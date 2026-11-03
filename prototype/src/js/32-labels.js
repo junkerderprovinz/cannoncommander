@@ -119,6 +119,8 @@ const Labels = {
   of: (k, folder) => DATA.labels[Labels.pathOf(k, folder)] || {},
   color: (id) => LABEL_COLORS.find(c => c[0] === id),
   set(items, folder, change) {
+    const before = items.map(k => [Labels.pathOf(k, folder), DATA.labels[Labels.pathOf(k, folder)]]);
+    CC.history.push(items.length === 1 ? `Markierung von „${items[0].name}“ geändert` : `Markierung von ${items.length} Objekten geändert`, () => { for (const [p, l] of before) if (l) DATA.labels[p] = l; else delete DATA.labels[p]; }, 'IconHash');
     for (const k of items) {
       const p = Labels.pathOf(k, folder), next = change({ tags: [], ...DATA.labels[p] });
       if (!next.color && !next.tags.length) delete DATA.labels[p]; else DATA.labels[p] = next;

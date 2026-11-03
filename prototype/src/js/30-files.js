@@ -124,6 +124,7 @@ const Files = {
     const label = `${kind === 'copy' ? 'Kopieren' : 'Verschieben'}: ${items.length === 1 ? items[0].name : items.length + ' Objekte'} nach ${FS.split(dest).pop()}`;
     Jobs.start({ kind, label, total, files: Jobs.filesOf(items), done: () => {
 
+      const placed = [], replaced = [], moved = [];
       for (const k of items) {
         const choice = decide[k.name] || 'replace';
         if (choice === 'skip') continue;
@@ -131,13 +132,18 @@ const Files = {
         delete copy.kind;
         copy.time = NOW;
         if (choice === 'both') copy.name = Files.freeName(target, k.name);
-        else target.children = target.children.filter(c => c.name !== copy.name);
+        else { replaced.push(...target.children.filter(c => c.name === copy.name)); target.children = target.children.filter(c => c.name !== copy.name); }
         target.children.push(copy);
-        if (kind === 'move') { const src = FS.nodeAt(k.at || from); src.children = src.children.filter(c => c.name !== k.name); }
+        placed.push(copy);
+        if (kind === 'move') { const src = FS.nodeAt(k.at || from); moved.push([src, src.children.find(c => c.name === k.name)]); src.children = src.children.filter(c => c.name !== k.name); }
       }
       Files.T().marked = new Set();
       DATA.activity.unshift({ t: Date.now(), who: CC.user.name, what: kind === 'copy' ? 'kopiert' : 'verschoben', obj: `${items.length} ${items.length === 1 ? 'Objekt' : 'Objekte'} nach ${dest}` });
-      CC.toast(label.replace('Kopieren', 'Kopiert').replace('Verschieben', 'Verschoben'));
+      CC.toast(label.replace('Kopieren', 'Kopiert').replace('Verschieben', 'Verschoben'), 'ok', { label: 'Rückgängig', run: () => {
+        target.children = [...target.children.filter(c => !placed.includes(c)), ...replaced];
+        for (const [src, n] of moved) if (n) src.children.push(JSON.parse(JSON.stringify(n)));
+        CC.render();
+      } });
       if (CC.view === 'files') CC.render();
     } });
     CC.toast(`${label} läuft`, 'ok', { label: 'Aufgaben', run: () => CC.run('jobs') });

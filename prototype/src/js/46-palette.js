@@ -1,6 +1,8 @@
 // The command search: every action by its name, the recent ones on top while nothing is typed.
 (() => {
   const KEY = 'cannoncommander-recent-commands';
+  // Other lists the search also looks through, such as folders: { head, list() } with rows { name, g, run }.
+  CC.paletteSources = [];
   const recent = () => {
     try { const v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch { return []; }
   };
@@ -37,6 +39,7 @@
 
   function entries(q) {
     const grp = groups();
+    const extra = CC.paletteSources.map(s => ({ head: s.head, rows: s.list().map(r => ({ ...r, a: { g: r.g }, group: s.head })) }));
     const all = Object.values(CC.actions).filter(a => a.label && a.id !== 'palette').map(a => ({
       a, name: typeof a.label === 'function' ? a.label() : a.label, group: grp[a.id],
       why: CC.blocked(a) || (a.when && !a.when() ? 'Gerade nicht möglich' : null),
@@ -45,9 +48,10 @@
     if (!q.trim()) {
       const first = recent().map(id => all.find(e => e.a.id === id)).filter(Boolean);
       const rest = all.filter(e => !first.includes(e)).sort(byName);
-      return first.length ? [{ head: 'Zuletzt benutzt' }, ...first, { head: 'Alle Befehle' }, ...rest] : rest;
+      const more = extra.filter(x => x.rows.length).flatMap(x => [{ head: x.head }, ...x.rows.slice(0, 5)]);
+      return first.length || more.length ? [...(first.length ? [{ head: 'Zuletzt benutzt' }, ...first] : []), ...more, { head: 'Alle Befehle' }, ...rest] : rest;
     }
-    return all.map(e => ({ ...e, score: score(q, e) })).filter(e => e.score).sort((x, y) => !!x.why - !!y.why || y.score - x.score || byName(x, y));
+    return [...all, ...extra.flatMap(x => x.rows)].map(e => ({ ...e, score: score(q, e) })).filter(e => e.score).sort((x, y) => !!x.why - !!y.why || y.score - x.score || byName(x, y));
   }
 
   const lead = (a) => a.checked ? `<span class="cbox ${a.checked() ? 'on' : ''}">${g('IconCheck')}</span>` : a.g ? g(a.g) : '<span class="ph"></span>';
@@ -59,7 +63,7 @@
     el = document.createElement('div');
     el.className = 'pal-scrim glim-modal-backdrop';
     el.innerHTML = `<div class="pal glim-card" role="dialog" aria-label="Befehl suchen">
-      <label class="field pal-q">${g('IconSearch')}<input id="pal-q" role="combobox" aria-expanded="true" aria-controls="pal-list" aria-autocomplete="list" placeholder="Befehl suchen" autocomplete="off" spellcheck="false"></label>
+      <label class="field pal-q">${g('IconSearch')}<input id="pal-q" role="combobox" aria-expanded="true" aria-controls="pal-list" aria-autocomplete="list" placeholder="Befehl oder Ordner suchen" autocomplete="off" spellcheck="false"></label>
       <div class="pal-list" id="pal-list" role="listbox" aria-label="Befehle"></div></div>`;
     document.body.appendChild(el);
     const input = $('#pal-q', el), list = $('#pal-list', el);
@@ -88,6 +92,7 @@
       if (!r || r.head) return;
       if (r.why) return CC.toast(r.why, 'warn');
       close();
+      if (r.run) return r.run();
       remember(r.a.id);
       CC.run(r.a.id);
     };

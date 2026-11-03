@@ -120,6 +120,7 @@ document.addEventListener('click', e => {
 function folderItems(path) {
   return [
     { label: 'Öffnen', g: 'IconFolderOpen', run: () => Files.go(path) },
+    { label: 'Internen Link kopieren', g: 'IconLink', run: () => CC.copyInternalLink(path) },
     { label: 'Im anderen Fenster öffnen', g: 'IconCompare', run: () => { CC.prefs.dual = true; Files.go(path, Files.other()); } },
     { label: 'In neuem Tab öffnen', g: 'IconAdd', run: () => { const p = Files.P(); p.tabs.push(newTab(path)); p.cur = p.tabs.length - 1; CC.render(); } },
     { label: 'Als Verknüpfung anlegen', g: 'IconStar', run: () => addBookmark(path) },
@@ -222,13 +223,20 @@ CC.deleteItems = (sel, path, after) => {
 CC.action('delete', { label: 'Löschen', g: 'IconTrash', key: 'F8', needs: ['sel', 'writable'], run: () => CC.deleteItems(Files.sel(), Files.T().path) });
 
 CC.action('newFolder', { label: 'Neuer Ordner', g: 'IconFolderAdd', key: 'F7', needs: 'writable', run: () => nameWindow('Neuer Ordner', 'Neuer Ordner', 'Anlegen', 'IconFolderAdd', (name) => {
-  FS.nodeAt(Files.T().path).children.push({ name, dir: true, children: [], time: Date.now(), owner: 'nobody', group: 'users', mode: '0775' });
+  const dir = FS.nodeAt(Files.T().path), n = { name, dir: true, children: [], time: Date.now(), owner: 'nobody', group: 'users', mode: '0775' };
+  dir.children.push(n);
+  CC.history.push(`Ordner „${name}“ angelegt`, () => { dir.children = dir.children.filter(c => c !== n); }, 'IconFolderAdd');
   return name;
 }) });
 CC.action('rename', { label: 'Umbenennen', g: 'IconPencil', key: 'F2', needs: ['sel', 'writable'], run: () => {
   const k = Files.sel()[0];
   if (Files.sel().length > 1 && CC.actions.multiRename) return CC.run('multiRename');
-  nameWindow('Umbenennen', k.name, 'Umbenennen', 'IconPencil', (name) => { FS.kids(FS.nodeAt(Files.T().path)).find(c => c.name === k.name).name = name; return name; }, k.name);
+  nameWindow('Umbenennen', k.name, 'Umbenennen', 'IconPencil', (name) => {
+    const n = FS.kids(FS.nodeAt(Files.T().path)).find(c => c.name === k.name);
+    n.name = name;
+    CC.history.push(`„${k.name}“ in „${name}“ umbenannt`, () => { n.name = k.name; }, 'IconPencil');
+    return name;
+  }, k.name);
 } });
 function nameWindow(title, value, verb, glyph, apply, old) {
   win({ title, body: `<div class="well">${frow('Name', `<input class="field w" id="nm" value="${esc(value)}">`)}</div>`,
