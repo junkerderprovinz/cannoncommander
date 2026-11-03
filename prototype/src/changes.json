@@ -1,8 +1,4 @@
 [
-  { "sel": ".head .brand", "go": { "view": "files" }, "text": "Notiz 78: Oben steht nur noch das Logo. Notiz 77: Die Befehlssuche sitzt rechts hinter der Lupe (Strg+K). Notiz 76: Der Zähler an Aufgaben erscheint erst, wenn etwas läuft" },
-  { "sel": "#tree", "go": { "view": "files" }, "text": "Notiz 80: Jedes Laufwerk zeigt seinen Füllstand wie unter Windows, im Baum und in der Liste von /mnt, ab neun Zehnteln rot" },
-  { "sel": "[data-viewmenu]", "go": { "view": "files" }, "text": "Notiz 70: In Auswahl-Menüs wie der Ansicht behält jede Wahl ihre Glyphe, die aktuelle bekommt einen Haken" },
-  { "sel": ".panel.active [data-labelsmenu]", "go": { "view": "files" }, "text": "Notiz 69: Im Fenster Farben öffnet der Punkt einen richtigen Farbwähler mit Farbfläche, Farbton-Leiste und Hex-Wert. Der Name kommt aus rund 90 deutschen Farbnamen" },
-  { "sel": ".hback", "go": { "view": "settings" }, "text": "Notiz 79: Aus den Einstellungen führt oben „Zurück zu den Dateien“ heraus, dazu Esc und das Zahnrad" },
-  { "sel": ".tiles", "go": { "view": "settings", "tab": "look" }, "text": "Notizen 71 und 72: Aussehen: Die Farben-Karte ist wie in BombVault gebaut, mit den drei Easter Eggs Blatt (Eckig 5-mal), Sturm (Wild 5-mal) und Disco (Regenbogen 5-mal in kurzer Folge). Notizen 73 bis 75: Info zeigt Versionen als Links ohne Badge, ohne Quantum-Zeile, Hilfe und Über wie in BombVault" }
+  { "sel": "#tree", "go": { "view": "files" }, "text": "Notiz 81: Der Ordnerbaum zeigt wieder nur den freien Platz als Text, die Füllstände stehen im Hauptfenster" },
+  { "sel": "[data-viewmenu]", "go": { "view": "files" }, "text": "Notiz 82: Neue Ansicht Laufwerke wie „Dieser PC“ unter Windows, mit Füllstand und freiem Platz je Laufwerk. Notiz 83: Jeder Ordner merkt sich seine Ansicht, und wo die Laufwerke liegen, öffnet sich von selbst die Laufwerksansicht. Notiz 84: Die Spaltenansicht bleibt beim Hineingehen bis zu den Dateien erhalten" }
 ]

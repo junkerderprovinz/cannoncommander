@@ -351,6 +351,16 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 
 /* Tiles: the same rows, laid out as cards, so clicks, marks, drags and menus work unchanged. */
 .list.grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: .6rem; align-content: start; padding: .25rem; }
+.list.view-drives { grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: .7rem; }
+.grid-view .row.dcard { position: relative; display: flex; align-items: center; gap: .9rem; height: auto; min-width: 0; padding: .8rem .9rem; }
+.dcard .dglyph { width: 2.6rem; height: 2.6rem; display: grid; place-items: center; flex: none; }
+.dcard .dglyph svg { width: 2.1rem; height: 2.1rem; color: var(--accent-glyph); }
+.dcard .dtext { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .35rem; }
+.dcard .t { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dcard .meta { font-size: 12px; color: var(--carbon-text-muted); }
+.dbar { height: .55rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); overflow: hidden; }
+.dbar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.dbar.full i { background: var(--status-fail-solid, #ff6b72); }
 .grid-view .row.gcard { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: .35rem; height: auto; min-width: 0; padding: .45rem; }
 .row .thumb { aspect-ratio: 4 / 3; border-radius: calc(var(--radius-control) * .8); display: grid; place-items: center; background: var(--carbon-surface2); overflow: hidden; }
 .row .thumb svg { width: 2.4rem; height: 2.4rem; color: var(--accent-glyph); }

@@ -187,7 +187,7 @@ function renderSide() {
       const glyph = p === '/mnt' ? 'IconDatabase' : p === '/boot' ? 'IconFlash' : p === '/mnt/remotes' ? 'IconCloud' : k.remote ? 'IconNetwork' : FS.FREE[p] ? 'IconZFS' : open ? 'IconFolderOpen' : 'IconFolder';
       rows.push(`<div class="nav-row tree-row ${cur === p ? 'cur' : ''}" style="padding-left:${.3 + depth * .85}rem" data-go="${esc(p)}" ${k.remote ? `data-tip="${esc(k.remote)}"` : ''}>
         ${hasKids ? `<button class="tree-tog ${open ? 'open' : ''}" data-tog="${esc(p)}" aria-label="${open ? 'Zuklappen' : 'Aufklappen'}">${g('IconExpand')}</button>` : '<span class="tree-tog"></span>'}
-        ${g(glyph)}<span>${esc(FS.LABEL[p] || k.name)}</span>${FS.FREE[p] ? `${volMeter(p)}<span class="meta glim-num">${fmtSize(FS.FREE[p])} frei</span>` : ''}</div>`);
+        ${g(glyph)}<span>${esc(FS.LABEL[p] || k.name)}</span>${FS.FREE[p] ? `<span class="meta glim-num">${fmtSize(FS.FREE[p])} frei</span>` : ''}</div>`);
       if (open) walk(k, p, depth + 1);
     }
   };
@@ -235,10 +235,18 @@ function renderPanel(i) {
 const VIEWS = [
   ['details', 'Details', 'IconViewAdvanced'], ['compact', 'Kompakt', 'IconViewSimple'], ['list', 'Liste', 'IconLog'], ['content', 'Inhalt', 'IconFileDoc'],
   ['columns', 'Spalten', 'IconCompare'], ['tiles', 'Kacheln', 'IconTabApps'], ['large', 'Große Kacheln', 'IconFileImage'], ['gallery', 'Galerie', 'IconFileRaw'],
+  ['drives', 'Laufwerke', 'IconDatabase'],
 ];
-const CARD_VIEWS = ['tiles', 'large', 'gallery'];
+const CARD_VIEWS = ['tiles', 'large', 'gallery', 'drives'];
 // Each folder remembers the view it was last shown in, so photos stay a gallery and logs stay a list.
-const viewOf = (t) => CC.prefs.folderViews?.[t.path] || 'details';
+// A folder without its own choice opens where the volumes live as drives, and below a column view as columns, as in the Finder.
+const viewOf = (t) => {
+  const own = CC.prefs.folderViews?.[t.path];
+  if (own) return own;
+  if (FS.kids(FS.nodeAt(t.path)).some(k => FS.FREE[FS.join(t.path, k.name)])) return 'drives';
+  for (let p = t.path; p !== '/'; p = FS.parent(p)) if (CC.prefs.folderViews?.[FS.parent(p)] === 'columns') return 'columns';
+  return 'details';
+};
 const setView = (t, id) => CC.setPref('folderViews', { ...CC.prefs.folderViews, [t.path]: id });
 
 // Grouping splits the list into sections with a heading; it is kept per folder like the view.
@@ -312,6 +320,16 @@ function tileHtml(i, k, idx) {
   return `<div class="row gcard ${rowClass(t, k, idx)}" data-idx="${idx}" draggable="true" data-tip="${esc(k.name)}">${thumb(k, k.at || t.path)}${t.marked.has(k.name) ? check() : ''}<span class="t">${esc(k.name)}</span><span class="meta glim-num">${meta}${Labels.marks(k, t.path)}</span></div>`;
 }
 
+// A drive card as in the Explorer's This PC: the volume's glyph, its name, how full it is and what is left.
+function driveHtml(i, k, idx) {
+  const t = Files.T(i), p = FS.join(t.path, k.name), free = FS.FREE[p], total = FS.TOTAL[p];
+  const glyph = p === '/boot' ? 'IconFlash' : p === '/mnt/remotes' ? 'IconCloud' : p === '/mnt/user' ? 'IconFiles' : free ? 'IconDatabase' : FS.glyphOf(k);
+  const used = free && total ? 1 - free / total : 0;
+  return `<div class="row dcard ${rowClass(t, k, idx)}" data-idx="${idx}" draggable="true">${t.marked.has(k.name) ? check() : ''}<span class="dglyph">${g(glyph)}</span>
+    <span class="dtext"><span class="t">${esc(FS.LABEL[p] ? `${FS.LABEL[p]} (${k.name})` : k.name)}</span>
+    ${free && total ? `<span class="dbar ${used > .9 ? 'full' : ''}"><i style="width:${Math.round(used * 100)}%"></i></span><span class="meta glim-num">${fmtSize(free)} frei von ${fmtSize(total)}</span>` : `<span class="meta glim-num">${k.dir ? `${FS.kids(k).length} Obj.` : fmtSize(k.size)}</span>`}</span></div>`;
+}
+
 function contentHtml(i, k, idx) {
   const t = Files.T(i);
   const extra = ['dimensions', 'duration', 'pages'].map(id => COL[id].value(k, t.path)).find(Boolean);
@@ -335,7 +353,7 @@ function millerHtml(i, t, list) {
     + `<div class="mcol cur">${list.map((k, idx) => flowHtml(i, k, idx)).join('')}</div>${peek}`;
 }
 
-const ITEM_HTML = { details: rowHtml, compact: rowHtml, list: flowHtml, columns: flowHtml, content: contentHtml, tiles: tileHtml, large: tileHtml, gallery: tileHtml };
+const ITEM_HTML = { details: rowHtml, compact: rowHtml, list: flowHtml, columns: flowHtml, content: contentHtml, tiles: tileHtml, large: tileHtml, gallery: tileHtml, drives: driveHtml };
 
 // A separator in the path opens the folders below the part on its left, as Explorer's arrows do.
 const psep = (under) => FS.nodeAt(under)?.dir ? `<button class="psep" data-psub="${esc(under)}" aria-label="Ordner in ${esc(FS.split(under).pop() || 'Server')}">›</button>` : '<span class="psep" aria-hidden="true">›</span>';
