@@ -57,7 +57,7 @@
       "vue-i18n": "$vue-i18n"
     },
     "@intlify/eslint-plugin-vue-i18n": {
-      "glob": "^13.0.0"
+      "glob": "^14.0.0"
     }
   },
   "devDependencies": {
