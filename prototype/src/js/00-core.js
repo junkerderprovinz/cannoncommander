@@ -66,7 +66,7 @@ CC.run = (id, ...args) => {
 CC.blocked = (a) => {
   const need = [].concat(a.needs || []);
   if (need.includes('sel') && !Files.sel().length) return 'Erst eine Datei oder einen Ordner wählen';
-  if (need.length && Files.sel().some(k => k.at && k.at !== Files.T().path)) return 'Im Suchergebnis: erst mit Enter zur Datei springen';
+  if (need.length && !['copy', 'move', 'delete'].includes(a.id) && Files.sel().some(k => k.at && k.at !== Files.T().path)) return 'Das geht nur im eigenen Ordner: mit Enter zur Datei springen';
   if (need.includes('file') && !Files.sel().some(k => !k.dir)) return 'Erst eine Datei wählen';
   if (need.includes('dual') && !CC.prefs.dual) return 'Dafür beide Fenster einschalten (Strg+2)';
   if (need.includes('writable') && FS.inArchive(Files.T().path)) return 'Im Archiv geht nur Ansehen und Entpacken';
@@ -180,7 +180,7 @@ const menuHTML = (list) => list.map((it, k) => {
   if (it.head) return `<div class="head">${esc(it.head)}</div>`;
   const off = it.id && CC.actions[it.id] && (CC.blocked(it) || (it.when && !it.when()));
   // Anything that can be on or off shows a checkbox where its glyph would stand, as the column menu does.
-  const lead = it.checked ? `<span class="cbox ${it.checked() ? 'on' : ''}" role="presentation">${g('IconCheck')}</span>` : it.g ? g(it.g) : '<span class="ph"></span>';
+  const lead = it.checked ? `<span class="cbox ${it.checked() ? 'on' : ''}" role="presentation">${g('IconCheck')}</span>` : it.color ? `<i class="cdot big" style="--c:${it.color}"></i>` : it.g ? g(it.g) : '<span class="ph"></span>';
   const role = it.checked ? `role="${it.radio ? 'menuitemradio' : 'menuitemcheckbox'}" aria-checked="${!!it.checked()}"` : it.sub ? 'role="menuitem" aria-haspopup="menu" data-sub' : 'role="menuitem"';
   const end = it.sub ? `<span class="chev">${g('IconExpand')}</span>` : it.key ? `<span class="kbd">${esc(it.key)}</span>` : '';
   return `<button data-k="${k}" ${off ? 'disabled' : ''} ${role}>${lead}<span>${esc(typeof it.label === 'function' ? it.label() : it.label)}</span>${end}</button>`;
