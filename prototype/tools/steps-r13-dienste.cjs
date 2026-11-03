@@ -181,8 +181,8 @@ module.exports = async (page, shot) => {
   await page.waitForTimeout(1500);
   console.log('9 job done:', await live());
   await page.keyboard.press('F1'); await wait();
-  console.log('9 shortcuts window:', await page.evaluate(() => $$('.kbd-grid div').filter(d => /Alt\+[1-4]/.test(d.innerText)).map(d => d.innerText.replace(/\s+/g, ' ')).join(' | ')));
-  await page.evaluate(() => $$('.kbd-grid div').find(d => /Alt\+4/.test(d.innerText)).scrollIntoView({ block: 'center' })); await wait(200);
+  console.log('9 shortcuts window:', await page.evaluate(() => $$('.kb-row').filter(d => /Alt\+[1-4]/.test(d.innerText)).map(d => d.innerText.replace(/\s+/g, ' ')).join(' | ')));
+  await page.evaluate(() => $$('.kb-row').find(d => /Alt\+4/.test(d.innerText)).scrollIntoView({ block: 'center' })); await wait(200);
   await shot('r13-9-shortcuts');
   await closeAll();
 };

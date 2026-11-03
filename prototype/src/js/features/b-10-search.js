@@ -19,7 +19,7 @@
   };
 
   function find(q) {
-    const nameRe = bk.globRe(q.name);
+    const mq = CC.meta.parse(q.name), nameRe = bk.globRe(mq.rest);
     const text = q.text.trim().toLowerCase();
     const min = bytes(q.min), max = bytes(q.max);
     const now = NOW;
@@ -31,7 +31,7 @@
         const p = FS.join(path, k.name);
         scanned++;
         const size = FS.totalSize(k);
-        let ok = (!nameRe || nameRe.test(k.name)) && typeOk(k, q.type);
+        let ok = (!nameRe || nameRe.test(k.name)) && typeOk(k, q.type) && (!mq.fields || mq.test({ ...k, at: path }));
         if (ok && text) ok = !k.dir && !bk.isBinary(k) && bk.textOf(path, k).toLowerCase().includes(text);
         if (ok && !isNaN(min)) ok = size >= min;
         if (ok && !isNaN(max)) ok = size <= max;
@@ -43,7 +43,7 @@
     const root = FS.nodeAt(q.in);
     if (root?.dir) walk(root, q.in === '/' ? '' : q.in);
     hits.sort((a, b) => (b.node.dir ? 1 : 0) - (a.node.dir ? 1 : 0) || a.node.name.localeCompare(b.node.name, 'de', { numeric: true }));
-    return { hits, scanned, found: !!root?.dir };
+    return { hits: mq.unknown.length ? [] : hits, scanned, found: !!root?.dir, unknown: mq.unknown };
   }
 
   function open(hit, asTab) {
@@ -115,6 +115,11 @@
       if (!res.found) {
         $('#s-count', w).textContent = 'Treffer';
         list.innerHTML = `<div class="empty">${g('IconFolder')}<div>Diesen Ordner gibt es nicht</div></div>`;
+        return;
+      }
+      if (res.unknown.length) {
+        $('#s-count', w).textContent = 'Treffer';
+        list.innerHTML = `<div class="empty">${g('IconInfo')}<div>${res.unknown.map(u => `„${esc(u)}:“`).join(', ')} kenne ich nicht</div><div class="muted" style="font-size:12px">Ich verstehe etwa breite, höhe, codec, interpret, kamera, größe, geändert, dauer und jeden Spaltennamen</div></div>`;
         return;
       }
       const shown = res.hits.slice(0, LIMIT);

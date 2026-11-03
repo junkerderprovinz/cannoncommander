@@ -367,7 +367,8 @@ function renderQuickview(i) {
 }
 
 function renderFkeys() {
-  const keys = [['F1', 'shortcuts', 'Hilfe'], ['F2', 'rename'], ['F3', 'view'], ['F4', 'edit'], ['F5', 'copy'], ['F6', 'move'], ['F7', 'newFolder'], ['F8', 'delete'], ['F9', 'search'], ['F10', 'menuBar']];
+  // The bar follows the key map, so keys of your own show up here too.
+  const keys = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10'].map(k => [k, k === 'F10' ? 'menuBar' : CC.keymap[k], CC.keymap[k] === 'shortcuts' ? 'Hilfe' : '']);
   $('#fkeys').innerHTML = keys.map(([k, id, label]) => {
     const a = CC.actions[id];
     if (!a) return '';
@@ -545,7 +546,7 @@ document.addEventListener('contextmenu', e => {
     const sel = Files.sel(), file = sel.find(x => !x.dir);
     const oneFolder = sel.length === 1 && sel[0].dir && !sel[0].up && !FS.inArchive(t.path);
     menu(e.clientX, e.clientY, [
-      ...(oneFolder ? folderItems(FS.join(t.path, sel[0].name)) : ['view', 'edit', ...(file?.zip || sel[0]?.kind === 'arch' ? ['unpack'] : [])]), '-',
+      ...(oneFolder ? folderItems(FS.join(t.path, sel[0].name)) : ['view', 'edit', ...(file?.zip || sel[0]?.kind === 'arch' ? ['unpack', 'testArchive'] : [])]), '-',
       'copy', 'move', 'rename', 'clipCut', 'clipCopy', '-',
       'share', 'collect', 'download', 'pack', 'checksum', 'symlink', ...(sel.length === 2 && sel.every(x => !x.dir) ? ['diff'] : []), '-',
       ...Labels.menuItems(sel, t.path), '-', 'props', 'fixPerms', 'copyPath', '-', 'delete',
