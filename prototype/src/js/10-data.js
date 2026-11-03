@@ -182,7 +182,8 @@ const Jobs = {
   },
   tick(advance = true) {
     const live = Jobs.list.filter(j => j.queue && (j.state === 'läuft' || j.state === 'wartet'));
-    const moving = Jobs.serial() ? live.slice(0, 1) : live;
+    const free = live.filter(j => !Jobs.held(j));
+    const moving = Jobs.serial() ? free.slice(0, 1) : free;
     // Jobs side by side share the disks, so together they are only a little faster than one alone.
     const share = moving.length > 1 ? 1.4 / moving.length : 1;
     for (const j of live) {
@@ -191,7 +192,7 @@ const Jobs = {
     }
     if (advance) for (const j of moving) {
       if (j.total) {
-        j.rate = (150 + rnd() * 110) * MB * j.speed * share;
+        j.rate = Math.min((150 + rnd() * 110) * MB * j.speed * share, Jobs.limit(j, moving.length));
         j.pct = Math.min(100, j.pct + j.rate * TICK / 1000 * LAPSE / j.total * 100);
       } else j.pct = Math.min(100, j.pct + (5 + rnd() * 12) * j.speed * share);
       if (j.pct >= 100) {
@@ -232,6 +233,9 @@ const Jobs = {
     Jobs.tick(false);
   },
   running: () => Jobs.list.filter(j => ['läuft', 'wartet', 'pausiert'].includes(j.state)),
+  // Bytes per second a job may use, and whether it has to wait; features narrow both.
+  limit: () => Infinity,
+  held: () => false,
   listeners: [],
   changed() { Jobs.listeners.forEach(f => f()); Shell.updateJobs(); },
 };
