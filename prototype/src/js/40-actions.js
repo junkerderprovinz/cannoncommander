@@ -150,25 +150,36 @@ const CLASH_RULES = [['ask', 'Fragen'], ['skip', 'Überspringen'], ['replace', '
 CC.transferWays = [];
 CC.action('copy', { label: 'Kopieren', g: 'IconCopy', key: 'F5', needs: 'sel', run: () => transferWindow('copy') });
 CC.action('move', { label: 'Verschieben', g: 'IconMove', key: 'F6', needs: ['sel', 'writable'], run: () => transferWindow('move') });
+// The selection as a row of chips: the first few by name, the rest as a count.
+const itemChips = (sel, max = 4) => `<div class="xchips">${sel.slice(0, max).map(k => `<span class="xchip">${g(FS.glyphOf(k))}<span>${esc(k.name)}</span><small class="glim-num">${fmtSize(FS.totalSize(k)) || '0 B'}</small></span>`).join('')}${sel.length > max ? `<span class="xchip more">und ${sel.length - max} weitere</span>` : ''}</div>`;
+const placeName = (p) => FS.LABEL[p] || FS.split(p).pop() || 'Server';
+
 function transferWindow(kind) {
   const sel = Files.sel();
   const dest = CC.prefs.dual ? Files.T(Files.other()).path : FS.parent(Files.T().path);
   const verb = kind === 'copy' ? 'Kopieren' : 'Verschieben';
   const total = sel.reduce((a, k) => a + FS.totalSize(k), 0);
   const from = Files.T().path, ways = CC.transferWays.filter(w => w.fits(kind, sel, from, dest));
-  win({
-    title: verb,
-    body: `<div class="well"><div class="eyebrow">${sel.length} ${sel.length === 1 ? 'Objekt' : 'Objekte'}, ${fmtSize(total)}</div>
-      <table class="tbl">${sel.slice(0, 6).map(k => `<tr><td>${esc(k.name)}</td><td class="glim-num r">${fmtSize(FS.totalSize(k))}</td></tr>`).join('')}${sel.length > 6 ? `<tr><td colspan="2">und ${sel.length - 6} weitere</td></tr>` : ''}</table></div>
-      <div class="well"><div class="eyebrow">Ziel</div>
-        ${frow('Ordner', CC.admin.pathField(dest, 'dest'), 'Im Zwei-Fenster-Modus steht hier der Ordner des anderen Fensters.')}
-        ${ways.length ? frow('Art', seg([[kind, verb], ...ways.map(w => [w.id, w.label])], kind, 'id="how"'), ways.map(w => w.tip).join(' ')) : ''}
-        <div class="stack">${frow('Wenn es die Datei schon gibt', seg(CLASH_RULES, 'ask', 'id="clash"'), 'Mit Fragen entscheidest du für jede Datei einzeln, sonst gilt deine Wahl hier ohne Rückfrage für alle.')}</div>
-        ${frow('Rechte und Zeitstempel übernehmen', sw(true), 'Besitzer, Rechte und Änderungsdatum bleiben wie im Original. Ohne diesen Schalter gehören neue Dateien nobody:users (99:100).')}
-        ${frow('Danach prüfen', sw(false), 'Liest das Ziel nach dem Kopieren noch einmal und vergleicht die Prüfsummen.')}
+  const w = win({
+    title: verb, cls: 'xwin',
+    body: `<div class="xroute">
+        <div class="xend"><span class="xic">${g('IconFolderOpen')}</span><b>${esc(placeName(from))}</b></div>
+        <div class="xmid"><span class="xsum glim-num">${sel.length} ${sel.length === 1 ? 'Objekt' : 'Objekte'} · ${fmtSize(total) || '0 B'}</span><span class="xtrack"><span class="xline"></span><span class="xarrow">${g(kind === 'copy' ? 'IconCopy' : 'IconMove')}</span></span></div>
+        <div class="xend"><span class="xic">${g('IconFolder')}</span><b id="xdest">${esc(placeName(dest))}</b></div>
+      </div>
+      ${itemChips(sel)}
+      <div class="well">
+        ${frow('Nach', CC.admin.pathField(dest, 'dest'))}
+        ${ways.length ? frow('Art', seg([[kind, verb], ...ways.map(x => [x.id, x.label])], kind, 'id="how"'), ways.map(x => x.tip).join(' ')) : ''}
+        ${frow('Wenn es die Datei schon gibt', CC.admin.dropdown(CLASH_RULES, 'ask', 'id="clash"'), 'Mit Fragen entscheidest du für jede Datei einzeln, sonst gilt deine Wahl ohne Rückfrage für alle.')}
+        <details class="xmore"><summary>Weitere Optionen</summary>
+          ${frow('Rechte und Zeitstempel übernehmen', sw(true), 'Besitzer, Rechte und Änderungsdatum bleiben wie im Original. Ohne diesen Schalter gehören neue Dateien nobody:users (99:100).')}
+          ${frow('Danach prüfen', sw(false), 'Liest das Ziel nach dem Kopieren noch einmal und vergleicht die Prüfsummen.')}
+        </details>
       </div>`,
-    foot: [{ start: 'Läuft als Aufgabe im Hintergrund' }, cancel, { label: verb, g: kind === 'copy' ? 'IconCopy' : 'IconMove', primary: true, run: (w) => { Files.transfer(ways.length ? segVal($('#how', w)) : kind, sel, $('#dest', w).value.trim(), from, segVal($('#clash', w))); } }],
+    foot: [{ start: 'Läuft als Aufgabe im Hintergrund' }, cancel, { label: verb, g: kind === 'copy' ? 'IconCopy' : 'IconMove', primary: true, run: (w) => { Files.transfer(ways.length ? segVal($('#how', w)) : kind, sel, $('#dest', w).value.trim(), from, CC.admin.ddVal($('#clash', w))); } }],
   });
+  $('#dest', w).addEventListener('input', e => { $('#xdest', w).textContent = placeName(e.target.value.trim().replace(/\/$/, '') || '/'); });
 }
 
 CC.action('delete', { label: 'Löschen', g: 'IconTrash', key: 'F8', needs: ['sel', 'writable'], run: () => {
@@ -182,13 +193,23 @@ CC.action('delete', { label: 'Löschen', g: 'IconTrash', key: 'F8', needs: ['sel
     CC.toast(`${sel.length} ${sel.length === 1 ? 'Objekt' : 'Objekte'} ${toTrash ? 'im Papierkorb' : 'gelöscht'}`, 'ok', toTrash ? { label: 'Rückgängig', run: () => { sel.forEach(k => { FS.nodeAt(k.at || path).children.push(k); DATA.trash = DATA.trash.filter(x => x.node !== k); }); CC.render(); } } : null);
   };
   if (!CC.prefs.confirmDelete) return doIt(CC.prefs.trash);
-  win({
-    title: 'Löschen',
-    body: `<div class="well"><div class="eyebrow">${sel.length} ${sel.length === 1 ? 'Objekt' : 'Objekte'}, ${fmtSize(sel.reduce((a, k) => a + FS.totalSize(k), 0))}</div>
-      <table class="tbl">${sel.slice(0, 8).map(k => `<tr><td>${esc(k.name)}</td><td class="glim-num r">${fmtSize(FS.totalSize(k))}</td></tr>`).join('')}${sel.length > 8 ? `<tr><td colspan="2">und ${sel.length - 8} weitere</td></tr>` : ''}</table>
-      ${frow('In den Papierkorb', sw(CC.prefs.trash, 'id="totrash"'), `Bleibt ${CC.prefs.trashDays} Tage im Papierkorb und lässt sich wiederherstellen. Ohne den Schalter ist es sofort weg.`)}</div>`,
+  const dw = win({
+    title: 'Löschen', cls: 'xwin',
+    body: `<div class="xdel"><span class="xbin">${g('IconTrash')}</span>
+        <div><b>${sel.length === 1 ? `${esc(sel[0].name)} löschen` : `${sel.length} Objekte löschen`}</b><span class="glim-num" id="xwhere"></span></div></div>
+      ${sel.length > 1 ? itemChips(sel, 6) : ''}
+      <div class="well">${frow('In den Papierkorb', sw(CC.prefs.trash, 'id="totrash"'), `Bleibt ${CC.prefs.trashDays} Tage im Papierkorb und lässt sich wiederherstellen. Ohne den Schalter ist es sofort weg.`)}</div>`,
     foot: [cancel, { label: 'Löschen', g: 'IconTrash', primary: true, run: (w) => doIt(swVal($('#totrash', w))) }],
   });
+  // The sentence and the button say what will happen, so nobody deletes for good by accident.
+  const say = () => {
+    const trash = swVal($('#totrash', dw)), size = fmtSize(sel.reduce((a, k) => a + FS.totalSize(k), 0)) || '0 B';
+    $('#xwhere', dw).textContent = trash ? `${size}, landet im Papierkorb und bleibt ${CC.prefs.trashDays} Tage wiederherstellbar` : `${size}, ist danach endgültig weg`;
+    $('.win-foot .btn.primary', dw).lastChild.textContent = trash ? 'In den Papierkorb' : 'Endgültig löschen';
+    dw.classList.toggle('forever', !trash);
+  };
+  $('#totrash', dw).addEventListener('change', say);
+  say();
 } });
 
 CC.action('newFolder', { label: 'Neuer Ordner', g: 'IconFolderAdd', key: 'F7', needs: 'writable', run: () => nameWindow('Neuer Ordner', 'Neuer Ordner', 'Anlegen', 'IconFolderAdd', (name) => {

@@ -30,36 +30,18 @@ svg { display: block; }
 .flight { position: relative; height: 9.5rem; margin: .2rem 0 1rem; border-radius: calc(var(--radius-card) - 6px); background: color-mix(in srgb, var(--carbon-surface2) 70%, transparent); overflow: hidden; }
 .place { position: absolute; top: 50%; translate: 0 -50%; width: 5.2rem; display: flex; flex-direction: column; align-items: center; gap: .35rem; z-index: 2; }
 .place.from { left: 1.4rem; } .place.to { right: 1.4rem; }
-.place .ic { width: 3.6rem; height: 3.6rem; border-radius: 1.1rem; display: grid; place-items: center; background: var(--carbon-surface); box-shadow: var(--hairline); transition: transform .3s; }
-.place .ic svg { width: 1.9rem; height: 1.9rem; color: var(--accent-glyph); }
+.place .ic { height: 3rem; display: grid; place-items: center; transition: transform .3s, opacity .3s; }
+.place .ic svg { width: 2.6rem; height: 2.6rem; color: var(--accent-glyph); }
 .place small { font-size: 11px; color: var(--carbon-text-muted); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .to .ic.catch { animation: catch .35s ease-out; }
-/* The target fills up as a ring; the source empties for moves, deletes and packing. */
-.place .ic { position: relative; }
-.to .ic::before { content: ""; position: absolute; inset: -5px; border-radius: 1.35rem; padding: 3px; background: conic-gradient(var(--accent) var(--p, 0%), color-mix(in srgb, var(--carbon-text) 10%, transparent) 0); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; transition: --p .25s; }
-.from .ic { transition: opacity .3s; }
 @keyframes catch { 40% { transform: scale(1.12); } }
 .from.empty .ic { opacity: .45; }
 
 .lane { position: absolute; inset: 0; pointer-events: none; }
 .lane path { fill: none; stroke: color-mix(in srgb, var(--carbon-text) 12%, transparent); stroke-width: 2; stroke-dasharray: 2 7; stroke-linecap: round; animation: dash 1.2s linear infinite; }
 @keyframes dash { to { stroke-dashoffset: -18; } }
-.paper { position: absolute; left: 0; top: 0; width: 1.7rem; height: 2.1rem; border-radius: .4rem; display: grid; place-items: center; background: var(--carbon-surface); box-shadow: 0 4px 14px rgb(0 0 0 / .25), var(--hairline); offset-path: var(--route); offset-rotate: 0deg; animation: fly var(--d, 1.6s) cubic-bezier(.45, .05, .35, 1) forwards; z-index: 3; }
-.paper svg { width: .95rem; height: .95rem; color: var(--accent-glyph); }
-@keyframes fly {
-  0% { offset-distance: 0%; opacity: 0; scale: .6; rotate: -8deg; }
-  12% { opacity: 1; scale: 1; }
-  50% { rotate: 6deg; }
-  88% { opacity: 1; scale: 1; }
-  100% { offset-distance: 100%; opacity: 0; scale: .5; rotate: 0deg; }
-}
-.mode-delete .paper { animation-name: drop; }
-@keyframes drop {
-  0% { offset-distance: 0%; opacity: 0; scale: .6; }
-  12% { opacity: 1; scale: 1; }
-  75% { opacity: 1; scale: .9; filter: none; }
-  100% { offset-distance: 100%; opacity: 0; scale: .2; filter: blur(2px); }
-}
+.paper { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; filter: drop-shadow(0 3px 6px rgb(0 0 0 / .3)); }
+.paper svg { width: 1.35rem; height: 1.35rem; color: var(--accent-glyph); }
 .spark { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); z-index: 4; pointer-events: none; animation: spark .6s ease-out forwards; }
 @keyframes spark { to { transform: translate(var(--x), var(--y)) scale(.2); opacity: 0; } }
 
@@ -74,24 +56,16 @@ svg { display: block; }
 @keyframes shine { to { translate: 100% 0; } }
 .paused .fill::after, .done .fill::after { animation: none; }
 
-.speed { height: 2.6rem; margin-top: .6rem; }
-.speed svg { width: 100%; height: 100%; overflow: visible; }
-.speed .area { fill: color-mix(in srgb, var(--accent) 16%, transparent); }
-.speed .line { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linejoin: round; }
-.speed .dot { fill: var(--accent); }
-
-.now { display: flex; align-items: center; gap: .6rem; margin-top: .9rem; padding: .55rem .7rem; border-radius: var(--radius-control); background: var(--carbon-surface2); min-height: 2.6rem; overflow: hidden; }
-.nowg { flex: none; }
-.now svg { width: 1rem; height: 1rem; color: var(--accent-glyph); flex: none; }
+.file { display: flex; align-items: center; gap: .5rem; margin-top: .55rem; font-size: 13px; color: var(--carbon-text-sub); }
+.file svg { width: .9rem; height: .9rem; color: var(--accent-glyph); flex: none; }
 .ticker { position: relative; flex: 1; min-width: 0; height: 1.3rem; overflow: hidden; }
 .ticker span { position: absolute; inset: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: tickin .35s ease-out; }
 .ticker span.out { animation: tickout .35s ease-in forwards; }
 @keyframes tickin { from { translate: 0 100%; opacity: 0; } }
 @keyframes tickout { to { translate: 0 -100%; opacity: 0; } }
-.now .count { font-size: 12px; color: var(--carbon-text-muted); font-variant-numeric: tabular-nums; flex: none; }
+.file .count { font-size: 12px; color: var(--carbon-text-muted); font-variant-numeric: tabular-nums; flex: none; }
 
 .foot { display: flex; align-items: center; gap: .5rem; margin-top: 1.1rem; }
-.hint { margin: .6rem .2rem 0; font-size: 12px; color: var(--carbon-text-muted); }
 .foot { justify-content: flex-end; }
 .btn { white-space: nowrap; flex: none; height: 2.3rem; padding: 0 1rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); display: inline-flex; align-items: center; gap: .45rem; }
 .btn svg { width: .95rem; height: .95rem; }
@@ -112,7 +86,7 @@ svg { display: block; }
 .done .lane, .done .paper { opacity: 0; transition: opacity .3s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .paper, .spark, .lane path, .fill::after { animation: none !important; }
+  .spark, .lane path, .fill::after { animation: none !important; }
   .paper { display: none; }
 }
 @media (max-width: 520px) { .facts { font-size: 12px; } .pct { font-size: 2.1rem; }  }
@@ -139,9 +113,7 @@ svg { display: block; }
       <div class="facts"><div><b id="done">0 B</b> von <span id="total"></span></div><div id="eta"></div></div>
     </div>
     <div class="track"><div class="fill" id="fill"></div></div>
-    <div class="speed"><svg viewBox="0 0 300 40" preserveAspectRatio="none"><path class="area" id="area"/><path class="line" id="line"/><circle class="dot" id="dot" r="2.6"/></svg></div>
-    <div class="now"><span class="nowg" id="nowg"></span><div class="ticker" id="ticker"></div><span class="count" id="count"></span></div>
-    <p class="hint" id="hint"></p>
+    <div class="file"><span class="nowg" id="nowg"></span><div class="ticker" id="ticker"></div><span class="count" id="count"></span></div>
     <div class="foot">
 
       <button class="btn" id="pause" type="button"><span data-g="IconPause"></span><span>Anhalten</span></button>
@@ -188,22 +160,30 @@ function route() {
   const d = `M ${x1} ${y} C ${x1 + (x2 - x1) * .3} ${y - lift}, ${x1 + (x2 - x1) * .7} ${y - lift}, ${x2} ${y}`;
   $('#lane').setAttribute('viewBox', `0 0 ${f.width} ${f.height}`);
   $('#route').setAttribute('d', d);
-  return { d, x2, y };
+  return { d, x2, y, p: [[x1, y], [x1 + (x2 - x1) * .3, y - lift], [x1 + (x2 - x1) * .7, y - lift], [x2, y]] };
 }
 
 function launch(file) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const r = route(), p = document.createElement('div');
   p.className = 'paper';
   p.innerHTML = g(file[0]);
-  p.style.setProperty('--route', `path("${r.d}")`);
-  p.style.setProperty('--d', (mode === 'delete' ? 1.1 : 1.6) + 's');
   $('#flight').appendChild(p);
-  p.addEventListener('animationend', () => {
+  const half = 11, steps = 18, frames = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps, u = 1 - t;
+    const x = u ** 3 * r.p[0][0] + 3 * u * u * t * r.p[1][0] + 3 * u * t * t * r.p[2][0] + t ** 3 * r.p[3][0];
+    const y = u ** 3 * r.p[0][1] + 3 * u * u * t * r.p[1][1] + 3 * u * t * t * r.p[2][1] + t ** 3 * r.p[3][1];
+    const s = mode === 'delete' ? 1 - t * .7 : t < .15 ? .6 + t * 2.6 : t > .85 ? 1 - (t - .85) * 3 : 1;
+    frames.push({ transform: `translate(${x - half}px, ${y - half}px) scale(${s.toFixed(2)})`, opacity: t < .12 ? t / .12 : t > .88 ? (1 - t) / .12 : 1, offset: t });
+  }
+  const a = p.animate(frames, { duration: mode === 'delete' ? 1100 : 1600, easing: 'cubic-bezier(.45, .05, .35, 1)', fill: 'forwards' });
+  a.onfinish = () => {
     p.remove();
     const to = $('#to .ic');
     to.classList.remove('catch'); void to.offsetWidth; to.classList.add('catch');
     if (mode === 'delete') sparks(r.x2, r.y);
-  });
+  };
 }
 function sparks(x, y) {
   for (let i = 0; i < 7; i++) {
@@ -231,10 +211,8 @@ function start() {
   const w = $('#win');
   w.className = `win mode-${mode}`;
   $('#verb').textContent = m.verb;
-  $('#hint').textContent = m.hint;
   $('#from').classList.remove('empty');
   $('#from .ic').style.opacity = '';
-  $('#to .ic').style.setProperty('--p', '0%');
   $('#from .ic').innerHTML = g(m.from[0]); $('#from small').textContent = m.from[1];
   $('#to .ic').innerHTML = g(m.to[0]); $('#to small').textContent = m.to[1];
   $('#pause').innerHTML = g('IconPause') + '<span>Anhalten</span>';
@@ -242,7 +220,7 @@ function start() {
   document.querySelectorAll('.paper, .spark').forEach(x => x.remove());
   $('#ticker').innerHTML = '';
   const total = FILES.reduce((a, f) => a + f[2], 0);
-  st = { i: 0, done: 0, fileDone: 0, total, paused: false, speeds: [], t: 0 };
+  st = { i: 0, done: 0, fileDone: 0, total, paused: false, t: 0 };
   $('#total').textContent = fmt(total);
   next();
   st.timer = setInterval(tick, 120);
@@ -264,7 +242,6 @@ function tick() {
   const mbs = m.mbs * (0.75 + 0.25 * Math.sin(st.t / 9) + 0.15 * Math.random());
   // The demo squeezes the job into m.secs seconds while showing real speeds.
   const pace = st.total / (m.mbs * 1e6 * m.secs), step = mbs * 1e6 * 0.12 * pace;
-  st.speeds.push(mbs); if (st.speeds.length > 60) st.speeds.shift();
   let left = step;
   while (left > 0 && st.i < FILES.length) {
     const need = FILES[st.i][2] - st.fileDone;
@@ -274,21 +251,11 @@ function tick() {
   const p = Math.min(1, st.done / st.total);
   $('#pct').textContent = Math.floor(p * 100);
   $('#fill').style.width = (p * 100).toFixed(1) + '%';
-  $('#to .ic').style.setProperty('--p', (p * 100).toFixed(1) + '%');
   if (mode !== 'copy') $('#from .ic').style.opacity = (1 - p * .55).toFixed(2);
   $('#done').textContent = fmt(st.done);
   const rest = (st.total - st.done) / (mbs * 1e6 * pace);
   $('#eta').textContent = `${mbs.toFixed(0)} MB/s · noch ${dur(rest)}`;
-  drawSpeed(m.mbs * 1.4);
   if (st.i >= FILES.length) finish();
-}
-function drawSpeed(max) {
-  const s = st.speeds, n = 60, pts = s.map((v, k) => [(k + n - s.length) / (n - 1) * 300, 38 - Math.min(1, v / max) * 34]);
-  if (pts.length < 2) return;
-  const line = 'M' + pts.map(p => p.map(v => v.toFixed(1)).join(' ')).join(' L');
-  $('#line').setAttribute('d', line);
-  $('#area').setAttribute('d', `${line} L ${pts.at(-1)[0]} 40 L ${pts[0][0]} 40 Z`);
-  $('#dot').setAttribute('cx', pts.at(-1)[0]); $('#dot').setAttribute('cy', pts.at(-1)[1]);
 }
 function finish() {
   st.finished = true;

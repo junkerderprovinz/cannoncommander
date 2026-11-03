@@ -406,3 +406,35 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .mitem span { overflow: hidden; text-overflow: ellipsis; }
 .mitem:hover { background: var(--carbon-hover); color: var(--carbon-text); }
 .mitem.on { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--carbon-text); }
+
+/* Copy, move and delete: a picture of what happens first, the choices below it. */
+.xwin .win-body { gap: .85rem; }
+.xroute { display: grid; grid-template-columns: 1fr minmax(8rem, 1.4fr) 1fr; align-items: center; gap: .5rem; padding: 1.1rem .75rem; border-radius: calc(var(--radius-card) - 6px); background: color-mix(in srgb, var(--carbon-surface2) 70%, transparent); }
+.xend { display: flex; flex-direction: column; align-items: center; gap: .4rem; min-width: 0; }
+.xend b { font-size: 13px; font-weight: 600; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xic { height: 2.6rem; display: grid; place-items: center; }
+.xic svg { width: 2.2rem; height: 2.2rem; color: var(--accent-glyph); }
+.xmid { position: relative; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+.xsum { font-size: 12px; color: var(--carbon-text-sub); white-space: nowrap; }
+.xtrack { position: relative; width: 100%; height: 1.9rem; display: grid; place-items: center; }
+.xline { position: absolute; left: 0; right: 0; top: 50%; translate: 0 -50%; height: 2px; background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, transparent) 0 6px, transparent 6px 12px); background-size: 24px 2px; animation: xflow 1s linear infinite; }
+@keyframes xflow { to { background-position: 24px 0; } }
+.xarrow { position: relative; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-contrast); box-shadow: 0 0 0 4px var(--carbon-surface); }
+.xarrow svg { width: .9rem; height: .9rem; }
+.xchips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.xchip { display: inline-flex; align-items: center; gap: .45rem; max-width: 100%; height: 2rem; padding: 0 .7rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); font-size: 13px; }
+.xchip svg { width: .9rem; height: .9rem; color: var(--accent-glyph); flex: none; }
+.xchip span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xchip small { color: var(--carbon-text-muted); font-size: 11px; flex: none; }
+.xchip.more { color: var(--carbon-text-sub); }
+.xmore summary { cursor: pointer; padding: .55rem 0 .2rem; font-size: 13px; color: var(--carbon-text-sub); list-style: none; display: flex; align-items: center; gap: .4rem; }
+.xmore summary::before { content: "›"; display: inline-block; transition: rotate .15s; }
+.xmore[open] summary::before { rotate: 90deg; }
+.xdel { display: flex; align-items: center; gap: 1rem; padding: .6rem .3rem; }
+.xbin { width: 3rem; display: grid; place-items: center; flex: none; }
+.xbin svg { width: 2.4rem; height: 2.4rem; color: var(--accent-glyph); }
+.xdel b { display: block; font-size: 16px; font-weight: 600; word-break: break-word; }
+.xdel span { display: block; margin-top: .2rem; font-size: 13px; color: var(--carbon-text-sub); }
+.forever .xbin svg { animation: xshake .4s; }
+@keyframes xshake { 25% { rotate: -8deg; } 75% { rotate: 8deg; } }
+@media (prefers-reduced-motion: reduce) { .xline, .forever .xbin svg { animation: none; } }
