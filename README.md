@@ -1,137 +1,108 @@
 <div align="center">
 
-  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0b548794f2ac4871a0cf7aa9ecab049f)](https://app.codacy.com/gh/gtsteffaniak/filebrowser/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-  [![latest version](https://img.shields.io/github/v/release/gtsteffaniak/filebrowser)](https://github.com/gtsteffaniak/filebrowser/releases)
-  [![DockerHub Pulls](https://img.shields.io/docker/pulls/gtstef/filebrowser?label=latest%20Docker%20pulls)](https://hub.docker.com/r/gtstef/filebrowser)
-  [![Apache-2.0 License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+  <h3>CannonCommander</h3>
+  A two-pane file manager for Unraid that runs in your browser.
 
-  [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://github.com/gtsteffaniak/filebrowser/wiki/Q&A#is-there-a-way-to-donate-or-support-this-project)
-
-  <img width="150" alt="FileBrowser Quantum logo" src="https://github.com/user-attachments/assets/c40b22c9-33da-47b7-bc4c-ce69bb5cc174">
-  <h3>FileBrowser Quantum</h3>
-  The best free self-hosted web-based file manager.
-  <br/><br/>
-  <img width="800" alt="FileBrowser Quantum file listing in dark mode" src="https://filebrowserquantum.com/images/generated/listing/view-mode-normal-dark.jpg">
 </div>
 
-## Pinned
+## Status
 
-:pushpin: [Read The Official Docs](https://filebrowserquantum.com/) (currently english-only)
+CannonCommander is at an early stage. The interface exists as a clickable prototype in [`prototype/`](prototype), with made-up files and no server behind it. The server side starts from [FileBrowser Quantum](https://github.com/gtsteffaniak/filebrowser), whose code and history this repository carries on. There is no release yet, so please don't install it on a server you care about.
 
-:pushpin: [v2.0.0 is now stable!](https://filebrowserquantum.com/en/docs/getting-started/v2/about/) --> See [migration support discussion](https://github.com/gtsteffaniak/filebrowser/discussions/3105)
+## What it is for
 
-## About
+Krusader and Total Commander are fast because you work in two panels side by side and press F5 to copy from one to the other. On a home server, getting that usually means running a whole desktop in a container just to move files. CannonCommander brings the same way of working into the browser, and it knows about Unraid:
 
-FileBrowser Quantum provides an easy way to access and manage your files from the web. It has a modern responsive interface that has many advanced features to manage users, access, sharing, and file preview and editing.
+- Two panels with tabs, an F-key bar, synchronized browsing and a command search on Ctrl+K.
+- Folder compare, batch rename with patterns, checksums, duplicate finder and disk usage.
+- Seven views, from details with 87 choosable columns to a photo gallery, and quick look on the space bar.
+- Copy and move run as background jobs, with a rule for files that already exist.
+- Users, groups, access rules, share links and OIDC sign-in, inherited from Quantum and extended.
+- Remote storage through rclone.
 
-This version is called "Quantum" because it packs tons of advanced features into a tiny and easy-to-run file. Unlike the majority of alternative options, FileBrowser Quantum is simple to install and easy to configure.
+## Trying the prototype
 
-The goal for this repo is to become the best open-source self-hosted file browsing application that exists -- **all for free**. This repo will always be free and open-source.
+The prototype is one HTML file built from plain JavaScript, with no framework and no install step.
 
-Ready to try it out? See [Getting Started Docs](https://filebrowserquantum.com/en/docs/getting-started/).
+```sh
+cd prototype
+node build.mjs
+```
 
-## How its different
+Open `prototype/dist/cannoncommander.html` in a browser.
 
-FileBrowser Quantum is a massive fork of the file browser open-source project with the following changes:
+## Comparison
 
-  1. ✅ Better source configuration - multiple sources, include/exclude rules, and [more](https://filebrowserquantum.com/en/docs/configuration/sources/)
-  2. ✅ Login support for OIDC, LDAP, JWT, password + 2FA, and proxy.
-  3. ✅ Beautiful, Responsive, and Customizable user interface.
-  4. ✅ Streamlined configuration via `config.yaml` config file.
-  5. ✅ Efficient search
-     - Real-time search results as you type.
-     - Real-time monitoring and updates in the UI.
-     - Search supports file and folder sizes, along with various filters.
-  6. ✅ Better listing browsing
-     - Thumbnails support includes **office**, **video**, and **album artwork**, and **3D models**.
-     - Faster and more responsive views with animations.
-     - **Folder sizes** are displayed and support thumbnails
-     - Navigating remembers the last scroll position.
-     - WebDAV support
-     - Granular permissions
-  7. ✅ Highly configurable and [customizable sharing options](https://filebrowserquantum.com/en/docs/shares/options/)
-     - share expiration time
-     - users who can access share (including anonymous)
-     - styling and themes
-     - file viewing, editing, and uploading permissions
-  8. ✅ Access control that can be scoped to user or group and source path.
-  9. ✅ Developer API support
-     - Ability to create long-lived API Tokens.
-     - A helpful Swagger page is available at `/swagger` endpoint for API enabled users.
+The rows and the values for the web file managers are taken from the [comparison chart in Quantum's README](https://github.com/gtsteffaniak/filebrowser#comparison-chart). The rows after the divider, and the Krusader and Windows Explorer columns (Windows 11 24H2), come from our own look at their documentation.
 
-Notable features that this fork *does not* have (removed):
- - ❌ shell commands are completely removed and will not be returned.
+✅ yes · ❌ no · 🟡 partly · 🧪 designed in the prototype, not yet working · 🚧 planned · ? not verified · n/a does not apply
 
-FileBrowser Quantum differs significantly from the original version. Many of these changes required a significant overhaul. Creating a fork was a necessary process to make the program better. There have been many growing pains, but a stable release is planned and coming soon.
+| | CannonCommander | Quantum | Filebrowser | Filestash | Nextcloud | Google Drive | FileRun | Krusader | Windows Explorer |
+|---|---|---|---|---|---|---|---|---|---|
+| Filesystem support | 🧪 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Linux | 🚧 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| Windows | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ✅ |
+| Mac | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | 🟡 | ❌ |
+| Self hostable | 🚧 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | 🟡 | ❌ |
+| Has stable release | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| S3 support | 🧪 | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| WebDAV support | 🧪 | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | 🟡 |
+| FTP support | 🧪 | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | 🟡 |
+| Dedicated docs site | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 |
+| Multiple sources at once | 🧪 | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Docker image size | n/a | 180 MB (with ffmpeg) | 31 MB | 240 MB (main image) | 250 MB | ❌ | > 2 GB | n/a | n/a |
+| Min. memory requirements | n/a | 512 MB | 128 MB | 128 MB (main image) | 512 MB | ❌ | 512 MB | n/a | n/a |
+| Has standalone binary | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ? | n/a |
+| Price | free | free | free | free | free tier | free tier | $99+ | free | included with Windows |
+| Rich media preview | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ |
+| Upload files from the web | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Advanced search | 🧪 | ✅ | ❌ | ✅ | configurable | ✅ | ✅ | ✅ | ✅ |
+| Indexed search | 🧪 | ✅ | ❌ | ✅ | configurable | ✅ | ✅ | 🟡 | ✅ |
+| Content-aware search | 🧪 | ❌ | ❌ | ✅ | configurable | ✅ | ✅ | ✅ | ✅ |
+| Custom job support | ❌ | 🚧 | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| Multiple users | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Single sign-on support | 🧪 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| LDAP sign-on support | 🚧 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Long-lived API key support | 🚧 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| API documentation page | 🚧 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
+| Mobile app | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Open source | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ |
+| Tags support | ❌ | 🚧 | ❌ | ✅ | ✅ | ❌ | ✅ | ? | 🟡 |
+| Shareable web links | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
+| Event-based notifications | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Metrics | ❌ | 🚧 | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| File space quotas | 🚧 | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ | 🟡 |
+| Text-based files editor | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Office file support | 🧪 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Office file previews | 🧪 | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ? | 🟡 |
+| Themes | 🧪 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🟡 |
+| Branding support | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Activity log | 🧪 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
+| Comments support | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
+| Trash support | 🧪 | 🚧 | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Starred/pinned files | 🧪 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ |
+| Chromecast support | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Share collections of files | ❌ | 🚧 | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Can archive selected files | 🧪 | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Can browse archive files | 🧪 | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Can convert documents | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Can convert videos | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Can convert photos | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Commander features** | | | | | | | | | |
+| Two-pane view | 🧪 | ❌ | ❌ | ? | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Tabs | 🧪 | ❌ | ❌ | ? | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Function-key bar, keyboard first | 🧪 | 🟡 | ? | 🟡 | ? | 🟡 | ❌ | ✅ | 🟡 |
+| Folder compare | 🧪 | ❌ | ❌ | ? | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Synchronized browsing | 🧪 | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Batch rename with patterns | 🧪 | ❌ | ❌ | ? | ? | ❌ | ❌ | ✅ | 🟡 |
+| Create and verify checksums | 🧪 | 🟡 | 🟡 | ? | ? | ❌ | ? | ✅ | ❌ |
+| Quick look on the space bar | 🧪 | ? | ? | ? | ? | 🟡 | ❌ | 🟡 | 🟡 |
+| Choosable list columns | 🧪 | ? | ❌ | ? | ? | ? | ✅ | ✅ | ✅ |
+| Thumbnail or gallery view | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ? | ? | ✅ |
+| Command search | 🧪 | ? | ❌ | ❌ | ❌ | ❌ | ❌ | ? | ❌ |
+| Duplicate finder | 🧪 | ✅ | ❌ | ? | ? | ❌ | ? | ? | ❌ |
+| Disk usage view | 🧪 | ✅ | ❌ | ? | 🟡 | 🟡 | ? | ✅ | 🟡 |
 
-## The UI
+## License
 
-The UI has a simple three-component navigation system:
-
-  1. (Left) Multi-action button with slide-out panel.
-  2. (Middle) The powerful search bar / title
-  3. (Right) The view change toggle / overflow menu
-
-All other functions are moved either into the action menu or pop-up menus.
-If the action does not depend on context, it will exist in the slide-out
-action panel. If the action is available based on context, it will show up as
-a pop-up menu.
-
-<img width="1200" height="750" alt="Aug-07-2026 14-54-55" src="https://github.com/user-attachments/assets/fd1c1747-f30f-4e21-b991-f45744416d7e" />
-
-## Official Docs
-
-See the [Official Docs](https://filebrowserquantum.com/). Contributions are welcome and encouraged! See [FilebrowserDocs Github](https://github.com/quantumx-apps/filebrowserDocs).
-
-## Comparison Chart
-Application Name | <img width="48" alt="" src="https://github.com/user-attachments/assets/c40b22c9-33da-47b7-bc4c-ce69bb5cc174" > Quantum | <img width="48" alt="" src="https://github.com/filebrowser/filebrowser/blob/master/frontend/public/img/logo.svg" > Filebrowser | <img width="48" alt="" src="https://github.com/mickael-kerjean/filestash/blob/master/public/assets/logo/app_icon.png?raw=true" > Filestash | <img width="48" alt="" src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" >  Nextcloud | <img width="48" alt="" src="https://cdn.iconscout.com/icon/free/png-256/free-google-drive-logo-icon-svg-download-png-2476481.png" > Google_Drive | <img width="48" alt="" src="https://avatars.githubusercontent.com/u/6422152?v=4" > FileRun
---- | --- | --- | --- | --- | --- | --- |
-Filesystem support            | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-Linux                         | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-Windows                       | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
-Mac                           | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
-Self hostable                 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-Has Stable Release?           | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-S3 support                    | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
-webdav support                | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
-FTP support                   | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ |
-Dedicated docs site?          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-Multiple sources at once      | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
-Docker image size             | 180 MB (with ffmpeg) | 31 MB  | 240 MB (main image) | 250 MB | ❌ | > 2 GB |
-Min. Memory Requirements      | 512 MB | 128 MB | 128 MB (main image) | 512 MB | ❌ | 512 MB   |
-has standalone binary         | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-price                         | free | free | free | free tier | free tier | $99+ |
-rich media preview            | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-Upload files from the web?    | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-Advanced Search?              | ✅ | ❌ | ✅ | configurable | ✅ | ✅ |
-Indexed Search?               | ✅ | ❌ | ✅ | configurable | ✅ | ✅ |
-Content-aware search?         | ❌ | ❌ | ✅ | configurable | ✅ | ✅ |
-Custom job support            | :construction: | ✅ | ✅ | ✅ | ❌ | ✅ |
-Multiple users                | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-Single sign-on support        | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-LDAP sign-on support          | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-Long-live API key support     | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-API documentation page        | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-Mobile App                    | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
-open source?                  | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-tags support                  | :construction: | ❌ | ✅ | ✅ | ❌ | ✅ |
-shareable web links?          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-Event-based notifications     | :construction: | ❌ | ✅ | ❌ | ❌ | ✅ |
-Metrics                       | :construction: | ❌ | ✅ | ✅ | ❌ | ❌ |
-file space quotas             | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-text-based files editor       | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-Office file support           | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-Office file previews          | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ |
-Themes                        | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-Branding support              | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
-activity log                  | ✅ | ❌ | ✅ | ✅ | ✅ | ✅
-Comments support              | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |
-trash support                 | :construction: | ❌ | ✅ | ✅ | ✅ | ✅ |
-Starred/pinned files          | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-Chromecast support            | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
-Share collections of files    | :construction: | ❌ | ❌ | ❌ | ❌ | ✅ |
-Can archive selected files    | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
-Can browse archive files      | :construction: | ❌ | ✅ | ❌ | ❌ | ✅ |
-Can convert documents         | :construction: | ❌ | ✅ | ❌ | ❌ | ✅ |
-Can convert videos            | :construction: | ❌ | ✅ | ❌ | ❌ | ❌ |
-Can convert photos            | :construction: | ❌ | ✅ | ❌ | ❌ | ❌ |
+CannonCommander is released under the [GNU Affero General Public License v3.0](LICENSE). It builds on FileBrowser Quantum and the original File Browser project, both under the Apache License 2.0; their notices are kept in [NOTICE](NOTICE) and the license text in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt). Thank you to Graham Steffaniak and everyone who worked on File Browser before us.
