@@ -9,7 +9,8 @@ module.exports = async (page, shot) => {
   await shot('r14-0-sidebar');
 
   // Tree: sorted by size, expand with the toggle and with the right arrow, sort by name, pick two and delete them.
-  await page.evaluate(() => { CC.setPref('duView', 'tree'); CC.run('diskUsage', '/mnt/user'); }); await wait(500);
+  await page.evaluate(() => CC.run('diskUsage', '/mnt/user')); await wait(500);
+  await page.click('#du-view [data-v="tree"]'); await wait();
   console.log('tree:', await rows());
   console.log('foot:', await page.evaluate(() => $('.bk-du .win-foot .start').textContent), 'delete disabled:', await page.evaluate(() => $('.bk-du .win-foot [data-f="2"]').disabled));
   await page.click('#du-body .du-row:not(.du-head) [data-du-tog]'); await wait();
@@ -24,6 +25,7 @@ module.exports = async (page, shot) => {
   await page.evaluate((i) => CC.run('diskUsage', '/mnt/user/backups'), backups); await wait(400);
   await closeAll();
   await page.evaluate(() => CC.run('diskUsage', '/mnt/user/backups')); await wait(400);
+  await page.click('#du-view [data-v="tree"]'); await wait();
   console.log('backups:', await rows());
   await page.click('#du-body .du-row:not(.du-head) >> nth=0');
   await page.click('#du-body .du-row:not(.du-head) >> nth=1', { modifiers: ['Control'] }); await wait();
@@ -50,7 +52,6 @@ module.exports = async (page, shot) => {
   await page.click('#du-view [data-v="map"]'); await wait(500);
   console.log('map blocks:', await page.evaluate(() => $$('#du-body .bk-blk').length));
   await shot('r14-5-map');
-  await page.evaluate(() => CC.setPref('duView', 'tree'));
   await closeAll();
 
   await page.click('.panel.active [data-run="quickFilter"]'); await wait();
@@ -64,7 +65,7 @@ module.exports = async (page, shot) => {
   await page.fill('.qfilter input', ''); await page.evaluate(() => { const i = $('.qfilter input'); i.dispatchEvent(new Event('input', { bubbles: true })); }); await wait();
   await page.click('.qfilter input'); await wait();
   console.log('saved rows:', await page.evaluate(() => $$('.qdrop .qrow').map(r => r.innerText.replace(/\s+/g, ' ')).join(' | ')));
-  await page.click('.qdrop [data-labelsearch="#steuer"]'); await wait();
+  await page.click('[data-qfclose]'); await page.click('.panel.active [data-labelsmenu]'); await page.click('#menu button:has-text("Steuer")'); await wait();
   console.log('label search:', await page.evaluate(() => `${Files.T().path} ${Files.T().filter} ${Files.entries().length} hits`));
   await page.click('[data-qfclose]'); await page.click('.panel.active [data-run="quickFilter"]'); await wait();
   await page.click('.qdrop .qrow >> nth=0'); await wait();

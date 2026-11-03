@@ -44,12 +44,16 @@ const Labels = {
     const all = [...new Set(Object.values(DATA.labels).flatMap(l => l.tags || []))].sort((a, b) => a.localeCompare(b, 'de'));
     const has = (t) => sel.every(k => (Labels.of(k, folder).tags || []).includes(t));
     const picked = new Set(all.filter(has));
-    const chips = () => [...new Set([...all, ...picked])].map(t => `<button class="tagchip ${picked.has(t) ? 'on' : ''}" data-tag="${esc(t)}">#${esc(t)}</button>`).join('');
+    const chips = () => [...picked].sort((a, b) => a.localeCompare(b, 'de')).map(t => `<span class="tagchip on">#${esc(t)}<button class="x" data-untag="${esc(t)}" data-tip="Entfernen" aria-label="${esc(t)} entfernen">${g('IconClose')}</button></span>`).join('')
+      + [...all].filter(t => !picked.has(t)).map(t => `<button class="tagchip" data-tag="${esc(t)}" data-tip="Hinzufügen">#${esc(t)}</button>`).join('');
     const w = win({ title: sel.length === 1 ? `Schlagworte für ${sel[0].name}` : `Schlagworte für ${sel.length} Objekte`,
-      body: `<div class="well"><div class="tagchips" id="tags">${chips()}</div>
-        ${frow('Neues Schlagwort', '<input class="field m" id="newtag" placeholder="etwa prüfen" autocomplete="off">', 'Mit Enter kommt es dazu. Ein Klick auf ein Schlagwort schaltet es an oder aus.')}</div>`,
+      body: `<div class="well">${frow('Schlagwort', '<input class="field m" id="newtag" placeholder="etwa prüfen" autocomplete="off">', 'Mit Enter kommt es dazu. Das x an einem Schlagwort nimmt es wieder weg, ein Klick auf ein graues setzt es.')}<div class="tagchips" id="tags">${chips()}</div></div>`,
       foot: [cancel, { label: 'Übernehmen', g: 'IconCheck', primary: true, run: () => Labels.set(sel, folder, l => ({ ...l, tags: [...picked] })) }] });
-    w.addEventListener('click', e => { const c = e.target.closest('[data-tag]'); if (!c) return; picked.has(c.dataset.tag) ? picked.delete(c.dataset.tag) : picked.add(c.dataset.tag); $('#tags', w).innerHTML = chips(); });
+    w.addEventListener('click', e => {
+      const off = e.target.closest('[data-untag]'), on = e.target.closest('[data-tag]');
+      if (off) picked.delete(off.dataset.untag); else if (on) picked.add(on.dataset.tag); else return;
+      $('#tags', w).innerHTML = chips();
+    });
     $('#newtag', w).addEventListener('keydown', e => {
       if (e.key !== 'Enter' || !e.target.value.trim()) return;
       e.preventDefault();
@@ -59,33 +63,36 @@ const Labels = {
     });
     $('#newtag', w).focus();
   },
-  // Every colour and tag in use as a chip for the search field's menu; a click searches the shares for it.
-  chips() {
+  // Every colour and tag in use, for the labels button; picking one searches the shares for it.
+  menu(btn) {
     const counts = {};
     for (const l of Object.values(DATA.labels)) {
       if (l.color) counts['c:' + l.color] = (counts['c:' + l.color] || 0) + 1;
       for (const t of l.tags || []) counts['t:' + t] = (counts['t:' + t] || 0) + 1;
     }
-    const keys = Object.keys(counts);
-    if (!keys.length) return '';
-    return [...LABEL_COLORS.filter(c => counts['c:' + c[0]]).map(([id, name, hex]) => `<button class="qchip" data-labelsearch="#${name.toLowerCase()}"><i class="cdot" style="--c:${hex}"></i>${name}<span class="glim-num">${counts['c:' + id]}</span></button>`),
-      ...keys.filter(k => k.startsWith('t:')).sort().map(k => `<button class="qchip" data-labelsearch="#${esc(k.slice(2).toLowerCase())}">${g('IconHash')}${esc(k.slice(2))}<span class="glim-num">${counts[k]}</span></button>`)].join('');
+    const search = (word) => () => { Files.go('/mnt/user'); Object.assign(Files.T(), { filter: word, qf: true, deep: true, cursor: 0 }); CC.render(); };
+    const colours = LABEL_COLORS.filter(c => counts['c:' + c[0]]).map(([id, name, hex]) => ({ label: name, color: hex, count: counts['c:' + id], run: search('#' + name.toLowerCase()) }));
+    const tags = Object.keys(counts).filter(k => k.startsWith('t:')).sort().map(k => ({ label: k.slice(2), g: 'IconHash', count: counts[k], run: search('#' + k.slice(2).toLowerCase()) }));
+    const r = btn.getBoundingClientRect();
+    menu(r.left, r.bottom + 6, colours.length || tags.length
+      ? [...(colours.length ? [{ head: 'Farben' }, ...colours] : []), ...(tags.length ? [{ head: 'Schlagworte' }, ...tags] : [])]
+      : [{ label: 'Noch nichts markiert. Rechtsklick auf eine Datei setzt Farbe und Schlagworte', g: 'IconInfo', run: () => {} }]);
   },
 };
 
 document.addEventListener('click', e => {
-  const r = CC.view === 'files' && e.target.closest('[data-labelsearch]');
-  if (!r) return;
-  Files.go('/mnt/user');
-  Object.assign(Files.T(), { filter: r.dataset.labelsearch, qf: true, deep: true, cursor: 0 });
-  CC.render();
+  const b = CC.view === 'files' && e.target.closest('[data-labelsmenu]');
+  if (b) Labels.menu(b);
 });
 
 CC.css(`
 .cdot { width: .6rem; height: .6rem; border-radius: 50%; background: var(--c); flex: none; box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 25%, transparent); }
 .cdot.big { width: .75rem; height: .75rem; margin: 0 .2rem; }
 .pill.tag { height: 1.2rem; padding: 0 .45rem; font-size: 11px; background: color-mix(in srgb, var(--accent) 14%, var(--carbon-surface2)); color: var(--carbon-text-sub); }
-.tagchips { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .8rem; }
-.tagchip { height: 1.8rem; padding: 0 .8rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); color: var(--carbon-text-sub); }
+.tagchips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
+.tagchip .x { width: 1.2rem; height: 1.2rem; margin-right: -.45rem; display: grid; place-items: center; border-radius: 50%; }
+.tagchip .x svg { width: .6rem; height: .6rem; color: currentColor; }
+.tagchip .x:hover { background: color-mix(in srgb, var(--accent-contrast) 18%, transparent); }
+.tagchip { height: 1.8rem; padding: 0 .8rem; display: inline-flex; align-items: center; gap: .35rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); color: var(--carbon-text-sub); }
 .tagchip.on { background: var(--accent); color: var(--accent-contrast); }
 `);

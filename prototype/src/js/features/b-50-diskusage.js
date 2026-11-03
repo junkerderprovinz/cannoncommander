@@ -68,7 +68,7 @@
 
   CC.action('diskUsage', { label: 'Speicherbelegung', g: 'IconDashboard', key: 'Alt+D', run: (start) => {
     let cur = start || (CC.view === 'files' && !FS.inArchive(bk.here()) ? bk.here() : '/mnt/user');
-    let view = VIEWS.some(v => v[0] === CC.prefs.duView) ? CC.prefs.duView : 'tree';
+    let view = 'map';
     let sort = { by: 'size', dir: -1 }, kind = null, stat, rows = [], focus = null, anchor = null, ro;
     const open = new Set(), sel = new Map();
 
@@ -84,7 +84,7 @@
     const body = $('#du-body', w), delBtn = $('.win-foot [data-f="2"]', w);
 
     const go = (p) => { cur = p; open.clear(); sel.clear(); focus = null; kind = null; draw(); body.focus(); };
-    const setView = (v) => { view = v; CC.setPref('duView', v); $$('#du-view button', w).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v))); draw(); body.focus(); };
+    const setView = (v) => { view = v; $$('#du-view button', w).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v))); draw(); body.focus(); };
 
     const order = (a, b) => {
       if (sort.by === 'name') return a.name.localeCompare(b.name, 'de', { numeric: true }) * -sort.dir;

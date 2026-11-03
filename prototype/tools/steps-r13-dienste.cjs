@@ -32,8 +32,10 @@ module.exports = async (page, shot) => {
   // 2. Saved searches: save *.mkv from Alt+F7, open it from the sidebar, rename and remove it by right click.
   await page.evaluate(() => CC.run('search')); await wait();
   await page.fill('#s-in', '/mnt/user');
-  await page.fill('#s-name', '*.mkv'); await wait(500);
-  await page.click('#s-save'); await wait();
+  await page.fill('#s-name', '*.mkv');
+  await page.waitForSelector('.bk-hits:not([hidden]) #s-save');
+  await page.click('#s-save');
+  await page.waitForSelector('#sm-name', { timeout: 5000 }).catch(async () => console.log('save window missing, windows:', await page.evaluate(() => $$('.win').map(w => w.getAttribute('aria-label')).join(' | '))));
   await page.fill('#sm-name', 'Alle Filme');
   await page.click('.scrim:last-of-type .win-foot .btn.primary'); await wait();
   await closeAll(); await wait();

@@ -116,11 +116,6 @@ CC.css(`
 .stile.dragging { opacity: .4; }
 .settings-body { overflow: auto; min-height: 0; padding: 0 2rem 2rem; }
 .settings-col { max-width: 52rem; display: flex; flex-direction: column; gap: 2.5rem; padding-top: .8rem; }
-/* A wide screen sets the cards in two balanced columns; the margin keeps room for the notch of the card below. */
-@media (min-width: 1500px) {
-  .settings-col { display: block; max-width: 106rem; columns: 2; column-gap: 2rem; }
-  .settings-col > * { break-inside: avoid; margin-bottom: 2.5rem; }
-}
 @media (max-width: 1024px) { .settings { grid-template-columns: 3.25rem minmax(0, 1fr); } .stile { justify-content: center; padding: 0; } .stile span { display: none !important; } }
 @media (max-width: 600px) {
   .settings { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }

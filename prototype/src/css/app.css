@@ -109,7 +109,7 @@ svg { display: block; }
 
 .crumbs { display: flex; align-items: center; gap: .3rem; padding: 0 .25rem .55rem; min-width: 0; }
 .crumbs .btn { height: 1.9rem; width: 1.9rem; flex: none; }
-.crumbs .tools { margin-left: auto; display: flex; gap: .3rem; flex: none; }
+.crumbs .tools { margin-left: auto; display: flex; gap: .3rem; flex: 0 1 auto; min-width: 0; }
 /* The path is one line that reads like a field: each folder can be clicked, the empty space edits the whole path. */
 .pathbar { flex: 1; min-width: 0; height: 1.9rem; display: flex; align-items: center; gap: 1px; padding: 0 .35rem; border-radius: var(--radius-control); background: var(--carbon-surface2); overflow: hidden; cursor: text; border: 0; outline: none; }
 .pathbar.pathedit { padding: 0 .7rem; color: var(--carbon-text); cursor: text; }
@@ -169,15 +169,16 @@ svg { display: block; }
 .lfoot .grow { flex: 1; }
 .meter { width: 5rem; height: .35rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); overflow: hidden; }
 .meter i { display: block; height: 100%; background: var(--carbon-text-muted); border-radius: inherit; }
-.qfilter { position: absolute; right: .75rem; top: .4rem; z-index: 3; display: flex; align-items: center; gap: .4rem; height: 2.1rem; padding: 0 .35rem 0 .7rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); box-shadow: var(--elevation), var(--hairline); }
+.qfilter { position: relative; flex: 0 1 17rem; min-width: 11rem; display: flex; align-items: center; gap: .35rem; height: 1.9rem; padding: 0 .15rem 0 .65rem; border-radius: var(--radius-control); background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
 .qfilter svg { width: .85rem; height: .85rem; color: var(--carbon-text-sub); }
-.qfilter input { width: 11rem; background: transparent; border: 0; outline: none; }
-.qfilter .btn { background: transparent; box-shadow: none; }
+.qfilter input { flex: 1; min-width: 0; width: auto; background: transparent; border: 0; outline: none; }
+.qfilter .btn { width: 1.6rem; height: 1.6rem; background: transparent; box-shadow: none; }
 .empty { display: grid; place-items: center; gap: .4rem; padding: 3rem 1rem; color: var(--carbon-text-muted); text-align: center; }
 .empty svg { width: 2rem; height: 2rem; opacity: .5; }
 .quickview { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: .8rem; padding: .25rem; }
 
 .fkeys { display: flex; align-items: center; gap: .45rem; padding: .55rem; overflow-x: auto; }
+.fkeys .btn { flex: 1 0 auto; justify-content: center; }
 .app:not(.with-fkeys) .fkeys { display: none; }
 
 /* Windows */
@@ -224,7 +225,8 @@ textarea.field { height: auto; padding: .6rem .7rem; resize: vertical; }
 .menu button:hover, .menu button:focus-visible { background: var(--carbon-hover); outline: none; }
 .menu button:disabled { opacity: .45; cursor: default; }
 .menu button:disabled:hover { background: none; }
-.menu button .kbd { margin-left: auto; }
+.menu button .kbd, .menu button .cnt { margin-left: auto; }
+.menu button .cnt { padding-left: 1.2rem; font-size: 12px; color: var(--carbon-text-muted); }
 .menu button .chev { margin-left: auto; display: grid; }
 .menu button .chev svg { width: .7rem; height: .7rem; color: var(--carbon-text-muted); transform: rotate(-90deg); }
 .menu button.open { background: var(--carbon-hover); }
@@ -381,8 +383,7 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .thumb.font small { font-size: 10px; color: #666; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .citem .thumb .page b, .citem .thumb .slide b, .citem .thumb .book b, .citem .thumb .tag, .citem .thumb .badge, .citem .thumb .wave, .citem .thumb.font small { display: none; }
 .citem .thumb.font span { font-size: 1.3rem; }
-.qfilter input { width: 13rem; }
-.qdeep { display: inline-flex; align-items: center; gap: .35rem; height: 1.6rem; padding: 0 .6rem; border-radius: var(--radius-pill); font-size: 12px; color: var(--carbon-text-sub); background: var(--carbon-surface3); }
+.qdeep { display: inline-flex; align-items: center; gap: .35rem; height: 1.5rem; padding: 0 .45rem; flex: none; border-radius: var(--radius-pill); font-size: 12px; color: var(--carbon-text-sub); background: var(--carbon-surface3); }
 .qdeep svg { width: .8rem; height: .8rem; }
 .qdeep.on { background: var(--accent); color: var(--accent-contrast); }
 .qdeep.on svg { color: var(--accent-contrast); }

@@ -208,7 +208,8 @@ function renderPanel(i) {
       ${t.editPath ? `<input class="pathbar pathedit mono" id="pathedit-${i}" value="${esc(t.path)}" aria-label="Pfad">` : `<div class="pathbar ${t.pathOpen ? 'open' : ''}" data-pathbar data-tip="Klick in die Zeile, um den Pfad zu tippen (Strg+L)">
         ${parts.length > 1 ? '<button class="pmore" data-pathmore aria-label="Ganzen Pfad zeigen">…</button>' : ''}<button class="pseg" data-go="/">Server</button>${parts.map((part, k) => `${psep('/' + parts.slice(0, k).join('/'))}<button class="pseg ${k === parts.length - 1 ? 'last' : ''}" data-go="${esc('/' + parts.slice(0, k + 1).join('/'))}">${esc(part.replace('::', ''))}</button>`).join('')}${FS.kids(FS.nodeAt(t.path)).some(c => c.dir) ? psep(t.path) : ''}</div>`}
       <span class="tools">
-        <button class="btn icon" data-run="quickFilter" data-tip="In diesem Ordner und darunter suchen (Strg+F oder /)">${g('IconSearch')}</button>
+        ${t.qf ? `<div class="qfilter">${g('IconSearch')}<input id="qf-${i}" value="${esc(t.filter)}" placeholder="Suchen, etwa *.mkv" aria-label="Im Ordner suchen" spellcheck="false" autocomplete="off">${t.filter ? `<button class="btn icon" data-qfsave data-tip="Diese Suche speichern">${g('IconSave')}</button>` : ''}<button class="qdeep ${t.deep === false ? '' : 'on'}" aria-pressed="${t.deep !== false}" aria-label="Unterordner" data-qfdeep data-tip="${t.deep === false ? 'Nur dieser Ordner. Klick sucht auch in Unterordnern' : 'Mit Unterordnern. Klick sucht nur hier'}">${g('IconFolderOpen')}</button><button class="btn icon" data-qfclose data-tip="Suche schließen (Esc)">${g('IconClose')}</button></div>` : `<button class="btn icon" data-run="quickFilter" data-tip="In diesem Ordner und darunter suchen (Strg+F oder /)">${g('IconSearch')}</button>`}
+        <button class="btn icon" data-labelsmenu data-tip="Markierungen: nach Farbe oder Schlagwort suchen">${g('IconHash')}</button>
         <button class="btn icon" data-viewmenu data-tip="Ansicht: ${VIEWS.find(v => v[0] === viewOf(t))[1]}">${g(VIEWS.find(v => v[0] === viewOf(t))[2])}</button>
         ${CC.prefs.dual ? `<button class="btn icon" data-run="equalPanels" data-tip="Anderes Fenster auf diesen Ordner (Strg+.)">${g('IconSync')}</button>` : ''}
       </span>
@@ -219,7 +220,7 @@ function renderPanel(i) {
       ${!list.length ? `<div class="empty">${g(t.filter ? 'IconSearch' : 'IconFolder')}<div>${t.filter ? `Nichts gefunden für ${esc(t.filter)}` : 'Dieser Ordner ist leer'}</div>${t.filter ? `<div class="muted" style="font-size:12px">${t.deep === false ? 'Nur in diesem Ordner gesucht' : 'Auch in allen Unterordnern gesucht'}</div>` : '<div class="muted" style="font-size:12px">Dateien hierher ziehen zum Hochladen</div>'}</div>` : ''}
     </div>
     <div class="lfoot glim-num">${footer(i, list)}</div>
-    ${t.qf ? `<div class="qfilter">${g('IconSearch')}<input id="qf-${i}" value="${esc(t.filter)}" placeholder="Suchen, etwa *.mkv" aria-label="Im Ordner suchen" spellcheck="false" autocomplete="off">${t.filter ? `<button class="btn icon" data-qfsave data-tip="Diese Suche speichern">${g('IconSave')}</button>` : ''}<button class="qdeep ${t.deep === false ? '' : 'on'}" data-qfdeep data-tip="${t.deep === false ? 'Nur dieser Ordner. Klick sucht auch in Unterordnern' : 'Mit Unterordnern. Klick sucht nur hier'}">${g('IconFolderOpen')}Unterordner</button><button class="btn icon" data-qfclose data-tip="Suche schließen (Esc)">${g('IconClose')}</button></div>` : ''}`;
+    `;
   return el;
 }
 

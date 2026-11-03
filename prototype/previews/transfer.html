@@ -22,74 +22,73 @@ svg { display: block; }
 .chip { height: 2.3rem; padding: 0 1rem; border-radius: var(--radius-pill); background: var(--carbon-surface); box-shadow: var(--hairline); color: var(--carbon-text-sub); display: inline-flex; align-items: center; gap: .45rem; }
 .chip svg { width: .95rem; height: .95rem; }
 
-.win { position: relative; width: min(38rem, 100%); padding: 1.6rem 1.25rem 1.1rem; border-radius: var(--radius-card); background: var(--carbon-surface); box-shadow: var(--elevation), var(--hairline); }
-.notch { position: absolute; top: 0; left: 1.25rem; transform: translateY(-50%); height: 1.6rem; padding: 0 .8rem; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-contrast); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: .5rem; }
+.win { --tone: var(--accent); position: relative; width: min(38rem, 100%); padding: 1.6rem 1.25rem 1.1rem; border-radius: var(--radius-card); background: var(--carbon-surface); box-shadow: var(--elevation), var(--hairline); }
+.win.failed { --tone: var(--status-fail-solid); }
+.notch { position: absolute; top: 0; left: 1.25rem; transform: translateY(-50%); height: 1.6rem; padding: 0 .8rem; border-radius: var(--radius-pill); background: var(--tone); color: var(--accent-contrast); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: .5rem; transition: background .3s; }
+.failed .notch { color: #fff; }
 .notch .of { font-weight: 500; letter-spacing: 0; text-transform: none; opacity: .75; }
 
-/* The flight: from one place to the other, the files arc across. */
-.flight { position: relative; height: 9.5rem; margin: .2rem 0 1rem; border-radius: calc(var(--radius-card) - 6px); background: color-mix(in srgb, var(--carbon-surface2) 70%, transparent); overflow: hidden; }
-.place { position: absolute; top: 50%; translate: 0 -50%; width: 5.2rem; display: flex; flex-direction: column; align-items: center; gap: .35rem; z-index: 2; }
-.place.from { left: 1.4rem; } .place.to { right: 1.4rem; }
-.place .ic { height: 3rem; display: grid; place-items: center; transition: transform .3s, opacity .3s; }
-.place .ic svg { width: 2.6rem; height: 2.6rem; color: var(--accent-glyph); }
-.place small { font-size: 11px; color: var(--carbon-text-muted); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.to .ic.catch { animation: catch .35s ease-out; }
-@keyframes catch { 40% { transform: scale(1.12); } }
-.from.empty .ic { opacity: .45; }
+/* The speed graph grows from left to right as the job advances, as in the Windows copy window. */
+.graph { position: relative; height: 7.5rem; margin-top: .3rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--carbon-surface2) 75%, transparent); overflow: hidden; }
+.graph::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, transparent 0 calc(25% - 1px), color-mix(in srgb, var(--carbon-text) 6%, transparent) calc(25% - 1px) 25%); }
+.graph svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.graph .area { fill: color-mix(in srgb, var(--tone) 28%, transparent); }
+.graph .edge { fill: none; stroke: var(--tone); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.graph .now { stroke: color-mix(in srgb, var(--carbon-text) 55%, transparent); stroke-width: 1; stroke-dasharray: 4 4; vector-effect: non-scaling-stroke; }
+.rate { position: absolute; right: .6rem; translate: 0 -120%; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--carbon-text-sub); transition: top .25s linear; }
+.pct { position: absolute; left: .8rem; top: .55rem; font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1; }
+.pct small { font-size: 1rem; font-weight: 600; color: var(--carbon-text-sub); margin-left: .1rem; }
 
-.lane { position: absolute; inset: 0; pointer-events: none; }
-.lane path { fill: none; stroke: color-mix(in srgb, var(--carbon-text) 12%, transparent); stroke-width: 2; stroke-dasharray: 2 7; stroke-linecap: round; animation: dash 1.2s linear infinite; }
-@keyframes dash { to { stroke-dashoffset: -18; } }
-.paper { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; filter: drop-shadow(0 3px 6px rgb(0 0 0 / .3)); }
-.paper svg { width: 1.35rem; height: 1.35rem; color: var(--accent-glyph); }
-.spark { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); z-index: 4; pointer-events: none; animation: spark .6s ease-out forwards; }
+/* One flat row: the files slide from the source to the target, each with the glyph of its own type. */
+.lane { display: flex; align-items: center; gap: .6rem; height: 2.6rem; margin-top: .55rem; }
+.place { display: flex; align-items: center; gap: .4rem; flex: none; max-width: 8.5rem; font-size: 12px; color: var(--carbon-text-muted); }
+.place .ic { width: 1.25rem; height: 1.25rem; display: grid; place-items: center; flex: none; transition: opacity .3s; }
+.place .ic svg { width: 1.25rem; height: 1.25rem; color: var(--accent-glyph); }
+.place span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.to .ic.catch { animation: catch .3s ease-out; }
+@keyframes catch { 40% { transform: scale(1.18); } }
+.from.empty .ic { opacity: .4; }
+.to .ic.ok svg { color: var(--accent); animation: pop .45s cubic-bezier(.2, 1.6, .4, 1); }
+.failed .to .ic svg { color: var(--status-fail-solid); }
+@keyframes pop { from { transform: scale(.3); } }
+.track { position: relative; flex: 1; min-width: 0; height: 100%; }
+.track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px dotted color-mix(in srgb, var(--carbon-text) 14%, transparent); }
+.paper { position: absolute; left: 0; top: 50%; margin-top: -.55rem; z-index: 2; pointer-events: none; }
+.paper svg { width: 1.1rem; height: 1.1rem; color: var(--accent-glyph); }
+.spark { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); pointer-events: none; animation: spark .5s ease-out forwards; }
 @keyframes spark { to { transform: translate(var(--x), var(--y)) scale(.2); opacity: 0; } }
+.done .paper, .failed .paper, .cancelled .paper { opacity: 0; transition: opacity .3s; }
 
-.big { display: flex; align-items: baseline; gap: .75rem; }
-.pct { font-size: 2.6rem; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1; }
-.pct small { font-size: 1.2rem; font-weight: 600; color: var(--carbon-text-sub); margin-left: .1rem; }
-.facts { margin-left: auto; text-align: right; font-size: 13px; color: var(--carbon-text-sub); font-variant-numeric: tabular-nums; line-height: 1.5; }
-.facts b { color: var(--carbon-text); font-weight: 600; }
-.track { position: relative; height: .6rem; margin: .9rem 0 .2rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); overflow: hidden; }
-.fill { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: var(--accent); transition: width .25s linear; overflow: hidden; }
-.fill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / .45) 50%, transparent 80%); translate: -100% 0; animation: shine 1.6s ease-in-out infinite; }
-@keyframes shine { to { translate: 100% 0; } }
-.paused .fill::after, .done .fill::after { animation: none; }
-
-.file { display: flex; align-items: center; gap: .5rem; margin-top: .55rem; font-size: 13px; color: var(--carbon-text-sub); }
+.file { display: flex; align-items: center; gap: .5rem; font-size: 13px; color: var(--carbon-text-sub); }
 .file svg { width: .9rem; height: .9rem; color: var(--accent-glyph); flex: none; }
+.failed .file, .failed .file svg { color: var(--status-fail-text); }
 .ticker { position: relative; flex: 1; min-width: 0; height: 1.3rem; overflow: hidden; }
-.ticker span { position: absolute; inset: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: tickin .35s ease-out; }
-.ticker span.out { animation: tickout .35s ease-in forwards; }
+.ticker span { position: absolute; inset: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: tickin .3s ease-out; }
+.ticker span.out { animation: tickout .3s ease-in forwards; }
 @keyframes tickin { from { translate: 0 100%; opacity: 0; } }
 @keyframes tickout { to { translate: 0 -100%; opacity: 0; } }
 .file .count { font-size: 12px; color: var(--carbon-text-muted); font-variant-numeric: tabular-nums; flex: none; }
 
-.foot { display: flex; align-items: center; gap: .5rem; margin-top: 1.1rem; }
-.foot { justify-content: flex-end; }
+.facts { display: grid; grid-template-columns: 1fr 1fr 1.7fr 1fr; gap: .5rem; margin-top: .9rem; padding-top: .8rem; border-top: 1px solid color-mix(in srgb, var(--carbon-text) 8%, transparent); }
+.facts div { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+.facts small { font-size: 11px; color: var(--carbon-text-muted); }
+.facts b { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.foot { display: flex; align-items: center; justify-content: flex-end; gap: .5rem; margin-top: 1.1rem; }
 .btn { white-space: nowrap; flex: none; height: 2.3rem; padding: 0 1rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); display: inline-flex; align-items: center; gap: .45rem; }
 .btn svg { width: .95rem; height: .95rem; }
 .btn:hover { background: var(--carbon-surface3); }
 .btn.primary { background: var(--accent); color: var(--accent-contrast); }
-
-/* Finished: the progress turns into a tick. */
-.done-mark { position: absolute; inset: 0; display: grid; place-items: center; z-index: 6; pointer-events: none; opacity: 0; }
-.done .done-mark { opacity: 1; }
-.done-mark i { width: 4.6rem; height: 4.6rem; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-contrast); scale: .3; box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); }
-.done .done-mark i { animation: pop .5s cubic-bezier(.2, 1.6, .4, 1) forwards, ring 1s .2s ease-out; }
-.done-mark svg { width: 2.2rem; height: 2.2rem; }
-.done-mark path { stroke-dasharray: 30; stroke-dashoffset: 30; }
-.done .done-mark path { animation: draw .45s .25s ease-out forwards; }
-@keyframes pop { to { scale: 1; } }
-@keyframes ring { to { box-shadow: 0 0 0 1.6rem transparent; } }
-@keyframes draw { to { stroke-dashoffset: 0; } }
-.done .lane, .done .paper { opacity: 0; transition: opacity .3s; }
+.btn.primary:hover { background: var(--accent-hover); }
 
 @media (prefers-reduced-motion: reduce) {
-  .spark, .lane path, .fill::after { animation: none !important; }
+  .spark, .ticker span { animation: none !important; }
   .paper { display: none; }
 }
-@media (max-width: 520px) { .facts { font-size: 12px; } .pct { font-size: 2.1rem; }  }
+@media (max-width: 520px) {
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: .7rem; }
+  .place { max-width: 5.5rem; }
+}
 </style>
 </head>
 <body>
@@ -102,24 +101,24 @@ svg { display: block; }
 <main class="stage">
   <section class="win" id="win" aria-live="polite">
     <span class="notch"><span id="verb">Kopieren</span><span class="of" id="of"></span></span>
-    <div class="flight" id="flight">
-      <div class="place from" id="from"><span class="ic"></span><small></small></div>
-      <svg class="lane" id="lane" preserveAspectRatio="none"><path id="route"/></svg>
-      <div class="place to" id="to"><span class="ic"></span><small></small></div>
-      <div class="done-mark"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i></div>
-    </div>
-    <div class="big">
+    <div class="graph">
+      <svg viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true"><path class="area" id="area"/><path class="edge" id="edge"/><line class="now" id="now" x1="0" x2="1000"/></svg>
       <div class="pct"><span id="pct">0</span><small>%</small></div>
-      <div class="facts"><div><b id="done">0 B</b> von <span id="total"></span></div><div id="eta"></div></div>
+      <span class="rate" id="rate"></span>
     </div>
-    <div class="track"><div class="fill" id="fill"></div></div>
-    <div class="file"><span class="nowg" id="nowg"></span><div class="ticker" id="ticker"></div><span class="count" id="count"></span></div>
-    <div class="foot">
-
-      <button class="btn" id="pause" type="button"><span data-g="IconPause"></span><span>Anhalten</span></button>
-      <button class="btn" id="cancel" type="button"><span data-g="IconClose"></span>Abbrechen</button>
-      <button class="btn primary" id="bg" type="button"><span data-g="IconCheck"></span><span>Im Hintergrund</span></button>
+    <div class="lane">
+      <div class="place from" id="from"><span class="ic"></span><span></span></div>
+      <div class="track" id="track"></div>
+      <div class="place to" id="to"><span class="ic"></span><span></span></div>
     </div>
+    <div class="file"><span id="nowg"></span><div class="ticker" id="ticker"></div><span class="count" id="count"></span></div>
+    <div class="facts">
+      <div><small id="leftl">Restzeit</small><b id="left">…</b></div>
+      <div><small>Dateien</small><b id="files"></b></div>
+      <div><small>Daten</small><b id="bytes"></b></div>
+      <div><small id="speedl">Tempo</small><b id="speed"></b></div>
+    </div>
+    <div class="foot" id="foot"></div>
   </section>
 </main>
 
@@ -136,92 +135,117 @@ const FILES = [
   ['IconFileImage', 'IMG_0205.jpg', 5.6e6], ['IconDisc', 'debian-13.1.0-amd64-netinst.iso', 754e6], ['IconFileText', 'setup-notes.md', 4e3],
 ];
 const MODES = {
-  copy:   { verb: 'Kopieren', g: 'IconCopy', from: ['IconFolderOpen', 'downloads'], to: ['IconFolder', 'backups'], mbs: 112, secs: 30, hint: 'Läuft weiter, auch wenn du das Fenster schließt' },
-  move:   { verb: 'Verschieben', g: 'IconMove', from: ['IconFolderOpen', 'downloads'], to: ['IconFolder', 'filme'], mbs: 180, secs: 22, hint: 'Gleiche Platte: Verschieben dauert nur einen Augenblick je Datei' },
-  delete: { verb: 'Löschen', g: 'IconTrash', from: ['IconFolderOpen', 'downloads'], to: ['IconTrash', 'Papierkorb'], mbs: 900, secs: 12, hint: 'Alles landet im Papierkorb und lässt sich 30 Tage lang zurückholen' },
-  pack:   { verb: 'Verpacken', g: 'IconArchive', from: ['IconFolderOpen', 'fotos'], to: ['IconArchive', 'Urlaub-2026.zip'], mbs: 64, secs: 34, hint: 'Packt mit zip, Kompression normal' },
+  copy:   { verb: 'Kopieren', g: 'IconCopy', from: ['IconFolderOpen', 'downloads'], to: ['IconFolder', 'backups'], mbs: 112, secs: 30, done: 'Alles kopiert' },
+  move:   { verb: 'Verschieben', g: 'IconMove', from: ['IconFolderOpen', 'downloads'], to: ['IconFolder', 'filme'], mbs: 180, secs: 22, done: 'Alles verschoben' },
+  delete: { verb: 'Löschen', g: 'IconTrash', from: ['IconFolderOpen', 'downloads'], to: ['IconTrash', 'Papierkorb'], mbs: 900, secs: 12, done: 'Alles im Papierkorb' },
+  pack:   { verb: 'Verpacken', g: 'IconArchive', from: ['IconFolderOpen', 'fotos'], to: ['IconArchive', 'Urlaub-2026.zip'], mbs: 64, secs: 34, done: 'Archiv ist fertig' },
+  fail:   { verb: 'Kopieren', label: 'Fehler', g: 'IconWarning', from: ['IconFolderOpen', 'downloads'], to: ['IconFolder', 'backups'], mbs: 112, secs: 30, failAt: 6,
+            why: 'backups ist voll, Elephants Dream (2006).mkv passt nicht mehr' },
 };
 const fmt = (b) => b >= 1e9 ? (b / 1e9).toFixed(2).replace('.', ',') + ' GB' : b >= 1e6 ? (b / 1e6).toFixed(1).replace('.', ',') + ' MB' : b >= 1e3 ? Math.round(b / 1e3) + ' KB' : b + ' B';
 const dur = (s) => s >= 60 ? `${Math.floor(s / 60)} Min. ${Math.round(s % 60)} s` : `${Math.max(1, Math.round(s))} s`;
+const motion = () => !matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let mode = 'copy', st;
-$('#modes').innerHTML = Object.entries(MODES).map(([k, m]) => `<button type="button" data-mode="${k}" aria-pressed="${k === mode}">${g(m.g)}${m.verb}</button>`).join('');
+$('#modes').innerHTML = Object.entries(MODES).map(([k, m]) => `<button type="button" data-mode="${k}" aria-pressed="${k === mode}">${g(m.g)}${m.label || m.verb}</button>`).join('');
 $('#modes').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (b) { mode = b.dataset.mode; start(); } });
 $('#again').onclick = () => start();
 $('#theme').onclick = () => { const r = document.documentElement; r.dataset.theme = r.dataset.theme === 'light' ? 'dark' : 'light'; };
-$('#pause').onclick = () => { if (st.finished) return start(); st.paused = !st.paused; $('#win').classList.toggle('paused', st.paused); $('#pause').innerHTML = g(st.paused ? 'IconPlay' : 'IconPause') + `<span>${st.paused ? 'Weiter' : 'Anhalten'}</span>`; };
-$('#cancel').onclick = () => start();
 
-// The lane bends up between the two places; papers follow it with CSS offset-path.
-function route() {
-  const f = $('#flight').getBoundingClientRect(), a = $('#from .ic').getBoundingClientRect(), b = $('#to .ic').getBoundingClientRect();
-  const x1 = a.left + a.width / 2 - f.left, x2 = b.left + b.width / 2 - f.left, y = f.height / 2;
-  const lift = mode === 'delete' ? 10 : 46;
-  const d = `M ${x1} ${y} C ${x1 + (x2 - x1) * .3} ${y - lift}, ${x1 + (x2 - x1) * .7} ${y - lift}, ${x2} ${y}`;
-  $('#lane').setAttribute('viewBox', `0 0 ${f.width} ${f.height}`);
-  $('#route').setAttribute('d', d);
-  return { d, x2, y, p: [[x1, y], [x1 + (x2 - x1) * .3, y - lift], [x1 + (x2 - x1) * .7, y - lift], [x2, y]] };
+function buttons(list) {
+  $('#foot').innerHTML = list.map(([id, glyph, label, primary]) => `<button class="btn ${primary ? 'primary' : ''}" id="${id}" type="button">${g(glyph)}<span>${label}</span></button>`).join('');
+}
+$('#foot').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.id === 'pause') return pause(!st.paused);
+  if (b.id === 'cancel') return stop();
+  start();
+});
+const running = () => buttons([['pause', 'IconPause', 'Pausieren'], ['cancel', 'IconClose', 'Abbrechen'], ['bg', 'IconCheck', 'Im Hintergrund', true]]);
+
+// Pausing holds the clock, the progress and every file in flight where it is.
+function pause(on) {
+  st.paused = on;
+  $('#win').classList.toggle('paused', on);
+  document.querySelectorAll('.paper').forEach(p => p.getAnimations().forEach(a => on ? a.pause() : a.play()));
+  $('#pause').innerHTML = g(on ? 'IconPlay' : 'IconPause') + `<span>${on ? 'Fortsetzen' : 'Pausieren'}</span>`;
+  $('#left').textContent = on ? 'pausiert' : $('#left').textContent;
 }
 
-function launch(file) {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const r = route(), p = document.createElement('div');
+function launch(glyph) {
+  if (!motion()) return;
+  const track = $('#track'), p = document.createElement('div'), w = track.clientWidth - 18;
   p.className = 'paper';
-  p.innerHTML = g(file[0]);
-  $('#flight').appendChild(p);
-  const half = 11, steps = 18, frames = [];
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps, u = 1 - t;
-    const x = u ** 3 * r.p[0][0] + 3 * u * u * t * r.p[1][0] + 3 * u * t * t * r.p[2][0] + t ** 3 * r.p[3][0];
-    const y = u ** 3 * r.p[0][1] + 3 * u * u * t * r.p[1][1] + 3 * u * t * t * r.p[2][1] + t ** 3 * r.p[3][1];
-    const s = mode === 'delete' ? 1 - t * .7 : t < .15 ? .6 + t * 2.6 : t > .85 ? 1 - (t - .85) * 3 : 1;
-    frames.push({ transform: `translate(${x - half}px, ${y - half}px) scale(${s.toFixed(2)})`, opacity: t < .12 ? t / .12 : t > .88 ? (1 - t) / .12 : 1, offset: t });
-  }
-  const a = p.animate(frames, { duration: mode === 'delete' ? 1100 : 1600, easing: 'cubic-bezier(.45, .05, .35, 1)', fill: 'forwards' });
+  p.innerHTML = g(glyph);
+  track.appendChild(p);
+  const shrink = mode === 'delete';
+  const a = p.animate([
+    { transform: 'translateX(0) scale(.6)', opacity: 0 },
+    { transform: `translateX(${w * .12}px) scale(1)`, opacity: 1, offset: .12 },
+    { transform: `translateX(${w * .88}px) scale(${shrink ? .7 : 1})`, opacity: 1, offset: .88 },
+    { transform: `translateX(${w}px) scale(${shrink ? .3 : .6})`, opacity: 0 },
+  ], { duration: shrink ? 650 : 1000, easing: 'cubic-bezier(.4, 0, .3, 1)', fill: 'forwards' });
   a.onfinish = () => {
     p.remove();
     const to = $('#to .ic');
     to.classList.remove('catch'); void to.offsetWidth; to.classList.add('catch');
-    if (mode === 'delete') sparks(r.x2, r.y);
+    if (shrink) sparks(track.clientWidth, track.clientHeight / 2);
   };
 }
 function sparks(x, y) {
-  for (let i = 0; i < 7; i++) {
-    const s = document.createElement('span'), a = Math.random() * Math.PI * 2, d = 18 + Math.random() * 22;
+  for (let i = 0; i < 5; i++) {
+    const s = document.createElement('span'), a = Math.random() * Math.PI * 2, d = 10 + Math.random() * 12;
     s.className = 'spark';
     s.style.left = x + 'px'; s.style.top = y + 'px';
     s.style.setProperty('--x', Math.cos(a) * d + 'px'); s.style.setProperty('--y', Math.sin(a) * d + 'px');
-    $('#flight').appendChild(s);
-    setTimeout(() => s.remove(), 650);
+    $('#track').appendChild(s);
+    setTimeout(() => s.remove(), 550);
   }
 }
 
 function ticker(name) {
   const t = $('#ticker'), old = t.querySelector('span:not(.out)');
-  if (old) { old.classList.add('out'); setTimeout(() => old.remove(), 360); }
+  if (old) { old.classList.add('out'); setTimeout(() => old.remove(), 320); }
   const s = document.createElement('span');
   s.textContent = name;
   t.appendChild(s);
+}
+
+function graph(mbs) {
+  // The curve keeps to the lower part so the percentage in the corner stays readable.
+  const top = MODES[mode].mbs * 1.4, y = (v) => (100 - Math.min(v / top, 1) * 62).toFixed(1);
+  const pts = st.samples.map(([p, v]) => `${(p * 1000).toFixed(1)},${y(v)}`);
+  if (!pts.length) return;
+  const last = st.samples.at(-1)[0] * 1000;
+  $('#edge').setAttribute('d', 'M' + pts.join(' L'));
+  $('#area').setAttribute('d', `M0,100 L${pts.join(' L')} L${last.toFixed(1)},100 Z`);
+  const ny = y(mbs);
+  $('#now').setAttribute('y1', ny); $('#now').setAttribute('y2', ny);
+  $('#rate').style.top = ny + '%';
+  $('#rate').textContent = `${Math.round(mbs)} MB/s`;
 }
 
 function start() {
   clearInterval(st?.timer);
   const m = MODES[mode];
   document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === mode));
-  const w = $('#win');
-  w.className = `win mode-${mode}`;
+  $('#win').className = `win mode-${mode}`;
   $('#verb').textContent = m.verb;
   $('#from').classList.remove('empty');
   $('#from .ic').style.opacity = '';
-  $('#from .ic').innerHTML = g(m.from[0]); $('#from small').textContent = m.from[1];
-  $('#to .ic').innerHTML = g(m.to[0]); $('#to small').textContent = m.to[1];
-  $('#pause').innerHTML = g('IconPause') + '<span>Anhalten</span>';
-  $('#bg').innerHTML = g('IconCheck') + '<span>Im Hintergrund</span>';
+  $('#from .ic').innerHTML = g(m.from[0]); $('#from span:last-child').textContent = m.from[1];
+  $('#to .ic').className = 'ic';
+  $('#to .ic').innerHTML = g(m.to[0]); $('#to span:last-child').textContent = m.to[1];
+  $('#leftl').textContent = 'Restzeit'; $('#speedl').textContent = 'Tempo';
   document.querySelectorAll('.paper, .spark').forEach(x => x.remove());
   $('#ticker').innerHTML = '';
+  ['#area', '#edge'].forEach(s => $(s).removeAttribute('d'));
+  $('#rate').textContent = '';
   const total = FILES.reduce((a, f) => a + f[2], 0);
-  st = { i: 0, done: 0, fileDone: 0, total, paused: false, t: 0 };
-  $('#total').textContent = fmt(total);
+  // The demo squeezes the job into m.secs seconds while showing real speeds; pace converts between the two.
+  st = { i: 0, done: 0, fileDone: 0, total, pace: total / (m.mbs * 1e6 * m.secs), paused: false, t: 0, sent: -9, queue: [], samples: [[0, 0]] };
+  running();
   next();
   st.timer = setInterval(tick, 120);
 }
@@ -231,49 +255,88 @@ function next() {
   ticker(f[1]);
   $('#of').textContent = `${st.i + 1} von ${FILES.length}`;
   $('#count').textContent = fmt(f[2]);
-
+  $('#files').textContent = `${st.i} von ${FILES.length}`;
+  st.queue.push(f[0]);
 }
 function tick() {
   if (st.paused || st.finished) return;
   const m = MODES[mode];
   st.t++;
-  if (st.t % 4 === 1) launch(FILES[Math.min(st.i, FILES.length - 1)]);
+  // Each file that starts sends its glyph across; a long file sends another now and then while it runs.
+  if (!st.queue.length && st.t - st.sent >= 7) st.queue.push(FILES[st.i][0]);
+  if (st.queue.length && st.t - st.sent >= 2) { launch(st.queue.shift()); st.sent = st.t; st.queue.length = Math.min(st.queue.length, 3); }
   // The speed wanders a little, the way a real disk does.
-  const mbs = m.mbs * (0.75 + 0.25 * Math.sin(st.t / 9) + 0.15 * Math.random());
-  // The demo squeezes the job into m.secs seconds while showing real speeds.
-  const pace = st.total / (m.mbs * 1e6 * m.secs), step = mbs * 1e6 * 0.12 * pace;
+  st.mbs = (st.mbs ?? m.mbs * .8) * .8 + m.mbs * (0.75 + 0.25 * Math.sin(st.t / 9) + 0.15 * Math.random()) * .2;
+  const mbs = st.mbs;
+  const pace = st.pace, step = mbs * 1e6 * 0.12 * pace;
   let left = step;
   while (left > 0 && st.i < FILES.length) {
     const need = FILES[st.i][2] - st.fileDone;
+    if (m.failAt === st.i && st.fileDone + left >= need / 2) { st.done += need / 2 - st.fileDone; st.fileDone = need / 2; return fail(mbs); }
     if (left >= need) { left -= need; st.done += need; st.fileDone = 0; st.i++; if (st.i < FILES.length) next(); }
     else { st.fileDone += left; st.done += left; left = 0; }
   }
   const p = Math.min(1, st.done / st.total);
+  st.samples.push([p, mbs]);
+  graph(mbs);
   $('#pct').textContent = Math.floor(p * 100);
-  $('#fill').style.width = (p * 100).toFixed(1) + '%';
-  if (mode !== 'copy') $('#from .ic').style.opacity = (1 - p * .55).toFixed(2);
-  $('#done').textContent = fmt(st.done);
-  const rest = (st.total - st.done) / (mbs * 1e6 * pace);
-  $('#eta').textContent = `${mbs.toFixed(0)} MB/s · noch ${dur(rest)}`;
+  if (mode !== 'copy' && mode !== 'fail') $('#from .ic').style.opacity = (1 - p * .55).toFixed(2);
+  $('#bytes').textContent = `${fmt(st.done)} von ${fmt(st.total)}`;
+  $('#speed').textContent = `${Math.round(mbs)} MB/s`;
+  $('#left').textContent = dur((st.total - st.done) / (mbs * 1e6 * pace));
   if (st.i >= FILES.length) finish();
 }
-function finish() {
+const real = () => st.t * .12 * st.pace;
+function settle(state) {
   st.finished = true;
   clearInterval(st.timer);
-  const m = MODES[mode];
-  $('#win').classList.add('done');
-  if (mode === 'move' || mode === 'delete' || mode === 'pack') $('#from').classList.add('empty');
-  $('#pct').textContent = '100';
-  $('#eta').textContent = `Fertig, ${fmt(st.total)} in ${dur(st.total / (m.mbs * 1e6))}`;
-  $('#of').textContent = `${FILES.length} Dateien`;
-  $('#nowg').innerHTML = g('IconCheck');
-  ticker({ copy: 'Alles kopiert', move: 'Alles verschoben', delete: 'Alles im Papierkorb', pack: 'Archiv ist fertig' }[mode]);
-  $('#bg').innerHTML = g(mode === 'delete' ? 'IconTrash' : 'IconFolderOpen') + `<span>${mode === 'delete' ? 'Papierkorb öffnen' : 'Ordner öffnen'}</span>`;
-  $('#pause').innerHTML = g('IconRefresh') + '<span>Nochmal</span>';
+  st.queue = [];
+  $('#win').classList.add(state);
 }
-addEventListener('resize', route);
+function finish() {
+  const m = MODES[mode];
+  settle('done');
+  if (mode !== 'copy') $('#from').classList.add('empty');
+  $('#pct').textContent = '100';
+  $('#to .ic').className = 'ic ok';
+  $('#to .ic').innerHTML = g('IconCheck');
+  $('#of').textContent = `${FILES.length} Dateien`;
+  $('#files').textContent = `${FILES.length} von ${FILES.length}`;
+  $('#leftl').textContent = 'Dauer'; $('#left').textContent = dur(real());
+  $('#speedl').textContent = 'Schnitt'; $('#speed').textContent = `${Math.round(st.total / real() / 1e6)} MB/s`;
+  $('#rate').textContent = '';
+  $('#nowg').innerHTML = g('IconCheck');
+  ticker(m.done);
+  $('#count').textContent = fmt(st.total);
+  buttons([['close', 'IconCheck', 'Schließen', true]]);
+}
+function fail(mbs) {
+  settle('failed');
+  st.samples.push([st.done / st.total, mbs * .3], [st.done / st.total, 0]);
+  graph(0);
+  $('#rate').textContent = '';
+  $('#to .ic').innerHTML = g('IconWarning');
+  $('#nowg').innerHTML = g('IconWarning');
+  ticker(MODES[mode].why);
+  $('#count').textContent = '';
+  $('#leftl').textContent = 'Gestoppt nach'; $('#left').textContent = dur(real());
+  $('#files').textContent = `${st.i} von ${FILES.length}`;
+  $('#bytes').textContent = `${fmt(st.done)} von ${fmt(st.total)}`;
+  $('#speed').textContent = '0 MB/s';
+  buttons([['close', 'IconClose', 'Schließen'], ['retry', 'IconRetry', 'Nochmal', true]]);
+}
+function stop() {
+  settle('cancelled');
+  $('#rate').textContent = '';
+  $('#nowg').innerHTML = g('IconClose');
+  ticker(`Abgebrochen, ${st.i} von ${FILES.length} Dateien sind schon drüben`);
+  $('#count').textContent = '';
+  $('#leftl').textContent = 'Gelaufen'; $('#left').textContent = dur(real());
+  $('#speed').textContent = '0 MB/s';
+  buttons([['close', 'IconCheck', 'Schließen', true]]);
+}
 start();
 </script>
-<!--PINNWAND 2-->
+<!--PINNWAND 3-->
 </body>
 </html>
