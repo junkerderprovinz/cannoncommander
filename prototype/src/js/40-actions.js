@@ -102,14 +102,21 @@ function bookmarkMenu(x, y, b) {
     { label: 'Nach oben', g: 'IconMoveUp', run: () => { const i = DATA.bookmarks.indexOf(b); if (i > 0) { DATA.bookmarks.splice(i - 1, 0, DATA.bookmarks.splice(i, 1)[0]); CC.render(); } } },
     { label: 'Nach unten', g: 'IconMoveDown', run: () => { const i = DATA.bookmarks.indexOf(b); if (i < DATA.bookmarks.length - 1) { DATA.bookmarks.splice(i + 1, 0, DATA.bookmarks.splice(i, 1)[0]); CC.render(); } } },
     '-',
-    { label: 'Verknüpfung entfernen', g: 'IconUnlink', run: () => {
-      const i = DATA.bookmarks.indexOf(b);
-      DATA.bookmarks.splice(i, 1);
-      CC.render();
-      CC.toast(`„${b.name}“ entfernt`, 'ok', { label: 'Rückgängig', run: () => { DATA.bookmarks.splice(i, 0, b); CC.render(); } });
-    } },
+    { label: 'Vom Schnellzugriff lösen', g: 'IconUnlink', run: () => unpin(b) },
   ]);
 }
+function unpin(b) {
+  const i = DATA.bookmarks.indexOf(b);
+  DATA.bookmarks.splice(i, 1);
+  CC.render();
+  CC.toast(`„${b.name}“ vom Schnellzugriff gelöst`, 'ok', { label: 'Rückgängig', run: () => { DATA.bookmarks.splice(i, 0, b); CC.render(); } });
+}
+document.addEventListener('click', e => {
+  const pin = CC.view === 'files' && e.target.closest('[data-unpin]');
+  if (!pin) return;
+  e.stopImmediatePropagation();
+  unpin(DATA.bookmarks[+pin.dataset.unpin]);
+}, true);
 function folderItems(path) {
   return [
     { label: 'Öffnen', g: 'IconFolderOpen', run: () => Files.go(path) },

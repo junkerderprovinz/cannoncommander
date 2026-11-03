@@ -168,7 +168,7 @@ function renderFiles(host) {
 
 function renderSide() {
   const cur = Files.T().path;
-  $('#shortcuts').innerHTML = DATA.bookmarks.map((s, i) => `<div class="nav-row ${cur === s.path ? 'cur' : ''}" data-go="${esc(s.path)}" data-bm="${i}">${g(s.g)}<span>${esc(s.name)}</span></div>`).join('')
+  $('#shortcuts').innerHTML = DATA.bookmarks.map((s, i) => `<div class="nav-row ${cur === s.path ? 'cur' : ''}" data-go="${esc(s.path)}" data-bm="${i}">${g(s.g)}<span>${esc(s.name)}</span><button class="unpin" data-unpin="${i}" data-tip="Vom Schnellzugriff lösen" aria-label="${esc(s.name)} vom Schnellzugriff lösen">${g('IconPin')}</button></div>`).join('')
     + `<div class="nav-row" data-run="openTrash">${g('IconTrash')}<span>Papierkorb</span><span class="meta glim-num">${DATA.trash.length}</span></div>`
     + Files.sideRows.map(f => f()).join('');
   const rows = [];

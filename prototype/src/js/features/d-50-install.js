@@ -17,6 +17,7 @@
     start_url: location.href.split('#')[0],
     scope: here,
     display: 'standalone',
+    display_override: ['window-controls-overlay', 'standalone'],
     background_color: '#161616',
     theme_color: CC.prefs.accent,
     icons: [

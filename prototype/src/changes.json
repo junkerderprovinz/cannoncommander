@@ -1,4 +1,5 @@
 [
-  { "sel": ".panel.active [data-labelsmenu]", "go": { "view": "files" }, "text": "Notiz 62: Jeder Stift im Menü öffnet sein eigenes Fenster, eins für Farben und eins für Schlagworte. Notiz 63: Farben kannst du umbenennen, über den Punkt neu einfärben, löschen und neu anlegen" },
-  { "sel": ".panel.active .lfree", "go": { "view": "files" }, "text": "Notiz 61: In der Speicherbelegung und im Fenster Ordner wählen springen die Maustasten 4 und 5 zurück und vor, wie in der Liste" }
+  { "sel": ".head", "go": { "view": "files" }, "text": "Notiz 68: Der Kopfbereich ist eine ruhige Leiste. Links Marke und Menüs, in der Mitte die Befehlssuche (Strg+K), rechts Fenster, Aufgaben, Einstellungen und Konto. Als installierte App wird die Leiste zur Titelleiste des Fensters" },
+  { "sel": "#shortcuts", "go": { "view": "files" }, "text": "Notiz 67: Jede Verknüpfung trägt rechts einen Pin wie im Windows Explorer. Ein Klick löst sie vom Schnellzugriff, Rückgängig bringt sie zurück" },
+  { "sel": ".panel.active [data-labelsmenu]", "go": { "view": "files" }, "text": "Notiz 65: Im Fenster Farben öffnet der Punkt einen Farbwähler im GlimStone-Stil. Notiz 66: Auch die neue Farbe hat so einen Punkt, und der gewählte Farbton schlägt gleich einen Namen vor" }
 ]

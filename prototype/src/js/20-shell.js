@@ -34,19 +34,21 @@ const Shell = {
   },
   head() {
     const mode = CC.view === 'files';
-    return `<header class="head">
-      <button class="brand glim-card" data-go-view="files" data-tip="Zu den Dateien"><span class="brand-mark">${g('IconFolderOpen')}</span><span class="brand-name">CannonCommander</span></button>
-      <nav class="menubar glim-card" aria-label="Menü">${MENUS.map(([n], i) => `<button data-menu="${i}">${n}</button>`).join('')}</nav>
+    return `<header class="head glim-card">
+      <button class="brand" data-go-view="files" data-tip="Zu den Dateien"><span class="brand-mark">${g('IconFolderOpen')}</span><span class="brand-name">CannonCommander</span></button>
+      <span class="hsep wide-only"></span>
+      <nav class="menubar" aria-label="Menü">${MENUS.map(([n], i) => `<button data-menu="${i}">${n}</button>`).join('')}</nav>
       <button class="btn icon narrow-only" data-all-menus data-tip="Menü">${g('IconMenu')}</button>
       <span class="spacer"></span>
-      ${mode ? `<div class="seg glim-card" role="group" aria-label="Ansicht">
+      <button class="hfind" data-run="palette" data-tip="Jeden Befehl über seinen Namen finden">${g('IconSearch')}<span>Befehl suchen</span><span class="kbd">Strg K</span></button>
+      <span class="spacer"></span>
+      ${mode ? `<div class="seg" role="group" aria-label="Ansicht">
         <button data-run="single" aria-pressed="${!CC.prefs.dual}" data-tip="Ein Fenster (Strg+1)">${g('IconViewSimple')}<span class="wide-only">Ein Fenster</span></button>
         <button data-run="dual" aria-pressed="${CC.prefs.dual}" data-tip="Zwei Fenster (Strg+2)">${g('IconCompare')}<span class="wide-only">Zwei Fenster</span></button>
       </div>` : ''}
-      <button class="btn icon" data-run="search" data-tip="Suchen (Alt+F7)">${g('IconSearch')}</button>
       <button class="btn" data-run="jobs" data-tip="Aufgaben">${g('IconQueued')}<span class="wide-only">Aufgaben</span><span class="count idle glim-num" id="job-count">0</span></button>
-      <button class="avatar glim-card" data-account data-tip="${esc(CC.user.full)}"><i>${esc(CC.user.name.slice(0, 2).toUpperCase())}</i></button>
       <button class="btn icon" data-go-view="settings" data-tip="Einstellungen">${g('IconGear')}</button>
+      <button class="avatar" data-account data-tip="${esc(CC.user.full)}"><i>${esc(CC.user.name.slice(0, 2).toUpperCase())}</i></button>
     </header>`;
   },
   bottombar() {
