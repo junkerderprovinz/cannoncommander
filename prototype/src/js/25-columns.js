@@ -10,7 +10,12 @@ const when = (test, fn) => (k, path) => test(k) ? fn(k, path) : '';
 const photo = (k) => k.kind === 'img' && /^(IMG|DSC)/.test(k.name);
 const doc = (k) => ['pdf', 'office'].includes(k.kind);
 const prog = (k) => ['exe', 'msi', 'apk', 'deb', 'rpm', 'appimage', 'dmg'].includes(FS.ext(k.name));
-const unpacked = (k) => Math.round((k.size || 0) * (1.2 + (h(k, 'u') % 30) / 10));
+// Season and episode as the release names write them: S01E02 or 1x02.
+const episodeOf = (k) => {
+  const m = k.kind === 'video' && k.name.match(/s(\d{1,2})e(\d{1,3})|\b(\d{1,2})x(\d{2,3})\b/i);
+  return m ? [String(+(m[1] || m[3])), String(+(m[2] || m[4]))] : [];
+};
+const unpacked = (k) =>Math.round((k.size || 0) * (1.2 + (h(k, 'u') % 30) / 10));
 const KIND_NAMES = { img: 'Bild', video: 'Video', audio: 'Musik', arch: 'Archiv', disk: 'Abbild', pdf: 'Dokument', office: 'Dokument', text: 'Text', code: 'Quelltext' };
 const CAMERA_MAKER = { 'Pixel 9': 'Google', 'iPhone 16': 'Apple', 'Sony A7 IV': 'Sony', 'Fujifilm X-T5': 'Fujifilm' };
 const MIME = {
@@ -69,6 +74,8 @@ const COLUMNS = [
   { id: 'hdr', label: 'HDR', group: 'Video', width: '5.5rem', value: when(k => k.kind === 'video', k => pick(k, ['SDR', 'HDR10', 'Dolby Vision', 'SDR'])) },
   { id: 'audiotracks', label: 'Tonspuren', group: 'Video', width: '8rem', value: when(k => k.kind === 'video', k => pick(k, ['Deutsch', 'Deutsch, Englisch', 'Englisch', 'Deutsch, Englisch, Französisch'])) },
   { id: 'subtitles', label: 'Untertitel', group: 'Video', width: '7rem', value: when(k => k.kind === 'video', k => pick(k, ['', 'Deutsch', 'Deutsch, Englisch', 'Englisch'])) },
+  { id: 'season', label: 'Staffel', group: 'Video', width: '4.5rem', r: true, num: (k) => +(episodeOf(k)[0] || -1), value: (k) => episodeOf(k)[0] || '' },
+  { id: 'episode', label: 'Folge', group: 'Video', width: '4.5rem', r: true, num: (k) => +(episodeOf(k)[1] || -1), value: (k) => episodeOf(k)[1] || '' },
   { id: 'title', label: 'Titel', group: 'Musik', width: '9rem', value: when(k => k.kind === 'audio', k => stem(k).replace(/^\d+[\s._-]*/, '')) },
   { id: 'albumartist', label: 'Albuminterpret', group: 'Musik', width: '8rem', value: when(k => k.kind === 'audio', k => pick(k, ['Kevin MacLeod', 'Josh Woodward', 'Verschiedene'])) },
   { id: 'track', label: 'Nr.', group: 'Musik', width: '3.5rem', r: true, num: (k) => k.kind === 'audio' ? h(k, 't') % 14 + 1 : -1, value: when(k => k.kind === 'audio', k => String(h(k, 't') % 14 + 1)) },

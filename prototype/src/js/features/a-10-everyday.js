@@ -11,7 +11,9 @@
       + CC.card('Löschen',
         frow('Vor dem Löschen fragen', sw(p.confirmDelete, 'data-pref="confirmDelete"'), 'Zeigt vor dem Löschen, was alles weggeht.')
         + frow('Papierkorb verwenden', sw(p.trash, 'data-pref="trash"'), 'Gelöschtes landet erst im Papierkorb und lässt sich von dort zurückholen. Ohne Papierkorb ist es sofort weg.')
-        + (p.trash ? frow('Aufbewahren', seg([[7, '7 Tage'], [14, '14 Tage'], [30, '30 Tage'], [90, '90 Tage']], days, 'data-pref="trashDays" data-num="1"'), 'Danach leert sich der Papierkorb von selbst.') : ''));
+        + (p.trash ? frow('Aufbewahren', seg([[7, '7 Tage'], [14, '14 Tage'], [30, '30 Tage'], [90, '90 Tage']], days, 'data-pref="trashDays" data-num="1"'), 'Danach leert sich der Papierkorb von selbst.') : ''))
+      + CC.card('Aufgaben',
+        frow('Mehrere Aufgaben', seg([['serial', 'Nacheinander'], ['parallel', 'Gleichzeitig']], p.jobMode || 'serial', 'data-pref="jobMode"'), 'Nacheinander schont die Platten: eine Aufgabe läuft, die anderen warten in der Reihenfolge der Liste. Gleichzeitig teilen sich alle die Bandbreite.'));
     A.bindPrefs(host);
     $('#a-start', host).addEventListener('change', e => {
       const v = e.target.value.trim(), n = FS.nodeAt(v);
