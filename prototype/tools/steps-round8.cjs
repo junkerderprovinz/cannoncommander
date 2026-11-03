@@ -29,5 +29,5 @@ module.exports = async (page, shot) => {
 
   console.log('pack label:', await page.evaluate(() => CC.actions.pack.label));
   await page.keyboard.press('Control+Shift+V'); await wait();
-  console.log('after Ctrl+Shift+V:', await page.evaluate(() => Files.T().view));
+  console.log('after Ctrl+Shift+V:', await page.evaluate(() => viewOf(Files.T())));
 };

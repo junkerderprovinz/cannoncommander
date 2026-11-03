@@ -207,27 +207,92 @@ CC.action('settings', { label: 'Einstellungen', g: 'IconGear', run: () => CC.go(
 CC.action('shortcuts', { label: 'Tastenkürzel', g: 'IconKeyboard', key: 'F1', run: shortcutsWindow });
 CC.action('menuBar', { label: 'Menü', g: 'IconMenu', key: 'F10', run: () => Shell.openMenu(0) });
 
-function jobsWindow() {
-  const body = () => Jobs.list.length ? Jobs.list.map(j => `<div class="job"><div><div>${esc(j.label)}</div><div class="sub glim-num" style="font-size:12px">${j.total ? `${fmtSize(j.total * j.pct / 100)} von ${fmtSize(j.total)}, ` : ''}${j.state}</div></div>
+const fmtLeft = (s) => s < 60 ? `noch ${Math.max(1, Math.ceil(s))} s` : s < 3600 ? `noch ${Math.ceil(s / 60)} Min.` : `noch ${(s / 3600).toLocaleString('de-AT', { maximumFractionDigits: 1 })} Std.`;
+function jobLine(j, place) {
+  const open = ['läuft', 'wartet', 'pausiert'].includes(j.state);
+  const facts = [j.total ? `${fmtSize(j.total * j.pct / 100) || '0 B'} von ${fmtSize(j.total)}` : ''];
+  if (j.state === 'läuft' && j.rate) facts.push(`${fmtSize(j.rate)}/s`, fmtLeft(Jobs.left(j)));
+  else facts.push(j.state === 'wartet' ? `wartet, Platz ${place + 1}` : j.state === 'pausiert' ? 'angehalten' : j.state);
+  const file = j.state === 'läuft' && j.files?.length > 1 ? Jobs.current(j) : '';
+  const many = Jobs.running().length > 1;
+  const btn = (act, glyph, tip) => `<button class="btn icon" data-jact="${act}" data-tip="${tip}" aria-label="${tip}">${g(glyph)}</button>`;
+  return `<div class="job ${open ? 'open' : ''}" data-job="${j.id}" ${open ? 'draggable="true" tabindex="0"' : ''} aria-label="${esc(j.label)}, ${Math.round(j.pct)} Prozent, ${j.state}">
+      <span class="job-grip" aria-hidden="true">${open ? g('IconGrip') : ''}</span>
+      <div class="job-text"><div class="job-label">${esc(j.label)}</div><div class="sub glim-num">${facts.filter(Boolean).join(' · ')}</div>${file ? `<div class="job-file mono" data-tip="Gerade in Arbeit">${g(FS.glyphOf({ name: file }))}<span>${esc(file)}</span></div>` : ''}</div>
       <div class="bar"><i style="width:${j.pct}%"></i></div><span class="pill glim-num">${Math.round(j.pct)} %</span>
-      <span class="job-acts">${j.state === 'läuft' || j.state === 'pausiert' ? `<button class="btn icon" data-jp="${j.id}" data-tip="${j.state === 'läuft' ? 'Anhalten' : 'Weiter'}">${g(j.state === 'läuft' ? 'IconPause' : 'IconPlay')}</button><button class="btn icon" data-jc="${j.id}" data-tip="Abbrechen">${g('IconStop')}</button>` : ''}</span></div>`).join('')
-    : `<div class="empty">${g('IconQueued')}<div>Gerade läuft nichts</div></div>`;
+      <span class="job-acts">${open ? (many ? btn('up', 'IconMoveUp', 'Früher dran') + btn('down', 'IconMoveDown', 'Später dran') : '')
+        + btn('pause', j.state === 'pausiert' ? 'IconPlay' : 'IconPause', j.state === 'pausiert' ? 'Weiter' : 'Anhalten') + btn('cancel', 'IconStop', 'Abbrechen') : ''}</span></div>`;
+}
+function jobsWindow() {
+  const body = () => {
+    const open = Jobs.running(), rest = Jobs.list.filter(j => !open.includes(j));
+    return Jobs.list.length ? [...open.map(j => jobLine(j, open.filter(x => x.state === 'wartet').indexOf(j))), ...rest.map(j => jobLine(j))].join('')
+      : `<div class="empty">${g('IconQueued')}<div>Gerade läuft nichts</div></div>`;
+  };
   const w = win({
     title: 'Aufgaben', wide: true,
-    body: `<div class="well" id="jobs-body">${body()}</div>`,
+    body: `<div class="well">${frow('Mehrere Aufgaben', seg([['serial', 'Nacheinander'], ['parallel', 'Gleichzeitig']], Jobs.serial() ? 'serial' : 'parallel', 'id="jobs-mode"'), 'Nacheinander schont die Platten: eine Aufgabe läuft, die anderen warten in der Reihenfolge der Liste. Gleichzeitig teilen sich alle die Bandbreite. Die Reihenfolge änderst du mit den Pfeilen, durch Ziehen oder mit Alt+Hoch und Alt+Runter.')}</div>
+      <div class="well" id="jobs-body">${body()}</div>`,
     foot: [{ start: 'Aufgaben laufen auf dem Server weiter, auch wenn du die Seite schließt' }, { label: 'Fertige entfernen', g: 'IconEmpty', run: () => { Jobs.list = Jobs.running(); Jobs.changed(); return false; } }, closeBtn],
     onClose: () => { Jobs.listeners = Jobs.listeners.filter(f => f !== refresh); },
   });
-  const refresh = () => { const b = $('#jobs-body', w); if (b) b.innerHTML = body(); };
+  let dragging = null;
+  // A redraw while a row is dragged or focused would drop the drag or the focus, so it waits or puts the focus back.
+  const refresh = () => {
+    const b = $('#jobs-body', w);
+    if (!b || dragging) return;
+    const a = document.activeElement, focus = a?.closest?.('[data-job]')?.dataset.job, act = a?.dataset?.jact;
+    b.innerHTML = body();
+    if (focus) $(`[data-job="${focus}"]${act ? ` [data-jact="${act}"]` : ''}`, b)?.focus();
+  };
   Jobs.listeners.push(refresh);
+  const find = (id) => Jobs.list.find(j => String(j.id) === id);
+  const step = (j, d) => Jobs.move(j, Jobs.running().indexOf(j) + d);
+  $('#jobs-mode', w).addEventListener('change', e => { CC.setPref('jobMode', segVal(e.currentTarget)); Jobs.tick(false); });
   w.addEventListener('click', e => {
-    const p = e.target.closest('[data-jp]'), c = e.target.closest('[data-jc]');
-    const find = (id) => Jobs.list.find(j => String(j.id) === id);
-    if (p) Jobs.pause(find(p.dataset.jp));
-    if (c) Jobs.cancel(find(c.dataset.jc));
+    const b = e.target.closest('[data-jact]');
+    if (!b) return;
+    const j = find(b.closest('[data-job]').dataset.job);
+    ({ pause: () => Jobs.pause(j), cancel: () => Jobs.cancel(j), up: () => step(j, -1), down: () => step(j, 1) })[b.dataset.jact]();
+  });
+  w.addEventListener('keydown', e => {
+    const row = e.target.closest('[data-job].open');
+    if (!row || !e.altKey || !['ArrowUp', 'ArrowDown'].includes(e.key)) return;
+    e.preventDefault();
+    step(find(row.dataset.job), e.key === 'ArrowUp' ? -1 : 1);
+  });
+  w.addEventListener('dragstart', e => { const row = e.target.closest('[data-job].open'); if (!row) return; dragging = row; row.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+  w.addEventListener('dragover', e => {
+    const over = e.target.closest('[data-job].open');
+    if (!dragging || !over || over === dragging) return;
+    e.preventDefault();
+    const r = over.getBoundingClientRect();
+    over.parentElement.insertBefore(dragging, e.clientY < r.top + r.height / 2 ? over : over.nextSibling);
+  });
+  w.addEventListener('dragend', () => {
+    if (!dragging) return;
+    const j = find(dragging.dataset.job), to = $$('[data-job].open', w).indexOf(dragging);
+    dragging = null;
+    Jobs.move(j, to);
+    refresh();
   });
 }
-CC.css(`.job { display: grid; grid-template-columns: 1fr 9rem auto auto; gap: .9rem; align-items: center; min-height: 2.6rem; } .job-acts { display: flex; gap: .3rem; }`);
+CC.css(`
+.job { display: grid; grid-template-columns: 1rem minmax(0, 1fr) 9rem 3.6rem auto; gap: .9rem; align-items: center; min-height: 2.6rem; padding: .25rem .3rem; border-radius: var(--radius-control); }
+.job.open { cursor: grab; }
+.job.dragging { opacity: .45; }
+.job:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: -2px; }
+.job-grip svg { width: .9rem; height: .9rem; color: var(--carbon-text-muted); }
+.job-text { min-width: 0; }
+.job-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.job .sub { font-size: 12px; }
+.job-file { display: flex; align-items: center; gap: .35rem; font-size: 12px; color: var(--carbon-text-sub); min-width: 0; }
+.job-file svg { width: .8rem; height: .8rem; flex: none; color: var(--accent-glyph); }
+.job-file span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.job .pill { justify-self: end; }
+.job-acts { display: flex; gap: .3rem; min-width: 8.4rem; justify-content: flex-end; }
+@media (max-width: 760px) { .job { grid-template-columns: minmax(0, 1fr) auto; gap: .4rem .6rem; } .job-grip { display: none; } .job .bar { grid-column: 1 / -1; grid-row: 2; } .job-acts { min-width: 0; grid-column: 1 / -1; } }
+`);
 
 function shortcutsWindow() {
   const rows = Object.values(CC.actions).filter(a => a.key).sort((a, b) => (a.menu || '').localeCompare(b.menu || ''));

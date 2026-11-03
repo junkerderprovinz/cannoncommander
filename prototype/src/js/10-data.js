@@ -98,6 +98,14 @@ const FS = {
   },
 };
 
+// The episodes get fixed dates instead of seeded ones, so every file above keeps the dates it has.
+const fixedNode = (extra) => ({ time: NOW - 12 * DAY, owner: 'nobody', group: 'users', mode: extra.dir ? '0775' : '0664', ...extra });
+FS.nodeAt('/mnt/user').children.splice(3, 0, fixedNode({ name: 'serien', dir: true, children: [
+  fixedNode({ name: 'Pioneer One', dir: true, children: [
+    fixedNode({ name: 'Staffel 1', dir: true, children: [1, 2, 3, 4, 5, 6].map(n => fixedNode({ name: `pioneer.one.s01e0${n}.720p.mkv`, size: (610 + n * 37) * MB, time: NOW - (60 - n * 7) * DAY })) }),
+  ] }),
+] }));
+
 const DATA = {
   users: [
     { name: 'jdp', full: 'Junker der Provinz', role: 'Admin', groups: ['admins', 'familie'], scope: '/mnt/user', last: NOW - 3 * 60000, twofa: true },
@@ -157,27 +165,73 @@ const DATA = {
 };
 
 // Background jobs: copy, move, delete, pack and friends run here and report into the Aufgaben window.
+// The queue works in list order. Nacheinander moves only the first job that is not paused, Gleichzeitig moves all of them.
+const TICK = 260;
+// The prototype runs its clock fast, so a copy of many gigabytes ends in seconds while rate and time left read like the server's.
+const LAPSE = 20;
 const Jobs = {
   list: [],
-  start({ kind, label, total = 0, speed = 1, done }) {
-    const job = { id: Date.now() + Math.random(), kind, label, total, pct: 0, state: 'läuft', started: Date.now() };
-    Jobs.list.unshift(job);
-    job.timer = setInterval(() => {
-      if (job.state !== 'läuft') return;
-      job.pct = Math.min(100, job.pct + (5 + rnd() * 12) * speed);
-      if (job.pct >= 100) {
-        clearInterval(job.timer);
-        job.state = 'fertig';
-        done && done(job);
-      }
-      Jobs.changed();
-    }, 260);
-    Jobs.changed();
+  timer: null,
+  serial: () => CC.prefs.jobMode !== 'parallel',
+  start({ kind, label, total = 0, speed = 1, files = [], done }) {
+    const job = { id: Date.now() + Math.random(), kind, label, total, speed, files, done, queue: true, pct: 0, rate: 0, state: 'wartet', started: Date.now() };
+    Jobs.list.push(job);
+    Jobs.timer ||= setInterval(Jobs.tick, TICK);
+    Jobs.tick(false);
     return job;
   },
-  pause(job) { job.state = job.state === 'pausiert' ? 'läuft' : 'pausiert'; Jobs.changed(); },
-  cancel(job) { clearInterval(job.timer); job.state = 'abgebrochen'; Jobs.changed(); },
-  running: () => Jobs.list.filter(j => j.state === 'läuft' || j.state === 'pausiert'),
+  tick(advance = true) {
+    const live = Jobs.list.filter(j => j.queue && (j.state === 'läuft' || j.state === 'wartet'));
+    const moving = Jobs.serial() ? live.slice(0, 1) : live;
+    // Jobs side by side share the disks, so together they are only a little faster than one alone.
+    const share = moving.length > 1 ? 1.4 / moving.length : 1;
+    for (const j of live) {
+      j.state = moving.includes(j) ? 'läuft' : 'wartet';
+      if (j.state === 'wartet') j.rate = 0;
+    }
+    if (advance) for (const j of moving) {
+      if (j.total) {
+        j.rate = (150 + rnd() * 110) * MB * j.speed * share;
+        j.pct = Math.min(100, j.pct + j.rate * TICK / 1000 * LAPSE / j.total * 100);
+      } else j.pct = Math.min(100, j.pct + (5 + rnd() * 12) * j.speed * share);
+      if (j.pct >= 100) {
+        j.state = 'fertig';
+        j.rate = 0;
+        j.done && j.done(j);
+      }
+    }
+    if (!Jobs.list.some(j => j.queue && ['läuft', 'wartet', 'pausiert'].includes(j.state))) { clearInterval(Jobs.timer); Jobs.timer = null; }
+    Jobs.changed();
+  },
+  // Every file below the items, named from the item on, so a job can say which one it is at.
+  filesOf: (items) => items.flatMap(k => {
+    if (!k.dir) return [{ name: k.name, size: k.size || 0 }];
+    const out = [];
+    FS.walk((c, p) => { if (!c.dir) out.push({ name: k.name + p, size: c.size || 0 }); }, k);
+    return out;
+  }),
+  // Seconds left at the current rate, in the server's time.
+  left: (j) => j.rate && j.total ? j.total * (100 - j.pct) / 100 / j.rate : null,
+  // The file a job works on: the first one whose share of the total is not yet done.
+  current(j) {
+    let at = j.total * j.pct / 100;
+    for (const f of j.files) { if (at < f.size) return f.name; at -= f.size; }
+    return j.files.at(-1)?.name || '';
+  },
+  pause(job) {
+    job.state = job.state === 'pausiert' ? (job.queue ? 'wartet' : 'läuft') : 'pausiert';
+    if (job.queue) { Jobs.timer ||= setInterval(Jobs.tick, TICK); Jobs.tick(false); } else Jobs.changed();
+  },
+  cancel(job) { job.state = 'abgebrochen'; job.rate = 0; Jobs.tick(false); },
+  // Moves a job to another place in the queue; finished ones keep their place below.
+  move(job, to) {
+    const open = Jobs.running(), from = open.indexOf(job);
+    if (from < 0 || to < 0 || to >= open.length || to === from) return;
+    open.splice(to, 0, open.splice(from, 1)[0]);
+    Jobs.list = [...open, ...Jobs.list.filter(j => !open.includes(j))];
+    Jobs.tick(false);
+  },
+  running: () => Jobs.list.filter(j => ['läuft', 'wartet', 'pausiert'].includes(j.state)),
   listeners: [],
   changed() { Jobs.listeners.forEach(f => f()); Shell.updateJobs(); },
 };
