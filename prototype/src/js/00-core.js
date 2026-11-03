@@ -179,11 +179,12 @@ const menuHTML = (list) => list.map((it, k) => {
   if (it === '-') return '<div class="sep"></div>';
   if (it.head) return `<div class="head">${esc(it.head)}${it.run ? `<button class="hedit" data-k="${k}" data-tip="${esc(it.tip)}" aria-label="${esc(it.tip)}">${g(it.g)}</button>` : ''}</div>`;
   const off = it.id && CC.actions[it.id] && (CC.blocked(it) || (it.when && !it.when()));
-  // Anything that can be on or off shows a checkbox where its glyph would stand, as the column menu does.
-  const lead = it.checked ? `<span class="cbox ${it.checked() ? 'on' : ''}" role="presentation">${g('IconCheck')}</span>` : it.color ? `<i class="cdot big" style="--c:${it.color}"></i>` : it.g ? g(it.g) : '<span class="ph"></span>';
-  const role = it.checked ? `role="${it.radio ? 'menuitemradio' : 'menuitemcheckbox'}" aria-checked="${!!it.checked()}"` : it.sub ? 'role="menuitem" aria-haspopup="menu" data-sub' : 'role="menuitem"';
-  const end = it.sub ? `<span class="chev">${g('IconExpand')}</span>` : it.key ? `<span class="kbd">${esc(it.key)}</span>` : it.count != null ? `<span class="cnt glim-num">${it.count}</span>` : '';
-  return `<button data-k="${k}" ${off ? 'disabled' : ''} ${role}>${lead}<span>${esc(typeof it.label === 'function' ? it.label() : it.label)}</span>${end}</button>`;
+  // A switch shows a checkbox where its glyph would stand, as the column menu does; a choice among several keeps its glyph and ticks the current one at the end.
+  const on = it.checked && it.checked();
+  const lead = it.checked && !it.radio ? `<span class="cbox ${on ? 'on' : ''}" role="presentation">${g('IconCheck')}</span>` : it.color ? `<i class="cdot big" style="--c:${it.color}"></i>` : it.g ? g(it.g) : '<span class="ph"></span>';
+  const role = it.checked ? `role="${it.radio ? 'menuitemradio' : 'menuitemcheckbox'}" aria-checked="${!!on}"` : it.sub ? 'role="menuitem" aria-haspopup="menu" data-sub' : 'role="menuitem"';
+  const end = it.sub ? `<span class="chev">${g('IconExpand')}</span>` : it.radio && on ? `<span class="tick">${g('IconCheck')}</span>` : it.key ? `<span class="kbd">${esc(it.key)}</span>` : it.count != null ? `<span class="cnt glim-num">${it.count}</span>` : '';
+  return `<button data-k="${k}" class="${it.radio && on ? 'on' : ''}" ${off ? 'disabled' : ''} ${role}>${lead}<span>${esc(typeof it.label === 'function' ? it.label() : it.label)}</span>${end}</button>`;
 }).join('');
 
 function menu(x, y, items, { above = false, anchor = null } = {}) {

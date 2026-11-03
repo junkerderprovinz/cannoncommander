@@ -19,15 +19,15 @@ module.exports = async (page, shot) => {
 
   await page.click('.panel.active [data-labelsmenu]'); await page.click('#menu .hedit >> nth=0'); await wait();
   await page.click('[data-colpick="2"]'); await wait();
-  console.log('picker:', await page.evaluate(() => `${$$('.cpick .cp-sw').length} swatches`));
+  console.log('picker:', await page.evaluate(() => `${!!$('.cpick .cp-sv')} field`));
   await shot('r18-2-picker');
-  await page.click('.cpick [data-hex="#2bb8e0"]'); await wait();
+  await page.fill('.cp-hex', '#2bb8e0'); await page.click('.cp-ok'); await wait();
   console.log('row 2 colour:', await page.evaluate(() => $('[data-colpick="2"]').style.getPropertyValue('--c')));
   await page.click('[data-colpick="new"]'); await wait();
-  await page.fill('.cp-hue', '300'); await page.dispatchEvent('.cp-hue', 'input'); await wait();
+  await page.fill('.cp-hex', '#c06cf0'); await wait();
   await page.click('.cp-ok'); await wait();
   console.log('suggested name:', await page.inputValue('#mk-new'));
-  await page.click('[data-colpick="new"]'); await page.click('.cpick [data-hex="#a87a55"]'); await wait();
+  await page.click('[data-colpick="new"]'); await page.fill('.cp-hex', '#a87a55'); await page.click('.cp-ok'); await wait();
   console.log('suggestion follows the swatch:', await page.inputValue('#mk-new'));
   await page.click('[data-coladd]'); await wait();
   await shot('r18-3-colours');
