@@ -639,16 +639,28 @@ function closeFilter() { Object.assign(Files.T(), { qf: false, filter: '', curso
 
 // Firefox keeps the mouse's side buttons for its own history and never shows them to the page (bug 1720538),
 // so every folder change gets a history entry and stepping through the history steps through the folders.
-const Nav = { at: 0, panel: [0] };
+const Nav = { at: 0, owner: [0], skip: false };
 history.replaceState({ ccNav: 0 }, '');
-Files.pushNav = (i) => { Nav.at += 1; Nav.panel[Nav.at] = i; Nav.panel.length = Nav.at + 1; history.pushState({ ccNav: Nav.at }, ''); };
+const pushNav = (owner) => { Nav.at += 1; Nav.owner[Nav.at] = owner; Nav.owner.length = Nav.at + 1; history.pushState({ ccNav: Nav.at }, ''); };
+Files.pushNav = pushNav;
+// A window with its own folders takes part in the same history; closing it takes its steps back out.
+CC.winNav = (w, steps) => {
+  const base = Nav.at;
+  steps.el = w;
+  return {
+    push: () => pushNav(steps),
+    close: () => { if (Nav.at > base) { Nav.skip = true; history.go(base - Nav.at); } },
+  };
+};
 addEventListener('popstate', e => {
   const to = e.state?.ccNav;
   if (to === undefined || to === Nav.at) return;
-  const back = to < Nav.at, i = Nav.panel[back ? Nav.at : to] ?? Files.active;
+  const back = to < Nav.at, owner = Nav.owner[back ? Nav.at : to];
   Nav.at = to;
+  if (Nav.skip) { Nav.skip = false; return; }
+  if (owner && typeof owner === 'object') { if (winStack.at(-1)?.el === owner.el) (back ? owner.back : owner.forward)(); return; }
   if (CC.view !== 'files' || winStack.length) return;
-  Files.active = i;
+  Files.active = owner ?? Files.active;
   CC.run(back ? 'back' : 'forward');
 });
 

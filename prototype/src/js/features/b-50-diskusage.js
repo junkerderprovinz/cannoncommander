@@ -79,11 +79,13 @@
       foot: [{ start: ' ' }, closeBtn,
         { label: 'Löschen', g: 'IconTrash', run: () => { remove(); return false; } },
         { label: 'Hier öffnen', g: 'IconFolderOpen', primary: true, run: () => Files.go(cur) }],
-      onClose: () => ro?.disconnect(),
+      onClose: () => { ro?.disconnect(); steps.close(); },
     });
     const body = $('#du-body', w), delBtn = $('.win-foot [data-f="2"]', w);
 
-    const go = (p) => { cur = p; open.clear(); sel.clear(); focus = null; kind = null; draw(); body.focus(); };
+    const show = (p) => { cur = p; open.clear(); sel.clear(); focus = null; kind = null; draw(); body.focus(); };
+    const steps = bk.folderSteps(w, () => cur, show);
+    const go = steps.go;
     const setView = (v) => { view = v; $$('#du-view button', w).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v))); draw(); body.focus(); };
 
     const order = (a, b) => {
@@ -193,8 +195,7 @@
     function draw() {
       stat = measure(FS.nodeAt(cur));
       for (const p of [...sel.keys()]) if (!FS.nodeAt(p)) sel.delete(p);
-      const parts = FS.split(cur);
-      $('#du-crumbs', w).innerHTML = `<button class="pseg ${parts.length ? '' : 'last'}" data-du-cd="/">Server</button>` + parts.map((p, k) => `<span class="psep" aria-hidden="true">›</span><button class="pseg ${k === parts.length - 1 ? 'last' : ''}" data-du-cd="${esc('/' + parts.slice(0, k + 1).join('/'))}">${esc(p.replace('::', ''))}</button>`).join('');
+      $('#du-crumbs', w).innerHTML = bk.crumbs(cur, 'data-du-cd');
       ({ tree: drawTree, largest: drawLargest, types: drawTypes, map: drawMap })[view]();
       bk.setStart(w, summary());
       delBtn.disabled = !sel.size;
@@ -215,7 +216,19 @@
         sel.clear(); sel.set(r.path, r); anchor = r.path;
       }
       focus = r.path;
-      draw();
+      paint();
+    }
+    // Picking only restyles the rows; rebuilding them would swallow the second click of a double click.
+    function paint() {
+      $$('[data-dui]', body).forEach(el => {
+        const r = rows[+el.dataset.dui], on = sel.has(r.path);
+        el.classList.toggle('sel', on);
+        el.classList.toggle('cur', focus === r.path);
+        if (el.hasAttribute('aria-selected')) el.setAttribute('aria-selected', String(on));
+      });
+      bk.setStart(w, summary());
+      delBtn.disabled = !sel.size;
+      $('.du-row.cur', body)?.scrollIntoView({ block: 'nearest' });
     }
     const toggle = (r, state = !open.has(r.path)) => { if (!r?.canOpen) return; state ? open.add(r.path) : open.delete(r.path); focus = r.path; draw(); };
 
@@ -289,7 +302,7 @@
       if (e.key === 'ArrowRight' && view === 'tree') { e.preventDefault(); if (r.canOpen && !open.has(r.path)) toggle(r, true); else if (rows[i + 1]?.depth > r.depth) pick(rows[i + 1]); }
       if (e.key === 'ArrowLeft' && view === 'tree') { e.preventDefault(); if (open.has(r.path)) toggle(r, false); else { const up = rows.find(x => x.path === r.at); if (up) pick(up); } }
       if (e.key === 'Enter') { e.preventDefault(); if (view === 'tree' && r.canOpen) toggle(r); else if (r.node.dir) go(r.path); else reveal(r); }
-      if (e.key === 'a' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); rows.forEach(x => sel.set(x.path, x)); draw(); }
+      if (e.key === 'a' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); rows.forEach(x => sel.set(x.path, x)); paint(); }
     });
     w.addEventListener('mouseover', e => {
       const b = e.target.closest('.bk-blk');

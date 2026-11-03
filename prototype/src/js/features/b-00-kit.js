@@ -73,10 +73,11 @@
       let cur = isDir(start) ? start : '/mnt/user', picked = null;
       const w = win({
         title: 'Ordner wählen', cls: 'bk bk-picker',
-        body: `<div class="bk-crumbs" id="pf-crumbs"></div><div class="well bk-fill"><div class="bk-list" id="pf-list"></div></div>`,
+        body: `<div class="pathbar bk-pathbar" id="pf-crumbs"></div><div class="well bk-fill"><div class="bk-list" id="pf-list"></div></div>`,
         foot: [cancel, { label: 'Diesen Ordner wählen', g: 'IconCheck', primary: true, run: () => { picked = cur; } }],
-        onClose: () => resolve(picked),
+        onClose: () => { steps.close(); resolve(picked); },
       });
+      const steps = folderSteps(w, () => cur, (p) => { cur = p; draw(); });
       const draw = () => {
         $('#pf-crumbs', w).innerHTML = crumbs(cur, 'data-bk-cd');
         const dirs = FS.kids(FS.nodeAt(cur)).filter(k => k.dir && !k.link && (CC.prefs.showHidden || !hidden(k))).sort((a, b) => a.name.localeCompare(b.name, 'de', { numeric: true }));
@@ -84,15 +85,27 @@
           + (dirs.length ? dirs.map(k => `<button class="bk-row" data-bk-cd="${esc(FS.join(cur, k.name))}"><span class="bk-tile dir">${g('IconFolder')}</span><span class="bk-name">${esc(FS.LABEL[FS.join(cur, k.name)] || k.name)}</span><span class="pill glim-num">${FS.kids(k).length} Obj.</span></button>`).join('')
             : `<div class="empty">${g('IconFolder')}<div>Hier gibt es keine Unterordner</div></div>`);
       };
-      w.addEventListener('click', e => { const c = e.target.closest('[data-bk-cd]'); if (c) { cur = c.dataset.bkCd; draw(); } });
+      w.addEventListener('click', e => { const c = e.target.closest('[data-bk-cd]'); if (c) steps.go(c.dataset.bkCd); });
       draw();
     });
   }
 
   const crumbs = (path, attr) => {
     const parts = FS.split(path);
-    return `<button class="bk-crumb ${parts.length ? '' : 'last'}" ${attr}="/">Server</button>` + parts.map((p, k) => `<button class="bk-crumb ${k === parts.length - 1 ? 'last' : ''}" ${attr}="${esc('/' + parts.slice(0, k + 1).join('/'))}">${esc(FS.LABEL['/' + parts.slice(0, k + 1).join('/')] || p.replace('::', ''))}</button>`).join('');
+    return `<button class="pseg ${parts.length ? '' : 'last'}" ${attr}="/">Server</button>` + parts.map((p, k) => `<span class="psep" aria-hidden="true">›</span><button class="pseg ${k === parts.length - 1 ? 'last' : ''}" ${attr}="${esc('/' + parts.slice(0, k + 1).join('/'))}">${esc(p.replace('::', ''))}</button>`).join('');
   };
+  // Back and forward for a window that moves between folders, wired to the mouse's side buttons.
+  function folderSteps(w, get, set) {
+    const past = [], ahead = [];
+    const nav = CC.winNav(w, {
+      back: () => { if (!past.length) return; ahead.push(get()); set(past.pop()); },
+      forward: () => { if (!ahead.length) return; past.push(get()); set(ahead.pop()); },
+    });
+    return {
+      go: (p) => { if (p === get()) return; past.push(get()); ahead.length = 0; set(p); nav.push(); },
+      close: nav.close,
+    };
+  }
 
   // A pattern without * or ? matches anywhere in the name, as people type it into a search field.
   function globRe(pattern) {
@@ -169,7 +182,7 @@
     return out;
   }
 
-  CC.bk = { rng, hex, hashOf, ALGOS, here, kidsOf, nodeIn, selNodes, otherDir, isDir, hidden, fileNode, dirNode, clone, baseExt, mkdirs, reveal, log, copyText, copyBtn, doneToast, pathField, wirePicks, pickFolder, crumbs, globRe, primary, setPrimary, setStart, tile, plural, textOf, variant, isBinary, SUMS, sumText };
+  CC.bk = { folderSteps, rng, hex, hashOf, ALGOS, here, kidsOf, nodeIn, selNodes, otherDir, isDir, hidden, fileNode, dirNode, clone, baseExt, mkdirs, reveal, log, copyText, copyBtn, doneToast, pathField, wirePicks, pickFolder, crumbs, globRe, primary, setPrimary, setStart, tile, plural, textOf, variant, isBinary, SUMS, sumText };
 
   // A few more files so the tools have something to find: copies, a backup to compare against, split parts, a sum list.
   const at = (p) => FS.nodeAt(p);
@@ -211,6 +224,7 @@
 .bk-grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .6rem 1.6rem; }
 .bk-fill { flex: 1; min-height: 0; overflow: hidden; }
 .bk-list { display: flex; flex-direction: column; gap: 1px; overflow: auto; min-height: 0; flex: 1; }
+.pathbar.bk-pathbar { flex: none; height: 2.1rem; cursor: default; }
 .bk-row { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; align-items: center; gap: .6rem; height: 2.25rem; padding: 0 .45rem; border-radius: var(--radius-control); text-align: left; width: 100%; cursor: pointer; flex: none; }
 .bk-row:hover, .bk-row:focus-visible, .bk-row.cur { background: var(--carbon-surface3); outline: none; }
 .bk-row:hover .pill, .bk-row.cur .pill, .bk-step:hover .pill, .bk-copy:hover .pill:not(.warn), .bk-mrow:hover .pill:not(.fault) { background: var(--carbon-hover-raised); }
@@ -220,10 +234,6 @@
 .bk-row:hover .bk-tile, .bk-row:focus-visible .bk-tile, .bk-row.cur .bk-tile { background: var(--accent); }
 .bk-row:hover .bk-tile svg, .bk-row:focus-visible .bk-tile svg, .bk-row.cur .bk-tile svg { color: var(--accent-contrast); }
 .bk-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.bk-crumbs { display: flex; gap: .3rem; flex-wrap: wrap; align-items: center; }
-.bk-crumb { height: 1.75rem; padding: 0 .7rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); font-size: 13px; color: var(--carbon-text-sub); white-space: nowrap; }
-.bk-crumb:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
-.bk-crumb.last { color: var(--carbon-text); background: var(--carbon-surface3); }
 .bk.win.full { height: calc(100vh - 8.5rem); margin-bottom: 5rem; }
 .bk-picker { height: min(34rem, calc(100vh - 3rem)); }
 .bk-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left; min-width: 0; }

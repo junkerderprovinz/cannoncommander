@@ -1,4 +1,4 @@
 [
-  { "sel": ".panel.active [data-labelsmenu]", "go": { "view": "files" }, "text": "Notiz 59: Das Menü zeigt immer die sechs Farben Rot, Orange, Gelb, Grün, Blau und Lila. Notiz 58: Der Stift an Farben und Schlagworte öffnet das neue Fenster Markierungen. Dort benennst du Farben um und kannst Schlagworte umbenennen, löschen und neu anlegen" },
-  { "sel": ".panel.active .lfree", "go": { "view": "files" }, "text": "Notiz 60: Der Pfad in der Speicherbelegung sieht aus wie die Pfadzeile im Dateifenster" }
+  { "sel": ".panel.active [data-labelsmenu]", "go": { "view": "files" }, "text": "Notiz 62: Jeder Stift im Menü öffnet sein eigenes Fenster, eins für Farben und eins für Schlagworte. Notiz 63: Farben kannst du umbenennen, über den Punkt neu einfärben, löschen und neu anlegen" },
+  { "sel": ".panel.active .lfree", "go": { "view": "files" }, "text": "Notiz 61: In der Speicherbelegung und im Fenster Ordner wählen springen die Maustasten 4 und 5 zurück und vor, wie in der Liste" }
 ]

@@ -1,4 +1,7 @@
 // Colours and tags on files and folders. They live on the server, keyed by path, so every user sees them.
+const files = (n) => n ? (n === 1 ? '1 Datei' : `${n} Dateien`) : 'noch keine Datei';
+// A file left without colour and tags has no label entry at all.
+const tidy = () => { for (const [p, l] of Object.entries(DATA.labels)) if (!l.color && !(l.tags || []).length) delete DATA.labels[p]; };
 const LABEL_COLORS = [['red', 'Rot', '#ff6b72'], ['orange', 'Orange', '#ff8a3d'], ['yellow', 'Gelb', '#f5c518'], ['green', 'Grün', '#4cc977'], ['blue', 'Blau', '#3b9cf5'], ['purple', 'Lila', '#a98bff']];
 // Tags that no file carries yet, created in the Markierungen window.
 DATA.tags = [];
@@ -74,42 +77,81 @@ const Labels = {
     }
     return counts;
   },
-  // All six colours and every tag, for the labels button; picking one searches the shares for it.
+  // Every colour and tag, for the labels button; picking one searches the shares for it.
   menu(btn) {
     const counts = Labels.counts();
     const search = (word) => () => { Files.go('/mnt/user'); Object.assign(Files.T(), { filter: word, qf: true, deep: true, cursor: 0 }); CC.render(); };
     const colours = LABEL_COLORS.map(([id, name, hex]) => ({ label: name, color: hex, count: counts['c:' + id] || '', run: search('#' + name.toLowerCase()) }));
     const tags = Labels.tags().map(t => ({ label: t, g: 'IconHash', count: counts['t:' + t] || '', run: search('#' + t.toLowerCase()) }));
-    const edit = { g: 'IconPencil', tip: 'Farben und Schlagworte bearbeiten', run: () => Labels.manage() };
     const r = btn.getBoundingClientRect();
-    menu(r.left, r.bottom + 6, [{ head: 'Farben', ...edit }, ...colours, { head: 'Schlagworte', ...edit }, ...(tags.length ? tags : [{ label: 'Noch keine Schlagworte', g: 'IconInfo', run: () => Labels.manage() }])]);
+    menu(r.left, r.bottom + 6, [
+      { head: 'Farben', g: 'IconPencil', tip: 'Farben bearbeiten', run: () => Labels.editColours() }, ...colours,
+      { head: 'Schlagworte', g: 'IconPencil', tip: 'Schlagworte bearbeiten', run: () => Labels.editTags() },
+      ...(tags.length ? tags : [{ label: 'Noch keine Schlagworte', g: 'IconInfo', run: () => Labels.editTags() }]),
+    ]);
   },
-  // Colour names and tags in one place: rename a colour, rename, delete or add a tag.
-  manage() {
-    const counts = Labels.counts(), files = (n) => n ? (n === 1 ? '1 Datei' : `${n} Dateien`) : 'noch keine Datei';
-    const tags = Labels.tags().map(t => ({ from: t, to: t }));
-    const tagRows = () => tags.length ? tags.map((t, i) => `<div class="mk-row">${g('IconHash')}<input class="field" data-tagname="${i}" value="${esc(t.to)}" aria-label="Schlagwort ${esc(t.from)}"><span class="muted">${files(counts['t:' + t.from])}</span><button class="btn icon" data-tagdel="${i}" data-tip="Schlagwort entfernen" aria-label="${esc(t.from)} entfernen">${g('IconTrash')}</button></div>`).join('') : '<div class="muted mk-none">Noch keine Schlagworte</div>';
-    const w = win({ title: 'Markierungen',
-      body: `<div class="well"><div class="eyebrow">Farben</div>${LABEL_COLORS.map(([id, name, hex]) => `<div class="mk-row"><i class="cdot big" style="--c:${hex}"></i><input class="field" data-colname="${id}" value="${esc(name)}" aria-label="Name für ${esc(name)}"><span class="muted">${files(counts['c:' + id])}</span></div>`).join('')}</div>
-        <div class="well"><div class="eyebrow">Schlagworte</div>${frow('Neues Schlagwort', '<input class="field m" id="mk-new" placeholder="etwa Urlaub" autocomplete="off">', 'Mit Enter kommt es in die Liste.')}<div id="mk-tags">${tagRows()}</div></div>`,
+  // The colours: rename one, give it another shade, delete it or add a new one.
+  editColours() {
+    const counts = Labels.counts();
+    const rows = LABEL_COLORS.map(([id, name, hex]) => ({ id, name, hex }));
+    const row = (c, i) => `<div class="mk-row"><input type="color" class="mk-swatch" data-colhex="${i}" value="${c.hex}" aria-label="Farbton für ${esc(c.name)}"><input class="field" data-colname="${i}" value="${esc(c.name)}" aria-label="Name für ${esc(c.name)}"><span class="muted">${files(counts['c:' + c.id])}</span><button class="btn icon" data-coldel="${i}" data-tip="Farbe entfernen" aria-label="${esc(c.name)} entfernen">${g('IconTrash')}</button></div>`;
+    const list = () => rows.length ? rows.map(row).join('') : '<div class="muted mk-none">Keine Farben</div>';
+    const w = win({ title: 'Farben',
+      body: `<div class="well">${frow('Neue Farbe', '<input class="field m" id="mk-new" placeholder="etwa Türkis" autocomplete="off">', 'Mit Enter kommt sie in die Liste, den Farbton wählst du am Punkt davor.')}<div id="mk-list">${list()}</div></div>`,
       foot: [cancel, { label: 'Übernehmen', g: 'IconCheck', primary: true, run: (w) => {
-        $$('[data-colname]', w).forEach(i => { const v = i.value.trim(); if (v) Labels.color(i.dataset.colname)[1] = v; });
+        keep(w);
+        const kept = new Set(rows.map(r => r.id));
+        for (const l of Object.values(DATA.labels)) if (l.color && !kept.has(l.color)) delete l.color;
+        tidy();
+        LABEL_COLORS.splice(0, LABEL_COLORS.length, ...rows.map(r => [r.id, r.name.trim() || 'Farbe', r.hex]));
+        CC.render();
+        CC.toast('Farben gespeichert');
+      } }] });
+    // The list is redrawn after a delete or an add, so what was typed is read back first.
+    const keep = () => {
+      $$('[data-colname]', w).forEach(i => { rows[+i.dataset.colname].name = i.value; });
+      $$('[data-colhex]', w).forEach(i => { rows[+i.dataset.colhex].hex = i.value; });
+    };
+    w.addEventListener('click', e => {
+      const d = e.target.closest('[data-coldel]');
+      if (!d) return;
+      keep();
+      rows.splice(+d.dataset.coldel, 1);
+      $('#mk-list', w).innerHTML = list();
+    });
+    $('#mk-new', w).addEventListener('keydown', e => {
+      const v = e.target.value.trim();
+      if (e.key !== 'Enter' || !v) return;
+      e.preventDefault();
+      keep();
+      rows.push({ id: 'c' + Date.now(), name: v, hex: '#2ec4b6' });
+      e.target.value = '';
+      $('#mk-list', w).innerHTML = list();
+    });
+  },
+  // The tags: rename one, delete it or add a new one before any file carries it.
+  editTags() {
+    const counts = Labels.counts();
+    const tags = Labels.tags().map(t => ({ from: t, to: t }));
+    const list = () => tags.length ? tags.map((t, i) => `<div class="mk-row">${g('IconHash')}<input class="field" data-tagname="${i}" value="${esc(t.to)}" aria-label="Schlagwort ${esc(t.from)}"><span class="muted">${files(counts['t:' + t.from])}</span><button class="btn icon" data-tagdel="${i}" data-tip="Schlagwort entfernen" aria-label="${esc(t.from)} entfernen">${g('IconTrash')}</button></div>`).join('') : '<div class="muted mk-none">Noch keine Schlagworte</div>';
+    const w = win({ title: 'Schlagworte',
+      body: `<div class="well">${frow('Neues Schlagwort', '<input class="field m" id="mk-new" placeholder="etwa Urlaub" autocomplete="off">', 'Mit Enter kommt es in die Liste.')}<div id="mk-list">${list()}</div></div>`,
+      foot: [cancel, { label: 'Übernehmen', g: 'IconCheck', primary: true, run: () => {
         keep();
         const rename = new Map(tags.map(t => [t.from, t.to.trim().replace(/^#/, '') || t.from]));
         for (const l of Object.values(DATA.labels)) l.tags = [...new Set((l.tags || []).filter(t => rename.has(t)).map(t => rename.get(t)))];
-        for (const [p, l] of Object.entries(DATA.labels)) if (!l.color && !l.tags.length) delete DATA.labels[p];
+        tidy();
         DATA.tags = [...rename.values()];
         CC.render();
-        CC.toast('Markierungen gespeichert');
+        CC.toast('Schlagworte gespeichert');
       } }] });
-    // The list is redrawn after a delete or an add, so typed renames are read back first.
     const keep = () => $$('[data-tagname]', w).forEach(i => { tags[+i.dataset.tagname].to = i.value; });
     w.addEventListener('click', e => {
       const d = e.target.closest('[data-tagdel]');
       if (!d) return;
       keep();
       tags.splice(+d.dataset.tagdel, 1);
-      $('#mk-tags', w).innerHTML = tagRows();
+      $('#mk-list', w).innerHTML = list();
     });
     $('#mk-new', w).addEventListener('keydown', e => {
       const v = e.target.value.trim().replace(/^#/, '');
@@ -118,7 +160,7 @@ const Labels = {
       keep();
       if (!tags.some(t => t.to === v)) tags.push({ from: v, to: v });
       e.target.value = '';
-      $('#mk-tags', w).innerHTML = tagRows();
+      $('#mk-list', w).innerHTML = list();
     });
   },
 };
@@ -137,8 +179,11 @@ CC.css(`
 .mk-row .cdot.big { justify-self: center; margin: 0; }
 .mk-row .muted { font-size: 12px; text-align: right; }
 .mk-row .btn { width: 1.9rem; height: 1.9rem; }
-.well > .eyebrow { padding-left: 0; }
-#mk-tags { margin-top: .4rem; }
+#mk-list { margin-top: .4rem; }
+.mk-swatch { width: 1.3rem; height: 1.3rem; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; justify-self: center; }
+.mk-swatch::-webkit-color-swatch-wrapper { padding: 0; }
+.mk-swatch::-webkit-color-swatch { border: 0; border-radius: 50%; }
+.mk-swatch::-moz-color-swatch { border: 0; border-radius: 50%; }
 .mk-none { font-size: 13px; padding: .4rem 0; }
 .tagchips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
 .tagchip .x { width: 1.2rem; height: 1.2rem; margin-right: -.45rem; display: grid; place-items: center; border-radius: 50%; }
