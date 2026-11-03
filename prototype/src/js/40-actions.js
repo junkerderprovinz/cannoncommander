@@ -182,15 +182,16 @@ function transferWindow(kind) {
   $('#dest', w).addEventListener('input', e => { $('#xdest', w).textContent = placeName(e.target.value.trim().replace(/\/$/, '') || '/'); });
 }
 
-CC.action('delete', { label: 'Löschen', g: 'IconTrash', key: 'F8', needs: ['sel', 'writable'], run: () => {
-  const sel = Files.sel(), path = Files.T().path;
+// Deletes items of the folder at path (or of their own folder in k.at); after() redraws a window that listed them.
+CC.deleteItems = (sel, path, after) => {
   const doIt = (toTrash) => {
     // In the flat view and in search hits the files come from several folders.
     for (const k of sel) { const n = FS.nodeAt(k.at || path); n.children = n.children.filter(c => c.name !== k.name); }
     if (toTrash) sel.forEach(k => DATA.trash.unshift({ name: k.name, from: k.at || path, size: FS.totalSize(k), deleted: Date.now(), by: CC.user.name, dir: !!k.dir, node: k }));
     Files.T().marked = new Set();
     CC.render();
-    CC.toast(`${sel.length} ${sel.length === 1 ? 'Objekt' : 'Objekte'} ${toTrash ? 'im Papierkorb' : 'gelöscht'}`, 'ok', toTrash ? { label: 'Rückgängig', run: () => { sel.forEach(k => { FS.nodeAt(k.at || path).children.push(k); DATA.trash = DATA.trash.filter(x => x.node !== k); }); CC.render(); } } : null);
+    after?.();
+    CC.toast(`${sel.length} ${sel.length === 1 ? 'Objekt' : 'Objekte'} ${toTrash ? 'im Papierkorb' : 'gelöscht'}`, 'ok', toTrash ? { label: 'Rückgängig', run: () => { sel.forEach(k => { FS.nodeAt(k.at || path).children.push(k); DATA.trash = DATA.trash.filter(x => x.node !== k); }); CC.render(); after?.(); } } : null);
   };
   if (!CC.prefs.confirmDelete) return doIt(CC.prefs.trash);
   const dw = win({
@@ -210,7 +211,8 @@ CC.action('delete', { label: 'Löschen', g: 'IconTrash', key: 'F8', needs: ['sel
   };
   $('#totrash', dw).addEventListener('change', say);
   say();
-} });
+};
+CC.action('delete', { label: 'Löschen', g: 'IconTrash', key: 'F8', needs: ['sel', 'writable'], run: () => CC.deleteItems(Files.sel(), Files.T().path) });
 
 CC.action('newFolder', { label: 'Neuer Ordner', g: 'IconFolderAdd', key: 'F7', needs: 'writable', run: () => nameWindow('Neuer Ordner', 'Neuer Ordner', 'Anlegen', 'IconFolderAdd', (name) => {
   FS.nodeAt(Files.T().path).children.push({ name, dir: true, children: [], time: Date.now(), owner: 'nobody', group: 'users', mode: '0775' });

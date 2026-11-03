@@ -156,7 +156,7 @@ function renderFiles(host) {
   if (!CC.prefs.dual) Files.active = 0;
   host.innerHTML = `<aside class="side" id="side">
       <section class="side-card"><span class="notch">Verknüpfungen</span><button class="ptab add side-add" data-run="addBookmark" data-tip="Aktuellen Ordner als Verknüpfung anlegen">${g('IconAdd')}</button><div id="shortcuts"></div></section>
-      ${Labels.card()}<section class="side-card side-tree"><span class="notch">Ordnerbaum</span><div id="tree"></div></section>
+      <section class="side-card side-tree"><span class="notch">Ordnerbaum</span><div id="tree"></div></section>
     </aside><div class="panels" id="panels"></div>`;
   renderSide();
   const panels = $('#panels');
@@ -219,7 +219,7 @@ function renderPanel(i) {
       ${!list.length ? `<div class="empty">${g(t.filter ? 'IconSearch' : 'IconFolder')}<div>${t.filter ? `Nichts gefunden für ${esc(t.filter)}` : 'Dieser Ordner ist leer'}</div>${t.filter ? `<div class="muted" style="font-size:12px">${t.deep === false ? 'Nur in diesem Ordner gesucht' : 'Auch in allen Unterordnern gesucht'}</div>` : '<div class="muted" style="font-size:12px">Dateien hierher ziehen zum Hochladen</div>'}</div>` : ''}
     </div>
     <div class="lfoot glim-num">${footer(i, list)}</div>
-    ${t.qf ? `<div class="qfilter">${g('IconSearch')}<input id="qf-${i}" value="${esc(t.filter)}" placeholder="Suchen, etwa *.mkv" aria-label="Im Ordner suchen" spellcheck="false" autocomplete="off"><button class="qdeep ${t.deep === false ? '' : 'on'}" data-qfdeep data-tip="${t.deep === false ? 'Nur dieser Ordner. Klick sucht auch in Unterordnern' : 'Mit Unterordnern. Klick sucht nur hier'}">${g('IconFolderOpen')}Unterordner</button><button class="btn icon" data-qfclose data-tip="Suche schließen (Esc)">${g('IconClose')}</button></div>` : ''}`;
+    ${t.qf ? `<div class="qfilter">${g('IconSearch')}<input id="qf-${i}" value="${esc(t.filter)}" placeholder="Suchen, etwa *.mkv" aria-label="Im Ordner suchen" spellcheck="false" autocomplete="off">${t.filter ? `<button class="btn icon" data-qfsave data-tip="Diese Suche speichern">${g('IconSave')}</button>` : ''}<button class="qdeep ${t.deep === false ? '' : 'on'}" data-qfdeep data-tip="${t.deep === false ? 'Nur dieser Ordner. Klick sucht auch in Unterordnern' : 'Mit Unterordnern. Klick sucht nur hier'}">${g('IconFolderOpen')}Unterordner</button><button class="btn icon" data-qfclose data-tip="Suche schließen (Esc)">${g('IconClose')}</button></div>` : ''}`;
   return el;
 }
 

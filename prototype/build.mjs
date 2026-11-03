@@ -69,9 +69,11 @@ writeFileSync(join(here, 'dist', 'cannoncommander-glyphen.html'), glyphPage);
 console.log(`${out}:${(html.length / 1024).toFixed(0)} KB, ${ordered.length} scripts, ${used.size} glyphs, round ${round}`);
 
 // Design previews: single pages with the same tokens, their own glyphs and their own notes.
+// <!--PINNWAND 3--> gives a preview its own round, so each new draft starts with an empty board.
 const previewDir = join(here, 'previews');
 for (const file of existsSync(previewDir) ? readdirSync(previewDir).filter(f => f.endsWith('.html')) : []) {
   const name = file.replace(/\.html$/, ''), src = read('previews', file);
+  const [slot, draft] = src.match(/<!--PINNWAND(?: (\d+))?-->/) || [];
   const names = [...new Set(src.match(/Icon[A-Z][A-Za-z]+/g) || [])];
   const unknown = names.filter(n => !glyphs[n]);
   if (unknown.length) throw new Error(`${file}: unknown glyphs ${unknown.join(', ')}`);
@@ -79,7 +81,7 @@ for (const file of existsSync(previewDir) ? readdirSync(previewDir).filter(f => 
   const page = src
     .replace('/*TOKENS*/', () => read('vendor', 'tokens.css'))
     .replace('/*GLYPHS*/', () => JSON.stringify(Object.fromEntries(names.map(n => [n, glyphs[n]]))))
-    .replace('<!--PINNWAND-->', () => board(`window.PW_ROUND = ${round};`, notes));
+    .replace(slot, () => board(`window.PW_ROUND = ${draft || round};`, notes));
   writeFileSync(join(here, 'dist', `cannoncommander-${name}.html`), page);
   console.log(`dist/cannoncommander-${name}.html: ${(page.length / 1024).toFixed(0)} KB`);
 }

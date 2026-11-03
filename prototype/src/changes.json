@@ -1,9 +1,5 @@
 [
-  { "sel": "[data-menu=\"2\"]", "go": { "view": "files" }, "text": "[9675] Flache Ansicht (Strg+Umschalt+B), [9677] Gruppieren nach Art, Datum oder Größe, [9680] Spaltenansicht wie im Finder. [9678] Jeder Ordner merkt sich seine Ansicht" },
-  { "sel": ".panel.active .list", "go": { "view": "files" }, "text": "[9676] Zieh Dateien direkt auf einen Ordner, einen Tab oder ein Pfadstück. Bleibst du kurz darüber stehen, öffnet sich der Ordner. [9692] Auf dem Handy startet langes Drücken den Auswahlmodus" },
-  { "sel": "#side", "go": { "view": "files" }, "text": "[9679] Markierungen: Farben und Schlagworte per Rechtsklick, Suche mit #steuer. [9683] Gespeicherte Suchen als eigene Karte. [9672] Schlafende Platten mit Mond im Baum" },
-  { "sel": ".panel.active .lfoot", "go": { "view": "files" }, "text": "[9670] Die Fußzeile zeigt Cache oder Array und wohin der Mover schiebt, Dateien auf dem Cache tragen ein Badge" },
-  { "sel": "[data-menu=\"4\"]", "go": { "view": "files" }, "text": "[9671] Rechte wie Unraid setzen mit appdata-Schutz, [9673] Ordner bündeln, [9685] Von Adresse laden. Kopieren prüft [9668] Disk- gegen User-Share und [9669] harte Links" },
-  { "sel": "[data-menu=\"0\"]", "go": { "view": "files" }, "text": "Kopieren, Verschieben und Löschen haben neue, ruhigere Fenster (Notiz 49). [9682] Aufgaben zeigen Tempo, Restzeit und Reihenfolge. [9684] Umbenennen kennt Metadaten. [9686] [9687] Sammelfreigabe und mehr Link-Optionen" },
-  { "sel": "[data-menu=\"5\"]", "go": { "view": "files" }, "text": "[9693] Als App installieren, [9694] Alt+1 bis Alt+4 springen zwischen den Bereichen, Ansagen für Bildschirmleser" }
+  { "sel": ".panel.active .lfree", "go": { "view": "files" }, "text": "Notiz 50: Die Speicherbelegung arbeitet jetzt wie TreeSize. Ein aufklappbarer Baum mit Größe, Anteil, Dateien und Ordnern, dazu Kacheln, Dateitypen und die größten Dateien. Markieren und Löschen geht direkt im Fenster, auch mit Entf" },
+  { "sel": "#side .side-tree", "go": { "view": "files" }, "text": "Notiz 51: Der Ordnerbaum hat die Seitenleiste wieder fast für sich" },
+  { "sel": ".panel.active [data-run=\"quickFilter\"]", "go": { "view": "files" }, "text": "Notiz 51: Gespeicherte Suchen und Markierungen klappen auf, sobald du ins leere Suchfeld klickst. Steht etwas im Feld, speichert der Knopf daneben die Suche" }
 ]

@@ -3,6 +3,7 @@
 module.exports = async (page, shot) => {
   const wait = (ms = 350) => page.waitForTimeout(ms);
   const closeAll = () => page.evaluate(() => { closeMenu(); while (winStack.length) CC.closeWin(); });
+  const smartMenu = async () => { await page.evaluate(() => { closeMenu(); Object.assign(Files.T(), { qf: false, filter: '' }); CC.render(); }); await page.click('.panel.active [data-run="quickFilter"]'); await wait(); };
   const live = () => page.evaluate(() => $('#cc-live').textContent);
   await wait(600);
 
@@ -36,17 +37,20 @@ module.exports = async (page, shot) => {
   await page.fill('#sm-name', 'Alle Filme');
   await page.click('.scrim:last-of-type .win-foot .btn.primary'); await wait();
   await closeAll(); await wait();
-  console.log('2 sidebar:', await page.evaluate(() => $$('.side-smart .nav-row').map(r => r.innerText.replace(/\s+/g, ' ')).join(' | ')));
-  await page.click('.side-smart .nav-row:has-text("Alle Filme")'); await wait();
+  await smartMenu();
+  console.log('2 search menu:', await page.evaluate(() => $$('.qdrop .qrow').map(r => r.innerText.replace(/\s+/g, ' ')).join(' | ')));
+  await page.click('.qdrop .qrow:has-text("Alle Filme")'); await wait();
   console.log('2 panel:', await page.evaluate(() => `${Files.entries().length} hits, bar: ${$('.panel.active .smart-bar')?.innerText}`));
   await shot('r13-2-smart');
-  await page.click('.side-smart .nav-row:has-text("Alle Filme")', { button: 'right' }); await wait();
+  await smartMenu();
+  await page.click('.qdrop .qrow:has-text("Alle Filme")', { button: 'right' }); await wait();
   await shot('r13-2-smart-menu');
   await page.click('#menu button:has-text("Umbenennen")'); await wait();
   await page.fill('#sm-name', 'Filme überall'); await page.keyboard.press('Enter'); await wait();
-  await page.click('.side-smart .nav-row:has-text("Filme überall")', { button: 'right' }); await wait();
+  await smartMenu();
+  await page.click('.qdrop .qrow:has-text("Filme überall")', { button: 'right' }); await wait();
   await page.click('#menu button:has-text("Entfernen")'); await wait();
-  console.log('2 after rename and remove:', await page.evaluate(() => $$('.side-smart .nav-row').map(r => r.innerText.split('\n')[0]).join(' | ')), 'panel smart:', await page.evaluate(() => Files.T().smart));
+  console.log('2 after rename and remove:', await page.evaluate(() => (CC.smart.rows().match(/<span>[^<]*/g) || []).map(s => s.slice(6)).join(' | ')), 'panel smart:', await page.evaluate(() => Files.T().smart));
 
   // 3. Rename with metadata: the photo preset, the series preset applied, an own preset saved.
   await page.evaluate(() => { Files.go('/mnt/user/fotos/2026', 0); CC.run('selectAll'); CC.run('multiRename'); }); await wait();

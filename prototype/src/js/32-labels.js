@@ -59,8 +59,8 @@ const Labels = {
     });
     $('#newtag', w).focus();
   },
-  // The sidebar card lists every colour and tag in use; a click searches the shares for it.
-  card() {
+  // Every colour and tag in use as a chip for the search field's menu; a click searches the shares for it.
+  chips() {
     const counts = {};
     for (const l of Object.values(DATA.labels)) {
       if (l.color) counts['c:' + l.color] = (counts['c:' + l.color] || 0) + 1;
@@ -68,9 +68,8 @@ const Labels = {
     }
     const keys = Object.keys(counts);
     if (!keys.length) return '';
-    const rows = [...LABEL_COLORS.filter(c => counts['c:' + c[0]]).map(([id, name, hex]) => `<div class="nav-row" data-labelsearch="#${name.toLowerCase()}"><i class="cdot big" style="--c:${hex}"></i><span>${name}</span><span class="meta glim-num">${counts['c:' + id]}</span></div>`),
-      ...keys.filter(k => k.startsWith('t:')).sort().map(k => `<div class="nav-row" data-labelsearch="#${esc(k.slice(2).toLowerCase())}">${g('IconHash')}<span>${esc(k.slice(2))}</span><span class="meta glim-num">${counts[k]}</span></div>`)];
-    return `<section class="side-card"><span class="notch">Markierungen</span>${rows.join('')}</section>`;
+    return [...LABEL_COLORS.filter(c => counts['c:' + c[0]]).map(([id, name, hex]) => `<button class="qchip" data-labelsearch="#${name.toLowerCase()}"><i class="cdot" style="--c:${hex}"></i>${name}<span class="glim-num">${counts['c:' + id]}</span></button>`),
+      ...keys.filter(k => k.startsWith('t:')).sort().map(k => `<button class="qchip" data-labelsearch="#${esc(k.slice(2).toLowerCase())}">${g('IconHash')}${esc(k.slice(2))}<span class="glim-num">${counts[k]}</span></button>`)].join('');
   },
 };
 

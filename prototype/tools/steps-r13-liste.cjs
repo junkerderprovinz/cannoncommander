@@ -21,8 +21,9 @@ module.exports = async (page, shot) => {
   await page.evaluate(() => { CC.run('view-details'); Files.go('/mnt/user/dokumente', 0); });
   await wait(); await shot('r13-labels');
   console.log('label marks:', await page.locator('.panel.active .cdot').count(), 'tags:', (await page.locator('.panel.active .pill.tag').allTextContents()).join(' '));
-  console.log('sidebar labels:', (await page.locator('[data-labelsearch]').allTextContents()).map(s => s.trim()).join(' | '));
-  await page.click('[data-labelsearch="#steuer"]'); await wait();
+  await page.click('.panel.active [data-run="quickFilter"]'); await wait();
+  console.log('search menu labels:', (await page.locator('.qdrop [data-labelsearch]').allTextContents()).map(s => s.trim()).join(' | '));
+  await page.click('.qdrop [data-labelsearch="#steuer"]'); await wait();
   console.log('#steuer hits:', await page.evaluate(() => Files.entries().map(k => k.name).join(', ')));
   await shot('r13-tagsearch');
   await page.evaluate(() => { Files.go('/mnt/user/dokumente', 0); const t = Files.T(); t.cursor = Files.entries().findIndex(k => k.name === 'notizen.txt'); CC.render(); });

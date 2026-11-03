@@ -77,7 +77,7 @@
           </div>
           ${frow('Art', seg(TYPES, q.type, 'id="s-type"'))}
         </div>
-        <div class="well bk-fill bk-hits" hidden><div class="bk-tools"><span class="eyebrow" id="s-count">Treffer</span><button class="btn" id="s-save" data-tip="Die Suche kommt in die Seitenleiste und zeigt beim Klick immer die aktuellen Treffer">${g('IconFilter')}Als intelligenten Ordner speichern</button></div>
+        <div class="well bk-fill bk-hits" hidden><div class="bk-tools"><span class="eyebrow" id="s-count">Treffer</span><button class="btn" id="s-save" data-tip="Die Suche kommt ins Menü des Suchfelds und zeigt beim Klick immer die aktuellen Treffer">${g('IconSave')}Suche speichern</button></div>
           <div class="bk-hhead"><span></span><span>Name</span><span>Ordner</span><span class="r">Größe</span><span class="r">Geändert</span></div>
           <div class="bk-list" id="s-list" role="listbox" aria-label="Treffer"></div></div>`,
       foot: [{ start: ' ' }, closeBtn,

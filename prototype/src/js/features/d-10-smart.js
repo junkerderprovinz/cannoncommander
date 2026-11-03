@@ -1,4 +1,4 @@
-// Gespeicherte Suchen: a search kept under a name sits in the sidebar and lists its current hits in the panel.
+// Gespeicherte Suchen: a search kept under a name waits in the search field's menu and lists its current hits in the panel.
 (() => {
   const { frow, cancel } = CC.ui;
   const KEY = 'cannoncommander-smart';
@@ -35,7 +35,7 @@
   }
 
   function nameWin(title, value, verb, done) {
-    win({ title, body: `<div class="well">${frow('Name', `<input class="field w" id="sm-name" value="${esc(value)}" autocomplete="off">`, 'So heißt die Suche in der Seitenleiste.')}</div>`,
+    win({ title, body: `<div class="well">${frow('Name', `<input class="field w" id="sm-name" value="${esc(value)}" autocomplete="off">`, 'So heißt die Suche im Menü des Suchfelds.')}</div>`,
       foot: [cancel, { label: verb, g: 'IconSave', primary: true, run: (w) => { const v = $('#sm-name', w).value.trim(); if (!v) return false; done(v); } }],
       onOpen: (w) => { const i = $('#sm-name', w); setTimeout(() => i.select(), 0); i.onkeydown = (e) => { if (e.key === 'Enter') $('.win-foot .btn.primary', w).click(); }; } });
   }
@@ -43,25 +43,25 @@
   const suggest = (q) => q.name.trim() || (q.text.trim() ? `Enthält „${q.text.trim()}“` : `Suche in ${FS.split(q.in).pop() || 'Server'}`);
   CC.smart = {
     save(q) {
-      nameWin('Als intelligenten Ordner speichern', suggest(q), 'Speichern', (name) => {
+      nameWin('Suche speichern', suggest(q), 'Speichern', (name) => {
         const s = { id: Math.max(0, ...saved.map(x => x.id)) + 1, name, q };
         saved.push(s);
         store();
         if (CC.view === 'files') CC.render();
-        CC.toast(`„${name}“ steht jetzt in der Seitenleiste`, 'ok', { label: 'Öffnen', run: () => { while (winStack.length) CC.closeWin(); open(s); } });
+        CC.toast(`„${name}“ steht jetzt im Suchfeld`, 'ok', { label: 'Öffnen', run: () => { while (winStack.length) CC.closeWin(); open(s); } });
       });
+    },
+    saveFilter() {
+      const t = Files.T();
+      CC.smart.save({ ...base, in: t.path, name: t.filter.trim() });
+    },
+    rows() {
+      const t = Files.T();
+      return saved.map(s => `<button class="qrow ${t.smart === s.id ? 'cur' : ''}" data-smart="${s.id}" data-tip="${esc(`${s.q.name || 'Alle Namen'} in ${s.q.in}`)}">${g('IconFilter')}<span>${esc(s.name)}</span><span class="glim-num">${hitsOf(s).length}</span></button>`).join('');
     },
   };
 
-  function card() {
-    const t = Files.T();
-    const rows = saved.map(s => `<div class="nav-row ${t.smart === s.id ? 'cur' : ''}" data-smart="${s.id}" data-tip="${esc(`${s.q.name || 'Alle Namen'} in ${s.q.in}`)}">${g('IconFilter')}<span>${esc(s.name)}</span><span class="meta glim-num">${hitsOf(s).length}</span></div>`).join('');
-    return `<section class="side-card side-smart"><span class="notch">Gespeicherte Suchen</span><button class="ptab add side-add" data-run="search" data-tip="Neue Suche (Alt+F7), dort speichern">${g('IconAdd')}</button>
-      <div class="smart-list">${rows || '<div class="muted smart-none">Im Suchfenster (Alt+F7) speicherst du eine Suche als intelligenten Ordner.</div>'}</div></section>`;
-  }
-
   function decorate() {
-    $('#side .side-card')?.insertAdjacentHTML('afterend', card());
     for (let i = 0; i < (CC.prefs.dual ? 2 : 1); i++) {
       const t = Files.T(i), s = t.smart && byId(t.smart), panel = $(`.panel[data-panel="${i}"]`);
       if (!s || !panel || !$('.crumbs', panel)) continue;
@@ -102,8 +102,6 @@
   }, true);
 
   CC.css(`
-.side-smart .smart-list { max-height: 9.5rem; overflow: auto; }
-.smart-none { font-size: 12px; padding: .2rem .55rem .3rem; }
 .smart-bar { display: flex; align-items: center; gap: .55rem; margin: 0 .75rem .35rem; padding: .25rem .3rem .25rem .7rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--accent) 14%, var(--carbon-surface2)); font-size: 13px; }
 .smart-bar > svg { width: 1rem; height: 1rem; color: var(--accent-glyph); flex: none; }
 .smart-bar span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
