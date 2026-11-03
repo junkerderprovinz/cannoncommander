@@ -1,0 +1,7 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Keyboard shortcuts in the prototype's action table"
+regexTarget = "line"
+regexes = ['''key: '(Strg|Alt|Umschalt)\+[^']*''']
