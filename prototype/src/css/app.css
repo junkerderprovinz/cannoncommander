@@ -20,12 +20,11 @@ svg { display: block; }
 .brand { display: flex; align-items: center; gap: .55rem; padding: 0 .7rem 0 .25rem; height: 2.4rem; flex: none; border-radius: var(--radius-control); }
 .brand:hover { background: var(--carbon-surface2); }
 .hsep { width: 1px; height: 1.5rem; margin: 0 .25rem; background: color-mix(in srgb, var(--carbon-text) 12%, transparent); flex: none; }
-.hfind { flex: 0 1 26rem; min-width: 12rem; height: 2.3rem; display: flex; align-items: center; gap: .6rem; padding: 0 .35rem 0 .85rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); color: var(--carbon-text-muted); font-size: 14px; text-align: left; }
-.hfind svg { width: .95rem; height: .95rem; color: var(--carbon-text-sub); flex: none; }
-.hfind span:first-of-type { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.hfind .kbd { flex: none; }
-.hfind:hover { background: var(--carbon-surface3); color: var(--carbon-text-sub); }
-.hfind:hover svg { color: var(--accent-glyph); }
+.brand { padding: 0 .25rem; }
+.head .count.idle { display: none; }
+.head .btn.on { background: var(--accent); color: var(--accent-contrast); }
+.head .btn.on svg { color: var(--accent-contrast); }
+.head .hback { background: var(--carbon-surface2); }
 .brand-mark { width: 1.9rem; height: 1.9rem; border-radius: var(--radius-control); background: var(--accent); color: var(--accent-contrast); display: grid; place-items: center; }
 .brand-mark svg { width: 1.1rem; height: 1.1rem; }
 .brand-name { font-size: 16px; font-weight: 700; letter-spacing: -.01em; }
@@ -92,6 +91,15 @@ svg { display: block; }
 .nav-row svg { width: 1.05rem; height: 1.05rem; color: var(--accent-glyph); flex: none; }
 .nav-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nav-row:hover { background: var(--carbon-hover); }
+.vmeter { width: 2.6rem; height: .35rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); overflow: hidden; flex: none; }
+.vmeter i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.vmeter.full i { background: var(--status-fail-solid, #ff6b72); }
+.nav-row .vmeter { margin-left: auto; }
+.nav-row .vmeter + .meta { margin-left: .5rem; }
+.vcell { display: flex; align-items: center; justify-content: flex-end; gap: .5rem; }
+.vcell .vmeter { width: 3.2rem; }
+.nav-row.cur .vmeter { background: color-mix(in srgb, var(--accent-contrast) 22%, transparent); }
+.nav-row.cur .vmeter i { background: var(--accent-contrast); }
 .nav-row .unpin { margin-left: auto; width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border-radius: var(--radius-control); flex: none; opacity: .55; }
 .nav-row .unpin svg { width: .8rem; height: .8rem; color: currentColor; }
 .nav-row:hover .unpin { opacity: 1; }
@@ -313,7 +321,7 @@ textarea.field { height: auto; padding: .6rem .7rem; resize: vertical; }
   .app { padding: .75rem .75rem 4.75rem; gap: .75rem; }
   .side { position: fixed; z-index: 40; margin-top: 0; inset: .75rem auto 8.5rem .75rem; width: min(20rem, calc(100vw - 1.5rem)); }
   .app:not(.side-open) .side { display: none; }
-  .head .seg, .head .brand-name, .hfind span { display: none; }
+  .head .seg, .head .hback { display: none; }
   .bottombar { display: flex; height: 3rem; padding: 3px; gap: 3px; }
   .bottombar button { flex: 1; min-width: 0; border-radius: var(--radius-control); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; color: var(--carbon-text-sub); }
   .bottombar button svg { width: 1.15rem; height: 1.15rem; }

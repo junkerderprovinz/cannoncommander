@@ -35,19 +35,19 @@ const Shell = {
   head() {
     const mode = CC.view === 'files';
     return `<header class="head glim-card">
-      <button class="brand" data-go-view="files" data-tip="Zu den Dateien"><span class="brand-mark">${g('IconFolderOpen')}</span><span class="brand-name">CannonCommander</span></button>
-      <span class="hsep wide-only"></span>
-      <nav class="menubar" aria-label="Menü">${MENUS.map(([n], i) => `<button data-menu="${i}">${n}</button>`).join('')}</nav>
-      <button class="btn icon narrow-only" data-all-menus data-tip="Menü">${g('IconMenu')}</button>
-      <span class="spacer"></span>
-      <button class="hfind" data-run="palette" data-tip="Jeden Befehl über seinen Namen finden">${g('IconSearch')}<span>Befehl suchen</span><span class="kbd">Strg K</span></button>
+      <button class="brand" data-go-view="files" data-tip="CannonCommander, zu den Dateien" aria-label="CannonCommander, zu den Dateien"><span class="brand-mark">${g('IconFolderOpen')}</span></button>
+      <span class="hsep"></span>
+      ${mode ? `<nav class="menubar" aria-label="Menü">${MENUS.map(([n], i) => `<button data-menu="${i}">${n}</button>`).join('')}</nav>
+      <button class="btn icon narrow-only" data-all-menus data-tip="Menü">${g('IconMenu')}</button>`
+      : `<button class="btn hback" data-go-view="files" data-tip="Zurück zu den Dateien (Esc)">${g('IconBack')}Zurück zu den Dateien</button>`}
       <span class="spacer"></span>
       ${mode ? `<div class="seg" role="group" aria-label="Ansicht">
         <button data-run="single" aria-pressed="${!CC.prefs.dual}" data-tip="Ein Fenster (Strg+1)">${g('IconViewSimple')}<span class="wide-only">Ein Fenster</span></button>
         <button data-run="dual" aria-pressed="${CC.prefs.dual}" data-tip="Zwei Fenster (Strg+2)">${g('IconCompare')}<span class="wide-only">Zwei Fenster</span></button>
       </div>` : ''}
+      <button class="btn icon" data-run="palette" data-tip="Befehl suchen (Strg+K)">${g('IconSearch')}</button>
       <button class="btn" data-run="jobs" data-tip="Aufgaben">${g('IconQueued')}<span class="wide-only">Aufgaben</span><span class="count idle glim-num" id="job-count">0</span></button>
-      <button class="btn icon" data-go-view="settings" data-tip="Einstellungen">${g('IconGear')}</button>
+      <button class="btn icon ${CC.view === 'settings' ? 'on' : ''}" data-go-view="${CC.view === 'settings' ? 'files' : 'settings'}" data-tip="${CC.view === 'settings' ? 'Einstellungen schließen' : 'Einstellungen'}" aria-pressed="${CC.view === 'settings'}">${g('IconGear')}</button>
       <button class="avatar" data-account data-tip="${esc(CC.user.full)}"><i>${esc(CC.user.name.slice(0, 2).toUpperCase())}</i></button>
     </header>`;
   },
@@ -189,6 +189,7 @@ const comboOf = (e) => {
 document.addEventListener('keydown', e => {
   if ($('#menu')) { if (e.key === 'Escape') { e.preventDefault(); closeMenu(); } return; }
   if (winStack.length) { if (e.key === 'Escape') { e.preventDefault(); CC.closeWin(); } return; }
+  if (e.key === 'Escape' && CC.views[CC.view]?.page && !e.target.closest('input, textarea, select, [contenteditable]')) { e.preventDefault(); CC.go('files'); return; }
   if (e.key === 'F10') { e.preventDefault(); Shell.openMenu(0); return; }
   if (e.target.closest('input, textarea, select, [contenteditable]')) return;
   const combo = comboOf(e);

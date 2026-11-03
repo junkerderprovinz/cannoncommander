@@ -166,6 +166,13 @@ function renderFiles(host) {
   $$('.list.view-columns').forEach(l => { l.scrollLeft = l.scrollWidth; });
 }
 
+// How full a volume is, red from nine tenths on; the free space stays as words beside it.
+const volMeter = (p) => {
+  if (!FS.TOTAL[p]) return '';
+  const used = 1 - FS.FREE[p] / FS.TOTAL[p];
+  return `<span class="vmeter ${used > .9 ? 'full' : ''}" title="${fmtSize(FS.FREE[p])} frei von ${fmtSize(FS.TOTAL[p])}"><i style="width:${Math.round(used * 100)}%"></i></span>`;
+};
+
 function renderSide() {
   const cur = Files.T().path;
   $('#shortcuts').innerHTML = DATA.bookmarks.map((s, i) => `<div class="nav-row ${cur === s.path ? 'cur' : ''}" data-go="${esc(s.path)}" data-bm="${i}">${g(s.g)}<span>${esc(s.name)}</span><button class="unpin" data-unpin="${i}" data-tip="Vom Schnellzugriff lösen" aria-label="${esc(s.name)} vom Schnellzugriff lösen">${g('IconPin')}</button></div>`).join('')
@@ -180,7 +187,7 @@ function renderSide() {
       const glyph = p === '/mnt' ? 'IconDatabase' : p === '/boot' ? 'IconFlash' : p === '/mnt/remotes' ? 'IconCloud' : k.remote ? 'IconNetwork' : FS.FREE[p] ? 'IconZFS' : open ? 'IconFolderOpen' : 'IconFolder';
       rows.push(`<div class="nav-row tree-row ${cur === p ? 'cur' : ''}" style="padding-left:${.3 + depth * .85}rem" data-go="${esc(p)}" ${k.remote ? `data-tip="${esc(k.remote)}"` : ''}>
         ${hasKids ? `<button class="tree-tog ${open ? 'open' : ''}" data-tog="${esc(p)}" aria-label="${open ? 'Zuklappen' : 'Aufklappen'}">${g('IconExpand')}</button>` : '<span class="tree-tog"></span>'}
-        ${g(glyph)}<span>${esc(FS.LABEL[p] || k.name)}</span>${FS.FREE[p] ? `<span class="meta glim-num">${fmtSize(FS.FREE[p])} frei</span>` : ''}</div>`);
+        ${g(glyph)}<span>${esc(FS.LABEL[p] || k.name)}</span>${FS.FREE[p] ? `${volMeter(p)}<span class="meta glim-num">${fmtSize(FS.FREE[p])} frei</span>` : ''}</div>`);
       if (open) walk(k, p, depth + 1);
     }
   };
@@ -268,7 +275,10 @@ function nameCell(i, k) {
 
 function rowHtml(i, k, idx) {
   const t = Files.T(i);
-  const cells = Columns.visible().map(id => id === 'name' ? nameCell(i, k) : `<span class="cell ${COL[id].r ? 'r' : ''} ${COL[id].mono ? 'mono' : ''} glim-num">${esc(COL[id].value(k, t.path))}</span>`).join('');
+  const vol = k.dir && FS.FREE[FS.join(t.path, k.name)] && FS.join(t.path, k.name);
+  const cells = Columns.visible().map(id => id === 'name' ? nameCell(i, k)
+    : id === 'size' && vol ? `<span class="cell r glim-num vcell">${volMeter(vol)}${fmtSize(FS.FREE[vol])} frei</span>`
+    : `<span class="cell ${COL[id].r ? 'r' : ''} ${COL[id].mono ? 'mono' : ''} glim-num">${esc(COL[id].value(k, t.path))}</span>`).join('');
   return `<div class="row ${rowClass(t, k, idx)}" data-idx="${idx}" draggable="true">${cells}</div>`;
 }
 
