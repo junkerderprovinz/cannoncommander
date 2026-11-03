@@ -28,7 +28,7 @@
   function ensureJob() {
     if (!Up.job || !['läuft', 'pausiert'].includes(Up.job.state)) {
       Up.job = { id: Date.now() + Math.random(), kind: 'upload', label: '', total: 0, pct: 0, state: 'läuft', started: Date.now() };
-      Jobs.list.unshift(Up.job);
+      Jobs.list.push(Up.job);
     }
     if (!Up.timer) Up.timer = setInterval(tick, 200);
   }
@@ -159,11 +159,14 @@
   }
   CC.ck.download = download;
 
-  // Freigeben: one public link per file or folder.
+  // Freigeben: one public link per file or folder, or one for a collection, which the other side sees as a folder.
   const HOST = 'https://dateien.example.org/s/';
   const EXPIRY = [['1', '1 Tag'], ['7', '7 Tage'], ['30', '30 Tage'], ['0', 'Unbegrenzt']];
+  const LIMITS = [['0', 'Ohne'], ['1', '1'], ['5', '5'], ['10', '10'], ['25', '25']];
+  const SLUG = /^[a-z0-9][a-z0-9-]{2,39}$/;
+  let rolls = 0;
   const slugFor = (name) => {
-    const r = rng(name + Date.now());
+    const r = rng(name + Date.now() + ++rolls);
     const id = Array.from({ length: 4 }, () => 'abcdefghjkmnpqrstuvwxyz23456789'[Math.floor(r() * 31)]).join('');
     return `${id}-${name.toLowerCase().replace(/\.[^.]+$/, '').normalize('NFD').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').slice(0, 18) || 'link'}`;
   };
@@ -178,51 +181,174 @@
   });
   CC.ck.secret = secret;
 
-  CC.action('share', { label: 'Freigeben', g: 'IconLink', needs: 'sel', run: () => share(nodesOf(Files.T().path), Files.T().path) });
+  const taken = (slug) => DATA.shares.some(s => s.slug === slug);
+  const freshSlug = (name) => { let s = slugFor(name); while (taken(s)) s = slugFor(name); return s; };
+
+  // The options every new link has, for a single file as for a collection.
+  const linkOptions = (name, dir) => `<div class="well"><div class="eyebrow">Neuer Link</div>
+      ${frow('Adresse', `<span class="cs-slugf"><span class="muted mono cs-host">${esc(HOST.replace('https://', ''))}</span><input class="field mono" id="cs-slug" value="${esc(freshSlug(name))}" autocomplete="off" spellcheck="false" aria-label="Ende der Adresse"><button class="btn icon" id="cs-dice" type="button" data-tip="Link neu würfeln" aria-label="Link neu würfeln">${g('IconRetry')}</button></span>`, 'Das Ende der Adresse kannst du selbst schreiben, etwa urlaub-2026. Erlaubt sind Kleinbuchstaben, Ziffern und Bindestriche. Der Würfel macht eine neue Adresse, die sich schwer erraten lässt.')}
+      ${frow('Gültig', seg(EXPIRY, '7', 'id="cs-exp"'), 'Danach führt der Link ins Leere. Verlängern kannst du ihn unter Freigaben.')}
+      ${frow('Download-Limit', seg(LIMITS, '0', 'id="cs-limit"'), 'Nach so vielen Downloads führt der Link ins Leere. Ansehen im Browser zählt nicht mit.')}
+      ${frow('Mit Passwort', sw(false, 'id="cs-pw"'))}
+      <div id="cs-pwrow" hidden>${frow('Passwort', secret('cs-pass', 'Passwort für den Link'))}</div>
+      ${dir ? frow('Hochladen erlauben', sw(false, 'id="cs-up"'), 'Wer den Link hat, kann Dateien in diesen Ordner legen. Ansehen und löschen kann er dort nichts.') : ''}
+      ${frow('Nachricht beim Öffnen', sw(false, 'id="cs-notify"'), 'Sobald jemand den Link öffnet, bekommst du eine Nachricht, hier in CastleCommander und über die Benachrichtigungen von Unraid.')}
+    </div>`;
+  function wireOptions(w, name) {
+    $('#cs-pw', w).addEventListener('change', (e) => { $('#cs-pwrow', w).hidden = !swVal(e.target); if (swVal(e.target)) $('#cs-pass', w).focus(); });
+    $('#cs-dice', w).addEventListener('click', () => { $('#cs-slug', w).value = freshSlug(name); });
+  }
+  function readLink(s) {
+    const pw = swVal($('#cs-pw', s)), pass = $('#cs-pass', s).value, slugEl = $('#cs-slug', s), slug = slugEl.value.trim().toLowerCase();
+    if (!SLUG.test(slug)) { CC.toast('Die Adresse braucht 3 bis 40 Zeichen: Kleinbuchstaben, Ziffern und Bindestriche', 'warn'); slugEl.focus(); return null; }
+    if (taken(slug)) { CC.toast('Diese Adresse ist schon vergeben. Der Würfel findet eine freie.', 'warn'); slugEl.focus(); return null; }
+    if (pw && pass.length < 6) { CC.toast('Das Passwort braucht mindestens 6 Zeichen', 'warn'); $('#cs-pass', s).focus(); return null; }
+    const days = +segVal($('#cs-exp', s));
+    return { by: CC.user.name, created: Date.now(), expires: days ? Date.now() + days * DAY : null, password: pw, uploads: !!$('#cs-up', s) && swVal($('#cs-up', s)),
+      limit: +segVal($('#cs-limit', s)), notify: swVal($('#cs-notify', s)), views: 0, slug };
+  }
+  function publish(link, title) {
+    DATA.shares.unshift(link);
+    DATA.activity.unshift({ t: Date.now(), who: CC.user.name, what: 'freigegeben', obj: link.name || link.path });
+    // The prototype has no visitors, so someone opens the link a few seconds later.
+    if (link.notify) setTimeout(() => {
+      if (!DATA.shares.includes(link)) return;
+      link.views += 1;
+      CC.toast(`Jemand hat deinen Link zu ${title} geöffnet`, 'ok', { label: 'Freigaben', run: () => CC.run('openShares') });
+    }, 6000);
+  }
+
+  CC.action('share', { label: 'Freigeben', g: 'IconLink', run: () => {
+    const sel = Files.sel(), folder = Files.T().path;
+    if (!sel.length) return CC.toast('Erst eine Datei oder einen Ordner wählen', 'warn');
+    // Several files, or hits from a search below this folder, go out together under one link.
+    if (sel.length > 1 || sel[0].at && sel[0].at !== folder) return shareMany(sel.map(pathOf));
+    share(nodesOf(folder), folder);
+  } });
   function share(items, folder) {
-    if (items.length !== 1) return CC.toast('Ein Link gilt für eine Datei oder einen Ordner. Wähle eins davon aus.', 'warn');
+    if (items.length !== 1) return shareMany(items.map(k => FS.join(folder, k.name)));
     const n = items[0], path = FS.join(folder, n.name).replace(/::/g, '');
     if (FS.inArchive(folder)) return CC.toast('Aus einem Archiv lässt sich nichts freigeben', 'warn');
-    const existing = DATA.shares.filter(s => s.path === path);
+    const existingHtml = () => {
+      const existing = DATA.shares.filter(s => s.path === path);
+      return existing.length ? `<div class="eyebrow">Bestehende Links</div>${existing.map(s => frow(`<span class="mono cs-slug">${esc(HOST + s.slug)}</span>`, `<span class="pill glim-num">${s.expires ? `bis ${fmtDate(s.expires)}` : 'unbegrenzt'}</span><span class="pill glim-num">${plural(s.views, 'Aufruf', 'Aufrufe')}</span><button class="btn icon" data-reroll="${esc(s.slug)}" data-tip="Link neu würfeln, der alte führt dann ins Leere" aria-label="Link neu würfeln">${g('IconRetry')}</button><button class="btn icon" data-copy="${esc(HOST + s.slug)}" data-tip="Link kopieren" aria-label="Link kopieren">${g('IconCopy')}</button>`)).join('')}` : '';
+    };
     const w = win({
       title: 'Freigeben',
       body: `<div class="well">${frow(`<span class="tile cs-tile">${g(FS.glyphOf(n))}</span><b class="cs-name">${esc(n.name)}</b>`, `<span class="pill glim-num">${fmtSize(FS.totalSize(n)) || '0 B'}</span>`)}</div>
-        <div class="well"><div class="eyebrow">Neuer Link</div>
-          ${frow('Gültig', seg(EXPIRY, '7', 'id="cs-exp"'), 'Danach führt der Link ins Leere. Verlängern kannst du ihn unter Freigaben.')}
-          ${frow('Mit Passwort', sw(false, 'id="cs-pw"'))}
-          <div id="cs-pwrow" hidden>${frow('Passwort', secret('cs-pass', 'Passwort für den Link'))}</div>
-          ${n.dir ? frow('Hochladen erlauben', sw(false, 'id="cs-up"'), 'Wer den Link hat, kann Dateien in diesen Ordner legen. Ansehen und löschen kann er dort nichts.') : ''}
-        </div>
-        ${existing.length ? `<div class="well"><div class="eyebrow">Bestehende Links</div>${existing.map(s => frow(`<span class="mono cs-slug">${esc(HOST + s.slug)}</span>`, `<span class="pill glim-num">${s.expires ? `bis ${fmtDate(s.expires)}` : 'unbegrenzt'}</span><span class="pill glim-num">${plural(s.views, 'Aufruf', 'Aufrufe')}</span><button class="btn icon" data-copy="${esc(HOST + s.slug)}" data-tip="Link kopieren" aria-label="Link kopieren">${g('IconCopy')}</button>`)).join('')}</div>` : ''}`,
+        ${linkOptions(n.name, n.dir)}
+        ${existingHtml() ? `<div class="well" id="cs-existing">${existingHtml()}</div>` : ''}`,
       foot: [{ start: esc(path) }, cancel, { label: 'Link erstellen', g: 'IconLink', primary: true, run: (s) => {
-        const pw = swVal($('#cs-pw', s)), pass = $('#cs-pass', s).value;
-        if (pw && pass.length < 6) { CC.toast('Das Passwort braucht mindestens 6 Zeichen', 'warn'); $('#cs-pass', s).focus(); return false; }
-        const days = +segVal($('#cs-exp', s));
-        const link = { path, by: CC.user.name, created: Date.now(), expires: days ? Date.now() + days * DAY : null, password: pw, uploads: !!$('#cs-up', s) && swVal($('#cs-up', s)), views: 0, slug: slugFor(n.name) };
-        DATA.shares.unshift(link);
-        DATA.activity.unshift({ t: Date.now(), who: CC.user.name, what: 'freigegeben', obj: path });
+        const link = readLink(s);
+        if (!link) return false;
+        link.path = path;
+        publish(link, n.name);
         setTimeout(() => done(link, n), 0);
       } }],
     });
-    $('#cs-pw', w).addEventListener('change', (e) => { $('#cs-pwrow', w).hidden = !swVal(e.target); if (swVal(e.target)) $('#cs-pass', w).focus(); });
+    wireOptions(w, n.name);
+    const box = $('#cs-existing', w);
+    box?.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-reroll]');
+      if (!b) return;
+      const s = DATA.shares.find(x => x.slug === b.dataset.reroll), old = s.slug;
+      s.slug = freshSlug(n.name);
+      box.innerHTML = existingHtml();
+      CC.toast('Neue Adresse gewürfelt, die alte führt ins Leere', 'ok', { label: 'Rückgängig', run: () => { if (!taken(old)) s.slug = old; if (box.isConnected) box.innerHTML = existingHtml(); } });
+    });
   }
   CC.ck.share = share;
 
-  function done(link, n) {
+  // Die Sammelmappe: files from several folders wait here until they go out under one link.
+  const Basket = [];
+  const pathOf = (k) => FS.join(k.at || Files.T().path, k.name);
+  const basketNodes = () => Basket.map(p => ({ path: p, node: FS.nodeAt(p) })).filter(x => x.node);
+  // The other side sees a folder; two files with the same name from different folders get a number.
+  const asFolder = (entries) => {
+    const seen = {};
+    return entries.map(({ path, node }) => {
+      const n = (seen[node.name] = (seen[node.name] || 0) + 1);
+      const dot = node.dir ? -1 : node.name.lastIndexOf('.');
+      return { path, node, shown: n === 1 ? node.name : dot > 0 ? `${node.name.slice(0, dot)} (${n})${node.name.slice(dot)}` : `${node.name} (${n})` };
+    });
+  };
+
+  CC.action('collect', { label: 'In die Sammelmappe', g: 'IconCollector', run: () => {
+    const sel = Files.sel();
+    if (!sel.length) return CC.toast('Erst eine Datei oder einen Ordner wählen', 'warn');
+    if (FS.inArchive(Files.T().path)) return CC.toast('Aus einem Archiv lässt sich nichts freigeben', 'warn');
+    const fresh = sel.map(pathOf).filter(p => !Basket.includes(p));
+    Basket.push(...fresh);
+    if (CC.view === 'files') CC.render();
+    CC.toast(fresh.length ? `${plural(fresh.length, 'Objekt', 'Objekte')} in die Sammelmappe gelegt, jetzt ${Basket.length}` : 'Das liegt schon in der Sammelmappe', 'ok', { label: 'Sammelmappe', run: () => CC.run('collection') });
+  } });
+  CC.action('collection', { label: () => Basket.length ? `Sammelmappe (${Basket.length})` : 'Sammelmappe', g: 'IconCollector', run: () => {
+    const body = () => {
+      const items = basketNodes();
+      return items.length ? `<div class="eyebrow">${plural(items.length, 'Objekt', 'Objekte')} aus ${plural(new Set(items.map(x => FS.parent(x.path))).size, 'Ordner', 'Ordnern')}, ${fmtSize(items.reduce((a, x) => a + FS.totalSize(x.node), 0)) || '0 B'}</div>
+          <div class="cs-basket">${items.map(({ path, node }) => `<div class="cs-brow"><span class="tile">${g(FS.glyphOf(node))}</span><span class="t">${esc(node.name)}</span><span class="muted mono cs-bdir">${esc(FS.parent(path))}</span><span class="pill glim-num">${fmtSize(FS.totalSize(node)) || '0 B'}</span><button class="btn icon" data-bdel="${esc(path)}" data-tip="Aus der Sammelmappe nehmen" aria-label="Aus der Sammelmappe nehmen">${g('IconClose')}</button></div>`).join('')}</div>`
+        : `<div class="empty">${g('IconCollector')}<div>Die Sammelmappe ist leer</div><div class="muted" style="font-size:12px">Markiere Dateien, auch in mehreren Ordnern oder in einem Suchergebnis, und wähle im Kontextmenü In die Sammelmappe.</div></div>`;
+    };
+    const w = win({
+      title: 'Sammelmappe', wide: true,
+      body: `<div class="well" id="cs-bbody">${body()}</div>`,
+      foot: [{ start: 'Die Dateien bleiben, wo sie sind' }, { label: 'Leeren', g: 'IconEmpty', run: () => { Basket.length = 0; paint(); return false; } }, closeBtn,
+        { label: 'Gemeinsam freigeben', g: 'IconLink', primary: true, run: () => { if (!basketNodes().length) return false; setTimeout(() => shareMany(Basket.slice(), true), 0); } }],
+    });
+    const paint = () => { $('#cs-bbody', w).innerHTML = body(); $('.win-foot .btn.primary', w).disabled = !basketNodes().length; if (CC.view === 'files') CC.render(); };
+    w.addEventListener('click', (e) => { const b = e.target.closest('[data-bdel]'); if (b) { Basket.splice(Basket.indexOf(b.dataset.bdel), 1); paint(); } });
+    $('.win-foot .btn.primary', w).disabled = !basketNodes().length;
+  } });
+  Files.sideRows.push(() => Basket.length ? `<div class="nav-row" data-run="collection">${g('IconCollector')}<span>Sammelmappe</span><span class="meta glim-num">${Basket.length}</span></div>` : '');
+
+  function shareMany(paths, fromBasket = false) {
+    const items = asFolder(paths.map(p => ({ path: p, node: FS.nodeAt(p) })).filter(x => x.node && !FS.inArchive(x.path)));
+    if (!items.length) return CC.toast('Aus einem Archiv lässt sich nichts freigeben', 'warn');
+    const dirs = new Set(items.map(x => FS.parent(x.path))).size;
+    const suggest = `Sammlung vom ${new Date(CC.admin.now()).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' })}`;
+    const w = win({
+      title: 'Sammelfreigabe',
+      body: `<div class="well"><div class="eyebrow">${plural(items.length, 'Objekt', 'Objekte')} aus ${plural(dirs, 'Ordner', 'Ordnern')}, ${fmtSize(items.reduce((a, x) => a + FS.totalSize(x.node), 0)) || '0 B'}</div>
+          <table class="tbl">${items.slice(0, 6).map(x => `<tr><td>${esc(x.node.name)}</td><td class="muted mono">${esc(FS.parent(x.path))}</td></tr>`).join('')}${items.length > 6 ? `<tr><td colspan="2">und ${items.length - 6} weitere</td></tr>` : ''}</table>
+          ${frow('Name des Ordners', `<input class="field w" id="cs-title" value="${esc(suggest)}" autocomplete="off">`, 'Die Gegenseite sieht einen Ordner mit diesem Namen und darin alle Dateien nebeneinander. Die Dateien bleiben auf dem Server, wo sie sind.')}</div>
+        ${linkOptions('sammlung', false)}`,
+      foot: [{ start: 'Ein Link für alles' }, cancel, { label: 'Link erstellen', g: 'IconLink', primary: true, run: (s) => {
+        const title = $('#cs-title', s).value.trim();
+        if (!title) { CC.toast('Gib der Sammlung einen Namen', 'warn'); $('#cs-title', s).focus(); return false; }
+        const link = readLink(s);
+        if (!link) return false;
+        Object.assign(link, { name: title, path: `${plural(items.length, 'Objekt', 'Objekte')} aus ${plural(dirs, 'Ordner', 'Ordnern')}`, items: items.map(x => x.path) });
+        publish(link, title);
+        if (fromBasket) { Basket.length = 0; if (CC.view === 'files') CC.render(); }
+        setTimeout(() => done(link, { name: title, dir: true }, items), 0);
+      } }],
+    });
+    wireOptions(w, 'sammlung');
+  }
+
+  function done(link, n, items) {
     const url = HOST + link.slug;
     win({
-      title: 'Link erstellt',
+      title: 'Link erstellt', wide: !!items,
       body: `<div class="well cs-done"><div class="cs-qr">${qr(url)}</div><div class="cs-facts">
           <div class="cs-url"><input class="field grow mono" value="${esc(url)}" readonly aria-label="Link"><button class="btn icon" data-copy="${esc(url)}" data-tip="Link kopieren" aria-label="Link kopieren">${g('IconCopy')}</button></div>
           ${frow('Für', `<span class="pill">${esc(n.name)}</span>`)}
           ${frow('Gültig', `<span class="pill glim-num">${link.expires ? `bis ${fmtDate(link.expires)}` : 'unbegrenzt'}</span>`)}
+          ${frow('Downloads', `<span class="pill glim-num">${link.limit ? `höchstens ${link.limit}` : 'ohne Limit'}</span>`)}
           ${frow('Passwort', `<span class="pill">${link.password ? 'ja' : 'nein'}</span>`)}
-          ${n.dir ? frow('Hochladen', `<span class="pill">${link.uploads ? 'erlaubt' : 'nein'}</span>`) : ''}
-        </div></div>`,
+          ${n.dir && !items ? frow('Hochladen', `<span class="pill">${link.uploads ? 'erlaubt' : 'nein'}</span>`) : ''}
+          ${frow('Nachricht beim Öffnen', `<span class="pill">${link.notify ? 'ja' : 'nein'}</span>`)}
+        </div></div>
+        ${items ? `<div class="well"><div class="eyebrow">So sieht es die Gegenseite ${info('Ein Ordner mit allen Dateien nebeneinander. Gleiche Namen aus verschiedenen Ordnern bekommen eine Nummer.')}</div>
+          <div class="cs-visitor"><div class="cs-vhead">${g('IconFolderOpen')}<b>${esc(n.name)}</b><span class="muted">${plural(items.length, 'Objekt', 'Objekte')}</span></div>
+          ${items.slice(0, 8).map(x => `<div class="cs-vrow">${g(FS.glyphOf(x.node))}<span>${esc(x.shown)}</span><span class="muted glim-num">${fmtSize(FS.totalSize(x.node)) || '0 B'}</span></div>`).join('')}${items.length > 8 ? `<div class="cs-vrow muted">und ${items.length - 8} weitere</div>` : ''}</div></div>` : ''}`,
       foot: [{ label: 'Link entfernen', g: 'IconUnlink', run: () => { DATA.shares = DATA.shares.filter(s => s !== link); CC.toast('Link entfernt'); } }, { label: 'Fertig', g: 'IconCheck', primary: true }],
       onOpen: (w) => setTimeout(() => $('.cs-url input', w).select(), 40),
     });
   }
+
+  const file = MENUS.find(([m]) => m === 'Datei')[1];
+  file.splice(file.indexOf('share') + 1, 0, 'collect', 'collection');
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-copy]');
     if (!b) return;
@@ -284,7 +410,28 @@
 .cs-facts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .35rem; }
 .cs-url { display: flex; gap: .4rem; margin-bottom: .3rem; }
 .cs-url .field { font-size: 12.5px; }
+.cs-slugf { display: flex; align-items: center; gap: .35rem; min-width: 0; flex: 1; justify-content: flex-end; }
+.cs-host { font-size: 12px; white-space: nowrap; flex: none; }
+.cs-slugf .field { width: 11rem; min-width: 9.5rem; flex: 0 1 11rem; }
+.cs-basket { display: flex; flex-direction: column; max-height: 20rem; overflow: auto; margin: 0 -.3rem; }
+.cs-brow { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) minmax(0, 1fr) 5.5rem 2rem; align-items: center; gap: .6rem; min-height: 2.4rem; padding: 0 .3rem; border-radius: var(--radius-control); }
+.cs-brow:hover { background: var(--carbon-hover); }
+.cs-brow .tile { background: var(--carbon-surface3); }
+.cs-brow .t, .cs-bdir { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs-bdir { font-size: 12px; }
+.cs-brow .pill { justify-self: end; background: var(--carbon-surface3); }
+.cs-brow .btn { width: 1.8rem; height: 1.8rem; background: transparent; }
+.cs-visitor { border-radius: var(--radius-control); background: var(--carbon-surface); padding: .5rem .7rem; display: flex; flex-direction: column; gap: .1rem; }
+.cs-vhead { display: flex; align-items: center; gap: .5rem; padding-bottom: .35rem; margin-bottom: .2rem; box-shadow: inset 0 -1px 0 var(--carbon-hover); }
+.cs-vhead svg, .cs-vrow svg { width: 1rem; height: 1rem; color: var(--accent-glyph); flex: none; }
+.cs-vhead .muted { margin-left: auto; font-size: 12px; }
+.cs-vrow { display: flex; align-items: center; gap: .55rem; min-height: 1.8rem; font-size: 13px; }
+.cs-vrow span:first-of-type { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs-vrow .muted { font-size: 12px; }
 @media (max-width: 760px) {
+  .cs-brow { grid-template-columns: 2.25rem minmax(0, 1fr) 2rem; }
+  .cs-brow .cs-bdir, .cs-brow .pill { display: none; }
+  .cs-host { display: none; }
   .cu-row { grid-template-columns: 2.25rem minmax(0, 1fr) 4.5rem 4.2rem; }
   .cu-row > .bar { display: none; }
   .cu-row > :nth-child(3):not(.bar) { grid-column: 3; }

@@ -494,6 +494,7 @@
 
   /* Freigaben */
   const shareUrl = (s) => `https://castle.tower.lan/s/${s.slug}`;
+  const shareName = (s) => s.name || FS.split(s.path).pop();
   const EXPIRY = [['keep', 'Wie bisher'], ['1', '1 Tag ab jetzt'], ['7', '7 Tage ab jetzt'], ['30', '30 Tage ab jetzt'], ['never', 'Nie']];
 
   function shareWin(s) {
@@ -522,8 +523,8 @@
     const rows = DATA.shares.map((s, i) => {
       const left = s.expires ? s.expires - A.now() : null;
       return row({
-        tile: g(FS.nodeAt(s.path)?.dir ? 'IconFolder' : 'IconFile'), name: FS.split(s.path).pop(), tip: s.path, attr: `data-open="${i}"`,
-        badges: [left == null ? pill('Läuft nicht ab') : left < 0 ? pill('Abgelaufen', 'state') : pill(A.ago(s.expires), left < 3 * DAY ? 'warn' : ''), s.password ? pill('Passwort') : '', pill(s.views === 1 ? '1 Aufruf' : `${s.views} Aufrufe`, 'glim-num')],
+        tile: g(s.items ? 'IconCollector' : FS.nodeAt(s.path)?.dir ? 'IconFolder' : 'IconFile'), name: shareName(s), tip: s.path, attr: `data-open="${i}"`,
+        badges: [left == null ? pill('Läuft nicht ab') : left < 0 ? pill('Abgelaufen', 'state') : pill(A.ago(s.expires), left < 3 * DAY ? 'warn' : ''), s.password ? pill('Passwort') : '', s.limit ? pill(`höchstens ${s.limit} Downloads`, 'glim-num') : '', pill(s.views === 1 ? '1 Aufruf' : `${s.views} Aufrufe`, 'glim-num')],
         acts: [bareBtn('IconCopy', 'Link kopieren', `data-copy="${esc(shareUrl(s))}"`), bareBtn('IconPencil', 'Bearbeiten', `data-open="${i}"`), bareBtn('IconUnlink', 'Widerrufen', `data-revoke="${i}"`)],
       });
     });
@@ -532,7 +533,7 @@
       revoke: (i) => {
         const s = DATA.shares.splice(+i, 1)[0];
         A.redraw();
-        CC.toast(`Der Link zu ${FS.split(s.path).pop()} gilt nicht mehr`, 'ok', { label: 'Rückgängig', run: () => { DATA.shares.splice(+i, 0, s); A.redraw(); } });
+        CC.toast(`Der Link zu ${shareName(s)} gilt nicht mehr`, 'ok', { label: 'Rückgängig', run: () => { DATA.shares.splice(+i, 0, s); A.redraw(); } });
       },
       open: (i) => shareWin(DATA.shares[+i]),
     });
