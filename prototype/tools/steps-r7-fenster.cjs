@@ -18,7 +18,7 @@ module.exports = async (page, shot) => {
   const copyWith = async (label) => {
     await setup();
     await page.evaluate(() => CC.run('copy')); await wait(300);
-    if (label) await page.click(`#clash button:has-text("${label}")`);
+    if (label) await page.evaluate((l) => { $('#clash').dataset.val = CLASH_RULES.find(r => r[1] === l)[0]; }, label);
     await page.click('.scrim .win-foot .btn.primary'); await wait(300);
     const asked = await page.locator('.scrim .notch', { hasText: 'Konflikte' }).count();
     if (asked) return { asked };
@@ -29,7 +29,7 @@ module.exports = async (page, shot) => {
 
   await setup();
   await page.evaluate(() => CC.run('copy')); await wait(300);
-  console.log('clash rule default:', await page.evaluate(() => segVal(document.querySelector('#clash'))));
+  console.log('clash rule default:', await page.evaluate(() => CC.admin.ddVal(document.querySelector('#clash'))));
   await shot('r7-copy-window');
   await page.keyboard.press('Escape');
 
