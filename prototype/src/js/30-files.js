@@ -19,6 +19,8 @@ const Files = {
   following: false,
   marks: [{}, {}],
   clip: null,
+  // Feature modules add rows under the shortcuts, each a function that returns its HTML or nothing.
+  sideRows: [],
   P: (i = Files.active) => Files.panels[i],
   T: (i = Files.active) => Files.panels[i].tabs[Files.panels[i].cur],
   other: () => (CC.prefs.dual ? 1 - Files.active : Files.active),
@@ -116,7 +118,7 @@ const Files = {
     }
     const total = items.reduce((a, k) => a + FS.totalSize(k), 0);
     const label = `${kind === 'copy' ? 'Kopieren' : 'Verschieben'}: ${items.length === 1 ? items[0].name : items.length + ' Objekte'} nach ${FS.split(dest).pop()}`;
-    Jobs.start({ kind, label, total, speed: total > 10 * GB ? 0.5 : 1, done: () => {
+    Jobs.start({ kind, label, total, files: Jobs.filesOf(items), done: () => {
       const src = FS.nodeAt(from);
       for (const k of items) {
         const choice = decide[k.name] || 'replace';
@@ -162,7 +164,8 @@ function renderFiles(host) {
 function renderSide() {
   const cur = Files.T().path;
   $('#shortcuts').innerHTML = DATA.bookmarks.map((s, i) => `<div class="nav-row ${cur === s.path ? 'cur' : ''}" data-go="${esc(s.path)}" data-bm="${i}">${g(s.g)}<span>${esc(s.name)}</span></div>`).join('')
-    + `<div class="nav-row" data-run="openTrash">${g('IconTrash')}<span>Papierkorb</span><span class="meta glim-num">${DATA.trash.length}</span></div>`;
+    + `<div class="nav-row" data-run="openTrash">${g('IconTrash')}<span>Papierkorb</span><span class="meta glim-num">${DATA.trash.length}</span></div>`
+    + Files.sideRows.map(f => f()).join('');
   const rows = [];
   const walk = (n, path, depth) => {
     for (const k of FS.kids(n).filter(k => k.dir)) {
@@ -290,7 +293,7 @@ function footer(i, list) {
   const marked = items.filter(k => t.marked.has(k.name));
   const vol = FS.volumeOf(t.path);
   const used = 1 - FS.FREE[vol] / FS.TOTAL[vol];
-  const sel = marked.length ? `${marked.length} markiert, ${fmtSize(marked.reduce((a, k) => a + FS.totalSize(k), 0))}<button class="lclear" data-run="unselect" data-tip="Auswahl aufheben (Esc)" aria-label="Auswahl aufheben">${g('IconClose')}</button>` : `${items.length} ${t.filter ? "Treffer" : "Objekte"}`;
+  const sel = marked.length ? `${marked.length} markiert, ${fmtSize(marked.reduce((a, k) => a + FS.totalSize(k), 0))}<button class="lclear" data-run="unselect" data-tip="Auswahl aufheben (Esc)" aria-label="Auswahl aufheben">${g('IconClose')}</button>` : `${items.length} ${t.filter || t.smart ? 'Treffer' : items.length === 1 ? 'Objekt' : 'Objekte'}`;
   const dots = CC.prefs.dual ? `<span class="pdots" aria-hidden="true">${[0, 1].map(n => `<i class="${n === i ? 'on' : ''}" data-pswitch="${n}"></i>`).join('')}</span>` : '';
   if (FS.inArchive(t.path)) return `<span>${sel}</span>${dots}<span class="grow"></span><span>im Archiv, nur lesen</span>`;
   return `<span>${sel}</span>${dots}<span class="grow"></span><button class="lfree" data-du="${esc(vol)}" data-tip="Speicherbelegung von ${esc(FS.LABEL[vol] || vol)}"><span>${fmtSize(FS.FREE[vol])} frei</span><span class="meter"><i style="width:${Math.round(used * 100)}%"></i></span></button>`;
@@ -490,7 +493,7 @@ document.addEventListener('contextmenu', e => {
     menu(e.clientX, e.clientY, [
       ...(oneFolder ? folderItems(FS.join(t.path, sel[0].name)) : ['view', 'edit', ...(file?.zip || sel[0]?.kind === 'arch' ? ['unpack'] : [])]), '-',
       'copy', 'move', 'rename', 'clipCut', 'clipCopy', '-',
-      'share', 'download', 'pack', 'checksum', 'symlink', ...(sel.length === 2 && sel.every(x => !x.dir) ? ['diff'] : []), '-',
+      'share', 'collect', 'download', 'pack', 'checksum', 'symlink', ...(sel.length === 2 && sel.every(x => !x.dir) ? ['diff'] : []), '-',
       'props', 'copyPath', '-', 'delete',
     ]);
   } else {

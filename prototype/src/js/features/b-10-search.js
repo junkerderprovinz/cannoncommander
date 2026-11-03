@@ -59,6 +59,7 @@
     $('.panel.active .row.cursor')?.scrollIntoView({ block: 'center' });
   }
 
+  CC.findFiles = find;
   CC.action('search', { label: 'Suchen', g: 'IconSearch', key: 'Alt+F7', run: () => {
     const start = CC.view === 'files' && !FS.inArchive(bk.here()) ? bk.here() : '/mnt/user';
     const q = { name: '', text: '', hidden: CC.prefs.showHidden, min: '', max: '', when: 'any', type: 'all', ...(last || {}), in: start };
@@ -76,7 +77,7 @@
           </div>
           ${frow('Art', seg(TYPES, q.type, 'id="s-type"'))}
         </div>
-        <div class="well bk-fill bk-hits" hidden><div class="bk-tools"><span class="eyebrow" id="s-count">Treffer</span></div>
+        <div class="well bk-fill bk-hits" hidden><div class="bk-tools"><span class="eyebrow" id="s-count">Treffer</span><button class="btn" id="s-save" data-tip="Die Suche kommt in die Seitenleiste und zeigt beim Klick immer die aktuellen Treffer">${g('IconFilter')}Als intelligenten Ordner speichern</button></div>
           <div class="bk-hhead"><span></span><span>Name</span><span>Ordner</span><span class="r">Größe</span><span class="r">Geändert</span></div>
           <div class="bk-list" id="s-list" role="listbox" aria-label="Treffer"></div></div>`,
       foot: [{ start: ' ' }, closeBtn,
@@ -135,6 +136,7 @@
     w.addEventListener('change', run);
     let lastClick = {};
     w.addEventListener('click', e => {
+      if (e.target.closest('#s-save')) { read(); CC.smart.save({ ...q }); return; }
       const r = e.target.closest('[data-bk-hit]');
       if (!r) return;
       const i = +r.dataset.bkHit;
