@@ -287,7 +287,7 @@ document.addEventListener('mouseover', e => {
   bubble = document.createElement('div');
   bubble.className = 'bubble';
   bubble._for = tr;
-  bubble.textContent = tr.dataset.tip;
+  bubble.textContent = CC.tipOf ? CC.tipOf(tr) : tr.dataset.tip;
   document.body.appendChild(bubble);
   const r = tr.getBoundingClientRect(), b = bubble.getBoundingClientRect();
   bubble.style.left = Math.max(8, Math.min(r.left + r.width / 2 - b.width / 2, innerWidth - b.width - 8)) + 'px';

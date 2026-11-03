@@ -6,6 +6,8 @@
     ['#steuer', 'alles mit dem Schlagwort steuer'],
     ['bericht', 'Namen, in denen bericht vorkommt'],
     ['IMG_????.jpg', 'ein ? steht für genau ein Zeichen'],
+    ['breite:>=3840 codec:hevc', '4K-Filme in HEVC, aus den Metadaten'],
+    ['geändert:<7d', 'alles, was sich in den letzten 7 Tagen geändert hat'],
   ];
   const close = () => $$('.qdrop').forEach(d => d.remove());
 
@@ -47,7 +49,8 @@
 .qrow .glim-num { font-size: 12px; color: var(--carbon-text-muted); }
 .qrow:hover, .qrow:focus-visible, .qrow.cur { background: var(--carbon-hover); outline: none; }
 .qex b { font-family: var(--font-mono, monospace); font-weight: 500; font-size: 12px; min-width: 6.5rem; color: var(--carbon-text); }
-.qex span { font-size: 12px; }
+.qex { height: auto; min-height: 2rem; padding-block: .3rem; }
+.qex span { font-size: 12px; white-space: normal; line-height: 1.3; }
 .qd-none { font-size: 12px; padding: .25rem .6rem; white-space: normal; line-height: 1.45; }
 `);
 })();

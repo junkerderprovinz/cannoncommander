@@ -36,7 +36,7 @@ module.exports = async (page, shot) => {
   console.log('palette from menu:', await page.locator('.pal').count());
   await page.keyboard.press('Escape'); await wait();
   await page.keyboard.press('F1'); await wait();
-  console.log('shortcut window has Strg+K:', await page.locator('.kbd-grid div', { hasText: 'Befehl suchen' }).textContent());
+  console.log('shortcut window has Strg+K:', await page.locator('.kb-row', { hasText: 'Befehl suchen' }).first().evaluate(r => r.innerText.replace(/\s+/g, ' ')));
   await page.keyboard.press('Escape'); await wait();
 
   const tabs = await page.evaluate(() => CC.orderedTabs().map(t => t.id));

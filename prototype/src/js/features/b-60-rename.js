@@ -102,7 +102,7 @@
         <div class="well bk-fill"><div class="bk-tools"><span class="eyebrow" id="m-count">Vorschau</span></div>
           <div class="bk-mhead"><span>Bisher</span><span></span><span>Neu</span><span></span></div>
           <div class="bk-list" id="m-list"></div></div>`,
-      foot: [{ start: ' ' }, cancel, { label: 'Umbenennen', g: 'IconPencil', primary: true, run: () => apply() }],
+      foot: [{ start: ' ' }, { label: 'Im Editor', g: 'IconCode', run: () => { setTimeout(() => CC.run('renameEditor')); } }, cancel, { label: 'Umbenennen', g: 'IconPencil', primary: true, run: () => apply() }],
     });
     const read = () => Object.assign(o, {
       name: $('#m-name', w).value, ext: $('#m-ext', w).value, start: parseInt($('#m-start', w).value, 10) || 0, step: parseInt($('#m-step', w).value, 10) || 1,
