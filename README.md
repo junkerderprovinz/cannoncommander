@@ -15,8 +15,9 @@ Krusader and Total Commander are fast because you work in two panels side by sid
 
 - Two panels with tabs, an F-key bar, synchronized browsing and a command search on Ctrl+K.
 - Folder compare, batch rename with patterns, checksums, duplicate finder and disk usage.
-- Seven views, from details with 87 choosable columns to a photo gallery, and quick look on the space bar.
-- Copy and move run as background jobs, with a rule for files that already exist.
+- Eight views, from details with 87 choosable columns to a photo gallery, and quick look on the space bar.
+- Copy and move run as background jobs with speed and time left, and a rule for files that already exist.
+- Cache or array, disk shares next to user shares, hard links, sleeping disks and the permissions Unraid itself sets.
 - Users, groups, access rules, share links and OIDC sign-in, inherited from Quantum and extended.
 - Remote storage through rclone.
 
@@ -67,7 +68,7 @@ The rows and the values for the web file managers are taken from the [comparison
 | API documentation page | 🚧 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
 | Mobile app | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Open source | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ |
-| Tags support | ❌ | 🚧 | ❌ | ✅ | ✅ | ❌ | ✅ | ? | 🟡 |
+| Tags support | 🧪 | 🚧 | ❌ | ✅ | ✅ | ❌ | ✅ | ? | 🟡 |
 | Shareable web links | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
 | Event-based notifications | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | Metrics | ❌ | 🚧 | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -82,7 +83,7 @@ The rows and the values for the web file managers are taken from the [comparison
 | Trash support | 🧪 | 🚧 | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Starred/pinned files | 🧪 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ |
 | Chromecast support | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Share collections of files | ❌ | 🚧 | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Share collections of files | 🧪 | 🚧 | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | Can archive selected files | 🧪 | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
 | Can browse archive files | 🧪 | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ |
 | Can convert documents | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
@@ -102,6 +103,7 @@ The rows and the values for the web file managers are taken from the [comparison
 | Command search | 🧪 | ? | ❌ | ❌ | ❌ | ❌ | ❌ | ? | ❌ |
 | Duplicate finder | 🧪 | ✅ | ❌ | ? | ? | ❌ | ? | ? | ❌ |
 | Disk usage view | 🧪 | ✅ | ❌ | ? | 🟡 | 🟡 | ? | ✅ | 🟡 |
+| Unraid cache, array and share awareness | 🧪 | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 ## License
 
