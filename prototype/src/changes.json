@@ -1,7 +1,4 @@
 [
-  { "sel": ".panel.active [data-run=\"quickFilter\"]", "go": { "view": "files" }, "text": "Notiz 55: Das Suchfeld klappt jetzt in der Pfadzeile auf, wie im Windows Explorer. Notiz 52: Darunter stehen die gespeicherten Suchen und, unter BEISPIELE, was das Feld versteht. Ein Klick setzt das Beispiel ein" },
-  { "sel": ".panel.active [data-labelsmenu]", "go": { "view": "files" }, "text": "Notiz 55: Die Markierungen haben einen eigenen Knopf. Er zeigt alle Farben und Schlagworte mit ihrer Anzahl, ein Klick sucht danach" },
-  { "sel": ".panel.active .lfree", "go": { "view": "files" }, "text": "Notiz 54: Die Speicherbelegung öffnet immer mit den Kacheln" },
-  { "sel": "#fkeys", "go": { "view": "files" }, "text": "Notiz 56: Die F-Tasten nutzen die ganze Breite" },
-  { "sel": "[data-menu=\"0\"]", "go": { "view": "files" }, "text": "Notiz 53: Schlagworte (Rechtsklick auf eine Datei): erst das Eingabefeld, darunter die Schlagworte. Das x nimmt eines weg. Notiz 57: In den Einstellungen stehen alle Karten untereinander" }
+  { "sel": ".panel.active [data-labelsmenu]", "go": { "view": "files" }, "text": "Notiz 59: Das Menü zeigt immer die sechs Farben Rot, Orange, Gelb, Grün, Blau und Lila. Notiz 58: Der Stift an Farben und Schlagworte öffnet das neue Fenster Markierungen. Dort benennst du Farben um und kannst Schlagworte umbenennen, löschen und neu anlegen" },
+  { "sel": ".panel.active .lfree", "go": { "view": "files" }, "text": "Notiz 60: Der Pfad in der Speicherbelegung sieht aus wie die Pfadzeile im Dateifenster" }
 ]

@@ -74,7 +74,7 @@
 
     const w = win({
       title: 'Speicherbelegung', full: true, cls: 'bk bk-du',
-      body: `<div class="du-top"><div class="bk-crumbs" id="du-crumbs"></div>${seg(VIEWS, view, 'id="du-view"')}</div>
+      body: `<div class="du-top"><div class="pathbar du-pathbar" id="du-crumbs"></div>${seg(VIEWS, view, 'id="du-view"')}</div>
         <div class="well du-well"><div class="du-body" id="du-body" tabindex="0"></div></div>`,
       foot: [{ start: ' ' }, closeBtn,
         { label: 'Löschen', g: 'IconTrash', run: () => { remove(); return false; } },
@@ -193,7 +193,8 @@
     function draw() {
       stat = measure(FS.nodeAt(cur));
       for (const p of [...sel.keys()]) if (!FS.nodeAt(p)) sel.delete(p);
-      $('#du-crumbs', w).innerHTML = bk.crumbs(cur, 'data-du-cd');
+      const parts = FS.split(cur);
+      $('#du-crumbs', w).innerHTML = `<button class="pseg ${parts.length ? '' : 'last'}" data-du-cd="/">Server</button>` + parts.map((p, k) => `<span class="psep" aria-hidden="true">›</span><button class="pseg ${k === parts.length - 1 ? 'last' : ''}" data-du-cd="${esc('/' + parts.slice(0, k + 1).join('/'))}">${esc(p.replace('::', ''))}</button>`).join('');
       ({ tree: drawTree, largest: drawLargest, types: drawTypes, map: drawMap })[view]();
       bk.setStart(w, summary());
       delBtn.disabled = !sel.size;
@@ -304,7 +305,7 @@
   CC.css(`
 .bk-du .win-body { gap: .8rem; }
 .du-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.du-top .bk-crumbs { flex: 1; min-width: 0; }
+.du-top .du-pathbar { flex: 1; min-width: 0; height: 2.1rem; cursor: default; }
 .du-well { flex: 1; min-height: 0; padding: .35rem; display: flex; }
 .du-body { flex: 1; min-height: 0; overflow: auto; outline: none; position: relative; border-radius: var(--radius-control); }
 .du-body:focus-visible { box-shadow: 0 0 0 2px var(--accent-soft, color-mix(in srgb, var(--accent) 35%, transparent)); }

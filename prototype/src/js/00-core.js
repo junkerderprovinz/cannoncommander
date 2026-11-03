@@ -177,7 +177,7 @@ const resolveItems = (items) => items.map(it => typeof it === 'string' && it !==
   .filter((it, k, a) => it !== '-' || (k > 0 && k < a.length - 1 && a[k - 1] !== '-' && !a[k - 1].head));
 const menuHTML = (list) => list.map((it, k) => {
   if (it === '-') return '<div class="sep"></div>';
-  if (it.head) return `<div class="head">${esc(it.head)}</div>`;
+  if (it.head) return `<div class="head">${esc(it.head)}${it.run ? `<button class="hedit" data-k="${k}" data-tip="${esc(it.tip)}" aria-label="${esc(it.tip)}">${g(it.g)}</button>` : ''}</div>`;
   const off = it.id && CC.actions[it.id] && (CC.blocked(it) || (it.when && !it.when()));
   // Anything that can be on or off shows a checkbox where its glyph would stand, as the column menu does.
   const lead = it.checked ? `<span class="cbox ${it.checked() ? 'on' : ''}" role="presentation">${g('IconCheck')}</span>` : it.color ? `<i class="cdot big" style="--c:${it.color}"></i>` : it.g ? g(it.g) : '<span class="ph"></span>';
