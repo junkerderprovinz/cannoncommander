@@ -1,4 +1,6 @@
 [
-  { "sel": "#tree", "go": { "view": "files" }, "text": "Notiz 81: Der Ordnerbaum zeigt wieder nur den freien Platz als Text, die Füllstände stehen im Hauptfenster" },
-  { "sel": "[data-viewmenu]", "go": { "view": "files" }, "text": "Notiz 82: Neue Ansicht Laufwerke wie „Dieser PC“ unter Windows, mit Füllstand und freiem Platz je Laufwerk. Notiz 83: Jeder Ordner merkt sich seine Ansicht, und wo die Laufwerke liegen, öffnet sich von selbst die Laufwerksansicht. Notiz 84: Die Spaltenansicht bleibt beim Hineingehen bis zu den Dateien erhalten" }
+  { "sel": ".head [data-run=\"palette\"]", "go": { "view": "files" }, "text": "Notiz 85: Lupe, Aufgaben, Zahnrad und Konto sind wieder richtige Knöpfe" },
+  { "sel": ".panel.active .list", "go": { "view": "files" }, "text": "[9816] Einfach lostippen springt zur passenden Datei. [9817] Strg+Z nimmt die letzte Aktion zurück, Bearbeiten › Letzte Aktionen zeigt zehn. [9822] Strg+V mit Bild oder Text legt eine Datei an. [9823] Strg+D dupliziert, Umschalt+F7 packt die Auswahl in einen neuen Ordner" },
+  { "sel": ".head [data-run=\"jobs\"]", "go": { "view": "files" }, "text": "[9825] Kopieren prüft vorab den Platz auf der Zielplatte. [9826] Große Aufgaben warten während der Paritätsprüfung. [9827] Tempolimit je Aufgabe und für alle. [9828] Meldung, wenn eine lange Aufgabe fertig ist" },
+  { "sel": "[data-viewmenu]", "go": { "view": "files" }, "text": "[9818] Häufige Ordner stehen in der Befehlssuche und im Ordnerverlauf oben. [9819] Der offene Ordner steht in der Adresse. [9838] Neue Dateien erscheinen von selbst. [9839] Ordner mit poster.jpg oder cover.jpg zeigen das Bild" }
 ]
