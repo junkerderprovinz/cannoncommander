@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CannonCommander Glyphen</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap">
+<style>
+/*TOKENS*/
+</style>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--carbon-bg); color: var(--carbon-text); font-family: var(--font-sans); font-size: 14px; line-height: 1.45; padding: 2rem 1rem 9rem; }
+main { max-width: 76rem; margin: 0 auto; display: flex; flex-direction: column; gap: 2.5rem; }
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+.card { position: relative; padding: 1.7rem 1.25rem 1.2rem; background: var(--carbon-surface); border-radius: var(--radius-card); box-shadow: var(--elevation), var(--hairline); }
+.notch { position: absolute; top: 0; left: 1.25rem; transform: translateY(-50%); height: 1.6rem; padding: 0 .8rem; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-contrast); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; display: inline-flex; align-items: center; }
+.intro p { margin: 0; color: var(--carbon-text-sub); }
+.legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: .8rem; font-size: 13px; color: var(--carbon-text-sub); }
+.legend span { display: inline-flex; gap: .45rem; align-items: center; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr)); gap: 2.5rem 1.5rem; }
+.fmt { display: flex; flex-direction: column; gap: .8rem; }
+.top { display: flex; gap: 1rem; align-items: center; }
+.big svg { width: 2.75rem; height: 2.75rem; color: var(--accent-ink); }
+.top b { font-size: 16px; }
+.state { font-size: 12px; height: 1.35rem; padding: 0 .55rem; border-radius: var(--radius-pill); display: inline-flex; align-items: center; margin-left: .5rem; background: var(--carbon-surface3); color: var(--carbon-text); }
+.state.drawn { background: color-mix(in srgb, var(--carbon-surface2), #24A148 45%); }
+.state.changed { background: var(--accent); color: var(--accent-contrast); }
+.exts { display: flex; flex-wrap: wrap; gap: .3rem; }
+.exts span { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 12px; padding: 0 .45rem; height: 1.35rem; display: inline-flex; align-items: center; border-radius: var(--radius-control); background: var(--carbon-surface2); color: var(--carbon-text-sub); }
+.pick { display: flex; flex-wrap: wrap; gap: 3px; padding: 3px; border-radius: var(--radius-control); background: var(--carbon-surface2); }
+.pick button { width: 2rem; height: 2rem; border-radius: var(--radius-control); display: grid; place-items: center; }
+.pick button svg { width: 1rem; height: 1rem; color: var(--carbon-text-sub); }
+.pick button:hover { background: var(--carbon-surface3); }
+.pick button:hover svg { color: var(--accent-ink); }
+.pick button[aria-pressed="true"] { background: var(--accent); }
+.pick button[aria-pressed="true"] svg { color: var(--accent-contrast); }
+textarea { width: 100%; min-height: 3.2rem; border: 0; border-radius: var(--radius-control); background: var(--carbon-surface2); color: var(--carbon-text); font: inherit; padding: .55rem .7rem; resize: vertical; outline: none; }
+textarea:focus { background: var(--carbon-surface3); }
+.bar { position: fixed; left: 50%; bottom: 5rem; transform: translateX(-50%); display: flex; gap: .5rem; padding: .5rem; background: var(--carbon-surface); border-radius: var(--radius-card); box-shadow: var(--elevation), var(--hairline); z-index: 5; }
+.btn { height: var(--btn-h); padding: 0 .9rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); font-weight: 500; }
+.btn:hover { background: var(--carbon-surface3); }
+.btn.primary { background: var(--accent); color: var(--accent-contrast); }
+.bubble { position: fixed; z-index: 80; padding: 6px 9px; font-size: 12px; border-radius: var(--radius-control); background: var(--carbon-surface3); pointer-events: none; }
+</style>
+</head>
+<body>
+<main>
+  <section class="card intro"><span class="notch">Glyphen für Dateiformate</span>
+    <p>Jede Gruppe zeigt den Glyphen, den CannonCommander ihr heute gibt, und alle Endungen, die dazugehören. Wähl darunter einen anderen, wenn er besser passt, und schreib dazu, was dir auffällt. Die 16 Gruppen mit dem grünen Hinweis bekommen einen neu gezeichneten Glyphen, den es in GlimStone noch nicht gibt. Den geliehenen von vorher findest du weiter in der Auswahl.</p>
+    <div class="legend"><span><span class="state">passt</span> eigener Glyph</span><span><span class="state drawn">neu gezeichnet</span> noch nicht in GlimStone</span><span><span class="state changed">geändert</span> von dir neu gewählt</span></div>
+  </section>
+  <div class="grid" id="grid"></div>
+</main>
+<div class="bar"><button class="btn" id="copy">Auswahl kopieren</button><button class="btn primary" id="save">Auswahl fertig</button></div>
+<script>
+const GLYPHS = /*GLYPHS*/;
+const FORMATS = /*FORMATS*/;
+const CANDIDATES = /*CANDIDATES*/;
+const g = (n) => { const d = GLYPHS[n] || GLYPHS.IconFile; return `<svg viewBox="${d.viewBox}" fill="currentColor" aria-hidden="true">${d.svg}</svg>`; };
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const KEY = 'cannoncommander-glyphen-wahl';
+const state = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || { pick: {}, notes: {} }; } catch { return { pick: {}, notes: {} }; } })();
+const store = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+const chosen = (f) => state.pick[f.id] || f.glyph;
+
+function render() {
+  document.getElementById('grid').innerHTML = FORMATS.map(f => {
+    const now = chosen(f), changed = now !== f.glyph;
+    return `<section class="card fmt" data-id="${f.id}"><span class="notch">${esc(f.name)}</span>
+      <div class="top"><span class="big">${g(now)}</span><div><b>${esc(now.replace('Icon', ''))}</b>${changed ? '<span class="state changed">geändert</span>' : f.drawn ? '<span class="state drawn">neu gezeichnet</span>' : '<span class="state">passt</span>'}<div style="font-size:12px;color:var(--carbon-text-muted)">${f.ext.length} Endungen</div></div></div>
+      <div class="exts">${f.ext.map(e => `<span>.${esc(e)}</span>`).join('')}</div>
+      <div class="pick" role="radiogroup" aria-label="Glyph für ${esc(f.name)}">${CANDIDATES.map(c => `<button role="radio" aria-pressed="${c === now}" data-g="${c}" data-tip="${c.replace('Icon', '')}">${g(c)}</button>`).join('')}</div>
+      <textarea data-note="${f.id}" placeholder="Notiz zu ${esc(f.name)}">${esc(state.notes[f.id] || '')}</textarea>
+    </section>`;
+  }).join('');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.pick button');
+  if (!b) return;
+  const f = FORMATS.find(x => x.id === b.closest('.fmt').dataset.id);
+  if (b.dataset.g === f.glyph) delete state.pick[f.id]; else state.pick[f.id] = b.dataset.g;
+  store();
+  const y = scrollY;
+  render();
+  scrollTo(0, y);
+});
+document.addEventListener('input', e => { const t = e.target.closest('[data-note]'); if (t) { state.notes[t.dataset.note] = t.value; store(); } });
+let bubble;
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest('[data-tip]');
+  bubble?.remove(); bubble = null;
+  if (!t) return;
+  bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = t.dataset.tip; document.body.appendChild(bubble);
+  const r = t.getBoundingClientRect(); bubble.style.left = r.left + 'px'; bubble.style.top = (r.bottom + 6) + 'px';
+});
+function answers() {
+  const lines = ['Antworten CannonCommander-Glyphen'];
+  for (const f of FORMATS) {
+    const pick = state.pick[f.id], note = (state.notes[f.id] || '').trim();
+    if (pick || note) lines.push(`${f.name}: ${pick ? `${f.glyph.replace('Icon', '')} → ${pick.replace('Icon', '')}` : 'bleibt ' + f.glyph.replace('Icon', '')}${note ? ` (${note})` : ''}`);
+  }
+  if (lines.length === 1) lines.push('Alles passt so.');
+  return lines.join('\n');
+}
+document.getElementById('copy').onclick = () => navigator.clipboard.writeText(answers());
+document.getElementById('save').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([answers()], { type: 'text/plain' }));
+  a.download = 'cannoncommander-glyphen-wahl.txt';
+  a.click();
+};
+render();
+</script>
+<!--PINNWAND-->
+</body>
+</html>
