@@ -161,7 +161,7 @@ const DATA = {
     { name: 'Fotos', path: '/mnt/user/fotos', g: 'IconFileImage' },
     { name: 'Backups', path: '/mnt/user/backups', g: 'IconBackupNow' },
   ],
-  version: { app: '0.1.0', glimstone: '3.8.5', quantum: '2.1.4', build: 'Vorschau, Runde 1' },
+  version: { app: '0.1.0', glimstone: '4.0.0', quantum: '2.1.4', build: 'Vorschau, Runde 1' },
 };
 
 // Background jobs: copy, move, delete, pack and friends run here and report into the Aufgaben window.

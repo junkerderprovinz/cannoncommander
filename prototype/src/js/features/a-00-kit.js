@@ -243,6 +243,7 @@
     const away = (e) => {
       if (e.type === 'keydown' && e.key !== 'Escape') return;
       if (e.type === 'mousedown' && (pop.contains(e.target) || anchor.contains(e.target))) return;
+      if (e.type === 'keydown') e.preventDefault();
       pop.remove();
       removeEventListener('mousedown', away, true); removeEventListener('keydown', away, true); removeEventListener('resize', away);
     };

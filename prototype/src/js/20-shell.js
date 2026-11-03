@@ -189,7 +189,8 @@ const comboOf = (e) => {
 document.addEventListener('keydown', e => {
   if ($('#menu')) { if (e.key === 'Escape') { e.preventDefault(); closeMenu(); } return; }
   if (winStack.length) { if (e.key === 'Escape') { e.preventDefault(); CC.closeWin(); } return; }
-  if (e.key === 'Escape' && CC.views[CC.view]?.page && !e.target.closest('input, textarea, select, [contenteditable]')) { e.preventDefault(); CC.go('files'); return; }
+  // Escape closes an open popover first and leaves the page only when none is open.
+  if (e.key === 'Escape' && CC.views[CC.view]?.page && !e.defaultPrevented && !$('.a-cpop, .cpick') && !e.target.closest('input, textarea, select, [contenteditable]')) { e.preventDefault(); CC.go('files'); return; }
   if (e.key === 'F10') { e.preventDefault(); Shell.openMenu(0); return; }
   if (e.target.closest('input, textarea, select, [contenteditable]')) return;
   const combo = comboOf(e);

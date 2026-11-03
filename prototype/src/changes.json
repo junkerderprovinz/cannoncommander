@@ -1,5 +1,8 @@
 [
-  { "sel": ".head", "go": { "view": "files" }, "text": "Notiz 68: Der Kopfbereich ist eine ruhige Leiste. Links Marke und Menüs, in der Mitte die Befehlssuche (Strg+K), rechts Fenster, Aufgaben, Einstellungen und Konto. Als installierte App wird die Leiste zur Titelleiste des Fensters" },
-  { "sel": "#shortcuts", "go": { "view": "files" }, "text": "Notiz 67: Jede Verknüpfung trägt rechts einen Pin wie im Windows Explorer. Ein Klick löst sie vom Schnellzugriff, Rückgängig bringt sie zurück" },
-  { "sel": ".panel.active [data-labelsmenu]", "go": { "view": "files" }, "text": "Notiz 65: Im Fenster Farben öffnet der Punkt einen Farbwähler im GlimStone-Stil. Notiz 66: Auch die neue Farbe hat so einen Punkt, und der gewählte Farbton schlägt gleich einen Namen vor" }
+  { "sel": ".head .brand", "go": { "view": "files" }, "text": "Notiz 78: Oben steht nur noch das Logo. Notiz 77: Die Befehlssuche sitzt rechts hinter der Lupe (Strg+K). Notiz 76: Der Zähler an Aufgaben erscheint erst, wenn etwas läuft" },
+  { "sel": "#tree", "go": { "view": "files" }, "text": "Notiz 80: Jedes Laufwerk zeigt seinen Füllstand wie unter Windows, im Baum und in der Liste von /mnt, ab neun Zehnteln rot" },
+  { "sel": "[data-viewmenu]", "go": { "view": "files" }, "text": "Notiz 70: In Auswahl-Menüs wie der Ansicht behält jede Wahl ihre Glyphe, die aktuelle bekommt einen Haken" },
+  { "sel": ".panel.active [data-labelsmenu]", "go": { "view": "files" }, "text": "Notiz 69: Im Fenster Farben öffnet der Punkt einen richtigen Farbwähler mit Farbfläche, Farbton-Leiste und Hex-Wert. Der Name kommt aus rund 90 deutschen Farbnamen" },
+  { "sel": ".hback", "go": { "view": "settings" }, "text": "Notiz 79: Aus den Einstellungen führt oben „Zurück zu den Dateien“ heraus, dazu Esc und das Zahnrad" },
+  { "sel": ".tiles", "go": { "view": "settings", "tab": "look" }, "text": "Notizen 71 und 72: Aussehen: Die Farben-Karte ist wie in BombVault gebaut, mit den drei Easter Eggs Blatt (Eckig 5-mal), Sturm (Wild 5-mal) und Disco (Regenbogen 5-mal in kurzer Folge). Notizen 73 bis 75: Info zeigt Versionen als Links ohne Badge, ohne Quantum-Zeile, Hilfe und Über wie in BombVault" }
 ]
