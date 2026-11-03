@@ -113,7 +113,18 @@
           </div></div>
         <div class="well bk-fill"><div class="bk-tools"><span class="eyebrow" id="y-count">Vorschau</span>${info('Probelauf: noch ist nichts geschrieben. Jeder Schritt lässt sich einzeln abschalten.')}</div>
           <div class="bk-list" id="y-list"></div></div>`,
-      foot: [{ start: 'Läuft als Aufgabe im Hintergrund' }, cancel, { label: 'Synchronisieren', g: 'IconSync', primary: true, run: () => apply() }],
+      foot: [{ start: 'Läuft als Aufgabe im Hintergrund' }, cancel, { label: 'In ArrowLoop planen', g: 'IconSchedules', run: () => { schedule(); return false; } }, { label: 'Synchronisieren', g: 'IconSync', primary: true, run: () => apply() }],
+    });
+    // Recurring runs belong to ArrowLoop, which already plans and logs them; this only hands the pair of folders over.
+    const schedule = () => win({
+      title: 'In ArrowLoop planen',
+      body: `<div class="well">${frow('Name', `<input class="field m" id="al-name" value="${esc(`${FS.split(L).pop()} nach ${FS.split(R).pop()}`)}">`, 'ArrowLoop übernimmt Richtung, Vergleich und Spiegeln so, wie sie hier eingestellt sind, und führt das Protokoll.')}
+        ${frow('Wie oft', seg([['hourly', 'Stündlich'], ['daily', 'Täglich'], ['weekly', 'Wöchentlich']], 'daily', 'id="al-when"'))}
+        ${frow('Uhrzeit', '<input class="field s mono" id="al-time" value="03:00" maxlength="5">', 'Nachts stören die Läufe am wenigsten.')}</div>`,
+      foot: [cancel, { label: 'An ArrowLoop übergeben', g: 'IconSchedules', primary: true, run: (hw) => {
+        const name = $('#al-name', hw).value.trim() || 'Synchronisieren';
+        CC.toast(`„${name}“ ist in ArrowLoop geplant`, 'ok', { label: 'ArrowLoop öffnen', run: () => CC.toast('ArrowLoop öffnet sich in einem eigenen Tab') });
+      } }],
     });
     const isOn = (s) => touched.has(s.key) ? touched.get(s.key) : !s.off;
     const draw = () => {
