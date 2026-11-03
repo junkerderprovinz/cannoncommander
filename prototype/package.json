@@ -1,0 +1,12 @@
+{
+  "name": "castlecommander-prototype",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node tools/check.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.0"
+  }
+}

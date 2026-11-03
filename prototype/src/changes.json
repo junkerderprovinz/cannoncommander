@@ -1,0 +1,4 @@
+[
+  { "sel": ".panel.active [data-run=\"quickFilter\"]", "go": { "view": "files" }, "text": "Statt des Filters gibt es hier eine Suche (Strg+F oder /): sie durchsucht den Ordner samt Unterordnern, *.mkv findet alle Filme, der Schalter Unterordner beschränkt sie auf diesen Ordner. Enter springt zur Datei" },
+  { "sel": ".panel.active .list", "go": { "view": "files" }, "text": "Der Anhalten-Knopf in der Schnellansicht ist jetzt wirklich quadratisch" }
+]
