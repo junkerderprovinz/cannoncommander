@@ -3,9 +3,9 @@ module.exports = async (page, shot) => {
   const wait = (ms = 350) => page.waitForTimeout(ms);
   await page.setViewportSize({ width: 1908, height: 1000 });
   await wait(600);
-  console.log('head:', await page.evaluate(() => { const h = $('.head').getBoundingClientRect(); return `${Math.round(h.width)}x${Math.round(h.height)}, find ${!!$('.hfind')}`; }));
+  console.log('head:', await page.evaluate(() => { const h = $('.head').getBoundingClientRect(); return `${Math.round(h.width)}x${Math.round(h.height)}, magnifier ${!!$('.head [data-run="palette"]')}`; }));
   await shot('r18-1-head');
-  await page.click('.hfind'); await wait();
+  await page.click('.head [data-run="palette"]'); await wait();
   console.log('palette open:', await page.evaluate(() => !!$('.pal-scrim')));
   await page.keyboard.press('Escape'); await wait();
 
