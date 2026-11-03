@@ -60,11 +60,14 @@ CC.action('equalPanels', { label: 'Anderes Fenster hierher', g: 'IconCompare', k
 CC.action('refresh', { label: 'Aktualisieren', g: 'IconRefresh', key: 'Strg+R', run: () => { CC.render(); CC.toast('Neu eingelesen'); } });
 CC.action('newTab', { label: 'Neuer Tab', g: 'IconAdd', key: 'Strg+T', run: () => { const p = Files.P(); p.tabs.push(newTab(Files.T().path)); p.cur = p.tabs.length - 1; CC.render(); } });
 CC.action('closeTab', { label: 'Tab schließen', g: 'IconClose', key: 'Strg+W', run: () => { const p = Files.P(); if (p.tabs.length > 1) { p.tabs.splice(p.cur, 1); p.cur = Math.max(0, p.cur - 1); CC.render(); } } });
-CC.action('dupTab', { label: 'Tab duplizieren', g: 'IconCopy', run: () => { const p = Files.P(), t = Files.T(); p.tabs.splice(p.cur + 1, 0, { ...newTab(t.path), sort: t.sort, dir: t.dir, view: t.view }); p.cur += 1; CC.render(); } });
+CC.action('dupTab', { label: 'Tab duplizieren', g: 'IconCopy', run: () => { const p = Files.P(), t = Files.T(); p.tabs.splice(p.cur + 1, 0, { ...newTab(t.path), sort: t.sort, dir: t.dir}); p.cur += 1; CC.render(); } });
 CC.action('lockTab', { label: 'Tab sperren', g: 'IconPin', checked: () => !!Files.T().locked, run: () => { Files.T().locked = !Files.T().locked; CC.render(); } });
 CC.action('closeOtherTabs', { label: 'Andere Tabs schließen', g: 'IconClose', when: () => Files.P().tabs.length > 1, run: () => { const p = Files.P(); p.tabs = [p.tabs[p.cur]]; p.cur = 0; CC.render(); } });
-VIEWS.forEach(([id, label, glyph]) => CC.action('view-' + id, { label, g: glyph, radio: true, checked: () => viewOf(Files.T()) === id, run: () => { Files.T().view = id; CC.render(); } }));
-CC.action('nextView', { label: 'Nächste Ansicht', g: 'IconTabApps', key: 'Strg+Umschalt+V', run: () => { const t = Files.T(), k = VIEWS.findIndex(v => v[0] === viewOf(t)); t.view = VIEWS[(k + 1) % VIEWS.length][0]; CC.render(); CC.toast(`Ansicht: ${VIEWS.find(v => v[0] === t.view)[1]}`); } });
+VIEWS.forEach(([id, label, glyph]) => CC.action('view-' + id, { label, g: glyph, radio: true, checked: () => viewOf(Files.T()) === id, run: () => setView(Files.T(), id) }));
+CC.action('nextView', { label: 'Nächste Ansicht', g: 'IconTabApps', key: 'Strg+Umschalt+V', run: () => { const t = Files.T(), k = VIEWS.findIndex(v => v[0] === viewOf(t)); const next = VIEWS[(k + 1) % VIEWS.length]; setView(t, next[0]); CC.toast(`Ansicht: ${next[1]}`); } });
+CC.action('group-none', { label: 'Nicht gruppieren', g: 'IconViewSimple', radio: true, checked: () => !groupOf(Files.T()), run: () => setGroup(Files.T(), '') });
+Object.entries(GROUPS).forEach(([id, gr]) => CC.action('group-' + id, { label: 'Nach ' + gr.label, g: gr.g, radio: true, checked: () => groupOf(Files.T()) === id, run: () => setGroup(Files.T(), id) }));
+CC.action('flat', { label: 'Flache Ansicht', g: 'IconLog', key: 'Strg+Umschalt+B', checked: () => !!Files.T().flat, run: () => { const t = Files.T(); Object.assign(t, { flat: !t.flat, cursor: 0, marked: new Set() }); CC.render(); } });
 
 CC.action('back', { label: 'Zurück', g: 'IconBack', key: 'Alt+Links', run: () => { const t = Files.T(); if (!t.hist.length) return; t.fwd.push(t.path); Files.go(t.hist.pop(), Files.active, false); } });
 CC.action('forward', { label: 'Vor', g: 'IconForward', key: 'Alt+Rechts', run: () => { const t = Files.T(); if (!t.fwd.length) return; t.hist.push(t.path); Files.go(t.fwd.pop(), Files.active, false); } });
@@ -167,12 +170,12 @@ function transferWindow(kind) {
 CC.action('delete', { label: 'Löschen', g: 'IconTrash', key: 'F8', needs: ['sel', 'writable'], run: () => {
   const sel = Files.sel(), path = Files.T().path;
   const doIt = (toTrash) => {
-    const n = FS.nodeAt(path);
-    n.children = n.children.filter(c => !sel.some(s => s.name === c.name));
-    if (toTrash) sel.forEach(k => DATA.trash.unshift({ name: k.name, from: path, size: FS.totalSize(k), deleted: Date.now(), by: CC.user.name, dir: !!k.dir, node: k }));
+    // In the flat view and in search hits the files come from several folders.
+    for (const k of sel) { const n = FS.nodeAt(k.at || path); n.children = n.children.filter(c => c.name !== k.name); }
+    if (toTrash) sel.forEach(k => DATA.trash.unshift({ name: k.name, from: k.at || path, size: FS.totalSize(k), deleted: Date.now(), by: CC.user.name, dir: !!k.dir, node: k }));
     Files.T().marked = new Set();
     CC.render();
-    CC.toast(`${sel.length} ${sel.length === 1 ? 'Objekt' : 'Objekte'} ${toTrash ? 'im Papierkorb' : 'gelöscht'}`, 'ok', toTrash ? { label: 'Rückgängig', run: () => { const n2 = FS.nodeAt(path); sel.forEach(k => { n2.children.push(k); DATA.trash = DATA.trash.filter(x => x.node !== k); }); CC.render(); } } : null);
+    CC.toast(`${sel.length} ${sel.length === 1 ? 'Objekt' : 'Objekte'} ${toTrash ? 'im Papierkorb' : 'gelöscht'}`, 'ok', toTrash ? { label: 'Rückgängig', run: () => { sel.forEach(k => { FS.nodeAt(k.at || path).children.push(k); DATA.trash = DATA.trash.filter(x => x.node !== k); }); CC.render(); } } : null);
   };
   if (!CC.prefs.confirmDelete) return doIt(CC.prefs.trash);
   win({
@@ -214,6 +217,6 @@ const KEYS = {
   'Ctrl+a': 'selectAll', '*': 'invertSel', '-': 'unselect', '+': 'selectPattern', '/': 'quickFilter', 'Ctrl+f': 'quickFilter',
   'Ctrl+x': 'clipCut', 'Ctrl+c': 'clipCopy', 'Ctrl+v': 'clipPaste',
   F1: 'shortcuts', F2: 'rename', F3: 'view', F4: 'edit', 'Shift+F4': 'newFile', F5: 'copy', F6: 'move', F7: 'newFolder', F8: 'delete', F9: 'search', F10: 'menuBar', Delete: 'delete',
-  'Alt+F7': 'search', 'Alt+ArrowDown': 'history', 'Ctrl+m': 'multiRename', 'Ctrl+Shift+c': 'compareDirs', 'Ctrl+Shift+v': 'nextView', 'Alt+Enter': 'props', 'Alt+p': 'pack', 'Alt+u': 'unpack', 'Alt+d': 'diskUsage',
+  'Alt+F7': 'search', 'Alt+ArrowDown': 'history', 'Ctrl+m': 'multiRename', 'Ctrl+Shift+c': 'compareDirs', 'Ctrl+Shift+v': 'nextView', 'Ctrl+Shift+b': 'flat', 'Alt+Enter': 'props', 'Alt+p': 'pack', 'Alt+u': 'unpack', 'Alt+d': 'diskUsage',
 };
 Object.entries(KEYS).forEach(([k, id]) => CC.bindKey(k, id));

@@ -2,7 +2,7 @@
 const MENUS = [
   ['Datei', ['newFolder', 'newFile', 'upload', 'download', '-', 'view', 'edit', 'share', 'props', '-', 'pack', 'unpack', 'checksum', 'checksumVerify', 'split', 'combine', 'symlink', '-', 'delete', 'openTrash', '-', 'logout']],
   ['Bearbeiten', ['copy', 'move', 'rename', 'multiRename', '-', 'clipCut', 'clipCopy', 'clipPaste', '-', 'selectAll', 'invertSel', 'selectPattern', 'unselect', 'saveSel', 'restoreSel', '-', 'copyPath']],
-  ['Ansicht', ['single', 'dual', 'sidebar', 'quickview', 'fkeys', 'hidden', 'extensions', 'syncBrowse', '-', { label: 'Darstellung', g: 'IconTabApps', sub: ['view-details', 'view-compact', 'view-list', 'view-content', 'view-tiles', 'view-large', 'view-gallery'] }, 'columns', { head: 'Sortieren' }, 'sortName', 'sortSize', 'sortTime', 'sortType', '-', 'swapPanels', 'equalPanels', 'profiles', 'refresh']],
+  ['Ansicht', ['single', 'dual', 'sidebar', 'quickview', 'fkeys', 'hidden', 'extensions', 'syncBrowse', '-', { label: 'Darstellung', g: 'IconTabApps', sub: ['view-details', 'view-compact', 'view-list', 'view-content', 'view-columns', 'view-tiles', 'view-large', 'view-gallery'] }, { label: 'Gruppieren', g: 'IconFile', sub: ['group-none', 'group-kind', 'group-date', 'group-size'] }, 'flat', 'columns', { head: 'Sortieren' }, 'sortName', 'sortSize', 'sortTime', 'sortType', '-', 'swapPanels', 'equalPanels', 'profiles', 'refresh']],
   ['Gehe zu', ['back', 'forward', 'up', 'home', 'gotoPath', 'history', '-', 'BOOKMARKS', '-', 'openTrash', 'openShares', 'openActivity']],
   ['Werkzeuge', ['search', 'quickFilter', '-', 'compareDirs', 'sync', 'diff', 'duplicates', 'diskUsage', '-', 'jobs', 'mounts']],
   ['Hilfe', ['palette', 'shortcuts', 'whatsNew', 'docs', 'glyphs', '-', 'about']],

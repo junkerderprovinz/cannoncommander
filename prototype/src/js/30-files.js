@@ -1,10 +1,11 @@
 // The file manager itself: one or two panels, each with its own tabs, history, selection and filter.
-// Words in a search match anywhere in the name; a word with * or ? is a pattern for the whole name, so *.mkv finds every film.
+// Words in a search match anywhere in the name; a word with * or ? is a pattern for the whole name, so *.mkv finds
+// every film, and a word starting with # finds a tag or a colour.
 function nameMatcher(query) {
   const parts = query.trim().toLowerCase().split(/\s+/).filter(Boolean).map(p => /[*?]/.test(p)
     ? new RegExp('^' + p.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.') + '$', 'i')
     : p);
-  return (k) => parts.some(p => typeof p === 'string' ? k.name.toLowerCase().includes(p) : p.test(k.name));
+  return (k) => parts.some(p => typeof p !== 'string' ? p.test(k.name) : p.startsWith('#') ? Labels.matches(k, p) : k.name.toLowerCase().includes(p));
 }
 const newTab = (path) => ({ path, marked: new Set(), cursor: 0, sort: 'name', dir: 1, filter: '', qf: false, hist: [], fwd: [], editPath: false });
 
@@ -27,7 +28,8 @@ const Files = {
     const shown = (k) => CC.prefs.showHidden || (!k.hidden && !k.name.startsWith('.'));
     let list = FS.kids(FS.nodeAt(t.path)).filter(shown).map(k => ({ ...k, kind: FS.kindOf(k) }));
     if (t.filter && t.deep !== false) list = Files.search(t.path, t.filter, shown);
-    else if (t.filter) list = list.filter(nameMatcher(t.filter));
+    else if (t.flat) list = Files.search(t.path, '*', shown).filter(k => !k.dir);
+    else if (t.filter) list = list.filter(k => nameMatcher(t.filter)({ ...k, at: t.path }));
     const by = {
       name: (a, b) => a.name.localeCompare(b.name, 'de', { numeric: true }),
       size: (a, b) => FS.totalSize(a) - FS.totalSize(b),
@@ -35,6 +37,8 @@ const Files = {
       type: (a, b) => FS.ext(a.name).localeCompare(FS.ext(b.name)) || a.name.localeCompare(b.name, 'de'),
     }[t.sort] || Columns.comparer(t.sort) || ((a, b) => a.name.localeCompare(b.name, 'de', { numeric: true }));
     list.sort((a, b) => (CC.prefs.foldersFirst ? (b.dir ? 1 : 0) - (a.dir ? 1 : 0) : 0) || by(a, b) * t.dir);
+    const grp = GROUPS[groupOf(t)];
+    if (grp) list.sort((a, b) => grp.rank(a) - grp.rank(b));
     return list;
   },
   // The search walks the whole tree below the folder; each hit remembers the folder it was found in.
@@ -43,7 +47,7 @@ const Files = {
     const walk = (n, path) => {
       for (const k of FS.kids(n).filter(shown)) {
         if (hits.length >= 2000) return;
-        if (match(k)) hits.push({ ...k, kind: FS.kindOf(k), at: path });
+        if (match({ ...k, at: path })) hits.push({ ...k, kind: FS.kindOf(k), at: path });
         if (k.dir && !k.link) walk(k, FS.join(path, k.name));
       }
     };
@@ -65,7 +69,7 @@ const Files = {
     // A locked tab keeps its folder; going elsewhere from it opens the new folder in a tab beside it, as in Krusader.
     if (record && t.locked && t.path !== path && !Files.following) { const p = Files.P(i); p.tabs.splice(p.cur + 1, 0, newTab(path)); p.cur += 1; return Files.go(path, i, false); }
     if (record && t.path !== path) { t.hist.push(t.path); t.fwd = []; if (!Files.following) Files.pushNav(i); }
-    Object.assign(t, { path, marked: new Set(), cursor: 0, filter: '', qf: false, editPath: false });
+    Object.assign(t, { path, marked: new Set(), cursor: 0, filter: '', qf: false, editPath: false, flat: false });
     Files.visited = [path, ...Files.visited.filter(p => p !== path)].slice(0, 20);
     // Synchronised browsing: one step down or up in this panel takes the other panel the same step, where it can follow.
     if (CC.prefs.syncBrowse && CC.prefs.dual && record && !Files.following) {
@@ -117,7 +121,7 @@ const Files = {
     const total = items.reduce((a, k) => a + FS.totalSize(k), 0);
     const label = `${kind === 'copy' ? 'Kopieren' : 'Verschieben'}: ${items.length === 1 ? items[0].name : items.length + ' Objekte'} nach ${FS.split(dest).pop()}`;
     Jobs.start({ kind, label, total, speed: total > 10 * GB ? 0.5 : 1, done: () => {
-      const src = FS.nodeAt(from);
+
       for (const k of items) {
         const choice = decide[k.name] || 'replace';
         if (choice === 'skip') continue;
@@ -127,7 +131,7 @@ const Files = {
         if (choice === 'both') copy.name = Files.freeName(target, k.name);
         else target.children = target.children.filter(c => c.name !== copy.name);
         target.children.push(copy);
-        if (kind === 'move') src.children = src.children.filter(c => c.name !== k.name);
+        if (kind === 'move') { const src = FS.nodeAt(k.at || from); src.children = src.children.filter(c => c.name !== k.name); }
       }
       Files.T().marked = new Set();
       DATA.activity.unshift({ t: Date.now(), who: CC.user.name, what: kind === 'copy' ? 'kopiert' : 'verschoben', obj: `${items.length} ${items.length === 1 ? 'Objekt' : 'Objekte'} nach ${dest}` });
@@ -150,13 +154,14 @@ function renderFiles(host) {
   if (!CC.prefs.dual) Files.active = 0;
   host.innerHTML = `<aside class="side" id="side">
       <section class="side-card"><span class="notch">Verknüpfungen</span><button class="ptab add side-add" data-run="addBookmark" data-tip="Aktuellen Ordner als Verknüpfung anlegen">${g('IconAdd')}</button><div id="shortcuts"></div></section>
-      <section class="side-card side-tree"><span class="notch">Ordnerbaum</span><div id="tree"></div></section>
+      ${Labels.card()}<section class="side-card side-tree"><span class="notch">Ordnerbaum</span><div id="tree"></div></section>
     </aside><div class="panels" id="panels"></div>`;
   renderSide();
   const panels = $('#panels');
   for (let i = 0; i < (CC.prefs.dual ? 2 : 1); i++) panels.appendChild(CC.prefs.quickview && CC.prefs.dual && i !== Files.active ? renderQuickview(i) : renderPanel(i));
   renderFkeys();
   $('.panel.active .list')?.focus({ preventScroll: true });
+  $$('.list.view-columns').forEach(l => { l.scrollLeft = l.scrollWidth; });
 }
 
 function renderSide() {
@@ -207,7 +212,7 @@ function renderPanel(i) {
     </div>
     <div class="list view-${viewOf(t)} ${CARD_VIEWS.includes(viewOf(t)) ? 'grid-view' : ''}" tabindex="0" style="--cols:${Columns.template()};--minw:${Columns.minWidth()}">
       ${!['details', 'compact'].includes(viewOf(t)) ? '' : `<div class="lhead" data-lhead>${Columns.visible().map(id => { const c = COL[id], key = Columns.sortKey(c); return `<button class="lh ${c.r ? 'r' : ''} ${t.sort === key ? 'sorted' : ''}" data-sort="${key}" data-colid="${id}">${esc(c.label)}${sortGlyph(key)}${c.fixed ? '' : `<span class="lh-grip" data-grip="${id}" aria-hidden="true"></span>`}</button>`; }).join('')}</div>`}
-      ${list.map((k, idx) => ITEM_HTML[viewOf(t)](i, k, idx)).join('')}
+      ${viewOf(t) === 'columns' ? millerHtml(i, t, list) : list.map((k, idx) => groupHead(t, list, idx) + ITEM_HTML[viewOf(t)](i, k, idx)).join('')}
       ${!list.length ? `<div class="empty">${g(t.filter ? 'IconSearch' : 'IconFolder')}<div>${t.filter ? `Nichts gefunden für ${esc(t.filter)}` : 'Dieser Ordner ist leer'}</div>${t.filter ? `<div class="muted" style="font-size:12px">${t.deep === false ? 'Nur in diesem Ordner gesucht' : 'Auch in allen Unterordnern gesucht'}</div>` : '<div class="muted" style="font-size:12px">Dateien hierher ziehen zum Hochladen</div>'}</div>` : ''}
     </div>
     <div class="lfoot glim-num">${footer(i, list)}</div>
@@ -218,10 +223,32 @@ function renderPanel(i) {
 // Every view renders the same .row elements, so clicks, marks, drags and menus work the same in all of them.
 const VIEWS = [
   ['details', 'Details', 'IconViewAdvanced'], ['compact', 'Kompakt', 'IconViewSimple'], ['list', 'Liste', 'IconLog'], ['content', 'Inhalt', 'IconFileDoc'],
-  ['tiles', 'Kacheln', 'IconTabApps'], ['large', 'Große Kacheln', 'IconFileImage'], ['gallery', 'Galerie', 'IconFileRaw'],
+  ['columns', 'Spalten', 'IconCompare'], ['tiles', 'Kacheln', 'IconTabApps'], ['large', 'Große Kacheln', 'IconFileImage'], ['gallery', 'Galerie', 'IconFileRaw'],
 ];
 const CARD_VIEWS = ['tiles', 'large', 'gallery'];
-const viewOf = (t) => t.view || 'details';
+// Each folder remembers the view it was last shown in, so photos stay a gallery and logs stay a list.
+const viewOf = (t) => CC.prefs.folderViews?.[t.path] || 'details';
+const setView = (t, id) => CC.setPref('folderViews', { ...CC.prefs.folderViews, [t.path]: id });
+
+// Grouping splits the list into sections with a heading; it is kept per folder like the view.
+const AGE = [['Heute', 1], ['Gestern', 2], ['Diese Woche', 7], ['Diesen Monat', 31], ['Dieses Jahr', 365], ['Älter', Infinity]];
+const SIZE = [['Riesig, über 1 GB', 1e9], ['Groß, über 100 MB', 1e8], ['Mittel, über 1 MB', 1e6], ['Klein', 1], ['Leer', 0]];
+const KIND_ORDER = ['dir', 'video', 'audio', 'img', 'pdf', 'office', 'text', 'code', 'arch', 'disk', 'file'];
+const GROUPS = {
+  kind: { label: 'Art', g: 'IconFile', rank: (k) => KIND_ORDER.indexOf(k.dir ? 'dir' : k.kind), name: (k) => k.dir ? 'Ordner' : KIND_NAMES[k.kind] || 'Sonstiges' },
+  date: { label: 'Änderungsdatum', g: 'IconCalendar', rank: (k) => AGE.findIndex(([, d]) => NOW - k.time < d * DAY), name: (k) => AGE.find(([, d]) => NOW - k.time < d * DAY)[0] },
+  size: { label: 'Größe', g: 'IconDatabase', rank: (k) => k.dir ? -1 : SIZE.findIndex(([, s]) => (k.size || 0) >= s), name: (k) => k.dir ? 'Ordner' : SIZE.find(([, s]) => (k.size || 0) >= s)[0] },
+};
+const groupOf = (t) => CC.prefs.folderGroups?.[t.path] || '';
+const setGroup = (t, id) => CC.setPref('folderGroups', { ...CC.prefs.folderGroups, [t.path]: id });
+function groupHead(t, list, idx) {
+  const grp = GROUPS[groupOf(t)];
+  if (!grp) return '';
+  const name = grp.name(list[idx]);
+  if (idx > 0 && grp.name(list[idx - 1]) === name) return '';
+  const n = list.filter(k => grp.name(k) === name).length;
+  return `<div class="lgroup"><span>${esc(name)}</span><span class="glim-num">${n}</span></div>`;
+}
 
 const rowClass = (t, k, idx) => {
   const cut = Files.clip?.cut && Files.clip.from === t.path && Files.clip.items.includes(k.name);
@@ -232,7 +259,7 @@ const check = () => `<span class="cbox on">${g('IconCheck')}</span>`;
 function nameCell(i, k) {
   const t = Files.T(i), mark = Files.marks[i][k.name];
   const shown = CC.prefs.showExt || k.dir || !k.name.includes('.', 1) ? k.name : k.name.slice(0, k.name.lastIndexOf('.'));
-  return `<span class="name"><span class="glyph">${t.marked.has(k.name) ? check() : g(FS.glyphOf(k))}</span><span class="t">${esc(shown)}</span>${k.at && k.at !== t.path ? `<span class="link">in ${esc(k.at.slice(t.path.length + 1))}</span>` : ''}${k.link ? `<span class="link">→ ${esc(k.link)}</span>` : ''}${k.zip ? '<span class="pill state">Archiv</span>' : ''}${k.remote ? `<span class="pill state">${esc(k.remote.split(':')[0])}</span>` : ''}${mark ? `<span class="pill ${mark.tone} state">${esc(mark.label)}</span>` : ''}</span>`;
+  return `<span class="name"><span class="glyph">${t.marked.has(k.name) ? check() : g(FS.glyphOf(k))}</span><span class="t">${esc(shown)}</span>${Labels.marks(k, t.path)}${k.at && k.at !== t.path ? `<span class="link">in ${esc(k.at.slice(t.path.length + 1))}</span>` : ''}${k.link ? `<span class="link">→ ${esc(k.link)}</span>` : ''}${k.zip ? '<span class="pill state">Archiv</span>' : ''}${k.remote ? `<span class="pill state">${esc(k.remote.split(':')[0])}</span>` : ''}${mark ? `<span class="pill ${mark.tone} state">${esc(mark.label)}</span>` : ''}</span>`;
 }
 
 function rowHtml(i, k, idx) {
@@ -268,7 +295,7 @@ function thumb(k, folder) {
 function tileHtml(i, k, idx) {
   const t = Files.T(i);
   const meta = k.dir ? `${FS.kids(k).length} Obj.` : fmtSize(k.size);
-  return `<div class="row gcard ${rowClass(t, k, idx)}" data-idx="${idx}" draggable="true" data-tip="${esc(k.name)}">${thumb(k, k.at || t.path)}${t.marked.has(k.name) ? check() : ''}<span class="t">${esc(k.name)}</span><span class="meta glim-num">${meta}</span></div>`;
+  return `<div class="row gcard ${rowClass(t, k, idx)}" data-idx="${idx}" draggable="true" data-tip="${esc(k.name)}">${thumb(k, k.at || t.path)}${t.marked.has(k.name) ? check() : ''}<span class="t">${esc(k.name)}</span><span class="meta glim-num">${meta}${Labels.marks(k, t.path)}</span></div>`;
 }
 
 function contentHtml(i, k, idx) {
@@ -279,7 +306,22 @@ function contentHtml(i, k, idx) {
     <span class="c-side glim-num"><span>${k.dir ? `${FS.kids(k).length} Obj.` : fmtSize(k.size)}</span>${extra ? `<span>${esc(extra)}</span>` : ''}</span></div>`;
 }
 
-const ITEM_HTML = { details: rowHtml, compact: rowHtml, list: flowHtml, content: contentHtml, tiles: tileHtml, large: tileHtml, gallery: tileHtml };
+// Column view: the folders above the current one stay visible as columns to the left, and a folder under the
+// cursor already shows its contents on the right, so the arrows walk the tree sideways.
+function millerHtml(i, t, list) {
+  const parts = FS.split(t.path).filter(p => !p.includes('::'));
+  const column = (folder, on) => {
+    const kids = FS.kids(FS.nodeAt(folder)).filter(k => CC.prefs.showHidden || !k.name.startsWith('.')).sort((a, b) => (b.dir ? 1 : 0) - (a.dir ? 1 : 0) || a.name.localeCompare(b.name, 'de', { numeric: true }));
+    return `<div class="mcol">${kids.map(k => `<div class="mitem ${k.name === on ? 'on' : ''}" ${k.dir ? `data-go="${esc(FS.join(folder, k.name))}"` : ''}>${g(FS.glyphOf(k))}<span>${esc(FS.LABEL[FS.join(folder, k.name)] || k.name)}</span>${k.dir ? g('IconExpand') : ''}</div>`).join('')}</div>`;
+  };
+  const ancestors = parts.map((p, j) => [FS.join('/', parts.slice(0, j).join('/')), p]).slice(-2);
+  const cur = list[t.cursor];
+  const peek = cur?.dir ? column(FS.join(cur.at || t.path, cur.name), null) : '';
+  return ancestors.map(([folder, on]) => column(folder, on)).join('')
+    + `<div class="mcol cur">${list.map((k, idx) => flowHtml(i, k, idx)).join('')}</div>${peek}`;
+}
+
+const ITEM_HTML = { details: rowHtml, compact: rowHtml, list: flowHtml, columns: flowHtml, content: contentHtml, tiles: tileHtml, large: tileHtml, gallery: tileHtml };
 
 // A separator in the path opens the folders below the part on its left, as Explorer's arrows do.
 const psep = (under) => FS.nodeAt(under)?.dir ? `<button class="psep" data-psub="${esc(under)}" aria-label="Ordner in ${esc(FS.split(under).pop() || 'Server')}">›</button>` : '<span class="psep" aria-hidden="true">›</span>';
@@ -290,7 +332,7 @@ function footer(i, list) {
   const marked = items.filter(k => t.marked.has(k.name));
   const vol = FS.volumeOf(t.path);
   const used = 1 - FS.FREE[vol] / FS.TOTAL[vol];
-  const sel = marked.length ? `${marked.length} markiert, ${fmtSize(marked.reduce((a, k) => a + FS.totalSize(k), 0))}<button class="lclear" data-run="unselect" data-tip="Auswahl aufheben (Esc)" aria-label="Auswahl aufheben">${g('IconClose')}</button>` : `${items.length} ${t.filter ? "Treffer" : "Objekte"}`;
+  const sel = marked.length ? `${marked.length} markiert, ${fmtSize(marked.reduce((a, k) => a + FS.totalSize(k), 0))}<button class="lclear" data-run="unselect" data-tip="Auswahl aufheben (Esc)" aria-label="Auswahl aufheben">${g('IconClose')}</button>` : `${items.length} ${t.filter ? "Treffer" : t.flat ? "Dateien aus allen Unterordnern" : "Objekte"}`;
   const dots = CC.prefs.dual ? `<span class="pdots" aria-hidden="true">${[0, 1].map(n => `<i class="${n === i ? 'on' : ''}" data-pswitch="${n}"></i>`).join('')}</span>` : '';
   if (FS.inArchive(t.path)) return `<span>${sel}</span>${dots}<span class="grow"></span><span>im Archiv, nur lesen</span>`;
   return `<span>${sel}</span>${dots}<span class="grow"></span><button class="lfree" data-du="${esc(vol)}" data-tip="Speicherbelegung von ${esc(FS.LABEL[vol] || vol)}"><span>${fmtSize(FS.FREE[vol])} frei</span><span class="meter"><i style="width:${Math.round(used * 100)}%"></i></span></button>`;
@@ -335,6 +377,7 @@ CC.registerView('files', {
       Tab: () => { if (CC.prefs.dual && !CC.prefs.quickview) { Files.active = Files.other(); CC.render(); } },
       ArrowDown: () => move(t.cursor + (grid ? across() : 1)), ArrowUp: () => move(t.cursor - (grid ? across() : 1)), Home: () => move(0), End: () => move(list.length - 1),
       ...(grid || flow ? { ArrowRight: () => move(t.cursor + (flow ? across() : 1)), ArrowLeft: () => move(t.cursor - (flow ? across() : 1)) } : {}),
+      ...(viewOf(t) === 'columns' ? { ArrowLeft: () => t.path !== '/' && Files.open(Files.active, { up: true }), ArrowRight: () => list[t.cursor]?.dir && Files.open(Files.active, list[t.cursor]) } : {}),
       PageDown: () => move(t.cursor + 10), PageUp: () => move(t.cursor - 10),
       Enter: () => list[t.cursor] && Files.open(Files.active, list[t.cursor]),
       Backspace: () => t.path !== '/' && Files.open(Files.active, { up: true }),
@@ -491,7 +534,7 @@ document.addEventListener('contextmenu', e => {
       ...(oneFolder ? folderItems(FS.join(t.path, sel[0].name)) : ['view', 'edit', ...(file?.zip || sel[0]?.kind === 'arch' ? ['unpack'] : [])]), '-',
       'copy', 'move', 'rename', 'clipCut', 'clipCopy', '-',
       'share', 'download', 'pack', 'checksum', 'symlink', ...(sel.length === 2 && sel.every(x => !x.dir) ? ['diff'] : []), '-',
-      'props', 'copyPath', '-', 'delete',
+      ...Labels.menuItems(sel, t.path), '-', 'props', 'copyPath', '-', 'delete',
     ]);
   } else {
     CC.render();
@@ -499,8 +542,30 @@ document.addEventListener('contextmenu', e => {
   }
 });
 
-// Dragging rows copies to the other panel or a folder in the sidebar; Shift moves instead.
-let drag = null;
+// Dragging rows copies onto a folder, a tab, a piece of the path, the sidebar or the other panel; Shift moves.
+// Holding still over a folder, tab or path piece opens it, so a drop can go deeper, as in Finder.
+let drag = null, spring = { el: null, timer: 0 };
+const dropTarget = (e) => {
+  const at = e.target.closest?.bind(e.target);
+  if (!at) return null;
+  const panelEl = at('.panel'), panel = panelEl ? +panelEl.dataset.panel : Files.active;
+  const row = at('.row.dir');
+  if (row && panelEl) {
+    const k = Files.entries(panel)[+row.dataset.idx];
+    if (k && !drag.items.some(x => x.name === k.name && (x.at || '') === (k.at || ''))) {
+      const dest = FS.join(k.at || Files.T(panel).path, k.name);
+      return { el: row, dest, open: () => Files.go(dest, panel) };
+    }
+  }
+  const tab = at('[data-tab]');
+  if (tab && panelEl) { const n = +tab.dataset.tab; return { el: tab, dest: Files.P(panel).tabs[n].path, open: () => { Files.P(panel).cur = n; CC.render(); } }; }
+  const go = at('[data-go]');
+  if (go) return { el: go, dest: go.dataset.go, open: () => Files.go(go.dataset.go, panelEl ? panel : Files.active) };
+  const list = at('.list');
+  if (list && panel !== drag.from) return { el: list, dest: Files.T(panel).path };
+  return null;
+};
+const clearDrop = () => $$('.dragover, .drop').forEach(x => x.classList.remove('dragover', 'drop'));
 document.addEventListener('dragstart', e => {
   const row = e.target.closest?.('.row');
   if (!row) return;
@@ -513,18 +578,24 @@ document.addEventListener('dragstart', e => {
   e.dataTransfer.setData('text/plain', drag.items.map(x => x.name).join('\n'));
 });
 document.addEventListener('dragover', e => {
-  const list = e.target.closest?.('.list'), nav = e.target.closest?.('[data-go]');
   const external = !drag && [...(e.dataTransfer?.types || [])].includes('Files');
-  if ((drag && (list || nav)) || (external && list)) {
-    e.preventDefault();
-    $$('.dragover, .nav-row.drop').forEach(x => x.classList.remove('dragover', 'drop'));
-    (nav && nav.classList.contains('nav-row') ? nav : list)?.classList.add(nav && nav.classList.contains('nav-row') ? 'drop' : 'dragover');
+  if (external && e.target.closest?.('.list')) { e.preventDefault(); clearDrop(); e.target.closest('.list').classList.add('dragover'); return; }
+  if (!drag) return;
+  const tgt = dropTarget(e);
+  if (!tgt) { clearDrop(); return; }
+  e.preventDefault();
+  if (!tgt.el.classList.contains('drop') && !tgt.el.classList.contains('dragover')) { clearDrop(); tgt.el.classList.add(tgt.el.classList.contains('list') ? 'dragover' : 'drop'); }
+  if (spring.el !== tgt.el) {
+    clearTimeout(spring.timer);
+    spring = { el: tgt.el, timer: tgt.open ? setTimeout(() => { tgt.open(); spring.el = null; }, 900) : 0 };
   }
 });
-document.addEventListener('dragleave', e => { if (e.target.classList?.contains('list') || e.target.classList?.contains('nav-row')) e.target.classList.remove('dragover', 'drop'); });
+document.addEventListener('dragend', () => { drag = null; clearTimeout(spring.timer); spring.el = null; clearDrop(); });
 document.addEventListener('drop', e => {
-  $$('.dragover, .nav-row.drop').forEach(x => x.classList.remove('dragover', 'drop'));
-  const list = e.target.closest?.('.list'), nav = e.target.closest?.('.nav-row[data-go]');
+  clearDrop();
+  clearTimeout(spring.timer);
+  spring.el = null;
+  const list = e.target.closest?.('.list');
   if (!drag && list && e.dataTransfer.files.length) {
     e.preventDefault();
     Files.active = +list.closest('.panel').dataset.panel;
@@ -533,14 +604,10 @@ document.addEventListener('drop', e => {
   }
   if (!drag) return;
   e.preventDefault();
-  let dest = null;
-  if (nav) dest = nav.dataset.go;
-  else if (list) { const i = +list.closest('.panel').dataset.panel; if (i === drag.from) { drag = null; return; } dest = Files.T(i).path; }
-  const items = drag.items;
+  const tgt = dropTarget(e), items = drag.items, from = Files.T(drag.from).path;
   drag = null;
-  if (dest) Files.transfer(e.shiftKey ? 'move' : 'copy', items, dest);
+  if (tgt) Files.transfer(e.shiftKey ? 'move' : 'copy', items, tgt.dest, from);
 });
-document.addEventListener('dragend', () => { drag = null; });
 
 function openFilter() {
   if (CC.view !== 'files') CC.go('files');

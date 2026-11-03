@@ -67,3 +67,19 @@ const glyphPage = read('src', 'glyph-page.html')
   .replace('<!--PINNWAND-->', () => board(`window.PW_ROUND = ${round};`, pinnwand.replaceAll('cannoncommander-notizen', 'cannoncommander-glyphen-notizen').replace("'cannoncommander-notes'", "'cannoncommander-glyphen-notes'").replace("'cannoncommander.html': 'CannonCommander'", "'cannoncommander-glyphen.html': 'Glyphen'")));
 writeFileSync(join(here, 'dist', 'cannoncommander-glyphen.html'), glyphPage);
 console.log(`${out}:${(html.length / 1024).toFixed(0)} KB, ${ordered.length} scripts, ${used.size} glyphs, round ${round}`);
+
+// Design previews: single pages with the same tokens, their own glyphs and their own notes.
+const previewDir = join(here, 'previews');
+for (const file of existsSync(previewDir) ? readdirSync(previewDir).filter(f => f.endsWith('.html')) : []) {
+  const name = file.replace(/\.html$/, ''), src = read('previews', file);
+  const names = [...new Set(src.match(/Icon[A-Z][A-Za-z]+/g) || [])];
+  const unknown = names.filter(n => !glyphs[n]);
+  if (unknown.length) throw new Error(`${file}: unknown glyphs ${unknown.join(', ')}`);
+  const notes = pinnwand.replaceAll('cannoncommander-notizen', `cannoncommander-${name}-notizen`).replace("'cannoncommander-notes'", `'cannoncommander-${name}-notes'`).replace("'cannoncommander.html': 'CannonCommander'", `'cannoncommander-${name}.html': 'CannonCommander ${name}'`);
+  const page = src
+    .replace('/*TOKENS*/', () => read('vendor', 'tokens.css'))
+    .replace('/*GLYPHS*/', () => JSON.stringify(Object.fromEntries(names.map(n => [n, glyphs[n]]))))
+    .replace('<!--PINNWAND-->', () => board(`window.PW_ROUND = ${round};`, notes));
+  writeFileSync(join(here, 'dist', `cannoncommander-${name}.html`), page);
+  console.log(`dist/cannoncommander-${name}.html: ${(page.length / 1024).toFixed(0)} KB`);
+}
