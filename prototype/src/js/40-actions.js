@@ -152,7 +152,7 @@ CC.action('clipPaste', { label: 'Einfügen', g: 'IconPaste', key: 'Strg+V', need
   if (c.cut) Files.clip = null;
 } });
 
-const CLASH_RULES = [['ask', 'Fragen'], ['skip', 'Überspringen'], ['replace', 'Überschreiben'], ['newer', 'Wenn neuer'], ['both', 'Umbenennen']];
+const CLASH_RULES = [['ask', 'Fragen', 'IconHelp'], ['skip', 'Überspringen', 'IconKeepRight'], ['replace', 'Ersetzen', 'IconKeepLeft'], ['newer', 'Wenn neuer', 'IconUpdate'], ['both', 'Beide behalten', 'IconKeepBoth']];
 // Other ways to carry out a copy or move, such as a hard link: { id, label, g, tip, fits(kind, items, from, dest) }.
 CC.transferWays = [];
 CC.action('copy', { label: 'Kopieren', g: 'IconCopy', key: 'F5', needs: 'sel', run: () => transferWindow('copy') });

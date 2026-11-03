@@ -101,7 +101,7 @@
         <div class="well bk-form"><div class="eyebrow">Ziel</div>
           ${frow('Ordner', bk.pathField('x-dest', dest0))}
           ${frow('In eigenen Ordner', sw(!inside, 'id="x-own"'), 'Legt für jedes Archiv einen Ordner mit seinem Namen an, damit sich nichts mit vorhandenen Dateien mischt.')}
-          ${frow('Wenn es das schon gibt', seg([['skip', 'Überspringen'], ['both', 'Beide behalten'], ['replace', 'Ersetzen']], 'both', 'id="x-clash"'), 'Beide behalten hängt an den neuen Namen eine Nummer an. Ersetzen überschreibt die vorhandene Datei.')}
+          ${frow('Wenn es das schon gibt', seg([['skip', 'Überspringen', 'IconKeepRight'], ['both', 'Beide behalten', 'IconKeepBoth'], ['replace', 'Ersetzen', 'IconKeepLeft']], 'both', 'id="x-clash"'), 'Beide behalten hängt an den neuen Namen eine Nummer an. Ersetzen überschreibt die vorhandene Datei.')}
           ${frow('Landet in', `<span class="bk-finalw" id="x-final"></span>`)}
         </div>`,
       foot: [{ start: `Ergibt ${fmtSize(unpacked)}, läuft als Aufgabe im Hintergrund` }, cancel, { label: 'Entpacken', g: 'IconArchive', primary: true, run: () => go() }],

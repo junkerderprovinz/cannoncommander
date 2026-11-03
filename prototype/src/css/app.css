@@ -252,7 +252,9 @@ textarea.field { height: auto; padding: .6rem .7rem; resize: vertical; }
 .menu button:hover, .menu button:focus-visible { background: var(--carbon-hover); outline: none; }
 .menu button:disabled { opacity: .45; cursor: default; }
 .menu button:disabled:hover { background: none; }
-.menu button .kbd, .menu button .cnt { margin-left: auto; }
+.menu button .kbd, .menu button .cnt, .menu button .tick { margin-left: auto; }
+.menu button.on { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.menu button .tick svg { color: var(--accent-glyph); }
 .menu button .cnt { padding-left: 1.2rem; font-size: 12px; color: var(--carbon-text-muted); }
 .menu button .chev { margin-left: auto; display: grid; }
 .menu button .chev svg { width: .7rem; height: .7rem; color: var(--carbon-text-muted); transform: rotate(-90deg); }
