@@ -140,9 +140,15 @@
   ];
   const seen = () => CC.prefs.newsSeen || [];
   const unseen = () => NEWS.filter(n => !seen().includes(n.id)).length;
-  const versionUrl = { app: 'https://github.com/junkerderprovinz/cannoncommander/releases/tag/v', glimstone: 'https://github.com/junkerderprovinz/glimstone/releases/tag/v', quantum: 'https://github.com/gtsteffaniak/filebrowser/releases/tag/v' };
-  const vlink = (k) => `<a class="a-vlink glim-num" href="${versionUrl[k]}${esc(DATA.version[k])}" target="_blank" rel="noopener" data-tip="Versionshinweise auf GitHub">${esc(String(DATA.version[k]).replace(/^v/, ''))}</a>`;
-  const readmeBtn = ({ tile, mark, glyph, name, sub, attr }) => `<div class="glim-readme-btn-unit group ${tile}"><button class="glim-readme-btn glim-brand-tile" ${attr}><span class="glim-readme-btn-mark ${mark}">${g(glyph)}</span><span class="glim-readme-btn-text"><span class="glim-readme-btn-name">${esc(name)}</span><span class="glim-readme-btn-sub">${esc(sub)}</span></span></button></div>`;
+  const REPO = 'https://github.com/junkerderprovinz/cannoncommander';
+  const versionUrl = { app: REPO + '/releases/tag/v', glimstone: 'https://github.com/junkerderprovinz/glimstone/releases/tag/v', rclone: 'https://github.com/rclone/rclone/releases/tag/v' };
+  DATA.version.rclone ??= '1.71.2';
+  // A version number is a plain link to its release page, as in every app of the workshop.
+  const vlink = (k) => `<a class="a-vlink glim-num" href="${versionUrl[k]}${esc(DATA.version[k])}" target="_blank" rel="noopener">${esc(String(DATA.version[k]).replace(/^v/, ''))}</a>`;
+  const readmeBtn = ({ tile, mark, glyph, name, sub, attr }) => `<div class="glim-readme-btn-unit group ${tile}"><button class="glim-readme-btn glim-brand-tile" ${attr}><span class="glim-readme-btn-mark ${mark}">${g(glyph)}</span><span class="glim-readme-btn-text"><span class="glim-readme-btn-name">${esc(name)}</span>${sub ? `<span class="glim-readme-btn-sub">${esc(sub)}</span>` : ''}</span></button></div>`;
+  // The hint rides inside the heading badge, so a card explains itself without a line of its own.
+  const hinted = (title, hint, inner) => CC.card(title, inner).replace('</span><div class="card-body">', ` ${info(hint)}</span><div class="card-body">`);
+  const MAIL = 'hello@halleluja.design';
 
   function bugReport() {
     const report = { app: DATA.version, prefs: { ...CC.prefs }, sources: DATA.sources.map(s => ({ path: s.path, indexed: s.indexed, readOnly: s.readOnly })), remotes: DATA.remotes.map(r => ({ type: r.type, state: r.state })), users: DATA.users.length, jobs: Jobs.list.map(j => ({ kind: j.kind, state: j.state })) };
@@ -154,6 +160,27 @@
     CC.toast(`${a.download} liegt in deinen Downloads`);
   }
 
+  // Nothing from a payment service loads before somebody opens one of these windows.
+  function paypalWin() {
+    const w = win({ title: 'PayPal',
+      body: `<div class="well">${frow('Wie oft', seg([['once', 'Einmal'], ['month', 'Monatlich'], ['year', 'Jährlich']], 'once', 'id="pp-often"'))}
+        ${frow('Betrag', seg([['10', '10 €'], ['25', '25 €'], ['50', '50 €']], '25', 'id="pp-amount"'))}</div>
+        <div class="well a-text"><p>PayPal öffnet sich in einem eigenen Fenster. Mit der Karte geht es auch ohne PayPal-Konto.</p></div>`,
+      foot: [cancel, { label: 'Weiter zu PayPal', g: 'IconPayPal', primary: true, run: () => CC.toast('In der fertigen App öffnet sich hier PayPal') }] });
+    return w;
+  }
+  const COINS = [['btc', 'Bitcoin', 'bc1q078lt57t4n5zq5md3knz3ythum0w78zmjw5eda'], ['eth', 'Ethereum', '0xFF6726C5bd76C8FD6b6bE7Ea5CEd4621fde5e841'], ['sol', 'Solana', 'GrTyhSbZVArdaZAr3TqWDrkEGahomLtNZJ41qPLm3dHd'], ['xrp', 'XRP', 'rwMK2nXqChT4JYWVypMypnpctDcM9jgWmG']];
+  function cryptoWin() {
+    const addr = (id) => COINS.find(c => c[0] === id)[2];
+    const w = win({ title: 'Krypto',
+      body: `<div class="well">${frow('Münze', seg(COINS.map(([id, name]) => [id, name]), 'btc', 'id="cr-coin"'))}
+        <div class="a-addr mono" id="cr-addr">${addr('btc')}</div><p class="a-text muted" id="cr-note"></p></div>`,
+      foot: [closeBtn, { label: 'Adresse kopieren', g: 'IconCopy', primary: true, run: (w) => { A.copy($('#cr-addr', w).textContent); return false; } }] });
+    // XRP is the one coin here whose address would otherwise make a donor look for a tag.
+    $('#cr-coin', w).addEventListener('change', e => { const id = segVal(e.currentTarget); $('#cr-addr', w).textContent = addr(id); $('#cr-note', w).textContent = id === 'xrp' ? 'Kein Destination Tag und kein Memo nötig.' : ''; });
+    return w;
+  }
+
   function coffeeWin() {
     win({ title: 'Kaffee spendieren',
       body: `<div class="well a-text"><p>Wirf deinem Ritter eine Münze zu: Das deckt einen Teil der Kosten und hält das Projekt am Leben. Alles, was ich baue, kostet nichts und zeigt keine Werbung.</p><p>Buy Me a Coffee nimmt Karte, PayPal sowie Apple Pay und Google Pay. Ein Konto brauchst du dort nicht.</p></div>`,
@@ -162,24 +189,31 @@
 
   CC.settingsTab({ id: 'info', label: 'Info', g: 'IconInfo', order: 120, render(host) {
     const n = unseen();
-    host.innerHTML = CC.card('Version',
+    host.innerHTML = hinted('Version', 'Ein Klick auf eine Versionsnummer öffnet ihre Release-Seite.',
       frow('CannonCommander', vlink('app'))
-      + frow('GlimStone', vlink('glimstone'), 'Die Designsprache, in der CannonCommander gebaut ist.')
-      + frow('FileBrowser Quantum', vlink('quantum'), 'CannonCommander baut auf einem Fork von FileBrowser Quantum auf.')
-      + foot(`<button class="btn" data-run="whatsNew"><span class="a-dot ${n ? '' : 'seen'}"></span>${g('IconWhatsNew')}${n ? `Neu · ${n}` : 'Neu'}</button>`))
-      + CC.card('Hilfe',
-        frow('Handbuch', btn('Öffnen', 'IconManual', 'data-run="docs"'), 'Eine kurze Einführung, wie CannonCommander gedacht ist.')
-        + frow('Tastenkürzel', btn('Anzeigen', 'IconKeyboard', 'data-run="shortcuts"'))
-        + frow('Fehlerbericht', btn('Herunterladen', 'IconDiagnostics', 'id="a-bug"'), 'Packt Einstellungen und den Zustand der Aufgaben in eine Datei, ohne Passwörter, Schlüssel oder Zugangsdaten. Häng sie an ein Issue auf GitHub an.'))
+      + frow('GlimStone', vlink('glimstone'), 'Die Designsprache, in der CannonCommander gebaut ist')
+      + frow('rclone', vlink('rclone'), 'Die Brücke zu den Fernzielen')
+      + foot(`<button class="btn" data-run="whatsNew"><span class="a-dot ${n ? '' : 'seen'}"></span>${g('IconWhatsNew')}${n ? `Neu · ${n}` : 'Neu'}</button><button class="btn" id="a-update">${g('IconSearch')}Nach Updates suchen</button>`))
+      + hinted('Hilfe', 'Für einen Fehlerbericht lädst du eine Datei mit den Einstellungen und dem Zustand der Aufgaben herunter, ohne Passwörter, Schlüssel und Zugangsdaten. Häng sie an ein Issue auf GitHub, dann sieht man, was auf deinem Server passiert ist.', `<div class="a-about">
+        <p>Probleme, Wünsche oder Verbesserungsvorschläge? Mach gern ein Issue auf GitHub auf, oder schick eine E-Mail.</p>
+        <div class="glim-readme-btn-rows">${readmeBtn({ tile: 'glim-tile-github', mark: 'glim-github-mark', glyph: 'IconGithub', name: 'GitHub', attr: 'id="a-github"' })}${readmeBtn({ tile: 'glim-tile-house', mark: 'glim-house-mark', glyph: 'IconMail', name: 'E-Mail', attr: 'id="a-mail"' })}${readmeBtn({ tile: 'glim-tile-docs', mark: 'glim-docs-mark', glyph: 'IconManual', name: 'Handbuch', sub: 'Öffnen', attr: 'data-run="docs"' })}${readmeBtn({ tile: 'glim-tile-github', mark: 'glim-github-mark', glyph: 'IconDiagnostics', name: 'Fehlerbericht', sub: 'Herunterladen', attr: 'id="a-bug"' })}</div></div>`)
       + CC.card('Über CannonCommander', `<div class="a-about">
-        <p>Ein Kreuzzug von einem einzigen Ritter: gut aussehende Open-Source-Werkzeuge, die es so, wie ich sie wollte, nicht gab, gebaut, bis nichts mehr fehlt. Kostenlos, ohne Konto, ohne Telemetrie, ohne Werbung und ohne Bezahlstufe. Kein Sternchen, nirgends. Nichts Lesbares verlässt je deine eigenen Mauern. Geschmiedet an Abenden und Wochenenden, mit Herz und Sturheit.</p>
-        <p class="a-gap">Wenn sich CannonCommander einen Platz auf deinem Server verdient hat, wirf deinem Ritter eine Münze zu: Das hilft bei den Kosten und hält das Projekt am Leben. Und es lässt das Herz dieses Ritters ein wenig schneller schlagen.</p>
-        <div class="glim-readme-btn-rows glim-about-give">${readmeBtn({ tile: 'glim-tile-coffee', mark: 'a-coffee-mark', glyph: 'IconCoffee', name: 'Kaffee', sub: 'Buy Me a Coffee', attr: 'id="a-coffee"' })}</div>
-        <p class="a-gap">Probleme, Wünsche oder Ideen? Mach gern ein Issue auf GitHub auf.</p>
-        <div class="glim-readme-btn-rows">${readmeBtn({ tile: 'glim-tile-github', mark: 'glim-github-mark', glyph: 'IconGithub', name: 'GitHub', sub: 'Issue öffnen', attr: 'id="a-github"' })}</div></div>`);
+        <p>Ein einzelner Ritter, ein Feldzug: ansehnliche quelloffene Werkzeuge, die es in der Form, die ich wollte, nicht gab, gebaut, bis nichts mehr fehlt. Alles kostenlos, ohne Konten, ohne Telemetrie, ohne Werbung, ohne Bezahlstufen. Nirgends ein Sternchen. Nichts Lesbares verlässt je deine eigenen Mauern. An Abenden und Wochenenden geschmiedet, mit Herz und Dickkopf.</p>
+        <p>Wenn sich CannonCommander einen Platz auf deinem Server verdient hat: wirf deinem Ritter eine Münze zu. Sie hilft, die Kosten zu decken, und hält das Projekt am Leben. Und sie lässt das Herz dieses Ritters etwas höher schlagen. Drei Wege stehen unten, nimm den, der dir passt.</p>
+        <div class="glim-readme-btn-rows glim-about-give">${readmeBtn({ tile: 'glim-tile-coffee', mark: 'a-coffee-mark', glyph: 'IconCoffee', name: 'Kaffee', attr: 'id="a-coffee" aria-label="Kaffee spendieren"' })}${readmeBtn({ tile: 'glim-tile-paypal', mark: 'glim-paypal-mark', glyph: 'IconPayPal', name: 'PayPal', attr: 'id="a-paypal"' })}${readmeBtn({ tile: 'glim-tile-bitcoin', mark: 'glim-bitcoin-mark', glyph: 'IconBitcoin', name: 'Krypto', attr: 'id="a-crypto"' })}</div></div>`);
     $('#a-bug', host).addEventListener('click', bugReport);
     $('#a-coffee', host).addEventListener('click', coffeeWin);
-    $('#a-github', host).addEventListener('click', () => window.open('https://github.com/junkerderprovinz/cannoncommander/issues', '_blank', 'noopener'));
+    $('#a-paypal', host).addEventListener('click', paypalWin);
+    $('#a-crypto', host).addEventListener('click', cryptoWin);
+    $('#a-github', host).addEventListener('click', () => window.open(REPO, '_blank', 'noopener'));
+    // Subject only: a prefilled body reads as a form to fill in.
+    $('#a-mail', host).addEventListener('click', () => window.open(`mailto:${MAIL}?subject=${encodeURIComponent('CannonCommander Rückmeldung')}`, '_blank', 'noopener'));
+    const up = $('#a-update', host);
+    up.addEventListener('click', () => {
+      up.disabled = true;
+      up.innerHTML = `${g('IconSearch')}Nach Updates suchen`;
+      setTimeout(() => { up.disabled = false; up.classList.add('ok'); up.innerHTML = `${g('IconCheck')}Aktuell`; up.dataset.tip = 'Nach Updates suchen'; }, 900);
+    });
   } });
 
   function whatsNewWin() {
@@ -269,14 +303,17 @@
   CC.action('whatsNew', { label: 'Neuigkeiten', g: 'IconWhatsNew', run: whatsNewWin });
 
   CC.css(`
-.a-vlink { height: 1.6rem; padding: 0 .7rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); color: var(--carbon-text); text-decoration: none; display: inline-flex; align-items: center; font-size: 13px; }
-.a-vlink:hover, .a-vlink:focus-visible { background: color-mix(in srgb, var(--carbon-surface3), var(--accent) 22%); }
+.a-vlink { font-size: 14px; color: var(--accent-text, var(--accent)); text-decoration: none; }
+.a-vlink:hover, .a-vlink:focus-visible { text-decoration: underline; text-underline-offset: 2px; }
+@media (pointer: coarse) { .a-vlink { margin: -.6rem; padding: .6rem; } }
+.notch .info { margin-left: .15rem; }
+.notch .info svg { color: currentColor; opacity: .8; }
+.a-addr { margin-top: .8rem; padding: .7rem .8rem; border-radius: var(--radius-control); background: var(--carbon-surface3); font-size: 13px; overflow-wrap: anywhere; }
+#a-update.ok svg { color: var(--status-ok-text, #6fdc8c); }
 .a-dot { width: .5rem; height: .5rem; border-radius: 50%; background: #6fdc8c; box-shadow: 0 0 6px #6fdc8c; flex: none; }
 .a-dot.seen { background: var(--carbon-text-muted); box-shadow: none; }
-.a-about p { margin: 0; line-height: 1.6; }
-.a-about .a-gap { margin-top: 1.5em; }
-.a-about .glim-readme-btn-rows { margin-top: .75rem; }
-.a-about .glim-about-give { margin-top: 1.5em; }
+.a-about { display: flex; flex-direction: column; gap: 1rem; }
+.a-about p { margin: 0; line-height: 1.6; color: var(--carbon-text-sub); font-size: 14px; }
 .a-coffee-mark { color: var(--brand-coffee); }
 .a-newtop { display: flex; justify-content: flex-end; }
 .a-release { position: relative; padding-top: 1.4rem; margin-top: .6rem; }
