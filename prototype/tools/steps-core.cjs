@@ -6,6 +6,9 @@ module.exports = async (page, shot) => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('ArrowDown'); await page.keyboard.press('Insert'); await page.keyboard.press('Insert');
   await page.keyboard.press('F5'); await page.waitForTimeout(300); await shot('core-copy');
-  await page.click('.win-foot .btn.primary'); await page.waitForTimeout(3500); await shot('core-after');
+  await page.click('.win-foot .btn.primary'); await page.waitForTimeout(300);
+  // The selection holds hard-linked files, so the copy asks once more before it gives them their own data.
+  await page.click('.win-foot .btn:has-text("Trotzdem kopieren")');
+  await page.waitForTimeout(3500); await shot('core-after');
   await page.click('[data-go-view="settings"]'); await page.waitForTimeout(300); await shot('core-settings');
 };

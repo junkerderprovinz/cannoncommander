@@ -534,11 +534,11 @@ document.addEventListener('contextmenu', e => {
       ...(oneFolder ? folderItems(FS.join(t.path, sel[0].name)) : ['view', 'edit', ...(file?.zip || sel[0]?.kind === 'arch' ? ['unpack'] : [])]), '-',
       'copy', 'move', 'rename', 'clipCut', 'clipCopy', '-',
       'share', 'download', 'pack', 'checksum', 'symlink', ...(sel.length === 2 && sel.every(x => !x.dir) ? ['diff'] : []), '-',
-      ...Labels.menuItems(sel, t.path), '-', 'props', 'copyPath', '-', 'delete',
+      ...Labels.menuItems(sel, t.path), '-', 'props', 'fixPerms', 'copyPath', '-', 'delete',
     ]);
   } else {
     CC.render();
-    menu(e.clientX, e.clientY, ['newFolder', 'newFile', 'upload', 'clipPaste', '-', 'selectAll', 'selectPattern', '-', 'refresh', 'props']);
+    menu(e.clientX, e.clientY, ['newFolder', 'newFile', 'upload', 'clipPaste', '-', 'selectAll', 'selectPattern', '-', 'refresh', 'props', 'fixPerms']);
   }
 });
 

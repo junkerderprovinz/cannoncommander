@@ -146,6 +146,8 @@ CC.action('clipPaste', { label: 'Einfügen', g: 'IconPaste', key: 'Strg+V', need
 } });
 
 const CLASH_RULES = [['ask', 'Fragen'], ['skip', 'Überspringen'], ['replace', 'Überschreiben'], ['newer', 'Wenn neuer'], ['both', 'Umbenennen']];
+// Other ways to carry out a copy or move, such as a hard link: { id, label, g, tip, fits(kind, items, from, dest) }.
+CC.transferWays = [];
 CC.action('copy', { label: 'Kopieren', g: 'IconCopy', key: 'F5', needs: 'sel', run: () => transferWindow('copy') });
 CC.action('move', { label: 'Verschieben', g: 'IconMove', key: 'F6', needs: ['sel', 'writable'], run: () => transferWindow('move') });
 function transferWindow(kind) {
@@ -153,17 +155,19 @@ function transferWindow(kind) {
   const dest = CC.prefs.dual ? Files.T(Files.other()).path : FS.parent(Files.T().path);
   const verb = kind === 'copy' ? 'Kopieren' : 'Verschieben';
   const total = sel.reduce((a, k) => a + FS.totalSize(k), 0);
+  const from = Files.T().path, ways = CC.transferWays.filter(w => w.fits(kind, sel, from, dest));
   win({
     title: verb,
     body: `<div class="well"><div class="eyebrow">${sel.length} ${sel.length === 1 ? 'Objekt' : 'Objekte'}, ${fmtSize(total)}</div>
       <table class="tbl">${sel.slice(0, 6).map(k => `<tr><td>${esc(k.name)}</td><td class="glim-num r">${fmtSize(FS.totalSize(k))}</td></tr>`).join('')}${sel.length > 6 ? `<tr><td colspan="2">und ${sel.length - 6} weitere</td></tr>` : ''}</table></div>
       <div class="well"><div class="eyebrow">Ziel</div>
         ${frow('Ordner', CC.admin.pathField(dest, 'dest'), 'Im Zwei-Fenster-Modus steht hier der Ordner des anderen Fensters.')}
+        ${ways.length ? frow('Art', seg([[kind, verb], ...ways.map(w => [w.id, w.label])], kind, 'id="how"'), ways.map(w => w.tip).join(' ')) : ''}
         <div class="stack">${frow('Wenn es die Datei schon gibt', seg(CLASH_RULES, 'ask', 'id="clash"'), 'Mit Fragen entscheidest du für jede Datei einzeln, sonst gilt deine Wahl hier ohne Rückfrage für alle.')}</div>
         ${frow('Rechte und Zeitstempel übernehmen', sw(true), 'Besitzer, Rechte und Änderungsdatum bleiben wie im Original. Ohne diesen Schalter gehören neue Dateien nobody:users (99:100).')}
         ${frow('Danach prüfen', sw(false), 'Liest das Ziel nach dem Kopieren noch einmal und vergleicht die Prüfsummen.')}
       </div>`,
-    foot: [{ start: 'Läuft als Aufgabe im Hintergrund' }, cancel, { label: verb, g: kind === 'copy' ? 'IconCopy' : 'IconMove', primary: true, run: (w) => { Files.transfer(kind, sel, $('#dest', w).value.trim(), Files.T().path, segVal($('#clash', w))); } }],
+    foot: [{ start: 'Läuft als Aufgabe im Hintergrund' }, cancel, { label: verb, g: kind === 'copy' ? 'IconCopy' : 'IconMove', primary: true, run: (w) => { Files.transfer(ways.length ? segVal($('#how', w)) : kind, sel, $('#dest', w).value.trim(), from, segVal($('#clash', w))); } }],
   });
 }
 
