@@ -1,7 +1,7 @@
 // The transfer preview: every mode mid-run, pause, cancel, a failure with retry, finished, and in light.
 module.exports = async (page, shot) => {
   const wait = (ms) => page.waitForTimeout(ms);
-  const state = async () => `pct ${await page.textContent('#pct')}, papers ${await page.locator('.paper').count()}, left ${await page.textContent('#left')}, files ${await page.textContent('#files')}, speed ${await page.textContent('#speed')}, buttons ${(await page.locator('#foot button').allTextContents()).join('/')}`;
+  const state = async () => `pct ${await page.textContent('#pct')}, papers ${await page.locator('.paper').count()}, left ${await page.textContent('#left')}, files ${await page.textContent('#files')}, rate ${await page.textContent('#rate')}, file line ${await page.isVisible('.file')}, buttons ${(await page.locator('#foot button').allTextContents()).join('/')}`;
   for (const m of ['copy', 'move', 'delete', 'pack']) {
     await page.click(`[data-mode="${m}"]`); await wait(2600);
     console.log(m, await state());

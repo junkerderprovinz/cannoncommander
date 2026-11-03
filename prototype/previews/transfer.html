@@ -59,8 +59,9 @@ svg { display: block; }
 @keyframes spark { to { transform: translate(var(--x), var(--y)) scale(.2); opacity: 0; } }
 .done .paper, .failed .paper, .cancelled .paper { opacity: 0; transition: opacity .3s; }
 
-.file { display: flex; align-items: center; gap: .5rem; font-size: 13px; color: var(--carbon-text-sub); }
+.file { display: none; align-items: center; gap: .5rem; font-size: 13px; color: var(--carbon-text-sub); }
 .file svg { width: .9rem; height: .9rem; color: var(--accent-glyph); flex: none; }
+.done .file, .failed .file, .cancelled .file { display: flex; }
 .failed .file, .failed .file svg { color: var(--status-fail-text); }
 .ticker { position: relative; flex: 1; min-width: 0; height: 1.3rem; overflow: hidden; }
 .ticker span { position: absolute; inset: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: tickin .3s ease-out; }
@@ -69,7 +70,7 @@ svg { display: block; }
 @keyframes tickout { to { translate: 0 -100%; opacity: 0; } }
 .file .count { font-size: 12px; color: var(--carbon-text-muted); font-variant-numeric: tabular-nums; flex: none; }
 
-.facts { display: grid; grid-template-columns: 1fr 1fr 1.7fr 1fr; gap: .5rem; margin-top: .9rem; padding-top: .8rem; border-top: 1px solid color-mix(in srgb, var(--carbon-text) 8%, transparent); }
+.facts { display: grid; grid-template-columns: 1fr 1fr 1.7fr; gap: .5rem; margin-top: .9rem; padding-top: .8rem; border-top: 1px solid color-mix(in srgb, var(--carbon-text) 8%, transparent); }
 .facts div { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
 .facts small { font-size: 11px; color: var(--carbon-text-muted); }
 .facts b { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -116,7 +117,6 @@ svg { display: block; }
       <div><small id="leftl">Restzeit</small><b id="left">…</b></div>
       <div><small>Dateien</small><b id="files"></b></div>
       <div><small>Daten</small><b id="bytes"></b></div>
-      <div><small id="speedl">Tempo</small><b id="speed"></b></div>
     </div>
     <div class="foot" id="foot"></div>
   </section>
@@ -237,7 +237,7 @@ function start() {
   $('#from .ic').innerHTML = g(m.from[0]); $('#from span:last-child').textContent = m.from[1];
   $('#to .ic').className = 'ic';
   $('#to .ic').innerHTML = g(m.to[0]); $('#to span:last-child').textContent = m.to[1];
-  $('#leftl').textContent = 'Restzeit'; $('#speedl').textContent = 'Tempo';
+  $('#leftl').textContent = 'Restzeit';
   document.querySelectorAll('.paper, .spark').forEach(x => x.remove());
   $('#ticker').innerHTML = '';
   ['#area', '#edge'].forEach(s => $(s).removeAttribute('d'));
@@ -282,7 +282,6 @@ function tick() {
   $('#pct').textContent = Math.floor(p * 100);
   if (mode !== 'copy' && mode !== 'fail') $('#from .ic').style.opacity = (1 - p * .55).toFixed(2);
   $('#bytes').textContent = `${fmt(st.done)} von ${fmt(st.total)}`;
-  $('#speed').textContent = `${Math.round(mbs)} MB/s`;
   $('#left').textContent = dur((st.total - st.done) / (mbs * 1e6 * pace));
   if (st.i >= FILES.length) finish();
 }
@@ -303,8 +302,7 @@ function finish() {
   $('#of').textContent = `${FILES.length} Dateien`;
   $('#files').textContent = `${FILES.length} von ${FILES.length}`;
   $('#leftl').textContent = 'Dauer'; $('#left').textContent = dur(real());
-  $('#speedl').textContent = 'Schnitt'; $('#speed').textContent = `${Math.round(st.total / real() / 1e6)} MB/s`;
-  $('#rate').textContent = '';
+  $('#rate').textContent = `Schnitt ${Math.round(st.total / real() / 1e6)} MB/s`;
   $('#nowg').innerHTML = g('IconCheck');
   ticker(m.done);
   $('#count').textContent = fmt(st.total);
@@ -322,7 +320,6 @@ function fail(mbs) {
   $('#leftl').textContent = 'Gestoppt nach'; $('#left').textContent = dur(real());
   $('#files').textContent = `${st.i} von ${FILES.length}`;
   $('#bytes').textContent = `${fmt(st.done)} von ${fmt(st.total)}`;
-  $('#speed').textContent = '0 MB/s';
   buttons([['close', 'IconClose', 'Schließen'], ['retry', 'IconRetry', 'Nochmal', true]]);
 }
 function stop() {
@@ -332,11 +329,10 @@ function stop() {
   ticker(`Abgebrochen, ${st.i} von ${FILES.length} Dateien sind schon drüben`);
   $('#count').textContent = '';
   $('#leftl').textContent = 'Gelaufen'; $('#left').textContent = dur(real());
-  $('#speed').textContent = '0 MB/s';
   buttons([['close', 'IconCheck', 'Schließen', true]]);
 }
 start();
 </script>
-<!--PINNWAND 3-->
+<!--PINNWAND 4-->
 </body>
 </html>
