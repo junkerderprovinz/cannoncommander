@@ -183,7 +183,7 @@ func TestListRejectsBadInput(t *testing.T) {
 		"/etc":                               http.StatusNotFound,
 		"/mnt/user/nichts":                   http.StatusNotFound,
 		"/mnt/user/downloads/setup-notes.md": http.StatusBadRequest,
-		"/mnt/user/a.zip::/":                 http.StatusNotImplemented,
+		"/mnt/user/a.zip::/":                 http.StatusNotFound,
 	}
 	for p, want := range cases {
 		rec := f.get(t, "jdp", "/fs/list", p)

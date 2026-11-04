@@ -70,6 +70,10 @@ type ArrowLoop struct {
 	URL      string `json:"url"`
 	Token    string `json:"token,omitempty"`
 	TokenSet bool   `json:"tokenSet"`
+	// Paths maps the start of a path here to the same folder in ArrowLoop's
+	// container, as /mnt/user to /data, since both mount the shares where
+	// they like.
+	Paths map[string]string `json:"paths,omitempty"`
 }
 
 // Previews switches the thumbnails and the transcoding for the browser.
@@ -134,6 +138,11 @@ func (a *App) validate() error {
 		}
 	default:
 		return fmt.Errorf("office kind must be none, onlyoffice, eurooffice or collabora")
+	}
+	for here, there := range a.ArrowLoop.Paths {
+		if !strings.HasPrefix(here, "/") || !strings.HasPrefix(there, "/") {
+			return fmt.Errorf("the ArrowLoop paths have to be full paths")
+		}
 	}
 	for _, u := range []string{a.Office.URL, a.ArrowLoop.URL} {
 		if u == "" {
