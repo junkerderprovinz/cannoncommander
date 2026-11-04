@@ -402,3 +402,99 @@ func TestWOPIGetFileIsAnAttachment(t *testing.T) {
 		t.Errorf("headers %v", h)
 	}
 }
+
+func savedTo(t *testing.T, f *fixture, documentURL string) int {
+	t.Helper()
+	_, c := f.config("jdp")
+	callback := c.Config["editorConfig"].(map[string]any)["callbackUrl"].(string)
+	body, err := json.Marshal(map[string]any{"key": "k", "status": 2, "url": documentURL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	rec := f.do(local(t, "POST", callback, strings.NewReader(string(body))))
+	var out map[string]int
+	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
+		t.Fatal(err)
+	}
+	return out["error"]
+}
+
+func TestCallbackRefusesAnotherPortOnTheDocumentServer(t *testing.T) {
+	f := newFixture(t)
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("neu")) }))
+	defer docServer.Close()
+	other := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("fremd")) }))
+	defer other.Close()
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: docServer.URL}
+	if savedTo(t, f, other.URL+"/out.docx") != 1 || f.content() != "alt" {
+		t.Fatalf("a document from another port was taken: %q", f.content())
+	}
+	if savedTo(t, f, docServer.URL+"/out.docx") != 0 || f.content() != "neu" {
+		t.Fatalf("a document from the server itself was refused: %q", f.content())
+	}
+}
+
+func TestCallbackRefusesAnotherSchemeOnTheDocumentServer(t *testing.T) {
+	f := newFixture(t)
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("neu")) }))
+	defer docServer.Close()
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: strings.Replace(docServer.URL, "http://", "https://", 1)}
+	if savedTo(t, f, docServer.URL+"/out.docx") != 1 || f.content() != "alt" {
+		t.Fatalf("a document over another scheme was taken: %q", f.content())
+	}
+}
+
+func TestCallbackTreatsTheDefaultPortAsThePortOfTheScheme(t *testing.T) {
+	cases := []struct {
+		server, document string
+		same             bool
+	}{
+		{"https://office.lan", "https://office.lan:443/cache/out.docx", true},
+		{"https://office.lan:443/", "https://OFFICE.lan/cache/out.docx", true},
+		{"http://office.lan:80", "http://office.lan/cache/out.docx", true},
+		{"https://office.lan", "https://office.lan:8443/cache/out.docx", false},
+		{"http://office.lan", "https://office.lan/cache/out.docx", false},
+		{"https://office.lan", "https://office.lan.evil.test/cache/out.docx", false},
+	}
+	for _, c := range cases {
+		server, _ := url.Parse(c.server)
+		document, _ := url.Parse(c.document)
+		if got := sameOrigin(server, document); got != c.same {
+			t.Errorf("sameOrigin(%s, %s) = %v", c.server, c.document, got)
+		}
+	}
+}
+
+func TestCallbackRefusesARedirectOffTheDocumentServer(t *testing.T) {
+	f := newFixture(t)
+	reached := false
+	other := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		reached = true
+		_, _ = w.Write([]byte("fremd"))
+	}))
+	defer other.Close()
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, other.URL+"/secret", http.StatusFound)
+	}))
+	defer docServer.Close()
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: docServer.URL}
+	if savedTo(t, f, docServer.URL+"/out.docx") != 1 || f.content() != "alt" || reached {
+		t.Fatalf("the redirect was followed: reached %v, content %q", reached, f.content())
+	}
+}
+
+func TestCallbackFollowsARedirectThatStaysOnTheDocumentServer(t *testing.T) {
+	f := newFixture(t)
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/out.docx" {
+			http.Redirect(w, r, "/cache/out.docx", http.StatusFound)
+			return
+		}
+		_, _ = w.Write([]byte("neu"))
+	}))
+	defer docServer.Close()
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: docServer.URL}
+	if savedTo(t, f, docServer.URL+"/out.docx") != 0 || f.content() != "neu" {
+		t.Fatalf("content %q", f.content())
+	}
+}
