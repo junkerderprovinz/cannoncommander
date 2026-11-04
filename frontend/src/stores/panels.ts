@@ -1,6 +1,6 @@
 // The file manager's state: one or two panels, each with its own tabs, history, selection and filter.
 import { defineStore } from 'pinia';
-import { computed, reactive, ref, watch, watchEffect } from 'vue';
+import { computed, reactive, ref, toRef, watch, watchEffect } from 'vue';
 import { ApiError } from '@/api/client';
 import { actions, run, setActionContext } from '@/core/actions';
 import { extend } from '@/core/extend';
@@ -16,6 +16,7 @@ import { recordVisit } from '@/files/frequent';
 import { inArchive, join, parent, split } from '@/files/paths';
 import { viewOf } from '@/files/views';
 import { t as tr } from '@/i18n';
+import { useClipboard } from './clipboard';
 import { useListing } from './listing';
 import { useUser } from './user';
 
@@ -39,8 +40,9 @@ export interface Tab {
 export interface Panel { tabs: Tab[]; cur: number }
 // A short word on a row, such as "kopiert", that a feature puts there and the next folder change takes away.
 export interface RowMark { label: string; tone?: string }
-export interface Clip { cut: boolean; from: string; items: string[] }
-export interface Transfer { kind: 'copy' | 'move'; items: Entry[]; dest: string; from: string }
+// The kind link puts hard links instead of copies; the options are what the transfer window asked.
+export interface TransferOptions { rule?: 'ask' | 'skip' | 'replace' | 'both' | 'newer'; verify?: boolean; keepAttrs?: boolean }
+export interface Transfer extends TransferOptions { kind: 'copy' | 'move' | 'link'; items: Entry[]; dest: string; from: string }
 
 const ancestors = (path: string) => split(path).map((_, k, a) => '/' + a.slice(0, k + 1).join('/')).filter((p) => !p.includes('::'));
 
@@ -58,7 +60,7 @@ export const usePanels = defineStore('panels', () => {
   const openTree = reactive(new Set(['/mnt', '/mnt/user', ...panels.flatMap((p) => ancestors(p.tabs[0]!.path))]));
   const visited = ref<string[]>([]);
   const marks = reactive<Record<string, RowMark>[]>([{}, {}]);
-  const clip = ref<Clip | null>(null);
+  const clip = toRef(useClipboard(), 'clip');
   let following = false;
 
   const P = (i = active.value) => panels[i]!;
@@ -198,10 +200,10 @@ export const usePanels = defineStore('panels', () => {
   }
 
   // Copy or move by dragging; the transfer window decides what happens to names that are already there.
-  async function transfer(kind: Transfer['kind'], items: Entry[], dest: string, from = T().path) {
+  async function transfer(kind: Transfer['kind'], items: Entry[], dest: string, from = T().path, options: TransferOptions = {}) {
     if (inArchive(dest) || !(await listing.load(dest).catch(() => null))) return toast(tr('files.noTarget'), 'warn');
     if (dest === from) return toast(tr('files.sameFolder'), 'warn');
-    let job: Transfer | null = { kind, items, dest, from };
+    let job: Transfer | null = { kind, items, dest, from, ...options };
     for (const step of extend.transferPipeline) {
       job = step(job as never) as Transfer | null;
       if (!job) return;

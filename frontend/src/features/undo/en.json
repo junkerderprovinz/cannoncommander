@@ -1,0 +1,20 @@
+{
+  "undo": "Undo",
+  "list": "Recent actions",
+  "head": "Take back",
+  "empty": "Nothing to take back yet",
+  "nothing": "There is nothing to take back here",
+  "taken": "Taken back: {label}",
+  "items": "{n} items",
+  "justNow": "just now",
+  "minutes": "{n} min ago",
+  "hours": "{n} h ago",
+  "kind": {
+    "rename": "Renamed “{name}” to “{to}”",
+    "mkdir": "Created folder “{name}”",
+    "touch": "Created file “{name}”",
+    "copy": "Copied {what} to {to}",
+    "move": "Moved {what} to {to}",
+    "trash": "Put {what} in the trash"
+  }
+}

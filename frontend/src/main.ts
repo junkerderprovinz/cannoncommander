@@ -52,7 +52,7 @@ onPrefsSaved((p) => {
   clearTimeout(saving);
   saving = setTimeout(() => api.savePrefs(p).catch(() => {}), 800);
 });
-if (import.meta.env.MODE !== 'fixture') connect();
+connect();
 
 app.mount('#root');
 if (import.meta.env.VITE_E2E === '1') import('./e2e/shim').then((m) => m.installShim());
