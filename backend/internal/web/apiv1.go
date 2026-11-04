@@ -8,7 +8,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/api"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
@@ -31,8 +30,8 @@ var (
 	eventHub    = hub.New(hub.Options{OnTopic: folderWatch.Topic})
 )
 
-// mountAPIv1 serves /api/v1 next to the older /api routes. The more
-// specific prefix wins in the ServeMux.
+// mountAPIv1 serves /api/v1. The more specific prefix wins over /api/ in
+// the ServeMux.
 func mountAPIv1(router *http.ServeMux) error {
 	var gate ccfs.AccessGate
 	if store := state.Default(); store != nil {
@@ -50,13 +49,6 @@ func mountAPIv1(router *http.ServeMux) error {
 	resolver, err := ccfs.FromSettings(&settings.Config, gate, devices...)
 	if err != nil {
 		return err
-	}
-	if db != nil {
-		codes, err := accounts.RecoveryCodes(db)
-		if err != nil {
-			return err
-		}
-		auth.UseRecoveryCodes(codes)
 	}
 	index := fsindex.Quantum()
 	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index}

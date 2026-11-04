@@ -11,7 +11,7 @@ import (
 
 func initSidebarLinkTestDB(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")

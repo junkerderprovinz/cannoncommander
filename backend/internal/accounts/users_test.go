@@ -8,7 +8,6 @@ import (
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
@@ -157,10 +156,6 @@ func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
 	if links := decode[[]any](t, w.must(http.StatusOK, w.as(w.admin.Username, "GET", "/admin/shares", nil))); len(links) != 1 {
 		t.Fatalf("share links before = %v", links)
 	}
-	link := &share.Share{ShareColumns: share.ShareColumns{Hash: "anna-share", Path: "/fotos"}, UserID: anna.ID, SourcePath: w.share}
-	if err := state.CreateShare(link); err != nil {
-		t.Fatal(err)
-	}
 	id := strconv.FormatUint(anna.ID, 10)
 	if _, err := w.deps.DB.Exec(`INSERT INTO user_prefs (user_id, data, updated_at) VALUES (?, '{}', 0)`, id); err != nil {
 		t.Fatal(err)
@@ -170,9 +165,6 @@ func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
 
 	if _, err := state.GetUserByUsername("anna"); err == nil {
 		t.Fatal("anna is still there")
-	}
-	if left, _ := state.GetSharesByUserID(anna.ID); len(left) != 0 {
-		t.Fatalf("shares left: %+v", left)
 	}
 	if links := decode[[]any](t, w.must(http.StatusOK, w.as(w.admin.Username, "GET", "/admin/shares", nil))); len(links) != 0 {
 		t.Fatalf("share links left: %+v", links)

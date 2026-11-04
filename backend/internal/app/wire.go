@@ -17,12 +17,12 @@ type App struct {
 
 // WireServices connects domain packages to the state store after Open.
 func WireServices(store *state.Store) (*App, error) {
-	filesSvc := files.New(store, store, store)
+	filesSvc := files.New(store, store)
 	authSvc := auth.New(store)
 	files.SetDefault(filesSvc)
 	auth.SetDefault(authSvc)
 	indexing.SetMetaStore(store)
-	activity.SetQueryDeps(store, store)
+	activity.SetQueryDeps(store)
 	if err := auth.InitWebAuthn(store); err != nil {
 		return nil, err
 	}

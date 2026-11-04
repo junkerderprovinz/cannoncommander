@@ -1,0 +1,40 @@
+http:
+  port: 80
+  baseURL:  "/"
+server:
+  database:
+    migrateFrom: "database.db.old"
+  logging:
+    - levels: "info|error|warning|debug"
+      apiFilter: 'disabled'
+  sources:
+    - path: "../frontend/tests/playwright-files"
+      name: "playwright + files"
+      config:
+        defaultEnabled: true
+        defaultPermissions:
+          modify: false
+    - path: "."
+      name: "docker"
+      config:
+        defaultEnabled: true
+        rules:
+          - folderPath: "/"
+            viewable: true
+    - path: "/tests/playwright-files"
+      name: "access"
+      config:
+        defaultEnabled: true
+        denyByDefault: true
+frontend:
+  name: "CannonCommander"
+
+auth:
+  adminPassword: "playwright-password"
+  methods:
+    password:
+      signup: true
+
+userDefaults:
+  listing:
+    showHidden: true

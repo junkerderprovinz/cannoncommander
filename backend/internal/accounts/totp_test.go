@@ -51,10 +51,10 @@ func TestTurningOnTwoFactorLogin(t *testing.T) {
 	}
 	w.must(http.StatusConflict, w.as("anna", "POST", "/me/totp", map[string]any{}))
 
-	if err := passwordLogin("anna", strong, ""); err == nil {
+	if err := w.passwordLogin("anna", strong, ""); err == nil {
 		t.Fatal("the login takes the password alone")
 	}
-	if err := passwordLogin("anna", strong, code(t, setup.Secret, time.Now())); err != nil {
+	if err := w.passwordLogin("anna", strong, code(t, setup.Secret, time.Now().Add(30*time.Second))); err != nil {
 		t.Fatalf("login with a code: %v", err)
 	}
 }
@@ -94,10 +94,10 @@ func TestRecoveryCodesStandInForTheApp(t *testing.T) {
 	w.addUser("anna", "user", "/mnt/user")
 	_, codes := w.turnOnTotp("anna")
 
-	if err := passwordLogin("anna", strong, strings.ToLower(codes[0])); err != nil {
+	if err := w.passwordLogin("anna", strong, strings.ToLower(codes[0])); err != nil {
 		t.Fatalf("login with a recovery code: %v", err)
 	}
-	if err := passwordLogin("anna", strong, codes[0]); err == nil {
+	if err := w.passwordLogin("anna", strong, codes[0]); err == nil {
 		t.Fatal("a recovery code logged in twice")
 	}
 	if me := decode[accounts.Me](t, w.must(http.StatusOK, w.as("anna", "GET", "/me", nil))); me.Recovery != 7 {
@@ -108,7 +108,7 @@ func TestRecoveryCodesStandInForTheApp(t *testing.T) {
 	if me := decode[accounts.Me](t, w.must(http.StatusOK, w.as("anna", "GET", "/me", nil))); me.Recovery != 8 {
 		t.Fatalf("left after new codes = %d", me.Recovery)
 	}
-	if err := passwordLogin("anna", strong, codes[2]); err == nil {
+	if err := w.passwordLogin("anna", strong, codes[2]); err == nil {
 		t.Fatal("an old recovery code still works")
 	}
 
@@ -118,7 +118,7 @@ func TestRecoveryCodesStandInForTheApp(t *testing.T) {
 	if me.Twofa || me.Recovery != 0 {
 		t.Fatalf("me = %+v", me)
 	}
-	if err := passwordLogin("anna", strong, ""); err != nil {
+	if err := w.passwordLogin("anna", strong, ""); err != nil {
 		t.Fatalf("the password alone logs in again: %v", err)
 	}
 	w.must(http.StatusConflict, w.as("anna", "DELETE", "/me/totp", map[string]any{"code": fresh[1]}))

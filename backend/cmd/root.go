@@ -15,7 +15,6 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/app"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/icons"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/preview"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
@@ -24,8 +23,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/web"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
-	"github.com/junkerderprovinz/cannoncommander/backend/swagger/docs"
-	"github.com/swaggo/swag"
 )
 
 var runtimeApp *app.App
@@ -67,7 +64,7 @@ func Start() {
 		return
 	}
 	system.ApplyStored(context.Background(), state.MainDB())
-	database :=fmt.Sprintf("Using existing database  : %v", settings.Config.Server.DatabaseV2.Path)
+	database := fmt.Sprintf("Using existing database  : %v", settings.Config.Server.DatabaseV2.Path)
 	if !dbExists {
 		database = fmt.Sprintf("Creating new database    : %v", settings.Config.Server.DatabaseV2.Path)
 	}
@@ -125,9 +122,6 @@ func Start() {
 		fileutils.ClearCacheDir(settings.Config.Server.CacheDir)
 	}
 	serverConfig := settings.Config.Server
-	swagInfo := docs.SwaggerInfo
-	swagInfo.BasePath = settings.Config.Http.BaseURL
-	swag.Register(docs.SwaggerInfo.InstanceName(), swagInfo)
 	// initialize indexing and schedule indexing ever n minutes (default 5)
 	if len(settings.Config.Server.SourceMap) == 0 {
 		logger.Fatal("No sources configured, exiting...")
@@ -152,7 +146,6 @@ func Start() {
 	validateUserInfo(!dbExists)
 	validateOfficeIntegration()
 	validateAccessRules()
-	validateShareInfo()
 	// Start the rootCMD in a goroutine
 	go func() {
 		if err := rootCMD(ctx, &serverConfig, runtimeApp, shutdownComplete); err != nil {
@@ -223,14 +216,6 @@ func rootCMD(ctx context.Context, serverConfig *settings.Server, a *app.App, shu
 		logger.Fatalf("Error starting preview service: %v", err)
 	}
 	logger.Debugf("MuPDF Enabled            : %v", settings.Env.MuPdfAvailable)
-
-	// Generate PWA icons after preview service is initialized
-	if err := icons.GeneratePWAIcons(); err != nil {
-		logger.Warningf("Failed to generate PWA icons: %v", err)
-	}
-
-	// Initialize PWA manifest after icons are generated
-	icons.InitializePWAManifest()
 
 	web.StartHttp(ctx, web.Deps{
 		Store: a.Store,

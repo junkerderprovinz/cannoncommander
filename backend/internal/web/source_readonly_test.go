@@ -1,22 +1,14 @@
 package web
 
 import (
-	"archive/zip"
-	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func setTestSourceReadOnly(sourceName string, readOnly bool) {
@@ -148,164 +140,4 @@ func TestWebDAVReadOnlySourceEnforcement(t *testing.T) {
 			t.Fatalf("PUT on writable source: expected 201, got %d", code)
 		}
 	})
-}
-
-func TestUnarchivePreviewAllowsReadOnlyDestination(t *testing.T) {
-	root, user := setupUploadHTTPTest(t)
-	setTestSourceReadOnly("uploads", true)
-
-	archivePath := filepath.Join(root, "test.zip")
-	f, err := os.Create(archivePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	zw := zip.NewWriter(f)
-	w, err := zw.Create("file.txt")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err = w.Write([]byte("hello")); err != nil {
-		t.Fatal(err)
-	}
-	if err = zw.Close(); err != nil {
-		t.Fatal(err)
-	}
-	if err = f.Close(); err != nil {
-		t.Fatal(err)
-	}
-
-	body := `{"fromSource":"uploads","path":"/test.zip","destination":"/","preview":true}`
-	rec := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/api/resources/unarchive", strings.NewReader(body))
-	status, err := unarchiveHandler(rec, req, &Context{User: user})
-	if err != nil || status != http.StatusOK {
-		t.Fatalf("preview on read-only dest: status=%d err=%v body=%s", status, err, rec.Body.String())
-	}
-}
-
-func TestUnarchiveExtractionDeniedOnReadOnlyDestination(t *testing.T) {
-	root, user := setupUploadHTTPTest(t)
-	setTestSourceReadOnly("uploads", true)
-
-	archivePath := filepath.Join(root, "test.zip")
-	f, err := os.Create(archivePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	zw := zip.NewWriter(f)
-	w, err := zw.Create("file.txt")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err = w.Write([]byte("hello")); err != nil {
-		t.Fatal(err)
-	}
-	if err = zw.Close(); err != nil {
-		t.Fatal(err)
-	}
-	if err = f.Close(); err != nil {
-		t.Fatal(err)
-	}
-
-	body := `{"fromSource":"uploads","path":"/test.zip","destination":"/","preview":false}`
-	rec := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/api/resources/unarchive", strings.NewReader(body))
-	status, err := unarchiveHandler(rec, req, &Context{User: user})
-	if status != http.StatusForbidden || err == nil {
-		t.Fatalf("extract on read-only dest: status=%d err=%v", status, err)
-	}
-}
-
-func TestOnlyOfficeCallbackDeniedOnReadOnlySource(t *testing.T) {
-	initStreamTestSources(t)
-	indexing.SetTestIndex("default", "/default")
-	t.Cleanup(func() { indexing.ClearTestIndices() })
-	setTestSourceReadOnly("default", true)
-
-	const realPath = "/default/doc.docx"
-	const docKey = "oo-ro-key"
-	origFileInfo := files.FileInfoFasterFunc
-	t.Cleanup(func() { files.FileInfoFasterFunc = origFileInfo })
-	files.FileInfoFasterFunc = func(utils.FileOptions, *users.User) (*iteminfo.ExtendedFileInfo, error) {
-		return &iteminfo.ExtendedFileInfo{RealPath: realPath}, nil
-	}
-	utils.OnlyOfficeCache.Set(realPath, docKey)
-	t.Cleanup(func() { utils.OnlyOfficeCache.Delete(realPath) })
-
-	origOnlyOffice := settings.Config.Integrations.OnlyOffice
-	t.Cleanup(func() { settings.Config.Integrations.OnlyOffice = origOnlyOffice })
-	settings.Config.Integrations.OnlyOffice.Url = "http://onlyoffice.test"
-
-	user := testUserWithSourcePerms("/default", users.SourceFilePermissions{
-		View: true, Download: true, Modify: true,
-	})
-	d := &requestContext{User: user}
-	callback := &OnlyOfficeCallback{
-		Key:    docKey,
-		Status: onlyOfficeStatusDocumentClosedWithChanges,
-		URL:    "http://onlyoffice.test/cache/doc.docx",
-	}
-	req := httptest.NewRequest(http.MethodPost, "/api/office/callback?source=default&path=/doc.docx", nil)
-	rec := httptest.NewRecorder()
-	if _, err := processOnlyOfficeCallback(rec, req, d, callback); err != nil {
-		t.Fatalf("processOnlyOfficeCallback: %v", err)
-	}
-	if rec.Code != http.StatusForbidden {
-		t.Fatalf("status = %d, want %d body=%s", rec.Code, http.StatusForbidden, rec.Body.String())
-	}
-}
-
-func TestArchiveCreateDeniedOnReadOnlySource(t *testing.T) {
-	root, user := setupUploadHTTPTest(t)
-	setTestSourceReadOnly("uploads", true)
-	if err := os.WriteFile(filepath.Join(root, "a.txt"), []byte("x"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	body := `{"fromSource":"uploads","paths":["/a.txt"],"destination":"/out.zip","format":"zip"}`
-	rec := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/api/resources/archive", strings.NewReader(body))
-	status, err := archiveCreateHandler(rec, req, &Context{User: user})
-	if status != http.StatusForbidden || err == nil {
-		t.Fatalf("archive create on read-only: status=%d err=%v", status, err)
-	}
-}
-
-func TestUnarchivePreviewSkipsReadOnlyDeleteAfterOnSource(t *testing.T) {
-	root, user := setupUploadHTTPTest(t)
-	setTestSourceReadOnly("uploads", true)
-
-	archivePath := filepath.Join(root, "test.zip")
-	f, err := os.Create(archivePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	zw := zip.NewWriter(f)
-	w, err := zw.Create("file.txt")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err = w.Write([]byte("hello")); err != nil {
-		t.Fatal(err)
-	}
-	if err = zw.Close(); err != nil {
-		t.Fatal(err)
-	}
-	if err = f.Close(); err != nil {
-		t.Fatal(err)
-	}
-
-	body := `{"fromSource":"uploads","path":"/test.zip","destination":"/","preview":true,"deleteAfter":true}`
-	rec := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/api/resources/unarchive", strings.NewReader(body))
-	status, err := unarchiveHandler(rec, req, &Context{User: user})
-	if err != nil || status != http.StatusOK {
-		t.Fatalf("preview with deleteAfter on read-only source: status=%d err=%v", status, err)
-	}
-	var preview json.RawMessage
-	if err = json.Unmarshal(rec.Body.Bytes(), &preview); err != nil {
-		t.Fatal(err)
-	}
-	if _, err = os.Stat(archivePath); err != nil {
-		t.Fatal("archive should remain when preview does not delete")
-	}
 }

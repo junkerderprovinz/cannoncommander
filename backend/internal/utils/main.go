@@ -6,7 +6,6 @@ import (
 	math "math/rand"
 	"os"
 	"reflect"
-	"strings"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -16,14 +15,6 @@ func CheckErr(source string, err error) {
 	if err != nil {
 		logger.Fatalf("%s: %v", source, err)
 	}
-}
-
-// CapitalizeFirst returns the input string with the first letter capitalized.
-func CapitalizeFirst(s string) string {
-	if len(s) == 0 {
-		return s // Return the empty string as is
-	}
-	return strings.ToUpper(string(s[0])) + s[1:]
 }
 
 func InsecureRandomIdentifier(length int) string {
@@ -68,13 +59,6 @@ func NonNilSlice[T any](in []T) []T {
 		return []T{}
 	}
 	return in
-}
-
-func Ternary[T any](cond bool, vtrue, vfalse T) T {
-	if cond {
-		return vtrue
-	}
-	return vfalse
 }
 
 // Clamp returns value clamped between min and max.

@@ -1,27 +1,18 @@
 package web
 
 import (
-	"encoding/json"
 	libError "errors"
 	"fmt"
-	"io"
-	"mime"
 	"net/http"
-	"net/url"
 	"slices"
 	"strings"
 	"time"
 
-	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/golang-jwt/jwt/v4/request"
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/activity"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
-	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
@@ -80,7 +71,7 @@ func ExtractToken(r *http.Request) (string, error) {
 }
 
 // getOrCreateAuthenticatedUser is a common helper for retrieving or auto-creating users
-// across different authentication methods (proxy, JWT, LDAP, OIDC).
+// that sign in through JWT or OIDC.
 // When groupsPresent is false the groups claim was omitted and existing memberships are left unchanged.
 // When groupsPresent is true, groups (including empty) are synced into access-control GroupMap.
 func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod, isAdmin bool, groups []string, groupsPresent bool) (*users.User, error) {
@@ -159,36 +150,20 @@ func ensureUserInAllowedGroups(loginMethod users.LoginMethod, groups []string) e
 	switch loginMethod {
 	case users.LoginMethodJwt:
 		allowedGroups = settings.Config.Auth.Methods.JwtAuth.UserGroups
-	case users.LoginMethodLdap:
-		allowedGroups = settings.Config.Auth.Methods.LdapAuth.UserGroups
 	case users.LoginMethodOidc:
 		allowedGroups = settings.Config.Auth.Methods.OidcAuth.UserGroups
-	case users.LoginMethodProxy:
-		allowedGroups = settings.Config.Auth.Methods.ProxyAuth.UserGroups
 	}
 	if len(allowedGroups) == 0 {
 		return nil
 	}
 	for _, userGroup := range groups {
 		for _, allowedGroup := range allowedGroups {
-			if loginMethod == users.LoginMethodLdap {
-				if ldapGroupMatches(userGroup, allowedGroup) {
-					return nil
-				}
-			} else if strings.EqualFold(userGroup, allowedGroup) {
+			if strings.EqualFold(userGroup, allowedGroup) {
 				return nil
 			}
 		}
 	}
 	return fmt.Errorf("user is not in allowed groups")
-}
-
-func SetupProxyUser(r *http.Request, data *Context, proxyUser string) (*users.User, error) {
-	proxyCfg := settings.Config.Auth.Methods.ProxyAuth
-	groups, groupsPresent := auth.ExtractGroupsFromHeader(r, proxyCfg.GroupsClaim)
-	isAdmin := isAdminFromGroups(proxyCfg.AdminGroup, groups)
-
-	return getOrCreateAuthenticatedUser(proxyUser, users.LoginMethodProxy, isAdmin, groups, groupsPresent)
 }
 
 // setupJwtUser retrieves or creates a user based on external JWT token claims
@@ -202,366 +177,11 @@ func SetupJwtUser(r *http.Request, data *Context, username string, claims map[st
 	return getOrCreateAuthenticatedUser(username, users.LoginMethodJwt, isAdmin, groups, groupsPresent)
 }
 
-// loginHandler handles user authentication via password.
-// @Summary User login
-// @Description Authenticate a user with a username and password. The password must be URL-encoded and sent in the X-Password header to support special characters (e.g., ^, %, £, €, etc.).
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Param username query string true "Username"
-// @Param recaptcha query string false "ReCaptcha response token (if enabled)"
-// @Param X-Password header string true "URL-encoded password"
-// @Param X-Secret header string false "TOTP code (if 2FA is enabled)"
-// @Success 200 {string} string "JWT token for authentication"
-// @Failure 401 {object} map[string]string "Unauthorized - authentication failed"
-// @Failure 403 {object} map[string]string "Forbidden - authentication failed"
-// @Failure 429 {object} map[string]string "Too many requests - rate limited or temporarily locked out after failed attempts"
-// @Failure 500 {object} map[string]string "Internal server error"
-// @Router /api/auth/login [post]
-func loginHandler(w http.ResponseWriter, r *http.Request, d *Context) (int, error) {
-	passwordUser := d.User.LoginMethod == users.LoginMethodPassword
-	enforcedOtp := settings.Config.Auth.Methods.PasswordAuth.EnforcedOtp
-	missingOtp := d.User.TOTPSecret == ""
-	if passwordUser && enforcedOtp && missingOtp {
-		return http.StatusForbidden, errors.ErrNoTotpConfigured
-	}
-	if d.User.HasPasskeyMFA() && d.User.TOTPSecret == "" {
-		return http.StatusForbidden, errors.ErrPasskeyMFARequired
-	}
-	if passwordUser && d.User.RequirePasswordChange {
-		return http.StatusForbidden, errors.ErrPasswordChangeRequired
-	}
-	status, err := printToken(w, r, d.User, "")
-	if err != nil || status != 0 {
-		return status, err
-	}
-	activity.RecordLogin(r, d.User)
-	return 0, nil
-}
-
 func sessionCookieDomain(r *http.Request) string {
 	return strings.Split(requestHost(r), ":")[0]
 }
 
-// logoutHandler handles user logout
-// @Summary User Logout
-// @Description Returns a logout URL for the frontend to redirect to.
-// @Tags Auth
-// @Produce json
-// @Param auth query string false "JWT token"
-// @Success 200 {object} map[string]string "{"logoutUrl": "http://..."}"
-// @Router /api/auth/logout [post]
-func logoutHandler(w http.ResponseWriter, r *http.Request, d *Context) (int, error) {
-	if err := state.RevokeToken(d.Token); err != nil {
-		logger.Errorf("Failed to revoke token on logout: %v", err)
-	}
-
-	// Clear the authentication cookie by setting it to expire in the past
-	http.SetCookie(w, sessionCookie(r, "", time.Unix(0, 0), -1, http.SameSiteStrictMode))
-
-	logoutUrl := fmt.Sprintf("%vlogin", settings.Config.Http.BaseURL) // Default fallback
-	if d.User != nil && d.User.LoginMethod == users.LoginMethodProxy {
-		proxyRedirectUrl := settings.Config.Auth.Methods.ProxyAuth.LogoutRedirectUrl
-		if proxyRedirectUrl != "" {
-			logoutUrl = proxyRedirectUrl
-		}
-	} else if d.User != nil && d.User.LoginMethod == users.LoginMethodOidc {
-		oidcRedirectUrl := settings.Config.Auth.Methods.OidcAuth.LogoutRedirectUrl
-		if oidcRedirectUrl != "" {
-			logoutUrl = oidcRedirectUrl
-		}
-	} else if d.User != nil && d.User.LoginMethod == users.LoginMethodLdap {
-		ldapRedirectUrl := settings.Config.Auth.Methods.LdapAuth.LogoutRedirectUrl
-		if ldapRedirectUrl != "" {
-			logoutUrl = ldapRedirectUrl
-		}
-	} else if d.User != nil && d.User.LoginMethod == users.LoginMethodJwt {
-		jwtRedirectUrl := settings.Config.Auth.Methods.JwtAuth.LogoutRedirectUrl
-		if jwtRedirectUrl != "" {
-			logoutUrl = jwtRedirectUrl
-		}
-	}
-	if logoutUrl == "" {
-		logger.Debug("no logout url found, using default")
-		logoutUrl = fmt.Sprintf("%vlogin", settings.Config.Http.BaseURL)
-	}
-	response := map[string]string{
-		"logoutUrl": logoutUrl,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(w).Encode(response)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	if d.User != nil {
-		activity.RecordAuth(r, d.User, activitydb.EventLogout, activitydb.Details{
-			LoginMethod: string(d.User.LoginMethod),
-		})
-	}
-
-	return http.StatusOK, nil
-}
-
-// signupHandler registers a new user account.
-// @Summary User signup
-// @Description Register a new user account with a username and password.
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Success 201 {string} string "User created successfully"
-// @Failure 400 {object} map[string]string "Bad request - invalid input"
-// @Failure 405 {object} map[string]string "Method not allowed - signup is disabled"
-// @Failure 409 {object} map[string]string "Conflict - user already exists"
-// @Failure 500 {object} map[string]string "Internal server error"
-// @Router /api/auth/signup [post]
-func signupHandler(w http.ResponseWriter, r *http.Request, d *Context) (int, error) {
-	if !settings.Config.Auth.Methods.PasswordAuth.Signup {
-		return http.StatusMethodNotAllowed, fmt.Errorf("signup is disabled")
-	}
-
-	username, password, credErr := parseSignupCredentials(r)
-	if credErr != nil {
-		return http.StatusBadRequest, fmt.Errorf("invalid signup request body")
-	}
-
-	// Validate that we have both username and password
-	if username == "" || password == "" {
-		return http.StatusBadRequest, fmt.Errorf("username and password are required")
-	}
-	if err := settings.ValidatePasswordPolicy(password); err != nil {
-		return http.StatusBadRequest, err
-	}
-
-	user := users.User{
-		FrontendUser: users.FrontendUser{
-			Username:    username,
-			LoginMethod: users.LoginMethodPassword,
-			Permissions: settings.ConvertPermissionsToUsers(settings.Config.UserDefaults.Account.Permissions),
-		},
-	}
-	err := state.CreateUser(&user, password)
-	if err != nil {
-		logger.Debug(err.Error())
-		return http.StatusBadRequest, err
-	}
-	if dirErr := files.MakeUserDirs(&user, true); dirErr != nil {
-		logger.Error(dirErr.Error())
-	}
-	activity.RecordAuth(r, &user, activitydb.EventSignup, activitydb.Details{
-		LoginMethod: string(users.LoginMethodPassword),
-	})
-	return 201, nil
-}
-
-type signupCredentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-func parseSignupCredentials(r *http.Request) (username, password string, err error) {
-	mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
-	if err == nil && mediaType == "application/json" {
-		var body signupCredentials
-		dec := json.NewDecoder(io.LimitReader(r.Body, 8192))
-		if err := dec.Decode(&body); err != nil {
-			return "", "", err
-		}
-		return strings.TrimSpace(body.Username), body.Password, nil
-	}
-	return r.URL.Query().Get("username"), r.URL.Query().Get("password"), nil
-}
-
-// renewHandler refreshes the authentication token for a logged-in user.
-// @Summary Renew authentication token
-// @Description Refresh the authentication token for a logged-in user.
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Success 200 {string} string "New JWT token generated"
-// @Failure 401 {object} map[string]string "Unauthorized - invalid token"
-// @Failure 403 {object} map[string]string "Forbidden - non-session token"
-// @Failure 500 {object} map[string]string "Internal server error"
-// @Router /api/auth/renew [post]
-func renewHandler(w http.ResponseWriter, r *http.Request, d *Context) (int, error) {
-	if settings.Config.Auth.Methods.NoAuth {
-		w.Header().Set("Content-Type", "text/plain")
-		if d.Token != "" {
-			if _, err := w.Write([]byte(d.Token)); err != nil {
-				return 401, errors.ErrUnauthorized
-			}
-		}
-		return 0, nil
-	}
-	token := d.Token
-	if token == "" {
-		extracted, err := ExtractToken(r)
-		if err != nil || extracted == "" {
-			return http.StatusUnauthorized, errors.ErrUnauthorized
-		}
-		token = extracted
-		d.Token = token
-	}
-	_, isSession, ok := state.HashedTokenOwner(token)
-	if ok && !isSession {
-		return http.StatusForbidden, fmt.Errorf("renew requires a session token")
-	}
-	if !ok {
-		return http.StatusUnauthorized, errors.ErrUnauthorized
-	}
-	// Renew is idempotent while the presented session token is still fresh:
-	// without this every page load rotates the token (the frontend tracks exp
-	// in memory only), churning token state. Rotation happens only inside the
-	// refresh window, matching the frontend's renew threshold.
-	var tk users.AuthToken
-	if _, err := jwt.ParseWithClaims(d.Token, &tk, auth.JWTSigningKeyFunc()); err == nil &&
-		tk.RegisteredClaims.ExpiresAt != nil &&
-		time.Until(tk.RegisteredClaims.ExpiresAt.Time) > sessionRenewWindow {
-		// Do not re-emit the cookie when the request already carried this token.
-		// A concurrent renew may have rotated the jar; an in-flight idempotent
-		// response would otherwise revert the browser to a retiring token.
-		if c, err := r.Cookie(sessionCookieName); err != nil || c.Value == "" || c.Value != d.Token {
-			SetSessionCookie(w, r, d.Token, tk.RegisteredClaims.ExpiresAt.Add(sessionCookieBuffer))
-		}
-		w.Header().Set("Content-Type", "text/plain")
-		if _, err := w.Write([]byte(d.Token)); err != nil {
-			return 401, errors.ErrUnauthorized
-		}
-		return 0, nil
-	}
-	return printToken(w, r, d.User, d.Token)
-}
-
-// sessionRenewWindow mirrors the frontend SESSION_REFRESH_BEFORE_MS: renews
-// arriving while the session token has more than this left return it unchanged.
-const sessionRenewWindow = 30 * time.Minute
-
-// sessionCookieBuffer keeps the browser cookie briefly past JWT expiry so an
-// in-flight renew can still authenticate against the just-expired token.
-const sessionCookieBuffer = 30 * time.Minute
-
-func printToken(w http.ResponseWriter, r *http.Request, user *users.User, priorToken string) (int, error) {
-	expires := time.Hour * time.Duration(settings.Config.Auth.TokenExpirationHours)
-	tokenString, err := replaceSessionToken(priorToken, user)
-	if err != nil {
-		if strings.Contains(err.Error(), "key already exists with same name") {
-			return http.StatusConflict, err
-		}
-		return 401, errors.ErrUnauthorized
-	}
-
-	expiresTime := time.Now().Add(expires).Add(sessionCookieBuffer)
-
-	SetSessionCookie(w, r, tokenString, expiresTime)
-
-	// Still return token in body for backward compatibility and state management
-	w.Header().Set("Content-Type", "text/plain")
-	if _, err := w.Write([]byte(tokenString)); err != nil {
-		return 401, errors.ErrUnauthorized
-	}
-	return 0, nil
-}
-
-// AuthenticateShareRequest validates access to a password-protected share.
-// UI sessions are minted only after successful X-SHARE-PASSWORD auth, never from download tokens.
-func AuthenticateShareRequest(w http.ResponseWriter, r *http.Request, l share.Share) (int, error) {
-	if l.PasswordHash == "" {
-		return http.StatusOK, nil
-	}
-
-	if validateShareUISessionCookie(r, l.Hash) {
-		return http.StatusOK, nil
-	}
-
-	tokenParam := r.URL.Query().Get("token")
-	if tokenParam != "" {
-		if shareRequestAllowsDownloadToken(r) && authorizeShareDownloadAccessToken(tokenParam, l.Hash) {
-			return http.StatusOK, nil
-		}
-		logger.Debugf("share auth failed: hash=%s reason=invalid_or_disallowed_token", l.Hash)
-	}
-
-	password := r.Header.Get("X-SHARE-PASSWORD")
-	if password == "" {
-		logger.Debugf("share auth failed: hash=%s reason=missing_password", l.Hash)
-		return http.StatusUnauthorized, nil
-	}
-	password, err := url.QueryUnescape(password)
-	if err != nil {
-		return http.StatusUnauthorized, nil
-	}
-	if err := bcrypt.CompareHashAndPassword([]byte(l.PasswordHash), []byte(password)); err != nil {
-		if libError.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
-			logger.Debugf("share auth failed: hash=%s reason=wrong_password", l.Hash)
-			return http.StatusUnauthorized, nil
-		}
-		return http.StatusUnauthorized, err
-	}
-	if w != nil {
-		if cookieErr := SetShareUISessionCookie(w, r, l.Hash); cookieErr != nil {
-			logger.Debugf("share session cookie: hash=%s err=%v", l.Hash, cookieErr)
-		}
-	}
-	return http.StatusOK, nil
-}
-
 const sessionCookieName = "filebrowser_quantum_jwt"
-const shareUISessionCookieName = "filebrowser_share_session"
-
-// validateShareUISessionCookie checks the HttpOnly share UI session cookie for a hash.
-func validateShareUISessionCookie(r *http.Request, shareHash string) bool {
-	if r == nil || shareHash == "" {
-		return false
-	}
-	cookie, err := r.Cookie(shareUISessionCookieName)
-	if err != nil || cookie.Value == "" {
-		return false
-	}
-	return validateShareUISessionToken(cookie.Value, shareHash)
-}
-
-// SetShareUISessionCookie stores a short-lived session after successful X-SHARE-PASSWORD auth.
-// Enables native browser streaming downloads without putting tokens in download URLs.
-func SetShareUISessionCookie(w http.ResponseWriter, r *http.Request, shareHash string) error {
-	token, expiresAt, err := mintShareUISessionToken(shareHash, maxShareUISessionTTL)
-	if err != nil {
-		return err
-	}
-	expiresTime := time.Unix(expiresAt, 0)
-	http.SetCookie(w, shareUISessionCookie(r, token, expiresTime))
-	return nil
-}
-
-const maxShareUISessionTTL = 24 * time.Hour
-
-// shareUISessionCookiePath scopes the share session cookie to the configured HTTP base URL path.
-func shareUISessionCookiePath() string {
-	base := settings.Config.Http.BaseURL
-	if base == "" {
-		return "/"
-	}
-	return base
-}
-
-// shareUISessionCookie builds the HttpOnly share UI session cookie for a validated password entry.
-func shareUISessionCookie(r *http.Request, token string, expiresTime time.Time) *http.Cookie {
-	maxAge := int(time.Until(expiresTime).Seconds())
-	if maxAge < 0 {
-		maxAge = 0
-	}
-	return &http.Cookie{
-		Name:     shareUISessionCookieName,
-		Value:    token,
-		Path:     shareUISessionCookiePath(),
-		SameSite: http.SameSiteLaxMode,
-		HttpOnly: true,
-		Secure:   requestScheme(r) == "https",
-		Expires:  expiresTime,
-		MaxAge:   maxAge,
-	}
-}
 
 // sessionCookie builds the JWT cookie. HttpOnly prevents srcdoc XSS from reading
 // document.cookie; Secure is set when the request is HTTPS (including via proxy).

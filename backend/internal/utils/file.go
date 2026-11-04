@@ -1,49 +1,10 @@
 package utils
 
 import (
-	"crypto/md5"
-	"crypto/sha1"
-	"crypto/sha256"
-	"crypto/sha512"
-	"encoding/hex"
 	"fmt"
-	"hash"
-	"io"
-	"os"
 	"path"
 	"strings"
-
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 )
-
-// GetChecksum calculates the checksum of a file using the specified algorithm.
-// Returns the checksum as a hex-encoded string.
-func GetChecksum(fullPath, algo string) (string, error) {
-	reader, err := os.Open(fullPath)
-	if err != nil {
-		return "", err
-	}
-	defer reader.Close()
-
-	hashFuncs := map[string]hash.Hash{
-		"md5":    md5.New(),
-		"sha1":   sha1.New(),
-		"sha256": sha256.New(),
-		"sha512": sha512.New(),
-	}
-
-	h, ok := hashFuncs[algo]
-	if !ok {
-		return "", errors.ErrInvalidOption
-	}
-
-	_, err = io.Copy(h, reader)
-	if err != nil {
-		return "", err
-	}
-
-	return hex.EncodeToString(h.Sum(nil)), nil
-}
 
 // FileOptions are the options when getting a file info.
 type FileOptions struct {
@@ -58,12 +19,10 @@ type FileOptions struct {
 	AlbumArt                 bool   // whether to get album art from media files
 	ShowHidden               bool   // whether to show hidden files (true = show, false = hide)
 	ShowPinnedItems          bool   // whether to show pinned items
-	ShareHash                string // when set, pinned items are loaded from this share link
 	HideFileExt              string // Hide files based on extensions (eg: '.lrc' or '.srt')
 	FollowSymlinks           bool   // whether to follow symlinks
 	Only                     string // whether to only get files or folders
 	SkipExtendedAttrs        bool   // whether to skip extended attributes
-	ShowSharedAttr           bool   // whether to show share attributes
 }
 
 // SanitizePath cleans and validates a path or path-like filter (index paths, globs, etc.)

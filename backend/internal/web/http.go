@@ -5,23 +5,16 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"math"
 	"net"
 	"net/http"
-	"net/url"
-	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gtsteffaniak/go-cache/cache"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	libErrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/preview"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/quota"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"golang.org/x/time/rate"
@@ -30,11 +23,8 @@ import (
 // Context carries per-request state for HTTP handlers.
 type Context struct {
 	User         *users.User
-	ShareUser    *users.User
 	FileInfo     iteminfo.ExtendedFileInfo
 	Token        string
-	Share        share.Share
-	ShareValid   bool
 	Ctx          context.Context
 	MaxBandwidth int
 	Data         interface{}
@@ -45,26 +35,10 @@ type Context struct {
 type HandleFunc func(w http.ResponseWriter, r *http.Request, d *Context) (int, error)
 
 func effectiveFilePerms(d *Context, sourceName string) (users.SourceFilePermissions, error) {
-	if d == nil {
+	if d == nil || d.User == nil {
 		return users.DenyAllSourceFilePermissions(), fmt.Errorf("user context not set")
 	}
-	var link *share.Share
-	if d.Share.Hash != "" {
-		link = &d.Share
-	}
-	return share.EffectiveFilePermissions(d.User, link, sourceName)
-}
-
-// accessCheckUsername is the username used for filesystem access-rule checks.
-// Public share routes evaluate rules as the share owner, not the anonymous visitor.
-func accessCheckUsername(d *Context) string {
-	if d == nil || d.User == nil {
-		return ""
-	}
-	if d.Share.Hash != "" && d.ShareUser != nil {
-		return d.ShareUser.Username
-	}
-	return d.User.Username
+	return d.User.FilePermsForSourceName(sourceName)
 }
 
 // HttpResponse is the standard JSON error/success envelope.
@@ -132,48 +106,6 @@ var (
 	authRateLimitOIDCByIP             = cache.NewCache[*rate.Limiter](authLimiterEntryTTL)
 	authRateLimitAuthenticatedByUser  = cache.NewCache[*rate.Limiter](authLimiterEntryTTL)
 )
-
-// ErrToStatus maps domain errors to HTTP status codes.
-func ErrToStatus(err error) int {
-	switch {
-	case err == nil:
-		return http.StatusOK
-	case os.IsPermission(err):
-		return http.StatusForbidden
-	case errors.Is(err, libErrors.ErrAccessDenied):
-		return http.StatusForbidden
-	case errors.Is(err, libErrors.ErrPathEscapesScope):
-		return http.StatusForbidden
-	case os.IsNotExist(err), errors.Is(err, os.ErrNotExist), err == libErrors.ErrNotExist:
-		return http.StatusNotFound
-	case os.IsExist(err), errors.Is(err, os.ErrExist), err == libErrors.ErrExist:
-		return http.StatusConflict
-	case errors.Is(err, libErrors.ErrPermissionDenied):
-		return http.StatusForbidden
-	case errors.Is(err, libErrors.ErrInvalidRequestParams):
-		return http.StatusBadRequest
-	case errors.Is(err, libErrors.ErrIsDirectory):
-		return http.StatusMethodNotAllowed
-	case errors.Is(err, preview.ErrUnsupportedFormat):
-		return http.StatusUnsupportedMediaType
-	default:
-		if qe, ok := quota.AsError(err); ok {
-			if qe.Code == quota.CodeLengthRequired {
-				return http.StatusBadRequest
-			}
-			return http.StatusInsufficientStorage
-		}
-		return http.StatusInternalServerError
-	}
-}
-
-// realPathErrStatus maps filesystem path resolution errors to HTTP status codes for download/view/archive paths.
-func realPathErrStatus(err error) int {
-	if errors.Is(err, libErrors.ErrPathEscapesScope) {
-		return http.StatusForbidden
-	}
-	return ErrToStatus(err)
-}
 
 // RenderJSON writes a JSON response, optionally gzip-compressed.
 func RenderJSON(w http.ResponseWriter, r *http.Request, data interface{}, statusCode ...int) (int, error) {
@@ -284,33 +216,6 @@ func GetRemoteIP(r *http.Request) string {
 // GetScheme returns the request scheme (http or https).
 func GetScheme(r *http.Request) string {
 	return requestScheme(r)
-}
-
-func toASCIIFilename(fileName string) string {
-	var result strings.Builder
-	for _, r := range fileName {
-		if r > 127 {
-			result.WriteRune('_')
-		} else {
-			result.WriteRune(r)
-		}
-	}
-	return result.String()
-}
-
-func SetContentDisposition(w http.ResponseWriter, r *http.Request, fileName string, forceInline bool) {
-	dispositionType := "attachment"
-	if forceInline || r.URL.Query().Get("inline") == "true" {
-		dispositionType = "inline"
-		w.Header().Set("Content-Security-Policy", "script-src 'none'")
-	}
-	asciiFileName := toASCIIFilename(fileName)
-	encodedFileName := url.PathEscape(fileName)
-	w.Header().Set("Content-Disposition", fmt.Sprintf("%s; filename=%q; filename*=utf-8''%s", dispositionType, asciiFileName, encodedFileName))
-}
-
-func IsOnlyOfficeCompatibleFile(fileName string) bool {
-	return iteminfo.IsOnlyOffice(fileName)
 }
 
 // WithRateLimitChain applies a rate limit tier then fn for nesting inside withUser / withOrWithoutUser / withoutUser.
@@ -451,11 +356,6 @@ func recordAuthFailure(ip, username string) {
 // withRateLimit registers a rate-limited route (same shape as withTimeout: option first, handler second).
 func withRateLimit(kind AuthRateLimitKind, fn HandleFunc) http.HandlerFunc {
 	return wrapHandler(WithRateLimitChain(kind, fn))
-}
-
-// withRateLimitChain applies a rate limit tier then fn for nesting inside withUser / withOrWithoutUser / withoutUser.
-func withRateLimitChain(kind AuthRateLimitKind, fn HandleFunc) HandleFunc {
-	return WithRateLimitChain(kind, fn)
 }
 
 func withRateLimitInternal(fn HandleFunc, allow func(*http.Request, *Context) (retryAfter int, ok bool)) HandleFunc {

@@ -51,7 +51,7 @@ func TestChangingThePasswordEndsTheOtherSessions(t *testing.T) {
 	if utils.CheckPwd("ein-ganz-neues-passwort", fresh.Password) != nil {
 		t.Fatal("the new password did not take")
 	}
-	if err := passwordLogin("anna", "ein-ganz-neues-passwort", ""); err != nil {
+	if err := w.passwordLogin("anna", "ein-ganz-neues-passwort", ""); err != nil {
 		t.Fatalf("login with the new password: %v", err)
 	}
 }

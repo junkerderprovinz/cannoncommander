@@ -1,12 +1,9 @@
 package web
 
 import (
-	"context"
 	"fmt"
 	"time"
 
-	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
@@ -33,30 +30,4 @@ func mintSessionToken(user *users.User, life time.Duration) (string, error) {
 		return "", err
 	}
 	return tokenString, nil
-}
-
-// replaceSessionToken mints and registers the replacement before retiring the
-// prior token. If minting or registration fails the current session is left
-// untouched. The prior token is retired with a grace window (not revoked
-// immediately) so requests already in flight with the old cookie stay valid.
-func replaceSessionToken(oldToken string, user *users.User) (string, error) {
-	newToken, err := mintAndRegisterSessionToken(user)
-	if err != nil {
-		return "", err
-	}
-	if oldToken == "" || oldToken == newToken {
-		return newToken, nil
-	}
-	if err := state.RetireSessionToken(oldToken); err != nil {
-		if cleanupErr := state.RemoveApiToken(newToken); cleanupErr != nil {
-			logger.Errorf("failed to roll back replacement session token: %v", cleanupErr)
-		}
-		return "", err
-	}
-	if db := state.MainDB(); db != nil {
-		if err := accounts.Rotated(context.Background(), db, utils.HashSHA256(oldToken), utils.HashSHA256(newToken)); err != nil {
-			logger.Errorf("carry session over to its new token: %v", err)
-		}
-	}
-	return newToken, nil
 }

@@ -2,9 +2,9 @@ package accounts_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -13,7 +13,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/app"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
@@ -96,12 +95,6 @@ func newWorld(t *testing.T) *world {
 	if err != nil {
 		t.Fatal(err)
 	}
-	codes, err := accounts.RecoveryCodes(db)
-	if err != nil {
-		t.Fatal(err)
-	}
-	auth.UseRecoveryCodes(codes)
-	t.Cleanup(func() { auth.UseRecoveryCodes(nil) })
 
 	login := &fakeLogin{dead: map[string]bool{}}
 	accounts.UseLogin(login)
@@ -219,13 +212,25 @@ func (w *world) addUser(name, role, scope string, groups ...string) users.User {
 	return u
 }
 
-// passwordLogin runs the real password login of the login system.
-func passwordLogin(name, password, code string) error {
-	r := httptest.NewRequest("POST", "/api/auth/login?username="+url.QueryEscape(name), nil)
-	r.Header.Set("X-Password", url.QueryEscape(password))
-	if code != "" {
-		r.Header.Set("X-Secret", code)
+// passwordLogin signs in through /auth/login, and through /auth/totp with
+// code when the account asks for a second step.
+func (w *world) passwordLogin(name, password, code string) error {
+	w.t.Helper()
+	settings.Config.Auth.Methods.PasswordAuth.Enabled = true
+	rec := w.req("POST", "/auth/login", map[string]any{"username": name, "password": password})
+	if rec.Code != http.StatusOK {
+		return fmt.Errorf("sign in: %d %s", rec.Code, rec.Body)
 	}
-	_, err := auth.AuthenticatePassword(r, false, false)
-	return err
+	step := decode[accounts.SignIn](w.t, rec)
+	if step.Next == "done" {
+		return nil
+	}
+	if step.Next != "totp" || code == "" {
+		return fmt.Errorf("sign in stops at %q", step.Next)
+	}
+	rec = w.req("POST", "/auth/totp", map[string]string{"challenge": step.Challenge, "code": code})
+	if rec.Code != http.StatusOK {
+		return fmt.Errorf("code: %d %s", rec.Code, rec.Body)
+	}
+	return nil
 }

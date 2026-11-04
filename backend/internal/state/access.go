@@ -39,56 +39,12 @@ func DenyAll(sourcePath string, indexPath utils.IndexPath) error {
 	return accessDb.DenyAll(sourcePath, indexPath)
 }
 
-func GetFrontendRules(sourcePath string, indexPath utils.IndexPath) (access.FrontendAccessRule, bool) {
-	return accessDb.GetFrontendRules(sourcePath, indexPath)
-}
-
 func GetAllRules(sourcePath string) (map[string]access.FrontendAccessRule, error) {
 	return accessDb.GetAllRules(sourcePath)
 }
 
-func GetRulesForUser(sourcePath, username string) map[string]access.FrontendAccessRule {
-	return accessDb.GetRulesForUser(sourcePath, username)
-}
-
-func GetRulesForGroup(sourcePath, groupname string) map[string]access.FrontendAccessRule {
-	return accessDb.GetRulesForGroup(sourcePath, groupname)
-}
-
-func RemoveUserCascade(sourcePath string, indexPath utils.IndexPath, username string, allow bool) (int, error) {
-	return accessDb.RemoveUserCascade(sourcePath, indexPath, username, allow)
-}
-
-func RemoveGroupCascade(sourcePath string, indexPath utils.IndexPath, groupname string, allow bool) (int, error) {
-	return accessDb.RemoveGroupCascade(sourcePath, indexPath, groupname, allow)
-}
-
-func RemoveAllowUser(sourcePath string, indexPath utils.IndexPath, username string) (bool, error) {
-	return accessDb.RemoveAllowUser(sourcePath, indexPath, username)
-}
-
-func RemoveAllowGroup(sourcePath string, indexPath utils.IndexPath, groupname string) (bool, error) {
-	return accessDb.RemoveAllowGroup(sourcePath, indexPath, groupname)
-}
-
-func RemoveDenyUser(sourcePath string, indexPath utils.IndexPath, username string) (bool, error) {
-	return accessDb.RemoveDenyUser(sourcePath, indexPath, username)
-}
-
-func RemoveDenyGroup(sourcePath string, indexPath utils.IndexPath, groupname string) (bool, error) {
-	return accessDb.RemoveDenyGroup(sourcePath, indexPath, groupname)
-}
-
-func RemoveDenyAll(sourcePath string, indexPath utils.IndexPath) (bool, error) {
-	return accessDb.RemoveDenyAll(sourcePath, indexPath)
-}
-
 func GetUserGroups(username string) []string {
 	return accessDb.GetUserGroups(username)
-}
-
-func GetAllGroups() []string {
-	return accessDb.GetAllGroups()
 }
 
 func AddUserToGroup(group, username string) error {
@@ -150,10 +106,6 @@ func SetAccessSQLStoreForTest(store access.SQLPersister) {
 	}
 }
 
-func UpdateRulePath(sourcePath string, oldPath, newPath utils.IndexPath) error {
-	return accessDb.UpdateRulePath(sourcePath, oldPath, newPath)
-}
-
 func RemoveRuleByPathKey(sourcePath, pathKey string) {
 	accessDb.RemoveRuleByPathKey(sourcePath, pathKey)
 }
@@ -175,15 +127,6 @@ func RegisterSessionToken(tokenString string, userID uint64) error {
 		return fmt.Errorf("access storage not available")
 	}
 	return accessDb.AddSessionToken(tokenString, userID)
-}
-
-// RetireSessionToken schedules a rotated session token for revocation after a
-// short grace window so in-flight requests carrying the old cookie still work.
-func RetireSessionToken(tokenString string) error {
-	if accessDb == nil {
-		return fmt.Errorf("access storage not available")
-	}
-	return accessDb.RetireToken(tokenString)
 }
 
 // HashedTokenOwner returns the owner id and session type for a registered bearer

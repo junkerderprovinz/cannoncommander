@@ -499,10 +499,3 @@ var ONLYOFFICE_READONLY_FILE_EXTENSIONS = map[string]bool{
 	"numbers": true,
 	"key":     true,
 }
-
-func CanEditOnlyOffice(modify bool, extention string) bool {
-	if !modify {
-		return false
-	}
-	return !ONLYOFFICE_READONLY_FILE_EXTENSIONS[strings.ToLower(extention)]
-}

@@ -1,60 +1,10 @@
 package state
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/toolaccess"
 )
-
-func TestPatchToolAccessDefaults_retriesPendingResync(t *testing.T) {
-	initSidebarLinkTestDB(t)
-
-	doc := toolaccess.InitialToolAccessDefaultsDocument()
-	if err := PatchToolAccessDefaults(doc); err != nil {
-		t.Fatal(err)
-	}
-
-	toolAccessDefaultsResyncPending = true
-	if err := PatchToolAccessDefaults(doc); err != nil {
-		t.Fatal(err)
-	}
-	if toolAccessDefaultsResyncPending {
-		t.Fatal("expected pending resync to clear after successful retry")
-	}
-}
-
-func TestPatchToolAccessDefaults_marksPendingOnResyncFailure(t *testing.T) {
-	initSidebarLinkTestDB(t)
-
-	errInjectResyncToolAccessDefaults = errors.New("simulated resync failure")
-	t.Cleanup(func() {
-		errInjectResyncToolAccessDefaults = nil
-		toolAccessDefaultsResyncPending = false
-	})
-
-	doc := toolaccess.InitialToolAccessDefaultsDocument()
-	doc.Items = append(doc.Items, toolaccess.ToolAccessDefaultItem{
-		ToolID:   users.ToolFileWatcher,
-		Enabled:  false,
-		Enforced: true,
-	})
-	if err := PatchToolAccessDefaults(doc); err == nil {
-		t.Fatal("expected resync failure")
-	}
-	if !toolAccessDefaultsResyncPending {
-		t.Fatal("expected pending resync after failure")
-	}
-
-	errInjectResyncToolAccessDefaults = nil
-	if err := PatchToolAccessDefaults(doc); err != nil {
-		t.Fatal(err)
-	}
-	if toolAccessDefaultsResyncPending {
-		t.Fatal("expected pending resync to clear after successful retry")
-	}
-}
 
 func TestResyncToolAccessDefaultsForAllUsers_appliesDefaults(t *testing.T) {
 	initSidebarLinkTestDB(t)
@@ -70,7 +20,7 @@ func TestResyncToolAccessDefaultsForAllUsers_appliesDefaults(t *testing.T) {
 
 	doc := EffectiveToolAccessDefaults()
 	for i := range doc.Items {
-		if doc.Items[i].ToolID == users.ToolFileWatcher {
+		if doc.Items[i].ToolID == users.ToolMaterialIconPicker {
 			doc.Items[i].Enabled = false
 			doc.Items[i].Enforced = false
 			break
@@ -97,7 +47,7 @@ func TestResyncToolAccessDefaultsForAllUsers_appliesDefaults(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if loaded.ToolAccess[users.ToolFileWatcher] {
-		t.Fatal("expected fileWatcher denied after resync")
+	if loaded.ToolAccess[users.ToolMaterialIconPicker] {
+		t.Fatal("expected materialIconPicker denied after resync")
 	}
 }

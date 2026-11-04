@@ -45,14 +45,3 @@ func NormalizeSidebarLinkCategory(category string) string {
 func IsSourceSidebarCategory(category string) bool {
 	return strings.HasPrefix(NormalizeSidebarLinkCategory(category), "source")
 }
-
-// SidebarLinkDiskScopeRoot reports whether the category shows the
-// root-filesystem-only disk usage rather than the aggregated nested-mount usage.
-func SidebarLinkDiskScopeRoot(category string) bool {
-	return strings.HasSuffix(NormalizeSidebarLinkCategory(category), "-root")
-}
-
-// BaseSidebarLinkCategory strips the root-only "-root" suffix from a category.
-func BaseSidebarLinkCategory(category string) string {
-	return strings.TrimSuffix(NormalizeSidebarLinkCategory(category), "-root")
-}

@@ -1,9 +1,6 @@
 package state
 
 import (
-	"fmt"
-
-	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
@@ -17,48 +14,4 @@ func ApplyEnforcedSourcePermissionsSyncToUser(u *users.User) bool {
 	defaults := GetSourceAccessDefaults()
 	enforced := GetEnforcedSourcePermissions()
 	return settings.SyncEnforcedSourcePermissionsOntoUser(u, defaults, enforced)
-}
-
-// ResyncEnforcedSourcePermissionsForAllUsers writes enforced source permission defaults into SQLite for every user when they differ.
-//
-// Lock ordering: snapshot sourceAccessMu, release it, then acquire usersMux.
-// Callers holding usersMux must snapshot enforcement via GetEnforcedSourcePermissions before locking usersMux.
-func ResyncEnforcedSourcePermissionsForAllUsers() error {
-	sourceAccessMu.RLock()
-	defaults := GetSourceAccessDefaults()
-	enforced := sourceAccessEnforcedDefault
-	sourceAccessMu.RUnlock()
-
-	usersMux.Lock()
-	defer usersMux.Unlock()
-
-	usersList, err := sqlDb.ListUsers()
-	if err != nil {
-		return fmt.Errorf("list users for source permission enforced sync: %w", err)
-	}
-
-	var updated int
-	for _, row := range usersList {
-		if row == nil {
-			continue
-		}
-		u := cloneUserPtr(row)
-		if !settings.EnforcementAppliesToUser(u) {
-			continue
-		}
-		if !settings.SyncEnforcedSourcePermissionsOntoUser(u, defaults, enforced) {
-			continue
-		}
-		u.FrontendScopes = nil
-		u.SourcePermissions = nil
-		if err := sqlDb.UpdateUser(u); err != nil {
-			return fmt.Errorf("sync enforced source permissions for user %s: %w", u.Username, err)
-		}
-		putUserInCache(u)
-		updated++
-	}
-	if updated > 0 {
-		logger.Debugf("synced enforced source permissions for %d users", updated)
-	}
-	return nil
 }

@@ -179,10 +179,6 @@ type ResizeOptions struct {
 	JpegQuality int // JPEG encoding quality (1-100), 0 means use Quality default
 }
 
-func (s *Service) Resize(ctx context.Context, in io.Reader, out io.Writer, opts ResizeOptions) error {
-	return s.ResizeWithSize(ctx, in, out, 0, opts)
-}
-
 // ResizeWithSize resizes an image with file size information for appropriate semaphore selection.
 // Resize runs synchronously so the image semaphore accurately bounds concurrent CPU work.
 // A detached goroutine would return on ctx cancellation while still decoding/resizing,

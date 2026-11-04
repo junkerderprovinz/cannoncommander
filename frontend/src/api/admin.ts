@@ -25,7 +25,7 @@ export const statusOf = (e: unknown) => (e instanceof ApiError ? e.status : 0);
 export type Role = 'admin' | 'user' | 'readonly';
 export interface User {
   id: string; name: string; full: string; role: Role; scope: string; groups: string[];
-  loginMethod: 'password' | 'proxy' | 'oidc' | 'ldap' | 'jwt'; twofa: boolean; passkeys: number; last: number | null; pwChanged: number | null;
+  loginMethod: 'password' | 'oidc' | 'jwt'; twofa: boolean; passkeys: number; last: number | null; pwChanged: number | null;
 }
 export interface Account extends User { recovery: number; lockPassword: boolean; token?: { name: string; rights: Token['rights'] } }
 export interface UserInput { name?: string; full?: string; role?: Role; scope?: string; groups?: string[]; password?: string }

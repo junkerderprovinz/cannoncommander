@@ -56,40 +56,6 @@ func TestSetSessionCookieIgnoresUntrustedForwardedHost(t *testing.T) {
 	}
 }
 
-func TestLogoutClearsCookieForTrustedHost(t *testing.T) {
-	setupTestEnv(t)
-
-	origTrust := settings.Config.Http.TrustProxyHeaders
-	origBaseURL := settings.Config.Http.BaseURL
-	t.Cleanup(func() {
-		settings.Config.Http.TrustProxyHeaders = origTrust
-		settings.Config.Http.BaseURL = origBaseURL
-	})
-
-	settings.Config.Http.TrustProxyHeaders = true
-	settings.Config.Http.BaseURL = "/"
-
-	req := httptest.NewRequest(http.MethodPost, "/api/auth/logout", nil)
-	req.Host = "127.0.0.1:8080"
-	req.Header.Set("X-Forwarded-Host", "files.example.com")
-
-	rec := httptest.NewRecorder()
-	status, err := logoutHandler(rec, req, &Context{User: &users.User{
-		FrontendUser: users.FrontendUser{LoginMethod: users.LoginMethodPassword},
-	}})
-	if err != nil || status != http.StatusOK {
-		t.Fatalf("logoutHandler() status=%d err=%v", status, err)
-	}
-
-	cookie := findSessionCookie(t, rec)
-	if cookie.Domain != "files.example.com" {
-		t.Fatalf("logout cookie Domain = %q, want files.example.com", cookie.Domain)
-	}
-	if cookie.MaxAge != -1 {
-		t.Fatalf("logout cookie MaxAge = %d, want -1", cookie.MaxAge)
-	}
-}
-
 func TestExtractTokenPrefersAuthorizationOverCookie(t *testing.T) {
 	const apiToken = "aaa.bbb.ccc"
 	const cookieToken = "revoked.header.token"

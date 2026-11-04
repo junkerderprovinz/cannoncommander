@@ -108,108 +108,17 @@ func saveSourceAccessSettingsDocument(doc sourceAccessSettingsDocument) error {
 	return sqlDb.SaveSetting(sourceAccessDefaultsSettingKey, doc)
 }
 
-func currentSourceAccessSettingsDocument() sourceAccessSettingsDocument {
-	sourceAccessMu.RLock()
-	defer sourceAccessMu.RUnlock()
-	return sourceAccessSettingsDocument{
-		DefaultPermissions:  GetSourceAccessDefaults(),
-		EnforcedPermissions: sourceAccessEnforcedDefault,
-	}
-}
-
 // GetSourceAccessDefaults returns the global default file permissions for sources.
 func GetSourceAccessDefaults() users.SourceFilePermissions {
 	return settings.DefaultSourceFilePermissions()
 }
 
-// SourceSettings is the admin API payload for GET/PATCH /api/settings/source.
-type SourceSettings struct {
-	DefaultPermissions    users.SourceFilePermissions               `json:"defaultPermissions"`
-	EnforcedPermissions   settings.SourceFilePermissionsEnforcement `json:"enforcedPermissions"`
-	LockedFromConfigPaths []string                                  `json:"lockedFromConfigPaths,omitempty"`
-	LockMessage           string                                    `json:"lockMessage,omitempty"`
-}
-
-// GetSourceSettings returns admin-editable source-wide settings.
-func GetSourceSettings() SourceSettings {
-	doc := currentSourceAccessSettingsDocument()
-	lockedPaths := settings.ConfigSourceDefaultLockedPaths()
-	lockMessage := ""
-	if len(lockedPaths) > 0 {
-		lockMessage = settings.SourceDefaultsConfigLockMessage
-	}
-	return SourceSettings{
-		DefaultPermissions:    doc.DefaultPermissions,
-		EnforcedPermissions:   doc.EnforcedPermissions,
-		LockedFromConfigPaths: lockedPaths,
-		LockMessage:           lockMessage,
-	}
-}
 
 // GetEnforcedSourcePermissions returns universal enforced source permission flags.
 func GetEnforcedSourcePermissions() settings.SourceFilePermissionsEnforcement {
 	sourceAccessMu.RLock()
 	defer sourceAccessMu.RUnlock()
 	return sourceAccessEnforcedDefault
-}
-
-// PatchSourceAccessDefaults merges a partial defaultPermissions patch and persists.
-func PatchSourceAccessDefaults(patchJSON []byte) error {
-	if err := settings.ValidateSourceDefaultsPatchNotConfigLocked(patchJSON); err != nil {
-		return err
-	}
-	current := GetSourceAccessDefaults()
-	merged, mergeErr := settings.MergeSourceDefaultsPatchJSON(current, patchJSON)
-	if mergeErr != nil {
-		return mergeErr
-	}
-	return SetSourceAccessDefaults(merged)
-}
-
-// SetSourceAccessDefaults persists and applies new global source file permission defaults.
-func SetSourceAccessDefaults(perms users.SourceFilePermissions) error {
-	if sqlDb == nil {
-		return fmt.Errorf("sqlDb not initialized")
-	}
-	sourceAccessMu.Lock()
-	doc := sourceAccessSettingsDocument{
-		DefaultPermissions:  settings.NormalizeSourceFilePermissions(users.MarkSourceFilePermissionsConfigured(perms)),
-		EnforcedPermissions: sourceAccessEnforcedDefault,
-	}
-	if err := saveSourceAccessSettingsDocument(doc); err != nil {
-		sourceAccessMu.Unlock()
-		return err
-	}
-	settings.ApplySourceAccessDefaultsToAllSources(doc.DefaultPermissions)
-	hasEnforced := len(settings.EnforcedSourcePermissionFlags(doc.EnforcedPermissions)) > 0
-	sourceAccessMu.Unlock()
-
-	if !hasEnforced {
-		return nil
-	}
-	return ResyncEnforcedSourcePermissionsForAllUsers()
-}
-
-// PatchSourceAccessEnforced merges enforcement patch JSON and resyncs all users.
-func PatchSourceAccessEnforced(patchJSON []byte) error {
-	sourceAccessMu.Lock()
-	merged, mergeErr := settings.MergeSourceEnforcedPatchJSON(sourceAccessEnforcedDefault, patchJSON)
-	if mergeErr != nil {
-		sourceAccessMu.Unlock()
-		return mergeErr
-	}
-	doc := sourceAccessSettingsDocument{
-		DefaultPermissions:  GetSourceAccessDefaults(),
-		EnforcedPermissions: merged,
-	}
-	if saveErr := saveSourceAccessSettingsDocument(doc); saveErr != nil {
-		sourceAccessMu.Unlock()
-		return fmt.Errorf("save enforced source permissions: %w", saveErr)
-	}
-	sourceAccessEnforcedDefault = merged
-	sourceAccessMu.Unlock()
-
-	return ResyncEnforcedSourcePermissionsForAllUsers()
 }
 
 func stripLegacyFilePermissionsFromUserDefaults() error {

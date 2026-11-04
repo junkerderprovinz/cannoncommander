@@ -50,60 +50,6 @@ func handleUserEvents() {
 	}
 }
 
-func Register(username string, sources []string) chan EventMessage {
-	ch := make(chan EventMessage, 10)
-
-	userClientsMu.Lock()
-	userClients[username] = append(userClients[username], ch)
-	userClientsMu.Unlock()
-
-	sourceClientsMu.Lock()
-	for _, source := range sources {
-		if sourceClients[source] == nil {
-			sourceClients[source] = make(map[chan EventMessage]struct{})
-		}
-		sourceClients[source][ch] = struct{}{}
-	}
-	sourceClientsMu.Unlock()
-
-	return ch
-}
-
-func Unregister(username string, ch chan EventMessage) {
-	userClientsMu.Lock()
-	defer userClientsMu.Unlock()
-	conns, ok := userClients[username]
-	if !ok {
-		// User already cleaned up by Shutdown, nothing to do.
-		return
-	}
-	for i, c := range conns {
-		if c == ch {
-			userClients[username] = append(conns[:i], conns[i+1:]...)
-			break
-		}
-	}
-	if len(userClients[username]) == 0 {
-		delete(userClients, username)
-	}
-
-	sourceClientsMu.Lock()
-	defer sourceClientsMu.Unlock()
-	for source, clients := range sourceClients {
-		delete(clients, ch)
-		if len(clients) == 0 {
-			delete(sourceClients, source)
-		}
-	}
-}
-
-func SendToUsers(eventType, message string, users []string) {
-	userEventChan <- userEvent{
-		event: EventMessage{EventType: eventType, Message: message},
-		users: users,
-	}
-}
-
 func SendSourceUpdate(source string, message string) {
 	event := sourceEvent{
 		source: source,
@@ -153,21 +99,5 @@ func Shutdown() {
 			close(ch)
 		}
 		delete(userClients, username)
-	}
-}
-
-// Broadcast hands the event to every open stream, each through its own
-// channel. Streams that are not keeping up miss it.
-func Broadcast(eventType, message string) {
-	event := EventMessage{EventType: eventType, Message: message}
-	userClientsMu.RLock()
-	defer userClientsMu.RUnlock()
-	for _, conns := range userClients {
-		for _, ch := range conns {
-			select {
-			case ch <- event:
-			default:
-			}
-		}
 	}
 }

@@ -27,10 +27,10 @@ func TestFrontendUserEffectiveToolAccessJSON(t *testing.T) {
 	u := FrontendUser{
 		Username: "alice",
 		EffectiveToolAccess: map[string]bool{
-			"sizeViewer":      true,
-			"fileWatcher":     false,
-			"activityViewer":  true,
-			"duplicateFinder": false,
+			"sizeViewer":         true,
+			"materialIconPicker": false,
+			"activityViewer":     true,
+			"duplicateFinder":    false,
 		},
 	}
 
@@ -60,11 +60,10 @@ func TestToolAccessMapRoundTripValidIDs(t *testing.T) {
 
 	original := ToolAccessMap{
 		ToolSizeViewer:         true,
-		ToolFileWatcher:        false,
+		ToolMaterialIconPicker: false,
 		ToolActivityViewer:     true,
 		ToolDuplicateFinder:    false,
 		ToolAdvancedSearch:     true,
-		ToolMaterialIconPicker: false,
 	}
 
 	encoded, err := json.Marshal(original)
@@ -99,13 +98,15 @@ func TestToolAccessMapRoundTripValidIDs(t *testing.T) {
 	}
 }
 
-func TestToolAccessMapRejectsUnknownToolID(t *testing.T) {
+func TestAStoredUserWithAGoneToolStillLoads(t *testing.T) {
 	t.Parallel()
 
-	var m ToolAccessMap
-	err := json.Unmarshal([]byte(`{"sizeViewer":true,"notATool":false}`), &m)
-	if err == nil {
-		t.Fatal("expected unknown tool id to be rejected")
+	var u User
+	if err := json.Unmarshal([]byte(`{"username":"anna","toolAccess":{"sizeViewer":true,"fileWatcher":true}}`), &u); err != nil {
+		t.Fatal(err)
+	}
+	if len(u.ToolAccess) != 1 || !u.ToolAccess[ToolSizeViewer] {
+		t.Fatalf("tool access = %v", u.ToolAccess)
 	}
 }
 
@@ -113,8 +114,8 @@ func TestUserToolAccessJSONRoundTrip(t *testing.T) {
 	t.Parallel()
 
 	wantToolAccess := ToolAccessMap{
-		ToolSizeViewer:  true,
-		ToolFileWatcher: false,
+		ToolSizeViewer:     true,
+		ToolActivityViewer: false,
 	}
 	u := User{
 		FrontendUser: FrontendUser{

@@ -38,30 +38,6 @@ func TestOverlayConfigSourceDefaults_unsetStoredPartialConfig(t *testing.T) {
 	}
 }
 
-func TestValidateSourceDefaultsPatchNotConfigLocked(t *testing.T) {
-	prev := Env.ConfigSourceDefaultPermissions
-	t.Cleanup(func() { Env.ConfigSourceDefaultPermissions = prev })
-
-	Env.ConfigSourceDefaultPermissions = map[string]bool{"modify": false}
-	if err := ValidateSourceDefaultsPatchNotConfigLocked([]byte(`{"defaultPermissions":{"view":false}}`)); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if err := ValidateSourceDefaultsPatchNotConfigLocked([]byte(`{"defaultPermissions":{"modify":true}}`)); err == nil {
-		t.Fatal("expected config lock error")
-	}
-}
-
-func TestConfigSourceDefaultLockedPaths(t *testing.T) {
-	prev := Env.ConfigSourceDefaultPermissions
-	t.Cleanup(func() { Env.ConfigSourceDefaultPermissions = prev })
-
-	Env.ConfigSourceDefaultPermissions = map[string]bool{"modify": false, "view": true}
-	paths := ConfigSourceDefaultLockedPaths()
-	if len(paths) != 2 {
-		t.Fatalf("paths=%v", paths)
-	}
-}
-
 func TestAttachSourceDefaultPermissionsFromConfig(t *testing.T) {
 	Config.Server.Sources = []*Source{{Path: "/data", Config: SourceConfig{}}}
 	raw := map[string]interface{}{

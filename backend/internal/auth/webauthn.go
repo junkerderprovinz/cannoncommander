@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 	"sync"
@@ -16,7 +15,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ports"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -109,83 +107,6 @@ func (s *WebAuthnService) userByID(id uint64) (*users.User, error) {
 	return &u, nil
 }
 
-func (s *WebAuthnService) BeginMFALogin(username, password string, rpID string) (sessionID string, assertion *protocol.CredentialAssertion, err error) {
-	id, resErr := users.ResolveUsernameToID(username)
-	if resErr != nil {
-		return "", nil, resErr
-	}
-	user, getErr := s.userByID(id)
-	passwordHash := utils.InvalidPasswordHash
-	if getErr == nil {
-		passwordHash = user.Password
-	}
-	// Always run password check to prevent timing-based username enumeration
-	if err = utils.CheckPwd(password, passwordHash); err != nil {
-		return "", nil, errors.ErrUnauthorized
-	}
-	if getErr != nil {
-		return "", nil, errors.ErrUnauthorized
-	}
-
-	if !user.HasPasskeyMFA() {
-		return "", nil, errors.ErrPasskeyNoCredential
-	}
-
-	var opts []webauthn.LoginOption
-	if rpID != "" {
-		opts = append(opts, webauthn.WithLoginRelyingPartyID(rpID))
-	}
-	assertion, sessionData, err := s.wa.BeginLogin(user, opts...)
-	if err != nil {
-		return "", nil, fmt.Errorf("failed to begin WebAuthn login: %w", err)
-	}
-
-	sessionID = generateSessionID()
-	s.sessions.Store(sessionID, &webAuthnSession{
-		SessionData: sessionData,
-		UserID:      uint(user.ID),
-		ExpiresAt:   time.Now().Add(5 * time.Minute),
-	})
-
-	return sessionID, assertion, nil
-}
-
-func (s *WebAuthnService) FinishMFALogin(sessionID string, r *http.Request) (*users.User, error) {
-	sessionVal, ok := s.sessions.Load(sessionID)
-	if !ok {
-		return nil, errors.ErrPasskeyInvalidSession
-	}
-	sess, ok := sessionVal.(*webAuthnSession)
-	if !ok {
-		return nil, errors.ErrPasskeyInvalidSession
-	}
-	defer s.sessions.Delete(sessionID)
-
-	if time.Now().After(sess.ExpiresAt) {
-		return nil, errors.ErrPasskeyInvalidSession
-	}
-
-	user, err := s.userByID(uint64(sess.UserID))
-	if err != nil {
-		return nil, fmt.Errorf("user not found: %w", err)
-	}
-
-	credential, err := s.wa.FinishLogin(user, *sess.SessionData, r)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", errors.ErrPasskeyVerification, err)
-	}
-
-	credB64 := base64.RawURLEncoding.EncodeToString(credential.ID)
-	for i := range user.PasskeyCredentials {
-		if user.PasskeyCredentials[i].ID == credB64 {
-			users.UpdateCredentialFromLibrary(&user.PasskeyCredentials[i], credential)
-			return user, nil
-		}
-	}
-
-	return user, nil
-}
-
 // BeginPasskeyLogin starts a sign in where the browser picks the passkey and
 // the passkey names the user, so nobody types a name first.
 func (s *WebAuthnService) BeginPasskeyLogin(rpID string) (sessionID string, assertion *protocol.CredentialAssertion, err error) {
@@ -266,14 +187,6 @@ func (s *WebAuthnService) BeginRegistration(user *users.User, rpID string) (sess
 	return sessionID, creation, nil
 }
 
-func (s *WebAuthnService) FinishRegistration(user *users.User, sessionID string, credentialName string, r *http.Request) error {
-	parsed, err := protocol.ParseCredentialCreationResponse(r)
-	if err != nil {
-		return fmt.Errorf("failed to finish WebAuthn registration: %w", err)
-	}
-	return s.finishRegistration(user, sessionID, credentialName, parsed)
-}
-
 // FinishRegistrationJSON is FinishRegistration for a credential that came
 // as JSON inside a larger request body.
 func (s *WebAuthnService) FinishRegistrationJSON(user *users.User, sessionID string, credentialName string, credential []byte) error {
@@ -318,16 +231,6 @@ func (s *WebAuthnService) finishRegistration(user *users.User, sessionID string,
 	newCred := users.CredentialFromLibrary(credentialName, credential)
 	user.PasskeyCredentials = append(user.PasskeyCredentials, newCred)
 	return nil
-}
-
-func (s *WebAuthnService) DeleteCredential(user *users.User, credentialID string) error {
-	for i, c := range user.PasskeyCredentials {
-		if c.ID == credentialID {
-			user.PasskeyCredentials = append(user.PasskeyCredentials[:i], user.PasskeyCredentials[i+1:]...)
-			return nil
-		}
-	}
-	return errors.ErrPasskeyNoCredential
 }
 
 func (s *WebAuthnService) cleanupExpiredSessions() {
