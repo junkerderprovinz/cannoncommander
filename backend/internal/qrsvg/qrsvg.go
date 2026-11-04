@@ -1,4 +1,6 @@
-package accounts
+// Package qrsvg draws QR codes as SVG, for the two-factor setup and for
+// share links, so no encoder has to ship to the browser.
+package qrsvg
 
 import (
 	"fmt"
@@ -7,9 +9,9 @@ import (
 	"github.com/boombuler/barcode/qr"
 )
 
-// qrSVG draws content as a QR code with a quiet zone of two modules. The
+// Draw renders content as a QR code with a quiet zone of two modules. The
 // modules are rects on a viewBox, so the code stays sharp at any size.
-func qrSVG(content string) (string, error) {
+func Draw(content string) (string, error) {
 	code, err := qr.Encode(content, qr.M, qr.Auto)
 	if err != nil {
 		return "", err

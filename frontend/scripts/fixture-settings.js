@@ -1,5 +1,5 @@
-// The settings pages, the account and the labels in the shape of /api/v1, with the prototype's made-up people,
-// shares and sources. It keeps changes in memory, so a page can be clicked through as it will work against the server.
+// The settings pages, the account and the labels in the shape of /api/v1, with the prototype's made-up people and
+// sources. It keeps changes in memory, so a page can be clicked through as it will work against the server.
 import { createFixture } from './fixture.js';
 
 const MIN = 60000, HOUR = 60 * MIN, DAY = 24 * HOUR, KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
@@ -60,10 +60,6 @@ function state() {
       { who: 'anna', path: '/mnt/user/backups', rule: 'hide' },
       { who: 'gast', path: '/mnt/user/filme', rule: 'read' },
       { who: '*', path: '*.partial*', rule: 'hide' },
-    ],
-    shares: [
-      { id: 's1', path: '/mnt/user/fotos/Urlaub', by: 'jdp', created: now - 5 * DAY, expires: now + 25 * DAY, password: true, views: 14, slug: 'k3x9-urlaub' },
-      { id: 's2', path: '/mnt/user/dokumente/Rechnung-Oktober.pdf', by: 'jdp', created: now - 1 * DAY, expires: now + 6 * DAY, password: false, views: 2, slug: 'p7q2-rechnung' },
     ],
     activity: [
       { t: now - 4 * MIN, who: 'jdp', what: 'copy', obj: '2 Dateien nach /mnt/user/backups', path: '/mnt/user/backups' },
@@ -137,7 +133,6 @@ export function settingsFixtureMiddleware() {
   };
   const tidy = () => { for (const [p, l] of Object.entries(S.labels)) if (!l.colour && !(l.tags || []).length) delete S.labels[p]; };
   const wireUser = (u) => ({ ...u, last: iso(u.last) });
-  const wireShare = (s) => ({ ...s, url: `https://cannon.tower.lan/s/${s.slug}`, created: iso(s.created), expires: iso(s.expires) });
 
   const routes = [
     ['GET', '/me', () => ({ ...S.me, pwChanged: iso(S.me.pwChanged) })],
@@ -183,7 +178,6 @@ export function settingsFixtureMiddleware() {
       S.users = S.users.filter((u) => u.name !== name);
       S.groups.forEach((g) => { g.members = g.members.filter((m) => m !== name); });
       S.rules = S.rules.filter((r) => r.who !== name);
-      S.shares = S.shares.filter((s) => s.by !== name);
       return 204;
     }],
     ['GET', '/admin/groups', () => ({ items: S.groups })],
@@ -225,16 +219,6 @@ export function settingsFixtureMiddleware() {
     ['POST', '/admin/app/export', (b) => { S.exports.push({ path: b.path, time: Date.now() }); return 204; }],
     ['POST', '/admin/app/import', (b) => (isFile(b.path) ? 204 : [400, 'file'])],
     ['POST', '/admin/integrations/test', (b) => (b.secret || b.kind === 'collabora' ? { ok: true } : { ok: false, reason: 'secret' })],
-    ['GET', '/shares', () => ({ items: S.shares.filter((s) => s.by === S.me.name).map(wireShare) })],
-    ['GET', '/admin/shares', () => ({ items: S.shares.map(wireShare) })],
-    ['PATCH', /^\/shares\/(.+)$/, (b, [id]) => {
-      const s = S.shares.find((x) => x.id === id);
-      if (!s) return [404, 'share'];
-      if ('expires' in b) s.expires = b.expires ? Date.parse(b.expires) : null;
-      if ('password' in b) s.password = !!b.password;
-      return 204;
-    }],
-    ['DELETE', /^\/shares\/(.+)$/, (_, [id]) => { S.shares = S.shares.filter((s) => s.id !== id); return 204; }],
     ['GET', '/remotes', () => ({ items: S.remotes.map((r) => ({ ...r, cfg: { ...r.cfg, pass: undefined, secret: undefined } })) })],
     ['POST', '/remotes', (b) => { S.remotes.push({ ...b, mounted: true }); return 204; }],
     ['PUT', /^\/remotes\/([^/]+)$/, (b, [name]) => {

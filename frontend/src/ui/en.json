@@ -2,5 +2,28 @@
   "pickFolder": "Choose a folder",
   "pick": "Choose",
   "folder": "Folder",
-  "noFolder": "This folder does not exist"
+  "noFolder": "This folder does not exist",
+  "copy": "Copy",
+  "copied": "Copied",
+  "objects": {
+    "one": "{n} item",
+    "many": "{n} items"
+  },
+  "files": {
+    "one": "{n} file",
+    "many": "{n} files"
+  },
+  "folders": {
+    "one": "{n} folder",
+    "many": "{n} folders"
+  },
+  "noName": "The name is missing",
+  "taken": "Name taken",
+  "background": "Runs as a job in the background",
+  "running": "{label} is running",
+  "toJobs": "Jobs",
+  "copyPath": "Copy path",
+  "failed": "{label} did not work out: {error}",
+  "show": "Show",
+  "hide": "Hide"
 }

@@ -2,5 +2,28 @@
   "pickFolder": "Ordner wählen",
   "pick": "Auswählen",
   "folder": "Ordner",
-  "noFolder": "Diesen Ordner gibt es nicht"
+  "noFolder": "Diesen Ordner gibt es nicht",
+  "copy": "Kopieren",
+  "copied": "Kopiert",
+  "objects": {
+    "one": "{n} Objekt",
+    "many": "{n} Objekte"
+  },
+  "files": {
+    "one": "{n} Datei",
+    "many": "{n} Dateien"
+  },
+  "folders": {
+    "one": "{n} Ordner",
+    "many": "{n} Ordnern"
+  },
+  "noName": "Der Name fehlt",
+  "taken": "Name vergeben",
+  "background": "Läuft als Aufgabe im Hintergrund",
+  "running": "{label} läuft",
+  "toJobs": "Aufgaben",
+  "copyPath": "Pfad kopieren",
+  "failed": "{label} hat nicht geklappt: {error}",
+  "show": "Anzeigen",
+  "hide": "Verbergen"
 }

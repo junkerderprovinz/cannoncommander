@@ -4,7 +4,7 @@ import { split } from '@/files/paths';
 import { t } from '@/i18n';
 import type { Step } from '@/stores/undo';
 
-const GLYPH: Record<string, string> = { rename: 'IconPencil', mkdir: 'IconFolderAdd', touch: 'IconFileText', copy: 'IconCopy', move: 'IconMove', trash: 'IconTrash' };
+const GLYPH: Record<string, string> = { rename: 'IconPencil', renameBatch: 'IconPencil', link: 'IconLink', mkdir: 'IconFolderAdd', touch: 'IconFileText', copy: 'IconCopy', move: 'IconMove', trash: 'IconTrash' };
 
 export function stepLabel(step: Step) {
   if ('local' in step) return step.local.label;

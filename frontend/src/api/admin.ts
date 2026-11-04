@@ -1,6 +1,7 @@
 // The settings pages talk to the server through these calls. Times arrive as ISO strings and leave this file as
 // milliseconds, so the pages compare and format them like every other date.
 import { call } from './client';
+import { type Share as WireShare, shareUrl, tools } from './tools';
 
 const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
 const send = (method: string, body?: unknown): RequestInit => ({
@@ -44,7 +45,11 @@ export interface System { version: { app: string; rclone: string; ffmpeg: string
 
 type Wire<T, K extends keyof T> = Omit<T, K> & { [P in K]: string | null };
 const user = (u: Wire<User, 'last'>): User => ({ ...u, last: ms(u.last) });
-const share = (s: Wire<Share, 'created' | 'expires'>): Share => ({ ...s, created: ms(s.created)!, expires: ms(s.expires) });
+// A collection lists all its paths where a single link names its one.
+const share = (s: WireShare): Share => ({
+  id: s.id, path: s.paths.join(', '), slug: s.slug, url: shareUrl(s.slug), by: s.owner, created: ms(s.created)!, expires: ms(s.expires),
+  password: s.password, views: s.views, limit: s.limit, ...(s.kind === 'collection' ? { name: s.name, items: s.paths.length } : {}),
+});
 const token = (x: Wire<Token, 'created' | 'last' | 'expires'>): Token => ({ ...x, created: ms(x.created)!, last: ms(x.last), expires: ms(x.expires) });
 const passkey = (x: Wire<Passkey, 'created' | 'last'>): Passkey => ({ ...x, created: ms(x.created)!, last: ms(x.last) });
 
@@ -71,9 +76,9 @@ export const admin = {
   restart: () => write('POST', '/admin/app/restart'),
   exportSettings: (path: string, users: boolean) => write('POST', '/admin/app/export', { path, users }),
   importSettings: (path: string, users: boolean) => write('POST', '/admin/app/import', { path, users }),
-  shares: async (all: boolean) => (await items<Wire<Share, 'created' | 'expires'>>(all ? '/admin/shares' : '/shares')).map(share),
+  shares: async (all: boolean) => (await (all ? tools.allShares() : tools.shares())).map(share),
   updateShare: (id: string, change: { expires?: number | null; password?: string | null }) =>
-    write('PATCH', `/shares/${id}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}) }),
+    write('PATCH', `/shares/${id}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}), ...(change.password === null ? { password: '' } : {}) }),
   deleteShare: (id: string) => write('DELETE', `/shares/${id}`),
   remotes: () => items<Remote>('/remotes'),
   addRemote: (r: Omit<Remote, 'mounted'>) => write('POST', '/remotes', r),
