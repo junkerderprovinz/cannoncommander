@@ -92,3 +92,19 @@ server:
 		t.Fatal("denyByDefault has to stay readable until the access rules took it over")
 	}
 }
+
+func TestWebDAVStaysOffUnlessSomethingTurnsItOn(t *testing.T) {
+	if !SetDefaults(false).Http.DisableWebDAV {
+		t.Fatal("WebDAV is on by default")
+	}
+	file := filepath.Join(t.TempDir(), "config.yaml")
+	if err := os.WriteFile(file, []byte("http:\n  disableWebDAV: false\nserver:\n  sources:\n    - path: \".\"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := loadConfigWithDefaults(file, false); err != nil {
+		t.Fatalf("load: %v", err)
+	}
+	if Config.Http.DisableWebDAV {
+		t.Fatal("the config file did not count")
+	}
+}

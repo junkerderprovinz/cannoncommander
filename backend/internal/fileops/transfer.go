@@ -423,7 +423,7 @@ func (t *transfer) dir(ctx context.Context, src, dst node, key string, info fs.F
 	var first error
 	for _, e := range entries {
 		name := e.Name()
-		if isPart(name) {
+		if IsPart(name) {
 			continue
 		}
 		if _, err := t.entry(ctx, src.child(name), dst.child(name), key+"/"+name, inNew || created); err != nil {
@@ -435,7 +435,7 @@ func (t *transfer) dir(ctx context.Context, src, dst node, key string, info fs.F
 	}
 	if created && t.keep {
 		_ = os.Chmod(dst.real, info.Mode().Perm())
-		chown(dst.real, info)
+		Chown(dst.real, info)
 		_ = os.Chtimes(dst.real, info.ModTime(), info.ModTime())
 	}
 	if t.move && first == nil {
@@ -462,7 +462,7 @@ func (t *transfer) link(ctx context.Context, src, dst node, info fs.FileInfo, re
 		return err
 	}
 	if t.keep {
-		chown(dst.real, info)
+		Chown(dst.real, info)
 	}
 	t.remember(src, dst, inNew)
 	fschange.Created(dst.api)
@@ -492,7 +492,7 @@ func (t *transfer) file(ctx context.Context, src, dst node, info fs.FileInfo, re
 	}
 	if t.keep {
 		_ = os.Chmod(part, info.Mode().Perm())
-		chown(part, info)
+		Chown(part, info)
 		if err := os.Chtimes(part, info.ModTime(), info.ModTime()); err != nil {
 			return err
 		}
@@ -708,7 +708,7 @@ func cmpOr(a, b error) error {
 	return b
 }
 
-// isPart reports whether name is a part file of this package.
-func isPart(name string) bool {
+// IsPart reports whether name is a part file of this package.
+func IsPart(name string) bool {
 	return strings.HasPrefix(name, ".") && strings.HasSuffix(name, PartSuffix)
 }

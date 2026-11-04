@@ -763,8 +763,9 @@ func SetDefaults(generate bool) Settings {
 
 	s := Settings{
 		Http: Http{
-			Port:    80,
-			BaseURL: "",
+			Port:          80,
+			BaseURL:       "",
+			DisableWebDAV: true,
 		},
 		Server: Server{
 			SearchResultsLimit: 1000,

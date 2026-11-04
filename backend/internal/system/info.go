@@ -50,6 +50,7 @@ type Features struct {
 	Office OfficeInfo `json:"office"`
 	Thumbs bool       `json:"thumbs"`
 	Video  bool       `json:"videoPreview"`
+	WebDAV bool       `json:"webdav"`
 	MuPDF  bool       `json:"mupdf"`
 }
 
@@ -152,6 +153,7 @@ func (s *service) info(ctx context.Context) (Info, error) {
 			Office: OfficeInfo{Kind: app.Office.Kind, URL: app.Office.URL},
 			Thumbs: app.Previews.Thumbs,
 			Video:  app.Previews.Video,
+			WebDAV: app.WebDAV,
 			MuPDF:  settings.Env.MuPdfAvailable,
 		},
 	}
