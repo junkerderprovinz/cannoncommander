@@ -44,13 +44,39 @@ func (sessionLogin) APIToken(r *http.Request) (string, bool) {
 	return token, true
 }
 
-func (sessionLogin) Start(w http.ResponseWriter, r *http.Request, u *users.User) error {
-	token, err := mintAndRegisterSessionToken(u)
+// browserSession is how long a session that ends with the browser may run
+// at most, for a tab that stays open for days.
+const browserSession = 12 * time.Hour
+
+func (sessionLogin) Start(w http.ResponseWriter, r *http.Request, u *users.User, keep time.Duration) error {
+	life := keep
+	if life <= 0 {
+		life = time.Hour * time.Duration(settings.Config.Auth.TokenExpirationHours)
+		if life < browserSession {
+			life = browserSession
+		}
+	}
+	token, err := mintSessionToken(u, life)
 	if err != nil {
 		return err
 	}
-	expires := time.Now().Add(time.Hour * time.Duration(settings.Config.Auth.TokenExpirationHours)).Add(sessionCookieBuffer)
+	// Without keep the cookie has no expiry, so the browser drops it when it closes.
+	var expires time.Time
+	if keep > 0 {
+		expires = time.Now().Add(keep)
+	}
 	SetSessionCookie(w, r, token, expires)
+	return nil
+}
+
+func (sessionLogin) Stop(w http.ResponseWriter, r *http.Request) error {
+	token, err := ExtractToken(r)
+	if err == nil {
+		if err := state.RevokeToken(token); err != nil {
+			return err
+		}
+	}
+	http.SetCookie(w, sessionCookie(r, "", time.Unix(0, 0), -1, http.SameSiteStrictMode))
 	return nil
 }
 

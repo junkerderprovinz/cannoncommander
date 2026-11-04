@@ -431,7 +431,10 @@ components:
         type: string
   responses:
     ShareGone:
-      description: The link expired, used up its downloads, or its owner may no longer share.
+      description: |
+        The link leads nowhere any more. The problem type says why:
+        share-expired, share-used-up when the downloads are used up, or
+        share-withdrawn when its owner may no longer share.
       content:
         application/problem+json:
           schema:
@@ -455,7 +458,7 @@ components:
   schemas:
     Share:
       type: object
-      required: [id, slug, kind, name, paths, owner, created, expires, password, limit, downloads, views, uploads, uploadLimit, uploaded, notify, state]
+      required: [id, slug, kind, name, message, paths, owner, created, expires, password, limit, downloads, views, uploads, uploadLimit, uploaded, notify, state]
       properties:
         id:
           type: string
@@ -469,6 +472,9 @@ components:
         name:
           type: string
           description: The folder name of a collection, otherwise the name of the file or folder.
+        message:
+          type: string
+          description: A note for the visitors, shown above the files.
         paths:
           type: array
           items:
@@ -518,6 +524,9 @@ components:
         name:
           type: string
           description: Needed for a collection.
+        message:
+          type: string
+          maxLength: 2000
         slug:
           type: string
           pattern: "^[a-z0-9][a-z0-9-]{2,39}$"
@@ -551,6 +560,9 @@ components:
           description: Gives the link a fresh address, the old one leads nowhere.
         name:
           type: string
+        message:
+          type: string
+          maxLength: 2000
         expires:
           type: string
           format: date-time
@@ -583,6 +595,9 @@ components:
           enum: [file, folder, collection]
         name:
           type: string
+        message:
+          type: string
+          description: The note of the owner, left out when there is none.
         expires:
           type: string
           format: date-time
