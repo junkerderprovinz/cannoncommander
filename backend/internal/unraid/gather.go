@@ -78,6 +78,9 @@ type Move struct {
 	From string
 	To   string
 	Size int64
+	// Linked files have other names on their disk. A move across disks
+	// would turn them into copies, so the job leaves them where they are.
+	Linked bool
 }
 
 // MoveList returns the moves the plan makes, for the job that runs it.
@@ -208,7 +211,7 @@ func largest(opts []GatherOption) string {
 func gatherMoves(st *State, array []file, to string) (moves []Move, size, short int64) {
 	for _, f := range array {
 		if f.dev != to {
-			moves = append(moves, Move{Rel: f.rel, From: f.dev, To: to, Size: f.size})
+			moves = append(moves, Move{Rel: f.rel, From: f.dev, To: to, Size: f.size, Linked: f.ino.nlink > 1})
 			size += f.size
 		}
 	}
@@ -260,7 +263,7 @@ func scatterMoves(st *State, array []file, from, folder string) (moves []Move, s
 		}
 		room[to] -= u.size
 		for _, f := range u.files {
-			moves = append(moves, Move{Rel: f.rel, From: from, To: to, Size: f.size})
+			moves = append(moves, Move{Rel: f.rel, From: from, To: to, Size: f.size, Linked: f.ino.nlink > 1})
 			size += f.size
 		}
 	}
