@@ -1,0 +1,14 @@
+{
+  "title": "Tastenkürzel",
+  "fixed": {
+    "tab": { "label": "Fenster wechseln", "key": "Tab" },
+    "enter": { "label": "Öffnen", "key": "Enter" },
+    "insert": { "label": "Markieren und weiter", "key": "Einfg" },
+    "space": { "label": "Schnellansicht, darin I für Dateiinfos", "key": "Leertaste" },
+    "ctrlClick": { "label": "Zur Auswahl", "key": "Strg+Klick" },
+    "shiftClick": { "label": "Bereich auswählen", "key": "Umschalt+Klick" },
+    "rightClick": { "label": "Kontextmenü", "key": "Rechtsklick" },
+    "f10": { "label": "Menüleiste", "key": "F10" },
+    "esc": { "label": "Filter, Menü oder Fenster schließen", "key": "Esc" }
+  }
+}

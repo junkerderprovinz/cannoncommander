@@ -1,34 +1,24 @@
-<template>
-  <router-view></router-view>
-</template>
+<script setup lang="ts">
+import { computed } from 'vue';
+import MenuHost from '@/core/MenuHost.vue';
+import { prefs } from '@/core/prefs';
+import ToastHost from '@/core/ToastHost.vue';
+import { currentView, view } from '@/core/views';
+import WindowHost from '@/core/WindowHost.vue';
+import BottomBar from '@/shell/BottomBar.vue';
+import FKeys from '@/shell/FKeys.vue';
+import Head from '@/shell/Head.vue';
+import { shell } from '@/shell/state';
 
-<script>
-import { onMounted } from "vue";
-import { mutations } from "@/store"; // Import your store's mutations
-import { scheduleFullIcons } from "@/utils/loadFullIcons";
-
-mutations.setLoading("main-app", true);
-export default {
-  name: "app",
-  computed: {},
-  setup() {
-    onMounted(async () => {
-      if (document.fonts?.load) {
-        try {
-          await document.fonts.load("24px 'Material Symbols Core'");
-        } catch {
-          // Core icons still render once the preloaded font finishes loading.
-        }
-      }
-
-      mutations.setLoading("main-app", false);
-      const loadingLoader = document.querySelector("body > .loader");
-      if (loadingLoader) {
-        loadingLoader.remove();
-      }
-
-      scheduleFullIcons();
-    });
-  },
-};
+const def = computed(() => currentView());
 </script>
+
+<template>
+  <div v-if="def?.page" class="app page-app">
+    <Head /><main id="page" class="page"><component :is="def.component" :arg="view.arg" /></main><BottomBar />
+  </div>
+  <div v-else-if="def" id="app" class="app" :class="{ dual: prefs.dual, 'no-side': !prefs.side, 'with-fkeys': prefs.fkeys, 'side-open': shell.sideOpen }">
+    <Head /><div id="main" class="main"><component :is="def.component" /></div><FKeys /><BottomBar />
+  </div>
+  <MenuHost /><WindowHost /><ToastHost />
+</template>
