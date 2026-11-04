@@ -96,7 +96,7 @@ func runGather(ctx context.Context, run *jobs.Run) error {
 	res := GatherResult{Partial: plan.Partial}
 	emptied := map[string]bool{}
 	for _, m := range plan.MoveList() {
-		if isPart(path.Base(m.Rel)) {
+		if IsPart(path.Base(m.Rel)) {
 			continue
 		}
 		if m.Linked {
@@ -185,7 +185,7 @@ func mkdirLike(from, to, rel string) error {
 			return err
 		}
 		_ = os.Chmod(dst, info.Mode().Perm())
-		chown(dst, info)
+		Chown(dst, info)
 	}
 	return nil
 }
