@@ -1,5 +1,5 @@
 // Sizes, dates and durations the way the whole interface writes them.
-import { locale, t } from '@/i18n';
+import { language, locale, t } from '@/i18n';
 import { prefs } from './prefs';
 
 export const KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
@@ -17,6 +17,9 @@ export function fmtSize(b: number | null | undefined): string {
   }
   return b + ' B';
 }
+
+// Austria's own locale groups thousands with a space; the lists group them with a dot, as German text does.
+export const fmtCount = (n: number) => n.toLocaleString(language() === 'de' ? 'de' : locale());
 
 export const fmtDate = (ms: number) => new Date(ms).toLocaleDateString(locale(), { day: '2-digit', month: '2-digit', year: 'numeric' });
 export const fmtTime = (ms: number) => new Date(ms).toLocaleString(locale(), { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });

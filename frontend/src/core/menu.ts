@@ -1,8 +1,11 @@
-// Stand-in for GlimStone's context menu until @glimstone/vue ships one; MenuHost.vue draws this state with the prototype's DOM.
+// The context menu as the app calls it: menu(x, y, items) anywhere, drawn by GlimStone's ContextMenu in MenuHost.vue.
 // Items are action ids, '-' for a separator, {head} for a heading, a plain {label, g, run} or {label, g, sub: [...]},
 // which opens its items to the side.
+import type { MenuEntry as GlimEntry } from '@glimstone/vue';
+import { menuIsOpen } from '@glimstone/core';
 import { reactive } from 'vue';
-import { actions, blocked, run, type Need } from './actions';
+import { actions, blocked, labelOf, run, type Need } from './actions';
+import { glyphComponent } from './glyphs';
 import { hideTip } from './tips';
 
 export interface MenuItem {
@@ -32,52 +35,55 @@ export const resolveItems = (items: MenuEntry[]): Resolved[] => items
 
 export const itemOff = (it: MenuItem) => !!(it.id && actions[it.id] && (blocked({ id: it.id, needs: it.needs }) || (it.when && !it.when())));
 
-export interface MenuOptions { above?: boolean; anchor?: HTMLElement | null; bar?: number }
-export interface Placed { left: number; top: number }
+export interface MenuOptions { above?: boolean; anchor?: HTMLElement | null }
 
 export const menuState = reactive({
   list: null as Resolved[] | null,
-  items: [] as MenuEntry[],
-  x: 0, y: 0, above: false, bar: -1,
+  x: 0, y: 0, above: false, seq: 0,
   anchor: null as HTMLElement | null,
-  at: null as Placed | null,
-  focusK: -1,
-  sub: null as { host: number; list: Resolved[]; focus: boolean; focusK: number } | null,
 });
 
-export const isMenuOpen = () => !!menuState.list;
+// A menu of the bar is GlimStone's own and not in menuState, so both count.
+export const isMenuOpen = () => !!menuState.list || menuIsOpen();
 
-export function menu(x: number, y: number, items: MenuEntry[], { above = false, anchor = null, bar = -1 }: MenuOptions = {}) {
-  closeMenu();
+export function menu(x: number, y: number, items: MenuEntry[], { above = false, anchor = null }: MenuOptions = {}) {
   hideTip();
-  Object.assign(menuState, { list: resolveItems(items), items, x, y, above, anchor, bar, at: null, focusK: -1, sub: null });
+  Object.assign(menuState, { list: resolveItems(items), x, y, above, anchor, seq: menuState.seq + 1 });
 }
 
 export function closeMenu() {
-  Object.assign(menuState, { list: null, sub: null, bar: -1, anchor: null, at: null });
+  Object.assign(menuState, { list: null, anchor: null });
 }
 
-export function openSub(host: number, focus = false) {
-  const it = menuState.list?.[host];
-  if (!it || it === '-' || isHead(it) || !it.sub) return;
-  menuState.sub = { host, list: resolveItems(it.sub), focus, focusK: -1 };
+const text = (v: string | (() => string)) => (typeof v === 'function' ? v() : v);
+
+// An action that switches something on or off closes the menu like any action; only a plain box, such as a column
+// in the column menu, keeps it open so several can be ticked in a row.
+function pick(it: MenuItem) {
+  if (it.id && actions[it.id]) {
+    run(it.id);
+    if (it.checked && !it.radio) closeMenu();
+  } else (it.run as (() => unknown) | undefined)?.();
 }
 
-export const closeSub = () => { menuState.sub = null; };
-
-// A checkbox item leaves the menu open where it was, so several boxes can be ticked in a row.
-export function choose(it: MenuItem, k: number, placed: Placed, fromSub = false) {
-  const { items, anchor, bar } = menuState;
-  const host = menuState.sub?.host ?? -1;
-  closeMenu();
-  if (it.id && actions[it.id]) run(it.id);
-  else (it.run as (() => unknown) | undefined)?.();
-  if (it.checked && !it.id && !it.radio) {
-    menu(placed.left, placed.top, items, { anchor, bar });
-    menuState.at = placed;
-    if (fromSub) {
-      openSub(host);
-      menuState.sub!.focusK = k;
-    } else menuState.focusK = k;
-  }
+export function toGlim(list: Resolved[]): GlimEntry[] {
+  return list.map((it): GlimEntry => {
+    if (it === '-') return '-';
+    if (isHead(it)) {
+      const run = it.run;
+      return { head: text(it.head), ...(run ? { edit: { tip: it.tip ?? '', glyph: it.g ? glyphComponent(it.g) : undefined, onSelect: () => { run(); } } } : {}) };
+    }
+    return {
+      label: labelOf(it),
+      ...(it.g && !it.color ? { glyph: glyphComponent(it.g) } : {}),
+      ...(it.color ? { color: it.color } : {}),
+      ...(it.key ? { shortcut: it.key } : {}),
+      ...(it.count != null ? { count: it.count } : {}),
+      ...(it.checked ? { checked: it.checked() } : {}),
+      ...(it.radio ? { radio: true } : {}),
+      ...(it.sub ? { sub: toGlim(resolveItems(it.sub)) } : {}),
+      disabled: itemOff(it),
+      onSelect: () => pick(it),
+    };
+  });
 }
