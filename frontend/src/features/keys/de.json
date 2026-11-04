@@ -1,0 +1,17 @@
+{
+  "title": "Tastenkürzel",
+  "mod": { "ctrl": "Strg", "shift": "Umschalt", "alt": "Alt" },
+  "named": { "ArrowLeft": "Links", "ArrowRight": "Rechts", "ArrowUp": "Hoch", "ArrowDown": "Runter", "Delete": "Entf", "Insert": "Einfg", "Escape": "Esc", "Space": "Leertaste", "Home": "Pos1", "End": "Ende", "PageUp": "Bild auf", "PageDown": "Bild ab", "Backspace": "Rück" },
+  "preset": "Vorlage", "presetTip": "Total Commander legt etwa Packen auf Alt+F5, Entpacken auf Alt+F9 und Umbenennen auf Umschalt+F6. Eigene Änderungen kommen obendrauf.",
+  "search": "Befehl suchen", "searchPh": "etwa Kopieren", "more": "Weitere", "noMatch": "Kein Befehl heißt so",
+  "change": "Taste für {action} ändern", "press": "Taste drücken …", "none": "keine", "clear": "Taste entfernen", "undo": "Wie vorher",
+  "fixed": "{key} ist fest belegt. Nimm eine andere Taste.", "letter": "Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.",
+  "taken": "{key} gehört schon zu „{action}“. Nochmal drücken übernimmt die Taste, Esc lässt alles, wie es ist.",
+  "hint": "Klick auf eine Taste und drück die neue Kombination", "resetAll": "Alles zurücksetzen",
+  "ownNow": "Deine Tastenkürzel gelten jetzt überall", "asShipped": "Die Tastenkürzel sind wieder wie ausgeliefert",
+  "fixedHead": "Fest belegt",
+  "fixedKeys": {
+    "tab": { "label": "Fenster wechseln", "key": "Tab" }, "enter": { "label": "Öffnen", "key": "Enter" }, "insert": { "label": "Markieren und weiter", "key": "Einfg" },
+    "space": { "label": "Schnellansicht", "key": "Leertaste" }, "f10": { "label": "Menüleiste", "key": "F10" }, "esc": { "label": "Schließen", "key": "Esc" }
+  }
+}

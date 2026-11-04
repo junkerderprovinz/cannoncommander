@@ -1,0 +1,28 @@
+/* The file list's parts that the prototype adds from its feature files: the jump bubble, the column window, the
+   spacers of a long list and the server's thumbnails, which are pictures rather than drawn svg scenes. */
+.tjump { position: absolute; left: 50%; bottom: 3.2rem; transform: translateX(-50%); z-index: 4; display: flex; align-items: center; gap: .55rem; height: 2.1rem; padding: 0 .9rem; border-radius: var(--radius-pill); font-size: 13px; pointer-events: none; animation: tjump-in .12s ease-out; }
+.tjump svg { width: .9rem; height: .9rem; color: var(--accent-glyph); }
+.tjump .mono { font-weight: 600; color: var(--carbon-text); }
+.tjump small { color: var(--carbon-text-muted); font-size: 12px; }
+.tjump.miss svg, .tjump.miss .mono { color: var(--status-fail-text, #ff8389); }
+@keyframes tjump-in { from { opacity: 0; translate: 0 .3rem; } }
+@media (prefers-reduced-motion: reduce) { .tjump { animation: none; } }
+
+#col-q { flex: none; }
+.col-cols { columns: 13rem; column-gap: 2rem; }
+.col-group { break-inside: avoid; display: flex; flex-direction: column; padding-bottom: 1.1rem; }
+.col-group .eyebrow { margin-bottom: .25rem; }
+.col-check { display: flex; align-items: center; gap: .6rem; min-height: 2rem; padding: 0 .4rem; border-radius: var(--radius-control); text-align: left; }
+.col-check:hover { background: var(--carbon-hover); }
+.col-check:disabled { opacity: .55; cursor: default; }
+.col-check:disabled:hover { background: none; }
+
+.vpad { grid-column: 1 / -1; pointer-events: none; }
+.row .thumb > img.scene { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* A folder without a volume, such as /mnt, keeps the footer as tall as one with the fill level. */
+.lfoot > span:first-child { line-height: 1.5rem; }
+
+/* As in the prototype, a menu row with the focus shows it by its background alone, and the menus set their words
+   with the browser's button spacing rather than the page's tighter one. */
+.glim-menu .glim-menu-item:focus-visible { outline: none; }
+.glim-menubar-item, .glim-menu-item { letter-spacing: normal; }

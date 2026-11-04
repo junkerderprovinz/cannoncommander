@@ -1,0 +1,121 @@
+import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { api, type Listing } from '@/api/client';
+import { emit, watch } from '@/api/sse';
+import { useListing } from './listing';
+
+vi.mock('@/api/sse', async (original) => ({ ...(await original<typeof import('@/api/sse')>()), watch: vi.fn() }));
+
+const listing = (path: string, names: string[], etag = 'v1'): Listing => ({
+  path, etag, items: names.map((name) => ({ name, dir: false, size: 1, time: 0, mode: '0664', owner: 'nobody', group: 'users' })),
+});
+const names = (l?: Listing) => l?.items.map((k) => k.name);
+const settle = () => new Promise((r) => setTimeout(r, 0));
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+  vi.restoreAllMocks();
+});
+
+describe('listing cache', () => {
+  it('asks again with the ETag and keeps its copy while the folder is unchanged', async () => {
+    const fsList = vi.spyOn(api, 'fsList').mockResolvedValueOnce(listing('/a', ['x'])).mockResolvedValueOnce(null);
+    const L = useListing();
+    await L.load('/a');
+    await L.load('/a');
+    expect(fsList.mock.calls.map((c) => c[1])).toEqual([undefined, 'v1']);
+    expect(names(L.lists.get('/a'))).toEqual(['x']);
+  });
+
+  it('reads a folder only once while the first answer is on its way', async () => {
+    const fsList = vi.spyOn(api, 'fsList').mockResolvedValue(listing('/a', ['x']));
+    const L = useListing();
+    await Promise.all([L.load('/a'), L.load('/a')]);
+    expect(fsList).toHaveBeenCalledOnce();
+  });
+});
+
+describe('live changes', () => {
+  it('reads a folder on screen again in place when the server reports a change', async () => {
+    vi.spyOn(api, 'fsTree').mockResolvedValue({ path: '/', items: [] });
+    const fsList = vi.spyOn(api, 'fsList').mockResolvedValueOnce(listing('/a', ['x'])).mockResolvedValueOnce(listing('/a', ['x', 'y'], 'v2'));
+    const L = useListing();
+    await L.load('/a');
+    L.setShown(['/a']);
+    emit({ type: 'fs.changed', topic: 'fs:/a' });
+    expect(names(L.lists.get('/a'))).toEqual(['x']);
+    await settle();
+    expect(fsList).toHaveBeenCalledTimes(2);
+    expect(names(L.lists.get('/a'))).toEqual(['x', 'y']);
+  });
+
+  it('only forgets a folder out of sight', async () => {
+    const fsList = vi.spyOn(api, 'fsList').mockResolvedValue(listing('/b', ['x']));
+    const L = useListing();
+    await L.load('/b');
+    L.setShown(['/a']);
+    emit({ type: 'fs.changed', topic: 'fs:/b' });
+    await settle();
+    expect(L.lists.has('/b')).toBe(false);
+    expect(fsList).toHaveBeenCalledOnce();
+  });
+
+  it('reads every folder on screen again after the stream lost events', async () => {
+    const fsList = vi.spyOn(api, 'fsList').mockImplementation(async (p) => listing(p, ['x']));
+    const L = useListing();
+    await Promise.all([L.load('/a'), L.load('/b')]);
+    L.setShown(['/a', '/b']);
+    const before = fsList.mock.calls.length;
+    emit({ type: 'resync' });
+    await settle();
+    expect(new Set(fsList.mock.calls.slice(before).map((c) => c[0]))).toEqual(new Set(['/a', '/b']));
+  });
+
+  it('tells the server which folders are on screen', () => {
+    useListing().setShown(['/mnt/user', '/mnt/user', '/boot']);
+    expect(watch).toHaveBeenLastCalledWith(['/mnt/user', '/boot']);
+  });
+});
+
+describe('metadata columns', () => {
+  it('asks for the rows on screen in one request and never twice', async () => {
+    const fsMeta = vi.spyOn(api, 'fsMeta').mockResolvedValue({ '/a/x.mkv': { duration: 60 }, '/a/y.mkv': { duration: 90 } });
+    const L = useListing();
+    L.wantMeta(['/a/x.mkv'], ['duration']);
+    L.wantMeta(['/a/y.mkv', '/a/x.mkv'], ['duration']);
+    await settle();
+    expect(fsMeta).toHaveBeenCalledOnce();
+    expect(fsMeta).toHaveBeenCalledWith(['/a/x.mkv', '/a/y.mkv'], ['duration']);
+    expect(L.metaOf('/a', 'y.mkv')).toEqual({ duration: 90 });
+    L.wantMeta(['/a/x.mkv'], ['duration', 'vcodec']);
+    await settle();
+    expect(fsMeta).toHaveBeenLastCalledWith(['/a/x.mkv'], ['vcodec']);
+  });
+
+  it('asks again after the server failed', async () => {
+    const fsMeta = vi.spyOn(api, 'fsMeta').mockRejectedValueOnce(new Error('down')).mockResolvedValue({});
+    const L = useListing();
+    L.wantMeta(['/a/x.mkv'], ['duration']);
+    await settle();
+    L.wantMeta(['/a/x.mkv'], ['duration']);
+    await settle();
+    expect(fsMeta).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('search', () => {
+  it('keeps the hits of a query and stops the query before it', async () => {
+    const signals: AbortSignal[] = [];
+    const search = vi.spyOn(api, 'search').mockImplementation(async (_p, q, _h, signal) => {
+      signals.push(signal!);
+      return { items: [{ name: q, dir: false, size: 0, time: 0, mode: '0664', owner: '', group: '', at: '/a' }], more: false };
+    });
+    const L = useListing();
+    L.search('/a', 'mk', false);
+    L.search('/a', 'mkv', false);
+    await settle();
+    expect(signals[0]!.aborted).toBe(true);
+    expect(L.search('/a', 'mkv', false)).toMatchObject({ done: true, items: [{ name: 'mkv' }] });
+    expect(search).toHaveBeenCalledTimes(2);
+  });
+});

@@ -1,0 +1,109 @@
+{
+  "title": "View",
+  "quickview": "Preview in the other panel",
+  "download": "Download",
+  "edit": "Edit",
+  "share": "Share",
+  "unpack": "Unpack",
+  "openIn": "Open in {name}",
+  "changed": "changed {time}",
+  "preview": "Preview",
+  "pickFile": "Pick a file on the left",
+  "failed": "This file can't be read right now.",
+  "and": "and {rest}",
+  "img": {
+    "of": "{i} of {n}",
+    "fit": "Fit",
+    "prev": "Previous picture",
+    "prevTip": "Previous picture (left arrow)",
+    "next": "Next picture",
+    "nextTip": "Next picture (right arrow)"
+  },
+  "media": {
+    "play": "Play",
+    "playTip": "Play (space)",
+    "pause": "Pause",
+    "pauseTip": "Pause (space)",
+    "position": "Position",
+    "subs": "Subtitles",
+    "audio": "Audio track",
+    "off": "Off",
+    "track": "Track {n}",
+    "subFile": "Subtitle file",
+    "playBig": "Play in the large window (F3)",
+    "prevTrack": "Previous track",
+    "nextTrack": "Next track",
+    "cantPlay": "Sorry, your browser can't play this file. Downloading it always works, though."
+  },
+  "langs": {
+    "de": "German", "en": "English", "fr": "French", "es": "Spanish", "it": "Italian", "nl": "Dutch", "pl": "Polish",
+    "cs": "Czech", "hu": "Hungarian", "tr": "Turkish", "pt": "Portuguese", "ru": "Russian", "ja": "Japanese"
+  },
+  "text": {
+    "wrap": "Wrap lines",
+    "truncated": "Only the beginning",
+    "cut": "shortened"
+  },
+  "md": { "rendered": "Rendered", "source": "Source" },
+  "pages": {
+    "of": "Page {i} of {n}",
+    "page": "Page {n}",
+    "prev": "Previous page",
+    "prevTip": "Previous page (Page Up)",
+    "next": "Next page",
+    "nextTip": "Next page (Page Down)"
+  },
+  "slides": { "of": "Slide {i} of {n}", "slide": "Slide {n}", "prev": "Previous slide", "next": "Next slide" },
+  "office": {
+    "doc": "Text document",
+    "sheet": "Spreadsheet",
+    "none": "This format needs an office server for its preview. You can add one under Settings, Integrations.",
+    "unreachable": "{name} can't be reached right now. You can still download the file.",
+    "kinds": { "none": "Office", "onlyoffice": "OnlyOffice", "eurooffice": "Euro-Office", "collabora": "Collabora" }
+  },
+  "arch": {
+    "browse": "Open like a folder",
+    "unpacked": "{size} unpacked",
+    "unreadable": "The preview can't look inside this archive right now.",
+    "limit": "The preview shows the first {n} entries."
+  },
+  "hex": {
+    "first": "First {n} bytes",
+    "tip": "There is no preview for this kind of file. The hex view shows the start of the file as it sits on the disk.",
+    "sqlite": "SQLite database",
+    "program": "Program",
+    "binary": "Binary file"
+  },
+  "disk": {
+    "eyebrow": "Image",
+    "format": "Format",
+    "iso": "ISO 9660",
+    "raw": "Raw disk image",
+    "label": "Label",
+    "boot": "Boots with",
+    "used": "Used",
+    "usedTip": "The image is sparse. On the disk it only takes up as much as is really in it.",
+    "sum": "Checksum",
+    "sumThere": "right beside it",
+    "sumNone": "none",
+    "sumTip": "There is a .sha256 file next to the image. Compare the two under File, Verify checksum.",
+    "parts": "Partitions",
+    "content": "Contents"
+  },
+  "dir": { "none": "empty", "empty": "This folder is empty" },
+  "details": { "size": "Size", "content": "Contents", "format": "Format", "changed": "Changed", "owner": "Owner", "rights": "Permissions" },
+  "epub": { "book": "E-book", "prev": "Previous page", "next": "Next page" },
+  "model": { "info": "3D model, {format}", "hint": "Drag to turn the model, scroll to bring it closer" },
+  "lang": { "nginx": "Nginx", "config": "Configuration", "log": "Log", "subtitle": "Subtitles", "checksum": "Checksum", "text": "Text" },
+  "n": {
+    "lines": { "one": "{n} line", "many": "{n} lines" },
+    "pages": { "one": "{n} page", "many": "{n} pages" },
+    "sheets": { "one": "{n} sheet", "many": "{n} sheets" },
+    "slides": { "one": "{n} slide", "many": "{n} slides" },
+    "files": { "one": "{n} file", "many": "{n} files" },
+    "dirs": { "one": "{n} folder", "many": "{n} folders" },
+    "morePictures": { "one": "{n} more picture", "many": "{n} more pictures" },
+    "moreObjects": { "one": "{n} more item", "many": "{n} more items" },
+    "moreEntries": { "one": "{n} more entry", "many": "{n} more entries" }
+  }
+}

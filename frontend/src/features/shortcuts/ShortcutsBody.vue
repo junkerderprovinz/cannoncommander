@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { actions, labelOf } from '@/core/actions';
-import Kbd from '@/core/Kbd.vue';
+import { Kbd } from '@glimstone/vue';
 import { t } from '@/i18n';
 
 const FIXED = ['tab', 'enter', 'insert', 'space', 'ctrlClick', 'shiftClick', 'rightClick', 'f10', 'esc'];
@@ -12,5 +12,5 @@ const rows = computed(() => [
 </script>
 
 <template>
-  <div class="well"><div class="kbd-grid"><div v-for="([label, key], n) in rows" :key="n"><span>{{ label }}</span><Kbd>{{ key }}</Kbd></div></div></div>
+  <div class="well"><div class="kbd-grid"><div v-for="([label, key], n) in rows" :key="n"><span>{{ label }}</span><Kbd class="kbd">{{ key }}</Kbd></div></div></div>
 </template>

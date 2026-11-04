@@ -34,8 +34,9 @@ var formatByExt = func() map[string]string {
 // Rotated logs such as syslog.log.1 keep their real type in front of the number.
 var rotatedLog = regexp.MustCompile(`\.log\.\d+$`)
 
-// formatOf returns the format group of a file name, or "" when none fits.
-func formatOf(name string) string {
+// FormatOf returns the format group of a file name, an id from
+// formats.json such as video, or "" when none fits.
+func FormatOf(name string) string {
 	if rotatedLog.MatchString(name) {
 		return formatByExt["log"]
 	}

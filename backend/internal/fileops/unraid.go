@@ -41,6 +41,7 @@ var kindNames = map[string]string{
 	KindCopy: "Kopieren", KindMove: "Verschieben", KindDelete: "Löschen",
 	"trash": "In den Papierkorb", "restore": "Wiederherstellen", "emptyTrash": "Papierkorb leeren",
 	unraid.FixPermsKind: "Rechte setzen", "undo": "Rückgängig",
+	unraid.ModeGather: "Bündeln", unraid.ModeScatter: "Leeren",
 }
 
 // notice words a finished job like the prototype does: "Kopieren: Urlaub
@@ -88,7 +89,7 @@ func prepareFixPerms(_ context.Context, d v1.Deps, u *users.User, raw json.RawMe
 	if err := jobs.Decode(raw, &p); err != nil {
 		return nil, err
 	}
-	task, err := unraid.Default().PreparePerms(d.FS, u, p.Path)
+	task, err := unraidService().PreparePerms(d.FS, u, p.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +101,7 @@ func runFixPerms(ctx context.Context, run *jobs.Run) error {
 	if err := run.Params(&p); err != nil {
 		return err
 	}
-	task, err := unraid.Default().ResumePerms(run.Deps().FS, p.Path)
+	task, err := unraidService().ResumePerms(run.Deps().FS, p.Path)
 	if err != nil {
 		return err
 	}

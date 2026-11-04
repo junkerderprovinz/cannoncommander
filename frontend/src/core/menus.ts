@@ -1,10 +1,10 @@
 // The menu bar: every top-level menu with the action ids it lists. Ids no feature has registered yet drop out on their own.
 import { tl } from '@/i18n';
-import { menu, type MenuEntry, type MenuItem, menuState } from './menu';
+import type { MenuEntry, MenuItem } from './menu';
 
 export const MENUS: [string, MenuEntry[]][] = [
   ['file', ['newFolder', 'newFile', 'upload', 'download', '-', 'view', 'edit', 'share', 'props', '-', 'pack', 'unpack', 'checksum', 'checksumVerify', 'split', 'combine', 'symlink', '-', 'delete', 'openTrash', '-', 'logout']],
-  ['edit', ['copy', 'move', 'rename', 'multiRename', '-', 'clipCut', 'clipCopy', 'clipPaste', '-', 'selectAll', 'invertSel', 'selectPattern', 'unselect', 'saveSel', 'restoreSel', '-', 'copyPath']],
+  ['edit', ['copy', 'move', 'rename', 'multiRename', '-', 'clipCut', 'clipCopy', 'clipPaste', '-', 'selectAll', 'invertSel', 'selectPattern', 'unselect', 'saveSel', 'restoreSel', '-', 'copyPath', 'internalLink']],
   ['view', ['single', 'dual', 'sidebar', 'quickview', 'fkeys', 'hidden', 'extensions', 'syncBrowse', '-',
     { label: tl('menus.look'), g: 'IconTabApps', sub: ['view-details', 'view-compact', 'view-list', 'view-content', 'view-columns', 'view-tiles', 'view-large', 'view-gallery', 'view-drives'] },
     { label: tl('menus.group'), g: 'IconFile', sub: ['group-none', 'group-kind', 'group-date', 'group-size'] },
@@ -31,11 +31,7 @@ export function allMenuItems(bookmarks: MenuItem[] = bookmarkEntries()): MenuEnt
   ]);
 }
 
-export function openMenuBar(i: number) {
-  const btn = document.querySelectorAll<HTMLElement>('.menubar button')[i];
-  if (!btn) return;
-  const r = btn.getBoundingClientRect();
-  menu(r.left, r.bottom + 6, menuItems(i), { anchor: btn, bar: i });
-}
-
-export const stepMenu = (d: number) => openMenuBar((menuState.bar + d + MENUS.length) % MENUS.length);
+// The bar is GlimStone's MenuBar in the head row; F10 and the F-key bar open its menus through the opener it registers.
+let opener: (i: number) => void = () => {};
+export const setMenuBarOpener = (fn: (i: number) => void) => { opener = fn; };
+export const openMenuBar = (i: number) => opener(i);
