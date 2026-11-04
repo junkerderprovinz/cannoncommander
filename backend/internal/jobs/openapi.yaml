@@ -34,8 +34,10 @@ paths:
         Kinds: copy, move, delete, trash, restore, emptyTrash, pack, unpack,
         testArchive, checksum, verify, split, combine, attrsRecursive,
         fixPerms, sync, gather, scatter, contentSearch, duplicates,
-        fetchUrl, reindex. Built so far: copy, move, delete, trash and
-        fixPerms. Restore and emptyTrash start from the trash endpoints.
+        fetchUrl, reindex. Built so far: copy, move, delete, trash,
+        fixPerms, contentSearch (params ContentSearchParams), duplicates
+        (params DuplicatesParams) and reindex (params ReindexParams, admins
+        only). Restore and emptyTrash start from the trash endpoints.
       requestBody:
         required: true
         content:

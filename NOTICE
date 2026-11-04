@@ -9,3 +9,7 @@ Copyright Graham Steffaniak and contributors, which is based on File Browser
 Both are licensed under the Apache License, Version 2.0; the full text is in
 LICENSES/Apache-2.0.txt. Files taken from them keep that notice, and files we
 changed say so at the top.
+
+The place names in backend/internal/meta/places/cities.tsv.gz come from
+GeoNames (https://www.geonames.org/), licensed under the Creative Commons
+Attribution 4.0 License (https://creativecommons.org/licenses/by/4.0/).

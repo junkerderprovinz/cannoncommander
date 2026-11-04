@@ -18,6 +18,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/meta"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 )
 
@@ -35,6 +36,7 @@ func Routes(r *v1.Router) {
 	r.Handle("GET /fs/thumb", h.thumb)
 	r.Handle("GET /fs/text", h.text)
 	r.Handle("GET /fs/hex", h.hex)
+	meta.Routes(r, meta.Default())
 }
 
 // Item is one row of a listing.

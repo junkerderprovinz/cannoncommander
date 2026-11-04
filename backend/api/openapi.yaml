@@ -171,11 +171,36 @@ paths:
     post:
       operationId: fsMeta
       summary: Metadata columns for many paths
-      description: Takes the visible rows and the wanted columns, returns the values from the metadata cache.
-      tags: [fs]
+      description: |
+        Takes the visible rows and the wanted columns and reads what is
+        inside the files: photo details from EXIF, streams from ffprobe,
+        music tags, pages and document details, archive contents, disk
+        image and program details, checksums. What was read stays in the
+        metadata cache until the file changes, so asking again is cheap.
+
+        A value comes back only where the file has one. Paths the user may
+        not see or that are gone are left out, so are columns this
+        endpoint does not fill. Checksums are worked out for files up to
+        1 GiB, bigger ones go through the checksum tool. Reading stops after
+        25 seconds and answers with what it has.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FsMetaRequest"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The values by path.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsMeta"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [fs]
   /fs/raw:
     get:
       operationId: fsRaw
@@ -263,12 +288,69 @@ paths:
     get:
       operationId: fsPage
       summary: One page of a PDF or office file as an image
+      description: |
+        Draws a page with MuPDF as a PNG of the given width. Works for PDF,
+        XPS, EPUB, CBZ, FB2 and MOBI, and for office files as far as MuPDF
+        reads them. The number of pages is the pages column of fs/meta.
+        Needs the download right. A client that adds the file's mtime as v
+        may cache the answer for good.
       parameters:
         - $ref: "#/components/parameters/Path"
-      tags: [fs]
+        - name: page
+          in: query
+          description: Page number, counted from 1.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: width
+          in: query
+          description: Width of the picture in pixels.
+          schema:
+            type: integer
+            minimum: 64
+            maximum: 4096
+            default: 1200
+        - name: v
+          in: query
+          description: Any value that changes with the file, such as its mtime.
+          schema:
+            type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The page.
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: The path or the page does not exist.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "415":
+          description: The file has no pages.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          description: MuPDF is not installed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [fs]
   /fs/text:
     get:
       operationId: fsText
@@ -1073,10 +1155,84 @@ paths:
     get:
       operationId: search
       summary: Search below a folder
-      tags: [search]
+      description: |
+        Finds files and folders below path by name, fields, kind, size and
+        age, the way the list's filter and the search window do. The name
+        line takes words that match anywhere in a name, patterns with * and
+        ? for the whole name, #words for tags and colours, and field tests
+        such as breite:>=3840, codec:hevc, interpret:"Queen", größe:>1GB or
+        geändert:<30d. Every column name works as a field.
+
+        The search reads the index where it holds the folder and the disk
+        otherwise. Field tests on metadata read it for files the cache does
+        not know yet for ten seconds, files left after that count as
+        pending. Hidden entries and everything inside hidden folders are
+        left out unless hidden is true.
+
+        Hits come folders first and in name order. Total counts all of
+        them, items holds the first limit. A line with unknown fields finds
+        nothing and names them. A search for text inside files is the job
+        kind contentSearch with the same criteria and text, its hits arrive
+        as search.hits events.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: q
+          in: query
+          description: The name line, with field tests.
+          schema:
+            type: string
+          example: "*.mkv breite:>=3840"
+        - name: hidden
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [all, dir, img, video, audio, doc, arch]
+            default: all
+        - name: min
+          in: query
+          description: Smallest size, such as 300 KB. A number alone counts in MB. Folders count with their total size.
+          schema:
+            type: string
+        - name: max
+          in: query
+          description: Largest size, written like min.
+          schema:
+            type: string
+        - name: when
+          in: query
+          description: Changed today, in the last 7, 30 or 365 days, or more than a year ago.
+          schema:
+            type: string
+            enum: [any, "1", "7", "30", "365", old]
+            default: any
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10000
+            default: 2000
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The hits.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [search]
   /search/saved:
     get:
       operationId: savedSearchesList
@@ -1188,18 +1344,82 @@ paths:
     post:
       operationId: toolsDuplicates
       summary: Find duplicate files
-      tags: [tools]
+      description: |
+        Starts a duplicates job below path, the same as POST /jobs with the
+        kind duplicates. Files are grouped by name and size, or by size
+        alone, then compared by the start and end of their content and at
+        last by a SHA-256 over all of it, so only true copies remain. The
+        full read keeps to the speed limit of the job and can be paused.
+        The finished job has a Duplicates object as its result.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DuplicatesParams"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "202":
+          description: The job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [tools]
   /tools/diskusage:
     get:
       operationId: toolsDiskUsage
       summary: Sizes below a folder for the treemap
-      tags: [tools]
+      description: |
+        Measures a folder from the index, or from the disk where the index
+        does not hold it: the totals, every entry directly inside with its
+        own totals for the tree and the treemap, the kinds of files with
+        the extensions that take the most room, and the largest files.
+        Entries the user may not see do not count.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: hidden
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: kind
+          in: query
+          description: Only files of this kind among the largest.
+          schema:
+            type: string
+            enum: [img, video, audio, arch, disk, doc, text, code, file]
+        - name: largest
+          in: query
+          description: How many of the largest files to list.
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 2000
+            default: 200
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The folder measured.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiskUsage"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [tools]
   /tools/cleanup/scan:
     post:
       operationId: toolsCleanupScan
@@ -2479,19 +2699,53 @@ paths:
     get:
       operationId: indexState
       summary: State of the index per source
+      description: |
+        Per source whether it is indexed and ready, how many folders and
+        files the index holds, how long the scans took, which folder is
+        being read, how many files have cached metadata and the open
+        rebuild, if any.
       x-access: admin
-      tags: [system]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The sources.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndexStates"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
     post:
       operationId: indexRebuild
       summary: Rebuild the index of a source
+      description: |
+        Starts a reindex job that reads one source, or every indexed one,
+        again in full and then drops the cached metadata of files that are
+        gone. Its progress comes as index.progress events.
       x-access: admin
-      tags: [system]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReindexParams"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "202":
+          description: The job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "503":
+          description: The job queue is not running.
+      tags: [system]
   /admin/integrations/test:
     post:
       operationId: integrationsTest
@@ -2928,6 +3182,59 @@ components:
           type: string
           format: byte
           description: The bytes, base64.
+    FsMetaRequest:
+      type: object
+      required: [paths, columns]
+      properties:
+        paths:
+          type: array
+          maxItems: 5000
+          items:
+            type: string
+        columns:
+          type: array
+          maxItems: 100
+          description: |
+            Column ids of the list. Photos: dimensions, camera, make, lens,
+            focal, aperture, exposure, iso, flash, taken, place,
+            orientation, depth, dpi. Film and music: duration, vcodec,
+            acodec, framerate, vbitrate, aspect, hdr, audiotracks,
+            subtitles, season, episode, artist, album, title, albumartist,
+            track, year, genre, composer, abitrate, samplerate, channels.
+            Documents: pages, author, lastauthor, doctitle, subject, words,
+            lines, encoding, app, encrypted. Archives: unpacked, ratio,
+            entries, method, archcrypt. Disk images: fs, volume, bootable.
+            Programs: version, vendor, arch, signed. Checksums: sha256,
+            crc32, md5, sha1. From the file system: accessed, statchange,
+            disk.
+          items:
+            type: string
+          example: [dimensions, camera, taken, place]
+    FsMeta:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: object
+          description: |
+            Per path as asked, the columns that have a value. Numbers are
+            bytes for unpacked, milliseconds since 1970 for taken, accessed
+            and statchange, whole seconds for duration, kBit/s for vbitrate
+            and plain figures for the rest. Booleans answer yes or no
+            columns. Text is ready to show, in German.
+          additionalProperties:
+            type: object
+            additionalProperties:
+              oneOf:
+                - type: string
+                - type: number
+                - type: boolean
+          example:
+            /mnt/user/fotos/2026/IMG_0101.jpg:
+              dimensions: 4032 × 3024
+              camera: Pixel 9
+              taken: 1767434400000
+              place: Wien
     PermsParams:
       type: object
       description: Params of the job kind fixPerms. Admins only.
@@ -3337,6 +3644,314 @@ components:
             id:
               type: integer
               format: int64
+    SearchHit:
+      allOf:
+        - $ref: "#/components/schemas/FsItem"
+        - type: object
+          required: [at]
+          properties:
+            at:
+              type: string
+              description: The folder the hit lies in.
+            line:
+              type: integer
+              description: For a content search, the line of the first match, counted from 1.
+    SearchResult:
+      type: object
+      required: [path, items, total, scanned, indexed]
+      properties:
+        path:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchHit"
+        total:
+          type: integer
+          description: Every hit, items holds the first ones.
+        more:
+          type: boolean
+          description: There are more hits than items.
+        scanned:
+          type: integer
+          description: Entries looked at.
+        pending:
+          type: integer
+          description: Files whose metadata could not be read in time, so field tests may have missed them.
+        unknown:
+          type: array
+          items:
+            type: string
+          description: Field names nobody knows. The search finds nothing while there are any.
+        indexed:
+          type: boolean
+          description: The search read the index rather than the disk.
+    ContentSearchParams:
+      type: object
+      description: Params of the job kind contentSearch. Upper and lower case do not count, binary files are passed over.
+      required: [path, text]
+      properties:
+        path:
+          type: string
+        text:
+          type: string
+        q:
+          type: string
+        hidden:
+          type: boolean
+        type:
+          type: string
+        min:
+          type: string
+        max:
+          type: string
+        when:
+          type: string
+    ContentSearchResult:
+      type: object
+      description: The result of a finished contentSearch job, the first 2000 hits in the order of GET /search.
+      required: [items, total, scanned]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchHit"
+        total:
+          type: integer
+        scanned:
+          type: integer
+    SearchHitsEvent:
+      type: object
+      description: Data of search.hits, new hits of a running content search. The last one has done set.
+      required: [job, items, total, scanned]
+      properties:
+        job:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchHit"
+        total:
+          type: integer
+        scanned:
+          type: integer
+        done:
+          type: boolean
+    IndexProgressEvent:
+      type: object
+      description: Data of index.progress, sent while a reindex job runs.
+      required: [job, source, status, dirs, files]
+      properties:
+        job:
+          type: string
+        source:
+          type: string
+        status:
+          type: string
+          enum: [ready, indexing, unavailable]
+        dirs:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+        scanning:
+          type: string
+          description: The folder the scanner reads.
+        done:
+          type: boolean
+    IndexState:
+      type: object
+      required: [source, path, status, dirs, files, quickScanSeconds, fullScanSeconds, metadata]
+      properties:
+        source:
+          type: string
+        path:
+          type: string
+          description: Where the source is mounted.
+        status:
+          type: string
+          enum: [ready, indexing, unavailable, "off"]
+        dirs:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+        lastIndexed:
+          type: string
+          format: date-time
+        quickScanSeconds:
+          type: integer
+        fullScanSeconds:
+          type: integer
+        scanning:
+          type: string
+          description: The folder a scanner reads right now.
+        metadata:
+          type: integer
+          format: int64
+          description: Files below the source with cached metadata.
+        job:
+          type: string
+          description: The open reindex job of the source.
+    IndexStates:
+      type: object
+      required: [sources]
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/IndexState"
+    ReindexParams:
+      type: object
+      description: Params of the job kind reindex and body of POST /admin/index.
+      properties:
+        source:
+          type: string
+          description: Name of the source. Without it every indexed source is read again.
+    DuplicatesParams:
+      type: object
+      required: [path]
+      properties:
+        path:
+          type: string
+        by:
+          type: string
+          enum: [name, size]
+          default: name
+          description: Same name and size, or the same size alone, which also finds renamed copies.
+        hidden:
+          type: boolean
+        minSize:
+          type: integer
+          format: int64
+          description: Smallest file size in bytes. Empty files never count.
+    Duplicates:
+      type: object
+      description: Result of a finished duplicates job, the groups that waste the most room first.
+      required: [groups, wasted, files]
+      properties:
+        groups:
+          type: array
+          maxItems: 5000
+          items:
+            type: object
+            required: [name, size, sha256, wasted, copies]
+            properties:
+              name:
+                type: string
+              size:
+                type: integer
+                format: int64
+              sha256:
+                type: string
+              wasted:
+                type: integer
+                format: int64
+                description: Bytes taken by all copies but one.
+              copies:
+                type: array
+                description: Newest first, on equal times the shorter path first.
+                items:
+                  type: object
+                  required: [path, at, mtime]
+                  properties:
+                    path:
+                      type: string
+                    at:
+                      type: string
+                    mtime:
+                      type: string
+                      format: date-time
+        more:
+          type: boolean
+          description: There were more than 5000 groups.
+        wasted:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+          description: Files looked at.
+    UsageTotals:
+      type: object
+      required: [size, files, dirs, mtime]
+      properties:
+        size:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+        dirs:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+          description: The newest change anywhere below.
+    DiskUsage:
+      allOf:
+        - $ref: "#/components/schemas/UsageTotals"
+        - type: object
+          required: [path, items, types, largest, indexed]
+          properties:
+            path:
+              type: string
+            items:
+              type: array
+              description: The entries directly inside, largest first.
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/UsageTotals"
+                  - type: object
+                    required: [name, dir]
+                    properties:
+                      name:
+                        type: string
+                      dir:
+                        type: boolean
+            types:
+              type: array
+              items:
+                type: object
+                required: [kind, name, files, size, exts]
+                properties:
+                  kind:
+                    type: string
+                  name:
+                    type: string
+                    description: The kind in German, such as Video or Sonstiges.
+                  files:
+                    type: integer
+                    format: int64
+                  size:
+                    type: integer
+                    format: int64
+                  exts:
+                    type: array
+                    items:
+                      type: string
+            largest:
+              type: array
+              items:
+                type: object
+                required: [name, at, size, mtime]
+                properties:
+                  name:
+                    type: string
+                  at:
+                    type: string
+                  size:
+                    type: integer
+                    format: int64
+                  mtime:
+                    type: string
+                    format: date-time
+            indexed:
+              type: boolean
+              description: The numbers come from the index rather than the disk.
     Label:
       type: object
       properties:

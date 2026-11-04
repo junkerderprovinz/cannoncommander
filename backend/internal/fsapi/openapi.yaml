@@ -98,7 +98,35 @@ paths:
     post:
       operationId: fsMeta
       summary: Metadata columns for many paths
-      description: Takes the visible rows and the wanted columns, returns the values from the metadata cache.
+      description: |
+        Takes the visible rows and the wanted columns and reads what is
+        inside the files: photo details from EXIF, streams from ffprobe,
+        music tags, pages and document details, archive contents, disk
+        image and program details, checksums. What was read stays in the
+        metadata cache until the file changes, so asking again is cheap.
+
+        A value comes back only where the file has one. Paths the user may
+        not see or that are gone are left out, so are columns this
+        endpoint does not fill. Checksums are worked out for files up to
+        1 GiB, bigger ones go through the checksum tool. Reading stops after
+        25 seconds and answers with what it has.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FsMetaRequest"
+      responses:
+        "200":
+          description: The values by path.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsMeta"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /fs/raw:
     get:
       operationId: fsRaw
@@ -184,8 +212,68 @@ paths:
     get:
       operationId: fsPage
       summary: One page of a PDF or office file as an image
+      description: |
+        Draws a page with MuPDF as a PNG of the given width. Works for PDF,
+        XPS, EPUB, CBZ, FB2 and MOBI, and for office files as far as MuPDF
+        reads them. The number of pages is the pages column of fs/meta.
+        Needs the download right. A client that adds the file's mtime as v
+        may cache the answer for good.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: page
+          in: query
+          description: Page number, counted from 1.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: width
+          in: query
+          description: Width of the picture in pixels.
+          schema:
+            type: integer
+            minimum: 64
+            maximum: 4096
+            default: 1200
+        - name: v
+          in: query
+          description: Any value that changes with the file, such as its mtime.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The page.
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: The path or the page does not exist.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "415":
+          description: The file has no pages.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          description: MuPDF is not installed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /fs/text:
     get:
       operationId: fsText
@@ -470,3 +558,56 @@ components:
           type: string
           format: byte
           description: The bytes, base64.
+    FsMetaRequest:
+      type: object
+      required: [paths, columns]
+      properties:
+        paths:
+          type: array
+          maxItems: 5000
+          items:
+            type: string
+        columns:
+          type: array
+          maxItems: 100
+          description: |
+            Column ids of the list. Photos: dimensions, camera, make, lens,
+            focal, aperture, exposure, iso, flash, taken, place,
+            orientation, depth, dpi. Film and music: duration, vcodec,
+            acodec, framerate, vbitrate, aspect, hdr, audiotracks,
+            subtitles, season, episode, artist, album, title, albumartist,
+            track, year, genre, composer, abitrate, samplerate, channels.
+            Documents: pages, author, lastauthor, doctitle, subject, words,
+            lines, encoding, app, encrypted. Archives: unpacked, ratio,
+            entries, method, archcrypt. Disk images: fs, volume, bootable.
+            Programs: version, vendor, arch, signed. Checksums: sha256,
+            crc32, md5, sha1. From the file system: accessed, statchange,
+            disk.
+          items:
+            type: string
+          example: [dimensions, camera, taken, place]
+    FsMeta:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: object
+          description: |
+            Per path as asked, the columns that have a value. Numbers are
+            bytes for unpacked, milliseconds since 1970 for taken, accessed
+            and statchange, whole seconds for duration, kBit/s for vbitrate
+            and plain figures for the rest. Booleans answer yes or no
+            columns. Text is ready to show, in German.
+          additionalProperties:
+            type: object
+            additionalProperties:
+              oneOf:
+                - type: string
+                - type: number
+                - type: boolean
+          example:
+            /mnt/user/fotos/2026/IMG_0101.jpg:
+              dimensions: 4032 × 3024
+              camera: Pixel 9
+              taken: 1767434400000
+              place: Wien

@@ -19,11 +19,51 @@ paths:
     get:
       operationId: indexState
       summary: State of the index per source
+      description: |
+        Per source whether it is indexed and ready, how many folders and
+        files the index holds, how long the scans took, which folder is
+        being read, how many files have cached metadata and the open
+        rebuild, if any.
       x-access: admin
+      responses:
+        "200":
+          description: The sources.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndexStates"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     post:
       operationId: indexRebuild
       summary: Rebuild the index of a source
+      description: |
+        Starts a reindex job that reads one source, or every indexed one,
+        again in full and then drops the cached metadata of files that are
+        gone. Its progress comes as index.progress events.
       x-access: admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReindexParams"
+      responses:
+        "202":
+          description: The job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "503":
+          description: The job queue is not running.
   /admin/integrations/test:
     post:
       operationId: integrationsTest

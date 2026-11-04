@@ -14,10 +14,80 @@ paths:
     post:
       operationId: toolsDuplicates
       summary: Find duplicate files
+      description: |
+        Starts a duplicates job below path, the same as POST /jobs with the
+        kind duplicates. Files are grouped by name and size, or by size
+        alone, then compared by the start and end of their content and at
+        last by a SHA-256 over all of it, so only true copies remain. The
+        full read keeps to the speed limit of the job and can be paused.
+        The finished job has a Duplicates object as its result.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DuplicatesParams"
+      responses:
+        "202":
+          description: The job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /tools/diskusage:
     get:
       operationId: toolsDiskUsage
       summary: Sizes below a folder for the treemap
+      description: |
+        Measures a folder from the index, or from the disk where the index
+        does not hold it: the totals, every entry directly inside with its
+        own totals for the tree and the treemap, the kinds of files with
+        the extensions that take the most room, and the largest files.
+        Entries the user may not see do not count.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: hidden
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: kind
+          in: query
+          description: Only files of this kind among the largest.
+          schema:
+            type: string
+            enum: [img, video, audio, arch, disk, doc, text, code, file]
+        - name: largest
+          in: query
+          description: How many of the largest files to list.
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 2000
+            default: 200
+      responses:
+        "200":
+          description: The folder measured.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiskUsage"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /tools/cleanup/scan:
     post:
       operationId: toolsCleanupScan
@@ -30,3 +100,147 @@ paths:
     post:
       operationId: toolsArrowLoop
       summary: Hand a folder to ArrowLoop as a job
+components:
+  schemas:
+    DuplicatesParams:
+      type: object
+      required: [path]
+      properties:
+        path:
+          type: string
+        by:
+          type: string
+          enum: [name, size]
+          default: name
+          description: Same name and size, or the same size alone, which also finds renamed copies.
+        hidden:
+          type: boolean
+        minSize:
+          type: integer
+          format: int64
+          description: Smallest file size in bytes. Empty files never count.
+    Duplicates:
+      type: object
+      description: Result of a finished duplicates job, the groups that waste the most room first.
+      required: [groups, wasted, files]
+      properties:
+        groups:
+          type: array
+          maxItems: 5000
+          items:
+            type: object
+            required: [name, size, sha256, wasted, copies]
+            properties:
+              name:
+                type: string
+              size:
+                type: integer
+                format: int64
+              sha256:
+                type: string
+              wasted:
+                type: integer
+                format: int64
+                description: Bytes taken by all copies but one.
+              copies:
+                type: array
+                description: Newest first, on equal times the shorter path first.
+                items:
+                  type: object
+                  required: [path, at, mtime]
+                  properties:
+                    path:
+                      type: string
+                    at:
+                      type: string
+                    mtime:
+                      type: string
+                      format: date-time
+        more:
+          type: boolean
+          description: There were more than 5000 groups.
+        wasted:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+          description: Files looked at.
+    UsageTotals:
+      type: object
+      required: [size, files, dirs, mtime]
+      properties:
+        size:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+        dirs:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+          description: The newest change anywhere below.
+    DiskUsage:
+      allOf:
+        - $ref: "#/components/schemas/UsageTotals"
+        - type: object
+          required: [path, items, types, largest, indexed]
+          properties:
+            path:
+              type: string
+            items:
+              type: array
+              description: The entries directly inside, largest first.
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/UsageTotals"
+                  - type: object
+                    required: [name, dir]
+                    properties:
+                      name:
+                        type: string
+                      dir:
+                        type: boolean
+            types:
+              type: array
+              items:
+                type: object
+                required: [kind, name, files, size, exts]
+                properties:
+                  kind:
+                    type: string
+                  name:
+                    type: string
+                    description: The kind in German, such as Video or Sonstiges.
+                  files:
+                    type: integer
+                    format: int64
+                  size:
+                    type: integer
+                    format: int64
+                  exts:
+                    type: array
+                    items:
+                      type: string
+            largest:
+              type: array
+              items:
+                type: object
+                required: [name, at, size, mtime]
+                properties:
+                  name:
+                    type: string
+                  at:
+                    type: string
+                  size:
+                    type: integer
+                    format: int64
+                  mtime:
+                    type: string
+                    format: date-time
+            indexed:
+              type: boolean
+              description: The numbers come from the index rather than the disk.
