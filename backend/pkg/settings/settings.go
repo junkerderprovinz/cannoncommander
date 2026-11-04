@@ -12,24 +12,6 @@ func boolPtr(b bool) *bool {
 	return &b
 }
 
-// boolValueOrDefault returns the value of a bool pointer, or the default if nil
-func boolValueOrDefault(ptr *bool, defaultValue bool) bool {
-	if ptr != nil {
-		return *ptr
-	}
-	return defaultValue
-}
-
-// ConvertPermissionsToUsers converts account permission defaults to users.Permissions (global only).
-func ConvertPermissionsToUsers(p UserDefaultsAccountPermissions) users.Permissions {
-	return users.Permissions{
-		Api:      p.Api,
-		Admin:    p.Admin,
-		Share:    p.Share,
-		Realtime: p.Realtime,
-	}
-}
-
 const DefaultUsersHomeBasePath = "/users"
 
 // AuthMethod describes an authentication method.
@@ -141,58 +123,11 @@ func ComputeDeclinedDefaultSources(scopes []users.BackendScope) []string {
 	return declined
 }
 
-// ApplyUserDefaults applies Config.UserDefaults to a user (tests and legacy callers).
-func ApplyUserDefaults(u *users.User) {
-	ApplyUserDefaultsFrom(u, Config.UserDefaults)
-}
-
-// ApplyUserDefaultsFrom applies the given defaults template to a user.
-// Keep this in sync with [UserDefaults]: every user-facing field there should be copied
-// here (except DefaultScopes, which is wired through source config rather than this helper).
-func ApplyUserDefaultsFrom(u *users.User, d UserDefaults) {
-	applyUserDefaultsFrom(u, d, false)
-}
-
-// ApplyUserDefaultsFromKeepingAccountPermissions applies profile and scope defaults but
-// leaves u.Permissions unchanged so default-enabled scope permissions use the caller's
-// final admin flag (see CreateUser).
-func ApplyUserDefaultsFromKeepingAccountPermissions(u *users.User, d UserDefaults) {
-	applyUserDefaultsFrom(u, d, true)
-}
-
-func applyUserDefaultsFrom(u *users.User, d UserDefaults, keepAccountPermissions bool) {
-	savedPermissions := u.Permissions
-	ApplyFullProfileFromDefaults(u, d)
-
-	if u.Username == "anonymous" {
-		return
-	}
-
-	// Global permissions (admin, api, share, realtime). Profile merge overwrites these;
-	// restore the caller's values when CreateUser already applied requested permissions
-	// so default-enabled scope permissions use the final admin flag.
-	if keepAccountPermissions {
-		u.Permissions = savedPermissions
-	} else {
-		u.Permissions.Api = d.Account.Permissions.Api
-		u.Permissions.Admin = d.Account.Permissions.Admin
-		u.Permissions.Share = d.Account.Permissions.Share
-		u.Permissions.Realtime = d.Account.Permissions.Realtime
-	}
-
+// ApplySourceDefaults gives a new user the sources marked defaultEnabled and
+// the default file permissions on every scope that has none yet.
+func ApplySourceDefaults(u *users.User) {
 	sourceDefaults := DefaultSourceFilePermissions()
-
 	u.BackendScopes = MergeDefaultEnabledBackendScopes(u.BackendScopes, nil)
-	if len(u.SidebarLinks) == 0 && len(u.BackendScopes) > 0 {
-		scope := u.BackendScopes[0]
-		u.SidebarLinks = append(u.SidebarLinks, users.SidebarLink{
-			Category:   "source",
-			Target:     "/",
-			Icon:       "",
-			SourceName: scope.Path,
-		})
-	}
-
 	if u.BackendSourcePermissions == nil {
 		u.BackendSourcePermissions = make(map[string]users.SourceFilePermissions)
 	}
@@ -208,10 +143,8 @@ func applyUserDefaultsFrom(u *users.User, d UserDefaults, keepAccountPermissions
 			u.BackendScopes[i].Permissions = u.BackendSourcePermissions[scope.Path]
 		}
 	}
-
-	if u.LoginMethod == "" && d.Account.LoginMethod != "" {
-		u.LoginMethod = users.LoginMethod(d.Account.LoginMethod)
+	if u.LoginMethod == "" {
+		u.LoginMethod = users.LoginMethodPassword
 	}
-
 	u.Version = users.CurrentUserMigrationVersion
 }

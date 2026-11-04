@@ -142,9 +142,6 @@ func knownNames(ctx context.Context, tx *sql.Tx) (map[string]struct{}, error) {
 func configuredSources() []oldSource {
 	var out []oldSource
 	for _, s := range settings.Config.Server.Sources {
-		if s == nil {
-			continue
-		}
 		out = append(out, oldSource{
 			name:          s.Name,
 			key:           s.Path,
@@ -156,9 +153,8 @@ func configuredSources() []oldSource {
 	return out
 }
 
-// prependRules puts list in front of the rules already stored. Before, a
-// path had to pass both sets, so the carried rules keep their say over
-// what was set up in the app since.
+// prependRules puts list in front of the rules already stored. A path had to
+// pass both sets, so the carried rules keep their say over the others.
 func prependRules(ctx context.Context, tx *sql.Tx, list []Rule) error {
 	rs, err := tx.QueryContext(ctx, `SELECT who, path, rule FROM path_rules ORDER BY pos`)
 	if err != nil {
@@ -305,8 +301,8 @@ func carryOver(rows []oldRow, sources []oldSource, known func(who string) bool, 
 }
 
 // oldKey brings a stored path into one form: lower case, starting with a
-// slash, without one at the end. Older versions stored files and folders
-// with and without the trailing slash and did not always lower the case.
+// slash, without one at the end. The table holds files and folders with and
+// without the trailing slash, not always in lower case.
 func oldKey(p string) string {
 	return strings.ToLower(path.Clean("/" + strings.TrimSpace(p)))
 }

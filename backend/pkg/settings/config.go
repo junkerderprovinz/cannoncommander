@@ -88,10 +88,6 @@ func setupServer() {
 }
 
 func setupEnv() {
-	Env.IsPlaywright = os.Getenv("CC_PLAYWRIGHT_TEST") == "true"
-	if Env.IsPlaywright {
-		logger.Warning("Running in playwright test mode. This is not recommended for production.")
-	}
 	Env.IsDevMode = os.Getenv("CC_DEVMODE") == "true"
 	if Env.IsDevMode {
 		logger.Warning("Running in dev mode. This is not recommended for production.")
@@ -108,7 +104,7 @@ func setupHttp() {
 }
 
 func warnHttpProxyConfig() {
-	if Env.IsDevMode || Env.IsPlaywright {
+	if Env.IsDevMode {
 		return
 	}
 	if Config.Http.BaseURL != "/" && !Config.Http.TrustProxyHeaders {
@@ -445,7 +441,7 @@ func setupSources(generate bool) {
 			logger.Warningf("skipping source: %v", sourcePathOnly.Path)
 		}
 	}
-	Config.UserDefaults.DefaultScopes = defaultScopes
+	Config.Server.DefaultScopes = defaultScopes
 	Config.Server.Sources = sourceList
 	finalizeConfigSourceDefaultPermissions()
 }
@@ -520,8 +516,6 @@ func setupAuth(generate bool) {
 		Config.Auth.Methods.PasswordAuth.Enabled = true
 		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "password")
 	}
-	Config.UserDefaults.Account.LoginMethod = Config.Auth.AuthMethods[0]
-
 }
 
 func setupLogging() {
@@ -608,7 +602,6 @@ func loadConfigWithDefaults(configFile string, generate bool) error {
 		"auth":         true,
 		"integrations": true,
 		"frontend":     true,
-		"userDefaults": true,
 		"http":         true,
 	}
 
@@ -616,13 +609,6 @@ func loadConfigWithDefaults(configFile string, generate bool) error {
 	for key, value := range rawConfig {
 		if validFields[key] {
 			filteredConfig[key] = value
-		}
-	}
-
-	if udRaw, ok := filteredConfig["userDefaults"]; ok {
-		Env.ConfigUserDefaultsSpecified = true
-		if udMap, ok := udRaw.(map[string]interface{}); ok {
-			Env.ConfigUserDefaultsSpecifiedPaths = CollectMapLeafPaths(udMap, "")
 		}
 	}
 
@@ -649,30 +635,10 @@ func loadConfigWithDefaults(configFile string, generate bool) error {
 
 	MigrateLegacyPasswordAdminFromAuth()
 
-	if err := applyLoadedUserDefaultsFromConfig(generate); err != nil {
-		return err
-	}
-
 	attachSourceDefaultPermissionsFromConfig(filteredConfig)
 
 	loadEnvConfig()
 	return ResolveDatabasePaths()
-}
-
-// applyLoadedUserDefaultsFromConfig merges config-specified userDefaults paths onto
-// SetDefaults so partial YAML (e.g. only account.permissions.share) does not zero
-// unspecified sections such as preview thumbnails or fileViewer.autoplayMedia.
-func applyLoadedUserDefaultsFromConfig(generate bool) error {
-	if !Env.ConfigUserDefaultsSpecified {
-		return nil
-	}
-	base := SetDefaults(generate).UserDefaults
-	merged, err := ApplyConfigSpecifiedPathsToUserDefaults(base, Config.UserDefaults)
-	if err != nil {
-		return fmt.Errorf("merge user defaults with config: %w", err)
-	}
-	Config.UserDefaults = merged
-	return nil
 }
 
 func attachSourceDefaultPermissionsFromConfig(raw map[string]interface{}) {
@@ -839,81 +805,6 @@ func SetDefaults(generate bool) Settings {
 		},
 		Frontend: Frontend{
 			Name: "CannonCommander",
-		},
-		UserDefaults: UserDefaults{
-			// New organized structure
-			Sidebar: UserDefaultsSidebar{
-				DisableQuickToggles:  false,
-				HideFileActions:      false,
-				DisableHideOnPreview: false,
-				Sticky:               true,
-				HideFiles:            false,
-				ShowTools:            boolPtr(true),
-			},
-			Listing: UserDefaultsListing{
-				DeleteWithoutConfirming: false,
-				PromptRightCloseButton:  false,
-				DateFormat:              false,
-				ShowHidden:              false,
-				QuickDownload:           false,
-				ShowSelectMultiple:      false,
-				SingleClick:             false,
-				HideFileExt:             "",
-				ShowCopyPath:            false,
-				ShowTypeColumn:          false,
-				ShowCreationDateColumn:  false,
-				DeleteAfterArchive:      true,
-				ViewMode:                "normal",
-				GallerySize:             3,
-				NewFileTemplate:         []string{""},
-			},
-			Preview: UserDefaultsPreview{
-				Image:              boolPtr(true),
-				Video:              boolPtr(true),
-				Audio:              boolPtr(true),
-				MotionVideoPreview: boolPtr(true),
-				Office:             boolPtr(true),
-				PopUp:              boolPtr(true),
-				DisablePreviewExt:  "",
-				HighQuality:        boolPtr(true),
-				Folder:             boolPtr(true),
-				Models:             boolPtr(true),
-			},
-			FileViewer: UserDefaultsFileViewer{
-				AutoplayMedia:           boolPtr(true),
-				DisableViewingExt:       "",
-				DisableOnlyOfficeExt:    ".md .txt .pdf .html .xml",
-				PreferEditorForMarkdown: false,
-				DebugOffice:             false,
-			},
-			Search: UserDefaultsSearch{
-				DisableOptions: false,
-			},
-			UI: UserDefaultsUI{
-				DarkMode:    boolPtr(true),
-				ThemeColor:  "var(--blue)",
-				CustomTheme: "",
-				Locale:      "en",
-			},
-			FileLoading: users.FileLoading{
-				MaxConcurrent:     10,
-				UploadChunkSize:   10, // 10MB
-				DownloadChunkSize: 0,  // 0MB, default to no chunking
-			},
-			Account: UserDefaultsAccount{
-				Permissions: UserDefaultsAccountPermissions{
-					Api:      false,
-					Admin:    false,
-					Share:    false,
-					Realtime: false,
-				},
-				LockPassword:               false,
-				RequirePasswordChange:      false,
-				DisableSettings:            false,
-				LoginMethod:                "",
-				DisableUpdateNotifications: false,
-				ShowAdvancedProfile:        false,
-			},
 		},
 	}
 	// Initialize ImagePreview map with defaults

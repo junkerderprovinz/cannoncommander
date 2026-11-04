@@ -11,7 +11,7 @@ import (
 
 // QuickSetup creates the initial admin user on first run.
 func QuickSetup() error {
-	if settings.Env.IsPlaywright || settings.Env.IsDevMode {
+	if settings.Env.IsDevMode {
 		settings.Env.IsFirstLoad = false
 	} else {
 		settings.Env.IsFirstLoad = true
@@ -25,7 +25,6 @@ func QuickSetup() error {
 	}
 
 	user := &users.User{}
-	ApplyUserDefaults(user)
 
 	user.Username = settings.PasswordAdminUsername()
 

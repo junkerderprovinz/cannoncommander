@@ -29,10 +29,3 @@ frontend:
 
 auth:
   adminPassword: "playwright-password"
-  methods:
-    password:
-      signup: true
-
-userDefaults:
-  listing:
-    showHidden: true

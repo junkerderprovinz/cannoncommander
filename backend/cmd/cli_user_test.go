@@ -15,7 +15,6 @@ func setupCLIUserTest(t *testing.T) {
 	t.Helper()
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.InitializeCLI("../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	store, _, err := state.Open(dbPath)

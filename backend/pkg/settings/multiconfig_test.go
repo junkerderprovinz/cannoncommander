@@ -52,12 +52,6 @@ auth:
 frontend:
   name: "Test FileBrowser"
 
-userDefaults:
-  ui:
-    darkMode: true
-    locale: "en"
-  listing:
-    viewMode: "grid"
 `
 	mainPath := filepath.Join(testDir, "config.yaml")
 	if err := os.WriteFile(mainPath, []byte(mainConfig), 0644); err != nil {
@@ -102,10 +96,6 @@ userDefaults:
 
 	if Config.Frontend.Name != "Test FileBrowser" {
 		t.Errorf("Expected frontend name 'Test FileBrowser', got '%s'", Config.Frontend.Name)
-	}
-
-	if Config.UserDefaults.Listing.ViewMode != "grid" {
-		t.Errorf("Expected view mode 'grid', got '%s'", Config.UserDefaults.Listing.ViewMode)
 	}
 }
 
@@ -166,11 +156,6 @@ base_logging: &base_logging
   - levels: "info|warning|error"
     output: "stdout"
 
-# Base permissions  
-base_permissions: &base_permissions
-  share: false
-  admin: false
-  api: false
 `
 	// Use pattern-based naming: main config is "config.yaml", so anchors must be "*-config.yaml"
 	anchorsPath := filepath.Join(testDir, "definitions-config.yaml")
@@ -189,15 +174,6 @@ server:
 
 auth:
   tokenExpirationHours: 2
-
-userDefaults:
-  ui:
-    darkMode: true
-    locale: "en"
-  listing:
-    viewMode: "normal"
-  account:
-    permissions: *base_permissions
 
 frontend:
   name: "Nested Reference Test"
@@ -227,25 +203,4 @@ frontend:
 		t.Errorf("Expected logging output 'stdout', got '%s'", Config.Server.Logging[0].Output)
 	}
 
-	// Verify user defaults
-	if Config.UserDefaults.UI.DarkMode == nil || !*Config.UserDefaults.UI.DarkMode {
-		t.Errorf("Expected dark mode true, got %v", Config.UserDefaults.UI.DarkMode)
-	}
-
-	if Config.UserDefaults.UI.Locale != "en" {
-		t.Errorf("Expected locale 'en', got '%s'", Config.UserDefaults.UI.Locale)
-	}
-
-	if Config.UserDefaults.Listing.ViewMode != "normal" {
-		t.Errorf("Expected viewMode 'normal', got '%s'", Config.UserDefaults.Listing.ViewMode)
-	}
-
-	// Verify permissions were loaded from anchor into account.permissions
-	if Config.UserDefaults.Account.Permissions.Admin {
-		t.Errorf("Expected admin permission false (from base), got %v", Config.UserDefaults.Account.Permissions.Admin)
-	}
-
-	if Config.UserDefaults.Account.Permissions.Share {
-		t.Errorf("Expected share permission false (from base), got %v", Config.UserDefaults.Account.Permissions.Share)
-	}
 }

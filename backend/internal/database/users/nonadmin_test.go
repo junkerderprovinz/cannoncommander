@@ -29,36 +29,3 @@ func TestNonAdminEditableDoesNotDuplicateOtpEnabled(t *testing.T) {
 		t.Fatal("OtpEnabled should not be duplicated on NonAdminEditable")
 	}
 }
-
-func TestGetNonAdminEditableFieldNames(t *testing.T) {
-	names := getNonAdminEditableFieldNames()
-
-	for _, name := range names {
-		if name == "OtpEnabled" {
-			t.Error("OtpEnabled should not be in NonAdminEditable field names")
-		}
-	}
-
-	expectedFields := []string{"DarkMode", "Locale", "ViewMode", "SingleClick"}
-	for _, expected := range expectedFields {
-		found := false
-		for _, name := range names {
-			if name == expected {
-				found = true
-				break
-			}
-		}
-		if !found {
-			t.Errorf("Expected field %s should be in non-admin editable fields", expected)
-		}
-	}
-}
-
-func getNonAdminEditableFieldNames() []string {
-	var names []string
-	t := reflect.TypeOf(NonAdminEditable{})
-	for i := 0; i < t.NumField(); i++ {
-		names = append(names, t.Field(i).Name)
-	}
-	return names
-}

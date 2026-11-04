@@ -17,7 +17,6 @@ type Settings struct {
 	Server       Server       `json:"server"`
 	Auth         Auth         `json:"auth"`
 	Frontend     Frontend     `json:"frontend"`
-	UserDefaults UserDefaults `json:"userDefaults"` // optional signup/CLI defaults; per-user values are managed in the UI
 	Integrations Integrations `json:"integrations"`
 	Http         Http         `json:"http"`
 }
@@ -44,12 +43,9 @@ type Http struct {
 }
 
 type Environment struct {
-	IsCLIMode                        bool     `json:"-"` // true when running a CLI subcommand (user set, promote, etc.)
-	IsPlaywright                     bool     `json:"-"`
-	IsDevMode                        bool     `json:"-"`
-	IsFirstLoad                      bool     `json:"-"` // used internally to track if this is the first load of the application
-	ConfigUserDefaultsSpecified      bool     `json:"-"` // true when the config file contained a userDefaults section
-	ConfigUserDefaultsSpecifiedPaths []string `json:"-"` // dot-paths explicitly set under userDefaults in config
+	IsCLIMode   bool `json:"-"` // true when running a CLI subcommand (user set, promote, etc.)
+	IsDevMode   bool `json:"-"`
+	IsFirstLoad bool `json:"-"` // used internally to track if this is the first load of the application
 	// ConfigSourceDefaultPermissions maps permission flags explicitly set in config defaultPermissions (e.g. view -> true).
 	ConfigSourceDefaultPermissions map[string]bool `json:"-"`
 	MuPdfAvailable                 bool            `json:"-"` // used internally if compiled with mupdf support
@@ -75,9 +71,10 @@ type Server struct {
 	Filesystem                   Filesystem     `json:"filesystem"`      // filesystem settings
 	IndexSqlConfig               IndexSqlConfig `json:"indexSqlConfig"`  // Index database SQL configuration
 	// not exposed to config
-	SourceMap    map[string]*Source `json:"-" validate:"omitempty"` // uses realpath as key
-	NameToSource map[string]*Source `json:"-" validate:"omitempty"` // uses name as key
-	DatabaseV2   Database           `json:"database"`               // SQLite database configuration
+	SourceMap     map[string]*Source   `json:"-" validate:"omitempty"` // uses realpath as key
+	DefaultScopes []users.BackendScope `json:"-" validate:"omitempty"` // the defaultEnabled sources
+	NameToSource  map[string]*Source   `json:"-" validate:"omitempty"` // uses name as key
+	DatabaseV2    Database             `json:"database"`               // SQLite database configuration
 }
 
 type ActivityConfig struct {
@@ -293,102 +290,4 @@ type Frontend struct {
 	Name                  string `json:"name"`                  // the name the passkey prompt shows for this server
 	DisableUsedPercentage bool   `json:"disableUsedPercentage"` // skip the used space of the sources
 	OIDCLoginButtonText   string `json:"oidcLoginButtonText"`   // text on the single sign on button of the sign in page
-}
-
-// UserDefaultsAccountPermissions holds global permission settings (not per-source file operations).
-type UserDefaultsAccountPermissions struct {
-	Api      bool `json:"api"`      // allow api access
-	Admin    bool `json:"admin"`    // allow admin access
-	Share    bool `json:"share"`    // allow sharing files
-	Realtime bool `json:"realtime"` // allow realtime updates
-}
-
-// UserDefaultsSidebar holds sidebar-related settings
-type UserDefaultsSidebar struct {
-	DisableQuickToggles  bool  `json:"disableQuickToggles"`  // disable the quick toggles in the sidebar
-	HideFileActions      bool  `json:"hideFileActions"`      // hide the file actions in the sidebar
-	DisableHideOnPreview bool  `json:"disableHideOnPreview"` // keep sidebar open when previewing files (was preview.disableHideSidebar)
-	Sticky               bool  `json:"sticky"`               // keep sidebar open when navigating
-	HideFiles            bool  `json:"hideFiles"`            // hide files in the sidebar tree navigation, when true, will show only directories
-	ShowTools            *bool `json:"showTools"`            // show sidebar links with category "tool"; default is true
-}
-
-// UserDefaultsListing holds file listing display settings
-type UserDefaultsListing struct {
-	DeleteWithoutConfirming bool     `json:"deleteWithoutConfirming"` // delete files without confirmation
-	PromptRightCloseButton  bool     `json:"promptRightCloseButton"`  // show the prompts close button on the right
-	DateFormat              bool     `json:"dateFormat"`              // when false, the date is relative, when true, the date is an exact timestamp
-	ShowHidden              bool     `json:"showHidden"`              // show hidden files in the UI. On windows this includes files starting with a dot and windows hidden files
-	QuickDownload           bool     `json:"quickDownload"`           // show icon to download in one click
-	ShowSelectMultiple      bool     `json:"showSelectMultiple"`      // show select multiple files on desktop
-	SingleClick             bool     `json:"singleClick"`             // open directory on single click, also enables middle click to open in new tab
-	HideFileExt             string   `json:"hideFileExt"`             // space separated list of file extensions to hide in UI
-	ShowCopyPath            bool     `json:"showCopyPath"`            // show copy path button in the context menu
-	ShowTypeColumn          bool     `json:"showTypeColumn"`          // show the Type column in list and compact views
-	ShowCreationDateColumn  bool     `json:"showCreationDateColumn"`  // show the Creation date column in list and compact views
-	DeleteAfterArchive      bool     `json:"deleteAfterArchive"`      // delete source files after successful creation/extraction of archives
-	ViewMode                string   `json:"viewMode"`                // view mode to use: eg. normal, list, grid, or compact
-	GallerySize             int      `json:"gallerySize"`             // 0-9 - the size of the gallery thumbnails
-	NewFileTemplate         []string `json:"newFileTemplate"`         // list of custom filenames that will be used as template for new files
-}
-
-// UserDefaultsPreview holds preview-related settings
-type UserDefaultsPreview struct {
-	Image              *bool  `json:"image"`              // show thumbnails for image files
-	Video              *bool  `json:"video"`              // show thumbnails for video files
-	Audio              *bool  `json:"audio"`              // show thumbnails for audio files
-	MotionVideoPreview *bool  `json:"motionVideoPreview"` // show multiple frames for videos in thumbnail preview when hovering
-	Office             *bool  `json:"office"`             // show thumbnails for office files
-	PopUp              *bool  `json:"popup"`              // show larger popup preview when hovering over thumbnail
-	DisablePreviewExt  string `json:"disablePreviewExt"`  // comma separated list of file extensions to disable preview for
-	HighQuality        *bool  `json:"highQuality"`        // high quality preview thumbnails
-	Folder             *bool  `json:"folder"`             // show thumbnails for folders that have previewable contents
-	Models             *bool  `json:"models"`             // show live thumbnails for 3D models files
-}
-
-// UserDefaultsFileViewer holds file viewer/editor settings
-type UserDefaultsFileViewer struct {
-	AutoplayMedia           *bool  `json:"autoplayMedia"`           // autoplay media files in preview
-	DisableViewingExt       string `json:"disableViewingExt"`       // comma separated list of file extensions to disable viewing for
-	DisableOnlyOfficeExt    string `json:"disableOnlyOfficeExt"`    // list of file extensions to disable onlyoffice editor for
-	PreferEditorForMarkdown bool   `json:"preferEditorForMarkdown"` // prefer editor first for markdown files instead of the Markdown Viewer
-	DebugOffice             bool   `json:"debugOffice"`             // debug onlyoffice editor
-}
-
-// UserDefaultsSearch holds search-related settings
-type UserDefaultsSearch struct {
-	DisableOptions bool `json:"disableOptions"` // disable the search options in the search bar
-}
-
-// UserDefaultsUI holds UI/appearance settings
-type UserDefaultsUI struct {
-	DarkMode    *bool  `json:"darkMode"`    // should dark mode be enabled
-	ThemeColor  string `json:"themeColor"`  // theme color to use: eg. #ff0000, or var(--red), var(--purple), etc
-	CustomTheme string `json:"customTheme"` // Name of theme to use chosen from custom themes config
-	Locale      string `json:"locale"`      // language to use: eg. de, en, or fr
-
-}
-
-// UserDefaultsAccount holds account/security settings
-type UserDefaultsAccount struct {
-	Permissions                UserDefaultsAccountPermissions `json:"permissions"`
-	LockPassword               bool                           `json:"lockPassword"`               // disable the user from changing their password
-	RequirePasswordChange      bool                           `json:"requirePasswordChange"`      // force password change at next password login
-	DisableSettings            bool                           `json:"disableSettings"`            // disable the user from viewing the settings page
-	LoginMethod                string                         `json:"loginMethod,omitempty"`      // login method to use: eg. password, proxy, oidc
-	DisableUpdateNotifications bool                           `json:"disableUpdateNotifications"` // disable update notifications banner for admin users
-	ShowAdvancedProfile        bool                           `json:"showAdvancedProfile"`        // show advanced profile settings in the user profile page
-}
-
-// UserDefaults is a type that holds the default values for some fields on User.
-type UserDefaults struct {
-	Sidebar       UserDefaultsSidebar    `json:"sidebar,omitempty"`
-	Listing       UserDefaultsListing    `json:"listing,omitempty"`
-	Preview       UserDefaultsPreview    `json:"preview,omitempty"`
-	FileViewer    UserDefaultsFileViewer `json:"fileViewer,omitempty"`
-	Search        UserDefaultsSearch     `json:"search,omitempty"`
-	UI            UserDefaultsUI         `json:"ui,omitempty"`
-	FileLoading   users.FileLoading      `json:"fileLoading,omitempty"`
-	Account       UserDefaultsAccount    `json:"account,omitempty"`
-	DefaultScopes []users.BackendScope   `json:"-"`
 }
