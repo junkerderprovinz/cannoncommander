@@ -1,6 +1,8 @@
 package shares
 
 import (
+	"context"
+	"database/sql"
 	"errors"
 	"io/fs"
 	"net/http"
@@ -441,6 +443,13 @@ func (s *Service) publicUpload(w http.ResponseWriter, r *http.Request) error {
 	if n >= maxOpenUploads {
 		return v1.Errorf(http.StatusTooManyRequests, "many uploads are running through this link, please wait for some of them to finish")
 	}
+	// The body above can take as long as the visitor likes, so the first look
+	// at the link may be old by now. Looking after the pending uploads means
+	// a file landing in between counts twice for a moment instead of not at
+	// all.
+	if v, err = s.uploader(w, r); err != nil {
+		return err
+	}
 	if v.sh.UploadLimit > 0 && v.sh.Uploaded+pending+req.Size > v.sh.UploadLimit {
 		return v1.Errorf(http.StatusRequestEntityTooLarge, "this link takes no more than "+strconv.FormatInt(max(v.sh.UploadLimit-v.sh.Uploaded-pending, 0), 10)+" more bytes")
 	}
@@ -448,7 +457,6 @@ func (s *Service) publicUpload(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	s.landed(r, v, up)
 	status := http.StatusOK
 	if created && up.State == fileops.UploadOpen {
 		status = http.StatusCreated
@@ -478,14 +486,24 @@ func (s *Service) publicUploadChunk(w http.ResponseWriter, r *http.Request) erro
 		return err
 	}
 	root := s.rootSpot(v)
-	up, err := s.files.UploadChunk(r.Context(), v.owner, v.sh.ID, r.PathValue("id"), offset, r.Body)
+	landing := &fileops.Landing{
+		// The body can outlast the link, or the owner's right to it.
+		Allow: func() error {
+			_, err := s.uploader(w, r)
+			return err
+		},
+		Count: func(ctx context.Context, tx *sql.Tx, size int64) error {
+			_, err := tx.ExecContext(ctx, `UPDATE share_links SET uploaded = uploaded + ? WHERE id = ?`, size, v.sh.ID)
+			return err
+		},
+	}
+	up, err := s.files.UploadChunk(r.Context(), v.owner, v.sh.ID, r.PathValue("id"), offset, r.Body, landing)
 	if fileops.WriteUploadError(w, r, err, func(up fileops.Upload) fileops.Upload { return s.inLink(root, up) }) {
 		return nil
 	}
 	if err != nil {
 		return err
 	}
-	s.landed(r, v, up)
 	return fileops.WriteUpload(w, r, http.StatusOK, s.inLink(root, up))
 }
 
@@ -515,16 +533,6 @@ func (s *Service) uploader(w http.ResponseWriter, r *http.Request) (*visit, erro
 		return nil, errNoUploads
 	}
 	return v, nil
-}
-
-// landed adds a finished upload to what the link took.
-func (s *Service) landed(r *http.Request, v *visit, up fileops.Upload) {
-	if up.State != fileops.UploadDone {
-		return
-	}
-	if _, err := s.db.ExecContext(r.Context(), `UPDATE share_links SET uploaded = uploaded + ? WHERE id = ?`, up.Size, v.sh.ID); err != nil {
-		logger.Errorf("share %s: %v", v.sh.ID, err)
-	}
 }
 
 // inLink shows an upload with its path inside the link, so a visitor

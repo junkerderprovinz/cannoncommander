@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -13,13 +14,16 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
 )
 
 // ownTables are the tables of this package with rows per user.
 var ownTables = []string{"sessions", "account_profiles", "recovery_codes", "token_use"}
 
 // deleteUser removes an account with everything that hangs on it: shares,
-// jobs, rules, settings and sessions. Files stay where they are.
+// jobs, undo steps, rules, settings and sessions. Files stay where they are,
+// and its trash stays for admins until the clean up deletes it.
 func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 	u, err := target(r)
 	if err != nil {
@@ -37,6 +41,12 @@ func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 	if m := jobs.For(h.deps); m != nil {
 		m.Forget(u.Username)
 	}
+	if err := undo.For(h.deps).Forget(u.Username); err != nil {
+		return err
+	}
+	if err := trash.For(h.deps).Disown(u.Username); err != nil {
+		return err
+	}
 	if err := h.svc.rules.dropWho(r.Context(), u.Username); err != nil {
 		return err
 	}
@@ -51,6 +61,16 @@ func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 	activity.RecordUserMutation(r, &activity.Actor{User: actor}, activitydb.EventUserDelete, &u, nil)
 	w.WriteHeader(http.StatusNoContent)
 	return nil
+}
+
+// moveName carries what hangs on a login name over to the new one. It tries
+// everything even when one step fails, as the account is renamed already.
+func (h handlers) moveName(ctx context.Context, from, to string) error {
+	var jobErr error
+	if m := jobs.For(h.deps); m != nil {
+		jobErr = m.Rename(from, to)
+	}
+	return errors.Join(h.svc.rules.renameWho(ctx, from, to), jobErr, undo.For(h.deps).Rename(from, to), trash.For(h.deps).Rename(from, to))
 }
 
 func forgetRows(ctx context.Context, h handlers, userID uint64) error {

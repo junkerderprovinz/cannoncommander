@@ -79,7 +79,8 @@ paths:
       description: |
         Fields left out stay as they are. An expiry of null makes the link
         last, an empty password removes it. Setting a password or a new
-        one closes the link in every browser that unlocked it.
+        one closes the link in every browser that unlocked it. Needs the
+        share right, which deleting a link does not.
       requestBody:
         required: true
         content:
@@ -97,6 +98,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
         "409":

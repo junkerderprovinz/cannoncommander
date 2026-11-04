@@ -336,6 +336,22 @@ func (s *Store) forget(id string) {
 	}
 }
 
+// Disown takes the entries of an account that is being deleted away from its
+// login name, which a new account could get. Admins still see them and the
+// clean up deletes them when their days are over.
+func (s *Store) Disown(owner string) error {
+	return s.Rename(owner, "")
+}
+
+// Rename moves the entries of a user to a new login name.
+func (s *Store) Rename(from, to string) error {
+	if _, err := s.db.Exec(`UPDATE trash_items SET owner = ? WHERE owner = ?`, to, from); err != nil {
+		return err
+	}
+	s.changed()
+	return nil
+}
+
 // Days returns how long entries stay.
 func (s *Store) Days() int {
 	n, err := strconv.Atoi(jobs.Setting(s.db, settingDays, ""))

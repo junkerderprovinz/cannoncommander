@@ -652,6 +652,9 @@ func TestFetchLoadsIntoTheFolder(t *testing.T) {
 	if got := result[map[string]string](t, j)["path"]; got != "/mnt/user/downloads/umweg" {
 		t.Errorf("saved as %s", got)
 	}
+	if j.Name != "example.org/umweg" {
+		t.Errorf("the job is called %q, it should say where the file comes from", j.Name)
+	}
 	if e.read("/mnt/user/downloads/umweg") != strings.Repeat("iso", 1000) || e.read("/mnt/user/downloads/datei.iso") != "alt" {
 		t.Error("the content is wrong or the old file was replaced")
 	}
