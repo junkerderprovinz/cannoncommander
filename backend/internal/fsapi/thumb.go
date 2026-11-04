@@ -91,6 +91,13 @@ func (h handlers) thumb(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 	data, err := h.thumbs.thumb(r.Context(), real, info, size)
+	var ctype string
+	if err == nil {
+		var ok bool
+		if ctype, ok = rasterType(data); !ok {
+			err = errNoThumb
+		}
+	}
 	if errors.Is(err, errNoThumb) {
 		hdr.Del("ETag")
 		hdr.Del("Cache-Control")
@@ -99,8 +106,9 @@ func (h handlers) thumb(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	hdr.Set("Content-Type", http.DetectContentType(data))
+	hdr.Set("Content-Type", ctype)
 	hdr.Set("X-Content-Type-Options", "nosniff")
+	hdr.Set("Content-Security-Policy", SandboxPolicy)
 	w.WriteHeader(http.StatusOK)
 	if r.Method != http.MethodHead {
 		_, err = w.Write(data)
@@ -109,6 +117,21 @@ func (h handlers) thumb(w http.ResponseWriter, r *http.Request) error {
 }
 
 func noThumb() error { return v1.Errorf(http.StatusNotFound, "no thumbnail for this file") }
+
+// rasterType names the picture format of data. The preview service hands
+// small files and embedded covers back unchanged, so the bytes may be
+// anything the file's owner wrote, whatever the name says.
+func rasterType(data []byte) (string, bool) {
+	// Go's sniffer takes AVIF for unknown binary data.
+	if len(data) >= 12 && string(data[4:8]) == "ftyp" && (string(data[8:12]) == "avif" || string(data[8:12]) == "avis") {
+		return "image/avif", true
+	}
+	switch t := http.DetectContentType(data); t {
+	case "image/png", "image/jpeg", "image/gif", "image/webp", "image/bmp", "image/x-icon":
+		return t, true
+	}
+	return "", false
+}
 
 func etagMatches(header, tag string) bool {
 	for _, t := range strings.Split(header, ",") {
