@@ -150,7 +150,7 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 	if err := checkPassword(*in.Password); err != nil {
 		return err
 	}
-	perms := users.Permissions{Admin: role == roleAdmin}
+	perms := users.Permissions{Admin: role == roleAdmin, Share: mayShareAs(role)}
 	u := users.User{FrontendUser: users.FrontendUser{
 		Username:    name,
 		LoginMethod: users.LoginMethodPassword,
@@ -223,7 +223,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 			return v1.Errorf(http.StatusConflict, "only another admin can take away your own admin role")
 		}
 		role = *in.Role
-		u.Permissions.Admin = role == roleAdmin
+		u.Permissions.Admin, u.Permissions.Share = role == roleAdmin, mayShareAs(role)
 		u.Permissions = users.MarkPermissionsConfigured(u.Permissions)
 		fields = append(fields, "permissions")
 	}
@@ -270,7 +270,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 	if u.Username != oldName {
-		if err := h.svc.rules.renameWho(r.Context(), oldName, u.Username); err != nil {
+		if err := h.moveName(r.Context(), oldName, u.Username); err != nil {
 			return err
 		}
 	}
@@ -321,6 +321,10 @@ func (h handlers) withRole(scopes []users.BackendScope, role string) []users.Bac
 	}
 	return out
 }
+
+// mayShareAs keeps links from read only users, because a public link hands a
+// file to anyone, which goes further than looking at it and downloading it.
+func mayShareAs(role string) bool { return role != roleReadOnly }
 
 func deref(s *string) string {
 	if s == nil {

@@ -117,9 +117,14 @@ func (h handlers) transfer(w http.ResponseWriter, r *http.Request) error {
 		rep.Trap.Files = files
 	}
 	if rep.Links != nil {
-		for i := range rep.Links.Files {
-			rep.Links.Files[i].Others = h.visible(u, rep.Links.Files[i].Others)
+		files := rep.Links.Files[:0]
+		for _, f := range rep.Links.Files {
+			if h.sees(u, f.Path) {
+				f.Others = h.visible(u, f.Others)
+				files = append(files, f)
+			}
 		}
+		rep.Links.Files = files
 	}
 	if rep.Space != nil && rep.Space.Biggest != nil && !h.sees(u, rep.Space.Biggest.Path) {
 		rep.Space.Biggest.Path = ""

@@ -172,7 +172,9 @@ func prepareFetch(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessa
 		return nil, err
 	}
 	p.URL, p.Dest = addr.String(), dest.Path
-	return &jobs.Plan{Params: p, Name: p.Name, Dest: dest.Path,
+	// The job goes by host/name so that lists can say where the file comes
+	// from, in their own language. Neither part can hold a slash.
+	return &jobs.Plan{Params: p, Name: addr.Hostname() + "/" + p.Name, Dest: dest.Path,
 		Items: []jobs.Item{{Seq: 0, Path: path.Join(dest.Path, p.Name), Name: p.Name}}}, nil
 }
 

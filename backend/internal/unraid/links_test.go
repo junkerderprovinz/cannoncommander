@@ -4,6 +4,7 @@ package unraid
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"path/filepath"
 	"slices"
@@ -98,5 +99,24 @@ func TestInodeIndexSavesTheWalk(t *testing.T) {
 	w, _ := e.svc.Where(context.Background(), src, false)
 	if w.Links == nil || !slices.Equal(w.Links.Paths, []string{"/mnt/user/serien/a.mkv"}) {
 		t.Errorf("links = %+v, want what the index says", w.Links)
+	}
+}
+
+func TestTheTransferCheckNamesOnlyLinkedFilesTheUserMaySee(t *testing.T) {
+	e, h := routesFixture(t)
+	e.link("disk2", "filme/Sintel/Sintel.mkv", "filme/Sintel/Sintel-Kopie.mkv")
+	body := `{"kind":"copy","paths":["/mnt/user"],"dest":"/mnt/user/fotos"}`
+	var admin, anna TransferReport
+	if code := call(t, h, "jdp", "POST", "/unraid/transfer", body, &admin); code != http.StatusOK {
+		t.Fatalf("status %d", code)
+	}
+	if admin.Links == nil || len(admin.Links.Files) != 2 {
+		t.Fatalf("an admin sees the files: %+v", admin.Links)
+	}
+	if code := call(t, h, "anna", "POST", "/unraid/transfer", body, &anna); code != http.StatusOK {
+		t.Fatalf("status %d", code)
+	}
+	if anna.Links == nil || anna.Links.Count != 2 || len(anna.Links.Files) != 0 {
+		t.Fatalf("anna, who sees only fotos: %+v", anna.Links)
 	}
 }

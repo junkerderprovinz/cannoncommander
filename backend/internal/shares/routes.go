@@ -98,6 +98,8 @@ type updateRequest struct {
 
 func mayShare(u *users.User) bool { return u.Permissions.Share || u.Permissions.Admin }
 
+var errMayNotShare = v1.Errorf(http.StatusForbidden, "this account may not share files")
+
 func (s *Service) mine(w http.ResponseWriter, r *http.Request) error {
 	list, err := s.list(r.Context(), `WHERE owner_id = ?`, ownerKey(v1.UserFrom(r).ID))
 	if err != nil {
@@ -138,7 +140,7 @@ func (s *Service) owned(r *http.Request) (*Share, error) {
 func (s *Service) create(w http.ResponseWriter, r *http.Request) error {
 	u := v1.UserFrom(r)
 	if !mayShare(u) {
-		return v1.Errorf(http.StatusForbidden, "this account may not share files")
+		return errMayNotShare
 	}
 	var req createRequest
 	if err := v1.DecodeJSON(r, &req); err != nil {
@@ -183,6 +185,9 @@ func (s *Service) update(w http.ResponseWriter, r *http.Request) error {
 	sh, err := s.owned(r)
 	if err != nil {
 		return err
+	}
+	if !mayShare(u) {
+		return errMayNotShare
 	}
 	var req updateRequest
 	if err := v1.DecodeJSON(r, &req); err != nil {
@@ -249,6 +254,8 @@ func (s *Service) update(w http.ResponseWriter, r *http.Request) error {
 	return v1.WriteJSON(w, r, http.StatusOK, sh)
 }
 
+// delete asks for no share right: withdrawing a link only takes something
+// away from its visitors, and someone who lost the right can still clean up.
 func (s *Service) delete(w http.ResponseWriter, r *http.Request) error {
 	sh, err := s.owned(r)
 	if err != nil {

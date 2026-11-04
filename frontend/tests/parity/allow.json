@@ -583,8 +583,8 @@
     "why": "the app's preset is called Interpret und Titel, as UI texts carry no dashes"
    },
    {
-    "pattern": "(?<=^4 job: Laden: ubuntu-24\\.04\\.3-live-server-amd64\\.iso).*$",
-    "why": "the server's job names the file without the address, and its rate comes from the fixture's random numbers"
+    "pattern": "(?<=^4 job: Laden: ubuntu-24\\.04\\.3-live-server-amd64\\.iso von releases\\.ubuntu\\.com ).*$",
+    "why": "the job's rate comes from the fixture's random numbers"
    },
    {
     "pattern": "(?<=^6 rolled: ).*$",

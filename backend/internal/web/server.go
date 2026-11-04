@@ -61,6 +61,7 @@ func StartHttp(ctx context.Context, shutdownComplete chan struct{}) {
 		Handler:     muxWithMiddleware(securityHeaders(crossOrigin(router))),
 		ConnContext: settings.AttachConnContext,
 	}
+	limitSlowClients(srv)
 	listenAddress := settings.Config.Http.ListenAddress
 	go func() {
 		var listener net.Listener
@@ -198,4 +199,12 @@ func securityHeaders(next http.Handler) http.Handler {
 		h.Set("Content-Security-Policy", "frame-ancestors 'self'")
 		next.ServeHTTP(w, r)
 	})
+}
+
+// limitSlowClients ends connections that dawdle over their headers or sit idle.
+// The read and write timeouts stay unset, because uploads, downloads and event
+// streams run as long as they need.
+func limitSlowClients(srv *http.Server) {
+	srv.ReadHeaderTimeout = 20 * time.Second
+	srv.IdleTimeout = 2 * time.Minute
 }
