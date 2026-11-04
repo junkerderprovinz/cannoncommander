@@ -10,8 +10,6 @@
   "forever": "Endgültig löschen",
   "inTrash": "{what} im Papierkorb",
   "deleted": "{what} gelöscht",
-  "one": "1 Objekt",
-  "many": "{n} Objekte",
   "title": "Papierkorb",
   "emptyTitle": "Der Papierkorb ist leer",
   "emptyText": "Was du löschst, bleibt hier {days} Tage, bevor es endgültig weg ist.",
@@ -22,7 +20,12 @@
   "nextOn": "am {date}",
   "nextTip": "Alles im Papierkorb wird {days} Tage nach dem Löschen endgültig entfernt. Die Frist stellst du unter Einstellungen, Dateien ein.",
   "listTitle": "Gelöschte Objekte",
-  "col": { "name": "Name", "from": "Ursprung", "size": "Größe", "deleted": "Gelöscht" },
+  "col": {
+    "name": "Name",
+    "from": "Ursprung",
+    "size": "Größe",
+    "deleted": "Gelöscht"
+  },
   "more": "Mehr",
   "mark": "Auswählen",
   "byTip": "Von {by} gelöscht, endgültig weg am {date}",

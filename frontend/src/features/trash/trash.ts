@@ -8,6 +8,7 @@ import { toast } from '@/core/toast';
 import { cancelBtn, win } from '@/core/windows';
 import type { Entry } from '@/files/entries';
 import { t } from '@/i18n';
+import { objects } from '@/features/jobs/label';
 import { pathOf } from '@/features/transfer/paths';
 import { undoAct } from '@/features/undo/act';
 import { useJobs } from '@/stores/jobs';
@@ -16,7 +17,6 @@ import { useTrash } from '@/stores/trash';
 import DeleteBody from './DeleteBody.vue';
 import PurgeBody from './PurgeBody.vue';
 
-export const objects = (n: number) => (n === 1 ? t('trash.one') : t('trash.many', { n }));
 const failed = (j: Job) => toast(t('trash.failed', { error: j.error || j.state }), 'fault');
 
 function whenThrough(job: Job, ok: (j: Job) => void) {

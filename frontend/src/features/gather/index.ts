@@ -1,7 +1,6 @@
 // Ordner bündeln for admins: the server plans, the window shows the plan, and the move runs as a gather or scatter job.
 import { reactive, watch } from 'vue';
-import type { GatherPlan, Job } from '@/api/ops';
-import { ops } from '@/api/ops';
+import { type GatherPlan, type Job, ops } from '@/api/ops';
 import { action, run } from '@/core/actions';
 import { fmtSize } from '@/core/format';
 import { MENUS } from '@/core/menus';

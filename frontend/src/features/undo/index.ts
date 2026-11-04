@@ -1,6 +1,5 @@
 // Rückgängig: Strg+Z takes back the newest step, the list in the Bearbeiten menu any of the last ten. A toast that
 // offers to undo something lands in the same list, so its button and Strg+Z take it back only once.
-import { toRaw } from 'vue';
 import { action } from '@/core/actions';
 import { extend } from '@/core/extend';
 import { bindKey } from '@/core/keymap';
@@ -29,7 +28,7 @@ export default function setup() {
 
   extend.toastHistory.push((note) => {
     const act = note.act;
-    if (!act || act.label !== t('core.undo') || isServerAct(toRaw(act))) return;
+    if (!act || act.label !== t('core.undo') || isServerAct(act)) return;
     const step = undo.push(note.text, act.run);
     note.act = { label: act.label, run: () => { void takeBack({ at: step.at, local: step }); } };
   });

@@ -10,8 +10,6 @@
   "forever": "Delete for good",
   "inTrash": "{what} in the trash",
   "deleted": "{what} deleted",
-  "one": "1 item",
-  "many": "{n} items",
   "title": "Trash",
   "emptyTitle": "The trash is empty",
   "emptyText": "What you delete stays here for {days} days before it is gone for good.",
@@ -22,7 +20,12 @@
   "nextOn": "on {date}",
   "nextTip": "Everything in the trash is removed for good {days} days after it was deleted. Set the time under Settings, Files.",
   "listTitle": "Deleted items",
-  "col": { "name": "Name", "from": "Origin", "size": "Size", "deleted": "Deleted" },
+  "col": {
+    "name": "Name",
+    "from": "Origin",
+    "size": "Size",
+    "deleted": "Deleted"
+  },
   "more": "More",
   "mark": "Select",
   "byTip": "Deleted by {by}, gone for good on {date}",
