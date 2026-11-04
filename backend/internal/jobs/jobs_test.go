@@ -719,3 +719,36 @@ func TestABigResultIsOnlyReadFromTheJobItself(t *testing.T) {
 		t.Error("the job lost its result in the restart")
 	}
 }
+
+func TestAFinishedBigJobKeepsItsItemsOnlyInTheDatabase(t *testing.T) {
+	e := newEnv(t)
+	name := addScript(t, func(ctx context.Context, run *Run) error {
+		for _, it := range run.Items() {
+			run.Measure(it.Seq, 2, 1)
+			run.Finish(it.Seq, ItemDone, nil)
+		}
+		return nil
+	})
+	n := maxItemsKept + 1
+	j := e.submit(t, "test", name, n)
+	e.waitState(t, j.ID, Done)
+	check := func() {
+		t.Helper()
+		e.m.mu.Lock()
+		held := len(e.m.jobs[j.ID].items)
+		e.m.mu.Unlock()
+		if held != 0 {
+			t.Errorf("%d items in memory", held)
+		}
+		got, _ := e.m.Get(j.ID, true)
+		if len(got.Items) != n || got.Items[n-1].Seq != n-1 || got.Items[n-1].State != ItemDone || got.Items[n-1].Bytes != 2 {
+			t.Fatalf("%d items, the last one %+v", len(got.Items), got.Items[len(got.Items)-1])
+		}
+		if got.Count != n || got.TotalFiles != int64(n) || got.DoneBytes != int64(2*n) {
+			t.Errorf("totals of the job = %+v", got)
+		}
+	}
+	check()
+	e.restart(t)
+	check()
+}

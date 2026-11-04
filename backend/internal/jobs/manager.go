@@ -36,6 +36,9 @@ const (
 	saveEvery     = 2 * time.Second
 	parityEvery   = 5 * time.Second
 	keepFinished  = 7 * 24 * time.Hour
+	// maxItemsKept is how many items a finished job may hold in memory. It
+	// stays in the list for a week, and only a look at its items needs them.
+	maxItemsKept = 1000
 )
 
 // Settings are the queue settings shared by all users.
@@ -166,6 +169,7 @@ func New(d v1.Deps, opts Options) (*Manager, error) {
 			}
 		}
 		j.recount()
+		j.letGoOfItems()
 		m.jobs[j.ID] = j
 		m.nextPos = max(m.nextPos, j.Position+1)
 	}
@@ -687,6 +691,7 @@ func (m *Manager) end(j *job, err error) []func() {
 	j.Rate, j.Left, j.Current, j.Place, j.Reason = 0, nil, "", 0, ""
 	j.ask, j.Conflict = nil, nil
 	m.save(j)
+	j.letGoOfItems()
 	m.publish(EventDone, j)
 	if j.forget {
 		delete(m.jobs, j.ID)
@@ -759,6 +764,14 @@ func (m *Manager) progress(j *job, bytes, files int64) {
 	}
 }
 
+// letGoOfItems drops the items of a big job that is through. Only a failed or
+// cancelled job can run them again.
+func (j *job) letGoOfItems() {
+	if j.State == Done && len(j.items) > maxItemsKept {
+		j.items = nil
+	}
+}
+
 // recount sums the items into the totals.
 func (j *job) recount() {
 	j.TotalBytes, j.TotalFiles, j.doneBytes, j.doneFiles, j.FailedItems = 0, 0, 0, 0, 0
@@ -801,6 +814,9 @@ func (m *Manager) view(j *job, withItems bool) Job {
 	v.Items = nil
 	if withItems {
 		v.Items = slices.Clone(j.items)
+		if j.items == nil {
+			v.Items = m.storedItems(j.ID)
+		}
 	} else if k, _ := kindOf(j.Kind); k.BigResult {
 		v.Result = nil
 	}

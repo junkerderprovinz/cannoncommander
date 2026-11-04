@@ -229,6 +229,29 @@ func PutSetting(db *sql.DB, key, value string) error {
 	return err
 }
 
+// storedItems reads the items of a job that let go of them.
+func (m *Manager) storedItems(id string) []Item {
+	rows, err := m.db.Query(`SELECT seq, path, name, state, bytes, files, error FROM job_items WHERE job_id = ? ORDER BY seq`, id)
+	if err != nil {
+		m.logf("jobs: %v", err)
+		return nil
+	}
+	defer rows.Close()
+	var out []Item
+	for rows.Next() {
+		var it Item
+		if err := rows.Scan(&it.Seq, &it.Path, &it.Name, &it.State, &it.Bytes, &it.Files, &it.Error); err != nil {
+			m.logf("jobs: %v", err)
+			return nil
+		}
+		out = append(out, it)
+	}
+	if err := rows.Err(); err != nil {
+		m.logf("jobs: %v", err)
+	}
+	return out
+}
+
 func (m *Manager) loadSettings() Settings {
 	s := Settings{Mode: Serial, ParityWait: true}
 	if Setting(m.db, settingMode, Serial) == Parallel {
