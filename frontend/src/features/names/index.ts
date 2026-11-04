@@ -66,6 +66,7 @@ export default function setup() {
     const hint = picked.length === 1 ? t('names.oneGoesIn') : t('names.manyGoIn', { n: picked.length });
     return nameWindow(t('names.folderWithSel'), freeName(namesIn(folder), t('names.newFolder')), t('names.create'), 'IconFolderAdd', async (name) => {
       const box = join(folder, name), made = await ops.mkdir(box);
+      F.T().marked = new Set();
       const job = await useJobs().start({ kind: 'move', params: { sources: picked.map((k) => join(folder, k.name)), dest: box, rule: 'skip' } });
       useJobs().whenDone(job, (done) => {
         if (done.state !== 'done') return toast(done.error || t('names.notMoved'), 'fault');

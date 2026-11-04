@@ -23,8 +23,9 @@ export function provideOps(provide: (name: string, value: unknown) => void) {
     get list() { return jobs.list.map(asPrototype); },
     set list(_: unknown) { jobs.clear().catch(() => {}); },
     running: () => [...jobs.running.map(asPrototype), ...Array.from({ length: jobs.starting }, () => ({ state: STATE.queued, job: {} }))],
-    pause: (j: Shown) => jobs.pause(j.job),
-    cancel: (j: Shown) => jobs.cancel(j.job),
+    // The prototype cancels a job that has just ended without a word; the server answers that it fits no longer.
+    pause: (j: Shown) => j.id && jobs.pause(j.job).catch(() => {}),
+    cancel: (j: Shown) => j.id && jobs.cancel(j.job).catch(() => {}),
     move: (j: Shown, to: number) => jobs.move(j.job, to),
     held: (j: Shown) => j.job.reason === 'parity',
     changed: () => {},

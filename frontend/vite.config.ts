@@ -36,6 +36,9 @@ const page = (file: string) => fileURLToPath(new URL(file, import.meta.url));
 export default defineConfig(({ mode }) => ({
   plugins: [vue(), sharePage(), ...(mode === 'fixture' ? [fixture()] : [])],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+  // Every source is scanned up front, so a library only a viewer loads later does not make Vite bundle the
+  // dependencies again while a page is open.
+  optimizeDeps: { entries: ['index.html', 'share.html', 'src/**/*.{ts,vue}', '!src/**/*.test.ts'] },
   server: mode === 'fixture' ? {} : { proxy: { '/api': process.env.CC_BACKEND || 'http://localhost:8080' } },
   build: {
     outDir: 'dist', emptyOutDir: true, chunkSizeWarningLimit: 900,
