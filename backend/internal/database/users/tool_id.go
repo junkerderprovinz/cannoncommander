@@ -67,7 +67,7 @@ func (m *ToolAccessMap) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
-	// Grants for tools the app no longer has are dropped, so older records still load.
+	// Grants for tools the app does not have are dropped, so older records still load.
 	out := make(ToolAccessMap, len(raw))
 	for key, granted := range raw {
 		if id := ToolID(key); id.Valid() {

@@ -14,6 +14,8 @@ auth:
   methods:
     password:
       enabled: true
+      recaptcha:
+        host: "https://www.google.com/recaptcha/api.js"
     ldap:
       enabled: true
       server: "ldap://ldap.example.com:389"
@@ -26,6 +28,16 @@ server:
       flushIntervalSeconds: 10
   sources:
     - path: "."
+frontend:
+  name: "Turm"
+  styling:
+    disableEventThemes: true
+  externalLinks:
+    - text: "Hilfe"
+      url: "https://example.org"
+  favicon: "favicon.png"
+  description: "Dateien"
+  loginButtonText: "Los"
 shareDefaults:
   disableAnonymous: true
 `)
@@ -35,7 +47,7 @@ shareDefaults:
 	if err := loadConfigWithDefaults(file, false); err != nil {
 		t.Fatalf("load: %v", err)
 	}
-	if !Config.Auth.Methods.PasswordAuth.Enabled {
+	if !Config.Auth.Methods.PasswordAuth.Enabled || Config.Frontend.Name != "Turm" {
 		t.Fatal("the rest of the config was not read")
 	}
 }
