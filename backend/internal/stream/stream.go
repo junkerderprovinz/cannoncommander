@@ -14,6 +14,7 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/watch"
 )
 
 //go:embed openapi.yaml
@@ -75,7 +76,7 @@ func (s server) events(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 	for _, e := range replay {
-		if writeEvent(w, e, true) != nil {
+		if writeEvent(w, watch.ForUser(s.fs, u, e), true) != nil {
 			return nil
 		}
 	}
@@ -93,7 +94,7 @@ func (s server) events(w http.ResponseWriter, r *http.Request) error {
 			if !ok {
 				return nil
 			}
-			if writeEvent(w, e, true) != nil {
+			if writeEvent(w, watch.ForUser(s.fs, u, e), true) != nil {
 				return nil
 			}
 		case now := <-tick.C:

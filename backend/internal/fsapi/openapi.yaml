@@ -9,8 +9,9 @@ paths:
       description: |
         Lists the entries of a folder in name order. The folders / and /mnt
         are virtual and list the sources below them. Entries the user may
-        not see are left out. The ETag follows the entries only, so a change
-        in free space alone still answers 304.
+        not see are left out. Folders carry their entry count and total size
+        where the index knows them. The ETag follows the entries only, so a
+        change in free space alone still answers 304.
       parameters:
         - $ref: "#/components/parameters/Path"
       responses:
@@ -41,7 +42,8 @@ paths:
       description: |
         Returns the visible subfolders of one folder, one level deep. The
         tree asks again when a folder is opened. Folders where a source is
-        mounted carry its name and fill level.
+        mounted carry its name and fill level, folders where an rclone
+        remote is mounted carry the remote.
       parameters:
         - $ref: "#/components/parameters/Path"
       responses:
@@ -69,8 +71,29 @@ paths:
     get:
       operationId: fsStat
       summary: Details of one path
+      description: |
+        The same fields as a listing row, for one path. A folder also gets
+        the number of files and folders anywhere below it, as far as the
+        index knows them.
       parameters:
         - $ref: "#/components/parameters/Path"
+      responses:
+        "200":
+          description: The path.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsStat"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /fs/meta:
     post:
       operationId: fsMeta
@@ -80,14 +103,83 @@ paths:
     get:
       operationId: fsRaw
       summary: File content, with range requests
+      description: |
+        Sends the file as it is, with Range, If-Range and conditional
+        requests. Needs the download right. Pages and drawings come with a
+        sandbox policy, so their scripts do not run.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: download
+          in: query
+          description: Ask the browser to save the file instead of showing it.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: The whole file.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "206":
+          description: The requested range.
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "416":
+          description: The range lies outside the file.
   /fs/thumb:
     get:
       operationId: fsThumb
       summary: Thumbnail of a file or folder picture
+      description: |
+        A small picture of an image, video, document or album cover. For a
+        folder it is the folder's poster.jpg, folder.jpg or cover.jpg. A
+        client that adds the file's mtime as v may cache the answer for
+        good.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: size
+          in: query
+          schema:
+            type: string
+            enum: [small, large]
+            default: small
+        - name: v
+          in: query
+          description: Any value that changes with the file, such as its mtime.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The picture.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: The path does not exist or has no thumbnail.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /fs/page:
     get:
       operationId: fsPage
@@ -98,14 +190,81 @@ paths:
     get:
       operationId: fsText
       summary: Text content with encoding detection
+      description: |
+        Reads the start of a text file and decodes it. The encoding comes
+        from a byte order mark, then from valid UTF-8, and falls back to
+        Windows-1252. Needs the download right.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: max
+          in: query
+          description: Bytes to read at most.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 16777216
+            default: 1048576
+      responses:
+        "200":
+          description: The text.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsText"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "415":
+          description: The file holds binary data.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /fs/hex:
     get:
       operationId: fsHex
       summary: A byte range for the hex view
+      description: Needs the download right.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+            default: 0
+        - name: length
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 65536
+            default: 4096
+      responses:
+        "200":
+          description: The bytes. Fewer than asked for at the end of the file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsHex"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /fs/file:
     get:
       operationId: fsFileGet
@@ -134,26 +293,57 @@ components:
         size:
           type: integer
           format: int64
-          description: Bytes, 0 for folders.
+          description: Bytes. For a folder the total size from the index, 0 while the index has not measured it.
         mtime:
           type: string
           format: date-time
           description: Modification time in UTC with milliseconds.
+        btime:
+          type: string
+          format: date-time
+          description: Creation time, where the file system records it.
         mode:
           type: string
-          description: Permission bits in octal.
+          description: Permission bits in octal, with setuid, setgid and sticky in front.
           example: "0664"
         owner:
           type: string
           description: User name, or the number when the container does not know it.
         group:
           type: string
+        uid:
+          type: integer
+        gid:
+          type: integer
+        ino:
+          type: integer
+          format: int64
+          description: Inode number. On /mnt/user it is the one the user share reports, not the disk's.
+        nlink:
+          type: integer
+          format: int64
+          description: Number of hard links.
         hidden:
           type: boolean
           description: The name starts with a dot.
         link:
           type: string
           description: Target of a symbolic link.
+        items:
+          type: integer
+          description: Entries directly inside a folder. Missing when neither the index nor a quick look could count them.
+        format:
+          type: string
+          description: Format group of a file, an id from formats.json such as video or archive.
+        picture:
+          type: string
+          description: Name of the folder's poster.jpg, folder.jpg or cover.jpg, for the card views.
+        pool:
+          type: string
+          description: Under /mnt/user, the Unraid pool that holds the entry, such as cache.
+        remote:
+          type: string
+          description: The rclone remote mounted at this folder.
     Volume:
       type: object
       required: [path, free, total]
@@ -203,6 +393,9 @@ components:
         total:
           type: integer
           format: int64
+        remote:
+          type: string
+          description: The rclone remote mounted here.
     FsTree:
       type: object
       required: [path, items]
@@ -213,3 +406,62 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FsTreeItem"
+    FsStat:
+      allOf:
+        - $ref: "#/components/schemas/FsItem"
+        - type: object
+          required: [path]
+          properties:
+            path:
+              type: string
+            files:
+              type: integer
+              format: int64
+              description: Files anywhere below a folder.
+            dirs:
+              type: integer
+              format: int64
+              description: Folders anywhere below a folder.
+            volume:
+              $ref: "#/components/schemas/Volume"
+    FsText:
+      type: object
+      required: [path, size, mtime, encoding, text]
+      properties:
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        encoding:
+          type: string
+          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+        eol:
+          type: string
+          enum: [lf, crlf, cr, mixed]
+          description: Missing for text without line breaks.
+        text:
+          type: string
+        truncated:
+          type: boolean
+          description: The file goes on after max bytes.
+    FsHex:
+      type: object
+      required: [path, size, offset, data]
+      properties:
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+          description: Size of the whole file.
+        offset:
+          type: integer
+          format: int64
+        data:
+          type: string
+          format: byte
+          description: The bytes, base64.

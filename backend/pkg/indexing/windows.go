@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"golang.org/x/sys/windows"
 )
 
@@ -74,3 +75,6 @@ func (idx *Index) MakeIndexPathPlatform(path string) string {
 	}
 	return path
 }
+
+// unixAttrsOf has nothing to report on Windows, which only runs in development.
+func unixAttrsOf(os.FileInfo) iteminfo.UnixAttrs { return iteminfo.UnixAttrs{} }

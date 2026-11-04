@@ -7,13 +7,19 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/watch"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-// eventHub carries the /api/v1 events. It lives as long as the process.
-var eventHub = hub.New(hub.Options{})
+// The watcher follows the hub's folder topics, and both live as long as
+// the process.
+var (
+	folderWatch = watch.New(watch.Options{})
+	eventHub    = hub.New(hub.Options{OnTopic: folderWatch.Topic})
+)
 
 // mountAPIv1 serves /api/v1 next to the older /api routes. The more
 // specific prefix wins in the ServeMux.
@@ -26,11 +32,13 @@ func mountAPIv1(router *http.ServeMux) error {
 	if err != nil {
 		return err
 	}
-	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: state.MainDB()}
+	index := fsindex.Quantum()
+	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: state.MainDB(), Index: index}
 	h, err := api.NewRouter(deps, authenticateV1).Handler()
 	if err != nil {
 		return err
 	}
+	folderWatch.Start(eventHub, resolver, index)
 	prefix := settings.Config.Http.BaseURL + "api/v1"
 	router.Handle(prefix+"/", http.StripPrefix(prefix, h))
 	return nil

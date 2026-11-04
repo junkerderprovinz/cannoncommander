@@ -12,6 +12,7 @@ import (
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 )
 
@@ -20,6 +21,8 @@ type Deps struct {
 	FS  *ccfs.Resolver
 	Hub *hub.Hub
 	DB  *sql.DB
+	// Index may be nil, then listings go without folder sizes.
+	Index fsindex.Index
 }
 
 // HandlerFunc is a handler that reports failure by returning an error,

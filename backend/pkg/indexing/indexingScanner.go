@@ -665,6 +665,7 @@ func (s *Scanner) checkFolderModtime(folderPath string) (bool, error) {
 			Name:       filepath.Base(strings.TrimSuffix(folderPath, "/")),
 			Size:       sizeForDB,
 			Created:    getCreatedTime(info, realPath),
+			Unix:       unixAttrsOf(info),
 			ModTime:    info.ModTime(),
 			Type:       "directory",
 			Hidden:     hidden,

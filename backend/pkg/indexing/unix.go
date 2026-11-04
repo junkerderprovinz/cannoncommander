@@ -9,6 +9,7 @@ import (
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
 func CheckWindowsHidden(realpath string) bool {
@@ -117,4 +118,16 @@ func (idx *Index) MakeIndexPathPlatform(path string) string {
 		path = "/" + strings.TrimPrefix(path, "/")
 	}
 	return path
+}
+
+// unixAttrsOf reads the inode details from an os.FileInfo, using the
+// listing's own stat result where the platform listing provides one.
+func unixAttrsOf(info os.FileInfo) iteminfo.UnixAttrs {
+	switch st := info.Sys().(type) {
+	case interface{ unixAttrs() iteminfo.UnixAttrs }:
+		return st.unixAttrs()
+	case *syscall.Stat_t:
+		return iteminfo.UnixAttrs{Known: true, Inode: uint64(st.Ino), Nlink: uint64(st.Nlink), UID: st.Uid, GID: st.Gid, Mode: uint32(st.Mode) & 0o7777}
+	}
+	return iteminfo.UnixAttrs{}
 }

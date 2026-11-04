@@ -231,6 +231,15 @@ func GetIndex(name string) *Index {
 	return index
 }
 
+// Lookup returns the index of a source by name, or nil when the source has
+// none. Unlike GetIndex it stays quiet, because a source without an index
+// is normal for callers that only use the index to enrich what they read.
+func Lookup(name string) *Index {
+	indexesMutex.Lock()
+	defer indexesMutex.Unlock()
+	return indexes[name]
+}
+
 // ReadOnlyOperation executes a function with read-only access to the index
 func (idx *Index) ReadOnlyOperation(fn func()) {
 	idx.mu.RLock()

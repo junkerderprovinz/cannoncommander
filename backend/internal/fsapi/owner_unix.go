@@ -3,11 +3,9 @@
 package fsapi
 
 import (
-	"io/fs"
 	"os/user"
 	"strconv"
 	"sync"
-	"syscall"
 
 	"golang.org/x/sys/unix"
 )
@@ -17,14 +15,13 @@ var (
 	idNames   = map[string]string{}
 )
 
-// ownerOf returns user and group names, or the numbers when the container
-// has no entry for them in its passwd and group files.
-func ownerOf(info fs.FileInfo) (owner, group string) {
-	st, ok := info.Sys().(*syscall.Stat_t)
-	if !ok {
+// ownerNames returns user and group names, or the numbers when the
+// container has no entry for them in its passwd and group files.
+func ownerNames(st fileStat) (owner, group string) {
+	if !st.ids {
 		return "", ""
 	}
-	return lookupName("u", st.Uid), lookupName("g", st.Gid)
+	return lookupName("u", st.uid), lookupName("g", st.gid)
 }
 
 func lookupName(kind string, id uint32) string {

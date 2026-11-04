@@ -13,11 +13,13 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 )
 
 type fixture struct {
 	h     http.Handler
 	share string
+	cache string
 }
 
 func write(t *testing.T, p string, size int) {
@@ -30,10 +32,11 @@ func write(t *testing.T, p string, size int) {
 	}
 }
 
-func newFixture(t *testing.T) fixture {
+func newFixture(t *testing.T, index ...fsindex.Index) fixture {
 	t.Helper()
 	base := t.TempDir()
-	share := filepath.Join(base, "user")
+	share := filepath.Join(base, "mnt", "user")
+	cache := filepath.Join(base, "mnt", "cache")
 	boot := filepath.Join(base, "boot")
 	write(t, filepath.Join(share, "filme", "Sintel (2010)", "Sintel (2010).mkv"), 2048)
 	write(t, filepath.Join(share, "filme", "Sintel (2010)", "poster.jpg"), 100)
@@ -60,6 +63,7 @@ func newFixture(t *testing.T) fixture {
 	people := map[string]*users.User{
 		"jdp":  {BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: all}, {Path: boot, Scope: "/", Permissions: all}}},
 		"anna": {BackendScopes: []users.BackendScope{{Path: share, Scope: "/fotos", Permissions: all}}},
+		"gast": {BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: users.SourceFilePermissions{View: true}}}},
 	}
 	for name, u := range people {
 		u.Username = name
@@ -70,13 +74,17 @@ func newFixture(t *testing.T) fixture {
 		}
 		return nil, v1.Errorf(http.StatusUnauthorized, "login required")
 	}
-	r := v1.NewRouter(v1.Deps{FS: fs}, auth)
+	deps := v1.Deps{FS: fs}
+	if len(index) > 0 {
+		deps.Index = index[0]
+	}
+	r := v1.NewRouter(deps, auth)
 	Routes(r)
 	h, err := r.Handler()
 	if err != nil {
 		t.Fatal(err)
 	}
-	return fixture{h: h, share: share}
+	return fixture{h: h, share: share, cache: cache}
 }
 
 func (f fixture) get(t *testing.T, user, endpoint, p string, extra ...string) *httptest.ResponseRecorder {
