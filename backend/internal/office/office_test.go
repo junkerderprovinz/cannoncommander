@@ -498,3 +498,61 @@ func TestCallbackFollowsARedirectThatStaysOnTheDocumentServer(t *testing.T) {
 		t.Fatalf("content %q", f.content())
 	}
 }
+
+func TestALinkOutOfTheSourceDoesNotOpen(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	outside := filepath.Join(filepath.Dir(f.share), "geheim.docx")
+	if err := os.WriteFile(outside, []byte("geheim"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, filepath.Join(f.share, "dokumente", "link.docx")); err != nil {
+		t.Skipf("no symlinks here: %v", err)
+	}
+	req := httptest.NewRequest("GET", "/office/config?path=/mnt/user/dokumente/link.docx", nil)
+	req.Header.Set("X-User", "jdp")
+	if rec := f.do(req); rec.Code != http.StatusForbidden {
+		t.Fatalf("config through the link: %d", rec.Code)
+	}
+
+	// A file that turned into such a link after the document was opened.
+	_, c := f.config("jdp")
+	inside := filepath.Join(f.share, "dokumente", "Brief.docx")
+	if err := os.Remove(inside); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, inside); err != nil {
+		t.Fatal(err)
+	}
+	doc := c.Config["document"].(map[string]any)
+	if rec := f.do(local(t, "GET", doc["url"].(string), nil)); rec.Code != http.StatusForbidden || strings.Contains(rec.Body.String(), "geheim") {
+		t.Fatalf("read through the link: %d %q", rec.Code, rec.Body)
+	}
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("neu")) }))
+	defer docServer.Close()
+	f.office.URL = docServer.URL
+	body := `{"key":"k","status":2,"url":"` + docServer.URL + `/out.docx"}`
+	f.do(local(t, "POST", c.Config["editorConfig"].(map[string]any)["callbackUrl"].(string), strings.NewReader(body)))
+	if b, _ := os.ReadFile(outside); string(b) != "geheim" {
+		t.Fatalf("written through the link: %q", b)
+	}
+}
+
+func TestOfficeNeedsTheDownloadRightToRead(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	viewer := users.SourceFilePermissions{View: true}
+	f.people["gast"] = &users.User{ID: 3, BackendScopes: []users.BackendScope{{Path: f.share, Scope: "/", Permissions: viewer}}}
+	f.people["gast"].Username = "gast"
+	if code, _ := f.config("gast"); code != http.StatusForbidden {
+		t.Fatalf("config without the download right: %d", code)
+	}
+
+	f.people["gast"].BackendScopes[0].Permissions.Download = true
+	_, c := f.config("gast")
+	f.people["gast"].BackendScopes[0].Permissions.Download = false
+	file := c.Config["document"].(map[string]any)["url"].(string)
+	if rec := f.do(local(t, "GET", file, nil)); rec.Code != http.StatusForbidden {
+		t.Fatalf("read after the download right was taken: %d", rec.Code)
+	}
+}
