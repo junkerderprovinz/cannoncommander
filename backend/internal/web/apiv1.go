@@ -8,6 +8,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/api"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
@@ -33,12 +34,24 @@ func mountAPIv1(router *http.ServeMux) error {
 	if store := state.Default(); store != nil {
 		gate = store
 	}
+	db := state.MainDB()
+	gate, err := accounts.Gate(gate, db)
+	if err != nil {
+		return err
+	}
 	resolver, err := ccfs.FromSettings(&settings.Config, gate)
 	if err != nil {
 		return err
 	}
+	if db != nil {
+		codes, err := accounts.RecoveryCodes(db)
+		if err != nil {
+			return err
+		}
+		auth.UseRecoveryCodes(codes)
+	}
 	index := fsindex.Quantum()
-	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: state.MainDB(), Index: index}
+	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index}
 	accounts.UseLogin(sessionLogin{})
 	h, err := api.NewRouter(deps, accounts.Track(deps.DB, authenticateV1)).Handler()
 	if err != nil {

@@ -71,9 +71,10 @@ func (s *Service) AuthenticatePassword(r *http.Request, disableOtp bool, skipReq
 		if totpCode == "" {
 			return nil, errors.ErrNoTotpProvided
 		}
-		err = VerifyTotpCode(&user, totpCode)
-		if err != nil {
-			return nil, err
+		if !redeemRecoveryCode(user.ID, totpCode) {
+			if err = VerifyTotpCode(&user, totpCode); err != nil {
+				return nil, err
+			}
 		}
 	}
 	if user.LoginMethod != users.LoginMethodPassword {
@@ -81,6 +82,22 @@ func (s *Service) AuthenticatePassword(r *http.Request, disableOtp bool, skipReq
 		return nil, errors.ErrWrongLoginMethod
 	}
 	return &user, nil
+}
+
+// RecoveryCodes redeems the one time codes a user may give instead of a
+// TOTP code when the phone is not at hand.
+type RecoveryCodes interface {
+	Redeem(userID uint64, code string) bool
+}
+
+var recoveryCodes RecoveryCodes
+
+// UseRecoveryCodes connects the password login to the recovery codes. The
+// server calls it once before it starts serving.
+func UseRecoveryCodes(r RecoveryCodes) { recoveryCodes = r }
+
+func redeemRecoveryCode(userID uint64, code string) bool {
+	return recoveryCodes != nil && recoveryCodes.Redeem(userID, code)
 }
 
 // AuthenticatePassword authenticates via the default service.

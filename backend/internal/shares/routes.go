@@ -95,7 +95,7 @@ type updateRequest struct {
 func mayShare(u *users.User) bool { return u.Permissions.Share || u.Permissions.Admin }
 
 func (s *Service) mine(w http.ResponseWriter, r *http.Request) error {
-	list, err := s.list(r.Context(), `WHERE owner_id = ?`, v1.UserFrom(r).ID)
+	list, err := s.list(r.Context(), `WHERE owner_id = ?`, ownerKey(v1.UserFrom(r).ID))
 	if err != nil {
 		return err
 	}

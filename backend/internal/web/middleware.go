@@ -293,6 +293,9 @@ func resolveBearerTokenUser(rawToken string) (*users.User, error) {
 		return nil, fmt.Errorf("token has no permission metadata")
 	}
 	applyNamedApiTokenGlobalCaps(&userValue, tokenName)
+	if userValue.Tokens[tokenName].ReadOnly {
+		userValue.RestrictToReading()
+	}
 	return &userValue, nil
 }
 

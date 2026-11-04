@@ -206,6 +206,24 @@ func (s *WebAuthnService) BeginRegistration(user *users.User, rpID string) (sess
 }
 
 func (s *WebAuthnService) FinishRegistration(user *users.User, sessionID string, credentialName string, r *http.Request) error {
+	parsed, err := protocol.ParseCredentialCreationResponse(r)
+	if err != nil {
+		return fmt.Errorf("failed to finish WebAuthn registration: %w", err)
+	}
+	return s.finishRegistration(user, sessionID, credentialName, parsed)
+}
+
+// FinishRegistrationJSON is FinishRegistration for a credential that came
+// as JSON inside a larger request body.
+func (s *WebAuthnService) FinishRegistrationJSON(user *users.User, sessionID string, credentialName string, credential []byte) error {
+	parsed, err := protocol.ParseCredentialCreationResponseBytes(credential)
+	if err != nil {
+		return fmt.Errorf("failed to finish WebAuthn registration: %w", err)
+	}
+	return s.finishRegistration(user, sessionID, credentialName, parsed)
+}
+
+func (s *WebAuthnService) finishRegistration(user *users.User, sessionID string, credentialName string, parsed *protocol.ParsedCredentialCreationData) error {
 	sessionVal, ok := s.sessions.Load(sessionID)
 	if !ok {
 		return errors.ErrPasskeyInvalidSession
@@ -224,7 +242,7 @@ func (s *WebAuthnService) FinishRegistration(user *users.User, sessionID string,
 		return errors.ErrUnauthorized
 	}
 
-	credential, err := s.wa.FinishRegistration(user, *sess.SessionData, r)
+	credential, err := s.wa.CreateCredential(user, *sess.SessionData, parsed)
 	if err != nil {
 		return fmt.Errorf("failed to finish WebAuthn registration: %w", err)
 	}

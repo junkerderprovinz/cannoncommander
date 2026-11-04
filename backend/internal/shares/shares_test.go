@@ -71,9 +71,10 @@ func newEnv(t testing.TB) *env {
 		u.Permissions.Admin, u.Permissions.Share = admin, share
 		return u
 	}
+	// Real ids are random, so the one of anna lies above the int64 range.
 	e.people = map[string]*users.User{
 		"jdp":  user(1, "jdp", true, true, "/", full),
-		"anna": user(2, "anna", false, true, "/", full),
+		"anna": user(1<<63|2, "anna", false, true, "/", full),
 		"gast": user(3, "gast", false, false, "/", users.SourceFilePermissions{View: true, Download: true}),
 		"bob":  user(4, "bob", false, true, "/", users.SourceFilePermissions{View: true, Download: true}),
 		"eva":  user(5, "eva", false, true, "/dokumente", full),
@@ -815,7 +816,7 @@ func TestRemovingAUserRemovesTheirLinks(t *testing.T) {
 	e := newEnv(t)
 	e.create("anna", map[string]any{"paths": []string{"/mnt/user/fotos/Urlaub"}})
 	keep := e.create("jdp", map[string]any{"paths": []string{"/mnt/user/fotos/a"}})
-	if err := shares.RemoveUser(t.Context(), e.deps, 2); err != nil {
+	if err := shares.RemoveUser(t.Context(), e.deps, e.people["anna"].ID); err != nil {
 		t.Fatal(err)
 	}
 	var all []shares.Share

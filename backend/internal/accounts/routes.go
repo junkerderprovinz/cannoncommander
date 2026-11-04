@@ -1,4 +1,5 @@
-// Package accounts manages the own account and, for admins, users, groups and rules.
+// Package accounts manages the own account and, for admins, users, groups,
+// access rules and the activity log.
 package accounts
 
 import (
@@ -10,11 +11,42 @@ import (
 //go:embed openapi.yaml
 var contract []byte
 
-// Routes registers the contract and the handlers that exist. Operations
-// without a handler answer 501.
+// Routes registers the contract and its handlers.
 func Routes(r *v1.Router) {
 	r.Contract("accounts", contract)
-	s := sessionHandlers{db: r.Deps().DB}
+	d := r.Deps()
+	svc, err := serviceFor(d.DB)
+	if err != nil {
+		// Serving without the rules would show files they are meant to hide.
+		panic(err)
+	}
+	s := sessionHandlers{db: d.DB}
+	h := handlers{db: d.DB, fs: d.FS, deps: d, svc: svc}
+	r.Handle("GET /me", h.getMe)
+	r.Handle("PUT /me/password", h.putPassword)
 	r.Handle("GET /me/sessions", s.list)
 	r.Handle("DELETE /me/sessions/{id}", s.end)
+	r.Handle("GET /me/tokens", h.listTokens)
+	r.Handle("POST /me/tokens", h.createToken)
+	r.Handle("DELETE /me/tokens/{id}", h.deleteToken)
+	r.Handle("GET /me/passkeys", h.listPasskeys)
+	r.Handle("POST /me/passkeys", h.postPasskey)
+	r.Handle("DELETE /me/passkeys/{id}", h.deletePasskey)
+	r.Handle("POST /me/totp", h.postTotp)
+	r.Handle("DELETE /me/totp", h.disableTotp)
+	r.Handle("POST /auth/reset-code", h.askReset)
+	r.Handle("POST /auth/reset", h.reset)
+	r.Handle("GET /admin/users", h.listUsers)
+	r.Handle("POST /admin/users", h.createUser)
+	r.Handle("GET /admin/users/{id}", h.getUser)
+	r.Handle("PATCH /admin/users/{id}", h.updateUser)
+	r.Handle("DELETE /admin/users/{id}", h.deleteUser)
+	r.Handle("GET /admin/groups", h.listGroups)
+	r.Handle("POST /admin/groups", h.createGroup)
+	r.Handle("PATCH /admin/groups/{name}", h.updateGroup)
+	r.Handle("DELETE /admin/groups/{name}", h.deleteGroup)
+	r.Handle("GET /admin/rules", h.getRules)
+	r.Handle("PUT /admin/rules", h.putRules)
+	r.Handle("POST /admin/rules/test", h.testRules)
+	r.Handle("GET /admin/activity", h.listActivity)
 }

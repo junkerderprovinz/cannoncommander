@@ -2,6 +2,7 @@ package ccfs
 
 import (
 	"path"
+	"strings"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
@@ -23,6 +24,22 @@ const writePerms = Create | Modify | Delete
 // AccessGate answers the access rules an admin set up per path.
 type AccessGate interface {
 	AccessPermitted(sourcePath string, indexPath utils.IndexPath, username string) bool
+}
+
+// Effect is what the rules of the app say about one path for one user.
+type Effect uint8
+
+const (
+	Open Effect = iota
+	ReadOnly
+	Hidden
+)
+
+// Rules are the ordered access rules an admin keeps in the app. They work
+// on API paths and can hide a place or make it read only. An AccessGate that
+// also implements Rules has both applied.
+type Rules interface {
+	Effect(u *users.User, p string) Effect
 }
 
 // Check resolves p and makes sure u holds every right in perm there.
@@ -66,6 +83,14 @@ func (r *Resolver) Check(u *users.User, p string, perm Perm) (Location, error) {
 	if !r.permitted(u, loc.Source, loc.Index) {
 		return Location{}, ErrForbidden
 	}
+	switch r.effect(u, loc.Path) {
+	case Hidden:
+		return Location{}, ErrForbidden
+	case ReadOnly:
+		if perm&writePerms != 0 {
+			return Location{}, ErrReadOnly
+		}
+	}
 	return loc, nil
 }
 
@@ -89,7 +114,20 @@ func (r *Resolver) Visible(u *users.User, dir Location, name string) bool {
 	if !within(child, scope) {
 		return within(scope, child)
 	}
-	return r.permitted(u, dir.Source, child)
+	return r.permitted(u, dir.Source, child) && r.effect(u, path.Join(dir.Path, name)) != Hidden
+}
+
+// effect asks the rules about p. A path into an archive counts as the
+// archive file, which is what the rules can name.
+func (r *Resolver) effect(u *users.User, p string) Effect {
+	rules, ok := r.access.(Rules)
+	if !ok {
+		return Open
+	}
+	if outer, _, found := strings.Cut(p, ArchiveSep); found {
+		p = outer
+	}
+	return rules.Effect(u, p)
 }
 
 // reaches reports whether some place u may open lies at or below p, or p
