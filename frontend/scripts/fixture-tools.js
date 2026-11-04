@@ -500,15 +500,16 @@ export function toolsFixture(engine) {
       const bad = paths.map((s) => FS.nodeAt(s)).find((n) => !isArchive(n));
       if (bad) return [400, `${bad.name} is not an archive that can be tested`];
       const nodes = paths.map((s) => FS.nodeAt(s));
+      // A test goes through the members, as the prototype plays it, so its time follows their number, not the bytes.
+      const members = nodes.map((n) => 6 + (fx.hashOf(n.name) % 140));
       return {
-        paths, total: sizeOf(nodes), names: nodes.map((n) => n.name),
+        paths, total: members.reduce((a, m) => a + m, 0) * 80 * MB, names: nodes.map((n) => n.name),
         apply: (j) => result(j, {
           archives: nodes.map((n, i) => {
-            const members = 6 + (fx.hashOf(n.name) % 140);
             if (locked(n, p.password)) return { path: paths[i], members: 0, ok: false, password: true };
-            if (!n.flaw) return { path: paths[i], members, ok: true };
+            if (!n.flaw) return { path: paths[i], members: members[i], ok: true };
             const [reason, entry] = n.flaw.split(' bei ');
-            return { path: paths[i], members: Math.ceil(members * 0.6), ok: false, damage: { entry, reason } };
+            return { path: paths[i], members: Math.ceil(members[i] * 0.6), ok: false, damage: { entry, reason } };
           }),
         }),
       };
@@ -642,7 +643,7 @@ export function toolsFixture(engine) {
       if (!dirAt(p.dest || '') || p.dest.includes('::')) return [404, 'Not found'];
       const size = (['iso', 'img'].includes(FS.ext(wanted)) ? 900 + (fx.hashOf(u.href) % 5200) : 2 + (fx.hashOf(u.href) % 400)) * MB;
       return {
-        paths: [], name: wanted, count: 1, dest: p.dest, total: size, files: 1, names: [wanted],
+        paths: [], name: wanted, count: 1, dest: p.dest, total: size, files: 1, names: [wanted], speed: 0.45,
         apply: (j) => {
           const d = dirAt(p.dest), name = freeName(d, wanted);
           d.children.push(fileNode(name, size));

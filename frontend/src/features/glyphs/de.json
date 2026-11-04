@@ -1,0 +1,116 @@
+{
+  "title": "Glyphen für Dateien",
+  "places": "Ordner und Orte",
+  "files": "Dateien",
+  "missing": "Fehlt noch in GlimStone",
+  "uses": "Nutzt im Moment {g}",
+  "g": {
+    "IconFolder": {
+      "label": "Ordner",
+      "use": "Jeder Ordner in Liste, Baum und Fenstern"
+    },
+    "IconFolderOpen": {
+      "label": "Geöffneter Ordner",
+      "use": "Aufgeklappter Ordner im Baum, die Marke"
+    },
+    "IconFolderUp": {
+      "label": "Eine Ebene hoch",
+      "use": "Die Zeile „..“"
+    },
+    "IconFolderAdd": {
+      "label": "Neuer Ordner",
+      "use": "F7 und das Datei-Menü"
+    },
+    "IconFiles": {
+      "label": "Dateien und Ordner",
+      "use": "Dateiliste in den Einstellungen, untere Leiste"
+    },
+    "IconZFS": {
+      "label": "Platte, Share, Pool",
+      "use": "Shares, Cache und Disks im Baum"
+    },
+    "IconDatabase": {
+      "label": "Datenbank, Array",
+      "use": "Der Server im Baum, Datenbanken, Abbilder"
+    },
+    "IconFlash": {
+      "label": "USB-Stick",
+      "use": "Der Boot-Stick"
+    },
+    "IconCloud": {
+      "label": "Fernziele",
+      "use": "Der Ordner der rclone-Ziele"
+    },
+    "IconNetwork": {
+      "label": "Netzwerkziel",
+      "use": "Ein SMB- oder SFTP-Ziel"
+    },
+    "IconLocal": {
+      "label": "Lokaler Speicher",
+      "use": "Noch nicht benutzt"
+    },
+    "IconTrash": {
+      "label": "Papierkorb",
+      "use": "Papierkorb und Löschen"
+    },
+    "IconFile": {
+      "label": "Datei",
+      "use": "Alles ohne eigenen Glyphen"
+    },
+    "IconFileText": {
+      "label": "Textdatei",
+      "use": "Text und Markdown, im Moment auch PDF und Office"
+    },
+    "IconFileImage": {
+      "label": "Bild",
+      "use": "JPG, PNG, HEIC und andere Bilder"
+    },
+    "IconFileVideo": {
+      "label": "Video",
+      "use": "MKV, MP4 und andere Videos"
+    },
+    "IconFileAudio": {
+      "label": "Audio",
+      "use": "MP3, FLAC und andere Musik"
+    },
+    "IconFileSubtitles": {
+      "label": "Untertitel",
+      "use": "SRT, ASS, VTT"
+    },
+    "IconCode": {
+      "label": "Quelltext",
+      "use": "Go, Shell, YAML, JavaScript"
+    },
+    "IconConfig": {
+      "label": "Konfiguration",
+      "use": "JSON, XML, CFG, CONF, INI"
+    },
+    "IconLog": {
+      "label": "Logdatei",
+      "use": ".log und rotierte Logs"
+    },
+    "IconArchive": {
+      "label": "Archiv",
+      "use": "ZIP, TAR, 7z, RAR"
+    },
+    "IconKey": {
+      "label": "Schlüssel",
+      "use": "Noch nicht benutzt, gut für .pem und .key"
+    },
+    "IconLink": {
+      "label": "Verknüpfung",
+      "use": "Noch nicht benutzt, gut für Symlinks"
+    }
+  },
+  "m": {
+    "pdf": "PDF",
+    "doc": "Textdokument (DOCX, ODT)",
+    "sheet": "Tabelle (XLSX, ODS, CSV)",
+    "slides": "Präsentation (PPTX, ODP)",
+    "disk": "Abbild (ISO, IMG)",
+    "checksum": "Prüfsumme (SHA256, MD5)",
+    "font": "Schrift (TTF, OTF)",
+    "ebook": "E-Book (EPUB)",
+    "program": "Programm (EXE, AppImage)"
+  }
+}

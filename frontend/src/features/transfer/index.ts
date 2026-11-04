@@ -81,13 +81,13 @@ function sameFileWindow(job: Transfer, pf: Preflight) {
     w.foot = w.foot.map((f) => (f.primary ? { ...f, disabled: nothing } : f));
   }, { immediate: true });
   async function go() {
-    const F = usePanels();
-    if (st.way === 'share') return F.transfer(kind, job.items, shareTo, shareFrom, job);
+    const F = usePanels(), options = { rule: job.rule, verify: job.verify, keepAttrs: job.keepAttrs };
+    if (st.way === 'share') return F.transfer(kind, job.items, shareTo, shareFrom, options);
     const to = `/mnt/${st.disk}` + sub(relDest), names = new Set(job.items.map((k) => k.name));
     const found = (await useListing().load(diskFrom).catch(() => null))?.items.filter((k) => names.has(k.name)).map(toEntry) ?? [];
     if (!found.length) return toast(t('transfer.nothingOn', { disk: diskName(src) }), 'warn');
     await ensureDir(to);
-    return F.transfer(kind, found, to, diskFrom, job);
+    return F.transfer(kind, found, to, diskFrom, options);
   }
 }
 

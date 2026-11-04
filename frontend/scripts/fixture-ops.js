@@ -273,7 +273,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       dest: extra.dest ?? params.dest, totalBytes: Math.round(kind === 'trash' || kind === 'delete' || kind === 'restore' || kind === 'emptyTrash' || kind === 'undo' ? 0 : total),
       doneBytes: 0, totalFiles: extra.files ?? nodes.reduce((a, n) => a + countOf(n), 0), doneFiles: 0, rate: 0, left: null, cap: extra.cap || 0,
       waitForParity: !!extra.waitForParity, failedItems: 0, createdAt: iso(clock.now()),
-      _params: params, _apply: extra.apply, _names: extra.names, _big: total >= BIG, _decisions: { ...(params.decisions || {}) }, _rule: params.rule || 'ask',
+      _params: params, _apply: extra.apply, _names: extra.names, _big: total >= BIG, _speed: extra.speed || 1, _decisions: { ...(params.decisions || {}) }, _rule: params.rule || 'ask',
     };
     if (kind === 'copy' || kind === 'move') j._ask = (params.sources || []).filter((p) => { const n = FS.nodeAt(p), d = dirAt(params.dest); return n && d && taken(d, n.name); }).map((p) => base(p));
     jobs.push(j);
@@ -286,6 +286,8 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     return j;
   }
 
+  // The bytes move LAPSE times faster than the clock, so a finished job tells the time it would have taken a server.
+  const endOf = (j) => { const start = Date.parse(j.startedAt || j.createdAt); return iso(start + (clock.now() - start) * LAPSE); };
   const held = (j) => settings.parityWait && parity.busy && ['copy', 'move'].includes(j.kind) && (j.waitForParity || j._big);
   function tick() {
     const live = open().filter((j) => j.state === 'queued' || j.state === 'running');
@@ -320,7 +322,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     }
     const caps = [j.cap || Infinity, settings.cap ? settings.cap / n : Infinity];
     if (j.totalBytes) {
-      j.rate = Math.min((150 + rnd() * 110) * MB * share, ...caps);
+      j.rate = Math.min((150 + rnd() * 110) * MB * j._speed * share, ...caps);
       j.doneBytes = Math.min(j.totalBytes, j.doneBytes + (j.rate * TICK / 1000) * LAPSE);
       j.left = (j.totalBytes - j.doneBytes) / j.rate;
       j.doneFiles = Math.min(j.totalFiles, Math.floor((j.doneBytes / j.totalBytes) * j.totalFiles));
@@ -332,9 +334,9 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     if (!finished) return;
     try {
       const undo = run(j);
-      Object.assign(j, { state: 'done', rate: 0, left: null, doneBytes: j.totalBytes, doneFiles: j.totalFiles, finishedAt: iso(clock.now()), ...(undo ? { undo } : {}) });
+      Object.assign(j, { state: 'done', rate: 0, left: null, doneBytes: j.totalBytes, doneFiles: j.totalFiles, finishedAt: endOf(j), ...(undo ? { undo } : {}) });
     } catch (e) {
-      Object.assign(j, { state: 'failed', rate: 0, left: null, error: String(e.message || e), failedItems: j.count, finishedAt: iso(clock.now()) });
+      Object.assign(j, { state: 'failed', rate: 0, left: null, error: String(e.message || e), failedItems: j.count, finishedAt: endOf(j) });
     }
     delete j.current;
     publish('job.state', j);
@@ -432,9 +434,29 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     return Array.isArray(own) ? own : [202, view(createJob(kind, params, { ...extra, ...own }))];
   }
 
+  // Only the fixture has this: a download client that writes into downloads every four seconds, a part file that
+  // grows and then gets its real name, as the prototype plays it.
+  const FILMS = ['Cosmos Laundromat (2015)', 'Spring (2019)', 'Agent 327 (2017)'];
+  let client = null, step = 0;
+  function download() {
+    const dir = '/mnt/user/downloads', n = dirAt(dir), film = FILMS[Math.floor(step / 3) % FILMS.length], phase = step % 3;
+    const part = `${film}.mkv.part`, done = `${film}.mkv`, k = FS.kids(n).find((x) => x.name === part);
+    if (phase === 0) n.children.push({ name: part, size: 300 * MB, time: clock.now(), owner: 'nobody', group: 'users', mode: '0664' });
+    if (phase === 1 && k) Object.assign(k, { size: 900 * MB, time: clock.now() });
+    if (phase === 2 && k) Object.assign(k, { name: FS.kids(n).some((x) => x.name === done) ? freeName(n, done) : done, size: 1.6 * GB, time: clock.now() });
+    step += 1;
+    changed(dir);
+  }
+
   // A route that answers false only looks on, and the next one for the same request answers it.
   const routes = [
     ...unraidRoutes,
+    ['PUT', /^\/fixture\/download$/, (_r, _s, b) => {
+      clock.clear(client);
+      client = b.run ? clock.setInterval(download, 4000) : null;
+      if (b.run) download();
+      return [204];
+    }],
     ['GET', /^\/events$/, (req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
       res.write(': fixture\n\n');

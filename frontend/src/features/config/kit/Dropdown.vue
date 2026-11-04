@@ -22,5 +22,5 @@ defineExpose({ el });
 </script>
 
 <template>
-  <button ref="el" class="field a-dd" :class="size" :data-val="cur?.[0]" @click.stop="open"><span><G v-if="cur?.[2]" :n="cur[2]" />{{ cur?.[1] }}</span><G n="IconExpand" /></button>
+  <button ref="el" class="field a-dd" :class="size" :data-val="cur?.[0]" :data-dd="JSON.stringify(options)" @click.stop="open"><span><G v-if="cur?.[2]" :n="cur[2]" />{{ cur?.[1] }}</span><G n="IconExpand" /></button>
 </template>
