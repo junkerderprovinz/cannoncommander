@@ -1,5 +1,7 @@
 // What the tool windows share, as the prototype's b-00-kit.js holds it for them: counted words, copying, back and
 // forward for a window that walks through folders, and the foot row that follows the window's state.
+import { copyText as writeClipboard } from '@glimstone/core';
+import type { InjectionKey } from 'vue';
 import { winNav } from '@/core/nav';
 import { toast } from '@/core/toast';
 import { closeBtn, type FootButton, type WinEntry } from '@/core/windows';
@@ -11,21 +13,15 @@ export const num = (n: number) => n.toLocaleString(locale());
 // key names a pair of texts with one and many under it, such as ui.objects.
 export const plural = (n: number, key: string) => t(`${key}.${n === 1 ? 'one' : 'many'}`, { n: num(n) });
 
-// The clipboard API needs a secure context, which a server on the home network often lacks, so a hidden field
-// carries the text where it is missing.
 export async function copyText(text: string, done = t('ui.copied')) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    const area = Object.assign(document.createElement('textarea'), { value: text });
-    area.style.cssText = 'position:fixed;opacity:0';
-    document.body.append(area);
-    area.select();
-    document.execCommand('copy');
-    area.remove();
-  }
-  toast(done);
+  if (await writeClipboard(text)) toast(done);
 }
+export const copyWords = () => ({ copy: t('ui.copy'), copied: t('ui.copied') });
+export const eyeWords = () => ({ show: t('ui.show'), hide: t('ui.hide') });
+export const pickerWords = () => ({ apply: t('ui.take'), hue: t('ui.hue'), area: t('ui.shade'), hex: t('ui.colourValue') });
+
+// What the row around a control calls it, for the control's accessible name.
+export const rowLabel: InjectionKey<() => string> = Symbol('rowLabel');
 
 // The mouse's side buttons step through the folders a window has shown, and closing it takes those steps back out.
 export function folderSteps(w: unknown, get: () => string, set: (path: string) => void) {
@@ -59,5 +55,5 @@ export const setStart = (w: WinEntry, text: string) => { w.foot = w.foot.map((f)
 export function pressPrimary(e: KeyboardEvent) {
   if (!(e.target as HTMLElement).closest('input')) return;
   e.preventDefault();
-  (e.target as HTMLElement).closest('.win')?.querySelector<HTMLButtonElement>('.win-foot .btn.primary:not(:disabled)')?.click();
+  (e.target as HTMLElement).closest('.glim-window')?.querySelector<HTMLButtonElement>('.glim-modal-foot .glim-btn--accent:not(:disabled)')?.click();
 }

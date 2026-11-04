@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { MenuBar } from '@glimstone/vue';
+import { MenuBar, Selector } from '@glimstone/vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { run } from '@/core/actions';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { menu, resolveItems, toGlim } from '@/core/menu';
 import { allMenuItems, MENUS, menuItems, menuName, setMenuBarOpener } from '@/core/menus';
 import { prefs } from '@/core/prefs';
@@ -39,6 +39,10 @@ function account(e: MouseEvent) {
     '-', 'logout',
   ]);
 }
+const layouts = computed(() => [
+  { id: 'single', label: t('actions.single'), glyph: glyphComponent('IconViewSimple'), tip: t('head.singleTip') },
+  { id: 'dual', label: t('actions.dual'), glyph: glyphComponent('IconCompare'), tip: t('head.dualTip') },
+]);
 </script>
 
 <template>
@@ -51,10 +55,7 @@ function account(e: MouseEvent) {
     </template>
     <button v-else class="btn hback" data-go-view="files" :data-tip="t('head.backTip')" @click="go('files')"><G n="IconBack" />{{ t('head.back') }}</button>
     <span class="spacer"></span>
-    <div v-if="files" class="seg" role="group" :aria-label="t('head.layout')">
-      <button data-run="single" :aria-pressed="!prefs.dual" :data-tip="t('head.singleTip')" @click="run('single')"><G n="IconViewSimple" /><span class="wide-only">{{ t('actions.single') }}</span></button>
-      <button data-run="dual" :aria-pressed="prefs.dual" :data-tip="t('head.dualTip')" @click="run('dual')"><G n="IconCompare" /><span class="wide-only">{{ t('actions.dual') }}</span></button>
-    </div>
+    <Selector v-if="files" class="seg" size="md" activation="manual" inline :label="t('head.layout')" :items="layouts" :model-value="prefs.dual ? 'dual' : 'single'" @update:model-value="run($event as string)" />
     <button class="btn icon" data-run="palette" :data-tip="t('head.palette')" @click="run('palette')"><G n="IconSearch" /></button>
     <button class="btn" data-run="jobs" :data-tip="t('head.jobs')" @click="run('jobs')"><G n="IconQueued" /><span class="wide-only">{{ t('head.jobs') }}</span><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }">{{ shell.jobCount }}</span></button>
     <button class="btn icon" :class="{ on: settings }" :data-go-view="settings ? 'files' : 'settings'" :data-tip="settings ? t('head.settingsClose') : t('head.settings')" :aria-pressed="settings" @click="go(settings ? 'files' : 'settings')"><G n="IconGear" /></button>

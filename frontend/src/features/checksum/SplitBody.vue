@@ -5,7 +5,7 @@ import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
 import { join } from '@/files/paths';
 import { t } from '@/i18n';
-import BkPath from '@/ui/BkPath.vue';
+import PathField from '@/ui/PathField.vue';
 import Frow from '@/ui/Frow.vue';
 import Seg from '@/ui/Seg.vue';
 import Sw from '@/ui/Sw.vue';
@@ -29,14 +29,14 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="well"><div class="bk-filehead"><Tile :k="st.k" /><span class="bk-name">{{ st.k.name }}</span><span class="pill glim-num">{{ fmtSize(st.k.size) }}</span></div></div>
-  <div class="well bk-form"><div class="eyebrow">{{ t('checksum.parts') }}</div>
+  <div class="well glim-well"><div class="bk-filehead"><Tile :k="st.k" /><span class="bk-name">{{ st.k.name }}</span><span class="pill glim-num">{{ fmtSize(st.k.size) }}</span></div></div>
+  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('checksum.parts') }}</div>
     <Frow :label="t('checksum.partSize')" :tip="t('checksum.partSizeTip')"><Seg id="t-size" v-model="st.size" :options="sizes" /></Frow>
-    <Frow :label="t('checksum.ownSize')"><span class="bk-range"><input id="t-custom" v-model="st.custom" class="field s glim-num" inputmode="numeric" :disabled="st.size !== 'custom'"><span class="muted">MB</span></span></Frow>
+    <Frow :label="t('checksum.ownSize')"><span class="bk-range"><input id="t-custom" v-model="st.custom" class="glim-input s glim-num" inputmode="numeric" :disabled="st.size !== 'custom'"><span class="muted">MB</span></span></Frow>
     <Frow :label="t('checksum.addSum')" :tip="t('checksum.addSumTip')"><Sw id="t-sum" v-model="st.sum" /></Frow>
   </div>
-  <div class="well bk-form"><div class="eyebrow">{{ t('checksum.target') }}</div>
-    <Frow :label="t('checksum.folder')"><BkPath id="t-dest" v-model="st.dest" /></Frow>
+  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('checksum.target') }}</div>
+    <Frow :label="t('checksum.folder')"><PathField id="t-dest" v-model="st.dest" /></Frow>
     <Frow :label="t('checksum.yields')">
       <span id="t-final" class="bk-finalw">
         <span v-if="ok === false" class="pill fault">{{ t('ui.noFolder') }}</span>

@@ -13,7 +13,7 @@ import type { WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
 import { useSearch } from '@/stores/search';
-import BkPath from '@/ui/BkPath.vue';
+import PathField from '@/ui/PathField.vue';
 import Dropdown from '@/ui/Dropdown.vue';
 import Frow from '@/ui/Frow.vue';
 import { num, plural, setFoot } from '@/ui/kit';
@@ -147,7 +147,7 @@ function key(e: KeyboardEvent) {
   if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
   if (e.key === 'Enter' && (e.target as Element).closest('input')) {
     e.preventDefault();
-    props.win.el?.querySelector<HTMLElement>('.win-foot .btn.primary')?.click();
+    props.win.el?.querySelector<HTMLElement>('.glim-modal-foot .glim-btn--accent')?.click();
   }
 }
 
@@ -160,18 +160,18 @@ onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(ti
 </script>
 
 <template>
-  <div class="well bk-form" @keydown="key">
+  <div class="well glim-well bk-form" @keydown="key">
     <div class="bk-grid2">
-      <Frow :label="t('search.name')" :tip="t('search.nameTip')"><input id="s-name" ref="nameField" v-model="q.name" class="field grow" :placeholder="t('search.namePlaceholder')" autocomplete="off" spellcheck="false"></Frow>
-      <Frow :label="t('search.text')" :tip="t('search.textTip')"><input id="s-text" v-model="q.text" class="field grow" :placeholder="t('search.textPlaceholder')" autocomplete="off"></Frow>
-      <Frow :label="t('search.in')"><BkPath id="s-in" v-model="q.in" /></Frow>
+      <Frow :label="t('search.name')" :tip="t('search.nameTip')"><input id="s-name" ref="nameField" v-model="q.name" class="glim-input grow" :placeholder="t('search.namePlaceholder')" autocomplete="off" spellcheck="false"></Frow>
+      <Frow :label="t('search.text')" :tip="t('search.textTip')"><input id="s-text" v-model="q.text" class="glim-input grow" :placeholder="t('search.textPlaceholder')" autocomplete="off"></Frow>
+      <Frow :label="t('search.in')"><PathField id="s-in" v-model="q.in" /></Frow>
       <Frow :label="t('search.hidden')" :tip="t('search.hiddenTip')"><Sw id="s-hidden" v-model="q.hidden" /></Frow>
-      <Frow :label="t('search.size')" :tip="t('search.sizeTip')"><span class="bk-range"><input id="s-min" v-model="q.min" class="field bk-num glim-num" :placeholder="t('search.from')" autocomplete="off"><span class="muted">{{ t('search.to') }}</span><input id="s-max" v-model="q.max" class="field bk-num glim-num" :placeholder="t('search.any')" autocomplete="off"></span></Frow>
+      <Frow :label="t('search.size')" :tip="t('search.sizeTip')"><span class="bk-range"><input id="s-min" v-model="q.min" class="glim-input bk-num glim-num" :placeholder="t('search.from')" autocomplete="off"><span class="muted">{{ t('search.to') }}</span><input id="s-max" v-model="q.max" class="glim-input bk-num glim-num" :placeholder="t('search.any')" autocomplete="off"></span></Frow>
       <Frow :label="t('search.when')"><Dropdown id="s-when" v-model="q.when" :options="WHEN" size="grow" /></Frow>
     </div>
     <Frow :label="t('search.type')"><Seg id="s-type" v-model="q.type" :options="TYPES" /></Frow>
   </div>
-  <div class="well bk-fill bk-hits" :hidden="empty" @keydown="key">
+  <div class="well glim-well bk-fill bk-hits" :hidden="empty" @keydown="key">
     <div class="bk-tools"><span id="s-count" class="eyebrow">{{ count }}</span><button id="s-save" class="btn" :data-tip="t('search.saveTip')" @click="saveSearch({ ...q })"><G n="IconSave" />{{ t('search.save') }}</button></div>
     <div class="bk-hhead"><span></span><span>{{ t('search.colName') }}</span><span>{{ t('search.colFolder') }}</span><span class="r">{{ t('search.colSize') }}</span><span class="r">{{ t('search.colChanged') }}</span></div>
     <div id="s-list" ref="list" class="bk-list" role="listbox" :aria-label="t('search.hitsLabel')">

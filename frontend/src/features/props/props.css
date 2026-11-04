@@ -5,8 +5,8 @@
 .bk-pathv { display: flex; align-items: center; gap: .2rem; max-width: 70%; }
 .bk-pathv .bk-path { font-size: 12.5px; }
 .bk-idf { display: flex; gap: .4rem; align-items: center; margin-left: auto; flex: 1; justify-content: flex-end; min-width: 0; }
-.bk-idf .field { flex: 1; min-width: 0; max-width: 12rem; }
-.bk-idf .field.s { flex: none; }
+.bk-idf .glim-input { flex: 1; min-width: 0; max-width: 12rem; }
+.bk-idf .glim-input.s { flex: none; }
 .bk-idf .pill { min-width: 4.4rem; justify-content: center; }
 .bk-perms { display: grid; grid-template-columns: 8.5rem repeat(3, minmax(0, 7rem)); align-items: center; row-gap: .35rem; }
 .bk-ph { font-size: 12px; color: var(--carbon-text-muted); text-align: center; }

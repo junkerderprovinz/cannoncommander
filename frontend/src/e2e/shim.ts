@@ -7,6 +7,7 @@ import {
   winStack,
 } from '@/core';
 import { DAY } from '@/core/format';
+import { installHooks } from './hooks';
 import { provideOps } from './ops';
 import { devOf, provideUnraid } from './unraid';
 import { provideTools } from './tools';
@@ -128,6 +129,7 @@ function aliasMenuParts() {
 }
 
 export async function installShim() {
+  installHooks();
   aliasMenuParts();
   const listing = useListing(), panels = usePanels(), user = useUser(), clipboard = useClipboard(), labels = useLabels();
   provideOps(provide);

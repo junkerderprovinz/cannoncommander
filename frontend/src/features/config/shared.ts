@@ -5,7 +5,7 @@ import { type Prefs, prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type FootButton, win, type WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
-import ConfirmBody from './ConfirmBody.vue';
+import ConfirmBody from '@/ui/ConfirmBody.vue';
 
 export const c = (key: string, params?: Record<string, string | number>) => t('config.' + key, params);
 
@@ -55,17 +55,12 @@ export function soon(at: number) {
   return c('soon.hours', { n: Math.round(d / h) });
 }
 
-export function copy(text: string, what = c('copied')) {
-  try { navigator.clipboard?.writeText(text).catch(() => {}); } catch { /* without a secure context the toast still confirms the try */ }
-  toast(what);
-}
-
 export function confirmWin({ title, text, verb, glyph = 'IconCheck', run }: { title: string; text: string[]; verb: string; glyph?: string; run: () => unknown }) {
   win({ title, body: ConfirmBody, props: { text }, foot: [cancelBtn(), { label: verb, g: glyph, primary: true, run: () => { run(); } }] });
 }
 
 // The foot of a window that walks through steps, set without the automatic way out, as each step names its own.
-export const setFoot = (w: WinEntry, foot: FootButton[]) => { w.foot = foot; };
+export const stepFoot = (w: WinEntry, foot: FootButton[]) => { w.foot = foot; };
 
 // The app's keyboard service listens on the document in the capture phase. This listens on the window, so it runs first.
 export function keysFirst(fn: (e: KeyboardEvent) => void) {

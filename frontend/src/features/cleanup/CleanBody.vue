@@ -1,13 +1,14 @@
 <script setup lang="ts">
 // The finds of Aufräumen by group, each one ticked on its own or the whole group at once.
+import { InfoBubble } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { CleanupFind, CleanupScan } from '@/api/tools';
 import { fmtSize } from '@/core/format';
+import { Checkbox } from '@glimstone/vue';
 import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
-import BkPath from '@/ui/BkPath.vue';
+import PathField from '@/ui/PathField.vue';
 import Frow from '@/ui/Frow.vue';
-import Info from '@/ui/Info.vue';
 import { plural } from '@/ui/kit';
 import { GROUPS, keyOf } from './groups';
 
@@ -36,20 +37,20 @@ const all = (group: string, rows: CleanupFind[]) => rows.every((f) => props.st.p
 </script>
 
 <template>
-  <div class="well bk-form"><Frow :label="t('cleanup.searchIn')" :tip="t('cleanup.searchInTip')"><BkPath id="cl-in" v-model="st.path" /></Frow></div>
-  <div class="well bk-fill bk-cleanwell">
-    <div class="bk-tools"><span id="cl-sum" class="eyebrow">{{ st.scan && total ? t('cleanup.findsIn', { finds: plural(total, 'cleanup.findWord'), objects: plural(st.scan.scanned, 'cleanup.objectsIn') }) : t('cleanup.finds') }}</span><Info v-if="st.scan?.capped" :tip="t('cleanup.capped')" /></div>
+  <div class="well glim-well bk-form"><Frow :label="t('cleanup.searchIn')" :tip="t('cleanup.searchInTip')"><PathField id="cl-in" v-model="st.path" /></Frow></div>
+  <div class="well glim-well bk-fill bk-cleanwell">
+    <div class="bk-tools"><span id="cl-sum" class="eyebrow">{{ st.scan && total ? t('cleanup.findsIn', { finds: plural(total, 'cleanup.findWord'), objects: plural(st.scan.scanned, 'cleanup.objectsIn') }) : t('cleanup.finds') }}</span><InfoBubble v-if="st.scan?.capped" :tip="t('cleanup.capped')" /></div>
     <div id="cl-list" class="bk-list">
       <div v-if="st.missing" class="empty"><G n="IconFolder" /><div>{{ t('ui.noFolder') }}</div></div>
       <template v-else-if="st.scan">
         <section v-for="gr in groups" :key="gr.id" class="bk-group">
           <div class="cl-head">
-            <button class="col-check cl-check" type="button" role="checkbox" :aria-checked="all(gr.id, gr.rows)" :data-cl-group="gr.id" :aria-label="t('cleanup.pickAll', { group: t(`cleanup.groups.${gr.id}.label`) })" @click="flipGroup(gr.id, gr.rows)"><span class="cbox" :class="{ on: all(gr.id, gr.rows) }"><G n="IconCheck" /></span></button>
-            <span class="cl-g"><G :n="gr.g" /></span><span class="bk-name">{{ t(`cleanup.groups.${gr.id}.label`) }}</span><Info :tip="t(`cleanup.groups.${gr.id}.tip`)" />
+            <Checkbox slim class="cl-check" :model-value="all(gr.id, gr.rows)" :data-cl-group="gr.id" :label="t('cleanup.pickAll', { group: t(`cleanup.groups.${gr.id}.label`) })" @update:model-value="flipGroup(gr.id, gr.rows)" />
+            <span class="cl-g"><G :n="gr.g" /></span><span class="bk-name">{{ t(`cleanup.groups.${gr.id}.label`) }}</span><InfoBubble :tip="t(`cleanup.groups.${gr.id}.tip`)" />
             <span class="pill glim-num">{{ gr.rows.length }}</span><span class="pill">{{ gr.act === 'delete' ? t('cleanup.trash') : t('cleanup.rename') }}</span>
           </div>
           <div v-for="f in gr.rows" :key="f.path" class="cl-row" :class="{ on: st.picked.has(keyOf(gr.id, f)) }">
-            <button class="col-check cl-check" type="button" role="checkbox" :aria-checked="st.picked.has(keyOf(gr.id, f))" :data-cl="keyOf(gr.id, f)" :aria-label="f.path" @click="flip(keyOf(gr.id, f))"><span class="cbox" :class="{ on: st.picked.has(keyOf(gr.id, f)) }"><G n="IconCheck" /></span></button>
+            <Checkbox slim class="cl-check" :model-value="st.picked.has(keyOf(gr.id, f))" :data-cl="keyOf(gr.id, f)" :label="f.path" @update:model-value="flip(keyOf(gr.id, f))" />
             <span class="bk-path mono" :title="f.path"><bdi>{{ shown(f) }}</bdi></span>
             <span v-if="f.to" class="cl-to mono"><G n="IconForward" />{{ f.to.split('/').pop() }}</span><span class="pill">{{ noteOf(gr.id, f) }}</span>
           </div>

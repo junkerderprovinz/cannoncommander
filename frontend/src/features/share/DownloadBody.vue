@@ -16,15 +16,15 @@ watch(() => props.st.format, (f) => { props.st.name = `${props.st.base}.${f === 
 </script>
 
 <template>
-  <div class="well"><div class="eyebrow">{{ plural(st.items.length, 'ui.objects') }}, {{ fmtSize(total) }}</div>
+  <div class="well glim-well"><div class="eyebrow">{{ plural(st.items.length, 'ui.objects') }}, {{ fmtSize(total) }}</div>
     <table class="tbl">
       <tr v-for="k in st.items.slice(0, 6)" :key="k.name"><td>{{ k.name }}</td><td class="glim-num r">{{ fmtSize(k.size) || '0 B' }}</td></tr>
       <tr v-if="st.items.length > 6"><td colspan="2">{{ t('share.more', { n: st.items.length - 6 }) }}</td></tr>
     </table>
   </div>
-  <div class="well"><div class="eyebrow">{{ t('share.archive') }}</div>
+  <div class="well glim-well"><div class="eyebrow">{{ t('share.archive') }}</div>
     <Frow :label="t('share.format')" :tip="t('share.formatTip')"><Seg id="dl-fmt" v-model="st.format" :options="formats" /></Frow>
-    <Frow :label="t('share.fileName')"><input id="dl-name" v-model="st.name" class="field m"></Frow>
+    <Frow :label="t('share.fileName')"><input id="dl-name" v-model="st.name" class="glim-input m"></Frow>
     <Frow :label="t('share.savesIn')" :tip="t('share.savesInTip')"><span class="pill">{{ t('share.browserFolder') }}</span></Frow>
   </div>
 </template>

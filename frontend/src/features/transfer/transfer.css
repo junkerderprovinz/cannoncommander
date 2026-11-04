@@ -12,7 +12,6 @@
 .cf-side .pill.state { background: var(--carbon-hover-raised); font-weight: 600; }
 .cf-lab { width: 5.2rem; font-size: 12px; color: var(--carbon-text-muted); }
 .cf-row .seg { grid-area: seg; background: var(--carbon-surface3); }
-.cf-row .seg button:hover { background: var(--carbon-hover-raised); }
 @media (max-width: 900px) {
   .cf-row { grid-template-columns: 1fr; grid-template-areas: "name" "sides" "seg"; }
   .cf-row .seg { justify-self: start; margin-left: 2.35rem; max-width: calc(100% - 2.35rem); overflow-x: auto; }
@@ -34,5 +33,4 @@
 .u-space p { margin: .3rem 0 0; font-size: 13px; line-height: 1.45; }
 .u-space .btn { margin-top: .6rem; }
 .bk-form .frow > .lab { flex: 0 0 auto; min-width: 8.5rem; white-space: nowrap; }
-.bk-form .frow .field.grow { flex: 1; }
-.bk-form .frow > .seg, .bk-form .frow > .sw, .bk-form .frow > .a-pw { margin-left: auto; }
+.bk-form .frow .glim-input.grow { flex: 1; }

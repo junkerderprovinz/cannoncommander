@@ -1,17 +1,16 @@
 <script setup lang="ts">
+import { Button, Card } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type AppSettings, type Remote } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
-import ARow from '../kit/ARow.vue';
-import BareBtn from '../kit/BareBtn.vue';
-import Btn from '../kit/Btn.vue';
-import Card from '../kit/Card.vue';
-import Frow from '../kit/Frow.vue';
-import { attempt, c, confirmWin } from '../kit/kit';
-import Seg from '../kit/Seg.vue';
-import Sw from '../kit/Sw.vue';
+import ARow from '@/ui/ARow.vue';
+import BareBtn from '@/ui/BareBtn.vue';
+import Frow from '@/ui/Frow.vue';
+import { attempt, c, confirmWin } from '@/features/config/shared';
+import Seg from '@/ui/Seg.vue';
+import Sw from '@/ui/Sw.vue';
 import { typeOf } from '../remotes';
 import RemoteWin from '../wins/RemoteWin.vue';
 
@@ -69,7 +68,7 @@ function remove(r: Remote) {
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconCloud" /><div>{{ c('remotes.none') }}</div></div>
-    <div class="a-foot"><Btn data-add :label="c('remotes.add')" g="IconAdd" @click="edit(null)" /></div>
+    <div class="a-foot"><Button data-add :label="c('remotes.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('remotes.mounting')">
     <Frow :label="c('remotes.automount')" :tip="c('remotes.automountTip')"><Sw v-model="automount" /></Frow>

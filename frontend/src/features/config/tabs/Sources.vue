@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button, Card } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { admin, type IndexState, type Source } from '@/api/admin';
 import { run } from '@/core/actions';
@@ -8,12 +9,10 @@ import { toast } from '@/core/toast';
 import { go } from '@/core/views';
 import { win } from '@/core/windows';
 import { locale } from '@/i18n';
-import ARow from '../kit/ARow.vue';
-import BareBtn from '../kit/BareBtn.vue';
-import Btn from '../kit/Btn.vue';
-import Card from '../kit/Card.vue';
-import Frow from '../kit/Frow.vue';
-import { ago, attempt, c, confirmWin, fail, soon } from '../kit/kit';
+import ARow from '@/ui/ARow.vue';
+import BareBtn from '@/ui/BareBtn.vue';
+import Frow from '@/ui/Frow.vue';
+import { ago, attempt, c, confirmWin, fail, soon } from '@/features/config/shared';
 import SourceWin from '../wins/SourceWin.vue';
 
 const sources = ref<Source[]>([]);
@@ -100,12 +99,12 @@ function remove(s: Source) {
     </div>
     <div v-else class="empty"><G n="IconDatabase" /><div>{{ c('sources.none') }}</div></div>
     <Frow v-if="restartNeeded" :label="c('sources.restart')" :tip="c('sources.restartTip')">
-      <span class="a-ctl"><span class="pill warn">{{ c('sources.restartPill') }}</span><Btn :label="c('sources.toRestart')" g="IconRefresh" @click="go('settings', 'app')" /></span>
+      <span class="a-ctl"><span class="pill warn">{{ c('sources.restartPill') }}</span><Button :label="c('sources.toRestart')" label-key="IconRefresh" @click="go('settings', 'app')" /></span>
     </Frow>
-    <div class="a-foot"><Btn data-add :label="c('sources.add')" g="IconAdd" @click="edit(null)" /></div>
+    <div class="a-foot"><Button data-add :label="c('sources.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('sources.index')">
     <Frow :label="c('sources.every')" :tip="c('sources.everyTip')"><span class="pill">{{ Number.isFinite(next) ? c('sources.nextRun', { when: soon(next) }) : c('sources.notPlanned') }}</span></Frow>
-    <Frow :label="c('sources.last')"><span class="a-ctl"><span class="pill">{{ last ? ago(last) : c('sources.never') }}</span><Btn data-reindexall :label="c('sources.reindexAll')" g="IconRefresh" @click="reindex()" /></span></Frow>
+    <Frow :label="c('sources.last')"><span class="a-ctl"><span class="pill">{{ last ? ago(last) : c('sources.never') }}</span><Button data-reindexall :label="c('sources.reindexAll')" label-key="IconRefresh" @click="reindex()" /></span></Frow>
   </Card>
 </template>

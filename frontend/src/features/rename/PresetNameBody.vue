@@ -10,5 +10,5 @@ onMounted(() => setTimeout(() => input.value?.select(), 20));
 </script>
 
 <template>
-  <div class="well"><Frow :label="t('rename.name')" :tip="t('rename.saveTip')"><input id="m-pname" ref="input" v-model="ps.name" class="field w" autocomplete="off" @keydown.enter="pressPrimary"></Frow></div>
+  <div class="well glim-well"><Frow :label="t('rename.name')" :tip="t('rename.saveTip')"><input id="m-pname" ref="input" v-model="ps.name" class="glim-input w" autocomplete="off" @keydown.enter="pressPrimary"></Frow></div>
 </template>

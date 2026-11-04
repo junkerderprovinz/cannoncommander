@@ -11,10 +11,10 @@ onMounted(() => setTimeout(() => {
   input.value?.setSelectionRange(0, dot > 0 ? dot : props.value.length);
 }, 0));
 const enter = (e: KeyboardEvent) => {
-  if (e.key === 'Enter') (input.value?.closest('.win')?.querySelector('.win-foot .btn.primary') as HTMLElement | null)?.click();
+  if (e.key === 'Enter') (input.value?.closest('.win')?.querySelector('.glim-modal-foot .glim-btn--accent') as HTMLElement | null)?.click();
 };
 </script>
 
 <template>
-  <div class="well"><div class="frow"><span class="lab">{{ t('editor.name') }}</span><input id="nm" ref="input" class="field w" :value="value" @keydown="enter"></div></div>
+  <div class="well glim-well"><div class="frow"><span class="lab">{{ t('editor.name') }}</span><input id="nm" ref="input" class="glim-input w" :value="value" @keydown="enter"></div></div>
 </template>

@@ -51,7 +51,7 @@ const row = (r: Line) => r as Row;
 <template>
   <div v-if="pal.open" class="pal-scrim glim-modal-backdrop" @mousedown="onDown">
     <div class="pal glim-card" role="dialog" :aria-label="t('palette.title')">
-      <label class="field pal-q"><G n="IconSearch" /><input id="pal-q" ref="input" v-model="q" role="combobox" aria-expanded="true" aria-controls="pal-list"
+      <label class="glim-input pal-q"><G n="IconSearch" /><input id="pal-q" ref="input" v-model="q" role="combobox" aria-expanded="true" aria-controls="pal-list"
         aria-autocomplete="list" :aria-activedescendant="cur >= 0 ? `pal-${cur}` : ''" :placeholder="t('palette.placeholder')" autocomplete="off" spellcheck="false" @keydown="onKey"></label>
       <div id="pal-list" ref="list" class="pal-list" role="listbox" :aria-label="t('palette.list')">
         <template v-if="rows.length">

@@ -16,8 +16,8 @@ const at = mine();
 </script>
 
 <template>
-  <div class="well"><div class="in-head"><span class="in-icon"><img :src="icon" alt=""></span><div><b>{{ t('install.head') }}</b><div class="muted">{{ t('install.intro') }}</div></div></div></div>
-  <div class="well"><div class="eyebrow">{{ t('install.how') }}</div>
+  <div class="well glim-well"><div class="in-head"><span class="in-icon"><img :src="icon" alt=""></span><div><b>{{ t('install.head') }}</b><div class="muted">{{ t('install.intro') }}</div></div></div></div>
+  <div class="well glim-well"><div class="eyebrow">{{ t('install.how') }}</div>
     <div v-for="[id, g] in WAYS" :key="id" class="in-way" :class="{ cur: id === at }"><G :n="g" /><div><b>{{ t(`install.ways.${id}.head`) }}</b><span v-if="id === at" class="pill">{{ t('install.yours') }}</span><div class="muted">{{ t(`install.ways.${id}.how`) }}</div></div></div>
   </div>
 </template>

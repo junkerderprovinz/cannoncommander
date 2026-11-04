@@ -20,8 +20,8 @@ const flip = (id: string) => (props.on.has(id) ? props.on.delete(id) : props.on.
 </script>
 
 <template>
-  <input id="col-q" v-model="q" class="field grow" type="search" :placeholder="t('files.columnsSearch')" autocomplete="off">
-  <div class="well">
+  <input id="col-q" v-model="q" class="glim-input grow" type="search" :placeholder="t('files.columnsSearch')" autocomplete="off">
+  <div class="well glim-well">
     <div class="col-cols">
       <section v-for="gr in groups" :key="gr.id" class="col-group" data-colgroup>
         <div class="eyebrow">{{ gr.name }}</div>

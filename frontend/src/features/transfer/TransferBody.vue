@@ -48,7 +48,7 @@ watch(linkable, (ok) => { if (!ok) props.st.way = props.st.kind; });
   </div>
   <ItemChips :items="st.items" />
   <SpacePanel v-if="st.pf?.unraid?.space" :space="st.pf.unraid.space" :dest="clean(st.dest)" @dest="(p) => ensureDir(p).then(() => { st.dest = p; })" />
-  <div class="well">
+  <div class="well glim-well">
     <Frow :label="t('transfer.to')"><PathField id="dest" v-model="st.dest" /></Frow>
     <Frow v-if="linkable" :label="t('transfer.way')" :tip="t('transfer.linkTip')"><Seg id="how" v-model="st.way" :options="ways" /></Frow>
     <Frow :label="t('transfer.clash')" :tip="t('transfer.clashTip')"><Dropdown id="clash" v-model="st.rule" :options="RULES()" /></Frow>
