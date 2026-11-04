@@ -215,10 +215,8 @@ func (h handlers) finder(ctx context.Context, u *users.User, p Params) *finder {
 			if err != nil || loc.Source == nil {
 				return 0
 			}
-			if got, ok := h.deps.Index.Folders(loc.Source, []string{loc.Index})[loc.Index]; ok && got.Size > 0 {
-				return got.Size
-			}
-			return 0
+			size, _ := h.deps.Index.FolderSize(loc.Source, loc.Index)
+			return size
 		}
 	}
 	return f
