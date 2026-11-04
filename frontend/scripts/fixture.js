@@ -98,6 +98,7 @@ export function createFixture() {
   return {
     FS,
     DATA,
+    hashOf,
     list(path) {
       const n = dirAt(path);
       return n && { path, items: FS.kids(n).map(item), volume: volume(path) };

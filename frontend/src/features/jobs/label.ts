@@ -12,8 +12,13 @@ export const diskName = (dev?: string) => (dev ? useListing().placeLabel('/mnt/'
 
 export const objects = (n: number) => (n === 1 ? t('jobs.one') : t('jobs.many', { n }));
 
-export function jobLabel(j: Pick<Job, 'kind' | 'name' | 'count' | 'dest'>) {
+type Labelled = Pick<Job, 'kind' | 'name' | 'count' | 'dest'>;
+// Features name the kinds of job they start themselves; what is the one name or the count the default label shows.
+export const kindLabels: Record<string, (j: Labelled, what: string) => string> = {};
+
+export function jobLabel(j: Labelled) {
   const what = j.count === 1 ? j.name : j.kind === 'upload' ? t('jobs.files', { n: j.count }) : objects(j.count);
+  if (kindLabels[j.kind]) return kindLabels[j.kind]!(j, what);
   const dev = j.dest?.replace(/^\/mnt\//, '');
   const to = j.kind === 'gather' || j.kind === 'scatter' ? diskName(dev) : placeName(j.dest);
   const kind = ['copy', 'move', 'delete', 'trash', 'restore', 'emptyTrash', 'undo', 'upload', 'gather', 'scatter', 'fixPerms'].includes(j.kind) ? j.kind : 'other';

@@ -1,0 +1,17 @@
+{
+  "title": "Load from an address",
+  "address": "Address",
+  "addressTip": "The server downloads the file itself. Your device does not have to stay online for it.",
+  "fileName": "File name",
+  "fileNameTip": "Comes from the address, you can change it. When the folder has the name already, the new file gets a number.",
+  "target": "Target",
+  "targetTip": "The folder open in the active panel.",
+  "load": "Load",
+  "badUrl": "That is no valid address. It starts with https:// or http://",
+  "badName": "The file name is missing or holds a slash",
+  "noDir": "This target folder does not exist",
+  "loading": "{name} is being loaded",
+  "arrived": "{name} has arrived",
+  "go": "Go there",
+  "job": "Load: {what}"
+}

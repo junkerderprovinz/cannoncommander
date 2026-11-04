@@ -3,6 +3,7 @@
 // server does, so copying, conflicts, pausing and the queue can be tried without a server.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { toolsFixture } from './fixture-tools.js';
 import { sharedFixture } from './fixture.js';
 
 const KB = 1024, MB = KB * 1024, GB = MB * 1024;
@@ -24,7 +25,9 @@ const RULES = { filme: { alloc: 'fill', min: 30 * GB }, backups: { alloc: 'most'
 const ALLOCATOR = { fill: 'fillup', most: 'mostfree', high: 'highwater' };
 const ruleOf = (share) => RULES[share] || { alloc: 'high', min: 10 * GB };
 
-export function opsFixture(fx = sharedFixture()) {
+// A plugin adds routes and job kinds of its own: it gets the tree and the engine's helpers, and each kind turns the
+// params of POST /jobs into what the job works on and what it does to the tree once it is through.
+export function opsFixture(fx = sharedFixture(), plugins = []) {
   const { FS, DATA } = fx;
   const unraid = JSON.parse(readFileSync(exported, 'utf8')).unraid;
   let seq = 0, eventId = 0, rolled = 7;
@@ -259,7 +262,7 @@ export function opsFixture(fx = sharedFixture()) {
   const renumber = () => open().forEach((j, k) => { j.position = k; });
 
   function createJob(kind, params, extra = {}) {
-    const paths = kind === 'copy' || kind === 'move' ? params.sources : kind === 'delete' || kind === 'trash' ? params.paths : kind === 'gather' || kind === 'scatter' ? [params.path] : extra.paths || [];
+    const paths = extra.paths ? extra.paths : kind === 'copy' || kind === 'move' ? params.sources : kind === 'delete' || kind === 'trash' ? params.paths : kind === 'gather' || kind === 'scatter' ? [params.path] : extra.paths || [];
     const nodes = (paths || []).map((p) => FS.nodeAt(p)).filter(Boolean);
     const total = extra.total ?? nodes.reduce((a, n) => a + FS.totalSize(n), 0);
     const j = {
@@ -267,7 +270,7 @@ export function opsFixture(fx = sharedFixture()) {
       dest: extra.dest ?? params.dest, totalBytes: Math.round(kind === 'trash' || kind === 'delete' || kind === 'restore' || kind === 'emptyTrash' || kind === 'undo' ? 0 : total),
       doneBytes: 0, totalFiles: extra.files ?? nodes.reduce((a, n) => a + countOf(n), 0), doneFiles: 0, rate: 0, left: null, cap: extra.cap || 0,
       waitForParity: !!extra.waitForParity, failedItems: 0, createdAt: iso(Date.now()),
-      _params: params, _apply: extra.apply, _big: total >= BIG, _decisions: { ...(params.decisions || {}) }, _rule: params.rule || 'ask',
+      _params: params, _apply: extra.apply, _names: extra.names, _big: total >= BIG, _decisions: { ...(params.decisions || {}) }, _rule: params.rule || 'ask',
     };
     if (kind === 'copy' || kind === 'move') j._ask = (params.sources || []).filter((p) => { const n = FS.nodeAt(p), d = dirAt(params.dest); return n && d && taken(d, n.name); }).map((p) => base(p));
     jobs.push(j);
@@ -315,7 +318,7 @@ export function opsFixture(fx = sharedFixture()) {
       j.doneBytes = Math.min(j.totalBytes, j.doneBytes + (j.rate * TICK / 1000) * LAPSE);
       j.left = (j.totalBytes - j.doneBytes) / j.rate;
       j.doneFiles = Math.min(j.totalFiles, Math.floor((j.doneBytes / j.totalBytes) * j.totalFiles));
-      const names = (j._params.sources || []).map(base);
+      const names = j._names || (j._params.sources || []).map(base);
       j.current = names[Math.min(names.length - 1, Math.floor((j.doneBytes / j.totalBytes) * names.length))];
     } else j.doneFiles = Math.min(j.totalFiles, j.doneFiles + Math.max(1, Math.ceil(j.totalFiles / 3)));
     const finished = j.totalBytes ? j.doneBytes >= j.totalBytes : j.doneFiles >= j.totalFiles;
@@ -335,7 +338,7 @@ export function opsFixture(fx = sharedFixture()) {
   // What a finished job does to the tree; it hands back the id of its undo step where it has one.
   function run(j) {
     const p = j._params;
-    if (j._apply) return j._apply();
+    if (j._apply) return j._apply(j);
     if (j.kind === 'copy' || j.kind === 'move') return transfer(j, p);
     if (j.kind === 'delete' || j.kind === 'trash') {
       const gone = p.paths.map((path) => [detach(path), path]).filter(([n]) => n);
@@ -425,6 +428,11 @@ export function opsFixture(fx = sharedFixture()) {
     }],
     ['GET', /^\/jobs$/, () => [200, { jobs: [...open(), ...jobs.filter((j) => !OPEN.includes(j.state)).reverse()].map(view) }]],
     ['POST', /^\/jobs$/, (_r, _s, b) => {
+      if (kinds[b.kind]) {
+        const extra = kinds[b.kind](b.params || {});
+        if (Array.isArray(extra)) return extra;
+        return [202, view(createJob(b.kind, b.params || {}, { cap: b.cap, ...extra }))];
+      }
       if (['gather', 'scatter'].includes(b.kind) && !gatherPlan({ ...b.params, mode: b.kind })) return [400, 'pick a folder in a user share'];
       return [202, view(createJob(b.kind, b.params || {}, { cap: b.cap, waitForParity: b.waitForParity, ...(b.kind === 'gather' || b.kind === 'scatter' ? { dest: '/mnt/' + b.params.disk, total: gatherPlan({ ...b.params, mode: b.kind }).out.move } : {}) }))];
     }],
@@ -510,15 +518,6 @@ export function opsFixture(fx = sharedFixture()) {
       const undo = pushStep({ kind: 'rename', name: was, to: name, path: FS.parent(path) }, () => { n.name = was; changed(FS.parent(path)); });
       return [200, { path: FS.join(FS.parent(path), name), undo }];
     }],
-    ['POST', /^\/fs\/link$/, (_r, _s, { target, path }) => {
-      const n = FS.nodeAt(target || ''), dir = dirAt(FS.parent(path || ''));
-      if (!n || !dir) return [404, 'Not found'];
-      const twin = clone(n);
-      twin.name = freeName(dir, base(path));
-      dir.children.push(twin);
-      changed(FS.parent(path));
-      return [201, { path: FS.join(FS.parent(path), twin.name), created: true }];
-    }],
 
     ['GET', /^\/trash$/, () => [200, { items: trash.map(({ node, ...e }) => e), count: trash.length, bytes: trash.reduce((a, e) => a + e.size, 0), days: 30 }]],
     ['POST', /^\/trash\/restore$/, (_r, _s, { ids = [] }) => {
@@ -547,7 +546,7 @@ export function opsFixture(fx = sharedFixture()) {
       if (!step) return [404, 'Nothing to take back'];
       steps.splice(steps.indexOf(step), 1);
       send('undo.changed', { count: steps.length });
-      if (['rename', 'mkdir', 'touch'].includes(step.kind)) { step.revert(); return [200, { step: stepOut(step) }]; }
+      if (['rename', 'renameBatch', 'mkdir', 'touch', 'link'].includes(step.kind)) { step.revert(); return [200, { step: stepOut(step) }]; }
       const job = createJob('undo', {}, { name: step.name, count: step.count, files: step.count, dest: step.path, apply: () => { step.revert(); } });
       return [202, { step: stepOut(step), job: view(job) }];
     }],
@@ -585,10 +584,31 @@ export function opsFixture(fx = sharedFixture()) {
     }],
     ['DELETE', /^\/uploads\/([^/]+)$/, (_r, _s, _b, [, id]) => (uploads.delete(id) ? [204] : [404, 'Not found'])],
 
+    ['GET', /^\/unraid\/where$/, (_r, _s, _b, _m, q) => {
+      const path = q.get('path') || '', n = FS.nodeAt(path), w = where(path);
+      if (!n) return [404, 'Not found'];
+      const files = filesOf(n, path), on = {};
+      files.forEach(([k]) => { if (k.dev) (on[k.dev] ||= { files: 0, size: 0 }).files++, (on[k.dev].size += k.size || 0); });
+      // Looked up on every call, so a hard link made since counts as well.
+      const others = !n.dir && n.ino ? filesOf(dirAt('/mnt/user'), '/mnt/user').filter(([k, p]) => k.ino === n.ino && k.dev === n.dev && p !== path).map(([, p]) => p) : [];
+      return [200, {
+        path, volume: w?.vol || '', share: w?.share || '', dir: !!n.dir, files: files.length, size: Math.round(files.reduce((a, [k]) => a + (k.size || 0), 0)),
+        on: Object.entries(on).map(([device, x]) => ({ device, files: x.files, size: Math.round(x.size), asleep: unraid.spin[device] === false })),
+        ...(n.dir ? {} : { links: { count: others.length + 1, paths: others, complete: true } }),
+      }];
+    }],
     ['POST', /^\/unraid\/gather\/plan$/, (_r, _s, b) => { const plan = gatherPlan(b); return plan ? [200, plan.out] : [400, 'pick a folder in a user share']; }],
     // Only the fixture has this: it plays a parity check, so the waiting jobs and the question can be tried.
     ['PUT', /^\/fixture\/parity$/, (_r, _s, { busy }) => { parity.busy = !!busy; timer ||= setInterval(tick, TICK); tick(); return [200, parity]; }],
   ];
+
+  const kinds = {};
+  const engine = { FS, DATA, fx, send, changed, createJob, view, dirAt, taken, freeName, ensureDir, detach, pushStep, toTrash, countOf, nextId, iso, base, clone, raw };
+  for (const plugin of plugins) {
+    const got = plugin(engine);
+    routes.unshift(...(got.routes || []));
+    Object.assign(kinds, got.kinds);
+  }
 
   return async (req, res, next) => {
     const url = new URL(req.url, 'http://fixture');
@@ -597,8 +617,8 @@ export function opsFixture(fx = sharedFixture()) {
     for (const [method, re, fn] of routes) {
       const m = req.method === method && path.match(re);
       if (!m) continue;
-      const body = method === 'GET' || method === 'DELETE' || (method === 'PUT' && path.startsWith('/uploads/')) ? undefined : await bodyOf(req);
-      const out = await fn(req, res, body || {}, m);
+      const body = method === 'GET' || method === 'DELETE' || (method === 'PUT' && path.startsWith('/uploads/')) || fn.raw ? undefined : await bodyOf(req);
+      const out = await fn(req, res, body || {}, m, url.searchParams);
       if (out === true) return;
       const [status, payload, headers] = out;
       return json(res, status, payload, headers);
@@ -607,4 +627,4 @@ export function opsFixture(fx = sharedFixture()) {
   };
 }
 
-export const opsFixtureMiddleware = () => opsFixture();
+export const opsFixtureMiddleware = () => opsFixture(sharedFixture(), [toolsFixture]);

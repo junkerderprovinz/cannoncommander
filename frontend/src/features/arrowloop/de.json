@@ -1,0 +1,20 @@
+{
+  "title": "In ArrowLoop planen",
+  "name": "Name",
+  "nameTip": "ArrowLoop übernimmt Richtung, Vergleich und Spiegeln so, wie sie hier eingestellt sind, und führt das Protokoll.",
+  "to": "{left} nach {right}",
+  "every": "Wie oft",
+  "hourly": "Stündlich",
+  "daily": "Täglich",
+  "weekly": "Wöchentlich",
+  "at": "Uhrzeit",
+  "atTip": "Nachts stören die Läufe am wenigsten.",
+  "hand": "An ArrowLoop übergeben",
+  "fallback": "Synchronisieren",
+  "planned": "„{name}“ ist in ArrowLoop geplant",
+  "open": "ArrowLoop öffnen",
+  "badTime": "Die Uhrzeit braucht die Form 03:00",
+  "notSet": "ArrowLoop ist noch nicht eingerichtet. Unter Einstellungen und Integrationen trägst du Adresse und Token ein.",
+  "noAnswer": "ArrowLoop nimmt die Aufgabe gerade nicht an: {why}",
+  "taken": "ArrowLoop hat schon eine Aufgabe mit diesem Namen"
+}

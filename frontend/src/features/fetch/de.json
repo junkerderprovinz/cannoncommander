@@ -1,0 +1,17 @@
+{
+  "title": "Von Adresse laden",
+  "address": "Adresse",
+  "addressTip": "Der Server lädt die Datei selbst herunter. Dein Gerät muss dafür nicht online bleiben.",
+  "fileName": "Dateiname",
+  "fileNameTip": "Kommt aus der Adresse, du kannst ihn ändern. Gibt es den Namen im Ordner schon, bekommt die neue Datei eine Nummer dazu.",
+  "target": "Ziel",
+  "targetTip": "Der Ordner, der im aktiven Fenster offen ist.",
+  "load": "Laden",
+  "badUrl": "Das ist keine gültige Adresse. Sie beginnt mit https:// oder http://",
+  "badName": "Der Dateiname fehlt oder enthält einen Schrägstrich",
+  "noDir": "Diesen Zielordner gibt es nicht",
+  "loading": "{name} wird geladen",
+  "arrived": "{name} ist da",
+  "go": "Hingehen",
+  "job": "Laden: {what}"
+}

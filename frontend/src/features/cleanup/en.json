@@ -1,0 +1,39 @@
+{
+  "title": "Clean up",
+  "searchIn": "Search in",
+  "searchInTip": "Cleaning up also goes through every subfolder.",
+  "finds": "Finds",
+  "findsIn": "{finds} in {objects}",
+  "findWord": { "one": "{n} find", "many": "{n} finds" },
+  "objectsIn": { "one": "{n} item", "many": "{n} items" },
+  "toTrash": "What is deleted goes to the trash",
+  "trash": "Trash",
+  "rename": "Rename",
+  "delete": "Delete {n}",
+  "fix": "Rename {n}",
+  "pickAll": "Pick all {group}",
+  "clean": "Everything is tidy here",
+  "scanned": "{objects} searched",
+  "capped": "There are more finds than listed here. After cleaning up, a new run shows the rest.",
+  "fixed": { "one": "{n} name cleaned up", "many": "{n} names cleaned up" },
+  "kept": { "one": "{n} name is taken already and stays as it is", "many": "{n} names are taken already and stay as they are" },
+  "groups": {
+    "emptyDir": { "label": "Empty folders", "tip": "Folders without files. A folder holding only empty folders counts as well." },
+    "emptyFile": { "label": "Empty files", "tip": "Files of 0 bytes." },
+    "temp": { "label": "Leftovers", "tip": "Broken off downloads such as .part and .!qB, Office lock files with ~$ and what macOS and Windows leave in folders." },
+    "link": { "label": "Broken links", "tip": "Links whose target is gone." },
+    "ext": { "label": "Wrong ending", "tip": "The content does not fit the ending, such as a PNG called .jpg. Cleaning up gives it the right ending." },
+    "name": { "label": "Troublesome names", "tip": "Names that do not work on Windows over SMB or cause trouble. Cleaning up replaces the characters with _ and takes spaces off the edges." }
+  },
+  "notes": {
+    "empty": "empty",
+    "onlyEmptyDirs": "only empty folders",
+    "pointsTo": "points to {target}",
+    "isA": "is a {kind}",
+    "edgeSpace": "space at the edge",
+    "trailingDot": "dot at the end",
+    "windowsChars": "characters Windows does not know",
+    "tooLong": "longer than 255 characters"
+  },
+  "kinds": { "png": "PNG picture", "jpg": "JPEG picture", "pdf": "PDF document", "gif": "GIF picture", "zip": "ZIP archive" }
+}
