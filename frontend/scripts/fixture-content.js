@@ -62,7 +62,7 @@ export function contentRoutes(FS) {
   const nodeAt = (path) => FS.nodeAt(path);
   const parent = (path) => path.slice(0, path.lastIndexOf('/')) || '/';
   const nameOf = (path) => path.slice(path.lastIndexOf('/') + 1);
-  const textOf = (path, n) => texts.get(path) ?? exportedAt(path)?.text ?? (n && n.size === 0 ? '' : null);
+  const textOf = (path, n) => texts.get(path) ?? n?.text ?? exportedAt(path)?.text ?? (n && n.size === 0 ? '' : null);
 
   // The prototype's page drawings come out of its pager as markup; each page sits in a cv-paper of its own.
   function pagesOf(n) {

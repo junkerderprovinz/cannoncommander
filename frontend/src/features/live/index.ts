@@ -15,7 +15,7 @@ import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 
 const GLOW = 2500;
-const OWN = 3000;
+const OWN = 1000;
 
 export default function setup() {
   const listing = useListing(), F = usePanels(), jobs = useJobs();

@@ -11,6 +11,7 @@ import { t } from '@/i18n';
 import { useClipboard } from '@/stores/clipboard';
 import { usePanels } from '@/stores/panels';
 import { freeName, namesIn } from '@/ui/tools';
+import { addFiles } from '@/features/upload/queue';
 import PasteBody from './PasteBody.vue';
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -37,7 +38,8 @@ export default function setup() {
         const name = st.name.trim();
         if (!name) return false;
         if (namesIn(folder).has(name)) { toast(t('pastefile.taken'), 'warn'); return false; }
-        run('uploadFiles', [pic ? new File([pic], name, { type: pic.type }) : new File([text!], name, { type: 'text/plain' })], folder);
+        void addFiles([pic ? new File([pic], name, { type: pic.type }) : new File([text!], name, { type: 'text/plain' })], folder);
+        toast(t('pastefile.made', { name }));
         return true;
       } }],
       onClose: () => { if (url) URL.revokeObjectURL(url); },

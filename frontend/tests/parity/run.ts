@@ -44,7 +44,8 @@ interface ShotRule { pixels: number; why: string }
 // page: a prototype page of its own that the app has no counterpart for, run on both sides.
 // stale: why the step file fails on the prototype as well, until it is brought up to date.
 // errors: console errors the app writes on purpose, such as the 401 that signing out brings.
-interface Allow { lines?: Rule[]; shots?: Record<string, ShotRule>; errors?: Rule[]; page?: string; stale?: string }
+// setup: a script the app's page runs before the step file, for a state the prototype starts in and the app does not.
+interface Allow { lines?: Rule[]; shots?: Record<string, ShotRule>; errors?: Rule[]; page?: string; stale?: string; setup?: { script: string; why: string } }
 interface Side { lines: string[]; shots: string[]; errors: string[]; ms: number }
 interface Result { steps: string; a: Side; b: Side; problems: string[]; allowed: string[] }
 
@@ -207,9 +208,13 @@ function driven(tab: Page, fixture?: string): { page: Page; move: (ms: number) =
     ...Object.fromEntries(Object.keys(OPTIONS_AT).map((name) => [name, acting(name)])),
     keyboard,
     evaluate: evaluate as never,
+    // In steps, so what the server reports during the wait reaches the page while there is still page time to use it.
     waitForTimeout: async (ms: number) => {
       await settle();
-      await move(ms);
+      for (let left = ms; left > 0; left -= 250) {
+        await move(Math.min(left, 250));
+        await sleep(15);
+      }
       await settle();
     },
     waitForFunction: ((fn: () => unknown, arg?: unknown, o?: { timeout?: number }) =>
@@ -273,7 +278,7 @@ const stillMotion = () => {
   });
 };
 
-async function runSide(browser: Browser, file: string, page: string, dir: string, preview: boolean): Promise<Side> {
+async function runSide(browser: Browser, file: string, page: string, dir: string, preview: boolean, setup?: string): Promise<Side> {
   rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
   const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 1, locale: 'de-AT', timezoneId: 'Europe/Vienna' });
@@ -303,6 +308,10 @@ async function runSide(browser: Browser, file: string, page: string, dir: string
     // The prototype has CC once its script ran, the app once the shim has read the fixture; a preview page has none.
     if (!preview) await drive.waitForFunction('typeof CC !== "undefined"');
     await move(800);
+    if (setup) {
+      await drive.evaluate(setup);
+      await drive.waitForTimeout(100);
+    }
     delete fromPrototype.cache[fromPrototype.resolve(file)];
     const steps = fromPrototype(file);
     await Promise.race([steps(drive, shot), new Promise((_, no) => { timer = setTimeout(() => no(new Error('timed out')), SIDE_TIMEOUT); })]);
@@ -383,7 +392,7 @@ async function worker(file: string) {
     const own = allowFor(steps).page;
     const a = await runSide(browser, file, own ? join(prototype, 'dist', own) : opt.a, join(dir, 'a'), !!own);
     const server = !own && opt.b === 'fixture' ? await fixtureServer() : undefined;
-    const b = await runSide(browser, file, own ? join(prototype, 'dist', own) : server?.url || opt.b, join(dir, 'b'), !!own).finally(() => server?.stop());
+    const b = await runSide(browser, file, own ? join(prototype, 'dist', own) : server?.url || opt.b, join(dir, 'b'), !!own, allowFor(steps).setup?.script).finally(() => server?.stop());
     const result: Result = { steps, a, b, ...compare(steps, a, b, dir) };
     const golden = join(here, 'golden', steps + '.txt');
     const text = a.lines.join('\n') + '\n';

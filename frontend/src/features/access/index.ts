@@ -32,7 +32,7 @@ export default function setup() {
   });
 
   // The sidebar's rows and the lists say what they are; the arrows walk the rows below.
-  addTo('onRender', () => {
+  function label() {
     const s = document.getElementById('side');
     if (!s) return;
     s.setAttribute('aria-label', t('access.sidebar'));
@@ -46,10 +46,12 @@ export default function setup() {
       const i = Number(l.closest<HTMLElement>('.panel')!.dataset.panel);
       l.setAttribute('aria-label', `${side(i)}: ${placeName(F.T(i).path)}`);
     });
-  });
+  }
+  addTo('onRender', label);
 
   jobs.onEnded((j) => {
-    if (j.state === 'done' || j.state === 'cancelled') say(t(j.state === 'done' ? 'access.done' : 'access.cancelled', { label: jobLabel(j) }));
+    // After the marks a finished job clears have had their say, so the end of the job is what stays in the live region.
+    if (j.state === 'done' || j.state === 'cancelled') void nextTick(() => say(t(j.state === 'done' ? 'access.done' : 'access.cancelled', { label: jobLabel(j) })));
   });
 
   async function toList(i: number) {
@@ -58,6 +60,7 @@ export default function setup() {
     if (prefs.quickview && i !== F.active) setPref('quickview', false);
     F.active = i;
     await nextTick();
+    label();
     document.querySelector<HTMLElement>(`.panel[data-panel="${i}"] .list`)?.focus();
   }
   async function toSide() {
@@ -65,6 +68,7 @@ export default function setup() {
     if (innerWidth <= 760) shell.sideOpen = true;
     else if (!prefs.side) setPref('side', true);
     await nextTick();
+    label();
     (document.querySelector<HTMLElement>('#side .nav-row.cur') || document.querySelector<HTMLElement>('#side .nav-row'))?.focus();
     say(t('access.sideSay'));
   }
