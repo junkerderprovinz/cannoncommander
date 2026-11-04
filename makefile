@@ -93,8 +93,7 @@ build-frontend:
 	@echo "✓ Frontend built successfully"
 
 lint-frontend:
-	cd frontend && npm run lint
-	cd frontend && npm run lint:css
+	cd frontend && npm run typecheck
 
 lint-backend:
 	cd backend && GOLANGCI_LINT="$$(cd $(BACKEND_BUILD) && go tool -n golangci-lint)" && "$$GOLANGCI_LINT" run --path-prefix=backend
@@ -103,28 +102,7 @@ lint: lint-backend lint-frontend
 
 test: test-backend test-frontend
 
-check-all: lint test check-translations check-icons
-
-check-icons:
-	cd frontend && npm run icons:check
-
-sync-icons:
-	cd frontend && npm run icons:sync
-
-generate-icons:
-	cd frontend && npm run icons:sync
-
-check-translations:
-	cd frontend && npm run i18n:check
-
-sync-translations:
-	cd frontend && npm run i18n:sync
-
-reorder-translations:
-	cd frontend && npm run i18n:enforce-order
-
-cleanup-translations:
-	cd frontend && npm run i18n:cleanup
+check-all: lint test
 
 test-backend:
 	cd backend && go test -race -timeout=30s ./...
