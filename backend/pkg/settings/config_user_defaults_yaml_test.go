@@ -101,7 +101,7 @@ func TestYAMLConfig_applyUserDefaultsFrom(t *testing.T) {
 
 	t.Run("jwt", func(t *testing.T) {
 		loadConfigForUserDefaultsTests(t, jwtConfig)
-		u := &users.User{FrontendUser: users.FrontendUser{Username: "testuser", LoginMethod: users.LoginMethodJwt}}
+		u := &users.User{FrontendUser: users.FrontendUser{Username: "testuser", LoginMethod: users.LoginMethodOidc}}
 		ApplyUserDefaultsFrom(u, Config.UserDefaults)
 		if !u.Permissions.Share {
 			t.Fatal("Share=false after ApplyUserDefaultsFrom")

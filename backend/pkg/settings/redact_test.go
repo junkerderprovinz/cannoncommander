@@ -24,7 +24,6 @@ func TestSecretMarkers_drive_yaml_redaction(t *testing.T) {
 	Config.Auth.AdminUsername = "SENTINEL-LEGACY-ADMIN-USER"
 	Config.Auth.Methods.PasswordAuth.AdminPassword = "SENTINEL-NESTED-ADMIN-PW"
 	Config.Auth.Methods.OidcAuth.ClientSecret = "SENTINEL-OIDC"
-	Config.Auth.Methods.JwtAuth.Secret = "SENTINEL-JWT"
 	Config.Integrations.OnlyOffice.Secret = "SENTINEL-OFFICE"
 
 	out, err := GenerateConfigYamlWithEmbedded(&Config, false, true, false, string(embedded))
@@ -38,7 +37,6 @@ func TestSecretMarkers_drive_yaml_redaction(t *testing.T) {
 		"SENTINEL-LEGACY-ADMIN-USER",
 		"SENTINEL-NESTED-ADMIN-PW",
 		"SENTINEL-OIDC",
-		"SENTINEL-JWT",
 		"SENTINEL-OFFICE",
 	} {
 		if strings.Contains(out, sentinel) {

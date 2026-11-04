@@ -25,6 +25,8 @@ var retiredKeys = [][]string{
 	{"shareDefaults"},
 	{"http", "disableWebDAV"},
 	{"server", "database", "migrateFrom"},
+	{"auth", "methods", "jwt"},
+	{"auth", "methods", "password", "signup"},
 }
 
 // dropRetiredKeys removes the retired keys from a parsed config and says so

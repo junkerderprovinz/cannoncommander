@@ -36,7 +36,6 @@ type LoginMethod string
 const (
 	LoginMethodPassword LoginMethod = "password"
 	LoginMethodOidc     LoginMethod = "oidc"
-	LoginMethodJwt      LoginMethod = "jwt"
 )
 
 // AnonymousUserName is the username for unauthenticated requests (user_id 0).

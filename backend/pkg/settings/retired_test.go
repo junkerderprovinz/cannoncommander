@@ -14,11 +14,15 @@ auth:
   methods:
     password:
       enabled: true
+      signup: true
       recaptcha:
         host: "https://www.google.com/recaptcha/api.js"
     ldap:
       enabled: true
       server: "ldap://ldap.example.com:389"
+    jwt:
+      enabled: true
+      secret: "geheim"
     proxy:
       enabled: true
       header: "X-Remote-User"

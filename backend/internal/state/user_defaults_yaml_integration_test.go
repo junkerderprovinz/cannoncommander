@@ -79,7 +79,7 @@ func TestStateInit_jwtYAML_organizedDefaultsOnNewUser(t *testing.T) {
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
 			Username:    "testuser",
-			LoginMethod: users.LoginMethodJwt,
+			LoginMethod: users.LoginMethodOidc,
 		},
 	}
 	settings.ApplyUserDefaults(u)
