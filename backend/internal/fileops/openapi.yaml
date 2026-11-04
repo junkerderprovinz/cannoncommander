@@ -147,18 +147,151 @@ paths:
     post:
       operationId: uploadCreate
       summary: Start an upload
+      description: |
+        Announces a file and its size. The bytes go to ".name.cc-part" next
+        to the target and the file takes its name with the last chunk.
+        Missing folders on the way are created, so a dropped folder keeps
+        its structure. Starting again for the same target and size picks
+        up the running upload, which is how a client resumes after a reload
+        and how it answers a conflict: it sends the same request with the
+        rule it chose.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadRequest"
+      responses:
+        "200":
+          description: The running upload for this target, or the finished one when nothing was left to send.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "201":
+          description: A new upload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/UploadConflict"
+        "507":
+          description: Not enough free space for the file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /uploads/{id}:
     get:
       operationId: uploadGet
       summary: State of an upload, for resuming
+      responses:
+        "200":
+          description: Where the upload stands.
+          headers:
+            Upload-Offset:
+              schema:
+                type: integer
+                format: int64
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
     put:
       operationId: uploadChunk
       summary: Send the next chunk
+      description: |
+        The body is the raw bytes. Upload-Offset, or the start of
+        Content-Range, says where they go, and has to match the offset of
+        the upload. A chunk may hold up to 64 MiB. When the connection
+        breaks, what arrived is kept and GET tells where to go on.
+      parameters:
+        - name: Upload-Offset
+          in: header
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: The upload after the chunk. Its state is done once the file has its name.
+          headers:
+            Upload-Offset:
+              schema:
+                type: integer
+                format: int64
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/UploadConflict"
+        "410":
+          description: The part file disappeared, the upload has to start over.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "413":
+          description: The chunk goes past the announced size.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
     delete:
       operationId: uploadCancel
       summary: Cancel an upload
+      description: Removes the part file.
+      responses:
+        "204":
+          description: Cancelled.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
 components:
   responses:
+    UploadConflict:
+      description: |
+        Either a file of this name exists and the rule is ask, then
+        conflict tells both sides, or the chunk does not start at the
+        offset of the upload, then upload tells where it stands. A start
+        for a target another upload is writing answers 409 as well.
+      content:
+        application/problem+json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Problem"
+              - type: object
+                properties:
+                  upload:
+                    $ref: "#/components/schemas/Upload"
+                  conflict:
+                    $ref: "#/components/schemas/JobConflict"
     FsChanged:
       description: The entry as it is now, and the undo step for it.
       content:
@@ -175,6 +308,57 @@ components:
                 type: string
                 description: Id of the undo step, for POST /undo.
   schemas:
+    UploadRequest:
+      type: object
+      required: [path, size]
+      properties:
+        path:
+          type: string
+          description: The file to create.
+        size:
+          type: integer
+          format: int64
+          minimum: 0
+        mtime:
+          type: string
+          format: date-time
+          description: Modification time the file gets, usually lastModified of the browser file.
+        rule:
+          type: string
+          enum: [ask, skip, replace, both, newer]
+          default: ask
+          description: |
+            What happens when the name exists. ask answers 409 with the
+            conflict, replace moves the old file to the trash, both keeps
+            the new one as "name (1).ext", newer replaces only an older
+            file. The rule is applied again when the last chunk arrives.
+    Upload:
+      type: object
+      required: [id, path, size, offset, state, rule, chunk]
+      properties:
+        id:
+          type: string
+        path:
+          type: string
+          description: The target, and once done the file it became, which differs when both were kept.
+        size:
+          type: integer
+          format: int64
+        offset:
+          type: integer
+          format: int64
+          description: Bytes received so far, where the next chunk starts.
+        state:
+          type: string
+          enum: [open, done, skipped]
+        rule:
+          type: string
+        mtime:
+          type: string
+          format: date-time
+        chunk:
+          type: integer
+          description: The chunk size the server asks for.
     PermsParams:
       type: object
       description: Params of the job kind fixPerms. Admins only.

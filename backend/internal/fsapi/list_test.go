@@ -215,8 +215,8 @@ func TestFormatOfNames(t *testing.T) {
 		"film.mkv.part":     "temp",
 	}
 	for name, want := range cases {
-		if got := formatOf(name); got != want {
-			t.Errorf("formatOf(%q) = %q, want %q", name, got, want)
+		if got := FormatOf(name); got != want {
+			t.Errorf("FormatOf(%q) = %q, want %q", name, got, want)
 		}
 	}
 	if !slices.Contains(fsindex.FolderPictures, "poster.jpg") {
