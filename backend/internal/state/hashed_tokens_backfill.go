@@ -6,9 +6,7 @@ import (
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // BackfillHashedTokensFromUserRecords registers SHA256(raw JWT) → user_id for stored API tokens.
@@ -33,31 +31,6 @@ func BackfillHashedTokensFromUserRecords() error {
 	}
 	if added > 0 {
 		logger.Infof("Backfilled %d hashed token mapping(s) from user API token records", added)
-	}
-	return nil
-}
-
-// BackfillUserTokenHashesOnStore writes hash mappings for a user's stored token strings (migration helper).
-// It scans both Tokens and legacy ApiKeys so pre-2.0.8 tokens issued before the
-// minimal-JWT cutover regain a hashed_tokens row. Strict auth ignores BelongsTo.
-func BackfillUserTokenHashesOnStore(store *sqldb.SQLStore, user *users.User) error {
-	if store == nil || user == nil || user.ID == 0 {
-		return nil
-	}
-	now := time.Now()
-	for _, raw := range CollectStoredRawTokens(user) {
-		expiresAt := access.TokenExpiryUnix(raw)
-		if access.TokenExpiredPastGrace(expiresAt, now) {
-			// The token is dead past the grace window: drop any lingering
-			// mapping (e.g. a row migrated with expires_at=0).
-			if err := store.DeleteHashedToken(utils.HashSHA256(raw)); err != nil {
-				return err
-			}
-			continue
-		}
-		if err := store.SaveHashedToken(utils.HashSHA256(raw), user.ID, false, expiresAt); err != nil {
-			return err
-		}
 	}
 	return nil
 }

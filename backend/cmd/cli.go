@@ -232,9 +232,6 @@ func createConfig(configpath string, noInput bool) error {
 	}
 
 	for {
-		// "database.db" is the reserved legacy-bolt filename and is rejected
-		// at startup (see backend/cmd/migrate.go), so the wizard must not
-		// suggest it as the default.
 		config.Server.DatabaseV2.Path = askQuestion(reader, "What should the file name and path be for the database?", "./cannoncommander.sqlite")
 		if strings.HasSuffix(config.Server.DatabaseV2.Path, ".sqlite") {
 			break

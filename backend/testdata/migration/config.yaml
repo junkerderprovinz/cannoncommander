@@ -2,8 +2,6 @@ http:
   port: 80
   baseURL:  "/"
 server:
-  database:
-    migrateFrom: "database.db.old"
   logging:
     - levels: "info|error|warning|debug"
       apiFilter: 'disabled'

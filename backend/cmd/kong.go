@@ -118,7 +118,7 @@ type cliRoot struct {
 	Run     runCmd     `cmd:"" default:"1" hidden:"" help:"Start the server"`
 	Version versionCmd `cmd:"" name:"version" help:"Print version information"`
 	Setup   setupCmd   `cmd:"" name:"setup" help:"Interactive configuration setup"`
-	Init    initCmd    `cmd:"" name:"init" hidden:"" help:"Initialize the database or migrate from a legacy database"`
+	Init    initCmd    `cmd:"" name:"init" hidden:"" help:"Initialize the database"`
 	Set     SetCmd     `cmd:"" name:"set" help:"Set configuration values (deprecated: use 'user set' for users)"`
 	User    UserCmd    `cmd:"" name:"user" help:"User management"`
 }
