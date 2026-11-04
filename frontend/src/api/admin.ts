@@ -59,7 +59,6 @@ export interface AppSettings {
   office: { kind: OfficeKind; url: string; secret?: string; secretSet?: boolean };
   arrowloop: { url: string; token?: string; tokenSet?: boolean; paths?: Record<string, string> };
   previews: { thumbs: boolean; video: boolean };
-  webdav: boolean;
   remotes: { automount: boolean; cache: 'off' | 'writes' | 'full'; cacheSize: number };
   updates: { autoCheck: boolean };
   logLevel: 'error' | 'info' | 'debug';
@@ -72,7 +71,7 @@ export interface Tool { available: boolean; path?: string; version?: string }
 export interface System {
   version: string; commit?: string; go: string; os: string; arch: string; started: number; uptime: number;
   tools: Record<string, Tool>; unraid: { available: boolean; socket: boolean };
-  features: { office: { kind: OfficeKind; url?: string }; thumbs: boolean; videoPreview: boolean; webdav: boolean; mupdf: boolean };
+  features: { office: { kind: OfficeKind; url?: string }; thumbs: boolean; videoPreview: boolean; mupdf: boolean };
 }
 export interface UpdateCheck { version: string; latest: string; updateAvailable: boolean; releaseUrl?: string }
 export interface Imported { sections: string[]; notes: string[]; restartNeeded: boolean }

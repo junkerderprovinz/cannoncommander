@@ -38,19 +38,8 @@ func ExtractToken(r *http.Request) (string, error) {
 	if authHeader != "" {
 		hasToken = true
 		parts := strings.Split(authHeader, " ")
-		if len(parts) > 1 {
-			switch strings.ToLower(parts[0]) {
-			case "bearer":
-				if strings.Count(parts[1], ".") == 2 {
-					return parts[1], nil
-				}
-			case "basic":
-				// compatibility for basic auth: user ignored, password is token
-				_, token, ok := r.BasicAuth()
-				if ok && token != "" && strings.Count(token, ".") == 2 {
-					return token, nil
-				}
-			}
+		if len(parts) > 1 && strings.EqualFold(parts[0], "bearer") && strings.Count(parts[1], ".") == 2 {
+			return parts[1], nil
 		}
 	}
 
