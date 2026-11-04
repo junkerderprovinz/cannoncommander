@@ -8284,7 +8284,10 @@ components:
               readOnly: true
             paths:
               type: object
-              description: The start of a path here mapped to the same folder in ArrowLoop's container, as /mnt/user to /data.
+              description: |
+                The start of a path here mapped to the same folder in
+                ArrowLoop's container, as /mnt/user to /data. Sent paths
+                replace the saved ones as a whole.
               additionalProperties:
                 type: string
         previews:
