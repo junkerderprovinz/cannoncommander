@@ -8,6 +8,7 @@
 .cl-name { font-size: 20px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
 .cl-brand .muted { font-size: 13px; }
 .cl-fields { display: flex; flex-direction: column; gap: .55rem; }
+.cl .frow > .glim-input, .cl .frow > .glim-secret { flex: 1 1 13rem; width: auto; }
 .cl .frow { flex-wrap: wrap; row-gap: .35rem; }
 .cl .frow > .lab { flex: 1 0 7rem; }
 .cl .cl-code { text-transform: uppercase; letter-spacing: .12em; }

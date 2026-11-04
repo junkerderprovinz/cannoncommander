@@ -1,4 +1,4 @@
-.bk-props .win-body { gap: .9rem; }
+.bk-props .glim-window-body { gap: .9rem; }
 .bk-phead { display: flex; align-items: center; gap: .6rem; padding: 0 .1rem; }
 .bk-phead .bk-name { font-size: 16px; font-weight: 600; }
 .bk-val { margin-left: auto; text-align: right; color: var(--carbon-text-sub); min-width: 0; }

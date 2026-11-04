@@ -72,8 +72,6 @@
 .a-vlink { font-size: 14px; color: var(--accent-text, var(--accent)); text-decoration: none; }
 .a-vlink:hover, .a-vlink:focus-visible { text-decoration: underline; text-underline-offset: 2px; }
 @media (pointer: coarse) { .a-vlink { margin: -.6rem; padding: .6rem; } }
-.notch .info { margin-left: .15rem; }
-.notch .info svg { color: currentColor; opacity: .8; }
 .a-addr { margin-top: .8rem; padding: .7rem .8rem; border-radius: var(--radius-control); background: var(--carbon-surface3); font-size: 13px; overflow-wrap: anywhere; }
 #a-update.ok svg { color: var(--status-ok-text, #6fdc8c); }
 .a-dot { width: .5rem; height: .5rem; border-radius: 50%; background: #6fdc8c; box-shadow: 0 0 6px #6fdc8c; flex: none; }

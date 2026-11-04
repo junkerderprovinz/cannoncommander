@@ -1,5 +1,5 @@
 
-.bk-du .win-body { gap: .8rem; }
+.bk-du .glim-window-body { gap: .8rem; }
 .du-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .du-top .du-pathbar { flex: 1; min-width: 0; height: 2.1rem; cursor: default; }
 .du-well { flex: 1; min-height: 0; padding: .35rem; display: flex; }

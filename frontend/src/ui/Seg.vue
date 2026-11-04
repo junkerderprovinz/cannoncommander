@@ -27,5 +27,5 @@ function pressed(e: MouseEvent) {
 </script>
 
 <template>
-  <Selector v-model="chosen" class="seg" :items="items" :label="label ?? row()" size="sm" activation="manual" inline button-height :disabled="disabled" @click.capture="pressed" />
+  <Selector v-model="chosen" class="seg" :items="items" :label="label ?? row()" size="sm" activation="manual" inline button-height pairs-on-phone :disabled="disabled" @click.capture="pressed" />
 </template>

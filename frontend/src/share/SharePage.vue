@@ -135,7 +135,7 @@ async function uploaded() {
         <form class="sp-lock" novalidate @submit.prevent="unlock">
           <p class="sp-text">{{ s('lockedText') }}</p>
           <div v-if="err" class="sp-err" role="alert"><G n="IconWarning" /><span>{{ err }}</span></div>
-          <div class="frow"><span class="lab">{{ s('password') }}</span><PasswordField id="sp-pass" v-model="password" autocomplete="current-password" class="w" :text="eyeWords()" /></div>
+          <div class="frow"><span class="lab">{{ s('password') }}</span><PasswordField id="sp-pass" v-model="password" autocomplete="current-password" class="grow" :text="eyeWords()" /></div>
           <button class="btn key primary" type="submit" :disabled="busy"><G n="IconUnlock" />{{ s('open') }}</button>
         </form>
       </section>

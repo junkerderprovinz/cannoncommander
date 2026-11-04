@@ -1,8 +1,13 @@
 .a-slot { width: var(--btn-h); flex: none; }
-.glim-input.w, .glim-secret.w, .glim-copy.w, .glim-select-trigger.w { width: 22rem; max-width: 100%; flex: none; }
-.glim-input.m, .glim-secret.m, .glim-select-trigger.m { width: 12rem; max-width: 100%; flex: none; }
+.glim-input.w, .glim-secret.w, .glim-select-trigger.w { width: 22rem; max-width: 100%; flex: none; }
+.glim-copy.w { flex: 1 1 24rem; width: auto; max-width: 30rem; }
+.glim-input.m, .glim-secret.m { width: 12rem; max-width: 100%; flex: none; }
+.glim-select-trigger.m { width: 14rem; max-width: 100%; flex: none; }
 .glim-input.s { width: 5.5rem; flex: none; }
-.glim-input.grow, .glim-select-trigger.grow { flex: 1; width: auto; min-width: 0; }
+.glim-input.grow, .glim-secret.grow, .glim-select-trigger.grow { flex: 1 1 13rem; width: auto; min-width: 0; }
+.bk-form .frow > .seg, .bk-form .frow > .glim-toggle, .bk-form .frow > .glim-secret { margin-left: auto; }
+.glim-modal-foot .glim-btn { flex: none; }
+.glim-window-start { flex: 1 1 0; min-width: 0; }
 textarea.glim-input { height: auto; padding: .6rem .7rem; resize: vertical; }
 .pathf { display: flex; gap: .4rem; flex: 1 1 22rem; min-width: 0; max-width: 30rem; }
 .pathf .glim-input { flex: 1; }

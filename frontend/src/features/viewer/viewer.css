@@ -1,5 +1,5 @@
 /* The viewer window, the preview bar and their renderers, in the prototype's look. */
-.cv-win .win-body { padding-bottom: 0; }
+.cv-win .glim-window-body { padding-bottom: 0; }
 .cv-host { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .75rem; outline: none; }
 .cv-bar { display: flex; align-items: center; gap: .5rem; min-height: var(--btn-h); flex: none; }
 .cv-bar .grow { flex: 1; }
@@ -9,7 +9,6 @@
 .cv-stage.full.panning { cursor: grabbing; }
 .cv-box { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .75rem; }
 .cv-host, .cv-compact { contain: inline-size; }
-.cv-win.full { height: calc(100vh - 6.75rem); }
 .cv-stage.fit { container-type: size; }
 .cv-stage.fit .cv-pic { width: min(100cqw - 2rem, (100cqh - 2rem) * var(--ar)); aspect-ratio: var(--ar); border-radius: var(--radius-control); overflow: hidden; box-shadow: var(--elevation); }
 .cv-stage.fit .cv-pic svg { width: 100%; height: 100%; }
@@ -85,9 +84,8 @@
 .cv-mrow .tile svg { color: var(--carbon-text-sub); }
 
 @media (max-width: 760px) {
-  .cv-win.full { height: calc(100vh - 5.25rem); max-height: none; padding: 1.4rem .75rem .75rem; }
-  .cv-win .win-foot { flex-wrap: wrap; }
-  .cv-win .win-foot .start { flex-basis: 100%; }
+  .cv-win .glim-modal-foot { flex-wrap: wrap; }
+  .cv-win .glim-window-start { flex-basis: 100%; }
   .cv-ctrl { flex-wrap: wrap; }
   .cv-ctrl .cv-scrub { flex-basis: calc(100% - 9rem); }
   .cv-ctrl [data-pick] { flex: 1; }
