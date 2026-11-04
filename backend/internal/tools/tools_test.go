@@ -583,6 +583,23 @@ func TestPublicAddresses(t *testing.T) {
 	}
 }
 
+func TestPublicAddressesAreGloballyRoutable(t *testing.T) {
+	for addr, want := range map[string]bool{
+		"2a00:1450:4001::1": true, "2001:4860:4860::8888": true, "8.8.8.8": true,
+		"::127.0.0.1": false, "::7f00:1": false, "::8.8.8.8": false, "::": false,
+		"fec0::1": false, "ff02::1": false,
+		"2002:7f00:1::1": false, "2002:c0a8:a0a::1": false, "2002:808:808::1": false,
+		"2001:0:7f00:1::": false, "2001::1": false,
+		"64:ff9b::7f00:1": false, "64:ff9b:1::1": false,
+		"2001:db8::1": false, "3fff::1": false,
+		"192.0.2.1": false, "198.51.100.1": false, "203.0.113.1": false, "192.88.99.1": false,
+	} {
+		if got := PublicAddr(mustAddr(t, addr)); got != want {
+			t.Errorf("PublicAddr(%s) = %v", addr, got)
+		}
+	}
+}
+
 func mustAddr(t *testing.T, s string) netip.Addr {
 	t.Helper()
 	a, err := netip.ParseAddr(s)
