@@ -907,6 +907,7 @@ func (idx *Index) processDirectoryItem(file os.FileInfo, indexPath string, subdi
 		ModTime: file.ModTime(),
 		Hidden:  IsHidden(utils.JoinPathAsUnix(idx.Path, indexPath, file.Name())),
 		Type:    "directory",
+		Unix:    unixAttrsOf(file),
 	}
 
 	if opts.Recursive {
@@ -950,6 +951,7 @@ func (idx *Index) processFileItem(file os.FileInfo, indexPath string, opts Optio
 		Created: getCreatedTime(file, fullCombined),
 		ModTime: file.ModTime(),
 		Hidden:  IsHidden(fullCombined),
+		Unix:    unixAttrsOf(file),
 	}
 
 	// For API calls (non-recursive, no scanner), use appropriate size calculation
@@ -1157,6 +1159,7 @@ func (idx *Index) GetDirInfoCore(dirInfo *os.File, stat os.FileInfo, indexPath s
 		Type:       "directory",
 		Size:       totalSize,
 		Created:    getCreatedTime(stat, dirInfo.Name()),
+		Unix:       unixAttrsOf(stat),
 		ModTime:    stat.ModTime(),
 		HasPreview: hasPreview,
 	}
@@ -1174,6 +1177,7 @@ func (idx *Index) GetDirInfoCore(dirInfo *os.File, stat os.FileInfo, indexPath s
 			Type:       "directory",
 			Size:       indexableSize,
 			Created:    dirFileInfo.Created,
+			Unix:       dirFileInfo.Unix,
 			ModTime:    dirFileInfo.ModTime,
 			HasPreview: indexableHasPreview,
 		}

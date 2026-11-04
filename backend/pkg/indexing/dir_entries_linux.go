@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"golang.org/x/sys/unix"
 )
 
@@ -23,6 +24,8 @@ type statxFileInfo struct {
 	blocks   uint64
 	nlink    uint32
 	ino      uint64
+	uid      uint32
+	gid      uint32
 	mtime    unix.StatxTimestamp
 	btime    unix.StatxTimestamp
 	hasBtime bool
@@ -50,6 +53,10 @@ func (s *statxFileInfo) unixFileDetails(useLogicalSize bool) (uint64, uint64, ui
 		return s.size, uint64(s.nlink), s.ino
 	}
 	return s.blocks * 512, uint64(s.nlink), s.ino
+}
+
+func (s *statxFileInfo) unixAttrs() iteminfo.UnixAttrs {
+	return iteminfo.UnixAttrs{Known: true, Inode: s.ino, Nlink: uint64(s.nlink), UID: s.uid, GID: s.gid, Mode: uint32(s.mode) & 0o7777}
 }
 
 func modeFromStatx(mode uint16) os.FileMode {
@@ -80,7 +87,7 @@ func modeFromStatx(mode uint16) os.FileMode {
 	return fm
 }
 
-const statxDirListingMask = unix.STATX_TYPE | unix.STATX_MODE | unix.STATX_NLINK |
+const statxDirListingMask = unix.STATX_TYPE | unix.STATX_MODE | unix.STATX_NLINK | unix.STATX_UID | unix.STATX_GID |
 	unix.STATX_INO | unix.STATX_SIZE | unix.STATX_BLOCKS | unix.STATX_MTIME | unix.STATX_BTIME
 
 var (
@@ -238,6 +245,8 @@ func statDirEntry(dirFd int, name string, useStatx bool) (os.FileInfo, error) {
 				blocks:   stx.Blocks,
 				nlink:    stx.Nlink,
 				ino:      stx.Ino,
+				uid:      stx.Uid,
+				gid:      stx.Gid,
 				mtime:    stx.Mtime,
 				btime:    stx.Btime,
 				hasBtime: stx.Mask&unix.STATX_BTIME != 0,
@@ -279,4 +288,8 @@ func (f *fstatatFileInfo) unixFileDetails(useLogicalSize bool) (uint64, uint64, 
 		return uint64(f.stat.Size), uint64(f.stat.Nlink), f.stat.Ino
 	}
 	return uint64(f.stat.Blocks) * 512, uint64(f.stat.Nlink), f.stat.Ino
+}
+
+func (f *fstatatFileInfo) unixAttrs() iteminfo.UnixAttrs {
+	return iteminfo.UnixAttrs{Known: true, Inode: f.stat.Ino, Nlink: uint64(f.stat.Nlink), UID: f.stat.Uid, GID: f.stat.Gid, Mode: f.stat.Mode & 0o7777}
 }

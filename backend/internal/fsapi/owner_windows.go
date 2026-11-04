@@ -1,13 +1,9 @@
 package fsapi
 
-import (
-	"io/fs"
+import "golang.org/x/sys/windows"
 
-	"golang.org/x/sys/windows"
-)
-
-// ownerOf has nothing to report on Windows, which only runs in development.
-func ownerOf(fs.FileInfo) (owner, group string) { return "", "" }
+// ownerNames has nothing to report on Windows, which only runs in development.
+func ownerNames(fileStat) (owner, group string) { return "", "" }
 
 func usage(dir string) (free, total uint64, ok bool) {
 	p, err := windows.UTF16PtrFromString(dir)

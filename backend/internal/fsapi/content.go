@@ -1,0 +1,301 @@
+package fsapi
+
+import (
+	"bytes"
+	"errors"
+	"fmt"
+	"io"
+	"mime"
+	"net/http"
+	"os"
+	"path"
+	"strconv"
+	"strings"
+	"unicode/utf8"
+
+	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"golang.org/x/text/encoding/charmap"
+	"golang.org/x/text/encoding/unicode"
+)
+
+const (
+	textDefault = 1 << 20
+	textMax     = 16 << 20
+	hexDefault  = 4096
+	hexMax      = 64 << 10
+)
+
+// Text is the answer of GET /fs/text.
+type Text struct {
+	Path     string `json:"path"`
+	Size     int64  `json:"size"`
+	MTime    string `json:"mtime"`
+	Encoding string `json:"encoding"`
+	// EOL is lf, crlf, cr or mixed, and empty for a single line.
+	EOL       string `json:"eol,omitempty"`
+	Text      string `json:"text"`
+	Truncated bool   `json:"truncated,omitempty"`
+}
+
+// Hex is the answer of GET /fs/hex. Data is base64 in JSON.
+type Hex struct {
+	Path   string `json:"path"`
+	Size   int64  `json:"size"`
+	Offset int64  `json:"offset"`
+	Data   []byte `json:"data"`
+}
+
+// file checks that p is a regular file the user holds perm on.
+func (h handlers) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, os.FileInfo, error) {
+	if p == "" {
+		return ccfs.Location{}, nil, v1.Errorf(http.StatusBadRequest, "path is required")
+	}
+	loc, err := h.fs.Check(u, p, perm)
+	if err != nil {
+		return loc, nil, err
+	}
+	if loc.InArchive() {
+		return loc, nil, v1.Errorf(http.StatusNotImplemented, "reading from archives is not built yet")
+	}
+	if loc.Virtual() {
+		return loc, nil, v1.Errorf(http.StatusBadRequest, "path is a folder")
+	}
+	if err := ccfs.Contained(loc); err != nil {
+		return loc, nil, err
+	}
+	info, err := os.Stat(loc.Real)
+	if err != nil {
+		return loc, nil, err
+	}
+	if info.IsDir() {
+		return loc, nil, v1.Errorf(http.StatusBadRequest, "path is a folder")
+	}
+	// Reading a pipe or a device would hang or never end.
+	if !info.Mode().IsRegular() {
+		return loc, nil, v1.Errorf(http.StatusBadRequest, "path is not a regular file")
+	}
+	return loc, info, nil
+}
+
+func (h handlers) raw(w http.ResponseWriter, r *http.Request) error {
+	q := r.URL.Query()
+	loc, info, err := h.file(v1.UserFrom(r), q.Get("path"), ccfs.Download)
+	if err != nil {
+		return err
+	}
+	f, err := os.Open(loc.Real)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	name := path.Base(loc.Path)
+	ctype, err := contentType(name, f)
+	if err != nil {
+		return err
+	}
+	hdr := w.Header()
+	hdr.Set("Content-Type", ctype)
+	hdr.Set("X-Content-Type-Options", "nosniff")
+	hdr.Set("ETag", strongTag(info))
+	hdr.Set("Cache-Control", "private, no-cache")
+	// A page or a drawing from the share would otherwise run its scripts
+	// with the app's own origin and session.
+	if active(ctype) {
+		hdr.Set("Content-Security-Policy", "sandbox; default-src 'none'; img-src data:; style-src 'unsafe-inline'")
+	}
+	disposition := "inline"
+	if flag(q.Get("download")) {
+		disposition = "attachment"
+	}
+	hdr.Set("Content-Disposition", mime.FormatMediaType(disposition, map[string]string{"filename": name}))
+	http.ServeContent(w, r, name, info.ModTime(), f)
+	return nil
+}
+
+func (h handlers) text(w http.ResponseWriter, r *http.Request) error {
+	q := r.URL.Query()
+	limit, err := intParam(q.Get("max"), textDefault, 1, textMax)
+	if err != nil {
+		return err
+	}
+	loc, info, err := h.file(v1.UserFrom(r), q.Get("path"), ccfs.Download)
+	if err != nil {
+		return err
+	}
+	f, err := os.Open(loc.Real)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	buf, err := io.ReadAll(io.LimitReader(f, limit))
+	if err != nil {
+		return err
+	}
+	truncated := int64(len(buf)) < info.Size()
+	enc, text, err := decodeText(buf, truncated)
+	if err != nil {
+		return err
+	}
+	out := Text{
+		Path:      loc.Path,
+		Size:      info.Size(),
+		MTime:     formatTime(info.ModTime()),
+		Encoding:  enc,
+		EOL:       lineEnding(text),
+		Text:      text,
+		Truncated: truncated,
+	}
+	return v1.WriteJSON(w, r, http.StatusOK, out)
+}
+
+func (h handlers) hex(w http.ResponseWriter, r *http.Request) error {
+	q := r.URL.Query()
+	offset, err := intParam(q.Get("offset"), 0, 0, 1<<62)
+	if err != nil {
+		return err
+	}
+	length, err := intParam(q.Get("length"), hexDefault, 1, hexMax)
+	if err != nil {
+		return err
+	}
+	loc, info, err := h.file(v1.UserFrom(r), q.Get("path"), ccfs.Download)
+	if err != nil {
+		return err
+	}
+	f, err := os.Open(loc.Real)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	data := make([]byte, length)
+	n, err := f.ReadAt(data, offset)
+	if err != nil && !errors.Is(err, io.EOF) {
+		return err
+	}
+	return v1.WriteJSON(w, r, http.StatusOK, Hex{Path: loc.Path, Size: info.Size(), Offset: offset, Data: data[:n]})
+}
+
+func errBinary() error { return v1.Errorf(http.StatusUnsupportedMediaType, "file is not text") }
+
+// decodeText finds the encoding of buf and returns its text. The checks
+// run from the surest sign to the weakest: a byte order mark, then valid
+// UTF-8, then Windows-1252, which older Windows tools write in Europe.
+func decodeText(buf []byte, truncated bool) (encoding, text string, err error) {
+	switch {
+	case bytes.HasPrefix(buf, []byte{0xEF, 0xBB, 0xBF}):
+		return "utf-8-bom", string(trimRune(buf[3:], truncated)), nil
+	case bytes.HasPrefix(buf, []byte{0xFF, 0xFE}):
+		return decodeUTF16("utf-16le", unicode.LittleEndian, buf, truncated)
+	case bytes.HasPrefix(buf, []byte{0xFE, 0xFF}):
+		return decodeUTF16("utf-16be", unicode.BigEndian, buf, truncated)
+	}
+	if bytes.IndexByte(buf[:min(len(buf), 8000)], 0) >= 0 {
+		return "", "", errBinary()
+	}
+	cut := trimRune(buf, truncated)
+	if utf8.Valid(cut) {
+		for _, b := range cut {
+			if b >= 0x80 {
+				return "utf-8", string(cut), nil
+			}
+		}
+		return "ascii", string(cut), nil
+	}
+	out, err := charmap.Windows1252.NewDecoder().Bytes(buf)
+	if err != nil {
+		return "", "", errBinary()
+	}
+	return "windows-1252", string(out), nil
+}
+
+func decodeUTF16(name string, order unicode.Endianness, buf []byte, truncated bool) (string, string, error) {
+	if truncated && len(buf)%2 == 1 {
+		buf = buf[:len(buf)-1]
+	}
+	out, err := unicode.UTF16(order, unicode.ExpectBOM).NewDecoder().Bytes(buf)
+	if err != nil {
+		return "", "", errBinary()
+	}
+	return name, string(out), nil
+}
+
+// trimRune drops a character the read limit cut in half.
+func trimRune(b []byte, truncated bool) []byte {
+	if !truncated {
+		return b
+	}
+	for i := 0; i < utf8.UTFMax && len(b) > 0; i++ {
+		r, size := utf8.DecodeLastRune(b)
+		if r != utf8.RuneError || size > 1 {
+			break
+		}
+		b = b[:len(b)-1]
+	}
+	return b
+}
+
+func lineEnding(s string) string {
+	crlf := strings.Count(s, "\r\n")
+	lf := strings.Count(s, "\n") - crlf
+	cr := strings.Count(s, "\r") - crlf
+	switch crlf + lf + cr {
+	case 0:
+		return ""
+	case crlf:
+		return "crlf"
+	case lf:
+		return "lf"
+	case cr:
+		return "cr"
+	}
+	return "mixed"
+}
+
+func contentType(name string, f *os.File) (string, error) {
+	if t := mime.TypeByExtension(path.Ext(name)); t != "" {
+		return t, nil
+	}
+	head := make([]byte, 512)
+	n, err := io.ReadFull(f, head)
+	if err != nil && !errors.Is(err, io.ErrUnexpectedEOF) && !errors.Is(err, io.EOF) {
+		return "", err
+	}
+	if _, err := f.Seek(0, io.SeekStart); err != nil {
+		return "", err
+	}
+	return http.DetectContentType(head[:n]), nil
+}
+
+func active(ctype string) bool {
+	t, _, _ := mime.ParseMediaType(ctype)
+	switch t {
+	case "text/html", "application/xhtml+xml", "image/svg+xml", "text/xml", "application/xml",
+		"text/javascript", "application/javascript", "application/x-javascript":
+		return true
+	}
+	return false
+}
+
+// strongTag changes whenever the file is written, which is what range
+// requests need to resume safely.
+func strongTag(info os.FileInfo) string {
+	return fmt.Sprintf(`"%x-%x"`, info.Size(), info.ModTime().UnixNano())
+}
+
+func flag(s string) bool {
+	b, _ := strconv.ParseBool(s)
+	return b
+}
+
+func intParam(s string, def, lo, hi int64) (int64, error) {
+	if s == "" {
+		return def, nil
+	}
+	n, err := strconv.ParseInt(s, 10, 64)
+	if err != nil || n < lo || n > hi {
+		return 0, v1.Errorf(http.StatusBadRequest, fmt.Sprintf("expected a number from %d to %d, got %q", lo, hi, s))
+	}
+	return n, nil
+}

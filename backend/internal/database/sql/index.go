@@ -315,23 +315,8 @@ func createdUnix(created *time.Time) int64 {
 }
 
 func (db *IndexDB) InsertItem(source, path string, info *iteminfo.FileInfo) error {
-	query := `
-	INSERT INTO index_items (source, path, parent_path, name, size, created_time, mod_time, type, is_dir, is_hidden, has_preview, last_updated)
-	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	ON CONFLICT(source, path) DO UPDATE SET
-		parent_path = excluded.parent_path,
-		name = excluded.name,
-		size = excluded.size,
-		created_time = excluded.created_time,
-		mod_time = excluded.mod_time,
-		type = excluded.type,
-		is_dir = excluded.is_dir,
-		is_hidden = excluded.is_hidden,
-		has_preview = excluded.has_preview,
-		last_updated = excluded.last_updated
-	`
 	parentPath := getParentPath(path)
-	_, err := db.Exec(query,
+	_, err := db.Exec(upsertItem,
 		source,
 		path,
 		parentPath,
@@ -344,6 +329,7 @@ func (db *IndexDB) InsertItem(source, path string, info *iteminfo.FileInfo) erro
 		info.Hidden,
 		info.HasPreview,
 		time.Now().Unix(),
+		inode(info.Unix), nlink(info.Unix), uid(info.Unix), gid(info.Unix), mode(info.Unix),
 	)
 	if err != nil {
 		if !sqlitebusy.IsBusyOrLocked(err) {
@@ -418,21 +404,7 @@ func (db *IndexDB) attemptBulkInsert(source string, items []*iteminfo.FileInfo) 
 		db.mu.Unlock()
 	}()
 
-	stmt, err := tx.Prepare(`
-	INSERT INTO index_items (source, path, parent_path, name, size, created_time, mod_time, type, is_dir, is_hidden, has_preview, last_updated)
-	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	ON CONFLICT(source, path) DO UPDATE SET
-		parent_path = excluded.parent_path,
-		name = excluded.name,
-		size = excluded.size,
-		created_time = excluded.created_time,
-		mod_time = excluded.mod_time,
-		type = excluded.type,
-		is_dir = excluded.is_dir,
-		is_hidden = excluded.is_hidden,
-		has_preview = excluded.has_preview,
-		last_updated = excluded.last_updated
-	`)
+	stmt, err := tx.Prepare(upsertItem)
 	if err != nil {
 		if sqlitebusy.IsBusyOrLocked(err) {
 			logger.Debugf("[DB_TX] BulkInsertItems: Prepare busy/locked: %v", err)
@@ -458,6 +430,7 @@ func (db *IndexDB) attemptBulkInsert(source string, items []*iteminfo.FileInfo) 
 			info.Hidden,
 			info.HasPreview,
 			nowUnix,
+			inode(info.Unix), nlink(info.Unix), uid(info.Unix), gid(info.Unix), mode(info.Unix),
 		)
 		if err != nil {
 			if sqlitebusy.IsBusyOrLocked(err) {

@@ -15,6 +15,21 @@ type ItemInfo struct {
 	Hidden     bool       `json:"hidden"`             // whether the file is hidden
 	HasPreview bool       `json:"hasPreview"`         // whether the file has a thumbnail preview
 	IsShared   bool       `json:"isShared,omitempty"` // whether the file or folder is shared
+	Unix       UnixAttrs  `json:"-"`
+}
+
+// UnixAttrs are the inode details the index keeps for hard link and owner
+// searches. Known is false where the platform has none, which leaves the
+// stored values as they were.
+type UnixAttrs struct {
+	Known bool
+	Inode uint64
+	Nlink uint64
+	UID   uint32
+	GID   uint32
+	// Mode holds the permission bits including setuid, setgid and sticky,
+	// as chmod writes them.
+	Mode uint32
 }
 
 // ExtendedItemInfo extends ItemInfo with optional metadata that's only populated on-demand
