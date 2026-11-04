@@ -109,12 +109,12 @@ func TestContentNeedsTheDownloadRight(t *testing.T) {
 	}
 }
 
-func TestContentRejectsFoldersAndArchives(t *testing.T) {
+func TestContentRejectsFoldersAndMissingArchives(t *testing.T) {
 	f := newFixture(t)
 	cases := map[string]int{
 		"/mnt/user/downloads":           http.StatusBadRequest,
 		"/mnt":                          http.StatusForbidden,
-		"/mnt/user/a.zip::/b.txt":       http.StatusNotImplemented,
+		"/mnt/user/a.zip::/b.txt":       http.StatusNotFound,
 		"/mnt/user/downloads/fehlt.txt": http.StatusNotFound,
 		"":                              http.StatusBadRequest,
 	}

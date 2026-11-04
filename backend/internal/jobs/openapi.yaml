@@ -35,9 +35,12 @@ paths:
         testArchive, checksum, verify, split, combine, attrsRecursive,
         fixPerms, sync, gather, scatter, contentSearch, duplicates,
         fetchUrl, reindex. Built so far: copy, move, delete, trash,
-        fixPerms, contentSearch (params ContentSearchParams), duplicates
-        (params DuplicatesParams) and reindex (params ReindexParams, admins
-        only). Restore and emptyTrash start from the trash endpoints.
+        fixPerms, gather, scatter, pack, unpack, testArchive, checksum,
+        verify, split, combine, attrsRecursive, sync and fetchUrl, whose
+        params the tools part describes, contentSearch (params
+        ContentSearchParams), duplicates (params DuplicatesParams) and
+        reindex (params ReindexParams, admins only). Restore and emptyTrash
+        start from the trash endpoints.
       requestBody:
         required: true
         content:

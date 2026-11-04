@@ -129,6 +129,9 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	if loc.InArchive() {
+		return h.archiveList(w, r, loc)
+	}
 	out := Listing{Path: loc.Path, Items: []Item{}}
 	if loc.Virtual() {
 		for _, name := range h.fs.VirtualChildren(loc.Path) {
@@ -169,6 +172,9 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 	loc, err := h.folder(u, r.URL.Query().Get("path"))
 	if err != nil {
 		return err
+	}
+	if loc.InArchive() {
+		return h.archiveTree(w, r, loc)
 	}
 	out := Tree{Path: loc.Path, Items: []TreeItem{}}
 	var names []string
@@ -212,7 +218,7 @@ func (h handlers) stat(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if loc.InArchive() {
-		return v1.Errorf(http.StatusNotImplemented, "looking into archives is not built yet")
+		return h.archiveStat(w, r, loc)
 	}
 	out := Stat{Path: loc.Path}
 	if loc.Virtual() {
@@ -248,7 +254,7 @@ func (h handlers) folder(u *users.User, p string) (ccfs.Location, error) {
 		return loc, err
 	}
 	if loc.InArchive() {
-		return loc, v1.Errorf(http.StatusNotImplemented, "listing archives is not built yet")
+		return loc, archiveFile(loc)
 	}
 	if loc.Virtual() {
 		return loc, nil

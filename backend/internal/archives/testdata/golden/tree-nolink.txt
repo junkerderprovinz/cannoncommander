@@ -1,0 +1,17 @@
+set	dir	0
+set/Tabelle (1).csv	file	8
+set/docs	dir	0
+set/docs/Grüße.txt	file	16
+set/docs/leer	dir	0
+set/docs/leer/.keep	file	0
+set/docs/readme.txt	file	11
+set/fotos	dir	0
+set/fotos/2026	dir	0
+set/fotos/2026/a.txt	file	1
+set/fotos/strand.jpg	file	2400
+set/leer.txt	file	0
+set/tief	dir	0
+set/tief/x	dir	0
+set/tief/x/y	dir	0
+set/tief/x/y/z	dir	0
+set/tief/x/y/z/end.md	file	7

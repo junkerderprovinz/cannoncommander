@@ -98,14 +98,136 @@ paths:
     post:
       operationId: fsRenameBatch
       summary: Rename many entries with a pattern
+      description: |
+        Takes either a mask, with the tokens of the rename dialog, or the
+        new names in the order of the paths, as the editor sends them. With
+        dryRun nothing is renamed and the rows show what would happen.
+        Errors per row are empty, invalid, exists and duplicate, compared
+        without case. Nothing is renamed while a row has an error. Names
+        can trade places. The tools package serves this route.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RenameBatch"
+      responses:
+        "200":
+          description: The rows, renamed unless dryRun was set.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenameBatchResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: A row has an error, so nothing was renamed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenameBatchResult"
   /fs/link:
     post:
       operationId: fsLink
       summary: Create a symbolic or hard link
+      description: |
+        A symbolic link may point to something that does not exist yet,
+        but only to a place inside a source the user may see. A hard link
+        needs an existing file on the same source.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target, path]
+              properties:
+                target:
+                  type: string
+                  description: What the link points to, as a full path.
+                path:
+                  type: string
+                  description: Where the link is created.
+                hard:
+                  type: boolean
+      responses:
+        "201":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /fs/attrs:
     patch:
       operationId: fsAttrs
       summary: Change mode, owner or times
+      description: |
+        Fields left out stay as they are. Owner and group take a name or a
+        number. With recursive the change also covers everything inside
+        the folders and runs as an attrsRecursive job, answered with 202.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths]
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+                mode:
+                  type: string
+                  example: "0775"
+                owner:
+                  type: string
+                  example: nobody
+                group:
+                  type: string
+                  example: users
+                mtime:
+                  type: string
+                  format: date-time
+                recursive:
+                  type: boolean
+      responses:
+        "200":
+          description: How many entries changed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [changed]
+                properties:
+                  changed:
+                    type: integer
+        "202":
+          description: The change runs as a job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /ops/preflight:
     post:
       operationId: opsPreflight

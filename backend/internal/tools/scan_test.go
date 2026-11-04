@@ -15,13 +15,12 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex/fsindextest"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
 )
-
-func TestMain(m *testing.M) { os.Exit(testutil.Main(m)) }
 
 type fixture struct {
 	h     http.Handler
@@ -95,6 +94,7 @@ func newFixture(t *testing.T) *fixture {
 		v1.Forget(deps, "jobs")
 	})
 	r := v1.NewRouter(deps, auth)
+	fileops.Routes(r)
 	Routes(r)
 	h, err := r.Handler()
 	if err != nil {
