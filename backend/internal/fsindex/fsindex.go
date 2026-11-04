@@ -105,3 +105,36 @@ func slashed(dir string) string {
 	}
 	return dir + "/"
 }
+
+// Inodes answers hard link lookups for the unraid package from the index of
+// the source mounted at /mnt/<device>. Only disks and pools that are sources
+// of their own are indexed with the inode numbers of the disk, since
+// /mnt/user reports numbers of its own.
+func Inodes(fs *ccfs.Resolver) InodeLookup { return InodeLookup{fs} }
+
+// InodeLookup is the hard link lookup Inodes returns.
+type InodeLookup struct{ fs *ccfs.Resolver }
+
+// PathsByInode returns the other names below /mnt/<device>, without the
+// leading slash. ok is false when the index cannot answer, so the caller
+// walks the disk instead.
+func (i InodeLookup) PathsByInode(device string, ino uint64) ([]string, bool) {
+	db := indexing.GetIndexDB()
+	if db == nil {
+		return nil, false
+	}
+	for _, s := range i.fs.Sources() {
+		if s.Mount != "/mnt/"+device || indexing.Lookup(s.Name) == nil {
+			continue
+		}
+		paths, err := db.PathsByInode(s.Name, ino)
+		if err != nil || len(paths) == 0 {
+			return nil, false
+		}
+		for k, p := range paths {
+			paths[k] = strings.TrimPrefix(p, "/")
+		}
+		return paths, true
+	}
+	return nil, false
+}

@@ -50,7 +50,9 @@ type Rename struct {
 
 // Mover hears about entries that something outside the app renamed or
 // moved between watched folders, so data kept by path, such as labels, can
-// follow them. Paths are absolute API paths.
+// follow them. Only renames inotify pairs by their cookie count, so a file
+// that one disk loses and another gains, as when Unraid's mover runs, is
+// never taken for one. Paths are absolute API paths.
 type Mover interface {
 	Moved(from, to string)
 }
@@ -144,22 +146,16 @@ func (w *Watcher) Topic(topic string, active bool) {
 	w.close(p)
 }
 
-// Follow adds m to the movers told about renames from outside.
-func (w *Watcher) Follow(m Mover) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-	w.movers = append(w.movers, m)
-}
-
 // Start begins watching the folders subscribed so far and those to come.
 // index may be nil, otherwise each changed folder is read into it again.
-func (w *Watcher) Start(h *hub.Hub, fs *ccfs.Resolver, index fsindex.Index) {
+// movers hear about renames from outside.
+func (w *Watcher) Start(h *hub.Hub, fs *ccfs.Resolver, index fsindex.Index, movers ...Mover) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.started || w.closed {
 		return
 	}
-	w.hub, w.fs, w.index, w.started = h, fs, index, true
+	w.hub, w.fs, w.index, w.movers, w.started = h, fs, index, movers, true
 	if !w.opts.PollOnly {
 		n, err := newNotifier(w)
 		if err != nil {
@@ -266,7 +262,7 @@ func (w *Watcher) flush(f *folder) {
 	b := f.batch
 	f.batch, f.timer = nil, nil
 	current := w.folders[f.path] == f
-	h, index, movers := w.hub, w.index, slices.Clone(w.movers)
+	h, index, movers := w.hub, w.index, w.movers
 	w.mu.Unlock()
 	if b == nil || !current {
 		return

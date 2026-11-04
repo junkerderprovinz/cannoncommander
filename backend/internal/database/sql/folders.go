@@ -154,3 +154,21 @@ func inChunks(keys []string, fn func(marks string, args []any) error) error {
 	}
 	return nil
 }
+
+// PathsByInode returns the files of source that carry the inode ino.
+func (db *IndexDB) PathsByInode(source string, ino uint64) ([]string, error) {
+	rows, err := db.Query(`SELECT path FROM index_items WHERE source = ? AND ino = ? AND is_dir = 0`, source, int64(ino))
+	if err != nil {
+		return nil, sqlitebusy.Wrap(err)
+	}
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var p string
+		if err := rows.Scan(&p); err != nil {
+			return nil, err
+		}
+		out = append(out, p)
+	}
+	return out, rows.Err()
+}

@@ -97,9 +97,11 @@ type Tree struct {
 type Stat struct {
 	Path string `json:"path"`
 	Item
-	Files  *int64  `json:"files,omitempty"`
-	Dirs   *int64  `json:"dirs,omitempty"`
-	Volume *Volume `json:"volume,omitempty"`
+	Files *int64 `json:"files,omitempty"`
+	Dirs  *int64 `json:"dirs,omitempty"`
+	// Devices are the disks and pools that hold a path of the user shares.
+	Devices []string `json:"devices,omitempty"`
+	Volume  *Volume  `json:"volume,omitempty"`
 }
 
 type handlers struct {
@@ -143,7 +145,7 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 		refs = append(refs, refIn(loc, &out.Items[i]))
 	}
 	h.describe(loc.Source, refs)
-	markPools(loc, out.Items)
+	unraidDetails(loc, out.Items)
 	out.Volume = volumeOf(loc.Source)
 	// Free space changes all the time, the ETag only follows the entries.
 	return v1.WriteJSONTagged(w, r, http.StatusOK, out, Listing{Path: out.Path, Items: out.Items})
@@ -218,14 +220,9 @@ func (h handlers) stat(w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 	}
-	if loc.Index != "/" {
-		parent, err := h.fs.Resolve(path.Dir(loc.Path))
-		if err == nil {
-			markPools(parent, []Item{out.Item})
-		}
-	}
+	out.Devices = devicesOf(loc, &out.Item)
 	out.Volume = volumeOf(loc.Source)
-	return v1.WriteJSONTagged(w, r, http.StatusOK, out, Stat{Path: out.Path, Item: out.Item, Files: out.Files, Dirs: out.Dirs})
+	return v1.WriteJSONTagged(w, r, http.StatusOK, out, Stat{Path: out.Path, Item: out.Item, Files: out.Files, Dirs: out.Dirs, Devices: out.Devices})
 }
 
 // folder checks that p is a folder the user may list.

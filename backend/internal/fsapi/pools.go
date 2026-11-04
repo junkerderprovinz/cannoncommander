@@ -13,50 +13,60 @@ import (
 // userShares is where Unraid joins its disks and pools into the user shares.
 const userShares = "/mnt/user"
 
-// Everything else next to /mnt/user that is not an array disk is a pool.
+// Everything next to /mnt/user that is not one of these is a disk or a pool.
 var (
-	notPools = map[string]bool{"user": true, "user0": true, "disks": true, "remotes": true, "addons": true, "rootshare": true}
-	diskName = regexp.MustCompile(`^disk[0-9]+$`)
+	notDevices = map[string]bool{"user": true, "user0": true, "disks": true, "remotes": true, "addons": true, "rootshare": true}
+	diskName   = regexp.MustCompile(`^disk[0-9]+$`)
 )
 
-const poolsTTL = time.Minute
+const devicesTTL = time.Minute
 
-var poolCache struct {
+var deviceCache struct {
 	sync.Mutex
 	root  string
 	at    time.Time
 	names []string
 }
 
-// poolsNextTo returns the pools beside the user shares, such as cache. A
-// share keeps its files on the pools and the disks at the same path inside,
-// so the pool folder shows which entries sit on fast storage.
-func poolsNextTo(userRoot string) []string {
-	poolCache.Lock()
-	defer poolCache.Unlock()
-	if poolCache.root == userRoot && time.Since(poolCache.at) < poolsTTL {
-		return poolCache.names
+// devicesNextTo returns the disks and pools beside the user shares. A share
+// keeps its files on them at the same path inside.
+func devicesNextTo(userRoot string) []string {
+	deviceCache.Lock()
+	defer deviceCache.Unlock()
+	if deviceCache.root == userRoot && time.Since(deviceCache.at) < devicesTTL {
+		return deviceCache.names
 	}
 	var names []string
 	dirents, _ := os.ReadDir(filepath.Dir(userRoot))
 	for _, d := range dirents {
-		if d.IsDir() && !notPools[d.Name()] && !diskName.MatchString(d.Name()) {
+		if d.IsDir() && !notDevices[d.Name()] {
 			names = append(names, d.Name())
 		}
 	}
-	poolCache.root, poolCache.at, poolCache.names = userRoot, time.Now(), names
+	deviceCache.root, deviceCache.at, deviceCache.names = userRoot, time.Now(), names
 	return names
 }
 
-// markPools sets Pool on the entries of a user share folder that are on a
-// pool. One folder read per pool covers the whole listing.
-func markPools(dir ccfs.Location, items []Item) {
-	if dir.Source == nil || dir.Source.Mount != userShares || len(items) == 0 {
+func isUserShare(loc ccfs.Location) bool {
+	return loc.Source != nil && loc.Source.Mount == userShares
+}
+
+// unraidDetails sets Pool on the entries of a user share folder that sit on
+// a pool, which takes one folder read per pool. It also drops the inode
+// numbers, because the share makes up its own and only the disk's count.
+func unraidDetails(dir ccfs.Location, items []Item) {
+	if !isUserShare(dir) || len(items) == 0 {
 		return
 	}
+	for i := range items {
+		items[i].Ino = 0
+	}
 	parent := filepath.Dir(dir.Source.Root)
-	for _, pool := range poolsNextTo(dir.Source.Root) {
-		dirents, err := os.ReadDir(filepath.Join(parent, pool, filepath.FromSlash(dir.Index)))
+	for _, dev := range devicesNextTo(dir.Source.Root) {
+		if diskName.MatchString(dev) {
+			continue
+		}
+		dirents, err := os.ReadDir(filepath.Join(parent, dev, filepath.FromSlash(dir.Index)))
 		if err != nil {
 			continue
 		}
@@ -66,8 +76,33 @@ func markPools(dir ccfs.Location, items []Item) {
 		}
 		for i := range items {
 			if items[i].Pool == "" && on[items[i].Name] {
-				items[i].Pool = pool
+				items[i].Pool = dev
 			}
 		}
 	}
+}
+
+// devicesOf finds the disks and pools that hold a path of the user shares,
+// with one stat each, and takes the inode from the first.
+func devicesOf(loc ccfs.Location, item *Item) []string {
+	if !isUserShare(loc) {
+		return nil
+	}
+	item.Ino = 0
+	parent := filepath.Dir(loc.Source.Root)
+	var out []string
+	for _, dev := range devicesNextTo(loc.Source.Root) {
+		st, err := lstatFile(filepath.Join(parent, dev, filepath.FromSlash(loc.Index)))
+		if err != nil {
+			continue
+		}
+		if len(out) == 0 {
+			item.Ino = st.ino
+		}
+		if item.Pool == "" && !diskName.MatchString(dev) {
+			item.Pool = dev
+		}
+		out = append(out, dev)
+	}
+	return out
 }

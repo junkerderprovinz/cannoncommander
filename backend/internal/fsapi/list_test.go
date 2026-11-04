@@ -118,9 +118,9 @@ func TestListReportsInodeAndOwner(t *testing.T) {
 		t.Fatal(err)
 	}
 	l := decode[Listing](t, f.get(t, "jdp", "/fs/list", "/mnt/user/downloads"))
-	a, b := byName(t, l.Items, "setup-notes.md"), byName(t, l.Items, "zweiter-name.md")
-	if a.Ino == 0 || a.Ino != b.Ino || a.Nlink != 2 {
-		t.Errorf("hard links: %+v and %+v", a, b)
+	a := byName(t, l.Items, "setup-notes.md")
+	if a.Ino != 0 || a.Nlink != 2 {
+		t.Errorf("share entry %+v should have links but no inode of its own", a)
 	}
 	if a.UID == nil || a.GID == nil || *a.UID != uint32(os.Getuid()) || a.Owner == "" {
 		t.Errorf("owner of %+v", a)
@@ -221,5 +221,29 @@ func TestFormatOfNames(t *testing.T) {
 	}
 	if !slices.Contains(fsindex.FolderPictures, "poster.jpg") {
 		t.Fatal("poster.jpg is not a folder picture")
+	}
+}
+
+func TestStatFindsTheDisksOfASharePath(t *testing.T) {
+	f := newFixture(t)
+	base := filepath.Dir(f.share)
+	write(t, filepath.Join(base, "disk2", "downloads", "setup-notes.md"), 4)
+	write(t, filepath.Join(f.cache, "downloads", "setup-notes.md"), 4)
+	write(t, filepath.Join(base, "disk1", "filme", "anderes.mkv"), 1)
+	st := decode[Stat](t, f.get(t, "jdp", "/fs/stat", "/mnt/user/downloads/setup-notes.md"))
+	if !slices.Equal(st.Devices, []string{"cache", "disk2"}) || st.Pool != "cache" {
+		t.Fatalf("stat = %+v", st)
+	}
+	if runtime.GOOS == "linux" {
+		disk, err := lstatFile(filepath.Join(f.cache, "downloads", "setup-notes.md"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if st.Ino != disk.ino {
+			t.Errorf("inode %d, the cache has %d", st.Ino, disk.ino)
+		}
+	}
+	if boot := decode[Stat](t, f.get(t, "jdp", "/fs/stat", "/boot/config/go")); boot.Devices != nil {
+		t.Errorf("outside the shares: %+v", boot)
 	}
 }

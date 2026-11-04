@@ -75,8 +75,7 @@ func newRig(t *testing.T, opts Options, folders ...string) *rig {
 	r := &rig{root: root, rec: &recorder{}}
 	r.w = New(opts)
 	r.hub = hub.New(hub.Options{OnTopic: r.w.Topic})
-	r.w.Follow(r.rec)
-	r.w.Start(r.hub, fs, r.rec)
+	r.w.Start(r.hub, fs, r.rec, r.rec)
 	t.Cleanup(r.w.Close)
 	r.client, _, _ = r.hub.Connect("tab", "jdp", 0)
 	topics := make([]string, len(folders))

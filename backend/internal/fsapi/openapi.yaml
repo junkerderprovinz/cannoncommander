@@ -318,7 +318,7 @@ components:
         ino:
           type: integer
           format: int64
-          description: Inode number. On /mnt/user it is the one the user share reports, not the disk's.
+          description: Inode number. Missing below /mnt/user in a listing, because the share reports numbers of its own. fs/stat gives the one on the disk.
         nlink:
           type: integer
           format: int64
@@ -422,6 +422,11 @@ components:
               type: integer
               format: int64
               description: Folders anywhere below a folder.
+            devices:
+              type: array
+              items:
+                type: string
+              description: Below /mnt/user, the disks and pools that hold the path, such as cache or disk2.
             volume:
               $ref: "#/components/schemas/Volume"
     FsText:
