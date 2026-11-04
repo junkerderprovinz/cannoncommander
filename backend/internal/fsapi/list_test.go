@@ -30,6 +30,11 @@ func (f *fakeIndex) Folders(_ *ccfs.Source, dirs []string) map[string]fsindex.Fo
 	return out
 }
 
+func (f *fakeIndex) FolderSize(_ *ccfs.Source, dir string) (int64, bool) {
+	v, ok := f.folders[dir]
+	return v.Size, ok
+}
+
 func (f *fakeIndex) Totals(_ *ccfs.Source, dir string) (int64, int64, bool) {
 	t, ok := f.totals[dir]
 	return t[0], t[1], ok

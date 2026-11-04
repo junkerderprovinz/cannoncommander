@@ -29,6 +29,8 @@ func (r *recorder) Moved(from, to string) {
 
 func (r *recorder) Folders(*ccfs.Source, []string) map[string]fsindex.Folder { return nil }
 
+func (r *recorder) FolderSize(*ccfs.Source, string) (int64, bool) { return 0, false }
+
 func (r *recorder) Totals(*ccfs.Source, string) (int64, int64, bool) { return 0, 0, false }
 
 func (r *recorder) Refresh(_ *ccfs.Source, dir string) {
