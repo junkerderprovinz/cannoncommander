@@ -15,6 +15,7 @@ import { drop, followFocus } from './drop';
 import { saveFilter } from './saved';
 import SearchBody from './SearchBody.vue';
 import SearchDrop from './SearchDrop.vue';
+import MetaWarn from './MetaWarn.vue';
 import SmartBar from './SmartBar.vue';
 import './search.css';
 
@@ -42,6 +43,7 @@ export default function setup() {
     return s ? { name: s.name, g: 'IconFilter' } : null;
   });
   addTo('panelBars', (i) => (F.T(i).smart ? h(SmartBar, { i }) : null));
+  addTo('panelBars', (i) => h(MetaWarn, { i }));
   addTo('filterSlots', (i) => (drop.panel === i && !F.T(i).filter ? h(SearchDrop, { i }) : null));
   followFocus();
 }

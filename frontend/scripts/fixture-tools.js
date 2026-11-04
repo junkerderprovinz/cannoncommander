@@ -6,6 +6,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import vm from 'node:vm';
+import { clock } from './fixture-clock.js';
 import { applyMask, rowErrors } from './rename-mask.js';
 
 const KB = 1024, MB = KB * 1024, GB = MB * 1024, DAY = 86400000;
@@ -75,7 +76,7 @@ const EMPTY_ZIP = Buffer.from([0x50, 0x4b, 0x05, 0x06, ...Array(18).fill(0)]);
 export function toolsFixture(engine) {
   const { FS, fx, send, changed, startJob, dirAt, taken, freeName, ensureDir, detach, toTrash, pushStep, nextId, iso, base, clone, raw } = engine;
   const mk = madeUp(FS);
-  const now = () => Date.now();
+  const now = () => clock.now();
   const fileAt = (path) => { const n = FS.nodeAt(path || ''); return n && !n.dir ? n : null; };
   const hidden = (k) => k.hidden || k.name.startsWith('.');
   const show = (all) => (k) => all || !hidden(k);
@@ -711,7 +712,7 @@ export function toolsFixture(engine) {
     shares.unshift(s);
     // The fixture has no visitors, so someone opens a link that asks for a note a few seconds later.
     if (s.notify) {
-      setTimeout(() => {
+      clock.setTimeout(() => {
         if (!shares.includes(s)) return;
         s.views++;
         send('share.opened', { id: s.id, slug: s.slug, name: s.name, views: s.views });
@@ -736,6 +737,8 @@ export function toolsFixture(engine) {
   }
 
   const presets = { items: [] };
+  const profiles = [];
+  let profileId = 0;
 
   async function archiveStream(req, res) {
     const text = (await raw(req)).toString('utf8');
@@ -857,6 +860,18 @@ export function toolsFixture(engine) {
       const items = b.items || [];
       if (new Set(items.map((p) => p.name)).size !== items.length) return [409, 'Two presets share a name'];
       presets.items = items;
+      return [204];
+    }],
+    ['GET', /^\/me\/profiles$/, () => [200, { items: profiles }]],
+    ['POST', /^\/me\/profiles$/, (_r, _s, b) => {
+      if (!String(b.name || '').trim()) return [400, 'a profile needs a name'];
+      profiles.push({ id: ++profileId, name: b.name.trim(), dual: !!b.dual, columns: b.columns || [], panels: b.panels || [] });
+      return [201, profiles.at(-1)];
+    }],
+    ['DELETE', /^\/me\/profiles\/(\d+)$/, (_r, _s, _b, [, id]) => {
+      const at = profiles.findIndex((p) => p.id === +id);
+      if (at < 0) return [404, 'there is no such profile'];
+      profiles.splice(at, 1);
       return [204];
     }],
   ];

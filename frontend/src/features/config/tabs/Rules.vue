@@ -81,7 +81,7 @@ const probeState = { who: 'anna', path: '/mnt/user/backups' };
 <template>
   <Card :title="c('rules.title')">
     <div v-if="rules.length" class="a-list">
-      <ARow v-for="(r, i) in rules" :key="i" :name="r.path" mono data-open @click="edit(i)">
+      <ARow v-for="(r, i) in rules" :key="i" :name="r.path" mono :data-open="i" @click="edit(i)">
         <template #tile><G :n="ruleGlyph(r.rule)" /></template>
         <template #badges><span class="pill">{{ whoName(r.who, users) }}</span><span class="pill state">{{ ruleName(r.rule) }}</span></template>
         <template #acts>
@@ -93,11 +93,11 @@ const probeState = { who: 'anna', path: '/mnt/user/backups' };
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconShieldOn" /><div>{{ c('rules.none') }}</div></div>
-    <div class="a-foot"><Btn :label="c('rules.add')" g="IconAdd" @click="edit(null)" /></div>
+    <div class="a-foot"><Btn data-add :label="c('rules.add')" g="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('rules.probe')">
     <Frow :label="c('rules.who')"><Dropdown v-model="probe.who" :options="users.map((u) => [u.name, u.full])" /></Frow>
-    <Frow :label="c('rules.path')"><PathField v-model="probe.path" /></Frow>
+    <Frow :label="c('rules.path')"><PathField id="a-ppath" v-model="probe.path" /></Frow>
     <Frow :label="c('rules.result')" :tip="c('rules.resultTip')"><span id="a-pres" class="a-ctl"><span class="pill" :class="result.tone">{{ result.word }}</span><Info :tip="result.why" /></span></Frow>
   </Card>
 </template>

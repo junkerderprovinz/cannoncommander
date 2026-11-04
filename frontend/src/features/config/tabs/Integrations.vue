@@ -128,8 +128,8 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
       </template>
     </Card>
     <Card :title="c('integrations.media')">
-      <Frow :label="c('integrations.thumbs')" :tip="c('integrations.thumbsTip')"><Sw v-model="thumbs" /></Frow>
-      <Frow :label="c('integrations.video')" :tip="c('integrations.videoTip')"><Sw v-model="video" /></Frow>
+      <Frow :label="c('integrations.thumbs')" :tip="c('integrations.thumbsTip')"><Sw v-model="thumbs" data-it="thumbs" /></Frow>
+      <Frow :label="c('integrations.video')" :tip="c('integrations.videoTip')"><Sw v-model="video" data-it="videoPreview" /></Frow>
       <Frow label="ffmpeg" :tip="c('integrations.ffmpegTip')"><span class="pill mono">{{ sys ? tool(sys.tools.ffmpeg) : '' }}</span></Frow>
     </Card>
     <Card title="ArrowLoop" :hint="c('integrations.alHint')">
@@ -147,7 +147,7 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
       <div class="a-foot"><Btn :label="c('integrations.addPath')" g="IconAdd" @click="paths.push({ here: '', there: '' })" /></div>
     </Card>
     <Card :title="c('integrations.webdavRclone')">
-      <Frow :label="c('integrations.webdav')" :tip="c('integrations.webdavTip')"><Sw v-model="webdav" /></Frow>
+      <Frow :label="c('integrations.webdav')" :tip="c('integrations.webdavTip')"><Sw v-model="webdav" data-it="webdav" /></Frow>
       <Frow v-if="webdav" :label="c('integrations.address')"><CopyField :value="webdavUrl" /></Frow>
       <Frow label="rclone" :tip="c('integrations.rcloneTip')"><span class="pill mono">{{ sys ? tool(sys.tools.rclone) : '' }}</span></Frow>
     </Card>

@@ -39,7 +39,7 @@ const open = (url: string) => window.open(url, '_blank', 'noopener');
 // Subject only: a prefilled body reads as a form to fill in.
 const mail = () => open(`mailto:${MAIL}?subject=${encodeURIComponent(c('info.mailSubject'))}`);
 
-const readme = (tile: string, mark: string, glyph: string, name: string, sub: string | undefined, go: () => unknown, aria?: string) => ({ tile, mark, glyph, name, sub, go, aria });
+const readme = (tile: string, mark: string, glyph: string, name: string, sub: string | undefined, go: () => unknown, aria?: string, id?: string) => ({ tile, mark, glyph, name, sub, go, aria, id });
 const help = computed(() => [
   readme('glim-tile-github', 'glim-github-mark', 'IconGithub', 'GitHub', undefined, () => open(REPO)),
   readme('glim-tile-house', 'glim-house-mark', 'IconMail', c('info.mail'), undefined, mail),
@@ -47,9 +47,9 @@ const help = computed(() => [
   readme('glim-tile-github', 'glim-github-mark', 'IconDiagnostics', c('info.bug'), c('info.download'), bugReport),
 ]);
 const give = computed(() => [
-  readme('glim-tile-coffee', 'a-coffee-mark', 'IconCoffee', c('info.coffee'), undefined, () => win({ title: c('info.coffeeTitle'), body: CoffeeWin }), c('info.coffeeTitle')),
-  readme('glim-tile-paypal', 'glim-paypal-mark', 'IconPayPal', 'PayPal', undefined, () => win({ title: 'PayPal', body: PaypalWin })),
-  readme('glim-tile-bitcoin', 'glim-bitcoin-mark', 'IconBitcoin', c('info.crypto'), undefined, () => win({ title: c('info.crypto'), body: CryptoWin })),
+  readme('glim-tile-coffee', 'a-coffee-mark', 'IconCoffee', c('info.coffee'), undefined, () => win({ title: c('info.coffeeTitle'), body: CoffeeWin }), c('info.coffeeTitle'), 'a-coffee'),
+  readme('glim-tile-paypal', 'glim-paypal-mark', 'IconPayPal', 'PayPal', undefined, () => win({ title: 'PayPal', body: PaypalWin }), undefined, 'a-paypal'),
+  readme('glim-tile-bitcoin', 'glim-bitcoin-mark', 'IconBitcoin', c('info.crypto'), undefined, () => win({ title: c('info.crypto'), body: CryptoWin }), undefined, 'a-crypto'),
 ]);
 </script>
 
@@ -77,7 +77,7 @@ const give = computed(() => [
       <p>{{ c('info.about1') }}</p>
       <p>{{ c('info.about2') }}</p>
       <div class="glim-readme-btn-rows glim-about-give">
-        <div v-for="b in give" :key="b.name" class="glim-readme-btn-unit group" :class="b.tile"><button class="glim-readme-btn glim-brand-tile" :aria-label="b.aria" @click="b.go"><span class="glim-readme-btn-mark" :class="b.mark"><G :n="b.glyph" /></span><span class="glim-readme-btn-text"><span class="glim-readme-btn-name">{{ b.name }}</span></span></button></div>
+        <div v-for="b in give" :key="b.name" class="glim-readme-btn-unit group" :class="b.tile"><button :id="b.id" class="glim-readme-btn glim-brand-tile" :aria-label="b.aria" @click="b.go"><span class="glim-readme-btn-mark" :class="b.mark"><G :n="b.glyph" /></span><span class="glim-readme-btn-text"><span class="glim-readme-btn-name">{{ b.name }}</span></span></button></div>
       </div>
     </div>
   </Card>

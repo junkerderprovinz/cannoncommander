@@ -5,5 +5,18 @@
   "newFileName": "Neue Datei.txt",
   "create": "Anlegen",
   "rename": "Umbenennen",
-  "taken": "Diesen Namen gibt es hier schon"
+  "taken": "Diesen Namen gibt es hier schon",
+  "folderWithSel": "Neuer Ordner mit Auswahl",
+  "onlyHere": "Das geht nur mit Dateien aus diesem Ordner",
+  "oneGoesIn": "1 Objekt kommt gleich hinein.",
+  "manyGoIn": "{n} Objekte kommen gleich hinein.",
+  "oneObject": "1 Objekt",
+  "manyObjects": "{n} Objekten",
+  "folderMade": "„{name}“ mit {what} angelegt",
+  "notMoved": "Die Auswahl kam nicht in den neuen Ordner",
+  "duplicate": "Hier duplizieren",
+  "copyWord": "Kopie",
+  "made": "„{name}“ angelegt",
+  "copies": "{n} Kopien angelegt",
+  "notCopied": "Das Duplizieren hat nicht geklappt"
 }

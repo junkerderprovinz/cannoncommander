@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue';
 import { t } from '@/i18n';
 import Frow from '@/ui/Frow.vue';
 
-const props = defineProps<{ st: { name: string } }>();
+const props = defineProps<{ st: { name: string }; hint?: string; field?: string }>();
 const input = ref<HTMLInputElement | null>(null);
 onMounted(() => setTimeout(() => {
   const dot = props.st.name.lastIndexOf('.');
@@ -14,5 +14,5 @@ const enter = (e: KeyboardEvent) => (e.target as Element).closest('.win')?.query
 </script>
 
 <template>
-  <div class="well"><Frow :label="t('names.name')"><input id="nm" ref="input" v-model="st.name" class="field w" autocomplete="off" spellcheck="false" @keydown.enter="enter"></Frow></div>
+  <div class="well"><Frow :label="t('names.name')" :tip="hint"><input :id="field || 'nm'" ref="input" v-model="st.name" class="field w" autocomplete="off" spellcheck="false" @keydown.enter="enter"></Frow></div>
 </template>

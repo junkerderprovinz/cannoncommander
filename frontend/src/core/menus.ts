@@ -3,15 +3,15 @@ import { tl } from '@/i18n';
 import type { MenuEntry, MenuItem } from './menu';
 
 export const MENUS: [string, MenuEntry[]][] = [
-  ['file', ['newFolder', 'newFile', 'upload', 'download', '-', 'view', 'edit', 'share', 'props', '-', 'pack', 'unpack', 'checksum', 'checksumVerify', 'split', 'combine', 'symlink', '-', 'delete', 'openTrash', '-', 'logout']],
-  ['edit', ['copy', 'move', 'rename', 'multiRename', '-', 'clipCut', 'clipCopy', 'clipPaste', '-', 'selectAll', 'invertSel', 'selectPattern', 'unselect', 'saveSel', 'restoreSel', '-', 'copyPath', 'internalLink']],
+  ['file', ['newFolder', 'folderWithSel', 'newFile', 'upload', 'download', '-', 'view', 'edit', 'share', 'props', '-', 'pack', 'unpack', 'checksum', 'checksumVerify', 'split', 'combine', 'symlink', '-', 'delete', 'openTrash', '-', 'logout']],
+  ['edit', ['copy', 'move', 'rename', 'duplicate', 'multiRename', '-', 'clipCut', 'clipCopy', 'clipPaste', '-', 'touchSelect', 'selectAll', 'invertSel', 'selectPattern', 'unselect', 'saveSel', 'restoreSel', '-', 'copyPath', 'internalLink']],
   ['view', ['single', 'dual', 'sidebar', 'quickview', 'fkeys', 'hidden', 'extensions', 'syncBrowse', '-',
     { label: tl('menus.look'), g: 'IconTabApps', sub: ['view-details', 'view-compact', 'view-list', 'view-content', 'view-columns', 'view-tiles', 'view-large', 'view-gallery', 'view-drives'] },
     { label: tl('menus.group'), g: 'IconFile', sub: ['group-none', 'group-kind', 'group-date', 'group-size'] },
     'flat', 'columns', { head: tl('menus.sort') }, 'sortName', 'sortSize', 'sortTime', 'sortType', '-', 'swapPanels', 'equalPanels', 'profiles', 'refresh']],
   ['go', ['back', 'forward', 'up', 'home', 'gotoPath', 'history', '-', 'BOOKMARKS', '-', 'openTrash', 'openShares', 'openActivity']],
   ['tools', ['search', 'quickFilter', '-', 'compareDirs', 'sync', 'diff', 'duplicates', 'diskUsage', '-', 'jobs', 'mounts']],
-  ['help', ['palette', 'shortcuts', 'whatsNew', 'docs', 'glyphs', '-', 'about']],
+  ['help', ['palette', 'shortcuts', 'whatsNew', 'docs', 'installApp', 'glyphs', '-', 'about']],
 ];
 
 export const menuName = (i: number) => tl(`menus.${MENUS[i]![0]}`)();

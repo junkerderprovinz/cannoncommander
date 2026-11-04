@@ -49,8 +49,8 @@ onMounted(() => setFoot(props.win, [cancelBtn(), { label: s ? c('save') : c('add
 
 <template>
   <div class="well">
-    <Frow :label="c('sources.name')"><input ref="nameEl" v-model="name" class="field m" :placeholder="c('sources.namePh')"></Frow>
-    <Frow :label="c('sources.folder')"><PathField ref="pathEl" v-model="path" /></Frow>
+    <Frow :label="c('sources.name')"><input id="a-sname" ref="nameEl" v-model="name" class="field m" :placeholder="c('sources.namePh')"></Frow>
+    <Frow :label="c('sources.folder')"><PathField id="a-spath" ref="pathEl" v-model="path" /></Frow>
   </div>
   <div class="well">
     <Frow :label="c('sources.readOnly')" :tip="c('sources.readOnlyTip')"><Sw v-model="readOnly" /></Frow>

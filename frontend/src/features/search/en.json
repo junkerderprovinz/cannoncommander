@@ -70,5 +70,7 @@
     "meta": "4K films in HEVC, from the metadata",
     "week": "everything that changed in the last 7 days"
   },
-  "server": "Server"
+  "server": "Server",
+  "unknownFields": "I do not know {fields}. I understand width, height, codec, artist, camera, size, modified, duration and every column name such as lens or year",
+  "unknownField": "“{f}:”"
 }
