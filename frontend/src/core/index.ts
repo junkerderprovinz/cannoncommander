@@ -7,7 +7,7 @@ export { G, glyph, glyphOf, kindOf } from './glyphs';
 export { handleKey, installKeyboard } from './keyboard';
 export { bindKey, comboOf, keymap } from './keymap';
 export { closeMenu, menu, resolveItems } from './menu';
-export { MENUS, menuItems, openMenuBar, stepMenu } from './menus';
+export { MENUS, menuItems, openMenuBar } from './menus';
 export { Nav, pushNav, winNav } from './nav';
 export { applyPrefs, prefs, setPref } from './prefs';
 export { toast } from './toast';

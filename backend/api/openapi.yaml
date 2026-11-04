@@ -60,7 +60,12 @@ tags:
   - name: accounts
     description: The own account, and users, groups, rules and activity for admins.
   - name: shares
-    description: Share links and the public share pages.
+    description: |
+      Share links and the public share pages. A link shares one file, one
+      folder, or a collection of entries from several folders, which the
+      other side sees as one folder. It works with the rights of its owner,
+      so it stops working when the owner loses them. Paths inside a link
+      start at "/" and never show where the entries lie on the server.
   - name: unraid
     description: |
       Array state, file placement and the Unraid tools. Sizes are bytes.
@@ -354,29 +359,179 @@ paths:
     get:
       operationId: fsFileGet
       summary: File content for the editor
+      description: |
+        The whole text of a file up to 16 MiB, decoded like fs/text. The
+        ETag follows the bytes, and a save sends it back in If-Match. Needs
+        the download right.
       parameters:
         - $ref: "#/components/parameters/Path"
-      tags: [fs]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The text.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsFile"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "413":
+          description: The file is too big for the editor.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "415":
+          description: The file holds binary data.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [fs]
     put:
       operationId: fsFilePut
       summary: Save a file from the editor
+      description: |
+        Writes the text in the encoding given, by default the one the file
+        has. With If-Match the save only goes through while the file is
+        unchanged since it was read, with If-None-Match * only when it does
+        not exist yet. The file is written next to the old one and renamed
+        over it, keeping mode and owner. A file with hard links is written
+        in place, so its other names keep seeing the same content. Needs
+        the modify right, or the create right for a new file.
       parameters:
         - $ref: "#/components/parameters/Path"
-      tags: [fs]
+        - name: If-Match
+          in: header
+          schema:
+            type: string
+        - name: If-None-Match
+          in: header
+          schema:
+            type: string
+            enum: ["*"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                encoding:
+                  type: string
+                  enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+                eol:
+                  type: string
+                  enum: [lf, crlf, cr]
+                  description: Rewrites every line break. Missing keeps them as sent.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: Saved.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsSaved"
+        "201":
+          description: Saved as a new file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsSaved"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: The folder for a new file is missing.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "412":
+          description: The file changed since it was read, or exists already for If-None-Match *.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "413":
+          description: The text is too big for the editor.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: The text holds characters the encoding cannot store.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [fs]
   /fs/archive-stream:
     post:
       operationId: fsArchiveStream
       summary: Download several paths as one archive
-      tags: [fs]
+      description: |
+        Packs while it sends, so nothing stays behind on the server. Takes
+        JSON or a plain form with one paths field per path, which lets a
+        browser save the stream as it arrives. Two entries of the same
+        name get a number. zip compresses everything but formats that are
+        compressed already, tgz keeps mode and owner. Linked folders are
+        left out, linked files come along when they point inside the
+        source. Needs the download right on every path.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArchiveRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/ArchiveRequest"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The archive.
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            application/gzip:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [fs]
   /fs/mkdir:
     post:
       operationId: fsMkdir
@@ -534,14 +689,68 @@ paths:
     post:
       operationId: uploadCreate
       summary: Start an upload
-      tags: [fileops]
+      description: |
+        Announces a file and its size. The bytes go to ".name.cc-part" next
+        to the target and the file takes its name with the last chunk.
+        Missing folders on the way are created, so a dropped folder keeps
+        its structure. Starting again for the same target and size picks
+        up the running upload, which is how a client resumes after a reload
+        and how it answers a conflict: it sends the same request with the
+        rule it chose.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadRequest"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The running upload for this target, or the finished one when nothing was left to send.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "201":
+          description: A new upload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/UploadConflict"
+        "507":
+          description: Not enough free space for the file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [fileops]
   /uploads/{id}:
     get:
       operationId: uploadGet
       summary: State of an upload, for resuming
+      responses:
+        "200":
+          description: Where the upload stands.
+          headers:
+            Upload-Offset:
+              schema:
+                type: integer
+                format: int64
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [fileops]
       parameters:
         - name: id
@@ -549,25 +758,77 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     put:
       operationId: uploadChunk
       summary: Send the next chunk
-      tags: [fileops]
+      description: |
+        The body is the raw bytes. Upload-Offset, or the start of
+        Content-Range, says where they go, and has to match the offset of
+        the upload. A chunk may hold up to 64 MiB. When the connection
+        breaks, what arrived is kept and GET tells where to go on.
       parameters:
+        - name: Upload-Offset
+          in: header
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
         - name: id
           in: path
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The upload after the chunk. Its state is done once the file has its name.
+          headers:
+            Upload-Offset:
+              schema:
+                type: integer
+                format: int64
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/UploadConflict"
+        "410":
+          description: The part file disappeared, the upload has to start over.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "413":
+          description: The chunk goes past the announced size.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [fileops]
     delete:
       operationId: uploadCancel
       summary: Cancel an upload
+      description: Removes the part file.
+      responses:
+        "204":
+          description: Cancelled.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [fileops]
       parameters:
         - name: id
@@ -575,9 +836,6 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /jobs:
     get:
       operationId: jobsList
@@ -2517,21 +2775,70 @@ paths:
     get:
       operationId: sharesList
       summary: Own share links
-      tags: [shares]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The links, newest first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Share"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [shares]
     post:
       operationId: shareCreate
       summary: Create a share link
-      tags: [shares]
+      description: |
+        Needs the share right and the download right on every path. One
+        path makes a file or folder link, several make a collection, which
+        needs a name. Uploads work only for a link to one folder and need
+        the create right there.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareCreate"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          description: The new link.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Share"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The address is taken.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [shares]
   /shares/{id}:
     get:
       operationId: shareGet
       summary: One share link
+      description: For its owner and for admins.
+      responses:
+        "200":
+          description: The link.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Share"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [shares]
       parameters:
         - name: id
@@ -2539,12 +2846,38 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     patch:
       operationId: shareUpdate
       summary: Change a share link
+      description: |
+        Fields left out stay as they are. An expiry of null makes the link
+        last, an empty password removes it. Setting a password or a new
+        one closes the link in every browser that unlocked it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareUpdate"
+      responses:
+        "200":
+          description: The link as it is now.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Share"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The address is taken.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
       tags: [shares]
       parameters:
         - name: id
@@ -2552,12 +2885,17 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     delete:
       operationId: shareDelete
       summary: Delete a share link
+      description: The address leads nowhere afterwards, and uploads running through it stop.
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [shares]
       parameters:
         - name: id
@@ -2565,23 +2903,48 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /admin/shares:
     get:
       operationId: adminSharesList
       summary: Every share link on the server
       x-access: admin
-      tags: [shares]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The links of all users, newest first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Share"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [shares]
   /s/{slug}:
     get:
       operationId: publicShareGet
       summary: What a share link shows
+      description: |
+        A link with a password tells only that it is locked until the
+        visitor unlocks it. Opening a link counts as a view and sends
+        share.opened to its owner, once per visitor within half an hour,
+        and with notify on also a notice to Unraid.
       x-access: public
+      responses:
+        "200":
+          description: The link.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicShare"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+        "429":
+          $ref: "#/components/responses/TooManyTries"
       tags: [shares]
       parameters:
         - name: slug
@@ -2589,15 +2952,45 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
       security: []
   /s/{slug}/unlock:
     post:
       operationId: publicShareUnlock
       summary: Open a share link with its password
+      description: |
+        Answers a token for twelve hours and sets it as a cookie as well.
+        Apps send it in X-Share-Token, plain links to files in the token
+        query. Five wrong passwords make the address wait a few minutes.
       x-access: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Unlocked.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareUnlocked"
+        "403":
+          description: The password is wrong.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+        "429":
+          $ref: "#/components/responses/TooManyTries"
       tags: [shares]
       parameters:
         - name: slug
@@ -2605,57 +2998,282 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
       security: []
   /s/{slug}/list:
     get:
       operationId: publicShareList
       summary: List a folder inside a share
+      description: |
+        The root of a collection lists its entries, two of the same name
+        with a number. Entries starting with a dot are left out.
       x-access: public
-      tags: [shares]
       parameters:
+        - $ref: "#/components/parameters/SharePath"
+        - $ref: "#/components/parameters/ShareToken"
         - name: slug
           in: path
           required: true
           schema:
             type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The folder.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicListing"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+      tags: [shares]
       security: []
   /s/{slug}/raw:
     get:
       operationId: publicShareRaw
       summary: Download a file from a share
+      description: |
+        A file is sent with range requests. With download it counts
+        against the download limit, unless it goes on with a download that
+        broke off. Viewing in the browser is free. A folder, or the root of
+        a collection, comes as one zip or tar.gz and always counts.
       x-access: public
-      tags: [shares]
       parameters:
+        - $ref: "#/components/parameters/SharePath"
+        - $ref: "#/components/parameters/ShareToken"
+        - name: download
+          in: query
+          schema:
+            type: boolean
+        - name: format
+          in: query
+          description: Archive format for a folder.
+          schema:
+            type: string
+            enum: [zip, tgz]
+            default: zip
         - name: slug
           in: path
           required: true
           schema:
             type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The file or the archive.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "206":
+          description: The requested range.
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+      tags: [shares]
       security: []
   /s/{slug}/upload:
     post:
       operationId: publicShareUpload
       summary: Drop a file into a collecting share
+      description: |
+        Starts an upload like POST /uploads, into a folder link that takes
+        uploads. A link adds files but never replaces one: a name that
+        exists gets a number, or with skip the file is left out. The chunks
+        go to /s/{slug}/upload/{id}, and a visitor resumes by that id. The
+        link's upload limit counts the uploads still running as well, and
+        at most 20 can run at once.
       x-access: public
-      tags: [shares]
       parameters:
+        - $ref: "#/components/parameters/ShareToken"
         - name: slug
           in: path
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, size]
+              properties:
+                path:
+                  type: string
+                  description: Folder inside the link.
+                  default: /
+                name:
+                  type: string
+                  description: File name, with folders in front for a dropped folder.
+                  example: Urlaub/IMG_0101.jpg
+                size:
+                  type: integer
+                  format: int64
+                  minimum: 0
+                mtime:
+                  type: string
+                  format: date-time
+                rule:
+                  type: string
+                  enum: [both, skip]
+                  default: both
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: Nothing was left to send, see state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "201":
+          description: The upload, with its path inside the link.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "403":
+          description: The link takes no uploads.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+        "413":
+          description: The file does not fit into the upload limit of the link.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "429":
+          description: Too many uploads are running through the link.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "507":
+          description: Not enough free space for the file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [shares]
+      security: []
+  /s/{slug}/upload/{id}:
+    get:
+      operationId: publicShareUploadGet
+      summary: State of an upload into a share
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/ShareToken"
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Where the upload stands.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [shares]
+      security: []
+    put:
+      operationId: publicShareUploadChunk
+      summary: Send the next chunk of an upload into a share
+      description: Works like PUT /uploads/{id}.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/ShareToken"
+        - name: Upload-Offset
+          in: header
+          schema:
+            type: integer
+            format: int64
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: The upload after the chunk.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/UploadConflict"
+        "413":
+          description: The chunk goes past the announced size.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [shares]
+      security: []
+    delete:
+      operationId: publicShareUploadCancel
+      summary: Cancel an upload into a share
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/ShareToken"
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Cancelled.
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [shares]
       security: []
   /unraid/state:
     get:
@@ -3148,6 +3766,19 @@ components:
       schema:
         type: string
         pattern: "^[A-Za-z0-9_-]{1,64}$"
+    SharePath:
+      name: path
+      in: query
+      description: Path inside the link, "/" for its root.
+      schema:
+        type: string
+        default: /
+    ShareToken:
+      name: token
+      in: query
+      description: Unlock token of a link with a password, for when no header or cookie can carry it.
+      schema:
+        type: string
   responses:
     NotImplemented:
       description: Part of the contract, not built yet.
@@ -3179,6 +3810,23 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
+    UploadConflict:
+      description: |
+        Either a file of this name exists and the rule is ask, then
+        conflict tells both sides, or the chunk does not start at the
+        offset of the upload, then upload tells where it stands. A start
+        for a target another upload is writing answers 409 as well.
+      content:
+        application/problem+json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Problem"
+              - type: object
+                properties:
+                  upload:
+                    $ref: "#/components/schemas/Upload"
+                  conflict:
+                    $ref: "#/components/schemas/JobConflict"
     FsChanged:
       description: The entry as it is now, and the undo step for it.
       content:
@@ -3218,6 +3866,28 @@ components:
                 $ref: "#/components/schemas/UndoStep"
               job:
                 $ref: "#/components/schemas/Job"
+    ShareGone:
+      description: The link expired, used up its downloads, or its owner may no longer share.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    ShareLocked:
+      description: The link has a password and was not unlocked.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    TooManyTries:
+      description: Too many wrong passwords or unknown addresses. Retry-After says when to go on.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
   schemas:
     Problem:
       type: object
@@ -3447,6 +4117,63 @@ components:
         truncated:
           type: boolean
           description: The file goes on after max bytes.
+    FsFile:
+      type: object
+      required: [path, size, mtime, encoding, text, etag, writable]
+      properties:
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        encoding:
+          type: string
+          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+        eol:
+          type: string
+          enum: [lf, crlf, cr, mixed]
+        text:
+          type: string
+        etag:
+          type: string
+          description: The same as the ETag header, for If-Match on the save.
+        writable:
+          type: boolean
+          description: The user may save the file.
+    FsSaved:
+      type: object
+      required: [path, size, mtime, etag]
+      properties:
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        etag:
+          type: string
+        created:
+          type: boolean
+    ArchiveRequest:
+      type: object
+      required: [paths]
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+        format:
+          type: string
+          enum: [zip, tgz]
+          default: zip
+        name:
+          type: string
+          description: File name of the download. Made from the paths when missing.
     FsHex:
       type: object
       required: [path, size, offset, data]
@@ -3464,6 +4191,57 @@ components:
           type: string
           format: byte
           description: The bytes, base64.
+    UploadRequest:
+      type: object
+      required: [path, size]
+      properties:
+        path:
+          type: string
+          description: The file to create.
+        size:
+          type: integer
+          format: int64
+          minimum: 0
+        mtime:
+          type: string
+          format: date-time
+          description: Modification time the file gets, usually lastModified of the browser file.
+        rule:
+          type: string
+          enum: [ask, skip, replace, both, newer]
+          default: ask
+          description: |
+            What happens when the name exists. ask answers 409 with the
+            conflict, replace moves the old file to the trash, both keeps
+            the new one as "name (1).ext", newer replaces only an older
+            file. The rule is applied again when the last chunk arrives.
+    Upload:
+      type: object
+      required: [id, path, size, offset, state, rule, chunk]
+      properties:
+        id:
+          type: string
+        path:
+          type: string
+          description: The target, and once done the file it became, which differs when both were kept.
+        size:
+          type: integer
+          format: int64
+        offset:
+          type: integer
+          format: int64
+          description: Bytes received so far, where the next chunk starts.
+        state:
+          type: string
+          enum: [open, done, skipped]
+        rule:
+          type: string
+        mtime:
+          type: string
+          format: date-time
+        chunk:
+          type: integer
+          description: The chunk size the server asks for.
     PermsParams:
       type: object
       description: Params of the job kind fixPerms. Admins only.
@@ -4326,6 +5104,191 @@ components:
           type: string
         details:
           type: object
+    Share:
+      type: object
+      required: [id, slug, kind, name, paths, owner, created, expires, password, limit, downloads, views, uploads, uploadLimit, uploaded, notify, state]
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+          description: The end of the address, /s/{slug}.
+          example: k3x9qa-urlaub
+        kind:
+          type: string
+          enum: [file, folder, collection]
+        name:
+          type: string
+          description: The folder name of a collection, otherwise the name of the file or folder.
+        paths:
+          type: array
+          items:
+            type: string
+          description: What the link shares. Follows renames and moves made in the app.
+        owner:
+          type: string
+        created:
+          type: string
+          format: date-time
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+        password:
+          type: boolean
+        limit:
+          type: integer
+          description: Downloads until the link leads nowhere, 0 for no limit.
+        downloads:
+          type: integer
+        views:
+          type: integer
+        uploads:
+          type: boolean
+        uploadLimit:
+          type: integer
+          format: int64
+          description: Bytes visitors may upload through the link in all, 0 for no limit.
+        uploaded:
+          type: integer
+          format: int64
+        notify:
+          type: boolean
+          description: Opening the link sends a notice, in the app and to Unraid.
+        state:
+          type: string
+          enum: [active, expired, exhausted]
+    ShareCreate:
+      type: object
+      required: [paths]
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+          description: Needed for a collection.
+        slug:
+          type: string
+          pattern: "^[a-z0-9][a-z0-9-]{2,39}$"
+          description: Missing picks one that is hard to guess.
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+        password:
+          type: string
+          minLength: 6
+        limit:
+          type: integer
+          minimum: 0
+        uploads:
+          type: boolean
+        uploadLimit:
+          type: integer
+          format: int64
+          minimum: 0
+        notify:
+          type: boolean
+    ShareUpdate:
+      type: object
+      properties:
+        slug:
+          type: string
+          pattern: "^[a-z0-9][a-z0-9-]{2,39}$"
+        reroll:
+          type: boolean
+          description: Gives the link a fresh address, the old one leads nowhere.
+        name:
+          type: string
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+        password:
+          type: string
+          description: A new password, or empty to remove it.
+        limit:
+          type: integer
+          minimum: 0
+        uploads:
+          type: boolean
+        uploadLimit:
+          type: integer
+          format: int64
+          minimum: 0
+        notify:
+          type: boolean
+    PublicShare:
+      type: object
+      required: [slug, locked]
+      properties:
+        slug:
+          type: string
+        locked:
+          type: boolean
+          description: The link needs its password. Nothing else is told then.
+        kind:
+          type: string
+          enum: [file, folder, collection]
+        name:
+          type: string
+        expires:
+          type: string
+          format: date-time
+        uploads:
+          type: boolean
+        uploadRoom:
+          type: integer
+          format: int64
+          description: Bytes the link still takes, when it has an upload limit.
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        count:
+          type: integer
+          description: Entries of a collection.
+    ShareUnlocked:
+      type: object
+      required: [token, expires]
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
+          format: date-time
+    PublicItem:
+      type: object
+      required: [name, dir, size, mtime]
+      properties:
+        name:
+          type: string
+        dir:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        format:
+          type: string
+    PublicListing:
+      type: object
+      required: [path, name, items]
+      properties:
+        path:
+          type: string
+        name:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicItem"
     UnraidState:
       type: object
       required: [available, array, parity, disks, shares, write, spindownDelay]

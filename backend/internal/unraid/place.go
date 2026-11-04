@@ -70,6 +70,9 @@ func devicesFor(st *State, p Place) []string {
 	return []string{p.Vol}
 }
 
+// DiskPath returns where rel below /mnt/<dev> lies in this container.
+func (s *Service) DiskPath(dev, rel string) string { return s.real(dev, rel) }
+
 func (s *Service) real(dev, rel string) string {
 	return filepath.Join(s.cfg.Mnt, dev, filepath.FromSlash(rel))
 }

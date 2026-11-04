@@ -6,12 +6,13 @@ import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
 import { menu } from '@/core/menu';
 import { Render } from '@/core/Render';
-import { toast } from '@/core/toast';
+import { cancelBtn, win } from '@/core/windows';
 import { t } from '@/i18n';
 import type { Bookmark, TreeItem } from '@/api/types';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { useUser } from '@/stores/user';
+import { moveBookmark, renameBookmark, unpin } from './bookmarks';
 import { folderItems } from './menus';
 
 const F = usePanels();
@@ -40,24 +41,28 @@ const glyphOf = (k: TreeItem, open: boolean) => k.path === '/mnt' ? 'IconDatabas
   : k.remote ? 'IconNetwork' : k.free ? 'IconZFS' : open ? 'IconFolderOpen' : 'IconFolder';
 const toggle = (p: string) => (F.openTree.has(p) ? F.openTree.delete(p) : F.openTree.add(p));
 
-function unpin(b: Bookmark) {
-  const i = user.bookmarks.indexOf(b);
-  user.bookmarks.splice(i, 1);
-  toast(t('side.unpinned', { name: b.name }), 'ok', { label: t('core.undo'), run: () => { user.bookmarks.splice(i, 0, b); } });
-}
-
-function move(b: Bookmark, d: number) {
-  const i = user.bookmarks.indexOf(b), to = i + d;
-  if (to < 0 || to >= user.bookmarks.length) return;
-  user.bookmarks.splice(to, 0, user.bookmarks.splice(i, 1)[0]!);
+const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+function rename(b: Bookmark) {
+  win({
+    title: t('side.renameTitle'),
+    body: `<div class="well"><div class="frow"><span class="lab">${esc(t('side.name'))}</span><input class="field m" id="bmn" value="${esc(b.name)}"></div></div>`,
+    foot: [cancelBtn(), { label: t('side.rename'), g: 'IconPencil', primary: true, run: (el) => {
+      const name = el.querySelector<HTMLInputElement>('#bmn')!.value.trim();
+      if (!name) return false;
+      renameBookmark(b, name);
+      return true;
+    } }],
+  });
 }
 
 function bookmarkMenu(e: MouseEvent, b: Bookmark) {
+  const items = folderItems(b.path);
   menu(e.clientX, e.clientY, [
-    ...folderItems(b.path),
+    items[0]!, items[2]!, items[3]!,
     '-',
-    { label: t('side.moveUp'), g: 'IconMoveUp', run: () => move(b, -1) },
-    { label: t('side.moveDown'), g: 'IconMoveDown', run: () => move(b, 1) },
+    { label: t('side.rename'), g: 'IconPencil', run: () => rename(b) },
+    { label: t('side.moveUp'), g: 'IconMoveUp', run: () => moveBookmark(b, -1) },
+    { label: t('side.moveDown'), g: 'IconMoveDown', run: () => moveBookmark(b, 1) },
     '-',
     { label: t('side.unpin'), g: 'IconUnlink', run: () => unpin(b) },
   ]);

@@ -269,17 +269,176 @@ paths:
     get:
       operationId: fsFileGet
       summary: File content for the editor
+      description: |
+        The whole text of a file up to 16 MiB, decoded like fs/text. The
+        ETag follows the bytes, and a save sends it back in If-Match. Needs
+        the download right.
       parameters:
         - $ref: "#/components/parameters/Path"
+      responses:
+        "200":
+          description: The text.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsFile"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "413":
+          description: The file is too big for the editor.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "415":
+          description: The file holds binary data.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
     put:
       operationId: fsFilePut
       summary: Save a file from the editor
+      description: |
+        Writes the text in the encoding given, by default the one the file
+        has. With If-Match the save only goes through while the file is
+        unchanged since it was read, with If-None-Match * only when it does
+        not exist yet. The file is written next to the old one and renamed
+        over it, keeping mode and owner. A file with hard links is written
+        in place, so its other names keep seeing the same content. Needs
+        the modify right, or the create right for a new file.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: If-Match
+          in: header
+          schema:
+            type: string
+        - name: If-None-Match
+          in: header
+          schema:
+            type: string
+            enum: ["*"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                encoding:
+                  type: string
+                  enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+                eol:
+                  type: string
+                  enum: [lf, crlf, cr]
+                  description: Rewrites every line break. Missing keeps them as sent.
+      responses:
+        "200":
+          description: Saved.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsSaved"
+        "201":
+          description: Saved as a new file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsSaved"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: The folder for a new file is missing.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "412":
+          description: The file changed since it was read, or exists already for If-None-Match *.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "413":
+          description: The text is too big for the editor.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: The text holds characters the encoding cannot store.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /fs/archive-stream:
     post:
       operationId: fsArchiveStream
       summary: Download several paths as one archive
+      description: |
+        Packs while it sends, so nothing stays behind on the server. Takes
+        JSON or a plain form with one paths field per path, which lets a
+        browser save the stream as it arrives. Two entries of the same
+        name get a number. zip compresses everything but formats that are
+        compressed already, tgz keeps mode and owner. Linked folders are
+        left out, linked files come along when they point inside the
+        source. Needs the download right on every path.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArchiveRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/ArchiveRequest"
+      responses:
+        "200":
+          description: The archive.
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            application/gzip:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
 components:
   schemas:
     FsItem:
@@ -453,6 +612,63 @@ components:
         truncated:
           type: boolean
           description: The file goes on after max bytes.
+    FsFile:
+      type: object
+      required: [path, size, mtime, encoding, text, etag, writable]
+      properties:
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        encoding:
+          type: string
+          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+        eol:
+          type: string
+          enum: [lf, crlf, cr, mixed]
+        text:
+          type: string
+        etag:
+          type: string
+          description: The same as the ETag header, for If-Match on the save.
+        writable:
+          type: boolean
+          description: The user may save the file.
+    FsSaved:
+      type: object
+      required: [path, size, mtime, etag]
+      properties:
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        etag:
+          type: string
+        created:
+          type: boolean
+    ArchiveRequest:
+      type: object
+      required: [paths]
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+        format:
+          type: string
+          enum: [zip, tgz]
+          default: zip
+        name:
+          type: string
+          description: File name of the download. Made from the paths when missing.
     FsHex:
       type: object
       required: [path, size, offset, data]
