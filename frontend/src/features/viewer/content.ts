@@ -91,4 +91,5 @@ export interface OfficeConfig {
   token?: string;
   ttl?: number;
 }
-export const officeConfig = async (path: string) => (await call<OfficeConfig>('/office/config' + q({ path }))).body!;
+// A preview asks for view mode, as the server signs the config and the browser cannot change it afterwards.
+export const officeConfig = async (path: string, mode: 'edit' | 'view') => (await call<OfficeConfig>('/office/config' + q({ path, mode }))).body!;

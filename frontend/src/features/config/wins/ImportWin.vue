@@ -17,9 +17,10 @@ async function run() {
   const p = file.value.trim();
   if (!(await exists(p, 'file'))) return fail(c('app.noFile'), at('#a-imfile'));
   if (!p.toLowerCase().endsWith('.json')) return fail(c('app.notExport'), at('#a-imfile'));
-  if (!(await admin.importSettings(p, users.value).then(() => true, () => false))) return fail(c('app.notExport'), at('#a-imfile'));
+  const got = await admin.importSettings(p, users.value).catch(() => null);
+  if (!got) return fail(c('app.notExport'), at('#a-imfile'));
   props.win.close();
-  toast(c('app.imported', { name: p.split('/').pop()! }));
+  toast(c(got.restartNeeded ? 'app.importedRestart' : 'app.imported', { name: p.split('/').pop()! }));
 }
 
 onMounted(async () => {

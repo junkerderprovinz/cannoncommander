@@ -13,11 +13,11 @@ import { ago, c, copy } from '../kit/kit';
 import ShareWin from '../wins/ShareWin.vue';
 
 const shares = ref<Share[]>([]);
-const load = async () => { shares.value = await admin.shares(useUser().me.role.toLowerCase() === 'admin'); };
+const load = async () => { shares.value = await admin.shares(useUser().admin()); };
 onMounted(() => { load().catch(() => {}); });
 
-const name = (s: Share) => s.name || s.path.split('/').pop()!;
-const glyph = (s: Share) => (s.items ? 'IconCollector' : s.path.includes('.') ? 'IconFile' : 'IconFolder');
+const name = (s: Share) => s.name || s.paths[0]?.split('/').pop() || s.slug;
+const glyph = (s: Share) => (s.kind === 'collection' ? 'IconCollector' : s.kind === 'file' ? 'IconFile' : 'IconFolder');
 const left = (s: Share) => (s.expires == null ? null : s.expires - now());
 
 // A revoked link is only taken off the list at first, so Rückgängig brings it back as it was. The server forgets it
@@ -33,11 +33,12 @@ const edit = (s: Share) => win({ title: c('shares.share'), body: ShareWin, props
 <template>
   <Card :title="c('shares.title')">
     <div v-if="shares.length" class="a-list">
-      <ARow v-for="s in shares" :key="s.id" :name="name(s)" :tip="s.path" data-open @click="edit(s)">
+      <ARow v-for="s in shares" :key="s.id" :name="name(s)" :tip="s.paths.join(', ')" data-open @click="edit(s)">
         <template #tile><G :n="glyph(s)" /></template>
         <template #badges>
-          <span v-if="left(s) == null" class="pill">{{ c('shares.noExpiry') }}</span>
-          <span v-else-if="left(s)! < 0" class="pill state">{{ c('shares.expired') }}</span>
+          <span v-if="s.state === 'exhausted'" class="pill state">{{ c('shares.exhausted') }}</span>
+          <span v-else-if="s.state === 'expired' || (left(s) ?? 0) < 0" class="pill state">{{ c('shares.expired') }}</span>
+          <span v-else-if="left(s) == null" class="pill">{{ c('shares.noExpiry') }}</span>
           <span v-else class="pill" :class="{ warn: left(s)! < 3 * DAY }">{{ ago(s.expires!) }}</span>
           <span v-if="s.password" class="pill">{{ c('shares.password') }}</span>
           <span v-if="s.limit" class="pill glim-num">{{ c('shares.limit', { n: s.limit }) }}</span>

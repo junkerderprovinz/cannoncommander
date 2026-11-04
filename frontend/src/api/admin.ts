@@ -1,6 +1,6 @@
 // The settings pages talk to the server through these calls. Times arrive as ISO strings and leave this file as
 // milliseconds, so the pages compare and format them like every other date.
-import { call } from './client';
+import { ApiError, call } from './client';
 
 const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
 const send = (method: string, body?: unknown): RequestInit => ({
@@ -15,88 +15,145 @@ async function write<T = void>(method: string, path: string, body?: unknown): Pr
   return (await call<T>(path, send(method, body))).body as T;
 }
 const items = async <T>(path: string) => (await get<{ items: T[] }>(path)).items;
+const at = (name: string) => encodeURIComponent(name);
+
+// The status of a refused call, so a page can tell a wrong password from too many tries.
+export const statusOf = (e: unknown) => (e instanceof ApiError ? e.status : 0);
 
 export type Role = 'admin' | 'user' | 'readonly';
-export interface User { name: string; full: string; role: Role; groups: string[]; scope: string; last: number | null; twofa: boolean }
+export interface User {
+  id: string; name: string; full: string; role: Role; scope: string; groups: string[];
+  loginMethod: 'password' | 'proxy' | 'oidc' | 'ldap' | 'jwt'; twofa: boolean; passkeys: number; last: number | null; pwChanged: number | null;
+}
+export interface Account extends User { recovery: number; lockPassword: boolean; token?: { name: string; rights: Token['rights'] } }
+export interface UserInput { name?: string; full?: string; role?: Role; scope?: string; groups?: string[]; password?: string }
 export interface Group { name: string; note: string; members: string[] }
 export type RuleKind = 'hide' | 'read' | 'allow';
 // who is a user name, @group or * for everybody.
 export interface Rule { who: string; path: string; rule: RuleKind }
-export interface Verdict { result: 'hidden' | 'read' | 'visible'; scope?: string; rule?: number }
-export interface Source { name: string; path: string; readOnly: boolean; indexed: boolean; skipHidden: boolean; exclude: string[]; files: number; size: number; indexing?: boolean }
-export interface IndexState { every: 'hourly' | 'daily' | 'manual'; last: number | null; running: string[] }
-export interface Remote { name: string; type: string; mount: string; mounted: boolean; account?: string; cfg: Record<string, string> }
-export interface Share { id: string; path: string; name?: string; slug: string; url: string; by: string; created: number; expires: number | null; password: boolean; views: number; limit?: number; items?: number }
+export interface Verdict { result: 'visible' | 'read' | 'hidden' | 'missing'; reason: 'scope' | 'rule' | 'role' | 'source' | 'none'; rule?: number; scope?: string }
+export interface Source { name: string; path: string; readOnly: boolean; indexed: boolean; skipHidden: boolean; exclude: string[] }
+export interface Sources { sources: Source[]; restartNeeded: boolean }
+export interface IndexState {
+  source: string; path: string; status: 'ready' | 'indexing' | 'unavailable' | 'off'; dirs: number; files: number; size: number;
+  lastIndexed: number | null; quickScanSeconds: number; fullScanSeconds: number; nextScan: number | null; scanEverySeconds?: number;
+  scanning?: string; metadata: number; job?: string;
+}
+export interface Remote {
+  name: string; type: string; path: string; mount: string; label: string; mounted: boolean; mountOnStart: boolean;
+  error?: string; params?: Record<string, string>; secrets?: string[];
+}
+export interface RemoteInput { name?: string; type?: string; path?: string; mount?: string; params?: Record<string, string> }
+export interface RemoteTest { ok: boolean; entries: number; total?: number; used?: number; free?: number; error?: string }
+export interface Rclone { installed: boolean; running: boolean; version?: string; error?: string }
+export interface Share {
+  id: string; slug: string; kind: 'file' | 'folder' | 'collection'; name: string; paths: string[]; owner: string;
+  created: number; expires: number | null; password: boolean; limit: number; downloads: number; views: number;
+  uploads: boolean; uploadLimit: number; uploaded: number; notify: boolean; state: 'active' | 'expired' | 'exhausted'; url: string;
+}
 export interface Session { id: string; created: number; seen: number; userAgent: string; ip: string; current: boolean }
 export interface Token { id: string; name: string; created: number; last: number | null; rights: 'r' | 'rw'; expires: number | null }
 export interface Passkey { id: string; name: string; origin: string; created: number; last: number | null }
-export interface Account { name: string; full: string; role: Role; twofa: boolean; pwChanged: number | null; recovery: number }
-export interface Activity { t: number; who: string; what: string; obj: string; path?: string }
+export interface Passkeys { enabled: boolean; items: Passkey[] }
+export interface Activity { id: number; t: number; who: string; what: string; obj: string; path?: string; target?: string; ip?: string; details: Record<string, unknown> }
 export type OfficeKind = 'none' | 'onlyoffice' | 'eurooffice' | 'collabora';
 export interface AppSettings {
-  indexEvery: IndexState['every'];
-  rclone: { automount: boolean; cache: 'off' | 'writes' | 'full'; cacheSize: number };
-  office: { kind: OfficeKind; url: string; secret: string };
-  thumbs: boolean; videoPreview: boolean; webdav: boolean; webdavUrl: string;
-  autoCheck: boolean; logLevel: 'error' | 'info' | 'debug'; image: string; tag: string;
+  office: { kind: OfficeKind; url: string; secret?: string; secretSet?: boolean };
+  arrowloop: { url: string; token?: string; tokenSet?: boolean; paths?: Record<string, string> };
+  previews: { thumbs: boolean; video: boolean };
+  webdav: boolean;
+  remotes: { automount: boolean; cache: 'off' | 'writes' | 'full'; cacheSize: number };
+  updates: { autoCheck: boolean };
+  logLevel: 'error' | 'info' | 'debug';
+  restartNeeded?: boolean;
 }
-export interface System { version: { app: string; rclone: string; ffmpeg: string }; paths: { rclone: string; ffmpeg: string }; started: number; update?: string }
+// A save sends only what changed, down to a single switch.
+export type AppChange = { [K in keyof AppSettings]?: AppSettings[K] extends object ? Partial<AppSettings[K]> : AppSettings[K] };
+export interface IntegrationResult { kind: string; ok: boolean; reachable: boolean; token?: 'ok' | 'rejected' | 'missing' | 'off' | 'none'; version?: string; error?: string }
+export interface Tool { available: boolean; path?: string; version?: string }
+export interface System {
+  version: string; commit?: string; go: string; os: string; arch: string; started: number; uptime: number;
+  tools: Record<string, Tool>; unraid: { available: boolean; socket: boolean };
+  features: { office: { kind: OfficeKind; url?: string }; thumbs: boolean; videoPreview: boolean; webdav: boolean; mupdf: boolean };
+}
+export interface UpdateCheck { version: string; latest: string; updateAvailable: boolean; releaseUrl?: string }
+export interface Imported { sections: string[]; notes: string[]; restartNeeded: boolean }
 
 type Wire<T, K extends keyof T> = Omit<T, K> & { [P in K]: string | null };
-const user = (u: Wire<User, 'last'>): User => ({ ...u, last: ms(u.last) });
-const share = (s: Wire<Share, 'created' | 'expires'>): Share => ({ ...s, created: ms(s.created)!, expires: ms(s.expires) });
+type WireUser = Wire<User, 'last' | 'pwChanged'>;
+const user = <U extends WireUser>(u: U) => ({ ...u, last: ms(u.last), pwChanged: ms(u.pwChanged) });
+// A link carries its slug, the address is the server's own one with /s/ in front.
+const shareUrl = (slug: string) => new URL(`s/${slug}`, location.origin + import.meta.env.BASE_URL).href;
+const share = (s: Omit<Wire<Share, 'created' | 'expires'>, 'url'>): Share => ({ ...s, created: ms(s.created)!, expires: ms(s.expires), url: shareUrl(s.slug) });
 const token = (x: Wire<Token, 'created' | 'last' | 'expires'>): Token => ({ ...x, created: ms(x.created)!, last: ms(x.last), expires: ms(x.expires) });
 const passkey = (x: Wire<Passkey, 'created' | 'last'>): Passkey => ({ ...x, created: ms(x.created)!, last: ms(x.last) });
+const index = (x: Wire<IndexState, 'lastIndexed' | 'nextScan'>): IndexState => ({ ...x, lastIndexed: ms(x.lastIndexed), nextScan: ms(x.nextScan) });
 
 export const admin = {
-  users: async () => (await items<Wire<User, 'last'>>('/admin/users')).map(user),
-  createUser: (u: Omit<User, 'last' | 'twofa'> & { password: string }) => write('POST', '/admin/users', u),
-  updateUser: (name: string, u: Partial<User> & { password?: string }) => write('PATCH', `/admin/users/${encodeURIComponent(name)}`, u),
-  deleteUser: (name: string) => write('DELETE', `/admin/users/${encodeURIComponent(name)}`),
+  users: async () => (await items<WireUser>('/admin/users')).map(user),
+  createUser: (u: UserInput) => write('POST', '/admin/users', u),
+  updateUser: (name: string, u: UserInput) => write('PATCH', `/admin/users/${at(name)}`, u),
+  deleteUser: (name: string) => write('DELETE', `/admin/users/${at(name)}`),
   groups: () => items<Group>('/admin/groups'),
   createGroup: (g: Group) => write('POST', '/admin/groups', g),
-  updateGroup: (name: string, g: Group) => write('PATCH', `/admin/groups/${encodeURIComponent(name)}`, g),
-  deleteGroup: (name: string) => write('DELETE', `/admin/groups/${encodeURIComponent(name)}`),
+  updateGroup: (name: string, g: Partial<Group>) => write('PATCH', `/admin/groups/${at(name)}`, g),
+  deleteGroup: (name: string) => write('DELETE', `/admin/groups/${at(name)}`),
   rules: () => items<Rule>('/admin/rules'),
   saveRules: (rules: Rule[]) => write('PUT', '/admin/rules', { items: rules }),
   testRule: (user: string, path: string) => write<Verdict>('POST', '/admin/rules/test', { user, path }),
-  activity: async () => (await items<Wire<Activity, 't'>>('/admin/activity')).map((a) => ({ ...a, t: ms(a.t)! })),
-  sources: () => items<Source>('/admin/sources'),
-  saveSources: (sources: Source[]) => write('PUT', '/admin/sources', { items: sources }),
-  index: async (): Promise<IndexState> => { const s = await get<Wire<IndexState, 'last'>>('/admin/index'); return { ...s, last: ms(s.last) }; },
-  reindex: (path?: string) => write('POST', '/admin/index', path ? { path } : {}),
+  // Without a time span the server sends the last seven days, which is what the page shows.
+  activity: async () => (await items<Wire<Activity, 't'>>('/admin/activity' + q({ limit: '500' }))).map((a) => ({ ...a, t: ms(a.t)! })),
+  sources: () => get<Sources>('/admin/sources'),
+  saveSources: (sources: Source[]) => write<Sources>('PUT', '/admin/sources', { sources }),
+  index: async () => (await get<{ sources: Wire<IndexState, 'lastIndexed' | 'nextScan'>[] }>('/admin/index')).sources.map(index),
+  reindex: (source?: string) => write('POST', '/admin/index', source ? { source } : {}),
   app: () => get<AppSettings>('/admin/app'),
-  saveApp: (s: AppSettings) => write('PUT', '/admin/app', s),
-  testOffice: (office: AppSettings['office']) => write<{ ok: boolean; reason?: 'secret' | 'unreachable' }>('POST', '/admin/integrations/test', { integration: 'office', ...office }),
+  saveApp: (change: AppChange) => write<AppSettings>('PUT', '/admin/app', change),
+  testIntegration: (kind: Exclude<OfficeKind, 'none'> | 'arrowloop', url: string, key?: string) =>
+    write<IntegrationResult>('POST', '/admin/integrations/test', { kind, url, ...(key ? (kind === 'arrowloop' ? { token: key } : { secret: key }) : {}) }),
   restart: () => write('POST', '/admin/app/restart'),
-  exportSettings: (path: string, users: boolean) => write('POST', '/admin/app/export', { path, users }),
-  importSettings: (path: string, users: boolean) => write('POST', '/admin/app/import', { path, users }),
-  shares: async (all: boolean) => (await items<Wire<Share, 'created' | 'expires'>>(all ? '/admin/shares' : '/shares')).map(share),
-  updateShare: (id: string, change: { expires?: number | null; password?: string | null }) =>
-    write('PATCH', `/shares/${id}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}) }),
-  deleteShare: (id: string) => write('DELETE', `/shares/${id}`),
-  remotes: () => items<Remote>('/remotes'),
-  addRemote: (r: Omit<Remote, 'mounted'>) => write('POST', '/remotes', r),
-  updateRemote: (name: string, r: Omit<Remote, 'mounted'>) => write('PUT', `/remotes/${encodeURIComponent(name)}`, r),
-  deleteRemote: (name: string) => write('DELETE', `/remotes/${encodeURIComponent(name)}`),
-  mountRemote: (name: string, on: boolean) => write('POST', `/remotes/${encodeURIComponent(name)}/${on ? 'mount' : 'unmount'}`),
-  testRemote: (type: string, cfg: Record<string, string>) => write<{ ok: boolean; detail?: string }>('POST', '/remotes/test', { type, cfg }),
-  remoteToken: (type: string, token: string) => write<{ account: string }>('POST', '/remotes/oauth', { type, token }),
+  exportSettings: (path: string, users: boolean) => write<{ path: string; size: number }>('POST', '/admin/app/export', { path, users }),
+  importSettings: (path: string, users: boolean) => write<Imported>('POST', '/admin/app/import', { path, users }),
+  shares: async (all: boolean) => (await get<Omit<Wire<Share, 'created' | 'expires'>, 'url'>[]>(all ? '/admin/shares' : '/shares')).map(share),
+  // An expiry of null makes the link last, an empty password takes it off.
+  updateShare: (id: string, change: { expires?: number | null; password?: string }) =>
+    write('PATCH', `/shares/${at(id)}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}) }),
+  deleteShare: (id: string) => write('DELETE', `/shares/${at(id)}`),
+  remotes: () => get<{ remotes: Remote[]; rclone: Rclone }>('/remotes'),
+  addRemote: (r: RemoteInput) => write<Remote>('POST', '/remotes', r),
+  updateRemote: (name: string, r: RemoteInput) => write<Remote>('PUT', `/remotes/${at(name)}`, r),
+  deleteRemote: (name: string) => write('DELETE', `/remotes/${at(name)}`),
+  mountRemote: (name: string, on: boolean) => write<Remote>('POST', `/remotes/${at(name)}/${on ? 'mount' : 'unmount'}`),
+  // With the name of a saved remote, its stored password fills in the one the form leaves empty.
+  testRemote: (r: RemoteInput) => write<RemoteTest>('POST', '/remotes/test', r),
+  remoteToken: (type: string, pasted: string) => write<{ token?: string; expiry?: string }>('POST', '/remotes/oauth', { type, token: pasted }),
   system: async (): Promise<System> => { const s = await get<Wire<System, 'started'>>('/system'); return { ...s, started: ms(s.started)! }; },
-  checkUpdate: () => write<{ latest: string; current: boolean }>('POST', '/system/update'),
+  checkUpdate: () => write<UpdateCheck>('POST', '/system/update'),
+  notifyUnraid: (subject: string, description: string) => write('POST', '/unraid/notify/test', { subject, description }),
 };
 
+type WebAuthnJSON = { publicKey: unknown };
+type PublicKeyStatics = typeof PublicKeyCredential & { parseCreationOptionsFromJSON?: (o: unknown) => PublicKeyCredentialCreationOptions };
+
 export const me = {
-  account: async (): Promise<Account> => { const a = await get<Wire<Account, 'pwChanged'>>('/me'); return { ...a, pwChanged: ms(a.pwChanged) }; },
+  account: async (): Promise<Account> => user(await get<Wire<Account, 'last' | 'pwChanged'>>('/me')),
   password: (current: string, next: string) => write<{ ended: number }>('PUT', '/me/password', { current, next }),
   sessions: async () => (await items<Wire<Session, 'created' | 'seen'>>('/me/sessions')).map((s) => ({ ...s, created: ms(s.created)!, seen: ms(s.seen)! })),
-  endSession: (id: string) => write('DELETE', `/me/sessions/${id}`),
+  endSession: (id: string) => write('DELETE', `/me/sessions/${at(id)}`),
   tokens: async () => (await items<Wire<Token, 'created' | 'last' | 'expires'>>('/me/tokens')).map(token),
   createToken: (name: string, rights: Token['rights'], days: number | null) => write<{ secret: string }>('POST', '/me/tokens', { name, rights, days }),
-  deleteToken: (id: string) => write('DELETE', `/me/tokens/${id}`),
-  passkeys: async () => (await items<Wire<Passkey, 'created' | 'last'>>('/me/passkeys')).map(passkey),
-  addPasskey: (body: { name: string; credential?: unknown }) => write<{ options?: CredentialCreationOptions; passkey?: unknown }>('POST', '/me/passkeys', body),
-  deletePasskey: (id: string) => write('DELETE', `/me/passkeys/${id}`),
+  deleteToken: (id: string) => write('DELETE', `/me/tokens/${at(id)}`),
+  passkeys: async (): Promise<Passkeys> => { const p = await get<{ enabled: boolean; items: Wire<Passkey, 'created' | 'last'>[] }>('/me/passkeys'); return { enabled: p.enabled, items: p.items.map(passkey) }; },
+  // Two steps on one path: the name brings the options, the browser's answer to them adds the passkey.
+  async addPasskey(name: string): Promise<void> {
+    const { options } = await write<{ options: WebAuthnJSON }>('POST', '/me/passkeys', { name });
+    const parse = (PublicKeyCredential as PublicKeyStatics).parseCreationOptionsFromJSON;
+    if (!parse) throw new Error('this browser cannot read passkey options');
+    const credential = await navigator.credentials.create({ publicKey: parse(options.publicKey) }) as PublicKeyCredential | null;
+    if (!credential) throw new Error('no passkey');
+    await write('POST', '/me/passkeys', { name, credential: credential.toJSON() });
+  },
+  deletePasskey: (id: string) => write('DELETE', `/me/passkeys/${at(id)}`),
   // The server draws the QR code, so no encoder ships to the browser.
   totpBegin: () => write<{ secret: string; uri: string; qr: string }>('POST', '/me/totp', {}),
   totpConfirm: (code: string) => write<{ codes: string[] }>('POST', '/me/totp', { code }),
@@ -107,8 +164,8 @@ export const me = {
 // Whether a folder or, with files, a file exists, asked the way the file list asks.
 export async function exists(path: string, kind: 'dir' | 'file' = 'dir'): Promise<boolean> {
   if (kind === 'dir') return call(`/fs/list${q({ path })}`).then(() => true, () => false);
-  const at = path.lastIndexOf('/');
-  const parent = path.slice(0, at) || '/', name = path.slice(at + 1);
+  const cut = path.lastIndexOf('/');
+  const parent = path.slice(0, cut) || '/', name = path.slice(cut + 1);
   return call<{ items: { name: string; dir: boolean }[] }>(`/fs/list${q({ path: parent })}`)
     .then((r) => !!r.body?.items.some((k) => k.name === name && !k.dir), () => false);
 }

@@ -47,3 +47,23 @@ func TestRequestFullScanNeedsAScheduler(t *testing.T) {
 		t.Errorf("err = %v", err)
 	}
 }
+
+func TestThePlanNamesTheNextScanAndItsInterval(t *testing.T) {
+	idx := newRestoreTestIndex(t, "plan", []string{"a"}, persistedScanners("/", "/a/"))
+	idx.setupMultiScanner(false)
+	waitForPasses(t, idx, 1)
+	deadline := time.Now().Add(10 * time.Second)
+	for idx.NextScan().IsZero() {
+		if time.Now().After(deadline) {
+			t.Fatal("no scan planned after the first pass")
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+	if next := idx.NextScan(); !next.After(time.Now().Add(-time.Second)) {
+		t.Errorf("next scan %v lies in the past", next)
+	}
+	every := idx.ScanEvery()
+	if every < scanScheduleTiers[0] || every > scanScheduleTiers[len(scanScheduleTiers)-1] {
+		t.Errorf("every = %v", every)
+	}
+}

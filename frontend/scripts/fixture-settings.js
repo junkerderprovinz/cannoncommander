@@ -1,5 +1,6 @@
-// The settings pages, the account and the labels in the shape of /api/v1, with the prototype's made-up people,
-// shares and sources. It keeps changes in memory, so a page can be clicked through as it will work against the server.
+// The settings pages, the account and the labels in the shape of /api/v1, as the contracts in
+// backend/internal/*/openapi.yaml describe it, with the prototype's made-up people, shares and sources. It keeps
+// changes in memory, so a page can be clicked through as it will work against the server.
 import { createFixture } from './fixture.js';
 
 const MIN = 60000, HOUR = 60 * MIN, DAY = 24 * HOUR, KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
@@ -7,7 +8,7 @@ const iso = (t) => (t == null ? null : new Date(t).toISOString());
 const json = (res, status, body) => {
   res.statusCode = status;
   res.setHeader('Content-Type', status >= 400 ? 'application/problem+json' : 'application/json');
-  res.end(status === 204 ? '' : JSON.stringify(status >= 400 ? { type: 'about:blank', title: body, status } : body));
+  res.end(status === 204 ? '' : JSON.stringify(status >= 400 ? { type: 'about:blank', title: 'Error', status, detail: body } : body));
 };
 const readBody = (req) => new Promise((resolve) => {
   let raw = '';
@@ -34,45 +35,56 @@ function qr(secret) {
 }
 const randomOf = (alphabet, n) => Array.from({ length: n }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('');
 const codes = () => Array.from({ length: 8 }, () => `${randomOf('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4)}-${randomOf('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4)}`);
+const b64url = (n) => randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_', n);
 
 function state() {
   const now = Date.now();
+  const person = (id, name, full, role, scope, groups, last, more = {}) => ({
+    id, name, full, role, scope, groups, loginMethod: 'password', twofa: false, passkeys: 0, last, pwChanged: null, ...more,
+  });
   return {
-    started: now,
-    me: { name: 'jdp', full: 'Junker der Provinz', role: 'Admin', twofa: true, pwChanged: now - 41 * DAY, recovery: 8 },
+    started: now - 3 * DAY - 4 * HOUR,
     users: [
-      { name: 'jdp', full: 'Junker der Provinz', role: 'admin', groups: ['admins', 'familie'], scope: '/mnt/user', last: now - 3 * MIN, twofa: true },
-      { name: 'anna', full: 'Anna', role: 'user', groups: ['familie'], scope: '/mnt/user/fotos', last: now - 2 * DAY, twofa: false },
-      { name: 'gast', full: 'Gast', role: 'readonly', groups: [], scope: '/mnt/user/filme', last: now - 40 * DAY, twofa: false },
+      person('1', 'jdp', 'Junker der Provinz', 'admin', '/mnt/user', ['admins', 'familie'], now - 3 * MIN, { twofa: true, passkeys: 2, pwChanged: now - 41 * DAY }),
+      person('7340032', 'anna', 'Anna', 'user', '/mnt/user/fotos', ['familie'], now - 2 * DAY),
+      person('9007199254740993', 'gast', 'Gast', 'readonly', '/mnt/user/filme', [], now - 40 * DAY),
     ],
+    recovery: 8,
     groups: [
       { name: 'admins', members: ['jdp'], note: 'Alles, auch Einstellungen' },
       { name: 'familie', members: ['jdp', 'anna'], note: 'Fotos, Musik, Filme' },
     ],
     sources: [
-      { name: 'Shares', path: '/mnt/user', readOnly: false, indexed: true, skipHidden: true, exclude: [], files: 182344, size: 6.6 * TB },
-      { name: 'Cache', path: '/mnt/cache', readOnly: false, indexed: true, skipHidden: true, exclude: [], files: 4021, size: 580 * GB },
-      { name: 'USB-Stick', path: '/boot', readOnly: true, indexed: false, skipHidden: true, exclude: [], files: 211, size: 8 * GB },
-      { name: 'Fernziele', path: '/mnt/remotes', readOnly: false, indexed: false, skipHidden: true, exclude: [], files: 0, size: 0 },
+      { name: 'Shares', path: '/mnt/user', readOnly: false, indexed: true, skipHidden: true, exclude: ['*.tmp', 'appdata/plex/cache'] },
+      { name: 'Cache', path: '/mnt/cache', readOnly: false, indexed: true, skipHidden: true, exclude: [] },
+      { name: 'USB-Stick', path: '/boot', readOnly: true, indexed: false, skipHidden: true, exclude: [] },
+      { name: 'Fernziele', path: '/mnt/remotes', readOnly: false, indexed: false, skipHidden: true, exclude: [] },
     ],
-    index: { last: now - 5.5 * HOUR },
+    // What the server runs with, so a saved list that differs asks for a restart.
+    running: '',
+    index: {
+      Shares: { dirs: 14211, files: 182344, size: Math.round(6.6 * TB), last: now - 5.5 * HOUR, next: now + 25 * MIN, every: 40 * 60 },
+      Cache: { dirs: 801, files: 4021, size: 580 * GB, last: now - 20 * MIN, next: now + 40 * MIN, every: 60 * 60 },
+    },
+    reading: new Set(),
     rules: [
       { who: 'anna', path: '/mnt/user/backups', rule: 'hide' },
       { who: 'gast', path: '/mnt/user/filme', rule: 'read' },
       { who: '*', path: '*.partial*', rule: 'hide' },
     ],
     shares: [
-      { id: 's1', path: '/mnt/user/fotos/Urlaub', by: 'jdp', created: now - 5 * DAY, expires: now + 25 * DAY, password: true, views: 14, slug: 'k3x9-urlaub' },
-      { id: 's2', path: '/mnt/user/dokumente/Rechnung-Oktober.pdf', by: 'jdp', created: now - 1 * DAY, expires: now + 6 * DAY, password: false, views: 2, slug: 'p7q2-rechnung' },
+      { id: 's1', slug: 'k3x9qa-urlaub', kind: 'folder', name: 'Urlaub', paths: ['/mnt/user/fotos/Urlaub'], owner: 'jdp', created: now - 5 * DAY, expires: now + 25 * DAY, password: true, limit: 0, downloads: 3, views: 14, uploads: false, uploadLimit: 0, uploaded: 0, notify: false, state: 'active' },
+      { id: 's2', slug: 'p7q2mv-rechnung', kind: 'file', name: 'Rechnung-Oktober.pdf', paths: ['/mnt/user/dokumente/Rechnung-Oktober.pdf'], owner: 'jdp', created: now - 1 * DAY, expires: now + 6 * DAY, password: false, limit: 5, downloads: 1, views: 2, uploads: false, uploadLimit: 0, uploaded: 0, notify: true, state: 'active' },
     ],
     activity: [
-      { t: now - 4 * MIN, who: 'jdp', what: 'copy', obj: '2 Dateien nach /mnt/user/backups', path: '/mnt/user/backups' },
-      { t: now - 40 * MIN, who: 'jdp', what: 'rename', obj: '22 Fotos in /mnt/user/fotos/2026', path: '/mnt/user/fotos/2026' },
-      { t: now - 3 * HOUR, who: 'anna', what: 'upload', obj: '9 Fotos nach /mnt/user/fotos/Urlaub', path: '/mnt/user/fotos/Urlaub' },
-      { t: now - 5 * HOUR, who: 'jdp', what: 'share', obj: '/mnt/user/fotos/Urlaub', path: '/mnt/user/fotos/Urlaub' },
-      { t: now - 1 * DAY, who: 'gast', what: 'login', obj: 'von 192.168.30.50' },
-      { t: now - 2 * DAY, who: 'jdp', what: 'delete', obj: 'alte-notizen.txt' },
-    ],
+      { t: now - 4 * MIN, who: 'jdp', what: 'copy', path: '/mnt/user/downloads/neu', target: '/mnt/user/backups/neu', ip: '192.168.10.16' },
+      { t: now - 40 * MIN, who: 'jdp', what: 'rename', path: '/mnt/user/fotos/2026', ip: '192.168.10.16' },
+      { t: now - 3 * HOUR, who: 'anna', what: 'upload', path: '/mnt/user/fotos/Urlaub', ip: '192.168.30.50' },
+      { t: now - 5 * HOUR, who: 'jdp', what: 'shareCreate', path: '/mnt/user/fotos/Urlaub', ip: '192.168.10.16' },
+      { t: now - 1 * DAY, who: 'gast', what: 'login', ip: '192.168.30.50' },
+      { t: now - 2 * DAY, who: 'jdp', what: 'delete', path: '/mnt/user/dokumente/alte-notizen.txt', ip: '192.168.10.16' },
+      { t: now - 3 * DAY, who: 'jdp', what: 'tokenCreate', obj: 'backup-skript', ip: '192.168.10.16' },
+    ].map((a, i) => ({ id: 100 - i, details: {}, obj: a.obj ?? (a.target ? `${a.path} → ${a.target}` : a.path ?? a.ip), ...a })),
     sessions: [
       { id: 'a1', created: now - 9 * DAY, seen: now - MIN, userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0', ip: '192.168.10.16', current: true },
       { id: 'a2', created: now - 20 * DAY, seen: now - 2 * HOUR, userAgent: 'Mozilla/5.0 (Android 15; Mobile; rv:140.0) Gecko/140.0 Firefox/140.0', ip: '192.168.30.50', current: false },
@@ -83,14 +95,18 @@ function state() {
       { id: 'p2', name: 'Handy', origin: '192.168.10.5:8443', created: now - 120 * DAY, last: now - 50 * DAY },
     ],
     remotes: [
-      { name: 'gdrive', type: 'gdrive', mount: '/mnt/remotes/gdrive', mounted: true, account: 'junker@example.org', cfg: { folder: '' } },
-      { name: 'nas-keller', type: 'smb', mount: '/mnt/remotes/nas-keller', mounted: true, cfg: { host: 'keller', share: 'archiv', user: 'jdp', domain: '' } },
+      { name: 'gdrive', type: 'drive', path: '', mount: '/mnt/remotes/gdrive', label: 'rclone: gdrive', mounted: true, mountOnStart: true, params: {}, secrets: ['token'] },
+      { name: 'nas-keller', type: 'smb', path: 'archiv', mount: '/mnt/remotes/nas-keller', label: 'rclone: nas-keller', mounted: true, mountOnStart: true, params: { host: 'keller', user: 'jdp', domain: '' }, secrets: ['pass'] },
     ],
     app: {
-      indexEvery: 'daily', rclone: { automount: true, cache: 'writes', cacheSize: 50 },
-      office: { kind: 'none', url: '', secret: '' }, thumbs: true, videoPreview: false, webdav: false, webdavUrl: 'https://cannon.tower.lan/dav/',
-      autoCheck: true, logLevel: 'info', image: 'ghcr.io/junkerderprovinz/cannoncommander', tag: 'latest',
+      office: { kind: 'none', url: '', secret: '' },
+      arrowloop: { url: 'http://tower.lan:8095', token: 'al-token', paths: { '/mnt/user': '/data' } },
+      previews: { thumbs: true, video: false }, webdav: false,
+      remotes: { automount: true, cache: 'writes', cacheSize: 50 },
+      updates: { autoCheck: true }, logLevel: 'info',
     },
+    // The switches the server only reads when it starts.
+    booted: { webdav: false, autoCheck: true },
     colours: [['red', '#ff6b72'], ['orange', '#ff8a3d'], ['yellow', '#f5c518'], ['green', '#4cc977'], ['blue', '#3b9cf5'], ['purple', '#a98bff']].map(([id, hex]) => ({ id, name: '', hex })),
     tags: [],
     labels: {
@@ -107,24 +123,33 @@ function state() {
 
 const split = (p) => { const at = p.lastIndexOf('/'); return [p.slice(0, at) || '/', p.slice(at + 1)]; };
 const APPDATA = '/mnt/user/appdata/cannoncommander', EXPORTS = APPDATA + '/exports';
+const ME = 'jdp';
 
 export function settingsFixtureMiddleware() {
   const fx = createFixture();
   const S = state();
+  S.running = JSON.stringify(S.sources);
+  const isDir = (p) => !!fx.list(p);
   const isFile = (p) => { const [dir, name] = split(p); return S.exports.some((e) => e.path === p) || !!fx.list(dir)?.items.some((k) => k.name === name && !k.dir); };
+  const me = () => S.users.find((u) => u.name === ME);
+  const inside = (p, root) => p === root || p.startsWith(root.replace(/\/$/, '') + '/');
 
   const verdict = (user, path) => {
-    if (!(path === user.scope || path.startsWith(user.scope + '/'))) return { result: 'hidden', scope: user.scope };
+    if (!isDir(path) && !isFile(path)) return { result: 'missing', reason: 'none' };
+    if (!inside(path, user.scope)) return { result: 'hidden', reason: 'scope', scope: user.scope };
     const glob = (pat, s) => new RegExp('^' + pat.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$', 'i').test(s);
     const i = S.rules.findIndex((r) => {
       const who = r.who === '*' || r.who === user.name || (r.who.startsWith('@') && user.groups.includes(r.who.slice(1)));
       if (!who) return false;
-      if (r.path.includes('*')) return path.split('/').some((part) => glob(r.path, part)) || glob(r.path, path);
-      return path === r.path || path.startsWith(r.path + '/');
+      if (r.path.includes('*')) return path.split('/').some((part) => glob(r.path, part));
+      return inside(path, r.path);
     });
-    if (i < 0) return { result: user.role === 'readonly' ? 'read' : 'visible' };
-    const r = S.rules[i];
-    return { result: r.rule === 'hide' ? 'hidden' : r.rule === 'read' || user.role === 'readonly' ? 'read' : 'visible', rule: i };
+    const source = S.sources.find((s) => inside(path, s.path));
+    if (i >= 0 && S.rules[i].rule === 'hide') return { result: 'hidden', reason: 'rule', rule: i };
+    if (i >= 0 && S.rules[i].rule === 'read') return { result: 'read', reason: 'rule', rule: i };
+    if (user.role === 'readonly') return { result: 'read', reason: 'role' };
+    if (source?.readOnly) return { result: 'read', reason: 'source' };
+    return i >= 0 ? { result: 'visible', reason: 'rule', rule: i } : { result: 'visible', reason: 'none' };
   };
   const lists = () => {
     const count = {};
@@ -136,68 +161,130 @@ export function settingsFixtureMiddleware() {
     return { colours: S.colours.map((c) => ({ ...c, count: count['c:' + c.id] || 0 })), tags: tags.map((name) => ({ name, count: count['t:' + name] || 0 })) };
   };
   const tidy = () => { for (const [p, l] of Object.entries(S.labels)) if (!l.colour && !(l.tags || []).length) delete S.labels[p]; };
-  const wireUser = (u) => ({ ...u, last: iso(u.last) });
-  const wireShare = (s) => ({ ...s, url: `https://cannon.tower.lan/s/${s.slug}`, created: iso(s.created), expires: iso(s.expires) });
+  const wireUser = (u) => ({ ...u, last: iso(u.last), pwChanged: iso(u.pwChanged) });
+  const wireShare = (s) => ({ ...s, created: iso(s.created), expires: iso(s.expires) });
+  const wireRemote = (r) => ({ ...r, params: { ...r.params } });
+  const sources = () => ({ sources: S.sources, restartNeeded: JSON.stringify(S.sources) !== S.running });
+  const indexState = (s) => {
+    const ix = S.index[s.name];
+    const base = { source: s.name, path: s.path, status: 'off', dirs: 0, files: 0, size: 0, quickScanSeconds: 0, fullScanSeconds: 0, metadata: 0 };
+    if (!s.indexed || !ix) return base;
+    const reading = S.reading.has(s.name);
+    return {
+      ...base, status: reading ? 'indexing' : 'ready', dirs: ix.dirs, files: ix.files, size: ix.size, lastIndexed: iso(ix.last),
+      quickScanSeconds: 2, fullScanSeconds: 41, nextScan: iso(ix.next), scanEverySeconds: ix.every, metadata: Math.round(ix.files / 3),
+      ...(reading ? { job: 'j-' + s.name, scanning: s.path + '/fotos' } : {}),
+    };
+  };
+  const app = () => ({
+    ...S.app,
+    office: { kind: S.app.office.kind, url: S.app.office.url, secretSet: !!S.app.office.secret },
+    arrowloop: { url: S.app.arrowloop.url, tokenSet: !!S.app.arrowloop.token, ...(Object.keys(S.app.arrowloop.paths).length ? { paths: S.app.arrowloop.paths } : {}) },
+    restartNeeded: S.app.webdav !== S.booted.webdav || S.app.updates.autoCheck !== S.booted.autoCheck,
+  });
+  const badUrl = (u) => !!u && !/^https?:\/\/[^/\s]+/.test(u);
 
   const routes = [
-    ['GET', '/me', () => ({ ...S.me, pwChanged: iso(S.me.pwChanged) })],
+    ['GET', '/me', () => ({ ...wireUser(me()), recovery: S.recovery, lockPassword: false })],
     ['PUT', '/me/password', (b) => {
-      if (!b.current) return [400, 'current password'];
+      if (!b.next || b.next.length < 12) return [400, 'the password needs 12 characters'];
+      if (b.current !== 'cannoncommander') return [403, 'the current password is wrong'];
       const ended = S.sessions.filter((s) => !s.current).length;
       S.sessions = S.sessions.filter((s) => s.current);
-      S.me.pwChanged = Date.now();
+      me().pwChanged = Date.now();
       return { ended };
     }],
     ['GET', '/me/sessions', () => ({ items: S.sessions.map((s) => ({ ...s, created: iso(s.created), seen: iso(s.seen) })) })],
     ['DELETE', /^\/me\/sessions\/(.+)$/, (_, [id]) => { S.sessions = S.sessions.filter((s) => s.id !== id); return 204; }],
     ['GET', '/me/tokens', () => ({ items: S.tokens.map((t) => ({ ...t, created: iso(t.created), last: iso(t.last), expires: iso(t.expires) })) })],
     ['POST', '/me/tokens', (b) => {
-      S.tokens.push({ id: 't' + Date.now(), name: b.name, created: Date.now(), last: null, rights: b.rights, expires: b.days ? Date.now() + b.days * DAY : null });
-      return { secret: 'cc_' + randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 40) };
+      if (S.tokens.some((t) => t.name === b.name)) return [409, 'a token with this name exists'];
+      const t = { id: 't' + Date.now(), name: b.name, created: Date.now(), last: null, rights: b.rights, expires: b.days ? Date.now() + b.days * DAY : null };
+      S.tokens.push(t);
+      return [201, { ...t, created: iso(t.created), last: null, expires: iso(t.expires), secret: 'cc_' + b64url(40) }];
     }],
     ['DELETE', /^\/me\/tokens\/(.+)$/, (_, [id]) => { S.tokens = S.tokens.filter((t) => t.id !== id); return 204; }],
-    ['GET', '/me/passkeys', () => ({ items: S.passkeys.map((p) => ({ ...p, created: iso(p.created), last: iso(p.last) })) })],
-    ['POST', '/me/passkeys', (b) => { S.passkeys.push({ id: 'p' + Date.now(), name: b.name, origin: 'cannon.tower.lan', created: Date.now(), last: null }); return { passkey: b.name }; }],
-    ['DELETE', /^\/me\/passkeys\/(.+)$/, (_, [id]) => { S.passkeys = S.passkeys.filter((p) => p.id !== id); return 204; }],
-    ['POST', '/me/totp', (b) => {
-      if (b.code === '000000') return [400, 'code'];
-      if (b.regenerate) { S.me.recovery = 8; return { codes: codes() }; }
-      if (b.code) { S.me.twofa = true; S.me.recovery = 8; return { codes: codes() }; }
-      S.totpSecret = randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', 32);
-      return { secret: S.totpSecret, uri: `otpauth://totp/CannonCommander:jdp?secret=${S.totpSecret}`, qr: qr(S.totpSecret) };
+    ['GET', '/me/passkeys', () => ({ enabled: true, items: S.passkeys.map((p) => ({ ...p, created: iso(p.created), last: iso(p.last) })) })],
+    ['POST', '/me/passkeys', (b, _, __, req) => {
+      if (S.passkeys.some((p) => p.name === b.name)) return [409, 'the name is taken'];
+      const host = (req.headers.host || 'localhost').split(':')[0];
+      if (!b.credential) {
+        return { options: { publicKey: {
+          challenge: b64url(43), rp: { name: 'CannonCommander', id: host }, user: { id: b64url(11), name: ME, displayName: me().full },
+          pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }], timeout: 300000,
+          authenticatorSelection: { residentKey: 'preferred', userVerification: 'preferred' },
+        } } };
+      }
+      const p = { id: 'p' + Date.now(), name: b.name, origin: req.headers.host || host, created: Date.now(), last: null };
+      S.passkeys.push(p);
+      me().passkeys = S.passkeys.length;
+      return [201, { passkey: { ...p, created: iso(p.created) } }];
     }],
-    ['DELETE', '/me/totp', () => { S.me.twofa = false; return 204; }],
+    ['DELETE', /^\/me\/passkeys\/(.+)$/, (_, [id]) => { S.passkeys = S.passkeys.filter((p) => p.id !== id); me().passkeys = S.passkeys.length; return 204; }],
+    ['POST', '/me/totp', (b) => {
+      if (b.code === '000000') return [400, 'the code does not match'];
+      if (b.regenerate) { S.recovery = 8; return { codes: codes() }; }
+      if (b.code) {
+        if (me().twofa) return [409, 'two factor login is on already'];
+        me().twofa = true;
+        S.recovery = 8;
+        return { codes: codes() };
+      }
+      S.totpSecret = randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', 32);
+      return { secret: S.totpSecret, uri: `otpauth://totp/CannonCommander:${ME}?secret=${S.totpSecret}`, qr: qr(S.totpSecret) };
+    }],
+    ['DELETE', '/me/totp', (b) => (b.code === '000000' ? [400, 'the code does not work'] : (me().twofa = false, 204))],
 
     ['GET', '/admin/users', () => ({ items: S.users.map(wireUser) })],
-    ['POST', '/admin/users', (b) => { delete b.password; S.users.push({ ...b, last: null, twofa: false }); syncGroups(b.name, b.groups); return 204; }],
-    ['PATCH', /^\/admin\/users\/(.+)$/, (b, [name]) => {
-      const u = S.users.find((x) => x.name === name);
-      if (!u) return [404, 'user'];
-      delete b.password;
-      if (b.name && b.name !== name) S.rules.forEach((r) => { if (r.who === name) r.who = b.name; });
-      Object.assign(u, b);
-      syncGroups(u.name, u.groups, name);
-      return 204;
+    ['POST', '/admin/users', (b) => {
+      if (S.users.some((u) => u.name === b.name)) return [409, 'the login name is taken'];
+      if (!b.password || b.password.length < 12) return [400, 'the password needs 12 characters'];
+      const u = { id: String(Date.now()), name: b.name, full: b.full || b.name, role: b.role || 'user', scope: b.scope, groups: b.groups || [], loginMethod: 'password', twofa: false, passkeys: 0, last: null, pwChanged: Date.now() };
+      S.users.push(u);
+      syncGroups(u.name, u.groups);
+      return [201, wireUser(u)];
     }],
-    ['DELETE', /^\/admin\/users\/(.+)$/, (_, [name]) => {
-      S.users = S.users.filter((u) => u.name !== name);
-      S.groups.forEach((g) => { g.members = g.members.filter((m) => m !== name); });
-      S.rules = S.rules.filter((r) => r.who !== name);
-      S.shares = S.shares.filter((s) => s.by !== name);
+    ['PATCH', /^\/admin\/users\/(.+)$/, (b, [id]) => {
+      const u = S.users.find((x) => x.name === id || x.id === id);
+      if (!u) return [404, 'user'];
+      const was = u.name;
+      if (b.name && b.name !== was && was === ME) return [400, 'you cannot change your own login name'];
+      if (was === ME && b.role && b.role !== 'admin') return [409, 'you cannot give up your own admin role'];
+      if (b.name && b.name !== was) S.rules.forEach((r) => { if (r.who === was) r.who = b.name; });
+      const { password, ...rest } = b;
+      Object.assign(u, rest, password ? { pwChanged: Date.now() } : {});
+      if (b.groups || b.name) syncGroups(u.name, u.groups, was);
+      return wireUser(u);
+    }],
+    ['DELETE', /^\/admin\/users\/(.+)$/, (_, [id]) => {
+      const u = S.users.find((x) => x.name === id || x.id === id);
+      if (!u) return [404, 'user'];
+      if (u.name === ME) return [403, 'nobody can delete themselves'];
+      S.users = S.users.filter((x) => x !== u);
+      S.groups.forEach((g) => { g.members = g.members.filter((m) => m !== u.name); });
+      S.rules = S.rules.filter((r) => r.who !== u.name);
+      S.shares = S.shares.filter((s) => s.owner !== u.name);
       return 204;
     }],
     ['GET', '/admin/groups', () => ({ items: S.groups })],
-    ['POST', '/admin/groups', (b) => { S.groups.push(b); syncMembers(b); return 204; }],
+    ['POST', '/admin/groups', (b) => {
+      if (S.groups.some((g) => g.name === b.name)) return [409, 'the group exists'];
+      const g = { name: b.name, note: b.note || '', members: b.members || [] };
+      S.groups.push(g);
+      syncMembers(g);
+      return [201, g];
+    }],
     ['PATCH', /^\/admin\/groups\/(.+)$/, (b, [name]) => {
       const g = S.groups.find((x) => x.name === name);
       if (!g) return [404, 'group'];
-      if (b.name !== name) {
+      if (b.name && b.name !== name) {
+        if (S.groups.some((x) => x.name === b.name)) return [409, 'a group with the new name exists'];
         S.users.forEach((u) => { u.groups = u.groups.map((x) => (x === name ? b.name : x)); });
         S.rules.forEach((r) => { if (r.who === '@' + name) r.who = '@' + b.name; });
       }
       Object.assign(g, b);
       syncMembers(g);
-      return 204;
+      return g;
     }],
     ['DELETE', /^\/admin\/groups\/(.+)$/, (_, [name]) => {
       S.groups = S.groups.filter((g) => g.name !== name);
@@ -206,49 +293,118 @@ export function settingsFixtureMiddleware() {
       return 204;
     }],
     ['GET', '/admin/rules', () => ({ items: S.rules })],
-    ['PUT', '/admin/rules', (b) => { S.rules = b.items; return 204; }],
-    ['POST', '/admin/rules/test', (b) => { const u = S.users.find((x) => x.name === b.user); return u ? verdict(u, b.path) : [404, 'user']; }],
-    ['GET', '/admin/activity', () => ({ items: S.activity.map((a) => ({ ...a, t: iso(a.t) })) })],
-    ['GET', '/admin/sources', () => ({ items: S.sources })],
-    ['PUT', '/admin/sources', (b) => { S.sources = b.items; return 204; }],
-    ['GET', '/admin/index', () => ({ every: S.app.indexEvery, last: iso(S.index.last), running: S.sources.filter((s) => s.indexing).map((s) => s.path) })],
-    ['POST', '/admin/index', (b) => {
-      for (const s of S.sources.filter((x) => !b.path || x.path === b.path)) {
-        s.indexing = true;
-        setTimeout(() => { s.indexing = false; s.indexed = true; if (!s.files) Object.assign(s, { files: 1284, size: 42 * GB }); S.index.last = Date.now(); }, 2500);
-      }
-      return 204;
+    ['PUT', '/admin/rules', (b) => {
+      const bad = b.items.findIndex((r) => !r.path.includes('*') && !isDir(r.path) && !isFile(r.path));
+      if (bad >= 0) return [400, `rule ${bad + 1}: the path does not exist`];
+      S.rules = b.items;
+      return { items: S.rules };
     }],
-    ['GET', '/admin/app', () => S.app],
-    ['PUT', '/admin/app', (b) => { S.app = b; return 204; }],
-    ['POST', '/admin/app/restart', () => { S.started = Date.now(); return 204; }],
-    ['POST', '/admin/app/export', (b) => { S.exports.push({ path: b.path, time: Date.now() }); return 204; }],
-    ['POST', '/admin/app/import', (b) => (isFile(b.path) ? 204 : [400, 'file'])],
-    ['POST', '/admin/integrations/test', (b) => (b.secret || b.kind === 'collabora' ? { ok: true } : { ok: false, reason: 'secret' })],
-    ['GET', '/shares', () => ({ items: S.shares.filter((s) => s.by === S.me.name).map(wireShare) })],
-    ['GET', '/admin/shares', () => ({ items: S.shares.map(wireShare) })],
+    ['POST', '/admin/rules/test', (b) => { const u = S.users.find((x) => x.name === b.user); return u ? verdict(u, b.path) : [404, 'there is no such user']; }],
+    ['GET', '/admin/activity', (_, __, q) => {
+      const limit = Number(q.get('limit') || 50);
+      const items = S.activity.slice(0, limit).map((a) => ({ ...a, t: iso(a.t) }));
+      return { items, total: S.activity.length, page: 1, limit };
+    }],
+    ['GET', '/admin/sources', sources],
+    ['PUT', '/admin/sources', (b) => {
+      if (!b.sources?.length) return [400, 'keep at least one source'];
+      for (const s of b.sources) {
+        if (!isDir(s.path) && !['/boot', '/mnt/cache', '/mnt/remotes'].includes(s.path)) return [400, `${s.path} is not a folder on the server`];
+        if ((s.exclude || []).some((p) => p.includes('/') && p.includes('*'))) return [400, 'a star works in a name, not in a path'];
+      }
+      S.sources = b.sources.map((s) => ({ readOnly: false, indexed: false, skipHidden: false, exclude: [], ...s }));
+      return sources();
+    }],
+    ['GET', '/admin/index', () => ({ sources: JSON.parse(S.running).map(indexState) })],
+    ['POST', '/admin/index', (b) => {
+      const names = JSON.parse(S.running).filter((s) => s.indexed && S.index[s.name] && (!b.source || s.name === b.source)).map((s) => s.name);
+      if (!names.length) return [400, b.source ? `the source ${b.source} has no index` : 'no source has an index'];
+      for (const name of names) {
+        S.reading.add(name);
+        setTimeout(() => { S.reading.delete(name); S.index[name].last = Date.now(); }, 2500);
+      }
+      return [202, { id: 'j' + Date.now(), kind: 'reindex', name: names.length === 1 ? names[0] : 'Alle Quellen', state: 'queued', owner: ME, createdAt: iso(Date.now()) }];
+    }],
+    ['GET', '/admin/app', app],
+    ['PUT', '/admin/app', (b) => {
+      if (b.logLevel && !['error', 'info', 'debug'].includes(b.logLevel)) return [400, 'log level must be error, info or debug'];
+      if (badUrl(b.office?.url) || badUrl(b.arrowloop?.url)) return [400, 'the address starts with http:// or https://'];
+      const office = { ...S.app.office, ...b.office };
+      if (office.kind !== 'none' && !office.url) return [400, 'the office server needs an address'];
+      if (b.arrowloop?.paths && Object.entries(b.arrowloop.paths).some(([h, t]) => !h.startsWith('/') || !t.startsWith('/'))) return [400, 'the ArrowLoop paths have to be full paths'];
+      S.app = {
+        ...S.app, ...b, office, arrowloop: { ...S.app.arrowloop, ...b.arrowloop }, previews: { ...S.app.previews, ...b.previews },
+        remotes: { ...S.app.remotes, ...b.remotes }, updates: { ...S.app.updates, ...b.updates },
+      };
+      delete S.app.restartNeeded;
+      return app();
+    }],
+    ['POST', '/admin/app/restart', () => { S.started = Date.now(); S.running = JSON.stringify(S.sources); S.booted = { webdav: S.app.webdav, autoCheck: S.app.updates.autoCheck }; return [202, {}]; }],
+    ['POST', '/admin/app/export', (b) => {
+      if (isFile(b.path)) return [409, 'there is a file of that name already'];
+      S.exports.push({ path: b.path, time: Date.now() });
+      return [201, { path: b.path, size: 14 * KB }];
+    }],
+    ['POST', '/admin/app/import', (b) => (isFile(b.path) ? { sections: ['sources', 'app', 'remotes'], notes: [], restartNeeded: true } : [404, 'path not found'])],
+    ['POST', '/admin/integrations/test', (b) => {
+      const reachable = !b.url.includes('nirgends');
+      const saved = b.kind === 'arrowloop' ? S.app.arrowloop.token : S.app.office.secret;
+      const key = b.kind === 'arrowloop' ? b.token : b.secret;
+      const token = b.kind === 'collabora' ? 'none' : key || saved ? 'ok' : 'missing';
+      return { kind: b.kind, ok: reachable && ['ok', 'none'].includes(token), reachable, ...(reachable ? { token, version: '8.3.2' } : { error: 'connection refused' }) };
+    }],
+    // Both lists are bare arrays, which the router would read as a status and a body.
+    ['GET', '/shares', () => [200, S.shares.filter((s) => s.owner === ME).map(wireShare)]],
+    ['GET', '/admin/shares', () => [200, S.shares.map(wireShare)]],
     ['PATCH', /^\/shares\/(.+)$/, (b, [id]) => {
       const s = S.shares.find((x) => x.id === id);
       if (!s) return [404, 'share'];
       if ('expires' in b) s.expires = b.expires ? Date.parse(b.expires) : null;
       if ('password' in b) s.password = !!b.password;
-      return 204;
+      s.state = s.expires != null && s.expires < Date.now() ? 'expired' : 'active';
+      return wireShare(s);
     }],
     ['DELETE', /^\/shares\/(.+)$/, (_, [id]) => { S.shares = S.shares.filter((s) => s.id !== id); return 204; }],
-    ['GET', '/remotes', () => ({ items: S.remotes.map((r) => ({ ...r, cfg: { ...r.cfg, pass: undefined, secret: undefined } })) })],
-    ['POST', '/remotes', (b) => { S.remotes.push({ ...b, mounted: true }); return 204; }],
+    ['GET', '/remotes', () => ({ remotes: S.remotes.map(wireRemote), rclone: { installed: true, running: true, version: '1.71.2' } })],
+    ['POST', '/remotes', (b) => {
+      if (S.remotes.some((r) => r.name === b.name)) return [409, 'the name is taken'];
+      const params = { ...b.params }, secrets = [];
+      for (const k of ['pass', 'secret_access_key', 'token']) if (params[k]) { secrets.push(k); delete params[k]; }
+      const r = { name: b.name, type: b.type, path: b.path || '', mount: b.mount || '/mnt/remotes/' + b.name, label: 'rclone: ' + b.name, mounted: true, mountOnStart: true, params, secrets };
+      S.remotes.push(r);
+      return [201, wireRemote(r)];
+    }],
     ['PUT', /^\/remotes\/([^/]+)$/, (b, [name]) => {
       const r = S.remotes.find((x) => x.name === name);
       if (!r) return [404, 'remote'];
-      Object.assign(r, b, { cfg: { ...r.cfg, ...Object.fromEntries(Object.entries(b.cfg).filter(([, v]) => v !== '')) } });
-      return 204;
+      for (const [k, v] of Object.entries(b.params || {})) {
+        if (['pass', 'secret_access_key', 'token'].includes(k)) { if (v && !r.secrets.includes(k)) r.secrets.push(k); } else if (v === '') delete r.params[k]; else r.params[k] = v;
+      }
+      Object.assign(r, { name: b.name || r.name, path: b.path ?? r.path, mount: b.mount || r.mount });
+      r.label = 'rclone: ' + r.name;
+      return wireRemote(r);
     }],
     ['DELETE', /^\/remotes\/([^/]+)$/, (_, [name]) => { S.remotes = S.remotes.filter((r) => r.name !== name); return 204; }],
-    ['POST', /^\/remotes\/([^/]+)\/(mount|unmount)$/, (_, [name, how]) => { const r = S.remotes.find((x) => x.name === name); if (r) r.mounted = how === 'mount'; return 204; }],
-    ['POST', '/remotes/test', () => ({ ok: true })],
-    ['POST', '/remotes/oauth', (b) => (b.token.trim().startsWith('{') ? { account: 'junker@example.org' } : [400, 'token'])],
-    ['GET', '/system', () => ({ version: { app: '0.1.0', rclone: '1.71.2', ffmpeg: '7.1.1' }, paths: { rclone: '/usr/bin/rclone', ffmpeg: '/usr/bin/ffmpeg' }, started: iso(S.started - 3 * DAY - 4 * HOUR) })],
-    ['POST', '/system/update', () => ({ latest: '0.1.0', current: true })],
+    ['POST', /^\/remotes\/([^/]+)\/(mount|unmount)$/, (_, [name, how]) => {
+      const r = S.remotes.find((x) => x.name === name);
+      if (!r) return [404, 'remote'];
+      r.mounted = r.mountOnStart = how === 'mount';
+      return wireRemote(r);
+    }],
+    ['POST', '/remotes/test', (b) => (b.params?.host === 'nirgends' ? { ok: false, entries: 0, error: 'dial tcp: no such host' } : { ok: true, entries: 12, total: 4 * TB, used: TB, free: 3 * TB })],
+    ['POST', '/remotes/oauth', (b) => (b.token.trim().startsWith('{') ? { token: b.token.trim(), expiry: iso(Date.now() + HOUR) } : [400, 'this is not a token from rclone authorize'])],
+    ['GET', '/system', () => ({
+      version: '0.1.0', commit: 'f00dfeed', go: 'go1.27.0', os: 'linux', arch: 'amd64', started: iso(S.started), uptime: Math.round((Date.now() - S.started) / 1000),
+      tools: {
+        ffmpeg: { available: true, path: '/usr/bin/ffmpeg', version: '7.1.1' }, ffprobe: { available: true, path: '/usr/bin/ffprobe', version: '7.1.1' },
+        mutool: { available: true, path: '/usr/bin/mutool', version: '1.26.3' }, '7zz': { available: true, path: '/usr/bin/7zz', version: '24.09' },
+        rclone: { available: true, path: '/usr/bin/rclone', version: '1.71.2' },
+      },
+      unraid: { available: true, socket: false },
+      features: { office: S.app.office.kind === 'none' ? { kind: 'none' } : { kind: S.app.office.kind, url: S.app.office.url }, thumbs: S.app.previews.thumbs, videoPreview: S.app.previews.video, webdav: S.booted.webdav, mupdf: true },
+    })],
+    ['POST', '/system/update', () => ({ version: '0.1.0', latest: '0.1.0', updateAvailable: false, releaseUrl: 'https://github.com/junkerderprovinz/cannoncommander/releases/tag/v0.1.0' })],
+    ['POST', '/unraid/notify/test', () => 204],
 
     ['GET', '/labels', () => lists()],
     ['PUT', '/labels/colours', (b) => {
@@ -317,7 +473,7 @@ export function settingsFixtureMiddleware() {
       if (method !== req.method) continue;
       const m = typeof match === 'string' ? (match === path ? [] : null) : path.match(match)?.slice(1).map(decodeURIComponent);
       if (!m) continue;
-      const out = fn(['GET', 'DELETE'].includes(req.method) && !req.headers['content-length'] ? {} : await readBody(req), m, url.searchParams);
+      const out = fn(req.method === 'GET' || !req.headers['content-length'] ? {} : await readBody(req), m, url.searchParams, req);
       if (out === undefined) return next();
       if (out === 204) return json(res, 204);
       if (Array.isArray(out)) return json(res, out[0], out[1]);

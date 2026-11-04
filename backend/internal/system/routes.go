@@ -2,8 +2,10 @@
 package system
 
 import (
+	"bytes"
 	"context"
 	_ "embed"
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -113,10 +115,28 @@ func (s *service) getApp(w http.ResponseWriter, r *http.Request) error {
 // can send one switch at a time. A secret or token that is left out stays,
 // an empty one is removed.
 func (s *service) putApp(w http.ResponseWriter, r *http.Request) error {
+	var body json.RawMessage
+	if err := v1.DecodeJSON(r, &body); err != nil {
+		return err
+	}
+	// A map decodes over the saved one key by key, and into the very map the
+	// store holds. Sent paths therefore start from an empty map, so a mapping
+	// taken off the page goes and a refused save leaves the store as it was.
+	var sent struct {
+		ArrowLoop struct {
+			Paths json.RawMessage `json:"paths"`
+		} `json:"arrowloop"`
+	}
+	_ = json.Unmarshal(body, &sent)
 	a, err := s.store.update(r.Context(), func(a *App) error {
 		doc := appDoc{App: *a}
-		if err := v1.DecodeJSON(r, &doc); err != nil {
-			return err
+		if sent.ArrowLoop.Paths != nil {
+			doc.ArrowLoop.Paths = nil
+		}
+		dec := json.NewDecoder(bytes.NewReader(body))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&doc); err != nil {
+			return v1.Errorf(http.StatusBadRequest, "invalid JSON body: "+err.Error())
 		}
 		*a = doc.App
 		return nil

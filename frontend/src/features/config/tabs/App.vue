@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { admin, type AppSettings, type System } from '@/api/admin';
+import { admin, type AppChange, type AppSettings, type System } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
@@ -14,6 +14,7 @@ import Seg from '../kit/Seg.vue';
 import Sw from '../kit/Sw.vue';
 import ExportWin from '../wins/ExportWin.vue';
 import ImportWin from '../wins/ImportWin.vue';
+import { IMAGE } from '../support';
 
 const app = ref<AppSettings | null>(null), sys = ref<System | null>(null);
 const update = ref<'idle' | 'busy' | string>('idle');
@@ -21,14 +22,15 @@ const restarting = ref(false);
 const load = () => Promise.all([admin.app().then((a) => { app.value = a; }), admin.system().then((s) => { sys.value = s; })]);
 onMounted(() => { load().catch(() => {}); });
 
-const save = () => admin.saveApp(app.value!).then(() => toast(c('saved')), () => toast(c('notSaved'), 'warn'));
-const autoCheck = computed({ get: () => !!app.value?.autoCheck, set: (v: boolean) => { app.value!.autoCheck = v; save(); } });
-const logLevel = computed({ get: () => app.value?.logLevel ?? 'info', set: (v: AppSettings['logLevel']) => { app.value!.logLevel = v; save(); } });
+const save = (change: AppChange) => admin.saveApp(change).then((a) => { app.value!.restartNeeded = a.restartNeeded; toast(c('saved')); }, () => toast(c('notSaved'), 'warn'));
+const autoCheck = computed({ get: () => !!app.value?.updates.autoCheck, set: (v: boolean) => { app.value!.updates.autoCheck = v; save({ updates: { autoCheck: v } }); } });
+const logLevel = computed({ get: () => app.value?.logLevel ?? 'info', set: (v: AppSettings['logLevel']) => { app.value!.logLevel = v; save({ logLevel: v }); } });
 
 async function check() {
   update.value = 'busy';
   const got = await admin.checkUpdate().catch(() => null);
-  update.value = got ? (got.current ? c('app.current', { v: got.latest }) : c('app.newer', { v: got.latest })) : 'idle';
+  update.value = got ? (got.updateAvailable ? c('app.newer', { v: got.latest }) : c('app.current', { v: got.latest })) : 'idle';
+  if (!got) toast(c('app.noAnswer'), 'warn');
 }
 
 function restart() {
@@ -59,8 +61,8 @@ function restart() {
   <template v-if="app">
     <Card :title="c('app.updates')">
       <Frow :label="c('app.autoCheck')" :tip="c('app.autoCheckTip')"><Sw v-model="autoCheck" /></Frow>
-      <Frow :label="c('app.image')"><CopyField :value="app.image" /></Frow>
-      <Frow label="Tag" :tip="c('app.tagTip')"><span class="pill mono">{{ app.tag }}</span></Frow>
+      <Frow :label="c('app.image')"><CopyField :value="IMAGE" /></Frow>
+      <Frow label="Tag" :tip="c('app.tagTip')"><span class="pill mono">{{ sys?.version ?? '' }}</span></Frow>
       <div class="a-foot">
         <button id="a-upd" class="btn" :class="{ ok: update !== 'idle' && update !== 'busy' }" :disabled="update === 'busy'" @click="check"><G :n="update !== 'idle' && update !== 'busy' ? 'IconUpToDate' : 'IconSync'" />{{ update === 'idle' ? c('app.check') : update === 'busy' ? c('app.checking') : update }}</button>
       </div>
@@ -71,7 +73,7 @@ function restart() {
     </Card>
     <Card :title="c('app.service')">
       <Frow :label="c('app.log')" :tip="c('app.logTip')"><Seg v-model="logLevel" :options="[['error', c('app.errors')], ['info', c('app.normal')], ['debug', c('app.verbose')]]" /></Frow>
-      <Frow :label="c('app.running')"><span class="a-ctl"><span class="pill">{{ sys ? since(sys.started) : '' }}</span><Btn :label="c('app.restart')" g="IconRefresh" @click="restart" /></span></Frow>
+      <Frow :label="c('app.running')" :tip="app.restartNeeded ? c('app.restartNeededTip') : undefined"><span class="a-ctl"><span class="pill" :class="{ warn: app.restartNeeded }">{{ app.restartNeeded ? c('app.restartNeeded') : sys ? since(sys.started) : '' }}</span><Btn :label="c('app.restart')" g="IconRefresh" @click="restart" /></span></Frow>
     </Card>
   </template>
   <Teleport v-if="restarting" to="body">
