@@ -165,7 +165,7 @@ function driven(tab: Page, fixture?: string): { page: Page; move: (ms: number) =
   };
   // A script that returns at once settles long before the first pause; one that waits for a page timer gets the
   // clock moved on until it settles.
-  const evaluate = async (fn: unknown, arg?: unknown) => {
+  const once = async (fn: unknown, arg?: unknown) => {
     let settled = false;
     const result = tab.evaluate(fn as never, arg).finally(() => { settled = true; });
     result.catch(() => {});
@@ -175,6 +175,19 @@ function driven(tab: Page, fixture?: string): { page: Page; move: (ms: number) =
       await Promise.race([result, sleep(30)]);
     }
     return result;
+  };
+  // The prototype draws at once; the app draws on the next tick and reads from its server, so a script that reads the
+  // page right after changing it finds nothing yet. Such a script runs again a little later, for up to a second.
+  const evaluate = async (fn: unknown, arg?: unknown) => {
+    for (let tries = 0; ; tries++) {
+      try {
+        return await once(fn, arg);
+      } catch (e) {
+        if (tries >= 20 || !/Cannot read properties of (null|undefined)/.test(String((e as Error).message))) throw e;
+        await settle();
+        await move(50);
+      }
+    }
   };
   // A person's keys come apart in time, so a timer a key handler sets for right after it runs before the next key.
   const keyboard = new Proxy(tab.keyboard, {
@@ -301,6 +314,13 @@ async function runSide(browser: Browser, file: string, page: string, dir: string
   return { lines, shots, errors, ms: Date.now() - started };
 }
 
+// A part of a line the prototype prints differently from run to run, such as a colour that walks with time, has a
+// rule in allow.json; the golden output is held against the prototype with those parts left out.
+const normalised = (steps: string, text: string) => {
+  const rules = (allowFor(steps).lines || []).map((r) => new RegExp(r.pattern, 'g'));
+  return text.split('\n').map((l) => rules.reduce((x, re) => x.replace(re, '…'), l)).join('\n');
+};
+
 function compare(steps: string, a: Side, b: Side, dir: string): Pick<Result, 'problems' | 'allowed'> {
   const allow = allowFor(steps);
   const problems: string[] = [], allowed: string[] = [];
@@ -360,7 +380,7 @@ async function worker(file: string) {
       mkdirSync(join(here, 'golden'), { recursive: true });
       writeFileSync(golden, text);
     } else if (!existsSync(golden)) result.problems.push('no golden output yet, run with --update');
-    else if (readFileSync(golden, 'utf8') !== text) result.problems.push('the prototype prints other lines than its golden output, check them and run with --update');
+    else if (normalised(steps, readFileSync(golden, 'utf8')) !== normalised(steps, text)) result.problems.push('the prototype prints other lines than its golden output, check them and run with --update');
     writeFileSync(join(dir, 'result.json'), JSON.stringify(result, null, 1));
     process.send!(result);
   } finally {
