@@ -58,7 +58,7 @@ func StartHttp(ctx context.Context, shutdownComplete chan struct{}) {
 
 	srv := &http.Server{
 		Addr:        settings.HTTPListenAddr(settings.Config.Http.ListenAddress, settings.Config.Http.Port),
-		Handler:     muxWithMiddleware(crossOrigin(router)),
+		Handler:     muxWithMiddleware(securityHeaders(crossOrigin(router))),
 		ConnContext: settings.AttachConnContext,
 	}
 	listenAddress := settings.Config.Http.ListenAddress
@@ -183,6 +183,19 @@ func crossOrigin(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusForbidden)
 			return
 		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+// securityHeaders sets what every response needs unless its handler knows
+// better: a handler's own policy replaces this one, so each of them carries
+// frame-ancestors itself. HSTS is left to the proxy that terminates TLS.
+func securityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h := w.Header()
+		h.Set("X-Content-Type-Options", "nosniff")
+		h.Set("Referrer-Policy", "same-origin")
+		h.Set("Content-Security-Policy", "frame-ancestors 'self'")
 		next.ServeHTTP(w, r)
 	})
 }

@@ -113,7 +113,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request, real, name string, info o
 
 // SandboxPolicy gives a response from the share a unique origin, so a page
 // or a drawing in it cannot run scripts with the app's origin and session.
-const SandboxPolicy = "sandbox; default-src 'none'; img-src data:; style-src 'unsafe-inline'"
+const SandboxPolicy = "sandbox; default-src 'none'; img-src data:; style-src 'unsafe-inline'; frame-ancestors 'self'"
 
 // setDelivery sets how a browser may treat a file from the share. What it
 // does not know to be harmless is sandboxed, because browsers run scripts in

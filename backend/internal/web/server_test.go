@@ -3,8 +3,10 @@ package web
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -86,5 +88,52 @@ func TestTheExternalAddressCountsAsTheApp(t *testing.T) {
 	header := map[string]string{"Origin": "https://files.home.lan"}
 	if code := guarded(t, http.MethodPost, "cannoncommander:8080", header); code != http.StatusNoContent {
 		t.Errorf("%d", code)
+	}
+}
+
+func headersFrom(t *testing.T, inner http.HandlerFunc) http.Header {
+	t.Helper()
+	rec := httptest.NewRecorder()
+	securityHeaders(inner).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/health", nil))
+	return rec.Header()
+}
+
+func TestEveryResponseCarriesTheSecurityHeaders(t *testing.T) {
+	h := headersFrom(t, func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusNoContent) })
+	if h.Get("X-Content-Type-Options") != "nosniff" || h.Get("Referrer-Policy") != "same-origin" {
+		t.Errorf("headers %v", h)
+	}
+	if csp := h.Get("Content-Security-Policy"); csp != "frame-ancestors 'self'" {
+		t.Errorf("policy %q", csp)
+	}
+	if h.Get("Strict-Transport-Security") != "" {
+		t.Error("HSTS belongs to the proxy")
+	}
+}
+
+func TestAHandlersOwnPolicyStays(t *testing.T) {
+	h := headersFrom(t, func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Security-Policy", fsapi.SandboxPolicy)
+		w.Header().Set("Referrer-Policy", "no-referrer")
+	})
+	if h.Get("Content-Security-Policy") != fsapi.SandboxPolicy || h.Get("Referrer-Policy") != "no-referrer" {
+		t.Errorf("headers %v", h)
+	}
+}
+
+func TestEveryPolicyKeepsOtherSitesFromFramingTheApp(t *testing.T) {
+	for name, policy := range map[string]string{"sandbox": fsapi.SandboxPolicy, "app": appPolicy(), "share": sharePagePolicy} {
+		if !strings.Contains(policy, "frame-ancestors 'self'") {
+			t.Errorf("%s policy %q", name, policy)
+		}
+	}
+}
+
+func TestTheAppPolicyClosesBaseAndPlugins(t *testing.T) {
+	policy := appPolicy()
+	for _, want := range []string{"default-src 'self'", "base-uri 'self'", "object-src 'none'"} {
+		if !strings.Contains(policy, want) {
+			t.Errorf("policy %q lacks %s", policy, want)
+		}
 	}
 }
