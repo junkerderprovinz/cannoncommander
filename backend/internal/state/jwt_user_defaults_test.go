@@ -10,7 +10,7 @@ import (
 
 func TestJwtAutoCreateUserPersistsCreateUserDirScope(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	jwtConfig := "../../../_docker/src/jwt/backend/config.yaml"
+	jwtConfig := "../../testdata/jwt.yaml"
 	settings.Initialize(jwtConfig)
 	settings.Env.IsPlaywright = true
 

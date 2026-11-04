@@ -34,16 +34,6 @@ func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 	if err := shares.RemoveUser(r.Context(), h.deps, u.ID); err != nil {
 		return err
 	}
-	// Links made before the app had its own still live in the login system.
-	old, err := state.GetSharesByUserID(u.ID)
-	if err != nil {
-		return err
-	}
-	for _, s := range old {
-		if err := state.DeleteShare(s.Hash); err != nil {
-			return err
-		}
-	}
 	if m := jobs.For(h.deps); m != nil {
 		m.Forget(u.Username)
 	}

@@ -47,22 +47,6 @@ func TestApplyEnforcementFromPaths(t *testing.T) {
 	}
 }
 
-func TestValidateUserDefaultsPatchNotConfigLocked(t *testing.T) {
-	Env.ConfigUserDefaultsSpecified = true
-	Env.ConfigUserDefaultsSpecifiedPaths = []string{"listing.showHidden"}
-	t.Cleanup(func() {
-		Env.ConfigUserDefaultsSpecified = false
-		Env.ConfigUserDefaultsSpecifiedPaths = nil
-	})
-
-	if err := ValidateUserDefaultsPatchNotConfigLocked([]byte(`{"listing":{"singleClick":true}}`)); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if err := ValidateUserDefaultsPatchNotConfigLocked([]byte(`{"listing":{"showHidden":false}}`)); err == nil {
-		t.Fatal("expected config lock error")
-	}
-}
-
 func TestMergeEnforcedPatchAllowsConfigLockedValuePath(t *testing.T) {
 	merged, err := MergeEnforcedPatchJSON(UserDefaultsEnforcement{}, []byte(`{"listing":{"showHidden":true}}`))
 	if err != nil {
@@ -70,19 +54,6 @@ func TestMergeEnforcedPatchAllowsConfigLockedValuePath(t *testing.T) {
 	}
 	if !merged.Listing.ShowHidden {
 		t.Fatal("expected listing.showHidden enforcement true")
-	}
-}
-
-func TestIsUserDefaultLockedFromConfig(t *testing.T) {
-	Env.ConfigUserDefaultsSpecifiedPaths = []string{"ui.darkMode"}
-	t.Cleanup(func() {
-		Env.ConfigUserDefaultsSpecifiedPaths = nil
-	})
-	if !IsUserDefaultLockedFromConfig("ui.darkMode") {
-		t.Fatal("expected ui.darkMode locked")
-	}
-	if IsUserDefaultLockedFromConfig("ui.locale") {
-		t.Fatal("expected ui.locale unlocked")
 	}
 }
 
@@ -214,34 +185,5 @@ func TestMergeUserDefaultsPatchJSON_listingOverridePreservesDefaultPreview(t *te
 	}
 	if merged.Preview.Image == nil || !*merged.Preview.Image {
 		t.Fatalf("expected preview.image preserved from base")
-	}
-}
-
-func TestValidateSinglePropertyUserDefaultsPatch(t *testing.T) {
-	t.Parallel()
-	cases := []struct {
-		name    string
-		patch   string
-		wantErr bool
-	}{
-		{"one bool", `{"listing":{"showHidden":true}}`, false},
-		{"one string", `{"listing":{"hideFileExt":".exe"}}`, false},
-		{"enforced shape", `{"account":{"lockPassword":true}}`, false},
-		{"two fields", `{"listing":{"showHidden":true,"singleClick":true}}`, true},
-		{"two sections", `{"listing":{"showHidden":true},"sidebar":{"sticky":true}}`, true},
-		{"empty", `{}`, true},
-	}
-	for _, tc := range cases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			err := ValidateSinglePropertyUserDefaultsPatch([]byte(tc.patch))
-			if tc.wantErr && err == nil {
-				t.Fatal("expected error")
-			}
-			if !tc.wantErr && err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-		})
 	}
 }

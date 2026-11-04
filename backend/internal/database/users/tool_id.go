@@ -13,7 +13,6 @@ const (
 	ToolDuplicateFinder    ToolID = "duplicateFinder"
 	ToolAdvancedSearch     ToolID = "advancedSearch"
 	ToolMaterialIconPicker ToolID = "materialIconPicker"
-	ToolFileWatcher        ToolID = "fileWatcher"
 	ToolActivityViewer     ToolID = "activityViewer"
 )
 
@@ -23,7 +22,6 @@ var AllToolIDs = []ToolID{
 	ToolDuplicateFinder,
 	ToolAdvancedSearch,
 	ToolMaterialIconPicker,
-	ToolFileWatcher,
 	ToolActivityViewer,
 }
 
@@ -31,20 +29,11 @@ var AllToolIDs = []ToolID{
 func (id ToolID) Valid() bool {
 	switch id {
 	case ToolSizeViewer, ToolDuplicateFinder, ToolAdvancedSearch,
-		ToolMaterialIconPicker, ToolFileWatcher, ToolActivityViewer:
+		ToolMaterialIconPicker, ToolActivityViewer:
 		return true
 	default:
 		return false
 	}
-}
-
-// ParseToolID parses s into a ToolID when it names a catalog tool.
-func ParseToolID(s string) (ToolID, error) {
-	id := ToolID(s)
-	if !id.Valid() {
-		return "", fmt.Errorf("unknown tool id %q", s)
-	}
-	return id, nil
 }
 
 // ToolAccessMap stores per-user tool grants keyed by ToolID.
@@ -78,13 +67,12 @@ func (m *ToolAccessMap) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
+	// Grants for tools the app does not have are dropped, so older records still load.
 	out := make(ToolAccessMap, len(raw))
 	for key, granted := range raw {
-		id, err := ParseToolID(key)
-		if err != nil {
-			return err
+		if id := ToolID(key); id.Valid() {
+			out[id] = granted
 		}
-		out[id] = granted
 	}
 	*m = out
 	return nil

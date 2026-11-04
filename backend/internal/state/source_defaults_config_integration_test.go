@@ -11,7 +11,7 @@ import (
 func TestInitSourceAccessDefaults_overlaysConfigOnRestart(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	t.Setenv("CC_PLAYWRIGHT_TEST", "true")
-	settings.Initialize("../../../_docker/src/jwt/backend/config.yaml")
+	settings.Initialize("../../testdata/jwt.yaml")
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)

@@ -39,60 +39,6 @@ func (idx *Index) CreateMockData(numDirs, numFilesPerDir int) {
 	}
 }
 
-// CreateMockData builds a deterministic listing for performance measurement.
-//
-// Determinism matters: mock row names, sizes and mtimes feed directly into DOM
-// text length and JSON payload size, so unseeded randomness added real variance
-// between runs and made payload metrics impossible to baseline. The seed is
-// derived from the requested shape, so the same numDirs/numFiles always yields
-// identical output. Pass a non-zero seed to override.
-func CreateMockData(numDirs, numFilesPerDir int) iteminfo.FileInfo {
-	return CreateMockDataSeeded(numDirs, numFilesPerDir, 0)
-}
-
-// CreateMockDataSeeded is CreateMockData with an explicit seed.
-func CreateMockDataSeeded(numDirs, numFilesPerDir int, seed int64) iteminfo.FileInfo {
-	if seed == 0 {
-		seed = MockDataSeed(numDirs, numFilesPerDir)
-	}
-	// Fixed time base: using time.Now() here made every row's ModTime differ
-	// between runs, which changed formatted cell text and thus DOM payload.
-	baseTime := time.Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
-	r := rand.New(rand.NewSource(seed))
-
-	dir := iteminfo.FileInfo{}
-	dir.Path = "/here/is/your/mock/dir"
-
-	// Folders must genuinely be directories. The frontend decides whether a row
-	// is navigable purely from `item.type === "directory"`, so emitting
-	// file-shaped names with a file MIME type here produced rows that looked
-	// like folders in the payload but behaved as files in the UI.
-	for i := 0; i < numDirs; i++ {
-		dir.Folders = append(dir.Folders, iteminfo.ItemInfo{
-			Name:    "folder-" + utils.GetRandomTermSeeded(r),
-			Size:    0,
-			ModTime: baseTime.Add(-time.Duration(r.Intn(100)) * time.Hour),
-			Type:    "directory",
-		})
-	}
-
-	// Files carry their real MIME type so the listing exercises preview
-	// eligibility, type-based icons and media handling.
-	for j := 0; j < numFilesPerDir; j++ {
-		name := "file-" + utils.GetRandomTermSeeded(r) + utils.GetRandomExtensionSeeded(r)
-		newFile := iteminfo.ExtendedItemInfo{
-			ItemInfo: iteminfo.ItemInfo{
-				Name:    name,
-				Size:    mockSizeFor(name, r),
-				ModTime: baseTime.Add(-time.Duration(r.Intn(100)) * time.Hour),
-				Type:    mockMimeType(name),
-			},
-		}
-		dir.Files = append(dir.Files, newFile)
-	}
-	return dir
-}
-
 // mockMimeType resolves a MIME type from a filename's extension.
 //
 // Extension-only by design. Real indexing uses ItemInfo.DetectType, which
@@ -150,9 +96,4 @@ func mockSizeFor(name string, r *rand.Rand) int64 {
 		// Small text-like files.
 		return 10 + r.Int63n(50_000)
 	}
-}
-
-// MockDataSeed derives a stable seed from the requested listing shape.
-func MockDataSeed(numDirs, numFilesPerDir int) int64 {
-	return int64(numDirs)*1_000_003 + int64(numFilesPerDir)
 }

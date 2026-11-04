@@ -2,7 +2,6 @@ package accounts
 
 import (
 	"cmp"
-	"context"
 	"crypto/rand"
 	"database/sql"
 	"errors"
@@ -155,13 +154,6 @@ func due(hash string) bool {
 	}
 	seen[hash] = now
 	return true
-}
-
-// Rotated keeps a session in the list when the login system swaps its
-// token for a fresh one.
-func Rotated(ctx context.Context, db *sql.DB, oldHash, newHash string) error {
-	_, err := db.ExecContext(ctx, `UPDATE sessions SET token_hash = ? WHERE token_hash = ?`, newHash, oldHash)
-	return err
 }
 
 // Session is one open login of the user.

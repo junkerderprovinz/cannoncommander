@@ -4,7 +4,6 @@ package ports
 
 import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
@@ -26,12 +25,6 @@ type UserWriter interface {
 type AccessGate interface {
 	AccessPermitted(sourcePath string, indexPath utils.IndexPath, username string) bool
 	UpdateAccessRulesOnMove(sourcePath string, oldPath, newPath utils.IndexPath) (int, error)
-}
-
-// ShareReader loads share metadata for file and activity operations.
-type ShareReader interface {
-	GetShare(hash string) (share.Share, error)
-	IsShared(source, path string, userID uint64) bool
 }
 
 // IndexMetaStore persists per-source index metadata (complexity, scanner state).

@@ -45,10 +45,10 @@ func Initialize(ctx context.Context, opts InitOptions) error {
 	}
 
 	cfg := goffmpeg.Config{
-		FFmpegPath:    opts.FFmpegPath,
-		Concurrency:   opts.Concurrency,
-		Logger:        goffmpeg.NopLogger(),
-		SkipHWTests:   opts.SkipHWTests,
+		FFmpegPath:  opts.FFmpegPath,
+		Concurrency: opts.Concurrency,
+		Logger:      goffmpeg.NopLogger(),
+		SkipHWTests: opts.SkipHWTests,
 	}
 	if opts.Concurrency.MaxProbe == 0 && opts.Concurrency.MaxDecode == 0 && opts.Concurrency.MaxEncode == 0 {
 		if opts.MaxConcurrent < 1 {
@@ -119,30 +119,6 @@ func (s *Service) VideoPreview(ctx context.Context, w io.Writer, opts ops.Previe
 		return fmt.Errorf("ffmpeg service not available")
 	}
 	return s.inner.VideoPreview(ctx, w, opts)
-}
-
-// ExtractSubtitle returns embedded subtitle content as WebVTT.
-func (s *Service) ExtractSubtitle(ctx context.Context, videoPath string, streamIndex int) (string, error) {
-	if s == nil || s.inner == nil {
-		return "", fmt.Errorf("ffmpeg service not available")
-	}
-
-	fileInfo, err := os.Stat(videoPath)
-	if err != nil {
-		return "", fmt.Errorf("failed to stat file: %w", err)
-	}
-	cacheKey := fmt.Sprintf("subtitle_content:%s:%d:%d", videoPath, streamIndex, fileInfo.ModTime().Unix())
-	if content, ok := SubtitleContentCache.Get(cacheKey); ok {
-		return content, nil
-	}
-
-	content, err := s.inner.ExtractSubtitle(ctx, videoPath, streamIndex)
-	if err != nil {
-		return "", err
-	}
-
-	SubtitleContentCache.Set(cacheKey, content)
-	return content, nil
 }
 
 func logCapabilities(svc *goffmpeg.Service, detectHardware bool) {

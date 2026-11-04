@@ -2,48 +2,7 @@ package access_test
 
 import (
 	"testing"
-
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
 )
-
-func TestNormalizeGroupName(t *testing.T) {
-	for _, tc := range []struct {
-		name    string
-		in      string
-		want    string
-		wantErr bool
-	}{
-		{"trims", "  editors  ", "editors", false},
-		{"spaces inside", "cn=admins with spaces,ou=x", "cn=admins with spaces,ou=x", false},
-		{"empty", "", "", true},
-		{"blank", "   ", "", true},
-		{"newline", "a\nb", "", true},
-		{"too short", "a", "", true},
-		{"single wide char", "界", "界", false},
-		{"two chars", "ab", "ab", false},
-		{"single CJK char", "组", "组", false},
-		{"single non-letter non-ascii", "€", "", true},
-		{"too long", string(make([]byte, access.MaxGroupNameLength+1)), "", true},
-	} {
-		got, err := access.NormalizeGroupName(tc.in)
-		if tc.wantErr {
-			if err == nil {
-				t.Fatalf("%s: expected error, got %q", tc.name, got)
-			}
-			continue
-		}
-		if err != nil || got != tc.want {
-			t.Fatalf("%s: got %q, err=%v", tc.name, got, err)
-		}
-	}
-	// Long names of valid characters fail on length, not on content.
-	if _, err := access.NormalizeGroupName(string(make([]byte, access.MaxGroupNameLength+1))); err == nil {
-		t.Fatal("expected too-long name to fail")
-	}
-	if got := access.NormalizeMembers([]string{" a ", "b", "", "a", "  "}); len(got) != 2 || got[0] != "a" || got[1] != "b" {
-		t.Fatalf("unexpected members: %v", got)
-	}
-}
 
 func TestRemoveUserFromAllGroups(t *testing.T) {
 	setupTestSources()

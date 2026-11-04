@@ -27,11 +27,6 @@ func MergeUserDefaults(base, patch UserDefaults) (UserDefaults, error) {
 	return merged, nil
 }
 
-// MergeUserDefaultsPatchJSONBytes merges patchJSON into baseJSON (both JSON objects).
-func MergeUserDefaultsPatchJSONBytes(baseJSON, patchJSON []byte) ([]byte, error) {
-	return mergeUserDefaultsJSON(baseJSON, patchJSON)
-}
-
 // MergeUserDefaultsPatchJSON merges a partial JSON patch into base user defaults.
 func MergeUserDefaultsPatchJSON(base UserDefaults, patchJSON []byte) (UserDefaults, error) {
 	baseBytes, err := json.Marshal(base)
@@ -92,37 +87,4 @@ func mergeJSONMaps(base, patch map[string]interface{}) {
 		}
 		base[key] = patchVal
 	}
-}
-
-// CountJSONPatchLeaves counts scalar (and non-object) leaves in a JSON patch object.
-func CountJSONPatchLeaves(v interface{}) int {
-	if v == nil {
-		return 0
-	}
-	switch t := v.(type) {
-	case map[string]interface{}:
-		n := 0
-		for _, child := range t {
-			n += CountJSONPatchLeaves(child)
-		}
-		return n
-	default:
-		return 1
-	}
-}
-
-// ValidateSinglePropertyUserDefaultsPatch rejects patches that change more than one leaf value.
-func ValidateSinglePropertyUserDefaultsPatch(patchJSON []byte) error {
-	if len(patchJSON) == 0 || string(patchJSON) == "{}" || string(patchJSON) == "null" {
-		return fmt.Errorf("empty user defaults patch")
-	}
-	var v interface{}
-	if err := json.Unmarshal(patchJSON, &v); err != nil {
-		return fmt.Errorf("invalid patch JSON: %w", err)
-	}
-	n := CountJSONPatchLeaves(v)
-	if n != 1 {
-		return fmt.Errorf("patch must update exactly one property (got %d)", n)
-	}
-	return nil
 }

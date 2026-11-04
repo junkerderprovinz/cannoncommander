@@ -1,9 +1,7 @@
 package settings
 
 import (
-	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
@@ -69,23 +67,6 @@ func setSourcePermissionFlag(perms *users.SourceFilePermissions, flag string, va
 	}
 }
 
-// MergeSourceEnforcedPatchJSON merges a partial JSON patch into base source permission enforcement.
-func MergeSourceEnforcedPatchJSON(base SourceFilePermissionsEnforcement, patchJSON []byte) (SourceFilePermissionsEnforcement, error) {
-	baseBytes, err := json.Marshal(base)
-	if err != nil {
-		return SourceFilePermissionsEnforcement{}, err
-	}
-	mergedBytes, err := mergeUserDefaultsJSON(baseBytes, patchJSON)
-	if err != nil {
-		return SourceFilePermissionsEnforcement{}, err
-	}
-	var merged SourceFilePermissionsEnforcement
-	if err := json.Unmarshal(mergedBytes, &merged); err != nil {
-		return SourceFilePermissionsEnforcement{}, err
-	}
-	return merged, nil
-}
-
 // ApplyEnforcedSourcePermissionsFrom sets enforced permission bits on every scope from defaults.
 func ApplyEnforcedSourcePermissionsFrom(u *users.User, defaults users.SourceFilePermissions, enforced SourceFilePermissionsEnforcement) {
 	if u == nil || u.Username == users.AnonymousUserName || !EnforcementAppliesToUser(u) {
@@ -149,25 +130,6 @@ func ValidateUserScopePermissionsAgainstEnforced(u *users.User, defaults users.S
 			if expected != actual {
 				return ErrEnforcedUserValueMismatch{Path: fmt.Sprintf("scopes.%s.%s", scope.Path, flag)}
 			}
-		}
-	}
-	return nil
-}
-
-// ValidateSelfUserUpdateScopesNotEnforced rejects self-service scope updates when any permission is enforced.
-func ValidateSelfUserUpdateScopesNotEnforced(which []string, enforced SourceFilePermissionsEnforcement, actor *users.User) error {
-	if !EnforcementAppliesToUser(actor) {
-		return nil
-	}
-	if len(EnforcedSourcePermissionFlags(enforced)) == 0 {
-		return nil
-	}
-	for _, field := range which {
-		f := strings.TrimSpace(field)
-		if strings.EqualFold(f, "scopes") ||
-			strings.EqualFold(f, "sourcePermissions") ||
-			strings.EqualFold(f, "backendScopes") {
-			return ErrEnforcedUserField{Path: "scopes"}
 		}
 	}
 	return nil

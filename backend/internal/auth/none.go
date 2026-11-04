@@ -10,9 +10,6 @@ import (
 // MethodNoAuth is used to identify no auth.
 const MethodNoAuth = "noauth"
 
-// NoAuth is no auth implementation of auther.
-type NoAuth struct{}
-
 // AuthenticateNoAuth authenticates as the configured admin user with no credentials required.
 func AuthenticateNoAuth(r *http.Request, user *users.Storage) (*users.User, error) {
 	admin := settings.PasswordAdminUsername()
@@ -21,9 +18,4 @@ func AuthenticateNoAuth(r *http.Request, user *users.Storage) (*users.User, erro
 		return nil, err
 	}
 	return user.Get(id)
-}
-
-// Auth uses authenticates as the configured admin user (legacy no-credentials mode).
-func (a NoAuth) Auth(r *http.Request, user *users.Storage) (*users.User, error) {
-	return AuthenticateNoAuth(r, user)
 }

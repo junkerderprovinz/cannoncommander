@@ -77,18 +77,14 @@ func TestExpandConfigEnvCoercesWholeReference(t *testing.T) {
 
 func TestConfigLoadYamlEnvSubstitution(t *testing.T) {
 	testDir := t.TempDir()
-	const secret = "ldap-bind-secret"
-	t.Setenv("CC_LDAP_USER_PASSWORD", secret)
+	const secret = "jwt-secret"
+	t.Setenv("CC_TEST_SECRET", secret)
 
 	configContent := []byte(`
 auth:
   methods:
-    ldap:
-      enabled: true
-      server: "ldap://ldap.example.com:389"
-      baseDN: "dc=example,dc=com"
-      userDN: "cn=admin,dc=example,dc=com"
-      userPassword: "${CC_LDAP_USER_PASSWORD}"
+    jwt:
+      secret: "${CC_TEST_SECRET}"
 server:
   sources:
     - path: "."
@@ -101,8 +97,8 @@ server:
 	if err := loadConfigWithDefaults(configFile, true); err != nil {
 		t.Fatalf("loadConfigWithDefaults: %v", err)
 	}
-	if Config.Auth.Methods.LdapAuth.UserPassword != secret {
-		t.Fatalf("userPassword = %q, want %q", Config.Auth.Methods.LdapAuth.UserPassword, secret)
+	if Config.Auth.Methods.JwtAuth.Secret != secret {
+		t.Fatalf("secret = %q, want %q", Config.Auth.Methods.JwtAuth.Secret, secret)
 	}
 }
 
@@ -120,17 +116,13 @@ func TestConfigLoadYamlEnvSpecialCharacters(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testDir := t.TempDir()
-			t.Setenv("CC_LDAP_USER_PASSWORD", tt.secret)
+			t.Setenv("CC_TEST_SECRET", tt.secret)
 
 			configContent := []byte(`
 auth:
   methods:
-    ldap:
-      enabled: true
-      server: "ldap://ldap.example.com:389"
-      baseDN: "dc=example,dc=com"
-      userDN: "cn=admin,dc=example,dc=com"
-      userPassword: "${CC_LDAP_USER_PASSWORD}"
+    jwt:
+      secret: "${CC_TEST_SECRET}"
 server:
   sources:
     - path: "."
@@ -143,8 +135,8 @@ server:
 			if err := loadConfigWithDefaults(configFile, true); err != nil {
 				t.Fatalf("loadConfigWithDefaults: %v", err)
 			}
-			if Config.Auth.Methods.LdapAuth.UserPassword != tt.secret {
-				t.Fatalf("userPassword = %q, want %q", Config.Auth.Methods.LdapAuth.UserPassword, tt.secret)
+			if Config.Auth.Methods.JwtAuth.Secret != tt.secret {
+				t.Fatalf("secret = %q, want %q", Config.Auth.Methods.JwtAuth.Secret, tt.secret)
 			}
 		})
 	}

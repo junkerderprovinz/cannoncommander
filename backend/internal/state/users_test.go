@@ -13,7 +13,7 @@ import (
 
 func TestCreateUserValidateUsername(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -59,7 +59,7 @@ func TestCreateUserValidateUsername(t *testing.T) {
 
 func TestCreateUserCreateUserDirRespectsFinalAdminPermission(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -129,7 +129,7 @@ func TestCreateUserCreateUserDirRespectsFinalAdminPermission(t *testing.T) {
 
 func TestUpdateUserPatchPreservesTOTPSecret(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -184,7 +184,7 @@ func TestUpdateUserPatchPreservesTOTPSecret(t *testing.T) {
 
 func TestUpdateUserRejectsEmptyFields(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -219,7 +219,7 @@ func TestUpdateUserRejectsEmptyFields(t *testing.T) {
 
 func TestUpdateUserRejectsAllField(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -257,7 +257,7 @@ func TestUpdateUserRejectsAllField(t *testing.T) {
 
 func TestUpdateUserRejectsUnknownField(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -292,7 +292,7 @@ func TestUpdateUserRejectsUnknownField(t *testing.T) {
 
 func TestUpdateUserRejectsPasswordWithoutPlaintext(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -319,7 +319,7 @@ func TestUpdateUserRejectsPasswordWithoutPlaintext(t *testing.T) {
 
 func TestUpdateUserClearsTOTPWhenOtpDisabled(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -369,7 +369,7 @@ func TestUpdateUserClearsTOTPWhenOtpDisabled(t *testing.T) {
 
 func TestUpdateUserPatchPreservesBackendSourcePermissions(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")

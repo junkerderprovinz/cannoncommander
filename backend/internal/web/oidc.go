@@ -200,13 +200,6 @@ func OidcRedirectURL(r *http.Request) string {
 }
 
 // oidcLoginHandler initiates OIDC login.
-// @Summary OIDC login
-// @Description Initiates OIDC login flow.
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Success 302 {string} string "Redirect to OIDC provider"
-// @Router /api/auth/oidc/login [get]
 func oidcLoginHandler(w http.ResponseWriter, r *http.Request, d *Context) (int, error) {
 	oidcCfg := settings.Config.Auth.Methods.OidcAuth
 	if !oidcCfg.Enabled {
@@ -244,16 +237,6 @@ func oidcLoginHandler(w http.ResponseWriter, r *http.Request, d *Context) (int, 
 }
 
 // oidcCallbackHandler handles OIDC callback.
-// @Summary OIDC callback
-// @Description Handles OIDC login callback.
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Param code query string false "OIDC code"
-// @Param state query string false "OIDC state"
-// @Success 200 {object} map[string]string "OIDC callback result"
-// @Failure 400 {object} map[string]string "Bad request"
-// @Router /api/auth/oidc/callback [get]
 func oidcCallbackHandler(w http.ResponseWriter, r *http.Request, d *Context) (int, error) {
 	ctx := r.Context()
 	oidcCfg := settings.Config.Auth.Methods.OidcAuth

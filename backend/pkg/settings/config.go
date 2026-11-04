@@ -22,12 +22,10 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 )
 
 const (
-	defaultMinSearchLength     = 3
-	defaultFrontendDescription = "FileBrowser Quantum is a file manager for the web which can be used to manage files on your server"
+	defaultMinSearchLength = 3
 )
 
 var Config Settings
@@ -61,7 +59,7 @@ func initializeConfig(configFile string, cliMode bool) {
 		errmsg := "The provided config file failed validation. "
 		errmsg += "If you are seeing this on a config that worked before, "
 		errmsg += "then check the latest releases for breaking changes. "
-		errmsg += "visit https://github.com/gtsteffaniak/filebrowser/wiki/Full-Config-Example for more information."
+		errmsg += "frontend/public/config.generated.yaml in the repository lists every setting."
 		logger.Error(errmsg)
 		time.Sleep(5 * time.Second) // allow sleep time before exiting to give docker/kubernetes time before restarting
 		logger.Fatal(err.Error())
@@ -78,7 +76,7 @@ func initializeConfig(configFile string, cliMode bool) {
 		return
 	}
 	warnHttpProxyConfig()
-	setupFrontend(false)
+	setupSearch()
 	setupMedia(false)
 }
 
@@ -114,7 +112,7 @@ func warnHttpProxyConfig() {
 		return
 	}
 	if Config.Http.BaseURL != "/" && !Config.Http.TrustProxyHeaders {
-		logger.Warning(`http.baseURL is not "/" but http.trustProxyHeaders is false. Behind a reverse proxy on a subpath, set trustProxyHeaders: true so cookies, OIDC redirects, and URLs resolve correctly, and list the proxy addresses in http.trustedProxies so the client IP resolves too. See https://filebrowserquantum.com/en/docs/configuration/http/#trustproxyheaders`)
+		logger.Warning(`http.baseURL is not "/" but http.trustProxyHeaders is false. Behind a reverse proxy on a subpath, set trustProxyHeaders: true so cookies, OIDC redirects, and URLs resolve correctly, and list the proxy addresses in http.trustedProxies so the client IP resolves too.`)
 	}
 	if len(Config.Http.TrustedProxies) > 0 && !Config.Http.TrustProxyHeaders {
 		logger.Warning("http.trustedProxies is set but http.trustProxyHeaders is false; trusted proxy entries are ignored until trustProxyHeaders is enabled")
@@ -176,7 +174,7 @@ func setupFs() {
 // reading, and deleting a 10MB test file. Reports write and read performance in MB/s.
 func testCacheDirSpeed() {
 	msgPrfx := "cacheDir"
-	failSuffix := "Please review documentation to ensure a valid cache directory is configured https://filebrowserquantum.com/en/docs/configuration/server/#cachedir"
+	failSuffix := "Please check that server.cacheDir points to a fast, writable folder."
 	const testFileSize = 10 * 1024 * 1024 // 10MB
 
 	// Ensure cache directory exists
@@ -292,62 +290,10 @@ func testCacheDirSpeed() {
 	}
 }
 
-func setupFrontend(generate bool) {
-	// Load login icon configuration at startup
-	loadLoginIcon()
+func setupSearch() {
 	if Config.Server.MinSearchLength == 0 {
 		Config.Server.MinSearchLength = defaultMinSearchLength
 	}
-	if !Config.Frontend.DisableDefaultLinks {
-		Config.Frontend.ExternalLinks = append(Config.Frontend.ExternalLinks, ExternalLink{
-			Text:  fmt.Sprintf("(%v)", version.Version),
-			Title: version.CommitSHA,
-			Url:   "https://github.com/junkerderprovinz/cannoncommander/releases/",
-		})
-		Config.Frontend.ExternalLinks = append(Config.Frontend.ExternalLinks, ExternalLink{
-			Text: "Help",
-			Url:  "help prompt",
-		})
-	}
-	if Config.Frontend.Description == "" {
-		Config.Frontend.Description = defaultFrontendDescription
-	}
-	Config.Frontend.Styling.LightBackground = FallbackColor(Config.Frontend.Styling.LightBackground, "#f5f5f5")
-	Config.Frontend.Styling.DarkBackground = FallbackColor(Config.Frontend.Styling.DarkBackground, "#141D24")
-	var err error
-	if Config.Frontend.Styling.CustomCSS != "" {
-		Config.Frontend.Styling.CustomCSSRaw, err = readCustomCSS(Config.Frontend.Styling.CustomCSS)
-		if err != nil {
-			logger.Warning(err.Error())
-		}
-	}
-	Config.Frontend.Styling.CustomThemeOptions = map[string]CustomTheme{}
-	if Config.Frontend.Styling.CustomThemes == nil {
-		Config.Frontend.Styling.CustomThemes = map[string]CustomTheme{}
-	}
-	for name, theme := range Config.Frontend.Styling.CustomThemes {
-		addCustomTheme(name, theme.Description, theme.CSS)
-	}
-	noThemes := len(Config.Frontend.Styling.CustomThemes) == 0
-	if noThemes {
-		addCustomTheme("default", "The default theme", "")
-		// check if file exists
-		if _, err := os.Stat("reduce-rounded-corners.css"); err == nil {
-			addCustomTheme("alternative", "Reduce rounded corners", "reduce-rounded-corners.css")
-			if generate {
-				Config.Frontend.Styling.CustomThemes["alternative"] = CustomTheme{
-					Description: "Reduce rounded corners",
-					CSS:         "reduce-rounded-corners.css",
-				}
-			}
-		}
-	}
-	_, ok := Config.Frontend.Styling.CustomThemes["default"]
-	if !ok {
-		addCustomTheme("default", "The default theme", "")
-	}
-	// Load custom favicon if configured
-	loadCustomFavicon()
 }
 
 func setupMedia(generate bool) {
@@ -548,15 +494,6 @@ func setupAuth(generate bool) {
 	}
 	if Config.Auth.Methods.PasswordAuth.Enabled {
 		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "password")
-		ValidateRecaptcha()
-	}
-	if Config.Auth.Methods.ProxyAuth.Enabled {
-		applyAuthCommonDefaults(&Config.Auth.Methods.ProxyAuth.AuthCommon)
-		err := ValidateProxyAuth()
-		if err != nil && !generate {
-			logger.Fatalf("Error validating proxy auth: %v", err)
-		}
-		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "proxy")
 	}
 	if Config.Auth.Methods.NoAuth {
 		logger.Warning("Configured with no authentication, this is not recommended.")
@@ -572,14 +509,6 @@ func setupAuth(generate bool) {
 		if !generate {
 			warnOidcProxyHeaders()
 		}
-	}
-	if Config.Auth.Methods.LdapAuth.Enabled || generate {
-		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "ldap")
-		err := ValidateLdapAuth()
-		if err != nil && !generate {
-			logger.Fatalf("Error validating LDAP auth: %v", err)
-		}
-		logger.Info("LDAP Auth configured successfully")
 	}
 	if Config.Auth.Methods.JwtAuth.Enabled || generate {
 		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "jwt")
@@ -598,7 +527,6 @@ func setupAuth(generate bool) {
 	if len(Config.Auth.AuthMethods) == 0 {
 		Config.Auth.Methods.PasswordAuth.Enabled = true
 		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "password")
-		ValidateRecaptcha()
 	}
 	Config.UserDefaults.Account.LoginMethod = Config.Auth.AuthMethods[0]
 
@@ -678,6 +606,7 @@ func loadConfigWithDefaults(configFile string, generate bool) error {
 	// Expand $VAR / ${VAR} in decoded string scalars only (after parse) so
 	// secrets may contain quotes, backslashes, or newlines safely.
 	expandConfigEnv(rawConfig)
+	dropRetiredKeys(rawConfig)
 
 	// Filter to only keep valid top-level Settings struct fields
 	// This removes anchor definitions that are just templates (e.g., "test_server: &test_server")
@@ -864,17 +793,6 @@ func loadEnvConfig() {
 		logger.Info("Using TOTP Secret from CC_TOTP_SECRET environment variable")
 	}
 
-	recaptchaSecret := os.Getenv("CC_RECAPTCHA_SECRET")
-	if recaptchaSecret != "" {
-		Config.Auth.Methods.PasswordAuth.Recaptcha.Secret = recaptchaSecret
-		logger.Info("Using ReCaptcha Secret from CC_RECAPTCHA_SECRET environment variable")
-	}
-
-	ldapUserPassword := os.Getenv("CC_LDAP_USER_PASSWORD")
-	if ldapUserPassword != "" {
-		Config.Auth.Methods.LdapAuth.UserPassword = ldapUserPassword
-		logger.Info("Using LDAP bind password from CC_LDAP_USER_PASSWORD environment variable")
-	}
 }
 
 func SetDefaults(generate bool) Settings {
@@ -899,10 +817,6 @@ func SetDefaults(generate bool) Settings {
 					RetentionDays:        30,
 					FlushIntervalSeconds: 10,
 					MaxBufferSize:        10000,
-				},
-				Quotas: QuotasConfig{
-					FlushIntervalSeconds: 10,
-					FlushMaxBuffers:      500,
 				},
 			},
 			SourceMap:        map[string]*Source{},
@@ -932,8 +846,7 @@ func SetDefaults(generate bool) Settings {
 			},
 		},
 		Frontend: Frontend{
-			Name:        "FileBrowser Quantum",
-			Description: defaultFrontendDescription,
+			Name: "CannonCommander",
 		},
 		UserDefaults: UserDefaults{
 			// New organized structure
@@ -1023,74 +936,6 @@ func SetDefaults(generate bool) Settings {
 	return s
 }
 
-// validateCustomImage validates a custom image file path and returns the absolute path or error
-func validateCustomImage(configPath, imageName string, allowedFormats []string) (absolutePath string, err error) {
-	// Get absolute path
-	absolutePath, err = AbsPath(configPath)
-	if err != nil {
-		return "", fmt.Errorf("could not resolve path: %w", err)
-	}
-
-	// Check if file exists
-	_, err = os.Stat(absolutePath)
-	if err != nil {
-		return "", fmt.Errorf("could not access file: %w", err)
-	}
-
-	// Validate file format
-	ext := strings.ToLower(filepath.Ext(absolutePath))
-	validFormat := false
-	for _, format := range allowedFormats {
-		if ext == format {
-			validFormat = true
-			break
-		}
-	}
-	if !validFormat {
-		return "", fmt.Errorf("unsupported format '%s', supported formats: %v", ext, allowedFormats)
-	}
-
-	return absolutePath, nil
-}
-
-func loadCustomFavicon() {
-	const imageName = "favicon"
-	allowedFormats := []string{".ico", ".png", ".svg", ".jpg", ".jpeg", ".gif", ".webp"}
-
-	// Set default embedded favicon path
-	Env.FaviconEmbeddedPath = "img/icons/favicon.svg"
-
-	// Check if a custom favicon path is configured
-	if Config.Frontend.Favicon == "" {
-		Env.FaviconPath = Env.FaviconEmbeddedPath
-		Env.FaviconIsCustom = false
-		return
-	}
-
-	// Validate custom favicon
-	validatedPath, err := validateCustomImage(Config.Frontend.Favicon, imageName, allowedFormats)
-	if err != nil {
-		logger.Warningf("Custom favicon validation failed: %v, using default", err)
-		Config.Frontend.Favicon = ""
-		Env.FaviconPath = Env.FaviconEmbeddedPath
-		Env.FaviconIsCustom = false
-		return
-	}
-
-	// Update to validated path and mark as custom
-	Config.Frontend.Favicon = validatedPath
-	Env.FaviconPath = validatedPath
-	Env.FaviconIsCustom = true
-	logger.Infof("Using custom favicon: %s", Env.FaviconPath)
-	// PWA and platform PNGs are generated at server startup from this path (SVG uses a raster
-	// sidecar next to the .svg when present; see icons.GeneratePWAIcons).
-}
-
-// PWAIconsCacheDir is where startup icon generation writes PNGs (under the server cache dir).
-func PWAIconsCacheDir() string {
-	return filepath.Join(Config.Server.CacheDir, "icons")
-}
-
 // Where transient archives for multi-request (Range) downloads are stored to support chunked downloads.
 func DownloadCacheDir() string {
 	return filepath.Join(Config.Server.CacheDir, "downloads")
@@ -1102,35 +947,6 @@ func PrepareDownloadSpoolDir() error {
 		return err
 	}
 	return fileutils.ClearDirectoryContents(DownloadCacheDir())
-}
-
-func loadLoginIcon() {
-	const imageName = "login icon"
-	allowedFormats := []string{".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico"}
-
-	// Set default embedded icon path - just use favicon.svg (light/dark handled by CSS)
-	Env.LoginIconEmbeddedPath = "img/icons/favicon.svg"
-
-	// Check if a custom login icon path is configured
-	if Config.Frontend.LoginIcon == "" {
-		Env.LoginIconPath = Env.LoginIconEmbeddedPath
-		Env.LoginIconIsCustom = false
-		return
-	}
-
-	// Validate custom login icon
-	validatedPath, err := validateCustomImage(Config.Frontend.LoginIcon, imageName, allowedFormats)
-	if err != nil {
-		logger.Warningf("Custom login icon validation failed: %v, using default", err)
-		Env.LoginIconPath = Env.LoginIconEmbeddedPath
-		Env.LoginIconIsCustom = false
-		return
-	}
-
-	// Update to validated path and mark as custom
-	Env.LoginIconPath = validatedPath
-	Env.LoginIconIsCustom = true
-	logger.Infof("Using custom login icon: %s", Env.LoginIconPath)
 }
 
 // setConditionals builds optimized map structures from source rules for O(1) lookups.

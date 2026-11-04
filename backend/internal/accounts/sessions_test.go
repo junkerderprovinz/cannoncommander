@@ -226,20 +226,6 @@ func TestSessionsThatEndedElsewhereLeaveTheList(t *testing.T) {
 	}
 }
 
-func TestASessionKeepsItsPlaceWhenItsTokenIsRenewed(t *testing.T) {
-	f := newFixture(t)
-	f.do("jdp", "desk-4", "GET", "/me/sessions")
-	before := f.sessions("jdp", "desk-4")
-	if err := accounts.Rotated(context.Background(), f.db, "desk-4", "desk-5"); err != nil {
-		t.Fatal(err)
-	}
-	f.login.dead["desk-4"] = true
-	after := f.sessions("jdp", "desk-5")
-	if len(after) != 1 || after[0].ID != before[0].ID || !after[0].Current || !after[0].Created.Equal(before[0].Created) {
-		t.Errorf("before %+v, after %+v", before, after)
-	}
-}
-
 func TestRequestsWithoutASessionTokenAreNotListed(t *testing.T) {
 	f := newFixture(t)
 	f.do("jdp", "", "GET", "/me/sessions")

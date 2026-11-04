@@ -61,28 +61,16 @@ server:
     disableReuse: false                   # enable to always create a new indexing database on startup.
     startupIntegrityCheck: "quickCheck"   # the method used to check the integrity of the index database on startup (default: quickCheck)  validate:omitempty,oneof=quickCheck probe off
   database:                               # SQLite database configuration
-    path: "filebrowser.sqlite"            # path to SQLite database file
+    path: "cannoncommander.sqlite"        # path to SQLite database file
     migrateFrom: ""                       # path to legacy database file for migration (optional)
     activity:                             # activity audit logging configuration
       disabled: false                     # disable semantic activity audit logging (default: false)
       retentionDays: 30                   # purge activity rows older than this many days (default 30)
       flushIntervalSeconds: 10            # buffer flush interval in seconds (default 10)
       maxBufferSize: 10000                # max in-memory buffer before immediate flush (default 10000)
-    quotas:                               # quota counter batch flush configuration
-      flushIntervalSeconds: 10            # default 10
-      flushMaxBuffers: 500                # default 500
 auth:
   tokenExpirationHours: 2                 # time in hours each web UI session token is valid for. Default is 2 hours.
   methods:
-    proxy:                                #  validate:omitempty
-      enabled: false                      # whether to enable this authentication method.
-      adminGroup: ""                      # if set, users in this group will be granted admin privileges
-      userGroups:                         # if set, only users in these groups are allowed to log in. Blocks all other users even with valid credentials.
-      groupsClaim: ""                     # the JSON field name to read groups from. Default is "groups"
-      userIdentifier: ""                  # the field value to use as the username. Default is "preferred_username" in oidc, "sub" in jwt. Other common values are "email" or "username", or "phone"
-      disableVerifyTLS: false             # disable TLS verification (insecure, for testing only)
-      logoutRedirectUrl: ""               # if provider logout url is provided, filebrowser will also redirect to logout url. Custom logout query params are respected.
-      header: ""                          # required header to use for authentication. Security Warning: FileBrowser blindly accepts the header value as username.
     noauth: false                         # if set to true, overrides all other auth methods and disables authentication
     password:                             #  validate:omitempty
       enabled: true
@@ -90,10 +78,6 @@ auth:
       adminPassword: "admin"              # secret: password for admin auto-assigned admin account. If set, reset on startup.
       minLength: 5                        # minimum pasword length required, default is 5.  validate:omitempty
       signup: false                       # allow signups on login page if enabled -- not secure.  validate:omitempty
-      recaptcha:                          # recaptcha config. If configured will show up the checkbox verification in the login page  validate:omitempty
-        host: ""                          # google recaptcha host, for example: https://www.google.com/recaptcha/api.js  validate:required
-        key: ""                           # v2 site key  validate:required
-        secret: ""                        # secret: v2 secret key  validate:required
       enforcedOtp: false                  # if set to true, TOTP is enforced for all password users users. Otherwise, users can choose to enable TOTP.
     oidc:                                 #  validate:omitempty
       enabled: false                      # whether to enable this authentication method.
@@ -107,19 +91,6 @@ auth:
       clientSecret: ""                    # secret: client secret of the OIDC application
       issuerUrl: ""                       # authorization URL of the OIDC provider
       scopes: "openid email profile"      # scopes to request from the OIDC provider
-    ldap:                                 #  validate:omitempty
-      enabled: false                      # whether to enable this authentication method.
-      adminGroup: ""                      # if set, users in this group will be granted admin privileges
-      userGroups:                         # if set, only users in these groups are allowed to log in. Blocks all other users even with valid credentials.
-      groupsClaim: ""                     # the JSON field name to read groups from. Default is "groups"
-      userIdentifier: ""                  # the field value to use as the username. Default is "preferred_username" in oidc, "sub" in jwt. Other common values are "email" or "username", or "phone"
-      disableVerifyTLS: false             # disable TLS verification (insecure, for testing only)
-      logoutRedirectUrl: ""               # if provider logout url is provided, filebrowser will also redirect to logout url. Custom logout query params are respected.
-      server: ""                          # scheme://host:port of the LDAP server (e.g. ldap://localhost:389)
-      baseDN: ""                          # LDAP search base DN (e.g. dc=ldap,dc=goauthentik,dc=io)
-      userDN: ""                          # Bind DN for service account (e.g. cn=admin,ou=users,dc=ldap,dc=goauthentik,dc=io)
-      userPassword: ""                    # secret: bind password for the LDAP service account
-      userFilter: ""                      # Search filter for finding user by username. Default (&(cn=%s)(objectClass=user)); override e.g. (email=%s) or (sAMAccountName=%s) for other directories.
     jwt:                                  #  validate:omitempty
       enabled: false                      # whether to enable this authentication method.
       adminGroup: ""                      # if set, users in this group will be granted admin privileges
@@ -140,35 +111,9 @@ auth:
   key: ""                                 # secret: HMAC key for JWT tokens. If unset in config/env, one is generated and stored in the application database.
   totpSecret: ""                          # secret: secret used to encrypt TOTP secrets
 frontend:
-  name: "FileBrowser Quantum"             # display name, PWA installation name is capped at 30 characters
-  disableDefaultLinks: false              # disable default links in the sidebar
-  disableUsedPercentage: false            # disable used percentage for the sources in the sidebar
-  externalLinks:
-    - text: "(untracked)"                 # the text to display on the link  validate:required
-      title: "untracked"                  # the title to display on hover
-      url: "https://github.com/gtsteffaniak/filebrowser/releases/" # the url to link to  validate:required
-    - text: "Help"                        # the text to display on the link  validate:required
-      title: ""                           # the title to display on hover
-      url: "help prompt"                  # the url to link to  validate:required
-  disableNavButtons: false                # disable the nav buttons in the sidebar
-  styling:
-    disableEventThemes: false             # disable the event based themes,
-    customCSS: ""                         # if a valid path to a css file is provided, it will be applied for all users. (eg. "reduce-rounded-corners.css")
-    lightBackground: "#f5f5f5"            # specify a valid CSS color property value to use as the background color in light mode
-    darkBackground: "#141D24"             # Specify a valid CSS color property value to use as the background color in dark mode
-    customThemes:                         # A list of custom css files that each user can select to override the default styling. if "default" is key name then it will be the default option.
-      alternative:
-        description: "Reduce rounded corners" # The description of the theme to display in the UI.
-        css: "reduce-rounded-corners.css" # The css file path and filename to use for the theme.
-      default:
-        description: "The default theme"  # The description of the theme to display in the UI.
-        css: ""                           # The css file path and filename to use for the theme.
-  favicon: ""                             # path to a favicon to use for the frontend
-  description: "FileBrowser Quantum is a file manager for the web which can be used to manage files on your server" # description that shows up in html head meta description
-  loginIcon: ""                           # path to an image file for the login page icon
-  loginButtonText: ""                     # text to display on the login button
-  oidcLoginButtonText: ""                 # text to display on the OIDC login button
-  disablePWAInstall: false                # disable the PWA install button in the sidebar
+  name: "CannonCommander"                 # the name the passkey prompt shows for this server
+  disableUsedPercentage: false            # skip the used space of the sources
+  oidcLoginButtonText: ""                 # text on the single sign on button of the sign in page
 userDefaults:                             # optional signup/CLI defaults; per-user values are managed in the UI
   sidebar:
     disableQuickToggles: false            # disable the quick toggles in the sidebar
@@ -235,40 +180,6 @@ userDefaults:                             # optional signup/CLI defaults; per-us
     loginMethod: "password"               # login method to use: eg. password, proxy, oidc
     disableUpdateNotifications: false     # disable update notifications banner for admin users
     showAdvancedProfile: false            # show advanced profile settings in the user profile page
-shareDefaults:                            # optional defaults for new shares; managed in the UI
-  shareTheme: ""
-  disableAnonymous: false
-  disableThumbnails: false
-  keepAfterExpiration: false
-  themeColor: ""
-  title: ""
-  description: ""
-  favicon: ""
-  quickDownload: false
-  hideNavButtons: false
-  disableSidebar: false
-  disableShareCard: false
-  enforceDarkLightMode: ""
-  viewMode: ""
-  enableOnlyOffice: false
-  shareType: ""
-  allowDelete: false
-  allowCreate: false
-  allowModify: false
-  disableFileViewer: false
-  disableDownload: false
-  allowReplacements: false
-  sidebarLinks:
-  showHidden: false
-  disableLoginOption: false
-  maxBandwidth: 0
-  allowedUsernames:
-  perUserDownloadLimit: false
-  extractEmbeddedSubtitles: false
-  downloadsLimit: 0
-  quotaLimitBytes: 0
-  hideFileExt: ""
-  banner: ""
 integrations:
   office:                                 #  validate:omitempty
     url: ""                               # The URL to the OnlyOffice Document Server, needs to be accessible to the user.  validate:required

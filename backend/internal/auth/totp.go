@@ -8,12 +8,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"strings"
 	"time"
 
 	"github.com/gtsteffaniak/go-cache/cache"
-	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
@@ -51,37 +48,6 @@ var (
 	encryptionKey []byte
 	TotpCache     = cache.NewCache[string](5 * time.Minute)
 )
-
-func GenerateOtpForUser(user *users.User) (string, error) {
-	// Generate a new TOTP key using the defined constants.
-	key, err := totp.Generate(totp.GenerateOpts{
-		Issuer:      IssuerName,
-		AccountName: user.Username,
-		Period:      TOTPPeriod,
-		SecretSize:  TOTPSecretSize,
-		Digits:      TOTPDigits,
-		Algorithm:   TOTPAlgorithm,
-	})
-	if err != nil {
-		return "", fmt.Errorf("error generating TOTP key: %w", err)
-	}
-
-	secretText := key.Secret()
-	nonce := ""
-	secretToStore := secretText
-	if settings.Config.Auth.TotpSecret != "" {
-		// If an encryption key is provided, encrypt the secret.
-		secretToStore, nonce, err = encryptSecret(secretText, encryptionKey)
-		if err != nil {
-			return "", fmt.Errorf("failed to encrypt TOTP secret: %w", err)
-		}
-	}
-	// set cache so verify can attempt to use it but not require it for user yet.
-	TotpCache.Set(user.Username, secretToStore+"||"+nonce)
-	// Use the original base32 secret in the OTP URL, not the encrypted version
-	url := fmt.Sprintf("otpauth://totp/%v?secret=%v", "CannonCommander: "+user.Username, secretText)
-	return url, nil
-}
 
 // encryptSecret uses AES-GCM to encrypt a plaintext secret.
 // It returns the base64-encoded ciphertext and nonce, or an error.
@@ -144,60 +110,6 @@ func decryptSecret(b64Ciphertext, b64Nonce string) (string, error) {
 	}
 
 	return string(plaintext), nil
-}
-
-func VerifyTotpCode(user *users.User, code string) error {
-	cachedSecret, found := TotpCache.Get(user.Username)
-	if !found && user.TOTPSecret == "" {
-		return fmt.Errorf("OTP token not found in cache, please generate a new one")
-	}
-	useCache := found
-	totpSecret := user.TOTPSecret // The encrypted or plaintext secret
-	totpNonce := user.TOTPNonce   // The nonce if encrypted, or empty if plaintext
-	if useCache {
-		splitSecret := strings.Split(cachedSecret, "||")
-		if len(splitSecret) < 2 {
-			return fmt.Errorf("invalid cached OTP token format")
-		}
-		totpSecret = splitSecret[0]
-		totpNonce = splitSecret[1]
-	}
-	secretToValidate := totpSecret
-	if settings.Config.Auth.TotpSecret != "" {
-		// If an encryption key is configured, we must decrypt the secret first.
-		if totpNonce == "" {
-			return fmt.Errorf("secret is encrypted but nonce is missing")
-		}
-		decryptedSecret, err := decryptSecret(totpSecret, totpNonce)
-		if err != nil {
-			return fmt.Errorf("failed to decrypt TOTP secret: %w", err)
-		}
-		secretToValidate = decryptedSecret
-	}
-
-	valid, err := totp.ValidateCustom(code, secretToValidate, time.Now().UTC(), totp.ValidateOpts{
-		Period:    TOTPPeriod,
-		Skew:      TOTPSkew,
-		Digits:    TOTPDigits,
-		Algorithm: TOTPAlgorithm,
-	})
-	if err != nil {
-		logger.Errorf("error during TOTP validation for user %s: %v", user.Username, err)
-	}
-	if !valid {
-		logger.Warningf("Invalid TOTP code for user %s", user.Username)
-		return fmt.Errorf("invalid OTP token")
-	}
-	if totpSecret != "" || !user.OtpEnabled {
-		user.TOTPSecret = totpSecret
-		user.TOTPNonce = totpNonce
-		user.OtpEnabled = true
-		TotpCache.Delete(user.Username)
-	} else {
-		return fmt.Errorf("opt secret is empty, cannot enable TOTP")
-	}
-
-	return nil
 }
 
 // NewTotpKey creates a fresh TOTP key for username with the settings of this server.

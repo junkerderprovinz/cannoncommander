@@ -210,17 +210,17 @@ func TestApplyUserDefaults_preservesLoginMethodWhenAlreadySet(t *testing.T) {
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
 			Username:    "x",
-			LoginMethod: users.LoginMethodProxy,
+			LoginMethod: users.LoginMethodJwt,
 		},
 	}
 	ApplyUserDefaults(u)
-	if u.LoginMethod != users.LoginMethodProxy {
-		t.Fatalf("LoginMethod: got %q want proxy", u.LoginMethod)
+	if u.LoginMethod != users.LoginMethodJwt {
+		t.Fatalf("LoginMethod: got %q want jwt", u.LoginMethod)
 	}
 }
 
 func TestExpandBackendScopesForCreateUserDir(t *testing.T) {
-	loadConfigForUserDefaultsTests(t, jwtPlaywrightConfig)
+	loadConfigForUserDefaultsTests(t, jwtConfig)
 	u := &users.User{
 		FrontendUser: users.FrontendUser{Username: "testadmin"},
 		BackendScopes: []users.BackendScope{

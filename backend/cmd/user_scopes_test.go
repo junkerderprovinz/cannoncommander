@@ -1,12 +1,9 @@
 package cmd
 
 import (
-	"path/filepath"
 	"testing"
 
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -43,67 +40,6 @@ func TestUpdateUserScopes_mergesMissingDefaultEnabled(t *testing.T) {
 		if scope.Path == fixturePlaywrightSource && scope.Scope != "/myfolder" {
 			t.Fatalf("playwright scope path changed: %#v", scope)
 		}
-	}
-}
-
-func TestMigrationGraham_gainsAccessAfterScopeMerge(t *testing.T) {
-	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize(settingsMigrationConfigPath(t))
-	settings.Env.IsPlaywright = true
-	alignSettingsSourcesForMigrationFixture(t)
-
-	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
-	settings.Config.Server.DatabaseV2.Path = dbPath
-	settings.Config.Server.DatabaseV2.MigrateFrom = settingsMigrationBoltPath(t)
-	if err := migrateFromBoltToSQLite(); err != nil {
-		t.Fatal(err)
-	}
-
-	sqlStore, _, err := sqldb.NewSQLStoreWithOptions(dbPath, sqldb.NewSQLStoreOpts{SkipQuickSetup: true})
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer sqlStore.Close()
-
-	graham, err := sqlStore.GetUserByUsername("graham")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if graham.BackendSourcePermissions == nil {
-		t.Fatal("expected backend source permissions after migration")
-	}
-	// Migration fixture itself may omit access; merge happens in updateUserScopes.
-	if _, ok := graham.BackendSourcePermissions[fixtureAccessSource]; ok {
-		t.Fatalf("graham should not have access permissions from migration alone: %#v", graham.BackendSourcePermissions)
-	}
-
-	updateUserScopes(graham)
-	updateSourcePermissions(graham)
-	updateSidebarLinks(graham, true)
-
-	foundScope := false
-	for _, scope := range graham.BackendScopes {
-		if scope.Path == fixtureAccessSource {
-			foundScope = true
-			break
-		}
-	}
-	if !foundScope {
-		t.Fatalf("graham should gain access scope after merge: %#v", graham.BackendScopes)
-	}
-	if _, ok := graham.BackendSourcePermissions[fixtureAccessSource]; !ok {
-		t.Fatalf("graham should have access source permissions after merge: %#v", graham.BackendSourcePermissions)
-	}
-
-	foundLink := false
-	for _, link := range usersidebar.FrontendLinks(graham.SidebarLinks, true) {
-		if link.Name == "access" || link.SourceName == fixtureAccessSource {
-			foundLink = true
-			break
-		}
-	}
-	if !foundLink {
-		t.Fatalf("graham should have access sidebar link after merge: %#v", graham.SidebarLinks)
 	}
 }
 

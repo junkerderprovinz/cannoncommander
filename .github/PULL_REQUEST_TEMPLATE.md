@@ -1,10 +1,7 @@
-**Description**
+**What and why**
 
-According to the [contributing guide](https://github.com/gtsteffaniak/filebrowser/wiki/Contributing#contributing-as-an-unofficial-contributor), A PR should contain:
+**Checks**
 
-- [ ] A clear description of why it was opened.
-- [ ] A short title that best describes the change.
-- [ ] Must pass unit and integration tests, which can be run checked locally prior to opening a PR.
-- [ ] Any additional details for functionality not covered by tests.
-
-**Additional Details**
+- [ ] `make test` passes
+- [ ] `make lint` passes
+- [ ] The description says what a reviewer should try by hand, if tests do not cover it

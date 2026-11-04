@@ -66,22 +66,3 @@ func containsEventType(list []EventType, target EventType) bool {
 	}
 	return false
 }
-
-func TestEventTypeFromAction(t *testing.T) {
-	cases := []struct {
-		action string
-		want   EventType
-		ok     bool
-	}{
-		{"copy", EventCopy, true},
-		{"move", EventMove, true},
-		{"rename", EventRename, true},
-		{"delete", "", false},
-	}
-	for _, tc := range cases {
-		got, ok := EventTypeFromAction(tc.action)
-		if ok != tc.ok || got != tc.want {
-			t.Errorf("EventTypeFromAction(%q) = (%q, %v), want (%q, %v)", tc.action, got, ok, tc.want, tc.ok)
-		}
-	}
-}

@@ -204,61 +204,6 @@ func loadUserDefaultsEnforcedSetting(key string) (settings.UserDefaultsEnforceme
 	return enforced, nil
 }
 
-// GetDefaultUserDefaults returns the universal user defaults template.
-func GetDefaultUserDefaults() settings.UserDefaults {
-	return EffectiveUserDefaults()
-}
-
-// GetUserDefaults returns the universal user defaults template.
-func GetUserDefaults() settings.UserDefaults {
-	return EffectiveUserDefaults()
-}
-
-// GetEnforcedUserDefaults returns universal enforcement flags.
-func GetEnforcedUserDefaults() settings.UserDefaultsEnforcement {
-	return EffectiveEnforced()
-}
-
-// PatchUserDefaults merges patch JSON into the universal defaults and persists.
-func PatchUserDefaults(patchJSON []byte) error {
-	if err := settings.ValidateUserDefaultsPatchNotConfigLocked(patchJSON); err != nil {
-		return err
-	}
-	userDefaultsMu.Lock()
-	merged, mergeErr := settings.MergeUserDefaultsPatchJSON(userDefaultsDefault, patchJSON)
-	if mergeErr != nil {
-		userDefaultsMu.Unlock()
-		return mergeErr
-	}
-	if saveErr := sqlDb.SaveSetting(userDefaultsDefaultSettingKey, merged); saveErr != nil {
-		userDefaultsMu.Unlock()
-		return fmt.Errorf("save user defaults: %w", saveErr)
-	}
-	userDefaultsDefault = merged
-	settings.Config.UserDefaults = merged
-	userDefaultsMu.Unlock()
-
-	return nil
-}
-
-// PatchUserDefaultsEnforced merges enforcement patch JSON into the universal config.
-func PatchUserDefaultsEnforced(patchJSON []byte) error {
-	userDefaultsMu.Lock()
-	merged, mergeErr := settings.MergeEnforcedPatchJSON(userDefaultsEnforcedDefault, patchJSON)
-	if mergeErr != nil {
-		userDefaultsMu.Unlock()
-		return mergeErr
-	}
-	if saveErr := sqlDb.SaveSetting(userDefaultsEnforcedDefaultKey, merged); saveErr != nil {
-		userDefaultsMu.Unlock()
-		return fmt.Errorf("save enforced user defaults: %w", saveErr)
-	}
-	userDefaultsEnforcedDefault = merged
-	userDefaultsMu.Unlock()
-
-	return ResyncEnforcedDefaultsForAllUsers()
-}
-
 // EffectiveEnforced returns universal enforcement flags.
 func EffectiveEnforced() settings.UserDefaultsEnforcement {
 	userDefaultsMu.RLock()

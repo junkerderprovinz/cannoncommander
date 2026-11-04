@@ -80,24 +80,6 @@ func TestRevokeTokenRollsBackMemoryOnPersistenceFailure(t *testing.T) {
 	}
 }
 
-func TestRetireTokenRollsBackMemoryOnPersistenceFailure(t *testing.T) {
-	store, _ := createTestStorage(t)
-	store.SetSQLStore(failingRevokePersister{})
-
-	if err := store.AddSessionToken("tok", 1); err != nil {
-		t.Fatal(err)
-	}
-	if err := store.RetireToken("tok"); err == nil {
-		t.Fatal("expected RetireToken to propagate persistence failure")
-	}
-	if store.IsTokenRevoked("tok") {
-		t.Fatal("failed retirement must not leave in-memory revoked state")
-	}
-	if _, ok := store.GetHashedTokenInfo("tok"); !ok {
-		t.Fatal("failed retirement must keep owner mapping")
-	}
-}
-
 func TestRevokeTokenIsImmediate(t *testing.T) {
 	store, _ := createTestStorage(t)
 
@@ -115,32 +97,6 @@ func TestRevokeTokenIsImmediate(t *testing.T) {
 	}
 	if _, ok := store.GetHashedTokenInfo("tok"); ok {
 		t.Fatal("immediate revocation must remove the owner mapping")
-	}
-}
-
-func TestSessionAliveFollowsTheTokenByItsHash(t *testing.T) {
-	store, _ := createTestStorage(t)
-	if err := store.AddSessionToken("session", 1); err != nil {
-		t.Fatal(err)
-	}
-	if err := store.AddApiToken("api", 1); err != nil {
-		t.Fatal(err)
-	}
-	session, api := utils.HashSHA256("session"), utils.HashSHA256("api")
-	if !store.SessionAlive(session) || store.SessionAlive(api) || store.SessionAlive("unknown") {
-		t.Fatal("only the session token counts as a live session")
-	}
-	if err := store.RetireToken("session"); err != nil {
-		t.Fatal(err)
-	}
-	if !store.SessionAlive(session) {
-		t.Fatal("a retired session lives on during its grace window")
-	}
-	if err := store.RevokeTokenHash(session); err != nil {
-		t.Fatal(err)
-	}
-	if store.SessionAlive(session) || !store.IsTokenRevoked("session") {
-		t.Fatal("revoking by hash must end the session at once")
 	}
 }
 

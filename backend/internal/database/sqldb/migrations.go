@@ -6,7 +6,7 @@ import (
 )
 
 // currentSchemaVersion is the SQLite schema marker for this codebase.
-const currentSchemaVersion = 4
+const currentSchemaVersion = 6
 
 // Schema creates all tables for the SQLite database
 func createSchema(db *sql.DB) error {
@@ -28,25 +28,6 @@ func createSchema(db *sql.DB) error {
 	);
 	CREATE INDEX IF NOT EXISTS idx_users_admin ON users(perm_admin);
 	CREATE INDEX IF NOT EXISTS idx_users_api ON users(perm_api);
-
-	-- Shares (owner is user_id)
-	CREATE TABLE IF NOT EXISTS shares (
-		hash TEXT PRIMARY KEY,
-		user_id TEXT NOT NULL,
-		source TEXT NOT NULL,
-		path TEXT NOT NULL,
-		expire INTEGER NOT NULL DEFAULT 0,
-		downloads INTEGER NOT NULL DEFAULT 0,
-		password_hash TEXT,
-		user_downloads TEXT,
-		share_settings TEXT NOT NULL,
-		version INTEGER NOT NULL DEFAULT 0
-	);
-	CREATE INDEX IF NOT EXISTS idx_shares_user_id ON shares(user_id);
-	CREATE INDEX IF NOT EXISTS idx_shares_source ON shares(source);
-	CREATE INDEX IF NOT EXISTS idx_shares_path ON shares(path);
-	CREATE INDEX IF NOT EXISTS idx_shares_expire ON shares(expire);
-	CREATE INDEX IF NOT EXISTS idx_shares_source_path ON shares(source, path);
 
 	-- Access rules table
 	CREATE TABLE IF NOT EXISTS access_rules (
@@ -124,28 +105,6 @@ func createSchema(db *sql.DB) error {
 	CREATE INDEX IF NOT EXISTS idx_activity_user_created ON activity_log(user_id, created_at DESC);
 	CREATE INDEX IF NOT EXISTS idx_activity_event_created ON activity_log(event_type, created_at DESC);
 	CREATE INDEX IF NOT EXISTS idx_activity_user_event_created ON activity_log(user_id, event_type, created_at DESC);
-
-	-- Folder quotas (path-bound caps; meter: index_size | accounted)
-	CREATE TABLE IF NOT EXISTS quotas (
-		id TEXT PRIMARY KEY NOT NULL,
-		source TEXT NOT NULL,
-		path TEXT NOT NULL,
-		user_id TEXT,
-		limit_bytes INTEGER NOT NULL DEFAULT 0,
-		meter TEXT NOT NULL DEFAULT 'index_size',
-		created_at INTEGER NOT NULL
-	);
-	CREATE INDEX IF NOT EXISTS idx_quotas_source ON quotas(source);
-	CREATE INDEX IF NOT EXISTS idx_quotas_source_path ON quotas(source, path);
-
-	-- Accounted usage counters (scope, share, optional folder accounted in future)
-	CREATE TABLE IF NOT EXISTS quota_counters (
-		quota_id TEXT PRIMARY KEY NOT NULL,
-		used_bytes INTEGER NOT NULL DEFAULT 0,
-		reserved_bytes INTEGER NOT NULL DEFAULT 0,
-		version INTEGER NOT NULL DEFAULT 0,
-		updated_at INTEGER NOT NULL
-	);
 	`
 
 	_, err := db.Exec(schema)
@@ -206,12 +165,7 @@ func runMigrations(db *sql.DB, fromVersion int) error {
 		case 1:
 			// Canonical schema is createSchema + Bolt import; no step migrations.
 		case 2:
-			if err := migrateV2(db); err != nil {
-				return err
-			}
-			if err := normalizeLegacyShareTokens(db); err != nil {
-				return err
-			}
+			// Added the quota tables, which step 6 drops again.
 		case 3:
 			if err := addHashedTokenSessionColumn(db); err != nil {
 				return err
@@ -219,6 +173,14 @@ func runMigrations(db *sql.DB, fromVersion int) error {
 		case 4:
 			if err := addHashedTokenExpiryColumn(db); err != nil {
 				return err
+			}
+		case 5:
+			if err := dropOldShareLinks(db); err != nil {
+				return err
+			}
+		case 6:
+			if _, err := db.Exec(`DROP TABLE IF EXISTS quotas; DROP TABLE IF EXISTS quota_counters`); err != nil {
+				return fmt.Errorf("drop quotas: %w", err)
 			}
 		default:
 			return fmt.Errorf("unknown schema version: %d", v)
@@ -231,48 +193,6 @@ func runMigrations(db *sql.DB, fromVersion int) error {
 		return fmt.Errorf("failed to update schema version: %w", err)
 	}
 
-	return nil
-}
-
-func migrateV2(db *sql.DB) error {
-	schema := `
-	CREATE TABLE IF NOT EXISTS quotas (
-		id TEXT PRIMARY KEY NOT NULL,
-		source TEXT NOT NULL,
-		path TEXT NOT NULL,
-		user_id TEXT,
-		limit_bytes INTEGER NOT NULL DEFAULT 0,
-		meter TEXT NOT NULL DEFAULT 'index_size',
-		created_at INTEGER NOT NULL
-	);
-	CREATE INDEX IF NOT EXISTS idx_quotas_source ON quotas(source);
-	CREATE INDEX IF NOT EXISTS idx_quotas_source_path ON quotas(source, path);
-
-	CREATE TABLE IF NOT EXISTS quota_counters (
-		quota_id TEXT PRIMARY KEY NOT NULL,
-		used_bytes INTEGER NOT NULL DEFAULT 0,
-		reserved_bytes INTEGER NOT NULL DEFAULT 0,
-		version INTEGER NOT NULL DEFAULT 0,
-		updated_at INTEGER NOT NULL
-	);
-	`
-	if _, err := db.Exec(schema); err != nil {
-		return fmt.Errorf("migrate v2: %w", err)
-	}
-	return migrateV2AddMeterColumn(db)
-}
-
-func migrateV2AddMeterColumn(db *sql.DB) error {
-	var count int
-	if err := db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('quotas') WHERE name = 'meter'`).Scan(&count); err != nil {
-		return fmt.Errorf("migrate v2 meter column check: %w", err)
-	}
-	if count > 0 {
-		return nil
-	}
-	if _, err := db.Exec(`ALTER TABLE quotas ADD COLUMN meter TEXT NOT NULL DEFAULT 'index_size'`); err != nil {
-		return fmt.Errorf("migrate v2 add meter column: %w", err)
-	}
 	return nil
 }
 
@@ -337,4 +257,13 @@ func tableHasColumn(db *sql.DB, table, column string) (bool, error) {
 		return false, fmt.Errorf("error iterating table_info(%s): %w", table, err)
 	}
 	return false, nil
+}
+
+// dropOldShareLinks removes the share links of the older interface. The
+// links live in share_links, which the shares package keeps.
+func dropOldShareLinks(db *sql.DB) error {
+	if _, err := db.Exec(`DROP TABLE IF EXISTS shares; DELETE FROM settings WHERE key LIKE 'shareDefaults.%'`); err != nil {
+		return fmt.Errorf("drop old share links: %w", err)
+	}
+	return nil
 }

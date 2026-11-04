@@ -1,11 +1,5 @@
 package settings
 
-import (
-	"strings"
-
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-)
-
 // userJSONFieldEnforcementPaths maps flat user JSON field names (PATCH which / data keys)
 // to user-defaults enforcement dot-paths (see UserDefaultsEnforcement).
 var userJSONFieldEnforcementPaths = map[string]string{
@@ -46,99 +40,10 @@ var userJSONFieldEnforcementPaths = map[string]string{
 	"showAdvancedProfile":        "account.showAdvancedProfile",
 }
 
-var previewJSONSubfields = map[string]string{
-	"image":              "preview.image",
-	"video":              "preview.video",
-	"audio":              "preview.audio",
-	"motionVideoPreview": "preview.motionVideoPreview",
-	"office":             "preview.office",
-	"popup":              "preview.popup",
-	"folder":             "preview.folder",
-	"models":             "preview.models",
-	"autoplayMedia":      "fileViewer.autoplayMedia",
-	"disableHideSidebar": "sidebar.disableHideOnPreview",
-}
-
-var fileLoadingJSONSubfields = map[string]string{
-	"maxConcurrentUpload": "fileLoading.maxConcurrentUpload",
-	"uploadChunkSizeMb":   "fileLoading.uploadChunkSizeMb",
-	"downloadChunkSizeMb": "fileLoading.downloadChunkSizeMb",
-}
-
-// EnforcedPathsTouchedByUserJSONField returns enforcement paths a user JSON field name may affect.
-func EnforcedPathsTouchedByUserJSONField(jsonField string) []string {
-	jsonField = strings.TrimSpace(jsonField)
-	if jsonField == "" {
-		return nil
-	}
-	if path, ok := userJSONFieldEnforcementPaths[jsonField]; ok {
-		return []string{path}
-	}
-	switch jsonField {
-	case "preview":
-		out := make([]string, 0, len(previewJSONSubfields))
-		for _, p := range previewJSONSubfields {
-			out = append(out, p)
-		}
-		return out
-	case "fileLoading":
-		out := make([]string, 0, len(fileLoadingJSONSubfields))
-		for _, p := range fileLoadingJSONSubfields {
-			out = append(out, p)
-		}
-		return out
-	case "permissions", "Permissions":
-		return []string{
-			"account.permissions.admin",
-			"account.permissions.api",
-			"account.permissions.share",
-			"account.permissions.realtime",
-		}
-	default:
-		if path, ok := previewJSONSubfields[jsonField]; ok {
-			return []string{path}
-		}
-		if path, ok := fileLoadingJSONSubfields[jsonField]; ok {
-			return []string{path}
-		}
-	}
-	return nil
-}
-
 // ErrEnforcedUserField is returned when a self-service user update touches an enforced default.
 type ErrEnforcedUserField struct {
 	Field string
 	Path  string
-}
-
-func (e ErrEnforcedUserField) Error() string {
-	if e.Field != "" {
-		return "setting is enforced by administrator: " + e.Field
-	}
-	return "setting is enforced by administrator: " + e.Path
-}
-
-// ValidateSelfUserUpdateNotEnforced rejects PATCH fields that are locked by user-defaults enforcement.
-func ValidateSelfUserUpdateNotEnforced(which []string, enforced UserDefaultsEnforcement, u *users.User) error {
-	if !EnforcementAppliesToUser(u) {
-		return nil
-	}
-	paths := EnforcedPathSet(enforced)
-	if len(paths) == 0 {
-		return nil
-	}
-	for _, jsonField := range which {
-		jsonField = strings.TrimSpace(jsonField)
-		if jsonField == "" || strings.EqualFold(jsonField, "password") {
-			continue
-		}
-		for _, path := range EnforcedPathsTouchedByUserJSONField(jsonField) {
-			if _, ok := paths[path]; ok {
-				return ErrEnforcedUserField{Field: jsonField, Path: path}
-			}
-		}
-	}
-	return nil
 }
 
 // UserJSONFieldsForEnforcedSync lists top-level user JSON keys that enforced-default sync may modify.
