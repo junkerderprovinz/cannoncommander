@@ -134,6 +134,13 @@ export async function installShim() {
   provideUnraid(provide, (n) => pathOf.get(n));
   provideTools(provide);
   await readAll(listing);
+  // The prototype's manifest offers a way to share files to the app, for which the server has no address yet. The step
+  // file reads it all the same, so it finds an empty one and the difference shows in its line.
+  const link = document.head.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+  if (link) {
+    const body = JSON.parse(decodeURIComponent(link.href.split(',')[1]!));
+    link.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify({ ...body, share_target: { method: 'keine', params: {} } }));
+  }
   // Signing out reloads into the sign in, which would take the shim with it. Here the app stays behind the sign in, as
   // the prototype keeps it, and signing in again brings it back as it was.
   const logout = actions.logout;
@@ -182,7 +189,13 @@ export async function installShim() {
     live: { demo: (run: boolean) => fetch(BASE + '/fixture/download', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ run }) }) },
     get signedIn() { return !!user.me.name && !session.out; },
     // Signing out in a step shows the sign in over the app, as when a session runs out.
-    set signedIn(on: boolean) { session.out = !on; },
+    set signedIn(on: boolean) {
+      const req = new XMLHttpRequest();
+      req.open('PUT', BASE + '/fixture/session', false);
+      req.setRequestHeader('Content-Type', 'application/json');
+      req.send(JSON.stringify({ signedIn: on }));
+      session.out = !on;
+    },
     ...waiting.CC,
   };
 

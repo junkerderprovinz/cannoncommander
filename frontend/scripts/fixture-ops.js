@@ -289,7 +289,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
   // The bytes move LAPSE times faster than the clock, so a finished job tells the time it would have taken a server.
   const endOf = (j) => { const start = Date.parse(j.createdAt); return iso(start + (clock.now() - start) * LAPSE); };
   const held = (j) => settings.parityWait && parity.busy && ['copy', 'move'].includes(j.kind) && (j.waitForParity || j._big);
-  function tick() {
+  function tick(advanceJobs = true) {
     const live = open().filter((j) => j.state === 'queued' || j.state === 'running');
     const free = live.filter((j) => !held(j));
     const moving = settings.mode === 'serial' ? free.slice(0, 1) : free;
@@ -302,7 +302,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       if (j.state === 'running') { delete j.place; delete j.reason; j.startedAt ||= iso(clock.now()); }
       if (was !== [j.state, j.place, j.reason].join()) publish('job.state', j);
     }
-    for (const j of moving) advance(j, share, moving.length);
+    if (advanceJobs) for (const j of moving) advance(j, share, moving.length);
     if (!open().some((j) => j.state === 'queued' || j.state === 'running')) { clock.clear(timer); timer = null; }
   }
 
@@ -357,12 +357,27 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     }
     if (j.kind === 'gather' || j.kind === 'scatter') {
       const plan = gatherPlan({ path: p.path, mode: j.kind, disk: p.disk });
+      const share = p.path.slice('/mnt/user/'.length), touched = new Set(), dirs = new Set();
       for (const m of plan?.moves || []) {
+        const from = `/mnt/${m.from}/${share}/${m.rel}`, to = `/mnt/${m.to}/${share}/${m.rel}`;
+        if (FS.nodeAt(to)) continue;
+        const copy = detach(from);
+        if (copy) ensureDir(FS.parent(to)).children.push(copy);
+        dirs.add(FS.parent(from)).add(FS.parent(to));
         FS.FREE['/mnt/' + m.from] += m.n.size || 0;
         FS.FREE['/mnt/' + m.to] -= m.n.size || 0;
         m.n.dev = m.to;
+        touched.add(m.from);
       }
-      changed(p.path);
+      // unbalanced leaves no empty folders behind on the disk it emptied.
+      const prune = (path) => {
+        const n = dirAt(path);
+        if (!n) return;
+        FS.kids(n).filter((k) => k.dir && !k.link).forEach((k) => prune(FS.join(path, k.name)));
+        if (!FS.kids(n).length) { detach(path); dirs.add(FS.parent(path)); }
+      };
+      touched.forEach((dev) => prune(`/mnt/${dev}/${share.split('/')[0]}`));
+      changed(p.path, ...dirs);
       return undefined;
     }
     return undefined;
@@ -386,6 +401,14 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       else if (old) { target.children = target.children.filter((k) => k !== old); replaced.push(toTrash(old, FS.join(p.dest, old.name))); }
       target.children.push(copy);
       placed.push(copy);
+      // A file that lands on a disk of a share shows up under the user share as lying there.
+      const w = where(p.dest);
+      if (w?.share && w.vol !== 'user') {
+        for (const [, path] of filesOf(copy, FS.join(p.dest, copy.name))) {
+          const twin = FS.nodeAt('/mnt/user/' + path.slice(`/mnt/${w.vol}/`.length));
+          if (twin) twin.dev = w.vol;
+        }
+      }
       if (j.kind === 'move') moved.push([FS.parent(src), detach(src)]);
     }
     changed(p.dest, ...moved.map(([dir]) => dir));
@@ -408,7 +431,9 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     if (old && rule === 'skip') { u.state = 'skipped'; return; }
     if (old && rule === 'both') name = freeName(dir, name);
     else if (old) { dir.children = dir.children.filter((k) => k !== old); toTrash(old, u.path); }
-    dir.children.push({ name, size: u.size, time: Date.parse(u.mtime || '') || clock.now(), owner: 'nobody', group: 'users', mode: '0664' });
+    // A small file keeps what was sent, so opening a pasted note shows it.
+    const text = u.size < 64 * KB && u.chunks ? { text: Buffer.concat(u.chunks).toString() } : {};
+    dir.children.push({ name, size: u.size, time: Date.parse(u.mtime || '') || clock.now(), owner: 'nobody', group: 'users', mode: '0664', ...text });
     u.path = FS.join(FS.parent(u.path), name);
     u.state = 'done';
     changed(FS.parent(u.path));
@@ -425,7 +450,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
   const raw = (req) => new Promise((resolve) => { const parts = []; req.on('data', (c) => parts.push(c)); req.on('end', () => resolve(Buffer.concat(parts))); });
   const bodyOf = async (req) => { try { const b = (await raw(req)).toString('utf8'); return b ? JSON.parse(b) : {}; } catch { return {}; } };
   const jobAt = (id) => jobs.find((j) => j.id === id);
-  const resume = () => { timer ||= clock.setInterval(tick, TICK); timer.unref?.(); tick(); };
+  const resume = () => { timer ||= clock.setInterval(tick, TICK); timer.unref?.(); tick(false); };
   const unraidRoutes = unraidFixture({ fx, unraid, parity, send, createJob, view, filesOf, where, ruleOf, allocatorOf: (a) => ALLOCATOR[a], resume });
 
   const kinds = {};
@@ -488,7 +513,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
         list.splice(Math.max(0, Math.min(list.length, b.position)), 0, j);
         list.forEach((x, k) => { if (x.position !== k) { x.position = k; if (x !== j) publish('job.state', x); } });
       }
-      tick();
+      tick(false);
       publish('job.state', j);
       return [200, view(j)];
     }],
@@ -517,7 +542,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       publish('job.state', j);
       if (j.state === 'cancelled') publish('job.done', j);
       timer ||= clock.setInterval(tick, TICK);
-      tick();
+      tick(false);
       return [200, view(j)];
     }],
 
@@ -613,6 +638,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       if (at !== u.offset) return [409, { title: 'The chunk does not start where the upload stands', upload: uploadOut(u) }];
       if (u.offset + bytes.length > u.size) return [413, 'The chunk goes past the announced size'];
       u.offset += bytes.length;
+      (u.chunks ||= []).push(bytes);
       // A pause per chunk, so the progress can be watched even on a fast machine.
       await new Promise((r) => setTimeout(r, 120));
       if (u.offset >= u.size) landUpload(u);

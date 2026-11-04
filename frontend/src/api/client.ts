@@ -19,12 +19,12 @@ export const setToken = (t: string) => { token = t; };
 
 interface Got<T> { body: T | null; etag?: string }
 
-// When this page last asked the server to change something, so a change the server reports can be told apart from
-// one another program made.
+// When this page last asked the server to change something on disk, so a change the server reports can be told apart
+// from one another program made. Its settings, the folders it watches and a test note change nothing there.
 export const writes = { at: 0 };
 
 export async function call<T>(path: string, init: RequestInit & { etag?: string } = {}): Promise<Got<T>> {
-  if (init.method && init.method !== 'GET') writes.at = Date.now();
+  if (init.method && init.method !== 'GET' && !/^\/(me|events|jobs\/settings|unraid\/notify)\b/.test(path)) writes.at = Date.now();
   const headers = new Headers(init.headers);
   headers.set('Accept', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);

@@ -3,6 +3,8 @@
 .lfoot .u-filter { cursor: pointer; border: 0; font: inherit; font-size: 12px; }
 .lfoot .u-filter:hover { background: var(--carbon-hover-raised); }
 .name .u-cache { height: 1.1rem; padding: 0 .4rem; font-size: 11px; margin-left: .4rem; background: color-mix(in srgb, var(--carbon-surface2), var(--accent) 14%); }
+/* The cards keep their second line to the size and the marks; the badge belongs to the rows of the list. */
+.row .meta .u-cache { display: none; }
 .nav-row .u-moon { display: inline-grid; place-items: center; margin-left: auto; color: var(--carbon-text-muted); }
 .nav-row .u-moon svg { width: .85rem; height: .85rem; }
 .nav-row .u-moon + .meta { margin-left: .35rem; }

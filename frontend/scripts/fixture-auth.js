@@ -132,6 +132,8 @@ export function authFixtureMiddleware() {
     },
     'POST /auth/passkey/options': (_b, res) => problem(res, 409, 'passkeys are turned off on this server'),
     'POST /auth/passkey': (_b, res) => problem(res, 409, 'passkeys are turned off on this server'),
+    // Only the fixture has this: a step file that sets its session back without signing in.
+    'PUT /fixture/session': (b, res) => { S.out = !b.signedIn; json(res, 204, null); },
     'POST /auth/logout': (_b, res) => { S.out = true; json(res, 204, null, { 'Set-Cookie': 'filebrowser_quantum_jwt=; Path=/; Max-Age=0' }); },
     'POST /auth/reset-code': (_b, res) => json(res, 202, null),
     'POST /auth/reset': (b, res) => {
