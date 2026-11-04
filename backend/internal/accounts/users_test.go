@@ -149,6 +149,14 @@ func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
 		{"who": "anna", "path": "/mnt/user/backups", "rule": "hide"},
 		{"who": "@familie", "path": "/mnt/user/filme", "rule": "read"},
 	}}))
+	anna.Permissions.Share = true
+	if err := state.UpdateUser(&anna, "", "permissions"); err != nil {
+		t.Fatal(err)
+	}
+	w.must(http.StatusCreated, w.as("anna", "POST", "/shares", map[string]any{"paths": []string{"/mnt/user/fotos"}}))
+	if links := decode[[]any](t, w.must(http.StatusOK, w.as(w.admin.Username, "GET", "/admin/shares", nil))); len(links) != 1 {
+		t.Fatalf("share links before = %v", links)
+	}
 	link := &share.Share{ShareColumns: share.ShareColumns{Hash: "anna-share", Path: "/fotos"}, UserID: anna.ID, SourcePath: w.share}
 	if err := state.CreateShare(link); err != nil {
 		t.Fatal(err)
@@ -165,6 +173,9 @@ func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
 	}
 	if left, _ := state.GetSharesByUserID(anna.ID); len(left) != 0 {
 		t.Fatalf("shares left: %+v", left)
+	}
+	if links := decode[[]any](t, w.must(http.StatusOK, w.as(w.admin.Username, "GET", "/admin/shares", nil))); len(links) != 0 {
+		t.Fatalf("share links left: %+v", links)
 	}
 	if _, _, ok := state.HashedTokenOwner(tok.Secret); ok {
 		t.Fatal("the token of anna still logs in")
