@@ -173,6 +173,36 @@ func TestAppSettingsSaveFieldByFieldAndHideSecrets(t *testing.T) {
 	}
 }
 
+func TestArrowLoopPathsAreReplacedAsAWhole(t *testing.T) {
+	f := newFixture(t)
+	put := func(body string, want int) appDoc {
+		t.Helper()
+		var doc appDoc
+		if code := f.call("jdp", "PUT", "/admin/app", body, &doc); code != want {
+			t.Fatalf("%s: %d, want %d", body, code, want)
+		}
+		return doc
+	}
+	put(`{"arrowloop":{"url":"http://al.lan","paths":{"/mnt/user":"/data","/mnt/cache":"/cache"}}}`, 200)
+	if doc := put(`{"arrowloop":{"paths":{"/mnt/user":"/media"}}}`, 200); len(doc.ArrowLoop.Paths) != 1 || doc.ArrowLoop.Paths["/mnt/user"] != "/media" {
+		t.Fatalf("paths after replacing %v", doc.ArrowLoop.Paths)
+	}
+	if doc := put(`{"logLevel":"debug"}`, 200); doc.ArrowLoop.Paths["/mnt/user"] != "/media" || doc.ArrowLoop.URL != "http://al.lan" {
+		t.Fatalf("paths left out of the body %+v", doc.ArrowLoop)
+	}
+	put(`{"arrowloop":{"paths":{"/mnt/user":"data"}}}`, 400)
+	got, err := f.svc.store.get(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got.ArrowLoop.Paths) != 1 || got.ArrowLoop.Paths["/mnt/user"] != "/media" {
+		t.Fatalf("a refused save changed the paths to %v", got.ArrowLoop.Paths)
+	}
+	if doc := put(`{"arrowloop":{"paths":{}}}`, 200); len(doc.ArrowLoop.Paths) != 0 {
+		t.Fatalf("paths after emptying %v", doc.ArrowLoop.Paths)
+	}
+}
+
 func TestSettingsSurviveARestart(t *testing.T) {
 	f := newFixture(t)
 	if code := f.call("jdp", "PUT", "/admin/app", `{"previews":{"thumbs":false},"remotes":{"cacheSize":200}}`, nil); code != 200 {

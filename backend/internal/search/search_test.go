@@ -365,6 +365,9 @@ func (f *fakeIndex) GetStatus() indexing.IndexStatus { return indexing.READY }
 func (f *fakeIndex) GetLastIndexed() time.Time       { return time.Unix(1_700_000_000, 0) }
 func (f *fakeIndex) GetQuickScanTime() int           { return 1 }
 func (f *fakeIndex) GetFullScanTime() int            { return 3 }
+func (f *fakeIndex) NextScan() time.Time             { return time.Unix(1_700_003_600, 0) }
+func (f *fakeIndex) ScanEvery() time.Duration        { return 40 * time.Minute }
+func (f *fakeIndex) IndexedSize() uint64             { return 4096 }
 
 func TestAdminRebuildsTheIndexAsAJob(t *testing.T) {
 	f := newFixture(t)
@@ -402,5 +405,8 @@ func TestAdminRebuildsTheIndexAsAJob(t *testing.T) {
 	}
 	if len(st.Sources) != 1 || st.Sources[0].Status != "ready" || st.Sources[0].Files != 9 || st.Sources[0].Job != "" {
 		t.Errorf("state = %+v", st)
+	}
+	if s := st.Sources[0]; s.Size != 4096 || s.ScanEvery != 2400 || s.NextScan != "2023-11-14T23:13:20.000Z" {
+		t.Errorf("plan = %+v", s)
 	}
 }

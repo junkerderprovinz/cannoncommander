@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { type Account, me, type Passkey, type Session, type Token } from '@/api/admin';
+import { type Account, me, type Passkey, type Passkeys, type Session, type Token } from '@/api/admin';
 import { fmtDate } from '@/core/format';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
@@ -10,7 +10,7 @@ import BareBtn from '../kit/BareBtn.vue';
 import Btn from '../kit/Btn.vue';
 import Card from '../kit/Card.vue';
 import Frow from '../kit/Frow.vue';
-import { ago, c, confirmWin, P } from '../kit/kit';
+import { ago, attempt, c, confirmWin, P } from '../kit/kit';
 import Seg from '../kit/Seg.vue';
 import { device } from '../sessions';
 import CodeWin from '../wins/CodeWin.vue';
@@ -21,16 +21,19 @@ import TokenWin from '../wins/TokenWin.vue';
 import TotpWin from '../wins/TotpWin.vue';
 
 const acc = ref<Account | null>(null);
-const passkeys = ref<Passkey[]>([]), sessions = ref<Session[]>([]), tokens = ref<Token[]>([]);
+const keys = ref<Passkeys>({ enabled: true, items: [] }), sessions = ref<Session[]>([]), tokens = ref<Token[]>([]);
 async function load() {
   const [a, p, s, t] = await Promise.allSettled([me.account(), me.passkeys(), me.sessions(), me.tokens()]);
   if (a.status === 'fulfilled') acc.value = a.value;
-  if (p.status === 'fulfilled') passkeys.value = p.value;
+  if (p.status === 'fulfilled') keys.value = p.value;
   if (s.status === 'fulfilled') sessions.value = s.value;
   if (t.status === 'fulfilled') tokens.value = t.value;
 }
 onMounted(() => { load().catch(() => {}); });
 const others = computed(() => sessions.value.filter((s) => !s.current));
+const passkeys = computed(() => keys.value.items);
+// Some accounts sign in elsewhere or have their password kept by the admin, and then it is not changed here.
+const ownPassword = computed(() => !!acc.value && acc.value.loginMethod === 'password' && !acc.value.lockPassword);
 
 const password = () => win({ title: c('security.changePw'), body: PasswordWin, props: { done: load } });
 const totpOn = () => win({ title: c('security.totpSetup'), wide: true, body: TotpWin, props: { done: load } });
@@ -44,7 +47,7 @@ const addToken = () => win({ title: c('security.addToken'), body: TokenWin, prop
 
 function removePasskey(p: Passkey) {
   confirmWin({ title: c('security.removePasskey'), verb: c('remove'), glyph: 'IconTrash', text: [c('security.removePasskeyText', { name: p.name })],
-    run: async () => { await me.deletePasskey(p.id); await load(); toast(c('security.passkeyRemoved', { name: p.name })); } });
+    run: async () => { if (!(await attempt(me.deletePasskey(p.id)))) return; await load(); toast(c('security.passkeyRemoved', { name: p.name })); } });
 }
 async function signOut(s: Session) {
   await me.endSession(s.id);
@@ -59,14 +62,14 @@ function signOutAll() {
 }
 function revoke(t: Token) {
   confirmWin({ title: c('security.revokeToken'), verb: c('security.revoke'), glyph: 'IconKeyRevoke', text: [c('security.revokeText', { name: t.name })],
-    run: async () => { await me.deleteToken(t.id); await load(); toast(c('security.tokenRevoked', { name: t.name })); } });
+    run: async () => { if (!(await attempt(me.deleteToken(t.id)))) return; await load(); toast(c('security.tokenRevoked', { name: t.name })); } });
 }
 const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.created) }) + (t.expires ? c('security.tokenExpires', { date: fmtDate(t.expires) }) : c('security.tokenNoExpiry'));
 </script>
 
 <template>
   <Card :title="c('security.signIn')">
-    <Frow :label="c('users.password')" :tip="c('security.pwTip')"><span class="a-ctl"><span class="pill">{{ acc?.pwChanged ? c('security.changedAgo', { ago: ago(acc.pwChanged) }) : c('users.pwSet') }}</span><Btn :label="c('security.change')" g="IconKey" @click="password" /></span></Frow>
+    <Frow :label="c('users.password')" :tip="ownPassword || !acc ? c('security.pwTip') : c('security.pwLocked')"><span class="a-ctl"><span class="pill">{{ acc?.pwChanged ? c('security.changedAgo', { ago: ago(acc.pwChanged) }) : c('users.pwSet') }}</span><Btn v-if="ownPassword" :label="c('security.change')" g="IconKey" @click="password" /></span></Frow>
     <Frow :label="c('security.stay')" :tip="c('security.stayTip')"><Seg id="a-stay" v-model="P.stayDays" :options="[[1, c('security.day1')], [7, c('general.days', { n: 7 })], [30, c('general.days', { n: 30 })]]" /></Frow>
   </Card>
   <Card :title="c('security.twofa')">
@@ -84,8 +87,8 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
         <template #acts><BareBtn g="IconTrash" :tip="c('remove')" @click="removePasskey(p)" /></template>
       </ARow>
     </div>
-    <div v-else class="empty"><G n="IconKey" /><div>{{ c('security.noPasskey') }}</div></div>
-    <div class="a-foot"><Btn :label="c('security.addPasskey')" g="IconAdd" @click="addPasskey" /></div>
+    <div v-else class="empty"><G n="IconKey" /><div>{{ keys.enabled ? c('security.noPasskey') : c('security.passkeysOff') }}</div></div>
+    <div v-if="keys.enabled" class="a-foot"><Btn :label="c('security.addPasskey')" g="IconAdd" @click="addPasskey" /></div>
   </Card>
   <Card :title="c('security.sessions')">
     <div v-if="sessions.length" class="a-list">

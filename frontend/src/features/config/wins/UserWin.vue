@@ -6,7 +6,7 @@ import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { useUser } from '@/stores/user';
 import Frow from '../kit/Frow.vue';
-import { c, fail, setFoot } from '../kit/kit';
+import { attempt, c, fail, setFoot } from '../kit/kit';
 import PathField from '../kit/PathField.vue';
 import PwField from '../kit/PwField.vue';
 import Seg from '../kit/Seg.vue';
@@ -41,8 +41,8 @@ async function save() {
   }
   const groups = props.groups.filter((g) => inGroup[g.name]).map((g) => g.name);
   const body = { name, full: d.full.trim() || name, role: d.role, scope, groups };
-  if (u) await admin.updateUser(u.name, { ...body, ...(pwOpen.value ? { password: pw1.value } : {}) });
-  else await admin.createUser({ ...body, password: pw1.value });
+  const done = await attempt(u ? admin.updateUser(u.name, { ...body, ...(pwOpen.value ? { password: pw1.value } : {}) }) : admin.createUser({ ...body, password: pw1.value }), at('#a-uname'));
+  if (!done) return;
   props.win.close();
   toast(isNew ? c('users.created', { name: body.full }) : pwOpen.value ? c('users.savedPw') : c('saved'));
   props.saved();

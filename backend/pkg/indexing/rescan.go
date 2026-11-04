@@ -1,6 +1,9 @@
 package indexing
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 // ErrNoScheduler means the source is not indexed, so there is nothing to
 // rebuild.
@@ -35,3 +38,42 @@ func (idx *Index) FullPasses() uint64 { return idx.fullPasses.Load() }
 
 // ActiveScan returns the folder a scanner is reading right now, or "".
 func (idx *Index) ActiveScan() string { return idx.getActiveScannerPath() }
+
+// NextScan returns when the scheduler reads a folder of the source next,
+// or the zero time while nothing is planned.
+func (idx *Index) NextScan() time.Time {
+	idx.scheduleSlotsMu.Lock()
+	defer idx.scheduleSlotsMu.Unlock()
+	var first int64
+	for sec := range idx.scheduleSlots {
+		if first == 0 || sec < first {
+			first = sec
+		}
+	}
+	if first == 0 {
+		return time.Time{}
+	}
+	return time.Unix(first, 0).UTC()
+}
+
+// ScanEvery returns how long the scheduler waits between two reads of the
+// top folder, which shortens while files change there and grows while they
+// do not.
+func (idx *Index) ScanEvery() time.Duration {
+	idx.mu.RLock()
+	root := idx.scanners["/"]
+	idx.mu.RUnlock()
+	if root == nil {
+		return 0
+	}
+	var tier int
+	root.withStatsRLock(func() { tier = root.currentSchedule })
+	return scanScheduleDuration(tier)
+}
+
+// IndexedSize returns the bytes of the files the index holds.
+func (idx *Index) IndexedSize() uint64 {
+	idx.mu.RLock()
+	defer idx.mu.RUnlock()
+	return idx.UsedAsIndexed
+}

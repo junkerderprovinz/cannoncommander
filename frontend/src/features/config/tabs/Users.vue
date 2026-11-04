@@ -9,7 +9,7 @@ import ARow from '../kit/ARow.vue';
 import BareBtn from '../kit/BareBtn.vue';
 import Btn from '../kit/Btn.vue';
 import Card from '../kit/Card.vue';
-import { ago, c, confirmWin, fail } from '../kit/kit';
+import { ago, attempt, c, confirmWin, fail } from '../kit/kit';
 import { roleName } from '../roles';
 import GroupWin from '../wins/GroupWin.vue';
 import UserWin from '../wins/UserWin.vue';
@@ -33,18 +33,18 @@ const editGroup = (g: Group | null) => win({ title: g ? c('users.editGroup') : c
 
 function removeUser(u: User) {
   if (u.role === 'admin' && admins().length === 1) return fail(c('users.lastAdmin'));
-  const n = shares.value.filter((s) => s.by === u.name).length;
+  const n = shares.value.filter((s) => s.owner === u.name).length;
   const first = n ? c('users.removeTextShares', { full: u.full, shares: n === 1 ? c('users.theShare') : c('users.theShares', { n }), name: u.name }) : c('users.removeText', { full: u.full });
   confirmWin({
     title: c('users.remove'), verb: c('remove'), glyph: 'IconTrash', text: [first, c('users.filesStay')],
-    run: async () => { await admin.deleteUser(u.name); await load(); toast(c('removed', { name: u.full })); },
+    run: async () => { if (!(await attempt(admin.deleteUser(u.name)))) return; await load(); toast(c('removed', { name: u.full })); },
   });
 }
 function removeGroup(g: Group) {
   confirmWin({
     title: c('users.removeGroup'), verb: c('remove'), glyph: 'IconTrash',
     text: [c('users.removeGroupText', { name: g.name }), g.members.length ? c('users.membersStay') : c('users.noMembers')],
-    run: async () => { await admin.deleteGroup(g.name); await load(); toast(c('users.groupRemoved', { name: g.name })); },
+    run: async () => { if (!(await attempt(admin.deleteGroup(g.name)))) return; await load(); toast(c('users.groupRemoved', { name: g.name })); },
   });
 }
 </script>

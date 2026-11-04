@@ -22,6 +22,7 @@
 .a-ctl { display: inline-flex; gap: .4rem; align-items: center; flex: none; }
 .a-ctl.grow { flex: 1; min-width: 0; }
 .a-ctl.grow .field { flex: 1; width: auto; }
+.a-ctl > .a-to { width: 14px; height: 14px; flex: none; color: var(--carbon-text-muted); }
 .a-text { line-height: 1.55; }
 .a-text p { margin: 0; }
 .a-text p + p { margin-top: .6rem; }

@@ -10,7 +10,17 @@ import { usePanels } from '@/stores/panels';
 import Card from './kit/Card.vue';
 import { ago, c } from './kit/kit';
 
-const KINDS: Record<string, string> = { copy: 'IconCopy', move: 'IconMove', rename: 'IconPencil', upload: 'IconUpload', share: 'IconLink', login: 'IconSignIn', delete: 'IconTrash', export: 'IconExport' };
+// The server's event types and their glyphs. A type it adds later shows with its own name and the log glyph.
+const KINDS: Record<string, string> = {
+  copy: 'IconCopy', move: 'IconMove', rename: 'IconPencil', upload: 'IconUpload', download: 'IconDownload', fileModify: 'IconPencil',
+  delete: 'IconTrash', bulkDelete: 'IconTrash', archive: 'IconArchive', unarchive: 'IconArchive', duplicateFinder: 'IconCopy',
+  shareCreate: 'IconLink', shareUpdate: 'IconLink', shareDelete: 'IconUnlink',
+  userCreate: 'IconAccounts', userUpdate: 'IconAccounts', userDelete: 'IconAccounts',
+  accessCreate: 'IconShieldOn', accessUpdate: 'IconShieldOn', accessDelete: 'IconShieldOn',
+  quotaCreate: 'IconSliders', quotaUpdate: 'IconSliders', quotaDelete: 'IconSliders',
+  login: 'IconSignIn', logout: 'IconSignOut', signup: 'IconSignIn',
+  passkeyRegister: 'IconKey', passkeyDelete: 'IconKey', tokenCreate: 'IconKey', tokenDelete: 'IconKey',
+};
 const all = ref<Activity[]>([]), users = ref<User[]>([]);
 const act = reactive({ who: null as string | null, what: null as string | null, dir: -1 });
 onMounted(() => {
@@ -19,7 +29,7 @@ onMounted(() => {
 });
 
 const full = (who: string) => users.value.find((u) => u.name === who)?.full || who;
-const kind = (what: string) => c(`activity.kinds.${what}`);
+const kind = (what: string) => (what in KINDS ? c(`activity.kinds.${what}`) : what);
 const shown = computed(() => all.value.filter((a) => (!act.who || a.who === act.who) && (!act.what || a.what === act.what)).sort((a, b) => (a.t - b.t) * act.dir));
 const filtered = computed(() => !!(act.who || act.what));
 const today = computed(() => all.value.filter((a) => a.t >= now() - (now() % DAY)).length);
@@ -32,6 +42,11 @@ function filter(e: MouseEvent, k: 'who' | 'what') {
     { label: c('activity.all'), checked: () => !act[k], run: () => { act[k] = null; } }, '-',
     ...values.map((v) => ({ label: k === 'who' ? full(v) : kind(v), g: k === 'what' ? KINDS[v] || 'IconLog' : undefined, checked: () => act[k] === v, run: () => { act[k] = v; } })),
   ]);
+}
+// The tip carries what the row has no room for: where a copy went and where a login came from.
+function tip(a: Activity) {
+  const lines = [a.path ? c('activity.show') : '', a.target ? c('activity.target', { path: a.target }) : '', a.ip ? c('activity.from', { ip: a.ip }) : ''];
+  return lines.filter(Boolean).join(' ') || undefined;
 }
 function open(a: Activity) {
   if (!a.path) return;
@@ -58,7 +73,7 @@ function open(a: Activity) {
           <button class="a-hbtn" @click="act.dir *= -1">{{ c('activity.when') }}<G :n="act.dir < 0 ? 'IconMoveDown' : 'IconMoveUp'" /></button>
         </div>
         <template v-if="shown.length">
-          <div v-for="(a, k) in shown" :key="k" class="a-row a-arow" :tabindex="a.path ? 0 : undefined" :data-open="a.path" :data-tip="a.path ? c('activity.show') : undefined" @click="open(a)" @keydown.enter="open(a)">
+          <div v-for="a in shown" :key="a.id" class="a-row a-arow" :tabindex="a.path ? 0 : undefined" :data-open="a.path" :data-tip="tip(a)" @click="open(a)" @keydown.enter="open(a)">
             <span class="tile"><G :n="KINDS[a.what] || 'IconLog'" /></span><span class="a-name"><span class="t">{{ a.obj }}</span></span>
             <span class="pill">{{ full(a.who) }}</span><span class="pill">{{ kind(a.what) }}</span><span class="pill glim-num">{{ ago(a.t) }}</span>
           </div>

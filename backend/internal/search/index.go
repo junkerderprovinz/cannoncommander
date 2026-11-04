@@ -40,6 +40,9 @@ type sourceIndex interface {
 	GetLastIndexed() time.Time
 	GetQuickScanTime() int
 	GetFullScanTime() int
+	NextScan() time.Time
+	ScanEvery() time.Duration
+	IndexedSize() uint64
 }
 
 // indexOf returns the index of a source, or nil when it has none.
@@ -184,10 +187,15 @@ type IndexState struct {
 	Status      string `json:"status"`
 	Dirs        uint64 `json:"dirs"`
 	Files       uint64 `json:"files"`
+	Size        uint64 `json:"size"`
 	LastIndexed string `json:"lastIndexed,omitempty"`
 	QuickScan   int    `json:"quickScanSeconds"`
 	FullScan    int    `json:"fullScanSeconds"`
-	Scanning    string `json:"scanning,omitempty"`
+	// NextScan and ScanEvery are the plan of the scheduler, which reads busy
+	// folders more often than quiet ones.
+	NextScan  string `json:"nextScan,omitempty"`
+	ScanEvery int    `json:"scanEverySeconds,omitempty"`
+	Scanning  string `json:"scanning,omitempty"`
 	// Metadata counts the files below the source with cached metadata.
 	Metadata int64 `json:"metadata"`
 	// Job is the rebuild that is open for the source.
@@ -224,10 +232,14 @@ func (h handlers) indexState(w http.ResponseWriter, r *http.Request) error {
 		st := IndexState{Source: s.Name, Path: s.Mount, Status: "off", Job: open[s.Name]}
 		if ix := indexOf(s.Name); ix != nil {
 			st.Status = string(ix.GetStatus())
-			st.Dirs, st.Files = ix.GetNumDirs(), ix.GetNumFiles()
+			st.Dirs, st.Files, st.Size = ix.GetNumDirs(), ix.GetNumFiles(), ix.IndexedSize()
 			if t := ix.GetLastIndexed(); !t.IsZero() {
 				st.LastIndexed = formatTime(t)
 			}
+			if t := ix.NextScan(); !t.IsZero() {
+				st.NextScan = formatTime(t)
+			}
+			st.ScanEvery = int(ix.ScanEvery() / time.Second)
 			st.QuickScan, st.FullScan = ix.GetQuickScanTime(), ix.GetFullScanTime()
 			st.Scanning = ix.ActiveScan()
 		}
