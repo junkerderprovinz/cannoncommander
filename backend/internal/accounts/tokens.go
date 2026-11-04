@@ -124,6 +124,8 @@ func (h handlers) createToken(w http.ResponseWriter, r *http.Request) error {
 	switch {
 	case name == "":
 		return v1.Errorf(http.StatusBadRequest, "give the token a name")
+	// Session tokens carry the WEB_TOKEN names, and a name with two dots could
+	// pass for a token itself among the keys of the token map.
 	case len(name) > 64 || strings.HasPrefix(name, "WEB_TOKEN") || strings.Count(name, ".") == 2:
 		return v1.Errorf(http.StatusBadRequest, "pick another name for the token")
 	case in.Rights != rightsRead && in.Rights != rightsReadWrite:
