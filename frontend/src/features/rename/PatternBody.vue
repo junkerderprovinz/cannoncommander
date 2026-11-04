@@ -36,8 +36,8 @@ onMounted(() => setTimeout(() => input.value?.select(), 20));
 </script>
 
 <template>
-  <div class="well bk-form">
-    <Frow :label="t('rename.mask')" :tip="t('rename.patternTip')"><input id="p-pat" ref="input" v-model="st.pattern" class="field grow mono" spellcheck="false" autocomplete="off" @keydown.enter="pressPrimary"></Frow>
+  <div class="well glim-well bk-form">
+    <Frow :label="t('rename.mask')" :tip="t('rename.patternTip')"><input id="p-pat" ref="input" v-model="st.pattern" class="glim-input grow glim-input--mono" spellcheck="false" autocomplete="off" @keydown.enter="pressPrimary"></Frow>
     <div class="bk-tokens"><button v-for="p in PRESETS" :key="p" class="bk-chip mono" type="button" :data-bk-pre="p" @click="st.pattern = p">{{ p }}</button></div>
     <Frow :label="t('rename.withFolders')"><Sw id="p-dirs" v-model="st.folders" /></Frow>
     <Frow :label="t('rename.marking')" :tip="t('rename.markingTip')"><Seg id="p-mode" v-model="st.mode" :options="modes" /></Frow>

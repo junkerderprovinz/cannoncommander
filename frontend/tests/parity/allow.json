@@ -499,6 +499,10 @@
    {
     "pattern": "(?<=^\\d+ integrations: )\\d+ cards, 1 col, width 832, bottoms \\d+",
     "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
+   },
+   {
+    "pattern": "(?<=, bottoms )d+$",
+    "why": "GlimStone gilt: a card and its rows have GlimStone's padding and gaps, so a page of cards ends further down"
    }
   ],
   "shots": {
@@ -693,6 +697,10 @@
    {
     "pattern": "(?<=^disco walks: ).*?(?= true attr)",
     "why": "GlimStone gilt: the disco walks through GlimStone's colours on the browser's own time"
+   },
+   {
+    "pattern": "(?<=GlimStone )d+.d+.d+",
+    "why": "the app shows the GlimStone it is built on, the prototype the one it was last built with"
    }
   ],
   "shots": {
@@ -986,7 +994,13 @@
     "pixels": 37200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
-  }
+  },
+  "lines": [
+   {
+    "pattern": "^keys on strip: .*$",
+    "why": "GlimStone gilt: an arrow key moves the hue by GlimStone's step, so the same presses land on another colour"
+   }
+  ]
  },
  "steps-r20": {
   "shots": {

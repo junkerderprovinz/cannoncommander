@@ -10,7 +10,6 @@
 .cl-fields { display: flex; flex-direction: column; gap: .55rem; }
 .cl .frow { flex-wrap: wrap; row-gap: .35rem; }
 .cl .frow > .lab { flex: 1 0 7rem; }
-.cl .frow > .field, .cl .frow > .pw-field { flex: 1 1 13rem; }
 .cl .cl-code { text-transform: uppercase; letter-spacing: .12em; }
 .cl .cl-code::placeholder { letter-spacing: .12em; }
 .cl-btns { display: flex; flex-direction: column; gap: .5rem; padding-top: .2rem; }
@@ -29,8 +28,8 @@
 .cl-totp { display: flex; flex-direction: column; gap: .8rem; }
 .cl-lab { display: flex; align-items: center; gap: .35rem; }
 .cl-digits { display: grid; grid-template-columns: repeat(6, 1fr); gap: .45rem; }
-.cl-digits .field { height: 3.1rem; text-align: center; font-size: 22px; font-weight: 600; padding: 0; width: 100%; }
-.cl-digits .field:nth-child(3) { margin-right: .5rem; }
+.cl-digits .glim-input { height: 3.1rem; text-align: center; font-size: 22px; font-weight: 600; padding: 0; width: 100%; }
+.cl-digits .glim-input:nth-child(3) { margin-right: .5rem; }
 .cl-setup { display: flex; flex-direction: column; gap: .8rem; }
 .cl-qr { align-self: center; width: 11rem; height: 11rem; padding: .6rem; border-radius: var(--radius-card); background: #fff; }
 .cl-qr svg { width: 100%; height: 100%; }

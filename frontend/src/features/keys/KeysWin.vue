@@ -9,9 +9,9 @@ import type { MenuEntry } from '@/core/menu';
 import { MENUS, menuName } from '@/core/menus';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
-import Frow from '../config/kit/Frow.vue';
-import { keysFirst, setFoot } from '../config/kit/kit';
-import Seg from '../config/kit/Seg.vue';
+import Frow from '@/ui/Frow.vue';
+import { keysFirst, stepFoot } from '@/features/config/shared';
+import Seg from '@/ui/Seg.vue';
 import { assign, changed, check, combosOf, keyLabel, type KeyMap, mainCombo, MODIFIER_KEYS, preset, reset } from './keys';
 
 const props = defineProps<{ win: WinEntry; current: KeyMap; defaults: KeyMap; defaultLabel: Record<string, string | undefined>; which: 'cc' | 'tc'; apply: (map: KeyMap, which: 'cc' | 'tc') => void }>();
@@ -70,7 +70,7 @@ function pickPreset(v: 'cc' | 'tc') {
 let stopKeys = () => {};
 onMounted(() => {
   stopKeys = keysFirst(key);
-  setFoot(props.win, [
+  stepFoot(props.win, [
     { start: t('keys.hint') },
     { label: t('keys.resetAll'), g: 'IconRefresh', run: () => { map.value = { ...props.defaults }; which.value = 'cc'; stop(); return false; } },
     cancelBtn(),
@@ -81,11 +81,11 @@ onBeforeUnmount(() => stopKeys());
 </script>
 
 <template>
-  <div class="well">
-    <Frow :label="t('keys.preset')" :tip="t('keys.presetTip')"><Seg id="kb-preset" v-model="which" :options="[['cc', 'CannonCommander'], ['tc', 'Total Commander']]" @update:model-value="pickPreset" /></Frow>
-    <Frow :label="t('keys.search')"><input id="kb-q" v-model="query" class="field m" :placeholder="t('keys.searchPh')" autocomplete="off"></Frow>
+  <div class="well glim-well">
+    <Frow :label="t('keys.preset')" :tip="t('keys.presetTip')"><Seg id="kb-preset" v-model="which" :options="[['cc', 'CannonCommander'], ['tc', 'Total Commander']]" @update:model-value="(v) => pickPreset(v!)" /></Frow>
+    <Frow :label="t('keys.search')"><input id="kb-q" v-model="query" class="glim-input m" :placeholder="t('keys.searchPh')" autocomplete="off"></Frow>
   </div>
-  <div class="well kb-well">
+  <div class="well glim-well kb-well">
     <div id="kb-list" class="kb-list">
       <section v-for="[group, list] in shown" :key="group" class="kb-group">
         <div class="eyebrow">{{ group }}</div>

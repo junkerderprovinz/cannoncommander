@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // Hochladen: a drop zone, the target, and the queue with its progress per file and in total.
+import { InfoBubble } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import { fmtSize } from '@/core/format';
 import { G, glyphOf } from '@/core/glyphs';
 import { t } from '@/i18n';
 import Frow from '@/ui/Frow.vue';
-import Info from '@/ui/Info.vue';
 import { addFiles, cancelItem, clearDone, pauseItem, pausedAll, toggleAll, Up, type UpItem } from './queue';
 
 const props = defineProps<{ st: { path: string } }>();
@@ -34,13 +34,13 @@ function dropped(e: DragEvent) {
 </script>
 
 <template>
-  <button id="cu-drop" class="well cu-drop" :class="{ over }" @click="files?.click()" @dragover.prevent.stop="over = true" @dragleave="over = false" @drop.prevent.stop="dropped">
+  <button id="cu-drop" class="well glim-well cu-drop" :class="{ over }" @click="files?.click()" @dragover.prevent.stop="over = true" @dragleave="over = false" @drop.prevent.stop="dropped">
     <G n="IconUpload" /><span class="t">{{ t('upload.dropHere') }}</span><span class="muted">{{ t('upload.orClick') }}</span>
   </button>
   <input id="cu-in" ref="files" type="file" multiple hidden @change="picked"><input id="cu-din" type="file" webkitdirectory hidden @change="picked">
-  <div class="well"><Frow :label="t('upload.target')" :tip="t('upload.targetTip')"><span class="pill mono cu-path">{{ st.path }}</span></Frow></div>
-  <div id="cu-queue" class="well">
-    <div class="eyebrow">{{ t('upload.queue') }} <Info :tip="t('upload.queueTip')" />
+  <div class="well glim-well"><Frow :label="t('upload.target')" :tip="t('upload.targetTip')"><span class="pill mono cu-path">{{ st.path }}</span></Frow></div>
+  <div id="cu-queue" class="well glim-well">
+    <div class="eyebrow">{{ t('upload.queue') }} <InfoBubble :tip="t('upload.queueTip')" />
       <button v-if="busy" id="cu-all" class="btn icon" :data-tip="pausedAll() ? t('upload.resumeAll') : t('upload.pauseAll')" :aria-label="pausedAll() ? t('upload.resumeAll') : t('upload.pauseAll')" @click="toggleAll"><G :n="pausedAll() ? 'IconPlay' : 'IconPause'" /></button>
       <button v-if="ended" id="cu-clear" class="btn icon" :data-tip="t('upload.clear')" :aria-label="t('upload.clear')" @click="clearDone"><G n="IconEmpty" /></button>
     </div>

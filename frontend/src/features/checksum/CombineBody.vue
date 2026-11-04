@@ -5,7 +5,7 @@ import { fmtSize } from '@/core/format';
 import { join } from '@/files/paths';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
-import BkPath from '@/ui/BkPath.vue';
+import PathField from '@/ui/PathField.vue';
 import FinalPath from '@/ui/FinalPath.vue';
 import Frow from '@/ui/Frow.vue';
 import { plural } from '@/ui/kit';
@@ -35,15 +35,15 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="well"><div class="eyebrow">{{ t('checksum.partsOf', { parts: plural(parts.length, 'checksum.partsWord'), size: fmtSize(total) }) }}</div>
+  <div class="well glim-well"><div class="eyebrow">{{ t('checksum.partsOf', { parts: plural(parts.length, 'checksum.partsWord'), size: fmtSize(total) }) }}</div>
     <table class="tbl">
       <tr v-for="p in parts" :key="p.name"><td class="mono">{{ p.name }}</td><td class="glim-num r">{{ fmtSize(p.size) }}</td></tr>
       <tr v-if="missing.length"><td colspan="2"><span class="pill fault">{{ t('checksum.missingParts', { list: missing.map((i) => '.' + String(i).padStart(3, '0')).join(', ') }) }}</span></td></tr>
     </table>
   </div>
-  <div class="well bk-form"><div class="eyebrow">{{ t('checksum.result') }}</div>
-    <Frow :label="t('checksum.name')"><input id="j-name" v-model="st.name" class="field grow mono" spellcheck="false" autocomplete="off"></Frow>
-    <Frow :label="t('checksum.folder')"><BkPath id="j-dest" v-model="st.dest" /></Frow>
+  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('checksum.result') }}</div>
+    <Frow :label="t('checksum.name')"><input id="j-name" v-model="st.name" class="glim-input grow glim-input--mono" spellcheck="false" autocomplete="off"></Frow>
+    <Frow :label="t('checksum.folder')"><PathField id="j-dest" v-model="st.dest" /></Frow>
     <Frow :label="t('checksum.checkAfter')" :tip="sum ? t('checksum.checkWith', { name: sum.name }) : t('checksum.checkNone')"><Sw id="j-check" v-model="st.check" :disabled="!sum" /></Frow>
     <Frow :label="t('checksum.dropParts')" :tip="t('checksum.dropPartsTip')"><Sw id="j-drop" v-model="st.drop" /></Frow>
     <Frow :label="t('checksum.savedAs')">

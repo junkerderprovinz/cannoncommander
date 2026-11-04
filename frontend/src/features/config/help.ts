@@ -2,7 +2,7 @@
 import { run } from '@/core/actions';
 import { prefs } from '@/core/prefs';
 import { go } from '@/core/views';
-import { c } from './kit/kit';
+import { c } from '@/features/config/shared';
 
 export interface News { id: string; g: string; text: () => string; go: () => void }
 export const NEWS: News[] = [

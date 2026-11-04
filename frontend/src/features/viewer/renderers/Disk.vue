@@ -8,7 +8,7 @@ import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { fsStat, type ImageInfo } from '../content';
 import { ext, joinPath } from '../kinds';
-import Frow from '../ui/Frow.vue';
+import Frow from '@/ui/Frow.vue';
 import type { REmits, RProps } from './types';
 
 const props = defineProps<RProps>();
@@ -33,7 +33,7 @@ onMounted(async () => {
 
 <template>
   <div class="cv-scroll cv-disk">
-    <div class="well">
+    <div class="well glim-well">
       <div class="eyebrow">{{ t('viewer.disk.eyebrow') }}</div>
       <Frow :label="t('viewer.disk.format')" :value="format" />
       <Frow v-if="image.label" :label="t('viewer.disk.label')" :value="image.label" />
@@ -41,14 +41,14 @@ onMounted(async () => {
       <Frow v-if="image.used != null" :label="t('viewer.disk.used')" :value="fmtSize(image.used)" :tip="t('viewer.disk.usedTip')" />
       <Frow :label="t('viewer.disk.sum')" :value="hasSum ? t('viewer.disk.sumThere') : t('viewer.disk.sumNone')" :pill="hasSum ? 'ok' : ''" :tip="hasSum ? t('viewer.disk.sumTip') : ''" />
     </div>
-    <div v-if="parts.length" class="well">
+    <div v-if="parts.length" class="well glim-well">
       <div class="eyebrow">{{ t('viewer.disk.parts') }}</div>
       <div class="cv-parts"><i v-for="(p, k) in parts" :key="k" :class="'p' + (k % 4)" :style="{ flex: Math.max(p.size / n.size, 0.03) }"></i></div>
       <Frow v-for="(p, k) in parts" :key="k" :label="p.label" :value="fmtSize(p.size)">
         <template #label><span class="cv-key" :class="'p' + (k % 4)"></span>{{ p.label }}</template>
       </Frow>
     </div>
-    <div v-else-if="inside.length" class="well">
+    <div v-else-if="inside.length" class="well glim-well">
       <div class="eyebrow">{{ t('viewer.disk.content') }}</div>
       <div class="cv-mini">
         <div v-for="x in inside" :key="x.name" class="cv-mrow"><span class="tile"><G :n="x.dir ? 'IconFolder' : 'IconFile'" /></span><span class="t mono">{{ x.name }}</span><span></span></div>

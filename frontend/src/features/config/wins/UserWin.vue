@@ -1,16 +1,17 @@
 <script setup lang="ts">
+import { PasswordField } from '@glimstone/vue';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Group, type Role, type User } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { useUser } from '@/stores/user';
-import Frow from '../kit/Frow.vue';
-import { attempt, c, fail, setFoot } from '../kit/kit';
-import PathField from '../kit/PathField.vue';
-import PwField from '../kit/PwField.vue';
-import Seg from '../kit/Seg.vue';
-import Sw from '../kit/Sw.vue';
+import Frow from '@/ui/Frow.vue';
+import { attempt, c, fail, stepFoot } from '@/features/config/shared';
+import PathField from '@/ui/PathField.vue';
+import Seg from '@/ui/Seg.vue';
+import Sw from '@/ui/Sw.vue';
+import { eyeWords } from '@/ui/kit';
 import { ROLES, roleName } from '../roles';
 
 const props = defineProps<{ win: WinEntry; user: User | null; users: User[]; groups: Group[]; saved: () => void }>();
@@ -48,27 +49,27 @@ async function save() {
   props.saved();
 }
 
-onMounted(() => setFoot(props.win, [cancelBtn(), { label: isNew ? c('users.create') : c('save'), g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: () => { save(); return false; } }]));
+onMounted(() => stepFoot(props.win, [cancelBtn(), { label: isNew ? c('users.create') : c('save'), g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: () => { save(); return false; } }]));
 </script>
 
 <template>
-  <div class="well">
-    <Frow :label="c('users.loginName')" :tip="c('users.loginNameTip')"><input id="a-uname" v-model="d.name" class="field m" :readonly="self" :placeholder="c('users.loginNamePh')"></Frow>
-    <Frow :label="c('users.displayName')"><input id="a-ufull" v-model="d.full" class="field m" :placeholder="c('users.displayNamePh')"></Frow>
+  <div class="well glim-well">
+    <Frow :label="c('users.loginName')" :tip="c('users.loginNameTip')"><input id="a-uname" v-model="d.name" class="glim-input m" :readonly="self" :placeholder="c('users.loginNamePh')"></Frow>
+    <Frow :label="c('users.displayName')"><input id="a-ufull" v-model="d.full" class="glim-input m" :placeholder="c('users.displayNamePh')"></Frow>
   </div>
-  <div class="well">
+  <div class="well glim-well">
     <Frow :label="c('users.role')" :tip="c('users.roleTip')"><Seg id="a-urole" v-model="d.role" :options="ROLES.map((r) => [r, roleName(r)])" /></Frow>
     <Frow :label="c('users.scope')" :tip="c('users.scopeTip')"><PathField id="a-uscope" v-model="d.scope" /></Frow>
   </div>
-  <div class="well">
+  <div class="well glim-well">
     <div class="eyebrow">{{ c('users.groups') }}</div>
     <Frow v-for="g in groups" :key="g.name" :label="g.name" :tip="g.note"><Sw v-model="inGroup[g.name]!" :data-ug="g.name" /></Frow>
     <div v-if="!groups.length" class="muted">{{ c('users.noGroups') }}</div>
   </div>
-  <div v-if="!self" class="well">
+  <div v-if="!self" class="well glim-well">
     <template v-if="pwOpen">
-      <Frow :label="c('users.password')" :tip="c('users.pwTip')"><PwField id="a-upw" v-model="pw1" size="m" /></Frow>
-      <Frow :label="c('users.repeat')"><PwField id="a-upw2" v-model="pw2" size="m" /></Frow>
+      <Frow :label="c('users.password')" :tip="c('users.pwTip')"><PasswordField id="a-upw" v-model="pw1" class="m" autocomplete="new-password" :text="eyeWords()" /></Frow>
+      <Frow :label="c('users.repeat')"><PasswordField id="a-upw2" v-model="pw2" class="m" autocomplete="new-password" :text="eyeWords()" /></Frow>
     </template>
     <Frow v-else :label="c('users.password')" :tip="self ? c('users.ownPwTip') : c('users.newPwTip')">
       <span class="a-ctl"><span class="pill">{{ c('users.pwSet') }}</span><button class="btn" @click="openPassword"><G n="IconKey" />{{ c('users.pwNew') }}</button></span>

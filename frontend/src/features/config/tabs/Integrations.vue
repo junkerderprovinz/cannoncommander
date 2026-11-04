@@ -1,18 +1,17 @@
 <script setup lang="ts">
 // The office server is a choice: none uses the built-in previews, OnlyOffice and Euro-Office share one connection,
 // Collabora speaks WOPI. ArrowLoop takes folder pairs as recurring jobs and sees the shares under paths of its own.
+import { Button, Card, PasswordField } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { admin, type AppChange, type AppSettings, type IntegrationResult, type OfficeKind, type System, type Tool } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
-import BareBtn from '../kit/BareBtn.vue';
-import Btn from '../kit/Btn.vue';
-import Card from '../kit/Card.vue';
-import Dropdown from '../kit/Dropdown.vue';
-import Frow from '../kit/Frow.vue';
-import { c, fail, shake } from '../kit/kit';
-import PwField from '../kit/PwField.vue';
-import Sw from '../kit/Sw.vue';
+import BareBtn from '@/ui/BareBtn.vue';
+import Dropdown from '@/ui/Dropdown.vue';
+import Frow from '@/ui/Frow.vue';
+import { c, fail, shake } from '@/features/config/shared';
+import Sw from '@/ui/Sw.vue';
+import { eyeWords } from '@/ui/kit';
 
 type Test = 'idle' | 'busy' | 'ok' | 'bad';
 const app = ref<AppSettings | null>(null), sys = ref<System | null>(null);
@@ -118,10 +117,10 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
       </Frow>
       <template v-if="kind !== 'none'">
         <Frow :label="c('integrations.url')" :tip="c('integrations.urlTip')">
-          <span class="a-ctl"><input id="a-oourl" v-model="office.url" class="field w" placeholder="https://office.tower.lan" @input="tests.office = 'idle'" @change="saveOffice">
+          <span class="a-ctl"><input id="a-oourl" v-model="office.url" class="glim-input w" placeholder="https://office.tower.lan" @input="tests.office = 'idle'" @change="saveOffice">
             <button id="a-ootest" ref="officeBtn" class="btn" :class="{ ok: tests.office === 'ok', bad: tests.office === 'bad' }" :disabled="tests.office === 'busy'" @click="test('office')"><G :n="testGlyph(tests.office)" />{{ testWord(tests.office) }}</button></span>
         </Frow>
-        <Frow v-if="needsSecret" :label="c('integrations.secret')" :tip="c('integrations.secretTip')"><PwField id="a-oosecret" v-model="secret" :placeholder="office.secretSet ? c('integrations.kept') : 'JWT_SECRET'" @change="saveSecret" /></Frow>
+        <Frow v-if="needsSecret" :label="c('integrations.secret')" :tip="c('integrations.secretTip')"><PasswordField id="a-oosecret" v-model="secret" :placeholder="office.secretSet ? c('integrations.kept') : 'JWT_SECRET'" @change="saveSecret" class="w" autocomplete="new-password" :text="eyeWords()" /></Frow>
       </template>
     </Card>
     <Card :title="c('integrations.media')">
@@ -131,17 +130,17 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
     </Card>
     <Card title="ArrowLoop" :hint="c('integrations.alHint')">
       <Frow :label="c('integrations.address')" :tip="c('integrations.alUrlTip')">
-        <span class="a-ctl"><input id="a-alurl" v-model="app.arrowloop.url" class="field w" placeholder="http://tower.lan:8095" @input="tests.arrowloop = 'idle'" @change="saveAlUrl">
+        <span class="a-ctl"><input id="a-alurl" v-model="app.arrowloop.url" class="glim-input w" placeholder="http://tower.lan:8095" @input="tests.arrowloop = 'idle'" @change="saveAlUrl">
           <button id="a-altest" ref="alBtn" class="btn" :class="{ ok: tests.arrowloop === 'ok', bad: tests.arrowloop === 'bad' }" :disabled="tests.arrowloop === 'busy'" @click="test('arrowloop')"><G :n="testGlyph(tests.arrowloop)" />{{ testWord(tests.arrowloop) }}</button></span>
       </Frow>
-      <Frow :label="c('integrations.alToken')" :tip="c('integrations.alTokenTip')"><PwField id="a-altoken" v-model="alToken" :placeholder="app.arrowloop.tokenSet ? c('integrations.kept') : ''" @change="saveAlToken" /></Frow>
+      <Frow :label="c('integrations.alToken')" :tip="c('integrations.alTokenTip')"><PasswordField id="a-altoken" v-model="alToken" :placeholder="app.arrowloop.tokenSet ? c('integrations.kept') : ''" @change="saveAlToken" class="w" autocomplete="new-password" :text="eyeWords()" /></Frow>
       <div ref="pathsEl">
         <Frow v-if="!paths.length" :label="c('integrations.alPaths')" :tip="c('integrations.alPathsTip')"><span class="pill">{{ c('integrations.samePaths') }}</span></Frow>
         <Frow v-for="(p, i) in paths" :key="i" :label="i ? '' : c('integrations.alPaths')" :tip="i ? undefined : c('integrations.alPathsTip')">
-          <span class="a-ctl"><input v-model="p.here" class="field m mono" placeholder="/mnt/user" :aria-label="c('integrations.here')" @change="savePaths"><G n="IconForward" class="a-to" /><input v-model="p.there" class="field m mono" placeholder="/data" :aria-label="c('integrations.there')" @change="savePaths"><BareBtn g="IconTrash" :tip="c('remove')" @click="removePath(i)" /></span>
+          <span class="a-ctl"><input v-model="p.here" class="glim-input m glim-input--mono" placeholder="/mnt/user" :aria-label="c('integrations.here')" @change="savePaths"><G n="IconForward" class="a-to" /><input v-model="p.there" class="glim-input m glim-input--mono" placeholder="/data" :aria-label="c('integrations.there')" @change="savePaths"><BareBtn g="IconTrash" :tip="c('remove')" @click="removePath(i)" /></span>
         </Frow>
       </div>
-      <div class="a-foot"><Btn :label="c('integrations.addPath')" g="IconAdd" @click="paths.push({ here: '', there: '' })" /></div>
+      <div class="a-foot"><Button :label="c('integrations.addPath')" label-key="IconAdd" @click="paths.push({ here: '', there: '' })" /></div>
     </Card>
     <Card title="rclone">
       <Frow label="rclone" :tip="c('integrations.rcloneTip')"><span class="pill mono">{{ sys ? tool(sys.tools.rclone) : '' }}</span></Frow>

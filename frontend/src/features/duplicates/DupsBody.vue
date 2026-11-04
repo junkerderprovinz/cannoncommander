@@ -13,7 +13,7 @@ import { pctOf } from '@/features/jobs/label';
 import { undoAct } from '@/features/undo/act';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
-import BkPath from '@/ui/BkPath.vue';
+import PathField from '@/ui/PathField.vue';
 import Frow from '@/ui/Frow.vue';
 import { num, plural, setFoot } from '@/ui/kit';
 import Seg from '@/ui/Seg.vue';
@@ -128,11 +128,11 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
 </script>
 
 <template>
-  <div class="well bk-form"><div class="bk-grid2">
-    <Frow :label="t('duplicates.in')"><BkPath id="u-in" v-model="where" /></Frow>
+  <div class="well glim-well bk-form"><div class="bk-grid2">
+    <Frow :label="t('duplicates.in')"><PathField id="u-in" v-model="where" /></Frow>
     <Frow :label="t('duplicates.by')" :tip="t('duplicates.byTip')"><Seg id="u-by" v-model="by" :options="BY" /></Frow>
   </div></div>
-  <div class="well bk-fill bk-dupwell">
+  <div class="well glim-well bk-fill bk-dupwell">
     <div class="bk-tools"><span id="u-sum" class="eyebrow">{{ sum }}</span>
       <button class="btn" data-bk-keep="new" :disabled="!res?.groups.length" @click="keep('new')"><G n="IconLatest" />{{ t('duplicates.keepNew') }}</button>
       <button class="btn" data-bk-keep="old" :disabled="!res?.groups.length" @click="keep('old')"><G n="IconFirst" />{{ t('duplicates.keepOld') }}</button>
@@ -148,7 +148,7 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
             <span class="bk-path mono" :title="c.path"><bdi>{{ by === 'name' ? c.at : c.path }}</bdi></span>
             <span v-if="g.copies[0]!.mtime === g.copies.at(-1)!.mtime"></span><span v-else-if="ci === 0" class="pill">{{ t('duplicates.newest') }}</span><span v-else-if="ci === g.copies.length - 1" class="pill">{{ t('duplicates.oldest') }}</span><span v-else></span>
             <span class="pill glim-num">{{ fmtTime(Date.parse(c.mtime)) }}</span>
-            <span class="bk-swl"><Sw :model-value="drop.has(c.path)" :data-bk-dup="`${gi}:${ci}`" :aria-label="t('duplicates.dropLabel', { path: c.path })" :data-tip="t('duplicates.toTrash')" @update:model-value="(v: boolean) => toggle(gi, c, v)" /></span>
+            <span class="bk-swl"><Sw :model-value="drop.has(c.path)" :data-bk-dup="`${gi}:${ci}`" :label="t('duplicates.dropLabel', { path: c.path })" :data-tip="t('duplicates.toTrash')" @update:model-value="(v: boolean) => toggle(gi, c, v)" /></span>
           </div>
         </section>
       </template>

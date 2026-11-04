@@ -19,5 +19,5 @@ export function winKeys(scrim: () => HTMLElement | null, handler: WinKeyHandler)
 }
 
 // The window's title and its foot line belong to the frame; a window whose file changes rewrites them in place.
-export const notchOf = (el: Element | null) => el?.closest('.scrim')?.querySelector<HTMLElement>('.notch') ?? null;
-export const footStartOf = (el: Element | null) => el?.closest('.scrim')?.querySelector<HTMLElement>('.win-foot .start') ?? null;
+export const notchOf = (el: Element | null) => el?.closest('.glim-modal-backdrop')?.querySelector<HTMLElement>('.glim-window-title .glim-badge') ?? null;
+export const footStartOf = (el: Element | null) => el?.closest('.glim-modal-backdrop')?.querySelector<HTMLElement>('.glim-window-start') ?? null;

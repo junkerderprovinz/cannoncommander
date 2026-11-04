@@ -1,5 +1,6 @@
 // Glyphs by name, and which glyph a file gets: the format list decides, the kind is the fallback.
 import coreGlyphs from '@glimstone/core/glyphs.json';
+import { setGlyphResolver } from '@glimstone/vue';
 import { type FunctionalComponent, h } from 'vue';
 import formats from './formats.json';
 
@@ -59,3 +60,5 @@ export function glyphComponent(name: string): FunctionalComponent {
   if (!components.has(name)) components.set(name, () => h(G, { n: name }));
   return components.get(name)!;
 }
+// Button and Window pick a glyph by a key, which in this app is the glyph's own name.
+setGlyphResolver((key) => (hasGlyph(key) ? glyphComponent(key) : undefined));
