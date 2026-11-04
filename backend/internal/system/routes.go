@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/search"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -15,7 +16,7 @@ import (
 var contract []byte
 
 // Routes registers the contract and the handlers. The admin/index
-// operations are left to the indexer.
+// operations belong to the search package, which owns the indexer.
 func Routes(r *v1.Router) {
 	r.Contract("system", contract)
 	captureBoot()
@@ -30,6 +31,7 @@ func Routes(r *v1.Router) {
 	}
 	s.ownSections()
 	bind(r, s)
+	search.IndexRoutes(r)
 }
 
 type service struct {

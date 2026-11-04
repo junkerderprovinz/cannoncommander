@@ -236,6 +236,7 @@ func (idx *Index) runSerialScanPass() {
 		if err := idx.PostScan(); err != nil {
 			logger.Errorf("PostScan after serial pass: %v", err)
 		}
+		idx.fullPasses.Add(1)
 	}()
 
 	for _, p := range paths {
@@ -316,6 +317,7 @@ func (idx *Index) runIndexScheduler() {
 	n := len(idx.scanners)
 	idx.mu.RUnlock()
 	logger.Debugf("[%s] scheduler: started adaptive scanners=%d", idx.Name, n)
+	rescan := idx.rescanChan()
 	idx.schedulerAdaptiveTick()
 	for {
 		now := time.Now()
@@ -330,6 +332,13 @@ func (idx *Index) runIndexScheduler() {
 			logger.Debugf("[%s] scheduler: adaptive loop stopped", idx.Name)
 			return
 		case <-time.After(d):
+			idx.schedulerAdaptiveTick()
+		case <-rescan:
+			// The bootstrap path runs every scanner in full, one after the
+			// other, which is exactly a rebuild.
+			idx.mu.Lock()
+			idx.startupScanPending = true
+			idx.mu.Unlock()
 			idx.schedulerAdaptiveTick()
 		}
 	}
