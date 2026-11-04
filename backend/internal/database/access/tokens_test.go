@@ -144,6 +144,34 @@ func TestSessionAliveFollowsTheTokenByItsHash(t *testing.T) {
 	}
 }
 
+func TestRevokeSessionsKeepsOneSessionAndTheApiTokens(t *testing.T) {
+	store, _ := createTestStorage(t)
+	for _, tok := range []string{"desk", "phone", "laptop"} {
+		if err := store.AddSessionToken(tok, 1); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := store.AddSessionToken("other-user", 2); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.AddApiToken("script", 1); err != nil {
+		t.Fatal(err)
+	}
+	n, err := store.RevokeSessions(1, utils.HashSHA256("desk"))
+	if err != nil || n != 2 {
+		t.Fatalf("ended %d sessions, %v", n, err)
+	}
+	if !store.SessionAlive(utils.HashSHA256("desk")) || !store.SessionAlive(utils.HashSHA256("other-user")) {
+		t.Fatal("the kept session and other users' sessions must stay")
+	}
+	if store.SessionAlive(utils.HashSHA256("phone")) || store.SessionAlive(utils.HashSHA256("laptop")) {
+		t.Fatal("the other sessions must end")
+	}
+	if _, ok := store.GetHashedTokenInfo("script"); !ok {
+		t.Fatal("API tokens keep working")
+	}
+}
+
 // signedTestJWT mints a bare HS256 JWT carrying only an exp claim. The registry
 // only reads claims unverified, so any key works.
 func signedTestJWT(t *testing.T, exp time.Time) string {

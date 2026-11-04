@@ -401,3 +401,25 @@ func TestOnlyFoldersOneMayOpenAreCounted(t *testing.T) {
 		t.Errorf("counted %v", got)
 	}
 }
+
+func TestForgetDeletesEverythingOfOneUser(t *testing.T) {
+	f := newFixture(t)
+	for _, user := range []string{"jdp", "anna"} {
+		f.must(204, user, "PUT", "/me/prefs?device=desk", map[string]any{"theme": "light", "dual": true})
+		f.must(204, user, "PUT", "/me/rename-presets", presetList{Items: []prefs.RenamePreset{{Name: "Klein", Options: prefs.RenameOptions{Name: "[N]", Ext: "[E]", Case: "lower"}}}})
+		f.must(201, user, "POST", "/search/saved", `{"name":"Bilder","query":{"in":"/mnt/user"}}`)
+	}
+	if err := prefs.Forget(context.Background(), f.db, 2); err != nil {
+		t.Fatal(err)
+	}
+	if got := decode[map[string]any](t, f.must(200, "anna", "GET", "/me/prefs?device=desk", nil)); len(got) != 0 {
+		t.Errorf("anna still has settings: %v", got)
+	}
+	if got := decode[map[string]any](t, f.must(200, "jdp", "GET", "/me/prefs?device=desk", nil)); got["theme"] != "light" {
+		t.Errorf("jdp lost his settings: %v", got)
+	}
+	var left int
+	if err := f.db.QueryRow(`SELECT COUNT(*) FROM saved_searches WHERE user_id = '2'`).Scan(&left); err != nil || left != 0 {
+		t.Errorf("anna has %d saved searches left, %v", left, err)
+	}
+}

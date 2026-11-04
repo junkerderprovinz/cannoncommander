@@ -1728,6 +1728,25 @@ func (s *Storage) RevokeTokenHash(tokenHash string) error {
 	return nil
 }
 
+// RevokeSessions ends every session of the user except the one whose token
+// hash is keep, and returns how many it ended. API tokens keep working.
+func (s *Storage) RevokeSessions(userID uint64, keep string) (int, error) {
+	s.mux.RLock()
+	var hashes []string
+	for hash, info := range s.HashedTokens {
+		if info.UserID == userID && info.IsSession && hash != keep {
+			hashes = append(hashes, hash)
+		}
+	}
+	s.mux.RUnlock()
+	for i, hash := range hashes {
+		if err := s.RevokeTokenHash(hash); err != nil {
+			return i, err
+		}
+	}
+	return len(hashes), nil
+}
+
 // RetireToken schedules a rotated session token for revocation after
 // BearerTokenGrace. The owner mapping is kept during the grace window so
 // in-flight requests still carrying the previous cookie stay authenticated.

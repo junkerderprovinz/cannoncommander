@@ -212,6 +212,15 @@ func RevokeTokenHash(tokenHash string) error {
 	return accessDb.RevokeTokenHash(tokenHash)
 }
 
+// RevokeSessions ends every session of the user but the one with the token
+// hash keep and returns how many ended.
+func RevokeSessions(userID uint64, keep string) (int, error) {
+	if accessDb == nil {
+		return 0, fmt.Errorf("access storage not available")
+	}
+	return accessDb.RevokeSessions(userID, keep)
+}
+
 func RemoveApiToken(tokenString string) error {
 	return accessDb.RemoveApiToken(tokenString)
 }

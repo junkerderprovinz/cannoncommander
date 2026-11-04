@@ -73,9 +73,11 @@ type job struct {
 	limiter   *rate.Limiter
 	cancel    context.CancelFunc
 	cancelled bool
-	live      bool
-	allowed   bool
-	ask       chan string
+	// forget drops the job from the list as soon as it has stopped.
+	forget  bool
+	live    bool
+	allowed bool
+	ask     chan string
 
 	// done counts the finished items, inflight what the current item
 	// has moved so far.
@@ -503,6 +505,27 @@ func (m *Manager) ClearFinished(owner string) int {
 	return n
 }
 
+// Forget cancels every job of owner and drops them from the list, for an
+// account that is being deleted. A running job stops at its next pause
+// point and leaves the list then.
+func (m *Manager) Forget(owner string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	for id, j := range m.jobs {
+		if j.Owner != owner {
+			continue
+		}
+		if j.live {
+			j.cancelled, j.forget = true, true
+			j.cancel()
+			continue
+		}
+		delete(m.jobs, id)
+		m.delete(id)
+	}
+	m.schedule()
+}
+
 // Settings returns the queue settings.
 func (m *Manager) Settings() Settings {
 	m.mu.Lock()
@@ -664,6 +687,10 @@ func (m *Manager) end(j *job, err error) []func() {
 	j.ask, j.Conflict = nil, nil
 	m.save(j)
 	m.publish(EventDone, j)
+	if j.forget {
+		delete(m.jobs, j.ID)
+		m.delete(j.ID)
+	}
 	m.schedule()
 	n := Notice{Job: m.view(j, false), Took: j.FinishedAt.Sub(j.StartedAt)}
 	if j.StartedAt.IsZero() {

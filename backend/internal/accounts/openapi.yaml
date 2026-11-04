@@ -6,10 +6,60 @@ paths:
     get:
       operationId: meGet
       summary: The logged in user
+      description: With an API token, token names it and its rights.
+      responses:
+        "200":
+          description: The user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /me/password:
     put:
       operationId: mePassword
       summary: Change the own password, which ends the other sessions
+      description: |
+        Needs the current password. Every other session of the account is
+        logged out, this one stays. API tokens keep working. Not possible
+        with an API token. Five wrong current passwords block the change
+        for 15 minutes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current, next]
+              properties:
+                current:
+                  type: string
+                next:
+                  type: string
+                  minLength: 12
+      responses:
+        "200":
+          description: Changed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ended]
+                properties:
+                  ended:
+                    type: integer
+                    description: How many other sessions were logged out.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: The current password is wrong, the password is locked, or the request came with an API token.
+        "409":
+          description: The account signs in somewhere else, such as OIDC.
+        "429":
+          description: Too many wrong passwords.
   /me/sessions:
     get:
       operationId: sessionsList
@@ -48,90 +98,641 @@ paths:
     get:
       operationId: tokensList
       summary: API tokens
+      description: The tokens of the own account by name, without their secrets.
+      responses:
+        "200":
+          description: The tokens.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Token"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       operationId: tokenCreate
       summary: Create an API token with limited rights
+      description: |
+        A token never has more rights than its owner. One with the rights r
+        may only read: it cannot change files, and every other method than
+        GET and HEAD is refused. The secret is in this answer only. Not
+        possible with an API token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, rights]
+              properties:
+                name:
+                  type: string
+                  maxLength: 64
+                rights:
+                  type: string
+                  enum: [r, rw]
+                  description: r reads, rw also writes.
+                days:
+                  type: [integer, "null"]
+                  minimum: 0
+                  maximum: 3650
+                  description: How long the token lives. Null, 0 or left out means it never runs out.
+      responses:
+        "201":
+          description: Created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewToken"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: A token with this name exists.
   /me/tokens/{id}:
     delete:
       operationId: tokenDelete
       summary: Revoke an API token
+      description: The id comes from the list. Whatever uses the token loses access at once.
+      responses:
+        "204":
+          description: Revoked.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /me/passkeys:
     get:
       operationId: passkeysList
       summary: Passkeys
+      responses:
+        "200":
+          description: The passkeys, and whether the server takes passkeys.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [enabled, items]
+                properties:
+                  enabled:
+                    type: boolean
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Passkey"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       operationId: passkeyRegister
       summary: Register a passkey
+      description: |
+        Two steps on the same path. With a name alone the answer carries
+        the options for navigator.credentials.create, good for five
+        minutes. Sending the same name with the credential the browser
+        returned, as JSON, adds the passkey. It only works under the host
+        it was registered on. Not possible with an API token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  maxLength: 64
+                credential:
+                  type: object
+                  description: The PublicKeyCredential of the browser, for the second step.
+      responses:
+        "200":
+          description: The first step, with the options.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [options]
+                properties:
+                  options:
+                    type: object
+                    description: CredentialCreationOptions with a publicKey member, binary fields as base64url.
+        "201":
+          description: The passkey was added.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [passkey]
+                properties:
+                  passkey:
+                    $ref: "#/components/schemas/Passkey"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Passkeys are turned off, the name or the passkey is taken, or the first step ran out.
   /me/passkeys/{id}:
     delete:
       operationId: passkeyDelete
       summary: Remove a passkey
+      responses:
+        "204":
+          description: Removed.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /me/totp:
     post:
       operationId: totpSetup
       summary: Turn on two factor login
+      description: |
+        Three steps on the same path. An empty object starts the setup with
+        a fresh secret. The first code from the app within ten minutes
+        turns two factor login on, and the answer holds eight recovery
+        codes, each of which logs in once instead of a code. A code with
+        regenerate replaces the recovery codes with new ones. Codes are
+        shown this once. Not possible with an API token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: Six digits from the app. With regenerate, a recovery code works too.
+                regenerate:
+                  type: boolean
+      responses:
+        "200":
+          description: The secret when starting, the recovery codes otherwise.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/TotpSetup"
+                  - $ref: "#/components/schemas/RecoveryCodes"
+        "400":
+          description: The code does not match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Two factor login is on already or off, the setup ran out, or the account signs in somewhere else.
+        "429":
+          description: Too many wrong codes.
     delete:
       operationId: totpDisable
       summary: Turn off two factor login
+      description: Needs a code from the app or a recovery code. The recovery codes go with it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CodeInput"
+      responses:
+        "204":
+          description: Off.
+        "400":
+          description: The code does not work.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Two factor login is off already, or the server asks everyone for it.
+        "429":
+          description: Too many wrong codes.
+  /auth/reset-code:
+    post:
+      operationId: resetCodeRequest
+      summary: Ask for a code to reset a forgotten password
+      description: |
+        Writes a code to the container log, where only the admin of the
+        server can read it. It works for ten minutes. The answer is the
+        same for every name, so it cannot be used to find accounts.
+      x-access: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username]
+              properties:
+                username:
+                  type: string
+      responses:
+        "202":
+          description: Taken.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /auth/reset:
+    post:
+      operationId: passwordReset
+      summary: Set a new password with a code from the log
+      description: |
+        Also ends every session, turns off two factor login and revokes
+        every API token of the account. Passkeys stay. The client is
+        logged in with a new session cookie afterwards. Five wrong codes
+        from one address block it for 15 minutes.
+      x-access: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, password]
+              properties:
+                code:
+                  type: string
+                  example: K7QM-3XRP-9DTA
+                password:
+                  type: string
+                  minLength: 12
+      responses:
+        "200":
+          description: The new password counts, and this is the account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "400":
+          description: The code is wrong or ran out, or the password is too short.
+        "429":
+          description: Too many wrong codes.
   /admin/users:
     get:
       operationId: usersList
       summary: List users
       x-access: admin
+      responses:
+        "200":
+          description: Every user.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Account"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     post:
       operationId: userCreate
       summary: Create a user
       x-access: admin
+      description: The user signs in with the password. Login name, scopes and password are needed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+      responses:
+        "201":
+          description: Created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: The login name is taken.
   /admin/users/{id}:
     get:
       operationId: userGet
       summary: One user
+      description: The id in the path may also be the login name, which always starts with a letter.
       x-access: admin
+      responses:
+        "200":
+          description: The user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
     patch:
       operationId: userUpdate
       summary: Change a user
       x-access: admin
+      description: |
+        Fields left out stay as they are. A new password logs the user out
+        everywhere. Renaming moves the user's rules along. Nobody can change
+        their own login name or password here, or take away their own admin
+        role, so there is always an admin left.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+      responses:
+        "200":
+          description: Changed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The login name is taken, or an admin tried to give up the own admin role.
     delete:
       operationId: userDelete
       summary: Delete a user
       x-access: admin
+      description: |
+        Removes the account with its shares, jobs, rules, settings,
+        sessions and tokens. Files stay where they are. Nobody can delete
+        themselves.
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /admin/groups:
     get:
       operationId: groupsList
       summary: List groups
       x-access: admin
+      responses:
+        "200":
+          description: Every group.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Group"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     post:
       operationId: groupCreate
       summary: Create a group
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupInput"
+      responses:
+        "201":
+          description: Created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: The group exists.
   /admin/groups/{name}:
     patch:
       operationId: groupUpdate
       summary: Change a group
       x-access: admin
+      description: Fields left out stay as they are. Renaming moves the group's rules along.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupInput"
+      responses:
+        "200":
+          description: Changed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: A group with the new name exists.
     delete:
       operationId: groupDelete
       summary: Delete a group
       x-access: admin
+      description: The group and its rules go, its members stay users.
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /admin/rules:
     get:
       operationId: rulesGet
       summary: Access rules
       x-access: admin
+      description: The rules in order. For a path, the first rule that matches decides.
+      responses:
+        "200":
+          description: The rules.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RuleList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     put:
       operationId: rulesPut
       summary: Save access rules
       x-access: admin
+      description: |
+        Replaces every rule with the list, in its order. A path has to
+        exist, a pattern has a star. They count at once for every request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RuleList"
+      responses:
+        "200":
+          description: Saved, with the paths in their stored form.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RuleList"
+        "400":
+          description: A rule is wrong. The detail names it, counted from 1.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /admin/rules/test:
     post:
       operationId: rulesTest
       summary: Show what a user may do on a path
       x-access: admin
+      description: |
+        Asks the file system as that user, so the answer takes the scope,
+        the role, read only sources and the rules into account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user, path]
+              properties:
+                user:
+                  type: string
+                  description: Login name.
+                path:
+                  type: string
+      responses:
+        "200":
+          description: The verdict.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Verdict"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: There is no such user.
   /admin/activity:
     get:
       operationId: activityList
       summary: Activity log
       x-access: admin
+      description: Who did what and when, the newest first. Without from, the last seven days.
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: integer
+          description: Unix seconds.
+        - name: to
+          in: query
+          schema:
+            type: integer
+          description: Unix seconds.
+        - name: username
+          in: query
+          schema:
+            type: string
+        - name: eventType
+          in: query
+          schema:
+            type: string
+          description: One or more event types, separated by commas, such as login,upload.
+        - name: path
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+      responses:
+        "200":
+          description: One page.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total, page, limit]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ActivityEntry"
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 components:
   schemas:
     Session:
@@ -155,3 +756,263 @@ components:
         current:
           type: boolean
           description: The session this request came with.
+    Account:
+      type: object
+      required: [id, name, full, role, scope, groups, loginMethod, twofa, passkeys, last, pwChanged]
+      properties:
+        id:
+          type: string
+          description: A number too large for JavaScript, so it comes as a string.
+        name:
+          type: string
+          description: The login name.
+        full:
+          type: string
+          description: The name to show. The login name when none is set.
+        role:
+          type: string
+          enum: [admin, user, readonly]
+        scope:
+          type: string
+          description: The folder the user sees, as an absolute path.
+        groups:
+          type: array
+          items:
+            type: string
+        loginMethod:
+          type: string
+          enum: [password, proxy, oidc, ldap, jwt]
+        twofa:
+          type: boolean
+        passkeys:
+          type: integer
+        last:
+          type: [string, "null"]
+          format: date-time
+          description: The last request of a session, null for never.
+        pwChanged:
+          type: [string, "null"]
+          format: date-time
+    Me:
+      allOf:
+        - $ref: "#/components/schemas/Account"
+        - type: object
+          required: [recovery, lockPassword]
+          properties:
+            recovery:
+              type: integer
+              description: Recovery codes that are left.
+            lockPassword:
+              type: boolean
+              description: Only an admin may change the password.
+            token:
+              type: object
+              required: [name, rights]
+              properties:
+                name:
+                  type: string
+                rights:
+                  type: string
+                  enum: [r, rw]
+    UserInput:
+      type: object
+      properties:
+        name:
+          type: string
+          pattern: "^[a-z][a-z0-9._-]{1,31}$"
+          description: The login name.
+        full:
+          type: string
+        role:
+          type: string
+          enum: [admin, user, readonly]
+          description: user when left out of a new user.
+        scope:
+          type: string
+          description: |
+            An existing folder as an absolute path. A folder such as /mnt
+            that only leads to sources stands for all of them. The single
+            disks and the cache are for admins.
+        groups:
+          type: array
+          items:
+            type: string
+        password:
+          type: string
+          minLength: 12
+    Token:
+      type: object
+      required: [id, name, rights, created, expires, last]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        rights:
+          type: string
+          enum: [r, rw]
+        created:
+          type: string
+          format: date-time
+        expires:
+          type: [string, "null"]
+          format: date-time
+          description: Null when it never runs out.
+        last:
+          type: [string, "null"]
+          format: date-time
+          description: Last use to the minute, null for never.
+    NewToken:
+      allOf:
+        - $ref: "#/components/schemas/Token"
+        - type: object
+          required: [secret]
+          properties:
+            secret:
+              type: string
+              description: The token itself, sent as a bearer token.
+    Passkey:
+      type: object
+      required: [id, name, origin, created, last]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+          description: The host the passkey works for.
+        created:
+          type: string
+          format: date-time
+        last:
+          type: [string, "null"]
+          format: date-time
+    TotpSetup:
+      type: object
+      required: [secret, uri, qr]
+      properties:
+        secret:
+          type: string
+          description: Base32, for typing it into the app.
+        uri:
+          type: string
+          description: The otpauth URI.
+        qr:
+          type: string
+          description: The URI as a QR code, an SVG document.
+    CodeInput:
+      type: object
+      required: [code]
+      properties:
+        code:
+          type: string
+          description: Six digits from the app, or a recovery code like K7QM-3XRP.
+    RecoveryCodes:
+      type: object
+      required: [codes]
+      properties:
+        codes:
+          type: array
+          items:
+            type: string
+            example: K7QM-3XRP
+    Group:
+      type: object
+      required: [name, note, members]
+      properties:
+        name:
+          type: string
+        note:
+          type: string
+        members:
+          type: array
+          description: Login names.
+          items:
+            type: string
+    GroupInput:
+      type: object
+      properties:
+        name:
+          type: string
+          pattern: "^[a-z0-9][a-z0-9_-]{0,31}$"
+        note:
+          type: string
+        members:
+          type: array
+          items:
+            type: string
+    Rule:
+      type: object
+      required: [who, path, rule]
+      properties:
+        who:
+          type: string
+          description: A login name, @ and a group name, or * for everybody.
+          example: "@familie"
+        path:
+          type: string
+          description: |
+            An absolute path, which covers the folder and everything in it,
+            or a pattern with a star, which matches names anywhere, such as
+            *.partial*. Patterns ignore case.
+        rule:
+          type: string
+          enum: [hide, read, allow]
+          description: Allow lifts a rule further down, such as for a subfolder.
+    RuleList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          maxItems: 500
+          items:
+            $ref: "#/components/schemas/Rule"
+    Verdict:
+      type: object
+      required: [result, reason]
+      properties:
+        result:
+          type: string
+          enum: [visible, read, hidden, missing]
+        reason:
+          type: string
+          enum: [scope, rule, role, source, none]
+          description: |
+            What decided: the scope of the user, a rule, the read only
+            role, a read only source, or nothing in particular.
+        rule:
+          type: integer
+          description: The deciding rule, counted from 0.
+        scope:
+          type: string
+          description: The folder of the user, when the scope decided.
+    ActivityEntry:
+      type: object
+      required: [id, t, who, what, obj, details]
+      properties:
+        id:
+          type: integer
+        t:
+          type: string
+          format: date-time
+        who:
+          type: string
+          description: The login name, anonymous for public links.
+        what:
+          type: string
+          description: The event type, such as login, upload or shareCreate.
+        obj:
+          type: string
+          description: What the event was about in a few words, such as a path or a user.
+        path:
+          type: string
+          description: Absolute path, when the event touched files.
+        target:
+          type: string
+          description: Where a move or copy went.
+        ip:
+          type: string
+        details:
+          type: object

@@ -207,6 +207,52 @@ func TestCheckHonoursAccessRules(t *testing.T) {
 	}
 }
 
+// pathRules hides one folder and makes another read only, for anna only.
+type pathRules struct{ hidden, readOnly string }
+
+func (pathRules) AccessPermitted(string, utils.IndexPath, string) bool { return true }
+
+func (p pathRules) Effect(u *users.User, path string) Effect {
+	switch {
+	case u.Username != "anna":
+		return Open
+	case path == p.hidden || strings.HasPrefix(path, p.hidden+"/"):
+		return Hidden
+	case path == p.readOnly || strings.HasPrefix(path, p.readOnly+"/"):
+		return ReadOnly
+	}
+	return Open
+}
+
+func TestCheckHonoursTheAppRules(t *testing.T) {
+	r, roots := newResolver(t, pathRules{hidden: "/mnt/user/backups", readOnly: "/mnt/user/fotos"})
+	anna := user("anna", false, users.BackendScope{Path: roots.user, Scope: "/", Permissions: allPerms})
+	jdp := user("jdp", false, users.BackendScope{Path: roots.user, Scope: "/", Permissions: allPerms})
+
+	if _, err := r.Check(anna, "/mnt/user/backups/flash.zip", View); !errors.Is(err, ErrForbidden) {
+		t.Fatalf("hidden path: err = %v", err)
+	}
+	if _, err := r.Check(anna, "/mnt/user/backups/flash.zip::/config", View); !errors.Is(err, ErrForbidden) {
+		t.Fatalf("archive in a hidden folder: err = %v", err)
+	}
+	if _, err := r.Check(anna, "/mnt/user/fotos/a.jpg", View|Download); err != nil {
+		t.Fatalf("reading a read only folder: %v", err)
+	}
+	if _, err := r.Check(anna, "/mnt/user/fotos/a.jpg", Delete); !errors.Is(err, ErrReadOnly) {
+		t.Fatalf("deleting in a read only folder: err = %v", err)
+	}
+	if _, err := r.Check(jdp, "/mnt/user/backups", Delete); err != nil {
+		t.Fatalf("the rules are only for anna: %v", err)
+	}
+	dir, err := r.Check(anna, "/mnt/user", View)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Visible(anna, dir, "backups") || !r.Visible(anna, dir, "fotos") {
+		t.Error("only the hidden folder may drop out of the listing")
+	}
+}
+
 func TestVisibleShowsOnlyTheWayToTheScope(t *testing.T) {
 	r, roots := newResolver(t, nil)
 	anna := user("anna", false, users.BackendScope{Path: roots.user, Scope: "/fotos", Permissions: allPerms})
