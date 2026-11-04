@@ -1,0 +1,216 @@
+tag:
+  name: office
+  description: |
+    Office files in OnlyOffice, Euro-Office or Collabora, as chosen in
+    admin/app. The document server reaches the file and callback addresses
+    and the WOPI endpoints without a session, with the token from
+    office/config, which is good for one file, one user and 24 hours. The
+    user's rights are checked again on every call.
+paths:
+  /office/config:
+    get:
+      operationId: officeConfig
+      summary: What the viewer needs to open a file in the office server
+      description: |
+        For OnlyOffice and Euro-Office the editor config, signed with the
+        server's JWT secret when one is set. Users who may not change the
+        file get it in view mode. For Collabora the editor address with
+        WOPISrc, the access token and its end in milliseconds, to post into
+        the editor frame as access_token and access_token_ttl.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      responses:
+        "200":
+          description: How to open the file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfficeConfig"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: No office server is set up.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: Collabora did not answer its discovery.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /office/file:
+    get:
+      operationId: officeFile
+      summary: The document for OnlyOffice and Euro-Office
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/OfficeToken"
+      responses:
+        "200":
+          description: The file.
+          content:
+            application/octet-stream: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /office/callback:
+    post:
+      operationId: officeCallback
+      summary: Where OnlyOffice and Euro-Office report and save a document
+      description: |
+        With a JWT secret only signed callbacks count. On status 2 and 6
+        the document is fetched from the document server, only from its
+        own address, and replaces the file. The answer is always
+        {"error":0} or {"error":1}, as the document server expects.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/OfficeToken"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                status:
+                  type: integer
+                url:
+                  type: string
+                token:
+                  type: string
+      responses:
+        "200":
+          description: The answer for the document server.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: integer
+                    enum: [0, 1]
+  /wopi/files/{id}:
+    get:
+      operationId: wopiCheckFileInfo
+      summary: WOPI CheckFileInfo
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+      responses:
+        "200":
+          description: Name, size, version and the user's rights.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      operationId: wopiLock
+      summary: WOPI LOCK, GET_LOCK, REFRESH_LOCK and UNLOCK
+      description: The operation comes in X-WOPI-Override, the lock in X-WOPI-Lock. A lock holds 30 minutes.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+      responses:
+        "200":
+          description: Done, X-WOPI-Lock carries the lock.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Another lock is in the way, X-WOPI-Lock names it.
+  /wopi/files/{id}/contents:
+    get:
+      operationId: wopiGetFile
+      summary: WOPI GetFile
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+      responses:
+        "200":
+          description: The file.
+          content:
+            application/octet-stream: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      operationId: wopiPutFile
+      summary: WOPI PutFile
+      description: |
+        Replaces the file with the body. A file locked by someone else, or
+        changed since the time in X-COOL-WOPI-Timestamp, answers 409.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+      requestBody:
+        required: true
+        content:
+          application/octet-stream: {}
+      responses:
+        "200":
+          description: Saved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  LastModifiedTime:
+                    type: string
+                    format: date-time
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Locked by someone else, or changed meanwhile.
+components:
+  parameters:
+    OfficeToken:
+      name: token
+      in: query
+      required: true
+      schema:
+        type: string
+    WopiToken:
+      name: access_token
+      in: query
+      required: true
+      schema:
+        type: string
+  schemas:
+    OfficeConfig:
+      type: object
+      required: [kind, url]
+      properties:
+        kind:
+          type: string
+          enum: [onlyoffice, eurooffice, collabora]
+        url:
+          type: string
+          description: The document server, or for Collabora the editor address with WOPISrc.
+        config:
+          type: object
+          description: The editor config for DocsAPI.DocEditor.
+          additionalProperties: true
+        token:
+          type: string
+          description: The WOPI access token.
+        ttl:
+          type: integer
+          format: int64
+          description: When the access token ends, in milliseconds since 1970.
