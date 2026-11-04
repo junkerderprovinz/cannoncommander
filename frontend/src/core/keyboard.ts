@@ -11,7 +11,16 @@ const typing = (t: EventTarget | null) => !!(t as Element | null)?.closest?.('in
 
 export function handleKey(e: KeyboardEvent) {
   if (isMenuOpen()) {
-    if (e.key === 'Escape') { e.preventDefault(); closeMenu(); }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeMenu();
+      // The bar hands focus back to its title, where the next arrow key would open the menu again. Like the
+      // prototype, Escape goes back to the file list instead.
+      setTimeout(() => {
+        const el = document.activeElement as HTMLElement | null;
+        if (el?.closest('.menubar')) el.blur();
+      });
+    }
     return;
   }
   if (winStack.length) {
