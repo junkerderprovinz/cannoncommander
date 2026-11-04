@@ -4,6 +4,7 @@ import { nextTick, onMounted, onUpdated, watch } from 'vue';
 import { extend } from '@/core/extend';
 import { prefs } from '@/core/prefs';
 import { usePanels } from '@/stores/panels';
+import QuickviewPanel from '@/features/viewer/QuickviewPanel.vue';
 import Panel from './Panel.vue';
 import Sidebar from './Sidebar.vue';
 
@@ -17,5 +18,5 @@ onUpdated(() => extend.onRender.forEach((fn) => fn()));
 </script>
 
 <template>
-  <Sidebar /><div id="panels" class="panels"><Panel v-for="i in prefs.dual ? [0, 1] : [0]" :key="i" :i="i" /></div>
+  <Sidebar /><div id="panels" class="panels"><template v-for="i in prefs.dual ? [0, 1] : [0]" :key="i"><QuickviewPanel v-if="prefs.quickview && prefs.dual && i !== F.active" :i="i" /><Panel v-else :i="i" /></template></div>
 </template>

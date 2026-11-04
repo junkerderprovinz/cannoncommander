@@ -1,0 +1,109 @@
+{
+  "title": "Ansehen",
+  "quickview": "Vorschau im anderen Fenster",
+  "download": "Herunterladen",
+  "edit": "Bearbeiten",
+  "share": "Freigeben",
+  "unpack": "Entpacken",
+  "openIn": "In {name} öffnen",
+  "changed": "geändert {time}",
+  "preview": "Vorschau",
+  "pickFile": "Wähle links eine Datei",
+  "failed": "Diese Datei lässt sich gerade nicht lesen.",
+  "and": "und {rest}",
+  "img": {
+    "of": "{i} von {n}",
+    "fit": "Einpassen",
+    "prev": "Vorheriges Bild",
+    "prevTip": "Vorheriges Bild (Pfeil links)",
+    "next": "Nächstes Bild",
+    "nextTip": "Nächstes Bild (Pfeil rechts)"
+  },
+  "media": {
+    "play": "Abspielen",
+    "playTip": "Abspielen (Leertaste)",
+    "pause": "Anhalten",
+    "pauseTip": "Anhalten (Leertaste)",
+    "position": "Position",
+    "subs": "Untertitel",
+    "audio": "Tonspur",
+    "off": "Aus",
+    "track": "Spur {n}",
+    "subFile": "Untertitel-Datei",
+    "playBig": "Im großen Fenster abspielen (F3)",
+    "prevTrack": "Vorheriger Titel",
+    "nextTrack": "Nächster Titel",
+    "cantPlay": "Diese Datei kann der Browser leider nicht abspielen. Herunterladen klappt aber immer."
+  },
+  "langs": {
+    "de": "Deutsch", "en": "Englisch", "fr": "Französisch", "es": "Spanisch", "it": "Italienisch", "nl": "Niederländisch", "pl": "Polnisch",
+    "cs": "Tschechisch", "hu": "Ungarisch", "tr": "Türkisch", "pt": "Portugiesisch", "ru": "Russisch", "ja": "Japanisch"
+  },
+  "text": {
+    "wrap": "Zeilen umbrechen",
+    "truncated": "Nur der Anfang",
+    "cut": "gekürzt"
+  },
+  "md": { "rendered": "Gerendert", "source": "Quelltext" },
+  "pages": {
+    "of": "Seite {i} von {n}",
+    "page": "Seite {n}",
+    "prev": "Vorherige Seite",
+    "prevTip": "Vorherige Seite (Bild auf)",
+    "next": "Nächste Seite",
+    "nextTip": "Nächste Seite (Bild ab)"
+  },
+  "slides": { "of": "Folie {i} von {n}", "slide": "Folie {n}", "prev": "Vorherige Folie", "next": "Nächste Folie" },
+  "office": {
+    "doc": "Textdokument",
+    "sheet": "Tabelle",
+    "none": "Für dieses Format braucht die Vorschau einen Office-Server. Unter Einstellungen, Integrationen kannst du einen eintragen.",
+    "unreachable": "{name} ist gerade nicht erreichbar. Herunterladen geht trotzdem.",
+    "kinds": { "none": "Office", "onlyoffice": "OnlyOffice", "eurooffice": "Euro-Office", "collabora": "Collabora" }
+  },
+  "arch": {
+    "browse": "Wie einen Ordner öffnen",
+    "unpacked": "entpackt {size}",
+    "unreadable": "In dieses Archiv kann die Vorschau gerade nicht hineinsehen.",
+    "limit": "Die Vorschau zeigt die ersten {n} Einträge."
+  },
+  "hex": {
+    "first": "Erste {n} Byte",
+    "tip": "Für diesen Dateityp gibt es keine Vorschau. Die Hexansicht zeigt den Anfang der Datei, so wie er auf der Platte steht.",
+    "sqlite": "SQLite-Datenbank",
+    "program": "Programm",
+    "binary": "Binärdatei"
+  },
+  "disk": {
+    "eyebrow": "Abbild",
+    "format": "Format",
+    "iso": "ISO 9660",
+    "raw": "Rohes Disk-Image",
+    "label": "Bezeichnung",
+    "boot": "Startet mit",
+    "used": "Belegt",
+    "usedTip": "Das Abbild ist dünn angelegt. Es belegt auf der Platte nur so viel, wie wirklich darin steht.",
+    "sum": "Prüfsumme",
+    "sumThere": "liegt daneben",
+    "sumNone": "keine",
+    "sumTip": "Neben dem Abbild liegt eine .sha256-Datei. Unter Datei, Prüfsumme prüfen vergleichst du beide.",
+    "parts": "Partitionen",
+    "content": "Inhalt"
+  },
+  "dir": { "none": "leer", "empty": "Dieser Ordner ist leer" },
+  "details": { "size": "Größe", "content": "Inhalt", "format": "Format", "changed": "Geändert", "owner": "Besitzer", "rights": "Rechte" },
+  "epub": { "book": "E-Book", "prev": "Vorherige Seite", "next": "Nächste Seite" },
+  "model": { "info": "3D-Modell, {format}", "hint": "Ziehen dreht das Modell, das Mausrad holt es näher" },
+  "lang": { "nginx": "Nginx", "config": "Konfiguration", "log": "Log", "subtitle": "Untertitel", "checksum": "Prüfsumme", "text": "Text" },
+  "n": {
+    "lines": { "one": "{n} Zeile", "many": "{n} Zeilen" },
+    "pages": { "one": "{n} Seite", "many": "{n} Seiten" },
+    "sheets": { "one": "{n} Blatt", "many": "{n} Blätter" },
+    "slides": { "one": "{n} Folie", "many": "{n} Folien" },
+    "files": { "one": "{n} Datei", "many": "{n} Dateien" },
+    "dirs": { "one": "{n} Ordner", "many": "{n} Ordner" },
+    "morePictures": { "one": "{n} weiteres Bild", "many": "{n} weitere Bilder" },
+    "moreObjects": { "one": "{n} weiteres Objekt", "many": "{n} weitere Objekte" },
+    "moreEntries": { "one": "{n} weiterer Eintrag", "many": "{n} weitere Einträge" }
+  }
+}

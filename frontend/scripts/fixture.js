@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import vm from 'node:vm';
+import { contentRoutes } from './fixture-content.js';
 
 const prototype = join(import.meta.dirname, '..', '..', 'prototype', 'src');
 
@@ -46,6 +47,7 @@ export function createFixture() {
     return n && n.dir ? n : null;
   };
   return {
+    FS,
     list(path) {
       const n = dirAt(path);
       return n && { path, items: FS.kids(n).map(item), volume: volume(path) };
@@ -69,8 +71,9 @@ const problem = (res, status, title) => {
 // Connect middleware for Vite's dev and preview servers.
 export function fixtureMiddleware() {
   const fx = createFixture();
+  const content = contentRoutes(fx.FS);
   const routes = {
-    '/api/v1/fs/list': (q) => fx.list(q.get('path') || '/'),
+    '/api/v1/fs/list': (q) => content.list(q.get('path') || '/') || fx.list(q.get('path') || '/'),
     '/api/v1/fs/tree': (q) => fx.tree(q.get('path') || '/'),
     '/api/v1/me': () => fx.me(),
     '/api/v1/me/bookmarks': () => fx.bookmarks(),
@@ -82,6 +85,7 @@ export function fixtureMiddleware() {
     const url = new URL(req.url, 'http://fixture');
     const route = routes[url.pathname];
     if (!url.pathname.startsWith('/api/')) return next();
+    if (content.handle(url, req, res)) return;
     if (!route) return problem(res, 501, 'Not built yet');
     const body = route(url.searchParams);
     if (!body) return problem(res, 404, 'Not found');
