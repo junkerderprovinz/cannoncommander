@@ -76,6 +76,7 @@ func (e *env) serve() {
 			u.BackendScopes = append(u.BackendScopes, users.BackendScope{Path: root, Scope: "/", Permissions: perms})
 		}
 		u.Username = name
+		u.Permissions.Admin = name == "admin"
 		return u, nil
 	}
 	r := v1.NewRouter(e.deps, auth)

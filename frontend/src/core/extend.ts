@@ -6,6 +6,8 @@ import type { Toast } from './toast';
 
 export interface ExtensionPoints {
   entryFilters: Array<(items: Entry[], path: string, panel: number) => Entry[]>;
+  // A search word starting with # asks these whether an entry carries that colour or tag.
+  tagMatchers: Array<(item: Entry, word: string, path: string) => boolean>;
   // Returning false from beforeGo stops the change of folder.
   beforeGo: Array<(path: string, panel: number) => boolean | void | Promise<boolean | void>>;
   afterGo: Array<(path: string, panel: number) => void>;
@@ -21,7 +23,7 @@ export interface ExtensionPoints {
 }
 
 export const extend: ExtensionPoints = {
-  entryFilters: shallowReactive([]), beforeGo: shallowReactive([]), afterGo: shallowReactive([]), transferPipeline: shallowReactive([]),
+  entryFilters: shallowReactive([]), tagMatchers: shallowReactive([]), beforeGo: shallowReactive([]), afterGo: shallowReactive([]), transferPipeline: shallowReactive([]),
   footerSlots: shallowReactive([]), nameBadges: shallowReactive([]), thumbProviders: shallowReactive([]), sideRows: shallowReactive([]),
   treeDecorators: shallowReactive([]), actionWrappers: shallowReactive([]), onRender: shallowReactive([]), toastHistory: shallowReactive([]),
 };

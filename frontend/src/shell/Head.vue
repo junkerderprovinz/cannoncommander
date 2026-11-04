@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { MenuBar } from '@glimstone/vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { run } from '@/core/actions';
 import { G } from '@/core/glyphs';
-import { closeMenu, menu, menuState } from '@/core/menu';
-import { allMenuItems, MENUS, menuName, openMenuBar } from '@/core/menus';
+import { menu, resolveItems, toGlim } from '@/core/menu';
+import { allMenuItems, MENUS, menuItems, menuName, setMenuBarOpener } from '@/core/menus';
 import { prefs } from '@/core/prefs';
 import { go, view } from '@/core/views';
 import { t } from '@/i18n';
@@ -15,9 +16,14 @@ const files = computed(() => view.id === 'files');
 const settings = computed(() => view.id === 'settings');
 const initials = computed(() => user.me.name.slice(0, 2).toUpperCase());
 
-const toggleBar = (i: number) => (menuState.bar === i ? closeMenu() : openMenuBar(i));
-// While a menu of the bar is open, pointing at another title opens that one instead.
-const hoverBar = (i: number) => { if (menuState.anchor && menuState.bar !== i) openMenuBar(i); };
+// The menus are read again whenever an action changes, so a menu opened later shows today's state.
+const bar = ref<InstanceType<typeof MenuBar> | null>(null);
+const barMenus = computed(() => MENUS.map((_, i) => ({ label: menuName(i), items: toGlim(resolveItems(menuItems(i))) })));
+onMounted(() => setMenuBarOpener((i) => bar.value?.open(i)));
+// The prototype numbered its menu titles, and its step files still click them by that number.
+watch(bar, (b) => {
+  (b?.$el as HTMLElement | undefined)?.querySelectorAll<HTMLElement>('.glim-menubar-item').forEach((el, i) => { el.dataset.menu = String(i); });
+}, { flush: 'post' });
 const at = (e: MouseEvent) => (e.currentTarget as HTMLElement).getBoundingClientRect();
 
 function allMenus(e: MouseEvent) {
@@ -40,9 +46,7 @@ function account(e: MouseEvent) {
     <button class="brand" data-go-view="files" :data-tip="t('head.brand')" :aria-label="t('head.brand')" @click="go('files')"><span class="brand-mark"><G n="IconFolderOpen" /></span></button>
     <span class="hsep"></span>
     <template v-if="files">
-      <nav class="menubar" :aria-label="t('menus.label')">
-        <button v-for="(_, i) in MENUS" :key="i" :data-menu="i" :class="{ open: menuState.bar === i }" @click="toggleBar(i)" @mouseover="hoverBar(i)">{{ menuName(i) }}</button>
-      </nav>
+      <MenuBar ref="bar" class="menubar" :label="t('menus.label')" :menus="barMenus" />
       <button class="btn icon narrow-only" data-all-menus :data-tip="t('menus.label')" @click="allMenus"><G n="IconMenu" /></button>
     </template>
     <button v-else class="btn hback" data-go-view="files" :data-tip="t('head.backTip')" @click="go('files')"><G n="IconBack" />{{ t('head.back') }}</button>
