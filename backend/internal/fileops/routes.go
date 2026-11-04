@@ -23,4 +23,8 @@ func Routes(r *v1.Router) {
 	r.Handle("POST /fs/touch", s.touch)
 	r.Handle("POST /fs/rename", s.rename)
 	r.Handle("POST /ops/preflight", s.preflight)
+	r.Handle("POST /uploads", s.uploadCreate)
+	r.Handle("GET /uploads/{id}", s.uploadGet)
+	r.Handle("PUT /uploads/{id}", s.uploadChunk)
+	r.Handle("DELETE /uploads/{id}", s.uploadCancel)
 }

@@ -65,7 +65,23 @@ const seedRandom = () => {
 
 // The page's clock stands still and moves only while a step file waits, so jobs, toasts and timers reach the
 // same point on every run no matter how fast the machine is. Waiting for a condition steps the clock until it holds.
+// The prototype keeps everything in memory; the app asks its server, and an answer arrives in real time while the
+// page clock stands still. A wait lets the answers in flight land first, so both pages reach the same point.
+function inFlight(tab: Page) {
+  let open = 0;
+  tab.on('request', () => { open++; });
+  tab.on('requestfinished', () => { open--; });
+  tab.on('requestfailed', () => { open--; });
+  const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
+  // A request the page has just sent takes a moment to be reported, so the count is read after a short pause.
+  return async () => {
+    await sleep(30);
+    for (let waited = 0; open > 0 && waited < 5000; waited += 10) await sleep(10);
+  };
+}
+
 function driven(tab: Page): Page {
+  const settle = inFlight(tab);
   const until = async (test: () => Promise<unknown>, timeout = 30_000, what = 'condition') => {
     for (let waited = 0; ; waited += 50) {
       const value = await test();
@@ -121,7 +137,11 @@ function driven(tab: Page): Page {
   const own: Partial<Page> = {
     ...Object.fromEntries(Object.keys(OPTIONS_AT).map((name) => [name, acting(name)])),
     evaluate: evaluate as never,
-    waitForTimeout: (ms: number) => tab.clock.runFor(ms),
+    waitForTimeout: async (ms: number) => {
+      await settle();
+      await tab.clock.runFor(ms);
+      await settle();
+    },
     waitForFunction: ((fn: () => unknown, arg?: unknown, o?: { timeout?: number }) =>
       until(() => tab.evaluate(fn as never, arg), o?.timeout, 'waitForFunction')) as never,
     waitForSelector: ((selector: string, o?: { state?: string; timeout?: number }) =>

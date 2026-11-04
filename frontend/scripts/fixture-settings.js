@@ -1,0 +1,328 @@
+// The settings pages, the account and the labels in the shape of /api/v1, with the prototype's made-up people,
+// shares and sources. It keeps changes in memory, so a page can be clicked through as it will work against the server.
+import { createFixture } from './fixture.js';
+
+const MIN = 60000, HOUR = 60 * MIN, DAY = 24 * HOUR, KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
+const iso = (t) => (t == null ? null : new Date(t).toISOString());
+const json = (res, status, body) => {
+  res.statusCode = status;
+  res.setHeader('Content-Type', status >= 400 ? 'application/problem+json' : 'application/json');
+  res.end(status === 204 ? '' : JSON.stringify(status >= 400 ? { type: 'about:blank', title: body, status } : body));
+};
+const readBody = (req) => new Promise((resolve) => {
+  let raw = '';
+  req.on('data', (c) => { raw += c; });
+  req.on('end', () => { try { resolve(raw ? JSON.parse(raw) : {}); } catch { resolve({}); } });
+});
+
+// The prototype's three-finder pattern, seeded from the secret, so the code reads as a QR code.
+function qr(secret) {
+  const n = 25;
+  let s = [...secret].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 2147483647, 7);
+  const next = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const finder = (x, y) => (x < 7 && y < 7) || (x >= n - 7 && y < 7) || (x < 7 && y >= n - 7);
+  const inFinder = (x, y) => {
+    const fx = x >= n - 7 ? x - (n - 7) : x, fy = y >= n - 7 ? y - (n - 7) : y;
+    return fx === 0 || fx === 6 || fy === 0 || fy === 6 || (fx >= 2 && fx <= 4 && fy >= 2 && fy <= 4);
+  };
+  let rects = '';
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const on = finder(x, y) ? inFinder(x, y) : (x === 7 || y === 7 || x === n - 8 || y === n - 8) && (finder(x - 1, y) || finder(x, y - 1) || finder(x + 1, y) || finder(x, y + 1)) ? false : next() > 0.52;
+    if (on) rects += `<rect x="${x + 2}" y="${y + 2}" width="1" height="1"/>`;
+  }
+  return `<svg viewBox="0 0 ${n + 4} ${n + 4}" shape-rendering="crispEdges"><rect width="${n + 4}" height="${n + 4}" fill="#fff"/><g fill="#161616">${rects}</g></svg>`;
+}
+const randomOf = (alphabet, n) => Array.from({ length: n }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('');
+const codes = () => Array.from({ length: 8 }, () => `${randomOf('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4)}-${randomOf('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4)}`);
+
+function state() {
+  const now = Date.now();
+  return {
+    started: now,
+    me: { name: 'jdp', full: 'Junker der Provinz', role: 'Admin', twofa: true, pwChanged: now - 41 * DAY, recovery: 8 },
+    users: [
+      { name: 'jdp', full: 'Junker der Provinz', role: 'admin', groups: ['admins', 'familie'], scope: '/mnt/user', last: now - 3 * MIN, twofa: true },
+      { name: 'anna', full: 'Anna', role: 'user', groups: ['familie'], scope: '/mnt/user/fotos', last: now - 2 * DAY, twofa: false },
+      { name: 'gast', full: 'Gast', role: 'readonly', groups: [], scope: '/mnt/user/filme', last: now - 40 * DAY, twofa: false },
+    ],
+    groups: [
+      { name: 'admins', members: ['jdp'], note: 'Alles, auch Einstellungen' },
+      { name: 'familie', members: ['jdp', 'anna'], note: 'Fotos, Musik, Filme' },
+    ],
+    sources: [
+      { name: 'Shares', path: '/mnt/user', readOnly: false, indexed: true, skipHidden: true, exclude: [], files: 182344, size: 6.6 * TB },
+      { name: 'Cache', path: '/mnt/cache', readOnly: false, indexed: true, skipHidden: true, exclude: [], files: 4021, size: 580 * GB },
+      { name: 'USB-Stick', path: '/boot', readOnly: true, indexed: false, skipHidden: true, exclude: [], files: 211, size: 8 * GB },
+      { name: 'Fernziele', path: '/mnt/remotes', readOnly: false, indexed: false, skipHidden: true, exclude: [], files: 0, size: 0 },
+    ],
+    index: { last: now - 5.5 * HOUR },
+    rules: [
+      { who: 'anna', path: '/mnt/user/backups', rule: 'hide' },
+      { who: 'gast', path: '/mnt/user/filme', rule: 'read' },
+      { who: '*', path: '*.partial*', rule: 'hide' },
+    ],
+    shares: [
+      { id: 's1', path: '/mnt/user/fotos/Urlaub', by: 'jdp', created: now - 5 * DAY, expires: now + 25 * DAY, password: true, views: 14, slug: 'k3x9-urlaub' },
+      { id: 's2', path: '/mnt/user/dokumente/Rechnung-Oktober.pdf', by: 'jdp', created: now - 1 * DAY, expires: now + 6 * DAY, password: false, views: 2, slug: 'p7q2-rechnung' },
+    ],
+    activity: [
+      { t: now - 4 * MIN, who: 'jdp', what: 'copy', obj: '2 Dateien nach /mnt/user/backups', path: '/mnt/user/backups' },
+      { t: now - 40 * MIN, who: 'jdp', what: 'rename', obj: '22 Fotos in /mnt/user/fotos/2026', path: '/mnt/user/fotos/2026' },
+      { t: now - 3 * HOUR, who: 'anna', what: 'upload', obj: '9 Fotos nach /mnt/user/fotos/Urlaub', path: '/mnt/user/fotos/Urlaub' },
+      { t: now - 5 * HOUR, who: 'jdp', what: 'share', obj: '/mnt/user/fotos/Urlaub', path: '/mnt/user/fotos/Urlaub' },
+      { t: now - 1 * DAY, who: 'gast', what: 'login', obj: 'von 192.168.30.50' },
+      { t: now - 2 * DAY, who: 'jdp', what: 'delete', obj: 'alte-notizen.txt' },
+    ],
+    sessions: [
+      { id: 'a1', created: now - 9 * DAY, seen: now - MIN, userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0', ip: '192.168.10.16', current: true },
+      { id: 'a2', created: now - 20 * DAY, seen: now - 2 * HOUR, userAgent: 'Mozilla/5.0 (Android 15; Mobile; rv:140.0) Gecko/140.0 Firefox/140.0', ip: '192.168.30.50', current: false },
+    ],
+    tokens: [{ id: 't1', name: 'backup-skript', created: now - 30 * DAY, last: now - DAY, rights: 'rw', expires: null }],
+    passkeys: [
+      { id: 'p1', name: 'Windows Hello', origin: 'cannon.tower.lan', created: now - 60 * DAY, last: now - 3 * MIN },
+      { id: 'p2', name: 'Handy', origin: '192.168.10.5:8443', created: now - 120 * DAY, last: now - 50 * DAY },
+    ],
+    remotes: [
+      { name: 'gdrive', type: 'gdrive', mount: '/mnt/remotes/gdrive', mounted: true, account: 'junker@example.org', cfg: { folder: '' } },
+      { name: 'nas-keller', type: 'smb', mount: '/mnt/remotes/nas-keller', mounted: true, cfg: { host: 'keller', share: 'archiv', user: 'jdp', domain: '' } },
+    ],
+    app: {
+      indexEvery: 'daily', rclone: { automount: true, cache: 'writes', cacheSize: 50 },
+      office: { kind: 'none', url: '', secret: '' }, thumbs: true, videoPreview: false, webdav: false, webdavUrl: 'https://cannon.tower.lan/dav/',
+      autoCheck: true, logLevel: 'info', image: 'ghcr.io/junkerderprovinz/cannoncommander', tag: 'latest',
+    },
+    colours: [['red', '#ff6b72'], ['orange', '#ff8a3d'], ['yellow', '#f5c518'], ['green', '#4cc977'], ['blue', '#3b9cf5'], ['purple', '#a98bff']].map(([id, hex]) => ({ id, name: '', hex })),
+    tags: [],
+    labels: {
+      '/mnt/user/dokumente/Mietvertrag.pdf': { colour: 'red', tags: ['wichtig'] },
+      '/mnt/user/dokumente/Steuer 2025.xlsx': { colour: 'orange', tags: ['prüfen', 'Steuer'] },
+      '/mnt/user/dokumente/Rechnung-Oktober.pdf': { tags: ['Steuer'] },
+      '/mnt/user/downloads/ubuntu-24.04.3-desktop-amd64.iso': { colour: 'green', tags: ['fertig'] },
+      '/mnt/user/fotos/2026/IMG_0203.jpg': { colour: 'purple', tags: ['für Anna'] },
+    },
+    exports: [],
+    totpSecret: '',
+  };
+}
+
+const split = (p) => { const at = p.lastIndexOf('/'); return [p.slice(0, at) || '/', p.slice(at + 1)]; };
+const APPDATA = '/mnt/user/appdata/cannoncommander', EXPORTS = APPDATA + '/exports';
+
+export function settingsFixtureMiddleware() {
+  const fx = createFixture();
+  const S = state();
+  const isFile = (p) => { const [dir, name] = split(p); return S.exports.some((e) => e.path === p) || !!fx.list(dir)?.items.some((k) => k.name === name && !k.dir); };
+
+  const verdict = (user, path) => {
+    if (!(path === user.scope || path.startsWith(user.scope + '/'))) return { result: 'hidden', scope: user.scope };
+    const glob = (pat, s) => new RegExp('^' + pat.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$', 'i').test(s);
+    const i = S.rules.findIndex((r) => {
+      const who = r.who === '*' || r.who === user.name || (r.who.startsWith('@') && user.groups.includes(r.who.slice(1)));
+      if (!who) return false;
+      if (r.path.includes('*')) return path.split('/').some((part) => glob(r.path, part)) || glob(r.path, path);
+      return path === r.path || path.startsWith(r.path + '/');
+    });
+    if (i < 0) return { result: user.role === 'readonly' ? 'read' : 'visible' };
+    const r = S.rules[i];
+    return { result: r.rule === 'hide' ? 'hidden' : r.rule === 'read' || user.role === 'readonly' ? 'read' : 'visible', rule: i };
+  };
+  const lists = () => {
+    const count = {};
+    for (const l of Object.values(S.labels)) {
+      if (l.colour) count['c:' + l.colour] = (count['c:' + l.colour] || 0) + 1;
+      for (const t of l.tags || []) count['t:' + t] = (count['t:' + t] || 0) + 1;
+    }
+    const tags = [...new Set([...Object.values(S.labels).flatMap((l) => l.tags || []), ...S.tags])].sort((a, b) => a.localeCompare(b, 'de'));
+    return { colours: S.colours.map((c) => ({ ...c, count: count['c:' + c.id] || 0 })), tags: tags.map((name) => ({ name, count: count['t:' + name] || 0 })) };
+  };
+  const tidy = () => { for (const [p, l] of Object.entries(S.labels)) if (!l.colour && !(l.tags || []).length) delete S.labels[p]; };
+  const wireUser = (u) => ({ ...u, last: iso(u.last) });
+  const wireShare = (s) => ({ ...s, url: `https://cannon.tower.lan/s/${s.slug}`, created: iso(s.created), expires: iso(s.expires) });
+
+  const routes = [
+    ['GET', '/me', () => ({ ...S.me, pwChanged: iso(S.me.pwChanged) })],
+    ['PUT', '/me/password', (b) => {
+      if (!b.current) return [400, 'current password'];
+      const ended = S.sessions.filter((s) => !s.current).length;
+      S.sessions = S.sessions.filter((s) => s.current);
+      S.me.pwChanged = Date.now();
+      return { ended };
+    }],
+    ['GET', '/me/sessions', () => ({ items: S.sessions.map((s) => ({ ...s, created: iso(s.created), seen: iso(s.seen) })) })],
+    ['DELETE', /^\/me\/sessions\/(.+)$/, (_, [id]) => { S.sessions = S.sessions.filter((s) => s.id !== id); return 204; }],
+    ['GET', '/me/tokens', () => ({ items: S.tokens.map((t) => ({ ...t, created: iso(t.created), last: iso(t.last), expires: iso(t.expires) })) })],
+    ['POST', '/me/tokens', (b) => {
+      S.tokens.push({ id: 't' + Date.now(), name: b.name, created: Date.now(), last: null, rights: b.rights, expires: b.days ? Date.now() + b.days * DAY : null });
+      return { secret: 'cc_' + randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 40) };
+    }],
+    ['DELETE', /^\/me\/tokens\/(.+)$/, (_, [id]) => { S.tokens = S.tokens.filter((t) => t.id !== id); return 204; }],
+    ['GET', '/me/passkeys', () => ({ items: S.passkeys.map((p) => ({ ...p, created: iso(p.created), last: iso(p.last) })) })],
+    ['POST', '/me/passkeys', (b) => { S.passkeys.push({ id: 'p' + Date.now(), name: b.name, origin: 'cannon.tower.lan', created: Date.now(), last: null }); return { passkey: b.name }; }],
+    ['DELETE', /^\/me\/passkeys\/(.+)$/, (_, [id]) => { S.passkeys = S.passkeys.filter((p) => p.id !== id); return 204; }],
+    ['POST', '/me/totp', (b) => {
+      if (b.code === '000000') return [400, 'code'];
+      if (b.regenerate) { S.me.recovery = 8; return { codes: codes() }; }
+      if (b.code) { S.me.twofa = true; S.me.recovery = 8; return { codes: codes() }; }
+      S.totpSecret = randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', 32);
+      return { secret: S.totpSecret, uri: `otpauth://totp/CannonCommander:jdp?secret=${S.totpSecret}`, qr: qr(S.totpSecret) };
+    }],
+    ['DELETE', '/me/totp', () => { S.me.twofa = false; return 204; }],
+
+    ['GET', '/admin/users', () => ({ items: S.users.map(wireUser) })],
+    ['POST', '/admin/users', (b) => { delete b.password; S.users.push({ ...b, last: null, twofa: false }); syncGroups(b.name, b.groups); return 204; }],
+    ['PATCH', /^\/admin\/users\/(.+)$/, (b, [name]) => {
+      const u = S.users.find((x) => x.name === name);
+      if (!u) return [404, 'user'];
+      delete b.password;
+      if (b.name && b.name !== name) S.rules.forEach((r) => { if (r.who === name) r.who = b.name; });
+      Object.assign(u, b);
+      syncGroups(u.name, u.groups, name);
+      return 204;
+    }],
+    ['DELETE', /^\/admin\/users\/(.+)$/, (_, [name]) => {
+      S.users = S.users.filter((u) => u.name !== name);
+      S.groups.forEach((g) => { g.members = g.members.filter((m) => m !== name); });
+      S.rules = S.rules.filter((r) => r.who !== name);
+      S.shares = S.shares.filter((s) => s.by !== name);
+      return 204;
+    }],
+    ['GET', '/admin/groups', () => ({ items: S.groups })],
+    ['POST', '/admin/groups', (b) => { S.groups.push(b); syncMembers(b); return 204; }],
+    ['PATCH', /^\/admin\/groups\/(.+)$/, (b, [name]) => {
+      const g = S.groups.find((x) => x.name === name);
+      if (!g) return [404, 'group'];
+      if (b.name !== name) {
+        S.users.forEach((u) => { u.groups = u.groups.map((x) => (x === name ? b.name : x)); });
+        S.rules.forEach((r) => { if (r.who === '@' + name) r.who = '@' + b.name; });
+      }
+      Object.assign(g, b);
+      syncMembers(g);
+      return 204;
+    }],
+    ['DELETE', /^\/admin\/groups\/(.+)$/, (_, [name]) => {
+      S.groups = S.groups.filter((g) => g.name !== name);
+      S.users.forEach((u) => { u.groups = u.groups.filter((x) => x !== name); });
+      S.rules = S.rules.filter((r) => r.who !== '@' + name);
+      return 204;
+    }],
+    ['GET', '/admin/rules', () => ({ items: S.rules })],
+    ['PUT', '/admin/rules', (b) => { S.rules = b.items; return 204; }],
+    ['POST', '/admin/rules/test', (b) => { const u = S.users.find((x) => x.name === b.user); return u ? verdict(u, b.path) : [404, 'user']; }],
+    ['GET', '/admin/activity', () => ({ items: S.activity.map((a) => ({ ...a, t: iso(a.t) })) })],
+    ['GET', '/admin/sources', () => ({ items: S.sources })],
+    ['PUT', '/admin/sources', (b) => { S.sources = b.items; return 204; }],
+    ['GET', '/admin/index', () => ({ every: S.app.indexEvery, last: iso(S.index.last), running: S.sources.filter((s) => s.indexing).map((s) => s.path) })],
+    ['POST', '/admin/index', (b) => {
+      for (const s of S.sources.filter((x) => !b.path || x.path === b.path)) {
+        s.indexing = true;
+        setTimeout(() => { s.indexing = false; s.indexed = true; if (!s.files) Object.assign(s, { files: 1284, size: 42 * GB }); S.index.last = Date.now(); }, 2500);
+      }
+      return 204;
+    }],
+    ['GET', '/admin/app', () => S.app],
+    ['PUT', '/admin/app', (b) => { S.app = b; return 204; }],
+    ['POST', '/admin/app/restart', () => { S.started = Date.now(); return 204; }],
+    ['POST', '/admin/app/export', (b) => { S.exports.push({ path: b.path, time: Date.now() }); return 204; }],
+    ['POST', '/admin/app/import', (b) => (isFile(b.path) ? 204 : [400, 'file'])],
+    ['POST', '/admin/integrations/test', (b) => (b.secret || b.kind === 'collabora' ? { ok: true } : { ok: false, reason: 'secret' })],
+    ['GET', '/shares', () => ({ items: S.shares.filter((s) => s.by === S.me.name).map(wireShare) })],
+    ['GET', '/admin/shares', () => ({ items: S.shares.map(wireShare) })],
+    ['PATCH', /^\/shares\/(.+)$/, (b, [id]) => {
+      const s = S.shares.find((x) => x.id === id);
+      if (!s) return [404, 'share'];
+      if ('expires' in b) s.expires = b.expires ? Date.parse(b.expires) : null;
+      if ('password' in b) s.password = !!b.password;
+      return 204;
+    }],
+    ['DELETE', /^\/shares\/(.+)$/, (_, [id]) => { S.shares = S.shares.filter((s) => s.id !== id); return 204; }],
+    ['GET', '/remotes', () => ({ items: S.remotes.map((r) => ({ ...r, cfg: { ...r.cfg, pass: undefined, secret: undefined } })) })],
+    ['POST', '/remotes', (b) => { S.remotes.push({ ...b, mounted: true }); return 204; }],
+    ['PUT', /^\/remotes\/([^/]+)$/, (b, [name]) => {
+      const r = S.remotes.find((x) => x.name === name);
+      if (!r) return [404, 'remote'];
+      Object.assign(r, b, { cfg: { ...r.cfg, ...Object.fromEntries(Object.entries(b.cfg).filter(([, v]) => v !== '')) } });
+      return 204;
+    }],
+    ['DELETE', /^\/remotes\/([^/]+)$/, (_, [name]) => { S.remotes = S.remotes.filter((r) => r.name !== name); return 204; }],
+    ['POST', /^\/remotes\/([^/]+)\/(mount|unmount)$/, (_, [name, how]) => { const r = S.remotes.find((x) => x.name === name); if (r) r.mounted = how === 'mount'; return 204; }],
+    ['POST', '/remotes/test', () => ({ ok: true })],
+    ['POST', '/remotes/oauth', (b) => (b.token.trim().startsWith('{') ? { account: 'junker@example.org' } : [400, 'token'])],
+    ['GET', '/system', () => ({ version: { app: '0.1.0', rclone: '1.71.2', ffmpeg: '7.1.1' }, paths: { rclone: '/usr/bin/rclone', ffmpeg: '/usr/bin/ffmpeg' }, started: iso(S.started - 3 * DAY - 4 * HOUR) })],
+    ['POST', '/system/update', () => ({ latest: '0.1.0', current: true })],
+
+    ['GET', '/labels', () => lists()],
+    ['PUT', '/labels/colours', (b) => {
+      const kept = new Set();
+      S.colours = b.colours.map((c) => { const id = c.id || 'c' + Date.now() + Math.random().toString(36).slice(2, 6); kept.add(id); return { id, name: c.name, hex: c.hex }; });
+      for (const l of Object.values(S.labels)) if (l.colour && !kept.has(l.colour)) delete l.colour;
+      tidy();
+      return lists();
+    }],
+    ['PUT', '/labels/tags', (b) => {
+      const rename = new Map(b.tags.filter((t) => t.from).map((t) => [t.from, t.name]));
+      for (const l of Object.values(S.labels)) l.tags = [...new Set((l.tags || []).filter((t) => rename.has(t)).map((t) => rename.get(t)))];
+      S.tags = b.tags.map((t) => t.name);
+      tidy();
+      return lists();
+    }],
+    ['GET', '/labels/items', (_, __, q) => {
+      const dir = q.get('path') || '/', items = {};
+      for (const [p, l] of Object.entries(S.labels)) {
+        const [d, name] = split(p);
+        if (d === dir) items[name] = l;
+      }
+      return { path: dir, items };
+    }],
+    ['PUT', '/labels/items', (b) => {
+      const out = {};
+      for (const p of b.paths) {
+        const l = { tags: [], ...S.labels[p] };
+        if (b.colour !== undefined) l.colour = b.colour || undefined;
+        if (b.tags) l.tags = b.tags;
+        if (b.add) l.tags = [...new Set([...l.tags, ...b.add])];
+        if (b.remove) l.tags = l.tags.filter((t) => !b.remove.includes(t));
+        if (l.colour || l.tags.length) S.labels[p] = l; else delete S.labels[p];
+        out[p] = S.labels[p] || {};
+      }
+      return { items: out };
+    }],
+    // The app's own folder appears once the container has run, so exports have somewhere to go.
+    ['GET', '/fs/list', (_, __, q) => {
+      const p = q.get('path');
+      if (p !== APPDATA && p !== EXPORTS) return undefined;
+      const item = (name, dir, t, size = 0) => ({ name, dir, size, mtime: iso(t), mode: dir ? '0775' : '0664', owner: 'nobody', group: 'users' });
+      if (p === APPDATA) return { path: p, items: [item('exports', true, Date.now() - 3 * DAY), item('config.yaml', false, Date.now() - 3 * DAY, 4 * KB), item('cannoncommander.db', false, Date.now() - 10 * MIN, 22 * MB)] };
+      return { path: p, items: S.exports.map((e) => item(split(e.path)[1], false, e.time, 14 * KB)) };
+    }],
+  ];
+
+  function syncGroups(user, groups, was = user) {
+    S.groups.forEach((g) => {
+      g.members = g.members.filter((m) => m !== was && m !== user);
+      if (groups.includes(g.name)) g.members.push(user);
+    });
+  }
+  function syncMembers(group) {
+    S.users.forEach((u) => {
+      const has = group.members.includes(u.name);
+      u.groups = has ? [...new Set([...u.groups, group.name])] : u.groups.filter((x) => x !== group.name);
+    });
+  }
+
+  return async (req, res, next) => {
+    const url = new URL(req.url, 'http://fixture');
+    if (!url.pathname.startsWith('/api/v1/')) return next();
+    const path = url.pathname.slice('/api/v1'.length);
+    for (const [method, match, fn] of routes) {
+      if (method !== req.method) continue;
+      const m = typeof match === 'string' ? (match === path ? [] : null) : path.match(match)?.slice(1).map(decodeURIComponent);
+      if (!m) continue;
+      const out = fn(['GET', 'DELETE'].includes(req.method) && !req.headers['content-length'] ? {} : await readBody(req), m, url.searchParams);
+      if (out === undefined) return next();
+      if (out === 204) return json(res, 204);
+      if (Array.isArray(out)) return json(res, out[0], out[1]);
+      return json(res, 200, out);
+    }
+    next();
+  };
+}
