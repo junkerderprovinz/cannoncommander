@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,6 +18,7 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
 )
 
@@ -93,7 +95,14 @@ func (s *service) serveFile(w http.ResponseWriter, r *http.Request, token string
 		return publicError(err)
 	}
 	defer f.Close()
-	w.Header().Set("Cache-Control", "no-store")
+	// These routes are public and only a server reads them, so nothing here
+	// has to open in a browser, where a page would run on the app's origin.
+	hdr := w.Header()
+	hdr.Set("Cache-Control", "no-store")
+	hdr.Set("Content-Type", "application/octet-stream")
+	hdr.Set("X-Content-Type-Options", "nosniff")
+	hdr.Set("Content-Security-Policy", fsapi.SandboxPolicy)
+	hdr.Set("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": path.Base(loc.Path)}))
 	http.ServeContent(w, r, path.Base(loc.Path), info.ModTime(), f)
 	return nil
 }

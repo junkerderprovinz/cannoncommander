@@ -347,3 +347,58 @@ func TestCollaboraViewersCannotLockOrSave(t *testing.T) {
 		t.Fatalf("viewer saves: %d", rec.Code)
 	}
 }
+
+// readLink writes a file below the share and returns the address the
+// document server reads it from.
+func (f *fixture) readLink(t *testing.T, name, who string) string {
+	t.Helper()
+	if err := os.WriteFile(filepath.Join(f.share, "dokumente", name), []byte("<script>alert(1)</script>"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest("GET", "/office/config?path=/mnt/user/dokumente/"+name, nil)
+	req.Header.Set("X-User", who)
+	rec := f.do(req)
+	if rec.Code != 200 {
+		t.Fatalf("config for %s: %d %s", name, rec.Code, rec.Body)
+	}
+	var c Config
+	if err := json.Unmarshal(rec.Body.Bytes(), &c); err != nil {
+		t.Fatal(err)
+	}
+	return c.Config["document"].(map[string]any)["url"].(string)
+}
+
+func TestDocumentServerGetsAPageAsAnAttachment(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	for _, name := range []string{"seite.html", "daten.xml"} {
+		rec := f.do(local(t, "GET", f.readLink(t, name, "jdp"), nil))
+		if rec.Code != 200 || rec.Body.String() != "<script>alert(1)</script>" {
+			t.Fatalf("%s: %d %q", name, rec.Code, rec.Body)
+		}
+		h := rec.Header()
+		if !strings.HasPrefix(h.Get("Content-Disposition"), "attachment") || h.Get("X-Content-Type-Options") != "nosniff" ||
+			!strings.Contains(h.Get("Content-Security-Policy"), "sandbox") {
+			t.Errorf("%s goes out active: %v", name, h)
+		}
+		if strings.Contains(h.Get("Content-Type"), "html") || strings.Contains(h.Get("Content-Type"), "xml") {
+			t.Errorf("%s type %q", name, h.Get("Content-Type"))
+		}
+	}
+}
+
+func TestWOPIGetFileIsAnAttachment(t *testing.T) {
+	f := newFixture(t)
+	cool := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte(discoveryXML)) }))
+	defer cool.Close()
+	f.office = system.Office{Kind: system.OfficeCollabora, URL: cool.URL}
+	_, c := f.config("jdp")
+	src := base + "/wopi/files/" + fileID("/mnt/user/dokumente/Brief.docx") + "/contents?access_token=" + url.QueryEscape(c.Token)
+	rec := f.do(local(t, "GET", src, nil))
+	if rec.Code != 200 || rec.Body.String() != "alt" {
+		t.Fatalf("GetFile: %d %q", rec.Code, rec.Body)
+	}
+	if h := rec.Header(); !strings.HasPrefix(h.Get("Content-Disposition"), "attachment") || !strings.Contains(h.Get("Content-Security-Policy"), "sandbox") {
+		t.Errorf("headers %v", h)
+	}
+}
