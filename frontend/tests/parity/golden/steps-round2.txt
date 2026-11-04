@@ -1,0 +1,5 @@
+dots on files: 0
+order after drag: name,size,type,modified,owner,rights,dimensions
+path editing: 1
+dots on settings: 0
+dots on glyphs: 0

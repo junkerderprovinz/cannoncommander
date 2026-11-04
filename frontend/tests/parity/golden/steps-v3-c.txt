@@ -1,0 +1,21 @@
+space warning: Unraid würde Disk 1 nehmen, weil dort mehr als der Mindestplatz von 30 GB frei ist (Zuteilung Auffüllen). Die größte Datei, vm-win11-2026-10-01.img mit 64 GB, passt aber nicht auf die 48 GB, die dort frei sind. Die Kopie würde mittendrin abbrechen.
+button: Direkt auf Disk 3 legen, 1,1 TB frei | primary Trotzdem kopieren
+after fix: /mnt/disk3/filme | warning false | primary Kopieren
+into isos: false
+rate with 50 MB/s for all: 50
+job line: 1,3 GB von 18 GB · 50 MB/s · noch 6 Min. · höchstens 50 MB/s
+limit menu: Ohne | 25 MB/s | 50 MB/s | 100 MB/s | 200 MB/s
+rate with 25 MB/s own: 25
+big job: wartet held true pct 0
+small asks: Paritätsprüfung läuft
+jobs: 0 B von 18 GB · wartet auf die Paritätsprüfung | 0 B von 412 MB · wartet auf die Paritätsprüfung
+sidebar: Paritätsprüfung 4 %
+after parity: läuft, wartet
+browser message: Aufgabe fertig: Kopieren: flash-2026-10-31.zip nach fotos, nach 5 s | unraid: true
+settings rows: AUFGABEN | Mehrere Aufgaben | Nacheinander | Gleichzeitig | Tempo für alle zusammen | Ohne | 25 MB/s | 50 MB/s | 100 MB/s
+test message: CannonCommander: So sieht die Meldung aus, wenn eine Aufgabe fertig ist
+new row: Cosmos Laundromat (2015).mkv.part | cursor on: setup-notes.md
+while a window is open: false
+after closing: Cosmos Laundromat (2015).mkv.part
+film folders with a picture: 3
+music folder with a cover: 1

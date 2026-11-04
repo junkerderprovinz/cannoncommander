@@ -1,0 +1,10 @@
+field: tools inside crumbs: true
+menu: GESPEICHERTE SUCHEN Große Abbilder 7 Diesen Monat geändert 42 BEISPIELE *.mkv alle MKV-Dateien, auch in Unterordnern #steuer alles mit dem Schlagwort steuer bericht Namen, in denen bericht vorkommt IMG_????.jpg ein ? steht für genau ein Zeichen breite:>=3840 codec:hevc 4K-Filme in HEVC, aus den Metadaten geändert:<7d alles, was sich in den letzten 7 Tagen geändert hat
+example: *.mkv 1 hits, focused: qf-0
+labels menu: FARBEN | Rot 1 | Orange 1 | Gelb | Grün 1 | Blau | Lila 1 | SCHLAGWORTE | fertig 1 | für Anna 1 | prüfen 1 | Steuer 2 | wichtig 1
+label search: /mnt/user #steuer Rechnung-Oktober.pdf, Steuer 2025.xlsx
+tag editor: frow first, tags: #neu(on) #fertig #für Anna #prüfen #Steuer #wichtig
+after x: 
+disk usage opens on: map blocks: 10
+fkeys: 10 buttons, bar 1568px, right gap 9px
+settings columns: 1

@@ -1,0 +1,22 @@
+sidebar cards: Verknüpfungen | Ordnerbaum
+tree: backups 107 GB 58 % 13 1 01.11.2026 | system 41 GB 22 % 2 0 02.11.2026 | isos 13 GB 7 % 4 0 02.11.2026 | downloads 12 GB 7 % 21 3 02.11.2026 | filme 7,6 GB 4 % 8 4 11.10.2026 | serien 4,3 GB 2 % 7 2 21.10.2026
+foot: 185 GB in 129 Dateien und 35 Ordnern delete disabled: true
+expanded: backups 107 GB 58 % 13 1 01.11.2026 | vm-win11-2026-10-01.img 64 GB 60 % 06.05.2026 | appdata-2026-10-31.tar.zst 18 GB 17 % 28.01.2026 | appdata-2026-10-24.tar.zst 18 GB 17 % 27.09.2026 | ubuntu-24.04.3-desktop-amd64.iso 6,1 GB 6 % 10.10.2026 | flash-2026-10-31.zip 412 MB 0 % 14.01.2026
+arrow right, open rows: 1
+by name: system 41 GB 22 % 2 0 02.11.2026 | serien 4,3 GB 2 % 7 2 21.10.2026 | musik 59 MB 0 % 5 2 21.10.2026 | isos 13 GB 7 % 4 0 02.11.2026 | fotos 217 MB 0 % 47 3 01.11.2026 | filme 7,6 GB 4 % 8 4 11.10.2026
+backups: vm-win11-2026-10-01.img 64 GB 60 % 06.05.2026 | appdata-2026-10-31.tar.zst 18 GB 17 % 28.01.2026 | appdata-2026-10-24.tar.zst 18 GB 17 % 27.09.2026 | ubuntu-24.04.3-desktop-amd64.iso 6,1 GB 6 % 10.10.2026 | flash-2026-10-31.zip 412 MB 0 % 14.01.2026 | dokumente 4 MB 0 % 8 0 01.11.2026
+picked: 2 ausgewählt, 82 GB
+menu: Im Fenster zeigen | Pfad kopieren | 2 Objekte löschen
+delete window: 2 Objekte löschen
+after delete: appdata-2026-10-24.tar.zst 18 GB 74 % 27.09.2026 | ubuntu-24.04.3-desktop-amd64.iso 6,1 GB 25 % 10.10.2026 | flash-2026-10-31.zip 412 MB 2 % 14.01.2026 | dokumente 4 MB 0 % 8 0 01.11.2026 | trash: appdata-2026-10-31.tar.zst, vm-win11-2026-10-01.img
+after undo: vm-win11-2026-10-01.img 64 GB 60 % 06.05.2026 | appdata-2026-10-31.tar.zst 18 GB 17 % 28.01.2026 | appdata-2026-10-24.tar.zst 18 GB 17 % 27.09.2026 | ubuntu-24.04.3-desktop-amd64.iso 6,1 GB 6 % 10.10.2026 | flash-2026-10-31.zip 412 MB 0 % 14.01.2026 | dokumente 4 MB 0 % 8 0 01.11.2026
+types: Abbild .img .iso 2 Dateien 70 GB 66 % | Archiv .zst .zip 3 Dateien 37 GB 34 % | Dokument .pptx .pdf .docx .xlsx 5 Dateien 4 MB 0 % | Text .txt .md 2 Dateien 4 KB 0 % | Quelltext .yml 1 Datei 2,3 KB 0 %
+largest of one kind: Nur Abbild vm-win11-2026-10-01.img 64 GB 60 % 06.05.2026 | ubuntu-24.04.3-desktop-amd64.iso 6,1 GB 6 % 10.10.2026
+largest: vm-win11-2026-10-01.img 64 GB 60 % 06.05.2026 | appdata-2026-10-31.tar.zst 18 GB 17 % 28.01.2026 | appdata-2026-10-24.tar.zst 18 GB 17 % 27.09.2026 | ubuntu-24.04.3-desktop-amd64.iso 6,1 GB 6 % 10.10.2026 | flash-2026-10-31.zip 412 MB 0 % 14.01.2026 | Präsentation.pptx dokumente 2,4 MB 0 % 02.07.2026
+map blocks: 6
+search menu: GESPEICHERTE SUCHEN Große Abbilder 7 Diesen Monat geändert 42 BEISPIELE *.mkv alle MKV-Dateien, auch in Unterordnern #steuer alles mit dem Schlagwort steuer bericht Namen, in denen bericht vorkommt IMG_????.jpg ein ? steht für genau ein Zeichen breite:>=3840 codec:hevc 4K-Filme in HEVC, aus den Metadaten geändert:<7d alles, was sich in den letzten 7 Tagen geändert hat
+menu while typing: false save button: true
+save window: Suche speichern *.mkv
+saved rows: Große Abbilder 7 | Diesen Monat geändert 42 | *.mkv 1 | *.mkv alle MKV-Dateien, auch in Unterordnern | #steuer alles mit dem Schlagwort steuer | bericht Namen, in denen bericht vorkommt | IMG_????.jpg ein ? steht für genau ein Zeichen | breite:>=3840 codec:hevc 4K-Filme in HEVC, aus den Metadaten | geändert:<7d alles, was sich in den letzten 7 Tagen geändert hat
+label search: /mnt/user #steuer 2 hits
+saved search open: Gespeicherte Suche Große Abbilder, 7 Treffer in /mnt/user

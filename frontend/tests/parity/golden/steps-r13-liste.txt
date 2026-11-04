@@ -1,0 +1,12 @@
+flat entries: 47 first: /mnt/user/fotos/beste-bilder.txt
+copy allowed on flat: ja
+group heads: Ordner1 | Video1 | Musik1 | Dokument1 | Text2 | Archiv1 | Abbild2
+date heads: Diese Woche1 | Dieses Jahr8
+downloads view: details back in fotos: gallery
+label marks: 2 tags: #wichtig #Steuer #prüfen #Steuer
+labels menu:  | Rot1 | Orange1 | Gelb | Grün1 | Blau | Lila1 |  | fertig1 | für Anna1 | prüfen1 | Steuer2 | wichtig1
+#steuer hits: Rechnung-Oktober.pdf, Steuer 2025.xlsx
+notizen color: blue
+columns: 3
+after left: /mnt/user/fotos
+dropped into unfertig: true

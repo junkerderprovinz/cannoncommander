@@ -51,3 +51,4 @@ onPrefsSaved((p) => {
 if (import.meta.env.MODE !== 'fixture') connect();
 
 app.mount('#root');
+if (import.meta.env.VITE_E2E === '1') import('./e2e/shim').then((m) => m.installShim());

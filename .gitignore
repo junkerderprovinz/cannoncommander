@@ -76,3 +76,7 @@ backend/custom.css
 # Runtime cache directories created by tests/application
 backend/preview/heic/
 backend/preview/thumbnails/
+
+# Fixture trees and parity screenshots from testing/, whose own scripts are ES modules
+/testing/out
+!/testing/**/*.mjs

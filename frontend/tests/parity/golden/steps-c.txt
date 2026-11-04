@@ -1,0 +1,4 @@
+saved text starts: "Server-Notizen (erledigt)\n\nParity-Check läuft jeden ersten Sonntag im Monat um 3"
+downloads now: setup-notes.md, setup-notes (1).md, urlaub-video.mp4, liste.txt
+restored back: true trash left 2
+signed in: true

@@ -1,0 +1,8 @@
+brand text: "" | count visible: false
+palette from magnifier: true
+tree meters: 0 | list meters: 0
+list row: undefined
+settings head: true back, gear pressed files
+after Esc: files
+after back button: files
+count while busy: true 1

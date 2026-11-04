@@ -1,0 +1,2 @@
+dest name: dokumente
+forever label:   Endgültig löschen | 1,6 GB, ist danach endgültig weg

@@ -1,0 +1,9 @@
+pencils: Farben bearbeiten | Schlagworte bearbeiten
+colours window: Farben, 6 rows
+colours after: Dringend, Orange, Gelb, Grün, Blau, Türkis | purple label gone: true
+tags window: Schlagworte, 5 rows
+tags after: erledigt, für Anna, prüfen, Steuer, wichtig
+in: Server › mnt › user › backups
+after back: Server › mnt › user
+after forward: Server › mnt › user › backups
+history back at panel level: /mnt/user/downloads

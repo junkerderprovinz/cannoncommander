@@ -1,0 +1,9 @@
+tree meters: 0
+/mnt view: drives cards: 6
+first card: Cache (cache) 420 GB frei von 1 TB
+/ view: drives
+child of columns: columns
+grandchild of columns: columns
+musik keeps own default: columns
+fotos remembers: gallery
+/mnt can be changed: details list meters: 6
