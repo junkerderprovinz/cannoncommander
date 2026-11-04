@@ -4,11 +4,16 @@ import (
 	"context"
 	"path"
 	"slices"
+	"time"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqlitebusy"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 )
+
+// transferPatience is the longest wait between two tries of a transfer.
+const transferPatience = 2 * time.Second
 
 // Moved carries the labels of each From over to its To. Call it once the
 // rename or move has succeeded, for a whole job at once if it is handy.
@@ -65,20 +70,39 @@ func transferAll(ctx context.Context, d v1.Deps, moves []Move, keep bool) error 
 			clean = append(clean, Move{from, to})
 		}
 	}
+	// A transaction that reads before it writes gets SQLITE_BUSY at once when
+	// another writer is at work, however long the busy timeout is, and only
+	// starting over helps.
+	wait := 10 * time.Millisecond
+	for {
+		touched, err := transferOnce(ctx, d, clean, keep)
+		if err == nil {
+			publishItems(d.Hub, touched)
+			return nil
+		}
+		if !sqlitebusy.IsBusyOrLocked(err) || wait > transferPatience {
+			return err
+		}
+		select {
+		case <-time.After(wait):
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+		wait *= 2
+	}
+}
+
+func transferOnce(ctx context.Context, d v1.Deps, moves []Move, keep bool) ([]string, error) {
 	tx, err := d.DB.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer tx.Rollback()
-	touched, err := transfer(ctx, tx, clean, keep)
+	touched, err := transfer(ctx, tx, moves, keep)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-	publishItems(d.Hub, touched)
-	return nil
+	return touched, tx.Commit()
 }
 
 func cleanAll(paths []string) ([]string, error) {

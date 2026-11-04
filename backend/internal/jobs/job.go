@@ -169,6 +169,9 @@ type Kind struct {
 	Run func(ctx context.Context, run *Run) error
 	// Heavy kinds wait for a parity check once they are big.
 	Heavy bool
+	// BigResult kinds can find megabytes, which would go out with every
+	// event and every list of jobs. Clients read it from the job itself.
+	BigResult bool
 }
 
 var (
