@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import vm from 'node:vm';
+import { contentRoutes } from './fixture-content.js';
 
 const prototype = join(import.meta.dirname, '..', '..', 'prototype', 'src');
 const read = (...p) => readFileSync(join(prototype, ...p), 'utf8');
@@ -95,6 +96,7 @@ export function createFixture() {
     return out;
   };
   return {
+    FS,
     list(path) {
       const n = dirAt(path);
       return n && { path, items: FS.kids(n).map(item), volume: volume(path) };
@@ -125,16 +127,6 @@ export function createFixture() {
       walk(root, path);
       return { path, items: hits, more: hits.length >= 2000 };
     },
-    thumb(path) {
-      const k = fileAt(path);
-      if (!k) return null;
-      const at = FS.parent(path);
-      return k.kind === 'video' ? ck.poster(k.name, 640, 360, false) : ck.picture(k, at);
-    },
-    text(path, lines) {
-      const k = fileAt(path);
-      return k && { text: (k.text ?? ck.textFor(k)).split('\n').slice(0, lines || undefined).join('\n') };
-    },
     me: () => ({ name: 'jdp', full: 'Junker der Provinz', role: 'Admin' }),
     bookmarks: () => ({ items: DATA.bookmarks }),
     trash: () => ({ items: DATA.trash.map((t) => ({ ...t, size: Math.round(t.size), deleted: iso(t.deleted) })) }),
@@ -156,11 +148,11 @@ const bodyOf = (req) => new Promise((resolve) => {
 // Connect middleware for Vite's dev and preview servers.
 export function fixtureMiddleware() {
   const fx = createFixture();
+  const content = contentRoutes(fx.FS);
   const routes = {
-    'GET /api/v1/fs/list': (q) => fx.list(q.get('path') || '/'),
+    'GET /api/v1/fs/list': (q) => content.list(q.get('path') || '/') || fx.list(q.get('path') || '/'),
     'GET /api/v1/fs/tree': (q) => fx.tree(q.get('path') || '/'),
     'POST /api/v1/fs/meta': (_q, body) => fx.meta(body),
-    'GET /api/v1/fs/text': (q) => fx.text(q.get('path') || '', +(q.get('lines') || 0)),
     'GET /api/v1/search': (q) => fx.search(q.get('path') || '/', q.get('q') || '', q.get('hidden') === 'true'),
     'GET /api/v1/me': () => fx.me(),
     'GET /api/v1/me/bookmarks': () => fx.bookmarks(),
@@ -174,13 +166,7 @@ export function fixtureMiddleware() {
   return async (req, res, next) => {
     const url = new URL(req.url, 'http://fixture');
     if (!url.pathname.startsWith('/api/')) return next();
-    if (req.method === 'GET' && url.pathname === '/api/v1/fs/thumb') {
-      const svg = fx.thumb(url.searchParams.get('path') || '');
-      if (!svg) return problem(res, 404, 'Not found');
-      res.setHeader('Content-Type', 'image/svg+xml');
-      res.setHeader('Cache-Control', 'max-age=3600');
-      return res.end(svg);
-    }
+    if (content.handle(url, req, res)) return;
     const route = routes[`${req.method} ${url.pathname}`];
     if (!route) return problem(res, 501, 'Not built yet');
     const body = route(url.searchParams, req.method === 'GET' ? undefined : await bodyOf(req));

@@ -90,10 +90,12 @@ export const api = {
   async fsMeta(paths: string[], columns: string[]): Promise<FsMeta['items']> {
     return (await call<FsMeta>('/fs/meta', json('POST', { paths, columns }))).body?.items ?? {};
   },
+  // The first lines of a text file, read from its first few kilobytes only.
   async fsText(path: string, lines: number): Promise<string> {
-    return (await call<FsText>('/fs/text' + q({ path, lines: String(lines) }))).body?.text ?? '';
+    const text = (await call<FsText>('/fs/text' + q({ path, max: String(lines * 256) }))).body?.text ?? '';
+    return text.split('\n').slice(0, lines).join('\n');
   },
-  thumbUrl: (path: string, size = 320) => BASE + '/fs/thumb' + q({ path, size: String(size) }),
+  thumbUrl: (path: string, size: 'small' | 'large' = 'small', v?: number) => BASE + '/fs/thumb' + q({ path, size, ...(v ? { v: String(v) } : {}) }),
   // Names below `path` that match `query`, hidden ones only when they are shown.
   async search(path: string, query: string, hidden: boolean, signal?: AbortSignal): Promise<{ items: Item[]; more: boolean }> {
     const body = (await call<SearchResult>('/search' + q({ path, q: query, hidden: String(hidden) }), { signal })).body!;
