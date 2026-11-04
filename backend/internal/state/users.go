@@ -5,9 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/quota"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/toolaccess"
@@ -443,33 +441,6 @@ func commitUserUpdate(existingUser, storedSnapshot *users.User, sourceDefaults u
 		return err
 	}
 
-	for _, bs := range existingUser.BackendScopes {
-		if bs.Quota == nil || bs.Quota.LimitBytes <= 0 {
-			continue
-		}
-		meter := bs.Quota.Meter
-		if meter == "" {
-			meter = quota.MeterIndexScope
-		}
-		sourceName := ""
-		if src, ok := settings.Config.Server.SourceMap[bs.Path]; ok {
-			sourceName = src.Name
-		}
-		if sourceName != "" {
-			if err := quota.ValidateConfiguredMeter(sourceName, meter); err != nil {
-				return fmt.Errorf("scope quota: %w", err)
-			}
-		}
-	}
-
-	for _, bs := range existingUser.BackendScopes {
-		if bs.Quota != nil && bs.Quota.LimitBytes > 0 && bs.Quota.ID == "" {
-			bs.Quota.ID = uuid.New().String()
-		}
-	}
-
-	removedQuotaIDs := removedScopeQuotaIDs(storedSnapshot, existingUser)
-
 	if oldUsername != existingUser.Username {
 		if err := sqlDb.UpdateUserUsername(oldUsername, existingUser); err != nil {
 			return err
@@ -485,17 +456,6 @@ func commitUserUpdate(existingUser, storedSnapshot *users.User, sourceDefaults u
 		userRecordCache.Delete(userCacheKeyName(oldUsername))
 	} else if err := sqlDb.UpdateUser(existingUser); err != nil {
 		return err
-	}
-
-	for _, id := range removedQuotaIDs {
-		if err := OnUserScopeQuotaRemoved(id); err != nil {
-			return err
-		}
-	}
-	for _, bs := range existingUser.BackendScopes {
-		if err := OnUserScopeQuotaChanged(bs.Quota); err != nil {
-			return err
-		}
 	}
 
 	putUserInCache(existingUser)
@@ -525,28 +485,6 @@ func renameUserInAccess(oldUsername string, updated *users.User) error {
 		return fmt.Errorf("failed to rename user in access rules: %w", err)
 	}
 	return nil
-}
-
-func removedScopeQuotaIDs(before, after *users.User) []string {
-	oldByPath := map[string]string{}
-	for _, bs := range before.BackendScopes {
-		if bs.Quota != nil && bs.Quota.LimitBytes > 0 && bs.Quota.ID != "" {
-			oldByPath[bs.Path] = bs.Quota.ID
-		}
-	}
-	newByPath := map[string]string{}
-	for _, bs := range after.BackendScopes {
-		if bs.Quota != nil && bs.Quota.LimitBytes > 0 && bs.Quota.ID != "" {
-			newByPath[bs.Path] = bs.Quota.ID
-		}
-	}
-	var removed []string
-	for path, id := range oldByPath {
-		if newByPath[path] != id {
-			removed = append(removed, id)
-		}
-	}
-	return removed
 }
 
 // fieldListPatchesBackendScopes reports whether fields include persisted scope paths (JSON tag

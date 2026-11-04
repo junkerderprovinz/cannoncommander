@@ -71,7 +71,7 @@ func ExtractToken(r *http.Request) (string, error) {
 }
 
 // getOrCreateAuthenticatedUser is a common helper for retrieving or auto-creating users
-// across different authentication methods (proxy, JWT, LDAP, OIDC).
+// that sign in through JWT or OIDC.
 // When groupsPresent is false the groups claim was omitted and existing memberships are left unchanged.
 // When groupsPresent is true, groups (including empty) are synced into access-control GroupMap.
 func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod, isAdmin bool, groups []string, groupsPresent bool) (*users.User, error) {
@@ -150,36 +150,20 @@ func ensureUserInAllowedGroups(loginMethod users.LoginMethod, groups []string) e
 	switch loginMethod {
 	case users.LoginMethodJwt:
 		allowedGroups = settings.Config.Auth.Methods.JwtAuth.UserGroups
-	case users.LoginMethodLdap:
-		allowedGroups = settings.Config.Auth.Methods.LdapAuth.UserGroups
 	case users.LoginMethodOidc:
 		allowedGroups = settings.Config.Auth.Methods.OidcAuth.UserGroups
-	case users.LoginMethodProxy:
-		allowedGroups = settings.Config.Auth.Methods.ProxyAuth.UserGroups
 	}
 	if len(allowedGroups) == 0 {
 		return nil
 	}
 	for _, userGroup := range groups {
 		for _, allowedGroup := range allowedGroups {
-			if loginMethod == users.LoginMethodLdap {
-				if ldapGroupMatches(userGroup, allowedGroup) {
-					return nil
-				}
-			} else if strings.EqualFold(userGroup, allowedGroup) {
+			if strings.EqualFold(userGroup, allowedGroup) {
 				return nil
 			}
 		}
 	}
 	return fmt.Errorf("user is not in allowed groups")
-}
-
-func SetupProxyUser(r *http.Request, data *Context, proxyUser string) (*users.User, error) {
-	proxyCfg := settings.Config.Auth.Methods.ProxyAuth
-	groups, groupsPresent := auth.ExtractGroupsFromHeader(r, proxyCfg.GroupsClaim)
-	isAdmin := isAdminFromGroups(proxyCfg.AdminGroup, groups)
-
-	return getOrCreateAuthenticatedUser(proxyUser, users.LoginMethodProxy, isAdmin, groups, groupsPresent)
 }
 
 // setupJwtUser retrieves or creates a user based on external JWT token claims

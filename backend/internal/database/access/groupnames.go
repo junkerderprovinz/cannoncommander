@@ -6,7 +6,7 @@ import (
 )
 
 // MaxGroupNameLength bounds names for manually created groups. Existing names
-// (e.g. LDAP DNs synced from an IdP) may exceed it and are never rejected on read.
+// (e.g. long group names synced from an IdP) may exceed it and are never rejected on read.
 const MaxGroupNameLength = 128
 
 // MinGroupNameLength bounds manually created group names. Existing records are

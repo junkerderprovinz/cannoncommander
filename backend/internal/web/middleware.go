@@ -91,13 +91,11 @@ func withUserHelper(fn handleFunc) handleFunc {
 			}
 		}
 
-		proxyUser := r.Header.Get(settings.Config.Auth.Methods.ProxyAuth.Header)
-		isProxyUser := settings.Config.Auth.Methods.ProxyAuth.Enabled && proxyUser != ""
 		keyFunc := auth.JWTSigningKeyFunc()
 		if data.Token == "" {
 			var err error
 			data.Token, err = ExtractToken(r)
-			if err != nil && !isProxyUser {
+			if err != nil {
 				return http.StatusUnauthorized, err
 			}
 		}
@@ -105,9 +103,6 @@ func withUserHelper(fn handleFunc) handleFunc {
 		var tk users.AuthToken
 		token, err := jwt.ParseWithClaims(data.Token, &tk, keyFunc)
 		if err != nil {
-			if isProxyUser {
-				return getProxyUser(w, r, data, fn, proxyUser)
-			}
 			// JWT library automatically validates expiration - if expired, it returns an error
 			return http.StatusUnauthorized, fmt.Errorf("invalid token: %v", err)
 		}
@@ -236,38 +231,6 @@ func reusableSessionToken(r *http.Request, user *users.User) (string, time.Time)
 		return "", time.Time{}
 	}
 	return existing, tk.RegisteredClaims.ExpiresAt.Time
-}
-
-func getProxyUser(w http.ResponseWriter, r *http.Request, data *requestContext, fn handleFunc, proxyUser string) (int, error) {
-	// proxy user logic
-	user, err := SetupProxyUser(r, data, proxyUser)
-	if err != nil {
-		if status, mapped := loginMethodHTTPStatus(err); status != 0 {
-			return status, mapped
-		}
-		return http.StatusForbidden, err
-	}
-	data.User = user
-	SetUserInResponseWriter(w, data.User)
-	if data.User.Username == "" {
-		return http.StatusForbidden, errors.ErrUnauthorized
-	}
-	// Generate a token for proxy users if they don't have one
-	if data.Token == "" {
-		tokenString, err := mintAndRegisterSessionToken(user)
-		if err != nil {
-			logger.Errorf("Failed to generate token for proxy user %s: %v", proxyUser, err)
-			return http.StatusInternalServerError, fmt.Errorf("failed to generate token")
-		}
-		data.Token = tokenString
-		expires := time.Hour * time.Duration(settings.Config.Auth.TokenExpirationHours)
-		SetSessionCookie(w, r, tokenString, time.Now().Add(expires).Add(time.Minute*30))
-	}
-	// Call the handler function, passing in the context (or return OK if no handler)
-	if fn == nil {
-		return http.StatusOK, nil
-	}
-	return fn(w, r, data)
 }
 
 func wrapHandler(fn handleFunc) http.HandlerFunc {

@@ -71,22 +71,6 @@ func removeDestinationSymlinkIfPresent(dest string) error {
 	return nil
 }
 
-// MoveFile moves a file from src to dst.
-// By default, the rename system call is used. If src and dst are on different volumes,
-// CopyFile is used as a fallback and the source is removed synchronously on success.
-func MoveFile(src, dst string) error {
-	if err := os.Rename(src, dst); err != nil {
-		if !isCrossDeviceRenameError(err) {
-			return err
-		}
-		if err := CopyFile(src, dst); err != nil {
-			return err
-		}
-		return os.RemoveAll(src)
-	}
-	return nil
-}
-
 func preserveFileMode(path string, mode os.FileMode) error {
 	return os.Chmod(path, mode.Perm())
 }

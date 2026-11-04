@@ -20,7 +20,7 @@ func TestResyncToolAccessDefaultsForAllUsers_appliesDefaults(t *testing.T) {
 
 	doc := EffectiveToolAccessDefaults()
 	for i := range doc.Items {
-		if doc.Items[i].ToolID == users.ToolFileWatcher {
+		if doc.Items[i].ToolID == users.ToolMaterialIconPicker {
 			doc.Items[i].Enabled = false
 			doc.Items[i].Enforced = false
 			break
@@ -47,7 +47,7 @@ func TestResyncToolAccessDefaultsForAllUsers_appliesDefaults(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if loaded.ToolAccess[users.ToolFileWatcher] {
-		t.Fatal("expected fileWatcher denied after resync")
+	if loaded.ToolAccess[users.ToolMaterialIconPicker] {
+		t.Fatal("expected materialIconPicker denied after resync")
 	}
 }

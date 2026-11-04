@@ -85,7 +85,7 @@ func TestYAMLConfig_validConfig_organizedPermissions(t *testing.T) {
 func TestYAMLConfig_applyUserDefaultsFrom_proxyAndJwt(t *testing.T) {
 	t.Run("proxy", func(t *testing.T) {
 		loadConfigForUserDefaultsTests(t, proxyPlaywrightConfig)
-		u := &users.User{FrontendUser: users.FrontendUser{Username: "demo-127.0.0.1", LoginMethod: users.LoginMethodProxy}}
+		u := &users.User{FrontendUser: users.FrontendUser{Username: "demo-127.0.0.1", LoginMethod: users.LoginMethodPassword}}
 		ApplyUserDefaultsFrom(u, Config.UserDefaults)
 		if !u.Permissions.Share {
 			t.Fatal("Share=false after ApplyUserDefaultsFrom")

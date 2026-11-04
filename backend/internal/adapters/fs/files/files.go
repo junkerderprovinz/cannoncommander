@@ -406,9 +406,6 @@ func extractAudioMetadata(ctx context.Context, item *iteminfo.ExtendedItemInfo, 
 	track, _ := m.Track()
 	item.Metadata.Track = track
 
-	// Check if lyrics are available without extract them
-	item.Metadata.HasLyrics = hasLyricsSidecar(realPath) || m.Lyrics() != ""
-
 	// Extract duration ONLY if explicitly requested using the ffmpeg VideoService
 	// This respects concurrency limits and gracefully handles missing ffmpeg
 	if getDuration {
@@ -438,52 +435,6 @@ func extractAudioMetadata(ctx context.Context, item *iteminfo.ExtendedItemInfo, 
 	}
 
 	return nil
-}
-
-var lyricsSidecarExts = []string{".elrc", ".lrc", ".srt", ".vtt"}
-
-func lyricsSidecar(dir, nameWithoutExt, ext string) (path string, ok bool) {
-	sidecarPath := filepath.Join(dir, nameWithoutExt+ext)
-	info, err := os.Lstat(sidecarPath)
-	if err != nil {
-		return "", false
-	}
-	if !info.Mode().IsRegular() {
-		return "", false
-	}
-	if info.Size() > 15*1024*1024 { // 15MB
-		return "", false
-	}
-	return sidecarPath, true
-}
-
-func hasLyricsSidecar(realPath string) bool {
-	dir := filepath.Dir(realPath)
-	base := filepath.Base(realPath)
-	nameWithoutExt := strings.TrimSuffix(base, filepath.Ext(base))
-	for _, ext := range lyricsSidecarExts {
-		sidecarPath, ok := lyricsSidecar(dir, nameWithoutExt, ext)
-		if !ok {
-			continue
-		}
-		f, err := os.Open(sidecarPath)
-		if err != nil {
-			continue
-		}
-		buf := make([]byte, 4096)
-		for {
-			n, readErr := f.Read(buf)
-			if n > 0 && strings.TrimSpace(string(buf[:n])) != "" {
-				f.Close()
-				return true
-			}
-			if readErr != nil {
-				break
-			}
-		}
-		f.Close()
-	}
-	return false
 }
 
 // extractVideoMetadata extracts duration and codec info from video files using ffprobe.

@@ -22,8 +22,6 @@ import (
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	commonerrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/quota"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
@@ -328,71 +326,6 @@ func (ff *filteredFile) Readdir(count int) ([]os.FileInfo, error) {
 	return entries, nil
 }
 
-// quotaPutFile stages WebDAV PUT writes through a temp file when storage quotas apply.
-type quotaPutFile struct {
-	*filteredFile
-	tempPath      string
-	written       int64
-	writeErr      error
-	quotaCtx      quota.UploadContext
-	quotaReserved bool
-	totalSize     int64
-	hasTotalSize  bool
-	contentLength int64
-	sourceName    string
-	realPath      string
-}
-
-func (f *quotaPutFile) Write(p []byte) (int, error) {
-	n, err := f.File.Write(p)
-	f.written += int64(n)
-	if err != nil {
-		f.writeErr = err
-	}
-	return n, err
-}
-
-func (f *quotaPutFile) Close() error {
-	if f.tempPath == "" {
-		return f.filteredFile.Close()
-	}
-
-	if err := f.File.Close(); err != nil {
-		_ = os.Remove(f.tempPath)
-		if f.quotaReserved {
-			releaseUploadQuota(f.quotaCtx.SessionID)
-		}
-		return err
-	}
-
-	if f.writeErr != nil {
-		_ = os.Remove(f.tempPath)
-		if f.quotaReserved {
-			releaseUploadQuota(f.quotaCtx.SessionID)
-		}
-		return f.writeErr
-	}
-
-	stillReserved, finalizeErr := finalizeQuotaPut(f.quotaCtx, f.tempPath, f.realPath, f.sourceName, f.written, f.totalSize, f.hasTotalSize, f.contentLength)
-	if finalizeErr != nil {
-		if f.quotaReserved && stillReserved {
-			releaseUploadQuota(f.quotaCtx.SessionID)
-		}
-		if !stillReserved {
-			f.quotaReserved = false
-		}
-		return finalizeErr
-	}
-	f.quotaReserved = false
-
-	if !f.desiredMtime.IsZero() {
-		if chtimesErr := os.Chtimes(f.realPath, time.Now(), f.desiredMtime); chtimesErr != nil {
-			logger.Errorf("failed to set mtime on %s: %v", f.realPath, chtimesErr)
-		}
-	}
-	return nil
-}
-
 func (ffs *filteredFileSystem) sourceFilePerms() users.SourceFilePermissions {
 	return ffs.filePerms
 }
@@ -475,69 +408,6 @@ func (ffs *filteredFileSystem) OpenFile(ctx context.Context, requestPath string,
 		}
 	}
 
-	if isReplaceWrite && ffs.httpReq != nil {
-		userScope, scopeErr := ffs.user.GetScopeForSourceName(ffs.source)
-		if scopeErr == nil {
-			rel := strings.TrimPrefix(requestPath, "/")
-			fullIndexPath := utils.JoinScopedIndexPath(userScope, rel)
-			idx := indexing.GetIndex(ffs.source)
-			if idx != nil {
-				sourcePath := idx.Path
-				if sourceInfo, ok := settings.Config.Server.NameToSource[ffs.source]; ok {
-					sourcePath = sourceInfo.Path
-				}
-				principal := quota.PrincipalForUpload(ffs.user, 0, "")
-				if state.HasApplicableQuotas(principal, sourcePath, fullIndexPath, "", 0) {
-					realPath, pathErr := idx.GetRealPathForMutation(userScope, fullIndexPath)
-					if pathErr != nil {
-						_, clientErr := sanitizePutPathError(pathErr)
-						return nil, clientErr
-					}
-					if stat, statErr := os.Stat(realPath); statErr == nil && stat.IsDir() {
-						return nil, fmt.Errorf("path is a directory")
-					}
-					totalSize, hasTotalSize, sizeErr := parsePutTotalSize(ffs.httpReq)
-					if sizeErr != nil {
-						return nil, sizeErr
-					}
-					sessionID := newQuotaSessionID()
-					quotaCtx := buildUploadQuotaContext(principal, ffs.source, sourcePath, fullIndexPath, realPath, "", 0, sessionID, totalSize, hasTotalSize)
-					if quotaErr := checkUploadQuota(quotaCtx); quotaErr != nil {
-						return nil, quotaErr
-					}
-
-					if err := os.MkdirAll(filepath.Dir(realPath), fileutils.EffectiveDirPerm()); err != nil {
-						return nil, err
-					}
-					tempPath := uploadTempPath(realPath, sessionID)
-					tempFile, err := os.OpenFile(tempPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, fileutils.PermFile)
-					if err != nil {
-						releaseUploadQuota(sessionID)
-						return nil, err
-					}
-
-					return &quotaPutFile{
-						filteredFile: &filteredFile{
-							File:         tempFile,
-							fs:           ffs,
-							requestPath:  requestPath,
-							isDir:        false,
-							desiredMtime: desiredMtime,
-						},
-						tempPath:      tempPath,
-						quotaCtx:      quotaCtx,
-						quotaReserved: true,
-						totalSize:     totalSize,
-						hasTotalSize:  hasTotalSize,
-						contentLength: ffs.httpReq.ContentLength,
-						sourceName:    ffs.source,
-						realPath:      realPath,
-					}, nil
-				}
-			}
-		}
-	}
-
 	file, err := ffs.fs.OpenFile(ctx, requestPath, flag, perm)
 	if err != nil {
 		return nil, err
@@ -574,41 +444,8 @@ func (ffs *filteredFileSystem) RemoveAll(ctx context.Context, requestPath string
 		logger.Debugf("RemoveAll: scope check denied for %s: %v", requestPath, err)
 		return err
 	}
-	// The API delete path frees the deleted bytes from the quota counters. Do the same
-	// here: a WebDAV DELETE, and the MOVE over an existing destination that the WebDAV
-	// library implements as RemoveAll + Rename, otherwise leave the old bytes charged
-	// until the next quota recount.
-	//
-	// The counters and the index speak source-relative paths, while requestPath is
-	// relative to the user's scope, so join the scope the way OpenFile does.
-	indexPath := requestPath
-	if userScope, scopeErr := ffs.user.GetScopeForSourceName(ffs.source); scopeErr == nil {
-		indexPath = utils.JoinScopedIndexPath(userScope, strings.TrimPrefix(requestPath, "/"))
-	}
-
-	var deleteBytes int64
-	var isDir bool
-	if info, err := ffs.fs.Stat(ctx, requestPath); err != nil {
-		logger.Debugf("RemoveAll: cannot stat %s before deleting, quota not adjusted: %v", requestPath, err)
-	} else if info.IsDir() {
-		isDir = true
-		deleteBytes, _ = state.IndexedPathBytes(ffs.source, indexPath, true)
-	} else {
-		deleteBytes = info.Size()
-	}
-
-	// Collect the adjustments before deleting: a directory delete also has to release
-	// folder quotas nested under it, and their sizes come from the index.
-	var adjustments state.DeleteAdjustments
-	if sourceInfo, ok := settings.Config.Server.NameToSource[ffs.source]; ok {
-		adjustments = state.PrepareAccountedDelete(ffs.user, ffs.source, sourceInfo.Path, indexPath, "", isDir, deleteBytes)
-	}
-
 	if err := ffs.fs.RemoveAll(ctx, requestPath); err != nil {
 		return err
-	}
-	if err := state.ApplyAccountedDelete(adjustments); err != nil {
-		logger.Warningf("quota adjust after webdav delete failed: %v", err)
 	}
 	activity.RecordWebDAVUser(ffs.httpReq, ffs.user, activitydb.Entry{
 		EventType: activitydb.EventDelete,

@@ -47,3 +47,26 @@ func TestTheOldShareLinksLeaveTheDatabase(t *testing.T) {
 		t.Fatalf("other settings must stay: %v", err)
 	}
 }
+
+func TestTheQuotaTablesLeaveTheDatabase(t *testing.T) {
+	store, _, err := NewSQLStore(filepath.Join(t.TempDir(), "old.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = store.Close() })
+	for _, q := range []string{
+		`CREATE TABLE quotas (id TEXT PRIMARY KEY NOT NULL)`,
+		`CREATE TABLE quota_counters (quota_id TEXT PRIMARY KEY NOT NULL)`,
+		`UPDATE schema_version SET version = 5`,
+	} {
+		if _, err := store.db.Exec(q); err != nil {
+			t.Fatalf("%s: %v", q, err)
+		}
+	}
+	if err := runMigrations(store.db, 5); err != nil {
+		t.Fatal(err)
+	}
+	if tableExists(t, store, "quotas") || tableExists(t, store, "quota_counters") {
+		t.Fatal("the quota tables are still there")
+	}
+}

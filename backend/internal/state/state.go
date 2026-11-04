@@ -178,10 +178,6 @@ func initialize(dbPath string) (bool, error) {
 
 	InitActivityRecorder(settings.Config.Server.DatabaseV2)
 
-	if err := InitQuotas(settings.Config.Server.DatabaseV2); err != nil {
-		return existingDb, fmt.Errorf("failed to initialize quotas: %w", err)
-	}
-
 	return existingDb, nil
 }
 
@@ -198,7 +194,6 @@ func Close() error {
 	users.SetUsernameToID(nil)
 	clearUserRecordCache()
 	StopActivityRecorder()
-	StopQuotaFlusher()
 
 	var err error
 	if sqlDb != nil {
@@ -208,4 +203,3 @@ func Close() error {
 	defaultStore = nil
 	return err
 }
-

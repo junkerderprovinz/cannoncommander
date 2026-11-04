@@ -61,28 +61,16 @@ server:
     disableReuse: false                   # enable to always create a new indexing database on startup.
     startupIntegrityCheck: "quickCheck"   # the method used to check the integrity of the index database on startup (default: quickCheck)  validate:omitempty,oneof=quickCheck probe off
   database:                               # SQLite database configuration
-    path: "filebrowser.sqlite"            # path to SQLite database file
+    path: "cannoncommander.sqlite"        # path to SQLite database file
     migrateFrom: ""                       # path to legacy database file for migration (optional)
     activity:                             # activity audit logging configuration
       disabled: false                     # disable semantic activity audit logging (default: false)
       retentionDays: 30                   # purge activity rows older than this many days (default 30)
       flushIntervalSeconds: 10            # buffer flush interval in seconds (default 10)
       maxBufferSize: 10000                # max in-memory buffer before immediate flush (default 10000)
-    quotas:                               # quota counter batch flush configuration
-      flushIntervalSeconds: 10            # default 10
-      flushMaxBuffers: 500                # default 500
 auth:
   tokenExpirationHours: 2                 # time in hours each web UI session token is valid for. Default is 2 hours.
   methods:
-    proxy:                                #  validate:omitempty
-      enabled: false                      # whether to enable this authentication method.
-      adminGroup: ""                      # if set, users in this group will be granted admin privileges
-      userGroups:                         # if set, only users in these groups are allowed to log in. Blocks all other users even with valid credentials.
-      groupsClaim: ""                     # the JSON field name to read groups from. Default is "groups"
-      userIdentifier: ""                  # the field value to use as the username. Default is "preferred_username" in oidc, "sub" in jwt. Other common values are "email" or "username", or "phone"
-      disableVerifyTLS: false             # disable TLS verification (insecure, for testing only)
-      logoutRedirectUrl: ""               # if provider logout url is provided, filebrowser will also redirect to logout url. Custom logout query params are respected.
-      header: ""                          # required header to use for authentication. Security Warning: FileBrowser blindly accepts the header value as username.
     noauth: false                         # if set to true, overrides all other auth methods and disables authentication
     password:                             #  validate:omitempty
       enabled: true
@@ -107,19 +95,6 @@ auth:
       clientSecret: ""                    # secret: client secret of the OIDC application
       issuerUrl: ""                       # authorization URL of the OIDC provider
       scopes: "openid email profile"      # scopes to request from the OIDC provider
-    ldap:                                 #  validate:omitempty
-      enabled: false                      # whether to enable this authentication method.
-      adminGroup: ""                      # if set, users in this group will be granted admin privileges
-      userGroups:                         # if set, only users in these groups are allowed to log in. Blocks all other users even with valid credentials.
-      groupsClaim: ""                     # the JSON field name to read groups from. Default is "groups"
-      userIdentifier: ""                  # the field value to use as the username. Default is "preferred_username" in oidc, "sub" in jwt. Other common values are "email" or "username", or "phone"
-      disableVerifyTLS: false             # disable TLS verification (insecure, for testing only)
-      logoutRedirectUrl: ""               # if provider logout url is provided, filebrowser will also redirect to logout url. Custom logout query params are respected.
-      server: ""                          # scheme://host:port of the LDAP server (e.g. ldap://localhost:389)
-      baseDN: ""                          # LDAP search base DN (e.g. dc=ldap,dc=goauthentik,dc=io)
-      userDN: ""                          # Bind DN for service account (e.g. cn=admin,ou=users,dc=ldap,dc=goauthentik,dc=io)
-      userPassword: ""                    # secret: bind password for the LDAP service account
-      userFilter: ""                      # Search filter for finding user by username. Default (&(cn=%s)(objectClass=user)); override e.g. (email=%s) or (sAMAccountName=%s) for other directories.
     jwt:                                  #  validate:omitempty
       enabled: false                      # whether to enable this authentication method.
       adminGroup: ""                      # if set, users in this group will be granted admin privileges
@@ -146,7 +121,7 @@ frontend:
   externalLinks:
     - text: "(untracked)"                 # the text to display on the link  validate:required
       title: "untracked"                  # the title to display on hover
-      url: "https://github.com/gtsteffaniak/filebrowser/releases/" # the url to link to  validate:required
+      url: "https://github.com/junkerderprovinz/cannoncommander/releases/" # the url to link to  validate:required
     - text: "Help"                        # the text to display on the link  validate:required
       title: ""                           # the title to display on hover
       url: "help prompt"                  # the url to link to  validate:required
@@ -235,40 +210,6 @@ userDefaults:                             # optional signup/CLI defaults; per-us
     loginMethod: "password"               # login method to use: eg. password, proxy, oidc
     disableUpdateNotifications: false     # disable update notifications banner for admin users
     showAdvancedProfile: false            # show advanced profile settings in the user profile page
-shareDefaults:                            # optional defaults for new shares; managed in the UI
-  shareTheme: ""
-  disableAnonymous: false
-  disableThumbnails: false
-  keepAfterExpiration: false
-  themeColor: ""
-  title: ""
-  description: ""
-  favicon: ""
-  quickDownload: false
-  hideNavButtons: false
-  disableSidebar: false
-  disableShareCard: false
-  enforceDarkLightMode: ""
-  viewMode: ""
-  enableOnlyOffice: false
-  shareType: ""
-  allowDelete: false
-  allowCreate: false
-  allowModify: false
-  disableFileViewer: false
-  disableDownload: false
-  allowReplacements: false
-  sidebarLinks:
-  showHidden: false
-  disableLoginOption: false
-  maxBandwidth: 0
-  allowedUsernames:
-  perUserDownloadLimit: false
-  extractEmbeddedSubtitles: false
-  downloadsLimit: 0
-  quotaLimitBytes: 0
-  hideFileExt: ""
-  banner: ""
 integrations:
   office:                                 #  validate:omitempty
     url: ""                               # The URL to the OnlyOffice Document Server, needs to be accessible to the user.  validate:required
