@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -128,10 +129,15 @@ func (s server) watch(w http.ResponseWriter, r *http.Request) error {
 	}
 	out := watchRequest{ClientID: clientID, Paths: []string{}}
 	topics := make([]string, 0, len(req.Paths))
+	// A tab can still show a folder that was deleted or closed to the user
+	// since. It drops out of the answer instead of failing the other tabs.
 	for _, p := range req.Paths {
 		loc, err := s.fs.Check(u, p, ccfs.View)
 		if err != nil {
-			return err
+			continue
+		}
+		if fi, err := os.Stat(loc.Real); err != nil || !fi.IsDir() {
+			continue
 		}
 		out.Paths = append(out.Paths, loc.Path)
 		topics = append(topics, hub.FolderTopic(loc.Path))
