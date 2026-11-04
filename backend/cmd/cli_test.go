@@ -77,22 +77,6 @@ func TestParseUserSetConfigFlagOrder(t *testing.T) {
 	assert.Equal(t, "other.yaml", cli.Config)
 }
 
-func TestParseSetRuleFlags(t *testing.T) {
-	cli := freshCLI()
-	parser := newCLIParser(t, &cli)
-	ctx, err := parser.Parse([]string{
-		"set", "rule",
-		"-s", "access", "-p", "/", "-r", "user", "-v", "admin", "--allow",
-	})
-	require.NoError(t, err)
-	assert.Equal(t, "set rule", ctx.Command())
-	assert.Equal(t, "access", cli.Set.Rule.Source)
-	assert.Equal(t, "/", cli.Set.Rule.Path)
-	assert.Equal(t, "user", cli.Set.Rule.Role)
-	assert.Equal(t, "admin", cli.Set.Rule.Value)
-	assert.True(t, cli.Set.Rule.Allow)
-}
-
 func TestParseLegacySetUser(t *testing.T) {
 	cli := freshCLI()
 	parser := newCLIParser(t, &cli)
@@ -145,22 +129,12 @@ func TestSplitByMultiple(t *testing.T) {
 	assert.Equal(t, []string{"info", "warning", "error"}, SplitByMultiple("info|warning|error"))
 }
 
-func TestSetCmdRunSkipsWhenRuleSelected(t *testing.T) {
-	cli := freshCLI()
-	parser := newCLIParser(t, &cli)
-	ctx, err := parser.Parse([]string{"set", "rule", "-s", "x", "-p", "/", "-r", "all"})
-	require.NoError(t, err)
-	cli.Set.User = "should-not-run"
-	err = cli.Set.Run(ctx)
-	require.NoError(t, err)
-}
-
 func TestSetCmdRunLegacyUser(t *testing.T) {
 	cli := freshCLI()
 	parser := newCLIParser(t, &cli)
-	ctx, err := parser.Parse([]string{"set", "-u", "bad"})
+	_, err := parser.Parse([]string{"set", "-u", "bad"})
 	require.NoError(t, err)
-	err = cli.Set.Run(ctx)
+	err = cli.Set.Run()
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "not enough info")
 }

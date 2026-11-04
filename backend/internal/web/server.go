@@ -15,24 +15,14 @@ import (
 
 	"github.com/coreos/go-systemd/v22/activation"
 	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/events"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-// Deps holds injected dependencies for HTTP handlers and middleware.
-type Deps struct {
-	Store *state.Store
-	Files *files.Service
-	Auth  *auth.Service
-}
-
 var (
-	runtimeDeps Deps
-	assetFs     fs.FS
+	assetFs fs.FS
 )
 
 // Embed the files in the frontend/dist directory
@@ -46,7 +36,7 @@ func GetEmbeddedAssets() embed.FS {
 }
 
 // StartHttp starts the HTTP server and blocks until ctx is cancelled.
-func StartHttp(ctx context.Context, deps Deps, shutdownComplete chan struct{}) {
+func StartHttp(ctx context.Context, shutdownComplete chan struct{}) {
 	if settings.Env.IsDevMode {
 		go func() {
 			if err := http.ListenAndServe("localhost:6060", nil); err != nil {
@@ -59,7 +49,6 @@ func StartHttp(ctx context.Context, deps Deps, shutdownComplete chan struct{}) {
 	if assetFs == nil {
 		logger.Fatal("Asset filesystem not initialized. Call fileutils.InitAssetFS first.")
 	}
-	runtimeDeps = deps
 
 	router := http.NewServeMux()
 	configureHTTPRouter(router)

@@ -10,8 +10,7 @@ import (
 
 func TestInitSourceAccessDefaults_overlaysConfigOnRestart(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	t.Setenv("CC_PLAYWRIGHT_TEST", "true")
-	settings.Initialize("../../testdata/jwt.yaml")
+	settings.Initialize("../../testdata/sourcedefaults.yaml")
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -26,18 +25,14 @@ func TestInitSourceAccessDefaults_overlaysConfigOnRestart(t *testing.T) {
 	}
 
 	// Simulate admin changing modify in SQLite; config should re-overlay on next init.
-	sourceAccessMu.Lock()
 	doc := sourceAccessSettingsDocument{
 		DefaultPermissions: users.SourceFilePermissions{
 			View: true, Download: true, Modify: false, Create: true, Delete: false,
 		},
-		EnforcedPermissions: sourceAccessEnforcedDefault,
 	}
 	if saveErr := saveSourceAccessSettingsDocument(doc); saveErr != nil {
-		sourceAccessMu.Unlock()
 		t.Fatal(saveErr)
 	}
-	sourceAccessMu.Unlock()
 
 	if err := InitSourceAccessDefaults(); err != nil {
 		t.Fatal(err)
@@ -45,9 +40,9 @@ func TestInitSourceAccessDefaults_overlaysConfigOnRestart(t *testing.T) {
 
 	access = GetSourceAccessDefaults()
 	if !access.Modify {
-		t.Fatal("expected modify re-overlaid from jwt config on restart")
+		t.Fatal("expected modify re-overlaid from the config on restart")
 	}
 	if settings.Env.ConfigSourceDefaultPermissions == nil {
-		t.Fatal("expected config source default permissions for jwt yaml")
+		t.Fatal("expected config source default permissions from the yaml")
 	}
 }

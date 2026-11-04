@@ -12,7 +12,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
@@ -20,63 +19,6 @@ import (
 var (
 	configPath string
 )
-
-func setRule(backendSourcePath, indexPath, ruleCategory, value string, allow bool) error {
-	if backendSourcePath == "" {
-		return fmt.Errorf("backend source path is missing; check --source / -s")
-	}
-	if indexPath == "" {
-		return fmt.Errorf("--path / -p is required (index path within the source, e.g. /)")
-	}
-	if ruleCategory == "" {
-		return fmt.Errorf("role is required: use --role / -r <user|group|all>")
-	}
-	if ruleCategory != "all" && value == "" {
-		return fmt.Errorf("value is required when role is 'user' or 'group': use --value / -v <username|groupname>")
-	}
-
-	parsedPath, err := utils.ParseSanitizedIndexPath(indexPath, true)
-	if err != nil {
-		return err
-	}
-
-	if allow {
-		switch ruleCategory {
-		case "user":
-			err = state.AllowUser(backendSourcePath, parsedPath, value)
-		case "group":
-			err = state.AllowGroup(backendSourcePath, parsedPath, value)
-		default:
-			return fmt.Errorf("invalid role for allow: must be 'user' or 'group'")
-		}
-	} else {
-		switch ruleCategory {
-		case "user":
-			err = state.DenyUser(backendSourcePath, parsedPath, value)
-		case "group":
-			err = state.DenyGroup(backendSourcePath, parsedPath, value)
-		case "all":
-			err = state.DenyAll(backendSourcePath, parsedPath)
-		default:
-			return fmt.Errorf("invalid role: must be 'user', 'group', or 'all'")
-		}
-	}
-
-	if err != nil {
-		return fmt.Errorf("failed to add or update rule: %w", err)
-	}
-
-	action := "deny"
-	if allow {
-		action = "allow"
-	}
-	if ruleCategory == "all" {
-		fmt.Printf("successfully added %s rule for all users on index path '%s' in filesystem path '%s'\n", action, indexPath, backendSourcePath)
-	} else {
-		fmt.Printf("successfully added %s rule for %s '%s' on index path '%s' in filesystem path '%s'\n", action, ruleCategory, value, indexPath, backendSourcePath)
-	}
-	return nil
-}
 
 func setUser(username, password string, asAdmin bool) error {
 	user, err := state.GetUserByUsername(username)
@@ -101,7 +43,6 @@ func setUser(username, password string, asAdmin bool) error {
 		} else {
 			logger.Infof("Creating non-admin user: %s\n", username)
 		}
-		newUser.Permissions = settings.ConvertPermissionsToUsers(settings.Config.UserDefaults.Account.Permissions)
 		newUser.Permissions.Admin = asAdmin
 		err = state.CreateUser(&newUser, password)
 		if err != nil {
@@ -232,9 +173,6 @@ func createConfig(configpath string, noInput bool) error {
 	}
 
 	for {
-		// "database.db" is the reserved legacy-bolt filename and is rejected
-		// at startup (see backend/cmd/migrate.go), so the wizard must not
-		// suggest it as the default.
 		config.Server.DatabaseV2.Path = askQuestion(reader, "What should the file name and path be for the database?", "./cannoncommander.sqlite")
 		if strings.HasSuffix(config.Server.DatabaseV2.Path, ".sqlite") {
 			break
@@ -264,7 +202,6 @@ func createConfig(configpath string, noInput bool) error {
 		Create:   modifyDefault,
 		Delete:   modifyDefault,
 	})
-	config.UserDefaults.Account.Permissions.Share = askYesNoQuestion(reader, "Should a new user be able to create shares by default?", "no")
 
 	fmt.Println("--- 	Configuration Complete 	---")
 

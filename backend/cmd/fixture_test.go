@@ -8,36 +8,12 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-const settingsMigrationBoltMinSize = 1024
-
-// Docker source paths stored in the committed database.db.old Bolt fixture.
+// Docker source paths the user tests expect in testdata/migration/config.yaml.
 const (
 	fixturePlaywrightSource = "/app/frontend/tests/playwright-files"
 	fixtureDockerSource     = "/app/backend"
 	fixtureAccessSource     = "/tests/playwright-files"
 )
-
-// settingsMigrationBoltPath returns the committed read-only BoltDB reference used by
-// migration tests and the Playwright settings Docker image. Tests must never write to it.
-func settingsMigrationBoltPath(t *testing.T) string {
-	t.Helper()
-	path, err := filepath.Abs(filepath.Join("..", "testdata", "migration", "database.db.old"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	info, err := os.Stat(path)
-	if err != nil {
-		t.Fatalf(
-			"settings migration fixture not found at %s: %v (commit backend/testdata/migration/database.db.old)",
-			path,
-			err,
-		)
-	}
-	if info.Size() < settingsMigrationBoltMinSize {
-		t.Fatalf("settings migration fixture at %s is empty or too small (%d bytes)", path, info.Size())
-	}
-	return path
-}
 
 func settingsMigrationConfigPath(t *testing.T) string {
 	t.Helper()
@@ -52,8 +28,7 @@ func settingsMigrationConfigPath(t *testing.T) string {
 }
 
 // alignSettingsSourcesForMigrationFixture maps config sources to the Docker paths
-// stored in database.db.old so migration tests can run locally without modifying
-// the committed Bolt fixture.
+// the user tests expect.
 func alignSettingsSourcesForMigrationFixture(t *testing.T) {
 	t.Helper()
 	byName := map[string]string{

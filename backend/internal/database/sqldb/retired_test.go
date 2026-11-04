@@ -27,7 +27,7 @@ func TestTheOldShareLinksLeaveTheDatabase(t *testing.T) {
 	for _, q := range []string{
 		`CREATE TABLE shares (hash TEXT PRIMARY KEY, user_id TEXT NOT NULL, share_settings TEXT NOT NULL)`,
 		`INSERT INTO shares VALUES ('abc', '1', '{}')`,
-		`INSERT INTO settings (key, value) VALUES ('shareDefaults.default', '{}'), ('userDefaults.default', '{}')`,
+		`INSERT INTO settings (key, value) VALUES ('shareDefaults.default', '{}'), ('auth.signingKey', '{}')`,
 		`UPDATE schema_version SET version = 4`,
 	} {
 		if _, err := store.db.Exec(q); err != nil {
@@ -43,7 +43,7 @@ func TestTheOldShareLinksLeaveTheDatabase(t *testing.T) {
 	if _, err := store.GetSetting("shareDefaults.default"); err == nil {
 		t.Fatal("the old share defaults are still there")
 	}
-	if _, err := store.GetSetting("userDefaults.default"); err != nil {
+	if _, err := store.GetSetting("auth.signingKey"); err != nil {
 		t.Fatalf("other settings must stay: %v", err)
 	}
 }
@@ -68,5 +68,32 @@ func TestTheQuotaTablesLeaveTheDatabase(t *testing.T) {
 	}
 	if tableExists(t, store, "quotas") || tableExists(t, store, "quota_counters") {
 		t.Fatal("the quota tables are still there")
+	}
+}
+
+func TestTheUserDefaultsLeaveTheDatabase(t *testing.T) {
+	store, _, err := NewSQLStore(filepath.Join(t.TempDir(), "old.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = store.Close() })
+	for _, q := range []string{
+		`INSERT INTO settings (key, value) VALUES ('userDefaults.default', '{}'), ('userDefaults.enforced.default', '{}'), ('sidebarLinkDefaults', '{}'), ('toolAccessDefaults', '{}'), ('sourceAccessDefaults', '{}')`,
+		`UPDATE schema_version SET version = 6`,
+	} {
+		if _, err := store.db.Exec(q); err != nil {
+			t.Fatalf("%s: %v", q, err)
+		}
+	}
+	if err := runMigrations(store.db, 6); err != nil {
+		t.Fatal(err)
+	}
+	for _, key := range []string{"userDefaults.default", "userDefaults.enforced.default", "sidebarLinkDefaults", "toolAccessDefaults"} {
+		if _, err := store.GetSetting(key); err == nil {
+			t.Errorf("%s is still there", key)
+		}
+	}
+	if _, err := store.GetSetting("sourceAccessDefaults"); err != nil {
+		t.Fatalf("other settings must stay: %v", err)
 	}
 }

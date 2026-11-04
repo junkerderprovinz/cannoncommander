@@ -7,7 +7,7 @@ import (
 )
 
 // configureHTTPRouter registers what lives outside /api/v1: the pages, the
-// bundles, the single sign on that the sign in page links to, and WebDAV.
+// bundles and the single sign on that the sign in page links to.
 func configureHTTPRouter(router *http.ServeMux) {
 	base := settings.Config.Http.BaseURL
 
@@ -17,11 +17,6 @@ func configureHTTPRouter(router *http.ServeMux) {
 	router.Handle(base+"api/auth/oidc/", http.StripPrefix(base+"api", oidc))
 	// Anything else under /api is a mistyped call, not a page of the app.
 	router.Handle(base+"api/", http.NotFoundHandler())
-
-	if !settings.Config.Http.DisableWebDAV {
-		// The webdav library needs the /dav prefix, so it stays on the path.
-		router.Handle(base+"dav/{source}/{path...}", withBasicAuth(webDAVHandler))
-	}
 
 	router.HandleFunc("GET "+base+"assets/", viteAssetHandler)
 	router.HandleFunc("GET "+base+"s/{slug}", sharePageHandler)

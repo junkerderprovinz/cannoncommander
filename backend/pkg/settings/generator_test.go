@@ -41,12 +41,12 @@ func TestGenerateConfigYaml_StringQuoting(t *testing.T) {
 	sourceContent := `package settings
 
 type Settings struct {
-	UserDefaults UserDefaults ` + "`json:\"userDefaults\"`" + `
+	Frontend Frontend ` + "`json:\"frontend\"`" + `
 	Auth Auth ` + "`json:\"auth\"`" + `
 }
 
-type UserDefaults struct {
-	Locale string ` + "`json:\"locale\"`" + `
+type Frontend struct {
+	Name string ` + "`json:\"name\"`" + `
 }
 
 type Auth struct {
@@ -67,11 +67,7 @@ type PasswordAuthConfig struct {
 
 	// Create real Settings with string values to test quoting
 	settings := &Settings{
-		UserDefaults: UserDefaults{
-			UI: UserDefaultsUI{
-				Locale: "en-US",
-			},
-		},
+		Frontend: Frontend{Name: "en-US"},
 		Auth: Auth{
 			Methods: LoginMethods{
 				PasswordAuth: PasswordAuthConfig{
@@ -202,12 +198,12 @@ func TestGenerateConfigYaml_FullVsFiltered(t *testing.T) {
 	sourceContent := `package settings
 
 type Settings struct {
-	UserDefaults UserDefaults ` + "`json:\"userDefaults\"`" + `
+	Frontend Frontend ` + "`json:\"frontend\"`" + `
 }
 
-type UserDefaults struct {
-	DarkMode bool ` + "`json:\"darkMode\"`" + `
-	Locale string ` + "`json:\"locale\"`" + `
+type Frontend struct {
+	DisableUsedPercentage bool ` + "`json:\"disableUsedPercentage\"`" + `
+	Name string ` + "`json:\"name\"`" + `
 }
 `
 	tmpFile, cleanup := createTestSourceFile(t, sourceContent)
@@ -215,14 +211,8 @@ type UserDefaults struct {
 	sourcePath := tmpFile[:strings.LastIndex(tmpFile, "/")]
 
 	// Create a config with both default and non-default values
-	trueVal := true
 	config := &Settings{
-		UserDefaults: UserDefaults{
-			UI: UserDefaultsUI{
-				DarkMode: &trueVal,
-				Locale:   "es",
-			},
-		},
+		Frontend: Frontend{Name: "es"},
 	}
 
 	// Test full=true - should show all fields
@@ -243,24 +233,20 @@ type UserDefaults struct {
 	}
 
 	// Filtered output should contain the non-default field
-	if !strings.Contains(filteredYaml, "locale") {
-		t.Error("Filtered YAML should contain non-default locale field")
+	if !strings.Contains(filteredYaml, "name") {
+		t.Error("Filtered YAML should contain non-default name field")
 	}
 
 	// Full output should contain default fields
-	if !strings.Contains(fullYaml, "darkMode") {
-		t.Error("Full YAML should contain darkMode field")
+	if !strings.Contains(fullYaml, "disableUsedPercentage") {
+		t.Error("Full YAML should contain disableUsedPercentage field")
 	}
 }
 
 func TestGenerateConfigYaml_CommentsOnOff(t *testing.T) {
 	// Use the actual settings source directory since comments work there
 	config := &Settings{
-		UserDefaults: UserDefaults{
-			UI: UserDefaultsUI{
-				Locale: "en",
-			},
-		},
+		Frontend: Frontend{Name: "en"},
 	}
 
 	// Test with comments=true using the real source
@@ -294,17 +280,8 @@ func TestGenerateConfigYaml_CommentsOnOff(t *testing.T) {
 func TestGenerateConfigYaml_IntegrationTest(t *testing.T) {
 	reNumber := regexp.MustCompile(`^-?\d+(\.\d+)?$`)
 	// Comprehensive test with all features
-	trueVal := true
 	config := &Settings{
-		UserDefaults: UserDefaults{
-			UI: UserDefaultsUI{
-				Locale:   "es",
-				DarkMode: &trueVal,
-			},
-			FileViewer: UserDefaultsFileViewer{
-				DisableOnlyOfficeExt: ".docx .xlsx",
-			},
-		},
+		Frontend: Frontend{Name: "es"},
 		Auth: Auth{
 			Key: "secret123", // This is secret
 			Methods: LoginMethods{
@@ -462,12 +439,7 @@ func TestGenerateConfigYaml_EdgeCases(t *testing.T) {
 		{
 			name: "only_defaults",
 			config: &Settings{
-				UserDefaults: UserDefaults{
-					UI: UserDefaultsUI{
-						DarkMode: boolPtr(true), // default value
-						Locale:   "en",          // default value
-					},
-				},
+				Frontend: Frontend{Name: "x"},
 			},
 			desc: "Config with only default values",
 		},

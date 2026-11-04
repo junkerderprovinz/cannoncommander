@@ -25,9 +25,6 @@ func TestFinishUserLoad_legacyProfileRowPreservesAbsentSettingsFields(t *testing
 	if !loaded.ShowFirstLogin {
 		t.Fatal("expected top-level showFirstLogin to be preserved when settings omits it")
 	}
-	if !loaded.DarkMode {
-		t.Fatal("expected profile darkMode=true")
-	}
 	if len(loaded.PasskeyCredentials) != 0 {
 		t.Fatalf("expected no passkeys when settings omits passkeyCredentials, got %#v", loaded.PasskeyCredentials)
 	}
@@ -63,23 +60,6 @@ func TestFinishUserLoad_legacyProfileRowPreservesAbsentSettingsFields(t *testing
 	if loaded.ShowFirstLogin {
 		t.Fatal("expected settings.showFirstLogin=false to override top-level true")
 	}
-
-	explicitEmptySidebar := []byte(`{
-		"backendScopes": [],
-		"loginMethod": "password",
-		"version": 5,
-		"profile": {"ui":{"darkMode":true}},
-		"settings": {"sidebarLinks":[]}
-	}`)
-	loaded = users.User{FrontendUser: users.FrontendUser{NonAdminEditable: users.NonAdminEditable{
-		SidebarLinks: []users.SidebarLink{{Name: "Docs", Target: "/docs"}},
-	}}}
-	if err := finishUserLoad(&loaded, explicitEmptySidebar); err != nil {
-		t.Fatal(err)
-	}
-	if len(loaded.SidebarLinks) != 0 {
-		t.Fatalf("expected explicit empty sidebarLinks to clear links, got %#v", loaded.SidebarLinks)
-	}
 }
 
 func TestUserDataRoundTrip_profileSettingsOverlay(t *testing.T) {
@@ -91,16 +71,13 @@ func TestUserDataRoundTrip_profileSettingsOverlay(t *testing.T) {
 
 	original := &users.User{
 		FrontendUser: users.FrontendUser{
-			Username:       "legacy-v5",
-			LoginMethod:    users.LoginMethodPassword,
-			ShowFirstLogin: true,
-			NonAdminEditable: users.NonAdminEditable{
-				DarkMode: true,
-				SidebarLinks: []users.SidebarLink{
-					{Name: "Home", Target: "/files"},
-				},
-				Sorting: users.Sorting{By: "name", Asc: true},
-			},
+			Username:              "legacy-v5",
+			LoginMethod:           users.LoginMethodPassword,
+			ShowFirstLogin:        true,
+			LockPassword:          true,
+			RequirePasswordChange: true,
+			DisableSettings:       true,
+			NonAdminEditable:      users.NonAdminEditable{Locale: "de"},
 		},
 		Version: users.ProfileStorageVersion,
 		PasskeyCredentials: []users.WebAuthnCredential{
@@ -120,14 +97,11 @@ func TestUserDataRoundTrip_profileSettingsOverlay(t *testing.T) {
 	if !loaded.ShowFirstLogin {
 		t.Fatal("expected showFirstLogin preserved on round-trip")
 	}
-	if len(loaded.SidebarLinks) != 1 || loaded.SidebarLinks[0].Name != "Home" {
-		t.Fatalf("sidebarLinks=%#v", loaded.SidebarLinks)
+	if !loaded.LockPassword || !loaded.RequirePasswordChange || !loaded.DisableSettings || loaded.Locale != "de" {
+		t.Fatalf("account values lost: %+v", loaded.FrontendUser)
 	}
 	if len(loaded.PasskeyCredentials) != 1 {
 		t.Fatalf("passkeyCredentials=%#v", loaded.PasskeyCredentials)
-	}
-	if loaded.Sorting.By != "name" || !loaded.Sorting.Asc {
-		t.Fatalf("sorting=%#v", loaded.Sorting)
 	}
 
 	var persisted UserData
@@ -158,5 +132,28 @@ func TestUserDataRoundTrip_profileSettingsOverlay(t *testing.T) {
 	}
 	if !legacyLoaded.ShowFirstLogin {
 		t.Fatal("legacy row without settings overlay fields should keep top-level showFirstLogin")
+	}
+}
+
+func TestAProfileFromAnOlderVersionKeepsTheAccountValues(t *testing.T) {
+	row := []byte(`{
+		"backendScopes": [],
+		"loginMethod": "password",
+		"version": 5,
+		"profile": {
+			"sidebar": {"sticky": true},
+			"listing": {"viewMode": "grid", "gallerySize": 3},
+			"preview": {"image": true},
+			"ui": {"darkMode": true, "locale": "de"},
+			"account": {"lockPassword": true, "requirePasswordChange": true, "disableSettings": true, "permissions": {"share": true}}
+		},
+		"settings": {"sidebarLinks": [{"name": "Home"}], "sorting": {"by": "name"}}
+	}`)
+	var loaded users.User
+	if err := finishUserLoad(&loaded, row); err != nil {
+		t.Fatal(err)
+	}
+	if !loaded.LockPassword || !loaded.RequirePasswordChange || !loaded.DisableSettings || loaded.Locale != "de" {
+		t.Fatalf("account values lost: %+v", loaded.FrontendUser)
 	}
 }

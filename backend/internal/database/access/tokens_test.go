@@ -12,19 +12,9 @@ import (
 
 type failingRevokePersister struct{}
 
-func (failingRevokePersister) SaveAccessRule(string, string, *access.AccessRule) error { return nil }
-func (failingRevokePersister) DeleteAccessRule(string, string) error                   { return nil }
-func (failingRevokePersister) AccessRulesLowercaseMigrated() (bool, error)             { return false, nil }
-func (failingRevokePersister) SetAccessRulesLowercaseMigrated() error                  { return nil }
-func (failingRevokePersister) MigrateAccessRulePathsLowercase(string, []string, access.RuleMap) error {
-	return nil
-}
 func (failingRevokePersister) SaveGroup(string, access.StringSet) error { return nil }
 func (failingRevokePersister) DeleteGroup(string) error                 { return nil }
-func (failingRevokePersister) DeleteGroupWithRules(string, []access.RuleUpsert, []access.RuleKey) error {
-	return nil
-}
-func (failingRevokePersister) SaveRevokedToken(string, int64) error { return nil }
+func (failingRevokePersister) SaveRevokedToken(string, int64) error     { return nil }
 func (failingRevokePersister) PersistImmediateTokenRevocation(string) error {
 	return errors.New("simulated revocation persistence failure")
 }

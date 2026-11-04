@@ -14,20 +14,10 @@ type stubGroupSQL struct {
 	deleteErr error
 }
 
-func (s *stubGroupSQL) SaveAccessRule(string, string, *access.AccessRule) error { return nil }
-func (s *stubGroupSQL) DeleteAccessRule(string, string) error                   { return nil }
-func (s *stubGroupSQL) AccessRulesLowercaseMigrated() (bool, error)             { return false, nil }
-func (s *stubGroupSQL) SetAccessRulesLowercaseMigrated() error                  { return nil }
-func (s *stubGroupSQL) MigrateAccessRulePathsLowercase(string, []string, access.RuleMap) error {
-	return nil
-}
 func (s *stubGroupSQL) SaveGroup(string, access.StringSet) error {
 	return s.saveErr
 }
 func (s *stubGroupSQL) DeleteGroup(string) error { return s.deleteErr }
-func (s *stubGroupSQL) DeleteGroupWithRules(string, []access.RuleUpsert, []access.RuleKey) error {
-	return s.deleteErr
-}
 func (s *stubGroupSQL) SaveRevokedToken(string, int64) error {
 	return nil
 }
@@ -46,13 +36,6 @@ type recordingGroupSQL struct {
 	failOn    int
 }
 
-func (s *recordingGroupSQL) SaveAccessRule(string, string, *access.AccessRule) error { return nil }
-func (s *recordingGroupSQL) DeleteAccessRule(string, string) error                   { return nil }
-func (s *recordingGroupSQL) AccessRulesLowercaseMigrated() (bool, error)             { return false, nil }
-func (s *recordingGroupSQL) SetAccessRulesLowercaseMigrated() error                  { return nil }
-func (s *recordingGroupSQL) MigrateAccessRulePathsLowercase(string, []string, access.RuleMap) error {
-	return nil
-}
 func (s *recordingGroupSQL) SaveGroup(name string, members access.StringSet) error {
 	if s.groups == nil {
 		s.groups = make(map[string]access.StringSet)
@@ -70,9 +53,6 @@ func (s *recordingGroupSQL) DeleteGroup(name string) error {
 	}
 	delete(s.groups, name)
 	return nil
-}
-func (s *recordingGroupSQL) DeleteGroupWithRules(name string, _ []access.RuleUpsert, _ []access.RuleKey) error {
-	return s.DeleteGroup(name)
 }
 func (s *recordingGroupSQL) SaveRevokedToken(string, int64) error                 { return nil }
 func (s *recordingGroupSQL) PersistImmediateTokenRevocation(string) error         { return nil }
@@ -121,31 +101,6 @@ func TestRemoveUserFromGroup_RollsBackOnSQLFailure(t *testing.T) {
 	groups := store.GetUserGroups("alice")
 	if len(groups) != 1 || groups[0] != "editors" {
 		t.Fatalf("expected in-memory rollback, alice groups = %#v", groups)
-	}
-}
-
-func TestAllowGroup_ReturnsSQLSaveError(t *testing.T) {
-	setupTestSources()
-	store := access.NewStorage(users.NewStorage(nil))
-	store.SetSQLStore(&stubGroupSQL{saveErr: errors.New("save failed")})
-
-	err := store.AllowGroup("mnt/storage", idxPath("/tenant"), "acme")
-	if err == nil {
-		t.Fatal("expected SQL save error from AllowGroup")
-	}
-}
-
-func TestEnsureGroupExistsNL_RollsBackOnSQLFailure(t *testing.T) {
-	setupTestSources()
-	store := access.NewStorage(users.NewStorage(nil))
-	store.SetSQLStore(&stubGroupSQL{saveErr: errors.New("save failed")})
-
-	err := store.AllowGroup("mnt/storage", idxPath("/tenant"), "newgroup")
-	if err == nil {
-		t.Fatal("expected SQL save error")
-	}
-	if groups := store.GetAllGroups(); len(groups) != 0 {
-		t.Fatalf("expected no in-memory group after failed ensure, got %#v", groups)
 	}
 }
 

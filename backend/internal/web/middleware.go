@@ -9,24 +9,15 @@ import (
 
 	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 type requestContext = Context
-
-var FileInfoFasterFunc = func(opts utils.FileOptions, user *users.User) (*iteminfo.ExtendedFileInfo, error) {
-	if runtimeDeps.Files != nil {
-		return runtimeDeps.Files.FileInfoFaster(opts, user)
-	}
-	return files.FileInfoFaster(opts, user)
-}
 
 type handleFunc = HandleFunc
 
@@ -76,19 +67,6 @@ func withUserHelper(fn handleFunc) handleFunc {
 				return http.StatusOK, nil
 			}
 			return fn(w, r, data)
-		}
-
-		// Check for JWT external auth first (header or query param)
-		if settings.Config.Auth.Methods.JwtAuth.Enabled {
-			jwtToken := r.Header.Get(settings.Config.Auth.Methods.JwtAuth.Header)
-			if jwtToken == "" {
-				// Check query parameter (hardcoded to "jwt")
-				jwtToken = r.URL.Query().Get("jwt")
-			}
-
-			if jwtToken != "" {
-				return getJwtUser(w, r, data, fn, jwtToken)
-			}
 		}
 
 		keyFunc := auth.JWTSigningKeyFunc()
@@ -145,94 +123,6 @@ func withUserHelper(fn handleFunc) handleFunc {
 	}
 }
 
-func getJwtUser(w http.ResponseWriter, r *http.Request, data *requestContext, fn handleFunc, jwtToken string) (int, error) {
-	// Verify the external JWT token
-	username, claims, err := auth.VerifyExternalJWT(
-		jwtToken,
-		settings.Config.Auth.Methods.JwtAuth.Secret,
-		settings.Config.Auth.Methods.JwtAuth.Algorithm,
-		settings.Config.Auth.Methods.JwtAuth.UserIdentifier,
-	)
-	if err != nil {
-		logger.Debugf("JWT verification failed: %v", err)
-		return http.StatusForbidden, fmt.Errorf("JWT authentication failed: %w", err)
-	}
-
-	// Setup user based on JWT claims
-	user, err := SetupJwtUser(r, data, username, claims)
-	if err != nil {
-		if status, mapped := loginMethodHTTPStatus(err); status != 0 {
-			return status, mapped
-		}
-		return http.StatusForbidden, err
-	}
-	data.User = user
-	SetUserInResponseWriter(w, data.User)
-	if data.User.Username == "" {
-		return http.StatusForbidden, errors.ErrUnauthorized
-	}
-
-	// Generate a FileBrowser session token for JWT users if they don't have one.
-	// A valid session token already carried by the request (e.g. the session
-	// cookie set on a previous JwtAuth request) is reused so every request does
-	// not register a new session hash.
-	if data.Token == "" {
-		if existing, expiresAt := reusableSessionToken(r, user); existing != "" {
-			data.Token = existing
-			SetSessionCookie(w, r, existing, expiresAt)
-		}
-	}
-	if data.Token == "" {
-		tokenString, err := mintAndRegisterSessionToken(user)
-		if err != nil {
-			logger.Errorf("Failed to generate token for JWT user %s: %v", username, err)
-			return http.StatusInternalServerError, fmt.Errorf("failed to generate token")
-		}
-		data.Token = tokenString
-		expires := time.Hour * time.Duration(settings.Config.Auth.TokenExpirationHours)
-		SetSessionCookie(w, r, tokenString, time.Now().Add(expires).Add(time.Minute*30))
-	}
-
-	// Call the handler function, passing in the context (or return OK if no handler)
-	if fn == nil {
-		return http.StatusOK, nil
-	}
-	return fn(w, r, data)
-}
-
-// reusableSessionToken returns an existing FileBrowser session token carried by
-// the request when it is valid, registered, unexpired, and owned by the given
-// user. The expiry time is returned so callers can refresh the session cookie.
-// The session cookie is preferred over ExtractToken because ExtractToken would
-// otherwise select the external JwtAuth bearer (Authorization header or auth
-// query param), which is not a registered FileBrowser session and can never be
-// reused.
-func reusableSessionToken(r *http.Request, user *users.User) (string, time.Time) {
-	var existing string
-	var err error
-	if cookie, cookieErr := r.Cookie("filebrowser_quantum_jwt"); cookieErr == nil && cookie.Value != "" {
-		existing = cookie.Value
-	} else {
-		existing, err = ExtractToken(r)
-	}
-	if err != nil || existing == "" {
-		return "", time.Time{}
-	}
-	var tk users.AuthToken
-	token, err := jwt.ParseWithClaims(existing, &tk, auth.JWTSigningKeyFunc())
-	if err != nil || !token.Valid || tk.RegisteredClaims.ExpiresAt == nil {
-		return "", time.Time{}
-	}
-	if state.IsTokenRevoked(existing) {
-		return "", time.Time{}
-	}
-	ownerID, isSession, ok := state.HashedTokenOwner(existing)
-	if !ok || !isSession || ownerID != user.ID {
-		return "", time.Time{}
-	}
-	return existing, tk.RegisteredClaims.ExpiresAt.Time
-}
-
 func wrapHandler(fn handleFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &requestContext{
@@ -273,39 +163,6 @@ func wrapHandler(fn handleFunc) http.HandlerFunc {
 			w.WriteHeader(status)
 		}
 	}
-}
-
-// wrapHandlerBasicAuth wraps a handler and automatically sets WWW-Authenticate header
-// for 401 Unauthorized responses, triggering Basic Auth challenge
-func wrapHandlerBasicAuth(fn handleFunc) http.HandlerFunc {
-	// Wrap the handler to set WWW-Authenticate header for 401 responses
-	wrappedFn := func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		status, err := fn(w, r, data)
-		// Set WWW-Authenticate header before returning 401
-		if status == http.StatusUnauthorized {
-			w.Header().Set("WWW-Authenticate", `Basic realm="WebDAV"`)
-		}
-		return status, err
-	}
-	return wrapHandler(wrappedFn)
-}
-
-func withBasicAuthHelper(fn handleFunc) handleFunc {
-	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		_, password, ok := r.BasicAuth()
-		if !ok || password == "" {
-			// Return 401 - wrapHandlerBasicAuth will set WWW-Authenticate header
-			return http.StatusUnauthorized, fmt.Errorf("basic authentication required")
-		}
-		data.Token = password
-		return withUserHelper(fn)(w, r, data)
-	}
-}
-
-// withBasicAuth returns an http.HandlerFunc for use with router.Handle.
-// It extracts Basic Auth credentials and uses the password as a JWT token to authenticate the user.
-func withBasicAuth(fn handleFunc) http.HandlerFunc {
-	return wrapHandlerBasicAuth(withBasicAuthHelper(fn))
 }
 
 func muxWithMiddleware(mux *http.ServeMux) *http.ServeMux {

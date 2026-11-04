@@ -8,8 +8,6 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/toolaccess"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
@@ -61,10 +59,6 @@ func copyUserSlices(userCopy *users.User, user *users.User) {
 		for k, v := range user.Tokens {
 			userCopy.Tokens[k] = v
 		}
-	}
-	if user.SidebarLinks != nil {
-		userCopy.SidebarLinks = make([]users.SidebarLink, len(user.SidebarLinks))
-		copy(userCopy.SidebarLinks, user.SidebarLinks)
 	}
 	if user.FrontendScopes != nil {
 		userCopy.FrontendScopes = make([]users.FrontendScope, len(user.FrontendScopes))
@@ -212,9 +206,8 @@ func CreateUser(user *users.User, plaintextPassword string) error {
 	}
 
 	// Merge global permissions before converting API scopes: the final Admin value
-	// (including account defaults when the request omits admin) decides which source
+	// decides which source
 	// permissions applyScopesFromAPI assigns to scopes that omit permissions.
-	preserveRequirePasswordChange := user.RequirePasswordChange
 	requestedPermissions := user.Permissions
 	globalMask := user.EffectiveGlobalPermissionsMask()
 	// Configured distinguishes an explicit all-false permissions object from omission
@@ -225,8 +218,7 @@ func CreateUser(user *users.User, plaintextPassword string) error {
 		requestedPermissions.Api || requestedPermissions.Realtime ||
 		requestedPermissions.HasAnyFilePermission()
 	if globalMask.Any() || !permissionsRequested {
-		defaultPerms := settings.ConvertPermissionsToUsers(EffectiveUserDefaults().Account.Permissions)
-		user.Permissions = users.MergeGlobalPermissionsOnCreate(defaultPerms, requestedPermissions, globalMask)
+		user.Permissions = users.MergeGlobalPermissionsOnCreate(users.Permissions{}, requestedPermissions, globalMask)
 	} else {
 		user.Permissions = requestedPermissions
 	}
@@ -236,7 +228,6 @@ func CreateUser(user *users.User, plaintextPassword string) error {
 		return err
 	}
 
-	// If still no BackendScopes (omitted or invalid API names), same defaults as ApplyUserDefaults.
 	// Snapshot caller-supplied scope permissions by full scope identity so the defaults
 	// application below cannot collapse scopes sharing a source path.
 	requestedScopePermissions := make(map[backendScopeKey]users.SourceFilePermissions, len(user.BackendScopes))
@@ -245,15 +236,7 @@ func CreateUser(user *users.User, plaintextPassword string) error {
 			requestedScopePermissions[backendScopeKeyFor(scope)] = scope.Permissions
 		}
 	}
-	// Apply profile/scope defaults using the final account permissions (admin flag drives scope defaults).
-	if permissionsRequested {
-		settings.ApplyUserDefaultsFromKeepingAccountPermissions(user, EffectiveUserDefaults())
-	} else {
-		applyUserSettingsDefaults(user)
-	}
-	if preserveRequirePasswordChange {
-		user.RequirePasswordChange = true
-	}
+	settings.ApplySourceDefaults(user)
 	user.PermissionsFieldMask = users.GlobalPermissionsFieldMask{}
 	for i, scope := range user.BackendScopes {
 		if perms, ok := requestedScopePermissions[backendScopeKeyFor(scope)]; ok {
@@ -264,22 +247,10 @@ func CreateUser(user *users.User, plaintextPassword string) error {
 			user.BackendSourcePermissions[scope.Path] = perms
 		}
 	}
-	defaults := EffectiveUserDefaults()
-	enforced := EffectiveEnforced()
-	settings.ApplyEnforcedDefaultsFrom(user, defaults, enforced)
-	settings.ApplyEnforcedSourcePermissionsFrom(user, GetSourceAccessDefaults(), GetEnforcedSourcePermissions())
 
 	users.SyncBackendSourcePermissionsMap(user)
 	if !user.Permissions.Admin {
 		settings.ExpandBackendScopesForCreateUserDir(user)
-	}
-
-	applySidebarLinkDefaults(user)
-
-	applyToolAccessDefaults(user)
-
-	if links, changed := usersidebar.PrepareSidebarLinksForPersist(user.SidebarLinks, user.BackendScopes); changed {
-		user.SidebarLinks = links
 	}
 
 	usersMux.Lock()
@@ -336,9 +307,6 @@ func UpdateUser(user *users.User, plaintextPassword string, fields ...string) er
 		return err
 	}
 
-	sourceDefaults := GetSourceAccessDefaults()
-	sourceEnforced := GetEnforcedSourcePermissions()
-
 	usersMux.Lock()
 	defer usersMux.Unlock()
 
@@ -392,54 +360,16 @@ func UpdateUser(user *users.User, plaintextPassword string, fields ...string) er
 		}
 	}
 
-	if sidebarFieldsPatched(fields) {
-		var links []users.SidebarLink
-		var changed bool
-		if fieldListRequiresScopeConversion(fields) {
-			links, changed = usersidebar.PrepareSidebarLinksForPersist(existingUser.SidebarLinks, existingUser.BackendScopes)
-		} else {
-			links, changed = usersidebar.NormalizeSidebarLinks(existingUser.SidebarLinks)
-		}
-		if changed {
-			existingUser.SidebarLinks = links
-		}
-		if enforcedErr := usersidebar.ValidateEnforcedSidebarLinks(existingUser.SidebarLinks, existingUser.BackendScopes, EffectiveSidebarLinkDefaults(), existingUser.Permissions.Admin); enforcedErr != nil {
-			return enforcedErr
-		}
-	}
-
-	if FieldListIncludes(fields, "toolAccess") {
-		if enforcedErr := toolaccess.ValidateEnforcedToolAccess(existingUser, EffectiveToolAccessDefaults()); enforcedErr != nil {
-			return enforcedErr
-		}
-	}
-
-	return commitUserUpdate(existingUser, storedSnapshot, sourceDefaults, sourceEnforced)
+	return commitUserUpdate(existingUser, storedSnapshot)
 }
 
-func commitUserUpdate(existingUser, storedSnapshot *users.User, sourceDefaults users.SourceFilePermissions, sourceEnforced settings.SourceFilePermissionsEnforcement) error {
+func commitUserUpdate(existingUser, storedSnapshot *users.User) error {
 	oldUsername := storedSnapshot.Username
 	oldUserID := storedSnapshot.ID
 
 	users.SyncBackendSourcePermissionsMap(existingUser)
 	existingUser.FrontendScopes = nil
 	existingUser.SourcePermissions = nil
-
-	defaults := EffectiveUserDefaults()
-	enforced := EffectiveEnforced()
-	if err := settings.ValidateUserAgainstEnforcedDefaults(existingUser, defaults, enforced); err != nil {
-		return err
-	}
-	if err := settings.ValidateUserScopePermissionsAgainstEnforced(existingUser, sourceDefaults, sourceEnforced); err != nil {
-		return err
-	}
-	if err := usersidebar.ValidateEnforcedSidebarLinks(existingUser.SidebarLinks, existingUser.BackendScopes, EffectiveSidebarLinkDefaults(), existingUser.Permissions.Admin); err != nil {
-		return err
-	}
-	toolaccess.MergeEnforcedToolAccess(existingUser, EffectiveToolAccessDefaults())
-	if err := toolaccess.ValidateEnforcedToolAccess(existingUser, EffectiveToolAccessDefaults()); err != nil {
-		return err
-	}
 
 	if oldUsername != existingUser.Username {
 		if err := sqlDb.UpdateUserUsername(oldUsername, existingUser); err != nil {
@@ -477,13 +407,6 @@ func renameUserInAccess(oldUsername string, updated *users.User) error {
 		revertSQL()
 		return fmt.Errorf("failed to rename user in groups: %w", err)
 	}
-	if err := accessDb.RenameUserInRules(oldUsername, updated.Username); err != nil {
-		if revErr := accessDb.RenameUserInGroups(updated.Username, oldUsername); revErr != nil {
-			logger.Errorf("failed to revert group memberships for %q after rename failure: %v", oldUsername, revErr)
-		}
-		revertSQL()
-		return fmt.Errorf("failed to rename user in access rules: %w", err)
-	}
 	return nil
 }
 
@@ -511,10 +434,6 @@ func fieldListPatchesAPISourcePermissions(fields []string) bool {
 
 func fieldListRequiresScopeConversion(fields []string) bool {
 	return fieldListPatchesBackendScopes(fields) || fieldListPatchesAPISourcePermissions(fields)
-}
-
-func sidebarFieldsPatched(fields []string) bool {
-	return FieldListIncludes(fields, "sidebarLinks") || fieldListRequiresScopeConversion(fields)
 }
 
 // applyScopesFromAPI converts API scopes (with nested permissions) into BackendScopes.
@@ -653,19 +572,14 @@ func DeleteUserByUsername(username string) error {
 	return nil
 }
 
-// removeUserAccess strips a username from group memberships and path rules before the user row is
-// deleted. Each step rolls itself back on failure and any error aborts the delete, so a reused
-// username can never inherit leftovers. The failure mode is fail-safe: if the later SQL delete
-// fails the user only loses access, and a retry is idempotent.
+// removeUserAccess takes a username out of every group before the user row is deleted, so a
+// reused username never inherits the memberships. Any error aborts the delete.
 func removeUserAccess(username string) error {
 	if accessDb == nil {
 		return nil
 	}
 	if err := accessDb.RemoveUserFromAllGroups(username); err != nil {
 		return fmt.Errorf("failed to remove user from groups: %w", err)
-	}
-	if err := accessDb.RemoveAllRulesForUser(username); err != nil {
-		return fmt.Errorf("failed to remove user from access rules: %w", err)
 	}
 	return nil
 }

@@ -5,58 +5,16 @@ import (
 	"maps"
 	"slices"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/gtsteffaniak/go-cache/cache"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
-
-var (
-	accessCache     = cache.NewCache[string](1 * time.Minute)                        // for accessChangedKey
-	versionCache    = cache.NewCache[int](1 * time.Minute)                           // for version keys
-	permissionCache = cache.NewCache[bool](1 * time.Minute)                          // for permission keys
-	rulesCache      = cache.NewCache[map[string]FrontendAccessRule](1 * time.Minute) // for rules
-)
-
-const accessChangedKey = "newRule:"
-
-type RuleMap map[string]*AccessRule
-type SourceRuleMap map[string]RuleMap
 
 type StringSet map[string]struct{}
-
-// RuleSet groups users and groups for allow/deny lists.
-type RuleSet struct {
-	Users  StringSet
-	Groups StringSet
-}
-
-// AccessRule defines allow/deny lists for a path.
-type AccessRule struct {
-	DenyAll bool `json:"denyAll,omitempty"`
-	Deny    RuleSet
-	Allow   RuleSet
-}
-
-type FrontendRuleSet struct {
-	Users  []string `json:"users"`
-	Groups []string `json:"groups"`
-}
-
-type FrontendAccessRule struct {
-	DenyAll           bool            `json:"denyAll,omitempty"`
-	Deny              FrontendRuleSet `json:"deny"`
-	Allow             FrontendRuleSet `json:"allow"`
-	SourceDenyDefault bool            `json:"sourceDenyDefault"`
-	PathExists        bool            `json:"pathExists"`
-}
 
 // GroupMap maps group names to a set of usernames.
 type GroupMap map[string]StringSet
@@ -97,10 +55,9 @@ func TokenExpiredPastGrace(expiresAt int64, now time.Time) bool {
 	return expiresAt != 0 && now.After(time.Unix(expiresAt, 0).Add(BearerTokenGrace))
 }
 
-// Storage manages access rules and group membership.
+// Storage keeps the groups and the bearer token registry.
 type Storage struct {
 	mux           sync.RWMutex
-	AllRules      SourceRuleMap              // AllRules[sourcePath][indexPath] - in-memory authoritative state
 	Groups        GroupMap                   // key: group name, value: set of usernames - in-memory authoritative state
 	RevokedTokens map[string]int64           // token hash → revocation unix time (0 = immediate) - in-memory authoritative state
 	HashedTokens  map[string]HashedTokenInfo // maps token hash → owner/type - in-memory authoritative state
@@ -108,28 +65,10 @@ type Storage struct {
 	sqlStore      SQLPersister               // SQL store for persistence
 }
 
-// RuleKey identifies one access_rules row.
-type RuleKey struct {
-	Source string
-	Path   string
-}
-
-// RuleUpsert is an access_rules row to insert or replace.
-type RuleUpsert struct {
-	RuleKey
-	Rule *AccessRule
-}
-
 // SQLPersister interface for SQL persistence operations
 type SQLPersister interface {
-	SaveAccessRule(source, path string, rule *AccessRule) error
-	DeleteAccessRule(source, path string) error
-	MigrateAccessRulePathsLowercase(source string, oldPaths []string, newRules RuleMap) error
-	AccessRulesLowercaseMigrated() (bool, error)
-	SetAccessRulesLowercaseMigrated() error
 	SaveGroup(name string, members StringSet) error
 	DeleteGroup(name string) error
-	DeleteGroupWithRules(name string, save []RuleUpsert, remove []RuleKey) error
 	SaveRevokedToken(tokenHash string, revokedAt int64) error
 	PersistImmediateTokenRevocation(tokenHash string) error
 	PersistTokenRetirement(tokenHash string, revokedAt int64, pruned []string) error
@@ -142,11 +81,6 @@ type SQLPersister interface {
 // SetSQLStore sets the SQL store for persistence operations
 func (s *Storage) SetSQLStore(sqlStore SQLPersister) {
 	s.sqlStore = sqlStore
-}
-
-// Flush is a no-op; access rule and group updates already write through sqlStore when configured.
-func (s *Storage) Flush() error {
-	return nil
 }
 
 // persistGroupSQLNL upserts or deletes one groups row to match in-memory state.
@@ -168,422 +102,15 @@ func (s *Storage) persistGroupSQLNL(groupname string) error {
 	return nil
 }
 
-// ensureGroupExistsNL creates an empty in-memory group if missing and write-through persists it.
-// Caller must hold s.mux.
-func (s *Storage) ensureGroupExistsNL(groupname string) error {
-	if _, ok := s.Groups[groupname]; ok {
-		return nil
-	}
-	s.Groups[groupname] = make(StringSet)
-	if err := s.persistGroupSQLNL(groupname); err != nil {
-		delete(s.Groups, groupname)
-		return err
-	}
-	return nil
-}
-
 // NewStorage creates a new Storage instance.
 func NewStorage(usersStore *users.Storage) *Storage {
 	var s = &Storage{
-		AllRules:      make(SourceRuleMap),
 		Groups:        make(GroupMap),
 		RevokedTokens: make(map[string]int64),
 		HashedTokens:  make(map[string]HashedTokenInfo),
 		Users:         usersStore,
 	}
 	return s
-}
-
-// ClearCache clears the access cache (useful for testing)
-func ClearCache() {
-	// Recreate the caches to clear them
-	accessCache = cache.NewCache[string](1 * time.Minute)
-	versionCache = cache.NewCache[int](1 * time.Minute)
-	permissionCache = cache.NewCache[bool](1 * time.Minute)
-	rulesCache = cache.NewCache[map[string]FrontendAccessRule](1 * time.Minute)
-}
-
-// clearAllCaches clears ALL caches. This should be called whenever rules are created, updated, or deleted.
-func (s *Storage) clearAllCaches() {
-	accessCache.ClearAll()
-	versionCache.ClearAll()
-	permissionCache.ClearAll()
-	rulesCache.ClearAll()
-}
-
-func accessRuleHasPayload(rule *AccessRule) bool {
-	if rule == nil {
-		return false
-	}
-	return rule.DenyAll ||
-		len(rule.Allow.Users) > 0 || len(rule.Allow.Groups) > 0 ||
-		len(rule.Deny.Users) > 0 || len(rule.Deny.Groups) > 0
-}
-
-// persistRuleSQLNL upserts or deletes one access_rules row to match in-memory state.
-// Caller must hold s.mux (write lock). normalizedPath must match rule map keys (see getOrCreateRuleNL).
-func (s *Storage) persistRuleSQLNL(sourcePath, normalizedPath string) {
-	if err := s.persistRuleSQLErrorNL(sourcePath, normalizedPath); err != nil {
-		logger.Warningf("%v", err)
-	}
-}
-
-func (s *Storage) persistRuleSQLErrorNL(sourcePath, normalizedPath string) error {
-	if s.sqlStore == nil {
-		return nil
-	}
-	var rule *AccessRule
-	if bySrc, ok := s.AllRules[sourcePath]; ok {
-		rule = bySrc[normalizedPath]
-	}
-	if !accessRuleHasPayload(rule) {
-		if err := s.sqlStore.DeleteAccessRule(sourcePath, normalizedPath); err != nil {
-			return fmt.Errorf("access rules SQL delete (source=%s path=%s): %w", sourcePath, normalizedPath, err)
-		}
-		return nil
-	}
-	if err := s.sqlStore.SaveAccessRule(sourcePath, normalizedPath, rule); err != nil {
-		return fmt.Errorf("access rules SQL save (source=%s path=%s): %w", sourcePath, normalizedPath, err)
-	}
-	return nil
-}
-
-func (s *Storage) restoreRuleSQLNL(key RuleKey, rule *AccessRule) error {
-	if s.sqlStore == nil {
-		return nil
-	}
-	if !accessRuleHasPayload(rule) {
-		if err := s.sqlStore.DeleteAccessRule(key.Source, key.Path); err != nil {
-			return fmt.Errorf("access rules SQL delete (source=%s path=%s): %w", key.Source, key.Path, err)
-		}
-		return nil
-	}
-	if err := s.sqlStore.SaveAccessRule(key.Source, key.Path, rule); err != nil {
-		return fmt.Errorf("access rules SQL save (source=%s path=%s): %w", key.Source, key.Path, err)
-	}
-	return nil
-}
-
-// RemoveRuleByPath removes a rule by normalized index path.
-func (s *Storage) RemoveRuleByPath(sourcePath string, indexPath utils.IndexPath) {
-	s.RemoveRuleByPathKey(sourcePath, s.ruleKeyForNL(sourcePath, indexPath))
-}
-
-// RemoveRuleByPathKey removes a rule by its exact storage key (for legacy migration paths).
-func (s *Storage) RemoveRuleByPathKey(sourcePath, pathKey string) {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-
-	rulesBySource, ok := s.AllRules[sourcePath]
-	if !ok {
-		return
-	}
-
-	pathKey = strings.ToLower(pathKey)
-	if _, exists := rulesBySource[pathKey]; !exists {
-		return
-	}
-	delete(rulesBySource, pathKey)
-	if len(rulesBySource) == 0 {
-		delete(s.AllRules, sourcePath)
-	}
-	s.clearAllCaches()
-	s.persistRuleSQLNL(sourcePath, pathKey)
-	if s.sqlStore != nil {
-		_ = s.sqlStore.DeleteAccessRule(sourcePath, pathKey)
-		normalized := utils.AddTrailingSlashIfNotExists(pathKey)
-		if normalized != pathKey && rulesBySource[normalized] == nil {
-			_ = s.sqlStore.DeleteAccessRule(sourcePath, normalized)
-		}
-	}
-}
-
-// getOrCreateRuleNL ensures a rule exists for the given source and index path.
-// The caller must hold the lock.
-func (s *Storage) getOrCreateRuleNL(sourcePath string, indexPath utils.IndexPath) *AccessRule {
-	normalizedPath := s.ruleKeyForNL(sourcePath, indexPath)
-	if _, ok := s.AllRules[sourcePath]; !ok {
-		s.AllRules[sourcePath] = make(RuleMap)
-	}
-	rule, ok := s.AllRules[sourcePath][normalizedPath]
-	if !ok {
-		rule = &AccessRule{
-			Deny:  RuleSet{Users: make(StringSet), Groups: make(StringSet)},
-			Allow: RuleSet{Users: make(StringSet), Groups: make(StringSet)},
-		}
-		s.AllRules[sourcePath][normalizedPath] = rule
-	} else {
-		if rule.Deny.Users == nil {
-			rule.Deny.Users = make(StringSet)
-		}
-		if rule.Deny.Groups == nil {
-			rule.Deny.Groups = make(StringSet)
-		}
-		if rule.Allow.Users == nil {
-			rule.Allow.Users = make(StringSet)
-		}
-		if rule.Allow.Groups == nil {
-			rule.Allow.Groups = make(StringSet)
-		}
-	}
-	return rule
-}
-
-// DenyUser adds a user to the deny list for a given source and index path.
-// Rules are keyed by login name (username), not user id.
-func (s *Storage) DenyUser(sourcePath string, indexPath utils.IndexPath, username string) error {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-	rule := s.getOrCreateRuleNL(sourcePath, indexPath)
-	if _, ok := rule.Deny.Users[username]; ok {
-		return errors.ErrExist
-	}
-	rule.Deny.Users[username] = struct{}{}
-	s.clearAllCaches()
-	s.persistRuleSQLNL(sourcePath, s.ruleKeyForNL(sourcePath, indexPath))
-	return nil
-}
-
-// AllowUser adds a user to the allow list for a given source and index path.
-// Rules are keyed by login name (username), not user id.
-func (s *Storage) AllowUser(sourcePath string, indexPath utils.IndexPath, username string) error {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-	rule := s.getOrCreateRuleNL(sourcePath, indexPath)
-	if _, ok := rule.Allow.Users[username]; ok {
-		return errors.ErrExist
-	}
-	rule.Allow.Users[username] = struct{}{}
-	s.clearAllCaches()
-	s.persistRuleSQLNL(sourcePath, s.ruleKeyForNL(sourcePath, indexPath))
-	return nil
-}
-
-// DenyGroup adds a group to the deny list for a given source and index path.
-// Unknown groups are auto-created (empty) so admins can configure rules before first SSO sync.
-func (s *Storage) DenyGroup(sourcePath string, indexPath utils.IndexPath, groupname string) error {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-	if err := s.ensureGroupExistsNL(groupname); err != nil {
-		return err
-	}
-	rule := s.getOrCreateRuleNL(sourcePath, indexPath)
-	if _, ok := rule.Deny.Groups[groupname]; ok {
-		return errors.ErrExist
-	}
-	rule.Deny.Groups[groupname] = struct{}{}
-	s.clearAllCaches()
-	s.persistRuleSQLNL(sourcePath, s.ruleKeyForNL(sourcePath, indexPath))
-	return nil
-}
-
-// AllowGroup adds a group to the allow list for a given source and index path.
-// Unknown groups are auto-created (empty) so admins can configure rules before first SSO sync.
-func (s *Storage) AllowGroup(sourcePath string, indexPath utils.IndexPath, groupname string) error {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-	if err := s.ensureGroupExistsNL(groupname); err != nil {
-		return err
-	}
-	rule := s.getOrCreateRuleNL(sourcePath, indexPath)
-	if _, ok := rule.Allow.Groups[groupname]; ok {
-		return errors.ErrExist
-	}
-	rule.Allow.Groups[groupname] = struct{}{}
-	s.clearAllCaches()
-	s.persistRuleSQLNL(sourcePath, s.ruleKeyForNL(sourcePath, indexPath))
-	return nil
-}
-
-// DenyAll sets a rule to deny all access for a given source and index path.
-func (s *Storage) DenyAll(sourcePath string, indexPath utils.IndexPath) error {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-	rule := s.getOrCreateRuleNL(sourcePath, indexPath)
-	if rule.DenyAll {
-		return errors.ErrExist
-	}
-	rule.DenyAll = true
-	s.clearAllCaches()
-	s.persistRuleSQLNL(sourcePath, s.ruleKeyForNL(sourcePath, indexPath))
-	return nil
-}
-
-// Permitted checks if a username is permitted for a given sourcePath and indexPath, recursively checking parent directories.
-func (s *Storage) Permitted(sourcePath string, indexPath utils.IndexPath, username string) bool {
-	indexPath = s.checkPathForSource(sourcePath, indexPath)
-	pathStr := indexPath.String()
-
-	// Get current version for the sourcePath
-	versionKey := "version:" + sourcePath
-	version := 0
-	if v, ok := versionCache.Get(versionKey); ok {
-		version = v
-	}
-
-	// Check cache with versioned key
-	permKey := fmt.Sprintf("perm:%s:%d:%s:%s", sourcePath, version, pathStr, username)
-	if p, ok := permissionCache.Get(permKey); ok {
-		return p
-	}
-
-	// Not in cache, compute, then cache it.
-	result := s.computePermitted(sourcePath, indexPath, username)
-
-	permissionCache.Set(permKey, result)
-	return result
-}
-
-func (s *Storage) computePermitted(sourcePath string, indexPath utils.IndexPath, username string) bool {
-	var rulesFound []*AccessRule
-
-	currentPath := checkPath(indexPath)
-	for {
-		rule, found := s.getRuleAtExactPath(sourcePath, currentPath)
-		if found {
-			rulesFound = append(rulesFound, rule)
-		}
-		if currentPath.IsRoot() {
-			break
-		}
-		currentPath = currentPath.Parent()
-	}
-
-	// Now evaluate the rules, starting from the most specific (indexPath) to the least specific (root)
-	for _, rule := range rulesFound {
-		permitted, hasSpecificRule := s.evaluateRuleForUser(rule, username)
-		if hasSpecificRule {
-			return permitted
-		}
-	}
-
-	// No specific user or group rule found in the hierarchy.
-	// Check for any DenyAll rule in the path.
-	for _, rule := range rulesFound {
-		if rule.DenyAll {
-			return false
-		}
-	}
-
-	// No specific rules found anywhere in the path hierarchy.
-	// Fallback to the source's DenyByDefault setting.
-	sourceInfo, ok := settings.Config.Server.SourceMap[sourcePath]
-	if !ok {
-		logger.Errorf("source %s not found in config during access check", sourcePath)
-		return false
-	}
-
-	return !sourceInfo.Config.DenyByDefault
-}
-
-// getRuleAtExactPath is a helper to get a rule without the recursive logic.
-func (s *Storage) getRuleAtExactPath(sourcePath string, indexPath utils.IndexPath) (*AccessRule, bool) {
-	s.mux.RLock()
-	defer s.mux.RUnlock()
-	rulesBySource, ok := s.AllRules[sourcePath]
-	if !ok {
-		return nil, false
-	}
-	rule, ok := rulesBySource[s.ruleKeyForNL(sourcePath, indexPath)]
-	return rule, ok
-}
-
-// evaluateRuleForUser evaluates a single rule for a user and returns if a specific rule was found.
-func (s *Storage) evaluateRuleForUser(rule *AccessRule, username string) (permitted bool, hasSpecificRule bool) {
-	// Check user deny first
-	if _, found := rule.Deny.Users[username]; found {
-		return false, true
-	}
-
-	// Check group deny
-	for group := range rule.Deny.Groups {
-		if s.isUserInGroup(username, group) {
-			return false, true
-		}
-	}
-
-	// Check user allow
-	if _, found := rule.Allow.Users[username]; found {
-		return true, true
-	}
-
-	// Check group allow
-	for group := range rule.Allow.Groups {
-		if s.isUserInGroup(username, group) {
-			return true, true
-		}
-	}
-
-	// No specific rule for this user in this rule set.
-	return false, false
-}
-
-// isUserInGroup checks if a username is in a group.
-func (s *Storage) isUserInGroup(username, group string) bool {
-	s.mux.RLock()
-	defer s.mux.RUnlock()
-	users, ok := s.Groups[group]
-	if !ok {
-		return false
-	}
-	_, found := users[username]
-	return found
-}
-
-// GetAllRules returns all access rules as a map.
-func (s *Storage) GetAllRules(sourcePath string) (map[string]FrontendAccessRule, error) {
-	// Check if rules have changed by looking at the access cache
-	_, hasChanged := accessCache.Get(accessChangedKey + sourcePath)
-	if !hasChanged {
-		// If no change marker, check if we have cached rules
-		value, ok := rulesCache.Get(accessChangedKey + sourcePath)
-		if ok {
-			return value, nil
-		}
-	}
-
-	s.mux.RLock()
-	defer s.mux.RUnlock()
-
-	// Get source configuration
-	sourceDenyDefault := false
-	sourceInfo, sourceExists := settings.Config.Server.SourceMap[sourcePath]
-	if sourceExists {
-		sourceDenyDefault = sourceInfo.Config.DenyByDefault
-	}
-
-	// Return a copy to avoid external mutation
-	frontendRules := make(map[string]FrontendAccessRule, len(s.AllRules))
-	rules, ok := s.AllRules[sourcePath]
-	if !ok {
-		return frontendRules, nil
-	}
-	for indexPath, rule := range rules {
-		// Use the internal path as the frontend path (with trailing slash)
-		// This ensures consistency between internal storage and frontend display
-		frontendPath := indexPath
-
-		// Check if path exists on filesystem
-		pathExists := checkRulePathExists(sourcePath, indexPath)
-
-		// Convert AccessRule to FrontendAccessRule
-		frontendRules[frontendPath] = FrontendAccessRule{
-			DenyAll:           rule.DenyAll,
-			SourceDenyDefault: sourceDenyDefault,
-			PathExists:        pathExists,
-			Deny: FrontendRuleSet{
-				Users:  utils.NonNilSlice(slices.Collect(maps.Keys(rule.Deny.Users))),
-				Groups: utils.NonNilSlice(slices.Collect(maps.Keys(rule.Deny.Groups))),
-			},
-			Allow: FrontendRuleSet{
-				Users:  utils.NonNilSlice(slices.Collect(maps.Keys(rule.Allow.Users))),
-				Groups: utils.NonNilSlice(slices.Collect(maps.Keys(rule.Allow.Groups))),
-			},
-		}
-	}
-	// cache responses
-	rulesCache.Set(accessChangedKey+sourcePath, frontendRules)
-	return frontendRules, nil
 }
 
 // AddUserToGroup adds a username to a group.
@@ -606,7 +133,6 @@ func (s *Storage) AddUserToGroup(group, username string) error {
 		}
 		return err
 	}
-	s.clearAllCaches()
 	return nil
 }
 
@@ -659,59 +185,24 @@ func (s *Storage) SetGroupMembers(group string, usernames []string) error {
 		}
 		return err
 	}
-	s.clearAllCaches()
 	return nil
 }
 
-// DeleteGroup removes a group and every access rule entry that references it.
-// The group row and all affected rule rows are written in one SQL transaction, so a
-// failure stores nothing. On failure the in-memory groups and rules are restored and the
-// error is returned. The lock is held throughout, so no other change can interleave.
+// DeleteGroup removes a group. The rules that name it are the caller.s to
+// clean up.
 func (s *Storage) DeleteGroup(group string) error {
 	s.mux.Lock()
 	defer s.mux.Unlock()
-	previousMembers, existed := s.Groups[group]
-	delete(s.Groups, group)
-	touched, originals := s.removeAllRulesForGroupNL(group)
-	if !existed && len(touched) == 0 {
+	members, ok := s.Groups[group]
+	if !ok {
 		return nil
 	}
-	if err := s.persistGroupDeleteNL(group, touched); err != nil {
-		if existed {
-			s.Groups[group] = previousMembers
-		}
-		for key, rule := range originals {
-			if s.AllRules[key.Source] == nil {
-				s.AllRules[key.Source] = make(RuleMap)
-			}
-			s.AllRules[key.Source][key.Path] = rule
-		}
+	delete(s.Groups, group)
+	if err := s.persistGroupSQLNL(group); err != nil {
+		s.Groups[group] = members
 		return err
 	}
-	s.clearAllCaches()
 	return nil
-}
-
-// persistGroupDeleteNL writes a group deletion and the resulting rule row changes to SQL
-// in one transaction. Caller must hold s.mux.
-func (s *Storage) persistGroupDeleteNL(group string, touched []RuleKey) error {
-	if s.sqlStore == nil {
-		return nil
-	}
-	var save []RuleUpsert
-	var remove []RuleKey
-	for _, key := range touched {
-		var rule *AccessRule
-		if bySrc, ok := s.AllRules[key.Source]; ok {
-			rule = bySrc[key.Path]
-		}
-		if accessRuleHasPayload(rule) {
-			save = append(save, RuleUpsert{RuleKey: key, Rule: rule})
-		} else {
-			remove = append(remove, key)
-		}
-	}
-	return s.sqlStore.DeleteGroupWithRules(group, save, remove)
 }
 
 // GetUserGroups returns all groups for a specific user.
@@ -800,9 +291,6 @@ func (s *Storage) SyncUserGroups(username string, newGroups []string) error {
 		}
 		persisted = append(persisted, group)
 	}
-	if len(affected) > 0 {
-		s.clearAllCaches()
-	}
 	return nil
 }
 
@@ -847,7 +335,6 @@ func (s *Storage) RemoveUserFromGroup(group, username string) error {
 		s.Groups[group][username] = struct{}{}
 		return err
 	}
-	s.clearAllCaches()
 	return nil
 }
 
@@ -883,7 +370,6 @@ func (s *Storage) RemoveUserFromAllGroups(username string) error {
 		}
 		persisted = append(persisted, group)
 	}
-	s.clearAllCaches()
 	return nil
 }
 
@@ -923,354 +409,7 @@ func (s *Storage) RenameUserInGroups(oldName, newName string) error {
 		}
 		persisted = append(persisted, group)
 	}
-	s.clearAllCaches()
 	return nil
-}
-
-// RenameUserInRules replaces one username with another in every allow and deny user list.
-// Used when a user's username changes so path access rules follow the rename.
-func (s *Storage) RenameUserInRules(oldName, newName string) error {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-	if oldName == newName {
-		return nil
-	}
-	affected := make(map[RuleKey]*AccessRule)
-	var keys []RuleKey
-	for sourcePath, rulesBySource := range s.AllRules {
-		for indexPath, rule := range rulesBySource {
-			_, inAllow := rule.Allow.Users[oldName]
-			_, inDeny := rule.Deny.Users[oldName]
-			if !inAllow && !inDeny {
-				continue
-			}
-			key := RuleKey{Source: sourcePath, Path: indexPath}
-			affected[key] = cloneAccessRule(rule)
-			if inAllow {
-				delete(rule.Allow.Users, oldName)
-				rule.Allow.Users[newName] = struct{}{}
-			}
-			if inDeny {
-				delete(rule.Deny.Users, oldName)
-				rule.Deny.Users[newName] = struct{}{}
-			}
-			keys = append(keys, key)
-		}
-	}
-	if len(keys) == 0 {
-		return nil
-	}
-	slices.SortFunc(keys, func(a, b RuleKey) int {
-		if c := strings.Compare(a.Source, b.Source); c != 0 {
-			return c
-		}
-		return strings.Compare(a.Path, b.Path)
-	})
-	var persisted []RuleKey
-	for _, key := range keys {
-		if err := s.persistRuleSQLErrorNL(key.Source, key.Path); err != nil {
-			for _, pk := range persisted {
-				if restoreErr := s.restoreRuleSQLNL(pk, affected[pk]); restoreErr != nil {
-					logger.Errorf("failed to restore access rule %q/%q in sql after failure: %v", pk.Source, pk.Path, restoreErr)
-				}
-			}
-			for key, snap := range affected {
-				if s.AllRules[key.Source] == nil {
-					s.AllRules[key.Source] = make(RuleMap)
-				}
-				s.AllRules[key.Source][key.Path] = snap
-			}
-			return err
-		}
-		persisted = append(persisted, key)
-	}
-	s.clearAllCaches()
-	return nil
-}
-
-// RemoveAllRulesForUser removes a user from all allow and deny lists.
-// On a persistence failure the in-memory and already-persisted rules are restored and the error is returned.
-func (s *Storage) RemoveAllRulesForUser(username string) error {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-	affected := make(map[RuleKey]*AccessRule)
-	for sourcePath, rulesBySource := range s.AllRules {
-		for indexPath, rule := range rulesBySource {
-			_, inAllow := rule.Allow.Users[username]
-			_, inDeny := rule.Deny.Users[username]
-			if !inAllow && !inDeny {
-				continue
-			}
-			affected[RuleKey{Source: sourcePath, Path: indexPath}] = cloneAccessRule(rule)
-			delete(rule.Allow.Users, username)
-			delete(rule.Deny.Users, username)
-		}
-	}
-	if len(affected) == 0 {
-		return nil
-	}
-	keys := slices.SortedFunc(maps.Keys(affected), func(a, b RuleKey) int {
-		if c := strings.Compare(a.Source, b.Source); c != 0 {
-			return c
-		}
-		return strings.Compare(a.Path, b.Path)
-	})
-	for _, key := range keys {
-		rule := s.AllRules[key.Source][key.Path]
-		if rule.DenyAll || len(rule.Allow.Users) > 0 || len(rule.Allow.Groups) > 0 || len(rule.Deny.Users) > 0 || len(rule.Deny.Groups) > 0 {
-			continue
-		}
-		s.deleteStoredRuleNL(key.Source, key.Path)
-	}
-	var persisted []RuleKey
-	for _, key := range keys {
-		if err := s.persistRuleSQLErrorNL(key.Source, key.Path); err != nil {
-			for _, pk := range persisted {
-				if restoreErr := s.restoreRuleSQLNL(pk, affected[pk]); restoreErr != nil {
-					logger.Errorf("failed to restore access rule %q/%q in sql after failure: %v", pk.Source, pk.Path, restoreErr)
-				}
-			}
-			for k, snap := range affected {
-				if s.AllRules[k.Source] == nil {
-					s.AllRules[k.Source] = make(RuleMap)
-				}
-				s.AllRules[k.Source][k.Path] = snap
-			}
-			return err
-		}
-		persisted = append(persisted, key)
-	}
-	s.clearAllCaches()
-	return nil
-}
-
-// removeAllRulesForGroupNL removes a group from every allow and deny list in memory and
-// returns the rules it touched (rules left empty are deleted) plus a deep copy of each
-// touched rule's previous state for rollback. It does not persist; the caller must hold
-// s.mux and save the returned rules.
-func (s *Storage) removeAllRulesForGroupNL(groupname string) ([]RuleKey, map[RuleKey]*AccessRule) {
-	var touched []RuleKey
-	originals := make(map[RuleKey]*AccessRule)
-	for sourcePath, rulesBySource := range s.AllRules {
-		for indexPath, rule := range rulesBySource {
-			_, inAllow := rule.Allow.Groups[groupname]
-			_, inDeny := rule.Deny.Groups[groupname]
-			if !inAllow && !inDeny {
-				continue
-			}
-			key := RuleKey{Source: sourcePath, Path: indexPath}
-			originals[key] = cloneAccessRule(rule)
-			delete(rule.Allow.Groups, groupname)
-			delete(rule.Deny.Groups, groupname)
-			// A rule left with only DenyAll must stay, otherwise removing the group would open the path.
-			if !accessRuleHasPayload(rule) {
-				s.deleteStoredRuleNL(sourcePath, indexPath)
-			}
-			touched = append(touched, key)
-		}
-	}
-	return touched, originals
-}
-
-func cloneAccessRule(rule *AccessRule) *AccessRule {
-	if rule == nil {
-		return nil
-	}
-	return &AccessRule{
-		DenyAll: rule.DenyAll,
-		Deny:    RuleSet{Users: cloneStringSet(rule.Deny.Users), Groups: cloneStringSet(rule.Deny.Groups)},
-		Allow:   RuleSet{Users: cloneStringSet(rule.Allow.Users), Groups: cloneStringSet(rule.Allow.Groups)},
-	}
-}
-
-// GetAllRulesByUsers returns a map of usernames to their rules for a given sourcePath.
-func (s *Storage) GetAllRulesByUsers(sourcePath string) map[string]map[string]FrontendAccessRule {
-	s.mux.RLock()
-	defer s.mux.RUnlock()
-
-	// Get source configuration
-	sourceDenyDefault := false
-	sourceInfo, sourceExists := settings.Config.Server.SourceMap[sourcePath]
-	if sourceExists {
-		sourceDenyDefault = sourceInfo.Config.DenyByDefault
-	}
-
-	allUserRules := make(map[string]map[string]FrontendAccessRule)
-	rulesBySource, ok := s.AllRules[sourcePath]
-	if !ok {
-		return allUserRules
-	}
-	for indexPath, rule := range rulesBySource {
-		hasAllowUsers := len(rule.Allow.Users) > 0
-		hasDenyUsers := len(rule.Deny.Users) > 0
-		if !hasAllowUsers && !hasDenyUsers {
-			continue
-		}
-
-		// Use the internal path as the frontend path (with trailing slash)
-		// This ensures consistency between internal storage and frontend display
-		frontendPath := indexPath
-
-		frontendRule := FrontendAccessRule{
-			DenyAll:           rule.DenyAll,
-			SourceDenyDefault: sourceDenyDefault,
-			Deny: FrontendRuleSet{
-				Users:  utils.NonNilSlice(slices.Collect(maps.Keys(rule.Deny.Users))),
-				Groups: utils.NonNilSlice(slices.Collect(maps.Keys(rule.Deny.Groups))),
-			},
-			Allow: FrontendRuleSet{
-				Users:  utils.NonNilSlice(slices.Collect(maps.Keys(rule.Allow.Users))),
-				Groups: utils.NonNilSlice(slices.Collect(maps.Keys(rule.Allow.Groups))),
-			},
-		}
-		for user := range rule.Allow.Users {
-			if _, ok := allUserRules[user]; !ok {
-				allUserRules[user] = make(map[string]FrontendAccessRule)
-			}
-			allUserRules[user][frontendPath] = frontendRule
-		}
-		for user := range rule.Deny.Users {
-			if _, ok := allUserRules[user]; !ok {
-				allUserRules[user] = make(map[string]FrontendAccessRule)
-			}
-			allUserRules[user][frontendPath] = frontendRule
-		}
-	}
-	return allUserRules
-}
-
-// GetAllRulesByGroups returns a map of groupnames to their rules for a given sourcePath.
-func (s *Storage) GetAllRulesByGroups(sourcePath string) map[string]map[string]FrontendAccessRule {
-	s.mux.RLock()
-	defer s.mux.RUnlock()
-
-	// Get source configuration
-	sourceDenyDefault := false
-	sourceInfo, sourceExists := settings.Config.Server.SourceMap[sourcePath]
-	if sourceExists {
-		sourceDenyDefault = sourceInfo.Config.DenyByDefault
-	}
-
-	allGroupRules := make(map[string]map[string]FrontendAccessRule)
-	rulesBySource, ok := s.AllRules[sourcePath]
-	if !ok {
-		return allGroupRules
-	}
-	for indexPath, rule := range rulesBySource {
-		hasAllowGroups := len(rule.Allow.Groups) > 0
-		hasDenyGroups := len(rule.Deny.Groups) > 0
-		if !hasAllowGroups && !hasDenyGroups {
-			continue
-		}
-
-		// Use the internal path as the frontend path (with trailing slash)
-		// This ensures consistency between internal storage and frontend display
-		frontendPath := indexPath
-
-		frontendRule := FrontendAccessRule{
-			DenyAll:           rule.DenyAll,
-			SourceDenyDefault: sourceDenyDefault,
-			Deny: FrontendRuleSet{
-				Users:  utils.NonNilSlice(slices.Collect(maps.Keys(rule.Deny.Users))),
-				Groups: utils.NonNilSlice(slices.Collect(maps.Keys(rule.Deny.Groups))),
-			},
-			Allow: FrontendRuleSet{
-				Users:  utils.NonNilSlice(slices.Collect(maps.Keys(rule.Allow.Users))),
-				Groups: utils.NonNilSlice(slices.Collect(maps.Keys(rule.Allow.Groups))),
-			},
-		}
-		for group := range rule.Allow.Groups {
-			if _, ok := allGroupRules[group]; !ok {
-				allGroupRules[group] = make(map[string]FrontendAccessRule)
-			}
-			allGroupRules[group][frontendPath] = frontendRule
-		}
-		for group := range rule.Deny.Groups {
-			if _, ok := allGroupRules[group]; !ok {
-				allGroupRules[group] = make(map[string]FrontendAccessRule)
-			}
-			allGroupRules[group][frontendPath] = frontendRule
-		}
-	}
-	return allGroupRules
-}
-
-// HasAnyVisibleItems checks if a user has access to any items in a given parent path.
-// This is used to determine if a user should see a folder's contents even when
-// they don't have direct access to the parent folder.
-func (s *Storage) HasAnyVisibleItems(sourcePath string, parentPath utils.IndexPath, itemNames []string, username string) bool {
-	parent := checkPath(parentPath)
-	for _, itemName := range itemNames {
-		child := parent.Join(itemName, true)
-		if s.Permitted(sourcePath, child, username) {
-			return true
-		}
-	}
-	return false
-}
-
-// UpdateRules updates all access rules that match oldPath to point to newPath.
-// Handles both exact matches and subdirectories. Similar to share.Storage.UpdateShares.
-func (s *Storage) UpdateRules(sourcePath string, oldPath, newPath utils.IndexPath) (int, error) {
-	s.mux.Lock()
-	defer s.mux.Unlock()
-
-	rulesBySource, ok := s.AllRules[sourcePath]
-	if !ok {
-		return 0, nil // No rules for this source, not an error
-	}
-
-	oldKey := s.ruleKeyForNL(sourcePath, oldPath)
-	newKey := s.ruleKeyForNL(sourcePath, newPath)
-	if oldKey == newKey {
-		return 0, nil
-	}
-
-	updated := 0
-	rulesToUpdate := make(map[string]string) // old path -> new path
-	movedRules := make(map[string]*AccessRule)
-
-	// Find all rules that need to be updated
-	for rulePath := range rulesBySource {
-		if rulePath == oldKey {
-			rulesToUpdate[rulePath] = newKey
-		} else if strings.HasPrefix(rulePath, oldKey) {
-			newRulePath := newKey + strings.TrimPrefix(rulePath, oldKey)
-			rulesToUpdate[rulePath] = newRulePath
-		}
-	}
-
-	// Remove all matched rules first so overlapping moves cannot clobber each other
-	for oldRulePath := range rulesToUpdate {
-		movedRules[oldRulePath] = rulesBySource[oldRulePath]
-		delete(rulesBySource, oldRulePath)
-	}
-
-	// Insert or merge into target paths
-	for oldRulePath, newRulePath := range rulesToUpdate {
-		rule := movedRules[oldRulePath]
-		if existing, exists := rulesBySource[newRulePath]; exists {
-			mergeAccessRulesInPlace(existing, rule)
-		} else {
-			rulesBySource[newRulePath] = rule
-		}
-		logger.Info("access rule updated", "source", sourcePath, "fromPath", oldRulePath, "toPath", newRulePath)
-		updated++
-	}
-
-	if updated > 0 {
-		s.clearAllCaches()
-		for oldRulePath := range rulesToUpdate {
-			if s.sqlStore != nil && rulesBySource[oldRulePath] == nil {
-				_ = s.sqlStore.DeleteAccessRule(sourcePath, oldRulePath)
-			}
-		}
-		for _, newRulePath := range rulesToUpdate {
-			s.persistRuleSQLNL(sourcePath, newRulePath)
-		}
-	}
-
-	return updated, nil
 }
 
 // RevokeToken immediately invalidates a token: the owner mapping is removed and

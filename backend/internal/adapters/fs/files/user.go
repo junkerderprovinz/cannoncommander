@@ -34,7 +34,7 @@ func MakeUserDirs(u *users.User, createDir bool) error {
 		fullPath := filepath.Join(source.Path, scope.Scope)
 		parentDir := filepath.Dir(fullPath)
 		if createDir {
-			if !Exists(parentDir) {
+			if !exists(parentDir) {
 				if err := MakeUserDir(parentDir); err != nil {
 					logger.Errorf("MakeUserDirs: failed to create parent scope directory: %s - %v", scope.Scope, err)
 					continue
@@ -45,11 +45,16 @@ func MakeUserDirs(u *users.User, createDir bool) error {
 				return fmt.Errorf("MakeUserDirs: failed to create user home dir: %s", err)
 			}
 		} else {
-			if !Exists(fullPath) {
+			if !exists(fullPath) {
 				return fmt.Errorf("MakeUserDirs: scope folder does not exist: %s", fullPath)
 			}
 		}
 		u.BackendScopes[i] = scope
 	}
 	return nil
+}
+
+func exists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
 }

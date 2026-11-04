@@ -26,7 +26,6 @@ func (failingTokenPersister) SaveHashedToken(string, uint64, bool, int64) error 
 func TestBackfillHashedTokensPropagatesPersistenceFailure(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	if _, err := Initialize(dbPath); err != nil {
@@ -56,7 +55,6 @@ func TestBackfillHashedTokensPropagatesPersistenceFailure(t *testing.T) {
 func TestBackfillHashedTokensCoversLegacyApiKeys(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	if _, err := Initialize(dbPath); err != nil {
@@ -105,7 +103,6 @@ func TestBackfillHashedTokensCoversLegacyApiKeys(t *testing.T) {
 func TestBackfillReconcilesLegacyTokenExpiry(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	if _, err := Initialize(dbPath); err != nil {

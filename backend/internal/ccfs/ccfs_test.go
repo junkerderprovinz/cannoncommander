@@ -9,14 +9,13 @@ import (
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 type fakeRoots struct {
 	user, cache, disk1, boot string
 }
 
-func newResolver(t *testing.T, access AccessGate) (*Resolver, fakeRoots) {
+func newResolver(t *testing.T, rules Rules) (*Resolver, fakeRoots) {
 	t.Helper()
 	base := t.TempDir()
 	roots := fakeRoots{
@@ -30,7 +29,7 @@ func newResolver(t *testing.T, access AccessGate) (*Resolver, fakeRoots) {
 			t.Fatal(err)
 		}
 	}
-	r, err := New(access,
+	r, err := New(rules,
 		Source{Name: "Shares", Mount: "/mnt/user", Root: roots.user},
 		Source{Name: "Cache", Mount: "/mnt/cache", Root: roots.cache, AdminOnly: true},
 		Source{Name: "Disk 1", Mount: "/mnt/disk1", Root: roots.disk1, AdminOnly: true},
@@ -175,42 +174,8 @@ func TestCheckFollowsScopesAndRights(t *testing.T) {
 	}
 }
 
-type denyRule struct {
-	source, index, user string
-}
-
-func (d denyRule) AccessPermitted(source string, p utils.IndexPath, username string) bool {
-	return !(source == d.source && username == d.user && strings.HasPrefix(p.String(), d.index))
-}
-
-func TestCheckHonoursAccessRules(t *testing.T) {
-	base := t.TempDir()
-	root := filepath.Join(base, "user")
-	r, err := New(denyRule{source: root, index: "/backups/", user: "anna"}, Source{Name: "Shares", Mount: "/mnt/user", Root: root})
-	if err != nil {
-		t.Fatal(err)
-	}
-	anna := user("anna", false, users.BackendScope{Path: root, Scope: "/", Permissions: allPerms})
-
-	if _, err := r.Check(anna, "/mnt/user/backups/flash.zip", View); !errors.Is(err, ErrForbidden) {
-		t.Fatalf("denied path: err = %v", err)
-	}
-	dir, err := r.Check(anna, "/mnt/user", View)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if r.Visible(anna, dir, "backups") {
-		t.Error("denied folder is visible")
-	}
-	if !r.Visible(anna, dir, "filme") {
-		t.Error("allowed folder is hidden")
-	}
-}
-
 // pathRules hides one folder and makes another read only, for anna only.
 type pathRules struct{ hidden, readOnly string }
-
-func (pathRules) AccessPermitted(string, utils.IndexPath, string) bool { return true }
 
 func (p pathRules) Effect(u *users.User, path string) Effect {
 	switch {

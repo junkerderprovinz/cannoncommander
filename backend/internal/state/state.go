@@ -51,20 +51,8 @@ func initialize(dbPath string) (bool, error) {
 	}
 	sqlDb = store
 
-	if err = InitUserDefaultsSettings(); err != nil {
-		return existingDb, fmt.Errorf("failed to initialize user defaults settings: %w", err)
-	}
-
 	if err = InitSourceAccessDefaults(); err != nil {
 		return existingDb, fmt.Errorf("failed to initialize source access defaults: %w", err)
-	}
-
-	if err = InitSidebarLinkDefaults(); err != nil {
-		return existingDb, fmt.Errorf("failed to initialize sidebar link defaults: %w", err)
-	}
-
-	if err = InitToolAccessDefaults(); err != nil {
-		return existingDb, fmt.Errorf("failed to initialize tool access defaults: %w", err)
 	}
 
 	if err = InitAuthSigningKey(); err != nil {
@@ -96,18 +84,10 @@ func initialize(dbPath string) (bool, error) {
 	logger.Debugf("Loaded %d index info entries", len(allIndexInfo))
 
 	newAccessDb := &access.Storage{
-		AllRules:      make(access.SourceRuleMap),
 		Groups:        make(access.GroupMap),
 		RevokedTokens: make(map[string]int64),
 		HashedTokens:  make(map[string]access.HashedTokenInfo),
 	}
-
-	allRules, err := sqlDb.GetAllAccessRules()
-	if err != nil {
-		return existingDb, fmt.Errorf("failed to load access rules: %w", err)
-	}
-	newAccessDb.AllRules = allRules
-	logger.Debugf("Loaded access rules for %d sources", len(allRules))
 
 	allGroups, err := sqlDb.GetAllGroups()
 	if err != nil {
@@ -147,16 +127,6 @@ func initialize(dbPath string) (bool, error) {
 	logger.Debugf("Loaded %d hashed tokens (%d expired dropped)", len(hashedTokens)-expired, expired)
 
 	newAccessDb.SetSQLStore(sqlDb)
-
-	accessRulesLowercased, err := sqlDb.AccessRulesLowercaseMigrated()
-	if err != nil {
-		return existingDb, fmt.Errorf("failed to read access rules migration marker: %w", err)
-	}
-	if !accessRulesLowercased {
-		if migErr := newAccessDb.StartupMigrateAccessRuleKeys(); migErr != nil {
-			return existingDb, fmt.Errorf("failed to migrate access rule paths: %w", migErr)
-		}
-	}
 
 	usersMux.Lock()
 	indexMux.Lock()
