@@ -159,10 +159,18 @@ func (s *Service) Lookup(ctx context.Context, files []File, cols []string) (map[
 	unread := map[string]bool{}
 	var mu sync.Mutex
 	var wg sync.WaitGroup
+	keep := func(p string, v Values, missed bool) {
+		mu.Lock()
+		defer mu.Unlock()
+		out[p] = v
+		if missed {
+			unread[p] = true
+		}
+	}
 	for _, f := range files {
 		e, missing := s.plan(f, cached[f.Path], want)
 		if missing == 0 {
-			out[f.Path] = s.output(f, e.rec, cols)
+			keep(f.Path, s.output(f, e.rec, cols), false)
 			continue
 		}
 		slot := false
@@ -174,20 +182,13 @@ func (s *Service) Lookup(ctx context.Context, files []File, cols []string) (map[
 			}
 		}
 		if !slot {
-			out[f.Path] = s.output(f, e.rec, cols)
-			unread[f.Path] = true
+			keep(f.Path, s.output(f, e.rec, cols), true)
 			continue
 		}
 		wg.Go(func() {
 			defer func() { <-s.slots }()
 			e = s.read(ctx, f, e, missing)
-			v := s.output(f, e.rec, cols)
-			mu.Lock()
-			out[f.Path] = v
-			if e.done&missing != missing {
-				unread[f.Path] = true
-			}
-			mu.Unlock()
+			keep(f.Path, s.output(f, e.rec, cols), e.done&missing != missing)
 		})
 	}
 	wg.Wait()

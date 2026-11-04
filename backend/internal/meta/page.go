@@ -28,6 +28,15 @@ func (s *Service) Page(ctx context.Context, real string, page, width int) ([]byt
 	if !ok {
 		return nil, ErrNoRenderer
 	}
+	// MuPDF draws the last page for a number past the end instead of
+	// failing, so the count is checked first.
+	info, err := s.docInfo(ctx, real)
+	if err != nil {
+		return nil, errors.Join(ErrNoPage, err)
+	}
+	if info.Locked || page > int(info.Pages) {
+		return nil, ErrNoPage
+	}
 	dir, err := os.MkdirTemp("", "cannoncommander-page-")
 	if err != nil {
 		return nil, err

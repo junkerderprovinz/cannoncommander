@@ -48,27 +48,35 @@ type docInfo struct {
 	Encryption string `json:"encryption"`
 }
 
-func readPaged(ctx context.Context, s *Service, f File, rec Record) error {
+func (s *Service) docInfo(ctx context.Context, real string) (docInfo, error) {
+	var d docInfo
 	mutool, ok := s.tools.find("mutool")
 	if !ok {
-		return errNoTool
+		return d, errNoTool
 	}
 	script, err := scriptFile()
 	if err != nil {
-		return err
+		return d, err
 	}
-	out, err := run(ctx, mutool, "run", script, f.Real)
+	out, err := run(ctx, mutool, "run", script, real)
 	if err != nil && len(out) == 0 {
-		return err
+		return d, err
 	}
-	var d docInfo
 	// MuPDF prints warnings about damaged files before the answer.
-	line := out
-	if i := strings.LastIndexByte(strings.TrimSpace(string(out)), '\n'); i >= 0 {
-		line = []byte(strings.TrimSpace(string(out))[i+1:])
+	text := strings.TrimSpace(string(out))
+	if i := strings.LastIndexByte(text, '\n'); i >= 0 {
+		text = text[i+1:]
 	}
-	if err := json.Unmarshal(line, &d); err != nil {
-		return fmt.Errorf("mutool output: %w", err)
+	if err := json.Unmarshal([]byte(text), &d); err != nil {
+		return d, fmt.Errorf("mutool output: %w", err)
+	}
+	return d, nil
+}
+
+func readPaged(ctx context.Context, s *Service, f File, rec Record) error {
+	d, err := s.docInfo(ctx, f.Real)
+	if err != nil {
+		return err
 	}
 	rec["encrypted"] = d.Locked || (d.Encryption != "" && d.Encryption != "None")
 	if d.Pages > 0 {
