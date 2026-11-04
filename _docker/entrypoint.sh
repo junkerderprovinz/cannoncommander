@@ -22,6 +22,12 @@ if [ ! -f "$CC_CONFIG" ]; then
   cp /app/config.default.yaml "$CC_CONFIG"
 fi
 
+# Remotes are mounted below /mnt/remotes. A folder that is already there,
+# made by Unraid's Unassigned Devices say, keeps its owner.
+if [ ! -d /mnt/remotes ]; then
+  mkdir -p /mnt/remotes && chown "$PUID:$PGID" /mnt/remotes
+fi
+
 if [ "$PUID" = 0 ]; then
   exec /app/cannoncommander "$@"
 fi

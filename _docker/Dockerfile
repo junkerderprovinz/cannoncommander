@@ -22,6 +22,9 @@ RUN npm run build:docker
 FROM alpine:latest
 COPY --from=ffmpeg [ "/ffmpeg", "/ffprobe", "/usr/local/bin/" ]
 RUN apk --no-cache add ca-certificates mailcap tzdata curl su-exec 7zip
+# rclone mounts the remotes. allow_other lets other containers, such as a
+# media server, read those mounts while the server runs as PUID.
+RUN apk --no-cache add rclone fuse3 && echo user_allow_other >> /etc/fuse.conf
 # Unraid's own defaults: nobody:users, and files anyone on the network may change.
 ENV PUID=99 \
     PGID=100 \
@@ -34,7 +37,7 @@ COPY --from=base [ "/app/cannoncommander", "./" ]
 COPY [ "./_docker/config.yaml", "./config.default.yaml" ]
 COPY [ "./_docker/entrypoint.sh", "./" ]
 COPY --from=nbuild [ "/build/frontend/dist/", "./internal/web/dist/" ]
-RUN chmod 0755 ./entrypoint.sh && ./cannoncommander version && ffmpeg -version > /dev/null && ffprobe -version > /dev/null && 7zz i > /dev/null
+RUN chmod 0755 ./entrypoint.sh && ./cannoncommander version && ffmpeg -version > /dev/null && ffprobe -version > /dev/null && rclone version > /dev/null && 7zz i > /dev/null
 VOLUME /config
 EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \

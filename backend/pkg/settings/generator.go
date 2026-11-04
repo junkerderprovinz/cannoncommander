@@ -1192,7 +1192,6 @@ var SecretFieldNames = map[string]bool{
 	"ApiKey":        true,
 	"APIKey":        true,
 	"BearerToken":   true,
-	"Token":         true,
 	"PrivateKey":    true,
 }
 

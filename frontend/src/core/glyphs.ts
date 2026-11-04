@@ -1,13 +1,11 @@
 // Glyphs by name, and which glyph a file gets: the format list decides, the kind is the fallback.
 import coreGlyphs from '@glimstone/core/glyphs.json';
 import { type FunctionalComponent, h } from 'vue';
-// Stand-in for the 19 glyphs GlimStone 4.0.0 lacks; drop it once @glimstone/core ships them.
-import extraGlyphs from './glyphs-extra.json';
 import formats from './formats.json';
 
 type Glyph = { viewBox: string; svg: string };
 const GLYPHS: Record<string, Glyph> = Object.fromEntries(
-  [...coreGlyphs, ...extraGlyphs].map((g) => [g.name, { viewBox: g.viewBox, svg: g.svg.replace(/\s+/g, ' ') }]),
+  coreGlyphs.map((g) => [g.name, { viewBox: g.viewBox, svg: g.svg.replace(/\s+/g, ' ') }]),
 );
 
 export const hasGlyph = (name: string) => name in GLYPHS;
@@ -53,4 +51,11 @@ export function glyphOf(n: { name: string; dir?: boolean }): string {
   if (n.dir) return 'IconFolder';
   const e = /\.log\.\d+$/.test(n.name) ? 'log' : n.name === 'go' ? 'cfg' : ext(n.name);
   return FORMAT_GLYPH[e] || KIND_GLYPH[kindOf(n)];
+}
+
+// GlimStone's components take a glyph as a component; one per name is enough for every menu row that shows it.
+const components = new Map<string, FunctionalComponent>();
+export function glyphComponent(name: string): FunctionalComponent {
+  if (!components.has(name)) components.set(name, () => h(G, { n: name }));
+  return components.get(name)!;
 }

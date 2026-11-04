@@ -17,7 +17,9 @@ export interface WinOptions {
   onOpen?: (el: HTMLElement, close: () => void) => void;
   onClose?: () => void;
 }
-export interface WinEntry extends WinOptions { id: number; foot: FootButton[]; el: HTMLElement | null; close: () => void }
+// A window that walks through steps changes its body props and foot while open; a locked one stays until its own
+// button closes it, so a code shown only once cannot be lost to a stray Esc.
+export interface WinEntry extends WinOptions { id: number; foot: FootButton[]; el: HTMLElement | null; locked: boolean; close: () => void }
 
 export const winStack = shallowReactive<WinEntry[]>([]);
 let next = 1;
@@ -37,12 +39,13 @@ export function withWayOut(foot: FootButton[]): FootButton[] {
 
 export function win(opts: WinOptions): WinEntry {
   closeMenu();
-  const entry: WinEntry = {
+  const entry: WinEntry = shallowReactive({
     ...opts,
     body: typeof opts.body === 'string' ? opts.body : markRaw(opts.body),
     id: next++,
     foot: withWayOut(opts.foot || []),
     el: null,
+    locked: false,
     close: () => {
       const i = winStack.indexOf(entry);
       if (i < 0) return;
@@ -50,7 +53,7 @@ export function win(opts: WinOptions): WinEntry {
       opts.onClose?.();
       document.querySelector<HTMLElement>('.panel.active .list')?.focus();
     },
-  };
+  });
   winStack.push(entry);
   return entry;
 }

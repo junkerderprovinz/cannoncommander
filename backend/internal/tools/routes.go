@@ -5,6 +5,7 @@
 package tools
 
 import (
+	"context"
 	_ "embed"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
@@ -18,7 +19,7 @@ type handlers struct {
 	deps            v1.Deps
 	fs              *ccfs.Resolver
 	meta            Meta
-	arrowLoopConfig func() ArrowLoopConfig
+	arrowLoopConfig func(context.Context) (ArrowLoopConfig, error)
 }
 
 // Routes registers the contract and the handlers. The batch rename, the
@@ -30,7 +31,9 @@ func Routes(r *v1.Router) {
 	if d.FS == nil {
 		return
 	}
-	bind(r, handlers{deps: d, fs: d.FS, meta: readMeta, arrowLoopConfig: arrowLoopConfig})
+	h := handlers{deps: d, fs: d.FS, meta: readMeta}
+	h.arrowLoopConfig = h.savedArrowLoop
+	bind(r, h)
 }
 
 func bind(r *v1.Router, h handlers) {

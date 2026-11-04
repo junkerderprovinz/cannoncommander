@@ -75,7 +75,7 @@ func newEnv(t *testing.T) *env {
 	trash.Routes(r)
 	labels.Routes(r)
 	r.Contract("tools", contract)
-	bind(r, handlers{deps: e.deps, fs: fsys, meta: readMeta, arrowLoopConfig: func() ArrowLoopConfig { return e.al }})
+	bind(r, handlers{deps: e.deps, fs: fsys, meta: readMeta, arrowLoopConfig: func(context.Context) (ArrowLoopConfig, error) { return e.al, nil }})
 	handler, err := r.Handler()
 	if err != nil {
 		t.Fatal(err)

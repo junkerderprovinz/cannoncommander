@@ -67,15 +67,30 @@ tags:
   - name: accounts
     description: The own account, and users, groups, rules and activity for admins.
   - name: shares
-    description: Share links and the public share pages.
+    description: |
+      Share links and the public share pages. A link shares one file, one
+      folder, or a collection of entries from several folders, which the
+      other side sees as one folder. It works with the rights of its owner,
+      so it stops working when the owner loses them. Paths inside a link
+      start at "/" and never show where the entries lie on the server.
   - name: unraid
     description: |
       Array state, file placement and the Unraid tools. Sizes are bytes.
       Outside Unraid the state says available false and placements stay empty.
   - name: remotes
-    description: rclone remotes mounted below /mnt/remotes.
+    description: |
+      rclone remotes mounted below /mnt/remotes. rclone runs inside the
+      server with its own rclone.conf in the config folder. Calls that need
+      it answer 503 while it is missing or still starting.
   - name: system
     description: Server state and the settings only admins change.
+  - name: office
+    description: |
+      Office files in OnlyOffice, Euro-Office or Collabora, as chosen in
+      admin/app. The document server reaches the file and callback addresses
+      and the WOPI endpoints without a session, with the token from
+      office/config, which is good for one file, one user and 24 hours. The
+      user's rights are checked again on every call.
   - name: events
     description: The server event stream and the folders a client watches.
 paths:
@@ -361,29 +376,179 @@ paths:
     get:
       operationId: fsFileGet
       summary: File content for the editor
+      description: |
+        The whole text of a file up to 16 MiB, decoded like fs/text. The
+        ETag follows the bytes, and a save sends it back in If-Match. Needs
+        the download right.
       parameters:
         - $ref: "#/components/parameters/Path"
-      tags: [fs]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The text.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsFile"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "413":
+          description: The file is too big for the editor.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "415":
+          description: The file holds binary data.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [fs]
     put:
       operationId: fsFilePut
       summary: Save a file from the editor
+      description: |
+        Writes the text in the encoding given, by default the one the file
+        has. With If-Match the save only goes through while the file is
+        unchanged since it was read, with If-None-Match * only when it does
+        not exist yet. The file is written next to the old one and renamed
+        over it, keeping mode and owner. A file with hard links is written
+        in place, so its other names keep seeing the same content. Needs
+        the modify right, or the create right for a new file.
       parameters:
         - $ref: "#/components/parameters/Path"
-      tags: [fs]
+        - name: If-Match
+          in: header
+          schema:
+            type: string
+        - name: If-None-Match
+          in: header
+          schema:
+            type: string
+            enum: ["*"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                encoding:
+                  type: string
+                  enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+                eol:
+                  type: string
+                  enum: [lf, crlf, cr]
+                  description: Rewrites every line break. Missing keeps them as sent.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: Saved.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsSaved"
+        "201":
+          description: Saved as a new file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsSaved"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: The folder for a new file is missing.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "412":
+          description: The file changed since it was read, or exists already for If-None-Match *.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "413":
+          description: The text is too big for the editor.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: The text holds characters the encoding cannot store.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [fs]
   /fs/archive-stream:
     post:
       operationId: fsArchiveStream
       summary: Download several paths as one archive
-      tags: [fs]
+      description: |
+        Packs while it sends, so nothing stays behind on the server. Takes
+        JSON or a plain form with one paths field per path, which lets a
+        browser save the stream as it arrives. Two entries of the same
+        name get a number. zip compresses everything but formats that are
+        compressed already, tgz keeps mode and owner. Linked folders are
+        left out, linked files come along when they point inside the
+        source. Needs the download right on every path.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArchiveRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/ArchiveRequest"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The archive.
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            application/gzip:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [fs]
   /fs/mkdir:
     post:
       operationId: fsMkdir
@@ -654,14 +819,68 @@ paths:
     post:
       operationId: uploadCreate
       summary: Start an upload
-      tags: [fileops]
+      description: |
+        Announces a file and its size. The bytes go to ".name.cc-part" next
+        to the target and the file takes its name with the last chunk.
+        Missing folders on the way are created, so a dropped folder keeps
+        its structure. Starting again for the same target and size picks
+        up the running upload, which is how a client resumes after a reload
+        and how it answers a conflict: it sends the same request with the
+        rule it chose.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadRequest"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The running upload for this target, or the finished one when nothing was left to send.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "201":
+          description: A new upload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/UploadConflict"
+        "507":
+          description: Not enough free space for the file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [fileops]
   /uploads/{id}:
     get:
       operationId: uploadGet
       summary: State of an upload, for resuming
+      responses:
+        "200":
+          description: Where the upload stands.
+          headers:
+            Upload-Offset:
+              schema:
+                type: integer
+                format: int64
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [fileops]
       parameters:
         - name: id
@@ -669,25 +888,77 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     put:
       operationId: uploadChunk
       summary: Send the next chunk
-      tags: [fileops]
+      description: |
+        The body is the raw bytes. Upload-Offset, or the start of
+        Content-Range, says where they go, and has to match the offset of
+        the upload. A chunk may hold up to 64 MiB. When the connection
+        breaks, what arrived is kept and GET tells where to go on.
       parameters:
+        - name: Upload-Offset
+          in: header
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
         - name: id
           in: path
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The upload after the chunk. Its state is done once the file has its name.
+          headers:
+            Upload-Offset:
+              schema:
+                type: integer
+                format: int64
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/UploadConflict"
+        "410":
+          description: The part file disappeared, the upload has to start over.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "413":
+          description: The chunk goes past the announced size.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [fileops]
     delete:
       operationId: uploadCancel
       summary: Cancel an upload
+      description: Removes the part file.
+      responses:
+        "204":
+          description: Cancelled.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [fileops]
       parameters:
         - name: id
@@ -695,9 +966,6 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /jobs:
     get:
       operationId: jobsList
@@ -2397,21 +2665,70 @@ paths:
     get:
       operationId: sharesList
       summary: Own share links
-      tags: [shares]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The links, newest first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Share"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [shares]
     post:
       operationId: shareCreate
       summary: Create a share link
-      tags: [shares]
+      description: |
+        Needs the share right and the download right on every path. One
+        path makes a file or folder link, several make a collection, which
+        needs a name. Uploads work only for a link to one folder and need
+        the create right there.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareCreate"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          description: The new link.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Share"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The address is taken.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [shares]
   /shares/{id}:
     get:
       operationId: shareGet
       summary: One share link
+      description: For its owner and for admins.
+      responses:
+        "200":
+          description: The link.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Share"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [shares]
       parameters:
         - name: id
@@ -2419,12 +2736,38 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     patch:
       operationId: shareUpdate
       summary: Change a share link
+      description: |
+        Fields left out stay as they are. An expiry of null makes the link
+        last, an empty password removes it. Setting a password or a new
+        one closes the link in every browser that unlocked it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareUpdate"
+      responses:
+        "200":
+          description: The link as it is now.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Share"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The address is taken.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
       tags: [shares]
       parameters:
         - name: id
@@ -2432,12 +2775,17 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     delete:
       operationId: shareDelete
       summary: Delete a share link
+      description: The address leads nowhere afterwards, and uploads running through it stop.
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [shares]
       parameters:
         - name: id
@@ -2445,23 +2793,48 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /admin/shares:
     get:
       operationId: adminSharesList
       summary: Every share link on the server
       x-access: admin
-      tags: [shares]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The links of all users, newest first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Share"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [shares]
   /s/{slug}:
     get:
       operationId: publicShareGet
       summary: What a share link shows
+      description: |
+        A link with a password tells only that it is locked until the
+        visitor unlocks it. Opening a link counts as a view and sends
+        share.opened to its owner, once per visitor within half an hour,
+        and with notify on also a notice to Unraid.
       x-access: public
+      responses:
+        "200":
+          description: The link.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicShare"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+        "429":
+          $ref: "#/components/responses/TooManyTries"
       tags: [shares]
       parameters:
         - name: slug
@@ -2469,15 +2842,45 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
       security: []
   /s/{slug}/unlock:
     post:
       operationId: publicShareUnlock
       summary: Open a share link with its password
+      description: |
+        Answers a token for twelve hours and sets it as a cookie as well.
+        Apps send it in X-Share-Token, plain links to files in the token
+        query. Five wrong passwords make the address wait a few minutes.
       x-access: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Unlocked.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareUnlocked"
+        "403":
+          description: The password is wrong.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+        "429":
+          $ref: "#/components/responses/TooManyTries"
       tags: [shares]
       parameters:
         - name: slug
@@ -2485,57 +2888,282 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
       security: []
   /s/{slug}/list:
     get:
       operationId: publicShareList
       summary: List a folder inside a share
+      description: |
+        The root of a collection lists its entries, two of the same name
+        with a number. Entries starting with a dot are left out.
       x-access: public
-      tags: [shares]
       parameters:
+        - $ref: "#/components/parameters/SharePath"
+        - $ref: "#/components/parameters/ShareToken"
         - name: slug
           in: path
           required: true
           schema:
             type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The folder.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicListing"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+      tags: [shares]
       security: []
   /s/{slug}/raw:
     get:
       operationId: publicShareRaw
       summary: Download a file from a share
+      description: |
+        A file is sent with range requests. With download it counts
+        against the download limit, unless it goes on with a download that
+        broke off. Viewing in the browser is free. A folder, or the root of
+        a collection, comes as one zip or tar.gz and always counts.
       x-access: public
-      tags: [shares]
       parameters:
+        - $ref: "#/components/parameters/SharePath"
+        - $ref: "#/components/parameters/ShareToken"
+        - name: download
+          in: query
+          schema:
+            type: boolean
+        - name: format
+          in: query
+          description: Archive format for a folder.
+          schema:
+            type: string
+            enum: [zip, tgz]
+            default: zip
         - name: slug
           in: path
           required: true
           schema:
             type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The file or the archive.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "206":
+          description: The requested range.
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+      tags: [shares]
       security: []
   /s/{slug}/upload:
     post:
       operationId: publicShareUpload
       summary: Drop a file into a collecting share
+      description: |
+        Starts an upload like POST /uploads, into a folder link that takes
+        uploads. A link adds files but never replaces one: a name that
+        exists gets a number, or with skip the file is left out. The chunks
+        go to /s/{slug}/upload/{id}, and a visitor resumes by that id. The
+        link's upload limit counts the uploads still running as well, and
+        at most 20 can run at once.
       x-access: public
-      tags: [shares]
       parameters:
+        - $ref: "#/components/parameters/ShareToken"
         - name: slug
           in: path
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, size]
+              properties:
+                path:
+                  type: string
+                  description: Folder inside the link.
+                  default: /
+                name:
+                  type: string
+                  description: File name, with folders in front for a dropped folder.
+                  example: Urlaub/IMG_0101.jpg
+                size:
+                  type: integer
+                  format: int64
+                  minimum: 0
+                mtime:
+                  type: string
+                  format: date-time
+                rule:
+                  type: string
+                  enum: [both, skip]
+                  default: both
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: Nothing was left to send, see state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "201":
+          description: The upload, with its path inside the link.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "403":
+          description: The link takes no uploads.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "410":
+          $ref: "#/components/responses/ShareGone"
+        "413":
+          description: The file does not fit into the upload limit of the link.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "429":
+          description: Too many uploads are running through the link.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "507":
+          description: Not enough free space for the file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [shares]
+      security: []
+  /s/{slug}/upload/{id}:
+    get:
+      operationId: publicShareUploadGet
+      summary: State of an upload into a share
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/ShareToken"
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Where the upload stands.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [shares]
+      security: []
+    put:
+      operationId: publicShareUploadChunk
+      summary: Send the next chunk of an upload into a share
+      description: Works like PUT /uploads/{id}.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/ShareToken"
+        - name: Upload-Offset
+          in: header
+          schema:
+            type: integer
+            format: int64
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: The upload after the chunk.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/UploadConflict"
+        "413":
+          description: The chunk goes past the announced size.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [shares]
+      security: []
+    delete:
+      operationId: publicShareUploadCancel
+      summary: Cancel an upload into a share
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/ShareToken"
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Cancelled.
+        "401":
+          $ref: "#/components/responses/ShareLocked"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [shares]
       security: []
   /unraid/state:
     get:
@@ -2756,48 +3384,193 @@ paths:
     get:
       operationId: remotesList
       summary: Configured remotes
-      tags: [remotes]
+      description: |
+        mounted is the live state, mountOnStart what the server mounts when
+        it starts. Admins also get the parameters, without secrets.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The remotes and the state of rclone.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [remotes, rclone]
+                properties:
+                  remotes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Remote"
+                  rclone:
+                    $ref: "#/components/schemas/RcloneStatus"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [remotes]
     post:
       operationId: remoteCreate
       summary: Add a remote
+      description: |
+        Adds the remote to rclone.conf and mounts it, below /mnt/remotes
+        unless mount says otherwise. A mount that fails leaves the remote in
+        place with the reason in error.
       x-access: admin
-      tags: [remotes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoteInput"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          description: The new remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
+      tags: [remotes]
   /remotes/types:
     get:
       operationId: remoteTypes
       summary: Remote types rclone knows
-      tags: [remotes]
+      description: |
+        SFTP, SMB, WebDAV, S3, Google Drive, OneDrive and Dropbox come first
+        with featured set. Types with oauth log in through rclone authorize
+        on a computer with a browser, authorize is the command for it.
+      parameters:
+        - name: advanced
+          in: query
+          description: Include the advanced options.
+          schema:
+            type: boolean
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The types.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [types]
+                properties:
+                  types:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RemoteType"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
+      tags: [remotes]
   /remotes/test:
     post:
       operationId: remoteTest
       summary: Try a remote configuration
+      description: |
+        Lists the folder of the remote without saving anything. With the
+        name of a saved remote of the same type, its saved parameters fill
+        in what the body leaves out, such as an unchanged password. A remote
+        that does not answer is a result with ok false, not an error.
       x-access: admin
-      tags: [remotes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoteInput"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: What the test found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemoteTestResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
+      tags: [remotes]
   /remotes/oauth:
     post:
       operationId: remoteOAuth
       summary: Store a token from rclone authorize
+      description: |
+        token is what rclone authorize printed, the lines around the token
+        may stay. With name the token goes into that remote, which is
+        mounted again if it was. Without name the checked token comes back
+        for params.token of the remote the add dialog creates.
       x-access: admin
-      tags: [remotes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                type:
+                  type: string
+                  example: drive
+                token:
+                  type: string
+                name:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The checked token, or the remote that took it.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  expiry:
+                    type: string
+                    format: date-time
+                  remote:
+                    $ref: "#/components/schemas/Remote"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
+      tags: [remotes]
   /remotes/{name}:
     get:
       operationId: remoteGet
       summary: One remote
+      responses:
+        "200":
+          description: The remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [remotes]
       parameters:
         - name: name
@@ -2805,13 +3578,39 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     put:
       operationId: remoteUpdate
       summary: Change a remote
+      description: |
+        Fields left out stay. A parameter with an empty value is removed,
+        except a secret, which then stays. The type stays, a new name moves
+        the remote over. A mounted remote is mounted again afterwards.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoteInput"
+      responses:
+        "200":
+          description: The changed remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
       tags: [remotes]
       parameters:
         - name: name
@@ -2819,13 +3618,24 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     delete:
       operationId: remoteDelete
       summary: Remove a remote
+      description: Unmounts the remote and forgets it with its credentials. The files at the remote stay.
       x-access: admin
+      responses:
+        "204":
+          description: The remote is gone.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
       tags: [remotes]
       parameters:
         - name: name
@@ -2833,14 +3643,29 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /remotes/{name}/mount:
     post:
       operationId: remoteMount
       summary: Mount a remote
+      description: Mounts the remote with the cache settings of admin/app and keeps it mounted across restarts.
       x-access: admin
+      responses:
+        "200":
+          description: The mounted remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
       tags: [remotes]
       parameters:
         - name: name
@@ -2848,14 +3673,29 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /remotes/{name}/unmount:
     post:
       operationId: remoteUnmount
       summary: Unmount a remote
+      description: Unmounts the remote and leaves it unmounted across restarts.
       x-access: admin
+      responses:
+        "200":
+          description: The unmounted remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
       tags: [remotes]
       parameters:
         - name: name
@@ -2863,34 +3703,83 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /system:
     get:
       operationId: systemGet
       summary: Version, uptime and available features
-      tags: [system]
+      description: |
+        The helper programs are looked up once per start. Office tells the
+        viewers where office files open, without the secret. The ETag leaves
+        the uptime out.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The server state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemInfo"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [system]
   /admin/sources:
     get:
       operationId: sourcesGet
       summary: Configured sources
+      description: |
+        The saved sources, or the ones from the config file while nothing
+        was saved. restartNeeded is set while the saved ones differ from the
+        ones the server runs with.
       x-access: admin
-      tags: [system]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The sources.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSources"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
     put:
       operationId: sourcesPut
       summary: Save sources
+      description: |
+        Replaces the whole list. The sources are saved in sources.json next
+        to the config file and take over from the config on the next start.
+        Every folder has to exist, names and folders are unique. An exclude
+        pattern is a name, a path below the source, or a name with a star at
+        its start or end, such as *.tmp or backup-*.
       x-access: admin
-      tags: [system]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sources]
+              properties:
+                sources:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/AdminSource"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The saved sources.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSources"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
   /admin/index:
     get:
       operationId: indexState
@@ -2912,28 +3801,441 @@ paths:
     post:
       operationId: integrationsTest
       summary: Try an integration such as an office server
+      description: |
+        Asks the server for its health and version and checks the secret or
+        token. No file and no user data are sent. Without secret or token
+        the saved one is used when the address is the saved one. A server
+        that cannot be reached is a result with reachable false, not an
+        error.
       x-access: admin
-      tags: [system]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntegrationTest"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: What the test found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrationResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
   /admin/app:
     get:
       operationId: appSettingsGet
       summary: Server wide settings
+      description: Secrets are never sent, secretSet and tokenSet say whether one is saved.
       x-access: admin
-      tags: [system]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
     put:
       operationId: appSettingsPut
       summary: Save server wide settings
+      description: |
+        Only the fields in the body change, so a page can save one switch
+        at a time. A secret or token left out stays, an empty one is
+        removed. Office, previews and the log level apply at once, WebDAV
+        and the update check on the next start.
       x-access: admin
-      tags: [system]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppSettings"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The saved settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
+  /system/update:
+    post:
+      operationId: systemUpdate
+      summary: Look for a new release
+      description: |
+        Asks GitHub for the newest release, at most every ten minutes. The
+        image itself is updated on Unraid's Docker tab.
+      responses:
+        "200":
+          description: The installed and the newest version.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateCheck"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: GitHub could not be asked.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [system]
+  /admin/app/restart:
+    post:
+      operationId: appRestart
+      summary: Restart the server
+      description: |
+        The server shuts down as on a stop, unmounting the remotes, and
+        starts itself again in the same container. Running jobs stop and
+        continue after the start.
+      x-access: admin
+      responses:
+        "202":
+          description: The restart begins in a moment.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
+  /admin/app/export:
+    get:
+      operationId: appExportGet
+      summary: Download the settings file
+      description: Passwords, tokens, passkeys and the credentials of remotes never go into it.
+      x-access: admin
+      parameters:
+        - name: users
+          in: query
+          description: Take users, groups and rules along.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: The settings file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettingsFile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
+    post:
+      operationId: appExport
+      summary: Write the settings file on the server
+      description: |
+        Writes the file to a path below a source, such as
+        /mnt/user/appdata/cannoncommander/exports/settings.json. An existing
+        file is never replaced.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsFileRequest"
+      responses:
+        "201":
+          description: The file is written.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [path, size]
+                properties:
+                  path:
+                    type: string
+                  size:
+                    type: integer
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: There is a file of that name already.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [system]
+  /admin/app/import:
+    post:
+      operationId: appImport
+      summary: Take the settings from a settings file on the server
+      description: |
+        Sources and app settings replace the ones here, passwords and
+        secrets saved here stay. Remotes this server lacks are added without
+        credentials and stay unmounted, the ones it has stay as they are.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsFileRequest"
+      responses:
+        "200":
+          description: What was taken over.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sections, notes, restartNeeded]
+                properties:
+                  sections:
+                    type: array
+                    items:
+                      type: string
+                    example: [sources, app, remotes]
+                  notes:
+                    type: array
+                    items:
+                      type: string
+                    description: What was left out and why, in English.
+                  restartNeeded:
+                    type: boolean
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [system]
+  /office/config:
+    get:
+      operationId: officeConfig
+      summary: What the viewer needs to open a file in the office server
+      description: |
+        For OnlyOffice and Euro-Office the editor config, signed with the
+        server's JWT secret when one is set. Users who may not change the
+        file get it in view mode. For Collabora the editor address with
+        WOPISrc, the access token and its end in milliseconds, to post into
+        the editor frame as access_token and access_token_ttl.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: mode
+          in: query
+          description: view opens the file read only, for a preview.
+          schema:
+            type: string
+            enum: [edit, view]
+      responses:
+        "200":
+          description: How to open the file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfficeConfig"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: No office server is set up.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: Collabora did not answer its discovery.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [office]
+  /office/file:
+    get:
+      operationId: officeFile
+      summary: The document for OnlyOffice and Euro-Office
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/OfficeToken"
+      responses:
+        "200":
+          description: The file.
+          content:
+            application/octet-stream: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [office]
+      security: []
+  /office/callback:
+    post:
+      operationId: officeCallback
+      summary: Where OnlyOffice and Euro-Office report and save a document
+      description: |
+        With a JWT secret only signed callbacks count. On status 2 and 6
+        the document is fetched from the document server, only from its
+        own address, and replaces the file. The answer is always
+        {"error":0} or {"error":1}, as the document server expects.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/OfficeToken"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                status:
+                  type: integer
+                url:
+                  type: string
+                token:
+                  type: string
+      responses:
+        "200":
+          description: The answer for the document server.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: integer
+                    enum: [0, 1]
+      tags: [office]
+      security: []
+  /wopi/files/{id}:
+    get:
+      operationId: wopiCheckFileInfo
+      summary: WOPI CheckFileInfo
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Name, size, version and the user's rights.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [office]
+      security: []
+    post:
+      operationId: wopiLock
+      summary: WOPI LOCK, GET_LOCK, REFRESH_LOCK and UNLOCK
+      description: The operation comes in X-WOPI-Override, the lock in X-WOPI-Lock. A lock holds 30 minutes.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Done, X-WOPI-Lock carries the lock.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Another lock is in the way, X-WOPI-Lock names it.
+      tags: [office]
+      security: []
+  /wopi/files/{id}/contents:
+    get:
+      operationId: wopiGetFile
+      summary: WOPI GetFile
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The file.
+          content:
+            application/octet-stream: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [office]
+      security: []
+    post:
+      operationId: wopiPutFile
+      summary: WOPI PutFile
+      description: |
+        Replaces the file with the body. A file locked by someone else, or
+        changed since the time in X-COOL-WOPI-Timestamp, answers 409.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream: {}
+      responses:
+        "200":
+          description: Saved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  LastModifiedTime:
+                    type: string
+                    format: date-time
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Locked by someone else, or changed meanwhile.
+      tags: [office]
+      security: []
   /events:
     get:
       operationId: eventsStream
@@ -3028,6 +4330,31 @@ components:
       schema:
         type: string
         pattern: "^[A-Za-z0-9_-]{1,64}$"
+    SharePath:
+      name: path
+      in: query
+      description: Path inside the link, "/" for its root.
+      schema:
+        type: string
+        default: /
+    ShareToken:
+      name: token
+      in: query
+      description: Unlock token of a link with a password, for when no header or cookie can carry it.
+      schema:
+        type: string
+    OfficeToken:
+      name: token
+      in: query
+      required: true
+      schema:
+        type: string
+    WopiToken:
+      name: access_token
+      in: query
+      required: true
+      schema:
+        type: string
   responses:
     NotImplemented:
       description: Part of the contract, not built yet.
@@ -3059,6 +4386,23 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
+    UploadConflict:
+      description: |
+        Either a file of this name exists and the rule is ask, then
+        conflict tells both sides, or the chunk does not start at the
+        offset of the upload, then upload tells where it stands. A start
+        for a target another upload is writing answers 409 as well.
+      content:
+        application/problem+json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Problem"
+              - type: object
+                properties:
+                  upload:
+                    $ref: "#/components/schemas/Upload"
+                  conflict:
+                    $ref: "#/components/schemas/JobConflict"
     FsChanged:
       description: The entry as it is now, and the undo step for it.
       content:
@@ -3100,6 +4444,40 @@ components:
                 $ref: "#/components/schemas/Job"
     ToolFailed:
       description: The tool cannot do it, the detail says why, such as a file too big, a missing password or ArrowLoop not answering.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    ShareGone:
+      description: The link expired, used up its downloads, or its owner may no longer share.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    ShareLocked:
+      description: The link has a password and was not unlocked.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    TooManyTries:
+      description: Too many wrong passwords or unknown addresses. Retry-After says when to go on.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    RemoteConflict:
+      description: The name is taken, or a mount is busy or failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    RcloneUnavailable:
+      description: rclone is not installed or not running yet.
       content:
         application/problem+json:
           schema:
@@ -3333,6 +4711,63 @@ components:
         truncated:
           type: boolean
           description: The file goes on after max bytes.
+    FsFile:
+      type: object
+      required: [path, size, mtime, encoding, text, etag, writable]
+      properties:
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        encoding:
+          type: string
+          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+        eol:
+          type: string
+          enum: [lf, crlf, cr, mixed]
+        text:
+          type: string
+        etag:
+          type: string
+          description: The same as the ETag header, for If-Match on the save.
+        writable:
+          type: boolean
+          description: The user may save the file.
+    FsSaved:
+      type: object
+      required: [path, size, mtime, etag]
+      properties:
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        etag:
+          type: string
+        created:
+          type: boolean
+    ArchiveRequest:
+      type: object
+      required: [paths]
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+        format:
+          type: string
+          enum: [zip, tgz]
+          default: zip
+        name:
+          type: string
+          description: File name of the download. Made from the paths when missing.
     FsHex:
       type: object
       required: [path, size, offset, data]
@@ -3350,6 +4785,57 @@ components:
           type: string
           format: byte
           description: The bytes, base64.
+    UploadRequest:
+      type: object
+      required: [path, size]
+      properties:
+        path:
+          type: string
+          description: The file to create.
+        size:
+          type: integer
+          format: int64
+          minimum: 0
+        mtime:
+          type: string
+          format: date-time
+          description: Modification time the file gets, usually lastModified of the browser file.
+        rule:
+          type: string
+          enum: [ask, skip, replace, both, newer]
+          default: ask
+          description: |
+            What happens when the name exists. ask answers 409 with the
+            conflict, replace moves the old file to the trash, both keeps
+            the new one as "name (1).ext", newer replaces only an older
+            file. The rule is applied again when the last chunk arrives.
+    Upload:
+      type: object
+      required: [id, path, size, offset, state, rule, chunk]
+      properties:
+        id:
+          type: string
+        path:
+          type: string
+          description: The target, and once done the file it became, which differs when both were kept.
+        size:
+          type: integer
+          format: int64
+        offset:
+          type: integer
+          format: int64
+          description: Bytes received so far, where the next chunk starts.
+        state:
+          type: string
+          enum: [open, done, skipped]
+        rule:
+          type: string
+        mtime:
+          type: string
+          format: date-time
+        chunk:
+          type: integer
+          description: The chunk size the server asks for.
     PermsParams:
       type: object
       description: Params of the job kind fixPerms. Admins only.
@@ -4331,6 +5817,191 @@ components:
         current:
           type: boolean
           description: The session this request came with.
+    Share:
+      type: object
+      required: [id, slug, kind, name, paths, owner, created, expires, password, limit, downloads, views, uploads, uploadLimit, uploaded, notify, state]
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+          description: The end of the address, /s/{slug}.
+          example: k3x9qa-urlaub
+        kind:
+          type: string
+          enum: [file, folder, collection]
+        name:
+          type: string
+          description: The folder name of a collection, otherwise the name of the file or folder.
+        paths:
+          type: array
+          items:
+            type: string
+          description: What the link shares. Follows renames and moves made in the app.
+        owner:
+          type: string
+        created:
+          type: string
+          format: date-time
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+        password:
+          type: boolean
+        limit:
+          type: integer
+          description: Downloads until the link leads nowhere, 0 for no limit.
+        downloads:
+          type: integer
+        views:
+          type: integer
+        uploads:
+          type: boolean
+        uploadLimit:
+          type: integer
+          format: int64
+          description: Bytes visitors may upload through the link in all, 0 for no limit.
+        uploaded:
+          type: integer
+          format: int64
+        notify:
+          type: boolean
+          description: Opening the link sends a notice, in the app and to Unraid.
+        state:
+          type: string
+          enum: [active, expired, exhausted]
+    ShareCreate:
+      type: object
+      required: [paths]
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+          description: Needed for a collection.
+        slug:
+          type: string
+          pattern: "^[a-z0-9][a-z0-9-]{2,39}$"
+          description: Missing picks one that is hard to guess.
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+        password:
+          type: string
+          minLength: 6
+        limit:
+          type: integer
+          minimum: 0
+        uploads:
+          type: boolean
+        uploadLimit:
+          type: integer
+          format: int64
+          minimum: 0
+        notify:
+          type: boolean
+    ShareUpdate:
+      type: object
+      properties:
+        slug:
+          type: string
+          pattern: "^[a-z0-9][a-z0-9-]{2,39}$"
+        reroll:
+          type: boolean
+          description: Gives the link a fresh address, the old one leads nowhere.
+        name:
+          type: string
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+        password:
+          type: string
+          description: A new password, or empty to remove it.
+        limit:
+          type: integer
+          minimum: 0
+        uploads:
+          type: boolean
+        uploadLimit:
+          type: integer
+          format: int64
+          minimum: 0
+        notify:
+          type: boolean
+    PublicShare:
+      type: object
+      required: [slug, locked]
+      properties:
+        slug:
+          type: string
+        locked:
+          type: boolean
+          description: The link needs its password. Nothing else is told then.
+        kind:
+          type: string
+          enum: [file, folder, collection]
+        name:
+          type: string
+        expires:
+          type: string
+          format: date-time
+        uploads:
+          type: boolean
+        uploadRoom:
+          type: integer
+          format: int64
+          description: Bytes the link still takes, when it has an upload limit.
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        count:
+          type: integer
+          description: Entries of a collection.
+    ShareUnlocked:
+      type: object
+      required: [token, expires]
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
+          format: date-time
+    PublicItem:
+      type: object
+      required: [name, dir, size, mtime]
+      properties:
+        name:
+          type: string
+        dir:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        format:
+          type: string
+    PublicListing:
+      type: object
+      required: [path, name, items]
+      properties:
+        path:
+          type: string
+        name:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicItem"
     UnraidState:
       type: object
       required: [available, array, parity, disks, shares, write, spindownDelay]
@@ -4805,6 +6476,433 @@ components:
                 format: int64
         partial:
           type: boolean
+    Remote:
+      type: object
+      required: [name, type, path, mount, label, mounted, mountOnStart]
+      properties:
+        name:
+          type: string
+          example: gdrive
+        type:
+          type: string
+          description: The rclone backend.
+          example: drive
+        path:
+          type: string
+          description: The folder at the remote that is mounted, the share for SMB, the bucket for S3.
+        mount:
+          type: string
+          example: /mnt/remotes/gdrive
+        label:
+          type: string
+          description: What listings and the tree show on the mounted folder.
+          example: "rclone: gdrive"
+        mounted:
+          type: boolean
+        mountOnStart:
+          type: boolean
+        error:
+          type: string
+          description: Why the last mount failed.
+        params:
+          type: object
+          description: The rclone parameters without secrets, for admins.
+          additionalProperties:
+            type: string
+        secrets:
+          type: array
+          description: Secret parameters that are set, for admins.
+          items:
+            type: string
+          example: [pass]
+    RemoteInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Small letters, digits, _ and -.
+          example: nas-keller
+        type:
+          type: string
+          example: smb
+        path:
+          type: string
+          example: archiv
+        mount:
+          type: string
+          example: /mnt/remotes/nas-keller
+        params:
+          type: object
+          description: rclone parameters of the type. Passwords are sent in clear and obscured on the server.
+          additionalProperties:
+            type: string
+          example:
+            host: keller
+            user: jdp
+            pass: geheim
+    RcloneStatus:
+      type: object
+      required: [installed, running]
+      properties:
+        installed:
+          type: boolean
+        running:
+          type: boolean
+        version:
+          type: string
+          example: 1.75.2
+        error:
+          type: string
+          description: Why rclone last stopped.
+    RemoteType:
+      type: object
+      required: [id, description, featured, oauth, pathHint, options]
+      properties:
+        id:
+          type: string
+          example: drive
+        description:
+          type: string
+          example: Google Drive
+        featured:
+          type: boolean
+        oauth:
+          type: boolean
+        authorize:
+          type: string
+          example: rclone authorize "drive"
+        pathHint:
+          type: string
+          enum: [folder, share, bucket]
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/RemoteOption"
+    RemoteOption:
+      type: object
+      required: [name, help, type, required, secret, advanced, exclusive]
+      properties:
+        name:
+          type: string
+        help:
+          type: string
+        type:
+          type: string
+        default:
+          type: string
+        provider:
+          type: string
+          description: For S3, the providers the option applies to.
+        required:
+          type: boolean
+        secret:
+          type: boolean
+        advanced:
+          type: boolean
+        exclusive:
+          type: boolean
+          description: Only the examples are allowed.
+        examples:
+          type: array
+          items:
+            type: object
+            required: [value, help]
+            properties:
+              value:
+                type: string
+              help:
+                type: string
+              provider:
+                type: string
+    RemoteTestResult:
+      type: object
+      required: [ok, entries]
+      properties:
+        ok:
+          type: boolean
+        entries:
+          type: integer
+          description: Entries in the folder of the remote.
+        total:
+          type: integer
+          format: int64
+        used:
+          type: integer
+          format: int64
+        free:
+          type: integer
+          format: int64
+        error:
+          type: string
+          description: What rclone said, in English.
+    UpdateCheck:
+      type: object
+      required: [version, latest, updateAvailable]
+      properties:
+        version:
+          type: string
+          example: 0.1.0
+        latest:
+          type: string
+          example: 0.2.0
+        updateAvailable:
+          type: boolean
+        releaseUrl:
+          type: string
+    SettingsFileRequest:
+      type: object
+      required: [path]
+      properties:
+        path:
+          type: string
+          example: /mnt/user/appdata/cannoncommander/exports/cannoncommander-settings-2026-11-04.json
+        users:
+          type: boolean
+          description: Take users, groups and rules along.
+    SettingsFile:
+      type: object
+      required: [app, version, exported, sections]
+      properties:
+        app:
+          type: string
+          enum: [cannoncommander]
+        version:
+          type: string
+        exported:
+          type: string
+          format: date-time
+        sections:
+          type: object
+          description: One entry per part, such as sources, app and remotes.
+          additionalProperties: true
+    SystemInfo:
+      type: object
+      required: [version, go, os, arch, started, uptime, tools, unraid, features]
+      properties:
+        version:
+          type: string
+          example: 0.1.0
+        commit:
+          type: string
+        go:
+          type: string
+          example: go1.27.0
+        os:
+          type: string
+          example: linux
+        arch:
+          type: string
+          example: amd64
+        started:
+          type: string
+          format: date-time
+        uptime:
+          type: integer
+          format: int64
+          description: Seconds since the start.
+        tools:
+          type: object
+          description: ffmpeg, ffprobe, mutool, 7zz and rclone.
+          additionalProperties:
+            $ref: "#/components/schemas/SystemTool"
+        unraid:
+          type: object
+          required: [available, socket]
+          properties:
+            available:
+              type: boolean
+            socket:
+              type: boolean
+              description: Whether writing to Unraid (spin down, notifications) is switched on.
+        features:
+          type: object
+          required: [office, thumbs, videoPreview, webdav, mupdf]
+          properties:
+            office:
+              type: object
+              required: [kind]
+              properties:
+                kind:
+                  type: string
+                  enum: [none, onlyoffice, eurooffice, collabora]
+                url:
+                  type: string
+            thumbs:
+              type: boolean
+            videoPreview:
+              type: boolean
+            webdav:
+              type: boolean
+            mupdf:
+              type: boolean
+    SystemTool:
+      type: object
+      required: [available]
+      properties:
+        available:
+          type: boolean
+        path:
+          type: string
+          example: /usr/local/bin/ffmpeg
+        version:
+          type: string
+          example: 7.1.1
+    AdminSource:
+      type: object
+      required: [name, path]
+      properties:
+        name:
+          type: string
+          example: Shares
+        path:
+          type: string
+          example: /mnt/user
+        readOnly:
+          type: boolean
+        indexed:
+          type: boolean
+        skipHidden:
+          type: boolean
+        exclude:
+          type: array
+          items:
+            type: string
+          example: ["*.tmp", appdata/plex/cache]
+    AdminSources:
+      type: object
+      required: [sources, restartNeeded]
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminSource"
+        restartNeeded:
+          type: boolean
+    IntegrationTest:
+      type: object
+      required: [kind, url]
+      properties:
+        kind:
+          type: string
+          enum: [onlyoffice, eurooffice, collabora, arrowloop]
+        url:
+          type: string
+          example: https://office.tower.lan
+        secret:
+          type: string
+          description: The JWT secret of an OnlyOffice or Euro-Office server.
+        token:
+          type: string
+          description: The ArrowLoop API token.
+    IntegrationResult:
+      type: object
+      required: [kind, ok, reachable]
+      properties:
+        kind:
+          type: string
+        ok:
+          type: boolean
+        reachable:
+          type: boolean
+        token:
+          type: string
+          enum: [ok, rejected, missing, "off", none]
+          description: |
+            ok, rejected, missing when the server wants one and none was
+            given, off when the server checks none, none for Collabora,
+            which has no shared secret.
+        version:
+          type: string
+        error:
+          type: string
+          description: What went wrong, in English.
+    AppSettings:
+      type: object
+      properties:
+        office:
+          type: object
+          properties:
+            kind:
+              type: string
+              enum: [none, onlyoffice, eurooffice, collabora]
+            url:
+              type: string
+            secret:
+              type: string
+              writeOnly: true
+            secretSet:
+              type: boolean
+              readOnly: true
+        arrowloop:
+          type: object
+          properties:
+            url:
+              type: string
+            token:
+              type: string
+              writeOnly: true
+            tokenSet:
+              type: boolean
+              readOnly: true
+            paths:
+              type: object
+              description: The start of a path here mapped to the same folder in ArrowLoop's container, as /mnt/user to /data.
+              additionalProperties:
+                type: string
+        previews:
+          type: object
+          properties:
+            thumbs:
+              type: boolean
+            video:
+              type: boolean
+              description: Transcode formats such as MKV for the browser.
+        webdav:
+          type: boolean
+        remotes:
+          type: object
+          properties:
+            automount:
+              type: boolean
+            cache:
+              type: string
+              enum: ["off", writes, full]
+            cacheSize:
+              type: integer
+              description: Cap of the VFS cache of all mounts together, in GB.
+              example: 50
+        updates:
+          type: object
+          properties:
+            autoCheck:
+              type: boolean
+        logLevel:
+          type: string
+          enum: [error, info, debug]
+        restartNeeded:
+          type: boolean
+          readOnly: true
+    OfficeConfig:
+      type: object
+      required: [kind, url]
+      properties:
+        kind:
+          type: string
+          enum: [onlyoffice, eurooffice, collabora]
+        url:
+          type: string
+          description: The document server, or for Collabora the editor address with WOPISrc.
+        config:
+          type: object
+          description: The editor config for DocsAPI.DocEditor.
+          additionalProperties: true
+        token:
+          type: string
+          description: The WOPI access token.
+        ttl:
+          type: integer
+          format: int64
+          description: When the access token ends, in milliseconds since 1970.
     WatchRequest:
       type: object
       required: [clientId, paths]

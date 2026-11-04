@@ -88,12 +88,17 @@ func (h handlers) raw(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	f, err := os.Open(loc.Real)
+	return ServeFile(w, r, loc.Real, path.Base(loc.Path), info, flag(q.Get("download")))
+}
+
+// ServeFile sends the regular file at real under name, with range and
+// conditional requests. download asks the browser to save it.
+func ServeFile(w http.ResponseWriter, r *http.Request, real, name string, info os.FileInfo, download bool) error {
+	f, err := os.Open(real)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	name := path.Base(loc.Path)
 	ctype, err := contentType(name, f)
 	if err != nil {
 		return err
@@ -109,7 +114,7 @@ func (h handlers) raw(w http.ResponseWriter, r *http.Request) error {
 		hdr.Set("Content-Security-Policy", "sandbox; default-src 'none'; img-src data:; style-src 'unsafe-inline'")
 	}
 	disposition := "inline"
-	if flag(q.Get("download")) {
+	if download {
 		disposition = "attachment"
 	}
 	hdr.Set("Content-Disposition", mime.FormatMediaType(disposition, map[string]string{"filename": name}))
