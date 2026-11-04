@@ -25,7 +25,7 @@ const admins = () => props.users.filter((x) => x.role === 'admin');
 async function openPassword() {
   pwOpen.value = true;
   await nextTick();
-  (at('#a-upw input') as HTMLInputElement | null)?.focus();
+  (at('#a-upw') as HTMLInputElement | null)?.focus();
 }
 
 async function save() {

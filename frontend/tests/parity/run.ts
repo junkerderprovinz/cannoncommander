@@ -11,7 +11,7 @@ import { createServer } from 'node:net';
 import { basename, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { format, parseArgs } from 'node:util';
-import type { Browser, Page } from 'playwright';
+import type { Browser, Page, Request } from 'playwright';
 import { decode, diff, encode } from './png.ts';
 
 const here = import.meta.dirname;
@@ -105,13 +105,18 @@ const seedRandom = () => {
 // page clock stands still. A wait lets the answers in flight land first, so both pages reach the same point.
 function inFlight(tab: Page) {
   let open = 0;
-  tab.on('request', () => { open++; });
-  tab.on('requestfinished', () => { open--; });
-  tab.on('requestfailed', () => { open--; });
-  // A request the page has just sent takes a moment to be reported, so the count is read after a short pause.
+  // The event stream stays open for good, and counting it would make every wait run into the limit below.
+  const counts = (r: Request) => r.resourceType() !== 'eventsource';
+  tab.on('request', (r) => { if (counts(r)) open++; });
+  tab.on('requestfinished', (r) => { if (counts(r)) open--; });
+  tab.on('requestfailed', (r) => { if (counts(r)) open--; });
+  // A request the page has just sent takes a moment to be reported, and an event from the server can bring another
+  // request with it, so the count is read after a short pause and once more after it reached zero.
   return async () => {
-    await sleep(30);
-    for (let waited = 0; open > 0 && waited < 5000; waited += 10) await sleep(10);
+    for (let round = 0; round < 2; round++) {
+      await sleep(round ? 40 : 80);
+      for (let waited = 0; open > 0 && waited < 5000; waited += 10) await sleep(10);
+    }
   };
 }
 
@@ -208,6 +213,12 @@ function driven(tab: Page, fixture?: string): { page: Page; move: (ms: number) =
     ...Object.fromEntries(Object.keys(OPTIONS_AT).map((name) => [name, acting(name)])),
     keyboard,
     evaluate: evaluate as never,
+    // The prototype has its globals when the page has loaded, the app once the shim has read the fixture.
+    reload: (async (o?: Parameters<Page['reload']>[0]) => {
+      const got = await tab.reload(o);
+      await until(() => tab.evaluate('typeof CC !== "undefined"'), 60_000, 'the page after a reload');
+      return got;
+    }) as never,
     // In steps, so what the server reports during the wait reaches the page while there is still page time to use it.
     waitForTimeout: async (ms: number) => {
       await settle();
