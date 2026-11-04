@@ -300,7 +300,7 @@ components:
           type: boolean
     IndexState:
       type: object
-      required: [source, path, status, dirs, files, quickScanSeconds, fullScanSeconds, metadata]
+      required: [source, path, status, dirs, files, size, quickScanSeconds, fullScanSeconds, metadata]
       properties:
         source:
           type: string
@@ -316,6 +316,10 @@ components:
         files:
           type: integer
           format: int64
+        size:
+          type: integer
+          format: int64
+          description: Bytes of the files in the index.
         lastIndexed:
           type: string
           format: date-time
@@ -323,6 +327,16 @@ components:
           type: integer
         fullScanSeconds:
           type: integer
+        nextScan:
+          type: string
+          format: date-time
+          description: When the scheduler reads a folder of the source next.
+        scanEverySeconds:
+          type: integer
+          description: |
+            How often the top folder is read again. The scheduler shortens
+            it while files change and stretches it while they do not,
+            between 5 minutes and 12 hours.
         scanning:
           type: string
           description: The folder a scanner reads right now.

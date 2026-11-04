@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { me } from '@/api/admin';
+import { me, statusOf } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import Frow from '../kit/Frow.vue';
@@ -16,8 +16,13 @@ async function save() {
   if (p1.value.length < 12) return fail(c('security.newShort'), at('#a-pw1'));
   if (p1.value === p0.value) return fail(c('security.sameAsOld'), at('#a-pw1'));
   if (p1.value !== p2.value) return fail(c('security.newDiffer'), at('#a-pw2'));
-  const got = await me.password(p0.value, p1.value).catch(() => null);
-  if (!got) return fail(c('security.wrongCurrent'), at('#a-pw0'));
+  let got: { ended: number };
+  try {
+    got = await me.password(p0.value, p1.value);
+  } catch (e) {
+    const status = statusOf(e);
+    return fail(status === 429 ? c('security.tooMany') : status === 403 ? c('security.wrongCurrent') : c('notSaved'), at('#a-pw0'));
+  }
   props.win.close();
   toast(got.ended ? c(got.ended === 1 ? 'security.pwChangedOne' : 'security.pwChangedMany', { n: got.ended }) : c('security.pwChanged'));
   props.done();

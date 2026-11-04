@@ -2,7 +2,7 @@
 // The server writes the file into a folder of its own, not into the browser's downloads, so it can be found and
 // imported again without leaving CannonCommander.
 import { onMounted, ref } from 'vue';
-import { admin, exists, listDir } from '@/api/admin';
+import { admin, exists, listDir, statusOf } from '@/api/admin';
 import { go } from '@/core/views';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { usePanels } from '@/stores/panels';
@@ -24,8 +24,11 @@ async function save() {
   if (!/^[^/\\]+\.json$/.test(n)) return fail(c('app.endsJson'), at('#a-exname'));
   if ((await listDir(d)).some((k) => k.name === n)) return fail(c('app.fileExists'), at('#a-exname'));
   const full = `${d}/${n}`;
-  if (!(await admin.exportSettings(full, users.value).then(() => true, () => false))) return fail(c('notSaved'), at('#a-exname'));
-  written.value = full;
+  try {
+    written.value = (await admin.exportSettings(full, users.value)).path;
+  } catch (e) {
+    return fail(statusOf(e) === 409 ? c('app.fileExists') : c('notSaved'), at('#a-exname'));
+  }
   setFoot(props.win, [
     { label: c('app.showFile'), g: 'IconFolderOpen', run: () => { go('files'); usePanels().go(d); } },
     { label: c('done'), g: 'IconCheck', primary: true },

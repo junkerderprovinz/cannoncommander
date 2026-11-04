@@ -19,11 +19,7 @@ async function next() {
   waiting.value = true;
   setFoot(props.win, [cancelBtn()]);
   try {
-    const begun = await me.addPasskey({ name: n });
-    if (begun.options) {
-      const credential = await navigator.credentials.create(begun.options);
-      await me.addPasskey({ name: n, credential });
-    }
+    await me.addPasskey(n);
   } catch {
     waiting.value = false;
     showName();

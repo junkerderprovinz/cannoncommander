@@ -10,6 +10,7 @@
   "remove": "Entfernen", "removed": "{name} entfernt", "save": "Speichern", "saved": "Gespeichert", "test": "Testen", "undo": "Rückgängig",
   "ago": { "tomorrow": "morgen", "inDays": "noch {n} Tage", "now": "gerade eben", "minutes": "vor {n} Min.", "hours": "vor {n} Std.", "yesterday": "gestern", "days": "vor {n} Tagen" },
   "since": { "minutes": "seit {n} Min.", "hours": "seit {n} Std.", "days": "seit {n} Tagen" },
+  "soon": { "now": "gleich", "minutes": "in {n} Min.", "hours": "in {n} Std." },
   "picker": {
     "titleFolder": "Ordner wählen", "titleFile": "Datei wählen", "folder": "Ordner", "file": "Datei", "choose": "Auswählen", "collapse": "Zuklappen", "expand": "Aufklappen",
     "needFile": "Erst eine Datei wählen", "noFolder": "Diesen Ordner gibt es nicht"
@@ -21,7 +22,15 @@
     "trash": "Papierkorb verwenden", "trashTip": "Gelöschtes landet erst im Papierkorb und lässt sich von dort zurückholen. Ohne Papierkorb ist es sofort weg.",
     "keep": "Aufbewahren", "keepTip": "Danach leert sich der Papierkorb von selbst.", "days": "{n} Tage",
     "jobs": "Aufgaben", "jobMode": "Mehrere Aufgaben", "jobModeTip": "Nacheinander schont die Platten: eine Aufgabe läuft, die anderen warten in der Reihenfolge der Liste. Gleichzeitig teilen sich alle die Bandbreite.",
-    "serial": "Nacheinander", "parallel": "Gleichzeitig"
+    "serial": "Nacheinander", "parallel": "Gleichzeitig",
+    "noCap": "Ohne", "always": "Immer", "after1m": "1 Min.",
+    "after10m": "10 Min.", "after1h": "1 Std.", "speedCap": "Tempo für alle zusammen",
+    "speedCapTip": "Alle laufenden Aufgaben teilen sich dieses Tempo, damit Streams und Downloads flüssig bleiben. Eine einzelne Aufgabe bremst du im Aufgabenfenster.", "parityWait": "Während der Paritätsprüfung warten", "parityWaitTip": "Große Kopien ab 2 GB warten, bis Unraid mit der Prüfung oder einem Rebuild fertig ist. Bei kleinen fragt CannonCommander vorher. Beides teilt sich sonst dieselben Platten.",
+    "notifyDone": "Im Browser melden, wenn fertig", "notifyDoneTip": "Endet eine lange Aufgabe oder schlägt sie fehl, zeigt der Browser eine Benachrichtigung, auch wenn der Tab im Hintergrund liegt.", "notifyUnraid": "Auch an Unraid melden",
+    "notifyUnraidTip": "Schickt die Meldung zusätzlich an die Benachrichtigungen in der Unraid-Oberfläche.", "notifyAfter": "Melden ab", "notifyAfterTip": "Kurze Aufgaben meldet CannonCommander nicht, die siehst du ja noch laufen.",
+    "tryIt": "Ausprobieren", "sendTest": "Test senden", "testBody": "So sieht die Meldung aus, wenn eine Aufgabe fertig ist",
+    "testSent": "Testmeldung geschickt", "testUnraid": "Testmeldung an Unraid geschickt", "testBoth": "Testmeldung an den Browser und an Unraid geschickt",
+    "unraidFailed": "Unraid hat die Meldung nicht angenommen. Ist das Schreiben auf Unraid im Template eingeschaltet?", "noNotes": "Dieser Browser kann keine Benachrichtigungen zeigen", "notesBlocked": "Der Browser lässt keine Benachrichtigungen zu. Erlauben kannst du sie in den Seiteneinstellungen des Browsers"
   },
   "look": {
     "display": "Darstellung", "language": "Sprache", "theme": "Design", "themeTip": "System folgt der Einstellung deines Geräts.", "dark": "Dunkel", "light": "Hell", "system": "System",
@@ -56,12 +65,17 @@
     "removeText1": "{name} verschwindet aus CannonCommander, mit ihrem Index.", "removeText2": "Die Dateien in {path} bleiben auf dem Server, wie sie sind.",
     "reading": "{name} wird neu eingelesen", "readingPill": "Liest ein", "indexed": "{name} ist eingelesen", "jobs": "Aufgaben", "files": "{n} Dateien", "noIndex": "Kein Index",
     "readOnly": "Nur lesen", "readOnlyTip": "Niemand kann hier etwas ändern, löschen oder hochladen, auch Admins nicht.", "reindex": "Neu einlesen", "reindexAll": "Alle neu einlesen",
-    "index": "Index", "every": "Automatisch neu einlesen", "everyTip": "Hält die Suche aktuell, wenn Dateien an CannonCommander vorbei geändert werden, etwa durch andere Container.",
-    "hourly": "Stündlich", "daily": "Täglich", "manual": "Nur von Hand", "last": "Zuletzt eingelesen", "never": "Noch nie",
+    "index": "Index", "every": "Automatisch neu einlesen", "everyTip": "CannonCommander liest Ordner, in denen sich viel ändert, öfter ein und ruhige seltener, zwischen 5 Minuten und 12 Stunden. So bleibt die Suche aktuell, auch wenn andere Container Dateien ändern.",
+    "last": "Zuletzt eingelesen", "never": "Noch nie",
     "name": "Name", "namePh": "Etwa Disk 3", "folder": "Ordner", "needName": "Gib der Quelle einen Namen", "pathTaken": "Dieser Ordner ist schon eine Quelle",
     "indexIt": "Für die Suche einlesen", "indexItTip": "Der Index macht die Suche und die Ordnergrößen schnell. Das Einlesen läuft als Aufgabe im Hintergrund.",
     "skipHidden": "Versteckte Dateien auslassen", "skipHiddenTip": "Dateien und Ordner, deren Name mit einem Punkt beginnt, kommen nicht in den Index.",
-    "exclude": "Nicht einlesen", "excludeTip": "Ein Muster pro Zeile. Ein Stern steht für beliebige Zeichen, etwa *.tmp oder appdata/*/cache."
+    "exclude": "Nicht einlesen", "excludeTip": "Ein Muster pro Zeile: ein Name wie cache, ein Name mit Stern am Anfang oder Ende wie *.tmp oder ein Pfad in der Quelle wie appdata/plex/cache.",
+    "readingAll": "Alle Quellen werden neu eingelesen", "keepOne": "Eine Quelle muss bleiben", "everyMinutes": "alle {n} Min.",
+    "everyHours": "alle {n} Std.", "planTip": "Liest hier gerade {every} neu ein, öfter wenn sich viel ändert und seltener, wenn es ruhig bleibt.", "nextRun": "Nächstes Mal {when}",
+    "notPlanned": "Noch nicht geplant", "restart": "Neustart", "restartTip": "Geänderte Quellen gelten, sobald CannonCommander neu startet.",
+    "restartPill": "Nötig", "toRestart": "Zum Neustart", "savedRestart": "Gespeichert. Das gilt nach einem Neustart",
+    "patternAll": "Dieses Muster passt auf alles. Schalte das Einlesen dann lieber ganz aus", "patternPath": "In einem Pfad geht kein Stern. Nimm einen Namen wie *.tmp oder einen Pfad wie appdata/plex/cache", "patternStar": "Ein Stern geht nur am Anfang oder am Ende eines Namens, etwa *.tmp oder backup-*"
   },
   "remotes": {
     "title": "Fernziele", "add": "Fernziel hinzufügen", "edit": "Fernziel bearbeiten", "remove": "Fernziel entfernen", "none": "Noch kein Fernziel",
@@ -77,11 +91,13 @@
     "account": "Konto", "accountTip": "CannonCommander bekommt nur ein Token, nie dein Passwort.", "signInAt": "Bei {who} anmelden", "otherAccount": "Anderes Konto",
     "onYourPc": "Am PC ausführen", "onYourPcTip": "Auf einem Rechner mit Browser und rclone. Der Befehl öffnet die Anmeldung und schreibt danach ein Token in die Konsole.",
     "token": "Token", "tokenPh": "Hier das Token aus der Konsole einfügen", "takeToken": "Übernehmen", "needToken": "Füg erst das Token aus der Konsole ein",
-    "tokenRejected": "Mit diesem Token klappt die Anmeldung nicht", "signedIn": "Angemeldet bei {who} als {account}", "signInFirst": "Erst bei {who} anmelden",
+    "tokenRejected": "Mit diesem Token klappt die Anmeldung nicht", "signedIn": "Angemeldet bei {who}", "signInFirst": "Erst bei {who} anmelden",
     "missing": "{field} fehlt noch", "unchanged": "Unverändert",
     "name": "Name", "namePh": "etwa nas-keller", "nameTip": "Kleinbuchstaben, Ziffern und Bindestriche. rclone kennt das Fernziel unter diesem Namen.", "needName": "Gib dem Fernziel einen Namen",
     "mountAt": "Einhängen unter", "mountAtTip": "Unter diesem Ordner erscheinen die Dateien im Dateimanager und für andere Container.", "underMnt": "Der Ordner muss unter /mnt liegen, etwa /mnt/remotes/{name}",
-    "connection": "Verbindung", "connected": "Verbunden", "testFailed": "Die Verbindung klappt so noch nicht", "addedAt": "{name} ist eingehängt unter {mount}"
+    "connection": "Verbindung", "connected": "Verbunden", "testFailed": "Die Verbindung klappt so noch nicht", "addedAt": "{name} ist eingehängt unter {mount}",
+    "signedInPill": "Angemeldet", "failedPill": "Fehler", "mountFailed": "Das Einhängen hat nicht geklappt: {error}",
+    "savedNotMounted": "{name} ist gespeichert, das Einhängen hat aber nicht geklappt"
   },
   "roles": { "admin": "Admin", "user": "Nutzer", "readonly": "Nur lesen" },
   "users": {
@@ -114,14 +130,16 @@
     "appliesTo": "Gilt für", "user": "Benutzer", "groupWord": "Gruppe", "all": "Alle", "pathOrPattern": "Pfad oder Muster", "pathPh": "/mnt/user/backups oder *.tmp",
     "pathTip": "Ein Pfad gilt für den Ordner und alles darin. Ein Muster mit Stern passt auf Namen überall, etwa *.partial*.",
     "rule": "Regel", "ruleTip": "Erlauben hebt eine Regel weiter unten auf, etwa für einen Unterordner. Die erste passende Regel gilt.",
-    "needGroup": "Leg erst eine Gruppe an", "needPath": "Pfad oder Muster fehlt noch", "noPath": "Diesen Pfad gibt es nicht. Für ein Muster nimm einen Stern, etwa *.tmp"
+    "needGroup": "Leg erst eine Gruppe an", "needPath": "Pfad oder Muster fehlt noch", "noPath": "Diesen Pfad gibt es nicht. Für ein Muster nimm einen Stern, etwa *.tmp",
+    "readOnlySource": "Die ganze Quelle steht auf Nur lesen."
   },
   "shares": {
     "title": "Freigaben", "share": "Freigabe", "none": "Keine Freigaben. Teilen kannst du über Datei, Freigeben.", "noExpiry": "Läuft nicht ab", "expired": "Abgelaufen", "password": "Passwort",
     "limit": "höchstens {n} Downloads", "oneView": "1 Aufruf", "views": "{n} Aufrufe", "copyLink": "Link kopieren", "revoke": "Widerrufen", "revoked": "Der Link zu {name} gilt nicht mehr",
     "link": "Link", "path": "Pfad", "created": "Erstellt", "createdBy": "{date} von {by}", "viewsLabel": "Aufrufe", "expires": "Läuft ab",
     "keep": "Wie bisher", "never": "nie", "never_": "Nie", "fromNow1": "1 Tag ab jetzt", "fromNow": "{n} Tage ab jetzt",
-    "askPw": "Passwort verlangen", "askPwTip": "Wer den Link öffnet, muss erst das Passwort eingeben.", "pwTip": "Mindestens 6 Zeichen.", "pwShort": "Das Passwort braucht mindestens 6 Zeichen"
+    "askPw": "Passwort verlangen", "askPwTip": "Wer den Link öffnet, muss erst das Passwort eingeben.", "pwTip": "Mindestens 6 Zeichen.", "pwShort": "Das Passwort braucht mindestens 6 Zeichen",
+    "exhausted": "Aufgebraucht"
   },
   "security": {
     "signIn": "Anmeldung", "pwTip": "Ein neues Passwort meldet dich auf allen anderen Geräten ab. Diese Sitzung bleibt angemeldet.", "changedAgo": "Geändert {ago}", "change": "Ändern",
@@ -155,7 +173,8 @@
     "tokenCreated": "Erstellt am {date}", "tokenExpires": ", läuft am {date} ab.", "tokenNoExpiry": ", läuft nicht ab.",
     "read": "Lesen", "readWrite": "Lesen und schreiben", "rights": "Rechte", "rightsTip": "Das Token darf nie mehr als du selbst.", "year": "1 Jahr",
     "tokenNameTip": "Wofür das Token da ist. Es steht später in der Liste der Tokens.", "tokenNamePh": "etwa backup-skript", "needTokenName": "Gib dem Token einen Namen",
-    "copyNow": "Kopier das Token jetzt. CannonCommander zeigt es danach nie wieder, du kannst nur ein neues erstellen.", "tokenCreatedToast": "Token {name} erstellt"
+    "copyNow": "Kopier das Token jetzt. CannonCommander zeigt es danach nie wieder, du kannst nur ein neues erstellen.", "tokenCreatedToast": "Token {name} erstellt",
+    "pwLocked": "Dein Passwort ändert hier nur ein Admin, oder du meldest dich über einen anderen Dienst an.", "passkeysOff": "Passkeys sind auf diesem Server ausgeschaltet", "tooMany": "Zu viele Versuche. Probier es bitte in 15 Minuten noch einmal"
   },
   "integrations": {
     "office": "Office", "officeKind": "Office-Server", "officeKindTip": "Damit öffnen sich Word-, Excel- und PowerPoint-Dateien zum Bearbeiten im Browser, in der Schnellansicht und mit F3. Ohne Server zeigt CannonCommander sie in der eingebauten Vorschau.",
@@ -166,11 +185,18 @@
     "media": "Videos und Bilder", "thumbs": "Vorschaubilder", "thumbsTip": "Kleine Bilder für Fotos und Videos in der Vorschau. ffmpeg erzeugt sie im Hintergrund.",
     "video": "Videos im Browser abspielen", "videoTip": "Auch Formate wie MKV. ffmpeg wandelt sie dafür beim Abspielen um, das kostet Rechenzeit.", "ffmpegTip": "Ist im Container dabei.",
     "webdavRclone": "WebDAV und rclone", "webdav": "WebDAV-Server", "webdavTip": "Damit bindest du die Dateien als Laufwerk ein, etwa im Windows-Explorer oder in einer Handy-App. Es gelten dieselben Benutzer und Regeln.",
-    "address": "Adresse", "rcloneTip": "Hängt die Fernziele ein. Das Programm ist im Container dabei."
+    "address": "Adresse", "rcloneTip": "Hängt die Fernziele ein. Das Programm ist im Container dabei.",
+    "notFound": "Nicht gefunden", "afterRestart": "Gespeichert. Das gilt nach einem Neustart", "kept": "Gespeichert",
+    "secretWrong": "Der Server lehnt diesen JWT-Schlüssel ab", "notWorking": "Der Server antwortet, die Verbindung klappt aber noch nicht", "alHint": "ArrowLoop plant wiederkehrende Abgleiche. CannonCommander gibt ihm Ordnerpaare aus dem Ordnervergleich.",
+    "alUrlTip": "Die Adresse, unter der ArrowLoop im Browser erreichbar ist.", "alToken": "API-Token", "alTokenTip": "Ein Token aus den Einstellungen von ArrowLoop. Damit darf CannonCommander dort Aufgaben anlegen.",
+    "alPaths": "Pfade", "alPathsTip": "ArrowLoop sieht die Freigaben oft unter anderen Pfaden, etwa /data statt /mnt/user. Links steht der Pfad hier, rechts derselbe Ordner in ArrowLoop.", "samePaths": "Wie hier",
+    "here": "Pfad hier", "there": "Pfad in ArrowLoop", "addPath": "Pfad hinzufügen",
+    "fullPaths": "Beide Pfade beginnen mit /", "alUnreachable": "Unter dieser Adresse antwortet kein ArrowLoop", "alWantsToken": "ArrowLoop antwortet, will aber ein Token",
+    "alTokenWrong": "ArrowLoop lehnt dieses Token ab"
   },
   "app": {
     "updates": "Updates", "autoCheck": "Automatisch nach Updates suchen", "autoCheckTip": "Einmal am Tag. Installieren musst du ein Update selbst, auf Unraid im Docker-Tab.",
-    "image": "Docker-Image", "tagTip": "Den Tag legst du im Unraid-Template fest. latest folgt jeder neuen Version.", "check": "Nach Updates suchen", "checking": "Suche",
+    "image": "Docker-Image", "tagTip": "Diese Version läuft gerade. Welchen Tag Unraid holt, legst du im Template fest, latest folgt jeder neuen Version.", "check": "Nach Updates suchen", "checking": "Suche",
     "current": "Aktuell, {v}", "newer": "{v} ist da",
     "backup": "Einstellungen sichern", "toFile": "In eine Datei schreiben", "toFileTip": "Alle Einstellungen als JSON-Datei auf dem Server, ohne Passwörter.", "export": "Exportieren",
     "fromFile": "Aus einer Datei holen", "fromFileTip": "Ersetzt die Einstellungen hier durch die aus der Datei.", "import": "Importieren",
@@ -184,7 +210,9 @@
     "savedAt": "Gespeichert unter", "showFile": "Im Dateimanager zeigen",
     "importTitle": "Einstellungen importieren", "importFileTip": "Eine Datei, die CannonCommander exportiert hat.", "takeUsers": "Benutzer, Gruppen und Regeln übernehmen",
     "takeUsersTip": "Passwörter, Passkeys und Tokens bleiben hier, wie sie sind.", "noFile": "Diese Datei gibt es nicht", "notExport": "Das ist keine exportierte Einstellungsdatei",
-    "imported": "Einstellungen aus {name} übernommen"
+    "imported": "Einstellungen aus {name} übernommen",
+    "noAnswer": "GitHub hat gerade nicht geantwortet. Versuch es bitte später noch einmal", "restartNeeded": "Neustart nötig", "restartNeededTip": "Ein paar Einstellungen gelten erst nach einem Neustart.",
+    "importedRestart": "{name} ist übernommen. Starte CannonCommander neu, damit alles gilt"
   },
   "info": {
     "version": "Version", "versionHint": "Ein Klick auf eine Versionsnummer öffnet ihre Release-Seite.", "glimstoneTip": "Die Designsprache, in der CannonCommander gebaut ist",
@@ -223,6 +251,13 @@
     "overview": "Überblick", "entries": "Einträge", "inFilter": "Einträge im Filter", "ofAll": "{n} von {all}", "today": "Heute", "people": "Personen", "reset": "Filter zurücksetzen",
     "filtered": "Gefilterte Einträge", "allEntries": "Alle Einträge", "what": "Was", "who": "Wer", "kind": "Art", "when": "Wann", "filter": "Filtern", "all": "Alle",
     "show": "Im Dateimanager zeigen", "nothing": "Nichts passt zum Filter",
-    "kinds": { "copy": "kopiert", "move": "verschoben", "rename": "umbenannt", "upload": "hochgeladen", "share": "freigegeben", "login": "angemeldet", "delete": "gelöscht", "export": "exportiert" }
+    "kinds": {
+      "copy": "kopiert", "move": "verschoben", "rename": "umbenannt", "upload": "hochgeladen", "download": "heruntergeladen", "fileModify": "geändert",
+      "delete": "gelöscht", "bulkDelete": "mehreres gelöscht", "archive": "gepackt", "unarchive": "entpackt", "duplicateFinder": "Duplikate gesucht", "shareCreate": "freigegeben",
+      "shareUpdate": "Freigabe geändert", "shareDelete": "Freigabe widerrufen", "userCreate": "Benutzer angelegt", "userUpdate": "Benutzer geändert", "userDelete": "Benutzer gelöscht", "accessCreate": "Regel angelegt",
+      "accessUpdate": "Regel geändert", "accessDelete": "Regel gelöscht", "quotaCreate": "Kontingent angelegt", "quotaUpdate": "Kontingent geändert", "quotaDelete": "Kontingent gelöscht", "login": "angemeldet",
+      "logout": "abgemeldet", "signup": "registriert", "passkeyRegister": "Passkey hinzugefügt", "passkeyDelete": "Passkey entfernt", "tokenCreate": "Token erstellt", "tokenDelete": "Token widerrufen"
+    },
+    "target": "Ziel: {path}.", "from": "Von {ip}."
   }
 }

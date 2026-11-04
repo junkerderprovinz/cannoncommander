@@ -10,6 +10,7 @@
   "remove": "Remove", "removed": "{name} removed", "save": "Save", "saved": "Saved", "test": "Test", "undo": "Undo",
   "ago": { "tomorrow": "tomorrow", "inDays": "{n} days left", "now": "just now", "minutes": "{n} min ago", "hours": "{n} h ago", "yesterday": "yesterday", "days": "{n} days ago" },
   "since": { "minutes": "for {n} min", "hours": "for {n} h", "days": "for {n} days" },
+  "soon": { "now": "in a moment", "minutes": "in {n} min", "hours": "in {n} h" },
   "picker": {
     "titleFolder": "Choose a folder", "titleFile": "Choose a file", "folder": "Folder", "file": "File", "choose": "Choose", "collapse": "Collapse", "expand": "Expand",
     "needFile": "Choose a file first", "noFolder": "There is no such folder"
@@ -21,7 +22,15 @@
     "trash": "Use the bin", "trashTip": "Deleted things land in the bin first and can be brought back from there. Without the bin they are gone at once.",
     "keep": "Keep for", "keepTip": "After that the bin empties itself.", "days": "{n} days",
     "jobs": "Jobs", "jobMode": "Several jobs", "jobModeTip": "One after another is kind to the disks: one job runs, the others wait in the order of the list. At the same time shares the bandwidth among all of them.",
-    "serial": "One after another", "parallel": "At the same time"
+    "serial": "One after another", "parallel": "At the same time",
+    "noCap": "None", "always": "Always", "after1m": "1 min",
+    "after10m": "10 min", "after1h": "1 h", "speedCap": "Speed for all together",
+    "speedCapTip": "All running jobs share this speed, so streams and downloads stay smooth. You slow down a single job in the jobs window.", "parityWait": "Wait during a parity check", "parityWaitTip": "Big copies from 2 GB wait until Unraid is done with the check or a rebuild. For small ones CannonCommander asks first. Both would share the same disks otherwise.",
+    "notifyDone": "Tell me in the browser when done", "notifyDoneTip": "When a long job ends or fails, the browser shows a notification, also while the tab is in the background.", "notifyUnraid": "Tell Unraid too",
+    "notifyUnraidTip": "Also sends the notice to the notifications in the Unraid interface.", "notifyAfter": "Tell me from", "notifyAfterTip": "CannonCommander does not report short jobs, you still see them running.",
+    "tryIt": "Try it", "sendTest": "Send a test", "testBody": "This is how the notice looks when a job is done",
+    "testSent": "Test notice sent", "testUnraid": "Test notice sent to Unraid", "testBoth": "Test notice sent to the browser and to Unraid",
+    "unraidFailed": "Unraid did not take the notice. Is writing to Unraid switched on in the template?", "noNotes": "This browser cannot show notifications", "notesBlocked": "The browser does not allow notifications. You can allow them in the site settings of the browser"
   },
   "look": {
     "display": "Display", "language": "Language", "theme": "Theme", "themeTip": "System follows the setting of your device.", "dark": "Dark", "light": "Light", "system": "System",
@@ -56,12 +65,17 @@
     "removeText1": "{name} disappears from CannonCommander, along with its index.", "removeText2": "The files in {path} stay on the server as they are.",
     "reading": "{name} is being read again", "readingPill": "Reading", "indexed": "{name} is read in", "jobs": "Jobs", "files": "{n} files", "noIndex": "No index",
     "readOnly": "Read only", "readOnlyTip": "Nobody can change, delete or upload anything here, admins included.", "reindex": "Read again", "reindexAll": "Read all again",
-    "index": "Index", "every": "Read again by itself", "everyTip": "Keeps search current when files change past CannonCommander, for example through other containers.",
-    "hourly": "Hourly", "daily": "Daily", "manual": "Only by hand", "last": "Last read", "never": "Never",
+    "index": "Index", "every": "Read again by itself", "everyTip": "CannonCommander reads folders where much changes more often and quiet ones less often, between 5 minutes and 12 hours. That keeps the search current, also when other containers change files.",
+    "last": "Last read", "never": "Never",
     "name": "Name", "namePh": "Such as Disk 3", "folder": "Folder", "needName": "Give the source a name", "pathTaken": "This folder is a source already",
     "indexIt": "Read in for search", "indexItTip": "The index makes search and folder sizes fast. Reading in runs as a job in the background.",
     "skipHidden": "Leave out hidden files", "skipHiddenTip": "Files and folders whose name starts with a dot stay out of the index.",
-    "exclude": "Don't read in", "excludeTip": "One pattern per line. A star stands for any characters, such as *.tmp or appdata/*/cache."
+    "exclude": "Don't read in", "excludeTip": "One pattern per line: a name such as cache, a name with a star at its start or end such as *.tmp, or a path in the source such as appdata/plex/cache.",
+    "readingAll": "Every source is being read again", "keepOne": "One source has to stay", "everyMinutes": "every {n} min",
+    "everyHours": "every {n} h", "planTip": "Reads this again {every} right now, more often when much changes and less often when it stays quiet.", "nextRun": "Next time {when}",
+    "notPlanned": "Not planned yet", "restart": "Restart", "restartTip": "Changed sources count once CannonCommander starts again.",
+    "restartPill": "Needed", "toRestart": "Go to restart", "savedRestart": "Saved. It counts after a restart",
+    "patternAll": "This pattern matches everything. Better switch indexing off altogether", "patternPath": "A path takes no star. Use a name such as *.tmp or a path such as appdata/plex/cache", "patternStar": "A star works only at the start or the end of a name, such as *.tmp or backup-*"
   },
   "remotes": {
     "title": "Remotes", "add": "Add a remote", "edit": "Edit remote", "remove": "Remove remote", "none": "No remote yet",
@@ -77,11 +91,13 @@
     "account": "Account", "accountTip": "CannonCommander only gets a token, never your password.", "signInAt": "Sign in with {who}", "otherAccount": "Other account",
     "onYourPc": "Run on your computer", "onYourPcTip": "On a computer with a browser and rclone. The command opens the sign in and then prints a token in the console.",
     "token": "Token", "tokenPh": "Paste the token from the console here", "takeToken": "Use it", "needToken": "Paste the token from the console first",
-    "tokenRejected": "Signing in doesn't work with this token", "signedIn": "Signed in with {who} as {account}", "signInFirst": "Sign in with {who} first",
+    "tokenRejected": "Signing in doesn't work with this token", "signedIn": "Signed in at {who}", "signInFirst": "Sign in with {who} first",
     "missing": "{field} is still missing", "unchanged": "Unchanged",
     "name": "Name", "namePh": "such as nas-cellar", "nameTip": "Lowercase letters, digits and hyphens. rclone knows the remote by this name.", "needName": "Give the remote a name",
     "mountAt": "Mount at", "mountAtTip": "The files show up under this folder in the file manager and for other containers.", "underMnt": "The folder has to be under /mnt, such as /mnt/remotes/{name}",
-    "connection": "Connection", "connected": "Connected", "testFailed": "The connection doesn't work like this yet", "addedAt": "{name} is mounted at {mount}"
+    "connection": "Connection", "connected": "Connected", "testFailed": "The connection doesn't work like this yet", "addedAt": "{name} is mounted at {mount}",
+    "signedInPill": "Signed in", "failedPill": "Error", "mountFailed": "Mounting did not work: {error}",
+    "savedNotMounted": "{name} is saved, but mounting did not work"
   },
   "roles": { "admin": "Admin", "user": "User", "readonly": "Read only" },
   "users": {
@@ -114,14 +130,16 @@
     "appliesTo": "Applies to", "user": "User", "groupWord": "Group", "all": "Everybody", "pathOrPattern": "Path or pattern", "pathPh": "/mnt/user/backups or *.tmp",
     "pathTip": "A path applies to the folder and everything in it. A pattern with a star fits names anywhere, such as *.partial*.",
     "rule": "Rule", "ruleTip": "Allow lifts a rule further down, for a subfolder for example. The first rule that fits wins.",
-    "needGroup": "Add a group first", "needPath": "The path or pattern is still missing", "noPath": "There is no such path. For a pattern use a star, such as *.tmp"
+    "needGroup": "Add a group first", "needPath": "The path or pattern is still missing", "noPath": "There is no such path. For a pattern use a star, such as *.tmp",
+    "readOnlySource": "The whole source is set to read only."
   },
   "shares": {
     "title": "Shares", "share": "Share", "none": "No shares. You can share through File, Share.", "noExpiry": "Doesn't expire", "expired": "Expired", "password": "Password",
     "limit": "at most {n} downloads", "oneView": "1 view", "views": "{n} views", "copyLink": "Copy link", "revoke": "Revoke", "revoked": "The link to {name} no longer works",
     "link": "Link", "path": "Path", "created": "Created", "createdBy": "{date} by {by}", "viewsLabel": "Views", "expires": "Expires",
     "keep": "As before", "never": "never", "never_": "Never", "fromNow1": "1 day from now", "fromNow": "{n} days from now",
-    "askPw": "Ask for a password", "askPwTip": "Whoever opens the link has to enter the password first.", "pwTip": "At least 6 characters.", "pwShort": "The password needs at least 6 characters"
+    "askPw": "Ask for a password", "askPwTip": "Whoever opens the link has to enter the password first.", "pwTip": "At least 6 characters.", "pwShort": "The password needs at least 6 characters",
+    "exhausted": "Used up"
   },
   "security": {
     "signIn": "Signing in", "pwTip": "A new password signs you out on every other device. This session stays signed in.", "changedAgo": "Changed {ago}", "change": "Change",
@@ -155,7 +173,8 @@
     "tokenCreated": "Created on {date}", "tokenExpires": ", expires on {date}.", "tokenNoExpiry": ", doesn't expire.",
     "read": "Read", "readWrite": "Read and write", "rights": "Rights", "rightsTip": "The token may never do more than you.", "year": "1 year",
     "tokenNameTip": "What the token is for. It shows up later in the list of tokens.", "tokenNamePh": "such as backup-script", "needTokenName": "Give the token a name",
-    "copyNow": "Copy the token now. CannonCommander never shows it again, you can only create a new one.", "tokenCreatedToast": "Token {name} created"
+    "copyNow": "Copy the token now. CannonCommander never shows it again, you can only create a new one.", "tokenCreatedToast": "Token {name} created",
+    "pwLocked": "Only an admin changes your password here, or you sign in through another service.", "passkeysOff": "Passkeys are switched off on this server", "tooMany": "Too many tries. Please try again in 15 minutes"
   },
   "integrations": {
     "office": "Office", "officeKind": "Office server", "officeKindTip": "Word, Excel and PowerPoint files then open for editing in the browser, in the quick look and with F3. Without a server CannonCommander shows them in its built-in preview.",
@@ -166,11 +185,18 @@
     "media": "Videos and pictures", "thumbs": "Thumbnails", "thumbsTip": "Small pictures for photos and videos in the preview. ffmpeg makes them in the background.",
     "video": "Play videos in the browser", "videoTip": "Formats like MKV too. ffmpeg converts them while they play, which takes computing time.", "ffmpegTip": "Comes with the container.",
     "webdavRclone": "WebDAV and rclone", "webdav": "WebDAV server", "webdavTip": "Lets you mount the files as a drive, in Windows Explorer or a phone app for example. The same users and rules apply.",
-    "address": "Address", "rcloneTip": "Mounts the remotes. The program comes with the container."
+    "address": "Address", "rcloneTip": "Mounts the remotes. The program comes with the container.",
+    "notFound": "Not found", "afterRestart": "Saved. It counts after a restart", "kept": "Saved",
+    "secretWrong": "The server turns this JWT secret down", "notWorking": "The server answers, but the connection does not work yet", "alHint": "ArrowLoop plans recurring syncs. CannonCommander hands it pairs of folders from the folder comparison.",
+    "alUrlTip": "The address ArrowLoop has in the browser.", "alToken": "API token", "alTokenTip": "A token from the ArrowLoop settings. With it CannonCommander may add jobs there.",
+    "alPaths": "Paths", "alPathsTip": "ArrowLoop often sees the shares under other paths, such as /data instead of /mnt/user. The path here goes on the left, the same folder in ArrowLoop on the right.", "samePaths": "Same as here",
+    "here": "Path here", "there": "Path in ArrowLoop", "addPath": "Add a path",
+    "fullPaths": "Both paths start with /", "alUnreachable": "No ArrowLoop answers at this address", "alWantsToken": "ArrowLoop answers, but wants a token",
+    "alTokenWrong": "ArrowLoop turns this token down"
   },
   "app": {
     "updates": "Updates", "autoCheck": "Look for updates by itself", "autoCheckTip": "Once a day. You install an update yourself, on Unraid in the Docker tab.",
-    "image": "Docker image", "tagTip": "You set the tag in the Unraid template. latest follows every new version.", "check": "Look for updates", "checking": "Looking",
+    "image": "Docker image", "tagTip": "This version runs right now. Which tag Unraid pulls is set in the template, latest follows every new version.", "check": "Look for updates", "checking": "Looking",
     "current": "Up to date, {v}", "newer": "{v} is out",
     "backup": "Back up the settings", "toFile": "Write to a file", "toFileTip": "All settings as a JSON file on the server, without passwords.", "export": "Export",
     "fromFile": "Get from a file", "fromFileTip": "Replaces the settings here with the ones from the file.", "import": "Import",
@@ -184,7 +210,9 @@
     "savedAt": "Saved at", "showFile": "Show in the file manager",
     "importTitle": "Import settings", "importFileTip": "A file CannonCommander exported.", "takeUsers": "Take over users, groups and rules",
     "takeUsersTip": "Passwords, passkeys and tokens stay here as they are.", "noFile": "There is no such file", "notExport": "That isn't an exported settings file",
-    "imported": "Settings taken over from {name}"
+    "imported": "Settings taken over from {name}",
+    "noAnswer": "GitHub did not answer just now. Please try again later", "restartNeeded": "Restart needed", "restartNeededTip": "A few settings count only after a restart.",
+    "importedRestart": "{name} is taken over. Restart CannonCommander so all of it counts"
   },
   "info": {
     "version": "Version", "versionHint": "A click on a version number opens its release page.", "glimstoneTip": "The design language CannonCommander is built in",
@@ -223,6 +251,13 @@
     "overview": "Overview", "entries": "Entries", "inFilter": "Entries in the filter", "ofAll": "{n} of {all}", "today": "Today", "people": "People", "reset": "Reset the filter",
     "filtered": "Filtered entries", "allEntries": "All entries", "what": "What", "who": "Who", "kind": "Kind", "when": "When", "filter": "Filter", "all": "All",
     "show": "Show in the file manager", "nothing": "Nothing fits the filter",
-    "kinds": { "copy": "copied", "move": "moved", "rename": "renamed", "upload": "uploaded", "share": "shared", "login": "signed in", "delete": "deleted", "export": "exported" }
+    "kinds": {
+      "copy": "copied", "move": "moved", "rename": "renamed", "upload": "uploaded", "download": "downloaded", "fileModify": "changed",
+      "delete": "deleted", "bulkDelete": "several deleted", "archive": "packed", "unarchive": "unpacked", "duplicateFinder": "duplicates searched", "shareCreate": "shared",
+      "shareUpdate": "share changed", "shareDelete": "share revoked", "userCreate": "user added", "userUpdate": "user changed", "userDelete": "user deleted", "accessCreate": "rule added",
+      "accessUpdate": "rule changed", "accessDelete": "rule deleted", "quotaCreate": "quota added", "quotaUpdate": "quota changed", "quotaDelete": "quota deleted", "login": "signed in",
+      "logout": "signed out", "signup": "signed up", "passkeyRegister": "passkey added", "passkeyDelete": "passkey removed", "tokenCreate": "token created", "tokenDelete": "token revoked"
+    },
+    "target": "To {path}.", "from": "From {ip}."
   }
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { me } from '@/api/admin';
+import { me, statusOf } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import CopyField from '../kit/CopyField.vue';
@@ -18,8 +18,12 @@ const group4 = (s: string) => s.match(/.{1,4}/g)?.join(' ') ?? '';
 async function next() {
   const v = code.value.replace(/\s/g, '');
   if (!/^\d{6}$/.test(v)) return fail(c('security.sixDigits'), el.value);
-  const got = await me.totpConfirm(v).catch(() => null);
-  if (!got) return fail(c('security.codeClock'), el.value);
+  let got: { codes: string[] };
+  try {
+    got = await me.totpConfirm(v);
+  } catch (e) {
+    return fail(statusOf(e) === 429 ? c('security.tooMany') : c('security.codeClock'), el.value);
+  }
   codes.value = got.codes;
 }
 

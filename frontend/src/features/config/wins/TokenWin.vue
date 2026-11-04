@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // A token is shown once, right after it is made, and the window stays until it is confirmed as copied.
 import { onMounted, ref } from 'vue';
-import { me, type Token } from '@/api/admin';
+import { me, statusOf, type Token } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import CopyField from '../kit/CopyField.vue';
@@ -18,8 +18,12 @@ async function create() {
   const n = name.value.trim();
   if (!n) return fail(c('security.needTokenName'), el.value);
   if (props.taken.includes(n)) return fail(c('nameTaken'), el.value);
-  const got = await me.createToken(n, rights.value, expires.value === 'never' ? null : Number(expires.value)).catch(() => null);
-  if (!got) return fail(c('notSaved'), el.value);
+  let got: { secret: string };
+  try {
+    got = await me.createToken(n, rights.value, expires.value === 'never' ? null : Number(expires.value));
+  } catch (e) {
+    return fail(statusOf(e) === 409 ? c('nameTaken') : c('notSaved'), el.value);
+  }
   secret.value = got.secret;
   props.win.locked = true;
   setFoot(props.win, [{ label: c('done'), g: 'IconCheck', primary: true, run: () => { props.win.locked = false; props.done(); toast(c('security.tokenCreatedToast', { name: n })); } }]);
