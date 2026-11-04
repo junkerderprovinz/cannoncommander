@@ -3,7 +3,7 @@ package usersidebar
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 func TestPrepareSidebarLinksForPersist_addsScopedSourcesAndPreservesFolders(t *testing.T) {

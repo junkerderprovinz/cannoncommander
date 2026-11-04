@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/files"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 var (
@@ -235,7 +235,7 @@ func createConfig(configpath string, noInput bool) error {
 		// "database.db" is the reserved legacy-bolt filename and is rejected
 		// at startup (see backend/cmd/migrate.go), so the wizard must not
 		// suggest it as the default.
-		config.Server.DatabaseV2.Path = askQuestion(reader, "What should the file name and path be for the database?", "./filebrowser.sqlite")
+		config.Server.DatabaseV2.Path = askQuestion(reader, "What should the file name and path be for the database?", "./cannoncommander.sqlite")
 		if strings.HasSuffix(config.Server.DatabaseV2.Path, ".sqlite") {
 			break
 		}
@@ -310,7 +310,7 @@ func generateSetupConfigYAML(config *settings.Settings) (string, error) {
 }
 
 func generateYaml() {
-	generateConfig := os.Getenv("FILEBROWSER_GENERATE_CONFIG") == "true"
+	generateConfig := os.Getenv("CC_GENERATE_CONFIG") == "true"
 	if generateConfig || settings.Env.IsDevMode {
 		logger.Info("Generating config.yaml")
 		settings.GenerateYaml()

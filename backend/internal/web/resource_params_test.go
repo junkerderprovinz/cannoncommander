@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/files"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 func TestCheckPermissionsMissingParamsStatus(t *testing.T) {

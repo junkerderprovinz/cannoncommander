@@ -12,8 +12,8 @@ import (
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	ldap "github.com/go-ldap/ldap/v3"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/version"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 )
 
 // userAgentTransport wraps an http.RoundTripper to add a User-Agent header
@@ -259,7 +259,7 @@ func validateOidcAuth() error {
 	customClient := &http.Client{
 		Transport: &userAgentTransport{
 			base:      transport,
-			userAgent: fmt.Sprintf("FileBrowser Quantum - %s (OIDC Client)", version.Version),
+			userAgent: fmt.Sprintf("CannonCommander %s (OIDC client)", version.Version),
 		},
 	}
 

@@ -16,13 +16,13 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/goccy/go-yaml"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/ffmpeg"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/version"
 	goffmpeg "github.com/gtsteffaniak/go-ffmpeg"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 )
 
 const (
@@ -83,17 +83,17 @@ func initializeConfig(configFile string, cliMode bool) {
 
 func setupServer() {
 	// Check environment variable first (overrides config file)
-	if os.Getenv("FILEBROWSER_SQL_WAL") == "true" {
+	if os.Getenv("CC_SQL_WAL") == "true" {
 		Config.Server.IndexSqlConfig.WalMode = true
 	}
 }
 
 func setupEnv() {
-	Env.IsPlaywright = os.Getenv("FILEBROWSER_PLAYWRIGHT_TEST") == "true"
+	Env.IsPlaywright = os.Getenv("CC_PLAYWRIGHT_TEST") == "true"
 	if Env.IsPlaywright {
 		logger.Warning("Running in playwright test mode. This is not recommended for production.")
 	}
-	Env.IsDevMode = os.Getenv("FILEBROWSER_DEVMODE") == "true"
+	Env.IsDevMode = os.Getenv("CC_DEVMODE") == "true"
 	if Env.IsDevMode {
 		logger.Warning("Running in dev mode. This is not recommended for production.")
 	}
@@ -301,7 +301,7 @@ func setupFrontend(generate bool) {
 		Config.Frontend.ExternalLinks = append(Config.Frontend.ExternalLinks, ExternalLink{
 			Text:  fmt.Sprintf("(%v)", version.Version),
 			Title: version.CommitSHA,
-			Url:   "https://github.com/gtsteffaniak/filebrowser/releases/",
+			Url:   "https://github.com/junkerderprovinz/cannoncommander/releases/",
 		})
 		Config.Frontend.ExternalLinks = append(Config.Frontend.ExternalLinks, ExternalLink{
 			Text: "Help",
@@ -612,14 +612,14 @@ func setupLogging() {
 		}
 	}
 	// Tests quiet the logger in testutil.Main; skip stacking handlers here.
-	if isGoTest() && os.Getenv("FILEBROWSER_TEST_LOG") == "" {
+	if isGoTest() && os.Getenv("CC_TEST_LOG") == "" {
 		return
 	}
 	for i := range Config.Server.Logging {
 		cfg := &Config.Server.Logging[i]
 		// Enable debug logging automatically in dev mode
 		levels := cfg.Levels
-		if os.Getenv("FILEBROWSER_DEVMODE") == "true" {
+		if os.Getenv("CC_DEVMODE") == "true" {
 			levels = "info|warning|error|debug"
 		}
 		pattern := cfg.ApiFilter
@@ -823,64 +823,64 @@ func validateFilePermission(fl validator.FieldLevel) bool {
 }
 
 func loadEnvConfig() {
-	adminPassword, ok := os.LookupEnv("FILEBROWSER_ADMIN_PASSWORD")
+	adminPassword, ok := os.LookupEnv("CC_ADMIN_PASSWORD")
 	if ok {
-		logger.Info("Using admin password from FILEBROWSER_ADMIN_PASSWORD environment variable")
+		logger.Info("Using admin password from CC_ADMIN_PASSWORD environment variable")
 		Config.Auth.Methods.PasswordAuth.AdminPassword = adminPassword
 	}
-	officeSecret, ok := os.LookupEnv("FILEBROWSER_ONLYOFFICE_SECRET")
+	officeSecret, ok := os.LookupEnv("CC_ONLYOFFICE_SECRET")
 	if ok {
-		logger.Info("Using OnlyOffice secret from FILEBROWSER_ONLYOFFICE_SECRET environment variable")
+		logger.Info("Using OnlyOffice secret from CC_ONLYOFFICE_SECRET environment variable")
 		Config.Integrations.OnlyOffice.Secret = officeSecret
 	}
 
-	ffmpegPath, ok := os.LookupEnv("FILEBROWSER_FFMPEG_PATH")
+	ffmpegPath, ok := os.LookupEnv("CC_FFMPEG_PATH")
 	if ok {
 		Config.Integrations.Media.FfmpegPath = ffmpegPath
 	}
 
-	oidcClientId := os.Getenv("FILEBROWSER_OIDC_CLIENT_ID")
+	oidcClientId := os.Getenv("CC_OIDC_CLIENT_ID")
 	if oidcClientId != "" {
 		Config.Auth.Methods.OidcAuth.ClientID = oidcClientId
-		logger.Info("Using OIDC Client ID from FILEBROWSER_OIDC_CLIENT_ID environment variable")
+		logger.Info("Using OIDC Client ID from CC_OIDC_CLIENT_ID environment variable")
 	}
 
-	oidcClientSecret := os.Getenv("FILEBROWSER_OIDC_CLIENT_SECRET")
+	oidcClientSecret := os.Getenv("CC_OIDC_CLIENT_SECRET")
 	if oidcClientSecret != "" {
 		Config.Auth.Methods.OidcAuth.ClientSecret = oidcClientSecret
-		logger.Info("Using OIDC Client Secret from FILEBROWSER_OIDC_CLIENT_SECRET environment variable")
+		logger.Info("Using OIDC Client Secret from CC_OIDC_CLIENT_SECRET environment variable")
 	}
 
-	jwtTokenSecret := os.Getenv("FILEBROWSER_JWT_TOKEN_SECRET")
+	jwtTokenSecret := os.Getenv("CC_JWT_TOKEN_SECRET")
 	if jwtTokenSecret != "" {
 		Config.Auth.Key = jwtTokenSecret
-		logger.Info("Using JWT Token Secret from FILEBROWSER_JWT_TOKEN_SECRET environment variable")
+		logger.Info("Using JWT Token Secret from CC_JWT_TOKEN_SECRET environment variable")
 	}
 
-	totpSecret := os.Getenv("FILEBROWSER_TOTP_SECRET")
+	totpSecret := os.Getenv("CC_TOTP_SECRET")
 	if totpSecret != "" {
 		Config.Auth.TotpSecret = totpSecret
-		logger.Info("Using TOTP Secret from FILEBROWSER_TOTP_SECRET environment variable")
+		logger.Info("Using TOTP Secret from CC_TOTP_SECRET environment variable")
 	}
 
-	recaptchaSecret := os.Getenv("FILEBROWSER_RECAPTCHA_SECRET")
+	recaptchaSecret := os.Getenv("CC_RECAPTCHA_SECRET")
 	if recaptchaSecret != "" {
 		Config.Auth.Methods.PasswordAuth.Recaptcha.Secret = recaptchaSecret
-		logger.Info("Using ReCaptcha Secret from FILEBROWSER_RECAPTCHA_SECRET environment variable")
+		logger.Info("Using ReCaptcha Secret from CC_RECAPTCHA_SECRET environment variable")
 	}
 
-	ldapUserPassword := os.Getenv("FILEBROWSER_LDAP_USER_PASSWORD")
+	ldapUserPassword := os.Getenv("CC_LDAP_USER_PASSWORD")
 	if ldapUserPassword != "" {
 		Config.Auth.Methods.LdapAuth.UserPassword = ldapUserPassword
-		logger.Info("Using LDAP bind password from FILEBROWSER_LDAP_USER_PASSWORD environment variable")
+		logger.Info("Using LDAP bind password from CC_LDAP_USER_PASSWORD environment variable")
 	}
 }
 
 func SetDefaults(generate bool) Settings {
 	// New SQLite database path
-	databaseV2 := os.Getenv("FILEBROWSER_DATABASE_PATH")
+	databaseV2 := os.Getenv("CC_DATABASE_PATH")
 	if databaseV2 == "" {
-		databaseV2 = "filebrowser.sqlite"
+		databaseV2 = "cannoncommander.sqlite"
 	}
 
 	s := Settings{

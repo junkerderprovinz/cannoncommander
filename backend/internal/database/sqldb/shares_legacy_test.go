@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 )
 
 func createLegacySharesDB(t *testing.T) *SQLStore {

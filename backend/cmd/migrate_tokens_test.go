@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	storm "github.com/asdine/storm/v3"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/sqldb"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 func TestMigrateAdminTokensRoundTripSQLite(t *testing.T) {

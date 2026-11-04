@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/sqldb"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // newAuthSigningKeyTestStore opens an isolated SQLite store and points the

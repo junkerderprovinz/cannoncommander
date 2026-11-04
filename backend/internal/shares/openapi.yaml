@@ -1,0 +1,51 @@
+tag:
+  name: shares
+  description: Share links and the public share pages.
+paths:
+  /shares:
+    get:
+      operationId: sharesList
+      summary: Own share links
+    post:
+      operationId: shareCreate
+      summary: Create a share link
+  /shares/{id}:
+    get:
+      operationId: shareGet
+      summary: One share link
+    patch:
+      operationId: shareUpdate
+      summary: Change a share link
+    delete:
+      operationId: shareDelete
+      summary: Delete a share link
+  /admin/shares:
+    get:
+      operationId: adminSharesList
+      summary: Every share link on the server
+      x-access: admin
+  /s/{slug}:
+    get:
+      operationId: publicShareGet
+      summary: What a share link shows
+      x-access: public
+  /s/{slug}/unlock:
+    post:
+      operationId: publicShareUnlock
+      summary: Open a share link with its password
+      x-access: public
+  /s/{slug}/list:
+    get:
+      operationId: publicShareList
+      summary: List a folder inside a share
+      x-access: public
+  /s/{slug}/raw:
+    get:
+      operationId: publicShareRaw
+      summary: Download a file from a share
+      x-access: public
+  /s/{slug}/upload:
+    post:
+      operationId: publicShareUpload
+      summary: Drop a file into a collecting share
+      x-access: public

@@ -3,7 +3,7 @@ package share
 import (
 	"fmt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // FilePermissions maps share settings to per-source file operation flags.

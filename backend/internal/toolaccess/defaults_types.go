@@ -1,6 +1,6 @@
 package toolaccess
 
-import "github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+import "github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 
 // ToolAccessDefaultItem is one admin-configured tool with default/enforced flags.
 type ToolAccessDefaultItem struct {

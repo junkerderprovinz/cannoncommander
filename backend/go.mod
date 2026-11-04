@@ -1,4 +1,4 @@
-module github.com/gtsteffaniak/filebrowser/backend
+module github.com/junkerderprovinz/cannoncommander/backend
 
 go 1.27.0
 

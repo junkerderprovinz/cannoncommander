@@ -12,7 +12,7 @@
 
   "containerEnv": {
     "CGO_ENABLED": "1",
-    "FILEBROWSER_DEVMODE": "true"
+    "CC_DEVMODE": "true"
   },
 
   "forwardPorts": [80],

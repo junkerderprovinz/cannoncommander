@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
 )
 
 func denyIfSourceReadOnly(sourceName string) (int, error) {

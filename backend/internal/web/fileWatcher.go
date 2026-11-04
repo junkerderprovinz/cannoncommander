@@ -11,11 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/events"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/events"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
 )
 
 // fileWatchResponse represents the response from file watch

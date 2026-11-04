@@ -3,7 +3,7 @@ package access_test
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/access"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
 )
 
 func TestNormalizeGroupName(t *testing.T) {

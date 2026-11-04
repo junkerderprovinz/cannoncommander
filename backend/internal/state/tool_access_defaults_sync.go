@@ -3,8 +3,8 @@ package state
 import (
 	"fmt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/toolaccess"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/toolaccess"
 )
 
 func resyncToolAccessForAllUsers(doc toolaccess.ToolAccessDefaultsDocument) error {

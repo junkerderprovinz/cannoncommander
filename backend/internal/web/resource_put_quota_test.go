@@ -8,11 +8,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/app"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/app"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func setupPutQuotaTest(t *testing.T) string {

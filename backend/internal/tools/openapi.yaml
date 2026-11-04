@@ -1,0 +1,32 @@
+tag:
+  name: tools
+  description: Compare, sync, duplicates, disk usage, clean up and checksums.
+paths:
+  /tools/compare:
+    post:
+      operationId: toolsCompare
+      summary: Compare two folders
+  /tools/sync/plan:
+    post:
+      operationId: toolsSyncPlan
+      summary: Plan a sync between two folders
+  /tools/duplicates:
+    post:
+      operationId: toolsDuplicates
+      summary: Find duplicate files
+  /tools/diskusage:
+    get:
+      operationId: toolsDiskUsage
+      summary: Sizes below a folder for the treemap
+  /tools/cleanup/scan:
+    post:
+      operationId: toolsCleanupScan
+      summary: Find files that can go
+  /tools/checksum/parse:
+    post:
+      operationId: toolsChecksumParse
+      summary: Read a checksum file
+  /tools/arrowloop:
+    post:
+      operationId: toolsArrowLoop
+      summary: Hand a folder to ArrowLoop as a job

@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 type searchOptions struct {

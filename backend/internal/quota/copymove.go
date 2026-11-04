@@ -1,8 +1,8 @@
 package quota
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
 
 // CopyMoveContext describes a copy/move/rename admission check.

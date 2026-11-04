@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/imagemeta"
 	goffmpeg "github.com/gtsteffaniak/go-ffmpeg"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/imagemeta"
 )
 
 // GetImageOrientation extracts the EXIF orientation from an image file.

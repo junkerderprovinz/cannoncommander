@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestBootstrapWordsCount(t *testing.T) {

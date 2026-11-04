@@ -1,0 +1,46 @@
+tag:
+  name: prefs
+  description: Settings, bookmarks, profiles and folder history of the own account.
+paths:
+  /me/prefs:
+    get:
+      operationId: prefsGet
+      summary: Own settings
+    put:
+      operationId: prefsPut
+      summary: Save own settings
+  /me/bookmarks:
+    get:
+      operationId: bookmarksGet
+      summary: Pinned folders
+    put:
+      operationId: bookmarksPut
+      summary: Save pinned folders
+  /me/profiles:
+    get:
+      operationId: profilesList
+      summary: Saved panel profiles
+    post:
+      operationId: profileCreate
+      summary: Save a panel profile
+  /me/profiles/{id}:
+    put:
+      operationId: profileUpdate
+      summary: Change a panel profile
+    delete:
+      operationId: profileDelete
+      summary: Delete a panel profile
+  /me/rename-presets:
+    get:
+      operationId: renamePresetsGet
+      summary: Saved rename patterns
+    put:
+      operationId: renamePresetsPut
+      summary: Save rename patterns
+  /me/frequent:
+    get:
+      operationId: frequentGet
+      summary: Often visited folders
+    post:
+      operationId: frequentVisit
+      summary: Count a visit to a folder

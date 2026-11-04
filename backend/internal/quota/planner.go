@@ -3,25 +3,25 @@ package quota
 import (
 	"os"
 
-	quotadb "github.com/gtsteffaniak/filebrowser/backend/internal/database/quota"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	quotadb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/quota"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // UploadContext describes an upload admission check.
 type UploadContext struct {
-	Principal       *users.User
-	SourceName      string
-	SourcePath      string
-	DestIndexPath   string
-	DestRealPath    string
-	ShareHash       string
-	ShareLimitBytes int64
-	SessionID       string
-	TotalSize       int64
-	HasKnownSize    bool
-	PriorFileSize   int64
+	Principal        *users.User
+	SourceName       string
+	SourcePath       string
+	DestIndexPath    string
+	DestRealPath     string
+	ShareHash        string
+	ShareLimitBytes  int64
+	SessionID        string
+	TotalSize        int64
+	HasKnownSize     bool
+	PriorFileSize    int64
 	HasPriorFileSize bool
 }
 

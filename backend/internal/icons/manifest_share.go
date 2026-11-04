@@ -3,7 +3,7 @@ package icons
 import (
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 const maxManifestTextLen = 256

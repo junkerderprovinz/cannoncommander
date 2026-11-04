@@ -1,7 +1,7 @@
 package settings
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/errors"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 )
 
 // StorageBackend is a settings storage backend.

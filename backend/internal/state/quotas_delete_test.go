@@ -5,9 +5,9 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/quota"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/quota"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
 )
 
 func TestPrepareAccountedDelete(t *testing.T) {

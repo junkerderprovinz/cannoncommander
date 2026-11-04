@@ -1,7 +1,7 @@
 package share
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // FrontendShareInfo is share presentation and behavior for visitors (stored in share_settings JSON).

@@ -3,9 +3,9 @@ package sharedefaults
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestApplyDefaultsToEditable_mergesClientOverDefaults(t *testing.T) {

@@ -3,7 +3,7 @@ package settings
 import (
 	"fmt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // InitializeUserResolvers sets up the global resolvers and config providers in the users package

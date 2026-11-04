@@ -9,8 +9,8 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // Main lowers the bcrypt cost before running the package's tests. Under the
@@ -21,7 +21,7 @@ import (
 //	func TestMain(m *testing.M) { os.Exit(testutil.Main(m)) }
 //
 // It also quiets INFO/DEBUG/WARN logger output so failures are readable.
-// Set FILEBROWSER_TEST_LOG=1 to keep normal logging.
+// Set CC_TEST_LOG=1 to keep normal logging.
 func Main(m *testing.M) int {
 	utils.BcryptCost = bcrypt.MinCost
 	QuietLogging()
@@ -29,9 +29,9 @@ func Main(m *testing.M) int {
 }
 
 // QuietLogging sends only error/fatal lines to the null device. Safe to call
-// multiple times; no-ops when FILEBROWSER_TEST_LOG is set.
+// multiple times; no-ops when CC_TEST_LOG is set.
 func QuietLogging() {
-	if os.Getenv("FILEBROWSER_TEST_LOG") != "" {
+	if os.Getenv("CC_TEST_LOG") != "" {
 		return
 	}
 	logger.DisableCompatibilityMode()

@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/access"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // Auther is the authentication interface.

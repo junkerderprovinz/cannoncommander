@@ -1,0 +1,47 @@
+tag:
+  name: fileops
+  description: Creating, renaming and linking, uploads, and the check before a transfer.
+paths:
+  /fs/mkdir:
+    post:
+      operationId: fsMkdir
+      summary: Create a folder
+  /fs/touch:
+    post:
+      operationId: fsTouch
+      summary: Create an empty file or update its time
+  /fs/rename:
+    post:
+      operationId: fsRename
+      summary: Rename one entry
+  /fs/rename/batch:
+    post:
+      operationId: fsRenameBatch
+      summary: Rename many entries with a pattern
+  /fs/link:
+    post:
+      operationId: fsLink
+      summary: Create a symbolic or hard link
+  /fs/attrs:
+    patch:
+      operationId: fsAttrs
+      summary: Change mode, owner or times
+  /ops/preflight:
+    post:
+      operationId: opsPreflight
+      summary: Check a copy or move before it starts
+      description: Reports conflicts, missing rights and free space, so the conflict dialog can ask before the job runs.
+  /uploads:
+    post:
+      operationId: uploadCreate
+      summary: Start an upload
+  /uploads/{id}:
+    get:
+      operationId: uploadGet
+      summary: State of an upload, for resuming
+    put:
+      operationId: uploadChunk
+      summary: Send the next chunk
+    delete:
+      operationId: uploadCancel
+      summary: Cancel an upload

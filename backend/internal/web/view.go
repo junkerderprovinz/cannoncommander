@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func viewFilesHandler(w http.ResponseWriter, r *http.Request, d *Context, source string, scopedFileList []string) (int, error) {

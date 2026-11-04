@@ -8,8 +8,8 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestAuthenticateShareRequestUISessionCookie(t *testing.T) {

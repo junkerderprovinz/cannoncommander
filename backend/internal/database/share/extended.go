@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // IsSingleFileShare determines if this share is for a single file (not a directory).

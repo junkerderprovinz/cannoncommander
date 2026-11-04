@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/sqlitebusy"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqlitebusy"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	// SQLite driver is imported in driver_cgo.go or driver_nocgo.go based on build tags
 )
 

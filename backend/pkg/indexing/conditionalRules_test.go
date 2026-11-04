@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // setupConditionalTestIndex creates a test index with source rules configured.
@@ -143,7 +143,7 @@ func TestShouldSkip_FolderStartsWith(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idx := setupConditionalTestIndex([]settings.ConditionalRule{
-					{FolderStartsWith: tt.ruleValue},
+				{FolderStartsWith: tt.ruleValue},
 			})
 
 			result := idx.ShouldSkip(true, tt.fullPath, false, false, false)
@@ -247,7 +247,7 @@ func TestShouldSkip_FolderPaths(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idx := setupConditionalTestIndex([]settings.ConditionalRule{
-					{FolderPath: tt.ruleValue},
+				{FolderPath: tt.ruleValue},
 			})
 
 			result := idx.ShouldSkip(true, tt.fullPath, false, false, false)
@@ -293,7 +293,7 @@ func TestShouldSkip_FileStartsWith(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idx := setupConditionalTestIndex([]settings.ConditionalRule{
-					{FileStartsWith: tt.ruleValue},
+				{FileStartsWith: tt.ruleValue},
 			})
 
 			result := idx.ShouldSkip(false, "/"+tt.baseName, false, false, false)
@@ -339,7 +339,7 @@ func TestShouldSkip_FileEndsWith(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idx := setupConditionalTestIndex([]settings.ConditionalRule{
-					{FileEndsWith: tt.ruleValue},
+				{FileEndsWith: tt.ruleValue},
 			})
 
 			result := idx.ShouldSkip(false, "/"+tt.baseName, false, false, false)
@@ -389,7 +389,7 @@ func TestShouldSkip_FilePaths(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idx := setupConditionalTestIndex([]settings.ConditionalRule{
-					{FilePath: tt.ruleValue},
+				{FilePath: tt.ruleValue},
 			})
 
 			result := idx.ShouldSkip(false, tt.fullPath, false, false, false)
@@ -405,8 +405,8 @@ func TestShouldSkip_FileInExcludedFolderPath(t *testing.T) {
 	// Test that files in excluded folder paths are also skipped
 	// Uses FilePaths rule which applies to both the folder and its files via prefix matching
 	idx := setupConditionalTestIndex([]settings.ConditionalRule{
-			{FilePath: "/graham/"			},
-			})
+		{FilePath: "/graham/"},
+	})
 
 	tests := []struct {
 		fullPath   string
@@ -709,7 +709,7 @@ func TestIsViewableWithParentCheck_DoesNotMutate(t *testing.T) {
 	idx.Config.ResolvedRules.NoRules = false
 	idx.Config.ResolvedRules.FolderNames["restricted"] = settings.ConditionalRule{
 		FolderName: "restricted",
-		Viewable:    false,
+		Viewable:   false,
 	}
 
 	initialFolderPathCount := len(idx.Config.ResolvedRules.FolderPaths)

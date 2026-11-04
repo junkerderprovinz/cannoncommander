@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/stretchr/testify/require"
 )
 

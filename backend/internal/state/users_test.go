@@ -6,13 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/files"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestCreateUserValidateUsername(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -58,7 +58,7 @@ func TestCreateUserValidateUsername(t *testing.T) {
 }
 
 func TestCreateUserCreateUserDirRespectsFinalAdminPermission(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -128,7 +128,7 @@ func TestCreateUserCreateUserDirRespectsFinalAdminPermission(t *testing.T) {
 }
 
 func TestUpdateUserPatchPreservesTOTPSecret(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -183,7 +183,7 @@ func TestUpdateUserPatchPreservesTOTPSecret(t *testing.T) {
 }
 
 func TestUpdateUserRejectsEmptyFields(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -218,7 +218,7 @@ func TestUpdateUserRejectsEmptyFields(t *testing.T) {
 }
 
 func TestUpdateUserRejectsAllField(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -256,7 +256,7 @@ func TestUpdateUserRejectsAllField(t *testing.T) {
 }
 
 func TestUpdateUserRejectsUnknownField(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -291,7 +291,7 @@ func TestUpdateUserRejectsUnknownField(t *testing.T) {
 }
 
 func TestUpdateUserRejectsPasswordWithoutPlaintext(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -318,7 +318,7 @@ func TestUpdateUserRejectsPasswordWithoutPlaintext(t *testing.T) {
 }
 
 func TestUpdateUserClearsTOTPWhenOtpDisabled(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -368,7 +368,7 @@ func TestUpdateUserClearsTOTPWhenOtpDisabled(t *testing.T) {
 }
 
 func TestUpdateUserPatchPreservesBackendSourcePermissions(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 

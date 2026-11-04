@@ -72,3 +72,23 @@ func TestConcurrentSSEClientLifecycleRace(t *testing.T) {
 	Shutdown()
 	time.Sleep(50 * time.Millisecond)
 }
+
+func TestBroadcastReachesEveryRegisteredClient(t *testing.T) {
+	a := Register("broadcast-a", nil)
+	b := Register("broadcast-b", nil)
+	defer Unregister("broadcast-a", a)
+	defer Unregister("broadcast-b", b)
+
+	Broadcast("notification", `"for everyone"`)
+
+	for name, ch := range map[string]chan EventMessage{"a": a, "b": b} {
+		select {
+		case msg := <-ch:
+			if msg.Message != `"for everyone"` {
+				t.Errorf("client %s got %q", name, msg.Message)
+			}
+		case <-time.After(time.Second):
+			t.Errorf("client %s got nothing", name)
+		}
+	}
+}

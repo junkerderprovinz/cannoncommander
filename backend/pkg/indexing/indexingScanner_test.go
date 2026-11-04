@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-	dbsql "github.com/gtsteffaniak/filebrowser/backend/internal/database/sql"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
+	dbsql "github.com/junkerderprovinz/cannoncommander/backend/internal/database/sql"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // TestCheckFolderModtime_unchangedPreservesHasPreviewAndHidden verifies quick-scan touch updates

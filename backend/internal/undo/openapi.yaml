@@ -1,0 +1,11 @@
+tag:
+  name: undo
+  description: Taking back the last file operations.
+paths:
+  /undo:
+    get:
+      operationId: undoList
+      summary: Steps that can be taken back
+    post:
+      operationId: undoLast
+      summary: Take back the latest step

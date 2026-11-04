@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestPatchShareDefaults_persistsValues(t *testing.T) {
@@ -55,7 +55,7 @@ func TestPatchShareDefaultsCombined_persistsBoth(t *testing.T) {
 }
 
 func TestPatchShareDefaultsCombined_rollsBackBothOnEnforcedSaveFailure(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 

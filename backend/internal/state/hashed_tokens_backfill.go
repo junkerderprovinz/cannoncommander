@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/access"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/sqldb"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // BackfillHashedTokensFromUserRecords registers SHA256(raw JWT) → user_id for stored API tokens.

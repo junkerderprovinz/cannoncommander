@@ -1,6 +1,6 @@
 package usersidebar
 
-import "github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+import "github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 
 // SidebarLinkDefaultItem is one admin-configured sidebar link with default/enforced flags.
 type SidebarLinkDefaultItem struct {

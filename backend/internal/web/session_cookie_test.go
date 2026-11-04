@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestSessionCookie_HttpOnlyAndSecureOnHTTPS(t *testing.T) {

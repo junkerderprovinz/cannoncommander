@@ -1,12 +1,12 @@
 package state
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/dbindex"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
 // Store is the runtime handle for the state gateway. It implements ports interfaces

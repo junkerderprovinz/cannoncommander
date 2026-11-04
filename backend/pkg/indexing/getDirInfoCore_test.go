@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	dbsql "github.com/gtsteffaniak/filebrowser/backend/internal/database/sql"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	dbsql "github.com/junkerderprovinz/cannoncommander/backend/internal/database/sql"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // TestFetchExtendedAttributes tests the fetchExtendedAttributes helper function

@@ -5,8 +5,8 @@ import (
 	"maps"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/access"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 type stubGroupSQL struct {
@@ -15,9 +15,9 @@ type stubGroupSQL struct {
 }
 
 func (s *stubGroupSQL) SaveAccessRule(string, string, *access.AccessRule) error { return nil }
-func (s *stubGroupSQL) DeleteAccessRule(string, string) error                  { return nil }
-func (s *stubGroupSQL) AccessRulesLowercaseMigrated() (bool, error) { return false, nil }
-func (s *stubGroupSQL) SetAccessRulesLowercaseMigrated() error      { return nil }
+func (s *stubGroupSQL) DeleteAccessRule(string, string) error                   { return nil }
+func (s *stubGroupSQL) AccessRulesLowercaseMigrated() (bool, error)             { return false, nil }
+func (s *stubGroupSQL) SetAccessRulesLowercaseMigrated() error                  { return nil }
 func (s *stubGroupSQL) MigrateAccessRulePathsLowercase(string, []string, access.RuleMap) error {
 	return nil
 }
@@ -31,11 +31,11 @@ func (s *stubGroupSQL) DeleteGroupWithRules(string, []access.RuleUpsert, []acces
 func (s *stubGroupSQL) SaveRevokedToken(string, int64) error {
 	return nil
 }
-func (s *stubGroupSQL) PersistImmediateTokenRevocation(string) error          { return nil }
-func (s *stubGroupSQL) PersistTokenRetirement(string, int64, []string) error  { return nil }
-func (s *stubGroupSQL) DeleteRevokedToken(string) error                       { return nil }
-func (s *stubGroupSQL) SaveHashedToken(string, uint64, bool, int64) error            { return nil }
-func (s *stubGroupSQL) DeleteHashedToken(string) error                        { return nil }
+func (s *stubGroupSQL) PersistImmediateTokenRevocation(string) error         { return nil }
+func (s *stubGroupSQL) PersistTokenRetirement(string, int64, []string) error { return nil }
+func (s *stubGroupSQL) DeleteRevokedToken(string) error                      { return nil }
+func (s *stubGroupSQL) SaveHashedToken(string, uint64, bool, int64) error    { return nil }
+func (s *stubGroupSQL) DeleteHashedToken(string) error                       { return nil }
 func (s *stubGroupSQL) DeleteHashedTokensByUserID(uint64) error {
 	return nil
 }
@@ -47,9 +47,9 @@ type recordingGroupSQL struct {
 }
 
 func (s *recordingGroupSQL) SaveAccessRule(string, string, *access.AccessRule) error { return nil }
-func (s *recordingGroupSQL) DeleteAccessRule(string, string) error                  { return nil }
-func (s *recordingGroupSQL) AccessRulesLowercaseMigrated() (bool, error) { return false, nil }
-func (s *recordingGroupSQL) SetAccessRulesLowercaseMigrated() error      { return nil }
+func (s *recordingGroupSQL) DeleteAccessRule(string, string) error                   { return nil }
+func (s *recordingGroupSQL) AccessRulesLowercaseMigrated() (bool, error)             { return false, nil }
+func (s *recordingGroupSQL) SetAccessRulesLowercaseMigrated() error                  { return nil }
 func (s *recordingGroupSQL) MigrateAccessRulePathsLowercase(string, []string, access.RuleMap) error {
 	return nil
 }
@@ -74,13 +74,13 @@ func (s *recordingGroupSQL) DeleteGroup(name string) error {
 func (s *recordingGroupSQL) DeleteGroupWithRules(name string, _ []access.RuleUpsert, _ []access.RuleKey) error {
 	return s.DeleteGroup(name)
 }
-func (s *recordingGroupSQL) SaveRevokedToken(string, int64) error                   { return nil }
-func (s *recordingGroupSQL) PersistImmediateTokenRevocation(string) error          { return nil }
-func (s *recordingGroupSQL) PersistTokenRetirement(string, int64, []string) error  { return nil }
-func (s *recordingGroupSQL) DeleteRevokedToken(string) error                       { return nil }
-func (s *recordingGroupSQL) SaveHashedToken(string, uint64, bool, int64) error            { return nil }
-func (s *recordingGroupSQL) DeleteHashedToken(string) error                        { return nil }
-func (s *recordingGroupSQL) DeleteHashedTokensByUserID(uint64) error               { return nil }
+func (s *recordingGroupSQL) SaveRevokedToken(string, int64) error                 { return nil }
+func (s *recordingGroupSQL) PersistImmediateTokenRevocation(string) error         { return nil }
+func (s *recordingGroupSQL) PersistTokenRetirement(string, int64, []string) error { return nil }
+func (s *recordingGroupSQL) DeleteRevokedToken(string) error                      { return nil }
+func (s *recordingGroupSQL) SaveHashedToken(string, uint64, bool, int64) error    { return nil }
+func (s *recordingGroupSQL) DeleteHashedToken(string) error                       { return nil }
+func (s *recordingGroupSQL) DeleteHashedTokensByUserID(uint64) error              { return nil }
 
 func cloneStringSet(src access.StringSet) access.StringSet {
 	if len(src) == 0 {

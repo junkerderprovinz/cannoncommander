@@ -1,0 +1,50 @@
+tag:
+  name: jobs
+  description: Long running tasks such as copy, move, pack and checksum.
+paths:
+  /jobs:
+    get:
+      operationId: jobsList
+      summary: List jobs
+    post:
+      operationId: jobCreate
+      summary: Start a job
+      description: |
+        Kinds: copy, move, delete, trash, restore, emptyTrash, pack, unpack,
+        testArchive, checksum, verify, split, combine, attrsRecursive,
+        fixPerms, sync, gather, scatter, contentSearch, duplicates,
+        fetchUrl, reindex.
+  /jobs/settings:
+    get:
+      operationId: jobSettingsGet
+      summary: Queue and speed settings
+    put:
+      operationId: jobSettingsPut
+      summary: Change queue and speed settings
+  /jobs/{id}:
+    get:
+      operationId: jobGet
+      summary: One job with its items
+    delete:
+      operationId: jobRemove
+      summary: Remove a finished job from the list
+  /jobs/{id}/pause:
+    post:
+      operationId: jobPause
+      summary: Pause a job
+  /jobs/{id}/resume:
+    post:
+      operationId: jobResume
+      summary: Resume a paused job
+  /jobs/{id}/cancel:
+    post:
+      operationId: jobCancel
+      summary: Cancel a job
+  /jobs/{id}/retry:
+    post:
+      operationId: jobRetry
+      summary: Retry the failed items of a job
+  /jobs/{id}/decide:
+    post:
+      operationId: jobDecide
+      summary: Answer a conflict the job is waiting on

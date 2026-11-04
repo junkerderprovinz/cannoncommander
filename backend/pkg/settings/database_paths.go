@@ -7,7 +7,7 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 )
 
-// MigrateFromDefault resolves server.database.migrateFrom from FILEBROWSER_DATABASE or database.db.
+// MigrateFromDefault resolves server.database.migrateFrom from CC_DATABASE or database.db.
 const MigrateFromDefault = "default"
 
 const defaultLegacyDatabasePath = "database.db"
@@ -16,15 +16,15 @@ const defaultLegacyDatabasePath = "database.db"
 func ResolveDatabasePaths() error {
 	db := &Config.Server.DatabaseV2
 	if strings.TrimSpace(db.Path) == "" {
-		if v := os.Getenv("FILEBROWSER_DATABASE_PATH"); v != "" {
+		if v := os.Getenv("CC_DATABASE_PATH"); v != "" {
 			db.Path = v
 		} else {
-			db.Path = "filebrowser.sqlite"
+			db.Path = "cannoncommander.sqlite"
 		}
 	}
 
 	migrateFrom := strings.TrimSpace(db.MigrateFrom)
-	legacyEnv := strings.TrimSpace(os.Getenv("FILEBROWSER_DATABASE"))
+	legacyEnv := strings.TrimSpace(os.Getenv("CC_DATABASE"))
 
 	if migrateFrom == MigrateFromDefault {
 		if legacyEnv != "" {
@@ -34,7 +34,7 @@ func ResolveDatabasePaths() error {
 		}
 	} else if legacyEnv != "" {
 		logger.Fatalf(
-			"FILEBROWSER_DATABASE environment variable is deprecated. " +
+			"CC_DATABASE environment variable is deprecated. " +
 				`Remove it, or set server.database.migrateFrom to "default" to migrate from that path on first start.`,
 		)
 	}

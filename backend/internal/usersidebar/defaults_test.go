@@ -3,13 +3,13 @@ package usersidebar
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func initDefaultsTestConfig(t *testing.T) {
 	t.Helper()
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 }
@@ -21,10 +21,10 @@ func TestMergeDefaultLinks_appendsEnabledMissing(t *testing.T) {
 			{
 				Enabled: true,
 				Link: users.SidebarLink{
-					Name:       "Wiki",
-					Category:   "custom",
-					Target:     "/wiki",
-					Icon:       "link",
+					Name:     "Wiki",
+					Category: "custom",
+					Target:   "/wiki",
+					Icon:     "link",
 				},
 			},
 		},

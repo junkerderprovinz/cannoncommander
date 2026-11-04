@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // AuthManagedEnforcementPaths are default paths owned by authentication (adminGroup

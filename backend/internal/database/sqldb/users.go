@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // User SQL operations
@@ -16,13 +16,13 @@ import (
 type UserData struct {
 	Password string `json:"password,omitempty"`
 	// BackendScopes: persisted source access (Name = backend path). JSON key "scopes" is historical on-disk.
-	BackendScopes    []users.BackendScope       `json:"backendScopes"`
-	Tokens           map[string]users.AuthToken `json:"tokens,omitempty"`
-	TOTPSecret       string                     `json:"totpSecret,omitempty"`
-	TOTPNonce        string                     `json:"totpNonce,omitempty"`
-	LoginMethod      users.LoginMethod          `json:"loginMethod"`
-	OtpEnabled       bool                       `json:"otpEnabled"`
-	Version          int                        `json:"version"`
+	BackendScopes            []users.BackendScope                   `json:"backendScopes"`
+	Tokens                   map[string]users.AuthToken             `json:"tokens,omitempty"`
+	TOTPSecret               string                                 `json:"totpSecret,omitempty"`
+	TOTPNonce                string                                 `json:"totpNonce,omitempty"`
+	LoginMethod              users.LoginMethod                      `json:"loginMethod"`
+	OtpEnabled               bool                                   `json:"otpEnabled"`
+	Version                  int                                    `json:"version"`
 	ShowFirstLogin           bool                                   `json:"showFirstLogin"`
 	PinnedItems              users.PinnedItems                      `json:"pinnedItems,omitempty"`
 	Profile                  json.RawMessage                        `json:"profile,omitempty"`

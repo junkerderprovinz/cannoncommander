@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // PrepForFrontend builds API-safe ShareFrontend copies (never exposes backend Share fields).

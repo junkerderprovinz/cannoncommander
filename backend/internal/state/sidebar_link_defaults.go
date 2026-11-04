@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/usersidebar"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
 )
 
 const sidebarLinkDefaultsSettingKey = "sidebarLinkDefaults"

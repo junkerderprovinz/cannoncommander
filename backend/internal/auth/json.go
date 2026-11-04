@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // JSONAuth is a json implementation of an Auther.

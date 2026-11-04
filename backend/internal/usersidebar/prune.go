@@ -1,7 +1,7 @@
 package usersidebar
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // PruneSidebarLinksForScopes removes source-type links whose source is not in the user's scopes.

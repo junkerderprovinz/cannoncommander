@@ -1,6 +1,7 @@
 package sql
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -9,10 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/sqlitebusy"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqlitebusy"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // IndexDB manages the SQLite database for the file index.
@@ -108,6 +110,10 @@ func NewIndexDB(name string, journalMode string, batchSize int, cacheSizeMB int,
 	}
 
 	if err := idxDB.CreateIndexTable(); err != nil {
+		idxDB.Close()
+		return nil, false, err
+	}
+	if _, err := migrate.Apply(context.Background(), idxDB.DB(), migrate.Index); err != nil {
 		idxDB.Close()
 		return nil, false, err
 	}

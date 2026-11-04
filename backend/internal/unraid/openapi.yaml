@@ -1,0 +1,34 @@
+tag:
+  name: unraid
+  description: Array state, file placement and the Unraid tools.
+paths:
+  /unraid/state:
+    get:
+      operationId: unraidState
+      summary: Disks, shares, pools and parity
+  /unraid/where:
+    get:
+      operationId: unraidWhere
+      summary: On which disks a path lies
+      parameters:
+        - $ref: "#/components/parameters/Path"
+  /unraid/spindown:
+    post:
+      operationId: unraidSpindown
+      summary: Spin disks down
+      x-access: admin
+  /unraid/gather/plan:
+    post:
+      operationId: unraidGatherPlan
+      summary: Plan moving a folder onto one disk
+      x-access: admin
+  /unraid/fixperms/scan:
+    post:
+      operationId: unraidFixpermsScan
+      summary: Find entries with the wrong owner or mode
+      x-access: admin
+  /unraid/notify/test:
+    post:
+      operationId: unraidNotifyTest
+      summary: Send a test notification
+      x-access: admin

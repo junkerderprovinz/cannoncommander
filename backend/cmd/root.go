@@ -6,24 +6,24 @@ import (
 	"io/fs"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	_ "net/http/pprof"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/analytics"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/app"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/icons"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/preview"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/version"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/web"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-	"github.com/gtsteffaniak/filebrowser/backend/swagger/docs"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/app"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/icons"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/preview"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/web"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/swagger/docs"
 	"github.com/swaggo/swag"
 )
 
@@ -59,7 +59,8 @@ func initializeDatabase(configFile string, cliMode bool) bool {
 	return existingDb
 }
 
-func StartFilebrowser() {
+func Start() {
+	legacyEnv := adoptLegacyEnv()
 	keepGoing, dbExists := runCLI()
 	if !keepGoing {
 		return
@@ -103,7 +104,10 @@ func StartFilebrowser() {
 	for path, source := range settings.Config.Server.SourceMap {
 		sourceList = append(sourceList, fmt.Sprintf("%v: %v", source.Name, path))
 	}
-	logger.Infof("Initializing FileBrowser Quantum (%v)", version.Version)
+	logger.Infof("Initializing CannonCommander (%v)", version.Version)
+	for _, name := range legacyEnv {
+		logger.Warningf("%s is a FileBrowser name, read it as %s%s. Please rename it.", name, envPrefix, strings.TrimPrefix(name, legacyEnvPrefix))
+	}
 	logger.Infof("Using Config file        : %v", configPath)
 	logger.Infof("Auth Methods             : %v", settings.Config.Auth.AuthMethods)
 	logger.Info(database)
@@ -143,7 +147,6 @@ func StartFilebrowser() {
 	for _, source := range settings.Config.Server.SourceMap {
 		go indexing.Initialize(source, false, isNewDb)
 	}
-	analytics.StartReporter()
 	validateUserInfo(!dbExists)
 	validateOfficeIntegration()
 	validateAccessRules()
@@ -151,7 +154,7 @@ func StartFilebrowser() {
 	// Start the rootCMD in a goroutine
 	go func() {
 		if err := rootCMD(ctx, &serverConfig, runtimeApp, shutdownComplete); err != nil {
-			logger.Fatalf("Error starting filebrowser: %v", err)
+			logger.Fatalf("Error starting the server: %v", err)
 		}
 		close(done) // Signal that the server has stopped
 	}()

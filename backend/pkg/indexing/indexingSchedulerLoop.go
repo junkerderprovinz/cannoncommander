@@ -4,8 +4,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // alignCeilToInterval rounds t up (UTC) to the next boundary where Unix time is a multiple of interval.

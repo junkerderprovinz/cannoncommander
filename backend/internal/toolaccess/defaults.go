@@ -3,7 +3,7 @@ package toolaccess
 import (
 	"fmt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // ErrEnforcedToolAccess is returned when a non-admin changes an enforced tool access value.

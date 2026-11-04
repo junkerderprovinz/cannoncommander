@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func normalizeHTTPScheme(proto string) string {

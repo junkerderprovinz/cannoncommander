@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: CannonCommander API
+  version: "1"
+  description: |
+    Every path in this API is an absolute path as Unraid sees it, for example
+    /mnt/user/filme. A path into an archive carries "::" after the archive
+    name: /mnt/user/downloads/fotos.zip::/Strand/IMG_0101.jpg.
+
+    Errors come as application/problem+json. Operations that are part of the
+    contract but not built yet answer 501.
+
+    Server events arrive on GET /events. See the Event schema for their
+    types.
+servers:
+  - url: /api/v1
+security:
+  - bearer: []
+  - cookie: []
+tags: []
+paths: {}
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      description: An API token or a session token.
+    cookie:
+      type: apiKey
+      in: cookie
+      name: filebrowser_quantum_jwt
+      description: The session cookie the web app gets on login.
+  parameters:
+    Path:
+      name: path
+      in: query
+      required: true
+      description: Absolute path.
+      schema:
+        type: string
+        example: /mnt/user/filme
+  responses:
+    NotImplemented:
+      description: Part of the contract, not built yet.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    BadRequest:
+      description: The request is malformed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Unauthorized:
+      description: Not logged in.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Forbidden:
+      description: Not allowed for this user.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    NotFound:
+      description: The path does not exist.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+  schemas:
+    Problem:
+      type: object
+      description: RFC 9457 problem details.
+      required: [title, status]
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+    Event:
+      type: object
+      description: |
+        One server event. The SSE frame carries the type as "event:" and the
+        id as "id:", and this object as "data:". Reconnect with the
+        Last-Event-ID header (or lastEventId query) to receive what was
+        missed. A resync event means the gap was too large and the client
+        should reload its state.
+      required: [id, type, time]
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: string
+          enum:
+            - heartbeat
+            - resync
+            - notify
+            - job.created
+            - job.progress
+            - job.state
+            - job.conflict
+            - job.done
+            - fs.changed
+            - trash.changed
+            - labels.changed
+            - undo.changed
+            - share.opened
+            - unraid.parity
+            - unraid.spin
+            - index.progress
+            - search.hits
+            - prefs.changed
+        topic:
+          type: string
+          description: Set for events that only subscribers see, for example fs:/mnt/user/filme.
+        time:
+          type: string
+          format: date-time
+        data:
+          description: Payload, its shape depends on the type.

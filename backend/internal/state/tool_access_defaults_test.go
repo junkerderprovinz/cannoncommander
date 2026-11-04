@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/toolaccess"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/toolaccess"
 )
 
 func TestPatchToolAccessDefaults_retriesPendingResync(t *testing.T) {

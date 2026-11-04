@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	liberrors "github.com/gtsteffaniak/filebrowser/backend/internal/errors"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	liberrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func setupSymlinkEscapeFixture(t *testing.T) (sourceRoot, userScope string) {

@@ -1,0 +1,20 @@
+tag:
+  name: trash
+  description: Deleted files waiting in the trash.
+paths:
+  /trash:
+    get:
+      operationId: trashList
+      summary: List the trash
+  /trash/restore:
+    post:
+      operationId: trashRestore
+      summary: Put entries back where they came from
+  /trash/empty:
+    post:
+      operationId: trashEmpty
+      summary: Empty the trash
+  /trash/{id}:
+    delete:
+      operationId: trashDelete
+      summary: Delete one entry for good

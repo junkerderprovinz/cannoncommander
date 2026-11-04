@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	activityrec "github.com/gtsteffaniak/filebrowser/backend/internal/activity"
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	activityrec "github.com/junkerderprovinz/cannoncommander/backend/internal/activity"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // InitActivityRecorder starts the global activity recorder using the SQL store.

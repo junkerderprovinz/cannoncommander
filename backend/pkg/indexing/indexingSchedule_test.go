@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	indexingdb "github.com/gtsteffaniak/filebrowser/backend/internal/database/dbindex"
-	dbsql "github.com/gtsteffaniak/filebrowser/backend/internal/database/sql"
-	ierrors "github.com/gtsteffaniak/filebrowser/backend/internal/errors"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	indexingdb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
+	dbsql "github.com/junkerderprovinz/cannoncommander/backend/internal/database/sql"
+	ierrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // fakeMetaStore is a minimal ports.IndexMetaStore for startup/restore tests.

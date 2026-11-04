@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/auth"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // generateOTPHandler handles the generation of a new TOTP secret and QR code.

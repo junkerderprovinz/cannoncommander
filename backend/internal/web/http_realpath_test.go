@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	libErrors "github.com/gtsteffaniak/filebrowser/backend/internal/errors"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
+	libErrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
 func TestRealPathErrStatus(t *testing.T) {

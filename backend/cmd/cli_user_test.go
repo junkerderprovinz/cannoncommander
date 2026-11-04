@@ -5,15 +5,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/app"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/app"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func setupCLIUserTest(t *testing.T) {
 	t.Helper()
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.InitializeCLI("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 

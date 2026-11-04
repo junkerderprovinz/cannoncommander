@@ -3,7 +3,7 @@ package auth
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestJWTSigningKeyFuncRejectsEmptyKey(t *testing.T) {

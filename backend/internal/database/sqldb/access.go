@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/access"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
 )
 
 // settingAccessRulesLowercaseMigrated marks that access rule paths were normalized to lowercase.

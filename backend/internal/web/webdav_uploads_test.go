@@ -10,11 +10,11 @@ import (
 	"strings"
 	"testing"
 
-	activityrec "github.com/gtsteffaniak/filebrowser/backend/internal/activity"
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	activityrec "github.com/junkerderprovinz/cannoncommander/backend/internal/activity"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // chunkedUploadUser builds a user with the given permissions on source1.

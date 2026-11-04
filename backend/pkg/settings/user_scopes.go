@@ -4,7 +4,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // ExpandBackendScopesForCreateUserDir appends the username to each default scope when the

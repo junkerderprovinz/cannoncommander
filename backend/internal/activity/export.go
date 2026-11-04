@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 )
 
 var activityOptionalExportColumns = map[string]struct{}{

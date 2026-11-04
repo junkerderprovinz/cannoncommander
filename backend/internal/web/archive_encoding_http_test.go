@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/archiveencoding"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/archiveencoding"
 )
 
 func TestUnarchiveEncodingPreviewDoesNotWriteOrDelete(t *testing.T) {

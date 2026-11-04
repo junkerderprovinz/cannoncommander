@@ -1,0 +1,108 @@
+tag:
+  name: accounts
+  description: The own account, and users, groups, rules and activity for admins.
+paths:
+  /me:
+    get:
+      operationId: meGet
+      summary: The logged in user
+  /me/password:
+    put:
+      operationId: mePassword
+      summary: Change the own password, which ends the other sessions
+  /me/sessions:
+    get:
+      operationId: sessionsList
+      summary: Open sessions
+  /me/sessions/{id}:
+    delete:
+      operationId: sessionEnd
+      summary: End a session
+  /me/tokens:
+    get:
+      operationId: tokensList
+      summary: API tokens
+    post:
+      operationId: tokenCreate
+      summary: Create an API token with limited rights
+  /me/tokens/{id}:
+    delete:
+      operationId: tokenDelete
+      summary: Revoke an API token
+  /me/passkeys:
+    get:
+      operationId: passkeysList
+      summary: Passkeys
+    post:
+      operationId: passkeyRegister
+      summary: Register a passkey
+  /me/passkeys/{id}:
+    delete:
+      operationId: passkeyDelete
+      summary: Remove a passkey
+  /me/totp:
+    post:
+      operationId: totpSetup
+      summary: Turn on two factor login
+    delete:
+      operationId: totpDisable
+      summary: Turn off two factor login
+  /admin/users:
+    get:
+      operationId: usersList
+      summary: List users
+      x-access: admin
+    post:
+      operationId: userCreate
+      summary: Create a user
+      x-access: admin
+  /admin/users/{id}:
+    get:
+      operationId: userGet
+      summary: One user
+      x-access: admin
+    patch:
+      operationId: userUpdate
+      summary: Change a user
+      x-access: admin
+    delete:
+      operationId: userDelete
+      summary: Delete a user
+      x-access: admin
+  /admin/groups:
+    get:
+      operationId: groupsList
+      summary: List groups
+      x-access: admin
+    post:
+      operationId: groupCreate
+      summary: Create a group
+      x-access: admin
+  /admin/groups/{name}:
+    patch:
+      operationId: groupUpdate
+      summary: Change a group
+      x-access: admin
+    delete:
+      operationId: groupDelete
+      summary: Delete a group
+      x-access: admin
+  /admin/rules:
+    get:
+      operationId: rulesGet
+      summary: Access rules
+      x-access: admin
+    put:
+      operationId: rulesPut
+      summary: Save access rules
+      x-access: admin
+  /admin/rules/test:
+    post:
+      operationId: rulesTest
+      summary: Show what a user may do on a path
+      x-access: admin
+  /admin/activity:
+    get:
+      operationId: activityList
+      summary: Activity log
+      x-access: admin

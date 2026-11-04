@@ -13,17 +13,17 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/files"
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/sharedefaults"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/sharedefaults"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func applyShareDefaultsPolicy(u *users.User, editable *share.ShareEditable, isCreate bool) (int, error) {

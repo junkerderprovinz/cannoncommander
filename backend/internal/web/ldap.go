@@ -6,10 +6,9 @@ import (
 	"strings"
 
 	ldap "github.com/go-ldap/ldap/v3"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
 	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // AuthenticateLDAPUser attempts LDAP authentication and returns the filebrowser user if successful.

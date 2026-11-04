@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func findSessionCookie(t *testing.T, rec *httptest.ResponseRecorder) *http.Cookie {
@@ -200,7 +200,7 @@ func TestApplyNamedApiTokenGlobalCaps(t *testing.T) {
 		customized := false
 		user.Tokens = map[string]users.AuthToken{
 			"customized": {
-				Name: "customized",
+				Name:    "customized",
 				Minimal: &customized,
 				Permissions: users.Permissions{
 					Admin:  false,

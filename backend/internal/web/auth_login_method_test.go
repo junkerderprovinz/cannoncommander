@@ -7,12 +7,12 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/app"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/auth"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	fberrors "github.com/gtsteffaniak/filebrowser/backend/internal/errors"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/app"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	fberrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestGetOrCreateAuthenticatedUserRejectsLoginMethodMismatch(t *testing.T) {

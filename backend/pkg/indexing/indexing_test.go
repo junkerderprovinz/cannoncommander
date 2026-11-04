@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	dbsql "github.com/gtsteffaniak/filebrowser/backend/internal/database/sql"
+	dbsql "github.com/junkerderprovinz/cannoncommander/backend/internal/database/sql"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func BenchmarkFillIndex(b *testing.B) {

@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
 func docEnabled() bool {

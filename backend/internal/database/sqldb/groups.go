@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/access"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
 )
 
 // Groups SQL operations

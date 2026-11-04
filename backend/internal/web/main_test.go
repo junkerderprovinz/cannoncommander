@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/testutil"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 func TestMain(m *testing.M) {

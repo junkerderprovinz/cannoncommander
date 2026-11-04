@@ -1,0 +1,82 @@
+tag:
+  name: events
+  description: The server event stream and the folders a client watches.
+paths:
+  /events:
+    get:
+      operationId: eventsStream
+      summary: Server events as SSE
+      description: |
+        Opens a text/event-stream. Each frame has "id:", "event:" and a
+        "data:" line holding an Event. Heartbeats come every 25 seconds
+        without an id. After a reconnect with Last-Event-ID the missed
+        events follow first, or a single resync event when they are gone.
+      parameters:
+        - name: clientId
+          in: query
+          description: Chosen by the client once per tab, it ties the watched folders to this stream. Without it the stream carries only the events that are not about watched folders.
+          schema:
+            type: string
+            maxLength: 64
+        - name: lastEventId
+          in: query
+          description: Same as the Last-Event-ID header, for clients that cannot set headers.
+          schema:
+            type: integer
+            format: int64
+        - name: Last-Event-ID
+          in: header
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: The stream.
+          content:
+            text/event-stream:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /events/watch:
+    put:
+      operationId: eventsWatch
+      summary: Set the folders a client watches
+      description: |
+        Replaces the watched folders of a client. For each of them the stream
+        delivers fs.changed with topic fs:<path>. Folders stay watched for two
+        minutes after the stream closes, so a reconnect keeps them.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WatchRequest"
+      responses:
+        "200":
+          description: The watched folders.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WatchRequest"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+components:
+  schemas:
+    WatchRequest:
+      type: object
+      required: [clientId, paths]
+      properties:
+        clientId:
+          type: string
+        paths:
+          type: array
+          maxItems: 64
+          items:
+            type: string

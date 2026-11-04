@@ -13,12 +13,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/app"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/app"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func setupExtractAccessPolicyTest(t *testing.T) (destDir, sourceRoot, sourceName, username string) {
@@ -49,7 +49,7 @@ func setupExtractAccessPolicyTest(t *testing.T) (destDir, sourceRoot, sourceName
 	username = "extract-user"
 	perms := fullPerms()
 	user := &users.User{
-		ID: 1,
+		ID:           1,
 		FrontendUser: users.FrontendUser{Username: username},
 		BackendScopes: []users.BackendScope{{
 			Path:        sourceRoot,

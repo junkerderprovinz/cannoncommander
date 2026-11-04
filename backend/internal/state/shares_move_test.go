@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 func rewriteSharePathAfterMove(sharePath, oldPath, newPath string) string {

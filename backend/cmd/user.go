@@ -6,12 +6,12 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/usersidebar"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 var createBackup = false
@@ -98,7 +98,7 @@ func validateUserInfo(newDB bool) {
 			continue
 		}
 
-		skipCreateBackup := os.Getenv("FILEBROWSER_DISABLE_AUTOMATIC_BACKUP") == "true" || newDB
+		skipCreateBackup := os.Getenv("CC_DISABLE_AUTOMATIC_BACKUP") == "true" || newDB
 		if createBackup && !skipCreateBackup {
 			logger.Warning("Incompatible user settings detected, creating backup of database before converting.")
 			err = fileutils.CopyFile(settings.Config.Server.DatabaseV2.Path, fmt.Sprintf("%s.bak", settings.Config.Server.DatabaseV2.Path))

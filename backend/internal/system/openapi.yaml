@@ -1,0 +1,40 @@
+tag:
+  name: system
+  description: Server state and the settings only admins change.
+paths:
+  /system:
+    get:
+      operationId: systemGet
+      summary: Version, uptime and available features
+  /admin/sources:
+    get:
+      operationId: sourcesGet
+      summary: Configured sources
+      x-access: admin
+    put:
+      operationId: sourcesPut
+      summary: Save sources
+      x-access: admin
+  /admin/index:
+    get:
+      operationId: indexState
+      summary: State of the index per source
+      x-access: admin
+    post:
+      operationId: indexRebuild
+      summary: Rebuild the index of a source
+      x-access: admin
+  /admin/integrations/test:
+    post:
+      operationId: integrationsTest
+      summary: Try an integration such as an office server
+      x-access: admin
+  /admin/app:
+    get:
+      operationId: appSettingsGet
+      summary: Server wide settings
+      x-access: admin
+    put:
+      operationId: appSettingsPut
+      summary: Save server wide settings
+      x-access: admin

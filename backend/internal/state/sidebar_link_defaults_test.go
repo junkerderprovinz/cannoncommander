@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/usersidebar"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
 )
 
 func TestPatchSidebarLinkDefaults_retriesPendingResync(t *testing.T) {

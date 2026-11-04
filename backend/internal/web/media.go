@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/files"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/ffmpeg"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // subtitlesHandler handles subtitle requests for both external files and embedded streams

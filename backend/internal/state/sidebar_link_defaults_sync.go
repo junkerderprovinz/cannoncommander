@@ -3,8 +3,8 @@ package state
 import (
 	"fmt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/usersidebar"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
 )
 
 // ResyncSidebarLinkDefaultsForAllUsers merges enabled default sidebar links for every user.

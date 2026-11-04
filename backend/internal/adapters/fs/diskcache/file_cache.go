@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 )
 
 // Cache interface for caching operations

@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/alecthomas/kong"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -175,7 +175,7 @@ func TestPasswordReadAllFromReader(t *testing.T) {
 
 func TestResolveConfigPathEnvMissingFile(t *testing.T) {
 	missing := filepath.Join(t.TempDir(), "does-not-exist.yaml")
-	t.Setenv("FILEBROWSER_CONFIG", missing)
+	t.Setenv("CC_CONFIG", missing)
 	config := ""
 	resolveConfigPath(&config)
 	assert.Equal(t, missing, config)

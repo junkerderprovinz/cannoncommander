@@ -3,7 +3,7 @@ package settings
 import (
 	"encoding/json"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // ProfileFromUser builds nested profile from runtime user fields (flat + Preview).

@@ -5,12 +5,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func initSidebarLinkTestDB(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 

@@ -10,14 +10,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 const (
-	shareAccessScopeDownload = "download"
-	shareAccessScopeUISession  = "ui"
-	maxShareAccessTTL          = 24 * time.Hour
+	shareAccessScopeDownload  = "download"
+	shareAccessScopeUISession = "ui"
+	maxShareAccessTTL         = 24 * time.Hour
 )
 
 // shareDownloadGrantMu serializes use-count decrements for limited download tokens.

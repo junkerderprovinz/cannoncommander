@@ -3,9 +3,9 @@ package state
 import (
 	"fmt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // ApplyEnforcedSyncToUser applies enforced default values onto u in memory. Returns true if profile fields changed.

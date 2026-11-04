@@ -3,7 +3,7 @@ package state
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/quota"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/quota"
 )
 
 func withCleanQuotaReservations(t *testing.T) {

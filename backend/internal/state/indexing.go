@@ -3,8 +3,8 @@ package state
 import (
 	"fmt"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/errors"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/dbindex"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 )
 
 // Index info operations
