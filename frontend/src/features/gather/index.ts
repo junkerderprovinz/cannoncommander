@@ -10,6 +10,7 @@ import { win } from '@/core/windows';
 import { join, split } from '@/files/paths';
 import { t, tl } from '@/i18n';
 import { diskName, jobLabel } from '@/features/jobs/label';
+import { useUnraid } from '@/features/unraid/state';
 import { useJobs } from '@/stores/jobs';
 import { usePanels } from '@/stores/panels';
 import { useUser } from '@/stores/user';
@@ -67,6 +68,7 @@ function gatherWindow() {
   async function go() {
     if (!st.plan?.moves) return;
     const path = st.path.trim().replace(/(.)\/$/, '$1'), name = split(path).pop()!, mode = st.mode, disk = st.disk;
+    useUnraid().wake(st.plan.devices.filter((d) => d.device === disk || d.after !== d.now).map((d) => d.device));
     try {
       const job: Job = await useJobs().start({ kind: mode, params: { path, disk } });
       toast(t('gather.running', { label: jobLabel(job) }), 'ok', { label: t('gather.toJobs'), run: () => run('jobs') });

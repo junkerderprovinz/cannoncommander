@@ -57,8 +57,15 @@ export const useJobs = defineStore('jobs', () => {
     for (const j of got) if (!isOpen(j) && known.get(j.id) && isOpen(known.get(j.id)!)) ended(j);
   }
 
+  // Jobs asked for that the server has not answered yet, so a queue read right after a click is not empty.
+  const starting = ref(0);
   async function start(req: JobCreate) {
-    return upsert(await ops.startJob(req));
+    starting.value++;
+    try {
+      return upsert(await ops.startJob(req));
+    } finally {
+      starting.value--;
+    }
   }
 
   // Runs fn once the job has ended, whether it ended before the call or later.
@@ -138,7 +145,7 @@ export const useJobs = defineStore('jobs', () => {
   on('resync', () => { load().catch(() => {}); });
 
   return {
-    list, running, settings, load, start, whenDone, onEnded, onAsked, find, pause, cancel, retry, move, setCap, decide, clear,
+    list, running, starting, settings, load, start, whenDone, onEnded, onAsked, find, pause, cancel, retry, move, setCap, decide, clear,
     addLocal, localChanged, loadSettings, saveSettings, upsert,
   };
 });

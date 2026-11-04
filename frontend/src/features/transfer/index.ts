@@ -12,6 +12,7 @@ import { parent, split } from '@/files/paths';
 import { t, tl } from '@/i18n';
 import { diskName, jobLabel, objects, placeName } from '@/features/jobs/label';
 import { undoAct } from '@/features/undo/act';
+import { useUnraid } from '@/features/unraid/state';
 import { useClipboard } from '@/stores/clipboard';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
@@ -125,6 +126,7 @@ export async function transfer(job: Transfer) {
     if (!decisions) return;
     params.decisions = decisions;
   }
+  if (u?.wakes.length) useUnraid().wake(u.wakes);
   try {
     const started = await useJobs().start({ kind, params, waitForParity });
     toast(t('transfer.running', { label: jobLabel(started) }), 'ok', { label: t('transfer.toJobs'), run: () => run('jobs') });

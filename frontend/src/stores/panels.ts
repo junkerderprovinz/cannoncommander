@@ -36,6 +36,7 @@ export interface Tab {
   deep?: boolean;
   flat?: boolean;
   smart?: boolean;
+  cacheOnly?: boolean;
 }
 export interface Panel { tabs: Tab[]; cur: number }
 // A short word on a row, such as "kopiert", that a feature puts there and the next folder change takes away.
