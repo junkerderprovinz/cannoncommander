@@ -46,7 +46,10 @@ func NewSQLStoreWithOptions(dbPath string, opts NewSQLStoreOpts) (*SQLStore, boo
 	// Shared cache is intentionally not used: its table-lock conflicts surface as
 	// SQLITE_LOCKED_SHAREDCACHE, which busy_timeout does not wait on, and SQLite
 	// discourages the mode. WAL already provides concurrent readers.
-	dsn := fmt.Sprintf("file:%s?mode=rwc&_journal_mode=WAL", dbPath)
+	// With WAL, synchronous=NORMAL keeps the file intact through a crash and a
+	// power cut only costs the last commits. FULL waits for the disk on every
+	// commit, and a job writes several per item.
+	dsn := fmt.Sprintf("file:%s?mode=rwc&_journal_mode=WAL&_synchronous=NORMAL", dbPath)
 	db, err := sql.Open(SqliteDriver, sqlitebusy.WithBusyTimeout(dsn))
 	if err != nil {
 		return nil, existingDb, fmt.Errorf("failed to open database: %w", err)
