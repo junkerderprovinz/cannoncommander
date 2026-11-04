@@ -17,9 +17,9 @@ export const useTrash = defineStore('trash', () => {
     bytes.value = got.bytes;
   }
   // Restoring and deleting for good run as jobs, so they report like every other job.
-  const restore = async (list: TrashItem[]) => useJobs().upsert(await ops.restore(list.map((e) => e.id)));
-  const purge = async (list: TrashItem[]) => useJobs().upsert(await ops.emptyTrash(list.map((e) => e.id)));
-  const empty = async () => useJobs().upsert(await ops.emptyTrash());
+  const restore = async (list: TrashItem[]) => useJobs().adopt(await ops.restore(list.map((e) => e.id)));
+  const purge = async (list: TrashItem[]) => useJobs().adopt(await ops.emptyTrash(list.map((e) => e.id)));
+  const empty = async () => useJobs().adopt(await ops.emptyTrash());
 
   on('trash.changed', () => { load().catch(() => {}); });
   on('resync', () => { load().catch(() => {}); });

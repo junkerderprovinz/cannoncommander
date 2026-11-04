@@ -42,7 +42,7 @@ export const useUndo = defineStore('undo', () => {
     }
     steps.value = steps.value.filter((s) => s.id !== step.server.id);
     const got = await ops.undo(step.server.id).catch((e) => { load().catch(() => {}); throw e; });
-    if (got.job) useJobs().upsert(got.job);
+    if (got.job) useJobs().adopt(got.job);
     return true;
   }
   const byId = (id: string) => list.value.find((s) => ('server' in s ? s.server.id : s.local.id) === id);

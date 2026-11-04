@@ -23,7 +23,7 @@ beforeEach(() => {
   vi.spyOn(api, 'fsTree').mockImplementation(async (path) => fx.tree(path) ?? { path, items: [] });
   vi.spyOn(api, 'fsMeta').mockImplementation(async (paths, columns) => fx.meta({ paths, columns }).items);
   vi.spyOn(api, 'search').mockImplementation(async (path, q, hidden) => {
-    const got = fx.search(path, q, hidden)!;
+    const got = fx.search(path, { q, hidden })!;
     return { items: got.items.map((h) => ({ ...toItem(h), at: h.at })), more: !!got.more };
   });
 });

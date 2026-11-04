@@ -57,12 +57,19 @@ export const useJobs = defineStore('jobs', () => {
     for (const j of got) if (!isOpen(j) && known.get(j.id) && isOpen(known.get(j.id)!)) ended(j);
   }
 
+  // A quick job can end, and say so over the event stream, before the answer that created it arrives; that answer
+  // must not put it back into the queue.
+  function adopt(got: Job) {
+    const known = find(got.id);
+    return known && !isOpen(known) ? known : upsert(got);
+  }
+
   // Jobs asked for that the server has not answered yet, so a queue read right after a click is not empty.
   const starting = ref(0);
   async function start(req: JobCreate) {
     starting.value++;
     try {
-      return upsert(await ops.startJob(req));
+      return adopt(await ops.startJob(req));
     } finally {
       starting.value--;
     }
@@ -146,6 +153,6 @@ export const useJobs = defineStore('jobs', () => {
 
   return {
     list, running, starting, settings, load, start, whenDone, onEnded, onAsked, find, pause, cancel, retry, move, setCap, decide, clear,
-    addLocal, localChanged, loadSettings, saveSettings, upsert,
+    addLocal, localChanged, loadSettings, saveSettings, upsert, adopt,
   };
 });

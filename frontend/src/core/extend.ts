@@ -1,6 +1,7 @@
 // Named extension points. Feature modules add to them instead of patching the core, so two features never fight over one function.
 import { shallowReactive, type VNodeChild } from 'vue';
 import type { Entry } from '@/files/entries';
+import type { Tab } from '@/stores/panels';
 import type { Action } from './actions';
 import type { Toast } from './toast';
 
@@ -13,6 +14,11 @@ export interface ExtensionPoints {
   afterGo: Array<(path: string, panel: number) => void>;
   transferPipeline: Array<(job: Record<string, unknown>) => Record<string, unknown> | null>;
   footerSlots: Array<(panel: number) => VNodeChild>;
+  // Inside the search field of the path row, such as its menu, and as bars between the path row and the list.
+  filterSlots: Array<(panel: number) => VNodeChild>;
+  panelBars: Array<(panel: number) => VNodeChild>;
+  // A tab that shows something other than its folder names it here.
+  tabLabels: Array<(tab: Tab) => { name: string; g?: string } | null>;
   nameBadges: Array<(item: Entry, path: string) => VNodeChild>;
   thumbProviders: Array<(item: Entry, path: string) => VNodeChild | null>;
   sideRows: Array<() => VNodeChild>;
@@ -26,7 +32,7 @@ export interface ExtensionPoints {
 
 export const extend: ExtensionPoints = {
   entryFilters: shallowReactive([]), tagMatchers: shallowReactive([]), beforeGo: shallowReactive([]), afterGo: shallowReactive([]), transferPipeline: shallowReactive([]),
-  footerSlots: shallowReactive([]), nameBadges: shallowReactive([]), thumbProviders: shallowReactive([]), sideRows: shallowReactive([]),
+  footerSlots: shallowReactive([]), filterSlots: shallowReactive([]), panelBars: shallowReactive([]), tabLabels: shallowReactive([]), nameBadges: shallowReactive([]), thumbProviders: shallowReactive([]), sideRows: shallowReactive([]),
   treeDecorators: shallowReactive([]), propsWells: shallowReactive([]), actionWrappers: shallowReactive([]), onRender: shallowReactive([]), toastHistory: shallowReactive([]),
 };
 

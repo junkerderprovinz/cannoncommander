@@ -3,3 +3,5 @@ import type { Connect } from 'vite';
 
 export function opsFixture(): Connect.NextHandleFunction;
 export function opsFixtureMiddleware(): Connect.NextHandleFunction;
+// The queue and tree helpers the other parts of the fixture run their jobs with.
+export function sharedOps(): Record<string, unknown>;

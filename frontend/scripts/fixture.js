@@ -37,7 +37,7 @@ export function loadPrototype() {
     for (const k of Object.keys(FS[key])) delete FS[key][k];
     Object.assign(FS[key], state.volumes[key.toLowerCase()]);
   }
-  Object.assign(DATA, { bookmarks: state.data.bookmarks, trash: state.data.trash });
+  Object.assign(DATA, { bookmarks: state.data.bookmarks, trash: state.data.trash, labels: state.data.labels || {} });
   const { COL } = vm.runInContext(`${read('js', '25-columns.js')}\n;({ COL })`, context);
   vm.runInContext(read('js', 'features', 'c-00-kit.js'), context);
   return { FS, DATA, COL, ck: CC.ck, hashOf: vm.runInContext('hashOf', context), DAY, NOW, CC, run: (code) => vm.runInContext(code, context) };
@@ -45,12 +45,30 @@ export function loadPrototype() {
 
 const iso = (t) => new Date(t).toISOString();
 
+// The field tests of the name line, such as breite:>=3840 or geändert:<30d, as the prototype's e-30-meta.js reads
+// them; the part of that file that patches the panel's filter is left out.
+function metaParser(run) {
+  const src = readFileSync(join(prototype, 'js', 'features', 'e-30-meta.js'), 'utf8');
+  return run(src.slice(0, src.indexOf('  const plain = nameMatcher;')) + '  return parse;\n})()');
+}
+
+const UNIT = { B: 1, K: 1024, KB: 1024, M: 1024 ** 2, MB: 1024 ** 2, G: 1024 ** 3, GB: 1024 ** 3, T: 1024 ** 4, TB: 1024 ** 4 };
+// A number alone counts in MB, as the search window says next to its size fields.
+const bytes = (v) => { const m = String(v ?? '').trim().toUpperCase().match(/^([\d.,]+)\s*([KMGT]?B?)$/); return m ? parseFloat(m[1].replace(',', '.')) * (UNIT[m[2]] || UNIT.MB) : NaN; };
+// A word without * or ? matches anywhere in a name, a word with them the whole name, as b-00-kit.js does it.
+function globRe(words) {
+  if (!words.length) return null;
+  const one = (p) => { const body = p.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.'); return /[*?]/.test(p) ? `^${body}$` : body; };
+  return new RegExp(words.map(one).join('|'), 'i');
+}
+
 // fs/meta sends figures and yes or no as such; the prototype writes everything as text, so these turn back.
 const NUMERIC = ['accessed', 'statchange', 'taken', 'duration', 'season', 'episode', 'track', 'year', 'iso', 'pages', 'words', 'lines', 'entries', 'unpacked', 'vbitrate'];
 const BOOLEAN = ['encrypted', 'archcrypt', 'bootable', 'signed'];
 
 export function createFixture() {
-  const { FS, DATA, COL, ck, hashOf, DAY } = loadPrototype();
+  const { FS, DATA, COL, ck, hashOf, DAY, NOW, run } = loadPrototype();
+  const parse = metaParser(run);
   const h = (k, salt) => hashOf(k.name + salt);
   const volume = (path) => {
     const v = FS.volumeOf(path);
@@ -109,24 +127,45 @@ export function createFixture() {
     meta({ paths = [], columns = [] }) {
       return { items: Object.fromEntries(paths.map((p) => [p, metaOf(p, columns)]).filter(([, v]) => v)) };
     },
-    // The prototype's own search: the whole tree below, up to 2000 hits, hidden folders skipped unless shown.
-    search(path, query, hidden) {
+    // GET /search the way the prototype's search window finds: names, field tests, tags, kind, size and age below a
+    // folder, hidden entries and everything in hidden folders only when asked, folders first and then by name.
+    search(path, p = {}) {
       const root = dirAt(path);
       if (!root) return null;
-      const parts = query.trim().toLowerCase().split(/\s+/).filter(Boolean).map((p) => (/[*?]/.test(p)
-        ? new RegExp('^' + p.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.') + '$', 'i') : p));
-      const match = (k) => parts.some((p) => (typeof p !== 'string' ? p.test(k.name) : k.name.toLowerCase().includes(p)));
-      const keep = (k) => hidden || (!k.hidden && !k.name.startsWith('.'));
+      const mq = parse(p.q || '');
+      const words = mq.rest.split(/[\s;]+/).filter(Boolean);
+      const tags = words.filter((w) => w.startsWith('#')).map((w) => w.slice(1).toLowerCase());
+      const nameRe = globRe(words.filter((w) => !w.startsWith('#')));
+      const tagged = (k, at) => { const l = DATA.labels[FS.join(at, k.name)]; return !!l && tags.some((w) => l.color === w || (l.tags || []).some((x) => x.toLowerCase() === w)); };
+      const min = bytes(p.min), max = bytes(p.max), when = p.when || 'any', type = p.type || 'all', hidden = !!p.hidden;
+      const limit = Math.min(10000, Math.max(1, Number(p.limit) || 2000));
+      const typeOk = (k) => {
+        if (type === 'all') return true;
+        const kind = FS.kindOf(k);
+        if (type === 'doc') return ['pdf', 'office', 'text', 'code'].includes(kind);
+        if (type === 'arch') return kind === 'arch' || kind === 'disk' || !!k.zip;
+        return kind === type;
+      };
       const hits = [];
+      let scanned = 0;
       const walk = (n, at) => {
-        for (const k of FS.kids(n).filter(keep)) {
-          if (hits.length >= 2000) return;
-          if (match(k)) hits.push({ ...item(k), at });
+        for (const k of FS.kids(n)) {
+          if (!hidden && (k.hidden || k.name.startsWith('.'))) continue;
+          scanned++;
+          const size = FS.totalSize(k);
+          let ok = (!nameRe && !tags.length) || !!nameRe?.test(k.name) || tagged(k, at);
+          ok &&= typeOk(k) && (!mq.fields || mq.test({ ...k, at }));
+          if (ok && !isNaN(min)) ok = size >= min;
+          if (ok && !isNaN(max)) ok = size <= max;
+          if (ok && when !== 'any') ok = when === 'old' ? k.time < NOW - 365 * DAY : k.time >= NOW - Number(when) * DAY;
+          if (ok) hits.push({ k, at });
           if (k.dir && !k.link) walk(k, FS.join(at, k.name));
         }
       };
       walk(root, path);
-      return { path, items: hits, more: hits.length >= 2000 };
+      if (mq.unknown.length) hits.length = 0;
+      hits.sort((a, b) => Number(!!b.k.dir) - Number(!!a.k.dir) || a.k.name.localeCompare(b.k.name, 'de', { numeric: true }));
+      return { path, items: hits.slice(0, limit).map((h) => ({ ...item(h.k), at: h.at })), total: hits.length, more: hits.length > limit, scanned, pending: 0, unknown: mq.unknown, indexed: true };
     },
     me: () => ({ name: 'jdp', full: 'Junker der Provinz', role: 'Admin' }),
     bookmarks: () => ({ items: DATA.bookmarks }),
@@ -157,7 +196,7 @@ export function fixtureMiddleware() {
     'GET /api/v1/fs/list': (q) => content.list(q.get('path') || '/') || fx.list(q.get('path') || '/'),
     'GET /api/v1/fs/tree': (q) => fx.tree(q.get('path') || '/'),
     'POST /api/v1/fs/meta': (_q, body) => fx.meta(body),
-    'GET /api/v1/search': (q) => fx.search(q.get('path') || '/', q.get('q') || '', q.get('hidden') === 'true'),
+    'GET /api/v1/search': (q) => fx.search(q.get('path') || '/', Object.fromEntries(q)),
     'GET /api/v1/me': () => fx.me(),
     'GET /api/v1/me/bookmarks': () => fx.bookmarks(),
     // Settings, shortcuts and watched folders are taken and forgotten; the browser's own copy carries them here.

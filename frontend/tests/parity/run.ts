@@ -100,6 +100,9 @@ function driven(tab: Page): Page {
     getAttribute: 2, fill: 2, selectOption: 2, setInputFiles: 2, dragAndDrop: 2, dispatchEvent: 3,
   };
   const acting = (name: string) => async (...args: unknown[]) => {
+    // Vue drops a click that bubbles to a handler attached at the same moment, and on a stopped clock a button drawn
+    // by the click before has the same moment as this one, so the clock moves on by a millisecond first.
+    if (name === 'click' || name === 'dblclick') await tab.clock.runFor(1);
     const given = (args[OPTIONS_AT[name]!] as { timeout?: number } | undefined) || {};
     const target = tab.locator(args[0] as string).first();
     // textContent and the like also read hidden elements, so for them being there is enough.
