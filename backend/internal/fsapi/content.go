@@ -104,22 +104,31 @@ func ServeFile(w http.ResponseWriter, r *http.Request, real, name string, info o
 		return err
 	}
 	hdr := w.Header()
-	hdr.Set("Content-Type", ctype)
-	hdr.Set("X-Content-Type-Options", "nosniff")
+	setDelivery(hdr, ctype, name, download)
 	hdr.Set("ETag", strongTag(info))
 	hdr.Set("Cache-Control", "private, no-cache")
-	// A page or a drawing from the share would otherwise run its scripts
-	// with the app's own origin and session.
-	if active(ctype) {
-		hdr.Set("Content-Security-Policy", "sandbox; default-src 'none'; img-src data:; style-src 'unsafe-inline'")
+	http.ServeContent(w, r, name, info.ModTime(), f)
+	return nil
+}
+
+// SandboxPolicy gives a response from the share a unique origin, so a page
+// or a drawing in it cannot run scripts with the app's origin and session.
+const SandboxPolicy = "sandbox; default-src 'none'; img-src data:; style-src 'unsafe-inline'"
+
+// setDelivery sets how a browser may treat a file from the share. What it
+// does not know to be harmless is sandboxed, because browsers run scripts in
+// more types than anyone lists, such as any XML with an XHTML element in it.
+func setDelivery(hdr http.Header, ctype, name string, download bool) {
+	hdr.Set("Content-Type", ctype)
+	hdr.Set("X-Content-Type-Options", "nosniff")
+	if !passive(ctype) {
+		hdr.Set("Content-Security-Policy", SandboxPolicy)
 	}
 	disposition := "inline"
 	if download {
 		disposition = "attachment"
 	}
 	hdr.Set("Content-Disposition", mime.FormatMediaType(disposition, map[string]string{"filename": name}))
-	http.ServeContent(w, r, name, info.ModTime(), f)
-	return nil
 }
 
 func (h handlers) text(w http.ResponseWriter, r *http.Request) error {
@@ -282,14 +291,17 @@ func contentType(name string, f *os.File) (string, error) {
 	return http.DetectContentType(head[:n]), nil
 }
 
-func active(ctype string) bool {
+// passive reports whether browsers only ever display ctype. The viewers need
+// these without the sandbox: a browser's PDF viewer refuses a sandboxed
+// document, and pictures, films and sound go to their own elements.
+func passive(ctype string) bool {
 	t, _, _ := mime.ParseMediaType(ctype)
 	switch t {
-	case "text/html", "application/xhtml+xml", "image/svg+xml", "text/xml", "application/xml",
-		"text/javascript", "application/javascript", "application/x-javascript":
+	case "image/png", "image/apng", "image/jpeg", "image/gif", "image/webp", "image/avif", "image/bmp", "image/tiff",
+		"image/x-icon", "image/vnd.microsoft.icon", "application/pdf", "text/plain", "text/markdown":
 		return true
 	}
-	return false
+	return strings.HasPrefix(t, "video/") || strings.HasPrefix(t, "audio/")
 }
 
 // strongTag changes whenever the file is written, which is what range
