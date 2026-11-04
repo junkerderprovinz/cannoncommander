@@ -24,7 +24,7 @@ export default function setup() {
   const busy = () => view.id !== 'files' || !!winStack.length || isMenuOpen() || !!document.querySelector('.qdrop, .cpick, .a-cpop')
     || panels().some((i) => F.T(i).marked.size) || !!document.activeElement?.matches('input, textarea');
 
-  function refresh(path: string) {
+  function refresh(path: string, glow = true) {
     pending.delete(path);
     const before = new Map((listing.lists.get(path)?.items ?? []).map((k) => [k.name, `${k.size}:${k.time}`]));
     const at = panels().map((i) => (F.T(i).path === path ? F.cursorEntry(i)?.name : undefined));
@@ -33,8 +33,10 @@ export default function setup() {
       if (!got || got.items.length === before.size && got.items.every((k) => before.get(k.name) === `${k.size}:${k.time}`)) return;
       stop();
       const now = got.items.filter((k) => before.get(k.name) !== `${k.size}:${k.time}`).map((k) => join(path, k.name));
-      now.forEach((p) => fresh.add(p));
-      setTimeout(() => now.forEach((p) => fresh.delete(p)), GLOW);
+      if (glow) {
+        now.forEach((p) => fresh.add(p));
+        setTimeout(() => now.forEach((p) => fresh.delete(p)), GLOW);
+      }
       panels().forEach((i, n) => {
         const k = at[n] ? F.entries(i).findIndex((x) => x.name === at[n]) : -1;
         if (k >= 0) F.T(i).cursor = k;
@@ -43,14 +45,15 @@ export default function setup() {
     setTimeout(stop, 10_000);
   }
 
-  // A change this page caused, by a job or a step it asked for a moment ago, shows at once and without the glow.
-  const own = () => jobs.running.length > 0 || Date.now() - writes.at < OWN;
+  // A change this page caused, by a step it asked for a moment ago or a job of its own that ended, shows at once and
+  // without the glow. A job tells the folders it changed before it says it is done, so its end hands those on too.
+  const own = () => Date.now() - writes.at < OWN;
   listing.setGate((path) => {
     if (own()) return true;
     if (prefs.liveRefresh === false || busy()) pending.add(path);
     else refresh(path);
     return false;
   });
-  setInterval(() => { if (prefs.liveRefresh !== false && !busy()) [...pending].forEach(refresh); }, 700);
-  jobs.onEnded(() => [...pending].forEach(refresh));
+  setInterval(() => { if (prefs.liveRefresh !== false && !busy()) [...pending].forEach((p) => refresh(p)); }, 700);
+  jobs.onEnded(() => [...pending].forEach((p) => refresh(p, false)));
 }

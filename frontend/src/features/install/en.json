@@ -25,5 +25,6 @@
       "head": "Firefox",
       "how": "On Android tap Install in the menu. On Windows Firefox offers an icon in the address bar for it, otherwise a bookmark does the job."
     }
-  }
+  },
+  "description": "File manager for your Unraid server, with two windows like Krusader"
 }

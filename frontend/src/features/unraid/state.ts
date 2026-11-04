@@ -61,7 +61,10 @@ export const useUnraid = defineStore('unraid', () => {
   }
   on('fs.changed', (e) => {
     const paths = (e.data as { paths?: string[] } | undefined)?.paths ?? [];
-    for (const key of [...whereOf.keys()]) if (paths.some((p) => key === p || key.startsWith(p + '/') || p.startsWith(key + '/'))) whereOf.delete(key);
+    // A file with hard links changes its list wherever another name for it comes or goes.
+    for (const key of [...whereOf.keys()]) {
+      if (whereOf.get(key)?.links || paths.some((p) => key === p || key.startsWith(p + '/') || p.startsWith(key + '/'))) whereOf.delete(key);
+    }
   });
 
   function setAsleep(devs: string[], sleep: boolean) {

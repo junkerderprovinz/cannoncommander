@@ -12,6 +12,7 @@ import { devOf, provideUnraid } from './unraid';
 import { provideTools } from './tools';
 import { menuName } from '@/core/menus';
 import { orderedTabs, settingsTabs } from '@/core/views';
+import { hashPath } from '@/core/nav';
 import { type Action, action, labelOf } from '@/core/actions';
 import { glyph, kindOf } from '@/core/glyphs';
 import { BASE, toItem } from '@/api/client';
@@ -110,7 +111,8 @@ function getNow<T>(path: string): T | undefined {
 
 // GlimStone names some parts of its menus otherwise than the prototype did, and the step files still look for the old
 // names: the pencil in a heading, a row that opens a submenu and the chosen one of a set. The Google Drive tile of the
-// remote window carries rclone's name for it, drive, where the prototype said gdrive.
+// remote window carries rclone's name for it, drive, where the prototype said gdrive. A damaged archive carries its
+// mark on the name, where the prototype marked the whole row.
 function aliasMenuParts() {
   const alias = () => {
     document.querySelectorAll<HTMLElement>('.glim-menu-head-edit').forEach((el) => {
@@ -118,6 +120,7 @@ function aliasMenuParts() {
       el.dataset.tip ||= el.getAttribute('aria-label') || el.getAttribute('title') || '';
     });
     document.querySelectorAll<HTMLElement>('.glim-menu [aria-haspopup="menu"]').forEach((el) => { el.dataset.sub ??= ''; });
+    document.querySelectorAll('.row').forEach((el) => el.classList.toggle('damaged', !!el.querySelector('.bk-damaged')));
     document.querySelectorAll<HTMLElement>('.a-tile[data-type="drive"]').forEach((el) => { el.dataset.type = 'gdrive'; });
     document.querySelectorAll('.glim-menu [role="menuitemradio"]').forEach((el) => el.classList.toggle('on', el.getAttribute('aria-checked') === 'true'));
   };
@@ -135,8 +138,9 @@ export async function installShim() {
   // the prototype keeps it, and signing in again brings it back as it was.
   const logout = actions.logout;
   if (logout) action('logout', { ...logout, run: async () => { await auth.logout().catch(() => {}); session.out = true; } });
-  // The prototype starts with two tabs on the left and the backups on the right, and the step files count on it.
-  [['/mnt/user/downloads', '/mnt/user/fotos/2026'], ['/mnt/user/backups']].forEach((paths, i) => Object.assign(panels.P(i), { tabs: paths.map(newTab), cur: 0 }));
+  // The prototype starts with two tabs on the left and the backups on the right, and the step files count on it. A
+  // folder in the address, as after a reload, takes the first tab's place.
+  [[hashPath() || '/mnt/user/downloads', '/mnt/user/fotos/2026'], ['/mnt/user/backups']].forEach((paths, i) => Object.assign(panels.P(i), { tabs: paths.map(newTab), cur: 0 }));
   panels.openTree.clear();
   for (const p of ['/mnt', '/mnt/user']) panels.openTree.add(p);
 
@@ -195,11 +199,15 @@ export async function installShim() {
     set clip(c: Clip | null) { clipboard.clip = c; },
     get marks() { return panels.marks; },
     set marks(m: Record<string, RowMark>[]) { panels.marks.splice(0, panels.marks.length, ...m); },
-    // The prototype changes folder at once; the store waits for the server. A folder already read changes at once
-    // here too, so a step that sets the cursor right after going there sets it in the new folder.
+    // The prototype changes folder at once; the store waits for the server. Here the folder is read at once when it
+    // is not in the cache, so a step that sets the cursor right after going there sets it in the new folder.
     go(path: string, i = panels.active) {
-      if (listing.lists.has(path)) panels.enter(path, i);
-      else void panels.go(path, i);
+      if (!listing.lists.has(path)) {
+        const got = getNow<FsList>('/fs/list?path=' + encodeURIComponent(path));
+        if (!got) return void panels.go(path, i);
+        listing.lists.set(path, { path, items: got.items.map(toItem), volume: got.volume });
+      }
+      panels.enter(path, i);
     },
     ...waiting.Files,
   };

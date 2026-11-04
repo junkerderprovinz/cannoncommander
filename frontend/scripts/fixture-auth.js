@@ -1,6 +1,7 @@
 // The sign in and the public share links of the fixture, shaped like the contracts in backend/internal/accounts and
-// backend/internal/shares. Every password is "cannoncommander", jdp has two factor login with the code 123456 or
-// the recovery code K7QM-3XRP, and neu has to pick a new password first. CC_FIXTURE_SIGNED_OUT=1 starts signed out.
+// backend/internal/shares. Every password is "cannoncommander", and the ones the prototype's step files type work
+// too. jdp has two factor login with the code 123456 or the recovery code K7QM-3XRP, and neu has to pick a new
+// password first. CC_FIXTURE_SIGNED_OUT=1 starts signed out.
 // Links: k3x9qa-urlaub (folder with the password sonnenschein, takes uploads), m7tq2p-rechnung (one file),
 // abgelaufen and aufgebraucht (both lead nowhere).
 import { strToU8, zipSync } from 'fflate';
@@ -8,6 +9,7 @@ import { clock } from './fixture-clock.js';
 
 const DAY = 86400000;
 const PASSWORD = 'cannoncommander';
+export const PASSWORDS = [PASSWORD, 'geheim', 'altes-passwort'];
 const iso = (t) => new Date(t).toISOString();
 
 const json = (res, status, body, headers = {}) => {
@@ -103,7 +105,7 @@ export function authFixtureMiddleware() {
       if (S.fails >= 5) return problem(res, 429, 'too many wrong tries, please wait a few minutes', undefined, { 'Retry-After': '900' });
       if (!b.username || !b.password) return problem(res, 400, 'name and password are both needed');
       const name = String(b.username).trim().toLowerCase();
-      if (!users[name] || b.password !== PASSWORD) {
+      if (!users[name] || !PASSWORDS.includes(b.password)) {
         S.fails++;
         return problem(res, 401, 'the name or the password is not right');
       }

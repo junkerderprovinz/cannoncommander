@@ -1,6 +1,7 @@
 // The settings pages, the account and the labels in the shape of /api/v1, as the contracts in
 // backend/internal/*/openapi.yaml describe it, with the prototype's made-up people and sources. It keeps changes in
 // memory, so a page can be clicked through as it will work against the server. Share links live in fixture-tools.js.
+import { PASSWORDS } from './fixture-auth.js';
 import { clock } from './fixture-clock.js';
 import { createFixture } from './fixture.js';
 
@@ -184,7 +185,7 @@ export function settingsFixtureMiddleware() {
     ['GET', '/me', () => ({ ...wireUser(me()), recovery: S.recovery, lockPassword: false })],
     ['PUT', '/me/password', (b) => {
       if (!b.next || b.next.length < 12) return [400, 'the password needs 12 characters'];
-      if (b.current !== 'cannoncommander') return [403, 'the current password is wrong'];
+      if (!PASSWORDS.includes(b.current)) return [403, 'the current password is wrong'];
       const ended = S.sessions.filter((s) => !s.current).length;
       S.sessions = S.sessions.filter((s) => s.current);
       me().pwChanged = clock.now();
