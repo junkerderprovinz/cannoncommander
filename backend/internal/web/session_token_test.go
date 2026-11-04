@@ -110,9 +110,7 @@ func TestWithUserDoesNotEchoCookieToken(t *testing.T) {
 	}
 }
 
-// Clients that authenticate without a session cookie (gvfs, Bearer, ?auth=)
-// still get the token planted so subsequent requests stay authenticated.
-func TestWithUserPlantsCookieForBearerClients(t *testing.T) {
+func TestWithUserLeavesTheCookieJarToSignIn(t *testing.T) {
 	setupTestEnv(t)
 	user := createTokenAuthUser(t, "bearer-user", users.Permissions{Api: true})
 	token := testSessionToken(t, user, time.Hour)
@@ -120,23 +118,29 @@ func TestWithUserPlantsCookieForBearerClients(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/users", http.NoBody)
 	req.Header.Set("Authorization", "Bearer "+token)
-
 	withUser(mockHandler)(recorder, req)
 
 	if recorder.Code != http.StatusOK {
 		t.Fatalf("expected status 200, got %d", recorder.Code)
 	}
-	cookies := recorder.Result().Cookies()
-	var session *http.Cookie
-	for _, c := range cookies {
-		if c.Name == sessionCookieName {
-			session = c
-		}
+	if setCookie := recorder.Header().Values("Set-Cookie"); len(setCookie) != 0 {
+		t.Fatalf("a bearer token ended up as the session cookie: %v", setCookie)
 	}
-	if session == nil {
-		t.Fatal("cookie-less authenticated request must receive Set-Cookie")
+}
+
+func TestALinkWithATokenDoesNotSignTheVisitorIn(t *testing.T) {
+	setupTestEnv(t)
+	user := createTokenAuthUser(t, "link-user", users.Permissions{Api: true})
+	token := testSessionToken(t, user, time.Hour)
+
+	recorder := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/users?auth="+token, http.NoBody)
+	withUser(mockHandler)(recorder, req)
+
+	if recorder.Code != http.StatusUnauthorized {
+		t.Fatalf("expected status 401, got %d", recorder.Code)
 	}
-	if session.Value != token {
-		t.Fatal("planted cookie must contain the presented token")
+	if setCookie := recorder.Header().Values("Set-Cookie"); len(setCookie) != 0 {
+		t.Fatalf("the link planted a session: %v", setCookie)
 	}
 }

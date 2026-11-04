@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -31,6 +32,7 @@ type fixture struct {
 	share  string
 	office system.Office
 	people map[string]*users.User
+	db     *sql.DB
 }
 
 const base = "http://cc.test/api/v1"
@@ -58,7 +60,7 @@ func newFixture(t *testing.T) *fixture {
 		t.Fatal(err)
 	}
 	all := users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true}
-	f := &fixture{t: t, share: share, people: map[string]*users.User{
+	f := &fixture{t: t, share: share, db: db, people: map[string]*users.User{
 		"jdp":  {ID: 1, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: all}}},
 		"anna": {ID: 2, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: users.SourceFilePermissions{View: true, Download: true}}}},
 	}}
@@ -83,6 +85,7 @@ func newFixture(t *testing.T) *fixture {
 	router.Contract("office", contract)
 	bind(router, &service{
 		fs:        fs,
+		db:        db,
 		keys:      &keys{db: db},
 		settings:  func(context.Context) (system.Office, error) { return f.office, nil },
 		user:      byID,
@@ -271,14 +274,11 @@ func TestCollaboraEditsThroughWOPIWithLocks(t *testing.T) {
 	if code != 200 || c.Token == "" || c.TTL < time.Now().Add(time.Hour).UnixMilli() {
 		t.Fatalf("config: %d %+v", code, c)
 	}
-	prefix := "https://cool.lan/browser/abc/cool.html?WOPISrc="
-	if !strings.HasPrefix(c.URL, prefix) {
+	editor, err := url.Parse(c.URL)
+	if err != nil || !strings.HasPrefix(c.URL, "https://cool.lan/browser/abc/cool.html?") {
 		t.Fatalf("editor address %s", c.URL)
 	}
-	src, err := url.QueryUnescape(strings.TrimPrefix(c.URL, prefix))
-	if err != nil {
-		t.Fatal(err)
-	}
+	src := editor.Query().Get("WOPISrc")
 	q := "?access_token=" + url.QueryEscape(c.Token)
 	wopi := func(method, suffix, body string, header ...string) *httptest.ResponseRecorder {
 		req := local(t, method, src+suffix+q, strings.NewReader(body))
@@ -345,5 +345,267 @@ func TestCollaboraViewersCannotLockOrSave(t *testing.T) {
 	}
 	if rec := f.do(local(t, "POST", src+"/contents"+q, strings.NewReader("x"))); rec.Code != http.StatusUnauthorized || f.content() != "alt" {
 		t.Fatalf("viewer saves: %d", rec.Code)
+	}
+}
+
+// readLink writes a file below the share and returns the address the
+// document server reads it from.
+func (f *fixture) readLink(t *testing.T, name, who string) string {
+	t.Helper()
+	if err := os.WriteFile(filepath.Join(f.share, "dokumente", name), []byte("<script>alert(1)</script>"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest("GET", "/office/config?path=/mnt/user/dokumente/"+name, nil)
+	req.Header.Set("X-User", who)
+	rec := f.do(req)
+	if rec.Code != 200 {
+		t.Fatalf("config for %s: %d %s", name, rec.Code, rec.Body)
+	}
+	var c Config
+	if err := json.Unmarshal(rec.Body.Bytes(), &c); err != nil {
+		t.Fatal(err)
+	}
+	return c.Config["document"].(map[string]any)["url"].(string)
+}
+
+func TestDocumentServerGetsAPageAsAnAttachment(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	for _, name := range []string{"seite.html", "daten.xml"} {
+		rec := f.do(local(t, "GET", f.readLink(t, name, "jdp"), nil))
+		if rec.Code != 200 || rec.Body.String() != "<script>alert(1)</script>" {
+			t.Fatalf("%s: %d %q", name, rec.Code, rec.Body)
+		}
+		h := rec.Header()
+		if !strings.HasPrefix(h.Get("Content-Disposition"), "attachment") || h.Get("X-Content-Type-Options") != "nosniff" ||
+			!strings.Contains(h.Get("Content-Security-Policy"), "sandbox") {
+			t.Errorf("%s goes out active: %v", name, h)
+		}
+		if strings.Contains(h.Get("Content-Type"), "html") || strings.Contains(h.Get("Content-Type"), "xml") {
+			t.Errorf("%s type %q", name, h.Get("Content-Type"))
+		}
+	}
+}
+
+func TestWOPIGetFileIsAnAttachment(t *testing.T) {
+	f := newFixture(t)
+	cool := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte(discoveryXML)) }))
+	defer cool.Close()
+	f.office = system.Office{Kind: system.OfficeCollabora, URL: cool.URL}
+	_, c := f.config("jdp")
+	src := base + "/wopi/files/" + fileID("/mnt/user/dokumente/Brief.docx") + "/contents?access_token=" + url.QueryEscape(c.Token)
+	rec := f.do(local(t, "GET", src, nil))
+	if rec.Code != 200 || rec.Body.String() != "alt" {
+		t.Fatalf("GetFile: %d %q", rec.Code, rec.Body)
+	}
+	if h := rec.Header(); !strings.HasPrefix(h.Get("Content-Disposition"), "attachment") || !strings.Contains(h.Get("Content-Security-Policy"), "sandbox") {
+		t.Errorf("headers %v", h)
+	}
+}
+
+func savedTo(t *testing.T, f *fixture, documentURL string) int {
+	t.Helper()
+	_, c := f.config("jdp")
+	callback := c.Config["editorConfig"].(map[string]any)["callbackUrl"].(string)
+	body, err := json.Marshal(map[string]any{"key": "k", "status": 2, "url": documentURL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	rec := f.do(local(t, "POST", callback, strings.NewReader(string(body))))
+	var out map[string]int
+	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
+		t.Fatal(err)
+	}
+	return out["error"]
+}
+
+func TestCallbackRefusesAnotherPortOnTheDocumentServer(t *testing.T) {
+	f := newFixture(t)
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("neu")) }))
+	defer docServer.Close()
+	other := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("fremd")) }))
+	defer other.Close()
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: docServer.URL}
+	if savedTo(t, f, other.URL+"/out.docx") != 1 || f.content() != "alt" {
+		t.Fatalf("a document from another port was taken: %q", f.content())
+	}
+	if savedTo(t, f, docServer.URL+"/out.docx") != 0 || f.content() != "neu" {
+		t.Fatalf("a document from the server itself was refused: %q", f.content())
+	}
+}
+
+func TestCallbackRefusesAnotherSchemeOnTheDocumentServer(t *testing.T) {
+	f := newFixture(t)
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("neu")) }))
+	defer docServer.Close()
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: strings.Replace(docServer.URL, "http://", "https://", 1)}
+	if savedTo(t, f, docServer.URL+"/out.docx") != 1 || f.content() != "alt" {
+		t.Fatalf("a document over another scheme was taken: %q", f.content())
+	}
+}
+
+func TestCallbackTreatsTheDefaultPortAsThePortOfTheScheme(t *testing.T) {
+	cases := []struct {
+		server, document string
+		same             bool
+	}{
+		{"https://office.lan", "https://office.lan:443/cache/out.docx", true},
+		{"https://office.lan:443/", "https://OFFICE.lan/cache/out.docx", true},
+		{"http://office.lan:80", "http://office.lan/cache/out.docx", true},
+		{"https://office.lan", "https://office.lan:8443/cache/out.docx", false},
+		{"http://office.lan", "https://office.lan/cache/out.docx", false},
+		{"https://office.lan", "https://office.lan.evil.test/cache/out.docx", false},
+	}
+	for _, c := range cases {
+		server, _ := url.Parse(c.server)
+		document, _ := url.Parse(c.document)
+		if got := sameOrigin(server, document); got != c.same {
+			t.Errorf("sameOrigin(%s, %s) = %v", c.server, c.document, got)
+		}
+	}
+}
+
+func TestCallbackRefusesARedirectOffTheDocumentServer(t *testing.T) {
+	f := newFixture(t)
+	reached := false
+	other := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		reached = true
+		_, _ = w.Write([]byte("fremd"))
+	}))
+	defer other.Close()
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, other.URL+"/secret", http.StatusFound)
+	}))
+	defer docServer.Close()
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: docServer.URL}
+	if savedTo(t, f, docServer.URL+"/out.docx") != 1 || f.content() != "alt" || reached {
+		t.Fatalf("the redirect was followed: reached %v, content %q", reached, f.content())
+	}
+}
+
+func TestCallbackFollowsARedirectThatStaysOnTheDocumentServer(t *testing.T) {
+	f := newFixture(t)
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/out.docx" {
+			http.Redirect(w, r, "/cache/out.docx", http.StatusFound)
+			return
+		}
+		_, _ = w.Write([]byte("neu"))
+	}))
+	defer docServer.Close()
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: docServer.URL}
+	if savedTo(t, f, docServer.URL+"/out.docx") != 0 || f.content() != "neu" {
+		t.Fatalf("content %q", f.content())
+	}
+}
+
+func TestALinkOutOfTheSourceDoesNotOpen(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	outside := filepath.Join(filepath.Dir(f.share), "geheim.docx")
+	if err := os.WriteFile(outside, []byte("geheim"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, filepath.Join(f.share, "dokumente", "link.docx")); err != nil {
+		t.Skipf("no symlinks here: %v", err)
+	}
+	req := httptest.NewRequest("GET", "/office/config?path=/mnt/user/dokumente/link.docx", nil)
+	req.Header.Set("X-User", "jdp")
+	if rec := f.do(req); rec.Code != http.StatusForbidden {
+		t.Fatalf("config through the link: %d", rec.Code)
+	}
+
+	// A file that turned into such a link after the document was opened.
+	_, c := f.config("jdp")
+	inside := filepath.Join(f.share, "dokumente", "Brief.docx")
+	if err := os.Remove(inside); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, inside); err != nil {
+		t.Fatal(err)
+	}
+	doc := c.Config["document"].(map[string]any)
+	if rec := f.do(local(t, "GET", doc["url"].(string), nil)); rec.Code != http.StatusForbidden || strings.Contains(rec.Body.String(), "geheim") {
+		t.Fatalf("read through the link: %d %q", rec.Code, rec.Body)
+	}
+	docServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("neu")) }))
+	defer docServer.Close()
+	f.office.URL = docServer.URL
+	body := `{"key":"k","status":2,"url":"` + docServer.URL + `/out.docx"}`
+	f.do(local(t, "POST", c.Config["editorConfig"].(map[string]any)["callbackUrl"].(string), strings.NewReader(body)))
+	if b, _ := os.ReadFile(outside); string(b) != "geheim" {
+		t.Fatalf("written through the link: %q", b)
+	}
+}
+
+func TestOfficeNeedsTheDownloadRightToRead(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	viewer := users.SourceFilePermissions{View: true}
+	f.people["gast"] = &users.User{ID: 3, BackendScopes: []users.BackendScope{{Path: f.share, Scope: "/", Permissions: viewer}}}
+	f.people["gast"].Username = "gast"
+	if code, _ := f.config("gast"); code != http.StatusForbidden {
+		t.Fatalf("config without the download right: %d", code)
+	}
+
+	f.people["gast"].BackendScopes[0].Permissions.Download = true
+	_, c := f.config("gast")
+	f.people["gast"].BackendScopes[0].Permissions.Download = false
+	file := c.Config["document"].(map[string]any)["url"].(string)
+	if rec := f.do(local(t, "GET", file, nil)); rec.Code != http.StatusForbidden {
+		t.Fatalf("read after the download right was taken: %d", rec.Code)
+	}
+}
+
+func (f *fixture) picksLanguage(who, lang string) {
+	f.t.Helper()
+	_, err := f.db.Exec(`INSERT INTO user_prefs (user_id, data, updated_at) VALUES (?, ?, 0)`,
+		strconv.FormatUint(f.people[who].ID, 10), `{"language":"`+lang+`"}`)
+	if err != nil {
+		f.t.Fatal(err)
+	}
+}
+
+func TestOnlyOfficeOpensInTheLanguageThePersonPicked(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeEuroOffice, URL: "https://office.lan"}
+	f.people["jdp"].Locale = "fr"
+	f.picksLanguage("jdp", "de")
+	_, c := f.config("jdp")
+	if got := c.Config["editorConfig"].(map[string]any)["lang"]; got != "de" {
+		t.Errorf("lang %v", got)
+	}
+}
+
+func TestOnlyOfficeFallsBackToTheLocaleBeforeALanguageIsPicked(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	_, c := f.config("anna")
+	if got := c.Config["editorConfig"].(map[string]any)["lang"]; got != "en" {
+		t.Errorf("without a locale: %v", got)
+	}
+	f.people["jdp"].Locale = "fr"
+	_, c = f.config("jdp")
+	if got := c.Config["editorConfig"].(map[string]any)["lang"]; got != "fr" {
+		t.Errorf("with a locale: %v", got)
+	}
+}
+
+func TestCollaboraOpensInTheLanguageThePersonPicked(t *testing.T) {
+	f := newFixture(t)
+	cool := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte(discoveryXML)) }))
+	defer cool.Close()
+	f.office = system.Office{Kind: system.OfficeCollabora, URL: cool.URL}
+	f.picksLanguage("jdp", "de")
+	_, c := f.config("jdp")
+	editor, err := url.Parse(c.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := editor.Query().Get("lang"); got != "de" {
+		t.Errorf("lang %q in %s", got, c.URL)
+	}
+	if editor.Query().Get("WOPISrc") == "" {
+		t.Errorf("no WOPISrc in %s", c.URL)
 	}
 }
