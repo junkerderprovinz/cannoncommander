@@ -15,6 +15,8 @@
     "touch": "Created file “{name}”",
     "copy": "Copied {what} to {to}",
     "move": "Moved {what} to {to}",
-    "trash": "Put {what} in the trash"
+    "trash": "Put {what} in the trash",
+    "renameBatch": "Renamed {what}",
+    "link": "Created link “{name}”"
   }
 }

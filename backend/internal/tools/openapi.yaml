@@ -5,8 +5,10 @@ tag:
     ArrowLoop. The long runs are jobs: pack, unpack, testArchive, checksum,
     verify, split, combine, attrsRecursive, sync and fetchUrl, started with
     POST /jobs. Their params are described under the schemas Pack, Unpack,
-    TestArchive, Checksum, Verify, Split, Combine, Sync and FetchUrl. An
-    archive password goes into the params but not into the job table, so a
+    TestArchive, Checksum, Verify, Split, Combine, Sync and FetchUrl, the
+    result of a finished one under PackResult, UnpackResult,
+    TestArchiveResult, ChecksumResult, VerifyResult, SplitResult and
+    CombineResult. An archive password goes into the params but not into the job table, so a
     job resumed after a restart fails and has to be started again.
 paths:
   /tools/compare:
@@ -800,6 +802,113 @@ components:
           type: string
         dest:
           type: string
+    PackResult:
+      type: object
+      required: [path]
+      description: Result of a finished pack job, also of fetchUrl.
+      properties:
+        path:
+          type: string
+          description: Where the archive, or the loaded file, landed. A name that was taken gets a number.
+    UnpackResult:
+      type: object
+      required: [paths, skipped]
+      properties:
+        paths:
+          type: array
+          description: The folders made for each archive, or the entries unpacked at the top.
+          items:
+            type: string
+        skipped:
+          type: integer
+    TestArchiveResult:
+      type: object
+      required: [archives]
+      properties:
+        archives:
+          type: array
+          items:
+            type: object
+            required: [path, members, ok]
+            properties:
+              path:
+                type: string
+              members:
+                type: integer
+                description: Members read before the test ended.
+              ok:
+                type: boolean
+              damage:
+                type: object
+                required: [reason]
+                properties:
+                  entry:
+                    type: string
+                  reason:
+                    type: string
+              password:
+                type: boolean
+                description: The archive needs a password that was not given.
+    ChecksumResult:
+      type: object
+      required: [algo, files]
+      properties:
+        algo:
+          type: string
+          enum: [md5, sha1, sha256, sha512, b3]
+        files:
+          type: array
+          items:
+            type: object
+            required: [path, name, hash]
+            properties:
+              path:
+                type: string
+              name:
+                type: string
+                description: Relative to the folder the sources lie in.
+              hash:
+                type: string
+        saved:
+          type: string
+          description: The sum file written, when the params asked for one.
+    VerifyResult:
+      type: object
+      required: [lines]
+      properties:
+        lines:
+          type: array
+          description: One per line of the list, in its order.
+          items:
+            type: object
+            required: [name, state]
+            properties:
+              name:
+                type: string
+              path:
+                type: string
+              algo:
+                type: string
+              state:
+                type: string
+                enum: [ok, mismatch, missing, bad]
+    SplitResult:
+      type: object
+      required: [parts, first]
+      properties:
+        parts:
+          type: integer
+        first:
+          type: string
+    CombineResult:
+      type: object
+      required: [path, checked]
+      properties:
+        path:
+          type: string
+        checked:
+          type: boolean
+          description: The result was compared with the .sha256 beside the parts.
     DuplicatesParams:
       type: object
       required: [path]

@@ -11,13 +11,13 @@ import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { go as goView, view } from '@/core/views';
 import type { WinEntry } from '@/core/windows';
-import Crumbs from '@/bk/Crumbs.vue';
-import { copyText, folderSteps, num, plural, setFoot } from '@/bk/kit';
 import { toEntry } from '@/files/entries';
 import { inArchive, join, parent } from '@/files/paths';
 import { t } from '@/i18n';
 import { deleteItems } from '@/features/trash/trash';
 import { usePanels } from '@/stores/panels';
+import Crumbs from '@/ui/Crumbs.vue';
+import { copyText, folderSteps, num, plural, setFoot } from '@/ui/kit';
 import Seg from '@/ui/Seg.vue';
 import { ended } from './ended';
 import { fit, outermost, pct, squarify } from './treemap';
@@ -50,14 +50,14 @@ const asking = new Set<string>();
 function measure(path: string, again = false) {
   if ((usage.has(path) && !again) || asking.has(path)) return;
   asking.add(path);
-  tools.diskUsage(path, !!prefs.showHidden).then((u) => usage.set(path, u), (e) => { if (path === cur.value) toast((e as Error).message, 'warn'); })
+  tools.diskUsage(path, { hidden: !!prefs.showHidden }).then((u) => usage.set(path, u), (e) => { if (path === cur.value) toast((e as Error).message, 'warn'); })
     .finally(() => asking.delete(path));
 }
 function largestKind(path: string, k: string) {
   const key = path + '\n' + k;
   if (largestOf.has(key) || asking.has(key)) return largestOf.get(key);
   asking.add(key);
-  tools.diskUsage(path, !!prefs.showHidden, k).then((u) => largestOf.set(key, u.largest), () => {}).finally(() => asking.delete(key));
+  tools.diskUsage(path, { hidden: !!prefs.showHidden, kind: k }).then((u) => largestOf.set(key, u.largest), () => {}).finally(() => asking.delete(key));
   return undefined;
 }
 const here = computed(() => usage.get(cur.value));
@@ -132,7 +132,7 @@ const summary = computed(() => {
   if (sel.size) return t('diskusage.picked', { n: num(sel.size), size: fmtSize([...sel.values()].reduce((a, r) => a + r.size, 0)) || '0 B' });
   const u = here.value;
   if (!u) return ' ';
-  return t('diskusage.summary', { size: fmtSize(u.size) || '0 B', files: plural(u.files, t('diskusage.file'), t('diskusage.files')), dirs: plural(u.dirs, t('diskusage.dir'), t('diskusage.dirs')) });
+  return t('diskusage.summary', { size: fmtSize(u.size) || '0 B', files: plural(u.files, 'ui.files'), dirs: plural(u.dirs, 'ui.folders') });
 });
 watch([summary, () => sel.size], () => {
   setFoot(props.win, summary.value, [
@@ -183,7 +183,7 @@ function toggle(r: Row, state = !open.has(r.path)) {
 function remove() {
   const picked = [...sel.values()];
   if (!picked.length) return toast(t('diskusage.pickFirst'), 'warn');
-  if (inArchive(cur.value)) return toast(t('bk.archiveOnly'), 'warn');
+  if (inArchive(cur.value)) return toast(t('ui.archiveOnly'), 'warn');
   const items = outermost(picked).map((r) => toEntry({ name: r.name, dir: r.dir, size: r.size, time: r.time, mode: '', owner: '', group: '', at: r.at }));
   deleteItems(items, cur.value, { after: () => { sel.clear(); focus.value = null; } });
 }
@@ -326,7 +326,7 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
           <button v-for="x in types.list" :key="x.kind" class="du-row du-type" :data-du-kind="x.kind" :data-du-name="kindName(x.kind, x.name)" :data-du-glyph="KIND_GLYPH[x.kind] || 'IconFile'" :data-tip="t('diskusage.kindTip')">
             <span class="du-name"><G :n="KIND_GLYPH[x.kind] || 'IconFile'" /><span class="n">{{ kindName(x.kind, x.name) }}</span></span>
             <span class="du-exts muted">{{ x.exts.slice(0, 5).map((e) => '.' + e).join(' ') }}</span>
-            <span class="glim-num r muted">{{ plural(x.files, t('diskusage.file'), t('diskusage.files')) }}</span>
+            <span class="glim-num r muted">{{ plural(x.files, 'ui.files') }}</span>
             <span class="glim-num r">{{ fmtSize(x.size) || '0 B' }}</span><span class="du-share"><span class="bar"><i :style="{ width: share(x.size, types.whole).w }"></i></span><span class="glim-num">{{ share(x.size, types.whole).n }} %</span></span>
           </button>
         </template>

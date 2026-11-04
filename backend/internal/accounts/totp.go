@@ -9,6 +9,7 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/qrsvg"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
@@ -143,7 +144,7 @@ func (h handlers) startTotp(w http.ResponseWriter, r *http.Request, u *users.Use
 	if err != nil {
 		return err
 	}
-	svg, err := qrSVG(key.URL())
+	svg, err := qrsvg.Draw(key.URL())
 	if err != nil {
 		return err
 	}

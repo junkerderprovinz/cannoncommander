@@ -11,6 +11,7 @@ import { t, tl } from '@/i18n';
 import { shell } from '@/shell/state';
 import { useListing } from '@/stores/listing';
 import { newTab, usePanels } from '@/stores/panels';
+import { copyText } from '@/ui/kit';
 import { addBookmark, copyInternalLink } from './bookmarks';
 import { Columns } from './columns';
 import ColumnsBody from './ColumnsBody.vue';
@@ -121,10 +122,7 @@ export function registerFileActions() {
     F.entries().filter((k) => !k.up).forEach((k) => (tab.marked.has(k.name) ? tab.marked.delete(k.name) : tab.marked.add(k.name)));
   } });
   action('unselect', { label: tl('actions.unselect'), g: 'IconClearSelection', key: '-', run: () => { F.T().marked = new Set(); } });
-  action('copyPath', { label: tl('actions.copyPath'), g: 'IconLink', needs: 'sel', run: () => {
-    navigator.clipboard?.writeText(F.sel().map((k) => join(k.at || F.T().path, k.name)).join('\n'));
-    toast(t('files.pathCopied'));
-  } });
+  action('copyPath', { label: tl('actions.copyPath'), g: 'IconLink', needs: 'sel', run: () => copyText(F.sel().map((k) => join(k.at || F.T().path, k.name)).join('\n'), t('files.pathCopied')) });
 
   action('settings', { label: tl('actions.settings'), g: 'IconGear', run: () => goView('settings') });
   action('menuBar', { label: tl('actions.menuBar'), g: 'IconMenu', key: 'F10', run: () => openMenuBar(0) });
