@@ -92,6 +92,7 @@ func StartHttp(ctx context.Context, deps Deps, shutdownComplete chan struct{}) {
 
 	configureHTTPRouter(router, api, publicRoutes, publicApi)
 	router.HandleFunc("GET "+settings.Config.Http.BaseURL+"assets/", viteAssetHandler)
+	router.HandleFunc("GET "+settings.Config.Http.BaseURL+"s/{slug}", sharePageHandler)
 	if err := mountAPIv1(router); err != nil {
 		logger.Fatalf("Could not set up /api/v1: %v", err)
 	}

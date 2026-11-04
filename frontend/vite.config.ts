@@ -8,6 +8,8 @@ function fixture(): Plugin {
   const use = async (server: { middlewares: Connect.Server }) => {
     const { fixtureMiddleware } = await import('./scripts/fixture.js');
     const { opsFixtureMiddleware } = await import('./scripts/fixture-ops.js');
+    const { authFixtureMiddleware } = await import('./scripts/fixture-auth.js');
+    server.middlewares.use(authFixtureMiddleware());
     server.middlewares.use(opsFixtureMiddleware());
     const { settingsFixtureMiddleware } = await import('./scripts/fixture-settings.js');
     server.middlewares.use(settingsFixtureMiddleware());
@@ -16,11 +18,27 @@ function fixture(): Plugin {
   return { name: 'cc-fixture', configureServer: use, configurePreviewServer: use };
 }
 
+// The server answers /s/{slug} with the page for visitors, and the dev server does the same.
+function sharePage(): Plugin {
+  const use = (server: { middlewares: Connect.Server }) => {
+    server.middlewares.use((req, _res, next) => {
+      if (req.url && /^\/s\/[^/?]+\/?(\?|$)/.test(req.url)) req.url = '/share.html';
+      next();
+    });
+  };
+  return { name: 'cc-share-page', configureServer: use, configurePreviewServer: use };
+}
+
+const page = (file: string) => fileURLToPath(new URL(file, import.meta.url));
+
 export default defineConfig(({ mode }) => ({
-  plugins: [vue(), ...(mode === 'fixture' ? [fixture()] : [])],
+  plugins: [vue(), sharePage(), ...(mode === 'fixture' ? [fixture()] : [])],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: mode === 'fixture' ? {} : { proxy: { '/api': process.env.CC_BACKEND || 'http://localhost:8080' } },
-  build: { outDir: 'dist', emptyOutDir: true, chunkSizeWarningLimit: 900 },
+  build: {
+    outDir: 'dist', emptyOutDir: true, chunkSizeWarningLimit: 900,
+    rollupOptions: { input: { app: page('./index.html'), share: page('./share.html') } },
+  },
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.ts'],

@@ -2,5 +2,7 @@
   "pickFolder": "Choose a folder",
   "pick": "Choose",
   "folder": "Folder",
-  "noFolder": "This folder does not exist"
+  "noFolder": "This folder does not exist",
+  "show": "Show",
+  "hide": "Hide"
 }

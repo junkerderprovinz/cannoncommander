@@ -39,7 +39,7 @@ var kinds = map[string]kind{
 	"columns": kindArray, "colWidths": kindObject,
 	"density": kindString, "showHidden": kindBool, "showExt": kindBool, "syncBrowse": kindBool, "folderSizes": kindBool,
 	"foldersFirst": kindBool, "dblclick": kindString, "fkeys": kindBool, "side": kindBool, "dual": kindBool,
-	"quickview": kindBool, "confirmDelete": kindBool, "trash": kindBool, "trashDays": kindNumber,
+	"quickview": kindBool, "confirmDelete": kindBool, "trash": kindBool, "trashDays": kindNumber, "stayDays": kindNumber,
 	"language": kindString, "dateFormat": kindString, "startFolder": kindString,
 	"folderViews": kindObject, "folderGroups": kindObject,
 }

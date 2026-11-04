@@ -13,3 +13,8 @@
 .a-picker .nav-row.cur { background: var(--accent); }
 .ce-ask { display: flex; gap: .75rem; align-items: flex-start; line-height: 1.5; }
 .ce-ask svg { width: 1.2rem; height: 1.2rem; color: var(--accent-glyph); flex: none; margin-top: .1rem; }
+.pw-field { position: relative; display: inline-flex; flex: 1 1 13rem; min-width: 0; }
+.pw-field .field { width: 100%; padding-right: 2.3rem; }
+.pw-eye { position: absolute; right: .35rem; top: 50%; translate: 0 -50%; width: 1.6rem; height: 1.6rem; display: grid; place-items: center; color: var(--carbon-text-muted); border-radius: var(--radius-control); }
+.pw-eye svg { width: .95rem; height: .95rem; }
+.pw-eye:hover { color: var(--carbon-text); }

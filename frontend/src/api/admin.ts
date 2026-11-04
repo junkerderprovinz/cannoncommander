@@ -95,7 +95,7 @@ export const me = {
   createToken: (name: string, rights: Token['rights'], days: number | null) => write<{ secret: string }>('POST', '/me/tokens', { name, rights, days }),
   deleteToken: (id: string) => write('DELETE', `/me/tokens/${id}`),
   passkeys: async () => (await items<Wire<Passkey, 'created' | 'last'>>('/me/passkeys')).map(passkey),
-  addPasskey: (body: { name: string; credential?: unknown }) => write<{ options?: CredentialCreationOptions; passkey?: unknown }>('POST', '/me/passkeys', body),
+  addPasskey: (body: { name: string; credential?: unknown }) => write<{ options?: { publicKey: Record<string, unknown> }; passkey?: unknown }>('POST', '/me/passkeys', body),
   deletePasskey: (id: string) => write('DELETE', `/me/passkeys/${id}`),
   // The server draws the QR code, so no encoder ships to the browser.
   totpBegin: () => write<{ secret: string; uri: string; qr: string }>('POST', '/me/totp', {}),
