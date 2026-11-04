@@ -5,7 +5,7 @@ export const DEFAULT_KEYS: Record<string, string> = {
   'Ctrl+1': 'single', 'Ctrl+2': 'dual', 'Ctrl+b': 'sidebar', 'Ctrl+q': 'quickview', 'Ctrl+h': 'hidden', 'Ctrl+u': 'swapPanels', 'Ctrl+.': 'equalPanels',
   'Ctrl+r': 'refresh', 'Ctrl+t': 'newTab', 'Ctrl+w': 'closeTab', 'Alt+ArrowLeft': 'back', 'Alt+ArrowRight': 'forward', 'Ctrl+l': 'gotoPath', 'Ctrl+k': 'palette',
   'Ctrl+a': 'selectAll', '*': 'invertSel', '-': 'unselect', '+': 'selectPattern', '/': 'quickFilter', 'Ctrl+f': 'quickFilter',
-  'Ctrl+x': 'clipCut', 'Ctrl+c': 'clipCopy', 'Ctrl+v': 'clipPaste',
+  'Ctrl+x': 'clipCut', 'Ctrl+c': 'clipCopy',
   F1: 'shortcuts', F2: 'rename', F3: 'view', F4: 'edit', 'Shift+F4': 'newFile', F5: 'copy', F6: 'move', F7: 'newFolder', F8: 'delete', F9: 'search', F10: 'menuBar', Delete: 'delete',
   'Ctrl+d': 'duplicate', 'Shift+F7': 'folderWithSel', 'Alt+1': 'focusSide', 'Alt+2': 'focusLeft', 'Alt+3': 'focusRight', 'Alt+4': 'focusJobs',
   'Alt+F7': 'search', 'Alt+ArrowDown': 'history', 'Ctrl+m': 'multiRename', 'Ctrl+Shift+c': 'compareDirs', 'Ctrl+Shift+v': 'nextView', 'Ctrl+Shift+b': 'flat', 'Alt+Enter': 'props', 'Alt+p': 'pack', 'Alt+u': 'unpack', 'Alt+d': 'diskUsage',

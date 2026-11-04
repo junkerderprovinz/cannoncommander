@@ -43,14 +43,15 @@ interface Rule { pattern: string; why: string }
 interface ShotRule { pixels: number; why: string }
 // page: a prototype page of its own that the app has no counterpart for, run on both sides.
 // stale: why the step file fails on the prototype as well, until it is brought up to date.
-interface Allow { lines?: Rule[]; shots?: Record<string, ShotRule>; page?: string; stale?: string }
+// errors: console errors the app writes on purpose, such as the 401 that signing out brings.
+interface Allow { lines?: Rule[]; shots?: Record<string, ShotRule>; errors?: Rule[]; page?: string; stale?: string }
 interface Side { lines: string[]; shots: string[]; errors: string[]; ms: number }
 interface Result { steps: string; a: Side; b: Side; problems: string[]; allowed: string[] }
 
 const allowAll: Record<string, Allow> = JSON.parse(readFileSync(join(here, 'allow.json'), 'utf8'));
 const allowFor = (steps: string): Allow => {
   const own = allowAll[steps] || {}, any = allowAll['*'] || {};
-  return { ...own, lines: [...(any.lines || []), ...(own.lines || [])], shots: { ...any.shots, ...own.shots } };
+  return { ...own, lines: [...(any.lines || []), ...(own.lines || [])], shots: { ...any.shots, ...own.shots }, errors: [...(any.errors || []), ...(own.errors || [])] };
 };
 
 const urlOf = (page: string) => (/^https?:/.test(page) ? page : pathToFileURL(resolve(page)).href);
@@ -74,13 +75,16 @@ async function fixtureServer(force = false): Promise<{ url: string; stop: () => 
     { cwd: frontend, env: { ...process.env, VITE_E2E: '1' }, stdio: 'ignore' });
   const url = `http://localhost:${port}/`;
   for (let waited = 0; !(await fetch(url + 'api/v1/me').then((r) => r.ok, () => false)); waited += 250) {
-    if (child.exitCode !== null || waited > 60_000) {
+    if (child.exitCode !== null || waited > 120_000) {
       child.kill();
       throw new Error(`the fixture server on port ${port} did not come up`);
     }
     await sleep(250);
   }
-  return { url, stop: () => child.kill() };
+  // Windows leaves a child running when its parent ends, so the server goes with the worker however that ends.
+  const stop = () => child.kill();
+  process.once('exit', stop);
+  return { url, stop };
 }
 
 // The same sequence of random numbers on both pages, again after every reload.
@@ -293,7 +297,8 @@ async function runSide(browser: Browser, file: string, page: string, dir: string
   // Step files print their findings with console.log; those lines are what both pages have to agree on.
   console.log = (...args: unknown[]) => { lines.push(format(...args)); };
   try {
-    await tab.goto(urlOf(page));
+    // A fresh fixture server compiles the app on the first request, which takes a while on a busy machine.
+    await tab.goto(urlOf(page), { timeout: 120_000 });
     const { page: drive, move } = driven(tab, /^https?:/.test(page) ? new URL('/', page).href : undefined);
     // The prototype has CC once its script ran, the app once the shim has read the fixture; a preview page has none.
     if (!preview) await drive.waitForFunction('typeof CC !== "undefined"');
@@ -330,8 +335,14 @@ function compare(steps: string, a: Side, b: Side, dir: string): Pick<Result, 'pr
   const sameErrors = a.errors.join('\n') === b.errors.join('\n');
   if (allow.stale && sameErrors && a.errors.length) allowed.push(`both sides stop the same way, ${allow.stale}`);
   else {
-    for (const e of a.errors) problems.push(`a: ${e}`);
-    for (const e of b.errors) problems.push(`b: ${e}`);
+    const known = (e: string) => (allow.errors || []).find((r) => new RegExp(r.pattern).test(e));
+    for (const [side, errs] of [['a', a.errors], ['b', b.errors]] as const) {
+      for (const e of errs) {
+        const rule = known(e);
+        if (rule) allowed.push(`${side}: ${e.slice(0, 80)}, ${rule.why}`);
+        else problems.push(`${side}: ${e}`);
+      }
+    }
   }
 
   const n = Math.max(a.lines.length, b.lines.length);

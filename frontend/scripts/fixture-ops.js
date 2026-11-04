@@ -287,7 +287,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
   }
 
   // The bytes move LAPSE times faster than the clock, so a finished job tells the time it would have taken a server.
-  const endOf = (j) => { const start = Date.parse(j.startedAt || j.createdAt); return iso(start + (clock.now() - start) * LAPSE); };
+  const endOf = (j) => { const start = Date.parse(j.createdAt); return iso(start + (clock.now() - start) * LAPSE); };
   const held = (j) => settings.parityWait && parity.busy && ['copy', 'move'].includes(j.kind) && (j.waitForParity || j._big);
   function tick() {
     const live = open().filter((j) => j.state === 'queued' || j.state === 'running');

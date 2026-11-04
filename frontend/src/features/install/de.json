@@ -25,5 +25,6 @@
       "head": "Firefox",
       "how": "Auf Android im Menü Installieren antippen. Unter Windows bietet Firefox dafür ein Symbol in der Adressleiste an, sonst tut es ein Lesezeichen."
     }
-  }
+  },
+  "description": "Dateimanager für deinen Unraid-Server, mit zwei Fenstern wie Krusader"
 }
