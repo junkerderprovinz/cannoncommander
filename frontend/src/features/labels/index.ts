@@ -9,6 +9,7 @@ import { win } from '@/core/windows';
 import { t, tl } from '@/i18n';
 import { type Labelled, useLabels } from '@/stores/labels';
 import { usePanels } from '@/stores/panels';
+import { addRowMenuItems } from '@/files/menus';
 import ColoursWin from './ColoursWin.vue';
 import Marks from './Marks.vue';
 import TagEditWin from './TagEditWin.vue';
@@ -57,6 +58,7 @@ export default function setup() {
   labels.load().catch(() => {});
   addTo('nameBadges', (k, path) => h(Marks, { k, path }));
   addTo('tagMatchers', (k, word, path) => labels.matches(k, word, path));
+  addRowMenuItems((sel, path) => labelMenuItems(sel, path));
   action('labelsMenu', {
     label: tl('labels.menu'), g: 'IconHash',
     run: (anchor?: HTMLElement) => {
