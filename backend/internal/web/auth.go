@@ -12,7 +12,6 @@ import (
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
@@ -60,11 +59,11 @@ func ExtractToken(r *http.Request) (string, error) {
 }
 
 // getOrCreateAuthenticatedUser is a common helper for retrieving or auto-creating users
-// that sign in through JWT or OIDC.
+// that sign in through OIDC.
 // When groupsPresent is false the groups claim was omitted and existing memberships are left unchanged.
 // When groupsPresent is true, groups (including empty) are synced into access-control GroupMap.
 func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod, isAdmin bool, groups []string, groupsPresent bool) (*users.User, error) {
-	if err := ensureUserInAllowedGroups(loginMethod, groups); err != nil {
+	if err := ensureUserInAllowedGroups(groups); err != nil {
 		return nil, err
 	}
 
@@ -134,14 +133,8 @@ func isAdminFromGroups(adminGroup string, groups []string) bool {
 // ensureUserInAllowedGroups rejects login when userGroups is configured and none
 // of the IdP groups are allowed. Must run before auto-create so denied users
 // leave no account behind.
-func ensureUserInAllowedGroups(loginMethod users.LoginMethod, groups []string) error {
-	allowedGroups := []string{}
-	switch loginMethod {
-	case users.LoginMethodJwt:
-		allowedGroups = settings.Config.Auth.Methods.JwtAuth.UserGroups
-	case users.LoginMethodOidc:
-		allowedGroups = settings.Config.Auth.Methods.OidcAuth.UserGroups
-	}
+func ensureUserInAllowedGroups(groups []string) error {
+	allowedGroups := settings.Config.Auth.Methods.OidcAuth.UserGroups
 	if len(allowedGroups) == 0 {
 		return nil
 	}
@@ -153,17 +146,6 @@ func ensureUserInAllowedGroups(loginMethod users.LoginMethod, groups []string) e
 		}
 	}
 	return fmt.Errorf("user is not in allowed groups")
-}
-
-// setupJwtUser retrieves or creates a user based on external JWT token claims
-func SetupJwtUser(r *http.Request, data *Context, username string, claims map[string]interface{}) (*users.User, error) {
-	jwtCfg := settings.Config.Auth.Methods.JwtAuth
-	groupsClaim := jwtCfg.GroupsClaim
-	_, groupsPresent := claims[groupsClaim]
-	groups := auth.ExtractGroupsFromClaims(claims, groupsClaim)
-	isAdmin := isAdminFromGroups(jwtCfg.AdminGroup, groups)
-
-	return getOrCreateAuthenticatedUser(username, users.LoginMethodJwt, isAdmin, groups, groupsPresent)
 }
 
 func sessionCookieDomain(r *http.Request) string {

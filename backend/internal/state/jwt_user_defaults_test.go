@@ -24,7 +24,7 @@ func TestJwtAutoCreateUserPersistsCreateUserDirScope(t *testing.T) {
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
 			Username:    "testadmin",
-			LoginMethod: users.LoginMethodJwt,
+			LoginMethod: users.LoginMethodOidc,
 		},
 	}
 	settings.ApplyUserDefaults(u)

@@ -12,6 +12,5 @@ auth:
     password:
       enabled: true
       minLength: 5
-      signup: false
     passkey:
       enabled: false

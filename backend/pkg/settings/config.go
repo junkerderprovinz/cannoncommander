@@ -510,14 +510,6 @@ func setupAuth(generate bool) {
 			warnOidcProxyHeaders()
 		}
 	}
-	if Config.Auth.Methods.JwtAuth.Enabled || generate {
-		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "jwt")
-		err := ValidateJwtAuth()
-		if err != nil && !generate {
-			logger.Fatalf("Error validating JWT auth: %v", err)
-		}
-		logger.Info("JWT Auth configured successfully")
-	}
 	if Config.Auth.Methods.PasskeyAuth.Enabled || generate {
 		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "passkey")
 		logger.Info("Passkey Auth configured successfully")
@@ -842,7 +834,6 @@ func SetDefaults(generate bool) Settings {
 				PasswordAuth: PasswordAuthConfig{
 					Enabled:   true,
 					MinLength: 5,
-					Signup:    false,
 				},
 			},
 		},

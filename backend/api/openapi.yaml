@@ -7462,7 +7462,7 @@ components:
             type: string
         loginMethod:
           type: string
-          enum: [password, proxy, oidc, ldap, jwt]
+          enum: [password, oidc]
         twofa:
           type: boolean
         passkeys:

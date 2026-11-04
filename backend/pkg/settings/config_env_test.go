@@ -77,14 +77,14 @@ func TestExpandConfigEnvCoercesWholeReference(t *testing.T) {
 
 func TestConfigLoadYamlEnvSubstitution(t *testing.T) {
 	testDir := t.TempDir()
-	const secret = "jwt-secret"
+	const secret = "oidc-secret"
 	t.Setenv("CC_TEST_SECRET", secret)
 
 	configContent := []byte(`
 auth:
   methods:
-    jwt:
-      secret: "${CC_TEST_SECRET}"
+    oidc:
+      clientSecret: "${CC_TEST_SECRET}"
 server:
   sources:
     - path: "."
@@ -97,8 +97,8 @@ server:
 	if err := loadConfigWithDefaults(configFile, true); err != nil {
 		t.Fatalf("loadConfigWithDefaults: %v", err)
 	}
-	if Config.Auth.Methods.JwtAuth.Secret != secret {
-		t.Fatalf("secret = %q, want %q", Config.Auth.Methods.JwtAuth.Secret, secret)
+	if Config.Auth.Methods.OidcAuth.ClientSecret != secret {
+		t.Fatalf("secret = %q, want %q", Config.Auth.Methods.OidcAuth.ClientSecret, secret)
 	}
 }
 
@@ -121,8 +121,8 @@ func TestConfigLoadYamlEnvSpecialCharacters(t *testing.T) {
 			configContent := []byte(`
 auth:
   methods:
-    jwt:
-      secret: "${CC_TEST_SECRET}"
+    oidc:
+      clientSecret: "${CC_TEST_SECRET}"
 server:
   sources:
     - path: "."
@@ -135,8 +135,8 @@ server:
 			if err := loadConfigWithDefaults(configFile, true); err != nil {
 				t.Fatalf("loadConfigWithDefaults: %v", err)
 			}
-			if Config.Auth.Methods.JwtAuth.Secret != tt.secret {
-				t.Fatalf("secret = %q, want %q", Config.Auth.Methods.JwtAuth.Secret, tt.secret)
+			if Config.Auth.Methods.OidcAuth.ClientSecret != tt.secret {
+				t.Fatalf("secret = %q, want %q", Config.Auth.Methods.OidcAuth.ClientSecret, tt.secret)
 			}
 		})
 	}

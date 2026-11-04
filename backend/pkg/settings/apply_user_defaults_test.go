@@ -182,7 +182,7 @@ func TestApplyUserDefaults_setsLoginMethodWhenEmpty(t *testing.T) {
 		Server: Server{},
 		UserDefaults: UserDefaults{
 			Account: UserDefaultsAccount{
-				LoginMethod: "jwt",
+				LoginMethod: "oidc",
 			},
 		},
 	}
@@ -190,8 +190,8 @@ func TestApplyUserDefaults_setsLoginMethodWhenEmpty(t *testing.T) {
 		FrontendUser: users.FrontendUser{Username: "x"},
 	}
 	ApplyUserDefaults(u)
-	if u.LoginMethod != users.LoginMethodJwt {
-		t.Fatalf("LoginMethod: got %q want jwt", u.LoginMethod)
+	if u.LoginMethod != users.LoginMethodOidc {
+		t.Fatalf("LoginMethod: got %q want oidc", u.LoginMethod)
 	}
 }
 
@@ -210,12 +210,12 @@ func TestApplyUserDefaults_preservesLoginMethodWhenAlreadySet(t *testing.T) {
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
 			Username:    "x",
-			LoginMethod: users.LoginMethodJwt,
+			LoginMethod: users.LoginMethodOidc,
 		},
 	}
 	ApplyUserDefaults(u)
-	if u.LoginMethod != users.LoginMethodJwt {
-		t.Fatalf("LoginMethod: got %q want jwt", u.LoginMethod)
+	if u.LoginMethod != users.LoginMethodOidc {
+		t.Fatalf("LoginMethod: got %q want oidc", u.LoginMethod)
 	}
 }
 
