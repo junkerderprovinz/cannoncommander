@@ -16,6 +16,7 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 func init() {
@@ -35,7 +36,7 @@ func init() {
 	)
 }
 
-// Login is what the session list needs from the login system.
+// Login is what the accounts need from the login system.
 type Login interface {
 	// Session returns the hash of the session token r carries and the
 	// client's address. ok is false for API tokens.
@@ -44,12 +45,25 @@ type Login interface {
 	Alive(hash string) bool
 	// End revokes the session token with this hash.
 	End(hash string) error
+	// EndAll revokes every session of the user except the one with the
+	// token hash keep and returns how many it ended.
+	EndAll(userID uint64, keep string) (int, error)
+	// APIToken returns the API token r logs in with. ok is false for
+	// sessions and every other kind of login.
+	APIToken(r *http.Request) (raw string, ok bool)
+	// Start logs u in on this client with a new session.
+	Start(w http.ResponseWriter, r *http.Request, u *users.User) error
+	// ClientIP returns the address of the client behind any proxy.
+	ClientIP(r *http.Request) string
+	// PasskeySite readies passkeys for the address r came in on and returns
+	// the relying party id and the host as the browser shows it.
+	PasskeySite(r *http.Request) (rpID, host string)
 }
 
 var login Login
 
-// UseLogin connects the session list to the login system. The server calls
-// it once before it starts serving.
+// UseLogin connects the accounts to the login system. The server calls it
+// once before it starts serving.
 func UseLogin(l Login) { login = l }
 
 // seenEvery limits how often a session's last use is written, since every
@@ -61,13 +75,31 @@ var (
 	seen   = map[string]time.Time{}
 )
 
-// Track wraps the authenticator of /api/v1 so every session that makes a
-// request shows up in the list with its browser, address and last use.
+// Track wraps the authenticator of /api/v1. Every session that makes a
+// request shows up in the list with its browser, address and last use, API
+// tokens remember when they were used, and a read only token gets no
+// further than reading.
 func Track(db *sql.DB, next v1.Authenticator) v1.Authenticator {
 	return func(w http.ResponseWriter, r *http.Request) (*users.User, error) {
 		u, err := next(w, r)
 		if err != nil {
 			return u, err
+		}
+		if raw, ok := login.APIToken(r); ok {
+			name, _ := users.TokenNameByRaw(u.Tokens, raw)
+			if u.Tokens[name].ReadOnly && !safe(r.Method) {
+				return nil, v1.Errorf(http.StatusForbidden, "this API token may only read")
+			}
+			hash := utils.HashSHA256(raw)
+			if due("token:" + hash) {
+				now := time.Now().Unix()
+				// Like the session list, this is bookkeeping that must not fail the request.
+				if _, err := db.ExecContext(r.Context(), `INSERT INTO token_use (token_hash, user_id, seen_at) VALUES (?, ?, ?)
+					ON CONFLICT (token_hash) DO UPDATE SET seen_at = excluded.seen_at`, hash, idOf(u), now); err != nil {
+					logger.Errorf("record token use: %v", err)
+				}
+			}
+			return u, nil
 		}
 		hash, ip, ok := login.Session(r)
 		if !ok || !due(hash) {
@@ -82,11 +114,27 @@ func Track(db *sql.DB, next v1.Authenticator) v1.Authenticator {
 		if _, err := db.ExecContext(r.Context(), `INSERT INTO sessions (id, user_id, token_hash, created_at, seen_at, user_agent, ip)
 			VALUES (?, ?, ?, ?, ?, ?, ?)
 			ON CONFLICT (token_hash) DO UPDATE SET seen_at = excluded.seen_at, user_agent = excluded.user_agent, ip = excluded.ip`,
-			rand.Text(), strconv.FormatUint(u.ID, 10), hash, now, now, ua, ip); err != nil {
+			rand.Text(), idOf(u), hash, now, now, ua, ip); err != nil {
 			logger.Errorf("record session: %v", err)
+		}
+		if err := seenNow(r.Context(), db, idOf(u), now); err != nil {
+			logger.Errorf("record last login: %v", err)
 		}
 		return u, nil
 	}
+}
+
+func safe(method string) bool {
+	return method == http.MethodGet || method == http.MethodHead || method == http.MethodOptions
+}
+
+// needSession refuses changes to logins and credentials that come with an
+// API token, so a token can never mint a stronger one or lock its owner out.
+func needSession(r *http.Request) error {
+	if _, ok := login.APIToken(r); ok {
+		return v1.Errorf(http.StatusForbidden, "sign in to change this, an API token cannot")
+	}
+	return nil
 }
 
 func due(hash string) bool {

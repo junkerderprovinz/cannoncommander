@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/subtle"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -197,4 +198,55 @@ func VerifyTotpCode(user *users.User, code string) error {
 	}
 
 	return nil
+}
+
+// NewTotpKey creates a fresh TOTP key for username with the settings of this server.
+func NewTotpKey(username string) (*otp.Key, error) {
+	return totp.Generate(totp.GenerateOpts{
+		Issuer:      IssuerName,
+		AccountName: username,
+		Period:      TOTPPeriod,
+		SecretSize:  TOTPSecretSize,
+		Digits:      TOTPDigits,
+		Algorithm:   TOTPAlgorithm,
+	})
+}
+
+// SealTotpSecret turns a plain secret into the form stored on the user,
+// encrypted when the server has a TOTP key.
+func SealTotpSecret(secret string) (stored, nonce string, err error) {
+	if settings.Config.Auth.TotpSecret == "" {
+		return secret, "", nil
+	}
+	return encryptSecret(secret, encryptionKey)
+}
+
+// OpenTotpSecret returns the plain secret behind a stored one.
+func OpenTotpSecret(stored, nonce string) (string, error) {
+	if settings.Config.Auth.TotpSecret == "" {
+		return stored, nil
+	}
+	if nonce == "" {
+		return "", fmt.Errorf("secret is encrypted but nonce is missing")
+	}
+	return decryptSecret(stored, nonce)
+}
+
+// TotpStep returns the time step at which code is valid for secret, looking
+// as far around now as the login does. Callers use the step to refuse a code
+// that was already used.
+func TotpStep(secret, code string, now time.Time) (int64, bool) {
+	opts := totp.ValidateOpts{Period: TOTPPeriod, Digits: TOTPDigits, Algorithm: TOTPAlgorithm}
+	period := int64(TOTPPeriod)
+	for k := -int64(TOTPSkew); k <= int64(TOTPSkew); k++ {
+		at := now.Add(time.Duration(k*period) * time.Second)
+		want, err := totp.GenerateCodeCustom(secret, at, opts)
+		if err != nil {
+			return 0, false
+		}
+		if subtle.ConstantTimeCompare([]byte(want), []byte(code)) == 1 {
+			return at.Unix() / period, true
+		}
+	}
+	return 0, false
 }

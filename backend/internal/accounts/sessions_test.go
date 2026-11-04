@@ -20,11 +20,20 @@ import (
 )
 
 // fakeLogin stands in for the login system: the X-Token header is the
-// session token and its value doubles as the hash.
+// session token and its value doubles as the hash, X-Api carries an API
+// token, and X-IP the client address.
 type fakeLogin struct {
-	mu    sync.Mutex
-	dead  map[string]bool
-	ended []string
+	mu      sync.Mutex
+	dead    map[string]bool
+	ended   []string
+	endAll  []endAll
+	started []string
+}
+
+// endAll is one call to EndAll.
+type endAll struct {
+	user uint64
+	keep string
 }
 
 func (l *fakeLogin) Session(r *http.Request) (string, string, bool) {
@@ -44,6 +53,38 @@ func (l *fakeLogin) End(hash string) error {
 	l.dead[hash] = true
 	l.ended = append(l.ended, hash)
 	return nil
+}
+
+// EndAll pretends every user has two other sessions.
+func (l *fakeLogin) EndAll(userID uint64, keep string) (int, error) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.endAll = append(l.endAll, endAll{userID, keep})
+	return 2, nil
+}
+
+func (l *fakeLogin) APIToken(r *http.Request) (string, bool) {
+	t := r.Header.Get("X-Api")
+	return t, t != ""
+}
+
+func (l *fakeLogin) Start(w http.ResponseWriter, _ *http.Request, u *users.User) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.started = append(l.started, u.Username)
+	w.Header().Set("Set-Cookie", "session=fresh")
+	return nil
+}
+
+func (l *fakeLogin) ClientIP(r *http.Request) string {
+	if ip := r.Header.Get("X-IP"); ip != "" {
+		return ip
+	}
+	return "192.0.2.1"
+}
+
+func (l *fakeLogin) PasskeySite(*http.Request) (string, string) {
+	return "cannon.lan", "cannon.lan:8443"
 }
 
 type fixture struct {

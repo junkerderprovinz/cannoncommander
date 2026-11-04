@@ -23,6 +23,23 @@ func HasAnyGlobalPermission(p Permissions) bool {
 	return g.Admin || g.Api || g.Share || g.Realtime
 }
 
+// RestrictToReading leaves u only the rights to look at and download files,
+// for a request that comes with a read only API token.
+func (u *User) RestrictToReading() {
+	u.Permissions.Admin, u.Permissions.Share = false, false
+	readOnly := func(p SourceFilePermissions) SourceFilePermissions {
+		p.Modify, p.Create, p.Delete = false, false, false
+		p.Configured = true
+		return p
+	}
+	for i := range u.BackendScopes {
+		u.BackendScopes[i].Permissions = readOnly(u.BackendScopes[i].Permissions)
+	}
+	for k, p := range u.BackendSourcePermissions {
+		u.BackendSourcePermissions[k] = readOnly(p)
+	}
+}
+
 // IsMinimalApiToken reports whether the token inherits the owner's globals at auth time
 // rather than applying stored global permission caps.
 func IsMinimalApiToken(t AuthToken) bool {

@@ -533,6 +533,37 @@ func TestEndedJobsCanBeRemoved(t *testing.T) {
 	}
 }
 
+func TestForgetDropsEveryJobOfTheOwner(t *testing.T) {
+	e := newEnv(t)
+	release := make(chan struct{})
+	name := addScript(t, gated(release))
+	running := e.submit(t, "test", name, 1)
+	waiting := e.submit(t, "test", name, 1)
+	e.waitState(t, running.ID, Running)
+	other, err := e.m.Submit("bert", "test", &Plan{Params: testParams{Script: name}, Items: []Item{{Path: "/mnt/user/b"}}}, 0, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	e.m.Forget("anna")
+	deadline := time.Now().Add(10 * time.Second)
+	for len(e.m.List("anna")) > 0 {
+		if time.Now().After(deadline) {
+			t.Fatalf("jobs of anna are left: %+v", e.m.List("anna"))
+		}
+		time.Sleep(5 * time.Millisecond)
+	}
+	if _, ok := e.m.Get(waiting.ID, false); ok {
+		t.Fatal("the queued job is still there")
+	}
+	e.waitState(t, other.ID, Running)
+	close(release)
+	e.waitState(t, other.ID, Done)
+	e.restart(t)
+	if list := e.m.List("anna"); len(list) != 0 {
+		t.Fatalf("forgotten jobs came back: %+v", list)
+	}
+}
+
 func TestEventsOnlyReachTheOwner(t *testing.T) {
 	e := newEnv(t)
 	other, _, _ := e.hub.Connect("tab-bert", "bert", 0)
