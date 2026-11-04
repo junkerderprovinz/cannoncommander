@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/coreos/go-oidc/v3/oidc"
@@ -69,13 +68,12 @@ type LoginMethods struct {
 }
 
 type PasswordAuthConfig struct {
-	Enabled       bool      `json:"enabled"`
-	AdminUsername string    `json:"adminUsername"`                  // secret: admin username auto-assigned. If not set, the default is "admin".
-	AdminPassword string    `json:"adminPassword"`                  // secret: password for admin auto-assigned admin account. If set, reset on startup.
-	MinLength     int       `json:"minLength" validate:"omitempty"` // minimum pasword length required, default is 5.
-	Signup        bool      `json:"signup" validate:"omitempty"`    // allow signups on login page if enabled -- not secure.
-	Recaptcha     Recaptcha `json:"recaptcha" validate:"omitempty"` // recaptcha config. If configured will show up the checkbox verification in the login page
-	EnforcedOtp   bool      `json:"enforcedOtp"`                    // if set to true, TOTP is enforced for all password users users. Otherwise, users can choose to enable TOTP.
+	Enabled       bool   `json:"enabled"`
+	AdminUsername string `json:"adminUsername"`                  // secret: admin username auto-assigned. If not set, the default is "admin".
+	AdminPassword string `json:"adminPassword"`                  // secret: password for admin auto-assigned admin account. If set, reset on startup.
+	MinLength     int    `json:"minLength" validate:"omitempty"` // minimum pasword length required, default is 5.
+	Signup        bool   `json:"signup" validate:"omitempty"`    // allow signups on login page if enabled -- not secure.
+	EnforcedOtp   bool   `json:"enforcedOtp"`                    // if set to true, TOTP is enforced for all password users users. Otherwise, users can choose to enable TOTP.
 }
 
 // PasswordAdminUsername returns the password-auth admin username.
@@ -120,26 +118,6 @@ func MigrateLegacyPasswordAdminFromAuth() {
 			pwd.AdminPassword = legacyPass
 			logger.Warning("auth.adminPassword is deprecated; use auth.methods.password.adminPassword")
 		}
-	}
-}
-
-type Recaptcha struct {
-	Host   string `json:"host" validate:"required"`   // google recaptcha host, for example: https://www.google.com/recaptcha/api.js
-	Key    string `json:"key" validate:"required"`    // v2 site key
-	Secret string `json:"secret" validate:"required"` // secret: v2 secret key
-}
-
-// ValidateRecaptcha disables recaptcha at startup if the configured host isn't a valid https URL
-func ValidateRecaptcha() {
-	r := &Config.Auth.Methods.PasswordAuth.Recaptcha
-	if r.Host == "" || r.Key == "" {
-		return
-	}
-	parsed, err := url.Parse(r.Host)
-	if err != nil || !strings.EqualFold(parsed.Scheme, "https") || parsed.Hostname() == "" {
-		logger.Warning(fmt.Sprintf("configured recaptcha host %q is not a valid https URL - disabling recaptcha", r.Host))
-		r.Host = ""
-		r.Key = ""
 	}
 }
 

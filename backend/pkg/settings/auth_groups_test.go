@@ -24,4 +24,3 @@ func TestResolveGroupsClaim(t *testing.T) {
 		t.Fatalf("ResolveGroupsClaim(memberOf) = %q, want memberOf", got)
 	}
 }
-

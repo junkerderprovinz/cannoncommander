@@ -62,7 +62,6 @@ func cspOriginFromURL(raw string) string {
 	return u.Scheme + "://" + u.Host
 }
 
-// setContentType sets the Content-Type header from the file extension.
 func setContentType(w http.ResponseWriter, path string) {
 	ext := strings.ToLower(filepath.Ext(path))
 	switch ext {

@@ -18,14 +18,7 @@ server:
           create: true
 
 frontend:
-  name: "Graham's Filebrowser"
-  disableDefaultLinks: true
-  externalLinks:
-    - text: "A playwright test"
-      url: "https://playwright.dev/"
-      title: "Playwright"
-  styling:
-    disableEventThemes: true
+  name: "CannonCommander"
 auth:
   methods:
     password:

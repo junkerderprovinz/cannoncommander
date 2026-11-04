@@ -962,7 +962,7 @@ func GenerateYaml() {
 	setupSources(true)
 	setupUrls()
 	setupMedia(true)
-	setupFrontend(true)
+	setupSearch()
 
 	output := "../frontend/public/config.generated.yaml" // "output YAML file"
 

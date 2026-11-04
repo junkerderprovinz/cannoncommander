@@ -6,12 +6,22 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 )
 
-// retiredKeys are settings the app no longer has. An older config may still
+// retiredKeys are settings that older versions knew. A config may still
 // carry them, and the strict decoder would refuse to start over them.
 var retiredKeys = [][]string{
 	{"auth", "methods", "ldap"},
 	{"auth", "methods", "proxy"},
 	{"server", "database", "quotas"},
+	{"auth", "methods", "password", "recaptcha"},
+	{"frontend", "description"},
+	{"frontend", "disableDefaultLinks"},
+	{"frontend", "disableNavButtons"},
+	{"frontend", "disablePWAInstall"},
+	{"frontend", "externalLinks"},
+	{"frontend", "favicon"},
+	{"frontend", "loginButtonText"},
+	{"frontend", "loginIcon"},
+	{"frontend", "styling"},
 	{"shareDefaults"},
 }
 

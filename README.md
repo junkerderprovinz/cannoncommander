@@ -63,7 +63,7 @@ The rows and the values for the web file managers are taken from the [comparison
 | Custom job support | ❌ | 🚧 | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ |
 | Multiple users | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
 | Single sign-on support | 🧪 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| LDAP sign-on support | 🚧 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| LDAP sign-on support | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
 | Long-lived API key support | 🚧 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
 | API documentation page | 🚧 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
 | Mobile app | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ |
@@ -72,7 +72,7 @@ The rows and the values for the web file managers are taken from the [comparison
 | Shareable web links | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
 | Event-based notifications | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | Metrics | ❌ | 🚧 | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| File space quotas | 🚧 | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ | 🟡 |
+| File space quotas | ❌ | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ | 🟡 |
 | Text-based files editor | 🧪 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Office file support | 🧪 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
 | Office file previews | 🧪 | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ? | 🟡 |
