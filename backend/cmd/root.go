@@ -34,18 +34,6 @@ func initializeDatabase(configFile string, cliMode bool) bool {
 		settings.Initialize(configFile)
 	}
 
-	if err := validateDatabasePaths(); err != nil {
-		logger.Fatalf("%v", err)
-	}
-
-	if checkMigrationNeeded() {
-		logger.Info("Old database detected, starting migration...")
-		err := migrateFromBoltToSQLite()
-		if err != nil {
-			logger.Fatalf("Migration failed: %v", err)
-		}
-	}
-
 	store, existingDb, err := state.Open(settings.Config.Server.DatabaseV2.Path)
 	if err != nil {
 		logger.Fatalf("could not initialize state: %v", err)

@@ -88,9 +88,8 @@ type ActivityConfig struct {
 }
 
 type Database struct {
-	Path        string         `json:"path"`        // path to SQLite database file
-	MigrateFrom string         `json:"migrateFrom"` // path to legacy database file for migration (optional)
-	Activity    ActivityConfig `json:"activity"`    // activity audit logging configuration
+	Path     string         `json:"path"`     // path to SQLite database file
+	Activity ActivityConfig `json:"activity"` // activity audit logging configuration
 }
 
 type Filesystem struct {

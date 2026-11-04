@@ -299,7 +299,7 @@ func updateTokenHashBackfill(user *users.User) (bool, bool) {
 		return false, false
 	}
 	before := len(user.Tokens)
-	promoteLegacyApiKeysBeforeSQLite(user)
+	promoteLegacyApiKeys(user)
 	changed := len(user.Tokens) != before
 	hashesRegistered := true
 	for _, raw := range state.CollectStoredRawTokens(user) {
@@ -325,4 +325,33 @@ func bumpToNewestVersion(user *users.User, migrationFailed bool) bool {
 	}
 	user.Version = users.NewestUserVersion
 	return true
+}
+
+// promoteLegacyApiKeys moves the apiKeys of older user records into Tokens,
+// so the hashed-tokens backfill can register them (strict auth needs a hash
+// row per raw JWT).
+// auth ignores BelongsTo and requires a hash row per raw JWT).
+func promoteLegacyApiKeys(user *users.User) {
+	if len(user.ApiKeys) == 0 {
+		return
+	}
+	if user.Tokens == nil {
+		user.Tokens = make(map[string]users.AuthToken)
+	}
+	for name, token := range user.ApiKeys {
+		if token.Name == "" {
+			token.Name = name
+		}
+		if token.Token == "" {
+			token.Token = token.Key
+		}
+		if token.Token == "" {
+			continue
+		}
+		if _, exists := user.Tokens[token.Name]; exists {
+			continue
+		}
+		token.Permissions = users.SanitizeTokenPermissions(token.Permissions)
+		users.StoreToken(user.Tokens, token)
+	}
 }
