@@ -776,6 +776,25 @@ func TestALinkEndsWithItsOwnersRights(t *testing.T) {
 	}
 }
 
+func TestAnOwnerWithoutTheShareRightCannotChangeALinkButCanWithdrawIt(t *testing.T) {
+	e := newEnv(t)
+	sh := e.create("anna", map[string]any{"paths": []string{"/mnt/user/fotos/a"}, "password": "sonnenschein"})
+	e.people["anna"].Permissions.Share = false
+	if a := e.do("PATCH", "/shares/"+sh.ID, map[string]any{"password": ""}, "X-User", "anna"); a.code != http.StatusForbidden {
+		t.Fatalf("taking the password off: %d %s", a.code, a.body)
+	}
+	e.people["anna"].Permissions.Share = true
+	var got shares.Share
+	e.do("GET", "/shares/"+sh.ID, nil, "X-User", "anna").into(t, &got)
+	if !got.Password {
+		t.Fatal("the link lost its password")
+	}
+	e.people["anna"].Permissions.Share = false
+	if a := e.do("DELETE", "/shares/"+sh.ID, nil, "X-User", "anna"); a.code != http.StatusNoContent {
+		t.Fatalf("withdrawing: %d %s", a.code, a.body)
+	}
+}
+
 func TestLinksFollowRenamesAndGetNewAddresses(t *testing.T) {
 	e := newEnv(t)
 	sh := e.create("anna", map[string]any{"paths": []string{"/mnt/user/fotos/Urlaub"}})
