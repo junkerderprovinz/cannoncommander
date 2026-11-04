@@ -1,5 +1,5 @@
 {
-  "name": "filebrowser",
+  "name": "cannoncommander",
   "image": "mcr.microsoft.com/devcontainers/go:1.25-bookworm",
   
 
@@ -18,7 +18,7 @@
   "forwardPorts": [80],
   "portsAttributes": {
     "80": {
-      "label": "filebrowser app",
+      "label": "cannoncommander",
       "onAutoForward": "notify"
     }
   },

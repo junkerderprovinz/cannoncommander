@@ -39,12 +39,12 @@ type Index interface {
 	Refresh(src *ccfs.Source, dir string)
 }
 
-// Quantum returns the index the indexing package builds for each source.
-func Quantum() Index { return quantum{} }
+// Scanned returns the index the indexing package builds for each source.
+func Scanned() Index { return scanned{} }
 
-type quantum struct{}
+type scanned struct{}
 
-func (quantum) Folders(src *ccfs.Source, dirs []string) map[string]Folder {
+func (scanned) Folders(src *ccfs.Source, dirs []string) map[string]Folder {
 	idx := indexing.Lookup(src.Name)
 	db := indexing.GetIndexDB()
 	if idx == nil || db == nil || len(dirs) == 0 {
@@ -79,7 +79,7 @@ func (quantum) Folders(src *ccfs.Source, dirs []string) map[string]Folder {
 	return out
 }
 
-func (quantum) Totals(src *ccfs.Source, dir string) (files, dirs int64, ok bool) {
+func (scanned) Totals(src *ccfs.Source, dir string) (files, dirs int64, ok bool) {
 	db := indexing.GetIndexDB()
 	if indexing.Lookup(src.Name) == nil || db == nil {
 		return 0, 0, false
@@ -92,7 +92,7 @@ func (quantum) Totals(src *ccfs.Source, dir string) (files, dirs int64, ok bool)
 	return files, dirs, files+dirs > 0
 }
 
-func (quantum) Refresh(src *ccfs.Source, dir string) {
+func (scanned) Refresh(src *ccfs.Source, dir string) {
 	if idx := indexing.Lookup(src.Name); idx != nil {
 		idx.RefreshDirectoryAsync(slashed(dir))
 	}

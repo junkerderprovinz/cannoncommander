@@ -22,7 +22,7 @@ type Settings struct {
 }
 
 type Http struct {
-	Socket            string   `json:"socket"`            // socket to listen on - eg. /var/run/filebrowser.sock
+	Socket            string   `json:"socket"`            // socket to listen on - eg. /var/run/cannoncommander.sock
 	TLSKey            string   `json:"tlsKey"`            // path to TLS key
 	TLSCert           string   `json:"tlsCert"`           // path to TLS cert
 	Port              int      `json:"port"`              // port to listen on
@@ -121,7 +121,7 @@ type Integrations struct {
 // docker exec <containerID> /var/www/onlyoffice/documentserver/npm/json -f /etc/onlyoffice/documentserver/local.json 'services.CoAuthoring.secret.session.string'
 type OnlyOffice struct {
 	Url         string `json:"url" validate:"required"`    // The URL to the OnlyOffice Document Server, needs to be accessible to the user.
-	InternalUrl string `json:"internalUrl"`                // An optional internal address that the filebrowser server can use to communicate with the OnlyOffice Document Server, could be useful to bypass proxy.
+	InternalUrl string `json:"internalUrl"`                // An optional internal address that the server can use to communicate with the OnlyOffice Document Server, could be useful to bypass proxy.
 	Secret      string `json:"secret" validate:"required"` // secret: authentication key for OnlyOffice integration
 	ViewOnly    bool   `json:"viewOnly"`                   // view only mode for OnlyOffice
 }

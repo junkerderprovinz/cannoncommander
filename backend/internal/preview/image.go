@@ -14,7 +14,7 @@ import (
 )
 
 // configureImagingParallelism limits kovidgoyal/imaging to one thread per resize.
-// Concurrent preview jobs are capped separately by imageSem (like OG filebrowser).
+// Concurrent preview jobs are capped separately by imageSem.
 func configureImagingParallelism() {
 	imaging.SetMaxProcs(1)
 }

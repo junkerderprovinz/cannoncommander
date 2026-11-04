@@ -13,7 +13,7 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 )
 
-// Service wraps go-ffmpeg for filebrowser media operations.
+// Service wraps go-ffmpeg for media operations.
 type Service struct {
 	inner    *goffmpeg.Service
 	cacheDir string

@@ -31,7 +31,7 @@ describe('fixture sign in', () => {
     expect(step).toMatchObject({ next: 'totp' });
     const done = await api('POST', '/auth/totp', { challenge: step.challenge, code: '123456' });
     expect(done.body).toMatchObject({ next: 'done', me: { name: 'jdp', twofa: true } });
-    expect(done.headers.get('Set-Cookie')).toContain('filebrowser_quantum_jwt');
+    expect(done.headers.get('Set-Cookie')).toContain('cannoncommander_session');
     expect((await api('POST', '/auth/totp', { challenge: step.challenge, code: '123456' })).status).toBe(410);
     const again = (await api('POST', '/auth/login', { username: 'jdp', password: 'cannoncommander' })).body;
     expect((await api('POST', '/auth/totp', { challenge: again.challenge, code: '123456' })).status).toBe(400);

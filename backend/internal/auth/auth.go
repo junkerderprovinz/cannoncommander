@@ -11,7 +11,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-const FB_ISSUER = "FileBrowser Quantum" // don't change
+const TokenIssuer = "CannonCommander"
 
 // IsRevokedApiToken checks if a token is in the revoked list.
 func IsRevokedApiToken(accessStore *access.Storage, token string) bool {
@@ -46,7 +46,7 @@ func MakeSignedTokenAPI(user *users.User, name string, duration time.Duration, p
 				ID:        id,
 				IssuedAt:  jwt.NewNumericDate(now),
 				ExpiresAt: jwt.NewNumericDate(expires),
-				Issuer:    FB_ISSUER,
+				Issuer:    TokenIssuer,
 			},
 		},
 	}

@@ -74,7 +74,7 @@ func TestSessionTokenWithoutIDRemainsValid(t *testing.T) {
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		IssuedAt:  jwt.NewNumericDate(now),
 		ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour)),
-		Issuer:    auth.FB_ISSUER,
+		Issuer:    auth.TokenIssuer,
 	}).SignedString([]byte(settings.Config.Auth.Key))
 	if err != nil {
 		t.Fatal(err)

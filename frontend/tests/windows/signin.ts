@@ -58,7 +58,7 @@ async function newPage() {
   page.on('pageerror', (e: Error) => errors.push(String(e).slice(0, 300)));
   return { context, page };
 }
-const sessionCookie = async (context: { cookies(): Promise<{ name: string; expires: number }[]> }) => (await context.cookies()).find((c) => c.name === 'filebrowser_quantum_jwt');
+const sessionCookie = async (context: { cookies(): Promise<{ name: string; expires: number }[]> }) => (await context.cookies()).find((c) => c.name === 'cannoncommander_session');
 
 // Without two factor login and without staying signed in: the cookie ends with the browser.
 {

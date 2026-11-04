@@ -16,7 +16,7 @@ func JWTSigningKeyBytes() ([]byte, error) {
 	return []byte(key), nil
 }
 
-// JWTSigningKeyFunc is the keyFunc for FileBrowser-issued session and API JWTs.
+// JWTSigningKeyFunc is the keyFunc for the session and API tokens this server issues.
 func JWTSigningKeyFunc() jwt.Keyfunc {
 	return func(token *jwt.Token) (interface{}, error) {
 		return JWTSigningKeyBytes()
