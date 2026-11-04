@@ -9,7 +9,7 @@ import (
 
 // Simulates migrateUsers() steps for a Bolt user without backend scopes or source permissions.
 func TestMigrateUsersFlow_appliesConfigDefaultsAndSourcePermissions(t *testing.T) {
-	loadMigrateTestConfig(t, "../../_docker/src/jwt/backend/config.yaml")
+	loadMigrateTestConfig(t, "../testdata/jwt.yaml")
 
 	user := &users.User{
 		FrontendUser: users.FrontendUser{
@@ -58,7 +58,7 @@ func TestMigrateUsersFlow_appliesConfigDefaultsAndSourcePermissions(t *testing.T
 }
 
 func TestMigrateUsersFlow_existingScopeGetsLegacyGlobalFileOps(t *testing.T) {
-	loadMigrateTestConfig(t, "../../_docker/src/proxy/backend/config.yaml")
+	loadMigrateTestConfig(t, "../testdata/userdefaults.yaml")
 
 	user := &users.User{
 		FrontendUser: users.FrontendUser{

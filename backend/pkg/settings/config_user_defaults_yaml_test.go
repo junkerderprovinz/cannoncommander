@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	proxyPlaywrightConfig = "../../../_docker/src/proxy/backend/config.yaml"
-	jwtPlaywrightConfig   = "../../../_docker/src/jwt/backend/config.yaml"
+	userDefaultsConfig = "../../testdata/userdefaults.yaml"
+	jwtConfig          = "../../testdata/jwt.yaml"
 )
 
-func TestYAMLConfig_proxy_newStyleUserDefaults(t *testing.T) {
-	loadConfigForUserDefaultsTests(t, proxyPlaywrightConfig)
+func TestYAMLConfig_newStyleUserDefaults(t *testing.T) {
+	loadConfigForUserDefaultsTests(t, userDefaultsConfig)
 
 	if !Config.UserDefaults.Account.Permissions.Share {
 		t.Fatal("expected account.permissions.share true from organized userDefaults")
@@ -39,8 +39,8 @@ func TestYAMLConfig_proxy_newStyleUserDefaults(t *testing.T) {
 	}
 }
 
-func TestYAMLConfig_proxy_sourceAccessDefaultsMatchYAML(t *testing.T) {
-	loadConfigForUserDefaultsTests(t, proxyPlaywrightConfig)
+func TestYAMLConfig_sourceAccessDefaultsMatchYAML(t *testing.T) {
+	loadConfigForUserDefaultsTests(t, userDefaultsConfig)
 	got := DefaultSourceFilePermissions()
 	if !got.View || !got.Download || !got.Modify || !got.Create {
 		t.Fatalf("DefaultSourceFilePermissions: %+v", got)
@@ -48,7 +48,7 @@ func TestYAMLConfig_proxy_sourceAccessDefaultsMatchYAML(t *testing.T) {
 }
 
 func TestYAMLConfig_jwt_organizedUserDefaults(t *testing.T) {
-	loadConfigForUserDefaultsTests(t, jwtPlaywrightConfig)
+	loadConfigForUserDefaultsTests(t, jwtConfig)
 
 	ud := Config.UserDefaults
 	if !ud.Account.Permissions.Share {
@@ -82,9 +82,9 @@ func TestYAMLConfig_validConfig_organizedPermissions(t *testing.T) {
 	}
 }
 
-func TestYAMLConfig_applyUserDefaultsFrom_proxyAndJwt(t *testing.T) {
-	t.Run("proxy", func(t *testing.T) {
-		loadConfigForUserDefaultsTests(t, proxyPlaywrightConfig)
+func TestYAMLConfig_applyUserDefaultsFrom(t *testing.T) {
+	t.Run("password", func(t *testing.T) {
+		loadConfigForUserDefaultsTests(t, userDefaultsConfig)
 		u := &users.User{FrontendUser: users.FrontendUser{Username: "demo-127.0.0.1", LoginMethod: users.LoginMethodPassword}}
 		ApplyUserDefaultsFrom(u, Config.UserDefaults)
 		if !u.Permissions.Share {
@@ -100,7 +100,7 @@ func TestYAMLConfig_applyUserDefaultsFrom_proxyAndJwt(t *testing.T) {
 	})
 
 	t.Run("jwt", func(t *testing.T) {
-		loadConfigForUserDefaultsTests(t, jwtPlaywrightConfig)
+		loadConfigForUserDefaultsTests(t, jwtConfig)
 		u := &users.User{FrontendUser: users.FrontendUser{Username: "testuser", LoginMethod: users.LoginMethodJwt}}
 		ApplyUserDefaultsFrom(u, Config.UserDefaults)
 		if !u.Permissions.Share {
@@ -122,7 +122,7 @@ func TestYAMLConfig_applyUserDefaultsFrom_proxyAndJwt(t *testing.T) {
 }
 
 func TestYAMLConfig_profileMerge_matchesApplyUserDefaults(t *testing.T) {
-	loadConfigForUserDefaultsTests(t, jwtPlaywrightConfig)
+	loadConfigForUserDefaultsTests(t, jwtConfig)
 	fromDefaults := ProfileFromUserDefaults(Config.UserDefaults)
 	u := &users.User{FrontendUser: users.FrontendUser{Username: "merge-check"}}
 	ExpandProfileIntoUser(u, fromDefaults)
@@ -137,7 +137,7 @@ func TestYAMLConfig_profileMerge_matchesApplyUserDefaults(t *testing.T) {
 }
 
 func TestYAMLConfig_seedSourcePermissionsAfterMigration(t *testing.T) {
-	loadConfigForUserDefaultsTests(t, proxyPlaywrightConfig)
+	loadConfigForUserDefaultsTests(t, userDefaultsConfig)
 	defaults := DefaultSourceFilePermissions()
 	user := &users.User{
 		Version: users.SourcePermissionsMigrationVersion,
