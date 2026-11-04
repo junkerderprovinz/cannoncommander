@@ -3,9 +3,6 @@ package state
 import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
 // Store is the runtime handle for the state gateway. It implements ports interfaces
@@ -27,18 +24,6 @@ func Open(dbPath string) (*Store, bool, error) {
 	existingDb, err := initialize(dbPath)
 	if err != nil {
 		return nil, existingDb, err
-	}
-	if sidebarLinkDefaultsNeedResync {
-		if err := ResyncSidebarLinkDefaultsForAllUsers(); err != nil {
-			return nil, existingDb, err
-		}
-		sidebarLinkDefaultsNeedResync = false
-	}
-	if toolAccessDefaultsNeedResync {
-		if err := ResyncToolAccessDefaultsForAllUsers(); err != nil {
-			return nil, existingDb, err
-		}
-		toolAccessDefaultsNeedResync = false
 	}
 	defaultStore = &Store{}
 	return defaultStore, existingDb, nil
@@ -66,21 +51,6 @@ func (s *Store) UpdateUser(user *users.User, plaintextPassword string, fields ..
 
 func (s *Store) DeleteUser(id uint64) error {
 	return DeleteUser(id)
-}
-
-// --- ports.AccessGate ---
-
-func (s *Store) AccessPermitted(sourcePath string, indexPath utils.IndexPath, username string) bool {
-	return AccessPermitted(sourcePath, indexPath, username)
-}
-
-func (s *Store) UpdateAccessRulesOnMove(sourcePath string, oldPath, newPath utils.IndexPath) (int, error) {
-	return UpdateAccessRulesOnMove(sourcePath, oldPath, newPath)
-}
-
-// CheckChildItemAccess implements files.ChildAccessChecker.
-func (s *Store) CheckChildItemAccess(response *iteminfo.FileInfo, idx *indexing.Index, username string) error {
-	return CheckChildItemAccess(response, idx, username)
 }
 
 // --- ports.IndexMetaStore ---

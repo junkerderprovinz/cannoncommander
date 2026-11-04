@@ -4,8 +4,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
-const SourceDefaultsConfigLockMessage = "some source access defaults were set in the config file and cannot be changed here until an admin removes them from the config file"
-
 // BuiltinDefaultSourceFilePermissions is used when no source access defaults are configured.
 func BuiltinDefaultSourceFilePermissions() users.SourceFilePermissions {
 	return users.SourceFilePermissions{
@@ -59,4 +57,19 @@ func OverlayConfigSourceDefaults(stored users.SourceFilePermissions) users.Sourc
 		setSourcePermissionFlag(&stored, flag, val)
 	}
 	return users.MarkSourceFilePermissionsConfigured(stored)
+}
+
+func setSourcePermissionFlag(perms *users.SourceFilePermissions, flag string, value bool) {
+	switch flag {
+	case "view":
+		perms.View = value
+	case "download":
+		perms.Download = value
+	case "modify":
+		perms.Modify = value
+	case "create":
+		perms.Create = value
+	case "delete":
+		perms.Delete = value
+	}
 }

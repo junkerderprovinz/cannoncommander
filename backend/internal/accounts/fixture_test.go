@@ -83,11 +83,11 @@ func newWorld(t *testing.T) *world {
 	app.MustWireServices(state.Default())
 
 	db := state.MainDB()
-	gate, err := accounts.Gate(state.Default(), db)
+	rules, err := accounts.Rules(db)
 	if err != nil {
 		t.Fatal(err)
 	}
-	fs, err := ccfs.New(gate,
+	fs, err := ccfs.New(rules,
 		ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: share},
 		ccfs.Source{Name: "Disk 1", Mount: "/mnt/disk1", Root: disk, AdminOnly: true},
 		ccfs.Source{Name: "USB-Stick", Mount: "/boot", Root: boot, ReadOnly: true},

@@ -5,43 +5,7 @@ import (
 	"slices"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
-
-// AccessPermitted reports whether username may access indexPath on sourcePath.
-// When accessDb is not initialized, access is allowed.
-func AccessPermitted(sourcePath string, indexPath utils.IndexPath, username string) bool {
-	if accessDb == nil {
-		return true
-	}
-	return accessDb.Permitted(sourcePath, indexPath, username)
-}
-
-func AllowUser(sourcePath string, indexPath utils.IndexPath, username string) error {
-	return accessDb.AllowUser(sourcePath, indexPath, username)
-}
-
-func AllowGroup(sourcePath string, indexPath utils.IndexPath, groupname string) error {
-	return accessDb.AllowGroup(sourcePath, indexPath, groupname)
-}
-
-func DenyUser(sourcePath string, indexPath utils.IndexPath, username string) error {
-	return accessDb.DenyUser(sourcePath, indexPath, username)
-}
-
-func DenyGroup(sourcePath string, indexPath utils.IndexPath, groupname string) error {
-	return accessDb.DenyGroup(sourcePath, indexPath, groupname)
-}
-
-func DenyAll(sourcePath string, indexPath utils.IndexPath) error {
-	return accessDb.DenyAll(sourcePath, indexPath)
-}
-
-func GetAllRules(sourcePath string) (map[string]access.FrontendAccessRule, error) {
-	return accessDb.GetAllRules(sourcePath)
-}
 
 func GetUserGroups(username string) []string {
 	return accessDb.GetUserGroups(username)
@@ -83,31 +47,11 @@ func RenameUserInGroups(oldName, newName string) error {
 	return accessDb.RenameUserInGroups(oldName, newName)
 }
 
-// RenameUserInRules replaces one username with another in all path access allow/deny lists.
-func RenameUserInRules(oldName, newName string) error {
-	if accessDb == nil {
-		return nil
-	}
-	return accessDb.RenameUserInRules(oldName, newName)
-}
-
-// RemoveAllRulesForUser removes a username from every path access allow and deny list.
-func RemoveAllRulesForUser(username string) error {
-	if accessDb == nil {
-		return nil
-	}
-	return accessDb.RemoveAllRulesForUser(username)
-}
-
 // SetAccessSQLStoreForTest replaces the SQL persister used by access control (tests only).
 func SetAccessSQLStoreForTest(store access.SQLPersister) {
 	if accessDb != nil {
 		accessDb.SetSQLStore(store)
 	}
-}
-
-func RemoveRuleByPathKey(sourcePath, pathKey string) {
-	accessDb.RemoveRuleByPathKey(sourcePath, pathKey)
 }
 
 func AddApiToken(tokenString string, userID uint64) error {
@@ -179,22 +123,6 @@ func RevokeToken(token string) error {
 	return accessDb.RevokeToken(token)
 }
 
-// CheckChildItemAccess filters directory listings using in-memory access rules.
-func CheckChildItemAccess(response *iteminfo.FileInfo, idx *indexing.Index, username string) error {
-	if accessDb == nil {
-		return nil
-	}
-	return accessDb.CheckChildItemAccess(response, idx, username)
-}
-
-// UpdateAccessRulesOnMove rewrites access rule paths when a resource moves within one source.
-func UpdateAccessRulesOnMove(sourcePath string, oldPath, newPath utils.IndexPath) (int, error) {
-	if accessDb == nil {
-		return 0, nil
-	}
-	return accessDb.UpdateRules(sourcePath, oldPath, newPath)
-}
-
 // GetGroupMembers returns every group with its sorted member usernames.
 func GetGroupMembers() map[string][]string {
 	return accessDb.GetGroupMembers()
@@ -205,7 +133,7 @@ func SetGroupMembers(group string, usernames []string) error {
 	return accessDb.SetGroupMembers(group, usernames)
 }
 
-// DeleteGroup removes a group and every access rule entry that references it.
+// DeleteGroup removes a group.
 func DeleteGroup(group string) error {
 	return accessDb.DeleteGroup(group)
 }

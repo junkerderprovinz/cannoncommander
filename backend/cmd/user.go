@@ -10,7 +10,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -31,8 +30,7 @@ func validateUserInfo(newDB bool) {
 		changedFields := make([]string, 0, 8)
 		changePass := false
 
-		scopesChanged := updateUserScopes(user)
-		if scopesChanged {
+		if updateUserScopes(user) {
 			changedFields = append(changedFields, "backendScopes")
 		}
 		if updatePermissions(user) {
@@ -41,17 +39,11 @@ func validateUserInfo(newDB bool) {
 		if updateSourcePermissions(user) {
 			changedFields = append(changedFields, "backendScopes", "backendSourcePermissions", "version")
 		}
-		if updatePreviewSettings(user) {
-			changedFields = append(changedFields, "preview")
-		}
 		if updateLoginType(user) {
 			changedFields = append(changedFields, "loginMethod")
 		}
 		if updateShowFirstLogin(user) {
 			changedFields = append(changedFields, "showFirstLogin")
-		}
-		if updateSidebarLinks(user, scopesChanged) {
-			changedFields = append(changedFields, "sidebarLinks")
 		}
 		if updateTokens(user) {
 			changedFields = append(changedFields, "tokens", "version")
@@ -64,12 +56,6 @@ func validateUserInfo(newDB bool) {
 			changedFields = append(changedFields, "tokens", "version")
 		} else if tokenBackfillChanged {
 			changedFields = append(changedFields, "tokens")
-		}
-		if state.ApplyEnforcedSyncToUser(user) {
-			changedFields = append(changedFields, settings.UserJSONFieldsForEnforcedSync()...)
-		}
-		if state.ApplyEnforcedSourcePermissionsSyncToUser(user) {
-			changedFields = append(changedFields, "backendScopes", "backendSourcePermissions")
 		}
 		if bumpToNewestVersion(user, tokenBackfillFailed) {
 			changedFields = append(changedFields, "version")
@@ -229,30 +215,6 @@ func updateLoginType(user *users.User) bool {
 	return false
 }
 
-func updatePreviewSettings(user *users.User) bool {
-	// if user hasn't been updated yet
-	if user.LoginMethod == "" {
-		user.Preview.Image = true
-		user.Preview.PopUp = true
-		return true
-	}
-	return false
-}
-
-// updateSidebarLinks normalizes saved links and adds defaults for new or changed scopes.
-func updateSidebarLinks(user *users.User, scopesChanged bool) bool {
-	links, changed := usersidebar.NormalizeSidebarLinks(user.SidebarLinks)
-	if scopesChanged || user.SidebarLinks == nil {
-		links, changed = usersidebar.PrepareSidebarLinksForPersist(user.SidebarLinks, user.BackendScopes)
-	}
-	if !changed {
-		return false
-	}
-
-	user.SidebarLinks = links
-	return true
-}
-
 func updateTokens(user *users.User) bool {
 	if user.Version >= users.TokenMigrationVersion {
 		return false
@@ -299,7 +261,7 @@ func updateTokenHashBackfill(user *users.User) (bool, bool) {
 		return false, false
 	}
 	before := len(user.Tokens)
-	promoteLegacyApiKeysBeforeSQLite(user)
+	promoteLegacyApiKeys(user)
 	changed := len(user.Tokens) != before
 	hashesRegistered := true
 	for _, raw := range state.CollectStoredRawTokens(user) {
@@ -325,4 +287,33 @@ func bumpToNewestVersion(user *users.User, migrationFailed bool) bool {
 	}
 	user.Version = users.NewestUserVersion
 	return true
+}
+
+// promoteLegacyApiKeys moves the apiKeys of older user records into Tokens,
+// so the hashed-tokens backfill can register them (strict auth needs a hash
+// row per raw JWT).
+// auth ignores BelongsTo and requires a hash row per raw JWT).
+func promoteLegacyApiKeys(user *users.User) {
+	if len(user.ApiKeys) == 0 {
+		return
+	}
+	if user.Tokens == nil {
+		user.Tokens = make(map[string]users.AuthToken)
+	}
+	for name, token := range user.ApiKeys {
+		if token.Name == "" {
+			token.Name = name
+		}
+		if token.Token == "" {
+			token.Token = token.Key
+		}
+		if token.Token == "" {
+			continue
+		}
+		if _, exists := user.Tokens[token.Name]; exists {
+			continue
+		}
+		token.Permissions = users.SanitizeTokenPermissions(token.Permissions)
+		users.StoreToken(user.Tokens, token)
+	}
 }

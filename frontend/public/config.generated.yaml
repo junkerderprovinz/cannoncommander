@@ -18,9 +18,8 @@ server:
     - path: "/relative/or/absolute/path"  # file system path. (Can be relative)  validate:required
       name: "Source Name"                 # display name
       config:
-        denyByDefault: false              # deny access unless an "allow" access rule was specifically created.
         private: false                    # designate as source as private -- currently just means no sharing permitted.
-        readOnly: false                   # read-only source, changes from the UI, webdav, and API will be disabled.
+        readOnly: false                   # read-only source, changes from the UI and the API are refused.
         disabled: false                   # disable the source, this is useful so you don't need to remove it from the config file
         rules:                            # list of item rules to apply to specific paths
           - neverWatchPath: ""            # index the folder in the first pass to get included in search, but never re-indexed.
@@ -62,7 +61,6 @@ server:
     startupIntegrityCheck: "quickCheck"   # the method used to check the integrity of the index database on startup (default: quickCheck)  validate:omitempty,oneof=quickCheck probe off
   database:                               # SQLite database configuration
     path: "cannoncommander.sqlite"        # path to SQLite database file
-    migrateFrom: ""                       # path to legacy database file for migration (optional)
     activity:                             # activity audit logging configuration
       disabled: false                     # disable semantic activity audit logging (default: false)
       retentionDays: 30                   # purge activity rows older than this many days (default 30)
@@ -77,31 +75,19 @@ auth:
       adminUsername: "admin"              # secret: admin username auto-assigned. If not set, the default is "admin".
       adminPassword: "admin"              # secret: password for admin auto-assigned admin account. If set, reset on startup.
       minLength: 5                        # minimum pasword length required, default is 5.  validate:omitempty
-      signup: false                       # allow signups on login page if enabled -- not secure.  validate:omitempty
       enforcedOtp: false                  # if set to true, TOTP is enforced for all password users users. Otherwise, users can choose to enable TOTP.
     oidc:                                 #  validate:omitempty
       enabled: false                      # whether to enable this authentication method.
       adminGroup: ""                      # if set, users in this group will be granted admin privileges
       userGroups:                         # if set, only users in these groups are allowed to log in. Blocks all other users even with valid credentials.
       groupsClaim: "groups"               # the JSON field name to read groups from. Default is "groups"
-      userIdentifier: "preferred_username" # the field value to use as the username. Default is "preferred_username" in oidc, "sub" in jwt. Other common values are "email" or "username", or "phone"
+      userIdentifier: "preferred_username" # the field value to use as the username. Default is "preferred_username". Other common values are "email" or "username", or "phone"
       disableVerifyTLS: false             # disable TLS verification (insecure, for testing only)
       logoutRedirectUrl: ""               # if provider logout url is provided, filebrowser will also redirect to logout url. Custom logout query params are respected.
       clientId: ""                        # secret: client id of the OIDC application
       clientSecret: ""                    # secret: client secret of the OIDC application
       issuerUrl: ""                       # authorization URL of the OIDC provider
       scopes: "openid email profile"      # scopes to request from the OIDC provider
-    jwt:                                  #  validate:omitempty
-      enabled: false                      # whether to enable this authentication method.
-      adminGroup: ""                      # if set, users in this group will be granted admin privileges
-      userGroups:                         # if set, only users in these groups are allowed to log in. Blocks all other users even with valid credentials.
-      groupsClaim: ""                     # the JSON field name to read groups from. Default is "groups"
-      userIdentifier: ""                  # the field value to use as the username. Default is "preferred_username" in oidc, "sub" in jwt. Other common values are "email" or "username", or "phone"
-      disableVerifyTLS: false             # disable TLS verification (insecure, for testing only)
-      logoutRedirectUrl: ""               # if provider logout url is provided, filebrowser will also redirect to logout url. Custom logout query params are respected.
-      header: ""                          # HTTP header to look for JWT token (e.g. X-JWT-Assertion). Default is "X-JWT-Assertion"
-      secret: ""                          # secret: Shared secret key/bytes for verifying JWT token signatures (required, eg PUBLIC KEY, RSA PUBLIC KEY, EC PUBLIC KEY, or CERTIFICATE)
-      algorithm: ""                       # JWT signing algorithm (HS256, HS384, HS512, RS256, ES256). Default is "HS256"
     passkey:                              #  validate:omitempty
       enabled: false                      # whether to enable passkey MFA
       rpDisplayName: ""                   # the Relying Party display name (defaults to frontend name)
@@ -114,72 +100,6 @@ frontend:
   name: "CannonCommander"                 # the name the passkey prompt shows for this server
   disableUsedPercentage: false            # skip the used space of the sources
   oidcLoginButtonText: ""                 # text on the single sign on button of the sign in page
-userDefaults:                             # optional signup/CLI defaults; per-user values are managed in the UI
-  sidebar:
-    disableQuickToggles: false            # disable the quick toggles in the sidebar
-    hideFileActions: false                # hide the file actions in the sidebar
-    disableHideOnPreview: false           # keep sidebar open when previewing files (was preview.disableHideSidebar)
-    sticky: true                          # keep sidebar open when navigating
-    hideFiles: false                      # hide files in the sidebar tree navigation, when true, will show only directories
-    showTools: true                       # show sidebar links with category "tool"; default is true
-  listing:
-    deleteWithoutConfirming: false        # delete files without confirmation
-    promptRightCloseButton: false         # show the prompts close button on the right
-    dateFormat: false                     # when false, the date is relative, when true, the date is an exact timestamp
-    showHidden: false                     # show hidden files in the UI. On windows this includes files starting with a dot and windows hidden files
-    quickDownload: false                  # show icon to download in one click
-    showSelectMultiple: false             # show select multiple files on desktop
-    singleClick: false                    # open directory on single click, also enables middle click to open in new tab
-    hideFileExt: ""                       # space separated list of file extensions to hide in UI
-    showCopyPath: false                   # show copy path button in the context menu
-    showTypeColumn: false                 # show the Type column in list and compact views
-    showCreationDateColumn: false         # show the Creation date column in list and compact views
-    deleteAfterArchive: true              # delete source files after successful creation/extraction of archives
-    viewMode: "normal"                    # view mode to use: eg. normal, list, grid, or compact
-    gallerySize: 3                        # 0-9 - the size of the gallery thumbnails
-    newFileTemplate:                      # list of custom filenames that will be used as template for new files
-      - ""
-  preview:
-    image: true                           # show thumbnails for image files
-    video: true                           # show thumbnails for video files
-    audio: true                           # show thumbnails for audio files
-    motionVideoPreview: true              # show multiple frames for videos in thumbnail preview when hovering
-    office: true                          # show thumbnails for office files
-    popup: true                           # show larger popup preview when hovering over thumbnail
-    disablePreviewExt: ""                 # comma separated list of file extensions to disable preview for
-    highQuality: true                     # high quality preview thumbnails
-    folder: true                          # show thumbnails for folders that have previewable contents
-    models: true                          # show live thumbnails for 3D models files
-  fileViewer:
-    autoplayMedia: true                   # autoplay media files in preview
-    disableViewingExt: ""                 # comma separated list of file extensions to disable viewing for
-    disableOnlyOfficeExt: ".md .txt .pdf .html .xml" # list of file extensions to disable onlyoffice editor for
-    preferEditorForMarkdown: false        # prefer editor first for markdown files instead of the Markdown Viewer
-    debugOffice: false                    # debug onlyoffice editor
-  search:
-    disableOptions: false                 # disable the search options in the search bar
-  ui:
-    darkMode: true                        # should dark mode be enabled
-    themeColor: "var(--blue)"             # theme color to use: eg. #ff0000, or var(--red), var(--purple), etc
-    customTheme: ""                       # Name of theme to use chosen from custom themes config
-    locale: "en"                          # language to use: eg. de, en, or fr
-  fileLoading:
-    maxConcurrentUpload: 10
-    uploadChunkSizeMb: 10
-    clearAll: false
-    downloadChunkSizeMb: 0
-  account:
-    permissions:
-      api: false                          # allow api access
-      admin: false                        # allow admin access
-      share: false                        # allow sharing files
-      realtime: false                     # allow realtime updates
-    lockPassword: false                   # disable the user from changing their password
-    requirePasswordChange: false          # force password change at next password login
-    disableSettings: false                # disable the user from viewing the settings page
-    loginMethod: "password"               # login method to use: eg. password, proxy, oidc
-    disableUpdateNotifications: false     # disable update notifications banner for admin users
-    showAdvancedProfile: false            # show advanced profile settings in the user profile page
 integrations:
   office:                                 #  validate:omitempty
     url: ""                               # The URL to the OnlyOffice Document Server, needs to be accessible to the user.  validate:required
@@ -223,7 +143,6 @@ http:
   baseURL: "/"                            # base URL for the server, the subpath that the server is running on.
   externalUrl: ""                         # used by share links if set (eg. http://mydomain.com)
   internalUrl: ""                         # used by integrations if set, this is the base domain that an integration service will use to communicate with filebrowser (eg. http://localhost:8080)
-  disableWebDAV: false                    # disable webdav support (default: false)
   trustProxyHeaders: false                # honor X-Forwarded-* and X-Real-IP from a reverse proxy (default: false)
   trustedProxies:                         # IPs/CIDRs of trusted proxies; forwarded client headers are only honored when the socket peer matches one of these (default: empty = forwarded headers ignored)
   unixSocketTrustedUIDs:                  # UnixSocketTrustedUIDs and UnixSocketTrustedGIDs list peer credentials (Linux SO_PEERCRED) allowed to

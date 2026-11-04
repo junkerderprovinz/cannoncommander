@@ -36,7 +36,6 @@ type LoginMethod string
 const (
 	LoginMethodPassword LoginMethod = "password"
 	LoginMethodOidc     LoginMethod = "oidc"
-	LoginMethodJwt      LoginMethod = "jwt"
 )
 
 // AnonymousUserName is the username for unauthenticated requests (user_id 0).
@@ -213,25 +212,6 @@ func (p Permissions) HasAnyFilePermission() bool {
 	return p.View || p.Download || p.Modify || p.Delete || p.Create
 }
 
-// SortingSettings represents the sorting settings.
-type Sorting struct {
-	By  string `json:"by"`
-	Asc bool   `json:"asc"`
-}
-
-type Preview struct {
-	DisableHideSidebar bool `json:"disableHideSidebar"` // disable the hide sidebar preview for previews and editors
-	Image              bool `json:"image"`              // show thumbnail preview image for image files
-	Video              bool `json:"video"`              // show thumbnail preview image for video files
-	Audio              bool `json:"audio"`              // show thumbnail preview image for audio files
-	MotionVideoPreview bool `json:"motionVideoPreview"` // show multiple frames for videos in thumbnail preview when hovering
-	Office             bool `json:"office"`             // show thumbnail preview image for office files
-	PopUp              bool `json:"popup"`              // show larger popup preview when hovering over thumbnail
-	AutoplayMedia      bool `json:"autoplayMedia"`      // autoplay media files in preview
-	Folder             bool `json:"folder"`             // show thumbnail preview image for folder files
-	Models             bool `json:"models"`             // show live thumbnails for 3D models files
-}
-
 // FrontendUser holds fields safe to return from user APIs (embedded on User).
 type FrontendUser struct {
 	NonAdminEditable
@@ -245,7 +225,6 @@ type FrontendUser struct {
 	LoginMethod           LoginMethod                      `json:"loginMethod"`
 	OtpEnabled            bool                             `json:"otpEnabled"`
 	ShowFirstLogin        bool                             `json:"showFirstLogin"`
-	EffectiveToolAccess   map[string]bool                  `json:"effectiveToolAccess,omitempty"`
 	Perm                  Permissions                      `json:"perm,omitzero"`
 }
 
@@ -293,63 +272,10 @@ type BackendScope struct {
 
 // json tags must match variable name with smaller case first letter
 type NonAdminEditable struct {
-	HideSidebarFileActions     bool                 `json:"hideSidebarFileActions"`  // hide the file actions in the sidebar
-	DisableQuickToggles        bool                 `json:"disableQuickToggles"`     // disable the quick toggles in the sidebar
-	DisableSearchOptions       bool                 `json:"disableSearchOptions"`    // disable the search options in the search bar
-	DeleteWithoutConfirming    bool                 `json:"deleteWithoutConfirming"` // delete files without confirmation
-	Preview                    Preview              `json:"preview"`
-	StickySidebar              bool                 `json:"stickySidebar"` // keep sidebar open when navigating
-	DarkMode                   bool                 `json:"darkMode"`      // should dark mode be enabled
-	Password                   string               `json:"password,omitempty"`
-	Locale                     string               `json:"locale"`          // language to use: eg. de, en, or fr
-	ViewMode                   string               `json:"viewMode"`        // view mode to use: eg. normal, list, grid, or compact
-	NewFileTemplate            []string             `json:"newFileTemplate"` // list of custom filenames that will be used as template for new files
-	SingleClick                bool                 `json:"singleClick"`     // open directory on single click, also enables middle click to open in new tab
-	Sorting                    Sorting              `json:"sorting"`
-	ShowHidden                 bool                 `json:"showHidden"`                 // show hidden files in the UI. On windows this includes files starting with a dot and windows hidden files
-	HideFileExt                string               `json:"hideFileExt"`                // space separated list of file extensions to hide in UI and API
-	DateFormat                 bool                 `json:"dateFormat"`                 // when false, the date is relative, when true, the date is an exact timestamp
-	GallerySize                int                  `json:"gallerySize"`                // 0-9 - the size of the gallery thumbnails
-	ThemeColor                 string               `json:"themeColor"`                 // theme color to use: eg. #ff0000, or var(--red), var(--purple), etc
-	QuickDownload              bool                 `json:"quickDownload"`              // show icon to download in one click
-	DisableUpdateNotifications bool                 `json:"disableUpdateNotifications"` // disable update notifications
-	FileLoading                FileLoading          `json:"fileLoading"`                // upload and download settings
-	DisableOfficePreviewExt    string               `json:"disableOfficePreviewExt"`    // deprecated
-	DisableOnlyOfficeExt       string               `json:"disableOnlyOfficeExt"`       // deprecated
-	DisablePreviewExt          string               `json:"disablePreviewExt"`          // space separated list of file extensions to disable preview for
-	DisableViewingExt          string               `json:"disableViewingExt"`          // space separated list of file extensions to disable viewing for
-	CustomTheme                string               `json:"customTheme"`                // Name of theme to use chosen from custom themes config.
-	ShowSelectMultiple         bool                 `json:"showSelectMultiple"`         // show select multiple files on desktop
-	ShowCopyPath               bool                 `json:"showCopyPath"`               // show copy path action in the context menu
-	ShowTypeColumn             bool                 `json:"showTypeColumn"`             // show the Type column in list and compact views
-	ShowCreationDateColumn     bool                 `json:"showCreationDateColumn"`     // show the Creation date column in list and compact views
-	ShowToolsInSidebar         bool                 `json:"showToolsInSidebar"`         // when false, sidebar hides links with category "tool" (default: true)
-	DebugOffice                bool                 `json:"debugOffice"`                // debug onlyoffice editor
-	SidebarLinks               []SidebarLink        `json:"sidebarLinks"`               // customizable sidebar links
-	ToolAccess                 ToolAccessMap        `json:"toolAccess,omitempty"`       // per-tool access overrides
-	HideFilesInTree            bool                 `json:"hideFilesInTree"`            // hide files in the sidebar tree navigation, when true, will show only directories.
-	DeleteAfterArchive         bool                 `json:"deleteAfterArchive"`         // delete source files after successful creation/extraction of archives
-	PreferEditorForMarkdown    bool                 `json:"preferEditorForMarkdown"`    // prefer editor first for markdown files instead of the Markdown Viewer
-	PromptRightCloseButton     bool                 `json:"promptRightCloseButton"`     // show the prompts close button on the right
-	ShowFirstLogin             bool                 `json:"showFirstLogin"`
-	PasskeyCredentials         []WebAuthnCredential `json:"passkeyCredentials,omitempty"`
-	ShowAdvancedProfile        bool                 `json:"showAdvancedProfile"`
-}
-
-type FileLoading struct {
-	MaxConcurrent     int  `json:"maxConcurrentUpload"`
-	UploadChunkSize   int  `json:"uploadChunkSizeMb"`
-	ClearAll          bool `json:"clearAll"`
-	DownloadChunkSize int  `json:"downloadChunkSizeMb"`
-}
-
-// SidebarLink represents a customizable link in the sidebar.
-type SidebarLink struct {
-	Name       string `json:"name"`                 // Display name of the link
-	Category   string `json:"category"`             // Category type: "source", "source-link", "share", "tool", "custom", etc.
-	Target     string `json:"target"`               // Target path/URL for the link (relative for source/share)
-	Icon       string `json:"icon"`                 // Material icon name
-	SourceName string `json:"sourceName,omitempty"` // Bolt: filesystem path. JSON out: display name (after prepForFrontend).
+	Password           string               `json:"password,omitempty"`
+	Locale             string               `json:"locale"` // language for the office editor: eg. de, en, or fr
+	ShowFirstLogin     bool                 `json:"showFirstLogin"`
+	PasskeyCredentials []WebAuthnCredential `json:"passkeyCredentials,omitempty"`
 }
 
 func CleanUsername(s string) string {

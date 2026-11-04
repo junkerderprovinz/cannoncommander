@@ -36,7 +36,7 @@ type AuthCommon struct {
 	AdminGroup        string   `json:"adminGroup"`        // if set, users in this group will be granted admin privileges
 	UserGroups        []string `json:"userGroups"`        // if set, only users in these groups are allowed to log in. Blocks all other users even with valid credentials.
 	GroupsClaim       string   `json:"groupsClaim"`       // the JSON field name to read groups from. Default is "groups"
-	UserIdentifier    string   `json:"userIdentifier"`    // the field value to use as the username. Default is "preferred_username" in oidc, "sub" in jwt. Other common values are "email" or "username", or "phone"
+	UserIdentifier    string   `json:"userIdentifier"`    // the field value to use as the username. Default is "preferred_username". Other common values are "email" or "username", or "phone"
 	DisableVerifyTLS  bool     `json:"disableVerifyTLS"`  // disable TLS verification (insecure, for testing only)
 	LogoutRedirectUrl string   `json:"logoutRedirectUrl"` // if provider logout url is provided, filebrowser will also redirect to logout url. Custom logout query params are respected.
 	CreateUser        bool     `json:"createUser"`        // deprecated: always true for supported authentication methods
@@ -63,7 +63,6 @@ type LoginMethods struct {
 	NoAuth       bool               `json:"noauth"` // if set to true, overrides all other auth methods and disables authentication
 	PasswordAuth PasswordAuthConfig `json:"password" validate:"omitempty"`
 	OidcAuth     OidcConfig         `json:"oidc" validate:"omitempty"`
-	JwtAuth      JwtAuthConfig      `json:"jwt" validate:"omitempty"`
 	PasskeyAuth  PasskeyAuthConfig  `json:"passkey" validate:"omitempty"`
 }
 
@@ -72,7 +71,6 @@ type PasswordAuthConfig struct {
 	AdminUsername string `json:"adminUsername"`                  // secret: admin username auto-assigned. If not set, the default is "admin".
 	AdminPassword string `json:"adminPassword"`                  // secret: password for admin auto-assigned admin account. If set, reset on startup.
 	MinLength     int    `json:"minLength" validate:"omitempty"` // minimum pasword length required, default is 5.
-	Signup        bool   `json:"signup" validate:"omitempty"`    // allow signups on login page if enabled -- not secure.
 	EnforcedOtp   bool   `json:"enforcedOtp"`                    // if set to true, TOTP is enforced for all password users users. Otherwise, users can choose to enable TOTP.
 }
 
@@ -132,16 +130,6 @@ type OidcConfig struct {
 	Verifier     *oidc.IDTokenVerifier `json:"-"`            // OIDC verifier
 }
 
-// JwtAuthConfig configures external JWT token authentication
-// Similar to Grafana's JWT auth: verifies HS* tokens with a shared secret, or RS*/ES* with a PEM public key (or certificate)
-// The query parameter is hardcoded to "jwt" (e.g. ?jwt=<token>)
-type JwtAuthConfig struct {
-	AuthCommon `json:",inline"`
-	Header     string `json:"header"`    // HTTP header to look for JWT token (e.g. X-JWT-Assertion). Default is "X-JWT-Assertion"
-	Secret     string `json:"secret"`    // secret: Shared secret key/bytes for verifying JWT token signatures (required, eg PUBLIC KEY, RSA PUBLIC KEY, EC PUBLIC KEY, or CERTIFICATE)
-	Algorithm  string `json:"algorithm"` // JWT signing algorithm (HS256, HS384, HS512, RS256, ES256). Default is "HS256"
-}
-
 // PasskeyAuthConfig configures WebAuthn / Passkey authentication as a second factor.
 type PasskeyAuthConfig struct {
 	Enabled         bool     `json:"enabled"`         // whether to enable passkey MFA
@@ -196,33 +184,5 @@ func validateOidcAuth() error {
 	oidcCfg.Provider = provider
 	oidcCfg.Verifier = provider.Verifier(&oidc.Config{ClientID: oidcCfg.ClientID})
 
-	return nil
-}
-
-// ValidateJwtAuth checks JWT config and sets defaults. Call when JWT auth is enabled.
-func ValidateJwtAuth() error {
-	jwtCfg := &Config.Auth.Methods.JwtAuth
-	if jwtCfg.Secret == "" {
-		return fmt.Errorf("JWT secret is required when JWT auth is enabled")
-	}
-	if jwtCfg.Header == "" {
-		jwtCfg.Header = "X-JWT-Assertion"
-	}
-	if jwtCfg.Algorithm == "" {
-		jwtCfg.Algorithm = "HS256"
-	}
-	applyAuthCommonDefaults(&jwtCfg.AuthCommon)
-	if jwtCfg.UserIdentifier == "" {
-		jwtCfg.UserIdentifier = "sub"
-	}
-	// Validate algorithm
-	validAlgos := map[string]bool{
-		"HS256": true, "HS384": true, "HS512": true,
-		"RS256": true, "RS384": true, "RS512": true,
-		"ES256": true, "ES384": true, "ES512": true,
-	}
-	if !validAlgos[jwtCfg.Algorithm] {
-		return fmt.Errorf("unsupported JWT algorithm: %s. Supported: HS256, HS384, HS512, RS256, RS384, RS512, ES256, ES384, ES512", jwtCfg.Algorithm)
-	}
 	return nil
 }

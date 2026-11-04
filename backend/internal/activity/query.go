@@ -7,7 +7,6 @@ import (
 
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -23,35 +22,26 @@ func ResolvePathFilters(actor *Actor, filter *activitydb.QueryFilter) (int, erro
 		return http.StatusBadRequest, fmt.Errorf("source is required when filtering by path")
 	}
 
-	sourceInfo, ok := settings.Config.Server.NameToSource[filter.Source]
-	if !ok {
+	if _, ok := settings.Config.Server.NameToSource[filter.Source]; !ok {
 		return http.StatusBadRequest, fmt.Errorf("invalid source: %s", filter.Source)
 	}
-	if _, err := actor.User.GetScopeForSourceName(filter.Source); err != nil {
+	userScope, err := actor.User.GetScopeForSourceName(filter.Source)
+	if err != nil {
 		return http.StatusForbidden, err
 	}
 	if filter.PathPrefix == "" && filter.PathGlob == "" {
 		return 0, nil
 	}
-	idx := indexing.GetIndex(sourceInfo.Name)
-	if idx == nil {
-		return http.StatusBadRequest, fmt.Errorf("index not found for source: %s", filter.Source)
-	}
-
-	userScope, err := actor.User.GetScopeForSourceName(filter.Source)
-	if err != nil {
-		return http.StatusForbidden, err
-	}
 
 	if filter.PathPrefix != "" {
-		indexPath, status, err := resolveActivityIndexPath(actor, idx, userScope, filter.PathPrefix)
+		indexPath, status, err := resolveActivityIndexPath(userScope, filter.PathPrefix)
 		if err != nil {
 			return status, err
 		}
 		filter.PathPrefix = indexPath
 	}
 	if filter.PathGlob != "" {
-		scopedGlob, status, err := resolveActivityPathGlob(actor, idx, userScope, filter.PathGlob)
+		scopedGlob, status, err := resolveActivityPathGlob(userScope, filter.PathGlob)
 		if err != nil {
 			return status, err
 		}
@@ -60,7 +50,7 @@ func ResolvePathFilters(actor *Actor, filter *activitydb.QueryFilter) (int, erro
 	return 0, nil
 }
 
-func resolveActivityIndexPath(actor *Actor, idx *indexing.Index, userScope, clientPath string) (string, int, error) {
+func resolveActivityIndexPath(userScope, clientPath string) (string, int, error) {
 	clientPath = strings.TrimSpace(clientPath)
 	if clientPath == "" {
 		return "", http.StatusBadRequest, fmt.Errorf("path is empty")
@@ -82,15 +72,10 @@ func resolveActivityIndexPath(actor *Actor, idx *indexing.Index, userScope, clie
 		}
 	}
 
-	isDir := strings.HasSuffix(fullIndexPath, "/")
-	fullPath := idx.MakeIndexPath(fullIndexPath, isDir)
-	if !accessPermitted(idx.Path, fullPath, actor.User.Username) {
-		return "", http.StatusForbidden, fmt.Errorf("user is not allowed to access this location")
-	}
 	return strings.TrimSuffix(fullIndexPath, "/"), 0, nil
 }
 
-func resolveActivityPathGlob(actor *Actor, idx *indexing.Index, userScope, glob string) (string, int, error) {
+func resolveActivityPathGlob(userScope, glob string) (string, int, error) {
 	glob = strings.TrimSpace(glob)
 	if glob == "" {
 		return "", http.StatusBadRequest, fmt.Errorf("pathGlob is empty")
@@ -113,15 +98,6 @@ func resolveActivityPathGlob(actor *Actor, idx *indexing.Index, userScope, glob 
 
 	if userScope != "" && userScope != "/" && !strings.HasPrefix(scoped, userScope) {
 		return "", http.StatusForbidden, fmt.Errorf("glob pattern outside user scope")
-	}
-
-	rootPath := userScope
-	if rootPath == "" {
-		rootPath = "/"
-	}
-	fullPath := idx.MakeIndexPath(rootPath, true)
-	if !accessPermitted(idx.Path, fullPath, actor.User.Username) {
-		return "", http.StatusForbidden, fmt.Errorf("user is not allowed to access this location")
 	}
 	return scoped, 0, nil
 }

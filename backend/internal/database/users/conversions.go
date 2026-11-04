@@ -7,7 +7,7 @@ import (
 
 // ResolveSourceKey maps a string that is either:
 //   - the configured source filesystem path (canonical Bolt / in-memory form for
-//     SourceScope.Name and source-type SidebarLink.SourceName), or
+//     SourceScope.Name), or
 //   - the source display name (JSON form from clients).
 //
 // Path is checked first so absolute paths are unambiguous. Used on write paths
@@ -89,35 +89,6 @@ func (u *User) GetFrontendScopes() []FrontendScope {
 		})
 	}
 	return newScopes
-}
-
-// GetBackendSidebarLinks normalizes source links for Bolt: SourceName is the filesystem path.
-func (u *User) GetBackendSidebarLinks() ([]SidebarLink, error) {
-	if sourceConfig == nil {
-		return nil, fmt.Errorf("source config not initialized")
-	}
-
-	newLinks := []SidebarLink{}
-	for _, link := range u.SidebarLinks {
-		if strings.HasPrefix(link.Category, "source") {
-			if link.SourceName == "" {
-				return nil, fmt.Errorf("source link missing sourceName (link name: %v)", link.Name)
-			}
-			// Validate source exists
-			sourceInfo, ok := sourceConfig.GetSourceByName(link.SourceName)
-			sourceInfo2, ok2 := sourceConfig.GetSourceByPath(link.SourceName)
-			if !ok && !ok2 {
-				return nil, fmt.Errorf("source not found: %v (link name: %v)", link.SourceName, link.Name)
-			}
-			if ok {
-				link.SourceName = sourceInfo.Path
-			} else {
-				link.SourceName = sourceInfo2.Path
-			}
-		}
-		newLinks = append(newLinks, link)
-	}
-	return newLinks, nil
 }
 
 // normalizeScope ensures scope starts with / and doesn't end with / (except for root)

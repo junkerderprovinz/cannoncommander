@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
@@ -35,9 +34,9 @@ func InitAuthSigningKey() error {
 
 // resolveAuthSigningKey returns the key to use without mutating config until the
 // key is known to be valid. Only a missing persisted row counts as absence; a
-// malformed row, an unreadable legacy database, or a configured key that differs
-// from the persisted one are hard errors so nodes in the same deployment can
-// never mint and verify with divergent keys.
+// malformed row or a configured key that differs from the persisted one are hard
+// errors, so nodes in the same deployment never mint and verify with divergent
+// keys.
 func resolveAuthSigningKey(explicitKey string) (string, error) {
 	storedKey, storedErr := loadPersistedAuthSigningKey()
 	switch {
@@ -47,7 +46,7 @@ func resolveAuthSigningKey(explicitKey string) (string, error) {
 		}
 		return "", fmt.Errorf("auth signing key from config/env differs from the persisted database key; remove the configured key to use the stored key")
 	case errors.Is(storedErr, errAuthSigningKeyAbsent):
-		// No persisted key yet: persist the configured key or fall back below.
+		// No persisted key yet: persist the configured key or generate one.
 	default:
 		return "", fmt.Errorf("load persisted auth signing key: %w", storedErr)
 	}
@@ -57,21 +56,6 @@ func resolveAuthSigningKey(explicitKey string) (string, error) {
 			return "", fmt.Errorf("persist auth signing key: %w", err)
 		}
 		return explicitKey, nil
-	}
-
-	boltPath := settings.Config.Server.DatabaseV2.MigrateFrom
-	legacyKey, legacyErr := ReadAuthSigningKeyFromBoltFile(boltPath)
-	switch {
-	case legacyErr == nil && legacyKey != "":
-		if err := persistAuthSigningKey(legacyKey); err != nil {
-			return "", fmt.Errorf("persist auth signing key: %w", err)
-		}
-		logger.Info("Recovered auth signing key from legacy database file")
-		return legacyKey, nil
-	case errors.Is(legacyErr, os.ErrNotExist):
-		// No legacy key to recover.
-	default:
-		return "", fmt.Errorf("read legacy auth signing key: %w", legacyErr)
 	}
 
 	generated := utils.GenerateKey()

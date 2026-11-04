@@ -2,8 +2,6 @@ http:
   port: 80
   baseURL:  "/"
 server:
-  database:
-    migrateFrom: "database.db.old"
   logging:
     - levels: "info|error|warning|debug"
       apiFilter: 'disabled'
@@ -31,10 +29,3 @@ frontend:
 
 auth:
   adminPassword: "playwright-password"
-  methods:
-    password:
-      signup: true
-
-userDefaults:
-  listing:
-    showHidden: true

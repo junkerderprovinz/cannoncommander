@@ -8,7 +8,6 @@ import { toast } from '@/core/toast';
 import BareBtn from '../kit/BareBtn.vue';
 import Btn from '../kit/Btn.vue';
 import Card from '../kit/Card.vue';
-import CopyField from '../kit/CopyField.vue';
 import Dropdown from '../kit/Dropdown.vue';
 import Frow from '../kit/Frow.vue';
 import { c, fail, shake } from '../kit/kit';
@@ -63,8 +62,6 @@ async function saveSecret() {
 
 const flag = (k: 'thumbs' | 'video') => computed({ get: () => !!app.value?.previews[k], set: (v: boolean) => { app.value!.previews[k] = v; save({ previews: { [k]: v } }); } });
 const thumbs = flag('thumbs'), video = flag('video');
-const webdav = computed({ get: () => !!app.value?.webdav, set: (v: boolean) => { app.value!.webdav = v; save({ webdav: v }, c('integrations.afterRestart')); } });
-const webdavUrl = new URL('dav/', location.origin + import.meta.env.BASE_URL).href;
 const tool = (t?: Tool) => (t?.available ? [t.version, t.path].filter(Boolean).join(', ') : c('integrations.notFound'));
 
 const alUrl = () => app.value!.arrowloop.url.trim();
@@ -146,9 +143,7 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
       </div>
       <div class="a-foot"><Btn :label="c('integrations.addPath')" g="IconAdd" @click="paths.push({ here: '', there: '' })" /></div>
     </Card>
-    <Card :title="c('integrations.webdavRclone')">
-      <Frow :label="c('integrations.webdav')" :tip="c('integrations.webdavTip')"><Sw v-model="webdav" /></Frow>
-      <Frow v-if="webdav" :label="c('integrations.address')"><CopyField :value="webdavUrl" /></Frow>
+    <Card title="rclone">
       <Frow label="rclone" :tip="c('integrations.rcloneTip')"><span class="pill mono">{{ sys ? tool(sys.tools.rclone) : '' }}</span></Frow>
     </Card>
   </template>

@@ -15,7 +15,6 @@ import (
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 var loginName = regexp.MustCompile(`^[a-z][a-z0-9._-]{1,31}$`)
@@ -151,8 +150,7 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 	if err := checkPassword(*in.Password); err != nil {
 		return err
 	}
-	perms := settings.ConvertPermissionsToUsers(state.EffectiveUserDefaults().Account.Permissions)
-	perms.Admin = role == roleAdmin
+	perms := users.Permissions{Admin: role == roleAdmin}
 	u := users.User{FrontendUser: users.FrontendUser{
 		Username:    name,
 		LoginMethod: users.LoginMethodPassword,
@@ -161,8 +159,8 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 	if err := state.CreateUser(&u, *in.Password); err != nil {
 		return v1.Errorf(http.StatusBadRequest, err.Error())
 	}
-	// The login system fills in its defaults on create, which may add
-	// sources or rights. The scopes picked here are the ones that count.
+	// The login system adds the default sources on create. The scopes
+	// picked here are the ones that count.
 	u.BackendScopes, u.Permissions = scopes, users.MarkPermissionsConfigured(perms)
 	if err := state.UpdateUser(&u, "", "backendScopes", "permissions"); err != nil {
 		if rmErr := state.DeleteUser(u.ID); rmErr != nil {

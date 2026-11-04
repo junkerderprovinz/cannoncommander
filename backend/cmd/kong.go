@@ -9,7 +9,6 @@ import (
 	"github.com/alecthomas/kong"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"golang.org/x/term"
 )
 
@@ -28,17 +27,8 @@ type setupCmd struct{}
 type initCmd struct{}
 
 type SetCmd struct {
-	User  string     `short:"u" help:"Deprecated: comma-separated username,password. Use 'user set' instead."`
-	Admin bool       `short:"a" help:"Create user as admin (used with -u)"`
-	Rule  SetRuleCmd `cmd:"" name:"rule" help:"Add or update an access rule"`
-}
-
-type SetRuleCmd struct {
-	Source string `short:"s" name:"source" aliases:"f,sourceName" required:"" help:"Source name from config"`
-	Path   string `short:"p" name:"path" aliases:"sourcePath" required:"" help:"Index path within the source"`
-	Role   string `short:"r" name:"role" enum:"user,group,all" required:"" help:"Rule target type"`
-	Value  string `short:"v" name:"value" help:"Username or group name (required for user/group)"`
-	Allow  bool   `name:"allow" help:"Allow access (default: deny)"`
+	User  string `short:"u" help:"Deprecated: comma-separated username,password. Use 'user set' instead."`
+	Admin bool   `short:"a" help:"Create user as admin (used with -u)"`
 }
 
 type UserCmd struct {
@@ -118,7 +108,7 @@ type cliRoot struct {
 	Run     runCmd     `cmd:"" default:"1" hidden:"" help:"Start the server"`
 	Version versionCmd `cmd:"" name:"version" help:"Print version information"`
 	Setup   setupCmd   `cmd:"" name:"setup" help:"Interactive configuration setup"`
-	Init    initCmd    `cmd:"" name:"init" hidden:"" help:"Initialize the database or migrate from a legacy database"`
+	Init    initCmd    `cmd:"" name:"init" hidden:"" help:"Initialize the database"`
 	Set     SetCmd     `cmd:"" name:"set" help:"Set configuration values (deprecated: use 'user set' for users)"`
 	User    UserCmd    `cmd:"" name:"user" help:"User management"`
 }
@@ -140,12 +130,9 @@ func (initCmd) Run() error {
 	return nil
 }
 
-func (s *SetCmd) Run(ctx *kong.Context) error {
-	if strings.HasPrefix(ctx.Command(), "set rule") {
-		return nil
-	}
+func (s *SetCmd) Run() error {
 	if s.User == "" {
-		return fmt.Errorf("missing subcommand for 'set'. Use 'set rule' or 'user set'")
+		return fmt.Errorf("'set' needs -u. Use 'user set' instead")
 	}
 	fmt.Fprintln(os.Stderr, "warning: 'set -u' is deprecated; use 'user set' instead")
 	userInfo := strings.SplitN(s.User, ",", 2)
@@ -153,14 +140,6 @@ func (s *SetCmd) Run(ctx *kong.Context) error {
 		return fmt.Errorf("not enough info to create user: \"set -u username,password\", only provided %v", strings.Split(s.User, ","))
 	}
 	return setUser(userInfo[0], userInfo[1], s.Admin)
-}
-
-func (r *SetRuleCmd) Run() error {
-	sourceInfo, ok := settings.Config.Server.NameToSource[r.Source]
-	if !ok {
-		return fmt.Errorf("invalid source name: %s", r.Source)
-	}
-	return setRule(sourceInfo.Path, r.Path, r.Role, r.Value, r.Allow)
 }
 
 func (u *UserSetCmd) Run(globals *Globals) error {
@@ -222,7 +201,7 @@ func runCLI() (keepGoing bool, dbExists bool) {
 	case cmd == "version" || cmd == "setup":
 		parser.FatalIfErrorf(ctx.Run(&rootCLI))
 		return false, false
-	case cmd == "init" || cmd == "set rule" || cmd == "set" || strings.HasPrefix(cmd, "user set") || strings.HasPrefix(cmd, "user promote"):
+	case cmd == "init" || cmd == "set" || strings.HasPrefix(cmd, "user set") || strings.HasPrefix(cmd, "user promote"):
 		requireExistingConfig(configPath)
 		dbExists = initializeDatabase(configPath, true)
 		parser.FatalIfErrorf(ctx.Run(&rootCLI))

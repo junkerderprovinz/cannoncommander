@@ -48,13 +48,3 @@ auth:
 
 frontend:
   name: "CannonCommander"
-
-userDefaults:
-  listing:
-    showHidden: true
-  preview:
-    image: true
-    popup: true
-    video: true
-    office: true
-    highQuality: true

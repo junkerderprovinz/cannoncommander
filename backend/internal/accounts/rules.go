@@ -16,7 +16,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // What a rule does with the paths it matches.
@@ -212,18 +211,6 @@ func (b *ruleBook) store(ctx context.Context, list []Rule) error {
 	}
 	return nil
 }
-
-// gate is the access gate of the login system with the app's rules on top.
-type gate struct {
-	inner ccfs.AccessGate
-	rules *ruleBook
-}
-
-func (g gate) AccessPermitted(source string, p utils.IndexPath, username string) bool {
-	return g.inner == nil || g.inner.AccessPermitted(source, p, username)
-}
-
-func (g gate) Effect(u *users.User, p string) ccfs.Effect { return g.rules.Effect(u, p) }
 
 type ruleList struct {
 	Items []Rule `json:"items"`

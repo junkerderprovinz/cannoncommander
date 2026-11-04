@@ -138,12 +138,12 @@ func TestRulesSurviveARestart(t *testing.T) {
 	w.addUser("anna", "user", "/mnt/user")
 	w.setRules(rule{"who": "anna", "path": "/mnt/user/backups", "rule": "hide"})
 	v1.Forget(w.deps, "accounts")
-	gate, err := accounts.Gate(nil, w.deps.DB)
+	rules, err := accounts.Rules(w.deps.DB)
 	if err != nil {
 		t.Fatal(err)
 	}
 	anna, _ := state.GetUserByUsername("anna")
-	if gate.(ccfs.Rules).Effect(&anna, "/mnt/user/backups/x") != ccfs.Hidden {
+	if rules.Effect(&anna, "/mnt/user/backups/x") != ccfs.Hidden {
 		t.Fatal("the rules were not loaded again")
 	}
 }

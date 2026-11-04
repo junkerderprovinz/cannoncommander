@@ -45,6 +45,40 @@ func applyLegacyFilePermissionsFromJSON(user *users.User, data *UserData) {
 	user.Permissions.Download = fp.Download
 }
 
+// storedProfile is what user_data.profile holds. Rows written by older versions
+// have more sections in there, which nothing reads any more.
+type storedProfile struct {
+	Account struct {
+		LockPassword          bool `json:"lockPassword"`
+		RequirePasswordChange bool `json:"requirePasswordChange"`
+		DisableSettings       bool `json:"disableSettings"`
+	} `json:"account"`
+	UI struct {
+		Locale string `json:"locale"`
+	} `json:"ui"`
+}
+
+func applyStoredProfile(user *users.User, raw json.RawMessage) error {
+	var p storedProfile
+	if err := json.Unmarshal(raw, &p); err != nil {
+		return err
+	}
+	user.LockPassword = p.Account.LockPassword
+	user.RequirePasswordChange = p.Account.RequirePasswordChange
+	user.DisableSettings = p.Account.DisableSettings
+	user.Locale = p.UI.Locale
+	return nil
+}
+
+func storedProfileJSON(user *users.User) (json.RawMessage, error) {
+	var p storedProfile
+	p.Account.LockPassword = user.LockPassword
+	p.Account.RequirePasswordChange = user.RequirePasswordChange
+	p.Account.DisableSettings = user.DisableSettings
+	p.UI.Locale = user.Locale
+	return json.Marshal(p)
+}
+
 func applyProfileSettingsOverlay(user *users.User, settingsJSON json.RawMessage) error {
 	if user == nil || len(settingsJSON) == 0 || string(settingsJSON) == "null" {
 		return nil
@@ -52,13 +86,6 @@ func applyProfileSettingsOverlay(user *users.User, settingsJSON json.RawMessage)
 	var raw map[string]json.RawMessage
 	if err := json.Unmarshal(settingsJSON, &raw); err != nil {
 		return fmt.Errorf("parse profile settings overlay: %w", err)
-	}
-	if v, ok := raw["sidebarLinks"]; ok {
-		var links []users.SidebarLink
-		if err := json.Unmarshal(v, &links); err != nil {
-			return fmt.Errorf("parse sidebarLinks: %w", err)
-		}
-		user.SidebarLinks = links
 	}
 	if v, ok := raw["showFirstLogin"]; ok {
 		var showFirstLogin bool
@@ -73,13 +100,6 @@ func applyProfileSettingsOverlay(user *users.User, settingsJSON json.RawMessage)
 			return fmt.Errorf("parse passkeyCredentials: %w", err)
 		}
 		user.PasskeyCredentials = creds
-	}
-	if v, ok := raw["sorting"]; ok {
-		var sorting users.Sorting
-		if err := json.Unmarshal(v, &sorting); err != nil {
-			return fmt.Errorf("parse sorting: %w", err)
-		}
-		user.Sorting = sorting
 	}
 	return nil
 }
@@ -102,7 +122,7 @@ func finishUserLoad(user *users.User, userDataJSON []byte) error {
 	user.PinnedItems = userData.PinnedItems
 	user.BackendSourcePermissions = userData.BackendSourcePermissions
 	if len(userData.Profile) > 0 {
-		if err := settings.ApplyProfileToUser(user, userData.Profile); err != nil {
+		if err := applyStoredProfile(user, userData.Profile); err != nil {
 			return fmt.Errorf("apply user profile: %w", err)
 		}
 		if err := applyProfileSettingsOverlay(user, userData.Settings); err != nil {
@@ -132,7 +152,7 @@ func finishUserLoad(user *users.User, userDataJSON []byte) error {
 }
 
 func userDataForPersist(user *users.User) UserData {
-	profileJSON, err := settings.ProfileJSONFromUser(user)
+	profileJSON, err := storedProfileJSON(user)
 	if err != nil {
 		profileJSON = nil
 	}
@@ -140,10 +160,8 @@ func userDataForPersist(user *users.User) UserData {
 	var settingsJSON json.RawMessage
 	if user.Version >= users.ProfileStorageVersion {
 		legacySettings = users.NonAdminEditable{
-			SidebarLinks:       user.SidebarLinks,
 			ShowFirstLogin:     user.ShowFirstLogin,
 			PasskeyCredentials: user.PasskeyCredentials,
-			Sorting:            user.Sorting,
 		}
 	}
 	settingsJSON, err = json.Marshal(legacySettings)

@@ -1,7 +1,5 @@
 *.db
 *.db.old
-# Bolt database the migration tests start from
-!backend/testdata/migration/database.db.old
 *.sqlite**
 *.bak
 *.log

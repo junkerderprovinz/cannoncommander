@@ -7,7 +7,7 @@ import (
 )
 
 func TestResolveActivityPathGlobRejectsTraversal(t *testing.T) {
-	_, status, err := resolveActivityPathGlob(&Actor{}, nil, "/docs", "../secret/*")
+	_, status, err := resolveActivityPathGlob("/docs", "../secret/*")
 	if status != http.StatusBadRequest {
 		t.Fatalf("expected 400, got %d", status)
 	}

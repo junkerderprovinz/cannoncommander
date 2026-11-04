@@ -26,7 +26,7 @@ func (r *Resolver) AdminOnly(p string) bool {
 // FromSettings builds a resolver from the configured sources. The source
 // path doubles as the mount, because the container sees the host paths.
 // devices names the pools and disks of the array.
-func FromSettings(cfg *settings.Settings, access AccessGate, devices ...string) (*Resolver, error) {
+func FromSettings(cfg *settings.Settings, rules Rules, devices ...string) (*Resolver, error) {
 	var sources []Source
 	for _, s := range cfg.Server.Sources {
 		if s == nil || s.Config.Disabled {
@@ -35,7 +35,7 @@ func FromSettings(cfg *settings.Settings, access AccessGate, devices ...string) 
 		mount := MountFor(s.Path)
 		sources = append(sources, Source{Name: s.Name, Mount: mount, Root: s.Path, ReadOnly: s.Config.ReadOnly})
 	}
-	r, err := New(access, sources...)
+	r, err := New(rules, sources...)
 	if err != nil {
 		return nil, err
 	}

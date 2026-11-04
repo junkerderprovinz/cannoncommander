@@ -1,7 +1,6 @@
 package state
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -116,29 +115,5 @@ func TestInitAuthSigningKeyRejectsMalformedPersistedRow(t *testing.T) {
 	}
 	if string(raw) != "{not-json" {
 		t.Fatalf("malformed row was overwritten: %q", string(raw))
-	}
-}
-
-func TestInitAuthSigningKeyRejectsLegacyReadFailure(t *testing.T) {
-	newAuthSigningKeyTestStore(t)
-	preserveAuthKey(t)
-
-	originalMigrateFrom := settings.Config.Server.DatabaseV2.MigrateFrom
-	t.Cleanup(func() { settings.Config.Server.DatabaseV2.MigrateFrom = originalMigrateFrom })
-
-	// A file that exists but is not a valid Bolt database must not be treated as
-	// an absent key (which would generate and persist a replacement).
-	corruptPath := filepath.Join(t.TempDir(), "corrupt.db")
-	if err := os.WriteFile(corruptPath, []byte("this is not a bolt database"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	settings.Config.Auth.Key = ""
-	settings.Config.Server.DatabaseV2.MigrateFrom = corruptPath
-
-	if err := InitAuthSigningKey(); err == nil {
-		t.Fatal("expected error for unreadable legacy database")
-	}
-	if settings.Config.Auth.Key != "" {
-		t.Fatalf("signing key was generated despite legacy read failure: %q", settings.Config.Auth.Key)
 	}
 }
