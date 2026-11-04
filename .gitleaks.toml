@@ -2,6 +2,9 @@
 useDefault = true
 
 [allowlist]
-description = "Keyboard shortcuts in the prototype's action table"
+description = "Keyboard shortcuts in the prototype's action table and the app's texts"
 regexTarget = "line"
-regexes = ['''key: '(Strg|Alt|Umschalt)\+[^']*''']
+regexes = [
+  '''key: '(Strg|Alt|Umschalt)\+[^']*''',
+  '''"key": "(Strg|Alt|Umschalt)\+[^"]*"''',
+]
