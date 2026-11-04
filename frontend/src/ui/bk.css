@@ -1,4 +1,4 @@
-
+/* The tool windows of the file and tools menus, as the prototype's b-00-kit.js styles them. */
 .bk svg { fill: currentColor; }
 .bk .well { min-width: 0; }
 .bk .well .pill:not(.ok):not(.warn):not(.fault) { background: var(--carbon-surface3); }
@@ -8,6 +8,8 @@
 .bk .btn.bk-ghost:hover svg { color: var(--accent-glyph); }
 .bk-pathf { display: flex; gap: .4rem; flex: 1; min-width: 0; max-width: 30rem; }
 .bk-pathf .field { flex: 1; min-width: 0; }
+.bk-finalw { display: flex; gap: .4rem; align-items: center; min-width: 0; flex: 1; max-width: 30rem; justify-content: flex-end; }
+.bk-final { font-size: 12.5px; color: var(--carbon-text); }
 .bk-form .frow > .lab { flex: 0 0 auto; min-width: 8.5rem; white-space: nowrap; }
 .bk-form .frow .field.grow { flex: 1; }
 .bk-form .frow > .seg, .bk-form .frow > .sw, .bk-form .frow > .a-pw { margin-left: auto; }
@@ -37,6 +39,10 @@
 .bk-scan .bar { width: min(20rem, 80%); }
 .bk .field:disabled, .bk .sw:disabled, .bk .seg.off { opacity: .45; cursor: not-allowed; }
 .bk .seg.off { pointer-events: none; }
+.bk-range { display: flex; gap: .4rem; align-items: center; margin-left: auto; flex: 1; min-width: 0; justify-content: flex-end; }
+.bk-arrow { width: 1.75rem; height: 1.75rem; display: grid; place-items: center; color: var(--accent-glyph); }
+.bk-arrow svg { width: 1rem; height: 1rem; }
+.bk-arrow.sm { color: var(--carbon-text-sub); }
 @media (max-width: 760px) {
   .bk.win { max-width: calc(100vw - 3rem); }
   .bk-grid2 { grid-template-columns: minmax(0, 1fr); }
@@ -48,3 +54,4 @@
   .bk-pathf, .bk-finalw { max-width: none; width: 100%; margin-left: 0; }
   .bk .win-foot .start { display: none; }
 }
+@media (max-width: 760px) { .bk-range { flex-wrap: wrap; margin-left: 0; } }

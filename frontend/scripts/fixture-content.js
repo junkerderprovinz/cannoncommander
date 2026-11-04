@@ -142,11 +142,15 @@ export function contentRoutes(FS) {
         let body = '';
         req.on('data', (c) => { body += c; });
         req.on('end', () => {
-          if (!n) return fail(res, 404, 'Not found');
+          const dir = n ? null : nodeAt(parent(path));
+          if (!n && !dir?.children) return fail(res, 409, 'The folder for a new file is missing');
           const { text = '' } = JSON.parse(body || '{}');
+          const file = n || { name: nameOf(path), owner: 'nobody', group: 'users', mode: '0664' };
+          if (!n) dir.children.push(file);
           texts.set(path, text);
-          Object.assign(n, { size: Buffer.byteLength(text), time: Date.now(), text });
-          json(res, { size: n.size, mtime: new Date(n.time).toISOString() });
+          Object.assign(file, { size: Buffer.byteLength(text), time: Date.now(), text });
+          if (!n) res.statusCode = 201;
+          json(res, { size: file.size, mtime: new Date(file.time).toISOString() });
         });
         return true;
       }

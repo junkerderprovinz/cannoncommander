@@ -81,7 +81,7 @@ components:
           type: string
         kind:
           type: string
-          enum: [rename, mkdir, touch, copy, move, trash]
+          enum: [rename, renameBatch, mkdir, touch, link, copy, move, trash]
         at:
           type: string
           format: date-time

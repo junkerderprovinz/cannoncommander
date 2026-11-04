@@ -2,6 +2,7 @@
 import { action, inArchive } from '@/core/actions';
 import { view } from '@/core/views';
 import { win } from '@/core/windows';
+import { kindLabels } from '@/features/jobs/label';
 import { t, tl } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 import DupsBody from './DupsBody.vue';
@@ -14,4 +15,5 @@ export default function setup() {
     const root = view.id === 'files' && !inArchive(here) ? here : '/mnt/user';
     win({ title: t('duplicates.title'), wide: true, cls: 'bk bk-dups', body: DupsBody, props: { root } });
   } });
+  kindLabels.duplicates = (j) => t('duplicates.job', { name: j.name });
 }

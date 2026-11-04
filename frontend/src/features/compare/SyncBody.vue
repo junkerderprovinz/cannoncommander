@@ -3,20 +3,21 @@
 // be switched off. The server plans; a step that would overwrite something newer comes switched off.
 import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue';
 import { type SyncDirection, type SyncStep, tools } from '@/api/tools';
+import { run } from '@/core/actions';
 import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import { plural } from '@/bk/kit';
-import Tile from '@/bk/Tile.vue';
 import { split } from '@/files/paths';
 import { t } from '@/i18n';
 import Frow from '@/ui/Frow.vue';
 import Info from '@/ui/Info.vue';
+import { plural } from '@/ui/kit';
 import Seg from '@/ui/Seg.vue';
 import Sw from '@/ui/Sw.vue';
-import { schedule, startSync } from './sync';
+import Tile from '@/ui/Tile.vue';
+import { startSync } from './sync';
 
 const props = defineProps<{ left: string; right: string; win: WinEntry; close: () => void }>();
 const o = reactive({ dir: 'right' as SyncDirection, by: 'time' as 'time' | 'content', mirror: false, recursive: true });
@@ -30,7 +31,7 @@ const arrow = computed(() => (o.dir === 'left' ? 'IconBack' : o.dir === 'right' 
 const isOn = (s: SyncStep) => (touched.has(s.key) ? touched.get(s.key)! : !s.off);
 const on = computed(() => steps.value.filter(isOn));
 const count = computed(() => (steps.value.length
-  ? t('compare.steps', { on: plural(on.value.length, t('compare.step'), t('compare.stepsWord')), all: steps.value.length, size: fmtSize(on.value.filter((s) => s.act !== 'delete').reduce((a, s) => a + s.size, 0)) || '0 B' })
+  ? t('compare.steps', { on: plural(on.value.length, 'compare.stepCount'), all: steps.value.length, size: fmtSize(on.value.filter((s) => s.act !== 'delete').reduce((a, s) => a + s.size, 0)) || '0 B' })
   : t('compare.preview')));
 
 const nameOf = (s: SyncStep) => ({ name: split(s.rel).pop() || s.rel, dir: !!s.dir });
@@ -59,8 +60,8 @@ function apply() {
 }
 watch(() => on.value.length, (n) => {
   props.win.foot = [
-    { start: t('compare.background') }, cancelBtn(),
-    { label: t('compare.arrowLoop'), g: 'IconSchedules', run: () => { schedule(props.left, props.right, o); return false; } },
+    { start: t('ui.background') }, cancelBtn(),
+    { label: t('arrowloop.title'), g: 'IconSchedules', run: () => { run('arrowLoop', props.left, props.right, { direction: o.dir, mirror: o.mirror }); return false; } },
     { label: t('compare.sync'), g: 'IconSync', primary: true, disabled: !n, run: apply },
   ];
 }, { immediate: true });
@@ -83,7 +84,7 @@ onBeforeUnmount(() => { asked++; });
       <template v-if="steps.length">
         <div v-for="(s, i) in steps" :key="s.key" class="bk-step" :class="{ skip: !isOn(s) }">
           <Sw :model-value="isOn(s)" :data-bk-step="i" :aria-label="s.rel" @update:model-value="(v: boolean) => touched.set(s.key, v)" />
-          <Tile :n="nameOf(s)" />
+          <Tile :k="nameOf(s)" />
           <span class="bk-name">{{ s.rel }}{{ s.dir ? '/' : '' }}</span>
           <span v-if="s.why" class="pill warn">{{ t(`compare.why.${s.why}`) }}</span><span v-else></span>
           <span class="bk-arrow sm" :data-tip="t(s.to === 'R' ? 'compare.right' : 'compare.left')"><G :n="glyphOf(s)" /></span>

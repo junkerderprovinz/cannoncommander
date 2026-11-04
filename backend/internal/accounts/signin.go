@@ -17,6 +17,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	ccerrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/qrsvg"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
@@ -215,7 +216,7 @@ func (h handlers) nextStep(w http.ResponseWriter, r *http.Request, u *users.User
 		if err != nil {
 			return err
 		}
-		svg, err := qrSVG(key.URL())
+		svg, err := qrsvg.Draw(key.URL())
 		if err != nil {
 			return err
 		}

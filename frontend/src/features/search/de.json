@@ -1,5 +1,6 @@
 {
   "title": "Suchen",
+  "job": "Inhalt durchsuchen: {name} in {to}",
   "name": "Name",
   "namePlaceholder": "*.iso *.img oder ein Teil des Namens",
   "nameTip": "Mehrere Muster mit Leerzeichen trennen. * steht für beliebig viele Zeichen, ? für genau eines. Ohne * passt jeder Name, der den Text enthält.",
@@ -20,6 +21,7 @@
   "whens": { "any": "Beliebig", "1": "Heute", "7": "Letzte 7 Tage", "30": "Letzte 30 Tage", "365": "Letztes Jahr", "old": "Älter als ein Jahr" },
   "hits": "Treffer",
   "hitsLabel": "Treffer",
+  "hitCount": { "one": "{n} Treffer", "many": "{n} Treffer" },
   "first": "Die ersten {n} von {total} Treffern",
   "scanned": "{n} Objekte durchsucht",
   "reading": "Lese Dateien, {n} durchsucht",

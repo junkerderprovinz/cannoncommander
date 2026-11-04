@@ -6,6 +6,7 @@ import { addTo } from '@/core/extend';
 import { prefs } from '@/core/prefs';
 import { view } from '@/core/views';
 import { win } from '@/core/windows';
+import { kindLabels, placeName } from '@/features/jobs/label';
 import { toEntry } from '@/files/entries';
 import { t, tl } from '@/i18n';
 import { usePanels } from '@/stores/panels';
@@ -28,6 +29,7 @@ export default function setup() {
     win({ title: t('search.title'), wide: true, cls: 'bk bk-search', body: SearchBody, props: { q } });
   } });
   action('saveSearch', { label: tl('search.saveFilter'), g: 'IconSave', when: () => !!F.T().filter.trim(), run: saveFilter });
+  kindLabels.contentSearch = (j) => t('search.job', { name: j.name, to: placeName(j.dest) });
 
   // A panel showing a saved search lists its hits instead of the folder; any step elsewhere ends that.
   addTo('entryFilters', (list, _path, i) => {

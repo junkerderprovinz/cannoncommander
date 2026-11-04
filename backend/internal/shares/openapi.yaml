@@ -116,6 +116,33 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+  /shares/{id}/qr:
+    get:
+      operationId: shareAddress
+      summary: The public address of a link and its QR code
+      description: |
+        The address is the origin, /s/ and the slug. A client behind a
+        reverse proxy names the origin its visitors use; without it the
+        origin comes from the request and its X-Forwarded headers.
+      parameters:
+        - name: origin
+          in: query
+          description: Scheme and host, such as https://files.example.org.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The address and the code.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareAddress"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /admin/shares:
     get:
       operationId: adminSharesList
@@ -513,6 +540,16 @@ components:
         state:
           type: string
           enum: [active, expired, exhausted]
+    ShareAddress:
+      type: object
+      required: [url, qr]
+      properties:
+        url:
+          type: string
+          example: https://files.example.org/s/k3x9qa-urlaub
+        qr:
+          type: string
+          description: The address as a QR code in SVG.
     ShareCreate:
       type: object
       required: [paths]

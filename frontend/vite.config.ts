@@ -11,8 +11,6 @@ function fixture(): Plugin {
     const { authFixtureMiddleware } = await import('./scripts/fixture-auth.js');
     server.middlewares.use(authFixtureMiddleware());
     server.middlewares.use(opsFixtureMiddleware());
-    const { toolsFixtureMiddleware } = await import('./scripts/fixture-tools.js');
-    server.middlewares.use(toolsFixtureMiddleware());
     const { settingsFixtureMiddleware } = await import('./scripts/fixture-settings.js');
     server.middlewares.use(settingsFixtureMiddleware());
     server.middlewares.use(fixtureMiddleware());
