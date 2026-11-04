@@ -1,44 +1,25 @@
 package web
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"runtime"
-	"slices"
-	"strings"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/toolaccess"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 type requestContext = Context
-
-// requestTimeoutError is returned by withTimeout when the handler exceeds its budget.
-type requestTimeoutError struct {
-	timeout time.Duration
-}
-
-func newRequestTimeoutError(timeout time.Duration) error {
-	return &requestTimeoutError{timeout: timeout}
-}
-
-func (e *requestTimeoutError) Error() string {
-	return fmt.Sprintf("request timed out after %s", e.timeout)
-}
 
 var FileInfoFasterFunc = func(opts utils.FileOptions, user *users.User) (*iteminfo.ExtendedFileInfo, error) {
 	if runtimeDeps.Files != nil {
@@ -48,226 +29,6 @@ var FileInfoFasterFunc = func(opts utils.FileOptions, user *users.User) (*itemin
 }
 
 type handleFunc = HandleFunc
-
-// Middleware to handle file requests by hash and pass it to the handler
-func withHashFileHelper(fn handleFunc) handleFunc {
-	return withOrWithoutUserHelper(func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		hash := r.URL.Query().Get("hash")
-		inputPath := r.URL.Query().Get("path")
-		path, err := utils.SanitizePath(inputPath)
-		if err != nil && inputPath != "" {
-			return http.StatusBadRequest, err
-		}
-
-		link, err := state.GetShare(hash)
-		if err != nil {
-			data.Share = share.Share{}
-			return http.StatusNotFound, fmt.Errorf("share hash not found")
-		}
-		// Defensive check: data.User should be set by withOrWithoutUserHelper
-		if data.User == nil {
-			return http.StatusInternalServerError, fmt.Errorf("internal error: user context not set")
-		}
-		if link.DisableAnonymous && data.User.Username == "anonymous" {
-			return http.StatusForbidden, fmt.Errorf("share is not available to anonymous users")
-		}
-		// Block anonymous users from download routes when per-user download limits are enabled.
-		// View/stream routes still need view grants so anonymous visitors can play media inline.
-		if link.PerUserDownloadLimit && data.User.Username == "anonymous" && shareRequestAllowsDownload(r) {
-			return http.StatusForbidden, fmt.Errorf("anonymous downloads are not allowed with per-user limits")
-		}
-		if len(link.AllowedUsernames) > 0 {
-			if !slices.Contains(link.AllowedUsernames, data.User.Username) {
-				return http.StatusForbidden, fmt.Errorf("share is not available to this user")
-			}
-		}
-		data.Share = link
-		// Authenticate the share request if needed
-		var status int
-		if link.Hash != "" {
-			status, err = AuthenticateShareRequest(w, r, link)
-			if err != nil || status != http.StatusOK {
-				return status, fmt.Errorf("could not authenticate share request")
-			}
-		}
-		source, ok := settings.Config.Server.SourceMap[link.SourcePath]
-		if !ok {
-			return http.StatusNotFound, fmt.Errorf("source not found")
-		}
-		if source.Config.Private {
-			return http.StatusForbidden, fmt.Errorf("the target source is private")
-		}
-		// Get file information with options
-		getContent := r.URL.Query().Get("content") == "true"
-		getMetadata := r.URL.Query().Get("metadata") == "true"
-		reachedDownloadsLimit := link.Downloads >= link.DownloadsLimit && link.DownloadsLimit > 0
-		if link.DisableFileViewer || reachedDownloadsLimit {
-			getContent = false
-		}
-		userValue, err := state.UserForShareOwner(link)
-		if err == nil {
-			data.ShareUser = &userValue
-		}
-		if err != nil {
-			return http.StatusNotFound, fmt.Errorf("user for share no longer exists")
-		}
-		// get user scope path from share
-		userScope, err := data.ShareUser.GetScopeForSourceName(source.Name)
-		if err != nil {
-			return http.StatusForbidden, err
-		}
-		// so trim user scope from link.Path
-		pathWithoutUserScope := utils.JoinPathAsUnix("/", strings.TrimPrefix(link.Path, userScope), path)
-		if !strings.HasSuffix(pathWithoutUserScope, "/") {
-			pathWithoutUserScope = pathWithoutUserScope + "/"
-		}
-		data.IndexPath = pathWithoutUserScope
-		// skip file fetch for certain apis
-		if (r.Method == "POST" && strings.Contains(r.URL.Path, "/resources")) ||
-			(r.Method == "POST" && strings.Contains(r.URL.Path, "/resources/view-token")) ||
-			(r.Method == "GET" && strings.Contains(r.URL.Path, "/resources/items")) ||
-			(r.Method == "GET" && strings.Contains(r.URL.Path, "/media/metadata")) ||
-			(r.Method == "GET" && strings.Contains(r.URL.Path, "/media/subtitles")) ||
-			(r.Method == "GET" && strings.Contains(r.URL.Path, "/resources/download")) ||
-			(r.Method == "GET" && strings.Contains(r.URL.Path, "/resources/view")) ||
-			(r.Method == "GET" && strings.Contains(r.URL.Path, "/media/stream")) {
-			return fn(w, r, data)
-		}
-		file, err := FileInfoFasterFunc(utils.FileOptions{
-			Path:                     pathWithoutUserScope,
-			Source:                   source.Name,
-			Expand:                   true,
-			Content:                  getContent,
-			Metadata:                 getMetadata,
-			AlbumArt:                 strings.Contains(r.URL.Path, "/preview"),
-			ExtractEmbeddedSubtitles: settings.Config.Integrations.Media.ExtractEmbeddedSubtitles && link.ExtractEmbeddedSubtitles,
-			ShowHidden:               link.ShowHidden,
-			HideFileExt:              link.HideFileExt,
-			FollowSymlinks:           true,
-			ShowPinnedItems:          true,
-			ShareHash:                hash,
-		}, data.ShareUser)
-		if err != nil {
-			logger.Errorf("error fetching file info for share. hash=%v path=%v error=%v", hash, path, err)
-			return ErrToStatus(err), fmt.Errorf("error fetching share from server")
-		}
-		file.Source = link.Hash
-		file.Hash = link.Hash
-		if !link.EnableOnlyOffice || link.DisableFileViewer || reachedDownloadsLimit {
-			file.OnlyOfficeId = ""
-		}
-		if file.Type != "directory" {
-			AttachViewToken(data, source.Name, file)
-		} else {
-			AttachViewTokensForDirectory(data, source.Name, file)
-		}
-		file.Path = utils.AddTrailingSlashIfNotExists(path)
-		// Set the file info in the `data` object
-		data.FileInfo = *file
-		// Call the next handler with the data
-		return fn(w, r, data)
-	})
-}
-
-// Middleware to ensure the user is an admin
-func withAdminHelper(fn handleFunc) handleFunc {
-	return withUserHelper(func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		// Ensure the user has admin permissions
-		if !data.User.Permissions.Admin {
-			return http.StatusForbidden, nil
-		}
-		return fn(w, r, data)
-	})
-}
-
-// withSearchToolAccess requires advancedSearch, or sizeViewer when largest=true.
-func withSearchToolAccess(fn handleFunc) handleFunc {
-	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		doc := state.EffectiveToolAccessDefaults()
-		toolID := users.ToolAdvancedSearch
-		if r.URL.Query().Get("largest") == "true" {
-			toolID = users.ToolSizeViewer
-		}
-		if !toolaccess.HasToolAccess(data.User, toolID, doc) {
-			return http.StatusForbidden, nil
-		}
-		return fn(w, r, data)
-	}
-}
-
-// withToolAccess requires the user to have access to at least one of the given tools.
-func withToolAccess(toolIDs ...users.ToolID) func(handleFunc) handleFunc {
-	return func(fn handleFunc) handleFunc {
-		return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-			doc := state.EffectiveToolAccessDefaults()
-			if !toolaccess.HasAnyToolAccess(data.User, toolIDs, doc) {
-				return http.StatusForbidden, nil
-			}
-			return fn(w, r, data)
-		}
-	}
-}
-
-// extractUserFromExpiredToken attempts to extract user information from an expired token
-// This is used by withOrWithoutUserHelper to get user context even when tokens are expired
-func extractUserFromExpiredToken(r *http.Request, data *requestContext) *users.User {
-	if settings.Config.Auth.Methods.NoAuth {
-		userValue, err := state.ResolveNoAuthUser()
-		if err != nil {
-			logger.Errorf("no auth: %v", err)
-			return nil
-		}
-		return &userValue
-	}
-
-	keyFunc := auth.JWTSigningKeyFunc()
-
-	tokenString, err := ExtractToken(r)
-	if err != nil {
-		return nil
-	}
-
-	data.Token = tokenString
-	var tk users.AuthToken
-	// Validate signature without enforcing exp/iat so expired session JWTs can still yield
-	// user context on public-share routes; revocation is checked explicitly below.
-	parser := jwt.NewParser(jwt.WithoutClaimsValidation())
-	token, err := parser.ParseWithClaims(tokenString, &tk, keyFunc)
-	if err != nil {
-		return nil
-	}
-
-	if !token.Valid {
-		return nil
-	}
-
-	if tk.NotBefore != nil && !tk.VerifyNotBefore(time.Now(), false) {
-		return nil
-	}
-
-	if state.IsTokenRevoked(tokenString) {
-		return nil
-	}
-
-	// An expired token may only identify a user for a bounded window past its
-	// expiry; older tokens resolve nothing even if their hash is still known.
-	if tk.RegisteredClaims.ExpiresAt == nil ||
-		time.Since(tk.RegisteredClaims.ExpiresAt.Time) >= state.BearerTokenGrace {
-		return nil
-	}
-
-	user, err := resolveBearerTokenUser(tokenString)
-	if err != nil {
-		logger.Errorf("Failed to get user from token: %v", err)
-		return nil
-	}
-
-	if user.Username == "" {
-		return nil
-	}
-
-	return user
-}
 
 // resolveBearerTokenUser maps a validated bearer JWT to its owner via the
 // hashed_tokens registry. Session tokens get full owner permissions; named API
@@ -297,171 +58,6 @@ func resolveBearerTokenUser(rawToken string) (*users.User, error) {
 		userValue.RestrictToReading()
 	}
 	return &userValue, nil
-}
-
-// withOrWithoutUserHelper is a middleware that tries to authenticate a user.
-// If authentication is successful, the user is added to the request context.
-// If authentication fails, the request continues without a user.
-func withOrWithoutUserHelper(fn handleFunc) handleFunc {
-	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		var snap share.Share
-		var haveSnap bool
-		var isShareRequest bool
-		var shareHash string
-
-		hash := r.URL.Query().Get("hash")
-		if hash != "" {
-			isShareRequest = true
-			shareHash = hash
-			if l, err := state.GetShare(hash); err == nil {
-				snap = l
-				haveSnap = true
-			}
-		} else {
-			prefix := settings.Config.Http.BaseURL + "public/share/"
-			reconstructed := settings.Config.Http.BaseURL + "public" + r.URL.Path
-			if strings.HasPrefix(reconstructed, prefix) {
-				remaining := strings.TrimPrefix(reconstructed, prefix)
-				if remaining != "" {
-					if idx := strings.IndexByte(remaining, '/'); idx >= 0 {
-						remaining = remaining[:idx]
-					}
-					if remaining != "" {
-						isShareRequest = true
-						shareHash = remaining
-						if l, err := state.GetShare(remaining); err == nil {
-							snap = l
-							haveSnap = true
-						} else {
-							logger.Debugf("error getting share by hash: %v", err)
-						}
-					}
-				}
-			}
-		}
-
-		if isShareRequest {
-			if haveSnap {
-				data.Share = snap
-				data.ShareValid = true
-			} else {
-				data.Share = share.Share{ShareColumns: share.ShareColumns{Hash: shareHash}}
-				data.ShareValid = false
-			}
-		}
-
-		// Try to authenticate user first
-		status, err := withUserHelper(nil)(w, r, data)
-		if err == nil && status < 400 {
-			if data.ShareValid && data.Share.Hash != "" {
-				if data.User != nil {
-					data.User.CustomTheme = data.Share.ShareTheme
-				}
-			}
-			return fn(w, r, data)
-		}
-
-		// Authentication failed, but try to extract user info from expired tokens
-		if status == http.StatusUnauthorized || status == http.StatusForbidden {
-			// Try to extract user info from potentially expired token
-			userFromExpiredToken := extractUserFromExpiredToken(r, data)
-			if userFromExpiredToken != nil {
-				data.User = userFromExpiredToken
-				if data.ShareValid && data.Share.Hash != "" {
-					data.User.CustomTheme = data.Share.ShareTheme
-				}
-				SetUserInResponseWriter(w, data.User)
-				return fn(w, r, data)
-			}
-
-			// No valid token or user found, fall back to anonymous
-			data.User = &users.User{
-				FrontendUser: users.FrontendUser{Username: "anonymous"},
-			}
-			state.ApplyUserDefaults(data.User)
-			// Clear any user data that might have been partially set
-			data.Token = ""
-			if data.ShareValid && data.Share.Hash != "" {
-				data.User.CustomTheme = data.Share.ShareTheme
-			}
-			// Call the handler function without user context
-			return fn(w, r, data)
-		}
-		return status, fmt.Errorf("could not authenticate request")
-	}
-}
-
-func withoutUserHelper(fn handleFunc) handleFunc {
-	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		// This middleware is used when no user authentication is required
-		// Call the actual handler function with the updated context
-		return fn(w, r, data)
-	}
-}
-
-// LoginHelper authenticates login/signup requests. When disableOtp is false, users with TOTPSecret must supply X-Secret.
-func LoginHelper(disableOtp bool, fn handleFunc) handleFunc {
-	return func(w http.ResponseWriter, r *http.Request, d *requestContext) (int, error) {
-		if settings.Config.Auth.Methods.ProxyAuth.Enabled {
-			proxyUser := r.Header.Get(settings.Config.Auth.Methods.ProxyAuth.Header)
-			if proxyUser != "" {
-				return getProxyUser(w, r, d, fn, proxyUser)
-			}
-		}
-		// Check if request has a valid admin token first
-		if tokenStr, err := ExtractToken(r); err == nil && tokenStr != "" {
-			keyFunc := auth.JWTSigningKeyFunc()
-			var tk users.AuthToken
-			if token, err := jwt.ParseWithClaims(tokenStr, &tk, keyFunc); err == nil && token.Valid {
-				if !state.IsTokenRevoked(tokenStr) {
-					userValue, err := resolveBearerTokenUser(tokenStr)
-					if err == nil && userValue.Permissions.Admin {
-						d.User = userValue
-						return fn(w, r, d)
-					}
-				}
-			}
-		}
-
-		// Try LDAP first if enabled; on success set d.User and continue to handler
-		if settings.Config.Auth.Methods.LdapAuth.Enabled {
-			// No valid admin token - proceed with username/password authentication
-			username := r.URL.Query().Get("username")
-			password := r.Header.Get("X-Password")
-			// URL-decode password to support special characters in headers
-			password, err := url.QueryUnescape(password)
-			if err != nil {
-				return 401, fmt.Errorf("invalid password encoding")
-			}
-			logger.Debug("ldap auth, calling AuthenticateLDAPUser")
-			ldapUser, err := AuthenticateLDAPUser(username, password)
-			if err == nil {
-				logger.Debugf("ldap auth successful, calling handler")
-				d.User = ldapUser
-				return fn(w, r, d)
-			}
-			logger.Debug("ldap auth failed, calling password auth", err)
-		}
-		if settings.Config.Auth.Methods.PasswordAuth.Enabled {
-			user, err := auth.AuthenticatePassword(r, disableOtp, false)
-			if err != nil {
-				logger.Debug("password auth failed, calling handler:", err)
-				if err == errors.ErrNoTotpProvided {
-					return 403, err
-				}
-				if err == errors.ErrPasswordChangeRequired {
-					return 403, err
-				}
-				if status, mapped := loginMethodHTTPStatus(err); status != 0 {
-					return status, mapped
-				}
-				return 401, errors.ErrUnauthorized
-			}
-			d.User = user
-			return fn(w, r, d)
-		}
-		return withUserHelper(fn)(w, r, d)
-	}
 }
 
 // Middleware to retrieve and authenticate user
@@ -674,18 +270,6 @@ func getProxyUser(w http.ResponseWriter, r *http.Request, data *requestContext, 
 	return fn(w, r, data)
 }
 
-// Middleware to ensure the user is either the requested user or an admin
-func withSelfOrAdminHelper(fn handleFunc) handleFunc {
-	return withUserHelper(func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		// Check if the current user is the same as the requested user or if they are an admin
-		if !data.User.Permissions.Admin {
-			return http.StatusForbidden, nil
-		}
-		// Call the actual handler function with the updated context
-		return fn(w, r, data)
-	})
-}
-
 func wrapHandler(fn handleFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &requestContext{
@@ -743,15 +327,6 @@ func wrapHandlerBasicAuth(fn handleFunc) http.HandlerFunc {
 	return wrapHandler(wrappedFn)
 }
 
-func withPermShareHelper(fn handleFunc) handleFunc {
-	return withUserHelper(func(w http.ResponseWriter, r *http.Request, d *requestContext) (int, error) {
-		if !d.User.Permissions.Share {
-			return http.StatusForbidden, nil
-		}
-		return fn(w, r, d)
-	})
-}
-
 func withBasicAuthHelper(fn handleFunc) handleFunc {
 	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
 		_, password, ok := r.BasicAuth()
@@ -768,78 +343,6 @@ func withBasicAuthHelper(fn handleFunc) handleFunc {
 // It extracts Basic Auth credentials and uses the password as a JWT token to authenticate the user.
 func withBasicAuth(fn handleFunc) http.HandlerFunc {
 	return wrapHandlerBasicAuth(withBasicAuthHelper(fn))
-}
-
-func withPermShare(fn handleFunc) http.HandlerFunc {
-	return wrapHandler(withPermShareHelper(fn))
-}
-
-func withHashFile(fn handleFunc) http.HandlerFunc {
-	return wrapHandler(withHashFileHelper(fn))
-}
-
-func withAdmin(fn handleFunc) http.HandlerFunc {
-	return wrapHandler(withAdminHelper(fn))
-}
-
-func withUser(fn handleFunc) http.HandlerFunc {
-	return wrapHandler(withUserHelper(fn))
-}
-
-func withOrWithoutUser(fn handleFunc) http.HandlerFunc {
-	return wrapHandler(withOrWithoutUserHelper(fn))
-}
-
-func withoutUser(fn handleFunc) http.HandlerFunc {
-	return wrapHandler(withoutUserHelper(fn))
-}
-
-func loginHelper(fn handleFunc) handleFunc {
-	return LoginHelper(false, fn)
-}
-
-func withSelfOrAdmin(fn handleFunc) http.HandlerFunc {
-	return wrapHandler(withSelfOrAdminHelper(fn))
-}
-
-// withTimeoutHelper adds a configurable timeout context to any operation.
-func withTimeoutHelper(timeout time.Duration, fn handleFunc) handleFunc {
-	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		// Create a context with the specified timeout
-		ctx, cancel := context.WithTimeout(r.Context(), timeout)
-		defer cancel()
-
-		// Log timeout warning at 80% of timeout duration
-		warningTime := time.Duration(float64(timeout) * 0.8)
-		method, path := r.Method, r.URL.Path
-		go func() {
-			select {
-			case <-time.After(warningTime):
-				if ctx.Err() == nil {
-					logger.Api(http.StatusRequestTimeout, fmt.Sprintf("Request approaching timeout (%.1fs/%.0fs): %s %s", warningTime.Seconds(), timeout.Seconds(), method, path))
-				}
-			case <-ctx.Done():
-				// Context finished before warning time
-				return
-			}
-		}()
-
-		// Replace the request context with the timeout context
-		r = r.WithContext(ctx)
-		data.Ctx = ctx
-		// Call the handler and check for timeout
-		status, err := fn(w, r, data)
-
-		if ctx.Err() == context.DeadlineExceeded {
-			return http.StatusRequestTimeout, newRequestTimeoutError(timeout)
-		}
-
-		return status, err
-	}
-}
-
-func withTimeout(timeout time.Duration, fn handleFunc) http.HandlerFunc {
-	return wrapHandler(withTimeoutHelper(timeout, fn))
 }
 
 func muxWithMiddleware(mux *http.ServeMux) *http.ServeMux {

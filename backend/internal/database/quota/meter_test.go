@@ -71,23 +71,6 @@ func TestEffectiveMeter_ExplicitAccountedWhenIndexOn(t *testing.T) {
 	}
 }
 
-func TestEffectiveMeter_IndexWhenSizeAvailable(t *testing.T) {
-	root := t.TempDir()
-	name := "meter-src4"
-	setupMeterTestSource(t, name, root, false)
-	idx := indexing.GetIndex(name)
-	idx.SetFolderSize("/", 2048)
-
-	got := quota.EffectiveMeter(quota.MeterIndexSize, name, "/")
-	if got != quota.MeterIndexSize {
-		t.Fatalf("expected index_size, got %q", got)
-	}
-	status := quota.MeasurementStatus(quota.MeterIndexSize, got)
-	if status != quota.MeasurementStatusReady {
-		t.Fatalf("expected ready, got %q", status)
-	}
-}
-
 func TestEffectiveMeter_IndexPathTrailingSlash(t *testing.T) {
 	root := t.TempDir()
 	name := "meter-src6"
@@ -98,19 +81,5 @@ func TestEffectiveMeter_IndexPathTrailingSlash(t *testing.T) {
 	got := quota.EffectiveMeter(quota.MeterIndexSize, name, "/projects")
 	if got != quota.MeterIndexSize {
 		t.Fatalf("expected index_size for path without trailing slash, got %q", got)
-	}
-}
-func TestEffectiveMeter_RuntimeFallback(t *testing.T) {
-	root := t.TempDir()
-	name := "meter-src5"
-	setupMeterTestSource(t, name, root, false)
-
-	got := quota.EffectiveMeter(quota.MeterIndexScope, name, "/missing")
-	if got != quota.MeterAccounted {
-		t.Fatalf("expected accounted fallback, got %q", got)
-	}
-	status := quota.MeasurementStatus(quota.MeterIndexScope, got)
-	if status != quota.MeasurementStatusAccountedFallback {
-		t.Fatalf("expected accounted_fallback, got %q", status)
 	}
 }

@@ -25,15 +25,6 @@ func TestResolveGroupsClaim(t *testing.T) {
 	}
 }
 
-func TestResolveLdapGroupsClaim(t *testing.T) {
-	if got := ResolveLdapGroupsClaim(""); got != "memberOf" {
-		t.Fatalf("ResolveLdapGroupsClaim(\"\") = %q, want memberOf", got)
-	}
-	if got := ResolveLdapGroupsClaim("groups"); got != "groups" {
-		t.Fatalf("ResolveLdapGroupsClaim(groups) = %q, want groups", got)
-	}
-}
-
 func TestApplyLdapAuthCommonDefaultsUsesMemberOf(t *testing.T) {
 	ldapCfg := LdapConfig{AuthCommon: AuthCommon{}}
 	if ldapCfg.GroupsClaim == "" {

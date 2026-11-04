@@ -143,43 +143,6 @@ func EnforceScope(r *http.Request, actor *Actor) (int, error) {
 	return 0, nil
 }
 
-// ValidateChartParams checks grouped/chart query parameters.
-func ValidateChartParams(filter activitydb.QueryFilter) error {
-	interval := filter.Interval
-	if interval == "" {
-		switch filter.GroupBy {
-		case "day":
-			interval = "day"
-		case "none":
-			interval = "none"
-		case "hour", "":
-			interval = "hour"
-		default:
-			return fmt.Errorf("groupBy must be none, hour, or day (use interval instead)")
-		}
-	}
-	if interval != "minute" && interval != "hour" && interval != "day" && interval != "none" {
-		return fmt.Errorf("interval must be minute, hour, day, or none")
-	}
-
-	splitBy := filter.SplitBy
-	if splitBy == "" {
-		splitBy = "eventType"
-	}
-	if splitBy != "eventType" && splitBy != "user" && splitBy != "none" {
-		return fmt.Errorf("splitBy must be eventType, user, or none")
-	}
-
-	rangeSecs := filter.To - filter.From
-	if interval == "minute" && rangeSecs > maxMinuteRangeSecs {
-		return fmt.Errorf("minute interval supports at most 48 hours; use hour or day for longer ranges")
-	}
-	if interval != "none" && rangeSecs > int64(maxChartDays)*86400 {
-		return fmt.Errorf("time range exceeds %d days for chart queries", maxChartDays)
-	}
-	return nil
-}
-
 func parseInt64Default(s string, def int64) int64 {
 	if s == "" {
 		return def

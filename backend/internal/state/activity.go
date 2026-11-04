@@ -63,11 +63,3 @@ func activityActorUsername(row activitydb.Entry, joinedUsername string) string {
 	}
 	return strconv.FormatUint(row.UserID, 10)
 }
-
-// ListActivityStats returns aggregated activity buckets for charts.
-func ListActivityStats(filter activitydb.QueryFilter) ([]activitydb.StatsBucket, error) {
-	if sqlDb == nil {
-		return nil, fmt.Errorf("sql store not initialized")
-	}
-	return sqlDb.ListActivityStats(filter)
-}

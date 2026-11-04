@@ -2,14 +2,12 @@ package state
 
 import (
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // Share operations
@@ -72,64 +70,6 @@ func GetSharesByUserID(userID uint64) ([]share.Share, error) {
 	return shares, nil
 }
 
-// GetSharesByPath retrieves shares for a specific source and path
-// Returns values (not pointers) to prevent modifications to the cache
-func GetSharesByPath(source, path string) ([]share.Share, error) {
-	sharesMux.RLock()
-	defer sharesMux.RUnlock()
-
-	pathKey := makePathKey(source, path)
-	hashes, exists := sharesByPath[pathKey]
-
-	if !exists {
-		return []share.Share{}, nil
-	}
-
-	var shares []share.Share
-	for _, hash := range hashes {
-		if link, exists := sharesByHash[hash]; exists {
-			shares = append(shares, copyShareLink(link))
-		}
-	}
-
-	return shares, nil
-}
-
-// CreateShare creates a new share with write-through to SQL
-func CreateShare(link *share.Share) error {
-	sharesMux.Lock()
-	defer sharesMux.Unlock()
-
-	// 1. Check if share already exists in cache (state)
-	if _, exists := sharesByHash[link.Hash]; exists {
-		return fmt.Errorf("share with hash %s already exists", link.Hash)
-	}
-
-	if link.QuotaLimitBytes > 0 {
-		if err := EnsureShareQuotaCounter(link.Hash); err != nil {
-			return err
-		}
-	}
-
-	// 2. Write to database
-	err := sqlDb.SaveShare(link)
-	if err != nil {
-		if link.QuotaLimitBytes > 0 {
-			_ = DeleteShareQuotaCounter(link.Hash)
-		}
-		return err
-	}
-
-	// 3. Update cache to match database
-	sharesByHash[link.Hash] = link
-	pathKey := makePathKey(link.SourcePath, link.Path)
-
-	// Add to path index
-	sharesByPath[pathKey] = append(sharesByPath[pathKey], link.Hash)
-
-	return nil
-}
-
 // UpdateShare updates an existing share with write-through to SQL
 // Takes a function that modifies the share to ensure thread-safe updates
 func UpdateShare(hash string, updateFn func(*share.Share) error) error {
@@ -156,24 +96,6 @@ func UpdateShare(hash string, updateFn func(*share.Share) error) error {
 	// 3. Cache is already updated since we modified the pointer directly
 
 	return nil
-}
-
-// IncrementShareDownloadCount updates share entity state: global download count and, when
-// per-user limits are enabled, the count for viewerUsername. This is not activity audit
-// logging — use activity.RecordDownload for the Activity Viewer. Callers must not mutate
-// download counters on share snapshots directly.
-func IncrementShareDownloadCount(hash, viewerUsername string) error {
-	sharesMux.Lock()
-	defer sharesMux.Unlock()
-	link, exists := sharesByHash[hash]
-	if !exists {
-		return fmt.Errorf("share not found in cache")
-	}
-	link.Downloads++
-	if link.PerUserDownloadLimit {
-		link.IncrementUserDownload(viewerUsername)
-	}
-	return sqlDb.SaveShare(link)
 }
 
 // DeleteShare deletes a share by hash
@@ -232,48 +154,6 @@ func DeleteShare(hash string) error {
 	return nil
 }
 
-// UpdateSharePath updates the path for a specific share
-func UpdateSharePath(hash, newPath string) error {
-	sharesMux.Lock()
-	defer sharesMux.Unlock()
-
-	// 1. Check if share exists in cache (state)
-	link, exists := sharesByHash[hash]
-	if !exists {
-		return fmt.Errorf("share not found in cache")
-	}
-
-	oldPathKey := makePathKey(link.SourcePath, link.Path)
-
-	// 2. Update database
-	err := sqlDb.UpdateSharePath(hash, newPath)
-	if err != nil {
-		return err
-	}
-
-	// 3. Update cache to match database
-	link.Path = newPath
-	newPathKey := makePathKey(link.SourcePath, newPath)
-
-	// Remove from old path index
-	if oldHashes, exists := sharesByPath[oldPathKey]; exists {
-		for i, h := range oldHashes {
-			if h == hash {
-				sharesByPath[oldPathKey] = append(oldHashes[:i], oldHashes[i+1:]...)
-				break
-			}
-		}
-		if len(sharesByPath[oldPathKey]) == 0 {
-			delete(sharesByPath, oldPathKey)
-		}
-	}
-
-	// Add to new path index
-	sharesByPath[newPathKey] = append(sharesByPath[newPathKey], hash)
-
-	return nil
-}
-
 // UpdateSharesPaths updates paths for shares when a resource is moved
 func UpdateSharesPaths(oldSource, oldPath, newSource, newPath string) error {
 	sharesMux.Lock()
@@ -302,75 +182,6 @@ func UpdateSharesPaths(oldSource, oldPath, newSource, newPath string) error {
 	}
 
 	return nil
-}
-
-// removeShareFromPathIndexLocked removes hash from sharesByPath for the given source/path key. Caller must hold sharesMux.
-func removeShareFromPathIndexLocked(source, path, hash string) {
-	adjustedPath := utils.AddTrailingSlashIfNotExists(path)
-	adjustedSource := utils.AddTrailingSlashIfNotExists(source)
-	key := makePathKey(adjustedSource, adjustedPath)
-	if inner, ok := sharesByPath[key]; ok {
-		out := make([]string, 0, len(inner))
-		for _, h := range inner {
-			if h != hash {
-				out = append(out, h)
-			}
-		}
-		if len(out) == 0 {
-			delete(sharesByPath, key)
-		} else {
-			sharesByPath[key] = out
-		}
-	}
-}
-
-// appendShareToPathIndexLocked appends hash to sharesByPath for source/path. Caller must hold sharesMux.
-func appendShareToPathIndexLocked(source, path, hash string) {
-	adjustedPath := utils.AddTrailingSlashIfNotExists(path)
-	adjustedSource := utils.AddTrailingSlashIfNotExists(source)
-	key := makePathKey(adjustedSource, adjustedPath)
-	sharesByPath[key] = append(sharesByPath[key], hash)
-}
-
-// UpdateSharesForMovedResource updates share rows whose stored path is under a moved index path (same logic as
-// share.Storage.UpdateShares). It is the only supported way to reconcile shares after a filesystem move.
-// Returns hashes of updated shares (e.g. for logging).
-func UpdateSharesForMovedResource(oldSource, oldPath, newSource, newPath string) ([]string, error) {
-	sharesMux.Lock()
-	defer sharesMux.Unlock()
-
-	oldPath = utils.AddTrailingSlashIfNotExists(oldPath)
-	newPath = utils.AddTrailingSlashIfNotExists(newPath)
-
-	var updatedHashes []string
-	for _, l := range sharesByHash {
-		if l == nil || l.SourcePath != oldSource {
-			continue
-		}
-		norm := utils.AddTrailingSlashIfNotExists(l.Path)
-		if !strings.HasPrefix(norm, oldPath) {
-			continue
-		}
-
-		removeShareFromPathIndexLocked(l.SourcePath, l.Path, l.Hash)
-
-		shareWasDir := strings.HasSuffix(l.Path, "/")
-		l.SourcePath = newSource
-		suffix := strings.TrimPrefix(norm, oldPath)
-		l.Path = strings.TrimSuffix(newPath+suffix, "/")
-		if shareWasDir {
-			l.Path = utils.AddTrailingSlashIfNotExists(l.Path)
-		}
-
-		if err := sqlDb.SaveShare(l); err != nil {
-			logger.Error("failed to save updated share after resource move", "hash", l.Hash, "error", err)
-			return updatedHashes, err
-		}
-
-		appendShareToPathIndexLocked(l.SourcePath, l.Path, l.Hash)
-		updatedHashes = append(updatedHashes, l.Hash)
-	}
-	return updatedHashes, nil
 }
 
 // IsShared checks if a path is shared by the given owner user id.
@@ -404,77 +215,6 @@ func IsShared(source, path string, userID uint64) bool {
 	}
 
 	return false
-}
-
-// PrepSharesForFrontend builds API-safe ShareFrontend copies for share pointers.
-func PrepSharesForFrontend(viewer *users.User, r *http.Request, publicHost, publicScheme string, links ...*share.Share) []*share.ShareFrontend {
-	ownerLookup := func(userID uint64) string {
-		u, err := GetUserByID(userID)
-		if err != nil {
-			return ""
-		}
-		return u.Username
-	}
-	out := share.PrepForFrontend(viewer, r, publicHost, publicScheme, ownerLookup, links...)
-	enrichShareQuotaFields(out)
-	return out
-}
-
-func enrichShareQuotaFields(out []*share.ShareFrontend) {
-	for _, s := range out {
-		if s == nil || s.QuotaLimitBytes <= 0 {
-			continue
-		}
-		used, reserved := GetShareQuotaUsage(s.Hash)
-		s.QuotaUsedBytes = used
-		s.QuotaReservedBytes = reserved
-		avail := s.QuotaLimitBytes - used - reserved
-		if avail < 0 {
-			avail = 0
-		}
-		s.QuotaAvailableBytes = avail
-	}
-}
-
-// PrepShareValuesForFrontend builds API-safe ShareFrontend copies from immutable share values.
-func PrepShareValuesForFrontend(viewer *users.User, r *http.Request, publicHost, publicScheme string, shares []share.Share) []*share.ShareFrontend {
-	if len(shares) == 0 {
-		return utils.NonNilSlice([]*share.ShareFrontend(nil))
-	}
-	ptrs := make([]*share.Share, len(shares))
-	for i := range shares {
-		s := shares[i]
-		ptrs[i] = new(share.Share)
-		*ptrs[i] = s
-	}
-	return PrepSharesForFrontend(viewer, r, publicHost, publicScheme, ptrs...)
-}
-
-// PrepShareForFrontend builds a single API-safe ShareFrontend copy from an immutable share value.
-func PrepShareForFrontend(viewer *users.User, r *http.Request, publicHost, publicScheme string, sh share.Share) *share.ShareFrontend {
-	prepped := PrepShareValuesForFrontend(viewer, r, publicHost, publicScheme, []share.Share{sh})
-	if len(prepped) == 0 {
-		return nil
-	}
-	return prepped[0]
-}
-
-// GetSharesInScope returns non-expired shares for scopePath on source owned by userID.
-func GetSharesInScope(scopePath, source string, userID uint64) ([]*share.Share, error) {
-	links, err := GetSharesByPath(source, scopePath)
-	if err != nil {
-		return nil, err
-	}
-	now := time.Now().Unix()
-	filtered := make([]*share.Share, 0, len(links))
-	for i := range links {
-		l := links[i]
-		if l.UserID == userID && (l.Expire == 0 || l.Expire > now || l.KeepAfterExpiration) {
-			copy := l
-			filtered = append(filtered, &copy)
-		}
-	}
-	return filtered, nil
 }
 
 // copyShareLink creates a deep copy of a share link

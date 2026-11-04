@@ -68,35 +68,6 @@ func defaultItemAppliesToUser(item SidebarLinkDefaultItem, scopes []users.Backen
 	return UserHasSourceAccess(scopes, source.Path)
 }
 
-// FilterDefaultsDocumentForUser returns defaults items that apply to the user's scopes.
-func FilterDefaultsDocumentForUser(doc SidebarLinkDefaultsDocument, scopes []users.BackendScope) SidebarLinkDefaultsDocument {
-	if len(doc.Items) == 0 {
-		return doc
-	}
-	out := make([]SidebarLinkDefaultItem, 0, len(doc.Items))
-	for _, item := range doc.Items {
-		if defaultItemAppliesToUser(item, scopes) {
-			out = append(out, item)
-		}
-	}
-	return SidebarLinkDefaultsDocument{Items: out}
-}
-
-// SourceDisplayNamesForScopes returns display names for the given backend scopes.
-func SourceDisplayNamesForScopes(scopes []users.BackendScope) []string {
-	names := make([]string, 0, len(scopes))
-	for _, scope := range scopes {
-		name := scope.Path
-		if users.SourceConfigLoaded() {
-			if src := settings.Config.Server.SourceMap[scope.Path]; src != nil && src.Name != "" {
-				name = src.Name
-			}
-		}
-		names = append(names, name)
-	}
-	return names
-}
-
 func prepareDefaultLink(link users.SidebarLink) (users.SidebarLink, bool) {
 	normalized, changed := NormalizeSidebarLinks([]users.SidebarLink{link})
 	if len(normalized) == 0 {
@@ -278,21 +249,6 @@ func DocumentWithAllSources(doc SidebarLinkDefaultsDocument) SidebarLinkDefaults
 	return SidebarLinkDefaultsDocument{Items: out}
 }
 
-// ConfiguredSourceNames returns display names for all configured sources.
-func ConfiguredSourceNames() []string {
-	if !users.SourceConfigLoaded() {
-		return nil
-	}
-	names := make([]string, 0, len(settings.Config.Server.Sources))
-	for _, src := range settings.Config.Server.Sources {
-		if src == nil {
-			continue
-		}
-		names = append(names, src.Name)
-	}
-	return names
-}
-
 // EnsureAllSourcesInDefaults merges in any configured sources missing from doc (enabled by default).
 func EnsureAllSourcesInDefaults(doc SidebarLinkDefaultsDocument) (SidebarLinkDefaultsDocument, bool) {
 	merged := DocumentWithAllSources(doc)
@@ -305,44 +261,4 @@ func EnsureAllSourcesInDefaults(doc SidebarLinkDefaultsDocument) (SidebarLinkDef
 // InitialSidebarLinkDefaultsDocument returns enabled defaults for every configured source.
 func InitialSidebarLinkDefaultsDocument() SidebarLinkDefaultsDocument {
 	return DocumentWithAllSources(SidebarLinkDefaultsDocument{Items: []SidebarLinkDefaultItem{}})
-}
-
-// FrontendDefaultItem converts one defaults item for API responses.
-func FrontendDefaultItem(item SidebarLinkDefaultItem) SidebarLinkDefaultItem {
-	if prepared, ok := prepareFrontendLink(item.Link); ok {
-		item.Link = prepared
-	}
-	return item
-}
-
-// FrontendDefaultsDocument converts stored defaults for API responses.
-func FrontendDefaultsDocument(doc SidebarLinkDefaultsDocument) SidebarLinkDefaultsDocument {
-	if len(doc.Items) == 0 {
-		return doc
-	}
-	out := make([]SidebarLinkDefaultItem, len(doc.Items))
-	for i, item := range doc.Items {
-		out[i] = FrontendDefaultItem(item)
-	}
-	return SidebarLinkDefaultsDocument{Items: out}
-}
-
-// NormalizeDefaultsDocument canonicalizes incoming defaults for storage.
-func NormalizeDefaultsDocument(doc SidebarLinkDefaultsDocument) SidebarLinkDefaultsDocument {
-	if len(doc.Items) == 0 {
-		return doc
-	}
-	out := make([]SidebarLinkDefaultItem, 0, len(doc.Items))
-	for _, item := range doc.Items {
-		normalized, _ := NormalizeSidebarLinks([]users.SidebarLink{item.Link})
-		if len(normalized) == 0 {
-			continue
-		}
-		out = append(out, SidebarLinkDefaultItem{
-			Enabled:  item.Enabled,
-			Enforced: item.Enforced,
-			Link:     normalized[0],
-		})
-	}
-	return SidebarLinkDefaultsDocument{Items: out}
 }

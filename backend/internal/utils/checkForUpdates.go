@@ -84,10 +84,6 @@ func CheckForUpdates() (updateInfo, error) {
 	}, nil
 }
 
-func GetUpdateAvailableUrl() string {
-	return updateAvailableUrl
-}
-
 // starts a background process to check for updates periodically.
 func StartCheckForUpdates() {
 	// Create a ticker that fires every 24 hours.

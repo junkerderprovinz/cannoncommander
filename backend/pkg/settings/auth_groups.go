@@ -13,14 +13,6 @@ func ResolveGroupsClaim(claim string) string {
 	return claim
 }
 
-// ResolveLdapGroupsClaim returns the configured LDAP groups attribute or memberOf when empty.
-func ResolveLdapGroupsClaim(claim string) string {
-	if claim == "" {
-		return defaultLdapGroupsClaim
-	}
-	return claim
-}
-
 // applyAuthCommonDefaults sets shared defaults for external auth methods that support group claims.
 func applyAuthCommonDefaults(c *AuthCommon) {
 	c.GroupsClaim = ResolveGroupsClaim(c.GroupsClaim)

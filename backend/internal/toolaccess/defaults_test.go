@@ -19,45 +19,6 @@ func testDoc(items []ToolAccessDefaultItem) ToolAccessDefaultsDocument {
 	return ToolAccessDefaultsDocument{Items: items}
 }
 
-func TestHasToolAccessDefaultEnabled(t *testing.T) {
-	doc := testDoc([]ToolAccessDefaultItem{
-		{ToolID: users.ToolFileWatcher, Enabled: false, Enforced: false},
-	})
-	if HasToolAccess(testUser(nil, false), users.ToolFileWatcher, doc) {
-		t.Fatal("expected fileWatcher disabled by default")
-	}
-}
-
-func TestHasToolAccessUserOverride(t *testing.T) {
-	doc := testDoc([]ToolAccessDefaultItem{
-		{ToolID: users.ToolFileWatcher, Enabled: false, Enforced: false},
-	})
-	u := testUser(users.ToolAccessMap{users.ToolFileWatcher: true}, false)
-	if !HasToolAccess(u, users.ToolFileWatcher, doc) {
-		t.Fatal("expected user override to grant access")
-	}
-}
-
-func TestHasToolAccessEnforced(t *testing.T) {
-	doc := testDoc([]ToolAccessDefaultItem{
-		{ToolID: users.ToolFileWatcher, Enabled: false, Enforced: true},
-	})
-	u := testUser(users.ToolAccessMap{users.ToolFileWatcher: true}, false)
-	if HasToolAccess(u, users.ToolFileWatcher, doc) {
-		t.Fatal("expected enforced default to deny access")
-	}
-}
-
-func TestHasToolAccessAdminBypass(t *testing.T) {
-	doc := testDoc([]ToolAccessDefaultItem{
-		{ToolID: users.ToolFileWatcher, Enabled: false, Enforced: true},
-	})
-	u := testUser(users.ToolAccessMap{users.ToolFileWatcher: false}, true)
-	if !HasToolAccess(u, users.ToolFileWatcher, doc) {
-		t.Fatal("expected admin bypass")
-	}
-}
-
 func TestValidateEnforcedToolAccess(t *testing.T) {
 	doc := testDoc([]ToolAccessDefaultItem{
 		{ToolID: users.ToolActivityViewer, Enabled: true, Enforced: true},

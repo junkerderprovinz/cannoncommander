@@ -13,11 +13,6 @@ import (
 // MethodProxyAuth is used to identify no auth.
 const MethodProxyAuth = "proxy"
 
-// ProxyAuth is a proxy implementation of an auther.
-type ProxyAuth struct {
-	Header string `json:"header"`
-}
-
 // AuthenticateProxy authenticates the user via an HTTP header.
 func AuthenticateProxy(r *http.Request, usr *users.Storage, headerName string) (*users.User, error) {
 	username := r.Header.Get(headerName)
@@ -34,11 +29,6 @@ func AuthenticateProxy(r *http.Request, usr *users.Storage, headerName string) (
 	}
 
 	return user, err
-}
-
-// Auth authenticates the user via an HTTP header (legacy method for compatibility).
-func (a ProxyAuth) Auth(r *http.Request, usr *users.Storage) (*users.User, error) {
-	return AuthenticateProxy(r, usr, a.Header)
 }
 
 // ExtractGroupsFromHeader reads group/role values from a proxy header named by groupsClaim.

@@ -139,18 +139,6 @@ func profilePatchJSONForPaths(source UserProfile, paths map[string]struct{}) ([]
 	return json.Marshal(patchMap)
 }
 
-func profilePatchForPaths(source UserProfile, paths map[string]struct{}) (UserProfile, error) {
-	patchBytes, err := profilePatchJSONForPaths(source, paths)
-	if err != nil {
-		return UserProfile{}, err
-	}
-	var patch UserProfile
-	if err := json.Unmarshal(patchBytes, &patch); err != nil {
-		return UserProfile{}, fmt.Errorf("unmarshal profile patch: %w", err)
-	}
-	return patch, nil
-}
-
 func valueAtJSONPath(root map[string]interface{}, path string) (interface{}, bool) {
 	parts := strings.Split(path, ".")
 	var cur interface{} = root

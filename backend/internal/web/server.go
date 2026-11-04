@@ -4,9 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"embed"
-	"encoding/json"
 	"fmt"
-	"html/template"
 	"io/fs"
 	"net"
 	"net/http"
@@ -37,13 +35,6 @@ var (
 	assetFs     fs.FS
 )
 
-func initRuntime(deps Deps, assets fs.FS) {
-	runtimeDeps = deps
-	assetFs = assets
-	// Make the generated YAML's `secret:` markers available to the settings redactor.
-	initSettingsSecretMarkers()
-}
-
 // Embed the files in the frontend/dist directory
 //
 //go:embed embed/*
@@ -64,35 +55,14 @@ func StartHttp(ctx context.Context, deps Deps, shutdownComplete chan struct{}) {
 		}()
 	}
 
-	fs := fileutils.GetAssetFS()
-	if fs == nil {
+	assetFs = fileutils.GetAssetFS()
+	if assetFs == nil {
 		logger.Fatal("Asset filesystem not initialized. Call fileutils.InitAssetFS first.")
 	}
-
-	templates := template.New("").Funcs(template.FuncMap{
-		"marshal": func(v interface{}) (string, error) {
-			a, err := json.Marshal(v)
-			return string(a), err
-		},
-	})
-	if !settings.Env.IsDevMode {
-		templates = template.Must(templates.ParseFS(fs, indexTemplatePath()))
-	}
-	templateRenderer = &TemplateRenderer{
-		templates: templates,
-		devMode:   settings.Env.IsDevMode,
-	}
-
-	initRuntime(deps, fs)
+	runtimeDeps = deps
 
 	router := http.NewServeMux()
-	api := http.NewServeMux()
-	publicRoutes := http.NewServeMux()
-	publicApi := http.NewServeMux()
-
-	configureHTTPRouter(router, api, publicRoutes, publicApi)
-	router.HandleFunc("GET "+settings.Config.Http.BaseURL+"assets/", viteAssetHandler)
-	router.HandleFunc("GET "+settings.Config.Http.BaseURL+"s/{slug}", sharePageHandler)
+	configureHTTPRouter(router)
 	if err := mountAPIv1(router); err != nil {
 		logger.Fatalf("Could not set up /api/v1: %v", err)
 	}

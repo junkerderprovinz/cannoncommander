@@ -77,7 +77,7 @@ func TestResettingThePasswordClearsTheWayIn(t *testing.T) {
 	if _, _, ok := state.HashedTokenOwner(tok.Secret); ok || !state.IsTokenRevoked(tok.Secret) {
 		t.Fatal("the API token survived the reset")
 	}
-	if err := passwordLogin("anna", "ein-ganz-neues-passwort", ""); err != nil {
+	if err := w.passwordLogin("anna", "ein-ganz-neues-passwort", ""); err != nil {
 		t.Fatalf("login after the reset: %v", err)
 	}
 	w.must(http.StatusBadRequest, w.req("POST", "/auth/reset", map[string]string{"code": code, "password": "noch-ein-neues-passwort"}))

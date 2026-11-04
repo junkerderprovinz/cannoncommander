@@ -1,14 +1,11 @@
 package utils
 
 import (
-	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -58,37 +55,6 @@ func HashSHA256(data string) string {
 	return hex.EncodeToString(bytes[:])
 }
 
-// SignHMACSHA256Base64URL returns base64url(payload).base64url(hmac-sha256 signature).
-func SignHMACSHA256Base64URL(key, payload []byte) string {
-	payloadB64 := base64.RawURLEncoding.EncodeToString(payload)
-	mac := hmac.New(sha256.New, key)
-	mac.Write([]byte(payloadB64))
-	signature := base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
-	return payloadB64 + "." + signature
-}
-
-// VerifyHMACSHA256Base64URL validates token form and returns the decoded payload.
-func VerifyHMACSHA256Base64URL(key []byte, token string) ([]byte, bool) {
-	parts := strings.Split(token, ".")
-	if len(parts) != 2 {
-		return nil, false
-	}
-	payloadB64, signature := parts[0], parts[1]
-
-	mac := hmac.New(sha256.New, key)
-	mac.Write([]byte(payloadB64))
-	expectedSignature := base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
-	if !hmac.Equal([]byte(signature), []byte(expectedSignature)) {
-		return nil, false
-	}
-
-	payload, err := base64.RawURLEncoding.DecodeString(payloadB64)
-	if err != nil {
-		return nil, false
-	}
-	return payload, true
-}
-
 // RandomUint64ID returns a non-zero cryptographically random uint64 (e.g. new user rows after migration).
 // Small ids 1, 2, 3, … remain valid for migrated Bolt-era users.
 func RandomUint64ID() (uint64, error) {
@@ -111,38 +77,4 @@ func GenerateKey() string {
 		return ""
 	}
 	return string(b)
-}
-
-// CSPNonce returns a random value suitable for Content-Security-Policy nonces
-// and matching HTML nonce="" attributes: 16 cryptographically random bytes
-// encoded with unpadded URL-safe base64 (22 chars from A-Za-z0-9-_).
-// URL-safe encoding is required because html/template HTML-escapes '+' as
-// "&#43;" inside quoted attributes, so a StdEncoding nonce containing '+'
-// would not byte-match the 'nonce-...' source in the CSP response header
-// and the browser would block the inline script.
-func CSPNonce() (string, error) {
-	b, err := randomBytes(16)
-	if err != nil {
-		return "", err
-	}
-	return base64.RawURLEncoding.EncodeToString(b), nil
-}
-
-// CSPNonceFromData returns an existing cspNonce from map template data, or generates
-// and stores one when data is a map[string]interface{}. For other data types it
-// generates a fresh nonce without modifying data.
-func CSPNonceFromData(data interface{}) (string, error) {
-	m, ok := data.(map[string]interface{})
-	if !ok {
-		return CSPNonce()
-	}
-	if nonce, ok := m["cspNonce"].(string); ok && nonce != "" {
-		return nonce, nil
-	}
-	nonce, err := CSPNonce()
-	if err != nil {
-		return "", fmt.Errorf("csp nonce: %w", err)
-	}
-	m["cspNonce"] = nonce
-	return nonce, nil
 }

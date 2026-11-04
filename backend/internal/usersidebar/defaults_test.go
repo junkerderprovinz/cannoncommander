@@ -103,49 +103,6 @@ func TestValidateEnforcedSidebarLinks_blocksRemoval(t *testing.T) {
 	}
 }
 
-func TestFilterDefaultsDocumentForUser_filtersInaccessibleSources(t *testing.T) {
-	initDefaultsTestConfig(t)
-	doc := SidebarLinkDefaultsDocument{
-		Items: []SidebarLinkDefaultItem{
-			{
-				Enforced: true,
-				Link: users.SidebarLink{
-					Name:       "exclude",
-					Category:   "source",
-					Target:     "/",
-					SourceName: "exclude",
-				},
-			},
-			{
-				Enforced: true,
-				Link: users.SidebarLink{
-					Name:       "include",
-					Category:   "source",
-					Target:     "/",
-					SourceName: "include",
-				},
-			},
-			{
-				Enforced: true,
-				Link: users.SidebarLink{
-					Name:     "Wiki",
-					Category: "custom",
-					Target:   "/wiki",
-				},
-			},
-		},
-	}
-	excludeSource, ok := users.ResolveSourceKey("exclude")
-	if !ok {
-		t.Fatal("exclude source not in test config")
-	}
-	scopes := []users.BackendScope{{Path: excludeSource.Path}}
-	filtered := FilterDefaultsDocumentForUser(doc, scopes)
-	if len(filtered.Items) != 2 {
-		t.Fatalf("len(items)=%d want 2 (exclude source + custom): %#v", len(filtered.Items), filtered.Items)
-	}
-}
-
 func TestInitialSidebarLinkDefaultsDocument_enablesAllSources(t *testing.T) {
 	initDefaultsTestConfig(t)
 	doc := InitialSidebarLinkDefaultsDocument()
@@ -173,54 +130,6 @@ func TestEnsureAllSourcesInDefaults_addsMissingSourcesEnabled(t *testing.T) {
 		if !item.Enabled {
 			t.Fatalf("new source %q should default to enabled", item.Link.SourceName)
 		}
-	}
-}
-
-func TestFrontendDefaultsDocument_usesSourceDisplayName(t *testing.T) {
-	initDefaultsTestConfig(t)
-	doc := SidebarLinkDefaultsDocument{
-		Items: []SidebarLinkDefaultItem{
-			{
-				Enabled: true,
-				Link: users.SidebarLink{
-					Name:       "exclude",
-					Category:   "source",
-					Target:     "/",
-					SourceName: "/stale/path/not/in/sourcemap",
-				},
-			},
-		},
-	}
-	out := FrontendDefaultsDocument(doc)
-	if len(out.Items) != 1 {
-		t.Fatalf("got %#v", out.Items)
-	}
-	if out.Items[0].Link.SourceName != "exclude" {
-		t.Fatalf("expected display name exclude via name fallback, got %q", out.Items[0].Link.SourceName)
-	}
-}
-
-func TestNormalizeDefaultsDocument_storesSourcePath(t *testing.T) {
-	initDefaultsTestConfig(t)
-	doc := SidebarLinkDefaultsDocument{
-		Items: []SidebarLinkDefaultItem{
-			{
-				Enabled: true,
-				Link: users.SidebarLink{
-					Name:       "exclude",
-					Category:   "source",
-					Target:     "/",
-					SourceName: "exclude",
-				},
-			},
-		},
-	}
-	out := NormalizeDefaultsDocument(doc)
-	if len(out.Items) != 1 {
-		t.Fatalf("got %#v", out.Items)
-	}
-	if out.Items[0].Link.SourceName == "exclude" {
-		t.Fatalf("expected canonical path, got display name %q", out.Items[0].Link.SourceName)
 	}
 }
 

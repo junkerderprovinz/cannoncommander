@@ -645,19 +645,3 @@ func CacheKey(md5, previewSize string, percentage int) string {
 	key := fmt.Sprintf("%x%x%x", md5, previewSize, percentage)
 	return key
 }
-
-func DelThumbs(ctx context.Context, file iteminfo.ExtendedFileInfo) {
-	// Generate metadata-based cache hash for deletion
-	hasher := md5.New()
-	cacheString := fmt.Sprintf("%s:%d:%s", file.RealPath, file.Size, file.ModTime.Format(time.RFC3339Nano))
-	_, _ = hasher.Write([]byte(cacheString))
-	cacheHash := hex.EncodeToString(hasher.Sum(nil))
-
-	errSmall := service.fileCache.Delete(ctx, CacheKey(cacheHash, "small", 0))
-	if errSmall != nil {
-		errLarge := service.fileCache.Delete(ctx, CacheKey(cacheHash, "large", 0))
-		if errLarge != nil {
-			logger.Debugf("Could not delete thumbnail: %v", file.Name)
-		}
-	}
-}
