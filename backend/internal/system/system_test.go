@@ -345,3 +345,30 @@ func TestVersionNumberIsFoundInToolOutput(t *testing.T) {
 		}
 	}
 }
+
+func TestWebDAVStartsOffAndTheSwitchWorksAtOnce(t *testing.T) {
+	saved := settings.Config
+	t.Cleanup(func() { settings.Config = saved })
+	settings.Config.Http.DisableWebDAV = true
+
+	f := newFixture(t)
+	var doc appDoc
+	if code := f.call("jdp", "GET", "/admin/app", "", &doc); code != 200 || doc.WebDAV {
+		t.Fatalf("%d, webdav %v", code, doc.WebDAV)
+	}
+	if code := f.call("jdp", "PUT", "/admin/app", `{"webdav":true}`, &doc); code != 200 || !doc.WebDAV || doc.RestartNeeded {
+		t.Fatalf("%d, %+v", code, doc)
+	}
+	apply(f.applied[len(f.applied)-1])
+	if settings.Config.Http.DisableWebDAV {
+		t.Fatal("the switch did not reach the running server")
+	}
+	var in Info
+	if code := f.call("jdp", "GET", "/system", "", &in); code != 200 || !in.Feature.WebDAV {
+		t.Fatalf("%d, %+v", code, in.Feature)
+	}
+	apply(App{LogLevel: "info"})
+	if !settings.Config.Http.DisableWebDAV {
+		t.Fatal("switching it off did not reach the running server")
+	}
+}

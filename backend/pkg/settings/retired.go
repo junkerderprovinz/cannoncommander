@@ -23,7 +23,6 @@ var retiredKeys = [][]string{
 	{"frontend", "loginIcon"},
 	{"frontend", "styling"},
 	{"shareDefaults"},
-	{"http", "disableWebDAV"},
 	{"userDefaults"},
 	{"server", "database", "migrateFrom"},
 	{"auth", "methods", "jwt"},

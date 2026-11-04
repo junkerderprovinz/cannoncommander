@@ -366,3 +366,44 @@ func FuzzResolveStaysInsideItsSource(f *testing.F) {
 		}
 	})
 }
+
+func TestFollowedNamesWhereALinkLeads(t *testing.T) {
+	root := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(root, "alben", "2026"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(filepath.Join(root, "alben"), filepath.Join(root, "kurz")); err != nil {
+		t.Skipf("no symlinks here: %v", err)
+	}
+	outside := t.TempDir()
+	if err := os.Symlink(outside, filepath.Join(root, "raus")); err != nil {
+		t.Fatal(err)
+	}
+	r, err := New(nil, Source{Name: "Shares", Mount: "/mnt/user", Root: root})
+	if err != nil {
+		t.Fatal(err)
+	}
+	cases := []struct {
+		in, want string
+		err      error
+	}{
+		{"/mnt/user/alben/2026", "/mnt/user/alben/2026", nil},
+		{"/mnt/user/kurz/2026", "/mnt/user/alben/2026", nil},
+		{"/mnt/user/kurz/neu.txt", "/mnt/user/alben/neu.txt", nil},
+		{"/mnt/user/raus/x", "", ErrEscape},
+		{"/mnt", "/mnt", nil},
+	}
+	for _, c := range cases {
+		loc, err := r.Resolve(c.in)
+		if err != nil {
+			t.Fatal(err)
+		}
+		got, err := r.Followed(loc)
+		if !errors.Is(err, c.err) {
+			t.Fatalf("%s: error %v, want %v", c.in, err, c.err)
+		}
+		if err == nil && got.Path != c.want {
+			t.Fatalf("%s: got %s, want %s", c.in, got.Path, c.want)
+		}
+	}
+}

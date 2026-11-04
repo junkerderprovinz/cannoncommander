@@ -53,6 +53,7 @@ func apply(a App) {
 		oo.Url, oo.Secret = "", ""
 	}
 	c.Server.DisablePreviews = !a.Previews.Thumbs
+	c.Http.DisableWebDAV = !a.WebDAV
 	c.Server.DisableUpdateCheck = !a.Updates.AutoCheck
 	if err := settings.SetLogLevel(a.LogLevel); err != nil {
 		logger.Errorf("log level: %v", err)

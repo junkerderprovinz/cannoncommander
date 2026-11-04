@@ -185,6 +185,7 @@
     "wantsSecret": "Der Server antwortet, will aber den JWT-Schlüssel", "unreachable": "Unter dieser Adresse antwortet kein Office-Server",
     "media": "Videos und Bilder", "thumbs": "Vorschaubilder", "thumbsTip": "Kleine Bilder für Fotos und Videos in der Vorschau. ffmpeg erzeugt sie im Hintergrund.",
     "video": "Videos im Browser abspielen", "videoTip": "Auch Formate wie MKV. ffmpeg wandelt sie dafür beim Abspielen um, das kostet Rechenzeit.", "ffmpegTip": "Ist im Container dabei.",
+    "webdavRclone": "WebDAV und rclone", "webdav": "WebDAV-Server", "webdavTip": "Damit bindest du die Dateien als Laufwerk ein, etwa im Windows-Explorer oder in einer Handy-App. Es gelten dieselben Benutzer und Regeln.",
     "address": "Adresse", "rcloneTip": "Hängt die Fernziele ein. Das Programm ist im Container dabei.",
     "notFound": "Nicht gefunden", "kept": "Gespeichert",
     "secretWrong": "Der Server lehnt diesen JWT-Schlüssel ab", "notWorking": "Der Server antwortet, die Verbindung klappt aber noch nicht", "alHint": "ArrowLoop plant wiederkehrende Abgleiche. CannonCommander gibt ihm Ordnerpaare aus dem Ordnervergleich.",

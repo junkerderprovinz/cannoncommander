@@ -256,3 +256,29 @@ func within(p, base string) bool {
 	}
 	return p == base || strings.HasPrefix(p, base+"/")
 }
+
+// Followed returns the location loc ends up at once its symlinks are
+// followed. Rules name paths, so a link has to answer for the place it leads
+// to as well. Like Contained it reports ErrEscape for a target outside the
+// source and takes parts that do not exist yet as they are.
+func (r *Resolver) Followed(loc Location) (Location, error) {
+	if loc.Source == nil {
+		return loc, nil
+	}
+	root, err := filepath.EvalSymlinks(loc.Source.Root)
+	if err != nil {
+		return Location{}, err
+	}
+	real, err := evalExisting(loc.Real)
+	if err != nil {
+		return Location{}, err
+	}
+	if !inside(root, real) {
+		return Location{}, ErrEscape
+	}
+	rel, err := filepath.Rel(root, real)
+	if err != nil {
+		return Location{}, err
+	}
+	return r.Resolve(path.Join(loc.Source.Mount, filepath.ToSlash(rel)))
+}
