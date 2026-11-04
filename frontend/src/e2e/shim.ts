@@ -8,6 +8,7 @@ import {
 } from '@/core';
 import { DAY } from '@/core/format';
 import { provideOps } from './ops';
+import { provideTools } from './tools';
 import { menuName } from '@/core/menus';
 import { orderedTabs } from '@/core/views';
 import { COLUMNS, Columns, DEFAULT_COLUMNS } from '@/files/columns';
@@ -76,6 +77,7 @@ async function readAll(listing: ReturnType<typeof useListing>, path = '/') {
 export async function installShim() {
   const listing = useListing(), panels = usePanels(), user = useUser();
   provideOps(provide);
+  provideTools(provide);
   await readAll(listing);
 
   const CC = {

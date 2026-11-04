@@ -30,7 +30,7 @@ export interface FsMeta { items: Record<string, Record<string, string | number |
 export interface FsText { text: string; encoding?: string }
 // A hit carries the folder it was found in.
 export interface SearchHit extends FsItem { at: string }
-export interface SearchResult { path: string; items: SearchHit[]; more?: boolean }
+export interface SearchResult { path: string; items: SearchHit[]; total: number; more?: boolean; scanned: number; pending?: number; unknown?: string[]; indexed: boolean }
 export interface WatchRequest { clientId: string; paths: string[] }
 export interface Me { name: string; full: string; role: string }
 export interface Bookmark { name: string; path: string; g: string }

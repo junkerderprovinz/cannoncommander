@@ -78,4 +78,17 @@ describe('job list', () => {
     J.localChanged(own, 'running');
     expect(ended).toHaveBeenCalledOnce();
   });
+
+  it('keeps a job that ended before the answer that started it came back', async () => {
+    const J = useJobs(), ended = vi.fn();
+    vi.spyOn(ops, 'startJob').mockImplementation(async () => {
+      emit({ type: 'job.created', data: job('q', { kind: 'trash' }) });
+      emit({ type: 'job.done', data: job('q', { kind: 'trash', state: 'done' }) });
+      return job('q', { kind: 'trash' });
+    });
+    const got = await J.start({ kind: 'trash', params: {} });
+    J.whenDone(got, ended);
+    expect(J.find('q')!.state).toBe('done');
+    expect(ended).toHaveBeenCalledOnce();
+  });
 });

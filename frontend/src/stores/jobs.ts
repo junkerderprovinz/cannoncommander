@@ -57,8 +57,11 @@ export const useJobs = defineStore('jobs', () => {
     for (const j of got) if (!isOpen(j) && known.get(j.id) && isOpen(known.get(j.id)!)) ended(j);
   }
 
+  // A quick job can end, and say so over the event stream, before the answer that created it arrives; that answer
+  // must not put it back into the queue.
   async function start(req: JobCreate) {
-    return upsert(await ops.startJob(req));
+    const got = await ops.startJob(req), known = find(got.id);
+    return known && !isOpen(known) ? known : upsert(got);
   }
 
   // Runs fn once the job has ended, whether it ended before the call or later.
