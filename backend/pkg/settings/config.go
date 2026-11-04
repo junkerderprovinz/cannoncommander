@@ -70,6 +70,7 @@ func initializeConfig(configFile string, cliMode bool) {
 	setupServer()
 	setupHttp()
 	setupAuth(false)
+	useStoredSources(configFile)
 	setupSources(false)
 	InitializeUserResolvers() // Initialize user package resolvers after sources are set up
 	setupUrls()
@@ -1193,7 +1194,9 @@ func setConditionals(config *Source) {
 		if rule.FilePath != "" {
 			resolved.FilePaths[rule.FilePath] = rule
 		}
-		if rule.FolderPath != "" {
+		// A root rule only carries the flags above. As a folder path it would
+		// prefix match every path and keep the whole source out of the index.
+		if rule.FolderPath != "" && !isRootLevelRule {
 			resolved.FolderPaths[rule.FolderPath] = rule
 		}
 		if rule.NeverWatchPath != "" {

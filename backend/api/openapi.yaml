@@ -71,9 +71,19 @@ tags:
       Array state, file placement and the Unraid tools. Sizes are bytes.
       Outside Unraid the state says available false and placements stay empty.
   - name: remotes
-    description: rclone remotes mounted below /mnt/remotes.
+    description: |
+      rclone remotes mounted below /mnt/remotes. rclone runs inside the
+      server with its own rclone.conf in the config folder. Calls that need
+      it answer 503 while it is missing or still starting.
   - name: system
     description: Server state and the settings only admins change.
+  - name: office
+    description: |
+      Office files in OnlyOffice, Euro-Office or Collabora, as chosen in
+      admin/app. The document server reaches the file and callback addresses
+      and the WOPI endpoints without a session, with the token from
+      office/config, which is good for one file, one user and 24 hours. The
+      user's rights are checked again on every call.
   - name: events
     description: The server event stream and the folders a client watches.
 paths:
@@ -2958,48 +2968,193 @@ paths:
     get:
       operationId: remotesList
       summary: Configured remotes
-      tags: [remotes]
+      description: |
+        mounted is the live state, mountOnStart what the server mounts when
+        it starts. Admins also get the parameters, without secrets.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The remotes and the state of rclone.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [remotes, rclone]
+                properties:
+                  remotes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Remote"
+                  rclone:
+                    $ref: "#/components/schemas/RcloneStatus"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [remotes]
     post:
       operationId: remoteCreate
       summary: Add a remote
+      description: |
+        Adds the remote to rclone.conf and mounts it, below /mnt/remotes
+        unless mount says otherwise. A mount that fails leaves the remote in
+        place with the reason in error.
       x-access: admin
-      tags: [remotes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoteInput"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          description: The new remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
+      tags: [remotes]
   /remotes/types:
     get:
       operationId: remoteTypes
       summary: Remote types rclone knows
-      tags: [remotes]
+      description: |
+        SFTP, SMB, WebDAV, S3, Google Drive, OneDrive and Dropbox come first
+        with featured set. Types with oauth log in through rclone authorize
+        on a computer with a browser, authorize is the command for it.
+      parameters:
+        - name: advanced
+          in: query
+          description: Include the advanced options.
+          schema:
+            type: boolean
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The types.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [types]
+                properties:
+                  types:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RemoteType"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
+      tags: [remotes]
   /remotes/test:
     post:
       operationId: remoteTest
       summary: Try a remote configuration
+      description: |
+        Lists the folder of the remote without saving anything. With the
+        name of a saved remote of the same type, its saved parameters fill
+        in what the body leaves out, such as an unchanged password. A remote
+        that does not answer is a result with ok false, not an error.
       x-access: admin
-      tags: [remotes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoteInput"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: What the test found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemoteTestResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
+      tags: [remotes]
   /remotes/oauth:
     post:
       operationId: remoteOAuth
       summary: Store a token from rclone authorize
+      description: |
+        token is what rclone authorize printed, the lines around the token
+        may stay. With name the token goes into that remote, which is
+        mounted again if it was. Without name the checked token comes back
+        for params.token of the remote the add dialog creates.
       x-access: admin
-      tags: [remotes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                type:
+                  type: string
+                  example: drive
+                token:
+                  type: string
+                name:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The checked token, or the remote that took it.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  expiry:
+                    type: string
+                    format: date-time
+                  remote:
+                    $ref: "#/components/schemas/Remote"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
+      tags: [remotes]
   /remotes/{name}:
     get:
       operationId: remoteGet
       summary: One remote
+      responses:
+        "200":
+          description: The remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [remotes]
       parameters:
         - name: name
@@ -3007,13 +3162,39 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     put:
       operationId: remoteUpdate
       summary: Change a remote
+      description: |
+        Fields left out stay. A parameter with an empty value is removed,
+        except a secret, which then stays. The type stays, a new name moves
+        the remote over. A mounted remote is mounted again afterwards.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoteInput"
+      responses:
+        "200":
+          description: The changed remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
       tags: [remotes]
       parameters:
         - name: name
@@ -3021,13 +3202,24 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     delete:
       operationId: remoteDelete
       summary: Remove a remote
+      description: Unmounts the remote and forgets it with its credentials. The files at the remote stay.
       x-access: admin
+      responses:
+        "204":
+          description: The remote is gone.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
       tags: [remotes]
       parameters:
         - name: name
@@ -3035,14 +3227,29 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /remotes/{name}/mount:
     post:
       operationId: remoteMount
       summary: Mount a remote
+      description: Mounts the remote with the cache settings of admin/app and keeps it mounted across restarts.
       x-access: admin
+      responses:
+        "200":
+          description: The mounted remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
       tags: [remotes]
       parameters:
         - name: name
@@ -3050,14 +3257,29 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /remotes/{name}/unmount:
     post:
       operationId: remoteUnmount
       summary: Unmount a remote
+      description: Unmounts the remote and leaves it unmounted across restarts.
       x-access: admin
+      responses:
+        "200":
+          description: The unmounted remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
       tags: [remotes]
       parameters:
         - name: name
@@ -3065,34 +3287,83 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /system:
     get:
       operationId: systemGet
       summary: Version, uptime and available features
-      tags: [system]
+      description: |
+        The helper programs are looked up once per start. Office tells the
+        viewers where office files open, without the secret. The ETag leaves
+        the uptime out.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The server state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemInfo"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [system]
   /admin/sources:
     get:
       operationId: sourcesGet
       summary: Configured sources
+      description: |
+        The saved sources, or the ones from the config file while nothing
+        was saved. restartNeeded is set while the saved ones differ from the
+        ones the server runs with.
       x-access: admin
-      tags: [system]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The sources.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSources"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
     put:
       operationId: sourcesPut
       summary: Save sources
+      description: |
+        Replaces the whole list. The sources are saved in sources.json next
+        to the config file and take over from the config on the next start.
+        Every folder has to exist, names and folders are unique. An exclude
+        pattern is a name, a path below the source, or a name with a star at
+        its start or end, such as *.tmp or backup-*.
       x-access: admin
-      tags: [system]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sources]
+              properties:
+                sources:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/AdminSource"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The saved sources.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSources"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
   /admin/index:
     get:
       operationId: indexState
@@ -3114,28 +3385,441 @@ paths:
     post:
       operationId: integrationsTest
       summary: Try an integration such as an office server
+      description: |
+        Asks the server for its health and version and checks the secret or
+        token. No file and no user data are sent. Without secret or token
+        the saved one is used when the address is the saved one. A server
+        that cannot be reached is a result with reachable false, not an
+        error.
       x-access: admin
-      tags: [system]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntegrationTest"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: What the test found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrationResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
   /admin/app:
     get:
       operationId: appSettingsGet
       summary: Server wide settings
+      description: Secrets are never sent, secretSet and tokenSet say whether one is saved.
       x-access: admin
-      tags: [system]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
     put:
       operationId: appSettingsPut
       summary: Save server wide settings
+      description: |
+        Only the fields in the body change, so a page can save one switch
+        at a time. A secret or token left out stays, an empty one is
+        removed. Office, previews and the log level apply at once, WebDAV
+        and the update check on the next start.
       x-access: admin
-      tags: [system]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppSettings"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The saved settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
+  /system/update:
+    post:
+      operationId: systemUpdate
+      summary: Look for a new release
+      description: |
+        Asks GitHub for the newest release, at most every ten minutes. The
+        image itself is updated on Unraid's Docker tab.
+      responses:
+        "200":
+          description: The installed and the newest version.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateCheck"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: GitHub could not be asked.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [system]
+  /admin/app/restart:
+    post:
+      operationId: appRestart
+      summary: Restart the server
+      description: |
+        The server shuts down as on a stop, unmounting the remotes, and
+        starts itself again in the same container. Running jobs stop and
+        continue after the start.
+      x-access: admin
+      responses:
+        "202":
+          description: The restart begins in a moment.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
+  /admin/app/export:
+    get:
+      operationId: appExportGet
+      summary: Download the settings file
+      description: Passwords, tokens, passkeys and the credentials of remotes never go into it.
+      x-access: admin
+      parameters:
+        - name: users
+          in: query
+          description: Take users, groups and rules along.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: The settings file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettingsFile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [system]
+    post:
+      operationId: appExport
+      summary: Write the settings file on the server
+      description: |
+        Writes the file to a path below a source, such as
+        /mnt/user/appdata/cannoncommander/exports/settings.json. An existing
+        file is never replaced.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsFileRequest"
+      responses:
+        "201":
+          description: The file is written.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [path, size]
+                properties:
+                  path:
+                    type: string
+                  size:
+                    type: integer
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: There is a file of that name already.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [system]
+  /admin/app/import:
+    post:
+      operationId: appImport
+      summary: Take the settings from a settings file on the server
+      description: |
+        Sources and app settings replace the ones here, passwords and
+        secrets saved here stay. Remotes this server lacks are added without
+        credentials and stay unmounted, the ones it has stay as they are.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsFileRequest"
+      responses:
+        "200":
+          description: What was taken over.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sections, notes, restartNeeded]
+                properties:
+                  sections:
+                    type: array
+                    items:
+                      type: string
+                    example: [sources, app, remotes]
+                  notes:
+                    type: array
+                    items:
+                      type: string
+                    description: What was left out and why, in English.
+                  restartNeeded:
+                    type: boolean
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [system]
+  /office/config:
+    get:
+      operationId: officeConfig
+      summary: What the viewer needs to open a file in the office server
+      description: |
+        For OnlyOffice and Euro-Office the editor config, signed with the
+        server's JWT secret when one is set. Users who may not change the
+        file get it in view mode. For Collabora the editor address with
+        WOPISrc, the access token and its end in milliseconds, to post into
+        the editor frame as access_token and access_token_ttl.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: mode
+          in: query
+          description: view opens the file read only, for a preview.
+          schema:
+            type: string
+            enum: [edit, view]
+      responses:
+        "200":
+          description: How to open the file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfficeConfig"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: No office server is set up.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: Collabora did not answer its discovery.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [office]
+  /office/file:
+    get:
+      operationId: officeFile
+      summary: The document for OnlyOffice and Euro-Office
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/OfficeToken"
+      responses:
+        "200":
+          description: The file.
+          content:
+            application/octet-stream: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [office]
+      security: []
+  /office/callback:
+    post:
+      operationId: officeCallback
+      summary: Where OnlyOffice and Euro-Office report and save a document
+      description: |
+        With a JWT secret only signed callbacks count. On status 2 and 6
+        the document is fetched from the document server, only from its
+        own address, and replaces the file. The answer is always
+        {"error":0} or {"error":1}, as the document server expects.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/OfficeToken"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                status:
+                  type: integer
+                url:
+                  type: string
+                token:
+                  type: string
+      responses:
+        "200":
+          description: The answer for the document server.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: integer
+                    enum: [0, 1]
+      tags: [office]
+      security: []
+  /wopi/files/{id}:
+    get:
+      operationId: wopiCheckFileInfo
+      summary: WOPI CheckFileInfo
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Name, size, version and the user's rights.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [office]
+      security: []
+    post:
+      operationId: wopiLock
+      summary: WOPI LOCK, GET_LOCK, REFRESH_LOCK and UNLOCK
+      description: The operation comes in X-WOPI-Override, the lock in X-WOPI-Lock. A lock holds 30 minutes.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Done, X-WOPI-Lock carries the lock.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Another lock is in the way, X-WOPI-Lock names it.
+      tags: [office]
+      security: []
+  /wopi/files/{id}/contents:
+    get:
+      operationId: wopiGetFile
+      summary: WOPI GetFile
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The file.
+          content:
+            application/octet-stream: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [office]
+      security: []
+    post:
+      operationId: wopiPutFile
+      summary: WOPI PutFile
+      description: |
+        Replaces the file with the body. A file locked by someone else, or
+        changed since the time in X-COOL-WOPI-Timestamp, answers 409.
+      x-access: public
+      parameters:
+        - $ref: "#/components/parameters/WopiToken"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream: {}
+      responses:
+        "200":
+          description: Saved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  LastModifiedTime:
+                    type: string
+                    format: date-time
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Locked by someone else, or changed meanwhile.
+      tags: [office]
+      security: []
   /events:
     get:
       operationId: eventsStream
@@ -3243,6 +3927,18 @@ components:
       description: Unlock token of a link with a password, for when no header or cookie can carry it.
       schema:
         type: string
+    OfficeToken:
+      name: token
+      in: query
+      required: true
+      schema:
+        type: string
+    WopiToken:
+      name: access_token
+      in: query
+      required: true
+      schema:
+        type: string
   responses:
     NotImplemented:
       description: Part of the contract, not built yet.
@@ -3348,6 +4044,18 @@ components:
         Retry-After:
           schema:
             type: integer
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    RemoteConflict:
+      description: The name is taken, or a mount is busy or failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    RcloneUnavailable:
+      description: rclone is not installed or not running yet.
       content:
         application/problem+json:
           schema:
@@ -4967,6 +5675,428 @@ components:
                 format: int64
         partial:
           type: boolean
+    Remote:
+      type: object
+      required: [name, type, path, mount, label, mounted, mountOnStart]
+      properties:
+        name:
+          type: string
+          example: gdrive
+        type:
+          type: string
+          description: The rclone backend.
+          example: drive
+        path:
+          type: string
+          description: The folder at the remote that is mounted, the share for SMB, the bucket for S3.
+        mount:
+          type: string
+          example: /mnt/remotes/gdrive
+        label:
+          type: string
+          description: What listings and the tree show on the mounted folder.
+          example: "rclone: gdrive"
+        mounted:
+          type: boolean
+        mountOnStart:
+          type: boolean
+        error:
+          type: string
+          description: Why the last mount failed.
+        params:
+          type: object
+          description: The rclone parameters without secrets, for admins.
+          additionalProperties:
+            type: string
+        secrets:
+          type: array
+          description: Secret parameters that are set, for admins.
+          items:
+            type: string
+          example: [pass]
+    RemoteInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Small letters, digits, _ and -.
+          example: nas-keller
+        type:
+          type: string
+          example: smb
+        path:
+          type: string
+          example: archiv
+        mount:
+          type: string
+          example: /mnt/remotes/nas-keller
+        params:
+          type: object
+          description: rclone parameters of the type. Passwords are sent in clear and obscured on the server.
+          additionalProperties:
+            type: string
+          example:
+            host: keller
+            user: jdp
+            pass: geheim
+    RcloneStatus:
+      type: object
+      required: [installed, running]
+      properties:
+        installed:
+          type: boolean
+        running:
+          type: boolean
+        version:
+          type: string
+          example: 1.75.2
+        error:
+          type: string
+          description: Why rclone last stopped.
+    RemoteType:
+      type: object
+      required: [id, description, featured, oauth, pathHint, options]
+      properties:
+        id:
+          type: string
+          example: drive
+        description:
+          type: string
+          example: Google Drive
+        featured:
+          type: boolean
+        oauth:
+          type: boolean
+        authorize:
+          type: string
+          example: rclone authorize "drive"
+        pathHint:
+          type: string
+          enum: [folder, share, bucket]
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/RemoteOption"
+    RemoteOption:
+      type: object
+      required: [name, help, type, required, secret, advanced, exclusive]
+      properties:
+        name:
+          type: string
+        help:
+          type: string
+        type:
+          type: string
+        default:
+          type: string
+        provider:
+          type: string
+          description: For S3, the providers the option applies to.
+        required:
+          type: boolean
+        secret:
+          type: boolean
+        advanced:
+          type: boolean
+        exclusive:
+          type: boolean
+          description: Only the examples are allowed.
+        examples:
+          type: array
+          items:
+            type: object
+            required: [value, help]
+            properties:
+              value:
+                type: string
+              help:
+                type: string
+              provider:
+                type: string
+    RemoteTestResult:
+      type: object
+      required: [ok, entries]
+      properties:
+        ok:
+          type: boolean
+        entries:
+          type: integer
+          description: Entries in the folder of the remote.
+        total:
+          type: integer
+          format: int64
+        used:
+          type: integer
+          format: int64
+        free:
+          type: integer
+          format: int64
+        error:
+          type: string
+          description: What rclone said, in English.
+    UpdateCheck:
+      type: object
+      required: [version, latest, updateAvailable]
+      properties:
+        version:
+          type: string
+          example: 0.1.0
+        latest:
+          type: string
+          example: 0.2.0
+        updateAvailable:
+          type: boolean
+        releaseUrl:
+          type: string
+    SettingsFileRequest:
+      type: object
+      required: [path]
+      properties:
+        path:
+          type: string
+          example: /mnt/user/appdata/cannoncommander/exports/cannoncommander-settings-2026-11-04.json
+        users:
+          type: boolean
+          description: Take users, groups and rules along.
+    SettingsFile:
+      type: object
+      required: [app, version, exported, sections]
+      properties:
+        app:
+          type: string
+          enum: [cannoncommander]
+        version:
+          type: string
+        exported:
+          type: string
+          format: date-time
+        sections:
+          type: object
+          description: One entry per part, such as sources, app and remotes.
+          additionalProperties: true
+    SystemInfo:
+      type: object
+      required: [version, go, os, arch, started, uptime, tools, unraid, features]
+      properties:
+        version:
+          type: string
+          example: 0.1.0
+        commit:
+          type: string
+        go:
+          type: string
+          example: go1.27.0
+        os:
+          type: string
+          example: linux
+        arch:
+          type: string
+          example: amd64
+        started:
+          type: string
+          format: date-time
+        uptime:
+          type: integer
+          format: int64
+          description: Seconds since the start.
+        tools:
+          type: object
+          description: ffmpeg, ffprobe, mutool, 7zz and rclone.
+          additionalProperties:
+            $ref: "#/components/schemas/SystemTool"
+        unraid:
+          type: object
+          required: [available, socket]
+          properties:
+            available:
+              type: boolean
+            socket:
+              type: boolean
+              description: Whether writing to Unraid (spin down, notifications) is switched on.
+        features:
+          type: object
+          required: [office, thumbs, videoPreview, webdav, mupdf]
+          properties:
+            office:
+              type: object
+              required: [kind]
+              properties:
+                kind:
+                  type: string
+                  enum: [none, onlyoffice, eurooffice, collabora]
+                url:
+                  type: string
+            thumbs:
+              type: boolean
+            videoPreview:
+              type: boolean
+            webdav:
+              type: boolean
+            mupdf:
+              type: boolean
+    SystemTool:
+      type: object
+      required: [available]
+      properties:
+        available:
+          type: boolean
+        path:
+          type: string
+          example: /usr/local/bin/ffmpeg
+        version:
+          type: string
+          example: 7.1.1
+    AdminSource:
+      type: object
+      required: [name, path]
+      properties:
+        name:
+          type: string
+          example: Shares
+        path:
+          type: string
+          example: /mnt/user
+        readOnly:
+          type: boolean
+        indexed:
+          type: boolean
+        skipHidden:
+          type: boolean
+        exclude:
+          type: array
+          items:
+            type: string
+          example: ["*.tmp", appdata/plex/cache]
+    AdminSources:
+      type: object
+      required: [sources, restartNeeded]
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminSource"
+        restartNeeded:
+          type: boolean
+    IntegrationTest:
+      type: object
+      required: [kind, url]
+      properties:
+        kind:
+          type: string
+          enum: [onlyoffice, eurooffice, collabora, arrowloop]
+        url:
+          type: string
+          example: https://office.tower.lan
+        secret:
+          type: string
+          description: The JWT secret of an OnlyOffice or Euro-Office server.
+        token:
+          type: string
+          description: The ArrowLoop API token.
+    IntegrationResult:
+      type: object
+      required: [kind, ok, reachable]
+      properties:
+        kind:
+          type: string
+        ok:
+          type: boolean
+        reachable:
+          type: boolean
+        token:
+          type: string
+          enum: [ok, rejected, missing, "off", none]
+          description: |
+            ok, rejected, missing when the server wants one and none was
+            given, off when the server checks none, none for Collabora,
+            which has no shared secret.
+        version:
+          type: string
+        error:
+          type: string
+          description: What went wrong, in English.
+    AppSettings:
+      type: object
+      properties:
+        office:
+          type: object
+          properties:
+            kind:
+              type: string
+              enum: [none, onlyoffice, eurooffice, collabora]
+            url:
+              type: string
+            secret:
+              type: string
+              writeOnly: true
+            secretSet:
+              type: boolean
+              readOnly: true
+        arrowloop:
+          type: object
+          properties:
+            url:
+              type: string
+            token:
+              type: string
+              writeOnly: true
+            tokenSet:
+              type: boolean
+              readOnly: true
+        previews:
+          type: object
+          properties:
+            thumbs:
+              type: boolean
+            video:
+              type: boolean
+              description: Transcode formats such as MKV for the browser.
+        webdav:
+          type: boolean
+        remotes:
+          type: object
+          properties:
+            automount:
+              type: boolean
+            cache:
+              type: string
+              enum: ["off", writes, full]
+            cacheSize:
+              type: integer
+              description: Cap of the VFS cache of all mounts together, in GB.
+              example: 50
+        updates:
+          type: object
+          properties:
+            autoCheck:
+              type: boolean
+        logLevel:
+          type: string
+          enum: [error, info, debug]
+        restartNeeded:
+          type: boolean
+          readOnly: true
+    OfficeConfig:
+      type: object
+      required: [kind, url]
+      properties:
+        kind:
+          type: string
+          enum: [onlyoffice, eurooffice, collabora]
+        url:
+          type: string
+          description: The document server, or for Collabora the editor address with WOPISrc.
+        config:
+          type: object
+          description: The editor config for DocsAPI.DocEditor.
+          additionalProperties: true
+        token:
+          type: string
+          description: The WOPI access token.
+        ttl:
+          type: integer
+          format: int64
+          description: When the access token ends, in milliseconds since 1970.
     WatchRequest:
       type: object
       required: [clientId, paths]

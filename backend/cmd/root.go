@@ -18,6 +18,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/icons"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/preview"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/web"
@@ -65,7 +66,8 @@ func Start() {
 	if !keepGoing {
 		return
 	}
-	database := fmt.Sprintf("Using existing database  : %v", settings.Config.Server.DatabaseV2.Path)
+	system.ApplyStored(context.Background(), state.MainDB())
+	database :=fmt.Sprintf("Using existing database  : %v", settings.Config.Server.DatabaseV2.Path)
 	if !dbExists {
 		database = fmt.Sprintf("Creating new database    : %v", settings.Config.Server.DatabaseV2.Path)
 	}
@@ -183,10 +185,17 @@ func Start() {
 		fileutils.ClearCacheDir(settings.Config.Server.CacheDir)
 	}
 	<-shutdownComplete
+	system.Shutdown()
 	if err := fileutils.ClearDirectoryContents(settings.DownloadCacheDir()); err != nil {
 		logger.Warningf("failed to clear download spool on shutdown: %v", err)
 	}
 	logger.Info("Shutdown complete.")
+	if system.RestartWanted() {
+		logger.Info("Starting again.")
+		if err := system.Restart(); err != nil {
+			logger.Fatalf("Could not start again: %v", err)
+		}
+	}
 }
 
 func rootCMD(ctx context.Context, serverConfig *settings.Server, a *app.App, shutdownComplete chan struct{}) error {
