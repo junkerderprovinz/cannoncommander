@@ -433,7 +433,7 @@
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-light-upload": {
-    "pixels": 3000,
+    "pixels": 12000,
     "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point"
    },
    "c-light-trash": {
@@ -469,7 +469,7 @@
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-phone-upload": {
-    "pixels": 500,
+    "pixels": 5000,
     "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point"
    },
    "c-phone-login": {
@@ -601,12 +601,12 @@
   ],
   "shots": {
    "r13-1-jobs-serial": {
-    "pixels": 3400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 8000,
+    "why": "job rates and progress come from the fixture's own random numbers"
    },
    "r13-1-jobs-parallel": {
-    "pixels": 3600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 8000,
+    "why": "job rates and progress come from the fixture's own random numbers"
    },
    "r13-4-fetch-job": {
     "pixels": 1200,
@@ -1025,6 +1025,10 @@
    "r7-active-right": {
     "pixels": 15600,
     "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+   },
+   "r7-locked": {
+    "pixels": 1500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
  },

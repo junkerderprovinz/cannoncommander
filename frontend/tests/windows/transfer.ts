@@ -214,7 +214,7 @@ await page.evaluate('CC.run("gather")');
 check('the gather plan suggests a disk', await until('/^Verschiebt/.test(document.querySelector("#g-plan")?.textContent || "")'));
 await shot('gather');
 await primary();
-check('the gather job ends', await until('Jobs.list[0]?.kind === "gather" && Jobs.list[0].state === "fertig"'));
+check('the gather job ends', await until('Jobs.list.find((j) => j.kind === "gather")?.state === "fertig"'));
 
 check('no page errors', !errors.length, errors);
 await browser.close();

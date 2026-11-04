@@ -103,7 +103,7 @@ await wait(400);
 check('the pack window aims at the other panel', (await page.inputValue('#k-dest')) === '/mnt/user/backups', await page.inputValue('#k-dest'));
 await page.click('#k-fmt [data-v="tar.zst"]');
 await wait(150);
-check('tar.zst has no password', await page.isDisabled('#k-pw input'));
+check('tar.zst has no password', await page.isDisabled('#k-pw'));
 await page.click('#k-fmt [data-v="zip"]');
 await shot('pack');
 await primary();
