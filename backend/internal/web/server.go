@@ -15,7 +15,6 @@ import (
 
 	"github.com/coreos/go-systemd/v22/activation"
 	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/events"
@@ -26,7 +25,6 @@ import (
 // Deps holds injected dependencies for HTTP handlers and middleware.
 type Deps struct {
 	Store *state.Store
-	Files *files.Service
 	Auth  *auth.Service
 }
 

@@ -15,18 +15,8 @@ type stubGroupSQL struct {
 	saveErr error
 }
 
-func (s *stubGroupSQL) SaveAccessRule(string, string, *access.AccessRule) error { return nil }
-func (s *stubGroupSQL) DeleteAccessRule(string, string) error                   { return nil }
-func (s *stubGroupSQL) AccessRulesLowercaseMigrated() (bool, error)             { return false, nil }
-func (s *stubGroupSQL) SetAccessRulesLowercaseMigrated() error                  { return nil }
-func (s *stubGroupSQL) MigrateAccessRulePathsLowercase(string, []string, access.RuleMap) error {
-	return nil
-}
-func (s *stubGroupSQL) SaveGroup(string, access.StringSet) error { return s.saveErr }
-func (s *stubGroupSQL) DeleteGroup(string) error                 { return nil }
-func (s *stubGroupSQL) DeleteGroupWithRules(string, []access.RuleUpsert, []access.RuleKey) error {
-	return nil
-}
+func (s *stubGroupSQL) SaveGroup(string, access.StringSet) error             { return s.saveErr }
+func (s *stubGroupSQL) DeleteGroup(string) error                             { return nil }
 func (s *stubGroupSQL) SaveRevokedToken(string, int64) error                 { return nil }
 func (s *stubGroupSQL) PersistImmediateTokenRevocation(string) error         { return nil }
 func (s *stubGroupSQL) PersistTokenRetirement(string, int64, []string) error { return nil }

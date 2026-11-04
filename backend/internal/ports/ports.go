@@ -5,7 +5,6 @@ package ports
 import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // UserReader loads persisted users (read-only).
@@ -19,12 +18,6 @@ type UserWriter interface {
 	CreateUser(user *users.User, plaintextPassword string) error
 	UpdateUser(user *users.User, plaintextPassword string, fields ...string) error
 	DeleteUser(id uint64) error
-}
-
-// AccessGate enforces path-level access rules (no indexing types to avoid import cycles).
-type AccessGate interface {
-	AccessPermitted(sourcePath string, indexPath utils.IndexPath, username string) bool
-	UpdateAccessRulesOnMove(sourcePath string, oldPath, newPath utils.IndexPath) (int, error)
 }
 
 // IndexMetaStore persists per-source index metadata (complexity, scanner state).

@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // Perm is one right on a path. Several can be combined with |.
@@ -21,11 +20,6 @@ const (
 
 const writePerms = Create | Modify | Delete
 
-// AccessGate answers the access rules an admin set up per path.
-type AccessGate interface {
-	AccessPermitted(sourcePath string, indexPath utils.IndexPath, username string) bool
-}
-
 // Effect is what the rules of the app say about one path for one user.
 type Effect uint8
 
@@ -36,8 +30,7 @@ const (
 )
 
 // Rules are the ordered access rules an admin keeps in the app. They work
-// on API paths and can hide a place or make it read only. An AccessGate that
-// also implements Rules has both applied.
+// on API paths and can hide a place or make it read only.
 type Rules interface {
 	Effect(u *users.User, p string) Effect
 }
@@ -80,9 +73,6 @@ func (r *Resolver) Check(u *users.User, p string, perm Perm) (Location, error) {
 	if !holds(granted, perm) {
 		return Location{}, ErrForbidden
 	}
-	if !r.permitted(u, loc.Source, loc.Index) {
-		return Location{}, ErrForbidden
-	}
 	switch r.effect(u, loc.Path) {
 	case Hidden:
 		return Location{}, ErrForbidden
@@ -114,20 +104,19 @@ func (r *Resolver) Visible(u *users.User, dir Location, name string) bool {
 	if !within(child, scope) {
 		return within(scope, child)
 	}
-	return r.permitted(u, dir.Source, child) && r.effect(u, path.Join(dir.Path, name)) != Hidden
+	return r.effect(u, path.Join(dir.Path, name)) != Hidden
 }
 
 // effect asks the rules about p. A path into an archive counts as the
 // archive file, which is what the rules can name.
 func (r *Resolver) effect(u *users.User, p string) Effect {
-	rules, ok := r.access.(Rules)
-	if !ok {
+	if r.rules == nil {
 		return Open
 	}
 	if outer, _, found := strings.Cut(p, ArchiveSep); found {
 		p = outer
 	}
-	return rules.Effect(u, p)
+	return r.rules.Effect(u, p)
 }
 
 // reaches reports whether some place u may open lies at or below p, or p
@@ -157,13 +146,6 @@ func (r *Resolver) scope(u *users.User, s *Source) (string, bool) {
 		}
 	}
 	return "", false
-}
-
-func (r *Resolver) permitted(u *users.User, s *Source, index string) bool {
-	if r.access == nil {
-		return true
-	}
-	return r.access.AccessPermitted(s.Root, utils.IndexPathFromNormalized(index, true), u.Username)
 }
 
 func holds(g users.SourceFilePermissions, perm Perm) bool {

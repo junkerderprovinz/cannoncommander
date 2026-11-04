@@ -133,7 +133,6 @@ func Start() {
 	}
 	validateUserInfo(!dbExists)
 	validateOfficeIntegration()
-	validateAccessRules()
 	// Start the rootCMD in a goroutine
 	go func() {
 		if err := rootCMD(ctx, &serverConfig, runtimeApp, shutdownComplete); err != nil {
@@ -207,7 +206,6 @@ func rootCMD(ctx context.Context, serverConfig *settings.Server, a *app.App, shu
 
 	web.StartHttp(ctx, web.Deps{
 		Store: a.Store,
-		Files: a.Files,
 		Auth:  a.Auth,
 	}, shutdownComplete)
 	return nil

@@ -18,7 +18,6 @@ server:
     - path: "/relative/or/absolute/path"  # file system path. (Can be relative)  validate:required
       name: "Source Name"                 # display name
       config:
-        denyByDefault: false              # deny access unless an "allow" access rule was specifically created.
         private: false                    # designate as source as private -- currently just means no sharing permitted.
         readOnly: false                   # read-only source, changes from the UI and the API are refused.
         disabled: false                   # disable the source, this is useful so you don't need to remove it from the config file
@@ -62,7 +61,6 @@ server:
     startupIntegrityCheck: "quickCheck"   # the method used to check the integrity of the index database on startup (default: quickCheck)  validate:omitempty,oneof=quickCheck probe off
   database:                               # SQLite database configuration
     path: "cannoncommander.sqlite"        # path to SQLite database file
-    migrateFrom: ""                       # path to legacy database file for migration (optional)
     activity:                             # activity audit logging configuration
       disabled: false                     # disable semantic activity audit logging (default: false)
       retentionDays: 30                   # purge activity rows older than this many days (default 30)

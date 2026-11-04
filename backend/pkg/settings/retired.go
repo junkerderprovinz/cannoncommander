@@ -42,3 +42,18 @@ func dropRetiredKeys(cfg map[string]interface{}) {
 		}
 	}
 }
+
+// warnDenyByDefault says that a source's denyByDefault no longer works on
+// its own. It stays readable because the first start with the app's access
+// rules turns it into a rule that hides the source from everyone.
+func warnDenyByDefault(cfg map[string]interface{}) {
+	server, _ := cfg["server"].(map[string]interface{})
+	sources, _ := server["sources"].([]interface{})
+	for i, s := range sources {
+		source, _ := s.(map[string]interface{})
+		config, _ := source["config"].(map[string]interface{})
+		if _, ok := config["denyByDefault"]; ok {
+			logger.Warningf("server.sources[%d].config.denyByDefault is no longer a setting. The first start of this version made it an access rule, after that it is ignored", i)
+		}
+	}
+}

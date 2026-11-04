@@ -61,7 +61,7 @@ func (l Location) InArchive() bool { return l.Inner != "" }
 // Resolver turns API paths into locations. It is immutable once built.
 type Resolver struct {
 	sources []*Source
-	access  AccessGate
+	rules   Rules
 	// devices are the pools and disks Unraid reports, for pools that are
 	// not called cache.
 	devices []string
@@ -69,8 +69,8 @@ type Resolver struct {
 
 // New builds a resolver. Mounts must be absolute and may not nest inside
 // each other, because then one path would belong to two sources.
-func New(access AccessGate, sources ...Source) (*Resolver, error) {
-	r := &Resolver{access: access}
+func New(rules Rules, sources ...Source) (*Resolver, error) {
+	r := &Resolver{rules: rules}
 	for _, s := range sources {
 		mount, err := Clean(s.Mount)
 		if err != nil || mount == "/" {
@@ -93,7 +93,7 @@ func New(access AccessGate, sources ...Source) (*Resolver, error) {
 // WithDevices returns a copy of r that also keeps the named pools and disks
 // for admins, since a pool may go by any name.
 func (r *Resolver) WithDevices(names ...string) *Resolver {
-	out := &Resolver{access: r.access, devices: slices.Clone(names)}
+	out := &Resolver{rules: r.rules, devices: slices.Clone(names)}
 	for _, s := range r.sources {
 		c := *s
 		c.AdminOnly = c.AdminOnly || out.AdminOnly(c.Mount)
