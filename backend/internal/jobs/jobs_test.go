@@ -605,3 +605,83 @@ func TestJobJSONHasTheFieldsTheClientReads(t *testing.T) {
 		t.Error("finishedAt is set on an open job")
 	}
 }
+
+func TestManyItemsAreReportedAtMostFourTimesASecond(t *testing.T) {
+	e := newEnv(t)
+	client, _, _ := e.hub.Connect("tab", "anna", 0)
+	progress := make(chan int)
+	go func() {
+		n := 0
+		for ev := range client.Events {
+			if ev.Type == EventProgress {
+				n++
+			}
+		}
+		progress <- n
+	}()
+	name := addScript(t, func(ctx context.Context, run *Run) error {
+		for _, it := range run.Items() {
+			run.Begin(it.Seq)
+			run.Finish(it.Seq, ItemDone, nil)
+		}
+		return nil
+	})
+	began := time.Now()
+	j := e.submit(t, "test", name, 2000)
+	e.waitState(t, j.ID, Done)
+	took := time.Since(began)
+	e.hub.Disconnect(client)
+	if n, most := <-progress, int(took/progressEvery)+2; n > most {
+		t.Fatalf("%d progress events in %s, at most %d expected", n, took, most)
+	}
+}
+
+func BenchmarkItemOfAJobWithFiftyThousandItems(b *testing.B) {
+	m, err := New(v1.Deps{DB: testutil.MainDB(b)}, Options{})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.Cleanup(m.Close)
+	j := &job{}
+	j.ID = "big"
+	for i := range 50000 {
+		j.items = append(j.items, Item{Seq: i, Path: "/mnt/user/x", State: ItemPending, Bytes: 1, Files: 1})
+	}
+	run := &Run{m: m, j: j}
+	seq := 0
+	for b.Loop() {
+		run.Begin(seq)
+		run.Measure(seq, 1, 1)
+		run.Finish(seq, ItemDone, nil)
+		seq = (seq + 1) % len(j.items)
+	}
+}
+
+func TestAFinishedItemIsReportedWhileTheNextOneTakesLong(t *testing.T) {
+	e := newEnv(t)
+	client, _, _ := e.hub.Connect("tab", "anna", 0)
+	release := make(chan struct{})
+	name := addScript(t, func(ctx context.Context, run *Run) error {
+		items := run.Items()
+		run.Measure(items[0].Seq, 1, 1)
+		run.Finish(items[0].Seq, ItemDone, nil)
+		run.Begin(items[1].Seq)
+		<-release
+		run.Finish(items[1].Seq, ItemDone, nil)
+		return nil
+	})
+	defer close(release)
+	e.submit(t, "test", name, 2)
+	timeout := time.After(5 * time.Second)
+	for {
+		select {
+		case ev := <-client.Events:
+			var p Progress
+			if ev.Type == EventProgress && json.Unmarshal(ev.Data, &p) == nil && p.DoneFiles == 1 {
+				return
+			}
+		case <-timeout:
+			t.Fatal("the finished item was never reported")
+		}
+	}
+}

@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 )
@@ -51,7 +52,6 @@ func (r *Run) Cancelled() bool {
 func (r *Run) Measure(seq int, bytes, files int64) {
 	r.item(seq, func(it *Item) { it.Bytes, it.Files = bytes, files })
 	r.m.mu.Lock()
-	r.j.recount()
 	r.m.schedule()
 	r.m.mu.Unlock()
 }
@@ -76,8 +76,12 @@ func (r *Run) Finish(seq int, state string, err error) {
 	r.m.mu.Lock()
 	defer r.m.mu.Unlock()
 	r.j.inflightBytes, r.j.inflightFiles = 0, 0
-	r.j.recount()
-	r.m.publishProgress(r.j)
+	r.j.addUp()
+	if time.Since(r.j.publishedAt) >= progressEvery {
+		r.m.publishProgress(r.j)
+	} else {
+		r.m.reportSoon(r.j)
+	}
 }
 
 // SetRef keeps something about an item that the kind needs again after a
@@ -86,16 +90,17 @@ func (r *Run) SetRef(seq int, ref string) {
 	r.item(seq, func(it *Item) { it.Ref = ref })
 }
 
+// item changes one item, which sits at the index of its Seq, and keeps the
+// totals of the job in step without going through all its items.
 func (r *Run) item(seq int, f func(*Item)) {
 	r.m.mu.Lock()
 	defer r.m.mu.Unlock()
-	for i := range r.j.items {
-		if r.j.items[i].Seq == seq {
-			f(&r.j.items[i])
-			r.m.saveItem(r.j, r.j.items[i])
-			return
-		}
-	}
+	it := &r.j.items[seq]
+	r.j.tally(it, -1)
+	f(it)
+	r.j.tally(it, 1)
+	r.j.addUp()
+	r.m.saveItem(r.j, *it)
 }
 
 // Current names the file in work, relative to the job's items.

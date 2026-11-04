@@ -85,6 +85,7 @@ type job struct {
 	inflightBytes, inflightFiles int64
 
 	publishedAt time.Time
+	reportDue   bool
 	savedAt     time.Time
 	sampleAt    time.Time
 	sampleBytes int64
@@ -761,20 +762,30 @@ func (m *Manager) progress(j *job, bytes, files int64) {
 // recount sums the items into the totals.
 func (j *job) recount() {
 	j.TotalBytes, j.TotalFiles, j.doneBytes, j.doneFiles, j.FailedItems = 0, 0, 0, 0, 0
-	for _, it := range j.items {
-		if it.State == ItemFailed {
-			j.FailedItems++
-		}
-		j.TotalBytes += it.Bytes
-		j.TotalFiles += it.Files
-		if it.State == ItemDone || it.State == ItemSkipped {
-			j.doneBytes += it.Bytes
-			j.doneFiles += it.Files
-		}
+	for i := range j.items {
+		j.tally(&j.items[i], 1)
 	}
+	j.addUp()
+	j.Count = len(j.items)
+}
+
+// tally adds what an item counts for to the totals, or takes it out again
+// with sign -1.
+func (j *job) tally(it *Item, sign int64) {
+	if it.State == ItemFailed {
+		j.FailedItems += int(sign)
+	}
+	j.TotalBytes += sign * it.Bytes
+	j.TotalFiles += sign * it.Files
+	if it.State == ItemDone || it.State == ItemSkipped {
+		j.doneBytes += sign * it.Bytes
+		j.doneFiles += sign * it.Files
+	}
+}
+
+func (j *job) addUp() {
 	j.DoneBytes = j.doneBytes + j.inflightBytes
 	j.DoneFiles = j.doneFiles + j.inflightFiles
-	j.Count = len(j.items)
 }
 
 func (m *Manager) view(j *job, withItems bool) Job {
@@ -826,6 +837,27 @@ func (m *Manager) publishProgress(j *job) {
 	if _, err := m.hub.PublishJSON(EventProgress, "", p, j.Owner); err != nil {
 		m.logf("jobs: %v", err)
 	}
+}
+
+// reportSoon publishes the progress of j when the next report is due, since
+// nothing else may report it for a while. Call with m.mu held.
+func (m *Manager) reportSoon(j *job) {
+	if j.reportDue {
+		return
+	}
+	j.reportDue = true
+	time.AfterFunc(progressEvery, func() {
+		m.mu.Lock()
+		defer m.mu.Unlock()
+		j.reportDue = false
+		switch {
+		case !j.live:
+		case time.Since(j.publishedAt) >= progressEvery:
+			m.publishProgress(j)
+		default:
+			m.reportSoon(j)
+		}
+	})
 }
 
 func (m *Manager) logf(format string, args ...any) {
