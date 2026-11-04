@@ -1,0 +1,20 @@
+{
+  "title": "Plan in ArrowLoop",
+  "name": "Name",
+  "nameTip": "ArrowLoop takes direction, comparison and mirroring as they are set here, and keeps the log.",
+  "to": "{left} to {right}",
+  "every": "How often",
+  "hourly": "Hourly",
+  "daily": "Daily",
+  "weekly": "Weekly",
+  "at": "Time",
+  "atTip": "At night the runs bother least.",
+  "hand": "Hand over to ArrowLoop",
+  "fallback": "Sync",
+  "planned": "“{name}” is planned in ArrowLoop",
+  "open": "Open ArrowLoop",
+  "badTime": "The time needs the form 03:00",
+  "notSet": "ArrowLoop is not set up yet. Under Settings and Integrations you enter its address and token.",
+  "noAnswer": "ArrowLoop does not take the job right now: {why}",
+  "taken": "ArrowLoop has a job of this name already"
+}

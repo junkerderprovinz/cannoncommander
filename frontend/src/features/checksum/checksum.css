@@ -1,0 +1,15 @@
+.bk-sums { height: min(44rem, calc(100vh - 3rem)); }
+.bk-verify { height: min(42rem, calc(100vh - 3rem)); }
+.bk-sum { display: grid; grid-template-columns: 1.75rem minmax(0, 1.3fr) minmax(0, 1fr) 5.5rem; gap: .7rem; align-items: center; height: 2.25rem; padding: 0 .45rem; border-radius: var(--radius-control); flex: none; }
+.bk-sum:hover { background: var(--carbon-surface3); }
+.bk-hash { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--carbon-text-sub); }
+.bk-hash .bar { display: block; width: 100%; height: .35rem; max-width: 14rem; contain: size layout; }
+.bk-sum > :last-child { justify-self: end; }
+.bk-ok { display: inline-flex; align-items: center; gap: .4rem; font-size: 12px; color: var(--carbon-text-sub); }
+.bk-swap { min-height: 7.6rem; display: flex; flex-direction: column; }
+.bk-swap > div { display: flex; flex-direction: column; gap: .6rem; }
+.bk-swap > [hidden] { display: none; }
+.bk-swap textarea { width: 100%; min-height: 4.6rem; }
+.bk-filehead { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; gap: .6rem; align-items: center; }
+.bk-filehead .bk-name { font-weight: 600; }
+@media (max-width: 760px) { .bk-sum { grid-template-columns: 1.75rem minmax(0, 1fr) auto; } .bk-sum .bk-hash { display: none; } }

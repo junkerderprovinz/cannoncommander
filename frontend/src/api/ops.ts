@@ -93,7 +93,7 @@ export interface TrashItem {
 }
 export interface TrashList { items: TrashItem[]; count: number; bytes: number; days: number }
 
-export interface UndoStep { id: string; kind: 'rename' | 'mkdir' | 'touch' | 'copy' | 'move' | 'trash'; at: string; name: string; count: number; path?: string; to?: string }
+export interface UndoStep { id: string; kind: 'rename' | 'renameBatch' | 'mkdir' | 'touch' | 'link' | 'copy' | 'move' | 'trash'; at: string; name: string; count: number; path?: string; to?: string }
 
 export interface Upload { id: string; path: string; size: number; offset: number; state: 'open' | 'done' | 'skipped'; rule: string; mtime?: string; chunk: number }
 export interface UploadRequest { path: string; size: number; mtime?: string; rule?: Rule }
@@ -133,7 +133,7 @@ export const ops = {
   touch: (path: string) => body<FsChanged>('/fs/touch', json('POST', { path })),
   rename: (path: string, name: string) => body<FsChanged>('/fs/rename', json('POST', { path, name })),
   // A hard link is a second name for the same data; target is the existing file, path the new name.
-  link: (target: string, path: string) => body<FsChanged>('/fs/link', json('POST', { type: 'hard', target, path })),
+  link: (target: string, path: string) => body<FsChanged>('/fs/link', json('POST', { target, path, hard: true })),
 
   trash: () => body<TrashList>('/trash'),
   restore: (ids: string[]) => body<Job>('/trash/restore', json('POST', { ids })),

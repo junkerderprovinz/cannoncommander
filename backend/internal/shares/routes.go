@@ -31,6 +31,7 @@ func Routes(r *v1.Router) {
 	r.Handle("GET /shares", s.mine)
 	r.Handle("POST /shares", s.create)
 	r.Handle("GET /shares/{id}", s.get)
+	r.Handle("GET /shares/{id}/qr", s.qr)
 	r.Handle("PATCH /shares/{id}", s.update)
 	r.Handle("DELETE /shares/{id}", s.delete)
 	r.Handle("GET /admin/shares", s.all)

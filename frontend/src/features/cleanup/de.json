@@ -1,0 +1,39 @@
+{
+  "title": "Aufräumen",
+  "searchIn": "Suchen in",
+  "searchInTip": "Aufräumen geht auch durch alle Unterordner.",
+  "finds": "Funde",
+  "findsIn": "{finds} in {objects}",
+  "findWord": { "one": "{n} Fund", "many": "{n} Funde" },
+  "objectsIn": { "one": "{n} Objekt", "many": "{n} Objekten" },
+  "toTrash": "Gelöschtes landet im Papierkorb",
+  "trash": "Papierkorb",
+  "rename": "Umbenennen",
+  "delete": "{n} löschen",
+  "fix": "{n} umbenennen",
+  "pickAll": "Alle {group} wählen",
+  "clean": "Hier ist alles aufgeräumt",
+  "scanned": "{objects} durchsucht",
+  "capped": "Es gibt noch mehr Funde, als hier stehen. Nach dem Aufräumen zeigt ein neuer Lauf den Rest.",
+  "fixed": { "one": "{n} Name bereinigt", "many": "{n} Namen bereinigt" },
+  "kept": { "one": "{n} Name ist schon vergeben und bleibt, wie er ist", "many": "{n} Namen sind schon vergeben und bleiben, wie sie sind" },
+  "groups": {
+    "emptyDir": { "label": "Leere Ordner", "tip": "Ordner ohne Dateien. Ein Ordner, in dem nur leere Ordner liegen, zählt mit." },
+    "emptyFile": { "label": "Leere Dateien", "tip": "Dateien mit 0 Byte." },
+    "temp": { "label": "Temp-Reste", "tip": "Abgebrochene Downloads wie .part und .!qB, Office-Sperrdateien mit ~$ und was macOS und Windows in Ordnern ablegen." },
+    "link": { "label": "Kaputte Verknüpfungen", "tip": "Verknüpfungen, deren Ziel es nicht mehr gibt." },
+    "ext": { "label": "Falsche Endung", "tip": "Der Inhalt passt nicht zur Endung, etwa ein PNG, das .jpg heißt. Aufräumen gibt die richtige Endung." },
+    "name": { "label": "Problematische Namen", "tip": "Namen, die über SMB auf Windows nicht gehen oder Ärger machen. Aufräumen ersetzt die Zeichen durch _ und nimmt Leerzeichen am Rand weg." }
+  },
+  "notes": {
+    "empty": "leer",
+    "onlyEmptyDirs": "nur leere Ordner",
+    "pointsTo": "zeigt auf {target}",
+    "isA": "ist ein {kind}",
+    "edgeSpace": "Leerzeichen am Rand",
+    "trailingDot": "Punkt am Ende",
+    "windowsChars": "Zeichen, die Windows nicht kennt",
+    "tooLong": "länger als 255 Zeichen"
+  },
+  "kinds": { "png": "PNG-Bild", "jpg": "JPEG-Bild", "pdf": "PDF-Dokument", "gif": "GIF-Bild", "zip": "ZIP-Archiv" }
+}

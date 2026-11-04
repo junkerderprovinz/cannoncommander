@@ -1,6 +1,6 @@
 // The settings pages, the account and the labels in the shape of /api/v1, as the contracts in
-// backend/internal/*/openapi.yaml describe it, with the prototype's made-up people, shares and sources. It keeps
-// changes in memory, so a page can be clicked through as it will work against the server.
+// backend/internal/*/openapi.yaml describe it, with the prototype's made-up people and sources. It keeps changes in
+// memory, so a page can be clicked through as it will work against the server. Share links live in fixture-tools.js.
 import { createFixture } from './fixture.js';
 
 const MIN = 60000, HOUR = 60 * MIN, DAY = 24 * HOUR, KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
@@ -71,10 +71,6 @@ function state() {
       { who: 'anna', path: '/mnt/user/backups', rule: 'hide' },
       { who: 'gast', path: '/mnt/user/filme', rule: 'read' },
       { who: '*', path: '*.partial*', rule: 'hide' },
-    ],
-    shares: [
-      { id: 's1', slug: 'k3x9qa-urlaub', kind: 'folder', name: 'Urlaub', paths: ['/mnt/user/fotos/Urlaub'], owner: 'jdp', created: now - 5 * DAY, expires: now + 25 * DAY, password: true, limit: 0, downloads: 3, views: 14, uploads: false, uploadLimit: 0, uploaded: 0, notify: false, state: 'active' },
-      { id: 's2', slug: 'p7q2mv-rechnung', kind: 'file', name: 'Rechnung-Oktober.pdf', paths: ['/mnt/user/dokumente/Rechnung-Oktober.pdf'], owner: 'jdp', created: now - 1 * DAY, expires: now + 6 * DAY, password: false, limit: 5, downloads: 1, views: 2, uploads: false, uploadLimit: 0, uploaded: 0, notify: true, state: 'active' },
     ],
     activity: [
       { t: now - 4 * MIN, who: 'jdp', what: 'copy', path: '/mnt/user/downloads/neu', target: '/mnt/user/backups/neu', ip: '192.168.10.16' },
@@ -162,7 +158,6 @@ export function settingsFixtureMiddleware() {
   };
   const tidy = () => { for (const [p, l] of Object.entries(S.labels)) if (!l.colour && !(l.tags || []).length) delete S.labels[p]; };
   const wireUser = (u) => ({ ...u, last: iso(u.last), pwChanged: iso(u.pwChanged) });
-  const wireShare = (s) => ({ ...s, created: iso(s.created), expires: iso(s.expires) });
   const wireRemote = (r) => ({ ...r, params: { ...r.params } });
   const sources = () => ({ sources: S.sources, restartNeeded: JSON.stringify(S.sources) !== S.running });
   const indexState = (s) => {
@@ -263,7 +258,6 @@ export function settingsFixtureMiddleware() {
       S.users = S.users.filter((x) => x !== u);
       S.groups.forEach((g) => { g.members = g.members.filter((m) => m !== u.name); });
       S.rules = S.rules.filter((r) => r.who !== u.name);
-      S.shares = S.shares.filter((s) => s.owner !== u.name);
       return 204;
     }],
     ['GET', '/admin/groups', () => ({ items: S.groups })],
@@ -353,18 +347,6 @@ export function settingsFixtureMiddleware() {
       const token = b.kind === 'collabora' ? 'none' : key || saved ? 'ok' : 'missing';
       return { kind: b.kind, ok: reachable && ['ok', 'none'].includes(token), reachable, ...(reachable ? { token, version: '8.3.2' } : { error: 'connection refused' }) };
     }],
-    // Both lists are bare arrays, which the router would read as a status and a body.
-    ['GET', '/shares', () => [200, S.shares.filter((s) => s.owner === ME).map(wireShare)]],
-    ['GET', '/admin/shares', () => [200, S.shares.map(wireShare)]],
-    ['PATCH', /^\/shares\/(.+)$/, (b, [id]) => {
-      const s = S.shares.find((x) => x.id === id);
-      if (!s) return [404, 'share'];
-      if ('expires' in b) s.expires = b.expires ? Date.parse(b.expires) : null;
-      if ('password' in b) s.password = !!b.password;
-      s.state = s.expires != null && s.expires < Date.now() ? 'expired' : 'active';
-      return wireShare(s);
-    }],
-    ['DELETE', /^\/shares\/(.+)$/, (_, [id]) => { S.shares = S.shares.filter((s) => s.id !== id); return 204; }],
     ['GET', '/remotes', () => ({ remotes: S.remotes.map(wireRemote), rclone: { installed: true, running: true, version: '1.71.2' } })],
     ['POST', '/remotes', (b) => {
       if (S.remotes.some((r) => r.name === b.name)) return [409, 'the name is taken'];

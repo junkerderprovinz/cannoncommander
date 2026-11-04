@@ -8,17 +8,17 @@ import { G } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import type { WinEntry } from '@/core/windows';
-import { num, plural, setFoot } from '@/bk/kit';
-import PathPick from '@/bk/PathPick.vue';
-import Tile from '@/bk/Tile.vue';
 import { t } from '@/i18n';
 import { pctOf } from '@/features/jobs/label';
 import { undoAct } from '@/features/undo/act';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
+import BkPath from '@/ui/BkPath.vue';
 import Frow from '@/ui/Frow.vue';
+import { num, plural, setFoot } from '@/ui/kit';
 import Seg from '@/ui/Seg.vue';
 import Sw from '@/ui/Sw.vue';
+import Tile from '@/ui/Tile.vue';
 
 const props = defineProps<{ root: string; win: WinEntry; close: () => void }>();
 const jobs = useJobs();
@@ -39,9 +39,9 @@ const all = computed(() => res.value?.groups.flatMap((g) => g.copies.map((c) => 
 const picked = computed(() => all.value.filter((x) => drop.value.has(x.c.path)));
 const freed = computed(() => picked.value.reduce((a, x) => a + x.size, 0));
 const sum = computed(() => (res.value?.groups.length
-  ? t('duplicates.sum', { groups: plural(res.value.groups.length, t('duplicates.group'), t('duplicates.groupsWord')), size: fmtSize(res.value.wasted) })
+  ? t('duplicates.sum', { groups: plural(res.value.groups.length, 'duplicates.groupCount'), size: fmtSize(res.value.wasted) })
   : t('duplicates.groups')));
-const copies = (n: number) => plural(n, t('duplicates.copy'), t('duplicates.copies'));
+const copies = (n: number) => plural(n, 'duplicates.copies');
 
 const stopJob = () => {
   if (job.value && live.value && ['queued', 'running', 'paused'].includes(live.value.state)) ops.jobStep(job.value.id, 'cancel').catch(() => {});
@@ -129,7 +129,7 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
 
 <template>
   <div class="well bk-form"><div class="bk-grid2">
-    <Frow :label="t('duplicates.in')"><PathPick id="u-in" v-model="where" /></Frow>
+    <Frow :label="t('duplicates.in')"><BkPath id="u-in" v-model="where" /></Frow>
     <Frow :label="t('duplicates.by')" :tip="t('duplicates.byTip')"><Seg id="u-by" v-model="by" :options="BY" /></Frow>
   </div></div>
   <div class="well bk-fill bk-dupwell">
@@ -143,7 +143,7 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
       <div v-else-if="!res" class="bk-scan"><div>{{ t('duplicates.scanning', { path: root }) }}</div><div class="bar"><i id="u-bar" :style="{ width: pct + '%' }"></i></div><div id="u-n" class="glim-num">{{ t('duplicates.files', { n: num(seen) }) }}</div></div>
       <template v-else-if="res.groups.length">
         <section v-for="(g, gi) in res.groups" :key="g.sha256 + gi" class="bk-group">
-          <div class="bk-ghead"><Tile :n="{ name: g.name }" /><span class="bk-name">{{ by === 'name' ? g.name : t('duplicates.sameSize', { n: g.copies.length }) }}</span><span class="pill glim-num">{{ t('duplicates.each', { copies: copies(g.copies.length), size: fmtSize(g.size) }) }}</span></div>
+          <div class="bk-ghead"><Tile :k="{ name: g.name }" /><span class="bk-name">{{ by === 'name' ? g.name : t('duplicates.sameSize', { n: g.copies.length }) }}</span><span class="pill glim-num">{{ t('duplicates.each', { copies: copies(g.copies.length), size: fmtSize(g.size) }) }}</span></div>
           <div v-for="(c, ci) in g.copies" :key="c.path" class="bk-copy" :class="{ gone: drop.has(c.path) }">
             <span class="bk-path mono" :title="c.path"><bdi>{{ by === 'name' ? c.at : c.path }}</bdi></span>
             <span v-if="g.copies[0]!.mtime === g.copies.at(-1)!.mtime"></span><span v-else-if="ci === 0" class="pill">{{ t('duplicates.newest') }}</span><span v-else-if="ci === g.copies.length - 1" class="pill">{{ t('duplicates.oldest') }}</span><span v-else></span>

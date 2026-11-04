@@ -10,16 +10,16 @@ import { fmtDate, fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import type { WinEntry } from '@/core/windows';
-import { num, plural, setFoot } from '@/bk/kit';
-import PathPick from '@/bk/PathPick.vue';
-import Tile from '@/bk/Tile.vue';
 import { t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
 import { useSearch } from '@/stores/search';
+import BkPath from '@/ui/BkPath.vue';
 import Dropdown from '@/ui/Dropdown.vue';
 import Frow from '@/ui/Frow.vue';
+import { num, plural, setFoot } from '@/ui/kit';
 import Seg from '@/ui/Seg.vue';
 import Sw from '@/ui/Sw.vue';
+import Tile from '@/ui/Tile.vue';
 import { openHit, saveSearch } from './saved';
 
 const LIMIT = 400;
@@ -39,7 +39,7 @@ const shown = computed(() => res.value.hits.slice(0, LIMIT));
 const count = computed(() => {
   const r = res.value;
   if (!r.found || r.unknown.length) return t('search.hits');
-  return r.total > LIMIT ? t('search.first', { n: LIMIT, total: num(r.total) }) : plural(r.total, t('search.hitsLabel'), t('search.hitsLabel'));
+  return r.total > LIMIT ? t('search.first', { n: LIMIT, total: num(r.total) }) : plural(r.total, 'search.hitCount');
 });
 
 // Folders first, then names in the order people count, as the server sorts its hits.
@@ -164,7 +164,7 @@ onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(ti
     <div class="bk-grid2">
       <Frow :label="t('search.name')" :tip="t('search.nameTip')"><input id="s-name" ref="nameField" v-model="q.name" class="field grow" :placeholder="t('search.namePlaceholder')" autocomplete="off" spellcheck="false"></Frow>
       <Frow :label="t('search.text')" :tip="t('search.textTip')"><input id="s-text" v-model="q.text" class="field grow" :placeholder="t('search.textPlaceholder')" autocomplete="off"></Frow>
-      <Frow :label="t('search.in')"><PathPick id="s-in" v-model="q.in" /></Frow>
+      <Frow :label="t('search.in')"><BkPath id="s-in" v-model="q.in" /></Frow>
       <Frow :label="t('search.hidden')" :tip="t('search.hiddenTip')"><Sw id="s-hidden" v-model="q.hidden" /></Frow>
       <Frow :label="t('search.size')" :tip="t('search.sizeTip')"><span class="bk-range"><input id="s-min" v-model="q.min" class="field bk-num glim-num" :placeholder="t('search.from')" autocomplete="off"><span class="muted">{{ t('search.to') }}</span><input id="s-max" v-model="q.max" class="field bk-num glim-num" :placeholder="t('search.any')" autocomplete="off"></span></Frow>
       <Frow :label="t('search.when')"><Dropdown id="s-when" v-model="q.when" :options="WHEN" size="grow" /></Frow>
@@ -180,7 +180,7 @@ onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(ti
         <div v-else-if="res.unknown.length" class="empty"><G n="IconInfo" /><div>{{ t('search.unknown', { fields: res.unknown.map((u) => `„${u}:“`).join(', ') }) }}</div><div class="muted" style="font-size:12px">{{ t('search.unknownHint') }}</div></div>
         <template v-else-if="shown.length">
           <div v-for="(h, i) in shown" :key="h.at + '/' + h.name" class="bk-row bk-hit" :class="{ cur: i === cur }" :data-bk-hit="i" role="option" :aria-selected="i === cur" @click="clickHit($event, i)">
-            <Tile :n="h" /><span class="bk-name">{{ h.name }}</span><span class="bk-path muted mono" :title="h.at || '/'"><bdi>{{ h.at || '/' }}</bdi></span>
+            <Tile :k="h" /><span class="bk-name">{{ h.name }}</span><span class="bk-path muted mono" :title="h.at || '/'"><bdi>{{ h.at || '/' }}</bdi></span>
             <span class="pill glim-num">{{ fmtSize(h.size) || '0 B' }}</span><span class="pill glim-num">{{ fmtDate(h.time) }}</span>
           </div>
         </template>
