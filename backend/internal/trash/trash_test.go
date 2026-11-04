@@ -143,6 +143,7 @@ func TestABurstOfChangesIsToldAtOnceAndAgainAtItsEnd(t *testing.T) {
 	if err := os.MkdirAll(filepath.Join(root, "fotos"), 0o755); err != nil {
 		t.Fatal(err)
 	}
+	began := time.Now()
 	for i := range 100 {
 		name := fmt.Sprintf("%d.jpg", i)
 		if err := os.WriteFile(filepath.Join(root, "fotos", name), nil, 0o644); err != nil {
@@ -156,18 +157,14 @@ func TestABurstOfChangesIsToldAtOnceAndAgainAtItsEnd(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	first := time.After(100 * time.Millisecond)
+	took := time.Since(began)
 	n := 0
-	for counting := true; counting; {
-		select {
-		case <-client.Events:
-			n++
-		case <-first:
-			counting = false
-		}
+	for len(client.Events) > 0 {
+		<-client.Events
+		n++
 	}
-	if n == 0 || n > 5 {
-		t.Fatalf("%d changes told for a burst of 100", n)
+	if most := int(took/tellEvery) + 1; n == 0 || n > most {
+		t.Fatalf("%d changes told for a burst of 100 in %s, at most %d expected", n, took, most)
 	}
 	select {
 	case <-client.Events:
