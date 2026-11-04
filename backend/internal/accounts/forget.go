@@ -11,6 +11,7 @@ import (
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
 
@@ -30,11 +31,15 @@ func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 	}
 	// What hangs on the login name or grants access goes first, so a new
 	// account with the same name can never inherit it.
-	shares, err := state.GetSharesByUserID(u.ID)
+	if err := shares.RemoveUser(r.Context(), h.deps, u.ID); err != nil {
+		return err
+	}
+	// Links made before the app had its own still live in the login system.
+	old, err := state.GetSharesByUserID(u.ID)
 	if err != nil {
 		return err
 	}
-	for _, s := range shares {
+	for _, s := range old {
 		if err := state.DeleteShare(s.Hash); err != nil {
 			return err
 		}

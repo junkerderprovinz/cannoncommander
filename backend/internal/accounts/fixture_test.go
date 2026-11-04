@@ -17,6 +17,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
@@ -122,6 +123,7 @@ func newWorld(t *testing.T) *world {
 	deps := v1.Deps{FS: fs, DB: db, Hub: hub.New(hub.Options{})}
 	r := v1.NewRouter(deps, accounts.Track(db, authenticate))
 	accounts.Routes(r)
+	shares.Routes(r)
 	h, err := r.Handler()
 	if err != nil {
 		t.Fatal(err)

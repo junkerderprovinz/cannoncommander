@@ -159,13 +159,17 @@ func (s *Service) follow(from, to string) {
 	}
 }
 
+// ownerKey is how a user id goes into SQLite, which takes no uint64 above
+// the int64 range. Ids are random, so half of them are up there.
+func ownerKey(id uint64) int64 { return int64(id) }
+
 // RemoveUser deletes the links of a user, for when the account goes away.
 func RemoveUser(ctx context.Context, d v1.Deps, userID uint64) error {
 	s := For(d)
 	if s == nil {
 		return nil
 	}
-	list, err := s.list(ctx, `WHERE owner_id = ?`, userID)
+	list, err := s.list(ctx, `WHERE owner_id = ?`, ownerKey(userID))
 	if err != nil {
 		return err
 	}
@@ -192,11 +196,12 @@ func (s *Service) list(ctx context.Context, where string, args ...any) ([]*Share
 	for rows.Next() {
 		var sh Share
 		var expires sql.NullInt64
-		var created int64
-		if err := rows.Scan(&sh.ID, &sh.Slug, &sh.OwnerID, &sh.Owner, &sh.Kind, &sh.Name, &sh.passwordHash, &expires,
+		var created, owner int64
+		if err := rows.Scan(&sh.ID, &sh.Slug, &owner, &sh.Owner, &sh.Kind, &sh.Name, &sh.passwordHash, &expires,
 			&sh.Limit, &sh.Downloads, &sh.Views, &sh.Uploads, &sh.UploadLimit, &sh.Uploaded, &sh.Notify, &created); err != nil {
 			return nil, err
 		}
+		sh.OwnerID = uint64(owner)
 		sh.Created = time.Unix(created, 0).UTC()
 		if expires.Valid {
 			t := time.Unix(expires.Int64, 0).UTC()
@@ -260,7 +265,7 @@ func (s *Service) insert(ctx context.Context, sh *Share) error {
 	if _, err := tx.ExecContext(ctx, `INSERT INTO share_links (id, slug, owner_id, owner, kind, name, password_hash, expires_at,
 		download_limit, downloads, views, uploads, upload_limit, uploaded, notify, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, ?, 0, ?, ?, ?)`,
-		sh.ID, sh.Slug, sh.OwnerID, sh.Owner, sh.Kind, storedName(sh), sh.passwordHash, unixOrNil(sh.Expires),
+		sh.ID, sh.Slug, ownerKey(sh.OwnerID), sh.Owner, sh.Kind, storedName(sh), sh.passwordHash, unixOrNil(sh.Expires),
 		sh.Limit, sh.Uploads, sh.UploadLimit, sh.Notify, now, now); err != nil {
 		if isUnique(err) {
 			return errSlugTaken
