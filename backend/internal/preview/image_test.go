@@ -7,14 +7,18 @@ import (
 	"errors"
 	"hash/crc32"
 	"image"
+	"image/color"
+	"image/gif"
 	"image/jpeg"
 	"image/png"
 	"io"
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
+	"github.com/kovidgoyal/imaging/apng"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 )
@@ -266,4 +270,58 @@ func TestOrientationLeavesAnImageWithTooManyPixelsAlone(t *testing.T) {
 	require.NoError(t, png.Encode(&buf, image.NewGray(image.Rect(0, 0, 10500, 10001))))
 	data := buf.Bytes()
 	require.Equal(t, data, applyOrientationToPreviewBytes(data, "Rotate 180"))
+}
+
+func previewAllocation(t *testing.T, data []byte) uint64 {
+	t.Helper()
+	options, err := getPreviewOptions("large")
+	require.NoError(t, err)
+	var before, after runtime.MemStats
+	runtime.ReadMemStats(&before)
+	out, err := (&Service{}).CreatePreview(context.Background(), bytes.NewReader(data), int64(len(data)), options)
+	runtime.ReadMemStats(&after)
+	require.NoError(t, err)
+	_, format, err := image.DecodeConfig(bytes.NewReader(out))
+	require.NoError(t, err)
+	require.Equal(t, "jpeg", format)
+	return after.TotalAlloc - before.TotalAlloc
+}
+
+func TestCreatePreviewDecodesOneFrameOfAnAnimatedGIF(t *testing.T) {
+	frame := image.NewPaletted(image.Rect(0, 0, 3000, 3000), color.Palette{color.Black, color.White})
+	var animation gif.GIF
+	for range 20 {
+		animation.Image = append(animation.Image, frame)
+		animation.Delay = append(animation.Delay, 0)
+	}
+	var buf bytes.Buffer
+	require.NoError(t, gif.EncodeAll(&buf, &animation))
+	require.Less(t, previewAllocation(t, buf.Bytes()), uint64(100<<20))
+}
+
+func TestCreatePreviewDecodesOneFrameOfAnAnimatedPNG(t *testing.T) {
+	frame := image.NewGray(image.Rect(0, 0, 3000, 3000))
+	var animation apng.APNG
+	for range 20 {
+		animation.Frames = append(animation.Frames, apng.Frame{Image: frame, DelayNumerator: 1, DelayDenominator: 10})
+	}
+	var buf bytes.Buffer
+	require.NoError(t, apng.Encode(&buf, animation))
+	require.Less(t, previewAllocation(t, buf.Bytes()), uint64(100<<20))
+}
+
+func TestCreatePreviewRefusesAnAnimatedWebP(t *testing.T) {
+	vp8x := []byte("VP8X\x0a\x00\x00\x00\x02\x00\x00\x00\xff\x00\x00\xff\x00\x00")
+	data := binary.LittleEndian.AppendUint32([]byte("RIFF"), uint32(4+len(vp8x)))
+	data = append(append(data, "WEBP"...), vp8x...)
+	options, err := getPreviewOptions("large")
+	require.NoError(t, err)
+	_, err = (&Service{}).CreatePreview(context.Background(), bytes.NewReader(data), int64(len(data)), options)
+	require.ErrorIs(t, err, ErrUnsupportedFormat)
+}
+
+func TestCreatePreviewOfAStillPNGStillWorks(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, png.Encode(&buf, image.NewGray(image.Rect(0, 0, 800, 800))))
+	previewAllocation(t, buf.Bytes())
 }
