@@ -1,5 +1,5 @@
 // Every call to /api/v1 goes through here, so the rest of the app never sees a URL, a header or the wire format.
-import type { Bookmark, FsList, FsTree, Me, Problem, TrashItem, Volume } from './types';
+import type { Bookmark, FsItem, FsList, FsMeta, FsText, FsTree, Me, Problem, SearchResult, TrashItem, Volume } from './types';
 
 export const BASE = '/api/v1';
 
@@ -19,6 +19,7 @@ async function call<T>(path: string, init: RequestInit & { etag?: string } = {})
   headers.set('Accept', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);
   if (init.etag) headers.set('If-None-Match', init.etag);
+  if (init.body) headers.set('Content-Type', 'application/json');
   const res = await fetch(BASE + path, { ...init, headers });
   if (res.status === 304) return { body: null, etag: init.etag };
   if (!res.ok) {
@@ -29,6 +30,7 @@ async function call<T>(path: string, init: RequestInit & { etag?: string } = {})
 }
 
 const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
+const json = (method: string, body: unknown): RequestInit => ({ method, body: JSON.stringify(body) });
 
 // Some settings follow the screen, so every browser keeps an id of its own for them.
 const DEVICE_KEY = 'cannoncommander-device';
@@ -58,13 +60,22 @@ export interface Item {
   hidden?: boolean;
   link?: string;
   items?: number;
+  archive?: boolean;
   at?: string;
+  btime?: number;
+  ino?: number;
+  nlink?: number;
+  uid?: number;
+  gid?: number;
 }
 export interface Listing { path: string; items: Item[]; volume?: Volume; etag?: string }
 
-const toItem = (i: FsList['items'][number]): Item => ({
+export const toItem = (i: FsItem): Item => ({
   name: i.name, dir: i.dir, size: i.size, time: Date.parse(i.mtime), mode: i.mode, owner: i.owner ?? '', group: i.group ?? '',
   ...(i.hidden ? { hidden: true } : {}), ...(i.link ? { link: i.link } : {}), ...(i.items != null ? { items: i.items } : {}),
+  ...(i.archive ? { archive: true } : {}), ...(i.btime ? { btime: Date.parse(i.btime) } : {}),
+  ...(i.ino != null ? { ino: i.ino } : {}), ...(i.nlink != null ? { nlink: i.nlink } : {}),
+  ...(i.uid != null ? { uid: i.uid } : {}), ...(i.gid != null ? { gid: i.gid } : {}),
 });
 
 export const api = {
@@ -76,11 +87,29 @@ export const api = {
   async fsTree(path: string): Promise<FsTree> {
     return (await call<FsTree>('/fs/tree' + q({ path }))).body!;
   },
+  async fsMeta(paths: string[], columns: string[]): Promise<FsMeta['items']> {
+    return (await call<FsMeta>('/fs/meta', json('POST', { paths, columns }))).body?.items ?? {};
+  },
+  async fsText(path: string, lines: number): Promise<string> {
+    return (await call<FsText>('/fs/text' + q({ path, lines: String(lines) }))).body?.text ?? '';
+  },
+  thumbUrl: (path: string, size = 320) => BASE + '/fs/thumb' + q({ path, size: String(size) }),
+  // Names below `path` that match `query`, hidden ones only when they are shown.
+  async search(path: string, query: string, hidden: boolean, signal?: AbortSignal): Promise<{ items: Item[]; more: boolean }> {
+    const body = (await call<SearchResult>('/search' + q({ path, q: query, hidden: String(hidden) }), { signal })).body!;
+    return { items: body.items.map((h) => ({ ...toItem(h), at: h.at })), more: !!body.more };
+  },
+  async watch(clientId: string, paths: string[]): Promise<void> {
+    await call('/events/watch', json('PUT', { clientId, paths }));
+  },
   async me(): Promise<Me> {
     return (await call<Me>('/me')).body!;
   },
   async bookmarks(): Promise<Bookmark[]> {
     return (await call<{ items: Bookmark[] }>('/me/bookmarks')).body!.items;
+  },
+  async saveBookmarks(items: Bookmark[]): Promise<void> {
+    await call('/me/bookmarks', json('PUT', { items }));
   },
   async trash(): Promise<TrashItem[]> {
     return (await call<{ items: TrashItem[] }>('/trash')).body!.items;
@@ -89,6 +118,6 @@ export const api = {
     return (await call<Record<string, unknown>>('/me/prefs' + q(device()))).body ?? {};
   },
   async savePrefs(prefs: Record<string, unknown>): Promise<void> {
-    await call('/me/prefs' + q(device()), { method: 'PUT', body: JSON.stringify(prefs), headers: { 'Content-Type': 'application/json' } });
+    await call('/me/prefs' + q(device()), json('PUT', prefs));
   },
 };

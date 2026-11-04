@@ -7,6 +7,7 @@ import {
   winStack,
 } from '@/core';
 import { DAY } from '@/core/format';
+import { menuName } from '@/core/menus';
 import { orderedTabs } from '@/core/views';
 import { COLUMNS, Columns, DEFAULT_COLUMNS } from '@/files/columns';
 import { join, parent, split } from '@/files/paths';
@@ -104,15 +105,8 @@ export async function installShim() {
     // The prototype changes folder at once; the store waits for the server. A folder already read changes at once
     // here too, so a step that sets the cursor right after going there sets it in the new folder.
     go(path: string, i = panels.active) {
-      if (!listing.lists.has(path)) return void panels.go(path, i);
-      const t = panels.T(i);
-      if (t.path !== path) {
-        t.hist.push(t.path);
-        t.fwd = [];
-      }
-      Object.assign(t, { path, marked: new Set(), cursor: 0, filter: '', qf: false, editPath: false, flat: false });
-      split(path).forEach((_, k, a) => panels.openTree.add('/' + a.slice(0, k + 1).join('/')));
-      if (view.id !== 'files') goView('files');
+      if (listing.lists.has(path)) panels.enter(path, i);
+      else void panels.go(path, i);
     },
     ...waiting.Files,
   };
@@ -129,14 +123,12 @@ export async function installShim() {
     Files,
     DATA,
     FS: fsOver(listing),
-    Columns: {
-      shown: Columns.shown,
-      set: (ids: string[]) => setPref('columns', ids.includes('name') ? ids : ['name', ...ids]),
-      reset: () => { prefs.colWidths = {}; setPref('columns', DEFAULT_COLUMNS); },
-    },
+    Columns,
     COLUMNS,
+    viewOf: panels.viewOf,
     DEFAULT_COLUMNS,
-    MENUS,
+    // The step files find a menu by its German title, as the prototype names them; the id stands third.
+    MENUS: MENUS.map(([id, items], i) => [menuName(i), items, id]),
     winStack,
     closeMenu,
     $: (s: string, r: ParentNode = document) => r.querySelector(s),

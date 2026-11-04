@@ -1,16 +1,23 @@
 // The everyday actions of the file view. Feature modules add the rest under the ids the menu bar lists.
+import { reactive } from 'vue';
 import { action } from '@/core/actions';
 import { menu } from '@/core/menu';
 import { openMenuBar } from '@/core/menus';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { go as goView, view } from '@/core/views';
-import { tl, t } from '@/i18n';
+import { win } from '@/core/windows';
+import { t, tl } from '@/i18n';
 import { shell } from '@/shell/state';
-import { newTab, usePanels } from '@/stores/panels';
 import { useListing } from '@/stores/listing';
+import { newTab, usePanels } from '@/stores/panels';
+import { addBookmark, copyInternalLink } from './bookmarks';
+import { Columns } from './columns';
+import ColumnsBody from './ColumnsBody.vue';
+import { GROUPS } from './entries';
+import { topFolders } from './frequent';
 import { join } from './paths';
-import { VIEWS, viewOf } from './views';
+import { VIEWS } from './views';
 
 const toggle = (k: string) => () => setPref(k, !prefs[k]);
 
@@ -32,9 +39,11 @@ export function registerFileActions() {
   } });
   action('history', { label: tl('actions.history'), g: 'IconLog', key: 'Alt+Runter', run: () => {
     const r = document.querySelector('.panel.active .pathbar')?.getBoundingClientRect() || { left: 300, bottom: 120 };
-    const list = F.visited.filter((p) => p !== F.T().path);
-    menu(r.left, r.bottom + 6, list.length
-      ? [{ head: t('files.recent') }, ...list.map((p) => ({ label: p, g: 'IconFolder', run: () => F.go(p) }))]
+    const here = F.T().path, top = topFolders(5, here);
+    const recent = F.visited.filter((p) => p !== here && !top.includes(p));
+    const row = (p: string) => ({ label: p, g: 'IconFolder', run: () => F.go(p) });
+    menu(r.left, r.bottom + 6, top.length || recent.length
+      ? [...(top.length ? [{ head: t('files.frequent') }, ...top.map(row)] : []), ...(recent.length ? [{ head: t('files.recent') }, ...recent.map(row)] : [])]
       : [{ head: t('files.noHistory') }]);
   } });
 
@@ -48,7 +57,7 @@ export function registerFileActions() {
   action('swapPanels', { label: tl('actions.swapPanels'), g: 'IconSync', key: 'Strg+U', needs: 'dual', run: () => { F.panels.reverse(); } });
   action('equalPanels', { label: tl('actions.equalPanels'), g: 'IconCompare', key: 'Strg+.', needs: 'dual', run: () => F.go(F.T().path, F.other()) });
   action('refresh', { label: tl('actions.refresh'), g: 'IconRefresh', key: 'Strg+R', run: async () => {
-    listing.invalidate(F.T().path);
+    listing.changed(F.T().path);
     await listing.load(F.T().path);
     toast(t('files.refreshed'));
   } });
@@ -59,11 +68,33 @@ export function registerFileActions() {
   action('lockTab', { label: tl('actions.lockTab'), g: 'IconPin', checked: () => !!F.T().locked, run: () => { F.T().locked = !F.T().locked; } });
   action('closeOtherTabs', { label: tl('actions.closeOtherTabs'), g: 'IconClose', when: () => F.P().tabs.length > 1, run: () => { const p = F.P(); p.tabs = [p.tabs[p.cur]!]; p.cur = 0; } });
 
-  // Only Details and Kompakt have rows yet, and they share one layout.
-  VIEWS.filter(([id]) => id === 'details' || id === 'compact').forEach(([id, glyph]) => action('view-' + id, {
-    label: tl(`views.${id}`), g: glyph, radio: true, checked: () => viewOf(F.T()) === id,
-    run: () => setPref('folderViews', { ...prefs.folderViews, [F.T().path]: id }),
+  VIEWS.forEach(([id, glyph]) => action('view-' + id, {
+    label: tl(`views.${id}`), g: glyph, radio: true, checked: () => F.viewOf(F.T()) === id, run: () => F.setView(F.T(), id),
   }));
+  action('nextView', { label: tl('actions.nextView'), g: 'IconTabApps', key: 'Strg+Umschalt+V', run: () => {
+    const tab = F.T(), k = VIEWS.findIndex((v) => v[0] === F.viewOf(tab)), next = VIEWS[(k + 1) % VIEWS.length]![0];
+    F.setView(tab, next);
+    toast(t('files.viewNow', { name: t(`views.${next}`) }));
+  } });
+  action('group-none', { label: tl('actions.groupNone'), g: 'IconViewSimple', radio: true, checked: () => !F.groupOf(F.T()), run: () => F.setGroup(F.T(), '') });
+  Object.entries(GROUPS).forEach(([id, gr]) => action('group-' + id, {
+    label: tl(`actions.group-${id}`), g: gr.g, radio: true, checked: () => F.groupOf(F.T()) === id, run: () => F.setGroup(F.T(), id),
+  }));
+  action('flat', { label: tl('actions.flat'), g: 'IconLog', key: 'Strg+Umschalt+B', checked: () => !!F.T().flat, run: () => {
+    const tab = F.T();
+    Object.assign(tab, { flat: !tab.flat, cursor: 0, marked: new Set() });
+  } });
+  action('columns', { label: tl('actions.columns'), g: 'IconSliders', run: () => {
+    const cur = Columns.shown(), on = reactive(new Set(cur));
+    win({
+      title: t('files.columnsTitle'), wide: true, body: ColumnsBody, props: { on },
+      foot: [
+        { start: t('files.columnsHint') },
+        { label: t('ctx.resetColumns'), g: 'IconRefresh', run: () => Columns.reset() },
+        { label: t('files.apply'), g: 'IconApply', primary: true, run: () => Columns.set([...cur.filter((id) => on.has(id)), ...[...on].filter((id) => !cur.includes(id))]) },
+      ],
+    });
+  } });
 
   action('back', { label: tl('actions.back'), g: 'IconBack', key: 'Alt+Links', run: () => { const tab = F.T(); if (!tab.hist.length) return; tab.fwd.push(tab.path); F.go(tab.hist.pop()!, F.active, false); } });
   action('forward', { label: tl('actions.forward'), g: 'IconForward', key: 'Alt+Rechts', run: () => { const tab = F.T(); if (!tab.fwd.length) return; tab.hist.push(tab.path); F.go(tab.fwd.pop()!, F.active, false); } });
@@ -73,6 +104,16 @@ export function registerFileActions() {
     if (view.id !== 'files') goView('files');
     F.T().editPath = true;
   } });
+  action('addBookmark', { label: tl('actions.addBookmark'), g: 'IconStar', run: (path: string = F.T().path) => addBookmark(path) });
+  action('internalLink', { label: tl('actions.internalLink'), g: 'IconLink', needs: 'sel', when: () => F.sel().length === 1 && !!F.sel()[0]!.dir, run: () => {
+    const k = F.sel()[0]!;
+    copyInternalLink(join(k.at || F.T().path, k.name));
+  } });
+  action('quickFilter', { label: tl('actions.quickFilter'), g: 'IconSearch', key: 'Strg+F', run: () => {
+    if (view.id !== 'files') goView('files');
+    F.T().qf = true;
+  } });
+  action('typeJump', { label: tl('actions.typeJump'), g: 'IconSearch', key: t('files.typeJumpKey'), run: () => toast(t('files.typeJumpTip')) });
 
   action('selectAll', { label: tl('actions.selectAll'), g: 'IconSelectAll', key: 'Strg+A', run: () => { const tab = F.T(); F.entries().filter((k) => !k.up).forEach((k) => tab.marked.add(k.name)); } });
   action('invertSel', { label: tl('actions.invertSel'), g: 'IconSync', key: '*', run: () => {
@@ -81,11 +122,10 @@ export function registerFileActions() {
   } });
   action('unselect', { label: tl('actions.unselect'), g: 'IconClearSelection', key: '-', run: () => { F.T().marked = new Set(); } });
   action('copyPath', { label: tl('actions.copyPath'), g: 'IconLink', needs: 'sel', run: () => {
-    navigator.clipboard?.writeText(F.sel().map((k) => join(F.T().path, k.name)).join('\n'));
+    navigator.clipboard?.writeText(F.sel().map((k) => join(k.at || F.T().path, k.name)).join('\n'));
     toast(t('files.pathCopied'));
   } });
 
   action('settings', { label: tl('actions.settings'), g: 'IconGear', run: () => goView('settings') });
   action('menuBar', { label: tl('actions.menuBar'), g: 'IconMenu', key: 'F10', run: () => openMenuBar(0) });
 }
-
