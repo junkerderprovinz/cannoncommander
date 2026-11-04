@@ -32,7 +32,7 @@ func TestStateInit_proxyYAML_seedsDefaultsAndCreatesUser(t *testing.T) {
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
 			Username:    "demo-127.0.0.1",
-			LoginMethod: users.LoginMethodProxy,
+			LoginMethod: users.LoginMethodPassword,
 		},
 	}
 	settings.ApplyUserDefaults(u)

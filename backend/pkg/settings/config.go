@@ -550,14 +550,6 @@ func setupAuth(generate bool) {
 		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "password")
 		ValidateRecaptcha()
 	}
-	if Config.Auth.Methods.ProxyAuth.Enabled {
-		applyAuthCommonDefaults(&Config.Auth.Methods.ProxyAuth.AuthCommon)
-		err := ValidateProxyAuth()
-		if err != nil && !generate {
-			logger.Fatalf("Error validating proxy auth: %v", err)
-		}
-		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "proxy")
-	}
 	if Config.Auth.Methods.NoAuth {
 		logger.Warning("Configured with no authentication, this is not recommended.")
 		Config.Auth.AuthMethods = []string{"disabled"}
@@ -572,14 +564,6 @@ func setupAuth(generate bool) {
 		if !generate {
 			warnOidcProxyHeaders()
 		}
-	}
-	if Config.Auth.Methods.LdapAuth.Enabled || generate {
-		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "ldap")
-		err := ValidateLdapAuth()
-		if err != nil && !generate {
-			logger.Fatalf("Error validating LDAP auth: %v", err)
-		}
-		logger.Info("LDAP Auth configured successfully")
 	}
 	if Config.Auth.Methods.JwtAuth.Enabled || generate {
 		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "jwt")
@@ -678,6 +662,7 @@ func loadConfigWithDefaults(configFile string, generate bool) error {
 	// Expand $VAR / ${VAR} in decoded string scalars only (after parse) so
 	// secrets may contain quotes, backslashes, or newlines safely.
 	expandConfigEnv(rawConfig)
+	dropRetiredKeys(rawConfig)
 
 	// Filter to only keep valid top-level Settings struct fields
 	// This removes anchor definitions that are just templates (e.g., "test_server: &test_server")
@@ -870,11 +855,6 @@ func loadEnvConfig() {
 		logger.Info("Using ReCaptcha Secret from CC_RECAPTCHA_SECRET environment variable")
 	}
 
-	ldapUserPassword := os.Getenv("CC_LDAP_USER_PASSWORD")
-	if ldapUserPassword != "" {
-		Config.Auth.Methods.LdapAuth.UserPassword = ldapUserPassword
-		logger.Info("Using LDAP bind password from CC_LDAP_USER_PASSWORD environment variable")
-	}
 }
 
 func SetDefaults(generate bool) Settings {
@@ -899,10 +879,6 @@ func SetDefaults(generate bool) Settings {
 					RetentionDays:        30,
 					FlushIntervalSeconds: 10,
 					MaxBufferSize:        10000,
-				},
-				Quotas: QuotasConfig{
-					FlushIntervalSeconds: 10,
-					FlushMaxBuffers:      500,
 				},
 			},
 			SourceMap:        map[string]*Source{},

@@ -1,8 +1,7 @@
 package settings
 
 const (
-	defaultGroupsClaim     = "groups"
-	defaultLdapGroupsClaim = "memberOf"
+	defaultGroupsClaim = "groups"
 )
 
 // ResolveGroupsClaim returns the configured groups claim or the shared default when empty.

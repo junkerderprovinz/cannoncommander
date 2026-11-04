@@ -63,7 +63,6 @@ type MediaMetadata struct {
 	AudioCodec string `json:"audioCodec,omitempty"` // audio codec name (e.g. aac)
 	Container  string `json:"container,omitempty"`  // container/format name (e.g. mov,mp4,m4a,3gp,3g2,mj2)
 	AlbumArt   []byte `json:"albumArt,omitempty"`   // album art image data (automatically base64-encoded in JSON)
-	HasLyrics  bool   `json:"hasLyrics,omitempty"`  // checks if lyrics are available without parse them
 }
 
 // for efficiency, a response will be a pointer to the data

@@ -25,7 +25,6 @@ func TestSecretMarkers_drive_yaml_redaction(t *testing.T) {
 	Config.Auth.Methods.PasswordAuth.AdminPassword = "SENTINEL-NESTED-ADMIN-PW"
 	Config.Auth.Methods.PasswordAuth.Recaptcha.Secret = "SENTINEL-RECAPTCHA"
 	Config.Auth.Methods.OidcAuth.ClientSecret = "SENTINEL-OIDC"
-	Config.Auth.Methods.LdapAuth.UserPassword = "SENTINEL-LDAP"
 	Config.Auth.Methods.JwtAuth.Secret = "SENTINEL-JWT"
 	Config.Integrations.OnlyOffice.Secret = "SENTINEL-OFFICE"
 
@@ -41,7 +40,6 @@ func TestSecretMarkers_drive_yaml_redaction(t *testing.T) {
 		"SENTINEL-NESTED-ADMIN-PW",
 		"SENTINEL-RECAPTCHA",
 		"SENTINEL-OIDC",
-		"SENTINEL-LDAP",
 		"SENTINEL-JWT",
 		"SENTINEL-OFFICE",
 	} {
@@ -68,7 +66,6 @@ func TestActiveSecretFields_fromEmbeddedYaml(t *testing.T) {
 		{"Auth", "Key"},
 		{"Recaptcha", "Secret"},
 		{"OidcConfig", "ClientSecret"},
-		{"LdapConfig", "UserPassword"},
 		{"OnlyOffice", "Secret"},
 		{"PasswordAuthConfig", "AdminPassword"},
 	} {

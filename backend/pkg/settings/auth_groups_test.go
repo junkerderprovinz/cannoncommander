@@ -25,13 +25,3 @@ func TestResolveGroupsClaim(t *testing.T) {
 	}
 }
 
-func TestApplyLdapAuthCommonDefaultsUsesMemberOf(t *testing.T) {
-	ldapCfg := LdapConfig{AuthCommon: AuthCommon{}}
-	if ldapCfg.GroupsClaim == "" {
-		ldapCfg.GroupsClaim = defaultLdapGroupsClaim
-	}
-	applyAuthCommonDefaults(&ldapCfg.AuthCommon)
-	if ldapCfg.GroupsClaim != "memberOf" {
-		t.Fatalf("ldap groupsClaim = %q, want memberOf", ldapCfg.GroupsClaim)
-	}
-}

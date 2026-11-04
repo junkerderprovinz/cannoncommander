@@ -32,13 +32,13 @@ func TestValidateEnforcedToolAccess(t *testing.T) {
 func TestMergeDefaultToolAccess(t *testing.T) {
 	doc := testDoc([]ToolAccessDefaultItem{
 		{ToolID: users.ToolSizeViewer, Enabled: true, Enforced: false},
-		{ToolID: users.ToolFileWatcher, Enabled: false, Enforced: false},
+		{ToolID: users.ToolMaterialIconPicker, Enabled: false, Enforced: false},
 	})
 	u := testUser(nil, false)
 	if !MergeDefaultToolAccess(u, doc) {
 		t.Fatal("expected change")
 	}
-	if !u.ToolAccess[users.ToolSizeViewer] || u.ToolAccess[users.ToolFileWatcher] {
+	if !u.ToolAccess[users.ToolSizeViewer] || u.ToolAccess[users.ToolMaterialIconPicker] {
 		t.Fatalf("unexpected tool access: %+v", u.ToolAccess)
 	}
 }
@@ -56,13 +56,13 @@ func TestMergeEnforcedToolAccess(t *testing.T) {
 	}
 }
 
-func TestToolAccessMapJSON(t *testing.T) {
+func TestToolAccessMapDropsToolsTheAppNoLongerHas(t *testing.T) {
 	raw := `{"sizeViewer":true,"fileWatcher":false}`
 	var m users.ToolAccessMap
 	if err := json.Unmarshal([]byte(raw), &m); err != nil {
 		t.Fatal(err)
 	}
-	if !m[users.ToolSizeViewer] || m[users.ToolFileWatcher] {
+	if !m[users.ToolSizeViewer] || len(m) != 1 {
 		t.Fatalf("unexpected map: %+v", m)
 	}
 	encoded, err := json.Marshal(m)
@@ -75,11 +75,5 @@ func TestToolAccessMapJSON(t *testing.T) {
 	}
 	if round[users.ToolSizeViewer] != m[users.ToolSizeViewer] {
 		t.Fatalf("round trip failed: %+v", round)
-	}
-}
-
-func TestParseToolIDRejectsUnknown(t *testing.T) {
-	if _, err := users.ParseToolID("notATool"); err == nil {
-		t.Fatal("expected error for unknown tool")
 	}
 }

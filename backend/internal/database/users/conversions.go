@@ -64,7 +64,6 @@ func APIScopesToBackend(apiScopes []FrontendScope) ([]BackendScope, error) {
 			Path:        source.Path,
 			Scope:       scope.Scope,
 			Permissions: frontendScopePermissions(scope),
-			Quota:       scope.Quota,
 		})
 	}
 	return newScopes, nil
@@ -87,7 +86,6 @@ func (u *User) GetFrontendScopes() []FrontendScope {
 			Name:        source.Name,
 			Scope:       scope.Scope,
 			Permissions: &perms,
-			Quota:       scope.Quota,
 		})
 	}
 	return newScopes
