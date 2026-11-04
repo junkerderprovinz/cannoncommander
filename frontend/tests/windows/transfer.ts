@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..', '..', '..');
-const { chromium } = createRequire(join(root, 'prototype', 'package.json'))('playwright');
+const { chromium } = createRequire(join(root, 'prototype', 'package.json'))('playwright') as typeof import('playwright');
 const app = process.argv[2] || 'http://localhost:5191/';
 const shots = resolve(process.argv[3] || join(root, 'testing', 'out', 'windows'));
 mkdirSync(shots, { recursive: true });
@@ -214,7 +214,7 @@ await page.evaluate('CC.run("gather")');
 check('the gather plan suggests a disk', await until('/^Verschiebt/.test(document.querySelector("#g-plan")?.textContent || "")'));
 await shot('gather');
 await primary();
-check('the gather job ends', await until('Jobs.list[0]?.kind === "gather" && Jobs.list[0].state === "fertig"'));
+check('the gather job ends', await until('Jobs.list.find((j) => j.kind === "gather")?.state === "fertig"'));
 
 check('no page errors', !errors.length, errors);
 await browser.close();

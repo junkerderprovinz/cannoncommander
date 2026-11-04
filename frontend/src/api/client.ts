@@ -19,7 +19,12 @@ export const setToken = (t: string) => { token = t; };
 
 interface Got<T> { body: T | null; etag?: string }
 
+// When this page last asked the server to change something on disk, so a change the server reports can be told apart
+// from one another program made. Its settings, the folders it watches and a test note change nothing there.
+export const writes = { at: 0 };
+
 export async function call<T>(path: string, init: RequestInit & { etag?: string } = {}): Promise<Got<T>> {
+  if (init.method && init.method !== 'GET' && !/^\/(me|events|jobs\/settings|unraid\/notify)\b/.test(path)) writes.at = Date.now();
   const headers = new Headers(init.headers);
   headers.set('Accept', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);
@@ -73,6 +78,7 @@ export interface Item {
   nlink?: number;
   uid?: number;
   gid?: number;
+  picture?: string;
 }
 export interface Listing { path: string; items: Item[]; volume?: Volume; etag?: string }
 
@@ -81,7 +87,7 @@ export const toItem = (i: FsItem): Item => ({
   ...(i.hidden ? { hidden: true } : {}), ...(i.link ? { link: i.link } : {}), ...(i.items != null ? { items: i.items } : {}),
   ...(i.archive ? { archive: true } : {}), ...(i.btime ? { btime: Date.parse(i.btime) } : {}),
   ...(i.ino != null ? { ino: i.ino } : {}), ...(i.nlink != null ? { nlink: i.nlink } : {}),
-  ...(i.uid != null ? { uid: i.uid } : {}), ...(i.gid != null ? { gid: i.gid } : {}),
+  ...(i.uid != null ? { uid: i.uid } : {}), ...(i.gid != null ? { gid: i.gid } : {}), ...(i.picture ? { picture: i.picture } : {}),
 });
 
 export const api = {
@@ -103,9 +109,9 @@ export const api = {
   },
   thumbUrl: (path: string, size: 'small' | 'large' = 'small', v?: number) => BASE + '/fs/thumb' + q({ path, size, ...(v ? { v: String(v) } : {}) }),
   // Names below `path` that match `query`, hidden ones only when they are shown.
-  async search(path: string, query: string, hidden: boolean, signal?: AbortSignal): Promise<{ items: Item[]; more: boolean }> {
+  async search(path: string, query: string, hidden: boolean, signal?: AbortSignal): Promise<{ items: Item[]; more: boolean; unknown?: string[] }> {
     const body = (await call<SearchResult>('/search' + q({ path, q: query, hidden: String(hidden) }), { signal })).body!;
-    return { items: body.items.map((h) => ({ ...toItem(h), at: h.at })), more: !!body.more };
+    return { items: body.items.map((h) => ({ ...toItem(h), at: h.at })), more: !!body.more, unknown: body.unknown ?? [] };
   },
   async watch(clientId: string, paths: string[]): Promise<void> {
     await call('/events/watch', json('PUT', { clientId, paths }));

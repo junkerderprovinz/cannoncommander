@@ -11,7 +11,7 @@ export const DEFAULT_PREFS = {
   accentPresets: ACCENTS.map((a) => a.hex), palette: [...RAINBOW], jobMode: 'serial', newsSeen: [] as string[], stayDays: 30,
   speedCap: 0, parityWait: true, notifyDone: false, notifyUnraid: false, notifyAfter: 60,
   columns: ['name', 'size', 'modified'], colWidths: {} as Record<string, number>,
-  density: 'medium', showHidden: false, showExt: true, syncBrowse: false, folderSizes: true, foldersFirst: true, dblclick: 'open', fkeys: false, side: true, dual: true,
+  density: 'medium', showHidden: false, showExt: true, syncBrowse: false, folderSizes: true, foldersFirst: true, liveRefresh: true, dblclick: 'open', fkeys: false, side: true, dual: true,
   quickview: false, confirmDelete: true, trash: true, trashDays: 30, language: 'de', dateFormat: 'short', startFolder: '/mnt/user/downloads',
   folderViews: {} as Record<string, string>, folderGroups: {} as Record<string, string>,
 };

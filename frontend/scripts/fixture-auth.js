@@ -1,12 +1,15 @@
 // The sign in and the public share links of the fixture, shaped like the contracts in backend/internal/accounts and
-// backend/internal/shares. Every password is "cannoncommander", jdp has two factor login with the code 123456 or
-// the recovery code K7QM-3XRP, and neu has to pick a new password first. CC_FIXTURE_SIGNED_OUT=1 starts signed out.
+// backend/internal/shares. Every password is "cannoncommander", and the ones the prototype's step files type work
+// too. jdp has two factor login with the code 123456 or the recovery code K7QM-3XRP, and neu has to pick a new
+// password first. CC_FIXTURE_SIGNED_OUT=1 starts signed out.
 // Links: k3x9qa-urlaub (folder with the password sonnenschein, takes uploads), m7tq2p-rechnung (one file),
 // abgelaufen and aufgebraucht (both lead nowhere).
 import { strToU8, zipSync } from 'fflate';
+import { clock } from './fixture-clock.js';
 
 const DAY = 86400000;
 const PASSWORD = 'cannoncommander';
+export const PASSWORDS = [PASSWORD, 'geheim', 'altes-passwort'];
 const iso = (t) => new Date(t).toISOString();
 
 const json = (res, status, body, headers = {}) => {
@@ -48,11 +51,11 @@ function pdf(lines) {
   return strToU8(out);
 }
 
-const file = (name, data, daysAgo) => ({ name, data, time: Date.now() - daysAgo * DAY });
-const folder = (name, children, daysAgo = 3) => ({ name, dir: true, children, time: Date.now() - daysAgo * DAY });
+const file = (name, data, daysAgo) => ({ name, data, time: clock.now() - daysAgo * DAY });
+const folder = (name, children, daysAgo = 3) => ({ name, dir: true, children, time: clock.now() - daysAgo * DAY });
 
 function links() {
-  const now = Date.now();
+  const now = clock.now();
   return {
     'k3x9qa-urlaub': {
       id: 'urlaub', kind: 'folder', password: 'sonnenschein', uploads: true, room: 2 * 1024 ** 3, expires: now + 14 * DAY,
@@ -76,7 +79,7 @@ function account(name, twofa) {
   const full = { jdp: 'Junker der Provinz', anna: 'Anna', neu: 'Neu' }[name] ?? name;
   return {
     id: String(name.length), name, full, role: name === 'jdp' ? 'admin' : 'user', scope: '/mnt/user', groups: [], loginMethod: 'password',
-    twofa, passkeys: 0, last: iso(Date.now()), pwChanged: iso(Date.now() - 41 * DAY), recovery: twofa ? 8 : 0, lockPassword: false,
+    twofa, passkeys: 0, last: iso(clock.now()), pwChanged: iso(clock.now() - 41 * DAY), recovery: twofa ? 8 : 0, lockPassword: false,
   };
 }
 
@@ -102,7 +105,7 @@ export function authFixtureMiddleware() {
       if (S.fails >= 5) return problem(res, 429, 'too many wrong tries, please wait a few minutes', undefined, { 'Retry-After': '900' });
       if (!b.username || !b.password) return problem(res, 400, 'name and password are both needed');
       const name = String(b.username).trim().toLowerCase();
-      if (!users[name] || b.password !== PASSWORD) {
+      if (!users[name] || !PASSWORDS.includes(b.password)) {
         S.fails++;
         return problem(res, 401, 'the name or the password is not right');
       }
@@ -129,6 +132,8 @@ export function authFixtureMiddleware() {
     },
     'POST /auth/passkey/options': (_b, res) => problem(res, 409, 'passkeys are turned off on this server'),
     'POST /auth/passkey': (_b, res) => problem(res, 409, 'passkeys are turned off on this server'),
+    // Only the fixture has this: a step file that sets its session back without signing in.
+    'PUT /fixture/session': (b, res) => { S.out = !b.signedIn; json(res, 204, null); },
     'POST /auth/logout': (_b, res) => { S.out = true; json(res, 204, null, { 'Set-Cookie': 'cannoncommander_session=; Path=/; Max-Age=0' }); },
     'POST /auth/reset-code': (_b, res) => json(res, 202, null),
     'POST /auth/reset': (b, res) => {
@@ -186,7 +191,7 @@ export function authFixtureMiddleware() {
       if (b.password !== l.password) return problem(res, 403, 'the password is not right');
       const token = 'fx-' + Math.random().toString(36).slice(2);
       S.unlocked.add(token);
-      return json(res, 200, { token, expires: iso(Date.now() + DAY / 2) }, { 'Set-Cookie': `cc_share_${l.id}=${token}; Path=/; HttpOnly; SameSite=Lax` });
+      return json(res, 200, { token, expires: iso(clock.now() + DAY / 2) }, { 'Set-Cookie': `cc_share_${l.id}=${token}; Path=/; HttpOnly; SameSite=Lax` });
     }
     const l = visit(slug, req, res);
     if (!l) return;
@@ -240,7 +245,7 @@ export function authFixtureMiddleware() {
     let name = up.name.split('/').pop();
     const [base, ext] = name.includes('.') ? [name.slice(0, name.lastIndexOf('.')), name.slice(name.lastIndexOf('.'))] : [name, ''];
     for (let i = 2; dir.children.some((k) => k.name === name); i++) name = `${base} (${i})${ext}`;
-    dir.children.push({ name, data: new Uint8Array(Buffer.concat(up.parts)), time: Date.now() });
+    dir.children.push({ name, data: new Uint8Array(Buffer.concat(up.parts)), time: clock.now() });
     l.room -= up.size;
     up.state = 'done';
     S.uploads.delete(up.id);

@@ -58,7 +58,8 @@
     "columns": "Spalten", "columnsTip": "Spalten lassen sich auch direkt im Spaltenkopf verschieben, und ein Rechtsklick auf den Kopf blendet sie ein und aus.", "chooseColumns": "Spalten wählen",
     "bars": "Leisten", "side": "Seitenleiste", "sideTip": "Verknüpfungen und Ordnerbaum links neben den Fenstern.",
     "fkeys": "Funktionstastenleiste", "fkeysTip": "Die Knöpfe für F3 bis F8 am unteren Rand, wie im Total Commander.",
-    "quickview": "Vorschauleiste", "quickviewTip": "Zeigt im zweiten Fenster eine Vorschau der Datei, auf der der Cursor steht. Schaltet dafür die zwei Fenster ein."
+    "quickview": "Vorschauleiste", "quickviewTip": "Zeigt im zweiten Fenster eine Vorschau der Datei, auf der der Cursor steht. Schaltet dafür die zwei Fenster ein.",
+    "refresh": "Aktualisieren", "live": "Liste von selbst aktualisieren", "liveTip": "Ändern andere Programme Dateien im offenen Ordner, etwa ein Download-Client, erscheinen sie ohne Neu laden und leuchten kurz auf. Ist ein Fenster offen oder etwas markiert, wartet die Liste, bis du fertig bist."
   },
   "sources": {
     "title": "Quellen", "add": "Quelle hinzufügen", "edit": "Quelle bearbeiten", "remove": "Quelle entfernen", "none": "Noch keine Quelle",

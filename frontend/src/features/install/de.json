@@ -1,0 +1,30 @@
+{
+  "title": "Als App installieren",
+  "already": "CannonCommander läuft schon als App",
+  "installed": "CannonCommander ist jetzt als App installiert",
+  "declined": "Nicht installiert. Über Hilfe geht es jederzeit wieder.",
+  "head": "CannonCommander als App",
+  "intro": "Eigenes Fenster ohne Adressleiste, ein Symbol auf dem Startbildschirm oder in der Taskleiste. Auf dem Handy kannst du Dateien aus anderen Apps direkt hierher teilen.",
+  "how": "So geht es in deinem Browser",
+  "yours": "dein Browser",
+  "notOffered": "Dein Browser bietet die Installation gerade nicht selbst an",
+  "ways": {
+    "chrome": {
+      "head": "Chrome und Edge am Computer",
+      "how": "In der Adressleiste rechts auf das Installieren-Symbol klicken, oder im Browsermenü App installieren wählen."
+    },
+    "android": {
+      "head": "Android",
+      "how": "Im Browsermenü App installieren oder Zum Startbildschirm hinzufügen antippen."
+    },
+    "ios": {
+      "head": "iPhone und iPad",
+      "how": "In Safari auf Teilen tippen, dann Zum Home-Bildschirm."
+    },
+    "firefox": {
+      "head": "Firefox",
+      "how": "Auf Android im Menü Installieren antippen. Unter Windows bietet Firefox dafür ein Symbol in der Adressleiste an, sonst tut es ein Lesezeichen."
+    }
+  },
+  "description": "Dateimanager für deinen Unraid-Server, mit zwei Fenstern wie Krusader"
+}

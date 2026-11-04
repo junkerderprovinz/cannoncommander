@@ -16,16 +16,20 @@ import { COL, Columns } from './columns';
 import type { Entry } from './entries';
 import { join } from './paths';
 import Thumb from './Thumb.vue';
+import { fresh } from './fresh';
+import { ticking } from './touch';
 
 const props = defineProps<{ k: Entry; idx: number; view: string; path: string; marked: boolean; cursor: boolean; cut?: boolean; mark?: RowMark }>();
 const listing = useListing();
+const boxes = computed(() => ticking(props.path) && !props.k.up);
+const glows = computed(() => fresh.has(join(props.k.at || props.path, props.k.name)));
 
 const kind = computed(() => (['details', 'compact'].includes(props.view) ? 'row'
   : ['list', 'columns'].includes(props.view) ? 'flow'
     : props.view === 'content' ? 'content' : props.view === 'drives' ? 'drive' : 'tile'));
 const cls = computed(() => [
   { row: 'row', flow: 'row fitem', content: 'row citem', tile: 'row gcard', drive: 'row dcard' }[kind.value],
-  { dir: props.k.dir, hidden: props.k.hidden || props.k.name.startsWith('.'), marked: props.marked, cursor: props.cursor, cut: props.cut },
+  { dir: props.k.dir, hidden: props.k.hidden || props.k.name.startsWith('.'), marked: props.marked, cursor: props.cursor, cut: props.cut, fresh: glows.value },
 ]);
 const folder = computed(() => props.k.at || props.path);
 const shownName = computed(() => {
@@ -52,7 +56,7 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
     <template v-if="kind === 'row' || kind === 'flow'">
       <template v-for="id in kind === 'row' ? Columns.visible() : ['name']" :key="id">
         <span v-if="id === 'name'" class="name">
-          <span class="glyph"><Cbox v-if="marked" on /><G v-else :n="glyphOf(k)" /></span><span class="t">{{ shownName }}</span>
+          <span class="glyph"><Cbox v-if="marked || boxes" :on="marked" /><G v-else :n="glyphOf(k)" /></span><span class="t">{{ shownName }}</span>
           <Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" />
           <span v-if="k.at && k.at !== path" class="link">{{ t('files.foundIn', { path: k.at.slice(path.length + 1) }) }}</span>
           <span v-if="k.link" class="link">→ {{ k.link }}</span>
@@ -64,11 +68,11 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
       </template>
     </template>
     <template v-else-if="kind === 'tile'">
-      <Thumb :k="k" :folder="folder" /><Cbox v-if="marked" on />
+      <Thumb :k="k" :folder="folder" /><Cbox v-if="marked || boxes" :on="marked" />
       <span class="t">{{ k.name }}</span><span class="meta glim-num">{{ objects }}<Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" /></span>
     </template>
     <template v-else-if="kind === 'content'">
-      <Thumb :k="k" :folder="folder" /><Cbox v-if="marked" on />
+      <Thumb :k="k" :folder="folder" /><Cbox v-if="marked || boxes" :on="marked" />
       <span class="c-main"><span class="t">{{ k.name }}</span><span class="c-sub">{{ COL.type!.value(k, path) }} · {{ fmtListDate(k.time) }}</span></span>
       <span class="c-side glim-num"><span>{{ objects }}</span><span v-if="extra">{{ extra }}</span></span>
     </template>

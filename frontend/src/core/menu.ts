@@ -62,7 +62,11 @@ const text = (v: string | (() => string)) => (typeof v === 'function' ? v() : v)
 function pick(it: MenuItem) {
   if (it.id && actions[it.id]) {
     run(it.id);
-    if (it.checked && !it.radio) closeMenu();
+    if (it.checked && !it.radio) {
+      // A menu of the bar is GlimStone's own, and from outside only Escape closes it.
+      if (menuState.list) closeMenu();
+      else document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    }
   } else (it.run as (() => unknown) | undefined)?.();
 }
 

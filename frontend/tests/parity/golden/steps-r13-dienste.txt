@@ -18,8 +18,8 @@
 5 sidebar row: Sammelmappe 4
 5 visitor sees: poster.jpg, poster (2).jpg, poster (3).jpg, Mietvertrag.pdf
 5 basket after share: Sammelmappe shares page: Sammlung vom 02.11.
-6 rolled: sg7v-urlaub -> fbmx-urlaub
-6 existing rerolled: wc56-urlaub
+6 rolled: qbww-urlaub -> 5p7p-urlaub
+6 existing rerolled: 8d2s-urlaub
 6 short address keeps the window: 1
 6 link: urlaub-2026, limit 5, notify true
 6 notice: Jemand hat deinen Link zu Urlaub geöffnet Freigaben

@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..', '..', '..');
-const { chromium } = createRequire(join(root, 'prototype', 'package.json'))('playwright');
+const { chromium } = createRequire(join(root, 'prototype', 'package.json'))('playwright') as typeof import('playwright');
 const app = process.argv[2] || 'http://localhost:5191/';
 const shots = resolve(process.argv[3] || join(root, 'testing', 'out', 'unraid'));
 mkdirSync(shots, { recursive: true });
@@ -96,7 +96,7 @@ await at('/mnt/user/filme');
 check('an array-only share says so', await until('document.querySelector(".panel.active .u-store")?.textContent.trim() === "nur Array"'));
 await at('/mnt/disk1/filme');
 check('a disk share warns', await until('document.querySelector(".panel.active .u-store")?.textContent.trim() === "Disk-Share"'));
-check('and says the disk sleeps', (await page.evaluate('document.querySelector(".panel.active .u-store").dataset.tip')).includes('Die Platte schläft'));
+check('and says the disk sleeps', (await page.evaluate<string>('document.querySelector(".panel.active .u-store").dataset.tip')).includes('Die Platte schläft'));
 await page.hover('.panel.active .u-store');
 await wait(700);
 await shot('foot-disk-share');

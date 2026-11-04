@@ -68,8 +68,8 @@ function restart() {
       </div>
     </Card>
     <Card :title="c('app.backup')">
-      <Frow :label="c('app.toFile')" :tip="c('app.toFileTip')"><Btn :label="c('app.export')" g="IconExport" @click="win({ title: c('app.exportTitle'), body: ExportWin })" /></Frow>
-      <Frow :label="c('app.fromFile')" :tip="c('app.fromFileTip')"><Btn :label="c('app.import')" g="IconImport" @click="win({ title: c('app.importTitle'), body: ImportWin })" /></Frow>
+      <Frow :label="c('app.toFile')" :tip="c('app.toFileTip')"><Btn id="a-export" :label="c('app.export')" g="IconExport" @click="win({ title: c('app.exportTitle'), body: ExportWin })" /></Frow>
+      <Frow :label="c('app.fromFile')" :tip="c('app.fromFileTip')"><Btn id="a-import" :label="c('app.import')" g="IconImport" @click="win({ title: c('app.importTitle'), body: ImportWin })" /></Frow>
     </Card>
     <Card :title="c('app.service')">
       <Frow :label="c('app.log')" :tip="c('app.logTip')"><Seg v-model="logLevel" :options="[['error', c('app.errors')], ['info', c('app.normal')], ['debug', c('app.verbose')]]" /></Frow>
