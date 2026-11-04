@@ -1,0 +1,20 @@
+{
+  "undo": "Rückgängig",
+  "list": "Letzte Aktionen",
+  "head": "Zurücknehmen",
+  "empty": "Noch nichts, das sich zurücknehmen ließe",
+  "nothing": "Hier gibt es nichts zurückzunehmen",
+  "taken": "Zurückgenommen: {label}",
+  "items": "{n} Objekte",
+  "justNow": "gerade eben",
+  "minutes": "vor {n} Min.",
+  "hours": "vor {n} Std.",
+  "kind": {
+    "rename": "„{name}“ in „{to}“ umbenannt",
+    "mkdir": "Ordner „{name}“ angelegt",
+    "touch": "Datei „{name}“ angelegt",
+    "copy": "{what} nach {to} kopiert",
+    "move": "{what} nach {to} verschoben",
+    "trash": "{what} in den Papierkorb gelegt"
+  }
+}

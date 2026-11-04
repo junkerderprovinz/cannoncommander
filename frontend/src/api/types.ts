@@ -34,5 +34,4 @@ export interface SearchResult { path: string; items: SearchHit[]; more?: boolean
 export interface WatchRequest { clientId: string; paths: string[] }
 export interface Me { name: string; full: string; role: string }
 export interface Bookmark { name: string; path: string; g: string }
-export interface TrashItem { name: string; from: string; size: number; deleted: string; by: string; dir?: boolean }
 export interface Problem { type: string; title: string; status: number; detail?: string }

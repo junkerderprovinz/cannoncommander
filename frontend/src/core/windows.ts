@@ -4,7 +4,7 @@ import { type Component, markRaw, shallowReactive } from 'vue';
 import { t } from '@/i18n';
 import { closeMenu } from './menu';
 
-export interface FootButton { label?: string; g?: string; primary?: boolean; start?: string; run?: (el: HTMLElement) => unknown }
+export interface FootButton { label?: string; g?: string; primary?: boolean; disabled?: boolean; start?: string; run?: (el: HTMLElement) => unknown }
 export interface WinOptions {
   title: string;
   // A string is markup; a component gets `props` and a `close` prop.

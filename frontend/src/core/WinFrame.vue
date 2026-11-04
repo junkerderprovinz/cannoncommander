@@ -33,7 +33,7 @@ onMounted(() => {
       <div class="win-foot">
         <template v-for="(f, k) in w.foot" :key="k">
           <span v-if="f.start" class="start">{{ f.start }}</span>
-          <button v-else class="btn" :class="{ primary: f.primary }" :data-f="k" @click="press(f)"><G v-if="f.g" :n="f.g" />{{ f.label }}</button>
+          <button v-else class="btn" :class="{ primary: f.primary }" :disabled="f.disabled" :data-f="k" @click="press(f)"><G v-if="f.g" :n="f.g" />{{ f.label }}</button>
         </template>
       </div>
     </div>

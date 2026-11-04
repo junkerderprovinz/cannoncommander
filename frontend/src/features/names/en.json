@@ -1,0 +1,9 @@
+{
+  "name": "Name",
+  "newFolder": "New folder",
+  "newFile": "New file",
+  "newFileName": "New file.txt",
+  "create": "Create",
+  "rename": "Rename",
+  "taken": "This name exists here already"
+}

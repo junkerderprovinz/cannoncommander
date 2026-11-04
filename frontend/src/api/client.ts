@@ -1,5 +1,5 @@
 // Every call to /api/v1 goes through here, so the rest of the app never sees a URL, a header or the wire format.
-import type { Bookmark, FsItem, FsList, FsMeta, FsText, FsTree, Me, Problem, SearchResult, TrashItem, Volume } from './types';
+import type { Bookmark, FsItem, FsList, FsMeta, FsText, FsTree, Me, Problem, SearchResult, Volume } from './types';
 
 export const BASE = '/api/v1';
 
@@ -19,7 +19,7 @@ export async function call<T>(path: string, init: RequestInit & { etag?: string 
   headers.set('Accept', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);
   if (init.etag) headers.set('If-None-Match', init.etag);
-  if (init.body) headers.set('Content-Type', 'application/json');
+  if (init.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
   const res = await fetch(BASE + path, { ...init, headers });
   if (res.status === 304) return { body: null, etag: init.etag };
   if (!res.ok) {
@@ -29,8 +29,8 @@ export async function call<T>(path: string, init: RequestInit & { etag?: string 
   return { body: res.status === 204 ? null : await res.json(), etag: res.headers.get('ETag') ?? undefined };
 }
 
-const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
-const json = (method: string, body: unknown): RequestInit => ({ method, body: JSON.stringify(body) });
+export const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
+export const json = (method: string, body: unknown): RequestInit => ({ method, body: JSON.stringify(body) });
 
 // Some settings follow the screen, so every browser keeps an id of its own for them.
 const DEVICE_KEY = 'cannoncommander-device';
@@ -112,9 +112,6 @@ export const api = {
   },
   async saveBookmarks(items: Bookmark[]): Promise<void> {
     await call('/me/bookmarks', json('PUT', { items }));
-  },
-  async trash(): Promise<TrashItem[]> {
-    return (await call<{ items: TrashItem[] }>('/trash')).body!.items;
   },
   async prefs(): Promise<Record<string, unknown>> {
     return (await call<Record<string, unknown>>('/me/prefs' + q(device()))).body ?? {};

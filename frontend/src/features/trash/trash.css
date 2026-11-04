@@ -1,0 +1,45 @@
+.ct { padding-bottom: 6rem; }
+.ct-empty { padding: 2.5rem 1rem 2rem; }
+.ct-empty .t { color: var(--carbon-text-sub); font-size: 15px; font-weight: 600; }
+.ct-empty .muted { font-size: 13px; margin-bottom: .6rem; }
+.ct-card { padding: 1.5rem .75rem .6rem; }
+.ct-head, .ct-row { display: grid; grid-template-columns: 1.3rem 2.25rem minmax(0, 1fr) 13rem 6rem 9.5rem 4.4rem; align-items: center; gap: .6rem; padding: 0 .5rem; }
+.ct-head { height: 2.2rem; font-size: 12px; color: var(--carbon-text-muted); }
+.ct-head [data-tsort] { text-align: left; display: inline-flex; align-items: center; gap: .3rem; height: 1.6rem; padding: 0 .35rem; border-radius: var(--radius-control); color: inherit; justify-self: start; }
+.ct-head [data-tsort].r { justify-self: end; }
+.ct-head [data-tsort]:hover { background: var(--carbon-hover); color: var(--carbon-text); }
+.ct-head [data-tsort].sorted { color: var(--carbon-text); }
+.ct-head [data-tsort] svg { width: .7rem; height: .7rem; }
+.ct-head .col-from { justify-self: start; }
+.ct-head .btn { justify-self: end; height: 1.8rem; padding: 0 .7rem; font-size: 13px; }
+.ct-head .btn svg { width: .8rem; height: .8rem; }
+.ct-row { height: var(--row-h); border-radius: var(--radius-control); cursor: default; user-select: none; }
+.ct-row:hover { background: var(--carbon-hover); }
+.ct-row .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ct-row .col-from { justify-self: start; max-width: 100%; overflow: hidden; text-overflow: ellipsis; display: block; line-height: 1.35rem; font-size: 11.5px; }
+.ct-row .tile svg { color: var(--carbon-text-sub); }
+.ct-row:hover .tile, .ct-row.sel .tile { background: var(--accent); }
+.ct-row:hover .tile svg, .ct-row.sel .tile svg { color: var(--accent-contrast); }
+.ct-row.sel { background: var(--accent); color: var(--accent-contrast); }
+.ct-row.sel .pill { background: color-mix(in srgb, var(--accent-contrast) 14%, transparent); color: var(--accent-contrast); }
+.ct-mark { width: 1.15rem; height: 1.15rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); display: grid; place-items: center; opacity: 0; }
+.ct-mark svg { width: .65rem; height: .65rem; opacity: 0; }
+.ct-row:hover .ct-mark, .ct-list.picking .ct-mark, .ct-mark:focus-visible { opacity: 1; }
+.ct-row.sel .ct-mark { background: var(--accent-contrast); }
+.ct-row.sel .ct-mark svg { opacity: 1; color: var(--accent); }
+.ct-acts { display: flex; gap: .2rem; justify-content: flex-end; opacity: 0; }
+.ct-row:hover .ct-acts, .ct-row:focus-within .ct-acts { opacity: 1; }
+@media (hover: none) { .ct-acts { opacity: 1; } .ct-mark { opacity: 1; } }
+.ct-acts .btn { width: 1.9rem; height: 1.9rem; background: transparent; }
+.ct-acts .btn:hover { background: var(--carbon-surface2); }
+.ct-row.sel .ct-acts .btn svg { color: var(--accent-contrast); }
+.ct-fab { position: sticky; bottom: 1rem; align-self: flex-end; margin-top: -1.5rem; z-index: 2; }
+.ct-fab .btn { box-shadow: var(--elevation); }
+.ct .card-body .frow .pill + .pill { margin-left: .3rem; }
+@media (max-width: 1000px) { .ct-head, .ct-row { grid-template-columns: 1.3rem 2.25rem minmax(0, 1fr) 6rem 9.5rem 4.4rem; } .col-from { display: none !important; } }
+@media (max-width: 760px) {
+  .ct-head, .ct-row { grid-template-columns: 1.3rem 2.25rem minmax(0, 1fr) auto 4.2rem; gap: .45rem; padding: 0 .25rem; }
+  .ct-head .col-deleted, .ct-row .col-deleted { display: none; }
+  .ct-card { padding: 1.5rem .4rem .5rem; }
+  .ct .card .frow { flex-wrap: wrap; }
+}
