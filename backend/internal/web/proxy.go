@@ -1,11 +1,9 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -71,19 +69,4 @@ func shareURLParams(r *http.Request) (host, scheme string) {
 		return "", ""
 	}
 	return requestHost(r), requestSchemeForPublicURL(r)
-}
-
-// requestPageFullURL builds the canonical page URL from the request (or http.externalUrl when set).
-func requestPageFullURL(r *http.Request) string {
-	if settings.Config.Http.ExternalUrl != "" {
-		return strings.TrimSuffix(settings.Config.Http.ExternalUrl, "/") + r.URL.Path
-	}
-	host, scheme := shareURLParams(r)
-	return fmt.Sprintf("%s://%s%s", scheme, host, r.URL.Path)
-}
-
-// ShareURLFromRequest builds a public share or direct-download URL from the request and server config.
-func ShareURLFromRequest(r *http.Request, hash string, isDirectDownload bool, hasPassword bool) string {
-	host, scheme := shareURLParams(r)
-	return share.PublicShareURL(host, scheme, hash, isDirectDownload, hasPassword)
 }

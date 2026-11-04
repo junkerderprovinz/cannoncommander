@@ -72,13 +72,6 @@ func (s *Service) shareByHash(hash string) (share.Share, bool) {
 	return sh, true
 }
 
-func (s *Service) updateAccessRulesOnMove(sourcePath string, oldPath, newPath utils.IndexPath) {
-	if s.access == nil {
-		return
-	}
-	_, _ = s.access.UpdateAccessRulesOnMove(sourcePath, oldPath, newPath)
-}
-
 // CheckPermissions validates user access and returns the resolved index path and user scope.
 func (s *Service) CheckPermissions(opts utils.FileOptions, user *users.User) (string, string, error) {
 	return checkPermissionsImpl(opts, user, s)
@@ -87,14 +80,4 @@ func (s *Service) CheckPermissions(opts utils.FileOptions, user *users.User) (st
 // FileInfoFaster returns extended file info with access filtering applied.
 func (s *Service) FileInfoFaster(opts utils.FileOptions, user *users.User) (*iteminfo.ExtendedFileInfo, error) {
 	return fileInfoFasterImpl(opts, user, s)
-}
-
-// GetDirItems lists directory entries visible to the user.
-func (s *Service) GetDirItems(opts utils.FileOptions, user *users.User) (Items, error) {
-	return getDirItemsImpl(opts, user, s)
-}
-
-// MoveResource moves a file or directory and updates access rules when needed.
-func (s *Service) MoveResource(isSrcDir bool, sourceIndex, destIndex, realsrc, realdst string) error {
-	return moveResourceImpl(isSrcDir, sourceIndex, destIndex, realsrc, realdst, s)
 }

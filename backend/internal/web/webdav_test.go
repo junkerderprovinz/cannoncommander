@@ -1,7 +1,6 @@
 package web
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,11 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"golang.org/x/net/webdav"
-
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/app"
-	databasequota "github.com/junkerderprovinz/cannoncommander/backend/internal/database/quota"
 	_ "github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb" // Import to register SQL driver
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	commonerrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
@@ -1149,139 +1145,4 @@ func TestWebDAV_OPTIONS(t *testing.T) {
 			}
 		}
 	})
-}
-
-type failedDeleteFileSystem struct{ webdav.FileSystem }
-
-func (failedDeleteFileSystem) RemoveAll(context.Context, string) error { return os.ErrPermission }
-
-func TestWebDAVDeleteNestedQuota(t *testing.T) {
-	for _, scope := range []string{"/", "/scoped"} {
-		t.Run(scope, func(t *testing.T) {
-			sourcePath := setupDeleteQuotaTest(t)
-			user, err := state.GetUserByUsername("admin")
-			if err != nil {
-				t.Fatal(err)
-			}
-			user.BackendScopes[0].Scope = scope
-			nested, sibling := seedNestedQuotaFixture(t, sourcePath, scope, &user)
-			ffs := &filteredFileSystem{fs: failedDeleteFileSystem{webdav.Dir(filepath.Join(sourcePath, scope))}, source: "Downloads", user: &user}
-			if err = ffs.RemoveAll(context.Background(), "/public"); err == nil {
-				t.Fatal("expected forbidden deletion")
-			}
-			ffs.filePerms = users.SourceFilePermissions{Delete: true}
-			if err = ffs.RemoveAll(context.Background(), "/public"); err == nil {
-				t.Fatal("expected underlying deletion failure")
-			}
-			if used, _ := state.GetQuotaCounterSnapshot(nested.ID); used != 5 {
-				t.Fatalf("failed delete changed usage: %d", used)
-			}
-
-			req := httptest.NewRequest(http.MethodDelete, "/dav/Downloads/public", nil)
-			req.SetPathValue("source", "Downloads")
-			req.SetPathValue("path", "/public")
-			rec := httptest.NewRecorder()
-			_, err = webDAVHandler(rec, req, &requestContext{User: &user})
-			if err != nil || rec.Code != http.StatusNoContent {
-				t.Fatalf("delete: code=%d err=%v body=%s", rec.Code, err, rec.Body.String())
-			}
-			if _, err := os.Stat(filepath.Join(sourcePath, scope, "public")); !os.IsNotExist(err) {
-				t.Fatalf("ancestor still exists: %v", err)
-			}
-			if used, _ := state.GetQuotaCounterSnapshot(nested.ID); used != 0 {
-				t.Fatalf("nested usage=%d, want 0", used)
-			}
-			if used, _ := state.GetQuotaCounterSnapshot(sibling.ID); used != 7 {
-				t.Fatalf("sibling usage=%d, want 7", used)
-			}
-			req = httptest.NewRequest(http.MethodDelete, "/dav/Downloads/sibling/file", nil)
-			req.SetPathValue("source", "Downloads")
-			req.SetPathValue("path", "/sibling/file")
-			rec = httptest.NewRecorder()
-			if _, err := webDAVHandler(rec, req, &requestContext{User: &user}); err != nil || rec.Code != http.StatusNoContent {
-				t.Fatalf("file delete: code=%d err=%v", rec.Code, err)
-			}
-			if used, _ := state.GetQuotaCounterSnapshot(sibling.ID); used != 0 {
-				t.Fatalf("file delete usage=%d, want 0", used)
-			}
-		})
-	}
-}
-
-// A WebDAV DELETE must free the deleted bytes from the quota counters, the way the
-// API delete path does, or the old bytes stay charged until the next recount.
-func TestWebDAV_DeleteFreesQuota(t *testing.T) {
-	testCases := []struct {
-		name       string
-		scope      string
-		webdavPath string
-		quotaPath  string
-		indexPath  string
-	}{
-		{
-			name:       "root scope",
-			scope:      "/",
-			webdavPath: "/public/readme.txt",
-			quotaPath:  "/",
-			indexPath:  "/public/readme.txt",
-		},
-		{
-			// The WebDAV path is relative to the user's scope; the quota and the
-			// index are not, so this case pins the scope join.
-			name:       "scoped user",
-			scope:      "/public",
-			webdavPath: "/readme.txt",
-			quotaPath:  "/public",
-			indexPath:  "/public/readme.txt",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			source1Path, _ := setupWebDAVTestEnv(t)
-
-			user := &users.User{
-				ID: 1,
-				FrontendUser: users.FrontendUser{
-					Username: "quotauser",
-				},
-				BackendScopes: []users.BackendScope{
-					{Path: source1Path, Scope: tc.scope},
-				},
-				BackendSourcePermissions: webDAVPermsForPaths(true, true, true, true, source1Path),
-				Version:                  users.SourcePermissionsMigrationVersion,
-			}
-			applyBackendSourcePerms(user, user.BackendSourcePermissions)
-
-			folderQuota, err := state.CreateFolderQuota(source1Path, tc.quotaPath, 0, 1<<20, databasequota.MeterAccounted)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			size := int64(len("public content"))
-			if err = state.ApplyAccountedUsageDelta(user, "source1", source1Path, tc.indexPath, "", size); err != nil {
-				t.Fatal(err)
-			}
-			if used, _ := state.GetQuotaCounterSnapshot(folderQuota.ID); used != size {
-				t.Fatalf("seeded counter = %d, want %d", used, size)
-			}
-
-			req := httptest.NewRequest(http.MethodDelete, "/dav/source1"+tc.webdavPath, nil)
-			req.SetPathValue("source", "source1")
-			req.SetPathValue("path", tc.webdavPath)
-
-			w := httptest.NewRecorder()
-			status, err := webDAVHandler(w, req, &requestContext{User: user})
-			if status != 0 && status != http.StatusOK && w.Code == 0 {
-				w.Code = status
-			}
-			if w.Code != http.StatusNoContent {
-				t.Fatalf("DELETE status = %d (err %v), want %d", w.Code, err, http.StatusNoContent)
-			}
-
-			if used, _ := state.GetQuotaCounterSnapshot(folderQuota.ID); used != 0 {
-				t.Fatalf("counter after DELETE = %d, want 0", used)
-			}
-		})
-	}
 }

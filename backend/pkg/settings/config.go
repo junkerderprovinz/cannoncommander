@@ -1086,11 +1086,6 @@ func loadCustomFavicon() {
 	// sidecar next to the .svg when present; see icons.GeneratePWAIcons).
 }
 
-// PWAIconsCacheDir is where startup icon generation writes PNGs (under the server cache dir).
-func PWAIconsCacheDir() string {
-	return filepath.Join(Config.Server.CacheDir, "icons")
-}
-
 // Where transient archives for multi-request (Range) downloads are stored to support chunked downloads.
 func DownloadCacheDir() string {
 	return filepath.Join(Config.Server.CacheDir, "downloads")

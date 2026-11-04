@@ -46,22 +46,6 @@ func ConfigSpecifiedUserDefaultPaths() []string {
 	return out
 }
 
-// ConfigSpecifiedUserDefaultPathSet returns a set of config-specified user default paths.
-func ConfigSpecifiedUserDefaultPathSet() map[string]struct{} {
-	paths := Env.ConfigUserDefaultsSpecifiedPaths
-	out := make(map[string]struct{}, len(paths))
-	for _, p := range paths {
-		out[p] = struct{}{}
-	}
-	return out
-}
-
-// IsUserDefaultLockedFromConfig reports whether path was explicitly set in config userDefaults.
-func IsUserDefaultLockedFromConfig(path string) bool {
-	_, ok := ConfigSpecifiedUserDefaultPathSet()[path]
-	return ok
-}
-
 // ApplyEnforcementFromPaths sets enforcement flags for config-specified paths.
 func ApplyEnforcementFromPaths(enforced *UserDefaultsEnforcement, paths []string) {
 	if enforced == nil || len(paths) == 0 {
@@ -121,18 +105,6 @@ func structFieldIndexByJSONTag(v reflect.Value, name string) (int, bool) {
 	return 0, false
 }
 
-// CollectJSONPatchLeafPaths returns dot-paths updated by a JSON patch object.
-func CollectJSONPatchLeafPaths(patchJSON []byte) ([]string, error) {
-	if len(patchJSON) == 0 || string(patchJSON) == "{}" || string(patchJSON) == "null" {
-		return nil, fmt.Errorf("empty user defaults patch")
-	}
-	var raw map[string]interface{}
-	if err := json.Unmarshal(patchJSON, &raw); err != nil {
-		return nil, fmt.Errorf("invalid patch JSON: %w", err)
-	}
-	return CollectMapLeafPaths(raw, ""), nil
-}
-
 // UserDefaultsPatchJSONForPaths builds a partial JSON patch containing only the given dot-paths from source.
 func UserDefaultsPatchJSONForPaths(source UserDefaults, paths []string) ([]byte, error) {
 	if len(paths) == 0 {
@@ -173,21 +145,4 @@ func ApplyConfigSpecifiedPathsToUserDefaults(stored, config UserDefaults) (UserD
 		return stored, nil
 	}
 	return MergeUserDefaultsPatchJSON(stored, patchJSON)
-}
-
-// ValidateUserDefaultsPatchNotConfigLocked rejects patches touching config-locked paths.
-func ValidateUserDefaultsPatchNotConfigLocked(patchJSON []byte) error {
-	if !Env.ConfigUserDefaultsSpecified {
-		return nil
-	}
-	paths, err := CollectJSONPatchLeafPaths(patchJSON)
-	if err != nil {
-		return err
-	}
-	for _, path := range paths {
-		if IsUserDefaultLockedFromConfig(path) {
-			return fmt.Errorf("user default %q is locked from config file", path)
-		}
-	}
-	return nil
 }

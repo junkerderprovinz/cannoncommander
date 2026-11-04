@@ -149,25 +149,6 @@ func GetFolderQuotaByID(id string) (*quota.FolderQuota, error) {
 	return &copyQ, nil
 }
 
-func GetFolderQuotaByPath(source, path string) (*quota.FolderQuota, error) {
-	return GetFolderQuotaByPathAndUser(source, path, 0)
-}
-
-// GetFolderQuotaByPathAndUser returns a folder quota for exact source, path, and user binding (0 = all users).
-func GetFolderQuotaByPathAndUser(source, path string, userID uint64) (*quota.FolderQuota, error) {
-	path = normalizeQuotaPath(path)
-	quotasMux.RLock()
-	defer quotasMux.RUnlock()
-	for _, id := range folderQuotasBySource[source] {
-		q := folderQuotasByID[id]
-		if q != nil && normalizeQuotaPath(q.Path) == path && q.UserID == userID {
-			copyQ := *q
-			return &copyQ, nil
-		}
-	}
-	return nil, fmt.Errorf("quota not found")
-}
-
 // ListFolderQuotasForSource returns folder quotas for a source.
 func ListFolderQuotasForSource(source string) []quota.FolderQuota {
 	quotasMux.RLock()
@@ -180,109 +161,6 @@ func ListFolderQuotasForSource(source string) []quota.FolderQuota {
 		}
 	}
 	return out
-}
-
-// CreateFolderQuota persists and caches a folder quota.
-func CreateFolderQuota(source, path string, userID uint64, limitBytes int64, meter string) (*quota.FolderQuota, error) {
-	path = normalizeQuotaPath(path)
-	if limitBytes <= 0 {
-		return nil, fmt.Errorf("limit must be positive")
-	}
-	meter = strings.TrimSpace(meter)
-	if meter == "" {
-		meter = quota.MeterIndexSize
-	}
-	sourceName := sourceNameForPath(source)
-	if sourceName != "" {
-		if err := quota.ValidateConfiguredMeter(sourceName, meter); err != nil {
-			return nil, err
-		}
-	}
-	q := quota.FolderQuota{
-		ID:         uuid.New().String(),
-		Source:     source,
-		Path:       path,
-		UserID:     userID,
-		LimitBytes: limitBytes,
-		Meter:      meter,
-	}
-
-	quotasMux.Lock()
-	defer quotasMux.Unlock()
-
-	if err := sqlDb.SaveFolderQuota(&q); err != nil {
-		return nil, err
-	}
-	storeFolderQuota(q)
-	if err := ensureQuotaCounterMem(q.ID); err != nil {
-		return nil, err
-	}
-	copyQ := q
-	return &copyQ, nil
-}
-
-// UpdateFolderQuota updates limit and optional meter; userID is applied only when userIDPatch is non-nil.
-func UpdateFolderQuota(id string, limitBytes int64, meter string, userIDPatch *uint64) (*quota.FolderQuota, error) {
-	quotasMux.Lock()
-	defer quotasMux.Unlock()
-
-	q, ok := folderQuotasByID[id]
-	if !ok {
-		return nil, fmt.Errorf("quota not found")
-	}
-	if limitBytes > 0 {
-		q.LimitBytes = limitBytes
-	}
-	if userIDPatch != nil {
-		q.UserID = *userIDPatch
-	}
-	meter = strings.TrimSpace(meter)
-	if meter != "" {
-		sourceName := sourceNameForPath(q.Source)
-		if sourceName != "" {
-			if err := quota.ValidateConfiguredMeter(sourceName, meter); err != nil {
-				return nil, err
-			}
-		}
-		q.Meter = meter
-	}
-	if err := sqlDb.SaveFolderQuota(q); err != nil {
-		return nil, err
-	}
-	copyQ := *q
-	return &copyQ, nil
-}
-
-func sourceNameForPath(sourcePath string) string {
-	if src, ok := settings.Config.Server.SourceMap[sourcePath]; ok {
-		return src.Name
-	}
-	return ""
-}
-
-// DeleteFolderQuota removes a folder quota and its counter.
-func DeleteFolderQuota(id string) error {
-	quotasMux.Lock()
-	defer quotasMux.Unlock()
-
-	q, ok := folderQuotasByID[id]
-	if !ok {
-		return fmt.Errorf("quota not found")
-	}
-	if err := sqlDb.DeleteFolderQuota(id); err != nil {
-		return err
-	}
-	delete(folderQuotasByID, id)
-	ids := folderQuotasBySource[q.Source]
-	for i, v := range ids {
-		if v == id {
-			folderQuotasBySource[q.Source] = append(ids[:i], ids[i+1:]...)
-			break
-		}
-	}
-	delete(quotaCounters, id)
-	delete(pendingIndexDelta, id)
-	return nil
 }
 
 func ensureQuotaCounterMem(quotaID string) error {
@@ -347,50 +225,6 @@ func GetQuotaCounterSnapshot(quotaID string) (used, reserved int64) {
 	return 0, 0
 }
 
-// GetShareQuotaUsage returns used and reserved bytes for a share.
-func GetShareQuotaUsage(hash string) (used, reserved int64) {
-	return GetQuotaCounterSnapshot(quota.ShareQuotaID(hash))
-}
-
-// FolderQuotaSnapshot builds a snapshot for a folder quota.
-func FolderQuotaSnapshot(q quota.FolderQuota, sourceName string) quota.Snapshot {
-	configured := configuredFolderMeter(q)
-	effective := quota.EffectiveMeter(configured, sourceName, q.Path)
-	used, reserved := folderUsageForMeter(effective, sourceName, q.Path, q.ID)
-	status := quota.MeasurementStatus(configured, effective)
-	logger.Debugf("quota snapshot: id=%s source=%s indexPath=%q configured=%s effective=%s used=%d reserved=%d status=%s",
-		q.ID, sourceName, q.Path, configured, effective, used, reserved, status)
-	return quota.Snapshot{
-		QuotaID:           q.ID,
-		Kind:              "folder",
-		LimitBytes:        q.LimitBytes,
-		UsedBytes:         used,
-		ReservedBytes:     reserved,
-		Meter:             effective,
-		ConfiguredMeter:   configured,
-		EffectiveMeter:    effective,
-		MeasurementStatus: status,
-	}
-}
-
-// FolderQuotaUsagePreview returns usage for a path without a persisted quota row.
-func FolderQuotaUsagePreview(sourceName, indexPath string) quota.Snapshot {
-	configured := quota.MeterIndexSize
-	effective := quota.EffectiveMeter(configured, sourceName, indexPath)
-	used, reserved := folderUsageForMeter(effective, sourceName, indexPath, "")
-	status := quota.MeasurementStatus(configured, effective)
-	logger.Debugf("quota usage preview: source=%s indexPath=%q effective=%s used=%d status=%s",
-		sourceName, indexPath, effective, used, status)
-	return quota.Snapshot{
-		UsedBytes:         used,
-		ReservedBytes:     reserved,
-		Meter:             effective,
-		ConfiguredMeter:   configured,
-		EffectiveMeter:    effective,
-		MeasurementStatus: status,
-	}
-}
-
 func configuredFolderMeter(q quota.FolderQuota) string {
 	if q.Meter == "" {
 		return quota.MeterIndexSize
@@ -405,31 +239,6 @@ func folderUsageForMeter(meter, sourceName, indexPath, quotaID string) (used, re
 	used, _ = indexFolderUsage(sourceName, indexPath)
 	used += getPendingIndexDelta(quotaID)
 	return used, getCounterReserved(quotaID)
-}
-
-// ScopeQuotaSnapshot builds a snapshot for a user scope quota.
-func ScopeQuotaSnapshot(user *users.User, sourceName string, sq *users.ScopeQuota) quota.Snapshot {
-	if sq == nil || sq.LimitBytes <= 0 {
-		return quota.Snapshot{}
-	}
-	configured := sq.Meter
-	if configured == "" {
-		configured = quota.MeterIndexScope
-	}
-	scopePath := scopeIndexPath(user, sourceName)
-	effective := quota.EffectiveMeter(configured, sourceName, scopePath)
-	used, reserved := scopeUsageForMeter(effective, user, sourceName, scopePath, sq.ID)
-	return quota.Snapshot{
-		QuotaID:           sq.ID,
-		Kind:              "scope",
-		LimitBytes:        sq.LimitBytes,
-		UsedBytes:         used,
-		ReservedBytes:     reserved,
-		Meter:             effective,
-		ConfiguredMeter:   configured,
-		EffectiveMeter:    effective,
-		MeasurementStatus: quota.MeasurementStatus(configured, effective),
-	}
 }
 
 func scopeUsageForMeter(meter string, user *users.User, sourceName, scopePath, quotaID string) (used, reserved int64) {
@@ -973,92 +782,6 @@ func IndexedPathBytes(sourceName, indexPath string, isDir bool) (int64, bool) {
 		return 0, false
 	}
 	return fi.Size, true
-}
-
-func copyMoveItemDelta(action, fromIndexPath string, quotaRoot string, itemSize, overwrite int64) int64 {
-	if action == "move" || action == "rename" {
-		if indexPathCovers(quotaRoot, fromIndexPath) {
-			return 0
-		}
-	}
-	delta := itemSize
-	if overwrite > 0 {
-		delta = itemSize - overwrite
-	}
-	if delta < 0 {
-		return 0
-	}
-	return delta
-}
-
-// BuildCopyMoveReserveChecks builds reserve checks for copy/move into toIndexPath.
-func BuildCopyMoveReserveChecks(principal *users.User, sourceName, sourcePath, fromIndexPath, toIndexPath, action string, itemSize, overwrite int64, shareHash string, shareLimit int64) []QuotaReserveCheck {
-	principalID := principal.ID
-	checks := []QuotaReserveCheck{}
-
-	for _, fq := range ApplicableFolderQuotas(sourcePath, toIndexPath, principalID) {
-		delta := copyMoveItemDelta(action, fromIndexPath, fq.Path, itemSize, overwrite)
-		if delta <= 0 {
-			continue
-		}
-		configured := configuredFolderMeter(fq)
-		effective := quota.EffectiveMeter(configured, sourceName, fq.Path)
-		used, _ := folderUsageForMeter(effective, sourceName, fq.Path, fq.ID)
-		checks = append(checks, QuotaReserveCheck{
-			QuotaID:    fq.ID,
-			Kind:       "folder",
-			Meter:      effective,
-			LimitBytes: fq.LimitBytes,
-			UsedBytes:  used,
-			DeltaBytes: delta,
-		})
-	}
-
-	for _, bs := range principal.BackendScopes {
-		if bs.Path != sourcePath || bs.Quota == nil || bs.Quota.LimitBytes <= 0 {
-			continue
-		}
-		sq := bs.Quota
-		scopePath := scopeIndexPath(principal, sourceName)
-		delta := copyMoveItemDelta(action, fromIndexPath, scopePath, itemSize, overwrite)
-		if delta <= 0 {
-			continue
-		}
-		configured := sq.Meter
-		if configured == "" {
-			configured = quota.MeterIndexScope
-		}
-		effective := quota.EffectiveMeter(configured, sourceName, scopePath)
-		used, _ := scopeUsageForMeter(effective, principal, sourceName, scopePath, sq.ID)
-		checks = append(checks, QuotaReserveCheck{
-			QuotaID:    sq.ID,
-			Kind:       "scope",
-			Meter:      effective,
-			LimitBytes: sq.LimitBytes,
-			UsedBytes:  used,
-			DeltaBytes: delta,
-		})
-	}
-
-	if shareHash != "" && shareLimit > 0 {
-		delta := itemSize
-		if overwrite > 0 {
-			delta = itemSize - overwrite
-		}
-		if delta > 0 {
-			id := quota.ShareQuotaID(shareHash)
-			used, _ := GetQuotaCounterSnapshot(id)
-			checks = append(checks, QuotaReserveCheck{
-				QuotaID:    id,
-				Kind:       "share",
-				Meter:      quota.MeterAccounted,
-				LimitBytes: shareLimit,
-				UsedBytes:  used,
-				DeltaBytes: delta,
-			})
-		}
-	}
-	return checks
 }
 
 // HasApplicableQuotas reports whether any quota applies to this upload.

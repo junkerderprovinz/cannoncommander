@@ -5,7 +5,6 @@ import (
 	"time"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
@@ -76,14 +75,4 @@ func Gate(inner ccfs.AccessGate, db *sql.DB) (ccfs.AccessGate, error) {
 		return nil, err
 	}
 	return gate{inner: inner, rules: s.rules}, nil
-}
-
-// RecoveryCodes lets the password login take a recovery code instead of a
-// TOTP code.
-func RecoveryCodes(db *sql.DB) (auth.RecoveryCodes, error) {
-	s, err := serviceFor(db)
-	if err != nil {
-		return nil, err
-	}
-	return s.recovery, nil
 }

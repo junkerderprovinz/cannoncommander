@@ -11,11 +11,9 @@ import (
 const toolAccessDefaultsSettingKey = "toolAccessDefaults"
 
 var (
-	toolAccessDefaultsMu            sync.RWMutex
-	toolAccessDefaultsPatchMu       sync.Mutex
-	toolAccessDefaults              toolaccess.ToolAccessDefaultsDocument
-	toolAccessDefaultsNeedResync    bool
-	toolAccessDefaultsResyncPending bool
+	toolAccessDefaultsMu         sync.RWMutex
+	toolAccessDefaults           toolaccess.ToolAccessDefaultsDocument
+	toolAccessDefaultsNeedResync bool
 	// errInjectResyncToolAccessDefaults is set by tests in this package only.
 	errInjectResyncToolAccessDefaults error
 )
@@ -87,73 +85,4 @@ func EffectiveToolAccessDefaults() toolaccess.ToolAccessDefaultsDocument {
 		doc.Items = append([]toolaccess.ToolAccessDefaultItem(nil), doc.Items...)
 	}
 	return doc
-}
-
-// GetToolAccessDefaults returns the admin API response for GET /api/settings/tool-access-defaults.
-func GetToolAccessDefaults() toolaccess.ToolAccessDefaultsDocument {
-	doc := EffectiveToolAccessDefaults()
-	ensured, _ := toolaccess.EnsureCatalogInDefaults(doc)
-	return toolaccess.NormalizeDefaultsDocument(ensured)
-}
-
-// GetToolAccessDefaultsForUser returns tool access defaults visible to the user (same document for all users).
-func GetToolAccessDefaultsForUser() toolaccess.ToolAccessDefaultsDocument {
-	return GetToolAccessDefaults()
-}
-
-// PatchToolAccessDefaults replaces the full tool access defaults document and resyncs users when needed.
-func PatchToolAccessDefaults(doc toolaccess.ToolAccessDefaultsDocument) error {
-	toolAccessDefaultsPatchMu.Lock()
-	defer toolAccessDefaultsPatchMu.Unlock()
-
-	if doc.Items == nil {
-		doc.Items = []toolaccess.ToolAccessDefaultItem{}
-	}
-	doc = toolaccess.NormalizeDefaultsDocument(doc)
-
-	toolAccessDefaultsMu.Lock()
-	prev := toolAccessDefaults
-	docChanged := !toolAccessDefaultsEqual(prev, doc)
-	if docChanged {
-		if err := saveToolAccessDefaultsDocument(doc); err != nil {
-			toolAccessDefaultsMu.Unlock()
-			return fmt.Errorf("save tool access defaults: %w", err)
-		}
-		toolAccessDefaults = doc
-	}
-	syncDoc := toolAccessDefaults
-	needsResync := docChanged || toolAccessDefaultsResyncPending
-	toolAccessDefaultsMu.Unlock()
-
-	if !needsResync {
-		return nil
-	}
-	if err := resyncToolAccessForAllUsers(syncDoc); err != nil {
-		toolAccessDefaultsResyncPending = true
-		return err
-	}
-	toolAccessDefaultsResyncPending = false
-	return nil
-}
-
-func toolAccessDefaultsEqual(a, b toolaccess.ToolAccessDefaultsDocument) bool {
-	ma := toolAccessFlagsMap(a)
-	mb := toolAccessFlagsMap(b)
-	if len(ma) != len(mb) {
-		return false
-	}
-	for k, va := range ma {
-		if mb[k] != va {
-			return false
-		}
-	}
-	return true
-}
-
-func toolAccessFlagsMap(doc toolaccess.ToolAccessDefaultsDocument) map[string]string {
-	out := make(map[string]string)
-	for _, item := range doc.Items {
-		out[string(item.ToolID)] = fmt.Sprintf("%t:%t", item.Enabled, item.Enforced)
-	}
-	return out
 }

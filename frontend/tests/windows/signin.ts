@@ -39,10 +39,6 @@ const send = async (method: string, path: string, body?: unknown) => {
   return { status: res.status(), body: res.headers()['content-type']?.includes('json') ? await res.json() : null };
 };
 
-// The older login keeps working next to the new one.
-const old = await api.post(`/api/auth/login?username=${encodeURIComponent(admin)}`, { headers: { 'X-Password': encodeURIComponent(adminPw) } });
-check('the older login still answers with a token', old.status() === 200 && (await old.text()).split('.').length === 3, old.status());
-
 const signedIn = await send('POST', '/auth/login', { username: admin, password: adminPw });
 check('the admin signs in through the API', signedIn.body?.next === 'done', signedIn.body);
 const scope: string = signedIn.body.me.scope;

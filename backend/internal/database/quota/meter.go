@@ -52,14 +52,6 @@ func EffectiveMeter(configuredMeter, sourceName, quotaRootPath string) string {
 	return MeterAccounted
 }
 
-// MeasurementStatus compares configured vs effective meter for API snapshots.
-func MeasurementStatus(configuredMeter, effectiveMeter string) string {
-	if IsIndexMeter(configuredMeter) && effectiveMeter == MeterAccounted {
-		return MeasurementStatusAccountedFallback
-	}
-	return MeasurementStatusReady
-}
-
 // ValidateConfiguredMeter rejects index meters when indexing is disabled on the source.
 func ValidateConfiguredMeter(sourceName, meter string) error {
 	meter = strings.TrimSpace(meter)

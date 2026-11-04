@@ -177,17 +177,3 @@ func (e EventType) Valid() bool {
 func (e EventType) String() string {
 	return string(e)
 }
-
-// EventTypeFromAction maps a resource PATCH action string to an event type.
-func EventTypeFromAction(action string) (EventType, bool) {
-	switch action {
-	case "copy":
-		return EventCopy, true
-	case "move":
-		return EventMove, true
-	case "rename":
-		return EventRename, true
-	default:
-		return "", false
-	}
-}

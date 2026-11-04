@@ -2,7 +2,6 @@ package auth
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -11,12 +10,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
-
-// Auther is the authentication interface.
-type Auther interface {
-	// Auth is called to authenticate a request.
-	Auth(r *http.Request, userStore *users.Storage) (*users.User, error)
-}
 
 const FB_ISSUER = "FileBrowser Quantum" // don't change
 

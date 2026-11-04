@@ -6,13 +6,13 @@ import (
 )
 
 const (
-	CodeExceeded                = "quota_exceeded"
-	CodeMeasurementUnavailable  = "quota_measurement_unavailable"
-	CodePathNotCountable        = "quota_path_not_countable"
-	CodeUsageUnknown            = "quota_usage_unknown"
-	CodeReservedCapacity        = "quota_reserved_capacity"
-	CodeLengthRequired          = "quota_length_required"
-	CodeRootImmutable           = "quota_root_immutable"
+	CodeExceeded               = "quota_exceeded"
+	CodeMeasurementUnavailable = "quota_measurement_unavailable"
+	CodePathNotCountable       = "quota_path_not_countable"
+	CodeUsageUnknown           = "quota_usage_unknown"
+	CodeReservedCapacity       = "quota_reserved_capacity"
+	CodeLengthRequired         = "quota_length_required"
+	CodeRootImmutable          = "quota_root_immutable"
 )
 
 // Error is returned when a quota check fails.
@@ -83,13 +83,4 @@ func newError(code, kind, id string, limit, used, reserved int64, msg string) *E
 func IsQuotaError(err error) bool {
 	var qe *Error
 	return errors.As(err, &qe)
-}
-
-// AsError unwraps a quota Error.
-func AsError(err error) (*Error, bool) {
-	var qe *Error
-	if errors.As(err, &qe) {
-		return qe, true
-	}
-	return nil, false
 }

@@ -3,10 +3,8 @@ package quota
 import (
 	"os"
 
-	quotadb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/quota"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // UploadContext describes an upload admission check.
@@ -108,19 +106,4 @@ func uploadReserveDelta(ctx UploadContext) int64 {
 		return 0
 	}
 	return delta
-}
-
-// ScopeQuotaForSource returns scope quota snapshot for sidebar.
-func ScopeQuotaForSource(user *users.User, sourceName string) (quotadb.Snapshot, bool) {
-	sourceInfo, ok := settings.Config.Server.NameToSource[sourceName]
-	if !ok {
-		return quotadb.Snapshot{}, false
-	}
-	for _, bs := range user.BackendScopes {
-		if bs.Path != sourceInfo.Path || bs.Quota == nil || bs.Quota.LimitBytes <= 0 {
-			continue
-		}
-		return state.ScopeQuotaSnapshot(user, sourceName, bs.Quota), true
-	}
-	return quotadb.Snapshot{}, false
 }

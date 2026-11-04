@@ -3,7 +3,6 @@ package share
 import (
 	stderrors "errors"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
@@ -81,11 +80,6 @@ func (s *Storage) All() ([]*Share, error) {
 // FindByUserID returns non-expired shares owned by userID from the backend.
 func (s *Storage) FindByUserID(userID uint64) ([]*Share, error) {
 	return s.back.FindByUserID(userID)
-}
-
-// PrepForFrontend returns API-safe ShareFrontend copies for one or more shares.
-func (s *Storage) PrepForFrontend(viewer *users.User, r *http.Request, links ...*Share) []*ShareFrontend {
-	return PrepForFrontend(viewer, r, "", "", nil, links...)
 }
 
 // GetByHash wraps StorageBackend.GetByHash and handles expiry.

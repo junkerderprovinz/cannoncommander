@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/quota"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/toolaccess"
@@ -185,14 +184,6 @@ func GetAllUsers() ([]users.User, error) {
 		out = append(out, userCopy)
 	}
 	return out, nil
-}
-
-// UserForShareOwner resolves the user who owns a share link.
-func UserForShareOwner(link share.Share) (users.User, error) {
-	if link.UserID == 0 {
-		return users.User{}, errors.ErrNotExist
-	}
-	return GetUserByID(link.UserID)
 }
 
 // CreateUser creates a new user with plaintext password.
