@@ -147,3 +147,15 @@ func TestThumbOfASmallAVIFKeepsItsType(t *testing.T) {
 		t.Fatalf("thumb: %d %q", rec.Code, rec.Header().Get("Content-Type"))
 	}
 }
+
+func TestThumbOfAnImageDeclaringTooManyPixelsIsMissing(t *testing.T) {
+	withPreviews(t)
+	f := newFixture(t)
+	ihdr := []byte("\x00\x00\x00\x0dIHDR\x00\x00\x4e\x20\x00\x00\x4e\x20\x08\x06\x00\x00\x00\xe3\x70\x46\x39")
+	data := append([]byte("\x89PNG\r\n\x1a\n"), ihdr...)
+	data = append(data, make([]byte, 300<<10)...)
+	put(t, filepath.Join(f.share, "fotos", "riesig.png"), data)
+	if rec := f.get(t, "jdp", "/fs/thumb", "/mnt/user/fotos/riesig.png"); rec.Code != http.StatusNotFound {
+		t.Fatalf("thumb: %d %s", rec.Code, rec.Body)
+	}
+}

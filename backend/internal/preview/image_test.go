@@ -3,9 +3,12 @@ package preview
 import (
 	"bytes"
 	"context"
+	"encoding/binary"
 	"errors"
+	"hash/crc32"
 	"image"
 	"image/jpeg"
+	"image/png"
 	"io"
 	"os"
 	"testing"
@@ -191,4 +194,76 @@ func TestReadImageFileDimensions(t *testing.T) {
 	require.NoError(t, err)
 	require.Greater(t, width, 0)
 	require.Greater(t, height, 0)
+}
+
+// pngDeclaring is a PNG that states a size in its header and has no pixels.
+func pngDeclaring(width, height uint32, padding int) []byte {
+	chunk := func(name string, data []byte) []byte {
+		out := binary.BigEndian.AppendUint32(nil, uint32(len(data)))
+		out = append(out, name...)
+		out = append(out, data...)
+		return binary.BigEndian.AppendUint32(out, crc32.ChecksumIEEE(out[4:]))
+	}
+	ihdr := binary.BigEndian.AppendUint32(nil, width)
+	ihdr = binary.BigEndian.AppendUint32(ihdr, height)
+	ihdr = append(ihdr, 8, 6, 0, 0, 0)
+	out := []byte("\x89PNG\r\n\x1a\n")
+	out = append(out, chunk("IHDR", ihdr)...)
+	out = append(out, chunk("tEXt", make([]byte, padding))...)
+	return append(out, chunk("IEND", nil)...)
+}
+
+func jpegDeclaring(t *testing.T, width, height uint16) []byte {
+	t.Helper()
+	var buf bytes.Buffer
+	require.NoError(t, jpeg.Encode(&buf, image.NewGray(image.Rect(0, 0, 8, 8)), nil))
+	data := buf.Bytes()
+	sof := bytes.Index(data, []byte{0xff, 0xc0})
+	require.GreaterOrEqual(t, sof, 0)
+	binary.BigEndian.PutUint16(data[sof+5:], height)
+	binary.BigEndian.PutUint16(data[sof+7:], width)
+	return data
+}
+
+func gifDeclaring(width, height uint16) []byte {
+	out := []byte("GIF89a")
+	out = binary.LittleEndian.AppendUint16(out, width)
+	out = binary.LittleEndian.AppendUint16(out, height)
+	return append(out, 0x80, 0, 0, 0, 0, 0, 0xff, 0xff, 0xff, ';')
+}
+
+func TestCreatePreviewRefusesAnImageDeclaringTooManyPixels(t *testing.T) {
+	options, err := getPreviewOptions("large")
+	require.NoError(t, err)
+	for name, data := range map[string][]byte{
+		"png":  pngDeclaring(20000, 20000, 0),
+		"jpeg": jpegDeclaring(t, 20000, 20000),
+		"gif":  gifDeclaring(20000, 20000),
+	} {
+		_, err := (&Service{}).CreatePreview(context.Background(), bytes.NewReader(data), int64(len(data)), options)
+		require.ErrorIs(t, err, ErrTooManyPixels, name)
+	}
+}
+
+func TestCheckPixelsAllowsThePhotosOfTheLargestCameras(t *testing.T) {
+	require.NoError(t, checkPixels(bytes.NewReader(pngDeclaring(11648, 8736, 0))))
+	require.NoError(t, checkPixels(bytes.NewReader(jpegDeclaring(t, 11648, 8736))))
+	require.ErrorIs(t, checkPixels(bytes.NewReader(pngDeclaring(10500, 10001, 0))), ErrTooManyPixels)
+}
+
+func TestCheckPixelsLeavesTheReaderWhereItWas(t *testing.T) {
+	data := pngDeclaring(64, 64, 0)
+	r := bytes.NewReader(data)
+	require.NoError(t, checkPixels(r))
+	require.Equal(t, int64(len(data)), int64(r.Len()))
+}
+
+func TestOrientationLeavesAnImageWithTooManyPixelsAlone(t *testing.T) {
+	if testing.Short() {
+		t.Skip("encodes a very large picture")
+	}
+	var buf bytes.Buffer
+	require.NoError(t, png.Encode(&buf, image.NewGray(image.Rect(0, 0, 10500, 10001))))
+	data := buf.Bytes()
+	require.Equal(t, data, applyOrientationToPreviewBytes(data, "Rotate 180"))
 }

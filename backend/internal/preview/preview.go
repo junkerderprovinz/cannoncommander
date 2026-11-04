@@ -393,6 +393,10 @@ func (s *Service) generateImagePreview(ctx context.Context, file iteminfo.Extend
 // handleJPEGFallback attempts to use FFmpeg for problematic JPEG files
 // This is preview-specific logic for user files, not used for icon generation
 func handleJPEGFallback(ctx context.Context, s *Service, file iteminfo.ExtendedFileInfo, previewSize string, originalErr error) ([]byte, error) {
+	// FFmpeg would have to decode the same pixels.
+	if errors.Is(originalErr, ErrTooManyPixels) {
+		return nil, originalErr
+	}
 	enableJPEGFallback := *settings.Config.Integrations.Media.Convert.ImagePreview[settings.JPEGImagePreview]
 
 	if !enableJPEGFallback {
@@ -633,7 +637,7 @@ func getPreviewOptions(previewSize string) (ResizeOptions, error) {
 }
 
 // CreatePreview resizes an image from a reader with the given options
-func (s *Service) CreatePreview(ctx context.Context, reader io.Reader, fileSize int64, options ResizeOptions) ([]byte, error) {
+func (s *Service) CreatePreview(ctx context.Context, reader io.ReadSeeker, fileSize int64, options ResizeOptions) ([]byte, error) {
 	output := &bytes.Buffer{}
 	if err := s.ResizeWithSize(ctx, reader, output, fileSize, options); err != nil {
 		return nil, err

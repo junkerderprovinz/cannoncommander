@@ -3,6 +3,7 @@ package preview
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -12,6 +13,31 @@ import (
 	exifcommon "github.com/dsoprea/go-exif/v3/common"
 	"github.com/kovidgoyal/imaging"
 )
+
+// maxPixels sits just above the 102 megapixels of the largest common camera
+// sensors. A decoder allocates what the header states, 420 MB here at four
+// bytes a pixel, however small the file is.
+const maxPixels = 105_000_000
+
+// ErrTooManyPixels means an image states a size too large to decode for a preview.
+var ErrTooManyPixels = errors.New("the image has too many pixels for a preview")
+
+// checkPixels reads the size r states and puts r back where it was. A header
+// that cannot be read is left to the decoder, which reads it the same way.
+func checkPixels(r io.ReadSeeker) error {
+	start, err := r.Seek(0, io.SeekCurrent)
+	if err != nil {
+		return err
+	}
+	cfg, _, cfgErr := image.DecodeConfig(r)
+	if _, err := r.Seek(start, io.SeekStart); err != nil {
+		return err
+	}
+	if cfgErr == nil && int64(cfg.Width)*int64(cfg.Height) > maxPixels {
+		return ErrTooManyPixels
+	}
+	return nil
+}
 
 // configureImagingParallelism limits kovidgoyal/imaging to one thread per resize.
 // Concurrent preview jobs are capped separately by imageSem.
@@ -183,7 +209,7 @@ type ResizeOptions struct {
 // Resize runs synchronously so the image semaphore accurately bounds concurrent CPU work.
 // A detached goroutine would return on ctx cancellation while still decoding/resizing,
 // defeating the semaphore and piling up orphaned work that causes preview timeouts under load.
-func (s *Service) ResizeWithSize(ctx context.Context, in io.Reader, out io.Writer, fileSize int64, opts ResizeOptions) error {
+func (s *Service) ResizeWithSize(ctx context.Context, in io.ReadSeeker, out io.Writer, fileSize int64, opts ResizeOptions) error {
 	if ctx.Err() != nil {
 		return ctx.Err()
 	}
@@ -194,7 +220,7 @@ func (s *Service) ResizeWithSize(ctx context.Context, in io.Reader, out io.Write
 	return err
 }
 
-func (s *Service) resizeWithSize(in io.Reader, out io.Writer, fileSize int64, opts ResizeOptions) error {
+func (s *Service) resizeWithSize(in io.ReadSeeker, out io.Writer, fileSize int64, opts ResizeOptions) error {
 	// Set defaults
 	if opts.ResizeMode == 0 {
 		opts.ResizeMode = ResizeModeFit
@@ -208,7 +234,7 @@ func (s *Service) resizeWithSize(in io.Reader, out io.Writer, fileSize int64, op
 
 	// Skip format detection - format is already known (FormatJpeg from CreatePreviewFromReaderWithSize)
 	// This avoids unnecessary I/O and DecodeConfig issues with corrupted files
-	var wrappedReader = in
+	var wrappedReader io.Reader = in
 	var err error
 
 	// HEIC has no encoder and webp/netpbm are decode-only in imaging; fall back
@@ -231,6 +257,10 @@ func (s *Service) resizeWithSize(in io.Reader, out io.Writer, fileSize int64, op
 				return nil
 			}
 		}
+	}
+
+	if err := checkPixels(in); err != nil {
+		return err
 	}
 
 	// Decode the image - try imaging library first, fall back to format-specific decoder if it fails
@@ -290,6 +320,9 @@ func (s *Service) resizeWithSize(in io.Reader, out io.Writer, fileSize int64, op
 // Returns rotated JPEG bytes or the original bytes on error/unknown orientation. No FFmpeg required.
 func applyOrientationToPreviewBytes(imageBytes []byte, orientation string) []byte {
 	if len(imageBytes) < 100 {
+		return imageBytes
+	}
+	if checkPixels(bytes.NewReader(imageBytes)) != nil {
 		return imageBytes
 	}
 	img, err := imaging.Decode(bytes.NewReader(imageBytes), previewDecodeOpts(false)...)
@@ -399,14 +432,4 @@ func getEmbeddedThumbnail(in io.Reader) ([]byte, io.Reader, error) {
 
 	thm, err := ifd.Thumbnail()
 	return thm, wrappedReader, err
-}
-
-// CreateThumbnail decodes an image and creates a fixed-size thumbnail.
-func CreateThumbnail(rawData io.Reader, width, height int) (image.Image, error) {
-	img, _, err := image.Decode(rawData)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode image: %w", err)
-	}
-	thumb := imaging.Fit(img, width, height, imaging.CatmullRom)
-	return thumb, nil
 }
