@@ -30,6 +30,22 @@ async function call<T>(path: string, init: RequestInit & { etag?: string } = {})
 
 const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
 
+// Some settings follow the screen, so every browser keeps an id of its own for them.
+const DEVICE_KEY = 'cannoncommander-device';
+function device(): Record<string, string> {
+  try {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) {
+      // randomUUID needs a secure context, which a server on the home network often lacks.
+      id = Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, '0')).join('');
+      localStorage.setItem(DEVICE_KEY, id);
+    }
+    return { device: id };
+  } catch {
+    return {};
+  }
+}
+
 // What the interface works with: times as milliseconds, nothing optional that it reads on every row.
 export interface Item {
   name: string;
@@ -70,9 +86,9 @@ export const api = {
     return (await call<{ items: TrashItem[] }>('/trash')).body!.items;
   },
   async prefs(): Promise<Record<string, unknown>> {
-    return (await call<Record<string, unknown>>('/me/prefs')).body ?? {};
+    return (await call<Record<string, unknown>>('/me/prefs' + q(device()))).body ?? {};
   },
   async savePrefs(prefs: Record<string, unknown>): Promise<void> {
-    await call('/me/prefs', { method: 'PUT', body: JSON.stringify(prefs), headers: { 'Content-Type': 'application/json' } });
+    await call('/me/prefs' + q(device()), { method: 'PUT', body: JSON.stringify(prefs), headers: { 'Content-Type': 'application/json' } });
   },
 };

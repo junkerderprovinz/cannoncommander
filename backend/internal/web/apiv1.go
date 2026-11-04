@@ -3,6 +3,7 @@ package web
 import (
 	"net/http"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/api"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -27,7 +28,8 @@ func mountAPIv1(router *http.ServeMux) error {
 		return err
 	}
 	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: state.MainDB()}
-	h, err := api.NewRouter(deps, authenticateV1).Handler()
+	accounts.UseLogin(sessionLogin{})
+	h, err := api.NewRouter(deps, accounts.Track(deps.DB, authenticateV1)).Handler()
 	if err != nil {
 		return err
 	}

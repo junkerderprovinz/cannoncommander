@@ -33,7 +33,10 @@ tags:
   - name: tools
     description: Compare, sync, duplicates, disk usage, clean up and checksums.
   - name: labels
-    description: Colour labels and tags on paths.
+    description: |
+      Colour labels and tags on paths. They are shared, every user sees the
+      labels of the files they may see. They follow a file when the server
+      renames, moves or copies it.
   - name: prefs
     description: Settings, bookmarks, profiles and folder history of the own account.
   - name: accounts
@@ -514,21 +517,69 @@ paths:
     get:
       operationId: savedSearchesList
       summary: Saved searches
-      tags: [search]
+      description: The own saved searches, oldest first.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The saved searches.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SavedSearch"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [search]
     post:
       operationId: savedSearchCreate
       summary: Save a search
-      tags: [search]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedSearchInput"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          description: The new saved search.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSearch"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: There are 200 saved searches already.
+      tags: [search]
   /search/saved/{id}:
     put:
       operationId: savedSearchUpdate
       summary: Change a saved search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedSearchInput"
+      responses:
+        "200":
+          description: The changed saved search.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSearch"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [search]
       parameters:
         - name: id
@@ -536,12 +587,16 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     delete:
       operationId: savedSearchDelete
       summary: Delete a saved search
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [search]
       parameters:
         - name: id
@@ -549,9 +604,6 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /tools/compare:
     post:
       operationId: toolsCompare
@@ -612,90 +664,358 @@ paths:
     get:
       operationId: labelsGet
       summary: Colours and tags with their names
-      tags: [labels]
+      description: The colours in their order and every tag in German alphabetical order, each with the number of paths carrying it.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The colour and tag lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelLists"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [labels]
   /labels/colours:
     put:
       operationId: labelColoursPut
       summary: Rename or recolour the colour labels
-      tags: [labels]
+      description: |
+        Replaces the colour list, in the given order. An entry with an id
+        changes that colour, one without is a new colour. Colours left out
+        are taken off every path. Sends labels.changed to everyone.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [colours]
+              properties:
+                colours:
+                  type: array
+                  maxItems: 64
+                  items:
+                    type: object
+                    required: [name, hex]
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                        description: Empty keeps the name the app gives its own colours.
+                      hex:
+                        type: string
+                        example: "#2ec4b6"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The new lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelLists"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [labels]
   /labels/tags:
     put:
       operationId: labelTagsPut
       summary: Change the list of tags
-      tags: [labels]
+      description: |
+        Replaces the tag list. An entry with from renames that tag on every
+        path, and two tags renamed to the same name become one. An entry
+        without from is a tag no file needs to carry yet. Tags left out are
+        taken off every path. Sends labels.changed to everyone.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tags]
+              properties:
+                tags:
+                  type: array
+                  maxItems: 1000
+                  items:
+                    type: object
+                    required: [name]
+                    properties:
+                      from:
+                        type: string
+                      name:
+                        type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The new lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelLists"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [labels]
   /labels/items:
     get:
       operationId: labelItemsGet
       summary: Labels of the entries in a folder
-      tags: [labels]
+      description: |
+        The labelled entries of a folder the user may see, keyed by name.
+        With deep=true everything below the folder, keyed by the path
+        relative to it, for the flat view and search results.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: deep
+          in: query
+          schema:
+            type: boolean
+            default: false
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The labels.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [path, items]
+                properties:
+                  path:
+                    type: string
+                  items:
+                    type: object
+                    additionalProperties:
+                      $ref: "#/components/schemas/Label"
+                example:
+                  path: /mnt/user/dokumente
+                  items:
+                    Mietvertrag.pdf: {colour: red, tags: [wichtig]}
+                    Rechnung-Oktober.pdf: {tags: [Steuer]}
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [labels]
     put:
       operationId: labelItemsPut
       summary: Set colour and tags on paths
-      tags: [labels]
+      description: |
+        Changes the labels of up to 10000 paths at once. colour sets the
+        colour, an empty colour clears it. tags replaces the tags, add and
+        remove adjust them. Fields left out stay as they are. Needs the
+        right to change each path, so read only places carry no labels.
+        Sends labels.changed to the watchers of each folder.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths]
+              properties:
+                paths:
+                  type: array
+                  minItems: 1
+                  maxItems: 10000
+                  items:
+                    type: string
+                colour:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                add:
+                  type: array
+                  items:
+                    type: string
+                remove:
+                  type: array
+                  items:
+                    type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The labels the paths carry after the change, keyed by path. An empty object means no label.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: object
+                    additionalProperties:
+                      $ref: "#/components/schemas/Label"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [labels]
   /me/prefs:
     get:
       operationId: prefsGet
       summary: Own settings
-      tags: [prefs]
+      description: |
+        Returns the settings as one flat object, as the interface keeps
+        them. Settings never saved are left out, so the client keeps its
+        own defaults for them. With a device the device settings (dual,
+        side, fkeys, colWidths) of that device lie on top of the others.
+      parameters:
+        - $ref: "#/components/parameters/Device"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Prefs"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     put:
       operationId: prefsPut
       summary: Save own settings
-      tags: [prefs]
+      description: |
+        Replaces the settings with the given object. With a device the
+        device settings are stored for that device and the rest for the
+        user. Without one everything is stored for the user, and the user's
+        values serve devices that have none of their own. Known settings
+        have to keep their JSON type. Sends prefs.changed to the user.
+      parameters:
+        - $ref: "#/components/parameters/Device"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Prefs"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "204":
+          description: Saved.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "413":
+          description: The settings are larger than 256 KiB.
+      tags: [prefs]
   /me/bookmarks:
     get:
       operationId: bookmarksGet
       summary: Pinned folders
-      tags: [prefs]
+      description: |
+        The pinned folders in their order. A user who never saved any gets
+        the usual shares that exist and that the user may open.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The bookmarks.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookmarkList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     put:
       operationId: bookmarksPut
       summary: Save pinned folders
-      tags: [prefs]
+      description: Replaces the list. Paths have to be unique and may not point into an archive.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookmarkList"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "204":
+          description: Saved.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: The same path is pinned twice.
+      tags: [prefs]
   /me/profiles:
     get:
       operationId: profilesList
       summary: Saved panel profiles
-      tags: [prefs]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The profiles, oldest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     post:
       operationId: profileCreate
       summary: Save a panel profile
-      tags: [prefs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          description: The new profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: There are 100 profiles already.
+      tags: [prefs]
   /me/profiles/{id}:
     put:
       operationId: profileUpdate
       summary: Change a panel profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "200":
+          description: The changed profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [prefs]
       parameters:
         - name: id
@@ -703,12 +1023,16 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     delete:
       operationId: profileDelete
       summary: Delete a panel profile
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [prefs]
       parameters:
         - name: id
@@ -716,39 +1040,107 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /me/rename-presets:
     get:
       operationId: renamePresetsGet
       summary: Saved rename patterns
-      tags: [prefs]
+      description: The user's own presets. The presets that come with the app live in the client.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The presets.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenamePresetList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     put:
       operationId: renamePresetsPut
       summary: Save rename patterns
-      tags: [prefs]
+      description: Replaces the list. Names have to be unique.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RenamePresetList"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "204":
+          description: Saved.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Two presets share a name.
+      tags: [prefs]
   /me/frequent:
     get:
       operationId: frequentGet
       summary: Often visited folders
-      tags: [prefs]
+      description: |
+        The folders ranked like zoxide: the number of visits, weighted by
+        how recent the last one was (four times within the hour, twice
+        within the day, half within the week, a quarter after that).
+        Folders that are gone or out of reach are left out.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 8
+        - name: skip
+          in: query
+          description: A folder to leave out, usually the one that is open.
+          schema:
+            type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The best ranked folders first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FrequentFolder"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     post:
       operationId: frequentVisit
       summary: Count a visit to a folder
-      tags: [prefs]
+      description: Folders inside an archive are not counted. The history keeps the 500 folders visited last.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "204":
+          description: Counted.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [prefs]
   /me:
     get:
       operationId: meGet
@@ -769,14 +1161,37 @@ paths:
     get:
       operationId: sessionsList
       summary: Open sessions
-      tags: [accounts]
+      description: |
+        The logins of the own account that are still valid, the one used
+        last first. A session shows up once it made a request to this API.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The sessions.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Session"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [accounts]
   /me/sessions/{id}:
     delete:
       operationId: sessionEnd
       summary: End a session
+      description: Logs that session out at once. Ending the current session logs out this client.
+      responses:
+        "204":
+          description: Ended.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [accounts]
       parameters:
         - name: id
@@ -784,9 +1199,6 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /me/tokens:
     get:
       operationId: tokensList
@@ -1629,6 +2041,13 @@ components:
       schema:
         type: string
         example: /mnt/user/filme
+    Device:
+      name: device
+      in: query
+      description: An id the client picks once per device and keeps, up to 64 letters, digits, - and _.
+      schema:
+        type: string
+        pattern: "^[A-Za-z0-9_-]{1,64}$"
   responses:
     NotImplemented:
       description: Part of the contract, not built yet.
@@ -1808,6 +2227,221 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FsTreeItem"
+    SavedSearchInput:
+      type: object
+      required: [name, query]
+      properties:
+        name:
+          type: string
+        query:
+          type: object
+          description: |
+            The search as the search window sends it, stored as given. When
+            it has a field in, that has to be a folder path.
+          additionalProperties: true
+          example: {text: "", in: /mnt/user, name: "*.iso *.img", min: 1 GB, when: any, type: all, hidden: false}
+    SavedSearch:
+      allOf:
+        - $ref: "#/components/schemas/SavedSearchInput"
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: integer
+              format: int64
+    Label:
+      type: object
+      properties:
+        colour:
+          type: string
+          description: Id of the colour.
+        tags:
+          type: array
+          items:
+            type: string
+    LabelLists:
+      type: object
+      required: [colours, tags]
+      properties:
+        colours:
+          type: array
+          items:
+            type: object
+            required: [id, name, hex, count]
+            properties:
+              id:
+                type: string
+                example: red
+              name:
+                type: string
+                description: Empty for the colours the app comes with, which the client names in its language.
+              hex:
+                type: string
+                example: "#ff6b72"
+              count:
+                type: integer
+        tags:
+          type: array
+          items:
+            type: object
+            required: [name, count]
+            properties:
+              name:
+                type: string
+              count:
+                type: integer
+    LabelsChanged:
+      type: object
+      description: |
+        Payload of labels.changed. Kind colours or tags reaches everyone,
+        kind items reaches the watchers of the folder in path.
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [colours, tags, items]
+        path:
+          type: string
+    Prefs:
+      type: object
+      description: Settings by name. The interface defines the names, see DEFAULT_PREFS in the frontend.
+      additionalProperties: true
+    Bookmark:
+      type: object
+      required: [name, path]
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        g:
+          type: string
+          description: Glyph name, for example IconDownload.
+    BookmarkList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/Bookmark"
+    ProfileInput:
+      type: object
+      required: [name, panels]
+      properties:
+        name:
+          type: string
+        dual:
+          type: boolean
+        columns:
+          type: array
+          items:
+            type: string
+        panels:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            type: object
+            required: [cur, tabs]
+            properties:
+              cur:
+                type: integer
+                description: Index of the active tab.
+              tabs:
+                type: array
+                minItems: 1
+                maxItems: 50
+                items:
+                  type: string
+                  description: Folder of the tab.
+    Profile:
+      allOf:
+        - $ref: "#/components/schemas/ProfileInput"
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: integer
+              format: int64
+    RenamePresetList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            required: [name, options]
+            properties:
+              name:
+                type: string
+              options:
+                type: object
+                description: The fields of the multi rename window.
+                properties:
+                  name:
+                    type: string
+                    example: "[A]_[C3]"
+                  ext:
+                    type: string
+                    example: "[E]"
+                  find:
+                    type: string
+                  repl:
+                    type: string
+                  regex:
+                    type: boolean
+                  case:
+                    type: string
+                    enum: [keep, lower, upper, title]
+    FrequentFolder:
+      type: object
+      required: [path, visits, last, rank]
+      properties:
+        path:
+          type: string
+        visits:
+          type: integer
+        last:
+          type: string
+          format: date-time
+        rank:
+          type: number
+    PrefsChanged:
+      type: object
+      description: Payload of prefs.changed, sent only to the user it concerns.
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [settings, bookmarks, profiles, renamePresets, savedSearches]
+        device:
+          type: string
+          description: The device whose settings were saved.
+    Session:
+      type: object
+      required: [id, created, seen, userAgent, ip, current]
+      properties:
+        id:
+          type: string
+        created:
+          type: string
+          format: date-time
+          description: First request of the session.
+        seen:
+          type: string
+          format: date-time
+          description: Last request, to the minute.
+        userAgent:
+          type: string
+        ip:
+          type: string
+        current:
+          type: boolean
+          description: The session this request came with.
     UnraidState:
       type: object
       required: [available, array, parity, disks, shares, write, spindownDelay]

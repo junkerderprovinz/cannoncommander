@@ -10,13 +10,98 @@ paths:
     get:
       operationId: savedSearchesList
       summary: Saved searches
+      description: The own saved searches, oldest first.
+      responses:
+        "200":
+          description: The saved searches.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SavedSearch"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       operationId: savedSearchCreate
       summary: Save a search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedSearchInput"
+      responses:
+        "201":
+          description: The new saved search.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSearch"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: There are 200 saved searches already.
   /search/saved/{id}:
     put:
       operationId: savedSearchUpdate
       summary: Change a saved search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedSearchInput"
+      responses:
+        "200":
+          description: The changed saved search.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSearch"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
     delete:
       operationId: savedSearchDelete
       summary: Delete a saved search
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+components:
+  schemas:
+    SavedSearchInput:
+      type: object
+      required: [name, query]
+      properties:
+        name:
+          type: string
+        query:
+          type: object
+          description: |
+            The search as the search window sends it, stored as given. When
+            it has a field in, that has to be a folder path.
+          additionalProperties: true
+          example: { text: "", in: /mnt/user, name: "*.iso *.img", min: 1 GB, when: any, type: all, hidden: false }
+    SavedSearch:
+      allOf:
+        - $ref: "#/components/schemas/SavedSearchInput"
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: integer
+              format: int64
