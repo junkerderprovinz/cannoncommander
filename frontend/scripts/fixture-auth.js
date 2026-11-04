@@ -87,7 +87,7 @@ export function authFixtureMiddleware() {
   const done = (res, name) => {
     S.out = false;
     S.fails = 0;
-    json(res, 200, { next: 'done', me: account(name, users[name].totp) }, { 'Set-Cookie': 'filebrowser_quantum_jwt=fixture; Path=/; HttpOnly; SameSite=Strict' });
+    json(res, 200, { next: 'done', me: account(name, users[name].totp) }, { 'Set-Cookie': 'cannoncommander_session=fixture; Path=/; HttpOnly; SameSite=Strict' });
   };
   const step = (res, name, need) => {
     const challenge = Math.random().toString(36).slice(2);
@@ -129,7 +129,7 @@ export function authFixtureMiddleware() {
     },
     'POST /auth/passkey/options': (_b, res) => problem(res, 409, 'passkeys are turned off on this server'),
     'POST /auth/passkey': (_b, res) => problem(res, 409, 'passkeys are turned off on this server'),
-    'POST /auth/logout': (_b, res) => { S.out = true; json(res, 204, null, { 'Set-Cookie': 'filebrowser_quantum_jwt=; Path=/; Max-Age=0' }); },
+    'POST /auth/logout': (_b, res) => { S.out = true; json(res, 204, null, { 'Set-Cookie': 'cannoncommander_session=; Path=/; Max-Age=0' }); },
     'POST /auth/reset-code': (_b, res) => json(res, 202, null),
     'POST /auth/reset': (b, res) => {
       if (String(b.code || '').replace(/[\s-]/g, '').toUpperCase() !== 'K7QM3XRP9DTA') return problem(res, 400, 'this code is not right or ran out, please ask for a new one');

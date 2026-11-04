@@ -46,7 +46,7 @@ func mountAPIv1(router *http.ServeMux) error {
 	if err != nil {
 		return err
 	}
-	index := fsindex.Quantum()
+	index := fsindex.Scanned()
 	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index}
 	accounts.UseLogin(sessionLogin{})
 	h, err := api.NewRouter(deps, accounts.Track(deps.DB, authenticateV1)).Handler()

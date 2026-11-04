@@ -144,7 +144,7 @@ func (s *SQLStore) DeleteRevokedToken(tokenHash string) error {
 }
 
 // SaveHashedToken saves a token hash to owner user_id mapping (decimal text).
-// isSession records that the bearer token is a FileBrowser session token rather
+// isSession records that the bearer token is a session token rather
 // than a named API token, so auth can reject non-session tokens without caps.
 // expiresAt is the token's exp claim as unix time; 0 means no expiry.
 func (s *SQLStore) SaveHashedToken(tokenHash string, userID uint64, isSession bool, expiresAt int64) error {

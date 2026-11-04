@@ -38,7 +38,7 @@ type AuthCommon struct {
 	GroupsClaim       string   `json:"groupsClaim"`       // the JSON field name to read groups from. Default is "groups"
 	UserIdentifier    string   `json:"userIdentifier"`    // the field value to use as the username. Default is "preferred_username". Other common values are "email" or "username", or "phone"
 	DisableVerifyTLS  bool     `json:"disableVerifyTLS"`  // disable TLS verification (insecure, for testing only)
-	LogoutRedirectUrl string   `json:"logoutRedirectUrl"` // if provider logout url is provided, filebrowser will also redirect to logout url. Custom logout query params are respected.
+	LogoutRedirectUrl string   `json:"logoutRedirectUrl"` // if provider logout url is provided, the server will also redirect to logout url. Custom logout query params are respected.
 	CreateUser        bool     `json:"createUser"`        // deprecated: always true for supported authentication methods
 }
 

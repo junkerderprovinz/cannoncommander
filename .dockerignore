@@ -3,7 +3,7 @@ backend/*.sqlite
 backend/*.sqlite.*
 **/*.sqlite
 **/*.sqlite.*
-backend/filebrowser.sqlite*
+backend/cannoncommander.sqlite*
 **.crt
 **.key
 backend/tmp

@@ -20,8 +20,8 @@ import (
 )
 
 const (
-	oidcStateCookieName    = "filebrowser_oidc_state"
-	oidcRedirectCookieName = "filebrowser_oidc_redirect"
+	oidcStateCookieName    = "cannoncommander_oidc_state"
+	oidcRedirectCookieName = "cannoncommander_oidc_redirect"
 	oidcFlowCookieMaxAge   = 600 // seconds
 )
 
@@ -85,7 +85,7 @@ func (u *userInfoUnmarshaller) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	// Extract groups if configured (supports nested claims like "resource_access.filebrowser-client.roles")
+	// Extract groups if configured (supports nested claims like "resource_access.cannoncommander.roles")
 	if u.groupsClaim != "" {
 		u.userInfo.Groups = extractGroupsFromOIDCClaims(raw, u.groupsClaim)
 	}
@@ -95,7 +95,7 @@ func (u *userInfoUnmarshaller) UnmarshalJSON(data []byte) error {
 }
 
 // extractGroupsFromOIDCClaims extracts groups from OIDC claims supporting nested paths.
-// Supports both direct claims (e.g., "groups") and nested claims using '.' separator (e.g., "resource_access.filebrowser-client.roles")
+// Supports both direct claims (e.g., "groups") and nested claims using '.' separator (e.g., "resource_access.cannoncommander.roles")
 func extractGroupsFromOIDCClaims(claims map[string]interface{}, groupsClaimField string) []string {
 	var groups []string
 

@@ -21,7 +21,7 @@ import (
 // Prefer explicit ?auth= query and Authorization header over the session cookie so API
 // clients can authenticate while a revoked browser cookie is present. ?auth= comes before
 // Authorization so server callbacks (e.g. OnlyOffice) with both query session JWT and a
-// third-party Bearer header resolve to the FileBrowser token (GitHub #2715).
+// third-party Bearer header resolve to our own token.
 func ExtractToken(r *http.Request) (string, error) {
 	hasToken := false
 
@@ -42,7 +42,7 @@ func ExtractToken(r *http.Request) (string, error) {
 		}
 	}
 
-	tokenObj, err := r.Cookie("filebrowser_quantum_jwt")
+	tokenObj, err := r.Cookie("cannoncommander_session")
 	if err == nil {
 		hasToken = true
 		token := tokenObj.Value
@@ -150,7 +150,7 @@ func sessionCookieDomain(r *http.Request) string {
 	return strings.Split(requestHost(r), ":")[0]
 }
 
-const sessionCookieName = "filebrowser_quantum_jwt"
+const sessionCookieName = "cannoncommander_session"
 
 // sessionCookie builds the JWT cookie. HttpOnly prevents srcdoc XSS from reading
 // document.cookie; Secure is set when the request is HTTPS (including via proxy).

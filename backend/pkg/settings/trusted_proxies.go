@@ -155,7 +155,7 @@ func canonicalHopIP(hop string) string {
 // When trustedProxies is configured, the chain is walked right-to-left past
 // every entry that belongs to a trusted proxy; the first untrusted entry is
 // the client. This keeps client identity correct in multi-hop deployments
-// (e.g. CDN -> reverse proxy -> filebrowser), where the rightmost entry would
+// (e.g. CDN -> reverse proxy -> this server), where the rightmost entry would
 // otherwise be the edge proxy shared by all clients.
 func TrustedProxyClientIP(xff string) string {
 	parts := strings.Split(xff, ",")

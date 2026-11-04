@@ -5379,7 +5379,7 @@ components:
     cookie:
       type: apiKey
       in: cookie
-      name: filebrowser_quantum_jwt
+      name: cannoncommander_session
       description: The session cookie the web app gets on login.
   parameters:
     Path:

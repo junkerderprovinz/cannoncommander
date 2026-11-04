@@ -124,7 +124,7 @@ func TestWithAdminHelper(t *testing.T) {
 				t.Fatalf("Error creating request: %v", err)
 			}
 			req.AddCookie(&http.Cookie{
-				Name:  "filebrowser_quantum_jwt",
+				Name:  "cannoncommander_session",
 				Value: tokenString,
 			})
 

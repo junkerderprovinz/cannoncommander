@@ -138,7 +138,7 @@ func warnOidcProxyHeaders() {
 	if Config.Http.TrustProxyHeaders {
 		return
 	}
-	logger.Warning("OIDC is enabled but http.trustProxyHeaders is false. Behind a reverse proxy, FileBrowser builds the OIDC redirect_uri from the incoming request; set trustProxyHeaders: true and configure your proxy to send X-Forwarded-Proto and X-Forwarded-Host. http.externalUrl does not apply to OIDC redirects.")
+	logger.Warning("OIDC is enabled but http.trustProxyHeaders is false. Behind a reverse proxy, the server builds the OIDC redirect_uri from the incoming request; set trustProxyHeaders: true and configure your proxy to send X-Forwarded-Proto and X-Forwarded-Host. http.externalUrl does not apply to OIDC redirects.")
 }
 
 func setupFs() {

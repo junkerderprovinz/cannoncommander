@@ -60,7 +60,7 @@ func cookieRequest(t *testing.T, handler http.HandlerFunc, token string) *httpte
 	t.Helper()
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/users", http.NoBody)
-	req.AddCookie(&http.Cookie{Name: "filebrowser_quantum_jwt", Value: token})
+	req.AddCookie(&http.Cookie{Name: "cannoncommander_session", Value: token})
 	handler(rec, req)
 	return rec
 }

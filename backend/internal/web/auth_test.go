@@ -13,7 +13,7 @@ import (
 func findSessionCookie(t *testing.T, rec *httptest.ResponseRecorder) *http.Cookie {
 	t.Helper()
 	for _, c := range rec.Result().Cookies() {
-		if c.Name == "filebrowser_quantum_jwt" {
+		if c.Name == "cannoncommander_session" {
 			return c
 		}
 	}
@@ -62,7 +62,7 @@ func TestExtractTokenPrefersAuthorizationOverCookie(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodGet, "/api/users", nil)
 	req.AddCookie(&http.Cookie{
-		Name:  "filebrowser_quantum_jwt",
+		Name:  "cannoncommander_session",
 		Value: cookieToken,
 	})
 	req.Header.Set("Authorization", "Bearer "+apiToken)
@@ -81,7 +81,7 @@ func TestExtractTokenUsesCookieWhenNoAuthorizationHeader(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodGet, "/api/users", nil)
 	req.AddCookie(&http.Cookie{
-		Name:  "filebrowser_quantum_jwt",
+		Name:  "cannoncommander_session",
 		Value: cookieToken,
 	})
 
@@ -100,7 +100,7 @@ func TestExtractTokenUsesAuthQueryBeforeCookie(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodGet, "/api/users?auth="+queryToken, nil)
 	req.AddCookie(&http.Cookie{
-		Name:  "filebrowser_quantum_jwt",
+		Name:  "cannoncommander_session",
 		Value: cookieToken,
 	})
 
