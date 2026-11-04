@@ -70,6 +70,7 @@ func initializeConfig(configFile string, cliMode bool) {
 	setupServer()
 	setupHttp()
 	setupAuth(false)
+	useStoredSources(configFile)
 	setupSources(false)
 	InitializeUserResolvers() // Initialize user package resolvers after sources are set up
 	setupUrls()
@@ -538,7 +539,6 @@ func setupUrls() {
 	}
 	Config.Integrations.OnlyOffice.Url = strings.Trim(Config.Integrations.OnlyOffice.Url, "/")
 	Config.Integrations.OnlyOffice.InternalUrl = strings.Trim(Config.Integrations.OnlyOffice.InternalUrl, "/")
-	Config.Integrations.ArrowLoop.Url = strings.Trim(Config.Integrations.ArrowLoop.Url, "/")
 }
 
 func setupAuth(generate bool) {
@@ -833,10 +833,6 @@ func loadEnvConfig() {
 	if ok {
 		logger.Info("Using OnlyOffice secret from CC_ONLYOFFICE_SECRET environment variable")
 		Config.Integrations.OnlyOffice.Secret = officeSecret
-	}
-
-	if token, ok := os.LookupEnv("CC_ARROWLOOP_TOKEN"); ok {
-		Config.Integrations.ArrowLoop.Token = token
 	}
 
 	ffmpegPath, ok := os.LookupEnv("CC_FFMPEG_PATH")
@@ -1198,7 +1194,9 @@ func setConditionals(config *Source) {
 		if rule.FilePath != "" {
 			resolved.FilePaths[rule.FilePath] = rule
 		}
-		if rule.FolderPath != "" {
+		// A root rule only carries the flags above. As a folder path it would
+		// prefix match every path and keep the whole source out of the index.
+		if rule.FolderPath != "" && !isRootLevelRule {
 			resolved.FolderPaths[rule.FolderPath] = rule
 		}
 		if rule.NeverWatchPath != "" {

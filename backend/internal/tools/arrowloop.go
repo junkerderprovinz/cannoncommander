@@ -14,7 +14,7 @@ import (
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
 )
 
 // ArrowLoopRequest hands a pair of folders to ArrowLoop as a job that
@@ -40,13 +40,13 @@ type ArrowLoopConfig struct {
 	Paths map[string]string
 }
 
-func arrowLoopConfig() ArrowLoopConfig {
-	c := settings.Config.Integrations.ArrowLoop
-	paths := map[string]string{}
-	for _, p := range c.Paths {
-		paths[p.Here] = p.There
+func (h handlers) savedArrowLoop(ctx context.Context) (ArrowLoopConfig, error) {
+	app, err := system.Settings(ctx, h.deps)
+	if err != nil {
+		return ArrowLoopConfig{}, err
 	}
-	return ArrowLoopConfig{URL: c.Url, Token: c.Token, Paths: paths}
+	c := app.ArrowLoop
+	return ArrowLoopConfig{URL: c.URL, Token: c.Token, Paths: c.Paths}, nil
 }
 
 // mapPath names p as ArrowLoop sees it, by the longest matching prefix.
@@ -191,7 +191,10 @@ func (h handlers) arrowLoop(w http.ResponseWriter, r *http.Request) error {
 	if l.Path == rr.Path {
 		return badRequest("both sides are the same folder")
 	}
-	c := h.arrowLoopConfig()
+	c, err := h.arrowLoopConfig(r.Context())
+	if err != nil {
+		return err
+	}
 	job, err := c.job(req, l.Path, rr.Path)
 	if err != nil {
 		return err

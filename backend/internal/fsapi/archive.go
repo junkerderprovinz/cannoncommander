@@ -1,195 +1,383 @@
 package fsapi
 
 import (
-	"errors"
+	"archive/tar"
+	"archive/zip"
+	"compress/flate"
+	"compress/gzip"
+	"context"
 	"io"
+	"io/fs"
 	"mime"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 
+	"github.com/gtsteffaniak/go-logger/logger"
+
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/archives"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 )
 
-// errArchived tells the content handlers that a path lies inside an
-// archive and has to be read through it.
-var errArchived = errors.New("inside an archive")
+// Archive formats for downloads.
+const (
+	FormatZip = "zip"
+	FormatTgz = "tgz"
+)
 
-// passwordHeader carries the password of an encrypted archive. A header
-// stays out of the access logs that a query string would end up in.
-const passwordHeader = "X-Archive-Password"
+const maxArchivePaths = 10000
 
-func archiveOptions(r *http.Request) archives.Options {
-	return archives.Options{Password: r.Header.Get(passwordHeader)}
+// ArchiveEntry is one top level entry of a download archive.
+type ArchiveEntry struct {
+	// Name is what the entry is called inside the archive.
+	Name string
+	Loc  ccfs.Location
+	// Bound is the real folder a symbolic link inside the entry may point
+	// into. Empty means the source of the entry.
+	Bound string
 }
 
-// archiveFile checks the archive a location points into.
-func archiveFile(loc ccfs.Location) error {
-	if err := ccfs.Contained(loc); err != nil {
+// ArchiveOptions say what goes into a download archive.
+type ArchiveOptions struct {
+	Format string
+	// Visible decides about every entry below the top level, which is
+	// where the access rules of a user or a share come in.
+	Visible func(dir ccfs.Location, name string) bool
+	// KeepOwners writes user and group into a tar archive. Visitors of a
+	// share get no such details.
+	KeepOwners bool
+}
+
+// ArchiveName is the file name a download of entries gets.
+func ArchiveName(base, format string) string {
+	if format == FormatTgz {
+		return base + ".tar.gz"
+	}
+	return base + ".zip"
+}
+
+// ServeArchive streams entries as one archive file called name. The server
+// packs while it sends, so nothing is left behind on disk.
+func ServeArchive(w http.ResponseWriter, r *http.Request, fsys *ccfs.Resolver, name string, entries []ArchiveEntry, opts ArchiveOptions) {
+	h := w.Header()
+	h.Set("Content-Type", "application/zip")
+	if opts.Format == FormatTgz {
+		h.Set("Content-Type", "application/gzip")
+	}
+	h.Set("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": name}))
+	h.Set("Cache-Control", "no-store")
+	h.Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(http.StatusOK)
+	if err := WriteArchive(r.Context(), w, fsys, entries, opts); err != nil {
+		if r.Context().Err() == nil {
+			logger.Errorf("archive %s: %v", name, err)
+		}
+		// The status is out already. Breaking the connection makes the
+		// browser report a failed download instead of keeping half a file.
+		panic(http.ErrAbortHandler)
+	}
+}
+
+// WriteArchive writes entries to w as zip or tar.gz.
+func WriteArchive(ctx context.Context, w io.Writer, fsys *ccfs.Resolver, entries []ArchiveEntry, opts ArchiveOptions) error {
+	var a archiver
+	switch opts.Format {
+	case FormatTgz:
+		gz, _ := gzip.NewWriterLevel(w, gzip.DefaultCompression)
+		a = &tarArchiver{gz: gz, tw: tar.NewWriter(gz), owners: opts.KeepOwners}
+	default:
+		zw := zip.NewWriter(w)
+		zw.RegisterCompressor(zip.Deflate, func(out io.Writer) (io.WriteCloser, error) {
+			return flate.NewWriter(out, flate.BestSpeed)
+		})
+		a = &zipArchiver{zw: zw}
+	}
+	walk := archiveWalk{ctx: ctx, fs: fsys, a: a, visible: opts.Visible}
+	for _, e := range entries {
+		bound := e.Bound
+		if bound == "" && e.Loc.Source != nil {
+			bound = e.Loc.Source.Root
+		}
+		real, err := filepath.EvalSymlinks(bound)
+		if err != nil {
+			return err
+		}
+		walk.bound = real
+		if err := walk.entry(e.Loc, e.Name, true); err != nil {
+			return err
+		}
+	}
+	return a.Close()
+}
+
+type archiver interface {
+	Dir(name string, info fs.FileInfo) error
+	File(name string, info fs.FileInfo, r io.Reader) error
+	Close() error
+}
+
+type archiveWalk struct {
+	ctx     context.Context
+	fs      *ccfs.Resolver
+	a       archiver
+	visible func(dir ccfs.Location, name string) bool
+	bound   string
+}
+
+func (wk *archiveWalk) entry(loc ccfs.Location, name string, top bool) error {
+	if err := wk.ctx.Err(); err != nil {
 		return err
 	}
-	info, err := os.Stat(loc.Real)
+	info, err := os.Lstat(loc.Real)
 	if err != nil {
-		return err
+		if top {
+			return err
+		}
+		// Gone between reading the folder and getting here.
+		return nil
 	}
-	if !info.Mode().IsRegular() || archives.FormatOf(loc.Real) == "" {
-		return v1.Errorf(http.StatusBadRequest, "path is not an archive")
+	if info.Mode()&fs.ModeSymlink != 0 {
+		// Linked folders could loop or lead anywhere, linked files come
+		// along when they stay inside the bound.
+		target, err := filepath.EvalSymlinks(loc.Real)
+		if err != nil || !within(wk.bound, target) {
+			return nil
+		}
+		if info, err = os.Stat(target); err != nil || !info.Mode().IsRegular() {
+			return nil
+		}
+	}
+	switch {
+	case info.IsDir():
+		return wk.dir(loc, name, info)
+	case info.Mode().IsRegular():
+		f, err := os.Open(loc.Real)
+		if err != nil {
+			if top {
+				return err
+			}
+			return nil
+		}
+		defer f.Close()
+		return wk.a.File(name, info, f)
 	}
 	return nil
 }
 
-func archiveItem(e archives.Entry) Item {
-	name := path.Base(e.Name)
-	it := Item{Name: name, Dir: e.Dir, Size: e.Size, MTime: formatTime(e.ModTime), Mode: modeString(e.Mode),
-		Hidden: strings.HasPrefix(name, "."), Link: e.Link}
-	if !e.Dir {
-		it.Format = formatOf(name)
+func (wk *archiveWalk) dir(loc ccfs.Location, name string, info fs.FileInfo) error {
+	if err := wk.a.Dir(name, info); err != nil {
+		return err
 	}
-	return it
-}
-
-func (h handlers) archiveIndex(r *http.Request, loc ccfs.Location) (*archives.Index, error) {
-	ix, err := archives.Load(loc.Real, archiveOptions(r))
-	if err != nil {
-		return nil, archives.Problem(err)
-	}
-	return ix, nil
-}
-
-func (h handlers) archiveList(w http.ResponseWriter, r *http.Request, loc ccfs.Location) error {
-	ix, err := h.archiveIndex(r, loc)
+	dirents, err := os.ReadDir(loc.Real)
 	if err != nil {
 		return err
 	}
-	kids, ok := ix.Children(loc.Inner)
-	if !ok {
-		return v1.Errorf(http.StatusNotFound, "path not found")
-	}
-	out := Listing{Path: loc.Path, Items: make([]Item, 0, len(kids))}
-	for _, e := range kids {
-		out.Items = append(out.Items, archiveItem(e))
-	}
-	return v1.WriteJSON(w, r, http.StatusOK, out)
-}
-
-func (h handlers) archiveTree(w http.ResponseWriter, r *http.Request, loc ccfs.Location) error {
-	ix, err := h.archiveIndex(r, loc)
-	if err != nil {
-		return err
-	}
-	kids, ok := ix.Children(loc.Inner)
-	if !ok {
-		return v1.Errorf(http.StatusNotFound, "path not found")
-	}
-	out := Tree{Path: loc.Path, Items: []TreeItem{}}
-	outer, _, _ := strings.Cut(loc.Path, ccfs.ArchiveSep)
-	for _, e := range kids {
-		if !e.Dir {
+	for _, d := range dirents {
+		n := d.Name()
+		if bookkeeping(n) || (wk.visible != nil && !wk.visible(loc, n)) {
 			continue
 		}
-		sub, _ := ix.Children(e.Name)
-		hasDirs := false
-		for _, s := range sub {
-			hasDirs = hasDirs || s.Dir
+		child, err := wk.fs.Resolve(path.Join(loc.Path, n))
+		if err != nil {
+			continue
 		}
-		out.Items = append(out.Items, TreeItem{Name: path.Base(e.Name), Path: outer + ccfs.ArchiveSep + "/" + e.Name, HasDirs: hasDirs})
+		if err := wk.entry(child, name+"/"+n, false); err != nil {
+			return err
+		}
 	}
-	return v1.WriteJSON(w, r, http.StatusOK, out)
+	return nil
 }
 
-func (h handlers) archiveStat(w http.ResponseWriter, r *http.Request, loc ccfs.Location) error {
-	if err := archiveFile(loc); err != nil {
-		return err
+type zipArchiver struct{ zw *zip.Writer }
+
+func (z *zipArchiver) Dir(name string, info fs.FileInfo) error {
+	_, err := z.zw.CreateHeader(&zip.FileHeader{Name: name + "/", Modified: info.ModTime(), Method: zip.Store})
+	return err
+}
+
+func (z *zipArchiver) File(name string, info fs.FileInfo, r io.Reader) error {
+	hdr := &zip.FileHeader{Name: name, Modified: info.ModTime(), Method: zip.Deflate}
+	hdr.SetMode(info.Mode().Perm())
+	if packed(name) {
+		hdr.Method = zip.Store
 	}
-	ix, err := h.archiveIndex(r, loc)
+	out, err := z.zw.CreateHeader(hdr)
 	if err != nil {
 		return err
 	}
-	e, ok := ix.Stat(loc.Inner)
-	if !ok {
-		return v1.Errorf(http.StatusNotFound, "path not found")
-	}
-	out := Stat{Path: loc.Path, Item: archiveItem(e)}
-	if loc.Inner == "/" {
-		outer, _, _ := strings.Cut(loc.Path, ccfs.ArchiveSep)
-		out.Name = path.Base(outer)
-	}
-	return v1.WriteJSON(w, r, http.StatusOK, out)
+	_, err = io.Copy(out, r)
+	return err
 }
 
-// readArchived hands fn the content of a file inside an archive.
-func readArchived(r *http.Request, loc ccfs.Location, fn func(e archives.Entry, rd io.Reader) error) error {
-	if err := archiveFile(loc); err != nil {
+func (z *zipArchiver) Close() error { return z.zw.Close() }
+
+type tarArchiver struct {
+	gz     *gzip.Writer
+	tw     *tar.Writer
+	owners bool
+}
+
+func (t *tarArchiver) header(name string, info fs.FileInfo) (*tar.Header, error) {
+	hdr, err := tar.FileInfoHeader(info, "")
+	if err != nil {
+		return nil, err
+	}
+	hdr.Name = name
+	if !t.owners {
+		hdr.Uid, hdr.Gid, hdr.Uname, hdr.Gname = 0, 0, "", ""
+	}
+	return hdr, nil
+}
+
+func (t *tarArchiver) Dir(name string, info fs.FileInfo) error {
+	hdr, err := t.header(name+"/", info)
+	if err != nil {
 		return err
 	}
-	err := archives.ReadEntry(loc.Real, archiveOptions(r), loc.Inner, fn)
-	if errors.Is(err, os.ErrNotExist) {
-		return v1.Errorf(http.StatusNotFound, "path not found")
-	}
-	return archives.Problem(err)
+	return t.tw.WriteHeader(hdr)
 }
 
-// archiveRaw streams a file out of an archive. Most formats cannot seek
-// inside an entry, so there are no range requests.
-func (h handlers) archiveRaw(w http.ResponseWriter, r *http.Request, loc ccfs.Location) error {
-	return readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
-		name := path.Base(e.Name)
-		ctype := mime.TypeByExtension(path.Ext(name))
-		if ctype == "" {
-			ctype = "application/octet-stream"
-		}
-		hdr := w.Header()
-		hdr.Set("Content-Type", ctype)
-		hdr.Set("X-Content-Type-Options", "nosniff")
-		hdr.Set("Cache-Control", "private, no-cache")
-		hdr.Set("Accept-Ranges", "none")
-		hdr.Set("Content-Length", strconv.FormatInt(e.Size, 10))
-		if active(ctype) {
-			hdr.Set("Content-Security-Policy", "sandbox; default-src 'none'; img-src data:; style-src 'unsafe-inline'")
-		}
-		disposition := "inline"
-		if flag(r.URL.Query().Get("download")) {
-			disposition = "attachment"
-		}
-		hdr.Set("Content-Disposition", mime.FormatMediaType(disposition, map[string]string{"filename": name}))
-		w.WriteHeader(http.StatusOK)
-		if r.Method == http.MethodHead {
-			return nil
-		}
-		_, err := io.Copy(w, rd)
+func (t *tarArchiver) File(name string, info fs.FileInfo, r io.Reader) error {
+	hdr, err := t.header(name, info)
+	if err != nil {
 		return err
-	})
+	}
+	if err := t.tw.WriteHeader(hdr); err != nil {
+		return err
+	}
+	// A file that grows while it is read must not overrun its header.
+	_, err = io.Copy(t.tw, io.LimitReader(r, info.Size()))
+	return err
 }
 
-func (h handlers) archiveText(w http.ResponseWriter, r *http.Request, loc ccfs.Location, limit int64) error {
-	return readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
-		buf, err := io.ReadAll(io.LimitReader(rd, limit))
-		if err != nil {
-			return err
-		}
-		truncated := int64(len(buf)) < e.Size
-		enc, text, err := decodeText(buf, truncated)
-		if err != nil {
-			return err
-		}
-		return v1.WriteJSON(w, r, http.StatusOK, Text{Path: loc.Path, Size: e.Size, MTime: formatTime(e.ModTime),
-			Encoding: enc, EOL: lineEnding(text), Text: text, Truncated: truncated})
-	})
+func (t *tarArchiver) Close() error {
+	if err := t.tw.Close(); err != nil {
+		return err
+	}
+	return t.gz.Close()
 }
 
-func (h handlers) archiveHex(w http.ResponseWriter, r *http.Request, loc ccfs.Location, offset, length int64) error {
-	return readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
-		if _, err := io.CopyN(io.Discard, rd, offset); err != nil && !errors.Is(err, io.EOF) {
-			return err
+// packed reports formats that are compressed already, where deflate only
+// costs time.
+func packed(name string) bool {
+	switch strings.ToLower(path.Ext(name)) {
+	case ".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".avif", ".mp4", ".m4v", ".mkv", ".mov", ".avi", ".webm",
+		".mp3", ".m4a", ".aac", ".ogg", ".opus", ".flac", ".zip", ".7z", ".rar", ".gz", ".tgz", ".bz2", ".xz", ".zst", ".pdf", ".docx", ".xlsx", ".pptx":
+		return true
+	}
+	return false
+}
+
+// NumberDuplicates gives entries of the same name from different folders a
+// number, as the other side of a collection sees them: the second
+// IMG_1.jpg becomes IMG_1 (2).jpg.
+func NumberDuplicates(names []string, dirs []bool) []string {
+	seen := map[string]int{}
+	out := make([]string, len(names))
+	for i, n := range names {
+		seen[n]++
+		k := seen[n]
+		if k == 1 {
+			out[i] = n
+			continue
 		}
-		data, err := io.ReadAll(io.LimitReader(rd, length))
+		dot := strings.LastIndex(n, ".")
+		if dirs[i] || dot <= 0 {
+			out[i] = n + " (" + strconv.Itoa(k) + ")"
+		} else {
+			out[i] = n[:dot] + " (" + strconv.Itoa(k) + ")" + n[dot:]
+		}
+	}
+	return out
+}
+
+// within reports whether the real path p is root or lies below it.
+func within(root, p string) bool {
+	rel, err := filepath.Rel(root, p)
+	return err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) && !filepath.IsAbs(rel)
+}
+
+type archiveRequest struct {
+	Paths  []string `json:"paths"`
+	Format string   `json:"format"`
+	Name   string   `json:"name"`
+}
+
+// readArchiveRequest takes JSON from scripts and a plain form from the
+// browser, which can then save the stream as it arrives.
+func readArchiveRequest(r *http.Request) (archiveRequest, error) {
+	var req archiveRequest
+	ctype, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
+	if ctype == "application/x-www-form-urlencoded" || ctype == "multipart/form-data" {
+		r.Body = http.MaxBytesReader(nil, r.Body, 4<<20)
+		if err := r.ParseForm(); err != nil {
+			return req, v1.Errorf(http.StatusBadRequest, "invalid form")
+		}
+		req = archiveRequest{Paths: r.PostForm["paths"], Format: r.PostForm.Get("format"), Name: r.PostForm.Get("name")}
+	} else if err := v1.DecodeJSON(r, &req); err != nil {
+		return req, err
+	}
+	switch req.Format {
+	case "":
+		req.Format = FormatZip
+	case FormatZip, FormatTgz:
+	default:
+		return req, v1.Errorf(http.StatusBadRequest, "format must be zip or tgz")
+	}
+	if len(req.Paths) == 0 {
+		return req, v1.Errorf(http.StatusBadRequest, "choose at least one path")
+	}
+	if len(req.Paths) > maxArchivePaths {
+		return req, v1.Errorf(http.StatusBadRequest, "too many paths for one download")
+	}
+	return req, nil
+}
+
+func (h handlers) archiveStream(w http.ResponseWriter, r *http.Request) error {
+	u := v1.UserFrom(r)
+	req, err := readArchiveRequest(r)
+	if err != nil {
+		return err
+	}
+	entries := make([]ArchiveEntry, 0, len(req.Paths))
+	names := make([]string, 0, len(req.Paths))
+	dirs := make([]bool, 0, len(req.Paths))
+	for _, p := range req.Paths {
+		loc, err := h.fs.Check(u, p, ccfs.View|ccfs.Download)
 		if err != nil {
 			return err
 		}
-		return v1.WriteJSON(w, r, http.StatusOK, Hex{Path: loc.Path, Size: e.Size, Offset: offset, Data: data})
-	})
+		if loc.Virtual() || loc.InArchive() {
+			return v1.Errorf(http.StatusBadRequest, "only entries inside a source can be downloaded")
+		}
+		if err := ccfs.Contained(loc); err != nil {
+			return err
+		}
+		info, err := os.Stat(loc.Real)
+		if err != nil {
+			return err
+		}
+		entries = append(entries, ArchiveEntry{Loc: loc})
+		names = append(names, path.Base(loc.Path))
+		dirs = append(dirs, info.IsDir())
+	}
+	for i, n := range NumberDuplicates(names, dirs) {
+		entries[i].Name = n
+	}
+	name := req.Name
+	if name == "" || !ccfs.ValidName(name) {
+		base := names[0]
+		if len(names) > 1 {
+			if base = path.Base(path.Dir(entries[0].Loc.Path)); base == "/" || base == "." {
+				base = "download"
+			}
+		}
+		name = ArchiveName(base, req.Format)
+	}
+	visible := func(dir ccfs.Location, n string) bool { return h.fs.Visible(u, dir, n) }
+	ServeArchive(w, r, h.fs, name, entries, ArchiveOptions{Format: req.Format, Visible: visible, KeepOwners: true})
+	return nil
 }

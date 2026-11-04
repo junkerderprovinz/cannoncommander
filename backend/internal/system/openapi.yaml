@@ -6,15 +6,76 @@ paths:
     get:
       operationId: systemGet
       summary: Version, uptime and available features
+      description: |
+        The helper programs are looked up once per start. Office tells the
+        viewers where office files open, without the secret. The ETag leaves
+        the uptime out.
+      responses:
+        "200":
+          description: The server state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemInfo"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /admin/sources:
     get:
       operationId: sourcesGet
       summary: Configured sources
+      description: |
+        The saved sources, or the ones from the config file while nothing
+        was saved. restartNeeded is set while the saved ones differ from the
+        ones the server runs with.
       x-access: admin
+      responses:
+        "200":
+          description: The sources.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSources"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     put:
       operationId: sourcesPut
       summary: Save sources
+      description: |
+        Replaces the whole list. The sources are saved in sources.json next
+        to the config file and take over from the config on the next start.
+        Every folder has to exist, names and folders are unique. An exclude
+        pattern is a name, a path below the source, or a name with a star at
+        its start or end, such as *.tmp or backup-*.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sources]
+              properties:
+                sources:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/AdminSource"
+      responses:
+        "200":
+          description: The saved sources.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSources"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /admin/index:
     get:
       operationId: indexState
@@ -28,13 +89,469 @@ paths:
     post:
       operationId: integrationsTest
       summary: Try an integration such as an office server
+      description: |
+        Asks the server for its health and version and checks the secret or
+        token. No file and no user data are sent. Without secret or token
+        the saved one is used when the address is the saved one. A server
+        that cannot be reached is a result with reachable false, not an
+        error.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntegrationTest"
+      responses:
+        "200":
+          description: What the test found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrationResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /admin/app:
     get:
       operationId: appSettingsGet
       summary: Server wide settings
+      description: Secrets are never sent, secretSet and tokenSet say whether one is saved.
       x-access: admin
+      responses:
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     put:
       operationId: appSettingsPut
       summary: Save server wide settings
+      description: |
+        Only the fields in the body change, so a page can save one switch
+        at a time. A secret or token left out stays, an empty one is
+        removed. Office, previews and the log level apply at once, WebDAV
+        and the update check on the next start.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppSettings"
+      responses:
+        "200":
+          description: The saved settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /system/update:
+    post:
+      operationId: systemUpdate
+      summary: Look for a new release
+      description: |
+        Asks GitHub for the newest release, at most every ten minutes. The
+        image itself is updated on Unraid's Docker tab.
+      responses:
+        "200":
+          description: The installed and the newest version.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateCheck"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: GitHub could not be asked.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /admin/app/restart:
+    post:
+      operationId: appRestart
+      summary: Restart the server
+      description: |
+        The server shuts down as on a stop, unmounting the remotes, and
+        starts itself again in the same container. Running jobs stop and
+        continue after the start.
+      x-access: admin
+      responses:
+        "202":
+          description: The restart begins in a moment.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /admin/app/export:
+    get:
+      operationId: appExportGet
+      summary: Download the settings file
+      description: Passwords, tokens, passkeys and the credentials of remotes never go into it.
+      x-access: admin
+      parameters:
+        - name: users
+          in: query
+          description: Take users, groups and rules along.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: The settings file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettingsFile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      operationId: appExport
+      summary: Write the settings file on the server
+      description: |
+        Writes the file to a path below a source, such as
+        /mnt/user/appdata/cannoncommander/exports/settings.json. An existing
+        file is never replaced.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsFileRequest"
+      responses:
+        "201":
+          description: The file is written.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [path, size]
+                properties:
+                  path:
+                    type: string
+                  size:
+                    type: integer
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: There is a file of that name already.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /admin/app/import:
+    post:
+      operationId: appImport
+      summary: Take the settings from a settings file on the server
+      description: |
+        Sources and app settings replace the ones here, passwords and
+        secrets saved here stay. Remotes this server lacks are added without
+        credentials and stay unmounted, the ones it has stay as they are.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsFileRequest"
+      responses:
+        "200":
+          description: What was taken over.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sections, notes, restartNeeded]
+                properties:
+                  sections:
+                    type: array
+                    items:
+                      type: string
+                    example: [sources, app, remotes]
+                  notes:
+                    type: array
+                    items:
+                      type: string
+                    description: What was left out and why, in English.
+                  restartNeeded:
+                    type: boolean
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+components:
+  schemas:
+    UpdateCheck:
+      type: object
+      required: [version, latest, updateAvailable]
+      properties:
+        version:
+          type: string
+          example: 0.1.0
+        latest:
+          type: string
+          example: 0.2.0
+        updateAvailable:
+          type: boolean
+        releaseUrl:
+          type: string
+    SettingsFileRequest:
+      type: object
+      required: [path]
+      properties:
+        path:
+          type: string
+          example: /mnt/user/appdata/cannoncommander/exports/cannoncommander-settings-2026-11-04.json
+        users:
+          type: boolean
+          description: Take users, groups and rules along.
+    SettingsFile:
+      type: object
+      required: [app, version, exported, sections]
+      properties:
+        app:
+          type: string
+          enum: [cannoncommander]
+        version:
+          type: string
+        exported:
+          type: string
+          format: date-time
+        sections:
+          type: object
+          description: One entry per part, such as sources, app and remotes.
+          additionalProperties: true
+    SystemInfo:
+      type: object
+      required: [version, go, os, arch, started, uptime, tools, unraid, features]
+      properties:
+        version:
+          type: string
+          example: 0.1.0
+        commit:
+          type: string
+        go:
+          type: string
+          example: go1.27.0
+        os:
+          type: string
+          example: linux
+        arch:
+          type: string
+          example: amd64
+        started:
+          type: string
+          format: date-time
+        uptime:
+          type: integer
+          format: int64
+          description: Seconds since the start.
+        tools:
+          type: object
+          description: ffmpeg, ffprobe, mutool, 7zz and rclone.
+          additionalProperties:
+            $ref: "#/components/schemas/SystemTool"
+        unraid:
+          type: object
+          required: [available, socket]
+          properties:
+            available:
+              type: boolean
+            socket:
+              type: boolean
+              description: Whether writing to Unraid (spin down, notifications) is switched on.
+        features:
+          type: object
+          required: [office, thumbs, videoPreview, webdav, mupdf]
+          properties:
+            office:
+              type: object
+              required: [kind]
+              properties:
+                kind:
+                  type: string
+                  enum: [none, onlyoffice, eurooffice, collabora]
+                url:
+                  type: string
+            thumbs:
+              type: boolean
+            videoPreview:
+              type: boolean
+            webdav:
+              type: boolean
+            mupdf:
+              type: boolean
+    SystemTool:
+      type: object
+      required: [available]
+      properties:
+        available:
+          type: boolean
+        path:
+          type: string
+          example: /usr/local/bin/ffmpeg
+        version:
+          type: string
+          example: 7.1.1
+    AdminSource:
+      type: object
+      required: [name, path]
+      properties:
+        name:
+          type: string
+          example: Shares
+        path:
+          type: string
+          example: /mnt/user
+        readOnly:
+          type: boolean
+        indexed:
+          type: boolean
+        skipHidden:
+          type: boolean
+        exclude:
+          type: array
+          items:
+            type: string
+          example: ["*.tmp", appdata/plex/cache]
+    AdminSources:
+      type: object
+      required: [sources, restartNeeded]
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminSource"
+        restartNeeded:
+          type: boolean
+    IntegrationTest:
+      type: object
+      required: [kind, url]
+      properties:
+        kind:
+          type: string
+          enum: [onlyoffice, eurooffice, collabora, arrowloop]
+        url:
+          type: string
+          example: https://office.tower.lan
+        secret:
+          type: string
+          description: The JWT secret of an OnlyOffice or Euro-Office server.
+        token:
+          type: string
+          description: The ArrowLoop API token.
+    IntegrationResult:
+      type: object
+      required: [kind, ok, reachable]
+      properties:
+        kind:
+          type: string
+        ok:
+          type: boolean
+        reachable:
+          type: boolean
+        token:
+          type: string
+          enum: [ok, rejected, missing, "off", none]
+          description: |
+            ok, rejected, missing when the server wants one and none was
+            given, off when the server checks none, none for Collabora,
+            which has no shared secret.
+        version:
+          type: string
+        error:
+          type: string
+          description: What went wrong, in English.
+    AppSettings:
+      type: object
+      properties:
+        office:
+          type: object
+          properties:
+            kind:
+              type: string
+              enum: [none, onlyoffice, eurooffice, collabora]
+            url:
+              type: string
+            secret:
+              type: string
+              writeOnly: true
+            secretSet:
+              type: boolean
+              readOnly: true
+        arrowloop:
+          type: object
+          properties:
+            url:
+              type: string
+            token:
+              type: string
+              writeOnly: true
+            tokenSet:
+              type: boolean
+              readOnly: true
+            paths:
+              type: object
+              description: The start of a path here mapped to the same folder in ArrowLoop's container, as /mnt/user to /data.
+              additionalProperties:
+                type: string
+        previews:
+          type: object
+          properties:
+            thumbs:
+              type: boolean
+            video:
+              type: boolean
+              description: Transcode formats such as MKV for the browser.
+        webdav:
+          type: boolean
+        remotes:
+          type: object
+          properties:
+            automount:
+              type: boolean
+            cache:
+              type: string
+              enum: ["off", writes, full]
+            cacheSize:
+              type: integer
+              description: Cap of the VFS cache of all mounts together, in GB.
+              example: 50
+        updates:
+          type: object
+          properties:
+            autoCheck:
+              type: boolean
+        logLevel:
+          type: string
+          enum: [error, info, debug]
+        restartNeeded:
+          type: boolean
+          readOnly: true

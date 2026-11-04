@@ -15,7 +15,7 @@ export function handleKey(e: KeyboardEvent) {
     return;
   }
   if (winStack.length) {
-    if (e.key === 'Escape') { e.preventDefault(); closeWin(); }
+    if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); if (!winStack.at(-1)!.locked) closeWin(); }
     return;
   }
   // Escape closes an open popover first and leaves the page only when none is open.

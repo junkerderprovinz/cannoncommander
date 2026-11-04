@@ -1,0 +1,14 @@
+{
+  "menu": "Markierungen", "colour": "Farbe", "tags": "Schlagworte", "tag": "Schlagwort", "take": "Übernehmen", "add": "Hinzufügen",
+  "colours": { "title": "Farben", "red": "Rot", "orange": "Orange", "yellow": "Gelb", "green": "Grün", "blue": "Blau", "purple": "Lila" },
+  "isSet": "{name}, gesetzt", "noColour": "Keine Farbe", "editColours": "Farben bearbeiten", "editTags": "Schlagworte bearbeiten", "noTagsYet": "Noch keine Schlagworte",
+  "tagsFor": "Schlagworte für {name}", "tagsForN": "Schlagworte für {n} Objekte",
+  "tagTip": "Mit Enter kommt es dazu. Das x an einem Schlagwort nimmt es wieder weg, ein Klick auf ein graues setzt es.", "tagPh": "etwa prüfen", "untag": "Entfernen", "addTag": "Hinzufügen",
+  "oneFile": "1 Datei", "files": "{n} Dateien", "noFile": "noch keine Datei",
+  "newColour": "Neue Farbe", "newColourTip": "Wähl am Punkt einen Farbton, der Name wird vorgeschlagen. Mit Enter oder Plus kommt die Farbe in die Liste.", "newColourPh": "etwa Türkis",
+  "pickNew": "Farbton wählen, der Name kommt von selbst", "pickNewAria": "Farbton der neuen Farbe", "pickShade": "Farbton wählen", "shadeFor": "Farbton für {name}", "nameFor": "Name für {name}",
+  "removeColour": "Farbe entfernen", "removeName": "{name} entfernen", "noColours": "Keine Farben", "coloursSaved": "Farben gespeichert",
+  "newTag": "Neues Schlagwort", "newTagTip": "Mit Enter kommt es in die Liste.", "newTagPh": "etwa Urlaub", "tagAria": "Schlagwort {name}", "removeTag": "Schlagwort entfernen",
+  "noTags": "Noch keine Schlagworte", "tagsSaved": "Schlagworte gespeichert",
+  "picker": { "sv": "Sättigung und Helligkeit", "svValue": "Sättigung {s} %, Helligkeit {v} %", "hue": "Farbton", "value": "Farbwert" }
+}

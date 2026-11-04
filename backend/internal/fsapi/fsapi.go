@@ -35,6 +35,9 @@ func Routes(r *v1.Router) {
 	r.Handle("GET /fs/thumb", h.thumb)
 	r.Handle("GET /fs/text", h.text)
 	r.Handle("GET /fs/hex", h.hex)
+	r.Handle("GET /fs/file", h.fileGet)
+	r.Handle("PUT /fs/file", h.filePut)
+	r.Handle("POST /fs/archive-stream", h.archiveStream)
 }
 
 // Item is one row of a listing.
@@ -337,7 +340,7 @@ func itemFor(real, name string) (Item, error) {
 	}
 	fill(&item, st)
 	if !item.Dir {
-		item.Format = formatOf(name)
+		item.Format = FormatOf(name)
 	}
 	return item, nil
 }
