@@ -91,8 +91,9 @@ function bookmarkMenu(e: MouseEvent, b: Bookmark) {
           :data-go="k.path" :data-tip="k.remote" @click="F.go(k.path)" @contextmenu.prevent.stop="menu($event.clientX, $event.clientY, folderItems(k.path))">
           <button v-if="k.hasDirs" class="tree-tog" :class="{ open }" :data-tog="k.path" :aria-label="open ? t('side.collapse') : t('side.expand')" @click.stop="toggle(k.path)"><G n="IconExpand" /></button>
           <span v-else class="tree-tog"></span>
-          <G :n="glyphOf(k, open)" /><span>{{ k.label || k.name }}</span><span v-if="k.free" class="meta glim-num">{{ t('files.free', { size: fmtSize(k.free) }) }}</span>
+          <G :n="glyphOf(k, open)" /><span>{{ k.label || k.name }}</span>
           <Render v-for="(dec, n) in extend.treeDecorators" :key="n" :node="dec(k.path)" />
+          <span v-if="k.free" class="meta glim-num">{{ t('files.free', { size: fmtSize(k.free) }) }}</span>
         </div>
       </div>
     </section>

@@ -21,5 +21,13 @@
  },
  "steps-transfer": {
   "page": "cannoncommander-transfer.html"
+ },
+ "steps-v3-c": {
+  "lines": [
+   {
+    "pattern": "(?<=^sidebar: Paritätsprüfung )\\d+(?= %)",
+    "why": "the fixture's parity check moves on with the server's clock, the prototype's with the page clock"
+   }
+  ]
  }
 }

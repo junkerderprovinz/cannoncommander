@@ -61,7 +61,7 @@ func (r *Resolver) Check(u *users.User, p string, perm Perm) (Location, error) {
 		return loc, nil
 	}
 	scope, ok := r.scope(u, loc.Source)
-	if !ok {
+	if !ok || !u.Permissions.Admin && r.AdminOnly(loc.Path) {
 		return Location{}, ErrForbidden
 	}
 	if within(scope, loc.Index) && scope != loc.Index {
@@ -107,7 +107,7 @@ func (r *Resolver) Visible(u *users.User, dir Location, name string) bool {
 		return true
 	}
 	scope, ok := r.scope(u, dir.Source)
-	if !ok {
+	if !ok || !u.Permissions.Admin && r.AdminOnly(path.Join(dir.Path, name)) {
 		return false
 	}
 	child := path.Join(dir.Index, name)

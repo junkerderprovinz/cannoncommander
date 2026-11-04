@@ -8,6 +8,7 @@ import {
 } from '@/core';
 import { DAY } from '@/core/format';
 import { provideOps } from './ops';
+import { devOf, provideUnraid } from './unraid';
 import { menuName } from '@/core/menus';
 import { orderedTabs } from '@/core/views';
 import { COLUMNS, Columns, DEFAULT_COLUMNS } from '@/files/columns';
@@ -41,10 +42,16 @@ export function provide(name: string, value: unknown) {
 }
 
 // The prototype's FS over the listing cache, built on demand, so a folder the app has read is a folder FS knows.
+// A node also carries the disk it lies on, as the prototype's do, read only when a step asks for it.
+const pathOf = new WeakMap<object, string>();
 function fsOver(listing: ReturnType<typeof useListing>) {
-  const nodeOf = (item: Item, path: string): FsNode => (item.dir
-    ? { ...item, get children() { return (listing.lists.get(path)?.items || []).map((k) => nodeOf(k, join(path, k.name))); } }
-    : { ...item });
+  const nodeOf = (item: Item, path: string): FsNode => {
+    const node: FsNode = item.dir
+      ? { ...item, get children() { return (listing.lists.get(path)?.items || []).map((k) => nodeOf(k, join(path, k.name))); } }
+      : { ...item };
+    pathOf.set(node, path);
+    return Object.defineProperty(node, 'dev', { get: () => devOf(path) });
+  };
   const root = nodeOf({ name: '', dir: true, size: 0, time: 0, mode: '0755', owner: 'root', group: 'root' }, '/');
   const FS = {
     root,
@@ -76,6 +83,7 @@ async function readAll(listing: ReturnType<typeof useListing>, path = '/') {
 export async function installShim() {
   const listing = useListing(), panels = usePanels(), user = useUser();
   provideOps(provide);
+  provideUnraid(provide, (n) => pathOf.get(n));
   await readAll(listing);
 
   const CC = {

@@ -39,7 +39,11 @@ func mountAPIv1(router *http.ServeMux) error {
 	if err != nil {
 		return err
 	}
-	resolver, err := ccfs.FromSettings(&settings.Config, gate)
+	var devices []string
+	if st, err := unraid.Default().State(); err == nil {
+		devices = st.Devices()
+	}
+	resolver, err := ccfs.FromSettings(&settings.Config, gate, devices...)
 	if err != nil {
 		return err
 	}
