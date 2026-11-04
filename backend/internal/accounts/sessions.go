@@ -51,8 +51,12 @@ type Login interface {
 	// APIToken returns the API token r logs in with. ok is false for
 	// sessions and every other kind of login.
 	APIToken(r *http.Request) (raw string, ok bool)
-	// Start logs u in on this client with a new session.
-	Start(w http.ResponseWriter, r *http.Request, u *users.User) error
+	// Start logs u in on this client with a new session. With keep above
+	// zero the session lasts that long, through browser restarts. Without,
+	// it ends with the browser.
+	Start(w http.ResponseWriter, r *http.Request, u *users.User, keep time.Duration) error
+	// Stop ends the session r carries and clears its cookie.
+	Stop(w http.ResponseWriter, r *http.Request) error
 	// ClientIP returns the address of the client behind any proxy.
 	ClientIP(r *http.Request) string
 	// PasskeySite readies passkeys for the address r came in on and returns

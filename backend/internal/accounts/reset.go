@@ -159,7 +159,7 @@ func (h handlers) reset(w http.ResponseWriter, r *http.Request) error {
 	if u, err = state.GetUserByID(id); err != nil {
 		return err
 	}
-	if err := login.Start(w, r, &u); err != nil {
+	if err := login.Start(w, r, &u, 0); err != nil {
 		return err
 	}
 	activity.RecordAuth(r, &u, activitydb.EventUserUpdate, activitydb.Details{Changes: []activitydb.FieldChange{{Field: "password", To: "reset"}}})

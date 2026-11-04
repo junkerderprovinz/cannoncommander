@@ -2,6 +2,7 @@
 // A passkey gets its name here, then the browser asks for the fingerprint, the PIN or the key itself.
 import { onMounted, ref } from 'vue';
 import { me } from '@/api/admin';
+import { creationOptions, credentialJSON } from '@/api/webauthn';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
@@ -21,7 +22,7 @@ async function next() {
   try {
     const begun = await me.addPasskey({ name: n });
     if (begun.options) {
-      const credential = await navigator.credentials.create(begun.options);
+      const credential = credentialJSON(await navigator.credentials.create(creationOptions(begun.options)));
       await me.addPasskey({ name: n, credential });
     }
   } catch {

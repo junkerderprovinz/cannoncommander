@@ -11,7 +11,8 @@ import (
 )
 
 // service holds what lives as long as the database: the rules, pending two
-// factor setups, reset codes and the counters of failed attempts.
+// factor setups, sign ins halfway through, reset codes and the counters of
+// failed attempts.
 type service struct {
 	db       *sql.DB
 	rules    *ruleBook
@@ -19,10 +20,13 @@ type service struct {
 	totp     *totpSetups
 	passkeys *passkeyStarts
 	resets   *resets
+	signIns  *pendingSignIns
 
 	passwordTries *limiter
 	factorTries   *limiter
 	resetTries    *limiter
+	signInTries   *limiter
+	addressTries  *limiter
 }
 
 // serviceFor returns the service for db and builds it on first use. Without
@@ -51,9 +55,12 @@ func newService(db *sql.DB, book *ruleBook) *service {
 		totp:          newTotpSetups(),
 		passkeys:      newPasskeyStarts(),
 		resets:        newResets(),
+		signIns:       newPendingSignIns(),
 		passwordTries: newLimiter(5, 15*time.Minute),
 		factorTries:   newLimiter(5, 15*time.Minute),
 		resetTries:    newLimiter(5, 15*time.Minute),
+		signInTries:   newLimiter(5, 15*time.Minute),
+		addressTries:  newLimiter(20, 15*time.Minute),
 	}
 }
 

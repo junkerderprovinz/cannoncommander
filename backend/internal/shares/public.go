@@ -41,6 +41,7 @@ type Public struct {
 	Locked  bool       `json:"locked"`
 	Kind    string     `json:"kind,omitempty"`
 	Name    string     `json:"name,omitempty"`
+	Message string     `json:"message,omitempty"`
 	Expires *time.Time `json:"expires,omitempty"`
 	Uploads bool       `json:"uploads,omitempty"`
 	// UploadRoom is how many bytes the link still takes, when it has an
@@ -114,14 +115,17 @@ func (s *Service) visit(w http.ResponseWriter, r *http.Request) (*visit, error) 
 		}
 		return nil, err
 	}
-	if sh.State != StateActive {
-		return nil, errGone
+	switch sh.State {
+	case StateExpired:
+		return nil, errExpired
+	case StateExhausted:
+		return nil, errUsedUp
 	}
 	// The link lives on the rights of its owner. An account that is gone,
 	// or lost the right to share, takes its links with it.
 	owner, err := UserByID(sh.OwnerID)
 	if err != nil || !mayShare(owner) {
-		return nil, errGone
+		return nil, errWithdrawn
 	}
 	return &visit{sh: sh, owner: owner}, nil
 }
@@ -152,7 +156,7 @@ func (s *Service) publicGet(w http.ResponseWriter, r *http.Request) error {
 	if sh.Password && !s.validToken(sh, tokenFrom(r, sh)) {
 		return v1.WriteJSON(w, r, http.StatusOK, Public{Slug: sh.Slug, Locked: true})
 	}
-	out := Public{Slug: sh.Slug, Kind: sh.Kind, Name: sh.Name, Expires: sh.Expires, Uploads: sh.Uploads && sh.Kind == KindFolder}
+	out := Public{Slug: sh.Slug, Kind: sh.Kind, Name: sh.Name, Message: sh.Message, Expires: sh.Expires, Uploads: sh.Uploads && sh.Kind == KindFolder}
 	if out.Uploads && sh.UploadLimit > 0 {
 		room := max(sh.UploadLimit-sh.Uploaded, 0)
 		out.UploadRoom = &room

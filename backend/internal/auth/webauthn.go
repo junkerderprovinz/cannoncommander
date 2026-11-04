@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"sync"
 	"time"
 
@@ -185,11 +186,71 @@ func (s *WebAuthnService) FinishMFALogin(sessionID string, r *http.Request) (*us
 	return user, nil
 }
 
+// BeginPasskeyLogin starts a sign in where the browser picks the passkey and
+// the passkey names the user, so nobody types a name first.
+func (s *WebAuthnService) BeginPasskeyLogin(rpID string) (sessionID string, assertion *protocol.CredentialAssertion, err error) {
+	var opts []webauthn.LoginOption
+	if rpID != "" {
+		opts = append(opts, webauthn.WithLoginRelyingPartyID(rpID))
+	}
+	opts = append(opts, webauthn.WithUserVerification(protocol.VerificationRequired))
+	assertion, sessionData, err := s.wa.BeginDiscoverableLogin(opts...)
+	if err != nil {
+		return "", nil, fmt.Errorf("failed to begin WebAuthn login: %w", err)
+	}
+	sessionID = generateSessionID()
+	s.sessions.Store(sessionID, &webAuthnSession{SessionData: sessionData, ExpiresAt: time.Now().Add(5 * time.Minute)})
+	return sessionID, assertion, nil
+}
+
+// FinishPasskeyLogin checks the browser's answer to BeginPasskeyLogin and
+// returns the user the passkey belongs to, with the passkey's counter and
+// last use updated but not saved. A session works once.
+func (s *WebAuthnService) FinishPasskeyLogin(sessionID string, response []byte) (*users.User, error) {
+	val, ok := s.sessions.LoadAndDelete(sessionID)
+	if !ok {
+		return nil, errors.ErrPasskeyInvalidSession
+	}
+	sess, ok := val.(*webAuthnSession)
+	if !ok || time.Now().After(sess.ExpiresAt) {
+		return nil, errors.ErrPasskeyInvalidSession
+	}
+	parsed, err := protocol.ParseCredentialRequestResponseBytes(response)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", errors.ErrPasskeyVerification, err)
+	}
+	var owner *users.User
+	byHandle := func(_, userHandle []byte) (webauthn.User, error) {
+		id, err := strconv.ParseUint(string(userHandle), 10, 64)
+		if err != nil {
+			return nil, errors.ErrPasskeyNoCredential
+		}
+		if owner, err = s.userByID(id); err != nil {
+			return nil, err
+		}
+		return owner, nil
+	}
+	credential, err := s.wa.ValidateDiscoverableLogin(byHandle, *sess.SessionData, parsed)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", errors.ErrPasskeyVerification, err)
+	}
+	id := base64.RawURLEncoding.EncodeToString(credential.ID)
+	for i := range owner.PasskeyCredentials {
+		if owner.PasskeyCredentials[i].ID == id {
+			users.UpdateCredentialFromLibrary(&owner.PasskeyCredentials[i], credential)
+		}
+	}
+	return owner, nil
+}
+
 func (s *WebAuthnService) BeginRegistration(user *users.User, rpID string) (sessionID string, creation *protocol.CredentialCreation, err error) {
 	var opts []webauthn.RegistrationOption
 	if rpID != "" {
 		opts = append(opts, webauthn.WithRegistrationRelyingPartyID(rpID))
 	}
+	// A passkey the authenticator keeps for itself can sign in without a
+	// name, which is how the sign in page uses it.
+	opts = append(opts, webauthn.WithResidentKeyRequirement(protocol.ResidentKeyRequirementPreferred))
 	creation, sessionData, err := s.wa.BeginRegistration(user, opts...)
 	if err != nil {
 		return "", nil, fmt.Errorf("failed to begin WebAuthn registration: %w", err)
