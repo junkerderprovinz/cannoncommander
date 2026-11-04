@@ -158,7 +158,7 @@ func (previewThumbs) thumb(ctx context.Context, real string, info os.FileInfo, s
 		return nil, errNoThumb
 	}
 	data, err := preview.GetPreviewForFile(ctx, file, size, "", 0)
-	if errors.Is(err, preview.ErrUnsupportedMedia) || errors.Is(err, preview.ErrUnsupportedFormat) || (err == nil && len(data) == 0) {
+	if errors.Is(err, preview.ErrUnsupportedMedia) || errors.Is(err, preview.ErrUnsupportedFormat) || errors.Is(err, preview.ErrTooManyPixels) || (err == nil && len(data) == 0) {
 		return nil, errNoThumb
 	}
 	return data, err
