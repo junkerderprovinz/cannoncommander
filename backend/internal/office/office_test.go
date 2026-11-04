@@ -209,6 +209,16 @@ func TestOnlyOfficeOpensFetchesAndSavesWithTheSecret(t *testing.T) {
 	if _, c2 := f.config("jdp"); c2.Config["document"].(map[string]any)["key"] == doc["key"] {
 		t.Fatal("the document key stayed after a change")
 	}
+
+	req := httptest.NewRequest("GET", "/office/config?mode=view&path=/mnt/user/dokumente/Brief.docx", nil)
+	req.Header.Set("X-User", "jdp")
+	var preview Config
+	if err := json.Unmarshal(f.do(req).Body.Bytes(), &preview); err != nil {
+		t.Fatal(err)
+	}
+	if preview.Config["editorConfig"].(map[string]any)["mode"] != "view" {
+		t.Fatalf("preview config %+v", preview.Config)
+	}
 }
 
 func TestReadOnlyUsersGetAViewerThatCannotSave(t *testing.T) {

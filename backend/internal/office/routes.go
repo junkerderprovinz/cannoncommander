@@ -128,7 +128,9 @@ func (s *service) config(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	_, werr := s.fs.Check(u, loc.Path, ccfs.Modify)
-	g := grant{User: u.ID, Path: loc.Path, Write: werr == nil}
+	// A preview asks for view mode here, because a signed config cannot be
+	// changed in the browser.
+	g := grant{User: u.ID, Path: loc.Path, Write: werr == nil && r.URL.Query().Get("mode") != "view"}
 	token, expires, err := s.keys.sign(r.Context(), g)
 	if err != nil {
 		return err
