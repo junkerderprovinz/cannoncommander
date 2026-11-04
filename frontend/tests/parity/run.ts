@@ -1,15 +1,17 @@
-// node frontend/tests/parity/run.ts [--a page] [--b page] [--steps r13-unraid,core] [--jobs 4] [--out dir] [--update]
+// node frontend/tests/parity/run.ts [--a page] [--b page | --fixture] [--steps r13-unraid,core,path/to/steps.cjs] [--jobs 4] [--out dir] [--update]
 // Runs every step file of the prototype against two pages, the prototype (a) and the app (b), with the same clock
 // and the same random numbers, then compares what the steps print and what the screenshots show. A page is a
-// path to an HTML file or a URL; b defaults to PARITY_APP_URL and, without it, to the prototype itself.
+// path to an HTML file or a URL; b defaults to PARITY_APP_URL and, without it, to the prototype itself. With --fixture,
+// b is the app on a fixture server of its own for every step file, as the step files change the tree they work on.
 // Differences the app may have are listed per step file in allow.json, each with its reason.
-import { execFileSync, fork } from 'node:child_process';
+import { type ChildProcess, execFileSync, fork, spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { createServer } from 'node:net';
 import { basename, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { format, parseArgs } from 'node:util';
-import type { Browser, Page } from 'playwright';
+import type { Browser, Page, Request } from 'playwright';
 import { decode, diff, encode } from './png.ts';
 
 const here = import.meta.dirname;
@@ -26,31 +28,65 @@ const { values: opt } = parseArgs({
     jobs: { type: 'string', default: '4' },
     out: { type: 'string', default: join(repo, 'testing', 'out', 'parity') },
     update: { type: 'boolean', default: false },
+    fixture: { type: 'boolean', default: false },
     worker: { type: 'string' },
   },
 });
-opt.b ||= opt.a;
+opt.b ||= opt.fixture ? 'fixture' : opt.a;
 
 // The fixture on disk was made at this moment, so both pages have to agree with it on what "today" is.
 const NOW: number = JSON.parse(readFileSync(join(repo, 'testing', 'fixture', 'prototype.json'), 'utf8')).now;
 const VIEWPORT = { width: 1600, height: 950 };
-const SIDE_TIMEOUT = 10 * 60_000;
+const SIDE_TIMEOUT = 20 * 60_000;
 
 interface Rule { pattern: string; why: string }
 interface ShotRule { pixels: number; why: string }
 // page: a prototype page of its own that the app has no counterpart for, run on both sides.
 // stale: why the step file fails on the prototype as well, until it is brought up to date.
-interface Allow { lines?: Rule[]; shots?: Record<string, ShotRule>; page?: string; stale?: string }
+// errors: console errors the app writes on purpose, such as the 401 that signing out brings.
+// setup: a script the app's page runs before the step file, for a state the prototype starts in and the app does not.
+interface Allow { lines?: Rule[]; shots?: Record<string, ShotRule>; errors?: Rule[]; page?: string; stale?: string; setup?: { script: string; why: string } }
 interface Side { lines: string[]; shots: string[]; errors: string[]; ms: number }
 interface Result { steps: string; a: Side; b: Side; problems: string[]; allowed: string[] }
 
 const allowAll: Record<string, Allow> = JSON.parse(readFileSync(join(here, 'allow.json'), 'utf8'));
 const allowFor = (steps: string): Allow => {
   const own = allowAll[steps] || {}, any = allowAll['*'] || {};
-  return { ...own, lines: [...(any.lines || []), ...(own.lines || [])], shots: { ...any.shots, ...own.shots } };
+  return { ...own, lines: [...(any.lines || []), ...(own.lines || [])], shots: { ...any.shots, ...own.shots }, errors: [...(any.errors || []), ...(own.errors || [])] };
 };
 
 const urlOf = (page: string) => (/^https?:/.test(page) ? page : pathToFileURL(resolve(page)).href);
+const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
+
+const frontend = join(repo, 'frontend');
+const vite = join(frontend, 'node_modules', 'vite', 'bin', 'vite.js');
+
+const freePort = () => new Promise<number>((done, fail) => {
+  const probe = createServer().once('error', fail).listen(0, '127.0.0.1', () => {
+    const { port } = probe.address() as { port: number };
+    probe.close(() => done(port));
+  });
+});
+
+// The server is ready once the fixture answers, which it adds to Vite after reading the prototype's tree. Only the
+// first server bundles the dependencies anew; the others read that bundle, so they never write it at the same time.
+async function fixtureServer(force = false): Promise<{ url: string; stop: () => void }> {
+  const port = await freePort();
+  const child: ChildProcess = spawn(process.execPath, [vite, '--mode', 'fixture', '--port', String(port), '--strictPort', ...(force ? ['--force'] : [])],
+    { cwd: frontend, env: { ...process.env, VITE_E2E: '1' }, stdio: 'ignore' });
+  const url = `http://localhost:${port}/`;
+  for (let waited = 0; !(await fetch(url + 'api/v1/me').then((r) => r.ok, () => false)); waited += 250) {
+    if (child.exitCode !== null || waited > 120_000) {
+      child.kill();
+      throw new Error(`the fixture server on port ${port} did not come up`);
+    }
+    await sleep(250);
+  }
+  // Windows leaves a child running when its parent ends, so the server goes with the worker however that ends.
+  const stop = () => child.kill();
+  process.once('exit', stop);
+  return { url, stop };
+}
 
 // The same sequence of random numbers on both pages, again after every reload.
 const seedRandom = () => {
@@ -69,25 +105,37 @@ const seedRandom = () => {
 // page clock stands still. A wait lets the answers in flight land first, so both pages reach the same point.
 function inFlight(tab: Page) {
   let open = 0;
-  tab.on('request', () => { open++; });
-  tab.on('requestfinished', () => { open--; });
-  tab.on('requestfailed', () => { open--; });
-  const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
-  // A request the page has just sent takes a moment to be reported, so the count is read after a short pause.
+  // The event stream stays open for good, and counting it would make every wait run into the limit below.
+  const counts = (r: Request) => r.resourceType() !== 'eventsource';
+  tab.on('request', (r) => { if (counts(r)) open++; });
+  tab.on('requestfinished', (r) => { if (counts(r)) open--; });
+  tab.on('requestfailed', (r) => { if (counts(r)) open--; });
+  // A request the page has just sent takes a moment to be reported, and an event from the server can bring another
+  // request with it, so the count is read after a short pause and once more after it reached zero.
   return async () => {
-    await sleep(30);
-    for (let waited = 0; open > 0 && waited < 5000; waited += 10) await sleep(10);
+    for (let round = 0; round < 2; round++) {
+      await sleep(round ? 40 : 80);
+      for (let waited = 0; open > 0 && waited < 5000; waited += 10) await sleep(10);
+    }
   };
 }
 
-function driven(tab: Page): Page {
+// fixture is the app's own server, whose clock follows the page's from the first step on.
+function driven(tab: Page, fixture?: string): { page: Page; move: (ms: number) => Promise<void> } {
   const settle = inFlight(tab);
+  let now: number | undefined;
+  const move = async (ms: number) => {
+    await tab.clock.runFor(ms);
+    if (!fixture) return;
+    now = now === undefined ? await tab.evaluate(() => Date.now()) : now + ms;
+    await fetch(fixture + 'api/v1/fixture/clock', { method: 'PUT', body: JSON.stringify({ now }), signal: AbortSignal.timeout(10_000) });
+  };
   const until = async (test: () => Promise<unknown>, timeout = 30_000, what = 'condition') => {
     for (let waited = 0; ; waited += 50) {
       const value = await test();
       if (value) return value;
       if (waited >= timeout) throw new Error(`${what} not met after ${timeout} ms of page time`);
-      await tab.clock.runFor(50);
+      await move(50);
       // The server's jobs run on its own clock, so every step of page time also gives it a little real time.
       await sleep(10);
     }
@@ -102,7 +150,7 @@ function driven(tab: Page): Page {
   const acting = (name: string) => async (...args: unknown[]) => {
     // Vue drops a click that bubbles to a handler attached at the same moment, and on a stopped clock a button drawn
     // by the click before has the same moment as this one, so the clock moves on by a millisecond first.
-    if (name === 'click' || name === 'dblclick') await tab.clock.runFor(1);
+    if (name === 'click' || name === 'dblclick') await move(1);
     const given = (args[OPTIONS_AT[name]!] as { timeout?: number } | undefined) || {};
     const target = tab.locator(args[0] as string).first();
     // textContent and the like also read hidden elements, so for them being there is enough.
@@ -110,7 +158,7 @@ function driven(tab: Page): Page {
     let there = false;
     for (let waited = 0; !(there = !!(needsSight ? await target.isVisible() : await target.count())); waited += 250) {
       if (waited >= (given.timeout ?? 30_000)) break;
-      await tab.clock.runFor(250);
+      await move(250);
     }
     const fn = (tab as unknown as Record<string, (...a: unknown[]) => Promise<unknown>>)[name]!.bind(tab);
     for (let waited = 0; ; waited += 250) {
@@ -122,29 +170,62 @@ function driven(tab: Page): Page {
       } catch (e) {
         if ((e as Error).name !== 'TimeoutError' || !there || waited >= (given.timeout ?? 30_000)) throw e;
       }
-      await tab.clock.runFor(250);
+      await move(250);
     }
   };
   // A script that returns at once settles long before the first pause; one that waits for a page timer gets the
   // clock moved on until it settles.
-  const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
-  const evaluate = async (fn: unknown, arg?: unknown) => {
+  const once = async (fn: unknown, arg?: unknown) => {
     let settled = false;
     const result = tab.evaluate(fn as never, arg).finally(() => { settled = true; });
     result.catch(() => {});
     await Promise.race([result, sleep(200)]);
     while (!settled) {
-      await tab.clock.runFor(50);
+      await move(50);
       await Promise.race([result, sleep(30)]);
     }
     return result;
   };
+  // The prototype draws at once; the app draws on the next tick and reads from its server, so a script that reads the
+  // page right after changing it finds nothing yet. Such a script runs again a little later, for up to a second.
+  const evaluate = async (fn: unknown, arg?: unknown) => {
+    for (let tries = 0; ; tries++) {
+      try {
+        return await once(fn, arg);
+      } catch (e) {
+        if (tries >= 20 || !/Cannot read properties of (null|undefined)/.test(String((e as Error).message))) throw e;
+        await settle();
+        await move(50);
+      }
+    }
+  };
+  // A person's keys come apart in time, so a timer a key handler sets for right after it runs before the next key.
+  const keyboard = new Proxy(tab.keyboard, {
+    get: (k, key) => {
+      const v = Reflect.get(k, key);
+      return typeof v !== 'function' ? v : async (...args: unknown[]) => {
+        await move(1);
+        return v.apply(k, args);
+      };
+    },
+  });
   const own: Partial<Page> = {
     ...Object.fromEntries(Object.keys(OPTIONS_AT).map((name) => [name, acting(name)])),
+    keyboard,
     evaluate: evaluate as never,
+    // The prototype has its globals when the page has loaded, the app once the shim has read the fixture.
+    reload: (async (o?: Parameters<Page['reload']>[0]) => {
+      const got = await tab.reload(o);
+      await until(() => tab.evaluate('typeof CC !== "undefined"'), 60_000, 'the page after a reload');
+      return got;
+    }) as never,
+    // In steps, so what the server reports during the wait reaches the page while there is still page time to use it.
     waitForTimeout: async (ms: number) => {
       await settle();
-      await tab.clock.runFor(ms);
+      for (let left = ms; left > 0; left -= 250) {
+        await move(Math.min(left, 250));
+        await sleep(15);
+      }
       await settle();
     },
     waitForFunction: ((fn: () => unknown, arg?: unknown, o?: { timeout?: number }) =>
@@ -157,13 +238,14 @@ function driven(tab: Page): Page {
         return state === 'visible' ? visible : state === 'hidden' ? !visible : state === 'detached' ? !there : there;
       }, o?.timeout, selector)) as never,
   };
-  return new Proxy(tab, {
+  const page = new Proxy(tab, {
     get: (t, key) => {
       if (key in own) return own[key as keyof Page];
       const v = Reflect.get(t, key);
       return typeof v === 'function' ? v.bind(t) : v;
     },
   });
+  return { page, move };
 }
 
 // CSS transitions, animations and smooth scrolling run on the browser's own clock, which the page clock does not
@@ -207,7 +289,7 @@ const stillMotion = () => {
   });
 };
 
-async function runSide(browser: Browser, file: string, page: string, dir: string, preview: boolean): Promise<Side> {
+async function runSide(browser: Browser, file: string, page: string, dir: string, preview: boolean, setup?: string): Promise<Side> {
   rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
   const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 1, locale: 'de-AT', timezoneId: 'Europe/Vienna' });
@@ -231,11 +313,16 @@ async function runSide(browser: Browser, file: string, page: string, dir: string
   // Step files print their findings with console.log; those lines are what both pages have to agree on.
   console.log = (...args: unknown[]) => { lines.push(format(...args)); };
   try {
-    await tab.goto(urlOf(page));
-    const drive = driven(tab);
+    // A fresh fixture server compiles the app on the first request, which takes a while on a busy machine.
+    await tab.goto(urlOf(page), { timeout: 120_000 });
+    const { page: drive, move } = driven(tab, /^https?:/.test(page) ? new URL('/', page).href : undefined);
     // The prototype has CC once its script ran, the app once the shim has read the fixture; a preview page has none.
     if (!preview) await drive.waitForFunction('typeof CC !== "undefined"');
-    await tab.clock.runFor(800);
+    await move(800);
+    if (setup) {
+      await drive.evaluate(setup);
+      await drive.waitForTimeout(100);
+    }
     delete fromPrototype.cache[fromPrototype.resolve(file)];
     const steps = fromPrototype(file);
     await Promise.race([steps(drive, shot), new Promise((_, no) => { timer = setTimeout(() => no(new Error('timed out')), SIDE_TIMEOUT); })]);
@@ -252,6 +339,13 @@ async function runSide(browser: Browser, file: string, page: string, dir: string
   return { lines, shots, errors, ms: Date.now() - started };
 }
 
+// A part of a line the prototype prints differently from run to run, such as a colour that walks with time, has a
+// rule in allow.json; the golden output is held against the prototype with those parts left out.
+const normalised = (steps: string, text: string) => {
+  const rules = (allowFor(steps).lines || []).map((r) => new RegExp(r.pattern, 'g'));
+  return text.split('\n').map((l) => rules.reduce((x, re) => x.replace(re, '…'), l)).join('\n');
+};
+
 function compare(steps: string, a: Side, b: Side, dir: string): Pick<Result, 'problems' | 'allowed'> {
   const allow = allowFor(steps);
   const problems: string[] = [], allowed: string[] = [];
@@ -261,8 +355,14 @@ function compare(steps: string, a: Side, b: Side, dir: string): Pick<Result, 'pr
   const sameErrors = a.errors.join('\n') === b.errors.join('\n');
   if (allow.stale && sameErrors && a.errors.length) allowed.push(`both sides stop the same way, ${allow.stale}`);
   else {
-    for (const e of a.errors) problems.push(`a: ${e}`);
-    for (const e of b.errors) problems.push(`b: ${e}`);
+    const known = (e: string) => (allow.errors || []).find((r) => new RegExp(r.pattern).test(e));
+    for (const [side, errs] of [['a', a.errors], ['b', b.errors]] as const) {
+      for (const e of errs) {
+        const rule = known(e);
+        if (rule) allowed.push(`${side}: ${e.slice(0, 80)}, ${rule.why}`);
+        else problems.push(`${side}: ${e}`);
+      }
+    }
   }
 
   const n = Math.max(a.lines.length, b.lines.length);
@@ -302,7 +402,8 @@ async function worker(file: string) {
   try {
     const own = allowFor(steps).page;
     const a = await runSide(browser, file, own ? join(prototype, 'dist', own) : opt.a, join(dir, 'a'), !!own);
-    const b = await runSide(browser, file, own ? join(prototype, 'dist', own) : opt.b, join(dir, 'b'), !!own);
+    const server = !own && opt.b === 'fixture' ? await fixtureServer() : undefined;
+    const b = await runSide(browser, file, own ? join(prototype, 'dist', own) : server?.url || opt.b, join(dir, 'b'), !!own, allowFor(steps).setup?.script).finally(() => server?.stop());
     const result: Result = { steps, a, b, ...compare(steps, a, b, dir) };
     const golden = join(here, 'golden', steps + '.txt');
     const text = a.lines.join('\n') + '\n';
@@ -310,7 +411,7 @@ async function worker(file: string) {
       mkdirSync(join(here, 'golden'), { recursive: true });
       writeFileSync(golden, text);
     } else if (!existsSync(golden)) result.problems.push('no golden output yet, run with --update');
-    else if (readFileSync(golden, 'utf8') !== text) result.problems.push('the prototype prints other lines than its golden output, check them and run with --update');
+    else if (normalised(steps, readFileSync(golden, 'utf8')) !== normalised(steps, text)) result.problems.push('the prototype prints other lines than its golden output, check them and run with --update');
     writeFileSync(join(dir, 'result.json'), JSON.stringify(result, null, 1));
     process.send!(result);
   } finally {
@@ -319,13 +420,32 @@ async function worker(file: string) {
   process.exit(0);
 }
 
+// The first page the app serves makes Vite bundle the dependencies, and it reloads the page when it is done.
+async function warmUp() {
+  const { chromium } = fromPrototype('playwright') as typeof import('playwright');
+  const server = await fixtureServer(true);
+  const browser = await chromium.launch();
+  try {
+    const tab = await browser.newPage();
+    await tab.goto(server.url);
+    await tab.waitForFunction('document.documentElement.dataset.e2e === "ready"', null, { timeout: 120_000 });
+  } finally {
+    await browser.close();
+    server.stop();
+  }
+}
+
 async function main() {
   if (opt.a.endsWith('cannoncommander.html') && !existsSync(opt.a)) execFileSync(process.execPath, [join(prototype, 'build.mjs')], { stdio: 'inherit' });
-  const wanted = opt.steps.split(',').filter(Boolean).map((s) => s.replace(/^steps-/, '').replace(/\.cjs$/, ''));
+  // A step file given by its path runs too, which helps to look into one difference on its own.
+  const given = opt.steps.split(',').filter(Boolean);
+  const loose = given.filter((s) => s.endsWith('.cjs') && existsSync(s)).map((s) => resolve(s));
+  const wanted = given.map((s) => s.replace(/^steps-/, '').replace(/\.cjs$/, ''));
   const files = readdirSync(tools).filter((f) => /^steps-.+\.cjs$/.test(f))
-    .filter((f) => !wanted.length || wanted.includes(f.slice(6, -4))).sort().map((f) => join(tools, f));
+    .filter((f) => !given.length || wanted.includes(f.slice(6, -4))).sort().map((f) => join(tools, f)).concat(loose);
   if (!files.length) throw new Error('no step files match ' + opt.steps);
   mkdirSync(opt.out, { recursive: true });
+  if (opt.b === 'fixture') await warmUp();
   console.log(`parity: ${files.length} step files, a ${opt.a}, b ${opt.b}${opt.a === opt.b ? ' (the prototype against itself)' : ''}`);
 
   const results: Result[] = [];

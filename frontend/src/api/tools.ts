@@ -47,6 +47,10 @@ export interface RenameMask { name: string; ext: string; start: number; step: nu
 export type RenameError = 'empty' | 'invalid' | 'exists' | 'duplicate';
 export interface RenameRow { path: string; old: string; new: string; error?: RenameError; missing?: string[] }
 export interface RenameBatchResult { rows: RenameRow[]; changed: number; errors: number; done: boolean; undo?: string }
+// A saved layout of both panels: the folders of their tabs, the active tab of each and the columns of the list.
+export interface ProfileInput { name: string; dual: boolean; columns: string[]; panels: { cur: number; tabs: string[] }[] }
+export interface Profile extends ProfileInput { id: number }
+
 export interface RenamePreset { name: string; options: Partial<Omit<RenameMask, 'start' | 'step'>> }
 
 export interface CleanupFind { path: string; note?: string; size?: number; to?: string }
@@ -123,6 +127,9 @@ export const tools = {
     body<RenameBatchResult>('/fs/rename/batch', { ...json('POST', req), signal }),
   presets: async () => (await body<{ items: RenamePreset[] }>('/me/rename-presets')).items,
   savePresets: (items: RenamePreset[]) => call('/me/rename-presets', json('PUT', { items })),
+  profiles: async () => (await body<{ items: Profile[] }>('/me/profiles')).items,
+  saveProfile: (p: ProfileInput) => body<Profile>('/me/profiles', json('POST', p)),
+  deleteProfile: (id: number) => call(`/me/profiles/${id}`, { method: 'DELETE' }),
 
   symlink: (target: string, path: string) => body<{ path: string; undo?: string }>('/fs/link', json('POST', { target, path })),
   // Answers how many entries changed, or with recursive the job that changes them.

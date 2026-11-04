@@ -54,7 +54,7 @@ function remove(r: Remote) {
 <template>
   <Card :title="c('remotes.title')">
     <div v-if="remotes.length" class="a-list">
-      <ARow v-for="r in remotes" :key="r.name" :name="r.name" :tip="r.error ? c('remotes.mountFailed', { error: r.error }) : null" data-open @click="edit(r)">
+      <ARow v-for="(r, i) in remotes" :key="r.name" :name="r.name" :tip="r.error ? c('remotes.mountFailed', { error: r.error }) : null" :data-open="i" @click="edit(r)">
         <template #tile><G :n="typeOf(r.type).g" /></template>
         <template #badges>
           <span class="pill">{{ typeOf(r.type).label }}</span><span class="pill mono">{{ r.mount }}</span>
@@ -63,13 +63,13 @@ function remove(r: Remote) {
         </template>
         <template #acts>
           <BareBtn :g="r.mounted ? 'IconUnlink' : 'IconLink'" :tip="r.mounted ? c('remotes.unmount') : c('remotes.mount')" @click="mount(r)" />
-          <BareBtn g="IconPencil" :tip="c('edit')" @click="edit(r)" />
+          <BareBtn g="IconPencil" :tip="c('edit')" :data-open="i" @click="edit(r)" />
           <BareBtn g="IconTrash" :tip="c('remove')" @click="remove(r)" />
         </template>
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconCloud" /><div>{{ c('remotes.none') }}</div></div>
-    <div class="a-foot"><Btn :label="c('remotes.add')" g="IconAdd" @click="edit(null)" /></div>
+    <div class="a-foot"><Btn data-add :label="c('remotes.add')" g="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('remotes.mounting')">
     <Frow :label="c('remotes.automount')" :tip="c('remotes.automountTip')"><Sw v-model="automount" /></Frow>

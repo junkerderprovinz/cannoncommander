@@ -30,4 +30,7 @@ const foldersFirst = computed({ get: () => prefs.foldersFirst !== false, set: (o
     <Frow :label="c('list.fkeys')" :tip="c('list.fkeysTip')"><Sw v-model="P.fkeys" /></Frow>
     <Frow :label="c('list.quickview')" :tip="c('list.quickviewTip')"><Sw id="a-qv" v-model="quickview" /></Frow>
   </Card>
+  <Card :title="c('list.refresh')">
+    <Frow :label="c('list.live')" :tip="c('list.liveTip')"><Sw v-model="P.liveRefresh" data-pref="liveRefresh" /></Frow>
+  </Card>
 </template>

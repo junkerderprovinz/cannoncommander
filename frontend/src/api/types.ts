@@ -18,6 +18,8 @@ export interface FsItem {
   nlink?: number;
   uid?: number;
   gid?: number;
+  // A folder's poster.jpg, folder.jpg or cover.jpg, which the card views show for it.
+  picture?: string;
 }
 export interface Volume { path: string; label?: string; free: number; total: number }
 export interface FsList { path: string; items: FsItem[]; volume?: Volume }

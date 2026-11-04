@@ -1,6 +1,8 @@
 // The settings pages, the account and the labels in the shape of /api/v1, as the contracts in
 // backend/internal/*/openapi.yaml describe it, with the prototype's made-up people and sources. It keeps changes in
 // memory, so a page can be clicked through as it will work against the server. Share links live in fixture-tools.js.
+import { PASSWORDS } from './fixture-auth.js';
+import { clock } from './fixture-clock.js';
 import { createFixture } from './fixture.js';
 
 const MIN = 60000, HOUR = 60 * MIN, DAY = 24 * HOUR, KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
@@ -38,7 +40,7 @@ const codes = () => Array.from({ length: 8 }, () => `${randomOf('ABCDEFGHJKLMNPQ
 const b64url = (n) => randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_', n);
 
 function state() {
-  const now = Date.now();
+  const now = clock.now();
   const person = (id, name, full, role, scope, groups, last, more = {}) => ({
     id, name, full, role, scope, groups, loginMethod: 'password', twofa: false, passkeys: 0, last, pwChanged: null, ...more,
   });
@@ -183,10 +185,10 @@ export function settingsFixtureMiddleware() {
     ['GET', '/me', () => ({ ...wireUser(me()), recovery: S.recovery, lockPassword: false })],
     ['PUT', '/me/password', (b) => {
       if (!b.next || b.next.length < 12) return [400, 'the password needs 12 characters'];
-      if (b.current !== 'cannoncommander') return [403, 'the current password is wrong'];
+      if (!PASSWORDS.includes(b.current)) return [403, 'the current password is wrong'];
       const ended = S.sessions.filter((s) => !s.current).length;
       S.sessions = S.sessions.filter((s) => s.current);
-      me().pwChanged = Date.now();
+      me().pwChanged = clock.now();
       return { ended };
     }],
     ['GET', '/me/sessions', () => ({ items: S.sessions.map((s) => ({ ...s, created: iso(s.created), seen: iso(s.seen) })) })],
@@ -194,7 +196,7 @@ export function settingsFixtureMiddleware() {
     ['GET', '/me/tokens', () => ({ items: S.tokens.map((t) => ({ ...t, created: iso(t.created), last: iso(t.last), expires: iso(t.expires) })) })],
     ['POST', '/me/tokens', (b) => {
       if (S.tokens.some((t) => t.name === b.name)) return [409, 'a token with this name exists'];
-      const t = { id: 't' + Date.now(), name: b.name, created: Date.now(), last: null, rights: b.rights, expires: b.days ? Date.now() + b.days * DAY : null };
+      const t = { id: 't' + clock.now(), name: b.name, created: clock.now(), last: null, rights: b.rights, expires: b.days ? clock.now() + b.days * DAY : null };
       S.tokens.push(t);
       return [201, { ...t, created: iso(t.created), last: null, expires: iso(t.expires), secret: 'cc_' + b64url(40) }];
     }],
@@ -210,7 +212,7 @@ export function settingsFixtureMiddleware() {
           authenticatorSelection: { residentKey: 'preferred', userVerification: 'preferred' },
         } } };
       }
-      const p = { id: 'p' + Date.now(), name: b.name, origin: req.headers.host || host, created: Date.now(), last: null };
+      const p = { id: 'p' + clock.now(), name: b.name, origin: req.headers.host || host, created: clock.now(), last: null };
       S.passkeys.push(p);
       me().passkeys = S.passkeys.length;
       return [201, { passkey: { ...p, created: iso(p.created) } }];
@@ -234,7 +236,7 @@ export function settingsFixtureMiddleware() {
     ['POST', '/admin/users', (b) => {
       if (S.users.some((u) => u.name === b.name)) return [409, 'the login name is taken'];
       if (!b.password || b.password.length < 12) return [400, 'the password needs 12 characters'];
-      const u = { id: String(Date.now()), name: b.name, full: b.full || b.name, role: b.role || 'user', scope: b.scope, groups: b.groups || [], loginMethod: 'password', twofa: false, passkeys: 0, last: null, pwChanged: Date.now() };
+      const u = { id: String(clock.now()), name: b.name, full: b.full || b.name, role: b.role || 'user', scope: b.scope, groups: b.groups || [], loginMethod: 'password', twofa: false, passkeys: 0, last: null, pwChanged: clock.now() };
       S.users.push(u);
       syncGroups(u.name, u.groups);
       return [201, wireUser(u)];
@@ -247,7 +249,7 @@ export function settingsFixtureMiddleware() {
       if (was === ME && b.role && b.role !== 'admin') return [409, 'you cannot give up your own admin role'];
       if (b.name && b.name !== was) S.rules.forEach((r) => { if (r.who === was) r.who = b.name; });
       const { password, ...rest } = b;
-      Object.assign(u, rest, password ? { pwChanged: Date.now() } : {});
+      Object.assign(u, rest, password ? { pwChanged: clock.now() } : {});
       if (b.groups || b.name) syncGroups(u.name, u.groups, was);
       return wireUser(u);
     }],
@@ -315,9 +317,9 @@ export function settingsFixtureMiddleware() {
       if (!names.length) return [400, b.source ? `the source ${b.source} has no index` : 'no source has an index'];
       for (const name of names) {
         S.reading.add(name);
-        setTimeout(() => { S.reading.delete(name); S.index[name].last = Date.now(); }, 2500);
+        clock.setTimeout(() => { S.reading.delete(name); S.index[name].last = clock.now(); }, 2500);
       }
-      return [202, { id: 'j' + Date.now(), kind: 'reindex', name: names.length === 1 ? names[0] : 'Alle Quellen', state: 'queued', owner: ME, createdAt: iso(Date.now()) }];
+      return [202, { id: 'j' + clock.now(), kind: 'reindex', name: names.length === 1 ? names[0] : 'Alle Quellen', state: 'queued', owner: ME, createdAt: iso(clock.now()) }];
     }],
     ['GET', '/admin/app', app],
     ['PUT', '/admin/app', (b) => {
@@ -333,10 +335,10 @@ export function settingsFixtureMiddleware() {
       delete S.app.restartNeeded;
       return app();
     }],
-    ['POST', '/admin/app/restart', () => { S.started = Date.now(); S.running = JSON.stringify(S.sources); S.booted = { autoCheck: S.app.updates.autoCheck }; return [202, {}]; }],
+    ['POST', '/admin/app/restart', () => { S.started = clock.now(); S.running = JSON.stringify(S.sources); S.booted = { autoCheck: S.app.updates.autoCheck }; return [202, {}]; }],
     ['POST', '/admin/app/export', (b) => {
       if (isFile(b.path)) return [409, 'there is a file of that name already'];
-      S.exports.push({ path: b.path, time: Date.now() });
+      S.exports.push({ path: b.path, time: clock.now() });
       return [201, { path: b.path, size: 14 * KB }];
     }],
     ['POST', '/admin/app/import', (b) => (isFile(b.path) ? { sections: ['sources', 'app', 'remotes'], notes: [], restartNeeded: true } : [404, 'path not found'])],
@@ -374,9 +376,9 @@ export function settingsFixtureMiddleware() {
       return wireRemote(r);
     }],
     ['POST', '/remotes/test', (b) => (b.params?.host === 'nirgends' ? { ok: false, entries: 0, error: 'dial tcp: no such host' } : { ok: true, entries: 12, total: 4 * TB, used: TB, free: 3 * TB })],
-    ['POST', '/remotes/oauth', (b) => (b.token.trim().startsWith('{') ? { token: b.token.trim(), expiry: iso(Date.now() + HOUR) } : [400, 'this is not a token from rclone authorize'])],
+    ['POST', '/remotes/oauth', (b) => (b.token.trim().startsWith('{') ? { token: b.token.trim(), expiry: iso(clock.now() + HOUR) } : [400, 'this is not a token from rclone authorize'])],
     ['GET', '/system', () => ({
-      version: '0.1.0', commit: 'f00dfeed', go: 'go1.27.0', os: 'linux', arch: 'amd64', started: iso(S.started), uptime: Math.round((Date.now() - S.started) / 1000),
+      version: '0.1.0', commit: 'f00dfeed', go: 'go1.27.0', os: 'linux', arch: 'amd64', started: iso(S.started), uptime: Math.round((clock.now() - S.started) / 1000),
       tools: {
         ffmpeg: { available: true, path: '/usr/bin/ffmpeg', version: '7.1.1' }, ffprobe: { available: true, path: '/usr/bin/ffprobe', version: '7.1.1' },
         mutool: { available: true, path: '/usr/bin/mutool', version: '1.26.3' }, '7zz': { available: true, path: '/usr/bin/7zz', version: '24.09' },
@@ -391,7 +393,7 @@ export function settingsFixtureMiddleware() {
     ['GET', '/labels', () => lists()],
     ['PUT', '/labels/colours', (b) => {
       const kept = new Set();
-      S.colours = b.colours.map((c) => { const id = c.id || 'c' + Date.now() + Math.random().toString(36).slice(2, 6); kept.add(id); return { id, name: c.name, hex: c.hex }; });
+      S.colours = b.colours.map((c) => { const id = c.id || 'c' + clock.now() + Math.random().toString(36).slice(2, 6); kept.add(id); return { id, name: c.name, hex: c.hex }; });
       for (const l of Object.values(S.labels)) if (l.colour && !kept.has(l.colour)) delete l.colour;
       tidy();
       return lists();
@@ -429,7 +431,7 @@ export function settingsFixtureMiddleware() {
       const p = q.get('path');
       if (p !== APPDATA && p !== EXPORTS) return undefined;
       const item = (name, dir, t, size = 0) => ({ name, dir, size, mtime: iso(t), mode: dir ? '0775' : '0664', owner: 'nobody', group: 'users' });
-      if (p === APPDATA) return { path: p, items: [item('exports', true, Date.now() - 3 * DAY), item('config.yaml', false, Date.now() - 3 * DAY, 4 * KB), item('cannoncommander.db', false, Date.now() - 10 * MIN, 22 * MB)] };
+      if (p === APPDATA) return { path: p, items: [item('exports', true, clock.now() - 3 * DAY), item('config.yaml', false, clock.now() - 3 * DAY, 4 * KB), item('cannoncommander.db', false, clock.now() - 10 * MIN, 22 * MB)] };
       return { path: p, items: S.exports.map((e) => item(split(e.path)[1], false, e.time, 14 * KB)) };
     }],
   ];

@@ -3,6 +3,7 @@
 // server does, so copying, conflicts, pausing and the queue can be tried without a server.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { clock } from './fixture-clock.js';
 import { toolsFixture } from './fixture-tools.js';
 import { sharedFixture } from './fixture.js';
 import { unraidFixture } from './fixture-unraid.js';
@@ -38,7 +39,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
 
   const clients = new Set();
   function send(type, data, topic) {
-    const frame = { id: ++eventId, type, time: iso(Date.now()), ...(topic ? { topic } : {}), ...(data === undefined ? {} : { data }) };
+    const frame = { id: ++eventId, type, time: iso(clock.now()), ...(topic ? { topic } : {}), ...(data === undefined ? {} : { data }) };
     for (const res of clients) res.write(`id: ${frame.id}\nevent: ${type}\ndata: ${JSON.stringify(frame)}\n\n`);
   }
   const changed = (...paths) => { for (const p of new Set(paths.filter(Boolean))) send('fs.changed', { paths: [p] }, 'fs:' + p); };
@@ -54,7 +55,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     let n = FS.root;
     for (const part of FS.split(path)) {
       let next = FS.kids(n).find((k) => k.name === part && k.dir);
-      if (!next) { next = { name: part, dir: true, children: [], time: Date.now(), owner: 'nobody', group: 'users', mode: '0775' }; n.children.push(next); }
+      if (!next) { next = { name: part, dir: true, children: [], time: clock.now(), owner: 'nobody', group: 'users', mode: '0775' }; n.children.push(next); }
       n = next;
     }
     return n;
@@ -170,7 +171,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
   // Undo steps; each knows how to put the tree back.
   const steps = [];
   const pushStep = (step, revert) => {
-    const s = { id: nextId('u'), at: iso(Date.now()), count: 1, ...step };
+    const s = { id: nextId('u'), at: iso(clock.now()), count: 1, ...step };
     steps.unshift({ ...s, revert });
     steps.length = Math.min(steps.length, 30);
     send('undo.changed', { count: steps.length });
@@ -183,7 +184,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     deletedAt: iso(e.deleted), expiresAt: iso(e.deleted + 30 * 86400000) }));
   const toTrash = (n, path) => {
     const e = { id: nextId('t'), name: n.name, origin: path, from: FS.parent(path), dir: !!n.dir, size: Math.round(FS.totalSize(n)), files: countOf(n), by: 'jdp',
-      deletedAt: iso(Date.now()), expiresAt: iso(Date.now() + 30 * 86400000), node: n };
+      deletedAt: iso(clock.now()), expiresAt: iso(clock.now() + 30 * 86400000), node: n };
     trash.unshift(e);
     send('trash.changed', {});
     return e;
@@ -271,13 +272,13 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       id: nextId('j'), kind, owner: 'jdp', state: 'queued', position: open().length, name: extra.name ?? base(paths?.[0] || ''), count: extra.count ?? paths?.length ?? 0,
       dest: extra.dest ?? params.dest, totalBytes: Math.round(kind === 'trash' || kind === 'delete' || kind === 'restore' || kind === 'emptyTrash' || kind === 'undo' ? 0 : total),
       doneBytes: 0, totalFiles: extra.files ?? nodes.reduce((a, n) => a + countOf(n), 0), doneFiles: 0, rate: 0, left: null, cap: extra.cap || 0,
-      waitForParity: !!extra.waitForParity, failedItems: 0, createdAt: iso(Date.now()),
-      _params: params, _apply: extra.apply, _names: extra.names, _big: total >= BIG, _decisions: { ...(params.decisions || {}) }, _rule: params.rule || 'ask',
+      waitForParity: !!extra.waitForParity, failedItems: 0, createdAt: iso(clock.now()),
+      _params: params, _apply: extra.apply, _names: extra.names, _big: total >= BIG, _speed: extra.speed || 1, _decisions: { ...(params.decisions || {}) }, _rule: params.rule || 'ask',
     };
     if (kind === 'copy' || kind === 'move') j._ask = (params.sources || []).filter((p) => { const n = FS.nodeAt(p), d = dirAt(params.dest); return n && d && taken(d, n.name); }).map((p) => base(p));
     jobs.push(j);
     publish('job.created', j);
-    timer ||= setInterval(tick, TICK);
+    timer ||= clock.setInterval(tick, TICK);
     timer.unref?.();
     // A job that moves no bytes, such as one into the trash, ends at once, as it does on a server for a handful of
     // names; the prototype's own deletes take no time either, so both reach the same point after the same wait.
@@ -285,8 +286,10 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     return j;
   }
 
+  // The bytes move LAPSE times faster than the clock, so a finished job tells the time it would have taken a server.
+  const endOf = (j) => { const start = Date.parse(j.createdAt); return iso(start + (clock.now() - start) * LAPSE); };
   const held = (j) => settings.parityWait && parity.busy && ['copy', 'move'].includes(j.kind) && (j.waitForParity || j._big);
-  function tick() {
+  function tick(advanceJobs = true) {
     const live = open().filter((j) => j.state === 'queued' || j.state === 'running');
     const free = live.filter((j) => !held(j));
     const moving = settings.mode === 'serial' ? free.slice(0, 1) : free;
@@ -296,11 +299,11 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       const was = [j.state, j.place, j.reason].join();
       if (moving.includes(j)) j.state = 'running';
       else { j.state = 'queued'; j.rate = 0; j.left = null; j.place = ++place; if (held(j)) j.reason = 'parity'; else delete j.reason; }
-      if (j.state === 'running') { delete j.place; delete j.reason; j.startedAt ||= iso(Date.now()); }
+      if (j.state === 'running') { delete j.place; delete j.reason; j.startedAt ||= iso(clock.now()); }
       if (was !== [j.state, j.place, j.reason].join()) publish('job.state', j);
     }
-    for (const j of moving) advance(j, share, moving.length);
-    if (!open().some((j) => j.state === 'queued' || j.state === 'running')) { clearInterval(timer); timer = null; }
+    if (advanceJobs) for (const j of moving) advance(j, share, moving.length);
+    if (!open().some((j) => j.state === 'queued' || j.state === 'running')) { clock.clear(timer); timer = null; }
   }
 
   function advance(j, share, n) {
@@ -319,7 +322,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     }
     const caps = [j.cap || Infinity, settings.cap ? settings.cap / n : Infinity];
     if (j.totalBytes) {
-      j.rate = Math.min((150 + rnd() * 110) * MB * share, ...caps);
+      j.rate = Math.min((150 + rnd() * 110) * MB * j._speed * share, ...caps);
       j.doneBytes = Math.min(j.totalBytes, j.doneBytes + (j.rate * TICK / 1000) * LAPSE);
       j.left = (j.totalBytes - j.doneBytes) / j.rate;
       j.doneFiles = Math.min(j.totalFiles, Math.floor((j.doneBytes / j.totalBytes) * j.totalFiles));
@@ -331,9 +334,9 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     if (!finished) return;
     try {
       const undo = run(j);
-      Object.assign(j, { state: 'done', rate: 0, left: null, doneBytes: j.totalBytes, doneFiles: j.totalFiles, finishedAt: iso(Date.now()), ...(undo ? { undo } : {}) });
+      Object.assign(j, { state: 'done', rate: 0, left: null, doneBytes: j.totalBytes, doneFiles: j.totalFiles, finishedAt: endOf(j), ...(undo ? { undo } : {}) });
     } catch (e) {
-      Object.assign(j, { state: 'failed', rate: 0, left: null, error: String(e.message || e), failedItems: j.count, finishedAt: iso(Date.now()) });
+      Object.assign(j, { state: 'failed', rate: 0, left: null, error: String(e.message || e), failedItems: j.count, finishedAt: endOf(j) });
     }
     delete j.current;
     publish('job.state', j);
@@ -354,12 +357,27 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     }
     if (j.kind === 'gather' || j.kind === 'scatter') {
       const plan = gatherPlan({ path: p.path, mode: j.kind, disk: p.disk });
+      const share = p.path.slice('/mnt/user/'.length), touched = new Set(), dirs = new Set();
       for (const m of plan?.moves || []) {
+        const from = `/mnt/${m.from}/${share}/${m.rel}`, to = `/mnt/${m.to}/${share}/${m.rel}`;
+        if (FS.nodeAt(to)) continue;
+        const copy = detach(from);
+        if (copy) ensureDir(FS.parent(to)).children.push(copy);
+        dirs.add(FS.parent(from)).add(FS.parent(to));
         FS.FREE['/mnt/' + m.from] += m.n.size || 0;
         FS.FREE['/mnt/' + m.to] -= m.n.size || 0;
         m.n.dev = m.to;
+        touched.add(m.from);
       }
-      changed(p.path);
+      // unbalanced leaves no empty folders behind on the disk it emptied.
+      const prune = (path) => {
+        const n = dirAt(path);
+        if (!n) return;
+        FS.kids(n).filter((k) => k.dir && !k.link).forEach((k) => prune(FS.join(path, k.name)));
+        if (!FS.kids(n).length) { detach(path); dirs.add(FS.parent(path)); }
+      };
+      touched.forEach((dev) => prune(`/mnt/${dev}/${share.split('/')[0]}`));
+      changed(p.path, ...dirs);
       return undefined;
     }
     return undefined;
@@ -369,19 +387,28 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     const target = dirAt(p.dest);
     if (!target) throw new Error('Den Zielordner gibt es nicht mehr');
     const placed = [], replaced = [], moved = [];
-    for (const src of p.sources) {
+    for (const [i, src] of p.sources.entries()) {
       const n = FS.nodeAt(src);
       if (!n) continue;
-      const old = FS.kids(target).find((k) => k.name === n.name);
-      let choice = old ? j._decisions[n.name] || (j._rule === 'ask' ? 'both' : j._rule) : 'new';
+      const name = p.names?.[i] || n.name;
+      const old = FS.kids(target).find((k) => k.name === name);
+      let choice = old ? j._decisions[name] || (j._rule === 'ask' ? 'both' : j._rule) : 'new';
       if (choice === 'newer') choice = n.time > old.time ? 'replace' : 'skip';
       if (choice === 'skip') continue;
-      const copy = clone(n);
-      if (p.keepAttrs === false) Object.assign(copy, { owner: 'nobody', group: 'users', time: Date.now() });
-      if (choice === 'both') copy.name = freeName(target, n.name);
+      const copy = { ...clone(n), name };
+      if (p.keepAttrs === false) Object.assign(copy, { owner: 'nobody', group: 'users', time: clock.now() });
+      if (choice === 'both') copy.name = freeName(target, name);
       else if (old) { target.children = target.children.filter((k) => k !== old); replaced.push(toTrash(old, FS.join(p.dest, old.name))); }
       target.children.push(copy);
       placed.push(copy);
+      // A file that lands on a disk of a share shows up under the user share as lying there.
+      const w = where(p.dest);
+      if (w?.share && w.vol !== 'user') {
+        for (const [, path] of filesOf(copy, FS.join(p.dest, copy.name))) {
+          const twin = FS.nodeAt('/mnt/user/' + path.slice(`/mnt/${w.vol}/`.length));
+          if (twin) twin.dev = w.vol;
+        }
+      }
       if (j.kind === 'move') moved.push([FS.parent(src), detach(src)]);
     }
     changed(p.dest, ...moved.map(([dir]) => dir));
@@ -404,7 +431,9 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     if (old && rule === 'skip') { u.state = 'skipped'; return; }
     if (old && rule === 'both') name = freeName(dir, name);
     else if (old) { dir.children = dir.children.filter((k) => k !== old); toTrash(old, u.path); }
-    dir.children.push({ name, size: u.size, time: Date.parse(u.mtime || '') || Date.now(), owner: 'nobody', group: 'users', mode: '0664' });
+    // A small file keeps what was sent, so opening a pasted note shows it.
+    const text = u.size < 64 * KB && u.chunks ? { text: Buffer.concat(u.chunks).toString() } : {};
+    dir.children.push({ name, size: u.size, time: Date.parse(u.mtime || '') || clock.now(), owner: 'nobody', group: 'users', mode: '0664', ...text });
     u.path = FS.join(FS.parent(u.path), name);
     u.state = 'done';
     changed(FS.parent(u.path));
@@ -421,7 +450,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
   const raw = (req) => new Promise((resolve) => { const parts = []; req.on('data', (c) => parts.push(c)); req.on('end', () => resolve(Buffer.concat(parts))); });
   const bodyOf = async (req) => { try { const b = (await raw(req)).toString('utf8'); return b ? JSON.parse(b) : {}; } catch { return {}; } };
   const jobAt = (id) => jobs.find((j) => j.id === id);
-  const resume = () => { timer ||= setInterval(tick, TICK); timer.unref?.(); tick(); };
+  const resume = () => { timer ||= clock.setInterval(tick, TICK); timer.unref?.(); tick(false); };
   const unraidRoutes = unraidFixture({ fx, unraid, parity, send, createJob, view, filesOf, where, ruleOf, allocatorOf: (a) => ALLOCATOR[a], resume });
 
   const kinds = {};
@@ -430,9 +459,29 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     return Array.isArray(own) ? own : [202, view(createJob(kind, params, { ...extra, ...own }))];
   }
 
+  // Only the fixture has this: a download client that writes into downloads every four seconds, a part file that
+  // grows and then gets its real name, as the prototype plays it.
+  const FILMS = ['Cosmos Laundromat (2015)', 'Spring (2019)', 'Agent 327 (2017)'];
+  let client = null, step = 0;
+  function download() {
+    const dir = '/mnt/user/downloads', n = dirAt(dir), film = FILMS[Math.floor(step / 3) % FILMS.length], phase = step % 3;
+    const part = `${film}.mkv.part`, done = `${film}.mkv`, k = FS.kids(n).find((x) => x.name === part);
+    if (phase === 0) n.children.push({ name: part, size: 300 * MB, time: clock.now(), owner: 'nobody', group: 'users', mode: '0664' });
+    if (phase === 1 && k) Object.assign(k, { size: 900 * MB, time: clock.now() });
+    if (phase === 2 && k) Object.assign(k, { name: FS.kids(n).some((x) => x.name === done) ? freeName(n, done) : done, size: 1.6 * GB, time: clock.now() });
+    step += 1;
+    changed(dir);
+  }
+
   // A route that answers false only looks on, and the next one for the same request answers it.
   const routes = [
     ...unraidRoutes,
+    ['PUT', /^\/fixture\/download$/, (_r, _s, b) => {
+      clock.clear(client);
+      client = b.run ? clock.setInterval(download, 4000) : null;
+      if (b.run) download();
+      return [204];
+    }],
     ['GET', /^\/events$/, (req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
       res.write(': fixture\n\n');
@@ -454,7 +503,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     }],
     ['GET', /^\/jobs\/settings$/, () => [200, settings]],
     ['GET', /^\/jobs\/([^/]+)$/, (_r, _s, _b, [, id]) => { const j = jobAt(id); return j ? [200, view(j)] : [404, 'Not found']; }],
-    ['PUT', /^\/jobs\/settings$/, (_r, _s, b) => { Object.assign(settings, b); timer ||= setInterval(tick, TICK); return [200, settings]; }],
+    ['PUT', /^\/jobs\/settings$/, (_r, _s, b) => { Object.assign(settings, b); timer ||= clock.setInterval(tick, TICK); return [200, settings]; }],
     ['PATCH', /^\/jobs\/([^/]+)$/, (_r, _s, b, [, id]) => {
       const j = jobAt(id);
       if (!j) return [404, 'Not found'];
@@ -464,7 +513,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
         list.splice(Math.max(0, Math.min(list.length, b.position)), 0, j);
         list.forEach((x, k) => { if (x.position !== k) { x.position = k; if (x !== j) publish('job.state', x); } });
       }
-      tick();
+      tick(false);
       publish('job.state', j);
       return [200, view(j)];
     }],
@@ -480,7 +529,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       if (!j) return [404, 'Not found'];
       if (step === 'pause' && ['queued', 'running'].includes(j.state)) Object.assign(j, { state: 'paused', rate: 0, left: null });
       else if (step === 'resume' && j.state === 'paused') j.state = 'queued';
-      else if (step === 'cancel' && OPEN.includes(j.state)) Object.assign(j, { state: 'cancelled', rate: 0, left: null, finishedAt: iso(Date.now()) });
+      else if (step === 'cancel' && OPEN.includes(j.state)) Object.assign(j, { state: 'cancelled', rate: 0, left: null, finishedAt: iso(clock.now()) });
       else if (step === 'retry' && ['failed', 'cancelled'].includes(j.state)) { Object.assign(j, { state: 'queued', doneBytes: 0, doneFiles: 0, failedItems: 0, position: open().length }); delete j.error; delete j.finishedAt; }
       else if (step === 'decide' && j.state === 'asking') {
         const key = b.key || j.conflict?.key;
@@ -492,8 +541,8 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       renumber();
       publish('job.state', j);
       if (j.state === 'cancelled') publish('job.done', j);
-      timer ||= setInterval(tick, TICK);
-      tick();
+      timer ||= clock.setInterval(tick, TICK);
+      tick(false);
       return [200, view(j)];
     }],
 
@@ -502,7 +551,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       const dir = dirAt(FS.parent(path || ''));
       if (!dir) return [404, 'Not found'];
       if (taken(dir, base(path))) return [409, 'This name exists already'];
-      const n = { name: base(path), dir: true, children: [], time: Date.now(), owner: 'nobody', group: 'users', mode: '0775' };
+      const n = { name: base(path), dir: true, children: [], time: clock.now(), owner: 'nobody', group: 'users', mode: '0775' };
       dir.children.push(n);
       changed(FS.parent(path));
       const undo = pushStep({ kind: 'mkdir', name: n.name, path: FS.parent(path) }, () => { dir.children = dir.children.filter((k) => k !== n); changed(FS.parent(path)); });
@@ -512,8 +561,8 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       const dir = dirAt(FS.parent(path || ''));
       if (!dir) return [404, 'Not found'];
       const old = FS.kids(dir).find((k) => k.name === base(path));
-      if (old) { old.time = mtime ? Date.parse(mtime) : Date.now(); changed(FS.parent(path)); return [200, { path }]; }
-      const n = { name: base(path), size: 0, time: Date.now(), owner: 'nobody', group: 'users', mode: '0664', text: '' };
+      if (old) { old.time = mtime ? Date.parse(mtime) : clock.now(); changed(FS.parent(path)); return [200, { path }]; }
+      const n = { name: base(path), size: 0, time: clock.now(), owner: 'nobody', group: 'users', mode: '0664', text: '' };
       dir.children.push(n);
       changed(FS.parent(path));
       const undo = pushStep({ kind: 'touch', name: n.name, path: FS.parent(path) }, () => { dir.children = dir.children.filter((k) => k !== n); changed(FS.parent(path)); });
@@ -570,7 +619,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       if (running) { running.rule = rule === 'ask' ? running.rule : rule; return [200, uploadOut(running)]; }
       const there = dirAt(dir) && FS.kids(dirAt(dir)).find((k) => k.name === base(path));
       if (there && rule === 'ask') {
-        return [409, { title: 'The name exists already', conflict: { key: base(path), source: { path, dir: false, size, mtime: mtime || iso(Date.now()) }, target: side(there, path) } }];
+        return [409, { title: 'The name exists already', conflict: { key: base(path), source: { path, dir: false, size, mtime: mtime || iso(clock.now()) }, target: side(there, path) } }];
       }
       const u = { id: nextId('up'), path, size, offset: 0, state: 'open', rule, mtime };
       uploads.set(u.id, u);
@@ -589,6 +638,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       if (at !== u.offset) return [409, { title: 'The chunk does not start where the upload stands', upload: uploadOut(u) }];
       if (u.offset + bytes.length > u.size) return [413, 'The chunk goes past the announced size'];
       u.offset += bytes.length;
+      (u.chunks ||= []).push(bytes);
       // A pause per chunk, so the progress can be watched even on a fast machine.
       await new Promise((r) => setTimeout(r, 120));
       if (u.offset >= u.size) landUpload(u);

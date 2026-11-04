@@ -25,5 +25,5 @@ async function pick() {
 </script>
 
 <template>
-  <span class="a-ctl"><input :id="id" ref="input" v-model="model" class="field w mono" :placeholder="placeholder"><button class="btn icon" type="button" :data-tip="exts ? c('picker.titleFile') : c('picker.titleFolder')" @click.stop="pick"><G n="IconFolderOpen" /></button></span>
+  <span class="a-ctl"><input :id="id" ref="input" v-model="model" class="field w mono" :placeholder="placeholder"><button class="btn icon" type="button" :data-pickfor="id" :data-tip="exts ? c('picker.titleFile') : c('picker.titleFolder')" @click.stop="pick"><G n="IconFolderOpen" /></button></span>
 </template>

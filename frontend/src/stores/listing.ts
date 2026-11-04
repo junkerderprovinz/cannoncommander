@@ -8,7 +8,8 @@ import type { TreeItem } from '@/api/types';
 import type { MetaValue } from '@/files/entries';
 import { join, parent } from '@/files/paths';
 
-export interface Hits { items: Item[]; more: boolean; done: boolean }
+// unknown names the field tests of the query the server does not know, such as farbe in farbe:rot.
+export interface Hits { items: Item[]; more: boolean; done: boolean; unknown?: string[] }
 
 export const useListing = defineStore('listing', () => {
   const lists = reactive(new Map<string, Listing>());
@@ -64,10 +65,13 @@ export const useListing = defineStore('listing', () => {
     }
   }
 
+  // A feature may hold a change on screen back, such as while a window is open, and hand it to changed() later.
+  let gate = (_path: string) => true;
+  const setGate = (fn: (path: string) => boolean) => { gate = fn; };
   const pathOf = (e: ServerEvent) => (e.topic?.startsWith('fs:') ? e.topic.slice(3) : '');
   on('fs.changed', (e) => {
     const paths = (e.data as { paths?: string[] } | undefined)?.paths ?? [pathOf(e)];
-    paths.filter(Boolean).forEach(changed);
+    paths.filter((p) => p && (!shown.includes(p) || gate(p))).forEach(changed);
   });
   on('resync', () => [...lists.keys()].forEach(changed));
 
@@ -145,5 +149,5 @@ export const useListing = defineStore('listing', () => {
   }
   const placeOf = (path: string) => trees.get(parent(path))?.find((x) => x.path === path);
 
-  return { lists, trees, meta, hits, load, tree, invalidate, changed, setShown, wantMeta, metaOf, search, text, placeLabel, placeOf };
+  return { lists, trees, meta, hits, load, tree, invalidate, changed, setGate, setShown, wantMeta, metaOf, search, text, placeLabel, placeOf };
 });

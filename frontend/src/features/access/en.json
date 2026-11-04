@@ -1,0 +1,20 @@
+{
+  "left": "Left window",
+  "right": "Right window",
+  "panel": "Window",
+  "where": "{side}, folder {folder}, {n} {what}",
+  "one": "item",
+  "many": "items",
+  "marked": "{n} marked, {size}",
+  "unmarked": "Nothing marked",
+  "sidebar": "Sidebar",
+  "sideSay": "Sidebar. Arrow keys choose, Enter opens",
+  "done": "Done: {label}",
+  "cancelled": "Cancelled: {label}",
+  "jobsOpen": "Jobs, {n} open",
+  "jobsIdle": "Jobs, nothing running",
+  "focusSide": "Jump to the sidebar",
+  "focusLeft": "Jump to the left window",
+  "focusRight": "Jump to the right window",
+  "focusJobs": "Jump to the jobs"
+}

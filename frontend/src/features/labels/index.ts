@@ -60,12 +60,12 @@ export default function setup() {
   addTo('tagMatchers', (k, word, path) => labels.matches(k, word, path));
   addRowMenuItems((sel, path) => labelMenuItems(sel, path));
   action('labelsMenu', {
-    label: tl('labels.menu'), g: 'IconHash',
+    label: tl('labels.menu'), g: 'IconHash', hidden: true,
     run: (anchor?: HTMLElement) => {
       const at = anchor ?? document.querySelector<HTMLElement>('.panel.active [data-labelsmenu]') ?? document.querySelector<HTMLElement>('[data-labelsmenu]');
       if (at) labelsMenu(at);
     },
   });
-  action('editLabelColours', { label: tl('labels.editColours'), g: 'IconTabLook', run: editColours });
-  action('editLabelTags', { label: tl('labels.editTags'), g: 'IconHash', run: editTags });
+  action('editLabelColours', { label: tl('labels.editColours'), g: 'IconTabLook', hidden: true, run: editColours });
+  action('editLabelTags', { label: tl('labels.editTags'), g: 'IconHash', hidden: true, run: editTags });
 }

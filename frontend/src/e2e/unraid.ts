@@ -7,9 +7,10 @@ import { useListing } from '@/stores/listing';
 
 interface Node { name: string; dir?: boolean; link?: string; children?: Node[] }
 
-export function devicesNow(paths: string[]): void {
+// fresh asks again for paths already known, as a move can have put a file on another disk since.
+export function devicesNow(paths: string[], fresh = false): void {
   const listing = useListing();
-  const missing = paths.filter((p) => listing.meta.get(p)?.disk === undefined);
+  const missing = paths.filter((p) => fresh || listing.meta.get(p)?.disk === undefined);
   if (!missing.length) return;
   const req = new XMLHttpRequest();
   req.open('POST', BASE + '/fs/meta', false);
@@ -21,7 +22,7 @@ export function devicesNow(paths: string[]): void {
 }
 
 export function devOf(path: string): string | undefined {
-  devicesNow([path]);
+  devicesNow([path], true);
   const v = useListing().meta.get(path)?.disk;
   return typeof v === 'string' && v ? v.split(', ')[0] : undefined;
 }

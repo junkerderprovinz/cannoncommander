@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import vm from 'node:vm';
-import { contentRoutes } from './fixture-content.js';
+import { contentRoutes, FOLDER_PICTURES } from './fixture-content.js';
 
 const prototype = join(import.meta.dirname, '..', '..', 'prototype', 'src');
 const read = (...p) => readFileSync(join(prototype, ...p), 'utf8');
@@ -84,7 +84,12 @@ export function createFixture() {
     ...(k.dir ? { items: FS.kids(k).length } : {}), ...(k.zip ? { archive: true } : {}),
     btime: iso(k.time - (hashOf(k.name) % 400) * DAY), ino: num(k, 'inode', h(k, 'i') % 9000000), nlink: num(k, 'hardlinks', k.dir ? 2 : 1 + (h(k, 'l') % 9 === 0)),
     uid: num(k, 'uid', k.owner === 'root' ? 0 : 99), gid: num(k, 'gid', k.group === 'root' ? 0 : 100),
+    ...pictureOf(k),
   });
+  const pictureOf = (k) => {
+    const pic = k.dir && !k.link && FOLDER_PICTURES.map((want) => FS.kids(k).find((c) => c.name.toLowerCase() === want)).find(Boolean);
+    return pic ? { picture: pic.name } : {};
+  };
   const folder = (path, k) => {
     const p = FS.join(path, k.name);
     return {

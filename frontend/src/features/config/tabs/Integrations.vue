@@ -125,8 +125,8 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
       </template>
     </Card>
     <Card :title="c('integrations.media')">
-      <Frow :label="c('integrations.thumbs')" :tip="c('integrations.thumbsTip')"><Sw v-model="thumbs" /></Frow>
-      <Frow :label="c('integrations.video')" :tip="c('integrations.videoTip')"><Sw v-model="video" /></Frow>
+      <Frow :label="c('integrations.thumbs')" :tip="c('integrations.thumbsTip')"><Sw v-model="thumbs" data-it="thumbs" /></Frow>
+      <Frow :label="c('integrations.video')" :tip="c('integrations.videoTip')"><Sw v-model="video" data-it="videoPreview" /></Frow>
       <Frow label="ffmpeg" :tip="c('integrations.ffmpegTip')"><span class="pill mono">{{ sys ? tool(sys.tools.ffmpeg) : '' }}</span></Frow>
     </Card>
     <Card title="ArrowLoop" :hint="c('integrations.alHint')">
