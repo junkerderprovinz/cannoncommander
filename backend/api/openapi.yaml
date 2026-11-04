@@ -7417,7 +7417,7 @@ components:
             $ref: "#/components/schemas/PublicItem"
     UnraidState:
       type: object
-      required: [available, array, parity, disks, shares, write, spindownDelay]
+      required: [available, array, parity, disks, shares, write, spindownDelay, mover]
       properties:
         available:
           type: boolean
@@ -7462,6 +7462,17 @@ components:
         spindownDelay:
           type: integer
           description: Default spin down delay in minutes, 0 for never.
+        mover:
+          type: object
+          required: [active]
+          properties:
+            schedule:
+              type: string
+              description: The crontab line the mover runs on.
+              example: 40 3 * * *
+            active:
+              type: boolean
+              description: The mover is carrying files right now.
     UnraidParity:
       type: object
       required: [running, paused, pos, size, percent, lastErrors, lastExit]

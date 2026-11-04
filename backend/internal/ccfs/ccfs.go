@@ -62,6 +62,9 @@ func (l Location) InArchive() bool { return l.Inner != "" }
 type Resolver struct {
 	sources []*Source
 	access  AccessGate
+	// devices are the pools and disks Unraid reports, for pools that are
+	// not called cache.
+	devices []string
 }
 
 // New builds a resolver. Mounts must be absolute and may not nest inside
@@ -75,6 +78,7 @@ func New(access AccessGate, sources ...Source) (*Resolver, error) {
 		}
 		s.Mount = mount
 		s.Root = filepath.Clean(s.Root)
+		s.AdminOnly = s.AdminOnly || r.AdminOnly(mount)
 		for _, o := range r.sources {
 			if within(mount, o.Mount) || within(o.Mount, mount) {
 				return nil, errors.New("sources " + o.Name + " and " + s.Name + " overlap")
@@ -84,6 +88,18 @@ func New(access AccessGate, sources ...Source) (*Resolver, error) {
 	}
 	slices.SortFunc(r.sources, func(a, b *Source) int { return strings.Compare(a.Mount, b.Mount) })
 	return r, nil
+}
+
+// WithDevices returns a copy of r that also keeps the named pools and disks
+// for admins, since a pool may go by any name.
+func (r *Resolver) WithDevices(names ...string) *Resolver {
+	out := &Resolver{access: r.access, devices: slices.Clone(names)}
+	for _, s := range r.sources {
+		c := *s
+		c.AdminOnly = c.AdminOnly || out.AdminOnly(c.Mount)
+		out.sources = append(out.sources, &c)
+	}
+	return out
 }
 
 // Sources returns the configured sources sorted by mount.

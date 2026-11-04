@@ -3,33 +3,43 @@ package ccfs
 import (
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-// The single disks and the cache bypass the user shares and their split
-// rules, so only admins get to see them.
-var adminOnlyMount = regexp.MustCompile(`^/mnt/(disk[0-9]+|cache)$`)
+var diskName = regexp.MustCompile(`^disk[0-9]+$`)
+
+// AdminOnly reports whether p lies on a single disk or a pool. Those bypass
+// the user shares and their split rules, so only admins get to see them,
+// also when a source reaches them from /mnt or starts deeper inside.
+func (r *Resolver) AdminOnly(p string) bool {
+	rest, ok := strings.CutPrefix(p, "/mnt/")
+	if !ok {
+		return false
+	}
+	name, _, _ := strings.Cut(rest, "/")
+	return diskName.MatchString(name) || name == "cache" || slices.Contains(r.devices, name)
+}
 
 // FromSettings builds a resolver from the configured sources. The source
 // path doubles as the mount, because the container sees the host paths.
-func FromSettings(cfg *settings.Settings, access AccessGate) (*Resolver, error) {
+// devices names the pools and disks of the array.
+func FromSettings(cfg *settings.Settings, access AccessGate, devices ...string) (*Resolver, error) {
 	var sources []Source
 	for _, s := range cfg.Server.Sources {
 		if s == nil || s.Config.Disabled {
 			continue
 		}
 		mount := MountFor(s.Path)
-		sources = append(sources, Source{
-			Name:      s.Name,
-			Mount:     mount,
-			Root:      s.Path,
-			ReadOnly:  s.Config.ReadOnly,
-			AdminOnly: adminOnlyMount.MatchString(mount),
-		})
+		sources = append(sources, Source{Name: s.Name, Mount: mount, Root: s.Path, ReadOnly: s.Config.ReadOnly})
 	}
-	return New(access, sources...)
+	r, err := New(access, sources...)
+	if err != nil {
+		return nil, err
+	}
+	return r.WithDevices(devices...), nil
 }
 
 // MountFor returns the API path of a directory on disk. On Linux that is the

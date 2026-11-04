@@ -59,6 +59,9 @@ func TestReadStateFromUnraid734(t *testing.T) {
 	if flash, _ := st.Disk("flash"); flash.Kind != "flash" || flash.Mount != "/boot" {
 		t.Errorf("flash = %+v", flash)
 	}
+	if st.Mover != (Mover{Schedule: "0 */2 * * *"}) {
+		t.Errorf("mover = %+v", st.Mover)
+	}
 }
 
 func TestReadSharesFromUnraid734(t *testing.T) {

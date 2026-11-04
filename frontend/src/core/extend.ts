@@ -17,6 +17,8 @@ export interface ExtensionPoints {
   thumbProviders: Array<(item: Entry, path: string) => VNodeChild | null>;
   sideRows: Array<() => VNodeChild>;
   treeDecorators: Array<(path: string) => VNodeChild>;
+  // Eigenschaften shows these below its head, for the one entry or folder it describes.
+  propsWells: Array<(path: string) => VNodeChild>;
   actionWrappers: Array<(action: Action, run: Action['run']) => Action['run']>;
   onRender: Array<() => void>;
   toastHistory: Array<(toast: Toast) => void>;
@@ -25,7 +27,7 @@ export interface ExtensionPoints {
 export const extend: ExtensionPoints = {
   entryFilters: shallowReactive([]), tagMatchers: shallowReactive([]), beforeGo: shallowReactive([]), afterGo: shallowReactive([]), transferPipeline: shallowReactive([]),
   footerSlots: shallowReactive([]), nameBadges: shallowReactive([]), thumbProviders: shallowReactive([]), sideRows: shallowReactive([]),
-  treeDecorators: shallowReactive([]), actionWrappers: shallowReactive([]), onRender: shallowReactive([]), toastHistory: shallowReactive([]),
+  treeDecorators: shallowReactive([]), propsWells: shallowReactive([]), actionWrappers: shallowReactive([]), onRender: shallowReactive([]), toastHistory: shallowReactive([]),
 };
 
 export function addTo<K extends keyof ExtensionPoints>(point: K, fn: ExtensionPoints[K][number]) {

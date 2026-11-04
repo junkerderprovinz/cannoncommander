@@ -122,7 +122,7 @@ func (h handlers) scopesFrom(scope *string, role string) ([]users.BackendScope, 
 	}
 	perms := rolePerms(role)
 	if !loc.Virtual() {
-		if loc.Source.AdminOnly && role != roleAdmin {
+		if (loc.Source.AdminOnly || h.fs.AdminOnly(loc.Path)) && role != roleAdmin {
 			return nil, v1.Errorf(http.StatusBadRequest, "only admins may see the single disks and the cache")
 		}
 		if fi, err := os.Stat(loc.Real); err != nil || !fi.IsDir() {
