@@ -1,3 +1,4 @@
+// Node runs these scripts as they are, so only the types are checked. Playwright comes from the prototype's install.
 {
   "compilerOptions": {
     "target": "ES2023",
@@ -12,8 +13,8 @@
     "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "playwright": ["../../../prototype/node_modules/playwright/index.d.ts"]
+      "playwright": ["../../prototype/node_modules/playwright/index.d.ts"]
     }
   },
-  "include": ["*.ts"]
+  "include": ["**/*.ts"]
 }
