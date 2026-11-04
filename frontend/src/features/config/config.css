@@ -1,0 +1,147 @@
+/* The settings tabs, their windows and the activity page, as the prototype draws them. */
+.a-list { display: flex; flex-direction: column; gap: 2px; margin: 0 -.5rem; }
+.a-row { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) auto auto; align-items: center; gap: .6rem; min-height: 2.6rem; padding: 0 .5rem; border-radius: var(--radius-control); cursor: pointer; outline-offset: -2px; }
+.a-row:not([data-open], [data-uopen], [data-gopen]) { cursor: default; }
+.a-row:hover, .a-row:focus-within { background: var(--carbon-hover); }
+.a-row:hover .tile, .a-row:focus-visible .tile { background: var(--accent); }
+.a-row:hover .tile svg, .a-row:focus-visible .tile svg { color: var(--accent-contrast); }
+.a-row:hover .tile i, .a-row:focus-visible .tile i { color: var(--accent-contrast); }
+.a-row .tile i { font-style: normal; font-size: 12px; font-weight: 700; color: var(--carbon-text-sub); }
+.a-row .tile svg { color: var(--accent-glyph); }
+.a-name { display: flex; align-items: center; gap: .4rem; min-width: 0; white-space: nowrap; }
+.a-name .t { overflow: hidden; text-overflow: ellipsis; }
+.a-badges { display: flex; gap: .35rem; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
+.a-acts { display: flex; gap: .15rem; opacity: 0; transition: opacity .1s; }
+.a-row:hover .a-acts, .a-row:focus-within .a-acts { opacity: 1; }
+@media (hover: none) { .a-acts { opacity: 1; } }
+.a-slot { width: var(--btn-h); flex: none; }
+.btn.a-bare { background: transparent; box-shadow: none; }
+.btn.a-bare:hover, .btn.a-bare:focus-visible { background: transparent; }
+.btn.a-bare:hover svg, .btn.a-bare:focus-visible svg { color: var(--accent-glyph); }
+.a-foot { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; padding-top: .5rem; }
+.a-ctl { display: inline-flex; gap: .4rem; align-items: center; flex: none; }
+.a-ctl.grow { flex: 1; min-width: 0; }
+.a-ctl.grow .field { flex: 1; width: auto; }
+.a-text { line-height: 1.55; }
+.a-text p { margin: 0; }
+.a-text p + p { margin-top: .6rem; }
+.well .pill { background: var(--carbon-surface3); }
+.well .field { background: var(--carbon-surface3); }
+.mono.pill { font-size: 12px; }
+.card-body > .frow + .frow { margin-top: .1rem; }
+.a-pw { position: relative; display: inline-flex; flex: none; }
+.a-pw .field { padding-right: 2.3rem; }
+.a-eye { position: absolute; right: .35rem; top: 50%; translate: 0 -50%; width: 1.6rem; height: 1.6rem; display: grid; place-items: center; color: var(--carbon-text-muted); border-radius: var(--radius-control); }
+.a-eye svg { width: .95rem; height: .95rem; }
+.a-eye:hover { color: var(--carbon-text); }
+.a-dd { display: inline-flex; align-items: center; justify-content: space-between; gap: .5rem; text-align: left; cursor: pointer; }
+.a-dd span { display: inline-flex; align-items: center; gap: .45rem; overflow: hidden; white-space: nowrap; }
+.a-dd svg { width: .8rem; height: .8rem; flex: none; color: var(--carbon-text-sub); }
+.a-dd:hover { background: var(--carbon-hover-raised); }
+.card-body .a-dd:not(:hover) { background: var(--carbon-surface2); }
+.card-body .field:not(.a-dd) { background: var(--carbon-surface2); }
+.card-body .field:not(.a-dd):focus { background: var(--carbon-surface3); }
+.card-body .well .field:not(.a-dd) { background: var(--carbon-surface3); }
+.a-tree { max-height: 22rem; overflow: auto; gap: 2px; padding: .5rem; }
+.a-picker .nav-row:hover { background: var(--carbon-surface3); }
+.a-picker .nav-row.cur { background: var(--accent); }
+.a-cpop { position: fixed; z-index: 75; width: 16rem; padding: .8rem; display: flex; flex-direction: column; gap: .7rem; }
+.a-sv { position: relative; height: 9rem; border-radius: var(--radius-control); cursor: crosshair; touch-action: none; }
+.a-hue { position: relative; height: .9rem; border-radius: var(--radius-pill); background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); cursor: pointer; touch-action: none; }
+.a-sv i, .a-hue i { position: absolute; width: 1rem; height: 1rem; border-radius: 50%; translate: -50% -50%; box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.4); pointer-events: none; }
+.a-hue i { top: 50%; background: transparent; }
+.btn.ok { background: color-mix(in srgb, var(--carbon-surface2), #6fdc8c 40%); }
+.btn.bad { background: color-mix(in srgb, var(--carbon-surface2), #ff8389 40%); }
+.win .well .seg, .card-body .well .seg { background: var(--carbon-surface3); }
+.win .well .seg button:not([aria-pressed="true"]):hover, .card-body .well .seg button:not([aria-pressed="true"]):hover { background: var(--carbon-hover-raised); }
+@media (max-width: 900px) { .settings { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) {
+  .settings-body .frow, .win .frow { flex-wrap: wrap; }
+  .settings-body .frow > .seg, .win .frow > .seg { flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; }
+  .settings-body .frow > .seg button, .win .frow > .seg button { flex: 1; justify-content: center; padding: 0 .5rem; }
+  .settings-body .frow > .a-swatches { flex: 1 1 100%; justify-content: flex-start; }
+  .settings-body .field.w, .win .field.w { width: 100%; }
+  .settings-body .a-ctl, .win .a-ctl { width: 100%; }
+  .settings-body .a-ctl .field, .win .a-ctl .field { flex: 1; width: auto; }
+  .a-row { grid-template-columns: 2.25rem minmax(0, 1fr) auto; }
+  .a-badges { display: none; }
+}
+.a-swatches { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
+/* A 28px disc in a 2px ring is 32px, the size of the reset badge beside it. */
+.a-swatch { width: 2rem; height: 2rem; border-radius: var(--radius-pill); flex: none; background: var(--c); border: 2px solid var(--carbon-border, color-mix(in srgb, var(--carbon-text) 16%, transparent)); background-clip: padding-box; transition: transform .12s; }
+.a-swatch:hover:not(:disabled) { transform: scale(1.1); }
+.a-swatch[aria-pressed="true"] { border-color: var(--carbon-text); }
+.a-swatch:disabled { cursor: default; }
+.a-accent.dim .a-dimmable { opacity: .45; }
+/* Neutral, so a reset beside the swatches never reads as one more colour to pick. */
+.a-reset { width: 2rem; height: 2rem; border-radius: var(--radius-control); display: grid; place-items: center; flex: none; background: var(--carbon-surface2); border: 2px solid var(--carbon-border, color-mix(in srgb, var(--carbon-text) 16%, transparent)); color: var(--carbon-text); }
+.a-reset svg { width: 1rem; height: 1rem; }
+.a-reset:hover:not(:disabled) { background: var(--carbon-surface3); }
+.a-reset:disabled { opacity: .45; cursor: default; }
+.pill.run { background: var(--accent); color: var(--accent-contrast); }
+.a-pickhead { display: flex; justify-content: flex-end; }
+.a-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .8125rem; align-content: start; }
+.a-tile { display: flex; align-items: center; gap: .7rem; height: 3.4rem; padding: 0 .9rem 0 .6rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); text-align: left; }
+.a-tile:hover, .a-tile:focus-visible { background: var(--accent); color: var(--accent-contrast); }
+.a-tile:hover .tile, .a-tile:focus-visible .tile { background: color-mix(in srgb, var(--accent-contrast) 14%, transparent); }
+.a-tile:hover .tile svg, .a-tile:focus-visible .tile svg { color: var(--accent-contrast); }
+.a-tile .tile { background: var(--carbon-surface3); }
+.a-tile .tile svg { color: var(--accent-glyph); }
+.a-tile b { display: block; font-weight: 600; }
+.a-tile small { display: block; font-size: 12px; opacity: .75; }
+.a-tiles .empty { grid-column: 1 / -1; }
+.a-totp { flex-direction: row; gap: 1.2rem; align-items: center; }
+.a-qr { width: 10rem; height: 10rem; flex: none; border-radius: var(--radius-control); overflow: hidden; }
+.a-qr svg { width: 100%; height: 100%; }
+.a-totp-side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .6rem; }
+.a-totp-side .field.w { width: 18rem; }
+.a-codes { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+.a-codes span { height: 2rem; display: grid; place-items: center; border-radius: var(--radius-control); background: var(--carbon-surface3); letter-spacing: .06em; }
+@media (max-width: 760px) { .a-totp { flex-direction: column; align-items: stretch; } .a-qr { align-self: center; } .a-codes { grid-template-columns: repeat(2, 1fr); } }
+.a-vlink { font-size: 14px; color: var(--accent-text, var(--accent)); text-decoration: none; }
+.a-vlink:hover, .a-vlink:focus-visible { text-decoration: underline; text-underline-offset: 2px; }
+@media (pointer: coarse) { .a-vlink { margin: -.6rem; padding: .6rem; } }
+.notch .info { margin-left: .15rem; }
+.notch .info svg { color: currentColor; opacity: .8; }
+.a-addr { margin-top: .8rem; padding: .7rem .8rem; border-radius: var(--radius-control); background: var(--carbon-surface3); font-size: 13px; overflow-wrap: anywhere; }
+#a-update.ok svg { color: var(--status-ok-text, #6fdc8c); }
+.a-dot { width: .5rem; height: .5rem; border-radius: 50%; background: #6fdc8c; box-shadow: 0 0 6px #6fdc8c; flex: none; }
+.a-dot.seen { background: var(--carbon-text-muted); box-shadow: none; }
+.a-about { display: flex; flex-direction: column; gap: 1rem; }
+.a-about p { margin: 0; line-height: 1.6; color: var(--carbon-text-sub); font-size: 14px; }
+.a-coffee-mark { color: var(--brand-coffee); }
+.a-newtop { display: flex; justify-content: flex-end; }
+.a-release { position: relative; padding-top: 1.4rem; margin-top: .6rem; }
+.a-release .notch { left: .9rem; }
+.a-release > .a-text { margin: 0 0 .4rem; }
+.a-newlist { display: flex; flex-direction: column; gap: 2px; }
+.a-newrow { display: grid; grid-template-columns: .5rem 2rem 1fr auto; align-items: center; gap: .6rem; min-height: 2.6rem; padding: 0 .5rem; border-radius: var(--radius-control); background: var(--carbon-surface); }
+.a-newrow .tile { width: 1.75rem; height: 1.75rem; border-radius: var(--radius-control); background: var(--carbon-surface2); display: grid; place-items: center; }
+.a-newrow .tile svg { width: 1rem; height: 1rem; color: var(--accent-glyph); }
+.a-newrow.seen .t { color: var(--carbon-text-muted); }
+.a-newrow .btn { background: var(--carbon-surface2); }
+.a-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+.a-stat { gap: .1rem; }
+.a-stat span:first-child { font-size: 22px; font-weight: 600; }
+.a-stat span:last-child { font-size: 12px; color: var(--carbon-text-muted); }
+.a-actlist { display: flex; flex-direction: column; gap: 2px; margin: 0 -.5rem; }
+.a-lhead, .a-arow { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) 10rem 7.5rem 7.5rem; gap: .6rem; align-items: center; padding: 0 .5rem; }
+.a-lhead { height: 1.9rem; font-size: 12px; color: var(--carbon-text-muted); }
+.a-arow .pill { justify-self: end; }
+.a-hbtn { justify-self: end; display: inline-flex; align-items: center; gap: .3rem; height: 1.6rem; padding: 0 .45rem; border-radius: var(--radius-control); color: inherit; }
+.a-hbtn svg { width: .7rem; height: .7rem; }
+.a-hbtn:hover { background: var(--carbon-hover); color: var(--carbon-text); }
+.a-hbtn.on { background: var(--accent); color: var(--accent-contrast); }
+.a-veil { z-index: 90; }
+.a-veil-card { display: flex; align-items: center; gap: .7rem; padding: 1rem 1.3rem; }
+.a-veil-card svg { width: 1.1rem; height: 1.1rem; color: var(--accent-glyph); animation: a-spin 1s linear infinite; }
+@keyframes a-spin { to { rotate: 360deg; } }
+@media (max-width: 760px) { .a-lhead, .a-arow { grid-template-columns: 2.25rem minmax(0, 1fr) auto; } .a-lhead > :nth-child(n+3):not(:last-child), .a-arow .pill:not(:last-child) { display: none; } .a-stats { grid-template-columns: 1fr 1fr 1fr; } }
+:root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+1) { --accent-glyph: var(--rb-0); }
+:root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+2) { --accent-glyph: var(--rb-1); }
+:root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+3) { --accent-glyph: var(--rb-2); }
+:root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+4) { --accent-glyph: var(--rb-3); }
+:root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+5) { --accent-glyph: var(--rb-4); }
+:root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+6) { --accent-glyph: var(--rb-5); }
+:root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+7) { --accent-glyph: var(--rb-6); }
+:root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+8) { --accent-glyph: var(--rb-7); }

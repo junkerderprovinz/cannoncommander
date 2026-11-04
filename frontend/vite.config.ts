@@ -7,6 +7,8 @@ import { type Connect, defineConfig, type Plugin } from 'vite';
 function fixture(): Plugin {
   const use = async (server: { middlewares: Connect.Server }) => {
     const { fixtureMiddleware } = await import('./scripts/fixture.js');
+    const { settingsFixtureMiddleware } = await import('./scripts/fixture-settings.js');
+    server.middlewares.use(settingsFixtureMiddleware());
     server.middlewares.use(fixtureMiddleware());
   };
   return { name: 'cc-fixture', configureServer: use, configurePreviewServer: use };
