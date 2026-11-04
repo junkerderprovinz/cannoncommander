@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"slices"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -32,6 +31,7 @@ func prepareDelete(_ context.Context, d v1.Deps, u *users.User, raw json.RawMess
 	}
 	var clean []string
 	var items []jobs.Item
+	seen := make(map[string]bool, len(p.Paths))
 	for _, raw := range p.Paths {
 		loc, err := d.FS.Check(u, raw, ccfs.Delete)
 		if err != nil {
@@ -46,9 +46,10 @@ func prepareDelete(_ context.Context, d v1.Deps, u *users.User, raw json.RawMess
 		if _, err := os.Lstat(loc.Real); err != nil {
 			return nil, err
 		}
-		if slices.Contains(clean, loc.Path) {
+		if seen[loc.Path] {
 			continue
 		}
+		seen[loc.Path] = true
 		clean = append(clean, loc.Path)
 		items = append(items, jobs.Item{Path: loc.Path, Name: path.Base(loc.Path)})
 	}
