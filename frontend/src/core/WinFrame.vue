@@ -13,7 +13,7 @@ function press(f: FootButton) {
 }
 // A click beside an open dropdown only closes the dropdown, not the window under it.
 function beside(e: MouseEvent) {
-  if (e.target === scrim.value && !isMenuOpen()) props.w.close();
+  if (e.target === scrim.value && !isMenuOpen() && !props.w.locked) props.w.close();
 }
 
 onMounted(() => {

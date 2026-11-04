@@ -9,6 +9,8 @@ function fixture(): Plugin {
     const { fixtureMiddleware } = await import('./scripts/fixture.js');
     const { opsFixtureMiddleware } = await import('./scripts/fixture-ops.js');
     server.middlewares.use(opsFixtureMiddleware());
+    const { settingsFixtureMiddleware } = await import('./scripts/fixture-settings.js');
+    server.middlewares.use(settingsFixtureMiddleware());
     server.middlewares.use(fixtureMiddleware());
   };
   return { name: 'cc-fixture', configureServer: use, configurePreviewServer: use };
