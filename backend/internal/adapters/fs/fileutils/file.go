@@ -231,39 +231,6 @@ func copyDirectory(source, dest string) error {
 	return os.Chtimes(dest, srcInfo.ModTime(), srcInfo.ModTime())
 }
 
-// PreserveModTimes copies the mod times from src onto dst, this is used by the webdav COPY handler
-func PreserveModTimes(src, dst string) error {
-	info, err := os.Lstat(src)
-	if err != nil {
-		return err
-	}
-	if !info.IsDir() {
-		return os.Chtimes(dst, info.ModTime(), info.ModTime())
-	}
-	return filepath.WalkDir(src, func(p string, d os.DirEntry, err error) error {
-		if err != nil {
-			logger.Debugf("Error accessing %s to set mod time: %v", p, err)
-			return nil
-		}
-		if d.IsDir() {
-			return nil
-		}
-		rel, err := filepath.Rel(src, p)
-		if err != nil {
-			return nil
-		}
-		info, err := d.Info()
-		if err != nil {
-			logger.Debugf("Error getting info for %s: %v", p, err)
-			return nil
-		}
-		if err := os.Chtimes(filepath.Join(dst, rel), info.ModTime(), info.ModTime()); err != nil {
-			logger.Debugf("Could not preserve modification time for %s: %v", filepath.Join(dst, rel), err)
-		}
-		return nil
-	})
-}
-
 // CommonPrefix returns the common directory path of provided files.
 func CommonPrefix(sep byte, paths ...string) string {
 	// Handle special cases.

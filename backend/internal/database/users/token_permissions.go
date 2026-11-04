@@ -46,6 +46,6 @@ func IsMinimalApiToken(t AuthToken) bool {
 	if t.Minimal != nil {
 		return *t.Minimal
 	}
-	// Legacy tokens lack minimal; empty stored global caps implied minimal (WebDAV-style).
+	// Legacy tokens lack minimal; empty stored global caps implied minimal.
 	return !HasAnyGlobalPermission(t.Permissions)
 }

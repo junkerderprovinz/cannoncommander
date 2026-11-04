@@ -83,17 +83,6 @@ func RecordUser(r *http.Request, actor *Actor, entry activitydb.Entry) {
 	finalizeActivityEntry(r, actor, entry, activityActorUser)
 }
 
-func RecordWebDAVUser(r *http.Request, user *users.User, entry activitydb.Entry) {
-	if user == nil || user.ID == 0 {
-		return
-	}
-	actor := &Actor{User: user}
-	if entry.UserID == 0 {
-		entry.UserID = user.ID
-	}
-	finalizeActivityEntry(r, actor, entry, activityActorUser)
-}
-
 func scopesToActivityDetails(target *users.User) []activitydb.ScopeDetail {
 	if target == nil {
 		return nil

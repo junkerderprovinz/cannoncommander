@@ -23,6 +23,7 @@ var retiredKeys = [][]string{
 	{"frontend", "loginIcon"},
 	{"frontend", "styling"},
 	{"shareDefaults"},
+	{"http", "disableWebDAV"},
 }
 
 // dropRetiredKeys removes the retired keys from a parsed config and says so

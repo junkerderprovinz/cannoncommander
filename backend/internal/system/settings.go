@@ -51,7 +51,6 @@ type App struct {
 	Office    Office    `json:"office"`
 	ArrowLoop ArrowLoop `json:"arrowloop"`
 	Previews  Previews  `json:"previews"`
-	WebDAV    bool      `json:"webdav"`
 	Remotes   Mounting  `json:"remotes"`
 	Updates   Updates   `json:"updates"`
 	LogLevel  string    `json:"logLevel"`
@@ -102,7 +101,6 @@ func defaults() App {
 	a := App{
 		Office:   Office{Kind: OfficeNone},
 		Previews: Previews{Thumbs: !c.Server.DisablePreviews},
-		WebDAV:   !c.Http.DisableWebDAV,
 		Remotes:  Mounting{Automount: true, Cache: CacheWrites, CacheSize: 50},
 		Updates:  Updates{AutoCheck: !c.Server.DisableUpdateCheck},
 		LogLevel: "info",

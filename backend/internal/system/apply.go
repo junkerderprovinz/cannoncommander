@@ -13,25 +13,23 @@ import (
 // settings page can say when a restart is due.
 var boot struct {
 	once      sync.Once
-	webdav    bool
 	autoCheck bool
 }
 
 func captureBoot() {
 	boot.once.Do(func() {
-		boot.webdav = !settings.Config.Http.DisableWebDAV
 		boot.autoCheck = !settings.Config.Server.DisableUpdateCheck
 	})
 }
 
 func restartNeeded(a App) bool {
 	captureBoot()
-	return a.WebDAV != boot.webdav || a.Updates.AutoCheck != boot.autoCheck
+	return a.Updates.AutoCheck != boot.autoCheck
 }
 
 // ApplyStored puts the saved settings into the running config. It runs
-// before the web server registers its routes, because WebDAV and the update
-// check are only looked at once.
+// before the web server registers its routes, because the update check is only
+// looked at once.
 func ApplyStored(ctx context.Context, db *sql.DB) {
 	if db != nil {
 		a, saved, err := readApp(ctx, db)
@@ -55,7 +53,6 @@ func apply(a App) {
 		oo.Url, oo.Secret = "", ""
 	}
 	c.Server.DisablePreviews = !a.Previews.Thumbs
-	c.Http.DisableWebDAV = !a.WebDAV
 	c.Server.DisableUpdateCheck = !a.Updates.AutoCheck
 	if err := settings.SetLogLevel(a.LogLevel); err != nil {
 		logger.Errorf("log level: %v", err)

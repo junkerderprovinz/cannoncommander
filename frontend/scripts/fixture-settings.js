@@ -97,12 +97,12 @@ function state() {
     app: {
       office: { kind: 'none', url: '', secret: '' },
       arrowloop: { url: 'http://tower.lan:8095', token: 'al-token', paths: { '/mnt/user': '/data' } },
-      previews: { thumbs: true, video: false }, webdav: false,
+      previews: { thumbs: true, video: false },
       remotes: { automount: true, cache: 'writes', cacheSize: 50 },
       updates: { autoCheck: true }, logLevel: 'info',
     },
     // The switches the server only reads when it starts.
-    booted: { webdav: false, autoCheck: true },
+    booted: { autoCheck: true },
     colours: [['red', '#ff6b72'], ['orange', '#ff8a3d'], ['yellow', '#f5c518'], ['green', '#4cc977'], ['blue', '#3b9cf5'], ['purple', '#a98bff']].map(([id, hex]) => ({ id, name: '', hex })),
     tags: [],
     labels: {
@@ -175,7 +175,7 @@ export function settingsFixtureMiddleware() {
     ...S.app,
     office: { kind: S.app.office.kind, url: S.app.office.url, secretSet: !!S.app.office.secret },
     arrowloop: { url: S.app.arrowloop.url, tokenSet: !!S.app.arrowloop.token, ...(Object.keys(S.app.arrowloop.paths).length ? { paths: S.app.arrowloop.paths } : {}) },
-    restartNeeded: S.app.webdav !== S.booted.webdav || S.app.updates.autoCheck !== S.booted.autoCheck,
+    restartNeeded: S.app.updates.autoCheck !== S.booted.autoCheck,
   });
   const badUrl = (u) => !!u && !/^https?:\/\/[^/\s]+/.test(u);
 
@@ -333,7 +333,7 @@ export function settingsFixtureMiddleware() {
       delete S.app.restartNeeded;
       return app();
     }],
-    ['POST', '/admin/app/restart', () => { S.started = Date.now(); S.running = JSON.stringify(S.sources); S.booted = { webdav: S.app.webdav, autoCheck: S.app.updates.autoCheck }; return [202, {}]; }],
+    ['POST', '/admin/app/restart', () => { S.started = Date.now(); S.running = JSON.stringify(S.sources); S.booted = { autoCheck: S.app.updates.autoCheck }; return [202, {}]; }],
     ['POST', '/admin/app/export', (b) => {
       if (isFile(b.path)) return [409, 'there is a file of that name already'];
       S.exports.push({ path: b.path, time: Date.now() });
@@ -383,7 +383,7 @@ export function settingsFixtureMiddleware() {
         rclone: { available: true, path: '/usr/bin/rclone', version: '1.71.2' },
       },
       unraid: { available: true, socket: false },
-      features: { office: S.app.office.kind === 'none' ? { kind: 'none' } : { kind: S.app.office.kind, url: S.app.office.url }, thumbs: S.app.previews.thumbs, videoPreview: S.app.previews.video, webdav: S.booted.webdav, mupdf: true },
+      features: { office: S.app.office.kind === 'none' ? { kind: 'none' } : { kind: S.app.office.kind, url: S.app.office.url }, thumbs: S.app.previews.thumbs, videoPreview: S.app.previews.video, mupdf: true },
     })],
     ['POST', '/system/update', () => ({ version: '0.1.0', latest: '0.1.0', updateAvailable: false, releaseUrl: 'https://github.com/junkerderprovinz/cannoncommander/releases/tag/v0.1.0' })],
     ['POST', '/unraid/notify/test', () => 204],

@@ -275,39 +275,6 @@ func wrapHandler(fn handleFunc) http.HandlerFunc {
 	}
 }
 
-// wrapHandlerBasicAuth wraps a handler and automatically sets WWW-Authenticate header
-// for 401 Unauthorized responses, triggering Basic Auth challenge
-func wrapHandlerBasicAuth(fn handleFunc) http.HandlerFunc {
-	// Wrap the handler to set WWW-Authenticate header for 401 responses
-	wrappedFn := func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		status, err := fn(w, r, data)
-		// Set WWW-Authenticate header before returning 401
-		if status == http.StatusUnauthorized {
-			w.Header().Set("WWW-Authenticate", `Basic realm="WebDAV"`)
-		}
-		return status, err
-	}
-	return wrapHandler(wrappedFn)
-}
-
-func withBasicAuthHelper(fn handleFunc) handleFunc {
-	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		_, password, ok := r.BasicAuth()
-		if !ok || password == "" {
-			// Return 401 - wrapHandlerBasicAuth will set WWW-Authenticate header
-			return http.StatusUnauthorized, fmt.Errorf("basic authentication required")
-		}
-		data.Token = password
-		return withUserHelper(fn)(w, r, data)
-	}
-}
-
-// withBasicAuth returns an http.HandlerFunc for use with router.Handle.
-// It extracts Basic Auth credentials and uses the password as a JWT token to authenticate the user.
-func withBasicAuth(fn handleFunc) http.HandlerFunc {
-	return wrapHandlerBasicAuth(withBasicAuthHelper(fn))
-}
-
 func muxWithMiddleware(mux *http.ServeMux) *http.ServeMux {
 	wrappedMux := http.NewServeMux()
 	wrappedMux.Handle("/", LoggingMiddleware(mux))

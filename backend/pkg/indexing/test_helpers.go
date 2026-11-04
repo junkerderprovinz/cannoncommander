@@ -2,7 +2,6 @@ package indexing
 
 import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
-	"golang.org/x/net/webdav"
 )
 
 // SetTestIndex allows tests to register mock indices without database initialization
@@ -16,7 +15,6 @@ func SetTestIndex(name string, path string) {
 			Name: name,
 			Path: path,
 		},
-		WebdavLock:          webdav.NewMemLS(),
 		mock:                true,
 		folderSizes:         make(map[string]uint64),
 		folderSizesUnsynced: make(map[string]struct{}),
