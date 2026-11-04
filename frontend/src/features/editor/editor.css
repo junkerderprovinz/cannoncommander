@@ -1,0 +1,49 @@
+/* The editor window in the prototype's look, drawn by CodeMirror. */
+.ce-win .win-body { padding-bottom: 0; }
+.ce-bar { display: flex; align-items: center; gap: 1.1rem; min-height: var(--btn-h); flex: none; }
+.ce-bar .grow { flex: 1; }
+.scrim:has(> .ce-win) { padding-bottom: 5.25rem; }
+.ce-win.full { height: calc(100vh - 6.75rem); }
+.ce-main { contain: inline-size; flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.ce-main.split { grid-template-columns: 1fr 1fr; }
+.ce-main:not(.split) .ce-preview { display: none; }
+.ce-pane { position: relative; min-width: 0; min-height: 0; display: flex; }
+.ce-scroll { flex: 1; overflow: auto; border-radius: var(--radius-card); background: var(--carbon-surface2); }
+.ce-grid { position: relative; min-width: 100%; width: max-content; min-height: 100%; }
+.ce-scroll.wrap .ce-grid { width: 100%; }
+.ce-back, .ce-ta { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 13px; line-height: 1.6; tab-size: 4; letter-spacing: 0; }
+.ce-back { padding: .7rem 0 3rem; color: transparent; counter-reset: ln; pointer-events: none; }
+.ce-back .ln { position: relative; padding: 0 1rem 0 4.2rem; white-space: pre; min-height: 1.6em; }
+.ce-scroll.wrap .ce-back .ln { white-space: pre-wrap; overflow-wrap: anywhere; }
+.ce-back .ln::before { counter-increment: ln; content: counter(ln); position: absolute; left: 0; width: 3.1rem; text-align: right; color: var(--carbon-text-muted); font-variant-numeric: tabular-nums; }
+.ce-back .ln.cur { background: var(--carbon-hover); }
+.ce-back .ln.cur::before { color: var(--carbon-text); }
+.ce-back mark { color: transparent; background: color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 3px; }
+.ce-back mark.cur { background: var(--accent); }
+.ce-ta { position: absolute; inset: 0; width: 100%; height: 100%; padding: .7rem 1rem 3rem 4.2rem; margin: 0; border: 0; outline: none; resize: none; overflow: hidden; background: transparent; color: var(--carbon-text); caret-color: var(--accent-ink); white-space: pre; }
+.ce-scroll.wrap .ce-ta { white-space: pre-wrap; overflow-wrap: anywhere; }
+.ce-ta::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+.ce-find { position: absolute; top: .6rem; right: 1.4rem; z-index: 2; padding: .55rem; display: flex; flex-direction: column; gap: .45rem; width: min(30rem, calc(100% - 2rem)); }
+.ce-find[hidden] { display: none; }
+.ce-frow { display: flex; align-items: center; gap: .4rem; }
+.ce-frow .field { flex: 1; min-width: 0; }
+.ce-frow .pill { min-width: 4.5rem; justify-content: center; }
+.ce-preview { min-width: 0; overflow: auto; border-radius: var(--radius-card); background: var(--carbon-surface2); }
+.ce-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent-contrast); margin-left: .5rem; }
+.ce-ask { display: flex; gap: .75rem; align-items: flex-start; line-height: 1.5; }
+.ce-ask svg { width: 1.2rem; height: 1.2rem; color: var(--accent-glyph); flex: none; margin-top: .1rem; }
+.ce-pos { font-size: 12px; }
+@media (max-width: 760px) {
+  .scrim:has(> .ce-win) { padding: .5rem .5rem 4.75rem; }
+  .ce-win.full { height: calc(100vh - 5.25rem); max-height: none; padding: 1.4rem .75rem .75rem; }
+  .ce-bar { flex-wrap: wrap; gap: .6rem 1rem; }
+  .ce-bar .pill, .ce-bar .grow { display: none; }
+  #ce-findbtn { font-size: 0; gap: 0; width: var(--btn-h); padding: 0; }
+  .ce-main.split { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  .ce-find { right: .5rem; left: .5rem; width: auto; }
+  .ce-frow { flex-wrap: wrap; }
+}
+
+/* CodeMirror draws the lines, the numbers and the marks itself; the pane only gives it the surface. */
+.ce-scroll { display: flex; overflow: hidden; }
+.ce-scroll > .cm-editor { flex: 1; min-width: 0; }
