@@ -247,3 +247,18 @@ func TestStatFindsTheDisksOfASharePath(t *testing.T) {
 		t.Errorf("outside the shares: %+v", boot)
 	}
 }
+
+func TestBookkeepingHidesTrashAndPartFiles(t *testing.T) {
+	cases := map[string]bool{
+		".cc-trash":         true,
+		".film.mkv.cc-part": true,
+		"film.mkv.cc-part":  false,
+		".hidden":           false,
+		"notes.cc-trash":    false,
+	}
+	for name, want := range cases {
+		if got := bookkeeping(name); got != want {
+			t.Errorf("bookkeeping(%q) = %v, want %v", name, got, want)
+		}
+	}
+}

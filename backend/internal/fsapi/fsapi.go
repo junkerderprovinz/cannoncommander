@@ -16,7 +16,9 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 )
 
 //go:embed openapi.yaml
@@ -110,6 +112,12 @@ type handlers struct {
 	thumbs thumbnailer
 }
 
+// bookkeeping reports the names CannonCommander keeps for itself: the trash folder of a share and
+// the part file a copy writes before it takes the real name.
+func bookkeeping(name string) bool {
+	return name == trash.DirName || (strings.HasPrefix(name, ".") && strings.HasSuffix(name, fileops.PartSuffix))
+}
+
 func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 	u := v1.UserFrom(r)
 	loc, err := h.folder(u, r.URL.Query().Get("path"))
@@ -130,7 +138,7 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	for _, d := range dirents {
-		if !h.fs.Visible(u, loc, d.Name()) {
+		if bookkeeping(d.Name()) || !h.fs.Visible(u, loc, d.Name()) {
 			continue
 		}
 		item, err := itemFor(filepath.Join(loc.Real, d.Name()), d.Name())
@@ -173,7 +181,7 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 	for _, name := range names {
-		if !h.fs.Visible(u, loc, name) {
+		if bookkeeping(name) || !h.fs.Visible(u, loc, name) {
 			continue
 		}
 		child, err := h.fs.Check(u, path.Join(loc.Path, name), ccfs.View)
