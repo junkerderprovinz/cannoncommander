@@ -37,7 +37,7 @@ const head = computed(() => (props.st.inside ? t('archive.fromArchive', { object
     <Frow :label="t('archive.folder')"><PathField id="x-dest" v-model="st.dest" /></Frow>
     <Frow :label="t('archive.own')" :tip="t('archive.ownTip')"><Sw id="x-own" v-model="st.own" /></Frow>
     <Frow :label="t('archive.clash')" :tip="t('archive.clashTip')"><Seg id="x-clash" v-model="st.clash" :options="clashes" /></Frow>
-    <Frow v-if="st.locked" :label="t('archive.unpackPassword')" :tip="t('archive.unpackPasswordTip')"><PasswordField id="x-pw" v-model="st.password" class="m" autocomplete="new-password" :text="eyeWords()" /></Frow>
+    <Frow v-if="st.locked" :label="t('archive.unpackPassword')" :tip="t('archive.unpackPasswordTip')"><PasswordField id="x-pw" v-model="st.password" class="grow" autocomplete="new-password" :text="eyeWords()" /></Frow>
     <Frow :label="t('archive.lands')">
       <span id="x-final" class="bk-finalw">
         <span v-if="ok === false" class="pill fault">{{ t('ui.noFolder') }}</span>

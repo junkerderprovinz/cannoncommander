@@ -20,7 +20,6 @@
 .bk-row:hover .bk-tile, .bk-row:focus-visible .bk-tile, .bk-row.cur .bk-tile { background: var(--accent); }
 .bk-row:hover .bk-tile svg, .bk-row:focus-visible .bk-tile svg, .bk-row.cur .bk-tile svg { color: var(--accent-contrast); }
 .bk-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.bk.win.full { height: calc(100vh - 8.5rem); margin-bottom: 5rem; }
 .bk-picker { height: min(34rem, calc(100vh - 3rem)); }
 .bk-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left; min-width: 0; }
 .bk-dot { width: .5rem; height: .5rem; border-radius: 50%; background: #6fdc8c; display: inline-block; flex: none; }
@@ -44,6 +43,6 @@
   .bk-form .frow:has(> .bk-val, > .glim-toggle) > .lab { flex: 1 1 auto; min-width: 0; }
   .bk-form .seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; margin-left: 0; }
   .pathf, .bk-finalw { max-width: none; width: 100%; margin-left: 0; }
-  .bk .win-foot .start { display: none; }
+  .bk .glim-window-start { display: none; }
 }
 @media (max-width: 760px) { .bk-range { flex-wrap: wrap; margin-left: 0; } }

@@ -32,7 +32,7 @@ watchEffect(() => { props.st.file = ok.value && props.st.name.trim() ? freeName(
     <Frow :label="t('archive.name')"><span class="bk-namef"><input id="k-name" v-model="st.name" class="glim-input grow" spellcheck="false" autocomplete="off"><span id="k-ext" class="pill mono">.{{ st.format }}</span></span></Frow>
     <Frow :label="t('archive.format')" :tip="t('archive.formatTip')"><Seg id="k-fmt" v-model="st.format" :options="formats" /></Frow>
     <Frow :label="t('archive.level')" :tip="t('archive.levelTip')"><Seg id="k-level" v-model="st.level" :options="levels" /></Frow>
-    <Frow :label="t('archive.password')" :tip="t('archive.passwordTip')"><PasswordField id="k-pw" v-model="st.password" class="m" :placeholder="t('archive.noPassword')" :disabled="tar" autocomplete="new-password" :text="eyeWords()" /></Frow>
+    <Frow :label="t('archive.password')" :tip="t('archive.passwordTip')"><PasswordField id="k-pw" v-model="st.password" class="grow" :placeholder="t('archive.noPassword')" :disabled="tar" autocomplete="new-password" :text="eyeWords()" /></Frow>
   </div>
   <div class="well glim-well bk-form"><div class="eyebrow">{{ t('archive.target') }}</div>
     <Frow :label="t('archive.folder')"><PathField id="k-dest" v-model="st.dest" /></Frow>

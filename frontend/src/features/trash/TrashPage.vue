@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Papierkorb: a full page listing what was deleted, with restore, delete for good and empty.
+import { Card } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import type { TrashItem } from '@/api/ops';
 import { DAY, fmtDate, fmtSize } from '@/core/format';
@@ -80,17 +81,17 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
 
 <template>
   <div v-if="!list.length" class="page-inner ct">
-    <section class="card glim-card"><span class="notch">{{ t('trash.title') }}</span><div class="card-body">
+    <Card :title="t('trash.title')">
       <div class="empty ct-empty"><G n="IconTrash" /><div class="t">{{ t('trash.emptyTitle') }}</div><div class="muted">{{ t('trash.emptyText', { days: trash.days }) }}</div>
         <button class="btn" data-go-view="files" @click="go('files')"><G n="IconFiles" />{{ t('trash.toFiles') }}</button></div>
-    </div></section>
+    </Card>
   </div>
   <div v-else class="page-inner ct">
-    <section class="card glim-card"><span class="notch">{{ t('trash.title') }}</span><div class="card-body">
+    <Card :title="t('trash.title')">
       <Frow :label="t('trash.content')"><span class="pill glim-num">{{ t('trash.contentPill', { what: objects(list.length), size: fmtSize(total) }) }}</span></Frow>
       <Frow v-if="next" :label="t('trash.next')" :tip="t('trash.nextTip', { days: trash.days })"><span class="pill">{{ next.name }}</span><span class="pill glim-num">{{ t('trash.nextOn', { date: goneOn(next) }) }}</span></Frow>
-    </div></section>
-    <section class="card glim-card ct-card"><span class="notch">{{ t('trash.listTitle') }}</span>
+    </Card>
+    <Card class="ct-card" :title="t('trash.listTitle')">
       <div class="ct-head" role="row"><span></span><span></span>
         <button v-for="k in COLS" :key="k" :data-tsort="k" :class="[{ sorted: pick.sort === k, r: k === 'size' || k === 'deleted' }, `col-${k}`]" @click="sortBy(k)">{{ t(`trash.col.${k}`) }}<G v-if="pick.sort === k" :n="pick.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /></button>
         <button id="ct-more" class="btn" @click="more"><G n="IconMore" />{{ t('trash.more') }}</button>
@@ -109,7 +110,7 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
           </span>
         </div>
       </div>
-    </section>
+    </Card>
     <div v-if="picked.length" class="ct-fab"><button id="ct-restore" class="btn key primary" @click="restore(picked, clear)"><G n="IconRestore" />{{ picked.length === 1 ? t('trash.restore') : t('trash.restoreMany', { n: picked.length }) }}</button></div>
   </div>
 </template>

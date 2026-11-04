@@ -260,7 +260,7 @@ function toggleRecovery() {
       <template v-if="step === 'pw'">
         <div class="cl-fields">
           <Frow :label="s('name')"><input id="cl-user" v-model="name" class="glim-input grow" autocomplete="username" autocapitalize="off" spellcheck="false"></Frow>
-          <Frow :label="s('password')"><PasswordField id="cl-pass" v-model="pass" autocomplete="current-password" class="w" :text="eyeWords()" /></Frow>
+          <Frow :label="s('password')"><PasswordField id="cl-pass" v-model="pass" autocomplete="current-password" class="grow" :text="eyeWords()" /></Frow>
           <Frow :label="s('stay')" :tip="s('stayTip')"><Sw id="cl-keep" v-model="keep" /></Frow>
         </div>
         <div class="cl-btns">
@@ -297,8 +297,8 @@ function toggleRecovery() {
         <p v-if="step === 'password'" class="cl-text">{{ s('ownText') }}</p>
         <div class="cl-fields">
           <Frow v-if="step === 'reset'" :label="s('logCode')" :tip="s('logCodeTip')"><input id="cl-code" v-model="logCode" class="glim-input grow glim-input--mono cl-code" placeholder="XXXX-XXXX-XXXX" spellcheck="false" autocomplete="one-time-code" autocapitalize="characters"></Frow>
-          <Frow :label="s('newPassword')"><PasswordField id="cl-new" v-model="next1" autocomplete="new-password" :placeholder="s('minChars', { n: opts.minPassword })" class="w" :text="eyeWords()" /></Frow>
-          <Frow :label="s('repeat')"><PasswordField id="cl-new2" v-model="next2" autocomplete="new-password" class="w" :text="eyeWords()" /></Frow>
+          <Frow :label="s('newPassword')"><PasswordField id="cl-new" v-model="next1" autocomplete="new-password" :placeholder="s('minChars', { n: opts.minPassword })" class="grow" :text="eyeWords()" /></Frow>
+          <Frow :label="s('repeat')"><PasswordField id="cl-new2" v-model="next2" autocomplete="new-password" class="grow" :text="eyeWords()" /></Frow>
         </div>
         <div class="cl-btns">
           <button class="btn key primary" type="submit" :disabled="busy"><G n="IconKey" />{{ s('setPassword') }}</button>

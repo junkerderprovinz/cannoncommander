@@ -36,6 +36,7 @@ svg { display: block; }
 .menubar button:hover, .menubar button.open { background: var(--carbon-surface2); color: var(--carbon-text); }
 .head .spacer { flex: 1; }
 
+/* In the test build GlimStone's window buttons carry .btn as well, and they keep GlimStone's look. */
 .btn:not(.glim-btn) { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; height: var(--btn-h); padding: 0 .85rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); color: var(--carbon-text); font-size: 14px; font-weight: 500; white-space: nowrap; flex: none; }
 .btn:not(.glim-btn):hover, .btn:not(.glim-btn):focus-visible { background: var(--carbon-surface3); }
 .btn:not(.glim-btn) svg { width: .875rem; height: .875rem; color: var(--carbon-text); flex: none; }
@@ -211,8 +212,6 @@ svg { display: block; }
 .frow > .lab small { color: var(--carbon-text-muted); font-size: 12px; }
 .stack > .frow { flex-wrap: wrap; row-gap: .45rem; }
 .stack > .frow > .seg { flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; }
-.info { width: .95rem; height: .95rem; color: var(--carbon-text-muted); cursor: help; flex: none; display: inline-grid; }
-.info svg { width: .95rem; height: .95rem; }
 .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
 .tbl td, .tbl th { text-align: left; padding: .4rem .5rem; white-space: nowrap; }
 .tbl th { font-size: 12px; color: var(--carbon-text-muted); font-weight: 500; }
