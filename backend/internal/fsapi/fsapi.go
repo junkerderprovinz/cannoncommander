@@ -18,6 +18,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/meta"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 )
 
@@ -38,6 +39,7 @@ func Routes(r *v1.Router) {
 	r.Handle("GET /fs/file", h.fileGet)
 	r.Handle("PUT /fs/file", h.filePut)
 	r.Handle("POST /fs/archive-stream", h.archiveStream)
+	meta.Routes(r, meta.Default())
 }
 
 // Item is one row of a listing.

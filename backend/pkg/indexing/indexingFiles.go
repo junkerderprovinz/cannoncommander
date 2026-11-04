@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gtsteffaniak/go-cache/cache"
@@ -141,6 +142,12 @@ type Index struct {
 	// startupScanPending requests one bounded serial scan pass on startup when the
 	// persisted folder-size map could not be restored (quick scans would be blind).
 	startupScanPending bool
+	// rescan wakes the scheduler for a full pass that was asked for, and
+	// fullPasses counts the serial passes it finished, so the asker can
+	// tell when its pass is through.
+	rescan     chan struct{}
+	rescanOnce sync.Once
+	fullPasses atomic.Uint64
 }
 
 var (
