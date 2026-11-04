@@ -32,6 +32,9 @@ type Index interface {
 	// Folders looks up the given folders. Folders the index has not seen
 	// are missing from the result.
 	Folders(src *ccfs.Source, dirs []string) map[string]Folder
+	// FolderSize returns the total size of everything below dir, if the
+	// index has measured it. It costs no query, so it can be asked per entry.
+	FolderSize(src *ccfs.Source, dir string) (int64, bool)
 	// Totals counts the files and folders anywhere below dir. ok is false
 	// when the index holds nothing there.
 	Totals(src *ccfs.Source, dir string) (files, dirs int64, ok bool)
@@ -77,6 +80,15 @@ func (scanned) Folders(src *ccfs.Source, dirs []string) map[string]Folder {
 		out[d] = f
 	}
 	return out
+}
+
+func (scanned) FolderSize(src *ccfs.Source, dir string) (int64, bool) {
+	idx := indexing.Lookup(src.Name)
+	if idx == nil {
+		return 0, false
+	}
+	size, ok := idx.GetFolderSizeForIndexPath(slashed(dir))
+	return int64(size), ok
 }
 
 func (scanned) Totals(src *ccfs.Source, dir string) (files, dirs int64, ok bool) {

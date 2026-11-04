@@ -18,6 +18,7 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex/fsindextest"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
@@ -408,5 +409,52 @@ func TestAdminRebuildsTheIndexAsAJob(t *testing.T) {
 	}
 	if s := st.Sources[0]; s.Size != 4096 || s.ScanEvery != 2400 || s.NextScan != "2023-11-14T23:13:20.000Z" {
 		t.Errorf("plan = %+v", s)
+	}
+}
+
+type folderIndex struct {
+	sizes map[string]int64
+	asked int
+}
+
+func (x *folderIndex) Folders(_ *ccfs.Source, dirs []string) map[string]fsindex.Folder {
+	x.asked++
+	out := map[string]fsindex.Folder{}
+	for _, d := range dirs {
+		out[d] = fsindex.Folder{Size: x.sizes[d]}
+	}
+	return out
+}
+
+func (x *folderIndex) FolderSize(_ *ccfs.Source, dir string) (int64, bool) {
+	size, ok := x.sizes[dir]
+	return size, ok
+}
+
+func (x *folderIndex) Totals(*ccfs.Source, string) (int64, int64, bool) { return 0, 0, false }
+func (x *folderIndex) Refresh(*ccfs.Source, string)                     {}
+
+func TestASizeFilterJudgesFoldersWithoutAQueryForEach(t *testing.T) {
+	f := newFixture(t)
+	x := &folderIndex{sizes: map[string]int64{"/filme": 900 << 20, "/filme/Serie": 800 << 20, "/docs": 10}}
+	h := handlers{deps: f.deps}
+	h.deps.Index = x
+	u := f.users["jdp"]
+	p := Params{Path: "/mnt/user", Type: "dir", Min: "1 MB"}
+	loc, err := checkParams(f.deps.FS, u, p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	finder := h.finder(context.Background(), u, p)
+	if err := finder.run(context.Background(), loc, func(r *row) error { got = append(got, r.Name); return nil }); err != nil {
+		t.Fatal(err)
+	}
+	slices.Sort(got)
+	if !slices.Equal(got, []string{"Serie", "filme"}) {
+		t.Errorf("folders of at least 1 MB = %v", got)
+	}
+	if x.asked != 0 {
+		t.Errorf("%d queries for the sizes of folders", x.asked)
 	}
 }

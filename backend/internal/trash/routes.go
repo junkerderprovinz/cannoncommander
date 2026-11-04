@@ -4,7 +4,6 @@ package trash
 import (
 	_ "embed"
 	"net/http"
-	"slices"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -124,16 +123,19 @@ func (h handlers) submit(w http.ResponseWriter, r *http.Request, kind string, en
 // pick returns the entries with the given ids. An entry of somebody else
 // does not exist for a user who is not an admin.
 func (h handlers) pick(u *users.User, ids []string) ([]Item, error) {
+	found, err := h.s.getAll(ids)
+	if err != nil {
+		return nil, err
+	}
 	var out []Item
+	seen := make(map[string]bool, len(ids))
 	for _, id := range ids {
-		it, err := h.s.Get(id)
-		if err != nil {
-			return nil, err
-		}
-		if !u.Permissions.Admin && it.By != u.Username {
+		it, ok := found[id]
+		if !ok || !u.Permissions.Admin && it.By != u.Username {
 			return nil, ErrNotFound
 		}
-		if !slices.ContainsFunc(out, func(o Item) bool { return o.ID == it.ID }) {
+		if !seen[id] {
+			seen[id] = true
 			out = append(out, it)
 		}
 	}

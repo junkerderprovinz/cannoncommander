@@ -196,7 +196,7 @@ func (f *fixture) duplicates(t *testing.T, p DuplicatesParams) Duplicates {
 			t.Fatal("job does not finish")
 		}
 		time.Sleep(10 * time.Millisecond)
-		j, _ = f.m.Get(j.ID, false)
+		j, _ = f.m.Get(j.ID, true)
 	}
 	if j.State != jobs.Done {
 		t.Fatalf("job %s: %s", j.State, j.Error)
@@ -242,6 +242,38 @@ func TestDuplicatesBySizeFindRenamedCopies(t *testing.T) {
 	f := newFixture(t)
 	d := f.duplicates(t, DuplicatesParams{Path: "/mnt/user", By: "size", Hidden: true})
 	if len(d.Groups) != 2 || len(d.Groups[0].Copies) != 3 || len(d.Groups[1].Copies) != 3 {
+		t.Errorf("groups = %+v", d.Groups)
+	}
+}
+
+func TestDuplicatesCompareFilesWhoseIndexedSizeIsTheirSpaceOnDisk(t *testing.T) {
+	f := newFixture(t)
+	db := fsindextest.New(t)
+	fsindextest.Scan(t, db, "Shares", f.share)
+	// Unless a source asks for logical sizes, the scanner stores the blocks
+	// a file takes, which is more than the file holds.
+	if _, err := db.DB().Exec(`UPDATE index_items SET size = (size + 4095) / 4096 * 4096`); err != nil {
+		t.Fatal(err)
+	}
+	d := f.duplicates(t, DuplicatesParams{Path: "/mnt/user"})
+	if len(d.Groups) != 2 {
+		t.Fatalf("groups = %+v", d.Groups)
+	}
+	photo := d.Groups[1]
+	if photo.Name != "a.jpg" || photo.Size != 4 || photo.Wasted != 4 {
+		t.Errorf("photo group = %+v", photo)
+	}
+}
+
+func TestDuplicatesKeepToTheMinimumSizeOfTheFileItself(t *testing.T) {
+	f := newFixture(t)
+	db := fsindextest.New(t)
+	fsindextest.Scan(t, db, "Shares", f.share)
+	if _, err := db.DB().Exec(`UPDATE index_items SET size = (size + 4095) / 4096 * 4096`); err != nil {
+		t.Fatal(err)
+	}
+	d := f.duplicates(t, DuplicatesParams{Path: "/mnt/user", MinSize: 100})
+	if len(d.Groups) != 1 || d.Groups[0].Name != "Sintel.mkv" {
 		t.Errorf("groups = %+v", d.Groups)
 	}
 }
