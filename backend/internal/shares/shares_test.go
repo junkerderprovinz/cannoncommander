@@ -2,10 +2,13 @@ package shares_test
 
 import (
 	"archive/zip"
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -735,6 +738,172 @@ func TestTheUploadLimitHoldsAlsoForRunningUploads(t *testing.T) {
 		t.Fatalf("room %+v", pub.UploadRoom)
 	}
 	e.dropFile(sh.Slug, map[string]any{"name": "c.txt", "size": 6}, "123456")
+}
+
+// holdStart sends the start of an upload up to the last byte of its body and
+// returns once the handler has looked at the link and waits for the rest. The
+// function it returns sends that byte and reads the answer.
+func (e *env) holdStart(slug string, req map[string]any) func() answer {
+	e.t.Helper()
+	body, err := json.Marshal(req)
+	if err != nil {
+		e.t.Fatal(err)
+	}
+	visited := make(chan struct{}, 1)
+	byID := shares.UserByID
+	shares.UserByID = func(id uint64) (*users.User, error) {
+		select {
+		case visited <- struct{}{}:
+		default:
+		}
+		return byID(id)
+	}
+	conn := e.dial()
+	last := len(body) - 1
+	fmt.Fprintf(conn, "POST /s/%s/upload HTTP/1.1\r\nHost: x\r\nContent-Type: application/json\r\nContent-Length: %d\r\n\r\n%s", slug, len(body), body[:last])
+	select {
+	case <-visited:
+	case <-time.After(10 * time.Second):
+		e.t.Fatal("the handler never looked at the link")
+	}
+	shares.UserByID = byID
+	return func() answer {
+		e.t.Helper()
+		conn.Write(body[last:])
+		return e.answerOn(conn)
+	}
+}
+
+func (e *env) dial() net.Conn {
+	e.t.Helper()
+	conn, err := net.Dial("tcp", e.srv.Listener.Addr().String())
+	if err != nil {
+		e.t.Fatal(err)
+	}
+	e.t.Cleanup(func() { conn.Close() })
+	return conn
+}
+
+func (e *env) answerOn(conn net.Conn) answer {
+	e.t.Helper()
+	resp, err := http.ReadResponse(bufio.NewReader(conn), nil)
+	if err != nil {
+		e.t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	raw, _ := io.ReadAll(resp.Body)
+	return answer{resp.StatusCode, raw, resp.Header}
+}
+
+func (e *env) expire(id string) {
+	e.t.Helper()
+	if _, err := e.deps.DB.Exec(`UPDATE share_links SET expires_at = ? WHERE id = ?`, time.Now().Add(-time.Minute).Unix(), id); err != nil {
+		e.t.Fatal(err)
+	}
+}
+
+func (e *env) uploaded(id string) int64 {
+	e.t.Helper()
+	var got shares.Share
+	e.do("GET", "/shares/"+id, nil, "X-User", "anna").into(e.t, &got)
+	return got.Uploaded
+}
+
+func TestAHeldUploadStartCountsWhatLandedMeanwhile(t *testing.T) {
+	e := newEnv(t)
+	sh := e.create("anna", map[string]any{"paths": []string{"/mnt/user/eingang"}, "uploads": true, "uploadLimit": 10})
+	first := e.holdStart(sh.Slug, map[string]any{"name": "a.bin", "size": 10})
+	second := e.holdStart(sh.Slug, map[string]any{"name": "b.bin", "size": 10})
+	a := first()
+	if a.code != http.StatusCreated {
+		t.Fatalf("first start: %d %s", a.code, a.body)
+	}
+	var up fileops.Upload
+	a.into(t, &up)
+	if a := e.do("PUT", "/s/"+sh.Slug+"/upload/"+up.ID, "0123456789", "Upload-Offset", "0"); a.code != http.StatusOK {
+		t.Fatalf("chunk: %d %s", a.code, a.body)
+	}
+	if a := second(); a.code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("second start past the limit: %d %s", a.code, a.body)
+	}
+}
+
+func TestAHeldUploadStartEndsWithItsLink(t *testing.T) {
+	e := newEnv(t)
+	sh := e.create("anna", map[string]any{"paths": []string{"/mnt/user/eingang"}, "uploads": true})
+	held := e.holdStart(sh.Slug, map[string]any{"name": "a.bin", "size": 10})
+	e.expire(sh.ID)
+	if a := held(); a.code != http.StatusGone {
+		t.Fatalf("start on an expired link: %d %s", a.code, a.body)
+	}
+}
+
+func TestAChunkThatOutlivesItsLinkDoesNotLand(t *testing.T) {
+	e := newEnv(t)
+	sh := e.create("anna", map[string]any{"paths": []string{"/mnt/user/eingang"}, "uploads": true})
+	var up fileops.Upload
+	e.do("POST", "/s/"+sh.Slug+"/upload", map[string]any{"name": "a.bin", "size": 10}).into(t, &up)
+
+	conn := e.dial()
+	fmt.Fprintf(conn, "PUT /s/%s/upload/%s HTTP/1.1\r\nHost: x\r\nUpload-Offset: 0\r\nContent-Length: 10\r\n\r\n01234", sh.Slug, up.ID)
+	part := e.real("/mnt/user/eingang/.a.bin.cc-part")
+	for deadline := time.Now().Add(10 * time.Second); ; time.Sleep(5 * time.Millisecond) {
+		if info, err := os.Stat(part); err == nil && info.Size() == 5 {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("the first half never arrived")
+		}
+	}
+	e.expire(sh.ID)
+	conn.Write([]byte("56789"))
+	if a := e.answerOn(conn); a.code != http.StatusGone {
+		t.Fatalf("last chunk on an expired link: %d %s", a.code, a.body)
+	}
+	if _, err := os.Stat(e.real("/mnt/user/eingang/a.bin")); !os.IsNotExist(err) {
+		t.Fatal("the file landed")
+	}
+	if got := e.uploaded(sh.ID); got != 0 {
+		t.Fatalf("uploaded %d", got)
+	}
+
+	if a := e.do("PATCH", "/shares/"+sh.ID, map[string]any{"expires": nil}, "X-User", "anna"); a.code != http.StatusOK {
+		t.Fatalf("renewing the link: %d %s", a.code, a.body)
+	}
+	if a := e.do("PUT", "/s/"+sh.Slug+"/upload/"+up.ID, "", "Upload-Offset", "10"); a.code != http.StatusOK {
+		t.Fatalf("finishing on the renewed link: %d %s", a.code, a.body)
+	}
+	if e.read("/mnt/user/eingang/a.bin") != "0123456789" || e.uploaded(sh.ID) != 10 {
+		t.Fatalf("uploaded %d", e.uploaded(sh.ID))
+	}
+}
+
+func TestAnUploadThatCannotBeCountedDoesNotLand(t *testing.T) {
+	e := newEnv(t)
+	sh := e.create("anna", map[string]any{"paths": []string{"/mnt/user/eingang"}, "uploads": true, "uploadLimit": 4})
+	var up fileops.Upload
+	e.do("POST", "/s/"+sh.Slug+"/upload", map[string]any{"name": "a.bin", "size": 4}).into(t, &up)
+	if _, err := e.deps.DB.Exec(`CREATE TRIGGER no_count BEFORE UPDATE OF uploaded ON share_links BEGIN SELECT RAISE(ABORT, 'full'); END`); err != nil {
+		t.Fatal(err)
+	}
+	if a := e.do("PUT", "/s/"+sh.Slug+"/upload/"+up.ID, "1234", "Upload-Offset", "0"); a.code != http.StatusInternalServerError {
+		t.Fatalf("chunk: %d %s", a.code, a.body)
+	}
+	if _, err := os.Stat(e.real("/mnt/user/eingang/a.bin")); !os.IsNotExist(err) {
+		t.Fatal("a file landed without being counted")
+	}
+	if a := e.do("POST", "/s/"+sh.Slug+"/upload", map[string]any{"name": "b.bin", "size": 1}); a.code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("the open upload stopped counting: %d %s", a.code, a.body)
+	}
+	if _, err := e.deps.DB.Exec(`DROP TRIGGER no_count`); err != nil {
+		t.Fatal(err)
+	}
+	if a := e.do("PUT", "/s/"+sh.Slug+"/upload/"+up.ID, "", "Upload-Offset", "4"); a.code != http.StatusOK {
+		t.Fatalf("retry: %d %s", a.code, a.body)
+	}
+	if e.read("/mnt/user/eingang/a.bin") != "1234" || e.uploaded(sh.ID) != 4 {
+		t.Fatalf("uploaded %d", e.uploaded(sh.ID))
+	}
 }
 
 func TestVisitorsOnlyReachUploadsOfTheirLink(t *testing.T) {
