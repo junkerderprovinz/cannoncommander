@@ -25,8 +25,8 @@ func TestWatchPublishesSpinAndParityChanges(t *testing.T) {
 		<-done
 	}()
 
-	// Give the monitor one round to learn the starting state.
-	time.Sleep(3 * e.cfg.Poll)
+	// The monitor has to know the starting state before it can see a change.
+	firstRead(t, e.svc)
 	e.writeDisks(map[string]bool{"disk1": true})
 	ev := next(t, c.Events, EventSpin)
 	var spin SpinEvent
@@ -45,6 +45,25 @@ func TestWatchPublishesSpinAndParityChanges(t *testing.T) {
 	}
 	if !p.Running || p.Kind != "check" || !e.svc.ParityBusy() {
 		t.Errorf("parity = %+v", p)
+	}
+}
+
+// firstRead waits until Watch has read the state once. Its first round keeps
+// that state as the one to compare with, even if a file changes right after.
+func firstRead(t *testing.T, s *Service) {
+	t.Helper()
+	deadline := time.Now().Add(5 * time.Second)
+	for {
+		s.mu.Lock()
+		read := s.cached != nil
+		s.mu.Unlock()
+		if read {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("the monitor never read the state")
+		}
+		time.Sleep(time.Millisecond)
 	}
 }
 
