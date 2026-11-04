@@ -118,6 +118,32 @@ func TestRevokeTokenIsImmediate(t *testing.T) {
 	}
 }
 
+func TestSessionAliveFollowsTheTokenByItsHash(t *testing.T) {
+	store, _ := createTestStorage(t)
+	if err := store.AddSessionToken("session", 1); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.AddApiToken("api", 1); err != nil {
+		t.Fatal(err)
+	}
+	session, api := utils.HashSHA256("session"), utils.HashSHA256("api")
+	if !store.SessionAlive(session) || store.SessionAlive(api) || store.SessionAlive("unknown") {
+		t.Fatal("only the session token counts as a live session")
+	}
+	if err := store.RetireToken("session"); err != nil {
+		t.Fatal(err)
+	}
+	if !store.SessionAlive(session) {
+		t.Fatal("a retired session lives on during its grace window")
+	}
+	if err := store.RevokeTokenHash(session); err != nil {
+		t.Fatal(err)
+	}
+	if store.SessionAlive(session) || !store.IsTokenRevoked("session") {
+		t.Fatal("revoking by hash must end the session at once")
+	}
+}
+
 // signedTestJWT mints a bare HS256 JWT carrying only an exp claim. The registry
 // only reads claims unverified, so any key works.
 func signedTestJWT(t *testing.T, exp time.Time) string {

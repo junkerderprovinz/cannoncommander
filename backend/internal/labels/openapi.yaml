@@ -1,23 +1,260 @@
 tag:
   name: labels
-  description: Colour labels and tags on paths.
+  description: |
+    Colour labels and tags on paths. They are shared, every user sees the
+    labels of the files they may see. They follow a file when the server
+    renames, moves or copies it.
 paths:
   /labels:
     get:
       operationId: labelsGet
       summary: Colours and tags with their names
+      description: The colours in their order and every tag in German alphabetical order, each with the number of paths carrying it.
+      responses:
+        "200":
+          description: The colour and tag lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelLists"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /labels/colours:
     put:
       operationId: labelColoursPut
       summary: Rename or recolour the colour labels
+      description: |
+        Replaces the colour list, in the given order. An entry with an id
+        changes that colour, one without is a new colour. Colours left out
+        are taken off every path. Sends labels.changed to everyone.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [colours]
+              properties:
+                colours:
+                  type: array
+                  maxItems: 64
+                  items:
+                    type: object
+                    required: [name, hex]
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                        description: Empty keeps the name the app gives its own colours.
+                      hex:
+                        type: string
+                        example: "#2ec4b6"
+      responses:
+        "200":
+          description: The new lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelLists"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /labels/tags:
     put:
       operationId: labelTagsPut
       summary: Change the list of tags
+      description: |
+        Replaces the tag list. An entry with from renames that tag on every
+        path, and two tags renamed to the same name become one. An entry
+        without from is a tag no file needs to carry yet. Tags left out are
+        taken off every path. Sends labels.changed to everyone.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tags]
+              properties:
+                tags:
+                  type: array
+                  maxItems: 1000
+                  items:
+                    type: object
+                    required: [name]
+                    properties:
+                      from:
+                        type: string
+                      name:
+                        type: string
+      responses:
+        "200":
+          description: The new lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelLists"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /labels/items:
     get:
       operationId: labelItemsGet
       summary: Labels of the entries in a folder
+      description: |
+        The labelled entries of a folder the user may see, keyed by name.
+        With deep=true everything below the folder, keyed by the path
+        relative to it, for the flat view and search results.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: deep
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: The labels.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [path, items]
+                properties:
+                  path:
+                    type: string
+                  items:
+                    type: object
+                    additionalProperties:
+                      $ref: "#/components/schemas/Label"
+                example:
+                  path: /mnt/user/dokumente
+                  items:
+                    Mietvertrag.pdf: { colour: red, tags: [wichtig] }
+                    Rechnung-Oktober.pdf: { tags: [Steuer] }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     put:
       operationId: labelItemsPut
       summary: Set colour and tags on paths
+      description: |
+        Changes the labels of up to 10000 paths at once. colour sets the
+        colour, an empty colour clears it. tags replaces the tags, add and
+        remove adjust them. Fields left out stay as they are. Needs the
+        right to change each path, so read only places carry no labels.
+        Sends labels.changed to the watchers of each folder.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths]
+              properties:
+                paths:
+                  type: array
+                  minItems: 1
+                  maxItems: 10000
+                  items:
+                    type: string
+                colour:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                add:
+                  type: array
+                  items:
+                    type: string
+                remove:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: The labels the paths carry after the change, keyed by path. An empty object means no label.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: object
+                    additionalProperties:
+                      $ref: "#/components/schemas/Label"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+components:
+  schemas:
+    Label:
+      type: object
+      properties:
+        colour:
+          type: string
+          description: Id of the colour.
+        tags:
+          type: array
+          items:
+            type: string
+    LabelLists:
+      type: object
+      required: [colours, tags]
+      properties:
+        colours:
+          type: array
+          items:
+            type: object
+            required: [id, name, hex, count]
+            properties:
+              id:
+                type: string
+                example: red
+              name:
+                type: string
+                description: Empty for the colours the app comes with, which the client names in its language.
+              hex:
+                type: string
+                example: "#ff6b72"
+              count:
+                type: integer
+        tags:
+          type: array
+          items:
+            type: object
+            required: [name, count]
+            properties:
+              name:
+                type: string
+              count:
+                type: integer
+    LabelsChanged:
+      type: object
+      description: |
+        Payload of labels.changed. Kind colours or tags reaches everyone,
+        kind items reaches the watchers of the folder in path.
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [colours, tags, items]
+        path:
+          type: string

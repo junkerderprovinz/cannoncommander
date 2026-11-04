@@ -1702,7 +1702,12 @@ func (s *Storage) UpdateRulePath(sourcePath string, oldPath, newPath utils.Index
 // RevokeToken immediately invalidates a token: the owner mapping is removed and
 // the hash is persisted as revoked with timestamp 0 (no grace window).
 func (s *Storage) RevokeToken(tokenString string) error {
-	tokenHash := utils.HashSHA256(tokenString)
+	return s.RevokeTokenHash(utils.HashSHA256(tokenString))
+}
+
+// RevokeTokenHash is RevokeToken for callers that only kept the hash, such as
+// the list of open sessions.
+func (s *Storage) RevokeTokenHash(tokenHash string) error {
 	var rollback tokenRevokeRollback
 	s.mux.Lock()
 	rollback.capture(s, tokenHash)
@@ -1907,6 +1912,20 @@ func (s *Storage) GetHashedTokenInfo(tokenString string) (HashedTokenInfo, bool)
 		return HashedTokenInfo{}, false
 	}
 	return info, true
+}
+
+// SessionAlive reports whether the session token with this hash still logs in:
+// it is registered as a session, not expired and not revoked. A retired token
+// counts as alive while its grace window lasts.
+func (s *Storage) SessionAlive(tokenHash string) bool {
+	s.mux.RLock()
+	defer s.mux.RUnlock()
+	info, ok := s.HashedTokens[tokenHash]
+	if !ok || !info.IsSession || TokenExpiredPastGrace(info.ExpiresAt, time.Now()) {
+		return false
+	}
+	revokedAt, revoked := s.RevokedTokens[tokenHash]
+	return !revoked || (revokedAt != 0 && time.Since(time.Unix(revokedAt, 0)) < BearerTokenGrace)
 }
 
 // GetRevokedTokens returns a copy of the revocation map (hash → revocation unix time).
