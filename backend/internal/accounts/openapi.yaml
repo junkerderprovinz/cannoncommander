@@ -683,9 +683,10 @@ paths:
       x-access: admin
       description: |
         Fields left out stay as they are. A new password logs the user out
-        everywhere. Renaming moves the user's rules along. Nobody can change
-        their own login name or password here, or take away their own admin
-        role, so there is always an admin left.
+        everywhere. Renaming moves the user's rules, jobs, undo steps and
+        trash along. Nobody can change their own login name or password
+        here, or take away their own admin role, so there is always an admin
+        left.
       requestBody:
         required: true
         content:
@@ -714,9 +715,10 @@ paths:
       summary: Delete a user
       x-access: admin
       description: |
-        Removes the account with its shares, jobs, rules, settings,
-        sessions and tokens. Files stay where they are. Nobody can delete
-        themselves.
+        Removes the account with its shares, jobs, undo steps, rules,
+        settings, sessions and tokens. Files stay where they are. What the
+        user put in the trash stays there for admins until its days are over.
+        Nobody can delete themselves.
       responses:
         "204":
           description: Deleted.

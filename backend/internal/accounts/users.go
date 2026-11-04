@@ -270,7 +270,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 	if u.Username != oldName {
-		if err := h.svc.rules.renameWho(r.Context(), oldName, u.Username); err != nil {
+		if err := h.moveName(r.Context(), oldName, u.Username); err != nil {
 			return err
 		}
 	}
