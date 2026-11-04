@@ -1,20 +1,177 @@
 tag:
   name: trash
-  description: Deleted files waiting in the trash.
+  description: |
+    Deleted files waiting in the trash. Every share has its own trash
+    folder .cc-trash, other sources have one at their top, so moving there
+    never copies. Entries go away for good after the days set here.
+    Putting things into the trash is the job kind trash. trash.changed
+    tells clients to reload the list.
 paths:
   /trash:
     get:
       operationId: trashList
       summary: List the trash
+      description: Admins see every user's entries.
+      responses:
+        "200":
+          description: The entries, newest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, count, bytes, days]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TrashItem"
+                  count:
+                    type: integer
+                  bytes:
+                    type: integer
+                    format: int64
+                  days:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /trash/restore:
     post:
       operationId: trashRestore
       summary: Put entries back where they came from
+      description: Runs as a job. Missing folders are created again, a name taken meanwhile gets a number.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrashIds"
+      responses:
+        "202":
+          $ref: "#/components/responses/JobAnswer"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /trash/empty:
     post:
       operationId: trashEmpty
       summary: Empty the trash
+      description: Deletes the given entries for good, or every entry the user sees without a body. Runs as a job.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrashIds"
+      responses:
+        "202":
+          $ref: "#/components/responses/JobAnswer"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /trash/{id}:
     delete:
       operationId: trashDelete
       summary: Delete one entry for good
+      description: Runs as a job.
+      responses:
+        "202":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /trash/settings:
+    get:
+      operationId: trashSettingsGet
+      summary: How long the trash keeps entries
+      responses:
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrashSettings"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    put:
+      operationId: trashSettingsPut
+      summary: Change how long the trash keeps entries
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrashSettings"
+      responses:
+        "200":
+          description: The settings as stored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrashSettings"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+components:
+  schemas:
+    TrashIds:
+      type: object
+      required: [ids]
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+    TrashSettings:
+      type: object
+      required: [days]
+      properties:
+        days:
+          type: integer
+          minimum: 1
+          maximum: 3650
+          example: 30
+    TrashItem:
+      type: object
+      required: [id, name, origin, from, dir, size, files, by, deletedAt, expiresAt]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+          description: Where the entry was.
+        from:
+          type: string
+          description: The folder it was in.
+        dir:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+          description: Entries at and below it, folders included.
+        by:
+          type: string
+          description: Who deleted it.
+        deletedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+          description: When it goes away for good.

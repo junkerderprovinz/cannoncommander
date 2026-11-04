@@ -1,11 +1,98 @@
 tag:
   name: undo
-  description: Taking back the last file operations.
+  description: |
+    Taking back the last file operations: renaming, creating, moving,
+    copying and moving to the trash. Each user has their own list of up to
+    30 steps. undo.changed with the number of steps tells the client to
+    reload it.
 paths:
   /undo:
     get:
       operationId: undoList
       summary: Steps that can be taken back
+      responses:
+        "200":
+          description: The steps, newest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [steps]
+                properties:
+                  steps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UndoStep"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       operationId: undoLast
       summary: Take back the latest step
+      description: |
+        Takes back the step with the given id, or the newest one without a
+        body. Renaming and creating are taken back right away and answer
+        200. Moving, copying and the trash run as a job and answer 202
+        with the job.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/UndoTaken"
+        "202":
+          $ref: "#/components/responses/UndoTaken"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Nothing to take back.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+components:
+  responses:
+    UndoTaken:
+      description: The step that was taken back, and the job doing it.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [step]
+            properties:
+              step:
+                $ref: "#/components/schemas/UndoStep"
+              job:
+                $ref: "#/components/schemas/Job"
+  schemas:
+    UndoStep:
+      type: object
+      required: [id, kind, at, name, count]
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum: [rename, mkdir, touch, copy, move, trash]
+        at:
+          type: string
+          format: date-time
+        name:
+          type: string
+          description: The first name the step touched, the old one for a rename.
+        count:
+          type: integer
+        path:
+          type: string
+          description: The folder the step happened in.
+        to:
+          type: string
+          description: The new name of a rename, or the folder a copy or move went to.

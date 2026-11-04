@@ -1,11 +1,32 @@
 tag:
   name: jobs
-  description: Long running tasks such as copy, move, pack and checksum.
+  description: |
+    Long running tasks such as copy, move, pack and checksum. Jobs run on
+    the server and go on after a restart. Their progress arrives as
+    job.created, job.progress (at most four times a second), job.state,
+    job.conflict and job.done events, each with the job or its progress as
+    data.
 paths:
   /jobs:
     get:
       operationId: jobsList
       summary: List jobs
+      description: The open jobs in queue order, then the ended ones, newest first. Admins see every user's jobs.
+      responses:
+        "200":
+          description: The jobs.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [jobs]
+                properties:
+                  jobs:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Job"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       operationId: jobCreate
       summary: Start a job
@@ -13,38 +34,446 @@ paths:
         Kinds: copy, move, delete, trash, restore, emptyTrash, pack, unpack,
         testArchive, checksum, verify, split, combine, attrsRecursive,
         fixPerms, sync, gather, scatter, contentSearch, duplicates,
-        fetchUrl, reindex.
+        fetchUrl, reindex. Built so far: copy, move, delete, trash and
+        fixPerms. Restore and emptyTrash start from the trash endpoints.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobCreate"
+      responses:
+        "202":
+          description: The job is queued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: jobsClear
+      summary: Remove every ended job from the list
+      responses:
+        "200":
+          description: How many jobs were removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [removed]
+                properties:
+                  removed:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /jobs/settings:
     get:
       operationId: jobSettingsGet
       summary: Queue and speed settings
+      responses:
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobSettings"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     put:
       operationId: jobSettingsPut
       summary: Change queue and speed settings
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobSettings"
+      responses:
+        "200":
+          description: The settings as stored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobSettings"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /jobs/{id}:
     get:
       operationId: jobGet
       summary: One job with its items
+      responses:
+        "200":
+          description: The job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: jobChange
+      summary: Move a job in the queue or limit its speed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                position:
+                  type: integer
+                  description: New index among the open jobs, from 0.
+                cap:
+                  type: integer
+                  format: int64
+                  description: Bytes per second for this job, 0 for no limit.
+      responses:
+        "200":
+          description: The job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
     delete:
       operationId: jobRemove
-      summary: Remove a finished job from the list
+      summary: Remove an ended job from the list
+      responses:
+        "204":
+          description: Removed.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /jobs/{id}/pause:
     post:
       operationId: jobPause
       summary: Pause a job
+      description: A running job stops at its next pause point, at most one MiB later.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /jobs/{id}/resume:
     post:
       operationId: jobResume
       summary: Resume a paused job
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /jobs/{id}/cancel:
     post:
       operationId: jobCancel
       summary: Cancel a job
+      description: What is done stays done. A half written file is removed.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /jobs/{id}/retry:
     post:
       operationId: jobRetry
       summary: Retry the failed items of a job
+      description: Runs the failed and unfinished items of a failed or cancelled job again. Done items stay done.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /jobs/{id}/decide:
     post:
       operationId: jobDecide
       summary: Answer a conflict the job is waiting on
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [choice]
+              properties:
+                key:
+                  type: string
+                  description: Key of the conflict, from job.conflict. Empty means the one the job waits on.
+                choice:
+                  type: string
+                  enum: [skip, replace, both, newer]
+                all:
+                  type: boolean
+                  description: Use the choice for every later conflict of this job as well.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+components:
+  responses:
+    JobAnswer:
+      description: The job after the change.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Job"
+    StateConflict:
+      description: The request does not fit the current state, for example a name that exists already.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+  schemas:
+    JobCreate:
+      type: object
+      required: [kind, params]
+      properties:
+        kind:
+          type: string
+          example: copy
+        params:
+          description: |
+            Depends on the kind. copy and move take TransferParams, delete
+            and trash take PathsParams, fixPerms takes PermsParams.
+          oneOf:
+            - $ref: "#/components/schemas/TransferParams"
+            - $ref: "#/components/schemas/PathsParams"
+            - $ref: "#/components/schemas/PermsParams"
+        cap:
+          type: integer
+          format: int64
+          description: Bytes per second for this job, 0 for no limit.
+        waitForParity:
+          type: boolean
+          description: Wait for a running parity check even if the job is small.
+    JobSettings:
+      type: object
+      required: [mode, cap, parityWait, notifyUnraid, notifyAfter]
+      properties:
+        mode:
+          type: string
+          enum: [serial, parallel]
+          description: serial runs one job at a time in queue order, parallel lets them share the speed.
+        cap:
+          type: integer
+          format: int64
+          description: Bytes per second for all jobs together, 0 for no limit.
+        parityWait:
+          type: boolean
+          description: Copies and moves from 2 GiB on wait while Unraid checks parity or rebuilds.
+        notifyUnraid:
+          type: boolean
+          description: Send a notice to Unraid when a long job ends. Needs write access to Unraid in the template.
+        notifyAfter:
+          type: integer
+          format: int64
+          description: Seconds a job has to run before its end is worth a notice.
+          example: 60
+    Job:
+      type: object
+      required: [id, kind, owner, state, position, name, count, totalBytes, doneBytes, totalFiles, doneFiles, rate, left, cap, waitForParity, failedItems, createdAt]
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+        owner:
+          type: string
+        state:
+          type: string
+          enum: [queued, running, paused, asking, done, failed, cancelled]
+        reason:
+          type: string
+          enum: [parity]
+          description: Why a queued job does not run. Missing while it only waits for its turn.
+        place:
+          type: integer
+          description: Place in the waiting line, from 1.
+        position:
+          type: integer
+        name:
+          type: string
+          description: Name of the first item.
+        count:
+          type: integer
+          description: Number of items.
+        dest:
+          type: string
+        totalBytes:
+          type: integer
+          format: int64
+        doneBytes:
+          type: integer
+          format: int64
+        totalFiles:
+          type: integer
+          format: int64
+          description: Entries below and at the items, folders included.
+        doneFiles:
+          type: integer
+          format: int64
+        rate:
+          type: number
+          description: Bytes per second right now.
+        left:
+          type: [number, "null"]
+          description: Seconds left at the current rate.
+        current:
+          type: string
+          description: The entry in work, relative to the items.
+        cap:
+          type: integer
+          format: int64
+        waitForParity:
+          type: boolean
+        failedItems:
+          type: integer
+        error:
+          type: string
+        conflict:
+          $ref: "#/components/schemas/JobConflict"
+        undo:
+          type: string
+          description: Id of the undo step that takes the finished job back.
+        result:
+          description: What the job found out, for kinds that report more than done or failed.
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          description: Only in GET /jobs/{id}.
+          items:
+            $ref: "#/components/schemas/JobItem"
+    JobItem:
+      type: object
+      required: [seq, path, state, bytes, files]
+      properties:
+        seq:
+          type: integer
+        path:
+          type: string
+        name:
+          type: string
+          description: Name at the target when it differs.
+        state:
+          type: string
+          enum: [pending, running, done, skipped, failed]
+        bytes:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+        error:
+          type: string
+    JobConflict:
+      type: object
+      description: A name that exists at the target already. Also the data of job.conflict, together with the job id.
+      required: [key, source, target]
+      properties:
+        key:
+          type: string
+          description: Path relative to the target folder. An answer for a folder covers everything inside it.
+        source:
+          $ref: "#/components/schemas/ConflictSide"
+        target:
+          $ref: "#/components/schemas/ConflictSide"
+        newer:
+          type: string
+          enum: [source, target]
+          description: The side changed more than a second later. Missing when both are equally old.
+    ConflictSide:
+      type: object
+      required: [path, dir, size, mtime]
+      properties:
+        path:
+          type: string
+        dir:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        entries:
+          type: integer
+          description: Entries directly inside a folder.
+    JobProgress:
+      type: object
+      description: Data of job.progress.
+      required: [id, totalBytes, doneBytes, totalFiles, doneFiles, rate, left]
+      properties:
+        id:
+          type: string
+        totalBytes:
+          type: integer
+          format: int64
+        doneBytes:
+          type: integer
+          format: int64
+        totalFiles:
+          type: integer
+          format: int64
+        doneFiles:
+          type: integer
+          format: int64
+        rate:
+          type: number
+        left:
+          type: [number, "null"]
+        current:
+          type: string

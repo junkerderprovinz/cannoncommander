@@ -21,13 +21,31 @@ tags:
   - name: fs
     description: Reading files and folders.
   - name: fileops
-    description: Creating, renaming and linking, uploads, and the check before a transfer.
+    description: |
+      Creating and renaming, uploads, and the check before a transfer.
+      Copying, moving and deleting run as jobs (kinds copy, move, delete and
+      trash on POST /jobs). A file in work is written as ".name.cc-part" next
+      to its target and only takes its name once it is complete.
   - name: jobs
-    description: Long running tasks such as copy, move, pack and checksum.
+    description: |
+      Long running tasks such as copy, move, pack and checksum. Jobs run on
+      the server and go on after a restart. Their progress arrives as
+      job.created, job.progress (at most four times a second), job.state,
+      job.conflict and job.done events, each with the job or its progress as
+      data.
   - name: undo
-    description: Taking back the last file operations.
+    description: |
+      Taking back the last file operations: renaming, creating, moving,
+      copying and moving to the trash. Each user has their own list of up to
+      30 steps. undo.changed with the number of steps tells the client to
+      reload it.
   - name: trash
-    description: Deleted files waiting in the trash.
+    description: |
+      Deleted files waiting in the trash. Every share has its own trash
+      folder .cc-trash, other sources have one at their top, so moving there
+      never copies. Entries go away for good after the days set here.
+      Putting things into the trash is the job kind trash. trash.changed
+      tells clients to reload the list.
   - name: search
     description: Search by name pattern, fields and content.
   - name: tools
@@ -219,26 +237,93 @@ paths:
     post:
       operationId: fsMkdir
       summary: Create a folder
-      tags: [fileops]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PathBody"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [fileops]
   /fs/touch:
     post:
       operationId: fsTouch
       summary: Create an empty file or update its time
-      tags: [fileops]
+      description: Answers 201 for a new file, 200 when only the time of an existing one changed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+                mtime:
+                  type: string
+                  format: date-time
+                  description: The time to set, now when missing.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          $ref: "#/components/responses/FsChanged"
+        "201":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [fileops]
   /fs/rename:
     post:
       operationId: fsRename
       summary: Rename one entry
-      tags: [fileops]
+      description: Renames inside the same folder. An existing entry of the new name is never replaced.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, name]
+              properties:
+                path:
+                  type: string
+                name:
+                  type: string
+                  description: The new name, without a folder.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [fileops]
   /fs/rename/batch:
     post:
       operationId: fsRenameBatch
@@ -267,11 +352,40 @@ paths:
     post:
       operationId: opsPreflight
       summary: Check a copy or move before it starts
-      description: Reports conflicts, missing rights and free space, so the conflict dialog can ask before the job runs.
-      tags: [fileops]
+      description: |
+        Reports the names that exist at the target, the size, the free
+        space and whether a parity check would hold the job, so the
+        conflict dialog can ask before the job runs. The answers go into
+        the decisions of the job.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/TransferParams"
+                - type: object
+                  required: [kind]
+                  properties:
+                    kind:
+                      type: string
+                      enum: [copy, move]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: What the transfer would run into.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Preflight"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [fileops]
   /uploads:
     post:
       operationId: uploadCreate
@@ -324,10 +438,23 @@ paths:
     get:
       operationId: jobsList
       summary: List jobs
-      tags: [jobs]
+      description: The open jobs in queue order, then the ended ones, newest first. Admins see every user's jobs.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The jobs.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [jobs]
+                properties:
+                  jobs:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Job"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [jobs]
     post:
       operationId: jobCreate
       summary: Start a job
@@ -335,30 +462,100 @@ paths:
         Kinds: copy, move, delete, trash, restore, emptyTrash, pack, unpack,
         testArchive, checksum, verify, split, combine, attrsRecursive,
         fixPerms, sync, gather, scatter, contentSearch, duplicates,
-        fetchUrl, reindex.
-      tags: [jobs]
+        fetchUrl, reindex. Built so far: copy, move, delete, trash and
+        fixPerms. Restore and emptyTrash start from the trash endpoints.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobCreate"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "202":
+          description: The job is queued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [jobs]
+    delete:
+      operationId: jobsClear
+      summary: Remove every ended job from the list
+      responses:
+        "200":
+          description: How many jobs were removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [removed]
+                properties:
+                  removed:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [jobs]
   /jobs/settings:
     get:
       operationId: jobSettingsGet
       summary: Queue and speed settings
-      tags: [jobs]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobSettings"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [jobs]
     put:
       operationId: jobSettingsPut
       summary: Change queue and speed settings
-      tags: [jobs]
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobSettings"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The settings as stored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobSettings"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [jobs]
   /jobs/{id}:
     get:
       operationId: jobGet
       summary: One job with its items
+      responses:
+        "200":
+          description: The job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [jobs]
       parameters:
         - name: id
@@ -366,12 +563,57 @@ paths:
           required: true
           schema:
             type: string
+    patch:
+      operationId: jobChange
+      summary: Move a job in the queue or limit its speed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                position:
+                  type: integer
+                  description: New index among the open jobs, from 0.
+                cap:
+                  type: integer
+                  format: int64
+                  description: Bytes per second for this job, 0 for no limit.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
     delete:
       operationId: jobRemove
-      summary: Remove a finished job from the list
+      summary: Remove an ended job from the list
+      responses:
+        "204":
+          description: Removed.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
       tags: [jobs]
       parameters:
         - name: id
@@ -379,13 +621,20 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /jobs/{id}/pause:
     post:
       operationId: jobPause
       summary: Pause a job
+      description: A running job stops at its next pause point, at most one MiB later.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
       tags: [jobs]
       parameters:
         - name: id
@@ -393,13 +642,19 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /jobs/{id}/resume:
     post:
       operationId: jobResume
       summary: Resume a paused job
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
       tags: [jobs]
       parameters:
         - name: id
@@ -407,13 +662,20 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /jobs/{id}/cancel:
     post:
       operationId: jobCancel
       summary: Cancel a job
+      description: What is done stays done. A half written file is removed.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
       tags: [jobs]
       parameters:
         - name: id
@@ -421,13 +683,20 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /jobs/{id}/retry:
     post:
       operationId: jobRetry
       summary: Retry the failed items of a job
+      description: Runs the failed and unfinished items of a failed or cancelled job again. Done items stay done.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
       tags: [jobs]
       parameters:
         - name: id
@@ -435,13 +704,38 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /jobs/{id}/decide:
     post:
       operationId: jobDecide
       summary: Answer a conflict the job is waiting on
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [choice]
+              properties:
+                key:
+                  type: string
+                  description: Key of the conflict, from job.conflict. Empty means the one the job waits on.
+                choice:
+                  type: string
+                  enum: [skip, replace, both, newer]
+                all:
+                  type: boolean
+                  description: Use the choice for every later conflict of this job as well.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
       tags: [jobs]
       parameters:
         - name: id
@@ -449,52 +743,143 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /undo:
     get:
       operationId: undoList
       summary: Steps that can be taken back
-      tags: [undo]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The steps, newest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [steps]
+                properties:
+                  steps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UndoStep"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [undo]
     post:
       operationId: undoLast
       summary: Take back the latest step
-      tags: [undo]
+      description: |
+        Takes back the step with the given id, or the newest one without a
+        body. Renaming and creating are taken back right away and answer
+        200. Moving, copying and the trash run as a job and answer 202
+        with the job.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          $ref: "#/components/responses/UndoTaken"
+        "202":
+          $ref: "#/components/responses/UndoTaken"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Nothing to take back.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [undo]
   /trash:
     get:
       operationId: trashList
       summary: List the trash
-      tags: [trash]
+      description: Admins see every user's entries.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The entries, newest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, count, bytes, days]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TrashItem"
+                  count:
+                    type: integer
+                  bytes:
+                    type: integer
+                    format: int64
+                  days:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [trash]
   /trash/restore:
     post:
       operationId: trashRestore
       summary: Put entries back where they came from
-      tags: [trash]
+      description: Runs as a job. Missing folders are created again, a name taken meanwhile gets a number.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrashIds"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "202":
+          $ref: "#/components/responses/JobAnswer"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [trash]
   /trash/empty:
     post:
       operationId: trashEmpty
       summary: Empty the trash
-      tags: [trash]
+      description: Deletes the given entries for good, or every entry the user sees without a body. Runs as a job.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrashIds"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "202":
+          $ref: "#/components/responses/JobAnswer"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [trash]
   /trash/{id}:
     delete:
       operationId: trashDelete
       summary: Delete one entry for good
+      description: Runs as a job.
+      responses:
+        "202":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [trash]
       parameters:
         - name: id
@@ -502,9 +887,44 @@ paths:
           required: true
           schema:
             type: string
+  /trash/settings:
+    get:
+      operationId: trashSettingsGet
+      summary: How long the trash keeps entries
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrashSettings"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [trash]
+    put:
+      operationId: trashSettingsPut
+      summary: Change how long the trash keeps entries
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrashSettings"
+      responses:
+        "200":
+          description: The settings as stored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrashSettings"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [trash]
   /search:
     get:
       operationId: search
@@ -2079,6 +2499,45 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
+    FsChanged:
+      description: The entry as it is now, and the undo step for it.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [path]
+            properties:
+              path:
+                type: string
+              created:
+                type: boolean
+              undo:
+                type: string
+                description: Id of the undo step, for POST /undo.
+    JobAnswer:
+      description: The job after the change.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Job"
+    StateConflict:
+      description: The request does not fit the current state, for example a name that exists already.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    UndoTaken:
+      description: The step that was taken back, and the job doing it.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [step]
+            properties:
+              step:
+                $ref: "#/components/schemas/UndoStep"
+              job:
+                $ref: "#/components/schemas/Job"
   schemas:
     Problem:
       type: object
@@ -2227,6 +2686,393 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FsTreeItem"
+    PermsParams:
+      type: object
+      description: Params of the job kind fixPerms. Admins only.
+      required: [path]
+      properties:
+        path:
+          type: string
+    PathBody:
+      type: object
+      required: [path]
+      properties:
+        path:
+          type: string
+    PathsParams:
+      type: object
+      description: Params of the job kinds delete and trash.
+      required: [paths]
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+    TransferParams:
+      type: object
+      description: Params of the job kinds copy and move.
+      required: [sources, dest]
+      properties:
+        sources:
+          type: array
+          description: Files and folders, also from different folders.
+          items:
+            type: string
+        dest:
+          type: string
+          description: The folder they go into.
+        names:
+          type: array
+          description: Names at the target, in the order of the sources.
+          items:
+            type: string
+        rule:
+          type: string
+          enum: [ask, skip, replace, both, newer]
+          default: ask
+          description: |
+            Answers every conflict without a decision. ask waits for
+            POST /jobs/{id}/decide after job.conflict. replace moves the
+            old entry to the trash, both gives the new one a number,
+            newer replaces only older files. Folders on both sides are
+            merged for replace and newer.
+        decisions:
+          type: object
+          description: Answers keyed by conflict key, for example from the preflight.
+          additionalProperties:
+            type: string
+            enum: [skip, replace, both, newer]
+        verify:
+          type: boolean
+          description: Read every copied file back and compare checksums.
+        keepAttrs:
+          type: boolean
+          default: true
+          description: Keep owner, mode and times. Without it new entries belong to the user the server runs as.
+    Preflight:
+      type: object
+      required: [dest, count, bytes, files, conflicts, sameDevice, big, parityBusy]
+      properties:
+        dest:
+          type: string
+        count:
+          type: integer
+        bytes:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+        conflicts:
+          type: array
+          items:
+            $ref: "#/components/schemas/JobConflict"
+        sameDevice:
+          type: boolean
+          description: A move that only renames and needs no free space.
+        space:
+          $ref: "#/components/schemas/Space"
+        big:
+          type: boolean
+          description: From 2 GiB on the job waits for a running parity check.
+        parityBusy:
+          type: boolean
+          description: Unraid checks parity right now. For small jobs the client asks whether to wait.
+        unraid:
+          $ref: "#/components/schemas/UnraidTransferReport"
+          description: Trap, broken hard links, space after the allocation rules and disks that wake up. Missing where Unraid has nothing to say.
+    Space:
+      type: object
+      required: [free, need, enough]
+      properties:
+        free:
+          type: integer
+          format: int64
+        need:
+          type: integer
+          format: int64
+        enough:
+          type: boolean
+    JobCreate:
+      type: object
+      required: [kind, params]
+      properties:
+        kind:
+          type: string
+          example: copy
+        params:
+          description: |
+            Depends on the kind. copy and move take TransferParams, delete
+            and trash take PathsParams, fixPerms takes PermsParams.
+          oneOf:
+            - $ref: "#/components/schemas/TransferParams"
+            - $ref: "#/components/schemas/PathsParams"
+            - $ref: "#/components/schemas/PermsParams"
+        cap:
+          type: integer
+          format: int64
+          description: Bytes per second for this job, 0 for no limit.
+        waitForParity:
+          type: boolean
+          description: Wait for a running parity check even if the job is small.
+    JobSettings:
+      type: object
+      required: [mode, cap, parityWait, notifyUnraid, notifyAfter]
+      properties:
+        mode:
+          type: string
+          enum: [serial, parallel]
+          description: serial runs one job at a time in queue order, parallel lets them share the speed.
+        cap:
+          type: integer
+          format: int64
+          description: Bytes per second for all jobs together, 0 for no limit.
+        parityWait:
+          type: boolean
+          description: Copies and moves from 2 GiB on wait while Unraid checks parity or rebuilds.
+        notifyUnraid:
+          type: boolean
+          description: Send a notice to Unraid when a long job ends. Needs write access to Unraid in the template.
+        notifyAfter:
+          type: integer
+          format: int64
+          description: Seconds a job has to run before its end is worth a notice.
+          example: 60
+    Job:
+      type: object
+      required: [id, kind, owner, state, position, name, count, totalBytes, doneBytes, totalFiles, doneFiles, rate, left, cap, waitForParity, failedItems, createdAt]
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+        owner:
+          type: string
+        state:
+          type: string
+          enum: [queued, running, paused, asking, done, failed, cancelled]
+        reason:
+          type: string
+          enum: [parity]
+          description: Why a queued job does not run. Missing while it only waits for its turn.
+        place:
+          type: integer
+          description: Place in the waiting line, from 1.
+        position:
+          type: integer
+        name:
+          type: string
+          description: Name of the first item.
+        count:
+          type: integer
+          description: Number of items.
+        dest:
+          type: string
+        totalBytes:
+          type: integer
+          format: int64
+        doneBytes:
+          type: integer
+          format: int64
+        totalFiles:
+          type: integer
+          format: int64
+          description: Entries below and at the items, folders included.
+        doneFiles:
+          type: integer
+          format: int64
+        rate:
+          type: number
+          description: Bytes per second right now.
+        left:
+          type: [number, "null"]
+          description: Seconds left at the current rate.
+        current:
+          type: string
+          description: The entry in work, relative to the items.
+        cap:
+          type: integer
+          format: int64
+        waitForParity:
+          type: boolean
+        failedItems:
+          type: integer
+        error:
+          type: string
+        conflict:
+          $ref: "#/components/schemas/JobConflict"
+        undo:
+          type: string
+          description: Id of the undo step that takes the finished job back.
+        result:
+          description: What the job found out, for kinds that report more than done or failed.
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          description: Only in GET /jobs/{id}.
+          items:
+            $ref: "#/components/schemas/JobItem"
+    JobItem:
+      type: object
+      required: [seq, path, state, bytes, files]
+      properties:
+        seq:
+          type: integer
+        path:
+          type: string
+        name:
+          type: string
+          description: Name at the target when it differs.
+        state:
+          type: string
+          enum: [pending, running, done, skipped, failed]
+        bytes:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+        error:
+          type: string
+    JobConflict:
+      type: object
+      description: A name that exists at the target already. Also the data of job.conflict, together with the job id.
+      required: [key, source, target]
+      properties:
+        key:
+          type: string
+          description: Path relative to the target folder. An answer for a folder covers everything inside it.
+        source:
+          $ref: "#/components/schemas/ConflictSide"
+        target:
+          $ref: "#/components/schemas/ConflictSide"
+        newer:
+          type: string
+          enum: [source, target]
+          description: The side changed more than a second later. Missing when both are equally old.
+    ConflictSide:
+      type: object
+      required: [path, dir, size, mtime]
+      properties:
+        path:
+          type: string
+        dir:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        entries:
+          type: integer
+          description: Entries directly inside a folder.
+    JobProgress:
+      type: object
+      description: Data of job.progress.
+      required: [id, totalBytes, doneBytes, totalFiles, doneFiles, rate, left]
+      properties:
+        id:
+          type: string
+        totalBytes:
+          type: integer
+          format: int64
+        doneBytes:
+          type: integer
+          format: int64
+        totalFiles:
+          type: integer
+          format: int64
+        doneFiles:
+          type: integer
+          format: int64
+        rate:
+          type: number
+        left:
+          type: [number, "null"]
+        current:
+          type: string
+    UndoStep:
+      type: object
+      required: [id, kind, at, name, count]
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum: [rename, mkdir, touch, copy, move, trash]
+        at:
+          type: string
+          format: date-time
+        name:
+          type: string
+          description: The first name the step touched, the old one for a rename.
+        count:
+          type: integer
+        path:
+          type: string
+          description: The folder the step happened in.
+        to:
+          type: string
+          description: The new name of a rename, or the folder a copy or move went to.
+    TrashIds:
+      type: object
+      required: [ids]
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+    TrashSettings:
+      type: object
+      required: [days]
+      properties:
+        days:
+          type: integer
+          minimum: 1
+          maximum: 3650
+          example: 30
+    TrashItem:
+      type: object
+      required: [id, name, origin, from, dir, size, files, by, deletedAt, expiresAt]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+          description: Where the entry was.
+        from:
+          type: string
+          description: The folder it was in.
+        dir:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+          description: Entries at and below it, folders included.
+        by:
+          type: string
+          description: Who deleted it.
+        deletedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+          description: When it goes away for good.
     SavedSearchInput:
       type: object
       required: [name, query]
