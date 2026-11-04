@@ -26,6 +26,10 @@ type service struct {
 	resetTries    *limiter
 	signInTries   *limiter
 	addressTries  *limiter
+
+	basicTries        *limiter
+	basicAddressTries *limiter
+	basicSeen         *passwordMemory
 }
 
 // serviceFor returns the service for db and builds it on first use. Without
@@ -60,6 +64,10 @@ func newService(db *sql.DB, book *ruleBook) *service {
 		resetTries:    newLimiter(5, 15*time.Minute),
 		signInTries:   newLimiter(5, 15*time.Minute),
 		addressTries:  newLimiter(20, 15*time.Minute),
+
+		basicTries:        newLimiter(5, 15*time.Minute),
+		basicAddressTries: newLimiter(20, 15*time.Minute),
+		basicSeen:         newPasswordMemory(),
 	}
 }
 

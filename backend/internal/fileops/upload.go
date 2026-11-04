@@ -353,7 +353,7 @@ func (s *Service) uploadTarget(u *users.User, p string) (ccfs.Location, error) {
 	if err != nil {
 		return loc, err
 	}
-	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) || isPart(path.Base(loc.Path)) {
+	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) || IsPart(path.Base(loc.Path)) {
 		return loc, v1.Errorf(http.StatusBadRequest, "invalid path")
 	}
 	if err := ccfs.Contained(loc); err != nil {

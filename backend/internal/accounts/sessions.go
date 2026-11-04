@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"cmp"
+	"context"
 	"crypto/rand"
 	"database/sql"
 	"errors"
@@ -93,15 +94,7 @@ func Track(db *sql.DB, next v1.Authenticator) v1.Authenticator {
 			if u.Tokens[name].ReadOnly && !safe(r.Method) {
 				return nil, v1.Errorf(http.StatusForbidden, "this API token may only read")
 			}
-			hash := utils.HashSHA256(raw)
-			if due("token:" + hash) {
-				now := time.Now().Unix()
-				// Like the session list, this is bookkeeping that must not fail the request.
-				if _, err := db.ExecContext(r.Context(), `INSERT INTO token_use (token_hash, user_id, seen_at) VALUES (?, ?, ?)
-					ON CONFLICT (token_hash) DO UPDATE SET seen_at = excluded.seen_at`, hash, idOf(u), now); err != nil {
-					logger.Errorf("record token use: %v", err)
-				}
-			}
+			TokenUsed(r.Context(), db, u, raw)
 			return u, nil
 		}
 		hash, ip, ok := login.Session(r)
@@ -124,6 +117,20 @@ func Track(db *sql.DB, next v1.Authenticator) v1.Authenticator {
 			logger.Errorf("record last login: %v", err)
 		}
 		return u, nil
+	}
+}
+
+// TokenUsed notes that the API token raw of u was used just now, for the list
+// of tokens. Like the session list, this is bookkeeping that must not fail a
+// request.
+func TokenUsed(ctx context.Context, db *sql.DB, u *users.User, raw string) {
+	hash := utils.HashSHA256(raw)
+	if !due("token:" + hash) {
+		return
+	}
+	if _, err := db.ExecContext(ctx, `INSERT INTO token_use (token_hash, user_id, seen_at) VALUES (?, ?, ?)
+		ON CONFLICT (token_hash) DO UPDATE SET seen_at = excluded.seen_at`, hash, idOf(u), time.Now().Unix()); err != nil {
+		logger.Errorf("record token use: %v", err)
 	}
 }
 

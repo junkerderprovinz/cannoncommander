@@ -30,6 +30,7 @@ type Http struct {
 	BaseURL           string   `json:"baseURL"`           // base URL for the server, the subpath that the server is running on.
 	ExternalUrl       string   `json:"externalUrl"`       // used by share links if set (eg. http://mydomain.com)
 	InternalUrl       string   `json:"internalUrl"`       // used by integrations if set, this is the base domain that an integration service will use to communicate with filebrowser (eg. http://localhost:8080)
+	DisableWebDAV     bool     `json:"disableWebDAV"`     // keeps the WebDAV server off until an admin switches it on in the settings (default: true)
 	TrustProxyHeaders bool     `json:"trustProxyHeaders"` // honor X-Forwarded-* and X-Real-IP from a reverse proxy (default: false)
 	TrustedProxies    []string `json:"trustedProxies"`    // IPs/CIDRs of trusted proxies; forwarded client headers are only honored when the socket peer matches one of these (default: empty = forwarded headers ignored)
 	// UnixSocketTrustedUIDs and UnixSocketTrustedGIDs list peer credentials (Linux SO_PEERCRED) allowed to
@@ -225,7 +226,7 @@ type Source struct {
 type SourceConfig struct {
 	DenyByDefault    bool              `json:"denyByDefault,omitempty"` // deprecated: the first start with the app's access rules turns it into a rule that hides the source from everyone
 	Private          bool              `json:"private"`                 // designate as source as private -- currently just means no sharing permitted.
-	ReadOnly         bool              `json:"readOnly,omitempty"`      // read-only source, changes from the UI and the API are refused.
+	ReadOnly         bool              `json:"readOnly,omitempty"`      // read-only source, changes from the UI, WebDAV and the API are refused.
 	Disabled         bool              `json:"disabled,omitempty"`      // disable the source, this is useful so you don't need to remove it from the config file
 	Rules            []ConditionalRule `json:"rules"`                   // list of item rules to apply to specific paths
 	DefaultUserScope string            `json:"defaultUserScope"`        // defaults to root of index "/" should match folders under path

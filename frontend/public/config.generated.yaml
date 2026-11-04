@@ -19,7 +19,7 @@ server:
       name: "Source Name"                 # display name
       config:
         private: false                    # designate as source as private -- currently just means no sharing permitted.
-        readOnly: false                   # read-only source, changes from the UI and the API are refused.
+        readOnly: false                   # read-only source, changes from the UI, WebDAV and the API are refused.
         disabled: false                   # disable the source, this is useful so you don't need to remove it from the config file
         rules:                            # list of item rules to apply to specific paths
           - neverWatchPath: ""            # index the folder in the first pass to get included in search, but never re-indexed.
@@ -143,6 +143,7 @@ http:
   baseURL: "/"                            # base URL for the server, the subpath that the server is running on.
   externalUrl: ""                         # used by share links if set (eg. http://mydomain.com)
   internalUrl: ""                         # used by integrations if set, this is the base domain that an integration service will use to communicate with filebrowser (eg. http://localhost:8080)
+  disableWebDAV: true                     # keeps the WebDAV server off until an admin switches it on in the settings (default: true)
   trustProxyHeaders: false                # honor X-Forwarded-* and X-Real-IP from a reverse proxy (default: false)
   trustedProxies:                         # IPs/CIDRs of trusted proxies; forwarded client headers are only honored when the socket peer matches one of these (default: empty = forwarded headers ignored)
   unixSocketTrustedUIDs:                  # UnixSocketTrustedUIDs and UnixSocketTrustedGIDs list peer credentials (Linux SO_PEERCRED) allowed to

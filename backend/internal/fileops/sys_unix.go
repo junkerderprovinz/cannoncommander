@@ -26,10 +26,10 @@ func device(info fs.FileInfo) (uint64, bool) {
 	return uint64(st.Dev), true
 }
 
-// chown hands p to the owner of info. Without CAP_CHOWN the process may
+// Chown hands p to the owner of info. Without CAP_CHOWN the process may
 // only keep its own ids, which is fine: the files then belong to the user
 // the container runs as.
-func chown(p string, info fs.FileInfo) {
+func Chown(p string, info fs.FileInfo) {
 	if st, ok := info.Sys().(*syscall.Stat_t); ok {
 		_ = os.Lchown(p, int(st.Uid), int(st.Gid))
 	}

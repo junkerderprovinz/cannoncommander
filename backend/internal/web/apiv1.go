@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"net/http"
+	"path"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
@@ -10,6 +11,7 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
@@ -68,6 +70,7 @@ func mountAPIv1(router *http.ServeMux) error {
 	folderWatch.Start(eventHub, resolver, index, labelMover{deps})
 	prefix := settings.Config.Http.BaseURL + "api/v1"
 	router.Handle(prefix+"/", http.StripPrefix(prefix, h))
+	mountDAV(router, deps)
 	return nil
 }
 
@@ -97,6 +100,11 @@ func authenticateV1(w http.ResponseWriter, r *http.Request) (*users.User, error)
 type labelMover struct{ deps v1.Deps }
 
 func (m labelMover) Moved(from, to string) {
+	// A finished part file takes the place of the file it replaces, whose
+	// labels stay.
+	if fileops.IsPart(path.Base(from)) {
+		return
+	}
 	if err := labels.Moved(context.Background(), m.deps, labels.Move{From: from, To: to}); err != nil {
 		logger.Errorf("labels for %s moved to %s: %v", from, to, err)
 	}
