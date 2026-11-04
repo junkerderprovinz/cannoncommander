@@ -9,7 +9,7 @@ import (
 )
 
 func TestUpdateSidebarLinks_dedupesDuplicateMigratedLinks(t *testing.T) {
-	settingsConfig := "../../_docker/src/settings/backend/config.yaml"
+	settingsConfig := "../testdata/migration/config.yaml"
 	settings.Initialize(settingsConfig)
 
 	user := &users.User{

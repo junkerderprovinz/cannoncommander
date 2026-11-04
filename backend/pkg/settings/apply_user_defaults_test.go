@@ -220,7 +220,7 @@ func TestApplyUserDefaults_preservesLoginMethodWhenAlreadySet(t *testing.T) {
 }
 
 func TestExpandBackendScopesForCreateUserDir(t *testing.T) {
-	loadConfigForUserDefaultsTests(t, jwtPlaywrightConfig)
+	loadConfigForUserDefaultsTests(t, jwtConfig)
 	u := &users.User{
 		FrontendUser: users.FrontendUser{Username: "testadmin"},
 		BackendScopes: []users.BackendScope{

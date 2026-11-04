@@ -25,7 +25,7 @@ func (failingTokenPersister) SaveHashedToken(string, uint64, bool, int64) error 
 
 func TestBackfillHashedTokensPropagatesPersistenceFailure(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -55,7 +55,7 @@ func TestBackfillHashedTokensPropagatesPersistenceFailure(t *testing.T) {
 // hashed_tokens row so strict server-side auth accepts them.
 func TestBackfillHashedTokensCoversLegacyApiKeys(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -104,7 +104,7 @@ func TestBackfillHashedTokensCoversLegacyApiKeys(t *testing.T) {
 // tokens dead past the grace window have their mapping removed entirely.
 func TestBackfillReconcilesLegacyTokenExpiry(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")

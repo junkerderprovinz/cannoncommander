@@ -21,14 +21,14 @@ const (
 // migration tests and the Playwright settings Docker image. Tests must never write to it.
 func settingsMigrationBoltPath(t *testing.T) string {
 	t.Helper()
-	path, err := filepath.Abs(filepath.Join("..", "..", "_docker", "src", "settings", "backend", "database.db.old"))
+	path, err := filepath.Abs(filepath.Join("..", "testdata", "migration", "database.db.old"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	info, err := os.Stat(path)
 	if err != nil {
 		t.Fatalf(
-			"settings migration fixture not found at %s: %v (commit _docker/src/settings/backend/database.db.old)",
+			"settings migration fixture not found at %s: %v (commit backend/testdata/migration/database.db.old)",
 			path,
 			err,
 		)
@@ -41,7 +41,7 @@ func settingsMigrationBoltPath(t *testing.T) string {
 
 func settingsMigrationConfigPath(t *testing.T) string {
 	t.Helper()
-	path, err := filepath.Abs(filepath.Join("..", "..", "_docker", "src", "settings", "backend", "config.yaml"))
+	path, err := filepath.Abs(filepath.Join("..", "testdata", "migration", "config.yaml"))
 	if err != nil {
 		t.Fatal(err)
 	}

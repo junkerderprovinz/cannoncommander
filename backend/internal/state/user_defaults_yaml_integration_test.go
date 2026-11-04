@@ -8,10 +8,10 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-func TestStateInit_proxyYAML_seedsDefaultsAndCreatesUser(t *testing.T) {
+func TestStateInit_userDefaultsYAML_seedsDefaultsAndCreatesUser(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	t.Setenv("CC_PLAYWRIGHT_TEST", "true")
-	settings.Initialize("../../../_docker/src/proxy/backend/config.yaml")
+	settings.Initialize("../../testdata/userdefaults.yaml")
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -22,7 +22,7 @@ func TestStateInit_proxyYAML_seedsDefaultsAndCreatesUser(t *testing.T) {
 
 	effective := EffectiveUserDefaults()
 	if !effective.Account.Permissions.Share {
-		t.Fatal("DB-seeded defaults missing share from proxy yaml")
+		t.Fatal("DB-seeded defaults missing share from the yaml")
 	}
 	access := GetSourceAccessDefaults()
 	if !access.View || !access.Modify || !access.Create {
@@ -58,7 +58,7 @@ func TestStateInit_proxyYAML_seedsDefaultsAndCreatesUser(t *testing.T) {
 func TestStateInit_jwtYAML_organizedDefaultsOnNewUser(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	t.Setenv("CC_PLAYWRIGHT_TEST", "true")
-	settings.Initialize("../../../_docker/src/jwt/backend/config.yaml")
+	settings.Initialize("../../testdata/jwt.yaml")
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)

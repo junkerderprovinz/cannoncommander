@@ -14,7 +14,6 @@ builds:
       - CGO_ENABLED=1
       - CC=zig cc -target x86_64-linux-musl
     tags:
-      - analytics
       - mupdf
       - musl
     ldflags: &ldflags
@@ -38,7 +37,6 @@ builds:
       - CGO_ENABLED=1
       - CC=zig cc -target aarch64-linux-musl
     tags:
-      - analytics
       - mupdf
       - musl
     goos:
@@ -58,7 +56,6 @@ builds:
       - CC=zig cc -target riscv64-linux-musl
     # go-fitz does not provide riscv64 MuPDF libraries yet: https://github.com/gen2brain/go-fitz/tree/master/libs
     tags:
-      - analytics
       - musl
     goos:
       - linux
@@ -71,7 +68,6 @@ builds:
     main: main.go
     binary: cannoncommander
     tags:
-      - analytics
     goos:
       - linux
     goarch:
@@ -90,7 +86,6 @@ builds:
       # windows-gnu avoids zig rejecting Go's -tsaware when cross-compiling from macOS
       - CC=zig cc -target x86_64-windows-gnu -lc
     tags:
-      - analytics
       - mupdf
     ldflags: *ldflags
     main: main.go
@@ -109,7 +104,6 @@ builds:
     main: main.go
     binary: cannoncommander
     tags:
-      - analytics
     goos:
       - freebsd
     goarch:
@@ -121,7 +115,6 @@ builds:
     main: main.go
     binary: cannoncommander
     tags:
-      - analytics
     goos:
       - darwin
     goarch:

@@ -10,7 +10,7 @@ import (
 func initDefaultsTestConfig(t *testing.T) {
 	t.Helper()
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
-	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
+	settings.Initialize("../../testdata/noauth.yaml")
 	settings.Env.IsPlaywright = true
 }
 
