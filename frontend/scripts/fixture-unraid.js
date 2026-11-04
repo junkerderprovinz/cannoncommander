@@ -1,6 +1,8 @@
 // Unraid as the fixture plays it: the server state with its disks and shares, where a file lies, sleeping disks, a
 // parity check that runs for a while and the rights repair as a job. A disk wakes when something reads from it and
 // falls asleep again a while later, as it does on the server.
+import { clock } from './fixture-clock.js';
+
 const KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
 const iso = (t) => new Date(t).toISOString();
 
@@ -24,7 +26,7 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
   const asleep = (dev) => spin[dev] === false;
   // The timers never keep a test run or the dev server from ending.
   const later = (ms, fn) => {
-    const t = setTimeout(fn, ms);
+    const t = clock.setTimeout(fn, ms);
     t.unref?.();
     return t;
   };
@@ -37,15 +39,15 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
   const naps = {}, ups = {};
   function wake(devs) {
     for (const d of new Set(devs.filter((x) => x in spin))) {
-      clearTimeout(naps[d]);
+      clock.clear(naps[d]);
       naps[d] = later(SLEEP_AFTER, () => sleep([d]));
       if (asleep(d) && !ups[d]) ups[d] = later(SPIN_UP, () => { delete ups[d]; setSpin([d], true); });
     }
   }
   function sleep(devs) {
     for (const d of devs) {
-      clearTimeout(naps[d]);
-      clearTimeout(ups[d]);
+      clock.clear(naps[d]);
+      clock.clear(ups[d]);
       delete ups[d];
     }
     setSpin(devs, false);
@@ -94,13 +96,13 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
   });
 
   // The parity check as /proc/mdstat tells it, played on a timer of its own.
-  const check = { running: false, paused: false, pos: 0, size: PARITY_SIZE, percent: 0, lastSync: iso(Date.now() - 23 * 86400000), lastErrors: 0, lastExit: 0 };
+  const check = { running: false, paused: false, pos: 0, size: PARITY_SIZE, percent: 0, lastSync: iso(clock.now() - 23 * 86400000), lastErrors: 0, lastExit: 0 };
   let ticking = null;
   function startCheck() {
     if (check.running) return;
     Object.assign(check, { running: true, kind: 'check', action: 'check P', correct: false, pos: 0, percent: 0, speed: 180 * MB });
     parity.busy = true;
-    ticking = setInterval(() => {
+    ticking = clock.setInterval(() => {
       check.pos = Math.min(PARITY_SIZE, check.pos + PARITY_STEP * PARITY_SIZE);
       check.percent = Math.round((check.pos / PARITY_SIZE) * 1000) / 10;
       if (check.pos >= PARITY_SIZE) stopCheck(true);
@@ -112,10 +114,10 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
   }
   function stopCheck(finished) {
     if (!check.running) return;
-    clearInterval(ticking);
+    clock.clear(ticking);
     ticking = null;
     for (const k of ['kind', 'action', 'correct', 'speed']) delete check[k];
-    Object.assign(check, { running: false, pos: 0, percent: 0, lastExit: finished ? 0 : -4, ...(finished ? { lastSync: iso(Date.now()) } : {}) });
+    Object.assign(check, { running: false, pos: 0, percent: 0, lastExit: finished ? 0 : -4, ...(finished ? { lastSync: iso(clock.now()) } : {}) });
     parity.busy = false;
     send('unraid.parity', { ...check });
     resume();

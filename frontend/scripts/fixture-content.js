@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import vm from 'node:vm';
 import { office } from '../../testing/generate/formats.mjs';
+import { clock } from './fixture-clock.js';
 
 const repo = join(import.meta.dirname, '..', '..');
 const js = (f) => readFileSync(join(repo, 'prototype', 'src', 'js', f), 'utf8');
@@ -132,7 +133,7 @@ export function contentRoutes(FS) {
           const p = JSON.parse(body || '{}').path || '';
           const dir = nodeAt(parent(p));
           if (!dir?.children || nodeAt(p)) return fail(res, 409, 'Exists');
-          dir.children.push({ name: nameOf(p), size: 0, time: Date.now(), owner: 'nobody', group: 'users', mode: '0664' });
+          dir.children.push({ name: nameOf(p), size: 0, time: clock.now(), owner: 'nobody', group: 'users', mode: '0664' });
           texts.set(p, '');
           json(res, { path: p });
         });
@@ -148,7 +149,7 @@ export function contentRoutes(FS) {
           const file = n || { name: nameOf(path), owner: 'nobody', group: 'users', mode: '0664' };
           if (!n) dir.children.push(file);
           texts.set(path, text);
-          Object.assign(file, { size: Buffer.byteLength(text), time: Date.now(), text });
+          Object.assign(file, { size: Buffer.byteLength(text), time: clock.now(), text });
           if (!n) res.statusCode = 201;
           json(res, { size: file.size, mtime: new Date(file.time).toISOString() });
         });

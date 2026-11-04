@@ -9,7 +9,7 @@ import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..', '..', '..');
-const { chromium, request } = createRequire(join(root, 'prototype', 'package.json'))('playwright');
+const { chromium, request } = createRequire(join(root, 'prototype', 'package.json'))('playwright') as typeof import('playwright');
 const [base = 'http://localhost:8090', admin = 'jdp', adminPw = ''] = process.argv.slice(2);
 const shots = resolve(process.argv[5] || join(root, 'testing', 'out', 'signin'));
 mkdirSync(shots, { recursive: true });

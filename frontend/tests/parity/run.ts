@@ -1,11 +1,13 @@
-// node frontend/tests/parity/run.ts [--a page] [--b page] [--steps r13-unraid,core] [--jobs 4] [--out dir] [--update]
+// node frontend/tests/parity/run.ts [--a page] [--b page | --fixture] [--steps r13-unraid,core,path/to/steps.cjs] [--jobs 4] [--out dir] [--update]
 // Runs every step file of the prototype against two pages, the prototype (a) and the app (b), with the same clock
 // and the same random numbers, then compares what the steps print and what the screenshots show. A page is a
-// path to an HTML file or a URL; b defaults to PARITY_APP_URL and, without it, to the prototype itself.
+// path to an HTML file or a URL; b defaults to PARITY_APP_URL and, without it, to the prototype itself. With --fixture,
+// b is the app on a fixture server of its own for every step file, as the step files change the tree they work on.
 // Differences the app may have are listed per step file in allow.json, each with its reason.
-import { execFileSync, fork } from 'node:child_process';
+import { type ChildProcess, execFileSync, fork, spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { createServer } from 'node:net';
 import { basename, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { format, parseArgs } from 'node:util';
@@ -26,10 +28,11 @@ const { values: opt } = parseArgs({
     jobs: { type: 'string', default: '4' },
     out: { type: 'string', default: join(repo, 'testing', 'out', 'parity') },
     update: { type: 'boolean', default: false },
+    fixture: { type: 'boolean', default: false },
     worker: { type: 'string' },
   },
 });
-opt.b ||= opt.a;
+opt.b ||= opt.fixture ? 'fixture' : opt.a;
 
 // The fixture on disk was made at this moment, so both pages have to agree with it on what "today" is.
 const NOW: number = JSON.parse(readFileSync(join(repo, 'testing', 'fixture', 'prototype.json'), 'utf8')).now;
@@ -51,6 +54,34 @@ const allowFor = (steps: string): Allow => {
 };
 
 const urlOf = (page: string) => (/^https?:/.test(page) ? page : pathToFileURL(resolve(page)).href);
+const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
+
+const frontend = join(repo, 'frontend');
+const vite = join(frontend, 'node_modules', 'vite', 'bin', 'vite.js');
+
+const freePort = () => new Promise<number>((done, fail) => {
+  const probe = createServer().once('error', fail).listen(0, '127.0.0.1', () => {
+    const { port } = probe.address() as { port: number };
+    probe.close(() => done(port));
+  });
+});
+
+// The server is ready once the fixture answers, which it adds to Vite after reading the prototype's tree. Only the
+// first server bundles the dependencies anew; the others read that bundle, so they never write it at the same time.
+async function fixtureServer(force = false): Promise<{ url: string; stop: () => void }> {
+  const port = await freePort();
+  const child: ChildProcess = spawn(process.execPath, [vite, '--mode', 'fixture', '--port', String(port), '--strictPort', ...(force ? ['--force'] : [])],
+    { cwd: frontend, env: { ...process.env, VITE_E2E: '1' }, stdio: 'ignore' });
+  const url = `http://localhost:${port}/`;
+  for (let waited = 0; !(await fetch(url + 'api/v1/me').then((r) => r.ok, () => false)); waited += 250) {
+    if (child.exitCode !== null || waited > 60_000) {
+      child.kill();
+      throw new Error(`the fixture server on port ${port} did not come up`);
+    }
+    await sleep(250);
+  }
+  return { url, stop: () => child.kill() };
+}
 
 // The same sequence of random numbers on both pages, again after every reload.
 const seedRandom = () => {
@@ -72,7 +103,6 @@ function inFlight(tab: Page) {
   tab.on('request', () => { open++; });
   tab.on('requestfinished', () => { open--; });
   tab.on('requestfailed', () => { open--; });
-  const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
   // A request the page has just sent takes a moment to be reported, so the count is read after a short pause.
   return async () => {
     await sleep(30);
@@ -80,14 +110,22 @@ function inFlight(tab: Page) {
   };
 }
 
-function driven(tab: Page): Page {
+// fixture is the app's own server, whose clock follows the page's from the first step on.
+function driven(tab: Page, fixture?: string): { page: Page; move: (ms: number) => Promise<void> } {
   const settle = inFlight(tab);
+  let now: number | undefined;
+  const move = async (ms: number) => {
+    await tab.clock.runFor(ms);
+    if (!fixture) return;
+    now = now === undefined ? await tab.evaluate(() => Date.now()) : now + ms;
+    await fetch(fixture + 'api/v1/fixture/clock', { method: 'PUT', body: JSON.stringify({ now }) });
+  };
   const until = async (test: () => Promise<unknown>, timeout = 30_000, what = 'condition') => {
     for (let waited = 0; ; waited += 50) {
       const value = await test();
       if (value) return value;
       if (waited >= timeout) throw new Error(`${what} not met after ${timeout} ms of page time`);
-      await tab.clock.runFor(50);
+      await move(50);
       // The server's jobs run on its own clock, so every step of page time also gives it a little real time.
       await sleep(10);
     }
@@ -102,7 +140,7 @@ function driven(tab: Page): Page {
   const acting = (name: string) => async (...args: unknown[]) => {
     // Vue drops a click that bubbles to a handler attached at the same moment, and on a stopped clock a button drawn
     // by the click before has the same moment as this one, so the clock moves on by a millisecond first.
-    if (name === 'click' || name === 'dblclick') await tab.clock.runFor(1);
+    if (name === 'click' || name === 'dblclick') await move(1);
     const given = (args[OPTIONS_AT[name]!] as { timeout?: number } | undefined) || {};
     const target = tab.locator(args[0] as string).first();
     // textContent and the like also read hidden elements, so for them being there is enough.
@@ -110,7 +148,7 @@ function driven(tab: Page): Page {
     let there = false;
     for (let waited = 0; !(there = !!(needsSight ? await target.isVisible() : await target.count())); waited += 250) {
       if (waited >= (given.timeout ?? 30_000)) break;
-      await tab.clock.runFor(250);
+      await move(250);
     }
     const fn = (tab as unknown as Record<string, (...a: unknown[]) => Promise<unknown>>)[name]!.bind(tab);
     for (let waited = 0; ; waited += 250) {
@@ -122,29 +160,39 @@ function driven(tab: Page): Page {
       } catch (e) {
         if ((e as Error).name !== 'TimeoutError' || !there || waited >= (given.timeout ?? 30_000)) throw e;
       }
-      await tab.clock.runFor(250);
+      await move(250);
     }
   };
   // A script that returns at once settles long before the first pause; one that waits for a page timer gets the
   // clock moved on until it settles.
-  const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
   const evaluate = async (fn: unknown, arg?: unknown) => {
     let settled = false;
     const result = tab.evaluate(fn as never, arg).finally(() => { settled = true; });
     result.catch(() => {});
     await Promise.race([result, sleep(200)]);
     while (!settled) {
-      await tab.clock.runFor(50);
+      await move(50);
       await Promise.race([result, sleep(30)]);
     }
     return result;
   };
+  // A person's keys come apart in time, so a timer a key handler sets for right after it runs before the next key.
+  const keyboard = new Proxy(tab.keyboard, {
+    get: (k, key) => {
+      const v = Reflect.get(k, key);
+      return typeof v !== 'function' ? v : async (...args: unknown[]) => {
+        await move(1);
+        return v.apply(k, args);
+      };
+    },
+  });
   const own: Partial<Page> = {
     ...Object.fromEntries(Object.keys(OPTIONS_AT).map((name) => [name, acting(name)])),
+    keyboard,
     evaluate: evaluate as never,
     waitForTimeout: async (ms: number) => {
       await settle();
-      await tab.clock.runFor(ms);
+      await move(ms);
       await settle();
     },
     waitForFunction: ((fn: () => unknown, arg?: unknown, o?: { timeout?: number }) =>
@@ -157,13 +205,14 @@ function driven(tab: Page): Page {
         return state === 'visible' ? visible : state === 'hidden' ? !visible : state === 'detached' ? !there : there;
       }, o?.timeout, selector)) as never,
   };
-  return new Proxy(tab, {
+  const page = new Proxy(tab, {
     get: (t, key) => {
       if (key in own) return own[key as keyof Page];
       const v = Reflect.get(t, key);
       return typeof v === 'function' ? v.bind(t) : v;
     },
   });
+  return { page, move };
 }
 
 // CSS transitions, animations and smooth scrolling run on the browser's own clock, which the page clock does not
@@ -232,10 +281,10 @@ async function runSide(browser: Browser, file: string, page: string, dir: string
   console.log = (...args: unknown[]) => { lines.push(format(...args)); };
   try {
     await tab.goto(urlOf(page));
-    const drive = driven(tab);
+    const { page: drive, move } = driven(tab, /^https?:/.test(page) ? new URL('/', page).href : undefined);
     // The prototype has CC once its script ran, the app once the shim has read the fixture; a preview page has none.
     if (!preview) await drive.waitForFunction('typeof CC !== "undefined"');
-    await tab.clock.runFor(800);
+    await move(800);
     delete fromPrototype.cache[fromPrototype.resolve(file)];
     const steps = fromPrototype(file);
     await Promise.race([steps(drive, shot), new Promise((_, no) => { timer = setTimeout(() => no(new Error('timed out')), SIDE_TIMEOUT); })]);
@@ -302,7 +351,8 @@ async function worker(file: string) {
   try {
     const own = allowFor(steps).page;
     const a = await runSide(browser, file, own ? join(prototype, 'dist', own) : opt.a, join(dir, 'a'), !!own);
-    const b = await runSide(browser, file, own ? join(prototype, 'dist', own) : opt.b, join(dir, 'b'), !!own);
+    const server = !own && opt.b === 'fixture' ? await fixtureServer() : undefined;
+    const b = await runSide(browser, file, own ? join(prototype, 'dist', own) : server?.url || opt.b, join(dir, 'b'), !!own).finally(() => server?.stop());
     const result: Result = { steps, a, b, ...compare(steps, a, b, dir) };
     const golden = join(here, 'golden', steps + '.txt');
     const text = a.lines.join('\n') + '\n';
@@ -319,13 +369,32 @@ async function worker(file: string) {
   process.exit(0);
 }
 
+// The first page the app serves makes Vite bundle the dependencies, and it reloads the page when it is done.
+async function warmUp() {
+  const { chromium } = fromPrototype('playwright') as typeof import('playwright');
+  const server = await fixtureServer(true);
+  const browser = await chromium.launch();
+  try {
+    const tab = await browser.newPage();
+    await tab.goto(server.url);
+    await tab.waitForFunction('document.documentElement.dataset.e2e === "ready"', null, { timeout: 120_000 });
+  } finally {
+    await browser.close();
+    server.stop();
+  }
+}
+
 async function main() {
   if (opt.a.endsWith('cannoncommander.html') && !existsSync(opt.a)) execFileSync(process.execPath, [join(prototype, 'build.mjs')], { stdio: 'inherit' });
-  const wanted = opt.steps.split(',').filter(Boolean).map((s) => s.replace(/^steps-/, '').replace(/\.cjs$/, ''));
+  // A step file given by its path runs too, which helps to look into one difference on its own.
+  const given = opt.steps.split(',').filter(Boolean);
+  const loose = given.filter((s) => s.endsWith('.cjs') && existsSync(s)).map((s) => resolve(s));
+  const wanted = given.map((s) => s.replace(/^steps-/, '').replace(/\.cjs$/, ''));
   const files = readdirSync(tools).filter((f) => /^steps-.+\.cjs$/.test(f))
-    .filter((f) => !wanted.length || wanted.includes(f.slice(6, -4))).sort().map((f) => join(tools, f));
+    .filter((f) => !given.length || wanted.includes(f.slice(6, -4))).sort().map((f) => join(tools, f)).concat(loose);
   if (!files.length) throw new Error('no step files match ' + opt.steps);
   mkdirSync(opt.out, { recursive: true });
+  if (opt.b === 'fixture') await warmUp();
   console.log(`parity: ${files.length} step files, a ${opt.a}, b ${opt.b}${opt.a === opt.b ? ' (the prototype against itself)' : ''}`);
 
   const results: Result[] = [];
