@@ -22,7 +22,11 @@ type Run struct {
 func (r *Run) ID() string { return r.j.ID }
 
 // Owner returns the user who started the job.
-func (r *Run) Owner() string { return r.j.Owner }
+func (r *Run) Owner() string {
+	r.m.mu.Lock()
+	defer r.m.mu.Unlock()
+	return r.j.Owner
+}
 
 // Deps returns the shared services.
 func (r *Run) Deps() v1.Deps { return r.m.deps }

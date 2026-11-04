@@ -564,6 +564,31 @@ func TestForgetDropsEveryJobOfTheOwner(t *testing.T) {
 	}
 }
 
+func TestRenameMovesTheJobsOfAnOwnerWhileTheyRun(t *testing.T) {
+	e := newEnv(t)
+	release := make(chan struct{})
+	owner := make(chan string, 1)
+	wait := gated(release)
+	running := e.submit(t, "test", addScript(t, func(ctx context.Context, run *Run) error {
+		err := wait(ctx, run)
+		owner <- run.Owner()
+		return err
+	}), 1)
+	e.waitState(t, running.ID, Running)
+	if err := e.m.Rename("anna", "anni"); err != nil {
+		t.Fatal(err)
+	}
+	close(release)
+	if got := <-owner; got != "anni" {
+		t.Errorf("the running job goes on for %q", got)
+	}
+	e.waitState(t, running.ID, Done)
+	e.restart(t)
+	if list := e.m.List("anni"); len(list) != 1 || list[0].ID != running.ID {
+		t.Errorf("after a restart: %+v", list)
+	}
+}
+
 func TestEventsOnlyReachTheOwner(t *testing.T) {
 	e := newEnv(t)
 	other, _, _ := e.hub.Connect("tab-bert", "bert", 0)

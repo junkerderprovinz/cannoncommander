@@ -526,6 +526,22 @@ func (m *Manager) Forget(owner string) {
 	m.schedule()
 }
 
+// Rename moves the jobs of a user to a new login name. A job that is running
+// goes on under it, so what it leaves behind lands with the same user.
+func (m *Manager) Rename(from, to string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, err := m.db.Exec(`UPDATE jobs SET owner = ? WHERE owner = ?`, to, from); err != nil {
+		return err
+	}
+	for _, j := range m.jobs {
+		if j.Owner == from {
+			j.Owner = to
+		}
+	}
+	return nil
+}
+
 // Settings returns the queue settings.
 func (m *Manager) Settings() Settings {
 	m.mu.Lock()

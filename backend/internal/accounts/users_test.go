@@ -1,14 +1,21 @@
 package accounts_test
 
 import (
+	"errors"
 	"net/http"
+	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
+	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
@@ -202,4 +209,103 @@ func TestTheRoleDecidesWhoMayShare(t *testing.T) {
 	w.must(http.StatusCreated, w.as("gast", "POST", "/shares", link))
 	w.must(http.StatusOK, w.as(w.admin.Username, "PATCH", "/admin/users/anna", map[string]any{"role": "readonly"}))
 	w.must(http.StatusForbidden, w.as("anna", "POST", "/shares", link))
+}
+
+// traces leaves an undo step and a trash entry under a login name, as work
+// with files does, and returns the entry with the file it holds.
+func (w *world) traces(owner string) (*undo.Log, *trash.Store, trash.Item, string) {
+	w.t.Helper()
+	log, bin := undo.For(w.deps), trash.For(w.deps)
+	w.t.Cleanup(func() {
+		bin.Close()
+		v1.Forget(w.deps, "trash")
+		v1.Forget(w.deps, "undo")
+	})
+	if _, err := log.Record(owner, undo.Step{Kind: "test", Name: "alt.txt", Count: 1}, nil); err != nil {
+		w.t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(w.share, "fotos", "alt.txt"), []byte("alt"), 0o644); err != nil {
+		w.t.Fatal(err)
+	}
+	loc, err := w.fs.Resolve("/mnt/user/fotos/alt.txt")
+	if err != nil {
+		w.t.Fatal(err)
+	}
+	it, err := bin.Put(w.t.Context(), owner, loc)
+	if err != nil {
+		w.t.Fatal(err)
+	}
+	return log, bin, it, filepath.Join(w.share, "fotos", trash.DirName, it.ID, "alt.txt")
+}
+
+func TestANewUserOfAnOldNameInheritsNoUndoStepsOrTrash(t *testing.T) {
+	w := newWorld(t)
+	w.addUser("anna", "user", "/mnt/user")
+	log, bin, it, file := w.traces("anna")
+
+	w.must(http.StatusNoContent, w.as(w.admin.Username, "DELETE", "/admin/users/anna", nil))
+	w.addUser("anna", "user", "/mnt/user")
+
+	if steps, err := log.List("anna"); err != nil || len(steps) != 0 {
+		t.Errorf("undo steps of the old anna: %+v, %v", steps, err)
+	}
+	if items, err := bin.List("anna"); err != nil || len(items) != 0 {
+		t.Errorf("trash of the old anna: %+v, %v", items, err)
+	}
+
+	if _, err := os.Stat(file); err != nil {
+		t.Fatalf("the entry left the bin before its time: %v", err)
+	}
+	if _, err := w.deps.DB.Exec(`UPDATE trash_items SET deleted_at = 1 WHERE id = ?`, it.ID); err != nil {
+		t.Fatal(err)
+	}
+	if err := bin.SetDays(30); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(file); !errors.Is(err, os.ErrNotExist) {
+		t.Errorf("the file outlived its time in the bin: %v", err)
+	}
+	if _, err := bin.Get(it.ID); !errors.Is(err, trash.ErrNotFound) {
+		t.Errorf("the entry outlived its time in the bin: %v", err)
+	}
+}
+
+func TestRenamingAUserTakesUndoStepsTrashAndJobsAlong(t *testing.T) {
+	w := newWorld(t)
+	w.addUser("anna", "user", "/mnt/user")
+	log, bin, it, _ := w.traces("anna")
+	m := jobs.For(w.deps)
+	t.Cleanup(func() {
+		m.Close()
+		v1.Forget(w.deps, "jobs")
+	})
+	job, err := m.Submit("anna", trash.KindEmpty, &jobs.Plan{Params: struct{}{}, Items: []jobs.Item{{Path: "/mnt/user/fotos/x", Name: "x", Ref: "gibtsnicht"}}}, 0, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w.must(http.StatusOK, w.as(w.admin.Username, "PATCH", "/admin/users/anna", map[string]any{"name": "anni"}))
+
+	if steps, err := log.List("anni"); err != nil || len(steps) != 1 {
+		t.Errorf("undo steps under the new name: %+v, %v", steps, err)
+	}
+	if steps, err := log.List("anna"); err != nil || len(steps) != 0 {
+		t.Errorf("undo steps under the old name: %+v, %v", steps, err)
+	}
+	if items, err := bin.List("anni"); err != nil || len(items) != 1 || items[0].ID != it.ID {
+		t.Errorf("trash under the new name: %+v, %v", items, err)
+	}
+	if items, err := bin.List("anna"); err != nil || len(items) != 0 {
+		t.Errorf("trash under the old name: %+v, %v", items, err)
+	}
+	if list := m.List("anni"); len(list) != 1 || list[0].ID != job.ID {
+		t.Errorf("jobs under the new name: %+v", list)
+	}
+	if list := m.List("anna"); len(list) != 0 {
+		t.Errorf("jobs under the old name: %+v", list)
+	}
+	var owner string
+	if err := w.deps.DB.QueryRow(`SELECT owner FROM jobs WHERE id = ?`, job.ID).Scan(&owner); err != nil || owner != "anni" {
+		t.Errorf("the stored job belongs to %q, %v", owner, err)
+	}
 }
