@@ -26,7 +26,7 @@ import (
 const KindContent = "contentSearch"
 
 func init() {
-	jobs.RegisterKind(KindContent, jobs.Kind{Prepare: prepareContent, Run: runContent})
+	jobs.RegisterKind(KindContent, jobs.Kind{Prepare: prepareContent, Run: runContent, BigResult: true})
 }
 
 // ContentParams are the criteria of the search window together with the

@@ -28,7 +28,7 @@ import (
 const KindDuplicates = "duplicates"
 
 func init() {
-	jobs.RegisterKind(KindDuplicates, jobs.Kind{Prepare: prepareDuplicates, Run: runDuplicates, Heavy: true})
+	jobs.RegisterKind(KindDuplicates, jobs.Kind{Prepare: prepareDuplicates, Run: runDuplicates, Heavy: true, BigResult: true})
 }
 
 const (

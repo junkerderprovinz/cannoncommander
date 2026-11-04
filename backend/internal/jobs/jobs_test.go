@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -39,6 +40,11 @@ func init() {
 		f := scripts[p.Script]
 		scriptsMu.Unlock()
 		return f(ctx, run)
+	}})
+	RegisterKind("bigresult", Kind{BigResult: true, Run: func(ctx context.Context, run *Run) error {
+		run.SetResult(map[string]int{"hits": 1})
+		run.Finish(0, ItemDone, nil)
+		return nil
 	}})
 	RegisterKind("heavy", Kind{Heavy: true, Run: func(ctx context.Context, run *Run) error {
 		for _, it := range run.Items() {
@@ -683,5 +689,33 @@ func TestAFinishedItemIsReportedWhileTheNextOneTakesLong(t *testing.T) {
 		case <-timeout:
 			t.Fatal("the finished item was never reported")
 		}
+	}
+}
+
+func TestABigResultIsOnlyReadFromTheJobItself(t *testing.T) {
+	e := newEnv(t)
+	client, _, _ := e.hub.Connect("tab", "anna", 0)
+	p := &Plan{Params: struct{}{}, Items: []Item{{Path: "/mnt/user/x"}}}
+	j, err := e.m.Submit("anna", "bigresult", p, 0, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	e.waitState(t, j.ID, Done)
+	for _, listed := range e.m.List("") {
+		if listed.Result != nil {
+			t.Errorf("the list holds the result %v", listed.Result)
+		}
+	}
+	for len(client.Events) > 0 {
+		if ev := <-client.Events; strings.Contains(string(ev.Data), `"result":`) {
+			t.Errorf("%s holds the result: %s", ev.Type, ev.Data)
+		}
+	}
+	if full, _ := e.m.Get(j.ID, true); full.Result == nil {
+		t.Error("the job lost its result")
+	}
+	e.restart(t)
+	if full, _ := e.m.Get(j.ID, true); full.Result == nil {
+		t.Error("the job lost its result in the restart")
 	}
 }

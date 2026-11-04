@@ -6194,7 +6194,10 @@ components:
           type: string
           description: Id of the undo step that takes the finished job back.
         result:
-          description: What the job found out, for kinds that report more than done or failed.
+          description: |
+            What the job found out, for kinds that report more than done or
+            failed. For duplicates and contentSearch it can be megabytes, so
+            only GET /jobs/{id} carries it.
         createdAt:
           type: string
           format: date-time
