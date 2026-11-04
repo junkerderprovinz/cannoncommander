@@ -3622,6 +3622,12 @@ paths:
         the editor frame as access_token and access_token_ttl.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: mode
+          in: query
+          description: view opens the file read only, for a preview.
+          schema:
+            type: string
+            enum: [edit, view]
       responses:
         "200":
           description: How to open the file.
