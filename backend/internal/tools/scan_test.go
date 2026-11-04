@@ -196,7 +196,7 @@ func (f *fixture) duplicates(t *testing.T, p DuplicatesParams) Duplicates {
 			t.Fatal("job does not finish")
 		}
 		time.Sleep(10 * time.Millisecond)
-		j, _ = f.m.Get(j.ID, false)
+		j, _ = f.m.Get(j.ID, true)
 	}
 	if j.State != jobs.Done {
 		t.Fatalf("job %s: %s", j.State, j.Error)

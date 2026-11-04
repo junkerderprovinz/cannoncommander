@@ -801,6 +801,8 @@ func (m *Manager) view(j *job, withItems bool) Job {
 	v.Items = nil
 	if withItems {
 		v.Items = slices.Clone(j.items)
+	} else if k, _ := kindOf(j.Kind); k.BigResult {
+		v.Result = nil
 	}
 	return v
 }
