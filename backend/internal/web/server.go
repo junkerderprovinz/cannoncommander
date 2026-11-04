@@ -58,7 +58,7 @@ func StartHttp(ctx context.Context, shutdownComplete chan struct{}) {
 
 	srv := &http.Server{
 		Addr:        settings.HTTPListenAddr(settings.Config.Http.ListenAddress, settings.Config.Http.Port),
-		Handler:     muxWithMiddleware(router),
+		Handler:     muxWithMiddleware(crossOrigin(router)),
 		ConnContext: settings.AttachConnContext,
 	}
 	listenAddress := settings.Config.Http.ListenAddress
@@ -162,4 +162,27 @@ func StartHttp(ctx context.Context, shutdownComplete chan struct{}) {
 	}
 
 	close(shutdownComplete)
+}
+
+// crossOrigin refuses writes a browser sends from another origin. SameSite
+// cookies do not stop them, because another app on this address at another
+// port is the same site. A plain LAN address gets no Sec-Fetch-Site, so there
+// Origin is compared with the host the browser asked for, and callers without
+// browser headers, such as a document server, pass.
+func crossOrigin(next http.Handler) http.Handler {
+	guard := http.NewCrossOriginProtection()
+	if origin := cspOriginFromURL(settings.Config.Http.ExternalUrl); origin != "" {
+		if err := guard.AddTrustedOrigin(origin); err != nil {
+			logger.Errorf("external address %s: %v", origin, err)
+		}
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		seen := r.WithContext(r.Context())
+		seen.Host = requestHost(r)
+		if err := guard.Check(seen); err != nil {
+			http.Error(w, err.Error(), http.StatusForbidden)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }

@@ -165,7 +165,7 @@ func wrapHandler(fn handleFunc) http.HandlerFunc {
 	}
 }
 
-func muxWithMiddleware(mux *http.ServeMux) *http.ServeMux {
+func muxWithMiddleware(mux http.Handler) *http.ServeMux {
 	wrappedMux := http.NewServeMux()
 	wrappedMux.Handle("/", LoggingMiddleware(mux))
 	return wrappedMux
