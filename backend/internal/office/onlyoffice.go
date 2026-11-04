@@ -199,14 +199,24 @@ func (s *service) fetchInto(r *http.Request, server, raw string, loc ccfs.Locati
 	if err != nil {
 		return err
 	}
-	if (got.Scheme != "http" && got.Scheme != "https") || !strings.EqualFold(got.Hostname(), want.Hostname()) {
-		return errors.New("the saved document is not on the document server: " + got.Host)
+	if !sameOrigin(want, got) {
+		return errors.New("the saved document is not on the document server: " + got.Scheme + "://" + got.Host)
 	}
 	req, err := http.NewRequestWithContext(r.Context(), http.MethodGet, got.String(), nil)
 	if err != nil {
 		return err
 	}
-	resp, err := s.client.Do(req)
+	client := *s.client
+	client.CheckRedirect = func(next *http.Request, via []*http.Request) error {
+		if len(via) >= 5 {
+			return errors.New("the document server redirects too often")
+		}
+		if !sameOrigin(want, next.URL) {
+			return errors.New("the document server redirects elsewhere: " + next.URL.Scheme + "://" + next.URL.Host)
+		}
+		return nil
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -237,4 +247,20 @@ func officeLang(u *users.User) string {
 		return u.Locale
 	}
 	return "en"
+}
+
+// sameOrigin reports whether two addresses lead to the same scheme, host and
+// port, with a missing port taken as the default of the scheme.
+func sameOrigin(a, b *url.URL) bool {
+	return a.Scheme == b.Scheme && strings.EqualFold(a.Hostname(), b.Hostname()) && originPort(a) == originPort(b)
+}
+
+func originPort(u *url.URL) string {
+	if p := u.Port(); p != "" {
+		return p
+	}
+	if u.Scheme == "https" {
+		return "443"
+	}
+	return "80"
 }
