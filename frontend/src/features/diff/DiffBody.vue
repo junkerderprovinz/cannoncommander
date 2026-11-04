@@ -5,7 +5,7 @@ import type { Diff, DiffRow, DiffSide } from '@/api/tools';
 import { fmtSize, fmtTime } from '@/core/format';
 import { G, glyphOf } from '@/core/glyphs';
 import { closeBtn, type WinEntry } from '@/core/windows';
-import { plural } from '@/bk/kit';
+import { plural } from '@/ui/kit';
 import { parent, split } from '@/files/paths';
 import { t } from '@/i18n';
 import { countOf, hunksOf, inline, type Piece } from './diff';
@@ -29,7 +29,7 @@ const lines = computed(() => rows.value.map((r) => ({ r, pieces: cells(r), cls: 
 function summary() {
   const n = hunks.value.length;
   if (!n) return ' ';
-  return t('diff.summary', { places: plural(n, t('diff.place'), t('diff.places')), chg: countOf(rows.value, 'chg'), del: countOf(rows.value, 'del'), add: countOf(rows.value, 'add') });
+  return t('diff.summary', { places: plural(n, 'diff.places'), chg: countOf(rows.value, 'chg'), del: countOf(rows.value, 'del'), add: countOf(rows.value, 'add') });
 }
 function foot(start: string) {
   const none = !hunks.value.length;

@@ -3,6 +3,30 @@
   "pick": "Auswählen",
   "folder": "Ordner",
   "noFolder": "Diesen Ordner gibt es nicht",
+  "copy": "Kopieren",
+  "copied": "Kopiert",
+  "objects": {
+    "one": "{n} Objekt",
+    "many": "{n} Objekte"
+  },
+  "files": {
+    "one": "{n} Datei",
+    "many": "{n} Dateien"
+  },
+  "folders": {
+    "one": "{n} Ordner",
+    "many": "{n} Ordnern"
+  },
+  "noName": "Der Name fehlt",
+  "taken": "Name vergeben",
+  "background": "Läuft als Aufgabe im Hintergrund",
+  "running": "{label} läuft",
+  "toJobs": "Aufgaben",
+  "copyPath": "Pfad kopieren",
+  "server": "Server",
+  "sameFolder": "Beide Fenster zeigen denselben Ordner",
+  "archiveOnly": "Im Archiv geht nur Ansehen und Entpacken",
+  "failed": "{label} hat nicht geklappt: {error}",
   "show": "Anzeigen",
   "hide": "Verbergen"
 }

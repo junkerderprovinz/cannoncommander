@@ -1,5 +1,6 @@
 {
   "title": "Search",
+  "job": "Search contents: {name} in {to}",
   "name": "Name",
   "namePlaceholder": "*.iso *.img or part of the name",
   "nameTip": "Separate several patterns with spaces. * stands for any number of characters, ? for exactly one. Without *, every name that contains the text matches.",
@@ -20,6 +21,7 @@
   "whens": { "any": "Any time", "1": "Today", "7": "Last 7 days", "30": "Last 30 days", "365": "Last year", "old": "Older than a year" },
   "hits": "Hits",
   "hitsLabel": "Hits",
+  "hitCount": { "one": "{n} hit", "many": "{n} hits" },
   "first": "The first {n} of {total} hits",
   "scanned": "{n} objects searched",
   "reading": "Reading files, {n} searched",

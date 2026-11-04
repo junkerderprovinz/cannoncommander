@@ -8,13 +8,8 @@ import { createFixture, fixtureMiddleware } from '../../scripts/fixture.js';
 
 let server: Server, base = '';
 beforeAll(async () => {
-  const ops = opsFixture(), tools = toolsFixture(undefined, (ops as unknown as { ops: Record<string, unknown> }).ops), plain = fixtureMiddleware();
-  const chain = [ops, tools, plain];
-  server = createServer((req, res) => {
-    let i = 0;
-    const next = (): void => { const m = chain[i++]; if (m) m(req as never, res as never, next); else { res.statusCode = 404; res.end(); } };
-    next();
-  });
+  const ops = opsFixture(undefined, [toolsFixture]), plain = fixtureMiddleware();
+  server = createServer((req, res) => ops(req as never, res as never, () => plain(req as never, res as never, () => { res.statusCode = 404; res.end(); })));
   await new Promise<void>((r) => server.listen(0, '127.0.0.1', () => r()));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/v1`;
 });

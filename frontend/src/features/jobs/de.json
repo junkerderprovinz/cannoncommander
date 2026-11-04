@@ -52,9 +52,6 @@
     "gather": "Bündeln: {what} auf {to}",
     "scatter": "Leeren: {what} von {to}",
     "fixPerms": "Rechte reparieren: {what}",
-    "sync": "Synchronisieren: {name} und {to}",
-    "duplicates": "Doppelte Dateien suchen: {name}",
-    "contentSearch": "Inhalt durchsuchen: {name} in {to}",
     "other": "{kind}: {what}"
   },
   "notifyDone": "Aufgabe fertig",

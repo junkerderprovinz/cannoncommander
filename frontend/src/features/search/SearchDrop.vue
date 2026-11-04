@@ -4,7 +4,7 @@
 import { computed, nextTick, onMounted } from 'vue';
 import type { SavedSearch } from '@/api/tools';
 import { run } from '@/core/actions';
-import { num } from '@/bk/kit';
+import { num } from '@/ui/kit';
 import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { usePanels } from '@/stores/panels';

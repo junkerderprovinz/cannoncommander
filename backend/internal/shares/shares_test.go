@@ -825,3 +825,26 @@ func TestRemovingAUserRemovesTheirLinks(t *testing.T) {
 		t.Fatalf("left %+v", all)
 	}
 }
+
+func TestALinkComesWithItsAddressAsAQRCode(t *testing.T) {
+	e := newEnv(t)
+	sh := e.create("anna", map[string]any{"paths": []string{"/mnt/user/fotos/Urlaub"}, "slug": "urlaub-2026"})
+	var got shares.Address
+	a := e.do("GET", "/shares/"+sh.ID+"/qr?origin="+url.QueryEscape("https://files.example.org/"), nil, "X-User", "anna")
+	a.into(t, &got)
+	if a.code != http.StatusOK || got.URL != "https://files.example.org/s/urlaub-2026" || !strings.HasPrefix(got.QR, "<svg") {
+		t.Fatalf("address %d %+v", a.code, got)
+	}
+	e.do("GET", "/shares/"+sh.ID+"/qr", nil, "X-User", "anna", "X-Forwarded-Proto", "https", "X-Forwarded-Host", "cannon.lan").into(t, &got)
+	if got.URL != "https://cannon.lan/s/urlaub-2026" {
+		t.Fatalf("forwarded address %q", got.URL)
+	}
+	for _, bad := range []string{"javascript:alert(1)", "https://files.example.org/elsewhere", "https://user@files.example.org"} {
+		if a := e.do("GET", "/shares/"+sh.ID+"/qr?origin="+url.QueryEscape(bad), nil, "X-User", "anna"); a.code != http.StatusBadRequest {
+			t.Fatalf("origin %q: %d", bad, a.code)
+		}
+	}
+	if a := e.do("GET", "/shares/"+sh.ID+"/qr", nil, "X-User", "bob"); a.code != http.StatusNotFound {
+		t.Fatalf("bob reads the address: %d", a.code)
+	}
+}

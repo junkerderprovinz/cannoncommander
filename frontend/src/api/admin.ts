@@ -1,6 +1,7 @@
 // The settings pages talk to the server through these calls. Times arrive as ISO strings and leave this file as
 // milliseconds, so the pages compare and format them like every other date.
 import { ApiError, call } from './client';
+import { type Share as WireShare, shareUrl, tools } from './tools';
 import { creationOptions, credentialJSON } from './webauthn';
 
 const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
@@ -47,11 +48,7 @@ export interface Remote {
 export interface RemoteInput { name?: string; type?: string; path?: string; mount?: string; params?: Record<string, string> }
 export interface RemoteTest { ok: boolean; entries: number; total?: number; used?: number; free?: number; error?: string }
 export interface Rclone { installed: boolean; running: boolean; version?: string; error?: string }
-export interface Share {
-  id: string; slug: string; kind: 'file' | 'folder' | 'collection'; name: string; paths: string[]; owner: string;
-  created: number; expires: number | null; password: boolean; limit: number; downloads: number; views: number;
-  uploads: boolean; uploadLimit: number; uploaded: number; notify: boolean; state: 'active' | 'expired' | 'exhausted'; url: string;
-}
+export interface Share extends Omit<WireShare, 'created' | 'expires'> { created: number; expires: number | null; url: string }
 export interface Session { id: string; created: number; seen: number; userAgent: string; ip: string; current: boolean }
 export interface Token { id: string; name: string; created: number; last: number | null; rights: 'r' | 'rw'; expires: number | null }
 export interface Passkey { id: string; name: string; origin: string; created: number; last: number | null }
@@ -83,9 +80,7 @@ export interface Imported { sections: string[]; notes: string[]; restartNeeded: 
 type Wire<T, K extends keyof T> = Omit<T, K> & { [P in K]: string | null };
 type WireUser = Wire<User, 'last' | 'pwChanged'>;
 const user = <U extends WireUser>(u: U) => ({ ...u, last: ms(u.last), pwChanged: ms(u.pwChanged) });
-// A link carries its slug, the address is the server's own one with /s/ in front.
-const shareUrl = (slug: string) => new URL(`s/${slug}`, location.origin + import.meta.env.BASE_URL).href;
-const share = (s: Omit<Wire<Share, 'created' | 'expires'>, 'url'>): Share => ({ ...s, created: ms(s.created)!, expires: ms(s.expires), url: shareUrl(s.slug) });
+const share = (s: WireShare): Share => ({ ...s, created: ms(s.created)!, expires: ms(s.expires), url: shareUrl(s.slug) });
 const token = (x: Wire<Token, 'created' | 'last' | 'expires'>): Token => ({ ...x, created: ms(x.created)!, last: ms(x.last), expires: ms(x.expires) });
 const passkey = (x: Wire<Passkey, 'created' | 'last'>): Passkey => ({ ...x, created: ms(x.created)!, last: ms(x.last) });
 const index = (x: Wire<IndexState, 'lastIndexed' | 'nextScan'>): IndexState => ({ ...x, lastIndexed: ms(x.lastIndexed), nextScan: ms(x.nextScan) });
@@ -115,7 +110,7 @@ export const admin = {
   restart: () => write('POST', '/admin/app/restart'),
   exportSettings: (path: string, users: boolean) => write<{ path: string; size: number }>('POST', '/admin/app/export', { path, users }),
   importSettings: (path: string, users: boolean) => write<Imported>('POST', '/admin/app/import', { path, users }),
-  shares: async (all: boolean) => (await get<Omit<Wire<Share, 'created' | 'expires'>, 'url'>[]>(all ? '/admin/shares' : '/shares')).map(share),
+  shares: async (all: boolean) => (await (all ? tools.allShares() : tools.shares())).map(share),
   // An expiry of null makes the link last, an empty password takes it off.
   updateShare: (id: string, change: { expires?: number | null; password?: string }) =>
     write('PATCH', `/shares/${at(id)}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}) }),
