@@ -123,7 +123,7 @@ func (s *service) config(w http.ResponseWriter, r *http.Request) error {
 		return v1.Errorf(http.StatusConflict, "no office server is set up")
 	}
 	u := v1.UserFrom(r)
-	loc, info, err := s.file(u, r.URL.Query().Get("path"), ccfs.View)
+	loc, info, err := s.file(u, r.URL.Query().Get("path"), ccfs.Download)
 	if err != nil {
 		return err
 	}
@@ -163,6 +163,9 @@ func (s *service) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 	if loc.Virtual() || loc.InArchive() {
 		return ccfs.Location{}, nil, v1.Errorf(http.StatusBadRequest, "only a file below a source opens in the office server")
 	}
+	if err := ccfs.Contained(loc); err != nil {
+		return ccfs.Location{}, nil, err
+	}
 	info, err := os.Stat(loc.Real)
 	if err != nil {
 		return ccfs.Location{}, nil, err
@@ -187,7 +190,9 @@ func (s *service) granted(ctx context.Context, token string, write bool) (grant,
 	if err != nil {
 		return grant{}, nil, ccfs.Location{}, nil, errBadToken
 	}
-	perm := ccfs.View
+	// The document server passes the whole file on to the browser, which
+	// /fs/raw counts as a download.
+	perm := ccfs.Download
 	if write {
 		perm = ccfs.Modify
 	}
