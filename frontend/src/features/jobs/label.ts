@@ -16,8 +16,9 @@ export function jobLabel(j: Pick<Job, 'kind' | 'name' | 'count' | 'dest'>) {
   const what = j.count === 1 ? j.name : j.kind === 'upload' ? t('jobs.files', { n: j.count }) : objects(j.count);
   const dev = j.dest?.replace(/^\/mnt\//, '');
   const to = j.kind === 'gather' || j.kind === 'scatter' ? diskName(dev) : placeName(j.dest);
-  const kind = ['copy', 'move', 'delete', 'trash', 'restore', 'emptyTrash', 'undo', 'upload', 'gather', 'scatter', 'fixPerms'].includes(j.kind) ? j.kind : 'other';
-  return t(`jobs.kind.${kind}`, { what, to, kind: j.kind });
+  const params = { what, to, kind: j.kind, name: j.name };
+  const own = t(`jobs.kind.${j.kind}`, params);
+  return own === `jobs.kind.${j.kind}` ? t('jobs.kind.other', params) : own;
 }
 
 export const pctOf = (j: Job) => (j.state === 'done' ? 100 : j.totalBytes ? (j.doneBytes / j.totalBytes) * 100 : j.totalFiles ? (j.doneFiles / j.totalFiles) * 100 : 0);

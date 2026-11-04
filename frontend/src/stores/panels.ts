@@ -35,7 +35,8 @@ export interface Tab {
   pathOpen?: boolean;
   deep?: boolean;
   flat?: boolean;
-  smart?: boolean;
+  // The id of the saved search the tab lists instead of its folder.
+  smart?: number | null;
   cacheOnly?: boolean;
 }
 export interface Panel { tabs: Tab[]; cur: number }

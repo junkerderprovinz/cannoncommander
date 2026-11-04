@@ -1,0 +1,12 @@
+{
+  "title": "Compare files",
+  "pickTwo": "Mark two files first",
+  "pickTwoDual": "Mark two files or pick one file in each panel",
+  "same": "The files are the same",
+  "place": "place",
+  "places": "places",
+  "summary": "{places}: {chg} changed, {del} removed, {add} added",
+  "at": "Place {n} of {all}",
+  "prev": "Previous place",
+  "next": "Next place"
+}

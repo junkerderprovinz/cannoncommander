@@ -23,7 +23,7 @@ export function createFixture(): {
   list(path: string): { path: string; items: import('../src/api/types').FsItem[] } | null;
   tree(path: string): import('../src/api/types').FsTree | null;
   meta(req: { paths: string[]; columns: string[] }): import('../src/api/types').FsMeta;
-  search(path: string, query: string, hidden: boolean): import('../src/api/types').SearchResult | null;
+  search(path: string, params: { q?: string; hidden?: boolean | string; type?: string; min?: string; max?: string; when?: string; limit?: number | string }): import('../src/api/types').SearchResult | null;
   text(path: string, lines: number): { text: string } | null;
   thumb(path: string): string | null;
 };
