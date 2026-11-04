@@ -1,22 +1,20 @@
 package activity
 
 import (
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ports"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
-// QueryDeps holds access and share dependencies for activity query filtering.
+// QueryDeps holds the access rules that filter activity queries.
 type QueryDeps struct {
 	Access ports.AccessGate
-	Shares ports.ShareReader
 }
 
 var queryDeps QueryDeps
 
-// SetQueryDeps registers access and share ports for activity queries (called from app.WireServices).
-func SetQueryDeps(access ports.AccessGate, shares ports.ShareReader) {
-	queryDeps = QueryDeps{Access: access, Shares: shares}
+// SetQueryDeps registers the access rules for activity queries (called from app.WireServices).
+func SetQueryDeps(access ports.AccessGate) {
+	queryDeps = QueryDeps{Access: access}
 }
 
 func accessPermitted(sourcePath string, indexPath utils.IndexPath, username string) bool {
@@ -24,11 +22,4 @@ func accessPermitted(sourcePath string, indexPath utils.IndexPath, username stri
 		return true
 	}
 	return queryDeps.Access.AccessPermitted(sourcePath, indexPath, username)
-}
-
-func getShare(hash string) (share.Share, error) {
-	if queryDeps.Shares == nil {
-		return share.Share{}, nil
-	}
-	return queryDeps.Shares.GetShare(hash)
 }

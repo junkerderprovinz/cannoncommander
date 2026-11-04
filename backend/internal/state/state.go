@@ -9,7 +9,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
@@ -20,17 +19,14 @@ var (
 	stateLifecycleMu sync.Mutex
 
 	// Separate mutexes for each resource type for better concurrency
-	usersMux  sync.RWMutex
-	sharesMux sync.RWMutex
-	indexMux  sync.RWMutex
+	usersMux sync.RWMutex
+	indexMux sync.RWMutex
 
 	// sqlDb is the SQLite persistence layer. Only state package code should call it directly;
 	// everyone else goes through exported state.* helpers and the caches below.
 	sqlDb *sqldb.SQLStore
 
-	// In-memory caches (authoritative at runtime after Initialize for shares/access/index; users use TTL cache)
-	sharesByHash    map[string]*share.Share
-	sharesByPath    map[string][]string // "source:path" -> []hash
+	// In-memory caches (authoritative at runtime after Initialize for access and index; users use TTL cache)
 	indexInfoByPath map[string]*dbindex.IndexInfo
 
 	// accessDb holds access rules, groups, and token hashes in memory with write-through to sqlDb.
@@ -71,10 +67,6 @@ func initialize(dbPath string) (bool, error) {
 		return existingDb, fmt.Errorf("failed to initialize tool access defaults: %w", err)
 	}
 
-	if err = InitShareDefaultsSettings(); err != nil {
-		return existingDb, fmt.Errorf("failed to initialize share defaults settings: %w", err)
-	}
-
 	if err = InitAuthSigningKey(); err != nil {
 		return existingDb, fmt.Errorf("failed to initialize auth signing key: %w", err)
 	}
@@ -89,22 +81,9 @@ func initialize(dbPath string) (bool, error) {
 		}
 	}
 
-	logger.Debugf("Loading shares and index data into memory...")
+	logger.Debugf("Loading index data into memory...")
 
 	users.SetUsernameToID(UserIDForUsername)
-
-	newSharesByHash := make(map[string]*share.Share)
-	newSharesByPath := make(map[string][]string)
-	sharesList, err := sqlDb.ListAllShares()
-	if err != nil {
-		return existingDb, fmt.Errorf("failed to load shares: %w", err)
-	}
-	for _, link := range sharesList {
-		newSharesByHash[link.Hash] = link
-		pathKey := makePathKey(link.SourcePath, link.Path)
-		newSharesByPath[pathKey] = append(newSharesByPath[pathKey], link.Hash)
-	}
-	logger.Debugf("Loaded %d shares", len(sharesList))
 
 	newIndexInfoByPath := make(map[string]*dbindex.IndexInfo)
 	allIndexInfo, err := sqlDb.ListAllIndexInfo()
@@ -180,14 +159,10 @@ func initialize(dbPath string) (bool, error) {
 	}
 
 	usersMux.Lock()
-	sharesMux.Lock()
 	indexMux.Lock()
-	sharesByHash = newSharesByHash
-	sharesByPath = newSharesByPath
 	indexInfoByPath = newIndexInfoByPath
 	accessDb = newAccessDb
 	usersMux.Unlock()
-	sharesMux.Unlock()
 	indexMux.Unlock()
 
 	if err = BackfillHashedTokensFromUserRecords(); err != nil {
@@ -216,10 +191,8 @@ func Close() error {
 	defer stateLifecycleMu.Unlock()
 
 	usersMux.Lock()
-	sharesMux.Lock()
 	indexMux.Lock()
 	defer usersMux.Unlock()
-	defer sharesMux.Unlock()
 	defer indexMux.Unlock()
 
 	users.SetUsernameToID(nil)
@@ -236,6 +209,3 @@ func Close() error {
 	return err
 }
 
-func makePathKey(source, path string) string {
-	return source + ":" + path
-}

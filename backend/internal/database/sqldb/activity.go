@@ -3,6 +3,7 @@ package sqldb
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
@@ -39,7 +40,7 @@ func (s *SQLStore) BulkInsertActivity(entries []activity.Entry) error {
 		}
 		_, err = stmt.Exec(
 			e.CreatedAt,
-			shareUserIDDB(e.UserID),
+			userIDDBString(e.UserID),
 			string(e.EventType),
 			nullString(e.Source),
 			nullString(e.Path),
@@ -145,7 +146,7 @@ func scanActivityListRow(scanner interface {
 		return nil, err
 	}
 
-	if err := scanShareUserID(userIDStr, &e.UserID); err != nil {
+	if err := scanUserID(userIDStr, &e.UserID); err != nil {
 		return nil, err
 	}
 	if source.Valid {
@@ -297,7 +298,7 @@ func buildActivityWhereTable(filter activity.QueryFilter, table string) (string,
 	}
 	if filter.UserFilter {
 		clauses = append(clauses, col("user_id")+" = ?")
-		args = append(args, shareUserIDDB(filter.UserID))
+		args = append(args, userIDDBString(filter.UserID))
 	}
 	if filter.ShareOwnerFilter {
 		appendShareOwnerActivityClauses(&clauses, &args, filter, table)
@@ -378,7 +379,7 @@ func appendShareOwnerActivityClauses(clauses *[]string, args *[]interface{}, fil
 	col := func(name string) string {
 		return table + "." + name
 	}
-	ownerID := shareUserIDDB(filter.ShareOwnerUserID)
+	ownerID := userIDDBString(filter.ShareOwnerUserID)
 	shareOwnerInDetails := "CAST(json_extract(" + table + ".details, '$.shareOwnerUserId') AS TEXT) = ?"
 
 	downloadMatch := "(" + col("event_type") + " = ? AND " + shareOwnerInDetails + ")"
@@ -410,4 +411,17 @@ func escapeLikePrefix(prefix string) string {
 	}
 	b.WriteByte('%')
 	return b.String()
+}
+
+func scanUserID(s string, dest *uint64) error {
+	if s == "" {
+		*dest = 0
+		return nil
+	}
+	u, err := strconv.ParseUint(s, 10, 64)
+	if err != nil {
+		return fmt.Errorf("parse user_id: %w", err)
+	}
+	*dest = u
+	return nil
 }

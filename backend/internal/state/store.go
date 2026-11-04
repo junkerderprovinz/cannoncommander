@@ -2,7 +2,6 @@ package state
 
 import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
@@ -82,16 +81,6 @@ func (s *Store) UpdateAccessRulesOnMove(sourcePath string, oldPath, newPath util
 // CheckChildItemAccess implements files.ChildAccessChecker.
 func (s *Store) CheckChildItemAccess(response *iteminfo.FileInfo, idx *indexing.Index, username string) error {
 	return CheckChildItemAccess(response, idx, username)
-}
-
-// --- ports.ShareReader ---
-
-func (s *Store) GetShare(hash string) (share.Share, error) {
-	return GetShare(hash)
-}
-
-func (s *Store) IsShared(source, path string, userID uint64) bool {
-	return IsShared(source, path, userID)
 }
 
 // --- ports.IndexMetaStore ---

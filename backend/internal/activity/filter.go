@@ -104,9 +104,7 @@ func ParseFilter(r *http.Request, actor *Actor) (activitydb.QueryFilter, int, er
 	}
 	filter.Scope = scope
 
-	if status, err := ResolveShareAccess(actor, &filter); err != nil {
-		return activitydb.QueryFilter{}, status, err
-	}
+	scopeToOwnShares(actor, &filter)
 
 	resolvedTypes, err := activitydb.ResolveScopeEventTypes(scope, filter.EventTypes)
 	if err != nil {

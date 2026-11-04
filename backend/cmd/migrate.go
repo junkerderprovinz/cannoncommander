@@ -12,7 +12,6 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
@@ -185,12 +184,6 @@ func migrateFromBoltToSQLite() error {
 	}
 	if err := state.EnsureNoAuthAdminUserAfterMigration(sqlStore); err != nil {
 		return fmt.Errorf("failed to configure noauth admin user: %w", err)
-	}
-
-	// Migrate shares
-	logger.Info("Migrating shares...")
-	if err := migrateShares(oldDB, sqlStore); err != nil {
-		return fmt.Errorf("failed to migrate shares: %w", err)
 	}
 
 	// Migrate access rules and groups
@@ -377,65 +370,6 @@ func promoteLegacyApiKeysBeforeSQLite(user *users.User) {
 		token.Permissions = users.SanitizeTokenPermissions(token.Permissions)
 		users.StoreToken(user.Tokens, token)
 	}
-}
-
-// migrateShares migrates all shares from BoltDB to SQLite.
-//
-// Legacy Bolt "Link" / "Share" JSON (flat CommonShare + Link fields):
-//   - "source"  → Share.SourcePath (backend source path; not the share item path)
-//   - "path"    → Share.Path (index-relative path within that source)
-//   - "userID"  → Share.UserID unchanged (same numeric id as migrated users in SQLite)
-//   - "password_hash" → Share.PasswordHash (username is never stored on the share row)
-//
-// New users created after migration get random uint64 ids (utils.RandomUint64ID); Bolt ids 1,2,3…
-// remain valid. PrepForFrontend resolves Share.UserID to username for API responses only.
-func migrateShares(oldDB *storm.DB, sqlStore *sqldb.SQLStore) error {
-	boltShareBuckets := []string{"Share", "Link"}
-	var sharesList []*share.LegacyShare
-	for _, bucket := range boltShareBuckets {
-		var batch []*share.LegacyShare
-		err := oldDB.Select().Bucket(bucket).Find(&batch)
-		if err != nil && err != storm.ErrNotFound {
-			return fmt.Errorf("failed to read shares from legacy DB bucket %q: %w", bucket, err)
-		}
-		if len(batch) > 0 {
-			sharesList = append(sharesList, batch...)
-		}
-	}
-
-	if len(sharesList) == 0 {
-		logger.Info("  No shares to migrate")
-		return nil
-	}
-
-	for _, legacy := range sharesList {
-		link := legacy.ToShare()
-		if link.UserID == 0 {
-			return fmt.Errorf("failed to save share %s: owner user id is missing", link.Hash)
-		}
-		// Legacy Bolt "source" → SourcePath; normalize when it was stored as a display name.
-		if link.SourcePath != "" {
-			if _, ok := settings.Config.Server.SourceMap[link.SourcePath]; !ok {
-				if src, ok := settings.Config.Server.NameToSource[link.SourcePath]; ok {
-					link.SourceName = src.Name
-					link.SourcePath = src.Path
-				}
-			} else if link.SourceName == "" {
-				link.SourceName = settings.Config.Server.SourceMap[link.SourcePath].Name
-			}
-		}
-		// Do not persist API-only fields; PrepForFrontend fills these on read.
-		link.ShareURL = ""
-		link.DownloadURL = ""
-		link.FrontendShareInfo.SourceURL = ""
-		link.CanEditShare = false
-		if err := sqlStore.SaveShare(&link); err != nil {
-			return fmt.Errorf("failed to save share %s: %w", link.Hash, err)
-		}
-	}
-
-	logger.Infof("  ✓ Migrated %d shares", len(sharesList))
-	return nil
 }
 
 // migrateAccessRules migrates access control data from BoltDB to SQLite.

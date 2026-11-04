@@ -1,7 +1,6 @@
 package files
 
 import (
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ports"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
@@ -14,18 +13,17 @@ type ChildAccessChecker interface {
 	CheckChildItemAccess(response *iteminfo.FileInfo, idx *indexing.Index, username string) error
 }
 
-// Service performs filesystem operations with injected access and share dependencies.
+// Service performs filesystem operations with injected access dependencies.
 type Service struct {
 	access ports.AccessGate
 	child  ChildAccessChecker
-	shares ports.ShareReader
 }
 
 var defaultService *Service
 
 // New constructs a file service with the given port implementations.
-func New(access ports.AccessGate, child ChildAccessChecker, shares ports.ShareReader) *Service {
-	return &Service{access: access, child: child, shares: shares}
+func New(access ports.AccessGate, child ChildAccessChecker) *Service {
+	return &Service{access: access, child: child}
 }
 
 // SetDefault registers the process-wide file service (called from app.WireServices).
@@ -52,24 +50,6 @@ func (s *Service) checkChildItemAccess(response *iteminfo.FileInfo, idx *indexin
 		return nil
 	}
 	return s.child.CheckChildItemAccess(response, idx, username)
-}
-
-func (s *Service) pathIsShared(path, source string, userID uint64) bool {
-	if s.shares == nil {
-		return false
-	}
-	return s.shares.IsShared(source, path, userID)
-}
-
-func (s *Service) shareByHash(hash string) (share.Share, bool) {
-	if s.shares == nil || hash == "" {
-		return share.Share{}, false
-	}
-	sh, err := s.shares.GetShare(hash)
-	if err != nil {
-		return share.Share{}, false
-	}
-	return sh, true
 }
 
 // CheckPermissions validates user access and returns the resolved index path and user scope.

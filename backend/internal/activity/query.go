@@ -137,26 +137,11 @@ func EnforcePathGlobFilter(r *http.Request, actor *Actor) (int, error) {
 	return 0, nil
 }
 
-// resolveActivityShareAccess validates share hash filters and configures share-owner scoping for non-admins.
-func ResolveShareAccess(actor *Actor, filter *activitydb.QueryFilter) (int, error) {
-	if filter.ShareHash != "" {
-		sh, err := getShare(filter.ShareHash)
-		if err != nil {
-			return http.StatusBadRequest, fmt.Errorf("share not found")
-		}
-		if !actor.User.Permissions.Admin && sh.UserID != actor.User.ID {
-			return http.StatusForbidden, fmt.Errorf("forbidden: not your share")
-		}
-	}
-
-	if actor.User.Permissions.Admin {
-		return 0, nil
-	}
-
-	if filter.Scope == "shares" || filter.ShareHash != "" {
+// scopeToOwnShares limits a non-admin query about share links to the links the user owns.
+func scopeToOwnShares(actor *Actor, filter *activitydb.QueryFilter) {
+	if !actor.User.Permissions.Admin && (filter.Scope == "shares" || filter.ShareHash != "") {
 		filter.UserFilter = false
 		filter.ShareOwnerUserID = actor.User.ID
 		filter.ShareOwnerFilter = true
 	}
-	return 0, nil
 }
