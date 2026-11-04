@@ -7,15 +7,20 @@ import { c } from './kit/kit';
 
 export const REPO = 'https://github.com/junkerderprovinz/cannoncommander';
 export const MAIL = 'hello@halleluja.design';
+// The server cannot see which image it runs from, and every release goes to this one.
+export const IMAGE = 'ghcr.io/junkerderprovinz/cannoncommander';
 
 export async function bugReport() {
   const [sys, sources, remotes, users] = await Promise.allSettled([admin.system(), admin.sources(), admin.remotes(), admin.users()]);
   const ok = <T>(r: PromiseSettledResult<T>) => (r.status === 'fulfilled' ? r.value : null);
+  const system = ok(sys);
   const report = {
-    app: ok(sys)?.version ?? null,
+    app: system?.version ?? null,
     prefs: { ...prefs },
-    sources: ok(sources)?.map((s) => ({ path: s.path, indexed: s.indexed, readOnly: s.readOnly })) ?? null,
-    remotes: ok(remotes)?.map((r) => ({ type: r.type, mounted: r.mounted })) ?? null,
+    os: system ? `${system.os}/${system.arch}` : null,
+    sources: ok(sources)?.sources.map((s) => ({ path: s.path, indexed: s.indexed, readOnly: s.readOnly })) ?? null,
+    remotes: ok(remotes)?.remotes.map((r) => ({ type: r.type, mounted: r.mounted, failed: !!r.error })) ?? null,
+    rclone: ok(remotes)?.rclone ?? null,
     users: ok(users)?.length ?? null,
   };
   const today = new Date().toISOString().slice(0, 10);

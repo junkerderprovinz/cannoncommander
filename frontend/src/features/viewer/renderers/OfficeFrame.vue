@@ -26,7 +26,7 @@ function load(src: string) {
 
 onMounted(async () => {
   try {
-    const c = await officeConfig(props.path);
+    const c = await officeConfig(props.path, props.edit ? 'edit' : 'view');
     cfg.value = c;
     if (c.kind === 'collabora') {
       setTimeout(() => form.value?.submit(), 0);
@@ -34,7 +34,7 @@ onMounted(async () => {
       await load(c.url.replace(/\/$/, '') + '/web-apps/apps/api/documents/api.js');
       const api = (window as unknown as { DocsAPI?: DocsApi }).DocsAPI;
       if (!api) throw new Error('no DocsAPI');
-      const config = { ...c.config, width: '100%', height: '100%', ...(props.edit ? {} : { type: 'embedded', editorConfig: { ...(c.config?.editorConfig as object), mode: 'view' } }) };
+      const config = { ...c.config, width: '100%', height: '100%', ...(props.edit ? {} : { type: 'embedded' }) };
       editor = new api.DocEditor(id, config);
     }
     emit('ready', c.kind);

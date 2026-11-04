@@ -33,7 +33,7 @@ function allMenus(e: MouseEvent) {
 function account(e: MouseEvent) {
   const r = at(e);
   menu(r.right - 260, r.bottom + 6, [
-    { head: `${user.me.full}, ${user.me.role}` },
+    { head: [user.me.full, user.me.role && t(`config.roles.${user.me.role.toLowerCase()}`)].filter(Boolean).join(', ') },
     { label: t('head.security'), g: 'IconKey', run: () => go('settings', 'security') },
     { label: t('head.activity'), g: 'IconLog', run: () => run('openActivity') },
     '-', 'logout',

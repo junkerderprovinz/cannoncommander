@@ -8,7 +8,7 @@ import { cancelBtn, type WinEntry } from '@/core/windows';
 import CopyField from '../kit/CopyField.vue';
 import Dropdown from '../kit/Dropdown.vue';
 import Frow from '../kit/Frow.vue';
-import { c, fail, setFoot } from '../kit/kit';
+import { attempt, c, fail, setFoot } from '../kit/kit';
 import PwField from '../kit/PwField.vue';
 import Sw from '../kit/Sw.vue';
 
@@ -29,12 +29,12 @@ async function setNew() {
 async function save() {
   const asking = pwOn.value && (!s.password || pwNew.value);
   if (asking && pw.value.length < 6) return fail(c('shares.pwShort'), pwField.value?.input);
-  const change: { expires?: number | null; password?: string | null } = {};
+  const change: { expires?: number | null; password?: string } = {};
   if (expiry.value === 'never') change.expires = null;
   else if (expiry.value !== 'keep') change.expires = now() + Number(expiry.value) * DAY;
-  if (!pwOn.value && s.password) change.password = null;
+  if (!pwOn.value && s.password) change.password = '';
   if (asking) change.password = pw.value;
-  await admin.updateShare(s.id, change);
+  if (!(await attempt(admin.updateShare(s.id, change), pwField.value?.input))) return;
   props.win.close();
   toast(c('saved'));
   props.saved();
@@ -46,8 +46,8 @@ onMounted(() => setFoot(props.win, [cancelBtn(), { label: c('save'), g: 'IconSav
 <template>
   <div class="well">
     <Frow :label="c('shares.link')"><CopyField :value="s.url" /></Frow>
-    <Frow :label="c('shares.path')"><span class="pill mono">{{ s.path }}</span></Frow>
-    <Frow :label="c('shares.created')"><span class="pill">{{ c('shares.createdBy', { date: fmtDate(s.created), by: s.by }) }}</span></Frow>
+    <Frow :label="c('shares.path')"><span v-for="p in s.paths" :key="p" class="pill mono">{{ p }}</span></Frow>
+    <Frow :label="c('shares.created')"><span class="pill">{{ c('shares.createdBy', { date: fmtDate(s.created), by: s.owner }) }}</span></Frow>
     <Frow :label="c('shares.viewsLabel')"><span class="pill glim-num">{{ s.views }}</span></Frow>
   </div>
   <div class="well">

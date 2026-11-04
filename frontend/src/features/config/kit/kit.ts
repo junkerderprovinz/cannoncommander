@@ -43,6 +43,18 @@ export function fail(text: string, el?: Element | null): void {
   shake(el);
 }
 
+// A save the server may refuse. On a refusal the note shows and the field shakes, and the window stays for another
+// try, so the caller only goes on with a result.
+export const attempt = <T>(p: Promise<T>, el?: Element | null) => p.then((value) => ({ value }), () => { fail(c('notSaved'), el); return null; });
+
+// When something planned comes, as in 12 Min.
+export function soon(at: number) {
+  const d = at - now(), min = 60000, h = 60 * min;
+  if (d < 2 * min) return c('soon.now');
+  if (d < 2 * h) return c('soon.minutes', { n: Math.round(d / min) });
+  return c('soon.hours', { n: Math.round(d / h) });
+}
+
 export function copy(text: string, what = c('copied')) {
   try { navigator.clipboard?.writeText(text).catch(() => {}); } catch { /* without a secure context the toast still confirms the try */ }
   toast(what);

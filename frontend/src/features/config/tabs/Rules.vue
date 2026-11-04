@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue';
-import { admin, exists, type Rule, type User, type Verdict } from '@/api/admin';
+import { admin, type Rule, type User, type Verdict } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
@@ -28,39 +28,48 @@ async function load() {
 }
 onMounted(() => { load().catch(() => {}); });
 
-function why(v: Verdict, user: User) {
-  if (v.scope) return c('rules.outside', { scope: v.scope });
-  if (v.rule == null) return user.role === 'readonly' ? c('rules.noneReadonly') : c('rules.noneScope');
-  const r = rules.value[v.rule]!;
-  return c('rules.byRule', { n: v.rule + 1, who: whoName(r.who, users.value), path: r.path, rule: ruleName(r.rule) });
+function why(v: Verdict) {
+  const r = v.rule == null ? undefined : rules.value[v.rule];
+  switch (v.reason) {
+    case 'scope': return c('rules.outside', { scope: v.scope ?? '' });
+    case 'rule': return r ? c('rules.byRule', { n: v.rule! + 1, who: whoName(r.who, users.value), path: r.path, rule: ruleName(r.rule) }) : c('rules.noneScope');
+    case 'role': return c('rules.noneReadonly');
+    case 'source': return c('rules.readOnlySource');
+    default: return c('rules.noneScope');
+  }
 }
 async function check() {
   const user = users.value.find((u) => u.name === probe.who);
-  if (!user) return;
   const path = probe.path.trim();
-  if (!(await exists(path)) && !(await exists(path, 'file'))) {
+  if (!user || !path) return;
+  const v = await admin.testRule(user.name, path);
+  if (v.result === 'missing') {
     result.value = { word: c('rules.missing'), tone: 'warn', why: c('rules.missingWhy') };
     return;
   }
-  const v = await admin.testRule(user.name, path);
   const word = v.result === 'hidden' ? c('rules.hidden') : v.result === 'read' ? c('rules.readOnly') : c('rules.visible');
-  result.value = { word, tone: v.result === 'visible' ? 'ok' : 'state', why: why(v, user) };
+  result.value = { word, tone: v.result === 'visible' ? 'ok' : 'state', why: why(v) };
 }
 watch(() => [probe.who, probe.path], () => { check().catch(() => {}); });
 
+// The list on the page follows the server's, also when it refuses a change.
 async function save(next: Rule[]) {
-  await admin.saveRules(next);
-  await load();
+  try {
+    await admin.saveRules(next);
+  } finally {
+    await load().catch(() => {});
+  }
 }
+const quietly = (next: Rule[]) => save(next).catch(() => toast(c('notSaved'), 'warn'));
 function move(i: number, d: number) {
   const next = [...rules.value];
   next.splice(i + d, 0, next.splice(i, 1)[0]!);
-  save(next);
+  quietly(next);
 }
 function remove(i: number) {
   const before = [...rules.value];
-  save(rules.value.filter((_, k) => k !== i));
-  toast(c('rules.removed'), 'ok', { label: c('undo'), run: () => { save(before); } });
+  quietly(rules.value.filter((_, k) => k !== i));
+  toast(c('rules.removed'), 'ok', { label: c('undo'), run: () => { quietly(before); } });
 }
 const edit = (i: number | null) => win({ title: i == null ? c('rules.add') : c('rules.edit'), body: RuleWin, props: { index: i, rules: rules.value, users: users.value, save } });
 </script>

@@ -2,14 +2,14 @@
 // A remote in two steps: first the kind, then its fields. Google, Microsoft and Dropbox sign in through
 // rclone authorize on a computer with a browser, and the token it prints is pasted here.
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-import { admin, type Remote } from '@/api/admin';
+import { admin, type Remote, type RemoteInput } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type FootButton, type WinEntry } from '@/core/windows';
 import CopyField from '../kit/CopyField.vue';
 import Dropdown from '../kit/Dropdown.vue';
 import Frow from '../kit/Frow.vue';
-import { c, fail, keysFirst, setFoot } from '../kit/kit';
+import { attempt, c, fail, keysFirst, setFoot } from '../kit/kit';
 import PathField from '../kit/PathField.vue';
 import PwField from '../kit/PwField.vue';
 import { type RemoteType, remoteFields, remoteTypes, typeOf } from '../remotes';
@@ -17,10 +17,12 @@ import { type RemoteType, remoteFields, remoteTypes, typeOf } from '../remotes';
 const props = defineProps<{ win: WinEntry; remote: Remote | null; all: Remote[]; saved: () => void }>();
 const r = props.remote, isNew = !r;
 const type = ref<RemoteType | null>(r ? typeOf(r.type) : null);
-const draft = reactive<Record<string, string>>({ name: r?.name ?? '', mount: r?.mount ?? '/mnt/remotes/', account: r?.account ?? '', ...(r?.cfg ?? {}) });
+const draft = reactive<Record<string, string>>({ name: r?.name ?? '', mount: r?.mount ?? '/mnt/remotes/', ...(r?.params ?? {}) });
+const token = ref('');
+const signedIn = computed(() => !!token.value || !!r?.secrets?.includes('token'));
 const query = ref('');
 const tested = ref<'no' | 'busy' | 'ok'>('no');
-const signing = ref(false), token = ref('');
+const signing = ref(false), pasted = ref('');
 let mountTouched = !!r;
 const at = (sel: string) => props.win.el?.querySelector(sel) ?? null;
 // A changed field needs a new test before the button says it is connected again.
@@ -34,7 +36,7 @@ function missing(): [string, Element | null] | null {
     if (f.opt || f.dd || (f.pw && !isNew)) continue;
     if (!draft[f.k]?.trim()) return [c('remotes.missing', { field: f.l }), at(`[data-rf="${f.k}"]`)];
   }
-  if (type.value?.oauth && !draft.account) return [c('remotes.signInFirst', { who: type.value.oauth }), at('#a-oauth')];
+  if (type.value?.oauth && !signedIn.value) return [c('remotes.signInFirst', { who: type.value.oauth }), at('#a-oauth')];
   return null;
 }
 
@@ -46,7 +48,10 @@ function choose(t: RemoteType) {
 }
 
 function defaults(t: RemoteType) {
-  for (const f of remoteFields(t)) if (!draft[f.k]) draft[f.k] = f.def ?? f.dd?.[0]?.[0] ?? '';
+  for (const f of remoteFields(t)) {
+    if (f.path && r) draft[f.k] ??= r.path;
+    if (!draft[f.k]) draft[f.k] = f.def ?? f.dd?.[0]?.[0] ?? '';
+  }
 }
 
 function showPick() {
@@ -64,30 +69,36 @@ function nameTyped() {
   if (!mountTouched) draft.mount = '/mnt/remotes/' + draft.name.trim().toLowerCase();
 }
 
+// The form as rclone takes it. An empty password leaves the saved one in place.
+function input(): RemoteInput {
+  const params: Record<string, string> = {};
+  let path = '';
+  for (const f of fields.value) {
+    const v = draft[f.k]?.trim() ?? '';
+    if (f.path) path = v;
+    else params[f.k] = v;
+  }
+  if (token.value) params.token = token.value;
+  return { name: draft.name.trim(), type: type.value!.id, path, mount: draft.mount.trim(), params };
+}
+
 async function test() {
   const m = missing();
   if (m) return fail(...m);
   tested.value = 'busy';
-  const got = await admin.testRemote(type.value!.id, cfg()).catch(() => ({ ok: false }));
-  tested.value = got.ok ? 'ok' : 'no';
-  if (!got.ok) fail(c('remotes.testFailed'), at('#a-rtest'));
+  const got = await admin.testRemote({ ...input(), ...(r ? { name: r.name } : {}) }).catch(() => null);
+  tested.value = got?.ok ? 'ok' : 'no';
+  if (!got?.ok) fail(c('remotes.testFailed'), at('#a-rtest'));
 }
 
 async function useToken() {
-  if (!token.value.trim()) return fail(c('remotes.needToken'), at('#a-rtoken'));
-  const got = await admin.remoteToken(type.value!.id, token.value.trim()).catch(() => null);
-  if (!got) return fail(c('remotes.tokenRejected'), at('#a-rtoken'));
-  draft.account = got.account;
+  if (!pasted.value.trim()) return fail(c('remotes.needToken'), at('#a-rtoken'));
+  const got = await admin.remoteToken(type.value!.id, pasted.value.trim()).catch(() => null);
+  if (!got?.token) return fail(c('remotes.tokenRejected'), at('#a-rtoken'));
+  token.value = got.token;
   signing.value = false;
-  token.value = '';
-  toast(c('remotes.signedIn', { who: type.value!.oauth!, account: got.account }));
-}
-
-function cfg() {
-  const out: Record<string, string> = {};
-  for (const f of fields.value) if (draft[f.k] != null) out[f.k] = draft[f.k]!.trim();
-  if (draft.account) out.account = draft.account;
-  return out;
+  pasted.value = '';
+  toast(c('remotes.signedIn', { who: type.value!.oauth! }));
 }
 
 async function save() {
@@ -97,11 +108,10 @@ async function save() {
   if (!/^\/mnt\/[^/]+\/.+/.test(mount)) return fail(c('remotes.underMnt', { name }), at('#a-rmount'));
   const m = missing();
   if (m) return fail(...m);
-  const body = { name, type: type.value!.id, mount, cfg: cfg(), ...(draft.account ? { account: draft.account } : {}) };
-  if (r) await admin.updateRemote(r.name, body);
-  else await admin.addRemote(body);
+  const done = await attempt(r ? admin.updateRemote(r.name, input()) : admin.addRemote(input()), at('#a-rname'));
+  if (!done) return;
   props.win.close();
-  toast(isNew ? c('remotes.addedAt', { name, mount }) : c('saved'));
+  toast(done.value.error ? c('remotes.savedNotMounted', { name }) : isNew ? c('remotes.addedAt', { name, mount }) : c('saved'), done.value.error ? 'warn' : 'ok');
   props.saved();
 }
 
@@ -132,12 +142,12 @@ onBeforeUnmount(() => stopKeys());
       <div class="well">
         <div class="eyebrow">{{ type.label }}</div>
         <Frow v-if="type.oauth" :label="c('remotes.account')" :tip="c('remotes.accountTip')">
-          <span v-if="draft.account" class="a-ctl"><span class="pill">{{ draft.account }}</span><button id="a-oauth" class="btn" @click="signing = true"><G n="IconSignIn" />{{ c('remotes.otherAccount') }}</button></span>
+          <span v-if="signedIn" class="a-ctl"><span class="pill ok">{{ c('remotes.signedInPill') }}</span><button id="a-oauth" class="btn" @click="signing = true"><G n="IconSignIn" />{{ c('remotes.otherAccount') }}</button></span>
           <button v-else id="a-oauth" class="btn" @click="signing = true"><G n="IconSignIn" />{{ c('remotes.signInAt', { who: type.oauth }) }}</button>
         </Frow>
         <template v-if="type.oauth && signing">
-          <Frow :label="c('remotes.onYourPc')" :tip="c('remotes.onYourPcTip')"><CopyField :value="`rclone authorize &quot;${type.rclone}&quot;`" /></Frow>
-          <Frow :label="c('remotes.token')"><span class="a-ctl grow"><input id="a-rtoken" v-model="token" class="field w mono" :placeholder="c('remotes.tokenPh')" spellcheck="false" autocomplete="off" @keydown.enter="useToken"><button class="btn" @click="useToken"><G n="IconCheck" />{{ c('remotes.takeToken') }}</button></span></Frow>
+          <Frow :label="c('remotes.onYourPc')" :tip="c('remotes.onYourPcTip')"><CopyField :value="`rclone authorize &quot;${type.id}&quot;`" /></Frow>
+          <Frow :label="c('remotes.token')"><span class="a-ctl grow"><input id="a-rtoken" v-model="pasted" class="field w mono" :placeholder="c('remotes.tokenPh')" spellcheck="false" autocomplete="off" @keydown.enter="useToken"><button class="btn" @click="useToken"><G n="IconCheck" />{{ c('remotes.takeToken') }}</button></span></Frow>
         </template>
         <Frow v-for="f in fields" :key="f.k" :tip="f.tip">
           <template #label>{{ f.l }}<template v-if="f.opt">{{ ' ' }}<small>{{ c('optional') }}</small></template></template>

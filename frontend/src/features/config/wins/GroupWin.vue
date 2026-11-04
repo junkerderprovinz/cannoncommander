@@ -4,7 +4,7 @@ import { admin, type Group, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import Frow from '../kit/Frow.vue';
-import { c, fail, setFoot } from '../kit/kit';
+import { attempt, c, fail, setFoot } from '../kit/kit';
 import Sw from '../kit/Sw.vue';
 
 const props = defineProps<{ win: WinEntry; group: Group | null; users: User[]; groups: Group[]; saved: () => void }>();
@@ -18,8 +18,7 @@ async function save() {
   if (!/^[a-z0-9][a-z0-9_-]*$/.test(n)) return fail(n ? c('lowercaseOnly') : c('users.needGroupName'), nameEl.value);
   if (props.groups.some((x) => x !== g && x.name === n)) return fail(c('users.groupTaken'), nameEl.value);
   const body = { name: n, note: note.value.trim(), members: props.users.filter((u) => member[u.name]).map((u) => u.name) };
-  if (g) await admin.updateGroup(g.name, body);
-  else await admin.createGroup(body);
+  if (!(await attempt(g ? admin.updateGroup(g.name, body) : admin.createGroup(body), nameEl.value))) return;
   props.win.close();
   toast(isNew ? c('users.groupCreated', { name: n }) : c('saved'));
   props.saved();

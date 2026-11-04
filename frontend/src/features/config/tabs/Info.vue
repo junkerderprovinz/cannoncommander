@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { GLIMSTONE_VERSION } from '@glimstone/core';
 import { computed, onMounted, ref } from 'vue';
-import { admin, type System } from '@/api/admin';
+import { admin, type System, type UpdateCheck } from '@/api/admin';
+import { toast } from '@/core/toast';
 import { run } from '@/core/actions';
 import { G } from '@/core/glyphs';
 import { win } from '@/core/windows';
@@ -15,21 +16,24 @@ import CryptoWin from '../wins/CryptoWin.vue';
 import PaypalWin from '../wins/PaypalWin.vue';
 
 const sys = ref<System | null>(null);
-const update = ref<'idle' | 'busy' | 'ok'>('idle');
+const update = ref<'idle' | 'busy' | 'ok' | 'newer'>('idle');
+const latest = ref<UpdateCheck | null>(null);
 onMounted(() => { admin.system().then((s) => { sys.value = s; }, () => {}); });
 
 // A version number is a plain link to its release page, as in every app of the workshop.
 const versions = computed(() => [
-  { name: 'CannonCommander', v: sys.value?.version.app, href: REPO + '/releases/tag/v' },
+  { name: 'CannonCommander', v: sys.value?.version, href: REPO + '/releases/tag/v' },
   { name: 'GlimStone', v: GLIMSTONE_VERSION, href: 'https://github.com/junkerderprovinz/glimstone/releases/tag/v', tip: c('info.glimstoneTip') },
-  { name: 'rclone', v: sys.value?.version.rclone, href: 'https://github.com/rclone/rclone/releases/tag/v', tip: c('info.rcloneTip') },
+  { name: 'rclone', v: sys.value?.tools.rclone?.version, href: 'https://github.com/rclone/rclone/releases/tag/v', tip: c('info.rcloneTip') },
 ]);
 const n = computed(() => unseen());
 
 async function check() {
   update.value = 'busy';
   const got = await admin.checkUpdate().catch(() => null);
-  update.value = got ? 'ok' : 'idle';
+  latest.value = got;
+  update.value = !got ? 'idle' : got.updateAvailable ? 'newer' : 'ok';
+  if (!got) toast(c('app.noAnswer'), 'warn');
 }
 const open = (url: string) => window.open(url, '_blank', 'noopener');
 // Subject only: a prefilled body reads as a form to fill in.
@@ -56,7 +60,8 @@ const give = computed(() => [
     </Frow>
     <div class="a-foot">
       <button class="btn" data-run="whatsNew" @click="run('whatsNew')"><span class="a-dot" :class="{ seen: !n }"></span><G n="IconWhatsNew" />{{ n ? c('info.newN', { n }) : c('info.new') }}</button>
-      <button id="a-update" class="btn" :class="{ ok: update === 'ok' }" :disabled="update === 'busy'" :data-tip="update === 'ok' ? c('app.check') : undefined" @click="check"><G :n="update === 'ok' ? 'IconCheck' : 'IconSearch'" />{{ update === 'ok' ? c('info.current') : c('app.check') }}</button>
+      <a v-if="update === 'newer'" id="a-update" class="btn" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener"><G n="IconWhatsNew" />{{ c('app.newer', { v: latest!.latest }) }}</a>
+      <button v-else id="a-update" class="btn" :class="{ ok: update === 'ok' }" :disabled="update === 'busy'" :data-tip="update === 'ok' ? c('app.check') : undefined" @click="check"><G :n="update === 'ok' ? 'IconCheck' : 'IconSearch'" />{{ update === 'ok' ? c('info.current') : c('app.check') }}</button>
     </div>
   </Card>
   <Card :title="c('info.help')" :hint="c('info.helpHint')">

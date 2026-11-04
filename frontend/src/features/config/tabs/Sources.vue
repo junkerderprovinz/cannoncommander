@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { admin, type AppSettings, type IndexState, type Source } from '@/api/admin';
+import { admin, type IndexState, type Source } from '@/api/admin';
 import { run } from '@/core/actions';
 import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
+import { go } from '@/core/views';
 import { win } from '@/core/windows';
 import { locale } from '@/i18n';
 import ARow from '../kit/ARow.vue';
@@ -12,55 +13,68 @@ import BareBtn from '../kit/BareBtn.vue';
 import Btn from '../kit/Btn.vue';
 import Card from '../kit/Card.vue';
 import Frow from '../kit/Frow.vue';
-import { ago, c, confirmWin } from '../kit/kit';
-import Seg from '../kit/Seg.vue';
+import { ago, attempt, c, confirmWin, fail, soon } from '../kit/kit';
 import SourceWin from '../wins/SourceWin.vue';
 
 const sources = ref<Source[]>([]);
-const ix = ref<IndexState>({ every: 'daily', last: null, running: [] });
-let app: AppSettings | null = null;
+const states = ref<IndexState[]>([]);
+const restartNeeded = ref(false);
 let poll: ReturnType<typeof setInterval> | undefined;
 
+const stateOf = (s: Source) => states.value.find((x) => x.source === s.name);
+const busy = (st?: IndexState) => !!st && (st.status === 'indexing' || !!st.job);
+
 async function load() {
-  const [s, i] = await Promise.all([admin.sources(), admin.index()]);
-  const was = sources.value.filter((x) => x.indexing).map((x) => x.path);
-  sources.value = s;
-  ix.value = i;
-  for (const x of s) if (was.includes(x.path) && !x.indexing) toast(c('sources.indexed', { name: x.name }));
+  const [list, ix] = await Promise.all([admin.sources(), admin.index()]);
+  const was = states.value.filter(busy).map((x) => x.source);
+  sources.value = list.sources;
+  restartNeeded.value = list.restartNeeded;
+  states.value = ix;
+  for (const st of ix) if (was.includes(st.source) && !busy(st)) toast(c('sources.indexed', { name: st.source }));
   clearInterval(poll);
   // Indexing runs as a job on the server, and the list looks again until no source is busy.
-  if (s.some((x) => x.indexing)) poll = setInterval(() => load().catch(() => {}), 1500);
+  if (ix.some(busy)) poll = setInterval(() => load().catch(() => {}), 1500);
 }
-onMounted(() => { load().catch(() => {}); admin.app().then((a) => { app = a; }, () => {}); });
+onMounted(() => { load().catch(() => {}); });
 onBeforeUnmount(() => clearInterval(poll));
 
 const glyph = (s: Source) => (s.path === '/boot' ? 'IconFlash' : s.path.startsWith('/mnt/remotes') ? 'IconCloud' : 'IconDatabase');
+const hasIndex = (s: Source) => s.indexed && !!stateOf(s) && stateOf(s)!.status !== 'off';
 
-async function reindex(s: Source) {
-  if (s.indexing) return;
-  await admin.reindex(s.path);
-  toast(c('sources.reading', { name: s.name }), 'ok', { label: c('sources.jobs'), run: () => run('jobs') });
+function every(seconds: number) {
+  const min = Math.round(seconds / 60);
+  return min < 60 ? c('sources.everyMinutes', { n: min }) : c('sources.everyHours', { n: Math.round(min / 60) });
+}
+function rowTip(s: Source) {
+  const st = stateOf(s);
+  if (!hasIndex(s) || !st?.scanEverySeconds) return null;
+  return c('sources.planTip', { every: every(st.scanEverySeconds) });
+}
+
+// The scheduler plans per source, so the card names the soonest run and the latest one.
+const next = computed(() => Math.min(...states.value.map((x) => x.nextScan ?? Infinity)));
+const last = computed(() => Math.max(0, ...states.value.map((x) => x.lastIndexed ?? 0)) || null);
+
+async function reindex(s?: Source) {
+  if (s && busy(stateOf(s))) return;
+  if (!(await attempt(admin.reindex(s?.name)))) return;
+  toast(s ? c('sources.reading', { name: s.name }) : c('sources.readingAll'), 'ok', { label: c('sources.jobs'), run: () => run('jobs') });
   await load();
 }
-async function reindexAll() {
-  for (const s of sources.value.filter((x) => x.indexed)) await reindex(s);
-}
-const every = computed({
-  get: () => ix.value.every,
-  set: (v: IndexState['every']) => {
-    ix.value.every = v;
-    if (app) admin.saveApp({ ...app, indexEvery: v }).then(() => toast(c('saved')), () => toast(c('notSaved'), 'warn'));
-  },
-});
 
 function edit(s: Source | null) {
-  win({ title: s ? c('sources.edit') : c('sources.add'), body: SourceWin, props: { source: s, all: sources.value, saved: async (path: string | null) => { await load(); const n = sources.value.find((x) => x.path === path); if (n) await reindex(n); } } });
+  win({ title: s ? c('sources.edit') : c('sources.add'), body: SourceWin, props: { source: s, all: sources.value, saved: load } });
 }
 function remove(s: Source) {
+  if (sources.value.length === 1) return fail(c('sources.keepOne'));
   confirmWin({
     title: c('sources.remove'), verb: c('remove'), glyph: 'IconTrash',
     text: [c('sources.removeText1', { name: s.name }), c('sources.removeText2', { path: s.path })],
-    run: async () => { await admin.saveSources(sources.value.filter((x) => x !== s)); await load(); toast(c('removed', { name: s.name })); },
+    run: async () => {
+      if (!(await attempt(admin.saveSources(sources.value.filter((x) => x !== s))))) return;
+      await load();
+      toast(c('removed', { name: s.name }));
+    },
   });
 }
 </script>
@@ -68,27 +82,30 @@ function remove(s: Source) {
 <template>
   <Card :title="c('sources.title')">
     <div v-if="sources.length" class="a-list">
-      <ARow v-for="s in sources" :key="s.path" :name="s.name" data-open @click="edit(s)">
+      <ARow v-for="s in sources" :key="s.path" :name="s.name" :tip="rowTip(s)" data-open @click="edit(s)">
         <template #tile><G :n="glyph(s)" /></template>
         <template #badges>
           <span class="pill mono">{{ s.path }}</span>
-          <span v-if="s.indexing" class="pill run">{{ c('sources.readingPill') }}</span>
-          <template v-else-if="s.indexed"><span class="pill">{{ fmtSize(s.size) }}</span><span class="pill glim-num">{{ c('sources.files', { n: s.files.toLocaleString(locale()) }) }}</span></template>
+          <span v-if="busy(stateOf(s))" class="pill run">{{ c('sources.readingPill') }}</span>
+          <template v-else-if="hasIndex(s)"><span class="pill">{{ fmtSize(stateOf(s)!.size) }}</span><span class="pill glim-num">{{ c('sources.files', { n: stateOf(s)!.files.toLocaleString(locale()) }) }}</span></template>
           <span v-else class="pill state">{{ c('sources.noIndex') }}</span>
           <span v-if="s.readOnly" class="pill state">{{ c('sources.readOnly') }}</span>
         </template>
         <template #acts>
-          <BareBtn :g="s.indexed && !s.indexing ? 'IconRefresh' : undefined" :tip="c('sources.reindex')" @click="reindex(s)" />
+          <BareBtn :g="hasIndex(s) && !busy(stateOf(s)) ? 'IconRefresh' : undefined" :tip="c('sources.reindex')" @click="reindex(s)" />
           <BareBtn g="IconPencil" :tip="c('edit')" @click="edit(s)" />
           <BareBtn g="IconTrash" :tip="c('remove')" @click="remove(s)" />
         </template>
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconDatabase" /><div>{{ c('sources.none') }}</div></div>
+    <Frow v-if="restartNeeded" :label="c('sources.restart')" :tip="c('sources.restartTip')">
+      <span class="a-ctl"><span class="pill warn">{{ c('sources.restartPill') }}</span><Btn :label="c('sources.toRestart')" g="IconRefresh" @click="go('settings', 'app')" /></span>
+    </Frow>
     <div class="a-foot"><Btn :label="c('sources.add')" g="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('sources.index')">
-    <Frow :label="c('sources.every')" :tip="c('sources.everyTip')"><Seg v-model="every" :options="[['hourly', c('sources.hourly')], ['daily', c('sources.daily')], ['manual', c('sources.manual')]]" /></Frow>
-    <Frow :label="c('sources.last')"><span class="a-ctl"><span class="pill">{{ ix.last ? ago(ix.last) : c('sources.never') }}</span><Btn :label="c('sources.reindexAll')" g="IconRefresh" @click="reindexAll" /></span></Frow>
+    <Frow :label="c('sources.every')" :tip="c('sources.everyTip')"><span class="pill">{{ Number.isFinite(next) ? c('sources.nextRun', { when: soon(next) }) : c('sources.notPlanned') }}</span></Frow>
+    <Frow :label="c('sources.last')"><span class="a-ctl"><span class="pill">{{ last ? ago(last) : c('sources.never') }}</span><Btn :label="c('sources.reindexAll')" g="IconRefresh" @click="reindex()" /></span></Frow>
   </Card>
 </template>

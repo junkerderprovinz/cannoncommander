@@ -46,7 +46,7 @@ export default function setup() {
   action('openActivity', { label: tl('config.actions.activity'), g: 'IconLog', run: () => go('activity') });
   action('docs', { label: tl('config.actions.docs'), g: 'IconManual', run: () => win({ title: c('actions.docs'), wide: true, body: DocsWin }) });
   action('whatsNew', { label: tl('config.actions.whatsNew'), g: 'IconWhatsNew', run: async () => {
-    const version = (await admin.system().catch(() => null))?.version.app ?? '';
+    const version = (await admin.system().catch(() => null))?.version ?? '';
     win({ title: c('news.title', { v: version }), wide: true, body: NewsWin, props: { version } });
   } });
 }

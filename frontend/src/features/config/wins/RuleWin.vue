@@ -5,7 +5,7 @@ import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import Dropdown from '../kit/Dropdown.vue';
 import Frow from '../kit/Frow.vue';
-import { c, fail, setFoot } from '../kit/kit';
+import { attempt, c, fail, setFoot } from '../kit/kit';
 import PathField from '../kit/PathField.vue';
 import Seg from '../kit/Seg.vue';
 import { RULES, ruleName } from '../roles';
@@ -36,7 +36,7 @@ async function save() {
   }
   const rule = { ...d, path };
   const next = isNew ? [...props.rules, rule] : props.rules.map((r, k) => (k === props.index ? rule : r));
-  await props.save(next);
+  if (!(await attempt(props.save(next), at('#a-rpath')))) return;
   props.win.close();
   toast(isNew ? c('rules.added') : c('saved'));
 }
