@@ -191,14 +191,21 @@ func TestWatchLimitsFolderEventsToWatchedFolders(t *testing.T) {
 		t.Fatalf("frame = %+v", f)
 	}
 
-	req, _ = http.NewRequest(http.MethodPut, srv.URL+"/events/watch", strings.NewReader(`{"clientId":"tab1","paths":["/mnt/user/filme"]}`))
+	// A forbidden and a missing folder drop out without taking the allowed one along.
+	req, _ = http.NewRequest(http.MethodPut, srv.URL+"/events/watch", strings.NewReader(`{"clientId":"tab1","paths":["/mnt/user/filme","/mnt/user/fotos/weg","/mnt/user/fotos"]}`))
 	resp, err = http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatal(err)
 	}
+	got = watchRequest{}
+	_ = json.NewDecoder(resp.Body).Decode(&got)
 	resp.Body.Close()
-	if resp.StatusCode != http.StatusForbidden {
-		t.Fatalf("watching a forbidden folder answered %d", resp.StatusCode)
+	if resp.StatusCode != http.StatusOK || len(got.Paths) != 1 || got.Paths[0] != "/mnt/user/fotos" {
+		t.Fatalf("watch answered %d %+v", resp.StatusCode, got)
+	}
+	h.Publish(hub.Event{Type: "fs.changed", Topic: hub.FolderTopic("/mnt/user/fotos")})
+	if f := next(t, frames); !strings.Contains(f.data, `"topic":"fs:/mnt/user/fotos"`) {
+		t.Fatalf("frame = %+v", f)
 	}
 }
 

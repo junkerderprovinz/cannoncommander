@@ -47,7 +47,8 @@ paths:
       description: |
         Replaces the watched folders of a client. For each of them the stream
         delivers fs.changed with topic fs:<path>. Folders stay watched for two
-        minutes after the stream closes, so a reconnect keeps them.
+        minutes after the stream closes, so a reconnect keeps them. A folder
+        that is gone or not open to the user is left out of the answer.
       requestBody:
         required: true
         content:
@@ -65,8 +66,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
 components:
   schemas:
     WatchRequest:
