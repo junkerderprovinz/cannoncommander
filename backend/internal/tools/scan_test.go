@@ -246,6 +246,38 @@ func TestDuplicatesBySizeFindRenamedCopies(t *testing.T) {
 	}
 }
 
+func TestDuplicatesCompareFilesWhoseIndexedSizeIsTheirSpaceOnDisk(t *testing.T) {
+	f := newFixture(t)
+	db := fsindextest.New(t)
+	fsindextest.Scan(t, db, "Shares", f.share)
+	// Unless a source asks for logical sizes, the scanner stores the blocks
+	// a file takes, which is more than the file holds.
+	if _, err := db.DB().Exec(`UPDATE index_items SET size = (size + 4095) / 4096 * 4096`); err != nil {
+		t.Fatal(err)
+	}
+	d := f.duplicates(t, DuplicatesParams{Path: "/mnt/user"})
+	if len(d.Groups) != 2 {
+		t.Fatalf("groups = %+v", d.Groups)
+	}
+	photo := d.Groups[1]
+	if photo.Name != "a.jpg" || photo.Size != 4 || photo.Wasted != 4 {
+		t.Errorf("photo group = %+v", photo)
+	}
+}
+
+func TestDuplicatesKeepToTheMinimumSizeOfTheFileItself(t *testing.T) {
+	f := newFixture(t)
+	db := fsindextest.New(t)
+	fsindextest.Scan(t, db, "Shares", f.share)
+	if _, err := db.DB().Exec(`UPDATE index_items SET size = (size + 4095) / 4096 * 4096`); err != nil {
+		t.Fatal(err)
+	}
+	d := f.duplicates(t, DuplicatesParams{Path: "/mnt/user", MinSize: 100})
+	if len(d.Groups) != 1 || d.Groups[0].Name != "Sintel.mkv" {
+		t.Errorf("groups = %+v", d.Groups)
+	}
+}
+
 func TestDuplicatesCheckTheirParams(t *testing.T) {
 	f := newFixture(t)
 	for _, p := range []DuplicatesParams{{Path: "/mnt/user", By: "farbe"}, {Path: "/mnt/user/fotos/a.jpg"}, {}, {Path: "/mnt/user", MinSize: -1}} {
