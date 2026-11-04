@@ -1,48 +1,464 @@
 tag:
   name: remotes
-  description: rclone remotes mounted below /mnt/remotes.
+  description: |
+    rclone remotes mounted below /mnt/remotes. rclone runs inside the
+    server with its own rclone.conf in the config folder. Calls that need
+    it answer 503 while it is missing or still starting.
 paths:
   /remotes:
     get:
       operationId: remotesList
       summary: Configured remotes
+      description: |
+        mounted is the live state, mountOnStart what the server mounts when
+        it starts. Admins also get the parameters, without secrets.
+      responses:
+        "200":
+          description: The remotes and the state of rclone.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [remotes, rclone]
+                properties:
+                  remotes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Remote"
+                  rclone:
+                    $ref: "#/components/schemas/RcloneStatus"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       operationId: remoteCreate
       summary: Add a remote
+      description: |
+        Adds the remote to rclone.conf and mounts it, below /mnt/remotes
+        unless mount says otherwise. A mount that fails leaves the remote in
+        place with the reason in error.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoteInput"
+      responses:
+        "201":
+          description: The new remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
   /remotes/types:
     get:
       operationId: remoteTypes
       summary: Remote types rclone knows
+      description: |
+        SFTP, SMB, WebDAV, S3, Google Drive, OneDrive and Dropbox come first
+        with featured set. Types with oauth log in through rclone authorize
+        on a computer with a browser, authorize is the command for it.
+      parameters:
+        - name: advanced
+          in: query
+          description: Include the advanced options.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: The types.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [types]
+                properties:
+                  types:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RemoteType"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
   /remotes/test:
     post:
       operationId: remoteTest
       summary: Try a remote configuration
+      description: |
+        Lists the folder of the remote without saving anything. With the
+        name of a saved remote of the same type, its saved parameters fill
+        in what the body leaves out, such as an unchanged password. A remote
+        that does not answer is a result with ok false, not an error.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoteInput"
+      responses:
+        "200":
+          description: What the test found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemoteTestResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
   /remotes/oauth:
     post:
       operationId: remoteOAuth
       summary: Store a token from rclone authorize
+      description: |
+        token is what rclone authorize printed, the lines around the token
+        may stay. With name the token goes into that remote, which is
+        mounted again if it was. Without name the checked token comes back
+        for params.token of the remote the add dialog creates.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                type:
+                  type: string
+                  example: drive
+                token:
+                  type: string
+                name:
+                  type: string
+      responses:
+        "200":
+          description: The checked token, or the remote that took it.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  expiry:
+                    type: string
+                    format: date-time
+                  remote:
+                    $ref: "#/components/schemas/Remote"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
   /remotes/{name}:
     get:
       operationId: remoteGet
       summary: One remote
+      responses:
+        "200":
+          description: The remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
     put:
       operationId: remoteUpdate
       summary: Change a remote
+      description: |
+        Fields left out stay. A parameter with an empty value is removed,
+        except a secret, which then stays. The type stays, a new name moves
+        the remote over. A mounted remote is mounted again afterwards.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoteInput"
+      responses:
+        "200":
+          description: The changed remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
     delete:
       operationId: remoteDelete
       summary: Remove a remote
+      description: Unmounts the remote and forgets it with its credentials. The files at the remote stay.
       x-access: admin
+      responses:
+        "204":
+          description: The remote is gone.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
   /remotes/{name}/mount:
     post:
       operationId: remoteMount
       summary: Mount a remote
+      description: Mounts the remote with the cache settings of admin/app and keeps it mounted across restarts.
       x-access: admin
+      responses:
+        "200":
+          description: The mounted remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
   /remotes/{name}/unmount:
     post:
       operationId: remoteUnmount
       summary: Unmount a remote
+      description: Unmounts the remote and leaves it unmounted across restarts.
       x-access: admin
+      responses:
+        "200":
+          description: The unmounted remote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Remote"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/RemoteConflict"
+        "503":
+          $ref: "#/components/responses/RcloneUnavailable"
+components:
+  responses:
+    RemoteConflict:
+      description: The name is taken, or a mount is busy or failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    RcloneUnavailable:
+      description: rclone is not installed or not running yet.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+  schemas:
+    Remote:
+      type: object
+      required: [name, type, path, mount, label, mounted, mountOnStart]
+      properties:
+        name:
+          type: string
+          example: gdrive
+        type:
+          type: string
+          description: The rclone backend.
+          example: drive
+        path:
+          type: string
+          description: The folder at the remote that is mounted, the share for SMB, the bucket for S3.
+        mount:
+          type: string
+          example: /mnt/remotes/gdrive
+        label:
+          type: string
+          description: What listings and the tree show on the mounted folder.
+          example: "rclone: gdrive"
+        mounted:
+          type: boolean
+        mountOnStart:
+          type: boolean
+        error:
+          type: string
+          description: Why the last mount failed.
+        params:
+          type: object
+          description: The rclone parameters without secrets, for admins.
+          additionalProperties:
+            type: string
+        secrets:
+          type: array
+          description: Secret parameters that are set, for admins.
+          items:
+            type: string
+          example: [pass]
+    RemoteInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Small letters, digits, _ and -.
+          example: nas-keller
+        type:
+          type: string
+          example: smb
+        path:
+          type: string
+          example: archiv
+        mount:
+          type: string
+          example: /mnt/remotes/nas-keller
+        params:
+          type: object
+          description: rclone parameters of the type. Passwords are sent in clear and obscured on the server.
+          additionalProperties:
+            type: string
+          example:
+            host: keller
+            user: jdp
+            pass: geheim
+    RcloneStatus:
+      type: object
+      required: [installed, running]
+      properties:
+        installed:
+          type: boolean
+        running:
+          type: boolean
+        version:
+          type: string
+          example: 1.75.2
+        error:
+          type: string
+          description: Why rclone last stopped.
+    RemoteType:
+      type: object
+      required: [id, description, featured, oauth, pathHint, options]
+      properties:
+        id:
+          type: string
+          example: drive
+        description:
+          type: string
+          example: Google Drive
+        featured:
+          type: boolean
+        oauth:
+          type: boolean
+        authorize:
+          type: string
+          example: rclone authorize "drive"
+        pathHint:
+          type: string
+          enum: [folder, share, bucket]
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/RemoteOption"
+    RemoteOption:
+      type: object
+      required: [name, help, type, required, secret, advanced, exclusive]
+      properties:
+        name:
+          type: string
+        help:
+          type: string
+        type:
+          type: string
+        default:
+          type: string
+        provider:
+          type: string
+          description: For S3, the providers the option applies to.
+        required:
+          type: boolean
+        secret:
+          type: boolean
+        advanced:
+          type: boolean
+        exclusive:
+          type: boolean
+          description: Only the examples are allowed.
+        examples:
+          type: array
+          items:
+            type: object
+            required: [value, help]
+            properties:
+              value:
+                type: string
+              help:
+                type: string
+              provider:
+                type: string
+    RemoteTestResult:
+      type: object
+      required: [ok, entries]
+      properties:
+        ok:
+          type: boolean
+        entries:
+          type: integer
+          description: Entries in the folder of the remote.
+        total:
+          type: integer
+          format: int64
+        used:
+          type: integer
+          format: int64
+        free:
+          type: integer
+          format: int64
+        error:
+          type: string
+          description: What rclone said, in English.
