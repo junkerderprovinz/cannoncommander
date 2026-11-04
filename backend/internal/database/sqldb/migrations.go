@@ -6,7 +6,7 @@ import (
 )
 
 // currentSchemaVersion is the SQLite schema marker for this codebase.
-const currentSchemaVersion = 6
+const currentSchemaVersion = 7
 
 // Schema creates all tables for the SQLite database
 func createSchema(db *sql.DB) error {
@@ -151,7 +151,7 @@ func runMigrations(db *sql.DB, fromVersion int) error {
 	for v := fromVersion + 1; v <= currentSchemaVersion; v++ {
 		switch v {
 		case 1:
-			// Canonical schema is createSchema + Bolt import; no step migrations.
+			// Canonical schema is createSchema; no step migrations.
 		case 2:
 			// Added the quota tables, which step 6 drops again.
 		case 3:
@@ -169,6 +169,10 @@ func runMigrations(db *sql.DB, fromVersion int) error {
 		case 6:
 			if _, err := db.Exec(`DROP TABLE IF EXISTS quotas; DROP TABLE IF EXISTS quota_counters`); err != nil {
 				return fmt.Errorf("drop quotas: %w", err)
+			}
+		case 7:
+			if _, err := db.Exec(`DELETE FROM settings WHERE key LIKE 'userDefaults.%' OR key IN ('sidebarLinkDefaults', 'toolAccessDefaults')`); err != nil {
+				return fmt.Errorf("drop user defaults: %w", err)
 			}
 		default:
 			return fmt.Errorf("unknown schema version: %d", v)

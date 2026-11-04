@@ -63,7 +63,7 @@ func (s *service) editorConfig(r *http.Request, o system.Office, u *users.User, 
 		"editorConfig": map[string]any{
 			"mode":        mode,
 			"callbackUrl": base + "/office/callback?token=" + url.QueryEscape(token),
-			"lang":        u.Locale,
+			"lang":        officeLang(u),
 			"user":        map[string]any{"id": strconv.FormatUint(u.ID, 10), "name": u.Username},
 		},
 	}
@@ -221,4 +221,11 @@ func publicError(err error) error {
 		return p
 	}
 	return v1.ProblemFor(err)
+}
+
+func officeLang(u *users.User) string {
+	if u.Locale != "" {
+		return u.Locale
+	}
+	return "en"
 }

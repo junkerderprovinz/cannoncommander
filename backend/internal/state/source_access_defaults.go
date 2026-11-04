@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
-	"sync"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
@@ -12,14 +11,8 @@ import (
 
 const sourceAccessDefaultsSettingKey = "sourceAccessDefaults"
 
-var (
-	sourceAccessMu              sync.RWMutex
-	sourceAccessEnforcedDefault settings.SourceFilePermissionsEnforcement
-)
-
 type sourceAccessSettingsDocument struct {
-	DefaultPermissions  users.SourceFilePermissions               `json:"defaultPermissions"`
-	EnforcedPermissions settings.SourceFilePermissionsEnforcement `json:"enforcedPermissions,omitempty"`
+	DefaultPermissions users.SourceFilePermissions `json:"defaultPermissions"`
 }
 
 // InitSourceAccessDefaults loads persisted source access defaults and applies them to every source.
@@ -51,13 +44,7 @@ func InitSourceAccessDefaults() error {
 	}
 
 	settings.ApplySourceAccessDefaultsToAllSources(doc.DefaultPermissions)
-	sourceAccessMu.Lock()
-	sourceAccessEnforcedDefault = doc.EnforcedPermissions
-	sourceAccessMu.Unlock()
 
-	if !found {
-		return stripLegacyFilePermissionsFromUserDefaults()
-	}
 	return nil
 }
 
@@ -111,63 +98,4 @@ func saveSourceAccessSettingsDocument(doc sourceAccessSettingsDocument) error {
 // GetSourceAccessDefaults returns the global default file permissions for sources.
 func GetSourceAccessDefaults() users.SourceFilePermissions {
 	return settings.DefaultSourceFilePermissions()
-}
-
-
-// GetEnforcedSourcePermissions returns universal enforced source permission flags.
-func GetEnforcedSourcePermissions() settings.SourceFilePermissionsEnforcement {
-	sourceAccessMu.RLock()
-	defer sourceAccessMu.RUnlock()
-	return sourceAccessEnforcedDefault
-}
-
-func stripLegacyFilePermissionsFromUserDefaults() error {
-	patch := map[string]interface{}{
-		"account": map[string]interface{}{
-			"permissions": map[string]interface{}{
-				"modify":   nil,
-				"create":   nil,
-				"delete":   nil,
-				"download": nil,
-				"view":     nil,
-			},
-		},
-	}
-	patchJSON, err := json.Marshal(patch)
-	if err != nil {
-		return err
-	}
-	merged, mergeErr := settings.MergeUserDefaultsPatchJSON(userDefaultsDefault, patchJSON)
-	if mergeErr != nil {
-		return mergeErr
-	}
-	userDefaultsDefault = merged
-	settings.Config.UserDefaults = merged
-	if saveErr := sqlDb.SaveSetting(userDefaultsDefaultSettingKey, merged); saveErr != nil {
-		return saveErr
-	}
-	enfPatch := map[string]interface{}{
-		"account": map[string]interface{}{
-			"permissions": map[string]interface{}{
-				"modify":   false,
-				"create":   false,
-				"delete":   false,
-				"download": false,
-				"view":     false,
-			},
-		},
-	}
-	enfJSON, err := json.Marshal(enfPatch)
-	if err != nil {
-		return err
-	}
-	mergedEnf, mergeErr := settings.MergeEnforcedPatchJSON(userDefaultsEnforcedDefault, enfJSON)
-	if mergeErr != nil {
-		return mergeErr
-	}
-	userDefaultsEnforcedDefault = mergedEnf
-	if saveErr := sqlDb.SaveSetting(userDefaultsEnforcedDefaultKey, mergedEnf); saveErr != nil {
-		return saveErr
-	}
-	return nil
 }

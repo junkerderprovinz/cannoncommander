@@ -43,7 +43,6 @@ func setUser(username, password string, asAdmin bool) error {
 		} else {
 			logger.Infof("Creating non-admin user: %s\n", username)
 		}
-		newUser.Permissions = settings.ConvertPermissionsToUsers(settings.Config.UserDefaults.Account.Permissions)
 		newUser.Permissions.Admin = asAdmin
 		err = state.CreateUser(&newUser, password)
 		if err != nil {
@@ -203,7 +202,6 @@ func createConfig(configpath string, noInput bool) error {
 		Create:   modifyDefault,
 		Delete:   modifyDefault,
 	})
-	config.UserDefaults.Account.Permissions.Share = askYesNoQuestion(reader, "Should a new user be able to create shares by default?", "no")
 
 	fmt.Println("--- 	Configuration Complete 	---")
 

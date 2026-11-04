@@ -34,13 +34,6 @@ type Context struct {
 // HandleFunc is the signature used by middleware-wrapped handlers.
 type HandleFunc func(w http.ResponseWriter, r *http.Request, d *Context) (int, error)
 
-func effectiveFilePerms(d *Context, sourceName string) (users.SourceFilePermissions, error) {
-	if d == nil || d.User == nil {
-		return users.DenyAllSourceFilePermissions(), fmt.Errorf("user context not set")
-	}
-	return d.User.FilePermsForSourceName(sourceName)
-}
-
 // HttpResponse is the standard JSON error/success envelope.
 type HttpResponse struct {
 	Status  int    `json:"status,omitempty"`

@@ -25,8 +25,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-var runtimeApp *app.App
-
 func initializeDatabase(configFile string, cliMode bool) bool {
 	if cliMode {
 		settings.InitializeCLI(configFile)
@@ -38,8 +36,7 @@ func initializeDatabase(configFile string, cliMode bool) bool {
 	if err != nil {
 		logger.Fatalf("could not initialize state: %v", err)
 	}
-	runtimeApp, err = app.WireServices(store)
-	if err != nil {
+	if _, err = app.WireServices(store); err != nil {
 		logger.Fatalf("could not wire services: %v", err)
 	}
 	return existingDb
@@ -135,7 +132,7 @@ func Start() {
 	validateOfficeIntegration()
 	// Start the rootCMD in a goroutine
 	go func() {
-		if err := rootCMD(ctx, &serverConfig, runtimeApp, shutdownComplete); err != nil {
+		if err := rootCMD(ctx, &serverConfig, shutdownComplete); err != nil {
 			logger.Fatalf("Error starting the server: %v", err)
 		}
 		close(done) // Signal that the server has stopped
@@ -178,7 +175,7 @@ func Start() {
 	}
 }
 
-func rootCMD(ctx context.Context, serverConfig *settings.Server, a *app.App, shutdownComplete chan struct{}) error {
+func rootCMD(ctx context.Context, serverConfig *settings.Server, shutdownComplete chan struct{}) error {
 	if serverConfig.NumImageProcessors < 1 {
 		logger.Fatal("Image resize workers count could not be < 1")
 	}
@@ -204,9 +201,6 @@ func rootCMD(ctx context.Context, serverConfig *settings.Server, a *app.App, shu
 	}
 	logger.Debugf("MuPDF Enabled            : %v", settings.Env.MuPdfAvailable)
 
-	web.StartHttp(ctx, web.Deps{
-		Store: a.Store,
-		Auth:  a.Auth,
-	}, shutdownComplete)
+	web.StartHttp(ctx, shutdownComplete)
 	return nil
 }

@@ -51,20 +51,8 @@ func initialize(dbPath string) (bool, error) {
 	}
 	sqlDb = store
 
-	if err = InitUserDefaultsSettings(); err != nil {
-		return existingDb, fmt.Errorf("failed to initialize user defaults settings: %w", err)
-	}
-
 	if err = InitSourceAccessDefaults(); err != nil {
 		return existingDb, fmt.Errorf("failed to initialize source access defaults: %w", err)
-	}
-
-	if err = InitSidebarLinkDefaults(); err != nil {
-		return existingDb, fmt.Errorf("failed to initialize sidebar link defaults: %w", err)
-	}
-
-	if err = InitToolAccessDefaults(); err != nil {
-		return existingDb, fmt.Errorf("failed to initialize tool access defaults: %w", err)
 	}
 
 	if err = InitAuthSigningKey(); err != nil {

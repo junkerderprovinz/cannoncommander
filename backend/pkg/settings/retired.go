@@ -24,6 +24,7 @@ var retiredKeys = [][]string{
 	{"frontend", "styling"},
 	{"shareDefaults"},
 	{"http", "disableWebDAV"},
+	{"userDefaults"},
 	{"server", "database", "migrateFrom"},
 	{"auth", "methods", "jwt"},
 	{"auth", "methods", "password", "signup"},
@@ -45,9 +46,9 @@ func dropRetiredKeys(cfg map[string]interface{}) {
 	}
 }
 
-// warnDenyByDefault says that a source's denyByDefault no longer works on
-// its own. It stays readable because the first start with the app's access
-// rules turns it into a rule that hides the source from everyone.
+// warnDenyByDefault says that a source's denyByDefault has no effect of its
+// own. It stays readable for the one start that turns it into an access rule
+// hiding the source from everyone.
 func warnDenyByDefault(cfg map[string]interface{}) {
 	server, _ := cfg["server"].(map[string]interface{})
 	sources, _ := server["sources"].([]interface{})

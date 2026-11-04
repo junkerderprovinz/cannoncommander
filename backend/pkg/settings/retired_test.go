@@ -44,6 +44,9 @@ frontend:
   loginButtonText: "Los"
 shareDefaults:
   disableAnonymous: true
+userDefaults:
+  listing:
+    viewMode: "grid"
 `)
 	if err := os.WriteFile(file, content, 0o644); err != nil {
 		t.Fatal(err)

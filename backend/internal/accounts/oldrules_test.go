@@ -13,14 +13,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
-func names(list ...string) oldNames {
-	out := oldNames{}
-	for _, n := range list {
-		out[n] = struct{}{}
-	}
-	return out
-}
-
 // decodeOld reads a rule the way the old tables stored it.
 func decodeOld(t *testing.T, data string) oldRule {
 	t.Helper()

@@ -1,7 +1,5 @@
 http:
   port: 8080
-  baseURL: "/subpath"
-  trustProxyHeaders: true
 server:
   logging:
     - levels: "info|error|warning|debug"
@@ -19,12 +17,3 @@ server:
 
 frontend:
   name: "CannonCommander"
-auth:
-  methods:
-    password:
-      enabled: true
-
-userDefaults:
-  account:
-    permissions:
-      share: true

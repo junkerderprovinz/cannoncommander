@@ -10,7 +10,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -31,8 +30,7 @@ func validateUserInfo(newDB bool) {
 		changedFields := make([]string, 0, 8)
 		changePass := false
 
-		scopesChanged := updateUserScopes(user)
-		if scopesChanged {
+		if updateUserScopes(user) {
 			changedFields = append(changedFields, "backendScopes")
 		}
 		if updatePermissions(user) {
@@ -41,17 +39,11 @@ func validateUserInfo(newDB bool) {
 		if updateSourcePermissions(user) {
 			changedFields = append(changedFields, "backendScopes", "backendSourcePermissions", "version")
 		}
-		if updatePreviewSettings(user) {
-			changedFields = append(changedFields, "preview")
-		}
 		if updateLoginType(user) {
 			changedFields = append(changedFields, "loginMethod")
 		}
 		if updateShowFirstLogin(user) {
 			changedFields = append(changedFields, "showFirstLogin")
-		}
-		if updateSidebarLinks(user, scopesChanged) {
-			changedFields = append(changedFields, "sidebarLinks")
 		}
 		if updateTokens(user) {
 			changedFields = append(changedFields, "tokens", "version")
@@ -64,12 +56,6 @@ func validateUserInfo(newDB bool) {
 			changedFields = append(changedFields, "tokens", "version")
 		} else if tokenBackfillChanged {
 			changedFields = append(changedFields, "tokens")
-		}
-		if state.ApplyEnforcedSyncToUser(user) {
-			changedFields = append(changedFields, settings.UserJSONFieldsForEnforcedSync()...)
-		}
-		if state.ApplyEnforcedSourcePermissionsSyncToUser(user) {
-			changedFields = append(changedFields, "backendScopes", "backendSourcePermissions")
 		}
 		if bumpToNewestVersion(user, tokenBackfillFailed) {
 			changedFields = append(changedFields, "version")
@@ -227,30 +213,6 @@ func updateLoginType(user *users.User) bool {
 		return true
 	}
 	return false
-}
-
-func updatePreviewSettings(user *users.User) bool {
-	// if user hasn't been updated yet
-	if user.LoginMethod == "" {
-		user.Preview.Image = true
-		user.Preview.PopUp = true
-		return true
-	}
-	return false
-}
-
-// updateSidebarLinks normalizes saved links and adds defaults for new or changed scopes.
-func updateSidebarLinks(user *users.User, scopesChanged bool) bool {
-	links, changed := usersidebar.NormalizeSidebarLinks(user.SidebarLinks)
-	if scopesChanged || user.SidebarLinks == nil {
-		links, changed = usersidebar.PrepareSidebarLinksForPersist(user.SidebarLinks, user.BackendScopes)
-	}
-	if !changed {
-		return false
-	}
-
-	user.SidebarLinks = links
-	return true
 }
 
 func updateTokens(user *users.User) bool {

@@ -80,8 +80,6 @@ func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod
 				Username:    username,
 			},
 		}
-		state.ApplyUserDefaults(&user)
-
 		if isAdmin {
 			user.Permissions.Admin = true
 		}

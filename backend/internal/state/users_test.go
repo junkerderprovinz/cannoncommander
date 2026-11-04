@@ -14,7 +14,6 @@ import (
 func TestCreateUserValidateUsername(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -60,7 +59,6 @@ func TestCreateUserValidateUsername(t *testing.T) {
 func TestCreateUserCreateUserDirRespectsFinalAdminPermission(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	if _, err := Initialize(dbPath); err != nil {
@@ -91,12 +89,8 @@ func TestCreateUserCreateUserDirRespectsFinalAdminPermission(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			d := EffectiveUserDefaults()
-			d.Account.Permissions.Admin = tc.admin
-			SetEffectiveUserDefaultsForTest(t, d)
-
 			user := &users.User{
-				FrontendUser:  users.FrontendUser{Username: tc.username},
+				FrontendUser:  users.FrontendUser{Username: tc.username, Permissions: users.Permissions{Admin: tc.admin}},
 				BackendScopes: []users.BackendScope{{Path: root, Scope: "/"}},
 			}
 			if err := CreateUser(user, "password"); err != nil {
@@ -130,7 +124,6 @@ func TestCreateUserCreateUserDirRespectsFinalAdminPermission(t *testing.T) {
 func TestUpdateUserPatchPreservesTOTPSecret(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -185,7 +178,6 @@ func TestUpdateUserPatchPreservesTOTPSecret(t *testing.T) {
 func TestUpdateUserRejectsEmptyFields(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -220,7 +212,6 @@ func TestUpdateUserRejectsEmptyFields(t *testing.T) {
 func TestUpdateUserRejectsAllField(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -258,7 +249,6 @@ func TestUpdateUserRejectsAllField(t *testing.T) {
 func TestUpdateUserRejectsUnknownField(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -293,7 +283,6 @@ func TestUpdateUserRejectsUnknownField(t *testing.T) {
 func TestUpdateUserRejectsPasswordWithoutPlaintext(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -320,7 +309,6 @@ func TestUpdateUserRejectsPasswordWithoutPlaintext(t *testing.T) {
 func TestUpdateUserClearsTOTPWhenOtpDisabled(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -370,7 +358,6 @@ func TestUpdateUserClearsTOTPWhenOtpDisabled(t *testing.T) {
 func TestUpdateUserPatchPreservesBackendSourcePermissions(t *testing.T) {
 	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../testdata/noauth.yaml")
-	settings.Env.IsPlaywright = true
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
 	_, err := Initialize(dbPath)
@@ -463,8 +450,6 @@ func TestCreateUserKeepsRequestedPermissions(t *testing.T) {
 	}
 }
 
-// Non-admin create with another account flag set must not keep admin-level source file
-// permissions that applyUserSettingsDefaults would assign while defaults still had Admin.
 func TestCreateUserNonAdminDoesNotKeepAdminScopePermissions(t *testing.T) {
 	original := settings.Config
 	t.Cleanup(func() { settings.Config = original })
@@ -484,11 +469,6 @@ func TestCreateUserNonAdminDoesNotKeepAdminScopePermissions(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = Close() })
-
-	d := EffectiveUserDefaults()
-	d.Account.Permissions.Admin = true
-	d.Account.Permissions.Share = false
-	SetEffectiveUserDefaultsForTest(t, d)
 
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
@@ -525,19 +505,11 @@ func TestCreateUserNonAdminDoesNotKeepAdminScopePermissions(t *testing.T) {
 	}
 }
 
-func setupCreateUserDefaultsTest(t *testing.T) {
+func setupCreateUserTest(t *testing.T) {
 	t.Helper()
 	original := settings.Config
 	t.Cleanup(func() { settings.Config = original })
 	settings.Config = settings.SetDefaults(true)
-	settings.Config.UserDefaults.Account.Permissions.Share = true
-	settings.Config.UserDefaults.Account.Permissions.Api = true
-	settings.Config.UserDefaults.Account.Permissions.Realtime = true
-	d := EffectiveUserDefaults()
-	d.Account.Permissions.Share = true
-	d.Account.Permissions.Api = true
-	d.Account.Permissions.Realtime = true
-	SetEffectiveUserDefaultsForTest(t, d)
 	source := &settings.Source{Path: "/data/a", Name: "a", Config: settings.SourceConfig{
 		DefaultEnabled:     true,
 		DefaultPermissions: users.SourceFilePermissions{View: true, Download: true},
@@ -554,15 +526,8 @@ func setupCreateUserDefaultsTest(t *testing.T) {
 	t.Cleanup(func() { _ = Close() })
 }
 
-// Explicit all-false account permissions must not inherit Admin from user defaults.
-func TestCreateUserAllFalsePermissionsDoesNotInheritAdminDefaults(t *testing.T) {
-	setupCreateUserDefaultsTest(t)
-
-	d := EffectiveUserDefaults()
-	d.Account.Permissions.Admin = true
-	d.Account.Permissions.Share = true
-	d.Account.Permissions.Api = true
-	SetEffectiveUserDefaultsForTest(t, d)
+func TestCreateUserKeepsExplicitlyEmptyPermissions(t *testing.T) {
+	setupCreateUserTest(t)
 
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
@@ -583,8 +548,8 @@ func TestCreateUserAllFalsePermissionsDoesNotInheritAdminDefaults(t *testing.T) 
 	}
 }
 
-func TestCreateUserAppliesDefaultGlobalPermissionsWhenOmitted(t *testing.T) {
-	setupCreateUserDefaultsTest(t)
+func TestCreateUserGivesNoGlobalPermissionsWhenOmitted(t *testing.T) {
+	setupCreateUserTest(t)
 
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
@@ -599,14 +564,14 @@ func TestCreateUserAppliesDefaultGlobalPermissionsWhenOmitted(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := users.Permissions{Share: true, Api: true, Realtime: true}
+	want := users.Permissions{}
 	if loaded.Permissions != want {
 		t.Fatalf("permissions = %+v, want %+v", loaded.Permissions, want)
 	}
 }
 
 func TestCreateUserPartialGlobalPermissionsMask(t *testing.T) {
-	setupCreateUserDefaultsTest(t)
+	setupCreateUserTest(t)
 
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
@@ -623,14 +588,14 @@ func TestCreateUserPartialGlobalPermissionsMask(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := users.Permissions{Admin: true, Share: true, Api: true, Realtime: true}
+	want := users.Permissions{Admin: true}
 	if loaded.Permissions != want {
 		t.Fatalf("permissions = %+v, want %+v", loaded.Permissions, want)
 	}
 }
 
-func TestCreateUserExplicitFalseOverridesDefault(t *testing.T) {
-	setupCreateUserDefaultsTest(t)
+func TestCreateUserExplicitFalseStaysFalse(t *testing.T) {
+	setupCreateUserTest(t)
 
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
@@ -647,7 +612,7 @@ func TestCreateUserExplicitFalseOverridesDefault(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := users.Permissions{Share: false, Api: false, Realtime: true}
+	want := users.Permissions{}
 	if loaded.Permissions != want {
 		t.Fatalf("permissions = %+v, want %+v", loaded.Permissions, want)
 	}

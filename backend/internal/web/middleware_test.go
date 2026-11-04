@@ -83,7 +83,6 @@ func TestWithAdminHelper(t *testing.T) {
 	if err := state.CreateUser(adminUser, ""); err != nil {
 		t.Fatal("failed to create admin user:", err)
 	}
-	// CreateUser runs ApplyUserDefaults, which replaces permissions from global UserDefaults.
 	adminUser.Permissions = users.Permissions{Admin: true}
 	if err := state.UpdateUser(adminUser, "", "permissions"); err != nil {
 		t.Fatal("failed to set admin permissions:", err)
