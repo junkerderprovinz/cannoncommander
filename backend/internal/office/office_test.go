@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -31,6 +32,7 @@ type fixture struct {
 	share  string
 	office system.Office
 	people map[string]*users.User
+	db     *sql.DB
 }
 
 const base = "http://cc.test/api/v1"
@@ -58,7 +60,7 @@ func newFixture(t *testing.T) *fixture {
 		t.Fatal(err)
 	}
 	all := users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true}
-	f := &fixture{t: t, share: share, people: map[string]*users.User{
+	f := &fixture{t: t, share: share, db: db, people: map[string]*users.User{
 		"jdp":  {ID: 1, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: all}}},
 		"anna": {ID: 2, BackendScopes: []users.BackendScope{{Path: share, Scope: "/", Permissions: users.SourceFilePermissions{View: true, Download: true}}}},
 	}}
@@ -83,6 +85,7 @@ func newFixture(t *testing.T) *fixture {
 	router.Contract("office", contract)
 	bind(router, &service{
 		fs:        fs,
+		db:        db,
 		keys:      &keys{db: db},
 		settings:  func(context.Context) (system.Office, error) { return f.office, nil },
 		user:      byID,
@@ -271,14 +274,11 @@ func TestCollaboraEditsThroughWOPIWithLocks(t *testing.T) {
 	if code != 200 || c.Token == "" || c.TTL < time.Now().Add(time.Hour).UnixMilli() {
 		t.Fatalf("config: %d %+v", code, c)
 	}
-	prefix := "https://cool.lan/browser/abc/cool.html?WOPISrc="
-	if !strings.HasPrefix(c.URL, prefix) {
+	editor, err := url.Parse(c.URL)
+	if err != nil || !strings.HasPrefix(c.URL, "https://cool.lan/browser/abc/cool.html?") {
 		t.Fatalf("editor address %s", c.URL)
 	}
-	src, err := url.QueryUnescape(strings.TrimPrefix(c.URL, prefix))
-	if err != nil {
-		t.Fatal(err)
-	}
+	src := editor.Query().Get("WOPISrc")
 	q := "?access_token=" + url.QueryEscape(c.Token)
 	wopi := func(method, suffix, body string, header ...string) *httptest.ResponseRecorder {
 		req := local(t, method, src+suffix+q, strings.NewReader(body))
@@ -554,5 +554,58 @@ func TestOfficeNeedsTheDownloadRightToRead(t *testing.T) {
 	file := c.Config["document"].(map[string]any)["url"].(string)
 	if rec := f.do(local(t, "GET", file, nil)); rec.Code != http.StatusForbidden {
 		t.Fatalf("read after the download right was taken: %d", rec.Code)
+	}
+}
+
+func (f *fixture) picksLanguage(who, lang string) {
+	f.t.Helper()
+	_, err := f.db.Exec(`INSERT INTO user_prefs (user_id, data, updated_at) VALUES (?, ?, 0)`,
+		strconv.FormatUint(f.people[who].ID, 10), `{"language":"`+lang+`"}`)
+	if err != nil {
+		f.t.Fatal(err)
+	}
+}
+
+func TestOnlyOfficeOpensInTheLanguageThePersonPicked(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeEuroOffice, URL: "https://office.lan"}
+	f.people["jdp"].Locale = "fr"
+	f.picksLanguage("jdp", "de")
+	_, c := f.config("jdp")
+	if got := c.Config["editorConfig"].(map[string]any)["lang"]; got != "de" {
+		t.Errorf("lang %v", got)
+	}
+}
+
+func TestOnlyOfficeFallsBackToTheLocaleBeforeALanguageIsPicked(t *testing.T) {
+	f := newFixture(t)
+	f.office = system.Office{Kind: system.OfficeOnlyOffice, URL: "https://office.lan"}
+	_, c := f.config("anna")
+	if got := c.Config["editorConfig"].(map[string]any)["lang"]; got != "en" {
+		t.Errorf("without a locale: %v", got)
+	}
+	f.people["jdp"].Locale = "fr"
+	_, c = f.config("jdp")
+	if got := c.Config["editorConfig"].(map[string]any)["lang"]; got != "fr" {
+		t.Errorf("with a locale: %v", got)
+	}
+}
+
+func TestCollaboraOpensInTheLanguageThePersonPicked(t *testing.T) {
+	f := newFixture(t)
+	cool := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte(discoveryXML)) }))
+	defer cool.Close()
+	f.office = system.Office{Kind: system.OfficeCollabora, URL: cool.URL}
+	f.picksLanguage("jdp", "de")
+	_, c := f.config("jdp")
+	editor, err := url.Parse(c.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := editor.Query().Get("lang"); got != "de" {
+		t.Errorf("lang %q in %s", got, c.URL)
+	}
+	if editor.Query().Get("WOPISrc") == "" {
+		t.Errorf("no WOPISrc in %s", c.URL)
 	}
 }

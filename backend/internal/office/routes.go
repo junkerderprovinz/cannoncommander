@@ -7,6 +7,7 @@ package office
 import (
 	"context"
 	"crypto/sha256"
+	"database/sql"
 	_ "embed"
 	"encoding/base64"
 	"fmt"
@@ -36,6 +37,7 @@ func Routes(r *v1.Router) {
 	d := r.Deps()
 	bind(r, &service{
 		fs:   d.FS,
+		db:   d.DB,
 		keys: &keys{db: d.DB},
 		settings: func(ctx context.Context) (system.Office, error) {
 			a, err := system.Settings(ctx, d)
@@ -54,6 +56,7 @@ func Routes(r *v1.Router) {
 
 type service struct {
 	fs        *ccfs.Resolver
+	db        *sql.DB
 	keys      *keys
 	settings  func(context.Context) (system.Office, error)
 	user      func(id uint64) (*users.User, error)
@@ -142,7 +145,8 @@ func (s *service) config(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
-		out = Config{Kind: o.Kind, URL: action + "WOPISrc=" + url.QueryEscape(s.base(r)+"/wopi/files/"+fileID(loc.Path)), Token: token, TTL: expires.UnixMilli()}
+		address := action + "WOPISrc=" + url.QueryEscape(s.base(r)+"/wopi/files/"+fileID(loc.Path)) + "&lang=" + url.QueryEscape(s.officeLang(r.Context(), u))
+		out = Config{Kind: o.Kind, URL: address, Token: token, TTL: expires.UnixMilli()}
 	default:
 		cfg, err := s.editorConfig(r, o, u, loc, info, g, token)
 		if err != nil {
