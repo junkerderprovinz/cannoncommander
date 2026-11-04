@@ -9,6 +9,7 @@ import (
 	"path"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -46,7 +47,8 @@ func Routes(r *v1.Router) {
 type createRequest struct {
 	Paths []string `json:"paths"`
 	// Name is the folder name of a collection.
-	Name string `json:"name"`
+	Name    string `json:"name"`
+	Message string `json:"message"`
 	// Slug is the end of the address. Empty picks one that is hard to guess.
 	Slug        string     `json:"slug"`
 	Expires     *time.Time `json:"expires"`
@@ -83,6 +85,7 @@ type updateRequest struct {
 	// Reroll gives the link a fresh address. The old one leads nowhere.
 	Reroll  bool         `json:"reroll"`
 	Name    *string      `json:"name"`
+	Message *string      `json:"message"`
 	Expires optionalTime `json:"expires"`
 	// Password sets a new password, an empty one removes it.
 	Password    *string `json:"password"`
@@ -140,7 +143,7 @@ func (s *Service) create(w http.ResponseWriter, r *http.Request) error {
 	if err := v1.DecodeJSON(r, &req); err != nil {
 		return err
 	}
-	sh := &Share{ID: newID(), OwnerID: u.ID, Owner: u.Username, Expires: req.Expires, Limit: req.Limit,
+	sh := &Share{ID: newID(), OwnerID: u.ID, Owner: u.Username, Message: strings.TrimSpace(req.Message), Expires: req.Expires, Limit: req.Limit,
 		Uploads: req.Uploads, UploadLimit: req.UploadLimit, Notify: req.Notify}
 	var err error
 	if sh.Paths, sh.Kind, err = s.checkPaths(u, req.Paths); err != nil {
@@ -198,6 +201,9 @@ func (s *Service) update(w http.ResponseWriter, r *http.Request) error {
 		if sh.Name = strings.TrimSpace(*req.Name); !ccfs.ValidName(sh.Name) {
 			return v1.Errorf(http.StatusBadRequest, "give the collection a name, it becomes the folder the other side sees")
 		}
+	}
+	if req.Message != nil {
+		sh.Message = strings.TrimSpace(*req.Message)
 	}
 	if req.Expires.set {
 		sh.Expires = req.Expires.t
@@ -309,6 +315,9 @@ func (s *Service) checkSettings(owner *users.User, sh *Share) error {
 	}
 	if sh.Limit < 0 || sh.UploadLimit < 0 {
 		return v1.Errorf(http.StatusBadRequest, "limits cannot be negative")
+	}
+	if utf8.RuneCountInString(sh.Message) > maxMessage {
+		return v1.Errorf(http.StatusBadRequest, "the message can have at most 2000 characters")
 	}
 	if !sh.Uploads {
 		return nil

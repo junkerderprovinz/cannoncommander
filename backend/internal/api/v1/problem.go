@@ -53,7 +53,8 @@ func ProblemFor(err error) *Problem {
 
 // WriteError answers with the problem for err.
 func WriteError(w http.ResponseWriter, r *http.Request, err error) {
-	p := ProblemFor(err)
+	// Packages keep common problems in variables, so the instance goes on a copy.
+	p := *ProblemFor(err)
 	if p.Status >= 500 && p.Status != http.StatusNotImplemented {
 		logger.Errorf("%s %s: %v", r.Method, r.URL.Path, err)
 	}

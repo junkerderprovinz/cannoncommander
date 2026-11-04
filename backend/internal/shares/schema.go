@@ -55,5 +55,8 @@ func init() {
 			_, err := tx.ExecContext(ctx, `INSERT INTO share_secret (id, key) VALUES (1, ?)`, key)
 			return err
 		}},
+		migrate.SQL("shares/003_message",
+			`ALTER TABLE share_links ADD COLUMN message TEXT NOT NULL DEFAULT ''`,
+		),
 	)
 }

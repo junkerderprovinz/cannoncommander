@@ -3025,6 +3025,247 @@ paths:
           description: Too many wrong codes.
       tags: [accounts]
       security: []
+  /auth/options:
+    get:
+      operationId: signInOptions
+      summary: What the sign in page can offer
+      description: |
+        Which ways in this server takes, the name of the server and the
+        version, for the page shown before anyone is signed in. With
+        OpenID Connect on, oidc links to the sign in of the older API.
+      x-access: public
+      responses:
+        "200":
+          description: The ways in.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInOptions"
+      tags: [accounts]
+      security: []
+  /auth/login:
+    post:
+      operationId: signIn
+      summary: Sign in with name and password
+      description: |
+        A right password either finishes the sign in or names the next
+        step with a challenge for it: totp when two factor login is on,
+        password when a new password is due, totpSetup when the server asks
+        everyone for two factor login and the account has none yet. A
+        challenge works for five minutes. With remember the session lasts
+        the days of the setting stayDays (30 when unset) through browser
+        restarts, without it the session ends with the browser and after
+        12 hours at most. Five wrong passwords for one name from one
+        address, or twenty from one address, wait 15 minutes.
+      x-access: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                remember:
+                  type: boolean
+      responses:
+        "200":
+          description: Signed in, with the session cookie set, or one step to go.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignIn"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          description: The name or the password is not right. The answer is the same for names that do not exist.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "403":
+          description: This server does not take passwords.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "429":
+          $ref: "#/components/responses/SignInBlocked"
+      tags: [accounts]
+      security: []
+  /auth/totp:
+    post:
+      operationId: signInTotp
+      summary: Second step with a code
+      description: |
+        For totp the code comes from the authenticator app or is one of
+        the recovery codes. A code from the app works once, a recovery
+        code is used up. A wrong code keeps the challenge, five wrong codes
+        wait 15 minutes. For totpSetup the code from the app turns two
+        factor login on, and the answer carries the new recovery codes.
+      x-access: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge, code]
+              properties:
+                challenge:
+                  type: string
+                code:
+                  type: string
+                  example: "492817"
+      responses:
+        "200":
+          description: Signed in.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignIn"
+        "400":
+          description: The code does not work.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "410":
+          $ref: "#/components/responses/SignInStale"
+        "429":
+          $ref: "#/components/responses/SignInBlocked"
+      tags: [accounts]
+      security: []
+  /auth/password:
+    post:
+      operationId: signInPassword
+      summary: Set the new password a sign in asks for
+      description: |
+        After the first start the admin password comes from the log and
+        has to be replaced. The answer goes on like POST /auth/login.
+      x-access: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge, password]
+              properties:
+                challenge:
+                  type: string
+                password:
+                  type: string
+                  minLength: 12
+      responses:
+        "200":
+          description: Signed in, or the next step.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignIn"
+        "400":
+          description: The password is too short or the old one.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "410":
+          $ref: "#/components/responses/SignInStale"
+      tags: [accounts]
+      security: []
+  /auth/passkey/options:
+    post:
+      operationId: signInPasskeyOptions
+      summary: Start a sign in with a passkey
+      description: |
+        The options go to navigator.credentials.get. The browser offers
+        the passkeys it keeps for this site, so no name is needed. The
+        challenge works once, for five minutes.
+      x-access: public
+      responses:
+        "200":
+          description: The options.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PasskeyChallenge"
+        "409":
+          description: Passkeys are turned off on this server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "429":
+          $ref: "#/components/responses/SignInBlocked"
+      tags: [accounts]
+      security: []
+  /auth/passkey:
+    post:
+      operationId: signInPasskey
+      summary: Finish a sign in with a passkey
+      description: |
+        A passkey stands for both factors, so two factor login asks for no
+        code here. remember works as with POST /auth/login. Twenty passkeys
+        that do not sign in from one address wait 15 minutes.
+      x-access: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge, credential]
+              properties:
+                challenge:
+                  type: string
+                credential:
+                  type: object
+                  description: The PublicKeyCredential from the browser, as JSON.
+                remember:
+                  type: boolean
+      responses:
+        "200":
+          description: Signed in.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignIn"
+        "401":
+          description: The passkey does not sign in here.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: Passkeys are turned off on this server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "410":
+          $ref: "#/components/responses/SignInStale"
+        "429":
+          $ref: "#/components/responses/SignInBlocked"
+      tags: [accounts]
+      security: []
+  /auth/logout:
+    post:
+      operationId: signOut
+      summary: Sign out
+      description: Ends this session and clears its cookie. Not possible with an API token.
+      responses:
+        "204":
+          description: Signed out.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [accounts]
   /admin/users:
     get:
       operationId: usersList
@@ -5240,8 +5481,27 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
+    SignInBlocked:
+      description: Too many wrong tries. Retry-After says when to go on.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    SignInStale:
+      description: The challenge ran out or was used, the sign in starts again.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
     ShareGone:
-      description: The link expired, used up its downloads, or its owner may no longer share.
+      description: |
+        The link leads nowhere any more. The problem type says why:
+        share-expired, share-used-up when the downloads are used up, or
+        share-withdrawn when its owner may no longer share.
       content:
         application/problem+json:
           schema:
@@ -6984,6 +7244,58 @@ components:
         current:
           type: boolean
           description: The session this request came with.
+    SignIn:
+      type: object
+      required: [next]
+      properties:
+        next:
+          type: string
+          enum: [done, totp, password, totpSetup]
+        challenge:
+          type: string
+          description: Carries the sign in to its next step.
+        me:
+          $ref: "#/components/schemas/Me"
+        setup:
+          $ref: "#/components/schemas/TotpSetup"
+        codes:
+          type: array
+          items:
+            type: string
+          description: Recovery codes of a two factor login set up during the sign in, shown this once.
+    SignInOptions:
+      type: object
+      required: [password, passkey, oidc, server, version, minPassword]
+      properties:
+        password:
+          type: boolean
+        passkey:
+          type: boolean
+        oidc:
+          type: object
+          nullable: true
+          required: [label, url]
+          properties:
+            label:
+              type: string
+            url:
+              type: string
+        server:
+          type: string
+          description: The name of the Unraid server, or of the host.
+        version:
+          type: string
+        minPassword:
+          type: integer
+    PasskeyChallenge:
+      type: object
+      required: [challenge, options]
+      properties:
+        challenge:
+          type: string
+        options:
+          type: object
+          description: The options for navigator.credentials.get, with publicKey.
     Account:
       type: object
       required: [id, name, full, role, scope, groups, loginMethod, twofa, passkeys, last, pwChanged]
@@ -7246,7 +7558,7 @@ components:
           type: object
     Share:
       type: object
-      required: [id, slug, kind, name, paths, owner, created, expires, password, limit, downloads, views, uploads, uploadLimit, uploaded, notify, state]
+      required: [id, slug, kind, name, message, paths, owner, created, expires, password, limit, downloads, views, uploads, uploadLimit, uploaded, notify, state]
       properties:
         id:
           type: string
@@ -7260,6 +7572,9 @@ components:
         name:
           type: string
           description: The folder name of a collection, otherwise the name of the file or folder.
+        message:
+          type: string
+          description: A note for the visitors, shown above the files.
         paths:
           type: array
           items:
@@ -7309,6 +7624,9 @@ components:
         name:
           type: string
           description: Needed for a collection.
+        message:
+          type: string
+          maxLength: 2000
         slug:
           type: string
           pattern: "^[a-z0-9][a-z0-9-]{2,39}$"
@@ -7342,6 +7660,9 @@ components:
           description: Gives the link a fresh address, the old one leads nowhere.
         name:
           type: string
+        message:
+          type: string
+          maxLength: 2000
         expires:
           type: string
           format: date-time
@@ -7374,6 +7695,9 @@ components:
           enum: [file, folder, collection]
         name:
           type: string
+        message:
+          type: string
+          description: The note of the owner, left out when there is none.
         expires:
           type: string
           format: date-time

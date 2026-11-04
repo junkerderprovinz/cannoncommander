@@ -4,10 +4,15 @@ import type { Bookmark, FsItem, FsList, FsMeta, FsText, FsTree, Me, Problem, Sea
 export const BASE = '/api/v1';
 
 export class ApiError extends Error {
-  constructor(readonly status: number, readonly problem?: Problem) {
+  // retryAfter is in seconds, for a request the server wants to see again later.
+  constructor(readonly status: number, readonly problem?: Problem, readonly retryAfter?: number) {
     super(problem?.title || `HTTP ${status}`);
   }
 }
+
+// A 401 outside the sign in means the session ended, and the app shows the sign in again.
+let signedOut = () => {};
+export const onSignedOut = (fn: () => void) => { signedOut = fn; };
 
 let token = '';
 export const setToken = (t: string) => { token = t; };
@@ -24,7 +29,8 @@ export async function call<T>(path: string, init: RequestInit & { etag?: string 
   if (res.status === 304) return { body: null, etag: init.etag };
   if (!res.ok) {
     const problem = res.headers.get('Content-Type')?.includes('json') ? await res.json().catch(() => undefined) : undefined;
-    throw new ApiError(res.status, problem);
+    if (res.status === 401 && !path.startsWith('/auth/')) signedOut();
+    throw new ApiError(res.status, problem, Number(res.headers.get('Retry-After')) || undefined);
   }
   return { body: res.status === 204 ? null : await res.json(), etag: res.headers.get('ETag') ?? undefined };
 }

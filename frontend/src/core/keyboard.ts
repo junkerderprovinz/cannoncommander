@@ -9,7 +9,12 @@ import { closeWin, winStack } from './windows';
 
 const typing = (t: EventTarget | null) => !!(t as Element | null)?.closest?.('input, textarea, select, [contenteditable]');
 
+// While something covers the whole app, such as the sign in after a session ran out, its keys stay with it.
+let covered = () => false;
+export const coverKeys = (fn: () => boolean) => { covered = fn; };
+
 export function handleKey(e: KeyboardEvent) {
+  if (covered()) return;
   if (isMenuOpen()) {
     if (e.key === 'Escape') {
       e.preventDefault();

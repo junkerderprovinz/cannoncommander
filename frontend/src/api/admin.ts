@@ -1,6 +1,7 @@
 // The settings pages talk to the server through these calls. Times arrive as ISO strings and leave this file as
 // milliseconds, so the pages compare and format them like every other date.
 import { ApiError, call } from './client';
+import { creationOptions, credentialJSON } from './webauthn';
 
 const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
 const send = (method: string, body?: unknown): RequestInit => ({
@@ -132,9 +133,6 @@ export const admin = {
   notifyUnraid: (subject: string, description: string) => write('POST', '/unraid/notify/test', { subject, description }),
 };
 
-type WebAuthnJSON = { publicKey: unknown };
-type PublicKeyStatics = typeof PublicKeyCredential & { parseCreationOptionsFromJSON?: (o: unknown) => PublicKeyCredentialCreationOptions };
-
 export const me = {
   account: async (): Promise<Account> => user(await get<Wire<Account, 'last' | 'pwChanged'>>('/me')),
   password: (current: string, next: string) => write<{ ended: number }>('PUT', '/me/password', { current, next }),
@@ -146,12 +144,9 @@ export const me = {
   passkeys: async (): Promise<Passkeys> => { const p = await get<{ enabled: boolean; items: Wire<Passkey, 'created' | 'last'>[] }>('/me/passkeys'); return { enabled: p.enabled, items: p.items.map(passkey) }; },
   // Two steps on one path: the name brings the options, the browser's answer to them adds the passkey.
   async addPasskey(name: string): Promise<void> {
-    const { options } = await write<{ options: WebAuthnJSON }>('POST', '/me/passkeys', { name });
-    const parse = (PublicKeyCredential as PublicKeyStatics).parseCreationOptionsFromJSON;
-    if (!parse) throw new Error('this browser cannot read passkey options');
-    const credential = await navigator.credentials.create({ publicKey: parse(options.publicKey) }) as PublicKeyCredential | null;
-    if (!credential) throw new Error('no passkey');
-    await write('POST', '/me/passkeys', { name, credential: credential.toJSON() });
+    const { options } = await write<{ options: { publicKey: Record<string, unknown> } }>('POST', '/me/passkeys', { name });
+    const credential = credentialJSON(await navigator.credentials.create(creationOptions(options)));
+    await write('POST', '/me/passkeys', { name, credential });
   },
   deletePasskey: (id: string) => write('DELETE', `/me/passkeys/${at(id)}`),
   // The server draws the QR code, so no encoder ships to the browser.

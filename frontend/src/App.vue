@@ -9,8 +9,12 @@ import BottomBar from '@/shell/BottomBar.vue';
 import FKeys from '@/shell/FKeys.vue';
 import Head from '@/shell/Head.vue';
 import { shell } from '@/shell/state';
+import { session } from '@/signin';
+import SignInPage from '@/signin/SignInPage.vue';
+import { useUser } from '@/stores/user';
 
 const def = computed(() => currentView());
+const user = useUser();
 </script>
 
 <template>
@@ -20,5 +24,5 @@ const def = computed(() => currentView());
   <div v-else-if="def" id="app" class="app" :class="{ dual: prefs.dual, 'no-side': !prefs.side, 'with-fkeys': prefs.fkeys, 'side-open': shell.sideOpen }">
     <Head /><div id="main" class="main"><component :is="def.component" /></div><FKeys /><BottomBar />
   </div>
-  <MenuHost /><WindowHost /><ToastHost />
+  <MenuHost /><WindowHost /><SignInPage v-if="session.out" overlay :was="user.me.name" /><ToastHost />
 </template>

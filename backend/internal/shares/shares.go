@@ -52,7 +52,16 @@ const (
 // slugPattern is the address rule of the share dialog.
 var slugPattern = regexp.MustCompile(`^[a-z0-9][a-z0-9-]{2,39}$`)
 
-var errGone = v1.Errorf(http.StatusGone, "this link has expired")
+// maxMessage caps the note a link shows its visitors.
+const maxMessage = 2000
+
+// A link that leads nowhere says why in the problem type, so the page for
+// visitors can explain it.
+var (
+	errExpired   = &v1.Problem{Type: "share-expired", Title: "Gone", Status: http.StatusGone, Detail: "this link has expired"}
+	errUsedUp    = &v1.Problem{Type: "share-used-up", Title: "Gone", Status: http.StatusGone, Detail: "this link has used up its downloads"}
+	errWithdrawn = &v1.Problem{Type: "share-withdrawn", Title: "Gone", Status: http.StatusGone, Detail: "the owner of this link may no longer share"}
+)
 
 // Share is a link as its owner and the admins see it.
 type Share struct {
@@ -61,9 +70,11 @@ type Share struct {
 	Kind string `json:"kind"`
 	// Name is the folder name a collection shows, and the file or folder
 	// name otherwise.
-	Name  string   `json:"name"`
-	Paths []string `json:"paths"`
-	Owner string   `json:"owner"`
+	Name string `json:"name"`
+	// Message is a note for the visitors, shown above the files.
+	Message string   `json:"message"`
+	Paths   []string `json:"paths"`
+	Owner   string   `json:"owner"`
 	// OwnerID is the account behind the link, whose rights it uses.
 	OwnerID     uint64     `json:"-"`
 	Created     time.Time  `json:"created"`
@@ -181,7 +192,7 @@ func RemoveUser(ctx context.Context, d v1.Deps, userID uint64) error {
 	return nil
 }
 
-const selectShare = `SELECT id, slug, owner_id, owner, kind, name, password_hash, expires_at, download_limit, downloads,
+const selectShare = `SELECT id, slug, owner_id, owner, kind, name, message, password_hash, expires_at, download_limit, downloads,
 	views, uploads, upload_limit, uploaded, notify, created_at FROM share_links `
 
 func (s *Service) list(ctx context.Context, where string, args ...any) ([]*Share, error) {
@@ -197,7 +208,7 @@ func (s *Service) list(ctx context.Context, where string, args ...any) ([]*Share
 		var sh Share
 		var expires sql.NullInt64
 		var created, owner int64
-		if err := rows.Scan(&sh.ID, &sh.Slug, &owner, &sh.Owner, &sh.Kind, &sh.Name, &sh.passwordHash, &expires,
+		if err := rows.Scan(&sh.ID, &sh.Slug, &owner, &sh.Owner, &sh.Kind, &sh.Name, &sh.Message, &sh.passwordHash, &expires,
 			&sh.Limit, &sh.Downloads, &sh.Views, &sh.Uploads, &sh.UploadLimit, &sh.Uploaded, &sh.Notify, &created); err != nil {
 			return nil, err
 		}
@@ -262,10 +273,10 @@ func (s *Service) insert(ctx context.Context, sh *Share) error {
 	}
 	defer tx.Rollback()
 	now := time.Now().Unix()
-	if _, err := tx.ExecContext(ctx, `INSERT INTO share_links (id, slug, owner_id, owner, kind, name, password_hash, expires_at,
+	if _, err := tx.ExecContext(ctx, `INSERT INTO share_links (id, slug, owner_id, owner, kind, name, message, password_hash, expires_at,
 		download_limit, downloads, views, uploads, upload_limit, uploaded, notify, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, ?, 0, ?, ?, ?)`,
-		sh.ID, sh.Slug, ownerKey(sh.OwnerID), sh.Owner, sh.Kind, storedName(sh), sh.passwordHash, unixOrNil(sh.Expires),
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, ?, 0, ?, ?, ?)`,
+		sh.ID, sh.Slug, ownerKey(sh.OwnerID), sh.Owner, sh.Kind, storedName(sh), sh.Message, sh.passwordHash, unixOrNil(sh.Expires),
 		sh.Limit, sh.Uploads, sh.UploadLimit, sh.Notify, now, now); err != nil {
 		if isUnique(err) {
 			return errSlugTaken
@@ -281,9 +292,9 @@ func (s *Service) insert(ctx context.Context, sh *Share) error {
 }
 
 func (s *Service) save(ctx context.Context, sh *Share) error {
-	_, err := s.db.ExecContext(ctx, `UPDATE share_links SET slug = ?, name = ?, password_hash = ?, expires_at = ?, download_limit = ?,
+	_, err := s.db.ExecContext(ctx, `UPDATE share_links SET slug = ?, name = ?, message = ?, password_hash = ?, expires_at = ?, download_limit = ?,
 		uploads = ?, upload_limit = ?, notify = ?, updated_at = ? WHERE id = ?`,
-		sh.Slug, storedName(sh), sh.passwordHash, unixOrNil(sh.Expires), sh.Limit, sh.Uploads, sh.UploadLimit, sh.Notify, time.Now().Unix(), sh.ID)
+		sh.Slug, storedName(sh), sh.Message, sh.passwordHash, unixOrNil(sh.Expires), sh.Limit, sh.Uploads, sh.UploadLimit, sh.Notify, time.Now().Unix(), sh.ID)
 	if isUnique(err) {
 		return errSlugTaken
 	}
@@ -328,7 +339,7 @@ func (s *Service) countDownload(ctx context.Context, id string) error {
 		return err
 	}
 	if n, err := res.RowsAffected(); err != nil || n == 0 {
-		return errGone
+		return errUsedUp
 	}
 	return nil
 }

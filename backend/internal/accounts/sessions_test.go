@@ -10,6 +10,7 @@ import (
 	"slices"
 	"sync"
 	"testing"
+	"time"
 
 	_ "modernc.org/sqlite"
 
@@ -28,6 +29,8 @@ type fakeLogin struct {
 	ended   []string
 	endAll  []endAll
 	started []string
+	kept    []time.Duration
+	stopped []string
 }
 
 // endAll is one call to EndAll.
@@ -68,11 +71,20 @@ func (l *fakeLogin) APIToken(r *http.Request) (string, bool) {
 	return t, t != ""
 }
 
-func (l *fakeLogin) Start(w http.ResponseWriter, _ *http.Request, u *users.User) error {
+func (l *fakeLogin) Start(w http.ResponseWriter, _ *http.Request, u *users.User, keep time.Duration) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.started = append(l.started, u.Username)
+	l.kept = append(l.kept, keep)
 	w.Header().Set("Set-Cookie", "session=fresh")
+	return nil
+}
+
+func (l *fakeLogin) Stop(w http.ResponseWriter, r *http.Request) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.stopped = append(l.stopped, r.Header.Get("X-Token"))
+	w.Header().Set("Set-Cookie", "session=; Max-Age=0")
 	return nil
 }
 

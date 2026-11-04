@@ -53,3 +53,14 @@ func (l *limiter) recent(key string) []time.Time {
 	l.fails[key] = list
 	return list
 }
+
+// wait returns how long key stays blocked.
+func (l *limiter) wait(key string) time.Duration {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	list := l.recent(key)
+	if len(list) < l.max {
+		return 0
+	}
+	return time.Until(list[len(list)-l.max].Add(l.window))
+}
