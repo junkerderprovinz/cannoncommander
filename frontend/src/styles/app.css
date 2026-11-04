@@ -210,7 +210,8 @@ svg { display: block; }
 .app:not(.with-fkeys) .fkeys { display: none; }
 
 /* Windows */
-.scrim { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 1.5rem; }
+/* GlimStone centres its backdrop as a flex box. Here the grid track has to stretch, or a window sized in percent shrinks to its content. */
+.scrim { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; justify-content: normal; padding: 1.5rem; }
 .win { position: relative; width: min(40rem, 100%); max-height: calc(100vh - 3rem); display: flex; flex-direction: column; padding: 1.6rem 1.25rem 1.1rem; }
 .win.wide { width: min(58rem, 100%); }
 .win.full { width: min(80rem, 100%); height: calc(100vh - 3rem); }

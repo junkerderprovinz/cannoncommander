@@ -17,8 +17,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@glimstone/core": "4.0.0",
-    "@glimstone/vue": "4.0.0",
+    "@glimstone/core": "file:vendor/glimstone/glimstone-core-4.0.0.tgz",
+    "@glimstone/vue": "file:vendor/glimstone/glimstone-vue-4.0.0.tgz",
     "pinia": "^4.1.0",
     "vue": "^3.5.44"
   },
@@ -30,5 +30,8 @@
     "vite": "^8.3.5",
     "vitest": "^5.1.0",
     "vue-tsc": "^3.3.14"
+  },
+  "overrides": {
+    "@glimstone/core": "$@glimstone/core"
   }
 }
