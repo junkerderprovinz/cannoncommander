@@ -117,4 +117,3 @@ func TestInitAuthSigningKeyRejectsMalformedPersistedRow(t *testing.T) {
 		t.Fatalf("malformed row was overwritten: %q", string(raw))
 	}
 }
-

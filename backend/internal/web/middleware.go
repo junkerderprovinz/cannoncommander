@@ -9,24 +9,15 @@ import (
 
 	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 type requestContext = Context
-
-var FileInfoFasterFunc = func(opts utils.FileOptions, user *users.User) (*iteminfo.ExtendedFileInfo, error) {
-	if runtimeDeps.Files != nil {
-		return runtimeDeps.Files.FileInfoFaster(opts, user)
-	}
-	return files.FileInfoFaster(opts, user)
-}
 
 type handleFunc = HandleFunc
 

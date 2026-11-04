@@ -13,7 +13,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -46,7 +45,6 @@ func setupTestEnv(t *testing.T) {
 	}
 	// Initialize user resolvers so users package can resolve source names
 	settings.InitializeUserResolvers()
-	mockFileInfoFaster(t) // Mock FileInfoFasterFunc for this test
 }
 
 func testSessionToken(t *testing.T, user *users.User, duration time.Duration) string {
@@ -62,26 +60,6 @@ func testSessionToken(t *testing.T, user *users.User, duration time.Duration) st
 		t.Fatalf("RegisterSessionToken: %v", err)
 	}
 	return tokenString
-}
-
-func mockFileInfoFaster(t *testing.T) {
-	// Backup the original function
-	originalFileInfoFaster := FileInfoFasterFunc
-	// Defer restoration of the original function
-	t.Cleanup(func() { FileInfoFasterFunc = originalFileInfoFaster })
-
-	// Mock the function to skip execution
-	FileInfoFasterFunc = func(opts utils.FileOptions, user *users.User) (*iteminfo.ExtendedFileInfo, error) {
-		return &iteminfo.ExtendedFileInfo{
-			FileInfo: iteminfo.FileInfo{
-				Path: opts.Path,
-				ItemInfo: iteminfo.ItemInfo{
-					Name: "mocked_file",
-					Size: 12345,
-				},
-			},
-		}, nil
-	}
 }
 
 func TestWithAdminHelper(t *testing.T) {

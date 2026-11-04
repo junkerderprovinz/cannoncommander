@@ -5,7 +5,6 @@ import (
 )
 
 func TestRemoveUserFromAllGroups(t *testing.T) {
-	setupTestSources()
 	s, _, sqlStore := createTestStorageWithSQL(t)
 
 	if err := s.SetGroupMembers("editors", []string{"alice", "bob"}); err != nil {
@@ -41,7 +40,6 @@ func TestRemoveUserFromAllGroups(t *testing.T) {
 }
 
 func TestRenameUserInGroups(t *testing.T) {
-	setupTestSources()
 	s, _, sqlStore := createTestStorageWithSQL(t)
 
 	if err := s.SetGroupMembers("editors", []string{"alice", "bob"}); err != nil {

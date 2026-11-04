@@ -63,16 +63,15 @@ func newService(db *sql.DB, book *ruleBook) *service {
 	}
 }
 
-// Gate adds the rules admins keep in the app to the access gate of the
-// login system, so the file system follows both. The server builds its
-// path resolver with it.
-func Gate(inner ccfs.AccessGate, db *sql.DB) (ccfs.AccessGate, error) {
+// Rules returns the access rules admins keep in the app. The server builds
+// its path resolver with them.
+func Rules(db *sql.DB) (ccfs.Rules, error) {
 	if db == nil {
-		return inner, nil
+		return nil, nil
 	}
 	s, err := serviceFor(db)
 	if err != nil {
 		return nil, err
 	}
-	return gate{inner: inner, rules: s.rules}, nil
+	return s.rules, nil
 }

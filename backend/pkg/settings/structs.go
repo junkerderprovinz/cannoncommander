@@ -226,7 +226,7 @@ type Source struct {
 }
 
 type SourceConfig struct {
-	DenyByDefault    bool              `json:"denyByDefault,omitempty"` // deny access unless an "allow" access rule was specifically created.
+	DenyByDefault    bool              `json:"denyByDefault,omitempty"` // deprecated: the first start with the app's access rules turns it into a rule that hides the source from everyone
 	Private          bool              `json:"private"`                 // designate as source as private -- currently just means no sharing permitted.
 	ReadOnly         bool              `json:"readOnly,omitempty"`      // read-only source, changes from the UI and the API are refused.
 	Disabled         bool              `json:"disabled,omitempty"`      // disable the source, this is useful so you don't need to remove it from the config file

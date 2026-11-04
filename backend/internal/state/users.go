@@ -477,13 +477,6 @@ func renameUserInAccess(oldUsername string, updated *users.User) error {
 		revertSQL()
 		return fmt.Errorf("failed to rename user in groups: %w", err)
 	}
-	if err := accessDb.RenameUserInRules(oldUsername, updated.Username); err != nil {
-		if revErr := accessDb.RenameUserInGroups(updated.Username, oldUsername); revErr != nil {
-			logger.Errorf("failed to revert group memberships for %q after rename failure: %v", oldUsername, revErr)
-		}
-		revertSQL()
-		return fmt.Errorf("failed to rename user in access rules: %w", err)
-	}
 	return nil
 }
 
@@ -653,19 +646,14 @@ func DeleteUserByUsername(username string) error {
 	return nil
 }
 
-// removeUserAccess strips a username from group memberships and path rules before the user row is
-// deleted. Each step rolls itself back on failure and any error aborts the delete, so a reused
-// username can never inherit leftovers. The failure mode is fail-safe: if the later SQL delete
-// fails the user only loses access, and a retry is idempotent.
+// removeUserAccess takes a username out of every group before the user row is deleted, so a
+// reused username never inherits the memberships. Any error aborts the delete.
 func removeUserAccess(username string) error {
 	if accessDb == nil {
 		return nil
 	}
 	if err := accessDb.RemoveUserFromAllGroups(username); err != nil {
 		return fmt.Errorf("failed to remove user from groups: %w", err)
-	}
-	if err := accessDb.RemoveAllRulesForUser(username); err != nil {
-		return fmt.Errorf("failed to remove user from access rules: %w", err)
 	}
 	return nil
 }

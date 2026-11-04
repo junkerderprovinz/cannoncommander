@@ -33,12 +33,8 @@ var (
 // mountAPIv1 serves /api/v1. The more specific prefix wins over /api/ in
 // the ServeMux.
 func mountAPIv1(router *http.ServeMux) error {
-	var gate ccfs.AccessGate
-	if store := state.Default(); store != nil {
-		gate = store
-	}
 	db := state.MainDB()
-	gate, err := accounts.Gate(gate, db)
+	rules, err := accounts.Rules(db)
 	if err != nil {
 		return err
 	}
@@ -46,7 +42,7 @@ func mountAPIv1(router *http.ServeMux) error {
 	if st, err := unraid.Default().State(); err == nil {
 		devices = st.Devices()
 	}
-	resolver, err := ccfs.FromSettings(&settings.Config, gate, devices...)
+	resolver, err := ccfs.FromSettings(&settings.Config, rules, devices...)
 	if err != nil {
 		return err
 	}

@@ -1,7 +1,6 @@
 package state
 
 import (
-
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
@@ -39,4 +38,3 @@ func ResolveNoAuthUser() (users.User, error) {
 	}
 	return users.User{}, errors.ErrNotExist
 }
-

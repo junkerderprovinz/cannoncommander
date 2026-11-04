@@ -29,18 +29,6 @@ func createSchema(db *sql.DB) error {
 	CREATE INDEX IF NOT EXISTS idx_users_admin ON users(perm_admin);
 	CREATE INDEX IF NOT EXISTS idx_users_api ON users(perm_api);
 
-	-- Access rules table
-	CREATE TABLE IF NOT EXISTS access_rules (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		source TEXT NOT NULL,
-		path TEXT NOT NULL,
-		rule_data TEXT NOT NULL,
-		UNIQUE(source, path)
-	);
-	CREATE INDEX IF NOT EXISTS idx_access_rules_source ON access_rules(source);
-	CREATE INDEX IF NOT EXISTS idx_access_rules_path ON access_rules(path);
-	CREATE INDEX IF NOT EXISTS idx_access_rules_source_path ON access_rules(source, path);
-
 	-- Groups table
 	CREATE TABLE IF NOT EXISTS groups (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,

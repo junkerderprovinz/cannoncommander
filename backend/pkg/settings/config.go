@@ -607,6 +607,7 @@ func loadConfigWithDefaults(configFile string, generate bool) error {
 	// secrets may contain quotes, backslashes, or newlines safely.
 	expandConfigEnv(rawConfig)
 	dropRetiredKeys(rawConfig)
+	warnDenyByDefault(rawConfig)
 
 	// Filter to only keep valid top-level Settings struct fields
 	// This removes anchor definitions that are just templates (e.g., "test_server: &test_server")
