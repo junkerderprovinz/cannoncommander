@@ -18,20 +18,10 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-// Prefer explicit ?auth= query and Authorization header over the session cookie so API
-// clients can authenticate while a revoked browser cookie is present. ?auth= comes before
-// Authorization so server callbacks (e.g. OnlyOffice) with both query session JWT and a
-// third-party Bearer header resolve to our own token.
+// ExtractToken prefers the Authorization header over the session cookie, so
+// API clients can authenticate while a revoked browser cookie is present.
 func ExtractToken(r *http.Request) (string, error) {
 	hasToken := false
-
-	auth := r.URL.Query().Get("auth")
-	if auth != "" {
-		hasToken = true
-		if strings.Count(auth, ".") == 2 {
-			return auth, nil
-		}
-	}
 
 	authHeader := r.Header.Get("Authorization")
 	if authHeader != "" {

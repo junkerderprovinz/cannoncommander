@@ -102,15 +102,6 @@ func withUserHelper(fn handleFunc) handleFunc {
 		}
 		data.User = userValue
 
-		// Plant the session cookie only when the request didn't already carry
-		// one. Some clients like gvfs rely on it for concurrent uploads, but a
-		// request that presented a stale cookie must not re-emit it or it could
-		// revert the jar to a token retired by a concurrent renew.
-		if tk.RegisteredClaims.ExpiresAt != nil {
-			if c, err := r.Cookie(sessionCookieName); err != nil || c.Value == "" || c.Value != data.Token {
-				SetSessionCookie(w, r, data.Token, tk.RegisteredClaims.ExpiresAt.Time)
-			}
-		}
 		SetUserInResponseWriter(w, data.User)
 		if data.User.Username == "" {
 			return http.StatusForbidden, errors.ErrUnauthorized
