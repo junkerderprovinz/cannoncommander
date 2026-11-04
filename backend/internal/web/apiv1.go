@@ -13,8 +13,12 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/watch"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
@@ -56,6 +60,17 @@ func mountAPIv1(router *http.ServeMux) error {
 	h, err := api.NewRouter(deps, accounts.Track(deps.DB, authenticateV1)).Handler()
 	if err != nil {
 		return err
+	}
+	// Hooks run last added first, so running jobs stop before the trash and
+	// the share links they may still write to.
+	if s := shares.For(deps); s != nil {
+		system.OnShutdown(s.Close)
+	}
+	if s := trash.For(deps); s != nil {
+		system.OnShutdown(s.Close)
+	}
+	if m := jobs.For(deps); m != nil {
+		system.OnShutdown(m.Close)
 	}
 	unraid.Default().SetInodeIndex(fsindex.Inodes(resolver))
 	folderWatch.Start(eventHub, resolver, index, labelMover{deps})
