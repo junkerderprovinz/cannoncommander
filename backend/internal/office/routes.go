@@ -7,6 +7,7 @@ package office
 import (
 	"context"
 	"crypto/sha256"
+	"database/sql"
 	_ "embed"
 	"encoding/base64"
 	"fmt"
@@ -36,6 +37,7 @@ func Routes(r *v1.Router) {
 	d := r.Deps()
 	bind(r, &service{
 		fs:   d.FS,
+		db:   d.DB,
 		keys: &keys{db: d.DB},
 		settings: func(ctx context.Context) (system.Office, error) {
 			a, err := system.Settings(ctx, d)
@@ -54,6 +56,7 @@ func Routes(r *v1.Router) {
 
 type service struct {
 	fs        *ccfs.Resolver
+	db        *sql.DB
 	keys      *keys
 	settings  func(context.Context) (system.Office, error)
 	user      func(id uint64) (*users.User, error)
@@ -123,7 +126,7 @@ func (s *service) config(w http.ResponseWriter, r *http.Request) error {
 		return v1.Errorf(http.StatusConflict, "no office server is set up")
 	}
 	u := v1.UserFrom(r)
-	loc, info, err := s.file(u, r.URL.Query().Get("path"), ccfs.View)
+	loc, info, err := s.file(u, r.URL.Query().Get("path"), ccfs.Download)
 	if err != nil {
 		return err
 	}
@@ -142,7 +145,8 @@ func (s *service) config(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
-		out = Config{Kind: o.Kind, URL: action + "WOPISrc=" + url.QueryEscape(s.base(r)+"/wopi/files/"+fileID(loc.Path)), Token: token, TTL: expires.UnixMilli()}
+		address := action + "WOPISrc=" + url.QueryEscape(s.base(r)+"/wopi/files/"+fileID(loc.Path)) + "&lang=" + url.QueryEscape(s.officeLang(r.Context(), u))
+		out = Config{Kind: o.Kind, URL: address, Token: token, TTL: expires.UnixMilli()}
 	default:
 		cfg, err := s.editorConfig(r, o, u, loc, info, g, token)
 		if err != nil {
@@ -162,6 +166,9 @@ func (s *service) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 	}
 	if loc.Virtual() || loc.InArchive() {
 		return ccfs.Location{}, nil, v1.Errorf(http.StatusBadRequest, "only a file below a source opens in the office server")
+	}
+	if err := ccfs.Contained(loc); err != nil {
+		return ccfs.Location{}, nil, err
 	}
 	info, err := os.Stat(loc.Real)
 	if err != nil {
@@ -187,7 +194,9 @@ func (s *service) granted(ctx context.Context, token string, write bool) (grant,
 	if err != nil {
 		return grant{}, nil, ccfs.Location{}, nil, errBadToken
 	}
-	perm := ccfs.View
+	// The document server passes the whole file on to the browser, which
+	// /fs/raw counts as a download.
+	perm := ccfs.Download
 	if write {
 		perm = ccfs.Modify
 	}

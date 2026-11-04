@@ -2,6 +2,7 @@ package fsapi
 
 import (
 	"bytes"
+	"mime"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -92,8 +93,68 @@ func TestRawKeepsPagesFromRunningScripts(t *testing.T) {
 			t.Errorf("%s may be sniffed", name)
 		}
 	}
+	put(t, filepath.Join(f.share, "downloads", "setup-notes.md"), []byte("# Notizen"))
 	if csp := f.get(t, "jdp", "/fs/raw", "/mnt/user/downloads/setup-notes.md").Header().Get("Content-Security-Policy"); csp != "" {
 		t.Errorf("plain text got csp %q", csp)
+	}
+}
+
+func TestRawSandboxesScriptableXMLTypes(t *testing.T) {
+	f := newFixture(t)
+	page := []byte(`<x xmlns:h="http://www.w3.org/1999/xhtml"><h:script>alert(1)</h:script></x>`)
+	for ext, ctype := range map[string]string{
+		".atom": "application/atom+xml",
+		".rss":  "application/rss+xml",
+		".rdf":  "application/rdf+xml",
+		".mml":  "application/mathml+xml",
+	} {
+		if err := mime.AddExtensionType(ext, ctype); err != nil {
+			t.Fatal(err)
+		}
+		put(t, filepath.Join(f.share, "downloads", "feed"+ext), page)
+		rec := f.get(t, "jdp", "/fs/raw", "/mnt/user/downloads/feed"+ext)
+		if csp := rec.Header().Get("Content-Security-Policy"); !strings.Contains(csp, "sandbox") {
+			t.Errorf("%s csp %q", ext, csp)
+		}
+		if rec.Header().Get("X-Content-Type-Options") != "nosniff" {
+			t.Errorf("%s may be sniffed", ext)
+		}
+	}
+}
+
+func TestRawLeavesWhatTheViewersShowInlineUnsandboxed(t *testing.T) {
+	f := newFixture(t)
+	for ext, ctype := range map[string]string{
+		".png": "image/png", ".jpg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp", ".avif": "image/avif",
+		".bmp": "image/bmp", ".ico": "image/x-icon", ".mp4": "video/mp4", ".mkv": "video/x-matroska", ".mp3": "audio/mpeg",
+		".flac": "audio/flac", ".pdf": "application/pdf", ".txt": "text/plain; charset=utf-8",
+	} {
+		if err := mime.AddExtensionType(ext, ctype); err != nil {
+			t.Fatal(err)
+		}
+		put(t, filepath.Join(f.share, "downloads", "datei"+ext), []byte("0123456789"))
+		rec := f.get(t, "jdp", "/fs/raw", "/mnt/user/downloads/datei"+ext)
+		if csp := rec.Header().Get("Content-Security-Policy"); csp != "" {
+			t.Errorf("%s csp %q", ext, csp)
+		}
+		if cd := rec.Header().Get("Content-Disposition"); !strings.HasPrefix(cd, "inline") {
+			t.Errorf("%s disposition %q", ext, cd)
+		}
+	}
+	rec := f.request(t, "jdp", "/fs/raw", "/mnt/user/downloads/datei.mp4", http.Header{"Range": {"bytes=2-5"}})
+	if rec.Code != http.StatusPartialContent || rec.Body.String() != "2345" {
+		t.Errorf("a video cannot seek: %d %q", rec.Code, rec.Body)
+	}
+}
+
+func TestRawSandboxesATypeItDoesNotKnow(t *testing.T) {
+	f := newFixture(t)
+	if err := mime.AddExtensionType(".frisch", "application/x-frisch"); err != nil {
+		t.Fatal(err)
+	}
+	put(t, filepath.Join(f.share, "downloads", "neu.frisch"), []byte("x"))
+	if csp := f.get(t, "jdp", "/fs/raw", "/mnt/user/downloads/neu.frisch").Header().Get("Content-Security-Policy"); !strings.Contains(csp, "sandbox") {
+		t.Errorf("csp %q", csp)
 	}
 }
 

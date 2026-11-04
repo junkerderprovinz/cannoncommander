@@ -1,10 +1,12 @@
 package office
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,6 +19,8 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsapi"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
 )
 
@@ -63,7 +67,7 @@ func (s *service) editorConfig(r *http.Request, o system.Office, u *users.User, 
 		"editorConfig": map[string]any{
 			"mode":        mode,
 			"callbackUrl": base + "/office/callback?token=" + url.QueryEscape(token),
-			"lang":        officeLang(u),
+			"lang":        s.officeLang(r.Context(), u),
 			"user":        map[string]any{"id": strconv.FormatUint(u.ID, 10), "name": u.Username},
 		},
 	}
@@ -93,7 +97,14 @@ func (s *service) serveFile(w http.ResponseWriter, r *http.Request, token string
 		return publicError(err)
 	}
 	defer f.Close()
-	w.Header().Set("Cache-Control", "no-store")
+	// These routes are public and only a server reads them, so nothing here
+	// has to open in a browser, where a page would run on the app's origin.
+	hdr := w.Header()
+	hdr.Set("Cache-Control", "no-store")
+	hdr.Set("Content-Type", "application/octet-stream")
+	hdr.Set("X-Content-Type-Options", "nosniff")
+	hdr.Set("Content-Security-Policy", fsapi.SandboxPolicy)
+	hdr.Set("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": path.Base(loc.Path)}))
 	http.ServeContent(w, r, path.Base(loc.Path), info.ModTime(), f)
 	return nil
 }
@@ -190,14 +201,24 @@ func (s *service) fetchInto(r *http.Request, server, raw string, loc ccfs.Locati
 	if err != nil {
 		return err
 	}
-	if (got.Scheme != "http" && got.Scheme != "https") || !strings.EqualFold(got.Hostname(), want.Hostname()) {
-		return errors.New("the saved document is not on the document server: " + got.Host)
+	if !sameOrigin(want, got) {
+		return errors.New("the saved document is not on the document server: " + got.Scheme + "://" + got.Host)
 	}
 	req, err := http.NewRequestWithContext(r.Context(), http.MethodGet, got.String(), nil)
 	if err != nil {
 		return err
 	}
-	resp, err := s.client.Do(req)
+	client := *s.client
+	client.CheckRedirect = func(next *http.Request, via []*http.Request) error {
+		if len(via) >= 5 {
+			return errors.New("the document server redirects too often")
+		}
+		if !sameOrigin(want, next.URL) {
+			return errors.New("the document server redirects elsewhere: " + next.URL.Scheme + "://" + next.URL.Host)
+		}
+		return nil
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -223,9 +244,34 @@ func publicError(err error) error {
 	return v1.ProblemFor(err)
 }
 
-func officeLang(u *users.User) string {
+// officeLang is the language the editor opens in: the one the user picked for
+// the interface, otherwise the locale of the account.
+func (s *service) officeLang(ctx context.Context, u *users.User) string {
+	lang, err := prefs.Language(ctx, s.db, u.ID)
+	if err != nil {
+		logger.Errorf("office language of user %d: %v", u.ID, err)
+	}
+	if lang != "" {
+		return lang
+	}
 	if u.Locale != "" {
 		return u.Locale
 	}
 	return "en"
+}
+
+// sameOrigin reports whether two addresses lead to the same scheme, host and
+// port, with a missing port taken as the default of the scheme.
+func sameOrigin(a, b *url.URL) bool {
+	return a.Scheme == b.Scheme && strings.EqualFold(a.Hostname(), b.Hostname()) && originPort(a) == originPort(b)
+}
+
+func originPort(u *url.URL) string {
+	if p := u.Port(); p != "" {
+		return p
+	}
+	if u.Scheme == "https" {
+		return "443"
+	}
+	return "80"
 }

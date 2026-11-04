@@ -94,38 +94,25 @@ func TestExtractTokenUsesCookieWhenNoAuthorizationHeader(t *testing.T) {
 	}
 }
 
-func TestExtractTokenUsesAuthQueryBeforeCookie(t *testing.T) {
+func TestExtractTokenIgnoresAnAuthQuery(t *testing.T) {
 	const queryToken = "query.header.token"
 	const cookieToken = "session.header.token"
 
 	req := httptest.NewRequest(http.MethodGet, "/api/users?auth="+queryToken, nil)
+	if _, err := ExtractToken(req); err == nil {
+		t.Fatal("a token in the query counted")
+	}
+
 	req.AddCookie(&http.Cookie{
 		Name:  "cannoncommander_session",
 		Value: cookieToken,
 	})
-
 	got, err := ExtractToken(req)
 	if err != nil {
 		t.Fatalf("ExtractToken() error = %v", err)
 	}
-	if got != queryToken {
-		t.Fatalf("ExtractToken() = %q, want %q", got, queryToken)
-	}
-}
-
-func TestExtractTokenPrefersAuthQueryOverAuthorization(t *testing.T) {
-	const queryToken = "query.only.token"
-	const headerToken = "header.only.jwt"
-
-	req := httptest.NewRequest(http.MethodGet, "/api/office/callback?auth="+queryToken, nil)
-	req.Header.Set("Authorization", "Bearer "+headerToken)
-
-	got, err := ExtractToken(req)
-	if err != nil {
-		t.Fatalf("ExtractToken() error = %v", err)
-	}
-	if got != queryToken {
-		t.Fatalf("ExtractToken() = %q, want %q", got, queryToken)
+	if got != cookieToken {
+		t.Fatalf("ExtractToken() = %q, want %q", got, cookieToken)
 	}
 }
 

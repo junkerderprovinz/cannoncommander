@@ -143,19 +143,10 @@ func (h handlers) archiveRaw(w http.ResponseWriter, r *http.Request, loc ccfs.Lo
 			ctype = "application/octet-stream"
 		}
 		hdr := w.Header()
-		hdr.Set("Content-Type", ctype)
-		hdr.Set("X-Content-Type-Options", "nosniff")
+		setDelivery(hdr, ctype, name, flag(r.URL.Query().Get("download")))
 		hdr.Set("Cache-Control", "private, no-cache")
 		hdr.Set("Accept-Ranges", "none")
 		hdr.Set("Content-Length", strconv.FormatInt(e.Size, 10))
-		if active(ctype) {
-			hdr.Set("Content-Security-Policy", "sandbox; default-src 'none'; img-src data:; style-src 'unsafe-inline'")
-		}
-		disposition := "inline"
-		if flag(r.URL.Query().Get("download")) {
-			disposition = "attachment"
-		}
-		hdr.Set("Content-Disposition", mime.FormatMediaType(disposition, map[string]string{"filename": name}))
 		w.WriteHeader(http.StatusOK)
 		if r.Method == http.MethodHead {
 			return nil

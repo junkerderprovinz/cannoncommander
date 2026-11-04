@@ -423,3 +423,18 @@ func TestForgetDeletesEverythingOfOneUser(t *testing.T) {
 		t.Errorf("anna has %d saved searches left, %v", left, err)
 	}
 }
+
+func TestLanguageIsWhatTheUserPicked(t *testing.T) {
+	f := newFixture(t)
+	got, err := prefs.Language(context.Background(), f.db, 7)
+	if err != nil || got != "" {
+		t.Fatalf("before a pick: %q %v", got, err)
+	}
+	if _, err := f.db.Exec(`INSERT INTO user_prefs (user_id, data, updated_at) VALUES ('7', '{"language":"en"}', 0)`); err != nil {
+		t.Fatal(err)
+	}
+	got, err = prefs.Language(context.Background(), f.db, 7)
+	if err != nil || got != "en" {
+		t.Fatalf("after a pick: %q %v", got, err)
+	}
+}
