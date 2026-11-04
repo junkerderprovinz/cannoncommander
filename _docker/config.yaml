@@ -8,6 +8,13 @@ server:
   sources:
     - path: "/mnt/user"
       name: "Shares"
+    # Remotes are browsed live, indexing them would read whole clouds.
+    - path: "/mnt/remotes"
+      name: "Fernziele"
+      config:
+        rules:
+          - folderPath: "/"
+            viewable: true
 auth:
   methods:
     password:
