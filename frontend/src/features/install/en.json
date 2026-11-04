@@ -1,0 +1,29 @@
+{
+  "title": "Install as an app",
+  "already": "CannonCommander already runs as an app",
+  "installed": "CannonCommander is installed as an app now",
+  "declined": "Not installed. The Help menu offers it again any time.",
+  "head": "CannonCommander as an app",
+  "intro": "A window of its own without an address bar, an icon on the home screen or in the taskbar. On a phone you can share files from other apps straight to it.",
+  "how": "How it works in your browser",
+  "yours": "your browser",
+  "notOffered": "Your browser does not offer the install by itself right now",
+  "ways": {
+    "chrome": {
+      "head": "Chrome and Edge on a computer",
+      "how": "Click the install icon on the right of the address bar, or choose Install app in the browser menu."
+    },
+    "android": {
+      "head": "Android",
+      "how": "Tap Install app or Add to home screen in the browser menu."
+    },
+    "ios": {
+      "head": "iPhone and iPad",
+      "how": "Tap Share in Safari, then Add to Home Screen."
+    },
+    "firefox": {
+      "head": "Firefox",
+      "how": "On Android tap Install in the menu. On Windows Firefox offers an icon in the address bar for it, otherwise a bookmark does the job."
+    }
+  }
+}

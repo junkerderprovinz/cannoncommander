@@ -177,7 +177,7 @@ export default function setup() {
   const F = usePanels(), clip = useClipboard(), jobs = useJobs();
   action('copy', { label: tl('transfer.copy'), g: 'IconCopy', key: 'F5', needs: 'sel', run: () => transferWindow('copy') });
   action('move', { label: tl('transfer.move'), g: 'IconMove', key: 'F6', needs: ['sel', 'writable'], run: () => transferWindow('move') });
-  action('transfer', { label: tl('transfer.copy'), g: 'IconCopy', run: (job: Transfer) => transfer(job) });
+  action('transfer', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: (job: Transfer) => transfer(job) });
 
   action('clipCut', { label: tl('transfer.clipCut'), g: 'IconMove', key: 'Strg+X', needs: ['sel', 'writable'], run: () => {
     clip.put(true, F.T().path, F.sel().map((k) => k.name));

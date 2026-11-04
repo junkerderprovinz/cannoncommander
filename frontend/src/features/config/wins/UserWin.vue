@@ -54,7 +54,7 @@ onMounted(() => setFoot(props.win, [cancelBtn(), { label: isNew ? c('users.creat
 <template>
   <div class="well">
     <Frow :label="c('users.loginName')" :tip="c('users.loginNameTip')"><input id="a-uname" v-model="d.name" class="field m" :readonly="self" :placeholder="c('users.loginNamePh')"></Frow>
-    <Frow :label="c('users.displayName')"><input v-model="d.full" class="field m" :placeholder="c('users.displayNamePh')"></Frow>
+    <Frow :label="c('users.displayName')"><input id="a-ufull" v-model="d.full" class="field m" :placeholder="c('users.displayNamePh')"></Frow>
   </div>
   <div class="well">
     <Frow :label="c('users.role')" :tip="c('users.roleTip')"><Seg id="a-urole" v-model="d.role" :options="ROLES.map((r) => [r, roleName(r)])" /></Frow>
@@ -62,7 +62,7 @@ onMounted(() => setFoot(props.win, [cancelBtn(), { label: isNew ? c('users.creat
   </div>
   <div class="well">
     <div class="eyebrow">{{ c('users.groups') }}</div>
-    <Frow v-for="g in groups" :key="g.name" :label="g.name" :tip="g.note"><Sw v-model="inGroup[g.name]!" /></Frow>
+    <Frow v-for="g in groups" :key="g.name" :label="g.name" :tip="g.note"><Sw v-model="inGroup[g.name]!" :data-ug="g.name" /></Frow>
     <div v-if="!groups.length" class="muted">{{ c('users.noGroups') }}</div>
   </div>
   <div v-if="!self" class="well">

@@ -52,7 +52,7 @@ function removeGroup(g: Group) {
 <template>
   <Card :title="c('users.users')">
     <div v-if="users.length" class="a-list">
-      <ARow v-for="u in users" :key="u.name" :name="u.full" :tip="userTip(u)" data-uopen @click="editUser(u)">
+      <ARow v-for="(u, i) in users" :key="u.name" :name="u.full" :tip="userTip(u)" :data-uopen="i" @click="editUser(u)">
         <template #tile><i>{{ initials(u) }}</i></template>
         <template #badges>
           <span v-if="u.name === myName()" class="pill state">{{ c('users.you') }}</span>
@@ -60,13 +60,13 @@ function removeGroup(g: Group) {
           <span class="pill">{{ u.last ? ago(u.last) : c('users.never') }}</span>
         </template>
         <template #acts>
-          <BareBtn g="IconPencil" :tip="c('edit')" @click="editUser(u)" />
+          <BareBtn g="IconPencil" :tip="c('edit')" :data-uopen="i" @click="editUser(u)" />
           <BareBtn :g="u.name === myName() ? undefined : 'IconTrash'" :tip="c('remove')" @click="removeUser(u)" />
         </template>
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconAccounts" /><div>{{ c('users.nobody') }}</div></div>
-    <div class="a-foot"><Btn :label="c('users.add')" g="IconAdd" @click="editUser(null)" /></div>
+    <div class="a-foot"><Btn data-uadd :label="c('users.add')" g="IconAdd" @click="editUser(null)" /></div>
   </Card>
   <Card :title="c('users.groups')">
     <div v-if="groups.length" class="a-list">
@@ -80,6 +80,6 @@ function removeGroup(g: Group) {
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconAccounts" /><div>{{ c('users.noGroups') }}</div></div>
-    <div class="a-foot"><Btn :label="c('users.addGroup')" g="IconAdd" @click="editGroup(null)" /></div>
+    <div class="a-foot"><Btn data-gadd :label="c('users.addGroup')" g="IconAdd" @click="editGroup(null)" /></div>
   </Card>
 </template>

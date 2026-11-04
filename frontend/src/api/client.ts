@@ -103,9 +103,9 @@ export const api = {
   },
   thumbUrl: (path: string, size: 'small' | 'large' = 'small', v?: number) => BASE + '/fs/thumb' + q({ path, size, ...(v ? { v: String(v) } : {}) }),
   // Names below `path` that match `query`, hidden ones only when they are shown.
-  async search(path: string, query: string, hidden: boolean, signal?: AbortSignal): Promise<{ items: Item[]; more: boolean }> {
+  async search(path: string, query: string, hidden: boolean, signal?: AbortSignal): Promise<{ items: Item[]; more: boolean; unknown?: string[] }> {
     const body = (await call<SearchResult>('/search' + q({ path, q: query, hidden: String(hidden) }), { signal })).body!;
-    return { items: body.items.map((h) => ({ ...toItem(h), at: h.at })), more: !!body.more };
+    return { items: body.items.map((h) => ({ ...toItem(h), at: h.at })), more: !!body.more, unknown: body.unknown ?? [] };
   },
   async watch(clientId: string, paths: string[]): Promise<void> {
     await call('/events/watch', json('PUT', { clientId, paths }));

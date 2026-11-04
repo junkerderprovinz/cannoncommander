@@ -33,7 +33,7 @@ const edit = (s: Share) => win({ title: c('shares.share'), body: ShareWin, props
 <template>
   <Card :title="c('shares.title')">
     <div v-if="shares.length" class="a-list">
-      <ARow v-for="s in shares" :key="s.id" :name="name(s)" :tip="s.paths.join(', ')" data-open @click="edit(s)">
+      <ARow v-for="(s, i) in shares" :key="s.id" :name="name(s)" :tip="s.paths.join(', ')" :data-open="i" @click="edit(s)">
         <template #tile><G :n="glyph(s)" /></template>
         <template #badges>
           <span v-if="s.state === 'exhausted'" class="pill state">{{ c('shares.exhausted') }}</span>
@@ -46,8 +46,8 @@ const edit = (s: Share) => win({ title: c('shares.share'), body: ShareWin, props
         </template>
         <template #acts>
           <BareBtn g="IconCopy" :tip="c('shares.copyLink')" @click="copy(s.url)" />
-          <BareBtn g="IconPencil" :tip="c('edit')" @click="edit(s)" />
-          <BareBtn g="IconUnlink" :tip="c('shares.revoke')" @click="revoke(s)" />
+          <BareBtn g="IconPencil" :tip="c('edit')" :data-open="i" @click="edit(s)" />
+          <BareBtn g="IconUnlink" :tip="c('shares.revoke')" :data-revoke="i" @click="revoke(s)" />
         </template>
       </ARow>
     </div>

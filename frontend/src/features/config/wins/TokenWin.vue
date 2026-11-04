@@ -38,7 +38,7 @@ onMounted(() => setFoot(props.win, [cancelBtn(), { label: c('security.create'), 
     <div class="well"><Frow :label="name"><CopyField :value="secret" /></Frow></div>
   </template>
   <div v-else class="well">
-    <Frow :label="c('sources.name')" :tip="c('security.tokenNameTip')"><input ref="el" v-model="name" class="field m" :placeholder="c('security.tokenNamePh')"></Frow>
+    <Frow :label="c('sources.name')" :tip="c('security.tokenNameTip')"><input id="a-tkname" ref="el" v-model="name" class="field m" :placeholder="c('security.tokenNamePh')"></Frow>
     <Frow :label="c('security.rights')" :tip="c('security.rightsTip')"><Seg v-model="rights" :options="[['r', c('security.read')], ['rw', c('security.readWrite')]]" /></Frow>
     <Frow :label="c('shares.expires')"><Seg v-model="expires" :options="[['30', c('general.days', { n: 30 })], ['365', c('security.year')], ['never', c('shares.never_')]]" /></Frow>
   </div>

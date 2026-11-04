@@ -20,6 +20,8 @@ export interface Action {
   run: (...args: never[]) => unknown;
   when?: () => boolean;
   checked?: () => boolean;
+  // Kept out of the command search: it needs what its caller hands it, or a menu of its own already leads there.
+  hidden?: boolean;
 }
 export type ActionDef = Omit<Action, 'id'>;
 

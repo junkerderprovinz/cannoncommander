@@ -1,0 +1,17 @@
+.touch-sel .row { user-select: none; -webkit-user-select: none; }
+.touch-sel .row .glyph .cbox:not(.on) { box-shadow: inset 0 0 0 1.5px var(--carbon-text-muted); background: transparent; }
+.touch-sel :is(.gcard, .citem) > .cbox:not(.on) { box-shadow: inset 0 0 0 1.5px var(--carbon-text-muted); background: var(--carbon-surface); }
+.touchbar { position: fixed; z-index: 45; left: 50%; translate: -50% 0; bottom: 1rem; width: min(36rem, calc(100vw - 1.5rem)); display: flex; align-items: stretch; gap: 3px; padding: 3px; }
+.touchbar .tb-count { display: flex; align-items: center; padding: 0 .7rem; font-size: 13px; font-weight: 600; white-space: nowrap; color: var(--carbon-text); }
+.touchbar button { flex: 1; min-width: 0; min-height: 3rem; border-radius: var(--radius-control); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; color: var(--carbon-text-sub); }
+.touchbar button svg { width: 1.15rem; height: 1.15rem; color: var(--accent-glyph); }
+.touchbar button:hover:not(:disabled) { background: var(--carbon-hover); color: var(--carbon-text); }
+.touchbar button:disabled { opacity: .4; }
+.touchbar .tb-done { background: var(--accent); color: var(--accent-contrast); }
+.touchbar .tb-done svg { color: var(--accent-contrast); }
+@media (max-width: 760px) {
+  .touchbar { bottom: .75rem; flex-wrap: wrap; }
+  .touchbar .tb-count { width: 100%; padding: .3rem .6rem .1rem; font-size: 12px; }
+  .app.touch-sel .bottombar { visibility: hidden; }
+  .app.touch-sel { padding-bottom: 7.5rem; }
+}

@@ -92,7 +92,7 @@ function resetOrder() {
     <Frow :label="c('look.rainbow')" :tip="c('look.rainbowTip')"><Sw id="a-rainbow" v-model="rainbow" /></Frow>
     <!-- Everything under the rainbow only shows while it is on: a palette editor under a rainbow that is not running offers edits with no effect. -->
     <template v-if="prefs.rainbow">
-      <Frow v-if="found.disco || prefs.disco" :label="c('look.disco')" :tip="c('look.discoTip')"><Sw v-model="P.disco" /></Frow>
+      <Frow v-if="found.disco || prefs.disco" :label="c('look.disco')" :tip="c('look.discoTip')"><Sw v-model="P.disco" data-pref="disco" /></Frow>
       <Frow :label="c('look.reactiveMode')" :tip="c('look.reactiveTip')"><Sw v-model="P.reactive" /></Frow>
       <Frow :label="c('look.rotate')" :tip="c('look.rotateTip')"><Sw id="a-rotate" v-model="rotate" /></Frow>
       <div class="frow"><span class="lab">{{ c('look.palette') }}</span><div class="a-swatches">

@@ -68,8 +68,8 @@ function open(a: Activity) {
     <Card :title="filtered ? c('activity.filtered') : c('activity.allEntries')">
       <div class="a-actlist">
         <div class="a-lhead"><span></span><span>{{ c('activity.what') }}</span>
-          <button class="a-hbtn" :class="{ on: act.who }" :data-tip="c('activity.filter')" @click.stop="filter($event, 'who')">{{ act.who ? full(act.who) : c('activity.who') }}<G n="IconExpand" /></button>
-          <button class="a-hbtn" :class="{ on: act.what }" :data-tip="c('activity.filter')" @click.stop="filter($event, 'what')">{{ act.what ? kind(act.what) : c('activity.kind') }}<G n="IconExpand" /></button>
+          <button class="a-hbtn" :class="{ on: act.who }" data-af="who" :data-tip="c('activity.filter')" @click.stop="filter($event, 'who')">{{ act.who ? full(act.who) : c('activity.who') }}<G n="IconExpand" /></button>
+          <button class="a-hbtn" :class="{ on: act.what }" data-af="what" :data-tip="c('activity.filter')" @click.stop="filter($event, 'what')">{{ act.what ? kind(act.what) : c('activity.kind') }}<G n="IconExpand" /></button>
           <button class="a-hbtn" @click="act.dir *= -1">{{ c('activity.when') }}<G :n="act.dir < 0 ? 'IconMoveDown' : 'IconMoveUp'" /></button>
         </div>
         <template v-if="shown.length">

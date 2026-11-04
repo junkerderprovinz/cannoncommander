@@ -8,7 +8,8 @@ import type { TreeItem } from '@/api/types';
 import type { MetaValue } from '@/files/entries';
 import { join, parent } from '@/files/paths';
 
-export interface Hits { items: Item[]; more: boolean; done: boolean }
+// unknown names the field tests of the query the server does not know, such as farbe in farbe:rot.
+export interface Hits { items: Item[]; more: boolean; done: boolean; unknown?: string[] }
 
 export const useListing = defineStore('listing', () => {
   const lists = reactive(new Map<string, Listing>());

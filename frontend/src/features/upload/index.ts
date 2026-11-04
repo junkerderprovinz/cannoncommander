@@ -27,7 +27,7 @@ function uploadWindow(path: string) {
 export default function setup() {
   const F = usePanels();
   action('upload', { label: tl('upload.title'), g: 'IconUpload', needs: 'writable', run: () => uploadWindow(F.T().path) });
-  action('uploadFiles', { label: tl('upload.title'), g: 'IconUpload', run: (files: File[], path: string) => {
+  action('uploadFiles', { label: tl('upload.title'), g: 'IconUpload', hidden: true, run: (files: File[], path: string) => {
     uploadWindow(path);
     return addFiles(files, path);
   } });
