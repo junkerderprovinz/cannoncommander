@@ -1,34 +1,690 @@
 tag:
   name: unraid
-  description: Array state, file placement and the Unraid tools.
+  description: |
+    Array state, file placement and the Unraid tools. Sizes are bytes.
+    Outside Unraid the state says available false and placements stay empty.
 paths:
   /unraid/state:
     get:
       operationId: unraidState
       summary: Disks, shares, pools and parity
+      description: |
+        Read from emhttp's disks.ini, shares.ini and var.ini, the share
+        settings on the flash drive and /proc/mdstat. Empty array slots are
+        left out.
+      responses:
+        "200":
+          description: The server state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidState"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /unraid/where:
     get:
       operationId: unraidWhere
       summary: On which disks a path lies
+      description: |
+        A path in /mnt/user is looked up on every disk and pool. A folder
+        reports its size per disk, a file with several hard links also the
+        other names the user may see. Very large folders answer with
+        partial true.
       parameters:
         - $ref: "#/components/parameters/Path"
+      responses:
+        "200":
+          description: Where the path lies.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidWhere"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /unraid/transfer:
+    post:
+      operationId: unraidTransfer
+      summary: Check a copy, move or link against Unraid
+      description: |
+        Finds files that are the same at both ends through a disk share and
+        the user share above it, hard links the transfer breaks, whether the
+        files fit onto the disk Unraid would pick, and which sleeping disks
+        it wakes. ops/preflight carries the same report.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnraidTransfer"
+      responses:
+        "200":
+          description: What Unraid adds to the check.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidTransferReport"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /unraid/spindown:
     post:
       operationId: unraidSpindown
       summary: Spin disks down
+      description: Needs write access to Unraid, which is off by default. Without disks every disk spins down.
       x-access: admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                disks:
+                  type: array
+                  items:
+                    type: string
+                  example: [disk1, disk3]
+      responses:
+        "200":
+          description: The disks told to spin down.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [disks]
+                properties:
+                  disks:
+                    type: array
+                    items:
+                      type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /unraid/gather/plan:
     post:
       operationId: unraidGatherPlan
       summary: Plan moving a folder onto one disk
+      description: |
+        gather brings the folder onto one disk, scatter empties one disk of
+        it onto the others with whole subfolders kept together. Without disk
+        the plan suggests one.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, mode]
+              properties:
+                path:
+                  type: string
+                  example: /mnt/user/medien/Filme
+                mode:
+                  type: string
+                  enum: [gather, scatter]
+                disk:
+                  type: string
+      responses:
+        "200":
+          description: The plan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidGatherPlan"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /unraid/fixperms/scan:
     post:
       operationId: unraidFixpermsScan
       summary: Find entries with the wrong owner or mode
+      description: |
+        Counts what the fixPerms job would change. appdata, system, the VM
+        folders and the flash drive keep their owners and are listed in
+        kept, or named in blocked when the folder itself is one of them.
       x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+      responses:
+        "200":
+          description: The scan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidPermsScan"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /unraid/notify/test:
     post:
       operationId: unraidNotifyTest
       summary: Send a test notification
+      description: |
+        Needs write access to Unraid. The notice shows in the Unraid web
+        interface, the notification agents do not run for it.
       x-access: admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+                description:
+                  type: string
+      responses:
+        "204":
+          description: The notice was written.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+components:
+  schemas:
+    UnraidState:
+      type: object
+      required: [available, array, parity, disks, shares, write, spindownDelay]
+      properties:
+        available:
+          type: boolean
+        version:
+          type: string
+          example: 7.3.4
+        name:
+          type: string
+        array:
+          type: object
+          properties:
+            state:
+              type: string
+              example: STARTED
+            started:
+              type: boolean
+            disks:
+              type: integer
+            disabled:
+              type: integer
+            invalid:
+              type: integer
+            missing:
+              type: integer
+            fsState:
+              type: string
+            unmountable:
+              type: integer
+        parity:
+          $ref: "#/components/schemas/UnraidParity"
+        disks:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnraidDisk"
+        shares:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnraidShare"
+        write:
+          type: boolean
+          description: Spinning down and notifications are switched on.
+        spindownDelay:
+          type: integer
+          description: Default spin down delay in minutes, 0 for never.
+    UnraidParity:
+      type: object
+      required: [running, paused, pos, size, percent, lastErrors, lastExit]
+      properties:
+        running:
+          type: boolean
+        paused:
+          type: boolean
+        kind:
+          type: string
+          enum: [check, rebuild, clear]
+        action:
+          type: string
+          example: check P
+        correct:
+          type: boolean
+        pos:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int64
+        percent:
+          type: number
+        speed:
+          type: integer
+          format: int64
+          description: Bytes per second.
+        lastSync:
+          type: string
+          format: date-time
+        lastErrors:
+          type: integer
+        lastExit:
+          type: integer
+          description: 0 for a finished run, negative when it was cancelled.
+    UnraidDisk:
+      type: object
+      required: [name, kind, mounted, status, size, fsSize, free, used, spundown, rotational, errors]
+      properties:
+        name:
+          type: string
+          example: disk1
+        kind:
+          type: string
+          enum: [parity, data, pool, flash]
+        pool:
+          type: string
+          description: Set on the second and later devices of a pool.
+        mount:
+          type: string
+          example: /mnt/disk1
+        mounted:
+          type: boolean
+        status:
+          type: string
+          example: DISK_OK
+        fsStatus:
+          type: string
+        fsType:
+          type: string
+        size:
+          type: integer
+          format: int64
+        fsSize:
+          type: integer
+          format: int64
+        free:
+          type: integer
+          format: int64
+        used:
+          type: integer
+          format: int64
+        floor:
+          type: integer
+          format: int64
+          description: Minimum free space of a pool.
+        spundown:
+          type: boolean
+        rotational:
+          type: boolean
+        temp:
+          type: integer
+          description: Celsius, missing while the disk sleeps.
+        errors:
+          type: integer
+        color:
+          type: string
+          example: green-on
+    UnraidStorage:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [array, pool]
+        name:
+          type: string
+          description: The pool.
+    UnraidShare:
+      type: object
+      required: [name, primary, allocator, splitLevel, floor, disks, free, used, exclusive]
+      properties:
+        name:
+          type: string
+        comment:
+          type: string
+        primary:
+          $ref: "#/components/schemas/UnraidStorage"
+        secondary:
+          $ref: "#/components/schemas/UnraidStorage"
+        mover:
+          type: string
+          enum: [toSecondary, toPrimary]
+          description: toSecondary is "Cache to Array" in the share settings.
+        allocator:
+          type: string
+          enum: [highwater, fillup, mostfree]
+        splitLevel:
+          type: string
+          description: Empty splits any folder, 0 is manual, N splits the top N levels.
+        floor:
+          type: integer
+          format: int64
+        include:
+          type: array
+          items:
+            type: string
+        exclude:
+          type: array
+          items:
+            type: string
+        disks:
+          type: array
+          description: The array disks the share may write to.
+          items:
+            type: string
+        free:
+          type: integer
+          format: int64
+        used:
+          type: integer
+          format: int64
+        exclusive:
+          type: boolean
+    UnraidWhere:
+      type: object
+      required: [path, dir, "on", files, size]
+      properties:
+        path:
+          type: string
+        volume:
+          type: string
+          description: user, user0 or the disk or pool in the path. Empty off the array.
+        share:
+          type: string
+        dir:
+          type: boolean
+        "on":
+          type: array
+          items:
+            type: object
+            required: [device, files, size, asleep]
+            properties:
+              device:
+                type: string
+              files:
+                type: integer
+              size:
+                type: integer
+                format: int64
+              asleep:
+                type: boolean
+        files:
+          type: integer
+        size:
+          type: integer
+          format: int64
+        partial:
+          type: boolean
+        links:
+          type: object
+          required: [count, paths, complete]
+          properties:
+            count:
+              type: integer
+              description: Link count of the file, this path included.
+            paths:
+              type: array
+              items:
+                type: string
+            complete:
+              type: boolean
+    UnraidTransfer:
+      type: object
+      required: [kind, paths, dest]
+      properties:
+        kind:
+          type: string
+          enum: [copy, move, link]
+        paths:
+          type: array
+          items:
+            type: string
+        dest:
+          type: string
+          description: The destination folder.
+    UnraidTransferReport:
+      type: object
+      required: [linkable, wakes]
+      properties:
+        trap:
+          type: object
+          description: The files are the same at both ends. Copying or moving truncates them to 0 bytes.
+          required: [device, count, size, files, targets]
+          properties:
+            device:
+              type: string
+            count:
+              type: integer
+            size:
+              type: integer
+              format: int64
+            files:
+              type: array
+              items:
+                type: object
+                properties:
+                  path:
+                    type: string
+                  device:
+                    type: string
+                  size:
+                    type: integer
+                    format: int64
+            targets:
+              type: array
+              description: Other array disks for a safe copy, most free first.
+              items:
+                type: object
+                properties:
+                  disk:
+                    type: string
+                  free:
+                    type: integer
+                    format: int64
+        links:
+          type: object
+          description: Hard links the transfer turns into separate files.
+          required: [count, extra, files]
+          properties:
+            count:
+              type: integer
+            extra:
+              type: integer
+              format: int64
+              description: Space the data takes a second time.
+            files:
+              type: array
+              items:
+                type: object
+                properties:
+                  path:
+                    type: string
+                  size:
+                    type: integer
+                    format: int64
+                  names:
+                    type: integer
+                  others:
+                    type: array
+                    items:
+                      type: string
+                  complete:
+                    type: boolean
+        space:
+          type: object
+          description: Missing when the files fit.
+          required: [problem, share, allocator, floor, total, room, free]
+          properties:
+            problem:
+              type: string
+              enum: [noDisk, tooMuch, bigFile, poolFull]
+            share:
+              type: string
+            allocator:
+              type: string
+            floor:
+              type: integer
+              format: int64
+            total:
+              type: integer
+              format: int64
+            biggest:
+              type: object
+              properties:
+                path:
+                  type: string
+                size:
+                  type: integer
+                  format: int64
+            room:
+              type: integer
+              format: int64
+            disk:
+              type: string
+              description: The disk Unraid would pick.
+            free:
+              type: integer
+              format: int64
+            pool:
+              type: string
+            roomy:
+              type: string
+              description: A disk of the share that holds the largest file.
+            roomyFree:
+              type: integer
+              format: int64
+        linkable:
+          type: boolean
+          description: Hard links can stand in for a copy.
+        wakes:
+          type: array
+          items:
+            type: string
+        lands:
+          type: string
+          description: The disk or pool new files go to.
+        partial:
+          type: boolean
+    UnraidGatherPlan:
+      type: object
+      required: [path, mode, files, size, devices, options, moves, move, short, cached]
+      properties:
+        path:
+          type: string
+        mode:
+          type: string
+          enum: [gather, scatter]
+        disk:
+          type: string
+          description: Target for gather, source for scatter.
+        files:
+          type: integer
+        size:
+          type: integer
+          format: int64
+        devices:
+          type: array
+          items:
+            type: object
+            properties:
+              device:
+                type: string
+              now:
+                type: integer
+                format: int64
+              files:
+                type: integer
+              after:
+                type: integer
+                format: int64
+              free:
+                type: integer
+                format: int64
+              asleep:
+                type: boolean
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              disk:
+                type: string
+              move:
+                type: integer
+                format: int64
+              short:
+                type: integer
+                format: int64
+        moves:
+          type: integer
+        move:
+          type: integer
+          format: int64
+        short:
+          type: integer
+          format: int64
+          description: What fits nowhere and stays.
+        cached:
+          type: integer
+          description: Files still on a pool, the mover takes care of them.
+        partial:
+          type: boolean
+    UnraidPermsScan:
+      type: object
+      required: [path, owner, files, dirs, wrong, kept]
+      properties:
+        path:
+          type: string
+        blocked:
+          type: string
+          enum: [appdata, system, domains, flash, archive]
+        owner:
+          type: string
+          example: "99:100"
+        files:
+          type: integer
+        dirs:
+          type: integer
+        wrong:
+          type: integer
+        kept:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              reason:
+                type: string
+                enum: [appdata, system, domains, flash]
+              size:
+                type: integer
+                format: int64
+        partial:
+          type: boolean

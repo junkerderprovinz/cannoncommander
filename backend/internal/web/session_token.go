@@ -1,10 +1,12 @@
 package web
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
@@ -46,6 +48,11 @@ func replaceSessionToken(oldToken string, user *users.User) (string, error) {
 			logger.Errorf("failed to roll back replacement session token: %v", cleanupErr)
 		}
 		return "", err
+	}
+	if db := state.MainDB(); db != nil {
+		if err := accounts.Rotated(context.Background(), db, utils.HashSHA256(oldToken), utils.HashSHA256(newToken)); err != nil {
+			logger.Errorf("carry session over to its new token: %v", err)
+		}
 	}
 	return newToken, nil
 }

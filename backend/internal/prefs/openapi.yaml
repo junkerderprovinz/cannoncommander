@@ -6,41 +6,382 @@ paths:
     get:
       operationId: prefsGet
       summary: Own settings
+      description: |
+        Returns the settings as one flat object, as the interface keeps
+        them. Settings never saved are left out, so the client keeps its
+        own defaults for them. With a device the device settings (dual,
+        side, fkeys, colWidths) of that device lie on top of the others.
+      parameters:
+        - $ref: "#/components/parameters/Device"
+      responses:
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Prefs"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     put:
       operationId: prefsPut
       summary: Save own settings
+      description: |
+        Replaces the settings with the given object. With a device the
+        device settings are stored for that device and the rest for the
+        user. Without one everything is stored for the user, and the user's
+        values serve devices that have none of their own. Known settings
+        have to keep their JSON type. Sends prefs.changed to the user.
+      parameters:
+        - $ref: "#/components/parameters/Device"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Prefs"
+      responses:
+        "204":
+          description: Saved.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "413":
+          description: The settings are larger than 256 KiB.
   /me/bookmarks:
     get:
       operationId: bookmarksGet
       summary: Pinned folders
+      description: |
+        The pinned folders in their order. A user who never saved any gets
+        the usual shares that exist and that the user may open.
+      responses:
+        "200":
+          description: The bookmarks.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookmarkList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     put:
       operationId: bookmarksPut
       summary: Save pinned folders
+      description: Replaces the list. Paths have to be unique and may not point into an archive.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookmarkList"
+      responses:
+        "204":
+          description: Saved.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: The same path is pinned twice.
   /me/profiles:
     get:
       operationId: profilesList
       summary: Saved panel profiles
+      responses:
+        "200":
+          description: The profiles, oldest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       operationId: profileCreate
       summary: Save a panel profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "201":
+          description: The new profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: There are 100 profiles already.
   /me/profiles/{id}:
     put:
       operationId: profileUpdate
       summary: Change a panel profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "200":
+          description: The changed profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
     delete:
       operationId: profileDelete
       summary: Delete a panel profile
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /me/rename-presets:
     get:
       operationId: renamePresetsGet
       summary: Saved rename patterns
+      description: The user's own presets. The presets that come with the app live in the client.
+      responses:
+        "200":
+          description: The presets.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenamePresetList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     put:
       operationId: renamePresetsPut
       summary: Save rename patterns
+      description: Replaces the list. Names have to be unique.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RenamePresetList"
+      responses:
+        "204":
+          description: Saved.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Two presets share a name.
   /me/frequent:
     get:
       operationId: frequentGet
       summary: Often visited folders
+      description: |
+        The folders ranked like zoxide: the number of visits, weighted by
+        how recent the last one was (four times within the hour, twice
+        within the day, half within the week, a quarter after that).
+        Folders that are gone or out of reach are left out.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 8
+        - name: skip
+          in: query
+          description: A folder to leave out, usually the one that is open.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The best ranked folders first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FrequentFolder"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       operationId: frequentVisit
       summary: Count a visit to a folder
+      description: Folders inside an archive are not counted. The history keeps the 500 folders visited last.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+      responses:
+        "204":
+          description: Counted.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+components:
+  parameters:
+    Device:
+      name: device
+      in: query
+      description: An id the client picks once per device and keeps, up to 64 letters, digits, - and _.
+      schema:
+        type: string
+        pattern: "^[A-Za-z0-9_-]{1,64}$"
+  schemas:
+    Prefs:
+      type: object
+      description: Settings by name. The interface defines the names, see DEFAULT_PREFS in the frontend.
+      additionalProperties: true
+    Bookmark:
+      type: object
+      required: [name, path]
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        g:
+          type: string
+          description: Glyph name, for example IconDownload.
+    BookmarkList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/Bookmark"
+    ProfileInput:
+      type: object
+      required: [name, panels]
+      properties:
+        name:
+          type: string
+        dual:
+          type: boolean
+        columns:
+          type: array
+          items:
+            type: string
+        panels:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            type: object
+            required: [cur, tabs]
+            properties:
+              cur:
+                type: integer
+                description: Index of the active tab.
+              tabs:
+                type: array
+                minItems: 1
+                maxItems: 50
+                items:
+                  type: string
+                  description: Folder of the tab.
+    Profile:
+      allOf:
+        - $ref: "#/components/schemas/ProfileInput"
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: integer
+              format: int64
+    RenamePresetList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            required: [name, options]
+            properties:
+              name:
+                type: string
+              options:
+                type: object
+                description: The fields of the multi rename window.
+                properties:
+                  name:
+                    type: string
+                    example: "[A]_[C3]"
+                  ext:
+                    type: string
+                    example: "[E]"
+                  find:
+                    type: string
+                  repl:
+                    type: string
+                  regex:
+                    type: boolean
+                  case:
+                    type: string
+                    enum: [keep, lower, upper, title]
+    FrequentFolder:
+      type: object
+      required: [path, visits, last, rank]
+      properties:
+        path:
+          type: string
+        visits:
+          type: integer
+        last:
+          type: string
+          format: date-time
+        rank:
+          type: number
+    PrefsChanged:
+      type: object
+      description: Payload of prefs.changed, sent only to the user it concerns.
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [settings, bookmarks, profiles, renamePresets, savedSearches]
+        device:
+          type: string
+          description: The device whose settings were saved.

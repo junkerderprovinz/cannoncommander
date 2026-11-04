@@ -199,6 +199,19 @@ func HashedTokenOwner(tokenString string) (userID uint64, isSession bool, ok boo
 	return info.UserID, info.IsSession, true
 }
 
+// SessionAlive reports whether the session token with this hash still logs in.
+func SessionAlive(tokenHash string) bool {
+	return accessDb != nil && accessDb.SessionAlive(tokenHash)
+}
+
+// RevokeTokenHash ends the token with this hash at once.
+func RevokeTokenHash(tokenHash string) error {
+	if accessDb == nil {
+		return fmt.Errorf("access storage not available")
+	}
+	return accessDb.RevokeTokenHash(tokenHash)
+}
+
 func RemoveApiToken(tokenString string) error {
 	return accessDb.RemoveApiToken(tokenString)
 }

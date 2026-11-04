@@ -14,10 +14,36 @@ paths:
     get:
       operationId: sessionsList
       summary: Open sessions
+      description: |
+        The logins of the own account that are still valid, the one used
+        last first. A session shows up once it made a request to this API.
+      responses:
+        "200":
+          description: The sessions.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Session"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /me/sessions/{id}:
     delete:
       operationId: sessionEnd
       summary: End a session
+      description: Logs that session out at once. Ending the current session logs out this client.
+      responses:
+        "204":
+          description: Ended.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /me/tokens:
     get:
       operationId: tokensList
@@ -106,3 +132,26 @@ paths:
       operationId: activityList
       summary: Activity log
       x-access: admin
+components:
+  schemas:
+    Session:
+      type: object
+      required: [id, created, seen, userAgent, ip, current]
+      properties:
+        id:
+          type: string
+        created:
+          type: string
+          format: date-time
+          description: First request of the session.
+        seen:
+          type: string
+          format: date-time
+          description: Last request, to the minute.
+        userAgent:
+          type: string
+        ip:
+          type: string
+        current:
+          type: boolean
+          description: The session this request came with.

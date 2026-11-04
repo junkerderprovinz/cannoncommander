@@ -33,7 +33,10 @@ tags:
   - name: tools
     description: Compare, sync, duplicates, disk usage, clean up and checksums.
   - name: labels
-    description: Colour labels and tags on paths.
+    description: |
+      Colour labels and tags on paths. They are shared, every user sees the
+      labels of the files they may see. They follow a file when the server
+      renames, moves or copies it.
   - name: prefs
     description: Settings, bookmarks, profiles and folder history of the own account.
   - name: accounts
@@ -41,7 +44,9 @@ tags:
   - name: shares
     description: Share links and the public share pages.
   - name: unraid
-    description: Array state, file placement and the Unraid tools.
+    description: |
+      Array state, file placement and the Unraid tools. Sizes are bytes.
+      Outside Unraid the state says available false and placements stay empty.
   - name: remotes
     description: rclone remotes mounted below /mnt/remotes.
   - name: system
@@ -656,21 +661,69 @@ paths:
     get:
       operationId: savedSearchesList
       summary: Saved searches
-      tags: [search]
+      description: The own saved searches, oldest first.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The saved searches.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SavedSearch"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [search]
     post:
       operationId: savedSearchCreate
       summary: Save a search
-      tags: [search]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedSearchInput"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          description: The new saved search.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSearch"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: There are 200 saved searches already.
+      tags: [search]
   /search/saved/{id}:
     put:
       operationId: savedSearchUpdate
       summary: Change a saved search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedSearchInput"
+      responses:
+        "200":
+          description: The changed saved search.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSearch"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [search]
       parameters:
         - name: id
@@ -678,12 +731,16 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     delete:
       operationId: savedSearchDelete
       summary: Delete a saved search
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [search]
       parameters:
         - name: id
@@ -691,9 +748,6 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /tools/compare:
     post:
       operationId: toolsCompare
@@ -754,90 +808,358 @@ paths:
     get:
       operationId: labelsGet
       summary: Colours and tags with their names
-      tags: [labels]
+      description: The colours in their order and every tag in German alphabetical order, each with the number of paths carrying it.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The colour and tag lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelLists"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [labels]
   /labels/colours:
     put:
       operationId: labelColoursPut
       summary: Rename or recolour the colour labels
-      tags: [labels]
+      description: |
+        Replaces the colour list, in the given order. An entry with an id
+        changes that colour, one without is a new colour. Colours left out
+        are taken off every path. Sends labels.changed to everyone.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [colours]
+              properties:
+                colours:
+                  type: array
+                  maxItems: 64
+                  items:
+                    type: object
+                    required: [name, hex]
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                        description: Empty keeps the name the app gives its own colours.
+                      hex:
+                        type: string
+                        example: "#2ec4b6"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The new lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelLists"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [labels]
   /labels/tags:
     put:
       operationId: labelTagsPut
       summary: Change the list of tags
-      tags: [labels]
+      description: |
+        Replaces the tag list. An entry with from renames that tag on every
+        path, and two tags renamed to the same name become one. An entry
+        without from is a tag no file needs to carry yet. Tags left out are
+        taken off every path. Sends labels.changed to everyone.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tags]
+              properties:
+                tags:
+                  type: array
+                  maxItems: 1000
+                  items:
+                    type: object
+                    required: [name]
+                    properties:
+                      from:
+                        type: string
+                      name:
+                        type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The new lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelLists"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [labels]
   /labels/items:
     get:
       operationId: labelItemsGet
       summary: Labels of the entries in a folder
-      tags: [labels]
+      description: |
+        The labelled entries of a folder the user may see, keyed by name.
+        With deep=true everything below the folder, keyed by the path
+        relative to it, for the flat view and search results.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: deep
+          in: query
+          schema:
+            type: boolean
+            default: false
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The labels.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [path, items]
+                properties:
+                  path:
+                    type: string
+                  items:
+                    type: object
+                    additionalProperties:
+                      $ref: "#/components/schemas/Label"
+                example:
+                  path: /mnt/user/dokumente
+                  items:
+                    Mietvertrag.pdf: {colour: red, tags: [wichtig]}
+                    Rechnung-Oktober.pdf: {tags: [Steuer]}
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [labels]
     put:
       operationId: labelItemsPut
       summary: Set colour and tags on paths
-      tags: [labels]
+      description: |
+        Changes the labels of up to 10000 paths at once. colour sets the
+        colour, an empty colour clears it. tags replaces the tags, add and
+        remove adjust them. Fields left out stay as they are. Needs the
+        right to change each path, so read only places carry no labels.
+        Sends labels.changed to the watchers of each folder.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths]
+              properties:
+                paths:
+                  type: array
+                  minItems: 1
+                  maxItems: 10000
+                  items:
+                    type: string
+                colour:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                add:
+                  type: array
+                  items:
+                    type: string
+                remove:
+                  type: array
+                  items:
+                    type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The labels the paths carry after the change, keyed by path. An empty object means no label.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: object
+                    additionalProperties:
+                      $ref: "#/components/schemas/Label"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [labels]
   /me/prefs:
     get:
       operationId: prefsGet
       summary: Own settings
-      tags: [prefs]
+      description: |
+        Returns the settings as one flat object, as the interface keeps
+        them. Settings never saved are left out, so the client keeps its
+        own defaults for them. With a device the device settings (dual,
+        side, fkeys, colWidths) of that device lie on top of the others.
+      parameters:
+        - $ref: "#/components/parameters/Device"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Prefs"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     put:
       operationId: prefsPut
       summary: Save own settings
-      tags: [prefs]
+      description: |
+        Replaces the settings with the given object. With a device the
+        device settings are stored for that device and the rest for the
+        user. Without one everything is stored for the user, and the user's
+        values serve devices that have none of their own. Known settings
+        have to keep their JSON type. Sends prefs.changed to the user.
+      parameters:
+        - $ref: "#/components/parameters/Device"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Prefs"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "204":
+          description: Saved.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "413":
+          description: The settings are larger than 256 KiB.
+      tags: [prefs]
   /me/bookmarks:
     get:
       operationId: bookmarksGet
       summary: Pinned folders
-      tags: [prefs]
+      description: |
+        The pinned folders in their order. A user who never saved any gets
+        the usual shares that exist and that the user may open.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The bookmarks.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookmarkList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     put:
       operationId: bookmarksPut
       summary: Save pinned folders
-      tags: [prefs]
+      description: Replaces the list. Paths have to be unique and may not point into an archive.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookmarkList"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "204":
+          description: Saved.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: The same path is pinned twice.
+      tags: [prefs]
   /me/profiles:
     get:
       operationId: profilesList
       summary: Saved panel profiles
-      tags: [prefs]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The profiles, oldest first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     post:
       operationId: profileCreate
       summary: Save a panel profile
-      tags: [prefs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          description: The new profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: There are 100 profiles already.
+      tags: [prefs]
   /me/profiles/{id}:
     put:
       operationId: profileUpdate
       summary: Change a panel profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "200":
+          description: The changed profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [prefs]
       parameters:
         - name: id
@@ -845,12 +1167,16 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
     delete:
       operationId: profileDelete
       summary: Delete a panel profile
+      responses:
+        "204":
+          description: Deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [prefs]
       parameters:
         - name: id
@@ -858,39 +1184,107 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /me/rename-presets:
     get:
       operationId: renamePresetsGet
       summary: Saved rename patterns
-      tags: [prefs]
+      description: The user's own presets. The presets that come with the app live in the client.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The presets.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenamePresetList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     put:
       operationId: renamePresetsPut
       summary: Save rename patterns
-      tags: [prefs]
+      description: Replaces the list. Names have to be unique.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RenamePresetList"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "204":
+          description: Saved.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Two presets share a name.
+      tags: [prefs]
   /me/frequent:
     get:
       operationId: frequentGet
       summary: Often visited folders
-      tags: [prefs]
+      description: |
+        The folders ranked like zoxide: the number of visits, weighted by
+        how recent the last one was (four times within the hour, twice
+        within the day, half within the week, a quarter after that).
+        Folders that are gone or out of reach are left out.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 8
+        - name: skip
+          in: query
+          description: A folder to leave out, usually the one that is open.
+          schema:
+            type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The best ranked folders first.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FrequentFolder"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [prefs]
     post:
       operationId: frequentVisit
       summary: Count a visit to a folder
-      tags: [prefs]
+      description: Folders inside an archive are not counted. The history keeps the 500 folders visited last.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "204":
+          description: Counted.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [prefs]
   /me:
     get:
       operationId: meGet
@@ -911,14 +1305,37 @@ paths:
     get:
       operationId: sessionsList
       summary: Open sessions
-      tags: [accounts]
+      description: |
+        The logins of the own account that are still valid, the one used
+        last first. A session shows up once it made a request to this API.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The sessions.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Session"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [accounts]
   /me/sessions/{id}:
     delete:
       operationId: sessionEnd
       summary: End a session
+      description: Logs that session out at once. Ending the current session logs out this client.
+      responses:
+        "204":
+          description: Ended.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       tags: [accounts]
       parameters:
         - name: id
@@ -926,9 +1343,6 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
   /me/tokens:
     get:
       operationId: tokensList
@@ -1291,56 +1705,217 @@ paths:
     get:
       operationId: unraidState
       summary: Disks, shares, pools and parity
-      tags: [unraid]
+      description: |
+        Read from emhttp's disks.ini, shares.ini and var.ini, the share
+        settings on the flash drive and /proc/mdstat. Empty array slots are
+        left out.
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The server state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidState"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [unraid]
   /unraid/where:
     get:
       operationId: unraidWhere
       summary: On which disks a path lies
+      description: |
+        A path in /mnt/user is looked up on every disk and pool. A folder
+        reports its size per disk, a file with several hard links also the
+        other names the user may see. Very large folders answer with
+        partial true.
       parameters:
         - $ref: "#/components/parameters/Path"
-      tags: [unraid]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: Where the path lies.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidWhere"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [unraid]
+  /unraid/transfer:
+    post:
+      operationId: unraidTransfer
+      summary: Check a copy, move or link against Unraid
+      description: |
+        Finds files that are the same at both ends through a disk share and
+        the user share above it, hard links the transfer breaks, whether the
+        files fit onto the disk Unraid would pick, and which sleeping disks
+        it wakes. ops/preflight carries the same report.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnraidTransfer"
+      responses:
+        "200":
+          description: What Unraid adds to the check.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidTransferReport"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [unraid]
   /unraid/spindown:
     post:
       operationId: unraidSpindown
       summary: Spin disks down
+      description: Needs write access to Unraid, which is off by default. Without disks every disk spins down.
       x-access: admin
-      tags: [unraid]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                disks:
+                  type: array
+                  items:
+                    type: string
+                  example: [disk1, disk3]
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The disks told to spin down.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [disks]
+                properties:
+                  disks:
+                    type: array
+                    items:
+                      type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [unraid]
   /unraid/gather/plan:
     post:
       operationId: unraidGatherPlan
       summary: Plan moving a folder onto one disk
+      description: |
+        gather brings the folder onto one disk, scatter empties one disk of
+        it onto the others with whole subfolders kept together. Without disk
+        the plan suggests one.
       x-access: admin
-      tags: [unraid]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, mode]
+              properties:
+                path:
+                  type: string
+                  example: /mnt/user/medien/Filme
+                mode:
+                  type: string
+                  enum: [gather, scatter]
+                disk:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The plan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidGatherPlan"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [unraid]
   /unraid/fixperms/scan:
     post:
       operationId: unraidFixpermsScan
       summary: Find entries with the wrong owner or mode
+      description: |
+        Counts what the fixPerms job would change. appdata, system, the VM
+        folders and the flash drive keep their owners and are listed in
+        kept, or named in blocked when the folder itself is one of them.
       x-access: admin
-      tags: [unraid]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The scan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidPermsScan"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [unraid]
   /unraid/notify/test:
     post:
       operationId: unraidNotifyTest
       summary: Send a test notification
+      description: |
+        Needs write access to Unraid. The notice shows in the Unraid web
+        interface, the notification agents do not run for it.
       x-access: admin
-      tags: [unraid]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+                description:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "204":
+          description: The notice was written.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [unraid]
   /remotes:
     get:
       operationId: remotesList
@@ -1610,6 +2185,13 @@ components:
       schema:
         type: string
         example: /mnt/user/filme
+    Device:
+      name: device
+      in: query
+      description: An id the client picks once per device and keeps, up to 64 letters, digits, - and _.
+      schema:
+        type: string
+        pattern: "^[A-Za-z0-9_-]{1,64}$"
   responses:
     NotImplemented:
       description: Part of the contract, not built yet.
@@ -1735,7 +2317,7 @@ components:
         ino:
           type: integer
           format: int64
-          description: Inode number. On /mnt/user it is the one the user share reports, not the disk's.
+          description: Inode number. Missing below /mnt/user in a listing, because the share reports numbers of its own. fs/stat gives the one on the disk.
         nlink:
           type: integer
           format: int64
@@ -1839,6 +2421,11 @@ components:
               type: integer
               format: int64
               description: Folders anywhere below a folder.
+            devices:
+              type: array
+              items:
+                type: string
+              description: Below /mnt/user, the disks and pools that hold the path, such as cache or disk2.
             volume:
               $ref: "#/components/schemas/Volume"
     FsText:
@@ -1882,6 +2469,695 @@ components:
           type: string
           format: byte
           description: The bytes, base64.
+    SavedSearchInput:
+      type: object
+      required: [name, query]
+      properties:
+        name:
+          type: string
+        query:
+          type: object
+          description: |
+            The search as the search window sends it, stored as given. When
+            it has a field in, that has to be a folder path.
+          additionalProperties: true
+          example: {text: "", in: /mnt/user, name: "*.iso *.img", min: 1 GB, when: any, type: all, hidden: false}
+    SavedSearch:
+      allOf:
+        - $ref: "#/components/schemas/SavedSearchInput"
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: integer
+              format: int64
+    Label:
+      type: object
+      properties:
+        colour:
+          type: string
+          description: Id of the colour.
+        tags:
+          type: array
+          items:
+            type: string
+    LabelLists:
+      type: object
+      required: [colours, tags]
+      properties:
+        colours:
+          type: array
+          items:
+            type: object
+            required: [id, name, hex, count]
+            properties:
+              id:
+                type: string
+                example: red
+              name:
+                type: string
+                description: Empty for the colours the app comes with, which the client names in its language.
+              hex:
+                type: string
+                example: "#ff6b72"
+              count:
+                type: integer
+        tags:
+          type: array
+          items:
+            type: object
+            required: [name, count]
+            properties:
+              name:
+                type: string
+              count:
+                type: integer
+    LabelsChanged:
+      type: object
+      description: |
+        Payload of labels.changed. Kind colours or tags reaches everyone,
+        kind items reaches the watchers of the folder in path.
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [colours, tags, items]
+        path:
+          type: string
+    Prefs:
+      type: object
+      description: Settings by name. The interface defines the names, see DEFAULT_PREFS in the frontend.
+      additionalProperties: true
+    Bookmark:
+      type: object
+      required: [name, path]
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        g:
+          type: string
+          description: Glyph name, for example IconDownload.
+    BookmarkList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/Bookmark"
+    ProfileInput:
+      type: object
+      required: [name, panels]
+      properties:
+        name:
+          type: string
+        dual:
+          type: boolean
+        columns:
+          type: array
+          items:
+            type: string
+        panels:
+          type: array
+          minItems: 1
+          maxItems: 2
+          items:
+            type: object
+            required: [cur, tabs]
+            properties:
+              cur:
+                type: integer
+                description: Index of the active tab.
+              tabs:
+                type: array
+                minItems: 1
+                maxItems: 50
+                items:
+                  type: string
+                  description: Folder of the tab.
+    Profile:
+      allOf:
+        - $ref: "#/components/schemas/ProfileInput"
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: integer
+              format: int64
+    RenamePresetList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            required: [name, options]
+            properties:
+              name:
+                type: string
+              options:
+                type: object
+                description: The fields of the multi rename window.
+                properties:
+                  name:
+                    type: string
+                    example: "[A]_[C3]"
+                  ext:
+                    type: string
+                    example: "[E]"
+                  find:
+                    type: string
+                  repl:
+                    type: string
+                  regex:
+                    type: boolean
+                  case:
+                    type: string
+                    enum: [keep, lower, upper, title]
+    FrequentFolder:
+      type: object
+      required: [path, visits, last, rank]
+      properties:
+        path:
+          type: string
+        visits:
+          type: integer
+        last:
+          type: string
+          format: date-time
+        rank:
+          type: number
+    PrefsChanged:
+      type: object
+      description: Payload of prefs.changed, sent only to the user it concerns.
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [settings, bookmarks, profiles, renamePresets, savedSearches]
+        device:
+          type: string
+          description: The device whose settings were saved.
+    Session:
+      type: object
+      required: [id, created, seen, userAgent, ip, current]
+      properties:
+        id:
+          type: string
+        created:
+          type: string
+          format: date-time
+          description: First request of the session.
+        seen:
+          type: string
+          format: date-time
+          description: Last request, to the minute.
+        userAgent:
+          type: string
+        ip:
+          type: string
+        current:
+          type: boolean
+          description: The session this request came with.
+    UnraidState:
+      type: object
+      required: [available, array, parity, disks, shares, write, spindownDelay]
+      properties:
+        available:
+          type: boolean
+        version:
+          type: string
+          example: 7.3.4
+        name:
+          type: string
+        array:
+          type: object
+          properties:
+            state:
+              type: string
+              example: STARTED
+            started:
+              type: boolean
+            disks:
+              type: integer
+            disabled:
+              type: integer
+            invalid:
+              type: integer
+            missing:
+              type: integer
+            fsState:
+              type: string
+            unmountable:
+              type: integer
+        parity:
+          $ref: "#/components/schemas/UnraidParity"
+        disks:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnraidDisk"
+        shares:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnraidShare"
+        write:
+          type: boolean
+          description: Spinning down and notifications are switched on.
+        spindownDelay:
+          type: integer
+          description: Default spin down delay in minutes, 0 for never.
+    UnraidParity:
+      type: object
+      required: [running, paused, pos, size, percent, lastErrors, lastExit]
+      properties:
+        running:
+          type: boolean
+        paused:
+          type: boolean
+        kind:
+          type: string
+          enum: [check, rebuild, clear]
+        action:
+          type: string
+          example: check P
+        correct:
+          type: boolean
+        pos:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int64
+        percent:
+          type: number
+        speed:
+          type: integer
+          format: int64
+          description: Bytes per second.
+        lastSync:
+          type: string
+          format: date-time
+        lastErrors:
+          type: integer
+        lastExit:
+          type: integer
+          description: 0 for a finished run, negative when it was cancelled.
+    UnraidDisk:
+      type: object
+      required: [name, kind, mounted, status, size, fsSize, free, used, spundown, rotational, errors]
+      properties:
+        name:
+          type: string
+          example: disk1
+        kind:
+          type: string
+          enum: [parity, data, pool, flash]
+        pool:
+          type: string
+          description: Set on the second and later devices of a pool.
+        mount:
+          type: string
+          example: /mnt/disk1
+        mounted:
+          type: boolean
+        status:
+          type: string
+          example: DISK_OK
+        fsStatus:
+          type: string
+        fsType:
+          type: string
+        size:
+          type: integer
+          format: int64
+        fsSize:
+          type: integer
+          format: int64
+        free:
+          type: integer
+          format: int64
+        used:
+          type: integer
+          format: int64
+        floor:
+          type: integer
+          format: int64
+          description: Minimum free space of a pool.
+        spundown:
+          type: boolean
+        rotational:
+          type: boolean
+        temp:
+          type: integer
+          description: Celsius, missing while the disk sleeps.
+        errors:
+          type: integer
+        color:
+          type: string
+          example: green-on
+    UnraidStorage:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [array, pool]
+        name:
+          type: string
+          description: The pool.
+    UnraidShare:
+      type: object
+      required: [name, primary, allocator, splitLevel, floor, disks, free, used, exclusive]
+      properties:
+        name:
+          type: string
+        comment:
+          type: string
+        primary:
+          $ref: "#/components/schemas/UnraidStorage"
+        secondary:
+          $ref: "#/components/schemas/UnraidStorage"
+        mover:
+          type: string
+          enum: [toSecondary, toPrimary]
+          description: toSecondary is "Cache to Array" in the share settings.
+        allocator:
+          type: string
+          enum: [highwater, fillup, mostfree]
+        splitLevel:
+          type: string
+          description: Empty splits any folder, 0 is manual, N splits the top N levels.
+        floor:
+          type: integer
+          format: int64
+        include:
+          type: array
+          items:
+            type: string
+        exclude:
+          type: array
+          items:
+            type: string
+        disks:
+          type: array
+          description: The array disks the share may write to.
+          items:
+            type: string
+        free:
+          type: integer
+          format: int64
+        used:
+          type: integer
+          format: int64
+        exclusive:
+          type: boolean
+    UnraidWhere:
+      type: object
+      required: [path, dir, "on", files, size]
+      properties:
+        path:
+          type: string
+        volume:
+          type: string
+          description: user, user0 or the disk or pool in the path. Empty off the array.
+        share:
+          type: string
+        dir:
+          type: boolean
+        "on":
+          type: array
+          items:
+            type: object
+            required: [device, files, size, asleep]
+            properties:
+              device:
+                type: string
+              files:
+                type: integer
+              size:
+                type: integer
+                format: int64
+              asleep:
+                type: boolean
+        files:
+          type: integer
+        size:
+          type: integer
+          format: int64
+        partial:
+          type: boolean
+        links:
+          type: object
+          required: [count, paths, complete]
+          properties:
+            count:
+              type: integer
+              description: Link count of the file, this path included.
+            paths:
+              type: array
+              items:
+                type: string
+            complete:
+              type: boolean
+    UnraidTransfer:
+      type: object
+      required: [kind, paths, dest]
+      properties:
+        kind:
+          type: string
+          enum: [copy, move, link]
+        paths:
+          type: array
+          items:
+            type: string
+        dest:
+          type: string
+          description: The destination folder.
+    UnraidTransferReport:
+      type: object
+      required: [linkable, wakes]
+      properties:
+        trap:
+          type: object
+          description: The files are the same at both ends. Copying or moving truncates them to 0 bytes.
+          required: [device, count, size, files, targets]
+          properties:
+            device:
+              type: string
+            count:
+              type: integer
+            size:
+              type: integer
+              format: int64
+            files:
+              type: array
+              items:
+                type: object
+                properties:
+                  path:
+                    type: string
+                  device:
+                    type: string
+                  size:
+                    type: integer
+                    format: int64
+            targets:
+              type: array
+              description: Other array disks for a safe copy, most free first.
+              items:
+                type: object
+                properties:
+                  disk:
+                    type: string
+                  free:
+                    type: integer
+                    format: int64
+        links:
+          type: object
+          description: Hard links the transfer turns into separate files.
+          required: [count, extra, files]
+          properties:
+            count:
+              type: integer
+            extra:
+              type: integer
+              format: int64
+              description: Space the data takes a second time.
+            files:
+              type: array
+              items:
+                type: object
+                properties:
+                  path:
+                    type: string
+                  size:
+                    type: integer
+                    format: int64
+                  names:
+                    type: integer
+                  others:
+                    type: array
+                    items:
+                      type: string
+                  complete:
+                    type: boolean
+        space:
+          type: object
+          description: Missing when the files fit.
+          required: [problem, share, allocator, floor, total, room, free]
+          properties:
+            problem:
+              type: string
+              enum: [noDisk, tooMuch, bigFile, poolFull]
+            share:
+              type: string
+            allocator:
+              type: string
+            floor:
+              type: integer
+              format: int64
+            total:
+              type: integer
+              format: int64
+            biggest:
+              type: object
+              properties:
+                path:
+                  type: string
+                size:
+                  type: integer
+                  format: int64
+            room:
+              type: integer
+              format: int64
+            disk:
+              type: string
+              description: The disk Unraid would pick.
+            free:
+              type: integer
+              format: int64
+            pool:
+              type: string
+            roomy:
+              type: string
+              description: A disk of the share that holds the largest file.
+            roomyFree:
+              type: integer
+              format: int64
+        linkable:
+          type: boolean
+          description: Hard links can stand in for a copy.
+        wakes:
+          type: array
+          items:
+            type: string
+        lands:
+          type: string
+          description: The disk or pool new files go to.
+        partial:
+          type: boolean
+    UnraidGatherPlan:
+      type: object
+      required: [path, mode, files, size, devices, options, moves, move, short, cached]
+      properties:
+        path:
+          type: string
+        mode:
+          type: string
+          enum: [gather, scatter]
+        disk:
+          type: string
+          description: Target for gather, source for scatter.
+        files:
+          type: integer
+        size:
+          type: integer
+          format: int64
+        devices:
+          type: array
+          items:
+            type: object
+            properties:
+              device:
+                type: string
+              now:
+                type: integer
+                format: int64
+              files:
+                type: integer
+              after:
+                type: integer
+                format: int64
+              free:
+                type: integer
+                format: int64
+              asleep:
+                type: boolean
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              disk:
+                type: string
+              move:
+                type: integer
+                format: int64
+              short:
+                type: integer
+                format: int64
+        moves:
+          type: integer
+        move:
+          type: integer
+          format: int64
+        short:
+          type: integer
+          format: int64
+          description: What fits nowhere and stays.
+        cached:
+          type: integer
+          description: Files still on a pool, the mover takes care of them.
+        partial:
+          type: boolean
+    UnraidPermsScan:
+      type: object
+      required: [path, owner, files, dirs, wrong, kept]
+      properties:
+        path:
+          type: string
+        blocked:
+          type: string
+          enum: [appdata, system, domains, flash, archive]
+        owner:
+          type: string
+          example: "99:100"
+        files:
+          type: integer
+        dirs:
+          type: integer
+        wrong:
+          type: integer
+        kept:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              reason:
+                type: string
+                enum: [appdata, system, domains, flash]
+              size:
+                type: integer
+                format: int64
+        partial:
+          type: boolean
     WatchRequest:
       type: object
       required: [clientId, paths]
