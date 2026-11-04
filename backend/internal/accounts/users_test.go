@@ -187,3 +187,19 @@ func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
 	}
 	w.must(http.StatusNotFound, w.as(w.admin.Username, "DELETE", "/admin/users/anna", nil))
 }
+
+func TestTheRoleDecidesWhoMayShare(t *testing.T) {
+	w := newWorld(t)
+	w.addUser("anna", "user", "/mnt/user/fotos")
+	w.addUser("gast", "readonly", "/mnt/user/fotos")
+	w.addUser("boss", "admin", "/mnt/user/fotos")
+	link := map[string]any{"paths": []string{"/mnt/user/fotos"}}
+	w.must(http.StatusCreated, w.as("anna", "POST", "/shares", link))
+	w.must(http.StatusCreated, w.as("boss", "POST", "/shares", link))
+	w.must(http.StatusForbidden, w.as("gast", "POST", "/shares", link))
+
+	w.must(http.StatusOK, w.as(w.admin.Username, "PATCH", "/admin/users/gast", map[string]any{"role": "user"}))
+	w.must(http.StatusCreated, w.as("gast", "POST", "/shares", link))
+	w.must(http.StatusOK, w.as(w.admin.Username, "PATCH", "/admin/users/anna", map[string]any{"role": "readonly"}))
+	w.must(http.StatusForbidden, w.as("anna", "POST", "/shares", link))
+}
