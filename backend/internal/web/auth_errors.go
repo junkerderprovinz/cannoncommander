@@ -4,7 +4,7 @@ import (
 	libError "errors"
 	"net/http"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/errors"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 )
 
 // loginMethodHTTPStatus maps a login error to an HTTP status and client-safe message.

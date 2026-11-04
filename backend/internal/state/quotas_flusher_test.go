@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestQuotaFlusherConcurrentFlushAndStop(t *testing.T) {

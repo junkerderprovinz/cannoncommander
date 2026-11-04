@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/toolaccess"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/toolaccess"
 )
 
 const toolAccessDefaultsSettingKey = "toolAccessDefaults"

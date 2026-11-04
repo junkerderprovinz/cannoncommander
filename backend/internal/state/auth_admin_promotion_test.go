@@ -5,12 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestAuthAdminPromotionWithConfigUserDefaults(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	configPath := writeAuthAdminTestConfig(t)
 	settings.Initialize(configPath)
 	settings.Env.IsPlaywright = true
@@ -46,7 +46,7 @@ func TestAuthAdminPromotionWithConfigUserDefaults(t *testing.T) {
 }
 
 func TestAuthAdminPromotionWithEnforcedAdminDefault(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	configPath := filepath.Join(t.TempDir(), "config.yaml")
 	configYAML := `server:
   sources:

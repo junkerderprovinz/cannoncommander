@@ -1,8 +1,8 @@
 package activity
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // Actor carries request-scoped identity for activity recording and filtering.

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/access"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
 )
 
 // The lowercase marker is set by StartupMigrateAccessRuleKeys after all

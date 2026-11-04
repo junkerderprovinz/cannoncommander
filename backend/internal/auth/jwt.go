@@ -11,8 +11,8 @@ import (
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // MethodJwtAuth is used to identify JWT external authentication.
@@ -28,11 +28,11 @@ type JwtAuth struct {
 // ExternalJwtClaims represents the expected claims in an external JWT token
 type ExternalJwtClaims struct {
 	jwt.RegisteredClaims
-	Username string                 `json:"sub"`                    // subject claim (username)
-	Email    string                 `json:"email,omitempty"`        // email claim
-	Name     string                 `json:"name,omitempty"`         // full name claim
-	Groups   []string               `json:"groups,omitempty"`       // groups claim
-	Custom   map[string]interface{} `json:"-"`                      // catch-all for custom claims
+	Username string                 `json:"sub"`              // subject claim (username)
+	Email    string                 `json:"email,omitempty"`  // email claim
+	Name     string                 `json:"name,omitempty"`   // full name claim
+	Groups   []string               `json:"groups,omitempty"` // groups claim
+	Custom   map[string]interface{} `json:"-"`                // catch-all for custom claims
 }
 
 // Auth authenticates the user via an external JWT token.

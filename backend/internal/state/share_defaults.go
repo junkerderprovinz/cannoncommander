@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 const (

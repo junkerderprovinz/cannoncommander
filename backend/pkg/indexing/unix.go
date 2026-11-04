@@ -7,8 +7,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 func CheckWindowsHidden(realpath string) bool {

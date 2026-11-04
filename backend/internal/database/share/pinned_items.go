@@ -5,7 +5,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // PinnedItems maps share-relative directory paths to pinned item names.

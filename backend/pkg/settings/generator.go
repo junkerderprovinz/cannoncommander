@@ -395,7 +395,7 @@ func isSkippableStructType(t reflect.Type) bool {
 	pkgPath := t.PkgPath()
 
 	// Skip external packages
-	if pkgPath != "" && !strings.Contains(pkgPath, "filebrowser/backend") {
+	if pkgPath != "" && !strings.Contains(pkgPath, "cannoncommander/backend") {
 		return true
 	}
 
@@ -727,7 +727,7 @@ func buildNodeWithDefaults(v reflect.Value, comm CommentsMap, defaults reflect.V
 					// Build value node for embedded field
 					var valNode *yaml.Node
 					var err error
-					generateConfig := os.Getenv("FILEBROWSER_GENERATE_CONFIG") == "true"
+					generateConfig := os.Getenv("CC_GENERATE_CONFIG") == "true"
 					if secrets[embeddedTypeName][embeddedField.Name] && !generateConfig {
 						fieldValue := embeddedFieldValue.Interface()
 						if str, ok := fieldValue.(string); ok && str == "" {
@@ -824,7 +824,7 @@ func buildNodeWithDefaults(v reflect.Value, comm CommentsMap, defaults reflect.V
 			// Check if this field should be redacted as a secret
 			var valNode *yaml.Node
 			var err error
-			generateConfig := os.Getenv("FILEBROWSER_GENERATE_CONFIG") == "true"
+			generateConfig := os.Getenv("CC_GENERATE_CONFIG") == "true"
 			if secrets[typeName][sf.Name] && !generateConfig {
 				// Check if the secret value is empty
 				fieldValue := currentField.Interface()

@@ -1,0 +1,16 @@
+http:
+  port: 80
+  baseURL: "/"
+server:
+  cacheDir: "/config/cache"
+  logging:
+    - levels: "info|error|warning"
+  sources:
+    - path: "/mnt/user"
+      name: "Shares"
+auth:
+  methods:
+    password:
+      enabled: true
+      minLength: 8
+      signup: false

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 )
 
 func TestUnmarshalShareSettingsEmpty(t *testing.T) {

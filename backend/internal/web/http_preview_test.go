@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/preview"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/preview"
 )
 
 func TestErrToStatusUnsupportedPreviewFormat(t *testing.T) {

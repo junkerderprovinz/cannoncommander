@@ -12,10 +12,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/icons"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/version"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/icons"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 var templateRenderer *TemplateRenderer
@@ -72,7 +72,7 @@ func recaptchaSettings(pwd settings.PasswordAuthConfig) (enabled bool, host, key
 
 // spaContentSecurityPolicy restricts only scripts. srcdoc preview frames inherit
 // this header, blocking inline scripts without limiting frames, images, or API calls.
-// worker-src blob: is required for Ace editor web workers (analytics/config preview).
+// worker-src blob: is required for Ace editor web workers (config preview).
 func spaContentSecurityPolicy(nonce string) string {
 	policy := fmt.Sprintf(
 		"script-src 'self' 'nonce-%s' https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com",

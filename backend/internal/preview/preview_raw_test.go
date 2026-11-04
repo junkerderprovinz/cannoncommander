@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
 func TestGenerateRawPreviewRawWithoutEmbeddedReturnsUnsupported(t *testing.T) {

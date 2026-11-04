@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/quota"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/quota"
 )
 
 func scanQuotaUserID(s string, dest *uint64) error {

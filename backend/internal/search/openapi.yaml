@@ -1,0 +1,22 @@
+tag:
+  name: search
+  description: Search by name pattern, fields and content.
+paths:
+  /search:
+    get:
+      operationId: search
+      summary: Search below a folder
+  /search/saved:
+    get:
+      operationId: savedSearchesList
+      summary: Saved searches
+    post:
+      operationId: savedSearchCreate
+      summary: Save a search
+  /search/saved/{id}:
+    put:
+      operationId: savedSearchUpdate
+      summary: Change a saved search
+    delete:
+      operationId: savedSearchDelete
+      summary: Delete a saved search

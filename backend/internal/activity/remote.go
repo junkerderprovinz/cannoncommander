@@ -4,7 +4,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func remoteIP(r *http.Request) string {

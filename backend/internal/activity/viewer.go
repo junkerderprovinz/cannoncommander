@@ -1,8 +1,8 @@
 package activity
 
 import (
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // PrepareItemsForViewer trims activity paths for non-admin viewers.

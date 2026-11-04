@@ -3,7 +3,7 @@ package icons
 import (
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // PWAManifest represents the web app manifest structure

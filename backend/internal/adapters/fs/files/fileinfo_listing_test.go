@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
 func TestNormalizeFileInfoListing_fileOmitsChildren(t *testing.T) {

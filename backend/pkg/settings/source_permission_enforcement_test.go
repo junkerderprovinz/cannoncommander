@@ -3,7 +3,7 @@ package settings
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 func TestSyncEnforcedSourcePermissionsOntoUser_setsCreate(t *testing.T) {
@@ -34,7 +34,7 @@ func TestSyncEnforcedSourcePermissionsOntoUser_skipsAdmin(t *testing.T) {
 	enforced := SourceFilePermissionsEnforcement{Create: true}
 	u := &users.User{
 		FrontendUser: users.FrontendUser{
-			Username: "admin",
+			Username:    "admin",
 			Permissions: users.Permissions{Admin: true},
 		},
 		BackendScopes: []users.BackendScope{{
@@ -90,4 +90,3 @@ func TestValidateSelfUserUpdateScopesNotEnforced_caseInsensitive(t *testing.T) {
 		t.Fatal("expected mixed-case scope field to be blocked")
 	}
 }
-

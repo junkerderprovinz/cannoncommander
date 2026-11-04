@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/access"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // failingTokenPersister fails only SaveHashedToken so backfill error handling can
@@ -24,7 +24,7 @@ func (failingTokenPersister) SaveHashedToken(string, uint64, bool, int64) error 
 }
 
 func TestBackfillHashedTokensPropagatesPersistenceFailure(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -54,7 +54,7 @@ func TestBackfillHashedTokensPropagatesPersistenceFailure(t *testing.T) {
 // Legacy ApiKeys entries (pre-2.0.8 token format) must also gain a
 // hashed_tokens row so strict server-side auth accepts them.
 func TestBackfillHashedTokensCoversLegacyApiKeys(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 
@@ -103,7 +103,7 @@ func TestBackfillHashedTokensCoversLegacyApiKeys(t *testing.T) {
 // Backfill must reconcile them: live tokens get their real expiry recorded and
 // tokens dead past the grace window have their mapping removed entirely.
 func TestBackfillReconcilesLegacyTokenExpiry(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize("../../../_docker/src/noauth/backend/config.yaml")
 	settings.Env.IsPlaywright = true
 

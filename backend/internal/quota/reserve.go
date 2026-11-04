@@ -1,7 +1,7 @@
 package quota
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
 
 // mapReserveError converts reserve failures to quota errors.

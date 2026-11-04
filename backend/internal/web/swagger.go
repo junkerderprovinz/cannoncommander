@@ -3,9 +3,8 @@ package web
 import (
 	"net/http"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	httpSwagger "github.com/swaggo/http-swagger"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-
 )
 
 func swaggerHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (int, error) {

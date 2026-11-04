@@ -8,13 +8,13 @@ import (
 	"io/fs"
 	"net/http"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/quota"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/toolaccess"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/usersidebar"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/quota"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/toolaccess"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 const maxSettingsPatchBodySize = 1 << 20 // 1 MiB
@@ -172,10 +172,10 @@ func getSourceInfoHandler(w http.ResponseWriter, r *http.Request, d *Context) (i
 }
 
 type userDefaultsResponse struct {
-	Values                  *settings.UserDefaults            `json:"values,omitempty"`
-	Enforced                settings.UserDefaultsEnforcement `json:"enforced"`
-	LockedFromConfigPaths   []string                         `json:"lockedFromConfigPaths,omitempty"`
-	LockMessage             string                           `json:"lockMessage,omitempty"`
+	Values                *settings.UserDefaults           `json:"values,omitempty"`
+	Enforced              settings.UserDefaultsEnforcement `json:"enforced"`
+	LockedFromConfigPaths []string                         `json:"lockedFromConfigPaths,omitempty"`
+	LockMessage           string                           `json:"lockMessage,omitempty"`
 }
 
 func userDefaultsLockMeta() (paths []string, message string) {
@@ -372,7 +372,7 @@ func settingsToolAccessDefaultsPatchHandler(w http.ResponseWriter, r *http.Reque
 }
 
 type shareDefaultsResponse struct {
-	Values   *settings.ShareDefaults            `json:"values,omitempty"`
+	Values   *settings.ShareDefaults           `json:"values,omitempty"`
 	Enforced settings.ShareDefaultsEnforcement `json:"enforced"`
 }
 

@@ -1,0 +1,23 @@
+tag:
+  name: labels
+  description: Colour labels and tags on paths.
+paths:
+  /labels:
+    get:
+      operationId: labelsGet
+      summary: Colours and tags with their names
+  /labels/colours:
+    put:
+      operationId: labelColoursPut
+      summary: Rename or recolour the colour labels
+  /labels/tags:
+    put:
+      operationId: labelTagsPut
+      summary: Change the list of tags
+  /labels/items:
+    get:
+      operationId: labelItemsGet
+      summary: Labels of the entries in a folder
+    put:
+      operationId: labelItemsPut
+      summary: Set colour and tags on paths

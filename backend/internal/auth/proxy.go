@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/errors"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 )
 
 // MethodProxyAuth is used to identify no auth.

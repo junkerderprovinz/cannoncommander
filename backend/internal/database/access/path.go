@@ -1,6 +1,6 @@
 package access
 
-import "github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+import "github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 
 // ruleKey returns the canonical storage key for access rules (directory form with trailing slash).
 func ruleKey(path utils.IndexPath) string {

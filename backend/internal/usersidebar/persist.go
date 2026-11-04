@@ -1,7 +1,7 @@
 package usersidebar
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // PrepareSidebarLinksForPersist normalizes sidebar links, prunes links for revoked scopes,

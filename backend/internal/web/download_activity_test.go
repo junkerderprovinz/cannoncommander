@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/errors"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 )
 
 func TestResolveDownloadInlineDisposition(t *testing.T) {

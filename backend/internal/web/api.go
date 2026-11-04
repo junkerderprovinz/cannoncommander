@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/auth"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/activity"
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
 
 // createApiTokenHandler creates an API token for the user.
@@ -155,7 +155,7 @@ func deleteApiTokenHandler(w http.ResponseWriter, r *http.Request, d *Context) (
 	}
 
 	// Revoke the token (adds to RevokedTokens set)
-	if err := state.RevokeToken( tokenInfo.Token); err != nil {
+	if err := state.RevokeToken(tokenInfo.Token); err != nil {
 		logger.Errorf("Failed to revoke token: %v", err)
 	}
 	if err := state.RemoveApiToken(tokenInfo.Token); err != nil {

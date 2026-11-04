@@ -7,15 +7,15 @@ import (
 	"strings"
 
 	"github.com/alecthomas/kong"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/version"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"golang.org/x/term"
 )
 
 // Globals holds flags shared across all commands (order-independent).
 type Globals struct {
-	Config  string `short:"c" name:"config" default:"config.yaml" env:"FILEBROWSER_CONFIG" help:"Path to config file"`
+	Config  string `short:"c" name:"config" default:"config.yaml" env:"CC_CONFIG" help:"Path to config file"`
 	NoInput bool   `name:"no-input" help:"Disable interactive prompts (fail if input required)"`
 }
 
@@ -115,7 +115,7 @@ var rootCLI cliRoot
 type cliRoot struct {
 	Globals `embed:""`
 
-	Run     runCmd     `cmd:"" default:"1" hidden:"" help:"Start the FileBrowser server"`
+	Run     runCmd     `cmd:"" default:"1" hidden:"" help:"Start the server"`
 	Version versionCmd `cmd:"" name:"version" help:"Print version information"`
 	Setup   setupCmd   `cmd:"" name:"setup" help:"Interactive configuration setup"`
 	Init    initCmd    `cmd:"" name:"init" hidden:"" help:"Initialize the database or migrate from a legacy database"`
@@ -124,10 +124,10 @@ type cliRoot struct {
 }
 
 func (versionCmd) Run() error {
-	fmt.Printf(`FileBrowser Quantum - A modern web-based file manager
+	fmt.Printf(`CannonCommander, a two-panel file manager for Unraid
 	Version 	 : %v
 	Commit 		 : %v
-	Release Info 	 : https://github.com/gtsteffaniak/filebrowser/releases/tag/%v
+	Release Info 	 : https://github.com/junkerderprovinz/cannoncommander/releases/tag/%v
 `, version.Version, version.CommitSHA, version.Version)
 	return nil
 }
@@ -176,7 +176,7 @@ func (p *UserPromoteCmd) Run() error {
 }
 
 func resolveConfigPath(config *string) {
-	envConfig := os.Getenv("FILEBROWSER_CONFIG")
+	envConfig := os.Getenv("CC_CONFIG")
 	if *config == "" {
 		if envConfig != "" {
 			*config = envConfig
@@ -187,10 +187,10 @@ func resolveConfigPath(config *string) {
 }
 
 func requireExistingConfig(config string) {
-	envConfig := os.Getenv("FILEBROWSER_CONFIG")
+	envConfig := os.Getenv("CC_CONFIG")
 	if envConfig != "" && config == envConfig {
 		if _, err := os.Stat(config); err != nil {
-			logger.Fatalf("config file %v does not exist, please create it or set the FILEBROWSER_CONFIG environment variable to a valid config file path", config)
+			logger.Fatalf("config file %v does not exist, please create it or set the CC_CONFIG environment variable to a valid config file path", config)
 		}
 	}
 }
@@ -199,8 +199,8 @@ func runCLI() (keepGoing bool, dbExists bool) {
 	generateYaml()
 
 	parser, err := kong.New(&rootCLI,
-		kong.Name("filebrowser"),
-		kong.Description("FileBrowser Quantum - A modern web-based file manager"),
+		kong.Name("cannoncommander"),
+		kong.Description("CannonCommander, a two-panel file manager for Unraid"),
 		kong.Bind(&rootCLI.Globals),
 	)
 	if err != nil {

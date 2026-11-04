@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/auth"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 )
 
 func TestExtractGroupsFromHeader_SingleValue(t *testing.T) {

@@ -1,6 +1,6 @@
 package toolaccess
 
-import "github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+import "github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 
 // CatalogIDs returns the canonical ordered list of tool identifiers.
 func CatalogIDs() []users.ToolID {

@@ -6,21 +6,21 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/access"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/access"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 type failingRevokePersister struct{}
 
 func (failingRevokePersister) SaveAccessRule(string, string, *access.AccessRule) error { return nil }
 func (failingRevokePersister) DeleteAccessRule(string, string) error                   { return nil }
-func (failingRevokePersister) AccessRulesLowercaseMigrated() (bool, error) { return false, nil }
-func (failingRevokePersister) SetAccessRulesLowercaseMigrated() error      { return nil }
+func (failingRevokePersister) AccessRulesLowercaseMigrated() (bool, error)             { return false, nil }
+func (failingRevokePersister) SetAccessRulesLowercaseMigrated() error                  { return nil }
 func (failingRevokePersister) MigrateAccessRulePathsLowercase(string, []string, access.RuleMap) error {
 	return nil
 }
-func (failingRevokePersister) SaveGroup(string, access.StringSet) error                { return nil }
-func (failingRevokePersister) DeleteGroup(string) error                                { return nil }
+func (failingRevokePersister) SaveGroup(string, access.StringSet) error { return nil }
+func (failingRevokePersister) DeleteGroup(string) error                 { return nil }
 func (failingRevokePersister) DeleteGroupWithRules(string, []access.RuleUpsert, []access.RuleKey) error {
 	return nil
 }
@@ -31,10 +31,10 @@ func (failingRevokePersister) PersistImmediateTokenRevocation(string) error {
 func (failingRevokePersister) PersistTokenRetirement(string, int64, []string) error {
 	return errors.New("simulated retirement persistence failure")
 }
-func (failingRevokePersister) DeleteRevokedToken(string) error      { return nil }
+func (failingRevokePersister) DeleteRevokedToken(string) error                   { return nil }
 func (failingRevokePersister) SaveHashedToken(string, uint64, bool, int64) error { return nil }
-func (failingRevokePersister) DeleteHashedToken(string) error         { return nil }
-func (failingRevokePersister) DeleteHashedTokensByUserID(uint64) error { return nil }
+func (failingRevokePersister) DeleteHashedToken(string) error                    { return nil }
+func (failingRevokePersister) DeleteHashedTokensByUserID(uint64) error           { return nil }
 
 func TestSessionAndApiTokenMetadata(t *testing.T) {
 	store, _ := createTestStorage(t)

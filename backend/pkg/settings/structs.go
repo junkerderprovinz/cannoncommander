@@ -1,7 +1,7 @@
 package settings
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 type AllowedMethods string

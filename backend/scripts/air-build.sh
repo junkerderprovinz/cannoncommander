@@ -3,13 +3,13 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-LDFLAGS='-w -s -X github.com/gtsteffaniak/filebrowser/backend/internal/version.CommitSHA=commitSHA -X github.com/gtsteffaniak/filebrowser/backend/internal/version.Version=version'
-OUT=./tmp/filebrowser
+LDFLAGS='-w -s -X github.com/junkerderprovinz/cannoncommander/backend/internal/version.CommitSHA=commitSHA -X github.com/junkerderprovinz/cannoncommander/backend/internal/version.Version=version'
+OUT=./tmp/cannoncommander
 USE_MUPDF=1
 
 case "$(uname -s)" in
 MINGW*|MSYS*|CYGWIN*)
-	OUT=./tmp/filebrowser.exe
+	OUT=./tmp/cannoncommander.exe
 	if [[ -n "${CC:-}" ]]; then
 		:
 	elif command -v zig >/dev/null 2>&1; then

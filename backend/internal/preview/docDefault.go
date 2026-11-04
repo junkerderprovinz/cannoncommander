@@ -5,7 +5,7 @@ package preview
 import (
 	"context"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
 func docEnabled() bool {

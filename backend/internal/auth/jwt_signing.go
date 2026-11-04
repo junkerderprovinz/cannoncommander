@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // JWTSigningKeyBytes returns the HMAC key or an error if it is unset (empty key must never verify).

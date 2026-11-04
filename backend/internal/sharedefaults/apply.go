@@ -3,8 +3,8 @@ package sharedefaults
 import (
 	"encoding/json"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // NormalizeUploadShareEditable ensures upload shares always request create permission.

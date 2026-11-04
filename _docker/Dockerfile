@@ -7,44 +7,36 @@ COPY ./backend ./
 RUN apk update && apk add --no-cache gcc musl-dev
 RUN go mod download && go run ./scripts/setup-gofitz-cgo
 ENV CGO_ENABLED=1
-RUN go build -tags analytics,mupdf,musl -ldflags="-w -s \
-  -X 'github.com/gtsteffaniak/filebrowser/backend/internal/version.Version=${VERSION}' \
-  -X 'github.com/gtsteffaniak/filebrowser/backend/internal/version.CommitSHA=${REVISION}'" \
-  -o filebrowser .
+RUN go build -tags mupdf,musl -ldflags="-w -s \
+  -X 'github.com/junkerderprovinz/cannoncommander/backend/internal/version.Version=${VERSION}' \
+  -X 'github.com/junkerderprovinz/cannoncommander/backend/internal/version.CommitSHA=${REVISION}'" \
+  -o cannoncommander .
 
-FROM node:jod-slim AS nbuild
-WORKDIR /build
-COPY ./frontend/package.json ./frontend/package-lock.json ./frontend/
-RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
-    && git config --global url."https://github.com/".insteadOf "git@github.com:" \
-    && git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
-RUN cd frontend && npm ci --maxsockets 1
-COPY ./frontend/ ./frontend/
+FROM node:24-slim AS nbuild
 WORKDIR /build/frontend
+COPY ./frontend/package.json ./frontend/package-lock.json ./
+RUN npm ci
+COPY ./frontend/ ./
 RUN npm run build:docker
 
 FROM alpine:latest
 COPY --from=ffmpeg [ "/ffmpeg", "/ffprobe", "/usr/local/bin/" ]
-ENV FILEBROWSER_FFMPEG_PATH="/usr/local/bin/"
-ENV FILEBROWSER_DATABASE_PATH="/home/filebrowser/data/database.sqlite"
-ENV FILEBROWSER_CONFIG="/home/filebrowser/data/config.yaml"
-ENV PATH="$PATH:/home/filebrowser"
-RUN apk --no-cache add ca-certificates mailcap tzdata curl
-RUN adduser -D -s /bin/true -u 1000 filebrowser
-USER filebrowser
-WORKDIR /home/filebrowser
-# copy config to two locations for compatibility
-COPY --from=base --chown=filebrowser:1000 [ "/app/filebrowser", "./" ]
-COPY --from=base --chown=filebrowser:1000 [ "/app/config.yaml", "./data/config.yaml" ]
-COPY --from=base --chown=filebrowser:1000 [ "/app/config.yaml", "./" ]
-COPY --from=base --chown=filebrowser:1000 [ "/app/reduce-rounded-corners.css", "./" ]
-COPY --from=nbuild --chown=filebrowser:1000 [ "/build/backend/internal/web/dist/", "./internal/web/dist/" ]
-## sanity checks
-RUN [ "filebrowser", "version" ]
-RUN [ "ffmpeg", "-version" ]
-RUN [ "ffprobe", "-version" ]
-# exposing default port for auto discovery.
+RUN apk --no-cache add ca-certificates mailcap tzdata curl su-exec
+# Unraid's own defaults: nobody:users, and files anyone on the network may change.
+ENV PUID=99 \
+    PGID=100 \
+    UMASK=000 \
+    CC_FFMPEG_PATH="/usr/local/bin/" \
+    CC_CONFIG="/config/config.yaml" \
+    CC_DATABASE_PATH="/config/cannoncommander.sqlite"
+WORKDIR /app
+COPY --from=base [ "/app/cannoncommander", "./" ]
+COPY [ "./_docker/config.yaml", "./config.default.yaml" ]
+COPY [ "./_docker/entrypoint.sh", "./" ]
+COPY --from=nbuild [ "/build/frontend/dist/", "./internal/web/dist/" ]
+RUN chmod 0755 ./entrypoint.sh && ./cannoncommander version && ffmpeg -version > /dev/null && ffprobe -version > /dev/null
+VOLUME /config
 EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:80/health || exit 1
-ENTRYPOINT [ "./filebrowser" ]
+  CMD curl -fsS http://localhost:80/health || exit 1
+ENTRYPOINT [ "./entrypoint.sh" ]

@@ -7,7 +7,7 @@ import (
 
 func TestResolveDatabasePaths_migrateFromDefaultUsesEnv(t *testing.T) {
 	boltPath := filepath.Join(t.TempDir(), "database.db")
-	t.Setenv("FILEBROWSER_DATABASE", boltPath)
+	t.Setenv("CC_DATABASE", boltPath)
 
 	Config = SetDefaults(false)
 	Config.Server.DatabaseV2.MigrateFrom = MigrateFromDefault
@@ -21,7 +21,7 @@ func TestResolveDatabasePaths_migrateFromDefaultUsesEnv(t *testing.T) {
 }
 
 func TestResolveDatabasePaths_migrateFromDefaultFallsBackToDatabaseDB(t *testing.T) {
-	t.Setenv("FILEBROWSER_DATABASE", "")
+	t.Setenv("CC_DATABASE", "")
 
 	Config = SetDefaults(false)
 	Config.Server.DatabaseV2.MigrateFrom = MigrateFromDefault
@@ -36,8 +36,8 @@ func TestResolveDatabasePaths_migrateFromDefaultFallsBackToDatabaseDB(t *testing
 
 func TestResolveDatabasePaths_emptyPathUsesEnvDefault(t *testing.T) {
 	want := filepath.Join(t.TempDir(), "custom.sqlite")
-	t.Setenv("FILEBROWSER_DATABASE_PATH", want)
-	t.Setenv("FILEBROWSER_DATABASE", "")
+	t.Setenv("CC_DATABASE_PATH", want)
+	t.Setenv("CC_DATABASE", "")
 
 	Config = SetDefaults(false)
 	Config.Server.DatabaseV2.Path = ""

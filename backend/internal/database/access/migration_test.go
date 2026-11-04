@@ -3,7 +3,7 @@ package access
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 func TestRemoveRuleByPathKey_exactLegacyKey(t *testing.T) {

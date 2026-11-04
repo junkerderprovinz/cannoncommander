@@ -1,9 +1,9 @@
 package indexing
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/dbindex"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/errors"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/ports"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ports"
 )
 
 var metaStore ports.IndexMetaStore

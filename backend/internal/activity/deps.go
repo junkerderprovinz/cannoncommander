@@ -1,9 +1,9 @@
 package activity
 
 import (
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/ports"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ports"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // QueryDeps holds access and share dependencies for activity query filtering.

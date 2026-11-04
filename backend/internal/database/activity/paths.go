@@ -3,7 +3,7 @@ package activity
 import (
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // TrimPathForUserScope removes a user's index scope prefix from a stored path.

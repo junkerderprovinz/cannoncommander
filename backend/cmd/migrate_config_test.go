@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestValidateDatabasePaths_missingBoltOnFreshInstall(t *testing.T) {
@@ -118,7 +118,7 @@ func TestValidateDatabasePaths_migrateFromDefaultResolvesFromEnv(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	t.Setenv("FILEBROWSER_DATABASE", boltPath)
+	t.Setenv("CC_DATABASE", boltPath)
 
 	settings.Config.Server.DatabaseV2.MigrateFrom = settings.MigrateFromDefault
 	settings.Config.Server.DatabaseV2.Path = filepath.Join(dir, "filebrowser.sqlite")

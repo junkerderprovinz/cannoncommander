@@ -1,0 +1,215 @@
+tag:
+  name: fs
+  description: Reading files and folders.
+paths:
+  /fs/list:
+    get:
+      operationId: fsList
+      summary: List a folder
+      description: |
+        Lists the entries of a folder in name order. The folders / and /mnt
+        are virtual and list the sources below them. Entries the user may
+        not see are left out. The ETag follows the entries only, so a change
+        in free space alone still answers 304.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      responses:
+        "200":
+          description: The folder and its entries.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsList"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /fs/tree:
+    get:
+      operationId: fsTree
+      summary: Subfolders for the folder tree
+      description: |
+        Returns the visible subfolders of one folder, one level deep. The
+        tree asks again when a folder is opened. Folders where a source is
+        mounted carry its name and fill level.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      responses:
+        "200":
+          description: The folder with its subfolders.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsTree"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /fs/stat:
+    get:
+      operationId: fsStat
+      summary: Details of one path
+      parameters:
+        - $ref: "#/components/parameters/Path"
+  /fs/meta:
+    post:
+      operationId: fsMeta
+      summary: Metadata columns for many paths
+      description: Takes the visible rows and the wanted columns, returns the values from the metadata cache.
+  /fs/raw:
+    get:
+      operationId: fsRaw
+      summary: File content, with range requests
+      parameters:
+        - $ref: "#/components/parameters/Path"
+  /fs/thumb:
+    get:
+      operationId: fsThumb
+      summary: Thumbnail of a file or folder picture
+      parameters:
+        - $ref: "#/components/parameters/Path"
+  /fs/page:
+    get:
+      operationId: fsPage
+      summary: One page of a PDF or office file as an image
+      parameters:
+        - $ref: "#/components/parameters/Path"
+  /fs/text:
+    get:
+      operationId: fsText
+      summary: Text content with encoding detection
+      parameters:
+        - $ref: "#/components/parameters/Path"
+  /fs/hex:
+    get:
+      operationId: fsHex
+      summary: A byte range for the hex view
+      parameters:
+        - $ref: "#/components/parameters/Path"
+  /fs/file:
+    get:
+      operationId: fsFileGet
+      summary: File content for the editor
+      parameters:
+        - $ref: "#/components/parameters/Path"
+    put:
+      operationId: fsFilePut
+      summary: Save a file from the editor
+      parameters:
+        - $ref: "#/components/parameters/Path"
+  /fs/archive-stream:
+    post:
+      operationId: fsArchiveStream
+      summary: Download several paths as one archive
+components:
+  schemas:
+    FsItem:
+      type: object
+      required: [name, dir, size, mtime, mode]
+      properties:
+        name:
+          type: string
+        dir:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+          description: Bytes, 0 for folders.
+        mtime:
+          type: string
+          format: date-time
+          description: Modification time in UTC with milliseconds.
+        mode:
+          type: string
+          description: Permission bits in octal.
+          example: "0664"
+        owner:
+          type: string
+          description: User name, or the number when the container does not know it.
+        group:
+          type: string
+        hidden:
+          type: boolean
+          description: The name starts with a dot.
+        link:
+          type: string
+          description: Target of a symbolic link.
+    Volume:
+      type: object
+      required: [path, free, total]
+      properties:
+        path:
+          type: string
+          description: Where the source is mounted.
+        label:
+          type: string
+          description: Name of the source.
+        free:
+          type: integer
+          format: int64
+        total:
+          type: integer
+          format: int64
+    FsList:
+      type: object
+      required: [path, items]
+      properties:
+        path:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FsItem"
+        volume:
+          $ref: "#/components/schemas/Volume"
+          description: Missing for the virtual folders / and /mnt.
+    FsTreeItem:
+      type: object
+      required: [name, path, hasDirs]
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        hasDirs:
+          type: boolean
+          description: The folder has visible subfolders.
+        label:
+          type: string
+          description: Name of the source mounted here.
+        free:
+          type: integer
+          format: int64
+        total:
+          type: integer
+          format: int64
+    FsTree:
+      type: object
+      required: [path, items]
+      properties:
+        path:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FsTreeItem"

@@ -1,0 +1,48 @@
+tag:
+  name: remotes
+  description: rclone remotes mounted below /mnt/remotes.
+paths:
+  /remotes:
+    get:
+      operationId: remotesList
+      summary: Configured remotes
+    post:
+      operationId: remoteCreate
+      summary: Add a remote
+      x-access: admin
+  /remotes/types:
+    get:
+      operationId: remoteTypes
+      summary: Remote types rclone knows
+  /remotes/test:
+    post:
+      operationId: remoteTest
+      summary: Try a remote configuration
+      x-access: admin
+  /remotes/oauth:
+    post:
+      operationId: remoteOAuth
+      summary: Store a token from rclone authorize
+      x-access: admin
+  /remotes/{name}:
+    get:
+      operationId: remoteGet
+      summary: One remote
+    put:
+      operationId: remoteUpdate
+      summary: Change a remote
+      x-access: admin
+    delete:
+      operationId: remoteDelete
+      summary: Remove a remote
+      x-access: admin
+  /remotes/{name}/mount:
+    post:
+      operationId: remoteMount
+      summary: Mount a remote
+      x-access: admin
+  /remotes/{name}/unmount:
+    post:
+      operationId: remoteUnmount
+      summary: Unmount a remote
+      x-access: admin

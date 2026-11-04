@@ -16,13 +16,13 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/coreos/go-systemd/v22/activation"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/files"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/auth"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/events"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/events"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // Deps holds injected dependencies for HTTP handlers and middleware.
@@ -91,6 +91,10 @@ func StartHttp(ctx context.Context, deps Deps, shutdownComplete chan struct{}) {
 	publicApi := http.NewServeMux()
 
 	configureHTTPRouter(router, api, publicRoutes, publicApi)
+	router.HandleFunc("GET "+settings.Config.Http.BaseURL+"assets/", viteAssetHandler)
+	if err := mountAPIv1(router); err != nil {
+		logger.Fatalf("Could not set up /api/v1: %v", err)
+	}
 
 	srv := &http.Server{
 		Addr:        settings.HTTPListenAddr(settings.Config.Http.ListenAddress, settings.Config.Http.Port),
@@ -177,6 +181,7 @@ func StartHttp(ctx context.Context, deps Deps, shutdownComplete chan struct{}) {
 	<-ctx.Done()
 	logger.Info("Shutting down HTTP server...")
 	events.Shutdown()
+	eventHub.Close()
 
 	if err := state.Close(); err != nil {
 		logger.Errorf("Failed to close state management: %v", err)

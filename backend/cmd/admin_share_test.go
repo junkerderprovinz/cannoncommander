@@ -6,14 +6,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/app"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/app"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestAdminHasSharePermissionAfterPlaywrightStartup(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	sharingConfig := "../../_docker/src/sharing/backend/config.yaml"
 	settings.Initialize(sharingConfig)
 	settings.Env.IsPlaywright = true
@@ -55,7 +55,7 @@ func TestAdminHasSharePermissionAfterPlaywrightStartup(t *testing.T) {
 }
 
 func TestAdminHasSharePermissionAfterSettingsMigration(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize(settingsMigrationConfigPath(t))
 	settings.Env.IsPlaywright = true
 	alignSettingsSourcesForMigrationFixture(t)
@@ -88,7 +88,7 @@ func TestAdminHasSharePermissionAfterSettingsMigration(t *testing.T) {
 }
 
 func TestGrahamGainsAccessAfterSettingsMigrationStartup_dockerSourcePaths(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	configPath := filepath.Join(t.TempDir(), "config.yaml")
 	configYAML := `server:
   sources:
@@ -159,7 +159,7 @@ auth:
 }
 
 func TestGrahamGainsAccessAfterSettingsMigrationStartup(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize(settingsMigrationConfigPath(t))
 	settings.Env.IsPlaywright = true
 	alignSettingsSourcesForMigrationFixture(t)

@@ -8,12 +8,12 @@ import (
 
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/auth"
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/errors"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
 
 // @Summary Begin passkey MFA login

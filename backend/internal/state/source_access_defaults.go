@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 const sourceAccessDefaultsSettingKey = "sourceAccessDefaults"
@@ -18,7 +18,7 @@ var (
 )
 
 type sourceAccessSettingsDocument struct {
-	DefaultPermissions  users.SourceFilePermissions                `json:"defaultPermissions"`
+	DefaultPermissions  users.SourceFilePermissions               `json:"defaultPermissions"`
 	EnforcedPermissions settings.SourceFilePermissionsEnforcement `json:"enforcedPermissions,omitempty"`
 }
 
@@ -124,10 +124,10 @@ func GetSourceAccessDefaults() users.SourceFilePermissions {
 
 // SourceSettings is the admin API payload for GET/PATCH /api/settings/source.
 type SourceSettings struct {
-	DefaultPermissions    users.SourceFilePermissions                `json:"defaultPermissions"`
+	DefaultPermissions    users.SourceFilePermissions               `json:"defaultPermissions"`
 	EnforcedPermissions   settings.SourceFilePermissionsEnforcement `json:"enforcedPermissions"`
-	LockedFromConfigPaths []string                                   `json:"lockedFromConfigPaths,omitempty"`
-	LockMessage           string                                     `json:"lockMessage,omitempty"`
+	LockedFromConfigPaths []string                                  `json:"lockedFromConfigPaths,omitempty"`
+	LockMessage           string                                    `json:"lockMessage,omitempty"`
 }
 
 // GetSourceSettings returns admin-editable source-wide settings.

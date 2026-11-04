@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 type mockActivityStore struct {

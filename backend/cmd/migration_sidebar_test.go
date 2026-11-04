@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	storm "github.com/asdine/storm/v3"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/sqldb"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/usersidebar"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/usersidebar"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func writeSidebarMigrationBolt(t *testing.T, path string) {
@@ -58,7 +58,7 @@ func writeSidebarMigrationBolt(t *testing.T, path string) {
 }
 
 func TestMigrationSidebarLinks_customMinimalPartialScopesAndCustomURL(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
 	settings.Initialize(settingsMigrationConfigPath(t))
 	settings.Env.IsPlaywright = true
 	alignSettingsSourcesForMigrationFixture(t)

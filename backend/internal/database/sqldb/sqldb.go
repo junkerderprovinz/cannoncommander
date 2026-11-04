@@ -1,14 +1,16 @@
 package sqldb
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
 	"path/filepath"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/sqlitebusy"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqlitebusy"
 	// SQLite driver is imported in driver_cgo.go or driver_nocgo.go based on build tags
 )
 
@@ -90,6 +92,11 @@ func NewSQLStoreWithOptions(dbPath string, opts NewSQLStoreOpts) (*SQLStore, boo
 			db.Close()
 			return nil, existingDb, err
 		}
+	}
+
+	if _, err := migrate.Apply(context.Background(), db, migrate.Main); err != nil {
+		db.Close()
+		return nil, existingDb, err
 	}
 
 	store := &SQLStore{db: db}

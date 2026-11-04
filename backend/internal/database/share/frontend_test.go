@@ -3,7 +3,7 @@ package share
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestPublicShareURLPasswordProtectedDirectLink(t *testing.T) {

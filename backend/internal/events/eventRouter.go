@@ -20,10 +20,8 @@ type userEvent struct {
 }
 
 var (
-	BroadcastChan     = make(chan EventMessage, 100)
-	userEventChan     = make(chan userEvent, 100)
-	debounceInputChan = make(chan EventMessage, 100)
-	sourceUpdateChan  = make(chan sourceEvent, 100)
+	userEventChan    = make(chan userEvent, 100)
+	sourceUpdateChan = make(chan sourceEvent, 100)
 
 	userClientsMu   sync.RWMutex
 	userClients     = make(map[string][]chan EventMessage)
@@ -123,13 +121,6 @@ func SendSourceUpdate(source string, message string) {
 	}
 }
 
-func DebouncedBroadcast(eventType, message string) {
-	debounceInputChan <- EventMessage{
-		EventType: eventType,
-		Message:   message,
-	}
-}
-
 func handleSourceUpdates() {
 	for update := range sourceUpdateChan {
 		sourceClientsMu.RLock()
@@ -162,5 +153,21 @@ func Shutdown() {
 			close(ch)
 		}
 		delete(userClients, username)
+	}
+}
+
+// Broadcast hands the event to every open stream, each through its own
+// channel. Streams that are not keeping up miss it.
+func Broadcast(eventType, message string) {
+	event := EventMessage{EventType: eventType, Message: message}
+	userClientsMu.RLock()
+	defer userClientsMu.RUnlock()
+	for _, conns := range userClients {
+		for _, ch := range conns {
+			select {
+			case ch <- event:
+			default:
+			}
+		}
 	}
 }

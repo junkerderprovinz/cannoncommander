@@ -1,0 +1,1658 @@
+openapi: 3.1.0
+info:
+  title: CannonCommander API
+  version: "1"
+  description: |
+    Every path in this API is an absolute path as Unraid sees it, for example
+    /mnt/user/filme. A path into an archive carries "::" after the archive
+    name: /mnt/user/downloads/fotos.zip::/Strand/IMG_0101.jpg.
+
+    Errors come as application/problem+json. Operations that are part of the
+    contract but not built yet answer 501.
+
+    Server events arrive on GET /events. See the Event schema for their
+    types.
+servers:
+  - url: /api/v1
+security:
+  - bearer: []
+  - cookie: []
+tags:
+  - name: fs
+    description: Reading files and folders.
+  - name: fileops
+    description: Creating, renaming and linking, uploads, and the check before a transfer.
+  - name: jobs
+    description: Long running tasks such as copy, move, pack and checksum.
+  - name: undo
+    description: Taking back the last file operations.
+  - name: trash
+    description: Deleted files waiting in the trash.
+  - name: search
+    description: Search by name pattern, fields and content.
+  - name: tools
+    description: Compare, sync, duplicates, disk usage, clean up and checksums.
+  - name: labels
+    description: Colour labels and tags on paths.
+  - name: prefs
+    description: Settings, bookmarks, profiles and folder history of the own account.
+  - name: accounts
+    description: The own account, and users, groups, rules and activity for admins.
+  - name: shares
+    description: Share links and the public share pages.
+  - name: unraid
+    description: Array state, file placement and the Unraid tools.
+  - name: remotes
+    description: rclone remotes mounted below /mnt/remotes.
+  - name: system
+    description: Server state and the settings only admins change.
+  - name: events
+    description: The server event stream and the folders a client watches.
+paths:
+  /fs/list:
+    get:
+      operationId: fsList
+      summary: List a folder
+      description: |
+        Lists the entries of a folder in name order. The folders / and /mnt
+        are virtual and list the sources below them. Entries the user may
+        not see are left out. The ETag follows the entries only, so a change
+        in free space alone still answers 304.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      responses:
+        "200":
+          description: The folder and its entries.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsList"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [fs]
+  /fs/tree:
+    get:
+      operationId: fsTree
+      summary: Subfolders for the folder tree
+      description: |
+        Returns the visible subfolders of one folder, one level deep. The
+        tree asks again when a folder is opened. Folders where a source is
+        mounted carry its name and fill level.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      responses:
+        "200":
+          description: The folder with its subfolders.
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FsTree"
+        "304":
+          description: Unchanged since the ETag in If-None-Match.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [fs]
+  /fs/stat:
+    get:
+      operationId: fsStat
+      summary: Details of one path
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/meta:
+    post:
+      operationId: fsMeta
+      summary: Metadata columns for many paths
+      description: Takes the visible rows and the wanted columns, returns the values from the metadata cache.
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/raw:
+    get:
+      operationId: fsRaw
+      summary: File content, with range requests
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/thumb:
+    get:
+      operationId: fsThumb
+      summary: Thumbnail of a file or folder picture
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/page:
+    get:
+      operationId: fsPage
+      summary: One page of a PDF or office file as an image
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/text:
+    get:
+      operationId: fsText
+      summary: Text content with encoding detection
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/hex:
+    get:
+      operationId: fsHex
+      summary: A byte range for the hex view
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/file:
+    get:
+      operationId: fsFileGet
+      summary: File content for the editor
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: fsFilePut
+      summary: Save a file from the editor
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/archive-stream:
+    post:
+      operationId: fsArchiveStream
+      summary: Download several paths as one archive
+      tags: [fs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/mkdir:
+    post:
+      operationId: fsMkdir
+      summary: Create a folder
+      tags: [fileops]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/touch:
+    post:
+      operationId: fsTouch
+      summary: Create an empty file or update its time
+      tags: [fileops]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/rename:
+    post:
+      operationId: fsRename
+      summary: Rename one entry
+      tags: [fileops]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/rename/batch:
+    post:
+      operationId: fsRenameBatch
+      summary: Rename many entries with a pattern
+      tags: [fileops]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/link:
+    post:
+      operationId: fsLink
+      summary: Create a symbolic or hard link
+      tags: [fileops]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /fs/attrs:
+    patch:
+      operationId: fsAttrs
+      summary: Change mode, owner or times
+      tags: [fileops]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /ops/preflight:
+    post:
+      operationId: opsPreflight
+      summary: Check a copy or move before it starts
+      description: Reports conflicts, missing rights and free space, so the conflict dialog can ask before the job runs.
+      tags: [fileops]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /uploads:
+    post:
+      operationId: uploadCreate
+      summary: Start an upload
+      tags: [fileops]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /uploads/{id}:
+    get:
+      operationId: uploadGet
+      summary: State of an upload, for resuming
+      tags: [fileops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: uploadChunk
+      summary: Send the next chunk
+      tags: [fileops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    delete:
+      operationId: uploadCancel
+      summary: Cancel an upload
+      tags: [fileops]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /jobs:
+    get:
+      operationId: jobsList
+      summary: List jobs
+      tags: [jobs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: jobCreate
+      summary: Start a job
+      description: |
+        Kinds: copy, move, delete, trash, restore, emptyTrash, pack, unpack,
+        testArchive, checksum, verify, split, combine, attrsRecursive,
+        fixPerms, sync, gather, scatter, contentSearch, duplicates,
+        fetchUrl, reindex.
+      tags: [jobs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /jobs/settings:
+    get:
+      operationId: jobSettingsGet
+      summary: Queue and speed settings
+      tags: [jobs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: jobSettingsPut
+      summary: Change queue and speed settings
+      tags: [jobs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /jobs/{id}:
+    get:
+      operationId: jobGet
+      summary: One job with its items
+      tags: [jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    delete:
+      operationId: jobRemove
+      summary: Remove a finished job from the list
+      tags: [jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /jobs/{id}/pause:
+    post:
+      operationId: jobPause
+      summary: Pause a job
+      tags: [jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /jobs/{id}/resume:
+    post:
+      operationId: jobResume
+      summary: Resume a paused job
+      tags: [jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /jobs/{id}/cancel:
+    post:
+      operationId: jobCancel
+      summary: Cancel a job
+      tags: [jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /jobs/{id}/retry:
+    post:
+      operationId: jobRetry
+      summary: Retry the failed items of a job
+      tags: [jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /jobs/{id}/decide:
+    post:
+      operationId: jobDecide
+      summary: Answer a conflict the job is waiting on
+      tags: [jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /undo:
+    get:
+      operationId: undoList
+      summary: Steps that can be taken back
+      tags: [undo]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: undoLast
+      summary: Take back the latest step
+      tags: [undo]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /trash:
+    get:
+      operationId: trashList
+      summary: List the trash
+      tags: [trash]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /trash/restore:
+    post:
+      operationId: trashRestore
+      summary: Put entries back where they came from
+      tags: [trash]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /trash/empty:
+    post:
+      operationId: trashEmpty
+      summary: Empty the trash
+      tags: [trash]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /trash/{id}:
+    delete:
+      operationId: trashDelete
+      summary: Delete one entry for good
+      tags: [trash]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /search:
+    get:
+      operationId: search
+      summary: Search below a folder
+      tags: [search]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /search/saved:
+    get:
+      operationId: savedSearchesList
+      summary: Saved searches
+      tags: [search]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: savedSearchCreate
+      summary: Save a search
+      tags: [search]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /search/saved/{id}:
+    put:
+      operationId: savedSearchUpdate
+      summary: Change a saved search
+      tags: [search]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    delete:
+      operationId: savedSearchDelete
+      summary: Delete a saved search
+      tags: [search]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /tools/compare:
+    post:
+      operationId: toolsCompare
+      summary: Compare two folders
+      tags: [tools]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /tools/sync/plan:
+    post:
+      operationId: toolsSyncPlan
+      summary: Plan a sync between two folders
+      tags: [tools]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /tools/duplicates:
+    post:
+      operationId: toolsDuplicates
+      summary: Find duplicate files
+      tags: [tools]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /tools/diskusage:
+    get:
+      operationId: toolsDiskUsage
+      summary: Sizes below a folder for the treemap
+      tags: [tools]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /tools/cleanup/scan:
+    post:
+      operationId: toolsCleanupScan
+      summary: Find files that can go
+      tags: [tools]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /tools/checksum/parse:
+    post:
+      operationId: toolsChecksumParse
+      summary: Read a checksum file
+      tags: [tools]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /tools/arrowloop:
+    post:
+      operationId: toolsArrowLoop
+      summary: Hand a folder to ArrowLoop as a job
+      tags: [tools]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /labels:
+    get:
+      operationId: labelsGet
+      summary: Colours and tags with their names
+      tags: [labels]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /labels/colours:
+    put:
+      operationId: labelColoursPut
+      summary: Rename or recolour the colour labels
+      tags: [labels]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /labels/tags:
+    put:
+      operationId: labelTagsPut
+      summary: Change the list of tags
+      tags: [labels]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /labels/items:
+    get:
+      operationId: labelItemsGet
+      summary: Labels of the entries in a folder
+      tags: [labels]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: labelItemsPut
+      summary: Set colour and tags on paths
+      tags: [labels]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/prefs:
+    get:
+      operationId: prefsGet
+      summary: Own settings
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: prefsPut
+      summary: Save own settings
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/bookmarks:
+    get:
+      operationId: bookmarksGet
+      summary: Pinned folders
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: bookmarksPut
+      summary: Save pinned folders
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/profiles:
+    get:
+      operationId: profilesList
+      summary: Saved panel profiles
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: profileCreate
+      summary: Save a panel profile
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/profiles/{id}:
+    put:
+      operationId: profileUpdate
+      summary: Change a panel profile
+      tags: [prefs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    delete:
+      operationId: profileDelete
+      summary: Delete a panel profile
+      tags: [prefs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/rename-presets:
+    get:
+      operationId: renamePresetsGet
+      summary: Saved rename patterns
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: renamePresetsPut
+      summary: Save rename patterns
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/frequent:
+    get:
+      operationId: frequentGet
+      summary: Often visited folders
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: frequentVisit
+      summary: Count a visit to a folder
+      tags: [prefs]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me:
+    get:
+      operationId: meGet
+      summary: The logged in user
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/password:
+    put:
+      operationId: mePassword
+      summary: Change the own password, which ends the other sessions
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/sessions:
+    get:
+      operationId: sessionsList
+      summary: Open sessions
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/sessions/{id}:
+    delete:
+      operationId: sessionEnd
+      summary: End a session
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/tokens:
+    get:
+      operationId: tokensList
+      summary: API tokens
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: tokenCreate
+      summary: Create an API token with limited rights
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/tokens/{id}:
+    delete:
+      operationId: tokenDelete
+      summary: Revoke an API token
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/passkeys:
+    get:
+      operationId: passkeysList
+      summary: Passkeys
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: passkeyRegister
+      summary: Register a passkey
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/passkeys/{id}:
+    delete:
+      operationId: passkeyDelete
+      summary: Remove a passkey
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /me/totp:
+    post:
+      operationId: totpSetup
+      summary: Turn on two factor login
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    delete:
+      operationId: totpDisable
+      summary: Turn off two factor login
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/users:
+    get:
+      operationId: usersList
+      summary: List users
+      x-access: admin
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: userCreate
+      summary: Create a user
+      x-access: admin
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/users/{id}:
+    get:
+      operationId: userGet
+      summary: One user
+      x-access: admin
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    patch:
+      operationId: userUpdate
+      summary: Change a user
+      x-access: admin
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    delete:
+      operationId: userDelete
+      summary: Delete a user
+      x-access: admin
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/groups:
+    get:
+      operationId: groupsList
+      summary: List groups
+      x-access: admin
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: groupCreate
+      summary: Create a group
+      x-access: admin
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/groups/{name}:
+    patch:
+      operationId: groupUpdate
+      summary: Change a group
+      x-access: admin
+      tags: [accounts]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    delete:
+      operationId: groupDelete
+      summary: Delete a group
+      x-access: admin
+      tags: [accounts]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/rules:
+    get:
+      operationId: rulesGet
+      summary: Access rules
+      x-access: admin
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: rulesPut
+      summary: Save access rules
+      x-access: admin
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/rules/test:
+    post:
+      operationId: rulesTest
+      summary: Show what a user may do on a path
+      x-access: admin
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/activity:
+    get:
+      operationId: activityList
+      summary: Activity log
+      x-access: admin
+      tags: [accounts]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /shares:
+    get:
+      operationId: sharesList
+      summary: Own share links
+      tags: [shares]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: shareCreate
+      summary: Create a share link
+      tags: [shares]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /shares/{id}:
+    get:
+      operationId: shareGet
+      summary: One share link
+      tags: [shares]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    patch:
+      operationId: shareUpdate
+      summary: Change a share link
+      tags: [shares]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    delete:
+      operationId: shareDelete
+      summary: Delete a share link
+      tags: [shares]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/shares:
+    get:
+      operationId: adminSharesList
+      summary: Every share link on the server
+      x-access: admin
+      tags: [shares]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /s/{slug}:
+    get:
+      operationId: publicShareGet
+      summary: What a share link shows
+      x-access: public
+      tags: [shares]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+      security: []
+  /s/{slug}/unlock:
+    post:
+      operationId: publicShareUnlock
+      summary: Open a share link with its password
+      x-access: public
+      tags: [shares]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+      security: []
+  /s/{slug}/list:
+    get:
+      operationId: publicShareList
+      summary: List a folder inside a share
+      x-access: public
+      tags: [shares]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+      security: []
+  /s/{slug}/raw:
+    get:
+      operationId: publicShareRaw
+      summary: Download a file from a share
+      x-access: public
+      tags: [shares]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+      security: []
+  /s/{slug}/upload:
+    post:
+      operationId: publicShareUpload
+      summary: Drop a file into a collecting share
+      x-access: public
+      tags: [shares]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+      security: []
+  /unraid/state:
+    get:
+      operationId: unraidState
+      summary: Disks, shares, pools and parity
+      tags: [unraid]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /unraid/where:
+    get:
+      operationId: unraidWhere
+      summary: On which disks a path lies
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      tags: [unraid]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /unraid/spindown:
+    post:
+      operationId: unraidSpindown
+      summary: Spin disks down
+      x-access: admin
+      tags: [unraid]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /unraid/gather/plan:
+    post:
+      operationId: unraidGatherPlan
+      summary: Plan moving a folder onto one disk
+      x-access: admin
+      tags: [unraid]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /unraid/fixperms/scan:
+    post:
+      operationId: unraidFixpermsScan
+      summary: Find entries with the wrong owner or mode
+      x-access: admin
+      tags: [unraid]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /unraid/notify/test:
+    post:
+      operationId: unraidNotifyTest
+      summary: Send a test notification
+      x-access: admin
+      tags: [unraid]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /remotes:
+    get:
+      operationId: remotesList
+      summary: Configured remotes
+      tags: [remotes]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: remoteCreate
+      summary: Add a remote
+      x-access: admin
+      tags: [remotes]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /remotes/types:
+    get:
+      operationId: remoteTypes
+      summary: Remote types rclone knows
+      tags: [remotes]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /remotes/test:
+    post:
+      operationId: remoteTest
+      summary: Try a remote configuration
+      x-access: admin
+      tags: [remotes]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /remotes/oauth:
+    post:
+      operationId: remoteOAuth
+      summary: Store a token from rclone authorize
+      x-access: admin
+      tags: [remotes]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /remotes/{name}:
+    get:
+      operationId: remoteGet
+      summary: One remote
+      tags: [remotes]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: remoteUpdate
+      summary: Change a remote
+      x-access: admin
+      tags: [remotes]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    delete:
+      operationId: remoteDelete
+      summary: Remove a remote
+      x-access: admin
+      tags: [remotes]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /remotes/{name}/mount:
+    post:
+      operationId: remoteMount
+      summary: Mount a remote
+      x-access: admin
+      tags: [remotes]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /remotes/{name}/unmount:
+    post:
+      operationId: remoteUnmount
+      summary: Unmount a remote
+      x-access: admin
+      tags: [remotes]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /system:
+    get:
+      operationId: systemGet
+      summary: Version, uptime and available features
+      tags: [system]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/sources:
+    get:
+      operationId: sourcesGet
+      summary: Configured sources
+      x-access: admin
+      tags: [system]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: sourcesPut
+      summary: Save sources
+      x-access: admin
+      tags: [system]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/index:
+    get:
+      operationId: indexState
+      summary: State of the index per source
+      x-access: admin
+      tags: [system]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    post:
+      operationId: indexRebuild
+      summary: Rebuild the index of a source
+      x-access: admin
+      tags: [system]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/integrations/test:
+    post:
+      operationId: integrationsTest
+      summary: Try an integration such as an office server
+      x-access: admin
+      tags: [system]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /admin/app:
+    get:
+      operationId: appSettingsGet
+      summary: Server wide settings
+      x-access: admin
+      tags: [system]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+    put:
+      operationId: appSettingsPut
+      summary: Save server wide settings
+      x-access: admin
+      tags: [system]
+      responses:
+        "501":
+          $ref: '#/components/responses/NotImplemented'
+  /events:
+    get:
+      operationId: eventsStream
+      summary: Server events as SSE
+      description: |
+        Opens a text/event-stream. Each frame has "id:", "event:" and a
+        "data:" line holding an Event. Heartbeats come every 25 seconds
+        without an id. After a reconnect with Last-Event-ID the missed
+        events follow first, or a single resync event when they are gone.
+      parameters:
+        - name: clientId
+          in: query
+          description: Chosen by the client once per tab, it ties the watched folders to this stream. Without it the stream carries only the events that are not about watched folders.
+          schema:
+            type: string
+            maxLength: 64
+        - name: lastEventId
+          in: query
+          description: Same as the Last-Event-ID header, for clients that cannot set headers.
+          schema:
+            type: integer
+            format: int64
+        - name: Last-Event-ID
+          in: header
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: The stream.
+          content:
+            text/event-stream:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [events]
+  /events/watch:
+    put:
+      operationId: eventsWatch
+      summary: Set the folders a client watches
+      description: |
+        Replaces the watched folders of a client. For each of them the stream
+        delivers fs.changed with topic fs:<path>. Folders stay watched for two
+        minutes after the stream closes, so a reconnect keeps them.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WatchRequest"
+      responses:
+        "200":
+          description: The watched folders.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WatchRequest"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [events]
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      description: An API token or a session token.
+    cookie:
+      type: apiKey
+      in: cookie
+      name: filebrowser_quantum_jwt
+      description: The session cookie the web app gets on login.
+  parameters:
+    Path:
+      name: path
+      in: query
+      required: true
+      description: Absolute path.
+      schema:
+        type: string
+        example: /mnt/user/filme
+  responses:
+    NotImplemented:
+      description: Part of the contract, not built yet.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    BadRequest:
+      description: The request is malformed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Unauthorized:
+      description: Not logged in.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Forbidden:
+      description: Not allowed for this user.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    NotFound:
+      description: The path does not exist.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+  schemas:
+    Problem:
+      type: object
+      description: RFC 9457 problem details.
+      required: [title, status]
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+    Event:
+      type: object
+      description: |
+        One server event. The SSE frame carries the type as "event:" and the
+        id as "id:", and this object as "data:". Reconnect with the
+        Last-Event-ID header (or lastEventId query) to receive what was
+        missed. A resync event means the gap was too large and the client
+        should reload its state.
+      required: [id, type, time]
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: string
+          enum:
+            - heartbeat
+            - resync
+            - notify
+            - job.created
+            - job.progress
+            - job.state
+            - job.conflict
+            - job.done
+            - fs.changed
+            - trash.changed
+            - labels.changed
+            - undo.changed
+            - share.opened
+            - unraid.parity
+            - unraid.spin
+            - index.progress
+            - search.hits
+            - prefs.changed
+        topic:
+          type: string
+          description: Set for events that only subscribers see, for example fs:/mnt/user/filme.
+        time:
+          type: string
+          format: date-time
+        data:
+          description: Payload, its shape depends on the type.
+    FsItem:
+      type: object
+      required: [name, dir, size, mtime, mode]
+      properties:
+        name:
+          type: string
+        dir:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+          description: Bytes, 0 for folders.
+        mtime:
+          type: string
+          format: date-time
+          description: Modification time in UTC with milliseconds.
+        mode:
+          type: string
+          description: Permission bits in octal.
+          example: "0664"
+        owner:
+          type: string
+          description: User name, or the number when the container does not know it.
+        group:
+          type: string
+        hidden:
+          type: boolean
+          description: The name starts with a dot.
+        link:
+          type: string
+          description: Target of a symbolic link.
+    Volume:
+      type: object
+      required: [path, free, total]
+      properties:
+        path:
+          type: string
+          description: Where the source is mounted.
+        label:
+          type: string
+          description: Name of the source.
+        free:
+          type: integer
+          format: int64
+        total:
+          type: integer
+          format: int64
+    FsList:
+      type: object
+      required: [path, items]
+      properties:
+        path:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FsItem"
+        volume:
+          $ref: "#/components/schemas/Volume"
+          description: Missing for the virtual folders / and /mnt.
+    FsTreeItem:
+      type: object
+      required: [name, path, hasDirs]
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        hasDirs:
+          type: boolean
+          description: The folder has visible subfolders.
+        label:
+          type: string
+          description: Name of the source mounted here.
+        free:
+          type: integer
+          format: int64
+        total:
+          type: integer
+          format: int64
+    FsTree:
+      type: object
+      required: [path, items]
+      properties:
+        path:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FsTreeItem"
+    WatchRequest:
+      type: object
+      required: [clientId, paths]
+      properties:
+        clientId:
+          type: string
+        paths:
+          type: array
+          maxItems: 64
+          items:
+            type: string

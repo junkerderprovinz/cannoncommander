@@ -3,7 +3,7 @@ package usersidebar
 import (
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // EnsureSidebarLinksFromScopes adds source sidebar links for scoped sources that have no link yet.

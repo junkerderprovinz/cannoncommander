@@ -3,7 +3,7 @@ package state
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestEffectiveUserDefaults_returnsUniversalTemplate(t *testing.T) {

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 func TestUserUpdateChangesSkipsSensitiveFields(t *testing.T) {
@@ -36,12 +36,12 @@ func TestUserUpdateChangesFiltersUnchangedFields(t *testing.T) {
 		FrontendUser: users.FrontendUser{
 			Username: "akadmin",
 			NonAdminEditable: users.NonAdminEditable{
-				DarkMode:       true,
-				StickySidebar:  true,
-				Locale:         "en",
-				SingleClick:    false,
-				ThemeColor:     "var(--blue)",
-				QuickDownload:  false,
+				DarkMode:           true,
+				StickySidebar:      true,
+				Locale:             "en",
+				SingleClick:        false,
+				ThemeColor:         "var(--blue)",
+				QuickDownload:      false,
 				DeleteAfterArchive: true,
 			},
 		},

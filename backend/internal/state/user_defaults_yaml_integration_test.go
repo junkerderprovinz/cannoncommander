@@ -4,13 +4,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestStateInit_proxyYAML_seedsDefaultsAndCreatesUser(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
-	t.Setenv("FILEBROWSER_PLAYWRIGHT_TEST", "true")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_PLAYWRIGHT_TEST", "true")
 	settings.Initialize("../../../_docker/src/proxy/backend/config.yaml")
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")
@@ -56,8 +56,8 @@ func TestStateInit_proxyYAML_seedsDefaultsAndCreatesUser(t *testing.T) {
 }
 
 func TestStateInit_jwtYAML_organizedDefaultsOnNewUser(t *testing.T) {
-	t.Setenv("FILEBROWSER_ONLYOFFICE_SECRET", "")
-	t.Setenv("FILEBROWSER_PLAYWRIGHT_TEST", "true")
+	t.Setenv("CC_ONLYOFFICE_SECRET", "")
+	t.Setenv("CC_PLAYWRIGHT_TEST", "true")
 	settings.Initialize("../../../_docker/src/jwt/backend/config.yaml")
 
 	dbPath := filepath.Join(t.TempDir(), "filebrowser.sqlite")

@@ -78,7 +78,7 @@ func TestExpandConfigEnvCoercesWholeReference(t *testing.T) {
 func TestConfigLoadYamlEnvSubstitution(t *testing.T) {
 	testDir := t.TempDir()
 	const secret = "ldap-bind-secret"
-	t.Setenv("FILEBROWSER_LDAP_USER_PASSWORD", secret)
+	t.Setenv("CC_LDAP_USER_PASSWORD", secret)
 
 	configContent := []byte(`
 auth:
@@ -88,7 +88,7 @@ auth:
       server: "ldap://ldap.example.com:389"
       baseDN: "dc=example,dc=com"
       userDN: "cn=admin,dc=example,dc=com"
-      userPassword: "${FILEBROWSER_LDAP_USER_PASSWORD}"
+      userPassword: "${CC_LDAP_USER_PASSWORD}"
 server:
   sources:
     - path: "."
@@ -120,7 +120,7 @@ func TestConfigLoadYamlEnvSpecialCharacters(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testDir := t.TempDir()
-			t.Setenv("FILEBROWSER_LDAP_USER_PASSWORD", tt.secret)
+			t.Setenv("CC_LDAP_USER_PASSWORD", tt.secret)
 
 			configContent := []byte(`
 auth:
@@ -130,7 +130,7 @@ auth:
       server: "ldap://ldap.example.com:389"
       baseDN: "dc=example,dc=com"
       userDN: "cn=admin,dc=example,dc=com"
-      userPassword: "${FILEBROWSER_LDAP_USER_PASSWORD}"
+      userPassword: "${CC_LDAP_USER_PASSWORD}"
 server:
   sources:
     - path: "."

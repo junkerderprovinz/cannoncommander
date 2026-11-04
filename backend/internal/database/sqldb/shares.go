@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 )
 
 func marshalShareSettings(link *share.Share) ([]byte, error) {

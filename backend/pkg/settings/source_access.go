@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 const SourceDefaultsConfigLockMessage = "some source access defaults were set in the config file and cannot be changed here until an admin removes them from the config file"

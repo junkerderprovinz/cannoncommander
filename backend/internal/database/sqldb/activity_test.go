@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 )
 
 func TestActivityBulkInsertAndQuery(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
 // TestCreatedTime_InsertAndReadBack checks that an inserted Created value is returned unchanged.

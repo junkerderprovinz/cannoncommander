@@ -3,7 +3,7 @@ package web
 import (
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/share"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 )
 
 func TestApplySharePasswordUpdatePreservesWhenOmitted(t *testing.T) {

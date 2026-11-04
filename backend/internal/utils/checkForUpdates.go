@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/version"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 	"golang.org/x/mod/semver"
 )
 
@@ -28,10 +28,10 @@ type updateInfo struct {
 
 func CheckForUpdates() (updateInfo, error) {
 	// --- Configuration ---
-	repoOwner := "gtsteffaniak"
-	repoName := "filebrowser"
+	repoOwner := "junkerderprovinz"
+	repoName := "cannoncommander"
 	currentVersion := version.Version
-	isDevMode := os.Getenv("FILEBROWSER_DEVMODE") == "true"
+	isDevMode := os.Getenv("CC_DEVMODE") == "true"
 	if currentVersion == "untracked" || currentVersion == "testing" || currentVersion == "" || isDevMode {
 		return updateInfo{}, nil
 	}

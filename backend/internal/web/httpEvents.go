@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/events"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/events"
 )
 
 // Messenger streams Server-Sent Events to a client.
@@ -55,13 +55,14 @@ func SSEHandler(w http.ResponseWriter, r *http.Request, d *Context) (int, error)
 
 	msgr := NewMessenger(f, w)
 	clientGone := r.Context().Done()
+	// Register before the acknowledgement, so a client that saw it cannot miss
+	// an event sent right after.
+	sendChan := events.Register(username, d.User.GetSourceNames())
+	defer events.Unregister(username, sendChan)
 
 	if err := msgr.SendEvent("acknowledge", "\"connection established\""); err != nil {
 		return http.StatusInternalServerError, fmt.Errorf("error sending message: %v, user: %s, SessionId: %s", err, username, sessionId)
 	}
-
-	sendChan := events.Register(username, d.User.GetSourceNames())
-	defer events.Unregister(username, sendChan)
 
 	heartbeatTicker := time.NewTicker(30 * time.Second)
 	defer heartbeatTicker.Stop()
@@ -78,11 +79,6 @@ func SSEHandler(w http.ResponseWriter, r *http.Request, d *Context) (int, error)
 		case <-heartbeatTicker.C:
 			if err := msgr.SendEvent("heartbeat", "\"hb\""); err != nil {
 				return http.StatusInternalServerError, fmt.Errorf("error sending heartbeat: %v, user: %s", err, username)
-			}
-
-		case msg := <-events.BroadcastChan:
-			if err := msgr.SendEvent(msg.EventType, msg.Message); err != nil {
-				return http.StatusInternalServerError, fmt.Errorf("error sending broadcast: %v, user: %s", err, username)
 			}
 
 		case msg, ok := <-sendChan:
@@ -170,8 +166,5 @@ func SendOnlyOfficeLogEvent(context *OnlyOfficeLogContext, level, component, mes
 		return
 	}
 
-	events.BroadcastChan <- events.EventMessage{
-		EventType: "onlyOfficeLog",
-		Message:   string(jsonData),
-	}
+	events.Broadcast("onlyOfficeLog", string(jsonData))
 }

@@ -17,9 +17,9 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 	"golang.org/x/net/webdav"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/activity"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
-	activitydb "github.com/gtsteffaniak/filebrowser/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 )
 
 // Chunked uploads over WebDAV, in the shape rclone's `--owncloud-chunk-size` sends, which is what

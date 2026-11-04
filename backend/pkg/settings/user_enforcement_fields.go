@@ -3,7 +3,7 @@ package settings
 import (
 	"strings"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // userJSONFieldEnforcementPaths maps flat user JSON field names (PATCH which / data keys)

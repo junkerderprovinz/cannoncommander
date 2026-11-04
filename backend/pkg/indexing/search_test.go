@@ -8,12 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gtsteffaniak/filebrowser/backend/internal/adapters/fs/fileutils"
-	dbsql "github.com/gtsteffaniak/filebrowser/backend/internal/database/sql"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/testutil"
-	"github.com/gtsteffaniak/filebrowser/backend/internal/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/indexing/iteminfo"
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	dbsql "github.com/junkerderprovinz/cannoncommander/backend/internal/database/sql"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -129,10 +129,10 @@ func TestParseSearch(t *testing.T) {
 		{
 			input: "type:olderThan=2024-06-01 type:newerThan=2024-01-01 findme",
 			want: iteminfo.SearchOptions{
-				Conditions:         map[string]bool{"exact": false},
-				Terms:              []string{"findme"},
-				ModifiedOlderThan:  time.Date(2024, 6, 1, 0, 0, 0, 0, time.UTC).Unix(),
-				ModifiedNewerThan:  time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC).Unix(),
+				Conditions:        map[string]bool{"exact": false},
+				Terms:             []string{"findme"},
+				ModifiedOlderThan: time.Date(2024, 6, 1, 0, 0, 0, 0, time.UTC).Unix(),
+				ModifiedNewerThan: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC).Unix(),
 			},
 		},
 	}
@@ -502,8 +502,8 @@ func TestSearchIndexes(t *testing.T) {
 			},
 		},
 		{
-			search:         "new folder",
-			scope:          "/",
+			search: "new folder",
+			scope:  "/",
 			expectedResult: []*SearchResult{
 				{
 					Path: "/new+folder/",
@@ -518,8 +518,8 @@ func TestSearchIndexes(t *testing.T) {
 			},
 		},
 		{
-			search: `"new folder"`,
-			scope:  "/media/",
+			search:         `"new folder"`,
+			scope:          "/media/",
 			expectedResult: []*SearchResult{},
 		},
 		{

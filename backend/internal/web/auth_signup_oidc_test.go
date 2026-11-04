@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gtsteffaniak/filebrowser/backend/pkg/settings"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func TestValidateOidcCallbackState(t *testing.T) {
@@ -82,4 +82,3 @@ func TestParseSignupCredentialsJSONMixedCaseContentType(t *testing.T) {
 		t.Fatalf("got user=%q pass=%q", user, pass)
 	}
 }
-
