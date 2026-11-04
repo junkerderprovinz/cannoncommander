@@ -96,6 +96,13 @@ type Parity struct {
 	LastExit int64 `json:"lastExit"`
 }
 
+// Mover is when the mover carries files between the pools and the array.
+type Mover struct {
+	// Schedule is the crontab line from the scheduler settings.
+	Schedule string `json:"schedule,omitempty"`
+	Active   bool   `json:"active"`
+}
+
 // Busy reports whether the run keeps the disks busy right now.
 func (p Parity) Busy() bool { return p.Running && !p.Paused }
 
@@ -114,6 +121,7 @@ type State struct {
 	Write bool `json:"write"`
 	// SpindownDelay is the default in minutes, 0 when disks never sleep.
 	SpindownDelay int64 `json:"spindownDelay"`
+	Mover         Mover `json:"mover"`
 
 	includeAll, excludeAll []string
 }
@@ -187,6 +195,7 @@ func ReadState(c Config) (*State, error) {
 		st.Version = v.str("version")
 		st.Name = v.str("NAME")
 		st.SpindownDelay = v.int("spindownDelay")
+		st.Mover = Mover{Schedule: v.str("shareMoverSchedule"), Active: v.str("shareMoverActive") == "yes"}
 		st.includeAll = list(v.str("shareUserInclude"))
 		st.excludeAll = list(v.str("shareUserExclude"))
 		st.Array = Array{

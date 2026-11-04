@@ -88,6 +88,8 @@ function driven(tab: Page): Page {
       if (value) return value;
       if (waited >= timeout) throw new Error(`${what} not met after ${timeout} ms of page time`);
       await tab.clock.runFor(50);
+      // The server's jobs run on its own clock, so every step of page time also gives it a little real time.
+      await sleep(10);
     }
   };
   // An action waits for its element to show up and hold still, both of which can take page time, so the clock moves

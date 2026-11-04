@@ -22,7 +22,7 @@ export function provideOps(provide: (name: string, value: unknown) => void) {
   provide('Jobs', {
     get list() { return jobs.list.map(asPrototype); },
     set list(_: unknown) { jobs.clear().catch(() => {}); },
-    running: () => jobs.running.map(asPrototype),
+    running: () => [...jobs.running.map(asPrototype), ...Array.from({ length: jobs.starting }, () => ({ state: STATE.queued, job: {} }))],
     pause: (j: Shown) => jobs.pause(j.job),
     cancel: (j: Shown) => jobs.cancel(j.job),
     move: (j: Shown, to: number) => jobs.move(j.job, to),

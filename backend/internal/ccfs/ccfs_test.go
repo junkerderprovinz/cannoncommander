@@ -253,6 +253,61 @@ func TestCheckHonoursTheAppRules(t *testing.T) {
 	}
 }
 
+func TestDisksAndPoolsStayWithAdmins(t *testing.T) {
+	base := t.TempDir()
+	mnt := filepath.Join(base, "mnt")
+	for _, d := range []string{"user/filme", "disk1/filme", "cache/appdata", "fastcache/vm", "remotes/nas"} {
+		if err := os.MkdirAll(filepath.Join(mnt, d), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	plain, err := New(nil, Source{Name: "Server", Mount: "/mnt", Root: mnt})
+	if err != nil {
+		t.Fatal(err)
+	}
+	r := plain.WithDevices("cache", "fastcache", "disk1")
+	all := users.BackendScope{Path: mnt, Scope: "/", Permissions: allPerms}
+	anna, jdp := user("anna", false, all), user("jdp", true, all)
+
+	for _, p := range []string{"/mnt/disk1", "/mnt/disk1/filme", "/mnt/cache/appdata", "/mnt/fastcache/vm"} {
+		if _, err := r.Check(anna, p, View); !errors.Is(err, ErrForbidden) {
+			t.Errorf("anna on %s: err = %v", p, err)
+		}
+		if _, err := r.Check(jdp, p, View|Modify); err != nil {
+			t.Errorf("jdp on %s: %v", p, err)
+		}
+	}
+	if _, err := r.Check(anna, "/mnt/user/filme", View|Modify); err != nil {
+		t.Errorf("anna in the shares: %v", err)
+	}
+	dir, err := r.Check(anna, "/mnt", View)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var seen []string
+	for _, name := range []string{"user", "disk1", "cache", "fastcache", "remotes"} {
+		if r.Visible(anna, dir, name) {
+			seen = append(seen, name)
+		}
+	}
+	if !slices.Equal(seen, []string{"user", "remotes"}) {
+		t.Errorf("anna sees %v in /mnt", seen)
+	}
+	if !r.AdminOnly("/mnt/fastcache") || plain.AdminOnly("/mnt/fastcache") || r.AdminOnly("/mnt/user/cache") {
+		t.Error("a pool counts only when Unraid names it")
+	}
+}
+
+func TestSourcesOnADiskAreForAdmins(t *testing.T) {
+	r, err := New(nil, Source{Name: "Filme", Mount: "/mnt/disk3/filme", Root: t.TempDir()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !r.Sources()[0].AdminOnly {
+		t.Error("a source below /mnt/disk3 is open to everyone")
+	}
+}
+
 func TestVisibleShowsOnlyTheWayToTheScope(t *testing.T) {
 	r, roots := newResolver(t, nil)
 	anna := user("anna", false, users.BackendScope{Path: roots.user, Scope: "/fotos", Permissions: allPerms})

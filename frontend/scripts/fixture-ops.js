@@ -4,6 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { sharedFixture } from './fixture.js';
+import { unraidFixture } from './fixture-unraid.js';
 
 const KB = 1024, MB = KB * 1024, GB = MB * 1024;
 const TICK = 250;
@@ -413,8 +414,12 @@ export function opsFixture(fx = sharedFixture()) {
   const raw = (req) => new Promise((resolve) => { const parts = []; req.on('data', (c) => parts.push(c)); req.on('end', () => resolve(Buffer.concat(parts))); });
   const bodyOf = async (req) => { try { const b = (await raw(req)).toString('utf8'); return b ? JSON.parse(b) : {}; } catch { return {}; } };
   const jobAt = (id) => jobs.find((j) => j.id === id);
+  const resume = () => { timer ||= setInterval(tick, TICK); timer.unref?.(); tick(); };
+  const unraidRoutes = unraidFixture({ fx, unraid, parity, send, createJob, view, filesOf, where, ruleOf, allocatorOf: (a) => ALLOCATOR[a], resume });
 
+  // A route that answers false only looks on, and the next one for the same request answers it.
   const routes = [
+    ...unraidRoutes,
     ['GET', /^\/events$/, (req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
       res.write(': fixture\n\n');
@@ -586,19 +591,19 @@ export function opsFixture(fx = sharedFixture()) {
     ['DELETE', /^\/uploads\/([^/]+)$/, (_r, _s, _b, [, id]) => (uploads.delete(id) ? [204] : [404, 'Not found'])],
 
     ['POST', /^\/unraid\/gather\/plan$/, (_r, _s, b) => { const plan = gatherPlan(b); return plan ? [200, plan.out] : [400, 'pick a folder in a user share']; }],
-    // Only the fixture has this: it plays a parity check, so the waiting jobs and the question can be tried.
-    ['PUT', /^\/fixture\/parity$/, (_r, _s, { busy }) => { parity.busy = !!busy; timer ||= setInterval(tick, TICK); tick(); return [200, parity]; }],
   ];
 
   return async (req, res, next) => {
     const url = new URL(req.url, 'http://fixture');
     if (!url.pathname.startsWith('/api/v1/')) return next();
     const path = url.pathname.slice('/api/v1'.length);
+    let body;
     for (const [method, re, fn] of routes) {
       const m = req.method === method && path.match(re);
       if (!m) continue;
-      const body = method === 'GET' || method === 'DELETE' || (method === 'PUT' && path.startsWith('/uploads/')) ? undefined : await bodyOf(req);
+      if (!(method === 'GET' || method === 'DELETE' || (method === 'PUT' && path.startsWith('/uploads/')))) body ??= await bodyOf(req);
       const out = await fn(req, res, body || {}, m);
+      if (out === false) continue;
       if (out === true) return;
       const [status, payload, headers] = out;
       return json(res, status, payload, headers);
