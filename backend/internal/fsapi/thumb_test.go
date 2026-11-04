@@ -99,3 +99,51 @@ func TestThumbIsMissingForPlainFiles(t *testing.T) {
 		t.Errorf("outside the scope: %d", rec.Code)
 	}
 }
+
+func TestThumbOfAPageNamedLikeAPictureIsMissing(t *testing.T) {
+	withPreviews(t)
+	f := newFixture(t)
+	page := []byte("<!doctype html><html><body><script>alert(document.domain)</script></body></html>" + strings.Repeat(" ", 200))
+	put(t, filepath.Join(f.share, "fotos", "seite.png"), page)
+	rec := f.get(t, "jdp", "/fs/thumb", "/mnt/user/fotos/seite.png")
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("thumb: %d %q", rec.Code, rec.Header().Get("Content-Type"))
+	}
+	if rec.Header().Get("ETag") != "" || rec.Header().Get("Cache-Control") != "no-store" {
+		t.Errorf("a missing thumbnail may be cached: %v", rec.Header())
+	}
+}
+
+func TestThumbOfADrawingIsMissing(t *testing.T) {
+	withPreviews(t)
+	f := newFixture(t)
+	drawing := `<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script>` + strings.Repeat(" ", 200) + `</svg>`
+	put(t, filepath.Join(f.share, "fotos", "bild.svg"), []byte(drawing))
+	if rec := f.get(t, "jdp", "/fs/thumb", "/mnt/user/fotos/bild.svg"); rec.Code != http.StatusNotFound {
+		t.Fatalf("thumb: %d %q", rec.Code, rec.Header().Get("Content-Type"))
+	}
+}
+
+func TestThumbCannotRunAsAPage(t *testing.T) {
+	withPreviews(t)
+	f := newFixture(t)
+	encode(t, filepath.Join(f.share, "fotos", "bunt.png"), func(b *bytes.Buffer) error { return png.Encode(b, noise(64, 64)) })
+	rec := f.get(t, "jdp", "/fs/thumb", "/mnt/user/fotos/bunt.png")
+	if rec.Code != http.StatusOK || rec.Header().Get("X-Content-Type-Options") != "nosniff" {
+		t.Fatalf("thumb: %d %v", rec.Code, rec.Header())
+	}
+	if csp := rec.Header().Get("Content-Security-Policy"); !strings.Contains(csp, "sandbox") {
+		t.Errorf("csp %q", csp)
+	}
+}
+
+func TestThumbOfASmallAVIFKeepsItsType(t *testing.T) {
+	withPreviews(t)
+	f := newFixture(t)
+	data := append([]byte("\x00\x00\x00\x1cftypavif\x00\x00\x00\x00avifmif1miaf"), make([]byte, 200)...)
+	put(t, filepath.Join(f.share, "fotos", "klein.avif"), data)
+	rec := f.get(t, "jdp", "/fs/thumb", "/mnt/user/fotos/klein.avif")
+	if rec.Code != http.StatusOK || rec.Header().Get("Content-Type") != "image/avif" {
+		t.Fatalf("thumb: %d %q", rec.Code, rec.Header().Get("Content-Type"))
+	}
+}
