@@ -99,7 +99,7 @@ function state() {
     app: {
       office: { kind: 'none', url: '', secret: '' },
       arrowloop: { url: 'http://tower.lan:8095', token: 'al-token', paths: { '/mnt/user': '/data' } },
-      previews: { thumbs: true, video: false },
+      previews: { thumbs: true, video: false }, webdav: false,
       remotes: { automount: true, cache: 'writes', cacheSize: 50 },
       updates: { autoCheck: true }, logLevel: 'info',
     },
@@ -385,7 +385,7 @@ export function settingsFixtureMiddleware() {
         rclone: { available: true, path: '/usr/bin/rclone', version: '1.71.2' },
       },
       unraid: { available: true, socket: false },
-      features: { office: S.app.office.kind === 'none' ? { kind: 'none' } : { kind: S.app.office.kind, url: S.app.office.url }, thumbs: S.app.previews.thumbs, videoPreview: S.app.previews.video, mupdf: true },
+      features: { office: S.app.office.kind === 'none' ? { kind: 'none' } : { kind: S.app.office.kind, url: S.app.office.url }, thumbs: S.app.previews.thumbs, videoPreview: S.app.previews.video, webdav: S.app.webdav, mupdf: true },
     })],
     ['POST', '/system/update', () => ({ version: '0.1.0', latest: '0.1.0', updateAvailable: false, releaseUrl: 'https://github.com/junkerderprovinz/cannoncommander/releases/tag/v0.1.0' })],
     ['POST', '/unraid/notify/test', () => 204],
