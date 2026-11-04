@@ -52,6 +52,9 @@
     "gather": "Gather: {what} onto {to}",
     "scatter": "Empty: {what} from {to}",
     "fixPerms": "Repair permissions: {what}",
+    "sync": "Synchronise: {name} and {to}",
+    "duplicates": "Find duplicate files: {name}",
+    "contentSearch": "Search contents: {name} in {to}",
     "other": "{kind}: {what}"
   },
   "notifyDone": "Job done",

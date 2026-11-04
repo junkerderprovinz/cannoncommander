@@ -13,6 +13,30 @@
  "steps-glyphpage": {
   "page": "cannoncommander-glyphen.html"
  },
+ "steps-r14": {
+  "shots": {
+   "r14-0-sidebar": {
+    "pixels": 15000,
+    "why": "the panels start in another state, the prototype has a second tab open and shows Unraid's disk pills, which the Unraid package brings"
+   },
+   "r14-1-tree": {
+    "pixels": 45000,
+    "why": "a click on a branch toggle redraws the prototype's tree and drops the keyboard focus, so its arrow down goes nowhere. The app keeps the focus in the tree and the arrow picks the next row"
+   },
+   "r14-6-searchmenu": {
+    "pixels": 16500,
+    "why": "the panels start in another state, the prototype has a second tab open and shows Unraid's disk pills, which the Unraid package brings"
+   }
+  }
+ },
+ "steps-r15": {
+  "shots": {
+   "r15-1-search": {
+    "pixels": 12500,
+    "why": "the panels start in another state, the prototype has a second tab open and shows Unraid's disk pills, which the Unraid package brings"
+   }
+  }
+ },
  "steps-r7-fenster": {
   "stale": "the step file asks for the conflict rules Überschreiben and Umbenennen, which are called Ersetzen and Beide behalten now"
  },

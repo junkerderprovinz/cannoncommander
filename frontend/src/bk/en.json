@@ -1,0 +1,10 @@
+{
+  "copied": "Copied",
+  "copyPath": "Copy path",
+  "pickFolder": "Choose folder",
+  "server": "Server",
+  "noFolder": "This folder does not exist",
+  "sameFolder": "Both panels show the same folder",
+  "archiveOnly": "Inside an archive you can only view and unpack",
+  "jobs": "Jobs"
+}

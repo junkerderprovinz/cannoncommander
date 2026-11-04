@@ -29,7 +29,8 @@ const v = computed(() => F.viewOf(tab.value));
 const active = computed(() => props.i === F.active);
 const vol = computed(() => F.volume(props.i));
 
-const tabName = (tb: Tab) => (listing.placeLabel(tb.path) || split(tb.path).pop() || t('files.server')).replace('::', '');
+const labelOf = (tb: Tab) => extend.tabLabels.reduce<{ name: string; g?: string } | null>((got, fn) => got ?? fn(tb), null);
+const tabName = (tb: Tab) => labelOf(tb)?.name ?? (listing.placeLabel(tb.path) || split(tb.path).pop() || t('files.server')).replace('::', '');
 const used = (free: number, total: number) => `${Math.round((1 - free / total) * 100)}%`;
 
 function activate() {
@@ -88,7 +89,7 @@ const count = computed(() => {
     <div class="ptabs" @dblclick.self="F.active = i; run('newTab')">
       <button v-for="(tb, k) in P.tabs" :key="k" class="ptab" :class="{ cur: k === P.cur }" :data-tab="k" :data-tip="tb.path + (tb.locked ? t('files.lockedSuffix') : '')"
         @click="P.cur = k" @contextmenu.prevent="onTabMenu($event, k)" @mousedown.middle.prevent @auxclick="middle($event, k)">
-        <G v-if="tb.locked" n="IconPin" />{{ tabName(tb) }}<span v-if="P.tabs.length > 1" class="x" :data-close="k" :data-tip="t('files.closeTab')" @click.stop="closeTab(k)"><G n="IconClose" /></span>
+        <G v-if="labelOf(tb)?.g" :n="labelOf(tb)!.g!" /><G v-if="tb.locked" n="IconPin" />{{ tabName(tb) }}<span v-if="P.tabs.length > 1" class="x" :data-close="k" :data-tip="t('files.closeTab')" @click.stop="closeTab(k)"><G n="IconClose" /></span>
       </button>
       <button class="ptab add" data-newtab :data-tip="t('files.newTab')" @click="F.active = i; run('newTab')"><G n="IconAdd" /></button>
     </div>
@@ -102,6 +103,7 @@ const count = computed(() => {
           <button class="qdeep" :class="{ on: tab.deep !== false }" :aria-pressed="tab.deep !== false" :aria-label="t('files.filterDeepLabel')" data-qfdeep
             :data-tip="tab.deep === false ? t('files.filterHere') : t('files.filterDeep')" @click="toggleDeep"><G n="IconFolderOpen" /></button>
           <button class="btn icon" data-qfclose :data-tip="t('files.filterClose')" @click="closeFilter"><G n="IconClose" /></button>
+          <Render v-for="(slot, n) in extend.filterSlots" :key="n" :node="slot(i)" />
         </div>
         <button v-else class="btn icon" data-run="quickFilter" :data-tip="t('files.searchTip')" @click="F.active = i; run('quickFilter')"><G n="IconSearch" /></button>
         <button class="btn icon" data-labelsmenu :data-tip="t('files.labelsTip')" @click="run('labelsMenu')"><G n="IconHash" /></button>
@@ -109,6 +111,7 @@ const count = computed(() => {
         <button v-if="prefs.dual" class="btn icon" data-run="equalPanels" :data-tip="t('files.equalTip')" @click="F.active = i; run('equalPanels')"><G n="IconSync" /></button>
       </span>
     </div>
+    <Render v-for="(bar, n) in extend.panelBars" :key="n" :node="bar(i)" />
     <FileList :key="tab.path + v" :i="i" />
     <div class="lfoot glim-num">
       <span v-if="marked.length">{{ t('files.marked', { n: marked.length, size: fmtSize(marked.reduce((a, k) => a + k.size, 0)) }) }}<button class="lclear" data-run="unselect" :data-tip="t('files.unselectTip')" :aria-label="t('files.unselect')" @click="run('unselect')"><G n="IconClose" /></button></span>

@@ -274,6 +274,9 @@ export function opsFixture(fx = sharedFixture()) {
     publish('job.created', j);
     timer ||= setInterval(tick, TICK);
     timer.unref?.();
+    // A job that moves no bytes, such as one into the trash, ends at once, as it does on a server for a handful of
+    // names; the prototype's own deletes take no time either, so both reach the same point after the same wait.
+    if (!j.totalBytes) setImmediate(tick);
     return j;
   }
 
@@ -317,7 +320,7 @@ export function opsFixture(fx = sharedFixture()) {
       j.doneFiles = Math.min(j.totalFiles, Math.floor((j.doneBytes / j.totalBytes) * j.totalFiles));
       const names = (j._params.sources || []).map(base);
       j.current = names[Math.min(names.length - 1, Math.floor((j.doneBytes / j.totalBytes) * names.length))];
-    } else j.doneFiles = Math.min(j.totalFiles, j.doneFiles + Math.max(1, Math.ceil(j.totalFiles / 3)));
+    } else j.doneFiles = j.totalFiles;
     const finished = j.totalBytes ? j.doneBytes >= j.totalBytes : j.doneFiles >= j.totalFiles;
     send('job.progress', { id: j.id, totalBytes: j.totalBytes, doneBytes: Math.round(j.doneBytes), totalFiles: j.totalFiles, doneFiles: j.doneFiles, rate: j.rate, left: j.left, current: j.current });
     if (!finished) return;
@@ -335,7 +338,7 @@ export function opsFixture(fx = sharedFixture()) {
   // What a finished job does to the tree; it hands back the id of its undo step where it has one.
   function run(j) {
     const p = j._params;
-    if (j._apply) return j._apply();
+    if (j._apply) return j._apply(j);
     if (j.kind === 'copy' || j.kind === 'move') return transfer(j, p);
     if (j.kind === 'delete' || j.kind === 'trash') {
       const gone = p.paths.map((path) => [detach(path), path]).filter(([n]) => n);
@@ -414,6 +417,16 @@ export function opsFixture(fx = sharedFixture()) {
   const bodyOf = async (req) => { try { const b = (await raw(req)).toString('utf8'); return b ? JSON.parse(b) : {}; } catch { return {}; } };
   const jobAt = (id) => jobs.find((j) => j.id === id);
 
+  // Job kinds other parts of the fixture bring along: prepare checks the params and hands back the job's extras,
+  // with apply for what the finished job does, or the reason it refuses as a string.
+  const kinds = {};
+  function startJob(kind, params = {}, extra = {}) {
+    const own = kinds[kind].prepare(params);
+    if (typeof own === 'string') return [400, own];
+    if (own === null) return [404, 'Not found'];
+    return [202, view(createJob(kind, params, { ...extra, ...own }))];
+  }
+
   const routes = [
     ['GET', /^\/events$/, (req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
@@ -426,6 +439,7 @@ export function opsFixture(fx = sharedFixture()) {
     ['GET', /^\/jobs$/, () => [200, { jobs: [...open(), ...jobs.filter((j) => !OPEN.includes(j.state)).reverse()].map(view) }]],
     ['POST', /^\/jobs$/, (_r, _s, b) => {
       if (['gather', 'scatter'].includes(b.kind) && !gatherPlan({ ...b.params, mode: b.kind })) return [400, 'pick a folder in a user share'];
+      if (kinds[b.kind]) return startJob(b.kind, b.params || {}, { cap: b.cap, waitForParity: b.waitForParity });
       return [202, view(createJob(b.kind, b.params || {}, { cap: b.cap, waitForParity: b.waitForParity, ...(b.kind === 'gather' || b.kind === 'scatter' ? { dest: '/mnt/' + b.params.disk, total: gatherPlan({ ...b.params, mode: b.kind }).out.move } : {}) }))];
     }],
     ['DELETE', /^\/jobs$/, () => {
@@ -434,6 +448,7 @@ export function opsFixture(fx = sharedFixture()) {
       return [200, { removed: ended.length }];
     }],
     ['GET', /^\/jobs\/settings$/, () => [200, settings]],
+    ['GET', /^\/jobs\/([^/]+)$/, (_r, _s, _b, [, id]) => { const j = jobAt(id); return j ? [200, view(j)] : [404, 'Not found']; }],
     ['PUT', /^\/jobs\/settings$/, (_r, _s, b) => { Object.assign(settings, b); timer ||= setInterval(tick, TICK); return [200, settings]; }],
     ['PATCH', /^\/jobs\/([^/]+)$/, (_r, _s, b, [, id]) => {
       const j = jobAt(id);
@@ -590,7 +605,7 @@ export function opsFixture(fx = sharedFixture()) {
     ['PUT', /^\/fixture\/parity$/, (_r, _s, { busy }) => { parity.busy = !!busy; timer ||= setInterval(tick, TICK); tick(); return [200, parity]; }],
   ];
 
-  return async (req, res, next) => {
+  const handler = async (req, res, next) => {
     const url = new URL(req.url, 'http://fixture');
     if (!url.pathname.startsWith('/api/v1/')) return next();
     const path = url.pathname.slice('/api/v1'.length);
@@ -605,6 +620,11 @@ export function opsFixture(fx = sharedFixture()) {
     }
     return next();
   };
+  // What the tools part of the fixture needs to run its jobs on the same queue and tree.
+  handler.ops = { kinds, startJob, send, changed, toTrash, ensureDir, detach, freeName, pushStep };
+  return handler;
 }
 
-export const opsFixtureMiddleware = () => opsFixture();
+let shared;
+export const opsFixtureMiddleware = () => (shared ??= opsFixture());
+export const sharedOps = () => opsFixtureMiddleware().ops;
