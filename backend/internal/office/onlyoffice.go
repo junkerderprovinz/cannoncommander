@@ -1,6 +1,7 @@
 package office
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -19,6 +20,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsapi"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
 )
 
@@ -65,7 +67,7 @@ func (s *service) editorConfig(r *http.Request, o system.Office, u *users.User, 
 		"editorConfig": map[string]any{
 			"mode":        mode,
 			"callbackUrl": base + "/office/callback?token=" + url.QueryEscape(token),
-			"lang":        officeLang(u),
+			"lang":        s.officeLang(r.Context(), u),
 			"user":        map[string]any{"id": strconv.FormatUint(u.ID, 10), "name": u.Username},
 		},
 	}
@@ -242,7 +244,16 @@ func publicError(err error) error {
 	return v1.ProblemFor(err)
 }
 
-func officeLang(u *users.User) string {
+// officeLang is the language the editor opens in: the one the user picked for
+// the interface, otherwise the locale of the account.
+func (s *service) officeLang(ctx context.Context, u *users.User) string {
+	lang, err := prefs.Language(ctx, s.db, u.ID)
+	if err != nil {
+		logger.Errorf("office language of user %d: %v", u.ID, err)
+	}
+	if lang != "" {
+		return lang
+	}
 	if u.Locale != "" {
 		return u.Locale
 	}
