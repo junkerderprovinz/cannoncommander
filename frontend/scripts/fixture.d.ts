@@ -28,4 +28,6 @@ export function createFixture(): {
   thumb(path: string): string | null;
 };
 
+export function sharedFixture(): ReturnType<typeof createFixture>;
+
 export function fixtureMiddleware(): Connect.NextHandleFunction;

@@ -7,6 +7,7 @@ import {
   winStack,
 } from '@/core';
 import { DAY } from '@/core/format';
+import { provideOps } from './ops';
 import { menuName } from '@/core/menus';
 import { orderedTabs } from '@/core/views';
 import { COLUMNS, Columns, DEFAULT_COLUMNS } from '@/files/columns';
@@ -14,6 +15,7 @@ import { join, parent, split } from '@/files/paths';
 import type { Item } from '@/api/client';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
+import { useTrash } from '@/stores/trash';
 import { useUser } from '@/stores/user';
 
 // The moment the prototype's made-up data and the fixture on disk were made; the parity runner sets the page clock to it.
@@ -73,6 +75,7 @@ async function readAll(listing: ReturnType<typeof useListing>, path = '/') {
 
 export async function installShim() {
   const listing = useListing(), panels = usePanels(), user = useUser();
+  provideOps(provide);
   await readAll(listing);
 
   const CC = {
@@ -113,7 +116,7 @@ export async function installShim() {
 
   const DATA = {
     get bookmarks() { return user.bookmarks; },
-    get trash() { return user.trash; },
+    get trash() { return useTrash().items; },
     ...waiting.DATA,
   };
 

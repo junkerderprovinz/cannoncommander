@@ -95,6 +95,8 @@ export function createFixture() {
     return out;
   };
   return {
+    FS,
+    DATA,
     list(path) {
       const n = dirAt(path);
       return n && { path, items: FS.kids(n).map(item), volume: volume(path) };
@@ -137,7 +139,6 @@ export function createFixture() {
     },
     me: () => ({ name: 'jdp', full: 'Junker der Provinz', role: 'Admin' }),
     bookmarks: () => ({ items: DATA.bookmarks }),
-    trash: () => ({ items: DATA.trash.map((t) => ({ ...t, size: Math.round(t.size), deleted: iso(t.deleted) })) }),
   };
 }
 
@@ -153,9 +154,13 @@ const bodyOf = (req) => new Promise((resolve) => {
   req.on('end', () => { try { resolve(JSON.parse(raw || '{}')); } catch { resolve({}); } });
 });
 
+// One tree for every middleware, so what one of them changes the others serve.
+let shared;
+export const sharedFixture = () => (shared ??= createFixture());
+
 // Connect middleware for Vite's dev and preview servers.
 export function fixtureMiddleware() {
-  const fx = createFixture();
+  const fx = sharedFixture();
   const routes = {
     'GET /api/v1/fs/list': (q) => fx.list(q.get('path') || '/'),
     'GET /api/v1/fs/tree': (q) => fx.tree(q.get('path') || '/'),
@@ -169,7 +174,6 @@ export function fixtureMiddleware() {
     'GET /api/v1/me/prefs': () => ({}),
     'PUT /api/v1/me/prefs': () => ({}),
     'PUT /api/v1/events/watch': (_q, body) => body,
-    'GET /api/v1/trash': () => fx.trash(),
   };
   return async (req, res, next) => {
     const url = new URL(req.url, 'http://fixture');

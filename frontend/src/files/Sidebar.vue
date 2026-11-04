@@ -11,6 +11,7 @@ import { t } from '@/i18n';
 import type { Bookmark, TreeItem } from '@/api/types';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
+import { useTrash } from '@/stores/trash';
 import { useUser } from '@/stores/user';
 import { moveBookmark, renameBookmark, unpin } from './bookmarks';
 import { folderItems } from './menus';
@@ -18,6 +19,7 @@ import { folderItems } from './menus';
 const F = usePanels();
 const listing = useListing();
 const user = useUser();
+const trash = useTrash();
 const cur = computed(() => F.T().path);
 
 const rows = computed(() => {
@@ -78,7 +80,7 @@ function bookmarkMenu(e: MouseEvent, b: Bookmark) {
         <div v-for="(s, i) in user.bookmarks" :key="s.path" class="nav-row" :class="{ cur: cur === s.path }" :data-go="s.path" :data-bm="i" @click="F.go(s.path)" @contextmenu.prevent.stop="bookmarkMenu($event, s)">
           <G :n="s.g" /><span>{{ s.name }}</span><button class="unpin" :data-unpin="i" :data-tip="t('side.unpin')" :aria-label="t('side.unpinLabel', { name: s.name })" @click.stop="unpin(s)"><G n="IconPin" /></button>
         </div>
-        <div class="nav-row" data-run="openTrash" @click="run('openTrash')"><G n="IconTrash" /><span>{{ t('side.trash') }}</span><span class="meta glim-num">{{ user.trash.length }}</span></div>
+        <div class="nav-row" data-run="openTrash" @click="run('openTrash')"><G n="IconTrash" /><span>{{ t('side.trash') }}</span><span class="meta glim-num">{{ trash.items.length }}</span></div>
         <Render v-for="(row, k) in extend.sideRows" :key="k" :node="row()" />
       </div>
     </section>
