@@ -1,0 +1,9 @@
+size width after drag: 11.5 sort still name: name
+modified width after double click: 8.5
+path menu: appdata | backups | dokumente | downloads | filme | fotos | isos | musik | serien | system
+after path menu: /mnt/user/musik
+tab menu: Neuer TabStrg+T | Tab duplizieren | Tab sperren | Tab schließenStrg+W | Andere Tabs schließen
+locked tab opened new tab: 1 locked stays in: /mnt/user/musik
+after middle click: 2
+disk usage title: Speicherbelegung
+phone active after dot: 1

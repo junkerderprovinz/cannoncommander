@@ -1,0 +1,32 @@
+9672 moons at start: /mnt/disk1, /mnt/disk3
+9672 moons after listing disk1: 2
+9672 toast on open: Disk 1 schläft und fährt jetzt hoch, das dauert ein paar Sekunden
+9672 moons after open: /mnt/disk3
+9672 moons after spin down: 3
+9668 window: Dieselbe Datei | files listed: 2
+9668 share way: Über die User-Shares sind Quelle und Ziel derselbe Ordner. Die Dateien liegen also schon dort, es gibt nichts zu tun. | primary disabled: true
+9668 disk way: Verschieben von /mnt/disk2/filme nach /mnt/disk3/filme.
+9668 toast: Disk 2 und Disk 3 schlafen und fahren jetzt hoch, das dauert ein paar Sekunden | Verschieben: Sintel (2010) nach filme läuftAufgaben
+9668 after move: on disk3 true | left on disk2 false | user share dev disk3 | size 2,2 GB
+9669 props links: /mnt/user/filme/Big Buck Bunny (2008)/Big Buck Bunny (2008).mkv | on: Disk 1
+9669 hard link offered towards isos (other disks): 0
+9669 hard link offered towards backups (disk1 allowed): 1
+9669 warning: Harte Links | Die Kopie ist kein harter Link
+9669 link made: true | 1 harter Link angelegt, belegt keinen neuen Platz
+9669 props links now: 2
+9669 move across a pool: Harte Links | Die harten Links gehen verloren | link button: 0
+9670 store badge: Cache → Array | tip: Share downloads: Primärspeicher Cache, Sekundärspeicher Array. Neue Dateien landen auf dem Cache, der Mover schiebt sie um 3:40 Uhr auf Disk 1. Hier liegen noch 19 Dateien mit 4,3 GB auf dem Cache.
+9670 cache badges: unfertig, album.flac, debian-13.1.0-amd64-netinst.iso, Rechnung-Oktober.pdf, setup-notes.md
+9670 menu has filter: 1
+9670 cache only: unfertig, album.flac, debian-13.1.0-amd64-netinst.iso, Rechnung-Oktober.pdf, setup-notes.md
+9670 filter off, entries: 9
+9670 filme badge:   nur Array
+9671 in context menu: 1
+9671 on appdata: Hier setzt CannonCommander keine Rechte
+9671 skipped: /mnt/user/appdataContainer-Daten101 MB | /mnt/user/systemDocker und VMs41 GB
+9671 after: setup-notes.md nobody:users 0666, unfertig nobody:users 0777, bombvault.db nobody:users 0664, docker.img nobody:users 0664 | Rechte setzen in Shares läuftAufgaben | Rechte gesetzt für 142 Objekte, 2 Ordner ausgelassen
+9673 spread: {"disk3":7,"disk1":7}
+9673 plan: Verschiebt 19 GB in 7 Dateien von Disk 3 auf Disk 1. | button:   Auf Disk 1 holen
+9673 toast: Disk 1 schläft und fährt jetzt hoch, das dauert ein paar Sekunden | Bündeln: backups auf Disk 1 läuftAufgaben
+9673 after: {"disk1":14} | disk dirs: disk1
+9673 scatter plan: Verteilt 5,3 GB von Disk 3 auf Disk 2 (5,3 GB). Ganze Unterordner bleiben zusammen.

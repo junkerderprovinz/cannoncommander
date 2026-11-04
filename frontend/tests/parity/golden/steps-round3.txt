@@ -1,0 +1,3 @@
+dots on files: 0
+windows without a way out: none
+menu still open after tick: 1

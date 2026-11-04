@@ -1,0 +1,7 @@
+parent rows: 0
+header menu:   Allgemein |   Speicher | Rechte |   Medien |   Video |   Musik | Fotos | Dokumente |   Archive | Abbilder | Programme | Prüfsumme |   Spalten wählen |   Standard wiederherstellen
+fotos submenu items: 13
+after tick, submenu open: 1 columns: name,size,modified,make
+menus after escape: 0
+iso checked: true
+visible for codec: 2

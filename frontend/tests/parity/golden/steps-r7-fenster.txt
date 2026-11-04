@@ -1,0 +1,3 @@
+clash rule default: ask
+Fragen: {"asked":1}
+Überspringen: {"asked":0,"names":["setup-notes.md:99"]}

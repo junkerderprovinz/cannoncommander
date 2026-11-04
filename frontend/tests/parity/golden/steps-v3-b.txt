@@ -1,0 +1,38 @@
+9832 codec:hevc -> Big Buck Bunny (2008).mkv, Big.Buck.Bunny.2008.1080p.mkv, Elephants Dream (2006).mkv, pioneer.one.s01e04.720p.mkv
+9832 breite:>=3840 -> DSC_0001.jpg, DSC_0003.jpg, DSC_0005.jpg, DSC_0007.jpg, DSC_0009.jpg, folder.jpg, IMG_0002.jpg, IMG_0004.jpg, IMG_0006.jpg, IMG_0008.jpg, IMG_0011.jpg, IMG_0013.jpg, IMG_0200.jpg, IMG_0202.jpg, IMG_0204.jpg, IMG_0206.jpg, IMG_0208.jpg, IMG_0211.jpg, IMG_0213.jpg, IMG_0215.jpg, IMG_0217.jpg, IMG_0219.jpg, IMG_0220.jpg, pioneer.one.s01e04.720p.mkv, pioneer.one.s01e06.720p.mkv
+9832 größe:>10GB -> appdata-2026-10-24.tar.zst, appdata-2026-10-31.tar.zst, docker.img, vm-win11-2026-10-01.img
+9832 geändert:<3d -> dokumente, isos, leer, system, ~$Bewerbung.docx, Bewerbung.docx, bombvault.db, cannoncommander.db, DSC_0008.jpg, IMG_0008.jpg, Mietvertrag.pdf, Mietvertrag.pdf
+9832 kamera:pixel -> DSC_0001.jpg, DSC_0005.jpg, DSC_0009.jpg, IMG_0004.jpg, IMG_0008.jpg, IMG_0013.jpg, IMG_0202.jpg, IMG_0206.jpg, IMG_0211.jpg, IMG_0215.jpg, IMG_0219.jpg, IMG_0220.jpg
+9832 interpret:"kevin" *.flac -> 
+9832 farbe:rot ->  | warning: „farbe:“ kenne ich nicht. Ich verstehe etwa breite, höhe, codec, interpret, kamera, größe, geändert, dauer und jeden Spaltennamen wie Objektiv oder Jahr
+9832 search window: 2 Treffer | Cipher.mp3, Monkeys Spinning Monkeys.mp3
+9832 search window unknown: „foo:“ kenne ich nicht Ich verstehe etwa breite, höhe, codec, interpret, kamera, größe, geändert, dauer und jeden Spaltennamen
+9832 examples: *.mkv | #steuer | bericht | IMG_????.jpg | breite:>=3840 codec:hevc | geändert:<7d
+9820 lines: 22 | sum: 22 Objekte, 0 Namen ändern sich
+9820 hits: 22 Treffer
+9820 after replace: 22 Objekte, 22 Namen ändern sich | enabled: true
+9820 extra line: Da stehen 23 Zeilen, gewählt sind aber 22 Namen. Jede Zeile gehört zu genau einer Datei, bitte eine Zeile entfernen. | disabled: true
+9820 duplicate: doppelt, doppelt
+9820 renamed: Urlaub_0200.jpg, Urlaub_0202.jpg, Urlaub_0203.jpg, Urlaub_0204.jpg
+9820 from multi rename: Im Editor umbenennen
+9821 window: Tastenkürzel, 100 rows
+9821 filter: Kopieren | Kopieren in die Ablage | Pfad kopieren | Internen Link kopieren
+9821 conflict: Strg+K gehört schon zu „Befehl suchen“. Nochmal drücken übernimmt die Taste, Esc lässt alles, wie es ist.
+9821 copy now: Strg+K | palette: keine
+9821 single letter: Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.
+9821 applied: copy Strg+K, newFolder Strg+Alt+N, palette none, Ctrl+k copy, F5 none
+9821 fkeys: F1 Hilfe | F2 Umbenennen | F3 Ansehen | F4 Bearbeiten | F6Verschieben | F8 Löschen | F9 Suchen | F10 Menü
+9821 menu key: Strg+K
+9821 Ctrl+k runs: Kopieren
+9821 stored: true
+9821 after reload: copy Strg+K, Ctrl+k copy
+9821 tc preset: pack Alt+F5, unpack Alt+F9, rename Umschalt+F6, flat Strg+B, compareDirs Umschalt+F2, copy F5
+9821 reset: copy F5, palette Strg+K, stored false
+9831 groups: Leere Ordner 1 Papierkorb | Leere Dateien 1 Papierkorb | Temp-Reste 5 Papierkorb | Kaputte Verknüpfungen 1 Papierkorb | Falsche Endung 1 Umbenennen | Problematische Namen 2 Umbenennen
+9831 primary: 5 löschen, 3 umbenennen
+9831 delete window: 5 Objekte löschen
+9831 left: Leere Ordner 1 Papierkorb | Leere Dateien 1 Papierkorb | Kaputte Verknüpfungen 1 Papierkorb
+9831 unfertig now: "Fotos-2019.7z.001", "Fotos-2019.7z.002", "Fotos-2019.7z.003", "Fotos-2019.7z.sha256", "alt", "notizen-leer.txt", "Urlaub-007.png", "Rechnung März.pdf", "Notiz_ wichtig_.txt", "altes-iso"
+9833 result: 1 Archiv ist defekt | appdata-2026-10-24.tar.zst 32 von 46 defekt | appdata-2026-10-31.tar.zst 104 von 104 in Ordnung | flash-2026-10-31.zip 12 von 12 in Ordnung
+9833 list mark: appdata-2026-10-24.tar.zst defekt 18 GB 27.09.2026 | appdata-2026-10-24.tar.zst defekt 18 GB 27.09.2026
+9833 context menu: EntpackenAlt+U | Archiv testen

@@ -1,0 +1,19 @@
+colours, rainbow off: FARBEN Akzentfarbe Regenbogen-Modus
+leaf: leaf leaf offered true
+storm: storm storm offered true
+disco offered: true rainbow: true
+colours, rainbow on: FARBEN Akzentfarbe Regenbogen-Modus Disco-Modus Reaktiver Modus Farbenrotation Farbpalette
+disco walks: #ff835b -> #ff8b29 true attr true
+disco off, rest palette: #FF8389
+rotation seed: 7 --rb-0 #FF7EB6 data-rotate false
+palette picker open: true
+palette 0: #123456 reset enabled: true
+palette after reset: #FF8389 #FF832B #FCC419 #6FDC8C #3DDBD9 #1D99F3 #BE95FF #FF7EB6
+accent row dimmed while rainbow on: true presets disabled: true
+accent: #1D99F3 picker: true
+accent after reset: #FCC419
+info cards: Version  | Hilfe  | Über CannonCommander
+version row: VERSION CannonCommander 0.1.0 GlimStone 4.0.0 rclone 1.71.2 Neu · 8 Nach Updates suchen
+quantum gone: true
+update: Aktuell
+crypto: rwMK2nXqChT4JYWVypMypnpctDcM9jgWmG | Kein Destination Tag und kein Memo nötig.

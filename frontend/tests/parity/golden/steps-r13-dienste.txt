@@ -1,0 +1,37 @@
+1 serial: 2 Objekte [läuft] | vm-win11-2026-10-01.img [wartet] | flash-2026-10-31.zip [wartet]
+1 first row: Kopieren: 2 Objekte nach dokumente 5,3 GB von 37 GB · 240 MB/s · noch 3 Min. appdata-2026-10-24.tar.zst 15 %
+1 after up: 2 Objekte [läuft] | flash-2026-10-31.zip [wartet] | vm-win11-2026-10-01.img [wartet]
+1 after drag: vm-win11-2026-10-01.img [läuft] | 2 Objekte [wartet] | flash-2026-10-31.zip [wartet]
+1 parallel: vm-win11-2026-10-01.img [läuft] | 2 Objekte [läuft]
+2 search menu: Große Abbilder 7 | Diesen Monat geändert 43 | Alle Filme 11 | *.mkv alle MKV-Dateien, auch in Unterordnern | #steuer alles mit dem Schlagwort steuer | bericht Namen, in denen bericht vorkommt | IMG_????.jpg ein ? steht für genau ein Zeichen | breite:>=3840 codec:hevc 4K-Filme in HEVC, aus den Metadaten | geändert:<7d alles, was sich in den letzten 7 Tagen geändert hat
+2 panel: 11 hits, bar: Gespeicherte Suche Alle Filme, 11 Treffer in /mnt/user
+2 after rename and remove: Große Abbilder | Diesen Monat geändert panel smart: null
+3 photos: IMG_0200.jpg 2026-04-12_001.jpg | IMG_0201.jpg 2026-08-30_002.jpg
+3 presets: Keine Vorlage, Fotos nach Datum, Interpret - Titel, Serie S01E02, Mit Auflösung, Pioneer One picked: Pioneer One
+3 series renamed: Pioneer One S01E01.mkv, Pioneer One S01E02.mkv, Pioneer One S01E03.mkv
+3 music, missing hint: Cipher.mp3 Chris Zabriskie - Cipher.mp3 ohne Auflösung
+4 suggested name: ubuntu-24.04.3-live-server-amd64.iso
+4 job: Laden: ubuntu-24.04.3-live-server-amd64.iso von releases.ubuntu.com 2,2 GB von 3,7 GB · 78 MB/s · noch 20 s 60 %
+4 landed: true
+4 bad address keeps the window: 1
+5 share from search result: allowed
+5 sidebar row: Sammelmappe 4
+5 visitor sees: poster.jpg, poster (2).jpg, poster (3).jpg, Mietvertrag.pdf
+5 basket after share: Sammelmappe shares page: Sammlung vom 02.11.
+6 rolled: sg7v-urlaub -> fbmx-urlaub
+6 existing rerolled: wc56-urlaub
+6 short address keeps the window: 1
+6 link: urlaub-2026, limit 5, notify true
+6 notice: Jemand hat deinen Link zu Urlaub geöffnet Freigaben
+7 mode on: true marked: album.flac
+7 after taps: album.flac, Big.Buck.Bunny.2008.1080p.mkv, debian-13.1.0-amd64-netinst.iso bar: 3 markiert Kopieren Verschieben Teilen Löschen Fertig
+7 copy window: Kopieren
+7 mode off: true
+8 manifest: CannonCommander, standalone, theme #FCC419, icons 2, share_target POST title/text/url/files
+8 help menu: palette, shortcuts, whatsNew, docs, installApp, glyphs, -, about
+9 Alt+1 focus: appdata | live: Seitenleiste. Pfeiltasten wählen, Enter öffnet
+9 Alt+3: active 1, focus Rechtes Fenster: backups | live: Rechtes Fenster, Ordner backups, 6 Objekte
+9 after marking: 2 markiert, 1,6 GB
+9 Alt+4: Aufgaben | live: Aufgaben, gerade läuft nichts
+9 job done: Fertig: Kopieren: setup-notes.md nach dokumente
+9 shortcuts window: Zur Seitenleiste springen Alt+1 | Ins linke Fenster springen Alt+2 | Ins rechte Fenster springen Alt+3 | Zu den Aufgaben springen Alt+4

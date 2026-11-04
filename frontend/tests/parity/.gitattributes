@@ -1,0 +1,2 @@
+# Golden outputs are compared byte for byte with what the step files print.
+golden/*.txt text eol=lf

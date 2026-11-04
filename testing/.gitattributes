@@ -1,0 +1,2 @@
+# The container runs these files on Linux, so they keep LF in a Windows checkout too.
+* text eol=lf

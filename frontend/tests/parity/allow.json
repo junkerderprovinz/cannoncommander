@@ -1,0 +1,25 @@
+{
+ "*": {
+  "shots": {
+   "*": {
+    "pixels": 100,
+    "why": "Chromium now and then rasterises a glyph or two a subpixel apart"
+   }
+  }
+ },
+ "steps-b": {
+  "stale": "the step file still picks the letter case from a <select>, which the rename window replaced with a dropdown"
+ },
+ "steps-glyphpage": {
+  "page": "cannoncommander-glyphen.html"
+ },
+ "steps-r7-fenster": {
+  "stale": "the step file asks for the conflict rules Überschreiben and Umbenennen, which are called Ersetzen and Beide behalten now"
+ },
+ "steps-round4": {
+  "stale": "the step file looks for the bookmark menu item Verknüpfung entfernen, which is called Vom Schnellzugriff lösen now"
+ },
+ "steps-transfer": {
+  "page": "cannoncommander-transfer.html"
+ }
+}

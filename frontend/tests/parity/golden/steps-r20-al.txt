@@ -1,0 +1,2 @@
+hand-over window: Synchronisieren > In ArrowLoop planen | dokumente nach backups
+toast: „dokumente nach backups“ ist in ArrowLoop geplant ArrowLoop öffnen | sync still open: 1

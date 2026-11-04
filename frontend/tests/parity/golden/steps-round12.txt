@@ -1,0 +1,5 @@
+hits for *.mkv: 11 /mnt/user/filme/Big Buck Bunny (2008)/Big Buck Bunny (2008).mkv, /mnt/user/downloads/Big.Buck.Bunny.2008.1080p.mkv, /mnt/user/filme/Elephants Dream (2006)/Elephants Dream (2006).mkv, /mnt/user/serien/Pioneer One/Staffel 1/pioneer.one.s01e01.720p.mkv, /mnt/user/serien/Pioneer One/Staffel 1/pioneer.one.s01e02.720p.mkv, /mnt/user/serien/Pioneer One/Staffel 1/pioneer.one.s01e03.720p.mkv
+only here: 0 input focused: qf-0
+copy blocked: null
+after Enter: path /mnt/user/filme/Big Buck Bunny (2008) window: Big Buck Bunny (2008).mkv
+pause button size: 44x44

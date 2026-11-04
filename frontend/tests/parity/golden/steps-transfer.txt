@@ -1,0 +1,10 @@
+copy pct 8, papers 0, left 27 s, files 0 von 12, rate 116 MB/s, file line false, buttons   Pausieren/Abbrechen/Im Hintergrund
+move pct 11, papers 0, left 19 s, files 0 von 12, rate 187 MB/s, file line false, buttons   Pausieren/Abbrechen/Im Hintergrund
+delete pct 20, papers 0, left 9 s, files 0 von 12, rate 950 MB/s, file line false, buttons   Pausieren/Abbrechen/Im Hintergrund
+pack pct 7, papers 0, left 31 s, files 0 von 12, rate 65 MB/s, file line false, buttons   Pausieren/Abbrechen/Im Hintergrund
+paused: true pct 6, papers 0, left pausiert, files 0 von 12, rate 116 MB/s, file line false, buttons   Fortsetzen/Abbrechen/Im Hintergrund
+resumed: pct 8, papers 0, left 26 s, files 0 von 12, rate 118 MB/s, file line false, buttons   Pausieren/Abbrechen/Im Hintergrund
+cancelled: 1 Abgebrochen, 0 von 12 Dateien sind schon drüben pct 8, papers 0, left 5 s, files 0 von 12, rate , file line true, buttons Schließen
+failed: 1 backups ist voll, Elephants Dream (2006).mkv passt nicht mehr pct 64, papers 0, left 42 s, files 6 von 12, rate , file line true, buttons Schließen/  Nochmal
+retry restarts: true pct 1, papers 0, left 34 s, files 0 von 12, rate 98 MB/s, file line false, buttons   Pausieren/Abbrechen/Im Hintergrund
+finished: 1 pct 100, papers 0, left 1 Min. 6 s, files 12 von 12, rate Schnitt 94 MB/s, file line true, buttons Schließen

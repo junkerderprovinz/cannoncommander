@@ -1,0 +1,20 @@
+picker parts: true true true true true swatch grid gone: true
+start: #2ec4b6 Türkis
+hue click: #2e58c4 Indigo
+drag past the edge: #0047ff Blau
+keys on field: #003fe0 Königsblau
+keys on strip: #4800e0 Indigo
+hex typed: #5e1224 Bordeaux
+field gets the name: Bordeaux
+  #1b6b73 -> Petrol
+  #98e2c6 -> Mint
+  #d2a91f -> Senf
+  #c8a2d6 -> Flieder
+  #383e42 -> Anthrazit
+  #fbb57c -> Apricot
+own name stays: Meine Farbe
+escape closes picker, window stays: true true
+row 0 colour: #7b1f2e
+colours: Rot #7b1f2e, Orange #ff8a3d, Gelb #f5c518, Grün #4cc977, Blau #3b9cf5, Lila #a98bff, Meine Farbe #ff4fa3
+view menu: Details+g(on) | Kompakt+g | Liste+g | Inhalt+g | Spalten+g | Kacheln+g | Große Kacheln+g | Galerie+g | Laufwerke+g
+clash menu: Fragen+g(on) | Überspringen+g | Ersetzen+g | Wenn neuer+g | Beide behalten+g

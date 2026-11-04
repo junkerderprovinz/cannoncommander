@@ -1,0 +1,13 @@
+side and panel top: 101 / 101
+details cursor 1 -> 2
+compact cursor 1 -> 2
+list cursor 1 -> 8
+content cursor 1 -> 2
+tiles cursor 1 -> 5
+large cursor 1 -> 4
+gallery cursor 1 -> 6
+view menu: Details | Kompakt | Liste | Inhalt | Spalten | Kacheln | Große Kacheln | Galerie | Laufwerke
+after footer x: 0
+after empty click: 0
+pack label: Verpacken
+after Ctrl+Shift+V: large

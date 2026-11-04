@@ -1,0 +1,10 @@
+head: 1876x54, magnifier true
+palette open: true
+shortcuts: Downloads, appdata, Filme, Fotos, Backups pins: 5
+after unpin: Downloads, appdata, Fotos, Backups | path unchanged: true
+after undo: Downloads, appdata, Filme, Fotos, Backups
+picker: true field
+row 2 colour: #2bb8e0
+suggested name: Lila
+suggestion follows the swatch: Haselnuss
+colours: Rot #ff6b72, Orange #ff8a3d, Gelb #2bb8e0, Grün #4cc977, Blau #3b9cf5, Lila #a98bff, Haselnuss #a87a55

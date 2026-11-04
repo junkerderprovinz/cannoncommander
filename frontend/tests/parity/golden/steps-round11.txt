@@ -1,0 +1,3 @@
+album.flac playing: 1 time: 0:01 bars: 160
+Big.Buck.Bunny.2008.1080p.mkv playing: 1 time: 0:01 bars: 0
+play button radius: 12px

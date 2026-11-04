@@ -1,0 +1,38 @@
+jump ub: ubuntu-24.04.3-desktop-amd64.iso | pill: ub Pfeile: nächster Treffer
+next hit: ubuntu-24.04.3-desktop-amd64.iso.sha256
+miss: true ubuntu-24.04.3-desktop-amd64.iso.sha256
+after Esc pill: false
+space still quick look: true
+duplicates: notizen Kopie 2.txt, notizen Kopie.txt, notizen.txt
+gather window: Neuer Ordner mit Auswahl Neuer Ordner
+after gather: Kopien, notizen.txt | inside: notizen Kopie 2.txt, notizen Kopie.txt
+undo gather: notizen Kopie 2.txt, notizen Kopie.txt, notizen.txt
+history menu: ZURÜCKNEHMEN | „notizen Kopie 2.txt“ angelegt gerade eben | „notizen Kopie.txt“ angelegt gerade eben
+after list undo: notizen Kopie 2.txt, notizen Kopie.txt, notizen.txt
+rename undone: true
+deleted: true | history top: 1 Objekt im Papierkorb
+delete undone by Strg+Z: true | toast button now inert: true
+moved to: downloads
+move undone, back in: dokumente
+top folders: /mnt/user/filme, /mnt/user/dokumente, /mnt/user/downloads
+palette empty: Häufige Ordner | Alle Befehle
+palette filme: /mnt/user/filme
+palette opened: /mnt/user/filme
+history: HÄUFIG | /mnt/user/dokumente | /mnt/user/downloads | /mnt/user/fotos
+hash: #/mnt/user/filme
+back: /mnt/user/filme #/mnt/user/filme
+forward: /mnt/user/serien #/mnt/user/serien
+window back: Server › mnt › user
+after window closed: /mnt/user/serien #/mnt/user/serien
+panel back after window: /mnt/user/filme
+typed hash: /mnt/user/musik
+after reload: /mnt/user/musik
+folder menu has link: true
+paste picture window: Bild als Datei einfügen Screenshot 2026-11-02 10-30.png
+picture file: Screenshot 2026-11-02 10-30.png
+paste text window: Text als Datei einfügen Notiz.txt
+text file: Einkaufsliste
+Brot
+Milch
+file clip still pastes: true
+shortcuts listed: Strg+Z | Strg+D | Umschalt+F7 | Buchstaben tippen

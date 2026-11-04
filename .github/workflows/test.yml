@@ -1,0 +1,74 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - run: go vet ./...
+      - run: go test -race ./...
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: frontend/.nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  fixture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Build the fixture and check it through mergerfs
+        run: sudo sh testing/container/run.sh up "$RUNNER_TEMP/fixture"
+      - name: Show part of the tree
+        run: sudo head -n 40 "$RUNNER_TEMP/fixture/listing.txt"
+      - name: Remove the container
+        if: always()
+        run: sudo sh testing/container/run.sh down "$RUNNER_TEMP/fixture"
+
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: frontend/.nvmrc
+      - name: Install Playwright with the prototype
+        working-directory: prototype
+        run: npm ci && npx playwright install --with-deps chromium
+      - name: Check the runner's types
+        working-directory: frontend
+        run: npm ci && npx tsc -p tests/parity
+      - run: node prototype/build.mjs
+      # Without PARITY_APP_URL the prototype runs against itself, which keeps the golden outputs and the runner honest.
+      - run: node frontend/tests/parity/run.ts --jobs 4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: parity
+          path: testing/out/parity
