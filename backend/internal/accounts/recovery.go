@@ -83,9 +83,6 @@ func (c *recovery) issue(ctx context.Context, userID uint64) ([]string, error) {
 }
 
 func (c *recovery) left(ctx context.Context, userID uint64) (int, error) {
-	if c.db == nil {
-		return 0, nil
-	}
 	var n int
 	err := c.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM recovery_codes WHERE user_id = ? AND used_at = 0`, strconv.FormatUint(userID, 10)).Scan(&n)
 	return n, err
@@ -100,7 +97,7 @@ func (c *recovery) clear(ctx context.Context, userID uint64) error {
 // race, and the update lets only one of them win.
 func (c *recovery) Redeem(userID uint64, code string) bool {
 	plain := normalizeCode(code, 8)
-	if plain == "" || c.db == nil {
+	if plain == "" {
 		return false
 	}
 	ctx := context.Background()

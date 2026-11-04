@@ -10,7 +10,7 @@ import (
 var tables = []string{"user_prefs", "device_prefs", "bookmarks", "rename_presets", "profiles", "saved_searches", "frequent_dirs"}
 
 // Forget deletes everything kept for the user, for an account that is being
-// deleted, so a new account can never inherit it.
+// deleted.
 func Forget(ctx context.Context, db *sql.DB, userID uint64) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
