@@ -239,12 +239,12 @@ func TestTheFixturesOfOtherToolsRead(t *testing.T) {
 	}
 	for _, p := range fixtures {
 		t.Run(filepath.Base(p), func(t *testing.T) {
-			ix, err := Load(p, Options{Password: "Bergkäse"})
+			ix, err := Load(p, Options{Password: fixturePassword})
 			if err != nil {
 				t.Fatalf("index: %v", err)
 			}
 			golden(t, "fixture-"+filepath.Base(p)+".txt", listing(t, ix))
-			if _, err := Test(p, Options{Password: "Bergkäse"}, nil); err != nil {
+			if _, err := Test(p, Options{Password: fixturePassword}, nil); err != nil {
 				t.Errorf("test: %v", err)
 			}
 		})
@@ -367,3 +367,7 @@ func TestFormatNames(t *testing.T) {
 		t.Errorf("StripExt gave %q", got)
 	}
 }
+
+// fixturePassword locks the encrypted fixtures. It is plain ASCII, as rar
+// turns a password from the command line into bytes by the locale.
+const fixturePassword = "Bergkaese"

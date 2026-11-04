@@ -196,7 +196,8 @@ func (c *cleaner) checkExt(p, real, name string) {
 	if kind == "" {
 		return
 	}
-	ext := strings.ToLower(strings.TrimPrefix(path.Ext(name), "."))
+	// A name with a space or a dot at its end is the name group's to fix.
+	ext := strings.ToLower(strings.TrimRight(strings.TrimPrefix(path.Ext(name), "."), " ."))
 	for _, s := range signatures {
 		if s.kind != kind {
 			continue

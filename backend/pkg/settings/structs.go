@@ -150,7 +150,13 @@ type OnlyOffice struct {
 type ArrowLoop struct {
 	Url   string            `json:"url"`   // the address CannonCommander reaches ArrowLoop at, eg. http://tower:8422
 	Token string            `json:"token"` // the ARROWLOOP_API_TOKEN of that ArrowLoop
-	Paths map[string]string `json:"paths"` // how folders here are named inside ArrowLoop's container, eg. /mnt/user: /data
+	Paths []ArrowLoopPath `json:"paths"` // how folders here are named inside ArrowLoop's container
+}
+
+// ArrowLoopPath names one folder here and inside ArrowLoop.
+type ArrowLoopPath struct {
+	Here  string `json:"here"`  // the start of a path here, eg. /mnt/user
+	There string `json:"there"` // the same folder as ArrowLoop sees it, eg. /data
 }
 
 type Media struct {

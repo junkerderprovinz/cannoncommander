@@ -236,7 +236,7 @@ func fuzzFixtures(f *testing.F, ext string) {
 		if err := os.WriteFile(file, data, 0o644); err != nil {
 			t.Fatal(err)
 		}
-		a, err := Open(file, Options{Password: "Bergkäse"})
+		a, err := Open(file, Options{Password: fixturePassword})
 		if err != nil {
 			return
 		}

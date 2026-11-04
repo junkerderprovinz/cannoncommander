@@ -42,7 +42,11 @@ type ArrowLoopConfig struct {
 
 func arrowLoopConfig() ArrowLoopConfig {
 	c := settings.Config.Integrations.ArrowLoop
-	return ArrowLoopConfig{URL: c.Url, Token: c.Token, Paths: c.Paths}
+	paths := map[string]string{}
+	for _, p := range c.Paths {
+		paths[p.Here] = p.There
+	}
+	return ArrowLoopConfig{URL: c.Url, Token: c.Token, Paths: paths}
 }
 
 // mapPath names p as ArrowLoop sees it, by the longest matching prefix.

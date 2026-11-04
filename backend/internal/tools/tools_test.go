@@ -361,7 +361,8 @@ func TestRenameByMask(t *testing.T) {
 	}
 
 	_, out = renameRows(t, e, BatchRequest{Paths: paths[:2], Mask: &Mask{Name: "[N]", Ext: "[E]", Find: `^(\w)`, Repl: "x$1y", Regex: true, Case: "title"}})
-	if !out.Done || !e.exists("/mnt/user/fotos/Urlaub/Xay.jpg") || !e.exists("/mnt/user/fotos/Urlaub/Xby.jpg") {
+	// The dot starts a word for title case, as in the prototype.
+	if !out.Done || out.Rows[0].New != "Xay.Jpg" || out.Rows[1].New != "Xby.Jpg" || !e.exists("/mnt/user/fotos/Urlaub/Xay.Jpg") {
 		t.Fatalf("regex rename %+v", out)
 	}
 

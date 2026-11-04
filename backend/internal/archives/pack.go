@@ -48,15 +48,22 @@ var ErrNoProgram = errors.New("the program for this format is not installed")
 // part of the image, its licence does not allow that, so an admin who
 // wants rar archives puts the program in place and sets CC_RAR.
 var (
-	SevenZip   = envOr("CC_7ZZ", "7zz")
-	RarProgram = envOr("CC_RAR", "rar")
+	SevenZip   = program("CC_7ZZ", "7zz", "7z")
+	RarProgram = program("CC_RAR", "rar")
 )
 
-func envOr(key, def string) string {
+// program picks the variable key or the first of names on the PATH. The
+// image has 7zz, Debian and most distributions call the same program 7z.
+func program(key string, names ...string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
 	}
-	return def
+	for _, n := range names {
+		if _, err := exec.LookPath(n); err == nil {
+			return n
+		}
+	}
+	return names[0]
 }
 
 // CanPack reports whether f can be written on this server.
@@ -369,6 +376,8 @@ func packTool(ctx context.Context, program string, args []string, base string, o
 	}
 	cmd := exec.CommandContext(ctx, program, args...)
 	cmd.Dir = base
+	// Without a UTF-8 locale both packers mangle names such as Grüße.txt.
+	cmd.Env = append(os.Environ(), "LC_ALL=C.UTF-8")
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return err

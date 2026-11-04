@@ -70,7 +70,8 @@ type dirTime struct {
 
 // Extract unpacks a into the folder dest. Every write goes through an
 // os.Root on dest, so neither a name nor a symlink planted by an earlier
-// entry can reach a file outside it. Links that point outside are skipped.
+// entry can reach a file outside it. Links that point outside and entries
+// that would be written through a link are skipped.
 func Extract(a Archive, dest string, o ExtractOptions) (ExtractResult, error) {
 	if o.Clash == "" {
 		o.Clash = ClashBoth
@@ -139,6 +140,10 @@ func (x *extractor) entry(e Entry, open Opener) error {
 	p, err := x.target(e.Name)
 	if err != nil || p == "" {
 		return err
+	}
+	if x.throughLink(p) {
+		x.res.Skipped = append(x.res.Skipped, p)
+		return nil
 	}
 	if x.o.Next != nil {
 		if err := x.o.Next(p); err != nil {
@@ -293,4 +298,17 @@ func Into(archive string) string {
 		return "archive"
 	}
 	return name
+}
+
+// throughLink reports whether a folder on the way to p is a symlink. The
+// check of a link's target only looks at the names, so a link written
+// through an earlier link, as x/y after x -> ., could still point out of
+// the target, and a file written through one would land elsewhere.
+func (x *extractor) throughLink(p string) bool {
+	for dir := path.Dir(p); dir != "."; dir = path.Dir(dir) {
+		if info, err := x.root.Lstat(dir); err == nil && info.Mode()&fs.ModeSymlink != 0 {
+			return true
+		}
+	}
+	return false
 }

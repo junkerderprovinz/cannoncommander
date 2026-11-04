@@ -61,7 +61,7 @@ server:
     disableReuse: false                   # enable to always create a new indexing database on startup.
     startupIntegrityCheck: "quickCheck"   # the method used to check the integrity of the index database on startup (default: quickCheck)  validate:omitempty,oneof=quickCheck probe off
   database:                               # SQLite database configuration
-    path: "filebrowser.sqlite"            # path to SQLite database file
+    path: "cannoncommander.sqlite"        # path to SQLite database file
     migrateFrom: ""                       # path to legacy database file for migration (optional)
     activity:                             # activity audit logging configuration
       disabled: false                     # disable semantic activity audit logging (default: false)
@@ -146,7 +146,7 @@ frontend:
   externalLinks:
     - text: "(untracked)"                 # the text to display on the link  validate:required
       title: "untracked"                  # the title to display on hover
-      url: "https://github.com/gtsteffaniak/filebrowser/releases/" # the url to link to  validate:required
+      url: "https://github.com/junkerderprovinz/cannoncommander/releases/" # the url to link to  validate:required
     - text: "Help"                        # the text to display on the link  validate:required
       title: ""                           # the title to display on hover
       url: "help prompt"                  # the url to link to  validate:required
@@ -303,6 +303,10 @@ integrations:
     debug: false                          # output ffmpeg stdout for media integration -- careful can produces lots of output!
     extractEmbeddedSubtitles: false       # extract embedded subtitles from media files
     hardwareAcceleration: false           # enable hardware acceleration for ffmpeg if available
+  arrowloop:                              #  validate:omitempty
+    url: ""                               # the address CannonCommander reaches ArrowLoop at, eg. http://tower:8422
+    token: ""                             # the ARROWLOOP_API_TOKEN of that ArrowLoop
+    paths:                                # how folders here are named inside ArrowLoop's container
 http:
   socket: ""                              # socket to listen on - eg. /var/run/filebrowser.sock
   tlsKey: ""                              # path to TLS key
