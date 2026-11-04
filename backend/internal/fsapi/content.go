@@ -240,21 +240,17 @@ func lineEnding(s string) string {
 	crlf := strings.Count(s, "\r\n")
 	lf := strings.Count(s, "\n") - crlf
 	cr := strings.Count(s, "\r") - crlf
-	kinds := 0
-	eol := ""
-	for _, k := range []struct {
-		n    int
-		name string
-	}{{crlf, "crlf"}, {lf, "lf"}, {cr, "cr"}} {
-		if k.n > 0 {
-			kinds++
-			eol = k.name
-		}
+	switch crlf + lf + cr {
+	case 0:
+		return ""
+	case crlf:
+		return "crlf"
+	case lf:
+		return "lf"
+	case cr:
+		return "cr"
 	}
-	if kinds > 1 {
-		return "mixed"
-	}
-	return eol
+	return "mixed"
 }
 
 func contentType(name string, f *os.File) (string, error) {

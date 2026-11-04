@@ -99,8 +99,6 @@ func (r *rig) file(t *testing.T, rel string) string {
 	return p
 }
 
-// next waits for the next fs.changed event and gathers what follows it
-// within a short while, since a poll and inotify may split one change.
 func (r *rig) next(t *testing.T) Change {
 	t.Helper()
 	select {

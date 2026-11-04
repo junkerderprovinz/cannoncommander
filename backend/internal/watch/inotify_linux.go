@@ -123,8 +123,8 @@ func (n *notifier) event(wd int, mask, cookie uint32, name string) {
 	for _, f := range n.folders(wd) {
 		switch {
 		case mask&(unix.IN_DELETE_SELF|unix.IN_MOVE_SELF|unix.IN_IGNORED) != 0:
-			// A moved folder keeps its watch under the new name, which no
-			// longer matches the path, so it is dropped and polled instead.
+			// A moved folder keeps its watch under the new name, which then
+			// differs from the path, so it is dropped and polled instead.
 			f.watch, f.poll = -1, true
 			if mask&unix.IN_MOVE_SELF != 0 {
 				_, _ = unix.InotifyRmWatch(n.fd, uint32(wd))
