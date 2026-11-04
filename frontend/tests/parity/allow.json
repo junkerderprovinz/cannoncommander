@@ -2,7 +2,7 @@
  "*": {
   "shots": {
    "*": {
-    "pixels": 100,
+    "pixels": 150,
     "why": "Chromium now and then rasterises a glyph or two a subpixel apart"
    }
   }
@@ -445,8 +445,8 @@
     "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
    },
    "c-phone-view-image": {
-    "pixels": 3500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 30000,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point, and signing out cuts a big one short, whose toasts still stand"
    },
    "c-phone-view-video": {
     "pixels": 55500,
