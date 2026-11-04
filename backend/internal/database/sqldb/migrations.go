@@ -6,7 +6,7 @@ import (
 )
 
 // currentSchemaVersion is the SQLite schema marker for this codebase.
-const currentSchemaVersion = 4
+const currentSchemaVersion = 5
 
 // Schema creates all tables for the SQLite database
 func createSchema(db *sql.DB) error {
@@ -28,25 +28,6 @@ func createSchema(db *sql.DB) error {
 	);
 	CREATE INDEX IF NOT EXISTS idx_users_admin ON users(perm_admin);
 	CREATE INDEX IF NOT EXISTS idx_users_api ON users(perm_api);
-
-	-- Shares (owner is user_id)
-	CREATE TABLE IF NOT EXISTS shares (
-		hash TEXT PRIMARY KEY,
-		user_id TEXT NOT NULL,
-		source TEXT NOT NULL,
-		path TEXT NOT NULL,
-		expire INTEGER NOT NULL DEFAULT 0,
-		downloads INTEGER NOT NULL DEFAULT 0,
-		password_hash TEXT,
-		user_downloads TEXT,
-		share_settings TEXT NOT NULL,
-		version INTEGER NOT NULL DEFAULT 0
-	);
-	CREATE INDEX IF NOT EXISTS idx_shares_user_id ON shares(user_id);
-	CREATE INDEX IF NOT EXISTS idx_shares_source ON shares(source);
-	CREATE INDEX IF NOT EXISTS idx_shares_path ON shares(path);
-	CREATE INDEX IF NOT EXISTS idx_shares_expire ON shares(expire);
-	CREATE INDEX IF NOT EXISTS idx_shares_source_path ON shares(source, path);
 
 	-- Access rules table
 	CREATE TABLE IF NOT EXISTS access_rules (
@@ -209,15 +190,16 @@ func runMigrations(db *sql.DB, fromVersion int) error {
 			if err := migrateV2(db); err != nil {
 				return err
 			}
-			if err := normalizeLegacyShareTokens(db); err != nil {
-				return err
-			}
 		case 3:
 			if err := addHashedTokenSessionColumn(db); err != nil {
 				return err
 			}
 		case 4:
 			if err := addHashedTokenExpiryColumn(db); err != nil {
+				return err
+			}
+		case 5:
+			if err := dropOldShareLinks(db); err != nil {
 				return err
 			}
 		default:
@@ -337,4 +319,13 @@ func tableHasColumn(db *sql.DB, table, column string) (bool, error) {
 		return false, fmt.Errorf("error iterating table_info(%s): %w", table, err)
 	}
 	return false, nil
+}
+
+// dropOldShareLinks removes the share links of the older interface. The
+// links live in share_links, which the shares package keeps.
+func dropOldShareLinks(db *sql.DB) error {
+	if _, err := db.Exec(`DROP TABLE IF EXISTS shares; DELETE FROM settings WHERE key LIKE 'shareDefaults.%'`); err != nil {
+		return fmt.Errorf("drop old share links: %w", err)
+	}
+	return nil
 }

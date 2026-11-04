@@ -27,7 +27,6 @@ type activityActorPolicy int
 const (
 	activityActorUser activityActorPolicy = iota
 	activityActorAny
-	activityActorShareOwner
 )
 
 func recordEntry(entry activitydb.Entry) {
@@ -50,13 +49,6 @@ func finalizeActivityEntry(r *http.Request, actor *Actor, entry activitydb.Entry
 		if actor.User != nil && entry.UserID == 0 {
 			entry.UserID = actor.User.ID
 		}
-	case activityActorShareOwner:
-		if actor == nil || actor.Share.Hash == "" || actor.Share.UserID == 0 {
-			return
-		}
-		entry.UserID = actor.Share.UserID
-		entry.Details.ShareHash = actor.Share.Hash
-		entry.Details.ShareOwnerUserID = actor.Share.UserID
 	}
 
 	if entry.CreatedAt == 0 {

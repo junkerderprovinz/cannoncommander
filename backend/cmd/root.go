@@ -146,7 +146,6 @@ func Start() {
 	validateUserInfo(!dbExists)
 	validateOfficeIntegration()
 	validateAccessRules()
-	validateShareInfo()
 	// Start the rootCMD in a goroutine
 	go func() {
 		if err := rootCMD(ctx, &serverConfig, runtimeApp, shutdownComplete); err != nil {

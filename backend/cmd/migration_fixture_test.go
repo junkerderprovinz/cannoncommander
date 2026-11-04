@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqldb"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
@@ -109,25 +108,6 @@ func TestMigrationFixturePostState(t *testing.T) {
 		t.Fatalf("access source rule deny=%+v", rule.Deny.Users)
 	}
 
-	shares, err := sqlStore.GetSharesByUserID(admin.ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(shares) != 2 {
-		t.Fatalf("share count=%d", len(shares))
-	}
-	shareByHash := make(map[string]*share.Share, len(shares))
-	for _, s := range shares {
-		shareByHash[s.Hash] = s
-	}
-	if link, ok := shareByHash["lMhwHkF-hqCN92-QIJJZow"]; !ok || link.Path != "/myfolder/" ||
-		!link.AllowModify || !link.AllowCreate || !link.AllowDelete {
-		t.Fatalf("myfolder share=%+v", link)
-	}
-	if link, ok := shareByHash["dGhQi4AcMhva2Ne-7x7fvw"]; !ok || link.Path != "/test & test.txt/" ||
-		link.AllowModify || link.AllowCreate || link.AllowDelete {
-		t.Fatalf("test share=%+v", link)
-	}
 }
 
 func assertSourceFilePerms(t *testing.T, user *users.User, sourcePath string, want users.SourceFilePermissions) {

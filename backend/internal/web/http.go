@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/gtsteffaniak/go-cache/cache"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/share"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
@@ -24,11 +23,8 @@ import (
 // Context carries per-request state for HTTP handlers.
 type Context struct {
 	User         *users.User
-	ShareUser    *users.User
 	FileInfo     iteminfo.ExtendedFileInfo
 	Token        string
-	Share        share.Share
-	ShareValid   bool
 	Ctx          context.Context
 	MaxBandwidth int
 	Data         interface{}
@@ -39,14 +35,10 @@ type Context struct {
 type HandleFunc func(w http.ResponseWriter, r *http.Request, d *Context) (int, error)
 
 func effectiveFilePerms(d *Context, sourceName string) (users.SourceFilePermissions, error) {
-	if d == nil {
+	if d == nil || d.User == nil {
 		return users.DenyAllSourceFilePermissions(), fmt.Errorf("user context not set")
 	}
-	var link *share.Share
-	if d.Share.Hash != "" {
-		link = &d.Share
-	}
-	return share.EffectiveFilePermissions(d.User, link, sourceName)
+	return d.User.FilePermsForSourceName(sourceName)
 }
 
 // HttpResponse is the standard JSON error/success envelope.

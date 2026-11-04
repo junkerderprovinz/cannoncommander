@@ -247,25 +247,8 @@ func fileInfoFasterImpl(opts utils.FileOptions, user *users.User, s *Service) (*
 		response.RealPath = utils.JoinUnderSourceRoot(idx.Path, indexPath)
 	}
 	response.Source = opts.Source
-	if user.Permissions.Share && opts.ShowSharedAttr {
-		for i := range response.Files {
-			file := &response.Files[i]
-			file.IsShared = s.pathIsShared(response.Path+file.Name, idx.Path, user.ID)
-		}
-		for i := range response.Folders {
-			folder := &response.Folders[i]
-			folder.IsShared = s.pathIsShared(response.Path+folder.Name, idx.Path, user.ID)
-		}
-		response.IsShared = s.pathIsShared(response.Path, idx.Path, user.ID)
-	}
 	if info.Type == "directory" && opts.ShowPinnedItems {
-		if opts.ShareHash != "" {
-			if link, ok := s.shareByHash(opts.ShareHash); ok {
-				if shareRelDir, err := link.ShareRelativeDir(response.Path); err == nil {
-					response.PinnedItems = link.PinnedItems.NamesForDirectory(shareRelDir)
-				}
-			}
-		} else if source, ok := users.ResolveSourceKey(response.Source); ok {
+		if source, ok := users.ResolveSourceKey(response.Source); ok {
 			response.PinnedItems = user.PinnedNamesForDirectory(source.Path, response.Path)
 		}
 	}
