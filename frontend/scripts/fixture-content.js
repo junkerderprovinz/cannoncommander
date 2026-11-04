@@ -11,6 +11,8 @@ const repo = join(import.meta.dirname, '..', '..');
 const js = (f) => readFileSync(join(repo, 'prototype', 'src', 'js', f), 'utf8');
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const KB = 1024, MB = KB * 1024;
+// The names media libraries give a folder's picture, the first one found counting.
+export const FOLDER_PICTURES = ['poster.jpg', 'folder.jpg', 'cover.jpg'];
 
 // The prototype's drawing helpers and document pages, run against the same tree the listing comes from.
 function drawings(FS) {
@@ -186,6 +188,13 @@ export function contentRoutes(FS) {
       }
       if (route === '/fs/thumb') {
         const large = url.searchParams.get('size') === 'large';
+        // A film or series folder shows a tall poster with its title, an album a square cover.
+        if (n.dir) {
+          const pic = FS.kids(n).find((k) => FOLDER_PICTURES.includes(k.name.toLowerCase()));
+          if (!pic) return (res.statusCode = 204, res.end(), true);
+          const square = pic.name === 'cover.jpg' || path.startsWith('/mnt/user/musik');
+          return send(res, 'image/svg+xml', square ? ck.scene(n.name, { w: 1000, h: 1000, title: n.name }) : ck.poster(n.name, 1000, 1500)), true;
+        }
         if (kind === 'img') return send(res, 'image/svg+xml', picture(n, folder)), true;
         if (kind === 'video') return send(res, 'image/svg+xml', large ? ck.poster(filmOf(n, folder), 1600, 900, false) : ck.poster(n.name, 640, 360, false)), true;
         // No content instead of 404 keeps the browser console of the test runs clean; the app treats both alike.

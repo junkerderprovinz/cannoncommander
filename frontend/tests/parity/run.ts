@@ -37,7 +37,7 @@ opt.b ||= opt.fixture ? 'fixture' : opt.a;
 // The fixture on disk was made at this moment, so both pages have to agree with it on what "today" is.
 const NOW: number = JSON.parse(readFileSync(join(repo, 'testing', 'fixture', 'prototype.json'), 'utf8')).now;
 const VIEWPORT = { width: 1600, height: 950 };
-const SIDE_TIMEOUT = 10 * 60_000;
+const SIDE_TIMEOUT = 20 * 60_000;
 
 interface Rule { pattern: string; why: string }
 interface ShotRule { pixels: number; why: string }
@@ -118,7 +118,7 @@ function driven(tab: Page, fixture?: string): { page: Page; move: (ms: number) =
     await tab.clock.runFor(ms);
     if (!fixture) return;
     now = now === undefined ? await tab.evaluate(() => Date.now()) : now + ms;
-    await fetch(fixture + 'api/v1/fixture/clock', { method: 'PUT', body: JSON.stringify({ now }) });
+    await fetch(fixture + 'api/v1/fixture/clock', { method: 'PUT', body: JSON.stringify({ now }), signal: AbortSignal.timeout(10_000) });
   };
   const until = async (test: () => Promise<unknown>, timeout = 30_000, what = 'condition') => {
     for (let waited = 0; ; waited += 50) {

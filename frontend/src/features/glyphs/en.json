@@ -1,0 +1,116 @@
+{
+  "title": "Glyphs for files",
+  "places": "Folders and places",
+  "files": "Files",
+  "missing": "Still missing in GlimStone",
+  "uses": "Uses {g} for now",
+  "g": {
+    "IconFolder": {
+      "label": "Folder",
+      "use": "Every folder in the list, the tree and the windows"
+    },
+    "IconFolderOpen": {
+      "label": "Open folder",
+      "use": "An expanded folder in the tree, the brand mark"
+    },
+    "IconFolderUp": {
+      "label": "One level up",
+      "use": "The “..” row"
+    },
+    "IconFolderAdd": {
+      "label": "New folder",
+      "use": "F7 and the File menu"
+    },
+    "IconFiles": {
+      "label": "Files and folders",
+      "use": "File list in the settings, bottom bar"
+    },
+    "IconZFS": {
+      "label": "Disk, share, pool",
+      "use": "Shares, cache and disks in the tree"
+    },
+    "IconDatabase": {
+      "label": "Database, array",
+      "use": "The server in the tree, databases, disk images"
+    },
+    "IconFlash": {
+      "label": "USB stick",
+      "use": "The boot stick"
+    },
+    "IconCloud": {
+      "label": "Remotes",
+      "use": "The folder of the rclone remotes"
+    },
+    "IconNetwork": {
+      "label": "Network target",
+      "use": "An SMB or SFTP target"
+    },
+    "IconLocal": {
+      "label": "Local storage",
+      "use": "Not used yet"
+    },
+    "IconTrash": {
+      "label": "Trash",
+      "use": "Trash and delete"
+    },
+    "IconFile": {
+      "label": "File",
+      "use": "Anything without a glyph of its own"
+    },
+    "IconFileText": {
+      "label": "Text file",
+      "use": "Text and Markdown, for now also PDF and Office"
+    },
+    "IconFileImage": {
+      "label": "Image",
+      "use": "JPG, PNG, HEIC and other images"
+    },
+    "IconFileVideo": {
+      "label": "Video",
+      "use": "MKV, MP4 and other videos"
+    },
+    "IconFileAudio": {
+      "label": "Audio",
+      "use": "MP3, FLAC and other music"
+    },
+    "IconFileSubtitles": {
+      "label": "Subtitles",
+      "use": "SRT, ASS, VTT"
+    },
+    "IconCode": {
+      "label": "Source code",
+      "use": "Go, shell, YAML, JavaScript"
+    },
+    "IconConfig": {
+      "label": "Configuration",
+      "use": "JSON, XML, CFG, CONF, INI"
+    },
+    "IconLog": {
+      "label": "Log file",
+      "use": ".log and rotated logs"
+    },
+    "IconArchive": {
+      "label": "Archive",
+      "use": "ZIP, TAR, 7z, RAR"
+    },
+    "IconKey": {
+      "label": "Key",
+      "use": "Not used yet, good for .pem and .key"
+    },
+    "IconLink": {
+      "label": "Link",
+      "use": "Not used yet, good for symlinks"
+    }
+  },
+  "m": {
+    "pdf": "PDF",
+    "doc": "Text document (DOCX, ODT)",
+    "sheet": "Spreadsheet (XLSX, ODS, CSV)",
+    "slides": "Presentation (PPTX, ODP)",
+    "disk": "Disk image (ISO, IMG)",
+    "checksum": "Checksum (SHA256, MD5)",
+    "font": "Font (TTF, OTF)",
+    "ebook": "E-book (EPUB)",
+    "program": "Program (EXE, AppImage)"
+  }
+}

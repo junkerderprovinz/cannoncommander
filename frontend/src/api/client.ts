@@ -19,7 +19,12 @@ export const setToken = (t: string) => { token = t; };
 
 interface Got<T> { body: T | null; etag?: string }
 
+// When this page last asked the server to change something, so a change the server reports can be told apart from
+// one another program made.
+export const writes = { at: 0 };
+
 export async function call<T>(path: string, init: RequestInit & { etag?: string } = {}): Promise<Got<T>> {
+  if (init.method && init.method !== 'GET') writes.at = Date.now();
   const headers = new Headers(init.headers);
   headers.set('Accept', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);
@@ -73,6 +78,7 @@ export interface Item {
   nlink?: number;
   uid?: number;
   gid?: number;
+  picture?: string;
 }
 export interface Listing { path: string; items: Item[]; volume?: Volume; etag?: string }
 
@@ -81,7 +87,7 @@ export const toItem = (i: FsItem): Item => ({
   ...(i.hidden ? { hidden: true } : {}), ...(i.link ? { link: i.link } : {}), ...(i.items != null ? { items: i.items } : {}),
   ...(i.archive ? { archive: true } : {}), ...(i.btime ? { btime: Date.parse(i.btime) } : {}),
   ...(i.ino != null ? { ino: i.ino } : {}), ...(i.nlink != null ? { nlink: i.nlink } : {}),
-  ...(i.uid != null ? { uid: i.uid } : {}), ...(i.gid != null ? { gid: i.gid } : {}),
+  ...(i.uid != null ? { uid: i.uid } : {}), ...(i.gid != null ? { gid: i.gid } : {}), ...(i.picture ? { picture: i.picture } : {}),
 });
 
 export const api = {

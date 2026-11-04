@@ -58,7 +58,8 @@
     "columns": "Columns", "columnsTip": "Columns can also be moved right in the column head, and a right click on the head shows or hides them.", "chooseColumns": "Choose columns",
     "bars": "Bars", "side": "Sidebar", "sideTip": "Shortcuts and the folder tree left of the panels.",
     "fkeys": "Function key bar", "fkeysTip": "The buttons for F3 to F8 along the bottom, as in Total Commander.",
-    "quickview": "Preview panel", "quickviewTip": "Shows a preview of the file under the cursor in the second panel. Turns on both panels for it."
+    "quickview": "Preview panel", "quickviewTip": "Shows a preview of the file under the cursor in the second panel. Turns on both panels for it.",
+    "refresh": "Refresh", "live": "Refresh the list by itself", "liveTip": "When other programs change files in the open folder, such as a download client, they show up without reloading and glow for a moment. While a window is open or something is marked, the list waits until you are done."
   },
   "sources": {
     "title": "Sources", "add": "Add a source", "edit": "Edit source", "remove": "Remove source", "none": "No source yet",

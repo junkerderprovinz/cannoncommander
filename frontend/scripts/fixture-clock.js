@@ -1,6 +1,12 @@
-// The fixture's clock. On its own it is the real one. The parity runner sets it to the page's time and from then on
+// The fixture's clock. On its own it runs from the moment the prototype's tree was exported, which the tree's dates
+// and the made-up sessions, tokens and logs count from. The parity runner sets it to the page's time and from then on
 // moves it along with the page's stopped clock, so jobs, the parity check and anything made carry the time the page
 // shows, and a wait of a few seconds in a step file is a few seconds for the fixture too.
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const exported = JSON.parse(readFileSync(join(import.meta.dirname, '..', '..', 'testing', 'fixture', 'prototype.json'), 'utf8')).now;
+const offset = exported - Date.now();
 const timers = new Map();
 let at = null;
 let seq = 0;
@@ -19,7 +25,7 @@ function add(fn, ms, every) {
 }
 
 export const clock = {
-  now: () => at ?? Date.now(),
+  now: () => at ?? Date.now() + offset,
   setTimeout: (fn, ms = 0) => add(fn, ms, 0),
   setInterval: (fn, ms) => add(fn, ms, ms),
   clear(t) {
@@ -37,7 +43,8 @@ export const clock = {
       at = t.due;
       if (t.every) t.due += t.every;
       else timers.delete(id);
-      t.fn();
+      // A timer that fails says so, as a real one would, and the clock still answers.
+      try { t.fn(); } catch (e) { console.error(e); }
     }
     at = Math.max(at, to);
   },
@@ -50,7 +57,7 @@ export function clockMiddleware() {
     let raw = '';
     req.on('data', (c) => { raw += c; });
     req.on('end', () => {
-      clock.moveTo(Number(JSON.parse(raw || '{}').now) || Date.now());
+      clock.moveTo(Number(JSON.parse(raw || '{}').now) || clock.now());
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ now: clock.now() }));
     });

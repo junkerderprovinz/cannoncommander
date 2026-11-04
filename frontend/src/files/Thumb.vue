@@ -36,6 +36,7 @@ watch(src, () => { pic.value = true; });
 
 <template>
   <span v-if="own != null" class="thumb"><Render :node="own" /></span>
+  <span v-else-if="k.dir && k.picture && pic" class="thumb pic folderpic"><img class="scene" :src="src" loading="lazy" alt="" @error="pic = false"><span class="fbadge"><G n="IconFolder" /></span></span>
   <span v-else-if="k.dir" class="thumb"><G :n="glyphOf(k)" /></span>
   <span v-else-if="pic && (f === 'image' || f === 'raw' || f === 'video')" class="thumb pic">
     <img class="scene" :src="src" loading="lazy" alt="" @error="pic = false">
@@ -59,4 +60,6 @@ watch(src, () => { pic.value = true; });
 .thumb > img.scene { width: 100%; height: 100%; object-fit: cover; display: block; }
 .thumb.paper > img.page-pic { height: 88%; max-width: 88%; object-fit: contain; border-radius: 2px; box-shadow: 0 1px 6px rgb(0 0 0 / .35); background: #f6f5f2; }
 .thumb.cover > img.scene { position: absolute; inset: 0; }
+.thumb.folderpic .fbadge { position: absolute; left: .4rem; bottom: .4rem; width: 1.6rem; height: 1.6rem; border-radius: var(--radius-control); display: grid; place-items: center; background: color-mix(in srgb, var(--carbon-surface) 82%, transparent); box-shadow: var(--hairline); }
+.thumb.folderpic .fbadge svg { width: .9rem; height: .9rem; color: var(--accent-glyph); }
 </style>

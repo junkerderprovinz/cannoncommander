@@ -4,6 +4,7 @@
 // Links: k3x9qa-urlaub (folder with the password sonnenschein, takes uploads), m7tq2p-rechnung (one file),
 // abgelaufen and aufgebraucht (both lead nowhere).
 import { strToU8, zipSync } from 'fflate';
+import { clock } from './fixture-clock.js';
 
 const DAY = 86400000;
 const PASSWORD = 'cannoncommander';
@@ -48,11 +49,11 @@ function pdf(lines) {
   return strToU8(out);
 }
 
-const file = (name, data, daysAgo) => ({ name, data, time: Date.now() - daysAgo * DAY });
-const folder = (name, children, daysAgo = 3) => ({ name, dir: true, children, time: Date.now() - daysAgo * DAY });
+const file = (name, data, daysAgo) => ({ name, data, time: clock.now() - daysAgo * DAY });
+const folder = (name, children, daysAgo = 3) => ({ name, dir: true, children, time: clock.now() - daysAgo * DAY });
 
 function links() {
-  const now = Date.now();
+  const now = clock.now();
   return {
     'k3x9qa-urlaub': {
       id: 'urlaub', kind: 'folder', password: 'sonnenschein', uploads: true, room: 2 * 1024 ** 3, expires: now + 14 * DAY,
@@ -76,7 +77,7 @@ function account(name, twofa) {
   const full = { jdp: 'Junker der Provinz', anna: 'Anna', neu: 'Neu' }[name] ?? name;
   return {
     id: String(name.length), name, full, role: name === 'jdp' ? 'admin' : 'user', scope: '/mnt/user', groups: [], loginMethod: 'password',
-    twofa, passkeys: 0, last: iso(Date.now()), pwChanged: iso(Date.now() - 41 * DAY), recovery: twofa ? 8 : 0, lockPassword: false,
+    twofa, passkeys: 0, last: iso(clock.now()), pwChanged: iso(clock.now() - 41 * DAY), recovery: twofa ? 8 : 0, lockPassword: false,
   };
 }
 
@@ -186,7 +187,7 @@ export function authFixtureMiddleware() {
       if (b.password !== l.password) return problem(res, 403, 'the password is not right');
       const token = 'fx-' + Math.random().toString(36).slice(2);
       S.unlocked.add(token);
-      return json(res, 200, { token, expires: iso(Date.now() + DAY / 2) }, { 'Set-Cookie': `cc_share_${l.id}=${token}; Path=/; HttpOnly; SameSite=Lax` });
+      return json(res, 200, { token, expires: iso(clock.now() + DAY / 2) }, { 'Set-Cookie': `cc_share_${l.id}=${token}; Path=/; HttpOnly; SameSite=Lax` });
     }
     const l = visit(slug, req, res);
     if (!l) return;
@@ -240,7 +241,7 @@ export function authFixtureMiddleware() {
     let name = up.name.split('/').pop();
     const [base, ext] = name.includes('.') ? [name.slice(0, name.lastIndexOf('.')), name.slice(name.lastIndexOf('.'))] : [name, ''];
     for (let i = 2; dir.children.some((k) => k.name === name); i++) name = `${base} (${i})${ext}`;
-    dir.children.push({ name, data: new Uint8Array(Buffer.concat(up.parts)), time: Date.now() });
+    dir.children.push({ name, data: new Uint8Array(Buffer.concat(up.parts)), time: clock.now() });
     l.room -= up.size;
     up.state = 'done';
     S.uploads.delete(up.id);

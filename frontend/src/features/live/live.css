@@ -1,0 +1,3 @@
+.row.fresh { animation: cc-fresh 2.2s ease-out; }
+@keyframes cc-fresh { 0%, 35% { background: color-mix(in srgb, var(--accent) 26%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .row.fresh { animation: none; box-shadow: inset 3px 0 0 var(--accent); } }
