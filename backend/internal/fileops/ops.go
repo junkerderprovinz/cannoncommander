@@ -1,0 +1,313 @@
+package fileops
+
+import (
+	"errors"
+
+	"github.com/gtsteffaniak/go-logger/logger"
+	"io/fs"
+	"net/http"
+	"os"
+	"path"
+	"time"
+
+	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fschange"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
+)
+
+// Kinds of undo steps besides copy and move.
+const (
+	StepRename = "rename"
+	StepMkdir  = "mkdir"
+	StepTouch  = "touch"
+)
+
+var errExists = v1.Errorf(http.StatusConflict, "an entry with this name exists already")
+
+// Changed is the answer of the operations that create or rename.
+type Changed struct {
+	Path    string `json:"path"`
+	Created bool   `json:"created,omitempty"`
+	Undo    string `json:"undo,omitempty"`
+}
+
+type pathRequest struct {
+	Path string `json:"path"`
+}
+
+func (s *Service) mkdir(w http.ResponseWriter, r *http.Request) error {
+	u := v1.UserFrom(r)
+	var req pathRequest
+	if err := v1.DecodeJSON(r, &req); err != nil {
+		return err
+	}
+	loc, err := s.newEntry(u, req.Path)
+	if err != nil {
+		return err
+	}
+	if err := os.Mkdir(loc.Real, 0o777); err != nil {
+		if errors.Is(err, fs.ErrExist) {
+			return errExists
+		}
+		return err
+	}
+	fschange.Created(loc.Path)
+	out := Changed{Path: loc.Path, Created: true}
+	out.Undo = s.record(u, undo.Step{Kind: StepMkdir, Name: path.Base(loc.Path), Count: 1, Path: path.Dir(loc.Path)}, entryData{Path: loc.Path})
+	return v1.WriteJSON(w, r, http.StatusCreated, out)
+}
+
+type touchRequest struct {
+	Path  string     `json:"path"`
+	MTime *time.Time `json:"mtime"`
+}
+
+func (s *Service) touch(w http.ResponseWriter, r *http.Request) error {
+	u := v1.UserFrom(r)
+	var req touchRequest
+	if err := v1.DecodeJSON(r, &req); err != nil {
+		return err
+	}
+	when := time.Now()
+	if req.MTime != nil {
+		when = *req.MTime
+	}
+	if loc, err := s.fs.Check(u, req.Path, ccfs.Modify); err == nil && !loc.Virtual() {
+		if _, err := os.Lstat(loc.Real); err == nil {
+			if err := ccfs.Contained(loc); err != nil {
+				return err
+			}
+			if err := os.Chtimes(loc.Real, when, when); err != nil {
+				return err
+			}
+			return v1.WriteJSON(w, r, http.StatusOK, Changed{Path: loc.Path})
+		}
+	}
+	loc, err := s.newEntry(u, req.Path)
+	if err != nil {
+		return err
+	}
+	f, err := os.OpenFile(loc.Real, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o666)
+	if err != nil {
+		if errors.Is(err, fs.ErrExist) {
+			return errExists
+		}
+		return err
+	}
+	if err := f.Close(); err != nil {
+		return err
+	}
+	if req.MTime != nil {
+		if err := os.Chtimes(loc.Real, when, when); err != nil {
+			return err
+		}
+	}
+	info, err := os.Stat(loc.Real)
+	if err != nil {
+		return err
+	}
+	fschange.Created(loc.Path)
+	out := Changed{Path: loc.Path, Created: true}
+	out.Undo = s.record(u, undo.Step{Kind: StepTouch, Name: path.Base(loc.Path), Count: 1, Path: path.Dir(loc.Path)},
+		entryData{Path: loc.Path, MTime: info.ModTime()})
+	return v1.WriteJSON(w, r, http.StatusCreated, out)
+}
+
+type renameRequest struct {
+	Path string `json:"path"`
+	Name string `json:"name"`
+}
+
+func (s *Service) rename(w http.ResponseWriter, r *http.Request) error {
+	u := v1.UserFrom(r)
+	var req renameRequest
+	if err := v1.DecodeJSON(r, &req); err != nil {
+		return err
+	}
+	if !ccfs.ValidName(req.Name) {
+		return v1.Errorf(http.StatusBadRequest, "invalid name")
+	}
+	from, err := s.existing(u, req.Path, ccfs.Modify)
+	if err != nil {
+		return err
+	}
+	if path.Base(from.Path) == req.Name {
+		return v1.WriteJSON(w, r, http.StatusOK, Changed{Path: from.Path})
+	}
+	to, err := s.newEntry(u, path.Join(path.Dir(from.Path), req.Name))
+	if err != nil {
+		return err
+	}
+	if err := renameNoReplace(from.Real, to.Real); err != nil {
+		return err
+	}
+	fschange.Moved(from.Path, to.Path)
+	s.moved(r.Context(), labels.Move{From: from.Path, To: to.Path})
+	out := Changed{Path: to.Path}
+	out.Undo = s.record(u, undo.Step{Kind: StepRename, Name: path.Base(from.Path), Count: 1, Path: path.Dir(from.Path), To: req.Name},
+		renameData{From: from.Path, To: to.Path})
+	return v1.WriteJSON(w, r, http.StatusOK, out)
+}
+
+// renameNoReplace renames unless the target exists. A plain rename would
+// silently replace a file of that name.
+func renameNoReplace(from, to string) error {
+	if _, err := os.Lstat(to); err == nil {
+		return errExists
+	}
+	return os.Rename(from, to)
+}
+
+// existing checks that p exists inside a source and u holds perm there.
+func (s *Service) existing(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, error) {
+	loc, err := s.fs.Check(u, p, perm)
+	if err != nil {
+		return loc, err
+	}
+	if loc.Virtual() || loc.InArchive() || loc.Index == "/" {
+		return loc, v1.Errorf(http.StatusBadRequest, "only entries inside a source can be changed")
+	}
+	if err := ccfs.Contained(loc); err != nil {
+		return loc, err
+	}
+	if _, err := os.Lstat(loc.Real); err != nil {
+		return loc, err
+	}
+	return loc, nil
+}
+
+// newEntry checks that u may create p and that its folder exists.
+func (s *Service) newEntry(u *users.User, p string) (ccfs.Location, error) {
+	loc, err := s.fs.Check(u, p, ccfs.Create)
+	if err != nil {
+		return loc, err
+	}
+	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) {
+		return loc, v1.Errorf(http.StatusBadRequest, "invalid path")
+	}
+	parent, err := s.fs.Resolve(path.Dir(loc.Path))
+	if err != nil {
+		return loc, err
+	}
+	if err := folder(parent); err != nil {
+		return loc, err
+	}
+	if err := ccfs.Contained(loc); err != nil {
+		return loc, err
+	}
+	if _, err := os.Lstat(loc.Real); err == nil {
+		return loc, errExists
+	}
+	return loc, nil
+}
+
+// record adds an undo step and returns its id, or "" when the step could
+// not be kept. The operation itself went through, so that is no error.
+func (s *Service) record(u *users.User, step undo.Step, data any) string {
+	if s.undo == nil {
+		return ""
+	}
+	st, err := s.undo.Record(u.Username, step, data)
+	if err != nil {
+		return ""
+	}
+	return st.ID
+}
+
+type preflightRequest struct {
+	Kind string `json:"kind"`
+	TransferParams
+}
+
+// Preflight is what a copy or move would run into.
+type Preflight struct {
+	Dest      string          `json:"dest"`
+	Count     int             `json:"count"`
+	Bytes     int64           `json:"bytes"`
+	Files     int64           `json:"files"`
+	Conflicts []jobs.Conflict `json:"conflicts"`
+	// SameDevice says that a move only renames and needs no free space.
+	SameDevice bool   `json:"sameDevice"`
+	Space      *Space `json:"space,omitempty"`
+	// Big copies and moves wait for a running parity check.
+	Big        bool `json:"big"`
+	ParityBusy bool `json:"parityBusy"`
+	// Unraid adds the disk share trap, hard links the transfer breaks,
+	// the space after the allocation rules of the share and the disks it
+	// wakes. It is missing where Unraid has nothing to say.
+	Unraid *unraid.TransferReport `json:"unraid,omitempty"`
+}
+
+func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
+	u := v1.UserFrom(r)
+	var req preflightRequest
+	if err := v1.DecodeJSON(r, &req); err != nil {
+		return err
+	}
+	if req.Kind != KindCopy && req.Kind != KindMove {
+		return v1.Errorf(http.StatusBadRequest, "kind must be copy or move")
+	}
+	move := req.Kind == KindMove
+	dest, plan, err := check(s.fs, u, req.TransferParams, move)
+	if err != nil {
+		return err
+	}
+	out := Preflight{Dest: dest.Path, Count: len(plan.Items), Conflicts: []jobs.Conflict{}, SameDevice: move}
+	destInfo, err := os.Stat(dest.Real)
+	if err != nil {
+		return err
+	}
+	destDev, devKnown := device(destInfo)
+	for _, it := range plan.Items {
+		src, err := s.fs.Resolve(it.Path)
+		if err != nil {
+			return err
+		}
+		info, err := os.Lstat(src.Real)
+		if err != nil {
+			return err
+		}
+		b, f, err := jobs.TreeSize(r.Context(), src.Real)
+		if err != nil {
+			return err
+		}
+		out.Bytes += b
+		out.Files += f
+		if dev, ok := device(info); !ok || !devKnown || dev != destDev {
+			out.SameDevice = false
+		}
+		name := it.Name
+		if name == "" {
+			name = path.Base(src.Path)
+		}
+		dst := node{dest.Path, dest.Real}.child(name)
+		if target, err := os.Lstat(dst.real); err == nil {
+			out.Conflicts = append(out.Conflicts, jobs.NewConflict(name, side(node{src.Path, src.Real}, info), side(dst, target)))
+		}
+	}
+	need := out.Bytes
+	if out.SameDevice {
+		need = 0
+	}
+	out.Space = plainSpace(dest, need)
+	out.Big = out.Bytes >= jobs.BigJob
+	if s.jobs != nil {
+		out.ParityBusy = s.jobs.ParityBusy()
+	}
+	paths := make([]string, len(plan.Items))
+	for i, it := range plan.Items {
+		paths[i] = it.Path
+	}
+	report, err := s.unraid.CheckTransfer(r.Context(), unraid.Transfer{Kind: req.Kind, Paths: paths, Dest: dest.Path})
+	if err != nil {
+		logger.Errorf("preflight: %v", err)
+	} else if report.Trap != nil || report.Links != nil || report.Space != nil || len(report.Wakes) > 0 || report.Lands != "" || report.Linkable {
+		out.Unraid = &report
+	}
+	return v1.WriteJSON(w, r, http.StatusOK, out)
+}

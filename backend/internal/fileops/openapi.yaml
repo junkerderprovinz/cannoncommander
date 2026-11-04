@@ -1,19 +1,99 @@
 tag:
   name: fileops
-  description: Creating, renaming and linking, uploads, and the check before a transfer.
+  description: |
+    Creating and renaming, uploads, and the check before a transfer.
+    Copying, moving and deleting run as jobs (kinds copy, move, delete and
+    trash on POST /jobs). A file in work is written as ".name.cc-part" next
+    to its target and only takes its name once it is complete.
 paths:
   /fs/mkdir:
     post:
       operationId: fsMkdir
       summary: Create a folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PathBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /fs/touch:
     post:
       operationId: fsTouch
       summary: Create an empty file or update its time
+      description: Answers 201 for a new file, 200 when only the time of an existing one changed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+                mtime:
+                  type: string
+                  format: date-time
+                  description: The time to set, now when missing.
+      responses:
+        "200":
+          $ref: "#/components/responses/FsChanged"
+        "201":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /fs/rename:
     post:
       operationId: fsRename
       summary: Rename one entry
+      description: Renames inside the same folder. An existing entry of the new name is never replaced.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, name]
+              properties:
+                path:
+                  type: string
+                name:
+                  type: string
+                  description: The new name, without a folder.
+      responses:
+        "200":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /fs/rename/batch:
     post:
       operationId: fsRenameBatch
@@ -30,7 +110,39 @@ paths:
     post:
       operationId: opsPreflight
       summary: Check a copy or move before it starts
-      description: Reports conflicts, missing rights and free space, so the conflict dialog can ask before the job runs.
+      description: |
+        Reports the names that exist at the target, the size, the free
+        space and whether a parity check would hold the job, so the
+        conflict dialog can ask before the job runs. The answers go into
+        the decisions of the job.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/TransferParams"
+                - type: object
+                  required: [kind]
+                  properties:
+                    kind:
+                      type: string
+                      enum: [copy, move]
+      responses:
+        "200":
+          description: What the transfer would run into.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Preflight"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /uploads:
     post:
       operationId: uploadCreate
@@ -45,3 +157,128 @@ paths:
     delete:
       operationId: uploadCancel
       summary: Cancel an upload
+components:
+  responses:
+    FsChanged:
+      description: The entry as it is now, and the undo step for it.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [path]
+            properties:
+              path:
+                type: string
+              created:
+                type: boolean
+              undo:
+                type: string
+                description: Id of the undo step, for POST /undo.
+  schemas:
+    PermsParams:
+      type: object
+      description: Params of the job kind fixPerms. Admins only.
+      required: [path]
+      properties:
+        path:
+          type: string
+    PathBody:
+      type: object
+      required: [path]
+      properties:
+        path:
+          type: string
+    PathsParams:
+      type: object
+      description: Params of the job kinds delete and trash.
+      required: [paths]
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+    TransferParams:
+      type: object
+      description: Params of the job kinds copy and move.
+      required: [sources, dest]
+      properties:
+        sources:
+          type: array
+          description: Files and folders, also from different folders.
+          items:
+            type: string
+        dest:
+          type: string
+          description: The folder they go into.
+        names:
+          type: array
+          description: Names at the target, in the order of the sources.
+          items:
+            type: string
+        rule:
+          type: string
+          enum: [ask, skip, replace, both, newer]
+          default: ask
+          description: |
+            Answers every conflict without a decision. ask waits for
+            POST /jobs/{id}/decide after job.conflict. replace moves the
+            old entry to the trash, both gives the new one a number,
+            newer replaces only older files. Folders on both sides are
+            merged for replace and newer.
+        decisions:
+          type: object
+          description: Answers keyed by conflict key, for example from the preflight.
+          additionalProperties:
+            type: string
+            enum: [skip, replace, both, newer]
+        verify:
+          type: boolean
+          description: Read every copied file back and compare checksums.
+        keepAttrs:
+          type: boolean
+          default: true
+          description: Keep owner, mode and times. Without it new entries belong to the user the server runs as.
+    Preflight:
+      type: object
+      required: [dest, count, bytes, files, conflicts, sameDevice, big, parityBusy]
+      properties:
+        dest:
+          type: string
+        count:
+          type: integer
+        bytes:
+          type: integer
+          format: int64
+        files:
+          type: integer
+          format: int64
+        conflicts:
+          type: array
+          items:
+            $ref: "#/components/schemas/JobConflict"
+        sameDevice:
+          type: boolean
+          description: A move that only renames and needs no free space.
+        space:
+          $ref: "#/components/schemas/Space"
+        big:
+          type: boolean
+          description: From 2 GiB on the job waits for a running parity check.
+        parityBusy:
+          type: boolean
+          description: Unraid checks parity right now. For small jobs the client asks whether to wait.
+        unraid:
+          $ref: "#/components/schemas/UnraidTransferReport"
+          description: Trap, broken hard links, space after the allocation rules and disks that wake up. Missing where Unraid has nothing to say.
+    Space:
+      type: object
+      required: [free, need, enough]
+      properties:
+        free:
+          type: integer
+          format: int64
+        need:
+          type: integer
+          format: int64
+        enough:
+          type: boolean

@@ -206,6 +206,24 @@ func (s *Service) PreparePerms(r *ccfs.Resolver, u *users.User, apiPath string) 
 	if err != nil {
 		return PermsTask{}, err
 	}
+	return s.permsTask(loc)
+}
+
+// ResumePerms rebuilds a task that PreparePerms passed before, for a job
+// that goes on after a restart. The rights of the user were checked then,
+// the rest is checked again.
+func (s *Service) ResumePerms(r *ccfs.Resolver, apiPath string) (PermsTask, error) {
+	loc, err := r.Resolve(apiPath)
+	if err != nil {
+		return PermsTask{}, err
+	}
+	if loc.Virtual() {
+		return PermsTask{}, v1.Errorf(http.StatusBadRequest, "path is not a folder")
+	}
+	return s.permsTask(loc)
+}
+
+func (s *Service) permsTask(loc ccfs.Location) (PermsTask, error) {
 	kept := s.keptShares()
 	switch {
 	case loc.InArchive():
