@@ -538,6 +538,7 @@ func setupUrls() {
 	}
 	Config.Integrations.OnlyOffice.Url = strings.Trim(Config.Integrations.OnlyOffice.Url, "/")
 	Config.Integrations.OnlyOffice.InternalUrl = strings.Trim(Config.Integrations.OnlyOffice.InternalUrl, "/")
+	Config.Integrations.ArrowLoop.Url = strings.Trim(Config.Integrations.ArrowLoop.Url, "/")
 }
 
 func setupAuth(generate bool) {
@@ -832,6 +833,10 @@ func loadEnvConfig() {
 	if ok {
 		logger.Info("Using OnlyOffice secret from CC_ONLYOFFICE_SECRET environment variable")
 		Config.Integrations.OnlyOffice.Secret = officeSecret
+	}
+
+	if token, ok := os.LookupEnv("CC_ARROWLOOP_TOKEN"); ok {
+		Config.Integrations.ArrowLoop.Token = token
 	}
 
 	ffmpegPath, ok := os.LookupEnv("CC_FFMPEG_PATH")

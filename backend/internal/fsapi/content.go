@@ -57,7 +57,7 @@ func (h handlers) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 		return loc, nil, err
 	}
 	if loc.InArchive() {
-		return loc, nil, v1.Errorf(http.StatusNotImplemented, "reading from archives is not built yet")
+		return loc, nil, errArchived
 	}
 	if loc.Virtual() {
 		return loc, nil, v1.Errorf(http.StatusBadRequest, "path is a folder")
@@ -82,6 +82,9 @@ func (h handlers) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 func (h handlers) raw(w http.ResponseWriter, r *http.Request) error {
 	q := r.URL.Query()
 	loc, info, err := h.file(v1.UserFrom(r), q.Get("path"), ccfs.Download)
+	if errors.Is(err, errArchived) {
+		return h.archiveRaw(w, r, loc)
+	}
 	if err != nil {
 		return err
 	}
@@ -121,6 +124,9 @@ func (h handlers) text(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	loc, info, err := h.file(v1.UserFrom(r), q.Get("path"), ccfs.Download)
+	if errors.Is(err, errArchived) {
+		return h.archiveText(w, r, loc, limit)
+	}
 	if err != nil {
 		return err
 	}
@@ -161,6 +167,9 @@ func (h handlers) hex(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	loc, info, err := h.file(v1.UserFrom(r), q.Get("path"), ccfs.Download)
+	if errors.Is(err, errArchived) {
+		return h.archiveHex(w, r, loc, offset, length)
+	}
 	if err != nil {
 		return err
 	}

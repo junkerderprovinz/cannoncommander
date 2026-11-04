@@ -49,7 +49,14 @@ tags:
   - name: search
     description: Search by name pattern, fields and content.
   - name: tools
-    description: Compare, sync, duplicates, disk usage, clean up and checksums.
+    description: |
+      Compare, sync, diff, clean up, checksums, archives and the hand over to
+      ArrowLoop. The long runs are jobs: pack, unpack, testArchive, checksum,
+      verify, split, combine, attrsRecursive, sync and fetchUrl, started with
+      POST /jobs. Their params are described under the schemas Pack, Unpack,
+      TestArchive, Checksum, Verify, Split, Combine, Sync and FetchUrl. An
+      archive password goes into the params but not into the job table, so a
+      job resumed after a restart fails and has to be started again.
   - name: labels
     description: |
       Colour labels and tags on paths. They are shared, every user sees the
@@ -472,26 +479,139 @@ paths:
     post:
       operationId: fsRenameBatch
       summary: Rename many entries with a pattern
-      tags: [fileops]
+      description: |
+        Takes either a mask, with the tokens of the rename dialog, or the
+        new names in the order of the paths, as the editor sends them. With
+        dryRun nothing is renamed and the rows show what would happen.
+        Errors per row are empty, invalid, exists and duplicate, compared
+        without case. Nothing is renamed while a row has an error. Names
+        can trade places. The tools package serves this route.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RenameBatch"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The rows, renamed unless dryRun was set.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenameBatchResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: A row has an error, so nothing was renamed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenameBatchResult"
+      tags: [fileops]
   /fs/link:
     post:
       operationId: fsLink
       summary: Create a symbolic or hard link
-      tags: [fileops]
+      description: |
+        A symbolic link may point to something that does not exist yet,
+        but only to a place inside a source the user may see. A hard link
+        needs an existing file on the same source.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target, path]
+              properties:
+                target:
+                  type: string
+                  description: What the link points to, as a full path.
+                path:
+                  type: string
+                  description: Where the link is created.
+                hard:
+                  type: boolean
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [fileops]
   /fs/attrs:
     patch:
       operationId: fsAttrs
       summary: Change mode, owner or times
-      tags: [fileops]
+      description: |
+        Fields left out stay as they are. Owner and group take a name or a
+        number. With recursive the change also covers everything inside
+        the folders and runs as an attrsRecursive job, answered with 202.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths]
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+                mode:
+                  type: string
+                  example: "0775"
+                owner:
+                  type: string
+                  example: nobody
+                group:
+                  type: string
+                  example: users
+                mtime:
+                  type: string
+                  format: date-time
+                recursive:
+                  type: boolean
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: How many entries changed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [changed]
+                properties:
+                  changed:
+                    type: integer
+        "202":
+          description: The change runs as a job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [fileops]
   /ops/preflight:
     post:
       operationId: opsPreflight
@@ -606,8 +726,11 @@ paths:
         Kinds: copy, move, delete, trash, restore, emptyTrash, pack, unpack,
         testArchive, checksum, verify, split, combine, attrsRecursive,
         fixPerms, sync, gather, scatter, contentSearch, duplicates,
-        fetchUrl, reindex. Built so far: copy, move, delete, trash and
-        fixPerms. Restore and emptyTrash start from the trash endpoints.
+        fetchUrl, reindex. Built so far: copy, move, delete, trash,
+        fixPerms, pack, unpack, testArchive, checksum, verify, split,
+        combine, attrsRecursive, sync and fetchUrl, whose params the tools
+        part describes. Restore and emptyTrash start from the trash
+        endpoints.
       requestBody:
         required: true
         content:
@@ -1172,18 +1295,137 @@ paths:
     post:
       operationId: toolsCompare
       summary: Compare two folders
-      tags: [tools]
+      description: |
+        States are same, newerL, newerR, differ, onlyL and onlyR. Two files
+        are the same with the same size and times less than two seconds
+        apart, or with content the same bytes. With top, folders are
+        compared by their total size.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompareRequest"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: Every name with its state, and how many of each.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, counts]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Compared"
+                  counts:
+                    type: object
+                    additionalProperties:
+                      type: integer
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [tools]
   /tools/sync/plan:
     post:
       operationId: toolsSyncPlan
       summary: Plan a sync between two folders
-      tags: [tools]
+      description: |
+        A dry run that writes nothing. A step that would overwrite something
+        newer starts switched off and says why. The steps the user keeps go
+        to a sync job.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [left, right, direction]
+              properties:
+                left:
+                  type: string
+                right:
+                  type: string
+                direction:
+                  type: string
+                  enum: [right, left, both]
+                content:
+                  type: boolean
+                recursive:
+                  type: boolean
+                mirror:
+                  type: boolean
+                  description: Delete on the target what the source lacks. Only with one direction.
+                hidden:
+                  type: boolean
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The steps.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [steps]
+                properties:
+                  steps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SyncStep"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [tools]
+  /tools/diff:
+    post:
+      operationId: toolsDiff
+      summary: Compare two files line by line
+      description: |
+        Rows pair a line of the left file with one of the right by index.
+        Binary files are compared as hex lines of 16 bytes, up to 1 MiB.
+        Text files are compared up to 8 MiB.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [left, right]
+              properties:
+                left:
+                  type: string
+                right:
+                  type: string
+      responses:
+        "200":
+          description: Both files and the rows.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Diff"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "413":
+          $ref: "#/components/responses/ToolFailed"
+        "422":
+          $ref: "#/components/responses/ToolFailed"
+      tags: [tools]
   /tools/duplicates:
     post:
       operationId: toolsDuplicates
@@ -1204,26 +1446,200 @@ paths:
     post:
       operationId: toolsCleanupScan
       summary: Find files that can go
-      tags: [tools]
+      description: |
+        Groups are emptyDir, emptyFile, temp and link, which go to the trash,
+        and ext and name, which get the name in to. Each group holds at most
+        5000 finds, capped says when that cut something off. Removing and
+        renaming go through the trash job and POST /fs/rename/batch.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The finds.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CleanupScan"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [tools]
   /tools/checksum/parse:
     post:
       operationId: toolsChecksumParse
       summary: Read a checksum file
-      tags: [tools]
+      description: Reads GNU lines such as sha256sum writes and BSD lines such as SHA256 (name) = hash, from a file or from pasted text.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                text:
+                  type: string
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "200":
+          description: The lines.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [lines]
+                properties:
+                  lines:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SumLine"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [tools]
+  /tools/archives:
+    get:
+      operationId: toolsArchiveFormats
+      summary: Archive formats this server reads and writes
+      description: 7z needs 7zz and rar needs the rar program, which is not part of the image.
+      responses:
+        "200":
+          description: The formats.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [read, pack]
+                properties:
+                  read:
+                    type: array
+                    items:
+                      type: string
+                  pack:
+                    type: array
+                    items:
+                      type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [tools]
+  /tools/archive:
+    get:
+      operationId: toolsArchiveInfo
+      summary: What an archive holds
+      description: The password of an encrypted archive goes in the header X-Archive-Password. Without the right one the answer is 428.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+      responses:
+        "200":
+          description: Entries and the unpacked size.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [path, format, entries, unpacked, encrypted]
+                properties:
+                  path:
+                    type: string
+                  format:
+                    type: string
+                  entries:
+                    type: integer
+                  unpacked:
+                    type: integer
+                    format: int64
+                  encrypted:
+                    type: boolean
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ToolFailed"
+        "428":
+          $ref: "#/components/responses/ToolFailed"
+      tags: [tools]
   /tools/arrowloop:
     post:
       operationId: toolsArrowLoop
-      summary: Hand a folder to ArrowLoop as a job
-      tags: [tools]
+      summary: Hand a folder pair to ArrowLoop as a job
+      description: |
+        Creates a job in the ArrowLoop set up under Integrations through its
+        POST /api/jobs, with the token from the same place. Paths are
+        renamed by the path map of the integration. The user needs the
+        rights here that the job will use there.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, left, right, direction, every]
+              properties:
+                name:
+                  type: string
+                left:
+                  type: string
+                right:
+                  type: string
+                direction:
+                  type: string
+                  enum: [right, left, both]
+                mirror:
+                  type: boolean
+                every:
+                  type: string
+                  enum: [hourly, daily, weekly]
+                at:
+                  type: string
+                  example: "03:00"
       responses:
-        "501":
-          $ref: '#/components/responses/NotImplemented'
+        "201":
+          description: The job as ArrowLoop stored it, and ArrowLoop's address.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [job, url]
+                properties:
+                  job:
+                    type: object
+                  url:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+        "502":
+          $ref: "#/components/responses/ToolFailed"
+        "503":
+          $ref: "#/components/responses/ToolFailed"
+      tags: [tools]
   /labels:
     get:
       operationId: labelsGet
@@ -2682,6 +3098,12 @@ components:
                 $ref: "#/components/schemas/UndoStep"
               job:
                 $ref: "#/components/schemas/Job"
+    ToolFailed:
+      description: The tool cannot do it, the detail says why, such as a file too big, a missing password or ArrowLoop not answering.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
   schemas:
     Problem:
       type: object
@@ -3337,6 +3759,385 @@ components:
             id:
               type: integer
               format: int64
+    RenameMask:
+      type: object
+      required: [name, ext]
+      description: |
+        Tokens: [N] name, [E] ending, [D] date, [P] folder, [C] counter, [C3]
+        with three digits, [A] taken, [K] camera, [I] artist, [T] title, [R]
+        resolution, [S2] season and [F2] episode.
+      properties:
+        name:
+          type: string
+          example: "[A]_[C3]"
+        ext:
+          type: string
+          example: "[E]"
+        start:
+          type: integer
+        step:
+          type: integer
+        find:
+          type: string
+        repl:
+          type: string
+        regex:
+          type: boolean
+        case:
+          type: string
+          enum: [keep, lower, upper, title]
+    RenameBatch:
+      type: object
+      required: [paths]
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+        mask:
+          $ref: "#/components/schemas/RenameMask"
+        names:
+          type: array
+          items:
+            type: string
+        dryRun:
+          type: boolean
+    RenameBatchResult:
+      type: object
+      required: [rows, changed, errors, done]
+      properties:
+        rows:
+          type: array
+          items:
+            type: object
+            required: [path, old, new]
+            properties:
+              path:
+                type: string
+              old:
+                type: string
+              new:
+                type: string
+              error:
+                type: string
+                enum: [empty, invalid, exists, duplicate]
+              missing:
+                type: array
+                items:
+                  type: string
+        changed:
+          type: integer
+        errors:
+          type: integer
+        done:
+          type: boolean
+        undo:
+          type: string
+    CompareRequest:
+      type: object
+      required: [left, right]
+      properties:
+        left:
+          type: string
+        right:
+          type: string
+        content:
+          type: boolean
+        recursive:
+          type: boolean
+        top:
+          type: boolean
+        hidden:
+          type: boolean
+    CompareSide:
+      type: object
+      required: [dir, size, mtime]
+      properties:
+        dir:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+    Compared:
+      type: object
+      required: [rel, name, state]
+      properties:
+        rel:
+          type: string
+        name:
+          type: string
+        state:
+          type: string
+          enum: [same, newerL, newerR, differ, onlyL, onlyR]
+        left:
+          $ref: "#/components/schemas/CompareSide"
+        right:
+          $ref: "#/components/schemas/CompareSide"
+    SyncStep:
+      type: object
+      required: [key, rel, act, to, size]
+      properties:
+        key:
+          type: string
+        rel:
+          type: string
+        act:
+          type: string
+          enum: [copy, replace, delete]
+        to:
+          type: string
+          enum: [L, R]
+        dir:
+          type: boolean
+        "off":
+          type: boolean
+        why:
+          type: string
+          enum: [rightNewer, leftNewer, sameAge]
+        size:
+          type: integer
+          format: int64
+    Diff:
+      type: object
+      required: [left, right, binary, rows, hunks]
+      properties:
+        left:
+          $ref: "#/components/schemas/DiffSide"
+        right:
+          $ref: "#/components/schemas/DiffSide"
+        binary:
+          type: boolean
+        hunks:
+          type: integer
+        rows:
+          type: array
+          items:
+            type: object
+            required: [t]
+            properties:
+              t:
+                type: string
+                enum: [eq, chg, del, add]
+              l:
+                type: integer
+                nullable: true
+              r:
+                type: integer
+                nullable: true
+    DiffSide:
+      type: object
+      required: [path, size, mtime, lines]
+      properties:
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        mtime:
+          type: string
+          format: date-time
+        lines:
+          type: array
+          items:
+            type: string
+    CleanupScan:
+      type: object
+      required: [path, scanned, groups]
+      properties:
+        path:
+          type: string
+        scanned:
+          type: integer
+        capped:
+          type: boolean
+        groups:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+                note:
+                  type: string
+                  description: Size of a leftover, link target, the real kind or the reason for a bad name.
+                size:
+                  type: integer
+                  format: int64
+                to:
+                  type: string
+    SumLine:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        hash:
+          type: string
+        algo:
+          type: string
+          enum: [md5, sha1, sha256, sha512, b3]
+        bad:
+          type: string
+          description: A line that is neither GNU nor BSD style.
+    Pack:
+      type: object
+      required: [sources, dest, name, format]
+      description: Params of pack. The sources lie in one folder.
+      properties:
+        sources:
+          type: array
+          items:
+            type: string
+        dest:
+          type: string
+        name:
+          type: string
+          description: Without the ending.
+        format:
+          type: string
+          enum: [zip, tar.gz, tar.zst, 7z, rar]
+        level:
+          type: integer
+          minimum: 0
+          maximum: 9
+        password:
+          type: string
+          description: AES-256 for zip, 7z and rar.
+    Unpack:
+      type: object
+      required: [archives, dest]
+      description: Params of unpack. An archive path with a folder after "::" unpacks only that folder, and items picks names in it.
+      properties:
+        archives:
+          type: array
+          items:
+            type: string
+        items:
+          type: array
+          items:
+            type: string
+        dest:
+          type: string
+        own:
+          type: boolean
+          description: A folder named after each archive.
+        clash:
+          type: string
+          enum: [skip, both, replace]
+        password:
+          type: string
+        charset:
+          type: string
+          description: Encoding of zip names without the UTF-8 flag.
+    TestArchive:
+      type: object
+      required: [paths]
+      description: Params of testArchive. Every member is read to its end, nothing is unpacked.
+      properties:
+        paths:
+          type: array
+          items:
+            type: string
+        password:
+          type: string
+    Checksum:
+      type: object
+      required: [sources]
+      description: Params of checksum. Lists are left out of a folder.
+      properties:
+        sources:
+          type: array
+          items:
+            type: string
+        algo:
+          type: string
+          enum: [md5, sha1, sha256, sha512, b3]
+        save:
+          type: string
+          description: The sum file to write, names relative to its folder.
+        bsd:
+          type: boolean
+    Verify:
+      type: object
+      description: Params of verify, a sum file or pasted lines with their folder. Line states are ok, mismatch, missing and bad.
+      properties:
+        file:
+          type: string
+        text:
+          type: string
+        dir:
+          type: string
+    Split:
+      type: object
+      required: [path, dest, partSize]
+      description: Params of split. Parts are named file.001 and on.
+      properties:
+        path:
+          type: string
+        dest:
+          type: string
+        partSize:
+          type: integer
+          format: int64
+        sum:
+          type: boolean
+          description: Lay a .sha256 of the whole file beside the parts.
+    Combine:
+      type: object
+      required: [path, dest]
+      description: Params of combine. Path is any of the parts.
+      properties:
+        path:
+          type: string
+        name:
+          type: string
+        dest:
+          type: string
+        check:
+          type: boolean
+        drop:
+          type: boolean
+          description: Move the parts to the trash once the result is complete.
+    Sync:
+      type: object
+      required: [left, right, steps]
+      description: Params of sync, the steps of the plan that are switched on. Deleted entries go to the trash.
+      properties:
+        left:
+          type: string
+        right:
+          type: string
+        steps:
+          type: array
+          items:
+            type: object
+            required: [rel, act, to]
+            properties:
+              rel:
+                type: string
+              act:
+                type: string
+                enum: [copy, replace, delete]
+              to:
+                type: string
+                enum: [L, R]
+    FetchUrl:
+      type: object
+      required: [url, dest]
+      description: Params of fetchUrl. Addresses in the local network and on the server itself are refused, after every redirect as well.
+      properties:
+        url:
+          type: string
+        name:
+          type: string
+        dest:
+          type: string
     Label:
       type: object
       properties:

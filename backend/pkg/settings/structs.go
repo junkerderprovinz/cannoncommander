@@ -134,6 +134,7 @@ type IndexSqlConfig struct {
 type Integrations struct {
 	OnlyOffice OnlyOffice `json:"office" validate:"omitempty"`
 	Media      Media      `json:"media" validate:"omitempty"`
+	ArrowLoop  ArrowLoop  `json:"arrowloop" validate:"omitempty"`
 }
 
 // onlyoffice secret is stored in the local.json file
@@ -143,6 +144,13 @@ type OnlyOffice struct {
 	InternalUrl string `json:"internalUrl"`                // An optional internal address that the filebrowser server can use to communicate with the OnlyOffice Document Server, could be useful to bypass proxy.
 	Secret      string `json:"secret" validate:"required"` // secret: authentication key for OnlyOffice integration
 	ViewOnly    bool   `json:"viewOnly"`                   // view only mode for OnlyOffice
+}
+
+// ArrowLoop is where folder pairs go to be synced on a schedule.
+type ArrowLoop struct {
+	Url   string            `json:"url"`   // the address CannonCommander reaches ArrowLoop at, eg. http://tower:8422
+	Token string            `json:"token"` // the ARROWLOOP_API_TOKEN of that ArrowLoop
+	Paths map[string]string `json:"paths"` // how folders here are named inside ArrowLoop's container, eg. /mnt/user: /data
 }
 
 type Media struct {
