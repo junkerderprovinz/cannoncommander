@@ -1,47 +1,53 @@
-import { createApp } from "vue";
-import i18n from "@/i18n/index.ts";
-import { state } from "@/store/index.ts";
-// biome-ignore lint/correctness/noUnresolvedImports: disabled temporarily
-import App from "./App.vue";
-import { router } from "./router/index.ts";
+import '@glimstone/core/tokens.css';
+import './styles/app.css';
+import './styles/shell.css';
+import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+import { api } from '@/api/client';
+import { connect } from '@/api/sse';
+import { installAnnouncer } from '@/core/announce';
+import { installKeyboard } from '@/core/keyboard';
+import { bindDefaults } from '@/core/keymap';
+import { installNav } from '@/core/nav';
+import { applyPrefs, mergeServerPrefs, onPrefsSaved, prefs } from '@/core/prefs';
+import { installTips } from '@/core/tips';
+import { registerView } from '@/core/views';
+import { loadFeatures } from '@/features';
+import { registerFileActions } from '@/files/actions';
+import FilesView from '@/files/FilesView.vue';
+import { filesKey } from '@/files/keys';
+import { setLanguage } from '@/i18n';
+import SettingsPage from '@/pages/SettingsPage.vue';
+import { usePanels } from '@/stores/panels';
+import { watchWidth } from '@/shell/state';
+import { useUser } from '@/stores/user';
+import App from './App.vue';
 
-import "./css/styles.css";
-import { initPwaInstall } from "@/utils/pwaInstall.js";
-import { defaultDarkMode, syncDocumentTheme } from "@/utils/theme.js";
-import { initViewportLayoutListener } from "@/utils/viewport.js";
+applyPrefs();
+setLanguage(prefs.language);
+matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => prefs.theme === 'system' && applyPrefs());
 
-initPwaInstall();
-initViewportLayoutListener();
-syncDocumentTheme(defaultDarkMode());
+const app = createApp(App).use(createPinia());
+registerView('files', { component: FilesView, key: filesKey });
+registerView('settings', { page: true, component: SettingsPage });
+bindDefaults();
+usePanels();
+registerFileActions();
+loadFeatures();
+installKeyboard();
+installTips();
+installAnnouncer();
+installNav();
+watchWidth();
+useUser().load();
 
-const app = createApp(App);
-
-// Install additionals
-app.use(i18n);
-app.use(router);
-
-// Provide state to the entire application
-app.provide("state", state);
-
-// provide v-focus for components
-app.directive("focus", {
-  mounted: (el) => {
-    // A longer timeout is sometimes needed to win a "focus race"
-    // against other parts of the app that might be managing focus.
-    setTimeout(() => {
-      el.focus();
-    }, 100);
-  },
+// The server's copy of the settings follows the local one; while the server has none, the local copy stands.
+api.prefs().then(mergeServerPrefs, () => {});
+let saving: ReturnType<typeof setTimeout> | undefined;
+onPrefsSaved((p) => {
+  clearTimeout(saving);
+  saving = setTimeout(() => api.savePrefs(p).catch(() => {}), 800);
 });
+if (import.meta.env.MODE !== 'fixture') connect();
 
-if (import.meta.env.DEV) {
-  app.mixin({
-    mounted() {
-      if (this.$el?.nodeType === 1) {
-        this.$el.__vue__ = this;
-      }
-    },
-  });
-}
-
-void router.isReady().then(() => app.mount("#app"));
+app.mount('#root');

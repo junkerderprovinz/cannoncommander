@@ -1,0 +1,14 @@
+{
+  "title": "Keyboard shortcuts",
+  "fixed": {
+    "tab": { "label": "Switch panel", "key": "Tab" },
+    "enter": { "label": "Open", "key": "Enter" },
+    "insert": { "label": "Select and move on", "key": "Insert" },
+    "space": { "label": "Quick look, with I for file details", "key": "Space" },
+    "ctrlClick": { "label": "Add to selection", "key": "Ctrl+Click" },
+    "shiftClick": { "label": "Select a range", "key": "Shift+Click" },
+    "rightClick": { "label": "Context menu", "key": "Right click" },
+    "f10": { "label": "Menu bar", "key": "F10" },
+    "esc": { "label": "Close filter, menu or window", "key": "Esc" }
+  }
+}
