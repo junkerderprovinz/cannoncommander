@@ -8,7 +8,8 @@ import { RULES } from '@/features/transfer/rules';
 import { deleteItems } from '@/features/trash/trash';
 import { stepLabel } from '@/features/undo/label';
 import { run } from '@/core/actions';
-import { isOpen, useJobs } from '@/stores/jobs';
+import { GB, KB, MB } from '@/core/format';
+import { useJobs } from '@/stores/jobs';
 import { type TransferOptions, usePanels } from '@/stores/panels';
 import { useUndo } from '@/stores/undo';
 
@@ -27,7 +28,6 @@ export function provideOps(provide: (name: string, value: unknown) => void) {
     move: (j: Shown, to: number) => jobs.move(j.job, to),
     held: (j: Shown) => j.job.reason === 'parity',
     changed: () => {},
-    open: (j: Shown) => isOpen(j.job),
   });
   provide('CC.history', { get list() { return undo.list.map((s) => ({ label: stepLabel(s), at: s.at })); } });
   provide('CC.deleteItems', (sel: Entry[], path: string, after?: () => void) => deleteItems(sel, path, { after }));
@@ -35,4 +35,5 @@ export function provideOps(provide: (name: string, value: unknown) => void) {
   provide('CC.uploadFiles', (files: File[], path: string) => run('uploadFiles', files, path));
   provide('Files.transfer', (kind: 'copy' | 'move', items: Entry[], dest: string, from?: string, rule?: TransferOptions['rule']) => F.transfer(kind, items, dest, from, { rule }));
   provide('CLASH_RULES', RULES());
+  for (const [name, value] of Object.entries({ KB, MB, GB })) provide(name, value);
 }

@@ -5,7 +5,7 @@ import { ApiError } from '@/api/client';
 import { type Choice, type Job, type JobConflict, ops, type Rule, type Upload } from '@/api/ops';
 import { now } from '@/core/format';
 import { toast } from '@/core/toast';
-import { inArchive, join, split } from '@/files/paths';
+import { inArchive, join } from '@/files/paths';
 import { t } from '@/i18n';
 import { resolveConflicts } from '@/features/transfer/conflicts';
 import { useJobs } from '@/stores/jobs';
@@ -25,10 +25,6 @@ let seq = 0, batches = 0;
 const iso = (ms: number) => new Date(ms || now()).toISOString();
 const nameOf = (f: File) => (f as File & { webkitRelativePath?: string }).webkitRelativePath || f.name;
 
-function sideOf(f: { size: number; mtime: number }, path: string) {
-  return { path, dir: false, size: f.size, mtime: iso(f.mtime) };
-}
-
 export async function addFiles(files: Iterable<File>, path: string) {
   const listing = useListing();
   const dir = !inArchive(path) && (await listing.load(path).catch(() => null));
@@ -38,7 +34,7 @@ export async function addFiles(files: Iterable<File>, path: string) {
   const there = new Map(dir.items.map((k) => [k.name, k]));
   const clashes: JobConflict[] = list.filter((f) => there.has(nameOf(f))).map((f) => {
     const old = there.get(nameOf(f))!;
-    return { key: nameOf(f), source: sideOf({ size: f.size, mtime: f.lastModified }, nameOf(f)), target: { path: join(path, old.name), dir: old.dir, size: old.size, mtime: iso(old.time) },
+    return { key: nameOf(f), source: { path: nameOf(f), dir: false, size: f.size, mtime: iso(f.lastModified) }, target: { path: join(path, old.name), dir: old.dir, size: old.size, mtime: iso(old.time) },
       ...(f.lastModified > old.time + 1000 ? { newer: 'source' as const } : old.time > f.lastModified + 1000 ? { newer: 'target' as const } : {}) };
   });
   const decide: Record<string, Choice> | null = clashes.length ? await resolveConflicts(clashes, path) : {};
@@ -58,7 +54,7 @@ function ensureJob(path: string) {
   Up.job = jobs.addLocal({
     id: `upload-${++batches}`, kind: 'upload', owner: '', state: 'running', position: Number.MAX_SAFE_INTEGER, name: '', count: 0, dest: path,
     totalBytes: 0, doneBytes: 0, totalFiles: 0, doneFiles: 0, rate: 0, left: null, cap: 0, waitForParity: false, failedItems: 0, createdAt: iso(now()),
-  }, { pause: pauseAll, resume: pauseAll, cancel: cancelAll });
+  }, { pause: toggleAll, resume: toggleAll, cancel: cancelAll });
   return Up.job;
 }
 
@@ -174,7 +170,7 @@ export function cancelItem(i: UpItem) {
   tick();
 }
 
-function pauseAll() {
+export function toggleAll() {
   const job = Up.job;
   if (!job) return;
   job.state = job.state === 'paused' ? 'running' : 'paused';
@@ -192,6 +188,4 @@ function cancelAll() {
 }
 
 export const pausedAll = () => Up.job?.state === 'paused';
-export const toggleAll = pauseAll;
 export const clearDone = () => { Up.items = Up.items.filter((i) => OPEN.includes(i.state)); };
-export const folderName = (path: string) => split(path).pop() || t('jobs.server');

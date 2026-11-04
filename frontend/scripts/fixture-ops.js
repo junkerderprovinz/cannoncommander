@@ -31,7 +31,6 @@ export function opsFixture(fx = sharedFixture()) {
   const nextId = (p) => `${p}${(++seq).toString(36)}`;
   const rnd = () => (rolled = (rolled * 16807) % 2147483647) / 2147483647;
 
-  // The event stream.
   const clients = new Set();
   function send(type, data, topic) {
     const frame = { id: ++eventId, type, time: iso(Date.now()), ...(topic ? { topic } : {}), ...(data === undefined ? {} : { data }) };
@@ -39,7 +38,6 @@ export function opsFixture(fx = sharedFixture()) {
   }
   const changed = (...paths) => { for (const p of new Set(paths.filter(Boolean))) send('fs.changed', { paths: [p] }, 'fs:' + p); };
 
-  // The tree.
   const dirAt = (path) => { const n = FS.nodeAt(path); return n && n.dir ? n : null; };
   const taken = (dir, name) => FS.kids(dir).some((k) => k.name === name);
   const freeName = (dir, name) => {
@@ -251,7 +249,6 @@ export function opsFixture(fx = sharedFixture()) {
     };
   }
 
-  // Jobs.
   const settings = { mode: 'serial', cap: 0, parityWait: true, notifyUnraid: false, notifyAfter: 60 };
   const parity = { busy: false };
   const jobs = [];
@@ -288,11 +285,11 @@ export function opsFixture(fx = sharedFixture()) {
     const share = moving.length > 1 ? 1.4 / moving.length : 1;
     let place = 0;
     for (const j of live) {
-      const was = j.state;
+      const was = [j.state, j.place, j.reason].join();
       if (moving.includes(j)) j.state = 'running';
       else { j.state = 'queued'; j.rate = 0; j.left = null; j.place = ++place; if (held(j)) j.reason = 'parity'; else delete j.reason; }
       if (j.state === 'running') { delete j.place; delete j.reason; j.startedAt ||= iso(Date.now()); }
-      if (was !== j.state) publish('job.state', j);
+      if (was !== [j.state, j.place, j.reason].join()) publish('job.state', j);
     }
     for (const j of moving) advance(j, share, moving.length);
     if (!open().some((j) => j.state === 'queued' || j.state === 'running')) { clearInterval(timer); timer = null; }
@@ -389,7 +386,6 @@ export function opsFixture(fx = sharedFixture()) {
     });
   }
 
-  // Uploads.
   const uploads = new Map();
   function landUpload(u) {
     const dir = ensureDir(FS.parent(u.path));
@@ -407,7 +403,6 @@ export function opsFixture(fx = sharedFixture()) {
   }
   const uploadOut = (u) => ({ id: u.id, path: u.path, size: u.size, offset: u.offset, state: u.state, rule: u.rule, mtime: u.mtime, chunk: CHUNK });
 
-  // Answers and the routes.
   const json = (res, status, body, headers = {}) => {
     res.statusCode = status;
     for (const [k, v] of Object.entries(headers)) res.setHeader(k, v);

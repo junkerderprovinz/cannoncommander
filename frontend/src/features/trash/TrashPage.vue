@@ -10,7 +10,8 @@ import { winStack } from '@/core/windows';
 import { t } from '@/i18n';
 import { useTrash } from '@/stores/trash';
 import Frow from '@/ui/Frow.vue';
-import { objects, purge, restore } from './trash';
+import { objects } from '@/features/jobs/label';
+import { purge, restore } from './trash';
 import { pick, type SortKey } from './pick';
 
 const trash = useTrash();
