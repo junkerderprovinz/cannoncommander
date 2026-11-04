@@ -36,6 +36,9 @@ func newArray(t *testing.T) *array {
 	var disks strings.Builder
 	for _, d := range []string{"disk1", "disk2"} {
 		fmt.Fprintf(&disks, "[\"%s\"]\nname=\"%s\"\ntype=\"Data\"\nstatus=\"DISK_OK\"\nfsStatus=\"Mounted\"\nfsMountpoint=\"/mnt/%s\"\nsize=\"4096\"\nfsSize=\"4096\"\nfsFree=\"2048\"\nspundown=\"0\"\n", d, d, d)
+		if err := os.MkdirAll(filepath.Join(cfg.Mnt, d), 0o755); err != nil {
+			t.Fatal(err)
+		}
 	}
 	a.write(filepath.Join(cfg.Emhttp, "disks.ini"), disks.String())
 	a.write(filepath.Join(cfg.Emhttp, "shares.ini"), "[\"filme\"]\nname=\"filme\"\nuseCache=\"no\"\ncachePool=\"\"\nallocator=\"highwater\"\nfloor=\"0\"\nexclude=\"\"\nsplitLevel=\"\"\nused=\"7\"\n")
@@ -116,7 +119,7 @@ func gather(e *env, disk string) jobs.Job {
 	}
 	j = waitAs(e, "admin", j.ID)
 	if j.State != jobs.Done {
-		e.t.Fatalf("job ended %s: %s", j.State, j.Error)
+		e.t.Fatalf("job ended %s: %+v", j.State, j.Items)
 	}
 	return j
 }
