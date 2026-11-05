@@ -130,7 +130,7 @@ func check(ctx context.Context, fsys *ccfs.Resolver, u *users.User, p TransferPa
 		}
 		// A copy leaves out what is hidden, but a move takes the folder along.
 		if move {
-			if err := fsys.Whole(ctx, u, src, srcPerm); err != nil {
+			if err := fsys.Carry(ctx, u, src, srcPerm); err != nil {
 				return dest, nil, err
 			}
 		}
@@ -344,7 +344,7 @@ func (t *transfer) item(ctx context.Context, dest ccfs.Location, it jobs.Item) (
 		return false, err
 	}
 	if t.move {
-		if err := t.s.fs.Whole(ctx, u, src, t.srcPerm); err != nil {
+		if err := t.s.fs.Carry(ctx, u, src, t.srcPerm); err != nil {
 			return false, err
 		}
 	}
@@ -391,6 +391,12 @@ func (t *transfer) entry(ctx context.Context, src, dst node, key string, inNew b
 			t.remember(src, dst, inNew)
 			return false, t.run.Advance(ctx, sizeOf(info), 1)
 		default:
+			// A question would show a name the user may not see, so both stay.
+			if t.move {
+				if _, err := t.s.fs.Check(t.u, src.api, t.srcPerm); err != nil {
+					return true, nil
+				}
+			}
 			choice, err := t.choose(ctx, key, src, dst, info, target)
 			if err != nil {
 				return false, err
@@ -461,11 +467,20 @@ func (t *transfer) entry(ctx context.Context, src, dst node, key string, inNew b
 // mayWrite checks the owner's rights at dst. Only the job's top entries were
 // checked when it started, and a rule can name any place below the target.
 func (t *transfer) mayWrite(ctx context.Context, dst node, replace bool) error {
-	loc, err := t.s.fs.Check(t.u, dst.api, t.dstPerm)
+	loc, err := t.look(dst.api, t.dstPerm)
 	if err != nil || !replace {
 		return err
 	}
-	return t.s.fs.Whole(ctx, t.u, loc, t.dstPerm)
+	return t.s.fs.Carry(ctx, t.u, loc, t.dstPerm)
+}
+
+// look checks one entry on the way through a folder. A copy leaves out what is
+// hidden, a move carries the folder away with what is hidden by name.
+func (t *transfer) look(api string, perm ccfs.Perm) (ccfs.Location, error) {
+	if t.move {
+		return t.s.fs.CheckCarried(t.u, api, perm)
+	}
+	return t.s.fs.Check(t.u, api, perm)
 }
 
 // choose finds the answer for a conflict, from the decisions, the rule or
@@ -513,7 +528,7 @@ func (t *transfer) dir(ctx context.Context, src, dst node, key string, info fs.F
 		if IsPart(name) {
 			continue
 		}
-		if _, err := t.s.fs.Check(t.u, src.child(name).api, t.srcPerm); err != nil {
+		if _, err := t.look(src.child(name).api, t.srcPerm); err != nil {
 			continue
 		}
 		if _, err := t.entry(ctx, src.child(name), dst.child(name), key+"/"+name, inNew || created); err != nil {

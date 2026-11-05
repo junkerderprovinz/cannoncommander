@@ -3,6 +3,8 @@ package accounts_test
 import (
 	"errors"
 	"net/http"
+	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -176,4 +178,47 @@ func TestTheCheckerExplainsWhatAUserGets(t *testing.T) {
 	}
 	w.must(http.StatusNotFound, w.as(w.admin.Username, "POST", "/admin/rules/test", map[string]string{"user": "niemand", "path": "/mnt/user"}))
 	w.must(http.StatusBadRequest, w.as(w.admin.Username, "POST", "/admin/rules/test", map[string]string{"user": "anna", "path": "mnt"}))
+}
+
+func TestCarryingAFolderGoesByTheKindOfRule(t *testing.T) {
+	w := newWorld(t)
+	anna := w.addUser("anna", "user", "/mnt/user")
+	album := filepath.Join(w.share, "fotos", "album")
+	if err := os.MkdirAll(filepath.Join(album, "privat"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"bild.jpg", "Thumbs.db", "privat/x.jpg"} {
+		if err := os.WriteFile(filepath.Join(album, name), []byte("x"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	const folder = "/mnt/user/fotos/album"
+	cases := []struct {
+		name  string
+		rule  rule
+		carry error
+		whole error
+	}{
+		{"name pattern", rule{"who": "*", "path": "Thumbs*", "rule": "hide"}, nil, ccfs.ErrProtected},
+		{"name pattern for a user", rule{"who": "anna", "path": "*.db", "rule": "hide"}, nil, ccfs.ErrProtected},
+		{"path", rule{"who": "*", "path": folder + "/privat", "rule": "hide"}, ccfs.ErrProtected, ccfs.ErrProtected},
+		{"pattern below a folder", rule{"who": "*", "path": folder + "/*.db", "rule": "hide"}, ccfs.ErrProtected, ccfs.ErrProtected},
+		{"read on a name", rule{"who": "*", "path": "Thumbs*", "rule": "read"}, ccfs.ErrProtected, ccfs.ErrProtected},
+		{"read on a path", rule{"who": "*", "path": folder + "/privat", "rule": "read"}, ccfs.ErrProtected, ccfs.ErrProtected},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			w.setRules(c.rule)
+			loc, err := w.fs.Check(&anna, folder, ccfs.Delete)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := w.fs.Carry(t.Context(), &anna, loc, ccfs.Delete); !errors.Is(err, c.carry) {
+				t.Errorf("carry: %v, want %v", err, c.carry)
+			}
+			if err := w.fs.Whole(t.Context(), &anna, loc, ccfs.Delete); !errors.Is(err, c.whole) {
+				t.Errorf("whole: %v, want %v", err, c.whole)
+			}
+		})
+	}
 }

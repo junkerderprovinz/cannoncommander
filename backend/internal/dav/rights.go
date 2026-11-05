@@ -113,7 +113,7 @@ func (s *session) wholeTree(name string, perm ccfs.Perm) error {
 	if err != nil {
 		return err
 	}
-	return fsys.Whole(s.ctx, s.u, top, perm)
+	return fsys.Carry(s.ctx, s.u, top, perm)
 }
 
 // rights checks what method takes on name, as far as that is known without

@@ -56,7 +56,7 @@ func prepareTrash(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMes
 		if _, err := os.Lstat(loc.Real); err != nil {
 			return nil, err
 		}
-		if err := d.FS.Whole(ctx, u, loc, ccfs.Delete); err != nil {
+		if err := d.FS.Carry(ctx, u, loc, ccfs.Delete); err != nil {
 			return nil, err
 		}
 		if seen[loc.Path] {
@@ -89,7 +89,7 @@ func runTrash(ctx context.Context, run *jobs.Run) error {
 		}
 		loc, u, err := run.Entry(it.Path, ccfs.Delete)
 		if err == nil {
-			err = run.Deps().FS.Whole(ctx, u, loc, ccfs.Delete)
+			err = run.Deps().FS.Carry(ctx, u, loc, ccfs.Delete)
 		}
 		var t Item
 		if err == nil {

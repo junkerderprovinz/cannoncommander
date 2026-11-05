@@ -211,7 +211,7 @@ func prepareAttrs(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMes
 		if err != nil {
 			return nil, err
 		}
-		if err := d.FS.Whole(ctx, u, loc, ccfs.Modify); err != nil {
+		if err := d.FS.Carry(ctx, u, loc, ccfs.Modify); err != nil {
 			return nil, err
 		}
 		plan.Items = append(plan.Items, jobs.Item{Seq: i, Path: loc.Path, Name: path.Base(loc.Path)})
@@ -236,7 +236,7 @@ func runAttrs(ctx context.Context, run *jobs.Run) error {
 			err = p.mayUseSpecialBits(u)
 		}
 		if err == nil {
-			err = run.Deps().FS.Whole(ctx, u, loc, ccfs.Modify)
+			err = run.Deps().FS.Carry(ctx, u, loc, ccfs.Modify)
 		}
 		if err != nil {
 			run.Finish(it.Seq, jobs.ItemFailed, err)
@@ -250,6 +250,17 @@ func runAttrs(ctx context.Context, run *jobs.Run) error {
 			}
 			if d.IsDir() && bookkeeping(d.Name()) {
 				return filepath.SkipDir
+			}
+			// What a user may not see stays as it is, like in a copy.
+			rel, err := filepath.Rel(loc.Real, q)
+			if err != nil {
+				return err
+			}
+			if _, err := run.Deps().FS.Check(u, path.Join(loc.Path, filepath.ToSlash(rel)), ccfs.Modify); err != nil {
+				if d.IsDir() {
+					return filepath.SkipDir
+				}
+				return nil
 			}
 			info, err := d.Info()
 			if err != nil {

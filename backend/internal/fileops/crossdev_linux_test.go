@@ -19,6 +19,32 @@ func deviceOf(t *testing.T, p string) uint64 {
 	return uint64(st.Dev)
 }
 
+func TestMoveAcrossFileSystemsTakesAFileHiddenByNameAlong(t *testing.T) {
+	shm, err := os.MkdirTemp("/dev/shm", "cc-test-")
+	if err != nil {
+		t.Skip("no /dev/shm")
+	}
+	t.Cleanup(func() { os.RemoveAll(shm) })
+	e := newEnv(t, ccfs.Source{Name: "shm", Mount: "/mnt/remotes/shm", Root: shm})
+	if deviceOf(t, e.root) == deviceOf(t, shm) {
+		t.Skip("the temp folder and /dev/shm share a file system")
+	}
+	album := albumWithThumbs(e)
+
+	j := e.run("move", fileops.TransferParams{Sources: []string{album}, Dest: "/mnt/remotes/shm"})
+	if !e.gone(album) {
+		t.Fatal("the hidden file kept the source alive")
+	}
+	if b, err := os.ReadFile(filepath.Join(shm, "album", "sub", "Thumbs.db")); err != nil || string(b) != "klein" {
+		t.Fatalf("moved file: %q, %v", b, err)
+	}
+
+	e.undo(j.Undo)
+	if e.read(album+"/sub/Thumbs.db") != "klein" {
+		t.Fatal("undo left the hidden file behind")
+	}
+}
+
 func TestMoveAcrossFileSystemsCopiesAndRemovesTheSource(t *testing.T) {
 	shm, err := os.MkdirTemp("/dev/shm", "cc-test-")
 	if err != nil {
