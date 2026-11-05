@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { eyeWords, segItems } from '@/ui/kit';
-import { FieldRow, IconButton, PasswordField, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, IconButton, PasswordField, Selector, SubCard, TextArea, TextField, Toggle } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import { glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
-import { type LinkForm, slugFor } from './link';
+import { type LinkForm, MESSAGE_MAX, slugFor } from './link';
 
 const props = defineProps<{ f: LinkForm; name: string }>();
 const pass = ref<InstanceType<typeof PasswordField> | null>(null);
@@ -19,6 +19,7 @@ watch(() => props.f.pw, async (on) => { if (on) { await nextTick(); pass.value?.
     <FieldRow :label="t('share.address')" :hint="t('share.addressTip')">
       <span class="cs-slugf"><span class="muted mono cs-host">{{ host }}</span><TextField id="cs-slug" v-model="f.slug" autocomplete="off" spellcheck="false" :aria-label="t('share.addressEnd')" mono /><IconButton id="cs-dice" :tip="t('share.dice')" :glyph="glyphComponent('IconRetry')" @click="f.slug = slugFor(name)" /></span>
     </FieldRow>
+    <FieldRow :label="t('share.message')" :hint="t('share.messageTip')"><TextArea id="cs-msg" v-model="f.message" :maxlength="MESSAGE_MAX" rows="2" :placeholder="t('share.messagePlaceholder')" width="wide" /></FieldRow>
     <FieldRow :label="t('share.valid')" :hint="t('share.validTip')"><Selector id="cs-exp" v-model="f.exp" :items="segItems(expiry)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="t('share.limit')" :hint="t('share.limitTip')"><Selector id="cs-limit" v-model="f.limit" :items="segItems(limits)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="t('share.withPassword')"><Toggle id="cs-pw" v-model="f.pw" /></FieldRow>
