@@ -3368,10 +3368,13 @@ paths:
       x-access: admin
       description: |
         Fields left out stay as they are. A new password logs the user out
-        everywhere. Renaming moves the user's rules, jobs, undo steps and
-        trash along. Nobody can change their own login name or password
-        here, or take away their own admin role, so there is always an admin
-        left.
+        everywhere, API tokens and passkeys stay unless revoke is true.
+        revoke ends every session, API token and passkey of the user, with
+        or without a new password, and is not possible with an API token.
+        Renaming moves the user's rules, jobs, undo steps and trash along.
+        Nobody can change their own login name or password here, revoke
+        their own access, or take away their own admin role, so there is
+        always an admin left.
       requestBody:
         required: true
         content:
@@ -3423,6 +3426,182 @@ paths:
       tags: [accounts]
       parameters:
         - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/tokens:
+    get:
+      operationId: userTokensList
+      summary: API tokens of a user
+      description: The tokens of the user by name, without their secrets.
+      x-access: admin
+      responses:
+        "200":
+          description: The tokens.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Token"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/tokens/{token}:
+    delete:
+      operationId: userTokenRevoke
+      summary: Revoke an API token of a user
+      description: Whatever uses the token loses access at once. Not possible with an API token.
+      x-access: admin
+      responses:
+        "204":
+          description: Revoked.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/passkeys:
+    get:
+      operationId: userPasskeysList
+      summary: Passkeys of a user
+      x-access: admin
+      responses:
+        "200":
+          description: The passkeys.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Passkey"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/passkeys/{passkey}:
+    delete:
+      operationId: userPasskeyRemove
+      summary: Remove a passkey of a user
+      description: Not possible with an API token.
+      x-access: admin
+      responses:
+        "204":
+          description: Removed.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: passkey
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/sessions:
+    get:
+      operationId: userSessionsList
+      summary: Open sessions of a user
+      description: Like the own list. current is true only for the session of the admin who asks.
+      x-access: admin
+      responses:
+        "200":
+          description: The sessions.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Session"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/sessions/{session}:
+    delete:
+      operationId: userSessionEnd
+      summary: End a session of a user
+      description: Logs that session out at once. Not possible with an API token.
+      x-access: admin
+      responses:
+        "204":
+          description: Ended.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: session
           in: path
           required: true
           schema:
@@ -7560,6 +7739,9 @@ components:
         password:
           type: string
           minLength: 12
+        revoke:
+          type: boolean
+          description: In a change, ends every session, API token and passkey of the user.
     Token:
       type: object
       required: [id, name, rights, created, expires, last]
