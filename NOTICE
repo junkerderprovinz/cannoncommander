@@ -7,9 +7,14 @@ It is based on FileBrowser Quantum (https://github.com/gtsteffaniak/filebrowser)
 Copyright Graham Steffaniak and contributors, which is based on File Browser
 (https://github.com/filebrowser/filebrowser), Copyright File Browser contributors.
 Both are licensed under the Apache License, Version 2.0; the full text is in
-LICENSES/Apache-2.0.txt. Files taken from them keep that notice, and files we
-changed say so at the top.
+LICENSES/Apache-2.0.txt. Files taken from them keep that notice. CannonCommander
+has changed most of those files and added many of its own; the Git history of
+this repository records every change since the fork.
 
 The place names in backend/internal/meta/places/cities.tsv.gz come from
 GeoNames (https://www.geonames.org/), licensed under the Creative Commons
 Attribution 4.0 License (https://creativecommons.org/licenses/by/4.0/).
+
+The download buttons in .github/assets/download-buttons/ carry marks from
+Font Awesome Free (CC BY 4.0) and Dashboard Icons (Apache-2.0); their sources are
+listed in scripts/brand-paths/README.md.

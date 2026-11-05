@@ -1,0 +1,27 @@
+# The same container as the Unraid template, for any Linux server with Docker.
+# Point ./files at the folders you want to manage, and PUID and PGID at the
+# user who owns them. On first start the container writes the password for the
+# user admin into its log.
+
+services:
+  cannoncommander:
+    image: junkerderprovinz/cannoncommander:latest
+    container_name: cannoncommander
+    restart: unless-stopped
+    hostname: cannoncommander
+    ports:
+      - "8480:80"
+    volumes:
+      - "./appdata:/config"
+      - "./files:/mnt/user"
+    # rclone needs FUSE to mount remote storage. Without these two lines
+    # everything else still works.
+    devices:
+      - /dev/fuse
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      TZ: Europe/Berlin
+      PUID: "1000"
+      PGID: "1000"
+      UMASK: "022"
