@@ -20,9 +20,9 @@
 .sp-gone > svg { width: 2.6rem; height: 2.6rem; color: var(--accent-glyph); }
 .sp-gone h1 { margin: 0; font-size: 20px; }
 .sp-wait { display: flex; flex-direction: column; align-items: center; gap: .8rem; padding: 3rem 0; }
-.sp-spin { width: 2rem; height: 2rem; border-radius: 50%; border: 3px solid var(--carbon-surface3); border-top-color: var(--accent); animation: sp-spin .8s linear infinite; }
-@keyframes sp-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .sp-spin { animation-duration: 2.4s; } }
+.sp-spin { width: 2rem; height: 2rem; border-radius: 50%; border: 3px solid var(--carbon-surface3); border-top-color: var(--accent); animation: sp-spin 2.4s linear infinite; }
+@keyframes sp-spin { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: no-preference) { .sp-spin { animation: sp-spin var(--motion-spin-dur, .8s) linear infinite; } }
 
 .sp-crumbs { display: flex; align-items: center; gap: .25rem; flex-wrap: wrap; }
 .sp-crumb { height: 1.9rem; padding: 0 .6rem; border-radius: var(--radius-pill); color: var(--carbon-text-sub); }

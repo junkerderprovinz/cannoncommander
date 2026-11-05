@@ -1,3 +1,7 @@
-.row.fresh { animation: cc-fresh 2.2s ease-out; }
-@keyframes cc-fresh { 0%, 35% { background: color-mix(in srgb, var(--accent) 26%, transparent); } }
-@media (prefers-reduced-motion: reduce) { .row.fresh { animation: none; box-shadow: inset 3px 0 0 var(--accent); } }
+@keyframes cc-fresh { 0%, 35% { background: color-mix(in srgb, var(--accent) var(--motion-fresh-glow, 26%), transparent); } }
+@media (prefers-reduced-motion: reduce) { .row.fresh { box-shadow: inset 3px 0 0 var(--accent); } }
+@media (prefers-reduced-motion: no-preference) {
+  .row.fresh { animation: cc-fresh var(--motion-fresh-dur, 2.2s) ease-out; }
+  /* Without motion a fresh row keeps a bar for its moment, as it does under reduced motion. */
+  :root[data-motion="off"] .row.fresh { animation: none; box-shadow: inset 3px 0 0 var(--accent); }
+}

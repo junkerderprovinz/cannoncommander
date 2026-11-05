@@ -14,14 +14,14 @@
 .cv-stage.fit .cv-pic svg { width: 100%; height: 100%; }
 .cv-stage.fit .cv-pic img { width: 100%; height: 100%; object-fit: contain; }
 .cv-stage.full .cv-pic svg { width: 100%; height: 100%; }
-.cv-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 2.75rem; height: 2.75rem; border-radius: var(--radius-pill); background: var(--carbon-surface); box-shadow: var(--elevation), var(--hairline); display: grid; place-items: center; opacity: 0; transition: opacity .15s; z-index: 1; }
+.cv-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 2.75rem; height: 2.75rem; border-radius: var(--radius-pill); background: var(--carbon-surface); box-shadow: var(--elevation), var(--hairline); display: grid; place-items: center; opacity: 0; transition: opacity var(--motion-control-dur, .15s); z-index: 1; }
 .cv-nav svg { width: 1.1rem; height: 1.1rem; }
 .cv-nav:hover { background: var(--carbon-surface2); color: var(--accent-glyph); }
 .cv-nav.prev { left: 1rem; } .cv-nav.next { right: 1rem; }
 .cv-stage:hover .cv-nav, .cv-nav:focus-visible { opacity: 1; }
 @media (hover: none) { .cv-nav { opacity: 1; } }
 .cv-strip { display: flex; gap: .45rem; overflow-x: auto; padding: .2rem .1rem .4rem; flex: none; scrollbar-width: thin; }
-.cv-thumb { width: 5.2rem; height: 3.9rem; flex: none; border-radius: var(--radius-control); overflow: hidden; opacity: .6; outline-offset: 2px; transition: opacity .12s; }
+.cv-thumb { width: 5.2rem; height: 3.9rem; flex: none; border-radius: var(--radius-control); overflow: hidden; opacity: .6; outline-offset: 2px; transition: opacity var(--motion-control-dur, .12s); }
 .cv-thumb svg, .cv-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .cv-thumb:hover { opacity: 1; }
 .cv-thumb.cur { opacity: 1; outline: 2px solid var(--accent); }
@@ -32,13 +32,13 @@
 
 .cv-video { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .7rem; }
 .cv-screen { position: relative; flex: 1; min-height: 0; border-radius: var(--radius-card); overflow: hidden; background: #000; display: grid; place-items: center; cursor: pointer; }
-.cv-screen > svg { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform .25s linear; transform: scale(1.04); }
+.cv-screen > svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: scale(1.04); }
 .cv-screen.compact { width: 100%; aspect-ratio: 16 / 9; flex: none; }
-.cv-big { position: relative; width: 4rem; height: 4rem; border-radius: var(--radius-control); background: var(--accent); color: var(--accent-contrast); display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0,0,0,.4); transition: opacity .2s, transform .2s; }
+.cv-big { position: relative; width: 4rem; height: 4rem; border-radius: var(--radius-control); background: var(--accent); color: var(--accent-contrast); display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0,0,0,.4); transition: opacity var(--motion-control-dur, .2s); }
 .cv-big svg { position: static; width: 1.5rem; height: 1.5rem; transform: none; }
 .cv-screen:hover .cv-big { transform: scale(1.06); }
 .playing .cv-big { opacity: 0; transform: scale(.9); }
-.cv-vtitle { position: absolute; left: 0; right: 0; bottom: 0; padding: 4rem 2.2rem 1.8rem; background: linear-gradient(transparent, rgba(0,0,0,.7)); color: #fff; display: flex; flex-direction: column; text-align: left; transition: opacity .3s; pointer-events: none; }
+.cv-vtitle { position: absolute; left: 0; right: 0; bottom: 0; padding: 4rem 2.2rem 1.8rem; background: linear-gradient(transparent, rgba(0,0,0,.7)); color: #fff; display: flex; flex-direction: column; text-align: left; transition: opacity var(--motion-content-dur, .3s); pointer-events: none; }
 .cv-vtitle b { font-size: clamp(22px, 4vw, 52px); line-height: 1.1; letter-spacing: -.01em; }
 .cv-vtitle span { opacity: .75; font-size: clamp(13px, 1.4vw, 18px); letter-spacing: .1em; }
 .playing .cv-vtitle { opacity: 0; }
@@ -211,7 +211,7 @@ i.k { font-style: normal; color: var(--accent-ink); }
 /* What the app adds: real pictures and media where the prototype draws made-up ones. */
 .cv-screen > img.cv-poster, .cv-screen > video { position: absolute; inset: 0; width: 100%; height: 100%; }
 .cv-screen > img.cv-poster { object-fit: cover; transform: scale(1.04); }
-.cv-screen > video { object-fit: contain; background: #000; opacity: 0; transition: opacity .2s; }
+.cv-screen > video { object-fit: contain; background: #000; opacity: 0; transition: opacity var(--motion-content-dur, .2s); }
 .cv-screen > video.seen { opacity: 1; }
 .cv-screen.compact { padding: 0; }
 .cv-cover > img, .cv-cover > span, .cv-cover > span > svg { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -235,6 +235,10 @@ i.k { font-style: normal; color: var(--accent-ink); }
 .cv-model.compact { flex: none; aspect-ratio: 4 / 3; }
 .cv-model canvas { display: block; }
 .cv-strip .cv-thumb img { display: block; }
+@media (prefers-reduced-motion: no-preference) {
+  .cv-screen > svg { transition: transform var(--motion-content-dur, .25s) linear; }
+  .cv-big { transition: opacity var(--motion-control-dur, .2s), transform var(--motion-control-dur, .2s); }
+}
 
 /* GlimStone centres the backdrop's content as flex, which leaves the scrim's grid track only as wide as the
    window's content; a full window needs the whole track to reach its 80rem. */
