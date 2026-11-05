@@ -110,6 +110,22 @@ func TestGatherMovesAFolderOntoOneDisk(t *testing.T) {
 	}
 }
 
+func TestAGatherStopsWhenItsOwnerIsNoAdminAnymore(t *testing.T) {
+	e := newEnv(t)
+	a := newArray(t)
+	a.write(a.path("disk1", "filme/Sintel/Sintel.mkv"), "sintel")
+	e.demoted.Store(true)
+	params := map[string]any{"mode": unraid.ModeGather, "path": "/mnt/user/filme", "disk": "disk2"}
+	j, err := jobs.For(e.deps).Submit("admin", unraid.ModeGather, &jobs.Plan{Params: params, Items: []jobs.Item{{Path: "/mnt/user/filme", Name: "filme"}}}, 0, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	waitAs(e, "admin", j.ID)
+	if !a.has("disk1", "filme/Sintel/Sintel.mkv") || a.has("disk2", "filme/Sintel/Sintel.mkv") {
+		t.Error("the job went on")
+	}
+}
+
 func gather(e *env, disk string) jobs.Job {
 	e.t.Helper()
 	var j jobs.Job

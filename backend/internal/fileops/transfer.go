@@ -65,19 +65,19 @@ type TransferParams struct {
 }
 
 func prepare(move bool) func(context.Context, v1.Deps, *users.User, json.RawMessage) (*jobs.Plan, error) {
-	return func(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
+	return func(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
 		var p TransferParams
 		if err := jobs.Decode(raw, &p); err != nil {
 			return nil, err
 		}
-		_, plan, err := check(d.FS, u, p, move)
+		_, plan, err := check(ctx, d.FS, u, p, move)
 		return plan, err
 	}
 }
 
 // check validates a copy or move for u and plans it. It returns the
 // destination folder as well, for the preflight.
-func check(fsys *ccfs.Resolver, u *users.User, p TransferParams, move bool) (ccfs.Location, *jobs.Plan, error) {
+func check(ctx context.Context, fsys *ccfs.Resolver, u *users.User, p TransferParams, move bool) (ccfs.Location, *jobs.Plan, error) {
 	if len(p.Sources) == 0 {
 		return ccfs.Location{}, nil, v1.Errorf(http.StatusBadRequest, "sources are required")
 	}
@@ -99,35 +99,32 @@ func check(fsys *ccfs.Resolver, u *users.User, p TransferParams, move bool) (ccf
 		keep := true
 		p.KeepAttrs = &keep
 	}
-	destPerm := ccfs.Create
-	if p.Rule != jobs.Skip && p.Rule != jobs.Both {
-		destPerm |= ccfs.Modify
-	}
-	dest, err := fsys.Check(u, p.Dest, destPerm)
+	destPerm := destPermFor(p.Rule)
+	dest, err := fsys.Reach(u, p.Dest, destPerm)
 	if err != nil {
 		return dest, nil, err
 	}
 	if err := folder(dest); err != nil {
 		return dest, nil, err
 	}
-	srcPerm := ccfs.View | ccfs.Download
-	if move {
-		srcPerm = ccfs.View | ccfs.Delete
-	}
+	srcPerm := srcPermFor(move)
 	plan := &jobs.Plan{Dest: dest.Path, Answers: p.Decisions, Rule: p.Rule}
 	for i, raw := range p.Sources {
-		src, err := fsys.Check(u, raw, srcPerm)
+		src, err := fsys.Reach(u, raw, srcPerm)
 		if err != nil {
 			return dest, nil, err
 		}
 		if src.Virtual() || src.InArchive() || src.Index == "/" {
 			return dest, nil, v1.Errorf(http.StatusBadRequest, "only files and folders inside a source can be copied or moved")
 		}
-		if err := ccfs.Contained(src); err != nil {
-			return dest, nil, err
-		}
 		if _, err := os.Lstat(src.Real); err != nil {
 			return dest, nil, err
+		}
+		// A copy leaves out what is hidden, but a move takes the folder along.
+		if move {
+			if err := fsys.Whole(ctx, u, src, srcPerm); err != nil {
+				return dest, nil, err
+			}
 		}
 		name := path.Base(src.Path)
 		if len(p.Names) > 0 {
@@ -135,6 +132,9 @@ func check(fsys *ccfs.Resolver, u *users.User, p TransferParams, move bool) (ccf
 		}
 		if !ccfs.ValidName(name) {
 			return dest, nil, v1.Errorf(http.StatusBadRequest, "invalid name")
+		}
+		if _, err := fsys.Check(u, path.Join(dest.Path, name), destPerm); err != nil {
+			return dest, nil, err
 		}
 		if path.Join(dest.Path, name) == src.Path {
 			return dest, nil, v1.Errorf(http.StatusBadRequest, "source and target are the same folder")
@@ -153,13 +153,24 @@ func check(fsys *ccfs.Resolver, u *users.User, p TransferParams, move bool) (ccf
 	return dest, plan, nil
 }
 
+func srcPermFor(move bool) ccfs.Perm {
+	if move {
+		return ccfs.View | ccfs.Delete
+	}
+	return ccfs.View | ccfs.Download
+}
+
+func destPermFor(rule string) ccfs.Perm {
+	if rule != jobs.Skip && rule != jobs.Both {
+		return ccfs.Create | ccfs.Modify
+	}
+	return ccfs.Create
+}
+
 // folder makes sure loc is a real folder that can take entries.
 func folder(loc ccfs.Location) error {
 	if loc.Virtual() || loc.InArchive() {
 		return v1.Errorf(http.StatusBadRequest, "the target has to be a folder inside a source")
-	}
-	if err := ccfs.Contained(loc); err != nil {
-		return err
 	}
 	info, err := os.Stat(loc.Real)
 	if err != nil {
@@ -213,6 +224,11 @@ type transfer struct {
 	tooBig  bool
 	// follow are the labels to carry along once the item is through.
 	follow []labels.Move
+
+	// u is the owner as of the last look, and the two rights are what the job
+	// needs at its sources and at its target.
+	u                *users.User
+	srcPerm, dstPerm ccfs.Perm
 }
 
 func runTransfer(move bool) func(context.Context, *jobs.Run) error {
@@ -229,10 +245,8 @@ func runTransfer(move bool) func(context.Context, *jobs.Run) error {
 		if err != nil {
 			return err
 		}
-		if err := folder(dest); err != nil {
-			return err
-		}
-		t := &transfer{s: s, run: run, move: move, keep: p.KeepAttrs == nil || *p.KeepAttrs, hash: p.Verify}
+		t := &transfer{s: s, run: run, move: move, keep: p.KeepAttrs == nil || *p.KeepAttrs, hash: p.Verify,
+			srcPerm: srcPermFor(move), dstPerm: destPermFor(p.Rule)}
 
 		items := run.Items()
 		for _, it := range items {
@@ -275,12 +289,21 @@ func runTransfer(move bool) func(context.Context, *jobs.Run) error {
 }
 
 func (t *transfer) item(ctx context.Context, dest ccfs.Location, it jobs.Item) (bool, error) {
-	src, err := t.s.fs.Resolve(it.Path)
+	src, u, err := t.run.Reach(it.Path, t.srcPerm)
 	if err != nil {
 		return false, err
 	}
-	if err := ccfs.Contained(src); err != nil {
+	t.u = u
+	if err := t.s.fs.Follows(u, dest, t.dstPerm); err != nil {
 		return false, err
+	}
+	if err := folder(dest); err != nil {
+		return false, err
+	}
+	if t.move {
+		if err := t.s.fs.Whole(ctx, u, src, t.srcPerm); err != nil {
+			return false, err
+		}
 	}
 	name := it.Name
 	if name == "" {
@@ -329,6 +352,13 @@ func (t *transfer) entry(ctx context.Context, src, dst node, key string, inNew b
 			if err != nil {
 				return false, err
 			}
+			// An answer can take a long time to come.
+			if t.u, err = t.run.User(); err != nil {
+				return false, err
+			}
+			if _, err := t.s.fs.Check(t.u, src.api, t.srcPerm); err != nil {
+				return false, err
+			}
 			bothDirs := info.IsDir() && target.IsDir()
 			switch choice {
 			case jobs.Skip:
@@ -349,6 +379,10 @@ func (t *transfer) entry(ctx context.Context, src, dst node, key string, inNew b
 				}
 			}
 		}
+	}
+
+	if err := t.mayWrite(ctx, dst, replace); err != nil {
+		return false, err
 	}
 
 	if t.move && !merge {
@@ -379,6 +413,16 @@ func (t *transfer) entry(ctx context.Context, src, dst node, key string, inNew b
 		return false, t.file(ctx, src, dst, info, replace, inNew)
 	}
 	return false, errSpecial
+}
+
+// mayWrite checks the owner's rights at dst. Only the job's top entries were
+// checked when it started, and a rule can name any place below the target.
+func (t *transfer) mayWrite(ctx context.Context, dst node, replace bool) error {
+	loc, err := t.s.fs.Check(t.u, dst.api, t.dstPerm)
+	if err != nil || !replace {
+		return err
+	}
+	return t.s.fs.Whole(ctx, t.u, loc, t.dstPerm)
 }
 
 // choose finds the answer for a conflict, from the decisions, the rule or
@@ -424,6 +468,9 @@ func (t *transfer) dir(ctx context.Context, src, dst node, key string, info fs.F
 	for _, e := range entries {
 		name := e.Name()
 		if IsPart(name) {
+			continue
+		}
+		if _, err := t.s.fs.Check(t.u, src.child(name).api, t.srcPerm); err != nil {
 			continue
 		}
 		if _, err := t.entry(ctx, src.child(name), dst.child(name), key+"/"+name, inNew || created); err != nil {
@@ -533,7 +580,7 @@ func (t *transfer) copyData(ctx context.Context, src, part string, info fs.FileI
 	if offset == 0 {
 		flags |= os.O_TRUNC
 	}
-	out, err := os.OpenFile(part, flags, 0o666)
+	out, err := ccfs.OpenPart(part, flags)
 	if err != nil {
 		return err
 	}

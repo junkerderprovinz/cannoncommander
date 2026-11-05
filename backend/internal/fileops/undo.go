@@ -122,9 +122,9 @@ func undoCopy(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 	s := For(run.Deps())
 	var errs []error
 	for _, p := range slices.Backward(data.Created) {
-		loc, err := s.fs.Resolve(p)
+		loc, u, err := run.Reach(p, ccfs.Delete)
 		if err == nil {
-			err = ccfs.Contained(loc)
+			err = s.fs.Whole(ctx, u, loc, ccfs.Delete)
 		}
 		if err == nil {
 			err = jobs.RemoveTree(ctx, run, loc.Real)
@@ -139,7 +139,7 @@ func undoCopy(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 		fschange.Removed(p)
 		s.removed(ctx, p)
 	}
-	return errors.Join(append(errs, restoreReplaced(s, data.Replaced))...)
+	return errors.Join(append(errs, restoreReplaced(run, s, data.Replaced))...)
 }
 
 // undoMove moves everything back where it came from, newest first, and
@@ -150,18 +150,19 @@ func undoMove(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 		return err
 	}
 	s := For(run.Deps())
-	t := &transfer{s: s, run: run, move: true, keep: true}
+	t := &transfer{s: s, run: run, move: true, keep: true, srcPerm: srcPermFor(true), dstPerm: ccfs.Create}
 	var errs []error
 	for _, m := range slices.Backward(data.Moved) {
-		to, err := s.fs.Resolve(m.To)
+		to, u, err := run.Reach(m.To, t.srcPerm)
+		if err == nil {
+			t.u = u
+			err = s.fs.Whole(ctx, u, to, t.srcPerm)
+		}
 		if err != nil {
 			errs = append(errs, err)
 			continue
 		}
-		from, err := s.fs.Resolve(m.From)
-		if err == nil {
-			err = ccfs.Contained(from)
-		}
+		from, err := s.fs.Reach(u, m.From, t.dstPerm)
 		if err == nil {
 			err = os.MkdirAll(filepath.Dir(from.Real), 0o777)
 		}
@@ -176,15 +177,19 @@ func undoMove(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 		}
 	}
 	s.moved(ctx, t.follow...)
-	return errors.Join(append(errs, restoreReplaced(s, data.Replaced))...)
+	return errors.Join(append(errs, restoreReplaced(run, s, data.Replaced))...)
 }
 
-func restoreReplaced(s *Service, replaced []replacedEntry) error {
+func restoreReplaced(run *jobs.Run, s *Service, replaced []replacedEntry) error {
 	if s.trash == nil {
 		return nil
 	}
 	var errs []error
 	for _, r := range replaced {
+		if _, _, err := run.Reach(r.Path, ccfs.Create); err != nil {
+			errs = append(errs, err)
+			continue
+		}
 		if _, err := s.trash.Restore(r.TrashID); err != nil && !errors.Is(err, trash.ErrNotFound) {
 			errs = append(errs, err)
 		}

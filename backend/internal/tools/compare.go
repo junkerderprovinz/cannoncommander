@@ -80,6 +80,12 @@ type comparer struct {
 	ctx context.Context
 	req CompareRequest
 	out []Compared
+	fs  *ccfs.Resolver
+	u   *users.User
+	// perm is what the user has to hold on an entry for it to show up, and
+	// sides are the API paths of the two folders.
+	perm  ccfs.Perm
+	sides [2]string
 }
 
 func sideOf(real string, info fs.FileInfo) *Side {
@@ -104,7 +110,12 @@ func (c *comparer) walk(l, r, rel string) error {
 			if bookkeeping(d.Name()) || !c.req.Hidden && strings.HasPrefix(d.Name(), ".") {
 				continue
 			}
-			info, err := os.Stat(filepath.Join(dir, d.Name()))
+			if _, err := c.fs.Check(c.u, path.Join(c.sides[i], rel, d.Name()), c.perm); err != nil {
+				continue
+			}
+			// Links count as themselves. Following them would walk out of the
+			// folder the rights were checked for.
+			info, err := os.Lstat(filepath.Join(dir, d.Name()))
 			if err != nil {
 				continue
 			}
@@ -180,6 +191,11 @@ func (c *comparer) state(it Compared) string {
 }
 
 func sameContent(a, b string) bool {
+	for _, p := range []string{a, b} {
+		if info, err := os.Lstat(p); err != nil || !info.Mode().IsRegular() {
+			return false
+		}
+	}
 	ha, err := fileSum(a)
 	if err != nil {
 		return false
@@ -240,11 +256,12 @@ func leadingNumber(s string) (string, string) {
 
 func (h handlers) pair(r *http.Request, req CompareRequest) (ccfs.Location, ccfs.Location, error) {
 	u := v1.UserFrom(r)
-	l, err := folder(h.fs, u, req.Left, ccfs.View)
+	perm := comparePerm(req)
+	l, err := folder(h.fs, u, req.Left, perm)
 	if err != nil {
 		return l, l, err
 	}
-	rr, err := folder(h.fs, u, req.Right, ccfs.View)
+	rr, err := folder(h.fs, u, req.Right, perm)
 	if err != nil {
 		return l, rr, err
 	}
@@ -254,8 +271,17 @@ func (h handlers) pair(r *http.Request, req CompareRequest) (ccfs.Location, ccfs
 	return l, rr, nil
 }
 
-func compareFolders(ctx context.Context, l, r ccfs.Location, req CompareRequest) ([]Compared, error) {
-	c := &comparer{ctx: ctx, req: req}
+// comparePerm is what a comparison shows of each entry: its name and size, and
+// with Content whether two files hold the same bytes.
+func comparePerm(req CompareRequest) ccfs.Perm {
+	if req.Content {
+		return ccfs.View | ccfs.Download
+	}
+	return ccfs.View
+}
+
+func compareFolders(ctx context.Context, fsys *ccfs.Resolver, u *users.User, l, r ccfs.Location, req CompareRequest) ([]Compared, error) {
+	c := &comparer{ctx: ctx, req: req, fs: fsys, u: u, perm: comparePerm(req), sides: [2]string{l.Path, r.Path}}
 	err := c.walk(l.Real, r.Real, "")
 	return c.out, err
 }
@@ -269,7 +295,7 @@ func (h handlers) compare(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	items, err := compareFolders(r.Context(), l, rr, req)
+	items, err := compareFolders(r.Context(), h.fs, v1.UserFrom(r), l, rr, req)
 	if err != nil {
 		return err
 	}
@@ -385,7 +411,7 @@ func (h handlers) syncPlan(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	items, err := compareFolders(r.Context(), l, rr, cr)
+	items, err := compareFolders(r.Context(), h.fs, v1.UserFrom(r), l, rr, cr)
 	if err != nil {
 		return err
 	}
@@ -406,7 +432,7 @@ type SyncStep struct {
 	To  string `json:"to"`
 }
 
-func prepareSync(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
+func prepareSync(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
 	var p SyncParams
 	if err := jobs.Decode(raw, &p); err != nil {
 		return nil, err
@@ -450,6 +476,9 @@ func prepareSync(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessag
 	p.Left, p.Right = l.Path, r.Path
 	plan := &jobs.Plan{Params: p, Name: path.Base(l.Path), Dest: r.Path}
 	for i, s := range p.Steps {
+		if err := p.mayDo(ctx, d.FS, u, s); err != nil {
+			return nil, err
+		}
 		base := l.Path
 		if s.To == "R" {
 			base = r.Path
@@ -458,6 +487,47 @@ func prepareSync(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessag
 	}
 	return plan, nil
 }
+
+// sides gives the API paths a step reads from and writes to.
+func (p SyncParams) sides(s SyncStep) (src, dst string) {
+	src, dst = path.Join(p.Left, s.Rel), path.Join(p.Right, s.Rel)
+	if s.To == "L" {
+		return dst, src
+	}
+	return src, dst
+}
+
+// writePerm is what a step takes at the place it writes to.
+func (s SyncStep) writePerm() ccfs.Perm {
+	switch s.Act {
+	case "delete":
+		return ccfs.Delete
+	case "replace":
+		return ccfs.Create | ccfs.Modify
+	}
+	return ccfs.Create
+}
+
+// mayDo checks one step for u. The two folders of a sync passing says nothing
+// about the paths below them, which come from the client.
+func (p SyncParams) mayDo(ctx context.Context, fsys *ccfs.Resolver, u *users.User, s SyncStep) error {
+	src, dst := p.sides(s)
+	if s.Act != "delete" {
+		if _, err := fsys.Reach(u, src, syncReadPerm); err != nil {
+			return err
+		}
+	}
+	loc, err := fsys.Reach(u, dst, s.writePerm())
+	if err != nil {
+		return err
+	}
+	if s.Act == "copy" {
+		return nil
+	}
+	return fsys.Whole(ctx, u, loc, s.writePerm())
+}
+
+const syncReadPerm = ccfs.View | ccfs.Download
 
 func runSync(ctx context.Context, run *jobs.Run) error {
 	var p SyncParams
@@ -476,22 +546,35 @@ func runSync(ctx context.Context, run *jobs.Run) error {
 	for _, it := range pending(run) {
 		s := p.Steps[it.Seq]
 		rel := filepath.FromSlash(s.Rel)
-		src, dst, dstPath := filepath.Join(l.Real, rel), filepath.Join(r.Real, rel), path.Join(p.Right, s.Rel)
+		srcPath, dstPath := p.sides(s)
+		src, dst := filepath.Join(l.Real, rel), filepath.Join(r.Real, rel)
 		if s.To == "L" {
-			src, dst, dstPath = dst, src, path.Join(p.Left, s.Rel)
+			src, dst = dst, src
 		}
 		run.Begin(it.Seq)
 		run.Current(s.Rel)
-		var err error
-		if s.Act == "delete" {
-			err = syncDelete(ctx, run, dstPath)
-		} else {
-			if size, files, terr := jobs.TreeSize(ctx, src); terr == nil {
-				run.Measure(it.Seq, size, files)
-			}
-			err = copyTree(ctx, run, src, dst)
-			if err == nil {
-				fschange.Created(dstPath)
+		u, err := run.User()
+		if err == nil {
+			err = p.mayDo(ctx, fsys, u, s)
+		}
+		if err == nil {
+			if s.Act == "delete" {
+				err = syncDelete(ctx, run, dstPath)
+			} else {
+				if size, files, terr := jobs.TreeSize(ctx, src); terr == nil {
+					run.Measure(it.Seq, size, files)
+				}
+				may := func(rel string) bool {
+					if _, err := fsys.Check(u, path.Join(srcPath, rel), syncReadPerm); err != nil {
+						return false
+					}
+					_, err := fsys.Check(u, path.Join(dstPath, rel), s.writePerm())
+					return err == nil
+				}
+				err = copyTree(ctx, run, src, dst, "", may)
+				if err == nil {
+					fschange.Created(dstPath)
+				}
 			}
 		}
 		if ctx.Err() != nil {
@@ -511,9 +594,6 @@ func syncDelete(ctx context.Context, run *jobs.Run, p string) error {
 	if err != nil {
 		return err
 	}
-	if err := ccfs.Contained(loc); err != nil {
-		return err
-	}
 	_, err = bin.Put(ctx, run.Owner(), loc)
 	if isNotExist(err) {
 		return nil
@@ -523,8 +603,8 @@ func syncDelete(ctx context.Context, run *jobs.Run, p string) error {
 
 // copyTree copies src to dst, replacing files of the same name and adding
 // to folders that exist, with modes and times kept. Every file goes
-// through a part file first.
-func copyTree(ctx context.Context, run *jobs.Run, src, dst string) error {
+// through a part file first. Below src it leaves out what may refuses.
+func copyTree(ctx context.Context, run *jobs.Run, src, dst, rel string, may func(rel string) bool) error {
 	info, err := os.Lstat(src)
 	if err != nil {
 		return err
@@ -556,10 +636,11 @@ func copyTree(ctx context.Context, run *jobs.Run, src, dst string) error {
 			return err
 		}
 		for _, d := range list {
-			if bookkeeping(d.Name()) {
+			child := path.Join(rel, d.Name())
+			if bookkeeping(d.Name()) || !may(child) {
 				continue
 			}
-			if err := copyTree(ctx, run, filepath.Join(src, d.Name()), filepath.Join(dst, d.Name())); err != nil {
+			if err := copyTree(ctx, run, filepath.Join(src, d.Name()), filepath.Join(dst, d.Name()), child, may); err != nil {
 				return err
 			}
 		}

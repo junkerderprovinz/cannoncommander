@@ -249,10 +249,13 @@ func TestUploadsBelongToTheirUserAndNeedTheCreateRight(t *testing.T) {
 	if _, code := e.startUpload("jdp", fileops.UploadRequest{Path: "/mnt/user/fotos/a.txt", Size: 1}); code != http.StatusConflict {
 		t.Fatalf("two users on one target: %d", code)
 	}
-	for _, p := range []string{"/mnt/user/../etc/a", "/mnt/user", "/mnt/user/fotos/.a.cc-part"} {
+	for _, p := range []string{"/mnt/user/../etc/a", "/mnt/user"} {
 		if _, code := e.startUpload("anna", fileops.UploadRequest{Path: p, Size: 1}); code != http.StatusBadRequest {
 			t.Fatalf("upload to %s: %d", p, code)
 		}
+	}
+	if _, code := e.startUpload("anna", fileops.UploadRequest{Path: "/mnt/user/fotos/.a.cc-part", Size: 1}); code != http.StatusForbidden {
+		t.Fatalf("upload to a part file: %d", code)
 	}
 }
 

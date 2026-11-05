@@ -110,6 +110,16 @@ func lookupID(name string, group bool) (int, error) {
 	return strconv.Atoi(id)
 }
 
+// mayUseSpecialBits keeps setuid and setgid for admins. The app often runs as
+// root, so the bits would turn an uploaded program into a way up on the host.
+func (p AttrsParams) mayUseSpecialBits(u *users.User) error {
+	m, err := strconv.ParseUint(p.Mode, 8, 32)
+	if err == nil && m&0o6000 != 0 && !u.Permissions.Admin {
+		return ccfs.ErrForbidden
+	}
+	return nil
+}
+
 func (a attrs) apply(p string, info fs.FileInfo) error {
 	link := info.Mode()&fs.ModeSymlink != 0
 	if a.uid >= 0 || a.gid >= 0 {
@@ -153,6 +163,9 @@ func (h handlers) setAttrs(w http.ResponseWriter, r *http.Request) error {
 		}
 		return v1.WriteJSON(w, r, http.StatusAccepted, j)
 	}
+	if err := p.mayUseSpecialBits(u); err != nil {
+		return err
+	}
 	a, err := p.parse()
 	if err != nil {
 		return err
@@ -178,12 +191,15 @@ func (h handlers) setAttrs(w http.ResponseWriter, r *http.Request) error {
 	return v1.WriteJSON(w, r, http.StatusOK, map[string]int{"changed": len(locs)})
 }
 
-func prepareAttrs(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
+func prepareAttrs(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
 	var p AttrsParams
 	if err := jobs.Decode(raw, &p); err != nil {
 		return nil, err
 	}
 	if _, err := p.parse(); err != nil {
+		return nil, err
+	}
+	if err := p.mayUseSpecialBits(u); err != nil {
 		return nil, err
 	}
 	if len(p.Paths) == 0 {
@@ -193,6 +209,9 @@ func prepareAttrs(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessa
 	for i, s := range p.Paths {
 		loc, _, err := entry(d.FS, u, s, ccfs.Modify)
 		if err != nil {
+			return nil, err
+		}
+		if err := d.FS.Whole(ctx, u, loc, ccfs.Modify); err != nil {
 			return nil, err
 		}
 		plan.Items = append(plan.Items, jobs.Item{Seq: i, Path: loc.Path, Name: path.Base(loc.Path)})
@@ -212,9 +231,9 @@ func runAttrs(ctx context.Context, run *jobs.Run) error {
 		return err
 	}
 	for _, it := range pending(run) {
-		loc, err := run.Deps().FS.Resolve(it.Path)
+		loc, u, err := run.Reach(it.Path, ccfs.Modify)
 		if err == nil {
-			err = ccfs.Contained(loc)
+			err = run.Deps().FS.Whole(ctx, u, loc, ccfs.Modify)
 		}
 		if err != nil {
 			run.Finish(it.Seq, jobs.ItemFailed, err)
@@ -282,7 +301,7 @@ func (h handlers) link(w http.ResponseWriter, r *http.Request) error {
 	if _, err := folder(h.fs, u, path.Dir(at.Path), ccfs.Create); err != nil {
 		return err
 	}
-	if err := ccfs.Contained(at); err != nil {
+	if err := h.fs.Follows(u, at, ccfs.Create); err != nil {
 		return err
 	}
 	if _, err := os.Lstat(at.Real); err == nil {
@@ -296,7 +315,9 @@ func (h handlers) link(w http.ResponseWriter, r *http.Request) error {
 		return badRequest("a link cannot point to itself")
 	}
 	if req.Hard {
-		target, _, err := file(h.fs, u, clean, ccfs.View|ccfs.Download)
+		// Writing to either name changes the one file, so the link takes the
+		// right to change it.
+		target, _, err := file(h.fs, u, clean, ccfs.View|ccfs.Download|ccfs.Modify)
 		if err != nil {
 			return err
 		}
@@ -310,9 +331,9 @@ func (h handlers) link(w http.ResponseWriter, r *http.Request) error {
 			return err
 		}
 	} else {
-		// The target may not exist yet, but it has to be a place the user
-		// could look at, or a link would be a window into anywhere.
-		target, err := h.fs.Check(u, clean, ccfs.View)
+		// The target may not exist yet, but it has to be a place the user can
+		// read. View alone also passes for the folders above their scope.
+		target, err := h.fs.Reach(u, clean, ccfs.View|ccfs.Download)
 		if err != nil {
 			return err
 		}

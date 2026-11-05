@@ -187,7 +187,7 @@ func runFetch(ctx context.Context, run *jobs.Run) error {
 	if it.State == jobs.ItemDone {
 		return nil
 	}
-	dest, err := run.Deps().FS.Resolve(p.Dest)
+	dest, _, err := run.Reach(p.Dest, ccfs.Create)
 	if err != nil {
 		return err
 	}
@@ -233,7 +233,7 @@ func fetch(ctx context.Context, run *jobs.Run, p FetchParams, dest ccfs.Location
 		}
 	}
 	part := filepath.Join(dest.Real, "."+name+partSuffix)
-	f, err := os.OpenFile(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
+	f, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 	if err != nil {
 		return "", err
 	}

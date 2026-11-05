@@ -79,6 +79,9 @@ func runGather(ctx context.Context, run *jobs.Run) error {
 	if s == nil {
 		return errors.New("no file service")
 	}
+	if err := run.RequireAdmin(); err != nil {
+		return err
+	}
 	var p gatherParams
 	if err := run.Params(&p); err != nil {
 		return err
