@@ -112,4 +112,3 @@ func TestFolderCountsTakeLongLists(t *testing.T) {
 		t.Fatalf("%d folders counted, d1199 = %d", len(counts), counts["/d1199/"])
 	}
 }
-

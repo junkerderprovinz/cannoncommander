@@ -92,7 +92,11 @@ func (h handlers) listTokens(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	used, err := h.tokenUse(r, &u)
+	return h.writeTokens(w, r, &u)
+}
+
+func (h handlers) writeTokens(w http.ResponseWriter, r *http.Request, u *users.User) error {
+	used, err := h.tokenUse(r, u)
 	if err != nil {
 		return err
 	}
@@ -105,11 +109,26 @@ func (h handlers) listTokens(w http.ResponseWriter, r *http.Request) error {
 	return v1.WriteJSON(w, r, http.StatusOK, map[string][]Token{"items": items})
 }
 
+// tokenByID finds the API token of u that the list shows with this id.
+func tokenByID(u *users.User, id string) (users.AuthToken, error) {
+	var tok users.AuthToken
+	users.EachNamedToken(u.Tokens, func(_ string, t users.AuthToken) {
+		if tokenID(t) == id {
+			tok = t
+		}
+	})
+	if tok.Name == "" {
+		return tok, v1.Errorf(http.StatusNotFound, "there is no such token")
+	}
+	return tok, nil
+}
+
 type tokenRequest struct {
 	Name   string `json:"name"`
 	Rights string `json:"rights"`
 	// Days is how long the token lives, null or 0 for always.
-	Days *int `json:"days"`
+	Days     *int   `json:"days"`
+	Password string `json:"password"`
 }
 
 func (h handlers) createToken(w http.ResponseWriter, r *http.Request) error {
@@ -135,6 +154,9 @@ func (h handlers) createToken(w http.ResponseWriter, r *http.Request) error {
 	}
 	u, err := current(r)
 	if err != nil {
+		return err
+	}
+	if err := h.confirmOwner(r, &u, in.Password); err != nil {
 		return err
 	}
 	if _, taken := u.Tokens[name]; taken {
@@ -175,21 +197,27 @@ func (h handlers) deleteToken(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	var tok users.AuthToken
-	users.EachNamedToken(u.Tokens, func(_ string, t users.AuthToken) {
-		if tokenID(t) == r.PathValue("id") {
-			tok = t
-		}
-	})
-	if tok.Name == "" {
-		return v1.Errorf(http.StatusNotFound, "there is no such token")
+	tok, err := tokenByID(&u, r.PathValue("id"))
+	if err != nil {
+		return err
 	}
-	name := tok.Name
 	if err := h.revokeToken(r, &u, tok); err != nil {
 		return err
 	}
-	activity.RecordTokenMutation(r, &activity.Actor{User: &u}, activitydb.EventTokenDelete, name)
+	activity.RecordTokenMutation(r, &activity.Actor{User: &u}, activitydb.EventTokenDelete, tok.Name)
 	w.WriteHeader(http.StatusNoContent)
+	return nil
+}
+
+// revokeTokens ends every API token of u.
+func (h handlers) revokeTokens(r *http.Request, u *users.User) error {
+	var all []users.AuthToken
+	users.EachNamedToken(u.Tokens, func(_ string, t users.AuthToken) { all = append(all, t) })
+	for _, t := range all {
+		if err := h.revokeToken(r, u, t); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
