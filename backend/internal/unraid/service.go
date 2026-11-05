@@ -1,6 +1,7 @@
 package unraid
 
 import (
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -78,6 +79,30 @@ func (s *Service) fresh() {
 func (s *Service) ParityBusy() bool {
 	st, err := s.State()
 	return err == nil && st.Parity.Busy()
+}
+
+// UserShares is the folder that holds the user shares.
+func (s *Service) UserShares() string { return filepath.Join(s.cfg.Mnt, "user") }
+
+// ExclusivePool returns the pool that holds share when the share is exclusive
+// and its link in the user shares leads to that pool.
+func (s *Service) ExclusivePool(share string) (string, bool) {
+	st, err := s.State()
+	if err != nil {
+		return "", false
+	}
+	pool, ok := st.exclusive[share]
+	return pool, ok
+}
+
+// LinkedFolder reports whether name in the folder root is the link of an
+// exclusive share, which stands for a folder of the user shares.
+func (s *Service) LinkedFolder(root, name string) bool {
+	if filepath.Clean(root) != s.UserShares() {
+		return false
+	}
+	_, ok := s.ExclusivePool(name)
+	return ok
 }
 
 // Asleep reports whether the named disk is spun down.
