@@ -126,7 +126,7 @@
     "outside": "Liegt außerhalb des Bereichs {scope}.", "noneReadonly": "Keine Regel passt, die Rolle erlaubt nur Lesen.", "noneScope": "Keine Regel passt, es gilt der Bereich.",
     "byRule": "Regel {n}: {who}, {path}, {rule}.",
     "appliesTo": "Gilt für", "user": "Benutzer", "groupWord": "Gruppe", "all": "Alle", "pathOrPattern": "Pfad oder Muster", "pathPh": "/mnt/user/backups oder *.tmp",
-    "pathTip": "Ein Pfad gilt für den Ordner und alles darin. Ein Muster mit Stern passt auf Namen überall, etwa *.partial*.",
+    "pathTip": "Ein Pfad gilt für den Ordner und alles darin, der Ordner darüber lässt sich dann nicht löschen oder verschieben. Ein Muster mit Stern passt auf Namen überall, etwa *.partial*. Solche Dateien gehen mit, wenn ihr Ordner gelöscht oder verschoben wird, und beim Kopieren bleiben sie draußen. Ein Muster mit Schrägstrich, etwa appdata/*/cache, gilt wie ein Pfad.",
     "rule": "Regel", "ruleTip": "Erlauben hebt eine Regel weiter unten auf, etwa für einen Unterordner. Die erste passende Regel gilt.",
     "needGroup": "Leg erst eine Gruppe an", "needPath": "Pfad oder Muster fehlt noch", "noPath": "Diesen Pfad gibt es nicht. Für ein Muster nimm einen Stern, etwa *.tmp",
     "readOnlySource": "Die ganze Quelle steht auf Nur lesen."

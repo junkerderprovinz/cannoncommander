@@ -1,6 +1,7 @@
 package fileops
 
 import (
+	"context"
 	"errors"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -136,7 +137,7 @@ func (s *Service) rename(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	if err := s.fs.Whole(r.Context(), u, from, ccfs.Modify); err != nil {
+	if err := s.fs.Carry(r.Context(), u, from, ccfs.Modify); err != nil {
 		return err
 	}
 	if path.Base(from.Path) == req.Name {
@@ -155,6 +156,15 @@ func (s *Service) rename(w http.ResponseWriter, r *http.Request) error {
 	out.Undo = s.record(u, undo.Step{Kind: StepRename, Name: path.Base(from.Path), Count: 1, Path: path.Dir(from.Path), To: req.Name},
 		renameData{From: from.Path, To: to.Path})
 	return v1.WriteJSON(w, r, http.StatusOK, out)
+}
+
+// preflightSize is what a copy or move would carry. A copy leaves out what is
+// hidden, and the answer has to say nothing about it.
+func preflightSize(ctx context.Context, fsys *ccfs.Resolver, u *users.User, src ccfs.Location, move bool) (bytes, files int64, err error) {
+	if move {
+		return jobs.TreeSize(ctx, src.Real)
+	}
+	return jobs.VisibleSize(ctx, fsys, u, src, srcPermFor(move))
 }
 
 // renameNoReplace renames unless the target exists. A plain rename would
@@ -269,7 +279,7 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
-		b, f, err := jobs.TreeSize(r.Context(), src.Real)
+		b, f, err := preflightSize(r.Context(), s.fs, u, src, move)
 		if err != nil {
 			return err
 		}

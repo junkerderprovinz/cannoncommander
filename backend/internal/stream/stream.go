@@ -22,15 +22,17 @@ import (
 var contract []byte
 
 const (
-	maxClientID   = 64
-	maxWatched    = 64
-	heartbeatTick = 25 * time.Second
+	maxClientID = 64
+	maxWatched  = 64
 )
+
+// heartbeatTick is how often a quiet stream speaks up. Tests shorten it.
+var heartbeatTick = 25 * time.Second
 
 // Routes registers the event stream.
 func Routes(r *v1.Router) {
 	r.Contract("stream", contract)
-	s := server{hub: r.Deps().Hub, fs: r.Deps().FS, heartbeat: heartbeatTick}
+	s := server{hub: r.Deps().Hub, fs: r.Deps().FS, heartbeat: heartbeatTick, auth: r.Authenticator()}
 	r.Handle("GET /events", s.events)
 	r.Handle("PUT /events/watch", s.watch)
 }
@@ -39,7 +41,16 @@ type server struct {
 	hub       *hub.Hub
 	fs        *ccfs.Resolver
 	heartbeat time.Duration
+	auth      v1.Authenticator
 }
+
+// unwritten takes the cookie a sign in check may refresh. A stream has sent its
+// headers by then, and the next request refreshes it.
+type unwritten struct{ header http.Header }
+
+func (w unwritten) Header() http.Header       { return w.header }
+func (unwritten) Write(b []byte) (int, error) { return len(b), nil }
+func (unwritten) WriteHeader(int)             {}
 
 func (s server) events(w http.ResponseWriter, r *http.Request) error {
 	u := v1.UserFrom(r)
@@ -99,6 +110,12 @@ func (s server) events(w http.ResponseWriter, r *http.Request) error {
 				return nil
 			}
 		case now := <-tick.C:
+			// A stream outlasts a sign out, a new password and a lost right.
+			fresh, err := s.auth(unwritten{http.Header{}}, r)
+			if err != nil {
+				return nil
+			}
+			u = fresh
 			if writeEvent(w, hub.Event{Type: hub.TypeHeartbeat, Time: now}, false) != nil {
 				return nil
 			}

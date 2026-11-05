@@ -3,6 +3,7 @@ package web
 import (
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"maps"
 	"net/http"
@@ -354,19 +355,35 @@ func oidcCallbackHandler(w http.ResponseWriter, r *http.Request, d *Context) (in
 	}
 
 	// --- Determine login username dynamically ---
-	if val, ok := userdata.Claims[oidcCfg.UserIdentifier]; ok {
-		if v, ok := val.(string); ok {
-			loginUsername = v
-		}
+	loginUsername, err = oidcLoginName(userdata.Claims, oidcCfg.UserIdentifier)
+	if errors.Is(err, errUnverifiedEmail) {
+		logger.Warningf("OIDC sign in refused: %v", err)
+		return http.StatusForbidden, err
 	}
-	if loginUsername == "" {
+	if err != nil {
 		logger.Errorf("No valid username found for identifier '%v' in claims.", oidcCfg.UserIdentifier)
-		return http.StatusInternalServerError, fmt.Errorf("no valid username found for identifier '%v'", oidcCfg.UserIdentifier)
+		return http.StatusInternalServerError, err
 	}
 
 	// Proceed to log the user in with the OIDC data
 	// userdata struct now contains info from either verified ID token or UserInfo endpoint
 	return loginWithOidcUser(w, r, loginUsername, userdata.Groups, postLoginRedirect)
+}
+
+var errUnverifiedEmail = errors.New("the identity provider has not verified this email address")
+
+// oidcLoginName takes the name of the account from the claims. An email nobody
+// verified can be anybody's, since users can often type in their own, and it
+// would lead straight into the account of the person it belongs to.
+func oidcLoginName(claims map[string]any, identifier string) (string, error) {
+	name, _ := claims[identifier].(string)
+	if name == "" {
+		return "", fmt.Errorf("no valid username found for identifier '%v'", identifier)
+	}
+	if verified, said := claims["email_verified"].(bool); identifier == "email" && said && !verified {
+		return "", errUnverifiedEmail
+	}
+	return name, nil
 }
 
 // mergeMissingOidcClaims copies claims from from into userdata when absent after UserInfo fallback.

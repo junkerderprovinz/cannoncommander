@@ -43,7 +43,7 @@ func prepareDelete(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMe
 		if _, err := os.Lstat(loc.Real); err != nil {
 			return nil, err
 		}
-		if err := d.FS.Whole(ctx, u, loc, ccfs.Delete); err != nil {
+		if err := d.FS.Carry(ctx, u, loc, ccfs.Delete); err != nil {
 			return nil, err
 		}
 		if seen[loc.Path] {
@@ -67,9 +67,13 @@ func runDelete(ctx context.Context, run *jobs.Run) error {
 		}
 		run.Begin(it.Seq)
 		run.Current(it.Name)
+		run.Guard(func() error {
+			_, _, err := run.Entry(it.Path, ccfs.Delete)
+			return err
+		})
 		loc, u, err := run.Entry(it.Path, ccfs.Delete)
 		if err == nil {
-			err = fsys.Whole(ctx, u, loc, ccfs.Delete)
+			err = fsys.Carry(ctx, u, loc, ccfs.Delete)
 		}
 		if err == nil {
 			var b, f int64

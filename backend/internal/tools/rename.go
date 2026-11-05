@@ -292,7 +292,7 @@ func (h handlers) renameBatch(w http.ResponseWriter, r *http.Request) error {
 		if _, err := folder(h.fs, u, path.Dir(loc.Path), ccfs.Create); err != nil {
 			return err
 		}
-		if err := h.fs.Whole(r.Context(), u, loc, ccfs.Modify); err != nil {
+		if err := h.fs.Carry(r.Context(), u, loc, ccfs.Modify); err != nil {
 			return err
 		}
 		entries[i] = renameEntry{loc: loc, name: path.Base(loc.Path), dir: info.IsDir(), info: info}
@@ -423,7 +423,7 @@ func undoRenameBatch(ctx context.Context, d v1.Deps, u *users.User, raw json.Raw
 		if err != nil {
 			return v1.Errorf(http.StatusConflict, path.Base(p.To)+" is not there any more")
 		}
-		if err := d.FS.Whole(ctx, u, loc, ccfs.Modify); err != nil {
+		if err := d.FS.Carry(ctx, u, loc, ccfs.Modify); err != nil {
 			return err
 		}
 		if _, err := d.FS.Entry(u, p.From, ccfs.Create); err != nil {

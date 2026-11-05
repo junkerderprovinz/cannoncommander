@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"runtime"
+	"slices"
+	"strings"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v4"
@@ -161,13 +164,30 @@ func muxWithMiddleware(mux http.Handler) *http.ServeMux {
 	wrappedMux.Handle("/", LoggingMiddleware(mux))
 	return wrappedMux
 }
+
+// logSafeURL is the address for the log, without the query values that grant
+// access: office links, and what an identity provider sends back.
+func logSafeURL(u *url.URL) string {
+	if u.RawQuery == "" {
+		return u.Path
+	}
+	parts := strings.Split(u.RawQuery, "&")
+	for i, part := range parts {
+		key, _, found := strings.Cut(part, "=")
+		if found && slices.Contains([]string{"token", "access_token", "code", "state"}, strings.ToLower(key)) {
+			parts[i] = key + "=***"
+		}
+	}
+	return u.Path + "?" + strings.Join(parts, "&")
+}
+
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// DEFER RECOVERY FUNCTION
 		defer func() {
 			if rcv := recover(); rcv != nil {
 				method := r.Method
-				url := r.URL.String()
+				url := logSafeURL(r.URL)
 				username := "unknown" // Default username
 
 				// Attempt to get username from ResponseWriterWrapper if it's set
@@ -206,10 +226,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(wrappedWriter, r)
 
 		// Existing logging logic for normal requests
-		fullURL := r.URL.Path
-		if r.URL.RawQuery != "" {
-			fullURL += "?" + r.URL.RawQuery
-		}
+		fullURL := logSafeURL(r.URL)
 		truncUser := wrappedWriter.User
 		if truncUser == "" {
 			truncUser = "N/A" // Handle case where user might not be set (e.g., if panic occurred before user auth)

@@ -32,7 +32,8 @@ const maxRules = 500
 
 // Rule is one access rule. Who is a login name, "@" and a group, or "*" for
 // everybody. Path is an absolute path that covers the folder and everything
-// in it, or a pattern with a star that matches names anywhere.
+// in it, or a pattern with a star. Without a slash the pattern matches names
+// anywhere, with one it matches a path and covers what lies below a match too.
 type Rule struct {
 	Who  string `json:"who"`
 	Path string `json:"path"`
@@ -42,6 +43,13 @@ type Rule struct {
 type compiledRule struct {
 	Rule
 	glob *regexp.Regexp
+	// byName marks a pattern on a name alone, which says a file is unimportant.
+	// One that fits every name says more: it closes all that no rule above allows.
+	byName bool
+	// folder marks a pattern with a slash, and anchor is the folder it stays
+	// below when it starts at the root.
+	folder bool
+	anchor string
 	// A pattern in plain ASCII also keeps what stands before its first star,
 	// after its last star and between its stars, in order.
 	plain       bool
@@ -51,19 +59,42 @@ type compiledRule struct {
 
 func compile(r Rule) compiledRule {
 	c := compiledRule{Rule: r}
-	if strings.Contains(r.Path, "*") {
-		c.glob = regexp.MustCompile("(?i)^" + strings.ReplaceAll(regexp.QuoteMeta(r.Path), `\*`, ".*") + "$")
-		if plainText(r.Path) {
-			pieces := strings.Split(r.Path, "*")
-			c.plain, c.first, c.last = true, pieces[0], pieces[len(pieces)-1]
-			for _, p := range pieces[1 : len(pieces)-1] {
-				if p != "" {
-					c.between = append(c.between, p)
-				}
+	if !strings.Contains(r.Path, "*") {
+		return c
+	}
+	if strings.Contains(r.Path, "/") {
+		return compileFolderPattern(c)
+	}
+	c.byName = strings.Trim(r.Path, "*") != ""
+	c.glob = regexp.MustCompile("(?i)^" + globBody(r.Path) + "$")
+	if plainText(r.Path) {
+		pieces := strings.Split(r.Path, "*")
+		c.plain, c.first, c.last = true, pieces[0], pieces[len(pieces)-1]
+		for _, p := range pieces[1 : len(pieces)-1] {
+			if p != "" {
+				c.between = append(c.between, p)
 			}
 		}
 	}
 	return c
+}
+
+// compileFolderPattern fills in a pattern with a slash. Without a leading slash
+// it starts at any folder, since nobody writing it has to know the mount.
+func compileFolderPattern(c compiledRule) compiledRule {
+	c.folder = true
+	start := "(?:.*/)?"
+	if strings.HasPrefix(c.Path, "/") {
+		start = ""
+		before, _, _ := strings.Cut(c.Path, "*")
+		c.anchor = before[:strings.LastIndex(before, "/")]
+	}
+	c.glob = regexp.MustCompile("(?is)^" + start + globBody(strings.TrimRight(c.Path, "/")) + "(?:/.*)?$")
+	return c
+}
+
+func globBody(pattern string) string {
+	return strings.ReplaceAll(regexp.QuoteMeta(pattern), `\*`, ".*")
 }
 
 // plainText reports whether s holds only printable ASCII, where ignoring case
@@ -121,6 +152,9 @@ func (c compiledRule) applies(name string, groups func() []string, p string) boo
 		if c.matches(p) {
 			return true
 		}
+		if c.folder {
+			return false
+		}
 		for part := range strings.SplitSeq(p, "/") {
 			if part != "" && c.matches(part) {
 				return true
@@ -130,6 +164,34 @@ func (c compiledRule) applies(name string, groups func() []string, p string) boo
 	}
 	return c.Path == "/" || p == c.Path || strings.HasPrefix(p, c.Path+"/")
 }
+
+// touches reports whether the rule could say something about p or what lies
+// below it.
+func (c compiledRule) touches(p string) bool {
+	switch {
+	case c.anchor != "":
+		return relatedFold(p, c.anchor)
+	case c.glob != nil:
+		return true
+	}
+	return c.Path == "/" || c.Path == p || strings.HasPrefix(c.Path, strings.TrimSuffix(p, "/")+"/") || strings.HasPrefix(p, c.Path+"/")
+}
+
+// relatedFold reports whether one of the two paths lies at or below the other,
+// ignoring case as a pattern does. Beyond plain text it says yes, since the
+// regular expression folds letters EqualFold cannot be cut to compare.
+func relatedFold(a, b string) bool {
+	if !plainText(a) || !plainText(b) {
+		return true
+	}
+	if len(a) > len(b) {
+		a, b = b, a
+	}
+	return strings.EqualFold(a, b[:len(a)]) && (len(a) == len(b) || b[len(a)] == '/' || strings.HasSuffix(a, "/"))
+}
+
+// carriedAlong reports whether what the rule matches goes along with its folder.
+func (c compiledRule) carriedAlong() bool { return c.byName && c.Rule.Rule == ruleHide }
 
 // names reports whether the rule is about the user at all.
 func (c compiledRule) names(name string, groups func() []string) bool {
@@ -182,6 +244,11 @@ func (b *ruleBook) list() []Rule {
 // match returns the first rule that covers p for u, which is the one that
 // decides.
 func (b *ruleBook) match(u *users.User, p string) (int, Rule, bool) {
+	return b.first(u, p, false)
+}
+
+// first is match, passing over what goes along with a folder when carried is set.
+func (b *ruleBook) first(u *users.User, p string, carried bool) (int, Rule, bool) {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 	var groups []string
@@ -193,6 +260,9 @@ func (b *ruleBook) match(u *users.User, p string) (int, Rule, bool) {
 		return groups
 	}
 	for i, c := range b.rules {
+		if carried && c.carriedAlong() {
+			continue
+		}
 		if c.applies(u.Username, groupsOf, p) {
 			return i, c.Rule, true
 		}
@@ -203,6 +273,17 @@ func (b *ruleBook) match(u *users.User, p string) (int, Rule, bool) {
 // Effect tells the file system what the rules say about p for u.
 func (b *ruleBook) Effect(u *users.User, p string) ccfs.Effect {
 	_, r, ok := b.match(u, p)
+	return effectOf(r, ok)
+}
+
+// CarryEffect is Effect for an entry that goes along with its folder. A pattern
+// that hides a name does not count, so a path rule behind it still does.
+func (b *ruleBook) CarryEffect(u *users.User, p string) ccfs.Effect {
+	_, r, ok := b.first(u, p, true)
+	return effectOf(r, ok)
+}
+
+func effectOf(r Rule, ok bool) ccfs.Effect {
 	switch {
 	case !ok:
 		return ccfs.Open
@@ -215,8 +296,17 @@ func (b *ruleBook) Effect(u *users.User, p string) ccfs.Effect {
 }
 
 // Below reports whether a rule could hide or freeze something below p for u.
-// Patterns match names anywhere, so they always could.
 func (b *ruleBook) Below(u *users.User, p string) bool {
+	return b.below(u, p, false)
+}
+
+// CarryBelow is Below for a folder that gets carried away, which a pattern that
+// hides a name does not stop.
+func (b *ruleBook) CarryBelow(u *users.User, p string) bool {
+	return b.below(u, p, true)
+}
+
+func (b *ruleBook) below(u *users.User, p string, carried bool) bool {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 	var groups []string
@@ -228,12 +318,12 @@ func (b *ruleBook) Below(u *users.User, p string) bool {
 		return groups
 	}
 	for _, c := range b.rules {
-		if c.Rule.Rule == ruleAllow || !c.names(u.Username, groupsOf) {
+		if c.Rule.Rule == ruleAllow || carried && c.carriedAlong() || !c.names(u.Username, groupsOf) {
 			continue
 		}
 		// A rule above p counts too: p can only have passed through an allow
 		// that need not cover everything below it.
-		if c.glob != nil || c.Path == p || strings.HasPrefix(c.Path, strings.TrimSuffix(p, "/")+"/") || strings.HasPrefix(p, c.Path+"/") {
+		if c.touches(p) {
 			return true
 		}
 	}

@@ -67,6 +67,8 @@ type Resolver struct {
 	// devices are the pools and disks Unraid reports, for pools that are
 	// not called cache.
 	devices []string
+	// closed are the API paths where the app's own data shows up.
+	closed []string
 }
 
 // New builds a resolver. Mounts must be absolute and may not nest inside
@@ -95,7 +97,7 @@ func New(rules Rules, sources ...Source) (*Resolver, error) {
 // WithDevices returns a copy of r that also keeps the named pools and disks
 // for admins, since a pool may go by any name.
 func (r *Resolver) WithDevices(names ...string) *Resolver {
-	out := &Resolver{rules: r.rules, devices: slices.Clone(names)}
+	out := &Resolver{rules: r.rules, devices: slices.Clone(names), closed: r.closed}
 	for _, s := range r.sources {
 		c := *s
 		c.AdminOnly = c.AdminOnly || out.AdminOnly(c.Mount)

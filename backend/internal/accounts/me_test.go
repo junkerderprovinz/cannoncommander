@@ -106,7 +106,7 @@ func TestAReadTokenOnlyReads(t *testing.T) {
 	if rec.Code != http.StatusForbidden || !strings.Contains(detail(t, rec), "may only read") {
 		t.Fatalf("a read token wrote: %d %s", rec.Code, rec.Body)
 	}
-	if rec := w.req("DELETE", "/me/sessions/x", nil, "X-Api", write); rec.Code != http.StatusNotFound {
+	if rec := w.req("DELETE", "/shares/x", nil, "X-Api", write); rec.Code != http.StatusNotFound {
 		t.Fatalf("a write token may write: %d %s", rec.Code, rec.Body)
 	}
 

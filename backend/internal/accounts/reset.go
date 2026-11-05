@@ -17,8 +17,6 @@ import (
 const (
 	resetCodeLen = 12
 	resetTime    = 10 * time.Minute
-	// askEvery keeps one name from flooding the log with codes.
-	askEvery = 30 * time.Second
 )
 
 // announce writes a reset code to the container log, which only the admin
@@ -31,7 +29,6 @@ var announce = func(username, code string) {
 type resets struct {
 	mu    sync.Mutex
 	codes map[string]resetCode
-	asked map[uint64]time.Time
 }
 
 type resetCode struct {
@@ -40,29 +37,27 @@ type resetCode struct {
 }
 
 func newResets() *resets {
-	return &resets{codes: map[string]resetCode{}, asked: map[uint64]time.Time{}}
+	return &resets{codes: map[string]resetCode{}}
 }
 
-// issue makes a new code for the user and drops the older one. It returns
-// "" when the user asked a moment ago.
+// issue makes a code for the user. It returns "" while the last one is still
+// good: anyone can ask, and a new code would take the old one from the owner.
 func (s *resets) issue(userID uint64) string {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	now := time.Now()
-	if last, ok := s.asked[userID]; ok && now.Sub(last) < askEvery {
+	live := false
+	for code, c := range s.codes {
+		switch {
+		case now.After(c.until):
+			delete(s.codes, code)
+		case c.userID == userID:
+			live = true
+		}
+	}
+	if live {
 		return ""
 	}
-	for code, c := range s.codes {
-		if c.userID == userID || now.After(c.until) {
-			delete(s.codes, code)
-		}
-	}
-	for id, at := range s.asked {
-		if now.Sub(at) >= askEvery {
-			delete(s.asked, id)
-		}
-	}
-	s.asked[userID] = now
 	code := randomCode(resetCodeLen)
 	s.codes[code] = resetCode{userID: userID, until: now.Add(resetTime)}
 	return code
@@ -107,15 +102,15 @@ type resetInput struct {
 }
 
 // reset sets a new password with a code from the log. It also ends every
-// session, turns off the two factor login and revokes every API token,
-// because whoever lost the password may have lost more. The client is
+// session, turns off the two factor login and removes every passkey and API
+// token, because whoever lost the password may have lost more. The client is
 // logged in afterwards.
 func (h handlers) reset(w http.ResponseWriter, r *http.Request) error {
 	var in resetInput
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
 	}
-	ip := login.ClientIP(r)
+	ip := addressKey(r)
 	if h.svc.resetTries.blocked(ip) {
 		return v1.Errorf(http.StatusTooManyRequests, "too many wrong codes, wait a few minutes")
 	}
@@ -136,8 +131,8 @@ func (h handlers) reset(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return v1.Errorf(http.StatusBadRequest, "this code is not right or ran out, please ask for a new one")
 	}
-	u.OtpEnabled, u.RequirePasswordChange = false, false
-	if err := state.UpdateUser(&u, in.Password, "password", "otpEnabled", "requirePasswordChange"); err != nil {
+	u.OtpEnabled, u.RequirePasswordChange, u.PasskeyCredentials = false, false, nil
+	if err := state.UpdateUser(&u, in.Password, "password", "otpEnabled", "requirePasswordChange", "PasskeyCredentials"); err != nil {
 		return err
 	}
 	if err := h.svc.recovery.clear(r.Context(), u.ID); err != nil {

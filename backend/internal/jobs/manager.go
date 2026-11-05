@@ -80,7 +80,9 @@ type job struct {
 	forget  bool
 	live    bool
 	allowed bool
-	ask     chan string
+	// pauses counts the pauses asked for, so a short one is not missed.
+	pauses int
+	ask    chan string
 
 	// done counts the finished items, inflight what the current item
 	// has moved so far.
@@ -355,6 +357,7 @@ func (m *Manager) Pause(id string) (Job, error) {
 		}
 		j.State = Paused
 		j.allowed = false
+		j.pauses++
 		j.Rate, j.Left = 0, nil
 		return nil
 	})
@@ -735,17 +738,30 @@ func errorText(err error) string {
 
 // gate blocks while the job may not move.
 func (m *Manager) gate(ctx context.Context, j *job) error {
+	var seen int
+	_, err := m.held(ctx, j, &seen)
+	return err
+}
+
+// held waits for the turn of j and reports whether it had to, or was paused
+// since the pauses it has seen, however short that lasted.
+func (m *Manager) held(ctx context.Context, j *job, seen *int) (bool, error) {
+	waited := false
 	for {
 		m.mu.Lock()
 		ok, ch := j.allowed, m.changed
+		if ok && j.pauses != *seen {
+			*seen, waited = j.pauses, true
+		}
 		m.mu.Unlock()
 		if ok {
-			return ctx.Err()
+			return waited, ctx.Err()
 		}
+		waited = true
 		select {
 		case <-ch:
 		case <-ctx.Done():
-			return ctx.Err()
+			return waited, ctx.Err()
 		}
 	}
 }

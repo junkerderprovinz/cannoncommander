@@ -63,6 +63,8 @@ func passkeyUser(r *http.Request, name string) (users.User, error) {
 		return users.User{}, err
 	}
 	switch {
+	case u.LoginMethod != users.LoginMethodPassword:
+		return users.User{}, v1.Errorf(http.StatusConflict, "passkeys come with the password, and you sign in through "+string(u.LoginMethod))
 	case name == "":
 		return users.User{}, v1.Errorf(http.StatusBadRequest, "give the passkey a name")
 	case len(name) > 64:
