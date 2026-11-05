@@ -117,6 +117,16 @@
     "pwShort": "The password needs at least 12 characters", "pwDiffer": "The two passwords aren't the same",
     "groupName": "Name", "groupNamePh": "such as family", "note": "Description", "notePh": "What the group is for", "needGroupName": "Give the group a name", "groupTaken": "That group exists already"
   },
+  "access": {
+    "title": "Access for {who}", "ways": "Access", "waysTip": "Sessions, API tokens and passkeys. End them one by one or all at once.",
+    "none": "None", "one": "1 active", "many": "{n} active", "show": "View", "since": "Signed in since {date}",
+    "noSessions": "Not signed in anywhere right now", "noTokens": "No API tokens", "noPasskeys": "No passkeys",
+    "signOut": "End session", "signOutText": "{who} gets signed out on {device}.", "removePasskeyText": "{who} can no longer sign in with {name}.",
+    "endAll": "End all access", "end": "End", "endAllText": "{who} gets signed out everywhere, and every API token and passkey stops working.",
+    "passwordStays": "The password stays as it is.", "allEnded": "All access for {who} has ended",
+    "revoke": "Also end tokens and passkeys", "revokeTip": "The new password signs the person out everywhere anyway. This also takes away their API tokens and passkeys.",
+    "savedPwEnded": "Saved, the new password works and all access has ended"
+  },
   "rules": {
     "title": "Rules", "add": "Add a rule", "edit": "Edit rule", "none": "No rules, everybody sees their whole area", "added": "Rule added", "removed": "Rule removed",
     "kind": { "hide": "Hide", "read": "Read only", "allow": "Allow" },
@@ -172,7 +182,9 @@
     "read": "Read", "readWrite": "Read and write", "rights": "Rights", "rightsTip": "The token may never do more than you.", "year": "1 year",
     "tokenNameTip": "What the token is for. It shows up later in the list of tokens.", "tokenNamePh": "such as backup-script", "needTokenName": "Give the token a name",
     "copyNow": "Copy the token now. CannonCommander never shows it again, you can only create a new one.", "tokenCreatedToast": "Token {name} created",
-    "pwLocked": "Only an admin changes your password here, or you sign in through another service.", "passkeysOff": "Passkeys are switched off on this server", "tooMany": "Too many tries. Please try again in 15 minutes"
+    "pwLocked": "Only an admin changes your password here, or you sign in through another service.", "passkeysOff": "Passkeys are switched off on this server", "tooMany": "Too many tries. Please try again in 15 minutes",
+    "proofTip": "CannonCommander asks for it before every new way in, so only you can add one.", "signInAgain": "Sign in again", "staleTitle": "Please sign in once more",
+    "staleToken": "A new token needs a fresh sign-in. This window opens again right after.", "stalePasskey": "A new passkey needs a fresh sign-in. This window opens again right after."
   },
   "integrations": {
     "office": "Office", "officeKind": "Office server", "officeKindTip": "Word, Excel and PowerPoint files then open for editing in the browser, in the quick look and with F3. Without a server CannonCommander shows them in its built-in preview.",

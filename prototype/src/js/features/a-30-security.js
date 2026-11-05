@@ -89,11 +89,13 @@
 
   function passkeyWin() {
     const w = A.stepWin({ title: 'Passkey hinzufügen' });
-    w.set(`<div class="well">${frow('Name', field('', 'id="a-pkname" placeholder="etwa Laptop"', 'm'), 'Damit erkennst du den Passkey in der Liste wieder.')}</div>`,
+    w.set(`<div class="well">${frow('Name', field('', 'id="a-pkname" placeholder="etwa Laptop"', 'm'), 'Damit erkennst du den Passkey in der Liste wieder.')}
+        ${frow('Aktuelles Passwort', A.pwField('id="a-pkpw" autocomplete="current-password"', 'm'), 'CannonCommander fragt bei jedem neuen Zugang danach, damit nur du einen anlegen kannst.')}</div>`,
       [cancel, { label: 'Weiter', g: 'IconForward', primary: true, run: (el) => {
         const name = $('#a-pkname', el).value.trim();
         if (!name) return fail('Gib dem Passkey einen Namen', $('#a-pkname', el));
         if (DATA.passkeys.some(p => p.name === name)) return fail('Diesen Namen gibt es schon', $('#a-pkname', el));
+        if (!$('#a-pkpw', el).value) return fail('Das aktuelle Passwort fehlt noch', $('#a-pkpw', el));
         w.set(`<div class="empty">${g('IconKey')}<div>Bestätige den Passkey im Fenster deines Browsers</div></div>`, [cancel]);
         setTimeout(() => {
           if (!w.el.isConnected) return;
@@ -110,11 +112,13 @@
     const w = A.stepWin({ title: 'Token erstellen' });
     w.set(`<div class="well">${frow('Name', field('', 'id="a-tkname" placeholder="etwa backup-skript"', 'm'), 'Wofür das Token da ist. Es steht später in der Liste der Sitzungen.')}
         ${frow('Rechte', seg([['r', 'Lesen'], ['rw', 'Lesen und schreiben']], 'r', 'id="a-tkrights"'), 'Das Token darf nie mehr als du selbst.')}
-        ${frow('Läuft ab', seg([['30', '30 Tage'], ['365', '1 Jahr'], ['never', 'Nie']], '365', 'id="a-tkexp"'))}</div>`,
+        ${frow('Läuft ab', seg([['30', '30 Tage'], ['365', '1 Jahr'], ['never', 'Nie']], '365', 'id="a-tkexp"'))}
+        ${frow('Aktuelles Passwort', A.pwField('id="a-tkpw" autocomplete="current-password"', 'm'), 'CannonCommander fragt bei jedem neuen Zugang danach, damit nur du einen anlegen kannst.')}</div>`,
       [cancel, { label: 'Erstellen', g: 'IconKey', primary: true, run: (el) => {
         const name = $('#a-tkname', el).value.trim();
         if (!name) return fail('Gib dem Token einen Namen', $('#a-tkname', el));
         if (DATA.tokens.some(t => t.name === name)) return fail('Diesen Namen gibt es schon', $('#a-tkname', el));
+        if (!$('#a-tkpw', el).value) return fail('Das aktuelle Passwort fehlt noch', $('#a-tkpw', el));
         const rights = segVal($('#a-tkrights', el)) === 'rw' ? 'lesen, schreiben' : 'lesen';
         const exp = segVal($('#a-tkexp', el));
         const token = 'cc_' + randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 40);
