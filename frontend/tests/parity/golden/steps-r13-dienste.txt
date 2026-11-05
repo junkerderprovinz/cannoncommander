@@ -3,7 +3,7 @@
 1 after up: 2 Objekte [läuft] | flash-2026-10-31.zip [wartet] | vm-win11-2026-10-01.img [wartet]
 1 after drag: vm-win11-2026-10-01.img [läuft] | 2 Objekte [wartet] | flash-2026-10-31.zip [wartet]
 1 parallel: vm-win11-2026-10-01.img [läuft] | 2 Objekte [läuft]
-2 search menu: Große Abbilder 7 | Diesen Monat geändert 43 | Alle Filme 11 | *.mkv alle MKV-Dateien, auch in Unterordnern | #steuer alles mit dem Schlagwort steuer | bericht Namen, in denen bericht vorkommt | IMG_????.jpg ein ? steht für genau ein Zeichen | breite:>=3840 codec:hevc 4K-Filme in HEVC, aus den Metadaten | geändert:<7d alles, was sich in den letzten 7 Tagen geändert hat
+2 search menu: Große Abbilder 7 | Diesen Monat geändert 42 | Alle Filme 11 | *.mkv alle MKV-Dateien, auch in Unterordnern | #steuer alles mit dem Schlagwort steuer | bericht Namen, in denen bericht vorkommt | IMG_????.jpg ein ? steht für genau ein Zeichen | breite:>=3840 codec:hevc 4K-Filme in HEVC, aus den Metadaten | geändert:<7d alles, was sich in den letzten 7 Tagen geändert hat
 2 panel: 11 hits, bar: Gespeicherte Suche Alle Filme, 11 Treffer in /mnt/user
 2 after rename and remove: Große Abbilder | Diesen Monat geändert panel smart: null
 3 photos: IMG_0200.jpg 2026-04-12_001.jpg | IMG_0201.jpg 2026-08-30_002.jpg
