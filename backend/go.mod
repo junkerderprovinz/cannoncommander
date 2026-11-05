@@ -12,7 +12,7 @@ require (
 	github.com/evanoberholster/imagemeta v1.1.0
 	github.com/gen2brain/go-fitz v1.28.2
 	github.com/go-ldap/ldap/v3 v3.4.15
-	github.com/go-playground/validator/v10 v10.30.5
+	github.com/go-playground/validator/v10 v10.30.6
 	github.com/go-webauthn/webauthn v0.18.2
 	github.com/goccy/go-yaml v1.19.2
 	github.com/golang-jwt/jwt/v4 v4.5.2
