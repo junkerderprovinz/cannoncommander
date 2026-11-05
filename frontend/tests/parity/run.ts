@@ -403,7 +403,7 @@ async function worker(file: string) {
     const own = allowFor(steps).page;
     const a = await runSide(browser, file, own ? join(prototype, 'dist', own) : opt.a, join(dir, 'a'), !!own);
     const server = !own && opt.b === 'fixture' ? await fixtureServer() : undefined;
-    const b = await runSide(browser, file, own ? join(prototype, 'dist', own) : server?.url || opt.b, join(dir, 'b'), !!own, allowFor(steps).setup?.script).finally(() => server?.stop());
+    const b = await runSide(browser, file, own ? join(prototype, 'dist', own) : server?.url || opt.b, join(dir, 'b'), !!own, opt.a === opt.b ? undefined : allowFor(steps).setup?.script).finally(() => server?.stop());
     const result: Result = { steps, a, b, ...compare(steps, a, b, dir) };
     const golden = join(here, 'golden', steps + '.txt');
     const text = a.lines.join('\n') + '\n';
