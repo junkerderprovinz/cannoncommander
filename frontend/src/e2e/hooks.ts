@@ -18,6 +18,9 @@ const CLASSES: [selector: string, name: string][] = [
   ['.glim-list-row-title', 't'],
   ['.glim-sel', 'seg'],
   ['.glim-kbd', 'kbd'],
+  ['.glim-table', 'tbl'],
+  ['.glim-nav-row', 'nav-row'],
+  ['.glim-nav-row.glim-active', 'cur'],
   ['.glim-subcard', 'well'],
   ['.glim-toast', 'toast'],
   ['.glim-pill', 'pill'],
@@ -37,10 +40,6 @@ const CLASSES: [selector: string, name: string][] = [
   ['.bk-perms .glim-checkbox-box', 'cbox'],
 ];
 
-type Choice = { value: string; label: string };
-interface SelectParts { value: string | null; groups: { entries: Choice[] }[] }
-const instanceOf = (el: Element) => (el as unknown as { __vueParentComponent?: { props: SelectParts } }).__vueParentComponent;
-
 function closedLists() {
   let holder = document.getElementById('e2e-lists');
   if (!holder) {
@@ -50,7 +49,6 @@ function closedLists() {
   return holder;
 }
 
-// A select's trigger says its value and its options as the prototype's dropdown does, read from the component.
 function nameSelects() {
   // A select keeps its closed list on the body, where the steps' .scrim:last-of-type expects the windows last. An open
   // list goes back to the end, to lie over its window.
@@ -59,32 +57,12 @@ function nameSelects() {
     if (open && list.parentElement !== document.body) document.body.append(list);
     if (!open && list.parentElement === document.body) closedLists().append(list);
   });
-  document.querySelectorAll<HTMLElement>('.glim-select-trigger').forEach((trigger) => {
-    const parts = instanceOf(trigger.closest('.glim-select')!)?.props;
-    if (!parts?.groups) return;
-    const val = parts.value ?? '', dd = JSON.stringify(parts.groups.flatMap((g) => g.entries).map((o) => [o.value, o.label]));
-    if (trigger.dataset.val !== val) trigger.dataset.val = val;
-    if (trigger.dataset.dd !== dd) trigger.dataset.dd = dd;
-  });
-  // An open list's rows are the menu's buttons for a step, each a clear button over its row that lets its click through.
   document.querySelectorAll<HTMLElement>('.glim-select-content--menu').forEach((list) => {
     const group = list.querySelector<HTMLElement>('.glim-select-group');
-    const open = list.dataset.state === 'open';
-    if (group) group.id = open ? 'menu' : '';
+    if (group) group.id = list.dataset.state === 'open' ? 'menu' : '';
     list.querySelectorAll<HTMLElement>('[role=option]').forEach((row) => {
-      let clear = row.querySelector<HTMLButtonElement>(':scope > button');
-      if (!clear) {
-        clear = document.createElement('button');
-        clear.type = 'button';
-        clear.setAttribute('role', 'menuitemradio');
-        clear.style.cssText = 'position:absolute;inset:0;opacity:0';
-        clear.innerHTML = row.querySelector('.glim-menu-glyph svg')?.outerHTML ?? '';
-        clear.append(row.querySelector('.glim-menu-label')?.textContent ?? '');
-        row.style.position = 'relative';
-        row.append(clear);
-      }
       const on = row.dataset.state === 'checked';
-      if (clear.classList.contains('on') !== on) clear.classList.toggle('on', on);
+      if (row.classList.contains('on') !== on) row.classList.toggle('on', on);
     });
   });
 }
@@ -110,6 +88,11 @@ function name() {
     if (seg.dataset.v !== seg.dataset.selId) seg.dataset.v = seg.dataset.selId;
     const on = seg.getAttribute('aria-checked') ?? seg.getAttribute('aria-selected') ?? 'false';
     if (seg.getAttribute('aria-pressed') !== on) seg.setAttribute('aria-pressed', on);
+  });
+  // The steps read a row's folder and its action from the row around its link.
+  document.querySelectorAll<HTMLElement>('.glim-nav-row--slots').forEach((row) => {
+    const main = row.querySelector<HTMLElement>(':scope > .glim-nav-row-main')!;
+    for (const key of ['go', 'run', 'parity']) if (main.dataset[key] !== undefined && row.dataset[key] !== main.dataset[key]) row.dataset[key] = main.dataset[key];
   });
   nameSelects();
 }

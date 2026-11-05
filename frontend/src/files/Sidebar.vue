@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Card } from '@glimstone/vue';
+import { Card, SidebarRow } from '@glimstone/vue';
 import { computed, reactive, watchEffect } from 'vue';
 import NameBody from '@/features/names/NameBody.vue';
 import { run } from '@/core/actions';
 import { extend } from '@/core/extend';
 import { fmtSize } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { menu } from '@/core/menu';
 import { Render } from '@/core/Render';
 import { cancelBtn, win } from '@/core/windows';
@@ -79,23 +79,26 @@ function bookmarkMenu(e: MouseEvent, b: Bookmark) {
     <Card class="side-card" :title="t('side.bookmarks')">
       <button class="ptab add side-add" data-run="addBookmark" :data-tip="t('side.addBookmark')" @click="run('addBookmark')"><G n="IconAdd" /></button>
       <div id="shortcuts">
-        <div v-for="(s, i) in user.bookmarks" :key="s.path" class="nav-row" :class="{ cur: cur === s.path }" :data-go="s.path" :data-bm="i" @click="F.go(s.path)" @contextmenu.prevent.stop="bookmarkMenu($event, s)">
-          <G :n="s.g" /><span>{{ s.name }}</span><button class="unpin" :data-unpin="i" :data-tip="t('side.unpin')" :aria-label="t('side.unpinLabel', { name: s.name })" @click.stop="unpin(s)"><G n="IconPin" /></button>
-        </div>
-        <div class="nav-row" data-run="openTrash" @click="run('openTrash')"><G n="IconTrash" /><span>{{ t('side.trash') }}</span><span class="meta glim-num">{{ trash.items.length }}</span></div>
+        <SidebarRow v-for="(s, i) in user.bookmarks" :key="s.path" :label="s.name" :glyph="glyphComponent(s.g)" :active="cur === s.path" :data-go="s.path" :data-bm="i" @click="F.go(s.path)" @contextmenu.prevent.stop="bookmarkMenu($event, s)">
+          <template #after><button class="unpin" :data-unpin="i" :data-tip="t('side.unpin')" :aria-label="t('side.unpinLabel', { name: s.name })" @click.stop="unpin(s)"><G n="IconPin" /></button></template>
+        </SidebarRow>
+        <SidebarRow :label="t('side.trash')" :glyph="glyphComponent('IconTrash')" data-run="openTrash" @click="run('openTrash')"><template #after><span class="meta glim-num">{{ trash.items.length }}</span></template></SidebarRow>
         <Render v-for="(row, k) in extend.sideRows" :key="k" :node="row()" />
       </div>
     </Card>
     <Card class="side-card side-tree" :title="t('side.tree')">
       <div id="tree">
-        <div v-for="{ k, depth, open } in rows" :key="k.path" class="nav-row tree-row" :class="{ cur: cur === k.path }" :style="{ paddingLeft: `${0.3 + depth * 0.85}rem` }"
+        <SidebarRow v-for="{ k, depth, open } in rows" :key="k.path" class="tree-row" :style="{ paddingInlineStart: `${0.3 + depth * 0.85}rem` }" :label="k.label || k.name" :glyph="glyphComponent(glyphOf(k, open))" :active="cur === k.path"
           :data-go="k.path" :data-tip="k.remote" @click="F.go(k.path)" @contextmenu.prevent.stop="menu($event.clientX, $event.clientY, folderItems(k.path))">
-          <button v-if="k.hasDirs" class="tree-tog" :class="{ open }" :data-tog="k.path" :aria-label="open ? t('side.collapse') : t('side.expand')" @click.stop="toggle(k.path)"><G n="IconExpand" /></button>
-          <span v-else class="tree-tog"></span>
-          <G :n="glyphOf(k, open)" /><span>{{ k.label || k.name }}</span>
-          <Render v-for="(dec, n) in extend.treeDecorators" :key="n" :node="dec(k.path)" />
-          <span v-if="k.free" class="meta glim-num">{{ t('files.free', { size: fmtSize(k.free) }) }}</span>
-        </div>
+          <template #before>
+            <button v-if="k.hasDirs" class="tree-tog" :class="{ open }" :data-tog="k.path" :aria-label="open ? t('side.collapse') : t('side.expand')" @click.stop="toggle(k.path)"><G n="IconExpand" /></button>
+            <span v-else class="tree-tog"></span>
+          </template>
+          <template #after>
+            <Render v-for="(dec, n) in extend.treeDecorators" :key="n" :node="dec(k.path)" />
+            <span v-if="k.free" class="meta glim-num">{{ t('files.free', { size: fmtSize(k.free) }) }}</span>
+          </template>
+        </SidebarRow>
       </div>
     </Card>
   </aside>

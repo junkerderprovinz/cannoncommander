@@ -51,7 +51,7 @@ watch(linkable, (ok) => { if (!ok) props.st.way = props.st.kind; });
     <FieldRowGroup>
       <FieldRow :label="t('transfer.to')"><PathField v-model="st.dest" v-bind="pathField('dest')" /></FieldRow>
       <FieldRow v-if="linkable" :label="t('transfer.way')" :hint="t('transfer.linkTip')"><Selector id="how" v-model="st.way" :items="segItems(ways)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-      <FieldRow :label="t('transfer.clash')" :hint="t('transfer.clashTip')"><Select id="clash" v-model="st.rule" :options="selectOptions(RULES())" rows="menu" /></FieldRow>
+      <FieldRow :label="t('transfer.clash')" :hint="t('transfer.clashTip')"><Select id="clash" v-model="st.rule" :trigger-attrs="{ 'data-val': st.rule }" :options="selectOptions(RULES())" rows="menu" /></FieldRow>
     </FieldRowGroup>
     <details class="xmore"><summary>{{ t('transfer.moreOptions') }}</summary>
       <FieldRow :label="t('transfer.keepAttrs')" :hint="t('transfer.keepAttrsTip')"><Toggle v-model="st.keepAttrs" /></FieldRow>

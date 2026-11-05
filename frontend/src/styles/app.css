@@ -53,35 +53,30 @@ svg { display: block; }
 .side-tree #tree { flex: 1; min-height: 0; overflow: auto; }
 .app.no-side .side { display: none; }
 .glim-eyebrow { padding: 0 .55rem .4rem; display: flex; align-items: center; gap: .4rem; }
-.nav-row { width: 100%; display: flex; align-items: center; gap: .6rem; height: 2.1rem; padding: 0 .55rem; border-radius: var(--radius-control); color: var(--carbon-text); text-align: left; cursor: pointer; }
-.nav-row svg { width: 1.05rem; height: 1.05rem; color: var(--accent-glyph); flex: none; }
-.nav-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.nav-row:hover { background: var(--carbon-hover); }
 .vmeter { width: 2.6rem; height: .35rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); overflow: hidden; flex: none; }
 .vmeter i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
 .vmeter.full i { background: var(--status-fail-solid, #ff6b72); }
-.nav-row .vmeter { margin-left: auto; }
-.nav-row .vmeter + .meta { margin-left: .5rem; }
 .vcell { display: flex; align-items: center; justify-content: flex-end; gap: .5rem; }
 .vcell .vmeter { width: 3.2rem; }
-.nav-row.cur .vmeter { background: color-mix(in srgb, var(--accent-contrast) 22%, transparent); }
-.nav-row.cur .vmeter i { background: var(--accent-contrast); }
-.nav-row .unpin { margin-left: auto; width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border-radius: var(--radius-control); flex: none; opacity: .55; }
-.nav-row .unpin svg { width: .8rem; height: .8rem; color: currentColor; }
-.nav-row:hover .unpin { opacity: 1; }
-.nav-row .unpin:hover { background: var(--carbon-surface3); color: var(--accent-glyph); }
-.nav-row.cur .unpin:hover { background: color-mix(in srgb, var(--accent-contrast) 15%, transparent); color: inherit; }
-.nav-row.cur { background: var(--accent); color: var(--accent-contrast); }
-.nav-row.cur svg { color: var(--accent-contrast); }
-.nav-row .meta { margin-left: auto; font-size: 12px; color: var(--carbon-text-muted); flex: none; }
-.nav-row.cur .meta { color: var(--accent-contrast); }
-.nav-row.drop { outline: 2px dashed var(--accent-ink); outline-offset: -2px; }
+.unpin { width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border-radius: var(--radius-control); flex: none; opacity: .55; }
+.unpin svg { width: .8rem; height: .8rem; color: currentColor; }
+.glim-nav-row:hover .unpin { opacity: 1; }
+.unpin:hover { background: var(--carbon-surface3); color: var(--accent-glyph); }
+.glim-active .unpin:hover { background: color-mix(in srgb, var(--accent-contrast) 15%, transparent); color: inherit; }
+#side .meta { font-size: 12px; font-weight: 400; color: var(--carbon-text-muted); flex: none; }
+#side .glim-active .meta { color: var(--accent-contrast); }
+.glim-nav-row:has(> .drop) { outline: 2px dashed var(--accent-ink); outline-offset: -2px; }
+#side { --nav-row-h: 2.1rem; }
+/* A row keeps its toggle and its pin in every label mode, as this sidebar stays wide. */
+#side .glim-nav-row--centred > .glim-nav-row-slot { display: inline-flex; }
 .tree-row { gap: .3rem; }
 .tree-tog { width: 1.1rem; height: 1.1rem; display: grid; place-items: center; flex: none; border-radius: var(--radius-control); color: var(--carbon-text-muted); }
 .tree-tog svg { width: .7rem; height: .7rem; color: currentColor; transform: rotate(-90deg); transition: transform .12s; }
 .tree-tog.open svg { transform: none; }
 .tree-tog:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
-.nav-row.cur .tree-tog { color: var(--accent-contrast); }
+.glim-active .tree-tog { color: var(--accent-contrast); }
+.glim-active .vmeter { background: color-mix(in srgb, var(--accent-contrast) 22%, transparent); }
+.glim-active .vmeter i { background: var(--accent-contrast); }
 
 .panels { flex: 1; min-width: 0; display: grid; grid-template-columns: 1fr; gap: var(--gut); }
 .app.dual .panels { grid-template-columns: 1fr 1fr; }
@@ -154,7 +149,7 @@ svg { display: block; }
 .citem > .glim-rowmark { position: absolute; top: .65rem; left: .85rem; }
 .gcard .tag { display: none; }
 .glyph .glim-rowmark { width: 1.05rem; height: 1.05rem; }
-.qfilter { flex: 0 1 17rem; min-width: 11rem; height: 1.9rem; width: auto; background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
+.qfilter { position: relative; flex: 0 1 17rem; min-width: 11rem; height: 1.9rem; width: auto; background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
 .quickview { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: .8rem; padding: .25rem; }
 
 .fkeys { display: flex; align-items: center; gap: .45rem; padding: .55rem; overflow-x: auto; }
@@ -184,9 +179,6 @@ svg { display: block; }
 @keyframes cc-hue { to { filter: hue-rotate(360deg); } }
 
 /* Labels, one axis each: buttons, sidebar, tabs and the phone's bottom bar. */
-:root[data-l-sidebar="text"] #side .nav-row > svg { display: none; }
-:root:is([data-l-sidebar="glyph"], [data-l-sidebar="reactive"]) #side .nav-row > span:not(.meta) { display: none; }
-:root[data-l-sidebar="reactive"] #side .nav-row:is(:hover, .cur) > span:not(.meta) { display: inline; }
 :root:is([data-l-tabs="glyph"], [data-l-tabs="reactive"]) .stile > span { display: none; }
 :root[data-l-tabs="reactive"] .stile:is(:hover, .cur) > span { display: inline; }
 :root[data-l-bottombar="text"] .bottombar button > svg { display: none; }

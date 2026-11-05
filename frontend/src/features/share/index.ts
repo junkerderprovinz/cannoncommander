@@ -1,12 +1,13 @@
 // Freigeben: one public link per file or folder, or one for a collection, which the other side sees as a folder. Die
 // Sammelmappe gathers entries from several folders for such a link. Herunterladen sends a file, or a packed folder.
+import { SidebarRow } from '@glimstone/vue';
 import { h, reactive, watch } from 'vue';
 import { on } from '@/api/sse';
 import { type Share, tools } from '@/api/tools';
 import { action, run } from '@/core/actions';
 import { addTo } from '@/core/extend';
 import { fmtSize, now } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { MENUS } from '@/core/menus';
 import { toast } from '@/core/toast';
 import { cancelBtn, closeBtn, win } from '@/core/windows';
@@ -141,7 +142,7 @@ export default function setup() {
   action('collection', { label: () => (basket.length ? t('share.collectionCount', { n: basket.length }) : t('share.collection')), g: 'IconCollector', run: collectionWindow });
   action('download', { label: tl('share.download'), g: 'IconDownload', needs: 'sel', run: download });
   addTo('sideRows', () => (basket.length
-    ? h('div', { class: 'nav-row', 'data-run': 'collection', onClick: () => run('collection') }, [h(G, { n: 'IconCollector' }), h('span', t('share.collection')), h('span', { class: 'meta glim-num' }, String(basket.length))])
+    ? h(SidebarRow, { label: t('share.collection'), glyph: glyphComponent('IconCollector'), 'data-run': 'collection', onClick: () => run('collection') }, { after: () => h('span', { class: 'meta glim-num' }, String(basket.length)) })
     : null));
   const file = MENUS.find(([id]) => id === 'file')![1];
   if (!file.includes('collect')) file.splice(file.indexOf('share') + 1, 0, 'collect', 'collection');

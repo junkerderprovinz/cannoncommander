@@ -58,6 +58,6 @@ module.exports = async (page, shot) => {
   await page.keyboard.press('Escape'); await page.evaluate(() => closeMenu());
   await page.evaluate(() => { Files.go('/mnt/user/downloads', 0); CC.run('selectAll'); CC.run('copy'); }); await wait();
   await page.click('#clash'); await wait();
-  console.log('clash menu:', await page.evaluate(() => $$('#menu button').map(b => `${b.innerText.trim()}${b.querySelector('svg') ? '+g' : ''}${b.classList.contains('on') ? '(on)' : ''}`).join(' | ')));
+  console.log('clash menu:', await page.evaluate(() => $$('#menu :is(button, [role=option])').map(b => `${b.innerText.trim()}${b.querySelector('svg') ? '+g' : ''}${b.classList.contains('on') ? '(on)' : ''}`).join(' | ')));
   await shot('r19-farbe-4-clash');
 };

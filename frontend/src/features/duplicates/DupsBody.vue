@@ -125,12 +125,12 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
 </script>
 
 <template>
-  <SubCard class="bk-form"><div class="bk-grid2">
-    <FieldRowGroup>
+  <SubCard class="bk-form">
+    <FieldRowGroup class="bk-fields2">
       <FieldRow :label="t('duplicates.in')"><PathField v-model="where" v-bind="pathField('u-in')" /></FieldRow>
       <FieldRow :label="t('duplicates.by')" :hint="t('duplicates.byTip')"><Selector id="u-by" v-model="by" :items="segItems(BY)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     </FieldRowGroup>
-  </div></SubCard>
+  </SubCard>
   <SubCard class="bk-fill bk-dupwell">
     <div class="bk-tools"><span id="u-sum" class="glim-eyebrow">{{ sum }}</span>
       <Button :label="t('duplicates.keepNew')" label-key="IconLatest" data-bk-keep="new" :disabled="!res?.groups.length" @click="keep('new')" />
