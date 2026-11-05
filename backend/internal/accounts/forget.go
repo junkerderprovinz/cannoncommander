@@ -12,6 +12,7 @@ import (
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
@@ -47,6 +48,9 @@ func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 	if err := trash.For(h.deps).Disown(u.Username); err != nil {
 		return err
 	}
+	if err := fileops.For(h.deps).ForgetOwner(r.Context(), u.Username); err != nil {
+		return err
+	}
 	if err := h.svc.rules.dropWho(r.Context(), u.Username); err != nil {
 		return err
 	}
@@ -70,7 +74,8 @@ func (h handlers) moveName(ctx context.Context, from, to string) error {
 	if m := jobs.For(h.deps); m != nil {
 		jobErr = m.Rename(from, to)
 	}
-	return errors.Join(h.svc.rules.renameWho(ctx, from, to), jobErr, undo.For(h.deps).Rename(from, to), trash.For(h.deps).Rename(from, to))
+	return errors.Join(h.svc.rules.renameWho(ctx, from, to), jobErr, undo.For(h.deps).Rename(from, to), trash.For(h.deps).Rename(from, to),
+		fileops.For(h.deps).RenameOwner(ctx, from, to))
 }
 
 func forgetRows(ctx context.Context, h handlers, userID uint64) error {

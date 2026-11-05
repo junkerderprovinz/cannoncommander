@@ -612,6 +612,26 @@ func (s *Service) dropUpload(ctx context.Context, row uploadRow) error {
 	return s.deleteUpload(ctx, row.id)
 }
 
+// ForgetOwner gives up the uploads of a user who is gone. A new account of that
+// name would otherwise go on with them.
+func (s *Service) ForgetOwner(ctx context.Context, owner string) error {
+	rows, err := s.uploadRows(ctx, `WHERE owner = ? AND share = ''`, owner)
+	if err != nil {
+		return err
+	}
+	var errs []error
+	for _, row := range rows {
+		errs = append(errs, s.dropUpload(ctx, row))
+	}
+	return errors.Join(errs...)
+}
+
+// RenameOwner hands the uploads of a user over to their new login name.
+func (s *Service) RenameOwner(ctx context.Context, from, to string) error {
+	_, err := s.deps.DB.ExecContext(ctx, `UPDATE uploads SET owner = ? WHERE owner = ? AND share = ''`, to, from)
+	return err
+}
+
 func (s *Service) deleteUpload(ctx context.Context, id string) error {
 	_, err := s.deps.DB.ExecContext(ctx, `DELETE FROM uploads WHERE id = ?`, id)
 	return err
