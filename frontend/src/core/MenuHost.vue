@@ -10,6 +10,6 @@ const items = computed(() => (menuState.list ? toGlim(menuState.list) : []));
 </script>
 
 <template>
-  <ContextMenu v-if="menuState.list" :key="menuState.seq" :x="menuState.x" :y="menuState.y" :items="items" :above="menuState.above"
+  <ContextMenu v-if="menuState.list" id="menu" :key="menuState.seq" :x="menuState.x" :y="menuState.y" :items="items" :above="menuState.above"
     :opener="menuState.anchor" :label="t('menus.label')" @close="closeMenu" />
 </template>

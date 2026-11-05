@@ -126,7 +126,7 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
 
 <template>
   <SubCard class="bk-form">
-    <FieldRowGroup class="bk-fields2">
+    <FieldRowGroup :columns="2">
       <FieldRow :label="t('duplicates.in')"><PathField v-model="where" v-bind="pathField('u-in')" /></FieldRow>
       <FieldRow :label="t('duplicates.by')" :hint="t('duplicates.byTip')"><Selector id="u-by" v-model="by" :items="segItems(BY)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     </FieldRowGroup>

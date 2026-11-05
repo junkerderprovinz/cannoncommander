@@ -67,9 +67,6 @@ svg { display: block; }
 #side .glim-active .meta { color: var(--accent-contrast); }
 .glim-nav-row:has(> .drop) { outline: 2px dashed var(--accent-ink); outline-offset: -2px; }
 #side { --nav-row-h: 2.1rem; }
-/* A row keeps its toggle and its pin in every label mode, as this sidebar stays wide. */
-#side .glim-nav-row--centred > .glim-nav-row-slot { display: inline-flex; }
-.tree-row { gap: .3rem; }
 .tree-tog { width: 1.1rem; height: 1.1rem; display: grid; place-items: center; flex: none; border-radius: var(--radius-control); color: var(--carbon-text-muted); }
 .tree-tog svg { width: .7rem; height: .7rem; color: currentColor; transform: rotate(-90deg); transition: transform .12s; }
 .tree-tog.open svg { transform: none; }
