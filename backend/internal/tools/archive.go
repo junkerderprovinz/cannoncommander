@@ -147,7 +147,7 @@ func runPack(ctx context.Context, run *jobs.Run) error {
 			return err
 		}
 		rightsBase = path.Dir(loc.Path)
-		bytes, files, err := jobs.TreeSize(ctx, filepath.Join(st.Base, it.Name))
+		bytes, files, err := jobs.VisibleSize(ctx, fsys, u, loc, packPerm)
 		if err != nil {
 			return err
 		}
@@ -392,8 +392,7 @@ type TestArchiveParams struct {
 }
 
 type testStored struct {
-	Real   map[int]string `json:"real"`
-	Secret string         `json:"secret,omitempty"`
+	Secret string `json:"secret,omitempty"`
 }
 
 // TestResult is the outcome of testing one archive.
@@ -406,6 +405,8 @@ type TestResult struct {
 	Password bool `json:"password,omitempty"`
 }
 
+const testPerm = ccfs.View | ccfs.Download
+
 func prepareTestArchive(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
 	var p TestArchiveParams
 	if err := jobs.Decode(raw, &p); err != nil {
@@ -414,7 +415,7 @@ func prepareTestArchive(_ context.Context, d v1.Deps, u *users.User, raw json.Ra
 	if len(p.Paths) == 0 {
 		return nil, badRequest("paths are required")
 	}
-	st := testStored{Real: map[int]string{}, Secret: keepSecret(p.Password)}
+	st := testStored{Secret: keepSecret(p.Password)}
 	plan := &jobs.Plan{}
 	for i, a := range p.Paths {
 		loc, _, err := file(d.FS, u, a, ccfs.View|ccfs.Download)
@@ -424,7 +425,6 @@ func prepareTestArchive(_ context.Context, d v1.Deps, u *users.User, raw json.Ra
 		if archives.FormatOf(loc.Real) == "" {
 			return nil, badRequest(path.Base(loc.Path) + " is not an archive that can be tested")
 		}
-		st.Real[i] = loc.Real
 		plan.Items = append(plan.Items, jobs.Item{Seq: i, Path: loc.Path, Name: path.Base(loc.Path)})
 	}
 	plan.Params = st
@@ -444,12 +444,22 @@ func runTestArchive(ctx context.Context, run *jobs.Run) error {
 		if it.State != jobs.ItemPending && it.State != jobs.ItemRunning {
 			continue
 		}
-		if info, err := os.Stat(st.Real[it.Seq]); err == nil {
+		loc, _, err := run.Reach(it.Path, testPerm)
+		if err != nil {
+			run.Finish(it.Seq, jobs.ItemFailed, err)
+			results = append(results, TestResult{Path: it.Path})
+			continue
+		}
+		if info, err := os.Stat(loc.Real); err == nil {
 			run.Measure(it.Seq, info.Size(), 1)
 		}
+		run.Guard(func() error {
+			_, _, err := run.Reach(it.Path, testPerm)
+			return err
+		})
 		run.Begin(it.Seq)
 		run.Current(it.Name)
-		n, err := archives.Test(st.Real[it.Seq], archives.Options{Password: secret(st.Secret)}, progress(ctx, run))
+		n, err := archives.Test(loc.Real, archives.Options{Password: secret(st.Secret)}, progress(ctx, run))
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}

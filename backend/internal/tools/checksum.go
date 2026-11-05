@@ -395,7 +395,6 @@ type VerifyParams struct {
 
 type verifyStored struct {
 	Lines []SumLine `json:"lines"`
-	Real  []string  `json:"real"`
 }
 
 // Checked is the outcome for one line: ok, mismatch, missing or bad.
@@ -407,6 +406,8 @@ type Checked struct {
 }
 
 const maxSumFile = 16 << 20
+
+const verifyPerm = ccfs.View | ccfs.Download
 
 func prepareVerify(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
 	var p VerifyParams
@@ -434,7 +435,7 @@ func prepareVerify(_ context.Context, d v1.Deps, u *users.User, raw json.RawMess
 	if len(lines) == 0 {
 		return nil, badRequest("there are no checksums in it")
 	}
-	st := verifyStored{Lines: lines, Real: make([]string, len(lines))}
+	st := verifyStored{Lines: lines}
 	plan := &jobs.Plan{Name: listName}
 	for i, l := range lines {
 		it := jobs.Item{Seq: i, Name: l.Name}
@@ -444,7 +445,7 @@ func prepareVerify(_ context.Context, d v1.Deps, u *users.User, raw json.RawMess
 				p = path.Join(dir, p)
 			}
 			if loc, _, err := file(d.FS, u, p, ccfs.View|ccfs.Download); err == nil {
-				it.Path, st.Real[i] = loc.Path, loc.Real
+				it.Path = loc.Path
 			}
 		}
 		if it.Name == "" {
@@ -465,8 +466,11 @@ func runVerify(ctx context.Context, run *jobs.Run) error {
 		return err
 	}
 	for _, it := range pending(run) {
-		if real := st.Real[it.Seq]; real != "" {
-			if info, err := os.Stat(real); err == nil {
+		if it.Path == "" {
+			continue
+		}
+		if loc, _, err := run.Reach(it.Path, verifyPerm); err == nil {
+			if info, err := os.Stat(loc.Real); err == nil {
 				run.Measure(it.Seq, info.Size(), 1)
 			}
 		}
@@ -479,9 +483,9 @@ func runVerify(ctx context.Context, run *jobs.Run) error {
 		}
 	}
 	for _, it := range run.Items() {
-		l, real := st.Lines[it.Seq], st.Real[it.Seq]
+		l := st.Lines[it.Seq]
 		checked[it.Seq].Path = it.Path
-		if l.Bad != "" || real == "" {
+		if l.Bad != "" || it.Path == "" {
 			if it.State == jobs.ItemPending {
 				run.Finish(it.Seq, jobs.ItemSkipped, nil)
 			}
@@ -493,9 +497,19 @@ func runVerify(ctx context.Context, run *jobs.Run) error {
 			run.Finish(it.Seq, jobs.ItemSkipped, nil)
 			continue
 		}
+		loc, _, err := run.Reach(it.Path, verifyPerm)
+		if err != nil {
+			checked[it.Seq].Path = ""
+			run.Finish(it.Seq, jobs.ItemFailed, err)
+			continue
+		}
+		run.Guard(func() error {
+			_, _, err := run.Reach(it.Path, verifyPerm)
+			return err
+		})
 		run.Begin(it.Seq)
 		run.Current(it.Name)
-		sum, err := hashFile(ctx, run, a, real)
+		sum, err := hashFile(ctx, run, a, loc.Real)
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
