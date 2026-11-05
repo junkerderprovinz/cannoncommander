@@ -126,7 +126,7 @@
     "outside": "Lies outside the area {scope}.", "noneReadonly": "No rule fits, the role only allows reading.", "noneScope": "No rule fits, the area applies.",
     "byRule": "Rule {n}: {who}, {path}, {rule}.",
     "appliesTo": "Applies to", "user": "User", "groupWord": "Group", "all": "Everybody", "pathOrPattern": "Path or pattern", "pathPh": "/mnt/user/backups or *.tmp",
-    "pathTip": "A path applies to the folder and everything in it. A pattern with a star fits names anywhere, such as *.partial*.",
+    "pathTip": "A path applies to the folder and everything in it, and the folder above it can then not be deleted or moved. A pattern with a star fits names anywhere, such as *.partial*. Such files go along when their folder is deleted or moved, and copying leaves them out. A pattern with a slash, such as appdata/*/cache, works like a path.",
     "rule": "Rule", "ruleTip": "Allow lifts a rule further down, for a subfolder for example. The first rule that fits wins.",
     "needGroup": "Add a group first", "needPath": "The path or pattern is still missing", "noPath": "There is no such path. For a pattern use a star, such as *.tmp",
     "readOnlySource": "The whole source is set to read only."

@@ -521,7 +521,7 @@ func (p SyncParams) mayDo(ctx context.Context, fsys *ccfs.Resolver, u *users.Use
 	if dst, err = fsys.Entry(u, to, s.writePerm()); err != nil || s.Act == "copy" {
 		return src, dst, err
 	}
-	return src, dst, fsys.Whole(ctx, u, dst, s.writePerm())
+	return src, dst, fsys.Carry(ctx, u, dst, s.writePerm())
 }
 
 const syncReadPerm = ccfs.View | ccfs.Download

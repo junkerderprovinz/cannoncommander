@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"path"
+	"path/filepath"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
@@ -47,6 +48,9 @@ func mountAPIv1(router *http.ServeMux) error {
 	resolver, err := ccfs.FromSettings(&settings.Config, rules, devices...)
 	if err != nil {
 		return err
+	}
+	if dbPath := settings.Config.Server.DatabaseV2.Path; dbPath != "" {
+		resolver = resolver.WithDataFolder(filepath.Dir(dbPath))
 	}
 	index := fsindex.Scanned()
 	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index, Users: currentUser}

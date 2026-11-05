@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io/fs"
 	"os"
+	pathpkg "path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -17,8 +18,11 @@ import (
 
 // Run is what a kind sees of its job while it works.
 type Run struct {
-	m *Manager
-	j *job
+	m     *Manager
+	j     *job
+	guard func() error
+	// pauses is how many pauses of the job the guard has answered for.
+	pauses int
 }
 
 // ID returns the job id.
@@ -61,6 +65,16 @@ func (r *Run) Entry(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error
 		return ccfs.Location{}, nil, err
 	}
 	loc, err := r.m.deps.FS.Entry(u, p, perm)
+	return loc, u, err
+}
+
+// EntryCarried is ccfs.EntryCarried for the owner as they are now.
+func (r *Run) EntryCarried(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error) {
+	u, err := r.User()
+	if err != nil {
+		return ccfs.Location{}, nil, err
+	}
+	loc, err := r.m.deps.FS.EntryCarried(u, p, perm)
 	return loc, u, err
 }
 
@@ -162,7 +176,19 @@ func (r *Run) Current(name string) {
 // Wait blocks while the job may not move: paused, waiting for its turn or
 // held for a parity check. It is the pause point for work that does not
 // move bytes.
-func (r *Run) Wait(ctx context.Context) error { return r.m.gate(ctx, r.j) }
+func (r *Run) Wait(ctx context.Context) error { return r.gate(ctx) }
+
+// Guard sets what is asked again after a wait for the turn, which can take days
+// and outlast the rights the work started on. Its error ends the wait.
+func (r *Run) Guard(f func() error) { r.guard = f }
+
+func (r *Run) gate(ctx context.Context) error {
+	waited, err := r.m.held(ctx, r.j, &r.pauses)
+	if err == nil && waited && r.guard != nil {
+		return r.guard()
+	}
+	return err
+}
 
 // Transfer is the pause point between two chunks of a copy. It waits for
 // the turn, keeps to the speed limits of the job and of all jobs, and
@@ -170,7 +196,7 @@ func (r *Run) Wait(ctx context.Context) error { return r.m.gate(ctx, r.j) }
 func (r *Run) Transfer(ctx context.Context, n int) error {
 	for n > 0 {
 		step := min(n, Chunk)
-		if err := r.m.gate(ctx, r.j); err != nil {
+		if err := r.gate(ctx); err != nil {
 			return err
 		}
 		if err := r.j.limiter.WaitN(ctx, step); err != nil {
@@ -199,7 +225,7 @@ func ctxOr(ctx context.Context, err error) error {
 // Advance waits for the turn and counts work that is not held to a speed
 // limit, such as files that are deleted or skipped.
 func (r *Run) Advance(ctx context.Context, bytes, files int64) error {
-	if err := r.m.gate(ctx, r.j); err != nil {
+	if err := r.gate(ctx); err != nil {
 		return err
 	}
 	r.m.mu.Lock()
@@ -286,12 +312,35 @@ func (r *Run) SetResult(v any) {
 // TreeSize walks path without following links and returns the bytes of
 // its files and how many entries there are below and at path.
 func TreeSize(ctx context.Context, path string) (bytes, files int64, err error) {
+	return treeSize(ctx, path, nil)
+}
+
+// VisibleSize is TreeSize of what u holds perm on, for work that leaves the rest
+// out, so that a total tells nothing about what is hidden.
+func VisibleSize(ctx context.Context, fsys *ccfs.Resolver, u *users.User, loc ccfs.Location, perm ccfs.Perm) (bytes, files int64, err error) {
+	return treeSize(ctx, loc.Real, func(p string) bool {
+		rel, err := filepath.Rel(loc.Real, p)
+		if err != nil {
+			return false
+		}
+		_, err = fsys.Check(u, pathpkg.Join(loc.Path, filepath.ToSlash(rel)), perm)
+		return err == nil
+	})
+}
+
+func treeSize(ctx context.Context, path string, keep func(string) bool) (bytes, files int64, err error) {
 	err = filepath.WalkDir(path, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if ctx.Err() != nil {
 			return ctx.Err()
+		}
+		if keep != nil && !keep(p) {
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
 		}
 		files++
 		if d.Type().IsRegular() {

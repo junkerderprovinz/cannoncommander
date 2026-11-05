@@ -52,7 +52,7 @@ func undoRename(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage
 	if err != nil {
 		return err
 	}
-	if err := s.fs.Whole(context.Background(), u, to, ccfs.Modify); err != nil {
+	if err := s.fs.Carry(context.Background(), u, to, ccfs.Modify); err != nil {
 		return err
 	}
 	from, err := s.newEntry(u, data.From)
@@ -128,7 +128,7 @@ func undoCopy(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 	for _, p := range slices.Backward(data.Created) {
 		loc, u, err := run.Entry(p, ccfs.Delete)
 		if err == nil {
-			err = s.fs.Whole(ctx, u, loc, ccfs.Delete)
+			err = s.fs.Carry(ctx, u, loc, ccfs.Delete)
 		}
 		if err == nil {
 			err = jobs.RemoveTree(ctx, run, loc.Real)
@@ -157,16 +157,16 @@ func undoMove(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 	t := &transfer{s: s, run: run, move: true, keep: true, srcPerm: srcPermFor(true), dstPerm: ccfs.Create}
 	var errs []error
 	for _, m := range slices.Backward(data.Moved) {
-		to, u, err := run.Entry(m.To, t.srcPerm)
+		to, u, err := run.EntryCarried(m.To, t.srcPerm)
 		if err == nil {
 			t.u = u
-			err = s.fs.Whole(ctx, u, to, t.srcPerm)
+			err = s.fs.Carry(ctx, u, to, t.srcPerm)
 		}
 		if err != nil {
 			errs = append(errs, err)
 			continue
 		}
-		from, err := s.fs.Entry(u, m.From, t.dstPerm)
+		from, err := s.fs.EntryCarried(u, m.From, t.dstPerm)
 		if err == nil {
 			err = os.MkdirAll(filepath.Dir(from.Real), 0o777)
 		}

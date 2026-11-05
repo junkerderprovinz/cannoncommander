@@ -44,6 +44,16 @@ type Rules interface {
 // A user sees the virtual folders and the folders above their scope only
 // as far as they lead to something they may open, and only for reading.
 func (r *Resolver) Check(u *users.User, p string, perm Perm) (Location, error) {
+	return r.check(u, p, perm, false)
+}
+
+// CheckCarried is Check for an entry that goes along with its folder, where a
+// pattern that hides by name alone does not count.
+func (r *Resolver) CheckCarried(u *users.User, p string, perm Perm) (Location, error) {
+	return r.check(u, p, perm, true)
+}
+
+func (r *Resolver) check(u *users.User, p string, perm Perm, carried bool) (Location, error) {
 	loc, err := r.Resolve(p)
 	if err != nil {
 		return Location{}, err
@@ -51,7 +61,7 @@ func (r *Resolver) Check(u *users.User, p string, perm Perm) (Location, error) {
 	if u == nil {
 		return Location{}, ErrForbidden
 	}
-	if reservedPath(loc.Path) {
+	if reservedPath(loc.Path) || r.isClosed(loc.Path) {
 		if perm&writePerms != 0 {
 			return Location{}, ErrForbidden
 		}
@@ -83,7 +93,13 @@ func (r *Resolver) Check(u *users.User, p string, perm Perm) (Location, error) {
 	if !holds(granted, perm) {
 		return Location{}, ErrForbidden
 	}
-	switch r.effect(u, loc.Path) {
+	var effect Effect
+	if carried {
+		effect = r.carriedEffect(u, loc.Path)
+	} else {
+		effect = r.effect(u, loc.Path)
+	}
+	switch effect {
 	case Hidden:
 		return Location{}, ErrForbidden
 	case ReadOnly:
@@ -97,7 +113,7 @@ func (r *Resolver) Check(u *users.User, p string, perm Perm) (Location, error) {
 // Visible reports whether u may see the entry name inside the folder dir,
 // which the caller already passed through Check.
 func (r *Resolver) Visible(u *users.User, dir Location, name string) bool {
-	if u == nil || Reserved(name) {
+	if u == nil || Reserved(name) || r.isClosed(path.Join(dir.Path, name)) {
 		return false
 	}
 	if dir.Virtual() {
@@ -158,7 +174,17 @@ func (r *Resolver) Landed(u *users.User, p string, perm Perm) (Location, error) 
 // and can go away wherever it leads. Only the folders on the way are followed,
 // and the location it returns is the one that leaves.
 func (r *Resolver) Entry(u *users.User, p string, perm Perm) (Location, error) {
-	loc, err := r.Check(u, p, perm)
+	return r.entry(u, p, perm, false)
+}
+
+// EntryCarried is Entry for something the app itself took along with its folder
+// and now has to find again.
+func (r *Resolver) EntryCarried(u *users.User, p string, perm Perm) (Location, error) {
+	return r.entry(u, p, perm, true)
+}
+
+func (r *Resolver) entry(u *users.User, p string, perm Perm, carried bool) (Location, error) {
+	loc, err := r.check(u, p, perm, carried)
 	if err != nil {
 		return loc, err
 	}
@@ -169,7 +195,7 @@ func (r *Resolver) Entry(u *users.User, p string, perm Perm) (Location, error) {
 	if err != nil || landed.Path == loc.Path {
 		return loc, err
 	}
-	return r.Check(u, landed.Path, perm)
+	return r.check(u, landed.Path, perm, carried)
 }
 
 // entryAt is loc with the links on the way to it followed, but not the last.
@@ -191,20 +217,64 @@ type belowRules interface {
 	Below(u *users.User, p string) bool
 }
 
-// Whole checks perm on everything below loc. A rule can name one entry deep
-// inside a folder, and an operation on the folder would take that entry past
-// its rule. Links are not followed, since such operations take them as links.
+// carryRules is what a rule book can say about entries that go along with a
+// folder. Whatever hides by name alone goes with it, as in other file managers,
+// while a rule on a path protects somebody's data from being taken through a
+// parent.
+type carryRules interface {
+	CarryEffect(u *users.User, p string) Effect
+	CarryBelow(u *users.User, p string) bool
+}
+
+// Whole checks perm on everything below loc, for an operation that hands the
+// folder to something that cannot leave an entry out. A rule can name one entry
+// deep inside a folder. Links are not followed, since such operations take them
+// as links.
 func (r *Resolver) Whole(ctx context.Context, u *users.User, loc Location, perm Perm) error {
-	if r.rules == nil || loc.Virtual() || loc.InArchive() {
+	if loc.Virtual() || loc.InArchive() {
 		return nil
 	}
 	top, err := r.entryAt(loc)
 	if err != nil {
 		return err
 	}
+	if r.holdsClosed(top.Path) {
+		return ErrProtected
+	}
+	if r.rules == nil {
+		return nil
+	}
 	if b, ok := r.rules.(belowRules); ok && !b.Below(u, top.Path) {
 		return nil
 	}
+	return r.walk(ctx, u, top, perm, false)
+}
+
+// Carry checks that loc can be deleted, moved or renamed with all it holds. An
+// entry hidden by a pattern on its name goes along, while a rule on a path keeps
+// the folder where it is, and so does a read rule of either kind.
+func (r *Resolver) Carry(ctx context.Context, u *users.User, loc Location, perm Perm) error {
+	b, ok := r.rules.(carryRules)
+	if !ok {
+		return r.Whole(ctx, u, loc, perm)
+	}
+	if loc.Virtual() || loc.InArchive() {
+		return nil
+	}
+	top, err := r.entryAt(loc)
+	if err != nil {
+		return err
+	}
+	if r.holdsClosed(top.Path) {
+		return ErrProtected
+	}
+	if !b.CarryBelow(u, top.Path) {
+		return nil
+	}
+	return r.walk(ctx, u, top, perm, true)
+}
+
+func (r *Resolver) walk(ctx context.Context, u *users.User, top Location, perm Perm, carried bool) error {
 	return filepath.WalkDir(top.Real, func(real string, d fs.DirEntry, err error) error {
 		// An entry that went away meanwhile needs no right.
 		if errors.Is(err, fs.ErrNotExist) {
@@ -227,7 +297,7 @@ func (r *Resolver) Whole(ctx context.Context, u *users.User, loc Location, perm 
 		if err != nil {
 			return err
 		}
-		if _, err := r.Check(u, path.Join(top.Path, filepath.ToSlash(rel)), perm); err != nil {
+		if _, err := r.check(u, path.Join(top.Path, filepath.ToSlash(rel)), perm, carried); err != nil {
 			return ErrProtected
 		}
 		return nil
@@ -244,6 +314,18 @@ func (r *Resolver) effect(u *users.User, p string) Effect {
 		p = outer
 	}
 	return r.rules.Effect(u, p)
+}
+
+// carriedEffect is effect for an entry that goes along with its folder.
+func (r *Resolver) carriedEffect(u *users.User, p string) Effect {
+	b, ok := r.rules.(carryRules)
+	if !ok {
+		return r.effect(u, p)
+	}
+	if outer, _, found := strings.Cut(p, ArchiveSep); found {
+		p = outer
+	}
+	return b.CarryEffect(u, p)
 }
 
 // reaches reports whether some place u may open lies at or below p, or p
