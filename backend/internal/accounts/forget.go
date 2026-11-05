@@ -20,7 +20,7 @@ import (
 )
 
 // ownTables are the tables of this package with rows per user.
-var ownTables = []string{"sessions", "account_profiles", "recovery_codes", "token_use"}
+var ownTables = []string{"sessions", "account_profiles", "recovery_codes", "token_use", "oidc_identities"}
 
 // deleteUser removes an account with everything that hangs on it: shares,
 // jobs, undo steps, rules, settings and sessions. Files stay where they are,
