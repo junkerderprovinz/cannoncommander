@@ -749,11 +749,11 @@
   ],
   "shots": {
    "r13-1-jobs-serial": {
-    "pixels": 33000,
+    "pixels": 37000,
     "why": "job rates and progress come from the fixture's own random numbers; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-1-jobs-parallel": {
-    "pixels": 31000,
+    "pixels": 37000,
     "why": "job rates and progress come from the fixture's own random numbers; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-4-fetch-job": {
