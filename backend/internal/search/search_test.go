@@ -457,6 +457,9 @@ func (x *folderIndex) FolderSize(_ *ccfs.Source, dir string) (int64, bool) {
 
 func (x *folderIndex) Totals(*ccfs.Source, string) (int64, int64, bool) { return 0, 0, false }
 func (x *folderIndex) Refresh(*ccfs.Source, string)                     {}
+func (x *folderIndex) Created(*ccfs.Source, string)                     {}
+func (x *folderIndex) Moved(*ccfs.Source, string, string)               {}
+func (x *folderIndex) Removed(*ccfs.Source, string)                     {}
 
 func TestASizeFilterJudgesFoldersWithoutAQueryForEach(t *testing.T) {
 	f := newFixture(t)
