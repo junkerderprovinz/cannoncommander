@@ -749,10 +749,6 @@
    {
     "pattern": "(?<=^6 existing rerolled: ).*$",
     "why": "the server's share slugs have six characters where the prototype's have four, by decision"
-   },
-   {
-    "pattern": "(?<=share_target ).*$",
-    "why": "the app's manifest offers no way to share files to it yet, as the server has no address for that"
    }
   ],
   "shots": {

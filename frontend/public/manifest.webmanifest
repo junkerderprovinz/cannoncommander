@@ -1,0 +1,23 @@
+{
+  "name": "CannonCommander",
+  "short_name": "Cannon",
+  "description": "Dateimanager für deinen Unraid-Server, mit zwei Fenstern wie Krusader",
+  "lang": "de",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "background_color": "#161616",
+  "theme_color": "#FCC419",
+  "icons": [
+    { "src": "icons/app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/app-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "share_target": {
+    "action": "teilen",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": { "title": "titel", "text": "text", "url": "adresse", "files": [{ "name": "dateien", "accept": ["*/*"] }] }
+  }
+}

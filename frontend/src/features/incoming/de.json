@@ -1,0 +1,12 @@
+{
+  "title": "Geteilte Dateien hochladen",
+  "one": "1 Datei",
+  "many": "{n} Dateien",
+  "more": "und {n} weitere",
+  "target": "Ziel",
+  "targetTip": "In diesen Ordner kommen die Dateien. Gleichnamige Dateien fragt CannonCommander vorher nach.",
+  "upload": "Hochladen",
+  "noFolder": "Diesen Ordner gibt es nicht",
+  "nothing": "Vom Teilen ist nichts angekommen. Probier es bitte noch einmal",
+  "noteName": "Geteilt"
+}

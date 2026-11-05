@@ -45,3 +45,46 @@ func TestEveryUnknownPageOpensTheApp(t *testing.T) {
 		t.Fatalf("health: %d", rec.Code)
 	}
 }
+
+func TestTheAppCanBeInstalledAndTakeShares(t *testing.T) {
+	saved, savedBase := assetFs, settings.Config.Http.BaseURL
+	t.Cleanup(func() { assetFs, settings.Config.Http.BaseURL = saved, savedBase })
+	assetFs = fstest.MapFS{
+		"index.html":           {Data: []byte("<html>app</html>")},
+		"manifest.webmanifest": {Data: []byte(`{"name":"CannonCommander"}`)},
+		"sw.js":                {Data: []byte("addEventListener('fetch', () => {})")},
+		"icons/app-512.png":    {Data: []byte("png")},
+	}
+	settings.Config.Http.BaseURL = "/"
+	router := http.NewServeMux()
+	configureHTTPRouter(router)
+	do := func(method, path string) *httptest.ResponseRecorder {
+		rec := httptest.NewRecorder()
+		router.ServeHTTP(rec, httptest.NewRequest(method, path, nil))
+		return rec
+	}
+
+	for path, kind := range map[string]string{
+		"/manifest.webmanifest": "application/manifest+json",
+		"/sw.js":                "application/javascript; charset=utf-8",
+		"/icons/app-512.png":    "image/png",
+	} {
+		rec := do("GET", path)
+		if rec.Code != http.StatusOK || rec.Header().Get("Content-Type") != kind || rec.Header().Get("Cache-Control") != "no-cache" {
+			t.Errorf("%s: %d %q %q", path, rec.Code, rec.Header().Get("Content-Type"), rec.Header().Get("Cache-Control"))
+		}
+	}
+	if rec := do("GET", "/icons/../index.html"); rec.Code == http.StatusOK && rec.Header().Get("Content-Type") != "text/html; charset=utf-8" {
+		t.Fatalf("an icon path reached another file: %q", rec.Header().Get("Content-Type"))
+	}
+	if rec := do("GET", "/icons/missing.png"); rec.Code != http.StatusNotFound {
+		t.Fatalf("missing icon: %d", rec.Code)
+	}
+	if csp := do("GET", "/").Header().Get("Content-Security-Policy"); !strings.Contains(csp, "worker-src 'self' blob:") {
+		t.Fatalf("the policy keeps the service worker out: %q", csp)
+	}
+	rec := do("POST", "/teilen")
+	if rec.Code != http.StatusSeeOther || rec.Header().Get("Location") != "/" {
+		t.Fatalf("a share before the worker runs: %d %q", rec.Code, rec.Header().Get("Location"))
+	}
+}
