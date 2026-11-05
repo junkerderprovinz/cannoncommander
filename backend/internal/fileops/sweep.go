@@ -4,12 +4,14 @@ import (
 	"context"
 	"os"
 	"path"
+	"slices"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fschange"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 )
 
 // partAge is how long a part file stays without a write before it counts as
@@ -20,6 +22,11 @@ const partAge = 24 * time.Hour
 // sweepParts removes the part files a crash left behind. It finds them through
 // the index, because looking on disk would wake every disk of the array.
 func (s *Service) sweepParts(ctx context.Context) {
+	// A job can wait for an answer or a pause for longer than partAge, with its
+	// part file open. The next round gets to it.
+	if s.jobs != nil && slices.ContainsFunc(s.jobs.List(""), func(j jobs.Job) bool { return j.State.Open() }) {
+		return
+	}
 	rows, err := s.uploadRows(ctx, "")
 	if err != nil {
 		logger.Errorf("part files: %v", err)
@@ -27,7 +34,15 @@ func (s *Service) sweepParts(ctx context.Context) {
 	}
 	open := make(map[string]bool, len(rows))
 	for _, row := range rows {
-		open[partPath(row.path)] = true
+		loc, err := s.fs.Resolve(row.path)
+		if err != nil {
+			continue
+		}
+		// The index knows the place itself, an upload can name it through a link.
+		if landed, err := s.fs.Followed(loc); err == nil {
+			loc = landed
+		}
+		open[partPath(loc.Path)] = true
 	}
 	cutoff := time.Now().Add(-partAge)
 	for _, src := range s.fs.Sources() {
@@ -40,7 +55,7 @@ func (s *Service) sweepParts(ctx context.Context) {
 			if ctx.Err() != nil {
 				return
 			}
-			if !open[p] {
+			if !open[p] && IsPart(path.Base(p)) {
 				s.dropPart(p, cutoff)
 			}
 		}

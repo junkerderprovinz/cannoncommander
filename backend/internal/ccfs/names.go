@@ -63,6 +63,24 @@ func ValidName(name string) bool {
 		!strings.ContainsAny(name, "/\x00") && !strings.Contains(name, ArchiveSep)
 }
 
+// OpenRegular opens a file for reading if it is a plain file, for walks over
+// what the index knows, where a link could be anything by now.
+func OpenRegular(name string) (*os.File, error) {
+	f, err := os.OpenFile(name, os.O_RDONLY|noFollow, 0)
+	if err != nil {
+		return nil, err
+	}
+	info, err := f.Stat()
+	if err == nil && !info.Mode().IsRegular() {
+		err = ErrEscape
+	}
+	if err != nil {
+		f.Close()
+		return nil, err
+	}
+	return f, nil
+}
+
 // OpenPart opens a part file for writing. A part file gets written without a
 // new check of the path, so a link in its place would pass the bytes on to
 // whatever it points at.

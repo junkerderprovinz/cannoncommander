@@ -1,13 +1,11 @@
 package dav
 
 import (
-	"errors"
 	"io/fs"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
-	"path/filepath"
 	"strings"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
@@ -93,9 +91,12 @@ func (s *session) writable(name string) (ccfs.Location, fs.FileInfo, error) {
 
 // removable checks that name may go away. A source itself stays.
 func (s *session) removable(name string, perm ccfs.Perm) (ccfs.Location, error) {
-	loc, err := s.reach(name, perm)
+	loc, err := s.h.deps.FS.Entry(s.u, rooted(name), perm)
 	if err != nil {
 		return loc, err
+	}
+	if closedPath(loc.Path) {
+		return loc, notThere(perm)
 	}
 	if loc.Index == "/" {
 		return loc, ccfs.ErrForbidden
@@ -112,31 +113,7 @@ func (s *session) wholeTree(name string, perm ccfs.Perm) error {
 	if err != nil {
 		return err
 	}
-	err = filepath.WalkDir(top.Real, func(real string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if err := s.ctx.Err(); err != nil {
-			return err
-		}
-		if strings.Contains(d.Name(), ccfs.ArchiveSep) {
-			// The resolver cannot name it, so no rule can either.
-			if d.IsDir() {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-		rel, err := filepath.Rel(top.Real, real)
-		if err != nil {
-			return err
-		}
-		_, err = fsys.Check(s.u, path.Join(top.Path, filepath.ToSlash(rel)), perm)
-		return err
-	})
-	if errors.Is(err, fs.ErrNotExist) {
-		return nil
-	}
-	return err
+	return fsys.Whole(s.ctx, s.u, top, perm)
 }
 
 // rights checks what method takes on name, as far as that is known without

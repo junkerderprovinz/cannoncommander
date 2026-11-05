@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"path"
 	"strings"
 	"sync"
@@ -17,6 +16,7 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 )
@@ -180,7 +180,7 @@ const sniff = 8 << 10
 // findIn looks for needle, in lower case, in the file and returns the line
 // of the first match.
 func findIn(ctx context.Context, real string, needle []byte) (line int, found bool, err error) {
-	fh, err := os.Open(real)
+	fh, err := ccfs.OpenRegular(real)
 	if err != nil {
 		return 0, false, err
 	}

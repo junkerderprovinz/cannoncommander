@@ -263,14 +263,15 @@ func runChecksum(ctx context.Context, run *jobs.Run) error {
 	}
 	fsys := run.Deps().FS
 	for _, it := range run.Items() {
-		if _, err := fsys.Reach(u, it.Path, ccfs.View|ccfs.Download); err != nil {
+		top, err := fsys.Entry(u, it.Path, ccfs.View|ccfs.Download)
+		if err != nil {
 			run.Finish(it.Seq, jobs.ItemFailed, err)
 			continue
 		}
 		root := filepath.Join(st.Base, path.Base(it.Path))
 		var files []string
 		var size int64
-		err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
+		err = filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
@@ -281,7 +282,7 @@ func runChecksum(ctx context.Context, run *jobs.Run) error {
 			if err != nil {
 				return err
 			}
-			if _, err := fsys.Check(u, path.Join(it.Path, filepath.ToSlash(rel)), ccfs.View|ccfs.Download); err != nil {
+			if _, err := fsys.Check(u, path.Join(top.Path, filepath.ToSlash(rel)), ccfs.View|ccfs.Download); err != nil {
 				if d.IsDir() {
 					return filepath.SkipDir
 				}

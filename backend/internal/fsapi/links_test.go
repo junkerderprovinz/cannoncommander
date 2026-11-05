@@ -101,6 +101,42 @@ func TestAFolderPosterBehindALinkStaysHidden(t *testing.T) {
 	}
 }
 
+func TestAnArchiveLeavesOutALinkIntoAPlaceItsUserMayNotRead(t *testing.T) {
+	f := linkedFixture(t, hideFor{"anna", "/mnt/user/fotos/geheim", ccfs.Hidden})
+	put(t, filepath.Join(f.share, "filme", "lohn.txt"), []byte("lohn"))
+	if err := os.Symlink(filepath.Join(f.share, "filme", "lohn.txt"), filepath.Join(f.share, "fotos", "frei", "scope.txt")); err != nil {
+		t.Fatal(err)
+	}
+	put(t, filepath.Join(f.share, "fotos", "geheim", "y.txt"), []byte("geheim"))
+	if err := os.Symlink(filepath.Join(f.share, "fotos", "geheim", "y.txt"), filepath.Join(f.share, "fotos", "frei", "regel.txt")); err != nil {
+		t.Fatal(err)
+	}
+	rec := f.archive(t, "anna", archiveRequest{Paths: []string{"/mnt/user/fotos/frei"}})
+	entries := zipEntries(t, rec)
+	for _, name := range []string{"frei/scope.txt", "frei/regel.txt"} {
+		if _, ok := entries[name]; ok {
+			t.Errorf("%s came along", name)
+		}
+	}
+}
+
+func TestAnArchiveThroughALinkedFolderGoesByTheRulesWhereItLeads(t *testing.T) {
+	f := linkedFixture(t, hideFor{"anna", "/mnt/user/fotos/album/geheim", ccfs.Hidden})
+	put(t, filepath.Join(f.share, "fotos", "album", "offen.txt"), []byte("offen"))
+	put(t, filepath.Join(f.share, "fotos", "album", "geheim", "y.txt"), []byte("geheim"))
+	if err := os.Symlink(filepath.Join(f.share, "fotos"), filepath.Join(f.share, "fotos", "frei", "tor")); err != nil {
+		t.Fatal(err)
+	}
+	rec := f.archive(t, "anna", archiveRequest{Paths: []string{"/mnt/user/fotos/frei/tor/album"}})
+	entries := zipEntries(t, rec)
+	if _, ok := entries["album/offen.txt"]; !ok {
+		t.Errorf("the open file is missing: %v", keys(entries))
+	}
+	if _, ok := entries["album/geheim/y.txt"]; ok {
+		t.Error("the hidden file came along")
+	}
+}
+
 func TestTheBinCannotBeReachedByPath(t *testing.T) {
 	f := newFixture(t)
 	write(t, filepath.Join(f.share, "fotos", ".cc-trash", "id", "x.txt"), 3)

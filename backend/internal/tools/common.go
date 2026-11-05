@@ -29,7 +29,7 @@ func partOf(p string) string {
 // entry checks that p is an existing file or folder inside a source and
 // that u holds perm there.
 func entry(fsys *ccfs.Resolver, u *users.User, p string, perm ccfs.Perm) (ccfs.Location, os.FileInfo, error) {
-	loc, err := fsys.Reach(u, p, perm)
+	loc, err := fsys.Entry(u, p, perm)
 	if err != nil {
 		return loc, nil, err
 	}
@@ -51,7 +51,7 @@ func file(fsys *ccfs.Resolver, u *users.User, p string, perm ccfs.Perm) (ccfs.Lo
 
 // folder checks that p is a folder inside a source where u holds perm.
 func folder(fsys *ccfs.Resolver, u *users.User, p string, perm ccfs.Perm) (ccfs.Location, error) {
-	loc, err := fsys.Reach(u, p, perm)
+	loc, err := fsys.Landed(u, p, perm)
 	if err != nil {
 		return loc, err
 	}

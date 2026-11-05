@@ -132,7 +132,7 @@ func (s server) watch(w http.ResponseWriter, r *http.Request) error {
 	// A tab can still show a folder that was deleted or closed to the user
 	// since. It drops out of the answer instead of failing the other tabs.
 	for _, p := range req.Paths {
-		loc, err := s.fs.Check(u, p, ccfs.View)
+		loc, err := s.fs.Reach(u, p, ccfs.View)
 		if err != nil {
 			continue
 		}

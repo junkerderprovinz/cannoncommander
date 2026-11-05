@@ -228,7 +228,7 @@ func fetch(ctx context.Context, run *jobs.Run, p FetchParams, dest ccfs.Location
 	}
 	name := p.Name
 	if _, params, err := mime.ParseMediaType(resp.Header.Get("Content-Disposition")); err == nil && name == NameFromURL(req.URL) {
-		if n := path.Base(params["filename"]); ccfs.ValidName(n) {
+		if n := path.Base(params["filename"]); ccfs.ValidName(n) && !ccfs.Reserved(n) {
 			name = n
 		}
 	}

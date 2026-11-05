@@ -231,7 +231,10 @@ func runAttrs(ctx context.Context, run *jobs.Run) error {
 		return err
 	}
 	for _, it := range pending(run) {
-		loc, u, err := run.Reach(it.Path, ccfs.Modify)
+		loc, u, err := run.Entry(it.Path, ccfs.Modify)
+		if err == nil {
+			err = p.mayUseSpecialBits(u)
+		}
 		if err == nil {
 			err = run.Deps().FS.Whole(ctx, u, loc, ccfs.Modify)
 		}

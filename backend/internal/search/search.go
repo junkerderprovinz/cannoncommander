@@ -194,6 +194,9 @@ func checkParams(fs *ccfs.Resolver, u *users.User, p Params) (ccfs.Location, err
 	if err := fs.Follows(u, loc, ccfs.View); err != nil {
 		return loc, err
 	}
+	if loc, err = fs.Followed(loc); err != nil {
+		return loc, err
+	}
 	info, err := os.Stat(loc.Real)
 	if err != nil {
 		return loc, err

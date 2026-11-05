@@ -476,7 +476,7 @@ func prepareSync(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMess
 	p.Left, p.Right = l.Path, r.Path
 	plan := &jobs.Plan{Params: p, Name: path.Base(l.Path), Dest: r.Path}
 	for i, s := range p.Steps {
-		if err := p.mayDo(ctx, d.FS, u, s); err != nil {
+		if _, _, err := p.mayDo(ctx, d.FS, u, s); err != nil {
 			return nil, err
 		}
 		base := l.Path
@@ -508,23 +508,20 @@ func (s SyncStep) writePerm() ccfs.Perm {
 	return ccfs.Create
 }
 
-// mayDo checks one step for u. The two folders of a sync passing says nothing
-// about the paths below them, which come from the client.
-func (p SyncParams) mayDo(ctx context.Context, fsys *ccfs.Resolver, u *users.User, s SyncStep) error {
-	src, dst := p.sides(s)
+// mayDo checks one step for u and returns where it reads and writes. The two
+// folders of a sync passing says nothing about the paths below them, which come
+// from the client.
+func (p SyncParams) mayDo(ctx context.Context, fsys *ccfs.Resolver, u *users.User, s SyncStep) (src, dst ccfs.Location, err error) {
+	from, to := p.sides(s)
 	if s.Act != "delete" {
-		if _, err := fsys.Reach(u, src, syncReadPerm); err != nil {
-			return err
+		if src, err = fsys.Entry(u, from, syncReadPerm); err != nil {
+			return src, dst, err
 		}
 	}
-	loc, err := fsys.Reach(u, dst, s.writePerm())
-	if err != nil {
-		return err
+	if dst, err = fsys.Entry(u, to, s.writePerm()); err != nil || s.Act == "copy" {
+		return src, dst, err
 	}
-	if s.Act == "copy" {
-		return nil
-	}
-	return fsys.Whole(ctx, u, loc, s.writePerm())
+	return src, dst, fsys.Whole(ctx, u, dst, s.writePerm())
 }
 
 const syncReadPerm = ccfs.View | ccfs.Download
@@ -535,45 +532,32 @@ func runSync(ctx context.Context, run *jobs.Run) error {
 		return err
 	}
 	fsys := run.Deps().FS
-	l, err := fsys.Resolve(p.Left)
-	if err != nil {
-		return err
-	}
-	r, err := fsys.Resolve(p.Right)
-	if err != nil {
-		return err
-	}
 	for _, it := range pending(run) {
 		s := p.Steps[it.Seq]
-		rel := filepath.FromSlash(s.Rel)
-		srcPath, dstPath := p.sides(s)
-		src, dst := filepath.Join(l.Real, rel), filepath.Join(r.Real, rel)
-		if s.To == "L" {
-			src, dst = dst, src
-		}
 		run.Begin(it.Seq)
 		run.Current(s.Rel)
 		u, err := run.User()
+		var src, dst ccfs.Location
 		if err == nil {
-			err = p.mayDo(ctx, fsys, u, s)
+			src, dst, err = p.mayDo(ctx, fsys, u, s)
 		}
 		if err == nil {
 			if s.Act == "delete" {
-				err = syncDelete(ctx, run, dstPath)
+				err = syncDelete(ctx, run, dst)
 			} else {
-				if size, files, terr := jobs.TreeSize(ctx, src); terr == nil {
+				if size, files, terr := jobs.TreeSize(ctx, src.Real); terr == nil {
 					run.Measure(it.Seq, size, files)
 				}
 				may := func(rel string) bool {
-					if _, err := fsys.Check(u, path.Join(srcPath, rel), syncReadPerm); err != nil {
+					if _, err := fsys.Check(u, path.Join(src.Path, rel), syncReadPerm); err != nil {
 						return false
 					}
-					_, err := fsys.Check(u, path.Join(dstPath, rel), s.writePerm())
+					_, err := fsys.Check(u, path.Join(dst.Path, rel), s.writePerm())
 					return err == nil
 				}
-				err = copyTree(ctx, run, src, dst, "", may)
+				err = copyTree(ctx, run, src.Real, dst.Real, "", may)
 				if err == nil {
-					fschange.Created(dstPath)
+					fschange.Created(dst.Path)
 				}
 			}
 		}
@@ -585,16 +569,12 @@ func runSync(ctx context.Context, run *jobs.Run) error {
 	return nil
 }
 
-func syncDelete(ctx context.Context, run *jobs.Run, p string) error {
+func syncDelete(ctx context.Context, run *jobs.Run, loc ccfs.Location) error {
 	bin := trash.For(run.Deps())
 	if bin == nil {
 		return os.ErrInvalid
 	}
-	loc, err := run.Deps().FS.Resolve(p)
-	if err != nil {
-		return err
-	}
-	_, err = bin.Put(ctx, run.Owner(), loc)
+	_, err := bin.Put(ctx, run.Owner(), loc)
 	if isNotExist(err) {
 		return nil
 	}

@@ -52,6 +52,9 @@ func undoRename(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage
 	if err != nil {
 		return err
 	}
+	if err := s.fs.Whole(context.Background(), u, to, ccfs.Modify); err != nil {
+		return err
+	}
 	from, err := s.newEntry(u, data.From)
 	if errors.Is(err, errExists) {
 		return v1.Errorf(http.StatusConflict, "the old name is taken again")
@@ -123,7 +126,7 @@ func undoCopy(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 	s := For(run.Deps())
 	var errs []error
 	for _, p := range slices.Backward(data.Created) {
-		loc, u, err := run.Reach(p, ccfs.Delete)
+		loc, u, err := run.Entry(p, ccfs.Delete)
 		if err == nil {
 			err = s.fs.Whole(ctx, u, loc, ccfs.Delete)
 		}
@@ -154,7 +157,7 @@ func undoMove(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 	t := &transfer{s: s, run: run, move: true, keep: true, srcPerm: srcPermFor(true), dstPerm: ccfs.Create}
 	var errs []error
 	for _, m := range slices.Backward(data.Moved) {
-		to, u, err := run.Reach(m.To, t.srcPerm)
+		to, u, err := run.Entry(m.To, t.srcPerm)
 		if err == nil {
 			t.u = u
 			err = s.fs.Whole(ctx, u, to, t.srcPerm)
@@ -163,7 +166,7 @@ func undoMove(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 			errs = append(errs, err)
 			continue
 		}
-		from, err := s.fs.Reach(u, m.From, t.dstPerm)
+		from, err := s.fs.Entry(u, m.From, t.dstPerm)
 		if err == nil {
 			err = os.MkdirAll(filepath.Dir(from.Real), 0o777)
 		}
@@ -186,7 +189,7 @@ func undoMove(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 
 // removeMadeFolder leaves the folder alone when something else moved in since.
 func removeMadeFolder(run *jobs.Run, p string) error {
-	loc, _, err := run.Reach(p, ccfs.Delete)
+	loc, _, err := run.Entry(p, ccfs.Delete)
 	if err != nil {
 		return err
 	}

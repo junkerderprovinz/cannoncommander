@@ -46,7 +46,7 @@ func prepareTrash(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMes
 	var items []jobs.Item
 	seen := make(map[string]bool, len(p.Paths))
 	for _, raw := range p.Paths {
-		loc, err := d.FS.Reach(u, raw, ccfs.Delete)
+		loc, err := d.FS.Entry(u, raw, ccfs.Delete)
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +87,7 @@ func runTrash(ctx context.Context, run *jobs.Run) error {
 		if err := run.Wait(ctx); err != nil {
 			return err
 		}
-		loc, u, err := run.Reach(it.Path, ccfs.Delete)
+		loc, u, err := run.Entry(it.Path, ccfs.Delete)
 		if err == nil {
 			err = run.Deps().FS.Whole(ctx, u, loc, ccfs.Delete)
 		}
@@ -149,7 +149,7 @@ func (s *Store) restoreFor(run *jobs.Run, id string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if _, _, err := run.Reach(it.From, ccfs.Create); err != nil {
+	if _, _, err := run.Entry(it.Origin, ccfs.Create); err != nil {
 		return "", err
 	}
 	return s.Restore(id)
