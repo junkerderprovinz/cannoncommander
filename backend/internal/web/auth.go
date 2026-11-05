@@ -88,6 +88,12 @@ func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod
 			return nil, err
 		}
 	}
+	// A name at the identity provider can match a local account it has nothing
+	// to do with, so this comes before anything changes on the account.
+	if userValue.LoginMethod != loginMethod {
+		logger.Debugf("login rejected: user %q attempted %s login but account loginMethod is %q", username, loginMethod, userValue.LoginMethod)
+		return nil, errors.ErrWrongLoginMethod
+	}
 	// Sync admin from current group membership when the auth source sent groups.
 	if groupsPresent {
 		if userValue.Permissions.Admin != isAdmin {
@@ -97,11 +103,6 @@ func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod
 				return nil, err
 			}
 		}
-	}
-	// Verify login method matches
-	if userValue.LoginMethod != loginMethod {
-		logger.Debugf("login rejected: user %q attempted %s login but account loginMethod is %q", username, loginMethod, userValue.LoginMethod)
-		return nil, errors.ErrWrongLoginMethod
 	}
 	// Sync IdP groups into access-control GroupMap (write-through). Skip when the
 	// token/response omitted groups so a missing claim cannot wipe memberships.
