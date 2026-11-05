@@ -18,20 +18,10 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-// Prefer explicit ?auth= query and Authorization header over the session cookie so API
-// clients can authenticate while a revoked browser cookie is present. ?auth= comes before
-// Authorization so server callbacks (e.g. OnlyOffice) with both query session JWT and a
-// third-party Bearer header resolve to our own token.
+// ExtractToken prefers the Authorization header over the session cookie, so
+// API clients can authenticate while a revoked browser cookie is present.
 func ExtractToken(r *http.Request) (string, error) {
 	hasToken := false
-
-	auth := r.URL.Query().Get("auth")
-	if auth != "" {
-		hasToken = true
-		if strings.Count(auth, ".") == 2 {
-			return auth, nil
-		}
-	}
 
 	authHeader := r.Header.Get("Authorization")
 	if authHeader != "" {
@@ -98,6 +88,12 @@ func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod
 			return nil, err
 		}
 	}
+	// A name at the identity provider can match a local account it has nothing
+	// to do with, so this comes before anything changes on the account.
+	if userValue.LoginMethod != loginMethod {
+		logger.Debugf("login rejected: user %q attempted %s login but account loginMethod is %q", username, loginMethod, userValue.LoginMethod)
+		return nil, errors.ErrWrongLoginMethod
+	}
 	// Sync admin from current group membership when the auth source sent groups.
 	if groupsPresent {
 		if userValue.Permissions.Admin != isAdmin {
@@ -107,11 +103,6 @@ func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod
 				return nil, err
 			}
 		}
-	}
-	// Verify login method matches
-	if userValue.LoginMethod != loginMethod {
-		logger.Debugf("login rejected: user %q attempted %s login but account loginMethod is %q", username, loginMethod, userValue.LoginMethod)
-		return nil, errors.ErrWrongLoginMethod
 	}
 	// Sync IdP groups into access-control GroupMap (write-through). Skip when the
 	// token/response omitted groups so a missing claim cannot wipe memberships.

@@ -191,6 +191,14 @@ func (h handlers) arrowLoop(w http.ResponseWriter, r *http.Request) error {
 	if l.Path == rr.Path {
 		return badRequest("both sides are the same folder")
 	}
+	// ArrowLoop knows nothing about the rules, so it gets no folder a rule
+	// names something in.
+	if err := h.fs.Whole(r.Context(), u, l, lperm); err != nil {
+		return err
+	}
+	if err := h.fs.Whole(r.Context(), u, rr, rperm); err != nil {
+		return err
+	}
 	c, err := h.arrowLoopConfig(r.Context())
 	if err != nil {
 		return err

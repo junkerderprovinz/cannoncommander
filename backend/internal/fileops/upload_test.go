@@ -1,6 +1,8 @@
 package fileops_test
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -11,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 )
 
@@ -246,10 +249,13 @@ func TestUploadsBelongToTheirUserAndNeedTheCreateRight(t *testing.T) {
 	if _, code := e.startUpload("jdp", fileops.UploadRequest{Path: "/mnt/user/fotos/a.txt", Size: 1}); code != http.StatusConflict {
 		t.Fatalf("two users on one target: %d", code)
 	}
-	for _, p := range []string{"/mnt/user/../etc/a", "/mnt/user", "/mnt/user/fotos/.a.cc-part"} {
+	for _, p := range []string{"/mnt/user/../etc/a", "/mnt/user"} {
 		if _, code := e.startUpload("anna", fileops.UploadRequest{Path: p, Size: 1}); code != http.StatusBadRequest {
 			t.Fatalf("upload to %s: %d", p, code)
 		}
+	}
+	if _, code := e.startUpload("anna", fileops.UploadRequest{Path: "/mnt/user/fotos/.a.cc-part", Size: 1}); code != http.StatusForbidden {
+		t.Fatalf("upload to a part file: %d", code)
 	}
 }
 
@@ -274,5 +280,33 @@ func TestConcurrentChunksDoNotMixUp(t *testing.T) {
 	}
 	if ok != 1 || e.read("/mnt/user/fotos/a.txt") != "abcd" {
 		t.Fatalf("codes %v", codes)
+	}
+}
+
+func TestAClientLeavingInTheLastStepLeavesTheUploadOpen(t *testing.T) {
+	e := newEnv(t)
+	up, _ := e.startUpload("anna", fileops.UploadRequest{Path: "/mnt/user/fotos/a.txt", Size: 4})
+	u := &users.User{BackendScopes: []users.BackendScope{{Path: e.root, Scope: "/", Permissions: full}}}
+	u.Username = "anna"
+	ctx, leave := context.WithCancel(t.Context())
+	defer leave()
+	_, err := fileops.For(e.deps).UploadChunk(ctx, u, "", up.ID, 0, strings.NewReader("abcd"), &fileops.Landing{
+		Allow: func() error { return nil },
+		Count: func(context.Context, *sql.Tx, int64) error {
+			leave()
+			return nil
+		},
+	})
+	if err == nil {
+		t.Fatal("the upload closed although its transaction ended with the client")
+	}
+	if _, err := os.Stat(e.real("/mnt/user/fotos/a.txt")); !os.IsNotExist(err) {
+		t.Fatal("the file landed while its upload stayed open")
+	}
+	if code, raw := e.chunk("anna", up.ID, 4, ""); code != http.StatusOK {
+		t.Fatalf("finishing: %d %s", code, raw)
+	}
+	if e.read("/mnt/user/fotos/a.txt") != "abcd" {
+		t.Fatal("the content is wrong")
 	}
 }

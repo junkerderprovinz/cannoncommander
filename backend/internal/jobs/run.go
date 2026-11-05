@@ -8,8 +8,11 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // Run is what a kind sees of its job while it works.
@@ -22,7 +25,54 @@ type Run struct {
 func (r *Run) ID() string { return r.j.ID }
 
 // Owner returns the user who started the job.
-func (r *Run) Owner() string { return r.j.Owner }
+func (r *Run) Owner() string {
+	r.m.mu.Lock()
+	defer r.m.mu.Unlock()
+	return r.j.Owner
+}
+
+// User returns the owner as they are now. A job can wait a long time for its
+// turn, for an answer or across a restart, and what its owner could do when it
+// started says little by then.
+func (r *Run) User() (*users.User, error) {
+	if r.m.deps.Users == nil {
+		return nil, ccfs.ErrForbidden
+	}
+	return r.m.deps.Users(r.Owner())
+}
+
+// RequireAdmin fails for a job only admins may run when its owner is no admin
+// anymore.
+func (r *Run) RequireAdmin() error {
+	u, err := r.User()
+	if err != nil {
+		return err
+	}
+	if !u.Permissions.Admin {
+		return ccfs.ErrForbidden
+	}
+	return nil
+}
+
+// Entry is ccfs.Entry for the owner as they are now.
+func (r *Run) Entry(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error) {
+	u, err := r.User()
+	if err != nil {
+		return ccfs.Location{}, nil, err
+	}
+	loc, err := r.m.deps.FS.Entry(u, p, perm)
+	return loc, u, err
+}
+
+// Reach is ccfs.Reach for the owner as they are now.
+func (r *Run) Reach(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error) {
+	u, err := r.User()
+	if err != nil {
+		return ccfs.Location{}, nil, err
+	}
+	loc, err := r.m.deps.FS.Reach(u, p, perm)
+	return loc, u, err
+}
 
 // Deps returns the shared services.
 func (r *Run) Deps() v1.Deps { return r.m.deps }
@@ -51,7 +101,6 @@ func (r *Run) Cancelled() bool {
 func (r *Run) Measure(seq int, bytes, files int64) {
 	r.item(seq, func(it *Item) { it.Bytes, it.Files = bytes, files })
 	r.m.mu.Lock()
-	r.j.recount()
 	r.m.schedule()
 	r.m.mu.Unlock()
 }
@@ -76,8 +125,12 @@ func (r *Run) Finish(seq int, state string, err error) {
 	r.m.mu.Lock()
 	defer r.m.mu.Unlock()
 	r.j.inflightBytes, r.j.inflightFiles = 0, 0
-	r.j.recount()
-	r.m.publishProgress(r.j)
+	r.j.addUp()
+	if time.Since(r.j.publishedAt) >= progressEvery {
+		r.m.publishProgress(r.j)
+	} else {
+		r.m.reportSoon(r.j)
+	}
 }
 
 // SetRef keeps something about an item that the kind needs again after a
@@ -86,16 +139,17 @@ func (r *Run) SetRef(seq int, ref string) {
 	r.item(seq, func(it *Item) { it.Ref = ref })
 }
 
+// item changes one item, which sits at the index of its Seq, and keeps the
+// totals of the job in step without going through all its items.
 func (r *Run) item(seq int, f func(*Item)) {
 	r.m.mu.Lock()
 	defer r.m.mu.Unlock()
-	for i := range r.j.items {
-		if r.j.items[i].Seq == seq {
-			f(&r.j.items[i])
-			r.m.saveItem(r.j, r.j.items[i])
-			return
-		}
-	}
+	it := &r.j.items[seq]
+	r.j.tally(it, -1)
+	f(it)
+	r.j.tally(it, 1)
+	r.j.addUp()
+	r.m.saveItem(r.j, *it)
 }
 
 // Current names the file in work, relative to the job's items.

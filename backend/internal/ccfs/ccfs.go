@@ -23,6 +23,8 @@ var (
 	ErrForbidden = errors.New("forbidden")
 	ErrEscape    = errors.New("path leaves its source")
 	ErrReadOnly  = errors.New("read only")
+	// ErrProtected refuses an operation on a folder because of what is in it.
+	ErrProtected = errors.New("a rule protects something in this folder")
 )
 
 // Source is one configured root. Mount is where it shows up in the API,

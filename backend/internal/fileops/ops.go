@@ -79,7 +79,7 @@ func (s *Service) touch(w http.ResponseWriter, r *http.Request) error {
 	}
 	if loc, err := s.fs.Check(u, req.Path, ccfs.Modify); err == nil && !loc.Virtual() {
 		if _, err := os.Lstat(loc.Real); err == nil {
-			if err := ccfs.Contained(loc); err != nil {
+			if err := s.fs.Follows(u, loc, ccfs.Modify); err != nil {
 				return err
 			}
 			if err := os.Chtimes(loc.Real, when, when); err != nil {
@@ -136,6 +136,9 @@ func (s *Service) rename(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	if err := s.fs.Whole(r.Context(), u, from, ccfs.Modify); err != nil {
+		return err
+	}
 	if path.Base(from.Path) == req.Name {
 		return v1.WriteJSON(w, r, http.StatusOK, Changed{Path: from.Path})
 	}
@@ -165,15 +168,12 @@ func renameNoReplace(from, to string) error {
 
 // existing checks that p exists inside a source and u holds perm there.
 func (s *Service) existing(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, error) {
-	loc, err := s.fs.Check(u, p, perm)
+	loc, err := s.fs.Entry(u, p, perm)
 	if err != nil {
 		return loc, err
 	}
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" {
 		return loc, v1.Errorf(http.StatusBadRequest, "only entries inside a source can be changed")
-	}
-	if err := ccfs.Contained(loc); err != nil {
-		return loc, err
 	}
 	if _, err := os.Lstat(loc.Real); err != nil {
 		return loc, err
@@ -183,7 +183,7 @@ func (s *Service) existing(u *users.User, p string, perm ccfs.Perm) (ccfs.Locati
 
 // newEntry checks that u may create p and that its folder exists.
 func (s *Service) newEntry(u *users.User, p string) (ccfs.Location, error) {
-	loc, err := s.fs.Check(u, p, ccfs.Create)
+	loc, err := s.fs.Entry(u, p, ccfs.Create)
 	if err != nil {
 		return loc, err
 	}
@@ -195,9 +195,6 @@ func (s *Service) newEntry(u *users.User, p string) (ccfs.Location, error) {
 		return loc, err
 	}
 	if err := folder(parent); err != nil {
-		return loc, err
-	}
-	if err := ccfs.Contained(loc); err != nil {
 		return loc, err
 	}
 	if _, err := os.Lstat(loc.Real); err == nil {
@@ -253,7 +250,7 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 		return v1.Errorf(http.StatusBadRequest, "kind must be copy or move")
 	}
 	move := req.Kind == KindMove
-	dest, plan, err := check(s.fs, u, req.TransferParams, move)
+	dest, plan, err := check(r.Context(), s.fs, u, req.TransferParams, move)
 	if err != nil {
 		return err
 	}
@@ -286,6 +283,9 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 			name = path.Base(src.Path)
 		}
 		dst := node{dest.Path, dest.Real}.child(name)
+		if _, err := s.fs.Check(u, dst.api, ccfs.View); err != nil {
+			continue
+		}
 		if target, err := os.Lstat(dst.real); err == nil {
 			out.Conflicts = append(out.Conflicts, jobs.NewConflict(name, side(node{src.Path, src.Real}, info), side(dst, target)))
 		}
@@ -304,6 +304,10 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 		paths[i] = it.Path
 	}
 	report, err := s.unraid.CheckTransfer(r.Context(), unraid.Transfer{Kind: req.Kind, Paths: paths, Dest: dest.Path})
+	report.Keep(func(p string) bool {
+		_, err := s.fs.Check(u, p, ccfs.View)
+		return err == nil
+	})
 	if err != nil {
 		logger.Errorf("preflight: %v", err)
 	} else if report.Trap != nil || report.Links != nil || report.Space != nil || len(report.Wakes) > 0 || report.Lands != "" || report.Linkable {

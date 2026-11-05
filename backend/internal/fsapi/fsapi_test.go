@@ -34,6 +34,11 @@ func write(t *testing.T, p string, size int) {
 
 func newFixture(t *testing.T, index ...fsindex.Index) fixture {
 	t.Helper()
+	return newFixtureWith(t, nil, index...)
+}
+
+func newFixtureWith(t *testing.T, rules ccfs.Rules, index ...fsindex.Index) fixture {
+	t.Helper()
 	base := t.TempDir()
 	share := filepath.Join(base, "mnt", "user")
 	cache := filepath.Join(base, "mnt", "cache")
@@ -52,7 +57,7 @@ func newFixture(t *testing.T, index ...fsindex.Index) fixture {
 		t.Fatal(err)
 	}
 
-	fs, err := ccfs.New(nil,
+	fs, err := ccfs.New(rules,
 		ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: share},
 		ccfs.Source{Name: "USB-Stick", Mount: "/boot", Root: boot, ReadOnly: true},
 	)

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -39,6 +40,11 @@ func init() {
 		f := scripts[p.Script]
 		scriptsMu.Unlock()
 		return f(ctx, run)
+	}})
+	RegisterKind("bigresult", Kind{BigResult: true, Run: func(ctx context.Context, run *Run) error {
+		run.SetResult(map[string]int{"hits": 1})
+		run.Finish(0, ItemDone, nil)
+		return nil
 	}})
 	RegisterKind("heavy", Kind{Heavy: true, Run: func(ctx context.Context, run *Run) error {
 		for _, it := range run.Items() {
@@ -564,6 +570,31 @@ func TestForgetDropsEveryJobOfTheOwner(t *testing.T) {
 	}
 }
 
+func TestRenameMovesTheJobsOfAnOwnerWhileTheyRun(t *testing.T) {
+	e := newEnv(t)
+	release := make(chan struct{})
+	owner := make(chan string, 1)
+	wait := gated(release)
+	running := e.submit(t, "test", addScript(t, func(ctx context.Context, run *Run) error {
+		err := wait(ctx, run)
+		owner <- run.Owner()
+		return err
+	}), 1)
+	e.waitState(t, running.ID, Running)
+	if err := e.m.Rename("anna", "anni"); err != nil {
+		t.Fatal(err)
+	}
+	close(release)
+	if got := <-owner; got != "anni" {
+		t.Errorf("the running job goes on for %q", got)
+	}
+	e.waitState(t, running.ID, Done)
+	e.restart(t)
+	if list := e.m.List("anni"); len(list) != 1 || list[0].ID != running.ID {
+		t.Errorf("after a restart: %+v", list)
+	}
+}
+
 func TestEventsOnlyReachTheOwner(t *testing.T) {
 	e := newEnv(t)
 	other, _, _ := e.hub.Connect("tab-bert", "bert", 0)
@@ -604,4 +635,145 @@ func TestJobJSONHasTheFieldsTheClientReads(t *testing.T) {
 	if _, ok := m["finishedAt"]; ok {
 		t.Error("finishedAt is set on an open job")
 	}
+}
+
+func TestManyItemsAreReportedAtMostFourTimesASecond(t *testing.T) {
+	e := newEnv(t)
+	client, _, _ := e.hub.Connect("tab", "anna", 0)
+	progress := make(chan int)
+	go func() {
+		n := 0
+		for ev := range client.Events {
+			if ev.Type == EventProgress {
+				n++
+			}
+		}
+		progress <- n
+	}()
+	name := addScript(t, func(ctx context.Context, run *Run) error {
+		for _, it := range run.Items() {
+			run.Begin(it.Seq)
+			run.Finish(it.Seq, ItemDone, nil)
+		}
+		return nil
+	})
+	began := time.Now()
+	j := e.submit(t, "test", name, 2000)
+	e.waitState(t, j.ID, Done)
+	took := time.Since(began)
+	e.hub.Disconnect(client)
+	if n, most := <-progress, int(took/progressEvery)+2; n > most {
+		t.Fatalf("%d progress events in %s, at most %d expected", n, took, most)
+	}
+}
+
+func BenchmarkItemOfAJobWithFiftyThousandItems(b *testing.B) {
+	m, err := New(v1.Deps{DB: testutil.MainDB(b)}, Options{})
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.Cleanup(m.Close)
+	j := &job{}
+	j.ID = "big"
+	for i := range 50000 {
+		j.items = append(j.items, Item{Seq: i, Path: "/mnt/user/x", State: ItemPending, Bytes: 1, Files: 1})
+	}
+	run := &Run{m: m, j: j}
+	seq := 0
+	for b.Loop() {
+		run.Begin(seq)
+		run.Measure(seq, 1, 1)
+		run.Finish(seq, ItemDone, nil)
+		seq = (seq + 1) % len(j.items)
+	}
+}
+
+func TestAFinishedItemIsReportedWhileTheNextOneTakesLong(t *testing.T) {
+	e := newEnv(t)
+	client, _, _ := e.hub.Connect("tab", "anna", 0)
+	release := make(chan struct{})
+	name := addScript(t, func(ctx context.Context, run *Run) error {
+		items := run.Items()
+		run.Measure(items[0].Seq, 1, 1)
+		run.Finish(items[0].Seq, ItemDone, nil)
+		run.Begin(items[1].Seq)
+		<-release
+		run.Finish(items[1].Seq, ItemDone, nil)
+		return nil
+	})
+	defer close(release)
+	e.submit(t, "test", name, 2)
+	timeout := time.After(5 * time.Second)
+	for {
+		select {
+		case ev := <-client.Events:
+			var p Progress
+			if ev.Type == EventProgress && json.Unmarshal(ev.Data, &p) == nil && p.DoneFiles == 1 {
+				return
+			}
+		case <-timeout:
+			t.Fatal("the finished item was never reported")
+		}
+	}
+}
+
+func TestABigResultIsOnlyReadFromTheJobItself(t *testing.T) {
+	e := newEnv(t)
+	client, _, _ := e.hub.Connect("tab", "anna", 0)
+	p := &Plan{Params: struct{}{}, Items: []Item{{Path: "/mnt/user/x"}}}
+	j, err := e.m.Submit("anna", "bigresult", p, 0, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	e.waitState(t, j.ID, Done)
+	for _, listed := range e.m.List("") {
+		if listed.Result != nil {
+			t.Errorf("the list holds the result %v", listed.Result)
+		}
+	}
+	for len(client.Events) > 0 {
+		if ev := <-client.Events; strings.Contains(string(ev.Data), `"result":`) {
+			t.Errorf("%s holds the result: %s", ev.Type, ev.Data)
+		}
+	}
+	if full, _ := e.m.Get(j.ID, true); full.Result == nil {
+		t.Error("the job lost its result")
+	}
+	e.restart(t)
+	if full, _ := e.m.Get(j.ID, true); full.Result == nil {
+		t.Error("the job lost its result in the restart")
+	}
+}
+
+func TestAFinishedBigJobKeepsItsItemsOnlyInTheDatabase(t *testing.T) {
+	e := newEnv(t)
+	name := addScript(t, func(ctx context.Context, run *Run) error {
+		for _, it := range run.Items() {
+			run.Measure(it.Seq, 2, 1)
+			run.Finish(it.Seq, ItemDone, nil)
+		}
+		return nil
+	})
+	n := maxItemsKept + 1
+	j := e.submit(t, "test", name, n)
+	e.waitState(t, j.ID, Done)
+	check := func() {
+		t.Helper()
+		e.m.mu.Lock()
+		held := len(e.m.jobs[j.ID].items)
+		e.m.mu.Unlock()
+		if held != 0 {
+			t.Errorf("%d items in memory", held)
+		}
+		got, _ := e.m.Get(j.ID, true)
+		if len(got.Items) != n || got.Items[n-1].Seq != n-1 || got.Items[n-1].State != ItemDone || got.Items[n-1].Bytes != 2 {
+			t.Fatalf("%d items, the last one %+v", len(got.Items), got.Items[len(got.Items)-1])
+		}
+		if got.Count != n || got.TotalFiles != int64(n) || got.DoneBytes != int64(2*n) {
+			t.Errorf("totals of the job = %+v", got)
+		}
+	}
+	check()
+	e.restart(t)
+	check()
 }

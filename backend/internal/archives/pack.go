@@ -39,6 +39,10 @@ type PackOptions struct {
 	Wrote func(n int) error
 	// Next is called before every entry with its name in the archive.
 	Next func(name string) error
+	// Skip leaves an entry out by its name in the archive, a folder with all
+	// it holds. The external programs read the folders themselves, so callers
+	// have to rule out what they would need to leave out there.
+	Skip func(name string, link bool) bool
 }
 
 // ErrNoProgram means a format needs a program that is not installed.
@@ -122,7 +126,7 @@ func Pack(ctx context.Context, out, base string, names []string, o PackOptions) 
 
 // walk visits every entry below base/names in a stable order and hands
 // fn its name in the archive.
-func walk(ctx context.Context, base string, names []string, fn func(rel, full string, d fs.DirEntry) error) error {
+func walk(ctx context.Context, base string, names []string, skip func(string, bool) bool, fn func(rel, full string, d fs.DirEntry) error) error {
 	for _, name := range names {
 		root := filepath.Join(base, name)
 		err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
@@ -135,6 +139,12 @@ func walk(ctx context.Context, base string, names []string, fn func(rel, full st
 			rel, err := filepath.Rel(base, p)
 			if err != nil {
 				return err
+			}
+			if skip != nil && skip(filepath.ToSlash(rel), d.Type()&fs.ModeSymlink != 0) {
+				if d.IsDir() {
+					return filepath.SkipDir
+				}
+				return nil
 			}
 			return fn(filepath.ToSlash(rel), p, d)
 		})
@@ -189,7 +199,7 @@ func packZip(ctx context.Context, w io.Writer, base string, names []string, o Pa
 	zw.RegisterCompressor(zip.Deflate, func(out io.Writer) (io.WriteCloser, error) {
 		return flate.NewWriter(out, o.Level)
 	})
-	err := walk(ctx, base, names, func(rel, full string, d fs.DirEntry) error {
+	err := walk(ctx, base, names, o.Skip, func(rel, full string, d fs.DirEntry) error {
 		if err := o.next(rel); err != nil {
 			return err
 		}
@@ -245,7 +255,7 @@ func packZip(ctx context.Context, w io.Writer, base string, names []string, o Pa
 // anywhere else.
 func packZipAES(ctx context.Context, w io.Writer, base string, names []string, o PackOptions) error {
 	zw := yzip.NewWriter(w)
-	err := walk(ctx, base, names, func(rel, full string, d fs.DirEntry) error {
+	err := walk(ctx, base, names, o.Skip, func(rel, full string, d fs.DirEntry) error {
 		if err := o.next(rel); err != nil {
 			return err
 		}
@@ -299,7 +309,7 @@ func packTar(ctx context.Context, w io.Writer, base string, names []string, o Pa
 		return err
 	}
 	tw := tar.NewWriter(cw)
-	err = walk(ctx, base, names, func(rel, full string, d fs.DirEntry) error {
+	err = walk(ctx, base, names, o.Skip, func(rel, full string, d fs.DirEntry) error {
 		if err := o.next(rel); err != nil {
 			return err
 		}

@@ -3350,9 +3350,10 @@ paths:
       x-access: admin
       description: |
         Fields left out stay as they are. A new password logs the user out
-        everywhere. Renaming moves the user's rules along. Nobody can change
-        their own login name or password here, or take away their own admin
-        role, so there is always an admin left.
+        everywhere. Renaming moves the user's rules, jobs, undo steps and
+        trash along. Nobody can change their own login name or password
+        here, or take away their own admin role, so there is always an admin
+        left.
       requestBody:
         required: true
         content:
@@ -3388,9 +3389,10 @@ paths:
       summary: Delete a user
       x-access: admin
       description: |
-        Removes the account with its shares, jobs, rules, settings,
-        sessions and tokens. Files stay where they are. Nobody can delete
-        themselves.
+        Removes the account with its shares, jobs, undo steps, rules,
+        settings, sessions and tokens. Files stay where they are. What the
+        user put in the trash stays there for admins until its days are over.
+        Nobody can delete themselves.
       responses:
         "204":
           description: Deleted.
@@ -3743,7 +3745,8 @@ paths:
       description: |
         Fields left out stay as they are. An expiry of null makes the link
         last, an empty password removes it. Setting a password or a new
-        one closes the link in every browser that unlocked it.
+        one closes the link in every browser that unlocked it. Needs the
+        share right, which deleting a link does not.
       requestBody:
         required: true
         content:
@@ -3761,6 +3764,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -6038,6 +6043,9 @@ components:
           type: boolean
           default: true
           description: Keep owner, mode and times. Without it new entries belong to the user the server runs as.
+        newFolder:
+          type: boolean
+          description: Only for a move. The job makes dest first, and taking the job back also removes it again, so both are one step.
     Preflight:
       type: object
       required: [dest, count, bytes, files, conflicts, sameDevice, big, parityBusy]
@@ -6194,7 +6202,10 @@ components:
           type: string
           description: Id of the undo step that takes the finished job back.
         result:
-          description: What the job found out, for kinds that report more than done or failed.
+          description: |
+            What the job found out, for kinds that report more than done or
+            failed. For duplicates and contentSearch it can be megabytes, so
+            only GET /jobs/{id} carries it.
         createdAt:
           type: string
           format: date-time

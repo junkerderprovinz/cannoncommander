@@ -643,7 +643,7 @@ export function toolsFixture(engine) {
       if (!dirAt(p.dest || '') || p.dest.includes('::')) return [404, 'Not found'];
       const size = (['iso', 'img'].includes(FS.ext(wanted)) ? 900 + (fx.hashOf(u.href) % 5200) : 2 + (fx.hashOf(u.href) % 400)) * MB;
       return {
-        paths: [], name: wanted, count: 1, dest: p.dest, total: size, files: 1, names: [wanted], speed: 0.45,
+        paths: [], name: `${u.hostname}/${wanted}`, count: 1, dest: p.dest, total: size, files: 1, names: [wanted], speed: 0.45,
         apply: (j) => {
           const d = dirAt(p.dest), name = freeName(d, wanted);
           d.children.push(fileNode(name, size));

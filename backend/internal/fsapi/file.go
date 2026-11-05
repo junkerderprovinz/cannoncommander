@@ -138,7 +138,7 @@ func (h handlers) filePut(w http.ResponseWriter, r *http.Request) error {
 	if loc, err = h.fs.Check(u, p, perm); err != nil {
 		return err
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := h.fs.Follows(u, loc, perm); err != nil {
 		return err
 	}
 	var info os.FileInfo

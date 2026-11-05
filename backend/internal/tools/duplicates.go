@@ -11,24 +11,23 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
-	"os"
 	"path"
 	"slices"
 	"strings"
 	"time"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
 
 // KindDuplicates is the job that finds files with the same content.
 const KindDuplicates = "duplicates"
 
 func init() {
-	jobs.RegisterKind(KindDuplicates, jobs.Kind{Prepare: prepareDuplicates, Run: runDuplicates, Heavy: true})
+	jobs.RegisterKind(KindDuplicates, jobs.Kind{Prepare: prepareDuplicates, Run: runDuplicates, Heavy: true, BigResult: true})
 }
 
 const (
@@ -76,13 +75,6 @@ type Duplicates struct {
 	More   bool  `json:"more,omitempty"`
 	Wasted int64 `json:"wasted"`
 	Files  int64 `json:"files"`
-}
-
-// jobOwner finds the owner of a job, whose rights decide what the job
-// may look at while it runs.
-var jobOwner = func(name string) (*users.User, error) {
-	u, err := state.GetUserByUsername(name)
-	return &u, err
 }
 
 func prepareDuplicates(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
@@ -144,7 +136,7 @@ func runDuplicates(ctx context.Context, run *jobs.Run) error {
 	if it.State != jobs.ItemPending {
 		return nil
 	}
-	u, err := jobOwner(run.Owner())
+	u, err := run.User()
 	if err != nil {
 		return fmt.Errorf("the user who started this search is gone: %w", err)
 	}
@@ -196,7 +188,7 @@ func runDuplicates(ctx context.Context, run *jobs.Run) error {
 	}
 	seen = nil
 
-	groups := regroupDups(cands, func(c dupCandidate) (string, bool) { return c.key, true })
+	groups := regroupDups(cands, func(c *dupCandidate) (string, bool) { return c.key, true })
 	var total int64
 	for _, g := range groups {
 		for _, c := range g {
@@ -204,9 +196,9 @@ func runDuplicates(ctx context.Context, run *jobs.Run) error {
 		}
 	}
 	run.Measure(it.Seq, total, int64(len(cands)))
-	groups = narrowDups(groups, func(c dupCandidate) (string, bool) {
+	groups = narrowDups(groups, func(c *dupCandidate) (string, bool) {
 		sum, err := partialHash(ctx, run, c)
-		return sum, err == nil
+		return sum, err == nil && c.Size >= minSize
 	})
 	if ctx.Err() != nil {
 		return ctx.Err()
@@ -221,8 +213,8 @@ func runDuplicates(ctx context.Context, run *jobs.Run) error {
 	}
 	run.Measure(it.Seq, total, n)
 	sums := map[string]string{}
-	groups = narrowDups(groups, func(c dupCandidate) (string, bool) {
-		sum, err := fullHash(ctx, run, c)
+	groups = narrowDups(groups, func(c *dupCandidate) (string, bool) {
+		sum, err := fullHash(ctx, run, *c)
 		sums[c.Path] = sum
 		return sum, err == nil
 	})
@@ -242,18 +234,18 @@ func hashKey(s string) uint64 {
 }
 
 // regroupDups sorts candidates by key and keeps the groups of two or more.
-func regroupDups(cands []dupCandidate, key func(dupCandidate) (string, bool)) [][]dupCandidate {
+func regroupDups(cands []dupCandidate, key func(*dupCandidate) (string, bool)) [][]dupCandidate {
 	by := map[string][]dupCandidate{}
 	var order []string
-	for _, c := range cands {
-		k, ok := key(c)
+	for i := range cands {
+		k, ok := key(&cands[i])
 		if !ok {
 			continue
 		}
 		if _, seen := by[k]; !seen {
 			order = append(order, k)
 		}
-		by[k] = append(by[k], c)
+		by[k] = append(by[k], cands[i])
 	}
 	var out [][]dupCandidate
 	for _, k := range order {
@@ -266,7 +258,7 @@ func regroupDups(cands []dupCandidate, key func(dupCandidate) (string, bool)) []
 
 // narrowDups splits every group by a finer key, a file that cannot be read
 // drops out of its group.
-func narrowDups(groups [][]dupCandidate, key func(dupCandidate) (string, bool)) [][]dupCandidate {
+func narrowDups(groups [][]dupCandidate, key func(*dupCandidate) (string, bool)) [][]dupCandidate {
 	var out [][]dupCandidate
 	for _, g := range groups {
 		out = append(out, regroupDups(g, key)...)
@@ -274,12 +266,19 @@ func narrowDups(groups [][]dupCandidate, key func(dupCandidate) (string, bool)) 
 	return out
 }
 
-func partialHash(ctx context.Context, run *jobs.Run, c dupCandidate) (string, error) {
-	f, err := os.Open(c.Real)
+// partialHash also puts the length of the file into c, because the index
+// may only know the blocks the file takes on its disk.
+func partialHash(ctx context.Context, run *jobs.Run, c *dupCandidate) (string, error) {
+	f, err := ccfs.OpenRegular(c.Real)
 	if err != nil {
 		return "", err
 	}
 	defer f.Close()
+	info, err := f.Stat()
+	if err != nil {
+		return "", err
+	}
+	c.Size = info.Size()
 	h := sha256.New()
 	head := min(c.Size, headTail)
 	if _, err := io.CopyN(h, f, head); err != nil {
@@ -303,7 +302,7 @@ func partialHash(ctx context.Context, run *jobs.Run, c dupCandidate) (string, er
 // fullHash reads the whole file through the job's speed limit, so a scan
 // of a big share can be paused and slowed like a copy.
 func fullHash(ctx context.Context, run *jobs.Run, c dupCandidate) (string, error) {
-	f, err := os.Open(c.Real)
+	f, err := ccfs.OpenRegular(c.Real)
 	if err != nil {
 		return "", err
 	}

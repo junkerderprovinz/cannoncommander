@@ -731,8 +731,8 @@
     "why": "the app's preset is called Interpret und Titel, as UI texts carry no dashes"
    },
    {
-    "pattern": "(?<=^4 job: Laden: ubuntu-24\\.04\\.3-live-server-amd64\\.iso).*$",
-    "why": "the server's job names the file without the address, and its rate comes from the fixture's random numbers"
+    "pattern": "(?<=^4 job: Laden: ubuntu-24\\.04\\.3-live-server-amd64\\.iso von releases\\.ubuntu\\.com ).*$",
+    "why": "the job's rate comes from the fixture's random numbers"
    },
    {
     "pattern": "(?<=^6 rolled: ).*$",
@@ -957,28 +957,14 @@
   }
  },
  "steps-v3-a": {
-  "lines": [
-   {
-    "pattern": "^undo gather: .*",
-    "why": "a new folder with the selection is two steps the server keeps, the folder and the move, and the server words its steps itself"
-   },
-   {
-    "pattern": "^history menu: .*",
-    "why": "a new folder with the selection is two steps the server keeps, the folder and the move, and the server words its steps itself"
-   },
-   {
-    "pattern": "(?<=history top: ).*$",
-    "why": "a new folder with the selection is two steps the server keeps, the folder and the move, and the server words its steps itself"
-   }
-  ],
   "shots": {
    "v3a-2-gather": {
     "pixels": 5900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3a-3-history": {
-    "pixels": 38900,
-    "why": "a new folder with the selection is two steps the server keeps, the folder and the move, and the server words its steps itself"
+    "pixels": 18500,
+    "why": "the server words its steps itself, so a duplicate reads as copied and the trash as laid in the trash"
    },
    "v3a-4-palette": {
     "pixels": 4700,
@@ -996,7 +982,21 @@
     "pixels": 5500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
-  }
+  },
+  "lines": [
+   {
+    "pattern": "^history menu: .*",
+    "why": "the server words its steps itself, so a duplicate reads as copied and the trash as laid in the trash"
+   },
+   {
+    "pattern": "^after list undo: .*",
+    "why": "the prototype hands over copies when it gathers, so its step for the duplicate no longer finds the file. The app takes the file back"
+   },
+   {
+    "pattern": "(?<=history top: ).*$",
+    "why": "the server words its steps itself, so a duplicate reads as copied and the trash as laid in the trash"
+   }
+  ]
  },
  "steps-v3-b": {
   "lines": [
@@ -1175,7 +1175,7 @@
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-delete-one": {
-    "pixels": 13000,
+    "pixels": 18500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }

@@ -107,23 +107,7 @@ func (h handlers) transfer(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	if rep.Trap != nil {
-		files := rep.Trap.Files[:0]
-		for _, f := range rep.Trap.Files {
-			if h.sees(u, f.Path) {
-				files = append(files, f)
-			}
-		}
-		rep.Trap.Files = files
-	}
-	if rep.Links != nil {
-		for i := range rep.Links.Files {
-			rep.Links.Files[i].Others = h.visible(u, rep.Links.Files[i].Others)
-		}
-	}
-	if rep.Space != nil && rep.Space.Biggest != nil && !h.sees(u, rep.Space.Biggest.Path) {
-		rep.Space.Biggest.Path = ""
-	}
+	rep.Keep(func(p string) bool { return h.sees(u, p) })
 	return v1.WriteJSON(w, r, http.StatusOK, rep)
 }
 

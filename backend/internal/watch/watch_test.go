@@ -29,6 +29,8 @@ func (r *recorder) Moved(from, to string) {
 
 func (r *recorder) Folders(*ccfs.Source, []string) map[string]fsindex.Folder { return nil }
 
+func (r *recorder) FolderSize(*ccfs.Source, string) (int64, bool) { return 0, false }
+
 func (r *recorder) Totals(*ccfs.Source, string) (int64, int64, bool) { return 0, 0, false }
 
 func (r *recorder) Refresh(_ *ccfs.Source, dir string) {
@@ -54,7 +56,9 @@ type rig struct {
 // modes runs a test against the poller everywhere and against inotify
 // where the platform has it.
 func modes(t *testing.T, run func(t *testing.T, opts Options)) {
-	t.Run("poll", func(t *testing.T) { run(t, Options{PollOnly: true, Poll: 40 * time.Millisecond, Delay: 30 * time.Millisecond}) })
+	t.Run("poll", func(t *testing.T) {
+		run(t, Options{PollOnly: true, Poll: 40 * time.Millisecond, Delay: 30 * time.Millisecond})
+	})
 	if runtime.GOOS == "linux" {
 		t.Run("inotify", func(t *testing.T) { run(t, Options{Delay: 30 * time.Millisecond}) })
 	}

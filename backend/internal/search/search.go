@@ -191,7 +191,10 @@ func checkParams(fs *ccfs.Resolver, u *users.User, p Params) (ccfs.Location, err
 	if loc.Virtual() {
 		return loc, nil
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := fs.Follows(u, loc, ccfs.View); err != nil {
+		return loc, err
+	}
+	if loc, err = fs.Followed(loc); err != nil {
 		return loc, err
 	}
 	info, err := os.Stat(loc.Real)
@@ -215,10 +218,8 @@ func (h handlers) finder(ctx context.Context, u *users.User, p Params) *finder {
 			if err != nil || loc.Source == nil {
 				return 0
 			}
-			if got, ok := h.deps.Index.Folders(loc.Source, []string{loc.Index})[loc.Index]; ok && got.Size > 0 {
-				return got.Size
-			}
-			return 0
+			size, _ := h.deps.Index.FolderSize(loc.Source, loc.Index)
+			return size
 		}
 	}
 	return f

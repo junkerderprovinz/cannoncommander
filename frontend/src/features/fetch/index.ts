@@ -12,7 +12,7 @@ import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { clean, reveal, startJob } from '@/ui/tools';
 import FetchBody, { type FetchState } from './FetchBody.vue';
-import { parseUrl } from './url';
+import { jobText, parseUrl } from './url';
 
 function fetchWindow() {
   const F = usePanels(), listing = useListing();
@@ -36,7 +36,7 @@ function fetchWindow() {
 
 export default function setup() {
   action('fetchUrl', { label: tl('fetch.title'), g: 'IconImport', needs: 'writable', run: fetchWindow });
-  kindLabels.fetchUrl = (_j, what) => t('fetch.job', { what });
+  kindLabels.fetchUrl = (j) => jobText(j.name);
   const file = MENUS.find(([id]) => id === 'file')![1];
   if (!file.includes('fetchUrl')) file.splice(file.indexOf('upload') + 1, 0, 'fetchUrl');
 }

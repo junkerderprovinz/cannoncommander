@@ -15,7 +15,7 @@ import (
 // the real one, with every migration the test binary has registered.
 func MainDB(t testing.TB) *sql.DB {
 	t.Helper()
-	dsn := "file:" + filepath.Join(t.TempDir(), "main.db") + "?mode=rwc&_journal_mode=WAL"
+	dsn := "file:" + filepath.Join(t.TempDir(), "main.db") + "?mode=rwc&_journal_mode=WAL&_synchronous=NORMAL"
 	db, err := sql.Open("sqlite", sqlitebusy.WithBusyTimeout(dsn))
 	if err != nil {
 		t.Fatal(err)

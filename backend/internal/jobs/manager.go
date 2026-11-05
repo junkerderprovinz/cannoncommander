@@ -36,6 +36,9 @@ const (
 	saveEvery     = 2 * time.Second
 	parityEvery   = 5 * time.Second
 	keepFinished  = 7 * 24 * time.Hour
+	// maxItemsKept is how many items a finished job may hold in memory. It
+	// stays in the list for a week, and only a look at its items needs them.
+	maxItemsKept = 1000
 )
 
 // Settings are the queue settings shared by all users.
@@ -85,6 +88,7 @@ type job struct {
 	inflightBytes, inflightFiles int64
 
 	publishedAt time.Time
+	reportDue   bool
 	savedAt     time.Time
 	sampleAt    time.Time
 	sampleBytes int64
@@ -165,6 +169,7 @@ func New(d v1.Deps, opts Options) (*Manager, error) {
 			}
 		}
 		j.recount()
+		j.letGoOfItems()
 		m.jobs[j.ID] = j
 		m.nextPos = max(m.nextPos, j.Position+1)
 	}
@@ -526,6 +531,22 @@ func (m *Manager) Forget(owner string) {
 	m.schedule()
 }
 
+// Rename moves the jobs of a user to a new login name. A job that is running
+// goes on under it, so what it leaves behind lands with the same user.
+func (m *Manager) Rename(from, to string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, err := m.db.Exec(`UPDATE jobs SET owner = ? WHERE owner = ?`, to, from); err != nil {
+		return err
+	}
+	for _, j := range m.jobs {
+		if j.Owner == from {
+			j.Owner = to
+		}
+	}
+	return nil
+}
+
 // Settings returns the queue settings.
 func (m *Manager) Settings() Settings {
 	m.mu.Lock()
@@ -686,6 +707,7 @@ func (m *Manager) end(j *job, err error) []func() {
 	j.Rate, j.Left, j.Current, j.Place, j.Reason = 0, nil, "", 0, ""
 	j.ask, j.Conflict = nil, nil
 	m.save(j)
+	j.letGoOfItems()
 	m.publish(EventDone, j)
 	if j.forget {
 		delete(m.jobs, j.ID)
@@ -758,23 +780,41 @@ func (m *Manager) progress(j *job, bytes, files int64) {
 	}
 }
 
+// letGoOfItems drops the items of a big job that is through. Only a failed or
+// cancelled job can run them again.
+func (j *job) letGoOfItems() {
+	if j.State == Done && len(j.items) > maxItemsKept {
+		j.items = nil
+	}
+}
+
 // recount sums the items into the totals.
 func (j *job) recount() {
 	j.TotalBytes, j.TotalFiles, j.doneBytes, j.doneFiles, j.FailedItems = 0, 0, 0, 0, 0
-	for _, it := range j.items {
-		if it.State == ItemFailed {
-			j.FailedItems++
-		}
-		j.TotalBytes += it.Bytes
-		j.TotalFiles += it.Files
-		if it.State == ItemDone || it.State == ItemSkipped {
-			j.doneBytes += it.Bytes
-			j.doneFiles += it.Files
-		}
+	for i := range j.items {
+		j.tally(&j.items[i], 1)
 	}
+	j.addUp()
+	j.Count = len(j.items)
+}
+
+// tally adds what an item counts for to the totals, or takes it out again
+// with sign -1.
+func (j *job) tally(it *Item, sign int64) {
+	if it.State == ItemFailed {
+		j.FailedItems += int(sign)
+	}
+	j.TotalBytes += sign * it.Bytes
+	j.TotalFiles += sign * it.Files
+	if it.State == ItemDone || it.State == ItemSkipped {
+		j.doneBytes += sign * it.Bytes
+		j.doneFiles += sign * it.Files
+	}
+}
+
+func (j *job) addUp() {
 	j.DoneBytes = j.doneBytes + j.inflightBytes
 	j.DoneFiles = j.doneFiles + j.inflightFiles
-	j.Count = len(j.items)
 }
 
 func (m *Manager) view(j *job, withItems bool) Job {
@@ -790,6 +830,11 @@ func (m *Manager) view(j *job, withItems bool) Job {
 	v.Items = nil
 	if withItems {
 		v.Items = slices.Clone(j.items)
+		if j.items == nil {
+			v.Items = m.storedItems(j.ID)
+		}
+	} else if k, _ := kindOf(j.Kind); k.BigResult {
+		v.Result = nil
 	}
 	return v
 }
@@ -826,6 +871,27 @@ func (m *Manager) publishProgress(j *job) {
 	if _, err := m.hub.PublishJSON(EventProgress, "", p, j.Owner); err != nil {
 		m.logf("jobs: %v", err)
 	}
+}
+
+// reportSoon publishes the progress of j when the next report is due, since
+// nothing else may report it for a while. Call with m.mu held.
+func (m *Manager) reportSoon(j *job) {
+	if j.reportDue {
+		return
+	}
+	j.reportDue = true
+	time.AfterFunc(progressEvery, func() {
+		m.mu.Lock()
+		defer m.mu.Unlock()
+		j.reportDue = false
+		switch {
+		case !j.live:
+		case time.Since(j.publishedAt) >= progressEvery:
+			m.publishProgress(j)
+		default:
+			m.reportSoon(j)
+		}
+	})
 }
 
 func (m *Manager) logf(format string, args ...any) {

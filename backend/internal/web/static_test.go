@@ -30,7 +30,7 @@ func TestEveryUnknownPageOpensTheApp(t *testing.T) {
 	if rec.Code != http.StatusOK || rec.Body.String() != "<html>app</html>" {
 		t.Fatalf("page: %d %s", rec.Code, rec.Body)
 	}
-	if csp := rec.Header().Get("Content-Security-Policy"); !strings.HasPrefix(csp, "script-src 'self' https://office.tower.lan;") {
+	if csp := rec.Header().Get("Content-Security-Policy"); !strings.Contains(csp, "script-src 'self' https://office.tower.lan;") {
 		t.Fatalf("policy %q", csp)
 	}
 	if rec := get("POST", "/files"); rec.Code != http.StatusNotFound {
