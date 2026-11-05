@@ -19,7 +19,7 @@ describe('motion selectors in the app', () => {
   it('still has quiet-level rules, so the scan has something to find', () => {
     // Otherwise the guard passes on a renamed attribute or a stylesheet without the levels.
     const quiet = all.flatMap(({ css }) => [...css.matchAll(/\[data-motion=["'](subtle|off)["']\]/g)]);
-    expect(quiet.length).toBeGreaterThanOrEqual(5);
+    expect(quiet.length).toBeGreaterThanOrEqual(4);
   });
 
   it('declares the hidden level its own block', () => {

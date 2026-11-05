@@ -12,10 +12,12 @@
   60% { opacity: 1; }
   to { translate: none; rotate: var(--motion-drop-tilt, 5deg); scale: calc(1 - var(--motion-drop-reach, .6) * .6); opacity: 0; }
 }
-/* The flight splits into the run across, steady, and the arc, rising slower and falling faster. */
+/* The flight splits into the run across, steady, and the arc, rising slower and falling faster. The ball goes out
+   as it lands, where the cloud takes over. */
 @keyframes fx-cannon-x {
   from { translate: calc(var(--fx-dx) * -1) 0; }
-  to { translate: none; }
+  96% { opacity: 1; }
+  to { translate: none; opacity: 0; }
 }
 @keyframes fx-cannon-y {
   from { translate: 0 calc(var(--fx-dy) * -1); animation-timing-function: cubic-bezier(.33, .66, .66, 1); }
