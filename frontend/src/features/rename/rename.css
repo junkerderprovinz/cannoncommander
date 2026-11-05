@@ -6,7 +6,6 @@
 .bk-mhead { font-size: 12px; color: var(--carbon-text-muted); padding: 0 .45rem; height: 1.4rem; }
 .bk-mrow { min-height: 2rem; padding: 0 .45rem; border-radius: var(--radius-control); font-size: 13px; flex: none; }
 .bk-mrow:hover { background: var(--carbon-surface3); }
-.bk-mrow .glim-pill { justify-self: end; }
 .bk-mrow .new { color: var(--carbon-text); font-weight: 600; }
 .bk-mrow > .bk-name:first-child { color: var(--carbon-text-sub); }
 .bk-mrow.same .bk-name { color: var(--carbon-text-muted); font-weight: 400; }

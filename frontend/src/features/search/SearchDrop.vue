@@ -36,11 +36,11 @@ async function example(q: string) {
 
 <template>
   <div class="qdrop glim-card" role="menu" @mousedown.prevent>
-    <div class="eyebrow">{{ t('search.menuSaved') }}<IconButton :tip="t('search.menuNew')" :glyph="glyphComponent('IconAdd')" data-run="search" @click="run('search')" /></div>
+    <div class="glim-eyebrow">{{ t('search.menuSaved') }}<IconButton :tip="t('search.menuNew')" :glyph="glyphComponent('IconAdd')" data-run="search" @click="run('search')" /></div>
     <button v-for="s in search.saved" :key="s.id" class="qrow" :class="{ cur: tab.smart === s.id }" :data-smart="s.id" :data-tip="tip(s)"
       @click="openSaved(s)" @contextmenu.prevent.stop="savedMenu(s, $event.clientX, $event.clientY)"><G n="IconFilter" /><span>{{ s.name }}</span><span class="glim-num">{{ count(s) }}</span></button>
     <div v-if="!search.saved.length" class="qd-none muted">{{ t('search.menuNone') }}</div>
-    <div class="eyebrow">{{ t('search.menuExamples') }}</div>
+    <div class="glim-eyebrow">{{ t('search.menuExamples') }}</div>
     <button v-for="[q, say] in EXAMPLES" :key="q" class="qrow qex" :data-example="q" @click="example(q)"><b>{{ q }}</b><span class="muted">{{ t(`search.examples.${say}`) }}</span></button>
   </div>
 </template>

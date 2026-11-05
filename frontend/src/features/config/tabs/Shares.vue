@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Card, IconButton, ListRow, Pill } from '@glimstone/vue';
+import { Card, EmptyState, IconButton, ListRow, Pill } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, type Share } from '@/api/admin';
 import { DAY, now } from '@/core/format';
@@ -50,6 +50,6 @@ const edit = (s: Share) => win({ title: c('shares.share'), body: ShareWin, props
         </template>
       </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconLink" /><div>{{ c('shares.none') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconLink')" :title="c('shares.none')" />
   </Card>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // What came from the clipboard, and the name it gets. The part before the extension starts selected.
-import { FieldRow, TextField } from '@glimstone/vue';
+import { FieldRow, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { t } from '@/i18n';
 
@@ -14,6 +14,6 @@ const enter = (e: KeyboardEvent) => (e.target as Element).closest('.win')?.query
 </script>
 
 <template>
-  <div class="well glim-well pz-prev"><img v-if="url" class="pz-img" :src="url" alt=""><pre v-else class="pz-text">{{ text?.slice(0, 600) }}</pre></div>
-  <div class="well glim-well"><FieldRow :label="t('pastefile.name')" :hint="t('pastefile.where', { path: folder })"><TextField id="pz-name" ref="input" v-model="st.name" autocomplete="off" width="wide" @keydown.enter="enter" /></FieldRow></div>
+  <SubCard class="pz-prev"><img v-if="url" class="pz-img" :src="url" alt=""><pre v-else class="pz-text">{{ text?.slice(0, 600) }}</pre></SubCard>
+  <SubCard><FieldRow :label="t('pastefile.name')" :hint="t('pastefile.where', { path: folder })"><TextField id="pz-name" ref="input" v-model="st.name" autocomplete="off" width="wide" @keydown.enter="enter" /></FieldRow></SubCard>
 </template>

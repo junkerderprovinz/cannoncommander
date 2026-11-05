@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // The tags of one file or several: the x on a tag takes it away, a grey one sets it, Enter adds a new one.
-import { FieldRow, TextField } from '@glimstone/vue';
+import { FieldRow, SubCard, TextField } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { G } from '@/core/glyphs';
 import { cancelBtn, type WinEntry } from '@/core/windows';
@@ -34,11 +34,11 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="t('labels.tag')" :hint="t('labels.tagTip')"><TextField id="newtag" v-model="fresh" :placeholder="t('labels.tagPh')" autocomplete="off" width="medium" @keydown.enter.prevent="add" /></FieldRow>
     <div id="tags" class="tagchips">
       <span v-for="tag in chosen" :key="'on' + tag" class="tagchip on">#{{ tag }}<button class="x" :data-untag="tag" :data-tip="t('labels.untag')" :aria-label="t('labels.removeName', { name: tag })" @click="picked.delete(tag)"><G n="IconClose" /></button></span>
       <button v-for="tag in others" :key="tag" class="tagchip" :data-tag="tag" :data-tip="t('labels.addTag')" @click="picked.add(tag)">#{{ tag }}</button>
     </div>
-  </div>
+  </SubCard>
 </template>

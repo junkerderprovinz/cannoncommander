@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // The name of a saved search, all of it selected, so typing replaces the suggestion.
-import { FieldRow, TextField } from '@glimstone/vue';
+import { FieldRow, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { t } from '@/i18n';
 
@@ -11,5 +11,5 @@ const enter = (e: KeyboardEvent) => (e.target as Element).closest('.win')?.query
 </script>
 
 <template>
-  <div class="well glim-well"><FieldRow :label="t('search.nameLabel')" :hint="t('search.nameWinTip')"><TextField id="sm-name" ref="input" v-model="st.name" autocomplete="off" width="wide" @keydown.enter="enter" /></FieldRow></div>
+  <SubCard><FieldRow :label="t('search.nameLabel')" :hint="t('search.nameWinTip')"><TextField id="sm-name" ref="input" v-model="st.name" autocomplete="off" width="wide" @keydown.enter="enter" /></FieldRow></SubCard>
 </template>

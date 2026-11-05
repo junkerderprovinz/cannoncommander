@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // A folder in the preview bar: its pictures when it is mostly pictures, else its first entries.
-import { Pill } from '@glimstone/vue';
+import { EmptyState, Pill } from '@glimstone/vue';
 import { computed, onMounted } from 'vue';
 import { fmtSize } from '@/core/format';
-import { G, glyphOf } from '@/core/glyphs';
+import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
@@ -31,7 +31,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="!kids.length" class="empty"><G n="IconFolder" /><div>{{ t('viewer.dir.empty') }}</div></div>
+  <EmptyState v-if="!kids.length" nested :glyph="glyphComponent('IconFolder')" :title="t('viewer.dir.empty')" />
   <template v-else-if="pics.length >= kids.length / 2">
     <div class="cv-grid"><div v-for="k in pics.slice(0, 12)" :key="k.name" class="cv-cell"><img :src="thumbUrl(joinPath(path, k.name), 'small', k.time)" alt="" loading="lazy"></div></div>
     <div v-if="pics.length > 12" class="muted cv-more">{{ t('viewer.and', { rest: plural(pics.length - 12, 'morePictures') }) }}</div>

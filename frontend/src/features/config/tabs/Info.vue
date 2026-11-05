@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import SlotButton from '@/ui/SlotButton.vue';
 import { Button, Card, FieldRow } from '@glimstone/vue';
 import { GLIMSTONE_VERSION } from '@glimstone/core';
 import { computed, onMounted, ref } from 'vue';
@@ -59,8 +58,8 @@ const give = computed(() => [
       <a v-if="x.v" class="a-vlink glim-num" :href="x.href + x.v" target="_blank" rel="noopener">{{ String(x.v).replace(/^v/, '') }}</a>
     </FieldRow>
     <div class="a-foot">
-      <SlotButton :label="n ? c('info.newN', { n }) : c('info.new')" g="IconWhatsNew" data-run="whatsNew" @click="run('whatsNew')"><template #before><span class="a-dot" :class="{ seen: !n }"></span></template></SlotButton>
-      <SlotButton v-if="update === 'newer'" id="a-update" :label="c('app.newer', { v: latest!.latest })" g="IconWhatsNew" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener" />
+      <Button :label="n ? c('info.newN', { n }) : c('info.new')" label-key="IconWhatsNew" data-run="whatsNew" @click="run('whatsNew')"><template #before><span class="a-dot" :class="{ seen: !n }"></span></template></Button>
+      <Button v-if="update === 'newer'" id="a-update" :label="c('app.newer', { v: latest!.latest })" label-key="IconWhatsNew" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener" />
       <Button v-else id="a-update" :label="update === 'ok' ? c('info.current') : c('app.check')" :label-key="update === 'ok' ? 'IconCheck' : 'IconSearch'" :tone="update === 'ok' ? 'ok' : 'neutral'" :disabled="update === 'busy'" :title="update === 'ok' ? c('app.check') : undefined" @click="check" />
     </div>
   </Card>

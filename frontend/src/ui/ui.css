@@ -1,10 +1,8 @@
-.a-ctl { display: inline-flex; gap: .4rem; align-items: center; flex: none; max-width: 100%; }
-.a-ctl.grow { flex: 1; min-width: 0; }
-.well .glim-pill { background: var(--carbon-surface3); }
 .glim-pill.mono { font-size: 12px; }
-.a-tree { max-height: 22rem; gap: 2px; padding: .5rem; }
+/* In a list's grid a pill keeps its width at the end of its column. */
+.glim-pill { justify-self: end; }
+/* A row's name takes the width of its words, so rows with a long field would start them at different places. */
+.glim-field-row:has(> :is(.glim-field--grow, .glim-path, .bk-range)) > .glim-field-row-name { min-width: 8.5rem; }
+.a-tree { max-height: 22rem; gap: 2px; padding: .5rem; border-radius: var(--radius-card); }
 .ce-ask { display: flex; gap: .75rem; align-items: flex-start; line-height: 1.5; }
 .ce-ask svg { width: 1.2rem; height: 1.2rem; color: var(--accent-glyph); flex: none; margin-top: .1rem; }
-/* A row's name grows as well, which would leave a wide field half the room. */
-.glim-field-row:has(> .glim-field--grow) > .glim-field-row-name { flex: 0 0 auto; min-width: 8.5rem; }
-a:is(.glim-btn, .glim-icon-btn) { text-decoration: none; }

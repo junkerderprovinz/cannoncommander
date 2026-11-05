@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Papierkorb: a full page listing what was deleted, with restore, delete for good and empty.
-import { Button, Card, FieldRow, IconButton, Pill } from '@glimstone/vue';
+import { Button, Card, EmptyState, FieldRow, IconButton, Pill } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import type { TrashItem } from '@/api/ops';
 import { DAY, fmtDate, fmtSize } from '@/core/format';
@@ -81,8 +81,7 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
 <template>
   <div v-if="!list.length" class="page-inner ct">
     <Card :title="t('trash.title')">
-      <div class="empty ct-empty"><G n="IconTrash" /><div class="t">{{ t('trash.emptyTitle') }}</div><div class="muted">{{ t('trash.emptyText', { days: trash.days }) }}</div>
-        <Button :label="t('trash.toFiles')" label-key="IconFiles" data-go-view="files" @click="go('files')" /></div>
+      <EmptyState class="ct-empty" nested :glyph="glyphComponent('IconTrash')" :title="t('trash.emptyTitle')" :hint="t('trash.emptyText', { days: trash.days })"><Button :label="t('trash.toFiles')" label-key="IconFiles" data-go-view="files" @click="go('files')" /></EmptyState>
     </Card>
   </div>
   <div v-else class="page-inner ct">

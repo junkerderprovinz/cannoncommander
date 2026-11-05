@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { pathField } from '@/ui/picker';
-import { Button, FieldRow, PasswordField, PathField, Pill, Selector, TextField, Toggle } from '@glimstone/vue';
+import { Button, FieldRow, PasswordField, PathField, Pill, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Group, type Role, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -49,26 +49,25 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: isNew ? c('users.crea
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="c('users.loginName')" :hint="c('users.loginNameTip')"><TextField id="a-uname" v-model="d.name" :readonly="self" :placeholder="c('users.loginNamePh')" width="medium" /></FieldRow>
     <FieldRow :label="c('users.displayName')"><TextField id="a-ufull" v-model="d.full" :placeholder="c('users.displayNamePh')" width="medium" /></FieldRow>
-  </div>
-  <div class="well glim-well">
+  </SubCard>
+  <SubCard>
     <FieldRow :label="c('users.role')" :hint="c('users.roleTip')"><Selector id="a-urole" v-model="d.role" :items="segItems(ROLES.map((r) => [r, roleName(r)]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="c('users.scope')" :hint="c('users.scopeTip')"><PathField v-model="d.scope" v-bind="pathField('a-uscope')" /></FieldRow>
-  </div>
-  <div class="well glim-well">
-    <div class="eyebrow">{{ c('users.groups') }}</div>
+  </SubCard>
+  <SubCard :title="c('users.groups')">
     <FieldRow v-for="g in groups" :key="g.name" :label="g.name" :hint="g.note"><Toggle v-model="inGroup[g.name]!" :data-ug="g.name" /></FieldRow>
     <div v-if="!groups.length" class="muted">{{ c('users.noGroups') }}</div>
-  </div>
-  <div v-if="!self" class="well glim-well">
+  </SubCard>
+  <SubCard v-if="!self">
     <template v-if="pwOpen">
       <FieldRow :label="c('users.password')" :hint="c('users.pwTip')"><PasswordField id="a-upw" v-model="pw1" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
       <FieldRow :label="c('users.repeat')"><PasswordField id="a-upw2" v-model="pw2" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
     </template>
     <FieldRow v-else :label="c('users.password')" :hint="self ? c('users.ownPwTip') : c('users.newPwTip')">
-      <span class="a-ctl"><Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="openPassword" /></span>
+      <Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="openPassword" />
     </FieldRow>
-  </div>
+  </SubCard>
 </template>

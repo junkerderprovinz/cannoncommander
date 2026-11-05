@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Verpacken: name, format, compression and password of the archive, and the folder it lands in.
 import { pathField } from '@/ui/picker';
-import { FieldRow, PasswordField, PathField, Pill, Selector, TextField } from '@glimstone/vue';
+import { FieldRow, PasswordField, PathField, Pill, Selector, SubCard, TextField } from '@glimstone/vue';
 import { computed, watch, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
@@ -26,13 +26,13 @@ watchEffect(() => { props.st.file = ok.value && props.st.name.trim() ? freeName(
 </script>
 
 <template>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ plural(st.items.length, 'ui.objects') }}, {{ fmtSize(total) || '0 B' }}</div>
+  <SubCard :title="`${plural(st.items.length, 'ui.objects')}, ${fmtSize(total) || '0 B'}`" class="bk-form">
     <FieldRow :label="t('archive.name')"><span class="bk-namef"><TextField id="k-name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" /><Pill id="k-ext" class="mono">.{{ st.format }}</Pill></span></FieldRow>
     <FieldRow :label="t('archive.format')" :hint="t('archive.formatTip')"><Selector id="k-fmt" v-model="st.format" :items="segItems(formats)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="t('archive.level')" :hint="t('archive.levelTip')"><Selector id="k-level" v-model="st.level" :items="segItems(levels)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="t('archive.password')" :hint="t('archive.passwordTip')"><PasswordField id="k-pw" v-model="st.password" width="grow" :placeholder="t('archive.noPassword')" :disabled="tar" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
-  </div>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('archive.target') }}</div>
+  </SubCard>
+  <SubCard :title="t('archive.target')" class="bk-form">
     <FieldRow :label="t('archive.folder')"><PathField v-model="st.dest" v-bind="pathField('k-dest')" /></FieldRow>
     <FieldRow :label="t('archive.savedAs')">
       <span id="k-final" class="bk-finalw">
@@ -41,5 +41,5 @@ watchEffect(() => { props.st.file = ok.value && props.st.name.trim() ? freeName(
         <template v-else-if="st.file"><FinalPath :path="join(clean(st.dest), st.file)" /><Pill v-if="st.file !== wanted" :data-tip="t('archive.takenTip')" tone="warn">{{ t('ui.taken') }}</Pill></template>
       </span>
     </FieldRow>
-  </div>
+  </SubCard>
 </template>

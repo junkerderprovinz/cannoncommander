@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Zusammenfügen: every part beside the picked one, gaps among them, and the whole file they make.
 import { pathField } from '@/ui/picker';
-import { FieldRow, PathField, Pill, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, PathField, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import { join } from '@/files/paths';
@@ -34,13 +34,13 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="well glim-well"><div class="eyebrow">{{ t('checksum.partsOf', { parts: plural(parts.length, 'checksum.partsWord'), size: fmtSize(total) }) }}</div>
+  <SubCard :title="t('checksum.partsOf', { parts: plural(parts.length, 'checksum.partsWord'), size: fmtSize(total) })">
     <table class="tbl">
       <tr v-for="p in parts" :key="p.name"><td class="mono">{{ p.name }}</td><td class="glim-num r">{{ fmtSize(p.size) }}</td></tr>
       <tr v-if="missing.length"><td colspan="2"><Pill tone="fail">{{ t('checksum.missingParts', { list: missing.map((i) => '.' + String(i).padStart(3, '0')).join(', ') }) }}</Pill></td></tr>
     </table>
-  </div>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('checksum.result') }}</div>
+  </SubCard>
+  <SubCard :title="t('checksum.result')" class="bk-form">
     <FieldRow :label="t('checksum.name')"><TextField id="j-name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
     <FieldRow :label="t('checksum.folder')"><PathField v-model="st.dest" v-bind="pathField('j-dest')" /></FieldRow>
     <FieldRow :label="t('checksum.checkAfter')" :hint="sum ? t('checksum.checkWith', { name: sum.name }) : t('checksum.checkNone')"><Toggle id="j-check" v-model="st.check" :disabled="!sum" /></FieldRow>
@@ -52,5 +52,5 @@ watchEffect(() => {
         <template v-else-if="st.file"><FinalPath :path="join(clean(st.dest), st.file)" /><Pill v-if="st.file !== st.name.trim()" :data-tip="t('checksum.takenTip')" tone="warn">{{ t('ui.taken') }}</Pill></template>
       </span>
     </FieldRow>
-  </div>
+  </SubCard>
 </template>

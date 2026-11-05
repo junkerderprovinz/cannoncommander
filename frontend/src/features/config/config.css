@@ -1,14 +1,13 @@
 /* The settings tabs, their windows and the activity page, as the prototype draws them. */
 .a-list { display: flex; flex-direction: column; gap: 2px; margin: 0 -.5rem; }
 .a-foot { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; padding-top: .5rem; }
-.a-ctl > .a-to { width: 14px; height: 14px; flex: none; color: var(--carbon-text-muted); }
+.a-to { width: 14px; height: 14px; flex: none; color: var(--carbon-text-muted); }
 .a-initials { font-style: normal; font-size: 12px; font-weight: 700; }
 .a-text { line-height: 1.55; }
 .a-text p { margin: 0; }
 .a-text p + p { margin-top: .6rem; }
 @media (max-width: 900px) { .settings { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) {
-  .settings-body .a-ctl, .win .a-ctl { width: 100%; }
 }
 .a-swatches { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
 /* A 28px disc in a 2px ring is 32px, the size of the reset badge beside it. */
@@ -30,7 +29,7 @@
 .a-tile:hover .tile svg, .a-tile:focus-visible .tile svg { color: var(--accent-contrast); }
 .a-tile b { display: block; font-weight: 600; }
 .a-tile small { display: block; font-size: 12px; opacity: .75; }
-.a-tiles .empty { grid-column: 1 / -1; }
+.a-tiles .glim-empty { grid-column: 1 / -1; }
 .a-totp { flex-direction: row; gap: 1.2rem; align-items: center; }
 .a-qr { width: 10rem; height: 10rem; flex: none; border-radius: var(--radius-control); overflow: hidden; }
 .a-qr svg { width: 100%; height: 100%; }
@@ -68,7 +67,6 @@
 .a-name .t { overflow: hidden; text-overflow: ellipsis; }
 .a-lhead, .a-arow { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) 10rem 7.5rem 7.5rem; gap: .6rem; align-items: center; padding: 0 .5rem; }
 .a-lhead { height: 1.9rem; font-size: 12px; color: var(--carbon-text-muted); }
-.a-arow .glim-pill { justify-self: end; }
 .a-hbtn { justify-self: end; display: inline-flex; align-items: center; gap: .3rem; height: 1.6rem; padding: 0 .45rem; border-radius: var(--radius-control); color: inherit; }
 .a-hbtn svg { width: .7rem; height: .7rem; }
 .a-hbtn:hover { background: var(--carbon-hover); color: var(--carbon-text); }

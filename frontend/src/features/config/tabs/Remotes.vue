@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { segItems } from '@/ui/kit';
-import { Button, Card, FieldRow, IconButton, ListRow, Pill, Selector, Toggle } from '@glimstone/vue';
+import { Button, Card, EmptyState, FieldRow, IconButton, ListRow, Pill, Selector, Toggle } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type AppSettings, type Remote } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -63,7 +63,7 @@ function remove(r: Remote) {
         </template>
       </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconCloud" /><div>{{ c('remotes.none') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.none')" />
     <div class="a-foot"><Button data-add :label="c('remotes.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('remotes.mounting')">

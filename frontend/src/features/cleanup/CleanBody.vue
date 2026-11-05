@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // The finds of Aufräumen by group, each one ticked on its own or the whole group at once.
 import { pathField } from '@/ui/picker';
-import { FieldRow, InfoBubble, PathField, Pill } from '@glimstone/vue';
+import { EmptyState, FieldRow, InfoBubble, PathField, Pill, SubCard } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { CleanupFind, CleanupScan } from '@/api/tools';
 import { fmtSize } from '@/core/format';
 import { Checkbox } from '@glimstone/vue';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { plural } from '@/ui/kit';
 import { GROUPS, keyOf } from './groups';
@@ -36,11 +36,11 @@ const all = (group: string, rows: CleanupFind[]) => rows.every((f) => props.st.p
 </script>
 
 <template>
-  <div class="well glim-well bk-form"><FieldRow :label="t('cleanup.searchIn')" :hint="t('cleanup.searchInTip')"><PathField v-model="st.path" v-bind="pathField('cl-in')" /></FieldRow></div>
-  <div class="well glim-well bk-fill bk-cleanwell">
-    <div class="bk-tools"><span id="cl-sum" class="eyebrow">{{ st.scan && total ? t('cleanup.findsIn', { finds: plural(total, 'cleanup.findWord'), objects: plural(st.scan.scanned, 'cleanup.objectsIn') }) : t('cleanup.finds') }}</span><InfoBubble v-if="st.scan?.capped" :tip="t('cleanup.capped')" /></div>
+  <SubCard class="bk-form"><FieldRow :label="t('cleanup.searchIn')" :hint="t('cleanup.searchInTip')"><PathField v-model="st.path" v-bind="pathField('cl-in')" /></FieldRow></SubCard>
+  <SubCard class="bk-fill bk-cleanwell">
+    <div class="bk-tools"><span id="cl-sum" class="glim-eyebrow">{{ st.scan && total ? t('cleanup.findsIn', { finds: plural(total, 'cleanup.findWord'), objects: plural(st.scan.scanned, 'cleanup.objectsIn') }) : t('cleanup.finds') }}</span><InfoBubble v-if="st.scan?.capped" :tip="t('cleanup.capped')" /></div>
     <div id="cl-list" class="bk-list">
-      <div v-if="st.missing" class="empty"><G n="IconFolder" /><div>{{ t('ui.noFolder') }}</div></div>
+      <EmptyState v-if="st.missing" nested :glyph="glyphComponent('IconFolder')" :title="t('ui.noFolder')" />
       <template v-else-if="st.scan">
         <section v-for="gr in groups" :key="gr.id" class="bk-group">
           <div class="cl-head">
@@ -54,8 +54,8 @@ const all = (group: string, rows: CleanupFind[]) => rows.every((f) => props.st.p
             <span v-if="f.to" class="cl-to mono"><G n="IconForward" />{{ f.to.split('/').pop() }}</span><Pill>{{ noteOf(gr.id, f) }}</Pill>
           </div>
         </section>
-        <div v-if="!groups.length" class="empty"><G n="IconCheck" /><div>{{ t('cleanup.clean') }}</div><div class="muted" style="font-size: 12px">{{ t('cleanup.scanned', { objects: plural(st.scan.scanned, 'ui.objects') }) }}</div></div>
+        <EmptyState v-if="!groups.length" nested :glyph="glyphComponent('IconCheck')" :title="t('cleanup.clean')" :hint="t('cleanup.scanned', { objects: plural(st.scan.scanned, 'ui.objects') })" />
       </template>
     </div>
-  </div>
+  </SubCard>
 </template>

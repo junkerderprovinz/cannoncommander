@@ -57,7 +57,7 @@ function restart() {
   <template v-if="app">
     <Card :title="c('app.updates')">
       <FieldRow :label="c('app.autoCheck')" :hint="c('app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
-      <FieldRow :label="c('app.image')"><CopyField class="glim-field--grow" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></FieldRow>
+      <FieldRow :label="c('app.image')"><CopyField width="grow" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></FieldRow>
       <FieldRow label="Tag" :hint="c('app.tagTip')"><Pill class="mono">{{ sys?.version ?? '' }}</Pill></FieldRow>
       <div class="a-foot">
         <Button id="a-upd" :class="{ ok: update !== 'idle' && update !== 'busy' }" :label="update === 'idle' ? c('app.check') : update === 'busy' ? c('app.checking') : update" :label-key="update !== 'idle' && update !== 'busy' ? 'IconUpToDate' : 'IconSync'" :disabled="update === 'busy'" @click="check" />
@@ -69,7 +69,7 @@ function restart() {
     </Card>
     <Card :title="c('app.service')">
       <FieldRow :label="c('app.log')" :hint="c('app.logTip')"><Selector v-model="logLevel" :items="segItems([['error', c('app.errors')], ['info', c('app.normal')], ['debug', c('app.verbose')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-      <FieldRow :label="c('app.running')" :hint="app.restartNeeded ? c('app.restartNeededTip') : undefined"><span class="a-ctl"><Pill :tone="app.restartNeeded ? 'warn' : 'neutral'">{{ app.restartNeeded ? c('app.restartNeeded') : sys ? since(sys.started) : '' }}</Pill><Button :label="c('app.restart')" label-key="IconRefresh" @click="restart" /></span></FieldRow>
+      <FieldRow :label="c('app.running')" :hint="app.restartNeeded ? c('app.restartNeededTip') : undefined"><Pill :tone="app.restartNeeded ? 'warn' : 'neutral'">{{ app.restartNeeded ? c('app.restartNeeded') : sys ? since(sys.started) : '' }}</Pill><Button :label="c('app.restart')" label-key="IconRefresh" @click="restart" /></FieldRow>
     </Card>
   </template>
   <Teleport v-if="restarting" to="body">

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 // The list of one panel in whichever view its folder has. A long folder draws only the lines in sight plus a margin,
 // with spacers for the rest, so ten thousand files scroll like twenty.
+import { EmptyState } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { now } from '@/core/format';
 import { prefs, setPref } from '@/core/prefs';
 import { t } from '@/i18n';
@@ -267,10 +268,6 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
       </template>
       <div v-if="virtual && range.after" class="vpad" aria-hidden="true" :style="{ height: pad(range.after) }"></div>
     </template>
-    <div v-if="!list.length && F.loaded(i)" class="empty">
-      <G :n="tab.filter ? 'IconSearch' : 'IconFolder'" />
-      <div>{{ tab.filter ? t('files.nothingFound', { q: tab.filter }) : t('files.empty') }}</div>
-      <div class="muted" style="font-size:12px">{{ tab.filter ? (tab.deep === false ? t('files.searchedHere') : t('files.searchedDeep')) : t('files.emptyHint') }}</div>
-    </div>
+    <EmptyState v-if="!list.length && F.loaded(i)" nested :glyph="glyphComponent(tab.filter ? 'IconSearch' : 'IconFolder')" :title="tab.filter ? t('files.nothingFound', { q: tab.filter }) : t('files.empty')" :hint="tab.filter ? (tab.deep === false ? t('files.searchedHere') : t('files.searchedDeep')) : t('files.emptyHint')" />
   </div>
 </template>

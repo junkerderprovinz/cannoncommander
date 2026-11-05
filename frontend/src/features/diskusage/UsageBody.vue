@@ -2,7 +2,7 @@
 // Speicherbelegung like TreeSize: one folder as a tree sorted by size, as a treemap, by file type and as its largest
 // files. Whatever it lists can be picked and deleted right here. The numbers come from tools/diskusage, one folder
 // at a time, so opening a branch of the tree asks for that folder.
-import { IconButton, Meter, Selector } from '@glimstone/vue';
+import { EmptyState, IconButton, Meter, Selector, SubCard } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { type DiskUsage, tools } from '@/api/tools';
 import { fmtDate, fmtSize } from '@/core/format';
@@ -295,7 +295,7 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
 
 <template>
   <div class="du-top"><div id="du-crumbs" class="pathbar du-pathbar"><Crumbs :path="cur" attr="data-du-cd" @go="go" /></div><Selector id="du-view" :model-value="mode" :items="segItems(VIEWS)" size="sm" activation="manual" inline button-height pairs-on-phone @press="setView" /></div>
-  <div class="well glim-well du-well">
+  <SubCard class="du-well">
     <div id="du-body" ref="body" :class="bodyClass" tabindex="0" :role="role" @click="click" @dblclick="dblclick" @contextmenu="context" @keydown="key">
       <template v-if="mode === 'tree'">
         <div class="du-row du-head" role="row"><button v-for="id in COLS" :key="id" class="du-sort" :class="{ on: sort.by === id }" :data-du-sort="id">{{ t(`diskusage.cols.${id}`) }}<G v-if="sort.by === id" :n="sort.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /></button></div>
@@ -307,7 +307,7 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
             <span class="glim-num r muted">{{ r.time ? fmtDate(r.time) : '' }}</span>
           </div>
         </template>
-        <div v-else-if="here" class="empty"><G n="IconFolder" /><div>{{ t('diskusage.emptyFolder') }}</div></div>
+        <EmptyState v-else-if="here" nested :glyph="glyphComponent('IconFolder')" :title="t('diskusage.emptyFolder')" />
       </template>
       <template v-else-if="mode === 'largest'">
         <div v-if="kind" class="du-kind"><G :n="kind.glyph" /><span>{{ t('diskusage.only', { name: kind.name }) }}</span><IconButton :tip="t('diskusage.allKinds')" :glyph="glyphComponent('IconClose')" data-du-allkinds /></div>
@@ -319,7 +319,7 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
             <span class="glim-num r muted">{{ r.time ? fmtDate(r.time) : '' }}</span>
           </div>
         </template>
-        <div v-else-if="here" class="empty"><G n="IconFile" /><div>{{ t('diskusage.noFiles') }}</div></div>
+        <EmptyState v-else-if="here" nested :glyph="glyphComponent('IconFile')" :title="t('diskusage.noFiles')" />
       </template>
       <template v-else-if="mode === 'types'">
         <template v-if="types.list.length">
@@ -330,7 +330,7 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
             <span class="glim-num r">{{ fmtSize(x.size) || '0 B' }}</span><span class="du-share"><Meter quiet :threshold="2" :value="share(x.size, types.whole).n / 100" :label="x.name" /><span class="glim-num">{{ share(x.size, types.whole).n }} %</span></span>
           </button>
         </template>
-        <div v-else-if="here" class="empty"><G n="IconFile" /><div>{{ t('diskusage.noFiles') }}</div></div>
+        <EmptyState v-else-if="here" nested :glyph="glyphComponent('IconFile')" :title="t('diskusage.noFiles')" />
       </template>
       <template v-else>
         <svg v-if="blocks.length" :width="box.w" :height="box.h" :viewBox="`0 0 ${box.w} ${box.h}`" :aria-label="t('diskusage.mapLabel', { path: cur })">
@@ -340,8 +340,8 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
             <text v-if="b.bw > 54 && b.bh > 42 && b.size" :x="b.x + 8" :y="b.y + 33" class="s">{{ b.size }}</text>
           </g>
         </svg>
-        <div v-else-if="here" class="empty"><G n="IconFolder" /><div>{{ t('diskusage.nothingBig') }}</div></div>
+        <EmptyState v-else-if="here" nested :glyph="glyphComponent('IconFolder')" :title="t('diskusage.nothingBig')" />
       </template>
     </div>
-  </div>
+  </SubCard>
 </template>

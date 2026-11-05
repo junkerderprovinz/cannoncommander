@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // The tags: rename one, delete it or add a new one before any file carries it.
-import { FieldRow, IconButton, TextField } from '@glimstone/vue';
+import { FieldRow, IconButton, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, reactive, ref } from 'vue';
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
@@ -30,7 +30,7 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="t('labels.newTag')" :hint="t('labels.newTagTip')"><TextField id="mk-new" v-model="fresh" :placeholder="t('labels.newTagPh')" autocomplete="off" width="medium" @keydown.enter.prevent="add" /></FieldRow>
     <div id="mk-list">
       <div v-for="(r, i) in rows" :key="i" class="mk-row">
@@ -39,5 +39,5 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 
       </div>
       <div v-if="!rows.length" class="muted mk-none">{{ t('labels.noTags') }}</div>
     </div>
-  </div>
+  </SubCard>
 </template>

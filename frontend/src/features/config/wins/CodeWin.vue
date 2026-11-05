@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Asks for a code from the app, or one of the recovery codes, before two-factor login changes.
-import { FieldRow, TextField } from '@glimstone/vue';
+import { FieldRow, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { c, fail, stepFoot } from '@/features/config/shared';
@@ -21,7 +21,7 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: props.verb, g: props.
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="c('security.appCode')" :hint="c('security.appCodeTip')"><TextField id="a-code" ref="el" v-model="code" inputmode="numeric" maxlength="9" autocomplete="one-time-code" placeholder="123456" width="short" mono @keydown.enter="go" /></FieldRow>
-  </div>
+  </SubCard>
 </template>

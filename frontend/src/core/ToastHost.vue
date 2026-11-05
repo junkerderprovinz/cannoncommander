@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { Button } from '@glimstone/vue';
-import { armToast, dropToast, holdToast, type Toast, toasts } from './toast';
+import { ToastViewport } from '@glimstone/vue';
+import { computed } from 'vue';
+import { t } from '@/i18n';
+import { dropToast, holdToast, releaseToast, type ToastKind, toasts } from './toast';
 
-function act(t: Toast) {
-  t.act!.run();
-  dropToast(t.id);
-}
+const SEVERITY = { ok: 'success', warn: 'warn', fault: 'fail' } as const satisfies Record<ToastKind, string>;
+const shown = computed(() => toasts.map((x) => ({
+  id: String(x.id),
+  message: x.text,
+  severity: SEVERITY[x.kind],
+  action: x.act && { label: x.act.label, onClick: x.act.run },
+})));
+const byId = (id: string) => toasts.find((x) => String(x.id) === id);
+const hold = (id: string) => { const x = byId(id); if (x) holdToast(x); };
+const release = (id: string) => { const x = byId(id); if (x) releaseToast(x); };
 </script>
 
 <template>
-  <Teleport to="#toasts">
-    <div v-for="t in toasts" :key="t.id" class="toast glim-card" :class="t.kind" @mouseenter="holdToast(t)" @mouseleave="armToast(t)">
-      <span class="dot"></span><span>{{ t.text }}</span><Button v-if="t.act" :label="t.act.label" :label-key="null" @click="act(t)" />
-    </div>
-  </Teleport>
+  <ToastViewport :toasts="shown" :dismiss-label="t('core.close')" @dismiss="dropToast(Number($event))" @enter="hold" @leave="release" @focusin="hold" @focusout="release" />
 </template>

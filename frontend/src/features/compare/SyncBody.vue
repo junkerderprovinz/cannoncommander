@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // The sync window: direction, how to compare and whether to mirror, and the plan as a dry run whose steps can each
 // be switched off. The server plans; a step that would overwrite something newer comes switched off.
-import { FieldRow, InfoBubble, Pill, Selector, Toggle } from '@glimstone/vue';
+import { EmptyState, FieldRow, InfoBubble, Pill, Selector, SubCard, Toggle } from '@glimstone/vue';
 import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue';
 import { type SyncDirection, type SyncStep, tools } from '@/api/tools';
 import { run } from '@/core/actions';
 import { fmtSize } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
@@ -66,7 +66,7 @@ onBeforeUnmount(() => { asked++; });
 </script>
 
 <template>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('compare.match') }}</div>
+  <SubCard :title="t('compare.match')" class="bk-form">
     <div class="bk-sides"><span class="bk-side mono" :title="left"><bdi>{{ left }}</bdi></span><span id="y-arrow" class="bk-arrow"><G :n="arrow" /></span><span class="bk-side mono" :title="right"><bdi>{{ right }}</bdi></span></div>
     <div class="bk-rows">
       <FieldRow :label="t('compare.direction')"><Selector id="y-dir" v-model="o.dir" :items="segItems(DIRS)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
@@ -74,9 +74,9 @@ onBeforeUnmount(() => { asked++; });
       <FieldRow :label="t('compare.recursive')"><Toggle id="y-rec" v-model="o.recursive" /></FieldRow>
       <FieldRow :label="t('compare.mirror')" :hint="t('compare.mirrorTip')"><Toggle id="y-mirror" v-model="o.mirror" :disabled="o.dir === 'both'" /></FieldRow>
     </div>
-  </div>
-  <div class="well glim-well bk-fill">
-    <div class="bk-tools"><span id="y-count" class="eyebrow">{{ count }}</span><InfoBubble :tip="t('compare.previewTip')" /></div>
+  </SubCard>
+  <SubCard class="bk-fill">
+    <div class="bk-tools"><span id="y-count" class="glim-eyebrow">{{ count }}</span><InfoBubble :tip="t('compare.previewTip')" /></div>
     <div id="y-list" class="bk-list">
       <template v-if="steps.length">
         <div v-for="(s, i) in steps" :key="s.key" class="bk-step" :class="{ skip: !isOn(s) }">
@@ -89,7 +89,7 @@ onBeforeUnmount(() => { asked++; });
           <Pill class="glim-num">{{ fmtSize(s.size) || '0 B' }}</Pill>
         </div>
       </template>
-      <div v-else class="empty"><G n="IconCheck" /><div>{{ t('compare.nothing') }}</div></div>
+      <EmptyState v-else nested :glyph="glyphComponent('IconCheck')" :title="t('compare.nothing')" />
     </div>
-  </div>
+  </SubCard>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Hochladen: a drop zone, the target, and the queue with its progress per file and in total.
-import { FieldRow, IconButton, InfoBubble, Pill, ProgressBar } from '@glimstone/vue';
+import { FieldRow, IconButton, InfoBubble, Pill, ProgressBar, SubCard } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import { fmtSize } from '@/core/format';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
@@ -33,13 +33,13 @@ function dropped(e: DragEvent) {
 </script>
 
 <template>
-  <button id="cu-drop" class="well glim-well cu-drop" :class="{ over }" @click="files?.click()" @dragover.prevent.stop="over = true" @dragleave="over = false" @drop.prevent.stop="dropped">
+  <button id="cu-drop" class="glim-well cu-drop" :class="{ over }" @click="files?.click()" @dragover.prevent.stop="over = true" @dragleave="over = false" @drop.prevent.stop="dropped">
     <G n="IconUpload" /><span class="t">{{ t('upload.dropHere') }}</span><span class="muted">{{ t('upload.orClick') }}</span>
   </button>
   <input id="cu-in" ref="files" type="file" multiple hidden @change="picked"><input id="cu-din" type="file" webkitdirectory hidden @change="picked">
-  <div class="well glim-well"><FieldRow :label="t('upload.target')" :hint="t('upload.targetTip')"><Pill class="mono cu-path">{{ st.path }}</Pill></FieldRow></div>
-  <div id="cu-queue" class="well glim-well">
-    <div class="eyebrow">{{ t('upload.queue') }} <InfoBubble :tip="t('upload.queueTip')" />
+  <SubCard><FieldRow :label="t('upload.target')" :hint="t('upload.targetTip')"><Pill class="mono cu-path">{{ st.path }}</Pill></FieldRow></SubCard>
+  <SubCard id="cu-queue">
+    <div class="glim-eyebrow">{{ t('upload.queue') }} <InfoBubble :tip="t('upload.queueTip')" />
       <IconButton v-if="busy" id="cu-all" :tip="pausedAll() ? t('upload.resumeAll') : t('upload.pauseAll')" :glyph="glyphComponent(pausedAll() ? 'IconPlay' : 'IconPause')" @click="toggleAll" />
       <IconButton v-if="ended" id="cu-clear" :tip="t('upload.clear')" :glyph="glyphComponent('IconEmpty')" @click="clearDone" />
     </div>
@@ -64,5 +64,5 @@ function dropped(e: DragEvent) {
       </div>
     </template>
     <div v-else class="cu-empty muted">{{ t('upload.nothing') }}</div>
-  </div>
+  </SubCard>
 </template>

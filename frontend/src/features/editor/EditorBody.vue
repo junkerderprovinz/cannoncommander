@@ -8,8 +8,9 @@ import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { saveText, type TextFile } from '@/features/viewer/content';
 import { type FileNode, joinPath, langOf, viewKind } from '@/features/viewer/kinds';
-import { esc, md } from '@/features/viewer/markdown';
-import { footStartOf, notchOf, winKeys } from '@/features/viewer/winkeys';
+import { md } from '@/features/viewer/markdown';
+import { footStartOf, winKeys } from '@/features/viewer/winkeys';
+import type { WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { makeEditor, setMatches } from './cm';
@@ -17,7 +18,7 @@ import { findAll, nearest, position, type Range } from './find';
 import { opts, type EditorState } from './state';
 
 // The text comes read already, so the editor stands ready the moment its window opens.
-const props = defineProps<{ node: FileNode; folder: string; file: Pick<TextFile, 'text' | 'encoding' | 'eol' | 'etag' | 'truncated'>; state: EditorState; close?: () => void }>();
+const props = defineProps<{ node: FileNode; folder: string; file: Pick<TextFile, 'text' | 'encoding' | 'eol' | 'etag' | 'truncated'>; state: EditorState; close?: () => void; win?: WinEntry }>();
 
 const path = joinPath(props.folder, props.node.name);
 const isMd = viewKind(props.node) === 'md';
@@ -41,8 +42,7 @@ const text = () => view?.state.doc.toString() ?? '';
 
 function setDirty(d: boolean) {
   props.state.dirty = d;
-  const notch = notchOf(host.value);
-  if (notch) notch.innerHTML = esc(props.node.name) + (d ? `<i class="ce-dot" aria-label="${esc(t('editor.unsaved'))}"></i>` : '');
+  if (props.win) props.win.dot = d ? t('editor.unsaved') : undefined;
 }
 
 function moved() {

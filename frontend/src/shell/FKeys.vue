@@ -2,10 +2,9 @@
 // The F-key bar follows the key map, so keys of your own show up here too.
 import { computed } from 'vue';
 import { actions, labelOf, run } from '@/core/actions';
-import { Kbd } from '@glimstone/vue';
+import { Button, Kbd } from '@glimstone/vue';
 import { FKEYS, keymap } from '@/core/keymap';
 import { t } from '@/i18n';
-import SlotButton from '@/ui/SlotButton.vue';
 
 const keys = computed(() => FKEYS.map((k) => {
   const id = k === 'F10' ? 'menuBar' : keymap[k];
@@ -16,6 +15,6 @@ const keys = computed(() => FKEYS.map((k) => {
 
 <template>
   <footer id="fkeys" class="fkeys glim-card">
-    <SlotButton v-for="f in keys" :key="f.k" :label="f.label" :g="f.g" :data-run="f.id" @click="run(f.id)"><template #before><Kbd>{{ f.k }}</Kbd></template></SlotButton>
+    <Button v-for="f in keys" :key="f.k" :label="f.label" :label-key="f.g" :data-run="f.id" @click="run(f.id)"><template #before><Kbd>{{ f.k }}</Kbd></template></Button>
   </footer>
 </template>

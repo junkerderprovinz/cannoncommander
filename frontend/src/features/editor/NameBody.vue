@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // The name field of Neue Datei. Enter takes the name, and the part before the extension is selected to type over.
-import { FieldRow, TextField } from '@glimstone/vue';
+import { FieldRow, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { t } from '@/i18n';
 
@@ -17,5 +17,5 @@ const enter = (e: KeyboardEvent) => {
 </script>
 
 <template>
-  <div class="well glim-well"><FieldRow :label="t('editor.name')"><TextField id="nm" ref="input" :model-value="value" width="wide" @keydown="enter" /></FieldRow></div>
+  <SubCard><FieldRow :label="t('editor.name')"><TextField id="nm" ref="input" :model-value="value" width="wide" @keydown="enter" /></FieldRow></SubCard>
 </template>
