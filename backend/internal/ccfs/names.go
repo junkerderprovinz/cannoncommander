@@ -34,7 +34,8 @@ const dataMarker = ".cc-data"
 // API tokens and two factor secrets of all users, and could write in a config
 // that turns the sign in off. A container sees this folder as /config, while a
 // share on the same disk usually shows it under appdata, so the places a source
-// usually has it are searched for the marker.
+// usually has it are searched for the marker, and the mounts of the container
+// tell where else it shows up.
 func (r *Resolver) WithDataFolder(dir string) *Resolver {
 	if abs, err := filepath.Abs(dir); err == nil {
 		dir = abs
@@ -42,11 +43,15 @@ func (r *Resolver) WithDataFolder(dir string) *Resolver {
 	if err := os.WriteFile(filepath.Join(dir, dataMarker), nil, 0o600); err != nil {
 		logger.Warningf("cannot mark the data folder: %v", err)
 	}
+	places := []string{dir}
+	if data, err := os.ReadFile("/proc/self/mountinfo"); err == nil {
+		places = append(places, mountedElsewhere(string(data), dir)...)
+	}
 	out := *r
 	out.closed = nil
 	for _, s := range r.sources {
-		if inside(s.Root, dir) {
-			if rel, err := filepath.Rel(s.Root, dir); err == nil && rel != "." {
+		for _, p := range places {
+			if rel, err := filepath.Rel(s.Root, p); err == nil && rel != "." && inside(s.Root, p) {
 				out.closed = append(out.closed, path.Join(s.Mount, filepath.ToSlash(rel)))
 			}
 		}
@@ -59,20 +64,91 @@ func (r *Resolver) WithDataFolder(dir string) *Resolver {
 			out.closed = append(out.closed, path.Join(s.Mount, rel))
 		}
 	}
-	for _, c := range slices.Clone(out.closed) {
-		rest, ok := strings.CutPrefix(c, "/mnt/user/")
-		if !ok {
-			continue
-		}
-		for _, s := range r.sources {
-			if s.Device {
-				out.closed = append(out.closed, path.Join(s.Mount, rest))
-			}
-		}
-	}
+	out.closed = append(out.closed, r.onEveryVolume(out.closed)...)
 	slices.Sort(out.closed)
 	out.closed = slices.Compact(out.closed)
 	return &out
+}
+
+// onEveryVolume returns the paths in the user shares and on each disk and pool
+// for those of paths that lie in one of them, since a share folder has the
+// same path on all of them.
+func (r *Resolver) onEveryVolume(paths []string) []string {
+	var volumes []string
+	for _, s := range r.sources {
+		if s.Device || s.Mount == "/mnt/user" {
+			volumes = append(volumes, s.Mount)
+		}
+	}
+	var out []string
+	for _, p := range paths {
+		for _, v := range volumes {
+			rest, ok := strings.CutPrefix(p, v+"/")
+			if !ok {
+				continue
+			}
+			for _, w := range volumes {
+				out = append(out, path.Join(w, rest))
+			}
+		}
+	}
+	return out
+}
+
+// mountedElsewhere reads the mount table in mountinfo and returns the other
+// paths where the folder dir can be reached, such as /mnt/cache/appdata/x for a
+// /config that the container got from that folder.
+func mountedElsewhere(mountinfo, dir string) []string {
+	type mount struct{ dev, root, at string }
+	var mounts []mount
+	for line := range strings.SplitSeq(mountinfo, "\n") {
+		f := strings.Fields(line)
+		if len(f) < 5 {
+			continue
+		}
+		mounts = append(mounts, mount{dev: f[2], root: unescapeMount(f[3]), at: unescapeMount(f[4])})
+	}
+	var home *mount
+	for i, m := range mounts {
+		if within(dir, m.at) && (home == nil || len(m.at) >= len(home.at)) {
+			home = &mounts[i]
+		}
+	}
+	if home == nil {
+		return nil
+	}
+	inFs := path.Join(home.root, strings.TrimPrefix(dir, home.at))
+	var out []string
+	for _, m := range mounts {
+		if m.dev != home.dev || m.at == home.at || !within(inFs, m.root) {
+			continue
+		}
+		p := path.Join(m.at, strings.TrimPrefix(inFs, m.root))
+		if !slices.Contains(out, p) {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+// unescapeMount undoes the octal escapes mountinfo writes for spaces, tabs,
+// newlines and backslashes in a path.
+func unescapeMount(s string) string {
+	if !strings.Contains(s, `\`) {
+		return s
+	}
+	var b strings.Builder
+	for i := 0; i < len(s); i++ {
+		if s[i] == '\\' && i+3 < len(s) {
+			if n, err := strconv.ParseUint(s[i+1:i+4], 8, 8); err == nil {
+				b.WriteByte(byte(n))
+				i += 3
+				continue
+			}
+		}
+		b.WriteByte(s[i])
+	}
+	return b.String()
 }
 
 // markedFolders looks in the folders directly in root and in those of its
