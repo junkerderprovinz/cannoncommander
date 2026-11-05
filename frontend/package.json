@@ -51,7 +51,7 @@
     "minimatch": "^11.0.0",
     "@xmldom/xmldom": "^0.8.15",
     "mammoth": {
-      "argparse": "^2.0.1"
+      "argparse": "^3.0.3"
     },
     "@intlify/vue-i18n-extensions": {
       "vue-i18n": "$vue-i18n"
