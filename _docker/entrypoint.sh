@@ -30,9 +30,13 @@ fi
 
 as_user=""
 if [ "$PUID" != 0 ]; then
-  # fusermount3 refuses to mount a remote for a user without a name.
+  # fusermount3 refuses to mount a remote for a user without a name. Unraid
+  # calls 99 nobody, and the line goes first so that name finds 99 rather
+  # than Alpine's own nobody.
   if ! cut -d: -f3 /etc/passwd | grep -qx "$PUID"; then
-    echo "cannoncommander:x:$PUID:$PGID::/config:/sbin/nologin" >> /etc/passwd
+    name=cannoncommander
+    [ "$PUID" = 99 ] && name=nobody
+    sed -i "1i $name:x:$PUID:$PGID::/config:/sbin/nologin" /etc/passwd
   fi
   if ! cut -d: -f3 /etc/group | grep -qx "$PGID"; then
     echo "cannoncommander:x:$PGID:" >> /etc/group
