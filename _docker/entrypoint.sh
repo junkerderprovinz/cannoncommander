@@ -43,7 +43,17 @@ if [ "$PUID" != 0 ]; then
   fi
   # Only what the server writes itself, never the shares.
   find "$config_dir" \( ! -user "$PUID" -o ! -group "$PGID" \) -exec chown "$PUID:$PGID" {} +
-  as_user="su-exec $PUID:$PGID"
+
+  # chown and fowner let "Set permissions the Unraid way" hand files to
+  # nobody:users. Unraid keeps /boot/config readable for root only, and the
+  # share settings there need dac_read_search, which Docker grants only on
+  # request, so it is kept when the template adds it.
+  caps="+chown,+fowner"
+  bounding="$(sed -n 's/^CapBnd:[[:space:]]*//p' /proc/self/status)"
+  if [ $((0x$bounding & 4)) != 0 ]; then
+    caps="$caps,+dac_read_search"
+  fi
+  as_user="setpriv --reuid=$PUID --regid=$PGID --init-groups --inh-caps=$caps --ambient-caps=$caps"
 fi
 
 # The server runs as a child rather than in place of this script, so the
