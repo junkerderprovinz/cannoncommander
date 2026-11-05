@@ -143,6 +143,48 @@ func (r *Resolver) Reach(u *users.User, p string, perm Perm) (Location, error) {
 	return loc, r.Follows(u, loc, perm)
 }
 
+// Landed is the location of a folder once its links are followed. Whatever is
+// judged below a folder has to go by this path, since a rule cannot name the
+// path of a link that leads there.
+func (r *Resolver) Landed(u *users.User, p string, perm Perm) (Location, error) {
+	loc, err := r.Reach(u, p, perm)
+	if err != nil || loc.Virtual() || loc.InArchive() {
+		return loc, err
+	}
+	return r.Followed(loc)
+}
+
+// Entry checks an entry that gets taken as itself, so a link counts as a link
+// and can go away wherever it leads. Only the folders on the way are followed,
+// and the location it returns is the one that leaves.
+func (r *Resolver) Entry(u *users.User, p string, perm Perm) (Location, error) {
+	loc, err := r.Check(u, p, perm)
+	if err != nil {
+		return loc, err
+	}
+	if loc.Virtual() || loc.InArchive() || loc.Index == "/" {
+		return loc, r.Follows(u, loc, perm)
+	}
+	landed, err := r.entryAt(loc)
+	if err != nil || landed.Path == loc.Path {
+		return loc, err
+	}
+	return r.Check(u, landed.Path, perm)
+}
+
+// entryAt is loc with the links on the way to it followed, but not the last.
+func (r *Resolver) entryAt(loc Location) (Location, error) {
+	dir, err := r.Resolve(path.Dir(loc.Path))
+	if err != nil {
+		return loc, err
+	}
+	landed, err := r.Followed(dir)
+	if err != nil {
+		return loc, err
+	}
+	return r.Resolve(path.Join(landed.Path, path.Base(loc.Path)))
+}
+
 // belowRules is what a rule book can say about a whole subtree without
 // looking at the disk.
 type belowRules interface {
@@ -156,10 +198,18 @@ func (r *Resolver) Whole(ctx context.Context, u *users.User, loc Location, perm 
 	if r.rules == nil || loc.Virtual() || loc.InArchive() {
 		return nil
 	}
-	if b, ok := r.rules.(belowRules); ok && !b.Below(u, loc.Path) {
+	top, err := r.entryAt(loc)
+	if err != nil {
+		return err
+	}
+	if b, ok := r.rules.(belowRules); ok && !b.Below(u, top.Path) {
 		return nil
 	}
-	err := filepath.WalkDir(loc.Real, func(real string, d fs.DirEntry, err error) error {
+	return filepath.WalkDir(top.Real, func(real string, d fs.DirEntry, err error) error {
+		// An entry that went away meanwhile needs no right.
+		if errors.Is(err, fs.ErrNotExist) {
+			return nil
+		}
 		if err != nil {
 			return err
 		}
@@ -173,17 +223,15 @@ func (r *Resolver) Whole(ctx context.Context, u *users.User, loc Location, perm 
 			}
 			return nil
 		}
-		rel, err := filepath.Rel(loc.Real, real)
+		rel, err := filepath.Rel(top.Real, real)
 		if err != nil {
 			return err
 		}
-		_, err = r.Check(u, path.Join(loc.Path, filepath.ToSlash(rel)), perm)
-		return err
-	})
-	if errors.Is(err, fs.ErrNotExist) {
+		if _, err := r.Check(u, path.Join(top.Path, filepath.ToSlash(rel)), perm); err != nil {
+			return ErrProtected
+		}
 		return nil
-	}
-	return err
+	})
 }
 
 // effect asks the rules about p. A path into an archive counts as the

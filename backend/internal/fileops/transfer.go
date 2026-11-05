@@ -118,7 +118,7 @@ func check(ctx context.Context, fsys *ccfs.Resolver, u *users.User, p TransferPa
 	srcPerm := srcPermFor(move)
 	plan := &jobs.Plan{Dest: dest.Path, Answers: p.Decisions, Rule: p.Rule}
 	for i, raw := range p.Sources {
-		src, err := fsys.Reach(u, raw, srcPerm)
+		src, err := fsys.Entry(u, raw, srcPerm)
 		if err != nil {
 			return dest, nil, err
 		}
@@ -141,7 +141,7 @@ func check(ctx context.Context, fsys *ccfs.Resolver, u *users.User, p TransferPa
 		if !ccfs.ValidName(name) {
 			return dest, nil, v1.Errorf(http.StatusBadRequest, "invalid name")
 		}
-		if _, err := fsys.Check(u, path.Join(dest.Path, name), destPerm); err != nil {
+		if _, err := fsys.Entry(u, path.Join(dest.Path, name), destPerm); err != nil {
 			return dest, nil, err
 		}
 		if path.Join(dest.Path, name) == src.Path {
@@ -332,12 +332,12 @@ func runTransfer(move bool) func(context.Context, *jobs.Run) error {
 }
 
 func (t *transfer) item(ctx context.Context, dest ccfs.Location, it jobs.Item) (bool, error) {
-	src, u, err := t.run.Reach(it.Path, t.srcPerm)
+	src, u, err := t.run.Entry(it.Path, t.srcPerm)
 	if err != nil {
 		return false, err
 	}
 	t.u = u
-	if err := t.s.fs.Follows(u, dest, t.dstPerm); err != nil {
+	if dest, err = t.s.fs.Landed(u, dest.Path, t.dstPerm); err != nil {
 		return false, err
 	}
 	if err := folder(dest); err != nil {

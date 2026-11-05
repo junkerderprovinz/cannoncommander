@@ -281,14 +281,21 @@ func (s *Service) publicList(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	seen, err := s.fs.Followed(loc)
+	if err != nil {
+		return err
+	}
 	for _, d := range dirents {
 		name := d.Name()
-		if strings.HasPrefix(name, ".") || !s.fs.Visible(v.owner, loc, name) {
+		if strings.HasPrefix(name, ".") || !s.fs.Visible(v.owner, seen, name) {
 			continue
 		}
 		real := filepath.Join(loc.Real, name)
-		if d.Type()&fs.ModeSymlink != 0 && !inside(sp.bound, real) {
-			continue
+		if d.Type()&fs.ModeSymlink != 0 {
+			child, err := s.fs.Resolve(path.Join(loc.Path, name))
+			if err != nil || !inside(sp.bound, real) || s.fs.Follows(v.owner, child, ccfs.View) != nil {
+				continue
+			}
 		}
 		if it, ok := itemAt(real, name); ok {
 			out.Items = append(out.Items, it)
@@ -368,8 +375,8 @@ func (s *Service) archive(w http.ResponseWriter, r *http.Request, v *visit, sp s
 	if sp.top {
 		names := s.shownNames(v.sh.Paths)
 		for i, p := range v.sh.Paths {
-			loc, err := s.fs.Check(v.owner, p, ccfs.View|ccfs.Download)
-			if err != nil || s.fs.Follows(v.owner, loc, ccfs.View|ccfs.Download) != nil {
+			loc, err := s.fs.Entry(v.owner, p, ccfs.View|ccfs.Download)
+			if err != nil {
 				continue
 			}
 			if _, err := os.Stat(loc.Real); err != nil {
@@ -378,7 +385,7 @@ func (s *Service) archive(w http.ResponseWriter, r *http.Request, v *visit, sp s
 			entries = append(entries, fsapi.ArchiveEntry{Name: names[i], Loc: loc, Bound: loc.Real})
 		}
 	} else {
-		loc, err := s.fs.Check(v.owner, sp.loc.Path, ccfs.View|ccfs.Download)
+		loc, err := s.fs.Entry(v.owner, sp.loc.Path, ccfs.View|ccfs.Download)
 		if err != nil {
 			return err
 		}
@@ -393,7 +400,8 @@ func (s *Service) archive(w http.ResponseWriter, r *http.Request, v *visit, sp s
 	visible := func(dir ccfs.Location, name string) bool {
 		return !strings.HasPrefix(name, ".") && s.fs.Visible(v.owner, dir, name)
 	}
-	fsapi.ServeArchive(w, r, s.fs, fsapi.ArchiveName(sp.name, format), entries, fsapi.ArchiveOptions{Format: format, Visible: visible})
+	follows := func(loc ccfs.Location) bool { return s.fs.Follows(v.owner, loc, ccfs.View|ccfs.Download) == nil }
+	fsapi.ServeArchive(w, r, s.fs, fsapi.ArchiveName(sp.name, format), entries, fsapi.ArchiveOptions{Format: format, Visible: visible, Follows: follows})
 	return nil
 }
 

@@ -12,10 +12,18 @@ import (
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex/fsindextest"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
 )
+
+func sweepNow(e *env) {
+	e.t.Helper()
+	db := fsindextest.New(e.t)
+	fsindextest.Scan(e.t, db, "Shares", e.root)
+	fileops.For(e.deps).SweepParts(e.t.Context())
+}
 
 func linksOnly(t *testing.T) {
 	t.Helper()

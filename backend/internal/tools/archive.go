@@ -136,14 +136,17 @@ func runPack(ctx context.Context, run *jobs.Run) error {
 		return err
 	}
 	var total int64
+	// The names in the archive start below this folder, wherever a link led.
+	var rightsBase string
 	for _, it := range items {
-		loc, err := fsys.Reach(u, it.Path, packPerm)
+		loc, err := fsys.Entry(u, it.Path, packPerm)
 		if err == nil {
 			err = wholeForProgram(ctx, fsys, u, archives.Format(st.Format), loc)
 		}
 		if err != nil {
 			return err
 		}
+		rightsBase = path.Dir(loc.Path)
 		bytes, files, err := jobs.TreeSize(ctx, filepath.Join(st.Base, it.Name))
 		if err != nil {
 			return err
@@ -167,7 +170,7 @@ func runPack(ctx context.Context, run *jobs.Run) error {
 		Wrote:    progress(ctx, run),
 		Next:     func(n string) error { run.Current(n); return nil },
 		Skip: func(n string, link bool) bool {
-			p := path.Join(path.Dir(items[0].Path), n)
+			p := path.Join(rightsBase, n)
 			if link {
 				_, err := fsys.Reach(u, p, packPerm)
 				return err != nil
@@ -291,7 +294,11 @@ func runUnpack(ctx context.Context, run *jobs.Run) error {
 	opts := archives.Options{Password: secret(st.Secret), Charset: st.Charset}
 	fsys := run.Deps().FS
 	perm := unpackPerm(st.Clash)
-	dest, u, err := run.Reach(st.Dest, perm)
+	u, err := run.User()
+	if err != nil {
+		return err
+	}
+	dest, err := fsys.Landed(u, st.Dest, perm)
 	if err != nil {
 		return err
 	}
@@ -307,14 +314,20 @@ func runUnpack(ctx context.Context, run *jobs.Run) error {
 			run.Measure(it.Seq, unpackedSize(ix, st.Inner[it.Seq]), int64(ix.Len()))
 		}
 		run.Begin(it.Seq)
-		target, into := dest.Real, st.Dest
+		target, into := dest.Real, dest.Path
 		if st.Own {
-			folder := archives.Into(real)
-			target, into = filepath.Join(dest.Real, folder), path.Join(st.Dest, folder)
-			if err := os.MkdirAll(target, 0o777); err != nil {
+			own := path.Join(dest.Path, archives.Into(real))
+			err := os.MkdirAll(filepath.Join(dest.Real, archives.Into(real)), 0o777)
+			var at ccfs.Location
+			if err == nil {
+				// A link of that name would pass the members on to where it leads.
+				at, err = fsys.Landed(u, own, perm)
+			}
+			if err != nil {
 				run.Finish(it.Seq, jobs.ItemFailed, err)
 				continue
 			}
+			target, into = at.Real, at.Path
 			landed = append(landed, into)
 		}
 		// The folder passing says nothing about the places below it the

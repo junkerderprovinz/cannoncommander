@@ -231,7 +231,9 @@ func (b *ruleBook) Below(u *users.User, p string) bool {
 		if c.Rule.Rule == ruleAllow || !c.names(u.Username, groupsOf) {
 			continue
 		}
-		if c.glob != nil || c.Path == p || strings.HasPrefix(c.Path, strings.TrimSuffix(p, "/")+"/") {
+		// A rule above p counts too: p can only have passed through an allow
+		// that need not cover everything below it.
+		if c.glob != nil || c.Path == p || strings.HasPrefix(c.Path, strings.TrimSuffix(p, "/")+"/") || strings.HasPrefix(p, c.Path+"/") {
 			return true
 		}
 	}

@@ -43,6 +43,8 @@ func ProblemFor(err error) *Problem {
 		return Errorf(http.StatusBadRequest, "invalid path")
 	case errors.Is(err, ccfs.ErrNotFound), errors.Is(err, fs.ErrNotExist):
 		return Errorf(http.StatusNotFound, "path not found")
+	case errors.Is(err, ccfs.ErrProtected):
+		return Errorf(http.StatusForbidden, "a rule protects something in this folder")
 	case errors.Is(err, ccfs.ErrReadOnly):
 		return Errorf(http.StatusForbidden, "path is read only")
 	case errors.Is(err, ccfs.ErrForbidden), errors.Is(err, ccfs.ErrEscape), errors.Is(err, fs.ErrPermission):

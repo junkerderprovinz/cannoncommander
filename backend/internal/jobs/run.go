@@ -54,6 +54,16 @@ func (r *Run) RequireAdmin() error {
 	return nil
 }
 
+// Entry is ccfs.Entry for the owner as they are now.
+func (r *Run) Entry(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error) {
+	u, err := r.User()
+	if err != nil {
+		return ccfs.Location{}, nil, err
+	}
+	loc, err := r.m.deps.FS.Entry(u, p, perm)
+	return loc, u, err
+}
+
 // Reach is ccfs.Reach for the owner as they are now.
 func (r *Run) Reach(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error) {
 	u, err := r.User()

@@ -11,13 +11,13 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
-	"os"
 	"path"
 	"slices"
 	"strings"
 	"time"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
@@ -269,7 +269,7 @@ func narrowDups(groups [][]dupCandidate, key func(*dupCandidate) (string, bool))
 // partialHash also puts the length of the file into c, because the index
 // may only know the blocks the file takes on its disk.
 func partialHash(ctx context.Context, run *jobs.Run, c *dupCandidate) (string, error) {
-	f, err := os.Open(c.Real)
+	f, err := ccfs.OpenRegular(c.Real)
 	if err != nil {
 		return "", err
 	}
@@ -302,7 +302,7 @@ func partialHash(ctx context.Context, run *jobs.Run, c *dupCandidate) (string, e
 // fullHash reads the whole file through the job's speed limit, so a scan
 // of a big share can be paused and slowed like a copy.
 func fullHash(ctx context.Context, run *jobs.Run, c dupCandidate) (string, error) {
-	f, err := os.Open(c.Real)
+	f, err := ccfs.OpenRegular(c.Real)
 	if err != nil {
 		return "", err
 	}

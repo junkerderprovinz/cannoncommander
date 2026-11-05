@@ -419,8 +419,15 @@ func undoRenameBatch(ctx context.Context, d v1.Deps, u *users.User, raw json.Raw
 	}
 	back := make([]renamePair, len(pairs))
 	for i, p := range pairs {
-		if _, _, err := entry(d.FS, u, p.To, ccfs.Modify); err != nil {
+		loc, _, err := entry(d.FS, u, p.To, ccfs.Modify)
+		if err != nil {
 			return v1.Errorf(http.StatusConflict, path.Base(p.To)+" is not there any more")
+		}
+		if err := d.FS.Whole(ctx, u, loc, ccfs.Modify); err != nil {
+			return err
+		}
+		if _, err := d.FS.Entry(u, p.From, ccfs.Create); err != nil {
+			return err
 		}
 		back[i] = renamePair{From: p.To, To: p.From}
 	}

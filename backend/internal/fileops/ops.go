@@ -168,7 +168,7 @@ func renameNoReplace(from, to string) error {
 
 // existing checks that p exists inside a source and u holds perm there.
 func (s *Service) existing(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, error) {
-	loc, err := s.fs.Reach(u, p, perm)
+	loc, err := s.fs.Entry(u, p, perm)
 	if err != nil {
 		return loc, err
 	}
@@ -183,7 +183,7 @@ func (s *Service) existing(u *users.User, p string, perm ccfs.Perm) (ccfs.Locati
 
 // newEntry checks that u may create p and that its folder exists.
 func (s *Service) newEntry(u *users.User, p string) (ccfs.Location, error) {
-	loc, err := s.fs.Reach(u, p, ccfs.Create)
+	loc, err := s.fs.Entry(u, p, ccfs.Create)
 	if err != nil {
 		return loc, err
 	}

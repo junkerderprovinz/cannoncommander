@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -320,6 +321,32 @@ func TestContentSearchFindsTextInFiles(t *testing.T) {
 		case <-time.After(5 * time.Second):
 			t.Fatal("no final search.hits event")
 		}
+	}
+}
+
+func TestContentSearchDoesNotReadThroughALink(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("needs symlinks")
+	}
+	f := newFixture(t)
+	outside := filepath.Join(t.TempDir(), "lohn.txt")
+	put(t, outside, "gehaltsgeheimnis", 0)
+	if err := os.Symlink(outside, filepath.Join(f.share, "tor.txt")); err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := json.Marshal(ContentParams{Params: Params{Path: "/mnt/user"}, Text: "gehaltsgeheimnis"})
+	plan, err := prepareContent(context.Background(), f.deps, f.users["jdp"], raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	j, err := f.m.Submit("jdp", KindContent, plan, 0, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	j = waitFor(t, f.m, j.ID)
+	body, _ := json.Marshal(j.Result)
+	if strings.Contains(string(body), "tor.txt") {
+		t.Errorf("found text behind a link: %s", body)
 	}
 }
 
