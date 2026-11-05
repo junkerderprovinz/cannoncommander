@@ -4,7 +4,7 @@ import { computed, nextTick, ref, watch } from 'vue';
 import type { Algo } from '@/api/tools';
 import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
-import BkPath from '@/ui/BkPath.vue';
+import PathField from '@/ui/PathField.vue';
 import Frow from '@/ui/Frow.vue';
 import { plural } from '@/ui/kit';
 import Seg from '@/ui/Seg.vue';
@@ -30,15 +30,15 @@ const width = (r: VerifyRow, i: number) => (r.state !== 'wait' || i < props.st.s
 </script>
 
 <template>
-  <div class="well bk-form">
+  <div class="well glim-well bk-form">
     <Frow :label="t('checksum.sums')"><Seg id="v-mode" v-model="st.mode" :options="modes" /></Frow>
     <div class="bk-swap">
-      <div class="bk-swap-a" :hidden="st.mode !== 'file'"><Frow :label="t('checksum.file')" :tip="t('checksum.fileTip')"><input id="v-file" ref="fileField" v-model="st.file" class="field grow mono" placeholder="/mnt/user/downloads/datei.sha256" spellcheck="false" autocomplete="off" @keydown.enter.prevent="check"></Frow></div>
-      <div class="bk-swap-b" :hidden="st.mode !== 'paste'"><textarea id="v-text" ref="textField" v-model="st.text" class="field mono" rows="3" :placeholder="t('checksum.pastePlaceholder')" spellcheck="false"></textarea>
-        <Frow :label="t('checksum.filesIn')"><BkPath id="v-dir" v-model="st.dir" /></Frow></div>
+      <div class="bk-swap-a" :hidden="st.mode !== 'file'"><Frow :label="t('checksum.file')" :tip="t('checksum.fileTip')"><input id="v-file" ref="fileField" v-model="st.file" class="glim-input grow glim-input--mono" placeholder="/mnt/user/downloads/datei.sha256" spellcheck="false" autocomplete="off" @keydown.enter.prevent="check"></Frow></div>
+      <div class="bk-swap-b" :hidden="st.mode !== 'paste'"><textarea id="v-text" ref="textField" v-model="st.text" class="glim-input glim-input--mono" rows="3" :placeholder="t('checksum.pastePlaceholder')" spellcheck="false"></textarea>
+        <Frow :label="t('checksum.filesIn')"><PathField id="v-dir" v-model="st.dir" /></Frow></div>
     </div>
   </div>
-  <div class="well bk-fill"><div class="bk-tools"><span id="v-count" class="eyebrow">{{ count }}</span></div>
+  <div class="well glim-well bk-fill"><div class="bk-tools"><span id="v-count" class="eyebrow">{{ count }}</span></div>
     <div id="v-list" class="bk-list">
       <div v-if="!st.rows" class="empty"><G :n="EMPTY[st.empty][0]" /><div>{{ t(EMPTY[st.empty][1]) }}</div></div>
       <template v-else><div v-for="(r, i) in st.rows" :id="`v-row-${i}`" :key="i" class="bk-sum">

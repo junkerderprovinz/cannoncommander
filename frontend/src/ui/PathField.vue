@@ -1,19 +1,31 @@
 <script setup lang="ts">
-// A path field with the picker button beside it.
-import { G } from '@/core/glyphs';
+// A path to type and the picker beside it, for folders or, with exts, for files with one of those endings.
+import { Button } from '@glimstone/vue';
+import { ref } from 'vue';
+import { exists } from '@/api/admin';
 import { t } from '@/i18n';
+import { usePanels } from '@/stores/panels';
 import { pickFolder } from './picker';
 import './texts';
 
-defineProps<{ id?: string }>();
+const props = defineProps<{ id?: string; exts?: string[]; placeholder?: string }>();
 const model = defineModel<string>({ required: true });
+const emit = defineEmits<{ picked: [path: string] }>();
+const input = ref<HTMLInputElement | null>(null);
+defineExpose({ input });
 
 async function pick() {
-  const p = await pickFolder(model.value || '/mnt/user');
-  if (p) model.value = p;
+  const here = usePanels().T().path;
+  const known = await exists(model.value.trim(), props.exts ? 'file' : 'dir');
+  const start = known ? model.value.trim() : here.includes('::') ? '/mnt/user' : here;
+  const p = await pickFolder({ start, exts: props.exts });
+  input.value?.focus();
+  if (!p) return;
+  model.value = p;
+  emit('picked', p);
 }
 </script>
 
 <template>
-  <span class="a-ctl"><input :id="id" v-model="model" class="field w mono" spellcheck="false" autocomplete="off"><button class="btn icon" type="button" :data-tip="t('ui.pickFolder')" :aria-label="t('ui.pickFolder')" @click.stop="pick"><G n="IconFolderOpen" /></button></span>
+  <span class="pathf"><input :id="id" ref="input" v-model="model" class="glim-input glim-input--mono" :placeholder="placeholder" spellcheck="false" autocomplete="off"><Button variant="icon" :label="exts ? t('ui.pickFile') : t('ui.pickFolder')" label-key="IconFolderOpen" :data-pickfor="id" @click.stop="pick" /></span>
 </template>

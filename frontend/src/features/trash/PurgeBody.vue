@@ -8,7 +8,7 @@ defineProps<{ list: TrashItem[]; what: string; size: number }>();
 </script>
 
 <template>
-  <div class="well"><div class="eyebrow">{{ what }}, {{ fmtSize(size) }}</div>
+  <div class="well glim-well"><div class="eyebrow">{{ what }}, {{ fmtSize(size) }}</div>
     <table class="tbl">
       <tr v-for="e in list.slice(0, 8)" :key="e.id"><td>{{ e.name }}</td><td class="glim-num r">{{ fmtSize(e.size) }}</td></tr>
       <tr v-if="list.length > 8"><td colspan="2">{{ t('trash.andMore', { n: list.length - 8 }) }}</td></tr>

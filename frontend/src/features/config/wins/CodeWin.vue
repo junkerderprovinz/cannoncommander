@@ -2,8 +2,8 @@
 // Asks for a code from the app, or one of the recovery codes, before two-factor login changes.
 import { onMounted, ref } from 'vue';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Frow from '../kit/Frow.vue';
-import { c, fail, setFoot } from '../kit/kit';
+import Frow from '@/ui/Frow.vue';
+import { c, fail, stepFoot } from '@/features/config/shared';
 
 const props = defineProps<{ win: WinEntry; verb: string; glyph: string; submit: (code: string) => Promise<void> }>();
 const code = ref('');
@@ -17,11 +17,11 @@ async function go() {
   props.win.close();
 }
 
-onMounted(() => setFoot(props.win, [cancelBtn(), { label: props.verb, g: props.glyph, primary: true, run: () => { go(); return false; } }]));
+onMounted(() => stepFoot(props.win, [cancelBtn(), { label: props.verb, g: props.glyph, primary: true, run: () => { go(); return false; } }]));
 </script>
 
 <template>
-  <div class="well">
-    <Frow :label="c('security.appCode')" :tip="c('security.appCodeTip')"><input id="a-code" ref="el" v-model="code" class="field s mono" inputmode="numeric" maxlength="9" autocomplete="one-time-code" placeholder="123456" @keydown.enter="go"></Frow>
+  <div class="well glim-well">
+    <Frow :label="c('security.appCode')" :tip="c('security.appCodeTip')"><input id="a-code" ref="el" v-model="code" class="glim-input s glim-input--mono" inputmode="numeric" maxlength="9" autocomplete="one-time-code" placeholder="123456" @keydown.enter="go"></Frow>
   </div>
 </template>

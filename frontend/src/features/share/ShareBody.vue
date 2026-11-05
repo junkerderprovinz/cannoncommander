@@ -15,9 +15,9 @@ defineProps<{ k: Entry; f: LinkForm; st: { existing: Share[] }; reroll: (s: Shar
 </script>
 
 <template>
-  <div class="well"><Frow><template #label><span class="tile cs-tile"><G :n="glyphOf(k)" /></span><b class="cs-name">{{ k.name }}</b></template><span class="pill glim-num">{{ fmtSize(k.size) || '0 B' }}</span></Frow></div>
+  <div class="well glim-well"><Frow><template #label><span class="tile cs-tile"><G :n="glyphOf(k)" /></span><b class="cs-name">{{ k.name }}</b></template><span class="pill glim-num">{{ fmtSize(k.size) || '0 B' }}</span></Frow></div>
   <LinkOptions :f="f" :name="k.name" />
-  <div v-if="st.existing.length" id="cs-existing" class="well"><div class="eyebrow">{{ t('share.existing') }}</div>
+  <div v-if="st.existing.length" id="cs-existing" class="well glim-well"><div class="eyebrow">{{ t('share.existing') }}</div>
     <Frow v-for="s in st.existing" :key="s.id"><template #label><span class="mono cs-slug">{{ shareUrl(s.slug) }}</span></template>
       <span class="pill glim-num">{{ s.expires ? t('share.until', { date: fmtDate(Date.parse(s.expires)) }) : t('share.unlimited') }}</span><span class="pill glim-num">{{ plural(s.views, 'share.views') }}</span>
       <button class="btn icon" type="button" :data-reroll="s.slug" :data-tip="t('share.reroll')" :aria-label="t('share.dice')" @click="reroll(s)"><G n="IconRetry" /></button>

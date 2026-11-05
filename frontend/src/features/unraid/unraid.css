@@ -10,7 +10,7 @@
 .nav-row .u-moon + .meta { margin-left: .35rem; }
 .nav-row.cur .u-moon { color: var(--accent-contrast); }
 .nav-row[data-parity] { cursor: pointer; }
-.bk svg { fill: currentColor; }
+.bk :not(.glim-info-icon) > svg { fill: currentColor; }
 .bk .well { min-width: 0; }
 .bk .well .pill:not(.ok):not(.warn):not(.fault) { background: var(--carbon-surface3); }
 .bk .well .tbl tr + tr td { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--carbon-text) 6%, transparent); }
@@ -18,9 +18,6 @@
 .bk-pathv { display: flex; align-items: center; gap: .2rem; max-width: 70%; }
 .bk-pathv .bk-path { font-size: 12.5px; }
 .bk-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left; min-width: 0; }
-.bk .well .btn.bk-ghost, .bk .btn.bk-ghost { background: transparent; width: 1.75rem; height: 1.75rem; }
-.bk .btn.bk-ghost:hover { background: var(--carbon-surface3); }
-.bk .btn.bk-ghost:hover svg { color: var(--accent-glyph); }
 .u-pills { display: flex; gap: .3rem; justify-content: flex-end; flex-wrap: wrap; }
 .u-links { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; max-width: 70%; }
 .u-links .bk-pathv { max-width: 100%; }

@@ -62,8 +62,8 @@ function dragEnd() {
 </script>
 
 <template>
-  <div class="well"><Frow :label="t('jobs.modeLabel')" :tip="t('jobs.modeTip')"><Seg id="jobs-mode" v-model="mode" :options="MODES" /></Frow></div>
-  <div id="jobs-body" class="well">
+  <div class="well glim-well"><Frow :label="t('jobs.modeLabel')" :tip="t('jobs.modeTip')"><Seg id="jobs-mode" v-model="mode" :options="MODES" /></Frow></div>
+  <div id="jobs-body" class="well glim-well">
     <template v-if="rows.length">
       <div v-for="j in rows" :key="j.id" class="job" :class="{ open: isOpen(j), dragging: dragging === j }" :data-job="j.id" :draggable="isOpen(j) ? 'true' : undefined" :tabindex="isOpen(j) ? 0 : undefined"
         :aria-label="t('jobs.aria', { label: jobLabel(j), pct: Math.round(pctOf(j)), state: t(`jobs.state.${j.state}`) })"

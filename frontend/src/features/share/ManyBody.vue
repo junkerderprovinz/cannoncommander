@@ -16,12 +16,12 @@ const size = computed(() => fmtSize(props.items.reduce((a, x) => a + x.size, 0))
 </script>
 
 <template>
-  <div class="well"><div class="eyebrow">{{ t('share.fromFolders', { objects: plural(items.length, 'ui.objects'), folders: plural(folders, 'share.folders') }) }}, {{ size }}</div>
+  <div class="well glim-well"><div class="eyebrow">{{ t('share.fromFolders', { objects: plural(items.length, 'ui.objects'), folders: plural(folders, 'share.folders') }) }}, {{ size }}</div>
     <table class="tbl">
       <tr v-for="x in items.slice(0, 6)" :key="x.path"><td>{{ x.name }}</td><td class="muted mono">{{ parent(x.path) }}</td></tr>
       <tr v-if="items.length > 6"><td colspan="2">{{ t('share.more', { n: items.length - 6 }) }}</td></tr>
     </table>
-    <Frow :label="t('share.folderName')" :tip="t('share.folderNameTip')"><input id="cs-title" v-model="st.title" class="field w" autocomplete="off"></Frow>
+    <Frow :label="t('share.folderName')" :tip="t('share.folderNameTip')"><input id="cs-title" v-model="st.title" class="glim-input w" autocomplete="off"></Frow>
   </div>
   <LinkOptions :f="f" name="sammlung" />
 </template>

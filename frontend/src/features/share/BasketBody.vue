@@ -13,7 +13,7 @@ const drop = (path: string) => basket.splice(basket.findIndex((x) => x.path === 
 </script>
 
 <template>
-  <div id="cs-bbody" class="well">
+  <div id="cs-bbody" class="well glim-well">
     <template v-if="basket.length">
       <div class="eyebrow">{{ t('share.basketFrom', { objects: plural(basket.length, 'ui.objects'), folders: plural(folders, 'share.folders'), size }) }}</div>
       <div class="cs-basket">

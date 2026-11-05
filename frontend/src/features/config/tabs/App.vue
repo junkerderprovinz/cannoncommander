@@ -1,17 +1,16 @@
 <script setup lang="ts">
+import { Button, Card, CopyField } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type AppChange, type AppSettings, type System } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { shell } from '@/shell/state';
-import Btn from '../kit/Btn.vue';
-import Card from '../kit/Card.vue';
-import CopyField from '../kit/CopyField.vue';
-import Frow from '../kit/Frow.vue';
-import { c, confirmWin, since } from '../kit/kit';
-import Seg from '../kit/Seg.vue';
-import Sw from '../kit/Sw.vue';
+import Frow from '@/ui/Frow.vue';
+import { c, confirmWin, since } from '@/features/config/shared';
+import Seg from '@/ui/Seg.vue';
+import Sw from '@/ui/Sw.vue';
+import { copyWords } from '@/ui/kit';
 import ExportWin from '../wins/ExportWin.vue';
 import ImportWin from '../wins/ImportWin.vue';
 import { IMAGE } from '../support';
@@ -61,19 +60,19 @@ function restart() {
   <template v-if="app">
     <Card :title="c('app.updates')">
       <Frow :label="c('app.autoCheck')" :tip="c('app.autoCheckTip')"><Sw v-model="autoCheck" /></Frow>
-      <Frow :label="c('app.image')"><CopyField :value="IMAGE" /></Frow>
+      <Frow :label="c('app.image')"><CopyField class="w" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></Frow>
       <Frow label="Tag" :tip="c('app.tagTip')"><span class="pill mono">{{ sys?.version ?? '' }}</span></Frow>
       <div class="a-foot">
         <button id="a-upd" class="btn" :class="{ ok: update !== 'idle' && update !== 'busy' }" :disabled="update === 'busy'" @click="check"><G :n="update !== 'idle' && update !== 'busy' ? 'IconUpToDate' : 'IconSync'" />{{ update === 'idle' ? c('app.check') : update === 'busy' ? c('app.checking') : update }}</button>
       </div>
     </Card>
     <Card :title="c('app.backup')">
-      <Frow :label="c('app.toFile')" :tip="c('app.toFileTip')"><Btn id="a-export" :label="c('app.export')" g="IconExport" @click="win({ title: c('app.exportTitle'), body: ExportWin })" /></Frow>
-      <Frow :label="c('app.fromFile')" :tip="c('app.fromFileTip')"><Btn id="a-import" :label="c('app.import')" g="IconImport" @click="win({ title: c('app.importTitle'), body: ImportWin })" /></Frow>
+      <Frow :label="c('app.toFile')" :tip="c('app.toFileTip')"><Button id="a-export" :label="c('app.export')" label-key="IconExport" @click="win({ title: c('app.exportTitle'), body: ExportWin })" /></Frow>
+      <Frow :label="c('app.fromFile')" :tip="c('app.fromFileTip')"><Button id="a-import" :label="c('app.import')" label-key="IconImport" @click="win({ title: c('app.importTitle'), body: ImportWin })" /></Frow>
     </Card>
     <Card :title="c('app.service')">
       <Frow :label="c('app.log')" :tip="c('app.logTip')"><Seg v-model="logLevel" :options="[['error', c('app.errors')], ['info', c('app.normal')], ['debug', c('app.verbose')]]" /></Frow>
-      <Frow :label="c('app.running')" :tip="app.restartNeeded ? c('app.restartNeededTip') : undefined"><span class="a-ctl"><span class="pill" :class="{ warn: app.restartNeeded }">{{ app.restartNeeded ? c('app.restartNeeded') : sys ? since(sys.started) : '' }}</span><Btn :label="c('app.restart')" g="IconRefresh" @click="restart" /></span></Frow>
+      <Frow :label="c('app.running')" :tip="app.restartNeeded ? c('app.restartNeededTip') : undefined"><span class="a-ctl"><span class="pill" :class="{ warn: app.restartNeeded }">{{ app.restartNeeded ? c('app.restartNeeded') : sys ? since(sys.started) : '' }}</span><Button :label="c('app.restart')" label-key="IconRefresh" @click="restart" /></span></Frow>
     </Card>
   </template>
   <Teleport v-if="restarting" to="body">

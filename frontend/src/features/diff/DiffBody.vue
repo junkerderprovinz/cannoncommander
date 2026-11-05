@@ -63,7 +63,7 @@ onMounted(() => {
       <span class="pill glim-num">{{ fmtSize(s.size) }}</span><span class="pill glim-num">{{ fmtTime(Date.parse(s.mtime)) }}</span>
     </div>
   </div>
-  <div class="well bk-fill bk-dwell">
+  <div class="well glim-well bk-fill bk-dwell">
     <div v-if="!hunks.length" class="bk-same"><span class="bk-dot"></span>{{ t('diff.same') }}</div>
     <div id="d-body" ref="body" class="bk-dbody mono" :class="{ hex: diff.binary }" tabindex="0">
       <div v-for="(x, i) in lines" :key="i" class="bk-dl" :class="{ cur: at >= 0 && hunks[at] === i }" :data-bk-row="i">

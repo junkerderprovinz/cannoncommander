@@ -23,18 +23,18 @@ const kept = computed(() => props.st.scan?.kept ?? []);
 </script>
 
 <template>
-  <div v-if="blocked" class="well u-warnwell">
+  <div v-if="blocked" class="well glim-well u-warnwell">
     <div class="u-alert"><G n="IconShieldOn" /><div><b>{{ t('unraid.perms.blockedTitle') }}</b>
       <p>{{ blocked === 'archive' ? t('unraid.perms.blockedArchive') : t('unraid.perms.blockedText', { path: st.path, own: t(`unraid.perms.reason.${blocked}`) }) }}</p></div></div>
   </div>
   <template v-else>
-    <div class="well bk-form"><div class="eyebrow">{{ t('unraid.perms.folder') }}</div>
+    <div class="well glim-well bk-form"><div class="eyebrow">{{ t('unraid.perms.folder') }}</div>
       <Frow :label="t('unraid.perms.folder')"><span class="bk-val bk-pathv"><span class="bk-path mono" :title="st.path"><bdi>{{ st.path }}</bdi></span></span></Frow>
       <Frow :label="t('unraid.perms.owner')" :tip="t('unraid.perms.ownerTip')"><span class="bk-val mono">{{ t('unraid.perms.ownerValue') }}</span></Frow>
       <Frow :label="t('unraid.perms.rights')" :tip="t('unraid.perms.rightsTip')"><span class="bk-val mono">{{ t('unraid.perms.rightsValue') }}</span></Frow>
       <Frow :label="t('unraid.perms.affects')"><span class="bk-val glim-num">{{ affects }}</span></Frow>
     </div>
-    <div class="well u-warnwell">
+    <div class="well glim-well u-warnwell">
       <div class="u-alert"><G n="IconWarning" /><div><b>{{ t('unraid.perms.warnTitle') }}</b>
         <p>{{ t('unraid.perms.warnText', { name: st.name }) }}{{ st.scan ? t(kept.length ? 'unraid.perms.keptSome' : 'unraid.perms.keptNone') : '' }}</p></div></div>
       <table v-if="kept.length" class="tbl u-tbl">

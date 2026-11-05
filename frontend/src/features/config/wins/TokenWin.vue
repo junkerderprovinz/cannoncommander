@@ -1,13 +1,14 @@
 <script setup lang="ts">
 // A token is shown once, right after it is made, and the window stays until it is confirmed as copied.
+import { CopyField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { me, statusOf, type Token } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import CopyField from '../kit/CopyField.vue';
-import Frow from '../kit/Frow.vue';
-import { c, fail, setFoot } from '../kit/kit';
-import Seg from '../kit/Seg.vue';
+import Frow from '@/ui/Frow.vue';
+import { c, fail, stepFoot } from '@/features/config/shared';
+import Seg from '@/ui/Seg.vue';
+import { copyWords } from '@/ui/kit';
 
 const props = defineProps<{ win: WinEntry; taken: string[]; done: () => void }>();
 const name = ref(''), rights = ref<Token['rights']>('r'), expires = ref('365');
@@ -26,19 +27,19 @@ async function create() {
   }
   secret.value = got.secret;
   props.win.locked = true;
-  setFoot(props.win, [{ label: c('done'), g: 'IconCheck', primary: true, run: () => { props.win.locked = false; props.done(); toast(c('security.tokenCreatedToast', { name: n })); } }]);
+  stepFoot(props.win, [{ label: c('done'), g: 'IconCheck', primary: true, run: () => { props.win.locked = false; props.done(); toast(c('security.tokenCreatedToast', { name: n })); } }]);
 }
 
-onMounted(() => setFoot(props.win, [cancelBtn(), { label: c('security.create'), g: 'IconKey', primary: true, run: () => { create(); return false; } }]));
+onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('security.create'), g: 'IconKey', primary: true, run: () => { create(); return false; } }]));
 </script>
 
 <template>
   <template v-if="secret">
-    <div class="well a-text"><p>{{ c('security.copyNow') }}</p></div>
-    <div class="well"><Frow :label="name"><CopyField :value="secret" /></Frow></div>
+    <div class="well glim-well a-text"><p>{{ c('security.copyNow') }}</p></div>
+    <div class="well glim-well"><Frow :label="name"><CopyField class="w" :value="secret" :label="name" :text="copyWords()" /></Frow></div>
   </template>
-  <div v-else class="well">
-    <Frow :label="c('sources.name')" :tip="c('security.tokenNameTip')"><input id="a-tkname" ref="el" v-model="name" class="field m" :placeholder="c('security.tokenNamePh')"></Frow>
+  <div v-else class="well glim-well">
+    <Frow :label="c('sources.name')" :tip="c('security.tokenNameTip')"><input id="a-tkname" ref="el" v-model="name" class="glim-input m" :placeholder="c('security.tokenNamePh')"></Frow>
     <Frow :label="c('security.rights')" :tip="c('security.rightsTip')"><Seg v-model="rights" :options="[['r', c('security.read')], ['rw', c('security.readWrite')]]" /></Frow>
     <Frow :label="c('shares.expires')"><Seg v-model="expires" :options="[['30', c('general.days', { n: 30 })], ['365', c('security.year')], ['never', c('shares.never_')]]" /></Frow>
   </div>

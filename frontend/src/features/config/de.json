@@ -11,10 +11,7 @@
   "ago": { "tomorrow": "morgen", "inDays": "noch {n} Tage", "now": "gerade eben", "minutes": "vor {n} Min.", "hours": "vor {n} Std.", "yesterday": "gestern", "days": "vor {n} Tagen" },
   "since": { "minutes": "seit {n} Min.", "hours": "seit {n} Std.", "days": "seit {n} Tagen" },
   "soon": { "now": "gleich", "minutes": "in {n} Min.", "hours": "in {n} Std." },
-  "picker": {
-    "titleFolder": "Ordner wählen", "titleFile": "Datei wählen", "folder": "Ordner", "file": "Datei", "choose": "Auswählen", "collapse": "Zuklappen", "expand": "Aufklappen",
-    "needFile": "Erst eine Datei wählen", "noFolder": "Diesen Ordner gibt es nicht"
-  },
+  "picker": { "folder": "Ordner", "file": "Datei" },
   "general": {
     "use": "Bedienung", "start": "Startordner", "startTip": "Dieser Ordner öffnet sich nach dem Anmelden im linken Fenster.", "startSaved": "Startordner gespeichert",
     "dblclick": "Doppelklick auf eine Datei", "dblclickTip": "Ein Doppelklick auf einen Ordner öffnet ihn immer.", "open": "Öffnen", "preview": "Vorschau", "download": "Herunterladen",

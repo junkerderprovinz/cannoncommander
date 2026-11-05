@@ -8,7 +8,7 @@ import { toast } from '@/core/toast';
 import { saveText, type TextFile } from '@/features/viewer/content';
 import { type FileNode, joinPath, langOf, viewKind } from '@/features/viewer/kinds';
 import { esc, md } from '@/features/viewer/markdown';
-import Sw from '@/features/viewer/ui/Sw.vue';
+import Sw from '@/ui/Sw.vue';
 import { footStartOf, notchOf, winKeys } from '@/features/viewer/winkeys';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
@@ -146,7 +146,7 @@ onMounted(() => {
   setDirty(false);
   moved();
   setTimeout(() => { view?.focus(); view?.dispatch({ selection: { anchor: 0 } }); }, 30);
-  unbind = winKeys(() => host.value?.closest('.scrim') as HTMLElement | null, (e, combo) => {
+  unbind = winKeys(() => host.value?.closest('.glim-modal-backdrop') as HTMLElement | null, (e, combo) => {
     if (combo === 'Ctrl+s') return save(), true;
     if (combo === 'Ctrl+f') return openFind(), true;
     if (combo === 'Ctrl+h') return openFind(true), true;
@@ -185,14 +185,14 @@ function repKey(e: KeyboardEvent) {
       <div ref="host" class="ce-scroll" :class="{ wrap: opts.wrap }"></div>
       <div class="ce-find glim-card" :hidden="!findOpen">
         <div class="ce-frow">
-          <input id="ce-q" ref="qIn" v-model="q" class="field" :placeholder="t('editor.findField')" :aria-label="t('editor.findField')" @input="search()" @keydown="qKey">
+          <input id="ce-q" ref="qIn" v-model="q" class="glim-input" :placeholder="t('editor.findField')" :aria-label="t('editor.findField')" @input="search()" @keydown="qKey">
           <span id="ce-n" class="pill glim-num">{{ count }}</span>
           <button class="btn icon" data-hit="-1" :data-tip="t('editor.prevHitTip')" :aria-label="t('editor.prevHit')" @click="step(-1)"><G n="IconMoveUp" /></button>
           <button class="btn icon" data-hit="1" :data-tip="t('editor.nextHitTip')" :aria-label="t('editor.nextHit')" @click="step(1)"><G n="IconMoveDown" /></button>
           <button id="ce-fclose" class="btn icon" :data-tip="t('editor.closeFindTip')" :aria-label="t('editor.closeFind')" @click="closeFind"><G n="IconClose" /></button>
         </div>
         <div class="ce-frow">
-          <input id="ce-r" ref="repIn" v-model="rep" class="field" :placeholder="t('editor.replaceField')" :aria-label="t('editor.replaceField')" @keydown="repKey">
+          <input id="ce-r" ref="repIn" v-model="rep" class="glim-input" :placeholder="t('editor.replaceField')" :aria-label="t('editor.replaceField')" @keydown="repKey">
           <button id="ce-one" class="btn" @click="replaceOne">{{ t('editor.replaceOne') }}</button>
           <button id="ce-all" class="btn" @click="replaceAll">{{ t('editor.replaceAll') }}</button>
         </div>

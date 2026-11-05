@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Who did what and when, filtered by person or kind from the column heads. A row naming a place opens it.
+import { Card } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { type Activity, admin, type User } from '@/api/admin';
 import { DAY, now } from '@/core/format';
@@ -7,8 +8,7 @@ import { G } from '@/core/glyphs';
 import { menu } from '@/core/menu';
 import { go } from '@/core/views';
 import { usePanels } from '@/stores/panels';
-import Card from './kit/Card.vue';
-import { ago, c } from './kit/kit';
+import { ago, c } from '@/features/config/shared';
 
 // The server's event types and their glyphs. A type it adds later shows with its own name and the log glyph.
 const KINDS: Record<string, string> = {
@@ -59,9 +59,9 @@ function open(a: Activity) {
   <div class="page-inner">
     <Card :title="c('activity.overview')">
       <div class="a-stats">
-        <div class="well a-stat"><span class="glim-num">{{ filtered ? c('activity.ofAll', { n: shown.length, all: all.length }) : all.length }}</span><span>{{ filtered ? c('activity.inFilter') : c('activity.entries') }}</span></div>
-        <div class="well a-stat"><span class="glim-num">{{ today }}</span><span>{{ c('activity.today') }}</span></div>
-        <div class="well a-stat"><span class="glim-num">{{ people }}</span><span>{{ c('activity.people') }}</span></div>
+        <div class="well glim-well a-stat"><span class="glim-num">{{ filtered ? c('activity.ofAll', { n: shown.length, all: all.length }) : all.length }}</span><span>{{ filtered ? c('activity.inFilter') : c('activity.entries') }}</span></div>
+        <div class="well glim-well a-stat"><span class="glim-num">{{ today }}</span><span>{{ c('activity.today') }}</span></div>
+        <div class="well glim-well a-stat"><span class="glim-num">{{ people }}</span><span>{{ c('activity.people') }}</span></div>
       </div>
       <div v-if="filtered" class="a-foot"><button class="btn" @click="act.who = act.what = null"><G n="IconClose" />{{ c('activity.reset') }}</button></div>
     </Card>

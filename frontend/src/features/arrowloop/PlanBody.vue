@@ -12,9 +12,9 @@ const every = computed(() => (['hourly', 'daily', 'weekly'] as const).map((e) =>
 </script>
 
 <template>
-  <div class="well" @keydown.enter="pressPrimary">
-    <Frow :label="t('arrowloop.name')" :tip="t('arrowloop.nameTip')"><input id="al-name" v-model="st.name" class="field m"></Frow>
+  <div class="well glim-well" @keydown.enter="pressPrimary">
+    <Frow :label="t('arrowloop.name')" :tip="t('arrowloop.nameTip')"><input id="al-name" v-model="st.name" class="glim-input m"></Frow>
     <Frow :label="t('arrowloop.every')"><Seg id="al-when" v-model="st.every" :options="every" /></Frow>
-    <Frow :label="t('arrowloop.at')" :tip="t('arrowloop.atTip')"><input id="al-time" v-model="st.at" class="field s mono" maxlength="5"></Frow>
+    <Frow :label="t('arrowloop.at')" :tip="t('arrowloop.atTip')"><input id="al-time" v-model="st.at" class="glim-input s glim-input--mono" maxlength="5"></Frow>
   </div>
 </template>

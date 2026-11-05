@@ -295,7 +295,7 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
 
 <template>
   <div class="du-top"><div id="du-crumbs" class="pathbar du-pathbar"><Crumbs :path="cur" attr="data-du-cd" @go="go" /></div><Seg id="du-view" :model-value="mode" :options="VIEWS" @press="setView" /></div>
-  <div class="well du-well">
+  <div class="well glim-well du-well">
     <div id="du-body" ref="body" :class="bodyClass" tabindex="0" :role="role" @click="click" @dblclick="dblclick" @contextmenu="context" @keydown="key">
       <template v-if="mode === 'tree'">
         <div class="du-row du-head" role="row"><button v-for="id in COLS" :key="id" class="du-sort" :class="{ on: sort.by === id }" :data-du-sort="id">{{ t(`diskusage.cols.${id}`) }}<G v-if="sort.by === id" :n="sort.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /></button></div>
