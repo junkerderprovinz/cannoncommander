@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The sync window: direction, how to compare and whether to mirror, and the plan as a dry run whose steps can each
 // be switched off. The server plans; a step that would overwrite something newer comes switched off.
-import { InfoBubble } from '@glimstone/vue';
+import { FieldRow, InfoBubble, Pill, Selector, Toggle } from '@glimstone/vue';
 import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue';
 import { type SyncDirection, type SyncStep, tools } from '@/api/tools';
 import { run } from '@/core/actions';
@@ -12,10 +12,7 @@ import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { split } from '@/files/paths';
 import { t } from '@/i18n';
-import Frow from '@/ui/Frow.vue';
-import { plural } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
+import { plural, segItems } from '@/ui/kit';
 import Tile from '@/ui/Tile.vue';
 import { startSync } from './sync';
 
@@ -72,10 +69,10 @@ onBeforeUnmount(() => { asked++; });
   <div class="well glim-well bk-form"><div class="eyebrow">{{ t('compare.match') }}</div>
     <div class="bk-sides"><span class="bk-side mono" :title="left"><bdi>{{ left }}</bdi></span><span id="y-arrow" class="bk-arrow"><G :n="arrow" /></span><span class="bk-side mono" :title="right"><bdi>{{ right }}</bdi></span></div>
     <div class="bk-rows">
-      <Frow :label="t('compare.direction')"><Seg id="y-dir" v-model="o.dir" :options="DIRS" /></Frow>
-      <Frow :label="t('compare.by')" :tip="t('compare.byTip')"><Seg id="y-by" v-model="o.by" :options="BY" /></Frow>
-      <Frow :label="t('compare.recursive')"><Sw id="y-rec" v-model="o.recursive" /></Frow>
-      <Frow :label="t('compare.mirror')" :tip="t('compare.mirrorTip')"><Sw id="y-mirror" v-model="o.mirror" :disabled="o.dir === 'both'" /></Frow>
+      <FieldRow :label="t('compare.direction')"><Selector id="y-dir" v-model="o.dir" :items="segItems(DIRS)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="t('compare.by')" :hint="t('compare.byTip')"><Selector id="y-by" v-model="o.by" :items="segItems(BY)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="t('compare.recursive')"><Toggle id="y-rec" v-model="o.recursive" /></FieldRow>
+      <FieldRow :label="t('compare.mirror')" :hint="t('compare.mirrorTip')"><Toggle id="y-mirror" v-model="o.mirror" :disabled="o.dir === 'both'" /></FieldRow>
     </div>
   </div>
   <div class="well glim-well bk-fill">
@@ -83,13 +80,13 @@ onBeforeUnmount(() => { asked++; });
     <div id="y-list" class="bk-list">
       <template v-if="steps.length">
         <div v-for="(s, i) in steps" :key="s.key" class="bk-step" :class="{ skip: !isOn(s) }">
-          <Sw :model-value="isOn(s)" :data-bk-step="i" :label="s.rel" @update:model-value="(v: boolean) => touched.set(s.key, v)" />
+          <Toggle :model-value="isOn(s)" :data-bk-step="i" :label="s.rel" hide-label @update:model-value="(v: boolean) => touched.set(s.key, v)" />
           <Tile :k="nameOf(s)" />
           <span class="bk-name">{{ s.rel }}{{ s.dir ? '/' : '' }}</span>
-          <span v-if="s.why" class="pill warn">{{ t(`compare.why.${s.why}`) }}</span><span v-else></span>
+          <Pill v-if="s.why" tone="warn">{{ t(`compare.why.${s.why}`) }}</Pill><span v-else></span>
           <span class="bk-arrow sm" :data-tip="t(s.to === 'R' ? 'compare.right' : 'compare.left')"><G :n="glyphOf(s)" /></span>
-          <span class="pill">{{ actOf(s) }}</span>
-          <span class="pill glim-num">{{ fmtSize(s.size) || '0 B' }}</span>
+          <Pill>{{ actOf(s) }}</Pill>
+          <Pill class="glim-num">{{ fmtSize(s.size) || '0 B' }}</Pill>
         </div>
       </template>
       <div v-else class="empty"><G n="IconCheck" /><div>{{ t('compare.nothing') }}</div></div>

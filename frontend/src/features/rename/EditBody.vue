@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // Im Editor umbenennen: every name on a line of its own, edited as text, and each changed line renames its file.
+import { Button, Pill, TextField, Toggle } from '@glimstone/vue';
 import { computed, onMounted, ref, watchEffect } from 'vue';
 import type { RenameError } from '@/api/tools';
 import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { plural } from '@/ui/kit';
-import Sw from '@/ui/Sw.vue';
 
 export interface EditRow { old: string; new: string; error?: RenameError }
 export interface EditState { dir: string; nodes: { name: string; at: string }[]; text: string; rows: EditRow[]; lines: number }
@@ -59,11 +59,11 @@ onMounted(() => setTimeout(() => area.value?.focus(), 20));
 
 <template>
   <div class="well glim-well re-find">
-    <input id="re-q" v-model="find" class="glim-input grow glim-input--mono" :placeholder="t('rename.find')" :aria-label="t('rename.find')" spellcheck="false" autocomplete="off">
-    <input id="re-r" v-model="repl" class="glim-input grow glim-input--mono" :placeholder="t('rename.replace')" :aria-label="t('rename.replace')" spellcheck="false" autocomplete="off">
-    <span class="re-sw">{{ t('rename.expr') }} <Sw id="re-regex" v-model="regex" :data-tip="t('rename.exprTip')" /></span>
-    <span id="re-n" class="pill glim-num">{{ hits }}</span>
-    <button id="re-all" class="btn" type="button" :disabled="!pattern" @click="replaceAll"><G n="IconSync" />{{ t('rename.replaceAll') }}</button>
+    <TextField id="re-q" v-model="find" :placeholder="t('rename.find')" :aria-label="t('rename.find')" spellcheck="false" autocomplete="off" width="grow" mono />
+    <TextField id="re-r" v-model="repl" :placeholder="t('rename.replace')" :aria-label="t('rename.replace')" spellcheck="false" autocomplete="off" width="grow" mono />
+    <span class="re-sw">{{ t('rename.expr') }} <Toggle id="re-regex" v-model="regex" :data-tip="t('rename.exprTip')" /></span>
+    <Pill id="re-n" class="glim-num">{{ hits }}</Pill>
+    <Button id="re-all" :label="t('rename.replaceAll')" label-key="IconSync" :disabled="!pattern" @click="replaceAll" />
   </div>
   <div class="re-main">
     <div class="well glim-well re-edit">
@@ -76,7 +76,7 @@ onMounted(() => setTimeout(() => area.value?.focus(), 20));
         <div v-for="r in st.rows" :key="r.old" class="bk-mrow" :class="{ same: r.new === r.old }">
           <span class="bk-name mono">{{ r.old }}</span><span class="bk-arrow sm"><G n="IconForward" /></span>
           <span class="bk-name mono" :class="{ new: !r.error }">{{ r.new || ' ' }}</span>
-          <span v-if="r.error" class="pill fault">{{ t(`rename.errors.${r.error}`) }}</span><span v-else></span>
+          <Pill v-if="r.error" tone="fail">{{ t(`rename.errors.${r.error}`) }}</Pill><span v-else></span>
         </div>
       </div>
     </div>

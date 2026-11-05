@@ -1,15 +1,14 @@
 <script setup lang="ts">
 // The colours: rename one, give it another shade, delete it or add a new one. A picked shade proposes its name.
 import { COLOR_NAMES_DE, nearestColorName } from '@glimstone/core';
-import { ColorPicker } from '@glimstone/vue';
+import { ColorPicker, FieldRow, IconButton, TextField } from '@glimstone/vue';
 import { onMounted, reactive, ref } from 'vue';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
 import { pickerWords } from '@/ui/kit';
 import { BUILT_IN, useLabels } from '@/stores/labels';
-import Frow from '@/ui/Frow.vue';
 import { stepFoot } from '@/features/config/shared';
 import { files } from './counts';
 
@@ -19,7 +18,7 @@ interface Row { id?: string; name: string; hex: string; count: number; was: stri
 const rows = reactive<Row[]>(labels.colours.map((x) => ({ id: x.id, name: labels.colourName(x), hex: x.hex, count: x.count, was: labels.colourName(x) })));
 const fresh = reactive({ hex: '#2ec4b6', named: '' });
 const newName = ref('');
-const newInput = ref<HTMLInputElement | null>(null);
+const newInput = ref<InstanceType<typeof TextField> | null>(null);
 const pick = ref<{ anchor: HTMLElement; hex: string; row: Row | null } | null>(null);
 
 function add() {
@@ -33,7 +32,7 @@ function picked(hex: string, name: string) {
   fresh.hex = hex;
   // The suggestion only fills the field while nobody has typed a name of their own.
   if (!newName.value.trim() || newName.value === fresh.named) { newName.value = name; fresh.named = name; }
-  newInput.value?.focus();
+  newInput.value?.input?.focus();
 }
 
 async function save() {
@@ -48,15 +47,15 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 
 
 <template>
   <div class="well glim-well">
-    <Frow :label="t('labels.newColour')" :tip="t('labels.newColourTip')">
-      <span class="mk-new"><button class="mk-swatch" data-colpick="new" :style="{ '--c': fresh.hex }" :data-tip="t('labels.pickNew')" :aria-label="t('labels.pickNewAria')" @click="pick = { anchor: $event.currentTarget as HTMLElement, hex: fresh.hex, row: null }"></button><input id="mk-new" ref="newInput" v-model="newName" class="glim-input m" :placeholder="t('labels.newColourPh')" autocomplete="off" @keydown.enter.prevent="add"><button class="btn icon" data-coladd :data-tip="t('labels.add')" :aria-label="t('labels.add')" @click="add"><G n="IconAdd" /></button></span>
-    </Frow>
+    <FieldRow :label="t('labels.newColour')" :hint="t('labels.newColourTip')">
+      <span class="mk-new"><button class="mk-swatch" data-colpick="new" :style="{ '--c': fresh.hex }" :data-tip="t('labels.pickNew')" :aria-label="t('labels.pickNewAria')" @click="pick = { anchor: $event.currentTarget as HTMLElement, hex: fresh.hex, row: null }"></button><TextField id="mk-new" ref="newInput" v-model="newName" :placeholder="t('labels.newColourPh')" autocomplete="off" width="medium" @keydown.enter.prevent="add" /><IconButton :tip="t('labels.add')" :glyph="glyphComponent('IconAdd')" data-coladd @click="add" /></span>
+    </FieldRow>
     <div id="mk-list">
       <div v-for="(r, i) in rows" :key="i" class="mk-row">
         <button class="mk-swatch" :data-colpick="i" :style="{ '--c': r.hex }" :data-tip="t('labels.pickShade')" :aria-label="t('labels.shadeFor', { name: r.name })" @click="pick = { anchor: $event.currentTarget as HTMLElement, hex: r.hex, row: r }"></button>
-        <input v-model="r.name" class="glim-input" :data-colname="i" :aria-label="t('labels.nameFor', { name: r.name })">
+        <TextField v-model="r.name" :data-colname="i" :aria-label="t('labels.nameFor', { name: r.name })" />
         <span class="muted">{{ files(r.count) }}</span>
-        <button class="btn icon" :data-coldel="i" :data-tip="t('labels.removeColour')" :aria-label="t('labels.removeName', { name: r.name })" @click="rows.splice(i, 1)"><G n="IconTrash" /></button>
+        <IconButton :tip="t('labels.removeColour')" :glyph="glyphComponent('IconTrash')" :data-coldel="i" @click="rows.splice(i, 1)" />
       </div>
       <div v-if="!rows.length" class="muted mk-none">{{ t('labels.noColours') }}</div>
     </div>

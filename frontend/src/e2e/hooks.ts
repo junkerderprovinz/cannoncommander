@@ -7,8 +7,24 @@ const CLASSES: [selector: string, name: string][] = [
   ['.glim-window-body', 'win-body'],
   ['.glim-window .glim-modal-foot', 'win-foot'],
   ['.glim-window-start', 'start'],
-  ['.glim-window .glim-modal-foot button', 'btn'],
-  ['.glim-window .glim-modal-foot .glim-btn--accent', 'primary'],
+  ['.glim-btn', 'btn'],
+  ['.glim-btn--accent', 'primary'],
+  ['.glim-btn-key', 'key'],
+  ['.glim-icon-btn', 'btn'],
+  ['.glim-icon-btn', 'icon'],
+  ['.glim-field-row', 'frow'],
+  ['.glim-field-row-name', 'lab'],
+  ['.glim-list-row', 'a-row'],
+  ['.glim-list-row-title', 't'],
+  ['.ql .glim-badge', 'ql-name'],
+  ['.glim-sel', 'seg'],
+  ['.glim-kbd', 'kbd'],
+  ['.glim-pill', 'pill'],
+  ['.glim-pill--state', 'state'],
+  ['.glim-pill--ok', 'ok'],
+  ['.glim-pill--warn', 'warn'],
+  ['.glim-pill--fail', 'fault'],
+  ['.row .name .glim-pill:is(.glim-pill--ok, .glim-pill--warn, .glim-pill--fail)', 'state'],
   ['.glim-picker-panel', 'a-cpop'],
   ['.glim-picker-panel', 'cpick'],
   ['.glim-picker-sv', 'cp-sv'],
@@ -20,33 +36,85 @@ const CLASSES: [selector: string, name: string][] = [
   ['.bk-perms .glim-checkbox-box', 'cbox'],
 ];
 
+type Choice = { value: string; label: string };
+interface SelectParts { value: string | null; groups: { entries: Choice[] }[] }
+const instanceOf = (el: Element) => (el as unknown as { __vueParentComponent?: { props: SelectParts } }).__vueParentComponent;
+
+function closedLists() {
+  let holder = document.getElementById('e2e-lists');
+  if (!holder) {
+    holder = Object.assign(document.createElement('div'), { id: 'e2e-lists' });
+    document.body.prepend(holder);
+  }
+  return holder;
+}
+
+// A select's trigger says its value and its options as the prototype's dropdown does, read from the component.
+function nameSelects() {
+  // A select keeps its closed list on the body, where the steps' .scrim:last-of-type expects the windows last. An open
+  // list goes back to the end, to lie over its window.
+  document.querySelectorAll<HTMLElement>('.glim-select-positioner').forEach((list) => {
+    const open = !!list.querySelector('[data-state=open]');
+    if (open && list.parentElement !== document.body) document.body.append(list);
+    if (!open && list.parentElement === document.body) closedLists().append(list);
+  });
+  document.querySelectorAll<HTMLElement>('.glim-select-trigger').forEach((trigger) => {
+    const parts = instanceOf(trigger.closest('.glim-select')!)?.props;
+    if (!parts?.groups) return;
+    const val = parts.value ?? '', dd = JSON.stringify(parts.groups.flatMap((g) => g.entries).map((o) => [o.value, o.label]));
+    if (trigger.dataset.val !== val) trigger.dataset.val = val;
+    if (trigger.dataset.dd !== dd) trigger.dataset.dd = dd;
+  });
+  // An open list's rows are the menu's buttons for a step, each a clear button over its row that lets its click through.
+  document.querySelectorAll<HTMLElement>('.glim-select-content--menu').forEach((list) => {
+    const group = list.querySelector<HTMLElement>('.glim-select-group');
+    const open = list.dataset.state === 'open';
+    if (group) group.id = open ? 'menu' : '';
+    list.querySelectorAll<HTMLElement>('[role=option]').forEach((row) => {
+      let clear = row.querySelector<HTMLButtonElement>(':scope > button');
+      if (!clear) {
+        clear = document.createElement('button');
+        clear.type = 'button';
+        clear.setAttribute('role', 'menuitemradio');
+        clear.style.cssText = 'position:absolute;inset:0;opacity:0';
+        clear.innerHTML = row.querySelector('.glim-menu-glyph svg')?.outerHTML ?? '';
+        clear.append(row.querySelector('.glim-menu-label')?.textContent ?? '');
+        row.style.position = 'relative';
+        row.append(clear);
+      }
+      const on = row.dataset.state === 'checked';
+      if (clear.classList.contains('on') !== on) clear.classList.toggle('on', on);
+    });
+  });
+}
+
+// ContextMenu puts its menus straight on the body, and the steps and the shim find them as #menu and #submenu.
+function nameMenus(changes: MutationRecord[]) {
+  for (const c of changes) {
+    for (const n of c.addedNodes) {
+      if (n instanceof HTMLElement && n.parentElement === document.body && n.classList.contains('glim-menu') && !n.id) n.id = document.getElementById('menu') ? 'submenu' : 'menu';
+    }
+  }
+}
+
 function name() {
   for (const [selector, cls] of CLASSES) {
     document.querySelectorAll(selector).forEach((el) => { if (!el.classList.contains(cls)) el.classList.add(cls); });
   }
-  document.querySelectorAll<HTMLElement>('.glim-window .glim-modal-foot').forEach((foot) => {
-    foot.querySelectorAll<HTMLElement>('.glim-window-start, button').forEach((el, k) => {
-      if (el.tagName === 'BUTTON' && el.dataset.f !== String(k)) el.dataset.f = String(k);
-    });
-  });
   document.querySelectorAll<HTMLElement>('.glim-window').forEach((card) => {
     const title = card.querySelector('.glim-window-title')?.textContent ?? '';
     if (card.getAttribute('aria-label') !== title) card.setAttribute('aria-label', title);
   });
-  // Card follows its title with a space for the hint, which a step file comparing the title would trip over.
-  document.querySelectorAll('.glim-notch-card > h2 .glim-badge').forEach((badge) => {
-    if (badge.querySelector('.glim-info-icon')) return;
-    badge.childNodes.forEach((n) => { if (n.nodeType === Node.TEXT_NODE && n.nodeValue !== n.nodeValue!.trimEnd()) n.nodeValue = n.nodeValue!.trimEnd(); });
-  });
   document.querySelectorAll<HTMLElement>('[data-sel-id]').forEach((seg) => {
     if (seg.dataset.v !== seg.dataset.selId) seg.dataset.v = seg.dataset.selId;
-    if (seg.closest('.head') && seg.dataset.run !== seg.dataset.selId) seg.dataset.run = seg.dataset.selId;
     const on = seg.getAttribute('aria-checked') ?? seg.getAttribute('aria-selected') ?? 'false';
     if (seg.getAttribute('aria-pressed') !== on) seg.setAttribute('aria-pressed', on);
   });
+  document.querySelectorAll<HTMLElement>('.glim-secret-eye').forEach((eye) => { if (!('eye' in eye.dataset)) eye.dataset.eye = ''; });
+  nameSelects();
 }
 
 export function installHooks() {
   name();
-  new MutationObserver(name).observe(document.documentElement, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'aria-checked', 'aria-selected'] });
+  new MutationObserver((changes) => { nameMenus(changes); name(); }).observe(document.documentElement, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'aria-checked', 'aria-selected', 'data-state'] });
 }

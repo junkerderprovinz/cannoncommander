@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // What an archive holds, read through the server as a folder whose path ends in "::".
+import { Button, Pill } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { api } from '@/api/client';
 import { closeWin } from '@/core/windows';
@@ -52,13 +53,13 @@ function browse() {
 </script>
 
 <template>
-  <div v-if="!compact && !inArchive(folder)" class="cv-bar"><span class="grow"></span><button id="cv-browse" class="btn" @click="browse"><G n="IconFolderOpen" />{{ t('viewer.arch.browse') }}</button></div>
+  <div v-if="!compact && !inArchive(folder)" class="cv-bar"><span class="grow"></span><Button id="cv-browse" :label="t('viewer.arch.browse')" label-key="IconFolderOpen" @click="browse" /></div>
   <div v-if="failed" class="empty"><G n="IconArchive" /><div>{{ t('viewer.arch.unreadable') }}</div></div>
   <div v-else class="cv-scroll">
     <div class="cv-mini">
       <div v-for="x in shown" :key="x.path" class="cv-mrow" :class="{ dir: x.dir }">
         <span class="tile"><G :n="x.dir ? 'IconFolder' : glyphOf({ name: x.path })" /></span><span class="t mono">{{ x.path }}</span>
-        <span v-if="x.dir"></span><span v-else class="pill glim-num">{{ fmtSize(Math.round(x.size)) }}</span>
+        <span v-if="x.dir"></span><Pill v-else class="glim-num">{{ fmtSize(Math.round(x.size)) }}</Pill>
       </div>
     </div>
     <div v-if="hidden > 0 || more" class="muted cv-more">{{ more ? t('viewer.arch.limit', { n: LIMIT.toLocaleString() }) : t('viewer.and', { rest: plural(hidden, 'moreEntries') }) }}</div>

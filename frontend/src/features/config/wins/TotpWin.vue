@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { CopyField, InfoBubble } from '@glimstone/vue';
+import { CopyField, FieldRow, InfoBubble, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { me, statusOf } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Frow from '@/ui/Frow.vue';
 import { c, fail, stepFoot } from '@/features/config/shared';
 import { copyWords } from '@/ui/kit';
 import CodesWin from './CodesWin.vue';
@@ -12,17 +11,17 @@ import CodesWin from './CodesWin.vue';
 const props = defineProps<{ win: WinEntry; done: () => void }>();
 const secret = ref(''), qr = ref(''), code = ref('');
 const codes = ref<string[] | null>(null);
-const el = ref<HTMLInputElement | null>(null);
+const el = ref<InstanceType<typeof TextField> | null>(null);
 const group4 = (s: string) => s.match(/.{1,4}/g)?.join(' ') ?? '';
 
 async function next() {
   const v = code.value.replace(/\s/g, '');
-  if (!/^\d{6}$/.test(v)) return fail(c('security.sixDigits'), el.value);
+  if (!/^\d{6}$/.test(v)) return fail(c('security.sixDigits'), el.value?.input);
   let got: { codes: string[] };
   try {
     got = await me.totpConfirm(v);
   } catch (e) {
-    return fail(statusOf(e) === 429 ? c('security.tooMany') : c('security.codeClock'), el.value);
+    return fail(statusOf(e) === 429 ? c('security.tooMany') : c('security.codeClock'), el.value?.input);
   }
   codes.value = got.codes;
 }
@@ -40,8 +39,8 @@ onMounted(async () => {
     <div class="a-qr" role="img" :aria-label="c('security.qr')" v-html="qr"></div>
     <div class="a-totp-side">
       <div class="eyebrow">{{ c('security.scan') }} <InfoBubble :tip="c('security.scanTip')" /></div>
-      <Frow :label="c('security.typeIt')"><CopyField class="w" :value="group4(secret)" :label="c('security.typeIt')" :text="copyWords()" /></Frow>
-      <Frow :label="c('security.appCode')" :tip="c('security.sixDigitsTip')"><input id="a-totp" ref="el" v-model="code" class="glim-input s glim-input--mono" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456" @keydown.enter="next"></Frow>
+      <FieldRow :label="c('security.typeIt')"><CopyField class="glim-field--grow" :value="group4(secret)" :label="c('security.typeIt')" :text="copyWords()" /></FieldRow>
+      <FieldRow :label="c('security.appCode')" :hint="c('security.sixDigitsTip')"><TextField id="a-totp" ref="el" v-model="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456" width="short" mono @keydown.enter="next" /></FieldRow>
     </div>
   </div>
 </template>

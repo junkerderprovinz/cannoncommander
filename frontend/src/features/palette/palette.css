@@ -11,7 +11,7 @@
 .pal-row .ph { width: .95rem; flex: none; }
 .pal-row .t { overflow: hidden; text-overflow: ellipsis; }
 .pal-row .grp { margin-left: auto; padding-left: .5rem; font-size: 12px; color: var(--carbon-text-muted); }
-.pal-row .t + .kbd { margin-left: auto; }
+.pal-row .t + .glim-kbd { margin-left: auto; }
 .pal-row.cur { background: var(--carbon-hover); }
 .pal-row.off { opacity: .45; cursor: default; }
 .pal-none { padding: .8rem .6rem; color: var(--carbon-text-muted); font-size: 13px; }

@@ -2,13 +2,14 @@
 // The body of the F3 window: one renderer, large, with the file's line in the foot.
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { fmtSize, fmtTime } from '@/core/format';
+import type { WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
 import type { FileNode } from './kinds';
 import type { KeyHandler } from './renderers/types';
 import Stage from './Stage.vue';
-import { footStartOf, notchOf, winKeys } from './winkeys';
+import { footStartOf, winKeys } from './winkeys';
 
-const props = defineProps<{ node: FileNode; folder: string; sibs: FileNode[]; onCurrent?: (n: FileNode) => void; close?: () => void }>();
+const props = defineProps<{ node: FileNode; folder: string; sibs: FileNode[]; onCurrent?: (n: FileNode) => void; close?: () => void; win?: WinEntry }>();
 
 const host = ref<HTMLElement | null>(null);
 const cur = ref(props.node);
@@ -25,8 +26,7 @@ function show(n: FileNode, autoplay = false) {
   play.value = autoplay;
   info.value = '';
   props.onCurrent?.(n);
-  const notch = notchOf(host.value);
-  if (notch) notch.textContent = n.name;
+  if (props.win) props.win.title = n.name;
   meta();
 }
 const onInfo = (text: string) => { info.value = text; meta(); };

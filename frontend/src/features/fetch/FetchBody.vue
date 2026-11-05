@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // The address, the file name it suggests, and the folder the file lands in.
+import { pathField } from '@/ui/picker';
+import { FieldRow, PathField, TextField } from '@glimstone/vue';
 import { t } from '@/i18n';
-import PathField from '@/ui/PathField.vue';
-import Frow from '@/ui/Frow.vue';
 import { pressPrimary } from '@/ui/kit';
 import { parseUrl } from './url';
 
@@ -25,8 +25,8 @@ function urlTyped() {
 
 <template>
   <div class="well glim-well bk-form" @keydown.enter="pressPrimary">
-    <Frow :label="t('fetch.address')" :tip="t('fetch.addressTip')"><input id="fu-url" v-model="st.url" class="glim-input grow glim-input--mono" placeholder="https://example.org/datei.iso" autocomplete="off" spellcheck="false" inputmode="url" @input="urlTyped"></Frow>
-    <Frow :label="t('fetch.fileName')" :tip="t('fetch.fileNameTip')"><input id="fu-name" v-model="st.name" class="glim-input grow" autocomplete="off" spellcheck="false" @input="st.typed = !!st.name.trim()"></Frow>
-    <Frow :label="t('fetch.target')" :tip="t('fetch.targetTip')"><PathField id="fu-dest" v-model="st.dest" /></Frow>
+    <FieldRow :label="t('fetch.address')" :hint="t('fetch.addressTip')"><TextField id="fu-url" v-model="st.url" placeholder="https://example.org/datei.iso" autocomplete="off" spellcheck="false" inputmode="url" width="grow" mono @input="urlTyped" /></FieldRow>
+    <FieldRow :label="t('fetch.fileName')" :hint="t('fetch.fileNameTip')"><TextField id="fu-name" v-model="st.name" autocomplete="off" spellcheck="false" width="grow" @input="st.typed = !!st.name.trim()" /></FieldRow>
+    <FieldRow :label="t('fetch.target')" :hint="t('fetch.targetTip')"><PathField v-model="st.dest" v-bind="pathField('fu-dest')" /></FieldRow>
   </div>
 </template>

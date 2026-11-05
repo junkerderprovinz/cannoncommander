@@ -6,21 +6,16 @@
 .cu-drop.over { background: color-mix(in srgb, var(--accent) 12%, var(--carbon-surface2)); outline: 2px dashed var(--accent-ink); outline-offset: -6px; }
 .cu-path { max-width: 26rem; overflow: hidden; text-overflow: ellipsis; }
 .cu-total { display: flex; flex-direction: column; gap: .4rem; padding-bottom: .3rem; }
-.cu-total .frow { min-height: 1.6rem; }
 .cu-list { display: flex; flex-direction: column; max-height: 16rem; overflow: auto; margin: 0 -.3rem; }
 .cu-row { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) 8rem 5.5rem 4.2rem; align-items: center; gap: .6rem; min-height: 2.4rem; padding: 0 .3rem; border-radius: var(--radius-control); }
 .cu-row:hover { background: var(--carbon-hover); }
 .cu-row .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cu-row .tile { background: var(--carbon-surface3); }
-.cu-row .pill { justify-self: end; background: var(--carbon-surface3); }
+.cu-row .glim-pill { justify-self: end; background: var(--carbon-surface3); }
 .cu-row.done .t { color: var(--carbon-text-sub); }
 .cu-row > :nth-child(3):not(.bar) { grid-column: 3 / 5; justify-self: end; }
 .cu-ok { display: inline-flex; align-items: center; gap: .4rem; font-size: 12px; color: var(--carbon-text-sub); }
 .cu-ok i { width: .5rem; height: .5rem; border-radius: 50%; background: var(--status-ok-solid); }
 .cu-acts { display: flex; gap: .25rem; justify-content: flex-end; }
-.cu-acts .btn, #cu-queue .eyebrow .btn { width: 1.8rem; height: 1.8rem; background: transparent; }
-.cu-acts .btn:hover, #cu-queue .eyebrow .btn:hover { background: var(--carbon-surface3); }
-#cu-queue .eyebrow .btn + .btn { margin-left: 0; }
 .cu-empty { font-size: 13px; padding: .3rem 0 .2rem; }
 @media (max-width: 760px) {
   .cu-row { grid-template-columns: 2.25rem minmax(0, 1fr) 4.5rem 4.2rem; }

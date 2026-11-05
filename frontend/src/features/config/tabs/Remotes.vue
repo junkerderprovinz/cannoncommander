@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import { Button, Card } from '@glimstone/vue';
+import { segItems } from '@/ui/kit';
+import { Button, Card, FieldRow, IconButton, ListRow, Pill, Selector, Toggle } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type AppSettings, type Remote } from '@/api/admin';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
-import ARow from '@/ui/ARow.vue';
-import BareBtn from '@/ui/BareBtn.vue';
-import Frow from '@/ui/Frow.vue';
 import { attempt, c, confirmWin } from '@/features/config/shared';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
 import { typeOf } from '../remotes';
 import RemoteWin from '../wins/RemoteWin.vue';
 
@@ -53,26 +49,26 @@ function remove(r: Remote) {
 <template>
   <Card :title="c('remotes.title')">
     <div v-if="remotes.length" class="a-list">
-      <ARow v-for="(r, i) in remotes" :key="r.name" :name="r.name" :tip="r.error ? c('remotes.mountFailed', { error: r.error }) : null" :data-open="i" @click="edit(r)">
+      <ListRow v-for="(r, i) in remotes" :key="r.name" :name="r.name" :tip="r.error ? c('remotes.mountFailed', { error: r.error }) : null" :data-open="i" @click="edit(r)">
         <template #tile><G :n="typeOf(r.type).g" /></template>
         <template #badges>
-          <span class="pill">{{ typeOf(r.type).label }}</span><span class="pill mono">{{ r.mount }}</span>
-          <span v-if="r.error" class="pill warn">{{ c('remotes.failedPill') }}</span>
-          <span v-else-if="!r.mounted" class="pill state">{{ c('remotes.unmountedPill') }}</span>
+          <Pill>{{ typeOf(r.type).label }}</Pill><Pill class="mono">{{ r.mount }}</Pill>
+          <Pill v-if="r.error" tone="warn">{{ c('remotes.failedPill') }}</Pill>
+          <Pill v-else-if="!r.mounted" tone="state">{{ c('remotes.unmountedPill') }}</Pill>
         </template>
-        <template #acts>
-          <BareBtn :g="r.mounted ? 'IconUnlink' : 'IconLink'" :tip="r.mounted ? c('remotes.unmount') : c('remotes.mount')" @click="mount(r)" />
-          <BareBtn g="IconPencil" :tip="c('edit')" :data-open="i" @click="edit(r)" />
-          <BareBtn g="IconTrash" :tip="c('remove')" @click="remove(r)" />
+        <template #actions>
+          <IconButton :glyph="glyphComponent(r.mounted ? 'IconUnlink' : 'IconLink')" :tip="r.mounted ? c('remotes.unmount') : c('remotes.mount')" @click="mount(r)" />
+          <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" :data-open="i" @click="edit(r)" />
+          <IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="remove(r)" />
         </template>
-      </ARow>
+      </ListRow>
     </div>
     <div v-else class="empty"><G n="IconCloud" /><div>{{ c('remotes.none') }}</div></div>
     <div class="a-foot"><Button data-add :label="c('remotes.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('remotes.mounting')">
-    <Frow :label="c('remotes.automount')" :tip="c('remotes.automountTip')"><Sw v-model="automount" /></Frow>
-    <Frow :label="c('remotes.cache')" :tip="c('remotes.cacheTip')"><Seg v-model="cache" :options="[['off', c('remotes.cacheOff')], ['writes', c('remotes.cacheWrites')], ['full', c('remotes.cacheFull')]]" /></Frow>
-    <Frow v-if="cache !== 'off'" :label="c('remotes.atMost')" :tip="c('remotes.atMostTip')"><Seg v-model="cacheSize" :options="[[10, '10 GB'], [50, '50 GB'], [200, '200 GB']]" /></Frow>
+    <FieldRow :label="c('remotes.automount')" :hint="c('remotes.automountTip')"><Toggle v-model="automount" /></FieldRow>
+    <FieldRow :label="c('remotes.cache')" :hint="c('remotes.cacheTip')"><Selector v-model="cache" :items="segItems([['off', c('remotes.cacheOff')], ['writes', c('remotes.cacheWrites')], ['full', c('remotes.cacheFull')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow v-if="cache !== 'off'" :label="c('remotes.atMost')" :hint="c('remotes.atMostTip')"><Selector v-model="cacheSize" :items="segItems([[10, '10 GB'], [50, '50 GB'], [200, '200 GB']])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </Card>
 </template>

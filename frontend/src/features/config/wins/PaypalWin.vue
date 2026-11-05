@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // Nothing from a payment service loads before somebody opens this window and goes on to PayPal's own donation page,
 // which takes cards without an account too.
+import { segItems } from '@/ui/kit';
+import { FieldRow, Selector } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Frow from '@/ui/Frow.vue';
 import { c, stepFoot } from '@/features/config/shared';
-import Seg from '@/ui/Seg.vue';
 
 const props = defineProps<{ win: WinEntry }>();
 const often = ref('once'), amount = ref('25');
@@ -18,8 +18,8 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('info.toPaypal'), g
 
 <template>
   <div class="well glim-well">
-    <Frow :label="c('info.often')"><Seg id="pp-often" v-model="often" :options="[['once', c('info.once')], ['month', c('info.monthly')], ['year', c('info.yearly')]]" /></Frow>
-    <Frow :label="c('info.amount')"><Seg id="pp-amount" v-model="amount" :options="[['10', '10 €'], ['25', '25 €'], ['50', '50 €']]" /></Frow>
+    <FieldRow :label="c('info.often')"><Selector id="pp-often" v-model="often" :items="segItems([['once', c('info.once')], ['month', c('info.monthly')], ['year', c('info.yearly')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('info.amount')"><Selector id="pp-amount" v-model="amount" :items="segItems([['10', '10 €'], ['25', '25 €'], ['50', '50 €']])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </div>
   <div class="well glim-well a-text"><p>{{ c('info.paypalText') }}</p></div>
 </template>

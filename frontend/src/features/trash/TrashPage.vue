@@ -1,16 +1,15 @@
 <script setup lang="ts">
 // Papierkorb: a full page listing what was deleted, with restore, delete for good and empty.
-import { Card } from '@glimstone/vue';
+import { Button, Card, FieldRow, IconButton, Pill } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import type { TrashItem } from '@/api/ops';
 import { DAY, fmtDate, fmtSize } from '@/core/format';
-import { G, glyphOf } from '@/core/glyphs';
+import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { isMenuOpen, menu } from '@/core/menu';
 import { go } from '@/core/views';
 import { winStack } from '@/core/windows';
 import { t } from '@/i18n';
 import { useTrash } from '@/stores/trash';
-import Frow from '@/ui/Frow.vue';
 import { objects } from '@/features/jobs/label';
 import { purge, restore } from './trash';
 import { pick, type SortKey } from './pick';
@@ -83,34 +82,34 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
   <div v-if="!list.length" class="page-inner ct">
     <Card :title="t('trash.title')">
       <div class="empty ct-empty"><G n="IconTrash" /><div class="t">{{ t('trash.emptyTitle') }}</div><div class="muted">{{ t('trash.emptyText', { days: trash.days }) }}</div>
-        <button class="btn" data-go-view="files" @click="go('files')"><G n="IconFiles" />{{ t('trash.toFiles') }}</button></div>
+        <Button :label="t('trash.toFiles')" label-key="IconFiles" data-go-view="files" @click="go('files')" /></div>
     </Card>
   </div>
   <div v-else class="page-inner ct">
     <Card :title="t('trash.title')">
-      <Frow :label="t('trash.content')"><span class="pill glim-num">{{ t('trash.contentPill', { what: objects(list.length), size: fmtSize(total) }) }}</span></Frow>
-      <Frow v-if="next" :label="t('trash.next')" :tip="t('trash.nextTip', { days: trash.days })"><span class="pill">{{ next.name }}</span><span class="pill glim-num">{{ t('trash.nextOn', { date: goneOn(next) }) }}</span></Frow>
+      <FieldRow :label="t('trash.content')"><Pill class="glim-num">{{ t('trash.contentPill', { what: objects(list.length), size: fmtSize(total) }) }}</Pill></FieldRow>
+      <FieldRow v-if="next" :label="t('trash.next')" :hint="t('trash.nextTip', { days: trash.days })"><Pill>{{ next.name }}</Pill><Pill class="glim-num">{{ t('trash.nextOn', { date: goneOn(next) }) }}</Pill></FieldRow>
     </Card>
     <Card class="ct-card" :title="t('trash.listTitle')">
       <div class="ct-head" role="row"><span></span><span></span>
         <button v-for="k in COLS" :key="k" :data-tsort="k" :class="[{ sorted: pick.sort === k, r: k === 'size' || k === 'deleted' }, `col-${k}`]" @click="sortBy(k)">{{ t(`trash.col.${k}`) }}<G v-if="pick.sort === k" :n="pick.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /></button>
-        <button id="ct-more" class="btn" @click="more"><G n="IconMore" />{{ t('trash.more') }}</button>
+        <Button id="ct-more" :label="t('trash.more')" label-key="IconMore" @click="more" />
       </div>
       <div class="ct-list" :class="{ picking: picked.length }" role="listbox" aria-multiselectable="true">
         <div v-for="(e, i) in list" :key="e.id" class="ct-row" :class="{ sel: pick.sel.has(e.id) }" :data-i="i" role="option" :aria-selected="pick.sel.has(e.id)" @click="click(e, i, $event)">
           <button class="ct-mark" data-mark :aria-label="t('trash.mark')"><G n="IconCheck" /></button>
           <span class="tile"><G :n="e.dir ? 'IconFolder' : glyphOf({ name: e.name })" /></span>
           <span class="t">{{ e.name }}</span>
-          <span class="pill mono col-from" :data-tip="e.from">{{ e.from }}</span>
-          <span class="pill glim-num col-size">{{ fmtSize(e.size) || '0 B' }}</span>
-          <span class="pill glim-num col-deleted" :data-tip="t('trash.byTip', { by: e.by, date: goneOn(e) })">{{ fmtDate(at(e)) }}, {{ e.by }}</span>
+          <Pill class="mono col-from" :data-tip="e.from">{{ e.from }}</Pill>
+          <Pill class="glim-num col-size">{{ fmtSize(e.size) || '0 B' }}</Pill>
+          <Pill class="glim-num col-deleted" :data-tip="t('trash.byTip', { by: e.by, date: goneOn(e) })">{{ fmtDate(at(e)) }}, {{ e.by }}</Pill>
           <span class="ct-acts">
-            <button class="btn icon" data-act="restore" :data-tip="t('trash.restore')" :aria-label="t('trash.restore')" @click.stop="restore([e], clear)"><G n="IconRestore" /></button>
-            <button class="btn icon" data-act="purge" :data-tip="t('trash.purge')" :aria-label="t('trash.purge')" @click.stop="purge([e], false, clear)"><G n="IconTrash" /></button>
+            <IconButton :tip="t('trash.restore')" :glyph="glyphComponent('IconRestore')" data-act="restore" @click.stop="restore([e], clear)" />
+            <IconButton :tip="t('trash.purge')" :glyph="glyphComponent('IconTrash')" data-act="purge" @click.stop="purge([e], false, clear)" />
           </span>
         </div>
       </div>
     </Card>
-    <div v-if="picked.length" class="ct-fab"><button id="ct-restore" class="btn key primary" @click="restore(picked, clear)"><G n="IconRestore" />{{ picked.length === 1 ? t('trash.restore') : t('trash.restoreMany', { n: picked.length }) }}</button></div>
+    <div v-if="picked.length" class="ct-fab"><Button id="ct-restore" class="glim-btn-key" :label="picked.length === 1 ? t('trash.restore') : t('trash.restoreMany', { n: picked.length })" label-key="IconRestore" tone="accent" @click="restore(picked, clear)" /></div>
   </div>
 </template>

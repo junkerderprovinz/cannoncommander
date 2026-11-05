@@ -1,4 +1,6 @@
 <script lang="ts">
+import { segItems } from '@/ui/kit';
+import { Pill, Selector } from '@glimstone/vue';
 import { ref } from 'vue';
 
 // The zoom carries over from one picture to the next, as it does in the prototype.
@@ -11,7 +13,6 @@ import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { rawUrl, thumbUrl } from '../content';
 import { browserDraws, joinPath } from '../kinds';
-import Seg from '@/ui/Seg.vue';
 import type { REmits, RProps } from './types';
 
 const props = defineProps<RProps>();
@@ -80,8 +81,8 @@ defineExpose({
   <div v-if="compact" class="cv-pic-c"><img :src="src" alt="" @load="loaded"></div>
   <template v-else>
     <div class="cv-bar">
-      <span v-if="many" class="pill glim-num">{{ t('viewer.img.of', { i: i + 1, n: sibs.length }) }}</span><span class="grow"></span>
-      <Seg id="cv-zoom" v-model="zoom" :options="[['fit', t('viewer.img.fit'), 'IconCompact'], ['full', '100 %', 'IconSearch']]" />
+      <Pill v-if="many" class="glim-num">{{ t('viewer.img.of', { i: i + 1, n: sibs.length }) }}</Pill><span class="grow"></span>
+      <Selector id="cv-zoom" v-model="zoom" :items="segItems([['fit', t('viewer.img.fit'), 'IconCompact'], ['full', '100 %', 'IconSearch']])" size="sm" activation="manual" inline button-height />
     </div>
     <div id="cv-stage" ref="stage" class="cv-stage" :class="[zoom, { panning }]" @mousedown="down" @mousemove="move" @mouseup="up" @mouseleave="up">
       <div class="cv-pic" :style="picStyle"><img :src="src" alt="" draggable="false" @load="loaded"></div>

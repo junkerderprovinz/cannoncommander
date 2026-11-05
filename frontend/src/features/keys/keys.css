@@ -11,9 +11,8 @@
 .kb-name .ph { width: .95rem; flex: none; }
 .kb-key { justify-self: end; display: inline-flex; align-items: center; gap: .35rem; height: 1.8rem; padding: 0 .55rem; border-radius: var(--radius-control); font-size: 13px; }
 .kb-key:hover, .kb-row.rec .kb-key { background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
-.kb-row.own .kb-key .kbd { background: color-mix(in srgb, var(--accent) 22%, var(--carbon-surface3)); }
+.kb-row.own .kb-key .glim-kbd { background: color-mix(in srgb, var(--accent) 22%, var(--carbon-surface3)); }
 .kb-acts { display: flex; justify-content: flex-end; gap: 2px; }
-.kb-acts .btn { width: 1.8rem; height: 1.8rem; background: transparent; }
 .kb-warn { grid-column: 1 / -1; margin: 0 0 .4rem; padding: .35rem .6rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--status-warn-solid, #FF832B) 16%, transparent); font-size: 12.5px; }
 .kb-fixedhead { margin-top: 1.2rem; }
 @media (max-width: 760px) { .kb-row { grid-template-columns: minmax(0, 1fr) auto auto; } }

@@ -12,7 +12,7 @@
 .nav-row[data-parity] { cursor: pointer; }
 .bk :not(.glim-info-icon) > svg { fill: currentColor; }
 .bk .well { min-width: 0; }
-.bk .well .pill:not(.ok):not(.warn):not(.fault) { background: var(--carbon-surface3); }
+.bk .well .glim-pill:not(.glim-pill--ok):not(.glim-pill--warn):not(.glim-pill--fail) { background: var(--carbon-surface3); }
 .bk .well .tbl tr + tr td { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--carbon-text) 6%, transparent); }
 .bk-val { margin-left: auto; text-align: right; color: var(--carbon-text-sub); min-width: 0; }
 .bk-pathv { display: flex; align-items: center; gap: .2rem; max-width: 70%; }

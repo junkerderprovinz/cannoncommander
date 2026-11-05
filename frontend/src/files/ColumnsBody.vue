@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // The column window: every column under its group, a search over them, and the choice applied together.
-import { Checkbox } from '@glimstone/vue';
+import { Checkbox, TextField } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
@@ -20,7 +20,7 @@ const flip = (id: string) => (props.on.has(id) ? props.on.delete(id) : props.on.
 </script>
 
 <template>
-  <input id="col-q" v-model="q" class="glim-input grow" type="search" :placeholder="t('files.columnsSearch')" autocomplete="off">
+  <TextField id="col-q" v-model="q" type="search" :placeholder="t('files.columnsSearch')" autocomplete="off" width="grow" />
   <div class="well glim-well">
     <div class="col-cols">
       <section v-for="gr in groups" :key="gr.id" class="col-group" data-colgroup>

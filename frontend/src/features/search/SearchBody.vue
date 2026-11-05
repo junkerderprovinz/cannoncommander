@@ -1,6 +1,9 @@
 <script setup lang="ts">
 // The search window: every criterion Krusader's search has, with hits that follow each keystroke. Names and fields
 // come from GET /search at once; a text inside files is a contentSearch job whose hits arrive one batch at a time.
+import { pathField } from '@/ui/picker';
+import { Select } from '@glimstone/vue/Select';
+import { Button, FieldRow, PathField, Pill, Selector, TextField, Toggle } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { ApiError } from '@/api/client';
 import { type Job, ops } from '@/api/ops';
@@ -13,12 +16,7 @@ import type { WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
 import { useSearch } from '@/stores/search';
-import PathField from '@/ui/PathField.vue';
-import Dropdown from '@/ui/Dropdown.vue';
-import Frow from '@/ui/Frow.vue';
-import { num, plural, setFoot } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
+import { num, plural, setFoot, segItems, selectOptions } from '@/ui/kit';
 import Tile from '@/ui/Tile.vue';
 import { openHit, saveSearch } from './saved';
 
@@ -151,10 +149,10 @@ function key(e: KeyboardEvent) {
   }
 }
 
-const nameField = ref<HTMLInputElement | null>(null);
+const nameField = ref<InstanceType<typeof TextField> | null>(null);
 onMounted(() => {
   void run().then(() => { drawn = true; });
-  setTimeout(() => { nameField.value?.focus(); nameField.value?.select(); }, 0);
+  setTimeout(() => { nameField.value?.input?.focus(); nameField.value?.input?.select(); }, 0);
 });
 onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(timer); });
 </script>
@@ -162,17 +160,17 @@ onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(ti
 <template>
   <div class="well glim-well bk-form" @keydown="key">
     <div class="bk-grid2">
-      <Frow :label="t('search.name')" :tip="t('search.nameTip')"><input id="s-name" ref="nameField" v-model="q.name" class="glim-input grow" :placeholder="t('search.namePlaceholder')" autocomplete="off" spellcheck="false"></Frow>
-      <Frow :label="t('search.text')" :tip="t('search.textTip')"><input id="s-text" v-model="q.text" class="glim-input grow" :placeholder="t('search.textPlaceholder')" autocomplete="off"></Frow>
-      <Frow :label="t('search.in')"><PathField id="s-in" v-model="q.in" /></Frow>
-      <Frow :label="t('search.hidden')" :tip="t('search.hiddenTip')"><Sw id="s-hidden" v-model="q.hidden" /></Frow>
-      <Frow :label="t('search.size')" :tip="t('search.sizeTip')"><span class="bk-range"><input id="s-min" v-model="q.min" class="glim-input bk-num glim-num" :placeholder="t('search.from')" autocomplete="off"><span class="muted">{{ t('search.to') }}</span><input id="s-max" v-model="q.max" class="glim-input bk-num glim-num" :placeholder="t('search.any')" autocomplete="off"></span></Frow>
-      <Frow :label="t('search.when')"><Dropdown id="s-when" v-model="q.when" :options="WHEN" size="grow" /></Frow>
+      <FieldRow :label="t('search.name')" :hint="t('search.nameTip')"><TextField id="s-name" ref="nameField" v-model="q.name" :placeholder="t('search.namePlaceholder')" autocomplete="off" spellcheck="false" width="grow" /></FieldRow>
+      <FieldRow :label="t('search.text')" :hint="t('search.textTip')"><TextField id="s-text" v-model="q.text" :placeholder="t('search.textPlaceholder')" autocomplete="off" width="grow" /></FieldRow>
+      <FieldRow :label="t('search.in')"><PathField v-model="q.in" v-bind="pathField('s-in')" /></FieldRow>
+      <FieldRow :label="t('search.hidden')" :hint="t('search.hiddenTip')"><Toggle id="s-hidden" v-model="q.hidden" /></FieldRow>
+      <FieldRow :label="t('search.size')" :hint="t('search.sizeTip')"><span class="bk-range"><TextField id="s-min" v-model="q.min" class="bk-num glim-num" :placeholder="t('search.from')" autocomplete="off" /><span class="muted">{{ t('search.to') }}</span><TextField id="s-max" v-model="q.max" class="bk-num glim-num" :placeholder="t('search.any')" autocomplete="off" /></span></FieldRow>
+      <FieldRow :label="t('search.when')"><Select id="s-when" v-model="q.when" :options="selectOptions(WHEN)" rows="menu" /></FieldRow>
     </div>
-    <Frow :label="t('search.type')"><Seg id="s-type" v-model="q.type" :options="TYPES" /></Frow>
+    <FieldRow :label="t('search.type')"><Selector id="s-type" v-model="q.type" :items="segItems(TYPES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </div>
   <div class="well glim-well bk-fill bk-hits" :hidden="empty" @keydown="key">
-    <div class="bk-tools"><span id="s-count" class="eyebrow">{{ count }}</span><button id="s-save" class="btn" :data-tip="t('search.saveTip')" @click="saveSearch({ ...q })"><G n="IconSave" />{{ t('search.save') }}</button></div>
+    <div class="bk-tools"><span id="s-count" class="eyebrow">{{ count }}</span><Button id="s-save" :label="t('search.save')" label-key="IconSave" :title="t('search.saveTip')" @click="saveSearch({ ...q })" /></div>
     <div class="bk-hhead"><span></span><span>{{ t('search.colName') }}</span><span>{{ t('search.colFolder') }}</span><span class="r">{{ t('search.colSize') }}</span><span class="r">{{ t('search.colChanged') }}</span></div>
     <div id="s-list" ref="list" class="bk-list" role="listbox" :aria-label="t('search.hitsLabel')">
       <template v-if="!empty">
@@ -181,7 +179,7 @@ onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(ti
         <template v-else-if="shown.length">
           <div v-for="(h, i) in shown" :key="h.at + '/' + h.name" class="bk-row bk-hit" :class="{ cur: i === cur }" :data-bk-hit="i" role="option" :aria-selected="i === cur" @click="clickHit($event, i)">
             <Tile :k="h" /><span class="bk-name">{{ h.name }}</span><span class="bk-path muted mono" :title="h.at || '/'"><bdi>{{ h.at || '/' }}</bdi></span>
-            <span class="pill glim-num">{{ fmtSize(h.size) || '0 B' }}</span><span class="pill glim-num">{{ fmtDate(h.time) }}</span>
+            <Pill class="glim-num">{{ fmtSize(h.size) || '0 B' }}</Pill><Pill class="glim-num">{{ fmtDate(h.time) }}</Pill>
           </div>
         </template>
         <div v-else-if="!res.reading" class="empty"><G n="IconFilter" /><div>{{ t('search.nothing') }}</div><div class="muted" style="font-size:12px">{{ t('search.nothingHint') }}</div></div>

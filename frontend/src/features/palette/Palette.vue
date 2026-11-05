@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The command search over the list: type to narrow, the arrows or Tab to pick, Enter to run.
+import { Kbd, RowMark } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
-import Cbox from '@/core/Cbox.vue';
 import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { type Line, lines, type Row } from './rows';
@@ -59,10 +59,10 @@ const row = (r: Line) => r as Row;
             <div v-if="'head' in r" class="head" role="presentation">{{ r.head }}</div>
             <div v-else :id="`pal-${i}`" class="pal-row" :class="{ off: !!row(r).why, cur: i === cur }" role="option" :aria-selected="i === cur" :aria-disabled="!!row(r).why"
               :data-i="i" :data-tip="row(r).why || undefined" @click="pick(r)" @mousemove="cur !== i && (cur = i)">
-              <Cbox v-if="row(r).a?.checked" :on="row(r).a!.checked!()" /><G v-else-if="row(r).g" :n="row(r).g!" /><span v-else class="ph"></span>
+              <RowMark v-if="row(r).a?.checked" :on="row(r).a!.checked!()" /><G v-else-if="row(r).g" :n="row(r).g!" /><span v-else class="ph"></span>
               <span class="t">{{ row(r).name }}</span>
               <span v-if="row(r).group" class="grp">{{ row(r).group }}</span>
-              <span v-if="row(r).a?.key" class="kbd">{{ row(r).a!.key }}</span>
+              <Kbd v-if="row(r).a?.key">{{ row(r).a!.key }}</Kbd>
             </div>
           </template>
         </template>

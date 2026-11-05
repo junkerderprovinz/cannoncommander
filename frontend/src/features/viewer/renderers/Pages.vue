@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // Pages of a PDF or an office file as the server draws them, with page pictures to the left as in a PDF reader.
+import { IconButton, Pill } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { type FirstPage, fsFirstPage, pageUrl } from '../content';
 import { joinPath, plural } from '../kinds';
@@ -61,9 +62,9 @@ defineExpose({
   <div v-if="compact" class="cv-paper img" :style="{ aspectRatio: ar }"><img v-if="first" :src="first.url" alt=""></div>
   <template v-else>
     <div class="cv-bar">
-      <button class="btn icon" data-pg="-1" :data-tip="t('viewer.pages.prevTip')" :aria-label="t('viewer.pages.prev')" @click="go(cur - 1)"><G n="IconBack" /></button>
-      <span id="cv-pgn" class="pill glim-num">{{ t('viewer.pages.of', { i: cur + 1, n: count || 1 }) }}</span>
-      <button class="btn icon" data-pg="1" :data-tip="t('viewer.pages.nextTip')" :aria-label="t('viewer.pages.next')" @click="go(cur + 1)"><G n="IconForward" /></button>
+      <IconButton :tip="t('viewer.pages.prevTip')" :glyph="glyphComponent('IconBack')" data-pg="-1" @click="go(cur - 1)" />
+      <Pill id="cv-pgn" class="glim-num">{{ t('viewer.pages.of', { i: cur + 1, n: count || 1 }) }}</Pill>
+      <IconButton :tip="t('viewer.pages.nextTip')" :glyph="glyphComponent('IconForward')" data-pg="1" @click="go(cur + 1)" />
     </div>
     <div class="cv-doc">
       <div v-if="count > 1" class="cv-pthumbs">

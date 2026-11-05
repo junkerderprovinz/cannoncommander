@@ -1,9 +1,8 @@
 <script setup lang="ts">
 // One entry in any view. Every view draws the same .row with its index, so clicks, marks, drags and menus work the
 // same in all of them; only the inside differs.
-import { Meter, Pill } from '@glimstone/vue';
+import { Meter, Pill, RowMark } from '@glimstone/vue';
 import { computed } from 'vue';
-import Cbox from '@/core/Cbox.vue';
 import { extend } from '@/core/extend';
 import { fmtListDate, fmtSize } from '@/core/format';
 import { G, glyphOf } from '@/core/glyphs';
@@ -11,7 +10,7 @@ import { prefs } from '@/core/prefs';
 import { Render } from '@/core/Render';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
-import type { RowMark } from '@/stores/panels';
+import type { RowMark as Mark } from '@/stores/panels';
 import { COL, Columns } from './columns';
 import type { Entry } from './entries';
 import { join } from './paths';
@@ -19,7 +18,7 @@ import Thumb from './Thumb.vue';
 import { fresh } from './fresh';
 import { ticking } from './touch';
 
-const props = defineProps<{ k: Entry; idx: number; view: string; path: string; marked: boolean; cursor: boolean; cut?: boolean; mark?: RowMark }>();
+const props = defineProps<{ k: Entry; idx: number; view: string; path: string; marked: boolean; cursor: boolean; cut?: boolean; mark?: Mark }>();
 const listing = useListing();
 const boxes = computed(() => ticking(props.path) && !props.k.up);
 const glows = computed(() => fresh.has(join(props.k.at || props.path, props.k.name)));
@@ -56,28 +55,28 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
     <template v-if="kind === 'row' || kind === 'flow'">
       <template v-for="id in kind === 'row' ? Columns.visible() : ['name']" :key="id">
         <span v-if="id === 'name'" class="name">
-          <span class="glyph"><Cbox v-if="marked || boxes" :on="marked" /><G v-else :n="glyphOf(k)" /></span><span class="t">{{ shownName }}</span>
+          <span class="glyph"><RowMark v-if="marked || boxes" :on="marked" /><G v-else :n="glyphOf(k)" /></span><span class="t">{{ shownName }}</span>
           <Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" />
           <span v-if="k.at && k.at !== path" class="link">{{ t('files.foundIn', { path: k.at.slice(path.length + 1) }) }}</span>
           <span v-if="k.link" class="link">→ {{ k.link }}</span>
-          <Pill v-if="k.archive" tone="state" class="pill state">{{ t('files.archive') }}</Pill>
-          <Pill v-if="mark" :tone="toneOf(mark.tone)" class="pill state" :class="mark.tone">{{ mark.label }}</Pill>
+          <Pill v-if="k.archive" tone="state">{{ t('files.archive') }}</Pill>
+          <Pill v-if="mark" :tone="toneOf(mark.tone)">{{ mark.label }}</Pill>
         </span>
         <span v-else-if="id === 'size' && volume" class="cell r glim-num vcell"><Meter class="vmeter" size="small" :value="1 - volume.free / volume.total" :label="driveName" :value-text="t('files.freeOf', { free: fmtSize(volume.free), total: fmtSize(volume.total) })" />{{ t('files.free', { size: fmtSize(volume.free) }) }}</span>
         <span v-else class="cell glim-num" :class="{ r: COL[id]!.r, mono: COL[id]!.mono }">{{ COL[id]!.value(k, path) }}</span>
       </template>
     </template>
     <template v-else-if="kind === 'tile'">
-      <Thumb :k="k" :folder="folder" /><Cbox v-if="marked || boxes" :on="marked" />
+      <Thumb :k="k" :folder="folder" /><RowMark v-if="marked || boxes" :on="marked" />
       <span class="t">{{ k.name }}</span><span class="meta glim-num">{{ objects }}<Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" /></span>
     </template>
     <template v-else-if="kind === 'content'">
-      <Thumb :k="k" :folder="folder" /><Cbox v-if="marked || boxes" :on="marked" />
+      <Thumb :k="k" :folder="folder" /><RowMark v-if="marked || boxes" :on="marked" />
       <span class="c-main"><span class="t">{{ k.name }}</span><span class="c-sub">{{ COL.type!.value(k, path) }} · {{ fmtListDate(k.time) }}</span></span>
       <span class="c-side glim-num"><span>{{ objects }}</span><span v-if="extra">{{ extra }}</span></span>
     </template>
     <template v-else>
-      <Cbox v-if="marked" on /><span class="dglyph"><G :n="driveGlyph" /></span>
+      <RowMark v-if="marked" on /><span class="dglyph"><G :n="driveGlyph" /></span>
       <span class="dtext"><span class="t">{{ driveName }}</span>
         <template v-if="volume"><Meter class="dbar" size="medium" :value="1 - volume.free / volume.total" :label="driveName" :value-text="t('files.freeOf', { free: fmtSize(volume.free), total: fmtSize(volume.total) })" /><span class="meta glim-num">{{ t('files.freeOf', { free: fmtSize(volume.free), total: fmtSize(volume.total) }) }}</span></template>
         <span v-else class="meta glim-num">{{ objects }}</span>

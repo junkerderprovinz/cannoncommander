@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // The preview bar and the quick look: the same renderers, compact, followed by the file's details.
+import { FieldRow } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import { fmtSize, fmtTime } from '@/core/format';
 import { t } from '@/i18n';
 import { type FileNode, viewKind } from './kinds';
 import Stage from './Stage.vue';
-import Frow from '@/ui/Frow.vue';
 
 const props = defineProps<{ n: FileNode; folder: string; autoplay?: boolean }>();
 const kind = computed(() => viewKind(props.n));
@@ -19,10 +19,10 @@ const sibs = computed(() => [props.n]);
   </div>
   <div class="well glim-well cv-details">
     <div class="eyebrow">{{ n.name }}</div>
-    <Frow :label="t('viewer.details.size')" :value="fmtSize(n.size) || '0 B'" />
-    <Frow v-if="info" :label="kind === 'dir' ? t('viewer.details.content') : t('viewer.details.format')" :value="info" />
-    <Frow :label="t('viewer.details.changed')" :value="fmtTime(n.time)" />
-    <Frow :label="t('viewer.details.owner')" :value="`${n.owner || 'nobody'}:${n.group || 'users'}`" />
-    <Frow :label="t('viewer.details.rights')" :value="n.mode || '0664'" />
+    <FieldRow :label="t('viewer.details.size')" :value="fmtSize(n.size) || '0 B'" />
+    <FieldRow v-if="info" :label="kind === 'dir' ? t('viewer.details.content') : t('viewer.details.format')" :value="info" />
+    <FieldRow :label="t('viewer.details.changed')" :value="fmtTime(n.time)" />
+    <FieldRow :label="t('viewer.details.owner')" :value="`${n.owner || 'nobody'}:${n.group || 'users'}`" />
+    <FieldRow :label="t('viewer.details.rights')" :value="n.mode || '0664'" />
   </div>
 </template>

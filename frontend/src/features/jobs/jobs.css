@@ -9,7 +9,7 @@
 .job-file { display: flex; align-items: center; gap: .35rem; font-size: 12px; color: var(--carbon-text-sub); min-width: 0; }
 .job-file svg { width: .8rem; height: .8rem; flex: none; color: var(--accent-glyph); }
 .job-file span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.job .pill { justify-self: end; }
+.job .glim-pill { justify-self: end; }
 .job-acts { display: flex; gap: .3rem; min-width: 8.4rem; justify-content: flex-end; }
-.job-acts .btn.on svg { color: var(--accent-glyph); }
+.job-acts .on { color: var(--accent-glyph); }
 @media (max-width: 760px) { .job { grid-template-columns: minmax(0, 1fr) auto; gap: .4rem .6rem; } .job-grip { display: none; } .job .bar { grid-column: 1 / -1; grid-row: 2; } .job-acts { min-width: 0; grid-column: 1 / -1; } }

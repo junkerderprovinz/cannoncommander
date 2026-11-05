@@ -1,4 +1,5 @@
 <script lang="ts">
+import { Pill, Toggle } from '@glimstone/vue';
 import { ref } from 'vue';
 
 const wrap = ref(false);
@@ -10,7 +11,6 @@ import { t } from '@/i18n';
 import { fsText } from '../content';
 import { ext, joinPath, langOf, plural, viewKind } from '../kinds';
 import { highlight } from '../markdown';
-import Sw from '@/ui/Sw.vue';
 import type { REmits, RProps } from './types';
 
 const props = defineProps<RProps>();
@@ -36,8 +36,8 @@ onMounted(async () => {
 
 <template>
   <div v-if="!compact" class="cv-bar">
-    <span v-if="truncated" class="pill">{{ t('viewer.text.truncated') }}</span><span class="grow"></span>
-    <span class="cv-swl">{{ t('viewer.text.wrap') }} <Sw id="cv-wrap" v-model="wrap" /></span>
+    <Pill v-if="truncated">{{ t('viewer.text.truncated') }}</Pill><span class="grow"></span>
+    <span class="cv-swl">{{ t('viewer.text.wrap') }} <Toggle id="cv-wrap" v-model="wrap" /></span>
   </div>
   <div v-if="failed" class="empty">{{ t('viewer.failed') }}</div>
   <div v-else class="cv-code" :class="{ wrap: wrap || compact }">

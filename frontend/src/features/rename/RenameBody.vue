@@ -1,13 +1,12 @@
 <script setup lang="ts">
 // Mehrfach umbenennen: the pattern on the left, find and replace on the right, the preview of every name below.
+import { Select } from '@glimstone/vue/Select';
+import { FieldRow, IconButton, Pill, TextField, Toggle } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import type { RenameMask, RenamePreset, RenameRow } from '@/api/tools';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
-import Dropdown from '@/ui/Dropdown.vue';
-import Frow from '@/ui/Frow.vue';
-import { plural, pressPrimary } from '@/ui/kit';
-import Sw from '@/ui/Sw.vue';
+import { plural, pressPrimary, selectOptions } from '@/ui/kit';
 import { BUILT_IN, CASES } from './presets';
 
 export interface RenameState { o: RenameMask; rows: RenameRow[]; bad: boolean; count: number; own: RenamePreset[]; preset: string }
@@ -29,10 +28,10 @@ watch(() => props.st.preset, (v) => {
   if (p) Object.assign(props.st.o, p);
 });
 
-const fields = { name: ref<HTMLInputElement | null>(null), ext: ref<HTMLInputElement | null>(null) };
+const fields = { name: ref<InstanceType<typeof TextField> | null>(null), ext: ref<InstanceType<typeof TextField> | null>(null) };
 let focused = 'name' as 'name' | 'ext';
 async function insert(token: string) {
-  const f = fields[focused].value!, a = f.selectionStart ?? f.value.length, z = f.selectionEnd ?? a;
+  const f = fields[focused].value!.input!, a = f.selectionStart ?? f.value.length, z = f.selectionEnd ?? a;
   props.st.o[focused] = f.value.slice(0, a) + token + f.value.slice(z);
   await nextTick();
   f.focus();
@@ -47,24 +46,24 @@ const missingTip = (r: RenameRow) => t('rename.withoutTip', { names: r.missing!.
 <template>
   <div class="bk-grid2 bk-top" @keydown.enter="pressPrimary">
     <div class="well glim-well bk-form"><div class="eyebrow">{{ t('rename.mask') }}</div>
-      <Frow :label="t('rename.preset')" :tip="t('rename.presetTip')">
-        <span id="m-presets" class="bk-range"><Dropdown id="m-preset" v-model="st.preset" :options="presets" size="grow" />
-          <button id="m-psave" class="btn icon" type="button" :data-tip="t('rename.savePreset')" :aria-label="t('rename.savePreset')" @click="savePreset"><G n="IconSave" /></button>
-          <button id="m-pdel" class="btn icon" type="button" :data-tip="t('rename.dropPreset')" :aria-label="t('rename.dropPreset')" :disabled="!st.preset.startsWith('own:')" @click="dropPreset"><G n="IconTrash" /></button></span>
-      </Frow>
-      <Frow :label="t('rename.name')"><input id="m-name" :ref="fields.name" v-model="st.o.name" class="glim-input grow glim-input--mono" spellcheck="false" autocomplete="off" @focus="focused = 'name'"></Frow>
-      <Frow :label="t('rename.ext')"><input id="m-ext" :ref="fields.ext" v-model="st.o.ext" class="glim-input grow glim-input--mono" spellcheck="false" autocomplete="off" @focus="focused = 'ext'"></Frow>
+      <FieldRow :label="t('rename.preset')" :hint="t('rename.presetTip')">
+        <span id="m-presets" class="bk-range"><Select id="m-preset" v-model="st.preset" :options="selectOptions(presets)" rows="menu" />
+          <IconButton id="m-psave" :tip="t('rename.savePreset')" :glyph="glyphComponent('IconSave')" @click="savePreset" />
+          <IconButton id="m-pdel" :tip="t('rename.dropPreset')" :glyph="glyphComponent('IconTrash')" :disabled="!st.preset.startsWith('own:')" @click="dropPreset" /></span>
+      </FieldRow>
+      <FieldRow :label="t('rename.name')"><TextField id="m-name" :ref="fields.name" v-model="st.o.name" spellcheck="false" autocomplete="off" width="grow" mono @focus="focused = 'name'" /></FieldRow>
+      <FieldRow :label="t('rename.ext')"><TextField id="m-ext" :ref="fields.ext" v-model="st.o.ext" spellcheck="false" autocomplete="off" width="grow" mono @focus="focused = 'ext'" /></FieldRow>
       <div class="bk-tokens"><button v-for="id in TOKENS" :key="id" class="bk-chip" type="button" :data-bk-tok="`[${id}]`" :data-tip="t(`rename.tokens.${id}.tip`)" @click="insert(`[${id}]`)"><b>[{{ id }}]</b>{{ label(id) }}</button></div>
       <div class="bk-tokens bk-meta"><span class="muted">{{ t('rename.fromMeta') }}</span><button v-for="id in META" :key="id" class="bk-chip" type="button" :data-bk-tok="chip(id)" :data-tip="t(`rename.tokens.${id}.tip`)" @click="insert(chip(id))"><b>{{ chip(id) }}</b>{{ label(id) }}</button></div>
-      <Frow :label="t('rename.counter')">
-        <span class="bk-range"><span class="muted">{{ t('rename.from') }}</span><input id="m-start" class="glim-input s glim-num" :value="st.o.start" inputmode="numeric" @input="st.o.start = num(($event.target as HTMLInputElement).value, 0)"><span class="muted">{{ t('rename.step') }}</span><input id="m-step" class="glim-input s glim-num" :value="st.o.step" inputmode="numeric" @input="st.o.step = num(($event.target as HTMLInputElement).value, 1)"></span>
-      </Frow>
+      <FieldRow :label="t('rename.counter')">
+        <span class="bk-range"><span class="muted">{{ t('rename.from') }}</span><TextField id="m-start" :model-value="String(st.o.start)" class="glim-num" inputmode="numeric" width="short" @input="st.o.start = num(($event.target as HTMLInputElement).value, 0)" /><span class="muted">{{ t('rename.step') }}</span><TextField id="m-step" :model-value="String(st.o.step)" class="glim-num" inputmode="numeric" width="short" @input="st.o.step = num(($event.target as HTMLInputElement).value, 1)" /></span>
+      </FieldRow>
     </div>
     <div class="well glim-well bk-form"><div class="eyebrow">{{ t('rename.findReplace') }}</div>
-      <Frow :label="t('rename.find')"><input id="m-find" v-model="st.o.find" class="glim-input grow glim-input--mono" spellcheck="false" autocomplete="off"></Frow>
-      <Frow :label="t('rename.replace')"><input id="m-repl" v-model="st.o.repl" class="glim-input grow glim-input--mono" spellcheck="false" autocomplete="off"></Frow>
-      <Frow :label="t('rename.regex')" :tip="t('rename.regexTip')"><Sw id="m-regex" v-model="st.o.regex" /></Frow>
-      <Frow :label="t('rename.case')"><Dropdown id="m-case" v-model="st.o.case" :options="caseOptions" size="grow" /></Frow>
+      <FieldRow :label="t('rename.find')"><TextField id="m-find" v-model="st.o.find" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
+      <FieldRow :label="t('rename.replace')"><TextField id="m-repl" v-model="st.o.repl" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
+      <FieldRow :label="t('rename.regex')" :hint="t('rename.regexTip')"><Toggle id="m-regex" v-model="st.o.regex" /></FieldRow>
+      <FieldRow :label="t('rename.case')"><Select id="m-case" v-model="st.o.case" :options="selectOptions(caseOptions)" rows="menu" /></FieldRow>
     </div>
   </div>
   <div class="well glim-well bk-fill"><div class="bk-tools"><span id="m-count" class="eyebrow">{{ t('rename.count', { objects: plural(st.count, 'ui.objects'), changes: plural(changed, 'rename.changes') }) }}</span></div>
@@ -73,8 +72,8 @@ const missingTip = (r: RenameRow) => t('rename.withoutTip', { names: r.missing!.
       <div v-for="r in st.rows" :key="r.path" class="bk-mrow" :class="{ same: r.new === r.old }">
         <span class="bk-name mono">{{ r.old }}</span><span class="bk-arrow sm"><G n="IconForward" /></span>
         <span class="bk-name mono" :class="{ new: !r.error }">{{ r.new || ' ' }}</span>
-        <span v-if="r.error" class="pill fault">{{ t(`rename.errors.${r.error}`) }}</span>
-        <span v-else-if="r.missing?.length" class="pill" :data-tip="missingTip(r)">{{ t('rename.without', { name: label(r.missing[0]!) }) }}</span>
+        <Pill v-if="r.error" tone="fail">{{ t(`rename.errors.${r.error}`) }}</Pill>
+        <Pill v-else-if="r.missing?.length" :data-tip="missingTip(r)">{{ t('rename.without', { name: label(r.missing[0]!) }) }}</Pill>
         <span v-else></span>
       </div>
     </div>

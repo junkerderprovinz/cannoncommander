@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { Card } from '@glimstone/vue';
+import { Card, IconButton, ListRow, Pill } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, type Share } from '@/api/admin';
 import { DAY, now } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { useUser } from '@/stores/user';
-import ARow from '@/ui/ARow.vue';
-import BareBtn from '@/ui/BareBtn.vue';
 import { ago, c } from '@/features/config/shared';
 import { copyText } from '@/ui/kit';
 import ShareWin from '../wins/ShareWin.vue';
@@ -34,23 +32,23 @@ const edit = (s: Share) => win({ title: c('shares.share'), body: ShareWin, props
 <template>
   <Card :title="c('shares.title')">
     <div v-if="shares.length" class="a-list">
-      <ARow v-for="(s, i) in shares" :key="s.id" :name="name(s)" :tip="s.paths.join(', ')" :data-open="i" @click="edit(s)">
+      <ListRow v-for="(s, i) in shares" :key="s.id" :name="name(s)" :tip="s.paths.join(', ')" :data-open="i" @click="edit(s)">
         <template #tile><G :n="glyph(s)" /></template>
         <template #badges>
-          <span v-if="s.state === 'exhausted'" class="pill state">{{ c('shares.exhausted') }}</span>
-          <span v-else-if="s.state === 'expired' || (left(s) ?? 0) < 0" class="pill state">{{ c('shares.expired') }}</span>
-          <span v-else-if="left(s) == null" class="pill">{{ c('shares.noExpiry') }}</span>
-          <span v-else class="pill" :class="{ warn: left(s)! < 3 * DAY }">{{ ago(s.expires!) }}</span>
-          <span v-if="s.password" class="pill">{{ c('shares.password') }}</span>
-          <span v-if="s.limit" class="pill glim-num">{{ c('shares.limit', { n: s.limit }) }}</span>
-          <span class="pill glim-num">{{ s.views === 1 ? c('shares.oneView') : c('shares.views', { n: s.views }) }}</span>
+          <Pill v-if="s.state === 'exhausted'" tone="state">{{ c('shares.exhausted') }}</Pill>
+          <Pill v-else-if="s.state === 'expired' || (left(s) ?? 0) < 0" tone="state">{{ c('shares.expired') }}</Pill>
+          <Pill v-else-if="left(s) == null">{{ c('shares.noExpiry') }}</Pill>
+          <Pill v-else :tone="left(s)! < 3 * DAY ? 'warn' : 'neutral'">{{ ago(s.expires!) }}</Pill>
+          <Pill v-if="s.password">{{ c('shares.password') }}</Pill>
+          <Pill v-if="s.limit" class="glim-num">{{ c('shares.limit', { n: s.limit }) }}</Pill>
+          <Pill class="glim-num">{{ s.views === 1 ? c('shares.oneView') : c('shares.views', { n: s.views }) }}</Pill>
         </template>
-        <template #acts>
-          <BareBtn g="IconCopy" :tip="c('shares.copyLink')" @click="copyText(s.url)" />
-          <BareBtn g="IconPencil" :tip="c('edit')" :data-open="i" @click="edit(s)" />
-          <BareBtn g="IconUnlink" :tip="c('shares.revoke')" :data-revoke="i" @click="revoke(s)" />
+        <template #actions>
+          <IconButton :glyph="glyphComponent('IconCopy')" :tip="c('shares.copyLink')" @click="copyText(s.url)" />
+          <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" :data-open="i" @click="edit(s)" />
+          <IconButton :glyph="glyphComponent('IconUnlink')" :tip="c('shares.revoke')" :data-revoke="i" @click="revoke(s)" />
         </template>
-      </ARow>
+      </ListRow>
     </div>
     <div v-else class="empty"><G n="IconLink" /><div>{{ c('shares.none') }}</div></div>
   </Card>

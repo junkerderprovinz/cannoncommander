@@ -1,11 +1,10 @@
 <script setup lang="ts">
 // Hochladen: a drop zone, the target, and the queue with its progress per file and in total.
-import { InfoBubble } from '@glimstone/vue';
+import { FieldRow, IconButton, InfoBubble, Pill, ProgressBar } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import { fmtSize } from '@/core/format';
-import { G, glyphOf } from '@/core/glyphs';
+import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
-import Frow from '@/ui/Frow.vue';
 import { addFiles, cancelItem, clearDone, pauseItem, pausedAll, toggleAll, Up, type UpItem } from './queue';
 
 const props = defineProps<{ st: { path: string } }>();
@@ -38,27 +37,27 @@ function dropped(e: DragEvent) {
     <G n="IconUpload" /><span class="t">{{ t('upload.dropHere') }}</span><span class="muted">{{ t('upload.orClick') }}</span>
   </button>
   <input id="cu-in" ref="files" type="file" multiple hidden @change="picked"><input id="cu-din" type="file" webkitdirectory hidden @change="picked">
-  <div class="well glim-well"><Frow :label="t('upload.target')" :tip="t('upload.targetTip')"><span class="pill mono cu-path">{{ st.path }}</span></Frow></div>
+  <div class="well glim-well"><FieldRow :label="t('upload.target')" :hint="t('upload.targetTip')"><Pill class="mono cu-path">{{ st.path }}</Pill></FieldRow></div>
   <div id="cu-queue" class="well glim-well">
     <div class="eyebrow">{{ t('upload.queue') }} <InfoBubble :tip="t('upload.queueTip')" />
-      <button v-if="busy" id="cu-all" class="btn icon" :data-tip="pausedAll() ? t('upload.resumeAll') : t('upload.pauseAll')" :aria-label="pausedAll() ? t('upload.resumeAll') : t('upload.pauseAll')" @click="toggleAll"><G :n="pausedAll() ? 'IconPlay' : 'IconPause'" /></button>
-      <button v-if="ended" id="cu-clear" class="btn icon" :data-tip="t('upload.clear')" :aria-label="t('upload.clear')" @click="clearDone"><G n="IconEmpty" /></button>
+      <IconButton v-if="busy" id="cu-all" :tip="pausedAll() ? t('upload.resumeAll') : t('upload.pauseAll')" :glyph="glyphComponent(pausedAll() ? 'IconPlay' : 'IconPause')" @click="toggleAll" />
+      <IconButton v-if="ended" id="cu-clear" :tip="t('upload.clear')" :glyph="glyphComponent('IconEmpty')" @click="clearDone" />
     </div>
     <template v-if="items.length">
       <div class="cu-total">
-        <Frow :label="t('upload.progress', { done: finished, all: alive.length === 1 ? t('upload.one') : t('upload.many', { n: alive.length }) })"><span class="pill glim-num">{{ t('upload.bytes', { done: fmtSize(done) || '0 B', total: fmtSize(total) || '0 B' }) }}</span></Frow>
-        <div class="bar"><i :style="{ width: (total ? (done / total) * 100 : 0) + '%' }"></i></div>
+        <FieldRow :label="t('upload.progress', { done: finished, all: alive.length === 1 ? t('upload.one') : t('upload.many', { n: alive.length }) })"><Pill class="glim-num">{{ t('upload.bytes', { done: fmtSize(done) || '0 B', total: fmtSize(total) || '0 B' }) }}</Pill></FieldRow>
+        <ProgressBar class="bar" :value="total ? done / total : 0" :label="t('upload.progress', { done: finished, all: alive.length === 1 ? t('upload.one') : t('upload.many', { n: alive.length }) })" />
       </div>
       <div class="cu-list">
         <div v-for="i in items" :key="i.id" class="cu-row" :class="{ done: i.state === 'done' }" :data-id="i.id">
           <span class="tile"><G :n="glyphOf({ name: i.name })" /></span><span class="t">{{ i.name }}</span>
           <span v-if="i.state === 'done'" class="cu-ok"><i></i>{{ t('upload.state.done') }}</span>
-          <span v-else-if="!open(i)" class="pill">{{ t(`upload.state.${i.state}`) }}</span>
-          <template v-else><span class="bar"><i :style="{ width: (i.loaded / (i.size || 1)) * 100 + '%' }"></i></span><span class="pill glim-num">{{ stateOf(i) }}</span></template>
+          <Pill v-else-if="!open(i)">{{ t(`upload.state.${i.state}`) }}</Pill>
+          <template v-else><ProgressBar class="bar" :value="i.loaded / (i.size || 1)" :label="i.name" :paused="i.state === 'paused'" /><Pill class="glim-num">{{ stateOf(i) }}</Pill></template>
           <span class="cu-acts">
             <template v-if="open(i)">
-              <button class="btn icon" data-up="pause" :data-tip="i.state === 'paused' ? t('upload.resume') : t('upload.pause')" :aria-label="i.state === 'paused' ? t('upload.resume') : t('upload.pause')" @click="pauseItem(i)"><G :n="i.state === 'paused' ? 'IconPlay' : 'IconPause'" /></button>
-              <button class="btn icon" data-up="cancel" :data-tip="t('upload.cancel')" :aria-label="t('upload.cancel')" @click="cancelItem(i)"><G n="IconStop" /></button>
+              <IconButton :tip="i.state === 'paused' ? t('upload.resume') : t('upload.pause')" :glyph="glyphComponent(i.state === 'paused' ? 'IconPlay' : 'IconPause')" data-up="pause" @click="pauseItem(i)" />
+              <IconButton :tip="t('upload.cancel')" :glyph="glyphComponent('IconStop')" data-up="cancel" @click="cancelItem(i)" />
             </template>
           </span>
         </div>

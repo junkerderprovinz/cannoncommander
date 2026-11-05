@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Two files side by side, changed lines tinted, and a jump from one changed place to the next.
+import { Pill } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import type { Diff, DiffRow, DiffSide } from '@/api/tools';
 import { fmtSize, fmtTime } from '@/core/format';
@@ -60,7 +61,7 @@ onMounted(() => {
   <div class="bk-dheads">
     <div v-for="s in [diff.left, diff.right]" :key="s.path" class="bk-dhead">
       <span class="bk-tile"><G :n="glyphOf({ name: nameOf(s) })" /></span><span class="bk-name">{{ nameOf(s) }}</span><span class="bk-path muted mono"><bdi>{{ parent(s.path) }}</bdi></span>
-      <span class="pill glim-num">{{ fmtSize(s.size) }}</span><span class="pill glim-num">{{ fmtTime(Date.parse(s.mtime)) }}</span>
+      <Pill class="glim-num">{{ fmtSize(s.size) }}</Pill><Pill class="glim-num">{{ fmtTime(Date.parse(s.mtime)) }}</Pill>
     </div>
   </div>
   <div class="well glim-well bk-fill bk-dwell">

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 // The slides of a presentation: the preview picture Office keeps in the file stands for the first, the text of
 // each slide for the rest.
+import { IconButton, Pill } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { rawUrl } from '../content';
 import { joinPath, plural } from '../kinds';
@@ -47,9 +48,9 @@ defineExpose({
     <div v-if="compact" class="cv-slide"><img v-if="picture" :src="picture" alt=""><div v-else class="sl"><h2>{{ slides[0]!.title }}</h2></div></div>
     <template v-else>
       <div class="cv-bar">
-        <button class="btn icon" data-sl="-1" :data-tip="t('viewer.slides.prev')" :aria-label="t('viewer.slides.prev')" @click="go(cur - 1)"><G n="IconBack" /></button>
-        <span class="pill glim-num">{{ t('viewer.slides.of', { i: cur + 1, n: count }) }}</span>
-        <button class="btn icon" data-sl="1" :data-tip="t('viewer.slides.next')" :aria-label="t('viewer.slides.next')" @click="go(cur + 1)"><G n="IconForward" /></button>
+        <IconButton :tip="t('viewer.slides.prev')" :glyph="glyphComponent('IconBack')" data-sl="-1" @click="go(cur - 1)" />
+        <Pill class="glim-num">{{ t('viewer.slides.of', { i: cur + 1, n: count }) }}</Pill>
+        <IconButton :tip="t('viewer.slides.next')" :glyph="glyphComponent('IconForward')" data-sl="1" @click="go(cur + 1)" />
       </div>
       <div class="cv-doc">
         <div v-if="count > 1" class="cv-pthumbs">

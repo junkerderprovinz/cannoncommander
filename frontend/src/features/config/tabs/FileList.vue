@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { Card } from '@glimstone/vue';
+import { segItems } from '@/ui/kit';
+import { Button, Card, FieldRow, Selector, Toggle } from '@glimstone/vue';
 import { computed } from 'vue';
 import { run } from '@/core/actions';
 import { DAY, fmtDate, fmtTime, now } from '@/core/format';
-import { G } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
-import Frow from '@/ui/Frow.vue';
 import { ago, c, P } from '@/features/config/shared';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
 
 const sample = now() - 2 * DAY;
 // The preview panel lives in the second window, so turning it on turns both windows on.
@@ -18,19 +15,19 @@ const foldersFirst = computed({ get: () => prefs.foldersFirst !== false, set: (o
 
 <template>
   <Card :title="c('list.list')">
-    <Frow :label="c('list.hidden')" :tip="c('list.hiddenTip')"><Sw v-model="P.showHidden" /></Frow>
-    <Frow :label="c('list.sizes')" :tip="c('list.sizesTip')"><Sw v-model="P.folderSizes" /></Frow>
-    <Frow :label="c('list.foldersFirst')" :tip="c('list.foldersFirstTip')"><Sw v-model="foldersFirst" /></Frow>
-    <Frow :label="c('list.date')"><Seg v-model="P.dateFormat" :options="[['short', fmtDate(sample)], ['long', fmtTime(sample)], ['relative', ago(sample)]]" /></Frow>
-    <Frow :label="c('list.density')"><Seg v-model="P.density" :options="[['compact', c('list.compact'), 'IconRowCompact'], ['medium', c('list.medium'), 'IconRowMedium'], ['comfortable', c('list.comfortable'), 'IconRowComfortable']]" /></Frow>
-    <Frow :label="c('list.columns')" :tip="c('list.columnsTip')"><button class="btn" data-run="columns" @click="run('columns')"><G n="IconSliders" />{{ c('list.chooseColumns') }}</button></Frow>
+    <FieldRow :label="c('list.hidden')" :hint="c('list.hiddenTip')"><Toggle v-model="P.showHidden" /></FieldRow>
+    <FieldRow :label="c('list.sizes')" :hint="c('list.sizesTip')"><Toggle v-model="P.folderSizes" /></FieldRow>
+    <FieldRow :label="c('list.foldersFirst')" :hint="c('list.foldersFirstTip')"><Toggle v-model="foldersFirst" /></FieldRow>
+    <FieldRow :label="c('list.date')"><Selector v-model="P.dateFormat" :items="segItems([['short', fmtDate(sample)], ['long', fmtTime(sample)], ['relative', ago(sample)]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('list.density')"><Selector v-model="P.density" :items="segItems([['compact', c('list.compact'), 'IconRowCompact'], ['medium', c('list.medium'), 'IconRowMedium'], ['comfortable', c('list.comfortable'), 'IconRowComfortable']])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('list.columns')" :hint="c('list.columnsTip')"><Button :label="c('list.chooseColumns')" label-key="IconSliders" data-run="columns" @click="run('columns')" /></FieldRow>
   </Card>
   <Card :title="c('list.bars')">
-    <Frow :label="c('list.side')" :tip="c('list.sideTip')"><Sw v-model="P.side" /></Frow>
-    <Frow :label="c('list.fkeys')" :tip="c('list.fkeysTip')"><Sw v-model="P.fkeys" /></Frow>
-    <Frow :label="c('list.quickview')" :tip="c('list.quickviewTip')"><Sw id="a-qv" v-model="quickview" /></Frow>
+    <FieldRow :label="c('list.side')" :hint="c('list.sideTip')"><Toggle v-model="P.side" /></FieldRow>
+    <FieldRow :label="c('list.fkeys')" :hint="c('list.fkeysTip')"><Toggle v-model="P.fkeys" /></FieldRow>
+    <FieldRow :label="c('list.quickview')" :hint="c('list.quickviewTip')"><Toggle id="a-qv" v-model="quickview" /></FieldRow>
   </Card>
   <Card :title="c('list.refresh')">
-    <Frow :label="c('list.live')" :tip="c('list.liveTip')"><Sw v-model="P.liveRefresh" data-pref="liveRefresh" /></Frow>
+    <FieldRow :label="c('list.live')" :hint="c('list.liveTip')"><Toggle v-model="P.liveRefresh" data-pref="liveRefresh" /></FieldRow>
   </Card>
 </template>

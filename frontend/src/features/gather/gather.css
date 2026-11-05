@@ -7,5 +7,5 @@
 .u-dn svg + svg { width: .8rem; height: .8rem; color: var(--carbon-text-muted); }
 .u-dn.on { font-weight: 600; }
 .u-dn.on svg:first-child { color: var(--accent-glyph); }
-.u-dist .pill { justify-self: end; }
+.u-dist .glim-pill { justify-self: end; }
 @media (max-width: 760px) { .u-dist { grid-template-columns: 6.5rem minmax(0, 1fr) 4.6rem 4.6rem; } .u-dist > :nth-child(5n) { display: none; } }

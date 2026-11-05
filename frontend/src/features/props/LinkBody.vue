@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // Symbolische Verknüpfung: what the link points to, where it lies and what it is called.
+import { pathField } from '@/ui/picker';
+import { FieldRow, PathField, Pill, TextField } from '@glimstone/vue';
 import { onMounted, ref, watchEffect } from 'vue';
 import { join, parent, split } from '@/files/paths';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
-import PathField from '@/ui/PathField.vue';
 import FinalPath from '@/ui/FinalPath.vue';
-import Frow from '@/ui/Frow.vue';
 import { pressPrimary } from '@/ui/kit';
 import { clean, folderState, namesIn } from '@/ui/tools';
 
@@ -14,7 +14,7 @@ export interface LinkState { target: string; where: string; name: string; ok: bo
 const props = defineProps<{ st: LinkState }>();
 const listing = useListing();
 const okDir = folderState(() => props.st.where);
-const name = ref<HTMLInputElement | null>(null);
+const name = ref<InstanceType<typeof TextField> | null>(null);
 
 const taken = () => namesIn(clean(props.st.where)).has(props.st.name.trim());
 const self = () => join(clean(props.st.where), props.st.name.trim()) === props.st.target.trim();
@@ -25,22 +25,22 @@ watchEffect(() => {
   st.missing = !!target && !!there && !there.items.some((k) => k.name === split(target).pop());
 });
 watchEffect(() => { const target = props.st.target.trim(); if (target.startsWith('/')) listing.load(parent(target)).catch(() => {}); });
-onMounted(() => setTimeout(() => name.value?.select(), 20));
+onMounted(() => setTimeout(() => name.value?.input?.select(), 20));
 </script>
 
 <template>
   <div class="well glim-well bk-form" @keydown.enter="pressPrimary">
-    <Frow :label="t('props.pointsTo')" :tip="t('props.pointsToTip')"><input id="l-target" v-model="st.target" class="glim-input grow glim-input--mono" spellcheck="false" autocomplete="off"></Frow>
-    <Frow :label="t('props.lies')"><PathField id="l-where" v-model="st.where" /></Frow>
-    <Frow :label="t('props.name')"><input id="l-name" ref="name" v-model="st.name" class="glim-input grow" spellcheck="false" autocomplete="off"></Frow>
-    <Frow :label="t('props.yields')">
+    <FieldRow :label="t('props.pointsTo')" :hint="t('props.pointsToTip')"><TextField id="l-target" v-model="st.target" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
+    <FieldRow :label="t('props.lies')"><PathField v-model="st.where" v-bind="pathField('l-where')" /></FieldRow>
+    <FieldRow :label="t('props.name')"><TextField id="l-name" ref="name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" /></FieldRow>
+    <FieldRow :label="t('props.yields')">
       <span id="l-final" class="bk-finalw">
-        <span v-if="okDir === false" class="pill fault">{{ t('ui.noFolder') }}</span>
-        <span v-else-if="!st.name.trim()" class="pill fault">{{ t('ui.noName') }}</span>
-        <span v-else-if="taken()" class="pill fault">{{ t('props.takenThere') }}</span>
-        <span v-else-if="self()" class="pill fault">{{ t('props.self') }}</span>
+        <Pill v-if="okDir === false" tone="fail">{{ t('ui.noFolder') }}</Pill>
+        <Pill v-else-if="!st.name.trim()" tone="fail">{{ t('ui.noName') }}</Pill>
+        <Pill v-else-if="taken()" tone="fail">{{ t('props.takenThere') }}</Pill>
+        <Pill v-else-if="self()" tone="fail">{{ t('props.self') }}</Pill>
         <FinalPath v-else :path="join(clean(st.where), st.name.trim())" />
       </span>
-    </Frow>
+    </FieldRow>
   </div>
 </template>
