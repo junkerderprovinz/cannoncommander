@@ -174,6 +174,18 @@ var omitList = map[string]bool{
 // set once at start.
 var LinkedFolder func(root, name string) bool
 
+// atRoot returns the folder a linked folder directly in the source leads to,
+// and any other entry as it is.
+func (idx *Index) atRoot(file os.FileInfo) os.FileInfo {
+	if file.Mode()&os.ModeSymlink == 0 || LinkedFolder == nil || !LinkedFolder(idx.Path, file.Name()) {
+		return file
+	}
+	if target, err := os.Stat(filepath.Join(idx.Path, file.Name())); err == nil && target.IsDir() {
+		return target
+	}
+	return file
+}
+
 func init() {
 	indexes = make(map[string]*Index)
 }
@@ -1054,12 +1066,10 @@ func (idx *Index) GetDirInfoCore(dirInfo *os.File, stat os.FileInfo, indexPath s
 	indexableHasPreview := false
 
 	for _, file := range files {
-		subfileBaseName := file.Name()
-		if indexPath == "/" && file.Mode()&os.ModeSymlink != 0 && LinkedFolder != nil && LinkedFolder(idx.Path, subfileBaseName) {
-			if target, err := os.Stat(filepath.Join(idx.Path, subfileBaseName)); err == nil && target.IsDir() {
-				file = target
-			}
+		if indexPath == "/" {
+			file = idx.atRoot(file)
 		}
+		subfileBaseName := file.Name()
 		isDir := iteminfo.IsDirectory(file)
 		fullCombined := indexPath + subfileBaseName
 		// Add trailing slash for directories to match normalized folder paths

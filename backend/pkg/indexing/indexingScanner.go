@@ -416,6 +416,7 @@ func (s *Scanner) getTopLevelDirs() []string {
 	}
 
 	for _, file := range files {
+		file = s.idx.atRoot(file)
 		baseName := file.Name()
 		realPath := utils.JoinPathAsUnix(s.idx.Path, baseName)
 		indexPath := "/" + baseName + "/"
