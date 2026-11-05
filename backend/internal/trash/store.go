@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -29,7 +30,7 @@ import (
 
 // DirName is the bin folder at the top of every share or volume. Moving
 // into it is a rename on the same disk, so nothing gets copied.
-const DirName = ".cc-trash"
+const DirName = ccfs.BinName
 
 // DefaultDays is how long entries stay before they are deleted for good.
 const DefaultDays = 30
@@ -95,6 +96,8 @@ type Store struct {
 
 	// mu keeps two restores from picking the same free name.
 	mu sync.Mutex
+
+	after atomic.Pointer[func(context.Context)]
 
 	// tellMu guards holding and tellAgain, see changed.
 	tellMu    sync.Mutex
@@ -413,9 +416,16 @@ func (s *Store) expireLoop() {
 			return
 		case <-t.C:
 			s.expire()
+			if f := s.after.Load(); f != nil {
+				(*f)(s.ctx)
+			}
 		}
 	}
 }
+
+// AfterExpire adds work to the hourly round of the bin, for leftovers of other
+// kinds.
+func (s *Store) AfterExpire(f func(context.Context)) { s.after.Store(&f) }
 
 // expire deletes the entries that stayed their days.
 func (s *Store) expire() {
