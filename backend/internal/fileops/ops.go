@@ -1,6 +1,7 @@
 package fileops
 
 import (
+	"context"
 	"errors"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -157,6 +158,15 @@ func (s *Service) rename(w http.ResponseWriter, r *http.Request) error {
 	return v1.WriteJSON(w, r, http.StatusOK, out)
 }
 
+// preflightSize is what a copy or move would carry. A copy leaves out what is
+// hidden, and the answer has to say nothing about it.
+func preflightSize(ctx context.Context, fsys *ccfs.Resolver, u *users.User, src ccfs.Location, move bool) (bytes, files int64, err error) {
+	if move {
+		return jobs.TreeSize(ctx, src.Real)
+	}
+	return jobs.VisibleSize(ctx, fsys, u, src, srcPermFor(move))
+}
+
 // renameNoReplace renames unless the target exists. A plain rename would
 // silently replace a file of that name.
 func renameNoReplace(from, to string) error {
@@ -269,7 +279,7 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
-		b, f, err := jobs.TreeSize(r.Context(), src.Real)
+		b, f, err := preflightSize(r.Context(), s.fs, u, src, move)
 		if err != nil {
 			return err
 		}

@@ -297,7 +297,7 @@ func runTransfer(move bool) func(context.Context, *jobs.Run) error {
 				continue
 			}
 			if loc, err := s.fs.Resolve(it.Path); err == nil {
-				if b, f, err := jobs.TreeSize(ctx, loc.Real); err == nil {
+				if b, f, err := t.size(ctx, loc); err == nil {
 					run.Measure(it.Seq, b, f)
 				}
 			}
@@ -331,6 +331,18 @@ func runTransfer(move bool) func(context.Context, *jobs.Run) error {
 	}
 }
 
+// size is what the job will carry from loc, as far as the owner may know.
+func (t *transfer) size(ctx context.Context, loc ccfs.Location) (bytes, files int64, err error) {
+	if t.move {
+		return jobs.TreeSize(ctx, loc.Real)
+	}
+	u, err := t.run.User()
+	if err != nil {
+		return 0, 0, err
+	}
+	return jobs.VisibleSize(ctx, t.s.fs, u, loc, t.srcPerm)
+}
+
 func (t *transfer) item(ctx context.Context, dest ccfs.Location, it jobs.Item) (bool, error) {
 	src, u, err := t.run.Entry(it.Path, t.srcPerm)
 	if err != nil {
@@ -352,6 +364,18 @@ func (t *transfer) item(ctx context.Context, dest ccfs.Location, it jobs.Item) (
 	if name == "" {
 		name = path.Base(src.Path)
 	}
+	t.run.Guard(func() error {
+		u, err := t.run.User()
+		if err != nil {
+			return err
+		}
+		t.u = u
+		if _, err := t.s.fs.Entry(u, it.Path, t.srcPerm); err != nil {
+			return err
+		}
+		_, err = t.s.fs.Landed(u, dest.Path, t.dstPerm)
+		return err
+	})
 	t.resumed = it.Resumed
 	from := node{src.Path, src.Real}
 	to := node{dest.Path, dest.Real}.child(name)

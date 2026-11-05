@@ -67,6 +67,10 @@ func runDelete(ctx context.Context, run *jobs.Run) error {
 		}
 		run.Begin(it.Seq)
 		run.Current(it.Name)
+		run.Guard(func() error {
+			_, _, err := run.Entry(it.Path, ccfs.Delete)
+			return err
+		})
 		loc, u, err := run.Entry(it.Path, ccfs.Delete)
 		if err == nil {
 			err = fsys.Carry(ctx, u, loc, ccfs.Delete)
