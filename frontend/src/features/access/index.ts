@@ -96,7 +96,7 @@ export default function setup() {
       if (tog && tog.classList.contains('open') !== (e.key === 'ArrowRight')) {
         const path = pressOf(row).dataset.go!;
         tog.click();
-        void nextTick(() => document.querySelector<HTMLElement>(`#side .glim-nav-row-main[data-go="${CSS.escape(path)}"]`)?.focus());
+        void nextTick(() => document.querySelector<HTMLElement>(`#tree .glim-nav-row-main[data-go="${CSS.escape(path)}"]`)?.focus());
       }
     } else return;
     e.preventDefault();
