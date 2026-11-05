@@ -109,7 +109,8 @@ type tokenRequest struct {
 	Name   string `json:"name"`
 	Rights string `json:"rights"`
 	// Days is how long the token lives, null or 0 for always.
-	Days *int `json:"days"`
+	Days     *int   `json:"days"`
+	Password string `json:"password"`
 }
 
 func (h handlers) createToken(w http.ResponseWriter, r *http.Request) error {
@@ -135,6 +136,9 @@ func (h handlers) createToken(w http.ResponseWriter, r *http.Request) error {
 	}
 	u, err := current(r)
 	if err != nil {
+		return err
+	}
+	if err := h.confirmOwner(r, &u, in.Password); err != nil {
 		return err
 	}
 	if _, taken := u.Tokens[name]; taken {

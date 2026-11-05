@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
@@ -31,6 +32,24 @@ func (sessionLogin) End(hash string) error { return state.RevokeTokenHash(hash) 
 
 func (sessionLogin) EndAll(userID uint64, keep string) (int, error) {
 	return state.RevokeSessions(userID, keep)
+}
+
+// SignedInAt reads the time from the token without checking its signature.
+// Only tokens this server minted are registered, and every session starts
+// with a new one.
+func (sessionLogin) SignedInAt(r *http.Request) (time.Time, bool) {
+	token, err := ExtractToken(r)
+	if err != nil {
+		return time.Time{}, false
+	}
+	if _, isSession, known := state.HashedTokenOwner(token); !known || !isSession {
+		return time.Time{}, false
+	}
+	var claims jwt.RegisteredClaims
+	if _, _, err := jwt.NewParser().ParseUnverified(token, &claims); err != nil || claims.IssuedAt == nil {
+		return time.Time{}, false
+	}
+	return claims.IssuedAt.Time, true
 }
 
 func (sessionLogin) APIToken(r *http.Request) (string, bool) {

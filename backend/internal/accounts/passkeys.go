@@ -75,11 +75,13 @@ func passkeyUser(r *http.Request, name string) (users.User, error) {
 	return u, nil
 }
 
-// passkeyInput drives both steps behind POST /me/passkeys: a name alone
-// starts a registration, the name with the browser's credential ends it.
+// passkeyInput drives both steps behind POST /me/passkeys: the name with the
+// current password starts a registration, the name with the browser's
+// credential ends it.
 type passkeyInput struct {
 	Name       string          `json:"name"`
 	Credential json.RawMessage `json:"credential"`
+	Password   string          `json:"password"`
 }
 
 // PasskeyStep is the answer to either step. Options go to
@@ -101,6 +103,9 @@ func (h handlers) postPasskey(w http.ResponseWriter, r *http.Request) error {
 	}
 	rpID, host := login.PasskeySite(r)
 	if len(in.Credential) == 0 || string(in.Credential) == "null" {
+		if err := h.confirmOwner(r, &u, in.Password); err != nil {
+			return err
+		}
 		session, creation, err := auth.GetWebAuthn().BeginRegistration(&u, rpID)
 		if err != nil {
 			return err

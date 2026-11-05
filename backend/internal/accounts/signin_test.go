@@ -222,7 +222,7 @@ func TestSigningOutEndsThisSession(t *testing.T) {
 	if len(w.login.stopped) != 1 || w.login.stopped[0] != w.session("anna") || rec.Header().Get("Set-Cookie") == "" {
 		t.Fatalf("stopped %v", w.login.stopped)
 	}
-	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "skript", "rights": "rw"})))
+	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "skript", "rights": "rw"})))
 	w.must(http.StatusForbidden, w.req("POST", "/auth/logout", nil, "X-Api", tok.Secret))
 	w.must(http.StatusUnauthorized, w.req("POST", "/auth/logout", nil))
 }
@@ -230,8 +230,8 @@ func TestSigningOutEndsThisSession(t *testing.T) {
 // addPasskey registers a passkey for user through the account API.
 func (w *world) addPasskey(user string, a *authenticator) {
 	w.t.Helper()
-	step := decode[struct{ Options json.RawMessage }](w.t, w.must(http.StatusOK, w.as(user, "POST", "/me/passkeys", map[string]any{"name": "Laptop"})))
-	w.must(http.StatusCreated, w.as(user, "POST", "/me/passkeys", map[string]any{"name": "Laptop", "credential": a.create(step.Options)}))
+	step := decode[struct{ Options json.RawMessage }](w.t, w.must(http.StatusOK, w.as(user, "POST", "/me/passkeys", map[string]any{"password": strong, "name": "Laptop"})))
+	w.must(http.StatusCreated, w.as(user, "POST", "/me/passkeys", map[string]any{"password": strong, "name": "Laptop", "credential": a.create(step.Options)}))
 }
 
 func (w *world) passkeyChallenge() accounts.PasskeyChallenge {
