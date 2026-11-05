@@ -268,13 +268,14 @@ func (w *Watcher) flush(f *folder) {
 		return
 	}
 	c := b.change(f.path)
-	if _, err := h.PublishJSON(EventChanged, hub.FolderTopic(f.path), c); err != nil {
-		logger.Errorf("watch: publish %s: %v", f.path, err)
-	}
+	// A client reloads as soon as it hears of the change, so labels have to be on the new path by then.
 	for _, m := range b.moves {
 		for _, mv := range movers {
 			mv.Moved(m[0], m[1])
 		}
+	}
+	if _, err := h.PublishJSON(EventChanged, hub.FolderTopic(f.path), c); err != nil {
+		logger.Errorf("watch: publish %s: %v", f.path, err)
 	}
 	if index != nil && !b.gone {
 		index.Refresh(f.src, f.index)
