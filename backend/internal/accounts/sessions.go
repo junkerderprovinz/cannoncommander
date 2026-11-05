@@ -217,6 +217,9 @@ func (h sessionHandlers) list(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (h sessionHandlers) end(w http.ResponseWriter, r *http.Request) error {
+	if err := needSession(r); err != nil {
+		return err
+	}
 	uid := strconv.FormatUint(v1.UserFrom(r).ID, 10)
 	var hash string
 	err := h.db.QueryRowContext(r.Context(), `SELECT token_hash FROM sessions WHERE id = ? AND user_id = ?`, r.PathValue("id"), uid).Scan(&hash)

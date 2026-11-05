@@ -2706,6 +2706,8 @@ paths:
           description: Ended.
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
       tags: [accounts]
@@ -2875,7 +2877,7 @@ paths:
         "403":
           $ref: "#/components/responses/Forbidden"
         "409":
-          description: Passkeys are turned off, the name or the passkey is taken, or the first step ran out.
+          description: Passkeys are turned off, the account signs in elsewhere, the name or the passkey is taken, or the first step ran out.
       tags: [accounts]
   /me/passkeys/{id}:
     delete:
@@ -2970,8 +2972,9 @@ paths:
       summary: Ask for a code to reset a forgotten password
       description: |
         Writes a code to the container log, where only the admin of the
-        server can read it. It works for ten minutes. The answer is the
-        same for every name, so it cannot be used to find accounts.
+        server can read it. It works for ten minutes, and until then asking
+        again writes nothing. The answer is the same for every name, so it
+        cannot be used to find accounts.
       x-access: public
       requestBody:
         required: true
@@ -2995,10 +2998,10 @@ paths:
       operationId: passwordReset
       summary: Set a new password with a code from the log
       description: |
-        Also ends every session, turns off two factor login and revokes
-        every API token of the account. Passkeys stay. The client is
-        logged in with a new session cookie afterwards. Five wrong codes
-        from one address block it for 15 minutes.
+        Also ends every session, turns off two factor login and removes
+        every passkey and API token of the account. The client is logged in
+        with a new session cookie afterwards. Five wrong codes from one
+        address block it for 15 minutes.
       x-access: public
       requestBody:
         required: true

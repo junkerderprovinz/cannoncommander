@@ -44,8 +44,8 @@ func BasicLogin(db *sql.DB, r *http.Request, name, password string) (*users.User
 		return nil, err
 	}
 	name = strings.TrimSpace(name)
-	ip := login.ClientIP(r)
-	pair := strings.ToLower(name) + "|" + ip
+	ip := addressKey(r)
+	pair := pairKey(name, login.ClientIP(r))
 	if svc.basicTries.blocked(pair) {
 		return nil, &TooManyTries{svc.basicTries.wait(pair)}
 	}
