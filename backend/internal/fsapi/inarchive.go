@@ -11,9 +11,9 @@ import (
 	"strings"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/archives"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // errArchived tells the content handlers that a path lies inside an

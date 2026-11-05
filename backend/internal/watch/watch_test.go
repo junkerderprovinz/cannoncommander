@@ -56,7 +56,9 @@ type rig struct {
 // modes runs a test against the poller everywhere and against inotify
 // where the platform has it.
 func modes(t *testing.T, run func(t *testing.T, opts Options)) {
-	t.Run("poll", func(t *testing.T) { run(t, Options{PollOnly: true, Poll: 40 * time.Millisecond, Delay: 30 * time.Millisecond}) })
+	t.Run("poll", func(t *testing.T) {
+		run(t, Options{PollOnly: true, Poll: 40 * time.Millisecond, Delay: 30 * time.Millisecond})
+	})
 	if runtime.GOOS == "linux" {
 		t.Run("inotify", func(t *testing.T) { run(t, Options{Delay: 30 * time.Millisecond}) })
 	}
