@@ -49,11 +49,10 @@ func ExtractToken(r *http.Request) (string, error) {
 	return "", request.ErrNoTokenInRequest
 }
 
-// getOrCreateAuthenticatedUser is a common helper for retrieving or auto-creating users
-// that sign in through OIDC.
-// When groupsPresent is false the groups claim was omitted and existing memberships are left unchanged.
-// When groupsPresent is true, groups (including empty) are synced into access-control GroupMap.
-func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod, isAdmin bool, groups []string, groupsPresent bool) (*users.User, error) {
+// getOrCreateAuthenticatedUser loads or creates the account of a user who
+// signed in through OIDC. A nil admin leaves the admin right as it is, and nil
+// groups leave the memberships as they are.
+func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod, admin *bool, groups []string) (*users.User, error) {
 	if err := ensureUserInAllowedGroups(groups); err != nil {
 		return nil, err
 	}
@@ -71,9 +70,7 @@ func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod
 				Username:    username,
 			},
 		}
-		if isAdmin {
-			user.Permissions.Admin = true
-		}
+		user.Permissions.Admin = admin != nil && *admin
 
 		err = state.CreateUser(&user, "")
 		if err != nil {
@@ -95,19 +92,13 @@ func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod
 		logger.Debugf("login rejected: user %q attempted %s login but account loginMethod is %q", username, loginMethod, userValue.LoginMethod)
 		return nil, errors.ErrWrongLoginMethod
 	}
-	// Sync admin from current group membership when the auth source sent groups.
-	if groupsPresent {
-		if userValue.Permissions.Admin != isAdmin {
-			userValue.Permissions.Admin = isAdmin
-			err = state.UpdateUser(&userValue, "", "permissions")
-			if err != nil {
-				return nil, err
-			}
+	if admin != nil && userValue.Permissions.Admin != *admin {
+		userValue.Permissions.Admin = *admin
+		if err := state.UpdateUser(&userValue, "", "permissions"); err != nil {
+			return nil, err
 		}
 	}
-	// Sync IdP groups into access-control GroupMap (write-through). Skip when the
-	// token/response omitted groups so a missing claim cannot wipe memberships.
-	if groupsPresent {
+	if groups != nil {
 		if err := state.SyncUserGroups(username, groups); err != nil {
 			return nil, fmt.Errorf("failed to sync user %s groups: %w", username, err)
 		}

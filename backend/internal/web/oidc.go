@@ -420,14 +420,16 @@ func loginWithOidcUser(w http.ResponseWriter, r *http.Request, username string, 
 		logger.Debugf("User %s is in required group, allowing access.", username)
 	}
 
-	isAdmin := isAdminFromGroups(oidcCfg.AdminGroup, groups)
-	if isAdmin {
-		logger.Debugf("User %s is in admin group %s, granting admin privileges.", username, oidcCfg.AdminGroup)
+	// The admin right follows the groups only when there is an admin group and
+	// the provider sent groups. Otherwise admins are made in the app.
+	var admin *bool
+	if oidcCfg.AdminGroup != "" && groups != nil {
+		inGroup := isAdminFromGroups(oidcCfg.AdminGroup, groups)
+		admin = &inGroup
 	}
+	logger.Debugf("Successfully authenticated OIDC username: %s", username)
 
-	logger.Debugf("Successfully authenticated OIDC username: %s isAdmin: %v", username, isAdmin)
-
-	user, err := getOrCreateAuthenticatedUser(username, users.LoginMethodOidc, isAdmin, groups, true)
+	user, err := getOrCreateAuthenticatedUser(username, users.LoginMethodOidc, admin, groups)
 	if err != nil {
 		if status, mapped := loginMethodHTTPStatus(err); status != 0 {
 			return status, mapped
