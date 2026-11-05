@@ -28,7 +28,8 @@ export interface User {
   loginMethod: 'password' | 'oidc'; twofa: boolean; passkeys: number; last: number | null; pwChanged: number | null;
 }
 export interface Account extends User { recovery: number; lockPassword: boolean; token?: { name: string; rights: Token['rights'] } }
-export interface UserInput { name?: string; full?: string; role?: Role; scope?: string; groups?: string[]; password?: string }
+// revoke ends every session, API token and passkey of the user.
+export interface UserInput { name?: string; full?: string; role?: Role; scope?: string; groups?: string[]; password?: string; revoke?: boolean }
 export interface Group { name: string; note: string; members: string[] }
 export type RuleKind = 'hide' | 'read' | 'allow';
 // who is a user name, @group or * for everybody.
@@ -83,6 +84,7 @@ const user = <U extends WireUser>(u: U) => ({ ...u, last: ms(u.last), pwChanged:
 const share = (s: WireShare): Share => ({ ...s, created: ms(s.created)!, expires: ms(s.expires), url: shareUrl(s.slug) });
 const token = (x: Wire<Token, 'created' | 'last' | 'expires'>): Token => ({ ...x, created: ms(x.created)!, last: ms(x.last), expires: ms(x.expires) });
 const passkey = (x: Wire<Passkey, 'created' | 'last'>): Passkey => ({ ...x, created: ms(x.created)!, last: ms(x.last) });
+const session = (x: Wire<Session, 'created' | 'seen'>): Session => ({ ...x, created: ms(x.created)!, seen: ms(x.seen)! });
 const index = (x: Wire<IndexState, 'lastIndexed' | 'nextScan'>): IndexState => ({ ...x, lastIndexed: ms(x.lastIndexed), nextScan: ms(x.nextScan) });
 
 export const admin = {
@@ -90,6 +92,12 @@ export const admin = {
   createUser: (u: UserInput) => write('POST', '/admin/users', u),
   updateUser: (name: string, u: UserInput) => write('PATCH', `/admin/users/${at(name)}`, u),
   deleteUser: (name: string) => write('DELETE', `/admin/users/${at(name)}`),
+  userSessions: async (name: string) => (await items<Wire<Session, 'created' | 'seen'>>(`/admin/users/${at(name)}/sessions`)).map(session),
+  endUserSession: (name: string, id: string) => write('DELETE', `/admin/users/${at(name)}/sessions/${at(id)}`),
+  userTokens: async (name: string) => (await items<Wire<Token, 'created' | 'last' | 'expires'>>(`/admin/users/${at(name)}/tokens`)).map(token),
+  revokeUserToken: (name: string, id: string) => write('DELETE', `/admin/users/${at(name)}/tokens/${at(id)}`),
+  userPasskeys: async (name: string) => (await items<Wire<Passkey, 'created' | 'last'>>(`/admin/users/${at(name)}/passkeys`)).map(passkey),
+  removeUserPasskey: (name: string, id: string) => write('DELETE', `/admin/users/${at(name)}/passkeys/${at(id)}`),
   groups: () => items<Group>('/admin/groups'),
   createGroup: (g: Group) => write('POST', '/admin/groups', g),
   updateGroup: (name: string, g: Partial<Group>) => write('PATCH', `/admin/groups/${at(name)}`, g),
@@ -131,15 +139,17 @@ export const admin = {
 export const me = {
   account: async (): Promise<Account> => user(await get<Wire<Account, 'last' | 'pwChanged'>>('/me')),
   password: (current: string, next: string) => write<{ ended: number }>('PUT', '/me/password', { current, next }),
-  sessions: async () => (await items<Wire<Session, 'created' | 'seen'>>('/me/sessions')).map((s) => ({ ...s, created: ms(s.created)!, seen: ms(s.seen)! })),
+  sessions: async () => (await items<Wire<Session, 'created' | 'seen'>>('/me/sessions')).map(session),
   endSession: (id: string) => write('DELETE', `/me/sessions/${at(id)}`),
   tokens: async () => (await items<Wire<Token, 'created' | 'last' | 'expires'>>('/me/tokens')).map(token),
-  createToken: (name: string, rights: Token['rights'], days: number | null) => write<{ secret: string }>('POST', '/me/tokens', { name, rights, days }),
+  // password is the current one, for an account that signs in with one.
+  createToken: (name: string, rights: Token['rights'], days: number | null, password?: string) =>
+    write<{ secret: string }>('POST', '/me/tokens', { name, rights, days, password }),
   deleteToken: (id: string) => write('DELETE', `/me/tokens/${at(id)}`),
   passkeys: async (): Promise<Passkeys> => { const p = await get<{ enabled: boolean; items: Wire<Passkey, 'created' | 'last'>[] }>('/me/passkeys'); return { enabled: p.enabled, items: p.items.map(passkey) }; },
   // Two steps on one path: the name brings the options, the browser's answer to them adds the passkey.
-  async addPasskey(name: string): Promise<void> {
-    const { options } = await write<{ options: { publicKey: Record<string, unknown> } }>('POST', '/me/passkeys', { name });
+  async addPasskey(name: string, password?: string): Promise<void> {
+    const { options } = await write<{ options: { publicKey: Record<string, unknown> } }>('POST', '/me/passkeys', { name, password });
     const credential = credentialJSON(await navigator.credentials.create(creationOptions(options)));
     await write('POST', '/me/passkeys', { name, credential });
   },

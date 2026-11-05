@@ -42,13 +42,13 @@ func getFileSizeByMode(logicalSize int64, useLogicalSize bool) uint64 {
 		// Logical size mode: return actual file size
 		return uint64(logicalSize)
 	}
-	
+
 	// Disk usage mode: calculate disk space used
 	// If file is empty, return 0
 	if logicalSize == 0 {
 		return 0
 	}
-	
+
 	// On Windows NTFS, cluster size is typically 4KB
 	// Round up to nearest 4KB cluster
 	const clusterSize = 4096

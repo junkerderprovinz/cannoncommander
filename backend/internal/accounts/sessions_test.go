@@ -31,6 +31,20 @@ type fakeLogin struct {
 	started []string
 	kept    []time.Duration
 	stopped []string
+	// signedIn is when every session signed in, now when it is zero.
+	signedIn time.Time
+}
+
+func (l *fakeLogin) SignedInAt(r *http.Request) (time.Time, bool) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	if r.Header.Get("X-Token") == "" {
+		return time.Time{}, false
+	}
+	if l.signedIn.IsZero() {
+		return time.Now(), true
+	}
+	return l.signedIn, true
 }
 
 // endAll is one call to EndAll.

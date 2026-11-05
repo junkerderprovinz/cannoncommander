@@ -17,6 +17,13 @@ describe('share links', () => {
     expect(readForm({ ...newForm('a.txt', false), uploads: true })).not.toHaveProperty('uploads');
   });
 
+  it('sends the message for the visitors without the blanks around it, and only when there is one', () => {
+    const f = newForm('urlaub', true);
+    expect(readForm({ ...f, message: '  Viel Spaß mit den Fotos\n' })).toMatchObject({ message: 'Viel Spaß mit den Fotos' });
+    expect(readForm({ ...f, message: '   ' })).not.toHaveProperty('message');
+    expect(readForm({ ...f, message: 'x'.repeat(2001) })).toBeNull();
+  });
+
   it('numbers the same name from two folders, as the other side sees them', () => {
     const shown = asFolder([
       { path: '/a/IMG.jpg', name: 'IMG.jpg', dir: false, size: 1 },

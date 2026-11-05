@@ -19,6 +19,10 @@ func configureHTTPRouter(router *http.ServeMux) {
 	router.Handle(base+"api/", http.NotFoundHandler())
 
 	router.HandleFunc("GET "+base+"assets/", viteAssetHandler)
+	for _, name := range []string{"manifest.webmanifest", "sw.js", "icons/"} {
+		router.HandleFunc("GET "+base+name, rootFileHandler)
+	}
+	router.HandleFunc("POST "+base+"teilen", sharedTooEarly)
 	router.HandleFunc("GET "+base+"s/{slug}", sharePageHandler)
 	router.HandleFunc("GET "+base+"health", healthHandler)
 	router.HandleFunc(base, indexHandler)

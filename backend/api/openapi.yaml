@@ -2745,7 +2745,10 @@ paths:
         A token never has more rights than its owner. One with the rights r
         may only read: it cannot change files, and every other method than
         GET and HEAD is refused. The secret is in this answer only. Not
-        possible with an API token.
+        possible with an API token. An account with a password sends its
+        current password, five wrong ones block it for 15 minutes together
+        with the password change. An account without one, such as OIDC,
+        needs a session that signed in less than five minutes ago.
       requestBody:
         required: true
         content:
@@ -2766,6 +2769,9 @@ paths:
                   minimum: 0
                   maximum: 3650
                   description: How long the token lives. Null, 0 or left out means it never runs out.
+                password:
+                  type: string
+                  description: The current password. Needed when the account signs in with one.
       responses:
         "201":
           description: Created.
@@ -2778,9 +2784,11 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
-          $ref: "#/components/responses/Forbidden"
+          $ref: "#/components/responses/FreshProof"
         "409":
           description: A token with this name exists.
+        "429":
+          description: Too many wrong passwords.
       tags: [accounts]
   /me/tokens/{id}:
     delete:
@@ -2829,10 +2837,12 @@ paths:
       operationId: passkeyRegister
       summary: Register a passkey
       description: |
-        Two steps on the same path. With a name alone the answer carries
-        the options for navigator.credentials.create, good for five
-        minutes. Sending the same name with the credential the browser
-        returned, as JSON, adds the passkey. It only works under the host
+        Two steps on the same path. With a name and the current password
+        the answer carries the options for navigator.credentials.create,
+        good for five minutes. Five wrong passwords block the first step
+        for 15 minutes together with the password change. Sending the same
+        name with the credential the browser returned, as JSON, adds the
+        passkey, this step needs no password. It only works under the host
         it was registered on. Not possible with an API token.
       requestBody:
         required: true
@@ -2845,6 +2855,9 @@ paths:
                 name:
                   type: string
                   maxLength: 64
+                password:
+                  type: string
+                  description: The current password, for the first step.
                 credential:
                   type: object
                   description: The PublicKeyCredential of the browser, for the second step.
@@ -2875,9 +2888,11 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
-          $ref: "#/components/responses/Forbidden"
+          $ref: "#/components/responses/FreshProof"
         "409":
           description: Passkeys are turned off, the account signs in elsewhere, the name or the passkey is taken, or the first step ran out.
+        "429":
+          description: Too many wrong passwords.
       tags: [accounts]
   /me/passkeys/{id}:
     delete:
@@ -3353,10 +3368,13 @@ paths:
       x-access: admin
       description: |
         Fields left out stay as they are. A new password logs the user out
-        everywhere. Renaming moves the user's rules, jobs, undo steps and
-        trash along. Nobody can change their own login name or password
-        here, or take away their own admin role, so there is always an admin
-        left.
+        everywhere, API tokens and passkeys stay unless revoke is true.
+        revoke ends every session, API token and passkey of the user, with
+        or without a new password, and is not possible with an API token.
+        Renaming moves the user's rules, jobs, undo steps and trash along.
+        Nobody can change their own login name or password here, revoke
+        their own access, or take away their own admin role, so there is
+        always an admin left.
       requestBody:
         required: true
         content:
@@ -3408,6 +3426,182 @@ paths:
       tags: [accounts]
       parameters:
         - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/tokens:
+    get:
+      operationId: userTokensList
+      summary: API tokens of a user
+      description: The tokens of the user by name, without their secrets.
+      x-access: admin
+      responses:
+        "200":
+          description: The tokens.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Token"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/tokens/{token}:
+    delete:
+      operationId: userTokenRevoke
+      summary: Revoke an API token of a user
+      description: Whatever uses the token loses access at once. Not possible with an API token.
+      x-access: admin
+      responses:
+        "204":
+          description: Revoked.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/passkeys:
+    get:
+      operationId: userPasskeysList
+      summary: Passkeys of a user
+      x-access: admin
+      responses:
+        "200":
+          description: The passkeys.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Passkey"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/passkeys/{passkey}:
+    delete:
+      operationId: userPasskeyRemove
+      summary: Remove a passkey of a user
+      description: Not possible with an API token.
+      x-access: admin
+      responses:
+        "204":
+          description: Removed.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: passkey
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/sessions:
+    get:
+      operationId: userSessionsList
+      summary: Open sessions of a user
+      description: Like the own list. current is true only for the session of the admin who asks.
+      x-access: admin
+      responses:
+        "200":
+          description: The sessions.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Session"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /admin/users/{id}/sessions/{session}:
+    delete:
+      operationId: userSessionEnd
+      summary: End a session of a user
+      description: Logs that session out at once. Not possible with an API token.
+      x-access: admin
+      responses:
+        "204":
+          description: Ended.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [accounts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: session
           in: path
           required: true
           schema:
@@ -5523,6 +5717,16 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
+    FreshProof:
+      description: |
+        The current password is wrong, or the request came with an API
+        token. For an account without a password, a problem with the type
+        fresh-sign-in means the session signed in more than five minutes
+        ago: sign in again, then send the request once more.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
     SignInBlocked:
       description: Too many wrong tries. Retry-After says when to go on.
       headers:
@@ -7535,6 +7739,9 @@ components:
         password:
           type: string
           minLength: 12
+        revoke:
+          type: boolean
+          description: In a change, ends every session, API token and passkey of the user.
     Token:
       type: object
       required: [id, name, rights, created, expires, last]

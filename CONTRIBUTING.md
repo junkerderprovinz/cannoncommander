@@ -33,7 +33,7 @@ make test          # go test -race ./... and the Vitest suite
 make lint          # golangci-lint and the type check
 ```
 
-Some Go tests need Linux (inotify, Unraid's files under `/var/local/emhttp`), so CI runs them on Ubuntu. After a change to an API contract, regenerate the OpenAPI document with `go run ./scripts/openapi` in `backend/`.
+Some Go tests need Linux (inotify, Unraid's files under `/var/local/emhttp`), so CI runs them on Ubuntu. CI also runs them as a normal user, and root passes permission checks that fail there, so `testing/go-test-nonroot.sh` runs `go vet` and `go test -race` as a normal user in a `golang` container; how to start it is at the top of the script. After a change to an API contract, regenerate the OpenAPI document with `go run ./scripts/openapi` in `backend/`.
 
 ## Pull requests
 
