@@ -1,12 +1,12 @@
 // Settings per user. The copy in localStorage paints the first frame right; the server's copy follows and wins.
-import { ACCENTS, applyAccent, applyDisco, applyMotion, applyRainbow, applyShape, DEFAULT_ACCENT, RAINBOW } from '@glimstone/core';
+import { ACCENTS, applyAccent, applyDisco, applyMotion, applyRainbow, applyShape, BOTTOM_BAR_AXIS, DEFAULT_ACCENT, DEFAULT_LABEL_MODE, labelModeChanged, RAINBOW, setLabelMode } from '@glimstone/core';
 import { reactive } from 'vue';
 
 export const PREFS_KEY = 'cannoncommander-prefs';
 
 export const DEFAULT_PREFS = {
   theme: 'dark', accent: DEFAULT_ACCENT, shape: 'round', motion: 'subtle', quietToasts: false,
-  labelsButtons: 'textGlyph', labelsSidebar: 'textGlyph', labelsTabs: 'textGlyph', labelsBottombar: 'textGlyph',
+  labelsButtons: DEFAULT_LABEL_MODE, labelsSidebar: DEFAULT_LABEL_MODE, labelsTabs: DEFAULT_LABEL_MODE, labelsBottombar: DEFAULT_LABEL_MODE,
   rainbow: false, reactive: false, rotate: false, rotateSeed: 0, disco: false, tabOrder: [] as string[],
   accentPresets: ACCENTS.map((a) => a.hex), palette: [...RAINBOW], jobMode: 'serial', newsSeen: [] as string[], stayDays: 30,
   speedCap: 0, parityWait: true, notifyDone: false, notifyUnraid: false, notifyAfter: 60,
@@ -58,10 +58,11 @@ export function applyPrefs(r: HTMLElement = document.documentElement) {
   applyShape(prefs.shape);
   applyMotion(prefs.motion);
   r.dataset.density = prefs.density;
-  r.dataset.lButtons = prefs.labelsButtons;
-  r.dataset.lSidebar = prefs.labelsSidebar;
-  r.dataset.lTabs = prefs.labelsTabs;
-  r.dataset.lBottombar = prefs.labelsBottombar;
+  setLabelMode('buttons', prefs.labelsButtons);
+  setLabelMode('sidebar', prefs.labelsSidebar);
+  setLabelMode('tabs', prefs.labelsTabs);
+  setLabelMode(BOTTOM_BAR_AXIS, prefs.labelsBottombar);
+  labelModeChanged();
   // Reactive is a way of showing the rainbow, so it does nothing without it, and rotation shifts the palette instead of spinning it.
   applyRainbow({ on: prefs.rainbow, reactive: prefs.reactive, rotate: prefs.rotate, seed: prefs.rotateSeed, palette: prefs.palette });
   r.toggleAttribute('data-reactive', prefs.rainbow && prefs.reactive);

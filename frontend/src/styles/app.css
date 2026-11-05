@@ -179,11 +179,11 @@ svg { display: block; }
 @keyframes cc-hue { to { filter: hue-rotate(360deg); } }
 
 /* Labels, one axis each: buttons, sidebar, tabs and the phone's bottom bar. */
-:root:is([data-l-tabs="glyph"], [data-l-tabs="reactive"]) .stile > span { display: none; }
-:root[data-l-tabs="reactive"] .stile:is(:hover, .cur) > span { display: inline; }
-:root[data-l-bottombar="text"] .bottombar button > svg { display: none; }
-:root:is([data-l-bottombar="glyph"], [data-l-bottombar="reactive"]) .bottombar button > span { display: none; }
-:root[data-l-bottombar="reactive"] .bottombar button[aria-current="page"] > span { display: inline; }
+:root:is([data-labels-tabs="glyph"], [data-labels-tabs="reactive"]) .stile > span { display: none; }
+:root[data-labels-tabs="reactive"] .stile:is(:hover, .cur) > span { display: inline; }
+:root[data-labels-bottombar="text"] .bottombar button > svg { display: none; }
+:root:is([data-labels-bottombar="glyph"], [data-labels-bottombar="reactive"]) .bottombar button > span { display: none; }
+:root[data-labels-bottombar="reactive"] .bottombar button[aria-current="page"] > span { display: inline; }
 :root[data-motion="off"] *, :root[data-motion="off"] *::before, :root[data-motion="off"] *::after { transition: none !important; animation: none !important; }
 
 .bottombar { display: none; }
