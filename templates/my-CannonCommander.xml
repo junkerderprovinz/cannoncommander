@@ -21,7 +21,7 @@ On the first start the container writes a password for the user admin into its l
   <WebUI>http://[IP]:[PORT:80]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/templates/my-CannonCommander.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/icon.png</Icon>
-  <ExtraParams>--restart unless-stopped --hostname=cannoncommander --cap-add=SYS_ADMIN --cap-add=DAC_READ_SEARCH</ExtraParams>
+  <ExtraParams>--restart unless-stopped --hostname=cannoncommander --cap-add=SYS_ADMIN --cap-add=DAC_READ_SEARCH --cap-add=DAC_OVERRIDE</ExtraParams>
   <DateInstalled/>
   <DonateText>If CannonCommander helps you, consider buying me a coffee.</DonateText>
   <DonateLink>https://buymeacoffee.com/junkerderprovinz</DonateLink>
@@ -46,15 +46,15 @@ On the first start the container writes a password for the user admin into its l
     Required="true"
     Mask="false">/mnt/user/appdata/cannoncommander</Config>
   <Config
-    Name="Shares"
-    Target="/mnt/user"
-    Default="/mnt/user"
-    Mode="rw"
-    Description="Your user shares. CannonCommander shows them as they are, so keep the same path inside and outside the container."
+    Name="Storage"
+    Target="/mnt"
+    Default="/mnt"
+    Mode="rw,slave"
+    Description="Your user shares, disks and pools, at the same paths as on the server. Everyone works in the user shares. The disks and pools are for admins alone, who need them to see where a file lies and to move a folder onto one disk. To browse one, add it under Settings, Sources."
     Type="Path"
     Display="always"
     Required="true"
-    Mask="false">/mnt/user</Config>
+    Mask="false">/mnt</Config>
   <Config
     Name="Remotes"
     Target="/mnt/remotes"
@@ -160,7 +160,7 @@ On the first start the container writes a password for the user admin into its l
     Target="/tmp/notifications"
     Default=""
     Mode="rw"
-    Description="Only with Unraid write access. Enter /tmp/notifications to send Unraid notifications when a job is done. Unraid lets only root write there, so this also needs PUID 0."
+    Description="Only with Unraid write access. Enter /tmp/notifications to send Unraid notifications when a job is done. Unraid lets only root write there, so the container writes with the DAC_OVERRIDE capability under Extra Parameters."
     Type="Path"
     Display="advanced"
     Required="false"
