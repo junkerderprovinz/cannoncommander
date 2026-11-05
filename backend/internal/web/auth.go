@@ -1,21 +1,15 @@
 package web
 
 import (
-	libError "errors"
 	"fmt"
 	"net/http"
 	"net/url"
-	"slices"
 	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4/request"
 
-	"github.com/gtsteffaniak/go-logger/logger"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/files"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -47,86 +41,6 @@ func ExtractToken(r *http.Request) (string, error) {
 	}
 
 	return "", request.ErrNoTokenInRequest
-}
-
-// getOrCreateAuthenticatedUser loads or creates the account of a user who
-// signed in through OIDC. A nil admin leaves the admin right as it is, and nil
-// groups leave the memberships as they are.
-func getOrCreateAuthenticatedUser(username string, loginMethod users.LoginMethod, admin *bool, groups []string) (*users.User, error) {
-	if err := ensureUserInAllowedGroups(groups); err != nil {
-		return nil, err
-	}
-
-	// Try to get existing user
-	userValue, err := state.GetUserByUsername(username)
-	if err != nil {
-		if !libError.Is(err, errors.ErrNotExist) {
-			return nil, err
-		}
-		// Auto-create user on first authentication
-		user := users.User{
-			FrontendUser: users.FrontendUser{
-				LoginMethod: loginMethod,
-				Username:    username,
-			},
-		}
-		user.Permissions.Admin = admin != nil && *admin
-
-		err = state.CreateUser(&user, "")
-		if err != nil {
-			return nil, err
-		}
-		if dirErr := files.MakeUserDirs(&user, true); dirErr != nil {
-			logger.Error(dirErr.Error())
-		}
-
-		// Fetch the created user
-		userValue, err = state.GetUserByUsername(username)
-		if err != nil {
-			return nil, err
-		}
-	}
-	// A name at the identity provider can match a local account it has nothing
-	// to do with, so this comes before anything changes on the account.
-	if userValue.LoginMethod != loginMethod {
-		logger.Debugf("login rejected: user %q attempted %s login but account loginMethod is %q", username, loginMethod, userValue.LoginMethod)
-		return nil, errors.ErrWrongLoginMethod
-	}
-	if admin != nil && userValue.Permissions.Admin != *admin {
-		userValue.Permissions.Admin = *admin
-		if err := state.UpdateUser(&userValue, "", "permissions"); err != nil {
-			return nil, err
-		}
-	}
-	if groups != nil {
-		if err := state.SyncUserGroups(username, groups); err != nil {
-			return nil, fmt.Errorf("failed to sync user %s groups: %w", username, err)
-		}
-	}
-
-	return &userValue, nil
-}
-
-func isAdminFromGroups(adminGroup string, groups []string) bool {
-	return adminGroup != "" && slices.Contains(groups, adminGroup)
-}
-
-// ensureUserInAllowedGroups rejects login when userGroups is configured and none
-// of the IdP groups are allowed. Must run before auto-create so denied users
-// leave no account behind.
-func ensureUserInAllowedGroups(groups []string) error {
-	allowedGroups := settings.Config.Auth.Methods.OidcAuth.UserGroups
-	if len(allowedGroups) == 0 {
-		return nil
-	}
-	for _, userGroup := range groups {
-		for _, allowedGroup := range allowedGroups {
-			if strings.EqualFold(userGroup, allowedGroup) {
-				return nil
-			}
-		}
-	}
-	return fmt.Errorf("user is not in allowed groups")
 }
 
 func sessionCookieDomain(r *http.Request) string {

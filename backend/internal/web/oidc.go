@@ -14,7 +14,7 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/activity"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"golang.org/x/oauth2"
@@ -367,7 +367,15 @@ func oidcCallbackHandler(w http.ResponseWriter, r *http.Request, d *Context) (in
 
 	// Proceed to log the user in with the OIDC data
 	// userdata struct now contains info from either verified ID token or UserInfo endpoint
-	return loginWithOidcUser(w, r, loginUsername, userdata.Groups, postLoginRedirect)
+	// The issuer is the one in the settings, which the provider's discovery
+	// and the ID token were checked against.
+	subject, _ := userdata.Claims["sub"].(string)
+	if subject == "" {
+		logger.Errorf("the identity provider sent no subject for %s", loginUsername)
+		return http.StatusInternalServerError, fmt.Errorf("the identity provider sent no subject")
+	}
+	id := oidcIdentity{issuer: oidcCfg.IssuerUrl, subject: subject, name: loginUsername, groups: userdata.Groups}
+	return loginWithOidcUser(w, r, id, postLoginRedirect)
 }
 
 var errUnverifiedEmail = errors.New("the identity provider has not verified this email address")
@@ -398,44 +406,43 @@ func mergeMissingOidcClaims(userdata *userInfo, from map[string]any) {
 	}
 }
 
-// loginWithOidcUser extracts the username from the user claims (userInfo)
-// based on the configured UserIdentifier and logs the user into the application.
-// It creates a new user if one doesn't exist.
-func loginWithOidcUser(w http.ResponseWriter, r *http.Request, username string, groups []string, postLoginRedirect string) (int, error) {
+// loginWithOidcUser signs in the person id stands for, creating an account on
+// the first sign in.
+func loginWithOidcUser(w http.ResponseWriter, r *http.Request, id oidcIdentity, postLoginRedirect string) (int, error) {
 	oidcCfg := settings.Config.Auth.Methods.OidcAuth
+	db := state.MainDB()
 
-	// Check if user is in required groups (if userGroups is configured)
-	if len(oidcCfg.UserGroups) > 0 {
-		userInAllowedGroup := false
-		for _, allowedGroup := range oidcCfg.UserGroups {
-			if slices.Contains(groups, allowedGroup) {
-				userInAllowedGroup = true
-				break
-			}
-		}
-		if !userInAllowedGroup {
-			logger.Warningf("User %s is not in any of the required groups %v. Access denied.", username, oidcCfg.UserGroups)
-			return http.StatusForbidden, fmt.Errorf("user %s is not authorized to access this application (not in required groups)", username)
-		}
-		logger.Debugf("User %s is in required group, allowing access.", username)
+	if len(oidcCfg.UserGroups) > 0 && !inAnyGroup(id.groups, oidcCfg.UserGroups) {
+		logger.Warningf("User %s is not in any of the required groups %v. Access denied.", id.name, oidcCfg.UserGroups)
+		endOidcAccess(r, db, id)
+		return http.StatusForbidden, fmt.Errorf("user %s is not authorized to access this application (not in required groups)", id.name)
 	}
 
 	// The admin right follows the groups only when there is an admin group and
 	// the provider sent groups. Otherwise admins are made in the app.
 	var admin *bool
-	if oidcCfg.AdminGroup != "" && groups != nil {
-		inGroup := isAdminFromGroups(oidcCfg.AdminGroup, groups)
+	if oidcCfg.AdminGroup != "" && id.groups != nil {
+		inGroup := slices.Contains(id.groups, oidcCfg.AdminGroup)
 		admin = &inGroup
 	}
-	logger.Debugf("Successfully authenticated OIDC username: %s", username)
 
-	user, err := getOrCreateAuthenticatedUser(username, users.LoginMethodOidc, admin, groups)
+	account, err := oidcAccount(r.Context(), db, id, admin != nil && *admin)
+	if errors.Is(err, errOidcNameTaken) {
+		logger.Warningf("OIDC sign in refused: %s %s claims the name %s, which is bound to someone else", id.issuer, id.subject, id.name)
+		return http.StatusConflict, err
+	}
+	if err == nil {
+		err = syncOidcRights(&account, admin, id.groups)
+	}
 	if err != nil {
 		if status, mapped := loginMethodHTTPStatus(err); status != 0 {
 			return status, mapped
 		}
 		return http.StatusUnauthorized, err
 	}
+	user := &account
+	username := user.Username
+	logger.Debugf("Successfully authenticated OIDC username: %s", username)
 
 	expires := time.Hour * time.Duration(settings.Config.Auth.TokenExpirationHours)
 	tokenString, err2 := mintAndRegisterSessionToken(user)
