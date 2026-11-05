@@ -205,13 +205,14 @@ CannonCommander is on its way into Community Applications. Until it is listed th
 ```sh
 docker run -d --name cannoncommander -p 8480:80 \
   -v /path/to/appdata:/config \
-  -v /path/to/your/files:/mnt/user \
+  -v /mnt:/mnt \
   -e PUID=1000 -e PGID=1000 -e UMASK=022 \
   --device /dev/fuse --cap-add SYS_ADMIN \
+  --cap-add DAC_READ_SEARCH --cap-add DAC_OVERRIDE \
   junkerderprovinz/cannoncommander:latest
 ```
 
-Or put [compose.yaml](compose.yaml) in a folder of its own, point `./files` at your files and run `docker compose up -d`. Without `--device /dev/fuse` and `SYS_ADMIN` everything works except mounting remote storage.
+CannonCommander shows the folders below `/mnt/user`, the way Unraid lays out its shares. On another server, keep your folders there or change the source in `/config/config.yaml`. [compose.yaml](compose.yaml) does the same with `docker compose up -d`. Without `--device /dev/fuse` and `SYS_ADMIN` everything works except mounting remote storage.
 
 ### First sign-in
 
@@ -228,7 +229,7 @@ The container reads `/config/config.yaml`, which it writes with good defaults on
 | Container path | What it holds |
 |---|---|
 | `/config` | `config.yaml`, the database with users, settings, jobs and the index, the thumbnail cache and rclone's own configuration |
-| `/mnt/user` | Your shares. Keep the same path inside and outside, so what you see matches Unraid. |
+| `/mnt` | Your user shares, disks and pools, at the same paths as on the server. Everyone works in the user shares under `/mnt/user`. The disks and pools are for admins alone. Where a file lies, the other names of a hard link and moving a folder onto one disk work right away, and to browse a disk or pool, add it under **Settings > Sources**. On Unraid the access mode is **RW/Slave**, so disks and pools mounted later show up too. |
 | `/mnt/remotes` | Where remote storage is mounted. On Unraid it is mapped with the access mode **RW/Shared**, so the mounts show up on the server and in other containers. |
 | `/var/local/emhttp` | Read only. Unraid's live view of the disks, pools and shares. |
 | `/boot/config` | Read only. The settings of each share, read for placing files and for the Unraid permissions. |
@@ -242,11 +243,17 @@ The container reads `/config/config.yaml`, which it writes with good defaults on
 | `UMASK` | `000` | The permission mask for new files. 000 matches Unraid's shares, so you can still change what CannonCommander writes over SMB. |
 | `TZ` | | Your time zone, such as `Europe/Berlin`. |
 
-Unraid keeps `/boot/config` readable for root alone. The template adds the `DAC_READ_SEARCH` capability, which lets the server read the share settings there while it runs as `nobody`. Without it everything works except the Unraid details that come from those settings.
+The server runs as `nobody` and keeps four capabilities of root, which the template sets for you:
+
+- `CHOWN` and `FOWNER` let **Set permissions the Unraid way** hand files to `nobody:users`.
+- `DAC_READ_SEARCH` lets the server read files that only root may read, such as the share settings in `/boot/config`.
+- `DAC_OVERRIDE` lets the server write where only root may write, such as Unraid's notification folder.
+
+The file manager's own users and rules still decide what each person sees and changes.
 
 ### Unraid write access
 
-Spinning disks down and sending Unraid notifications go through files and a socket that belong to root on the server, so they are off by default. To switch them on, set `CC_UNRAID_SOCKET` to `true` and map `/var/run/emhttpd.socket` into the container at the same path. Notifications also need `/tmp/notifications` mapped, and because only root may write there, `PUID` set to `0`. Only admins see these actions.
+Spinning disks down and sending Unraid notifications go through files and a socket that belong to root on the server, so they are off by default. To switch them on, set `CC_UNRAID_SOCKET` to `true` and map `/var/run/emhttpd.socket` into the container at the same path. Notifications also need `/tmp/notifications` mapped at the same path. Only admins see these actions.
 
 ### Remote storage
 
