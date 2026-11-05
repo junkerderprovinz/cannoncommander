@@ -1,13 +1,12 @@
 <script setup lang="ts">
 // Prüfsummen prüfen: a list from a file or pasted lines, and what each line found.
 import { pathField } from '@/ui/picker';
-import { EmptyState, FieldRow, PathField, Pill, ProgressBar, Selector, SubCard, TextArea, TextField } from '@glimstone/vue';
+import { EmptyState, FieldRow, GlyphTile, PathField, Pill, ProgressBar, Selector, SubCard, TextArea, TextField } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import type { Algo } from '@/api/tools';
-import { glyphComponent } from '@/core/glyphs';
+import { glyphComponent, glyphOf } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { plural, segItems } from '@/ui/kit';
-import Tile from '@/ui/Tile.vue';
 
 export interface VerifyRow { name: string; state: 'wait' | 'ok' | 'mismatch' | 'missing' | 'bad'; bad?: boolean; algo?: Algo; found?: boolean }
 export interface VerifyState { mode: 'file' | 'paste'; file: string; text: string; dir: string; rows: VerifyRow[] | null; empty: 'pick' | 'noFile' | 'noSums'; seen: number }
@@ -41,7 +40,7 @@ const width = (r: VerifyRow, i: number) => (r.state !== 'wait' || i < props.st.s
     <div id="v-list" class="bk-list">
       <EmptyState v-if="!st.rows" nested :glyph="glyphComponent(EMPTY[st.empty][0])" :title="t(EMPTY[st.empty][1])" />
       <template v-else><div v-for="(r, i) in st.rows" :id="`v-row-${i}`" :key="i" class="bk-sum">
-        <Tile v-if="r.found !== false && !r.bad" :k="{ name: r.name }" /><Tile v-else g="IconFile" />
+        <GlyphTile v-if="r.found !== false && !r.bad" :glyph="glyphComponent(glyphOf({ name: r.name }))" ground quiet /><GlyphTile v-else :glyph="glyphComponent('IconFile')" ground quiet />
         <span class="bk-name mono">{{ r.name }}</span>
         <span class="bk-hash"><span v-if="r.state !== 'wait' && r.algo" class="muted">{{ t(`checksum.algos.${r.algo}`) }}</span><ProgressBar v-else-if="!r.bad" class="bar" :value="width(r, i)" :label="r.name" /></span>
         <span class="bk-res">

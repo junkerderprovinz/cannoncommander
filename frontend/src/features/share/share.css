@@ -1,6 +1,4 @@
 .cs-head { display: flex; align-items: center; gap: .35rem; min-width: 0; }
-.cs-tile { width: 1.75rem; height: 1.75rem; }
-.cs-tile svg { color: var(--accent-glyph); }
 .cs-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cs-slug { font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cs-done { flex-direction: row; gap: 1.2rem; align-items: center; }

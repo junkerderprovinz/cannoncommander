@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // A disk image: what kind, its name, how it starts, its partitions or files, and whether a checksum lies beside it.
-import { FieldRow, SubCard } from '@glimstone/vue';
+import { FieldRow, GlyphTile, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { api } from '@/api/client';
 import { fmtSize } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { fsStat, type ImageInfo } from '../content';
@@ -48,7 +48,7 @@ onMounted(async () => {
     </SubCard>
     <SubCard :title="t('viewer.disk.content')" v-else-if="inside.length">
       <div class="cv-mini">
-        <div v-for="x in inside" :key="x.name" class="cv-mrow"><span class="tile"><G :n="x.dir ? 'IconFolder' : 'IconFile'" /></span><span class="t mono">{{ x.name }}</span><span></span></div>
+        <div v-for="x in inside" :key="x.name" class="cv-mrow"><GlyphTile :glyph="glyphComponent(x.dir ? 'IconFolder' : 'IconFile')" /><span class="t mono">{{ x.name }}</span><span></span></div>
       </div>
     </SubCard>
   </div>

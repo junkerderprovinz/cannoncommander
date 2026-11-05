@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { pathField } from '@/ui/picker';
 import { segItems } from '@/ui/kit';
-import { Button, Card, FieldRow, PathField, Selector, Toggle } from '@glimstone/vue';
+import { Button, Card, FieldRow, FieldRowGroup, PathField, Selector, Toggle } from '@glimstone/vue';
 import { ref } from 'vue';
 import { admin, exists } from '@/api/admin';
 import { prefs, setPref } from '@/core/prefs';
@@ -48,8 +48,10 @@ async function testNote() {
 
 <template>
   <Card :title="c('general.use')">
-    <FieldRow :label="c('general.start')" :hint="c('general.startTip')"><PathField ref="field" v-model="start" v-bind="pathField('a-start')" @change="save" @picked="save" /></FieldRow>
-    <FieldRow :label="c('general.dblclick')" :hint="c('general.dblclickTip')"><Selector v-model="P.dblclick" :items="segItems([['open', c('general.open')], ['preview', c('general.preview')], ['download', c('general.download')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="c('general.start')" :hint="c('general.startTip')"><PathField ref="field" v-model="start" v-bind="pathField('a-start')" @change="save" @picked="save" /></FieldRow>
+      <FieldRow :label="c('general.dblclick')" :hint="c('general.dblclickTip')"><Selector v-model="P.dblclick" :items="segItems([['open', c('general.open')], ['preview', c('general.preview')], ['download', c('general.download')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    </FieldRowGroup>
   </Card>
   <Card :title="c('general.delete')">
     <FieldRow :label="c('general.confirm')" :hint="c('general.confirmTip')"><Toggle v-model="P.confirmDelete" /></FieldRow>

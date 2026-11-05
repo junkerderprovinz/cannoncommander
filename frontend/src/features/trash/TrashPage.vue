@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Papierkorb: a full page listing what was deleted, with restore, delete for good and empty.
-import { Button, Card, EmptyState, FieldRow, IconButton, Pill } from '@glimstone/vue';
+import { Button, Card, EmptyState, FieldRow, GlyphTile, IconButton, Pill } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import type { TrashItem } from '@/api/ops';
 import { DAY, fmtDate, fmtSize } from '@/core/format';
@@ -97,7 +97,7 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
       <div class="ct-list" :class="{ picking: picked.length }" role="listbox" aria-multiselectable="true">
         <div v-for="(e, i) in list" :key="e.id" class="ct-row" :class="{ sel: pick.sel.has(e.id) }" :data-i="i" role="option" :aria-selected="pick.sel.has(e.id)" @click="click(e, i, $event)">
           <button class="ct-mark" data-mark :aria-label="t('trash.mark')"><G n="IconCheck" /></button>
-          <span class="tile"><G :n="e.dir ? 'IconFolder' : glyphOf({ name: e.name })" /></span>
+          <GlyphTile :glyph="glyphComponent(e.dir ? 'IconFolder' : glyphOf({ name: e.name }))" :active="pick.sel.has(e.id)" />
           <span class="t">{{ e.name }}</span>
           <Pill class="mono col-from" :data-tip="e.from">{{ e.from }}</Pill>
           <Pill class="glim-num col-size">{{ fmtSize(e.size) || '0 B' }}</Pill>
@@ -109,6 +109,6 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
         </div>
       </div>
     </Card>
-    <div v-if="picked.length" class="ct-fab"><Button id="ct-restore" class="glim-btn-key" :label="picked.length === 1 ? t('trash.restore') : t('trash.restoreMany', { n: picked.length })" label-key="IconRestore" tone="accent" @click="restore(picked, clear)" /></div>
+    <div v-if="picked.length" class="ct-fab"><Button id="ct-restore" size="key" :label="picked.length === 1 ? t('trash.restore') : t('trash.restoreMany', { n: picked.length })" label-key="IconRestore" tone="accent" @click="restore(picked, clear)" /></div>
   </div>
 </template>

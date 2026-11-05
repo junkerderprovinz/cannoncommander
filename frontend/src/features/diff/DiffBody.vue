@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // Two files side by side, changed lines tinted, and a jump from one changed place to the next.
-import { Pill, SubCard } from '@glimstone/vue';
+import { GlyphTile, Pill, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import type { Diff, DiffRow, DiffSide } from '@/api/tools';
 import { fmtSize, fmtTime } from '@/core/format';
-import { G, glyphOf } from '@/core/glyphs';
+import { glyphOf, glyphComponent } from '@/core/glyphs';
 import { closeBtn, type WinEntry } from '@/core/windows';
 import { plural } from '@/ui/kit';
 import { parent, split } from '@/files/paths';
@@ -60,7 +60,7 @@ onMounted(() => {
 <template>
   <div class="bk-dheads">
     <div v-for="s in [diff.left, diff.right]" :key="s.path" class="bk-dhead">
-      <span class="bk-tile"><G :n="glyphOf({ name: nameOf(s) })" /></span><span class="bk-name">{{ nameOf(s) }}</span><span class="bk-path muted mono"><bdi>{{ parent(s.path) }}</bdi></span>
+      <GlyphTile :glyph="glyphComponent(glyphOf({ name: nameOf(s) }))" ground quiet /><span class="bk-name">{{ nameOf(s) }}</span><span class="bk-path muted mono"><bdi>{{ parent(s.path) }}</bdi></span>
       <Pill class="glim-num">{{ fmtSize(s.size) }}</Pill><Pill class="glim-num">{{ fmtTime(Date.parse(s.mtime)) }}</Pill>
     </div>
   </div>

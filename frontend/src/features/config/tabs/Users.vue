@@ -58,7 +58,7 @@ function removeGroup(g: Group) {
         </template>
         <template #actions>
           <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" :data-uopen="i" @click="editUser(u)" />
-          <IconButton v-if="u.name !== myName()" :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removeUser(u)" /><span v-else class="glim-icon-btn-gap"></span>
+          <IconButton :absent="u.name === myName()" :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removeUser(u)" />
         </template>
       </ListRow>
     </div>

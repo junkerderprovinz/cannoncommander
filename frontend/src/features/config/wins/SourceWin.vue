@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { pathField } from '@/ui/picker';
-import { FieldRow, PathField, SubCard, TextArea, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, FieldRowGroup, PathField, SubCard, TextArea, TextField, Toggle } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, exists, type Source } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -47,8 +47,10 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: s ? c('save') : c('ad
 
 <template>
   <SubCard>
-    <FieldRow :label="c('sources.name')"><TextField id="a-sname" ref="nameEl" v-model="name" :placeholder="c('sources.namePh')" width="medium" /></FieldRow>
-    <FieldRow :label="c('sources.folder')"><PathField ref="pathEl" v-model="path" v-bind="pathField('a-spath')" /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="c('sources.name')"><TextField id="a-sname" ref="nameEl" v-model="name" :placeholder="c('sources.namePh')" width="medium" /></FieldRow>
+      <FieldRow :label="c('sources.folder')"><PathField ref="pathEl" v-model="path" v-bind="pathField('a-spath')" /></FieldRow>
+    </FieldRowGroup>
   </SubCard>
   <SubCard>
     <FieldRow :label="c('sources.readOnly')" :hint="c('sources.readOnlyTip')"><Toggle v-model="readOnly" /></FieldRow>

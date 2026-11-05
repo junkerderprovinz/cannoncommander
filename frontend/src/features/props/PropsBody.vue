@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { Select } from '@glimstone/vue/Select';
-import { Checkbox, FieldRow, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
+import { Checkbox, FieldRow, GlyphTile, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
 // Eigenschaften und Rechte: what the selection is, who owns it, and the nine rights as boxes and as a number.
 import { computed, ref, watch } from 'vue';
 import type { Item } from '@/api/client';
 import { extend } from '@/core/extend';
 import { fmtSize, fmtTime } from '@/core/format';
-import { ext, kindOf } from '@/core/glyphs';
+import { ext, kindOf, glyphComponent, glyphOf } from '@/core/glyphs';
 import { Render } from '@/core/Render';
 import { locale, t } from '@/i18n';
 import CopyBtn from '@/ui/CopyBtn.vue';
 import { plural, pressPrimary, selectOptions } from '@/ui/kit';
-import Tile from '@/ui/Tile.vue';
 
 export interface PropsState {
   nodes: Item[]; paths: string[]; dir: string; self: boolean; ro: boolean; uids: Record<string, number>; gids: Record<string, number>;
@@ -60,7 +59,7 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
 </script>
 
 <template>
-  <div class="bk-phead"><Tile v-if="one" :k="one" /><Tile v-else g="IconFiles" /><span class="bk-name">{{ title }}</span></div>
+  <div class="bk-phead"><GlyphTile v-if="one" :glyph="glyphComponent(glyphOf(one))" ground :quiet="!one.dir" /><GlyphTile v-else :glyph="glyphComponent('IconFiles')" ground quiet /><span class="bk-name">{{ title }}</span></div>
   <div class="bk-grid2 bk-top" @keydown.enter="pressPrimary">
     <SubCard :title="t('props.general')" class="bk-form">
       <template v-if="one">

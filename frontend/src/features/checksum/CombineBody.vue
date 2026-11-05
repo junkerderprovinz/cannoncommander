@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Zusammenfügen: every part beside the picked one, gaps among them, and the whole file they make.
 import { pathField } from '@/ui/picker';
-import { FieldRow, PathField, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, FieldRowGroup, PathField, Pill, SubCard, Table, TextField, Toggle } from '@glimstone/vue';
 import { computed, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import { join } from '@/files/paths';
@@ -35,16 +35,16 @@ watchEffect(() => {
 
 <template>
   <SubCard :title="t('checksum.partsOf', { parts: plural(parts.length, 'checksum.partsWord'), size: fmtSize(total) })">
-    <table class="tbl">
-      <tr v-for="p in parts" :key="p.name"><td class="mono">{{ p.name }}</td><td class="glim-num r">{{ fmtSize(p.size) }}</td></tr>
-      <tr v-if="missing.length"><td colspan="2"><Pill tone="fail">{{ t('checksum.missingParts', { list: missing.map((i) => '.' + String(i).padStart(3, '0')).join(', ') }) }}</Pill></td></tr>
-    </table>
+    <Table class="u-tbl" :label="t('checksum.name')" :columns="[{ key: 'name' }, { key: 'size', end: true }]" :rows="parts.map((p) => ({ name: p.name, size: fmtSize(p.size) }))" />
+    <Pill v-if="missing.length" tone="fail">{{ t('checksum.missingParts', { list: missing.map((i) => '.' + String(i).padStart(3, '0')).join(', ') }) }}</Pill>
   </SubCard>
   <SubCard :title="t('checksum.result')" class="bk-form">
-    <FieldRow :label="t('checksum.name')"><TextField id="j-name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
-    <FieldRow :label="t('checksum.folder')"><PathField v-model="st.dest" v-bind="pathField('j-dest')" /></FieldRow>
-    <FieldRow :label="t('checksum.checkAfter')" :hint="sum ? t('checksum.checkWith', { name: sum.name }) : t('checksum.checkNone')"><Toggle id="j-check" v-model="st.check" :disabled="!sum" /></FieldRow>
-    <FieldRow :label="t('checksum.dropParts')" :hint="t('checksum.dropPartsTip')"><Toggle id="j-drop" v-model="st.drop" /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="t('checksum.name')"><TextField id="j-name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
+      <FieldRow :label="t('checksum.folder')"><PathField v-model="st.dest" v-bind="pathField('j-dest')" /></FieldRow>
+      <FieldRow :label="t('checksum.checkAfter')" :hint="sum ? t('checksum.checkWith', { name: sum.name }) : t('checksum.checkNone')"><Toggle id="j-check" v-model="st.check" :disabled="!sum" /></FieldRow>
+      <FieldRow :label="t('checksum.dropParts')" :hint="t('checksum.dropPartsTip')"><Toggle id="j-drop" v-model="st.drop" /></FieldRow>
+    </FieldRowGroup>
     <FieldRow :label="t('checksum.savedAs')">
       <span id="j-final" class="bk-finalw">
         <Pill v-if="ok === false" tone="fail">{{ t('ui.noFolder') }}</Pill>

@@ -3,10 +3,10 @@
 // rclone authorize on a computer with a browser, and the token it prints is pasted here.
 import { pathField } from '@/ui/picker';
 import { Select } from '@glimstone/vue/Select';
-import { Button, CopyField, EmptyState, FieldRow, PasswordField, PathField, Pill, SubCard, TextField } from '@glimstone/vue';
+import { Button, CopyField, EmptyState, FieldRow, FieldRowGroup, GlyphTile, PasswordField, PathField, Pill, SubCard, TextField } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { admin, type Remote, type RemoteInput } from '@/api/admin';
-import { G, glyphComponent } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type FootButton, type WinEntry } from '@/core/windows';
 import { attempt, c, fail, keysFirst, stepFoot } from '@/features/config/shared';
@@ -134,7 +134,7 @@ onBeforeUnmount(() => stopKeys());
   <template v-if="!type">
       <div class="a-pickhead"><TextField id="a-rq" v-model="query" :placeholder="c('remotes.searchType')" :aria-label="c('remotes.searchType')" width="medium" /></div>
       <div id="a-tiles" class="a-tiles">
-        <button v-for="t in shown" :key="t.id" class="a-tile" :data-type="t.id" @click="choose(t)"><span class="tile"><G :n="t.g" /></span><span><b>{{ t.label }}</b><small>{{ t.sub }}</small></span></button>
+        <button v-for="t in shown" :key="t.id" class="a-tile" :data-type="t.id" @click="choose(t)"><GlyphTile :glyph="glyphComponent(t.g)" /><span><b>{{ t.label }}</b><small>{{ t.sub }}</small></span></button>
         <EmptyState v-if="!shown.length" nested :glyph="glyphComponent('IconSearch')" :title="c('remotes.noType')" />
       </div>
     </template>
@@ -145,8 +145,10 @@ onBeforeUnmount(() => stopKeys());
           <Button v-else id="a-oauth" :label="c('remotes.signInAt', { who: type.oauth })" label-key="IconSignIn" @click="signing = true" />
         </FieldRow>
         <template v-if="type.oauth && signing">
-          <FieldRow :label="c('remotes.onYourPc')" :hint="c('remotes.onYourPcTip')"><CopyField width="grow" :value="`rclone authorize &quot;${type.id}&quot;`" :label="c('remotes.onYourPc')" :text="copyWords()" /></FieldRow>
-          <FieldRow :label="c('remotes.token')"><TextField id="a-rtoken" v-model="pasted" :placeholder="c('remotes.tokenPh')" spellcheck="false" autocomplete="off" width="wide" mono @keydown.enter="useToken" /><Button :label="c('remotes.takeToken')" label-key="IconCheck" @click="useToken" /></FieldRow>
+          <FieldRowGroup>
+            <FieldRow :label="c('remotes.onYourPc')" :hint="c('remotes.onYourPcTip')"><CopyField width="grow" :value="`rclone authorize &quot;${type.id}&quot;`" :label="c('remotes.onYourPc')" :text="copyWords()" /></FieldRow>
+            <FieldRow :label="c('remotes.token')"><TextField id="a-rtoken" v-model="pasted" :placeholder="c('remotes.tokenPh')" spellcheck="false" autocomplete="off" width="wide" mono @keydown.enter="useToken" /><Button :label="c('remotes.takeToken')" label-key="IconCheck" @click="useToken" /></FieldRow>
+          </FieldRowGroup>
         </template>
         <FieldRow v-for="f in fields" :key="f.k" :label="f.l" :hint="f.tip">
           <template #label>{{ f.l }}<template v-if="f.opt">{{ ' ' }}<small>{{ c('optional') }}</small></template></template>
@@ -156,8 +158,10 @@ onBeforeUnmount(() => stopKeys());
         </FieldRow>
       </SubCard>
       <SubCard>
-        <FieldRow :label="c('remotes.name')" :hint="c('remotes.nameTip')"><TextField id="a-rname" v-model="draft.name" :placeholder="c('remotes.namePh')" width="medium" @input="nameTyped" /></FieldRow>
-        <FieldRow :label="c('remotes.mountAt')" :hint="c('remotes.mountAtTip')"><PathField v-model="draft.mount" v-bind="pathField('a-rmount')" @input="mountTouched = true" /></FieldRow>
+        <FieldRowGroup>
+          <FieldRow :label="c('remotes.name')" :hint="c('remotes.nameTip')"><TextField id="a-rname" v-model="draft.name" :placeholder="c('remotes.namePh')" width="medium" @input="nameTyped" /></FieldRow>
+          <FieldRow :label="c('remotes.mountAt')" :hint="c('remotes.mountAtTip')"><PathField v-model="draft.mount" v-bind="pathField('a-rmount')" @input="mountTouched = true" /></FieldRow>
+        </FieldRowGroup>
         <FieldRow :label="c('remotes.connection')">
           <Button id="a-rtest" :class="{ ok: tested === 'ok' }" :label="tested === 'ok' ? c('remotes.connected') : tested === 'busy' ? c('checking') : c('test')" :label-key="tested === 'ok' ? 'IconCheck' : tested === 'busy' ? 'IconRefresh' : 'IconHealth'" :disabled="tested === 'busy'" @click="test" />
         </FieldRow>

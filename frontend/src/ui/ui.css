@@ -1,10 +1,6 @@
 .glim-pill.mono { font-size: 12px; }
 /* In a list's grid a pill keeps its width at the end of its column. */
 .glim-pill { justify-self: end; }
-/* A row's name takes the width of its words, so rows with a long field would start them at different places. */
-.glim-field-row:has(> :is(.glim-field--grow, .glim-path, .bk-range)) > .glim-field-row-name { min-width: 6.5rem; }
-/* The picker's word needs its own width and no more, or a path in half a column has no room to show. */
-.glim-path > .glim-btn { min-width: 0; }
 .a-tree { max-height: 22rem; gap: 2px; padding: .5rem; border-radius: var(--radius-card); }
 .ce-ask { display: flex; gap: .75rem; align-items: flex-start; line-height: 1.5; }
 .ce-ask svg { width: 1.2rem; height: 1.2rem; color: var(--accent-glyph); flex: none; margin-top: .1rem; }

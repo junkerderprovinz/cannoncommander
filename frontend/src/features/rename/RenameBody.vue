@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Mehrfach umbenennen: the pattern on the left, find and replace on the right, the preview of every name below.
 import { Select } from '@glimstone/vue/Select';
-import { FieldRow, IconButton, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, FieldRowGroup, IconButton, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import type { RenameMask, RenamePreset, RenameRow } from '@/api/tools';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -51,8 +51,10 @@ const missingTip = (r: RenameRow) => t('rename.withoutTip', { names: r.missing!.
           <IconButton id="m-psave" :tip="t('rename.savePreset')" :glyph="glyphComponent('IconSave')" @click="savePreset" />
           <IconButton id="m-pdel" :tip="t('rename.dropPreset')" :glyph="glyphComponent('IconTrash')" :disabled="!st.preset.startsWith('own:')" @click="dropPreset" /></span>
       </FieldRow>
-      <FieldRow :label="t('rename.name')"><TextField id="m-name" :ref="fields.name" v-model="st.o.name" spellcheck="false" autocomplete="off" width="grow" mono @focus="focused = 'name'" /></FieldRow>
-      <FieldRow :label="t('rename.ext')"><TextField id="m-ext" :ref="fields.ext" v-model="st.o.ext" spellcheck="false" autocomplete="off" width="grow" mono @focus="focused = 'ext'" /></FieldRow>
+      <FieldRowGroup>
+        <FieldRow :label="t('rename.name')"><TextField id="m-name" :ref="fields.name" v-model="st.o.name" spellcheck="false" autocomplete="off" width="grow" mono @focus="focused = 'name'" /></FieldRow>
+        <FieldRow :label="t('rename.ext')"><TextField id="m-ext" :ref="fields.ext" v-model="st.o.ext" spellcheck="false" autocomplete="off" width="grow" mono @focus="focused = 'ext'" /></FieldRow>
+      </FieldRowGroup>
       <div class="bk-tokens"><button v-for="id in TOKENS" :key="id" class="bk-chip" type="button" :data-bk-tok="`[${id}]`" :data-tip="t(`rename.tokens.${id}.tip`)" @click="insert(`[${id}]`)"><b>[{{ id }}]</b>{{ label(id) }}</button></div>
       <div class="bk-tokens bk-meta"><span class="muted">{{ t('rename.fromMeta') }}</span><button v-for="id in META" :key="id" class="bk-chip" type="button" :data-bk-tok="chip(id)" :data-tip="t(`rename.tokens.${id}.tip`)" @click="insert(chip(id))"><b>{{ chip(id) }}</b>{{ label(id) }}</button></div>
       <FieldRow :label="t('rename.counter')">
@@ -60,10 +62,12 @@ const missingTip = (r: RenameRow) => t('rename.withoutTip', { names: r.missing!.
       </FieldRow>
     </SubCard>
     <SubCard :title="t('rename.findReplace')" class="bk-form">
-      <FieldRow :label="t('rename.find')"><TextField id="m-find" v-model="st.o.find" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
-      <FieldRow :label="t('rename.replace')"><TextField id="m-repl" v-model="st.o.repl" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
-      <FieldRow :label="t('rename.regex')" :hint="t('rename.regexTip')"><Toggle id="m-regex" v-model="st.o.regex" /></FieldRow>
-      <FieldRow :label="t('rename.case')"><Select id="m-case" v-model="st.o.case" :options="selectOptions(caseOptions)" rows="menu" /></FieldRow>
+      <FieldRowGroup>
+        <FieldRow :label="t('rename.find')"><TextField id="m-find" v-model="st.o.find" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
+        <FieldRow :label="t('rename.replace')"><TextField id="m-repl" v-model="st.o.repl" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
+        <FieldRow :label="t('rename.regex')" :hint="t('rename.regexTip')"><Toggle id="m-regex" v-model="st.o.regex" /></FieldRow>
+        <FieldRow :label="t('rename.case')"><Select id="m-case" v-model="st.o.case" :options="selectOptions(caseOptions)" rows="menu" /></FieldRow>
+      </FieldRowGroup>
     </SubCard>
   </div>
   <SubCard class="bk-fill"><div class="bk-tools"><span id="m-count" class="glim-eyebrow">{{ t('rename.count', { objects: plural(st.count, 'ui.objects'), changes: plural(changed, 'rename.changes') }) }}</span></div>

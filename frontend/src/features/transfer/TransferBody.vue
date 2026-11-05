@@ -3,7 +3,7 @@
 import { pathField } from '@/ui/picker';
 import { segItems, selectOptions } from '@/ui/kit';
 import { Select } from '@glimstone/vue/Select';
-import { FieldRow, PathField, Selector, SubCard, Toggle } from '@glimstone/vue';
+import { FieldRow, FieldRowGroup, PathField, Selector, SubCard, Toggle } from '@glimstone/vue';
 import { computed, watch } from 'vue';
 import type { Preflight, Rule } from '@/api/ops';
 import { fmtSize } from '@/core/format';
@@ -48,9 +48,11 @@ watch(linkable, (ok) => { if (!ok) props.st.way = props.st.kind; });
   <ItemChips :items="st.items" />
   <SpacePanel v-if="st.pf?.unraid?.space" :space="st.pf.unraid.space" :dest="clean(st.dest)" @dest="(p) => ensureDir(p).then(() => { st.dest = p; })" />
   <SubCard>
-    <FieldRow :label="t('transfer.to')"><PathField v-model="st.dest" v-bind="pathField('dest')" /></FieldRow>
-    <FieldRow v-if="linkable" :label="t('transfer.way')" :hint="t('transfer.linkTip')"><Selector id="how" v-model="st.way" :items="segItems(ways)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-    <FieldRow :label="t('transfer.clash')" :hint="t('transfer.clashTip')"><Select id="clash" v-model="st.rule" :options="selectOptions(RULES())" rows="menu" /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="t('transfer.to')"><PathField v-model="st.dest" v-bind="pathField('dest')" /></FieldRow>
+      <FieldRow v-if="linkable" :label="t('transfer.way')" :hint="t('transfer.linkTip')"><Selector id="how" v-model="st.way" :items="segItems(ways)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="t('transfer.clash')" :hint="t('transfer.clashTip')"><Select id="clash" v-model="st.rule" :options="selectOptions(RULES())" rows="menu" /></FieldRow>
+    </FieldRowGroup>
     <details class="xmore"><summary>{{ t('transfer.moreOptions') }}</summary>
       <FieldRow :label="t('transfer.keepAttrs')" :hint="t('transfer.keepAttrsTip')"><Toggle v-model="st.keepAttrs" /></FieldRow>
       <FieldRow :label="t('transfer.verify')" :hint="t('transfer.verifyTip')"><Toggle v-model="st.verify" /></FieldRow>

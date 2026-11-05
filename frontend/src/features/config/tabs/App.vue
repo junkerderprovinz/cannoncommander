@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card, CopyField, FieldRow, Pill, Selector, Toggle } from '@glimstone/vue';
+import { Button, Card, CopyField, FieldRow, FieldRowGroup, Pill, Selector, Toggle } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type AppChange, type AppSettings, type System } from '@/api/admin';
 import { G } from '@/core/glyphs';
@@ -56,9 +56,11 @@ function restart() {
 <template>
   <template v-if="app">
     <Card :title="c('app.updates')">
-      <FieldRow :label="c('app.autoCheck')" :hint="c('app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
-      <FieldRow :label="c('app.image')"><CopyField width="grow" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></FieldRow>
-      <FieldRow label="Tag" :hint="c('app.tagTip')"><Pill class="mono">{{ sys?.version ?? '' }}</Pill></FieldRow>
+      <FieldRowGroup>
+        <FieldRow :label="c('app.autoCheck')" :hint="c('app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
+        <FieldRow :label="c('app.image')"><CopyField width="grow" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></FieldRow>
+        <FieldRow label="Tag" :hint="c('app.tagTip')"><Pill class="mono">{{ sys?.version ?? '' }}</Pill></FieldRow>
+      </FieldRowGroup>
       <div class="a-foot">
         <Button id="a-upd" :class="{ ok: update !== 'idle' && update !== 'busy' }" :label="update === 'idle' ? c('app.check') : update === 'busy' ? c('app.checking') : update" :label-key="update !== 'idle' && update !== 'busy' ? 'IconUpToDate' : 'IconSync'" :disabled="update === 'busy'" @click="check" />
       </div>

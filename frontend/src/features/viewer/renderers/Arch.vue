@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // What an archive holds, read through the server as a folder whose path ends in "::".
-import { Button, EmptyState, Pill } from '@glimstone/vue';
+import { Button, EmptyState, GlyphTile, Pill } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { api } from '@/api/client';
 import { closeWin } from '@/core/windows';
 import { fmtSize } from '@/core/format';
-import { G, glyphOf, glyphComponent } from '@/core/glyphs';
+import { glyphOf, glyphComponent } from '@/core/glyphs';
 import { inArchive } from '@/files/paths';
 import { t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
@@ -58,7 +58,7 @@ function browse() {
   <div v-else class="cv-scroll">
     <div class="cv-mini">
       <div v-for="x in shown" :key="x.path" class="cv-mrow" :class="{ dir: x.dir }">
-        <span class="tile"><G :n="x.dir ? 'IconFolder' : glyphOf({ name: x.path })" /></span><span class="t mono">{{ x.path }}</span>
+        <GlyphTile :glyph="glyphComponent(x.dir ? 'IconFolder' : glyphOf({ name: x.path }))" /><span class="t mono">{{ x.path }}</span>
         <span v-if="x.dir"></span><Pill v-else class="glim-num">{{ fmtSize(Math.round(x.size)) }}</Pill>
       </div>
     </div>

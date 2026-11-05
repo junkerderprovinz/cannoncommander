@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The rights repair before it runs: who will own the files, which rights they get, how many there are and which
 // folders keep their own owners.
-import { FieldRow, Pill, SubCard } from '@glimstone/vue';
+import { FieldRow, Pill, SubCard, Table } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { PermsScan } from '@/api/unraid';
 import { fmtSize } from '@/core/format';
@@ -37,9 +37,9 @@ const kept = computed(() => props.st.scan?.kept ?? []);
     <SubCard class="u-warnwell">
       <div class="u-alert"><G n="IconWarning" /><div><b>{{ t('unraid.perms.warnTitle') }}</b>
         <p>{{ t('unraid.perms.warnText', { name: st.name }) }}{{ st.scan ? t(kept.length ? 'unraid.perms.keptSome' : 'unraid.perms.keptNone') : '' }}</p></div></div>
-      <table v-if="kept.length" class="tbl u-tbl">
-        <tr v-for="k in kept" :key="k.path"><td class="mono">{{ k.path }}</td><td><Pill>{{ t(`unraid.perms.reason.${k.reason}`) }}</Pill></td><td class="glim-num r">{{ k.size != null ? fmtSize(k.size) || '0 B' : '' }}</td></tr>
-      </table>
+      <Table v-if="kept.length" class="u-tbl" :label="t('unraid.perms.folder')" :columns="[{ key: 'path' }, { key: 'reason' }, { key: 'size', end: true }]" :rows="kept.map((k) => ({ path: k.path, reason: t(`unraid.perms.reason.${k.reason}`), size: k.size != null ? fmtSize(k.size) || '0 B' : '' }))">
+        <template #cell="{ column, value }"><Pill v-if="column.key === 'reason'">{{ value }}</Pill><template v-else>{{ value }}</template></template>
+      </Table>
     </SubCard>
   </template>
 </template>

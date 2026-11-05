@@ -3,7 +3,6 @@
 .cf-row + .cf-row { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--carbon-text) 7%, transparent); }
 .cf-name { grid-area: name; display: flex; align-items: center; gap: .6rem; min-width: 0; }
 .cf-name b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cf-name .tile { flex: none; }
 .cf-sides { grid-area: sides; display: flex; flex-direction: column; gap: .25rem; padding-left: 2.35rem; }
 .cf-side { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
 .cf-side .glim-pill { justify-self: auto; }
@@ -22,8 +21,7 @@
 .u-alert > svg { width: 1.4rem; height: 1.4rem; color: #FF832B; }
 .u-alert b { font-size: 15px; }
 .u-alert p { margin: .25rem 0 0; color: var(--carbon-text-sub); line-height: 1.45; }
-.u-tbl td { font-size: 13px; }
-.u-tbl td.mono { font-size: 12.5px; }
+.u-tbl td:first-child { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 12.5px; }
 .u-also { color: var(--carbon-text-muted); font-size: 12px; }
 .u-plan { margin: 0; color: var(--carbon-text-sub); font-size: 13px; padding: 0 .1rem; }
 .u-space { padding: .85rem 1rem; border-radius: var(--radius-control); background: color-mix(in srgb, #FF832B 10%, var(--carbon-surface2)); box-shadow: inset 0 0 0 1px color-mix(in srgb, #FF832B 45%, transparent); }

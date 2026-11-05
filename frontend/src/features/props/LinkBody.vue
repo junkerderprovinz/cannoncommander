@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Symbolische Verknüpfung: what the link points to, where it lies and what it is called.
 import { pathField } from '@/ui/picker';
-import { FieldRow, PathField, Pill, SubCard, TextField } from '@glimstone/vue';
+import { FieldRow, FieldRowGroup, PathField, Pill, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, ref, watchEffect } from 'vue';
 import { join, parent, split } from '@/files/paths';
 import { t } from '@/i18n';
@@ -30,9 +30,11 @@ onMounted(() => setTimeout(() => name.value?.input?.select(), 20));
 
 <template>
   <SubCard class="bk-form" @keydown.enter="pressPrimary">
-    <FieldRow :label="t('props.pointsTo')" :hint="t('props.pointsToTip')"><TextField id="l-target" v-model="st.target" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
-    <FieldRow :label="t('props.lies')"><PathField v-model="st.where" v-bind="pathField('l-where')" /></FieldRow>
-    <FieldRow :label="t('props.name')"><TextField id="l-name" ref="name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="t('props.pointsTo')" :hint="t('props.pointsToTip')"><TextField id="l-target" v-model="st.target" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
+      <FieldRow :label="t('props.lies')"><PathField v-model="st.where" v-bind="pathField('l-where')" /></FieldRow>
+      <FieldRow :label="t('props.name')"><TextField id="l-name" ref="name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" /></FieldRow>
+    </FieldRowGroup>
     <FieldRow :label="t('props.yields')">
       <span id="l-final" class="bk-finalw">
         <Pill v-if="okDir === false" tone="fail">{{ t('ui.noFolder') }}</Pill>

@@ -26,7 +26,6 @@
 .a-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .8125rem; align-content: start; }
 .a-tile { display: flex; align-items: center; gap: .7rem; height: 3.4rem; padding: 0 .9rem 0 .6rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); text-align: left; }
 .a-tile:hover, .a-tile:focus-visible { background: var(--accent); color: var(--accent-contrast); }
-.a-tile:hover .tile svg, .a-tile:focus-visible .tile svg { color: var(--accent-contrast); }
 .a-tile b { display: block; font-weight: 600; }
 .a-tile small { display: block; font-size: 12px; opacity: .75; }
 .a-tiles .glim-empty { grid-column: 1 / -1; }
@@ -52,8 +51,6 @@
 .a-release > .a-text { margin: 0 0 .4rem; }
 .a-newlist { display: flex; flex-direction: column; gap: 2px; }
 .a-newrow { display: grid; grid-template-columns: .5rem 2rem 1fr auto; align-items: center; gap: .6rem; min-height: 2.6rem; padding: 0 .5rem; border-radius: var(--radius-control); background: var(--carbon-surface); }
-.a-newrow .tile { width: 1.75rem; height: 1.75rem; border-radius: var(--radius-control); display: grid; place-items: center; }
-.a-newrow .tile svg { width: 1rem; height: 1rem; color: var(--accent-glyph); }
 .a-newrow.seen .t { color: var(--carbon-text-muted); }
 .a-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
 .a-stat { gap: .1rem; }

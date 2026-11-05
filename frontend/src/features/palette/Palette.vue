@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // The command search over the list: type to narrow, the arrows or Tab to pick, Enter to run.
-import { Kbd, RowMark } from '@glimstone/vue';
+import { GlyphField, Kbd, RowMark } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { type Line, lines, type Row } from './rows';
 import { pal, pick } from './state';
 
 const q = ref('');
-const input = ref<HTMLInputElement | null>(null);
+const input = ref<InstanceType<typeof GlyphField> | null>(null);
 const list = ref<HTMLElement | null>(null);
 const rows = computed<Line[]>(() => (pal.open ? lines(q.value) : []));
 const pickable = computed(() => rows.value.flatMap((r, i) => ('head' in r ? [] : [i])));
@@ -20,9 +20,9 @@ watch(() => pal.open, async (open) => {
   q.value = '';
   cur.value = pickable.value[0] ?? -1;
   await nextTick();
-  input.value?.focus();
+  input.value?.input?.focus();
 }, { immediate: true });
-watch(() => pal.focus, () => input.value?.focus());
+watch(() => pal.focus, () => input.value?.input?.focus());
 
 // The first row brings the list back to its top, so the heading above it shows again.
 watch(cur, async (i) => {
@@ -51,8 +51,8 @@ const row = (r: Line) => r as Row;
 <template>
   <div v-if="pal.open" class="pal-scrim glim-modal-backdrop" @mousedown="onDown">
     <div class="pal glim-card" role="dialog" :aria-label="t('palette.title')">
-      <label class="glim-input pal-q"><G n="IconSearch" /><input id="pal-q" ref="input" v-model="q" role="combobox" aria-expanded="true" aria-controls="pal-list"
-        aria-autocomplete="list" :aria-activedescendant="cur >= 0 ? `pal-${cur}` : ''" :placeholder="t('palette.placeholder')" autocomplete="off" spellcheck="false" @keydown="onKey"></label>
+      <GlyphField id="pal-q" ref="input" v-model="q" class="pal-q" :glyph="glyphComponent('IconSearch')" role="combobox" aria-expanded="true" aria-controls="pal-list"
+        aria-autocomplete="list" :aria-activedescendant="cur >= 0 ? `pal-${cur}` : ''" :placeholder="t('palette.placeholder')" autocomplete="off" spellcheck="false" @keydown="onKey" />
       <div id="pal-list" ref="list" class="pal-list" role="listbox" :aria-label="t('palette.list')">
         <template v-if="rows.length">
           <template v-for="(r, i) in rows" :key="i">
