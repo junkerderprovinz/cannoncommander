@@ -30,6 +30,13 @@ fi
 
 as_user=""
 if [ "$PUID" != 0 ]; then
+  # fusermount3 refuses to mount a remote for a user without a name.
+  if ! cut -d: -f3 /etc/passwd | grep -qx "$PUID"; then
+    echo "cannoncommander:x:$PUID:$PGID::/config:/sbin/nologin" >> /etc/passwd
+  fi
+  if ! cut -d: -f3 /etc/group | grep -qx "$PGID"; then
+    echo "cannoncommander:x:$PGID:" >> /etc/group
+  fi
   # Only what the server writes itself, never the shares.
   find "$config_dir" \( ! -user "$PUID" -o ! -group "$PGID" \) -exec chown "$PUID:$PGID" {} +
   as_user="su-exec $PUID:$PGID"
