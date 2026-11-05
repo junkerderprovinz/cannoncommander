@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -231,4 +232,48 @@ func TestStreamWorksWithoutAClientID(t *testing.T) {
 func jsonID(id uint64) string {
 	b, _ := json.Marshal(id)
 	return string(b)
+}
+
+func TestAStreamEndsWhenItsSignInIsGone(t *testing.T) {
+	old := heartbeatTick
+	heartbeatTick = 10 * time.Millisecond
+	t.Cleanup(func() { heartbeatTick = old })
+	root := t.TempDir()
+	fs, err := ccfs.New(nil, ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: root})
+	if err != nil {
+		t.Fatal(err)
+	}
+	h := hub.New(hub.Options{})
+	var gone atomic.Bool
+	auth := func(_ http.ResponseWriter, r *http.Request) (*users.User, error) {
+		if gone.Load() {
+			return nil, v1.Errorf(http.StatusUnauthorized, "login required")
+		}
+		u := &users.User{}
+		u.Username = "anna"
+		return u, nil
+	}
+	r := v1.NewRouter(v1.Deps{FS: fs, Hub: h}, auth)
+	Routes(r)
+	handler, err := r.Handler()
+	if err != nil {
+		t.Fatal(err)
+	}
+	srv := httptest.NewServer(handler)
+	t.Cleanup(srv.Close)
+
+	frames := open(t, srv, "c1", "")
+	waitConnected(t, h, frames)
+	gone.Store(true)
+	deadline := time.After(3 * time.Second)
+	for {
+		select {
+		case _, ok := <-frames:
+			if !ok {
+				return
+			}
+		case <-deadline:
+			t.Fatal("the stream went on without a sign in")
+		}
+	}
 }

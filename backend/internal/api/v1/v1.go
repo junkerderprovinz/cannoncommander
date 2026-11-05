@@ -91,6 +91,10 @@ func (r *Router) Handle(pattern string, h HandlerFunc) {
 	op.handler = h
 }
 
+// Authenticator returns what finds the user behind a request, for a handler that
+// runs for a long time and has to ask again.
+func (r *Router) Authenticator() Authenticator { return r.auth }
+
 // Operations returns every operation in contract order.
 func (r *Router) Operations() []*Operation { return r.ops }
 
