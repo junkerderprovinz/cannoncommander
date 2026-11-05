@@ -47,7 +47,7 @@ const missingTip = (r: RenameRow) => t('rename.withoutTip', { names: r.missing!.
   <div class="bk-grid2 bk-top" @keydown.enter="pressPrimary">
     <SubCard :title="t('rename.mask')" class="bk-form">
       <FieldRow :label="t('rename.preset')" :hint="t('rename.presetTip')">
-        <span id="m-presets" class="bk-range"><Select id="m-preset" v-model="st.preset" :options="selectOptions(presets)" rows="menu" />
+        <span id="m-presets" class="bk-range"><Select id="m-preset" v-model="st.preset" :trigger-attrs="{ 'data-dd': JSON.stringify(presets) }" :options="selectOptions(presets)" rows="menu" />
           <IconButton id="m-psave" :tip="t('rename.savePreset')" :glyph="glyphComponent('IconSave')" @click="savePreset" />
           <IconButton id="m-pdel" :tip="t('rename.dropPreset')" :glyph="glyphComponent('IconTrash')" :disabled="!st.preset.startsWith('own:')" @click="dropPreset" /></span>
       </FieldRow>
@@ -66,7 +66,7 @@ const missingTip = (r: RenameRow) => t('rename.withoutTip', { names: r.missing!.
         <FieldRow :label="t('rename.find')"><TextField id="m-find" v-model="st.o.find" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
         <FieldRow :label="t('rename.replace')"><TextField id="m-repl" v-model="st.o.repl" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
         <FieldRow :label="t('rename.regex')" :hint="t('rename.regexTip')"><Toggle id="m-regex" v-model="st.o.regex" /></FieldRow>
-        <FieldRow :label="t('rename.case')"><Select id="m-case" v-model="st.o.case" :options="selectOptions(caseOptions)" rows="menu" /></FieldRow>
+        <FieldRow :label="t('rename.case')"><Select id="m-case" v-model="st.o.case" :trigger-attrs="{ 'data-val': st.o.case }" :options="selectOptions(caseOptions)" rows="menu" /></FieldRow>
       </FieldRowGroup>
     </SubCard>
   </div>

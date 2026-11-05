@@ -65,6 +65,13 @@
 button.cv-playbtn:not(:disabled):is(:hover, :focus-visible) { background: color-mix(in srgb, var(--accent) 85%, var(--carbon-text)); color: var(--accent-contrast); }
 .cv-vbar { display: flex; align-items: center; gap: .75rem; padding: .55rem .2rem 0; font-size: 12px; }
 .cv-playbtn svg { width: 1.1rem; height: 1.1rem; }
+.cv-track { width: 100%; display: flex; align-items: center; gap: .6rem; height: 2.1rem; padding: 0 .55rem; border-radius: var(--radius-control); text-align: left; cursor: pointer; }
+.cv-track svg { width: 1.05rem; height: 1.05rem; color: var(--accent-glyph); flex: none; }
+.cv-track span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-track .meta { margin-left: auto; font-size: 12px; color: var(--carbon-text-muted); flex: none; }
+.cv-track:hover { background: var(--carbon-hover); }
+.cv-track.cur { background: var(--accent); color: var(--accent-contrast); }
+.cv-track.cur :is(svg, .meta) { color: var(--accent-contrast); }
 .cv-tracks { grid-column: 1 / -1; gap: 2px; align-self: start; }
 .cv-audio.compact { grid-template-columns: 1fr; padding: 0; gap: .7rem; overflow: visible; }
 .cv-audio.compact .cv-cover { grid-row: auto; width: 60%; justify-self: center; }

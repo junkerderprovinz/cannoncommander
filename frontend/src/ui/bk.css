@@ -4,6 +4,9 @@
 .bk-finalw { display: flex; gap: .4rem; align-items: center; min-width: 0; flex: 1; max-width: 30rem; justify-content: flex-end; }
 .bk-final { font-size: 12.5px; color: var(--carbon-text); }
 .bk-grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .6rem 1.6rem; }
+/* Two columns of rows, each lining up its own names. */
+.bk-fields2 { grid-template-columns: repeat(2, max-content minmax(0, 1fr)); column-gap: 1.6rem; }
+.bk-fields2 > .glim-field-row { grid-column: span 2; column-gap: .75rem; }
 .bk-fill { flex: 1; min-height: 0; overflow: hidden; }
 .bk-list { display: flex; flex-direction: column; gap: 1px; overflow: auto; min-height: 0; flex: 1; }
 .bk-row { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; align-items: center; gap: .6rem; height: 2.25rem; padding: 0 .45rem; border-radius: var(--radius-control); text-align: left; width: 100%; cursor: pointer; flex: none; }
@@ -28,5 +31,6 @@
   .bk-finalw { max-width: none; width: 100%; margin-left: 0; }
   .bk.win { max-width: calc(100vw - 3rem); }
   .bk-grid2 { grid-template-columns: minmax(0, 1fr); }
+  .bk-fields2 { grid-template-columns: max-content minmax(0, 1fr); }
 }
 @media (max-width: 760px) { .bk-range { flex-wrap: wrap; margin-left: 0; } }
