@@ -61,7 +61,7 @@ func (r *Resolver) check(u *users.User, p string, perm Perm, carried bool) (Loca
 	if u == nil {
 		return Location{}, ErrForbidden
 	}
-	if reservedPath(loc.Path) {
+	if reservedPath(loc.Path) || r.isClosed(loc.Path) {
 		if perm&writePerms != 0 {
 			return Location{}, ErrForbidden
 		}
@@ -113,7 +113,7 @@ func (r *Resolver) check(u *users.User, p string, perm Perm, carried bool) (Loca
 // Visible reports whether u may see the entry name inside the folder dir,
 // which the caller already passed through Check.
 func (r *Resolver) Visible(u *users.User, dir Location, name string) bool {
-	if u == nil || Reserved(name) {
+	if u == nil || Reserved(name) || r.isClosed(path.Join(dir.Path, name)) {
 		return false
 	}
 	if dir.Virtual() {
@@ -231,12 +231,18 @@ type carryRules interface {
 // deep inside a folder. Links are not followed, since such operations take them
 // as links.
 func (r *Resolver) Whole(ctx context.Context, u *users.User, loc Location, perm Perm) error {
-	if r.rules == nil || loc.Virtual() || loc.InArchive() {
+	if loc.Virtual() || loc.InArchive() {
 		return nil
 	}
 	top, err := r.entryAt(loc)
 	if err != nil {
 		return err
+	}
+	if r.holdsClosed(top.Path) {
+		return ErrProtected
+	}
+	if r.rules == nil {
+		return nil
 	}
 	if b, ok := r.rules.(belowRules); ok && !b.Below(u, top.Path) {
 		return nil
@@ -258,6 +264,9 @@ func (r *Resolver) Carry(ctx context.Context, u *users.User, loc Location, perm 
 	top, err := r.entryAt(loc)
 	if err != nil {
 		return err
+	}
+	if r.holdsClosed(top.Path) {
+		return ErrProtected
 	}
 	if !b.CarryBelow(u, top.Path) {
 		return nil
