@@ -47,5 +47,7 @@ export default defineConfig(({ mode }) => ({
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.ts'],
+    // The fixture holds dates the prototype wrote out in this zone.
+    env: { TZ: 'Europe/Vienna' },
   },
 }));
