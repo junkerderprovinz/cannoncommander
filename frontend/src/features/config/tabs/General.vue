@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { Card } from '@glimstone/vue';
+import { pathField } from '@/ui/picker';
+import { segItems } from '@/ui/kit';
+import { Button, Card, FieldRow, PathField, Selector, Toggle } from '@glimstone/vue';
 import { ref } from 'vue';
 import { admin, exists } from '@/api/admin';
-import { G } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { useUser } from '@/stores/user';
-import Frow from '@/ui/Frow.vue';
 import { c, fail, P } from '@/features/config/shared';
-import PathField from '@/ui/PathField.vue';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
 
 const start = ref(prefs.startFolder || '/mnt/user/downloads');
 const field = ref<InstanceType<typeof PathField> | null>(null);
@@ -51,23 +48,23 @@ async function testNote() {
 
 <template>
   <Card :title="c('general.use')">
-    <Frow :label="c('general.start')" :tip="c('general.startTip')"><PathField id="a-start" ref="field" v-model="start" @change="save" @picked="save" /></Frow>
-    <Frow :label="c('general.dblclick')" :tip="c('general.dblclickTip')"><Seg v-model="P.dblclick" :options="[['open', c('general.open')], ['preview', c('general.preview')], ['download', c('general.download')]]" /></Frow>
+    <FieldRow :label="c('general.start')" :hint="c('general.startTip')"><PathField ref="field" v-model="start" v-bind="pathField('a-start')" @change="save" @picked="save" /></FieldRow>
+    <FieldRow :label="c('general.dblclick')" :hint="c('general.dblclickTip')"><Selector v-model="P.dblclick" :items="segItems([['open', c('general.open')], ['preview', c('general.preview')], ['download', c('general.download')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </Card>
   <Card :title="c('general.delete')">
-    <Frow :label="c('general.confirm')" :tip="c('general.confirmTip')"><Sw v-model="P.confirmDelete" /></Frow>
-    <Frow :label="c('general.trash')" :tip="c('general.trashTip')"><Sw v-model="P.trash" /></Frow>
-    <Frow v-if="P.trash" :label="c('general.keep')" :tip="c('general.keepTip')"><Seg v-model="P.trashDays" :options="[7, 14, 30, 90].map((n) => [n, c('general.days', { n })])" /></Frow>
+    <FieldRow :label="c('general.confirm')" :hint="c('general.confirmTip')"><Toggle v-model="P.confirmDelete" /></FieldRow>
+    <FieldRow :label="c('general.trash')" :hint="c('general.trashTip')"><Toggle v-model="P.trash" /></FieldRow>
+    <FieldRow v-if="P.trash" :label="c('general.keep')" :hint="c('general.keepTip')"><Selector v-model="P.trashDays" :items="segItems([7, 14, 30, 90].map((n) => [n, c('general.days', { n })]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </Card>
   <Card :title="c('general.jobs')">
-    <Frow :label="c('general.jobMode')" :tip="c('general.jobModeTip')"><Seg v-model="P.jobMode" :options="[['serial', c('general.serial')], ['parallel', c('general.parallel')]]" /></Frow>
-    <Frow :label="c('general.speedCap')" :tip="c('general.speedCapTip')"><Seg v-model="P.speedCap" :options="CAPS" /></Frow>
-    <Frow :label="c('general.parityWait')" :tip="c('general.parityWaitTip')"><Sw :model-value="P.parityWait !== false" @update:model-value="P.parityWait = $event" /></Frow>
-    <Frow :label="c('general.notifyDone')" :tip="c('general.notifyDoneTip')"><Sw :model-value="!!P.notifyDone" @update:model-value="notifyDone" /></Frow>
-    <Frow :label="c('general.notifyUnraid')" :tip="c('general.notifyUnraidTip')"><Sw v-model="P.notifyUnraid" /></Frow>
+    <FieldRow :label="c('general.jobMode')" :hint="c('general.jobModeTip')"><Selector v-model="P.jobMode" :items="segItems([['serial', c('general.serial')], ['parallel', c('general.parallel')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('general.speedCap')" :hint="c('general.speedCapTip')"><Selector v-model="P.speedCap" :items="segItems(CAPS)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('general.parityWait')" :hint="c('general.parityWaitTip')"><Toggle :model-value="P.parityWait !== false" @update:model-value="P.parityWait = $event" /></FieldRow>
+    <FieldRow :label="c('general.notifyDone')" :hint="c('general.notifyDoneTip')"><Toggle :model-value="!!P.notifyDone" @update:model-value="notifyDone" /></FieldRow>
+    <FieldRow :label="c('general.notifyUnraid')" :hint="c('general.notifyUnraidTip')"><Toggle v-model="P.notifyUnraid" /></FieldRow>
     <template v-if="P.notifyDone || P.notifyUnraid">
-      <Frow :label="c('general.notifyAfter')" :tip="c('general.notifyAfterTip')"><Seg v-model="P.notifyAfter" :options="AFTER" /></Frow>
-      <Frow :label="c('general.tryIt')"><button id="f-notify-test" class="btn" @click="testNote"><G n="IconSendTest" />{{ c('general.sendTest') }}</button></Frow>
+      <FieldRow :label="c('general.notifyAfter')" :hint="c('general.notifyAfterTip')"><Selector v-model="P.notifyAfter" :items="segItems(AFTER)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="c('general.tryIt')"><Button id="f-notify-test" :label="c('general.sendTest')" label-key="IconSendTest" @click="testNote" /></FieldRow>
     </template>
   </Card>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // The panel foot on the array: how the share keeps its files, or a warning on a disk share, and the cache filter.
+import { Pill } from '@glimstone/vue';
 import { computed } from 'vue';
 import { run } from '@/core/actions';
 import { G } from '@/core/glyphs';
@@ -31,6 +32,6 @@ const badge = computed(() => {
 </script>
 
 <template>
-  <span v-if="badge" class="pill u-store" :data-tip="badge.tip"><G :n="badge.glyph" />{{ badge.label }}</span>
-  <button v-if="tab.cacheOnly" class="pill state u-filter" data-run="cacheOnly" :data-tip="t('unraid.filterOff')" @click="run('cacheOnly')">{{ t('unraid.cachePill') }}<G n="IconClose" /></button>
+  <Pill v-if="badge" class="u-store" :data-tip="badge.tip"><G :n="badge.glyph" />{{ badge.label }}</Pill>
+  <button v-if="tab.cacheOnly" class="glim-pill glim-pill--state u-filter" data-run="cacheOnly" :data-tip="t('unraid.filterOff')" @click="run('cacheOnly')">{{ t('unraid.cachePill') }}<G n="IconClose" /></button>
 </template>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // The rights repair before it runs: who will own the files, which rights they get, how many there are and which
 // folders keep their own owners.
+import { FieldRow, Pill } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { PermsScan } from '@/api/unraid';
 import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
-import Frow from '@/ui/Frow.vue';
 
 export interface PermsState { path: string; name: string; scan: PermsScan | null }
 const props = defineProps<{ st: PermsState }>();
@@ -29,16 +29,16 @@ const kept = computed(() => props.st.scan?.kept ?? []);
   </div>
   <template v-else>
     <div class="well glim-well bk-form"><div class="eyebrow">{{ t('unraid.perms.folder') }}</div>
-      <Frow :label="t('unraid.perms.folder')"><span class="bk-val bk-pathv"><span class="bk-path mono" :title="st.path"><bdi>{{ st.path }}</bdi></span></span></Frow>
-      <Frow :label="t('unraid.perms.owner')" :tip="t('unraid.perms.ownerTip')"><span class="bk-val mono">{{ t('unraid.perms.ownerValue') }}</span></Frow>
-      <Frow :label="t('unraid.perms.rights')" :tip="t('unraid.perms.rightsTip')"><span class="bk-val mono">{{ t('unraid.perms.rightsValue') }}</span></Frow>
-      <Frow :label="t('unraid.perms.affects')"><span class="bk-val glim-num">{{ affects }}</span></Frow>
+      <FieldRow :label="t('unraid.perms.folder')"><span class="bk-val bk-pathv"><span class="bk-path mono" :title="st.path"><bdi>{{ st.path }}</bdi></span></span></FieldRow>
+      <FieldRow :label="t('unraid.perms.owner')" :hint="t('unraid.perms.ownerTip')"><span class="bk-val mono">{{ t('unraid.perms.ownerValue') }}</span></FieldRow>
+      <FieldRow :label="t('unraid.perms.rights')" :hint="t('unraid.perms.rightsTip')"><span class="bk-val mono">{{ t('unraid.perms.rightsValue') }}</span></FieldRow>
+      <FieldRow :label="t('unraid.perms.affects')"><span class="bk-val glim-num">{{ affects }}</span></FieldRow>
     </div>
     <div class="well glim-well u-warnwell">
       <div class="u-alert"><G n="IconWarning" /><div><b>{{ t('unraid.perms.warnTitle') }}</b>
         <p>{{ t('unraid.perms.warnText', { name: st.name }) }}{{ st.scan ? t(kept.length ? 'unraid.perms.keptSome' : 'unraid.perms.keptNone') : '' }}</p></div></div>
       <table v-if="kept.length" class="tbl u-tbl">
-        <tr v-for="k in kept" :key="k.path"><td class="mono">{{ k.path }}</td><td><span class="pill">{{ t(`unraid.perms.reason.${k.reason}`) }}</span></td><td class="glim-num r">{{ k.size != null ? fmtSize(k.size) || '0 B' : '' }}</td></tr>
+        <tr v-for="k in kept" :key="k.path"><td class="mono">{{ k.path }}</td><td><Pill>{{ t(`unraid.perms.reason.${k.reason}`) }}</Pill></td><td class="glim-num r">{{ k.size != null ? fmtSize(k.size) || '0 B' : '' }}</td></tr>
       </table>
     </div>
   </template>

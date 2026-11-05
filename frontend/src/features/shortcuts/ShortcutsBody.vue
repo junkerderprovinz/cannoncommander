@@ -12,5 +12,5 @@ const rows = computed(() => [
 </script>
 
 <template>
-  <div class="well glim-well"><div class="kbd-grid"><div v-for="([label, key], n) in rows" :key="n"><span>{{ label }}</span><Kbd class="kbd">{{ key }}</Kbd></div></div></div>
+  <div class="well glim-well"><div class="kbd-grid"><div v-for="([label, key], n) in rows" :key="n"><span>{{ label }}</span><Kbd>{{ key }}</Kbd></div></div></div>
 </template>

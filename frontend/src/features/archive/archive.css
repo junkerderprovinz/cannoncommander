@@ -1,13 +1,10 @@
 .bk-namef { display: flex; gap: .4rem; align-items: center; flex: 0 1 22rem; margin-left: auto; }
-.bk-namef .glim-input { flex: 1; min-width: 0; }
 .at-list { display: flex; flex-direction: column; gap: 2px; }
 .at-row { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) 9rem auto 8rem; gap: .6rem; align-items: center; height: 2.4rem; padding: 0 .45rem; border-radius: var(--radius-control); }
-.at-row .bar { height: .4rem; }
 .at-row .at-state { justify-self: end; display: inline-flex; align-items: center; gap: .3rem; }
 .at-row .at-state svg { width: .75rem; height: .75rem; }
 .at-row.good .at-state { color: var(--status-ok-text, #6fdc8c); }
 .at-row.bad .at-state { background: color-mix(in srgb, var(--status-fail-solid, #ff6b72) 22%, transparent); color: var(--status-fail-text, #ff8389); }
-.at-row.bad .bar i { background: var(--status-fail-solid, #ff6b72); }
 .row:has(.bk-damaged) .name .t { color: var(--status-fail-text, #ff8389); }
-.row .name .pill.bk-damaged { margin-left: .5rem; height: 1.2rem; font-size: 11px; }
-@media (max-width: 760px) { .at-row { grid-template-columns: 1.75rem minmax(0, 1fr) auto; } .at-row .bar, .at-row .pill.glim-num { display: none; } }
+.row .name .glim-pill.bk-damaged { margin-left: .5rem; height: 1.2rem; font-size: 11px; }
+@media (max-width: 760px) { .at-row { grid-template-columns: 1.75rem minmax(0, 1fr) auto; } .at-row .bar, .at-row .glim-pill.glim-num { display: none; } }

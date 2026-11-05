@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Card, ColorPicker, InfoBubble } from '@glimstone/vue';
+import { Select } from '@glimstone/vue/Select';
+import { Button, Card, ColorPicker, FieldRow, Selector, Toggle } from '@glimstone/vue';
 import { ACCENTS, applyAccent, COLOR_NAMES_DE, DEFAULT_ACCENT, RAINBOW } from '@glimstone/core';
 import { computed, ref } from 'vue';
 import { G } from '@/core/glyphs';
@@ -7,12 +8,8 @@ import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { locale, setLanguage } from '@/i18n';
 import { found, motionPressed, rainbowSwitched, shapePressed } from '../eggs';
-import Dropdown from '@/ui/Dropdown.vue';
-import Frow from '@/ui/Frow.vue';
 import { c, P } from '@/features/config/shared';
-import { pickerWords } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
+import { pickerWords, segItems, selectOptions } from '@/ui/kit';
 
 const PRESETS = ACCENTS.map((a) => a.hex);
 const same = (a: string[], b: string[]) => a.length === b.length && a.every((x, i) => x.toLowerCase() === b[i]!.toLowerCase());
@@ -78,37 +75,38 @@ function resetOrder() {
 
 <template>
   <Card :title="c('look.display')">
-    <Frow :label="c('look.language')"><Dropdown v-model="language" :options="[['de', '🇩🇪 Deutsch'], ['en', '🇬🇧 English']]" /></Frow>
-    <Frow :label="c('look.theme')" :tip="c('look.themeTip')"><Seg v-model="P.theme" :options="[['dark', c('look.dark'), 'IconMoon'], ['light', c('look.light'), 'IconSun'], ['system', c('look.system'), 'IconThemeSystem']]" /></Frow>
-    <Frow :label="c('look.corners')" :tip="c('look.cornersTip')"><Seg id="a-shape" :model-value="prefs.shape" :options="shapes" @press="(v) => setPref('shape', shapePressed(v, prefs.shape))" /></Frow>
-    <Frow :label="c('look.motion')" :tip="c('look.motionTip')"><Seg id="a-motion" :model-value="prefs.motion" :options="motions" @press="(v) => setPref('motion', motionPressed(v, prefs.motion))" /></Frow>
-    <Frow :label="c('look.quiet')" :tip="c('look.quietTip')"><Sw v-model="P.quietToasts" /></Frow>
-    <Frow :label="c('look.order')" :tip="c('look.orderTip')"><button id="a-order-reset" class="btn" :disabled="!ordered" @click="resetOrder"><G n="IconRefresh" />{{ c('look.reset') }}</button></Frow>
+    <FieldRow :label="c('look.language')"><Select v-model="language" :options="selectOptions([['de', '🇩🇪 Deutsch'], ['en', '🇬🇧 English']])" rows="menu" /></FieldRow>
+    <FieldRow :label="c('look.theme')" :hint="c('look.themeTip')"><Selector v-model="P.theme" :items="segItems([['dark', c('look.dark'), 'IconMoon'], ['light', c('look.light'), 'IconSun'], ['system', c('look.system'), 'IconThemeSystem']])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('look.corners')" :hint="c('look.cornersTip')"><Selector id="a-shape" :model-value="prefs.shape" :items="segItems(shapes)" size="sm" activation="manual" inline button-height pairs-on-phone @press="(v) => setPref('shape', shapePressed(v, prefs.shape))" /></FieldRow>
+    <FieldRow :label="c('look.motion')" :hint="c('look.motionTip')"><Selector id="a-motion" :model-value="prefs.motion" :items="segItems(motions)" size="sm" activation="manual" inline button-height pairs-on-phone @press="(v) => setPref('motion', motionPressed(v, prefs.motion))" /></FieldRow>
+    <FieldRow :label="c('look.quiet')" :hint="c('look.quietTip')"><Toggle v-model="P.quietToasts" /></FieldRow>
+    <FieldRow :label="c('look.order')" :hint="c('look.orderTip')"><Button id="a-order-reset" :label="c('look.reset')" label-key="IconRefresh" :disabled="!ordered" @click="resetOrder" /></FieldRow>
   </Card>
   <Card :title="c('look.labels')">
-    <Frow :label="c('look.buttons')" :tip="c('look.buttonsTip')"><Seg v-model="P.labelsButtons" :options="labelModes" /></Frow>
-    <Frow :label="c('look.sidebar')"><Seg v-model="P.labelsSidebar" :options="labelModes" /></Frow>
-    <Frow :label="c('look.tabs')" :tip="c('look.tabsTip')"><Seg v-model="P.labelsTabs" :options="labelModes" /></Frow>
-    <Frow :label="c('look.bottombar')" :tip="c('look.bottombarTip')"><Seg v-model="P.labelsBottombar" :options="labelModes" /></Frow>
+    <FieldRow :label="c('look.buttons')" :hint="c('look.buttonsTip')"><Selector v-model="P.labelsButtons" :items="segItems(labelModes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('look.sidebar')"><Selector v-model="P.labelsSidebar" :items="segItems(labelModes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('look.tabs')" :hint="c('look.tabsTip')"><Selector v-model="P.labelsTabs" :items="segItems(labelModes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('look.bottombar')" :hint="c('look.bottombarTip')"><Selector v-model="P.labelsBottombar" :items="segItems(labelModes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </Card>
   <Card :title="c('look.colours')">
     <!-- While the rainbow owns the colours the accent row stays visible but dimmed, and its bubble says how to get it back. -->
-    <div class="frow a-accent" :class="{ dim: prefs.rainbow }"><span class="lab"><span class="a-dimmable">{{ c('look.accent') }}</span><template v-if="prefs.rainbow">{{ ' ' }}<InfoBubble :tip="c('look.accentDimTip')" /></template></span>
+    <FieldRow class="a-accent" :class="{ dim: prefs.rainbow }" :label="c('look.accent')" :hint="prefs.rainbow ? c('look.accentDimTip') : undefined">
+      <template #label><span class="a-dimmable">{{ c('look.accent') }}</span></template>
       <div class="a-swatches a-dimmable">
         <button v-for="(hex, i) in presets" :key="i" class="a-swatch" :style="{ '--c': hex }" :data-preset="i" :aria-pressed="hex.toLowerCase() === prefs.accent.toLowerCase()" :disabled="prefs.rainbow" :data-tip="c('look.preset', { n: i + 1 })" :aria-label="c('look.preset', { n: i + 1 })" @click="preset($event, i)"></button>
         <button id="a-accent-reset" class="a-reset" :data-tip="c('look.accentReset')" :aria-label="c('look.accentReset')" :disabled="accentDefault || prefs.rainbow" @click="resetAccent"><G n="IconResetArrow" /></button>
       </div>
-    </div>
-    <Frow :label="c('look.rainbow')" :tip="c('look.rainbowTip')"><Sw id="a-rainbow" v-model="rainbow" /></Frow>
+    </FieldRow>
+    <FieldRow :label="c('look.rainbow')" :hint="c('look.rainbowTip')"><Toggle id="a-rainbow" v-model="rainbow" /></FieldRow>
     <!-- Everything under the rainbow only shows while it is on: a palette editor under a rainbow that is not running offers edits with no effect. -->
     <template v-if="prefs.rainbow">
-      <Frow v-if="found.disco || prefs.disco" :label="c('look.disco')" :tip="c('look.discoTip')"><Sw v-model="P.disco" data-pref="disco" /></Frow>
-      <Frow :label="c('look.reactiveMode')" :tip="c('look.reactiveTip')"><Sw v-model="P.reactive" /></Frow>
-      <Frow :label="c('look.rotate')" :tip="c('look.rotateTip')"><Sw id="a-rotate" v-model="rotate" /></Frow>
-      <div class="frow"><span class="lab">{{ c('look.palette') }}</span><div class="a-swatches">
+      <FieldRow v-if="found.disco || prefs.disco" :label="c('look.disco')" :hint="c('look.discoTip')"><Toggle v-model="P.disco" data-pref="disco" /></FieldRow>
+      <FieldRow :label="c('look.reactiveMode')" :hint="c('look.reactiveTip')"><Toggle v-model="P.reactive" /></FieldRow>
+      <FieldRow :label="c('look.rotate')" :hint="c('look.rotateTip')"><Toggle id="a-rotate" v-model="rotate" /></FieldRow>
+      <FieldRow :label="c('look.palette')"><div class="a-swatches">
         <button v-for="(hex, i) in palette" :key="i" class="a-swatch" :style="{ '--c': hex }" :data-palette="i" :data-tip="c('look.paletteN', { n: i + 1 })" :aria-label="c('look.paletteN', { n: i + 1 })" @click="slot($event, i)"></button>
         <button id="a-palette-reset" class="a-reset" :data-tip="c('look.paletteReset')" :aria-label="c('look.paletteReset')" :disabled="same(palette, RAINBOW)" @click="setPref('palette', [...RAINBOW])"><G n="IconResetArrow" /></button>
-      </div></div>
+      </div></FieldRow>
     </template>
   </Card>
   <ColorPicker v-if="pop" :key="pop.anchor.dataset.preset ?? 'p' + pop.anchor.dataset.palette" :model-value="pop.hex" :anchor="pop.anchor" :names="locale() === 'de' ? COLOR_NAMES_DE : false" :text="pickerWords()" @input="live" @close="closed" />

@@ -2,10 +2,11 @@
 // Speicherbelegung like TreeSize: one folder as a tree sorted by size, as a treemap, by file type and as its largest
 // files. Whatever it lists can be picked and deleted right here. The numbers come from tools/diskusage, one folder
 // at a time, so opening a branch of the tree asks for that folder.
+import { IconButton, Meter, Selector } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { type DiskUsage, tools } from '@/api/tools';
 import { fmtDate, fmtSize } from '@/core/format';
-import { G, glyphOf } from '@/core/glyphs';
+import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { menu } from '@/core/menu';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
@@ -17,8 +18,7 @@ import { t } from '@/i18n';
 import { deleteItems } from '@/features/trash/trash';
 import { usePanels } from '@/stores/panels';
 import Crumbs from '@/ui/Crumbs.vue';
-import { copyText, folderSteps, num, plural, setFoot } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
+import { copyText, folderSteps, num, plural, setFoot, segItems } from '@/ui/kit';
 import { ended } from './ended';
 import { fit, outermost, pct, squarify } from './treemap';
 
@@ -287,14 +287,14 @@ onMounted(() => {
 onBeforeUnmount(() => { ro?.disconnect(); steps.close(); });
 
 const rowClass = (r: Row) => ['du-row', { sel: sel.has(r.path), cur: focus.value === r.path, dir: r.dir }];
-const share = (part: number, whole: number) => ({ w: pct(part, whole).toFixed(1) + '%', n: Math.round(pct(part, whole)) });
+const share = (part: number, whole: number) => ({ n: Math.round(pct(part, whole)) });
 const rel = (r: Row) => (r.at === cur.value ? '' : r.at.slice(cur.value === '/' ? 1 : cur.value.length + 1));
 const bodyClass = computed(() => `du-body du-${mode.value}`);
 const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', map: 'img' })[mode.value]);
 </script>
 
 <template>
-  <div class="du-top"><div id="du-crumbs" class="pathbar du-pathbar"><Crumbs :path="cur" attr="data-du-cd" @go="go" /></div><Seg id="du-view" :model-value="mode" :options="VIEWS" @press="setView" /></div>
+  <div class="du-top"><div id="du-crumbs" class="pathbar du-pathbar"><Crumbs :path="cur" attr="data-du-cd" @go="go" /></div><Selector id="du-view" :model-value="mode" :items="segItems(VIEWS)" size="sm" activation="manual" inline button-height pairs-on-phone @press="setView" /></div>
   <div class="well glim-well du-well">
     <div id="du-body" ref="body" :class="bodyClass" tabindex="0" :role="role" @click="click" @dblclick="dblclick" @contextmenu="context" @keydown="key">
       <template v-if="mode === 'tree'">
@@ -302,7 +302,7 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
         <template v-if="rows.length">
           <div v-for="(r, i) in rows" :key="r.path" :class="rowClass(r)" :data-dui="i" role="treeitem" :aria-level="r.depth + 1" :aria-selected="sel.has(r.path)" :aria-expanded="r.canOpen ? open.has(r.path) : undefined">
             <span class="du-name" :style="{ '--d': r.depth }"><button v-if="r.canOpen" class="tree-tog" :class="{ open: open.has(r.path) }" data-du-tog tabindex="-1" :aria-label="open.has(r.path) ? t('diskusage.collapse') : t('diskusage.expand')"><G n="IconExpand" /></button><span v-else class="tree-tog"></span><G :n="glyphOf(r)" /><span class="n">{{ r.name }}</span></span>
-            <span class="glim-num r">{{ fmtSize(r.size) || '0 B' }}</span><span class="du-share"><span class="bar"><i :style="{ width: share(r.size, r.whole).w }"></i></span><span class="glim-num">{{ share(r.size, r.whole).n }} %</span></span>
+            <span class="glim-num r">{{ fmtSize(r.size) || '0 B' }}</span><span class="du-share"><Meter quiet :threshold="2" :value="share(r.size, r.whole).n / 100" :label="r.name" /><span class="glim-num">{{ share(r.size, r.whole).n }} %</span></span>
             <span class="glim-num r">{{ r.dir ? num(r.files) : '' }}</span><span class="glim-num r">{{ r.dir ? num(r.dirs) : '' }}</span>
             <span class="glim-num r muted">{{ r.time ? fmtDate(r.time) : '' }}</span>
           </div>
@@ -310,12 +310,12 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
         <div v-else-if="here" class="empty"><G n="IconFolder" /><div>{{ t('diskusage.emptyFolder') }}</div></div>
       </template>
       <template v-else-if="mode === 'largest'">
-        <div v-if="kind" class="du-kind"><G :n="kind.glyph" /><span>{{ t('diskusage.only', { name: kind.name }) }}</span><button class="btn icon" data-du-allkinds :data-tip="t('diskusage.allKinds')" :aria-label="t('diskusage.allKinds')"><G n="IconClose" /></button></div>
+        <div v-if="kind" class="du-kind"><G :n="kind.glyph" /><span>{{ t('diskusage.only', { name: kind.name }) }}</span><IconButton :tip="t('diskusage.allKinds')" :glyph="glyphComponent('IconClose')" data-du-allkinds /></div>
         <template v-if="rows.length">
           <div v-for="(r, i) in rows" :key="r.path" :class="rowClass(r)" :data-dui="i" role="option" :aria-selected="sel.has(r.path)">
             <span class="du-name"><G :n="glyphOf(r)" /><span class="n">{{ r.name }}</span></span>
             <span class="du-path mono muted"><bdi>{{ rel(r) }}</bdi></span>
-            <span class="glim-num r">{{ fmtSize(r.size) || '0 B' }}</span><span class="du-share"><span class="bar"><i :style="{ width: share(r.size, r.whole).w }"></i></span><span class="glim-num">{{ share(r.size, r.whole).n }} %</span></span>
+            <span class="glim-num r">{{ fmtSize(r.size) || '0 B' }}</span><span class="du-share"><Meter quiet :threshold="2" :value="share(r.size, r.whole).n / 100" :label="r.name" /><span class="glim-num">{{ share(r.size, r.whole).n }} %</span></span>
             <span class="glim-num r muted">{{ r.time ? fmtDate(r.time) : '' }}</span>
           </div>
         </template>
@@ -327,7 +327,7 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
             <span class="du-name"><G :n="KIND_GLYPH[x.kind] || 'IconFile'" /><span class="n">{{ kindName(x.kind, x.name) }}</span></span>
             <span class="du-exts muted">{{ x.exts.slice(0, 5).map((e) => '.' + e).join(' ') }}</span>
             <span class="glim-num r muted">{{ plural(x.files, 'ui.files') }}</span>
-            <span class="glim-num r">{{ fmtSize(x.size) || '0 B' }}</span><span class="du-share"><span class="bar"><i :style="{ width: share(x.size, types.whole).w }"></i></span><span class="glim-num">{{ share(x.size, types.whole).n }} %</span></span>
+            <span class="glim-num r">{{ fmtSize(x.size) || '0 B' }}</span><span class="du-share"><Meter quiet :threshold="2" :value="share(x.size, types.whole).n / 100" :label="x.name" /><span class="glim-num">{{ share(x.size, types.whole).n }} %</span></span>
           </button>
         </template>
         <div v-else-if="here" class="empty"><G n="IconFile" /><div>{{ t('diskusage.noFiles') }}</div></div>

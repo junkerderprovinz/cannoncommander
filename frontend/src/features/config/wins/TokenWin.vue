@@ -1,29 +1,27 @@
 <script setup lang="ts">
 // A token is shown once, right after it is made, and the window stays until it is confirmed as copied.
-import { CopyField } from '@glimstone/vue';
+import { CopyField, FieldRow, Selector, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { me, statusOf, type Token } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Frow from '@/ui/Frow.vue';
 import { c, fail, stepFoot } from '@/features/config/shared';
-import Seg from '@/ui/Seg.vue';
-import { copyWords } from '@/ui/kit';
+import { copyWords, segItems } from '@/ui/kit';
 
 const props = defineProps<{ win: WinEntry; taken: string[]; done: () => void }>();
 const name = ref(''), rights = ref<Token['rights']>('r'), expires = ref('365');
 const secret = ref<string | null>(null);
-const el = ref<HTMLInputElement | null>(null);
+const el = ref<InstanceType<typeof TextField> | null>(null);
 
 async function create() {
   const n = name.value.trim();
-  if (!n) return fail(c('security.needTokenName'), el.value);
-  if (props.taken.includes(n)) return fail(c('nameTaken'), el.value);
+  if (!n) return fail(c('security.needTokenName'), el.value?.input);
+  if (props.taken.includes(n)) return fail(c('nameTaken'), el.value?.input);
   let got: { secret: string };
   try {
     got = await me.createToken(n, rights.value, expires.value === 'never' ? null : Number(expires.value));
   } catch (e) {
-    return fail(statusOf(e) === 409 ? c('nameTaken') : c('notSaved'), el.value);
+    return fail(statusOf(e) === 409 ? c('nameTaken') : c('notSaved'), el.value?.input);
   }
   secret.value = got.secret;
   props.win.locked = true;
@@ -36,11 +34,11 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('security.create'),
 <template>
   <template v-if="secret">
     <div class="well glim-well a-text"><p>{{ c('security.copyNow') }}</p></div>
-    <div class="well glim-well"><Frow :label="name"><CopyField class="w" :value="secret" :label="name" :text="copyWords()" /></Frow></div>
+    <div class="well glim-well"><FieldRow :label="name"><CopyField class="glim-field--grow" :value="secret" :label="name" :text="copyWords()" /></FieldRow></div>
   </template>
   <div v-else class="well glim-well">
-    <Frow :label="c('sources.name')" :tip="c('security.tokenNameTip')"><input id="a-tkname" ref="el" v-model="name" class="glim-input m" :placeholder="c('security.tokenNamePh')"></Frow>
-    <Frow :label="c('security.rights')" :tip="c('security.rightsTip')"><Seg v-model="rights" :options="[['r', c('security.read')], ['rw', c('security.readWrite')]]" /></Frow>
-    <Frow :label="c('shares.expires')"><Seg v-model="expires" :options="[['30', c('general.days', { n: 30 })], ['365', c('security.year')], ['never', c('shares.never_')]]" /></Frow>
+    <FieldRow :label="c('sources.name')" :hint="c('security.tokenNameTip')"><TextField id="a-tkname" ref="el" v-model="name" :placeholder="c('security.tokenNamePh')" width="medium" /></FieldRow>
+    <FieldRow :label="c('security.rights')" :hint="c('security.rightsTip')"><Selector v-model="rights" :items="segItems([['r', c('security.read')], ['rw', c('security.readWrite')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('shares.expires')"><Selector v-model="expires" :items="segItems([['30', c('general.days', { n: 30 })], ['365', c('security.year')], ['never', c('shares.never_')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </div>
 </template>

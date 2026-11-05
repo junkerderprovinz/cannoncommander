@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Dropping files into a link that collects them. They go one after the other into the folder on screen, and a name
 // that is taken gets a number, since a link never replaces a file.
+import { Button, Card, ProgressBar } from '@glimstone/vue';
 import { computed, reactive, ref } from 'vue';
 import { ApiError } from '@/api/client';
 import type { ShareApi } from '@/api/share';
@@ -67,13 +68,12 @@ function picked() {
 </script>
 
 <template>
-  <section class="glim-card sp-card sp-up" :class="{ over }" @dragover.prevent="over = true" @dragleave="over = false" @drop.prevent="drop">
-    <span class="notch">{{ s('uploadTitle') }}</span>
+  <Card class="glim-card sp-card sp-up" :class="{ over }" :title="s('uploadTitle')" @dragover.prevent="over = true" @dragleave="over = false" @drop.prevent="drop">
     <div class="sp-drop">
       <G n="IconUpload" />
       <p class="sp-text">{{ s('uploadText') }}</p>
       <div class="sp-uprow">
-        <button type="button" class="btn key primary" data-sp="pick" @click="input?.click()"><G n="IconUpload" />{{ s('pick') }}</button>
+        <Button class="glim-btn-key" :label="s('pick')" label-key="IconUpload" tone="accent" data-sp="pick" @click="input?.click()" />
         <span v-if="left" class="muted glim-num">{{ left }}</span>
       </div>
       <input ref="input" type="file" multiple hidden data-sp="files" @change="picked">
@@ -82,8 +82,8 @@ function picked() {
       <div v-for="(r, i) in list" :key="i" class="sp-send" :class="r.state">
         <G :n="r.state === 'fail' ? 'IconWarning' : r.state === 'done' || r.state === 'skipped' ? 'IconCheck' : 'IconUpload'" />
         <span class="sp-nm">{{ r.state === 'fail' ? r.note : r.state === 'skipped' ? s('skipped', { name: r.name }) : r.state === 'done' ? s('sent', { name: r.name }) : s('sending', { name: r.name }) }}</span>
-        <span v-if="r.state === 'run' || r.state === 'wait'" class="sp-bar"><span :style="{ width: progress(r) + '%' }"></span></span>
+        <ProgressBar v-if="r.state === 'run' || r.state === 'wait'" :value="progress(r) / 100" :label="r.name" />
       </div>
     </div>
-  </section>
+  </Card>
 </template>

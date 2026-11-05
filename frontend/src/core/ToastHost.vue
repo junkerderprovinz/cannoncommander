@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from '@glimstone/vue';
 import { armToast, dropToast, holdToast, type Toast, toasts } from './toast';
 
 function act(t: Toast) {
@@ -10,7 +11,7 @@ function act(t: Toast) {
 <template>
   <Teleport to="#toasts">
     <div v-for="t in toasts" :key="t.id" class="toast glim-card" :class="t.kind" @mouseenter="holdToast(t)" @mouseleave="armToast(t)">
-      <span class="dot"></span><span>{{ t.text }}</span><button v-if="t.act" class="btn" @click="act(t)">{{ t.act.label }}</button>
+      <span class="dot"></span><span>{{ t.text }}</span><Button v-if="t.act" :label="t.act.label" :label-key="null" @click="act(t)" />
     </div>
   </Teleport>
 </template>

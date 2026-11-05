@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // Through /mnt/diskN and /mnt/user the same file can sit on both ends of a copy; Unraid then cuts it to 0 bytes.
 // This window names the files and offers the two safe ways.
+import { segItems } from '@/ui/kit';
+import { FieldRow, Selector } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { UnraidTransferReport } from '@/api/ops';
 import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { diskName } from '@/features/jobs/label';
-import Frow from '@/ui/Frow.vue';
-import Seg from '@/ui/Seg.vue';
 
 export interface SafeWay { way: 'disk' | 'share'; disk: string }
 const props = defineProps<{ kind: 'copy' | 'move'; from: string; dest: string; trap: NonNullable<UnraidTransferReport['trap']>; st: SafeWay; plan: string }>();
@@ -27,8 +27,8 @@ const disks = computed(() => props.trap.targets.map((d) => [d.disk, t('transfer.
     </table>
   </div>
   <div class="well glim-well bk-form"><div class="eyebrow">{{ t('transfer.safeWay') }}</div>
-    <Frow :label="t('transfer.wayLabel')" :tip="t('transfer.wayTip')"><Seg id="u-way" v-model="st.way" :options="ways" /></Frow>
-    <div v-if="st.way === 'disk'" id="u-diskrow"><Frow :label="t('transfer.targetDisk')" :tip="t('transfer.targetDiskTip', { disk: diskName(trap.device) })"><Seg id="u-disk" v-model="st.disk" :options="disks" /></Frow></div>
+    <FieldRow :label="t('transfer.wayLabel')" :hint="t('transfer.wayTip')"><Selector id="u-way" v-model="st.way" :items="segItems(ways)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <div v-if="st.way === 'disk'" id="u-diskrow"><FieldRow :label="t('transfer.targetDisk')" :hint="t('transfer.targetDiskTip', { disk: diskName(trap.device) })"><Selector id="u-disk" v-model="st.disk" :items="segItems(disks)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow></div>
     <p id="u-plan" class="u-plan">{{ plan }}</p>
   </div>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // A folder in the preview bar: its pictures when it is mostly pictures, else its first entries.
+import { Pill } from '@glimstone/vue';
 import { computed, onMounted } from 'vue';
 import { fmtSize } from '@/core/format';
 import { G, glyphOf } from '@/core/glyphs';
@@ -37,7 +38,7 @@ onMounted(async () => {
   </template>
   <template v-else>
     <div class="cv-mini">
-      <div v-for="k in top.slice(0, 12)" :key="k.name" class="cv-mrow"><span class="tile"><G :n="glyphOf(k)" /></span><span class="t">{{ k.name }}</span><span class="pill glim-num">{{ fmtSize(k.size) || '0 B' }}</span></div>
+      <div v-for="k in top.slice(0, 12)" :key="k.name" class="cv-mrow"><span class="tile"><G :n="glyphOf(k)" /></span><span class="t">{{ k.name }}</span><Pill class="glim-num">{{ fmtSize(k.size) || '0 B' }}</Pill></div>
     </div>
     <div v-if="top.length > 12" class="muted cv-more">{{ t('viewer.and', { rest: plural(top.length - 12, 'moreObjects') }) }}</div>
   </template>

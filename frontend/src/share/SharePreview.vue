@@ -1,10 +1,11 @@
 <script setup lang="ts">
 // A file of the link over the page: pictures, video, audio, PDF and text the way the browser shows them. Arrows
 // step through the files of the folder, Escape closes.
+import { IconButton } from '@glimstone/vue';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { PublicItem } from '@/api/share';
 import { fmtSize } from '@/core/format';
-import { G, glyphOf } from '@/core/glyphs';
+import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { previewKind } from './preview';
 
@@ -44,10 +45,10 @@ onBeforeUnmount(() => removeEventListener('keydown', onKey));
         <G :n="glyphOf(item)" />
         <span class="sp-vname">{{ item.name }}</span>
         <span class="muted glim-num">{{ fmtSize(item.size) }}</span>
-        <button v-if="many" type="button" class="btn icon" :data-tip="s('prev')" :aria-label="s('prev')" @click="emit('step', -1)"><G n="IconBack" /></button>
-        <button v-if="many" type="button" class="btn icon" :data-tip="s('next')" :aria-label="s('next')" @click="emit('step', 1)"><G n="IconForward" /></button>
-        <a class="btn icon" :href="download" :data-tip="s('download')" :aria-label="s('download')"><G n="IconDownload" /></a>
-        <button type="button" class="btn icon" data-sp="close" :data-tip="s('close')" :aria-label="s('close')" @click="emit('close')"><G n="IconClose" /></button>
+        <IconButton v-if="many" :tip="s('prev')" :glyph="glyphComponent('IconBack')" @click="emit('step', -1)" />
+        <IconButton v-if="many" :tip="s('next')" :glyph="glyphComponent('IconForward')" @click="emit('step', 1)" />
+        <a class="glim-btn-bare glim-icon-btn" :href="download" :data-tip="s('download')" :aria-label="s('download')"><G n="IconDownload" /></a>
+        <IconButton :tip="s('close')" :glyph="glyphComponent('IconClose')" data-sp="close" @click="emit('close')" />
       </div>
       <div class="sp-vbody" :class="previewKind(item.name)">
         <img v-if="previewKind(item.name) === 'img'" :src="src" :alt="item.name">

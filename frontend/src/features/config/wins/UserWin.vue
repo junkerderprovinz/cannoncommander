@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import { PasswordField } from '@glimstone/vue';
+import { pathField } from '@/ui/picker';
+import { Button, FieldRow, PasswordField, PathField, Pill, Selector, TextField, Toggle } from '@glimstone/vue';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Group, type Role, type User } from '@/api/admin';
-import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { useUser } from '@/stores/user';
-import Frow from '@/ui/Frow.vue';
 import { attempt, c, fail, stepFoot } from '@/features/config/shared';
-import PathField from '@/ui/PathField.vue';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
-import { eyeWords } from '@/ui/kit';
+import { eyeWords, segItems } from '@/ui/kit';
 import { ROLES, roleName } from '../roles';
 
 const props = defineProps<{ win: WinEntry; user: User | null; users: User[]; groups: Group[]; saved: () => void }>();
@@ -54,25 +50,25 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: isNew ? c('users.crea
 
 <template>
   <div class="well glim-well">
-    <Frow :label="c('users.loginName')" :tip="c('users.loginNameTip')"><input id="a-uname" v-model="d.name" class="glim-input m" :readonly="self" :placeholder="c('users.loginNamePh')"></Frow>
-    <Frow :label="c('users.displayName')"><input id="a-ufull" v-model="d.full" class="glim-input m" :placeholder="c('users.displayNamePh')"></Frow>
+    <FieldRow :label="c('users.loginName')" :hint="c('users.loginNameTip')"><TextField id="a-uname" v-model="d.name" :readonly="self" :placeholder="c('users.loginNamePh')" width="medium" /></FieldRow>
+    <FieldRow :label="c('users.displayName')"><TextField id="a-ufull" v-model="d.full" :placeholder="c('users.displayNamePh')" width="medium" /></FieldRow>
   </div>
   <div class="well glim-well">
-    <Frow :label="c('users.role')" :tip="c('users.roleTip')"><Seg id="a-urole" v-model="d.role" :options="ROLES.map((r) => [r, roleName(r)])" /></Frow>
-    <Frow :label="c('users.scope')" :tip="c('users.scopeTip')"><PathField id="a-uscope" v-model="d.scope" /></Frow>
+    <FieldRow :label="c('users.role')" :hint="c('users.roleTip')"><Selector id="a-urole" v-model="d.role" :items="segItems(ROLES.map((r) => [r, roleName(r)]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('users.scope')" :hint="c('users.scopeTip')"><PathField v-model="d.scope" v-bind="pathField('a-uscope')" /></FieldRow>
   </div>
   <div class="well glim-well">
     <div class="eyebrow">{{ c('users.groups') }}</div>
-    <Frow v-for="g in groups" :key="g.name" :label="g.name" :tip="g.note"><Sw v-model="inGroup[g.name]!" :data-ug="g.name" /></Frow>
+    <FieldRow v-for="g in groups" :key="g.name" :label="g.name" :hint="g.note"><Toggle v-model="inGroup[g.name]!" :data-ug="g.name" /></FieldRow>
     <div v-if="!groups.length" class="muted">{{ c('users.noGroups') }}</div>
   </div>
   <div v-if="!self" class="well glim-well">
     <template v-if="pwOpen">
-      <Frow :label="c('users.password')" :tip="c('users.pwTip')"><PasswordField id="a-upw" v-model="pw1" class="m" autocomplete="new-password" :text="eyeWords()" /></Frow>
-      <Frow :label="c('users.repeat')"><PasswordField id="a-upw2" v-model="pw2" class="m" autocomplete="new-password" :text="eyeWords()" /></Frow>
+      <FieldRow :label="c('users.password')" :hint="c('users.pwTip')"><PasswordField id="a-upw" v-model="pw1" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
+      <FieldRow :label="c('users.repeat')"><PasswordField id="a-upw2" v-model="pw2" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
     </template>
-    <Frow v-else :label="c('users.password')" :tip="self ? c('users.ownPwTip') : c('users.newPwTip')">
-      <span class="a-ctl"><span class="pill">{{ c('users.pwSet') }}</span><button class="btn" @click="openPassword"><G n="IconKey" />{{ c('users.pwNew') }}</button></span>
-    </Frow>
+    <FieldRow v-else :label="c('users.password')" :hint="self ? c('users.ownPwTip') : c('users.newPwTip')">
+      <span class="a-ctl"><Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="openPassword" /></span>
+    </FieldRow>
   </div>
 </template>

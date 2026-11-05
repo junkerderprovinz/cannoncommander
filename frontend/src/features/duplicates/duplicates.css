@@ -10,4 +10,4 @@
 .bk-copy .bk-path { font-size: 12.5px; }
 .bk-copy.gone .bk-path { color: var(--carbon-text-muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--carbon-text) 35%, transparent); }
 .bk-swl { display: flex; }
-@media (max-width: 760px) { .bk-copy { padding-left: .45rem; grid-template-columns: minmax(0, 1fr) auto; } .bk-copy > .pill { display: none; } }
+@media (max-width: 760px) { .bk-copy { padding-left: .45rem; grid-template-columns: minmax(0, 1fr) auto; } .bk-copy > .glim-pill { display: none; } }

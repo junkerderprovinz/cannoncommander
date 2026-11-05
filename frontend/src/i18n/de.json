@@ -259,7 +259,6 @@
     "bookmarkExists": "Diese Verknüpfung gibt es schon",
     "bookmarkAdded": "Verknüpfung „{name}“ angelegt",
     "renameTitle": "Verknüpfung umbenennen",
-    "name": "Name",
     "rename": "Umbenennen"
   },
   "files": {

@@ -1,16 +1,15 @@
 <script setup lang="ts">
 // The copy and move window: where from and where to, how many and how much, and what to do with names that exist.
+import { pathField } from '@/ui/picker';
+import { segItems, selectOptions } from '@/ui/kit';
+import { Select } from '@glimstone/vue/Select';
+import { FieldRow, PathField, Selector, Toggle } from '@glimstone/vue';
 import { computed, watch } from 'vue';
 import type { Preflight, Rule } from '@/api/ops';
 import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
 import type { Entry } from '@/files/entries';
 import { t } from '@/i18n';
-import Dropdown from '@/ui/Dropdown.vue';
-import Frow from '@/ui/Frow.vue';
-import PathField from '@/ui/PathField.vue';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
 import ItemChips from './ItemChips.vue';
 import { ensureDir, placeName, sizeOf } from './paths';
 import { RULES } from './rules';
@@ -49,12 +48,12 @@ watch(linkable, (ok) => { if (!ok) props.st.way = props.st.kind; });
   <ItemChips :items="st.items" />
   <SpacePanel v-if="st.pf?.unraid?.space" :space="st.pf.unraid.space" :dest="clean(st.dest)" @dest="(p) => ensureDir(p).then(() => { st.dest = p; })" />
   <div class="well glim-well">
-    <Frow :label="t('transfer.to')"><PathField id="dest" v-model="st.dest" /></Frow>
-    <Frow v-if="linkable" :label="t('transfer.way')" :tip="t('transfer.linkTip')"><Seg id="how" v-model="st.way" :options="ways" /></Frow>
-    <Frow :label="t('transfer.clash')" :tip="t('transfer.clashTip')"><Dropdown id="clash" v-model="st.rule" :options="RULES()" /></Frow>
+    <FieldRow :label="t('transfer.to')"><PathField v-model="st.dest" v-bind="pathField('dest')" /></FieldRow>
+    <FieldRow v-if="linkable" :label="t('transfer.way')" :hint="t('transfer.linkTip')"><Selector id="how" v-model="st.way" :items="segItems(ways)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="t('transfer.clash')" :hint="t('transfer.clashTip')"><Select id="clash" v-model="st.rule" :options="selectOptions(RULES())" rows="menu" /></FieldRow>
     <details class="xmore"><summary>{{ t('transfer.moreOptions') }}</summary>
-      <Frow :label="t('transfer.keepAttrs')" :tip="t('transfer.keepAttrsTip')"><Sw v-model="st.keepAttrs" /></Frow>
-      <Frow :label="t('transfer.verify')" :tip="t('transfer.verifyTip')"><Sw v-model="st.verify" /></Frow>
+      <FieldRow :label="t('transfer.keepAttrs')" :hint="t('transfer.keepAttrsTip')"><Toggle v-model="st.keepAttrs" /></FieldRow>
+      <FieldRow :label="t('transfer.verify')" :hint="t('transfer.verifyTip')"><Toggle v-model="st.verify" /></FieldRow>
     </details>
   </div>
 </template>

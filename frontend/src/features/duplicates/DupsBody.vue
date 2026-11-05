@@ -1,5 +1,7 @@
 <script setup lang="ts">
 // Doppelte Dateien: the server's duplicates job groups true copies, and the copies picked here go to the trash.
+import { pathField } from '@/ui/picker';
+import { Button, FieldRow, PathField, Pill, ProgressBar, Selector, Toggle } from '@glimstone/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { type Job, ops } from '@/api/ops';
 import { type DupCopy, type Duplicates, tools } from '@/api/tools';
@@ -13,11 +15,7 @@ import { pctOf } from '@/features/jobs/label';
 import { undoAct } from '@/features/undo/act';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
-import PathField from '@/ui/PathField.vue';
-import Frow from '@/ui/Frow.vue';
-import { num, plural, setFoot } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
+import { num, plural, setFoot, segItems } from '@/ui/kit';
 import Tile from '@/ui/Tile.vue';
 
 const props = defineProps<{ root: string; win: WinEntry; close: () => void }>();
@@ -129,26 +127,26 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
 
 <template>
   <div class="well glim-well bk-form"><div class="bk-grid2">
-    <Frow :label="t('duplicates.in')"><PathField id="u-in" v-model="where" /></Frow>
-    <Frow :label="t('duplicates.by')" :tip="t('duplicates.byTip')"><Seg id="u-by" v-model="by" :options="BY" /></Frow>
+    <FieldRow :label="t('duplicates.in')"><PathField v-model="where" v-bind="pathField('u-in')" /></FieldRow>
+    <FieldRow :label="t('duplicates.by')" :hint="t('duplicates.byTip')"><Selector id="u-by" v-model="by" :items="segItems(BY)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </div></div>
   <div class="well glim-well bk-fill bk-dupwell">
     <div class="bk-tools"><span id="u-sum" class="eyebrow">{{ sum }}</span>
-      <button class="btn" data-bk-keep="new" :disabled="!res?.groups.length" @click="keep('new')"><G n="IconLatest" />{{ t('duplicates.keepNew') }}</button>
-      <button class="btn" data-bk-keep="old" :disabled="!res?.groups.length" @click="keep('old')"><G n="IconFirst" />{{ t('duplicates.keepOld') }}</button>
-      <button class="btn" data-bk-keep="none" :disabled="!res?.groups.length" @click="keep('none')"><G n="IconClearSelection" />{{ t('duplicates.keepAll') }}</button>
+      <Button :label="t('duplicates.keepNew')" label-key="IconLatest" data-bk-keep="new" :disabled="!res?.groups.length" @click="keep('new')" />
+      <Button :label="t('duplicates.keepOld')" label-key="IconFirst" data-bk-keep="old" :disabled="!res?.groups.length" @click="keep('old')" />
+      <Button :label="t('duplicates.keepAll')" label-key="IconClearSelection" data-bk-keep="none" :disabled="!res?.groups.length" @click="keep('none')" />
     </div>
     <div id="u-list" class="bk-list">
       <div v-if="missing" class="empty"><G n="IconFolder" /><div>{{ t('duplicates.noFolder') }}</div></div>
-      <div v-else-if="!res" class="bk-scan"><div>{{ t('duplicates.scanning', { path: root }) }}</div><div class="bar"><i id="u-bar" :style="{ width: pct + '%' }"></i></div><div id="u-n" class="glim-num">{{ t('duplicates.files', { n: num(seen) }) }}</div></div>
+      <div v-else-if="!res" class="bk-scan"><div>{{ t('duplicates.scanning', { path: root }) }}</div><ProgressBar id="u-bar" class="bar" :value="pct / 100" :label="t('duplicates.scanning', { path: root })" /><div id="u-n" class="glim-num">{{ t('duplicates.files', { n: num(seen) }) }}</div></div>
       <template v-else-if="res.groups.length">
         <section v-for="(g, gi) in res.groups" :key="g.sha256 + gi" class="bk-group">
-          <div class="bk-ghead"><Tile :k="{ name: g.name }" /><span class="bk-name">{{ by === 'name' ? g.name : t('duplicates.sameSize', { n: g.copies.length }) }}</span><span class="pill glim-num">{{ t('duplicates.each', { copies: copies(g.copies.length), size: fmtSize(g.size) }) }}</span></div>
+          <div class="bk-ghead"><Tile :k="{ name: g.name }" /><span class="bk-name">{{ by === 'name' ? g.name : t('duplicates.sameSize', { n: g.copies.length }) }}</span><Pill class="glim-num">{{ t('duplicates.each', { copies: copies(g.copies.length), size: fmtSize(g.size) }) }}</Pill></div>
           <div v-for="(c, ci) in g.copies" :key="c.path" class="bk-copy" :class="{ gone: drop.has(c.path) }">
             <span class="bk-path mono" :title="c.path"><bdi>{{ by === 'name' ? c.at : c.path }}</bdi></span>
-            <span v-if="g.copies[0]!.mtime === g.copies.at(-1)!.mtime"></span><span v-else-if="ci === 0" class="pill">{{ t('duplicates.newest') }}</span><span v-else-if="ci === g.copies.length - 1" class="pill">{{ t('duplicates.oldest') }}</span><span v-else></span>
-            <span class="pill glim-num">{{ fmtTime(Date.parse(c.mtime)) }}</span>
-            <span class="bk-swl"><Sw :model-value="drop.has(c.path)" :data-bk-dup="`${gi}:${ci}`" :label="t('duplicates.dropLabel', { path: c.path })" :data-tip="t('duplicates.toTrash')" @update:model-value="(v: boolean) => toggle(gi, c, v)" /></span>
+            <span v-if="g.copies[0]!.mtime === g.copies.at(-1)!.mtime"></span><Pill v-else-if="ci === 0">{{ t('duplicates.newest') }}</Pill><Pill v-else-if="ci === g.copies.length - 1">{{ t('duplicates.oldest') }}</Pill><span v-else></span>
+            <Pill class="glim-num">{{ fmtTime(Date.parse(c.mtime)) }}</Pill>
+            <span class="bk-swl"><Toggle :model-value="drop.has(c.path)" :data-bk-dup="`${gi}:${ci}`" :label="t('duplicates.dropLabel', { path: c.path })" :data-tip="t('duplicates.toTrash')" hide-label @update:model-value="(v: boolean) => toggle(gi, c, v)" /></span>
           </div>
         </section>
       </template>

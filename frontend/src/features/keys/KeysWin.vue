@@ -1,17 +1,16 @@
 <script setup lang="ts">
 // F1: every action with its key, grouped as in the menu bar. A click on a key listens for the new combination.
-import { Kbd } from '@glimstone/vue';
+import { segItems } from '@/ui/kit';
+import { FieldRow, IconButton, Kbd, Selector, TextField } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { type Action, actions, labelOf } from '@/core/actions';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { comboOf } from '@/core/keymap';
 import type { MenuEntry } from '@/core/menu';
 import { MENUS, menuName } from '@/core/menus';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
-import Frow from '@/ui/Frow.vue';
 import { keysFirst, stepFoot } from '@/features/config/shared';
-import Seg from '@/ui/Seg.vue';
 import { assign, changed, check, combosOf, keyLabel, type KeyMap, mainCombo, MODIFIER_KEYS, preset, reset } from './keys';
 
 const props = defineProps<{ win: WinEntry; current: KeyMap; defaults: KeyMap; defaultLabel: Record<string, string | undefined>; which: 'cc' | 'tc'; apply: (map: KeyMap, which: 'cc' | 'tc') => void }>();
@@ -82,8 +81,8 @@ onBeforeUnmount(() => stopKeys());
 
 <template>
   <div class="well glim-well">
-    <Frow :label="t('keys.preset')" :tip="t('keys.presetTip')"><Seg id="kb-preset" v-model="which" :options="[['cc', 'CannonCommander'], ['tc', 'Total Commander']]" @update:model-value="(v) => pickPreset(v!)" /></Frow>
-    <Frow :label="t('keys.search')"><input id="kb-q" v-model="query" class="glim-input m" :placeholder="t('keys.searchPh')" autocomplete="off"></Frow>
+    <FieldRow :label="t('keys.preset')" :hint="t('keys.presetTip')"><Selector id="kb-preset" v-model="which" :items="segItems([['cc', 'CannonCommander'], ['tc', 'Total Commander']])" size="sm" activation="manual" inline button-height pairs-on-phone @update:model-value="(v) => pickPreset(v as 'cc' | 'tc')" /></FieldRow>
+    <FieldRow :label="t('keys.search')"><TextField id="kb-q" v-model="query" :placeholder="t('keys.searchPh')" autocomplete="off" width="medium" /></FieldRow>
   </div>
   <div class="well glim-well kb-well">
     <div id="kb-list" class="kb-list">
@@ -93,12 +92,12 @@ onBeforeUnmount(() => stopKeys());
           <span class="kb-name"><G v-if="actions[id]!.g" :n="actions[id]!.g!" /><span v-else class="ph"></span>{{ name(actions[id]!) }}</span>
           <button class="kb-key" :data-kb-rec="id" :aria-label="t('keys.change', { action: name(actions[id]!) })" @click="listen(id)">
             <span v-if="rec === id" class="muted">{{ t('keys.press') }}</span>
-            <template v-else-if="main(id)"><Kbd class="kbd">{{ keyLabel(main(id)!) }}</Kbd><span v-if="combosOf(map, id).length > 1" class="muted">+{{ combosOf(map, id).length - 1 }}</span></template>
+            <template v-else-if="main(id)"><Kbd>{{ keyLabel(main(id)!) }}</Kbd><span v-if="combosOf(map, id).length > 1" class="muted">+{{ combosOf(map, id).length - 1 }}</span></template>
             <span v-else class="muted">{{ t('keys.none') }}</span>
           </button>
           <span class="kb-acts">
-            <button v-if="main(id)" class="btn icon" :data-kb-clear="id" :data-tip="t('keys.clear')" :aria-label="t('keys.clear')" @click="map = Object.fromEntries(Object.entries(map).filter(([, a]) => a !== id)); stop()"><G n="IconClose" /></button>
-            <button v-if="changed(map, defaults, id)" class="btn icon" :data-kb-reset="id" :data-tip="t('keys.undo')" :aria-label="t('keys.undo')" @click="map = reset(map, defaults, id); stop()"><G n="IconUndo" /></button>
+            <IconButton v-if="main(id)" :tip="t('keys.clear')" :glyph="glyphComponent('IconClose')" :data-kb-clear="id" @click="map = Object.fromEntries(Object.entries(map).filter(([, a]) => a !== id)); stop()" />
+            <IconButton v-if="changed(map, defaults, id)" :tip="t('keys.undo')" :glyph="glyphComponent('IconUndo')" :data-kb-reset="id" @click="map = reset(map, defaults, id); stop()" />
           </span>
           <div v-if="rec === id && pending" class="kb-warn">{{ pending.msg }}</div>
         </div>
@@ -106,6 +105,6 @@ onBeforeUnmount(() => stopKeys());
       <div v-if="!shown.length" class="empty"><G n="IconSearch" /><div>{{ t('keys.noMatch') }}</div></div>
     </div>
     <div class="eyebrow kb-fixedhead">{{ t('keys.fixedHead') }}</div>
-    <div class="kbd-grid"><div v-for="k in FIXED" :key="k"><span>{{ t(`keys.fixedKeys.${k}.label`) }}</span><Kbd class="kbd">{{ t(`keys.fixedKeys.${k}.key`) }}</Kbd></div></div>
+    <div class="kbd-grid"><div v-for="k in FIXED" :key="k"><span>{{ t(`keys.fixedKeys.${k}.label`) }}</span><Kbd>{{ t(`keys.fixedKeys.${k}.key`) }}</Kbd></div></div>
   </div>
 </template>

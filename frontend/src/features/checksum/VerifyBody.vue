@@ -1,13 +1,12 @@
 <script setup lang="ts">
 // Prüfsummen prüfen: a list from a file or pasted lines, and what each line found.
+import { pathField } from '@/ui/picker';
+import { FieldRow, PathField, Pill, ProgressBar, Selector, TextArea, TextField } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import type { Algo } from '@/api/tools';
 import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
-import PathField from '@/ui/PathField.vue';
-import Frow from '@/ui/Frow.vue';
-import { plural } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
+import { plural, segItems } from '@/ui/kit';
 import Tile from '@/ui/Tile.vue';
 
 export interface VerifyRow { name: string; state: 'wait' | 'ok' | 'mismatch' | 'missing' | 'bad'; bad?: boolean; algo?: Algo; found?: boolean }
@@ -15,8 +14,8 @@ export interface VerifyState { mode: 'file' | 'paste'; file: string; text: strin
 const props = defineProps<{ st: VerifyState; check: () => void }>();
 
 const modes = computed(() => [['file', t('checksum.fromFile')], ['paste', t('checksum.pasted')]] as const);
-const fileField = ref<HTMLInputElement | null>(null), textField = ref<HTMLTextAreaElement | null>(null);
-watch(() => props.st.mode, async (m) => { await nextTick(); (m === 'file' ? fileField.value : textField.value)?.focus(); });
+const fileField = ref<InstanceType<typeof TextField> | null>(null), textField = ref<InstanceType<typeof TextArea> | null>(null);
+watch(() => props.st.mode, async (m) => { await nextTick(); (m === 'file' ? fileField.value?.input : textField.value?.input)?.focus(); });
 
 const EMPTY = { pick: ['IconShieldOn', 'checksum.pick'], noFile: ['IconFile', 'checksum.noFile'], noSums: ['IconShieldOn', 'checksum.noSums'] } as const;
 const count = computed(() => {
@@ -26,16 +25,16 @@ const count = computed(() => {
   return [plural(rows.length, 'ui.files'), seen.length && t('checksum.okCount', { n: c('ok') }), c('mismatch') && t('checksum.offCount', { n: c('mismatch') }),
     c('missing') && t('checksum.missingCount', { n: c('missing') })].filter(Boolean).join(', ');
 });
-const width = (r: VerifyRow, i: number) => (r.state !== 'wait' || i < props.st.seen ? '100%' : i === props.st.seen ? '50%' : '0%');
+const width = (r: VerifyRow, i: number) => (r.state !== 'wait' || i < props.st.seen ? 1 : i === props.st.seen ? 0.5 : 0);
 </script>
 
 <template>
   <div class="well glim-well bk-form">
-    <Frow :label="t('checksum.sums')"><Seg id="v-mode" v-model="st.mode" :options="modes" /></Frow>
+    <FieldRow :label="t('checksum.sums')"><Selector id="v-mode" v-model="st.mode" :items="segItems(modes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <div class="bk-swap">
-      <div class="bk-swap-a" :hidden="st.mode !== 'file'"><Frow :label="t('checksum.file')" :tip="t('checksum.fileTip')"><input id="v-file" ref="fileField" v-model="st.file" class="glim-input grow glim-input--mono" placeholder="/mnt/user/downloads/datei.sha256" spellcheck="false" autocomplete="off" @keydown.enter.prevent="check"></Frow></div>
-      <div class="bk-swap-b" :hidden="st.mode !== 'paste'"><textarea id="v-text" ref="textField" v-model="st.text" class="glim-input glim-input--mono" rows="3" :placeholder="t('checksum.pastePlaceholder')" spellcheck="false"></textarea>
-        <Frow :label="t('checksum.filesIn')"><PathField id="v-dir" v-model="st.dir" /></Frow></div>
+      <div class="bk-swap-a" :hidden="st.mode !== 'file'"><FieldRow :label="t('checksum.file')" :hint="t('checksum.fileTip')"><TextField id="v-file" ref="fileField" v-model="st.file" placeholder="/mnt/user/downloads/datei.sha256" spellcheck="false" autocomplete="off" width="grow" mono @keydown.enter.prevent="check" /></FieldRow></div>
+      <div class="bk-swap-b" :hidden="st.mode !== 'paste'"><TextArea id="v-text" ref="textField" v-model="st.text" rows="3" :placeholder="t('checksum.pastePlaceholder')" spellcheck="false" mono />
+        <FieldRow :label="t('checksum.filesIn')"><PathField v-model="st.dir" v-bind="pathField('v-dir')" /></FieldRow></div>
     </div>
   </div>
   <div class="well glim-well bk-fill"><div class="bk-tools"><span id="v-count" class="eyebrow">{{ count }}</span></div>
@@ -44,12 +43,12 @@ const width = (r: VerifyRow, i: number) => (r.state !== 'wait' || i < props.st.s
       <template v-else><div v-for="(r, i) in st.rows" :id="`v-row-${i}`" :key="i" class="bk-sum">
         <Tile v-if="r.found !== false && !r.bad" :k="{ name: r.name }" /><Tile v-else g="IconFile" />
         <span class="bk-name mono">{{ r.name }}</span>
-        <span class="bk-hash"><span v-if="r.state !== 'wait' && r.algo" class="muted">{{ t(`checksum.algos.${r.algo}`) }}</span><span v-else-if="!r.bad" class="bar"><i :style="{ width: width(r, i) }"></i></span></span>
+        <span class="bk-hash"><span v-if="r.state !== 'wait' && r.algo" class="muted">{{ t(`checksum.algos.${r.algo}`) }}</span><ProgressBar v-else-if="!r.bad" class="bar" :value="width(r, i)" :label="r.name" /></span>
         <span class="bk-res">
           <span v-if="r.state === 'ok'" class="bk-ok"><span class="bk-dot"></span>{{ t('checksum.ok') }}</span>
-          <span v-else-if="r.state === 'mismatch'" class="pill fault">{{ t('checksum.mismatch') }}</span>
-          <span v-else-if="r.state === 'missing'" class="pill warn">{{ t('checksum.missing') }}</span>
-          <span v-else-if="r.state === 'bad'" class="pill warn">{{ t('checksum.bad') }}</span>
+          <Pill v-else-if="r.state === 'mismatch'" tone="fail">{{ t('checksum.mismatch') }}</Pill>
+          <Pill v-else-if="r.state === 'missing'" tone="warn">{{ t('checksum.missing') }}</Pill>
+          <Pill v-else-if="r.state === 'bad'" tone="warn">{{ t('checksum.bad') }}</Pill>
         </span>
       </div></template>
     </div>

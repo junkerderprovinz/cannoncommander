@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Everything without a better view gets the start of its bytes, as a lister would show it.
-import { InfoBubble } from '@glimstone/vue';
+import { InfoBubble, Pill } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { t } from '@/i18n';
 import { fsHex } from '../content';
@@ -26,7 +26,7 @@ onMounted(async () => {
 
 <template>
   <div v-if="!compact" class="cv-bar">
-    <span class="pill">{{ t('viewer.hex.first', { n: bytes?.length ?? 0 }) }}</span>
+    <Pill>{{ t('viewer.hex.first', { n: bytes?.length ?? 0 }) }}</Pill>
     <InfoBubble :tip="t('viewer.hex.tip')" />
   </div>
   <div v-if="failed" class="empty">{{ t('viewer.failed') }}</div>

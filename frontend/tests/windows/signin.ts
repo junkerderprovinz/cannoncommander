@@ -158,7 +158,7 @@ const once = await send('POST', '/shares', { paths: [urlaub + '/Reiseplan.md'], 
   await page.screenshot({ path: join(shots, 'share-preview.png') });
   await page.keyboard.press('Escape');
 
-  const [single] = await Promise.all([page.waitForEvent('download'), page.locator('.sp-row', { hasText: 'Reiseplan.md' }).locator('a.btn').click()]);
+  const [single] = await Promise.all([page.waitForEvent('download'), page.locator('.sp-row', { hasText: 'Reiseplan.md' }).locator('a').click()]);
   const text = readFileSync(await single.path(), 'utf8');
   check('a single file downloads', single.suggestedFilename() === 'Reiseplan.md' && text.includes('Montag'), single.suggestedFilename());
   const [zip] = await Promise.all([page.waitForEvent('download'), page.click('[data-sp="zip"]')]);

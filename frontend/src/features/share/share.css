@@ -1,13 +1,8 @@
+.cs-head { display: flex; align-items: center; gap: .35rem; min-width: 0; }
 .cs-tile { width: 1.75rem; height: 1.75rem; }
 .cs-tile svg { color: var(--accent-glyph); }
 .cs-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cs-slug { font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.well .frow .pill + .pill, .well .frow .pill + .btn { margin-left: .3rem; }
-.cs-secret { position: relative; display: inline-flex; }
-.cs-secret .glim-input { padding-right: 2.4rem; }
-.cs-eye { position: absolute; right: .35rem; top: 50%; transform: translateY(-50%); width: 1.7rem; height: 1.7rem; display: grid; place-items: center; color: var(--carbon-text-muted); border-radius: var(--radius-pill); }
-.cs-eye:hover { color: var(--carbon-text); }
-.cs-eye svg { width: 1rem; height: 1rem; }
 .cs-done { flex-direction: row; gap: 1.2rem; align-items: center; }
 .cs-qr { width: 11rem; flex: none; border-radius: var(--radius-control); overflow: hidden; }
 .cs-qr svg { width: 100%; height: auto; }
@@ -20,11 +15,9 @@
 .cs-basket { display: flex; flex-direction: column; max-height: 20rem; overflow: auto; margin: 0 -.3rem; }
 .cs-brow { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) minmax(0, 1fr) 5.5rem 2rem; align-items: center; gap: .6rem; min-height: 2.4rem; padding: 0 .3rem; border-radius: var(--radius-control); }
 .cs-brow:hover { background: var(--carbon-hover); }
-.cs-brow .tile { background: var(--carbon-surface3); }
 .cs-brow .t, .cs-bdir { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cs-bdir { font-size: 12px; }
-.cs-brow .pill { justify-self: end; background: var(--carbon-surface3); }
-.cs-brow .btn { width: 1.8rem; height: 1.8rem; background: transparent; }
+.cs-brow .glim-pill { justify-self: end; background: var(--carbon-surface3); }
 .cs-visitor { border-radius: var(--radius-control); background: var(--carbon-surface); padding: .5rem .7rem; display: flex; flex-direction: column; gap: .1rem; }
 .cs-vhead { display: flex; align-items: center; gap: .5rem; padding-bottom: .35rem; margin-bottom: .2rem; box-shadow: inset 0 -1px 0 var(--carbon-hover); }
 .cs-vhead svg, .cs-vrow svg { width: 1rem; height: 1rem; color: var(--accent-glyph); flex: none; }
@@ -34,10 +27,8 @@
 .cs-vrow .muted { font-size: 12px; }
 @media (max-width: 760px) {
   .cs-brow { grid-template-columns: 2.25rem minmax(0, 1fr) 2rem; }
-  .cs-brow .cs-bdir, .cs-brow .pill { display: none; }
+  .cs-brow .cs-bdir, .cs-brow .glim-pill { display: none; }
   .cs-host { display: none; }
   .cs-done { flex-direction: column; align-items: stretch; }
   .cs-qr { width: 9rem; align-self: center; }
-  .cs-secret .glim-input.w { width: 100%; }
-  .cs-secret { flex: 1; }
 }

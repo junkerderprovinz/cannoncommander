@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Who did what and when, filtered by person or kind from the column heads. A row naming a place opens it.
-import { Card } from '@glimstone/vue';
+import { Button, Card, Pill } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { type Activity, admin, type User } from '@/api/admin';
 import { DAY, now } from '@/core/format';
@@ -63,7 +63,7 @@ function open(a: Activity) {
         <div class="well glim-well a-stat"><span class="glim-num">{{ today }}</span><span>{{ c('activity.today') }}</span></div>
         <div class="well glim-well a-stat"><span class="glim-num">{{ people }}</span><span>{{ c('activity.people') }}</span></div>
       </div>
-      <div v-if="filtered" class="a-foot"><button class="btn" @click="act.who = act.what = null"><G n="IconClose" />{{ c('activity.reset') }}</button></div>
+      <div v-if="filtered" class="a-foot"><Button :label="c('activity.reset')" label-key="IconClose" @click="act.who = act.what = null" /></div>
     </Card>
     <Card :title="filtered ? c('activity.filtered') : c('activity.allEntries')">
       <div class="a-actlist">
@@ -75,7 +75,7 @@ function open(a: Activity) {
         <template v-if="shown.length">
           <div v-for="a in shown" :key="a.id" class="a-row a-arow" :tabindex="a.path ? 0 : undefined" :data-open="a.path" :data-tip="tip(a)" @click="open(a)" @keydown.enter="open(a)">
             <span class="tile"><G :n="KINDS[a.what] || 'IconLog'" /></span><span class="a-name"><span class="t">{{ a.obj }}</span></span>
-            <span class="pill">{{ full(a.who) }}</span><span class="pill">{{ kind(a.what) }}</span><span class="pill glim-num">{{ ago(a.t) }}</span>
+            <Pill>{{ full(a.who) }}</Pill><Pill>{{ kind(a.what) }}</Pill><Pill class="glim-num">{{ ago(a.t) }}</Pill>
           </div>
         </template>
         <div v-else class="empty"><G n="IconFilter" /><div>{{ c('activity.nothing') }}</div></div>
