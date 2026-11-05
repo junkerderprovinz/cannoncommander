@@ -76,6 +76,9 @@ type PasskeyChallenge struct {
 // step in need.
 type pendingSignIn struct {
 	userID uint64
+	// hash is the password the sign in started with. A sign in does not
+	// outlive a change of it.
+	hash   string
 	keep   bool
 	need   string
 	secret string
@@ -176,8 +179,8 @@ func (h handlers) signIn(w http.ResponseWriter, r *http.Request) error {
 	if name == "" || in.Password == "" {
 		return v1.Errorf(http.StatusBadRequest, "name and password are both needed")
 	}
-	ip := login.ClientIP(r)
-	pair := strings.ToLower(name) + "|" + ip
+	ip := addressKey(r)
+	pair := pairKey(name, login.ClientIP(r))
 	if h.svc.signInTries.blocked(pair) {
 		return tooManyTries(w, h.svc.signInTries.wait(pair))
 	}
@@ -196,7 +199,7 @@ func (h handlers) signIn(w http.ResponseWriter, r *http.Request) error {
 		return v1.Errorf(http.StatusUnauthorized, "the name or the password is not right")
 	}
 	h.svc.signInTries.clear(pair)
-	p := &pendingSignIn{userID: u.ID, keep: in.Remember}
+	p := &pendingSignIn{userID: u.ID, hash: u.Password, keep: in.Remember}
 	return h.nextStep(w, r, &u, p, "")
 }
 
@@ -262,7 +265,7 @@ func (h handlers) pending(challenge, step string) (*pendingSignIn, *users.User, 
 		return nil, nil, errStale
 	}
 	u, err := state.GetUserByID(p.userID)
-	if err != nil {
+	if err != nil || u.Password != p.hash || step == stepTotpSetup && u.TOTPSecret != "" || step == stepPassword && !u.RequirePasswordChange {
 		h.svc.signIns.drop(challenge)
 		return nil, nil, errStale
 	}
@@ -357,6 +360,7 @@ func (h handlers) signInPassword(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	p.hash = fresh.Password
 	return h.nextStep(w, r, &fresh, p, in.Challenge)
 }
 
@@ -366,7 +370,7 @@ func (h handlers) passkeyOptions(w http.ResponseWriter, r *http.Request) error {
 	if !auth.IsWebAuthnEnabled() {
 		return v1.Errorf(http.StatusConflict, "passkeys are turned off on this server")
 	}
-	ip := login.ClientIP(r)
+	ip := addressKey(r)
 	if h.svc.addressTries.blocked(ip) {
 		return tooManyTries(w, h.svc.addressTries.wait(ip))
 	}
@@ -394,7 +398,7 @@ func (h handlers) signInPasskey(w http.ResponseWriter, r *http.Request) error {
 	if !auth.IsWebAuthnEnabled() {
 		return v1.Errorf(http.StatusConflict, "passkeys are turned off on this server")
 	}
-	ip := login.ClientIP(r)
+	ip := addressKey(r)
 	if h.svc.addressTries.blocked(ip) {
 		return tooManyTries(w, h.svc.addressTries.wait(ip))
 	}
@@ -404,11 +408,11 @@ func (h handlers) signInPasskey(w http.ResponseWriter, r *http.Request) error {
 	if errors.Is(err, ccerrors.ErrPasskeyInvalidSession) {
 		return errStale
 	}
-	if err != nil {
+	// An account from elsewhere signs in there, where it can also be closed.
+	if err != nil || u.LoginMethod != users.LoginMethodPassword {
 		h.svc.addressTries.fail(ip)
 		return v1.Errorf(http.StatusUnauthorized, "this passkey does not sign in here")
 	}
-	h.svc.addressTries.clear(ip)
 	if err := state.UpdateUser(u, "", "PasskeyCredentials"); err != nil {
 		return err
 	}
