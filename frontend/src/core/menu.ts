@@ -85,7 +85,7 @@ export function toGlim(list: Resolved[]): GlimEntry[] {
       ...(it.count != null ? { count: it.count } : {}),
       ...(it.checked ? { checked: it.checked() } : {}),
       ...(it.radio ? { radio: true } : {}),
-      ...(it.sub ? { sub: toGlim(resolveItems(it.sub)) } : {}),
+      ...(it.sub ? { sub: toGlim(resolveItems(it.sub)), subId: 'submenu' } : {}),
       disabled: itemOff(it),
       onSelect: () => pick(it),
     };

@@ -67,15 +67,6 @@ function nameSelects() {
   });
 }
 
-// ContextMenu puts its menus straight on the body, and the steps and the shim find them as #menu and #submenu.
-function nameMenus(changes: MutationRecord[]) {
-  for (const c of changes) {
-    for (const n of c.addedNodes) {
-      if (n instanceof HTMLElement && n.parentElement === document.body && n.classList.contains('glim-menu') && !n.id) n.id = document.getElementById('menu') ? 'submenu' : 'menu';
-    }
-  }
-}
-
 function name() {
   for (const [selector, cls] of CLASSES) {
     document.querySelectorAll(selector).forEach((el) => { if (!el.classList.contains(cls)) el.classList.add(cls); });
@@ -99,5 +90,5 @@ function name() {
 
 export function installHooks() {
   name();
-  new MutationObserver((changes) => { nameMenus(changes); name(); }).observe(document.documentElement, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'aria-checked', 'aria-selected', 'data-state'] });
+  new MutationObserver(name).observe(document.documentElement, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'aria-checked', 'aria-selected', 'data-state'] });
 }

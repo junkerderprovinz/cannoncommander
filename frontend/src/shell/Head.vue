@@ -18,7 +18,7 @@ const initials = computed(() => user.me.name.slice(0, 2).toUpperCase());
 
 // The menus are read again whenever an action changes, so a menu opened later shows today's state.
 const bar = ref<InstanceType<typeof MenuBar> | null>(null);
-const barMenus = computed(() => MENUS.map((_, i) => ({ label: menuName(i), items: toGlim(resolveItems(menuItems(i))) })));
+const barMenus = computed(() => MENUS.map((_, i) => ({ id: 'menu', label: menuName(i), items: toGlim(resolveItems(menuItems(i))) })));
 onMounted(() => setMenuBarOpener((i) => bar.value?.open(i)));
 // The prototype numbered its menu titles, and its step files still click them by that number.
 watch(bar, (b) => {

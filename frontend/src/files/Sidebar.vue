@@ -88,7 +88,7 @@ function bookmarkMenu(e: MouseEvent, b: Bookmark) {
     </Card>
     <Card class="side-card side-tree" :title="t('side.tree')">
       <div id="tree">
-        <SidebarRow v-for="{ k, depth, open } in rows" :key="k.path" class="tree-row" :style="{ paddingInlineStart: `${0.3 + depth * 0.85}rem` }" :label="k.label || k.name" :glyph="glyphComponent(glyphOf(k, open))" :active="cur === k.path"
+        <SidebarRow v-for="{ k, depth, open } in rows" :key="k.path" :depth="depth" :label="k.label || k.name" :glyph="glyphComponent(glyphOf(k, open))" :active="cur === k.path"
           :data-go="k.path" :data-tip="k.remote" @click="F.go(k.path)" @contextmenu.prevent.stop="menu($event.clientX, $event.clientY, folderItems(k.path))">
           <template #before>
             <button v-if="k.hasDirs" class="tree-tog" :class="{ open }" :data-tog="k.path" :aria-label="open ? t('side.collapse') : t('side.expand')" @click.stop="toggle(k.path)"><G n="IconExpand" /></button>
