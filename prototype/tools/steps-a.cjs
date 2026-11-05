@@ -120,6 +120,7 @@ module.exports = async (page, shot) => {
   await page.click('.win-foot .btn.primary'); await wait(300);
   await page.click('[data-tadd]'); await wait();
   await page.fill('#a-tkname', 'home-assistant');
+  await page.fill('#a-tkpw', 'ein-neues-langes-passwort');
   await page.click('.win-foot .btn.primary'); await wait(300);
   await shot('a-token-once');
   await page.click('.win-foot .btn.primary'); await wait(300);

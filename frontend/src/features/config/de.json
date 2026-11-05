@@ -117,6 +117,16 @@
     "pwShort": "Das Passwort braucht mindestens 12 Zeichen", "pwDiffer": "Die beiden Passwörter sind nicht gleich",
     "groupName": "Name", "groupNamePh": "etwa familie", "note": "Beschreibung", "notePh": "Wofür die Gruppe da ist", "needGroupName": "Gib der Gruppe einen Namen", "groupTaken": "Diese Gruppe gibt es schon"
   },
+  "access": {
+    "title": "Zugänge von {who}", "ways": "Zugänge", "waysTip": "Sitzungen, API-Tokens und Passkeys. Du beendest sie einzeln oder alle auf einmal.",
+    "none": "Keine", "one": "1 aktiv", "many": "{n} aktiv", "show": "Ansehen", "since": "Angemeldet seit {date}",
+    "noSessions": "Gerade nirgends angemeldet", "noTokens": "Keine API-Tokens", "noPasskeys": "Keine Passkeys",
+    "signOut": "Sitzung beenden", "signOutText": "{who} wird auf {device} abgemeldet.", "removePasskeyText": "{who} kann sich danach nicht mehr mit {name} anmelden.",
+    "endAll": "Alle Zugänge beenden", "end": "Beenden", "endAllText": "{who} wird überall abgemeldet, und alle API-Tokens und Passkeys hören auf zu gelten.",
+    "passwordStays": "Das Passwort bleibt, wie es ist.", "allEnded": "Alle Zugänge von {who} sind beendet",
+    "revoke": "Auch Tokens und Passkeys beenden", "revokeTip": "Abgemeldet wird die Person mit dem neuen Passwort ohnehin überall. Das hier nimmt ihr auch die API-Tokens und Passkeys.",
+    "savedPwEnded": "Gespeichert, das neue Passwort gilt und alle Zugänge sind beendet"
+  },
   "rules": {
     "title": "Regeln", "add": "Regel anlegen", "edit": "Regel bearbeiten", "none": "Keine Regeln, jeder sieht seinen ganzen Bereich", "added": "Regel angelegt", "removed": "Regel entfernt",
     "kind": { "hide": "Verbergen", "read": "Nur lesen", "allow": "Erlauben" },
@@ -172,7 +182,9 @@
     "read": "Lesen", "readWrite": "Lesen und schreiben", "rights": "Rechte", "rightsTip": "Das Token darf nie mehr als du selbst.", "year": "1 Jahr",
     "tokenNameTip": "Wofür das Token da ist. Es steht später in der Liste der Tokens.", "tokenNamePh": "etwa backup-skript", "needTokenName": "Gib dem Token einen Namen",
     "copyNow": "Kopier das Token jetzt. CannonCommander zeigt es danach nie wieder, du kannst nur ein neues erstellen.", "tokenCreatedToast": "Token {name} erstellt",
-    "pwLocked": "Dein Passwort ändert hier nur ein Admin, oder du meldest dich über einen anderen Dienst an.", "passkeysOff": "Passkeys sind auf diesem Server ausgeschaltet", "tooMany": "Zu viele Versuche. Probier es bitte in 15 Minuten noch einmal"
+    "pwLocked": "Dein Passwort ändert hier nur ein Admin, oder du meldest dich über einen anderen Dienst an.", "passkeysOff": "Passkeys sind auf diesem Server ausgeschaltet", "tooMany": "Zu viele Versuche. Probier es bitte in 15 Minuten noch einmal",
+    "proofTip": "CannonCommander fragt bei jedem neuen Zugang danach, damit nur du einen anlegen kannst.", "signInAgain": "Neu anmelden", "staleTitle": "Bitte melde dich kurz neu an",
+    "staleToken": "Für ein neues Token muss die Anmeldung frisch sein. Danach öffnet sich dieses Fenster wieder.", "stalePasskey": "Für einen neuen Passkey muss die Anmeldung frisch sein. Danach öffnet sich dieses Fenster wieder."
   },
   "integrations": {
     "office": "Office", "officeKind": "Office-Server", "officeKindTip": "Damit öffnen sich Word-, Excel- und PowerPoint-Dateien zum Bearbeiten im Browser, in der Schnellansicht und mit F3. Ohne Server zeigt CannonCommander sie in der eingebauten Vorschau.",

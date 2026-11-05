@@ -68,9 +68,9 @@ func TestSourceFilePermissionsIsUnset(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name   string
-		perms  SourceFilePermissions
-		unset  bool
+		name  string
+		perms SourceFilePermissions
+		unset bool
 	}{
 		{name: "all false", perms: SourceFilePermissions{}, unset: true},
 		{name: "configured deny-all", perms: DenyAllSourceFilePermissions(), unset: false},

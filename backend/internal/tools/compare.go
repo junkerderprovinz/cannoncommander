@@ -88,10 +88,12 @@ type comparer struct {
 	sides [2]string
 }
 
-func sideOf(real string, info fs.FileInfo) *Side {
+// side describes an entry. A folder counts what the user may see in it, so
+// its size tells nothing about what is hidden.
+func (c *comparer) side(api, real string, info fs.FileInfo) *Side {
 	s := &Side{Dir: info.IsDir(), Size: info.Size(), MTime: info.ModTime()}
 	if s.Dir {
-		s.Size, _, _ = jobs.TreeSize(context.Background(), real)
+		s.Size, _, _ = jobs.VisibleSize(c.ctx, c.fs, c.u, ccfs.Location{Path: api, Real: real}, c.perm)
 	}
 	return s
 }
@@ -149,10 +151,10 @@ func (c *comparer) walk(l, r, rel string) error {
 		}
 		it := Compared{Rel: p, Name: name, lReal: lReal, rReal: rReal}
 		if pair[0] != nil {
-			it.Left = sideOf(lReal, pair[0])
+			it.Left = c.side(path.Join(c.sides[0], p), lReal, pair[0])
 		}
 		if pair[1] != nil {
-			it.Right = sideOf(rReal, pair[1])
+			it.Right = c.side(path.Join(c.sides[1], p), rReal, pair[1])
 		}
 		it.State = c.state(it)
 		c.out = append(c.out, it)
@@ -545,15 +547,15 @@ func runSync(ctx context.Context, run *jobs.Run) error {
 			if s.Act == "delete" {
 				err = syncDelete(ctx, run, dst)
 			} else {
-				if size, files, terr := jobs.TreeSize(ctx, src.Real); terr == nil {
-					run.Measure(it.Seq, size, files)
-				}
 				may := func(rel string) bool {
 					if _, err := fsys.Check(u, path.Join(src.Path, rel), syncReadPerm); err != nil {
 						return false
 					}
 					_, err := fsys.Check(u, path.Join(dst.Path, rel), s.writePerm())
 					return err == nil
+				}
+				if size, files, terr := jobs.SizeWhere(ctx, src.Real, may); terr == nil {
+					run.Measure(it.Seq, size, files)
 				}
 				err = copyTree(ctx, run, src.Real, dst.Real, "", may)
 				if err == nil {

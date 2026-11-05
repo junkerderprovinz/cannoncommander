@@ -149,7 +149,7 @@ func TestDeletingAUserTakesItsTracesAlong(t *testing.T) {
 	w.must(http.StatusCreated, w.as(w.admin.Username, "POST", "/admin/groups", map[string]any{"name": "familie"}))
 	anna := w.addUser("anna", "user", "/mnt/user", "familie")
 	w.as("anna", "GET", "/me", nil)
-	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "skript", "rights": "rw"})))
+	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "skript", "rights": "rw"})))
 	w.req("GET", "/me", nil, "X-Api", tok.Secret)
 	w.must(http.StatusOK, w.as(w.admin.Username, "PUT", "/admin/rules", map[string]any{"items": []map[string]string{
 		{"who": "anna", "path": "/mnt/user/backups", "rule": "hide"},

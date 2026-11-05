@@ -449,8 +449,8 @@
     "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "c-share": {
-    "pixels": 66455,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "pixels": 68554,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; the message for the visitors is GlimStone's TextArea, taller than the prototype's text field, and the window grows with it"
    },
    "c-share-done": {
     "pixels": 53477,
@@ -541,8 +541,8 @@
     "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; the step file writes a deleted file into the prototype's memory, which the app reads from its server, so its trash stays empty; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show"
    },
    "c-phone-share": {
-    "pixels": 61838,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show"
+    "pixels": 73763,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show; the message for the visitors is GlimStone's TextArea, taller than the prototype's text field, and the window grows with it"
    },
    "c-phone-upload": {
     "pixels": 67768,
@@ -731,10 +731,6 @@
     "why": "job rates and progress come from the fixture's own random numbers"
    },
    {
-    "pattern": "(?<=Diesen Monat geändert )\\d+",
-    "why": "both sides start with 42 recent files; the count here follows how far the queue of the steps before has come"
-   },
-   {
     "pattern": "(?<=Interpret )(- |und )(?=Titel)",
     "why": "the app's preset is called Interpret und Titel, as UI texts carry no dashes"
    },
@@ -749,10 +745,6 @@
    {
     "pattern": "(?<=^6 existing rerolled: ).*$",
     "why": "the server's share slugs have six characters where the prototype's have four, by decision"
-   },
-   {
-    "pattern": "(?<=share_target ).*$",
-    "why": "the app's manifest offers no way to share files to it yet, as the server has no address for that"
    }
   ],
   "shots": {

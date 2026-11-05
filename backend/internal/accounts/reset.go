@@ -138,12 +138,8 @@ func (h handlers) reset(w http.ResponseWriter, r *http.Request) error {
 	if err := h.svc.recovery.clear(r.Context(), u.ID); err != nil {
 		return err
 	}
-	var revoke []users.AuthToken
-	users.EachNamedToken(u.Tokens, func(_ string, t users.AuthToken) { revoke = append(revoke, t) })
-	for _, t := range revoke {
-		if err := h.revokeToken(r, &u, t); err != nil {
-			return err
-		}
+	if err := h.revokeTokens(r, &u); err != nil {
+		return err
 	}
 	if _, err := login.EndAll(u.ID, ""); err != nil {
 		return err

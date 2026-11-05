@@ -35,7 +35,7 @@ func TestPasskeysNeedTheServerToTakeThem(t *testing.T) {
 	if list.Enabled || len(list.Items) != 0 {
 		t.Fatalf("list = %+v", list)
 	}
-	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": "Laptop"}))
+	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"password": strong, "name": "Laptop"}))
 }
 
 func TestRegisteringAPasskeyStartsWithOptions(t *testing.T) {
@@ -47,9 +47,9 @@ func TestRegisteringAPasskeyStartsWithOptions(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": " "}))
-	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": "Handy"}))
-	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": "Laptop", "credential": map[string]any{"id": "x"}}))
+	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/passkeys", map[string]any{"password": strong, "name": " "}))
+	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"password": strong, "name": "Handy"}))
+	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"password": strong, "name": "Laptop", "credential": map[string]any{"id": "x"}}))
 
 	step := decode[struct {
 		Options struct {
@@ -58,13 +58,13 @@ func TestRegisteringAPasskeyStartsWithOptions(t *testing.T) {
 				RP        struct{ ID string }
 			}
 		}
-	}](t, w.must(http.StatusOK, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": "Laptop"})))
+	}](t, w.must(http.StatusOK, w.as("anna", "POST", "/me/passkeys", map[string]any{"password": strong, "name": "Laptop"})))
 	if step.Options.PublicKey.Challenge == "" || step.Options.PublicKey.RP.ID != "cannon.lan" {
 		t.Fatalf("options = %+v", step)
 	}
-	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": "Laptop", "credential": map[string]any{"id": "x", "type": "public-key"}}))
+	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/passkeys", map[string]any{"password": strong, "name": "Laptop", "credential": map[string]any{"id": "x", "type": "public-key"}}))
 	// A failed second step uses the registration up.
-	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": "Laptop", "credential": map[string]any{"id": "x"}}))
+	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"password": strong, "name": "Laptop", "credential": map[string]any{"id": "x"}}))
 
 	list := decode[accounts.PasskeyList](t, w.must(http.StatusOK, w.as("anna", "GET", "/me/passkeys", nil)))
 	if !list.Enabled || len(list.Items) != 1 || list.Items[0].Origin != "cannon.lan:8443" || list.Items[0].Last != nil {
