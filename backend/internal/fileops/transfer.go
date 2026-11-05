@@ -62,6 +62,9 @@ type TransferParams struct {
 	Verify bool `json:"verify,omitempty"`
 	// KeepAttrs keeps owner, mode and times. It is on unless set to false.
 	KeepAttrs *bool `json:"keepAttrs,omitempty"`
+	// NewFolder makes Dest first. Taking the job back also removes it again,
+	// so the two count as one step.
+	NewFolder bool `json:"newFolder,omitempty"`
 }
 
 func prepare(move bool) func(context.Context, v1.Deps, *users.User, json.RawMessage) (*jobs.Plan, error) {
@@ -104,7 +107,12 @@ func check(ctx context.Context, fsys *ccfs.Resolver, u *users.User, p TransferPa
 	if err != nil {
 		return dest, nil, err
 	}
-	if err := folder(dest); err != nil {
+	if p.NewFolder {
+		err = freshFolder(fsys, u, dest, move)
+	} else {
+		err = folder(dest)
+	}
+	if err != nil {
 		return dest, nil, err
 	}
 	srcPerm := srcPermFor(move)
@@ -151,6 +159,27 @@ func check(ctx context.Context, fsys *ccfs.Resolver, u *users.User, p TransferPa
 	}
 	plan.Params = p
 	return dest, plan, nil
+}
+
+// freshFolder checks that a folder can be made at loc.
+func freshFolder(fsys *ccfs.Resolver, u *users.User, loc ccfs.Location, move bool) error {
+	if !move {
+		return v1.Errorf(http.StatusBadRequest, "only a move can make its folder")
+	}
+	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) {
+		return v1.Errorf(http.StatusBadRequest, "invalid path")
+	}
+	parent, err := fsys.Reach(u, path.Dir(loc.Path), ccfs.Create)
+	if err != nil {
+		return err
+	}
+	if err := folder(parent); err != nil {
+		return err
+	}
+	if _, err := os.Lstat(loc.Real); err == nil {
+		return errExists
+	}
+	return nil
 }
 
 func srcPermFor(move bool) ccfs.Perm {
@@ -208,6 +237,8 @@ type transferUndo struct {
 	Created  []string        `json:"created,omitempty"`
 	Moved    []movedEntry    `json:"moved,omitempty"`
 	Replaced []replacedEntry `json:"replaced,omitempty"`
+	// Folder was made for the job and goes away with it.
+	Folder string `json:"folder,omitempty"`
 }
 
 type transfer struct {
@@ -247,6 +278,18 @@ func runTransfer(move bool) func(context.Context, *jobs.Run) error {
 		}
 		t := &transfer{s: s, run: run, move: move, keep: p.KeepAttrs == nil || *p.KeepAttrs, hash: p.Verify,
 			srcPerm: srcPermFor(move), dstPerm: destPermFor(p.Rule)}
+		if p.NewFolder {
+			// A restart finds the folder there already.
+			if _, _, err := run.Reach(p.Dest, ccfs.Create); err != nil {
+				return err
+			}
+			if err := os.Mkdir(dest.Real, 0o777); err == nil {
+				fschange.Created(dest.Path)
+			} else if !errors.Is(err, fs.ErrExist) {
+				return err
+			}
+			t.undo.Folder = dest.Path
+		}
 
 		items := run.Items()
 		for _, it := range items {

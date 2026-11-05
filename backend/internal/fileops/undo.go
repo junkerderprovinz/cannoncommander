@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io/fs"
 	"net/http"
 	"os"
 	"path"
@@ -177,7 +178,30 @@ func undoMove(ctx context.Context, run *jobs.Run, raw json.RawMessage) error {
 		}
 	}
 	s.moved(ctx, t.follow...)
+	if data.Folder != "" {
+		errs = append(errs, removeMadeFolder(run, data.Folder))
+	}
 	return errors.Join(append(errs, restoreReplaced(run, s, data.Replaced))...)
+}
+
+// removeMadeFolder leaves the folder alone when something else moved in since.
+func removeMadeFolder(run *jobs.Run, p string) error {
+	loc, _, err := run.Reach(p, ccfs.Delete)
+	if err != nil {
+		return err
+	}
+	entries, err := os.ReadDir(loc.Real)
+	if errors.Is(err, fs.ErrNotExist) || err == nil && len(entries) > 0 {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if err := os.Remove(loc.Real); err != nil {
+		return err
+	}
+	fschange.Removed(loc.Path)
+	return nil
 }
 
 func restoreReplaced(run *jobs.Run, s *Service, replaced []replacedEntry) error {

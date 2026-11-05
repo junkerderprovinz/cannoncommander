@@ -14,6 +14,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
 )
 
 func linksOnly(t *testing.T) {
@@ -258,6 +259,52 @@ func TestOperationsAnswerForWhereALinkLeads(t *testing.T) {
 	}
 	if code := e.call("anna", "POST", "/fs/touch", map[string]string{"path": "/mnt/user/backups/tor/neu.jpg"}, nil); code != http.StatusForbidden {
 		t.Errorf("touch through the link: %d", code)
+	}
+}
+
+func TestANewFolderWithItsEntriesIsTakenBackInOneStep(t *testing.T) {
+	e := newEnv(t)
+	e.write("/mnt/user/fotos/a.jpg", "a", time.Now())
+	box := "/mnt/user/fotos/Mappe"
+	j := e.run(fileops.KindMove, map[string]any{"sources": []string{"/mnt/user/fotos/a.jpg"}, "dest": box, "rule": jobs.Skip, "newFolder": true})
+	if e.read(box+"/a.jpg") != "a" {
+		t.Fatal("the entry did not move")
+	}
+	var steps struct {
+		Steps []undo.Step `json:"steps"`
+	}
+	e.call("anna", "GET", "/undo", nil, &steps)
+	if len(steps.Steps) != 1 {
+		t.Fatalf("%d steps", len(steps.Steps))
+	}
+	e.undo(j.Undo)
+	if e.gone("/mnt/user/fotos/a.jpg") {
+		t.Error("the entry did not come back")
+	}
+	if !e.gone(box) {
+		t.Error("the folder stayed")
+	}
+}
+
+func TestTakingBackANewFolderKeepsItWhenSomethingElseMovedIn(t *testing.T) {
+	e := newEnv(t)
+	e.write("/mnt/user/fotos/a.jpg", "a", time.Now())
+	box := "/mnt/user/fotos/Mappe"
+	j := e.run(fileops.KindMove, map[string]any{"sources": []string{"/mnt/user/fotos/a.jpg"}, "dest": box, "rule": jobs.Skip, "newFolder": true})
+	e.write(box+"/b.jpg", "b", time.Now())
+	e.undo(j.Undo)
+	if e.gone(box + "/b.jpg") {
+		t.Error("the other file went away")
+	}
+}
+
+func TestANewFolderHasToBeNew(t *testing.T) {
+	e := newEnv(t)
+	e.write("/mnt/user/fotos/a.jpg", "a", time.Now())
+	e.write("/mnt/user/fotos/Mappe/b.jpg", "b", time.Now())
+	code := e.startAnswer(fileops.KindMove, map[string]any{"sources": []string{"/mnt/user/fotos/a.jpg"}, "dest": "/mnt/user/fotos/Mappe", "newFolder": true})
+	if code != http.StatusConflict {
+		t.Errorf("%d", code)
 	}
 }
 
