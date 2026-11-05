@@ -14,6 +14,7 @@ export interface LocalControl { pause(): void; resume(): void; cancel(): void; r
 
 type Ended = (job: Job) => void;
 type Asked = (job: Job, conflict: JobConflict) => void;
+type Started = (job: Job, req: JobCreate) => void;
 
 export const useJobs = defineStore('jobs', () => {
   const server = ref<Job[]>([]);
@@ -22,6 +23,7 @@ export const useJobs = defineStore('jobs', () => {
   const waiting = new Map<string, Ended[]>();
   const endedHooks: Ended[] = [];
   const askedHooks: Asked[] = [];
+  const startedHooks: Started[] = [];
 
   const at = (j: Job) => Date.parse(j.finishedAt || j.createdAt) || 0;
   // Open jobs in queue order, then the ended ones, the newest first, as GET /jobs lists them.
@@ -69,7 +71,9 @@ export const useJobs = defineStore('jobs', () => {
   async function start(req: JobCreate) {
     starting.value++;
     try {
-      return adopt(await ops.startJob(req));
+      const job = adopt(await ops.startJob(req));
+      startedHooks.forEach((fn) => fn(job, req));
+      return job;
     } finally {
       starting.value--;
     }
@@ -83,6 +87,8 @@ export const useJobs = defineStore('jobs', () => {
   }
   const onEnded = (fn: Ended) => endedHooks.push(fn);
   const onAsked = (fn: Asked) => askedHooks.push(fn);
+  // Only the jobs this tab asks for, with what it asked, which the job itself no longer says.
+  const onStarted = (fn: Started) => startedHooks.push(fn);
 
   const local = (j: Job) => locals.get(j.id)?.control;
   async function step(j: Job, what: 'pause' | 'resume' | 'cancel' | 'retry') {
@@ -152,7 +158,7 @@ export const useJobs = defineStore('jobs', () => {
   on('resync', () => { load().catch(() => {}); });
 
   return {
-    list, running, starting, settings, load, start, whenDone, onEnded, onAsked, find, pause, cancel, retry, move, setCap, decide, clear,
+    list, running, starting, settings, load, start, whenDone, onEnded, onAsked, onStarted, find, pause, cancel, retry, move, setCap, decide, clear,
     addLocal, localChanged, loadSettings, saveSettings, upsert, adopt,
   };
 });

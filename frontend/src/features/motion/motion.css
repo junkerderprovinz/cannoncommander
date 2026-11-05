@@ -1,0 +1,124 @@
+/* The pieces fx.ts puts over the page. Each one ends invisible and is taken away at its end, so a piece never stays
+   behind on screen. Without motion the layer shows nothing at all. */
+.fx-layer { display: none; }
+
+@keyframes fx-trace {
+  from { translate: calc(var(--fx-dx) * -1) calc(var(--fx-dy) * -1); opacity: 0; }
+  20%, 80% { opacity: 1; }
+  to { translate: none; opacity: 0; }
+}
+@keyframes fx-drop {
+  from { translate: calc(var(--fx-dx) * var(--motion-drop-reach, .6) * -1) calc(var(--fx-dy) * var(--motion-drop-reach, .6) * -1); }
+  60% { opacity: 1; }
+  to { translate: none; rotate: var(--motion-drop-tilt, 5deg); scale: calc(1 - var(--motion-drop-reach, .6) * .6); opacity: 0; }
+}
+/* The flight splits into the run across, steady, and the arc, rising slower and falling faster. */
+@keyframes fx-cannon-x {
+  from { translate: calc(var(--fx-dx) * -1) 0; }
+  to { translate: none; }
+}
+@keyframes fx-cannon-y {
+  from { translate: 0 calc(var(--fx-dy) * -1); animation-timing-function: cubic-bezier(.33, .66, .66, 1); }
+  50% { translate: 0 calc(var(--fx-dy) * -.5 - var(--motion-cannon-arc, 90px)); animation-timing-function: cubic-bezier(.33, 0, .66, .33); }
+  to { translate: none; }
+}
+@keyframes fx-roll { from { rotate: 0deg; } to { rotate: 540deg; } }
+@keyframes fx-puff {
+  from { opacity: .9; scale: .3; }
+  to { opacity: 0; scale: var(--motion-puff-swell, 1.8); translate: calc(var(--fx-side) * 8px * var(--motion-puff-swell, 1.8)) calc(-6px * var(--motion-puff-swell, 1.8)); }
+}
+@keyframes fx-smoke {
+  from { opacity: 0; scale: .4; }
+  25% { opacity: .85; }
+  to { opacity: 0; scale: 1.6; translate: calc((var(--fx-i) - 1) * 6px) calc(var(--motion-smoke-rise, 36px) * -1); }
+}
+@keyframes fx-salute {
+  from { opacity: 0; scale: 0; rotate: -45deg; }
+  35% { opacity: 1; scale: calc(var(--motion-salute-burst, 1) * 1.4); }
+  to { opacity: 0; scale: calc(var(--motion-salute-burst, 1) * .6); rotate: 45deg; translate: 0 calc(var(--motion-salute-burst, 1) * -14px); }
+}
+@keyframes fx-recoil {
+  15% { transform: translateX(calc(var(--motion-recoil-dist, 6px) * -1)); }
+  45% { transform: translateX(calc(var(--motion-recoil-dist, 6px) * .4)); }
+  to { transform: none; }
+}
+@keyframes fx-tumble-fade {
+  from { opacity: 0; }
+  8%, 85% { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes fx-tumble-run {
+  from { translate: -100% 0; }
+  to { translate: none; }
+}
+@keyframes fx-hop {
+  0%, 100% { translate: none; animation-timing-function: cubic-bezier(.33, .66, .66, 1); }
+  45% { translate: 0 calc(var(--motion-tumble-hop, 10px) * -1); animation-timing-function: cubic-bezier(.33, 0, .66, .33); }
+}
+@keyframes fx-weed-roll { from { rotate: -900deg; } to { rotate: 0deg; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .fx-layer { display: block; position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }
+  .fx-layer > * { position: fixed; }
+
+  /* The head leads and the tail fades out behind it, pivoting on the head so it points where it goes. */
+  .fx-trace {
+    width: var(--motion-trace-length, 64px); height: var(--motion-trace-width, 3px);
+    margin: calc(var(--motion-trace-width, 3px) / -2) 0 0 calc(var(--motion-trace-length, 64px) * -1);
+    border-radius: var(--radius-pill); background: linear-gradient(90deg, transparent, var(--accent));
+    transform-origin: right center; rotate: var(--fx-angle);
+    filter: drop-shadow(0 0 calc(var(--motion-trace-width, 3px) * 1.5) color-mix(in srgb, var(--accent) 70%, transparent));
+    animation: fx-trace var(--motion-trace-dur, 460ms) cubic-bezier(.45, 0, .25, 1) both;
+  }
+
+  .fx-trace::after {
+    content: ""; position: absolute; right: calc(var(--motion-trace-width, 3px) * -.7); top: 50%;
+    width: calc(var(--motion-trace-width, 3px) * 2.4); height: calc(var(--motion-trace-width, 3px) * 2.4);
+    border-radius: 50%; background: var(--accent); translate: 0 -50%;
+  }
+
+  /* Placed where the fall ends, so the piece arrives at rest with nothing left to undo. */
+  .fx-drop {
+    margin: calc(var(--fx-dy) * var(--motion-drop-reach, .6)) 0 0 calc(var(--fx-dx) * var(--motion-drop-reach, .6));
+    display: flex; align-items: center; gap: .5rem; max-width: 18rem; height: 2rem; padding: 0 .8rem;
+    border-radius: var(--radius-pill); background: var(--carbon-surface2); box-shadow: var(--elevation), var(--hairline);
+    color: var(--carbon-text); font-size: 13px; white-space: nowrap;
+    animation: fx-drop var(--motion-drop-dur, 480ms) cubic-bezier(.5, 0, .9, .4) both;
+    animation-delay: calc(var(--fx-i) * var(--motion-stagger-step, 30ms));
+  }
+  .fx-drop svg { width: 1rem; height: 1rem; flex: none; color: var(--accent-glyph); }
+  .fx-drop span { overflow: hidden; text-overflow: ellipsis; }
+
+  .fx-cannon { width: 0; height: 0; animation: fx-cannon-x var(--motion-cannon-dur, 760ms) linear both; }
+  .fx-ball { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; color: var(--carbon-text); animation: fx-cannon-y var(--motion-cannon-dur, 760ms) both; }
+  .fx-ball svg { width: 100%; height: 100%; animation: fx-roll var(--motion-cannon-dur, 760ms) linear both; }
+  .fx-shine { fill: var(--carbon-surface); opacity: .7; }
+  .fx-puff {
+    width: 26px; height: 26px; margin: -13px 0 0 -13px; color: var(--carbon-text-muted);
+    animation: fx-puff var(--motion-puff-dur, 620ms) ease-out both;
+    animation-delay: calc(var(--fx-delay, 0s) + var(--fx-i) * var(--motion-stagger-step, 30ms));
+  }
+
+  .fx-smoke {
+    width: 26px; height: 26px; margin: -20px 0 0 -13px; color: color-mix(in srgb, var(--carbon-text-muted) 70%, transparent);
+    animation: fx-smoke var(--motion-smoke-dur, 1.4s) ease-out both;
+    animation-delay: calc(var(--fx-i) * var(--motion-smoke-dur, 1.4s) / 5);
+  }
+
+  .fx-salute {
+    width: 18px; height: 18px; margin: -9px 0 0 -9px; color: var(--accent);
+    animation: fx-salute var(--motion-salute-dur, 700ms) cubic-bezier(.2, .8, .3, 1) both;
+    animation-delay: calc(var(--fx-i) * var(--motion-salute-step, 70ms));
+  }
+  .fx-salute svg, .fx-puff svg, .fx-smoke svg { width: 100%; height: 100%; }
+
+  .head.fx-recoil { animation: fx-recoil var(--motion-recoil-dur, 420ms) cubic-bezier(.2, .8, .3, 1); }
+
+  .fx-tumble { overflow: hidden; animation: fx-tumble-fade var(--motion-tumble-dur, 2.4s) linear both; }
+  .fx-tumble-run { position: absolute; left: -36px; bottom: 22%; width: calc(100% + 72px); height: 32px; animation: fx-tumble-run var(--motion-tumble-dur, 2.4s) cubic-bezier(.3, .1, .6, .9) both; }
+  .fx-weed {
+    position: absolute; right: 0; bottom: 0; width: 32px; height: 32px; color: color-mix(in srgb, var(--accent-glyph) 55%, var(--carbon-text-muted));
+    animation: fx-hop calc(var(--motion-tumble-dur, 2.4s) / 4) infinite;
+  }
+  .fx-weed svg { width: 100%; height: 100%; animation: fx-weed-roll var(--motion-tumble-dur, 2.4s) linear both; }
+}

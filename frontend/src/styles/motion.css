@@ -15,11 +15,11 @@
     --motion-jump-travel: .3rem;
     /* The light that runs from one panel to the other when a copy or move starts. */
     --motion-trace-dur: 460ms;
-    --motion-trace-length: 64px;
+    --motion-trace-length: 90px;
     --motion-trace-width: 3px;
-    /* A deleted entry on its way to the trash: how long, how far and how much it tips. */
+    /* A deleted entry on its way to the trash: how long, how much of the way there it goes, and how much it tips. */
     --motion-drop-dur: 480ms;
-    --motion-drop-fall: 48px;
+    --motion-drop-reach: .6;
     --motion-drop-tilt: 5deg;
     /* The cannonball's flight and how high its arc rises, and the cloud where it lands. */
     --motion-cannon-dur: 760ms;
@@ -35,7 +35,7 @@
     --motion-salute-step: 70ms;
     /* The head bar's kick back. */
     --motion-recoil-dur: 420ms;
-    --motion-recoil-dist: 6px;
+    --motion-recoil-dist: 8px;
     /* The tumbleweed crossing an empty folder, and how high it bounces. */
     --motion-tumble-dur: 2.4s;
     --motion-tumble-hop: 10px;
@@ -50,10 +50,10 @@
     --motion-jump-dur: 80ms;
     --motion-jump-travel: .15rem;
     --motion-trace-dur: 280ms;
-    --motion-trace-length: 28px;
+    --motion-trace-length: 40px;
     --motion-trace-width: 2px;
     --motion-drop-dur: 260ms;
-    --motion-drop-fall: 14px;
+    --motion-drop-reach: .15;
     --motion-drop-tilt: 0deg;
     --motion-cannon-dur: 480ms;
     --motion-cannon-arc: 30px;
@@ -84,7 +84,7 @@
     --motion-trace-length: 0px;
     --motion-trace-width: 0px;
     --motion-drop-dur: 0s;
-    --motion-drop-fall: 0px;
+    --motion-drop-reach: 0;
     --motion-drop-tilt: 0deg;
     --motion-cannon-dur: 0s;
     --motion-cannon-arc: 0px;
@@ -110,10 +110,10 @@
     --motion-jump-dur: 260ms;
     --motion-jump-travel: .7rem;
     --motion-trace-dur: 640ms;
-    --motion-trace-length: 120px;
-    --motion-trace-width: 4px;
+    --motion-trace-length: 150px;
+    --motion-trace-width: 5px;
     --motion-drop-dur: 720ms;
-    --motion-drop-fall: 110px;
+    --motion-drop-reach: 1;
     --motion-drop-tilt: 14deg;
     --motion-cannon-dur: 980ms;
     --motion-cannon-arc: 160px;
