@@ -85,9 +85,10 @@ export interface Share {
   uploadLimit: number;
   uploaded: number;
   notify: boolean;
+  message: string;
   state: 'active' | 'expired' | 'exhausted';
 }
-export interface ShareCreate { paths: string[]; name?: string; slug?: string; expires?: string | null; password?: string; limit?: number; uploads?: boolean; notify?: boolean }
+export interface ShareCreate { paths: string[]; name?: string; message?: string; slug?: string; expires?: string | null; password?: string; limit?: number; uploads?: boolean; notify?: boolean }
 export type ShareUpdate = Partial<Omit<ShareCreate, 'paths'>> & { reroll?: boolean };
 
 const body = async <T>(path: string, init?: RequestInit) => (await call<T>(path, init)).body!;
