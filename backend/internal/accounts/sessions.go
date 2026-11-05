@@ -48,6 +48,9 @@ type Login interface {
 	// EndAll revokes every session of the user except the one with the
 	// token hash keep and returns how many it ended.
 	EndAll(userID uint64, keep string) (int, error)
+	// SignedInAt returns when the session r carries signed in. ok is false
+	// for API tokens.
+	SignedInAt(r *http.Request) (at time.Time, ok bool)
 	// APIToken returns the API token r logs in with. ok is false for
 	// sessions and every other kind of login.
 	APIToken(r *http.Request) (raw string, ok bool)

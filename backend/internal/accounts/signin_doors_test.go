@@ -98,7 +98,7 @@ func TestAPendingSignInEndsWhenThePasswordChanges(t *testing.T) {
 func TestATokenCannotEndASession(t *testing.T) {
 	w := newWorld(t)
 	w.addUser("anna", "user", "/mnt/user")
-	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "skript", "rights": "rw"})))
+	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "skript", "rights": "rw"})))
 	w.must(http.StatusForbidden, w.req("DELETE", "/me/sessions/irgendeine", nil, "X-Api", tok.Secret))
 }
 
@@ -113,7 +113,7 @@ func TestAnAccountFromElsewhereGetsNoPasskey(t *testing.T) {
 	if err := state.UpdateUser(&anna, "", "LoginMethod"); err != nil {
 		t.Fatal(err)
 	}
-	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": "Zweiter"}))
+	w.must(http.StatusConflict, w.as("anna", "POST", "/me/passkeys", map[string]any{"password": strong, "name": "Zweiter"}))
 	c := w.passkeyChallenge()
 	w.must(http.StatusUnauthorized, w.req("POST", "/auth/passkey", map[string]any{"challenge": c.Challenge, "credential": key.get(c.Options.(json.RawMessage))}))
 	if w.started() != 0 {
