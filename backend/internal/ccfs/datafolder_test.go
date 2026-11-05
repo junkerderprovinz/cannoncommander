@@ -5,6 +5,8 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"slices"
+	"strings"
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
@@ -105,5 +107,42 @@ func TestADataFolderOutsideEverySourceClosesNothing(t *testing.T) {
 	}
 	if err := r.Carry(context.Background(), dataFolderUser(root), dir, Delete); err != nil {
 		t.Error(err)
+	}
+}
+
+// mountinfo of a container on Unraid whose /config comes from an exclusive
+// share on the cache pool, next to /mnt mapped as a whole.
+const unraidMountinfo = `6504 6494 259:1 /test/cc\040l7/config /config rw,noatime shared:57 - xfs /dev/nvme1n1p1 rw
+6505 6494 0:2 /mnt /mnt rw shared:58 master:1 - rootfs rootfs rw
+6518 6505 259:1 / /mnt/cache rw,noatime shared:10 - xfs /dev/nvme1n1p1 rw
+6519 6505 259:2 / /mnt/fastcache rw,noatime shared:11 - btrfs /dev/nvme0n1p1 rw
+6567 6505 0:44 / /mnt/user0 rw,nosuid shared:12 - fuse.shfs shfs rw
+6568 6505 0:45 / /mnt/user rw,nosuid shared:13 - fuse.shfs shfs rw
+6569 6494 8:1 /config /boot/config ro shared:59 - vfat /dev/sda1 rw`
+
+func TestTheMountTableTellsWhereElseTheDataFolderIs(t *testing.T) {
+	for dir, want := range map[string][]string{
+		"/config":          {"/mnt/cache/test/cc l7/config"},
+		"/config/sessions": {"/mnt/cache/test/cc l7/config/sessions"},
+		"/boot/config":     nil,
+		"/srv/data":        nil,
+	} {
+		if got := mountedElsewhere(unraidMountinfo, dir); !slices.Equal(got, want) {
+			t.Errorf("mountedElsewhere(%s) = %q, want %q", dir, got, want)
+		}
+	}
+}
+
+func TestTheDataFolderIsClosedInTheUserSharesAndOnEveryPool(t *testing.T) {
+	mnt := unraidMnt(t)
+	r := sharesAndRemotes(t, mnt, nil).WithDevices(mnt, "cache", "fastcache", "disk1")
+	got := r.onEveryVolume([]string{"/mnt/cache/test/cc/config", "/mnt/remotes/x"})
+	for _, want := range []string{"/mnt/user/test/cc/config", "/mnt/fastcache/test/cc/config", "/mnt/disk1/test/cc/config"} {
+		if !slices.Contains(got, want) {
+			t.Errorf("%s is missing from %v", want, got)
+		}
+	}
+	if slices.ContainsFunc(got, func(p string) bool { return strings.HasPrefix(p, "/mnt/remotes") }) {
+		t.Errorf("a remote counts as a volume: %v", got)
 	}
 }
