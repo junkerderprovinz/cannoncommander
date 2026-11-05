@@ -11,44 +11,44 @@
   "stale": "the step file still picks the letter case from a <select>, which the rename window replaced with a dropdown",
   "shots": {
    "b-sync": {
-    "pixels": 35700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 34601,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "b-diff": {
-    "pixels": 189300,
-    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 182449,
+    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "b-diff-next": {
-    "pixels": 199500,
-    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 192216,
+    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "b-usage": {
-    "pixels": 264700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 254664,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "b-search": {
-    "pixels": 50700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 50176,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "b-search-open": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "b-compare": {
-    "pixels": 15100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 45524,
+    "why": "four things in the foot no longer fit one line, so GlimStone wraps its last button to the next; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "b-sync-both": {
-    "pixels": 34000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 32898,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "b-dups": {
-    "pixels": 15700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 28237,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "b-usage-drill": {
-    "pixels": 246500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 237163,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    }
   }
  },
@@ -65,8 +65,8 @@
   ],
   "shots": {
    "r7-copy-window": {
-    "pixels": 26300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 23257,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   }
  },
@@ -74,28 +74,28 @@
   "stale": "the step file looks for the bookmark menu item Verknüpfung entfernen, which is called Vom Schnellzugriff lösen now",
   "shots": {
    "r4-music-cols": {
-    "pixels": 5900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9646,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r4-colmenu": {
-    "pixels": 8300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11876,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r4-colsearch": {
-    "pixels": 49700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 46171,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r4-bm-menu": {
-    "pixels": 8200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11820,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r4-main": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r4-photo-cols": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9084,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
@@ -115,220 +115,220 @@
   },
   "shots": {
    "a-dark-general": {
-    "pixels": 69100,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 68106,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-files": {
-    "pixels": 44600,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 45556,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-sources": {
-    "pixels": 27800,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 28419,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-shares": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 7064,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-security": {
-    "pixels": 65800,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 64951,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-integrations": {
-    "pixels": 82700,
-    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
+    "pixels": 83823,
+    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-app": {
-    "pixels": 47300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 49648,
+    "why": "a copy field takes its row, as GlimStone gives it no width of its own; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-info": {
-    "pixels": 79900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 83050,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-general": {
-    "pixels": 72300,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 71254,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-files": {
-    "pixels": 51500,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 54204,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-sources": {
-    "pixels": 30000,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 30545,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-shares": {
-    "pixels": 9100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 10521,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-security": {
-    "pixels": 68300,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 67600,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-integrations": {
-    "pixels": 58500,
-    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
+    "pixels": 51564,
+    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-app": {
-    "pixels": 46200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 48547,
+    "why": "a copy field takes its row, as GlimStone gives it no width of its own; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-info": {
-    "pixels": 51900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 55869,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-look-picker": {
-    "pixels": 135700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 133392,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-source-added": {
-    "pixels": 48700,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 47651,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-remote-pick": {
-    "pixels": 44000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 41931,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-remote-form": {
-    "pixels": 39000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 37704,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-remote-added": {
-    "pixels": 32800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 32310,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-remote-oauth": {
-    "pixels": 37700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 36370,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-user-new": {
-    "pixels": 45300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 43643,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-group-new": {
-    "pixels": 41700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 39304,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-users-hover": {
-    "pixels": 28100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 29285,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-rule-new": {
-    "pixels": 69900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 56979,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-rules-after": {
-    "pixels": 50300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 51332,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-share-win": {
-    "pixels": 39100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 34810,
+    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-share-revoked": {
-    "pixels": 3800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 6019,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-totp-1": {
-    "pixels": 54900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 54193,
+    "why": "a secret, its QR code and the recovery codes are new on every run; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-totp-2": {
-    "pixels": 31900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 31415,
+    "why": "a secret, its QR code and the recovery codes are new on every run; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-token-once": {
-    "pixels": 28500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 24335,
+    "why": "a secret, its QR code and the recovery codes are new on every run; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-security-after": {
-    "pixels": 103000,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions"
+    "pixels": 42953,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-integrations-after": {
-    "pixels": 92700,
-    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
+    "pixels": 75016,
+    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-export-done": {
-    "pixels": 48800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 35693,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-app-after": {
-    "pixels": 51600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 53043,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-info-hover": {
-    "pixels": 87200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 89820,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-whatsnew": {
-    "pixels": 63800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 96982,
+    "why": "the release is a SubCard with GlimStone's small title, and the app says first version where the prototype says first preview; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-docs": {
-    "pixels": 69600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 67000,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-activity": {
-    "pixels": 24400,
-    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 25084,
+    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-activity-filtered": {
-    "pixels": 13900,
-    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 17537,
+    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-activity-light": {
-    "pixels": 31000,
-    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 34010,
+    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-phone-look": {
-    "pixels": 72900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 63556,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "a-dark-look": {
-    "pixels": 105500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 104544,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-remotes": {
-    "pixels": 26700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 27331,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-users": {
-    "pixels": 22000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22862,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-dark-rules": {
-    "pixels": 24800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 25528,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-look": {
-    "pixels": 100100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 97773,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-remotes": {
-    "pixels": 31500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 32040,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-users": {
-    "pixels": 25200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 26001,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-light-rules": {
-    "pixels": 30600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 31131,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "a-folder-picker": {
-    "pixels": 22200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 43229,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-source-new": {
-    "pixels": 15800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 16653,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "a-phone-users": {
-    "pixels": 17700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 17342,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    }
   }
  },
@@ -341,248 +341,248 @@
   ],
   "shots": {
    "c-view-video": {
-    "pixels": 383400,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 370373,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-pdf": {
-    "pixels": 220000,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 211654,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-image-100": {
-    "pixels": 255700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 245957,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-audio": {
-    "pixels": 186100,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 179181,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-code": {
-    "pixels": 124700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 120057,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-xlsx": {
-    "pixels": 116800,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 112462,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-pptx": {
-    "pixels": 307100,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 295454,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-docx": {
-    "pixels": 210900,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 202932,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-invoice": {
-    "pixels": 182500,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 175635,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-zip": {
-    "pixels": 115500,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 114158,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-tar": {
-    "pixels": 135200,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 136394,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-iso": {
-    "pixels": 115500,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 111179,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-img": {
-    "pixels": 129700,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 124839,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-hex": {
-    "pixels": 190600,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 183300,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-log": {
-    "pixels": 207600,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 199681,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-preview-image": {
-    "pixels": 6200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 13147,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-preview-md": {
-    "pixels": 8000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 12697,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-preview-dir": {
-    "pixels": 5700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 12571,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-preview-video": {
-    "pixels": 72400,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 67634,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-preview-audio": {
-    "pixels": 8600,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 13711,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-edit-find": {
-    "pixels": 142400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 140951,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-edit-unsaved": {
-    "pixels": 30200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 40949,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; four things in the foot no longer fit one line, so GlimStone wraps its last button to the next; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-edit-md": {
-    "pixels": 164900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 160618,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-edit-new": {
-    "pixels": 106300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 104219,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-upload-empty": {
-    "pixels": 19100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 18619,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-conflict-upload": {
-    "pixels": 23900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 25017,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-upload-progress": {
-    "pixels": 63400,
-    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 65920,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-share": {
-    "pixels": 35300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 34298,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-share-done": {
-    "pixels": 39200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 36438,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-conflict-copy": {
-    "pixels": 23000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 22327,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; the warning names the whole path, where the prototype names the file; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-trash": {
-    "pixels": 26400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 32442,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-trash-picked": {
-    "pixels": 125900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 127957,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-trash-more": {
-    "pixels": 25100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 30308,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-trash-empty-ask": {
-    "pixels": 17100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 21418,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-trash-empty": {
-    "pixels": 7100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 13400,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "c-login": {
-    "pixels": 87400,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
+    "pixels": 69579,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
    },
    "c-login-totp": {
-    "pixels": 59200,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
+    "pixels": 47631,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
    },
    "c-login-reset": {
-    "pixels": 21100,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 69643,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
    },
    "c-light-view-image": {
-    "pixels": 276800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 268013,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-light-view-video": {
-    "pixels": 412500,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 398237,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-light-view-pdf": {
-    "pixels": 144100,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 138624,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-light-edit": {
-    "pixels": 130800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 129784,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-light-upload": {
-    "pixels": 28200,
-    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 35071,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-light-trash": {
-    "pixels": 25500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 21910,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; the step file writes a deleted file into the prototype's memory, which the app reads from its server, so its trash stays empty; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-light-login": {
-    "pixels": 82100,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
+    "pixels": 65612,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
    },
    "c-phone-view-image": {
-    "pixels": 82500,
-    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point, and signing out cuts a big one short, whose toasts still stand; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 82230,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point, and signing out cuts a big one short, whose toasts still stand; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-phone-view-video": {
-    "pixels": 130800,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 132319,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-phone-view-pdf": {
-    "pixels": 98400,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 94777,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-phone-audio": {
-    "pixels": 99600,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 95920,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-phone-trash": {
-    "pixels": 10400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 13173,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; the step file writes a deleted file into the prototype's memory, which the app reads from its server, so its trash stays empty; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-phone-share": {
-    "pixels": 68100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
+    "pixels": 60923,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-phone-upload": {
-    "pixels": 64600,
-    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 65089,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-phone-login": {
-    "pixels": 74800,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
+    "pixels": 57549,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-view-image": {
-    "pixels": 340400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 327405,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-view-md": {
-    "pixels": 127300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 122558,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-upload-done": {
-    "pixels": 30100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 34657,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-download": {
-    "pixels": 24000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22526,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "c-light-view-md": {
-    "pixels": 120900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 116381,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "c-phone-view-md": {
-    "pixels": 70300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 67827,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-phone-edit": {
-    "pixels": 59600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 61017,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "c-phone-conflict": {
-    "pixels": 69400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 80467,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    }
   }
  },
@@ -610,109 +610,113 @@
    },
    {
     "pattern": "(?<=, bottoms )[0-9]+$",
-    "why": "GlimStone gilt: a card and its rows have GlimStone's padding and gaps, so a page of cards ends further down"
+    "why": "a card and its rows have GlimStone's padding and gaps, so a page of cards ends further down"
    }
   ],
   "shots": {
    "r7-settings-1600-general": {
-    "pixels": 69100,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 68106,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-files": {
-    "pixels": 44600,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 45556,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-sources": {
-    "pixels": 27800,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 28419,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-shares": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 7064,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-security": {
-    "pixels": 63100,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 62337,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-integrations": {
-    "pixels": 64400,
-    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
+    "pixels": 52485,
+    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-app": {
-    "pixels": 47000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 49648,
+    "why": "a copy field takes its row, as GlimStone gives it no width of its own; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-info": {
-    "pixels": 79900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 83050,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-general": {
-    "pixels": 69100,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 68104,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-files": {
-    "pixels": 44600,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 45554,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-sources": {
-    "pixels": 27800,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 28417,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-shares": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 7062,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-security": {
-    "pixels": 63100,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 62335,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-integrations": {
-    "pixels": 64400,
-    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
+    "pixels": 52483,
+    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-app": {
-    "pixels": 47000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 49646,
+    "why": "a copy field takes its row, as GlimStone gives it no width of its own; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-info": {
-    "pixels": 79900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 83048,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-help-menu": {
-    "pixels": 10000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 13825,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r7-settings-1600-look": {
-    "pixels": 105400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 104400,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-remotes": {
-    "pixels": 26700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 27331,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-users": {
-    "pixels": 22000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22862,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1600-rules": {
-    "pixels": 24800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 25528,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-look": {
-    "pixels": 105400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 104398,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-remotes": {
-    "pixels": 26700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 27329,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-users": {
-    "pixels": 22000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22860,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r7-settings-1200-rules": {
-    "pixels": 24800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 25526,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
+   },
+   "r7-palette-search": {
+    "pixels": 367,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    }
   }
  },
@@ -749,80 +753,80 @@
   ],
   "shots": {
    "r13-1-jobs-serial": {
-    "pixels": 37000,
-    "why": "job rates and progress come from the fixture's own random numbers; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 37452,
+    "why": "job rates and progress come from the fixture's own random numbers; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-1-jobs-parallel": {
-    "pixels": 37000,
-    "why": "job rates and progress come from the fixture's own random numbers; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 35694,
+    "why": "job rates and progress come from the fixture's own random numbers; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-4-fetch-job": {
-    "pixels": 26800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 38504,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-5-basket-side": {
-    "pixels": 6400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11972,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-5-basket": {
-    "pixels": 17700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 19482,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-5-collection-share": {
-    "pixels": 48400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 47419,
+    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-5-collection-done": {
-    "pixels": 59800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 57686,
+    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-5-shares-page": {
-    "pixels": 7600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11148,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-6-share-options": {
-    "pixels": 32800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 34210,
+    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-6-share-done": {
-    "pixels": 38900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 39387,
+    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-6-share-notice": {
-    "pixels": 38900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 37807,
+    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-7-touch-390": {
-    "pixels": 3600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 4164,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9-shortcuts": {
-    "pixels": 32900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 32574,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-2-smart": {
-    "pixels": 4900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 40610,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-2-smart-menu": {
-    "pixels": 8200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 41768,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r13-3-rename-photos": {
-    "pixels": 33100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 33078,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-3-rename-series": {
-    "pixels": 37800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 38152,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-4-fetch": {
-    "pixels": 23400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 28723,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-8-install": {
-    "pixels": 26800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 26130,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   }
  },
@@ -835,60 +839,60 @@
   ],
   "shots": {
    "r13-9672-wake": {
-    "pixels": 186400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 179351,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r13-9669-copywin": {
-    "pixels": 27500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 24705,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9669-warning": {
-    "pixels": 23700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22994,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9669-move": {
-    "pixels": 26300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 25558,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9673-gather": {
-    "pixels": 50700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 53473,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9673-scatter": {
-    "pixels": 37600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 39429,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9672-tree": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9309,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r13-9668-warning": {
-    "pixels": 48000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 46416,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9668-safe": {
-    "pixels": 48100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 46474,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9669-props": {
-    "pixels": 37300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 31003,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9670-badges": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9118,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r13-9670-filter": {
-    "pixels": 5300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 8822,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r13-9671-appdata": {
-    "pixels": 15500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 15175,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-9671-window": {
-    "pixels": 30300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 29323,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   }
  },
@@ -896,45 +900,49 @@
   "lines": [
    {
     "pattern": "(?<=^disco walks: ).*?(?= true attr)",
-    "why": "GlimStone gilt: the disco walks through GlimStone's colours on the browser's own time"
+    "why": "the disco walks through GlimStone's colours on the browser's own time"
    },
    {
     "pattern": "(?<=GlimStone )[0-9.]+",
     "why": "the app shows the GlimStone it is built on, the prototype the one it was last built with"
+   },
+   {
+    "pattern": "(?<=^info cards: )Version +| Hilfe +|",
+    "why": "the prototype writes a space after a card title that has an (i), GlimStone's Card does not"
    }
   ],
   "shots": {
    "r19-bv-3-colours-on": {
-    "pixels": 133700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 130800,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r19-bv-4-info-dark": {
-    "pixels": 82500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 85487,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r19-bv-5-info-light": {
-    "pixels": 58900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 61641,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r19-bv-6-paypal": {
-    "pixels": 38700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 41153,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r19-bv-7-crypto": {
-    "pixels": 31500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 34248,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r19-bv-1-colours-off": {
-    "pixels": 112500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 111062,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r19-bv-2-leaf-storm": {
-    "pixels": 112400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 111306,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r19-bv-8-colours-light": {
-    "pixels": 111500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 108534,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    }
   }
  },
@@ -947,40 +955,40 @@
   ],
   "shots": {
    "r11-album": {
-    "pixels": 6500,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11638,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r11-Big": {
-    "pixels": 135400,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 117705,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    }
   }
  },
  "steps-v3-a": {
   "shots": {
    "v3a-2-gather": {
-    "pixels": 5900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 20970,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3a-3-history": {
-    "pixels": 18500,
-    "why": "the server words its steps itself, so a duplicate reads as copied and the trash as laid in the trash"
+    "pixels": 28928,
+    "why": "the server words its steps itself, so a duplicate reads as copied and the trash as laid in the trash; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "v3a-4-palette": {
-    "pixels": 4700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 6781,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "v3a-5-paste-picture": {
-    "pixels": 31400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 28794,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3a-6-jump-light": {
-    "pixels": 12600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 23655,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "v3a-1-jump": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   },
   "lines": [
@@ -1006,7 +1014,7 @@
    },
    {
     "pattern": "(?<=^9821 menu key: ).*$",
-    "why": "GlimStone gilt: a menu row draws its key as .glim-kbd, not as .kbd"
+    "why": "a menu row draws its key as .glim-kbd, not as .kbd"
    },
    {
     "pattern": "(?<=^9821 stored: ).*$",
@@ -1019,44 +1027,44 @@
   ],
   "shots": {
    "v3b-6-cleanup": {
-    "pixels": 30400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 31092,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3b-7-archive-running": {
-    "pixels": 29000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 45276,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3b-8-archive-done": {
-    "pixels": 28400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 29817,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3b-1-meta-warn": {
-    "pixels": 6500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9502,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3b-2-examples": {
-    "pixels": 15200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 19161,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3b-3-rename-editor": {
-    "pixels": 34800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 35036,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "v3b-4-keys-conflict": {
-    "pixels": 25300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 26532,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3b-5-keys-tc": {
-    "pixels": 24200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 23608,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3b-9-damaged": {
-    "pixels": 5400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 10583,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3b-10-cleanup-light": {
-    "pixels": 8800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9022,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   }
  },
@@ -1079,706 +1087,712 @@
   ],
   "shots": {
    "v3c-2-limit": {
-    "pixels": 38900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 38800,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3c-3-parity-ask": {
-    "pixels": 34700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 34087,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3c-4-parity-jobs": {
-    "pixels": 49900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 50058,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3c-5-settings": {
-    "pixels": 84800,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 85080,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "v3c-6-settings-light": {
-    "pixels": 84900,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 85315,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "v3c-7-live": {
-    "pixels": 7500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 10711,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "v3c-8-posters": {
-    "pixels": 76600,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 70239,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "v3c-9-cover": {
-    "pixels": 53100,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 51463,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "v3c-1-space": {
-    "pixels": 64600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 49761,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   }
  },
  "steps-core": {
   "shots": {
    "core-menu-ansicht": {
-    "pixels": 24200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 27384,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "core-copy": {
-    "pixels": 26400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 23399,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "core-after": {
-    "pixels": 7600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 16795,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "core-settings": {
-    "pixels": 71300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 77402,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "core-1": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "core-menu-datei": {
-    "pixels": 13500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 15665,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    }
   }
  },
  "steps-glyphsheet": {
   "shots": {
    "glyphsheet": {
-    "pixels": 6700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 5434,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-r13-dialoge": {
   "shots": {
    "r13-copy": {
-    "pixels": 28200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 25161,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-copy-more": {
-    "pixels": 28600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22344,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-move": {
-    "pixels": 27400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 24357,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-delete": {
-    "pixels": 15500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 15128,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-delete-forever": {
-    "pixels": 14200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 13858,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r13-delete-one": {
-    "pixels": 18500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 12785,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   }
  },
  "steps-r13-liste": {
   "shots": {
    "r13-flat": {
-    "pixels": 7900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11577,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r13-colormenu": {
-    "pixels": 15200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 18397,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r13-columns": {
-    "pixels": 7600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11033,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r13-columns-up": {
-    "pixels": 7500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11070,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r13-group-kind": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9100,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r13-labels": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9113,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r13-tagsearch": {
-    "pixels": 6500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9517,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-r14": {
   "shots": {
    "r14-1-tree": {
-    "pixels": 204100,
-    "why": "a click on a branch toggle redraws the prototype's tree and drops the keyboard focus, so its arrow down goes nowhere; the app keeps the focus in the tree and the arrow picks the next row; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 196417,
+    "why": "a click on a branch toggle redraws the prototype's tree and drops the keyboard focus, so its arrow down goes nowhere; the app keeps the focus in the tree and the arrow picks the next row; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r14-0-sidebar": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r14-2-delete": {
-    "pixels": 27200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 26276,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r14-3-types": {
-    "pixels": 156700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 150677,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r14-4-largest": {
-    "pixels": 178100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 171365,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r14-5-map": {
-    "pixels": 238500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 229388,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r14-6-searchmenu": {
-    "pixels": 15400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 19189,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    }
   }
  },
  "steps-r15": {
   "shots": {
    "r15-2-labels": {
-    "pixels": 11700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 18414,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r15-5-settings": {
-    "pixels": 69100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 68104,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r15-1-search": {
-    "pixels": 15400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22434,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r15-3-tags": {
-    "pixels": 15200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 13987,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r15-4-fkeys": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 12358,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
-  }
+  },
+  "lines": [
+   {
+    "pattern": "(?<=^tag editor: )(glim-field-row )?frow",
+    "why": "the step file prints the first row's classes, and the row is GlimStone's FieldRow"
+   }
+  ]
  },
  "steps-r18": {
   "shots": {
    "r18-2-picker": {
-    "pixels": 35300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 34382,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r18-3-colours": {
-    "pixels": 24500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 23933,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r18-4-light": {
-    "pixels": 7200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 10373,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r18-1-head": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-r19": {
   "shots": {
    "r19-1-drives": {
-    "pixels": 5200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 10548,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r19-2-settings": {
-    "pixels": 69200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 69309,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    }
   }
  },
  "steps-r19-farbe": {
   "shots": {
    "r19-farbe-2-light": {
-    "pixels": 27600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 26518,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r19-farbe-3-viewmenu": {
-    "pixels": 9000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9996,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r19-farbe-4-clash": {
-    "pixels": 37200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 33531,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r19-farbe-1-dark": {
-    "pixels": 23200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22563,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   },
   "lines": [
    {
     "pattern": "^keys on strip: .*$",
-    "why": "GlimStone gilt: an arrow key moves the hue by GlimStone's step, so the same presses land on another colour"
+    "why": "GlimStone's hue bar steps 3 degrees and 30 with Shift and stops at its ends; the prototype steps 7,2 and 36 and wraps round, so the same press lands on another colour"
    }
   ]
  },
  "steps-r20": {
   "shots": {
    "r20-1-drives": {
-    "pixels": 5200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9196,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r20-3-drives-light": {
-    "pixels": 5300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 8964,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r20-2-columns": {
-    "pixels": 6000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9004,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-r7-liste": {
   "shots": {
    "r7-marked": {
-    "pixels": 5700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9253,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r7-resized": {
-    "pixels": 5700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9253,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r7-tiles": {
-    "pixels": 30600,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 33491,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r7-phone": {
-    "pixels": 17800,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 14929,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "r7-phone-path": {
-    "pixels": 14800,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 12537,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "r7-active-right": {
-    "pixels": 18400,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 21498,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r7-locked": {
-    "pixels": 5400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9084,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r7-tiles-mixed": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r7-pathmenu": {
-    "pixels": 8300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9763,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r7-du": {
-    "pixels": 737300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 709047,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    }
   }
  },
  "steps-review": {
   "shots": {
    "rv-04-editor": {
-    "pixels": 114900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 112487,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "rv-07-diskusage": {
-    "pixels": 251900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 242309,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "rv-12-settings-info": {
-    "pixels": 79900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 83050,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "rv-15-login": {
-    "pixels": 77600,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
+    "pixels": 57737,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
    },
    "rv-16-phone": {
-    "pixels": 12600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9269,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "rv-01-main": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "rv-02-menu-werkzeuge": {
-    "pixels": 14400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 18278,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "rv-03-view-image": {
-    "pixels": 228900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 220201,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "rv-05-search": {
-    "pixels": 36800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 58963,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "rv-06-compare": {
-    "pixels": 14300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 41675,
+    "why": "four things in the foot no longer fit one line, so GlimStone wraps its last button to the next; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "rv-08-rename": {
-    "pixels": 39300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 34206,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "rv-09-props": {
-    "pixels": 31400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 25695,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "rv-10-settings-look": {
-    "pixels": 105400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 104400,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "rv-11-settings-users": {
-    "pixels": 22000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22862,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "rv-13-trash": {
-    "pixels": 22400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 27185,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "rv-14-upload": {
-    "pixels": 17200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 16798,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   }
  },
  "steps-round10": {
   "shots": {
    "r10-ql": {
-    "pixels": 6500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11638,
+    "why": "the badge holds the name and the count is a pill of its own, as GlimStone's Card takes one line of words; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r10-ql-info": {
-    "pixels": 8000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 14022,
+    "why": "the badge holds the name and the count is a pill of its own, as GlimStone's Card takes one line of words; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r10-ql-video": {
-    "pixels": 74000,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 69022,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; the badge holds the name and the count is a pill of its own, as GlimStone's Card takes one line of words; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r10-main": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-round12": {
   "shots": {
    "r12-pause": {
-    "pixels": 7300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 12453,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r12-search-mkv": {
-    "pixels": 6400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9503,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-round2": {
   "shots": {
    "r2-colmenu": {
-    "pixels": 7900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11327,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r2-columns": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9094,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r2-pathedit": {
-    "pixels": 5700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9094,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r2-settings": {
-    "pixels": 105400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 104400,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "r2-glyphs": {
-    "pixels": 56600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 56038,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-round3": {
   "shots": {
    "r3-colmenu": {
-    "pixels": 15900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 19067,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r3-main": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-round5": {
   "shots": {
    "r5-cascade": {
-    "pixels": 9900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 13252,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r5-colwin": {
-    "pixels": 133500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 124419,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r5-colsearch": {
-    "pixels": 51100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 47553,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    },
    "r5-main": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9141,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r5-glyphs-in-list": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9101,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-round8": {
   "shots": {
    "r8-view-details": {
-    "pixels": 5700,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9236,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r8-view-compact": {
-    "pixels": 5700,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9266,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r8-view-list": {
-    "pixels": 5700,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9211,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r8-view-content": {
-    "pixels": 5700,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9189,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r8-view-tiles": {
-    "pixels": 5800,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9723,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r8-view-large": {
-    "pixels": 60900,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 57773,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r8-view-gallery": {
-    "pixels": 31500,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 34182,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r8-viewmenu": {
-    "pixels": 9100,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 10773,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's"
    }
   }
  },
  "steps-round9": {
   "shots": {
    "r9-tiles-downloads": {
-    "pixels": 5600,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9550,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r9-gallery-2026": {
-    "pixels": 31200,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 33921,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r9-main": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9097,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r9-tiles-dokumente": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 10835,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r9-content-dokumente": {
-    "pixels": 5500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9026,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r9-large-Kevin-MacLeod": {
-    "pixels": 5800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9077,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "r9-quicklook": {
-    "pixels": 3300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9135,
+    "why": "the badge holds the name and the count is a pill of its own, as GlimStone's Card takes one line of words; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "r9-quicklook-text": {
-    "pixels": 4500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 8949,
+    "why": "the badge holds the name and the count is a pill of its own, as GlimStone's Card takes one line of words; GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    }
   }
  },
  "steps-shell": {
   "shots": {
    "shell-phone": {
-    "pixels": 2200,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 2194,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "shell-light": {
-    "pixels": 5700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 8917,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "shell-1100": {
-    "pixels": 4400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 8466,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-tour": {
   "shots": {
    "tour-03-marked": {
-    "pixels": 5700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 9253,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "tour-10-activity": {
-    "pixels": 26100,
-    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 26772,
+    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-10-diskusage": {
-    "pixels": 266100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 255947,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "tour-20-copy": {
-    "pixels": 26100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 23129,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "tour-30-settings-general": {
-    "pixels": 69100,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 68106,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-files": {
-    "pixels": 44600,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 45556,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-sources": {
-    "pixels": 27800,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 28419,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-shares": {
-    "pixels": 5600,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 7064,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-security": {
-    "pixels": 63100,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 62337,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-integrations": {
-    "pixels": 64400,
-    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
+    "pixels": 52485,
+    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-app": {
-    "pixels": 47300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 49648,
+    "why": "a copy field takes its row, as GlimStone gives it no width of its own; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-info": {
-    "pixels": 79900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 83050,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-40-light": {
-    "pixels": 11500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 14546,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "tour-50-phone": {
-    "pixels": 9300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 8115,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "tour-51-phone-settings": {
-    "pixels": 18500,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22407,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window"
    },
    "tour-01-quickview": {
-    "pixels": 4400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 11327,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "tour-02-single": {
-    "pixels": 4700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 8087,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    },
    "tour-10-viewer": {
-    "pixels": 127300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 122558,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and its foot buttons keep their minimum width"
    },
    "tour-10-props": {
-    "pixels": 34100,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 28050,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "tour-10-search": {
-    "pixels": 36800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 49503,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "tour-10-trash": {
-    "pixels": 22400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 27185,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "tour-10-keys": {
-    "pixels": 28700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 27185,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "tour-10-rename": {
-    "pixels": 35900,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 30939,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "tour-10-compare": {
-    "pixels": 14400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 41664,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "tour-30-settings-look": {
-    "pixels": 105400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 104400,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-remotes": {
-    "pixels": 26700,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 27331,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-users": {
-    "pixels": 22000,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 22862,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-30-settings-rules": {
-    "pixels": 24800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 25528,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words, a switch that is off is dark, and the rows of a page end further down"
    },
    "tour-41-light-search": {
-    "pixels": 36400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 59051,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  },
  "steps-r17": {
   "shots": {
    "r17-1-colours": {
-    "pixels": 19800,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 18619,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    },
    "r17-2-after": {
-    "pixels": 7400,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 10466,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   }
  },
  "steps-r20-al": {
   "shots": {
    "r20-al": {
-    "pixels": 22300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 20686,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button keeps its minimum width, a path's picker shows its words, and the window's height follows"
    }
   }
  },
  "steps-round6": {
   "shots": {
    "r6-fkeys": {
-    "pixels": 5300,
-    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+    "pixels": 12329,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, and more room under a card's badge"
    }
   }
  }
