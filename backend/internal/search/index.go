@@ -229,6 +229,10 @@ func (h handlers) indexState(w http.ResponseWriter, r *http.Request) error {
 	}
 	out := indexStates{Sources: []IndexState{}}
 	for _, s := range h.deps.FS.Sources() {
+		// Disks and pools come from Unraid and have no index to report.
+		if s.Device {
+			continue
+		}
 		st := IndexState{Source: s.Name, Path: s.Mount, Status: "off", Job: open[s.Name]}
 		if ix := indexOf(s.Name); ix != nil {
 			st.Status = string(ix.GetStatus())

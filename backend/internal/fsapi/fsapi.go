@@ -150,7 +150,7 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 		if bookkeeping(d.Name()) || !h.fs.Visible(u, seen, d.Name()) {
 			continue
 		}
-		item, err := itemFor(filepath.Join(loc.Real, d.Name()), d.Name())
+		item, err := itemFor(h.fs.RealIn(loc, d.Name()), d.Name())
 		if err != nil {
 			// The entry vanished between reading the folder and looking at it.
 			continue
@@ -201,7 +201,14 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			continue
 		}
-		item := TreeItem{Name: name, Path: child.Path, HasDirs: h.hasSubfolder(u, child), Remote: remoteAt(child.Path)}
+		item := TreeItem{Name: name, Path: child.Path, Remote: remoteAt(child.Path)}
+		// Reading a disk to find a folder on it would wake it, and a disk
+		// without any folder is rare enough to show the toggle anyway.
+		if child.Source != nil && child.Source.Device && child.Index == "/" {
+			item.HasDirs = true
+		} else {
+			item.HasDirs = h.hasSubfolder(u, child)
+		}
 		if child.Source != nil && child.Index == "/" {
 			item.Label = child.Source.Name
 			if v := volumeOf(child.Source); v != nil {

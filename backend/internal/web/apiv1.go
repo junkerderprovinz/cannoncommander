@@ -41,14 +41,15 @@ func mountAPIv1(router *http.ServeMux) error {
 	if err != nil {
 		return err
 	}
-	var devices []string
-	if st, err := unraid.Default().State(); err == nil {
-		devices = st.Devices()
-	}
-	resolver, err := ccfs.FromSettings(&settings.Config, rules, devices...)
+	resolver, err := ccfs.FromSettings(&settings.Config, rules)
 	if err != nil {
 		return err
 	}
+	svc := unraid.Default()
+	if st, err := svc.State(); err == nil {
+		resolver = resolver.WithDevices(filepath.Dir(svc.UserShares()), st.Devices()...)
+	}
+	resolver = resolver.WithExclusive(svc)
 	if dbPath := settings.Config.Server.DatabaseV2.Path; dbPath != "" {
 		resolver = resolver.WithDataFolder(filepath.Dir(dbPath))
 	}

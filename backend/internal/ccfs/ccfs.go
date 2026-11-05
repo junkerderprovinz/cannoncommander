@@ -35,6 +35,9 @@ type Source struct {
 	Root      string
 	ReadOnly  bool
 	AdminOnly bool
+	// Device marks a disk or pool that Unraid reports, as opposed to a
+	// source from the settings.
+	Device bool
 }
 
 // Location is a resolved API path.
@@ -51,6 +54,11 @@ type Location struct {
 	// Inner is the path inside the archive, "/" for its root, or "" when
 	// the location is not inside an archive.
 	Inner string
+
+	// base is the folder on disk that a link inside an exclusive share may
+	// lead to, and baseMount its API path. Elsewhere the source is that
+	// folder and both stay empty.
+	base, baseMount string
 }
 
 // Virtual reports whether the location is a folder that only exists to
@@ -68,7 +76,8 @@ type Resolver struct {
 	// not called cache.
 	devices []string
 	// closed are the API paths where the app's own data shows up.
-	closed []string
+	closed    []string
+	exclusive ExclusiveShares
 }
 
 // New builds a resolver. Mounts must be absolute and may not nest inside
@@ -92,18 +101,6 @@ func New(rules Rules, sources ...Source) (*Resolver, error) {
 	}
 	slices.SortFunc(r.sources, func(a, b *Source) int { return strings.Compare(a.Mount, b.Mount) })
 	return r, nil
-}
-
-// WithDevices returns a copy of r that also keeps the named pools and disks
-// for admins, since a pool may go by any name.
-func (r *Resolver) WithDevices(names ...string) *Resolver {
-	out := &Resolver{rules: r.rules, devices: slices.Clone(names), closed: r.closed}
-	for _, s := range r.sources {
-		c := *s
-		c.AdminOnly = c.AdminOnly || out.AdminOnly(c.Mount)
-		out.sources = append(out.sources, &c)
-	}
-	return out
 }
 
 // Sources returns the configured sources sorted by mount.
@@ -163,9 +160,15 @@ func (r *Resolver) Resolve(p string) (Location, error) {
 		loc.Source = s
 		loc.Index = "/" + strings.TrimPrefix(strings.TrimPrefix(outer, s.Mount), "/")
 		loc.Real = filepath.Join(s.Root, filepath.FromSlash(loc.Index))
+		root := s.Root
+		if base, mount, ok := r.exclusiveBase(s, loc.Index); ok {
+			rel := strings.TrimPrefix(strings.TrimPrefix(outer, mount), "/")
+			loc.base, loc.baseMount = base, mount
+			loc.Real, root = filepath.Join(base, filepath.FromSlash(rel)), base
+		}
 		// On Windows a backslash in a name is a separator, so "\.." could
 		// still climb out after the checks in Clean.
-		if !inside(s.Root, loc.Real) {
+		if !inside(root, loc.Real) {
 			return Location{}, ErrBadPath
 		}
 		return loc, nil
@@ -190,6 +193,7 @@ func (r *Resolver) VirtualChildren(dir string) []string {
 			names = append(names, name)
 		}
 	}
+	r.childOrder(dir, names)
 	return names
 }
 
@@ -206,21 +210,36 @@ func (r *Resolver) isVirtual(p string) bool {
 // target lies outside the location's source. Parts that do not exist yet
 // are taken as they are, so a path that is about to be created passes.
 func Contained(loc Location) error {
+	_, _, err := landing(loc)
+	return err
+}
+
+// landing follows the symlinks in loc.Real and returns the API path of the
+// folder the target lies in and the target's path below it. Inside an
+// exclusive share that folder is the share on its pool or else the source.
+func landing(loc Location) (mount, rel string, err error) {
 	if loc.Source == nil {
-		return nil
-	}
-	root, err := filepath.EvalSymlinks(loc.Source.Root)
-	if err != nil {
-		return err
+		return "", "", nil
 	}
 	real, err := evalExisting(loc.Real)
 	if err != nil {
-		return err
+		return "", "", err
 	}
-	if !inside(root, real) {
-		return ErrEscape
+	roots := [][2]string{{loc.Source.Root, loc.Source.Mount}}
+	if loc.base != "" {
+		roots = [][2]string{{loc.base, loc.baseMount}, roots[0]}
 	}
-	return nil
+	for _, r := range roots {
+		root, err := filepath.EvalSymlinks(r[0])
+		if err != nil {
+			return "", "", err
+		}
+		if inside(root, real) {
+			rel, err := filepath.Rel(root, real)
+			return r[1], rel, err
+		}
+	}
+	return "", "", ErrEscape
 }
 
 // inside reports whether the file path p is root or lies below it.
@@ -269,20 +288,9 @@ func (r *Resolver) Followed(loc Location) (Location, error) {
 	if loc.Source == nil {
 		return loc, nil
 	}
-	root, err := filepath.EvalSymlinks(loc.Source.Root)
+	mount, rel, err := landing(loc)
 	if err != nil {
 		return Location{}, err
 	}
-	real, err := evalExisting(loc.Real)
-	if err != nil {
-		return Location{}, err
-	}
-	if !inside(root, real) {
-		return Location{}, ErrEscape
-	}
-	rel, err := filepath.Rel(root, real)
-	if err != nil {
-		return Location{}, err
-	}
-	return r.Resolve(path.Join(loc.Source.Mount, filepath.ToSlash(rel)))
+	return r.Resolve(path.Join(mount, filepath.ToSlash(rel)))
 }
