@@ -6043,6 +6043,9 @@ components:
           type: boolean
           default: true
           description: Keep owner, mode and times. Without it new entries belong to the user the server runs as.
+        newFolder:
+          type: boolean
+          description: Only for a move. The job makes dest first, and taking the job back also removes it again, so both are one step.
     Preflight:
       type: object
       required: [dest, count, bytes, files, conflicts, sameDevice, big, parityBusy]

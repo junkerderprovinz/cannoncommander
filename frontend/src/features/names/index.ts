@@ -10,7 +10,7 @@ import { t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { useJobs } from '@/stores/jobs';
-import { takeStep, undoAct } from '@/features/undo/act';
+import { undoAct } from '@/features/undo/act';
 import { freeName, namesIn, reveal } from '@/ui/tools';
 import NameBody from './NameBody.vue';
 
@@ -65,18 +65,14 @@ export default function setup() {
     if (!picked.length) return toast(t('names.onlyHere'), 'warn');
     const hint = picked.length === 1 ? t('names.oneGoesIn') : t('names.manyGoIn', { n: picked.length });
     return nameWindow(t('names.folderWithSel'), freeName(namesIn(folder), t('names.newFolder')), t('names.create'), 'IconFolderAdd', async (name) => {
-      const box = join(folder, name), made = await ops.mkdir(box);
+      const box = join(folder, name);
       F.T().marked = new Set();
-      const job = await useJobs().start({ kind: 'move', params: { sources: picked.map((k) => join(folder, k.name)), dest: box, rule: 'skip' } });
+      const job = await useJobs().start({ kind: 'move', params: { sources: picked.map((k) => join(folder, k.name)), dest: box, rule: 'skip', newFolder: true } });
       useJobs().whenDone(job, (done) => {
         if (done.state !== 'done') return toast(done.error || t('names.notMoved'), 'fault');
         void reveal(box);
         const what = picked.length === 1 ? t('names.oneObject') : t('names.manyObjects', { n: picked.length });
-        // Taking it back moves the entries out again and then drops the folder, two steps the server keeps.
-        toast(t('names.folderMade', { name, what }), 'ok', done.undo ? { ...undoAct(done.undo), run: async () => {
-          await takeStep(done.undo!);
-          if (made.undo) await takeStep(made.undo);
-        } } : undefined);
+        toast(t('names.folderMade', { name, what }), 'ok', done.undo ? undoAct(done.undo) : undefined);
       });
     }, undefined, hint, 'fws-name');
   } });
