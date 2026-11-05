@@ -586,3 +586,58 @@ func (m *mockFileInfo) Mode() os.FileMode  { return m.mode }
 func (m *mockFileInfo) ModTime() time.Time { return m.modTime }
 func (m *mockFileInfo) IsDir() bool        { return m.isDir }
 func (m *mockFileInfo) Sys() interface{}   { return nil }
+
+func TestALinkedFolderAtTheRootIsIndexedAsTheFolderItLeadsTo(t *testing.T) {
+	if indexDB == nil {
+		var err error
+		indexDB, _, err = dbsql.NewIndexDB("test_linked", "OFF", 1000, 32, false)
+		if err != nil {
+			t.Fatalf("Failed to create test database: %v", err)
+		}
+	}
+	mnt := t.TempDir()
+	root := filepath.Join(mnt, "user")
+	for _, d := range []string{"user", "pool/code/src", "pool/other"} {
+		if err := os.MkdirAll(filepath.Join(mnt, d), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, name := range []string{"code", "other"} {
+		if err := os.Symlink(filepath.Join("..", "pool", name), filepath.Join(root, name)); err != nil {
+			t.Skipf("no symlinks here: %v", err)
+		}
+	}
+	LinkedFolder = func(r, name string) bool { return r == root && name == "code" }
+	t.Cleanup(func() { LinkedFolder = nil })
+
+	idx := &Index{
+		Source:              settings.Source{Name: "test_linked", Path: root},
+		db:                  indexDB,
+		scanUpdatedPaths:    make(map[string]bool),
+		folderSizes:         make(map[string]uint64),
+		folderSizesUnsynced: make(map[string]struct{}),
+	}
+	dir, err := os.Open(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dir.Close()
+	stat, err := dir.Stat()
+	if err != nil {
+		t.Fatal(err)
+	}
+	display, _, err := idx.GetDirInfoCore(dir, stat, "/", Options{CheckViewable: true, ShowHidden: true}, nil)
+	if err != nil {
+		t.Fatalf("GetDirInfoCore: %v", err)
+	}
+	var folders, files []string
+	for _, f := range display.Folders {
+		folders = append(folders, f.Name)
+	}
+	for _, f := range display.Files {
+		files = append(files, f.Name)
+	}
+	if strings.Join(folders, ",") != "code" || strings.Join(files, ",") != "other" {
+		t.Errorf("folders %v, files %v", folders, files)
+	}
+}
