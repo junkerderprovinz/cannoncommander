@@ -35,7 +35,8 @@ export type RuleKind = 'hide' | 'read' | 'allow';
 export interface Rule { who: string; path: string; rule: RuleKind }
 export interface Verdict { result: 'visible' | 'read' | 'hidden' | 'missing'; reason: 'scope' | 'rule' | 'role' | 'source' | 'none'; rule?: number; scope?: string }
 export interface Source { name: string; path: string; readOnly: boolean; indexed: boolean; skipHidden: boolean; exclude: string[] }
-export interface Sources { sources: Source[]; restartNeeded: boolean }
+export interface Device { name: string; path: string }
+export interface Sources { sources: Source[]; devices: Device[]; restartNeeded: boolean }
 export interface IndexState {
   source: string; path: string; status: 'ready' | 'indexing' | 'unavailable' | 'off'; dirs: number; files: number; size: number;
   lastIndexed: number | null; quickScanSeconds: number; fullScanSeconds: number; nextScan: number | null; scanEverySeconds?: number;

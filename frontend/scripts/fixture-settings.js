@@ -161,7 +161,7 @@ export function settingsFixtureMiddleware() {
   const tidy = () => { for (const [p, l] of Object.entries(S.labels)) if (!l.colour && !(l.tags || []).length) delete S.labels[p]; };
   const wireUser = (u) => ({ ...u, last: iso(u.last), pwChanged: iso(u.pwChanged) });
   const wireRemote = (r) => ({ ...r, params: { ...r.params } });
-  const sources = () => ({ sources: S.sources, restartNeeded: JSON.stringify(S.sources) !== S.running });
+  const sources = () => ({ sources: S.sources, devices: [], restartNeeded: JSON.stringify(S.sources) !== S.running });
   const indexState = (s) => {
     const ix = S.index[s.name];
     const base = { source: s.name, path: s.path, status: 'off', dirs: 0, files: 0, size: 0, quickScanSeconds: 0, fullScanSeconds: 0, metadata: 0 };

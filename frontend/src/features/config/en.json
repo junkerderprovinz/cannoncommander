@@ -65,6 +65,7 @@
     "readOnly": "Read only", "readOnlyTip": "Nobody can change, delete or upload anything here, admins included.", "reindex": "Read again", "reindexAll": "Read all again",
     "index": "Index", "every": "Read again by itself", "everyTip": "CannonCommander reads folders where much changes more often and quiet ones less often, between 5 minutes and 12 hours. That keeps the search current, also when other containers change files.",
     "last": "Last read", "never": "Never",
+    "devices": "Disks and pools", "devicesTip": "Unraid reports these. Admins see them below /mnt without adding them here. They are never indexed, so a sleeping disk stays asleep.", "adminsOnly": "Admins only",
     "name": "Name", "namePh": "Such as Disk 3", "folder": "Folder", "needName": "Give the source a name", "pathTaken": "This folder is a source already",
     "indexIt": "Read in for search", "indexItTip": "The index makes search and folder sizes fast. Reading in runs as a job in the background.",
     "skipHidden": "Leave out hidden files", "skipHiddenTip": "Files and folders whose name starts with a dot stay out of the index.",
