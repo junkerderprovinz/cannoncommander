@@ -731,10 +731,6 @@
     "why": "job rates and progress come from the fixture's own random numbers"
    },
    {
-    "pattern": "(?<=Diesen Monat geändert )\\d+",
-    "why": "both sides start with 42 recent files; the count here follows how far the queue of the steps before has come"
-   },
-   {
     "pattern": "(?<=Interpret )(- |und )(?=Titel)",
     "why": "the app's preset is called Interpret und Titel, as UI texts carry no dashes"
    },
