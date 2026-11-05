@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // The column window: every column under its group, a search over them, and the choice applied together.
-import { Checkbox } from '@glimstone/vue';
+import { Checkbox, EmptyState, SubCard, TextField } from '@glimstone/vue';
 import { computed, ref } from 'vue';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { COLUMN_GROUPS, COLUMNS, columnLabel } from './columns';
 
@@ -20,14 +20,14 @@ const flip = (id: string) => (props.on.has(id) ? props.on.delete(id) : props.on.
 </script>
 
 <template>
-  <input id="col-q" v-model="q" class="glim-input grow" type="search" :placeholder="t('files.columnsSearch')" autocomplete="off">
-  <div class="well glim-well">
+  <TextField id="col-q" v-model="q" type="search" :placeholder="t('files.columnsSearch')" autocomplete="off" width="grow" />
+  <SubCard>
     <div class="col-cols">
       <section v-for="gr in groups" :key="gr.id" class="col-group" data-colgroup>
-        <div class="eyebrow">{{ gr.name }}</div>
+        <div class="glim-eyebrow">{{ gr.name }}</div>
         <Checkbox v-for="c in gr.cols" :key="c.id" class="col-check" :data-col="c.id" :label="columnLabel(c.id)" :disabled="c.fixed" :model-value="on.has(c.id)" @update:model-value="flip(c.id)" />
       </section>
     </div>
-    <div v-if="!groups.length" id="col-none" class="empty"><G n="IconSearch" /><div>{{ t('files.columnsNone') }}</div></div>
-  </div>
+    <EmptyState v-if="!groups.length" id="col-none" nested :glyph="glyphComponent('IconSearch')" :title="t('files.columnsNone')" />
+  </SubCard>
 </template>

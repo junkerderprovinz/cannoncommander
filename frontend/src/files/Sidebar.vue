@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue';
+import { Card, SidebarRow } from '@glimstone/vue';
+import { computed, reactive, watchEffect } from 'vue';
+import NameBody from '@/features/names/NameBody.vue';
 import { run } from '@/core/actions';
 import { extend } from '@/core/extend';
 import { fmtSize } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { menu } from '@/core/menu';
 import { Render } from '@/core/Render';
 import { cancelBtn, win } from '@/core/windows';
@@ -43,13 +45,14 @@ const glyphOf = (k: TreeItem, open: boolean) => k.path === '/mnt' ? 'IconDatabas
   : k.remote ? 'IconNetwork' : k.free ? 'IconZFS' : open ? 'IconFolderOpen' : 'IconFolder';
 const toggle = (p: string) => (F.openTree.has(p) ? F.openTree.delete(p) : F.openTree.add(p));
 
-const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 function rename(b: Bookmark) {
+  const st = reactive({ name: b.name });
   win({
     title: t('side.renameTitle'),
-    body: `<div class="well glim-well"><div class="frow"><span class="lab">${esc(t('side.name'))}</span><input class="glim-input m" id="bmn" value="${esc(b.name)}"></div></div>`,
-    foot: [cancelBtn(), { label: t('side.rename'), g: 'IconPencil', primary: true, run: (el) => {
-      const name = el.querySelector<HTMLInputElement>('#bmn')!.value.trim();
+    body: NameBody,
+    props: { st, field: 'bmn' },
+    foot: [cancelBtn(), { label: t('side.rename'), g: 'IconPencil', primary: true, run: () => {
+      const name = st.name.trim();
       if (!name) return false;
       renameBookmark(b, name);
       return true;
@@ -73,29 +76,30 @@ function bookmarkMenu(e: MouseEvent, b: Bookmark) {
 
 <template>
   <aside id="side" class="side">
-    <section class="side-card">
-      <span class="notch">{{ t('side.bookmarks') }}</span>
+    <Card class="side-card" :title="t('side.bookmarks')">
       <button class="ptab add side-add" data-run="addBookmark" :data-tip="t('side.addBookmark')" @click="run('addBookmark')"><G n="IconAdd" /></button>
       <div id="shortcuts">
-        <div v-for="(s, i) in user.bookmarks" :key="s.path" class="nav-row" :class="{ cur: cur === s.path }" :data-go="s.path" :data-bm="i" @click="F.go(s.path)" @contextmenu.prevent.stop="bookmarkMenu($event, s)">
-          <G :n="s.g" /><span>{{ s.name }}</span><button class="unpin" :data-unpin="i" :data-tip="t('side.unpin')" :aria-label="t('side.unpinLabel', { name: s.name })" @click.stop="unpin(s)"><G n="IconPin" /></button>
-        </div>
-        <div class="nav-row" data-run="openTrash" @click="run('openTrash')"><G n="IconTrash" /><span>{{ t('side.trash') }}</span><span class="meta glim-num">{{ trash.items.length }}</span></div>
+        <SidebarRow v-for="(s, i) in user.bookmarks" :key="s.path" :label="s.name" :glyph="glyphComponent(s.g)" :active="cur === s.path" :data-go="s.path" :data-bm="i" @click="F.go(s.path)" @contextmenu.prevent.stop="bookmarkMenu($event, s)">
+          <template #after><button class="unpin" :data-unpin="i" :data-tip="t('side.unpin')" :aria-label="t('side.unpinLabel', { name: s.name })" @click.stop="unpin(s)"><G n="IconPin" /></button></template>
+        </SidebarRow>
+        <SidebarRow :label="t('side.trash')" :glyph="glyphComponent('IconTrash')" data-run="openTrash" @click="run('openTrash')"><template #after><span class="meta glim-num">{{ trash.items.length }}</span></template></SidebarRow>
         <Render v-for="(row, k) in extend.sideRows" :key="k" :node="row()" />
       </div>
-    </section>
-    <section class="side-card side-tree">
-      <span class="notch">{{ t('side.tree') }}</span>
+    </Card>
+    <Card class="side-card side-tree" :title="t('side.tree')">
       <div id="tree">
-        <div v-for="{ k, depth, open } in rows" :key="k.path" class="nav-row tree-row" :class="{ cur: cur === k.path }" :style="{ paddingLeft: `${0.3 + depth * 0.85}rem` }"
+        <SidebarRow v-for="{ k, depth, open } in rows" :key="k.path" :depth="depth" :label="k.label || k.name" :glyph="glyphComponent(glyphOf(k, open))" :active="cur === k.path"
           :data-go="k.path" :data-tip="k.remote" @click="F.go(k.path)" @contextmenu.prevent.stop="menu($event.clientX, $event.clientY, folderItems(k.path))">
-          <button v-if="k.hasDirs" class="tree-tog" :class="{ open }" :data-tog="k.path" :aria-label="open ? t('side.collapse') : t('side.expand')" @click.stop="toggle(k.path)"><G n="IconExpand" /></button>
-          <span v-else class="tree-tog"></span>
-          <G :n="glyphOf(k, open)" /><span>{{ k.label || k.name }}</span>
-          <Render v-for="(dec, n) in extend.treeDecorators" :key="n" :node="dec(k.path)" />
-          <span v-if="k.free" class="meta glim-num">{{ t('files.free', { size: fmtSize(k.free) }) }}</span>
-        </div>
+          <template #before>
+            <button v-if="k.hasDirs" class="tree-tog" :class="{ open }" :data-tog="k.path" :aria-label="open ? t('side.collapse') : t('side.expand')" @click.stop="toggle(k.path)"><G n="IconExpand" /></button>
+            <span v-else class="tree-tog"></span>
+          </template>
+          <template #after>
+            <Render v-for="(dec, n) in extend.treeDecorators" :key="n" :node="dec(k.path)" />
+            <span v-if="k.free" class="meta glim-num">{{ t('files.free', { size: fmtSize(k.free) }) }}</span>
+          </template>
+        </SidebarRow>
       </div>
-    </section>
+    </Card>
   </aside>
 </template>

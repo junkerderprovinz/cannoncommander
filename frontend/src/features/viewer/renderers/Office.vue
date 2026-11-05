@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Office files: in the office suite when the server has one, else the built-in previews. Formats those cannot read
 // fall back to the pages the server draws, and to a short note when it draws none either.
+import { EmptyState } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { t } from '@/i18n';
 import { office } from '../content';
@@ -33,5 +34,5 @@ defineExpose({ keys: (e: KeyboardEvent, c: string) => inner.value?.keys?.(e, c) 
   <OfficeFrame v-if="how === 'suite'" :path="joinPath(folder, n.name)" @failed="fallback" />
   <component :is="own" v-else-if="how === 'own'" ref="inner" v-bind="props" @info="emit('info', $event)" @failed="how = 'pages'" />
   <Pages v-else-if="how === 'pages'" ref="inner" v-bind="props" @info="emit('info', $event)" @failed="fallback" />
-  <div v-else-if="how === 'none'" class="empty">{{ t('viewer.office.none') }}</div>
+  <EmptyState v-else-if="how === 'none'" nested :title="t('viewer.office.none')" />
 </template>

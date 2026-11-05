@@ -17,4 +17,4 @@
 .bk-dl.cur { outline: 2px solid var(--accent-ink); outline-offset: -2px; border-radius: 4px; }
 .bk-dbody.hex .bk-code { letter-spacing: .02em; }
 .bk-same { display: flex; align-items: center; gap: .5rem; padding: .2rem .9rem .6rem; font-size: 13px; color: var(--carbon-text-sub); }
-@media (max-width: 760px) { .bk-dheads { grid-template-columns: 1fr; } .bk-dhead .bk-path, .bk-dhead .pill:last-child { display: none; } .bk-dl { grid-template-columns: 2rem minmax(0, 1fr) 2rem minmax(0, 1fr); } }
+@media (max-width: 760px) { .bk-dheads { grid-template-columns: 1fr; } .bk-dhead .bk-path, .bk-dhead .glim-pill:last-child { display: none; } .bk-dl { grid-template-columns: 2rem minmax(0, 1fr) 2rem minmax(0, 1fr); } }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Before a copy into a user share, the question Unraid cannot ask: will the disk it is about to pick hold the largest
 // file? Unraid picks the disk when a file is created and cannot know its final size.
+import { Button } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { UnraidTransferReport } from '@/api/ops';
 import { fmtSize } from '@/core/format';
@@ -23,6 +24,6 @@ const why = computed(() => t(`transfer.space.${s.value.problem}`, {
 <template>
   <div class="u-alert u-space"><G n="IconWarning" /><div><b>{{ t('transfer.space.title') }}</b><p>{{ why }}</p>
     <p v-if="s.problem === 'bigFile'" class="muted">{{ t('transfer.space.tip') }}</p>
-    <button v-if="s.roomy" class="btn" :data-space-disk="s.roomy" @click="emit('dest', `/mnt/${s.roomy}/${shareRel(dest)}`)"><G n="IconDatabase" />{{ t('transfer.space.onDisk', { disk: diskName(s.roomy), free: fmtSize(s.roomyFree) }) }}</button>
+    <Button v-if="s.roomy" :label="t('transfer.space.onDisk', { disk: diskName(s.roomy), free: fmtSize(s.roomyFree) })" label-key="IconDatabase" :data-space-disk="s.roomy" @click="emit('dest', `/mnt/${s.roomy}/${shareRel(dest)}`)" />
   </div></div>
 </template>

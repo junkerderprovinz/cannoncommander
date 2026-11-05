@@ -31,17 +31,15 @@ export default function setup() {
     else if (now.n !== last.n) say(now.n ? t('access.marked', { n: now.n, size: fmtSize(now.size) || '0 B' }) : t('access.unmarked'));
   });
 
+  // A row with a toggle or a pin beside its link is pressed through that link.
+  const pressOf = (row: HTMLElement) => row.querySelector<HTMLElement>(':scope > .glim-nav-row-main') ?? row;
+
   // The sidebar's rows and the lists say what they are; the arrows walk the rows below.
   function label() {
     const s = document.getElementById('side');
     if (!s) return;
     s.setAttribute('aria-label', t('access.sidebar'));
-    s.querySelectorAll<HTMLElement>('.nav-row').forEach((r) => {
-      r.tabIndex = -1;
-      r.setAttribute('role', 'button');
-      if (r.classList.contains('cur')) r.setAttribute('aria-current', 'true');
-      else r.removeAttribute('aria-current');
-    });
+    s.querySelectorAll<HTMLElement>('.glim-nav-row').forEach((r) => { pressOf(r).tabIndex = -1; });
     document.querySelectorAll<HTMLElement>('.panel[data-panel] .list').forEach((l) => {
       const i = Number(l.closest<HTMLElement>('.panel')!.dataset.panel);
       l.setAttribute('aria-label', `${side(i)}: ${placeName(F.T(i).path)}`);
@@ -69,7 +67,8 @@ export default function setup() {
     else if (!prefs.side) setPref('side', true);
     await nextTick();
     label();
-    (document.querySelector<HTMLElement>('#side .nav-row.cur') || document.querySelector<HTMLElement>('#side .nav-row'))?.focus();
+    const row = document.querySelector<HTMLElement>('#side .glim-nav-row.glim-active') || document.querySelector<HTMLElement>('#side .glim-nav-row');
+    if (row) pressOf(row).focus();
     say(t('access.sideSay'));
   }
   function toJobs() {
@@ -85,19 +84,19 @@ export default function setup() {
 
   // In the sidebar the arrows walk its rows; the frame's keys would move the list's cursor instead.
   document.addEventListener('keydown', (e) => {
-    const row = (e.target as Element | null)?.closest?.<HTMLElement>('#side .nav-row');
+    const row = (e.target as Element | null)?.closest?.<HTMLElement>('#side .glim-nav-row');
     if (!row || e.altKey || e.ctrlKey) return;
-    const rows = [...document.querySelectorAll<HTMLElement>('#side .nav-row')], i = rows.indexOf(row);
+    const rows = [...document.querySelectorAll<HTMLElement>('#side .glim-nav-row')], i = rows.indexOf(row);
     const to = ({ ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: rows.length - 1 } as Record<string, number>)[e.key];
-    if (to !== undefined) rows[Math.max(0, Math.min(rows.length - 1, to))]!.focus();
-    else if (e.key === 'Enter' || e.key === ' ') row.click();
+    if (to !== undefined) pressOf(rows[Math.max(0, Math.min(rows.length - 1, to))]!).focus();
+    else if (e.key === 'Enter' || e.key === ' ') pressOf(row).click();
     else if (e.key === 'Escape') { shell.sideOpen = false; document.querySelector<HTMLElement>('.panel.active .list')?.focus(); }
     else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
       const tog = row.querySelector<HTMLElement>('[data-tog]');
       if (tog && tog.classList.contains('open') !== (e.key === 'ArrowRight')) {
-        const path = row.dataset.go!;
+        const path = pressOf(row).dataset.go!;
         tog.click();
-        void nextTick(() => document.querySelector<HTMLElement>(`#side .nav-row[data-go="${CSS.escape(path)}"]`)?.focus());
+        void nextTick(() => document.querySelector<HTMLElement>(`#tree .glim-nav-row-main[data-go="${CSS.escape(path)}"]`)?.focus());
       }
     } else return;
     e.preventDefault();

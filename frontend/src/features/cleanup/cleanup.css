@@ -2,7 +2,7 @@
 .bk-cleanwell .bk-list { gap: 1.1rem; padding-top: .3rem; }
 .cl-head { display: flex; align-items: center; gap: .55rem; height: 2.2rem; padding: 0 .45rem; }
 .cl-head .bk-name { font-weight: 600; flex: none; }
-.cl-head .pill:first-of-type { margin-left: auto; }
+.cl-head .glim-pill:first-of-type { margin-left: auto; }
 .cl-g svg { width: 1rem; height: 1rem; color: var(--accent-glyph); display: block; }
 .cl-check { min-height: 0; width: 1.6rem; height: 1.6rem; padding: 0; justify-content: center; flex: none; }
 .cl-row { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto auto; gap: .6rem; align-items: center; min-height: 2.1rem; padding: 0 .45rem 0 2.6rem; border-radius: var(--radius-control); }

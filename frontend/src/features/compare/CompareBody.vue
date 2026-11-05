@@ -1,17 +1,16 @@
 <script setup lang="ts">
+import { Pill, SubCard, Table, type PillTone } from '@glimstone/vue';
 import type { Comparison, CompareState } from '@/api/tools';
 import { t } from '@/i18n';
 
 defineProps<{ left: string; right: string; counts: Comparison['counts'] }>();
-const ROWS: [CompareState, string][] = [['same', 'ok'], ['newerL', 'warn'], ['newerR', 'warn'], ['differ', 'warn'], ['onlyL', ''], ['onlyR', '']];
+const ROWS: [CompareState, PillTone][] = [['same', 'ok'], ['newerL', 'warn'], ['newerR', 'warn'], ['differ', 'warn'], ['onlyL', 'neutral'], ['onlyR', 'neutral']];
 </script>
 
 <template>
-  <div class="well glim-well"><div class="eyebrow">{{ t('compare.and', { left, right }) }}</div>
-    <table class="tbl">
-      <template v-for="[s, tone] in ROWS" :key="s">
-        <tr v-if="s === 'same' || counts[s]"><td>{{ t(`compare.rows.${s}`) }}</td><td class="r"><span class="pill glim-num" :class="counts[s] && tone ? tone : ''">{{ counts[s] ?? 0 }}</span></td></tr>
-      </template>
-    </table>
-  </div>
+  <SubCard :title="t('compare.and', { left, right })">
+    <Table :label="t('compare.title')" :columns="[{ key: 'word' }, { key: 'count', end: true }]" :rows="ROWS.filter(([s]) => s === 'same' || counts[s]).map(([s, tone]) => ({ word: t(`compare.rows.${s}`), count: counts[s] ?? 0, tone: counts[s] ? tone : 'neutral' as PillTone }))">
+      <template #cell="{ row, column, value }"><Pill v-if="column.key === 'count'" :tone="row.tone">{{ value }}</Pill><template v-else>{{ value }}</template></template>
+    </Table>
+  </SubCard>
 </template>

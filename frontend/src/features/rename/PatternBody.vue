@@ -1,12 +1,10 @@
 <script setup lang="ts">
 // Nach Muster markieren: names in the open folder that match one of a few patterns, counted as they are typed.
+import { FieldRow, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, onMounted, ref, watchEffect } from 'vue';
 import { t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
-import Frow from '@/ui/Frow.vue';
-import { pressPrimary } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
+import { pressPrimary, segItems } from '@/ui/kit';
 
 export interface PatternState { pattern: string; folders: boolean; mode: 'add' | 'replace'; hits: string[]; total: number }
 const props = defineProps<{ st: PatternState }>();
@@ -31,15 +29,15 @@ watchEffect(() => {
   props.st.hits = re ? list.filter((k) => (props.st.folders || !k.dir) && re.test(k.name)).map((k) => k.name) : [];
 });
 
-const input = ref<HTMLInputElement | null>(null);
-onMounted(() => setTimeout(() => input.value?.select(), 20));
+const input = ref<InstanceType<typeof TextField> | null>(null);
+onMounted(() => setTimeout(() => input.value?.input?.select(), 20));
 </script>
 
 <template>
-  <div class="well glim-well bk-form">
-    <Frow :label="t('rename.mask')" :tip="t('rename.patternTip')"><input id="p-pat" ref="input" v-model="st.pattern" class="glim-input grow glim-input--mono" spellcheck="false" autocomplete="off" @keydown.enter="pressPrimary"></Frow>
+  <SubCard class="bk-form">
+    <FieldRow :label="t('rename.mask')" :hint="t('rename.patternTip')"><TextField id="p-pat" ref="input" v-model="st.pattern" spellcheck="false" autocomplete="off" width="grow" mono @keydown.enter="pressPrimary" /></FieldRow>
     <div class="bk-tokens"><button v-for="p in PRESETS" :key="p" class="bk-chip mono" type="button" :data-bk-pre="p" @click="st.pattern = p">{{ p }}</button></div>
-    <Frow :label="t('rename.withFolders')"><Sw id="p-dirs" v-model="st.folders" /></Frow>
-    <Frow :label="t('rename.marking')" :tip="t('rename.markingTip')"><Seg id="p-mode" v-model="st.mode" :options="modes" /></Frow>
-  </div>
+    <FieldRow :label="t('rename.withFolders')"><Toggle id="p-dirs" v-model="st.folders" /></FieldRow>
+    <FieldRow :label="t('rename.marking')" :hint="t('rename.markingTip')"><Selector id="p-mode" v-model="st.mode" :items="segItems(modes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+  </SubCard>
 </template>

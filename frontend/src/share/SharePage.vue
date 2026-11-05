@@ -2,12 +2,12 @@
 // What someone sees who got a share link: the name and the note of the owner, the files with a preview, downloads
 // one by one or as a zip, the password when the link has one, uploads when it takes them, and a kind word when the
 // link leads nowhere any more.
-import { PasswordField } from '@glimstone/vue';
+import { Button, Card, EmptyState, FieldRow, IconButton, PasswordField, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { ApiError } from '@/api/client';
 import { inside, type PublicItem, type PublicListing, type PublicShare, shareApi } from '@/api/share';
 import { fmtCount, fmtDate, fmtListDate, fmtSize } from '@/core/format';
-import { G, glyphOf } from '@/core/glyphs';
+import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { eyeWords } from '@/ui/kit';
 import { canPreview } from './preview';
@@ -130,36 +130,33 @@ async function uploaded() {
     <main class="sp-main">
       <div v-if="state === 'loading'" class="sp-wait"><span class="sp-spin"></span><span class="muted">{{ s('loading') }}</span></div>
 
-      <section v-else-if="state === 'locked'" class="glim-card sp-card sp-narrow">
-        <span class="notch">{{ s('lockedTitle') }}</span>
+      <Card v-else-if="state === 'locked'" class="glim-card sp-card sp-narrow" :title="s('lockedTitle')">
         <form class="sp-lock" novalidate @submit.prevent="unlock">
           <p class="sp-text">{{ s('lockedText') }}</p>
           <div v-if="err" class="sp-err" role="alert"><G n="IconWarning" /><span>{{ err }}</span></div>
-          <div class="frow"><span class="lab">{{ s('password') }}</span><PasswordField id="sp-pass" v-model="password" autocomplete="current-password" class="grow" :text="eyeWords()" /></div>
-          <button class="btn key primary" type="submit" :disabled="busy"><G n="IconUnlock" />{{ s('open') }}</button>
+          <FieldRow :label="s('password')"><PasswordField id="sp-pass" v-model="password" autocomplete="current-password" width="grow" :text="eyeWords()" /></FieldRow>
+          <Button size="key" :label="s('open')" label-key="IconUnlock" tone="accent" type="submit" :disabled="busy" />
         </form>
-      </section>
+      </Card>
 
       <template v-else-if="state === 'open' && pub">
-        <section class="glim-card sp-card">
-          <span class="notch">{{ s('kind.' + pub.kind) }}</span>
+        <Card class="glim-card sp-card" :title="s('kind.' + pub.kind)">
           <div class="sp-title">
             <G :n="isFile && file ? glyphOf(file) : 'IconFolderOpen'" />
             <div class="sp-name"><h1>{{ pub.name }}</h1><div v-if="meta.length" class="muted glim-num">{{ meta.join(' · ') }}</div></div>
-            <button v-if="isFile && file && canPreview(file.name)" class="btn key" type="button" data-sp="preview" @click="shown = file"><G n="IconEye" />{{ s('preview') }}</button>
-            <a v-if="isFile" class="btn key primary" :href="api.rawUrl('/', true)" data-sp="download"><G n="IconDownload" />{{ s('download') }}</a>
-            <a v-else class="btn key primary" :href="api.zipUrl(path)" data-sp="zip"><G n="IconDownload" />{{ zipLabel }}</a>
+            <Button v-if="isFile && file && canPreview(file.name)" size="key" :label="s('preview')" label-key="IconEye" data-sp="preview" @click="shown = file" />
+            <Button v-if="isFile" size="key" :label="s('download')" label-key="IconDownload" tone="accent" :href="api.rawUrl('/', true)" data-sp="download" />
+            <Button v-else size="key" :label="zipLabel" label-key="IconDownload" tone="accent" :href="api.zipUrl(path)" data-sp="zip" />
           </div>
-          <div v-if="pub.message" class="well glim-well sp-msg"><div class="eyebrow">{{ s('message') }}</div><p>{{ pub.message }}</p></div>
-        </section>
+          <SubCard :title="s('message')" v-if="pub.message" class="sp-msg"><p>{{ pub.message }}</p></SubCard>
+        </Card>
 
-        <section v-if="!isFile" class="glim-card sp-card sp-files">
-          <span class="notch">{{ s('files') }}</span>
+        <Card v-if="!isFile" class="glim-card sp-card sp-files" :title="s('files')">
           <nav class="sp-crumbs" :aria-label="s('path')">
             <button type="button" class="sp-crumb" :class="{ cur: path === '/' }" @click="browse('/')">{{ s('root') }}</button>
             <template v-for="c in crumbs" :key="c.path"><span class="muted">/</span><button type="button" class="sp-crumb" :class="{ cur: c.path === path }" @click="browse(c.path)">{{ c.name }}</button></template>
           </nav>
-          <div v-if="!items.length" class="empty"><G n="IconEmpty" /><div>{{ s('empty') }}</div></div>
+          <EmptyState v-if="!items.length" nested :glyph="glyphComponent('IconEmpty')" :title="s('empty')" />
           <div v-else class="sp-list" role="list">
             <div class="sp-lhead muted"><span>{{ s('name') }}</span><span>{{ s('size') }}</span><span>{{ s('changed') }}</span><span></span></div>
             <div v-for="k in items" :key="k.name" class="sp-row" role="listitem">
@@ -167,22 +164,21 @@ async function uploaded() {
               <span class="muted glim-num">{{ k.dir ? '' : fmtSize(k.size) }}</span>
               <span class="muted glim-num">{{ fmtListDate(Date.parse(k.mtime)) }}</span>
               <span class="sp-acts">
-                <button v-if="!k.dir && canPreview(k.name)" type="button" class="btn icon" :data-tip="s('preview')" :aria-label="s('preview')" @click="shown = k"><G n="IconEye" /></button>
-                <a class="btn icon" :href="k.dir ? api.zipUrl(inside(path, k.name)) : api.rawUrl(inside(path, k.name), true)" :data-tip="s('download')" :aria-label="s('download')"><G n="IconDownload" /></a>
+                <IconButton v-if="!k.dir && canPreview(k.name)" :tip="s('preview')" :glyph="glyphComponent('IconEye')" @click="shown = k" />
+                <IconButton :href="k.dir ? api.zipUrl(inside(path, k.name)) : api.rawUrl(inside(path, k.name), true)" :tip="s('download')" :glyph="glyphComponent('IconDownload')" />
               </span>
             </div>
           </div>
-        </section>
+        </Card>
 
         <ShareUpload v-if="pub.uploads" :api="api" :dir="path" :room="pub.uploadRoom" @done="uploaded" />
       </template>
 
-      <section v-else class="glim-card sp-card sp-narrow sp-gone">
-        <span class="notch">{{ s(state + 'Title') }}</span>
+      <Card v-else class="glim-card sp-card sp-narrow sp-gone" :title="s(state + 'Title')">
         <G :n="GONE_GLYPH[state as Gone]" />
         <h1>{{ s(state + 'Title') }}</h1>
         <p class="sp-text">{{ s(state + 'Text') }}</p>
-      </section>
+      </Card>
     </main>
 
     <SharePreview v-if="shown" :item="shown" :src="api.rawUrl(filePath(shown))" :download="api.rawUrl(filePath(shown), true)" :text="() => api.text(filePath(shown!))"

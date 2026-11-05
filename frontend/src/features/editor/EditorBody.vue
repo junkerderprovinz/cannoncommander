@@ -1,15 +1,16 @@
 <script setup lang="ts">
 // The editor window's body: CodeMirror in the prototype's look, a find and replace card over it and, for markdown,
 // a live preview beside it.
+import { Button, IconButton, Pill, TextField, Toggle } from '@glimstone/vue';
 import { EditorView } from '@codemirror/view';
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { saveText, type TextFile } from '@/features/viewer/content';
 import { type FileNode, joinPath, langOf, viewKind } from '@/features/viewer/kinds';
-import { esc, md } from '@/features/viewer/markdown';
-import Sw from '@/ui/Sw.vue';
-import { footStartOf, notchOf, winKeys } from '@/features/viewer/winkeys';
+import { md } from '@/features/viewer/markdown';
+import { footStartOf, winKeys } from '@/features/viewer/winkeys';
+import type { WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { makeEditor, setMatches } from './cm';
@@ -17,7 +18,7 @@ import { findAll, nearest, position, type Range } from './find';
 import { opts, type EditorState } from './state';
 
 // The text comes read already, so the editor stands ready the moment its window opens.
-const props = defineProps<{ node: FileNode; folder: string; file: Pick<TextFile, 'text' | 'encoding' | 'eol' | 'etag' | 'truncated'>; state: EditorState; close?: () => void }>();
+const props = defineProps<{ node: FileNode; folder: string; file: Pick<TextFile, 'text' | 'encoding' | 'eol' | 'etag' | 'truncated'>; state: EditorState; close?: () => void; win?: WinEntry }>();
 
 const path = joinPath(props.folder, props.node.name);
 const isMd = viewKind(props.node) === 'md';
@@ -25,8 +26,8 @@ const host = ref<HTMLElement | null>(null);
 const findOpen = ref(false);
 const q = ref('');
 const rep = ref('');
-const qIn = ref<HTMLInputElement | null>(null);
-const repIn = ref<HTMLInputElement | null>(null);
+const qIn = ref<InstanceType<typeof TextField> | null>(null);
+const repIn = ref<InstanceType<typeof TextField> | null>(null);
 const count = ref('');
 const preview = ref('');
 let view: EditorView | null = null;
@@ -41,8 +42,7 @@ const text = () => view?.state.doc.toString() ?? '';
 
 function setDirty(d: boolean) {
   props.state.dirty = d;
-  const notch = notchOf(host.value);
-  if (notch) notch.innerHTML = esc(props.node.name) + (d ? `<i class="ce-dot" aria-label="${esc(t('editor.unsaved'))}"></i>` : '');
+  if (props.win) props.win.dot = d ? t('editor.unsaved') : undefined;
 }
 
 function moved() {
@@ -73,7 +73,7 @@ async function openFind(replace = false) {
   if (picked && !picked.includes('\n')) q.value = picked;
   findOpen.value = true;
   await nextTick();
-  const el = replace ? repIn.value : qIn.value;
+  const el = replace ? repIn.value?.input : qIn.value?.input;
   el?.focus();
   el?.select();
   search();
@@ -175,26 +175,26 @@ function repKey(e: KeyboardEvent) {
 
 <template>
   <div class="ce-bar">
-    <span class="pill">{{ langOf(node) }}</span><span class="grow"></span>
-    <span v-if="isMd" class="cv-swl">{{ t('editor.preview') }} <Sw id="ce-split" v-model="opts.split" /></span>
-    <span class="cv-swl">{{ t('editor.wrap') }} <Sw id="ce-wrap" :model-value="opts.wrap" @update:model-value="setWrapOpt" /></span>
-    <button id="ce-findbtn" class="btn" data-tip="Strg+F" @click="openFind()"><G n="IconSearch" />{{ t('editor.find') }}</button>
+    <Pill>{{ langOf(node) }}</Pill><span class="grow"></span>
+    <span v-if="isMd" class="cv-swl">{{ t('editor.preview') }} <Toggle id="ce-split" v-model="opts.split" /></span>
+    <span class="cv-swl">{{ t('editor.wrap') }} <Toggle id="ce-wrap" :model-value="opts.wrap" @update:model-value="setWrapOpt" /></span>
+    <Button id="ce-findbtn" :compact-below="760" :label="t('editor.find')" label-key="IconSearch" title="Strg+F" @click="openFind()" />
   </div>
   <div class="ce-main" :class="{ split: isMd && opts.split }">
     <div class="ce-pane">
       <div ref="host" class="ce-scroll" :class="{ wrap: opts.wrap }"></div>
       <div class="ce-find glim-card" :hidden="!findOpen">
         <div class="ce-frow">
-          <input id="ce-q" ref="qIn" v-model="q" class="glim-input" :placeholder="t('editor.findField')" :aria-label="t('editor.findField')" @input="search()" @keydown="qKey">
-          <span id="ce-n" class="pill glim-num">{{ count }}</span>
-          <button class="btn icon" data-hit="-1" :data-tip="t('editor.prevHitTip')" :aria-label="t('editor.prevHit')" @click="step(-1)"><G n="IconMoveUp" /></button>
-          <button class="btn icon" data-hit="1" :data-tip="t('editor.nextHitTip')" :aria-label="t('editor.nextHit')" @click="step(1)"><G n="IconMoveDown" /></button>
-          <button id="ce-fclose" class="btn icon" :data-tip="t('editor.closeFindTip')" :aria-label="t('editor.closeFind')" @click="closeFind"><G n="IconClose" /></button>
+          <TextField id="ce-q" ref="qIn" v-model="q" :placeholder="t('editor.findField')" :aria-label="t('editor.findField')" @input="search()" @keydown="qKey" />
+          <Pill id="ce-n" class="glim-num">{{ count }}</Pill>
+          <IconButton :tip="t('editor.prevHitTip')" :glyph="glyphComponent('IconMoveUp')" data-hit="-1" @click="step(-1)" />
+          <IconButton :tip="t('editor.nextHitTip')" :glyph="glyphComponent('IconMoveDown')" data-hit="1" @click="step(1)" />
+          <IconButton id="ce-fclose" :tip="t('editor.closeFindTip')" :glyph="glyphComponent('IconClose')" @click="closeFind" />
         </div>
         <div class="ce-frow">
-          <input id="ce-r" ref="repIn" v-model="rep" class="glim-input" :placeholder="t('editor.replaceField')" :aria-label="t('editor.replaceField')" @keydown="repKey">
-          <button id="ce-one" class="btn" @click="replaceOne">{{ t('editor.replaceOne') }}</button>
-          <button id="ce-all" class="btn" @click="replaceAll">{{ t('editor.replaceAll') }}</button>
+          <TextField id="ce-r" ref="repIn" v-model="rep" :placeholder="t('editor.replaceField')" :aria-label="t('editor.replaceField')" @keydown="repKey" />
+          <Button id="ce-one" :label="t('editor.replaceOne')" :label-key="null" @click="replaceOne" />
+          <Button id="ce-all" :label="t('editor.replaceAll')" :label-key="null" @click="replaceAll" />
         </div>
       </div>
     </div>

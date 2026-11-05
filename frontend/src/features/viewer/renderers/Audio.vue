@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { IconButton, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref, watch } from 'vue';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { rawUrl, thumbUrl } from '../content';
 import { ext, fmtDur, hash, joinPath, rng, stem } from '../kinds';
@@ -62,19 +63,16 @@ defineExpose({ keys });
     <div class="cv-actl">
       <span class="glim-num cv-now">{{ fmtDur(st.t) }}</span>
       <span class="cv-tr">
-        <button v-if="many && !compact" class="btn icon" data-step="-1" :data-tip="t('viewer.media.prevTrack')" :aria-label="t('viewer.media.prevTrack')" @click="go(-1)"><G n="IconFirst" /></button>
-        <button class="btn icon cv-playbtn" data-play data-pi :data-tip="st.playing ? t('viewer.media.pauseTip') : t('viewer.media.playTip')" :aria-label="st.playing ? t('viewer.media.pause') : t('viewer.media.play')" @click="toggle">
-          <G :n="st.playing ? 'IconPause' : 'IconPlay'" />
-        </button>
-        <button v-if="many && !compact" class="btn icon" data-step="1" :data-tip="t('viewer.media.nextTrack')" :aria-label="t('viewer.media.nextTrack')" @click="go(1)"><G n="IconLatest" /></button>
+        <IconButton v-if="many && !compact" :tip="t('viewer.media.prevTrack')" :glyph="glyphComponent('IconFirst')" data-step="-1" @click="go(-1)" />
+        <IconButton class="cv-playbtn" :tip="st.playing ? t('viewer.media.pauseTip') : t('viewer.media.playTip')" :glyph="glyphComponent(st.playing ? 'IconPause' : 'IconPlay')" data-play data-pi @click="toggle" />
+        <IconButton v-if="many && !compact" :tip="t('viewer.media.nextTrack')" :glyph="glyphComponent('IconLatest')" data-step="1" @click="go(1)" />
       </span>
       <span class="glim-num muted">{{ fmtDur(st.dur) }}</span>
     </div>
-    <div v-if="many && !compact" class="well glim-well cv-tracks">
-      <div class="eyebrow">{{ artist }}</div>
-      <button v-for="(s, k) in sibs" :key="s.name" class="nav-row" :class="{ cur: s.name === n.name }" :data-k="k" @click="go(null, k)">
+    <SubCard :title="artist" v-if="many && !compact" class="cv-tracks">
+      <button v-for="(s, k) in sibs" :key="s.name" class="cv-track" :class="{ cur: s.name === n.name }" :data-k="k" @click="go(null, k)">
         <G n="IconFileAudio" /><span>{{ stem(s.name) }}</span><span class="meta glim-num">{{ s.name === n.name && st.dur ? fmtDur(st.dur) : '' }}</span>
       </button>
-    </div>
+    </SubCard>
   </div>
 </template>

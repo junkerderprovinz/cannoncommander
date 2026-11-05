@@ -1,23 +1,21 @@
 <script setup lang="ts">
-import { Button, Card, InfoBubble } from '@glimstone/vue';
+import { pathField } from '@/ui/picker';
+import { selectOptions } from '@/ui/kit';
+import { Select } from '@glimstone/vue/Select';
+import { Button, Card, EmptyState, FieldRow, FieldRowGroup, IconButton, InfoBubble, ListRow, PathField, Pill, type PillTone } from '@glimstone/vue';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { admin, type Rule, type User, type Verdict } from '@/api/admin';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
-import ARow from '@/ui/ARow.vue';
-import BareBtn from '@/ui/BareBtn.vue';
-import Dropdown from '@/ui/Dropdown.vue';
-import Frow from '@/ui/Frow.vue';
 import { c } from '@/features/config/shared';
-import PathField from '@/ui/PathField.vue';
 import { ruleGlyph, ruleName, whoName } from '../roles';
 import RuleWin from '../wins/RuleWin.vue';
 
 const rules = ref<Rule[]>([]), users = ref<User[]>([]);
 // The probe outlives a visit to another tab, as somebody checking a rule goes back and forth.
 const probe = reactive(probeState);
-const result = ref<{ word: string; tone: string; why: string }>({ word: '', tone: '', why: '' });
+const result = ref<{ word: string; tone: PillTone; why: string }>({ word: '', tone: 'neutral', why: '' });
 
 async function load() {
   [rules.value, users.value] = await Promise.all([admin.rules(), admin.users()]);
@@ -79,23 +77,25 @@ const probeState = { who: 'anna', path: '/mnt/user/backups' };
 <template>
   <Card :title="c('rules.title')">
     <div v-if="rules.length" class="a-list">
-      <ARow v-for="(r, i) in rules" :key="i" :name="r.path" mono :data-open="i" @click="edit(i)">
+      <ListRow v-for="(r, i) in rules" :key="i" :name="r.path" mono :data-open="i" @click="edit(i)">
         <template #tile><G :n="ruleGlyph(r.rule)" /></template>
-        <template #badges><span class="pill">{{ whoName(r.who, users) }}</span><span class="pill state">{{ ruleName(r.rule) }}</span></template>
-        <template #acts>
-          <BareBtn :g="i > 0 ? 'IconMoveUp' : undefined" :tip="c('rules.up')" @click="move(i, -1)" />
-          <BareBtn :g="i < rules.length - 1 ? 'IconMoveDown' : undefined" :tip="c('rules.down')" @click="move(i, 1)" />
-          <BareBtn g="IconPencil" :tip="c('edit')" @click="edit(i)" />
-          <BareBtn g="IconTrash" :tip="c('remove')" @click="remove(i)" />
+        <template #badges><Pill>{{ whoName(r.who, users) }}</Pill><Pill tone="state">{{ ruleName(r.rule) }}</Pill></template>
+        <template #actions>
+          <IconButton :absent="i === 0" :glyph="glyphComponent('IconMoveUp')" :tip="c('rules.up')" @click="move(i, -1)" />
+          <IconButton :absent="i === rules.length - 1" :glyph="glyphComponent('IconMoveDown')" :tip="c('rules.down')" @click="move(i, 1)" />
+          <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" @click="edit(i)" />
+          <IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="remove(i)" />
         </template>
-      </ARow>
+      </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconShieldOn" /><div>{{ c('rules.none') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconShieldOn')" :title="c('rules.none')" />
     <div class="a-foot"><Button data-add :label="c('rules.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('rules.probe')">
-    <Frow :label="c('rules.who')"><Dropdown v-model="probe.who" :options="users.map((u) => [u.name, u.full])" /></Frow>
-    <Frow :label="c('rules.path')"><PathField id="a-ppath" v-model="probe.path" /></Frow>
-    <Frow :label="c('rules.result')" :tip="c('rules.resultTip')"><span id="a-pres" class="a-ctl"><span class="pill" :class="result.tone">{{ result.word }}</span><InfoBubble :tip="result.why" /></span></Frow>
+    <FieldRowGroup>
+      <FieldRow :label="c('rules.who')"><Select v-model="probe.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" rows="menu" /></FieldRow>
+      <FieldRow :label="c('rules.path')"><PathField v-model="probe.path" v-bind="pathField('a-ppath')" /></FieldRow>
+      <FieldRow :label="c('rules.result')" :hint="c('rules.resultTip')"><Pill :tone="result.tone">{{ result.word }}</Pill><InfoBubble :tip="result.why" /></FieldRow>
+    </FieldRowGroup>
   </Card>
 </template>

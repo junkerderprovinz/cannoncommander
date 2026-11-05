@@ -77,7 +77,7 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await page.click('.cl-card button[type=submit]');
   await page.waitForSelector('#app', { timeout: 30000 });
   await page.waitForTimeout(600);
-  check('anna sees the file manager with a greeting', (await page.locator('.toast').allInnerTexts()).some((t: string) => t.includes('Hallo Anna')));
+  check('anna sees the file manager with a greeting', (await page.locator('.glim-toast').allInnerTexts()).some((t: string) => t.includes('Hallo Anna')));
   const cookie = await sessionCookie(context);
   check('the session ends with the browser', cookie && cookie.expires === -1, cookie);
   await page.screenshot({ path: join(shots, 'app-anna.png') });
@@ -158,7 +158,7 @@ const once = await send('POST', '/shares', { paths: [urlaub + '/Reiseplan.md'], 
   await page.screenshot({ path: join(shots, 'share-preview.png') });
   await page.keyboard.press('Escape');
 
-  const [single] = await Promise.all([page.waitForEvent('download'), page.locator('.sp-row', { hasText: 'Reiseplan.md' }).locator('a.btn').click()]);
+  const [single] = await Promise.all([page.waitForEvent('download'), page.locator('.sp-row', { hasText: 'Reiseplan.md' }).locator('a').click()]);
   const text = readFileSync(await single.path(), 'utf8');
   check('a single file downloads', single.suggestedFilename() === 'Reiseplan.md' && text.includes('Montag'), single.suggestedFilename());
   const [zip] = await Promise.all([page.waitForEvent('download'), page.click('[data-sp="zip"]')]);

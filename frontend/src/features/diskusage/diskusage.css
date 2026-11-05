@@ -25,10 +25,8 @@
 .du-name .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .du-path, .du-exts { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
 .du-share { display: grid; grid-template-columns: 1fr 2.6rem; gap: .45rem; align-items: center; font-size: 12px; color: var(--carbon-text-muted); text-align: right; }
-.du-share .bar { height: .4rem; contain: size layout; }
 .du-kind { display: flex; align-items: center; gap: .5rem; margin: .1rem .2rem .45rem; padding: .2rem .25rem .2rem .7rem; width: fit-content; border-radius: var(--radius-pill); background: color-mix(in srgb, var(--accent) 14%, var(--carbon-surface2)); font-size: 13px; }
 .du-kind > svg { width: .95rem; height: .95rem; color: var(--accent-glyph); }
-.du-kind .btn { width: 1.7rem; height: 1.7rem; background: transparent; }
 .du-map svg { position: absolute; inset: 0; }
 .bk-blk rect { fill: var(--blk); transition: fill .12s; }
 .bk-blk text { fill: var(--ink); font-size: 12px; pointer-events: none; }

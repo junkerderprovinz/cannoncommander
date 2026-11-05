@@ -3,7 +3,7 @@
 .sp-brand { display: flex; flex-direction: column; line-height: 1.25; }
 .sp-brand .muted { font-size: 12.5px; }
 .sp-main { width: min(60rem, 100%); display: flex; flex-direction: column; gap: 1.6rem; flex: 1; justify-content: safe center; }
-.sp-card { position: relative; padding: 1.7rem 1.3rem 1.3rem; display: flex; flex-direction: column; gap: 1rem; }
+.sp-card { padding: .7rem 1.3rem 1.3rem; }
 .sp-narrow { width: min(28rem, 100%); align-self: center; }
 .sp-text { margin: 0; color: var(--carbon-text-sub); line-height: 1.55; }
 .sp-title { display: flex; align-items: center; gap: .9rem; flex-wrap: wrap; }
@@ -12,13 +12,11 @@
 .sp-name h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.01em; overflow-wrap: anywhere; }
 .sp-name .muted { font-size: 13px; }
 .sp-msg p { margin: 0; white-space: pre-wrap; line-height: 1.55; overflow-wrap: anywhere; }
-a.btn { text-decoration: none; }
 .sp-lock { display: flex; flex-direction: column; gap: 1rem; }
-.sp-lock .frow { flex-wrap: wrap; row-gap: .35rem; }
-.sp-lock .btn { width: 100%; }
+.sp-lock > .glim-btn { width: 100%; }
 .sp-err { display: flex; align-items: center; gap: .6rem; padding: .6rem .8rem; border-radius: var(--radius-control); background: var(--status-fail-bg); font-size: 13px; }
 .sp-err svg { width: 1rem; height: 1rem; color: var(--status-fail-text); flex: none; }
-.sp-gone { align-items: center; text-align: center; padding-top: 2.4rem; }
+.sp-gone { align-items: center; text-align: center; padding-top: 1.4rem; }
 .sp-gone > svg { width: 2.6rem; height: 2.6rem; color: var(--accent-glyph); }
 .sp-gone h1 { margin: 0; font-size: 20px; }
 .sp-wait { display: flex; flex-direction: column; align-items: center; gap: .8rem; padding: 3rem 0; }
@@ -42,8 +40,6 @@ a.btn { text-decoration: none; }
 .sp-open svg { width: 1.05rem; height: 1.05rem; color: var(--accent-glyph); flex: none; }
 .sp-nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sp-acts { display: flex; justify-content: flex-end; gap: .2rem; }
-.sp-acts .btn.icon { height: 1.9rem; width: 1.9rem; background: transparent; }
-.sp-acts .btn.icon:hover { background: var(--carbon-surface3); }
 @media (max-width: 640px) {
   .sp-lhead, .sp-row { grid-template-columns: minmax(0, 1fr) 4.6rem; }
   .sp-lhead > :nth-child(2), .sp-lhead > :nth-child(3), .sp-row > .muted { display: none; }
@@ -58,8 +54,6 @@ a.btn { text-decoration: none; }
 .sp-send svg { width: .95rem; height: .95rem; color: var(--accent-glyph); }
 .sp-send.done svg, .sp-send.skipped svg { color: var(--status-ok-text); }
 .sp-send.fail svg { color: var(--status-fail-text); }
-.sp-bar { height: .35rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); overflow: hidden; }
-.sp-bar span { display: block; height: 100%; background: var(--accent); transition: width .2s; }
 
 .sp-scrim { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 1rem; background: color-mix(in srgb, var(--carbon-bg) 75%, transparent); }
 .sp-view { width: min(64rem, 100%); max-height: calc(100vh - 2rem); display: flex; flex-direction: column; overflow: hidden; outline: none; }

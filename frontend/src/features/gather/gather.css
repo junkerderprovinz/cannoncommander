@@ -1,5 +1,5 @@
 .u-dist { display: grid; grid-template-columns: 9rem minmax(0, 1fr) 5.2rem 5.2rem 5rem; gap: .45rem .7rem; align-items: center; }
-.u-dist .empty { grid-column: 1 / -1; }
+.u-dist .glim-empty { grid-column: 1 / -1; }
 .u-dh { font-size: 12px; color: var(--carbon-text-muted); }
 .u-dist .r { text-align: right; justify-self: end; font-size: 12px; }
 .u-dn { display: flex; align-items: center; gap: .45rem; font-size: 13px; }
@@ -7,5 +7,4 @@
 .u-dn svg + svg { width: .8rem; height: .8rem; color: var(--carbon-text-muted); }
 .u-dn.on { font-weight: 600; }
 .u-dn.on svg:first-child { color: var(--accent-glyph); }
-.u-dist .pill { justify-self: end; }
 @media (max-width: 760px) { .u-dist { grid-template-columns: 6.5rem minmax(0, 1fr) 4.6rem 4.6rem; } .u-dist > :nth-child(5n) { display: none; } }

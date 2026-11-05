@@ -57,13 +57,13 @@ module.exports = async (page, shot) => {
   // 3. Rename with metadata: the photo preset, the series preset applied, an own preset saved.
   await page.evaluate(() => { Files.go('/mnt/user/fotos/2026', 0); CC.run('selectAll'); CC.run('multiRename'); }); await wait();
   await page.click('#m-preset'); await wait(200);
-  await page.click('#menu button:has-text("Fotos nach Datum")'); await wait();
+  await page.click('#menu :is(button, [role=option]):has-text("Fotos nach Datum")'); await wait();
   console.log('3 photos:', await page.evaluate(() => $$('#m-list .bk-mrow').slice(0, 2).map(r => r.innerText.replace(/\s+/g, ' ')).join(' | ')));
   await shot('r13-3-rename-photos');
   await closeAll();
   await page.evaluate(() => { Files.go('/mnt/user/serien/Pioneer One/Staffel 1', 0); CC.run('selectAll'); CC.run('multiRename'); }); await wait();
   await page.click('#m-preset'); await wait(200);
-  await page.click('#menu button:has-text("Serie S01E02")'); await wait();
+  await page.click('#menu :is(button, [role=option]):has-text("Serie S01E02")'); await wait();
   await page.fill('#m-name', 'Pioneer One S[S2]E[F2]'); await wait();
   await page.click('#m-psave'); await wait();
   await page.fill('#m-pname', 'Pioneer One'); await page.click('.scrim:last-of-type .win-foot .btn.primary'); await wait();

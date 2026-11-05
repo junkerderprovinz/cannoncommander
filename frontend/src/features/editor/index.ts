@@ -32,7 +32,7 @@ export async function openEditor(node: FileNode, folder: string, fresh = false):
   state.ask = () => {
     win({
       title: t('editor.askTitle'),
-      body: `<div class="well"><div class="ce-ask">${glyphSvg('IconWarning')}<span>${t('editor.askText', { name: `<b>${esc(node.name)}</b>` })}</span></div></div>`,
+      body: `<div class="glim-subcard"><div class="ce-ask">${glyphSvg('IconWarning')}<span>${t('editor.askText', { name: `<b>${esc(node.name)}</b>` })}</span></div></div>`,
       foot: [
         { label: t('editor.keepEditing'), g: 'IconPencil' },
         { label: t('editor.discard'), g: 'IconUndo', run: () => { state.dirty = false; leave(); } },

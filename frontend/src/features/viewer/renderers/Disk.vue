@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // A disk image: what kind, its name, how it starts, its partitions or files, and whether a checksum lies beside it.
+import { FieldRow, GlyphTile, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { api } from '@/api/client';
 import { fmtSize } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { fsStat, type ImageInfo } from '../content';
 import { ext, joinPath } from '../kinds';
-import Frow from '@/ui/Frow.vue';
 import type { REmits, RProps } from './types';
 
 const props = defineProps<RProps>();
@@ -33,26 +33,23 @@ onMounted(async () => {
 
 <template>
   <div class="cv-scroll cv-disk">
-    <div class="well glim-well">
-      <div class="eyebrow">{{ t('viewer.disk.eyebrow') }}</div>
-      <Frow :label="t('viewer.disk.format')" :value="format" />
-      <Frow v-if="image.label" :label="t('viewer.disk.label')" :value="image.label" />
-      <Frow v-if="image.boot" :label="t('viewer.disk.boot')" :value="image.boot" />
-      <Frow v-if="image.used != null" :label="t('viewer.disk.used')" :value="fmtSize(image.used)" :tip="t('viewer.disk.usedTip')" />
-      <Frow :label="t('viewer.disk.sum')" :value="hasSum ? t('viewer.disk.sumThere') : t('viewer.disk.sumNone')" :pill="hasSum ? 'ok' : ''" :tip="hasSum ? t('viewer.disk.sumTip') : ''" />
-    </div>
-    <div v-if="parts.length" class="well glim-well">
-      <div class="eyebrow">{{ t('viewer.disk.parts') }}</div>
+    <SubCard :title="t('viewer.disk.eyebrow')">
+      <FieldRow :label="t('viewer.disk.format')" :value="format" />
+      <FieldRow v-if="image.label" :label="t('viewer.disk.label')" :value="image.label" />
+      <FieldRow v-if="image.boot" :label="t('viewer.disk.boot')" :value="image.boot" />
+      <FieldRow v-if="image.used != null" :label="t('viewer.disk.used')" :value="fmtSize(image.used)" :hint="t('viewer.disk.usedTip')" />
+      <FieldRow :label="t('viewer.disk.sum')" :value="hasSum ? t('viewer.disk.sumThere') : t('viewer.disk.sumNone')" :tone="hasSum ? 'ok' : 'neutral'" :hint="hasSum ? t('viewer.disk.sumTip') : ''" />
+    </SubCard>
+    <SubCard :title="t('viewer.disk.parts')" v-if="parts.length">
       <div class="cv-parts"><i v-for="(p, k) in parts" :key="k" :class="'p' + (k % 4)" :style="{ flex: Math.max(p.size / n.size, 0.03) }"></i></div>
-      <Frow v-for="(p, k) in parts" :key="k" :label="p.label" :value="fmtSize(p.size)">
+      <FieldRow v-for="(p, k) in parts" :key="k" :label="p.label" :value="fmtSize(p.size)">
         <template #label><span class="cv-key" :class="'p' + (k % 4)"></span>{{ p.label }}</template>
-      </Frow>
-    </div>
-    <div v-else-if="inside.length" class="well glim-well">
-      <div class="eyebrow">{{ t('viewer.disk.content') }}</div>
+      </FieldRow>
+    </SubCard>
+    <SubCard :title="t('viewer.disk.content')" v-else-if="inside.length">
       <div class="cv-mini">
-        <div v-for="x in inside" :key="x.name" class="cv-mrow"><span class="tile"><G :n="x.dir ? 'IconFolder' : 'IconFile'" /></span><span class="t mono">{{ x.name }}</span><span></span></div>
+        <div v-for="x in inside" :key="x.name" class="cv-mrow"><GlyphTile :glyph="glyphComponent(x.dir ? 'IconFolder' : 'IconFile')" /><span class="t mono">{{ x.name }}</span><span></span></div>
       </div>
-    </div>
+    </SubCard>
   </div>
 </template>

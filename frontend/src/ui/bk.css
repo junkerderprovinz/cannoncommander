@@ -1,30 +1,20 @@
 /* The tool windows of the file and tools menus, as the prototype's b-00-kit.js styles them. */
 .bk :not(.glim-info-icon) > svg { fill: currentColor; }
-.bk .well { min-width: 0; }
-.bk .well .pill:not(.ok):not(.warn):not(.fault) { background: var(--carbon-surface3); }
-.bk .well .tbl tr + tr td { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--carbon-text) 6%, transparent); }
+.bk .glim-subcard { min-width: 0; }
 .bk-finalw { display: flex; gap: .4rem; align-items: center; min-width: 0; flex: 1; max-width: 30rem; justify-content: flex-end; }
 .bk-final { font-size: 12.5px; color: var(--carbon-text); }
-.bk-form .frow > .lab { flex: 0 0 auto; min-width: 8.5rem; white-space: nowrap; }
-.bk-form .frow .glim-input.grow { flex: 1; }
 .bk-grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .6rem 1.6rem; }
 .bk-fill { flex: 1; min-height: 0; overflow: hidden; }
 .bk-list { display: flex; flex-direction: column; gap: 1px; overflow: auto; min-height: 0; flex: 1; }
-.pathbar.bk-pathbar { flex: none; height: 2.1rem; cursor: default; }
 .bk-row { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; align-items: center; gap: .6rem; height: 2.25rem; padding: 0 .45rem; border-radius: var(--radius-control); text-align: left; width: 100%; cursor: pointer; flex: none; }
 .bk-row:hover, .bk-row:focus-visible, .bk-row.cur { background: var(--carbon-surface3); outline: none; }
-.bk-row:hover .pill, .bk-row.cur .pill, .bk-step:hover .pill, .bk-copy:hover .pill:not(.warn), .bk-mrow:hover .pill:not(.fault) { background: var(--carbon-hover-raised); }
-.bk-tile { width: 1.75rem; height: 1.75rem; border-radius: var(--radius-control); background: var(--carbon-surface3); display: grid; place-items: center; flex: none; }
-.bk-tile svg { width: 1rem; height: 1rem; color: var(--carbon-text-sub); }
-.bk-tile.dir svg { color: var(--accent-glyph); }
-.bk-row:hover .bk-tile, .bk-row:focus-visible .bk-tile, .bk-row.cur .bk-tile { background: var(--accent); }
-.bk-row:hover .bk-tile svg, .bk-row:focus-visible .bk-tile svg, .bk-row.cur .bk-tile svg { color: var(--accent-contrast); }
+.bk-row:hover .glim-pill, .bk-row.cur .glim-pill, .bk-step:hover .glim-pill, .bk-copy:hover .glim-pill:not(.glim-pill--warn), .bk-mrow:hover .glim-pill:not(.glim-pill--fail) { background: var(--carbon-hover-raised); }
+.bk-row:is(:hover, :focus-visible, .cur) > .glim-tile { background: var(--accent); color: var(--accent-contrast); }
 .bk-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.bk-picker { height: min(34rem, calc(100vh - 3rem)); }
 .bk-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left; min-width: 0; }
 .bk-dot { width: .5rem; height: .5rem; border-radius: 50%; background: #6fdc8c; display: inline-block; flex: none; }
 .bk-tools { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
-.bk-tools .eyebrow { padding: 0; margin-right: auto; }
+.bk-tools .glim-eyebrow { padding: 0; margin-right: auto; }
 .bk-chip { height: 1.75rem; padding: 0 .65rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); font-size: 13px; white-space: nowrap; }
 .bk-chip:hover { background: color-mix(in srgb, var(--carbon-hover-raised) 78%, var(--btn-tint)); }
 .bk-chip b { font-weight: 600; font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 12px; margin-right: .35rem; }
@@ -35,14 +25,8 @@
 .bk-arrow svg { width: 1rem; height: 1rem; }
 .bk-arrow.sm { color: var(--carbon-text-sub); }
 @media (max-width: 760px) {
+  .bk-finalw { max-width: none; width: 100%; margin-left: 0; }
   .bk.win { max-width: calc(100vw - 3rem); }
   .bk-grid2 { grid-template-columns: minmax(0, 1fr); }
-  .bk-form .frow { flex-wrap: wrap; row-gap: .35rem; }
-  .bk-form .frow > .lab { flex: 1 0 100%; white-space: normal; }
-  .bk-form .frow:has(> .bk-val, > .glim-toggle) { flex-wrap: nowrap; }
-  .bk-form .frow:has(> .bk-val, > .glim-toggle) > .lab { flex: 1 1 auto; min-width: 0; }
-  .bk-form .seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; margin-left: 0; }
-  .pathf, .bk-finalw { max-width: none; width: 100%; margin-left: 0; }
-  .bk .glim-window-start { display: none; }
 }
 @media (max-width: 760px) { .bk-range { flex-wrap: wrap; margin-left: 0; } }

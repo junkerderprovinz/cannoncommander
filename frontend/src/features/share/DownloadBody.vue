@@ -1,12 +1,11 @@
 <script setup lang="ts">
 // Herunterladen of several entries or a folder: packed by the server while it sends, as zip or tar.gz.
+import { FieldRow, Pill, Selector, SubCard, Table, TextField } from '@glimstone/vue';
 import { computed, watch } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
 import { t } from '@/i18n';
-import Frow from '@/ui/Frow.vue';
-import { plural } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
+import { plural, segItems } from '@/ui/kit';
 
 export interface DownloadState { items: Entry[]; base: string; format: 'zip' | 'tgz'; name: string }
 const props = defineProps<{ st: DownloadState }>();
@@ -16,15 +15,12 @@ watch(() => props.st.format, (f) => { props.st.name = `${props.st.base}.${f === 
 </script>
 
 <template>
-  <div class="well glim-well"><div class="eyebrow">{{ plural(st.items.length, 'ui.objects') }}, {{ fmtSize(total) }}</div>
-    <table class="tbl">
-      <tr v-for="k in st.items.slice(0, 6)" :key="k.name"><td>{{ k.name }}</td><td class="glim-num r">{{ fmtSize(k.size) || '0 B' }}</td></tr>
-      <tr v-if="st.items.length > 6"><td colspan="2">{{ t('share.more', { n: st.items.length - 6 }) }}</td></tr>
-    </table>
-  </div>
-  <div class="well glim-well"><div class="eyebrow">{{ t('share.archive') }}</div>
-    <Frow :label="t('share.format')" :tip="t('share.formatTip')"><Seg id="dl-fmt" v-model="st.format" :options="formats" /></Frow>
-    <Frow :label="t('share.fileName')"><input id="dl-name" v-model="st.name" class="glim-input m"></Frow>
-    <Frow :label="t('share.savesIn')" :tip="t('share.savesInTip')"><span class="pill">{{ t('share.browserFolder') }}</span></Frow>
-  </div>
+  <SubCard :title="`${plural(st.items.length, 'ui.objects')}, ${fmtSize(total)}`">
+    <Table :label="t('share.format')" :columns="[{ key: 'name' }, { key: 'size', end: true }]" :rows="st.items.slice(0, 6).map((k) => ({ name: k.name, size: fmtSize(k.size) || '0 B' }))" :more="st.items.length > 6 ? t('share.more', { n: st.items.length - 6 }) : undefined" />
+  </SubCard>
+  <SubCard :title="t('share.archive')">
+    <FieldRow :label="t('share.format')" :hint="t('share.formatTip')"><Selector id="dl-fmt" v-model="st.format" :items="segItems(formats)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="t('share.fileName')"><TextField id="dl-name" v-model="st.name" width="medium" /></FieldRow>
+    <FieldRow :label="t('share.savesIn')" :hint="t('share.savesInTip')"><Pill>{{ t('share.browserFolder') }}</Pill></FieldRow>
+  </SubCard>
 </template>

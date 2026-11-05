@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { CopyField, PasswordField } from '@glimstone/vue';
+import { Select } from '@glimstone/vue/Select';
+import { Button, CopyField, FieldRow, FieldRowGroup, PasswordField, Pill, SubCard, Toggle } from '@glimstone/vue';
 import { nextTick, onMounted, ref } from 'vue';
 import { admin, type Share } from '@/api/admin';
 import { DAY, fmtDate, now } from '@/core/format';
-import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Dropdown from '@/ui/Dropdown.vue';
-import Frow from '@/ui/Frow.vue';
 import { attempt, c, fail, stepFoot } from '@/features/config/shared';
-import Sw from '@/ui/Sw.vue';
-import { copyWords, eyeWords } from '@/ui/kit';
+import { copyWords, eyeWords, selectOptions } from '@/ui/kit';
 
 const props = defineProps<{ win: WinEntry; share: Share; saved: () => void }>();
 const s = props.share;
@@ -44,20 +41,22 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('save'), g: 'IconSa
 </script>
 
 <template>
-  <div class="well glim-well">
-    <Frow :label="c('shares.link')"><CopyField class="w" :value="s.url" :label="c('shares.link')" :text="copyWords()" /></Frow>
-    <Frow :label="c('shares.path')"><span v-for="p in s.paths" :key="p" class="pill mono">{{ p }}</span></Frow>
-    <Frow :label="c('shares.created')"><span class="pill">{{ c('shares.createdBy', { date: fmtDate(s.created), by: s.owner }) }}</span></Frow>
-    <Frow :label="c('shares.viewsLabel')"><span class="pill glim-num">{{ s.views }}</span></Frow>
-  </div>
-  <div class="well glim-well">
-    <Frow :label="c('shares.expires')"><Dropdown v-model="expiry" :options="options()" /></Frow>
+  <SubCard>
+    <FieldRowGroup>
+      <FieldRow :label="c('shares.link')"><CopyField width="grow" :value="s.url" :label="c('shares.link')" :text="copyWords()" /></FieldRow>
+      <FieldRow :label="c('shares.path')"><Pill v-for="p in s.paths" :key="p" class="mono">{{ p }}</Pill></FieldRow>
+      <FieldRow :label="c('shares.created')"><Pill>{{ c('shares.createdBy', { date: fmtDate(s.created), by: s.owner }) }}</Pill></FieldRow>
+      <FieldRow :label="c('shares.viewsLabel')"><Pill class="glim-num">{{ s.views }}</Pill></FieldRow>
+    </FieldRowGroup>
+  </SubCard>
+  <SubCard>
+    <FieldRow :label="c('shares.expires')"><Select v-model="expiry" :options="selectOptions(options())" rows="menu" /></FieldRow>
     <div id="a-shpwbox">
-      <Frow :label="c('shares.askPw')" :tip="c('shares.askPwTip')"><Sw v-model="pwOn" /></Frow>
+      <FieldRow :label="c('shares.askPw')" :hint="c('shares.askPwTip')"><Toggle v-model="pwOn" /></FieldRow>
       <template v-if="pwOn">
-        <Frow v-if="s.password && !pwNew" :label="c('users.password')"><span class="a-ctl"><span class="pill">{{ c('users.pwSet') }}</span><button class="btn" @click="setNew"><G n="IconKey" />{{ c('users.pwNew') }}</button></span></Frow>
-        <Frow v-else :label="c('users.password')" :tip="c('shares.pwTip')"><PasswordField id="a-sharepw" v-model="pw" class="m" autocomplete="new-password" :text="eyeWords()" /></Frow>
+        <FieldRow v-if="s.password && !pwNew" :label="c('users.password')"><Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="setNew" /></FieldRow>
+        <FieldRow v-else :label="c('users.password')" :hint="c('shares.pwTip')"><PasswordField id="a-sharepw" v-model="pw" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
       </template>
     </div>
-  </div>
+  </SubCard>
 </template>

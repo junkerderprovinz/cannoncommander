@@ -5,7 +5,7 @@ import { prefs } from './prefs';
 
 export type ToastKind = 'ok' | 'warn' | 'fault';
 export interface ToastAct { label: string; run: () => void }
-export interface Toast { id: number; text: string; kind: ToastKind; act?: ToastAct; left: number; started: number; timer?: ReturnType<typeof setTimeout> }
+export interface Toast { id: number; text: string; kind: ToastKind; act?: ToastAct; left: number; started: number; holds: number; timer?: ReturnType<typeof setTimeout> }
 
 export const toasts = reactive<Toast[]>([]);
 let next = 1;
@@ -14,11 +14,16 @@ export function dropToast(id: number) {
   const i = toasts.findIndex((t) => t.id === id);
   if (i >= 0) { clearTimeout(toasts[i]!.timer); toasts.splice(i, 1); }
 }
+// The pointer and the focus each hold a toast, and its time runs on once both have left.
 export function holdToast(t: Toast) {
+  if (t.holds++) return;
   clearTimeout(t.timer);
   t.left -= Date.now() - t.started;
 }
-export function armToast(t: Toast) {
+export function releaseToast(t: Toast) {
+  if (--t.holds === 0) armToast(t);
+}
+function armToast(t: Toast) {
   t.started = Date.now();
   t.timer = setTimeout(() => dropToast(t.id), t.left);
 }
@@ -26,7 +31,7 @@ export function armToast(t: Toast) {
 export function toast(text: string, kind: ToastKind = 'ok', act?: ToastAct) {
   // Quiet notifications drop routine confirmations; failures and anything that offers a step still show.
   if (prefs.quietToasts && kind === 'ok' && !act) return;
-  toasts.push({ id: next++, text, kind, act, left: 4000, started: 0 });
+  toasts.push({ id: next++, text, kind, act, left: 4000, started: 0, holds: 0 });
   const t = toasts.at(-1)!;
   armToast(t);
   extend.toastHistory.forEach((fn) => fn(t));

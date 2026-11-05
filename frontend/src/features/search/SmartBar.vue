@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { IconButton } from '@glimstone/vue';
 import { computed } from 'vue';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 import { useSearch } from '@/stores/search';
@@ -16,5 +17,5 @@ function leave() {
 </script>
 
 <template>
-  <div v-if="s" class="smart-bar"><G n="IconFilter" /><span>{{ t('search.bar') }} <b>{{ s.name }}</b>{{ t('search.barRest', { n: F.entries(i).length, path: s.query.in }) }}</span><button class="btn icon" data-smart-close :data-tip="t('search.barClose')" :aria-label="t('search.barClose')" @click="leave"><G n="IconClose" /></button></div>
+  <div v-if="s" class="smart-bar"><G n="IconFilter" /><span>{{ t('search.bar') }} <b>{{ s.name }}</b>{{ t('search.barRest', { n: F.entries(i).length, path: s.query.in }) }}</span><IconButton :tip="t('search.barClose')" :glyph="glyphComponent('IconClose')" data-smart-close @click="leave" /></div>
 </template>

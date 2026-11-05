@@ -1,6 +1,7 @@
 .cl { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: safe center; gap: 1.2rem; padding: 2rem 1rem 6rem; overflow: auto; }
 .cl.over { position: fixed; inset: 0; z-index: 65; background: var(--carbon-bg); }
-.cl-card { position: relative; width: min(28rem, 100%); padding: 2rem 1.4rem 1.4rem; display: flex; flex-direction: column; gap: 1.2rem; flex: none; }
+.cl-card { width: min(28rem, 100%); gap: 0; padding: 2rem 1.4rem 1.4rem; flex: none; }
+.cl-form { display: flex; flex-direction: column; gap: 1.2rem; }
 .cl-brand { display: flex; align-items: center; gap: .8rem; padding: .2rem .1rem .3rem; }
 .cl-brand .brand-mark { width: 2.75rem; height: 2.75rem; }
 .cl-brand .brand-mark svg { width: 1.45rem; height: 1.45rem; }
@@ -8,17 +9,12 @@
 .cl-name { font-size: 20px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
 .cl-brand .muted { font-size: 13px; }
 .cl-fields { display: flex; flex-direction: column; gap: .55rem; }
-.cl .frow > .glim-input, .cl .frow > .glim-secret { flex: 1 1 13rem; width: auto; }
-.cl .frow { flex-wrap: wrap; row-gap: .35rem; }
-.cl .frow > .lab { flex: 1 0 7rem; }
 .cl .cl-code { text-transform: uppercase; letter-spacing: .12em; }
 .cl .cl-code::placeholder { letter-spacing: .12em; }
 .cl-btns { display: flex; flex-direction: column; gap: .5rem; padding-top: .2rem; }
-.cl-btns .btn { width: 100%; }
-.cl-row { display: flex; align-items: center; gap: .5rem; }
-.cl-row .btn { flex: 1; }
-.cl-quiet { background: var(--carbon-surface2); color: var(--carbon-text-sub); }
-.cl-quiet:hover { color: var(--carbon-text); }
+.cl-btns > .glim-btn { width: 100%; }
+.cl-forgot { display: flex; align-items: center; gap: .5rem; }
+.cl-forgot > .glim-btn { flex: 1; }
 .cl-err, .cl-note { display: flex; align-items: center; gap: .6rem; padding: .6rem .8rem; border-radius: var(--radius-control); color: var(--carbon-text); font-size: 13px; }
 .cl-err { background: var(--status-fail-bg); }
 .cl-note { background: var(--carbon-surface2); }

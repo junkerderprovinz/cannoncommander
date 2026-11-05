@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { Button, Card } from '@glimstone/vue';
+import { Button, Card, EmptyState, FieldRow, IconButton, ListRow, Pill } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { admin, type IndexState, type Source } from '@/api/admin';
 import { run } from '@/core/actions';
 import { fmtSize } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { go } from '@/core/views';
 import { win } from '@/core/windows';
 import { locale } from '@/i18n';
-import ARow from '@/ui/ARow.vue';
-import BareBtn from '@/ui/BareBtn.vue';
-import Frow from '@/ui/Frow.vue';
 import { ago, attempt, c, confirmWin, fail, soon } from '@/features/config/shared';
 import SourceWin from '../wins/SourceWin.vue';
 
@@ -81,30 +78,30 @@ function remove(s: Source) {
 <template>
   <Card :title="c('sources.title')">
     <div v-if="sources.length" class="a-list">
-      <ARow v-for="(s, i) in sources" :key="s.path" :name="s.name" :tip="rowTip(s)" :data-open="i" @click="edit(s)">
+      <ListRow v-for="(s, i) in sources" :key="s.path" :name="s.name" :tip="rowTip(s)" :data-open="i" @click="edit(s)">
         <template #tile><G :n="glyph(s)" /></template>
         <template #badges>
-          <span class="pill mono">{{ s.path }}</span>
-          <span v-if="busy(stateOf(s))" class="pill run">{{ c('sources.readingPill') }}</span>
-          <template v-else-if="hasIndex(s)"><span class="pill">{{ fmtSize(stateOf(s)!.size) }}</span><span class="pill glim-num">{{ c('sources.files', { n: stateOf(s)!.files.toLocaleString(locale()) }) }}</span></template>
-          <span v-else class="pill state">{{ c('sources.noIndex') }}</span>
-          <span v-if="s.readOnly" class="pill state">{{ c('sources.readOnly') }}</span>
+          <Pill class="mono">{{ s.path }}</Pill>
+          <Pill v-if="busy(stateOf(s))" class="run">{{ c('sources.readingPill') }}</Pill>
+          <template v-else-if="hasIndex(s)"><Pill>{{ fmtSize(stateOf(s)!.size) }}</Pill><Pill class="glim-num">{{ c('sources.files', { n: stateOf(s)!.files.toLocaleString(locale()) }) }}</Pill></template>
+          <Pill v-else tone="state">{{ c('sources.noIndex') }}</Pill>
+          <Pill v-if="s.readOnly" tone="state">{{ c('sources.readOnly') }}</Pill>
         </template>
-        <template #acts>
-          <BareBtn :g="hasIndex(s) && !busy(stateOf(s)) ? 'IconRefresh' : undefined" :tip="c('sources.reindex')" @click="reindex(s)" />
-          <BareBtn g="IconPencil" :tip="c('edit')" :data-open="i" @click="edit(s)" />
-          <BareBtn g="IconTrash" :tip="c('remove')" @click="remove(s)" />
+        <template #actions>
+          <IconButton :absent="!hasIndex(s) || busy(stateOf(s))" :glyph="glyphComponent('IconRefresh')" :tip="c('sources.reindex')" @click="reindex(s)" />
+          <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" :data-open="i" @click="edit(s)" />
+          <IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="remove(s)" />
         </template>
-      </ARow>
+      </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconDatabase" /><div>{{ c('sources.none') }}</div></div>
-    <Frow v-if="restartNeeded" :label="c('sources.restart')" :tip="c('sources.restartTip')">
-      <span class="a-ctl"><span class="pill warn">{{ c('sources.restartPill') }}</span><Button :label="c('sources.toRestart')" label-key="IconRefresh" @click="go('settings', 'app')" /></span>
-    </Frow>
+    <EmptyState v-else nested :glyph="glyphComponent('IconDatabase')" :title="c('sources.none')" />
+    <FieldRow v-if="restartNeeded" :label="c('sources.restart')" :hint="c('sources.restartTip')">
+      <Pill tone="warn">{{ c('sources.restartPill') }}</Pill><Button :label="c('sources.toRestart')" label-key="IconRefresh" @click="go('settings', 'app')" />
+    </FieldRow>
     <div class="a-foot"><Button data-add :label="c('sources.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('sources.index')">
-    <Frow :label="c('sources.every')" :tip="c('sources.everyTip')"><span class="pill">{{ Number.isFinite(next) ? c('sources.nextRun', { when: soon(next) }) : c('sources.notPlanned') }}</span></Frow>
-    <Frow :label="c('sources.last')"><span class="a-ctl"><span class="pill">{{ last ? ago(last) : c('sources.never') }}</span><Button data-reindexall :label="c('sources.reindexAll')" label-key="IconRefresh" @click="reindex()" /></span></Frow>
+    <FieldRow :label="c('sources.every')" :hint="c('sources.everyTip')"><Pill>{{ Number.isFinite(next) ? c('sources.nextRun', { when: soon(next) }) : c('sources.notPlanned') }}</Pill></FieldRow>
+    <FieldRow :label="c('sources.last')"><Pill>{{ last ? ago(last) : c('sources.never') }}</Pill><Button data-reindexall :label="c('sources.reindexAll')" label-key="IconRefresh" @click="reindex()" /></FieldRow>
   </Card>
 </template>

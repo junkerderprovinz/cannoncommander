@@ -1,11 +1,12 @@
 <script setup lang="ts">
 // The menu of the empty search field: the saved searches and a few examples of what the field understands. While
 // someone types it steps aside, so the hits stay visible.
+import { IconButton } from '@glimstone/vue';
 import { computed, nextTick, onMounted } from 'vue';
 import type { SavedSearch } from '@/api/tools';
 import { run } from '@/core/actions';
 import { num } from '@/ui/kit';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 import { useSearch } from '@/stores/search';
@@ -35,11 +36,11 @@ async function example(q: string) {
 
 <template>
   <div class="qdrop glim-card" role="menu" @mousedown.prevent>
-    <div class="eyebrow">{{ t('search.menuSaved') }}<button class="btn icon" data-run="search" :data-tip="t('search.menuNew')" :aria-label="t('search.menuNewLabel')" @click="run('search')"><G n="IconAdd" /></button></div>
+    <div class="glim-eyebrow">{{ t('search.menuSaved') }}<IconButton :tip="t('search.menuNew')" :glyph="glyphComponent('IconAdd')" data-run="search" @click="run('search')" /></div>
     <button v-for="s in search.saved" :key="s.id" class="qrow" :class="{ cur: tab.smart === s.id }" :data-smart="s.id" :data-tip="tip(s)"
       @click="openSaved(s)" @contextmenu.prevent.stop="savedMenu(s, $event.clientX, $event.clientY)"><G n="IconFilter" /><span>{{ s.name }}</span><span class="glim-num">{{ count(s) }}</span></button>
     <div v-if="!search.saved.length" class="qd-none muted">{{ t('search.menuNone') }}</div>
-    <div class="eyebrow">{{ t('search.menuExamples') }}</div>
+    <div class="glim-eyebrow">{{ t('search.menuExamples') }}</div>
     <button v-for="[q, say] in EXAMPLES" :key="q" class="qrow qex" :data-example="q" @click="example(q)"><b>{{ q }}</b><span class="muted">{{ t(`search.examples.${say}`) }}</span></button>
   </div>
 </template>
