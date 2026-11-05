@@ -304,6 +304,10 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 		paths[i] = it.Path
 	}
 	report, err := s.unraid.CheckTransfer(r.Context(), unraid.Transfer{Kind: req.Kind, Paths: paths, Dest: dest.Path})
+	report.Keep(func(p string) bool {
+		_, err := s.fs.Check(u, p, ccfs.View)
+		return err == nil
+	})
 	if err != nil {
 		logger.Errorf("preflight: %v", err)
 	} else if report.Trap != nil || report.Links != nil || report.Space != nil || len(report.Wakes) > 0 || report.Lands != "" || report.Linkable {
