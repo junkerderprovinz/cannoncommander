@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // Prüfsummen erstellen: the method, every file with its sum as it comes in, and where the list is saved.
+import { glyphComponent, glyphOf } from '@/core/glyphs';
 import { pathField } from '@/ui/picker';
-import { FieldRow, PathField, ProgressBar, Selector, SubCard, TextField } from '@glimstone/vue';
+import { FieldRow, FieldRowGroup, GlyphTile, PathField, ProgressBar, Selector, SubCard, TextField } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { Job } from '@/api/ops';
 import type { Algo, ChecksumResult } from '@/api/tools';
@@ -10,7 +11,6 @@ import { t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
 import CopyBtn from '@/ui/CopyBtn.vue';
 import { plural, segItems } from '@/ui/kit';
-import Tile from '@/ui/Tile.vue';
 
 export interface SumRow { name: string; size: number; state: 'wait' | 'read' | 'done'; hash?: string }
 export interface SumsState { algo: Algo; rows: SumRow[]; dir: string; name: string; touched: boolean; job: Job | null; result: ChecksumResult | null }
@@ -32,14 +32,16 @@ const width = (r: SumRow) => (r.state === 'done' ? 1 : r.state === 'read' ? 0.6 
   <SubCard class="bk-fill"><div class="bk-tools"><span id="c-count" class="glim-eyebrow">{{ count }}</span></div>
     <div id="c-list" class="bk-list">
       <div v-for="(r, i) in st.rows" :id="`c-row-${i}`" :key="r.name" class="bk-sum">
-        <Tile :k="{ name: r.name }" /><span class="bk-name" :title="r.name">{{ r.name }}</span>
+        <GlyphTile :glyph="glyphComponent(glyphOf({ name: r.name }))" ground quiet /><span class="bk-name" :title="r.name">{{ r.name }}</span>
         <span class="bk-hash mono"><span v-if="r.hash" :title="r.hash">{{ r.hash }}</span><ProgressBar v-else class="bar" :value="width(r)" :label="r.name" /></span>
         <CopyBtn v-if="r.hash" :text="r.hash" :tip="t('checksum.copySum')" /><span v-else></span>
       </div>
     </div>
   </SubCard>
   <SubCard :title="t('checksum.save')" class="bk-form">
-    <FieldRow :label="t('checksum.folder')"><PathField v-model="st.dir" v-bind="pathField('c-dir')" /></FieldRow>
-    <FieldRow :label="t('checksum.fileName')"><TextField id="c-name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" mono @input="st.touched = true" /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="t('checksum.folder')"><PathField v-model="st.dir" v-bind="pathField('c-dir')" /></FieldRow>
+      <FieldRow :label="t('checksum.fileName')"><TextField id="c-name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" mono @input="st.touched = true" /></FieldRow>
+    </FieldRowGroup>
   </SubCard>
 </template>

@@ -178,7 +178,7 @@ function repKey(e: KeyboardEvent) {
     <Pill>{{ langOf(node) }}</Pill><span class="grow"></span>
     <span v-if="isMd" class="cv-swl">{{ t('editor.preview') }} <Toggle id="ce-split" v-model="opts.split" /></span>
     <span class="cv-swl">{{ t('editor.wrap') }} <Toggle id="ce-wrap" :model-value="opts.wrap" @update:model-value="setWrapOpt" /></span>
-    <Button id="ce-findbtn" :label="t('editor.find')" label-key="IconSearch" title="Strg+F" @click="openFind()" />
+    <Button id="ce-findbtn" :compact-below="760" :label="t('editor.find')" label-key="IconSearch" title="Strg+F" @click="openFind()" />
   </div>
   <div class="ce-main" :class="{ split: isMd && opts.split }">
     <div class="ce-pane">

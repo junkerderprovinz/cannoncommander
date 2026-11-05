@@ -57,7 +57,7 @@ const layouts = computed(() => [
     <span class="spacer"></span>
     <Selector v-if="files" :model-value="prefs.dual ? 'dual' : 'single'" class="head-layout" size="md" activation="manual" inline :label="t('head.layout')" :items="layouts" @update:model-value="run($event)" />
     <IconButton :tip="t('head.palette')" :glyph="glyphComponent('IconSearch')" data-run="palette" @click="run('palette')" />
-    <Button class="head-jobs" :label="t('head.jobs')" label-key="IconQueued" data-run="jobs" @click="run('jobs')"><template #after><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }">{{ shell.jobCount }}</span></template></Button>
+    <Button :compact-below="900" :label="t('head.jobs')" label-key="IconQueued" data-run="jobs" @click="run('jobs')"><template #after><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }">{{ shell.jobCount }}</span></template></Button>
     <IconButton :tip="settings ? t('head.settingsClose') : t('head.settings')" :glyph="glyphComponent('IconGear')" :data-go-view="settings ? 'files' : 'settings'" :pressed="settings" @click="go(settings ? 'files' : 'settings')" />
     <button class="avatar" data-account :data-tip="user.me.full" @click="account"><i>{{ initials }}</i></button>
   </header>

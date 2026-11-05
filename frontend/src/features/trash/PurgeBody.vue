@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SubCard } from '@glimstone/vue';
+import { SubCard, Table } from '@glimstone/vue';
 import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
 import type { TrashItem } from '@/api/ops';
@@ -10,10 +10,7 @@ defineProps<{ list: TrashItem[]; what: string; size: number }>();
 
 <template>
   <SubCard :title="`${what}, ${fmtSize(size)}`">
-    <table class="tbl">
-      <tr v-for="e in list.slice(0, 8)" :key="e.id"><td>{{ e.name }}</td><td class="glim-num r">{{ fmtSize(e.size) }}</td></tr>
-      <tr v-if="list.length > 8"><td colspan="2">{{ t('trash.andMore', { n: list.length - 8 }) }}</td></tr>
-    </table>
+    <Table :label="what" :columns="[{ key: 'name' }, { key: 'size', end: true }]" :rows="list.slice(0, 8).map((e) => ({ name: e.name, size: fmtSize(e.size) }))" :more="list.length > 8 ? t('trash.andMore', { n: list.length - 8 }) : undefined" />
     <div class="ce-ask"><G n="IconWarning" /><span>{{ t('trash.gone') }}</span></div>
   </SubCard>
 </template>

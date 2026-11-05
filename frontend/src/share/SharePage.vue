@@ -135,7 +135,7 @@ async function uploaded() {
           <p class="sp-text">{{ s('lockedText') }}</p>
           <div v-if="err" class="sp-err" role="alert"><G n="IconWarning" /><span>{{ err }}</span></div>
           <FieldRow :label="s('password')"><PasswordField id="sp-pass" v-model="password" autocomplete="current-password" width="grow" :text="eyeWords()" /></FieldRow>
-          <Button class="glim-btn-key" :label="s('open')" label-key="IconUnlock" tone="accent" type="submit" :disabled="busy" />
+          <Button size="key" :label="s('open')" label-key="IconUnlock" tone="accent" type="submit" :disabled="busy" />
         </form>
       </Card>
 
@@ -144,9 +144,9 @@ async function uploaded() {
           <div class="sp-title">
             <G :n="isFile && file ? glyphOf(file) : 'IconFolderOpen'" />
             <div class="sp-name"><h1>{{ pub.name }}</h1><div v-if="meta.length" class="muted glim-num">{{ meta.join(' · ') }}</div></div>
-            <Button v-if="isFile && file && canPreview(file.name)" class="glim-btn-key" :label="s('preview')" label-key="IconEye" data-sp="preview" @click="shown = file" />
-            <Button v-if="isFile" class="glim-btn-key" :label="s('download')" label-key="IconDownload" tone="accent" :href="api.rawUrl('/', true)" data-sp="download" />
-            <Button v-else class="glim-btn-key" :label="zipLabel" label-key="IconDownload" tone="accent" :href="api.zipUrl(path)" data-sp="zip" />
+            <Button v-if="isFile && file && canPreview(file.name)" size="key" :label="s('preview')" label-key="IconEye" data-sp="preview" @click="shown = file" />
+            <Button v-if="isFile" size="key" :label="s('download')" label-key="IconDownload" tone="accent" :href="api.rawUrl('/', true)" data-sp="download" />
+            <Button v-else size="key" :label="zipLabel" label-key="IconDownload" tone="accent" :href="api.zipUrl(path)" data-sp="zip" />
           </div>
           <SubCard :title="s('message')" v-if="pub.message" class="sp-msg"><p>{{ pub.message }}</p></SubCard>
         </Card>

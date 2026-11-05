@@ -13,7 +13,6 @@
 .ct-row:hover { background: var(--carbon-hover); }
 .ct-row .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ct-row .col-from { justify-self: start; max-width: 100%; overflow: hidden; text-overflow: ellipsis; display: block; line-height: 1.35rem; font-size: 11.5px; }
-.ct-row.sel .tile svg { color: var(--accent-contrast); }
 .ct-row.sel { background: var(--accent); color: var(--accent-contrast); }
 .ct-row .glim-pill { justify-self: start; }
 .ct-row.sel .glim-pill { background: color-mix(in srgb, var(--accent-contrast) 14%, transparent); color: var(--accent-contrast); }

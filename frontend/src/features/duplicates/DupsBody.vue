@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // Doppelte Dateien: the server's duplicates job groups true copies, and the copies picked here go to the trash.
 import { pathField } from '@/ui/picker';
-import { Button, EmptyState, FieldRow, PathField, Pill, ProgressBar, Selector, SubCard, Toggle } from '@glimstone/vue';
+import { Button, EmptyState, FieldRow, FieldRowGroup, GlyphTile, PathField, Pill, ProgressBar, Selector, SubCard, Toggle } from '@glimstone/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { type Job, ops } from '@/api/ops';
 import { type DupCopy, type Duplicates, tools } from '@/api/tools';
 import { fmtSize, fmtTime } from '@/core/format';
-import { glyphComponent } from '@/core/glyphs';
+import { glyphComponent, glyphOf } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import type { WinEntry } from '@/core/windows';
@@ -16,7 +16,6 @@ import { undoAct } from '@/features/undo/act';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
 import { num, plural, setFoot, segItems } from '@/ui/kit';
-import Tile from '@/ui/Tile.vue';
 
 const props = defineProps<{ root: string; win: WinEntry; close: () => void }>();
 const jobs = useJobs();
@@ -127,8 +126,10 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
 
 <template>
   <SubCard class="bk-form"><div class="bk-grid2">
-    <FieldRow :label="t('duplicates.in')"><PathField v-model="where" v-bind="pathField('u-in')" /></FieldRow>
-    <FieldRow :label="t('duplicates.by')" :hint="t('duplicates.byTip')"><Selector id="u-by" v-model="by" :items="segItems(BY)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="t('duplicates.in')"><PathField v-model="where" v-bind="pathField('u-in')" /></FieldRow>
+      <FieldRow :label="t('duplicates.by')" :hint="t('duplicates.byTip')"><Selector id="u-by" v-model="by" :items="segItems(BY)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    </FieldRowGroup>
   </div></SubCard>
   <SubCard class="bk-fill bk-dupwell">
     <div class="bk-tools"><span id="u-sum" class="glim-eyebrow">{{ sum }}</span>
@@ -141,7 +142,7 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
       <div v-else-if="!res" class="bk-scan"><div>{{ t('duplicates.scanning', { path: root }) }}</div><ProgressBar id="u-bar" class="bar" :value="pct / 100" :label="t('duplicates.scanning', { path: root })" /><div id="u-n" class="glim-num">{{ t('duplicates.files', { n: num(seen) }) }}</div></div>
       <template v-else-if="res.groups.length">
         <section v-for="(g, gi) in res.groups" :key="g.sha256 + gi" class="bk-group">
-          <div class="bk-ghead"><Tile :k="{ name: g.name }" /><span class="bk-name">{{ by === 'name' ? g.name : t('duplicates.sameSize', { n: g.copies.length }) }}</span><Pill class="glim-num">{{ t('duplicates.each', { copies: copies(g.copies.length), size: fmtSize(g.size) }) }}</Pill></div>
+          <div class="bk-ghead"><GlyphTile :glyph="glyphComponent(glyphOf({ name: g.name }))" ground quiet /><span class="bk-name">{{ by === 'name' ? g.name : t('duplicates.sameSize', { n: g.copies.length }) }}</span><Pill class="glim-num">{{ t('duplicates.each', { copies: copies(g.copies.length), size: fmtSize(g.size) }) }}</Pill></div>
           <div v-for="(c, ci) in g.copies" :key="c.path" class="bk-copy" :class="{ gone: drop.has(c.path) }">
             <span class="bk-path mono" :title="c.path"><bdi>{{ by === 'name' ? c.at : c.path }}</bdi></span>
             <span v-if="g.copies[0]!.mtime === g.copies.at(-1)!.mtime"></span><Pill v-else-if="ci === 0">{{ t('duplicates.newest') }}</Pill><Pill v-else-if="ci === g.copies.length - 1">{{ t('duplicates.oldest') }}</Pill><span v-else></span>

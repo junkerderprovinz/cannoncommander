@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // Freigeben for one file or folder: the options of a new link, and the links it already has.
-import { FieldRow, IconButton, Pill, SubCard } from '@glimstone/vue';
+import { FieldRow, GlyphTile, IconButton, Pill, SubCard } from '@glimstone/vue';
 import { type Share, shareUrl } from '@/api/tools';
 import { fmtDate, fmtSize } from '@/core/format';
-import { G, glyphOf, glyphComponent } from '@/core/glyphs';
+import { glyphOf, glyphComponent } from '@/core/glyphs';
 import type { Entry } from '@/files/entries';
 import { t } from '@/i18n';
 import CopyBtn from '@/ui/CopyBtn.vue';
@@ -15,7 +15,7 @@ defineProps<{ k: Entry; f: LinkForm; st: { existing: Share[] }; reroll: (s: Shar
 </script>
 
 <template>
-  <SubCard><FieldRow :label="k.name"><template #label><span class="cs-head"><span class="tile cs-tile"><G :n="glyphOf(k)" /></span><b class="cs-name">{{ k.name }}</b></span></template><Pill class="glim-num">{{ fmtSize(k.size) || '0 B' }}</Pill></FieldRow></SubCard>
+  <SubCard><FieldRow :label="k.name"><template #label><span class="cs-head"><GlyphTile :glyph="glyphComponent(glyphOf(k))" /><b class="cs-name">{{ k.name }}</b></span></template><Pill class="glim-num">{{ fmtSize(k.size) || '0 B' }}</Pill></FieldRow></SubCard>
   <LinkOptions :f="f" :name="k.name" />
   <SubCard :title="t('share.existing')" v-if="st.existing.length" id="cs-existing">
     <FieldRow v-for="s in st.existing" :key="s.id" :label="shareUrl(s.slug)"><template #label><span class="mono cs-slug">{{ shareUrl(s.slug) }}</span></template>

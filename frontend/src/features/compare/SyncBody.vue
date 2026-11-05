@@ -1,19 +1,18 @@
 <script setup lang="ts">
 // The sync window: direction, how to compare and whether to mirror, and the plan as a dry run whose steps can each
 // be switched off. The server plans; a step that would overwrite something newer comes switched off.
-import { EmptyState, FieldRow, InfoBubble, Pill, Selector, SubCard, Toggle } from '@glimstone/vue';
+import { EmptyState, FieldRow, GlyphTile, InfoBubble, Pill, Selector, SubCard, Toggle } from '@glimstone/vue';
 import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue';
 import { type SyncDirection, type SyncStep, tools } from '@/api/tools';
 import { run } from '@/core/actions';
 import { fmtSize } from '@/core/format';
-import { G, glyphComponent } from '@/core/glyphs';
+import { G, glyphComponent, glyphOf } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { split } from '@/files/paths';
 import { t } from '@/i18n';
 import { plural, segItems } from '@/ui/kit';
-import Tile from '@/ui/Tile.vue';
 import { startSync } from './sync';
 
 const props = defineProps<{ left: string; right: string; win: WinEntry; close: () => void }>();
@@ -33,7 +32,7 @@ const count = computed(() => (steps.value.length
 
 const nameOf = (s: SyncStep) => ({ name: split(s.rel).pop() || s.rel, dir: !!s.dir });
 const actOf = (s: SyncStep) => (s.act === 'delete' ? t(s.to === 'R' ? 'compare.deleteRight' : 'compare.deleteLeft') : t(`compare.act.${s.act}`));
-const glyphOf = (s: SyncStep) => (s.act === 'delete' ? 'IconTrash' : s.to === 'R' ? 'IconForward' : 'IconBack');
+const arrowOf = (s: SyncStep) => (s.act === 'delete' ? 'IconTrash' : s.to === 'R' ? 'IconForward' : 'IconBack');
 
 let asked = 0;
 async function plan() {
@@ -81,10 +80,10 @@ onBeforeUnmount(() => { asked++; });
       <template v-if="steps.length">
         <div v-for="(s, i) in steps" :key="s.key" class="bk-step" :class="{ skip: !isOn(s) }">
           <Toggle :model-value="isOn(s)" :data-bk-step="i" :label="s.rel" hide-label @update:model-value="(v: boolean) => touched.set(s.key, v)" />
-          <Tile :k="nameOf(s)" />
+          <GlyphTile :glyph="glyphComponent(glyphOf(nameOf(s)))" ground :quiet="!nameOf(s).dir" />
           <span class="bk-name">{{ s.rel }}{{ s.dir ? '/' : '' }}</span>
           <Pill v-if="s.why" tone="warn">{{ t(`compare.why.${s.why}`) }}</Pill><span v-else></span>
-          <span class="bk-arrow sm" :data-tip="t(s.to === 'R' ? 'compare.right' : 'compare.left')"><G :n="glyphOf(s)" /></span>
+          <span class="bk-arrow sm" :data-tip="t(s.to === 'R' ? 'compare.right' : 'compare.left')"><G :n="arrowOf(s)" /></span>
           <Pill>{{ actOf(s) }}</Pill>
           <Pill class="glim-num">{{ fmtSize(s.size) || '0 B' }}</Pill>
         </div>

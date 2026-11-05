@@ -73,7 +73,7 @@ function picked() {
       <G n="IconUpload" />
       <p class="sp-text">{{ s('uploadText') }}</p>
       <div class="sp-uprow">
-        <Button class="glim-btn-key" :label="s('pick')" label-key="IconUpload" tone="accent" data-sp="pick" @click="input?.click()" />
+        <Button size="key" :label="s('pick')" label-key="IconUpload" tone="accent" data-sp="pick" @click="input?.click()" />
         <span v-if="left" class="muted glim-num">{{ left }}</span>
       </div>
       <input ref="input" type="file" multiple hidden data-sp="files" @change="picked">

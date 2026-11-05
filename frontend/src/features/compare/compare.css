@@ -10,4 +10,4 @@
 .bk-step:hover { background: var(--carbon-surface3); }
 .bk-step.skip .bk-name, .bk-step.skip .glim-pill:not(.glim-pill--warn), .bk-step.skip .bk-arrow { color: var(--carbon-text-muted); }
 .bk-step.skip .bk-name { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--carbon-text) 35%, transparent); }
-@media (max-width: 760px) { .bk-step { grid-template-columns: auto minmax(0, 1fr) 1.75rem auto; } .bk-step .bk-tile, .bk-step > span:nth-of-type(3), .bk-step .glim-pill.glim-num { display: none; } .bk-sides { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .bk-step { grid-template-columns: auto minmax(0, 1fr) 1.75rem auto; } .bk-step .glim-tile, .bk-step > span:nth-of-type(3), .bk-step .glim-pill.glim-num { display: none; } .bk-sides { grid-template-columns: 1fr; } }

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // Datei teilen: how big each part is, a sum file beside them, and where the parts land.
+import { glyphComponent, glyphOf } from '@/core/glyphs';
 import { pathField } from '@/ui/picker';
 import { segItems } from '@/ui/kit';
-import { FieldRow, PathField, Pill, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, FieldRowGroup, GlyphTile, PathField, Pill, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
 import { join } from '@/files/paths';
 import { t } from '@/i18n';
-import Tile from '@/ui/Tile.vue';
 import { clean, folderState } from '@/ui/tools';
 import { partSize } from './sums';
 
@@ -28,11 +28,13 @@ watchEffect(() => {
 </script>
 
 <template>
-  <SubCard><div class="bk-filehead"><Tile :k="st.k" /><span class="bk-name">{{ st.k.name }}</span><Pill class="glim-num">{{ fmtSize(st.k.size) }}</Pill></div></SubCard>
+  <SubCard><div class="bk-filehead"><GlyphTile :glyph="glyphComponent(glyphOf(st.k))" ground :quiet="!st.k.dir" /><span class="bk-name">{{ st.k.name }}</span><Pill class="glim-num">{{ fmtSize(st.k.size) }}</Pill></div></SubCard>
   <SubCard :title="t('checksum.parts')" class="bk-form">
-    <FieldRow :label="t('checksum.partSize')" :hint="t('checksum.partSizeTip')"><Selector id="t-size" v-model="st.size" :items="segItems(sizes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-    <FieldRow :label="t('checksum.ownSize')"><span class="bk-range"><TextField id="t-custom" v-model="st.custom" class="glim-num" inputmode="numeric" :disabled="st.size !== 'custom'" width="short" /><span class="muted">MB</span></span></FieldRow>
-    <FieldRow :label="t('checksum.addSum')" :hint="t('checksum.addSumTip')"><Toggle id="t-sum" v-model="st.sum" /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="t('checksum.partSize')" :hint="t('checksum.partSizeTip')"><Selector id="t-size" v-model="st.size" :items="segItems(sizes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="t('checksum.ownSize')"><span class="bk-range"><TextField id="t-custom" v-model="st.custom" class="glim-num" inputmode="numeric" :disabled="st.size !== 'custom'" width="short" /><span class="muted">MB</span></span></FieldRow>
+      <FieldRow :label="t('checksum.addSum')" :hint="t('checksum.addSumTip')"><Toggle id="t-sum" v-model="st.sum" /></FieldRow>
+    </FieldRowGroup>
   </SubCard>
   <SubCard :title="t('checksum.target')" class="bk-form">
     <FieldRow :label="t('checksum.folder')"><PathField v-model="st.dest" v-bind="pathField('t-dest')" /></FieldRow>

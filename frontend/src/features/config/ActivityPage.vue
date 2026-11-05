@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Who did what and when, filtered by person or kind from the column heads. A row naming a place opens it.
-import { Button, Card, EmptyState, Pill, SubCard } from '@glimstone/vue';
+import { Button, Card, EmptyState, GlyphTile, Pill, SubCard } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { type Activity, admin, type User } from '@/api/admin';
 import { DAY, now } from '@/core/format';
@@ -74,7 +74,7 @@ function open(a: Activity) {
         </div>
         <template v-if="shown.length">
           <div v-for="a in shown" :key="a.id" class="a-row a-arow" :tabindex="a.path ? 0 : undefined" :data-open="a.path" :data-tip="tip(a)" @click="open(a)" @keydown.enter="open(a)">
-            <span class="tile"><G :n="KINDS[a.what] || 'IconLog'" /></span><span class="a-name"><span class="t">{{ a.obj }}</span></span>
+            <GlyphTile :glyph="glyphComponent(KINDS[a.what] || 'IconLog')" /><span class="a-name"><span class="t">{{ a.obj }}</span></span>
             <Pill>{{ full(a.who) }}</Pill><Pill>{{ kind(a.what) }}</Pill><Pill class="glim-num">{{ ago(a.t) }}</Pill>
           </div>
         </template>

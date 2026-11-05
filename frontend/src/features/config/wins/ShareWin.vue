@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Select } from '@glimstone/vue/Select';
-import { Button, CopyField, FieldRow, PasswordField, Pill, SubCard, Toggle } from '@glimstone/vue';
+import { Button, CopyField, FieldRow, FieldRowGroup, PasswordField, Pill, SubCard, Toggle } from '@glimstone/vue';
 import { nextTick, onMounted, ref } from 'vue';
 import { admin, type Share } from '@/api/admin';
 import { DAY, fmtDate, now } from '@/core/format';
@@ -42,10 +42,12 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('save'), g: 'IconSa
 
 <template>
   <SubCard>
-    <FieldRow :label="c('shares.link')"><CopyField width="grow" :value="s.url" :label="c('shares.link')" :text="copyWords()" /></FieldRow>
-    <FieldRow :label="c('shares.path')"><Pill v-for="p in s.paths" :key="p" class="mono">{{ p }}</Pill></FieldRow>
-    <FieldRow :label="c('shares.created')"><Pill>{{ c('shares.createdBy', { date: fmtDate(s.created), by: s.owner }) }}</Pill></FieldRow>
-    <FieldRow :label="c('shares.viewsLabel')"><Pill class="glim-num">{{ s.views }}</Pill></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="c('shares.link')"><CopyField width="grow" :value="s.url" :label="c('shares.link')" :text="copyWords()" /></FieldRow>
+      <FieldRow :label="c('shares.path')"><Pill v-for="p in s.paths" :key="p" class="mono">{{ p }}</Pill></FieldRow>
+      <FieldRow :label="c('shares.created')"><Pill>{{ c('shares.createdBy', { date: fmtDate(s.created), by: s.owner }) }}</Pill></FieldRow>
+      <FieldRow :label="c('shares.viewsLabel')"><Pill class="glim-num">{{ s.views }}</Pill></FieldRow>
+    </FieldRowGroup>
   </SubCard>
   <SubCard>
     <FieldRow :label="c('shares.expires')"><Select v-model="expiry" :options="selectOptions(options())" rows="menu" /></FieldRow>

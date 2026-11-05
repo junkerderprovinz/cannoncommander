@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // Konflikte: each name that exists at the target, both sides side by side, and an answer per row or for all of them.
 import { segItems } from '@/ui/kit';
-import { FieldRow, Pill, Selector, SubCard } from '@glimstone/vue';
+import { FieldRow, GlyphTile, Pill, Selector, SubCard } from '@glimstone/vue';
 import { ref } from 'vue';
 import type { Choice, ConflictSide, JobConflict } from '@/api/ops';
 import { fmtSize, fmtTime } from '@/core/format';
-import { G, glyphOf } from '@/core/glyphs';
+import { glyphOf, glyphComponent } from '@/core/glyphs';
 import { split } from '@/files/paths';
 import { t } from '@/i18n';
 import { CHOICES, pick } from './rules';
@@ -34,7 +34,7 @@ const facts = (n: ConflictSide) => (n.dir ? t('transfer.entries', { n: n.entries
   <SubCard :title="conflicts.length === 1 ? t('transfer.existsOne', { dest: split(dest).pop() || t('jobs.server') }) : t('transfer.existsMany', { n: conflicts.length, dest: split(dest).pop() || t('jobs.server') })">
     <div class="cf-list">
       <div v-for="(c, i) in conflicts" :key="c.key" class="cf-row" :data-i="i">
-        <div class="cf-name"><span class="tile"><G :n="c.source.dir ? 'IconFolder' : glyphOf({ name: nameOf(c) })" /></span><b>{{ c.key }}</b></div>
+        <div class="cf-name"><GlyphTile :glyph="glyphComponent(c.source.dir ? 'IconFolder' : glyphOf({ name: nameOf(c) }))" /><b>{{ c.key }}</b></div>
         <div class="cf-sides">
           <div v-for="[side, other, label] in [[c.source, c.target, t('transfer.sideNew')], [c.target, c.source, t('transfer.sideOld')]] as const" :key="label" class="cf-side">
             <span class="cf-lab">{{ label }}</span><Pill class="glim-num">{{ facts(side) }}</Pill><Pill class="glim-num">{{ fmtTime(Date.parse(side.mtime)) }}</Pill><Pill v-if="newer(side, other)" tone="state">{{ t('transfer.newer') }}</Pill>

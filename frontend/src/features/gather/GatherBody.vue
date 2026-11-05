@@ -3,7 +3,7 @@
 // onto one disk or emptying one disk of it would move.
 import { pathField } from '@/ui/picker';
 import { segItems } from '@/ui/kit';
-import { EmptyState, FieldRow, Meter, PathField, Pill, Selector, SubCard } from '@glimstone/vue';
+import { EmptyState, FieldRow, FieldRowGroup, Meter, PathField, Pill, Selector, SubCard } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { GatherPlan } from '@/api/ops';
 import { fmtSize } from '@/core/format';
@@ -23,8 +23,10 @@ const options = computed(() => (props.st.plan?.options ?? []).map((o) => [o.disk
 
 <template>
   <SubCard class="bk-form">
-    <FieldRow :label="t('gather.folder')" :hint="t('gather.folderTip')"><PathField v-model="st.path" v-bind="pathField('g-dir')" /></FieldRow>
-    <FieldRow :label="t('gather.task')" :hint="t('gather.taskTip')"><Selector id="g-mode" v-model="st.mode" :items="segItems(MODES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="t('gather.folder')" :hint="t('gather.folderTip')"><PathField v-model="st.path" v-bind="pathField('g-dir')" /></FieldRow>
+      <FieldRow :label="t('gather.task')" :hint="t('gather.taskTip')"><Selector id="g-mode" v-model="st.mode" :items="segItems(MODES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    </FieldRowGroup>
     <div id="g-pick">
       <FieldRow v-if="st.valid && options.length" :label="st.mode === 'gather' ? t('gather.target') : t('gather.source')" :hint="st.mode === 'gather' ? t('gather.targetTip') : t('gather.sourceTip')">
         <Selector :id="st.mode === 'gather' ? 'g-target' : 'g-source'" v-model="st.disk" :items="segItems(options)" size="sm" activation="manual" inline button-height pairs-on-phone />

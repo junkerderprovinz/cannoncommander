@@ -2,7 +2,7 @@
 import { pathField } from '@/ui/picker';
 import { selectOptions } from '@/ui/kit';
 import { Select } from '@glimstone/vue/Select';
-import { Button, Card, EmptyState, FieldRow, IconButton, InfoBubble, ListRow, PathField, Pill, type PillTone } from '@glimstone/vue';
+import { Button, Card, EmptyState, FieldRow, FieldRowGroup, IconButton, InfoBubble, ListRow, PathField, Pill, type PillTone } from '@glimstone/vue';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { admin, type Rule, type User, type Verdict } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -81,8 +81,8 @@ const probeState = { who: 'anna', path: '/mnt/user/backups' };
         <template #tile><G :n="ruleGlyph(r.rule)" /></template>
         <template #badges><Pill>{{ whoName(r.who, users) }}</Pill><Pill tone="state">{{ ruleName(r.rule) }}</Pill></template>
         <template #actions>
-          <IconButton v-if="i > 0" :glyph="glyphComponent('IconMoveUp')" :tip="c('rules.up')" @click="move(i, -1)" /><span v-else class="glim-icon-btn-gap"></span>
-          <IconButton v-if="i < rules.length - 1" :glyph="glyphComponent('IconMoveDown')" :tip="c('rules.down')" @click="move(i, 1)" /><span v-else class="glim-icon-btn-gap"></span>
+          <IconButton :absent="i === 0" :glyph="glyphComponent('IconMoveUp')" :tip="c('rules.up')" @click="move(i, -1)" />
+          <IconButton :absent="i === rules.length - 1" :glyph="glyphComponent('IconMoveDown')" :tip="c('rules.down')" @click="move(i, 1)" />
           <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" @click="edit(i)" />
           <IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="remove(i)" />
         </template>
@@ -92,8 +92,10 @@ const probeState = { who: 'anna', path: '/mnt/user/backups' };
     <div class="a-foot"><Button data-add :label="c('rules.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('rules.probe')">
-    <FieldRow :label="c('rules.who')"><Select v-model="probe.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" rows="menu" /></FieldRow>
-    <FieldRow :label="c('rules.path')"><PathField v-model="probe.path" v-bind="pathField('a-ppath')" /></FieldRow>
-    <FieldRow :label="c('rules.result')" :hint="c('rules.resultTip')"><Pill :tone="result.tone">{{ result.word }}</Pill><InfoBubble :tip="result.why" /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="c('rules.who')"><Select v-model="probe.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" rows="menu" /></FieldRow>
+      <FieldRow :label="c('rules.path')"><PathField v-model="probe.path" v-bind="pathField('a-ppath')" /></FieldRow>
+      <FieldRow :label="c('rules.result')" :hint="c('rules.resultTip')"><Pill :tone="result.tone">{{ result.word }}</Pill><InfoBubble :tip="result.why" /></FieldRow>
+    </FieldRowGroup>
   </Card>
 </template>

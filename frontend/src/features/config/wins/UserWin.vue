@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { pathField } from '@/ui/picker';
-import { Button, FieldRow, PasswordField, PathField, Pill, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
+import { Button, FieldRow, FieldRowGroup, PasswordField, PathField, Pill, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Group, type Role, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -54,8 +54,10 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: isNew ? c('users.crea
     <FieldRow :label="c('users.displayName')"><TextField id="a-ufull" v-model="d.full" :placeholder="c('users.displayNamePh')" width="medium" /></FieldRow>
   </SubCard>
   <SubCard>
-    <FieldRow :label="c('users.role')" :hint="c('users.roleTip')"><Selector id="a-urole" v-model="d.role" :items="segItems(ROLES.map((r) => [r, roleName(r)]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-    <FieldRow :label="c('users.scope')" :hint="c('users.scopeTip')"><PathField v-model="d.scope" v-bind="pathField('a-uscope')" /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="c('users.role')" :hint="c('users.roleTip')"><Selector id="a-urole" v-model="d.role" :items="segItems(ROLES.map((r) => [r, roleName(r)]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="c('users.scope')" :hint="c('users.scopeTip')"><PathField v-model="d.scope" v-bind="pathField('a-uscope')" /></FieldRow>
+    </FieldRowGroup>
   </SubCard>
   <SubCard :title="c('users.groups')">
     <FieldRow v-for="g in groups" :key="g.name" :label="g.name" :hint="g.note"><Toggle v-model="inGroup[g.name]!" :data-ug="g.name" /></FieldRow>

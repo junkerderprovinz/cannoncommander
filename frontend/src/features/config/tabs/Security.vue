@@ -91,7 +91,7 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
       <ListRow v-for="s in sessions" :key="s.id" :name="device(s.userAgent).name">
         <template #tile><G :n="device(s.userAgent).g" /></template>
         <template #badges><Pill class="mono">{{ s.ip }}</Pill><Pill v-if="s.current" tone="state">{{ c('security.thisSession') }}</Pill><Pill v-else>{{ ago(s.seen) }}</Pill></template>
-        <template #actions><IconButton v-if="!s.current" :glyph="glyphComponent('IconSignOut')" :tip="c('security.signOut')" @click="signOut(s)" /><span v-else class="glim-icon-btn-gap"></span></template>
+        <template #actions><IconButton :absent="s.current" :glyph="glyphComponent('IconSignOut')" :tip="c('security.signOut')" @click="signOut(s)" /></template>
       </ListRow>
     </div>
     <EmptyState v-else nested :glyph="glyphComponent('IconBrowser')" :title="c('security.noSessions')" />

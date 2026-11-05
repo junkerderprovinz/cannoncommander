@@ -34,8 +34,6 @@
 @media (max-width: 760px) {
   .ce-bar { flex-wrap: wrap; gap: .6rem 1rem; }
   .ce-bar .glim-pill, .ce-bar .grow { display: none; }
-  #ce-findbtn { gap: 0; min-width: 0; width: var(--btn-h); padding: 0; }
-  #ce-findbtn > .glim-btn-label { display: none; }
   .ce-main.split { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
   .ce-find { right: .5rem; left: .5rem; width: auto; }
   .ce-frow { flex-wrap: wrap; }

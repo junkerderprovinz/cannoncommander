@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Hochladen: a drop zone, the target, and the queue with its progress per file and in total.
-import { FieldRow, IconButton, InfoBubble, Pill, ProgressBar, SubCard } from '@glimstone/vue';
+import { FieldRow, GlyphTile, IconButton, InfoBubble, Pill, ProgressBar, SubCard } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import { fmtSize } from '@/core/format';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
@@ -50,7 +50,7 @@ function dropped(e: DragEvent) {
       </div>
       <div class="cu-list">
         <div v-for="i in items" :key="i.id" class="cu-row" :class="{ done: i.state === 'done' }" :data-id="i.id">
-          <span class="tile"><G :n="glyphOf({ name: i.name })" /></span><span class="t">{{ i.name }}</span>
+          <GlyphTile :glyph="glyphComponent(glyphOf({ name: i.name }))" /><span class="t">{{ i.name }}</span>
           <span v-if="i.state === 'done'" class="cu-ok"><i></i>{{ t('upload.state.done') }}</span>
           <Pill v-else-if="!open(i)">{{ t(`upload.state.${i.state}`) }}</Pill>
           <template v-else><ProgressBar class="bar" :value="i.loaded / (i.size || 1)" :label="i.name" :paused="i.state === 'paused'" /><Pill class="glim-num">{{ stateOf(i) }}</Pill></template>

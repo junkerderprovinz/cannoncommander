@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Button, SubCard } from '@glimstone/vue';
+import { Button, GlyphTile, SubCard } from '@glimstone/vue';
 import { onMounted } from 'vue';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { setPref } from '@/core/prefs';
 import { closeBtn, type WinEntry } from '@/core/windows';
 import { NEWS, type News, seen, unseen } from '../help';
@@ -27,7 +27,7 @@ onMounted(() => stepFoot(props.win, [closeBtn()]));
     <p class="a-text">{{ c('news.intro') }}</p>
     <div class="a-newlist">
       <div v-for="n in NEWS" :key="n.id" class="a-newrow" :class="{ seen: seen().includes(n.id) }">
-        <span class="a-dot" :class="{ seen: seen().includes(n.id) }"></span><span class="tile"><G :n="n.g" /></span><span class="t">{{ n.text() }}</span>
+        <span class="a-dot" :class="{ seen: seen().includes(n.id) }"></span><GlyphTile :glyph="glyphComponent(n.g)" /><span class="t">{{ n.text() }}</span>
         <Button :label="c('news.go')" label-key="IconForward" :data-newgo="n.id" @click="visit(n)" />
       </div>
     </div>

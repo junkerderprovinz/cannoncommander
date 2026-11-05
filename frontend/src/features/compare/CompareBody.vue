@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Pill, SubCard, type PillTone } from '@glimstone/vue';
+import { Pill, SubCard, Table, type PillTone } from '@glimstone/vue';
 import type { Comparison, CompareState } from '@/api/tools';
 import { t } from '@/i18n';
 
@@ -9,10 +9,8 @@ const ROWS: [CompareState, PillTone][] = [['same', 'ok'], ['newerL', 'warn'], ['
 
 <template>
   <SubCard :title="t('compare.and', { left, right })">
-    <table class="tbl">
-      <template v-for="[s, tone] in ROWS" :key="s">
-        <tr v-if="s === 'same' || counts[s]"><td>{{ t(`compare.rows.${s}`) }}</td><td class="r"><Pill class="glim-num" :tone="counts[s] ? tone : 'neutral'">{{ counts[s] ?? 0 }}</Pill></td></tr>
-      </template>
-    </table>
+    <Table :label="t('compare.title')" :columns="[{ key: 'word' }, { key: 'count', end: true }]" :rows="ROWS.filter(([s]) => s === 'same' || counts[s]).map(([s, tone]) => ({ word: t(`compare.rows.${s}`), count: counts[s] ?? 0, tone: counts[s] ? tone : 'neutral' as PillTone }))">
+      <template #cell="{ row, column, value }"><Pill v-if="column.key === 'count'" :tone="row.tone">{{ value }}</Pill><template v-else>{{ value }}</template></template>
+    </Table>
   </SubCard>
 </template>

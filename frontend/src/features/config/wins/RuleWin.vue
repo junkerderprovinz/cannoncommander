@@ -2,7 +2,7 @@
 import { pathField } from '@/ui/picker';
 import { segItems, selectOptions } from '@/ui/kit';
 import { Select } from '@glimstone/vue/Select';
-import { FieldRow, PathField, Pill, Selector, SubCard } from '@glimstone/vue';
+import { FieldRow, FieldRowGroup, PathField, Pill, Selector, SubCard } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Rule, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -57,7 +57,9 @@ onMounted(async () => {
     </FieldRow>
   </SubCard>
   <SubCard>
-    <FieldRow :label="c('rules.pathOrPattern')" :hint="c('rules.pathTip')"><PathField v-model="d.path" :placeholder="c('rules.pathPh')" v-bind="pathField('a-rpath')" /></FieldRow>
-    <FieldRow :label="c('rules.rule')" :hint="c('rules.ruleTip')"><Selector v-model="d.rule" :items="segItems(RULES.map(([r, g]) => [r, ruleName(r), g]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRowGroup>
+      <FieldRow :label="c('rules.pathOrPattern')" :hint="c('rules.pathTip')"><PathField v-model="d.path" :placeholder="c('rules.pathPh')" v-bind="pathField('a-rpath')" /></FieldRow>
+      <FieldRow :label="c('rules.rule')" :hint="c('rules.ruleTip')"><Selector v-model="d.rule" :items="segItems(RULES.map(([r, g]) => [r, ruleName(r), g]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    </FieldRowGroup>
   </SubCard>
 </template>

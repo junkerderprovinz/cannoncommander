@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The way in: name and password, then the code from the app or a recovery code, a passkey instead, a password of
 // its own after the first start, and the reset with a code from the container log.
-import { Button, Card, FieldRow, InfoBubble, PasswordField, SubCard, TextField, Toggle } from '@glimstone/vue';
+import { Button, Card, FieldRow, FieldRowGroup, InfoBubble, PasswordField, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { auth, type SignIn, type SignInOptions, type TotpSetup } from '@/api/auth';
 import { ApiError } from '@/api/client';
@@ -256,14 +256,16 @@ function toggleRecovery() {
 
       <template v-if="step === 'pw'">
         <div class="cl-fields">
-          <FieldRow :label="s('name')"><TextField id="cl-user" v-model="name" autocomplete="username" autocapitalize="off" spellcheck="false" width="grow" /></FieldRow>
-          <FieldRow :label="s('password')"><PasswordField id="cl-pass" v-model="pass" autocomplete="current-password" width="grow" :text="eyeWords()" /></FieldRow>
-          <FieldRow :label="s('stay')" :hint="s('stayTip')"><Toggle id="cl-keep" v-model="keep" /></FieldRow>
+          <FieldRowGroup>
+            <FieldRow :label="s('name')"><TextField id="cl-user" v-model="name" autocomplete="username" autocapitalize="off" spellcheck="false" width="grow" /></FieldRow>
+            <FieldRow :label="s('password')"><PasswordField id="cl-pass" v-model="pass" autocomplete="current-password" width="grow" :text="eyeWords()" /></FieldRow>
+            <FieldRow :label="s('stay')" :hint="s('stayTip')"><Toggle id="cl-keep" v-model="keep" /></FieldRow>
+          </FieldRowGroup>
         </div>
         <div class="cl-btns">
-          <Button class="glim-btn-key" :label="s('signIn')" label-key="IconSignIn" tone="accent" type="submit" :disabled="busy" />
-          <Button v-if="opts.passkey" class="glim-btn-key" :label="s('passkey')" label-key="IconKey" data-cl="passkey" :disabled="busy" @click="passkey" />
-          <Button v-if="opts.oidc" class="glim-btn-key" :label="s('oidc', { name: opts.oidc.label })" label-key="IconExternalLink" data-cl="oidc" @click="oidc" />
+          <Button size="key" :label="s('signIn')" label-key="IconSignIn" tone="accent" type="submit" :disabled="busy" />
+          <Button v-if="opts.passkey" size="key" :label="s('passkey')" label-key="IconKey" data-cl="passkey" :disabled="busy" @click="passkey" />
+          <Button v-if="opts.oidc" size="key" :label="s('oidc', { name: opts.oidc.label })" label-key="IconExternalLink" data-cl="oidc" @click="oidc" />
           <div class="cl-forgot"><Button tone="subtle" :label="s('forgot')" label-key="IconForgotPassword" data-cl="forgot" :disabled="busy" @click="forgot" /><InfoBubble :tip="s('forgotTip')" /></div>
         </div>
       </template>
@@ -283,7 +285,7 @@ function toggleRecovery() {
           <FieldRow v-else :label="s('recovery')"><TextField id="cl-recovery" v-model="recovery" class="cl-code" placeholder="XXXX-XXXX" spellcheck="false" autocomplete="off" autocapitalize="characters" width="grow" mono /></FieldRow>
         </div>
         <div class="cl-btns">
-          <Button class="glim-btn-key" :label="s('confirm')" label-key="IconConfirm" tone="accent" type="submit" :disabled="busy" />
+          <Button size="key" :label="s('confirm')" label-key="IconConfirm" tone="accent" type="submit" :disabled="busy" />
           <Button v-if="step === 'totp'" tone="subtle" :label="byRecovery ? s('useApp') : s('useRecovery')" label-key="IconKey" data-cl="recovery" @click="toggleRecovery" />
           <Button tone="subtle" :label="s('back')" label-key="IconBack" data-cl="back" @click="back" />
         </div>
@@ -292,12 +294,14 @@ function toggleRecovery() {
       <template v-else-if="step === 'password' || step === 'reset'">
         <p v-if="step === 'password'" class="cl-text">{{ s('ownText') }}</p>
         <div class="cl-fields">
-          <FieldRow v-if="step === 'reset'" :label="s('logCode')" :hint="s('logCodeTip')"><TextField id="cl-code" v-model="logCode" class="cl-code" placeholder="XXXX-XXXX-XXXX" spellcheck="false" autocomplete="one-time-code" autocapitalize="characters" width="grow" mono /></FieldRow>
-          <FieldRow :label="s('newPassword')"><PasswordField id="cl-new" v-model="next1" autocomplete="new-password" :placeholder="s('minChars', { n: opts.minPassword })" width="grow" :text="eyeWords()" /></FieldRow>
-          <FieldRow :label="s('repeat')"><PasswordField id="cl-new2" v-model="next2" autocomplete="new-password" width="grow" :text="eyeWords()" /></FieldRow>
+          <FieldRowGroup>
+            <FieldRow v-if="step === 'reset'" :label="s('logCode')" :hint="s('logCodeTip')"><TextField id="cl-code" v-model="logCode" class="cl-code" placeholder="XXXX-XXXX-XXXX" spellcheck="false" autocomplete="one-time-code" autocapitalize="characters" width="grow" mono /></FieldRow>
+            <FieldRow :label="s('newPassword')"><PasswordField id="cl-new" v-model="next1" autocomplete="new-password" :placeholder="s('minChars', { n: opts.minPassword })" width="grow" :text="eyeWords()" /></FieldRow>
+            <FieldRow :label="s('repeat')"><PasswordField id="cl-new2" v-model="next2" autocomplete="new-password" width="grow" :text="eyeWords()" /></FieldRow>
+          </FieldRowGroup>
         </div>
         <div class="cl-btns">
-          <Button class="glim-btn-key" :label="s('setPassword')" label-key="IconKey" tone="accent" type="submit" :disabled="busy" />
+          <Button size="key" :label="s('setPassword')" label-key="IconKey" tone="accent" type="submit" :disabled="busy" />
           <Button tone="subtle" :label="s('back')" label-key="IconBack" data-cl="back" @click="back" />
         </div>
       </template>
@@ -305,14 +309,14 @@ function toggleRecovery() {
       <template v-else-if="step === 'codes'">
         <p class="cl-text">{{ s('codesText') }}</p>
         <SubCard class="cl-codes mono glim-num"><span v-for="c in codes" :key="c">{{ c }}</span></SubCard>
-        <div class="cl-btns"><Button class="glim-btn-key" :label="s('toFiles')" label-key="IconForward" tone="accent" type="submit" /></div>
+        <div class="cl-btns"><Button size="key" :label="s('toFiles')" label-key="IconForward" tone="accent" type="submit" /></div>
       </template>
 
       <template v-else-if="step === 'resetDone'">
         <SubCard :title="s('goneToo')" class="cl-gone">
           <div v-for="k in ['goneSessions', 'goneTwofa', 'goneTokens']" :key="k" class="cl-li"><G n="IconCheck" /><span>{{ s(k) }}</span></div>
         </SubCard>
-        <div class="cl-btns"><Button class="glim-btn-key" :label="s('toFiles')" label-key="IconForward" tone="accent" type="submit" /></div>
+        <div class="cl-btns"><Button size="key" :label="s('toFiles')" label-key="IconForward" tone="accent" type="submit" /></div>
       </template>
 
       <div v-else class="cl-wait"><span class="cl-spin"></span><div>{{ s('leaving', { name: opts.oidc?.label ?? '' }) }}</div></div>

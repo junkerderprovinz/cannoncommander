@@ -88,7 +88,7 @@ function remove(s: Source) {
           <Pill v-if="s.readOnly" tone="state">{{ c('sources.readOnly') }}</Pill>
         </template>
         <template #actions>
-          <IconButton v-if="hasIndex(s) && !busy(stateOf(s))" :glyph="glyphComponent('IconRefresh')" :tip="c('sources.reindex')" @click="reindex(s)" /><span v-else class="glim-icon-btn-gap"></span>
+          <IconButton :absent="!hasIndex(s) || busy(stateOf(s))" :glyph="glyphComponent('IconRefresh')" :tip="c('sources.reindex')" @click="reindex(s)" />
           <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" :data-open="i" @click="edit(s)" />
           <IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="remove(s)" />
         </template>
