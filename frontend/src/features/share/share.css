@@ -17,7 +17,6 @@
 .cs-brow:hover { background: var(--carbon-hover); }
 .cs-brow .t, .cs-bdir { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cs-bdir { font-size: 12px; }
-.cs-brow .glim-pill { justify-self: end; background: var(--carbon-surface3); }
 .cs-visitor { border-radius: var(--radius-control); background: var(--carbon-surface); padding: .5rem .7rem; display: flex; flex-direction: column; gap: .1rem; }
 .cs-vhead { display: flex; align-items: center; gap: .5rem; padding-bottom: .35rem; margin-bottom: .2rem; box-shadow: inset 0 -1px 0 var(--carbon-hover); }
 .cs-vhead svg, .cs-vrow svg { width: 1rem; height: 1rem; color: var(--accent-glyph); flex: none; }

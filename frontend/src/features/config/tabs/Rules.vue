@@ -2,7 +2,7 @@
 import { pathField } from '@/ui/picker';
 import { selectOptions } from '@/ui/kit';
 import { Select } from '@glimstone/vue/Select';
-import { Button, Card, FieldRow, IconButton, InfoBubble, ListRow, PathField, Pill, type PillTone } from '@glimstone/vue';
+import { Button, Card, EmptyState, FieldRow, IconButton, InfoBubble, ListRow, PathField, Pill, type PillTone } from '@glimstone/vue';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { admin, type Rule, type User, type Verdict } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -88,12 +88,12 @@ const probeState = { who: 'anna', path: '/mnt/user/backups' };
         </template>
       </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconShieldOn" /><div>{{ c('rules.none') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconShieldOn')" :title="c('rules.none')" />
     <div class="a-foot"><Button data-add :label="c('rules.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('rules.probe')">
     <FieldRow :label="c('rules.who')"><Select v-model="probe.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" rows="menu" /></FieldRow>
     <FieldRow :label="c('rules.path')"><PathField v-model="probe.path" v-bind="pathField('a-ppath')" /></FieldRow>
-    <FieldRow :label="c('rules.result')" :hint="c('rules.resultTip')"><span id="a-pres" class="a-ctl"><Pill :tone="result.tone">{{ result.word }}</Pill><InfoBubble :tip="result.why" /></span></FieldRow>
+    <FieldRow :label="c('rules.result')" :hint="c('rules.resultTip')"><Pill :tone="result.tone">{{ result.word }}</Pill><InfoBubble :tip="result.why" /></FieldRow>
   </Card>
 </template>

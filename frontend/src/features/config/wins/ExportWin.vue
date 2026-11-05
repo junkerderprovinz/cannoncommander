@@ -2,7 +2,7 @@
 // The server writes the file into a folder of its own, not into the browser's downloads, so it can be found and
 // imported again without leaving CannonCommander.
 import { pathField } from '@/ui/picker';
-import { CopyField, FieldRow, PathField, Pill, TextField, Toggle } from '@glimstone/vue';
+import { CopyField, FieldRow, PathField, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, exists, listDir, statusOf } from '@/api/admin';
 import { go } from '@/core/views';
@@ -38,15 +38,15 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('app.export'), g: '
 </script>
 
 <template>
-  <div v-if="written" class="well glim-well"><FieldRow :label="c('app.savedAt')"><CopyField class="glim-field--grow" :value="written" :label="c('app.savedAt')" :text="copyWords()" /></FieldRow></div>
+  <SubCard v-if="written"><FieldRow :label="c('app.savedAt')"><CopyField width="grow" :value="written" :label="c('app.savedAt')" :text="copyWords()" /></FieldRow></SubCard>
   <template v-else>
-    <div class="well glim-well">
+    <SubCard>
       <FieldRow :label="c('picker.folder')" :hint="c('app.exportDirTip')"><PathField v-model="dir" v-bind="pathField('a-exdir')" /></FieldRow>
       <FieldRow :label="c('app.fileName')"><TextField id="a-exname" v-model="name" width="wide" /></FieldRow>
-    </div>
-    <div class="well glim-well">
+    </SubCard>
+    <SubCard>
       <FieldRow :label="c('app.withUsers')"><Toggle v-model="users" /></FieldRow>
       <FieldRow :label="c('app.secrets')" :hint="c('app.secretsTip')"><Pill>{{ c('app.stayOut') }}</Pill></FieldRow>
-    </div>
+    </SubCard>
   </template>
 </template>

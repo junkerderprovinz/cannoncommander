@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Mehrfach umbenennen: the pattern on the left, find and replace on the right, the preview of every name below.
 import { Select } from '@glimstone/vue/Select';
-import { FieldRow, IconButton, Pill, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, IconButton, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import type { RenameMask, RenamePreset, RenameRow } from '@/api/tools';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -45,7 +45,7 @@ const missingTip = (r: RenameRow) => t('rename.withoutTip', { names: r.missing!.
 
 <template>
   <div class="bk-grid2 bk-top" @keydown.enter="pressPrimary">
-    <div class="well glim-well bk-form"><div class="eyebrow">{{ t('rename.mask') }}</div>
+    <SubCard :title="t('rename.mask')" class="bk-form">
       <FieldRow :label="t('rename.preset')" :hint="t('rename.presetTip')">
         <span id="m-presets" class="bk-range"><Select id="m-preset" v-model="st.preset" :options="selectOptions(presets)" rows="menu" />
           <IconButton id="m-psave" :tip="t('rename.savePreset')" :glyph="glyphComponent('IconSave')" @click="savePreset" />
@@ -58,15 +58,15 @@ const missingTip = (r: RenameRow) => t('rename.withoutTip', { names: r.missing!.
       <FieldRow :label="t('rename.counter')">
         <span class="bk-range"><span class="muted">{{ t('rename.from') }}</span><TextField id="m-start" :model-value="String(st.o.start)" class="glim-num" inputmode="numeric" width="short" @input="st.o.start = num(($event.target as HTMLInputElement).value, 0)" /><span class="muted">{{ t('rename.step') }}</span><TextField id="m-step" :model-value="String(st.o.step)" class="glim-num" inputmode="numeric" width="short" @input="st.o.step = num(($event.target as HTMLInputElement).value, 1)" /></span>
       </FieldRow>
-    </div>
-    <div class="well glim-well bk-form"><div class="eyebrow">{{ t('rename.findReplace') }}</div>
+    </SubCard>
+    <SubCard :title="t('rename.findReplace')" class="bk-form">
       <FieldRow :label="t('rename.find')"><TextField id="m-find" v-model="st.o.find" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
       <FieldRow :label="t('rename.replace')"><TextField id="m-repl" v-model="st.o.repl" spellcheck="false" autocomplete="off" width="grow" mono /></FieldRow>
       <FieldRow :label="t('rename.regex')" :hint="t('rename.regexTip')"><Toggle id="m-regex" v-model="st.o.regex" /></FieldRow>
       <FieldRow :label="t('rename.case')"><Select id="m-case" v-model="st.o.case" :options="selectOptions(caseOptions)" rows="menu" /></FieldRow>
-    </div>
+    </SubCard>
   </div>
-  <div class="well glim-well bk-fill"><div class="bk-tools"><span id="m-count" class="eyebrow">{{ t('rename.count', { objects: plural(st.count, 'ui.objects'), changes: plural(changed, 'rename.changes') }) }}</span></div>
+  <SubCard class="bk-fill"><div class="bk-tools"><span id="m-count" class="glim-eyebrow">{{ t('rename.count', { objects: plural(st.count, 'ui.objects'), changes: plural(changed, 'rename.changes') }) }}</span></div>
     <div class="bk-mhead"><span>{{ t('rename.before') }}</span><span></span><span>{{ t('rename.after') }}</span><span></span></div>
     <div id="m-list" class="bk-list">
       <div v-for="r in st.rows" :key="r.path" class="bk-mrow" :class="{ same: r.new === r.old }">
@@ -77,5 +77,5 @@ const missingTip = (r: RenameRow) => t('rename.withoutTip', { names: r.missing!.
         <span v-else></span>
       </div>
     </div>
-  </div>
+  </SubCard>
 </template>

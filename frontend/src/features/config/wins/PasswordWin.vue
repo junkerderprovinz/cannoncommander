@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FieldRow, PasswordField } from '@glimstone/vue';
+import { FieldRow, PasswordField, SubCard } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { me, statusOf } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -32,9 +32,9 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('security.changePw'
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="c('security.current')"><PasswordField id="a-pw0" v-model="p0" width="medium" autocomplete="current-password" :text="eyeWords()" /></FieldRow>
     <FieldRow :label="c('security.newPw')" :hint="c('security.newPwTip')"><PasswordField id="a-pw1" v-model="p1" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
     <FieldRow :label="c('users.repeat')"><PasswordField id="a-pw2" v-model="p2" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
-  </div>
+  </SubCard>
 </template>

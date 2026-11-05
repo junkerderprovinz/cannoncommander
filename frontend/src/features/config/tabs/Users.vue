@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card, IconButton, ListRow, Pill } from '@glimstone/vue';
+import { Button, Card, EmptyState, IconButton, ListRow, Pill } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, type Group, type Share, type User } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -62,7 +62,7 @@ function removeGroup(g: Group) {
         </template>
       </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconAccounts" /><div>{{ c('users.nobody') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconAccounts')" :title="c('users.nobody')" />
     <div class="a-foot"><Button data-uadd :label="c('users.add')" label-key="IconAdd" @click="editUser(null)" /></div>
   </Card>
   <Card :title="c('users.groups')">
@@ -76,7 +76,7 @@ function removeGroup(g: Group) {
         </template>
       </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconAccounts" /><div>{{ c('users.noGroups') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconAccounts')" :title="c('users.noGroups')" />
     <div class="a-foot"><Button data-gadd :label="c('users.addGroup')" label-key="IconAdd" @click="editGroup(null)" /></div>
   </Card>
 </template>

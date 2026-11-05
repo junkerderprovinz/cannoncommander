@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // F1: every action with its key, grouped as in the menu bar. A click on a key listens for the new combination.
 import { segItems } from '@/ui/kit';
-import { FieldRow, IconButton, Kbd, Selector, TextField } from '@glimstone/vue';
+import { EmptyState, FieldRow, IconButton, Kbd, Selector, SubCard, TextField } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { type Action, actions, labelOf } from '@/core/actions';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -13,6 +13,7 @@ import { t } from '@/i18n';
 import { keysFirst, stepFoot } from '@/features/config/shared';
 import { assign, changed, check, combosOf, keyLabel, type KeyMap, mainCombo, MODIFIER_KEYS, preset, reset } from './keys';
 
+const PRESETS = [['cc', 'CannonCommander'], ['tc', 'Total Commander']] as const;
 const props = defineProps<{ win: WinEntry; current: KeyMap; defaults: KeyMap; defaultLabel: Record<string, string | undefined>; which: 'cc' | 'tc'; apply: (map: KeyMap, which: 'cc' | 'tc') => void }>();
 const map = ref<KeyMap>({ ...props.current });
 const which = ref(props.which);
@@ -80,14 +81,14 @@ onBeforeUnmount(() => stopKeys());
 </script>
 
 <template>
-  <div class="well glim-well">
-    <FieldRow :label="t('keys.preset')" :hint="t('keys.presetTip')"><Selector id="kb-preset" v-model="which" :items="segItems([['cc', 'CannonCommander'], ['tc', 'Total Commander']])" size="sm" activation="manual" inline button-height pairs-on-phone @update:model-value="(v) => pickPreset(v as 'cc' | 'tc')" /></FieldRow>
+  <SubCard>
+    <FieldRow :label="t('keys.preset')" :hint="t('keys.presetTip')"><Selector id="kb-preset" v-model="which" :items="segItems(PRESETS)" size="sm" activation="manual" inline button-height pairs-on-phone @update:model-value="pickPreset" /></FieldRow>
     <FieldRow :label="t('keys.search')"><TextField id="kb-q" v-model="query" :placeholder="t('keys.searchPh')" autocomplete="off" width="medium" /></FieldRow>
-  </div>
-  <div class="well glim-well kb-well">
+  </SubCard>
+  <SubCard class="kb-well">
     <div id="kb-list" class="kb-list">
       <section v-for="[group, list] in shown" :key="group" class="kb-group">
-        <div class="eyebrow">{{ group }}</div>
+        <div class="glim-eyebrow">{{ group }}</div>
         <div v-for="id in list" :key="id" class="kb-row" :class="{ rec: rec === id, own: changed(map, defaults, id) }" :data-kb="id">
           <span class="kb-name"><G v-if="actions[id]!.g" :n="actions[id]!.g!" /><span v-else class="ph"></span>{{ name(actions[id]!) }}</span>
           <button class="kb-key" :data-kb-rec="id" :aria-label="t('keys.change', { action: name(actions[id]!) })" @click="listen(id)">
@@ -102,9 +103,9 @@ onBeforeUnmount(() => stopKeys());
           <div v-if="rec === id && pending" class="kb-warn">{{ pending.msg }}</div>
         </div>
       </section>
-      <div v-if="!shown.length" class="empty"><G n="IconSearch" /><div>{{ t('keys.noMatch') }}</div></div>
+      <EmptyState v-if="!shown.length" nested :glyph="glyphComponent('IconSearch')" :title="t('keys.noMatch')" />
     </div>
-    <div class="eyebrow kb-fixedhead">{{ t('keys.fixedHead') }}</div>
+    <div class="glim-eyebrow kb-fixedhead">{{ t('keys.fixedHead') }}</div>
     <div class="kbd-grid"><div v-for="k in FIXED" :key="k"><span>{{ t(`keys.fixedKeys.${k}.label`) }}</span><Kbd>{{ t(`keys.fixedKeys.${k}.key`) }}</Kbd></div></div>
-  </div>
+  </SubCard>
 </template>

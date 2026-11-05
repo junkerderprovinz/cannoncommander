@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Select } from '@glimstone/vue/Select';
-import { Button, CopyField, FieldRow, PasswordField, Pill, Toggle } from '@glimstone/vue';
+import { Button, CopyField, FieldRow, PasswordField, Pill, SubCard, Toggle } from '@glimstone/vue';
 import { nextTick, onMounted, ref } from 'vue';
 import { admin, type Share } from '@/api/admin';
 import { DAY, fmtDate, now } from '@/core/format';
@@ -41,20 +41,20 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('save'), g: 'IconSa
 </script>
 
 <template>
-  <div class="well glim-well">
-    <FieldRow :label="c('shares.link')"><CopyField class="glim-field--grow" :value="s.url" :label="c('shares.link')" :text="copyWords()" /></FieldRow>
+  <SubCard>
+    <FieldRow :label="c('shares.link')"><CopyField width="grow" :value="s.url" :label="c('shares.link')" :text="copyWords()" /></FieldRow>
     <FieldRow :label="c('shares.path')"><Pill v-for="p in s.paths" :key="p" class="mono">{{ p }}</Pill></FieldRow>
     <FieldRow :label="c('shares.created')"><Pill>{{ c('shares.createdBy', { date: fmtDate(s.created), by: s.owner }) }}</Pill></FieldRow>
     <FieldRow :label="c('shares.viewsLabel')"><Pill class="glim-num">{{ s.views }}</Pill></FieldRow>
-  </div>
-  <div class="well glim-well">
+  </SubCard>
+  <SubCard>
     <FieldRow :label="c('shares.expires')"><Select v-model="expiry" :options="selectOptions(options())" rows="menu" /></FieldRow>
     <div id="a-shpwbox">
       <FieldRow :label="c('shares.askPw')" :hint="c('shares.askPwTip')"><Toggle v-model="pwOn" /></FieldRow>
       <template v-if="pwOn">
-        <FieldRow v-if="s.password && !pwNew" :label="c('users.password')"><span class="a-ctl"><Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="setNew" /></span></FieldRow>
+        <FieldRow v-if="s.password && !pwNew" :label="c('users.password')"><Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="setNew" /></FieldRow>
         <FieldRow v-else :label="c('users.password')" :hint="c('shares.pwTip')"><PasswordField id="a-sharepw" v-model="pw" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
       </template>
     </div>
-  </div>
+  </SubCard>
 </template>

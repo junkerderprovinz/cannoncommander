@@ -3,11 +3,11 @@
 // onto one disk or emptying one disk of it would move.
 import { pathField } from '@/ui/picker';
 import { segItems } from '@/ui/kit';
-import { FieldRow, Meter, PathField, Pill, Selector } from '@glimstone/vue';
+import { EmptyState, FieldRow, Meter, PathField, Pill, Selector, SubCard } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { GatherPlan } from '@/api/ops';
 import { fmtSize } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { diskName } from '@/features/jobs/label';
 
@@ -22,7 +22,7 @@ const options = computed(() => (props.st.plan?.options ?? []).map((o) => [o.disk
 </script>
 
 <template>
-  <div class="well glim-well bk-form">
+  <SubCard class="bk-form">
     <FieldRow :label="t('gather.folder')" :hint="t('gather.folderTip')"><PathField v-model="st.path" v-bind="pathField('g-dir')" /></FieldRow>
     <FieldRow :label="t('gather.task')" :hint="t('gather.taskTip')"><Selector id="g-mode" v-model="st.mode" :items="segItems(MODES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <div id="g-pick">
@@ -30,11 +30,11 @@ const options = computed(() => (props.st.plan?.options ?? []).map((o) => [o.disk
         <Selector :id="st.mode === 'gather' ? 'g-target' : 'g-source'" v-model="st.disk" :items="segItems(options)" size="sm" activation="manual" inline button-height pairs-on-phone />
       </FieldRow>
     </div>
-  </div>
-  <div class="well glim-well">
-    <div class="bk-tools"><span id="g-sum" class="eyebrow">{{ st.plan && st.valid ? t('gather.sum', { files: files(st.plan.files), size: fmtSize(st.plan.size) || '0 B' }) : t('gather.spread') }}</span></div>
+  </SubCard>
+  <SubCard>
+    <div class="bk-tools"><span id="g-sum" class="glim-eyebrow">{{ st.plan && st.valid ? t('gather.sum', { files: files(st.plan.files), size: fmtSize(st.plan.size) || '0 B' }) : t('gather.spread') }}</span></div>
     <div id="g-bars" class="u-dist">
-      <div v-if="!st.valid" class="empty"><G n="IconFolder" /><div>{{ t('gather.pickUser') }}</div></div>
+      <EmptyState v-if="!st.valid" nested :glyph="glyphComponent('IconFolder')" :title="t('gather.pickUser')" />
       <template v-else>
         <span></span><span></span><span class="u-dh r">{{ t('gather.now') }}</span><span class="u-dh r">{{ t('gather.after') }}</span><span class="u-dh r">{{ t('gather.free') }}</span>
         <template v-for="d in devices" :key="d.device">
@@ -46,6 +46,6 @@ const options = computed(() => (props.st.plan?.options ?? []).map((o) => [o.disk
         </template>
       </template>
     </div>
-  </div>
+  </SubCard>
   <p id="g-plan" class="u-plan">{{ st.text }}</p>
 </template>

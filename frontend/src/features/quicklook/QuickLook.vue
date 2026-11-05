@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Quick look: the file under the cursor large, without leaving the list, as on a Mac.
-import { Card, Pill } from '@glimstone/vue';
+import { Card } from '@glimstone/vue';
 import { computed } from 'vue';
 import { prefs } from '@/core/prefs';
 import Preview from '@/features/viewer/Preview.vue';
@@ -17,8 +17,8 @@ const beside = (e: MouseEvent) => { if (e.target === e.currentTarget) look.open 
 
 <template>
   <div v-if="look.open && k" class="ql-scrim" @mousedown="beside">
-    <Card class="ql glim-card" :class="{ 'with-info': !!prefs.quickInfo }" :title="k.name" role="dialog" :aria-label="t('quicklook.title')">
-      <Pill class="ql-count glim-num">{{ count }}</Pill>
+    <Card class="ql glim-card" :class="{ 'with-info': !!prefs.quickInfo }" role="dialog" :aria-label="t('quicklook.title')">
+      <template #title><span class="ql-name">{{ k.name }}</span><span class="ql-count glim-num">{{ count }}</span></template>
       <div class="ql-body"><Preview :key="folder + '/' + k.name" :n="k" :folder="folder" autoplay /></div>
     </Card>
   </div>

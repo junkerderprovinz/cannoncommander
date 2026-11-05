@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Prüfsummen erstellen: the method, every file with its sum as it comes in, and where the list is saved.
 import { pathField } from '@/ui/picker';
-import { FieldRow, PathField, ProgressBar, Selector, TextField } from '@glimstone/vue';
+import { FieldRow, PathField, ProgressBar, Selector, SubCard, TextField } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { Job } from '@/api/ops';
 import type { Algo, ChecksumResult } from '@/api/tools';
@@ -28,8 +28,8 @@ const width = (r: SumRow) => (r.state === 'done' ? 1 : r.state === 'read' ? 0.6 
 </script>
 
 <template>
-  <div class="well glim-well bk-form"><FieldRow :label="t('checksum.algo')" :hint="t('checksum.algoTip')"><Selector id="c-algo" v-model="st.algo" :items="segItems(algos)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow></div>
-  <div class="well glim-well bk-fill"><div class="bk-tools"><span id="c-count" class="eyebrow">{{ count }}</span></div>
+  <SubCard class="bk-form"><FieldRow :label="t('checksum.algo')" :hint="t('checksum.algoTip')"><Selector id="c-algo" v-model="st.algo" :items="segItems(algos)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow></SubCard>
+  <SubCard class="bk-fill"><div class="bk-tools"><span id="c-count" class="glim-eyebrow">{{ count }}</span></div>
     <div id="c-list" class="bk-list">
       <div v-for="(r, i) in st.rows" :id="`c-row-${i}`" :key="r.name" class="bk-sum">
         <Tile :k="{ name: r.name }" /><span class="bk-name" :title="r.name">{{ r.name }}</span>
@@ -37,9 +37,9 @@ const width = (r: SumRow) => (r.state === 'done' ? 1 : r.state === 'read' ? 0.6 
         <CopyBtn v-if="r.hash" :text="r.hash" :tip="t('checksum.copySum')" /><span v-else></span>
       </div>
     </div>
-  </div>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('checksum.save') }}</div>
+  </SubCard>
+  <SubCard :title="t('checksum.save')" class="bk-form">
     <FieldRow :label="t('checksum.folder')"><PathField v-model="st.dir" v-bind="pathField('c-dir')" /></FieldRow>
     <FieldRow :label="t('checksum.fileName')"><TextField id="c-name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" mono @input="st.touched = true" /></FieldRow>
-  </div>
+  </SubCard>
 </template>

@@ -2,7 +2,7 @@
 import { pathField } from '@/ui/picker';
 import { segItems, selectOptions } from '@/ui/kit';
 import { Select } from '@glimstone/vue/Select';
-import { FieldRow, PathField, Pill, Selector } from '@glimstone/vue';
+import { FieldRow, PathField, Pill, Selector, SubCard } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Rule, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -48,16 +48,16 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="c('rules.appliesTo')"><Selector id="a-rkind" v-model="kindModel" :items="segItems([['user', c('rules.user')], ['group', c('rules.groupWord')], ['all', c('rules.all')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow v-if="kind === 'user'" :label="c('rules.user')"><Select v-model="d.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" rows="menu" /></FieldRow>
     <FieldRow v-else-if="kind === 'group'" :label="c('rules.groupWord')">
       <Select v-if="groups.length" v-model="d.who" :options="selectOptions(groups.map((g) => ['@' + g, g]))" rows="menu" />
       <Pill v-else tone="state">{{ c('users.noGroups') }}</Pill>
     </FieldRow>
-  </div>
-  <div class="well glim-well">
+  </SubCard>
+  <SubCard>
     <FieldRow :label="c('rules.pathOrPattern')" :hint="c('rules.pathTip')"><PathField v-model="d.path" :placeholder="c('rules.pathPh')" v-bind="pathField('a-rpath')" /></FieldRow>
     <FieldRow :label="c('rules.rule')" :hint="c('rules.ruleTip')"><Selector v-model="d.rule" :items="segItems(RULES.map(([r, g]) => [r, ruleName(r), g]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-  </div>
+  </SubCard>
 </template>

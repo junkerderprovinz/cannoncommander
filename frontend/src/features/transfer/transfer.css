@@ -6,8 +6,8 @@
 .cf-name .tile { flex: none; }
 .cf-sides { grid-area: sides; display: flex; flex-direction: column; gap: .25rem; padding-left: 2.35rem; }
 .cf-side { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
-.cf-side .glim-pill { background: var(--carbon-surface3); justify-self: auto; }
-.cf-side .glim-pill--state { background: var(--carbon-hover-raised); font-weight: 600; }
+.cf-side .glim-pill { justify-self: auto; }
+.cf-side .glim-pill--state { font-weight: 600; }
 .cf-lab { width: 5.2rem; font-size: 12px; color: var(--carbon-text-muted); }
 .cf-row .cf-seg { grid-area: seg; background: var(--carbon-surface3); }
 @media (max-width: 900px) {

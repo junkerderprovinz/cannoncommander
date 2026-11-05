@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Pill, Toggle } from '@glimstone/vue';
+import { EmptyState, Pill, Toggle } from '@glimstone/vue';
 import { ref } from 'vue';
 
 const wrap = ref(false);
@@ -39,7 +39,7 @@ onMounted(async () => {
     <Pill v-if="truncated">{{ t('viewer.text.truncated') }}</Pill><span class="grow"></span>
     <span class="cv-swl">{{ t('viewer.text.wrap') }} <Toggle id="cv-wrap" v-model="wrap" /></span>
   </div>
-  <div v-if="failed" class="empty">{{ t('viewer.failed') }}</div>
+  <EmptyState v-if="failed" nested :title="t('viewer.failed')" />
   <div v-else class="cv-code" :class="{ wrap: wrap || compact }">
     <div class="cv-lines"><div v-for="(l, k) in shown" :key="k" class="ln" v-html="highlight(l, kind, e) || ' '"></div></div>
   </div>

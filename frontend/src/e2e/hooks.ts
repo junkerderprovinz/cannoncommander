@@ -16,9 +16,10 @@ const CLASSES: [selector: string, name: string][] = [
   ['.glim-field-row-name', 'lab'],
   ['.glim-list-row', 'a-row'],
   ['.glim-list-row-title', 't'],
-  ['.ql .glim-badge', 'ql-name'],
   ['.glim-sel', 'seg'],
   ['.glim-kbd', 'kbd'],
+  ['.glim-subcard', 'well'],
+  ['.glim-toast', 'toast'],
   ['.glim-pill', 'pill'],
   ['.glim-pill--state', 'state'],
   ['.glim-pill--ok', 'ok'],
@@ -110,7 +111,6 @@ function name() {
     const on = seg.getAttribute('aria-checked') ?? seg.getAttribute('aria-selected') ?? 'false';
     if (seg.getAttribute('aria-pressed') !== on) seg.setAttribute('aria-pressed', on);
   });
-  document.querySelectorAll<HTMLElement>('.glim-secret-eye').forEach((eye) => { if (!('eye' in eye.dataset)) eye.dataset.eye = ''; });
   nameSelects();
 }
 

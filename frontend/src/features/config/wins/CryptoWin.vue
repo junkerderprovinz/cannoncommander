@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FieldRow, Selector } from '@glimstone/vue';
+import { FieldRow, Selector, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { closeBtn, type WinEntry } from '@/core/windows';
 import { c, stepFoot } from '@/features/config/shared';
@@ -15,10 +15,10 @@ onMounted(() => stepFoot(props.win, [closeBtn(), { label: c('info.copyAddress'),
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="c('info.coin')"><Selector id="cr-coin" v-model="coin" :items="segItems(COINS.map(([id, name]) => [id, name]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <div id="cr-addr" class="a-addr mono">{{ addr }}</div>
     <!-- XRP is the one coin here whose address would otherwise make a donor look for a tag. -->
     <p id="cr-note" class="a-text muted">{{ coin === 'xrp' ? c('info.xrpNote') : '' }}</p>
-  </div>
+  </SubCard>
 </template>

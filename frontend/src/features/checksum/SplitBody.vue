@@ -2,7 +2,7 @@
 // Datei teilen: how big each part is, a sum file beside them, and where the parts land.
 import { pathField } from '@/ui/picker';
 import { segItems } from '@/ui/kit';
-import { FieldRow, PathField, Pill, Selector, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, PathField, Pill, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
@@ -28,13 +28,13 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="well glim-well"><div class="bk-filehead"><Tile :k="st.k" /><span class="bk-name">{{ st.k.name }}</span><Pill class="glim-num">{{ fmtSize(st.k.size) }}</Pill></div></div>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('checksum.parts') }}</div>
+  <SubCard><div class="bk-filehead"><Tile :k="st.k" /><span class="bk-name">{{ st.k.name }}</span><Pill class="glim-num">{{ fmtSize(st.k.size) }}</Pill></div></SubCard>
+  <SubCard :title="t('checksum.parts')" class="bk-form">
     <FieldRow :label="t('checksum.partSize')" :hint="t('checksum.partSizeTip')"><Selector id="t-size" v-model="st.size" :items="segItems(sizes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="t('checksum.ownSize')"><span class="bk-range"><TextField id="t-custom" v-model="st.custom" class="glim-num" inputmode="numeric" :disabled="st.size !== 'custom'" width="short" /><span class="muted">MB</span></span></FieldRow>
     <FieldRow :label="t('checksum.addSum')" :hint="t('checksum.addSumTip')"><Toggle id="t-sum" v-model="st.sum" /></FieldRow>
-  </div>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('checksum.target') }}</div>
+  </SubCard>
+  <SubCard :title="t('checksum.target')" class="bk-form">
     <FieldRow :label="t('checksum.folder')"><PathField v-model="st.dest" v-bind="pathField('t-dest')" /></FieldRow>
     <FieldRow :label="t('checksum.yields')">
       <span id="t-final" class="bk-finalw">
@@ -43,5 +43,5 @@ watchEffect(() => {
         <template v-else><Pill class="glim-num">{{ t('checksum.partsCount', { n: st.count }) }}</Pill><span class="bk-path mono bk-final" :title="join(clean(st.dest), names[0]!)"><bdi>{{ t('checksum.range', { first: names[0]!, last: names.at(-1)!.split('.').pop()! }) }}</bdi></span></template>
       </span>
     </FieldRow>
-  </div>
+  </SubCard>
 </template>

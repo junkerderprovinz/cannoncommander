@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { pathField } from '@/ui/picker';
-import { FieldRow, PathField, Toggle } from '@glimstone/vue';
+import { FieldRow, PathField, SubCard, Toggle } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, exists, listDir } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -31,8 +31,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="c('picker.file')" :hint="c('app.importFileTip')"><PathField v-model="file" :placeholder="`${EXPORTS}/…json`" v-bind="pathField('a-imfile', ['json'])" /></FieldRow>
     <FieldRow :label="c('app.takeUsers')" :hint="c('app.takeUsersTip')"><Toggle v-model="users" /></FieldRow>
-  </div>
+  </SubCard>
 </template>

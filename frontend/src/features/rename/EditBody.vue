@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Im Editor umbenennen: every name on a line of its own, edited as text, and each changed line renames its file.
-import { Button, Pill, TextField, Toggle } from '@glimstone/vue';
+import { Button, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, onMounted, ref, watchEffect } from 'vue';
 import type { RenameError } from '@/api/tools';
 import { G } from '@/core/glyphs';
@@ -58,19 +58,19 @@ onMounted(() => setTimeout(() => area.value?.focus(), 20));
 </script>
 
 <template>
-  <div class="well glim-well re-find">
+  <SubCard class="re-find">
     <TextField id="re-q" v-model="find" :placeholder="t('rename.find')" :aria-label="t('rename.find')" spellcheck="false" autocomplete="off" width="grow" mono />
     <TextField id="re-r" v-model="repl" :placeholder="t('rename.replace')" :aria-label="t('rename.replace')" spellcheck="false" autocomplete="off" width="grow" mono />
     <span class="re-sw">{{ t('rename.expr') }} <Toggle id="re-regex" v-model="regex" :data-tip="t('rename.exprTip')" /></span>
     <Pill id="re-n" class="glim-num">{{ hits }}</Pill>
     <Button id="re-all" :label="t('rename.replaceAll')" label-key="IconSync" :disabled="!pattern" @click="replaceAll" />
-  </div>
+  </SubCard>
   <div class="re-main">
-    <div class="well glim-well re-edit">
+    <SubCard class="re-edit">
       <div ref="gutter" class="re-gutter mono" aria-hidden="true"><span v-for="(_, i) in names" :key="i" :class="{ extra: i >= total }">{{ i + 1 }}</span></div>
       <textarea ref="area" v-model="st.text" class="re-ta mono" spellcheck="false" autocapitalize="off" wrap="off" :aria-label="t('rename.names')" @scroll="follow"></textarea>
-    </div>
-    <div class="well glim-well bk-fill"><div class="bk-tools"><span id="re-sum" class="eyebrow">{{ t('rename.count', { objects: plural(total, 'ui.objects'), changes: plural(changed, 'rename.changes') }) }}</span></div>
+    </SubCard>
+    <SubCard class="bk-fill"><div class="bk-tools"><span id="re-sum" class="glim-eyebrow">{{ t('rename.count', { objects: plural(total, 'ui.objects'), changes: plural(changed, 'rename.changes') }) }}</span></div>
       <div v-if="st.lines !== total" id="re-warn" class="re-warn">{{ warning }}</div>
       <div id="re-list" class="bk-list">
         <div v-for="r in st.rows" :key="r.old" class="bk-mrow" :class="{ same: r.new === r.old }">
@@ -79,6 +79,6 @@ onMounted(() => setTimeout(() => area.value?.focus(), 20));
           <Pill v-if="r.error" tone="fail">{{ t(`rename.errors.${r.error}`) }}</Pill><span v-else></span>
         </div>
       </div>
-    </div>
+    </SubCard>
   </div>
 </template>

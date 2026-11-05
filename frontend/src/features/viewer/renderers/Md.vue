@@ -1,6 +1,6 @@
 <script lang="ts">
 import { segItems } from '@/ui/kit';
-import { Selector } from '@glimstone/vue';
+import { EmptyState, Selector } from '@glimstone/vue';
 import { ref } from 'vue';
 
 const mode = ref('md');
@@ -31,7 +31,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="failed" class="empty">{{ t('viewer.failed') }}</div>
+  <EmptyState v-if="failed" nested :title="t('viewer.failed')" />
   <article v-else-if="compact" class="cv-md compact" v-html="md(text ?? '')"></article>
   <template v-else>
     <div class="cv-bar"><span class="grow"></span><Selector id="cv-mdv" v-model="mode" :items="segItems([['md', t('viewer.md.rendered')], ['src', t('viewer.md.source')]])" size="sm" activation="manual" inline button-height /></div>

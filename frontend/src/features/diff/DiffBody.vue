@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Two files side by side, changed lines tinted, and a jump from one changed place to the next.
-import { Pill } from '@glimstone/vue';
+import { Pill, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import type { Diff, DiffRow, DiffSide } from '@/api/tools';
 import { fmtSize, fmtTime } from '@/core/format';
@@ -64,7 +64,7 @@ onMounted(() => {
       <Pill class="glim-num">{{ fmtSize(s.size) }}</Pill><Pill class="glim-num">{{ fmtTime(Date.parse(s.mtime)) }}</Pill>
     </div>
   </div>
-  <div class="well glim-well bk-fill bk-dwell">
+  <SubCard class="bk-fill bk-dwell">
     <div v-if="!hunks.length" class="bk-same"><span class="bk-dot"></span>{{ t('diff.same') }}</div>
     <div id="d-body" ref="body" class="bk-dbody mono" :class="{ hex: diff.binary }" tabindex="0">
       <div v-for="(x, i) in lines" :key="i" class="bk-dl" :class="{ cur: at >= 0 && hunks[at] === i }" :data-bk-row="i">
@@ -72,5 +72,5 @@ onMounted(() => {
         <span class="bk-ln glim-num">{{ x.r.r == null ? '' : x.r.r + 1 }}</span><span class="bk-code" :class="x.cls[1]"><template v-for="(p, k) in x.pieces[1]" :key="k"><mark v-if="p.mark">{{ p.text }}</mark><template v-else>{{ p.text }}</template></template><template v-if="!x.pieces[1].length || !x.pieces[1].some((p) => p.text)">{{ ' ' }}</template></span>
       </div>
     </div>
-  </div>
+  </SubCard>
 </template>

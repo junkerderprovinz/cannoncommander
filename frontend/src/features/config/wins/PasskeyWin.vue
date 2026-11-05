@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // A passkey gets its name here, then the browser asks for the fingerprint, the PIN or the key itself.
-import { FieldRow, TextField } from '@glimstone/vue';
+import { EmptyState, FieldRow, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { me } from '@/api/admin';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { c, fail, stepFoot } from '@/features/config/shared';
@@ -35,8 +35,8 @@ onMounted(showName);
 </script>
 
 <template>
-  <div v-if="waiting" class="empty"><G n="IconKey" /><div>{{ c('security.confirmPasskey') }}</div></div>
-  <div v-else class="well glim-well">
+  <EmptyState v-if="waiting" nested :glyph="glyphComponent('IconKey')" :title="c('security.confirmPasskey')" />
+  <SubCard v-else>
     <FieldRow :label="c('sources.name')" :hint="c('security.passkeyNameTip')"><TextField ref="el" v-model="name" :placeholder="c('security.passkeyNamePh')" width="medium" @keydown.enter="next" /></FieldRow>
-  </div>
+  </SubCard>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card, FieldRow, IconButton, ListRow, Pill } from '@glimstone/vue';
+import { Button, Card, EmptyState, FieldRow, IconButton, ListRow, Pill } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { admin, type IndexState, type Source } from '@/api/admin';
 import { run } from '@/core/actions';
@@ -94,14 +94,14 @@ function remove(s: Source) {
         </template>
       </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconDatabase" /><div>{{ c('sources.none') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconDatabase')" :title="c('sources.none')" />
     <FieldRow v-if="restartNeeded" :label="c('sources.restart')" :hint="c('sources.restartTip')">
-      <span class="a-ctl"><Pill tone="warn">{{ c('sources.restartPill') }}</Pill><Button :label="c('sources.toRestart')" label-key="IconRefresh" @click="go('settings', 'app')" /></span>
+      <Pill tone="warn">{{ c('sources.restartPill') }}</Pill><Button :label="c('sources.toRestart')" label-key="IconRefresh" @click="go('settings', 'app')" />
     </FieldRow>
     <div class="a-foot"><Button data-add :label="c('sources.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('sources.index')">
     <FieldRow :label="c('sources.every')" :hint="c('sources.everyTip')"><Pill>{{ Number.isFinite(next) ? c('sources.nextRun', { when: soon(next) }) : c('sources.notPlanned') }}</Pill></FieldRow>
-    <FieldRow :label="c('sources.last')"><span class="a-ctl"><Pill>{{ last ? ago(last) : c('sources.never') }}</Pill><Button data-reindexall :label="c('sources.reindexAll')" label-key="IconRefresh" @click="reindex()" /></span></FieldRow>
+    <FieldRow :label="c('sources.last')"><Pill>{{ last ? ago(last) : c('sources.never') }}</Pill><Button data-reindexall :label="c('sources.reindexAll')" label-key="IconRefresh" @click="reindex()" /></FieldRow>
   </Card>
 </template>

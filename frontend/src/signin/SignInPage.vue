@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The way in: name and password, then the code from the app or a recovery code, a passkey instead, a password of
 // its own after the first start, and the reset with a code from the container log.
-import { Button, Card, FieldRow, InfoBubble, PasswordField, TextField, Toggle } from '@glimstone/vue';
+import { Button, Card, FieldRow, InfoBubble, PasswordField, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { auth, type SignIn, type SignInOptions, type TotpSetup } from '@/api/auth';
 import { ApiError } from '@/api/client';
@@ -304,15 +304,14 @@ function toggleRecovery() {
 
       <template v-else-if="step === 'codes'">
         <p class="cl-text">{{ s('codesText') }}</p>
-        <div class="well glim-well cl-codes mono glim-num"><span v-for="c in codes" :key="c">{{ c }}</span></div>
+        <SubCard class="cl-codes mono glim-num"><span v-for="c in codes" :key="c">{{ c }}</span></SubCard>
         <div class="cl-btns"><Button class="glim-btn-key" :label="s('toFiles')" label-key="IconForward" tone="accent" type="submit" /></div>
       </template>
 
       <template v-else-if="step === 'resetDone'">
-        <div class="well glim-well cl-gone">
-          <div class="eyebrow">{{ s('goneToo') }}</div>
+        <SubCard :title="s('goneToo')" class="cl-gone">
           <div v-for="k in ['goneSessions', 'goneTwofa', 'goneTokens']" :key="k" class="cl-li"><G n="IconCheck" /><span>{{ s(k) }}</span></div>
-        </div>
+        </SubCard>
         <div class="cl-btns"><Button class="glim-btn-key" :label="s('toFiles')" label-key="IconForward" tone="accent" type="submit" /></div>
       </template>
 

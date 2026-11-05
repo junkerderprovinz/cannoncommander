@@ -41,6 +41,7 @@ onMounted(() => {
 
 <template>
   <Window ref="frame" class="win" :class="w.cls" :title="w.title" :actions="actions" :start="start" :size="w.full ? 'full' : w.wide ? 'wide' : 'normal'" :text="text" @close="asked">
+    <template v-if="w.dot" #title>{{ w.title }}<i class="ce-dot" :aria-label="w.dot"></i></template>
     <div v-if="typeof w.body === 'string'" v-html="w.body"></div>
     <component :is="w.body" v-else v-bind="w.props" :close="w.close" :win="w" />
   </Window>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // Who did what and when, filtered by person or kind from the column heads. A row naming a place opens it.
-import { Button, Card, Pill } from '@glimstone/vue';
+import { Button, Card, EmptyState, Pill, SubCard } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { type Activity, admin, type User } from '@/api/admin';
 import { DAY, now } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { menu } from '@/core/menu';
 import { go } from '@/core/views';
 import { usePanels } from '@/stores/panels';
@@ -59,9 +59,9 @@ function open(a: Activity) {
   <div class="page-inner">
     <Card :title="c('activity.overview')">
       <div class="a-stats">
-        <div class="well glim-well a-stat"><span class="glim-num">{{ filtered ? c('activity.ofAll', { n: shown.length, all: all.length }) : all.length }}</span><span>{{ filtered ? c('activity.inFilter') : c('activity.entries') }}</span></div>
-        <div class="well glim-well a-stat"><span class="glim-num">{{ today }}</span><span>{{ c('activity.today') }}</span></div>
-        <div class="well glim-well a-stat"><span class="glim-num">{{ people }}</span><span>{{ c('activity.people') }}</span></div>
+        <SubCard class="a-stat"><span class="glim-num">{{ filtered ? c('activity.ofAll', { n: shown.length, all: all.length }) : all.length }}</span><span>{{ filtered ? c('activity.inFilter') : c('activity.entries') }}</span></SubCard>
+        <SubCard class="a-stat"><span class="glim-num">{{ today }}</span><span>{{ c('activity.today') }}</span></SubCard>
+        <SubCard class="a-stat"><span class="glim-num">{{ people }}</span><span>{{ c('activity.people') }}</span></SubCard>
       </div>
       <div v-if="filtered" class="a-foot"><Button :label="c('activity.reset')" label-key="IconClose" @click="act.who = act.what = null" /></div>
     </Card>
@@ -78,7 +78,7 @@ function open(a: Activity) {
             <Pill>{{ full(a.who) }}</Pill><Pill>{{ kind(a.what) }}</Pill><Pill class="glim-num">{{ ago(a.t) }}</Pill>
           </div>
         </template>
-        <div v-else class="empty"><G n="IconFilter" /><div>{{ c('activity.nothing') }}</div></div>
+        <EmptyState v-else nested :glyph="glyphComponent('IconFilter')" :title="c('activity.nothing')" />
       </div>
     </Card>
   </div>

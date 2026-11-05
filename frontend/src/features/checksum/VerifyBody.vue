@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // Prüfsummen prüfen: a list from a file or pasted lines, and what each line found.
 import { pathField } from '@/ui/picker';
-import { FieldRow, PathField, Pill, ProgressBar, Selector, TextArea, TextField } from '@glimstone/vue';
+import { EmptyState, FieldRow, PathField, Pill, ProgressBar, Selector, SubCard, TextArea, TextField } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import type { Algo } from '@/api/tools';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { plural, segItems } from '@/ui/kit';
 import Tile from '@/ui/Tile.vue';
@@ -29,17 +29,17 @@ const width = (r: VerifyRow, i: number) => (r.state !== 'wait' || i < props.st.s
 </script>
 
 <template>
-  <div class="well glim-well bk-form">
+  <SubCard class="bk-form">
     <FieldRow :label="t('checksum.sums')"><Selector id="v-mode" v-model="st.mode" :items="segItems(modes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <div class="bk-swap">
       <div class="bk-swap-a" :hidden="st.mode !== 'file'"><FieldRow :label="t('checksum.file')" :hint="t('checksum.fileTip')"><TextField id="v-file" ref="fileField" v-model="st.file" placeholder="/mnt/user/downloads/datei.sha256" spellcheck="false" autocomplete="off" width="grow" mono @keydown.enter.prevent="check" /></FieldRow></div>
       <div class="bk-swap-b" :hidden="st.mode !== 'paste'"><TextArea id="v-text" ref="textField" v-model="st.text" rows="3" :placeholder="t('checksum.pastePlaceholder')" spellcheck="false" mono />
         <FieldRow :label="t('checksum.filesIn')"><PathField v-model="st.dir" v-bind="pathField('v-dir')" /></FieldRow></div>
     </div>
-  </div>
-  <div class="well glim-well bk-fill"><div class="bk-tools"><span id="v-count" class="eyebrow">{{ count }}</span></div>
+  </SubCard>
+  <SubCard class="bk-fill"><div class="bk-tools"><span id="v-count" class="glim-eyebrow">{{ count }}</span></div>
     <div id="v-list" class="bk-list">
-      <div v-if="!st.rows" class="empty"><G :n="EMPTY[st.empty][0]" /><div>{{ t(EMPTY[st.empty][1]) }}</div></div>
+      <EmptyState v-if="!st.rows" nested :glyph="glyphComponent(EMPTY[st.empty][0])" :title="t(EMPTY[st.empty][1])" />
       <template v-else><div v-for="(r, i) in st.rows" :id="`v-row-${i}`" :key="i" class="bk-sum">
         <Tile v-if="r.found !== false && !r.bad" :k="{ name: r.name }" /><Tile v-else g="IconFile" />
         <span class="bk-name mono">{{ r.name }}</span>
@@ -52,5 +52,5 @@ const width = (r: VerifyRow, i: number) => (r.state !== 'wait' || i < props.st.s
         </span>
       </div></template>
     </div>
-  </div>
+  </SubCard>
 </template>

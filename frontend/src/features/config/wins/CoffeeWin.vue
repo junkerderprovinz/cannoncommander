@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SubCard } from '@glimstone/vue';
 import { onMounted } from 'vue';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { c, stepFoot } from '@/features/config/shared';
@@ -8,5 +9,5 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('info.toCoffee'), g
 </script>
 
 <template>
-  <div class="well glim-well a-text"><p>{{ c('info.coffee1') }}</p><p>{{ c('info.coffee2') }}</p></div>
+  <SubCard class="a-text"><p>{{ c('info.coffee1') }}</p><p>{{ c('info.coffee2') }}</p></SubCard>
 </template>

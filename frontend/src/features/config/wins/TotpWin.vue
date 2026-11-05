@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CopyField, FieldRow, InfoBubble, TextField } from '@glimstone/vue';
+import { CopyField, FieldRow, InfoBubble, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { me, statusOf } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -35,12 +35,12 @@ onMounted(async () => {
 
 <template>
   <CodesWin v-if="codes" :win="win" :codes="codes" :done="() => { props.done(); toast(c('security.totpIsOn')); }" />
-  <div v-else class="well glim-well a-totp">
+  <SubCard v-else class="a-totp">
     <div class="a-qr" role="img" :aria-label="c('security.qr')" v-html="qr"></div>
     <div class="a-totp-side">
-      <div class="eyebrow">{{ c('security.scan') }} <InfoBubble :tip="c('security.scanTip')" /></div>
-      <FieldRow :label="c('security.typeIt')"><CopyField class="glim-field--grow" :value="group4(secret)" :label="c('security.typeIt')" :text="copyWords()" /></FieldRow>
+      <div class="glim-eyebrow">{{ c('security.scan') }} <InfoBubble :tip="c('security.scanTip')" /></div>
+      <FieldRow :label="c('security.typeIt')"><CopyField width="grow" :value="group4(secret)" :label="c('security.typeIt')" :text="copyWords()" /></FieldRow>
       <FieldRow :label="c('security.appCode')" :hint="c('security.sixDigitsTip')"><TextField id="a-totp" ref="el" v-model="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456" width="short" mono @keydown.enter="next" /></FieldRow>
     </div>
-  </div>
+  </SubCard>
 </template>

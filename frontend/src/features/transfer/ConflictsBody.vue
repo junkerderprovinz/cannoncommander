@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Konflikte: each name that exists at the target, both sides side by side, and an answer per row or for all of them.
 import { segItems } from '@/ui/kit';
-import { FieldRow, Pill, Selector } from '@glimstone/vue';
+import { FieldRow, Pill, Selector, SubCard } from '@glimstone/vue';
 import { ref } from 'vue';
 import type { Choice, ConflictSide, JobConflict } from '@/api/ops';
 import { fmtSize, fmtTime } from '@/core/format';
@@ -30,9 +30,8 @@ const facts = (n: ConflictSide) => (n.dir ? t('transfer.entries', { n: n.entries
 </script>
 
 <template>
-  <div class="well glim-well cf-all"><FieldRow :label="t('transfer.forAll')" :hint="t('transfer.forAllTip')"><Selector id="cf-all" v-model="all" :items="segItems(ALL)" size="sm" activation="manual" inline button-height pairs-on-phone @press="forAll" /></FieldRow></div>
-  <div class="well glim-well">
-    <div class="eyebrow">{{ conflicts.length === 1 ? t('transfer.existsOne', { dest: split(dest).pop() || t('jobs.server') }) : t('transfer.existsMany', { n: conflicts.length, dest: split(dest).pop() || t('jobs.server') }) }}</div>
+  <SubCard class="cf-all"><FieldRow :label="t('transfer.forAll')" :hint="t('transfer.forAllTip')"><Selector id="cf-all" v-model="all" :items="segItems(ALL)" size="sm" activation="manual" inline button-height pairs-on-phone @press="forAll" /></FieldRow></SubCard>
+  <SubCard :title="conflicts.length === 1 ? t('transfer.existsOne', { dest: split(dest).pop() || t('jobs.server') }) : t('transfer.existsMany', { n: conflicts.length, dest: split(dest).pop() || t('jobs.server') })">
     <div class="cf-list">
       <div v-for="(c, i) in conflicts" :key="c.key" class="cf-row" :data-i="i">
         <div class="cf-name"><span class="tile"><G :n="c.source.dir ? 'IconFolder' : glyphOf({ name: nameOf(c) })" /></span><b>{{ c.key }}</b></div>
@@ -44,5 +43,5 @@ const facts = (n: ConflictSide) => (n.dir ? t('transfer.entries', { n: n.entries
         <Selector :model-value="st.choice[c.key] ?? null" class="cf-seg" :data-row="i" :items="segItems(CH)" size="sm" activation="manual" inline button-height pairs-on-phone @press="one(c, $event)" />
       </div>
     </div>
-  </div>
+  </SubCard>
 </template>

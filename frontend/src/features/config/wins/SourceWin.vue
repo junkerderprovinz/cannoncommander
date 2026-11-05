@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { pathField } from '@/ui/picker';
-import { FieldRow, InfoBubble, PathField, TextArea, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, PathField, SubCard, TextArea, TextField, Toggle } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, exists, type Source } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -46,17 +46,16 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: s ? c('save') : c('ad
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="c('sources.name')"><TextField id="a-sname" ref="nameEl" v-model="name" :placeholder="c('sources.namePh')" width="medium" /></FieldRow>
     <FieldRow :label="c('sources.folder')"><PathField ref="pathEl" v-model="path" v-bind="pathField('a-spath')" /></FieldRow>
-  </div>
-  <div class="well glim-well">
+  </SubCard>
+  <SubCard>
     <FieldRow :label="c('sources.readOnly')" :hint="c('sources.readOnlyTip')"><Toggle v-model="readOnly" /></FieldRow>
     <FieldRow :label="c('sources.indexIt')" :hint="c('sources.indexItTip')"><Toggle v-model="indexed" /></FieldRow>
     <FieldRow :label="c('sources.skipHidden')" :hint="c('sources.skipHiddenTip')"><Toggle v-model="skipHidden" /></FieldRow>
-  </div>
-  <div class="well glim-well">
-    <div class="eyebrow">{{ c('sources.exclude') }} <InfoBubble :tip="c('sources.excludeTip')" /></div>
+  </SubCard>
+  <SubCard :title="c('sources.exclude')" :hint="c('sources.excludeTip')">
     <TextArea id="a-sex" v-model="exclude" rows="3" spellcheck="false" placeholder="*.tmp" />
-  </div>
+  </SubCard>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Select } from '@glimstone/vue/Select';
-import { Checkbox, FieldRow, Pill, TextField, Toggle } from '@glimstone/vue';
+import { Checkbox, FieldRow, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
 // Eigenschaften und Rechte: what the selection is, who owns it, and the nine rights as boxes and as a number.
 import { computed, ref, watch } from 'vue';
 import type { Item } from '@/api/client';
@@ -62,7 +62,7 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
 <template>
   <div class="bk-phead"><Tile v-if="one" :k="one" /><Tile v-else g="IconFiles" /><span class="bk-name">{{ title }}</span></div>
   <div class="bk-grid2 bk-top" @keydown.enter="pressPrimary">
-    <div class="well glim-well bk-form"><div class="eyebrow">{{ t('props.general') }}</div>
+    <SubCard :title="t('props.general')" class="bk-form">
       <template v-if="one">
         <FieldRow :label="t('props.kind')"><span class="bk-val">{{ typeOf(one) }}</span></FieldRow>
         <FieldRow :label="t('props.place')"><span class="bk-val bk-pathv"><span class="bk-path mono" :title="st.paths[0]"><bdi>{{ st.paths[0] }}</bdi></span><CopyBtn :text="st.paths[0]!" :tip="t('props.copyPath')" /></span></FieldRow>
@@ -77,15 +77,15 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
         <FieldRow :label="t('props.size')"><span class="bk-val glim-num" :data-tip="bytes">{{ sizeText }}</span></FieldRow>
         <FieldRow :label="t('props.lastChanged')"><span class="bk-val glim-num">{{ fmtTime(newest) }}</span></FieldRow>
       </template>
-    </div>
-    <div class="well glim-well bk-form"><div class="eyebrow">{{ t('props.owning') }}</div>
+    </SubCard>
+    <SubCard :title="t('props.owning')" class="bk-form">
       <FieldRow :label="t('props.owner')" :hint="t('props.ownerTip')"><span class="bk-idf"><Select id="r-owner" v-model="st.owner" :disabled="st.ro" :options="selectOptions(owners)" rows="menu" /><Pill id="r-uid" class="glim-num">{{ idOf(st.uids, st.owner, 'UID') }}</Pill></span></FieldRow>
       <FieldRow :label="t('props.group')"><span class="bk-idf"><Select id="r-group" v-model="st.group" :disabled="st.ro" :options="selectOptions(groups)" rows="menu" /><Pill id="r-gid" class="glim-num">{{ idOf(st.gids, st.group, 'GID') }}</Pill></span></FieldRow>
       <FieldRow :label="t('props.inside')" :hint="anyDir ? t('props.insideTip') : t('props.onlyDirs')"><Toggle id="r-rec" v-model="st.rec" :disabled="!anyDir || st.ro" /></FieldRow>
-    </div>
+    </SubCard>
   </div>
   <template v-if="one && !st.ro"><Render v-for="(well, n) in extend.propsWells" :key="n" :node="well(st.paths[0]!)" /></template>
-  <div class="well glim-well bk-form"><div class="bk-tools"><span class="eyebrow">{{ t('props.rights') }}</span><Pill v-if="st.modes.length > 1" :data-tip="t('props.mixedTip')" tone="warn">{{ t('props.mixed') }}</Pill></div>
+  <SubCard class="bk-form"><div class="bk-tools"><span class="glim-eyebrow">{{ t('props.rights') }}</span><Pill v-if="st.modes.length > 1" :data-tip="t('props.mixedTip')" tone="warn">{{ t('props.mixed') }}</Pill></div>
     <div class="bk-perms">
       <span></span><span v-for="bit in BITS" :key="bit" class="bk-ph">{{ t(`props.bits.${bit}`) }}</span>
       <template v-for="who in WHO" :key="who">
@@ -94,5 +94,5 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
       </template>
     </div>
     <FieldRow :label="t('props.asNumber')" :hint="t('props.asNumberTip')"><span class="bk-idf"><Pill id="r-sym" class="mono">{{ symbolic }}</Pill><TextField id="r-oct" v-model="oct" class="glim-num" maxlength="4" inputmode="numeric" :disabled="st.ro" width="short" mono /></span></FieldRow>
-  </div>
+  </SubCard>
 </template>

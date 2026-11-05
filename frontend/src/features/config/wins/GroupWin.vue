@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FieldRow, TextField, Toggle } from '@glimstone/vue';
+import { FieldRow, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { onMounted, reactive, ref } from 'vue';
 import { admin, type Group, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -27,12 +27,11 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: isNew ? c('users.crea
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="c('users.groupName')"><TextField ref="nameEl" v-model="name" :placeholder="c('users.groupNamePh')" width="medium" /></FieldRow>
     <FieldRow :label="c('users.note')"><TextField v-model="note" :placeholder="c('users.notePh')" width="wide" /></FieldRow>
-  </div>
-  <div class="well glim-well">
-    <div class="eyebrow">{{ c('users.members_') }}</div>
+  </SubCard>
+  <SubCard :title="c('users.members_')">
     <FieldRow v-for="u in users" :key="u.name" :label="u.full"><template #label>{{ u.full }} <small>{{ u.name }}</small></template><Toggle v-model="member[u.name]!" /></FieldRow>
-  </div>
+  </SubCard>
 </template>

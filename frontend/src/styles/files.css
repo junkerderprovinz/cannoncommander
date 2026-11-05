@@ -11,7 +11,7 @@
 #col-q { flex: none; }
 .col-cols { columns: 13rem; column-gap: 2rem; }
 .col-group { break-inside: avoid; display: flex; flex-direction: column; padding-bottom: 1.1rem; }
-.col-group .eyebrow { margin-bottom: .25rem; }
+.col-group .glim-eyebrow { margin-bottom: .25rem; }
 
 .vpad { grid-column: 1 / -1; pointer-events: none; }
 .row .thumb > img.scene { display: block; width: 100%; height: 100%; object-fit: cover; }

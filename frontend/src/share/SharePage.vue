@@ -2,7 +2,7 @@
 // What someone sees who got a share link: the name and the note of the owner, the files with a preview, downloads
 // one by one or as a zip, the password when the link has one, uploads when it takes them, and a kind word when the
 // link leads nowhere any more.
-import { Button, Card, FieldRow, IconButton, PasswordField } from '@glimstone/vue';
+import { Button, Card, EmptyState, FieldRow, IconButton, PasswordField, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { ApiError } from '@/api/client';
 import { inside, type PublicItem, type PublicListing, type PublicShare, shareApi } from '@/api/share';
@@ -10,7 +10,6 @@ import { fmtCount, fmtDate, fmtListDate, fmtSize } from '@/core/format';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { eyeWords } from '@/ui/kit';
-import SlotButton from '@/ui/SlotButton.vue';
 import { canPreview } from './preview';
 import SharePreview from './SharePreview.vue';
 import ShareUpload from './ShareUpload.vue';
@@ -146,10 +145,10 @@ async function uploaded() {
             <G :n="isFile && file ? glyphOf(file) : 'IconFolderOpen'" />
             <div class="sp-name"><h1>{{ pub.name }}</h1><div v-if="meta.length" class="muted glim-num">{{ meta.join(' · ') }}</div></div>
             <Button v-if="isFile && file && canPreview(file.name)" class="glim-btn-key" :label="s('preview')" label-key="IconEye" data-sp="preview" @click="shown = file" />
-            <SlotButton v-if="isFile" class="glim-btn-key" :label="s('download')" g="IconDownload" tone="accent" :href="api.rawUrl('/', true)" data-sp="download" />
-            <SlotButton v-else class="glim-btn-key" :label="zipLabel" g="IconDownload" tone="accent" :href="api.zipUrl(path)" data-sp="zip" />
+            <Button v-if="isFile" class="glim-btn-key" :label="s('download')" label-key="IconDownload" tone="accent" :href="api.rawUrl('/', true)" data-sp="download" />
+            <Button v-else class="glim-btn-key" :label="zipLabel" label-key="IconDownload" tone="accent" :href="api.zipUrl(path)" data-sp="zip" />
           </div>
-          <div v-if="pub.message" class="well glim-well sp-msg"><div class="eyebrow">{{ s('message') }}</div><p>{{ pub.message }}</p></div>
+          <SubCard :title="s('message')" v-if="pub.message" class="sp-msg"><p>{{ pub.message }}</p></SubCard>
         </Card>
 
         <Card v-if="!isFile" class="glim-card sp-card sp-files" :title="s('files')">
@@ -157,7 +156,7 @@ async function uploaded() {
             <button type="button" class="sp-crumb" :class="{ cur: path === '/' }" @click="browse('/')">{{ s('root') }}</button>
             <template v-for="c in crumbs" :key="c.path"><span class="muted">/</span><button type="button" class="sp-crumb" :class="{ cur: c.path === path }" @click="browse(c.path)">{{ c.name }}</button></template>
           </nav>
-          <div v-if="!items.length" class="empty"><G n="IconEmpty" /><div>{{ s('empty') }}</div></div>
+          <EmptyState v-if="!items.length" nested :glyph="glyphComponent('IconEmpty')" :title="s('empty')" />
           <div v-else class="sp-list" role="list">
             <div class="sp-lhead muted"><span>{{ s('name') }}</span><span>{{ s('size') }}</span><span>{{ s('changed') }}</span><span></span></div>
             <div v-for="k in items" :key="k.name" class="sp-row" role="listitem">
@@ -166,7 +165,7 @@ async function uploaded() {
               <span class="muted glim-num">{{ fmtListDate(Date.parse(k.mtime)) }}</span>
               <span class="sp-acts">
                 <IconButton v-if="!k.dir && canPreview(k.name)" :tip="s('preview')" :glyph="glyphComponent('IconEye')" @click="shown = k" />
-                <a class="glim-btn-bare glim-icon-btn" :href="k.dir ? api.zipUrl(inside(path, k.name)) : api.rawUrl(inside(path, k.name), true)" :data-tip="s('download')" :aria-label="s('download')"><G n="IconDownload" /></a>
+                <IconButton :href="k.dir ? api.zipUrl(inside(path, k.name)) : api.rawUrl(inside(path, k.name), true)" :tip="s('download')" :glyph="glyphComponent('IconDownload')" />
               </span>
             </div>
           </div>

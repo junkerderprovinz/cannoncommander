@@ -67,5 +67,5 @@ onMounted(() => {
 
 <template>
   <FieldRow :label="exts ? t('ui.file') : t('ui.folder')"><TextField id="a-pick-path" v-model="chosen as string" width="wide" mono /></FieldRow>
-  <Tree id="a-tree" v-model="chosen" v-model:open="opened" class="well a-tree" :label="exts ? t('ui.pickFile') : t('ui.pickFolder')" :load="load" @activate="activate" />
+  <Tree id="a-tree" v-model="chosen" v-model:open="opened" class="glim-well a-tree" :label="exts ? t('ui.pickFile') : t('ui.pickFolder')" :load="load" @activate="activate" />
 </template>

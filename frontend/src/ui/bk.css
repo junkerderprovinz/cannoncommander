@@ -1,7 +1,7 @@
 /* The tool windows of the file and tools menus, as the prototype's b-00-kit.js styles them. */
 .bk :not(.glim-info-icon) > svg { fill: currentColor; }
-.bk .well { min-width: 0; }
-.bk .well .tbl tr + tr td { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--carbon-text) 6%, transparent); }
+.bk .glim-subcard { min-width: 0; }
+.bk .glim-subcard .tbl tr + tr td { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--carbon-text) 6%, transparent); }
 .bk-finalw { display: flex; gap: .4rem; align-items: center; min-width: 0; flex: 1; max-width: 30rem; justify-content: flex-end; }
 .bk-final { font-size: 12.5px; color: var(--carbon-text); }
 .bk-grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .6rem 1.6rem; }
@@ -19,7 +19,7 @@
 .bk-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left; min-width: 0; }
 .bk-dot { width: .5rem; height: .5rem; border-radius: 50%; background: #6fdc8c; display: inline-block; flex: none; }
 .bk-tools { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
-.bk-tools .eyebrow { padding: 0; margin-right: auto; }
+.bk-tools .glim-eyebrow { padding: 0; margin-right: auto; }
 .bk-chip { height: 1.75rem; padding: 0 .65rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); font-size: 13px; white-space: nowrap; }
 .bk-chip:hover { background: color-mix(in srgb, var(--carbon-hover-raised) 78%, var(--btn-tint)); }
 .bk-chip b { font-weight: 600; font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 12px; margin-right: .35rem; }

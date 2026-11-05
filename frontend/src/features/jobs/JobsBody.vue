@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The jobs window: every job with its progress, the open ones in queue order and movable by arrow, drag or Alt+arrow.
 import { segItems } from '@/ui/kit';
-import { FieldRow, IconButton, Pill, ProgressBar, Selector } from '@glimstone/vue';
+import { EmptyState, FieldRow, IconButton, Pill, ProgressBar, Selector, SubCard } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import type { Job } from '@/api/ops';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
@@ -62,8 +62,8 @@ function dragEnd() {
 </script>
 
 <template>
-  <div class="well glim-well"><FieldRow :label="t('jobs.modeLabel')" :hint="t('jobs.modeTip')"><Selector id="jobs-mode" v-model="mode" :items="segItems(MODES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow></div>
-  <div id="jobs-body" class="well glim-well">
+  <SubCard><FieldRow :label="t('jobs.modeLabel')" :hint="t('jobs.modeTip')"><Selector id="jobs-mode" v-model="mode" :items="segItems(MODES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow></SubCard>
+  <SubCard id="jobs-body">
     <template v-if="rows.length">
       <div v-for="j in rows" :key="j.id" class="job" :class="{ open: isOpen(j), dragging: dragging === j }" :data-job="j.id" :draggable="isOpen(j) ? 'true' : undefined" :tabindex="isOpen(j) ? 0 : undefined"
         :aria-label="t('jobs.aria', { label: jobLabel(j), pct: Math.round(pctOf(j)), state: t(`jobs.state.${j.state}`) })"
@@ -77,7 +77,7 @@ function dragEnd() {
         <ProgressBar class="bar" :value="pctOf(j) / 100" :label="jobLabel(j)" :paused="j.state === 'paused'" :failed="j.state === 'failed'" /><Pill class="glim-num">{{ Math.round(pctOf(j)) }} %</Pill>
         <span class="job-acts">
           <template v-if="isOpen(j)">
-            <IconButton v-if="j.kind !== 'upload'" :class="{ on: j.cap }" :tip="t('jobs.limit')" :glyph="glyphComponent('IconSliders')" data-jact="limit" @click="act(j, 'limit', $event)" />
+            <IconButton v-if="j.kind !== 'upload'" :pressed="!!j.cap" :tip="t('jobs.limit')" :glyph="glyphComponent('IconSliders')" data-jact="limit" @click="act(j, 'limit', $event)" />
             <template v-if="many">
               <IconButton :tip="t('jobs.earlier')" :glyph="glyphComponent('IconMoveUp')" data-jact="up" @click="act(j, 'up', $event)" />
               <IconButton :tip="t('jobs.later')" :glyph="glyphComponent('IconMoveDown')" data-jact="down" @click="act(j, 'down', $event)" />
@@ -90,6 +90,6 @@ function dragEnd() {
         </span>
       </div>
     </template>
-    <div v-else class="empty"><G n="IconQueued" /><div>{{ t('jobs.empty') }}</div></div>
-  </div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconQueued')" :title="t('jobs.empty')" />
+  </SubCard>
 </template>

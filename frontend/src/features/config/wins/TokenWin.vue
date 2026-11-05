@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // A token is shown once, right after it is made, and the window stays until it is confirmed as copied.
-import { CopyField, FieldRow, Selector, TextField } from '@glimstone/vue';
+import { CopyField, FieldRow, Selector, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { me, statusOf, type Token } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -33,12 +33,12 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('security.create'),
 
 <template>
   <template v-if="secret">
-    <div class="well glim-well a-text"><p>{{ c('security.copyNow') }}</p></div>
-    <div class="well glim-well"><FieldRow :label="name"><CopyField class="glim-field--grow" :value="secret" :label="name" :text="copyWords()" /></FieldRow></div>
+    <SubCard class="a-text"><p>{{ c('security.copyNow') }}</p></SubCard>
+    <SubCard><FieldRow :label="name"><CopyField width="grow" :value="secret" :label="name" :text="copyWords()" /></FieldRow></SubCard>
   </template>
-  <div v-else class="well glim-well">
+  <SubCard v-else>
     <FieldRow :label="c('sources.name')" :hint="c('security.tokenNameTip')"><TextField id="a-tkname" ref="el" v-model="name" :placeholder="c('security.tokenNamePh')" width="medium" /></FieldRow>
     <FieldRow :label="c('security.rights')" :hint="c('security.rightsTip')"><Selector v-model="rights" :items="segItems([['r', c('security.read')], ['rw', c('security.readWrite')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="c('shares.expires')"><Selector v-model="expires" :items="segItems([['30', c('general.days', { n: 30 })], ['365', c('security.year')], ['never', c('shares.never_')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-  </div>
+  </SubCard>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SubCard } from '@glimstone/vue';
 import { onMounted } from 'vue';
 import { run } from '@/core/actions';
 import { closeBtn, type WinEntry } from '@/core/windows';
@@ -10,5 +11,5 @@ onMounted(() => stepFoot(props.win, [{ label: c('docs.keys'), g: 'IconKeyboard',
 </script>
 
 <template>
-  <div v-for="p in PARTS" :key="p" class="well glim-well"><div class="eyebrow">{{ c(`docs.${p}.title`) }}</div><div class="a-text"><p>{{ c(`docs.${p}.text`) }}</p></div></div>
+  <SubCard :title="c(`docs.${p}.title`)" v-for="p in PARTS" :key="p"><div class="a-text"><p>{{ c(`docs.${p}.text`) }}</p></div></SubCard>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The colours: rename one, give it another shade, delete it or add a new one. A picked shade proposes its name.
 import { COLOR_NAMES_DE, nearestColorName } from '@glimstone/core';
-import { ColorPicker, FieldRow, IconButton, TextField } from '@glimstone/vue';
+import { ColorPicker, FieldRow, IconButton, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, reactive, ref } from 'vue';
 import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
@@ -46,7 +46,7 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 
 </script>
 
 <template>
-  <div class="well glim-well">
+  <SubCard>
     <FieldRow :label="t('labels.newColour')" :hint="t('labels.newColourTip')">
       <span class="mk-new"><button class="mk-swatch" data-colpick="new" :style="{ '--c': fresh.hex }" :data-tip="t('labels.pickNew')" :aria-label="t('labels.pickNewAria')" @click="pick = { anchor: $event.currentTarget as HTMLElement, hex: fresh.hex, row: null }"></button><TextField id="mk-new" ref="newInput" v-model="newName" :placeholder="t('labels.newColourPh')" autocomplete="off" width="medium" @keydown.enter.prevent="add" /><IconButton :tip="t('labels.add')" :glyph="glyphComponent('IconAdd')" data-coladd @click="add" /></span>
     </FieldRow>
@@ -59,6 +59,6 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 
       </div>
       <div v-if="!rows.length" class="muted mk-none">{{ t('labels.noColours') }}</div>
     </div>
-  </div>
+  </SubCard>
   <ColorPicker v-if="pick" :model-value="pick.hex" :anchor="pick.anchor" :names="COLOR_NAMES_DE" :text="pickerWords()" @apply="(hex, name) => picked(hex, name ?? '')" @close="pick = null" />
 </template>
