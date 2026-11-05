@@ -720,7 +720,7 @@
    },
    "r7-palette-recent": {
     "pixels": 16954,
-    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "why": "the palette's search is GlimStone's GlyphField, which shows its hint where the prototype's field stays blank; the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    }
   }
  },
