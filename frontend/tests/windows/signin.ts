@@ -77,7 +77,7 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await page.click('.cl-card button[type=submit]');
   await page.waitForSelector('#app', { timeout: 30000 });
   await page.waitForTimeout(600);
-  check('anna sees the file manager with a greeting', (await page.locator('.toast').allInnerTexts()).some((t: string) => t.includes('Hallo Anna')));
+  check('anna sees the file manager with a greeting', (await page.locator('.glim-toast').allInnerTexts()).some((t: string) => t.includes('Hallo Anna')));
   const cookie = await sessionCookie(context);
   check('the session ends with the browser', cookie && cookie.expires === -1, cookie);
   await page.screenshot({ path: join(shots, 'app-anna.png') });
