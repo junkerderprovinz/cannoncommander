@@ -90,6 +90,9 @@ type UserInput struct {
 	Scope    *string  `json:"scope"`
 	Groups   []string `json:"groups"`
 	Password *string  `json:"password"`
+	// Revoke ends every session, API token and passkey of the user. Only a
+	// change looks at it.
+	Revoke bool `json:"revoke"`
 }
 
 func checkGroups(names []string) error {
@@ -199,6 +202,15 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 	oldName := u.Username
 	var fields []string
 
+	if in.Revoke {
+		if self {
+			return v1.Errorf(http.StatusBadRequest, "end your own sessions, tokens and passkeys under account and security")
+		}
+		if err := needSession(r); err != nil {
+			return err
+		}
+	}
+
 	if in.Name != nil && strings.TrimSpace(*in.Name) != u.Username {
 		name := strings.TrimSpace(*in.Name)
 		if self {
@@ -292,6 +304,12 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 		if err := passwordChanged(r.Context(), h.db, idOf(&u)); err != nil {
 			return err
 		}
+	}
+	if in.Revoke {
+		if err := h.revokeAll(r, &u); err != nil {
+			return err
+		}
+		fields = append(fields, "access")
 	}
 	changes := make([]activitydb.FieldChange, 0, len(fields))
 	for _, f := range fields {

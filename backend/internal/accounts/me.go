@@ -8,7 +8,6 @@ import (
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 )
 
 // Me is the logged in user. Token is set when the request came with an
@@ -86,18 +85,9 @@ func (h handlers) putPassword(w http.ResponseWriter, r *http.Request) error {
 	if u.LockPassword {
 		return v1.Errorf(http.StatusForbidden, "your password is locked, an admin can change it")
 	}
-	key := idOf(&u)
-	if h.svc.passwordTries.blocked(key) {
-		return v1.Errorf(http.StatusTooManyRequests, "too many wrong passwords, wait a few minutes")
+	if err := h.checkCurrentPassword(&u, in.Current); err != nil {
+		return err
 	}
-	if in.Current == "" {
-		return v1.Errorf(http.StatusBadRequest, "the current password is missing")
-	}
-	if utils.CheckPwd(in.Current, u.Password) != nil {
-		h.svc.passwordTries.fail(key)
-		return v1.Errorf(http.StatusForbidden, "the current password is not right")
-	}
-	h.svc.passwordTries.clear(key)
 	if err := checkPassword(in.Next); err != nil {
 		return err
 	}
@@ -108,7 +98,7 @@ func (h handlers) putPassword(w http.ResponseWriter, r *http.Request) error {
 	if err := state.UpdateUser(&u, in.Next, "password", "requirePasswordChange"); err != nil {
 		return err
 	}
-	if err := passwordChanged(r.Context(), h.db, key); err != nil {
+	if err := passwordChanged(r.Context(), h.db, idOf(&u)); err != nil {
 		return err
 	}
 	keep, _, _ := login.Session(r)

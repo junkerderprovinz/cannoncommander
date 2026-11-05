@@ -60,7 +60,7 @@ func TestResettingThePasswordClearsTheWayIn(t *testing.T) {
 	log := catchCodes(t)
 	anna := w.addUser("anna", "user", "/mnt/user")
 	w.turnOnTotp("anna")
-	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "skript", "rights": "rw"})))
+	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "skript", "rights": "rw"})))
 	w.req("POST", "/auth/reset-code", map[string]string{"username": "anna"})
 	code := log.last("anna")
 

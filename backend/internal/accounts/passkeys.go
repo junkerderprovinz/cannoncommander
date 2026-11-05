@@ -42,11 +42,15 @@ func (h handlers) listPasskeys(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	return v1.WriteJSON(w, r, http.StatusOK, PasskeyList{Enabled: auth.IsWebAuthnEnabled(), Items: passkeysOf(&u)})
+}
+
+func passkeysOf(u *users.User) []Passkey {
 	items := []Passkey{}
 	for _, c := range u.PasskeyCredentials {
 		items = append(items, passkeyOf(c))
 	}
-	return v1.WriteJSON(w, r, http.StatusOK, PasskeyList{Enabled: auth.IsWebAuthnEnabled(), Items: items})
+	return items
 }
 
 // passkeyUser loads the user for a change to the passkeys and checks the
@@ -75,11 +79,13 @@ func passkeyUser(r *http.Request, name string) (users.User, error) {
 	return u, nil
 }
 
-// passkeyInput drives both steps behind POST /me/passkeys: a name alone
-// starts a registration, the name with the browser's credential ends it.
+// passkeyInput drives both steps behind POST /me/passkeys: the name with the
+// current password starts a registration, the name with the browser's
+// credential ends it.
 type passkeyInput struct {
 	Name       string          `json:"name"`
 	Credential json.RawMessage `json:"credential"`
+	Password   string          `json:"password"`
 }
 
 // PasskeyStep is the answer to either step. Options go to
@@ -101,6 +107,9 @@ func (h handlers) postPasskey(w http.ResponseWriter, r *http.Request) error {
 	}
 	rpID, host := login.PasskeySite(r)
 	if len(in.Credential) == 0 || string(in.Credential) == "null" {
+		if err := h.confirmOwner(r, &u, in.Password); err != nil {
+			return err
+		}
 		session, creation, err := auth.GetWebAuthn().BeginRegistration(&u, rpID)
 		if err != nil {
 			return err
@@ -170,16 +179,22 @@ func (h handlers) deletePasskey(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	i := slices.IndexFunc(u.PasskeyCredentials, func(c users.WebAuthnCredential) bool { return c.ID == r.PathValue("id") })
-	if i < 0 {
-		return v1.Errorf(http.StatusNotFound, "there is no passkey with this id")
-	}
-	name := u.PasskeyCredentials[i].Name
-	u.PasskeyCredentials = slices.Delete(u.PasskeyCredentials, i, i+1)
-	if err := state.UpdateUser(&u, "", "PasskeyCredentials"); err != nil {
+	name, err := removePasskey(&u, r.PathValue("id"))
+	if err != nil {
 		return err
 	}
 	activity.RecordAuth(r, &u, activitydb.EventPasskeyDelete, activitydb.Details{PasskeyName: name})
 	w.WriteHeader(http.StatusNoContent)
 	return nil
+}
+
+// removePasskey takes the passkey with this id from u and returns its name.
+func removePasskey(u *users.User, id string) (string, error) {
+	i := slices.IndexFunc(u.PasskeyCredentials, func(c users.WebAuthnCredential) bool { return c.ID == id })
+	if i < 0 {
+		return "", v1.Errorf(http.StatusNotFound, "there is no passkey with this id")
+	}
+	name := u.PasskeyCredentials[i].Name
+	u.PasskeyCredentials = slices.Delete(u.PasskeyCredentials, i, i+1)
+	return name, state.UpdateUser(u, "", "PasskeyCredentials")
 }
