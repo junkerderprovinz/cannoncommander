@@ -45,11 +45,16 @@ if [ "$PUID" != 0 ]; then
   find "$config_dir" \( ! -user "$PUID" -o ! -group "$PGID" \) -exec chown "$PUID:$PGID" {} +
 
   # chown and fowner let "Set permissions the Unraid way" hand files to
-  # nobody:users. Unraid keeps /boot/config readable for root only, and the
-  # share settings there need dac_read_search, which Docker grants only on
-  # request, so it is kept when the template adds it.
+  # nobody:users. Unraid keeps /boot/config readable for root alone, which
+  # dac_read_search gets past, and /tmp/notifications writable for root
+  # alone, which dac_override gets past. Each is kept only when the
+  # container has it, so a run without the template's capabilities still
+  # starts.
   caps="+chown,+fowner"
   bounding="$(sed -n 's/^CapBnd:[[:space:]]*//p' /proc/self/status)"
+  if [ $((0x$bounding & 2)) != 0 ]; then
+    caps="$caps,+dac_override"
+  fi
   if [ $((0x$bounding & 4)) != 0 ]; then
     caps="$caps,+dac_read_search"
   fi
