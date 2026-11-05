@@ -48,7 +48,7 @@ func (h handlers) thumb(w http.ResponseWriter, r *http.Request) error {
 	if loc.Virtual() {
 		return noThumb()
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := h.fs.Follows(u, loc, ccfs.View); err != nil {
 		return err
 	}
 	real := loc.Real
@@ -60,10 +60,10 @@ func (h handlers) thumb(w http.ResponseWriter, r *http.Request) error {
 	if info.IsDir() {
 		_, pics, ok := peek(real)
 		pic := pickPicture(pics)
-		if !ok || pic == "" || !h.fs.Visible(u, loc, pic) {
+		if !ok || pic == "" || !h.fs.Visible(u, h.seenFrom(loc), pic) {
 			return noThumb()
 		}
-		pl, err := h.fs.Check(u, path.Join(loc.Path, pic), ccfs.View)
+		pl, err := h.fs.Reach(u, path.Join(loc.Path, pic), ccfs.View)
 		if err != nil {
 			return noThumb()
 		}

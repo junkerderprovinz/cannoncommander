@@ -167,7 +167,7 @@ func (s *service) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 	if loc.Virtual() || loc.InArchive() {
 		return ccfs.Location{}, nil, v1.Errorf(http.StatusBadRequest, "only a file below a source opens in the office server")
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := s.fs.Follows(u, loc, perm); err != nil {
 		return ccfs.Location{}, nil, err
 	}
 	info, err := os.Stat(loc.Real)

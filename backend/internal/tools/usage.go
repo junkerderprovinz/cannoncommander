@@ -154,7 +154,7 @@ func scanRoot(fsys *ccfs.Resolver, u *users.User, p string) (ccfs.Location, erro
 	if loc.Virtual() || loc.InArchive() {
 		return loc, v1.Errorf(http.StatusBadRequest, "pick a folder inside a source")
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := fsys.Follows(u, loc, ccfs.View); err != nil {
 		return loc, err
 	}
 	info, err := os.Stat(loc.Real)

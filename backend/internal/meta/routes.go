@@ -92,7 +92,7 @@ func (h handlers) meta(w http.ResponseWriter, r *http.Request) error {
 // the list asks for whole screens at once.
 func (h handlers) file(u *users.User, p string) (File, bool) {
 	loc, err := h.fs.Check(u, p, ccfs.View)
-	if err != nil || loc.Virtual() || loc.InArchive() || ccfs.Contained(loc) != nil {
+	if err != nil || loc.Virtual() || loc.InArchive() || h.fs.Follows(u, loc, ccfs.View) != nil {
 		return File{}, false
 	}
 	info, err := os.Stat(loc.Real)
@@ -115,14 +115,15 @@ func (h handlers) page(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return v1.Errorf(http.StatusBadRequest, fmt.Sprintf("width is a number from 64 to %d", MaxPageWidth))
 	}
-	loc, err := h.fs.Check(v1.UserFrom(r), q.Get("path"), ccfs.Download)
+	u := v1.UserFrom(r)
+	loc, err := h.fs.Check(u, q.Get("path"), ccfs.Download)
 	if err != nil {
 		return err
 	}
 	if loc.Virtual() || loc.InArchive() {
 		return v1.Errorf(http.StatusUnsupportedMediaType, "this has no pages to show")
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := h.fs.Follows(u, loc, ccfs.Download); err != nil {
 		return err
 	}
 	info, err := os.Stat(loc.Real)

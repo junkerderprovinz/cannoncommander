@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/archives"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 )
@@ -28,8 +29,8 @@ func archiveOptions(r *http.Request) archives.Options {
 }
 
 // archiveFile checks the archive a location points into.
-func archiveFile(loc ccfs.Location) error {
-	if err := ccfs.Contained(loc); err != nil {
+func (h handlers) archiveFile(u *users.User, loc ccfs.Location) error {
+	if err := h.fs.Follows(u, loc, ccfs.View); err != nil {
 		return err
 	}
 	info, err := os.Stat(loc.Real)
@@ -102,7 +103,7 @@ func (h handlers) archiveTree(w http.ResponseWriter, r *http.Request, loc ccfs.L
 }
 
 func (h handlers) archiveStat(w http.ResponseWriter, r *http.Request, loc ccfs.Location) error {
-	if err := archiveFile(loc); err != nil {
+	if err := h.archiveFile(v1.UserFrom(r), loc); err != nil {
 		return err
 	}
 	ix, err := h.archiveIndex(r, loc)
@@ -122,8 +123,8 @@ func (h handlers) archiveStat(w http.ResponseWriter, r *http.Request, loc ccfs.L
 }
 
 // readArchived hands fn the content of a file inside an archive.
-func readArchived(r *http.Request, loc ccfs.Location, fn func(e archives.Entry, rd io.Reader) error) error {
-	if err := archiveFile(loc); err != nil {
+func (h handlers) readArchived(r *http.Request, loc ccfs.Location, fn func(e archives.Entry, rd io.Reader) error) error {
+	if err := h.archiveFile(v1.UserFrom(r), loc); err != nil {
 		return err
 	}
 	err := archives.ReadEntry(loc.Real, archiveOptions(r), loc.Inner, fn)
@@ -136,7 +137,7 @@ func readArchived(r *http.Request, loc ccfs.Location, fn func(e archives.Entry, 
 // archiveRaw streams a file out of an archive. Most formats cannot seek
 // inside an entry, so there are no range requests.
 func (h handlers) archiveRaw(w http.ResponseWriter, r *http.Request, loc ccfs.Location) error {
-	return readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
+	return h.readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
 		name := path.Base(e.Name)
 		ctype := mime.TypeByExtension(path.Ext(name))
 		if ctype == "" {
@@ -157,7 +158,7 @@ func (h handlers) archiveRaw(w http.ResponseWriter, r *http.Request, loc ccfs.Lo
 }
 
 func (h handlers) archiveText(w http.ResponseWriter, r *http.Request, loc ccfs.Location, limit int64) error {
-	return readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
+	return h.readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
 		buf, err := io.ReadAll(io.LimitReader(rd, limit))
 		if err != nil {
 			return err
@@ -173,7 +174,7 @@ func (h handlers) archiveText(w http.ResponseWriter, r *http.Request, loc ccfs.L
 }
 
 func (h handlers) archiveHex(w http.ResponseWriter, r *http.Request, loc ccfs.Location, offset, length int64) error {
-	return readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
+	return h.readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
 		if _, err := io.CopyN(io.Discard, rd, offset); err != nil && !errors.Is(err, io.EOF) {
 			return err
 		}

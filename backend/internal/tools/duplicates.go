@@ -21,7 +21,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
 
 // KindDuplicates is the job that finds files with the same content.
@@ -76,13 +75,6 @@ type Duplicates struct {
 	More   bool  `json:"more,omitempty"`
 	Wasted int64 `json:"wasted"`
 	Files  int64 `json:"files"`
-}
-
-// jobOwner finds the owner of a job, whose rights decide what the job
-// may look at while it runs.
-var jobOwner = func(name string) (*users.User, error) {
-	u, err := state.GetUserByUsername(name)
-	return &u, err
 }
 
 func prepareDuplicates(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
@@ -144,7 +136,7 @@ func runDuplicates(ctx context.Context, run *jobs.Run) error {
 	if it.State != jobs.ItemPending {
 		return nil
 	}
-	u, err := jobOwner(run.Owner())
+	u, err := run.User()
 	if err != nil {
 		return fmt.Errorf("the user who started this search is gone: %w", err)
 	}

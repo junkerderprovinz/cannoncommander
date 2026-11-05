@@ -88,16 +88,13 @@ func newFixture(t *testing.T) *fixture {
 		}
 		return nil, v1.Errorf(http.StatusUnauthorized, "login required")
 	}
-	old := userByName
-	userByName = func(name string) (*users.User, error) {
+	owner := func(name string) (*users.User, error) {
 		if u, ok := people[name]; ok {
 			return u, nil
 		}
 		return nil, errors.New("no such user")
 	}
-	t.Cleanup(func() { userByName = old })
-
-	deps := v1.Deps{FS: fs, DB: testutil.MainDB(t), Hub: hub.New(hub.Options{})}
+	deps := v1.Deps{FS: fs, DB: testutil.MainDB(t), Hub: hub.New(hub.Options{}), Users: owner}
 	m := jobs.For(deps)
 	t.Cleanup(func() {
 		m.Close()

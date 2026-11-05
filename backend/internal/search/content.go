@@ -19,7 +19,6 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
 
 // KindContent is the job that looks for a text inside files.
@@ -51,13 +50,6 @@ type hitsEvent struct {
 	Total   int    `json:"total"`
 	Scanned int    `json:"scanned"`
 	Done    bool   `json:"done,omitempty"`
-}
-
-// userByName finds the owner of a job, whose rights decide what the search
-// may look at while it runs.
-var userByName = func(name string) (*users.User, error) {
-	u, err := state.GetUserByUsername(name)
-	return &u, err
 }
 
 func prepareContent(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
@@ -93,7 +85,7 @@ func runContent(ctx context.Context, run *jobs.Run) error {
 	if it.State != jobs.ItemPending {
 		return nil
 	}
-	u, err := userByName(run.Owner())
+	u, err := run.User()
 	if err != nil {
 		return fmt.Errorf("the user who started this search is gone: %w", err)
 	}

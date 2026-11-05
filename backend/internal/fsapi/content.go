@@ -62,7 +62,7 @@ func (h handlers) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 	if loc.Virtual() {
 		return loc, nil, v1.Errorf(http.StatusBadRequest, "path is a folder")
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := h.fs.Follows(u, loc, perm); err != nil {
 		return loc, nil, err
 	}
 	info, err := os.Stat(loc.Real)
