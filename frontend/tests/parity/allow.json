@@ -453,7 +453,7 @@
     "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "c-share-done": {
-    "pixels": 53112,
+    "pixels": 53694,
     "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "c-conflict-copy": {
@@ -615,7 +615,7 @@
   ],
   "shots": {
    "r7-settings-1600-general": {
-    "pixels": 65837,
+    "pixels": 65841,
     "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r7-settings-1600-files": {
@@ -647,7 +647,7 @@
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r7-settings-1200-general": {
-    "pixels": 65836,
+    "pixels": 65840,
     "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r7-settings-1200-files": {
@@ -679,7 +679,7 @@
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r7-help-menu": {
-    "pixels": 22282,
+    "pixels": 22294,
     "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r7-settings-1600-look": {
@@ -757,11 +757,11 @@
   ],
   "shots": {
    "r13-1-jobs-serial": {
-    "pixels": 89931,
+    "pixels": 90501,
     "why": "job rates and progress come from the fixture's own random numbers; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-1-jobs-parallel": {
-    "pixels": 100435,
+    "pixels": 100797,
     "why": "job rates and progress come from the fixture's own random numbers; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-4-fetch-job": {
@@ -777,11 +777,11 @@
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-5-collection-share": {
-    "pixels": 116368,
+    "pixels": 116382,
     "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-5-collection-done": {
-    "pixels": 104983,
+    "pixels": 105613,
     "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-5-shares-page": {
@@ -789,15 +789,15 @@
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-6-share-options": {
-    "pixels": 110758,
+    "pixels": 110773,
     "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-6-share-done": {
-    "pixels": 89702,
+    "pixels": 89922,
     "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-6-share-notice": {
-    "pixels": 44639,
+    "pixels": 44859,
     "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-7-touch-390": {
@@ -917,7 +917,7 @@
   ],
   "shots": {
    "r19-bv-3-colours-on": {
-    "pixels": 131931,
+    "pixels": 131933,
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r19-bv-4-info-dark": {
@@ -925,15 +925,15 @@
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r19-bv-5-info-light": {
-    "pixels": 62926,
+    "pixels": 62927,
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r19-bv-6-paypal": {
-    "pixels": 48786,
+    "pixels": 48803,
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r19-bv-7-crypto": {
-    "pixels": 39000,
+    "pixels": 39018,
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r19-bv-1-colours-off": {
@@ -941,11 +941,11 @@
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r19-bv-2-leaf-storm": {
-    "pixels": 112437,
+    "pixels": 112439,
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r19-bv-8-colours-light": {
-    "pixels": 109812,
+    "pixels": 109813,
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    }
   }
@@ -1091,7 +1091,7 @@
   ],
   "shots": {
    "v3c-2-limit": {
-    "pixels": 59362,
+    "pixels": 59572,
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "v3c-3-parity-ask": {
@@ -1179,11 +1179,11 @@
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-delete": {
-    "pixels": 17206,
+    "pixels": 17208,
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-delete-forever": {
-    "pixels": 15937,
+    "pixels": 15939,
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-delete-one": {
