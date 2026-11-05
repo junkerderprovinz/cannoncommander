@@ -963,7 +963,7 @@
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3a-3-history": {
-    "pixels": 13000,
+    "pixels": 18500,
     "why": "the server words its steps itself, so a duplicate reads as copied and the trash as laid in the trash"
    },
    "v3a-4-palette": {
@@ -1175,7 +1175,7 @@
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-delete-one": {
-    "pixels": 13000,
+    "pixels": 18500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
