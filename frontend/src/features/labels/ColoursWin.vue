@@ -1,16 +1,17 @@
 <script setup lang="ts">
 // The colours: rename one, give it another shade, delete it or add a new one. A picked shade proposes its name.
 import { COLOR_NAMES_DE, nearestColorName } from '@glimstone/core';
+import { ColorPicker } from '@glimstone/vue';
 import { onMounted, reactive, ref } from 'vue';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
+import { pickerWords } from '@/ui/kit';
 import { BUILT_IN, useLabels } from '@/stores/labels';
-import Frow from '../config/kit/Frow.vue';
-import { setFoot } from '../config/kit/kit';
+import Frow from '@/ui/Frow.vue';
+import { stepFoot } from '@/features/config/shared';
 import { files } from './counts';
-import PickColour from './PickColour.vue';
 
 const props = defineProps<{ win: WinEntry }>();
 const labels = useLabels();
@@ -42,23 +43,23 @@ async function save() {
   props.win.close();
   toast(t('labels.coloursSaved'));
 }
-onMounted(() => setFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 'IconCheck', primary: true, run: () => { save(); return false; } }]));
+onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 'IconCheck', primary: true, run: () => { save(); return false; } }]));
 </script>
 
 <template>
-  <div class="well">
+  <div class="well glim-well">
     <Frow :label="t('labels.newColour')" :tip="t('labels.newColourTip')">
-      <span class="mk-new"><button class="mk-swatch" data-colpick="new" :style="{ '--c': fresh.hex }" :data-tip="t('labels.pickNew')" :aria-label="t('labels.pickNewAria')" @click="pick = { anchor: $event.currentTarget as HTMLElement, hex: fresh.hex, row: null }"></button><input id="mk-new" ref="newInput" v-model="newName" class="field m" :placeholder="t('labels.newColourPh')" autocomplete="off" @keydown.enter.prevent="add"><button class="btn icon" data-coladd :data-tip="t('labels.add')" :aria-label="t('labels.add')" @click="add"><G n="IconAdd" /></button></span>
+      <span class="mk-new"><button class="mk-swatch" data-colpick="new" :style="{ '--c': fresh.hex }" :data-tip="t('labels.pickNew')" :aria-label="t('labels.pickNewAria')" @click="pick = { anchor: $event.currentTarget as HTMLElement, hex: fresh.hex, row: null }"></button><input id="mk-new" ref="newInput" v-model="newName" class="glim-input m" :placeholder="t('labels.newColourPh')" autocomplete="off" @keydown.enter.prevent="add"><button class="btn icon" data-coladd :data-tip="t('labels.add')" :aria-label="t('labels.add')" @click="add"><G n="IconAdd" /></button></span>
     </Frow>
     <div id="mk-list">
       <div v-for="(r, i) in rows" :key="i" class="mk-row">
         <button class="mk-swatch" :data-colpick="i" :style="{ '--c': r.hex }" :data-tip="t('labels.pickShade')" :aria-label="t('labels.shadeFor', { name: r.name })" @click="pick = { anchor: $event.currentTarget as HTMLElement, hex: r.hex, row: r }"></button>
-        <input v-model="r.name" class="field" :data-colname="i" :aria-label="t('labels.nameFor', { name: r.name })">
+        <input v-model="r.name" class="glim-input" :data-colname="i" :aria-label="t('labels.nameFor', { name: r.name })">
         <span class="muted">{{ files(r.count) }}</span>
         <button class="btn icon" :data-coldel="i" :data-tip="t('labels.removeColour')" :aria-label="t('labels.removeName', { name: r.name })" @click="rows.splice(i, 1)"><G n="IconTrash" /></button>
       </div>
       <div v-if="!rows.length" class="muted mk-none">{{ t('labels.noColours') }}</div>
     </div>
   </div>
-  <PickColour v-if="pick" :anchor="pick.anchor" :hex="pick.hex" @done="picked" @close="pick = null" />
+  <ColorPicker v-if="pick" :model-value="pick.hex" :anchor="pick.anchor" :names="COLOR_NAMES_DE" :text="pickerWords()" @apply="(hex, name) => picked(hex, name ?? '')" @close="pick = null" />
 </template>

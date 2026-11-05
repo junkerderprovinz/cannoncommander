@@ -1,17 +1,16 @@
 <script setup lang="ts">
+import { Button, Card } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { type Account, me, type Passkey, type Passkeys, type Session, type Token } from '@/api/admin';
 import { fmtDate } from '@/core/format';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
-import ARow from '../kit/ARow.vue';
-import BareBtn from '../kit/BareBtn.vue';
-import Btn from '../kit/Btn.vue';
-import Card from '../kit/Card.vue';
-import Frow from '../kit/Frow.vue';
-import { ago, attempt, c, confirmWin, P } from '../kit/kit';
-import Seg from '../kit/Seg.vue';
+import ARow from '@/ui/ARow.vue';
+import BareBtn from '@/ui/BareBtn.vue';
+import Frow from '@/ui/Frow.vue';
+import { ago, attempt, c, confirmWin, P } from '@/features/config/shared';
+import Seg from '@/ui/Seg.vue';
 import { device } from '../sessions';
 import CodeWin from '../wins/CodeWin.vue';
 import CodesWin from '../wins/CodesWin.vue';
@@ -69,15 +68,15 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
 
 <template>
   <Card :title="c('security.signIn')">
-    <Frow :label="c('users.password')" :tip="ownPassword || !acc ? c('security.pwTip') : c('security.pwLocked')"><span class="a-ctl"><span class="pill">{{ acc?.pwChanged ? c('security.changedAgo', { ago: ago(acc.pwChanged) }) : c('users.pwSet') }}</span><Btn v-if="ownPassword" data-pw :label="c('security.change')" g="IconKey" @click="password" /></span></Frow>
+    <Frow :label="c('users.password')" :tip="ownPassword || !acc ? c('security.pwTip') : c('security.pwLocked')"><span class="a-ctl"><span class="pill">{{ acc?.pwChanged ? c('security.changedAgo', { ago: ago(acc.pwChanged) }) : c('users.pwSet') }}</span><Button v-if="ownPassword" data-pw :label="c('security.change')" label-key="IconKey" @click="password" /></span></Frow>
     <Frow :label="c('security.stay')" :tip="c('security.stayTip')"><Seg id="a-stay" v-model="P.stayDays" :options="[[1, c('security.day1')], [7, c('general.days', { n: 7 })], [30, c('general.days', { n: 30 })]]" /></Frow>
   </Card>
   <Card :title="c('security.twofa')">
     <template v-if="acc?.twofa">
-      <Frow :label="c('security.status')" :tip="c('security.onTip')"><span class="a-ctl"><span class="pill ok">{{ c('security.on') }}</span><Btn data-2off :label="c('security.turnOff')" g="IconShieldOff" @click="totpOff" /></span></Frow>
-      <Frow :label="c('security.codes')" :tip="c('security.codesTip')"><span class="a-ctl"><span class="pill" :class="{ warn: acc.recovery < 3 }">{{ c('security.codesLeft', { n: acc.recovery }) }}</span><Btn data-2codes :label="c('security.regenerate')" g="IconRefresh" @click="newCodes" /></span></Frow>
+      <Frow :label="c('security.status')" :tip="c('security.onTip')"><span class="a-ctl"><span class="pill ok">{{ c('security.on') }}</span><Button data-2off :label="c('security.turnOff')" label-key="IconShieldOff" @click="totpOff" /></span></Frow>
+      <Frow :label="c('security.codes')" :tip="c('security.codesTip')"><span class="a-ctl"><span class="pill" :class="{ warn: acc.recovery < 3 }">{{ c('security.codesLeft', { n: acc.recovery }) }}</span><Button data-2codes :label="c('security.regenerate')" label-key="IconRefresh" @click="newCodes" /></span></Frow>
     </template>
-    <Frow v-else :label="c('security.status')" :tip="c('security.offTip')"><span class="a-ctl"><span class="pill state">{{ c('security.off') }}</span><Btn data-2on :label="c('security.setUp')" g="IconShieldOn" @click="totpOn" /></span></Frow>
+    <Frow v-else :label="c('security.status')" :tip="c('security.offTip')"><span class="a-ctl"><span class="pill state">{{ c('security.off') }}</span><Button data-2on :label="c('security.setUp')" label-key="IconShieldOn" @click="totpOn" /></span></Frow>
   </Card>
   <Card :title="c('security.passkeys')">
     <div v-if="passkeys.length" class="a-list">
@@ -88,7 +87,7 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconKey" /><div>{{ keys.enabled ? c('security.noPasskey') : c('security.passkeysOff') }}</div></div>
-    <div v-if="keys.enabled" class="a-foot"><Btn data-pkadd :label="c('security.addPasskey')" g="IconAdd" @click="addPasskey" /></div>
+    <div v-if="keys.enabled" class="a-foot"><Button data-pkadd :label="c('security.addPasskey')" label-key="IconAdd" @click="addPasskey" /></div>
   </Card>
   <Card :title="c('security.sessions')">
     <div v-if="sessions.length" class="a-list">
@@ -99,7 +98,7 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconBrowser" /><div>{{ c('security.noSessions') }}</div></div>
-    <div v-if="others.length" class="a-foot"><Btn data-soutall :label="c('security.signOutAll')" g="IconSignOut" @click="signOutAll" /></div>
+    <div v-if="others.length" class="a-foot"><Button data-soutall :label="c('security.signOutAll')" label-key="IconSignOut" @click="signOutAll" /></div>
   </Card>
   <Card :title="c('security.tokens')">
     <div v-if="tokens.length" class="a-list">
@@ -110,6 +109,6 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconKey" /><div>{{ c('security.noToken') }}</div></div>
-    <div class="a-foot"><Btn data-tadd :label="c('security.addToken')" g="IconAdd" @click="addToken" /></div>
+    <div class="a-foot"><Button data-tadd :label="c('security.addToken')" label-key="IconAdd" @click="addToken" /></div>
   </Card>
 </template>

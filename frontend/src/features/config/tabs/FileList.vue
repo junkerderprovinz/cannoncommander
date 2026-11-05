@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import { Card } from '@glimstone/vue';
 import { computed } from 'vue';
 import { run } from '@/core/actions';
 import { DAY, fmtDate, fmtTime, now } from '@/core/format';
 import { G } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
-import Card from '../kit/Card.vue';
-import Frow from '../kit/Frow.vue';
-import { ago, c, P } from '../kit/kit';
-import Seg from '../kit/Seg.vue';
-import Sw from '../kit/Sw.vue';
+import Frow from '@/ui/Frow.vue';
+import { ago, c, P } from '@/features/config/shared';
+import Seg from '@/ui/Seg.vue';
+import Sw from '@/ui/Sw.vue';
 
 const sample = now() - 2 * DAY;
 // The preview panel lives in the second window, so turning it on turns both windows on.

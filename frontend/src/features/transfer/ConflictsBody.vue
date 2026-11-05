@@ -30,8 +30,8 @@ const facts = (n: ConflictSide) => (n.dir ? t('transfer.entries', { n: n.entries
 </script>
 
 <template>
-  <div class="well cf-all"><Frow :label="t('transfer.forAll')" :tip="t('transfer.forAllTip')"><Seg id="cf-all" v-model="all" :options="ALL" @press="forAll" /></Frow></div>
-  <div class="well">
+  <div class="well glim-well cf-all"><Frow :label="t('transfer.forAll')" :tip="t('transfer.forAllTip')"><Seg id="cf-all" v-model="all" :options="ALL" @press="forAll" /></Frow></div>
+  <div class="well glim-well">
     <div class="eyebrow">{{ conflicts.length === 1 ? t('transfer.existsOne', { dest: split(dest).pop() || t('jobs.server') }) : t('transfer.existsMany', { n: conflicts.length, dest: split(dest).pop() || t('jobs.server') }) }}</div>
     <div class="cf-list">
       <div v-for="(c, i) in conflicts" :key="c.key" class="cf-row" :data-i="i">

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-// Stand-in for GlimStone's Checkbox until @glimstone/vue ships one.
+// The round mark on a row picked for an action on many (rule 39).
 import { G } from './glyphs';
 
 defineProps<{ on?: boolean }>();
 </script>
 
 <template>
-  <span class="cbox" :class="{ on }"><G n="IconCheck" /></span>
+  <span class="rowmark" :class="{ on }"><G n="IconCheck" /></span>
 </template>

@@ -3,7 +3,7 @@
 import { admin } from '@/api/admin';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
-import { c } from './kit/kit';
+import { c } from '@/features/config/shared';
 
 export const REPO = 'https://github.com/junkerderprovinz/cannoncommander';
 export const MAIL = 'hello@halleluja.design';

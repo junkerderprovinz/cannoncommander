@@ -1,15 +1,15 @@
 <script setup lang="ts">
 // Verpacken: name, format, compression and password of the archive, and the folder it lands in.
+import { PasswordField } from '@glimstone/vue';
 import { computed, watch, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
 import { join } from '@/files/paths';
 import { t } from '@/i18n';
-import PwField from '@/features/config/kit/PwField.vue';
-import BkPath from '@/ui/BkPath.vue';
+import PathField from '@/ui/PathField.vue';
 import FinalPath from '@/ui/FinalPath.vue';
 import Frow from '@/ui/Frow.vue';
-import { plural } from '@/ui/kit';
+import { eyeWords, plural } from '@/ui/kit';
 import Seg from '@/ui/Seg.vue';
 import { clean, folderState, freeName, namesIn } from '@/ui/tools';
 
@@ -28,14 +28,14 @@ watchEffect(() => { props.st.file = ok.value && props.st.name.trim() ? freeName(
 </script>
 
 <template>
-  <div class="well bk-form"><div class="eyebrow">{{ plural(st.items.length, 'ui.objects') }}, {{ fmtSize(total) || '0 B' }}</div>
-    <Frow :label="t('archive.name')"><span class="bk-namef"><input id="k-name" v-model="st.name" class="field grow" spellcheck="false" autocomplete="off"><span id="k-ext" class="pill mono">.{{ st.format }}</span></span></Frow>
+  <div class="well glim-well bk-form"><div class="eyebrow">{{ plural(st.items.length, 'ui.objects') }}, {{ fmtSize(total) || '0 B' }}</div>
+    <Frow :label="t('archive.name')"><span class="bk-namef"><input id="k-name" v-model="st.name" class="glim-input grow" spellcheck="false" autocomplete="off"><span id="k-ext" class="pill mono">.{{ st.format }}</span></span></Frow>
     <Frow :label="t('archive.format')" :tip="t('archive.formatTip')"><Seg id="k-fmt" v-model="st.format" :options="formats" /></Frow>
     <Frow :label="t('archive.level')" :tip="t('archive.levelTip')"><Seg id="k-level" v-model="st.level" :options="levels" /></Frow>
-    <Frow :label="t('archive.password')" :tip="t('archive.passwordTip')"><PwField id="k-pw" v-model="st.password" size="m" :placeholder="t('archive.noPassword')" :disabled="tar" /></Frow>
+    <Frow :label="t('archive.password')" :tip="t('archive.passwordTip')"><PasswordField id="k-pw" v-model="st.password" class="grow" :placeholder="t('archive.noPassword')" :disabled="tar" autocomplete="new-password" :text="eyeWords()" /></Frow>
   </div>
-  <div class="well bk-form"><div class="eyebrow">{{ t('archive.target') }}</div>
-    <Frow :label="t('archive.folder')"><BkPath id="k-dest" v-model="st.dest" /></Frow>
+  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('archive.target') }}</div>
+    <Frow :label="t('archive.folder')"><PathField id="k-dest" v-model="st.dest" /></Frow>
     <Frow :label="t('archive.savedAs')">
       <span id="k-final" class="bk-finalw">
         <span v-if="ok === false" class="pill fault">{{ t('ui.noFolder') }}</span>

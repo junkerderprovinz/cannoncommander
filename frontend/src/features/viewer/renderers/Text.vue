@@ -10,7 +10,7 @@ import { t } from '@/i18n';
 import { fsText } from '../content';
 import { ext, joinPath, langOf, plural, viewKind } from '../kinds';
 import { highlight } from '../markdown';
-import Sw from '../ui/Sw.vue';
+import Sw from '@/ui/Sw.vue';
 import type { REmits, RProps } from './types';
 
 const props = defineProps<RProps>();

@@ -10,9 +10,9 @@ onMounted(() => setTimeout(() => {
   const dot = props.st.name.lastIndexOf('.');
   input.value?.setSelectionRange(0, dot > 0 ? dot : props.st.name.length);
 }, 0));
-const enter = (e: KeyboardEvent) => (e.target as Element).closest('.win')?.querySelector<HTMLElement>('.win-foot .btn.primary')?.click();
+const enter = (e: KeyboardEvent) => (e.target as Element).closest('.win')?.querySelector<HTMLElement>('.glim-modal-foot .glim-btn--accent')?.click();
 </script>
 
 <template>
-  <div class="well"><Frow :label="t('names.name')" :tip="hint"><input :id="field || 'nm'" ref="input" v-model="st.name" class="field w" autocomplete="off" spellcheck="false" @keydown.enter="enter"></Frow></div>
+  <div class="well glim-well"><Frow :label="t('names.name')" :tip="hint"><input :id="field || 'nm'" ref="input" v-model="st.name" class="glim-input w" autocomplete="off" spellcheck="false" @keydown.enter="enter"></Frow></div>
 </template>

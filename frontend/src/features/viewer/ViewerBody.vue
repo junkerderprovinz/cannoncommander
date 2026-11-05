@@ -34,7 +34,7 @@ const onInfo = (text: string) => { info.value = text; meta(); };
 let unbind = () => {};
 onMounted(() => {
   meta();
-  unbind = winKeys(() => host.value?.closest('.scrim') as HTMLElement | null, (e, combo) => stage.value?.keys?.(e, combo));
+  unbind = winKeys(() => host.value?.closest('.glim-modal-backdrop') as HTMLElement | null, (e, combo) => stage.value?.keys?.(e, combo));
   // The frame focuses its last button; the stage takes the keys for the gallery and the players instead.
   setTimeout(() => host.value?.focus({ preventScroll: true }), 30);
 });

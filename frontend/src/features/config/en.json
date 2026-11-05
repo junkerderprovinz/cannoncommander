@@ -11,10 +11,7 @@
   "ago": { "tomorrow": "tomorrow", "inDays": "{n} days left", "now": "just now", "minutes": "{n} min ago", "hours": "{n} h ago", "yesterday": "yesterday", "days": "{n} days ago" },
   "since": { "minutes": "for {n} min", "hours": "for {n} h", "days": "for {n} days" },
   "soon": { "now": "in a moment", "minutes": "in {n} min", "hours": "in {n} h" },
-  "picker": {
-    "titleFolder": "Choose a folder", "titleFile": "Choose a file", "folder": "Folder", "file": "File", "choose": "Choose", "collapse": "Collapse", "expand": "Expand",
-    "needFile": "Choose a file first", "noFolder": "There is no such folder"
-  },
+  "picker": { "folder": "Folder", "file": "File" },
   "general": {
     "use": "Handling", "start": "Start folder", "startTip": "This folder opens in the left panel after you sign in.", "startSaved": "Start folder saved",
     "dblclick": "Double click on a file", "dblclickTip": "A double click on a folder always opens it.", "open": "Open", "preview": "Preview", "download": "Download",

@@ -427,7 +427,7 @@ async function warmUp() {
   const browser = await chromium.launch();
   try {
     const tab = await browser.newPage();
-    await tab.goto(server.url);
+    await tab.goto(server.url, { timeout: 120_000 });
     await tab.waitForFunction('document.documentElement.dataset.e2e === "ready"', null, { timeout: 120_000 });
   } finally {
     await browser.close();

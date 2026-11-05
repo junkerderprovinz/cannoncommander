@@ -5,7 +5,7 @@ import { fmtSize, fmtTime } from '@/core/format';
 import { t } from '@/i18n';
 import { type FileNode, viewKind } from './kinds';
 import Stage from './Stage.vue';
-import Frow from './ui/Frow.vue';
+import Frow from '@/ui/Frow.vue';
 
 const props = defineProps<{ n: FileNode; folder: string; autoplay?: boolean }>();
 const kind = computed(() => viewKind(props.n));
@@ -17,7 +17,7 @@ const sibs = computed(() => [props.n]);
   <div class="cv-compact" :class="`cvk-${kind}`">
     <Stage :n="n" :folder="folder" :sibs="sibs" compact :autoplay="autoplay" @info="info = $event" />
   </div>
-  <div class="well cv-details">
+  <div class="well glim-well cv-details">
     <div class="eyebrow">{{ n.name }}</div>
     <Frow :label="t('viewer.details.size')" :value="fmtSize(n.size) || '0 B'" />
     <Frow v-if="info" :label="kind === 'dir' ? t('viewer.details.content') : t('viewer.details.format')" :value="info" />

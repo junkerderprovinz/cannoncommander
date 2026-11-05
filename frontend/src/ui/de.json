@@ -28,5 +28,12 @@
   "archiveOnly": "Im Archiv geht nur Ansehen und Entpacken",
   "failed": "{label} hat nicht geklappt: {error}",
   "show": "Anzeigen",
-  "hide": "Verbergen"
+  "hide": "Verbergen",
+  "pickFile": "Datei wählen",
+  "file": "Datei",
+  "needFile": "Erst eine Datei wählen",
+  "take": "Übernehmen",
+  "hue": "Farbton",
+  "shade": "Sättigung und Helligkeit",
+  "colourValue": "Farbwert"
 }

@@ -58,19 +58,19 @@ onMounted(() => setTimeout(() => area.value?.focus(), 20));
 </script>
 
 <template>
-  <div class="well re-find">
-    <input id="re-q" v-model="find" class="field grow mono" :placeholder="t('rename.find')" :aria-label="t('rename.find')" spellcheck="false" autocomplete="off">
-    <input id="re-r" v-model="repl" class="field grow mono" :placeholder="t('rename.replace')" :aria-label="t('rename.replace')" spellcheck="false" autocomplete="off">
+  <div class="well glim-well re-find">
+    <input id="re-q" v-model="find" class="glim-input grow glim-input--mono" :placeholder="t('rename.find')" :aria-label="t('rename.find')" spellcheck="false" autocomplete="off">
+    <input id="re-r" v-model="repl" class="glim-input grow glim-input--mono" :placeholder="t('rename.replace')" :aria-label="t('rename.replace')" spellcheck="false" autocomplete="off">
     <span class="re-sw">{{ t('rename.expr') }} <Sw id="re-regex" v-model="regex" :data-tip="t('rename.exprTip')" /></span>
     <span id="re-n" class="pill glim-num">{{ hits }}</span>
     <button id="re-all" class="btn" type="button" :disabled="!pattern" @click="replaceAll"><G n="IconSync" />{{ t('rename.replaceAll') }}</button>
   </div>
   <div class="re-main">
-    <div class="well re-edit">
+    <div class="well glim-well re-edit">
       <div ref="gutter" class="re-gutter mono" aria-hidden="true"><span v-for="(_, i) in names" :key="i" :class="{ extra: i >= total }">{{ i + 1 }}</span></div>
       <textarea ref="area" v-model="st.text" class="re-ta mono" spellcheck="false" autocapitalize="off" wrap="off" :aria-label="t('rename.names')" @scroll="follow"></textarea>
     </div>
-    <div class="well bk-fill"><div class="bk-tools"><span id="re-sum" class="eyebrow">{{ t('rename.count', { objects: plural(total, 'ui.objects'), changes: plural(changed, 'rename.changes') }) }}</span></div>
+    <div class="well glim-well bk-fill"><div class="bk-tools"><span id="re-sum" class="eyebrow">{{ t('rename.count', { objects: plural(total, 'ui.objects'), changes: plural(changed, 'rename.changes') }) }}</span></div>
       <div v-if="st.lines !== total" id="re-warn" class="re-warn">{{ warning }}</div>
       <div id="re-list" class="bk-list">
         <div v-for="r in st.rows" :key="r.old" class="bk-mrow" :class="{ same: r.new === r.old }">

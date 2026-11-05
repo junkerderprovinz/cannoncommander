@@ -1,16 +1,17 @@
 <script setup lang="ts">
 // The server writes the file into a folder of its own, not into the browser's downloads, so it can be found and
 // imported again without leaving CannonCommander.
+import { CopyField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, exists, listDir, statusOf } from '@/api/admin';
 import { go } from '@/core/views';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { usePanels } from '@/stores/panels';
-import CopyField from '../kit/CopyField.vue';
-import Frow from '../kit/Frow.vue';
-import { c, fail, setFoot } from '../kit/kit';
-import PathField from '../kit/PathField.vue';
-import Sw from '../kit/Sw.vue';
+import Frow from '@/ui/Frow.vue';
+import { c, fail, stepFoot } from '@/features/config/shared';
+import PathField from '@/ui/PathField.vue';
+import Sw from '@/ui/Sw.vue';
+import { copyWords } from '@/ui/kit';
 
 const props = defineProps<{ win: WinEntry }>();
 const today = new Date().toISOString().slice(0, 10);
@@ -29,23 +30,23 @@ async function save() {
   } catch (e) {
     return fail(statusOf(e) === 409 ? c('app.fileExists') : c('notSaved'), at('#a-exname'));
   }
-  setFoot(props.win, [
+  stepFoot(props.win, [
     { label: c('app.showFile'), g: 'IconFolderOpen', run: () => { go('files'); usePanels().go(d); } },
     { label: c('done'), g: 'IconCheck', primary: true },
   ]);
 }
 
-onMounted(() => setFoot(props.win, [cancelBtn(), { label: c('app.export'), g: 'IconExport', primary: true, run: () => { save(); return false; } }]));
+onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('app.export'), g: 'IconExport', primary: true, run: () => { save(); return false; } }]));
 </script>
 
 <template>
-  <div v-if="written" class="well"><Frow :label="c('app.savedAt')"><CopyField :value="written" grow /></Frow></div>
+  <div v-if="written" class="well glim-well"><Frow :label="c('app.savedAt')"><CopyField class="w" :value="written" :label="c('app.savedAt')" :text="copyWords()" /></Frow></div>
   <template v-else>
-    <div class="well">
+    <div class="well glim-well">
       <Frow :label="c('picker.folder')" :tip="c('app.exportDirTip')"><PathField id="a-exdir" v-model="dir" /></Frow>
-      <Frow :label="c('app.fileName')"><input id="a-exname" v-model="name" class="field w"></Frow>
+      <Frow :label="c('app.fileName')"><input id="a-exname" v-model="name" class="glim-input w"></Frow>
     </div>
-    <div class="well">
+    <div class="well glim-well">
       <Frow :label="c('app.withUsers')"><Sw v-model="users" /></Frow>
       <Frow :label="c('app.secrets')" :tip="c('app.secretsTip')"><span class="pill">{{ c('app.stayOut') }}</span></Frow>
     </div>

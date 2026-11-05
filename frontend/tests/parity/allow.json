@@ -11,19 +11,43 @@
   "stale": "the step file still picks the letter case from a <select>, which the rename window replaced with a dropdown",
   "shots": {
    "b-sync": {
-    "pixels": 900,
+    "pixels": 35700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "b-diff": {
-    "pixels": 38300,
-    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml"
+    "pixels": 189300,
+    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "b-diff-next": {
-    "pixels": 38300,
-    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml"
+    "pixels": 199500,
+    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "b-usage": {
-    "pixels": 700,
+    "pixels": 264700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "b-search": {
+    "pixels": 50700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "b-search-open": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "b-compare": {
+    "pixels": 15100,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "b-sync-both": {
+    "pixels": 34000,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "b-dups": {
+    "pixels": 15700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "b-usage-drill": {
+    "pixels": 246500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -41,7 +65,7 @@
   ],
   "shots": {
    "r7-copy-window": {
-    "pixels": 22600,
+    "pixels": 26300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -50,19 +74,27 @@
   "stale": "the step file looks for the bookmark menu item Verknüpfung entfernen, which is called Vom Schnellzugriff lösen now",
   "shots": {
    "r4-music-cols": {
-    "pixels": 800,
+    "pixels": 5900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r4-colmenu": {
-    "pixels": 900,
+    "pixels": 8300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r4-colsearch": {
-    "pixels": 300,
+    "pixels": 49700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r4-bm-menu": {
-    "pixels": 800,
+    "pixels": 8200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r4-main": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r4-photo-cols": {
+    "pixels": 5500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -83,131 +115,131 @@
   },
   "shots": {
    "a-dark-general": {
-    "pixels": 5000,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 69100,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-dark-files": {
-    "pixels": 2500,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 44600,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-dark-sources": {
-    "pixels": 3200,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one"
+    "pixels": 27800,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-dark-shares": {
-    "pixels": 800,
+    "pixels": 5600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-dark-security": {
-    "pixels": 11200,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions"
+    "pixels": 65800,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-dark-integrations": {
     "pixels": 82700,
     "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
    },
    "a-dark-app": {
-    "pixels": 200,
+    "pixels": 47300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-dark-info": {
-    "pixels": 900,
+    "pixels": 79900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-light-general": {
-    "pixels": 9200,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 72300,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-light-files": {
-    "pixels": 7800,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 51500,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-light-sources": {
-    "pixels": 3200,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one"
+    "pixels": 30000,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-light-shares": {
-    "pixels": 800,
+    "pixels": 9100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-light-security": {
-    "pixels": 13000,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions"
+    "pixels": 68300,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-light-integrations": {
     "pixels": 58500,
     "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
    },
    "a-light-app": {
-    "pixels": 200,
+    "pixels": 46200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-light-info": {
-    "pixels": 1000,
+    "pixels": 51900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-look-picker": {
-    "pixels": 5800,
+    "pixels": 135700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-source-added": {
-    "pixels": 31700,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one"
+    "pixels": 48700,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-remote-pick": {
-    "pixels": 27000,
+    "pixels": 44000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-remote-form": {
-    "pixels": 25000,
+    "pixels": 39000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-remote-added": {
-    "pixels": 5000,
+    "pixels": 32800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-remote-oauth": {
-    "pixels": 22800,
+    "pixels": 37700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-user-new": {
-    "pixels": 25900,
+    "pixels": 45300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-group-new": {
-    "pixels": 25900,
+    "pixels": 41700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-users-hover": {
-    "pixels": 3100,
+    "pixels": 28100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-rule-new": {
-    "pixels": 25900,
+    "pixels": 69900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-rules-after": {
-    "pixels": 3100,
+    "pixels": 50300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-share-win": {
-    "pixels": 15300,
+    "pixels": 39100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-share-revoked": {
-    "pixels": 600,
+    "pixels": 3800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-totp-1": {
-    "pixels": 14500,
+    "pixels": 54900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-totp-2": {
-    "pixels": 6000,
+    "pixels": 31900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-token-once": {
-    "pixels": 23400,
+    "pixels": 28500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-security-after": {
@@ -219,39 +251,83 @@
     "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
    },
    "a-export-done": {
-    "pixels": 17700,
+    "pixels": 48800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-app-after": {
-    "pixels": 3300,
+    "pixels": 51600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-info-hover": {
-    "pixels": 1800,
+    "pixels": 87200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-whatsnew": {
-    "pixels": 21700,
+    "pixels": 63800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-docs": {
-    "pixels": 14900,
+    "pixels": 69600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-activity": {
-    "pixels": 14100,
-    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more"
+    "pixels": 24400,
+    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-activity-filtered": {
-    "pixels": 1300,
-    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more"
+    "pixels": 13900,
+    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-activity-light": {
-    "pixels": 10200,
-    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more"
+    "pixels": 31000,
+    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "a-phone-look": {
-    "pixels": 5100,
+    "pixels": 72900,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-dark-look": {
+    "pixels": 105500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-dark-remotes": {
+    "pixels": 26700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-dark-users": {
+    "pixels": 22000,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-dark-rules": {
+    "pixels": 24800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-light-look": {
+    "pixels": 100100,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-light-remotes": {
+    "pixels": 31500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-light-users": {
+    "pixels": 25200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-light-rules": {
+    "pixels": 30600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-folder-picker": {
+    "pixels": 22200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-source-new": {
+    "pixels": 15800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "a-phone-users": {
+    "pixels": 17700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -265,75 +341,75 @@
   ],
   "shots": {
    "c-view-video": {
-    "pixels": 209600,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 383400,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-pdf": {
-    "pixels": 34400,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 220000,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-image-100": {
-    "pixels": 1300,
+    "pixels": 255700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-view-audio": {
-    "pixels": 13900,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 186100,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-code": {
-    "pixels": 2500,
+    "pixels": 124700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-view-xlsx": {
-    "pixels": 15200,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 116800,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-pptx": {
-    "pixels": 214300,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 307100,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-docx": {
-    "pixels": 66900,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 210900,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-invoice": {
-    "pixels": 29100,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 182500,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-zip": {
-    "pixels": 11600,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 115500,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-tar": {
-    "pixels": 50100,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 135200,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-iso": {
-    "pixels": 12200,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 115500,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-img": {
-    "pixels": 12200,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 129700,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-hex": {
-    "pixels": 12200,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 190600,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-view-log": {
-    "pixels": 11700,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 207600,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-preview-image": {
-    "pixels": 2300,
+    "pixels": 6200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-preview-md": {
-    "pixels": 4300,
+    "pixels": 8000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-preview-dir": {
-    "pixels": 1800,
+    "pixels": 5700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-preview-video": {
@@ -341,67 +417,67 @@
     "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
    },
    "c-preview-audio": {
-    "pixels": 4700,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 8600,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-edit-find": {
-    "pixels": 11600,
+    "pixels": 142400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-edit-unsaved": {
-    "pixels": 16700,
+    "pixels": 30200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-edit-md": {
-    "pixels": 16300,
+    "pixels": 164900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-edit-new": {
-    "pixels": 300,
+    "pixels": 106300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-upload-empty": {
-    "pixels": 200,
+    "pixels": 19100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-conflict-upload": {
-    "pixels": 200,
+    "pixels": 23900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-upload-progress": {
-    "pixels": 40300,
-    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point"
+    "pixels": 63400,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-share": {
-    "pixels": 1600,
+    "pixels": 35300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-share-done": {
-    "pixels": 12900,
+    "pixels": 39200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-conflict-copy": {
-    "pixels": 2000,
+    "pixels": 23000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-trash": {
-    "pixels": 2100,
+    "pixels": 26400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-trash-picked": {
-    "pixels": 2100,
+    "pixels": 125900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-trash-more": {
-    "pixels": 2100,
+    "pixels": 25100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-trash-empty-ask": {
-    "pixels": 1100,
+    "pixels": 17100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-trash-empty": {
-    "pixels": 1100,
+    "pixels": 7100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-login": {
@@ -413,28 +489,28 @@
     "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
    },
    "c-login-reset": {
-    "pixels": 14500,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
+    "pixels": 21100,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-light-view-image": {
-    "pixels": 47600,
+    "pixels": 276800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-light-view-video": {
-    "pixels": 218000,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 412500,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-light-view-pdf": {
-    "pixels": 35200,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 144100,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-light-edit": {
-    "pixels": 400,
+    "pixels": 130800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-light-upload": {
-    "pixels": 12000,
-    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point"
+    "pixels": 28200,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-light-trash": {
     "pixels": 25500,
@@ -445,36 +521,68 @@
     "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
    },
    "c-phone-view-image": {
-    "pixels": 30000,
-    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point, and signing out cuts a big one short, whose toasts still stand"
+    "pixels": 82500,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point, and signing out cuts a big one short, whose toasts still stand; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-phone-view-video": {
-    "pixels": 55500,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 130800,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-phone-view-pdf": {
-    "pixels": 8200,
-    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content"
+    "pixels": 98400,
+    "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-phone-audio": {
-    "pixels": 800,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 99600,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-phone-trash": {
     "pixels": 10400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-phone-share": {
-    "pixels": 400,
+    "pixels": 68100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype, and the toasts left from earlier steps word a file by its name where the prototype counts it"
    },
    "c-phone-upload": {
-    "pixels": 5000,
-    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point"
+    "pixels": 64600,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "c-phone-login": {
     "pixels": 74800,
     "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own"
+   },
+   "c-view-image": {
+    "pixels": 340400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "c-view-md": {
+    "pixels": 127300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "c-upload-done": {
+    "pixels": 30100,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "c-download": {
+    "pixels": 24000,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "c-light-view-md": {
+    "pixels": 120900,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "c-phone-view-md": {
+    "pixels": 70300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "c-phone-edit": {
+    "pixels": 59600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "c-phone-conflict": {
+    "pixels": 69400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
  },
@@ -499,71 +607,111 @@
    {
     "pattern": "(?<=^\\d+ integrations: )\\d+ cards, 1 col, width 832, bottoms \\d+",
     "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
+   },
+   {
+    "pattern": "(?<=, bottoms )[0-9]+$",
+    "why": "GlimStone gilt: a card and its rows have GlimStone's padding and gaps, so a page of cards ends further down"
    }
   ],
   "shots": {
    "r7-settings-1600-general": {
-    "pixels": 5000,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 69100,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1600-files": {
-    "pixels": 2500,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 44600,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1600-sources": {
-    "pixels": 3200,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one"
+    "pixels": 27800,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1600-shares": {
-    "pixels": 800,
+    "pixels": 5600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1600-security": {
-    "pixels": 10500,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions"
+    "pixels": 63100,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1600-integrations": {
     "pixels": 64400,
     "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
    },
    "r7-settings-1600-app": {
-    "pixels": 200,
+    "pixels": 47000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1600-info": {
-    "pixels": 900,
+    "pixels": 79900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1200-general": {
-    "pixels": 5000,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 69100,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1200-files": {
-    "pixels": 2500,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 44600,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1200-sources": {
-    "pixels": 3200,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one"
+    "pixels": 27800,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1200-shares": {
-    "pixels": 800,
+    "pixels": 5600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1200-security": {
-    "pixels": 10500,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions"
+    "pixels": 63100,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1200-integrations": {
     "pixels": 64400,
     "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
    },
    "r7-settings-1200-app": {
-    "pixels": 200,
+    "pixels": 47000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-settings-1200-info": {
-    "pixels": 900,
+    "pixels": 79900,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-help-menu": {
+    "pixels": 10000,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-settings-1600-look": {
+    "pixels": 105400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-settings-1600-remotes": {
+    "pixels": 26700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-settings-1600-users": {
+    "pixels": 22000,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-settings-1600-rules": {
+    "pixels": 24800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-settings-1200-look": {
+    "pixels": 105400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-settings-1200-remotes": {
+    "pixels": 26700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-settings-1200-users": {
+    "pixels": 22000,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-settings-1200-rules": {
+    "pixels": 24800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -601,55 +749,79 @@
   ],
   "shots": {
    "r13-1-jobs-serial": {
-    "pixels": 8000,
-    "why": "job rates and progress come from the fixture's own random numbers"
+    "pixels": 37000,
+    "why": "job rates and progress come from the fixture's own random numbers; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-1-jobs-parallel": {
-    "pixels": 8000,
-    "why": "job rates and progress come from the fixture's own random numbers"
+    "pixels": 37000,
+    "why": "job rates and progress come from the fixture's own random numbers; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-4-fetch-job": {
-    "pixels": 1200,
+    "pixels": 26800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-5-basket-side": {
-    "pixels": 1300,
+    "pixels": 6400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-5-basket": {
-    "pixels": 400,
+    "pixels": 17700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-5-collection-share": {
-    "pixels": 900,
+    "pixels": 48400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-5-collection-done": {
-    "pixels": 12900,
+    "pixels": 59800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-5-shares-page": {
-    "pixels": 1200,
+    "pixels": 7600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-6-share-options": {
-    "pixels": 1800,
+    "pixels": 32800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-6-share-done": {
-    "pixels": 13400,
+    "pixels": 38900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-6-share-notice": {
-    "pixels": 13400,
+    "pixels": 38900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-7-touch-390": {
-    "pixels": 3400,
+    "pixels": 3600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-9-shortcuts": {
-    "pixels": 11800,
+    "pixels": 32900,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-2-smart": {
+    "pixels": 4900,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-2-smart-menu": {
+    "pixels": 8200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-3-rename-photos": {
+    "pixels": 33100,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-3-rename-series": {
+    "pixels": 37800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-4-fetch": {
+    "pixels": 23400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-8-install": {
+    "pixels": 26800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -663,27 +835,59 @@
   ],
   "shots": {
    "r13-9672-wake": {
-    "pixels": 3100,
+    "pixels": 186400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-9669-copywin": {
-    "pixels": 26000,
+    "pixels": 27500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-9669-warning": {
-    "pixels": 4000,
+    "pixels": 23700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-9669-move": {
-    "pixels": 2000,
+    "pixels": 26300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-9673-gather": {
-    "pixels": 400,
+    "pixels": 50700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-9673-scatter": {
-    "pixels": 3800,
+    "pixels": 37600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-9672-tree": {
+    "pixels": 5600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-9668-warning": {
+    "pixels": 48000,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-9668-safe": {
+    "pixels": 48100,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-9669-props": {
+    "pixels": 37300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-9670-badges": {
+    "pixels": 5600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-9670-filter": {
+    "pixels": 5300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-9671-appdata": {
+    "pixels": 15500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-9671-window": {
+    "pixels": 30300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -693,27 +897,43 @@
    {
     "pattern": "(?<=^disco walks: ).*?(?= true attr)",
     "why": "GlimStone gilt: the disco walks through GlimStone's colours on the browser's own time"
+   },
+   {
+    "pattern": "(?<=GlimStone )[0-9.]+",
+    "why": "the app shows the GlimStone it is built on, the prototype the one it was last built with"
    }
   ],
   "shots": {
    "r19-bv-3-colours-on": {
-    "pixels": 900,
+    "pixels": 133700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r19-bv-4-info-dark": {
-    "pixels": 900,
+    "pixels": 82500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r19-bv-5-info-light": {
-    "pixels": 2800,
+    "pixels": 58900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r19-bv-6-paypal": {
-    "pixels": 300,
+    "pixels": 38700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r19-bv-7-crypto": {
-    "pixels": 300,
+    "pixels": 31500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r19-bv-1-colours-off": {
+    "pixels": 112500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r19-bv-2-leaf-storm": {
+    "pixels": 112400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r19-bv-8-colours-light": {
+    "pixels": 111500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -727,8 +947,8 @@
   ],
   "shots": {
    "r11-album": {
-    "pixels": 4200,
-    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+    "pixels": 6500,
+    "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r11-Big": {
     "pixels": 135400,
@@ -739,7 +959,7 @@
  "steps-v3-a": {
   "shots": {
    "v3a-2-gather": {
-    "pixels": 800,
+    "pixels": 5900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3a-3-history": {
@@ -751,11 +971,15 @@
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3a-5-paste-picture": {
-    "pixels": 16000,
+    "pixels": 31400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3a-6-jump-light": {
-    "pixels": 8800,
+    "pixels": 12600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "v3a-1-jump": {
+    "pixels": 5500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   },
@@ -795,15 +1019,43 @@
   ],
   "shots": {
    "v3b-6-cleanup": {
-    "pixels": 9700,
+    "pixels": 30400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3b-7-archive-running": {
-    "pixels": 23500,
+    "pixels": 29000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3b-8-archive-done": {
-    "pixels": 16300,
+    "pixels": 28400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "v3b-1-meta-warn": {
+    "pixels": 6500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "v3b-2-examples": {
+    "pixels": 15200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "v3b-3-rename-editor": {
+    "pixels": 34800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "v3b-4-keys-conflict": {
+    "pixels": 25300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "v3b-5-keys-tc": {
+    "pixels": 24200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "v3b-9-damaged": {
+    "pixels": 5400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "v3b-10-cleanup-light": {
+    "pixels": 8800,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -827,24 +1079,24 @@
   ],
   "shots": {
    "v3c-2-limit": {
-    "pixels": 20700,
+    "pixels": 38900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3c-3-parity-ask": {
-    "pixels": 27800,
+    "pixels": 34700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3c-4-parity-jobs": {
-    "pixels": 25400,
+    "pixels": 49900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3c-5-settings": {
-    "pixels": 15500,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 84800,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3c-6-settings-light": {
-    "pixels": 18600,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 84900,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "v3c-7-live": {
     "pixels": 7500,
@@ -857,25 +1109,37 @@
    "v3c-9-cover": {
     "pixels": 53100,
     "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+   },
+   "v3c-1-space": {
+    "pixels": 64600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
  },
  "steps-core": {
   "shots": {
    "core-menu-ansicht": {
-    "pixels": 10800,
+    "pixels": 24200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "core-copy": {
-    "pixels": 21900,
+    "pixels": 26400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "core-after": {
-    "pixels": 2500,
+    "pixels": 7600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "core-settings": {
-    "pixels": 7100,
+    "pixels": 71300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "core-1": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "core-menu-datei": {
+    "pixels": 13500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -891,7 +1155,7 @@
  "steps-r13-dialoge": {
   "shots": {
    "r13-copy": {
-    "pixels": 24700,
+    "pixels": 28200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-copy-more": {
@@ -899,7 +1163,19 @@
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-move": {
-    "pixels": 25300,
+    "pixels": 27400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-delete": {
+    "pixels": 15500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-delete-forever": {
+    "pixels": 14200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-delete-one": {
+    "pixels": 13000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -907,19 +1183,31 @@
  "steps-r13-liste": {
   "shots": {
    "r13-flat": {
-    "pixels": 3200,
+    "pixels": 7900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-colormenu": {
-    "pixels": 2900,
+    "pixels": 15200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-columns": {
-    "pixels": 2500,
+    "pixels": 7600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r13-columns-up": {
-    "pixels": 2500,
+    "pixels": 7500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-group-kind": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-labels": {
+    "pixels": 5600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r13-tagsearch": {
+    "pixels": 6500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -927,19 +1215,55 @@
  "steps-r14": {
   "shots": {
    "r14-1-tree": {
-    "pixels": 52900,
-    "why": "a click on a branch toggle redraws the prototype's tree and drops the keyboard focus, so its arrow down goes nowhere; the app keeps the focus in the tree and the arrow picks the next row"
+    "pixels": 204100,
+    "why": "a click on a branch toggle redraws the prototype's tree and drops the keyboard focus, so its arrow down goes nowhere; the app keeps the focus in the tree and the arrow picks the next row; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r14-0-sidebar": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r14-2-delete": {
+    "pixels": 27200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r14-3-types": {
+    "pixels": 156700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r14-4-largest": {
+    "pixels": 178100,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r14-5-map": {
+    "pixels": 238500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r14-6-searchmenu": {
+    "pixels": 15400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
  },
  "steps-r15": {
   "shots": {
    "r15-2-labels": {
-    "pixels": 7400,
+    "pixels": 11700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r15-5-settings": {
-    "pixels": 5000,
+    "pixels": 69100,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r15-1-search": {
+    "pixels": 15400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r15-3-tags": {
+    "pixels": 15200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r15-4-fkeys": {
+    "pixels": 5500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -947,15 +1271,19 @@
  "steps-r18": {
   "shots": {
    "r18-2-picker": {
-    "pixels": 14100,
+    "pixels": 35300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r18-3-colours": {
-    "pixels": 13800,
+    "pixels": 24500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r18-4-light": {
-    "pixels": 2300,
+    "pixels": 7200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r18-1-head": {
+    "pixels": 5500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -963,11 +1291,11 @@
  "steps-r19": {
   "shots": {
    "r19-1-drives": {
-    "pixels": 700,
+    "pixels": 5200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r19-2-settings": {
-    "pixels": 5000,
+    "pixels": 69200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -975,7 +1303,7 @@
  "steps-r19-farbe": {
   "shots": {
    "r19-farbe-2-light": {
-    "pixels": 1900,
+    "pixels": 27600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r19-farbe-3-viewmenu": {
@@ -985,17 +1313,31 @@
    "r19-farbe-4-clash": {
     "pixels": 37200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r19-farbe-1-dark": {
+    "pixels": 23200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
-  }
+  },
+  "lines": [
+   {
+    "pattern": "^keys on strip: .*$",
+    "why": "GlimStone gilt: an arrow key moves the hue by GlimStone's step, so the same presses land on another colour"
+   }
+  ]
  },
  "steps-r20": {
   "shots": {
    "r20-1-drives": {
-    "pixels": 700,
+    "pixels": 5200,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r20-3-drives-light": {
-    "pixels": 700,
+    "pixels": 5300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r20-2-columns": {
+    "pixels": 6000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -1003,11 +1345,11 @@
  "steps-r7-liste": {
   "shots": {
    "r7-marked": {
-    "pixels": 300,
+    "pixels": 5700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-resized": {
-    "pixels": 300,
+    "pixels": 5700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-tiles": {
@@ -1023,11 +1365,23 @@
     "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
    },
    "r7-active-right": {
-    "pixels": 15600,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 18400,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r7-locked": {
-    "pixels": 1500,
+    "pixels": 5400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-tiles-mixed": {
+    "pixels": 5600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-pathmenu": {
+    "pixels": 8300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r7-du": {
+    "pixels": 737300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -1035,15 +1389,15 @@
  "steps-review": {
   "shots": {
    "rv-04-editor": {
-    "pixels": 600,
+    "pixels": 114900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "rv-07-diskusage": {
-    "pixels": 400,
+    "pixels": 251900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "rv-12-settings-info": {
-    "pixels": 900,
+    "pixels": 79900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "rv-15-login": {
@@ -1053,29 +1407,81 @@
    "rv-16-phone": {
     "pixels": 12600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-01-main": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-02-menu-werkzeuge": {
+    "pixels": 14400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-03-view-image": {
+    "pixels": 228900,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-05-search": {
+    "pixels": 36800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-06-compare": {
+    "pixels": 14300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-08-rename": {
+    "pixels": 39300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-09-props": {
+    "pixels": 31400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-10-settings-look": {
+    "pixels": 105400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-11-settings-users": {
+    "pixels": 22000,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-13-trash": {
+    "pixels": 22400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "rv-14-upload": {
+    "pixels": 17200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
  },
  "steps-round10": {
   "shots": {
    "r10-ql": {
-    "pixels": 4200,
+    "pixels": 6500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r10-ql-info": {
-    "pixels": 4300,
+    "pixels": 8000,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r10-ql-video": {
     "pixels": 74000,
     "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play"
+   },
+   "r10-main": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
  },
  "steps-round12": {
   "shots": {
    "r12-pause": {
-    "pixels": 5200,
+    "pixels": 7300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r12-search-mkv": {
+    "pixels": 6400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -1083,7 +1489,23 @@
  "steps-round2": {
   "shots": {
    "r2-colmenu": {
-    "pixels": 200,
+    "pixels": 7900,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r2-columns": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r2-pathedit": {
+    "pixels": 5700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r2-settings": {
+    "pixels": 105400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r2-glyphs": {
+    "pixels": 56600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -1091,7 +1513,11 @@
  "steps-round3": {
   "shots": {
    "r3-colmenu": {
-    "pixels": 9900,
+    "pixels": 15900,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r3-main": {
+    "pixels": 5500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -1099,15 +1525,23 @@
  "steps-round5": {
   "shots": {
    "r5-cascade": {
-    "pixels": 200,
+    "pixels": 9900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r5-colwin": {
-    "pixels": 9600,
+    "pixels": 133500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r5-colsearch": {
-    "pixels": 300,
+    "pixels": 51100,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r5-main": {
+    "pixels": 5600,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r5-glyphs-in-list": {
+    "pixels": 5600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -1115,24 +1549,24 @@
  "steps-round8": {
   "shots": {
    "r8-view-details": {
-    "pixels": 300,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 5700,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r8-view-compact": {
-    "pixels": 300,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 5700,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r8-view-list": {
-    "pixels": 300,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 5700,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r8-view-content": {
-    "pixels": 300,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 5700,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r8-view-tiles": {
-    "pixels": 400,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 5800,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r8-view-large": {
     "pixels": 60900,
@@ -1151,19 +1585,51 @@
  "steps-round9": {
   "shots": {
    "r9-tiles-downloads": {
-    "pixels": 200,
-    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+    "pixels": 5600,
+    "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "r9-gallery-2026": {
     "pixels": 31200,
     "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ"
+   },
+   "r9-main": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r9-tiles-dokumente": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r9-content-dokumente": {
+    "pixels": 5500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r9-large-Kevin-MacLeod": {
+    "pixels": 5800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r9-quicklook": {
+    "pixels": 3300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r9-quicklook-text": {
+    "pixels": 4500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
  },
  "steps-shell": {
   "shots": {
    "shell-phone": {
-    "pixels": 1900,
+    "pixels": 2200,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "shell-light": {
+    "pixels": 5700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "shell-1100": {
+    "pixels": 4400,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }
@@ -1171,55 +1637,55 @@
  "steps-tour": {
   "shots": {
    "tour-03-marked": {
-    "pixels": 300,
+    "pixels": 5700,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-10-activity": {
-    "pixels": 11900,
-    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more"
+    "pixels": 26100,
+    "why": "the activity page shows the paths the server logs, where the prototype words made-up entries, and the fixture has one entry more; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-10-diskusage": {
-    "pixels": 800,
+    "pixels": 266100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-20-copy": {
-    "pixels": 22200,
+    "pixels": 26100,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-30-settings-general": {
-    "pixels": 5000,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 69100,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-30-settings-files": {
-    "pixels": 2500,
-    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither"
+    "pixels": 44600,
+    "why": "the prototype offers switches that play a parity check and a download client, marked \"Nur im Prototyp\"; the app has neither; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-30-settings-sources": {
-    "pixels": 3200,
-    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one"
+    "pixels": 27800,
+    "why": "the index plan is a pill the server fills, by decision, and a new source asks for a restart as the server needs one; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-30-settings-shares": {
-    "pixels": 800,
+    "pixels": 5600,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-30-settings-security": {
-    "pixels": 10600,
-    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions"
+    "pixels": 63100,
+    "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-30-settings-integrations": {
     "pixels": 64400,
     "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths"
    },
    "tour-30-settings-app": {
-    "pixels": 200,
+    "pixels": 47300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-30-settings-info": {
-    "pixels": 900,
+    "pixels": 79900,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-40-light": {
-    "pixels": 7200,
+    "pixels": 11500,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-50-phone": {
@@ -1227,7 +1693,91 @@
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    },
    "tour-51-phone-settings": {
-    "pixels": 600,
+    "pixels": 18500,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-01-quickview": {
+    "pixels": 4400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-02-single": {
+    "pixels": 4700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-10-viewer": {
+    "pixels": 127300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-10-props": {
+    "pixels": 34100,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-10-search": {
+    "pixels": 36800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-10-trash": {
+    "pixels": 22400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-10-keys": {
+    "pixels": 28700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-10-rename": {
+    "pixels": 35900,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-10-compare": {
+    "pixels": 14400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-30-settings-look": {
+    "pixels": 105400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-30-settings-remotes": {
+    "pixels": 26700,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-30-settings-users": {
+    "pixels": 22000,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-30-settings-rules": {
+    "pixels": 24800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "tour-41-light-search": {
+    "pixels": 36400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   }
+  }
+ },
+ "steps-r17": {
+  "shots": {
+   "r17-1-colours": {
+    "pixels": 19800,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   },
+   "r17-2-after": {
+    "pixels": 7400,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   }
+  }
+ },
+ "steps-r20-al": {
+  "shots": {
+   "r20-al": {
+    "pixels": 22300,
+    "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
+   }
+  }
+ },
+ "steps-round6": {
+  "shots": {
+   "r6-fkeys": {
+    "pixels": 5300,
     "why": "GlimStone gilt: windows, menus, buttons, fields, switches, selectors and meters follow GlimStone where it draws them otherwise than the prototype"
    }
   }

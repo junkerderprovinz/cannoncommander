@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { PasswordField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { me, statusOf } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Frow from '../kit/Frow.vue';
-import { c, fail, setFoot } from '../kit/kit';
-import PwField from '../kit/PwField.vue';
+import Frow from '@/ui/Frow.vue';
+import { c, fail, stepFoot } from '@/features/config/shared';
+import { eyeWords } from '@/ui/kit';
 
 const props = defineProps<{ win: WinEntry; done: () => void }>();
 const p0 = ref(''), p1 = ref(''), p2 = ref('');
@@ -28,13 +29,13 @@ async function save() {
   props.done();
 }
 
-onMounted(() => setFoot(props.win, [cancelBtn(), { label: c('security.changePw'), g: 'IconKey', primary: true, run: () => { save(); return false; } }]));
+onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('security.changePw'), g: 'IconKey', primary: true, run: () => { save(); return false; } }]));
 </script>
 
 <template>
-  <div class="well">
-    <Frow :label="c('security.current')"><PwField id="a-pw0" v-model="p0" size="m" autocomplete="current-password" /></Frow>
-    <Frow :label="c('security.newPw')" :tip="c('security.newPwTip')"><PwField id="a-pw1" v-model="p1" size="m" /></Frow>
-    <Frow :label="c('users.repeat')"><PwField id="a-pw2" v-model="p2" size="m" /></Frow>
+  <div class="well glim-well">
+    <Frow :label="c('security.current')"><PasswordField id="a-pw0" v-model="p0" class="m" autocomplete="current-password" :text="eyeWords()" /></Frow>
+    <Frow :label="c('security.newPw')" :tip="c('security.newPwTip')"><PasswordField id="a-pw1" v-model="p1" class="m" autocomplete="new-password" :text="eyeWords()" /></Frow>
+    <Frow :label="c('users.repeat')"><PasswordField id="a-pw2" v-model="p2" class="m" autocomplete="new-password" :text="eyeWords()" /></Frow>
   </div>
 </template>

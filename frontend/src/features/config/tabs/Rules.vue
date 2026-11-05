@@ -1,18 +1,16 @@
 <script setup lang="ts">
+import { Button, Card, InfoBubble } from '@glimstone/vue';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { admin, type Rule, type User, type Verdict } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
-import ARow from '../kit/ARow.vue';
-import BareBtn from '../kit/BareBtn.vue';
-import Btn from '../kit/Btn.vue';
-import Card from '../kit/Card.vue';
-import Dropdown from '../kit/Dropdown.vue';
-import Frow from '../kit/Frow.vue';
-import Info from '../kit/Info.vue';
-import { c } from '../kit/kit';
-import PathField from '../kit/PathField.vue';
+import ARow from '@/ui/ARow.vue';
+import BareBtn from '@/ui/BareBtn.vue';
+import Dropdown from '@/ui/Dropdown.vue';
+import Frow from '@/ui/Frow.vue';
+import { c } from '@/features/config/shared';
+import PathField from '@/ui/PathField.vue';
 import { ruleGlyph, ruleName, whoName } from '../roles';
 import RuleWin from '../wins/RuleWin.vue';
 
@@ -93,11 +91,11 @@ const probeState = { who: 'anna', path: '/mnt/user/backups' };
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconShieldOn" /><div>{{ c('rules.none') }}</div></div>
-    <div class="a-foot"><Btn data-add :label="c('rules.add')" g="IconAdd" @click="edit(null)" /></div>
+    <div class="a-foot"><Button data-add :label="c('rules.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>
   <Card :title="c('rules.probe')">
     <Frow :label="c('rules.who')"><Dropdown v-model="probe.who" :options="users.map((u) => [u.name, u.full])" /></Frow>
     <Frow :label="c('rules.path')"><PathField id="a-ppath" v-model="probe.path" /></Frow>
-    <Frow :label="c('rules.result')" :tip="c('rules.resultTip')"><span id="a-pres" class="a-ctl"><span class="pill" :class="result.tone">{{ result.word }}</span><Info :tip="result.why" /></span></Frow>
+    <Frow :label="c('rules.result')" :tip="c('rules.resultTip')"><span id="a-pres" class="a-ctl"><span class="pill" :class="result.tone">{{ result.word }}</span><InfoBubble :tip="result.why" /></span></Frow>
   </Card>
 </template>

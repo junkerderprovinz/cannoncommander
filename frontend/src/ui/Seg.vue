@@ -1,20 +1,31 @@
 <script setup lang="ts" generic="V extends string | number">
-// A row of choices with the prototype's raised segments. A model of null leaves every segment unpressed.
-import { G } from '@/core/glyphs';
+// GlimStone's Selector for options written as [value, label, glyph], named by the row it stands in. A model of null
+// leaves every segment unchosen. Every press is reported before the choice changes, also on the choice already made,
+// because the hidden shapes and motions count exactly those.
+import { Selector } from '@glimstone/vue';
+import { computed, inject } from 'vue';
+import { glyphComponent } from '@/core/glyphs';
+import { rowLabel } from './kit';
 
 export type SegOption<T> = readonly [value: T, label: string, glyph?: string];
-defineProps<{ options: readonly SegOption<V>[] }>();
+const props = defineProps<{ options: readonly SegOption<V>[]; label?: string; disabled?: boolean }>();
 const model = defineModel<V | null>({ required: true });
 const emit = defineEmits<{ press: [value: V] }>();
+const row = inject(rowLabel, () => '');
 
-function press(v: V) {
-  model.value = v;
-  emit('press', v);
+const items = computed(() => props.options.map(([v, label, g]) => ({ id: String(v), label, glyph: g ? glyphComponent(g) : undefined })));
+const valueOf = (id: string) => props.options.find(([v]) => String(v) === id)![0];
+const chosen = computed({
+  get: () => (model.value === null ? null : String(model.value)),
+  set: (id) => { model.value = valueOf(id as string); },
+});
+
+function pressed(e: MouseEvent) {
+  const seg = (e.target as HTMLElement).closest<HTMLElement>('[data-sel-id]');
+  if (seg && !seg.matches(':disabled')) emit('press', valueOf(seg.dataset.selId!));
 }
 </script>
 
 <template>
-  <div class="seg">
-    <button v-for="o in options" :key="o[0]" type="button" :aria-pressed="o[0] === model" :data-v="o[0]" @click="press(o[0])"><G v-if="o[2]" :n="o[2]" />{{ o[1] }}</button>
-  </div>
+  <Selector v-model="chosen" class="seg" :items="items" :label="label ?? row()" size="sm" activation="manual" inline button-height pairs-on-phone :disabled="disabled" @click.capture="pressed" />
 </template>

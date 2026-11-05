@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // Every glyph GlimStone has for folders, places and files, with what CannonCommander uses it for, and the kinds still
 // without one.
+import { Card } from '@glimstone/vue';
 import { G } from '@/core/glyphs';
-import Card from '@/features/config/kit/Card.vue';
 import { t } from '@/i18n';
 import data from './sets.json';
 

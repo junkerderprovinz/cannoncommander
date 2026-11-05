@@ -1,15 +1,15 @@
 <script setup lang="ts">
 // Entpacken: the archives, or what is picked inside one, and where it all lands.
+import { PasswordField } from '@glimstone/vue';
 import { computed, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
 import { join } from '@/files/paths';
 import { t } from '@/i18n';
-import PwField from '@/features/config/kit/PwField.vue';
-import BkPath from '@/ui/BkPath.vue';
+import PathField from '@/ui/PathField.vue';
 import FinalPath from '@/ui/FinalPath.vue';
 import Frow from '@/ui/Frow.vue';
-import { plural } from '@/ui/kit';
+import { eyeWords, plural } from '@/ui/kit';
 import Seg from '@/ui/Seg.vue';
 import Sw from '@/ui/Sw.vue';
 import { clean, folderState } from '@/ui/tools';
@@ -27,17 +27,17 @@ const head = computed(() => (props.st.inside ? t('archive.fromArchive', { object
 </script>
 
 <template>
-  <div class="well"><div class="eyebrow">{{ head }}</div>
+  <div class="well glim-well"><div class="eyebrow">{{ head }}</div>
     <table class="tbl">
       <tr v-for="k in st.items.slice(0, 5)" :key="k.name"><td>{{ k.name }}</td><td class="glim-num r">{{ fmtSize(k.size) }}</td></tr>
       <tr v-if="st.items.length > 5"><td colspan="2" class="muted">{{ t('archive.more', { n: st.items.length - 5 }) }}</td></tr>
     </table>
   </div>
-  <div class="well bk-form"><div class="eyebrow">{{ t('archive.target') }}</div>
-    <Frow :label="t('archive.folder')"><BkPath id="x-dest" v-model="st.dest" /></Frow>
+  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('archive.target') }}</div>
+    <Frow :label="t('archive.folder')"><PathField id="x-dest" v-model="st.dest" /></Frow>
     <Frow :label="t('archive.own')" :tip="t('archive.ownTip')"><Sw id="x-own" v-model="st.own" /></Frow>
     <Frow :label="t('archive.clash')" :tip="t('archive.clashTip')"><Seg id="x-clash" v-model="st.clash" :options="clashes" /></Frow>
-    <Frow v-if="st.locked" :label="t('archive.unpackPassword')" :tip="t('archive.unpackPasswordTip')"><PwField id="x-pw" v-model="st.password" size="m" /></Frow>
+    <Frow v-if="st.locked" :label="t('archive.unpackPassword')" :tip="t('archive.unpackPasswordTip')"><PasswordField id="x-pw" v-model="st.password" class="grow" autocomplete="new-password" :text="eyeWords()" /></Frow>
     <Frow :label="t('archive.lands')">
       <span id="x-final" class="bk-finalw">
         <span v-if="ok === false" class="pill fault">{{ t('ui.noFolder') }}</span>

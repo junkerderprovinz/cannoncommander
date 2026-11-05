@@ -47,7 +47,7 @@ const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 function rename(b: Bookmark) {
   win({
     title: t('side.renameTitle'),
-    body: `<div class="well"><div class="frow"><span class="lab">${esc(t('side.name'))}</span><input class="field m" id="bmn" value="${esc(b.name)}"></div></div>`,
+    body: `<div class="well glim-well"><div class="frow"><span class="lab">${esc(t('side.name'))}</span><input class="glim-input m" id="bmn" value="${esc(b.name)}"></div></div>`,
     foot: [cancelBtn(), { label: t('side.rename'), g: 'IconPencil', primary: true, run: (el) => {
       const name = el.querySelector<HTMLInputElement>('#bmn')!.value.trim();
       if (!name) return false;
