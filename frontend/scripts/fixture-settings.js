@@ -92,6 +92,14 @@ function state() {
       { id: 'p1', name: 'Windows Hello', origin: 'cannon.tower.lan', created: now - 60 * DAY, last: now - 3 * MIN },
       { id: 'p2', name: 'Handy', origin: '192.168.10.5:8443', created: now - 120 * DAY, last: now - 50 * DAY },
     ],
+    // The sessions, tokens and passkeys of the other people, as an admin sees them.
+    others: {
+      anna: {
+        sessions: [{ id: 'b1', created: now - 2 * DAY, seen: now - 2 * DAY, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1', ip: '192.168.30.61', current: false }],
+        tokens: [{ id: 't2', name: 'fotos-sync', created: now - 90 * DAY, last: now - 5 * HOUR, rights: 'r', expires: now + 275 * DAY }],
+        passkeys: [{ id: 'p3', name: 'iPhone', origin: 'cannon.tower.lan', created: now - 80 * DAY, last: now - 2 * DAY }],
+      },
+    },
     remotes: [
       { name: 'gdrive', type: 'drive', path: '', mount: '/mnt/remotes/gdrive', label: 'rclone: gdrive', mounted: true, mountOnStart: true, params: {}, secrets: ['token'] },
       { name: 'nas-keller', type: 'smb', path: 'archiv', mount: '/mnt/remotes/nas-keller', label: 'rclone: nas-keller', mounted: true, mountOnStart: true, params: { host: 'keller', user: 'jdp', domain: '' }, secrets: ['pass'] },
@@ -130,6 +138,10 @@ export function settingsFixtureMiddleware() {
   const isDir = (p) => !!fx.list(p);
   const isFile = (p) => { const [dir, name] = split(p); return S.exports.some((e) => e.path === p) || !!fx.list(dir)?.items.some((k) => k.name === name && !k.dir); };
   const me = () => S.users.find((u) => u.name === ME);
+  const passwords = [...PASSWORDS];
+  const accessOf = (u) => (u.name === ME ? S : (S.others[u.name] ??= { sessions: [], tokens: [], passkeys: [] }));
+  const userAt = (id) => S.users.find((x) => x.name === id || x.id === id);
+  const wrongPassword = (b) => (!b.password ? [400, 'the current password is missing'] : passwords.includes(b.password) ? null : [403, 'the current password is not right']);
   const inside = (p, root) => p === root || p.startsWith(root.replace(/\/$/, '') + '/');
 
   const verdict = (user, path) => {
@@ -185,7 +197,8 @@ export function settingsFixtureMiddleware() {
     ['GET', '/me', () => ({ ...wireUser(me()), recovery: S.recovery, lockPassword: false })],
     ['PUT', '/me/password', (b) => {
       if (!b.next || b.next.length < 12) return [400, 'the password needs 12 characters'];
-      if (!PASSWORDS.includes(b.current)) return [403, 'the current password is wrong'];
+      if (!passwords.includes(b.current)) return [403, 'the current password is wrong'];
+      passwords.push(b.next);
       const ended = S.sessions.filter((s) => !s.current).length;
       S.sessions = S.sessions.filter((s) => s.current);
       me().pwChanged = clock.now();
@@ -195,6 +208,8 @@ export function settingsFixtureMiddleware() {
     ['DELETE', /^\/me\/sessions\/(.+)$/, (_, [id]) => { S.sessions = S.sessions.filter((s) => s.id !== id); return 204; }],
     ['GET', '/me/tokens', () => ({ items: S.tokens.map((t) => ({ ...t, created: iso(t.created), last: iso(t.last), expires: iso(t.expires) })) })],
     ['POST', '/me/tokens', (b) => {
+      const refused = wrongPassword(b);
+      if (refused) return refused;
       if (S.tokens.some((t) => t.name === b.name)) return [409, 'a token with this name exists'];
       const t = { id: 't' + clock.now(), name: b.name, created: clock.now(), last: null, rights: b.rights, expires: b.days ? clock.now() + b.days * DAY : null };
       S.tokens.push(t);
@@ -206,6 +221,8 @@ export function settingsFixtureMiddleware() {
       if (S.passkeys.some((p) => p.name === b.name)) return [409, 'the name is taken'];
       const host = (req.headers.host || 'localhost').split(':')[0];
       if (!b.credential) {
+        const refused = wrongPassword(b);
+        if (refused) return refused;
         return { options: { publicKey: {
           challenge: b64url(43), rp: { name: 'CannonCommander', id: host }, user: { id: b64url(11), name: ME, displayName: me().full },
           pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }], timeout: 300000,
@@ -233,6 +250,23 @@ export function settingsFixtureMiddleware() {
     ['DELETE', '/me/totp', (b) => (b.code === '000000' ? [400, 'the code does not work'] : (me().twofa = false, 204))],
 
     ['GET', '/admin/users', () => ({ items: S.users.map(wireUser) })],
+    ['GET', /^\/admin\/users\/([^/]+)\/(sessions|tokens|passkeys)$/, (_, [id, kind]) => {
+      const u = userAt(id);
+      if (!u) return [404, 'user'];
+      const wire = {
+        sessions: (x) => ({ ...x, current: u.name === ME && x.current, created: iso(x.created), seen: iso(x.seen) }),
+        tokens: (x) => ({ ...x, created: iso(x.created), last: iso(x.last), expires: iso(x.expires) }),
+        passkeys: (x) => ({ ...x, created: iso(x.created), last: iso(x.last) }),
+      }[kind];
+      return { items: accessOf(u)[kind].map(wire) };
+    }],
+    ['DELETE', /^\/admin\/users\/([^/]+)\/(sessions|tokens|passkeys)\/([^/]+)$/, (_, [id, kind, item]) => {
+      const u = userAt(id), access = u && accessOf(u);
+      if (!access?.[kind].some((x) => x.id === item)) return [404, kind];
+      access[kind] = access[kind].filter((x) => x.id !== item);
+      if (kind === 'passkeys') u.passkeys = access.passkeys.length;
+      return 204;
+    }],
     ['POST', '/admin/users', (b) => {
       if (S.users.some((u) => u.name === b.name)) return [409, 'the login name is taken'];
       if (!b.password || b.password.length < 12) return [400, 'the password needs 12 characters'];
@@ -248,8 +282,14 @@ export function settingsFixtureMiddleware() {
       if (b.name && b.name !== was && was === ME) return [400, 'you cannot change your own login name'];
       if (was === ME && b.role && b.role !== 'admin') return [409, 'you cannot give up your own admin role'];
       if (b.name && b.name !== was) S.rules.forEach((r) => { if (r.who === was) r.who = b.name; });
-      const { password, ...rest } = b;
+      if (b.revoke && was === ME) return [400, 'end your own sessions, tokens and passkeys under account and security'];
+      const { password, revoke, ...rest } = b;
       Object.assign(u, rest, password ? { pwChanged: clock.now() } : {});
+      if (password && was !== ME) accessOf(u).sessions = [];
+      if (revoke) {
+        Object.assign(accessOf(u), { sessions: [], tokens: [], passkeys: [] });
+        u.passkeys = 0;
+      }
       if (b.groups || b.name) syncGroups(u.name, u.groups, was);
       return wireUser(u);
     }],
