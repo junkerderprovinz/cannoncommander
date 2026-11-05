@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // The way in: name and password, then the code from the app or a recovery code, a passkey instead, a password of
 // its own after the first start, and the reset with a code from the container log.
+import { InfoBubble, PasswordField } from '@glimstone/vue';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { auth, type SignIn, type SignInOptions, type TotpSetup } from '@/api/auth';
 import { ApiError } from '@/api/client';
@@ -9,10 +10,9 @@ import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { t } from '@/i18n';
 import Frow from '@/ui/Frow.vue';
-import Info from '@/ui/Info.vue';
 import Sw from '@/ui/Sw.vue';
+import { eyeWords } from '@/ui/kit';
 import { leaveNote, session, takeNote } from '.';
-import PwField from '@/ui/PwField.vue';
 
 // overlay is set when a session ran out while the app was open, so the app stays as it is behind the card.
 const props = defineProps<{ overlay?: boolean; was?: string }>();
@@ -259,15 +259,15 @@ function toggleRecovery() {
 
       <template v-if="step === 'pw'">
         <div class="cl-fields">
-          <Frow :label="s('name')"><input id="cl-user" v-model="name" class="field grow" autocomplete="username" autocapitalize="off" spellcheck="false"></Frow>
-          <Frow :label="s('password')"><PwField id="cl-pass" v-model="pass" autocomplete="current-password" /></Frow>
+          <Frow :label="s('name')"><input id="cl-user" v-model="name" class="glim-input grow" autocomplete="username" autocapitalize="off" spellcheck="false"></Frow>
+          <Frow :label="s('password')"><PasswordField id="cl-pass" v-model="pass" autocomplete="current-password" class="grow" :text="eyeWords()" /></Frow>
           <Frow :label="s('stay')" :tip="s('stayTip')"><Sw id="cl-keep" v-model="keep" /></Frow>
         </div>
         <div class="cl-btns">
           <button class="btn key primary" type="submit" :disabled="busy"><G n="IconSignIn" />{{ s('signIn') }}</button>
           <button v-if="opts.passkey" class="btn key" type="button" data-cl="passkey" :disabled="busy" @click="passkey"><G n="IconKey" />{{ s('passkey') }}</button>
           <button v-if="opts.oidc" class="btn key" type="button" data-cl="oidc" @click="oidc"><G n="IconExternalLink" />{{ s('oidc', { name: opts.oidc.label }) }}</button>
-          <div class="cl-row"><button class="btn cl-quiet" type="button" data-cl="forgot" :disabled="busy" @click="forgot"><G n="IconForgotPassword" />{{ s('forgot') }}</button><Info :tip="s('forgotTip')" /></div>
+          <div class="cl-row"><button class="btn cl-quiet" type="button" data-cl="forgot" :disabled="busy" @click="forgot"><G n="IconForgotPassword" />{{ s('forgot') }}</button><InfoBubble :tip="s('forgotTip')" /></div>
         </div>
       </template>
 
@@ -279,12 +279,12 @@ function toggleRecovery() {
           <div class="cl-key"><span class="muted">{{ s('setupKey') }}</span><span class="mono">{{ setup.secret }}</span></div>
         </div>
         <div class="cl-totp">
-          <div v-if="!byRecovery" class="cl-lab">{{ s('codeLabel') }} <Info v-if="step === 'totp'" :tip="s('codeTip')" /></div>
+          <div v-if="!byRecovery" class="cl-lab">{{ s('codeLabel') }} <InfoBubble v-if="step === 'totp'" :tip="s('codeTip')" /></div>
           <div v-if="!byRecovery" class="cl-digits">
-            <input v-for="(d, i) in digits" :key="i" class="field glim-num" inputmode="numeric" maxlength="1" :value="d" :autocomplete="i ? 'off' : 'one-time-code'" :aria-label="s('digit', { n: i + 1 })" :data-d="i"
+            <input v-for="(d, i) in digits" :key="i" class="glim-input glim-num" inputmode="numeric" maxlength="1" :value="d" :autocomplete="i ? 'off' : 'one-time-code'" :aria-label="s('digit', { n: i + 1 })" :data-d="i"
               @input="digitInput(i, $event)" @keydown="digitKey(i, $event)" @paste="digitPaste">
           </div>
-          <Frow v-else :label="s('recovery')"><input id="cl-recovery" v-model="recovery" class="field grow mono cl-code" placeholder="XXXX-XXXX" spellcheck="false" autocomplete="off" autocapitalize="characters"></Frow>
+          <Frow v-else :label="s('recovery')"><input id="cl-recovery" v-model="recovery" class="glim-input grow glim-input--mono cl-code" placeholder="XXXX-XXXX" spellcheck="false" autocomplete="off" autocapitalize="characters"></Frow>
         </div>
         <div class="cl-btns">
           <button class="btn key primary" type="submit" :disabled="busy"><G n="IconConfirm" />{{ s('confirm') }}</button>
@@ -296,9 +296,9 @@ function toggleRecovery() {
       <template v-else-if="step === 'password' || step === 'reset'">
         <p v-if="step === 'password'" class="cl-text">{{ s('ownText') }}</p>
         <div class="cl-fields">
-          <Frow v-if="step === 'reset'" :label="s('logCode')" :tip="s('logCodeTip')"><input id="cl-code" v-model="logCode" class="field grow mono cl-code" placeholder="XXXX-XXXX-XXXX" spellcheck="false" autocomplete="one-time-code" autocapitalize="characters"></Frow>
-          <Frow :label="s('newPassword')"><PwField id="cl-new" v-model="next1" autocomplete="new-password" :placeholder="s('minChars', { n: opts.minPassword })" /></Frow>
-          <Frow :label="s('repeat')"><PwField id="cl-new2" v-model="next2" autocomplete="new-password" /></Frow>
+          <Frow v-if="step === 'reset'" :label="s('logCode')" :tip="s('logCodeTip')"><input id="cl-code" v-model="logCode" class="glim-input grow glim-input--mono cl-code" placeholder="XXXX-XXXX-XXXX" spellcheck="false" autocomplete="one-time-code" autocapitalize="characters"></Frow>
+          <Frow :label="s('newPassword')"><PasswordField id="cl-new" v-model="next1" autocomplete="new-password" :placeholder="s('minChars', { n: opts.minPassword })" class="grow" :text="eyeWords()" /></Frow>
+          <Frow :label="s('repeat')"><PasswordField id="cl-new2" v-model="next2" autocomplete="new-password" class="grow" :text="eyeWords()" /></Frow>
         </div>
         <div class="cl-btns">
           <button class="btn key primary" type="submit" :disabled="busy"><G n="IconKey" />{{ s('setPassword') }}</button>
@@ -308,12 +308,12 @@ function toggleRecovery() {
 
       <template v-else-if="step === 'codes'">
         <p class="cl-text">{{ s('codesText') }}</p>
-        <div class="well cl-codes mono glim-num"><span v-for="c in codes" :key="c">{{ c }}</span></div>
+        <div class="well glim-well cl-codes mono glim-num"><span v-for="c in codes" :key="c">{{ c }}</span></div>
         <div class="cl-btns"><button class="btn key primary" type="submit"><G n="IconForward" />{{ s('toFiles') }}</button></div>
       </template>
 
       <template v-else-if="step === 'resetDone'">
-        <div class="well cl-gone">
+        <div class="well glim-well cl-gone">
           <div class="eyebrow">{{ s('goneToo') }}</div>
           <div v-for="k in ['goneSessions', 'goneTwofa', 'goneTokens']" :key="k" class="cl-li"><G n="IconCheck" /><span>{{ s(k) }}</span></div>
         </div>

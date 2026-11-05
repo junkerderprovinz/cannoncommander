@@ -28,5 +28,12 @@
   "archiveOnly": "Inside an archive you can only view and unpack",
   "failed": "{label} did not work out: {error}",
   "show": "Show",
-  "hide": "Hide"
+  "hide": "Hide",
+  "pickFile": "Choose a file",
+  "file": "File",
+  "needFile": "Choose a file first",
+  "take": "Apply",
+  "hue": "Hue",
+  "shade": "Saturation and brightness",
+  "colourValue": "Colour value"
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // One panel: its tabs on the top edge, the path row with its tools, the list and the footer.
+import { Meter } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import { actions, run } from '@/core/actions';
 import { extend } from '@/core/extend';
@@ -121,7 +122,7 @@ const count = computed(() => {
       <span class="grow"></span>
       <span v-if="inArchive(tab.path)">{{ t('files.inArchive') }}</span>
       <button v-else-if="vol" class="lfree" :data-du="vol.path" :data-tip="t('files.diskUsage', { name: vol.label || vol.path })" @click="run('diskUsage', vol.path)">
-        <span>{{ t('files.free', { size: fmtSize(vol.free) }) }}</span><span class="meter"><i :style="{ width: used(vol.free, vol.total) }"></i></span>
+        <span>{{ t('files.free', { size: fmtSize(vol.free) }) }}</span><Meter quiet size="small" :value="1 - vol.free / vol.total" :label="vol.label || vol.path" :value-text="t('files.free', { size: fmtSize(vol.free) })" />
       </button>
     </div>
     <div v-if="active && jump.text" class="tjump glim-card" :class="{ miss: !jump.found }" role="status">

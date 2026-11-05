@@ -1,5 +1,5 @@
 import type { Role, RuleKind, User } from '@/api/admin';
-import { c } from './kit/kit';
+import { c } from '@/features/config/shared';
 
 export const ROLES: Role[] = ['admin', 'user', 'readonly'];
 export const roleName = (r: Role) => c(`roles.${r}`);

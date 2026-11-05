@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Card } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, type Share } from '@/api/admin';
 import { DAY, now } from '@/core/format';
@@ -6,10 +7,10 @@ import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { useUser } from '@/stores/user';
-import ARow from '../kit/ARow.vue';
-import BareBtn from '../kit/BareBtn.vue';
-import Card from '../kit/Card.vue';
-import { ago, c, copy } from '../kit/kit';
+import ARow from '@/ui/ARow.vue';
+import BareBtn from '@/ui/BareBtn.vue';
+import { ago, c } from '@/features/config/shared';
+import { copyText } from '@/ui/kit';
 import ShareWin from '../wins/ShareWin.vue';
 
 const shares = ref<Share[]>([]);
@@ -45,7 +46,7 @@ const edit = (s: Share) => win({ title: c('shares.share'), body: ShareWin, props
           <span class="pill glim-num">{{ s.views === 1 ? c('shares.oneView') : c('shares.views', { n: s.views }) }}</span>
         </template>
         <template #acts>
-          <BareBtn g="IconCopy" :tip="c('shares.copyLink')" @click="copy(s.url)" />
+          <BareBtn g="IconCopy" :tip="c('shares.copyLink')" @click="copyText(s.url)" />
           <BareBtn g="IconPencil" :tip="c('edit')" :data-open="i" @click="edit(s)" />
           <BareBtn g="IconUnlink" :tip="c('shares.revoke')" :data-revoke="i" @click="revoke(s)" />
         </template>

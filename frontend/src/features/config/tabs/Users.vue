@@ -1,15 +1,14 @@
 <script setup lang="ts">
+import { Button, Card } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, type Group, type Share, type User } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { useUser } from '@/stores/user';
-import ARow from '../kit/ARow.vue';
-import BareBtn from '../kit/BareBtn.vue';
-import Btn from '../kit/Btn.vue';
-import Card from '../kit/Card.vue';
-import { ago, attempt, c, confirmWin, fail } from '../kit/kit';
+import ARow from '@/ui/ARow.vue';
+import BareBtn from '@/ui/BareBtn.vue';
+import { ago, attempt, c, confirmWin, fail } from '@/features/config/shared';
 import { roleName } from '../roles';
 import GroupWin from '../wins/GroupWin.vue';
 import UserWin from '../wins/UserWin.vue';
@@ -66,7 +65,7 @@ function removeGroup(g: Group) {
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconAccounts" /><div>{{ c('users.nobody') }}</div></div>
-    <div class="a-foot"><Btn data-uadd :label="c('users.add')" g="IconAdd" @click="editUser(null)" /></div>
+    <div class="a-foot"><Button data-uadd :label="c('users.add')" label-key="IconAdd" @click="editUser(null)" /></div>
   </Card>
   <Card :title="c('users.groups')">
     <div v-if="groups.length" class="a-list">
@@ -80,6 +79,6 @@ function removeGroup(g: Group) {
       </ARow>
     </div>
     <div v-else class="empty"><G n="IconAccounts" /><div>{{ c('users.noGroups') }}</div></div>
-    <div class="a-foot"><Btn data-gadd :label="c('users.addGroup')" g="IconAdd" @click="editGroup(null)" /></div>
+    <div class="a-foot"><Button data-gadd :label="c('users.addGroup')" label-key="IconAdd" @click="editGroup(null)" /></div>
   </Card>
 </template>

@@ -1,5 +1,5 @@
 
-.bk-diff .win-body { gap: .7rem; }
+.bk-diff .glim-window-body { gap: .7rem; }
 .bk-dheads { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .bk-dhead { display: grid; grid-template-columns: 1.75rem auto minmax(0, 1fr) auto auto; gap: .55rem; align-items: center; min-width: 0; }
 .bk-dhead .bk-name { font-weight: 600; }

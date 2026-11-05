@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Card } from '@glimstone/vue';
 import { GLIMSTONE_VERSION } from '@glimstone/core';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type System, type UpdateCheck } from '@/api/admin';
@@ -7,9 +8,8 @@ import { run } from '@/core/actions';
 import { G } from '@/core/glyphs';
 import { win } from '@/core/windows';
 import { NEWS, unseen } from '../help';
-import Card from '../kit/Card.vue';
-import Frow from '../kit/Frow.vue';
-import { c } from '../kit/kit';
+import Frow from '@/ui/Frow.vue';
+import { c } from '@/features/config/shared';
 import { bugReport, MAIL, REPO } from '../support';
 import CoffeeWin from '../wins/CoffeeWin.vue';
 import CryptoWin from '../wins/CryptoWin.vue';

@@ -6,7 +6,7 @@ import { win } from '@/core/windows';
 import { admin } from '@/api/admin';
 import { tl } from '@/i18n';
 import ActivityPage from './ActivityPage.vue';
-import { c } from './kit/kit';
+import { c } from '@/features/config/shared';
 import App from './tabs/App.vue';
 import FileList from './tabs/FileList.vue';
 import General from './tabs/General.vue';

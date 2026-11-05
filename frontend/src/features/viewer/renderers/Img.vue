@@ -11,7 +11,7 @@ import { G } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { rawUrl, thumbUrl } from '../content';
 import { browserDraws, joinPath } from '../kinds';
-import Seg from '../ui/Seg.vue';
+import Seg from '@/ui/Seg.vue';
 import type { REmits, RProps } from './types';
 
 const props = defineProps<RProps>();
@@ -81,7 +81,7 @@ defineExpose({
   <template v-else>
     <div class="cv-bar">
       <span v-if="many" class="pill glim-num">{{ t('viewer.img.of', { i: i + 1, n: sibs.length }) }}</span><span class="grow"></span>
-      <Seg id="cv-zoom" v-model="zoom" :opts="[['fit', t('viewer.img.fit'), 'IconCompact'], ['full', '100 %', 'IconSearch']]" />
+      <Seg id="cv-zoom" v-model="zoom" :options="[['fit', t('viewer.img.fit'), 'IconCompact'], ['full', '100 %', 'IconSearch']]" />
     </div>
     <div id="cv-stage" ref="stage" class="cv-stage" :class="[zoom, { panning }]" @mousedown="down" @mousemove="move" @mouseup="up" @mouseleave="up">
       <div class="cv-pic" :style="picStyle"><img :src="src" alt="" draggable="false" @load="loaded"></div>

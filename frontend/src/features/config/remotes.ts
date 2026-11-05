@@ -1,6 +1,6 @@
 // The kinds of remote rclone can mount here, and the fields each one asks for. A field's key is rclone's own
 // parameter, except the one marked as the path, which names the folder, share or bucket the mount shows.
-import { c } from './kit/kit';
+import { c } from '@/features/config/shared';
 
 export interface RemoteType { id: string; label: string; g: string; sub: string; oauth?: string }
 export interface RemoteField { k: string; l: string; ph?: string; def?: string; w?: string; pw?: boolean; opt?: boolean; tip?: string; dd?: [string, string][]; path?: boolean }

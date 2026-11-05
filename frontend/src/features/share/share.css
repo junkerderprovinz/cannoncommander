@@ -4,7 +4,7 @@
 .cs-slug { font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .well .frow .pill + .pill, .well .frow .pill + .btn { margin-left: .3rem; }
 .cs-secret { position: relative; display: inline-flex; }
-.cs-secret .field { padding-right: 2.4rem; }
+.cs-secret .glim-input { padding-right: 2.4rem; }
 .cs-eye { position: absolute; right: .35rem; top: 50%; transform: translateY(-50%); width: 1.7rem; height: 1.7rem; display: grid; place-items: center; color: var(--carbon-text-muted); border-radius: var(--radius-pill); }
 .cs-eye:hover { color: var(--carbon-text); }
 .cs-eye svg { width: 1rem; height: 1rem; }
@@ -13,10 +13,10 @@
 .cs-qr svg { width: 100%; height: auto; }
 .cs-facts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .35rem; }
 .cs-url { display: flex; gap: .4rem; margin-bottom: .3rem; }
-.cs-url .field { font-size: 12.5px; }
+.cs-url .glim-input { font-size: 12.5px; }
 .cs-slugf { display: flex; align-items: center; gap: .35rem; min-width: 0; flex: 1; justify-content: flex-end; }
 .cs-host { font-size: 12px; white-space: nowrap; flex: none; }
-.cs-slugf .field { width: 11rem; min-width: 9.5rem; flex: 0 1 11rem; }
+.cs-slugf .glim-input { width: 11rem; min-width: 9.5rem; flex: 0 1 11rem; }
 .cs-basket { display: flex; flex-direction: column; max-height: 20rem; overflow: auto; margin: 0 -.3rem; }
 .cs-brow { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) minmax(0, 1fr) 5.5rem 2rem; align-items: center; gap: .6rem; min-height: 2.4rem; padding: 0 .3rem; border-radius: var(--radius-control); }
 .cs-brow:hover { background: var(--carbon-hover); }
@@ -38,6 +38,6 @@
   .cs-host { display: none; }
   .cs-done { flex-direction: column; align-items: stretch; }
   .cs-qr { width: 9rem; align-self: center; }
-  .cs-secret .field.w { width: 100%; }
+  .cs-secret .glim-input.w { width: 100%; }
   .cs-secret { flex: 1; }
 }

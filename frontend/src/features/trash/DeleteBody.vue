@@ -17,5 +17,5 @@ const size = computed(() => fmtSize(props.items.reduce((a, k) => a + (k.size || 
   <div class="xdel"><span class="xbin"><G n="IconTrash" /></span>
     <div><b>{{ items.length === 1 ? t('trash.deleteOne', { name: items[0]!.name }) : t('trash.deleteMany', { n: items.length }) }}</b><span id="xwhere" class="glim-num">{{ st.trash ? t('trash.whereTrash', { size, days }) : t('trash.whereGone', { size }) }}</span></div></div>
   <ItemChips v-if="items.length > 1" :items="items" :max="6" />
-  <div class="well"><Frow :label="t('trash.toTrash')" :tip="t('trash.toTrashTip', { days })"><Sw id="totrash" v-model="st.trash" /></Frow></div>
+  <div class="well glim-well"><Frow :label="t('trash.toTrash')" :tip="t('trash.toTrashTip', { days })"><Sw id="totrash" v-model="st.trash" /></Frow></div>
 </template>

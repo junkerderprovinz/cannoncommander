@@ -6,8 +6,8 @@ import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
 import { useLabels } from '@/stores/labels';
-import Frow from '../config/kit/Frow.vue';
-import { setFoot } from '../config/kit/kit';
+import Frow from '@/ui/Frow.vue';
+import { stepFoot } from '@/features/config/shared';
 import { files } from './counts';
 
 const props = defineProps<{ win: WinEntry }>();
@@ -26,15 +26,15 @@ async function save() {
   props.win.close();
   toast(t('labels.tagsSaved'));
 }
-onMounted(() => setFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 'IconCheck', primary: true, run: () => { save(); return false; } }]));
+onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 'IconCheck', primary: true, run: () => { save(); return false; } }]));
 </script>
 
 <template>
-  <div class="well">
-    <Frow :label="t('labels.newTag')" :tip="t('labels.newTagTip')"><input id="mk-new" v-model="fresh" class="field m" :placeholder="t('labels.newTagPh')" autocomplete="off" @keydown.enter.prevent="add"></Frow>
+  <div class="well glim-well">
+    <Frow :label="t('labels.newTag')" :tip="t('labels.newTagTip')"><input id="mk-new" v-model="fresh" class="glim-input m" :placeholder="t('labels.newTagPh')" autocomplete="off" @keydown.enter.prevent="add"></Frow>
     <div id="mk-list">
       <div v-for="(r, i) in rows" :key="i" class="mk-row">
-        <G n="IconHash" /><input v-model="r.to" class="field" :data-tagname="i" :aria-label="t('labels.tagAria', { name: r.from || r.to })"><span class="muted">{{ files(r.count) }}</span>
+        <G n="IconHash" /><input v-model="r.to" class="glim-input" :data-tagname="i" :aria-label="t('labels.tagAria', { name: r.from || r.to })"><span class="muted">{{ files(r.count) }}</span>
         <button class="btn icon" :data-tagdel="i" :data-tip="t('labels.removeTag')" :aria-label="t('labels.removeName', { name: r.from || r.to })" @click="rows.splice(i, 1)"><G n="IconTrash" /></button>
       </div>
       <div v-if="!rows.length" class="muted mk-none">{{ t('labels.noTags') }}</div>

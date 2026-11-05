@@ -5,8 +5,8 @@ import { G } from '@/core/glyphs';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
 import { byName, type Labelled, useLabels } from '@/stores/labels';
-import Frow from '../config/kit/Frow.vue';
-import { setFoot } from '../config/kit/kit';
+import Frow from '@/ui/Frow.vue';
+import { stepFoot } from '@/features/config/shared';
 
 const props = defineProps<{ win: WinEntry; sel: Labelled[]; folder: string }>();
 const labels = useLabels();
@@ -30,12 +30,12 @@ function add() {
   picked.add(v);
   fresh.value = '';
 }
-onMounted(() => setFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 'IconCheck', primary: true, run: () => { labels.set(props.sel, props.folder, { tags: [...picked] }); } }]));
+onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 'IconCheck', primary: true, run: () => { labels.set(props.sel, props.folder, { tags: [...picked] }); } }]));
 </script>
 
 <template>
-  <div class="well">
-    <Frow :label="t('labels.tag')" :tip="t('labels.tagTip')"><input id="newtag" v-model="fresh" class="field m" :placeholder="t('labels.tagPh')" autocomplete="off" @keydown.enter.prevent="add"></Frow>
+  <div class="well glim-well">
+    <Frow :label="t('labels.tag')" :tip="t('labels.tagTip')"><input id="newtag" v-model="fresh" class="glim-input m" :placeholder="t('labels.tagPh')" autocomplete="off" @keydown.enter.prevent="add"></Frow>
     <div id="tags" class="tagchips">
       <span v-for="tag in chosen" :key="'on' + tag" class="tagchip on">#{{ tag }}<button class="x" :data-untag="tag" :data-tip="t('labels.untag')" :aria-label="t('labels.removeName', { name: tag })" @click="picked.delete(tag)"><G n="IconClose" /></button></span>
       <button v-for="tag in others" :key="tag" class="tagchip" :data-tag="tag" :data-tip="t('labels.addTag')" @click="picked.add(tag)">#{{ tag }}</button>

@@ -4,8 +4,11 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body { background: var(--carbon-bg); color: var(--carbon-text); font-family: var(--font-sans); font-size: 14px; line-height: 1.4; overflow: hidden; }
-button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
-input, select, textarea { font: inherit; color: inherit; }
+/* In the layer below GlimStone's components, so that these plain defaults never beat a component. */
+@layer base {
+  button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+  input, select, textarea { font: inherit; color: inherit; }
+}
 svg { display: block; }
 .glim-num { font-variant-numeric: tabular-nums lining-nums; }
 .mono { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 13px; }
@@ -33,17 +36,18 @@ svg { display: block; }
 .menubar button:hover, .menubar button.open { background: var(--carbon-surface2); color: var(--carbon-text); }
 .head .spacer { flex: 1; }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; height: var(--btn-h); padding: 0 .85rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); color: var(--carbon-text); font-size: 14px; font-weight: 500; white-space: nowrap; flex: none; }
-.btn:hover, .btn:focus-visible { background: var(--carbon-surface3); }
-.btn svg { width: .875rem; height: .875rem; color: var(--carbon-text); flex: none; }
-.btn:hover svg { color: var(--accent-glyph); }
-.btn.icon { width: var(--btn-h); padding: 0; }
-.btn.icon svg { width: 1rem; height: 1rem; }
-.btn.key { height: var(--btn-h-key); }
-.btn.primary { background: var(--accent); color: var(--accent-contrast); }
-.btn.primary svg { color: var(--accent-contrast); }
-.btn.primary:hover { background: color-mix(in srgb, var(--accent) 85%, var(--carbon-text)); }
-.btn:disabled { opacity: .5; cursor: not-allowed; }
+/* In the test build GlimStone's window buttons carry .btn as well, and they keep GlimStone's look. */
+.btn:not(.glim-btn) { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; height: var(--btn-h); padding: 0 .85rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); color: var(--carbon-text); font-size: 14px; font-weight: 500; white-space: nowrap; flex: none; }
+.btn:not(.glim-btn):hover, .btn:not(.glim-btn):focus-visible { background: var(--carbon-surface3); }
+.btn:not(.glim-btn) svg { width: .875rem; height: .875rem; color: var(--carbon-text); flex: none; }
+.btn:not(.glim-btn):hover svg { color: var(--accent-glyph); }
+.btn:not(.glim-btn).icon { width: var(--btn-h); padding: 0; }
+.btn:not(.glim-btn).icon svg { width: 1rem; height: 1rem; }
+.btn:not(.glim-btn).key { height: var(--btn-h-key); }
+.btn:not(.glim-btn).primary { background: var(--accent); color: var(--accent-contrast); }
+.btn:not(.glim-btn).primary svg { color: var(--accent-contrast); }
+.btn:not(.glim-btn).primary:hover { background: color-mix(in srgb, var(--accent) 85%, var(--carbon-text)); }
+.btn:not(.glim-btn):disabled { opacity: .5; cursor: not-allowed; }
 /* Every control in the head row shares one height, so brand, menu, selector and buttons line up. */
 .head .btn { background: var(--carbon-surface2); height: 2.4rem; padding: 0 .8rem; }
 .head .btn.icon { width: 2.4rem; padding: 0; }
@@ -60,15 +64,7 @@ svg { display: block; }
 .avatar:hover i { background: var(--accent); color: var(--accent-contrast); }
 
 /* A choice between a few options shows all of them, the chosen one filled. */
-.seg { display: inline-flex; padding: 3px; gap: 3px; border-radius: var(--radius-pill); background: var(--carbon-surface); box-shadow: var(--elevation), var(--hairline); flex: none; }
-.seg button { height: calc(var(--btn-h) - 6px); padding: 0 .8rem; border-radius: var(--radius-pill); display: inline-flex; align-items: center; gap: .4rem; color: var(--carbon-text-sub); font-weight: 500; white-space: nowrap; }
-.seg button svg { width: .875rem; height: .875rem; }
-.seg button:hover { background: var(--carbon-hover); color: var(--carbon-text); }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-contrast); }
-.well .seg, .win .seg, .card-body .seg { background: var(--carbon-surface2); box-shadow: none; }
-.well .seg button:hover { background: var(--carbon-surface3); }
 .head .seg { height: 2.4rem; align-items: center; padding: 0 4px; background: var(--carbon-surface2); }
-.head .seg button { height: 1.9rem; }
 /* Installed with the window controls folded in, the bar takes the title bar's place and drags the window. */
 @media (display-mode: window-controls-overlay) {
   .app { padding-top: 0; }
@@ -121,8 +117,8 @@ svg { display: block; }
 .panels { flex: 1; min-width: 0; display: grid; grid-template-columns: 1fr; gap: var(--gut); }
 .app.dual .panels { grid-template-columns: 1fr 1fr; }
 .panel { position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 1.35rem .75rem .5rem; margin-top: .9rem; }
-.notch { position: absolute; top: 0; left: 1rem; transform: translateY(-50%); height: 1.6rem; padding: 0 .8rem; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-contrast); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: .45rem; white-space: nowrap; max-width: calc(100% - 2rem); overflow: hidden; z-index: 1; }
-.notch .role { font-weight: 500; letter-spacing: 0; text-transform: none; padding-left: .45rem; box-shadow: inset 1px 0 0 color-mix(in srgb, var(--accent-contrast) 30%, transparent); }
+.notch:not(.glim-badge) { position: absolute; top: 0; left: 1rem; transform: translateY(-50%); height: 1.6rem; padding: 0 .8rem; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-contrast); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: .45rem; white-space: nowrap; max-width: calc(100% - 2rem); overflow: hidden; z-index: 1; }
+.notch:not(.glim-badge) .role { font-weight: 500; letter-spacing: 0; text-transform: none; padding-left: .45rem; box-shadow: inset 1px 0 0 color-mix(in srgb, var(--accent-contrast) 30%, transparent); }
 
 /* Tabs ride on the panel's top edge like heading badges; the open one is filled, the others stay quiet. */
 .ptabs { position: absolute; top: 0; left: 1rem; right: 1rem; transform: translateY(-50%); display: flex; gap: .35rem; align-items: center; overflow-x: auto; scrollbar-width: none; z-index: 1; }
@@ -183,7 +179,7 @@ svg { display: block; }
 .row.marked { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .row.marked:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
 .row.marked .t { color: var(--carbon-text); }
-.glyph .cbox { width: 1.05rem; height: 1.05rem; }
+.glyph .rowmark { width: 1.05rem; height: 1.05rem; }
 .row.cut { opacity: .55; }
 .panel.active .row.cursor { outline: 2px solid var(--accent-ink); outline-offset: -2px; }
 .panel:not(.active) .row.cursor { outline: none; }
@@ -195,8 +191,6 @@ svg { display: block; }
 .row.hidden .t { color: var(--carbon-text-muted); }
 .lfoot { display: flex; align-items: center; gap: .5rem; padding: .5rem .5rem 0; font-size: 12px; color: var(--carbon-text-muted); }
 .lfoot .grow { flex: 1; }
-.meter { width: 5rem; height: .35rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); overflow: hidden; }
-.meter i { display: block; height: 100%; background: var(--carbon-text-muted); border-radius: inherit; }
 .qfilter { position: relative; flex: 0 1 17rem; min-width: 11rem; display: flex; align-items: center; gap: .35rem; height: 1.9rem; padding: 0 .15rem 0 .65rem; border-radius: var(--radius-control); background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
 .qfilter svg { width: .85rem; height: .85rem; color: var(--carbon-text-sub); }
 .qfilter input { flex: 1; min-width: 0; width: auto; background: transparent; border: 0; outline: none; }
@@ -211,14 +205,6 @@ svg { display: block; }
 
 /* Windows */
 /* GlimStone centres its backdrop as a flex box. Here the grid track has to stretch, or a window sized in percent shrinks to its content. */
-.scrim { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; justify-content: normal; padding: 1.5rem; }
-.win { position: relative; width: min(40rem, 100%); max-height: calc(100vh - 3rem); display: flex; flex-direction: column; padding: 1.6rem 1.25rem 1.1rem; }
-.win.wide { width: min(58rem, 100%); }
-.win.full { width: min(80rem, 100%); height: calc(100vh - 3rem); }
-.win .notch { left: 1.25rem; }
-.win-body { overflow: auto; display: flex; flex-direction: column; gap: 1rem; padding: .35rem .1rem .5rem; flex: 1; min-height: 0; }
-.win-foot { display: flex; justify-content: flex-end; align-items: center; gap: .5rem; padding-top: .9rem; }
-.win-foot .start { margin-right: auto; font-size: 12px; color: var(--carbon-text-muted); }
 .well { background: var(--carbon-surface2); border-radius: var(--radius-card); padding: .85rem .9rem; display: flex; flex-direction: column; gap: .6rem; }
 .well > .eyebrow { padding: 0 0 .1rem; }
 .frow { display: flex; align-items: center; gap: .75rem; min-height: var(--btn-h); }
@@ -226,17 +212,6 @@ svg { display: block; }
 .frow > .lab small { color: var(--carbon-text-muted); font-size: 12px; }
 .stack > .frow { flex-wrap: wrap; row-gap: .45rem; }
 .stack > .frow > .seg { flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; }
-.stack > .frow > .seg button { flex: 1; justify-content: center; }
-.field { height: var(--btn-h); border-radius: var(--radius-control); background: var(--carbon-surface3); border: 0; padding: 0 .7rem; outline: none; min-width: 0; }
-.field:focus { background: var(--carbon-hover-raised); }
-textarea.field { height: auto; padding: .6rem .7rem; resize: vertical; }
-.field.w { width: 22rem; } .field.m { width: 12rem; } .field.s { width: 5.5rem; } .field.grow { flex: 1; width: auto; }
-.sw { width: 2.3rem; height: 1.3rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); position: relative; flex: none; }
-.sw::after { content: ""; position: absolute; top: .2rem; left: .2rem; width: .9rem; height: .9rem; border-radius: var(--radius-pill); background: var(--carbon-text); transition: transform .12s; }
-.sw[aria-checked="true"] { background: var(--accent); }
-.sw[aria-checked="true"]::after { transform: translateX(1rem); background: var(--accent-contrast); }
-.info { width: .95rem; height: .95rem; color: var(--carbon-text-muted); cursor: help; flex: none; display: inline-grid; }
-.info svg { width: .95rem; height: .95rem; }
 .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
 .tbl td, .tbl th { text-align: left; padding: .4rem .5rem; white-space: nowrap; }
 .tbl th { font-size: 12px; color: var(--carbon-text-muted); font-weight: 500; }
@@ -261,10 +236,10 @@ textarea.field { height: auto; padding: .6rem .7rem; resize: vertical; }
 .menu button .chev { margin-left: auto; display: grid; }
 .menu button .chev svg { width: .7rem; height: .7rem; color: var(--carbon-text-muted); transform: rotate(-90deg); }
 .menu button.open { background: var(--carbon-hover); }
-.cbox { width: 1.125rem; height: 1.125rem; flex: none; border-radius: min(var(--radius-control), 5px); display: grid; place-items: center; background: color-mix(in srgb, var(--carbon-surface3) 60%, transparent); }
-.cbox svg { width: .75rem !important; height: .75rem !important; color: transparent !important; }
-.cbox.on { background: var(--accent); }
-.cbox.on svg { color: var(--accent-contrast) !important; }
+.rowmark { width: 1.125rem; height: 1.125rem; flex: none; border-radius: var(--radius-pill); display: grid; place-items: center; background: color-mix(in srgb, var(--carbon-surface3) 60%, transparent); }
+.rowmark svg { width: .75rem !important; height: .75rem !important; color: transparent !important; }
+.rowmark.on { background: var(--accent); }
+.rowmark.on svg { color: var(--accent-contrast) !important; }
 .menu .sep { height: 1px; margin: .3rem .4rem; background: color-mix(in srgb, var(--carbon-text) 9%, transparent); flex: none; }
 .menu .head { display: flex; align-items: center; gap: .5rem; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--carbon-text-muted); padding: .35rem .3rem .2rem .6rem; }
 .menu .head .hedit { margin-left: auto; width: 1.6rem; height: 1.6rem; padding: 0; justify-content: center; }
@@ -280,15 +255,11 @@ textarea.field { height: auto; padding: .6rem .7rem; resize: vertical; }
 /* Full-page views (settings and friends) keep the brand in the corner and centre the rest. */
 .page { min-height: 0; overflow: auto; }
 .page-inner { max-width: 60rem; margin: 0 auto; display: flex; flex-direction: column; gap: 2.5rem; padding: 1rem 0 2rem; }
-.card { position: relative; padding: 1.7rem 1.2rem 1.1rem; }
-.card-body { display: flex; flex-direction: column; gap: .5rem; }
 
 /* A selector inside a sub-card needs its own track, or it melts into the grey around it. */
-.well .seg, .win .well .seg { background: var(--carbon-surface3); }
-.well .seg button:hover { background: var(--carbon-hover-raised); }
 
 /* Colours: rainbow gives every place in a list its own hue, reactive keeps glyphs grey until they are pointed at. */
-:root[data-reactive] :is(.nav-row:not(.cur), .stile:not(.cur), .btn:not(.primary), .row:not(.marked), .menu button, .eyebrow, .a-row):not(:hover) svg { color: var(--carbon-text-muted) !important; }
+:root[data-reactive] :is(.nav-row:not(.cur), .stile:not(.cur), .btn:not(.primary, .glim-btn), .row:not(.marked), .menu button, .eyebrow, .a-row):not(:hover) svg { color: var(--carbon-text-muted) !important; }
 :root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+2) { --accent-glyph: #1D99F3; }
 :root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+3) { --accent-glyph: #6FDC8C; }
 :root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+4) { --accent-glyph: #FF8389; }
@@ -300,16 +271,13 @@ textarea.field { height: auto; padding: .6rem .7rem; resize: vertical; }
 @keyframes cc-hue { to { filter: hue-rotate(360deg); } }
 
 /* Labels, one axis each: buttons, sidebar, tabs and the phone's bottom bar. */
-:root[data-l-buttons="text"] .btn:not(.icon) > svg { display: none; }
-:root:is([data-l-buttons="glyph"], [data-l-buttons="reactive"]) .btn:not(.icon):has(> svg) { font-size: 0; gap: 0; min-width: var(--btn-h); padding: 0 .55rem; }
-:root[data-l-buttons="reactive"] .btn:not(.icon):has(> svg):is(:hover, :focus-visible) { font-size: 14px; gap: .45rem; padding: 0 .85rem; }
-:root:is([data-l-buttons="glyph"], [data-l-buttons="reactive"]) .btn :is(.kbd, .count) { font-size: 12px; margin-left: .35rem; }
+:root[data-l-buttons="text"] .btn:not(.glim-btn):not(.icon) > svg { display: none; }
+:root:is([data-l-buttons="glyph"], [data-l-buttons="reactive"]) .btn:not(.glim-btn):not(.icon):has(> svg) { font-size: 0; gap: 0; min-width: var(--btn-h); padding: 0 .55rem; }
+:root[data-l-buttons="reactive"] .btn:not(.glim-btn):not(.icon):has(> svg):is(:hover, :focus-visible) { font-size: 14px; gap: .45rem; padding: 0 .85rem; }
+:root:is([data-l-buttons="glyph"], [data-l-buttons="reactive"]) .btn:not(.glim-btn) :is(.kbd, .count) { font-size: 12px; margin-left: .35rem; }
 :root[data-l-sidebar="text"] #side .nav-row > svg { display: none; }
 :root:is([data-l-sidebar="glyph"], [data-l-sidebar="reactive"]) #side .nav-row > span:not(.meta) { display: none; }
 :root[data-l-sidebar="reactive"] #side .nav-row:is(:hover, .cur) > span:not(.meta) { display: inline; }
-:root[data-l-tabs="text"] :is(.seg button, .stile) > svg { display: none; }
-:root:is([data-l-tabs="glyph"], [data-l-tabs="reactive"]) .seg button:has(> svg) { font-size: 0; gap: 0; }
-:root[data-l-tabs="reactive"] .seg button:has(> svg):is(:hover, [aria-pressed="true"]) { font-size: 14px; gap: .4rem; }
 :root:is([data-l-tabs="glyph"], [data-l-tabs="reactive"]) .stile > span { display: none; }
 :root[data-l-tabs="reactive"] .stile:is(:hover, .cur) > span { display: inline; }
 :root[data-l-bottombar="text"] .bottombar button > svg { display: none; }
@@ -340,7 +308,6 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .ptab > svg { width: .7rem; height: .7rem; margin-left: -.2rem; }
 .lfree { display: flex; align-items: center; gap: .5rem; height: 1.5rem; padding: 0 .45rem; margin: 0 -.45rem; border-radius: var(--radius-control); color: inherit; font: inherit; }
 .lfree:hover { background: var(--carbon-hover); color: var(--carbon-text); }
-.lfree:hover .meter i { background: var(--accent); }
 .pdots { display: none; gap: .35rem; margin-left: .5rem; }
 .pdots i { width: .5rem; height: .5rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); cursor: pointer; }
 .pdots i.on { background: var(--accent); }
@@ -366,7 +333,7 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .grid-view .row.gcard { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: .35rem; height: auto; min-width: 0; padding: .45rem; }
 .row .thumb { aspect-ratio: 4 / 3; border-radius: calc(var(--radius-control) * .8); display: grid; place-items: center; background: var(--carbon-surface2); overflow: hidden; }
 .row .thumb svg { width: 2.4rem; height: 2.4rem; color: var(--accent-glyph); }
-.gcard > .cbox { position: absolute; top: .75rem; left: .75rem; }
+.gcard > .rowmark { position: absolute; top: .75rem; left: .75rem; }
 .gcard .t { font-size: 13px; color: var(--carbon-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 .1rem; }
 .gcard .meta { font-size: 12px; color: var(--carbon-text-muted); padding: 0 .1rem; }
 .lclear { width: 1.2rem; height: 1.2rem; margin-left: .35rem; display: inline-grid; place-items: center; vertical-align: middle; border-radius: var(--radius-pill); color: var(--carbon-text-sub); }
@@ -385,11 +352,11 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .view-gallery .row.gcard { padding: .2rem; }
 .view-gallery .row .thumb { aspect-ratio: 1; }
 .view-gallery .gcard :is(.t, .meta) { display: none; }
-.view-gallery .gcard > .cbox { top: .5rem; left: .5rem; }
+.view-gallery .gcard > .rowmark { top: .5rem; left: .5rem; }
 .view-content .row.citem { position: relative; display: grid; grid-template-columns: 3.6rem minmax(0, 1fr) auto; align-items: center; gap: .9rem; height: auto; min-width: 0; padding: .4rem .5rem; }
 .view-content .row + .row { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--carbon-text) 7%, transparent); }
 .citem .thumb svg { width: 1.5rem; height: 1.5rem; }
-.citem > .cbox { position: absolute; top: .65rem; left: .85rem; }
+.citem > .rowmark { position: absolute; top: .65rem; left: .85rem; }
 .c-main { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
 .c-main .t { font-size: 13px; color: var(--carbon-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .c-sub { font-size: 12px; color: var(--carbon-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -451,7 +418,7 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .mitem.on { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--carbon-text); }
 
 /* Copy, move and delete: a picture of what happens first, the choices below it. */
-.xwin .win-body { gap: .85rem; }
+.xwin .glim-window-body { gap: .85rem; }
 .xroute { display: grid; grid-template-columns: 1fr minmax(8rem, 1.4fr) 1fr; align-items: center; gap: .5rem; padding: 1.1rem .75rem; border-radius: calc(var(--radius-card) - 6px); background: color-mix(in srgb, var(--carbon-surface2) 70%, transparent); }
 .xend { display: flex; flex-direction: column; align-items: center; gap: .4rem; min-width: 0; }
 .xend b { font-size: 13px; font-weight: 600; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

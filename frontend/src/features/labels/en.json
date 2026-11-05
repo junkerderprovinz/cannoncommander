@@ -9,6 +9,5 @@
   "pickNew": "Pick a shade, the name comes by itself", "pickNewAria": "Shade of the new colour", "pickShade": "Pick a shade", "shadeFor": "Shade for {name}", "nameFor": "Name for {name}",
   "removeColour": "Remove colour", "removeName": "Remove {name}", "noColours": "No colours", "coloursSaved": "Colours saved",
   "newTag": "New tag", "newTagTip": "Enter puts it in the list.", "newTagPh": "such as Holiday", "tagAria": "Tag {name}", "removeTag": "Remove tag",
-  "noTags": "No tags yet", "tagsSaved": "Tags saved",
-  "picker": { "sv": "Saturation and brightness", "svValue": "Saturation {s} %, brightness {v} %", "hue": "Hue", "value": "Colour value" }
+  "noTags": "No tags yet", "tagsSaved": "Tags saved"
 }

@@ -9,7 +9,7 @@ defineProps<{ kind: 'copy' | 'move'; dest: string; links: NonNullable<UnraidTran
 </script>
 
 <template>
-  <div class="well u-warnwell">
+  <div class="well glim-well u-warnwell">
     <div class="u-alert"><G n="IconWarning" /><div>
       <b>{{ kind === 'copy' ? t('transfer.linksCopy') : t('transfer.linksMove') }}</b>
       <p>{{ kind === 'copy' ? t('transfer.linksCopyText', { size: fmtSize(links.extra) }) : t('transfer.linksMoveText', { dest, size: fmtSize(links.extra) }) }}</p>
