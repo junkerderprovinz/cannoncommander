@@ -1,0 +1,32 @@
+# The same container as the Unraid template, for any Linux server with Docker.
+# It shows the folders below /mnt/user, the way Unraid lays out its shares. On
+# another server, keep your folders there or change the source in
+# appdata/config.yaml. Point PUID and PGID at the user who owns them. On first
+# start the container writes the password for the user admin into its log.
+
+services:
+  cannoncommander:
+    image: junkerderprovinz/cannoncommander:latest
+    container_name: cannoncommander
+    restart: unless-stopped
+    hostname: cannoncommander
+    ports:
+      - "8480:80"
+    volumes:
+      - "./appdata:/config"
+      - "/mnt:/mnt"
+    # rclone needs /dev/fuse and SYS_ADMIN to mount remote storage. Everything
+    # else works without them.
+    devices:
+      - /dev/fuse
+    cap_add:
+      - SYS_ADMIN
+      # Read and write what root alone may, as on Unraid's /boot/config and
+      # /tmp/notifications, while the server runs as PUID.
+      - DAC_READ_SEARCH
+      - DAC_OVERRIDE
+    environment:
+      TZ: Europe/Berlin
+      PUID: "1000"
+      PGID: "1000"
+      UMASK: "022"

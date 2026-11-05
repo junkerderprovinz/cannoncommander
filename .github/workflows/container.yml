@@ -1,0 +1,180 @@
+name: Container
+
+# Builds the image and pushes it to GHCR, and to Docker Hub once that is set
+# up: `edge` from main, and the version tags on a release, where release.yml
+# calls this. A pull request builds only.
+#
+# `latest` belongs to the newest published release, which this workflow cannot
+# know about, so release.yml moves it once the release exists.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "_docker/**"
+      - ".github/assets/banner-raw.txt"
+      - ".github/workflows/container.yml"
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  packages: write
+
+# The literal prefix, because github.workflow is the caller's name under
+# release.yml; the caller's name, so a direct run and a release run stay apart;
+# the event, so a dispatched test on a tag cannot cancel the real release.
+concurrency:
+  group: container-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  # Runs the image for each architecture that is pushed, on a runner of that
+  # architecture, so an image that dies on startup never reaches the registry.
+  smoke:
+    name: Boot smoke test (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            # Shared with the push job, which also builds on amd64.
+            cache: buildkit
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            cache: smoke-arm64
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # git describe needs the tags, and a shallow clone has none.
+          fetch-depth: 0
+      - id: version
+        name: Work out what to stamp into the binary
+        run: echo "value=$(git describe --tags --always)" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+      - name: Build and load it locally
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          file: _docker/Dockerfile
+          platforms: linux/${{ matrix.arch }}
+          load: true
+          tags: cannoncommander:smoke
+          build-args: |
+            VERSION=${{ steps.version.outputs.value }}
+            REVISION=${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.cache }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.cache }}
+
+      - name: Run it as nobody:users and ask it a real question
+        env:
+          WANT: ${{ steps.version.outputs.value }}
+        run: |
+          set -eu
+          mkdir -p smoke/config smoke/share/Media
+          echo hello > smoke/share/Media/hello.txt
+          sudo chown -R 99:100 smoke/share
+          docker run -d --name smoke -p 8080:80 \
+            --cpus 2 --memory 1g \
+            -e PUID=99 -e PGID=100 \
+            -v "$PWD/smoke/config:/config" \
+            -v "$PWD/smoke/share:/mnt/user" \
+            cannoncommander:smoke
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8080/health; then
+              echo; echo "answered after ${i}s"; break
+            fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8080/health > /dev/null
+
+          # A first Unraid install starts with an empty /config, where the
+          # container writes a starter configuration.
+          test -f smoke/config/config.yaml
+
+          # The banner comes once the server answers, so give it a moment.
+          for i in $(seq 1 10); do
+            docker logs smoke 2>&1 | grep -q "CANNONCOMMANDER .* IS READY" && break
+            sleep 1
+          done
+          docker logs smoke 2>&1 | grep -q "CANNONCOMMANDER .* IS READY"
+
+          pid="$(docker exec smoke pgrep -f '^/app/cannoncommander' | head -n 1)"
+          test "$(docker exec smoke stat -c %u:%g "/proc/$pid")" = 99:100
+
+          got="$(docker exec smoke /app/cannoncommander version | sed -n 's/^[[:space:]]*Version[[:space:]]*:[[:space:]]*//p')"
+          echo "stamped: ${got}, expected: ${WANT}"
+          test "${got}" = "${WANT}"
+
+      - name: Show the log and clean up
+        if: always()
+        run: |
+          docker logs smoke || true
+          docker rm -f smoke || true
+
+  push:
+    name: Build and push
+    needs: smoke
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - id: version
+        name: Work out what to stamp into the binary
+        run: echo "value=$(git describe --tags --always)" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # The Docker Hub copy is what the Unraid template pulls. It is skipped
+      # until the DOCKERHUB_USERNAME variable and the DOCKERHUB_TOKEN secret are
+      # set together.
+      - if: ${{ vars.DOCKERHUB_USERNAME != '' }}
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
+        with:
+          images: |
+            ${{ env.IMAGE }}
+            name=docker.io/${{ vars.DOCKERHUB_USERNAME }}/cannoncommander,enable=${{ vars.DOCKERHUB_USERNAME != '' }}
+          # The default latest=auto tags every semver build that is not a
+          # pre-release, including one whose release never came out.
+          flavor: latest=false
+          tags: |
+            type=raw,value=edge,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=sha
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          file: _docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          # Only a pushed branch or tag publishes. A dispatched run, direct or
+          # through release.yml, builds only.
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.version.outputs.value }}
+            REVISION=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: true
+          sbom: true
