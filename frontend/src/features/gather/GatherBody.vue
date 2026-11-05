@@ -22,7 +22,7 @@ const options = computed(() => (props.st.plan?.options ?? []).map((o) => [o.disk
 </script>
 
 <template>
-  <div class="well bk-form">
+  <div class="well glim-well bk-form">
     <Frow :label="t('gather.folder')" :tip="t('gather.folderTip')"><PathField id="g-dir" v-model="st.path" /></Frow>
     <Frow :label="t('gather.task')" :tip="t('gather.taskTip')"><Seg id="g-mode" v-model="st.mode" :options="MODES" /></Frow>
     <div id="g-pick">
@@ -31,7 +31,7 @@ const options = computed(() => (props.st.plan?.options ?? []).map((o) => [o.disk
       </Frow>
     </div>
   </div>
-  <div class="well">
+  <div class="well glim-well">
     <div class="bk-tools"><span id="g-sum" class="eyebrow">{{ st.plan && st.valid ? t('gather.sum', { files: files(st.plan.files), size: fmtSize(st.plan.size) || '0 B' }) : t('gather.spread') }}</span></div>
     <div id="g-bars" class="u-dist">
       <div v-if="!st.valid" class="empty"><G n="IconFolder" /><div>{{ t('gather.pickUser') }}</div></div>

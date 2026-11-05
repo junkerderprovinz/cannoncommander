@@ -12,7 +12,7 @@ const ended = (r: TestRow) => ['ok', 'broken', 'locked'].includes(r.state);
 </script>
 
 <template>
-  <div class="well"><div id="at-sum" class="eyebrow">{{ st.sum }}</div>
+  <div class="well glim-well"><div id="at-sum" class="eyebrow">{{ st.sum }}</div>
     <div id="at-list" class="at-list">
       <div v-for="(r, i) in st.rows" :key="r.path" class="at-row" :class="{ bad: r.state === 'broken' || r.state === 'locked', good: r.state === 'ok' }" :data-at="i">
         <Tile :k="r.k" /><span class="bk-name">{{ r.k.name }}</span><span class="bar"><i :style="{ width: (r.done * 100).toFixed(1) + '%' }"></i></span>

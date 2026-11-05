@@ -70,7 +70,7 @@ defineExpose({ keys });
       </span>
       <span class="glim-num muted">{{ fmtDur(st.dur) }}</span>
     </div>
-    <div v-if="many && !compact" class="well cv-tracks">
+    <div v-if="many && !compact" class="well glim-well cv-tracks">
       <div class="eyebrow">{{ artist }}</div>
       <button v-for="(s, k) in sibs" :key="s.name" class="nav-row" :class="{ cur: s.name === n.name }" :data-k="k" @click="go(null, k)">
         <G n="IconFileAudio" /><span>{{ stem(s.name) }}</span><span class="meta glim-num">{{ s.name === n.name && st.dur ? fmtDur(st.dur) : '' }}</span>

@@ -3,11 +3,11 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Rule, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Dropdown from '../kit/Dropdown.vue';
-import Frow from '../kit/Frow.vue';
-import { attempt, c, fail, setFoot } from '../kit/kit';
-import PathField from '../kit/PathField.vue';
-import Seg from '../kit/Seg.vue';
+import Dropdown from '@/ui/Dropdown.vue';
+import Frow from '@/ui/Frow.vue';
+import { attempt, c, fail, stepFoot } from '@/features/config/shared';
+import PathField from '@/ui/PathField.vue';
+import Seg from '@/ui/Seg.vue';
 import { RULES, ruleName } from '../roles';
 
 const props = defineProps<{ win: WinEntry; index: number | null; rules: Rule[]; users: User[]; save: (rules: Rule[]) => Promise<void> }>();
@@ -42,13 +42,13 @@ async function save() {
 }
 
 onMounted(async () => {
-  setFoot(props.win, [cancelBtn(), { label: isNew ? c('users.create') : c('save'), g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: () => { save(); return false; } }]);
+  stepFoot(props.win, [cancelBtn(), { label: isNew ? c('users.create') : c('save'), g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: () => { save(); return false; } }]);
   groups.value = (await admin.groups().catch(() => [])).map((g) => g.name);
 });
 </script>
 
 <template>
-  <div class="well">
+  <div class="well glim-well">
     <Frow :label="c('rules.appliesTo')"><Seg id="a-rkind" v-model="kindModel" :options="[['user', c('rules.user')], ['group', c('rules.groupWord')], ['all', c('rules.all')]]" /></Frow>
     <Frow v-if="kind === 'user'" :label="c('rules.user')"><Dropdown v-model="d.who" :options="users.map((u) => [u.name, u.full])" /></Frow>
     <Frow v-else-if="kind === 'group'" :label="c('rules.groupWord')">
@@ -56,7 +56,7 @@ onMounted(async () => {
       <span v-else class="pill state">{{ c('users.noGroups') }}</span>
     </Frow>
   </div>
-  <div class="well">
+  <div class="well glim-well">
     <Frow :label="c('rules.pathOrPattern')" :tip="c('rules.pathTip')"><PathField id="a-rpath" v-model="d.path" :placeholder="c('rules.pathPh')" /></Frow>
     <Frow :label="c('rules.rule')" :tip="c('rules.ruleTip')"><Seg v-model="d.rule" :options="RULES.map(([r, g]) => [r, ruleName(r), g])" /></Frow>
   </div>

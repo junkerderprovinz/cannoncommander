@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import { ACCENTS, applyAccent, DEFAULT_ACCENT, RAINBOW } from '@glimstone/core';
+import { Card, ColorPicker, InfoBubble } from '@glimstone/vue';
+import { ACCENTS, applyAccent, COLOR_NAMES_DE, DEFAULT_ACCENT, RAINBOW } from '@glimstone/core';
 import { computed, ref } from 'vue';
 import { G } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
-import { setLanguage } from '@/i18n';
+import { locale, setLanguage } from '@/i18n';
 import { found, motionPressed, rainbowSwitched, shapePressed } from '../eggs';
-import Card from '../kit/Card.vue';
-import ColourPop from '../kit/ColourPop.vue';
-import Dropdown from '../kit/Dropdown.vue';
-import Frow from '../kit/Frow.vue';
-import Info from '../kit/Info.vue';
-import { c, P } from '../kit/kit';
-import Seg from '../kit/Seg.vue';
-import Sw from '../kit/Sw.vue';
+import Dropdown from '@/ui/Dropdown.vue';
+import Frow from '@/ui/Frow.vue';
+import { c, P } from '@/features/config/shared';
+import { pickerWords } from '@/ui/kit';
+import Seg from '@/ui/Seg.vue';
+import Sw from '@/ui/Sw.vue';
 
 const PRESETS = ACCENTS.map((a) => a.hex);
 const same = (a: string[], b: string[]) => a.length === b.length && a.every((x, i) => x.toLowerCase() === b[i]!.toLowerCase());
@@ -36,8 +35,19 @@ const rotate = computed({ get: () => prefs.rotate, set: (on: boolean) => { prefs
 const accentDefault = computed(() => prefs.accent.toLowerCase() === DEFAULT_ACCENT.toLowerCase() && same(presets.value, PRESETS));
 const ordered = computed(() => (prefs.tabOrder || []).length > 0);
 
-// The picker floats beside the swatch it belongs to and paints the page live while it is dragged.
+// The picker floats beside the swatch it belongs to and paints the page live while it is dragged. What it shows when
+// it closes is saved, however it was closed.
 const pop = ref<{ anchor: HTMLElement; hex: string; live: (hex: string) => void; done: (hex: string) => void } | null>(null);
+let shown = '';
+function live(hex: string) {
+  shown = hex.toUpperCase();
+  pop.value?.live(shown);
+}
+function closed() {
+  if (shown) pop.value?.done(shown);
+  shown = '';
+  pop.value = null;
+}
 
 function preset(e: MouseEvent, i: number) {
   const el = e.currentTarget as HTMLElement;
@@ -83,7 +93,7 @@ function resetOrder() {
   </Card>
   <Card :title="c('look.colours')">
     <!-- While the rainbow owns the colours the accent row stays visible but dimmed, and its bubble says how to get it back. -->
-    <div class="frow a-accent" :class="{ dim: prefs.rainbow }"><span class="lab"><span class="a-dimmable">{{ c('look.accent') }}</span><template v-if="prefs.rainbow">{{ ' ' }}<Info :tip="c('look.accentDimTip')" /></template></span>
+    <div class="frow a-accent" :class="{ dim: prefs.rainbow }"><span class="lab"><span class="a-dimmable">{{ c('look.accent') }}</span><template v-if="prefs.rainbow">{{ ' ' }}<InfoBubble :tip="c('look.accentDimTip')" /></template></span>
       <div class="a-swatches a-dimmable">
         <button v-for="(hex, i) in presets" :key="i" class="a-swatch" :style="{ '--c': hex }" :data-preset="i" :aria-pressed="hex.toLowerCase() === prefs.accent.toLowerCase()" :disabled="prefs.rainbow" :data-tip="c('look.preset', { n: i + 1 })" :aria-label="c('look.preset', { n: i + 1 })" @click="preset($event, i)"></button>
         <button id="a-accent-reset" class="a-reset" :data-tip="c('look.accentReset')" :aria-label="c('look.accentReset')" :disabled="accentDefault || prefs.rainbow" @click="resetAccent"><G n="IconResetArrow" /></button>
@@ -101,5 +111,5 @@ function resetOrder() {
       </div></div>
     </template>
   </Card>
-  <ColourPop v-if="pop" :key="pop.anchor.dataset.preset ?? 'p' + pop.anchor.dataset.palette" :anchor="pop.anchor" :hex="pop.hex" @live="pop.live" @done="pop.done" @close="pop = null" />
+  <ColorPicker v-if="pop" :key="pop.anchor.dataset.preset ?? 'p' + pop.anchor.dataset.palette" :model-value="pop.hex" :anchor="pop.anchor" :names="locale() === 'de' ? COLOR_NAMES_DE : false" :text="pickerWords()" @input="live" @close="closed" />
 </template>

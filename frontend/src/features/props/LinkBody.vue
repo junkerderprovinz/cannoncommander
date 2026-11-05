@@ -4,7 +4,7 @@ import { onMounted, ref, watchEffect } from 'vue';
 import { join, parent, split } from '@/files/paths';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
-import BkPath from '@/ui/BkPath.vue';
+import PathField from '@/ui/PathField.vue';
 import FinalPath from '@/ui/FinalPath.vue';
 import Frow from '@/ui/Frow.vue';
 import { pressPrimary } from '@/ui/kit';
@@ -29,10 +29,10 @@ onMounted(() => setTimeout(() => name.value?.select(), 20));
 </script>
 
 <template>
-  <div class="well bk-form" @keydown.enter="pressPrimary">
-    <Frow :label="t('props.pointsTo')" :tip="t('props.pointsToTip')"><input id="l-target" v-model="st.target" class="field grow mono" spellcheck="false" autocomplete="off"></Frow>
-    <Frow :label="t('props.lies')"><BkPath id="l-where" v-model="st.where" /></Frow>
-    <Frow :label="t('props.name')"><input id="l-name" ref="name" v-model="st.name" class="field grow" spellcheck="false" autocomplete="off"></Frow>
+  <div class="well glim-well bk-form" @keydown.enter="pressPrimary">
+    <Frow :label="t('props.pointsTo')" :tip="t('props.pointsToTip')"><input id="l-target" v-model="st.target" class="glim-input grow glim-input--mono" spellcheck="false" autocomplete="off"></Frow>
+    <Frow :label="t('props.lies')"><PathField id="l-where" v-model="st.where" /></Frow>
+    <Frow :label="t('props.name')"><input id="l-name" ref="name" v-model="st.name" class="glim-input grow" spellcheck="false" autocomplete="off"></Frow>
     <Frow :label="t('props.yields')">
       <span id="l-final" class="bk-finalw">
         <span v-if="okDir === false" class="pill fault">{{ t('ui.noFolder') }}</span>

@@ -2,13 +2,14 @@
 // What someone sees who got a share link: the name and the note of the owner, the files with a preview, downloads
 // one by one or as a zip, the password when the link has one, uploads when it takes them, and a kind word when the
 // link leads nowhere any more.
+import { PasswordField } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { ApiError } from '@/api/client';
 import { inside, type PublicItem, type PublicListing, type PublicShare, shareApi } from '@/api/share';
 import { fmtCount, fmtDate, fmtListDate, fmtSize } from '@/core/format';
 import { G, glyphOf } from '@/core/glyphs';
 import { t } from '@/i18n';
-import PwField from '@/ui/PwField.vue';
+import { eyeWords } from '@/ui/kit';
 import { canPreview } from './preview';
 import SharePreview from './SharePreview.vue';
 import ShareUpload from './ShareUpload.vue';
@@ -134,7 +135,7 @@ async function uploaded() {
         <form class="sp-lock" novalidate @submit.prevent="unlock">
           <p class="sp-text">{{ s('lockedText') }}</p>
           <div v-if="err" class="sp-err" role="alert"><G n="IconWarning" /><span>{{ err }}</span></div>
-          <div class="frow"><span class="lab">{{ s('password') }}</span><PwField id="sp-pass" v-model="password" autocomplete="current-password" /></div>
+          <div class="frow"><span class="lab">{{ s('password') }}</span><PasswordField id="sp-pass" v-model="password" autocomplete="current-password" class="grow" :text="eyeWords()" /></div>
           <button class="btn key primary" type="submit" :disabled="busy"><G n="IconUnlock" />{{ s('open') }}</button>
         </form>
       </section>
@@ -149,7 +150,7 @@ async function uploaded() {
             <a v-if="isFile" class="btn key primary" :href="api.rawUrl('/', true)" data-sp="download"><G n="IconDownload" />{{ s('download') }}</a>
             <a v-else class="btn key primary" :href="api.zipUrl(path)" data-sp="zip"><G n="IconDownload" />{{ zipLabel }}</a>
           </div>
-          <div v-if="pub.message" class="well sp-msg"><div class="eyebrow">{{ s('message') }}</div><p>{{ pub.message }}</p></div>
+          <div v-if="pub.message" class="well glim-well sp-msg"><div class="eyebrow">{{ s('message') }}</div><p>{{ pub.message }}</p></div>
         </section>
 
         <section v-if="!isFile" class="glim-card sp-card sp-files">

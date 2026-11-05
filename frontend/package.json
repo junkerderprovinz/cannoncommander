@@ -28,10 +28,15 @@
     "@codemirror/legacy-modes": "^6.5.5",
     "@codemirror/state": "^6.7.6",
     "@codemirror/view": "^6.43.15",
-    "@glimstone/core": "file:vendor/glimstone/glimstone-core-4.0.0.tgz",
-    "@glimstone/vue": "file:vendor/glimstone/glimstone-vue-4.0.0.tgz",
+    "@glimstone/core": "^4.1.0",
+    "@glimstone/vue": "^4.1.0",
     "@lezer/highlight": "^1.2.5",
     "@likecoin/epub-ts": "^0.7.3",
+    "@zag-js/combobox": "^1.46.0",
+    "@zag-js/menu": "^1.46.0",
+    "@zag-js/select": "^1.46.0",
+    "@zag-js/slider": "^1.46.0",
+    "@zag-js/vue": "^1.46.0",
     "dompurify": "^3.4.17",
     "fflate": "^0.8.3",
     "mammoth": "^1.13.0",
@@ -48,8 +53,5 @@
     "vite": "^8.3.5",
     "vitest": "^5.1.0",
     "vue-tsc": "^3.3.14"
-  },
-  "overrides": {
-    "@glimstone/core": "$@glimstone/core"
   }
 }

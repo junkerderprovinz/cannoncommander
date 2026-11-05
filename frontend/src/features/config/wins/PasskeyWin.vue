@@ -5,8 +5,8 @@ import { me } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Frow from '../kit/Frow.vue';
-import { c, fail, setFoot } from '../kit/kit';
+import Frow from '@/ui/Frow.vue';
+import { c, fail, stepFoot } from '@/features/config/shared';
 
 const props = defineProps<{ win: WinEntry; taken: string[]; done: () => void }>();
 const name = ref(''), waiting = ref(false);
@@ -17,7 +17,7 @@ async function next() {
   if (!n) return fail(c('security.needPasskeyName'), el.value);
   if (props.taken.includes(n)) return fail(c('nameTaken'), el.value);
   waiting.value = true;
-  setFoot(props.win, [cancelBtn()]);
+  stepFoot(props.win, [cancelBtn()]);
   try {
     await me.addPasskey(n);
   } catch {
@@ -30,13 +30,13 @@ async function next() {
   toast(c('security.passkeyAdded', { name: n }));
   props.done();
 }
-const showName = () => setFoot(props.win, [cancelBtn(), { label: c('next'), g: 'IconForward', primary: true, run: () => { next(); return false; } }]);
+const showName = () => stepFoot(props.win, [cancelBtn(), { label: c('next'), g: 'IconForward', primary: true, run: () => { next(); return false; } }]);
 onMounted(showName);
 </script>
 
 <template>
   <div v-if="waiting" class="empty"><G n="IconKey" /><div>{{ c('security.confirmPasskey') }}</div></div>
-  <div v-else class="well">
-    <Frow :label="c('sources.name')" :tip="c('security.passkeyNameTip')"><input ref="el" v-model="name" class="field m" :placeholder="c('security.passkeyNamePh')" @keydown.enter="next"></Frow>
+  <div v-else class="well glim-well">
+    <Frow :label="c('sources.name')" :tip="c('security.passkeyNameTip')"><input ref="el" v-model="name" class="glim-input m" :placeholder="c('security.passkeyNamePh')" @keydown.enter="next"></Frow>
   </div>
 </template>

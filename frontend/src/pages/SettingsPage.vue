@@ -6,6 +6,7 @@ const remembered: { id?: string } = {};
 <script setup lang="ts">
 // Settings: a column of tiles beside the content, the tab selector turned on its side, and only the content scrolls.
 // A tile can be dragged to another place in the column; the order is kept like any other pref.
+import { Card } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import { labelOf } from '@/core/actions';
 import { G } from '@/core/glyphs';
@@ -54,7 +55,7 @@ function end() {
 
 <template>
   <div v-if="!cur" class="page-inner">
-    <section class="card glim-card"><span class="notch">{{ t('settings.title') }}</span><div class="card-body"><p class="muted">{{ t('settings.none') }}</p></div></section>
+    <Card :title="t('settings.title')"><p class="muted">{{ t('settings.none') }}</p></Card>
   </div>
   <div v-else class="settings">
     <nav ref="tiles" class="tiles" role="tablist" aria-orientation="vertical" :aria-label="t('settings.title')">

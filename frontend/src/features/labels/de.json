@@ -9,6 +9,5 @@
   "pickNew": "Farbton wählen, der Name kommt von selbst", "pickNewAria": "Farbton der neuen Farbe", "pickShade": "Farbton wählen", "shadeFor": "Farbton für {name}", "nameFor": "Name für {name}",
   "removeColour": "Farbe entfernen", "removeName": "{name} entfernen", "noColours": "Keine Farben", "coloursSaved": "Farben gespeichert",
   "newTag": "Neues Schlagwort", "newTagTip": "Mit Enter kommt es in die Liste.", "newTagPh": "etwa Urlaub", "tagAria": "Schlagwort {name}", "removeTag": "Schlagwort entfernen",
-  "noTags": "Noch keine Schlagworte", "tagsSaved": "Schlagworte gespeichert",
-  "picker": { "sv": "Sättigung und Helligkeit", "svValue": "Sättigung {s} %, Helligkeit {v} %", "hue": "Farbton", "value": "Farbwert" }
+  "noTags": "Noch keine Schlagworte", "tagsSaved": "Schlagworte gespeichert"
 }

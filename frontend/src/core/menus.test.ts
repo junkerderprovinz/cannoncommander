@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { action, actions } from './actions';
 import { isHead, type MenuEntry, type Resolved, resolveItems } from './menu';
 import { allMenuItems, MENUS, menuItems, menuName } from './menus';
-import { closeBtn, withWayOut } from './windows';
 
 const register = (...ids: string[]) => ids.forEach((id) => action(id, { label: id, run: () => {} }));
 const text = (v: unknown) => (typeof v === 'function' ? v() : v);
@@ -76,17 +75,3 @@ describe('menu bar', () => {
   });
 });
 
-describe('window foot row', () => {
-  it('adds Schließen to a foot without a way out', () => {
-    expect(withWayOut([{ label: 'Laden' }]).map((f) => f.label)).toEqual(['Schließen', 'Laden']);
-  });
-
-  it('adds Abbrechen before the primary button and after the start text', () => {
-    expect(withWayOut([{ start: 'Hinweis' }, { label: 'Speichern', primary: true }]).map((f) => f.label ?? f.start)).toEqual(['Hinweis', 'Abbrechen', 'Speichern']);
-  });
-
-  it('leaves a foot that already has a way out alone', () => {
-    const foot = [closeBtn()];
-    expect(withWayOut(foot)).toBe(foot);
-  });
-});

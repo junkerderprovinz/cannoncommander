@@ -2,8 +2,6 @@
 .bk-top { gap: 1rem; }
 .bk-tokens { display: flex; flex-wrap: wrap; gap: .35rem; }
 .bk-meta > .muted { width: 100%; font-size: 12px; }
-#m-presets .a-dd { flex: 1; min-width: 0; }
-#m-presets .a-dd > span { min-width: 0; }
 .bk-mhead, .bk-mrow { display: grid; grid-template-columns: minmax(0, 1fr) 1.75rem minmax(0, 1fr) 7rem; gap: .6rem; align-items: center; }
 .bk-mhead { font-size: 12px; color: var(--carbon-text-muted); padding: 0 .45rem; height: 1.4rem; }
 .bk-mrow { min-height: 2rem; padding: 0 .45rem; border-radius: var(--radius-control); font-size: 13px; flex: none; }
@@ -15,7 +13,7 @@
 @media (max-width: 760px) { .bk-mhead { display: none; } .bk-mrow { grid-template-columns: minmax(0, 1fr) 1.2rem minmax(0, 1fr); } .bk-mrow .pill { grid-column: 1 / -1; justify-self: start; } }
 .re-win { height: min(44rem, calc(100vh - 3rem)); }
 .re-find { flex-direction: row; align-items: center; gap: .5rem; flex-wrap: wrap; flex: none; }
-.re-find .field { flex: 1 1 12rem; min-width: 0; height: var(--btn-h); }
+.re-find .glim-input { flex: 1 1 12rem; min-width: 0; height: var(--btn-h); }
 .re-sw { display: inline-flex; align-items: center; gap: .45rem; font-size: 13px; color: var(--carbon-text-sub); }
 .re-main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
 .re-edit { flex-direction: row; gap: 0; padding: 0; overflow: hidden; min-height: 0; }

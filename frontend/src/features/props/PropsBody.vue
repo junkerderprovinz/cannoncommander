@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Checkbox } from '@glimstone/vue';
 // Eigenschaften und Rechte: what the selection is, who owns it, and the nine rights as boxes and as a number.
 import { computed, ref, watch } from 'vue';
 import type { Item } from '@/api/client';
@@ -63,7 +64,7 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
 <template>
   <div class="bk-phead"><Tile v-if="one" :k="one" /><Tile v-else g="IconFiles" /><span class="bk-name">{{ title }}</span></div>
   <div class="bk-grid2 bk-top" @keydown.enter="pressPrimary">
-    <div class="well bk-form"><div class="eyebrow">{{ t('props.general') }}</div>
+    <div class="well glim-well bk-form"><div class="eyebrow">{{ t('props.general') }}</div>
       <template v-if="one">
         <Frow :label="t('props.kind')"><span class="bk-val">{{ typeOf(one) }}</span></Frow>
         <Frow :label="t('props.place')"><span class="bk-val bk-pathv"><span class="bk-path mono" :title="st.paths[0]"><bdi>{{ st.paths[0] }}</bdi></span><CopyBtn :text="st.paths[0]!" :tip="t('props.copyPath')" /></span></Frow>
@@ -79,21 +80,21 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
         <Frow :label="t('props.lastChanged')"><span class="bk-val glim-num">{{ fmtTime(newest) }}</span></Frow>
       </template>
     </div>
-    <div class="well bk-form"><div class="eyebrow">{{ t('props.owning') }}</div>
+    <div class="well glim-well bk-form"><div class="eyebrow">{{ t('props.owning') }}</div>
       <Frow :label="t('props.owner')" :tip="t('props.ownerTip')"><span class="bk-idf"><Dropdown id="r-owner" v-model="st.owner" :options="owners" :disabled="st.ro" /><span id="r-uid" class="pill glim-num">{{ idOf(st.uids, st.owner, 'UID') }}</span></span></Frow>
       <Frow :label="t('props.group')"><span class="bk-idf"><Dropdown id="r-group" v-model="st.group" :options="groups" :disabled="st.ro" /><span id="r-gid" class="pill glim-num">{{ idOf(st.gids, st.group, 'GID') }}</span></span></Frow>
       <Frow :label="t('props.inside')" :tip="anyDir ? t('props.insideTip') : t('props.onlyDirs')"><Sw id="r-rec" v-model="st.rec" :disabled="!anyDir || st.ro" /></Frow>
     </div>
   </div>
   <template v-if="one && !st.ro"><Render v-for="(well, n) in extend.propsWells" :key="n" :node="well(st.paths[0]!)" /></template>
-  <div class="well bk-form"><div class="bk-tools"><span class="eyebrow">{{ t('props.rights') }}</span><span v-if="st.modes.length > 1" class="pill warn" :data-tip="t('props.mixedTip')">{{ t('props.mixed') }}</span></div>
+  <div class="well glim-well bk-form"><div class="bk-tools"><span class="eyebrow">{{ t('props.rights') }}</span><span v-if="st.modes.length > 1" class="pill warn" :data-tip="t('props.mixedTip')">{{ t('props.mixed') }}</span></div>
     <div class="bk-perms">
       <span></span><span v-for="bit in BITS" :key="bit" class="bk-ph">{{ t(`props.bits.${bit}`) }}</span>
       <template v-for="who in WHO" :key="who">
         <span class="bk-pl">{{ t(`props.who.${who}`) }}</span>
-        <span v-for="bit in BITS" :key="bit" class="bk-pc"><button class="col-check" type="button" role="checkbox" :aria-checked="on(who, bit)" :data-bk-perm="`${who}:${bit}`" :aria-label="`${t(`props.who.${who}`)}: ${t(`props.bits.${bit}`)}`" :disabled="st.ro" @click="flip(who, bit)"><span class="cbox" :class="{ on: on(who, bit) }"><G n="IconCheck" /></span></button></span>
+        <span v-for="bit in BITS" :key="bit" class="bk-pc"><Checkbox slim :model-value="on(who, bit)" :data-bk-perm="`${who}:${bit}`" :label="`${t(`props.who.${who}`)}: ${t(`props.bits.${bit}`)}`" :disabled="st.ro" @update:model-value="flip(who, bit)" /></span>
       </template>
     </div>
-    <Frow :label="t('props.asNumber')" :tip="t('props.asNumberTip')"><span class="bk-idf"><span id="r-sym" class="pill mono">{{ symbolic }}</span><input id="r-oct" v-model="oct" class="field s mono glim-num" maxlength="4" inputmode="numeric" :disabled="st.ro"></span></Frow>
+    <Frow :label="t('props.asNumber')" :tip="t('props.asNumberTip')"><span class="bk-idf"><span id="r-sym" class="pill mono">{{ symbolic }}</span><input id="r-oct" v-model="oct" class="glim-input s glim-input--mono glim-num" maxlength="4" inputmode="numeric" :disabled="st.ro"></span></Frow>
   </div>
 </template>

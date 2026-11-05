@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import { Card } from '@glimstone/vue';
 import { ref } from 'vue';
 import { admin, exists } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { useUser } from '@/stores/user';
-import Card from '../kit/Card.vue';
-import Frow from '../kit/Frow.vue';
-import { c, fail, P } from '../kit/kit';
-import PathField from '../kit/PathField.vue';
-import Seg from '../kit/Seg.vue';
-import Sw from '../kit/Sw.vue';
+import Frow from '@/ui/Frow.vue';
+import { c, fail, P } from '@/features/config/shared';
+import PathField from '@/ui/PathField.vue';
+import Seg from '@/ui/Seg.vue';
+import Sw from '@/ui/Sw.vue';
 
 const start = ref(prefs.startFolder || '/mnt/user/downloads');
 const field = ref<InstanceType<typeof PathField> | null>(null);

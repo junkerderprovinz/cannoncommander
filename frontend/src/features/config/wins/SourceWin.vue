@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { InfoBubble } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, exists, type Source } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Frow from '../kit/Frow.vue';
-import Info from '../kit/Info.vue';
-import { attempt, c, fail, setFoot } from '../kit/kit';
-import PathField from '../kit/PathField.vue';
-import Sw from '../kit/Sw.vue';
+import Frow from '@/ui/Frow.vue';
+import { attempt, c, fail, stepFoot } from '@/features/config/shared';
+import PathField from '@/ui/PathField.vue';
+import Sw from '@/ui/Sw.vue';
 
 const props = defineProps<{ win: WinEntry; source: Source | null; all: Source[]; saved: () => void }>();
 const s = props.source;
@@ -44,21 +44,21 @@ async function save() {
   props.saved();
 }
 
-onMounted(() => setFoot(props.win, [cancelBtn(), { label: s ? c('save') : c('add'), g: s ? 'IconSave' : 'IconAdd', primary: true, run: () => { save(); return false; } }]));
+onMounted(() => stepFoot(props.win, [cancelBtn(), { label: s ? c('save') : c('add'), g: s ? 'IconSave' : 'IconAdd', primary: true, run: () => { save(); return false; } }]));
 </script>
 
 <template>
-  <div class="well">
-    <Frow :label="c('sources.name')"><input id="a-sname" ref="nameEl" v-model="name" class="field m" :placeholder="c('sources.namePh')"></Frow>
+  <div class="well glim-well">
+    <Frow :label="c('sources.name')"><input id="a-sname" ref="nameEl" v-model="name" class="glim-input m" :placeholder="c('sources.namePh')"></Frow>
     <Frow :label="c('sources.folder')"><PathField id="a-spath" ref="pathEl" v-model="path" /></Frow>
   </div>
-  <div class="well">
+  <div class="well glim-well">
     <Frow :label="c('sources.readOnly')" :tip="c('sources.readOnlyTip')"><Sw v-model="readOnly" /></Frow>
     <Frow :label="c('sources.indexIt')" :tip="c('sources.indexItTip')"><Sw v-model="indexed" /></Frow>
     <Frow :label="c('sources.skipHidden')" :tip="c('sources.skipHiddenTip')"><Sw v-model="skipHidden" /></Frow>
   </div>
-  <div class="well">
-    <div class="eyebrow">{{ c('sources.exclude') }} <Info :tip="c('sources.excludeTip')" /></div>
-    <textarea id="a-sex" v-model="exclude" class="field" rows="3" spellcheck="false" placeholder="*.tmp"></textarea>
+  <div class="well glim-well">
+    <div class="eyebrow">{{ c('sources.exclude') }} <InfoBubble :tip="c('sources.excludeTip')" /></div>
+    <textarea id="a-sex" v-model="exclude" class="glim-input" rows="3" spellcheck="false" placeholder="*.tmp"></textarea>
   </div>
 </template>
