@@ -640,4 +640,7 @@ func TestALinkedFolderAtTheRootIsIndexedAsTheFolderItLeadsTo(t *testing.T) {
 	if strings.Join(folders, ",") != "code" || strings.Join(files, ",") != "other" {
 		t.Errorf("folders %v, files %v", folders, files)
 	}
+	if dirs := (&Scanner{idx: idx}).getTopLevelDirs(); strings.Join(dirs, ",") != "/code/" {
+		t.Errorf("scanners for %v", dirs)
+	}
 }
