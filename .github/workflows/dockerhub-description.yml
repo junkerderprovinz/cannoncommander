@@ -1,0 +1,28 @@
+# Pushes the README to the Docker Hub overview without building anything, so a
+# failing sync can be traced to the credential alone.
+name: Docker Hub description
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Sync README to Docker Hub
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      # No check for the secret: a missing token or a refused login should turn
+      # this run red rather than pass quietly.
+      - name: Sync README to Docker Hub
+        uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ vars.DOCKERHUB_USERNAME }}/cannoncommander
+          short-description: "A two-pane file manager for Unraid in the browser, with tabs, F-keys and background copies."
+          enable-url-completion: true

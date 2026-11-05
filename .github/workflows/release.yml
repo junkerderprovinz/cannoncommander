@@ -1,0 +1,115 @@
+name: Release
+
+# Fires on the version tag, builds and pushes the image for it and publishes the
+# hand-written notes as the GitHub release. The release comes last, once the
+# image exists, and the image's `latest` tag follows it, so the badge, the
+# release page and `docker pull` name the same version. A failed build leaves no
+# release; re-running the failed jobs finishes it.
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+  # Builds without publishing, so a change to this chain can be tried before a
+  # tag depends on it.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # Before the long image build rather than after it.
+  notes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Check that the notes exist
+        if: github.ref_type == 'tag'
+        run: |
+          set -eu
+          notes=".github/release-notes/${GITHUB_REF_NAME}.md"
+          if [ ! -s "$notes" ]; then
+            echo "no release notes at $notes" >&2
+            echo "A release without notes is a tag, and a tag is not a release." >&2
+            exit 1
+          fi
+
+  # The image for this version, without `latest`, which image-latest moves once
+  # the release is out.
+  container:
+    needs: notes
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/container.yml
+    # The Docker Hub token, for the copy the Unraid template pulls.
+    secrets: inherit
+
+  publish:
+    needs: container
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      # Decided once, by publish-release.sh.
+      latest: ${{ steps.publish.outputs.latest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Publish
+        id: publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/publish-release.sh
+
+  # `latest` on the image means the newest released version. It follows the
+  # answer publish-release.sh gave for the release's "Latest" badge, so a
+  # version whose release never came out cannot take it and re-cutting an older
+  # one cannot drag it back. imagetools copies the manifest, nothing is rebuilt.
+  image-latest:
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - if: ${{ vars.DOCKERHUB_USERNAME != '' }}
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Move latest to this release
+        env:
+          # Written out, because imagetools would not lowercase a name built
+          # from the repository.
+          IMAGE: ghcr.io/junkerderprovinz/cannoncommander
+          HUB: ${{ vars.DOCKERHUB_USERNAME != '' && format('docker.io/{0}/cannoncommander', vars.DOCKERHUB_USERNAME) || '' }}
+          LATEST: ${{ needs.publish.outputs.latest }}
+        run: |
+          set -eu
+          # Empty means publish-release.sh never said, and a silent skip would
+          # leave the badge and the image tag on different versions.
+          case "$LATEST" in
+            true) ;;
+            false) echo "the release is not the newest one, so latest stays where it is"; exit 0 ;;
+            *) echo "::error::publish did not say whether $GITHUB_REF_NAME is the latest release, so the image tag is not moved blindly."; exit 1 ;;
+          esac
+          version="${GITHUB_REF_NAME#v}"
+          # metadata-action and this job derive the tag separately, so check it
+          # exists before moving latest.
+          docker buildx imagetools inspect "${IMAGE}:${version}" > /dev/null
+          docker buildx imagetools create --tag "${IMAGE}:latest" "${IMAGE}:${version}"
+          echo "${IMAGE}:latest is ${version}"
+          if [ -n "$HUB" ]; then
+            docker buildx imagetools create --tag "${HUB}:latest" "${HUB}:${version}"
+            echo "${HUB}:latest is ${version}"
+          fi

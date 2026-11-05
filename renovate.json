@@ -3,6 +3,7 @@
   "extends": [
     "config:recommended",
     "helpers:pinGitHubActionDigests",
+    "docker:pinDigests",
     ":semanticCommits",
     ":dependencyDashboard",
     ":enableVulnerabilityAlertsWithLabel(security)"
@@ -21,6 +22,15 @@
       "automergeType": "branch",
       "commitMessagePrefix": "ci:",
       "labels": ["github-actions"]
+    },
+    {
+      "description": "Docker: auto-merge digest pins and digest refreshes (same tag, new build). Major and minor stay open for review.",
+      "matchManagers": ["dockerfile"],
+      "matchUpdateTypes": ["pinDigest", "digest"],
+      "automerge": true,
+      "automergeType": "branch",
+      "commitMessagePrefix": "ci:",
+      "labels": ["docker"]
     }
   ]
 }

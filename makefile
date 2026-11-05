@@ -13,7 +13,7 @@ BACKEND_BUILD := build
 
 .SILENT:
 
-.PHONY: setup update build build-docker build-docker-slim build-backend build-frontend run generate-config
+.PHONY: setup update build build-docker build-backend build-frontend run generate-config
 .PHONY: lint-frontend lint-backend lint test test-backend test-frontend check-all setup-gofitz-cgo
 
 setup:
@@ -40,9 +40,6 @@ build: build-frontend build-backend
 
 build-docker:
 	docker build --build-arg="VERSION=testing" --build-arg="REVISION=n/a" -t cannoncommander -f _docker/Dockerfile .
-
-build-docker-slim:
-	docker build --build-arg="VERSION=testing" --build-arg="REVISION=n/a" -t cannoncommander -f _docker/Dockerfile.slim .
 
 build-backend:
 	@echo "Building backend..."

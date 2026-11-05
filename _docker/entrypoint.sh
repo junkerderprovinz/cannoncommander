@@ -28,10 +28,38 @@ if [ ! -d /mnt/remotes ]; then
   mkdir -p /mnt/remotes && chown "$PUID:$PGID" /mnt/remotes
 fi
 
-if [ "$PUID" = 0 ]; then
-  exec /app/cannoncommander "$@"
+as_user=""
+if [ "$PUID" != 0 ]; then
+  # Only what the server writes itself, never the shares.
+  find "$config_dir" \( ! -user "$PUID" -o ! -group "$PGID" \) -exec chown "$PUID:$PGID" {} +
+  as_user="su-exec $PUID:$PGID"
 fi
 
-# Only what the server writes itself, never the shares.
-find "$config_dir" \( ! -user "$PUID" -o ! -group "$PGID" \) -exec chown "$PUID:$PGID" {} +
-exec su-exec "$PUID:$PGID" /app/cannoncommander "$@"
+# The server runs as a child rather than in place of this script, so the
+# banner can be the last block of the startup log, printed once the server
+# answers. tini hands a stop to this script and the trap passes it on.
+$as_user /app/cannoncommander "$@" &
+pid=$!
+trap 'kill -TERM "$pid" 2>/dev/null' TERM INT
+
+until curl -fsS -o /dev/null http://localhost:80/health 2>/dev/null; do
+  kill -0 "$pid" 2>/dev/null || break
+  sleep 1
+done
+
+if kill -0 "$pid" 2>/dev/null; then
+  version="$(/app/cannoncommander version | sed -n 's/^[[:space:]]*Version[[:space:]]*:[[:space:]]*//p')"
+  version="${version:-dev}"
+  /app/print-banner.sh "CannonCommander $version" "two-pane file manager for Unraid"
+  printf '  \033[0;32m✓ CANNONCOMMANDER %s IS READY\033[0m - Open the WebUI now (port 80)\n\n' "$version"
+fi
+
+status=0
+wait "$pid" || status=$?
+# A signal ends the wait before the server is done, so wait again for its own
+# exit status.
+while kill -0 "$pid" 2>/dev/null; do
+  status=0
+  wait "$pid" || status=$?
+done
+exit "$status"
