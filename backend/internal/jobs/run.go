@@ -11,6 +11,8 @@ import (
 	"time"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 )
 
 // Run is what a kind sees of its job while it works.
@@ -27,6 +29,39 @@ func (r *Run) Owner() string {
 	r.m.mu.Lock()
 	defer r.m.mu.Unlock()
 	return r.j.Owner
+}
+
+// User returns the owner as they are now. A job can wait a long time for its
+// turn, for an answer or across a restart, and what its owner could do when it
+// started says little by then.
+func (r *Run) User() (*users.User, error) {
+	if r.m.deps.Users == nil {
+		return nil, ccfs.ErrForbidden
+	}
+	return r.m.deps.Users(r.Owner())
+}
+
+// RequireAdmin fails for a job only admins may run when its owner is no admin
+// anymore.
+func (r *Run) RequireAdmin() error {
+	u, err := r.User()
+	if err != nil {
+		return err
+	}
+	if !u.Permissions.Admin {
+		return ccfs.ErrForbidden
+	}
+	return nil
+}
+
+// Reach is ccfs.Reach for the owner as they are now.
+func (r *Run) Reach(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error) {
+	u, err := r.User()
+	if err != nil {
+		return ccfs.Location{}, nil, err
+	}
+	loc, err := r.m.deps.FS.Reach(u, p, perm)
+	return loc, u, err
 }
 
 // Deps returns the shared services.

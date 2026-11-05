@@ -291,7 +291,7 @@ func (s *Service) checkPaths(u *users.User, paths []string) ([]string, string, e
 		if loc.Virtual() {
 			return nil, "", v1.Errorf(http.StatusBadRequest, "only entries inside a source can be shared")
 		}
-		if err := ccfs.Contained(loc); err != nil {
+		if err := s.fs.Follows(u, loc, ccfs.View|ccfs.Download); err != nil {
 			return nil, "", err
 		}
 		info, err := os.Stat(loc.Real)

@@ -145,8 +145,9 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	seen := h.seenFrom(loc)
 	for _, d := range dirents {
-		if bookkeeping(d.Name()) || !h.fs.Visible(u, loc, d.Name()) {
+		if bookkeeping(d.Name()) || !h.fs.Visible(u, seen, d.Name()) {
 			continue
 		}
 		item, err := itemFor(filepath.Join(loc.Real, d.Name()), d.Name())
@@ -191,8 +192,9 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 	}
+	seen := h.seenFrom(loc)
 	for _, name := range names {
-		if bookkeeping(name) || !h.fs.Visible(u, loc, name) {
+		if bookkeeping(name) || !h.fs.Visible(u, seen, name) {
 			continue
 		}
 		child, err := h.fs.Check(u, path.Join(loc.Path, name), ccfs.View)
@@ -225,7 +227,7 @@ func (h handlers) stat(w http.ResponseWriter, r *http.Request) error {
 		out.Item = h.virtualItem(loc.Path, path.Base(loc.Path))
 		return v1.WriteJSON(w, r, http.StatusOK, out)
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := h.fs.Follows(u, loc, ccfs.View); err != nil {
 		return err
 	}
 	if out.Item, err = itemFor(loc.Real, path.Base(loc.Path)); err != nil {
@@ -244,6 +246,18 @@ func (h handlers) stat(w http.ResponseWriter, r *http.Request) error {
 	return v1.WriteJSONTagged(w, r, http.StatusOK, out, Stat{Path: out.Path, Item: out.Item, Files: out.Files, Dirs: out.Dirs, Devices: out.Devices})
 }
 
+// seenFrom is the place the names in dir are judged by. Inside a linked folder
+// the rules go by where the link leads, since the link's own path names nothing.
+func (h handlers) seenFrom(dir ccfs.Location) ccfs.Location {
+	if dir.Virtual() {
+		return dir
+	}
+	if target, err := h.fs.Followed(dir); err == nil {
+		return target
+	}
+	return dir
+}
+
 // folder checks that p is a folder the user may list.
 func (h handlers) folder(u *users.User, p string) (ccfs.Location, error) {
 	if p == "" {
@@ -254,12 +268,12 @@ func (h handlers) folder(u *users.User, p string) (ccfs.Location, error) {
 		return loc, err
 	}
 	if loc.InArchive() {
-		return loc, archiveFile(loc)
+		return loc, h.archiveFile(u, loc)
 	}
 	if loc.Virtual() {
 		return loc, nil
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := h.fs.Follows(u, loc, ccfs.View); err != nil {
 		return loc, err
 	}
 	info, err := os.Stat(loc.Real)
@@ -283,9 +297,10 @@ func (h handlers) hasSubfolder(u *users.User, dir ccfs.Location) bool {
 		}
 		return false
 	}
-	if ccfs.Contained(dir) != nil {
+	if h.fs.Follows(u, dir, ccfs.View) != nil {
 		return false
 	}
+	seen := h.seenFrom(dir)
 	f, err := os.Open(dir.Real)
 	if err != nil {
 		return false
@@ -294,7 +309,7 @@ func (h handlers) hasSubfolder(u *users.User, dir ccfs.Location) bool {
 	for {
 		batch, err := f.ReadDir(256)
 		for _, d := range batch {
-			if isDir(dir.Real, d) && h.fs.Visible(u, dir, d.Name()) {
+			if isDir(dir.Real, d) && h.fs.Visible(u, seen, d.Name()) {
 				return true
 			}
 		}

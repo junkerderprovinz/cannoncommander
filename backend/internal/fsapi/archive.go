@@ -353,7 +353,7 @@ func (h handlers) archiveStream(w http.ResponseWriter, r *http.Request) error {
 		if loc.Virtual() || loc.InArchive() {
 			return v1.Errorf(http.StatusBadRequest, "only entries inside a source can be downloaded")
 		}
-		if err := ccfs.Contained(loc); err != nil {
+		if err := h.fs.Follows(u, loc, ccfs.View|ccfs.Download); err != nil {
 			return err
 		}
 		info, err := os.Stat(loc.Real)

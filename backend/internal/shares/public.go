@@ -369,7 +369,7 @@ func (s *Service) archive(w http.ResponseWriter, r *http.Request, v *visit, sp s
 		names := s.shownNames(v.sh.Paths)
 		for i, p := range v.sh.Paths {
 			loc, err := s.fs.Check(v.owner, p, ccfs.View|ccfs.Download)
-			if err != nil || ccfs.Contained(loc) != nil {
+			if err != nil || s.fs.Follows(v.owner, loc, ccfs.View|ccfs.Download) != nil {
 				continue
 			}
 			if _, err := os.Stat(loc.Real); err != nil {
@@ -614,7 +614,7 @@ func (s *Service) locate(v *visit, p string) (spot, error) {
 	if sp.bound, err = filepath.EvalSymlinks(sp.root.Real); err != nil {
 		return spot{}, errNotHere
 	}
-	if ccfs.Contained(sp.loc) != nil || !inside(sp.bound, sp.loc.Real) {
+	if s.fs.Follows(v.owner, sp.loc, ccfs.View|ccfs.Download) != nil || !inside(sp.bound, sp.loc.Real) {
 		return spot{}, errNotHere
 	}
 	return sp, nil

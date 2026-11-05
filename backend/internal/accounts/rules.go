@@ -114,13 +114,7 @@ func indexFold(s, p string) int {
 // applies reports whether the rule covers path p for the user. groups is
 // only asked when a rule names a group.
 func (c compiledRule) applies(name string, groups func() []string, p string) bool {
-	switch {
-	case c.Who == everyone:
-	case strings.HasPrefix(c.Who, "@"):
-		if !slices.Contains(groups(), c.Who[1:]) {
-			return false
-		}
-	case c.Who != name:
+	if !c.names(name, groups) {
 		return false
 	}
 	if c.glob != nil {
@@ -135,6 +129,17 @@ func (c compiledRule) applies(name string, groups func() []string, p string) boo
 		return false
 	}
 	return c.Path == "/" || p == c.Path || strings.HasPrefix(p, c.Path+"/")
+}
+
+// names reports whether the rule is about the user at all.
+func (c compiledRule) names(name string, groups func() []string) bool {
+	switch {
+	case c.Who == everyone:
+		return true
+	case strings.HasPrefix(c.Who, "@"):
+		return slices.Contains(groups(), c.Who[1:])
+	}
+	return c.Who == name
 }
 
 // ruleBook keeps the rules in memory, because the file system asks it for
@@ -207,6 +212,30 @@ func (b *ruleBook) Effect(u *users.User, p string) ccfs.Effect {
 		return ccfs.ReadOnly
 	}
 	return ccfs.Open
+}
+
+// Below reports whether a rule could hide or freeze something below p for u.
+// Patterns match names anywhere, so they always could.
+func (b *ruleBook) Below(u *users.User, p string) bool {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+	var groups []string
+	asked := false
+	groupsOf := func() []string {
+		if !asked {
+			groups, asked = b.groupsOf(u.Username), true
+		}
+		return groups
+	}
+	for _, c := range b.rules {
+		if c.Rule.Rule == ruleAllow || !c.names(u.Username, groupsOf) {
+			continue
+		}
+		if c.glob != nil || c.Path == p || strings.HasPrefix(c.Path, strings.TrimSuffix(p, "/")+"/") {
+			return true
+		}
+	}
+	return false
 }
 
 // replace stores list as the new rules, in this order.
