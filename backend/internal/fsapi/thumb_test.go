@@ -14,6 +14,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/preview"
 )
 
@@ -26,6 +27,7 @@ func withPreviews(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		fileutils.SetFsPermissions(0o644, 0o755)
 		_ = preview.StartPreviewGenerator(1, dir)
 	})
 }
