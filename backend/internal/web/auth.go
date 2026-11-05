@@ -4,6 +4,7 @@ import (
 	libError "errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 	"strings"
 	"time"
@@ -144,7 +145,8 @@ func sessionCookieDomain(r *http.Request) string {
 const sessionCookieName = "cannoncommander_session"
 
 // sessionCookie builds the JWT cookie. HttpOnly prevents srcdoc XSS from reading
-// document.cookie; Secure is set when the request is HTTPS (including via proxy).
+// document.cookie. Secure is set when the request is HTTPS, or came in on the
+// https address the config names, which a proxy with untrusted headers hides.
 func sessionCookie(r *http.Request, token string, expiresTime time.Time, maxAge int, sameSite http.SameSite) *http.Cookie {
 	return &http.Cookie{
 		Name:     sessionCookieName,
@@ -153,10 +155,17 @@ func sessionCookie(r *http.Request, token string, expiresTime time.Time, maxAge 
 		Path:     "/",
 		SameSite: sameSite,
 		HttpOnly: true,
-		Secure:   requestScheme(r) == "https",
+		Secure:   requestScheme(r) == "https" || onExternalHTTPS(r),
 		Expires:  expiresTime,
 		MaxAge:   maxAge,
 	}
+}
+
+// onExternalHTTPS reports whether r came in on the host of an https ExternalUrl.
+// Other hosts stay out, a browser would drop the cookie on a plain LAN address.
+func onExternalHTTPS(r *http.Request) bool {
+	u, err := url.Parse(settings.Config.Http.ExternalUrl)
+	return err == nil && u.Scheme == "https" && strings.EqualFold(u.Hostname(), sessionCookieDomain(r))
 }
 
 // SetSessionCookie sets the authentication token as an HTTP cookie.
