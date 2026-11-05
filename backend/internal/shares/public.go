@@ -1,6 +1,8 @@
 package shares
 
 import (
+	"context"
+	"database/sql"
 	"errors"
 	"io/fs"
 	"net/http"
@@ -279,14 +281,21 @@ func (s *Service) publicList(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	seen, err := s.fs.Followed(loc)
+	if err != nil {
+		return err
+	}
 	for _, d := range dirents {
 		name := d.Name()
-		if strings.HasPrefix(name, ".") || !s.fs.Visible(v.owner, loc, name) {
+		if strings.HasPrefix(name, ".") || !s.fs.Visible(v.owner, seen, name) {
 			continue
 		}
 		real := filepath.Join(loc.Real, name)
-		if d.Type()&fs.ModeSymlink != 0 && !inside(sp.bound, real) {
-			continue
+		if d.Type()&fs.ModeSymlink != 0 {
+			child, err := s.fs.Resolve(path.Join(loc.Path, name))
+			if err != nil || !inside(sp.bound, real) || s.fs.Follows(v.owner, child, ccfs.View) != nil {
+				continue
+			}
 		}
 		if it, ok := itemAt(real, name); ok {
 			out.Items = append(out.Items, it)
@@ -366,8 +375,8 @@ func (s *Service) archive(w http.ResponseWriter, r *http.Request, v *visit, sp s
 	if sp.top {
 		names := s.shownNames(v.sh.Paths)
 		for i, p := range v.sh.Paths {
-			loc, err := s.fs.Check(v.owner, p, ccfs.View|ccfs.Download)
-			if err != nil || ccfs.Contained(loc) != nil {
+			loc, err := s.fs.Entry(v.owner, p, ccfs.View|ccfs.Download)
+			if err != nil {
 				continue
 			}
 			if _, err := os.Stat(loc.Real); err != nil {
@@ -376,7 +385,7 @@ func (s *Service) archive(w http.ResponseWriter, r *http.Request, v *visit, sp s
 			entries = append(entries, fsapi.ArchiveEntry{Name: names[i], Loc: loc, Bound: loc.Real})
 		}
 	} else {
-		loc, err := s.fs.Check(v.owner, sp.loc.Path, ccfs.View|ccfs.Download)
+		loc, err := s.fs.Entry(v.owner, sp.loc.Path, ccfs.View|ccfs.Download)
 		if err != nil {
 			return err
 		}
@@ -391,7 +400,8 @@ func (s *Service) archive(w http.ResponseWriter, r *http.Request, v *visit, sp s
 	visible := func(dir ccfs.Location, name string) bool {
 		return !strings.HasPrefix(name, ".") && s.fs.Visible(v.owner, dir, name)
 	}
-	fsapi.ServeArchive(w, r, s.fs, fsapi.ArchiveName(sp.name, format), entries, fsapi.ArchiveOptions{Format: format, Visible: visible})
+	follows := func(loc ccfs.Location) bool { return s.fs.Follows(v.owner, loc, ccfs.View|ccfs.Download) == nil }
+	fsapi.ServeArchive(w, r, s.fs, fsapi.ArchiveName(sp.name, format), entries, fsapi.ArchiveOptions{Format: format, Visible: visible, Follows: follows})
 	return nil
 }
 
@@ -441,6 +451,13 @@ func (s *Service) publicUpload(w http.ResponseWriter, r *http.Request) error {
 	if n >= maxOpenUploads {
 		return v1.Errorf(http.StatusTooManyRequests, "many uploads are running through this link, please wait for some of them to finish")
 	}
+	// The body above can take as long as the visitor likes, so the first look
+	// at the link may be old by now. Looking after the pending uploads means
+	// a file landing in between counts twice for a moment instead of not at
+	// all.
+	if v, err = s.uploader(w, r); err != nil {
+		return err
+	}
 	if v.sh.UploadLimit > 0 && v.sh.Uploaded+pending+req.Size > v.sh.UploadLimit {
 		return v1.Errorf(http.StatusRequestEntityTooLarge, "this link takes no more than "+strconv.FormatInt(max(v.sh.UploadLimit-v.sh.Uploaded-pending, 0), 10)+" more bytes")
 	}
@@ -448,7 +465,6 @@ func (s *Service) publicUpload(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	s.landed(r, v, up)
 	status := http.StatusOK
 	if created && up.State == fileops.UploadOpen {
 		status = http.StatusCreated
@@ -478,14 +494,24 @@ func (s *Service) publicUploadChunk(w http.ResponseWriter, r *http.Request) erro
 		return err
 	}
 	root := s.rootSpot(v)
-	up, err := s.files.UploadChunk(r.Context(), v.owner, v.sh.ID, r.PathValue("id"), offset, r.Body)
+	landing := &fileops.Landing{
+		// The body can outlast the link, or the owner's right to it.
+		Allow: func() error {
+			_, err := s.uploader(w, r)
+			return err
+		},
+		Count: func(ctx context.Context, tx *sql.Tx, size int64) error {
+			_, err := tx.ExecContext(ctx, `UPDATE share_links SET uploaded = uploaded + ? WHERE id = ?`, size, v.sh.ID)
+			return err
+		},
+	}
+	up, err := s.files.UploadChunk(r.Context(), v.owner, v.sh.ID, r.PathValue("id"), offset, r.Body, landing)
 	if fileops.WriteUploadError(w, r, err, func(up fileops.Upload) fileops.Upload { return s.inLink(root, up) }) {
 		return nil
 	}
 	if err != nil {
 		return err
 	}
-	s.landed(r, v, up)
 	return fileops.WriteUpload(w, r, http.StatusOK, s.inLink(root, up))
 }
 
@@ -515,16 +541,6 @@ func (s *Service) uploader(w http.ResponseWriter, r *http.Request) (*visit, erro
 		return nil, errNoUploads
 	}
 	return v, nil
-}
-
-// landed adds a finished upload to what the link took.
-func (s *Service) landed(r *http.Request, v *visit, up fileops.Upload) {
-	if up.State != fileops.UploadDone {
-		return
-	}
-	if _, err := s.db.ExecContext(r.Context(), `UPDATE share_links SET uploaded = uploaded + ? WHERE id = ?`, up.Size, v.sh.ID); err != nil {
-		logger.Errorf("share %s: %v", v.sh.ID, err)
-	}
 }
 
 // inLink shows an upload with its path inside the link, so a visitor
@@ -606,7 +622,7 @@ func (s *Service) locate(v *visit, p string) (spot, error) {
 	if sp.bound, err = filepath.EvalSymlinks(sp.root.Real); err != nil {
 		return spot{}, errNotHere
 	}
-	if ccfs.Contained(sp.loc) != nil || !inside(sp.bound, sp.loc.Real) {
+	if s.fs.Follows(v.owner, sp.loc, ccfs.View|ccfs.Download) != nil || !inside(sp.bound, sp.loc.Real) {
 		return spot{}, errNotHere
 	}
 	return sp, nil

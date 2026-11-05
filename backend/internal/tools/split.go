@@ -93,11 +93,11 @@ func runSplit(ctx context.Context, run *jobs.Run) error {
 	if it.State == jobs.ItemDone {
 		return nil
 	}
-	src, err := run.Deps().FS.Resolve(p.Path)
+	src, u, err := run.Reach(p.Path, ccfs.View|ccfs.Download)
 	if err != nil {
 		return err
 	}
-	dest, err := run.Deps().FS.Resolve(p.Dest)
+	dest, err := run.Deps().FS.Reach(u, p.Dest, ccfs.Create)
 	if err != nil {
 		return err
 	}
@@ -139,14 +139,22 @@ func split(ctx context.Context, run *jobs.Run, src, dest string, p SplitParams) 
 		return nil
 	}
 	line := FormatLine(Algos[2], hex.EncodeToString(sum.Sum(nil)), name, false)
-	return os.WriteFile(filepath.Join(dest, name+".sha256"), []byte(line), 0o666)
+	list, err := ccfs.OpenPart(filepath.Join(dest, name+".sha256"), os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
+	if err != nil {
+		return err
+	}
+	_, err = list.WriteString(line)
+	if cerr := list.Close(); err == nil {
+		err = cerr
+	}
+	return err
 }
 
 // writePart writes r to p through a part file, so a half written part
 // never looks complete. An existing part of the same name is replaced.
 func writePart(ctx context.Context, run *jobs.Run, p string, r io.Reader) error {
 	part := filepath.Join(filepath.Dir(p), "."+filepath.Base(p)+partSuffix)
-	out, err := os.OpenFile(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
+	out, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 	if err != nil {
 		return err
 	}
@@ -279,11 +287,11 @@ func runCombine(ctx context.Context, run *jobs.Run) error {
 		return err
 	}
 	fsys := run.Deps().FS
-	dir, err := fsys.Resolve(st.Path)
+	dir, u, err := run.Reach(st.Path, ccfs.View|ccfs.Download)
 	if err != nil {
 		return err
 	}
-	dest, err := fsys.Resolve(st.Dest)
+	dest, err := fsys.Reach(u, st.Dest, ccfs.Create)
 	if err != nil {
 		return err
 	}
@@ -295,7 +303,7 @@ func runCombine(ctx context.Context, run *jobs.Run) error {
 	// result says nothing about where it stopped.
 	name := ccfs.FreeName(dest.Real, st.Name)
 	part := filepath.Join(dest.Real, "."+name+partSuffix)
-	out, err := os.OpenFile(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
+	out, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 	if err != nil {
 		return err
 	}
@@ -304,7 +312,10 @@ func runCombine(ctx context.Context, run *jobs.Run) error {
 	for _, it := range items {
 		run.Begin(it.Seq)
 		run.Current(it.Name)
-		err := appendFile(ctx, run, w, filepath.Join(dir.Real, it.Name))
+		_, err := fsys.Reach(u, it.Path, ccfs.View|ccfs.Download)
+		if err == nil {
+			err = appendFile(ctx, run, w, filepath.Join(dir.Real, it.Name))
+		}
 		if err != nil {
 			out.Close()
 			os.Remove(part)
@@ -356,7 +367,7 @@ func dropParts(ctx context.Context, run *jobs.Run, items []jobs.Item) {
 		return
 	}
 	for _, it := range items {
-		loc, err := run.Deps().FS.Resolve(it.Path)
+		loc, _, err := run.Entry(it.Path, ccfs.Delete)
 		if err == nil {
 			_, err = bin.Put(ctx, run.Owner(), loc)
 		}

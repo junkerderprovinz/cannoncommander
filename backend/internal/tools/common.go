@@ -20,7 +20,7 @@ import (
 )
 
 // partSuffix marks a file that is still being written, as the copy jobs do.
-const partSuffix = ".cc-part"
+const partSuffix = ccfs.PartSuffix
 
 func partOf(p string) string {
 	return path.Join(path.Dir(p), "."+path.Base(p)+partSuffix)
@@ -29,15 +29,12 @@ func partOf(p string) string {
 // entry checks that p is an existing file or folder inside a source and
 // that u holds perm there.
 func entry(fsys *ccfs.Resolver, u *users.User, p string, perm ccfs.Perm) (ccfs.Location, os.FileInfo, error) {
-	loc, err := fsys.Check(u, p, perm)
+	loc, err := fsys.Entry(u, p, perm)
 	if err != nil {
 		return loc, nil, err
 	}
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" {
 		return loc, nil, v1.Errorf(http.StatusBadRequest, "only files and folders inside a source can be used here")
-	}
-	if err := ccfs.Contained(loc); err != nil {
-		return loc, nil, err
 	}
 	info, err := os.Lstat(loc.Real)
 	return loc, info, err
@@ -54,15 +51,12 @@ func file(fsys *ccfs.Resolver, u *users.User, p string, perm ccfs.Perm) (ccfs.Lo
 
 // folder checks that p is a folder inside a source where u holds perm.
 func folder(fsys *ccfs.Resolver, u *users.User, p string, perm ccfs.Perm) (ccfs.Location, error) {
-	loc, err := fsys.Check(u, p, perm)
+	loc, err := fsys.Landed(u, p, perm)
 	if err != nil {
 		return loc, err
 	}
 	if loc.Virtual() || loc.InArchive() {
 		return loc, v1.Errorf(http.StatusBadRequest, "the target has to be a folder inside a source")
-	}
-	if err := ccfs.Contained(loc); err != nil {
-		return loc, err
 	}
 	info, err := os.Stat(loc.Real)
 	if err != nil {

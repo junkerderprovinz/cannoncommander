@@ -13,5 +13,6 @@
   "loading": "{name} wird geladen",
   "arrived": "{name} ist da",
   "go": "Hingehen",
-  "job": "Laden: {what}"
+  "job": "Laden: {what}",
+  "jobFrom": "Laden: {what} von {host}"
 }

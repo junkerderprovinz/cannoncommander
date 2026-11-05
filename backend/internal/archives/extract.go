@@ -35,6 +35,11 @@ type ExtractOptions struct {
 	Wrote func(n int) error
 	// Next is called before every entry with its target path.
 	Next func(name string) error
+	// May and MayReplace can refuse an entry by its target path, or the
+	// replacing of a top level entry with everything in it. What they refuse
+	// is skipped.
+	May        func(name string) bool
+	MayReplace func(top string) bool
 }
 
 // ExtractResult says what landed where.
@@ -115,6 +120,11 @@ func (x *extractor) target(name string) (string, error) {
 				c.skip = true
 				x.res.Skipped = append(x.res.Skipped, top)
 			case ClashReplace:
+				if x.o.MayReplace != nil && !x.o.MayReplace(top) {
+					c.skip = true
+					x.res.Skipped = append(x.res.Skipped, top)
+					break
+				}
 				if err := x.root.RemoveAll(top); err != nil {
 					return "", err
 				}
@@ -136,12 +146,23 @@ func (x *extractor) target(name string) (string, error) {
 	return c.name + "/" + rest, nil
 }
 
+// reservedName reports a path with a part the app keeps for itself. A link
+// unpacked under such a name would be written through later.
+func reservedName(p string) bool {
+	for seg := range strings.SplitSeq(p, "/") {
+		if ccfs.Reserved(seg) {
+			return true
+		}
+	}
+	return false
+}
+
 func (x *extractor) entry(e Entry, open Opener) error {
 	p, err := x.target(e.Name)
 	if err != nil || p == "" {
 		return err
 	}
-	if x.throughLink(p) {
+	if x.throughLink(p) || reservedName(p) || x.o.May != nil && !x.o.May(p) {
 		x.res.Skipped = append(x.res.Skipped, p)
 		return nil
 	}
@@ -167,7 +188,9 @@ func (x *extractor) entry(e Entry, open Opener) error {
 		x.res.Dirs++
 		return nil
 	case e.Symlink():
-		if e.Outside {
+		// Prefix and the name chosen on a clash move the link, so what counts
+		// is where it lands and not where it stood in the archive.
+		if e.Outside || !linkStaysInside(p, e.Link) {
 			x.res.Skipped = append(x.res.Skipped, p)
 			return nil
 		}

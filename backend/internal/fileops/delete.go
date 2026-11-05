@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"slices"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -22,7 +21,7 @@ func init() {
 	jobs.RegisterKind(KindDelete, jobs.Kind{Prepare: prepareDelete, Run: runDelete})
 }
 
-func prepareDelete(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
+func prepareDelete(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
 	var p trash.PathsParams
 	if err := jobs.Decode(raw, &p); err != nil {
 		return nil, err
@@ -32,23 +31,25 @@ func prepareDelete(_ context.Context, d v1.Deps, u *users.User, raw json.RawMess
 	}
 	var clean []string
 	var items []jobs.Item
+	seen := make(map[string]bool, len(p.Paths))
 	for _, raw := range p.Paths {
-		loc, err := d.FS.Check(u, raw, ccfs.Delete)
+		loc, err := d.FS.Entry(u, raw, ccfs.Delete)
 		if err != nil {
 			return nil, err
 		}
 		if loc.Virtual() || loc.InArchive() || loc.Index == "/" {
 			return nil, v1.Errorf(http.StatusBadRequest, "only files and folders inside a source can be deleted")
 		}
-		if err := ccfs.Contained(loc); err != nil {
-			return nil, err
-		}
 		if _, err := os.Lstat(loc.Real); err != nil {
 			return nil, err
 		}
-		if slices.Contains(clean, loc.Path) {
+		if err := d.FS.Whole(ctx, u, loc, ccfs.Delete); err != nil {
+			return nil, err
+		}
+		if seen[loc.Path] {
 			continue
 		}
+		seen[loc.Path] = true
 		clean = append(clean, loc.Path)
 		items = append(items, jobs.Item{Path: loc.Path, Name: path.Base(loc.Path)})
 	}
@@ -66,9 +67,9 @@ func runDelete(ctx context.Context, run *jobs.Run) error {
 		}
 		run.Begin(it.Seq)
 		run.Current(it.Name)
-		loc, err := fsys.Resolve(it.Path)
+		loc, u, err := run.Entry(it.Path, ccfs.Delete)
 		if err == nil {
-			err = ccfs.Contained(loc)
+			err = fsys.Whole(ctx, u, loc, ccfs.Delete)
 		}
 		if err == nil {
 			var b, f int64

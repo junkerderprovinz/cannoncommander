@@ -1,7 +1,11 @@
 package ccfs
 
 import (
+	"context"
+	"errors"
+	"io/fs"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
@@ -47,6 +51,12 @@ func (r *Resolver) Check(u *users.User, p string, perm Perm) (Location, error) {
 	if u == nil {
 		return Location{}, ErrForbidden
 	}
+	if reservedPath(loc.Path) {
+		if perm&writePerms != 0 {
+			return Location{}, ErrForbidden
+		}
+		return Location{}, ErrNotFound
+	}
 	if loc.Virtual() {
 		if perm != View || !r.reaches(u, loc.Path) {
 			return Location{}, ErrForbidden
@@ -87,7 +97,7 @@ func (r *Resolver) Check(u *users.User, p string, perm Perm) (Location, error) {
 // Visible reports whether u may see the entry name inside the folder dir,
 // which the caller already passed through Check.
 func (r *Resolver) Visible(u *users.User, dir Location, name string) bool {
-	if u == nil {
+	if u == nil || Reserved(name) {
 		return false
 	}
 	if dir.Virtual() {
@@ -105,6 +115,123 @@ func (r *Resolver) Visible(u *users.User, dir Location, name string) bool {
 		return within(scope, child)
 	}
 	return r.effect(u, path.Join(dir.Path, name)) != Hidden
+}
+
+// Follows checks the place loc really is once its symlinks are followed, so a
+// link cannot lead past the source, the user's scope or a rule. Check only
+// reads the path, and many callers ask it for every entry of a walk, which
+// would be too slow with a look at the disk for each.
+func (r *Resolver) Follows(u *users.User, loc Location, perm Perm) error {
+	target, err := r.Followed(loc)
+	if err != nil {
+		return err
+	}
+	outer, _, _ := strings.Cut(loc.Path, ArchiveSep)
+	if target.Path == outer {
+		return nil
+	}
+	_, err = r.Check(u, target.Path, perm)
+	return err
+}
+
+// Reach is Check and Follows in one, for a path that is about to be used.
+func (r *Resolver) Reach(u *users.User, p string, perm Perm) (Location, error) {
+	loc, err := r.Check(u, p, perm)
+	if err != nil {
+		return loc, err
+	}
+	return loc, r.Follows(u, loc, perm)
+}
+
+// Landed is the location of a folder once its links are followed. Whatever is
+// judged below a folder has to go by this path, since a rule cannot name the
+// path of a link that leads there.
+func (r *Resolver) Landed(u *users.User, p string, perm Perm) (Location, error) {
+	loc, err := r.Reach(u, p, perm)
+	if err != nil || loc.Virtual() || loc.InArchive() {
+		return loc, err
+	}
+	return r.Followed(loc)
+}
+
+// Entry checks an entry that gets taken as itself, so a link counts as a link
+// and can go away wherever it leads. Only the folders on the way are followed,
+// and the location it returns is the one that leaves.
+func (r *Resolver) Entry(u *users.User, p string, perm Perm) (Location, error) {
+	loc, err := r.Check(u, p, perm)
+	if err != nil {
+		return loc, err
+	}
+	if loc.Virtual() || loc.InArchive() || loc.Index == "/" {
+		return loc, r.Follows(u, loc, perm)
+	}
+	landed, err := r.entryAt(loc)
+	if err != nil || landed.Path == loc.Path {
+		return loc, err
+	}
+	return r.Check(u, landed.Path, perm)
+}
+
+// entryAt is loc with the links on the way to it followed, but not the last.
+func (r *Resolver) entryAt(loc Location) (Location, error) {
+	dir, err := r.Resolve(path.Dir(loc.Path))
+	if err != nil {
+		return loc, err
+	}
+	landed, err := r.Followed(dir)
+	if err != nil {
+		return loc, err
+	}
+	return r.Resolve(path.Join(landed.Path, path.Base(loc.Path)))
+}
+
+// belowRules is what a rule book can say about a whole subtree without
+// looking at the disk.
+type belowRules interface {
+	Below(u *users.User, p string) bool
+}
+
+// Whole checks perm on everything below loc. A rule can name one entry deep
+// inside a folder, and an operation on the folder would take that entry past
+// its rule. Links are not followed, since such operations take them as links.
+func (r *Resolver) Whole(ctx context.Context, u *users.User, loc Location, perm Perm) error {
+	if r.rules == nil || loc.Virtual() || loc.InArchive() {
+		return nil
+	}
+	top, err := r.entryAt(loc)
+	if err != nil {
+		return err
+	}
+	if b, ok := r.rules.(belowRules); ok && !b.Below(u, top.Path) {
+		return nil
+	}
+	return filepath.WalkDir(top.Real, func(real string, d fs.DirEntry, err error) error {
+		// An entry that went away meanwhile needs no right.
+		if errors.Is(err, fs.ErrNotExist) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		// The resolver cannot name such an entry, so no rule can either.
+		if Reserved(d.Name()) || strings.Contains(d.Name(), ArchiveSep) {
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		rel, err := filepath.Rel(top.Real, real)
+		if err != nil {
+			return err
+		}
+		if _, err := r.Check(u, path.Join(top.Path, filepath.ToSlash(rel)), perm); err != nil {
+			return ErrProtected
+		}
+		return nil
+	})
 }
 
 // effect asks the rules about p. A path into an archive counts as the

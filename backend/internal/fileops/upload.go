@@ -185,7 +185,7 @@ func (s *Service) StartUpload(ctx context.Context, u *users.User, share string, 
 			return Upload{}, false, err
 		}
 		if row.received == row.size || row.rule == jobs.Skip && exists(loc.Real) {
-			up, err := s.finish(ctx, u, row)
+			up, err := s.finish(ctx, u, row, nil)
 			return up, false, err
 		}
 		return row.view(), false, nil
@@ -217,7 +217,7 @@ func (s *Service) StartUpload(ctx context.Context, u *users.User, share string, 
 	if _, err := os.Lstat(part); err == nil {
 		return Upload{}, false, v1.Errorf(http.StatusConflict, "this file is being written by a copy right now")
 	}
-	f, err := os.OpenFile(part, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o666)
+	f, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_EXCL)
 	if err != nil {
 		return Upload{}, false, err
 	}
@@ -231,15 +231,28 @@ func (s *Service) StartUpload(ctx context.Context, u *users.User, share string, 
 		return Upload{}, false, err
 	}
 	if row.size == 0 {
-		up, err := s.finish(ctx, u, row)
+		up, err := s.finish(ctx, u, row, nil)
 		return up, true, err
 	}
 	return row.view(), true, nil
 }
 
+// Landing lets the caller of UploadChunk take part in the step that gives a
+// complete part file its name.
+type Landing struct {
+	// Allow can still refuse, for a caller whose permission may have ended
+	// while the body came in. The part file stays and the upload can go on
+	// once it answers yes again.
+	Allow func() error
+	// Count runs in the transaction that closes the upload, so an upload is
+	// always either open or counted.
+	Count func(ctx context.Context, tx *sql.Tx, size int64) error
+}
+
 // UploadChunk writes body at offset, which has to be where the upload
-// stands. The chunk that completes the file gives it its name.
-func (s *Service) UploadChunk(ctx context.Context, u *users.User, share, id string, offset int64, body io.Reader) (Upload, error) {
+// stands. The chunk that completes the file gives it its name, with landing
+// taking part in that when it is set.
+func (s *Service) UploadChunk(ctx context.Context, u *users.User, share, id string, offset int64, body io.Reader, landing *Landing) (Upload, error) {
 	unlock, ok := lockUpload(id)
 	if !ok {
 		return Upload{}, errUploadBusy
@@ -249,12 +262,12 @@ func (s *Service) UploadChunk(ctx context.Context, u *users.User, share, id stri
 	if err != nil {
 		return Upload{}, err
 	}
-	loc, err := s.fs.Check(u, row.path, ccfs.Create)
+	loc, err := s.fs.Reach(u, row.path, ccfs.Create)
 	if err != nil {
 		return Upload{}, err
 	}
 	part := partOf(loc.Real)
-	f, err := os.OpenFile(part, os.O_WRONLY, 0)
+	f, err := ccfs.OpenPart(part, os.O_WRONLY)
 	if errors.Is(err, fs.ErrNotExist) {
 		_ = s.deleteUpload(ctx, row.id)
 		return Upload{}, v1.Errorf(http.StatusGone, "the part file of this upload is gone, please start again")
@@ -298,7 +311,7 @@ func (s *Service) UploadChunk(ctx context.Context, u *users.User, share, id stri
 	if err := f.Close(); err != nil {
 		return Upload{}, err
 	}
-	return s.finish(ctx, u, row)
+	return s.finish(ctx, u, row, landing)
 }
 
 // UploadState returns where an upload stands.
@@ -356,7 +369,7 @@ func (s *Service) uploadTarget(u *users.User, p string) (ccfs.Location, error) {
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) || IsPart(path.Base(loc.Path)) {
 		return loc, v1.Errorf(http.StatusBadRequest, "invalid path")
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := s.fs.Follows(u, loc, ccfs.Create); err != nil {
 		return loc, err
 	}
 	dir := path.Dir(loc.Path)
@@ -429,12 +442,17 @@ func (s *Service) conflict(loc ccfs.Location, row uploadRow, target fs.FileInfo)
 }
 
 // finish gives a complete part file its name, by the rule of the upload.
-func (s *Service) finish(ctx context.Context, u *users.User, row uploadRow) (Upload, error) {
+func (s *Service) finish(ctx context.Context, u *users.User, row uploadRow, landing *Landing) (Upload, error) {
+	if landing != nil {
+		if err := landing.Allow(); err != nil {
+			return Upload{}, err
+		}
+	}
 	loc, err := s.fs.Check(u, row.path, ccfs.Create)
 	if err != nil {
 		return Upload{}, err
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := s.fs.Follows(u, loc, ccfs.Create); err != nil {
 		return Upload{}, err
 	}
 	part := partOf(loc.Real)
@@ -479,15 +497,41 @@ func (s *Service) finish(ctx context.Context, u *users.User, row uploadRow) (Upl
 			return Upload{}, err
 		}
 	}
-	if err := os.Rename(part, final.Real); err != nil {
+	if err := s.land(ctx, part, final.Real, row, landing); err != nil {
 		return Upload{}, err
-	}
-	if err := s.deleteUpload(ctx, row.id); err != nil {
-		logger.Errorf("upload %s: %v", row.id, err)
 	}
 	fschange.Created(final.Path)
 	out.Path, out.Offset, out.State = final.Path, row.size, UploadDone
 	return out, nil
+}
+
+// land names the part file and closes the upload as one step. When the
+// database refuses, the file goes back to being a part and the client can
+// send the last request again.
+func (s *Service) land(ctx context.Context, part, final string, row uploadRow, landing *Landing) error {
+	tx, err := s.deps.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if _, err := tx.ExecContext(ctx, `DELETE FROM uploads WHERE id = ?`, row.id); err != nil {
+		return err
+	}
+	if landing != nil {
+		if err := landing.Count(ctx, tx, row.size); err != nil {
+			return err
+		}
+	}
+	if err := os.Rename(part, final); err != nil {
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		if rerr := os.Rename(final, part); rerr != nil {
+			logger.Errorf("upload %s: %v", row.id, rerr)
+		}
+		return err
+	}
+	return nil
 }
 
 // retire moves a file that an upload replaces to the trash, so it can be
@@ -566,6 +610,26 @@ func (s *Service) dropUpload(ctx context.Context, row uploadRow) error {
 		}
 	}
 	return s.deleteUpload(ctx, row.id)
+}
+
+// ForgetOwner gives up the uploads of a user who is gone. A new account of that
+// name would otherwise go on with them.
+func (s *Service) ForgetOwner(ctx context.Context, owner string) error {
+	rows, err := s.uploadRows(ctx, `WHERE owner = ? AND share = ''`, owner)
+	if err != nil {
+		return err
+	}
+	var errs []error
+	for _, row := range rows {
+		errs = append(errs, s.dropUpload(ctx, row))
+	}
+	return errors.Join(errs...)
+}
+
+// RenameOwner hands the uploads of a user over to their new login name.
+func (s *Service) RenameOwner(ctx context.Context, from, to string) error {
+	_, err := s.deps.DB.ExecContext(ctx, `UPDATE uploads SET owner = ? WHERE owner = ? AND share = ''`, to, from)
+	return err
 }
 
 func (s *Service) deleteUpload(ctx context.Context, id string) error {
@@ -727,7 +791,7 @@ func (s *Service) uploadChunk(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	up, err := s.UploadChunk(r.Context(), v1.UserFrom(r), "", r.PathValue("id"), offset, r.Body)
+	up, err := s.UploadChunk(r.Context(), v1.UserFrom(r), "", r.PathValue("id"), offset, r.Body, nil)
 	if WriteUploadError(w, r, err, nil) {
 		return nil
 	}

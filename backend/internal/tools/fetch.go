@@ -45,24 +45,40 @@ type FetchParams struct {
 // server can reach, such as a router's page or a container's API.
 var errPrivate = errors.New("addresses in the local network or on the server itself cannot be loaded")
 
+// globalV6 is the only part of the IPv6 space handed out for use on the
+// internet. Outside it lie the forms that carry an IPv4 address, such as
+// ::7f00:1 and 64:ff9b:1::/48, and retired ones such as fec0::/10.
+var globalV6 = netip.MustParsePrefix("2000::/3")
+
 // blocked are the ranges a fetch may not reach. Loopback, private,
 // link local and the other special ranges come from netip, these are the
-// ones it does not know.
+// ones it does not know. Teredo and 6to4 can tunnel to an IPv4 address of the
+// sender's choosing, and nothing a download needs lives there.
 var blocked = []netip.Prefix{
 	netip.MustParsePrefix("0.0.0.0/8"),
 	netip.MustParsePrefix("100.64.0.0/10"),
 	netip.MustParsePrefix("192.0.0.0/24"),
+	netip.MustParsePrefix("192.0.2.0/24"),
+	netip.MustParsePrefix("192.88.99.0/24"),
 	netip.MustParsePrefix("198.18.0.0/15"),
+	netip.MustParsePrefix("198.51.100.0/24"),
+	netip.MustParsePrefix("203.0.113.0/24"),
 	netip.MustParsePrefix("240.0.0.0/4"),
-	netip.MustParsePrefix("64:ff9b::/96"),
+	netip.MustParsePrefix("2001::/23"),
 	netip.MustParsePrefix("2001:db8::/32"),
+	netip.MustParsePrefix("2002::/16"),
+	netip.MustParsePrefix("3fff::/20"),
 }
 
-// PublicAddr reports whether a may be fetched from.
+// PublicAddr reports whether a may be fetched from, which only a globally
+// routable address may.
 func PublicAddr(a netip.Addr) bool {
 	a = a.Unmap()
 	if !a.IsValid() || a.IsLoopback() || a.IsPrivate() || a.IsLinkLocalUnicast() || a.IsLinkLocalMulticast() ||
 		a.IsInterfaceLocalMulticast() || a.IsMulticast() || a.IsUnspecified() {
+		return false
+	}
+	if a.Is6() && !globalV6.Contains(a) {
 		return false
 	}
 	for _, p := range blocked {
@@ -156,7 +172,9 @@ func prepareFetch(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessa
 		return nil, err
 	}
 	p.URL, p.Dest = addr.String(), dest.Path
-	return &jobs.Plan{Params: p, Name: p.Name, Dest: dest.Path,
+	// The job goes by host/name so that lists can say where the file comes
+	// from, in their own language. Neither part can hold a slash.
+	return &jobs.Plan{Params: p, Name: addr.Hostname() + "/" + p.Name, Dest: dest.Path,
 		Items: []jobs.Item{{Seq: 0, Path: path.Join(dest.Path, p.Name), Name: p.Name}}}, nil
 }
 
@@ -169,7 +187,7 @@ func runFetch(ctx context.Context, run *jobs.Run) error {
 	if it.State == jobs.ItemDone {
 		return nil
 	}
-	dest, err := run.Deps().FS.Resolve(p.Dest)
+	dest, _, err := run.Reach(p.Dest, ccfs.Create)
 	if err != nil {
 		return err
 	}
@@ -210,12 +228,12 @@ func fetch(ctx context.Context, run *jobs.Run, p FetchParams, dest ccfs.Location
 	}
 	name := p.Name
 	if _, params, err := mime.ParseMediaType(resp.Header.Get("Content-Disposition")); err == nil && name == NameFromURL(req.URL) {
-		if n := path.Base(params["filename"]); ccfs.ValidName(n) {
+		if n := path.Base(params["filename"]); ccfs.ValidName(n) && !ccfs.Reserved(n) {
 			name = n
 		}
 	}
 	part := filepath.Join(dest.Real, "."+name+partSuffix)
-	f, err := os.OpenFile(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
+	f, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 	if err != nil {
 		return "", err
 	}

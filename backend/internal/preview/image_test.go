@@ -3,15 +3,22 @@ package preview
 import (
 	"bytes"
 	"context"
+	"encoding/binary"
 	"errors"
+	"hash/crc32"
 	"image"
+	"image/color"
+	"image/gif"
 	"image/jpeg"
+	"image/png"
 	"io"
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
+	"github.com/kovidgoyal/imaging/apng"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 )
@@ -191,4 +198,130 @@ func TestReadImageFileDimensions(t *testing.T) {
 	require.NoError(t, err)
 	require.Greater(t, width, 0)
 	require.Greater(t, height, 0)
+}
+
+// pngDeclaring is a PNG that states a size in its header and has no pixels.
+func pngDeclaring(width, height uint32, padding int) []byte {
+	chunk := func(name string, data []byte) []byte {
+		out := binary.BigEndian.AppendUint32(nil, uint32(len(data)))
+		out = append(out, name...)
+		out = append(out, data...)
+		return binary.BigEndian.AppendUint32(out, crc32.ChecksumIEEE(out[4:]))
+	}
+	ihdr := binary.BigEndian.AppendUint32(nil, width)
+	ihdr = binary.BigEndian.AppendUint32(ihdr, height)
+	ihdr = append(ihdr, 8, 6, 0, 0, 0)
+	out := []byte("\x89PNG\r\n\x1a\n")
+	out = append(out, chunk("IHDR", ihdr)...)
+	out = append(out, chunk("tEXt", make([]byte, padding))...)
+	return append(out, chunk("IEND", nil)...)
+}
+
+func jpegDeclaring(t *testing.T, width, height uint16) []byte {
+	t.Helper()
+	var buf bytes.Buffer
+	require.NoError(t, jpeg.Encode(&buf, image.NewGray(image.Rect(0, 0, 8, 8)), nil))
+	data := buf.Bytes()
+	sof := bytes.Index(data, []byte{0xff, 0xc0})
+	require.GreaterOrEqual(t, sof, 0)
+	binary.BigEndian.PutUint16(data[sof+5:], height)
+	binary.BigEndian.PutUint16(data[sof+7:], width)
+	return data
+}
+
+func gifDeclaring(width, height uint16) []byte {
+	out := []byte("GIF89a")
+	out = binary.LittleEndian.AppendUint16(out, width)
+	out = binary.LittleEndian.AppendUint16(out, height)
+	return append(out, 0x80, 0, 0, 0, 0, 0, 0xff, 0xff, 0xff, ';')
+}
+
+func TestCreatePreviewRefusesAnImageDeclaringTooManyPixels(t *testing.T) {
+	options, err := getPreviewOptions("large")
+	require.NoError(t, err)
+	for name, data := range map[string][]byte{
+		"png":  pngDeclaring(20000, 20000, 0),
+		"jpeg": jpegDeclaring(t, 20000, 20000),
+		"gif":  gifDeclaring(20000, 20000),
+	} {
+		_, err := (&Service{}).CreatePreview(context.Background(), bytes.NewReader(data), int64(len(data)), options)
+		require.ErrorIs(t, err, ErrTooManyPixels, name)
+	}
+}
+
+func TestCheckPixelsAllowsThePhotosOfTheLargestCameras(t *testing.T) {
+	require.NoError(t, checkPixels(bytes.NewReader(pngDeclaring(11648, 8736, 0))))
+	require.NoError(t, checkPixels(bytes.NewReader(jpegDeclaring(t, 11648, 8736))))
+	require.ErrorIs(t, checkPixels(bytes.NewReader(pngDeclaring(10500, 10001, 0))), ErrTooManyPixels)
+}
+
+func TestCheckPixelsLeavesTheReaderWhereItWas(t *testing.T) {
+	data := pngDeclaring(64, 64, 0)
+	r := bytes.NewReader(data)
+	require.NoError(t, checkPixels(r))
+	require.Equal(t, int64(len(data)), int64(r.Len()))
+}
+
+func TestOrientationLeavesAnImageWithTooManyPixelsAlone(t *testing.T) {
+	if testing.Short() {
+		t.Skip("encodes a very large picture")
+	}
+	var buf bytes.Buffer
+	require.NoError(t, png.Encode(&buf, image.NewGray(image.Rect(0, 0, 10500, 10001))))
+	data := buf.Bytes()
+	require.Equal(t, data, applyOrientationToPreviewBytes(data, "Rotate 180"))
+}
+
+func previewAllocation(t *testing.T, data []byte) uint64 {
+	t.Helper()
+	options, err := getPreviewOptions("large")
+	require.NoError(t, err)
+	var before, after runtime.MemStats
+	runtime.ReadMemStats(&before)
+	out, err := (&Service{}).CreatePreview(context.Background(), bytes.NewReader(data), int64(len(data)), options)
+	runtime.ReadMemStats(&after)
+	require.NoError(t, err)
+	_, format, err := image.DecodeConfig(bytes.NewReader(out))
+	require.NoError(t, err)
+	require.Equal(t, "jpeg", format)
+	return after.TotalAlloc - before.TotalAlloc
+}
+
+func TestCreatePreviewDecodesOneFrameOfAnAnimatedGIF(t *testing.T) {
+	frame := image.NewPaletted(image.Rect(0, 0, 3000, 3000), color.Palette{color.Black, color.White})
+	var animation gif.GIF
+	for range 20 {
+		animation.Image = append(animation.Image, frame)
+		animation.Delay = append(animation.Delay, 0)
+	}
+	var buf bytes.Buffer
+	require.NoError(t, gif.EncodeAll(&buf, &animation))
+	require.Less(t, previewAllocation(t, buf.Bytes()), uint64(100<<20))
+}
+
+func TestCreatePreviewDecodesOneFrameOfAnAnimatedPNG(t *testing.T) {
+	frame := image.NewGray(image.Rect(0, 0, 3000, 3000))
+	var animation apng.APNG
+	for range 20 {
+		animation.Frames = append(animation.Frames, apng.Frame{Image: frame, DelayNumerator: 1, DelayDenominator: 10})
+	}
+	var buf bytes.Buffer
+	require.NoError(t, apng.Encode(&buf, animation))
+	require.Less(t, previewAllocation(t, buf.Bytes()), uint64(100<<20))
+}
+
+func TestCreatePreviewRefusesAnAnimatedWebP(t *testing.T) {
+	vp8x := []byte("VP8X\x0a\x00\x00\x00\x02\x00\x00\x00\xff\x00\x00\xff\x00\x00")
+	data := binary.LittleEndian.AppendUint32([]byte("RIFF"), uint32(4+len(vp8x)))
+	data = append(append(data, "WEBP"...), vp8x...)
+	options, err := getPreviewOptions("large")
+	require.NoError(t, err)
+	_, err = (&Service{}).CreatePreview(context.Background(), bytes.NewReader(data), int64(len(data)), options)
+	require.ErrorIs(t, err, ErrUnsupportedFormat)
+}
+
+func TestCreatePreviewOfAStillPNGStillWorks(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, png.Encode(&buf, image.NewGray(image.Rect(0, 0, 800, 800))))
+	previewAllocation(t, buf.Bytes())
 }

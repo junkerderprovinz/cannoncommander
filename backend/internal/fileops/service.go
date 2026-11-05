@@ -17,7 +17,7 @@ import (
 // PartSuffix marks a file that is still being written. The copy goes to
 // ".name.cc-part" next to the target and only takes the real name once it
 // is complete, so a half copied file never looks finished.
-const PartSuffix = ".cc-part"
+const PartSuffix = ccfs.PartSuffix
 
 // Space is the plain free space at the target of a transfer.
 type Space struct {
@@ -46,6 +46,9 @@ func For(d v1.Deps) *Service {
 		s := &Service{deps: d, fs: d.FS, trash: trash.For(d), undo: undo.For(d), jobs: jobs.For(d), unraid: unraid.Default()}
 		if s.jobs != nil {
 			connectUnraid(s.jobs, s.unraid)
+		}
+		if s.trash != nil {
+			s.trash.AfterExpire(s.sweepParts)
 		}
 		return s, nil
 	})

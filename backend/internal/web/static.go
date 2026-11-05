@@ -30,14 +30,19 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(page)
 }
 
-// appPolicy keeps the app to its own scripts, plus the document server
-// whose editor script the office viewer loads.
+// appPolicy keeps the app to what it loads itself, plus the document server,
+// whose editor script runs in the page and talks to its server. Frames stay
+// open because Collabora's address is not known here, and a frame runs nothing
+// in this page.
 func appPolicy() string {
-	policy := "script-src 'self'"
+	office := ""
 	for _, origin := range onlyOfficeScriptSrcOrigins() {
-		policy += " " + origin
+		office += " " + origin
 	}
-	return policy + "; worker-src blob:"
+	return "default-src 'self'; script-src 'self'" + office +
+		"; style-src 'self' 'unsafe-inline' blob: https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data: blob:" +
+		"; img-src 'self' blob: data:" + office + "; media-src 'self' blob:; connect-src 'self' blob: data:" + office +
+		"; worker-src blob:; frame-src 'self' blob: http: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
 }
 
 func onlyOfficeScriptSrcOrigins() []string {

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"path"
 	"strings"
 	"sync"
@@ -17,16 +16,16 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 )
 
 // KindContent is the job that looks for a text inside files.
 const KindContent = "contentSearch"
 
 func init() {
-	jobs.RegisterKind(KindContent, jobs.Kind{Prepare: prepareContent, Run: runContent})
+	jobs.RegisterKind(KindContent, jobs.Kind{Prepare: prepareContent, Run: runContent, BigResult: true})
 }
 
 // ContentParams are the criteria of the search window together with the
@@ -51,13 +50,6 @@ type hitsEvent struct {
 	Total   int    `json:"total"`
 	Scanned int    `json:"scanned"`
 	Done    bool   `json:"done,omitempty"`
-}
-
-// userByName finds the owner of a job, whose rights decide what the search
-// may look at while it runs.
-var userByName = func(name string) (*users.User, error) {
-	u, err := state.GetUserByUsername(name)
-	return &u, err
 }
 
 func prepareContent(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
@@ -93,7 +85,7 @@ func runContent(ctx context.Context, run *jobs.Run) error {
 	if it.State != jobs.ItemPending {
 		return nil
 	}
-	u, err := userByName(run.Owner())
+	u, err := run.User()
 	if err != nil {
 		return fmt.Errorf("the user who started this search is gone: %w", err)
 	}
@@ -188,7 +180,7 @@ const sniff = 8 << 10
 // findIn looks for needle, in lower case, in the file and returns the line
 // of the first match.
 func findIn(ctx context.Context, real string, needle []byte) (line int, found bool, err error) {
-	fh, err := os.Open(real)
+	fh, err := ccfs.OpenRegular(real)
 	if err != nil {
 		return 0, false, err
 	}

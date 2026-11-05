@@ -21,6 +21,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
 )
 
 type fixture struct {
@@ -420,5 +421,31 @@ func TestRemovedPathsLoseTheirLabels(t *testing.T) {
 	}
 	if err := labels.Removed(context.Background(), f.deps, "relative/path"); err == nil {
 		t.Error("a relative path was accepted")
+	}
+}
+
+func TestLabelsFollowAMoveWhileAnotherWriterIsAtWork(t *testing.T) {
+	db := testutil.MainDB(t)
+	ctx := context.Background()
+	if _, err := db.ExecContext(ctx, `INSERT INTO label_items (path, dir, colour, updated_at) VALUES ('/mnt/user/a.txt', '/mnt/user', 'red', 1)`); err != nil {
+		t.Fatal(err)
+	}
+	other, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := other.ExecContext(ctx, `INSERT INTO label_items (path, dir, colour, updated_at) VALUES ('/mnt/user/anders.txt', '/mnt/user', 'blue', 1)`); err != nil {
+		t.Fatal(err)
+	}
+	finished := time.AfterFunc(100*time.Millisecond, func() { other.Commit() })
+	defer finished.Stop()
+
+	deps := v1.Deps{DB: db, Hub: hub.New(hub.Options{})}
+	if err := labels.Moved(ctx, deps, labels.Move{From: "/mnt/user/a.txt", To: "/mnt/user/b.txt"}); err != nil {
+		t.Fatal(err)
+	}
+	var colour string
+	if err := db.QueryRowContext(ctx, `SELECT colour FROM label_items WHERE path = '/mnt/user/b.txt'`).Scan(&colour); err != nil || colour != "red" {
+		t.Errorf("colour %q, %v", colour, err)
 	}
 }

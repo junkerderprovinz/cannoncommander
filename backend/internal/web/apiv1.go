@@ -49,7 +49,7 @@ func mountAPIv1(router *http.ServeMux) error {
 		return err
 	}
 	index := fsindex.Scanned()
-	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index}
+	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index, Users: currentUser}
 	accounts.UseLogin(sessionLogin{})
 	h, err := api.NewRouter(deps, accounts.Track(deps.DB, authenticateV1)).Handler()
 	if err != nil {
@@ -72,6 +72,14 @@ func mountAPIv1(router *http.ServeMux) error {
 	router.Handle(prefix+"/", http.StripPrefix(prefix, h))
 	mountDAV(router, deps)
 	return nil
+}
+
+func currentUser(name string) (*users.User, error) {
+	u, err := state.GetUserByUsername(name)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
 }
 
 // authenticateV1 runs the same login checks as the older API, so a session

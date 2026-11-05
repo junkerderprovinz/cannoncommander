@@ -46,6 +46,9 @@ type ArchiveOptions struct {
 	// Visible decides about every entry below the top level, which is
 	// where the access rules of a user or a share come in.
 	Visible func(dir ccfs.Location, name string) bool
+	// Follows decides about a link below the top level, which comes along as
+	// the file it leads to.
+	Follows func(ccfs.Location) bool
 	// KeepOwners writes user and group into a tar archive. Visitors of a
 	// share get no such details.
 	KeepOwners bool
@@ -95,7 +98,7 @@ func WriteArchive(ctx context.Context, w io.Writer, fsys *ccfs.Resolver, entries
 		})
 		a = &zipArchiver{zw: zw}
 	}
-	walk := archiveWalk{ctx: ctx, fs: fsys, a: a, visible: opts.Visible}
+	walk := archiveWalk{ctx: ctx, fs: fsys, a: a, visible: opts.Visible, follows: opts.Follows}
 	for _, e := range entries {
 		bound := e.Bound
 		if bound == "" && e.Loc.Source != nil {
@@ -124,6 +127,7 @@ type archiveWalk struct {
 	fs      *ccfs.Resolver
 	a       archiver
 	visible func(dir ccfs.Location, name string) bool
+	follows func(ccfs.Location) bool
 	bound   string
 }
 
@@ -143,7 +147,7 @@ func (wk *archiveWalk) entry(loc ccfs.Location, name string, top bool) error {
 		// Linked folders could loop or lead anywhere, linked files come
 		// along when they stay inside the bound.
 		target, err := filepath.EvalSymlinks(loc.Real)
-		if err != nil || !within(wk.bound, target) {
+		if err != nil || !within(wk.bound, target) || wk.follows != nil && !wk.follows(loc) {
 			return nil
 		}
 		if info, err = os.Stat(target); err != nil || !info.Mode().IsRegular() {
@@ -346,15 +350,12 @@ func (h handlers) archiveStream(w http.ResponseWriter, r *http.Request) error {
 	names := make([]string, 0, len(req.Paths))
 	dirs := make([]bool, 0, len(req.Paths))
 	for _, p := range req.Paths {
-		loc, err := h.fs.Check(u, p, ccfs.View|ccfs.Download)
+		loc, err := h.fs.Entry(u, p, ccfs.View|ccfs.Download)
 		if err != nil {
 			return err
 		}
 		if loc.Virtual() || loc.InArchive() {
 			return v1.Errorf(http.StatusBadRequest, "only entries inside a source can be downloaded")
-		}
-		if err := ccfs.Contained(loc); err != nil {
-			return err
 		}
 		info, err := os.Stat(loc.Real)
 		if err != nil {
@@ -378,6 +379,7 @@ func (h handlers) archiveStream(w http.ResponseWriter, r *http.Request) error {
 		name = ArchiveName(base, req.Format)
 	}
 	visible := func(dir ccfs.Location, n string) bool { return h.fs.Visible(u, dir, n) }
-	ServeArchive(w, r, h.fs, name, entries, ArchiveOptions{Format: req.Format, Visible: visible, KeepOwners: true})
+	follows := func(loc ccfs.Location) bool { return h.fs.Follows(u, loc, ccfs.View|ccfs.Download) == nil }
+	ServeArchive(w, r, h.fs, name, entries, ArchiveOptions{Format: req.Format, Visible: visible, Follows: follows, KeepOwners: true})
 	return nil
 }

@@ -215,6 +215,21 @@ func (l *Log) forget(owner, id string) {
 	l.changed(owner)
 }
 
+// Forget removes the steps of owner, for an account that is being deleted.
+func (l *Log) Forget(owner string) error {
+	_, err := l.db.Exec(`DELETE FROM undo_ops WHERE owner = ?`, owner)
+	return err
+}
+
+// Rename moves the steps of a user to a new login name.
+func (l *Log) Rename(from, to string) error {
+	if _, err := l.db.Exec(`UPDATE undo_ops SET owner = ? WHERE owner = ?`, to, from); err != nil {
+		return err
+	}
+	l.changed(to)
+	return nil
+}
+
 type changedEvent struct {
 	Count int `json:"count"`
 }

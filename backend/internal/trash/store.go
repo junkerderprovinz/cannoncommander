@@ -10,9 +10,11 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -28,7 +30,7 @@ import (
 
 // DirName is the bin folder at the top of every share or volume. Moving
 // into it is a rename on the same disk, so nothing gets copied.
-const DirName = ".cc-trash"
+const DirName = ccfs.BinName
 
 // DefaultDays is how long entries stay before they are deleted for good.
 const DefaultDays = 30
@@ -36,6 +38,9 @@ const DefaultDays = 30
 const (
 	settingDays = "trashDays"
 	expireEvery = time.Hour
+	tellEvery   = time.Second
+	// idChunk stays below what SQLite allows for bound values in one query.
+	idChunk = 500
 )
 
 func init() {
@@ -91,6 +96,13 @@ type Store struct {
 
 	// mu keeps two restores from picking the same free name.
 	mu sync.Mutex
+
+	after atomic.Pointer[func(context.Context)]
+
+	// tellMu guards holding and tellAgain, see changed.
+	tellMu    sync.Mutex
+	holding   bool
+	tellAgain bool
 }
 
 // For returns the trash for the database in d and starts its clean up,
@@ -284,6 +296,25 @@ func (s *Store) Get(id string) (Item, error) {
 	return items[0], nil
 }
 
+// getAll returns the entries with the given ids, as far as they exist.
+func (s *Store) getAll(ids []string) (map[string]Item, error) {
+	out := make(map[string]Item, len(ids))
+	for chunk := range slices.Chunk(ids, idChunk) {
+		args := make([]any, len(chunk))
+		for i, id := range chunk {
+			args[i] = id
+		}
+		items, err := s.query(`WHERE id IN (?`+strings.Repeat(`, ?`, len(chunk)-1)+`)`, args...)
+		if err != nil {
+			return nil, err
+		}
+		for _, it := range items {
+			out[it.ID] = it
+		}
+	}
+	return out, nil
+}
+
 // List returns the entries of owner, or of everybody when owner is empty,
 // newest first. Entries whose files vanished from the bin are dropped.
 func (s *Store) List(owner string) ([]Item, error) {
@@ -336,6 +367,22 @@ func (s *Store) forget(id string) {
 	}
 }
 
+// Disown takes the entries of an account that is being deleted away from its
+// login name, which a new account could get. Admins still see them and the
+// clean up deletes them when their days are over.
+func (s *Store) Disown(owner string) error {
+	return s.Rename(owner, "")
+}
+
+// Rename moves the entries of a user to a new login name.
+func (s *Store) Rename(from, to string) error {
+	if _, err := s.db.Exec(`UPDATE trash_items SET owner = ? WHERE owner = ?`, to, from); err != nil {
+		return err
+	}
+	s.changed()
+	return nil
+}
+
 // Days returns how long entries stay.
 func (s *Store) Days() int {
 	n, err := strconv.Atoi(jobs.Setting(s.db, settingDays, ""))
@@ -369,9 +416,16 @@ func (s *Store) expireLoop() {
 			return
 		case <-t.C:
 			s.expire()
+			if f := s.after.Load(); f != nil {
+				(*f)(s.ctx)
+			}
 		}
 	}
 }
+
+// AfterExpire adds work to the hourly round of the bin, for leftovers of other
+// kinds.
+func (s *Store) AfterExpire(f func(context.Context)) { s.after.Store(&f) }
 
 // expire deletes the entries that stayed their days.
 func (s *Store) expire() {
@@ -399,12 +453,39 @@ func (s *Store) follow(err error) {
 	}
 }
 
-// changed tells every client to reload its trash. The event carries no
-// names, because the trash of one user is none of another's business.
+// changed tells every client to reload its trash, at most once per tellEvery
+// because each of them reads the whole list again and a job can put thousands
+// of entries in a row. The event carries no names, because the trash of one
+// user is none of another's business.
 func (s *Store) changed() {
 	if s.hub == nil {
 		return
 	}
+	s.tellMu.Lock()
+	defer s.tellMu.Unlock()
+	if s.holding {
+		s.tellAgain = true
+		return
+	}
+	s.holding = true
+	s.tell()
+	time.AfterFunc(tellEvery, s.release)
+}
+
+// release ends the wait after a change and tells what happened during it.
+func (s *Store) release() {
+	s.tellMu.Lock()
+	defer s.tellMu.Unlock()
+	if !s.tellAgain {
+		s.holding = false
+		return
+	}
+	s.tellAgain = false
+	s.tell()
+	time.AfterFunc(tellEvery, s.release)
+}
+
+func (s *Store) tell() {
 	if _, err := s.hub.PublishJSON(EventChanged, "", struct{}{}); err != nil {
 		logger.Errorf("trash: %v", err)
 	}

@@ -23,6 +23,8 @@ type Deps struct {
 	DB  *sql.DB
 	// Index may be nil, then listings go without folder sizes.
 	Index fsindex.Index
+	// Users finds a user as they are now, for work that runs outside a request.
+	Users func(name string) (*users.User, error)
 }
 
 // HandlerFunc is a handler that reports failure by returning an error,

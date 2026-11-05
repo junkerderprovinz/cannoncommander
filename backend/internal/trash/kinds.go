@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"slices"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -35,7 +34,7 @@ type PathsParams struct {
 	Paths []string `json:"paths"`
 }
 
-func prepareTrash(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
+func prepareTrash(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
 	var p PathsParams
 	if err := jobs.Decode(raw, &p); err != nil {
 		return nil, err
@@ -45,23 +44,25 @@ func prepareTrash(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessa
 	}
 	var clean []string
 	var items []jobs.Item
+	seen := make(map[string]bool, len(p.Paths))
 	for _, raw := range p.Paths {
-		loc, err := d.FS.Check(u, raw, ccfs.Delete)
+		loc, err := d.FS.Entry(u, raw, ccfs.Delete)
 		if err != nil {
 			return nil, err
 		}
 		if _, err := BinFor(loc); err != nil {
 			return nil, err
 		}
-		if err := ccfs.Contained(loc); err != nil {
-			return nil, err
-		}
 		if _, err := os.Lstat(loc.Real); err != nil {
 			return nil, err
 		}
-		if slices.Contains(clean, loc.Path) {
+		if err := d.FS.Whole(ctx, u, loc, ccfs.Delete); err != nil {
+			return nil, err
+		}
+		if seen[loc.Path] {
 			continue
 		}
+		seen[loc.Path] = true
 		clean = append(clean, loc.Path)
 		items = append(items, jobs.Item{Path: loc.Path, Name: path.Base(loc.Path)})
 	}
@@ -86,9 +87,9 @@ func runTrash(ctx context.Context, run *jobs.Run) error {
 		if err := run.Wait(ctx); err != nil {
 			return err
 		}
-		loc, err := run.Deps().FS.Resolve(it.Path)
+		loc, u, err := run.Entry(it.Path, ccfs.Delete)
 		if err == nil {
-			err = ccfs.Contained(loc)
+			err = run.Deps().FS.Whole(ctx, u, loc, ccfs.Delete)
 		}
 		var t Item
 		if err == nil {
@@ -134,11 +135,24 @@ func undoTrash(_ context.Context, run *jobs.Run, data json.RawMessage) error {
 	}
 	var errs []error
 	for _, id := range d.IDs {
-		if _, err := s.Restore(id); err != nil && !errors.Is(err, ErrNotFound) {
+		if _, err := s.restoreFor(run, id); err != nil && !errors.Is(err, ErrNotFound) {
 			errs = append(errs, err)
 		}
 	}
 	return errors.Join(errs...)
+}
+
+// restoreFor restores an entry if the job's owner may still create at its old
+// place, which can have changed since the entry went to the bin.
+func (s *Store) restoreFor(run *jobs.Run, id string) (string, error) {
+	it, err := s.Get(id)
+	if err != nil {
+		return "", err
+	}
+	if _, _, err := run.Entry(it.Origin, ccfs.Create); err != nil {
+		return "", err
+	}
+	return s.Restore(id)
 }
 
 func runRestore(ctx context.Context, run *jobs.Run) error {
@@ -155,7 +169,7 @@ func runRestore(ctx context.Context, run *jobs.Run) error {
 		if err := run.Wait(ctx); err != nil {
 			return err
 		}
-		_, err := s.Restore(it.Ref)
+		_, err := s.restoreFor(run, it.Ref)
 		run.Finish(it.Seq, jobs.ItemDone, err)
 	}
 	return nil

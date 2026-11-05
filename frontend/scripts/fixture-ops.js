@@ -384,7 +384,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
   }
 
   function transfer(j, p) {
-    const target = dirAt(p.dest);
+    const target = p.newFolder ? ensureDir(p.dest) : dirAt(p.dest);
     if (!target) throw new Error('Den Zielordner gibt es nicht mehr');
     const placed = [], replaced = [], moved = [];
     for (const [i, src] of p.sources.entries()) {
@@ -417,7 +417,8 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
       target.children = target.children.filter((k) => !placed.includes(k));
       restoreEntries(replaced);
       for (const [dir, n] of moved) if (n) ensureDir(dir).children.push(n);
-      changed(p.dest, ...moved.map(([dir]) => dir));
+      if (p.newFolder && !FS.kids(target).length) detach(p.dest);
+      changed(p.dest, FS.parent(p.dest), ...moved.map(([dir]) => dir));
     });
   }
 

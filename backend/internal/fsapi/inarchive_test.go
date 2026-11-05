@@ -3,10 +3,12 @@ package fsapi
 import (
 	"archive/zip"
 	"encoding/base64"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 	"testing"
 )
 
@@ -83,5 +85,19 @@ func TestAnArchiveOpensLikeAFolder(t *testing.T) {
 	}
 	if rec := f.get(t, "anna", "/fs/list", "/mnt/user/filme/x.zip::/"); rec.Code != http.StatusForbidden {
 		t.Errorf("an archive outside the scope answered %d", rec.Code)
+	}
+}
+
+func TestRawFromAnArchiveSandboxesScriptableXMLTypes(t *testing.T) {
+	f := newFixture(t)
+	if err := mime.AddExtensionType(".rss", "application/rss+xml"); err != nil {
+		t.Fatal(err)
+	}
+	writeZip(t, filepath.Join(f.share, "fotos", "feeds.zip"), map[string]string{"feed.rss": "<rss/>", "bild.png": "sonne"})
+	if csp := f.get(t, "jdp", "/fs/raw", "/mnt/user/fotos/feeds.zip::/feed.rss").Header().Get("Content-Security-Policy"); !strings.Contains(csp, "sandbox") {
+		t.Errorf("feed csp %q", csp)
+	}
+	if csp := f.get(t, "jdp", "/fs/raw", "/mnt/user/fotos/feeds.zip::/bild.png").Header().Get("Content-Security-Policy"); csp != "" {
+		t.Errorf("picture csp %q", csp)
 	}
 }

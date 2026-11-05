@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/url"
+	"slices"
 	"strconv"
 	"sync"
 	"time"
@@ -68,6 +69,9 @@ func IsWebAuthnEnabled() bool {
 	return webAuthnInstance != nil
 }
 
+// maxPasskeyOrigins bounds the list, since anyone can send any Host header.
+const maxPasskeyOrigins = 64
+
 // EnsureOrigin dynamically adds the given origin to the allowed RP origins list.
 // This supports self-hosted deployments where the access domain may vary.
 func (s *WebAuthnService) EnsureOrigin(origin string) {
@@ -79,6 +83,9 @@ func (s *WebAuthnService) EnsureOrigin(origin string) {
 		}
 	}
 	s.wa.Config.RPOrigins = append(s.wa.Config.RPOrigins, origin)
+	if extra := len(s.wa.Config.RPOrigins) - maxPasskeyOrigins; extra > 0 {
+		s.wa.Config.RPOrigins = slices.Delete(s.wa.Config.RPOrigins, 0, extra)
+	}
 }
 
 // EnsureRPID dynamically updates the relying party ID to match the request host.

@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"flag"
 	"io"
-	"net/http"
 	"net"
+	"net/http"
 	"net/http/httptest"
 	"net/netip"
 	"os"
@@ -15,6 +15,7 @@ import (
 	"runtime"
 	"slices"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -42,6 +43,45 @@ type env struct {
 	deps v1.Deps
 	srv  *httptest.Server
 	al   ArrowLoopConfig
+	// rules hold for everybody, and scopes confine a user to a folder.
+	rules  *pathRules
+	scopes map[string]string
+}
+
+// pathRules is a rule book for every user alike: a path with its effect covers
+// what lies below it.
+type pathRules struct {
+	mu    sync.Mutex
+	paths map[string]ccfs.Effect
+}
+
+func (r *pathRules) set(p string, effect ccfs.Effect) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.paths[p] = effect
+}
+
+func (r *pathRules) Effect(_ *users.User, p string) ccfs.Effect {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for at, effect := range r.paths {
+		if p == at || strings.HasPrefix(p, at+"/") {
+			return effect
+		}
+	}
+	return ccfs.Open
+}
+
+func (e *env) user(name string) (*users.User, error) {
+	perms := full
+	if name == "gast" {
+		perms = users.SourceFilePermissions{View: true, Download: true}
+	}
+	scope := "/"
+	if s, ok := e.scopes[name]; ok {
+		scope = s
+	}
+	return &users.User{Username: name, BackendScopes: []users.BackendScope{{Path: e.root, Scope: scope, Permissions: perms}}}, nil
 }
 
 var full = users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true}
@@ -54,19 +94,14 @@ func newEnv(t *testing.T) *env {
 			t.Fatal(err)
 		}
 	}
-	fsys, err := ccfs.New(nil, ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: root})
+	e := &env{t: t, root: root, rules: &pathRules{paths: map[string]ccfs.Effect{}}, scopes: map[string]string{}}
+	fsys, err := ccfs.New(e.rules, ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: root})
 	if err != nil {
 		t.Fatal(err)
 	}
-	e := &env{t: t, root: root}
-	e.deps = v1.Deps{FS: fsys, Hub: hub.New(hub.Options{}), DB: testutil.MainDB(t)}
+	e.deps = v1.Deps{FS: fsys, Hub: hub.New(hub.Options{}), DB: testutil.MainDB(t), Users: e.user}
 	auth := func(_ http.ResponseWriter, r *http.Request) (*users.User, error) {
-		name := r.Header.Get("X-User")
-		perms := full
-		if name == "gast" {
-			perms = users.SourceFilePermissions{View: true, Download: true}
-		}
-		return &users.User{Username: name, BackendScopes: []users.BackendScope{{Path: root, Scope: "/", Permissions: perms}}}, nil
+		return e.user(r.Header.Get("X-User"))
 	}
 	r := v1.NewRouter(e.deps, auth)
 	fileops.Routes(r)
@@ -583,6 +618,23 @@ func TestPublicAddresses(t *testing.T) {
 	}
 }
 
+func TestPublicAddressesAreGloballyRoutable(t *testing.T) {
+	for addr, want := range map[string]bool{
+		"2a00:1450:4001::1": true, "2001:4860:4860::8888": true, "8.8.8.8": true,
+		"::127.0.0.1": false, "::7f00:1": false, "::8.8.8.8": false, "::": false,
+		"fec0::1": false, "ff02::1": false,
+		"2002:7f00:1::1": false, "2002:c0a8:a0a::1": false, "2002:808:808::1": false,
+		"2001:0:7f00:1::": false, "2001::1": false,
+		"64:ff9b::7f00:1": false, "64:ff9b:1::1": false,
+		"2001:db8::1": false, "3fff::1": false,
+		"192.0.2.1": false, "198.51.100.1": false, "203.0.113.1": false, "192.88.99.1": false,
+	} {
+		if got := PublicAddr(mustAddr(t, addr)); got != want {
+			t.Errorf("PublicAddr(%s) = %v", addr, got)
+		}
+	}
+}
+
 func mustAddr(t *testing.T, s string) netip.Addr {
 	t.Helper()
 	a, err := netip.ParseAddr(s)
@@ -634,6 +686,9 @@ func TestFetchLoadsIntoTheFolder(t *testing.T) {
 	j := e.run(KindFetch, FetchParams{URL: "http://example.org/umweg", Dest: "/mnt/user/downloads"})
 	if got := result[map[string]string](t, j)["path"]; got != "/mnt/user/downloads/umweg" {
 		t.Errorf("saved as %s", got)
+	}
+	if j.Name != "example.org/umweg" {
+		t.Errorf("the job is called %q, it should say where the file comes from", j.Name)
 	}
 	if e.read("/mnt/user/downloads/umweg") != strings.Repeat("iso", 1000) || e.read("/mnt/user/downloads/datei.iso") != "alt" {
 		t.Error("the content is wrong or the old file was replaced")

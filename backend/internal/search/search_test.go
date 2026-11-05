@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"slices"
 	"strings"
 	"testing"
@@ -18,6 +19,7 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex/fsindextest"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
@@ -87,16 +89,13 @@ func newFixture(t *testing.T) *fixture {
 		}
 		return nil, v1.Errorf(http.StatusUnauthorized, "login required")
 	}
-	old := userByName
-	userByName = func(name string) (*users.User, error) {
+	owner := func(name string) (*users.User, error) {
 		if u, ok := people[name]; ok {
 			return u, nil
 		}
 		return nil, errors.New("no such user")
 	}
-	t.Cleanup(func() { userByName = old })
-
-	deps := v1.Deps{FS: fs, DB: testutil.MainDB(t), Hub: hub.New(hub.Options{})}
+	deps := v1.Deps{FS: fs, DB: testutil.MainDB(t), Hub: hub.New(hub.Options{}), Users: owner}
 	m := jobs.For(deps)
 	t.Cleanup(func() {
 		m.Close()
@@ -325,6 +324,32 @@ func TestContentSearchFindsTextInFiles(t *testing.T) {
 	}
 }
 
+func TestContentSearchDoesNotReadThroughALink(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("needs symlinks")
+	}
+	f := newFixture(t)
+	outside := filepath.Join(t.TempDir(), "lohn.txt")
+	put(t, outside, "gehaltsgeheimnis", 0)
+	if err := os.Symlink(outside, filepath.Join(f.share, "tor.txt")); err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := json.Marshal(ContentParams{Params: Params{Path: "/mnt/user"}, Text: "gehaltsgeheimnis"})
+	plan, err := prepareContent(context.Background(), f.deps, f.users["jdp"], raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	j, err := f.m.Submit("jdp", KindContent, plan, 0, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	j = waitFor(t, f.m, j.ID)
+	body, _ := json.Marshal(j.Result)
+	if strings.Contains(string(body), "tor.txt") {
+		t.Errorf("found text behind a link: %s", body)
+	}
+}
+
 func TestContentSearchNeedsText(t *testing.T) {
 	f := newFixture(t)
 	for _, p := range []ContentParams{{Params: Params{Path: "/mnt/user"}}, {Params: Params{Path: "/mnt/user", Q: "x:1"}, Text: "a"}} {
@@ -408,5 +433,52 @@ func TestAdminRebuildsTheIndexAsAJob(t *testing.T) {
 	}
 	if s := st.Sources[0]; s.Size != 4096 || s.ScanEvery != 2400 || s.NextScan != "2023-11-14T23:13:20.000Z" {
 		t.Errorf("plan = %+v", s)
+	}
+}
+
+type folderIndex struct {
+	sizes map[string]int64
+	asked int
+}
+
+func (x *folderIndex) Folders(_ *ccfs.Source, dirs []string) map[string]fsindex.Folder {
+	x.asked++
+	out := map[string]fsindex.Folder{}
+	for _, d := range dirs {
+		out[d] = fsindex.Folder{Size: x.sizes[d]}
+	}
+	return out
+}
+
+func (x *folderIndex) FolderSize(_ *ccfs.Source, dir string) (int64, bool) {
+	size, ok := x.sizes[dir]
+	return size, ok
+}
+
+func (x *folderIndex) Totals(*ccfs.Source, string) (int64, int64, bool) { return 0, 0, false }
+func (x *folderIndex) Refresh(*ccfs.Source, string)                     {}
+
+func TestASizeFilterJudgesFoldersWithoutAQueryForEach(t *testing.T) {
+	f := newFixture(t)
+	x := &folderIndex{sizes: map[string]int64{"/filme": 900 << 20, "/filme/Serie": 800 << 20, "/docs": 10}}
+	h := handlers{deps: f.deps}
+	h.deps.Index = x
+	u := f.users["jdp"]
+	p := Params{Path: "/mnt/user", Type: "dir", Min: "1 MB"}
+	loc, err := checkParams(f.deps.FS, u, p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	finder := h.finder(context.Background(), u, p)
+	if err := finder.run(context.Background(), loc, func(r *row) error { got = append(got, r.Name); return nil }); err != nil {
+		t.Fatal(err)
+	}
+	slices.Sort(got)
+	if !slices.Equal(got, []string{"Serie", "filme"}) {
+		t.Errorf("folders of at least 1 MB = %v", got)
+	}
+	if x.asked != 0 {
+		t.Errorf("%d queries for the sizes of folders", x.asked)
 	}
 }

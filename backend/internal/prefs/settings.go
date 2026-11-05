@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net/http"
 	"regexp"
+	"strconv"
 	"time"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
@@ -133,6 +134,20 @@ func loadSettings(ctx context.Context, db *sql.DB, userID, dev string) (Settings
 		out[k] = v
 	}
 	return out, nil
+}
+
+// Language returns the language the user picked for the interface, which is
+// kept with the user and not per device, or "" before they pick one.
+func Language(ctx context.Context, db *sql.DB, userID uint64) (string, error) {
+	s, err := loadDoc(ctx, db, `SELECT data FROM user_prefs WHERE user_id = ?`, strconv.FormatUint(userID, 10))
+	if err != nil {
+		return "", err
+	}
+	var lang string
+	if raw, ok := s["language"]; ok {
+		err = json.Unmarshal(raw, &lang)
+	}
+	return lang, err
 }
 
 // saveSettings replaces the settings of a user. With a device the device
