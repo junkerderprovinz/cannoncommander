@@ -136,7 +136,7 @@ func (s *Service) rename(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	if err := s.fs.Whole(r.Context(), u, from, ccfs.Modify); err != nil {
+	if err := s.fs.Carry(r.Context(), u, from, ccfs.Modify); err != nil {
 		return err
 	}
 	if path.Base(from.Path) == req.Name {

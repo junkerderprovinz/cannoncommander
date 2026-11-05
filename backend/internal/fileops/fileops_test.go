@@ -46,6 +46,29 @@ type env struct {
 type pathRules struct {
 	mu    sync.Mutex
 	paths map[string]ccfs.Effect
+	names map[string]bool
+}
+
+// hideName hides a name everywhere, the kind of rule that lets a folder go.
+func (r *pathRules) hideName(name string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if r.names == nil {
+		r.names = map[string]bool{}
+	}
+	r.names[name] = true
+}
+
+func (r *pathRules) CarryEffect(_ *users.User, p string) ccfs.Effect {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.onPath(p)
+}
+
+func (r *pathRules) CarryBelow(*users.User, string) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return len(r.paths) > 0
 }
 
 func (r *pathRules) set(p string, effect ccfs.Effect) {
@@ -57,6 +80,16 @@ func (r *pathRules) set(p string, effect ccfs.Effect) {
 func (r *pathRules) Effect(_ *users.User, p string) ccfs.Effect {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	if effect := r.onPath(p); effect != ccfs.Open {
+		return effect
+	}
+	if r.names[path.Base(p)] {
+		return ccfs.Hidden
+	}
+	return ccfs.Open
+}
+
+func (r *pathRules) onPath(p string) ccfs.Effect {
 	for at, effect := range r.paths {
 		if p == at || strings.HasPrefix(p, at+"/") {
 			return effect

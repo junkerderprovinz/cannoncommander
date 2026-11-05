@@ -32,19 +32,46 @@ var (
 	reader     = users.SourceFilePermissions{View: true, Download: true}
 )
 
-// rules hides or locks paths for everybody except admins.
+// rules hides or locks paths for everybody except admins. A key without a
+// leading slash is a name, hidden wherever it is.
 type rules map[string]ccfs.Effect
 
 func (r rules) Effect(u *users.User, p string) ccfs.Effect {
 	if u.Permissions.Admin {
 		return ccfs.Open
 	}
+	if effect, ok := r[path.Base(p)]; ok {
+		return effect
+	}
+	return r.onPath(p)
+}
+
+func (r rules) onPath(p string) ccfs.Effect {
 	for at, effect := range r {
 		if p == at || strings.HasPrefix(p, at+"/") {
 			return effect
 		}
 	}
 	return ccfs.Open
+}
+
+func (r rules) CarryEffect(u *users.User, p string) ccfs.Effect {
+	if u.Permissions.Admin {
+		return ccfs.Open
+	}
+	return r.onPath(p)
+}
+
+func (r rules) CarryBelow(u *users.User, _ string) bool {
+	if u.Permissions.Admin {
+		return false
+	}
+	for at := range r {
+		if strings.HasPrefix(at, "/") {
+			return true
+		}
+	}
+	return false
 }
 
 type refreshLog struct {

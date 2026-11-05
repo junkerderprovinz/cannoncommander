@@ -64,6 +64,16 @@ func (r *Run) Entry(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error
 	return loc, u, err
 }
 
+// EntryCarried is ccfs.EntryCarried for the owner as they are now.
+func (r *Run) EntryCarried(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error) {
+	u, err := r.User()
+	if err != nil {
+		return ccfs.Location{}, nil, err
+	}
+	loc, err := r.m.deps.FS.EntryCarried(u, p, perm)
+	return loc, u, err
+}
+
 // Reach is ccfs.Reach for the owner as they are now.
 func (r *Run) Reach(p string, perm ccfs.Perm) (ccfs.Location, *users.User, error) {
 	u, err := r.User()

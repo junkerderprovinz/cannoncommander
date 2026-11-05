@@ -338,7 +338,7 @@ func runUnpack(ctx context.Context, run *jobs.Run) error {
 		}
 		mayReplace := func(top string) bool {
 			loc, err := fsys.Check(u, path.Join(into, top), perm)
-			return err == nil && fsys.Whole(ctx, u, loc, perm) == nil
+			return err == nil && fsys.Carry(ctx, u, loc, perm) == nil
 		}
 		res, err := unpackOne(ctx, run, real, target, opts, archives.ExtractOptions{Clash: st.Clash, Prefix: st.Inner[it.Seq], Only: st.Items, May: may, MayReplace: mayReplace})
 		if ctx.Err() != nil {
