@@ -87,6 +87,23 @@ type picked struct {
 
 // CheckTransfer looks at a transfer with Unraid's eyes. Paths and Dest are
 // clean API paths the caller already checked.
+// Keep takes out of the report the paths sees refuses. The report looks at the
+// whole selection, whose folders can hold entries the user may not know about.
+func (r *TransferReport) Keep(sees func(string) bool) {
+	if r.Trap != nil {
+		r.Trap.Files = slices.DeleteFunc(r.Trap.Files, func(f TrapFile) bool { return !sees(f.Path) })
+	}
+	if r.Links != nil {
+		r.Links.Files = slices.DeleteFunc(r.Links.Files, func(f LinkedFile) bool { return !sees(f.Path) })
+		for i := range r.Links.Files {
+			r.Links.Files[i].Others = slices.DeleteFunc(r.Links.Files[i].Others, func(p string) bool { return !sees(p) })
+		}
+	}
+	if r.Space != nil && r.Space.Biggest != nil && !sees(r.Space.Biggest.Path) {
+		r.Space.Biggest.Path = ""
+	}
+}
+
 func (s *Service) CheckTransfer(ctx context.Context, t Transfer) (TransferReport, error) {
 	rep := TransferReport{Wakes: []string{}}
 	st, err := s.State()
