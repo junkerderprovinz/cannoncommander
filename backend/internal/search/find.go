@@ -79,14 +79,15 @@ func Bookkeeping(name string) bool {
 }
 
 // roots returns the folders to walk for loc. A virtual folder such as /mnt
-// stands for the sources mounted below it.
+// stands for the sources mounted below it, without the disks and pools: their
+// files are found in the user shares, and walking them would wake the disks.
 func (f *finder) roots(loc ccfs.Location) []ccfs.Location {
 	if !loc.Virtual() {
 		return []ccfs.Location{loc}
 	}
 	var out []ccfs.Location
 	for _, s := range f.fs.Sources() {
-		if !strings.HasPrefix(s.Mount, strings.TrimSuffix(loc.Path, "/")+"/") {
+		if s.Device || !strings.HasPrefix(s.Mount, strings.TrimSuffix(loc.Path, "/")+"/") {
 			continue
 		}
 		if l, err := f.fs.Check(f.user, s.Mount, ccfs.View); err == nil {

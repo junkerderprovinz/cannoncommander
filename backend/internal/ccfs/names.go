@@ -50,8 +50,24 @@ func (r *Resolver) WithDataFolder(dir string) *Resolver {
 				out.closed = append(out.closed, path.Join(s.Mount, filepath.ToSlash(rel)))
 			}
 		}
+		// Looking into a disk for the marker would wake it. A disk or pool
+		// holds the folder where the user shares have it.
+		if s.Device {
+			continue
+		}
 		for _, rel := range markedFolders(s.Root) {
 			out.closed = append(out.closed, path.Join(s.Mount, rel))
+		}
+	}
+	for _, c := range slices.Clone(out.closed) {
+		rest, ok := strings.CutPrefix(c, "/mnt/user/")
+		if !ok {
+			continue
+		}
+		for _, s := range r.sources {
+			if s.Device {
+				out.closed = append(out.closed, path.Join(s.Mount, rest))
+			}
 		}
 	}
 	slices.Sort(out.closed)

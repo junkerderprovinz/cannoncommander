@@ -14,12 +14,35 @@ import (
 
 // Sources is what the sources page reads and saves. RestartNeeded is set
 // while the saved sources differ from the ones the server runs with.
+// Devices are the disks and pools Unraid reports, which admins see next to
+// the sources without an index.
 type Sources struct {
 	Sources       []settings.StoredSource `json:"sources"`
+	Devices       []Device                `json:"devices"`
 	RestartNeeded bool                    `json:"restartNeeded"`
 }
 
+// Device is a disk or pool as the sources page lists it.
+type Device struct {
+	Name string `json:"name"`
+	Path string `json:"path"`
+}
+
 func (s *service) sources() (Sources, error) {
+	out, err := s.configured()
+	if err != nil {
+		return Sources{}, err
+	}
+	out.Devices = []Device{}
+	for _, src := range s.deps.FS.Sources() {
+		if src.Device {
+			out.Devices = append(out.Devices, Device{Name: src.Name, Path: src.Mount})
+		}
+	}
+	return out, nil
+}
+
+func (s *service) configured() (Sources, error) {
 	running := make([]settings.StoredSource, 0, len(s.running()))
 	for _, src := range s.running() {
 		running = append(running, settings.DescribeSource(src))
