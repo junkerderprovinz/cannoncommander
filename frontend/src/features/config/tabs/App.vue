@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { Button, Card, CopyField } from '@glimstone/vue';
+import { Button, Card, CopyField, FieldRow, FieldRowGroup, Pill, Selector, Toggle } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type AppChange, type AppSettings, type System } from '@/api/admin';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { shell } from '@/shell/state';
-import Frow from '@/ui/Frow.vue';
 import { c, confirmWin, since } from '@/features/config/shared';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
-import { copyWords } from '@/ui/kit';
+import { copyWords, segItems } from '@/ui/kit';
 import ExportWin from '../wins/ExportWin.vue';
 import ImportWin from '../wins/ImportWin.vue';
 import { IMAGE } from '../support';
@@ -59,20 +56,22 @@ function restart() {
 <template>
   <template v-if="app">
     <Card :title="c('app.updates')">
-      <Frow :label="c('app.autoCheck')" :tip="c('app.autoCheckTip')"><Sw v-model="autoCheck" /></Frow>
-      <Frow :label="c('app.image')"><CopyField class="w" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></Frow>
-      <Frow label="Tag" :tip="c('app.tagTip')"><span class="pill mono">{{ sys?.version ?? '' }}</span></Frow>
+      <FieldRowGroup>
+        <FieldRow :label="c('app.autoCheck')" :hint="c('app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
+        <FieldRow :label="c('app.image')"><CopyField width="grow" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></FieldRow>
+        <FieldRow label="Tag" :hint="c('app.tagTip')"><Pill class="mono">{{ sys?.version ?? '' }}</Pill></FieldRow>
+      </FieldRowGroup>
       <div class="a-foot">
-        <button id="a-upd" class="btn" :class="{ ok: update !== 'idle' && update !== 'busy' }" :disabled="update === 'busy'" @click="check"><G :n="update !== 'idle' && update !== 'busy' ? 'IconUpToDate' : 'IconSync'" />{{ update === 'idle' ? c('app.check') : update === 'busy' ? c('app.checking') : update }}</button>
+        <Button id="a-upd" :class="{ ok: update !== 'idle' && update !== 'busy' }" :label="update === 'idle' ? c('app.check') : update === 'busy' ? c('app.checking') : update" :label-key="update !== 'idle' && update !== 'busy' ? 'IconUpToDate' : 'IconSync'" :disabled="update === 'busy'" @click="check" />
       </div>
     </Card>
     <Card :title="c('app.backup')">
-      <Frow :label="c('app.toFile')" :tip="c('app.toFileTip')"><Button id="a-export" :label="c('app.export')" label-key="IconExport" @click="win({ title: c('app.exportTitle'), body: ExportWin })" /></Frow>
-      <Frow :label="c('app.fromFile')" :tip="c('app.fromFileTip')"><Button id="a-import" :label="c('app.import')" label-key="IconImport" @click="win({ title: c('app.importTitle'), body: ImportWin })" /></Frow>
+      <FieldRow :label="c('app.toFile')" :hint="c('app.toFileTip')"><Button id="a-export" :label="c('app.export')" label-key="IconExport" @click="win({ title: c('app.exportTitle'), body: ExportWin })" /></FieldRow>
+      <FieldRow :label="c('app.fromFile')" :hint="c('app.fromFileTip')"><Button id="a-import" :label="c('app.import')" label-key="IconImport" @click="win({ title: c('app.importTitle'), body: ImportWin })" /></FieldRow>
     </Card>
     <Card :title="c('app.service')">
-      <Frow :label="c('app.log')" :tip="c('app.logTip')"><Seg v-model="logLevel" :options="[['error', c('app.errors')], ['info', c('app.normal')], ['debug', c('app.verbose')]]" /></Frow>
-      <Frow :label="c('app.running')" :tip="app.restartNeeded ? c('app.restartNeededTip') : undefined"><span class="a-ctl"><span class="pill" :class="{ warn: app.restartNeeded }">{{ app.restartNeeded ? c('app.restartNeeded') : sys ? since(sys.started) : '' }}</span><Button :label="c('app.restart')" label-key="IconRefresh" @click="restart" /></span></Frow>
+      <FieldRow :label="c('app.log')" :hint="c('app.logTip')"><Selector v-model="logLevel" :items="segItems([['error', c('app.errors')], ['info', c('app.normal')], ['debug', c('app.verbose')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="c('app.running')" :hint="app.restartNeeded ? c('app.restartNeededTip') : undefined"><Pill :tone="app.restartNeeded ? 'warn' : 'neutral'">{{ app.restartNeeded ? c('app.restartNeeded') : sys ? since(sys.started) : '' }}</Pill><Button :label="c('app.restart')" label-key="IconRefresh" @click="restart" /></FieldRow>
     </Card>
   </template>
   <Teleport v-if="restarting" to="body">

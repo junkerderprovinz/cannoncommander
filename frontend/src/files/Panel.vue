@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // One panel: its tabs on the top edge, the path row with its tools, the list and the footer.
-import { Meter } from '@glimstone/vue';
+import { GlyphField, IconButton, Meter } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import { actions, run } from '@/core/actions';
 import { extend } from '@/core/extend';
 import { fmtSize } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { menu } from '@/core/menu';
 import { prefs } from '@/core/prefs';
 import { Render } from '@/core/Render';
@@ -58,12 +58,12 @@ function viewMenu(e: MouseEvent) {
 }
 
 // The filter field keeps the focus while the list below follows each letter.
-const qf = ref<HTMLInputElement | null>(null);
+const qf = ref<InstanceType<typeof GlyphField> | null>(null);
 watch(() => tab.value.qf && active.value, async (open) => {
   if (!open) return;
   await nextTick();
-  qf.value?.focus();
-  qf.value?.setSelectionRange(tab.value.filter.length, tab.value.filter.length);
+  qf.value?.input?.focus();
+  qf.value?.input?.setSelectionRange(tab.value.filter.length, tab.value.filter.length);
 }, { immediate: true });
 function onFilter(e: Event) {
   Object.assign(tab.value, { filter: (e.target as HTMLInputElement).value, cursor: 0 });
@@ -75,7 +75,7 @@ function filterKey(e: KeyboardEvent) {
 const closeFilter = () => Object.assign(tab.value, { qf: false, filter: '', cursor: 0 });
 function toggleDeep() {
   Object.assign(tab.value, { deep: tab.value.deep === false, cursor: 0 });
-  qf.value?.focus();
+  qf.value?.input?.focus();
 }
 
 const marked = computed(() => list.value.filter((k) => !k.up && tab.value.marked.has(k.name)));
@@ -95,21 +95,22 @@ const count = computed(() => {
       <button class="ptab add" data-newtab :data-tip="t('files.newTab')" @click="F.active = i; run('newTab')"><G n="IconAdd" /></button>
     </div>
     <div class="crumbs">
-      <button class="btn icon" data-run="back" :data-tip="t('files.backTip')" @click="F.active = i; run('back')"><G n="IconBack" /></button>
+      <IconButton :tip="t('files.backTip')" :glyph="glyphComponent('IconBack')" data-run="back" @click="F.active = i; run('back')" />
       <PathBar :i="i" />
       <span class="tools">
-        <div v-if="tab.qf" class="qfilter">
-          <G n="IconSearch" /><input :id="`qf-${i}`" ref="qf" :value="tab.filter" :placeholder="t('files.filterPlaceholder')" :aria-label="t('files.filterLabel')" spellcheck="false" autocomplete="off" @input="onFilter" @keydown="filterKey">
-          <button v-if="tab.filter && actions.saveSearch" class="btn icon" data-qfsave :data-tip="t('files.filterSave')" @click="run('saveSearch')"><G n="IconSave" /></button>
+        <GlyphField v-if="tab.qf" :id="`qf-${i}`" ref="qf" class="qfilter" :glyph="glyphComponent('IconSearch')" :label="t('files.filterLabel')" :model-value="tab.filter" :placeholder="t('files.filterPlaceholder')" spellcheck="false" autocomplete="off" @input="onFilter" @keydown="filterKey">
+          <template #after>
+          <IconButton v-if="tab.filter && actions.saveSearch" :tip="t('files.filterSave')" :glyph="glyphComponent('IconSave')" data-qfsave @click="run('saveSearch')" />
           <button class="qdeep" :class="{ on: tab.deep !== false }" :aria-pressed="tab.deep !== false" :aria-label="t('files.filterDeepLabel')" data-qfdeep
             :data-tip="tab.deep === false ? t('files.filterHere') : t('files.filterDeep')" @click="toggleDeep"><G n="IconFolderOpen" /></button>
-          <button class="btn icon" data-qfclose :data-tip="t('files.filterClose')" @click="closeFilter"><G n="IconClose" /></button>
+          <IconButton :tip="t('files.filterClose')" :glyph="glyphComponent('IconClose')" data-qfclose @click="closeFilter" />
           <Render v-for="(slot, n) in extend.filterSlots" :key="n" :node="slot(i)" />
-        </div>
-        <button v-else class="btn icon" data-run="quickFilter" :data-tip="t('files.searchTip')" @click="F.active = i; run('quickFilter')"><G n="IconSearch" /></button>
-        <button class="btn icon" data-labelsmenu :data-tip="t('files.labelsTip')" @click="run('labelsMenu')"><G n="IconHash" /></button>
-        <button class="btn icon" data-viewmenu :data-tip="t('files.viewTip', { name: t(`views.${v}`) })" @click="F.active = i; viewMenu($event)"><G :n="viewGlyph(v)" /></button>
-        <button v-if="prefs.dual" class="btn icon" data-run="equalPanels" :data-tip="t('files.equalTip')" @click="F.active = i; run('equalPanels')"><G n="IconSync" /></button>
+          </template>
+        </GlyphField>
+        <IconButton v-else :tip="t('files.searchTip')" :glyph="glyphComponent('IconSearch')" data-run="quickFilter" @click="F.active = i; run('quickFilter')" />
+        <IconButton :tip="t('files.labelsTip')" :glyph="glyphComponent('IconHash')" data-labelsmenu @click="run('labelsMenu')" />
+        <IconButton :tip="t('files.viewTip', { name: t(`views.${v}`) })" :glyph="glyphComponent(viewGlyph(v))" data-viewmenu @click="F.active = i; viewMenu($event)" />
+        <IconButton v-if="prefs.dual" :tip="t('files.equalTip')" :glyph="glyphComponent('IconSync')" data-run="equalPanels" @click="F.active = i; run('equalPanels')" />
       </span>
     </div>
     <Render v-for="(bar, n) in extend.panelBars" :key="n" :node="bar(i)" />

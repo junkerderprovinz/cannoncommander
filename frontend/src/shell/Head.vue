@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuBar, Selector } from '@glimstone/vue';
+import { Button, IconButton, MenuBar, Selector } from '@glimstone/vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { run } from '@/core/actions';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -18,7 +18,7 @@ const initials = computed(() => user.me.name.slice(0, 2).toUpperCase());
 
 // The menus are read again whenever an action changes, so a menu opened later shows today's state.
 const bar = ref<InstanceType<typeof MenuBar> | null>(null);
-const barMenus = computed(() => MENUS.map((_, i) => ({ label: menuName(i), items: toGlim(resolveItems(menuItems(i))) })));
+const barMenus = computed(() => MENUS.map((_, i) => ({ id: 'menu', label: menuName(i), items: toGlim(resolveItems(menuItems(i))) })));
 onMounted(() => setMenuBarOpener((i) => bar.value?.open(i)));
 // The prototype numbered its menu titles, and its step files still click them by that number.
 watch(bar, (b) => {
@@ -40,8 +40,8 @@ function account(e: MouseEvent) {
   ]);
 }
 const layouts = computed(() => [
-  { id: 'single', label: t('actions.single'), glyph: glyphComponent('IconViewSimple'), tip: t('head.singleTip') },
-  { id: 'dual', label: t('actions.dual'), glyph: glyphComponent('IconCompare'), tip: t('head.dualTip') },
+  { id: 'single', label: t('actions.single'), glyph: glyphComponent('IconViewSimple'), tip: t('head.singleTip'), attrs: { 'data-run': 'single' } },
+  { id: 'dual', label: t('actions.dual'), glyph: glyphComponent('IconCompare'), tip: t('head.dualTip'), attrs: { 'data-run': 'dual' } },
 ]);
 </script>
 
@@ -51,14 +51,14 @@ const layouts = computed(() => [
     <span class="hsep"></span>
     <template v-if="files">
       <MenuBar ref="bar" class="menubar" :label="t('menus.label')" :menus="barMenus" />
-      <button class="btn icon narrow-only" data-all-menus :data-tip="t('menus.label')" @click="allMenus"><G n="IconMenu" /></button>
+      <IconButton class="narrow-only" :tip="t('menus.label')" :glyph="glyphComponent('IconMenu')" data-all-menus @click="allMenus" />
     </template>
-    <button v-else class="btn hback" data-go-view="files" :data-tip="t('head.backTip')" @click="go('files')"><G n="IconBack" />{{ t('head.back') }}</button>
+    <Button v-else class="hback" :label="t('head.back')" label-key="IconBack" data-go-view="files" :title="t('head.backTip')" @click="go('files')" />
     <span class="spacer"></span>
-    <Selector v-if="files" class="seg" size="md" activation="manual" inline :label="t('head.layout')" :items="layouts" :model-value="prefs.dual ? 'dual' : 'single'" @update:model-value="run($event as string)" />
-    <button class="btn icon" data-run="palette" :data-tip="t('head.palette')" @click="run('palette')"><G n="IconSearch" /></button>
-    <button class="btn" data-run="jobs" :data-tip="t('head.jobs')" @click="run('jobs')"><G n="IconQueued" /><span class="wide-only">{{ t('head.jobs') }}</span><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }">{{ shell.jobCount }}</span></button>
-    <button class="btn icon" :class="{ on: settings }" :data-go-view="settings ? 'files' : 'settings'" :data-tip="settings ? t('head.settingsClose') : t('head.settings')" :aria-pressed="settings" @click="go(settings ? 'files' : 'settings')"><G n="IconGear" /></button>
+    <Selector v-if="files" :model-value="prefs.dual ? 'dual' : 'single'" class="head-layout" size="md" activation="manual" inline :label="t('head.layout')" :items="layouts" @update:model-value="run($event)" />
+    <IconButton :tip="t('head.palette')" :glyph="glyphComponent('IconSearch')" data-run="palette" @click="run('palette')" />
+    <Button :compact-below="900" :label="t('head.jobs')" label-key="IconQueued" data-run="jobs" @click="run('jobs')"><template #after><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }">{{ shell.jobCount }}</span></template></Button>
+    <IconButton :tip="settings ? t('head.settingsClose') : t('head.settings')" :glyph="glyphComponent('IconGear')" :data-go-view="settings ? 'files' : 'settings'" :pressed="settings" @click="go(settings ? 'files' : 'settings')" />
     <button class="avatar" data-account :data-tip="user.me.full" @click="account"><i>{{ initials }}</i></button>
   </header>
 </template>

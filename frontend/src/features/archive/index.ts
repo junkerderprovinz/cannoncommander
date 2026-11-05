@@ -1,5 +1,6 @@
 // Verpacken, Entpacken and Archiv testen. All three run as jobs; a damaged archive keeps a red mark in the list until
 // a test passes again.
+import { Pill } from '@glimstone/vue';
 import { h, reactive, watch } from 'vue';
 import { ApiError } from '@/api/client';
 import { type PackResult, type TestedArchive, tools, type UnpackResult } from '@/api/tools';
@@ -159,7 +160,7 @@ export default function setup() {
   kindLabels.testArchive = (_j, what) => t('archive.jobTest', { what });
   addTo('nameBadges', (k, path) => {
     const why = damaged.get(join(k.at || path, k.name));
-    return why ? h('span', { class: 'pill fault bk-damaged', 'data-tip': why }, t('archive.damaged')) : null;
+    return why ? h(Pill, { tone: 'fail', class: 'bk-damaged', 'data-tip': why }, () => t('archive.damaged')) : null;
   });
   const file = MENUS.find(([id]) => id === 'file')![1];
   if (!file.includes('testArchive')) file.splice(file.indexOf('unpack') + 1, 0, 'testArchive');

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // Sammelfreigabe: entries from several folders under one link, which the other side sees as one folder.
+import { FieldRow, SubCard, Table, TextField } from '@glimstone/vue';
 import { computed } from 'vue';
 import { fmtSize } from '@/core/format';
 import { parent } from '@/files/paths';
 import { t } from '@/i18n';
-import Frow from '@/ui/Frow.vue';
 import { plural } from '@/ui/kit';
 import type { Collected } from './basket';
 import type { LinkForm } from './link';
@@ -16,12 +16,11 @@ const size = computed(() => fmtSize(props.items.reduce((a, x) => a + x.size, 0))
 </script>
 
 <template>
-  <div class="well glim-well"><div class="eyebrow">{{ t('share.fromFolders', { objects: plural(items.length, 'ui.objects'), folders: plural(folders, 'share.folders') }) }}, {{ size }}</div>
-    <table class="tbl">
-      <tr v-for="x in items.slice(0, 6)" :key="x.path"><td>{{ x.name }}</td><td class="muted mono">{{ parent(x.path) }}</td></tr>
-      <tr v-if="items.length > 6"><td colspan="2">{{ t('share.more', { n: items.length - 6 }) }}</td></tr>
-    </table>
-    <Frow :label="t('share.folderName')" :tip="t('share.folderNameTip')"><input id="cs-title" v-model="st.title" class="glim-input w" autocomplete="off"></Frow>
-  </div>
+  <SubCard :title="`${t('share.fromFolders', { objects: plural(items.length, 'ui.objects'), folders: plural(folders, 'share.folders') })}, ${size}`">
+    <Table :label="t('share.folderName')" :columns="[{ key: 'name' }, { key: 'from', tone: 'muted' }]" :rows="items.slice(0, 6).map((x) => ({ name: x.name, from: parent(x.path) }))" :more="items.length > 6 ? t('share.more', { n: items.length - 6 }) : undefined">
+      <template #cell="{ column, value }"><span :class="{ mono: column.key === 'from' }">{{ value }}</span></template>
+    </Table>
+    <FieldRow :label="t('share.folderName')" :hint="t('share.folderNameTip')"><TextField id="cs-title" v-model="st.title" autocomplete="off" width="wide" /></FieldRow>
+  </SubCard>
   <LinkOptions :f="f" name="sammlung" />
 </template>

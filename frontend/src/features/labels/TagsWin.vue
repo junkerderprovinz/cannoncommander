@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // The tags: rename one, delete it or add a new one before any file carries it.
+import { FieldRow, IconButton, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, reactive, ref } from 'vue';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
 import { useLabels } from '@/stores/labels';
-import Frow from '@/ui/Frow.vue';
 import { stepFoot } from '@/features/config/shared';
 import { files } from './counts';
 
@@ -30,14 +30,14 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: t('labels.take'), g: 
 </script>
 
 <template>
-  <div class="well glim-well">
-    <Frow :label="t('labels.newTag')" :tip="t('labels.newTagTip')"><input id="mk-new" v-model="fresh" class="glim-input m" :placeholder="t('labels.newTagPh')" autocomplete="off" @keydown.enter.prevent="add"></Frow>
+  <SubCard>
+    <FieldRow :label="t('labels.newTag')" :hint="t('labels.newTagTip')"><TextField id="mk-new" v-model="fresh" :placeholder="t('labels.newTagPh')" autocomplete="off" width="medium" @keydown.enter.prevent="add" /></FieldRow>
     <div id="mk-list">
       <div v-for="(r, i) in rows" :key="i" class="mk-row">
-        <G n="IconHash" /><input v-model="r.to" class="glim-input" :data-tagname="i" :aria-label="t('labels.tagAria', { name: r.from || r.to })"><span class="muted">{{ files(r.count) }}</span>
-        <button class="btn icon" :data-tagdel="i" :data-tip="t('labels.removeTag')" :aria-label="t('labels.removeName', { name: r.from || r.to })" @click="rows.splice(i, 1)"><G n="IconTrash" /></button>
+        <G n="IconHash" /><TextField v-model="r.to" :data-tagname="i" :aria-label="t('labels.tagAria', { name: r.from || r.to })" /><span class="muted">{{ files(r.count) }}</span>
+        <IconButton :tip="t('labels.removeTag')" :glyph="glyphComponent('IconTrash')" :data-tagdel="i" @click="rows.splice(i, 1)" />
       </div>
       <div v-if="!rows.length" class="muted mk-none">{{ t('labels.noTags') }}</div>
     </div>
-  </div>
+  </SubCard>
 </template>

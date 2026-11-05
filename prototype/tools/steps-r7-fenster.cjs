@@ -55,9 +55,9 @@ module.exports = async (page, shot) => {
   console.log('perms after typing 750:', JSON.stringify(await perms()), 'checked:', await page.locator('.bk-perms [aria-checked="true"]').count());
   await page.click('#r-owner'); await wait(250);
   await shot('r7-props-owner');
-  await page.click('#menu button:has-text("anna")'); await wait(200);
+  await page.click('#menu :is(button, [role=option]):has-text("anna")'); await wait(200);
   await page.click('#r-group'); await wait(250);
-  await page.click('#menu button:has-text("familie")'); await wait(200);
+  await page.click('#menu :is(button, [role=option]):has-text("familie")'); await wait(200);
   console.log('owner and group:', await page.evaluate(() => [CC.admin.ddVal($('#r-owner')), $('#r-uid').textContent, CC.admin.ddVal($('#r-group')), $('#r-gid').textContent].join(' ')));
   await shot('r7-props');
   await page.click('.scrim .win-foot .btn.primary'); await wait(300);
@@ -76,13 +76,13 @@ module.exports = async (page, shot) => {
   await shot('r7-search-hits');
   await page.click('#s-when'); await wait(250);
   await shot('r7-search-when');
-  await page.click('#menu button:has-text("Letzte 30 Tage")'); await wait(300);
+  await page.click('#menu :is(button, [role=option]):has-text("Letzte 30 Tage")'); await wait(300);
   console.log('Geändert:', await page.evaluate(() => CC.admin.ddVal($('#s-when'))), await page.locator('#s-count').textContent());
   await page.click('#s-when'); await wait(200);
   await page.mouse.click(5, 5); await wait(200);
   console.log('search still open after a click beside its dropdown:', await page.locator('.bk-search').count(), 'menu:', await page.locator('#menu').count());
   await page.fill('#s-name', ''); await page.click('#s-when'); await wait(200);
-  await page.click('#menu button:has-text("Beliebig")'); await wait(150);
+  await page.click('#menu :is(button, [role=option]):has-text("Beliebig")'); await wait(150);
   await page.click('#s-type button[data-v="all"]'); await wait(500);
   console.log('search cleared:', JSON.stringify(await box()));
 
@@ -95,7 +95,7 @@ module.exports = async (page, shot) => {
   await page.evaluate(() => { const t = Files.T(0); t.marked = new Set(Files.entries(0).filter(k => !k.dir).slice(0, 3).map(k => k.name)); CC.render(); CC.run('multiRename'); });
   await wait(300);
   await page.click('#m-case'); await wait(200);
-  await page.click('#menu button:has-text("alles klein")'); await wait(250);
+  await page.click('#menu :is(button, [role=option]):has-text("alles klein")'); await wait(250);
   console.log('Schreibung:', await page.evaluate(() => CC.admin.ddVal($('#m-case'))), (await page.locator('#m-count').textContent()));
   await shot('r7-rename');
   await page.evaluate(() => { while (winStack.length) CC.closeWin(); });

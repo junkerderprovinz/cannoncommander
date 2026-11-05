@@ -24,6 +24,9 @@
   "notHere": "In diesen Ordner lässt sich nichts hochladen",
   "done": "{what} hochgeladen nach {path}",
   "go": "Hingehen",
-  "failed": "{n} Dateien ließen sich nicht hochladen. Wähle sie noch einmal, dann geht es beim letzten Stück weiter.",
+  "failed": {
+    "one": "Eine Datei ließ sich nicht hochladen. Wähle sie noch einmal, dann geht es beim letzten Stück weiter.",
+    "many": "{n} Dateien ließen sich nicht hochladen. Wähle sie noch einmal, dann geht es beim letzten Stück weiter."
+  },
   "oneFailed": "{name} ließ sich nicht hochladen: {error}"
 }

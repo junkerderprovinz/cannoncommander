@@ -1,17 +1,14 @@
 <script setup lang="ts">
 // Entpacken: the archives, or what is picked inside one, and where it all lands.
-import { PasswordField } from '@glimstone/vue';
+import { pathField } from '@/ui/picker';
+import { FieldRow, FieldRowGroup, PasswordField, PathField, Pill, Selector, SubCard, Table, Toggle } from '@glimstone/vue';
 import { computed, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
 import { join } from '@/files/paths';
 import { t } from '@/i18n';
-import PathField from '@/ui/PathField.vue';
 import FinalPath from '@/ui/FinalPath.vue';
-import Frow from '@/ui/Frow.vue';
-import { eyeWords, plural } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
+import { eyeWords, plural, segItems } from '@/ui/kit';
 import { clean, folderState } from '@/ui/tools';
 import { stripArchive } from './names';
 
@@ -27,23 +24,22 @@ const head = computed(() => (props.st.inside ? t('archive.fromArchive', { object
 </script>
 
 <template>
-  <div class="well glim-well"><div class="eyebrow">{{ head }}</div>
-    <table class="tbl">
-      <tr v-for="k in st.items.slice(0, 5)" :key="k.name"><td>{{ k.name }}</td><td class="glim-num r">{{ fmtSize(k.size) }}</td></tr>
-      <tr v-if="st.items.length > 5"><td colspan="2" class="muted">{{ t('archive.more', { n: st.items.length - 5 }) }}</td></tr>
-    </table>
-  </div>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('archive.target') }}</div>
-    <Frow :label="t('archive.folder')"><PathField id="x-dest" v-model="st.dest" /></Frow>
-    <Frow :label="t('archive.own')" :tip="t('archive.ownTip')"><Sw id="x-own" v-model="st.own" /></Frow>
-    <Frow :label="t('archive.clash')" :tip="t('archive.clashTip')"><Seg id="x-clash" v-model="st.clash" :options="clashes" /></Frow>
-    <Frow v-if="st.locked" :label="t('archive.unpackPassword')" :tip="t('archive.unpackPasswordTip')"><PasswordField id="x-pw" v-model="st.password" class="grow" autocomplete="new-password" :text="eyeWords()" /></Frow>
-    <Frow :label="t('archive.lands')">
+  <SubCard :title="head">
+    <Table :label="t('archive.folder')" :columns="[{ key: 'name' }, { key: 'size', end: true }]" :rows="st.items.slice(0, 5).map((k) => ({ name: k.name, size: fmtSize(k.size) }))" :more="st.items.length > 5 ? t('archive.more', { n: st.items.length - 5 }) : undefined" />
+  </SubCard>
+  <SubCard :title="t('archive.target')" class="bk-form">
+    <FieldRowGroup>
+      <FieldRow :label="t('archive.folder')"><PathField v-model="st.dest" v-bind="pathField('x-dest')" /></FieldRow>
+      <FieldRow :label="t('archive.own')" :hint="t('archive.ownTip')"><Toggle id="x-own" v-model="st.own" /></FieldRow>
+      <FieldRow :label="t('archive.clash')" :hint="t('archive.clashTip')"><Selector id="x-clash" v-model="st.clash" :items="segItems(clashes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow v-if="st.locked" :label="t('archive.unpackPassword')" :hint="t('archive.unpackPasswordTip')"><PasswordField id="x-pw" v-model="st.password" width="grow" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
+    </FieldRowGroup>
+    <FieldRow :label="t('archive.lands')">
       <span id="x-final" class="bk-finalw">
-        <span v-if="ok === false" class="pill fault">{{ t('ui.noFolder') }}</span>
-        <template v-else-if="st.own"><FinalPath :path="join(clean(st.dest), stripArchive(st.inside ? st.archive : st.items[0]!.name))" /><span v-if="!st.inside && st.items.length > 1" class="pill">{{ t('archive.more', { n: st.items.length - 1 }) }}</span></template>
+        <Pill v-if="ok === false" tone="fail">{{ t('ui.noFolder') }}</Pill>
+        <template v-else-if="st.own"><FinalPath :path="join(clean(st.dest), stripArchive(st.inside ? st.archive : st.items[0]!.name))" /><Pill v-if="!st.inside && st.items.length > 1">{{ t('archive.more', { n: st.items.length - 1 }) }}</Pill></template>
         <FinalPath v-else :path="clean(st.dest)" />
       </span>
-    </Frow>
-  </div>
+    </FieldRow>
+  </SubCard>
 </template>

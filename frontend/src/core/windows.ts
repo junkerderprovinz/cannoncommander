@@ -7,6 +7,8 @@ import { closeMenu } from './menu';
 export interface FootButton { label?: string; g?: string; primary?: boolean; disabled?: boolean; wayOut?: boolean; start?: string; run?: (el: HTMLElement) => unknown }
 export interface WinOptions {
   title: string;
+  // The name of a dot after the title, for a file with unsaved changes.
+  dot?: string;
   // A string is markup; a component gets `props` and a `close` prop.
   body: string | Component;
   props?: Record<string, unknown>;

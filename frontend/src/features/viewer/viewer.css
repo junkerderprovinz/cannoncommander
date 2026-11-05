@@ -3,7 +3,7 @@
 .cv-host { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .75rem; outline: none; }
 .cv-bar { display: flex; align-items: center; gap: .5rem; min-height: var(--btn-h); flex: none; }
 .cv-bar .grow { flex: 1; }
-.cv-bar .pill { justify-self: auto; }
+.cv-bar .glim-pill { justify-self: auto; }
 .cv-stage { position: relative; flex: 1; min-height: 0; border-radius: var(--radius-card); background: var(--carbon-surface2); overflow: hidden; display: grid; place-items: center; }
 .cv-stage.full { overflow: auto; display: block; cursor: grab; }
 .cv-stage.full.panning { cursor: grabbing; }
@@ -28,8 +28,7 @@
 .cv-pic-c { border-radius: var(--radius-control); overflow: hidden; aspect-ratio: 4 / 3; }
 .cv-pic-c svg, .cv-pic-c img { width: 100%; height: 100%; object-fit: cover; }
 .cv-compact { display: flex; flex-direction: column; gap: .75rem; flex: none; }
-.cv-details .frow { min-height: 1.9rem; }
-.cv-details .eyebrow { text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--carbon-text); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+.cv-details .glim-eyebrow { text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--carbon-text); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
 
 .cv-video { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .7rem; }
 .cv-screen { position: relative; flex: 1; min-height: 0; border-radius: var(--radius-card); overflow: hidden; background: #000; display: grid; place-items: center; cursor: pointer; }
@@ -45,7 +44,6 @@
 .playing .cv-vtitle { opacity: 0; }
 .cv-sub { position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); max-width: 80%; text-align: center; color: #fff; font-size: clamp(14px, 2.2vw, 26px); font-weight: 600; text-shadow: 0 2px 6px rgba(0,0,0,.9), 0 0 2px #000; pointer-events: none; }
 .cv-ctrl { display: flex; align-items: center; gap: .6rem; flex: none; }
-.cv-ctrl .btn span { max-width: 12rem; overflow: hidden; text-overflow: ellipsis; }
 .cv-scrub { --p: 0%; position: relative; flex: 1; height: 1.6rem; cursor: pointer; touch-action: none; }
 .cv-scrub::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: .35rem; transform: translateY(-50%); border-radius: var(--radius-pill); background: var(--carbon-surface3); }
 .cv-scrub > i { position: absolute; left: 0; top: 50%; height: .35rem; width: var(--p); transform: translateY(-50%); border-radius: var(--radius-pill); background: var(--accent); }
@@ -63,11 +61,17 @@
 .cv-actl { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: .75rem; }
 .cv-actl > :last-child { justify-self: end; }
 .cv-tr { display: flex; gap: .5rem; align-items: center; }
-.btn.icon.cv-playbtn { width: 2.75rem; height: 2.75rem; border-radius: var(--radius-control); background: var(--accent); }
+.cv-playbtn { width: 2.75rem; height: 2.75rem; border-radius: var(--radius-control); background: var(--accent); color: var(--accent-contrast); }
+button.cv-playbtn:not(:disabled):is(:hover, :focus-visible) { background: color-mix(in srgb, var(--accent) 85%, var(--carbon-text)); color: var(--accent-contrast); }
 .cv-vbar { display: flex; align-items: center; gap: .75rem; padding: .55rem .2rem 0; font-size: 12px; }
-.cv-playbtn svg { color: var(--accent-contrast); width: 1.1rem; height: 1.1rem; }
-.cv-playbtn:hover { background: color-mix(in srgb, var(--accent) 85%, var(--carbon-text)); }
-.cv-playbtn:hover svg { color: var(--accent-contrast); }
+.cv-playbtn svg { width: 1.1rem; height: 1.1rem; }
+.cv-track { width: 100%; display: flex; align-items: center; gap: .6rem; height: 2.1rem; padding: 0 .55rem; border-radius: var(--radius-control); text-align: left; cursor: pointer; }
+.cv-track svg { width: 1.05rem; height: 1.05rem; color: var(--accent-glyph); flex: none; }
+.cv-track span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-track .meta { margin-left: auto; font-size: 12px; color: var(--carbon-text-muted); flex: none; }
+.cv-track:hover { background: var(--carbon-hover); }
+.cv-track.cur { background: var(--accent); color: var(--accent-contrast); }
+.cv-track.cur :is(svg, .meta) { color: var(--accent-contrast); }
 .cv-tracks { grid-column: 1 / -1; gap: 2px; align-self: start; }
 .cv-audio.compact { grid-template-columns: 1fr; padding: 0; gap: .7rem; overflow: visible; }
 .cv-audio.compact .cv-cover { grid-row: auto; width: 60%; justify-self: center; }
@@ -81,7 +85,6 @@
 .cv-mini { display: flex; flex-direction: column; }
 .cv-mrow { display: grid; grid-template-columns: 2.25rem 1fr auto; align-items: center; gap: .6rem; height: 2.1rem; padding: 0 .4rem; }
 .cv-mrow .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cv-mrow .tile svg { color: var(--carbon-text-sub); }
 
 @media (max-width: 760px) {
   .cv-win .glim-modal-foot { flex-wrap: wrap; }
@@ -188,7 +191,6 @@ i.k { font-style: normal; color: var(--accent-ink); }
 .cv-stagebox { flex: 1; min-width: 0; border-radius: var(--radius-card); background: var(--carbon-surface2); display: grid; place-items: center; padding: 1.5rem; container-type: size; }
 .cv-slide.big { width: min(100cqw - 3rem, (100cqh - 3rem) * 16 / 9); box-shadow: var(--elevation); }
 
-.cv-mrow.dir .tile svg { color: var(--accent-glyph); }
 .cv-mrow .t.mono { font-size: 12.5px; }
 .cv-disk { display: flex; flex-direction: column; gap: 1rem; max-width: 46rem; width: 100%; margin: 0 auto; }
 .cv-parts { display: flex; gap: 3px; height: .9rem; border-radius: var(--radius-pill); overflow: hidden; }
@@ -225,8 +227,7 @@ i.k { font-style: normal; color: var(--accent-ink); }
 .cv-office { flex: 1; min-height: 24rem; display: flex; border-radius: var(--radius-card); overflow: hidden; background: var(--carbon-surface2); }
 .cv-office > div { flex: 1; }
 .cv-office form { display: none; }
-.cv-officepage { position: relative; height: calc(100vh - 9rem); padding: 1.4rem .9rem .9rem; display: flex; flex-direction: column; }
-.cv-officepage .empty .btn { margin-top: .5rem; }
+.cv-officepage { height: calc(100vh - 9rem); gap: 0; padding: 1.4rem .9rem .9rem; }
 .cv-book { flex: 1; min-height: 0; border-radius: var(--radius-card); background: var(--carbon-surface2); padding: 1.5rem; display: flex; justify-content: center; }
 .cv-book-page { width: min(100%, 44rem); background: #fff; border-radius: 4px; box-shadow: var(--elevation); overflow: hidden; }
 .cv-book.compact { flex: none; height: 24rem; padding: .75rem; }

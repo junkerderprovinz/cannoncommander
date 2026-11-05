@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { Button, Card } from '@glimstone/vue';
+import { segItems } from '@/ui/kit';
+import { Button, Card, EmptyState, FieldRow, IconButton, ListRow, Pill, Selector } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { type Account, me, type Passkey, type Passkeys, type Session, type Token } from '@/api/admin';
 import { fmtDate } from '@/core/format';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
-import ARow from '@/ui/ARow.vue';
-import BareBtn from '@/ui/BareBtn.vue';
-import Frow from '@/ui/Frow.vue';
 import { ago, attempt, c, confirmWin, P } from '@/features/config/shared';
-import Seg from '@/ui/Seg.vue';
 import { device } from '../sessions';
 import CodeWin from '../wins/CodeWin.vue';
 import CodesWin from '../wins/CodesWin.vue';
@@ -68,47 +65,47 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
 
 <template>
   <Card :title="c('security.signIn')">
-    <Frow :label="c('users.password')" :tip="ownPassword || !acc ? c('security.pwTip') : c('security.pwLocked')"><span class="a-ctl"><span class="pill">{{ acc?.pwChanged ? c('security.changedAgo', { ago: ago(acc.pwChanged) }) : c('users.pwSet') }}</span><Button v-if="ownPassword" data-pw :label="c('security.change')" label-key="IconKey" @click="password" /></span></Frow>
-    <Frow :label="c('security.stay')" :tip="c('security.stayTip')"><Seg id="a-stay" v-model="P.stayDays" :options="[[1, c('security.day1')], [7, c('general.days', { n: 7 })], [30, c('general.days', { n: 30 })]]" /></Frow>
+    <FieldRow :label="c('users.password')" :hint="ownPassword || !acc ? c('security.pwTip') : c('security.pwLocked')"><Pill>{{ acc?.pwChanged ? c('security.changedAgo', { ago: ago(acc.pwChanged) }) : c('users.pwSet') }}</Pill><Button v-if="ownPassword" data-pw :label="c('security.change')" label-key="IconKey" @click="password" /></FieldRow>
+    <FieldRow :label="c('security.stay')" :hint="c('security.stayTip')"><Selector id="a-stay" v-model="P.stayDays" :items="segItems([[1, c('security.day1')], [7, c('general.days', { n: 7 })], [30, c('general.days', { n: 30 })]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </Card>
   <Card :title="c('security.twofa')">
     <template v-if="acc?.twofa">
-      <Frow :label="c('security.status')" :tip="c('security.onTip')"><span class="a-ctl"><span class="pill ok">{{ c('security.on') }}</span><Button data-2off :label="c('security.turnOff')" label-key="IconShieldOff" @click="totpOff" /></span></Frow>
-      <Frow :label="c('security.codes')" :tip="c('security.codesTip')"><span class="a-ctl"><span class="pill" :class="{ warn: acc.recovery < 3 }">{{ c('security.codesLeft', { n: acc.recovery }) }}</span><Button data-2codes :label="c('security.regenerate')" label-key="IconRefresh" @click="newCodes" /></span></Frow>
+      <FieldRow :label="c('security.status')" :hint="c('security.onTip')"><Pill tone="ok">{{ c('security.on') }}</Pill><Button data-2off :label="c('security.turnOff')" label-key="IconShieldOff" @click="totpOff" /></FieldRow>
+      <FieldRow :label="c('security.codes')" :hint="c('security.codesTip')"><Pill :tone="acc.recovery < 3 ? 'warn' : 'neutral'">{{ c('security.codesLeft', { n: acc.recovery }) }}</Pill><Button data-2codes :label="c('security.regenerate')" label-key="IconRefresh" @click="newCodes" /></FieldRow>
     </template>
-    <Frow v-else :label="c('security.status')" :tip="c('security.offTip')"><span class="a-ctl"><span class="pill state">{{ c('security.off') }}</span><Button data-2on :label="c('security.setUp')" label-key="IconShieldOn" @click="totpOn" /></span></Frow>
+    <FieldRow v-else :label="c('security.status')" :hint="c('security.offTip')"><Pill tone="state">{{ c('security.off') }}</Pill><Button data-2on :label="c('security.setUp')" label-key="IconShieldOn" @click="totpOn" /></FieldRow>
   </Card>
   <Card :title="c('security.passkeys')">
     <div v-if="passkeys.length" class="a-list">
-      <ARow v-for="p in passkeys" :key="p.id" :name="p.name" :tip="c('security.passkeyTip', { origin: p.origin })">
+      <ListRow v-for="p in passkeys" :key="p.id" :name="p.name" :tip="c('security.passkeyTip', { origin: p.origin })">
         <template #tile><G n="IconKey" /></template>
-        <template #badges><span class="pill mono">{{ p.origin }}</span><span class="pill">{{ p.last ? c('security.used', { ago: ago(p.last) }) : c('security.neverUsed') }}</span></template>
-        <template #acts><BareBtn g="IconTrash" :tip="c('remove')" @click="removePasskey(p)" /></template>
-      </ARow>
+        <template #badges><Pill class="mono">{{ p.origin }}</Pill><Pill>{{ p.last ? c('security.used', { ago: ago(p.last) }) : c('security.neverUsed') }}</Pill></template>
+        <template #actions><IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removePasskey(p)" /></template>
+      </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconKey" /><div>{{ keys.enabled ? c('security.noPasskey') : c('security.passkeysOff') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconKey')" :title="keys.enabled ? c('security.noPasskey') : c('security.passkeysOff')" />
     <div v-if="keys.enabled" class="a-foot"><Button data-pkadd :label="c('security.addPasskey')" label-key="IconAdd" @click="addPasskey" /></div>
   </Card>
   <Card :title="c('security.sessions')">
     <div v-if="sessions.length" class="a-list">
-      <ARow v-for="s in sessions" :key="s.id" :name="device(s.userAgent).name">
+      <ListRow v-for="s in sessions" :key="s.id" :name="device(s.userAgent).name">
         <template #tile><G :n="device(s.userAgent).g" /></template>
-        <template #badges><span class="pill mono">{{ s.ip }}</span><span v-if="s.current" class="pill state">{{ c('security.thisSession') }}</span><span v-else class="pill">{{ ago(s.seen) }}</span></template>
-        <template #acts><BareBtn :g="s.current ? undefined : 'IconSignOut'" :tip="c('security.signOut')" @click="signOut(s)" /></template>
-      </ARow>
+        <template #badges><Pill class="mono">{{ s.ip }}</Pill><Pill v-if="s.current" tone="state">{{ c('security.thisSession') }}</Pill><Pill v-else>{{ ago(s.seen) }}</Pill></template>
+        <template #actions><IconButton :absent="s.current" :glyph="glyphComponent('IconSignOut')" :tip="c('security.signOut')" @click="signOut(s)" /></template>
+      </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconBrowser" /><div>{{ c('security.noSessions') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconBrowser')" :title="c('security.noSessions')" />
     <div v-if="others.length" class="a-foot"><Button data-soutall :label="c('security.signOutAll')" label-key="IconSignOut" @click="signOutAll" /></div>
   </Card>
   <Card :title="c('security.tokens')">
     <div v-if="tokens.length" class="a-list">
-      <ARow v-for="t in tokens" :key="t.id" :name="t.name" :tip="tokenTip(t)">
+      <ListRow v-for="t in tokens" :key="t.id" :name="t.name" :tip="tokenTip(t)">
         <template #tile><G n="IconKey" /></template>
-        <template #badges><span class="pill">{{ t.rights === 'rw' ? c('security.readWrite') : c('security.read') }}</span><span class="pill">{{ t.last ? c('security.used', { ago: ago(t.last) }) : c('security.neverUsed') }}</span></template>
-        <template #acts><BareBtn g="IconKeyRevoke" :tip="c('security.revoke')" @click="revoke(t)" /></template>
-      </ARow>
+        <template #badges><Pill>{{ t.rights === 'rw' ? c('security.readWrite') : c('security.read') }}</Pill><Pill>{{ t.last ? c('security.used', { ago: ago(t.last) }) : c('security.neverUsed') }}</Pill></template>
+        <template #actions><IconButton :glyph="glyphComponent('IconKeyRevoke')" :tip="c('security.revoke')" @click="revoke(t)" /></template>
+      </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconKey" /><div>{{ c('security.noToken') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconKey')" :title="c('security.noToken')" />
     <div class="a-foot"><Button data-tadd :label="c('security.addToken')" label-key="IconAdd" @click="addToken" /></div>
   </Card>
 </template>

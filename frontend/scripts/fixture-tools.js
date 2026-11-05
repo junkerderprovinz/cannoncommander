@@ -686,10 +686,12 @@ export function toolsFixture(engine) {
     state: s.expires != null && s.expires < now() ? 'expired' : s.limit && s.downloads >= s.limit ? 'exhausted' : 'active',
   });
   const shareAt = (id) => shares.find((s) => s.id === id);
+  // The slug only has to look random. A fixed sequence keeps its QR code the same from run to run.
+  let slugs = 0;
   const freshSlug = (name) => {
     const words = name.toLowerCase().replace(/\.[^.]+$/, '').normalize('NFD').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').slice(0, 18) || 'link';
     for (;;) {
-      const slug = `${Math.random().toString(36).slice(2, 8).padEnd(6, '0')}-${words}`;
+      const slug = `${(Math.imul(++slugs, 2654435761) >>> 0).toString(36).slice(0, 6).padEnd(6, '0')}-${words}`;
       if (!shares.some((s) => s.slug === slug)) return slug;
     }
   };

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // A 3D model on a turntable: dragging turns it, the wheel brings it closer.
+import { Pill } from '@glimstone/vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { t } from '@/i18n';
 import { rawUrl } from '../content';
@@ -70,6 +71,6 @@ onBeforeUnmount(() => stop());
 </script>
 
 <template>
-  <div v-if="!compact" class="cv-bar"><span class="pill">{{ t('viewer.model.hint') }}</span></div>
+  <div v-if="!compact" class="cv-bar"><Pill>{{ t('viewer.model.hint') }}</Pill></div>
   <div ref="host" class="cv-model" :class="{ compact }"></div>
 </template>

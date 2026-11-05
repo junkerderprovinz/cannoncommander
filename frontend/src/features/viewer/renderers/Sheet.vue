@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // A spreadsheet as a table, with the formula of the chosen cell above it and a tab per sheet.
+import { Pill } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { locale, t } from '@/i18n';
 import { rawUrl } from '../content';
@@ -47,7 +48,7 @@ defineExpose({
 </script>
 
 <template>
-  <div v-if="!compact" class="cv-bar"><span class="pill glim-num cv-ref">{{ ref0 }}</span><span class="cv-fx mono">{{ formula }}</span></div>
+  <div v-if="!compact" class="cv-bar"><Pill class="glim-num cv-ref">{{ ref0 }}</Pill><span class="cv-fx mono">{{ formula }}</span></div>
   <div class="cv-sheet">
     <table>
       <thead><tr><th></th><th v-for="c in nCols" :key="c">{{ colName(c - 1) }}</th></tr></thead>

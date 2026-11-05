@@ -1,16 +1,14 @@
 <script setup lang="ts">
 // Verpacken: name, format, compression and password of the archive, and the folder it lands in.
-import { PasswordField } from '@glimstone/vue';
+import { pathField } from '@/ui/picker';
+import { FieldRow, FieldRowGroup, PasswordField, PathField, Pill, Selector, SubCard, TextField } from '@glimstone/vue';
 import { computed, watch, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
 import { join } from '@/files/paths';
 import { t } from '@/i18n';
-import PathField from '@/ui/PathField.vue';
 import FinalPath from '@/ui/FinalPath.vue';
-import Frow from '@/ui/Frow.vue';
-import { eyeWords, plural } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
+import { eyeWords, plural, segItems } from '@/ui/kit';
 import { clean, folderState, freeName, namesIn } from '@/ui/tools';
 
 export interface PackState { items: Entry[]; name: string; format: string; level: string; password: string; dest: string; formats: string[]; file: string }
@@ -28,20 +26,22 @@ watchEffect(() => { props.st.file = ok.value && props.st.name.trim() ? freeName(
 </script>
 
 <template>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ plural(st.items.length, 'ui.objects') }}, {{ fmtSize(total) || '0 B' }}</div>
-    <Frow :label="t('archive.name')"><span class="bk-namef"><input id="k-name" v-model="st.name" class="glim-input grow" spellcheck="false" autocomplete="off"><span id="k-ext" class="pill mono">.{{ st.format }}</span></span></Frow>
-    <Frow :label="t('archive.format')" :tip="t('archive.formatTip')"><Seg id="k-fmt" v-model="st.format" :options="formats" /></Frow>
-    <Frow :label="t('archive.level')" :tip="t('archive.levelTip')"><Seg id="k-level" v-model="st.level" :options="levels" /></Frow>
-    <Frow :label="t('archive.password')" :tip="t('archive.passwordTip')"><PasswordField id="k-pw" v-model="st.password" class="grow" :placeholder="t('archive.noPassword')" :disabled="tar" autocomplete="new-password" :text="eyeWords()" /></Frow>
-  </div>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('archive.target') }}</div>
-    <Frow :label="t('archive.folder')"><PathField id="k-dest" v-model="st.dest" /></Frow>
-    <Frow :label="t('archive.savedAs')">
+  <SubCard :title="`${plural(st.items.length, 'ui.objects')}, ${fmtSize(total) || '0 B'}`" class="bk-form">
+    <FieldRowGroup>
+      <FieldRow :label="t('archive.name')"><span class="bk-namef"><TextField id="k-name" v-model="st.name" spellcheck="false" autocomplete="off" width="grow" /><Pill id="k-ext" class="mono">.{{ st.format }}</Pill></span></FieldRow>
+      <FieldRow :label="t('archive.format')" :hint="t('archive.formatTip')"><Selector id="k-fmt" v-model="st.format" :items="segItems(formats)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="t('archive.level')" :hint="t('archive.levelTip')"><Selector id="k-level" v-model="st.level" :items="segItems(levels)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="t('archive.password')" :hint="t('archive.passwordTip')"><PasswordField id="k-pw" v-model="st.password" width="grow" :placeholder="t('archive.noPassword')" :disabled="tar" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
+    </FieldRowGroup>
+  </SubCard>
+  <SubCard :title="t('archive.target')" class="bk-form">
+    <FieldRow :label="t('archive.folder')"><PathField v-model="st.dest" v-bind="pathField('k-dest')" /></FieldRow>
+    <FieldRow :label="t('archive.savedAs')">
       <span id="k-final" class="bk-finalw">
-        <span v-if="ok === false" class="pill fault">{{ t('ui.noFolder') }}</span>
-        <span v-else-if="!st.name.trim()" class="pill fault">{{ t('ui.noName') }}</span>
-        <template v-else-if="st.file"><FinalPath :path="join(clean(st.dest), st.file)" /><span v-if="st.file !== wanted" class="pill warn" :data-tip="t('archive.takenTip')">{{ t('ui.taken') }}</span></template>
+        <Pill v-if="ok === false" tone="fail">{{ t('ui.noFolder') }}</Pill>
+        <Pill v-else-if="!st.name.trim()" tone="fail">{{ t('ui.noName') }}</Pill>
+        <template v-else-if="st.file"><FinalPath :path="join(clean(st.dest), st.file)" /><Pill v-if="st.file !== wanted" :data-tip="t('archive.takenTip')" tone="warn">{{ t('ui.taken') }}</Pill></template>
       </span>
-    </Frow>
-  </div>
+    </FieldRow>
+  </SubCard>
 </template>

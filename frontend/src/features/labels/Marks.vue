@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // The colour dot and the tags beside a name in the file list.
+import { Pill } from '@glimstone/vue';
 import { computed } from 'vue';
 import { type Labelled, useLabels } from '@/stores/labels';
 
@@ -11,5 +12,5 @@ const colour = computed(() => labels.colour(l.value.colour));
 
 <template>
   <i v-if="colour" class="cdot" :style="{ '--c': colour.hex }" :title="labels.colourName(colour)"></i>
-  <span v-for="tag in l.tags || []" :key="tag" class="pill tag">#{{ tag }}</span>
+  <Pill v-for="tag in l.tags || []" :key="tag" class="tag">#{{ tag }}</Pill>
 </template>

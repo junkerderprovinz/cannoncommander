@@ -57,7 +57,7 @@ await page.keyboard.press('Control+m');
 await wait(500);
 await page.fill('#m-name', 'Urlaub_[C3]');
 await page.click('#m-case');
-await page.locator('#menu [role^=menuitem]', { hasText: 'alles klein' }).first().click();
+await page.locator('#menu [role=option]', { hasText: 'alles klein' }).first().click();
 await wait(600);
 check('the rename preview counts the changes', /4 Namen ändern sich/.test(await page.textContent('#m-count') || ''), await page.textContent('#m-count'));
 check('the preview shows the new names', (await page.locator('#m-list .bk-mrow .new').allInnerTexts())[0] === 'urlaub_001.jpg', await page.locator('#m-list .bk-mrow .new').allInnerTexts());

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // How to put CannonCommander on the home screen or the taskbar, with the way of the browser at hand first in mind.
+import { Pill, SubCard } from '@glimstone/vue';
 import { computed } from 'vue';
 import { G } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
@@ -16,8 +17,8 @@ const at = mine();
 </script>
 
 <template>
-  <div class="well glim-well"><div class="in-head"><span class="in-icon"><img :src="icon" alt=""></span><div><b>{{ t('install.head') }}</b><div class="muted">{{ t('install.intro') }}</div></div></div></div>
-  <div class="well glim-well"><div class="eyebrow">{{ t('install.how') }}</div>
-    <div v-for="[id, g] in WAYS" :key="id" class="in-way" :class="{ cur: id === at }"><G :n="g" /><div><b>{{ t(`install.ways.${id}.head`) }}</b><span v-if="id === at" class="pill">{{ t('install.yours') }}</span><div class="muted">{{ t(`install.ways.${id}.how`) }}</div></div></div>
-  </div>
+  <SubCard><div class="in-head"><span class="in-icon"><img :src="icon" alt=""></span><div><b>{{ t('install.head') }}</b><div class="muted">{{ t('install.intro') }}</div></div></div></SubCard>
+  <SubCard :title="t('install.how')">
+    <div v-for="[id, g] in WAYS" :key="id" class="in-way" :class="{ cur: id === at }"><G :n="g" /><div><b>{{ t(`install.ways.${id}.head`) }}</b><Pill v-if="id === at">{{ t('install.yours') }}</Pill><div class="muted">{{ t(`install.ways.${id}.how`) }}</div></div></div>
+  </SubCard>
 </template>

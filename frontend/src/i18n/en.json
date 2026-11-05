@@ -259,7 +259,6 @@
     "bookmarkExists": "This shortcut is already there",
     "bookmarkAdded": "Shortcut “{name}” added",
     "renameTitle": "Rename shortcut",
-    "name": "Name",
     "rename": "Rename"
   },
   "files": {

@@ -24,6 +24,9 @@
   "notHere": "Nothing can be uploaded into this folder",
   "done": "{what} uploaded to {path}",
   "go": "Go there",
-  "failed": "{n} files could not be uploaded. Choose them again and the upload goes on from the last chunk.",
+  "failed": {
+    "one": "One file could not be uploaded. Choose it again and the upload goes on from the last chunk.",
+    "many": "{n} files could not be uploaded. Choose them again and the upload goes on from the last chunk."
+  },
   "oneFailed": "{name} could not be uploaded: {error}"
 }

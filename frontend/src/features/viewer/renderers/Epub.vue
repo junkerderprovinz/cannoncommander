@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // An e-book page by page on paper, in the reader's own typeface; the arrows turn the pages.
+import { IconButton, Pill } from '@glimstone/vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
-import { G } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
 import { rawUrl } from '../content';
 import { joinPath } from '../kinds';
@@ -51,9 +52,9 @@ defineExpose({
 
 <template>
   <div v-if="!compact" class="cv-bar">
-    <button class="btn icon" :data-tip="t('viewer.epub.prev')" :aria-label="t('viewer.epub.prev')" @click="prev"><G n="IconBack" /></button>
-    <span v-if="where" class="pill glim-num">{{ where }}</span>
-    <button class="btn icon" :data-tip="t('viewer.epub.next')" :aria-label="t('viewer.epub.next')" @click="next"><G n="IconForward" /></button>
+    <IconButton :tip="t('viewer.epub.prev')" :glyph="glyphComponent('IconBack')" @click="prev" />
+    <Pill v-if="where" class="glim-num">{{ where }}</Pill>
+    <IconButton :tip="t('viewer.epub.next')" :glyph="glyphComponent('IconForward')" @click="next" />
   </div>
   <div class="cv-book" :class="{ compact }"><div ref="host" class="cv-book-page"></div></div>
 </template>

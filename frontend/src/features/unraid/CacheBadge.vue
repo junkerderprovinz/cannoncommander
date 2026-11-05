@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // "Cache" on an entry the mover still has to carry to the array. Only shares that empty their pool get it, since
 // elsewhere a file on the cache is where it belongs.
+import { Pill } from '@glimstone/vue';
 import { computed, watchEffect } from 'vue';
 import type { Entry } from '@/files/entries';
 import { join } from '@/files/paths';
@@ -24,5 +25,5 @@ const waits = computed(() => !!pool.value && !!U.devicesOf(folder.value, props.k
 </script>
 
 <template>
-  <span v-if="waits" class="pill u-cache" :data-tip="t(k.dir ? 'unraid.cacheDir' : 'unraid.cacheFile', { pool: poolPhrase(pool) })">{{ pool === 'cache' ? t('unraid.cache') : diskName(pool) }}</span>
+  <Pill v-if="waits" class="u-cache" :data-tip="t(k.dir ? 'unraid.cacheDir' : 'unraid.cacheFile', { pool: poolPhrase(pool) })">{{ pool === 'cache' ? t('unraid.cache') : diskName(pool) }}</Pill>
 </template>

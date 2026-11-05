@@ -1,15 +1,14 @@
 <script setup lang="ts">
 // Datei teilen: how big each part is, a sum file beside them, and where the parts land.
+import { glyphComponent, glyphOf } from '@/core/glyphs';
+import { pathField } from '@/ui/picker';
+import { segItems } from '@/ui/kit';
+import { FieldRow, FieldRowGroup, GlyphTile, PathField, Pill, Selector, SubCard, TextField, Toggle } from '@glimstone/vue';
 import { computed, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
 import { join } from '@/files/paths';
 import { t } from '@/i18n';
-import PathField from '@/ui/PathField.vue';
-import Frow from '@/ui/Frow.vue';
-import Seg from '@/ui/Seg.vue';
-import Sw from '@/ui/Sw.vue';
-import Tile from '@/ui/Tile.vue';
 import { clean, folderState } from '@/ui/tools';
 import { partSize } from './sums';
 
@@ -29,20 +28,22 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="well glim-well"><div class="bk-filehead"><Tile :k="st.k" /><span class="bk-name">{{ st.k.name }}</span><span class="pill glim-num">{{ fmtSize(st.k.size) }}</span></div></div>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('checksum.parts') }}</div>
-    <Frow :label="t('checksum.partSize')" :tip="t('checksum.partSizeTip')"><Seg id="t-size" v-model="st.size" :options="sizes" /></Frow>
-    <Frow :label="t('checksum.ownSize')"><span class="bk-range"><input id="t-custom" v-model="st.custom" class="glim-input s glim-num" inputmode="numeric" :disabled="st.size !== 'custom'"><span class="muted">MB</span></span></Frow>
-    <Frow :label="t('checksum.addSum')" :tip="t('checksum.addSumTip')"><Sw id="t-sum" v-model="st.sum" /></Frow>
-  </div>
-  <div class="well glim-well bk-form"><div class="eyebrow">{{ t('checksum.target') }}</div>
-    <Frow :label="t('checksum.folder')"><PathField id="t-dest" v-model="st.dest" /></Frow>
-    <Frow :label="t('checksum.yields')">
+  <SubCard><div class="bk-filehead"><GlyphTile :glyph="glyphComponent(glyphOf(st.k))" ground :quiet="!st.k.dir" /><span class="bk-name">{{ st.k.name }}</span><Pill class="glim-num">{{ fmtSize(st.k.size) }}</Pill></div></SubCard>
+  <SubCard :title="t('checksum.parts')" class="bk-form">
+    <FieldRowGroup>
+      <FieldRow :label="t('checksum.partSize')" :hint="t('checksum.partSizeTip')"><Selector id="t-size" v-model="st.size" :items="segItems(sizes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="t('checksum.ownSize')"><span class="bk-range"><TextField id="t-custom" v-model="st.custom" class="glim-num" inputmode="numeric" :disabled="st.size !== 'custom'" width="short" /><span class="muted">MB</span></span></FieldRow>
+      <FieldRow :label="t('checksum.addSum')" :hint="t('checksum.addSumTip')"><Toggle id="t-sum" v-model="st.sum" /></FieldRow>
+    </FieldRowGroup>
+  </SubCard>
+  <SubCard :title="t('checksum.target')" class="bk-form">
+    <FieldRow :label="t('checksum.folder')"><PathField v-model="st.dest" v-bind="pathField('t-dest')" /></FieldRow>
+    <FieldRow :label="t('checksum.yields')">
       <span id="t-final" class="bk-finalw">
-        <span v-if="ok === false" class="pill fault">{{ t('ui.noFolder') }}</span>
-        <span v-else-if="st.count < 2" class="pill warn">{{ t('checksum.smaller') }}</span>
-        <template v-else><span class="pill glim-num">{{ t('checksum.partsCount', { n: st.count }) }}</span><span class="bk-path mono bk-final" :title="join(clean(st.dest), names[0]!)"><bdi>{{ t('checksum.range', { first: names[0]!, last: names.at(-1)!.split('.').pop()! }) }}</bdi></span></template>
+        <Pill v-if="ok === false" tone="fail">{{ t('ui.noFolder') }}</Pill>
+        <Pill v-else-if="st.count < 2" tone="warn">{{ t('checksum.smaller') }}</Pill>
+        <template v-else><Pill class="glim-num">{{ t('checksum.partsCount', { n: st.count }) }}</Pill><span class="bk-path mono bk-final" :title="join(clean(st.dest), names[0]!)"><bdi>{{ t('checksum.range', { first: names[0]!, last: names.at(-1)!.split('.').pop()! }) }}</bdi></span></template>
       </span>
-    </Frow>
-  </div>
+    </FieldRow>
+  </SubCard>
 </template>

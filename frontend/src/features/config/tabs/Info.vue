@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Card } from '@glimstone/vue';
+import { Button, Card, FieldRow } from '@glimstone/vue';
 import { GLIMSTONE_VERSION } from '@glimstone/core';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type System, type UpdateCheck } from '@/api/admin';
@@ -8,7 +8,6 @@ import { run } from '@/core/actions';
 import { G } from '@/core/glyphs';
 import { win } from '@/core/windows';
 import { NEWS, unseen } from '../help';
-import Frow from '@/ui/Frow.vue';
 import { c } from '@/features/config/shared';
 import { bugReport, MAIL, REPO } from '../support';
 import CoffeeWin from '../wins/CoffeeWin.vue';
@@ -55,13 +54,13 @@ const give = computed(() => [
 
 <template>
   <Card :title="c('info.version')" :hint="c('info.versionHint')">
-    <Frow v-for="x in versions" :key="x.name" :label="x.name" :tip="x.tip">
+    <FieldRow v-for="x in versions" :key="x.name" :label="x.name" :hint="x.tip">
       <a v-if="x.v" class="a-vlink glim-num" :href="x.href + x.v" target="_blank" rel="noopener">{{ String(x.v).replace(/^v/, '') }}</a>
-    </Frow>
+    </FieldRow>
     <div class="a-foot">
-      <button class="btn" data-run="whatsNew" @click="run('whatsNew')"><span class="a-dot" :class="{ seen: !n }"></span><G n="IconWhatsNew" />{{ n ? c('info.newN', { n }) : c('info.new') }}</button>
-      <a v-if="update === 'newer'" id="a-update" class="btn" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener"><G n="IconWhatsNew" />{{ c('app.newer', { v: latest!.latest }) }}</a>
-      <button v-else id="a-update" class="btn" :class="{ ok: update === 'ok' }" :disabled="update === 'busy'" :data-tip="update === 'ok' ? c('app.check') : undefined" @click="check"><G :n="update === 'ok' ? 'IconCheck' : 'IconSearch'" />{{ update === 'ok' ? c('info.current') : c('app.check') }}</button>
+      <Button :label="n ? c('info.newN', { n }) : c('info.new')" label-key="IconWhatsNew" data-run="whatsNew" @click="run('whatsNew')"><template #before><span class="a-dot" :class="{ seen: !n }"></span></template></Button>
+      <Button v-if="update === 'newer'" id="a-update" :label="c('app.newer', { v: latest!.latest })" label-key="IconWhatsNew" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener" />
+      <Button v-else id="a-update" :label="update === 'ok' ? c('info.current') : c('app.check')" :label-key="update === 'ok' ? 'IconCheck' : 'IconSearch'" :tone="update === 'ok' ? 'ok' : 'neutral'" :disabled="update === 'busy'" :title="update === 'ok' ? c('app.check') : undefined" @click="check" />
     </div>
   </Card>
   <Card :title="c('info.help')" :hint="c('info.helpHint')">

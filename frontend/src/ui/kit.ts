@@ -1,13 +1,19 @@
 // What the tool windows share, as the prototype's b-00-kit.js holds it for them: counted words, copying, back and
 // forward for a window that walks through folders, and the foot row that follows the window's state.
 import { copyText as writeClipboard } from '@glimstone/core';
-import type { InjectionKey } from 'vue';
+import type { SelectorItem, SelectOption } from '@glimstone/vue';
+import { glyphComponent } from '@/core/glyphs';
 import { winNav } from '@/core/nav';
 import { toast } from '@/core/toast';
 import { closeBtn, type FootButton, type WinEntry } from '@/core/windows';
 import { locale, t } from '@/i18n';
 import './texts';
 import './bk.css';
+
+// Choices written as [value, label, glyph name], for a Selector or a Select.
+export type Choice<V> = readonly [value: V, label: string, glyph?: string];
+export const segItems = <V extends string | number>(choices: readonly Choice<V>[]): SelectorItem<V>[] => choices.map(([id, label, g]) => ({ id, label, glyph: g ? glyphComponent(g) : undefined }));
+export const selectOptions = <V extends string>(choices: readonly Choice<V>[]): SelectOption<V>[] => choices.map(([value, label, g]) => ({ value, label, glyph: g ? glyphComponent(g) : undefined }));
 
 export const num = (n: number) => n.toLocaleString(locale());
 // key names a pair of texts with one and many under it, such as ui.objects.
@@ -20,8 +26,6 @@ export const copyWords = () => ({ copy: t('ui.copy'), copied: t('ui.copied') });
 export const eyeWords = () => ({ show: t('ui.show'), hide: t('ui.hide') });
 export const pickerWords = () => ({ apply: t('ui.take'), hue: t('ui.hue'), area: t('ui.shade'), hex: t('ui.colourValue') });
 
-// What the row around a control calls it, for the control's accessible name.
-export const rowLabel: InjectionKey<() => string> = Symbol('rowLabel');
 
 // The mouse's side buttons step through the folders a window has shown, and closing it takes those steps back out.
 export function folderSteps(w: unknown, get: () => string, set: (path: string) => void) {

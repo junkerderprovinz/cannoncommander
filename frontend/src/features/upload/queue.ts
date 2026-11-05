@@ -11,6 +11,7 @@ import { resolveConflicts } from '@/features/transfer/conflicts';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
+import { plural } from '@/ui/kit';
 
 export type UpState = 'waiting' | 'running' | 'paused' | 'done' | 'cancelled' | 'failed';
 export interface UpItem { id: number; batch: string; file: File; name: string; size: number; path: string; loaded: number; state: UpState; rule: Rule; upload?: Upload; stop?: AbortController }
@@ -96,7 +97,7 @@ function finish(job: Job, items: UpItem[]) {
   useJobs().localChanged(job, was);
   const path = items[0]?.path || '/';
   if (n) toast(t('upload.done', { what: n === 1 ? t('upload.one') : t('upload.many', { n }), path }), 'ok', Up.shown ? undefined : { label: t('upload.go'), run: () => { usePanels().go(path); } });
-  if (failed) toast(t('upload.failed', { n: failed }), 'fault');
+  if (failed) toast(plural(failed, 'upload.failed'), 'fault');
 }
 
 async function begin(i: UpItem): Promise<Upload | null> {

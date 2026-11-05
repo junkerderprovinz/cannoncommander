@@ -1,14 +1,13 @@
 <script setup lang="ts">
 // The finds of Aufräumen by group, each one ticked on its own or the whole group at once.
-import { InfoBubble } from '@glimstone/vue';
+import { pathField } from '@/ui/picker';
+import { EmptyState, FieldRow, InfoBubble, PathField, Pill, SubCard } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { CleanupFind, CleanupScan } from '@/api/tools';
 import { fmtSize } from '@/core/format';
 import { Checkbox } from '@glimstone/vue';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { t } from '@/i18n';
-import PathField from '@/ui/PathField.vue';
-import Frow from '@/ui/Frow.vue';
 import { plural } from '@/ui/kit';
 import { GROUPS, keyOf } from './groups';
 
@@ -37,26 +36,26 @@ const all = (group: string, rows: CleanupFind[]) => rows.every((f) => props.st.p
 </script>
 
 <template>
-  <div class="well glim-well bk-form"><Frow :label="t('cleanup.searchIn')" :tip="t('cleanup.searchInTip')"><PathField id="cl-in" v-model="st.path" /></Frow></div>
-  <div class="well glim-well bk-fill bk-cleanwell">
-    <div class="bk-tools"><span id="cl-sum" class="eyebrow">{{ st.scan && total ? t('cleanup.findsIn', { finds: plural(total, 'cleanup.findWord'), objects: plural(st.scan.scanned, 'cleanup.objectsIn') }) : t('cleanup.finds') }}</span><InfoBubble v-if="st.scan?.capped" :tip="t('cleanup.capped')" /></div>
+  <SubCard class="bk-form"><FieldRow :label="t('cleanup.searchIn')" :hint="t('cleanup.searchInTip')"><PathField v-model="st.path" v-bind="pathField('cl-in')" /></FieldRow></SubCard>
+  <SubCard class="bk-fill bk-cleanwell">
+    <div class="bk-tools"><span id="cl-sum" class="glim-eyebrow">{{ st.scan && total ? t('cleanup.findsIn', { finds: plural(total, 'cleanup.findWord'), objects: plural(st.scan.scanned, 'cleanup.objectsIn') }) : t('cleanup.finds') }}</span><InfoBubble v-if="st.scan?.capped" :tip="t('cleanup.capped')" /></div>
     <div id="cl-list" class="bk-list">
-      <div v-if="st.missing" class="empty"><G n="IconFolder" /><div>{{ t('ui.noFolder') }}</div></div>
+      <EmptyState v-if="st.missing" nested :glyph="glyphComponent('IconFolder')" :title="t('ui.noFolder')" />
       <template v-else-if="st.scan">
         <section v-for="gr in groups" :key="gr.id" class="bk-group">
           <div class="cl-head">
             <Checkbox slim class="cl-check" :model-value="all(gr.id, gr.rows)" :data-cl-group="gr.id" :label="t('cleanup.pickAll', { group: t(`cleanup.groups.${gr.id}.label`) })" @update:model-value="flipGroup(gr.id, gr.rows)" />
             <span class="cl-g"><G :n="gr.g" /></span><span class="bk-name">{{ t(`cleanup.groups.${gr.id}.label`) }}</span><InfoBubble :tip="t(`cleanup.groups.${gr.id}.tip`)" />
-            <span class="pill glim-num">{{ gr.rows.length }}</span><span class="pill">{{ gr.act === 'delete' ? t('cleanup.trash') : t('cleanup.rename') }}</span>
+            <Pill class="glim-num">{{ gr.rows.length }}</Pill><Pill>{{ gr.act === 'delete' ? t('cleanup.trash') : t('cleanup.rename') }}</Pill>
           </div>
           <div v-for="f in gr.rows" :key="f.path" class="cl-row" :class="{ on: st.picked.has(keyOf(gr.id, f)) }">
             <Checkbox slim class="cl-check" :model-value="st.picked.has(keyOf(gr.id, f))" :data-cl="keyOf(gr.id, f)" :label="f.path" @update:model-value="flip(keyOf(gr.id, f))" />
             <span class="bk-path mono" :title="f.path"><bdi>{{ shown(f) }}</bdi></span>
-            <span v-if="f.to" class="cl-to mono"><G n="IconForward" />{{ f.to.split('/').pop() }}</span><span class="pill">{{ noteOf(gr.id, f) }}</span>
+            <span v-if="f.to" class="cl-to mono"><G n="IconForward" />{{ f.to.split('/').pop() }}</span><Pill>{{ noteOf(gr.id, f) }}</Pill>
           </div>
         </section>
-        <div v-if="!groups.length" class="empty"><G n="IconCheck" /><div>{{ t('cleanup.clean') }}</div><div class="muted" style="font-size: 12px">{{ t('cleanup.scanned', { objects: plural(st.scan.scanned, 'ui.objects') }) }}</div></div>
+        <EmptyState v-if="!groups.length" nested :glyph="glyphComponent('IconCheck')" :title="t('cleanup.clean')" :hint="t('cleanup.scanned', { objects: plural(st.scan.scanned, 'ui.objects') })" />
       </template>
     </div>
-  </div>
+  </SubCard>
 </template>

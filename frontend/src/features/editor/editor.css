@@ -25,7 +25,7 @@
 .ce-find[hidden] { display: none; }
 .ce-frow { display: flex; align-items: center; gap: .4rem; }
 .ce-frow .glim-input { flex: 1; min-width: 0; }
-.ce-frow .pill { min-width: 4.5rem; justify-content: center; }
+.ce-frow .glim-pill { min-width: 4.5rem; justify-content: center; }
 .ce-preview { min-width: 0; overflow: auto; border-radius: var(--radius-card); background: var(--carbon-surface2); }
 .ce-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent-contrast); margin-left: .5rem; }
 .ce-ask { display: flex; gap: .75rem; align-items: flex-start; line-height: 1.5; }
@@ -33,11 +33,11 @@
 .ce-pos { font-size: 12px; }
 @media (max-width: 760px) {
   .ce-bar { flex-wrap: wrap; gap: .6rem 1rem; }
-  .ce-bar .pill, .ce-bar .grow { display: none; }
-  #ce-findbtn { font-size: 0; gap: 0; width: var(--btn-h); padding: 0; }
+  .ce-bar .glim-pill, .ce-bar .grow { display: none; }
   .ce-main.split { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
   .ce-find { right: .5rem; left: .5rem; width: auto; }
   .ce-frow { flex-wrap: wrap; }
+  .ce-frow .glim-input { flex: 1 1 100%; }
 }
 
 /* CodeMirror draws the lines, the numbers and the marks itself; the pane only gives it the surface. */

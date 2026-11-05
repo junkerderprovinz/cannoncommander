@@ -1,10 +1,9 @@
 <script setup lang="ts">
+import { FieldRow, Selector, SubCard, TextField } from '@glimstone/vue';
 import { computed } from 'vue';
 import type { ArrowLoopJob } from '@/api/tools';
 import { t } from '@/i18n';
-import Frow from '@/ui/Frow.vue';
-import { pressPrimary } from '@/ui/kit';
-import Seg from '@/ui/Seg.vue';
+import { pressPrimary, segItems } from '@/ui/kit';
 
 export interface PlanState { name: string; every: ArrowLoopJob['every']; at: string }
 defineProps<{ st: PlanState }>();
@@ -12,9 +11,9 @@ const every = computed(() => (['hourly', 'daily', 'weekly'] as const).map((e) =>
 </script>
 
 <template>
-  <div class="well glim-well" @keydown.enter="pressPrimary">
-    <Frow :label="t('arrowloop.name')" :tip="t('arrowloop.nameTip')"><input id="al-name" v-model="st.name" class="glim-input m"></Frow>
-    <Frow :label="t('arrowloop.every')"><Seg id="al-when" v-model="st.every" :options="every" /></Frow>
-    <Frow :label="t('arrowloop.at')" :tip="t('arrowloop.atTip')"><input id="al-time" v-model="st.at" class="glim-input s glim-input--mono" maxlength="5"></Frow>
-  </div>
+  <SubCard @keydown.enter="pressPrimary">
+    <FieldRow :label="t('arrowloop.name')" :hint="t('arrowloop.nameTip')"><TextField id="al-name" v-model="st.name" width="medium" /></FieldRow>
+    <FieldRow :label="t('arrowloop.every')"><Selector id="al-when" v-model="st.every" :items="segItems(every)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="t('arrowloop.at')" :hint="t('arrowloop.atTip')"><TextField id="al-time" v-model="st.at" maxlength="5" width="short" mono /></FieldRow>
+  </SubCard>
 </template>

@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { Checkbox } from '@glimstone/vue';
+import { Select } from '@glimstone/vue/Select';
+import { Checkbox, FieldRow, GlyphTile, Pill, SubCard, TextField, Toggle } from '@glimstone/vue';
 // Eigenschaften und Rechte: what the selection is, who owns it, and the nine rights as boxes and as a number.
 import { computed, ref, watch } from 'vue';
 import type { Item } from '@/api/client';
 import { extend } from '@/core/extend';
 import { fmtSize, fmtTime } from '@/core/format';
-import { ext, G, kindOf } from '@/core/glyphs';
+import { ext, kindOf, glyphComponent, glyphOf } from '@/core/glyphs';
 import { Render } from '@/core/Render';
 import { locale, t } from '@/i18n';
 import CopyBtn from '@/ui/CopyBtn.vue';
-import Dropdown from '@/ui/Dropdown.vue';
-import Frow from '@/ui/Frow.vue';
-import { plural, pressPrimary } from '@/ui/kit';
-import Sw from '@/ui/Sw.vue';
-import Tile from '@/ui/Tile.vue';
+import { plural, pressPrimary, selectOptions } from '@/ui/kit';
 
 export interface PropsState {
   nodes: Item[]; paths: string[]; dir: string; self: boolean; ro: boolean; uids: Record<string, number>; gids: Record<string, number>;
@@ -62,32 +59,32 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
 </script>
 
 <template>
-  <div class="bk-phead"><Tile v-if="one" :k="one" /><Tile v-else g="IconFiles" /><span class="bk-name">{{ title }}</span></div>
+  <div class="bk-phead"><GlyphTile v-if="one" :glyph="glyphComponent(glyphOf(one))" ground :quiet="!one.dir" /><GlyphTile v-else :glyph="glyphComponent('IconFiles')" ground quiet /><span class="bk-name">{{ title }}</span></div>
   <div class="bk-grid2 bk-top" @keydown.enter="pressPrimary">
-    <div class="well glim-well bk-form"><div class="eyebrow">{{ t('props.general') }}</div>
+    <SubCard :title="t('props.general')" class="bk-form">
       <template v-if="one">
-        <Frow :label="t('props.kind')"><span class="bk-val">{{ typeOf(one) }}</span></Frow>
-        <Frow :label="t('props.place')"><span class="bk-val bk-pathv"><span class="bk-path mono" :title="st.paths[0]"><bdi>{{ st.paths[0] }}</bdi></span><CopyBtn :text="st.paths[0]!" :tip="t('props.copyPath')" /></span></Frow>
-        <Frow v-if="one.link" :label="t('props.pointsTo')"><span class="bk-val bk-pathv"><span class="bk-path mono"><bdi>{{ one.link }}</bdi></span><CopyBtn :text="one.link" :tip="t('props.copyTarget')" /></span></Frow>
-        <Frow :label="t('props.size')"><span class="bk-val glim-num" :data-tip="bytes">{{ sizeText }}</span></Frow>
-        <Frow :label="t('props.changed')"><span class="bk-val glim-num">{{ fmtTime(one.time) }}</span></Frow>
-        <Frow v-if="one.btime" :label="t('props.created')"><span class="bk-val glim-num">{{ fmtTime(one.btime) }}</span></Frow>
+        <FieldRow :label="t('props.kind')"><span class="bk-val">{{ typeOf(one) }}</span></FieldRow>
+        <FieldRow :label="t('props.place')"><span class="bk-val bk-pathv"><span class="bk-path mono" :title="st.paths[0]"><bdi>{{ st.paths[0] }}</bdi></span><CopyBtn :text="st.paths[0]!" :tip="t('props.copyPath')" /></span></FieldRow>
+        <FieldRow v-if="one.link" :label="t('props.pointsTo')"><span class="bk-val bk-pathv"><span class="bk-path mono"><bdi>{{ one.link }}</bdi></span><CopyBtn :text="one.link" :tip="t('props.copyTarget')" /></span></FieldRow>
+        <FieldRow :label="t('props.size')"><span class="bk-val glim-num" :data-tip="bytes">{{ sizeText }}</span></FieldRow>
+        <FieldRow :label="t('props.changed')"><span class="bk-val glim-num">{{ fmtTime(one.time) }}</span></FieldRow>
+        <FieldRow v-if="one.btime" :label="t('props.created')"><span class="bk-val glim-num">{{ fmtTime(one.btime) }}</span></FieldRow>
       </template>
       <template v-else>
-        <Frow :label="t('props.selection')"><span class="bk-val">{{ plural(st.nodes.length, 'ui.objects') }}</span></Frow>
-        <Frow :label="t('props.place')"><span class="bk-val bk-pathv"><span class="bk-path mono"><bdi>{{ st.dir }}</bdi></span><CopyBtn :text="st.paths.join('\n')" :tip="t('props.copyPaths')" /></span></Frow>
-        <Frow :label="t('props.size')"><span class="bk-val glim-num" :data-tip="bytes">{{ sizeText }}</span></Frow>
-        <Frow :label="t('props.lastChanged')"><span class="bk-val glim-num">{{ fmtTime(newest) }}</span></Frow>
+        <FieldRow :label="t('props.selection')"><span class="bk-val">{{ plural(st.nodes.length, 'ui.objects') }}</span></FieldRow>
+        <FieldRow :label="t('props.place')"><span class="bk-val bk-pathv"><span class="bk-path mono"><bdi>{{ st.dir }}</bdi></span><CopyBtn :text="st.paths.join('\n')" :tip="t('props.copyPaths')" /></span></FieldRow>
+        <FieldRow :label="t('props.size')"><span class="bk-val glim-num" :data-tip="bytes">{{ sizeText }}</span></FieldRow>
+        <FieldRow :label="t('props.lastChanged')"><span class="bk-val glim-num">{{ fmtTime(newest) }}</span></FieldRow>
       </template>
-    </div>
-    <div class="well glim-well bk-form"><div class="eyebrow">{{ t('props.owning') }}</div>
-      <Frow :label="t('props.owner')" :tip="t('props.ownerTip')"><span class="bk-idf"><Dropdown id="r-owner" v-model="st.owner" :options="owners" :disabled="st.ro" /><span id="r-uid" class="pill glim-num">{{ idOf(st.uids, st.owner, 'UID') }}</span></span></Frow>
-      <Frow :label="t('props.group')"><span class="bk-idf"><Dropdown id="r-group" v-model="st.group" :options="groups" :disabled="st.ro" /><span id="r-gid" class="pill glim-num">{{ idOf(st.gids, st.group, 'GID') }}</span></span></Frow>
-      <Frow :label="t('props.inside')" :tip="anyDir ? t('props.insideTip') : t('props.onlyDirs')"><Sw id="r-rec" v-model="st.rec" :disabled="!anyDir || st.ro" /></Frow>
-    </div>
+    </SubCard>
+    <SubCard :title="t('props.owning')" class="bk-form">
+      <FieldRow :label="t('props.owner')" :hint="t('props.ownerTip')"><span class="bk-idf"><Select id="r-owner" v-model="st.owner" :trigger-attrs="{ 'data-val': st.owner }" :disabled="st.ro" :options="selectOptions(owners)" rows="menu" /><Pill id="r-uid" class="glim-num">{{ idOf(st.uids, st.owner, 'UID') }}</Pill></span></FieldRow>
+      <FieldRow :label="t('props.group')"><span class="bk-idf"><Select id="r-group" v-model="st.group" :trigger-attrs="{ 'data-val': st.group }" :disabled="st.ro" :options="selectOptions(groups)" rows="menu" /><Pill id="r-gid" class="glim-num">{{ idOf(st.gids, st.group, 'GID') }}</Pill></span></FieldRow>
+      <FieldRow :label="t('props.inside')" :hint="anyDir ? t('props.insideTip') : t('props.onlyDirs')"><Toggle id="r-rec" v-model="st.rec" :disabled="!anyDir || st.ro" /></FieldRow>
+    </SubCard>
   </div>
   <template v-if="one && !st.ro"><Render v-for="(well, n) in extend.propsWells" :key="n" :node="well(st.paths[0]!)" /></template>
-  <div class="well glim-well bk-form"><div class="bk-tools"><span class="eyebrow">{{ t('props.rights') }}</span><span v-if="st.modes.length > 1" class="pill warn" :data-tip="t('props.mixedTip')">{{ t('props.mixed') }}</span></div>
+  <SubCard class="bk-form"><div class="bk-tools"><span class="glim-eyebrow">{{ t('props.rights') }}</span><Pill v-if="st.modes.length > 1" :data-tip="t('props.mixedTip')" tone="warn">{{ t('props.mixed') }}</Pill></div>
     <div class="bk-perms">
       <span></span><span v-for="bit in BITS" :key="bit" class="bk-ph">{{ t(`props.bits.${bit}`) }}</span>
       <template v-for="who in WHO" :key="who">
@@ -95,6 +92,6 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
         <span v-for="bit in BITS" :key="bit" class="bk-pc"><Checkbox slim :model-value="on(who, bit)" :data-bk-perm="`${who}:${bit}`" :label="`${t(`props.who.${who}`)}: ${t(`props.bits.${bit}`)}`" :disabled="st.ro" @update:model-value="flip(who, bit)" /></span>
       </template>
     </div>
-    <Frow :label="t('props.asNumber')" :tip="t('props.asNumberTip')"><span class="bk-idf"><span id="r-sym" class="pill mono">{{ symbolic }}</span><input id="r-oct" v-model="oct" class="glim-input s glim-input--mono glim-num" maxlength="4" inputmode="numeric" :disabled="st.ro"></span></Frow>
-  </div>
+    <FieldRow :label="t('props.asNumber')" :hint="t('props.asNumberTip')"><span class="bk-idf"><Pill id="r-sym" class="mono">{{ symbolic }}</Pill><TextField id="r-oct" v-model="oct" class="glim-num" maxlength="4" inputmode="numeric" :disabled="st.ro" width="short" mono /></span></FieldRow>
+  </SubCard>
 </template>

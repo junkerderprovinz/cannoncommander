@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { Button, Card } from '@glimstone/vue';
+import { Button, Card, EmptyState, IconButton, ListRow, Pill } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
 import { admin, type Group, type Share, type User } from '@/api/admin';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { useUser } from '@/stores/user';
-import ARow from '@/ui/ARow.vue';
-import BareBtn from '@/ui/BareBtn.vue';
 import { ago, attempt, c, confirmWin, fail } from '@/features/config/shared';
 import { roleName } from '../roles';
 import GroupWin from '../wins/GroupWin.vue';
@@ -51,34 +49,34 @@ function removeGroup(g: Group) {
 <template>
   <Card :title="c('users.users')">
     <div v-if="users.length" class="a-list">
-      <ARow v-for="(u, i) in users" :key="u.name" :name="u.full" :tip="userTip(u)" :data-uopen="i" @click="editUser(u)">
-        <template #tile><i>{{ initials(u) }}</i></template>
+      <ListRow v-for="(u, i) in users" :key="u.name" :name="u.full" :tip="userTip(u)" :data-uopen="i" @click="editUser(u)">
+        <template #tile><i class="a-initials">{{ initials(u) }}</i></template>
         <template #badges>
-          <span v-if="u.name === myName()" class="pill state">{{ c('users.you') }}</span>
-          <span class="pill">{{ roleName(u.role) }}</span><span class="pill mono">{{ u.scope }}</span>
-          <span class="pill">{{ u.last ? ago(u.last) : c('users.never') }}</span>
+          <Pill v-if="u.name === myName()" tone="state">{{ c('users.you') }}</Pill>
+          <Pill>{{ roleName(u.role) }}</Pill><Pill class="mono">{{ u.scope }}</Pill>
+          <Pill>{{ u.last ? ago(u.last) : c('users.never') }}</Pill>
         </template>
-        <template #acts>
-          <BareBtn g="IconPencil" :tip="c('edit')" :data-uopen="i" @click="editUser(u)" />
-          <BareBtn :g="u.name === myName() ? undefined : 'IconTrash'" :tip="c('remove')" @click="removeUser(u)" />
+        <template #actions>
+          <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" :data-uopen="i" @click="editUser(u)" />
+          <IconButton :absent="u.name === myName()" :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removeUser(u)" />
         </template>
-      </ARow>
+      </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconAccounts" /><div>{{ c('users.nobody') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconAccounts')" :title="c('users.nobody')" />
     <div class="a-foot"><Button data-uadd :label="c('users.add')" label-key="IconAdd" @click="editUser(null)" /></div>
   </Card>
   <Card :title="c('users.groups')">
     <div v-if="groups.length" class="a-list">
-      <ARow v-for="g in groups" :key="g.name" :name="g.name" :tip="g.note || null" data-gopen @click="editGroup(g)">
+      <ListRow v-for="g in groups" :key="g.name" :name="g.name" :tip="g.note || null" data-gopen @click="editGroup(g)">
         <template #tile><G n="IconAccounts" /></template>
-        <template #badges><span class="pill">{{ g.members.length === 1 ? c('users.oneMember') : c('users.members', { n: g.members.length }) }}</span></template>
-        <template #acts>
-          <BareBtn g="IconPencil" :tip="c('edit')" @click="editGroup(g)" />
-          <BareBtn g="IconTrash" :tip="c('remove')" @click="removeGroup(g)" />
+        <template #badges><Pill>{{ g.members.length === 1 ? c('users.oneMember') : c('users.members', { n: g.members.length }) }}</Pill></template>
+        <template #actions>
+          <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" @click="editGroup(g)" />
+          <IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removeGroup(g)" />
         </template>
-      </ARow>
+      </ListRow>
     </div>
-    <div v-else class="empty"><G n="IconAccounts" /><div>{{ c('users.noGroups') }}</div></div>
+    <EmptyState v-else nested :glyph="glyphComponent('IconAccounts')" :title="c('users.noGroups')" />
     <div class="a-foot"><Button data-gadd :label="c('users.addGroup')" label-key="IconAdd" @click="editGroup(null)" /></div>
   </Card>
 </template>

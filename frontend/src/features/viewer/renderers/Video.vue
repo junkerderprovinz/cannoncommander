@@ -1,4 +1,5 @@
 <script lang="ts">
+import { Button, IconButton } from '@glimstone/vue';
 import { reactive } from 'vue';
 
 // The chosen subtitles and sound track carry over to the next film.
@@ -8,7 +9,7 @@ const pick = reactive({ sub: 'off', audio: 0 });
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { run } from '@/core/actions';
-import { G } from '@/core/glyphs';
+import { G, glyphComponent } from '@/core/glyphs';
 import { menu } from '@/core/menu';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
@@ -114,17 +115,13 @@ defineExpose({ keys: (e: KeyboardEvent, combo: string) => (props.compact && !pro
       <div class="cv-sub">{{ line }}</div>
     </div>
     <div class="cv-ctrl">
-      <button class="btn icon" data-play data-pi :data-tip="st.playing ? t('viewer.media.pauseTip') : t('viewer.media.playTip')" :aria-label="st.playing ? t('viewer.media.pause') : t('viewer.media.play')" @click="toggle">
-        <G :n="st.playing ? 'IconPause' : 'IconPlay'" />
-      </button>
+      <IconButton :tip="st.playing ? t('viewer.media.pauseTip') : t('viewer.media.playTip')" :glyph="glyphComponent(st.playing ? 'IconPause' : 'IconPlay')" data-play data-pi @click="toggle" />
       <span class="glim-num cv-now">{{ fmtDur(st.t) }}</span>
       <div class="cv-scrub" role="slider" :aria-label="t('viewer.media.position')" :aria-valuenow="Math.round(st.t)" :aria-valuemax="Math.round(st.dur)" tabindex="0"
         :style="{ '--p': st.dur ? (st.t / st.dur * 100).toFixed(2) + '%' : '0%' }" @pointerdown="scrub"><i></i><b></b></div>
       <span class="glim-num muted">{{ fmtDur(st.dur) }}</span>
-      <button class="btn" data-pick="sub" :data-tip="t('viewer.media.subs')" @click="openPick($event, 'sub')"><G n="IconFileSubtitles" /><span>{{ subLabel }}</span></button>
-      <button v-if="audios.length > 1" class="btn" data-pick="audio" :data-tip="t('viewer.media.audio')" @click="openPick($event, 'audio')">
-        <G n="IconFileAudio" /><span>{{ audios[pick.audio]?.label || t('viewer.media.track', { n: pick.audio + 1 }) }}</span>
-      </button>
+      <Button :label="subLabel" label-key="IconFileSubtitles" keep-label data-pick="sub" :title="t('viewer.media.subs')" @click="openPick($event, 'sub')" />
+      <Button v-if="audios.length > 1" :label="audios[pick.audio]?.label || t('viewer.media.track', { n: pick.audio + 1 })" label-key="IconFileAudio" keep-label data-pick="audio" :title="t('viewer.media.audio')" @click="openPick($event, 'audio')" />
     </div>
   </div>
 </template>

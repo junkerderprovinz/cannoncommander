@@ -1,9 +1,10 @@
 <script setup lang="ts">
 // Two files side by side, changed lines tinted, and a jump from one changed place to the next.
+import { GlyphTile, Pill, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import type { Diff, DiffRow, DiffSide } from '@/api/tools';
 import { fmtSize, fmtTime } from '@/core/format';
-import { G, glyphOf } from '@/core/glyphs';
+import { glyphOf, glyphComponent } from '@/core/glyphs';
 import { closeBtn, type WinEntry } from '@/core/windows';
 import { plural } from '@/ui/kit';
 import { parent, split } from '@/files/paths';
@@ -59,11 +60,11 @@ onMounted(() => {
 <template>
   <div class="bk-dheads">
     <div v-for="s in [diff.left, diff.right]" :key="s.path" class="bk-dhead">
-      <span class="bk-tile"><G :n="glyphOf({ name: nameOf(s) })" /></span><span class="bk-name">{{ nameOf(s) }}</span><span class="bk-path muted mono"><bdi>{{ parent(s.path) }}</bdi></span>
-      <span class="pill glim-num">{{ fmtSize(s.size) }}</span><span class="pill glim-num">{{ fmtTime(Date.parse(s.mtime)) }}</span>
+      <GlyphTile :glyph="glyphComponent(glyphOf({ name: nameOf(s) }))" ground quiet /><span class="bk-name">{{ nameOf(s) }}</span><span class="bk-path muted mono"><bdi>{{ parent(s.path) }}</bdi></span>
+      <Pill class="glim-num">{{ fmtSize(s.size) }}</Pill><Pill class="glim-num">{{ fmtTime(Date.parse(s.mtime)) }}</Pill>
     </div>
   </div>
-  <div class="well glim-well bk-fill bk-dwell">
+  <SubCard class="bk-fill bk-dwell">
     <div v-if="!hunks.length" class="bk-same"><span class="bk-dot"></span>{{ t('diff.same') }}</div>
     <div id="d-body" ref="body" class="bk-dbody mono" :class="{ hex: diff.binary }" tabindex="0">
       <div v-for="(x, i) in lines" :key="i" class="bk-dl" :class="{ cur: at >= 0 && hunks[at] === i }" :data-bk-row="i">
@@ -71,5 +72,5 @@ onMounted(() => {
         <span class="bk-ln glim-num">{{ x.r.r == null ? '' : x.r.r + 1 }}</span><span class="bk-code" :class="x.cls[1]"><template v-for="(p, k) in x.pieces[1]" :key="k"><mark v-if="p.mark">{{ p.text }}</mark><template v-else>{{ p.text }}</template></template><template v-if="!x.pieces[1].length || !x.pieces[1].some((p) => p.text)">{{ ' ' }}</template></span>
       </div>
     </div>
-  </div>
+  </SubCard>
 </template>

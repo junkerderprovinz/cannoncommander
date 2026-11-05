@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { pathField } from '@/ui/picker';
+import { segItems, selectOptions } from '@/ui/kit';
+import { Select } from '@glimstone/vue/Select';
+import { FieldRow, FieldRowGroup, PathField, Pill, Selector, SubCard } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Rule, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import Dropdown from '@/ui/Dropdown.vue';
-import Frow from '@/ui/Frow.vue';
 import { attempt, c, fail, stepFoot } from '@/features/config/shared';
-import PathField from '@/ui/PathField.vue';
-import Seg from '@/ui/Seg.vue';
 import { RULES, ruleName } from '../roles';
 
 const props = defineProps<{ win: WinEntry; index: number | null; rules: Rule[]; users: User[]; save: (rules: Rule[]) => Promise<void> }>();
@@ -48,16 +48,18 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="well glim-well">
-    <Frow :label="c('rules.appliesTo')"><Seg id="a-rkind" v-model="kindModel" :options="[['user', c('rules.user')], ['group', c('rules.groupWord')], ['all', c('rules.all')]]" /></Frow>
-    <Frow v-if="kind === 'user'" :label="c('rules.user')"><Dropdown v-model="d.who" :options="users.map((u) => [u.name, u.full])" /></Frow>
-    <Frow v-else-if="kind === 'group'" :label="c('rules.groupWord')">
-      <Dropdown v-if="groups.length" v-model="d.who" :options="groups.map((g) => ['@' + g, g])" />
-      <span v-else class="pill state">{{ c('users.noGroups') }}</span>
-    </Frow>
-  </div>
-  <div class="well glim-well">
-    <Frow :label="c('rules.pathOrPattern')" :tip="c('rules.pathTip')"><PathField id="a-rpath" v-model="d.path" :placeholder="c('rules.pathPh')" /></Frow>
-    <Frow :label="c('rules.rule')" :tip="c('rules.ruleTip')"><Seg v-model="d.rule" :options="RULES.map(([r, g]) => [r, ruleName(r), g])" /></Frow>
-  </div>
+  <SubCard>
+    <FieldRow :label="c('rules.appliesTo')"><Selector id="a-rkind" v-model="kindModel" :items="segItems([['user', c('rules.user')], ['group', c('rules.groupWord')], ['all', c('rules.all')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow v-if="kind === 'user'" :label="c('rules.user')"><Select v-model="d.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" rows="menu" /></FieldRow>
+    <FieldRow v-else-if="kind === 'group'" :label="c('rules.groupWord')">
+      <Select v-if="groups.length" v-model="d.who" :options="selectOptions(groups.map((g) => ['@' + g, g]))" rows="menu" />
+      <Pill v-else tone="state">{{ c('users.noGroups') }}</Pill>
+    </FieldRow>
+  </SubCard>
+  <SubCard>
+    <FieldRowGroup>
+      <FieldRow :label="c('rules.pathOrPattern')" :hint="c('rules.pathTip')"><PathField v-model="d.path" :placeholder="c('rules.pathPh')" v-bind="pathField('a-rpath')" /></FieldRow>
+      <FieldRow :label="c('rules.rule')" :hint="c('rules.ruleTip')"><Selector v-model="d.rule" :items="segItems(RULES.map(([r, g]) => [r, ruleName(r), g]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    </FieldRowGroup>
+  </SubCard>
 </template>
