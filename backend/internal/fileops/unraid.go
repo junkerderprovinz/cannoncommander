@@ -97,6 +97,9 @@ func prepareFixPerms(_ context.Context, d v1.Deps, u *users.User, raw json.RawMe
 }
 
 func runFixPerms(ctx context.Context, run *jobs.Run) error {
+	if err := run.RequireAdmin(); err != nil {
+		return err
+	}
 	var p permsParams
 	if err := run.Params(&p); err != nil {
 		return err

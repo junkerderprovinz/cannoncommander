@@ -257,7 +257,16 @@ func runChecksum(ctx context.Context, run *jobs.Run) error {
 	}
 	a, _ := algoByID(st.Algo)
 	var sums []FileSum
+	u, err := run.User()
+	if err != nil {
+		return err
+	}
+	fsys := run.Deps().FS
 	for _, it := range run.Items() {
+		if _, err := fsys.Reach(u, it.Path, ccfs.View|ccfs.Download); err != nil {
+			run.Finish(it.Seq, jobs.ItemFailed, err)
+			continue
+		}
 		root := filepath.Join(st.Base, path.Base(it.Path))
 		var files []string
 		var size int64
@@ -267,6 +276,16 @@ func runChecksum(ctx context.Context, run *jobs.Run) error {
 			}
 			if d.IsDir() && bookkeeping(d.Name()) {
 				return filepath.SkipDir
+			}
+			rel, err := filepath.Rel(root, p)
+			if err != nil {
+				return err
+			}
+			if _, err := fsys.Check(u, path.Join(it.Path, filepath.ToSlash(rel)), ccfs.View|ccfs.Download); err != nil {
+				if d.IsDir() {
+					return filepath.SkipDir
+				}
+				return nil
 			}
 			if !d.Type().IsRegular() || sumFile.MatchString(d.Name()) || bookkeeping(d.Name()) {
 				return nil
@@ -332,7 +351,7 @@ func hashFile(ctx context.Context, run *jobs.Run, a Algo, p string) (string, err
 // writeSums writes the list beside its files. Names are relative to the
 // list's folder where the files lie below it, and full paths otherwise.
 func writeSums(run *jobs.Run, st checksumStored, a Algo, sums []FileSum) error {
-	save, err := run.Deps().FS.Resolve(st.Save)
+	save, _, err := run.Reach(st.Save, ccfs.Create)
 	if err != nil {
 		return err
 	}
@@ -346,7 +365,15 @@ func writeSums(run *jobs.Run, st checksumStored, a Algo, sums []FileSum) error {
 		b.WriteString(FormatLine(a, s.Hash, name, st.BSD))
 	}
 	part := filepath.Join(filepath.Dir(save.Real), "."+filepath.Base(save.Real)+partSuffix)
-	if err := os.WriteFile(part, []byte(b.String()), 0o666); err != nil {
+	f, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
+	if err != nil {
+		return err
+	}
+	_, err = f.WriteString(b.String())
+	if cerr := f.Close(); err == nil {
+		err = cerr
+	}
+	if err != nil {
 		return err
 	}
 	if err := os.Rename(part, save.Real); err != nil {

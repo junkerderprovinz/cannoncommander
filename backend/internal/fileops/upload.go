@@ -217,7 +217,7 @@ func (s *Service) StartUpload(ctx context.Context, u *users.User, share string, 
 	if _, err := os.Lstat(part); err == nil {
 		return Upload{}, false, v1.Errorf(http.StatusConflict, "this file is being written by a copy right now")
 	}
-	f, err := os.OpenFile(part, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o666)
+	f, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_EXCL)
 	if err != nil {
 		return Upload{}, false, err
 	}
@@ -262,12 +262,12 @@ func (s *Service) UploadChunk(ctx context.Context, u *users.User, share, id stri
 	if err != nil {
 		return Upload{}, err
 	}
-	loc, err := s.fs.Check(u, row.path, ccfs.Create)
+	loc, err := s.fs.Reach(u, row.path, ccfs.Create)
 	if err != nil {
 		return Upload{}, err
 	}
 	part := partOf(loc.Real)
-	f, err := os.OpenFile(part, os.O_WRONLY, 0)
+	f, err := ccfs.OpenPart(part, os.O_WRONLY)
 	if errors.Is(err, fs.ErrNotExist) {
 		_ = s.deleteUpload(ctx, row.id)
 		return Upload{}, v1.Errorf(http.StatusGone, "the part file of this upload is gone, please start again")
@@ -369,7 +369,7 @@ func (s *Service) uploadTarget(u *users.User, p string) (ccfs.Location, error) {
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) || IsPart(path.Base(loc.Path)) {
 		return loc, v1.Errorf(http.StatusBadRequest, "invalid path")
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := s.fs.Follows(u, loc, ccfs.Create); err != nil {
 		return loc, err
 	}
 	dir := path.Dir(loc.Path)
@@ -452,7 +452,7 @@ func (s *Service) finish(ctx context.Context, u *users.User, row uploadRow, land
 	if err != nil {
 		return Upload{}, err
 	}
-	if err := ccfs.Contained(loc); err != nil {
+	if err := s.fs.Follows(u, loc, ccfs.Create); err != nil {
 		return Upload{}, err
 	}
 	part := partOf(loc.Real)

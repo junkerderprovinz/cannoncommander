@@ -53,7 +53,7 @@ type packStored struct {
 	Secret string   `json:"secret,omitempty"`
 }
 
-func preparePack(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
+func preparePack(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
 	var p PackParams
 	if err := jobs.Decode(raw, &p); err != nil {
 		return nil, err
@@ -92,8 +92,11 @@ func preparePack(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessag
 	st := packStored{Dest: dest.Path, File: file, Format: p.Format, Level: level, Secret: keepSecret(p.Password)}
 	plan := &jobs.Plan{Name: file, Dest: dest.Path}
 	for i, s := range p.Sources {
-		loc, _, err := entry(d.FS, u, s, ccfs.View|ccfs.Download)
+		loc, _, err := entry(d.FS, u, s, packPerm)
 		if err != nil {
+			return nil, err
+		}
+		if err := wholeForProgram(ctx, d.FS, u, f, loc); err != nil {
 			return nil, err
 		}
 		st.Base = filepath.Dir(loc.Real)
@@ -102,6 +105,17 @@ func preparePack(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessag
 	}
 	plan.Params = st
 	return plan, nil
+}
+
+const packPerm = ccfs.View | ccfs.Download
+
+// wholeForProgram refuses a folder with an entry u may not read when an outside
+// program does the packing, since it cannot be told to leave one out.
+func wholeForProgram(ctx context.Context, fsys *ccfs.Resolver, u *users.User, f archives.Format, loc ccfs.Location) error {
+	if f != archives.SevenZ && f != archives.Rar {
+		return nil
+	}
+	return fsys.Whole(ctx, u, loc, packPerm)
 }
 
 func runPack(ctx context.Context, run *jobs.Run) error {
@@ -116,8 +130,20 @@ func runPack(ctx context.Context, run *jobs.Run) error {
 	if st.Secret != "" && secret(st.Secret) == "" {
 		return errPasswordGone
 	}
+	fsys := run.Deps().FS
+	u, err := run.User()
+	if err != nil {
+		return err
+	}
 	var total int64
 	for _, it := range items {
+		loc, err := fsys.Reach(u, it.Path, packPerm)
+		if err == nil {
+			err = wholeForProgram(ctx, fsys, u, archives.Format(st.Format), loc)
+		}
+		if err != nil {
+			return err
+		}
 		bytes, files, err := jobs.TreeSize(ctx, filepath.Join(st.Base, it.Name))
 		if err != nil {
 			return err
@@ -126,7 +152,7 @@ func runPack(ctx context.Context, run *jobs.Run) error {
 		total += bytes
 		run.Begin(it.Seq)
 	}
-	dest, err := run.Deps().FS.Resolve(st.Dest)
+	dest, err := fsys.Reach(u, st.Dest, ccfs.Create)
 	if err != nil {
 		return err
 	}
@@ -140,6 +166,15 @@ func runPack(ctx context.Context, run *jobs.Run) error {
 		Total:    total,
 		Wrote:    progress(ctx, run),
 		Next:     func(n string) error { run.Current(n); return nil },
+		Skip: func(n string, link bool) bool {
+			p := path.Join(path.Dir(items[0].Path), n)
+			if link {
+				_, err := fsys.Reach(u, p, packPerm)
+				return err != nil
+			}
+			_, err := fsys.Check(u, p, packPerm)
+			return err != nil
+		},
 	})
 	if err == nil {
 		name = ccfs.FreeName(dest.Real, name)
@@ -207,10 +242,7 @@ func prepareUnpack(_ context.Context, d v1.Deps, u *users.User, raw json.RawMess
 	if len(p.Items) > 0 && len(p.Archives) != 1 {
 		return nil, badRequest("items can only be picked from one archive")
 	}
-	perm := ccfs.Create
-	if p.Clash == archives.ClashReplace {
-		perm |= ccfs.Modify | ccfs.Delete
-	}
+	perm := unpackPerm(p.Clash)
 	dest, err := folder(d.FS, u, p.Dest, perm)
 	if err != nil {
 		return nil, err
@@ -219,15 +251,12 @@ func prepareUnpack(_ context.Context, d v1.Deps, u *users.User, raw json.RawMess
 		Clash: p.Clash, Secret: keepSecret(p.Password), Charset: p.Charset}
 	plan := &jobs.Plan{Dest: dest.Path}
 	for i, a := range p.Archives {
-		loc, err := d.FS.Check(u, a, ccfs.View|ccfs.Download)
+		loc, err := d.FS.Reach(u, a, ccfs.View|ccfs.Download)
 		if err != nil {
 			return nil, err
 		}
 		if loc.Virtual() {
 			return nil, badRequest("not an archive")
-		}
-		if err := ccfs.Contained(loc); err != nil {
-			return nil, err
 		}
 		if archives.FormatOf(loc.Real) == "" {
 			return nil, badRequest(path.Base(loc.Real) + " is not an archive that can be unpacked")
@@ -244,6 +273,13 @@ func prepareUnpack(_ context.Context, d v1.Deps, u *users.User, raw json.RawMess
 	return plan, nil
 }
 
+func unpackPerm(clash string) ccfs.Perm {
+	if clash == archives.ClashReplace {
+		return ccfs.Create | ccfs.Modify | ccfs.Delete
+	}
+	return ccfs.Create
+}
+
 func runUnpack(ctx context.Context, run *jobs.Run) error {
 	var st unpackStored
 	if err := run.Params(&st); err != nil {
@@ -253,13 +289,19 @@ func runUnpack(ctx context.Context, run *jobs.Run) error {
 		return errPasswordGone
 	}
 	opts := archives.Options{Password: secret(st.Secret), Charset: st.Charset}
-	dest, err := run.Deps().FS.Resolve(st.Dest)
+	fsys := run.Deps().FS
+	perm := unpackPerm(st.Clash)
+	dest, u, err := run.Reach(st.Dest, perm)
 	if err != nil {
 		return err
 	}
 	var landed []string
 	skipped := 0
 	for _, it := range pending(run) {
+		if _, err := fsys.Reach(u, it.Path, ccfs.View|ccfs.Download); err != nil {
+			run.Finish(it.Seq, jobs.ItemFailed, err)
+			continue
+		}
 		real := st.Real[it.Seq]
 		if ix, err := archives.Load(real, opts); err == nil {
 			run.Measure(it.Seq, unpackedSize(ix, st.Inner[it.Seq]), int64(ix.Len()))
@@ -275,7 +317,17 @@ func runUnpack(ctx context.Context, run *jobs.Run) error {
 			}
 			landed = append(landed, into)
 		}
-		res, err := unpackOne(ctx, run, real, target, opts, archives.ExtractOptions{Clash: st.Clash, Prefix: st.Inner[it.Seq], Only: st.Items})
+		// The folder passing says nothing about the places below it the
+		// members land on, and a rule can name any of them.
+		may := func(rel string) bool {
+			_, err := fsys.Check(u, path.Join(into, rel), perm)
+			return err == nil
+		}
+		mayReplace := func(top string) bool {
+			loc, err := fsys.Check(u, path.Join(into, top), perm)
+			return err == nil && fsys.Whole(ctx, u, loc, perm) == nil
+		}
+		res, err := unpackOne(ctx, run, real, target, opts, archives.ExtractOptions{Clash: st.Clash, Prefix: st.Inner[it.Seq], Only: st.Items, May: may, MayReplace: mayReplace})
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}

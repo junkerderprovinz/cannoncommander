@@ -177,7 +177,7 @@ func TestPickFindsEachEntryOnceAndKeepsToItsOwner(t *testing.T) {
 	s, _, _ := newStore(t)
 	for _, row := range [][2]string{{"a", "anna"}, {"b", "anna"}, {"c", "ben"}} {
 		if _, err := s.db.Exec(`INSERT INTO trash_items (id, owner, name, origin, bin, dir, size, files, deleted_at)
-			VALUES (?, ?, 'x', '/mnt/user/x', '/mnt/user/.cc-trash/x', 0, 1, 1, 1)`, row[0], row[1]); err != nil {
+			VALUES (?, ?, 'x', '/mnt/user/x', '/mnt/user/.cc-trash/x', 0, 1, 1, ?)`, row[0], row[1], time.Now().UnixMilli()); err != nil {
 			t.Fatal(err)
 		}
 	}

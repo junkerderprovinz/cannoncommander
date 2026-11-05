@@ -15,6 +15,7 @@ import (
 	"runtime"
 	"slices"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -42,6 +43,45 @@ type env struct {
 	deps v1.Deps
 	srv  *httptest.Server
 	al   ArrowLoopConfig
+	// rules hold for everybody, and scopes confine a user to a folder.
+	rules  *pathRules
+	scopes map[string]string
+}
+
+// pathRules is a rule book for every user alike: a path with its effect covers
+// what lies below it.
+type pathRules struct {
+	mu    sync.Mutex
+	paths map[string]ccfs.Effect
+}
+
+func (r *pathRules) set(p string, effect ccfs.Effect) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.paths[p] = effect
+}
+
+func (r *pathRules) Effect(_ *users.User, p string) ccfs.Effect {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for at, effect := range r.paths {
+		if p == at || strings.HasPrefix(p, at+"/") {
+			return effect
+		}
+	}
+	return ccfs.Open
+}
+
+func (e *env) user(name string) (*users.User, error) {
+	perms := full
+	if name == "gast" {
+		perms = users.SourceFilePermissions{View: true, Download: true}
+	}
+	scope := "/"
+	if s, ok := e.scopes[name]; ok {
+		scope = s
+	}
+	return &users.User{Username: name, BackendScopes: []users.BackendScope{{Path: e.root, Scope: scope, Permissions: perms}}}, nil
 }
 
 var full = users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true}
@@ -54,19 +94,14 @@ func newEnv(t *testing.T) *env {
 			t.Fatal(err)
 		}
 	}
-	fsys, err := ccfs.New(nil, ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: root})
+	e := &env{t: t, root: root, rules: &pathRules{paths: map[string]ccfs.Effect{}}, scopes: map[string]string{}}
+	fsys, err := ccfs.New(e.rules, ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: root})
 	if err != nil {
 		t.Fatal(err)
 	}
-	e := &env{t: t, root: root}
-	e.deps = v1.Deps{FS: fsys, Hub: hub.New(hub.Options{}), DB: testutil.MainDB(t)}
+	e.deps = v1.Deps{FS: fsys, Hub: hub.New(hub.Options{}), DB: testutil.MainDB(t), Users: e.user}
 	auth := func(_ http.ResponseWriter, r *http.Request) (*users.User, error) {
-		name := r.Header.Get("X-User")
-		perms := full
-		if name == "gast" {
-			perms = users.SourceFilePermissions{View: true, Download: true}
-		}
-		return &users.User{Username: name, BackendScopes: []users.BackendScope{{Path: root, Scope: "/", Permissions: perms}}}, nil
+		return e.user(r.Header.Get("X-User"))
 	}
 	r := v1.NewRouter(e.deps, auth)
 	fileops.Routes(r)

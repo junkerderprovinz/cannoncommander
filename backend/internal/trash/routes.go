@@ -73,7 +73,7 @@ func (h handlers) restore(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	for _, e := range entries {
-		if _, err := h.s.fs.Check(u, e.From, ccfs.Create); err != nil {
+		if _, err := h.s.fs.Reach(u, e.From, ccfs.Create); err != nil {
 			return err
 		}
 	}

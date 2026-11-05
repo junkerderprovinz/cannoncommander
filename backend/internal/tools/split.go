@@ -93,11 +93,11 @@ func runSplit(ctx context.Context, run *jobs.Run) error {
 	if it.State == jobs.ItemDone {
 		return nil
 	}
-	src, err := run.Deps().FS.Resolve(p.Path)
+	src, u, err := run.Reach(p.Path, ccfs.View|ccfs.Download)
 	if err != nil {
 		return err
 	}
-	dest, err := run.Deps().FS.Resolve(p.Dest)
+	dest, err := run.Deps().FS.Reach(u, p.Dest, ccfs.Create)
 	if err != nil {
 		return err
 	}
@@ -146,7 +146,7 @@ func split(ctx context.Context, run *jobs.Run, src, dest string, p SplitParams) 
 // never looks complete. An existing part of the same name is replaced.
 func writePart(ctx context.Context, run *jobs.Run, p string, r io.Reader) error {
 	part := filepath.Join(filepath.Dir(p), "."+filepath.Base(p)+partSuffix)
-	out, err := os.OpenFile(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
+	out, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 	if err != nil {
 		return err
 	}
@@ -279,11 +279,11 @@ func runCombine(ctx context.Context, run *jobs.Run) error {
 		return err
 	}
 	fsys := run.Deps().FS
-	dir, err := fsys.Resolve(st.Path)
+	dir, u, err := run.Reach(st.Path, ccfs.View|ccfs.Download)
 	if err != nil {
 		return err
 	}
-	dest, err := fsys.Resolve(st.Dest)
+	dest, err := fsys.Reach(u, st.Dest, ccfs.Create)
 	if err != nil {
 		return err
 	}
@@ -295,7 +295,7 @@ func runCombine(ctx context.Context, run *jobs.Run) error {
 	// result says nothing about where it stopped.
 	name := ccfs.FreeName(dest.Real, st.Name)
 	part := filepath.Join(dest.Real, "."+name+partSuffix)
-	out, err := os.OpenFile(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
+	out, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 	if err != nil {
 		return err
 	}

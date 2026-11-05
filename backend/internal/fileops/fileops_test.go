@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -35,6 +36,33 @@ type env struct {
 	roots []string
 	deps  v1.Deps
 	srv   *httptest.Server
+	rules *pathRules
+	// demoted takes the admin right from the admin.
+	demoted atomic.Bool
+}
+
+// pathRules is a rule book for every user alike: a path with its effect covers
+// what lies below it.
+type pathRules struct {
+	mu    sync.Mutex
+	paths map[string]ccfs.Effect
+}
+
+func (r *pathRules) set(p string, effect ccfs.Effect) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.paths[p] = effect
+}
+
+func (r *pathRules) Effect(_ *users.User, p string) ccfs.Effect {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for at, effect := range r.paths {
+		if p == at || strings.HasPrefix(p, at+"/") {
+			return effect
+		}
+	}
+	return ccfs.Open
 }
 
 var full = users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true}
@@ -49,16 +77,16 @@ func newEnv(t *testing.T, extra ...ccfs.Source) *env {
 			t.Fatal(err)
 		}
 	}
-	e := &env{t: t, root: root}
+	e := &env{t: t, root: root, rules: &pathRules{paths: map[string]ccfs.Effect{}}}
 	sources := append([]ccfs.Source{{Name: "Shares", Mount: "/mnt/user", Root: root}}, extra...)
-	fsys, err := ccfs.New(nil, sources...)
+	fsys, err := ccfs.New(e.rules, sources...)
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, s := range sources {
 		e.roots = append(e.roots, s.Root)
 	}
-	e.deps = v1.Deps{FS: fsys, Hub: hub.New(hub.Options{}), DB: testutil.MainDB(t)}
+	e.deps = v1.Deps{FS: fsys, Hub: hub.New(hub.Options{}), DB: testutil.MainDB(t), Users: e.user}
 	e.serve()
 	return e
 }
@@ -66,18 +94,7 @@ func newEnv(t *testing.T, extra ...ccfs.Source) *env {
 func (e *env) serve() {
 	t := e.t
 	auth := func(_ http.ResponseWriter, r *http.Request) (*users.User, error) {
-		name := r.Header.Get("X-User")
-		perms := full
-		if name == "gast" {
-			perms = users.SourceFilePermissions{View: true, Download: true}
-		}
-		u := &users.User{}
-		for _, root := range e.roots {
-			u.BackendScopes = append(u.BackendScopes, users.BackendScope{Path: root, Scope: "/", Permissions: perms})
-		}
-		u.Username = name
-		u.Permissions.Admin = name == "admin"
-		return u, nil
+		return e.user(r.Header.Get("X-User"))
 	}
 	r := v1.NewRouter(e.deps, auth)
 	fileops.Routes(r)
@@ -91,6 +108,20 @@ func (e *env) serve() {
 	}
 	e.srv = httptest.NewServer(h)
 	t.Cleanup(e.stop)
+}
+
+func (e *env) user(name string) (*users.User, error) {
+	perms := full
+	if name == "gast" {
+		perms = users.SourceFilePermissions{View: true, Download: true}
+	}
+	u := &users.User{}
+	for _, root := range e.roots {
+		u.BackendScopes = append(u.BackendScopes, users.BackendScope{Path: root, Scope: "/", Permissions: perms})
+	}
+	u.Username = name
+	u.Permissions.Admin = name == "admin" && !e.demoted.Load()
+	return u, nil
 }
 
 // stop shuts everything down as the server would on exit.

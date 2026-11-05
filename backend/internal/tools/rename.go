@@ -292,6 +292,9 @@ func (h handlers) renameBatch(w http.ResponseWriter, r *http.Request) error {
 		if _, err := folder(h.fs, u, path.Dir(loc.Path), ccfs.Create); err != nil {
 			return err
 		}
+		if err := h.fs.Whole(r.Context(), u, loc, ccfs.Modify); err != nil {
+			return err
+		}
 		entries[i] = renameEntry{loc: loc, name: path.Base(loc.Path), dir: info.IsDir(), info: info}
 	}
 	names, missing := req.Names, make([][]string, len(entries))
@@ -306,6 +309,16 @@ func (h handlers) renameBatch(w http.ResponseWriter, r *http.Request) error {
 		out.Rows[i] = RenameRow{Path: e.loc.Path, Old: e.name, New: strings.TrimSpace(names[i]), Missing: missing[i]}
 	}
 	check(out.Rows, entries)
+	// A name the user may not use reads the same whether it is taken or not.
+	for i := range out.Rows {
+		row := &out.Rows[i]
+		if row.New == row.Old || !ccfs.ValidName(row.New) {
+			continue
+		}
+		if _, err := h.fs.Reach(u, path.Join(path.Dir(row.Path), row.New), ccfs.Create); err != nil {
+			row.Error = "invalid"
+		}
+	}
 	var todo []int
 	for i, row := range out.Rows {
 		if row.Error != "" {
