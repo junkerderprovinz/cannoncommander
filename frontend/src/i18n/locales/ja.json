@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "左パネル",
     "right": "右パネル",
@@ -2141,7 +2140,7 @@
     "colChanged": "更新日時",
     "noFolder": "このフォルダーは存在しません",
     "unknown": "{fields} はわかりません",
-    "unknownHint": "",
+    "unknownHint": "たとえば「幅」「高さ」「コーデック」「アーティスト」「サイズ」「更新日」「長さ」と、すべての列名がわかります",
     "nothing": "見つかりませんでした",
     "nothingHint": "別のフォルダーにするか条件を減らすと、もっと見つかるかもしれません",
     "asTab": "タブで開く",
@@ -2172,22 +2171,22 @@
     "menuNewLabel": "新しい検索",
     "menuNone": "パターンを入力し、欄の中のボタンで保存します。",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "税金",
+      "word": "報告書"
     },
     "menuExamples": "例",
     "examples": {
       "mkv": "すべての MKV ファイル (サブフォルダーも含む)",
-      "tag": "",
-      "word": "",
+      "tag": "タグ {tag} が付いたものすべて",
+      "word": "{word} を含む名前",
       "one": "? はちょうど1文字を表します",
       "meta": "メタデータから HEVC の 4K 映画",
       "week": "過去 7 日間に変更されたものすべて"
     },
     "server": "サーバー",
-    "unknownFields": "",
+    "unknownFields": "{fields} はわかりません。たとえば「幅」「高さ」「コーデック」「アーティスト」「サイズ」「更新日」「長さ」と、「レンズ」や「年」のようなすべての列名がわかります",
     "unknownField": "「{f}:」",
-    "quoted": ""
+    "quoted": "「{text}」"
   },
   "share": {
     "share": "共有",
@@ -2461,18 +2460,18 @@
     "clipCopy": "クリップボードにコピー",
     "clipPaste": "貼り付け",
     "nothingOn": "{disk} にはそのいずれもありません",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "スキップします",
+    "sameSkipTip": "宛先には、ハードリンクや Disk Share と User Share 経由などで、別のパスに同じファイルがあります。そのファイルはそのままにします。",
     "sameSkipped": {
-      "other": ""
+      "other": "宛先にあるのが同じファイルのため、{n} 個のファイルをスキップしました"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "コピーしました: {files} を {to} へ。{same}",
+    "movedSame": "移動しました: {files} を {to} へ。{same}",
     "nothingCopied": {
-      "other": ""
+      "other": "何もコピーしていません。宛先の {n} 個のファイルは同じファイルなので、そのままにします"
     },
     "nothingMoved": {
-      "other": ""
+      "other": "何も移動していません。宛先の {n} 個のファイルは同じファイルなので、そのままにします"
     }
   },
   "trash": {
@@ -3114,35 +3113,35 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "横長",
+      "portrait": "縦長",
+      "square": "正方形"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "発光",
+      "off": "発光なし"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "モノラル",
+      "stereo": "ステレオ"
     },
     "channelCount": {
-      "other": ""
+      "other": "{n} チャンネル"
     },
     "method": {
-      "none": ""
+      "none": "なし"
     },
-    "methodNumber": "",
+    "methodNumber": "方式 {n}",
     "arch": {
-      "all": ""
+      "all": "すべて"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "不明"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "幅",
+    "height": "高さ",
+    "vcodec": "コーデック",
+    "modified": "更新日"
   },
   "kinds": {
     "folder": "フォルダー",
