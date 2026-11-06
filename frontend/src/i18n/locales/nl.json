@@ -1,4 +1,5 @@
 {
+  "$status": "untranslated",
   "access": {
     "left": "Linkerpaneel",
     "right": "Rechterpaneel",
@@ -2250,6 +2251,10 @@
     "menuNew": "Nieuwe zoekopdracht met alle velden (Alt+F7)",
     "menuNewLabel": "Nieuwe zoekopdracht",
     "menuNone": "Typ een patroon en sla het op met de knop in het veld.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Voorbeelden",
     "examples": {
       "mkv": "alle MKV-bestanden, ook in submappen",
@@ -2261,7 +2266,8 @@
     },
     "server": "Server",
     "unknownFields": "{fields} ken ik niet. Ik begrijp bijvoorbeeld width, height, codec, artist, camera, size, modified, duration en elke kolomnaam, zoals lens of year",
-    "unknownField": "„{f}:”"
+    "unknownField": "„{f}:”",
+    "quoted": ""
   },
   "share": {
     "share": "Delen",
@@ -2546,7 +2552,23 @@
     "clipCut": "Knippen",
     "clipCopy": "Naar het klembord kopiëren",
     "clipPaste": "Plakken",
-    "nothingOn": "Daarvan staat niets op {disk}"
+    "nothingOn": "Daarvan staat niets op {disk}",
+    "sameSkip": "",
+    "sameSkipTip": "",
+    "sameSkipped": {
+      "one": "",
+      "other": ""
+    },
+    "copiedSame": "",
+    "movedSame": "",
+    "nothingCopied": {
+      "one": "",
+      "other": ""
+    },
+    "nothingMoved": {
+      "one": "",
+      "other": ""
+    }
   },
   "trash": {
     "delete": "Verwijderen",
@@ -3216,6 +3238,39 @@
     "images": "Schijfkopieën",
     "programs": "Programma's",
     "checksum": "Controlesom"
+  },
+  "metaValues": {
+    "orientation": {
+      "landscape": "",
+      "portrait": "",
+      "square": ""
+    },
+    "flash": {
+      "fired": "",
+      "off": ""
+    },
+    "channels": {
+      "mono": "",
+      "stereo": ""
+    },
+    "channelCount": {
+      "one": "",
+      "other": ""
+    },
+    "method": {
+      "none": ""
+    },
+    "methodNumber": "",
+    "arch": {
+      "all": ""
+    },
+    "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Map",

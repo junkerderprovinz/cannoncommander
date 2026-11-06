@@ -1,4 +1,5 @@
 {
+  "$status": "untranslated",
   "access": {
     "left": "Panel esquerdo",
     "right": "Panel dereito",
@@ -2250,6 +2251,10 @@
     "menuNew": "Nova busca con todos os campos (Alt+F7)",
     "menuNewLabel": "Nova busca",
     "menuNone": "Escribe un patrón e gárdao co botón do campo.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Exemplos",
     "examples": {
       "mkv": "todos os ficheiros MKV, tamén en subcartafoles",
@@ -2261,7 +2266,8 @@
     },
     "server": "Servidor",
     "unknownFields": "Non coñezo {fields}. Entendo, por exemplo, width, height, codec, artist, camera, size, modified, duration e calquera nome de columna, como lens ou year",
-    "unknownField": "«{f}:»"
+    "unknownField": "«{f}:»",
+    "quoted": ""
   },
   "share": {
     "share": "Compartir",
@@ -2546,7 +2552,23 @@
     "clipCut": "Cortar",
     "clipCopy": "Copiar ao portapapeis",
     "clipPaste": "Pegar",
-    "nothingOn": "Nada diso está en {disk}"
+    "nothingOn": "Nada diso está en {disk}",
+    "sameSkip": "",
+    "sameSkipTip": "",
+    "sameSkipped": {
+      "one": "",
+      "other": ""
+    },
+    "copiedSame": "",
+    "movedSame": "",
+    "nothingCopied": {
+      "one": "",
+      "other": ""
+    },
+    "nothingMoved": {
+      "one": "",
+      "other": ""
+    }
   },
   "trash": {
     "delete": "Borrar",
@@ -3216,6 +3238,39 @@
     "images": "Imaxes de disco",
     "programs": "Programas",
     "checksum": "Suma de verificación"
+  },
+  "metaValues": {
+    "orientation": {
+      "landscape": "",
+      "portrait": "",
+      "square": ""
+    },
+    "flash": {
+      "fired": "",
+      "off": ""
+    },
+    "channels": {
+      "mono": "",
+      "stereo": ""
+    },
+    "channelCount": {
+      "one": "",
+      "other": ""
+    },
+    "method": {
+      "none": ""
+    },
+    "methodNumber": "",
+    "arch": {
+      "all": ""
+    },
+    "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Cartafol",

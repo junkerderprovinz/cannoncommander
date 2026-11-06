@@ -36,6 +36,13 @@ describe('fixture search', () => {
     expect(fx.search('/mnt/user', { q: 'jahr:>2000 *.mp3' })!.total).toBe(2);
     expect(fx.search('/mnt/user', { q: '#steuer' })!.items.map((h) => h.name)).toEqual(['Rechnung-Oktober.pdf', 'Steuer 2025.xlsx']);
   });
+  it('reads the codes the interface sends for words, as the server does', () => {
+    const total = (q: string) => fx.search('/mnt/user', { q })!.total;
+    for (const [code, word] of [['kind:music', 'art:Musik'], ['type:img', 'typ:Bild'], ['type:folder', 'typ:Ordner'], ['encrypted:no', 'verschlüsselt:Nein']]) {
+      expect(total(code), code).toBeGreaterThan(0);
+      expect(total(code), code).toBe(total(word));
+    }
+  });
   it('names unknown fields and finds nothing then', () => {
     const got = fx.search('/mnt/user', { q: 'farbtiefe:>8 foo:1' })!;
     expect(got.unknown).toEqual(['foo']);

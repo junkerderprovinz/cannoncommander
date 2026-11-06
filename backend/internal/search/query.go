@@ -250,12 +250,11 @@ func secs(s string) float64 {
 var (
 	ageRe   = regexp.MustCompile(`^(\d+)\s*(h|d|t|w|mo|m|y|j)$`)
 	isoRe   = regexp.MustCompile(`^(\d{4})(?:-(\d{1,2})(?:-(\d{1,2}))?)?$`)
-	dateRe  = regexp.MustCompile(`^(\d{1,2})\.(\d{1,2})\.(\d{4})$`)
 	ageUnit = map[string]time.Duration{"h": time.Hour, "d": day, "t": day, "w": 7 * day, "m": 30 * day, "mo": 30 * day, "y": 365 * day, "j": 365 * day}
 )
 
 // moment is a time a search compares with: an age such as 30d, or a day,
-// month or year starting at at.
+// month or year starting at at, written as in 2026-10-30, 2026-10 or 2026.
 type moment struct {
 	age  time.Duration
 	at   time.Time
@@ -268,22 +267,18 @@ func when(v string) moment {
 		n, _ := strconv.Atoi(m[1])
 		return moment{age: time.Duration(n) * ageUnit[m[2]], ok: true}
 	}
-	var y, mo, d int
-	span := day
-	if m := isoRe.FindStringSubmatch(v); m != nil {
-		y, mo, d = atoi(m[1]), 1, 1
-		switch {
-		case m[2] == "":
-			span = 365 * day
-		case m[3] == "":
-			mo, span = atoi(m[2]), 30*day
-		default:
-			mo, d = atoi(m[2]), atoi(m[3])
-		}
-	} else if m := dateRe.FindStringSubmatch(v); m != nil {
-		y, mo, d = atoi(m[3]), atoi(m[2]), atoi(m[1])
-	} else {
+	m := isoRe.FindStringSubmatch(v)
+	if m == nil {
 		return moment{}
+	}
+	y, mo, d, span := atoi(m[1]), 1, 1, day
+	switch {
+	case m[2] == "":
+		span = 365 * day
+	case m[3] == "":
+		mo, span = atoi(m[2]), 30*day
+	default:
+		mo, d = atoi(m[2]), atoi(m[3])
 	}
 	return moment{at: time.Date(y, time.Month(mo), d, 0, 0, 0, 0, time.Local), span: span, ok: true}
 }

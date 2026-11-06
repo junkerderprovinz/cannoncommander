@@ -6,11 +6,12 @@ import { prefs, setPref } from '@/core/prefs';
 import { byName, t } from '@/i18n';
 import { shell } from '@/shell/state';
 import type { Comparer, Entry, MetaValue } from './entries';
+import { decimals, metaWord } from './metaText';
 import { split } from './paths';
 
 // How a value from fs/meta is written: a byte count, a time in milliseconds, seconds of play, a figure with or
-// without thousands separators, a yes or no, or text as the server sends it.
-export type Fmt = 'size' | 'date' | 'duration' | 'int' | 'num' | 'kbps' | 'bool' | 'text';
+// without thousands separators, a yes or no, a code for a word, text with a decimal point, or text as it comes.
+export type Fmt = 'size' | 'date' | 'duration' | 'int' | 'num' | 'kbps' | 'bool' | 'word' | 'decimal' | 'text';
 
 export interface Column {
   id: string;
@@ -48,10 +49,10 @@ const KIND_KEY: Record<string, string> = { img: 'image', video: 'video', audio: 
 
 export const mmss = (s: number) => `${Math.floor(s / 3600) ? Math.floor(s / 3600) + ':' : ''}${String(Math.floor(s / 60) % 60).padStart(Math.floor(s / 3600) ? 2 : 1, '0')}:${String(s % 60).padStart(2, '0')}`;
 
-export function fmtMeta(v: MetaValue | undefined, fmt: Fmt): string {
+export function fmtMeta(v: MetaValue | undefined, fmt: Fmt, id = ''): string {
   if (v == null || v === '') return '';
   if (typeof v === 'boolean') return t(v ? 'files.yes' : 'files.no');
-  if (typeof v === 'string') return v;
+  if (typeof v === 'string') return fmt === 'word' ? metaWord(id, v) : fmt === 'decimal' ? decimals(v) : v;
   switch (fmt) {
     case 'size': return fmtSize(v);
     case 'date': return fmtListDate(v);
@@ -107,23 +108,23 @@ const media: Def[] = [
 ];
 const video: Def[] = [
   { id: 'vcodec', width: '6rem', meta: 'text' }, { id: 'acodec', width: '6rem', meta: 'text' },
-  { id: 'framerate', width: '5.5rem', r: true, meta: 'text' }, { id: 'vbitrate', width: '6.5rem', r: true, meta: 'kbps', num: metaNum('vbitrate') },
-  { id: 'aspect', width: '6rem', r: true, meta: 'text' }, { id: 'hdr', width: '5.5rem', meta: 'text' },
-  { id: 'audiotracks', width: '8rem', meta: 'text' }, { id: 'subtitles', width: '7rem', meta: 'text' },
+  { id: 'framerate', width: '5.5rem', r: true, meta: 'decimal' }, { id: 'vbitrate', width: '6.5rem', r: true, meta: 'kbps', num: metaNum('vbitrate') },
+  { id: 'aspect', width: '6rem', r: true, meta: 'decimal' }, { id: 'hdr', width: '5.5rem', meta: 'text' },
+  { id: 'audiotracks', width: '8rem', meta: 'word' }, { id: 'subtitles', width: '7rem', meta: 'word' },
   { id: 'season', width: '4.5rem', r: true, meta: 'num', num: metaNum('season') }, { id: 'episode', width: '4.5rem', r: true, meta: 'num', num: metaNum('episode') },
 ];
 const music: Def[] = [
   { id: 'artist', width: '8rem', meta: 'text' }, { id: 'album', width: '8rem', meta: 'text' }, { id: 'title', width: '9rem', meta: 'text' },
   { id: 'albumartist', width: '8rem', meta: 'text' }, { id: 'track', width: '3.5rem', r: true, meta: 'num', num: metaNum('track') },
   { id: 'year', width: '4rem', r: true, meta: 'num' }, { id: 'genre', width: '6.5rem', meta: 'text' }, { id: 'composer', width: '8rem', meta: 'text' },
-  { id: 'abitrate', width: '6rem', r: true, meta: 'text' }, { id: 'samplerate', width: '6rem', r: true, meta: 'text' }, { id: 'channels', width: '5rem', meta: 'text' },
+  { id: 'abitrate', width: '6rem', r: true, meta: 'text' }, { id: 'samplerate', width: '6rem', r: true, meta: 'decimal' }, { id: 'channels', width: '5rem', meta: 'word' },
 ];
 const photos: Def[] = [
   { id: 'camera', width: '8rem', meta: 'text' }, { id: 'taken', width: '7.5rem', r: true, meta: 'date', num: metaNum('taken') },
-  { id: 'make', width: '7rem', meta: 'text' }, { id: 'lens', width: '9rem', meta: 'text' }, { id: 'focal', width: '5.5rem', r: true, meta: 'text' },
-  { id: 'aperture', width: '4.5rem', r: true, meta: 'text' }, { id: 'exposure', width: '6rem', r: true, meta: 'text' },
-  { id: 'iso', width: '4.5rem', r: true, meta: 'num', num: metaNum('iso') }, { id: 'flash', width: '6rem', meta: 'text' }, { id: 'place', width: '8rem', meta: 'text' },
-  { id: 'orientation', width: '6rem', meta: 'text' }, { id: 'depth', width: '5rem', r: true, meta: 'text' }, { id: 'dpi', width: '5.5rem', r: true, meta: 'text' },
+  { id: 'make', width: '7rem', meta: 'text' }, { id: 'lens', width: '9rem', meta: 'text' }, { id: 'focal', width: '5.5rem', r: true, meta: 'decimal' },
+  { id: 'aperture', width: '4.5rem', r: true, meta: 'decimal' }, { id: 'exposure', width: '6rem', r: true, meta: 'decimal' },
+  { id: 'iso', width: '4.5rem', r: true, meta: 'num', num: metaNum('iso') }, { id: 'flash', width: '6rem', meta: 'word' }, { id: 'place', width: '8rem', meta: 'text' },
+  { id: 'orientation', width: '6rem', meta: 'word' }, { id: 'depth', width: '5rem', r: true, meta: 'text' }, { id: 'dpi', width: '5.5rem', r: true, meta: 'text' },
 ];
 const documents: Def[] = [
   { id: 'pages', width: '4.5rem', r: true, meta: 'num', num: metaNum('pages') },
@@ -134,13 +135,13 @@ const documents: Def[] = [
 ];
 const archives: Def[] = [
   { id: 'unpacked', width: '7rem', r: true, meta: 'size', num: metaNum('unpacked') }, { id: 'ratio', width: '6rem', r: true, meta: 'text' },
-  { id: 'entries', width: '6rem', r: true, meta: 'num', num: metaNum('entries') }, { id: 'method', width: '6.5rem', meta: 'text' },
+  { id: 'entries', width: '6rem', r: true, meta: 'num', num: metaNum('entries') }, { id: 'method', width: '6.5rem', meta: 'word' },
   { id: 'archcrypt', width: '6rem', meta: 'bool' },
 ];
 const images: Def[] = [{ id: 'fs', width: '6rem', meta: 'text' }, { id: 'volume', width: '9rem', mono: true, meta: 'text' }, { id: 'bootable', width: '5.5rem', meta: 'bool' }];
 const programs: Def[] = [
   { id: 'version', width: '5.5rem', r: true, meta: 'text' }, { id: 'vendor', width: '8rem', meta: 'text' },
-  { id: 'arch', width: '6rem', meta: 'text' }, { id: 'signed', width: '5rem', meta: 'bool' },
+  { id: 'arch', width: '6rem', meta: 'word' }, { id: 'signed', width: '5rem', meta: 'bool' },
 ];
 const checksum: Def[] = [
   { id: 'sha256', width: '9rem', mono: true, meta: 'text' }, { id: 'crc32', width: '6rem', mono: true, meta: 'text' },
@@ -157,7 +158,7 @@ const byGroup: Record<string, Def[]> = { general, storage, rights, media, video,
 export const COLUMNS: Column[] = Object.entries(byGroup).flatMap(([group, defs]) => defs.map((d) => ({
   ...d,
   group,
-  value: d.value ?? ((k: Entry) => fmtMeta(meta(k, d.id), d.meta!)),
+  value: d.value ?? ((k: Entry) => fmtMeta(meta(k, d.id), d.meta!, d.id)),
 })));
 export const COL: Record<string, Column> = Object.fromEntries(COLUMNS.map((c) => [c.id, c]));
 export const DEFAULT_COLUMNS = ['name', 'size', 'modified'];

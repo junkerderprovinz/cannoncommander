@@ -144,3 +144,37 @@ func TestTheDiskShareAndTheUserShareAboveItAreTheSameFile(t *testing.T) {
 		})
 	}
 }
+
+func TestPreflightTellsTheSameFileFromAConflict(t *testing.T) {
+	e := newEnv(t)
+	e.write("/mnt/user/fotos/a.jpg", "sonne", old)
+	e.write("/mnt/user/fotos/b.jpg", "strand", old)
+	e.link("/mnt/user/fotos/a.jpg", "/mnt/user/backups/a.jpg")
+	e.write("/mnt/user/backups/b.jpg", "regen", old)
+	var p fileops.Preflight
+	body := map[string]any{"kind": "copy", "sources": []string{"/mnt/user/fotos/a.jpg", "/mnt/user/fotos/b.jpg"}, "dest": "/mnt/user/backups"}
+	if code := e.call("anna", "POST", "/ops/preflight", body, &p); code != http.StatusOK {
+		t.Fatalf("preflight: %d", code)
+	}
+	if len(p.Same) != 1 || p.Same[0] != "a.jpg" {
+		t.Errorf("same %v", p.Same)
+	}
+	if len(p.Conflicts) != 1 || p.Conflicts[0].Key != "b.jpg" {
+		t.Errorf("conflicts %+v", p.Conflicts)
+	}
+}
+
+func TestPreflightSeesTheDiskShareUnderTheUserShare(t *testing.T) {
+	a := newArray(t)
+	a.write(a.path("disk1", "filme/a.mkv"), "sintel")
+	e := newEnv(t, ccfs.Source{Name: "Disk 1", Mount: "/mnt/disk1", Root: a.path("disk1", "")})
+	e.write("/mnt/user/filme/a.mkv", "sintel", old)
+	var p fileops.Preflight
+	body := map[string]any{"kind": "move", "sources": []string{"/mnt/disk1/filme/a.mkv"}, "dest": "/mnt/user/filme"}
+	if code := e.call("admin", "POST", "/ops/preflight", body, &p); code != http.StatusOK {
+		t.Fatalf("preflight: %d", code)
+	}
+	if len(p.Same) != 1 || len(p.Conflicts) != 0 {
+		t.Errorf("same %v, conflicts %+v", p.Same, p.Conflicts)
+	}
+}

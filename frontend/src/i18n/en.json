@@ -217,6 +217,39 @@
     "programs": "Programs",
     "checksum": "Checksum"
   },
+  "metaValues": {
+    "orientation": {
+      "landscape": "Landscape",
+      "portrait": "Portrait",
+      "square": "Square"
+    },
+    "flash": {
+      "fired": "Fired",
+      "off": "No flash"
+    },
+    "channels": {
+      "mono": "Mono",
+      "stereo": "Stereo"
+    },
+    "channelCount": {
+      "one": "{n} channel",
+      "other": "{n} channels"
+    },
+    "method": {
+      "none": "None"
+    },
+    "methodNumber": "Method {n}",
+    "arch": {
+      "all": "All"
+    },
+    "unknownLanguage": "Unknown"
+  },
+  "searchWords": {
+    "width": "width",
+    "height": "height",
+    "vcodec": "codec",
+    "modified": "modified"
+  },
   "kinds": {
     "folder": "Folder",
     "link": "Link"

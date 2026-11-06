@@ -166,7 +166,7 @@ func (h handlers) fixpermsScan(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (h handlers) notifyTest(w http.ResponseWriter, r *http.Request) error {
-	n := Notice{Subject: "CannonCommander", Description: "So sieht die Meldung aus, wenn eine Aufgabe fertig ist"}
+	n := Notice{Subject: "CannonCommander", Description: "This is how a notice looks when a job is done"}
 	if r.ContentLength != 0 {
 		var req Notice
 		if err := v1.DecodeJSON(r, &req); err != nil {

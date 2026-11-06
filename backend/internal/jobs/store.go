@@ -54,6 +54,19 @@ func init() {
 			value TEXT NOT NULL
 		)`,
 	))
+	migrate.Register(migrate.Main, migrate.SQL("jobs/002_error_codes",
+		`ALTER TABLE jobs ADD COLUMN error_code TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE jobs ADD COLUMN error_params TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE job_items ADD COLUMN error_code TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE job_items ADD COLUMN error_params TEXT NOT NULL DEFAULT ''`,
+	))
+	// Text searches were named in German quotes and an index run over every
+	// source in German. The interface quotes and names them in its own
+	// language.
+	migrate.Register(migrate.Main, migrate.SQL("jobs/003_plain_names",
+		`UPDATE jobs SET name = substr(name, 2, length(name) - 2) WHERE kind = 'contentSearch' AND name LIKE '„%“'`,
+		`UPDATE jobs SET name = 'All sources' WHERE kind = 'reindex' AND name = 'Alle Quellen'`,
+	))
 }
 
 // answers are the decisions a job collected, before and while it ran.
@@ -103,13 +116,32 @@ func (m *Manager) insert(j *job) error {
 		return err
 	}
 	for _, it := range j.items {
-		if _, err := tx.Exec(`INSERT INTO job_items (job_id, seq, path, name, ref, state, resumed, bytes, files, error)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			j.ID, it.Seq, it.Path, it.Name, it.Ref, it.State, b2i(it.Resumed), it.Bytes, it.Files, it.Error); err != nil {
+		if _, err := tx.Exec(`INSERT INTO job_items (job_id, seq, path, name, ref, state, resumed, bytes, files, error, error_code, error_params)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			j.ID, it.Seq, it.Path, it.Name, it.Ref, it.State, b2i(it.Resumed), it.Bytes, it.Files, it.Error, it.ErrorCode, paramsJSON(it.ErrorParams)); err != nil {
 			return err
 		}
 	}
 	return tx.Commit()
+}
+
+// paramsJSON keeps the parameters of an error code as a column, empty when
+// there are none.
+func paramsJSON(p map[string]any) string {
+	if len(p) == 0 {
+		return ""
+	}
+	b, _ := json.Marshal(p)
+	return string(b)
+}
+
+func paramsFrom(s string) map[string]any {
+	if s == "" {
+		return nil
+	}
+	var p map[string]any
+	_ = json.Unmarshal([]byte(s), &p)
+	return p
 }
 
 func (j *job) answersJSON() string {
@@ -126,15 +158,17 @@ func (m *Manager) save(j *job) {
 		}
 	}
 	m.exec(`UPDATE jobs SET state = ?, position = ?, answers = ?, cap = ?, wait_parity = ?, done_bytes = ?,
-		done_files = ?, current = ?, error = ?, undo = ?, result = ?, started_at = ?, finished_at = ? WHERE id = ?`,
+		done_files = ?, current = ?, error = ?, error_code = ?, error_params = ?, undo = ?, result = ?, started_at = ?,
+		finished_at = ? WHERE id = ?`,
 		j.State, j.Position, j.answersJSON(), j.Cap, b2i(j.WaitForParity), j.DoneBytes, j.DoneFiles, j.Current,
-		j.Error, j.Undo, result, ms(j.StartedAt), ms(j.FinishedAt), j.ID)
+		j.Error, j.ErrorCode, paramsJSON(j.ErrorParams), j.Undo, result, ms(j.StartedAt), ms(j.FinishedAt), j.ID)
 	j.savedAt = time.Now()
 }
 
 func (m *Manager) saveItem(j *job, it Item) {
-	m.exec(`UPDATE job_items SET ref = ?, state = ?, resumed = ?, bytes = ?, files = ?, error = ? WHERE job_id = ? AND seq = ?`,
-		it.Ref, it.State, b2i(it.Resumed), it.Bytes, it.Files, it.Error, j.ID, it.Seq)
+	m.exec(`UPDATE job_items SET ref = ?, state = ?, resumed = ?, bytes = ?, files = ?, error = ?, error_code = ?,
+		error_params = ? WHERE job_id = ? AND seq = ?`,
+		it.Ref, it.State, b2i(it.Resumed), it.Bytes, it.Files, it.Error, it.ErrorCode, paramsJSON(it.ErrorParams), j.ID, it.Seq)
 }
 
 func (m *Manager) delete(id string) {
@@ -152,7 +186,8 @@ func (m *Manager) exec(query string, args ...any) {
 
 func (m *Manager) load(ctx context.Context) ([]*job, error) {
 	rows, err := m.db.QueryContext(ctx, `SELECT id, kind, owner, state, position, name, dest, params, answers, cap,
-		wait_parity, done_bytes, done_files, current, error, undo, result, created_at, started_at, finished_at FROM jobs`)
+		wait_parity, done_bytes, done_files, current, error, error_code, error_params, undo, result, created_at, started_at,
+		finished_at FROM jobs`)
 	if err != nil {
 		return nil, err
 	}
@@ -160,15 +195,17 @@ func (m *Manager) load(ctx context.Context) ([]*job, error) {
 	var list []*job
 	for rows.Next() {
 		j := &job{}
-		var params, ans, result string
+		var params, ans, result, errParams string
 		var waitParity int
 		var created, started, finished int64
 		if err := rows.Scan(&j.ID, &j.Kind, &j.Owner, &j.State, &j.Position, &j.Name, &j.Dest, &params, &ans, &j.Cap,
-			&waitParity, &j.DoneBytes, &j.DoneFiles, &j.Current, &j.Error, &j.Undo, &result, &created, &started, &finished); err != nil {
+			&waitParity, &j.DoneBytes, &j.DoneFiles, &j.Current, &j.Error, &j.ErrorCode, &errParams, &j.Undo, &result, &created,
+			&started, &finished); err != nil {
 			rows.Close()
 			return nil, err
 		}
 		j.params = json.RawMessage(params)
+		j.ErrorParams = paramsFrom(errParams)
 		_ = json.Unmarshal([]byte(ans), &j.answers)
 		if result != "" {
 			j.Result = json.RawMessage(result)
@@ -183,8 +220,8 @@ func (m *Manager) load(ctx context.Context) ([]*job, error) {
 		return nil, err
 	}
 
-	rows, err = m.db.QueryContext(ctx, `SELECT job_id, seq, path, name, ref, state, resumed, bytes, files, error
-		FROM job_items ORDER BY job_id, seq`)
+	rows, err = m.db.QueryContext(ctx, `SELECT job_id, seq, path, name, ref, state, resumed, bytes, files, error,
+		error_code, error_params FROM job_items ORDER BY job_id, seq`)
 	if err != nil {
 		return nil, err
 	}
@@ -193,10 +230,13 @@ func (m *Manager) load(ctx context.Context) ([]*job, error) {
 		var id string
 		var it Item
 		var resumed int
-		if err := rows.Scan(&id, &it.Seq, &it.Path, &it.Name, &it.Ref, &it.State, &resumed, &it.Bytes, &it.Files, &it.Error); err != nil {
+		var errParams string
+		if err := rows.Scan(&id, &it.Seq, &it.Path, &it.Name, &it.Ref, &it.State, &resumed, &it.Bytes, &it.Files, &it.Error,
+			&it.ErrorCode, &errParams); err != nil {
 			return nil, err
 		}
 		it.Resumed = resumed != 0
+		it.ErrorParams = paramsFrom(errParams)
 		if j, ok := byID[id]; ok {
 			j.items = append(j.items, it)
 		}
@@ -231,7 +271,8 @@ func PutSetting(db *sql.DB, key, value string) error {
 
 // storedItems reads the items of a job that let go of them.
 func (m *Manager) storedItems(id string) []Item {
-	rows, err := m.db.Query(`SELECT seq, path, name, state, bytes, files, error FROM job_items WHERE job_id = ? ORDER BY seq`, id)
+	rows, err := m.db.Query(`SELECT seq, path, name, state, bytes, files, error, error_code, error_params FROM job_items
+		WHERE job_id = ? ORDER BY seq`, id)
 	if err != nil {
 		m.logf("jobs: %v", err)
 		return nil
@@ -240,10 +281,12 @@ func (m *Manager) storedItems(id string) []Item {
 	var out []Item
 	for rows.Next() {
 		var it Item
-		if err := rows.Scan(&it.Seq, &it.Path, &it.Name, &it.State, &it.Bytes, &it.Files, &it.Error); err != nil {
+		var errParams string
+		if err := rows.Scan(&it.Seq, &it.Path, &it.Name, &it.State, &it.Bytes, &it.Files, &it.Error, &it.ErrorCode, &errParams); err != nil {
 			m.logf("jobs: %v", err)
 			return nil
 		}
+		it.ErrorParams = paramsFrom(errParams)
 		out = append(out, it)
 	}
 	if err := rows.Err(); err != nil {

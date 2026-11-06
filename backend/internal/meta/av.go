@@ -248,15 +248,15 @@ func channels(n int, layout string) string {
 	case 0:
 		return ""
 	case 1:
-		return "Mono"
+		return "mono"
 	case 2:
-		return "Stereo"
+		return "stereo"
 	case 6:
 		return "5.1"
 	case 8:
 		return "7.1"
 	}
-	return fmt.Sprintf("%d Kanäle", n)
+	return strconv.Itoa(n)
 }
 
 // aspect names the display shape the way film people do and snaps the
@@ -272,7 +272,7 @@ func aspect(dar string, w, h int64) string {
 	for _, c := range []struct {
 		r    float64
 		name string
-	}{{4.0 / 3, "4:3"}, {16.0 / 9, "16:9"}, {1, "1:1"}, {1.5, "3:2"}, {9.0 / 16, "9:16"}, {1.85, "1,85:1"}} {
+	}{{4.0 / 3, "4:3"}, {16.0 / 9, "16:9"}, {1, "1:1"}, {1.5, "3:2"}, {9.0 / 16, "9:16"}, {1.85, "1.85:1"}} {
 		if math.Abs(r-c.r)/c.r < 0.03 {
 			return c.name
 		}
@@ -303,32 +303,29 @@ func hdrOf(transfer string, side []sideData) string {
 	return "SDR"
 }
 
+// languages maps the three letter codes containers write to the two letter
+// ones the interface names in its own language.
 var languages = map[string]string{
-	"deu": "Deutsch", "ger": "Deutsch", "de": "Deutsch", "eng": "Englisch", "en": "Englisch",
-	"fra": "Französisch", "fre": "Französisch", "fr": "Französisch", "spa": "Spanisch", "es": "Spanisch",
-	"ita": "Italienisch", "it": "Italienisch", "por": "Portugiesisch", "pt": "Portugiesisch",
-	"nld": "Niederländisch", "dut": "Niederländisch", "nl": "Niederländisch", "pol": "Polnisch", "pl": "Polnisch",
-	"ces": "Tschechisch", "cze": "Tschechisch", "cs": "Tschechisch", "slk": "Slowakisch", "slo": "Slowakisch", "sk": "Slowakisch",
-	"hun": "Ungarisch", "hu": "Ungarisch", "rus": "Russisch", "ru": "Russisch", "ukr": "Ukrainisch", "uk": "Ukrainisch",
-	"jpn": "Japanisch", "ja": "Japanisch", "kor": "Koreanisch", "ko": "Koreanisch", "zho": "Chinesisch", "chi": "Chinesisch", "zh": "Chinesisch",
-	"tur": "Türkisch", "tr": "Türkisch", "swe": "Schwedisch", "sv": "Schwedisch", "nor": "Norwegisch", "nob": "Norwegisch", "nno": "Norwegisch", "no": "Norwegisch",
-	"dan": "Dänisch", "da": "Dänisch", "fin": "Finnisch", "fi": "Finnisch", "ell": "Griechisch", "gre": "Griechisch", "el": "Griechisch",
-	"hrv": "Kroatisch", "hr": "Kroatisch", "srp": "Serbisch", "sr": "Serbisch", "slv": "Slowenisch", "sl": "Slowenisch",
-	"ron": "Rumänisch", "rum": "Rumänisch", "ro": "Rumänisch", "bul": "Bulgarisch", "bg": "Bulgarisch", "ara": "Arabisch", "ar": "Arabisch",
-	"heb": "Hebräisch", "he": "Hebräisch", "hin": "Hindi", "hi": "Hindi", "tha": "Thailändisch", "th": "Thailändisch",
-	"vie": "Vietnamesisch", "vi": "Vietnamesisch", "ind": "Indonesisch", "id": "Indonesisch", "cat": "Katalanisch", "ca": "Katalanisch",
-	"lat": "Latein", "la": "Latein",
+	"deu": "de", "ger": "de", "eng": "en", "fra": "fr", "fre": "fr", "spa": "es", "ita": "it", "por": "pt",
+	"nld": "nl", "dut": "nl", "pol": "pl", "ces": "cs", "cze": "cs", "slk": "sk", "slo": "sk", "hun": "hu",
+	"rus": "ru", "ukr": "uk", "jpn": "ja", "kor": "ko", "zho": "zh", "chi": "zh", "tur": "tr", "swe": "sv",
+	"nor": "no", "nob": "no", "nno": "no", "nb": "no", "nn": "no", "dan": "da", "fin": "fi", "ell": "el", "gre": "el",
+	"hrv": "hr", "srp": "sr", "slv": "sl", "ron": "ro", "rum": "ro", "bul": "bg", "ara": "ar", "heb": "he",
+	"hin": "hi", "tha": "th", "vie": "vi", "ind": "id", "cat": "ca", "lat": "la", "est": "et", "eus": "eu",
+	"baq": "eu", "fas": "fa", "per": "fa", "glg": "gl", "isl": "is", "ice": "is", "lit": "lt", "lav": "lv",
+	"msa": "ms", "may": "ms",
 }
 
+// language returns the code of a track's language, und when it has none.
 func language(code string) string {
 	code = strings.ToLower(strings.TrimSpace(code))
-	if code == "" || code == "und" {
-		return "Unbekannt"
+	if code == "" {
+		return "und"
 	}
-	if name, ok := languages[code]; ok {
-		return name
+	if two, ok := languages[code]; ok {
+		return two
 	}
-	return strings.ToUpper(code)
+	return code
 }
 
 func joinUnique(list []string) string {

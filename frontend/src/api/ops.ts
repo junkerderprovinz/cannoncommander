@@ -72,6 +72,8 @@ export interface Preflight {
   bytes: number;
   files: number;
   conflicts: JobConflict[];
+  // Names at dest that are the same file as their source under another path; the job leaves them alone.
+  same: string[];
   sameDevice: boolean;
   space?: { free: number; need: number; enough: boolean };
   big: boolean;

@@ -62,16 +62,18 @@
   "menuNew": "Neue Suche mit allen Feldern (Alt+F7)",
   "menuNewLabel": "Neue Suche",
   "menuNone": "Tipp ein Muster und speichere es mit dem Knopf im Feld.",
+  "exampleWords": { "tag": "steuer", "word": "bericht" },
   "menuExamples": "Beispiele",
   "examples": {
     "mkv": "alle MKV-Dateien, auch in Unterordnern",
-    "tag": "alles mit dem Schlagwort steuer",
-    "word": "Namen, in denen bericht vorkommt",
+    "tag": "alles mit dem Schlagwort {tag}",
+    "word": "Namen, in denen {word} vorkommt",
     "one": "ein ? steht für genau ein Zeichen",
     "meta": "4K-Filme in HEVC, aus den Metadaten",
     "week": "alles, was sich in den letzten 7 Tagen geändert hat"
   },
   "server": "Server",
   "unknownFields": "{fields} kenne ich nicht. Ich verstehe etwa breite, höhe, codec, interpret, kamera, größe, geändert, dauer und jeden Spaltennamen wie Objektiv oder Jahr",
-  "unknownField": "„{f}:“"
+  "unknownField": "„{f}:“",
+  "quoted": "„{text}“"
 }

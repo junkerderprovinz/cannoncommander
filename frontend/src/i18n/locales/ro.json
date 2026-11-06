@@ -1,4 +1,5 @@
 {
+  "$status": "untranslated",
   "access": {
     "left": "Panoul stâng",
     "right": "Panoul drept",
@@ -2330,6 +2331,10 @@
     "menuNew": "Căutare nouă cu toate câmpurile (Alt+F7)",
     "menuNewLabel": "Căutare nouă",
     "menuNone": "Scrie un model și salvează-l cu butonul din câmp.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Exemple",
     "examples": {
       "mkv": "toate fișierele MKV, și din subdosare",
@@ -2341,7 +2346,8 @@
     },
     "server": "Server",
     "unknownFields": "Nu cunosc {fields}. Înțeleg, de exemplu, width, height, codec, artist, camera, size, modified, duration și orice nume de coloană, precum lens sau year",
-    "unknownField": "„{f}:”"
+    "unknownField": "„{f}:”",
+    "quoted": ""
   },
   "share": {
     "share": "Partajează",
@@ -2638,7 +2644,26 @@
     "clipCut": "Decupează",
     "clipCopy": "Copiază în clipboard",
     "clipPaste": "Lipește",
-    "nothingOn": "Nimic din asta nu se află pe {disk}"
+    "nothingOn": "Nimic din asta nu se află pe {disk}",
+    "sameSkip": "",
+    "sameSkipTip": "",
+    "sameSkipped": {
+      "one": "",
+      "few": "",
+      "other": ""
+    },
+    "copiedSame": "",
+    "movedSame": "",
+    "nothingCopied": {
+      "one": "",
+      "few": "",
+      "other": ""
+    },
+    "nothingMoved": {
+      "one": "",
+      "few": "",
+      "other": ""
+    }
   },
   "trash": {
     "delete": "Șterge",
@@ -3340,6 +3365,40 @@
     "images": "Imagini de disc",
     "programs": "Programe",
     "checksum": "Sumă de control"
+  },
+  "metaValues": {
+    "orientation": {
+      "landscape": "",
+      "portrait": "",
+      "square": ""
+    },
+    "flash": {
+      "fired": "",
+      "off": ""
+    },
+    "channels": {
+      "mono": "",
+      "stereo": ""
+    },
+    "channelCount": {
+      "one": "",
+      "few": "",
+      "other": ""
+    },
+    "method": {
+      "none": ""
+    },
+    "methodNumber": "",
+    "arch": {
+      "all": ""
+    },
+    "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Dosar",

@@ -1,4 +1,5 @@
 {
+  "$status": "untranslated",
   "access": {
     "left": "Venstre panel",
     "right": "Højre panel",
@@ -2250,6 +2251,10 @@
     "menuNew": "Ny søgning med alle felter (Alt+F7)",
     "menuNewLabel": "Ny søgning",
     "menuNone": "Skriv et mønster, og gem det med knappen i feltet.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Eksempler",
     "examples": {
       "mkv": "alle MKV-filer, også i undermapper",
@@ -2261,7 +2266,8 @@
     },
     "server": "Server",
     "unknownFields": "{fields} kender jeg ikke. Jeg forstår fx width, height, codec, artist, camera, size, modified, duration og alle kolonnenavne som lens eller year",
-    "unknownField": "»{f}:«"
+    "unknownField": "»{f}:«",
+    "quoted": ""
   },
   "share": {
     "share": "Del",
@@ -2546,7 +2552,23 @@
     "clipCut": "Klip",
     "clipCopy": "Kopiér til udklipsholderen",
     "clipPaste": "Indsæt",
-    "nothingOn": "Intet af det ligger på {disk}"
+    "nothingOn": "Intet af det ligger på {disk}",
+    "sameSkip": "",
+    "sameSkipTip": "",
+    "sameSkipped": {
+      "one": "",
+      "other": ""
+    },
+    "copiedSame": "",
+    "movedSame": "",
+    "nothingCopied": {
+      "one": "",
+      "other": ""
+    },
+    "nothingMoved": {
+      "one": "",
+      "other": ""
+    }
   },
   "trash": {
     "delete": "Slet",
@@ -3216,6 +3238,39 @@
     "images": "Diskaftryk",
     "programs": "Programmer",
     "checksum": "Kontrolsum"
+  },
+  "metaValues": {
+    "orientation": {
+      "landscape": "",
+      "portrait": "",
+      "square": ""
+    },
+    "flash": {
+      "fired": "",
+      "off": ""
+    },
+    "channels": {
+      "mono": "",
+      "stereo": ""
+    },
+    "channelCount": {
+      "one": "",
+      "other": ""
+    },
+    "method": {
+      "none": ""
+    },
+    "methodNumber": "",
+    "arch": {
+      "all": ""
+    },
+    "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Mappe",

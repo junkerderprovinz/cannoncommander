@@ -36,16 +36,18 @@ func connectUnraid(m *jobs.Manager, u *unraid.Service) {
 	})
 }
 
-// kindNames name the jobs in the notices, which Unraid shows as they are.
+// kindNames name the jobs in the notices. Unraid shows them as they are and
+// knows nothing of the app's languages, so they are in English, as in the
+// English interface.
 var kindNames = map[string]string{
-	KindCopy: "Kopieren", KindMove: "Verschieben", KindDelete: "Löschen",
-	"trash": "In den Papierkorb", "restore": "Wiederherstellen", "emptyTrash": "Papierkorb leeren",
-	unraid.FixPermsKind: "Rechte setzen", "undo": "Rückgängig",
-	unraid.ModeGather: "Bündeln", unraid.ModeScatter: "Leeren",
+	KindCopy: "Copy", KindMove: "Move", KindDelete: "Delete",
+	"trash": "To the trash", "restore": "Restore", "emptyTrash": "Delete for good",
+	unraid.FixPermsKind: "Repair permissions", "undo": "Take back",
+	unraid.ModeGather: "Gather", unraid.ModeScatter: "Empty",
 }
 
-// notice words a finished job like the prototype does: "Kopieren: Urlaub
-// nach backups, nach 12 Min."
+// notice words a finished job like the interface does: "Copy: Urlaub to
+// backups, after 12 min".
 func notice(n jobs.Notice) unraid.Notice {
 	j := n.Job
 	what := kindNames[j.Kind]
@@ -54,16 +56,23 @@ func notice(n jobs.Notice) unraid.Notice {
 	}
 	label := what + ": " + j.Name
 	if j.Count > 1 {
-		label = fmt.Sprintf("%s: %d Objekte", what, j.Count)
+		label = fmt.Sprintf("%s: %d items", what, j.Count)
 	}
 	if j.Dest != "" {
-		label += " nach " + path.Base(j.Dest)
+		to := " to "
+		switch j.Kind {
+		case unraid.ModeGather:
+			to = " onto "
+		case unraid.ModeScatter:
+			to = " from "
+		}
+		label += to + path.Base(j.Dest)
 	}
-	out := unraid.Notice{Subject: "Aufgabe fertig", Description: label + ", nach " + took(n.Took)}
+	out := unraid.Notice{Subject: "Job done", Description: label + ", after " + took(n.Took)}
 	if j.State != jobs.Done {
-		out.Subject, out.Importance = "Aufgabe fehlgeschlagen", "warning"
+		out.Subject, out.Importance = "Job failed", "warning"
 		if j.State == jobs.Cancelled {
-			out.Subject, out.Importance = "Aufgabe abgebrochen", "normal"
+			out.Subject, out.Importance = "Job cancelled", "normal"
 		}
 	}
 	return out
@@ -74,9 +83,9 @@ func took(d time.Duration) string {
 	case s < 60:
 		return fmt.Sprintf("%d s", int(s+0.5))
 	case s < 3600:
-		return fmt.Sprintf("%d Min.", int(s/60+0.5))
+		return fmt.Sprintf("%d min", int(s/60+0.5))
 	default:
-		return strings.Replace(fmt.Sprintf("%.1f Std.", s/3600), ".", ",", 1)
+		return fmt.Sprintf("%.1f h", s/3600)
 	}
 }
 

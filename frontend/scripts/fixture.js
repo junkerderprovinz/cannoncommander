@@ -65,6 +65,39 @@ function globRe(words) {
 // fs/meta sends figures and yes or no as such; the prototype writes everything as text, so these turn back.
 const NUMERIC = ['accessed', 'statchange', 'taken', 'duration', 'season', 'episode', 'track', 'year', 'iso', 'pages', 'words', 'lines', 'entries', 'unpacked', 'vbitrate'];
 const BOOLEAN = ['encrypted', 'archcrypt', 'bootable', 'signed'];
+// The server keeps words as codes and numbers with a point, where the prototype writes German.
+const WORDS = {
+  orientation: { Querformat: 'landscape', Hochformat: 'portrait', Quadratisch: 'square' },
+  flash: { 'Ausgelöst': 'fired', 'Kein Blitz': 'off' },
+  channels: { Mono: 'mono', Stereo: 'stereo' },
+  method: { Ohne: 'none' },
+  arch: { Alle: 'all' },
+};
+const DECIMAL = ['framerate', 'samplerate', 'focal', 'aperture', 'exposure', 'aspect'];
+const germanName = new Intl.DisplayNames(['de'], { type: 'language' });
+const LANGUAGE_CODES = Object.fromEntries(['de', 'en', 'fr', 'es', 'it', 'nl', 'pl', 'ru', 'ja'].map((c) => [germanName.of(c), c]));
+function serverValue(id, text) {
+  if (WORDS[id]) return WORDS[id][text] ?? text.match(/^(\d+) Kanäle$/)?.[1] ?? text;
+  if (id === 'audiotracks' || id === 'subtitles') return text.split(', ').map((n) => (n === 'Unbekannt' ? 'und' : LANGUAGE_CODES[n] ?? n)).join(', ');
+  if (DECIMAL.includes(id)) return text.replace(/(\d),(\d)/g, '$1.$2');
+  return text;
+}
+// The search line also names types, kinds and yes or no by code.
+const YES_NO = { Ja: 'yes', Nein: 'no' };
+const LINE_WORDS = {
+  ...WORDS,
+  type: { Ordner: 'folder', 'Verknüpfung': 'link', Bild: 'img', Video: 'video', Audio: 'audio', Archiv: 'arch', Abbild: 'disk', 'PDF-Dokument': 'pdf', 'Office-Dokument': 'office', Textdatei: 'text', Quelltext: 'code', Datei: 'file' },
+  kind: { Ordner: 'folder', Bild: 'image', Video: 'video', Musik: 'music', Archiv: 'archive', Abbild: 'disk', Dokument: 'document', Text: 'text', Quelltext: 'code', Sonstiges: 'other' },
+  ...Object.fromEntries(BOOLEAN.map((id) => [id, YES_NO])),
+};
+// The search line names those codes, which the prototype's field tests know by their German words.
+function germanQuery(line) {
+  return line.replace(/\b(\w+):(>=|<=|!=|>|<|=)?(\w+)\b/g, (all, id, op = '', code) => {
+    const word = Object.entries(LINE_WORDS[id] ?? {}).find(([, c]) => c === code)?.[0];
+    const lang = (id === 'audiotracks' || id === 'subtitles') && (code === 'und' ? 'Unbekannt' : germanName.of(code));
+    return word || lang ? `${id}:${op}"${word || lang}"` : all;
+  });
+}
 
 export function createFixture() {
   const { FS, DATA, COL, ck, hashOf, DAY, NOW, run } = loadPrototype();
@@ -114,7 +147,7 @@ export function createFixture() {
       const c = COL[id];
       if (!c?.value) continue;
       const text = k.cols?.[id] ?? c.value(node, at);
-      out[id] = !text ? null : BOOLEAN.includes(id) ? text === 'Ja' : NUMERIC.includes(id) ? (c.num ? c.num(node) : Number(text)) : text;
+      out[id] = !text ? null : BOOLEAN.includes(id) ? text === 'Ja' : NUMERIC.includes(id) ? (c.num ? c.num(node) : Number(text)) : serverValue(id, text);
     }
     return out;
   };
@@ -138,7 +171,7 @@ export function createFixture() {
     search(path, p = {}) {
       const root = dirAt(path);
       if (!root) return null;
-      const mq = parse(p.q || '');
+      const mq = parse(germanQuery(p.q || ''));
       const words = mq.rest.split(/[\s;]+/).filter(Boolean);
       const tags = words.filter((w) => w.startsWith('#')).map((w) => w.slice(1).toLowerCase());
       const nameRe = globRe(words.filter((w) => !w.startsWith('#')));

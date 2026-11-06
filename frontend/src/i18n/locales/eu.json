@@ -1,4 +1,5 @@
 {
+  "$status": "untranslated",
   "access": {
     "left": "Ezkerreko panela",
     "right": "Eskuineko panela",
@@ -2250,6 +2251,10 @@
     "menuNew": "Bilaketa berria eremu guztiekin (Alt+F7)",
     "menuNewLabel": "Bilaketa berria",
     "menuNone": "Idatzi eredu bat eta gorde eremuko botoiarekin.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Adibideak",
     "examples": {
       "mkv": "MKV fitxategi guztiak, azpikarpetetan ere bai",
@@ -2261,7 +2266,8 @@
     },
     "server": "Zerbitzaria",
     "unknownFields": "Ez dut ezagutzen: {fields}. Ulertzen ditut, adibidez, width, height, codec, artist, camera, size, modified, duration eta zutabe-izen guztiak, lens edo year bezala",
-    "unknownField": "«{f}:»"
+    "unknownField": "«{f}:»",
+    "quoted": ""
   },
   "share": {
     "share": "Partekatu",
@@ -2546,7 +2552,23 @@
     "clipCut": "Moztu",
     "clipCopy": "Kopiatu arbelera",
     "clipPaste": "Itsatsi",
-    "nothingOn": "Horretatik ezer ez dago {disk} diskoan"
+    "nothingOn": "Horretatik ezer ez dago {disk} diskoan",
+    "sameSkip": "",
+    "sameSkipTip": "",
+    "sameSkipped": {
+      "one": "",
+      "other": ""
+    },
+    "copiedSame": "",
+    "movedSame": "",
+    "nothingCopied": {
+      "one": "",
+      "other": ""
+    },
+    "nothingMoved": {
+      "one": "",
+      "other": ""
+    }
   },
   "trash": {
     "delete": "Ezabatu",
@@ -3216,6 +3238,39 @@
     "images": "Disko-irudiak",
     "programs": "Programak",
     "checksum": "Kontrol-batura"
+  },
+  "metaValues": {
+    "orientation": {
+      "landscape": "",
+      "portrait": "",
+      "square": ""
+    },
+    "flash": {
+      "fired": "",
+      "off": ""
+    },
+    "channels": {
+      "mono": "",
+      "stereo": ""
+    },
+    "channelCount": {
+      "one": "",
+      "other": ""
+    },
+    "method": {
+      "none": ""
+    },
+    "methodNumber": "",
+    "arch": {
+      "all": ""
+    },
+    "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Karpeta",

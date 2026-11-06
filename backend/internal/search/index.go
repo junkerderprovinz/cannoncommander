@@ -85,7 +85,7 @@ func prepareReindex(_ context.Context, d v1.Deps, u *users.User, raw json.RawMes
 		}
 		return nil, v1.Errorf(http.StatusBadRequest, "no source has an index")
 	}
-	name := "Alle Quellen"
+	name := "All sources"
 	if len(items) == 1 {
 		name = items[0].Name
 	}

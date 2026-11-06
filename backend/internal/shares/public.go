@@ -205,7 +205,7 @@ func (s *Service) opening(r *http.Request, v *visit) {
 		}
 	}
 	if sh.Notify {
-		n := unraid.Notice{Subject: "Link geöffnet", Description: "Jemand hat deinen Link zu " + sh.Name + " geöffnet"}
+		n := unraid.Notice{Subject: "Link opened", Description: "Someone opened your link to " + sh.Name}
 		if err := Notify(n); err != nil && !errors.Is(err, unraid.ErrWriteOff) {
 			logger.Errorf("share %s: %v", sh.ID, err)
 		}
