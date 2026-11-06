@@ -746,7 +746,7 @@
       "mounted": "{name} prijungta",
       "unmounted": "{name} atjungta",
       "unmountedPill": "Atjungta",
-      "mounting": "Prijungiama",
+      "mounting": "Prijungimas",
       "automount": "Prijungti paleidžiant",
       "automountTip": "Prijungia visas nuotolines vietas, vos tik konteineris pasileidžia.",
       "cache": "Podėlis",

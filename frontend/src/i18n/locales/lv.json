@@ -711,7 +711,7 @@
       "mounted": "{name} ir uzmontēta",
       "unmounted": "{name} ir atmontēta",
       "unmountedPill": "Atmontēta",
-      "mounting": "Montē",
+      "mounting": "Montēšana",
       "automount": "Montēt startējot",
       "automountTip": "Uzmontē visas attālās vietas, tiklīdz konteiners startē.",
       "cache": "Kešatmiņa",

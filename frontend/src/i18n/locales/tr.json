@@ -676,7 +676,7 @@
       "mounted": "{name} bağlandı",
       "unmounted": "{name} ayrıldı",
       "unmountedPill": "Ayrıldı",
-      "mounting": "Bağlanıyor",
+      "mounting": "Bağlama",
       "automount": "Başlangıçta bağla",
       "automountTip": "Konteyner başlar başlamaz tüm uzak konumları bağlar.",
       "cache": "Önbellek",
