@@ -1,6 +1,7 @@
 package unraid
 
 import (
+	"os"
 	"path/filepath"
 	"slices"
 	"testing"
@@ -163,5 +164,35 @@ func TestParseINIKeepsSectionsAndUnquotes(t *testing.T) {
 	secs := parseINI([]byte("# comment\n[\"a\"]\nx=\"1\"\ny=two words\n\n[\"b\"]\nx=\"\"\n"))
 	if len(secs) != 2 || secs[0].name != "a" || secs[0].str("x") != "1" || secs[0].str("y") != "two words" || secs[1].str("x") != "" {
 		t.Errorf("sections = %+v", secs)
+	}
+}
+
+func TestExclusiveSharesCountOnlyWithTheirLinkToThePool(t *testing.T) {
+	c := testdataConfig()
+	c.Mnt = t.TempDir()
+	for _, d := range []string{"user", "fastcache/code", "fastcache/featherdrop", "cache/elsewhere"} {
+		if err := os.MkdirAll(filepath.Join(c.Mnt, d), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for link, target := range map[string]string{
+		"code":        "../fastcache/code",
+		"featherdrop": "../fastcache/featherdrop",
+		"appdata":     "../cache/elsewhere",
+		"backups":     filepath.Join(c.Mnt, "cache", "backups"),
+	} {
+		if err := os.Symlink(target, filepath.Join(c.Mnt, "user", link)); err != nil {
+			t.Skipf("no symlinks here: %v", err)
+		}
+	}
+	svc := New(c)
+	for share, want := range map[string]string{"code": "fastcache", "backups": "cache", "featherdrop": "", "appdata": "", "domains": ""} {
+		pool, ok := svc.ExclusivePool(share)
+		if pool != want || ok != (want != "") {
+			t.Errorf("ExclusivePool(%s) = %q, %v, want %q", share, pool, ok, want)
+		}
+	}
+	if got := svc.UserShares(); got != filepath.Join(c.Mnt, "user") {
+		t.Errorf("UserShares() = %s", got)
 	}
 }

@@ -168,6 +168,24 @@ var omitList = map[string]bool{
 	"@eaDir":                    true,
 }
 
+// LinkedFolder reports whether the link name directly inside the source at
+// root stands for a folder of that source, as an exclusive share does in the
+// Unraid user shares. Such a link is indexed as the folder it leads to. It is
+// set once at start.
+var LinkedFolder func(root, name string) bool
+
+// atRoot returns the folder a linked folder directly in the source leads to,
+// and any other entry as it is.
+func (idx *Index) atRoot(file os.FileInfo) os.FileInfo {
+	if file.Mode()&os.ModeSymlink == 0 || LinkedFolder == nil || !LinkedFolder(idx.Path, file.Name()) {
+		return file
+	}
+	if target, err := os.Stat(filepath.Join(idx.Path, file.Name())); err == nil && target.IsDir() {
+		return target
+	}
+	return file
+}
+
 func init() {
 	indexes = make(map[string]*Index)
 }
@@ -1070,6 +1088,9 @@ func (idx *Index) GetDirInfoCore(dirInfo *os.File, stat os.FileInfo, indexPath s
 	indexableHasPreview := false
 
 	for _, file := range files {
+		if indexPath == "/" {
+			file = idx.atRoot(file)
+		}
 		subfileBaseName := file.Name()
 		isDir := iteminfo.IsDirectory(file)
 		fullCombined := indexPath + subfileBaseName

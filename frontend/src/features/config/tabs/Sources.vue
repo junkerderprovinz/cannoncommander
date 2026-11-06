@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button, Card, EmptyState, FieldRow, IconButton, ListRow, Pill } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { admin, type IndexState, type Source } from '@/api/admin';
+import { admin, type Device, type IndexState, type Source } from '@/api/admin';
 import { run } from '@/core/actions';
 import { fmtSize } from '@/core/format';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -13,6 +13,7 @@ import { ago, attempt, c, confirmWin, fail, soon } from '@/features/config/share
 import SourceWin from '../wins/SourceWin.vue';
 
 const sources = ref<Source[]>([]);
+const devices = ref<Device[]>([]);
 const states = ref<IndexState[]>([]);
 const restartNeeded = ref(false);
 let poll: ReturnType<typeof setInterval> | undefined;
@@ -24,6 +25,7 @@ async function load() {
   const [list, ix] = await Promise.all([admin.sources(), admin.index()]);
   const was = states.value.filter(busy).map((x) => x.source);
   sources.value = list.sources;
+  devices.value = list.devices;
   restartNeeded.value = list.restartNeeded;
   states.value = ix;
   for (const st of ix) if (was.includes(st.source) && !busy(st)) toast(c('sources.indexed', { name: st.source }));
@@ -99,6 +101,16 @@ function remove(s: Source) {
       <Pill tone="warn">{{ c('sources.restartPill') }}</Pill><Button :label="c('sources.toRestart')" label-key="IconRefresh" @click="go('settings', 'app')" />
     </FieldRow>
     <div class="a-foot"><Button data-add :label="c('sources.add')" label-key="IconAdd" @click="edit(null)" /></div>
+  </Card>
+  <Card v-if="devices.length" :title="c('sources.devices')">
+    <div class="a-list">
+      <ListRow v-for="d in devices" :key="d.path" :name="d.name" :tip="c('sources.devicesTip')" :data-device="d.path">
+        <template #tile><G n="IconZFS" /></template>
+        <template #badges>
+          <Pill class="mono">{{ d.path }}</Pill><Pill tone="state">{{ c('sources.adminsOnly') }}</Pill><Pill tone="state">{{ c('sources.noIndex') }}</Pill>
+        </template>
+      </ListRow>
+    </div>
   </Card>
   <Card :title="c('sources.index')">
     <FieldRow :label="c('sources.every')" :hint="c('sources.everyTip')"><Pill>{{ Number.isFinite(next) ? c('sources.nextRun', { when: soon(next) }) : c('sources.notPlanned') }}</Pill></FieldRow>

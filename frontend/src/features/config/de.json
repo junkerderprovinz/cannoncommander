@@ -65,6 +65,7 @@
     "readOnly": "Nur lesen", "readOnlyTip": "Niemand kann hier etwas ändern, löschen oder hochladen, auch Admins nicht.", "reindex": "Neu einlesen", "reindexAll": "Alle neu einlesen",
     "index": "Index", "every": "Automatisch neu einlesen", "everyTip": "CannonCommander liest Ordner, in denen sich viel ändert, öfter ein und ruhige seltener, zwischen 5 Minuten und 12 Stunden. So bleibt die Suche aktuell, auch wenn andere Container Dateien ändern.",
     "last": "Zuletzt eingelesen", "never": "Noch nie",
+    "devices": "Platten und Pools", "devicesTip": "Die meldet Unraid. Admins sehen sie unter /mnt, ohne sie hier anzulegen. Sie werden nie eingelesen, damit schlafende Platten weiterschlafen.", "adminsOnly": "Nur Admins",
     "name": "Name", "namePh": "Etwa Disk 3", "folder": "Ordner", "needName": "Gib der Quelle einen Namen", "pathTaken": "Dieser Ordner ist schon eine Quelle",
     "indexIt": "Für die Suche einlesen", "indexItTip": "Der Index macht die Suche und die Ordnergrößen schnell. Das Einlesen läuft als Aufgabe im Hintergrund.",
     "skipHidden": "Versteckte Dateien auslassen", "skipHiddenTip": "Dateien und Ordner, deren Name mit einem Punkt beginnt, kommen nicht in den Index.",
