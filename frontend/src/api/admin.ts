@@ -120,7 +120,7 @@ export const admin = {
   importSettings: (path: string, users: boolean) => write<Imported>('POST', '/admin/app/import', { path, users }),
   shares: async (all: boolean) => (await (all ? tools.allShares() : tools.shares())).map(share),
   // An expiry of null makes the link last, an empty password takes it off.
-  updateShare: (id: string, change: { expires?: number | null; password?: string }) =>
+  updateShare: (id: string, change: { expires?: number | null; password?: string; message?: string }) =>
     write('PATCH', `/shares/${at(id)}`, { ...change, ...('expires' in change ? { expires: iso(change.expires ?? null) } : {}) }),
   deleteShare: (id: string) => write('DELETE', `/shares/${at(id)}`),
   remotes: () => get<{ remotes: Remote[]; rclone: Rclone }>('/remotes'),

@@ -147,7 +147,9 @@
     "link": "Link", "path": "Pfad", "created": "Erstellt", "createdBy": "{date} von {by}", "viewsLabel": "Aufrufe", "expires": "Läuft ab",
     "keep": "Wie bisher", "never": "nie", "never_": "Nie", "fromNow1": "1 Tag ab jetzt", "fromNow": "{n} Tage ab jetzt",
     "askPw": "Passwort verlangen", "askPwTip": "Wer den Link öffnet, muss erst das Passwort eingeben.", "pwTip": "Mindestens 6 Zeichen.", "pwShort": "Das Passwort braucht mindestens 6 Zeichen",
-    "exhausted": "Aufgebraucht"
+    "exhausted": "Aufgebraucht",
+    "message": "Nachricht an die Gegenseite", "messageTip": "Steht auf der Seite des Links über den Dateien, etwa ein Gruß oder ein Hinweis. Darf leer bleiben.",
+    "messagePlaceholder": "etwa: Hier sind die Fotos vom Wochenende"
   },
   "security": {
     "signIn": "Anmeldung", "pwTip": "Ein neues Passwort meldet dich auf allen anderen Geräten ab. Diese Sitzung bleibt angemeldet.", "changedAgo": "Geändert {ago}", "change": "Ändern",
