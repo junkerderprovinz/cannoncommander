@@ -2,10 +2,10 @@
 // A folder in the preview bar: its pictures when it is mostly pictures, else its first entries.
 import { EmptyState, GlyphTile, Pill } from '@glimstone/vue';
 import { computed, onMounted } from 'vue';
-import { fmtSize } from '@/core/format';
 import { glyphOf, glyphComponent } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import { byName, t } from '@/i18n';
+import SizeText from '@/files/SizeText.vue';
 import { useListing } from '@/stores/listing';
 import { thumbUrl } from '../content';
 import { joinPath, plural, viewKind } from '../kinds';
@@ -38,7 +38,7 @@ onMounted(async () => {
   </template>
   <template v-else>
     <div class="cv-mini">
-      <div v-for="k in top.slice(0, 12)" :key="k.name" class="cv-mrow"><GlyphTile :glyph="glyphComponent(glyphOf(k))" /><span class="t">{{ k.name }}</span><Pill class="glim-num">{{ fmtSize(k.size) || '0 B' }}</Pill></div>
+      <div v-for="k in top.slice(0, 12)" :key="k.name" class="cv-mrow"><GlyphTile :glyph="glyphComponent(glyphOf(k))" /><span class="t">{{ k.name }}</span><Pill class="glim-num"><SizeText :k="k" /></Pill></div>
     </div>
     <div v-if="top.length > 12" class="muted cv-more">{{ t('viewer.and', { rest: plural(top.length - 12, 'moreObjects') }) }}</div>
   </template>

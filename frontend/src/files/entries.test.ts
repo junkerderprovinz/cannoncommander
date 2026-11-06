@@ -94,3 +94,18 @@ describe('viewOf', () => {
     for (const path of paths) expect(viewOf(path, folderViews, holds(path)), path).toBe(protoViewOf({ path }));
   });
 });
+
+describe('folders the index has not measured yet', () => {
+  const entry = (name: string, size: number, sizeUnknown = false) => toEntry(toItem({ name, dir: true, size, mtime: '2026-11-02T09:00:00.000Z', mode: '0755', ...(sizeUnknown ? { sizeUnknown } : {}) }));
+  const list = () => [entry('offen', 0, true), entry('leer', 0), entry('gross', 900), entry('mittel', 40)];
+
+  it('keeps the mark from the server', () => {
+    expect(list().map((k) => !!k.sizeUnknown)).toEqual([true, false, false, false]);
+  });
+
+  it('sorts them after the measured folders in both directions', () => {
+    const order = (dir: number) => sortEntries(list(), { sort: 'size', dir, foldersFirst: true }).map((k) => k.name);
+    expect(order(1)).toEqual(['leer', 'mittel', 'gross', 'offen']);
+    expect(order(-1)).toEqual(['gross', 'mittel', 'leer', 'offen']);
+  });
+});

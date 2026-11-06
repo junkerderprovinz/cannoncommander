@@ -9,7 +9,8 @@ import { ApiError } from '@/api/client';
 import { type Job, ops } from '@/api/ops';
 import { on } from '@/api/sse';
 import { type ContentHits, type Hit, type SearchQuery, toHit, tools } from '@/api/tools';
-import { fmtDate, fmtSize } from '@/core/format';
+import { fmtDate } from '@/core/format';
+import SizeText from '@/files/SizeText.vue';
 import { glyphComponent, glyphOf } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import type { WinEntry } from '@/core/windows';
@@ -178,7 +179,7 @@ onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(ti
         <template v-else-if="shown.length">
           <div v-for="(h, i) in shown" :key="h.at + '/' + h.name" class="bk-row bk-hit" :class="{ cur: i === cur }" :data-bk-hit="i" role="option" :aria-selected="i === cur" @click="clickHit($event, i)">
             <GlyphTile :glyph="glyphComponent(glyphOf(h))" ground :quiet="!h.dir" /><span class="bk-name">{{ h.name }}</span><span class="bk-path muted mono" :title="h.at || '/'"><bdi>{{ h.at || '/' }}</bdi></span>
-            <Pill class="glim-num">{{ fmtSize(h.size) || '0 B' }}</Pill><Pill class="glim-num">{{ fmtDate(h.time) }}</Pill>
+            <Pill class="glim-num"><SizeText :k="h" /></Pill><Pill class="glim-num">{{ fmtDate(h.time) }}</Pill>
           </div>
         </template>
         <EmptyState v-else-if="!res.reading" nested :glyph="glyphComponent('IconFilter')" :title="t('search.nothing')" :hint="t('search.nothingHint')" />

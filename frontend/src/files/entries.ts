@@ -28,9 +28,11 @@ export const COMPARERS: Record<string, Comparer> = {
 };
 
 export interface SortOptions { sort: string; dir: number; foldersFirst: boolean; comparer?: Comparer | null }
+// A folder the index has not measured yet has no size to compare, so it goes after the measured ones either way.
 export function sortEntries(list: Entry[], { sort, dir, foldersFirst, comparer }: SortOptions) {
   const by = COMPARERS[sort] || comparer || byName;
-  return list.sort((a, b) => (foldersFirst ? (b.dir ? 1 : 0) - (a.dir ? 1 : 0) : 0) || by(a, b) * dir);
+  const unmeasured = (k: Entry) => (sort === 'size' && k.sizeUnknown ? 1 : 0);
+  return list.sort((a, b) => (foldersFirst ? (b.dir ? 1 : 0) - (a.dir ? 1 : 0) : 0) || unmeasured(a) - unmeasured(b) || by(a, b) * dir);
 }
 
 export const toEntry = (k: Item): Entry => ({ ...k, kind: kindOf(k) });

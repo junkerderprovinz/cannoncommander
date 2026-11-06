@@ -11,6 +11,8 @@ import { join, parent } from '@/files/paths';
 // unknown names the field tests of the query the server does not know, such as farbe in farbe:rot.
 export interface Hits { items: Item[]; more: boolean; done: boolean; unknown?: string[] }
 
+const SIZE_POLL = 30_000;
+
 export const useListing = defineStore('listing', () => {
   const lists = reactive(new Map<string, Listing>());
   const trees = reactive(new Map<string, TreeItem[]>());
@@ -26,6 +28,7 @@ export const useListing = defineStore('listing', () => {
   const failedTrees = new Map<string, unknown>();
   const asked = new Map<string, Set<string>>();
   let shown: string[] = [];
+  let measuring: ReturnType<typeof setTimeout> | undefined;
 
   async function load(path: string): Promise<Listing> {
     if (pending.has(path)) return pending.get(path)!;
@@ -36,6 +39,7 @@ export const useListing = defineStore('listing', () => {
         lists.set(path, next);
         failedTrees.delete(path);
         missing.delete(path);
+        if (shown.includes(path)) awaitSizes();
         return next;
       }, (e: unknown) => {
         if (e instanceof ApiError && (e.status === 404 || e.status === 403)) missing.set(path, e);
@@ -101,6 +105,17 @@ export const useListing = defineStore('listing', () => {
   function setShown(paths: string[]) {
     shown = [...new Set(paths)];
     watch(shown);
+    awaitSizes();
+  }
+
+  // The index measures a folder long after it is first listed and says nothing when it is done, so a folder on screen
+  // with sizes still to come is asked for again now and then until they are in. The ETag keeps an unchanged answer
+  // small.
+  function awaitSizes() {
+    clearTimeout(measuring);
+    const open = () => shown.filter((p) => lists.get(p)?.items.some((k) => k.sizeUnknown));
+    if (!open().length) return;
+    measuring = setTimeout(() => { Promise.allSettled(open().map(load)).then(awaitSizes); }, SIZE_POLL);
   }
 
   // Asks fs/meta only for the pairs of path and column it has not asked for yet; the rows on screen come in one go.

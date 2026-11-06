@@ -19,7 +19,7 @@ const sibs = computed(() => [props.n]);
   </div>
   <SubCard class="cv-details">
     <div class="glim-eyebrow">{{ n.name }}</div>
-    <FieldRow :label="t('viewer.details.size')" :value="fmtSize(n.size) || '0 B'" />
+    <FieldRow :label="t('viewer.details.size')" :value="n.sizeUnknown ? t('files.unmeasured') : fmtSize(n.size) || '0 B'" />
     <FieldRow v-if="info" :label="kind === 'dir' ? t('viewer.details.content') : t('viewer.details.format')" :value="info" />
     <FieldRow :label="t('viewer.details.changed')" :value="fmtTime(n.time)" />
     <FieldRow :label="t('viewer.details.owner')" :value="`${n.owner || 'nobody'}:${n.group || 'users'}`" />

@@ -147,3 +147,45 @@ describe('search', () => {
     expect(search).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('folder sizes still to come', () => {
+  const withFolder = (sizeUnknown: boolean, etag: string): Listing => ({
+    path: '/a', etag, items: [{ name: 'filme', dir: true, size: sizeUnknown ? 0 : 900, time: 0, mode: '0755', owner: 'nobody', group: 'users', ...(sizeUnknown ? { sizeUnknown } : {}) }],
+  });
+
+  it('asks a folder on screen again until the index has measured its folders', async () => {
+    vi.useFakeTimers();
+    try {
+      const fsList = vi.spyOn(api, 'fsList')
+        .mockResolvedValueOnce(withFolder(true, 'v1'))
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(withFolder(false, 'v2'));
+      const L = useListing();
+      L.setShown(['/a']);
+      await L.load('/a');
+      await vi.advanceTimersByTimeAsync(30_000);
+      expect(L.lists.get('/a')!.items[0]!.sizeUnknown).toBe(true);
+      await vi.advanceTimersByTimeAsync(30_000);
+      expect(L.lists.get('/a')!.items[0]).toMatchObject({ size: 900 });
+      expect(L.lists.get('/a')!.items[0]!.sizeUnknown).toBeUndefined();
+      await vi.advanceTimersByTimeAsync(120_000);
+      expect(fsList).toHaveBeenCalledTimes(3);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('leaves a folder out of sight alone', async () => {
+    vi.useFakeTimers();
+    try {
+      const fsList = vi.spyOn(api, 'fsList').mockResolvedValue(withFolder(true, 'v1'));
+      const L = useListing();
+      L.setShown(['/b']);
+      await L.load('/a');
+      await vi.advanceTimersByTimeAsync(120_000);
+      expect(fsList).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});

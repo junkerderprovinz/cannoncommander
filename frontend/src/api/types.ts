@@ -4,6 +4,8 @@ export interface FsItem {
   name: string;
   dir: boolean;
   size: number;
+  // A folder the index has not measured yet, whose size of 0 is no total.
+  sizeUnknown?: boolean;
   mtime: string;
   mode: string;
   owner?: string;

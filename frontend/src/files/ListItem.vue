@@ -14,6 +14,7 @@ import type { RowMark as Mark } from '@/stores/panels';
 import { COL, Columns } from './columns';
 import type { Entry } from './entries';
 import { join } from './paths';
+import SizeText from './SizeText.vue';
 import Thumb from './Thumb.vue';
 import { fresh } from './fresh';
 import { ticking } from './touch';
@@ -63,6 +64,7 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
           <Pill v-if="mark" :tone="toneOf(mark.tone)">{{ mark.label }}</Pill>
         </span>
         <span v-else-if="id === 'size' && volume" class="cell r glim-num vcell"><Meter class="vmeter" size="small" :value="1 - volume.free / volume.total" :label="driveName" :value-text="t('files.freeOf', { free: fmtSize(volume.free), total: fmtSize(volume.total) })" />{{ t('files.free', { size: fmtSize(volume.free) }) }}</span>
+        <span v-else-if="id === 'size' && k.sizeUnknown && prefs.folderSizes" class="cell r glim-num"><SizeText :k="k" /></span>
         <span v-else class="cell glim-num" :class="{ r: COL[id]!.r, mono: COL[id]!.mono }">{{ COL[id]!.value(k, path) }}</span>
       </template>
     </template>
