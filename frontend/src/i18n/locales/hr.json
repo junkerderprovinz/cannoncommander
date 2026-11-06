@@ -1193,7 +1193,7 @@
       "mailSubject": "CannonCommander povratne informacije",
       "docs": "Priručnik",
       "open": "Otvori",
-      "bug": "Prijava pogreške",
+      "bug": "Izvješće",
       "download": "Preuzmi",
       "bugFile": "cannoncommander-prijava-pogreske-{date}.json",
       "bugSaved": "{name} je u vašim preuzimanjima",
