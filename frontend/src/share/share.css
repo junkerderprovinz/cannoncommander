@@ -34,9 +34,9 @@
 .sp-row { min-height: var(--row-h); padding: 0 .3rem 0 .2rem; border-radius: var(--radius-control); }
 .sp-row:hover { background: var(--carbon-surface2); }
 .sp-row > .muted { font-size: 13px; }
-.sp-lhead > :nth-child(2), .sp-row > :nth-child(2) { text-align: right; }
-.sp-lhead > :nth-child(3) { padding-left: .1rem; }
-.sp-open { display: flex; align-items: center; gap: .6rem; min-width: 0; height: var(--row-h); padding: 0 .3rem; text-align: left; }
+.sp-lhead > :nth-child(2), .sp-row > :nth-child(2) { text-align: end; }
+.sp-lhead > :nth-child(3) { padding-inline-start: .1rem; }
+.sp-open { display: flex; align-items: center; gap: .6rem; min-width: 0; height: var(--row-h); padding: 0 .3rem; text-align: start; }
 .sp-open svg { width: 1.05rem; height: 1.05rem; color: var(--accent-glyph); flex: none; }
 .sp-nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sp-acts { display: flex; justify-content: flex-end; gap: .2rem; }

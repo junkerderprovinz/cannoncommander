@@ -24,7 +24,7 @@
 .glim-pill.run { background: var(--accent); color: var(--accent-contrast); }
 .a-pickhead { display: flex; justify-content: flex-end; }
 .a-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .8125rem; align-content: start; }
-.a-tile { display: flex; align-items: center; gap: .7rem; height: 3.4rem; padding: 0 .9rem 0 .6rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); text-align: left; }
+.a-tile { display: flex; align-items: center; gap: .7rem; height: 3.4rem; padding: 0 .9rem 0 .6rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); text-align: start; }
 .a-tile:hover, .a-tile:focus-visible { background: var(--accent); color: var(--accent-contrast); }
 .a-tile b { display: block; font-weight: 600; }
 .a-tile small { display: block; font-size: 12px; opacity: .75; }

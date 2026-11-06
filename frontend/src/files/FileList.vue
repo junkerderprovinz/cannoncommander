@@ -232,7 +232,7 @@ function onHeadMove(e: PointerEvent) {
   if (colSize.id) {
     if (!colSize.moved && Math.abs(e.clientX - colSize.x) < 3) return;
     colSize.moved = true;
-    prefs.colWidths = { ...prefs.colWidths, [colSize.id]: Math.max(2.5, Math.round((colSize.w + (e.clientX - colSize.x) / REM()) * 4) / 4) };
+    prefs.colWidths = { ...prefs.colWidths, [colSize.id]: Math.max(2.5, Math.round((colSize.w + (e.clientX - colSize.x) * (document.documentElement.dir === 'rtl' ? -1 : 1) / REM()) * 4) / 4) };
     return;
   }
   if (!colDrag.id || (!colDrag.moved && Math.abs(e.clientX - colDrag.x) < 6)) return;
