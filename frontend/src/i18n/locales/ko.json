@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "왼쪽 패널",
     "right": "오른쪽 패널",
@@ -2141,7 +2140,7 @@
     "colChanged": "수정한 날짜",
     "noFolder": "이 폴더가 없습니다",
     "unknown": "{fields} 항목은 모릅니다",
-    "unknownHint": "",
+    "unknownHint": "예를 들어 너비, 높이, 코덱, 아티스트, 크기, 수정일, 길이와 모든 열 이름을 이해합니다",
     "nothing": "찾지 못했습니다",
     "nothingHint": "다른 폴더를 고르거나 조건을 줄이면 더 찾을 수도 있습니다",
     "asTab": "탭으로 열기",
@@ -2172,22 +2171,22 @@
     "menuNewLabel": "새 검색",
     "menuNone": "패턴을 입력하고 검색창 안의 버튼으로 저장하세요.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "세금",
+      "word": "보고서"
     },
     "menuExamples": "예시",
     "examples": {
       "mkv": "모든 MKV 파일, 하위 폴더 포함",
-      "tag": "",
-      "word": "",
+      "tag": "{tag} 태그가 붙은 모든 항목",
+      "word": "{word} 단어가 들어간 이름",
       "one": "?는 정확히 한 글자를 뜻합니다",
       "meta": "메타데이터 기준 HEVC 4K 영화",
       "week": "지난 7일 동안 바뀐 모든 항목"
     },
     "server": "서버",
-    "unknownFields": "",
+    "unknownFields": "{fields} 항목은 모릅니다. 예를 들어 너비, 높이, 코덱, 아티스트, 크기, 수정일, 길이와 렌즈, 연도 같은 모든 열 이름을 이해합니다",
     "unknownField": "“{f}:”",
-    "quoted": ""
+    "quoted": "“{text}”"
   },
   "share": {
     "share": "공유",
@@ -2461,18 +2460,18 @@
     "clipCopy": "클립보드로 복사",
     "clipPaste": "붙여넣기",
     "nothingOn": "{disk}에는 그중 아무것도 없습니다",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "건너뜀",
+    "sameSkipTip": "대상에 같은 파일이 다른 경로로 이미 있습니다. 예를 들어 하드 링크이거나 Disk Share와 User Share를 통해 보이는 경우입니다. 그 파일은 그대로 둡니다.",
     "sameSkipped": {
-      "other": ""
+      "other": "대상에 있는 것과 같은 파일이라 파일 {n}개를 건너뛰었습니다"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "복사 완료: {files} → {to}. {same}",
+    "movedSame": "이동 완료: {files} → {to}. {same}",
     "nothingCopied": {
-      "other": ""
+      "other": "복사한 것이 없습니다. 대상의 파일 {n}개는 같은 파일이므로 그대로 둡니다"
     },
     "nothingMoved": {
-      "other": ""
+      "other": "이동한 것이 없습니다. 대상의 파일 {n}개는 같은 파일이므로 그대로 둡니다"
     }
   },
   "trash": {
@@ -3114,35 +3113,35 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "가로",
+      "portrait": "세로",
+      "square": "정사각형"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "발광",
+      "off": "플래시 없음"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "모노",
+      "stereo": "스테레오"
     },
     "channelCount": {
-      "other": ""
+      "other": "{n}채널"
     },
     "method": {
-      "none": ""
+      "none": "없음"
     },
-    "methodNumber": "",
+    "methodNumber": "방식 {n}",
     "arch": {
-      "all": ""
+      "all": "모두"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "알 수 없음"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "너비",
+    "height": "높이",
+    "vcodec": "코덱",
+    "modified": "수정일"
   },
   "kinds": {
     "folder": "폴더",

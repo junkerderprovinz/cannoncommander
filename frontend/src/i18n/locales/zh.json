@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "左侧面板",
     "right": "右侧面板",
@@ -2141,7 +2140,7 @@
     "colChanged": "修改时间",
     "noFolder": "此文件夹不存在",
     "unknown": "我不认识 {fields}",
-    "unknownHint": "",
+    "unknownHint": "我能理解例如宽度、高度、codec、艺术家、大小、修改、时长，以及每个列名",
     "nothing": "没有找到",
     "nothingHint": "换个文件夹或减少条件也许能找到更多",
     "asTab": "在标签页中打开",
@@ -2172,22 +2171,22 @@
     "menuNewLabel": "新搜索",
     "menuNone": "输入一个模式，再用搜索框中的按钮保存。",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "税务",
+      "word": "报告"
     },
     "menuExamples": "示例",
     "examples": {
       "mkv": "所有 MKV 文件，包括子文件夹中的",
-      "tag": "",
-      "word": "",
+      "tag": "所有带 {tag} 标签的内容",
+      "word": "包含 {word} 的名称",
       "one": "? 代表恰好一个字符",
       "meta": "HEVC 编码的 4K 影片，来自元数据",
       "week": "最近 7 天内修改过的所有内容"
     },
     "server": "服务器",
-    "unknownFields": "",
+    "unknownFields": "我不认识 {fields}。我能理解例如宽度、高度、codec、艺术家、大小、修改、时长，以及每个列名，如镜头或年份",
     "unknownField": "“{f}:”",
-    "quoted": ""
+    "quoted": "“{text}”"
   },
   "share": {
     "share": "分享",
@@ -2461,18 +2460,18 @@
     "clipCopy": "复制到剪贴板",
     "clipPaste": "粘贴",
     "nothingOn": "{disk} 上没有其中任何内容",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "将跳过",
+    "sameSkipTip": "目标中已有同一个文件，只是路径不同，例如作为硬链接，或通过 Disk Share 和 User Share。它保持不变。",
     "sameSkipped": {
-      "other": ""
+      "other": "已跳过 {n} 个文件，因为目标中就是同样的文件"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "已复制：{files} 到 {to}。{same}",
+    "movedSame": "已移动：{files} 到 {to}。{same}",
     "nothingCopied": {
-      "other": ""
+      "other": "没有复制任何内容。目标中的 {n} 个文件就是同样的文件，保持不变"
     },
     "nothingMoved": {
-      "other": ""
+      "other": "没有移动任何内容。目标中的 {n} 个文件就是同样的文件，保持不变"
     }
   },
   "trash": {
@@ -3114,35 +3113,35 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "横向",
+      "portrait": "纵向",
+      "square": "方形"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "已闪光",
+      "off": "未闪光"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "单声道",
+      "stereo": "立体声"
     },
     "channelCount": {
-      "other": ""
+      "other": "{n} 声道"
     },
     "method": {
-      "none": ""
+      "none": "无"
     },
-    "methodNumber": "",
+    "methodNumber": "方法 {n}",
     "arch": {
-      "all": ""
+      "all": "全部"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "未知"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "宽度",
+    "height": "高度",
+    "vcodec": "codec",
+    "modified": "修改"
   },
   "kinds": {
     "folder": "文件夹",
