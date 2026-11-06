@@ -27,11 +27,14 @@ Krusader and Total Commander are quick because you work in two panels side by si
 
 <!-- download-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=43f5bd4d4586#svgView(viewBox(0,0,841.9,245.3))" alt="In Unraid&#x27;s Community Applications soon" width="160" height="46.618">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(0,0,841.9,245.3))" alt="Server" width="160" height="46.618">
+</p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(866,0,841.9,245.3))" alt="In Unraid&#x27;s Community Applications soon" width="160" height="46.618">
   &nbsp;
-  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=43f5bd4d4586#svgView(viewBox(866,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
+  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(1732,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=43f5bd4d4586#svgView(viewBox(1732,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(2598,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
 </p>
 <!-- /download-buttons -->
 
@@ -47,11 +50,11 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 
 <!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=43f5bd4d4586#svgView(viewBox(2598,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(3464,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=43f5bd4d4586#svgView(viewBox(3464,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(4330,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=43f5bd4d4586#svgView(viewBox(4330,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(5196,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
 <!-- /give-buttons -->
 
@@ -349,11 +352,11 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 
 <!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=43f5bd4d4586#svgView(viewBox(2598,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(3464,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=43f5bd4d4586#svgView(viewBox(3464,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(4330,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=43f5bd4d4586#svgView(viewBox(4330,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=b6c802ce61d6#svgView(viewBox(5196,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
 <!-- /give-buttons -->
 
