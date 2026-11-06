@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Kairysis skydelis",
     "right": "Dešinysis skydelis",
@@ -2378,7 +2377,7 @@
     "colChanged": "Pakeista",
     "noFolder": "Tokio aplanko nėra",
     "unknown": "{fields} nežinau",
-    "unknownHint": "",
+    "unknownHint": "Suprantu, pvz., plotis, aukštis, kodekas, atlikėjas, fotoaparatas, dydis, pakeista, trukmė ir kiekvieną stulpelio pavadinimą",
     "nothing": "Nieko nerasta",
     "nothingHint": "Kitas aplankas ar mažiau sąlygų galbūt ras daugiau",
     "asTab": "Atidaryti kaip skirtuką",
@@ -2412,22 +2411,22 @@
     "menuNewLabel": "Nauja paieška",
     "menuNone": "Įvesk šabloną ir įrašyk jį lauko mygtuku.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "mokesčiai",
+      "word": "ataskaita"
     },
     "menuExamples": "Pavyzdžiai",
     "examples": {
       "mkv": "visi MKV failai, ir poaplankiuose",
-      "tag": "",
-      "word": "",
+      "tag": "viskas su žyme {tag}",
+      "word": "pavadinimai, kuriuose yra {word}",
       "one": "? reiškia lygiai vieną simbolį",
       "meta": "4K filmai HEVC formatu, iš metaduomenų",
       "week": "viskas, kas pasikeitė per pastarąsias 7 dienas"
     },
     "server": "Serveris",
-    "unknownFields": "",
+    "unknownFields": "{fields} nežinau. Suprantu, pvz., plotis, aukštis, kodekas, atlikėjas, fotoaparatas, dydis, pakeista, trukmė ir kiekvieną stulpelio pavadinimą, pvz., objektyvas ar metai",
     "unknownField": "„{f}:“",
-    "quoted": ""
+    "quoted": "„{text}“"
   },
   "share": {
     "share": "Bendrinti",
@@ -2737,27 +2736,27 @@
     "clipCopy": "Kopijuoti į iškarpinę",
     "clipPaste": "Įklijuoti",
     "nothingOn": "Diske {disk} nieko iš to nėra",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Bus praleista",
+    "sameSkipTip": "Paskirtyje tas pats failas yra kitu keliu, pvz., kaip kietoji nuoroda arba per disk share ir user share. Jis lieka toks, koks yra.",
     "sameSkipped": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "Praleistas {n} failas, nes paskirtyje tai tas pats failas",
+      "few": "Praleisti {n} failai, nes paskirtyje tai tie patys failai",
+      "many": "Praleista {n} failo, nes paskirtyje tai tie patys failai",
+      "other": "Praleista {n} failų, nes paskirtyje tai tie patys failai"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Nukopijuota: {files} į {to}. {same}",
+    "movedSame": "Perkelta: {files} į {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "Nieko nenukopijuota. {n} failas paskirtyje yra tas pats ir lieka toks, koks yra",
+      "few": "Nieko nenukopijuota. {n} failai paskirtyje yra tie patys ir lieka tokie, kokie yra",
+      "many": "Nieko nenukopijuota. {n} failo paskirtyje yra tie patys ir lieka tokie, kokie yra",
+      "other": "Nieko nenukopijuota. {n} failų paskirtyje yra tie patys ir lieka tokie, kokie yra"
     },
     "nothingMoved": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "Nieko neperkelta. {n} failas paskirtyje yra tas pats ir lieka toks, koks yra",
+      "few": "Nieko neperkelta. {n} failai paskirtyje yra tie patys ir lieka tokie, kokie yra",
+      "many": "Nieko neperkelta. {n} failo paskirtyje yra tie patys ir lieka tokie, kokie yra",
+      "other": "Nieko neperkelta. {n} failų paskirtyje yra tie patys ir lieka tokie, kokie yra"
     }
   },
   "trash": {
@@ -3439,7 +3438,7 @@
     "abitrate": "Bitų srautas",
     "samplerate": "Diskretizavimo dažnis",
     "channels": "Kanalai",
-    "camera": "Fotoaparato modelis",
+    "camera": "Fotoaparatas",
     "taken": "Nufotografuota",
     "make": "Fotoaparato gamintojas",
     "lens": "Objektyvas",
@@ -3495,38 +3494,38 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Gulsčias",
+      "portrait": "Stačias",
+      "square": "Kvadratas"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Suveikė",
+      "off": "Be blykstės"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "{n} kanalas",
+      "few": "{n} kanalai",
+      "many": "{n} kanalo",
+      "other": "{n} kanalų"
     },
     "method": {
-      "none": ""
+      "none": "Be"
     },
-    "methodNumber": "",
+    "methodNumber": "Metodas {n}",
     "arch": {
-      "all": ""
+      "all": "Visos"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Nežinoma"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "plotis",
+    "height": "aukštis",
+    "vcodec": "kodekas",
+    "modified": "pakeista"
   },
   "kinds": {
     "folder": "Aplankas",

@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Kreisais panelis",
     "right": "Labais panelis",
@@ -2299,7 +2298,7 @@
     "colChanged": "Mainīts",
     "noFolder": "Šādas mapes nav",
     "unknown": "{fields} es nepazīstu",
-    "unknownHint": "",
+    "unknownHint": "Es saprotu, piemēram, platums, augstums, kodeks, izpildītājs, kamera, lielums, mainīts, ilgums un katru kolonnas nosaukumu",
     "nothing": "Nekas nav atrasts",
     "nothingHint": "Cita mape vai mazāk nosacījumu varbūt atradīs vairāk",
     "asTab": "Atvērt kā cilni",
@@ -2332,22 +2331,22 @@
     "menuNewLabel": "Jauna meklēšana",
     "menuNone": "Ieraksti šablonu un saglabā to ar pogu laukā.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "nodokļi",
+      "word": "atskaite"
     },
     "menuExamples": "Piemēri",
     "examples": {
       "mkv": "visi MKV faili, arī apakšmapēs",
-      "tag": "",
-      "word": "",
+      "tag": "viss ar birku {tag}",
+      "word": "nosaukumi, kuros ir {word}",
       "one": "? nozīmē tieši vienu rakstzīmi",
       "meta": "4K filmas HEVC formātā, no metadatiem",
       "week": "viss, kas mainījies pēdējās 7 dienās"
     },
     "server": "Serveris",
-    "unknownFields": "",
+    "unknownFields": "{fields} es nepazīstu. Es saprotu, piemēram, platums, augstums, kodeks, izpildītājs, kamera, lielums, mainīts, ilgums un katru kolonnas nosaukumu, piemēram, objektīvs vai gads",
     "unknownField": "„{f}:”",
-    "quoted": ""
+    "quoted": "„{text}”"
   },
   "share": {
     "share": "Koplietot",
@@ -2645,24 +2644,24 @@
     "clipCopy": "Kopēt starpliktuvē",
     "clipPaste": "Ielīmēt",
     "nothingOn": "Diskā {disk} no tā nekā nav",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Tiks izlaists",
+    "sameSkipTip": "Galamērķī tas pats fails atrodas citā ceļā, piemēram, kā cietā saite vai caur disk share un user share. Tas paliek, kā ir.",
     "sameSkipped": {
-      "zero": "",
-      "one": "",
-      "other": ""
+      "zero": "Izlaisti {n} failu, jo galamērķī tie ir tie paši faili",
+      "one": "Izlaists {n} fails, jo galamērķī tas ir tas pats fails",
+      "other": "Izlaisti {n} faili, jo galamērķī tie ir tie paši faili"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Nokopēts: {files} uz {to}. {same}",
+    "movedSame": "Pārvietots: {files} uz {to}. {same}",
     "nothingCopied": {
-      "zero": "",
-      "one": "",
-      "other": ""
+      "zero": "Nekas nav nokopēts. {n} failu galamērķī ir tie paši un paliek, kā ir",
+      "one": "Nekas nav nokopēts. {n} fails galamērķī ir tas pats un paliek, kā ir",
+      "other": "Nekas nav nokopēts. {n} faili galamērķī ir tie paši un paliek, kā ir"
     },
     "nothingMoved": {
-      "zero": "",
-      "one": "",
-      "other": ""
+      "zero": "Nekas nav pārvietots. {n} failu galamērķī ir tie paši un paliek, kā ir",
+      "one": "Nekas nav pārvietots. {n} fails galamērķī ir tas pats un paliek, kā ir",
+      "other": "Nekas nav pārvietots. {n} faili galamērķī ir tie paši un paliek, kā ir"
     }
   },
   "trash": {
@@ -3312,7 +3311,7 @@
     "abitrate": "Bitu pārraides ātrums",
     "samplerate": "Iztveršanas frekvence",
     "channels": "Kanāli",
-    "camera": "Kameras modelis",
+    "camera": "Kamera",
     "taken": "Uzņemts",
     "make": "Kameras ražotājs",
     "lens": "Objektīvs",
@@ -3368,37 +3367,37 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Ainava",
+      "portrait": "Portrets",
+      "square": "Kvadrāts"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Nostrādāja",
+      "off": "Bez zibspuldzes"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "zero": "",
-      "one": "",
-      "other": ""
+      "zero": "{n} kanālu",
+      "one": "{n} kanāls",
+      "other": "{n} kanāli"
     },
     "method": {
-      "none": ""
+      "none": "Bez"
     },
-    "methodNumber": "",
+    "methodNumber": "Metode {n}",
     "arch": {
-      "all": ""
+      "all": "Visas"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Nezināma"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "platums",
+    "height": "augstums",
+    "vcodec": "kodeks",
+    "modified": "mainīts"
   },
   "kinds": {
     "folder": "Mape",
