@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Vinstri gluggi",
     "right": "Hægri gluggi",
@@ -2220,7 +2219,7 @@
     "colChanged": "Breytt",
     "noFolder": "Þessi mappa er ekki til",
     "unknown": "{fields} þekki ég ekki",
-    "unknownHint": "",
+    "unknownHint": "Ég skil til dæmis breidd, hæð, kóðari, flytjandi, myndavél, stærð, breytt, lengd og öll dálkaheiti",
     "nothing": "Ekkert fannst",
     "nothingHint": "Önnur mappa eða færri skilyrði finna kannski meira",
     "asTab": "Opna sem flipa",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "Ný leit",
     "menuNone": "Sláðu inn mynstur og vistaðu það með hnappinum í reitnum.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "skattur",
+      "word": "skýrsla"
     },
     "menuExamples": "Dæmi",
     "examples": {
       "mkv": "allar MKV-skrár, líka í undirmöppum",
-      "tag": "",
-      "word": "",
+      "tag": "allt með merkinu {tag}",
+      "word": "heiti sem innihalda {word}",
       "one": "? stendur fyrir nákvæmlega einn staf",
       "meta": "4K-kvikmyndir í HEVC, úr lýsigögnunum",
       "week": "allt sem hefur breyst síðustu 7 daga"
     },
     "server": "Þjónn",
-    "unknownFields": "",
+    "unknownFields": "{fields} þekki ég ekki. Ég skil til dæmis breidd, hæð, kóðari, flytjandi, myndavél, stærð, breytt, lengd og öll dálkaheiti eins og linsa eða ár",
     "unknownField": "„{f}:“",
-    "quoted": ""
+    "quoted": "„{text}“"
   },
   "share": {
     "share": "Deila",
@@ -2553,21 +2552,21 @@
     "clipCopy": "Afrita á klippiborð",
     "clipPaste": "Líma",
     "nothingOn": "Ekkert af því er á {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Sleppt",
+    "sameSkipTip": "Á áfangastað er sama skráin undir annarri slóð, til dæmis sem harður tengill eða í gegnum disk-share og user-share. Hún helst óbreytt.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} skrá sleppt því hún er sama skráin á áfangastað",
+      "other": "{n} skrám sleppt því þær eru sömu skrárnar á áfangastað"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Afritað: {files} í {to}. {same}",
+    "movedSame": "Fært: {files} í {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "Ekkert afritað. {n} skrá á áfangastað er sú sama og helst óbreytt",
+      "other": "Ekkert afritað. {n} skrár á áfangastað eru þær sömu og haldast óbreyttar"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "Ekkert fært. {n} skrá á áfangastað er sú sama og helst óbreytt",
+      "other": "Ekkert fært. {n} skrár á áfangastað eru þær sömu og haldast óbreyttar"
     }
   },
   "trash": {
@@ -3150,7 +3149,7 @@
     "created": "Búið til",
     "accessed": "Síðast opnað",
     "disksize": "Stærð á diski",
-    "kind": "Tegund",
+    "kind": "Flokkur",
     "mime": "MIME-tegund",
     "attributes": "Eigindi",
     "statchange": "Staða breytt",
@@ -3185,7 +3184,7 @@
     "abitrate": "Bitahraði",
     "samplerate": "Söfnunartíðni",
     "channels": "Rásir",
-    "camera": "Gerð myndavélar",
+    "camera": "Myndavél",
     "taken": "Tekið",
     "make": "Framleiðandi myndavélar",
     "lens": "Linsa",
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Langsnið",
+      "portrait": "Skammsnið",
+      "square": "Ferningur"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Kviknaði",
+      "off": "Ekkert flass"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mónó",
+      "stereo": "Steríó"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} rás",
+      "other": "{n} rásir"
     },
     "method": {
-      "none": ""
+      "none": "Engin"
     },
-    "methodNumber": "",
+    "methodNumber": "Aðferð {n}",
     "arch": {
-      "all": ""
+      "all": "Allt"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Óþekkt"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "breidd",
+    "height": "hæð",
+    "vcodec": "kóðari",
+    "modified": "breytt"
   },
   "kinds": {
     "folder": "Mappa",
