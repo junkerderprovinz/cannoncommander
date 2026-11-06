@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "החלונית הימנית",
     "right": "החלונית השמאלית",
@@ -2299,7 +2298,7 @@
     "colChanged": "שונה",
     "noFolder": "התיקייה הזו לא קיימת",
     "unknown": "את {fields} אני לא מכיר",
-    "unknownHint": "",
+    "unknownHint": "אני מבין למשל רוחב, גובה, קודק, אמן, מצלמה, גודל, שונה, משך וכל שם עמודה",
     "nothing": "לא נמצא כלום",
     "nothingHint": "תיקייה אחרת או פחות תנאים אולי ימצאו יותר",
     "asTab": "פתיחה כלשונית",
@@ -2332,22 +2331,22 @@
     "menuNewLabel": "חיפוש חדש",
     "menuNone": "מקלידים תבנית ושומרים אותה עם הכפתור שבשדה.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "מסים",
+      "word": "דוח"
     },
     "menuExamples": "דוגמאות",
     "examples": {
       "mkv": "כל קובצי MKV, גם בתיקיות משנה",
-      "tag": "",
-      "word": "",
+      "tag": "כל מה שיש לו התגית {tag}",
+      "word": "שמות שמופיע בהם {word}",
       "one": "? מייצג תו אחד בדיוק",
       "meta": "סרטי 4K ב־HEVC, מהמטא־נתונים",
       "week": "כל מה שהשתנה ב־7 הימים האחרונים"
     },
     "server": "שרת",
-    "unknownFields": "",
+    "unknownFields": "את {fields} אני לא מכיר. אני מבין למשל רוחב, גובה, קודק, אמן, מצלמה, גודל, שונה, משך וכל שם עמודה כמו עדשה או שנה",
     "unknownField": "„{f}:“",
-    "quoted": ""
+    "quoted": "„{text}“"
   },
   "share": {
     "share": "שיתוף",
@@ -2645,24 +2644,24 @@
     "clipCopy": "העתקה ללוח",
     "clipPaste": "הדבקה",
     "nothingOn": "שום דבר מזה לא נמצא על {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "דילוג",
+    "sameSkipTip": "ביעד נמצא אותו קובץ בנתיב אחר, למשל כקישור קשיח או דרך disk share ו־user share. הוא נשאר כמו שהוא.",
     "sameSkipped": {
-      "one": "",
-      "two": "",
-      "other": ""
+      "one": "דילגנו על קובץ אחד כי ביעד זה אותו קובץ",
+      "two": "דילגנו על שני קבצים כי ביעד אלה אותם קבצים",
+      "other": "דילגנו על {n} קבצים כי ביעד אלה אותם קבצים"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "הועתק: {files} אל {to}. {same}",
+    "movedSame": "הועבר: {files} אל {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "two": "",
-      "other": ""
+      "one": "שום דבר לא הועתק. הקובץ ביעד הוא אותו קובץ ונשאר כמו שהוא",
+      "two": "שום דבר לא הועתק. שני הקבצים ביעד הם אותם קבצים ונשארים כמו שהם",
+      "other": "שום דבר לא הועתק. {n} הקבצים ביעד הם אותם קבצים ונשארים כמו שהם"
     },
     "nothingMoved": {
-      "one": "",
-      "two": "",
-      "other": ""
+      "one": "שום דבר לא הועבר. הקובץ ביעד הוא אותו קובץ ונשאר כמו שהוא",
+      "two": "שום דבר לא הועבר. שני הקבצים ביעד הם אותם קבצים ונשארים כמו שהם",
+      "other": "שום דבר לא הועבר. {n} הקבצים ביעד הם אותם קבצים ונשארים כמו שהם"
     }
   },
   "trash": {
@@ -3277,7 +3276,7 @@
     "created": "נוצר",
     "accessed": "גישה אחרונה",
     "disksize": "גודל בדיסק",
-    "kind": "סוג",
+    "kind": "קטגוריה",
     "mime": "סוג MIME",
     "attributes": "תכונות",
     "statchange": "שינוי מצב",
@@ -3303,7 +3302,7 @@
     "episode": "פרק",
     "artist": "אמן",
     "album": "אלבום",
-    "title": "שם",
+    "title": "כותרת",
     "albumartist": "אמן האלבום",
     "track": "מס׳",
     "year": "שנה",
@@ -3312,7 +3311,7 @@
     "abitrate": "קצב סיביות",
     "samplerate": "קצב דגימה",
     "channels": "ערוצים",
-    "camera": "דגם מצלמה",
+    "camera": "מצלמה",
     "taken": "צולם",
     "make": "יצרן המצלמה",
     "lens": "עדשה",
@@ -3368,37 +3367,37 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "לרוחב",
+      "portrait": "לאורך",
+      "square": "ריבועי"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "הופעל",
+      "off": "בלי מבזק"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "מונו",
+      "stereo": "סטריאו"
     },
     "channelCount": {
-      "one": "",
-      "two": "",
-      "other": ""
+      "one": "ערוץ אחד",
+      "two": "שני ערוצים",
+      "other": "{n} ערוצים"
     },
     "method": {
-      "none": ""
+      "none": "ללא"
     },
-    "methodNumber": "",
+    "methodNumber": "שיטה {n}",
     "arch": {
-      "all": ""
+      "all": "הכול"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "לא ידוע"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "רוחב",
+    "height": "גובה",
+    "vcodec": "קודק",
+    "modified": "שונה"
   },
   "kinds": {
     "folder": "תיקייה",
