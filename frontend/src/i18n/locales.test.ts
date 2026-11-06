@@ -1,11 +1,32 @@
 import { describe, expect, it } from 'vitest';
 import { compare, DRAFT, merge, rulesFor, STATUS, type Table } from './check';
 import { BUNDLED, LANGUAGES } from './languages';
+import { FIELD_IDS, fold, WORDS } from '@/files/fields';
 
 const german = merge(import.meta.glob<Table>('/src/**/de.json', { eager: true, import: 'default' }));
 const english = merge(import.meta.glob<Table>('/src/**/en.json', { eager: true, import: 'default' }));
 const files = import.meta.glob<Table>('./locales/*.json', { eager: true, import: 'default' });
 const fileOf = (code: string) => files[`./locales/${code}.json`];
+
+const said = (table: Table, key: string) => {
+  const v = key.split('.').reduce<Table | string | undefined>((at, k) => (typeof at === 'object' ? at[k] : undefined), table);
+  return typeof v === 'string' ? fold(v) : '';
+};
+// A word the search line takes has to point at one field, and within a field at one value.
+function clashes(table: Table) {
+  const found: string[] = [];
+  const unique = (what: string, pairs: [string, string][]) => {
+    const seen = new Map<string, string>();
+    for (const [id, word] of pairs) {
+      if (!word) continue;
+      if (seen.has(word)) found.push(`${what}: ${seen.get(word)} and ${id} are both "${word}"`);
+      else seen.set(word, id);
+    }
+  };
+  unique('fields', FIELD_IDS.map((id) => [id, said(table, `searchWords.${id}`) || said(table, `columns.${id}`)]));
+  for (const [field, keys] of Object.entries(WORDS)) unique(field, Object.entries(keys).map(([code, key]) => [code, said(table, key)]));
+  return found;
+}
 
 const report = (table: Table, code: string) => compare(german, table, rulesFor(LANGUAGES.find((l) => l.code === code)?.locale ?? code)).map((f) => `${f.key}: ${f.problem}`);
 
@@ -19,11 +40,18 @@ describe('the language files', () => {
     expect(report(english, 'en')).toEqual([]);
   });
 
+  it('German and English give each search word one meaning', () => {
+    expect([...clashes(german), ...clashes(english)]).toEqual([]);
+  });
+
   for (const l of LANGUAGES.filter((x) => !BUNDLED.includes(x.code))) {
     const table = fileOf(l.code) ?? {};
     const draft = table[STATUS] === DRAFT;
     it(`${l.code} has German's keys, placeholders and plural forms${draft ? ', not translated yet' : ''}`, () => {
       expect(report(table, l.code)).toEqual([]);
+    });
+    it(`${l.code} gives each search word one meaning`, () => {
+      expect(clashes(table)).toEqual([]);
     });
   }
 });

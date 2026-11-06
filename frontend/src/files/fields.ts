@@ -7,7 +7,7 @@ import { language, LANGUAGES, locale, t } from '@/i18n';
 import { LANGUAGE_COLUMNS, languageName, META_WORDS } from './metaText';
 
 type Table = { [key: string]: string | Table };
-const FIELD_IDS = [...Object.keys(de.columns), ...Object.keys(de.searchWords)];
+export const FIELD_IDS = [...new Set([...Object.keys(de.columns), ...Object.keys(de.searchWords)])];
 
 // German words the server also takes for its fields.
 const ALIASES: Record<string, string> = {
@@ -17,7 +17,7 @@ const ALIASES: Record<string, string> = {
 
 // The codes of the columns that show words, each with the key of its word.
 const codes = (keys: string[], key: (code: string) => string) => Object.fromEntries(keys.map((c) => [c, key(c)]));
-const WORDS: Record<string, Record<string, string>> = {
+export const WORDS: Record<string, Record<string, string>> = {
   type: { folder: 'kinds.folder', link: 'kinds.link', ...codes(Object.keys(de.types), (c) => `types.${c}`) },
   kind: codes(['folder', 'image', 'video', 'music', 'archive', 'disk', 'document', 'text', 'code', 'other'], (c) => `groups.${c}`),
   ...Object.fromEntries(Object.entries(META_WORDS).map(([id, list]) => [id, codes(list, (c) => `metaValues.${id}.${c}`)])),
@@ -32,7 +32,7 @@ const UNITS: [string, string][] = [['byte', 'B'], ['kilobyte', 'KB'], ['megabyte
 const DAY = 86400000;
 
 // No case, no accents and ß as ss, as the server compares field names, in any script.
-const fold = (s: string) => s.toLowerCase().replace(/ß/g, 'ss').normalize('NFD').replace(/[^\p{L}\p{N}]/gu, '');
+export const fold = (s: string) => s.toLowerCase().replace(/ß/g, 'ss').normalize('NFD').replace(/[^\p{L}\p{N}]/gu, '');
 const at = (table: Table, key: string) => key.split('.').reduce<Table | string | undefined>((v, k) => (typeof v === 'object' ? v[k] : undefined), table);
 // A key's text in the interface's language, in English and in German, the order in which they count.
 const SOURCES = [(key: string) => t(key), (key: string) => at(en, key), (key: string) => at(de, key)];
