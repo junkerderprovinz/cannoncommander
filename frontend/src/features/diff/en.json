@@ -3,7 +3,7 @@
   "pickTwo": "Mark two files first",
   "pickTwoDual": "Mark two files or pick one file in each panel",
   "same": "The files are the same",
-  "places": { "one": "{n} place", "many": "{n} places" },
+  "places": { "one": "{n} place", "other": "{n} places" },
   "summary": "{places}: {chg} changed, {del} removed, {add} added",
   "at": "Place {n} of {all}",
   "prev": "Previous place",

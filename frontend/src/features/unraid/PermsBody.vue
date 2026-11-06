@@ -6,17 +6,16 @@ import { computed } from 'vue';
 import type { PermsScan } from '@/api/unraid';
 import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 
 export interface PermsState { path: string; name: string; scan: PermsScan | null }
 const props = defineProps<{ st: PermsState }>();
 
 const blocked = computed(() => props.st.scan?.blocked);
-const plural = (n: number, one: string, many: string) => t(n === 1 ? one : many, { n });
 const affects = computed(() => {
   const s = props.st.scan;
   if (!s) return t('unraid.perms.counting');
-  const what = t('unraid.perms.affectsValue', { files: plural(s.files, 'unraid.perms.fileOne', 'unraid.perms.fileMany'), dirs: plural(s.dirs + 1, 'unraid.perms.dirOne', 'unraid.perms.dirMany') });
+  const what = t('unraid.perms.affectsValue', { files: plural(s.files, 'unraid.perms.files'), dirs: plural(s.dirs + 1, 'unraid.perms.dirs') });
   return s.partial ? t('unraid.perms.atLeast', { what }) : what;
 });
 const kept = computed(() => props.st.scan?.kept ?? []);

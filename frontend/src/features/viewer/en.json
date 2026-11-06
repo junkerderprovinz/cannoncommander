@@ -65,10 +65,10 @@
     "browse": "Open like a folder",
     "unpacked": "{size} unpacked",
     "unreadable": "The preview can't look inside this archive right now.",
-    "limit": "The preview shows the first {n} entries."
+    "limit": { "one": "The preview shows the first {n} entry.", "other": "The preview shows the first {n} entries." }
   },
   "hex": {
-    "first": "First {n} bytes",
+    "first": { "one": "First {n} byte", "other": "First {n} bytes" },
     "tip": "There is no preview for this kind of file. The hex view shows the start of the file as it sits on the disk.",
     "sqlite": "SQLite database",
     "program": "Program",
@@ -96,14 +96,14 @@
   "model": { "info": "3D model, {format}", "hint": "Drag to turn the model, scroll to bring it closer" },
   "lang": { "nginx": "Nginx", "config": "Configuration", "log": "Log", "subtitle": "Subtitles", "checksum": "Checksum", "text": "Text" },
   "n": {
-    "lines": { "one": "{n} line", "many": "{n} lines" },
-    "pages": { "one": "{n} page", "many": "{n} pages" },
-    "sheets": { "one": "{n} sheet", "many": "{n} sheets" },
-    "slides": { "one": "{n} slide", "many": "{n} slides" },
-    "files": { "one": "{n} file", "many": "{n} files" },
-    "dirs": { "one": "{n} folder", "many": "{n} folders" },
-    "morePictures": { "one": "{n} more picture", "many": "{n} more pictures" },
-    "moreObjects": { "one": "{n} more item", "many": "{n} more items" },
-    "moreEntries": { "one": "{n} more entry", "many": "{n} more entries" }
+    "lines": { "one": "{n} line", "other": "{n} lines" },
+    "pages": { "one": "{n} page", "other": "{n} pages" },
+    "sheets": { "one": "{n} sheet", "other": "{n} sheets" },
+    "slides": { "one": "{n} slide", "other": "{n} slides" },
+    "files": { "one": "{n} file", "other": "{n} files" },
+    "dirs": { "one": "{n} folder", "other": "{n} folders" },
+    "morePictures": { "one": "{n} more picture", "other": "{n} more pictures" },
+    "moreObjects": { "one": "{n} more item", "other": "{n} more items" },
+    "moreEntries": { "one": "{n} more entry", "other": "{n} more entries" }
   }
 }

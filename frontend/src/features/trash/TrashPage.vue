@@ -8,7 +8,7 @@ import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { isMenuOpen, menu } from '@/core/menu';
 import { go } from '@/core/views';
 import { winStack } from '@/core/windows';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { useTrash } from '@/stores/trash';
 import { objects } from '@/features/jobs/label';
 import { purge, restore } from './trash';
@@ -109,6 +109,6 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
         </div>
       </div>
     </Card>
-    <div v-if="picked.length" class="ct-fab"><Button id="ct-restore" size="key" :label="picked.length === 1 ? t('trash.restore') : t('trash.restoreMany', { n: picked.length })" label-key="IconRestore" tone="accent" @click="restore(picked, clear)" /></div>
+    <div v-if="picked.length" class="ct-fab"><Button id="ct-restore" size="key" :label="picked.length === 1 ? t('trash.restore') : plural(picked.length, 'trash.restoreMany')" label-key="IconRestore" tone="accent" @click="restore(picked, clear)" /></div>
   </div>
 </template>

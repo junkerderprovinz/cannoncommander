@@ -34,7 +34,7 @@ const yes = (on: boolean) => (on ? t('share.yes') : t('share.no'));
   <SubCard :title="t('share.visitor')" :hint="t('share.visitorTip')" v-if="items">
     <div class="cs-visitor"><div class="cs-vhead"><G n="IconFolderOpen" /><b>{{ link.name }}</b><span class="muted">{{ plural(items.length, 'ui.objects') }}</span></div>
       <div v-for="x in shown.slice(0, 8)" :key="x.path" class="cs-vrow"><G :n="glyphOf(x)" /><span>{{ x.shown }}</span><span class="muted glim-num">{{ fmtSize(x.size) || '0 B' }}</span></div>
-      <div v-if="items.length > 8" class="cs-vrow muted">{{ t('share.more', { n: items.length - 8 }) }}</div>
+      <div v-if="items.length > 8" class="cs-vrow muted">{{ plural(items.length - 8, 'share.more') }}</div>
     </div>
   </SubCard>
 </template>

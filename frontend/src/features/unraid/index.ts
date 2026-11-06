@@ -13,7 +13,7 @@ import { closeBtn, win } from '@/core/windows';
 import { COL } from '@/files/columns';
 import type { Entry } from '@/files/entries';
 import { join, split } from '@/files/paths';
-import { t, tl } from '@/i18n';
+import { plural, t, tl } from '@/i18n';
 import { diskName } from '@/features/jobs/label';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
@@ -57,7 +57,7 @@ async function cacheOnly() {
   const turnOn = !tab.cacheOnly;
   if (turnOn) await diskMeta(F.entries().filter((k) => !k.up).map((k) => join(k.at || tab.path, k.name)));
   Object.assign(tab, { cacheOnly: turnOn, cursor: 0 });
-  if (turnOn) toast(t('unraid.onCache', { n: F.entries().filter((k) => !k.up).length }));
+  if (turnOn) toast(plural(F.entries().filter((k) => !k.up).length, 'unraid.onCache'));
 }
 
 async function spinDown() {
@@ -113,8 +113,8 @@ async function fixPerms() {
         // Owners and modes changed in every folder below, not only in the one the server reports.
         for (const p of [...listing.lists.keys()]) if (p === path || p.startsWith(path + '/')) listing.load(p).catch(() => {});
         const r = j.result as PermsResult | undefined, n = r?.entries ?? 0, kept = r?.kept.length ?? 0;
-        const what = t(n === 1 ? 'unraid.perms.objectOne' : 'unraid.perms.objectMany', { n });
-        toast(kept ? t('unraid.perms.doneKept', { what, kept: t(kept === 1 ? 'unraid.perms.keptOne' : 'unraid.perms.keptMany', { n: kept }) }) : t('unraid.perms.done', { what }));
+        const what = plural(n, 'unraid.perms.objects');
+        toast(kept ? t('unraid.perms.doneKept', { what, kept: plural(kept, 'unraid.perms.kept') }) : t('unraid.perms.done', { what }));
       });
     } catch (e) {
       toast((e as Error).message, 'warn');

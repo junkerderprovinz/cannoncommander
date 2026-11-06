@@ -11,7 +11,7 @@ import { type FileNode, joinPath, langOf, viewKind } from '@/features/viewer/kin
 import { md } from '@/features/viewer/markdown';
 import { footStartOf, winKeys } from '@/features/viewer/winkeys';
 import type { WinEntry } from '@/core/windows';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { makeEditor, setMatches } from './cm';
 import { findAll, nearest, position, type Range } from './find';
@@ -49,7 +49,7 @@ function moved() {
   if (!view) return;
   const s = view.state.selection.main, at = position(text(), s.head);
   const el = footStartOf(host.value);
-  if (el) el.textContent = t('editor.pos', { line: at.line, col: at.col }) + (s.to > s.from ? ', ' + t('editor.marked', { n: s.to - s.from }) : '');
+  if (el) el.textContent = t('editor.pos', { line: at.line, col: at.col }) + (s.to > s.from ? ', ' + plural(s.to - s.from, 'editor.marked') : '');
 }
 
 function search(keep = false) {
@@ -96,7 +96,7 @@ function replaceAll() {
   const n = matches.length;
   view.dispatch({ changes: matches.map(([from, to]) => ({ from, to, insert: rep.value })) });
   search();
-  toast(t(n === 1 ? 'editor.replacedOne' : 'editor.replaced', { n }));
+  toast(plural(n, 'editor.replaced'));
 }
 
 let mdTimer: ReturnType<typeof setTimeout> | undefined;

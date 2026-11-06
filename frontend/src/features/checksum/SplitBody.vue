@@ -8,7 +8,7 @@ import { computed, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import type { Entry } from '@/files/entries';
 import { join } from '@/files/paths';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { clean, folderState } from '@/ui/tools';
 import { partSize } from './sums';
 
@@ -42,7 +42,7 @@ watchEffect(() => {
       <span id="t-final" class="bk-finalw">
         <Pill v-if="ok === false" tone="fail">{{ t('ui.noFolder') }}</Pill>
         <Pill v-else-if="st.count < 2" tone="warn">{{ t('checksum.smaller') }}</Pill>
-        <template v-else><Pill class="glim-num">{{ t('checksum.partsCount', { n: st.count }) }}</Pill><span class="bk-path mono bk-final" :title="join(clean(st.dest), names[0]!)"><bdi>{{ t('checksum.range', { first: names[0]!, last: names.at(-1)!.split('.').pop()! }) }}</bdi></span></template>
+        <template v-else><Pill class="glim-num">{{ plural(st.count, 'checksum.partsCount') }}</Pill><span class="bk-path mono bk-final" :title="join(clean(st.dest), names[0]!)"><bdi>{{ t('checksum.range', { first: names[0]!, last: names.at(-1)!.split('.').pop()! }) }}</bdi></span></template>
       </span>
     </FieldRow>
   </SubCard>

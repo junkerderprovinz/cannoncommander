@@ -1,6 +1,6 @@
 // Which renderer a file gets, and the small helpers every renderer shares.
 import formats from '@/core/formats.json';
-import { locale, t } from '@/i18n';
+import { plural as count, t } from '@/i18n';
 
 export type ViewKind = 'dir' | 'img' | 'video' | 'audio' | 'pdf' | 'office' | 'md' | 'text' | 'code' | 'arch' | 'disk' | 'epub' | 'model' | 'file';
 
@@ -74,7 +74,7 @@ export function fmtDur(s: number): string {
 }
 
 // "1 Zeile", "12 Zeilen": the key names a pair of texts under viewer.n.
-export const plural = (n: number, key: string) => t(`viewer.n.${key}.${n === 1 ? 'one' : 'many'}`, { n: n.toLocaleString(locale()) });
+export const plural = (n: number, key: string) => count(n, `viewer.n.${key}`);
 
 // The same seed always gives the same numbers, so made-up decoration stays put between renders.
 export function hash(s: string): number {

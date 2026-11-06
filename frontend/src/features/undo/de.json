@@ -5,10 +5,10 @@
   "empty": "Noch nichts, das sich zurücknehmen ließe",
   "nothing": "Hier gibt es nichts zurückzunehmen",
   "taken": "Zurückgenommen: {label}",
-  "items": "{n} Objekte",
+  "items": { "one": "{n} Objekt", "other": "{n} Objekte" },
   "justNow": "gerade eben",
-  "minutes": "vor {n} Min.",
-  "hours": "vor {n} Std.",
+  "minutes": { "one": "vor {n} Min.", "other": "vor {n} Min." },
+  "hours": { "one": "vor {n} Std.", "other": "vor {n} Std." },
   "kind": {
     "rename": "„{name}“ in „{to}“ umbenannt",
     "mkdir": "Ordner „{name}“ angelegt",

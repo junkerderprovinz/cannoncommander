@@ -53,16 +53,16 @@
   "groupStays": "Gruppe bleibt",
   "jobAttrs": "Rechte setzen: {what}",
   "savedAll": "Rechte gesetzt für {objects}",
-  "bytes": "{n} Bytes",
+  "bytes": { "one": "{n} Byte", "other": "{n} Bytes" },
   "inDirs": "{files} in {dirs}",
   "andDirs": "{files} und {dirs}",
   "dirsWord": {
     "one": "{n} Ordner",
-    "many": "{n} Ordnern"
+    "other": "{n} Ordnern"
   },
   "dirsPlain": {
     "one": "{n} Ordner",
-    "many": "{n} Ordner"
+    "other": "{n} Ordner"
   },
   "server": "Server",
   "kinds": {

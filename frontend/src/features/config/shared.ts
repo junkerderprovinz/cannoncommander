@@ -4,31 +4,32 @@ import { DAY, now } from '@/core/format';
 import { type Prefs, prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type FootButton, win, type WinEntry } from '@/core/windows';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import ConfirmBody from '@/ui/ConfirmBody.vue';
 
 export const c = (key: string, params?: Record<string, string | number>) => t('config.' + key, params);
+export const cn = (n: number, key: string, params?: Record<string, string | number>) => plural(n, 'config.' + key, params);
 
 export function ago(at: number) {
   const d = now() - at, min = 60000, h = 60 * min;
   // The server's clock may run a little ahead of this one, which still means just now.
   if (d < -2 * min) {
     const days = Math.ceil(-d / DAY);
-    return days <= 1 ? c('ago.tomorrow') : c('ago.inDays', { n: days });
+    return days <= 1 ? c('ago.tomorrow') : cn(days, 'ago.inDays');
   }
   if (d < 2 * min) return c('ago.now');
-  if (d < h) return c('ago.minutes', { n: Math.round(d / min) });
-  if (d < DAY) return c('ago.hours', { n: Math.round(d / h) });
+  if (d < h) return cn(Math.round(d / min), 'ago.minutes');
+  if (d < DAY) return cn(Math.round(d / h), 'ago.hours');
   if (d < 2 * DAY) return c('ago.yesterday');
-  return c('ago.days', { n: Math.round(d / DAY) });
+  return cn(Math.round(d / DAY), 'ago.days');
 }
 
 // How long something has been going, for the service that runs since its last start.
 export function since(at: number) {
   const d = Math.max(0, now() - at), min = 60000, h = 60 * min;
-  if (d < h) return c('since.minutes', { n: Math.max(1, Math.round(d / min)) });
-  if (d < DAY) return c('since.hours', { n: Math.round(d / h) });
-  return c('since.days', { n: Math.round(d / DAY) });
+  if (d < h) return cn(Math.max(1, Math.round(d / min)), 'since.minutes');
+  if (d < DAY) return cn(Math.round(d / h), 'since.hours');
+  return cn(Math.round(d / DAY), 'since.days');
 }
 
 export function shake(el: Element | null | undefined) {
@@ -52,8 +53,8 @@ export const attempt = <T>(p: Promise<T>, el?: Element | null) => p.then((value)
 export function soon(at: number) {
   const d = at - now(), min = 60000, h = 60 * min;
   if (d < 2 * min) return c('soon.now');
-  if (d < 2 * h) return c('soon.minutes', { n: Math.round(d / min) });
-  return c('soon.hours', { n: Math.round(d / h) });
+  if (d < 2 * h) return cn(Math.round(d / min), 'soon.minutes');
+  return cn(Math.round(d / h), 'soon.hours');
 }
 
 export function confirmWin({ title, text, verb, glyph = 'IconCheck', run }: { title: string; text: string[]; verb: string; glyph?: string; run: () => unknown }) {

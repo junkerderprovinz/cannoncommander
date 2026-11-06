@@ -5,10 +5,10 @@
   "empty": "Nothing to take back yet",
   "nothing": "There is nothing to take back here",
   "taken": "Taken back: {label}",
-  "items": "{n} items",
+  "items": { "one": "{n} item", "other": "{n} items" },
   "justNow": "just now",
-  "minutes": "{n} min ago",
-  "hours": "{n} h ago",
+  "minutes": { "one": "{n} min ago", "other": "{n} min ago" },
+  "hours": { "one": "{n} h ago", "other": "{n} h ago" },
   "kind": {
     "rename": "Renamed “{name}” to “{to}”",
     "mkdir": "Created folder “{name}”",

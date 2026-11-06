@@ -8,7 +8,7 @@ import { extend } from '@/core/extend';
 import { fmtSize, fmtTime } from '@/core/format';
 import { ext, kindOf, glyphComponent, glyphOf } from '@/core/glyphs';
 import { Render } from '@/core/Render';
-import { locale, t } from '@/i18n';
+import { t } from '@/i18n';
 import CopyBtn from '@/ui/CopyBtn.vue';
 import { plural, pressPrimary, selectOptions } from '@/ui/kit';
 
@@ -32,7 +32,7 @@ const idOf = (known: Record<string, number>, name: string, word: string) => (nam
 
 const typeOf = (k: Item) => (k.link ? t(k.dir ? 'props.linkToDir' : 'props.linkToFile')
   : t(`props.kinds.${kindOf(k)}`) + (k.dir || !ext(k.name) ? '' : `, ${ext(k.name).toUpperCase()}`));
-const bytes = computed(() => t('props.bytes', { n: Math.round(st.size).toLocaleString(locale()) }));
+const bytes = computed(() => plural(Math.round(st.size), 'props.bytes'));
 const sizeText = computed(() => {
   const size = fmtSize(st.size) || '0 B';
   if (!st.counted) return size;

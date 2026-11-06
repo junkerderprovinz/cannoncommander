@@ -3,7 +3,7 @@ import { ApiError } from '@/api/client';
 import { type Share, type ShareCreate, tools } from '@/api/tools';
 import { DAY, now } from '@/core/format';
 import { toast } from '@/core/toast';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 
 export interface LinkForm { slug: string; message: string; exp: string; limit: string; pw: boolean; pass: string; uploads: boolean; notify: boolean; folder: boolean }
 export const MESSAGE_MAX = 2000;
@@ -21,7 +21,7 @@ export const newForm = (name: string, folder: boolean): LinkForm => ({ slug: slu
 export function readForm(f: LinkForm): Omit<ShareCreate, 'paths'> | null {
   const slug = f.slug.trim().toLowerCase(), days = Number(f.exp), message = f.message.trim();
   if (!SLUG.test(slug)) { toast(t('share.badSlug'), 'warn'); return null; }
-  if (message.length > MESSAGE_MAX) { toast(t('share.longMessage', { n: MESSAGE_MAX }), 'warn'); return null; }
+  if (message.length > MESSAGE_MAX) { toast(plural(MESSAGE_MAX, 'share.longMessage'), 'warn'); return null; }
   if (f.pw && f.pass.length < 6) { toast(t('share.shortPassword'), 'warn'); return null; }
   return {
     slug, expires: days ? new Date(now() + days * DAY).toISOString() : null, limit: Number(f.limit), notify: f.notify,

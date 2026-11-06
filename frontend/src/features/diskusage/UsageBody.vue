@@ -129,7 +129,7 @@ const blocks = computed(() => {
 });
 
 const summary = computed(() => {
-  if (sel.size) return t('diskusage.picked', { n: num(sel.size), size: fmtSize([...sel.values()].reduce((a, r) => a + r.size, 0)) || '0 B' });
+  if (sel.size) return plural(sel.size, 'diskusage.picked', { size: fmtSize([...sel.values()].reduce((a, r) => a + r.size, 0)) || '0 B' });
   const u = here.value;
   if (!u) return ' ';
   return t('diskusage.summary', { size: fmtSize(u.size) || '0 B', files: plural(u.files, 'ui.files'), dirs: plural(u.dirs, 'ui.folders') });
@@ -238,7 +238,7 @@ function context(e: MouseEvent) {
     { label: t('diskusage.showInPanel'), g: 'IconFolderOpen', run: () => reveal(r) },
     { label: t('diskusage.copyPath'), g: 'IconCopy', run: () => copyText(r.path) },
     '-',
-    { label: many ? t('diskusage.deleteMany', { n: sel.size }) : t('diskusage.delete'), g: 'IconTrash', run: remove },
+    { label: many ? plural(sel.size, 'diskusage.deleteMany') : t('diskusage.delete'), g: 'IconTrash', run: remove },
   ]);
 }
 function key(e: KeyboardEvent) {

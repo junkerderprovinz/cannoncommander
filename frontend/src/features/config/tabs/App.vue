@@ -6,7 +6,7 @@ import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { shell } from '@/shell/state';
-import { c, confirmWin, since } from '@/features/config/shared';
+import { c, cn, confirmWin, since } from '@/features/config/shared';
 import { copyWords, segItems } from '@/ui/kit';
 import ExportWin from '../wins/ExportWin.vue';
 import ImportWin from '../wins/ImportWin.vue';
@@ -33,7 +33,7 @@ function restart() {
   const n = shell.jobCount;
   confirmWin({
     title: c('app.restart'), verb: c('app.restart'), glyph: 'IconRefresh',
-    text: [c('app.restartText'), ...(n ? [n === 1 ? c('app.restartJob') : c('app.restartJobs', { n })] : [])],
+    text: [c('app.restartText'), ...(n ? [cn(n, 'app.restartJobs')] : [])],
     run: async () => {
       restarting.value = true;
       await admin.restart().catch(() => {});

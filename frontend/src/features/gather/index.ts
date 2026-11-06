@@ -8,7 +8,7 @@ import { toast } from '@/core/toast';
 import { view } from '@/core/views';
 import { win } from '@/core/windows';
 import { join, split } from '@/files/paths';
-import { t, tl } from '@/i18n';
+import { plural, t, tl } from '@/i18n';
 import { diskName, jobLabel } from '@/features/jobs/label';
 import { useUnraid } from '@/features/unraid/state';
 import { useJobs } from '@/stores/jobs';
@@ -18,11 +18,11 @@ import GatherBody, { type GatherState } from './GatherBody.vue';
 import './gather.css';
 
 const inShare = (p: string) => /^\/mnt\/user\/[^/]+/.test(p);
-const files = (n: number) => (n === 1 ? t('gather.one') : t('gather.many', { n }));
+const files = (n: number) => plural(n, 'gather.files');
 
 function planText(st: GatherState, plan: GatherPlan) {
   const disk = diskName(st.disk);
-  const cache = plan.cached ? (plan.cached === 1 ? t('gather.cachedOne') : t('gather.cachedMany', { n: plan.cached })) : '';
+  const cache = plan.cached ? plural(plan.cached, 'gather.cached') : '';
   if (st.mode === 'gather') {
     const from = plan.devices.filter((d) => d.device !== st.disk && d.after < d.now).map((d) => diskName(d.device)).join(t('gather.and'));
     return (plan.short ? t('gather.short', { disk, size: fmtSize(plan.short) }) : !plan.moves ? t('gather.already', { disk })

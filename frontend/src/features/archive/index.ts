@@ -101,7 +101,7 @@ function unpackWindow() {
         const r = j.result as UnpackResult, first = r.paths[0];
         const path = st.own && first ? first : dest;
         if (first) void reveal(first);
-        doneToast(r.skipped ? t('archive.unpackedSkipped', { path, n: r.skipped }) : t('archive.unpacked', { path }), path);
+        doneToast(r.skipped ? plural(r.skipped, 'archive.unpackedSkipped', { path }) : t('archive.unpacked', { path }), path);
       });
       return true;
     } }],
@@ -122,7 +122,7 @@ function testWindow() {
   const rows: TestRow[] = reactive(sel.map((k) => ({ k, path: join(k.at || dir, k.name), size: k.size || 0, members: 0, done: 0, state: 'waiting' as TestRow['state'], why: '' })));
   const st = reactive({ rows, sum: t('archive.checking'), job: '' });
   const w = win({
-    title: sel.length === 1 ? t('archive.test') : t('archive.testMany', { n: sel.length }), wide: true, cls: 'bk bk-atest', body: TestBody, props: { st },
+    title: sel.length === 1 ? t('archive.test') : plural(sel.length, 'archive.testMany'), wide: true, cls: 'bk bk-atest', body: TestBody, props: { st },
     foot: [{ start: t('archive.everyMember') }, closeBtn()],
   });
   const jobs = useJobs();

@@ -14,12 +14,12 @@
   "format": {
     "today": "today",
     "yesterday": "yesterday",
-    "daysAgo": "{n} days ago",
-    "monthsAgo": "{n} mo. ago",
-    "yearsAgo": "{n} yr. ago",
-    "secondsLeft": "{n} s left",
-    "minutesLeft": "{n} min. left",
-    "hoursLeft": "{n} h left"
+    "daysAgo": { "one": "{n} day ago", "other": "{n} days ago" },
+    "monthsAgo": { "one": "{n} mo. ago", "other": "{n} mo. ago" },
+    "yearsAgo": { "one": "{n} yr. ago", "other": "{n} yr. ago" },
+    "secondsLeft": { "one": "{n} s left", "other": "{n} s left" },
+    "minutesLeft": { "one": "{n} min. left", "other": "{n} min. left" },
+    "hoursLeft": { "one": "{n} h left", "other": "{n} h left" }
   },
   "menus": {
     "label": "Menu",
@@ -269,10 +269,9 @@
     "nothingFound": "Nothing found for {q}",
     "searchedHere": "Searched this folder only",
     "searchedDeep": "Searched all subfolders too",
-    "one": "1 item",
-    "many": "{n} items",
-    "hits": "{n} hits",
-    "flatCount": "{n} files from all subfolders",
+    "objects": { "one": "1 item", "other": "{n} items" },
+    "hits": { "one": "{n} hit", "other": "{n} hits" },
+    "flatCount": { "one": "{n} file from all subfolders", "other": "{n} files from all subfolders" },
     "objShort": "{n} items",
     "marked": "{n} selected, {size}",
     "unselect": "Clear selection",

@@ -6,7 +6,7 @@ import { admin, type Share } from '@/api/admin';
 import { DAY, fmtDate, now } from '@/core/format';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import { attempt, c, fail, stepFoot } from '@/features/config/shared';
+import { attempt, c, cn, fail, stepFoot } from '@/features/config/shared';
 import { MESSAGE_MAX } from '@/features/share/link';
 import { copyWords, eyeWords, selectOptions } from '@/ui/kit';
 
@@ -16,7 +16,7 @@ const pwOn = ref(s.password), pwNew = ref(false), pw = ref('');
 const expiry = ref('keep'), message = ref(s.message);
 const pwInput = () => document.querySelector<HTMLInputElement>('#a-sharepw');
 const keepLabel = () => c('shares.keep') + ', ' + (s.expires ? fmtDate(s.expires) : c('shares.never'));
-const options = (): [string, string][] => [['keep', keepLabel()], ['1', c('shares.fromNow1')], ['7', c('shares.fromNow', { n: 7 })], ['30', c('shares.fromNow', { n: 30 })], ['never', c('shares.never_')]];
+const options = (): [string, string][] => [['keep', keepLabel()], ['1', cn(1, 'shares.fromNow')], ['7', cn(7, 'shares.fromNow')], ['30', cn(30, 'shares.fromNow')], ['never', c('shares.never_')]];
 
 async function setNew() {
   pwNew.value = true;

@@ -145,7 +145,7 @@ function splitWindow() {
       void startJob('split', { path: join(k.at || dir, k.name), dest, partSize: partSize(st), sum: st.sum }, (j) => {
         const r = j.result as SplitResult;
         void reveal(r.first);
-        doneToast(t('checksum.splitDone', { n: r.parts, dest }), r.first);
+        doneToast(plural(r.parts, 'checksum.splitDone', { dest }), r.first);
       });
       return true;
     } }],

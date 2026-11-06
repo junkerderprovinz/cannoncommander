@@ -53,16 +53,16 @@
   "groupStays": "group stays",
   "jobAttrs": "Set rights: {what}",
   "savedAll": "Rights set for {objects}",
-  "bytes": "{n} bytes",
+  "bytes": { "one": "{n} byte", "other": "{n} bytes" },
   "inDirs": "{files} in {dirs}",
   "andDirs": "{files} and {dirs}",
   "dirsWord": {
     "one": "{n} folder",
-    "many": "{n} folders"
+    "other": "{n} folders"
   },
   "dirsPlain": {
     "one": "{n} folder",
-    "many": "{n} folders"
+    "other": "{n} folders"
   },
   "server": "Server",
   "kinds": {

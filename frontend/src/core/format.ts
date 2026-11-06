@@ -1,5 +1,5 @@
 // Sizes, dates and durations the way the whole interface writes them.
-import { language, locale, t } from '@/i18n';
+import { language, locale, plural, t } from '@/i18n';
 import { prefs } from './prefs';
 
 export const KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
@@ -28,14 +28,14 @@ export function fmtAgo(ms: number): string {
   const days = Math.floor((now() - ms) / DAY);
   if (days <= 0) return t('format.today');
   if (days === 1) return t('format.yesterday');
-  if (days < 30) return t('format.daysAgo', { n: days });
-  if (days < 365) return t('format.monthsAgo', { n: Math.round(days / 30) });
-  return t('format.yearsAgo', { n: Math.round(days / 365) });
+  if (days < 30) return plural(days, 'format.daysAgo');
+  if (days < 365) return plural(Math.round(days / 30), 'format.monthsAgo');
+  return plural(Math.round(days / 365), 'format.yearsAgo');
 }
 
 // The list shows dates the way the Dateiliste settings ask for; every other place keeps the plain date.
 export const fmtListDate = (ms: number) => ({ long: fmtTime, relative: fmtAgo }[prefs.dateFormat as string] || fmtDate)(ms);
 
-export const fmtLeft = (s: number) => s < 60 ? t('format.secondsLeft', { n: Math.max(1, Math.ceil(s)) })
-  : s < 3600 ? t('format.minutesLeft', { n: Math.ceil(s / 60) })
-  : t('format.hoursLeft', { n: (s / 3600).toLocaleString(locale(), { maximumFractionDigits: 1 }) });
+export const fmtLeft = (s: number) => s < 60 ? plural(Math.max(1, Math.ceil(s)), 'format.secondsLeft')
+  : s < 3600 ? plural(Math.ceil(s / 60), 'format.minutesLeft')
+  : plural(s / 3600, 'format.hoursLeft', { n: (s / 3600).toLocaleString(locale(), { maximumFractionDigits: 1 }) });

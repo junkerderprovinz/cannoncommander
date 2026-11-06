@@ -1,3 +1,3 @@
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 
-export const files = (n: number) => (n ? (n === 1 ? t('labels.oneFile') : t('labels.files', { n })) : t('labels.noFile'));
+export const files = (n: number) => (n ? plural(n, 'labels.files') : t('labels.noFile'));

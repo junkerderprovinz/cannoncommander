@@ -17,7 +17,7 @@ const size = computed(() => fmtSize(props.items.reduce((a, x) => a + x.size, 0))
 
 <template>
   <SubCard :title="`${t('share.fromFolders', { objects: plural(items.length, 'ui.objects'), folders: plural(folders, 'share.folders') })}, ${size}`">
-    <Table :label="t('share.folderName')" :columns="[{ key: 'name' }, { key: 'from', tone: 'muted' }]" :rows="items.slice(0, 6).map((x) => ({ name: x.name, from: parent(x.path) }))" :more="items.length > 6 ? t('share.more', { n: items.length - 6 }) : undefined">
+    <Table :label="t('share.folderName')" :columns="[{ key: 'name' }, { key: 'from', tone: 'muted' }]" :rows="items.slice(0, 6).map((x) => ({ name: x.name, from: parent(x.path) }))" :more="items.length > 6 ? plural(items.length - 6, 'share.more') : undefined">
       <template #cell="{ column, value }"><span :class="{ mono: column.key === 'from' }">{{ value }}</span></template>
     </Table>
     <FieldRow :label="t('share.folderName')" :hint="t('share.folderNameTip')"><TextField id="cs-title" v-model="st.title" autocomplete="off" width="wide" /></FieldRow>

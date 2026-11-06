@@ -36,9 +36,8 @@
   "limitHead": "Speed of this job",
   "noLimit": "None",
   "mbs": "{n} MB/s",
-  "one": "1 item",
-  "many": "{n} items",
-  "files": "{n} files",
+  "objects": { "one": "1 item", "other": "{n} items" },
+  "files": { "one": "{n} file", "other": "{n} files" },
   "server": "Server",
   "kind": {
     "copy": "Copy: {what} to {to}",

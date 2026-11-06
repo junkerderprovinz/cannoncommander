@@ -3,21 +3,21 @@ import type { Job } from '@/api/ops';
 import { fmtLeft, fmtSize, MB } from '@/core/format';
 import { prefs } from '@/core/prefs';
 import { split } from '@/files/paths';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 
 export const placeName = (path?: string) => (path ? useListing().placeLabel(path) || split(path).pop() || t('jobs.server') : t('jobs.server'));
 // A disk goes by its label, such as Disk 2, also where the tree has not been read yet.
 export const diskName = (dev?: string) => (dev ? useListing().placeLabel('/mnt/' + dev) || dev.replace(/^disk(\d+)$/, 'Disk $1').replace(/^cache$/, 'Cache') : '');
 
-export const objects = (n: number) => (n === 1 ? t('jobs.one') : t('jobs.many', { n }));
+export const objects = (n: number) => plural(n, 'jobs.objects');
 
 type Labelled = Pick<Job, 'kind' | 'name' | 'count' | 'dest'>;
 // Features name the kinds of job they start themselves; what is the one name or the count the default label shows.
 export const kindLabels: Record<string, (j: Labelled, what: string) => string> = {};
 
 export function jobLabel(j: Labelled) {
-  const what = j.count === 1 ? j.name : j.kind === 'upload' ? t('jobs.files', { n: j.count }) : objects(j.count);
+  const what = j.count === 1 ? j.name : j.kind === 'upload' ? plural(j.count, 'jobs.files') : objects(j.count);
   if (kindLabels[j.kind]) return kindLabels[j.kind]!(j, what);
   const dev = j.dest?.replace(/^\/mnt\//, '');
   const to = j.kind === 'gather' || j.kind === 'scatter' ? diskName(dev) : placeName(j.dest);

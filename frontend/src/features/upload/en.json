@@ -11,8 +11,7 @@
   "clear": "Remove finished",
   "progress": "{done} of {all} done",
   "bytes": "{done} of {total}",
-  "one": "1 file",
-  "many": "{n} files",
+  "files": { "one": "1 file", "other": "{n} files" },
   "nothing": "Nothing in the queue yet",
   "pause": "Pause",
   "resume": "Resume",
@@ -26,7 +25,7 @@
   "go": "Go there",
   "failed": {
     "one": "One file could not be uploaded. Choose it again and the upload goes on from the last chunk.",
-    "many": "{n} files could not be uploaded. Choose them again and the upload goes on from the last chunk."
+    "other": "{n} files could not be uploaded. Choose them again and the upload goes on from the last chunk."
   },
   "oneFailed": "{name} could not be uploaded: {error}"
 }

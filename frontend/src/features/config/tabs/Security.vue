@@ -7,7 +7,7 @@ import { fmtDate } from '@/core/format';
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
-import { ago, attempt, c, confirmWin, P } from '@/features/config/shared';
+import { ago, attempt, c, cn, confirmWin, P } from '@/features/config/shared';
 import { takePending } from '../proof';
 import { device } from '../sessions';
 import CodeWin from '../wins/CodeWin.vue';
@@ -62,7 +62,7 @@ async function signOut(s: Session) {
 function signOutAll() {
   const n = others.value.length;
   confirmWin({ title: c('security.signOutAll'), verb: c('security.signOut'), glyph: 'IconSignOut',
-    text: [n === 1 ? c('security.signOutOne') : c('security.signOutMany', { n }), c('security.tokensStay')],
+    text: [cn(n, 'security.signOut'), c('security.tokensStay')],
     run: async () => { for (const s of others.value) await me.endSession(s.id); await load(); toast(c('security.allSignedOut')); } });
 }
 function revoke(t: Token) {
@@ -75,12 +75,12 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
 <template>
   <Card :title="c('security.signIn')">
     <FieldRow :label="c('users.password')" :hint="ownPassword || !acc ? c('security.pwTip') : c('security.pwLocked')"><Pill>{{ acc?.pwChanged ? c('security.changedAgo', { ago: ago(acc.pwChanged) }) : c('users.pwSet') }}</Pill><Button v-if="ownPassword" data-pw :label="c('security.change')" label-key="IconKey" @click="password" /></FieldRow>
-    <FieldRow :label="c('security.stay')" :hint="c('security.stayTip')"><Selector id="a-stay" v-model="P.stayDays" :items="segItems([[1, c('security.day1')], [7, c('general.days', { n: 7 })], [30, c('general.days', { n: 30 })]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('security.stay')" :hint="c('security.stayTip')"><Selector id="a-stay" v-model="P.stayDays" :items="segItems([[1, c('security.day1')], [7, cn(7, 'general.days')], [30, cn(30, 'general.days')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </Card>
   <Card :title="c('security.twofa')">
     <template v-if="acc?.twofa">
       <FieldRow :label="c('security.status')" :hint="c('security.onTip')"><Pill tone="ok">{{ c('security.on') }}</Pill><Button data-2off :label="c('security.turnOff')" label-key="IconShieldOff" @click="totpOff" /></FieldRow>
-      <FieldRow :label="c('security.codes')" :hint="c('security.codesTip')"><Pill :tone="acc.recovery < 3 ? 'warn' : 'neutral'">{{ c('security.codesLeft', { n: acc.recovery }) }}</Pill><Button data-2codes :label="c('security.regenerate')" label-key="IconRefresh" @click="newCodes" /></FieldRow>
+      <FieldRow :label="c('security.codes')" :hint="c('security.codesTip')"><Pill :tone="acc.recovery < 3 ? 'warn' : 'neutral'">{{ cn(acc.recovery, 'security.codesLeft') }}</Pill><Button data-2codes :label="c('security.regenerate')" label-key="IconRefresh" @click="newCodes" /></FieldRow>
     </template>
     <FieldRow v-else :label="c('security.status')" :hint="c('security.offTip')"><Pill tone="state">{{ c('security.off') }}</Pill><Button data-2on :label="c('security.setUp')" label-key="IconShieldOn" @click="totpOn" /></FieldRow>
   </Card>

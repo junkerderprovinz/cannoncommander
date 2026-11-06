@@ -8,15 +8,13 @@
   "taken": "This name exists here already",
   "folderWithSel": "New folder with selection",
   "onlyHere": "This only works with files from this folder",
-  "oneGoesIn": "1 item goes in right away.",
-  "manyGoIn": "{n} items go in right away.",
-  "oneObject": "1 item",
-  "manyObjects": "{n} items",
+  "goIn": { "one": "1 item goes in right away.", "other": "{n} items go in right away." },
+  "objects": { "one": "1 item", "other": "{n} items" },
   "folderMade": "“{name}” made with {what}",
   "notMoved": "The selection did not get into the new folder",
   "duplicate": "Duplicate here",
   "copyWord": "copy",
   "made": "“{name}” made",
-  "copies": "{n} copies made",
+  "copies": { "one": "{n} copy made", "other": "{n} copies made" },
   "notCopied": "Duplicating did not work"
 }

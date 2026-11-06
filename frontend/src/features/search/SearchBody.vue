@@ -113,7 +113,7 @@ const go = (asTab: boolean) => {
 };
 watch([() => res.value.hits.length, empty, () => res.value.scanned, () => res.value.reading], () => {
   const none = !res.value.hits.length, r = res.value;
-  const start = empty.value ? '' : r.reading ? t('search.reading', { n: num(r.scanned) }) : r.found && !r.unknown.length ? t('search.scanned', { n: num(r.scanned) }) : '';
+  const start = empty.value ? '' : r.reading ? plural(r.scanned, 'search.reading') : r.found && !r.unknown.length ? plural(r.scanned, 'search.scanned') : '';
   setFoot(props.win, start, [
     { label: t('search.asTab'), g: 'IconAdd', disabled: none, run: () => go(true) },
     { label: t('search.openFolder'), g: 'IconFolderOpen', primary: true, disabled: none, run: () => go(false) },

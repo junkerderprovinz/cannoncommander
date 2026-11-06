@@ -63,7 +63,7 @@ function cleanupWindow() {
   watch(() => [st.picked.size, st.scan], () => {
     const all = chosen(), del = all.filter((f) => f.gr.act === 'delete').length, fix = all.length - del;
     setPrimary(w, {
-      label: all.length ? [del && t('cleanup.delete', { n: del }), fix && t('cleanup.fix', { n: fix })].filter(Boolean).join(', ') : t('cleanup.title'),
+      label: all.length ? [del && plural(del, 'cleanup.delete'), fix && plural(fix, 'cleanup.fix')].filter(Boolean).join(', ') : t('cleanup.title'),
       disabled: !all.length,
     });
   });

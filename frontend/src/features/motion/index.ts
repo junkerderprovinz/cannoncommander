@@ -9,7 +9,7 @@ import { levelOf, lively, moving, stormy } from '@/core/motion';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { join } from '@/files/paths';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
 import { usePanels } from '@/stores/panels';
 import { useTrash } from '@/stores/trash';
@@ -39,7 +39,7 @@ function onStarted(_job: Job, req: JobCreate) {
       if (req.kind === 'copy' && copyCommand && stormy()) cannon(source, target);
       else trace(source, target);
     }
-    if (req.kind === 'copy' && broadside(levelOf(), p.sources.length)) toast(t('motion.broadside', { n: p.sources.length }));
+    if (req.kind === 'copy' && broadside(levelOf(), p.sources.length)) toast(plural(p.sources.length, 'motion.broadside'));
   }
   if ((req.kind === 'trash' || req.kind === 'delete') && p.paths?.length) {
     const gone = new Set(p.paths);

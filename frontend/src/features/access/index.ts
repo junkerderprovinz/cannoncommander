@@ -7,7 +7,7 @@ import { prefs, setPref } from '@/core/prefs';
 import { go as goView, view } from '@/core/views';
 import { addTo } from '@/core/extend';
 import { jobLabel, placeName } from '@/features/jobs/label';
-import { t, tl } from '@/i18n';
+import { plural, t, tl } from '@/i18n';
 import { shell } from '@/shell/state';
 import { useJobs } from '@/stores/jobs';
 import { usePanels } from '@/stores/panels';
@@ -17,7 +17,7 @@ export default function setup() {
   const side = (i: number) => (prefs.dual ? t(i ? 'access.right' : 'access.left') : t('access.panel'));
   const where = (i = F.active) => {
     const n = F.entries(i).filter((k) => !k.up).length;
-    return t('access.where', { side: side(i), folder: placeName(F.T(i).path), n, what: t(n === 1 ? 'access.one' : 'access.many') });
+    return t('access.where', { side: side(i), folder: placeName(F.T(i).path), what: plural(n, 'access.items') });
   };
 
   // Only a change is spoken: another folder or panel, or another number of marked entries.
@@ -28,7 +28,7 @@ export default function setup() {
   }, (now, last) => {
     if (!now || !last) return;
     if (now.path !== last.path || now.panel !== last.panel) say(where());
-    else if (now.n !== last.n) say(now.n ? t('access.marked', { n: now.n, size: fmtSize(now.size) || '0 B' }) : t('access.unmarked'));
+    else if (now.n !== last.n) say(now.n ? plural(now.n, 'access.marked', { size: fmtSize(now.size) || '0 B' }) : t('access.unmarked'));
   });
 
   // A row with a toggle or a pin beside its link is pressed through that link.
@@ -75,7 +75,7 @@ export default function setup() {
     run('jobs');
     const n = jobs.running.length;
     setTimeout(() => (document.querySelector<HTMLElement>('#jobs-body [data-job].open') || document.querySelector<HTMLElement>('#jobs-mode button[aria-pressed="true"]'))?.focus(), 30);
-    say(n ? t('access.jobsOpen', { n }) : t('access.jobsIdle'));
+    say(n ? plural(n, 'access.jobsOpen') : t('access.jobsIdle'));
   }
   action('focusSide', { label: tl('access.focusSide'), g: 'IconMenu', key: 'Alt+1', run: toSide });
   action('focusLeft', { label: tl('access.focusLeft'), g: 'IconViewSimple', key: 'Alt+2', run: () => toList(0) });

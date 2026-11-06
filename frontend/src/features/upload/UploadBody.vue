@@ -4,7 +4,7 @@ import { FieldRow, GlyphTile, IconButton, InfoBubble, Pill, ProgressBar, SubCard
 import { computed, ref } from 'vue';
 import { fmtSize } from '@/core/format';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { addFiles, cancelItem, clearDone, pauseItem, pausedAll, toggleAll, Up, type UpItem } from './queue';
 
 const props = defineProps<{ st: { path: string } }>();
@@ -45,8 +45,8 @@ function dropped(e: DragEvent) {
     </div>
     <template v-if="items.length">
       <div class="cu-total">
-        <FieldRow :label="t('upload.progress', { done: finished, all: alive.length === 1 ? t('upload.one') : t('upload.many', { n: alive.length }) })"><Pill class="glim-num">{{ t('upload.bytes', { done: fmtSize(done) || '0 B', total: fmtSize(total) || '0 B' }) }}</Pill></FieldRow>
-        <ProgressBar class="bar" :value="total ? done / total : 0" :label="t('upload.progress', { done: finished, all: alive.length === 1 ? t('upload.one') : t('upload.many', { n: alive.length }) })" />
+        <FieldRow :label="t('upload.progress', { done: finished, all: plural(alive.length, 'upload.files') })"><Pill class="glim-num">{{ t('upload.bytes', { done: fmtSize(done) || '0 B', total: fmtSize(total) || '0 B' }) }}</Pill></FieldRow>
+        <ProgressBar class="bar" :value="total ? done / total : 0" :label="t('upload.progress', { done: finished, all: plural(alive.length, 'upload.files') })" />
       </div>
       <div class="cu-list">
         <div v-for="i in items" :key="i.id" class="cu-row" :class="{ done: i.state === 'done' }" :data-id="i.id">

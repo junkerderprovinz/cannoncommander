@@ -11,7 +11,7 @@ import de from './de.json';
 import en from './en.json';
 import SharePage from './SharePage.vue';
 
-addMessages('share', { de, en });
+addMessages('visit', { de, en });
 applyPrefs();
 // Visitors have no settings here, so the browser's language decides.
 setLanguage(navigator.language?.toLowerCase().startsWith('de') ? 'de' : 'en');

@@ -1,8 +1,7 @@
 {
   "title": "Upload shared files",
-  "one": "1 file",
-  "many": "{n} files",
-  "more": "and {n} more",
+  "files": { "one": "1 file", "other": "{n} files" },
+  "more": { "one": "and {n} more", "other": "and {n} more" },
   "target": "Target",
   "targetTip": "The files go into this folder. CannonCommander asks first about files with the same name.",
   "upload": "Upload",

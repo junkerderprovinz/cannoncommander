@@ -7,15 +7,15 @@
   "copied": "Kopiert",
   "objects": {
     "one": "{n} Objekt",
-    "many": "{n} Objekte"
+    "other": "{n} Objekte"
   },
   "files": {
     "one": "{n} Datei",
-    "many": "{n} Dateien"
+    "other": "{n} Dateien"
   },
   "folders": {
     "one": "{n} Ordner",
-    "many": "{n} Ordnern"
+    "other": "{n} Ordnern"
   },
   "noName": "Der Name fehlt",
   "taken": "Name vergeben",

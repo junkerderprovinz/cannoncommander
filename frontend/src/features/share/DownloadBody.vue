@@ -16,7 +16,7 @@ watch(() => props.st.format, (f) => { props.st.name = `${props.st.base}.${f === 
 
 <template>
   <SubCard :title="`${plural(st.items.length, 'ui.objects')}, ${fmtSize(total)}`">
-    <Table :label="t('share.format')" :columns="[{ key: 'name' }, { key: 'size', end: true }]" :rows="st.items.slice(0, 6).map((k) => ({ name: k.name, size: fmtSize(k.size) || '0 B' }))" :more="st.items.length > 6 ? t('share.more', { n: st.items.length - 6 }) : undefined" />
+    <Table :label="t('share.format')" :columns="[{ key: 'name' }, { key: 'size', end: true }]" :rows="st.items.slice(0, 6).map((k) => ({ name: k.name, size: fmtSize(k.size) || '0 B' }))" :more="st.items.length > 6 ? plural(st.items.length - 6, 'share.more') : undefined" />
   </SubCard>
   <SubCard :title="t('share.archive')">
     <FieldRow :label="t('share.format')" :hint="t('share.formatTip')"><Selector id="dl-fmt" v-model="st.format" :items="segItems(formats)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>

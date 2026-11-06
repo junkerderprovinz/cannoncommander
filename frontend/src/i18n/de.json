@@ -14,12 +14,12 @@
   "format": {
     "today": "heute",
     "yesterday": "gestern",
-    "daysAgo": "vor {n} Tagen",
-    "monthsAgo": "vor {n} Mon.",
-    "yearsAgo": "vor {n} J.",
-    "secondsLeft": "noch {n} s",
-    "minutesLeft": "noch {n} Min.",
-    "hoursLeft": "noch {n} Std."
+    "daysAgo": { "one": "vor {n} Tag", "other": "vor {n} Tagen" },
+    "monthsAgo": { "one": "vor {n} Mon.", "other": "vor {n} Mon." },
+    "yearsAgo": { "one": "vor {n} J.", "other": "vor {n} J." },
+    "secondsLeft": { "one": "noch {n} s", "other": "noch {n} s" },
+    "minutesLeft": { "one": "noch {n} Min.", "other": "noch {n} Min." },
+    "hoursLeft": { "one": "noch {n} Std.", "other": "noch {n} Std." }
   },
   "menus": {
     "label": "Menü",
@@ -269,10 +269,9 @@
     "nothingFound": "Nichts gefunden für {q}",
     "searchedHere": "Nur in diesem Ordner gesucht",
     "searchedDeep": "Auch in allen Unterordnern gesucht",
-    "one": "1 Objekt",
-    "many": "{n} Objekte",
-    "hits": "{n} Treffer",
-    "flatCount": "{n} Dateien aus allen Unterordnern",
+    "objects": { "one": "1 Objekt", "other": "{n} Objekte" },
+    "hits": { "one": "{n} Treffer", "other": "{n} Treffer" },
+    "flatCount": { "one": "{n} Datei aus allen Unterordnern", "other": "{n} Dateien aus allen Unterordnern" },
     "objShort": "{n} Obj.",
     "marked": "{n} markiert, {size}",
     "unselect": "Auswahl aufheben",

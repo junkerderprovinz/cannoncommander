@@ -36,9 +36,8 @@
   "limitHead": "Tempo dieser Aufgabe",
   "noLimit": "Ohne",
   "mbs": "{n} MB/s",
-  "one": "1 Objekt",
-  "many": "{n} Objekte",
-  "files": "{n} Dateien",
+  "objects": { "one": "1 Objekt", "other": "{n} Objekte" },
+  "files": { "one": "{n} Datei", "other": "{n} Dateien" },
   "server": "Server",
   "kind": {
     "copy": "Kopieren: {what} nach {to}",
