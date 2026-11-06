@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Venstre panel",
     "right": "Højre panel",
@@ -2220,7 +2219,7 @@
     "colChanged": "Ændret",
     "noFolder": "Denne mappe findes ikke",
     "unknown": "{fields} kender jeg ikke",
-    "unknownHint": "Jeg forstår fx width, height, codec, artist, camera, size, modified, duration og alle kolonnenavne",
+    "unknownHint": "Jeg forstår fx bredde, højde, codec, kunstner, kameramodel, størrelse, ændret, varighed og alle kolonnenavne",
     "nothing": "Intet fundet",
     "nothingHint": "En anden mappe eller færre betingelser finder måske mere",
     "asTab": "Åbn som fane",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "Ny søgning",
     "menuNone": "Skriv et mønster, og gem det med knappen i feltet.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "skat",
+      "word": "rapport"
     },
     "menuExamples": "Eksempler",
     "examples": {
       "mkv": "alle MKV-filer, også i undermapper",
-      "tag": "alt med tagget steuer",
-      "word": "navne, der indeholder bericht",
+      "tag": "alt med tagget {tag}",
+      "word": "navne, der indeholder {word}",
       "one": "et ? står for præcis ét tegn",
       "meta": "4K-film i HEVC, fra metadata",
       "week": "alt, der er ændret inden for de seneste 7 dage"
     },
     "server": "Server",
-    "unknownFields": "{fields} kender jeg ikke. Jeg forstår fx width, height, codec, artist, camera, size, modified, duration og alle kolonnenavne som lens eller year",
+    "unknownFields": "{fields} kender jeg ikke. Jeg forstår fx bredde, højde, codec, kunstner, kameramodel, størrelse, ændret, varighed og alle kolonnenavne som objektiv eller år",
     "unknownField": "»{f}:«",
-    "quoted": ""
+    "quoted": "»{text}«"
   },
   "share": {
     "share": "Del",
@@ -2553,21 +2552,21 @@
     "clipCopy": "Kopiér til udklipsholderen",
     "clipPaste": "Indsæt",
     "nothingOn": "Intet af det ligger på {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Springes over",
+    "sameSkipTip": "Målet har den samme fil under en anden sti, fx som hårdt link eller via en disk share og user share. Den forbliver, som den er.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} fil sprunget over, fordi den er den samme fil på målet",
+      "other": "{n} filer sprunget over, fordi de er de samme filer på målet"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Kopieret: {files} til {to}. {same}",
+    "movedSame": "Flyttet: {files} til {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "Intet kopieret. Filen på målet er den samme og forbliver, som den er",
+      "other": "Intet kopieret. De {n} filer på målet er de samme og forbliver, som de er"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "Intet flyttet. Filen på målet er den samme og forbliver, som den er",
+      "other": "Intet flyttet. De {n} filer på målet er de samme og forbliver, som de er"
     }
   },
   "trash": {
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Liggende",
+      "portrait": "Stående",
+      "square": "Kvadratisk"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Udløst",
+      "off": "Ingen blitz"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} kanal",
+      "other": "{n} kanaler"
     },
     "method": {
-      "none": ""
+      "none": "Ingen"
     },
-    "methodNumber": "",
+    "methodNumber": "Metode {n}",
     "arch": {
-      "all": ""
+      "all": "Alle"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Ukendt"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "bredde",
+    "height": "højde",
+    "vcodec": "codec",
+    "modified": "ændret"
   },
   "kinds": {
     "folder": "Mappe",
