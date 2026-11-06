@@ -65,7 +65,8 @@ func (r *row) metaTime(col string) (time.Time, bool) {
 
 // column is one column of the list as a search field.
 type column struct {
-	// text is what the column shows, which plain and = tests compare.
+	// text is what plain and = tests compare: the value, or its code where
+	// the list shows a word.
 	text func(r *row) string
 	// num is what < and > compare, where it is not the number the text
 	// starts with.
@@ -146,14 +147,10 @@ func (c column) test(op, v string, now time.Time) test {
 // a point, so 2,8 finds f/2.8 whichever way the person writes numbers.
 func loose(s string) string { return strings.ReplaceAll(strings.ToLower(s), ",", ".") }
 
-var typeNames = map[string]string{
-	"img": "Bild", "video": "Video", "audio": "Audio", "arch": "Archiv", "disk": "Abbild", "pdf": "PDF-Dokument",
-	"office": "Office-Dokument", "text": "Textdatei", "code": "Quelltext", "file": "Datei",
-}
-
-var kindNames = map[string]string{
-	"img": "Bild", "video": "Video", "audio": "Musik", "arch": "Archiv", "disk": "Abbild", "pdf": "Dokument",
-	"office": "Dokument", "text": "Text", "code": "Quelltext",
+// kindCodes are the codes of the Art column, as the interface names its groups.
+var kindCodes = map[string]string{
+	"img": "image", "video": "video", "audio": "music", "arch": "archive", "disk": "disk", "pdf": "document",
+	"office": "document", "text": "text", "code": "code",
 }
 
 var mimes = map[string]string{
@@ -167,55 +164,31 @@ var mimes = map[string]string{
 	"sh": "application/x-sh", "js": "text/javascript", "ts": "text/typescript", "go": "text/x-go",
 }
 
-// How fs/meta values read in the list, which text tests compare with.
-const (
-	asText = iota
-	asSize
-	asDate
-	asDuration
-	asCount
-	asKbps
-	asNumber
-	asBool
+// dateMeta and sizeMeta are the metadata columns that compare as dates and
+// as sizes.
+var (
+	dateMeta = set("accessed", "statchange", "taken")
+	sizeMeta = set("unpacked")
 )
-
-var metaFormats = map[string]int{
-	"accessed": asDate, "statchange": asDate, "taken": asDate, "duration": asDuration, "vbitrate": asKbps,
-	"season": asNumber, "episode": asNumber, "track": asNumber, "year": asNumber, "iso": asNumber, "pages": asNumber, "entries": asNumber,
-	"words": asCount, "lines": asCount, "unpacked": asSize,
-	"encrypted": asBool, "archcrypt": asBool, "bootable": asBool, "signed": asBool,
-}
 
 // numericMeta are the metadata columns the list sorts as numbers.
 var numericMeta = set("accessed", "statchange", "duration", "vbitrate", "season", "episode", "track", "taken", "iso", "pages", "words", "lines", "unpacked", "entries")
 
+// metaText is a metadata value as field tests compare it: words as their
+// codes, yes and no as such and numbers plain.
 func metaText(r *row, col string) string {
-	v, ok := r.meta[col]
-	if !ok {
+	switch x := r.meta[col].(type) {
+	case nil:
 		return ""
-	}
-	switch x := v.(type) {
 	case string:
 		return x
 	case bool:
 		if x {
-			return "Ja"
+			return "yes"
 		}
-		return "Nein"
+		return "no"
 	}
 	n, _ := r.metaNum(col)
-	switch metaFormats[col] {
-	case asSize:
-		return fmtSize(int64(n))
-	case asDate:
-		return fmtDate(time.UnixMilli(int64(n)))
-	case asDuration:
-		return mmss(int64(n))
-	case asCount:
-		return fmtCount(int64(n))
-	case asKbps:
-		return fmtCount(int64(n)) + " kBit/s"
-	}
 	return strconv.FormatFloat(n, 'f', -1, 64)
 }
 
@@ -224,8 +197,11 @@ func metaColumn(id string) column {
 	if numericMeta[id] {
 		c.num = func(r *row) (float64, bool) { return r.metaNum(id) }
 	}
-	if metaFormats[id] == asDate {
+	if dateMeta[id] {
 		c.at = func(r *row) (time.Time, bool) { return r.metaTime(id) }
+	}
+	if sizeMeta[id] {
+		c.unit = Bytes
 	}
 	return c
 }
@@ -246,24 +222,19 @@ func diskSize(size int64) int64 { return (size + 4095) / 4096 * 4096 }
 
 // columns are the list's columns by id, as search fields.
 var columns = withMeta(map[string]column{
-	"size":     {text: func(r *row) string { return fmtSize(r.Size) }, num: sizeOf},
-	"modified": {at: func(r *row) (time.Time, bool) { return r.MTime, true }, text: func(r *row) string { return fmtDate(r.MTime) }},
-	"created": {at: func(r *row) (time.Time, bool) { return r.Created, !r.Created.IsZero() }, text: func(r *row) string {
-		if r.Created.IsZero() {
-			return ""
-		}
-		return fmtDate(r.Created)
-	}},
+	"size":     {unit: Bytes, num: sizeOf},
+	"modified": {at: func(r *row) (time.Time, bool) { return r.MTime, true }},
+	"created":  {at: func(r *row) (time.Time, bool) { return r.Created, !r.Created.IsZero() }},
 	"type": {text: func(r *row) string {
 		switch {
 		case r.Dir:
-			return "Ordner"
+			return "folder"
 		case r.stat().link:
-			return "Verknüpfung"
+			return "link"
 		case extOf(r.Name) == "":
-			return "Datei"
+			return "file"
 		}
-		return typeNames[r.kind()]
+		return r.kind()
 	}},
 	"ext": {text: func(r *row) string {
 		if r.Dir {
@@ -298,15 +269,15 @@ var columns = withMeta(map[string]column{
 	}},
 	"rights":   {text: func(r *row) string { return rights(r.mode(), r.Dir) }},
 	"octal":    {text: func(r *row) string { return fmt.Sprintf("%03o", r.mode()&0o777) }},
-	"disksize": {text: func(r *row) string { return fmtSize(diskSize(r.Size)) }, num: fileNum(func(r *row) float64 { return float64(diskSize(r.Size)) })},
+	"disksize": {unit: Bytes, num: fileNum(func(r *row) float64 { return float64(diskSize(r.Size)) })},
 	"kind": {text: func(r *row) string {
 		if r.Dir {
-			return "Ordner"
+			return "folder"
 		}
-		if n, ok := kindNames[r.kind()]; ok {
-			return n
+		if k, ok := kindCodes[r.kind()]; ok {
+			return k
 		}
-		return "Sonstiges"
+		return "other"
 	}},
 	"mime": {text: func(r *row) string {
 		if r.Dir {
@@ -467,58 +438,6 @@ var fields = func() map[string]column {
 	}
 	return m
 }()
-
-func fmtSize(b int64) string {
-	for _, u := range []struct {
-		name string
-		v    float64
-	}{{"TB", tb}, {"GB", gb}, {"MB", mb}, {"KB", kb}} {
-		if float64(b) >= u.v {
-			x := float64(b) / u.v
-			prec := 0
-			if x < 10 {
-				prec = 1
-			}
-			return germanDecimal(x, prec) + " " + u.name
-		}
-	}
-	return strconv.FormatInt(b, 10) + " B"
-}
-
-func germanDecimal(v float64, prec int) string {
-	s := strconv.FormatFloat(v, 'f', prec, 64)
-	if strings.Contains(s, ".") {
-		s = strings.TrimRight(strings.TrimRight(s, "0"), ".")
-	}
-	return strings.Replace(s, ".", ",", 1)
-}
-
-func fmtDate(t time.Time) string { return t.Local().Format("02.01.2006") }
-
-func fmtCount(n int64) string {
-	s := strconv.FormatInt(n, 10)
-	neg := strings.HasPrefix(s, "-")
-	s = strings.TrimPrefix(s, "-")
-	var b strings.Builder
-	for i, c := range s {
-		if i > 0 && (len(s)-i)%3 == 0 {
-			b.WriteByte('.')
-		}
-		b.WriteRune(c)
-	}
-	if neg {
-		return "-" + b.String()
-	}
-	return b.String()
-}
-
-func mmss(s int64) string {
-	h, m, sec := s/3600, (s/60)%60, s%60
-	if h > 0 {
-		return fmt.Sprintf("%d:%02d:%02d", h, m, sec)
-	}
-	return fmt.Sprintf("%d:%02d", m, sec)
-}
 
 // parentOf is the folder an API path lies in.
 func parentOf(p string) string { return path.Dir(p) }
