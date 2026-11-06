@@ -2640,7 +2640,26 @@
     "clipCut": "",
     "clipCopy": "",
     "clipPaste": "",
-    "nothingOn": ""
+    "nothingOn": "",
+    "sameSkip": "",
+    "sameSkipTip": "",
+    "sameSkipped": {
+      "one": "",
+      "many": "",
+      "other": ""
+    },
+    "copiedSame": "",
+    "movedSame": "",
+    "nothingCopied": {
+      "one": "",
+      "many": "",
+      "other": ""
+    },
+    "nothingMoved": {
+      "one": "",
+      "many": "",
+      "other": ""
+    }
   },
   "trash": {
     "delete": "",

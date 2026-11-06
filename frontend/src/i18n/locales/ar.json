@@ -2916,7 +2916,35 @@
     "clipCut": "",
     "clipCopy": "",
     "clipPaste": "",
-    "nothingOn": ""
+    "nothingOn": "",
+    "sameSkip": "",
+    "sameSkipTip": "",
+    "sameSkipped": {
+      "zero": "",
+      "one": "",
+      "two": "",
+      "few": "",
+      "many": "",
+      "other": ""
+    },
+    "copiedSame": "",
+    "movedSame": "",
+    "nothingCopied": {
+      "zero": "",
+      "one": "",
+      "two": "",
+      "few": "",
+      "many": "",
+      "other": ""
+    },
+    "nothingMoved": {
+      "zero": "",
+      "one": "",
+      "two": "",
+      "few": "",
+      "many": "",
+      "other": ""
+    }
   },
   "trash": {
     "delete": "",

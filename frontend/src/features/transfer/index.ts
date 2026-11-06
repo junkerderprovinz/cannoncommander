@@ -10,7 +10,7 @@ import { win, type WinEntry } from '@/core/windows';
 import { toEntry } from '@/files/entries';
 import { parent, split } from '@/files/paths';
 import { plural, t, tl } from '@/i18n';
-import { diskName, jobLabel, objects, placeName } from '@/features/jobs/label';
+import { diskName, jobError, jobLabel, objects, placeName } from '@/features/jobs/label';
 import { undoAct } from '@/features/undo/act';
 import { useUnraid } from '@/features/unraid/state';
 import { useClipboard } from '@/stores/clipboard';
@@ -91,13 +91,22 @@ function sameFileWindow(job: Transfer, pf: Preflight) {
   }
 }
 
-function announce(job: Job, kind: string) {
+// A file whose target is the same file under another path is left alone, so the toast counts those and says what
+// went over in their place.
+export function doneText(done: Job, kind: 'copy' | 'move', what: string, to: string) {
+  const same = (done.result as { same?: number } | undefined)?.same ?? 0;
+  if (!same) return t(kind === 'copy' ? 'transfer.copied' : 'transfer.moved', { what, to });
+  if (!done.doneFiles) return plural(same, kind === 'copy' ? 'transfer.nothingCopied' : 'transfer.nothingMoved');
+  return t(kind === 'copy' ? 'transfer.copiedSame' : 'transfer.movedSame', { files: plural(done.doneFiles, 'jobs.files'), to, same: plural(same, 'transfer.sameSkipped') });
+}
+
+function announce(job: Job, kind: 'copy' | 'move') {
   const what = job.count === 1 ? job.name : objects(job.count), to = placeName(job.dest);
   useJobs().whenDone(job, (done) => {
     if (done.state === 'done') {
       usePanels().T().marked = new Set();
-      toast(t(kind === 'copy' ? 'transfer.copied' : 'transfer.moved', { what, to }), 'ok', done.undo ? undoAct(done.undo) : undefined);
-    } else if (done.state === 'failed') toast(done.error ? t('transfer.failed', { label: jobLabel(done), error: done.error }) : t('transfer.failedPlain', { label: jobLabel(done) }), 'fault');
+      toast(doneText(done, kind, what, to), 'ok', done.undo ? undoAct(done.undo) : undefined);
+    } else if (done.state === 'failed') toast(done.error ? t('transfer.failed', { label: jobLabel(done), error: jobError(done) }) : t('transfer.failedPlain', { label: jobLabel(done) }), 'fault');
   });
 }
 

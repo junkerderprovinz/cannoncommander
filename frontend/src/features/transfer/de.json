@@ -100,5 +100,12 @@
   "clipCut": "Ausschneiden",
   "clipCopy": "Kopieren in die Ablage",
   "clipPaste": "Einfügen",
-  "nothingOn": "Auf {disk} liegt davon nichts"
+  "nothingOn": "Auf {disk} liegt davon nichts",
+  "sameSkip": "Wird übersprungen",
+  "sameSkipTip": "Am Ziel liegt dieselbe Datei unter einem anderen Pfad, etwa als harter Link oder über Disk- und User-Share. Sie bleibt, wie sie ist.",
+  "sameSkipped": { "one": "{n} Datei übersprungen, weil sie am Ziel dieselbe Datei ist", "other": "{n} Dateien übersprungen, weil sie am Ziel dieselben Dateien sind" },
+  "copiedSame": "Kopiert: {files} nach {to}. {same}",
+  "movedSame": "Verschoben: {files} nach {to}. {same}",
+  "nothingCopied": { "one": "Nichts kopiert. Die Datei am Ziel ist dieselbe und bleibt, wie sie ist", "other": "Nichts kopiert. Die {n} Dateien am Ziel sind dieselben und bleiben, wie sie sind" },
+  "nothingMoved": { "one": "Nichts verschoben. Die Datei am Ziel ist dieselbe und bleibt, wie sie ist", "other": "Nichts verschoben. Die {n} Dateien am Ziel sind dieselben und bleiben, wie sie sind" }
 }

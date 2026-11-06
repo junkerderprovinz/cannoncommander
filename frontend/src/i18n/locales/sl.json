@@ -2732,7 +2732,29 @@
     "clipCut": "",
     "clipCopy": "",
     "clipPaste": "",
-    "nothingOn": ""
+    "nothingOn": "",
+    "sameSkip": "",
+    "sameSkipTip": "",
+    "sameSkipped": {
+      "one": "",
+      "two": "",
+      "few": "",
+      "other": ""
+    },
+    "copiedSame": "",
+    "movedSame": "",
+    "nothingCopied": {
+      "one": "",
+      "two": "",
+      "few": "",
+      "other": ""
+    },
+    "nothingMoved": {
+      "one": "",
+      "two": "",
+      "few": "",
+      "other": ""
+    }
   },
   "trash": {
     "delete": "",
