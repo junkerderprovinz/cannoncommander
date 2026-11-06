@@ -18,6 +18,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/preview"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/web"
@@ -125,6 +126,7 @@ func Start() {
 		}
 	}
 
+	indexing.LinkedFolder = unraid.Default().LinkedFolder
 	for _, source := range settings.Config.Server.SourceMap {
 		go indexing.Initialize(source, false, isNewDb)
 	}

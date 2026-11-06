@@ -89,8 +89,7 @@ func (r *Resolver) check(u *users.User, p string, perm Perm, carried bool) (Loca
 	if perm&writePerms != 0 && (loc.Source.ReadOnly || loc.InArchive()) {
 		return Location{}, ErrReadOnly
 	}
-	granted, _ := u.FilePermsForSourcePath(loc.Source.Root)
-	if !holds(granted, perm) {
+	if !holds(granted(u, loc.Source), perm) {
 		return Location{}, ErrForbidden
 	}
 	var effect Effect
@@ -344,7 +343,9 @@ func (r *Resolver) reaches(u *users.User, p string) bool {
 	return false
 }
 
-// scope returns the folder inside s that u is confined to.
+// scope returns the folder inside s that u is confined to. An admin who was
+// never given a scope in s has all of it, so a source added later and the
+// disks and pools reach the admins without another round in the user list.
 func (r *Resolver) scope(u *users.User, s *Source) (string, bool) {
 	if s.AdminOnly && !u.Permissions.Admin {
 		return "", false
@@ -354,7 +355,17 @@ func (r *Resolver) scope(u *users.User, s *Source) (string, bool) {
 			return path.Clean("/" + bs.Scope), true
 		}
 	}
-	return "", false
+	return "/", u.Permissions.Admin
+}
+
+// granted returns the rights u holds in s, all of them for an admin without
+// a scope there.
+func granted(u *users.User, s *Source) users.SourceFilePermissions {
+	g, ok := u.FilePermsForSourcePath(s.Root)
+	if !ok && u.Permissions.Admin {
+		return users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true}
+	}
+	return g
 }
 
 func holds(g users.SourceFilePermissions, perm Perm) bool {

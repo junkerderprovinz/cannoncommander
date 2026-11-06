@@ -151,30 +151,49 @@ func (s *Service) otherNames(ctx context.Context, f file) (rels []string, comple
 	ctx, cancel := context.WithTimeout(ctx, s.cfg.LinkBudget)
 	defer cancel()
 	base := filepath.Join(s.cfg.Mnt, f.dev)
+	// The other names mostly live in the same share, as a download next to
+	// the library that links it, so that share goes first and a busy pool
+	// does not use up the time before the walk gets there.
+	own := filepath.Join(base, filepath.FromSlash(f.share()))
+	_ = filepath.WalkDir(own, func(path string, d fs.DirEntry, err error) error {
+		return visitLink(ctx, base, path, d, err, f, &rels, want)
+	})
+	if len(rels) >= want || ctx.Err() != nil {
+		return rels, len(rels) >= want
+	}
 	_ = filepath.WalkDir(base, func(path string, d fs.DirEntry, err error) error {
-		if ctx.Err() != nil {
-			return filepath.SkipAll
+		if path == own && d != nil && d.IsDir() {
+			return filepath.SkipDir
 		}
-		if err != nil || !d.Type().IsRegular() {
-			return nil
-		}
-		info, err := d.Info()
-		if err != nil {
-			return nil
-		}
-		if in := inodeOf(info); in.ino != f.ino.ino || in.dev != f.ino.dev {
-			return nil
-		}
-		rel, _ := filepath.Rel(base, path)
-		if rel = filepath.ToSlash(rel); rel != f.rel {
-			rels = append(rels, rel)
-		}
-		if len(rels) >= want {
-			return filepath.SkipAll
-		}
-		return nil
+		return visitLink(ctx, base, path, d, err, f, &rels, want)
 	})
 	return rels, len(rels) >= want
+}
+
+// visitLink adds path, below /mnt/<dev> at base, to rels when it is another
+// name of the file f, and stops the walk once want names are known.
+func visitLink(ctx context.Context, base, path string, d fs.DirEntry, err error, f file, rels *[]string, want int) error {
+	if ctx.Err() != nil {
+		return filepath.SkipAll
+	}
+	if err != nil || !d.Type().IsRegular() {
+		return nil
+	}
+	info, err := d.Info()
+	if err != nil {
+		return nil
+	}
+	if in := inodeOf(info); in.ino != f.ino.ino || in.dev != f.ino.dev {
+		return nil
+	}
+	rel, _ := filepath.Rel(base, path)
+	if rel = filepath.ToSlash(rel); rel != f.rel {
+		*rels = append(*rels, rel)
+	}
+	if len(*rels) >= want {
+		return filepath.SkipAll
+	}
+	return nil
 }
 
 // shownPath is the path a person knows a file by: the user share when the

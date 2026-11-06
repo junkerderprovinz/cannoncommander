@@ -8905,14 +8905,31 @@ components:
           example: ["*.tmp", appdata/plex/cache]
     AdminSources:
       type: object
-      required: [sources, restartNeeded]
+      required: [sources, devices, restartNeeded]
       properties:
         sources:
           type: array
           items:
             $ref: "#/components/schemas/AdminSource"
+        devices:
+          description: |
+            The disks and pools Unraid reports. Admins see them below /mnt
+            without adding them as sources, and they are never indexed.
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminDevice"
         restartNeeded:
           type: boolean
+    AdminDevice:
+      type: object
+      required: [name, path]
+      properties:
+        name:
+          type: string
+          example: Disk 1
+        path:
+          type: string
+          example: /mnt/disk1
     IntegrationTest:
       type: object
       required: [kind, url]

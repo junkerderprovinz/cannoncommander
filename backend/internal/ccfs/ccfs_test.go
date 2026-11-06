@@ -119,7 +119,7 @@ func TestResolveKnowsTheVirtualParents(t *testing.T) {
 	if got := r.VirtualChildren("/"); !slices.Equal(got, []string{"boot", "mnt"}) {
 		t.Errorf("children of / = %v", got)
 	}
-	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"cache", "disk1", "user"}) {
+	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"user", "cache", "disk1"}) {
 		t.Errorf("children of /mnt = %v", got)
 	}
 }
@@ -230,7 +230,7 @@ func TestDisksAndPoolsStayWithAdmins(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	r := plain.WithDevices("cache", "fastcache", "disk1")
+	r := plain.WithDevices(mnt, "cache", "fastcache", "disk1")
 	all := users.BackendScope{Path: mnt, Scope: "/", Permissions: allPerms}
 	anna, jdp := user("anna", false, all), user("jdp", true, all)
 

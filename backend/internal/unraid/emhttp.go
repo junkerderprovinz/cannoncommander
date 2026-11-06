@@ -124,6 +124,9 @@ type State struct {
 	Mover         Mover `json:"mover"`
 
 	includeAll, excludeAll []string
+	// exclusive maps the exclusive shares whose link in /mnt/user leads to
+	// their pool to that pool.
+	exclusive map[string]string
 }
 
 // Disk returns the disk or pool with the given name.
@@ -252,7 +255,32 @@ func ReadState(c Config) (*State, error) {
 		}
 	}
 	slices.SortFunc(st.Shares, func(a, b Share) int { return strings.Compare(a.Name, b.Name) })
+	st.exclusive = exclusiveLinks(c.Mnt, st.Shares)
 	return st, nil
+}
+
+// exclusiveLinks finds the exclusive shares that are a link from
+// /mnt/user/<share> to /mnt/<pool>/<share>, as Unraid makes them. A share whose
+// link leads anywhere else is left out.
+func exclusiveLinks(mnt string, shares []Share) map[string]string {
+	out := map[string]string{}
+	user := filepath.Join(mnt, "user")
+	for _, sh := range shares {
+		if !sh.Exclusive || sh.Primary.Type != "pool" || sh.Primary.Name == "" {
+			continue
+		}
+		target, err := os.Readlink(filepath.Join(user, sh.Name))
+		if err != nil {
+			continue
+		}
+		if !filepath.IsAbs(target) {
+			target = filepath.Join(user, target)
+		}
+		if filepath.Clean(target) == filepath.Join(mnt, sh.Primary.Name, sh.Name) {
+			out[sh.Name] = sh.Primary.Name
+		}
+	}
+	return out
 }
 
 func readSections(p string) ([]section, error) {
