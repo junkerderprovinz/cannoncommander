@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panel kiri",
     "right": "Panel kanan",
@@ -2141,7 +2140,7 @@
     "colChanged": "Diubah",
     "noFolder": "Folder ini tidak ada",
     "unknown": "Saya tidak mengenal {fields}",
-    "unknownHint": "",
+    "unknownHint": "Saya mengerti misalnya lebar, tinggi, codec, artis, ukuran, diubah, durasi, dan setiap nama kolom",
     "nothing": "Tidak ada yang ditemukan",
     "nothingHint": "Folder lain atau syarat yang lebih sedikit mungkin menemukan lebih banyak",
     "asTab": "Buka sebagai tab",
@@ -2172,22 +2171,22 @@
     "menuNewLabel": "Pencarian baru",
     "menuNone": "Ketik pola dan simpan dengan tombol di kolom.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "pajak",
+      "word": "laporan"
     },
     "menuExamples": "Contoh",
     "examples": {
       "mkv": "semua berkas MKV, juga di subfolder",
-      "tag": "",
-      "word": "",
+      "tag": "semua dengan tag {tag}",
+      "word": "nama yang memuat {word}",
       "one": "? berarti tepat satu karakter",
       "meta": "Film 4K dalam HEVC, dari metadata",
       "week": "semua yang berubah dalam 7 hari terakhir"
     },
     "server": "Server",
-    "unknownFields": "",
+    "unknownFields": "Saya tidak mengenal {fields}. Saya mengerti misalnya lebar, tinggi, codec, artis, ukuran, diubah, durasi, dan setiap nama kolom seperti lensa atau tahun",
     "unknownField": "“{f}:”",
-    "quoted": ""
+    "quoted": "“{text}”"
   },
   "share": {
     "share": "Bagikan",
@@ -2461,18 +2460,18 @@
     "clipCopy": "Salin ke papan klip",
     "clipPaste": "Tempel",
     "nothingOn": "Tidak ada bagiannya di {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Dilewati",
+    "sameSkipTip": "Di tujuan sudah ada berkas yang sama di path lain, misalnya sebagai hard link atau lewat disk share dan user share. Berkas itu dibiarkan apa adanya.",
     "sameSkipped": {
-      "other": ""
+      "other": "{n} berkas dilewati karena di tujuan berkasnya sama"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Disalin: {files} ke {to}. {same}",
+    "movedSame": "Dipindahkan: {files} ke {to}. {same}",
     "nothingCopied": {
-      "other": ""
+      "other": "Tidak ada yang disalin. {n} berkas di tujuan adalah berkas yang sama dan dibiarkan apa adanya"
     },
     "nothingMoved": {
-      "other": ""
+      "other": "Tidak ada yang dipindahkan. {n} berkas di tujuan adalah berkas yang sama dan dibiarkan apa adanya"
     }
   },
   "trash": {
@@ -3114,35 +3113,35 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Lanskap",
+      "portrait": "Potret",
+      "square": "Persegi"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Menyala",
+      "off": "Mati"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "other": ""
+      "other": "{n} kanal"
     },
     "method": {
-      "none": ""
+      "none": "Tanpa"
     },
-    "methodNumber": "",
+    "methodNumber": "Metode {n}",
     "arch": {
-      "all": ""
+      "all": "Semua"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Tidak diketahui"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "lebar",
+    "height": "tinggi",
+    "vcodec": "codec",
+    "modified": "diubah"
   },
   "kinds": {
     "folder": "Folder",
