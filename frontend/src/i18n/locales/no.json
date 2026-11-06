@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Venstre panel",
     "right": "Høyre panel",
@@ -2220,7 +2219,7 @@
     "colChanged": "Endret",
     "noFolder": "Denne mappen finnes ikke",
     "unknown": "{fields} kjenner jeg ikke",
-    "unknownHint": "",
+    "unknownHint": "Jeg forstår for eksempel bredde, høyde, kodek, artist, kameramodell, størrelse, endret, lengde og alle kolonnenavn",
     "nothing": "Fant ingenting",
     "nothingHint": "En annen mappe eller færre betingelser finner kanskje mer",
     "asTab": "Åpne som fane",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "Nytt søk",
     "menuNone": "Skriv et mønster og lagre det med knappen i feltet.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "skatt",
+      "word": "rapport"
     },
     "menuExamples": "Eksempler",
     "examples": {
       "mkv": "alle MKV-filer, også i undermapper",
-      "tag": "",
-      "word": "",
+      "tag": "alt med stikkordet {tag}",
+      "word": "navn som inneholder {word}",
       "one": "et ? står for nøyaktig ett tegn",
       "meta": "4K-filmer i HEVC, fra metadataene",
       "week": "alt som er endret de siste 7 dagene"
     },
     "server": "Server",
-    "unknownFields": "",
+    "unknownFields": "{fields} kjenner jeg ikke. Jeg forstår for eksempel bredde, høyde, kodek, artist, kameramodell, størrelse, endret, lengde og alle kolonnenavn som objektiv eller år",
     "unknownField": "«{f}:»",
-    "quoted": ""
+    "quoted": "«{text}»"
   },
   "share": {
     "share": "Del",
@@ -2553,21 +2552,21 @@
     "clipCopy": "Kopier til utklippstavlen",
     "clipPaste": "Lim inn",
     "nothingOn": "Ingenting av det ligger på {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Hoppes over",
+    "sameSkipTip": "I målet ligger den samme filen under en annen sti, for eksempel som hard lenke eller via disk-share og user-share. Den blir som den er.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} fil hoppet over fordi den er den samme filen i målet",
+      "other": "{n} filer hoppet over fordi de er de samme filene i målet"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Kopiert: {files} til {to}. {same}",
+    "movedSame": "Flyttet: {files} til {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "Ingenting kopiert. Filen i målet er den samme og blir som den er",
+      "other": "Ingenting kopiert. De {n} filene i målet er de samme og blir som de er"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "Ingenting flyttet. Filen i målet er den samme og blir som den er",
+      "other": "Ingenting flyttet. De {n} filene i målet er de samme og blir som de er"
     }
   },
   "trash": {
@@ -3150,7 +3149,7 @@
     "created": "Opprettet",
     "accessed": "Sist åpnet",
     "disksize": "Størrelse på disk",
-    "kind": "Type",
+    "kind": "Sort",
     "mime": "MIME-type",
     "attributes": "Attributter",
     "statchange": "Status endret",
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Liggende",
+      "portrait": "Stående",
+      "square": "Kvadratisk"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Utløst",
+      "off": "Ingen blits"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} kanal",
+      "other": "{n} kanaler"
     },
     "method": {
-      "none": ""
+      "none": "Ingen"
     },
-    "methodNumber": "",
+    "methodNumber": "Metode {n}",
     "arch": {
-      "all": ""
+      "all": "Alle"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Ukjent"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "bredde",
+    "height": "høyde",
+    "vcodec": "kodek",
+    "modified": "endret"
   },
   "kinds": {
     "folder": "Mappe",
