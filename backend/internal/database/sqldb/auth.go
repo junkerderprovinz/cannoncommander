@@ -11,17 +11,17 @@ import (
 // GetAuthMethod retrieves an auth method by type
 func (s *SQLStore) GetAuthMethod(authType string) ([]byte, error) {
 	query := `SELECT config FROM auth_methods WHERE type = ?`
-	
+
 	var config []byte
 	err := s.db.QueryRow(query, authType).Scan(&config)
-	
+
 	if err == sql.ErrNoRows {
 		return nil, fmt.Errorf("auth method not found: %s", authType)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to get auth method: %w", err)
 	}
-	
+
 	return config, nil
 }
 
@@ -31,13 +31,13 @@ func (s *SQLStore) SaveAuthMethod(authType string, config interface{}) error {
 	if err != nil {
 		return fmt.Errorf("failed to marshal auth method config: %w", err)
 	}
-	
+
 	query := `INSERT OR REPLACE INTO auth_methods (type, config) VALUES (?, ?)`
 	_, err = s.db.Exec(query, authType, configJSON)
 	if err != nil {
 		return fmt.Errorf("failed to save auth method: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -48,16 +48,16 @@ func (s *SQLStore) DeleteAuthMethod(authType string) error {
 	if err != nil {
 		return fmt.Errorf("failed to delete auth method: %w", err)
 	}
-	
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("failed to get rows affected: %w", err)
 	}
-	
+
 	if rowsAffected == 0 {
 		return fmt.Errorf("auth method not found")
 	}
-	
+
 	return nil
 }
 
@@ -69,7 +69,7 @@ func (s *SQLStore) GetAllAuthMethods() (map[string][]byte, error) {
 		return nil, fmt.Errorf("failed to get all auth methods: %w", err)
 	}
 	defer rows.Close()
-	
+
 	authMethods := make(map[string][]byte)
 	for rows.Next() {
 		var authType string
@@ -79,10 +79,10 @@ func (s *SQLStore) GetAllAuthMethods() (map[string][]byte, error) {
 		}
 		authMethods[authType] = config
 	}
-	
+
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("error iterating auth methods: %w", err)
 	}
-	
+
 	return authMethods, nil
 }

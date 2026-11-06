@@ -4,6 +4,7 @@ import (
 	"path"
 	"slices"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -113,3 +114,52 @@ func TestFolderCountsTakeLongLists(t *testing.T) {
 	}
 }
 
+func TestMoveTreeCarriesEveryRowBelow(t *testing.T) {
+	db := newFolderDB(t, "move_tree")
+	items := []*iteminfo.FileInfo{
+		entry("/filme/", true, iteminfo.UnixAttrs{}),
+		entry("/filme/Über/", true, iteminfo.UnixAttrs{}),
+		entry("/filme/Über/größe.mkv", false, iteminfo.UnixAttrs{}),
+		entry("/filme/Über/Ränder/", true, iteminfo.UnixAttrs{}),
+		entry("/filme/Über/Ränder/a.srt", false, iteminfo.UnixAttrs{}),
+		entry("/filme/Überall.mkv", false, iteminfo.UnixAttrs{}),
+		entry("/serien/", true, iteminfo.UnixAttrs{}),
+		entry("/serien/Ä neu/", true, iteminfo.UnixAttrs{}),
+		entry("/serien/Ä neu/alt.mkv", false, iteminfo.UnixAttrs{}),
+	}
+	if err := db.BulkInsertItems("src", items); err != nil {
+		t.Fatal(err)
+	}
+	moved, err := db.MoveTree("src", "/filme/Über/", "/serien/Ä neu/")
+	if err != nil || !moved {
+		t.Fatalf("moved %v, %v", moved, err)
+	}
+	r, err := db.Query(`SELECT path, parent_path, name FROM index_items WHERE source = 'src' ORDER BY path`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer r.Close()
+	var got []string
+	for r.Next() {
+		var p, parent, name string
+		if err := r.Scan(&p, &parent, &name); err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, p+" in "+parent+" as "+name)
+	}
+	want := []string{
+		"/filme/ in / as filme",
+		"/filme/Überall.mkv in /filme/ as Überall.mkv",
+		"/serien/ in / as serien",
+		"/serien/Ä neu/ in /serien/ as Ä neu",
+		"/serien/Ä neu/Ränder/ in /serien/Ä neu/ as Ränder",
+		"/serien/Ä neu/Ränder/a.srt in /serien/Ä neu/Ränder/ as a.srt",
+		"/serien/Ä neu/größe.mkv in /serien/Ä neu/ as größe.mkv",
+	}
+	if !slices.Equal(got, want) {
+		t.Fatalf("rows\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
+	}
+	if moved, err := db.MoveTree("src", "/filme/Über/", "/x/"); moved || err != nil {
+		t.Fatalf("moving what is gone: %v, %v", moved, err)
+	}
+}

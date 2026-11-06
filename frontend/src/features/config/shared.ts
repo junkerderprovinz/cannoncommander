@@ -11,7 +11,8 @@ export const c = (key: string, params?: Record<string, string | number>) => t('c
 
 export function ago(at: number) {
   const d = now() - at, min = 60000, h = 60 * min;
-  if (d < 0) {
+  // The server's clock may run a little ahead of this one, which still means just now.
+  if (d < -2 * min) {
     const days = Math.ceil(-d / DAY);
     return days <= 1 ? c('ago.tomorrow') : c('ago.inDays', { n: days });
   }

@@ -73,6 +73,7 @@ func mountAPIv1(router *http.ServeMux) error {
 	}
 	unraid.Default().SetInodeIndex(fsindex.Inodes(resolver))
 	folderWatch.Start(eventHub, resolver, index, labelMover{deps})
+	system.OnShutdown(fsindex.Follow(resolver, index))
 	prefix := settings.Config.Http.BaseURL + "api/v1"
 	router.Handle(prefix+"/", http.StripPrefix(prefix, h))
 	mountDAV(router, deps)

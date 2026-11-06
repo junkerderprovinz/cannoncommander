@@ -715,6 +715,17 @@ func (idx *Index) getBasicDirInfo(ctx *PathContext) *iteminfo.FileInfo {
 
 // Define a function to recursively index files and directories
 func (idx *Index) indexDirectory(indexPath string, opts Options, scanner *Scanner) (int64, bool, error) {
+	info, _, err := idx.readDirectory(indexPath, opts, scanner)
+	if err != nil {
+		return 0, false, err
+	}
+	return info.Size, info.HasPreview, nil
+}
+
+// readDirectory reads one folder into the index. Outside a scan it also
+// drops the rows of entries that are gone and returns the folders the index
+// did not hold before.
+func (idx *Index) readDirectory(indexPath string, opts Options, scanner *Scanner) (*iteminfo.FileInfo, []string, error) {
 	if !strings.HasSuffix(indexPath, "/") {
 		indexPath = indexPath + "/"
 	}
@@ -724,25 +735,34 @@ func (idx *Index) indexDirectory(indexPath string, opts Options, scanner *Scanne
 	dir, err := os.Open(realPath)
 	if err != nil {
 		// must have been deleted
-		return 0, false, err
+		return nil, nil, err
 	}
 	defer dir.Close()
 
 	dirInfo, err := dir.Stat()
 	if err != nil {
-		return 0, false, err
+		return nil, nil, err
 	}
 
 	// check if excluded from indexing
 	hidden := IsHidden(realPath)
 	isSymlink := dirInfo.Mode()&os.ModeSymlink != 0
 	if idx.ShouldSkip(dirInfo.IsDir(), indexPath, hidden, isSymlink, true) {
-		return 0, false, errors.ErrNotIndexed
+		return nil, nil, errors.ErrNotIndexed
+	}
+
+	// What the index held is read before the disk, so an entry that comes
+	// back while the folder is read is never taken for gone.
+	var known map[string]bool
+	if scanner == nil {
+		if known, err = idx.db.Children(idx.Name, indexPath); err != nil {
+			logger.Debugf("index rows of %s: %v", indexPath, err)
+		}
 	}
 
 	dirFileInfo, err2 := idx.GetDirInfo(dir, dirInfo, indexPath, opts, scanner)
 	if err2 != nil {
-		return 0, false, err2
+		return nil, nil, err2
 	}
 	idx.UpdateMetadata(dirFileInfo, scanner, !opts.Recursive)
 
@@ -755,8 +775,10 @@ func (idx *Index) indexDirectory(indexPath string, opts Options, scanner *Scanne
 	} else {
 		idx.SetFolderSize(indexPath, uint64(dirFileInfo.Size))
 	}
-
-	return dirFileInfo.Size, dirFileInfo.HasPreview, nil
+	if known == nil {
+		return dirFileInfo, nil, nil
+	}
+	return dirFileInfo, idx.dropGone(indexPath, known, dirFileInfo), nil
 }
 
 // GetFsInfoCore is the consolidated implementation for both GetFsInfo and GetFsInfoViewableOnly
@@ -1377,7 +1399,7 @@ func (idx *Index) RefreshDirectory(indexPath string, recursive bool) error {
 
 	// Check if directory exists
 	dirInfo, err := os.Stat(realPath)
-	if err != nil {
+	if os.IsNotExist(err) && indexPath != "/" {
 		// Directory deleted - clear from cache and update parents
 		idx.folderSizesMu.Lock()
 		previousSize, exists := idx.folderSizes[indexPath]
@@ -1388,7 +1410,11 @@ func (idx *Index) RefreshDirectory(indexPath string, recursive bool) error {
 		if exists && previousSize > 0 {
 			idx.updateFolderSizeAndParents(indexPath, 0, previousSize, false)
 		}
+		idx.dropTrees([]string{indexPath})
 		return nil
+	}
+	if err != nil {
+		return err
 	}
 
 	if !dirInfo.IsDir() {
@@ -1401,6 +1427,16 @@ func (idx *Index) RefreshDirectory(indexPath string, recursive bool) error {
 	if idx.ShouldSkip(true, indexPath, hidden, isSymlink, false) {
 		return errors.ErrNotIndexed
 	}
+	// Scans never list hidden entries or what lies below them, so a refresh
+	// only reads folders the index already reaches: the folder itself, or
+	// for a whole tree the folder holding it.
+	reach := indexPath
+	if recursive {
+		reach = parentFolder(indexPath)
+	}
+	if indexPath != "/" && (hidden || !idx.holds(reach)) {
+		return nil
+	}
 
 	// Use indexDirectory for proper recursive indexing
 	opts := Options{
@@ -1409,7 +1445,18 @@ func (idx *Index) RefreshDirectory(indexPath string, recursive bool) error {
 		CheckViewable: false,
 	}
 
-	_, _, err = idx.indexDirectory(indexPath, opts, nil)
+	_, fresh, err := idx.readDirectory(indexPath, opts, nil)
+	if err != nil || recursive || len(fresh) == 0 || !idx.readsNewFolders() {
+		return err
+	}
+	for _, p := range fresh {
+		if _, _, err := idx.readDirectory(p, Options{Recursive: true}, nil); err != nil {
+			logger.Debugf("Failed to read new folder %s: %v", p, err)
+		}
+	}
+	// Read once more, so the sizes of the new folders count toward this one
+	// and the folders above.
+	_, _, err = idx.readDirectory(indexPath, opts, nil)
 	return err
 }
 

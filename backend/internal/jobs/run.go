@@ -318,13 +318,19 @@ func TreeSize(ctx context.Context, path string) (bytes, files int64, err error) 
 // VisibleSize is TreeSize of what u holds perm on, for work that leaves the rest
 // out, so that a total tells nothing about what is hidden.
 func VisibleSize(ctx context.Context, fsys *ccfs.Resolver, u *users.User, loc ccfs.Location, perm ccfs.Perm) (bytes, files int64, err error) {
-	return treeSize(ctx, loc.Real, func(p string) bool {
-		rel, err := filepath.Rel(loc.Real, p)
-		if err != nil {
-			return false
-		}
-		_, err = fsys.Check(u, pathpkg.Join(loc.Path, filepath.ToSlash(rel)), perm)
+	return SizeWhere(ctx, loc.Real, func(rel string) bool {
+		_, err := fsys.Check(u, pathpkg.Join(loc.Path, rel), perm)
 		return err == nil
+	})
+}
+
+// SizeWhere is TreeSize of the entries keep takes, for work that leaves out
+// more than what is hidden. keep gets the path below root with slashes, "."
+// for root itself, and a folder it refuses is not gone into.
+func SizeWhere(ctx context.Context, root string, keep func(rel string) bool) (bytes, files int64, err error) {
+	return treeSize(ctx, root, func(p string) bool {
+		rel, err := filepath.Rel(root, p)
+		return err == nil && keep(filepath.ToSlash(rel))
 	})
 }
 

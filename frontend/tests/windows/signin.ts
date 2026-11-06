@@ -114,14 +114,19 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   const cdp = await context.newCDPSession(page);
   await cdp.send('WebAuthn.enable');
   await cdp.send('WebAuthn.addVirtualAuthenticator', { options: { protocol: 'ctap2', transport: 'internal', hasResidentKey: true, hasUserVerification: true, isUserVerified: true } });
-  const added = await page.evaluate(async () => {
+  const asked = await page.evaluate(async (pw) => {
+    const post = (body: unknown) => fetch('/api/v1/me/passkeys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.status);
+    return [await post({ name: 'Testgerät' }), await post({ name: 'Testgerät', password: pw + '-falsch' })];
+  }, adminPw);
+  check('a passkey wants the current password, and the right one', asked[0] === 400 && asked[1] === 403, asked);
+  const added = await page.evaluate(async (pw) => {
     const b64 = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (s.length % 4)) % 4)), (c) => c.charCodeAt(0));
     const post = (body: unknown) => fetch('/api/v1/me/passkeys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    const { options } = await (await post({ name: 'Testgerät' })).json();
+    const { options } = await (await post({ name: 'Testgerät', password: pw })).json();
     const pk = options.publicKey;
     const credential = await navigator.credentials.create({ publicKey: { ...pk, challenge: b64(pk.challenge), user: { ...pk.user, id: b64(pk.user.id) }, excludeCredentials: [] } });
     return (await post({ name: 'Testgerät', credential: (credential as PublicKeyCredential & { toJSON(): unknown }).toJSON() })).status;
-  });
+  }, adminPw);
   check('a passkey is registered', added === 201, added);
   await page.evaluate(() => fetch('/api/v1/auth/logout', { method: 'POST' }));
   await page.goto(base + '/');
@@ -129,6 +134,55 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await page.click('[data-cl="passkey"]');
   await page.waitForSelector('#app', { timeout: 30000 });
   check('the passkey signs in without name and code', (await page.evaluate(() => fetch('/api/v1/me').then((r) => r.json()))).name === admin);
+
+  // A token from the security tab asks for the password and says so when it is wrong.
+  const top = () => page.locator('.win').last();
+  const settingsTab = async (name: string) => {
+    await page.locator('[aria-label="Einstellungen"]').first().click();
+    await page.getByText(name, { exact: true }).first().click();
+    await page.waitForTimeout(400);
+  };
+  await settingsTab('Konto & Sicherheit');
+  await page.click('[data-tadd]');
+  await top().locator('#a-tkname').fill('backup-skript');
+  await page.screenshot({ path: join(shots, 'token-password.png') });
+  await top().getByRole('button', { name: 'Erstellen' }).click();
+  await page.waitForTimeout(500);
+  check('a token without the password is held back', (await page.locator('.glim-toast').allInnerTexts()).some((t: string) => t.includes('aktuelle Passwort fehlt')));
+  await top().locator('#a-tkpw').fill(adminPw + '-falsch');
+  await top().getByRole('button', { name: 'Erstellen' }).click();
+  await page.waitForTimeout(800);
+  check('a wrong password is explained in the token window', (await page.locator('.glim-toast').allInnerTexts()).some((t: string) => t.includes('stimmt nicht')) && (await top().locator('#a-tkpw').count()) === 1);
+  await top().locator('#a-tkpw').fill(adminPw);
+  await top().getByRole('button', { name: 'Erstellen' }).click();
+  await top().locator('.glim-copy-field, input[readonly]').first().waitFor({ timeout: 10000 }).catch(() => {});
+  check('the right password makes the token', (await send('GET', '/me/tokens')).body?.items?.some((t: { name: string }) => t.name === 'backup-skript'));
+  await top().getByRole('button', { name: 'Fertig' }).click();
+
+  // Anna's own session and token, seen and ended by the admin.
+  const annaApi = await request.newContext({ baseURL: base });
+  await annaApi.post('/api/v1/auth/login', { data: { username: 'anna', password: 'anna-ihr-langes-passwort' } });
+  const annaToken = await annaApi.post('/api/v1/me/tokens', { data: { name: 'fotos-sync', rights: 'r', password: 'anna-ihr-langes-passwort' } });
+  check('anna makes a token with her password', annaToken.status() === 201, annaToken.status());
+  await settingsTab('Benutzer & Gruppen');
+  await page.locator('.glim-list-row, [data-uopen]', { hasText: 'Anna' }).first().click();
+  await top().locator('[data-uaccess]').waitFor();
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: join(shots, 'user-access-row.png') });
+  await top().locator('[data-uaccess]').click();
+  await top().locator('[data-acc-token]').waitFor({ timeout: 10000 }).catch(() => {});
+  check("the admin sees anna's session and token", (await top().locator('[data-acc-session]').count()) === 1 && (await top().locator('[data-acc-token]').count()) === 1);
+  await page.screenshot({ path: join(shots, 'user-access.png') });
+  await top().locator('[data-acc-token]').click();
+  await top().getByRole('button', { name: 'Widerrufen' }).click();
+  await page.waitForTimeout(800);
+  check("the admin revokes anna's token", (await top().locator('[data-acc-token]').count()) === 0 && (await annaApi.get('/api/v1/me', { headers: { Authorization: 'Bearer ' + (await annaToken.json()).secret } })).status() === 401);
+  await top().locator('[data-acc-all]').click();
+  await top().getByRole('button', { name: 'Beenden', exact: true }).click();
+  await page.waitForTimeout(800);
+  check('ending all access signs anna out', (await top().locator('[data-acc-session]').count()) === 0 && (await annaApi.get('/api/v1/me')).status() === 401);
+  await page.screenshot({ path: join(shots, 'user-access-ended.png') });
+  await annaApi.dispose();
   await context.close();
 }
 

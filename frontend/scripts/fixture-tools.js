@@ -678,8 +678,8 @@ export function toolsFixture(engine) {
   const SLUG = /^[a-z0-9][a-z0-9-]{2,39}$/;
   const t0 = now();
   const shares = [
-    { id: 's1', slug: 'k3x9qa-urlaub', kind: 'folder', name: 'Urlaub', paths: ['/mnt/user/fotos/Urlaub'], owner: 'jdp', created: t0 - 5 * DAY, expires: t0 + 25 * DAY, password: true, limit: 0, downloads: 3, views: 14, uploads: false, uploadLimit: 0, uploaded: 0, notify: false },
-    { id: 's2', slug: 'p7q2mv-rechnung', kind: 'file', name: 'Rechnung-Oktober.pdf', paths: ['/mnt/user/dokumente/Rechnung-Oktober.pdf'], owner: 'jdp', created: t0 - DAY, expires: t0 + 6 * DAY, password: false, limit: 5, downloads: 1, views: 2, uploads: false, uploadLimit: 0, uploaded: 0, notify: true },
+    { id: 's1', slug: 'k3x9qa-urlaub', kind: 'folder', name: 'Urlaub', paths: ['/mnt/user/fotos/Urlaub'], owner: 'jdp', created: t0 - 5 * DAY, expires: t0 + 25 * DAY, password: true, limit: 0, downloads: 3, views: 14, uploads: false, uploadLimit: 0, uploaded: 0, notify: false, message: '' },
+    { id: 's2', slug: 'p7q2mv-rechnung', kind: 'file', name: 'Rechnung-Oktober.pdf', paths: ['/mnt/user/dokumente/Rechnung-Oktober.pdf'], owner: 'jdp', created: t0 - DAY, expires: t0 + 6 * DAY, password: false, limit: 5, downloads: 1, views: 2, uploads: false, uploadLimit: 0, uploaded: 0, notify: true, message: '' },
   ];
   const shareOut = (s) => ({
     ...s, created: iso(s.created), expires: s.expires == null ? null : iso(s.expires),
@@ -704,13 +704,14 @@ export function toolsFixture(engine) {
     if (kind === 'collection' && !String(b.name || '').trim()) return [400, 'a collection needs a name'];
     if (b.password != null && b.password !== '' && b.password.length < 6) return [400, 'the password needs at least 6 characters'];
     if (b.uploads && kind !== 'folder') return [400, 'only a link to one folder takes uploads'];
+    if (String(b.message || '').length > 2000) return [400, 'the message can have at most 2000 characters'];
     const slug = b.slug ? String(b.slug).toLowerCase() : freshSlug(kind === 'collection' ? b.name : base(paths[0]));
     const bad = slugProblem(slug);
     if (bad) return bad;
     const s = {
       id: nextId('s'), slug, kind, name: kind === 'collection' ? b.name.trim() : base(paths[0]), paths, owner: 'jdp', created: now(),
       expires: b.expires ? Date.parse(b.expires) : null, password: !!b.password, limit: b.limit || 0, downloads: 0, views: 0,
-      uploads: !!b.uploads, uploadLimit: b.uploadLimit || 0, uploaded: 0, notify: !!b.notify,
+      uploads: !!b.uploads, uploadLimit: b.uploadLimit || 0, uploaded: 0, notify: !!b.notify, message: String(b.message || ''),
     };
     shares.unshift(s);
     // The fixture has no visitors, so someone opens a link that asks for a note a few seconds later.
@@ -735,7 +736,7 @@ export function toolsFixture(engine) {
       if (b.password && b.password.length < 6) return [400, 'the password needs at least 6 characters'];
       s.password = !!b.password;
     }
-    for (const k of ['name', 'limit', 'uploads', 'uploadLimit', 'notify']) if (k in b) s[k] = b[k];
+    for (const k of ['name', 'message', 'limit', 'uploads', 'uploadLimit', 'notify']) if (k in b) s[k] = b[k];
     return [200, shareOut(s)];
   }
 

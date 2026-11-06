@@ -8,6 +8,7 @@ import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { ago, attempt, c, confirmWin, P } from '@/features/config/shared';
+import { takePending } from '../proof';
 import { device } from '../sessions';
 import CodeWin from '../wins/CodeWin.vue';
 import CodesWin from '../wins/CodesWin.vue';
@@ -25,11 +26,19 @@ async function load() {
   if (s.status === 'fulfilled') sessions.value = s.value;
   if (t.status === 'fulfilled') tokens.value = t.value;
 }
-onMounted(() => { load().catch(() => {}); });
+// Back from signing in again for a new token or passkey, the window that asked for it opens once more.
+onMounted(async () => {
+  await load().catch(() => {});
+  const again = takePending();
+  if (again === 'token') addToken();
+  else if (again === 'passkey' && keys.value.enabled) addPasskey();
+});
 const others = computed(() => sessions.value.filter((s) => !s.current));
 const passkeys = computed(() => keys.value.items);
 // Some accounts sign in elsewhere or have their password kept by the admin, and then it is not changed here.
 const ownPassword = computed(() => !!acc.value && acc.value.loginMethod === 'password' && !acc.value.lockPassword);
+// New tokens and passkeys ask for the password of an account that has one, even one only the admin may change.
+const proof = () => acc.value?.loginMethod !== 'oidc';
 
 const password = () => win({ title: c('security.changePw'), body: PasswordWin, props: { done: load } });
 const totpOn = () => win({ title: c('security.totpSetup'), wide: true, body: TotpWin, props: { done: load } });
@@ -38,8 +47,8 @@ const newCodes = () => win({ title: c('security.newCodes'), body: CodeWin, props
   const { codes } = await me.totpCodes(code);
   setTimeout(() => win({ title: c('security.newCodes'), body: CodesWin, props: { codes, done: async () => { await load(); toast(c('security.codesNew')); } } }), 0);
 } } });
-const addPasskey = () => win({ title: c('security.addPasskey'), body: PasskeyWin, props: { taken: passkeys.value.map((p) => p.name), done: load } });
-const addToken = () => win({ title: c('security.addToken'), body: TokenWin, props: { taken: tokens.value.map((t) => t.name), done: load } });
+const addPasskey = () => win({ title: c('security.addPasskey'), body: PasskeyWin, props: { taken: passkeys.value.map((p) => p.name), password: proof(), done: load } });
+const addToken = () => win({ title: c('security.addToken'), body: TokenWin, props: { taken: tokens.value.map((t) => t.name), password: proof(), done: load } });
 
 function removePasskey(p: Passkey) {
   confirmWin({ title: c('security.removePasskey'), verb: c('remove'), glyph: 'IconTrash', text: [c('security.removePasskeyText', { name: p.name })],

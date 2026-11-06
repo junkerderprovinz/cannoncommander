@@ -42,9 +42,9 @@ func TestHeicTransformOrientationMapping(t *testing.T) {
 
 func TestParseHEICPrimaryIrotUsesPrimaryItem(t *testing.T) {
 	data := buildSyntheticHEIC(heicFixture{
-		primaryItemID: 1,
-		primaryIrot:   0,
-		thumbnailItem: &heicItemFixture{itemID: 2, irot: 3},
+		primaryItemID:   1,
+		primaryIrot:     0,
+		thumbnailItem:   &heicItemFixture{itemID: 2, irot: 3},
 		decoyIrotInMDAT: true,
 	})
 	got := parseHEICPrimaryIrot(data)

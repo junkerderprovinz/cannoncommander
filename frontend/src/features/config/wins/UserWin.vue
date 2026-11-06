@@ -4,18 +4,21 @@ import { Button, FieldRow, FieldRowGroup, PasswordField, PathField, Pill, Select
 import { nextTick, onMounted, reactive, ref } from 'vue';
 import { admin, exists, type Group, type Role, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
-import { cancelBtn, type WinEntry } from '@/core/windows';
+import { cancelBtn, win, type WinEntry } from '@/core/windows';
 import { useUser } from '@/stores/user';
 import { attempt, c, fail, stepFoot } from '@/features/config/shared';
 import { eyeWords, segItems } from '@/ui/kit';
 import { ROLES, roleName } from '../roles';
+import AccessWin from './AccessWin.vue';
 
 const props = defineProps<{ win: WinEntry; user: User | null; users: User[]; groups: Group[]; saved: () => void }>();
 const u = props.user, isNew = !u;
 const self = !!u && u.name === useUser().me.name;
 const d = reactive({ name: u?.name ?? '', full: u?.full ?? '', role: (u?.role ?? 'user') as Role, scope: u?.scope ?? '/mnt/user' });
 const inGroup = reactive(Object.fromEntries(props.groups.map((g) => [g.name, !!u?.groups.includes(g.name)])));
-const pwOpen = ref(isNew), pw1 = ref(''), pw2 = ref('');
+const pwOpen = ref(isNew), pw1 = ref(''), pw2 = ref(''), revoke = ref(false);
+// How many sessions, tokens and passkeys the person has, null until the server answered.
+const ways = ref<number | null>(null);
 const at = (sel: string) => props.win.el?.querySelector(sel) ?? null;
 const admins = () => props.users.filter((x) => x.role === 'admin');
 
@@ -38,14 +41,25 @@ async function save() {
   }
   const groups = props.groups.filter((g) => inGroup[g.name]).map((g) => g.name);
   const body = { name, full: d.full.trim() || name, role: d.role, scope, groups };
-  const done = await attempt(u ? admin.updateUser(u.name, { ...body, ...(pwOpen.value ? { password: pw1.value } : {}) }) : admin.createUser({ ...body, password: pw1.value }), at('#a-uname'));
+  const change = pwOpen.value ? { password: pw1.value, ...(revoke.value ? { revoke: true } : {}) } : {};
+  const done = await attempt(u ? admin.updateUser(u.name, { ...body, ...change }) : admin.createUser({ ...body, password: pw1.value }), at('#a-uname'));
   if (!done) return;
   props.win.close();
-  toast(isNew ? c('users.created', { name: body.full }) : pwOpen.value ? c('users.savedPw') : c('saved'));
+  toast(isNew ? c('users.created', { name: body.full }) : pwOpen.value ? c(revoke.value ? 'access.savedPwEnded' : 'users.savedPw') : c('saved'));
   props.saved();
 }
 
-onMounted(() => stepFoot(props.win, [cancelBtn(), { label: isNew ? c('users.create') : c('save'), g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: () => { save(); return false; } }]));
+async function countWays() {
+  if (!u || self) return;
+  const lists = await Promise.all([admin.userSessions(u.name), admin.userTokens(u.name), admin.userPasskeys(u.name)]).catch(() => null);
+  ways.value = lists ? lists.reduce((n, l) => n + l.length, 0) : null;
+}
+const showAccess = () => u && win({ title: c('access.title', { who: u.full || u.name }), wide: true, body: AccessWin, props: { user: u, changed: () => { countWays(); props.saved(); } } });
+
+onMounted(() => {
+  stepFoot(props.win, [cancelBtn(), { label: isNew ? c('users.create') : c('save'), g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: () => { save(); return false; } }]);
+  countWays();
+});
 </script>
 
 <template>
@@ -67,9 +81,14 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: isNew ? c('users.crea
     <template v-if="pwOpen">
       <FieldRow :label="c('users.password')" :hint="c('users.pwTip')"><PasswordField id="a-upw" v-model="pw1" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
       <FieldRow :label="c('users.repeat')"><PasswordField id="a-upw2" v-model="pw2" width="medium" autocomplete="new-password" :text="eyeWords()" /></FieldRow>
+      <FieldRow v-if="!isNew" :label="c('access.revoke')" :hint="c('access.revokeTip')"><Toggle id="a-urevoke" v-model="revoke" /></FieldRow>
     </template>
     <FieldRow v-else :label="c('users.password')" :hint="self ? c('users.ownPwTip') : c('users.newPwTip')">
       <Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="openPassword" />
+    </FieldRow>
+    <FieldRow v-if="!isNew" :label="c('access.ways')" :hint="c('access.waysTip')">
+      <Pill v-if="ways !== null">{{ ways === 0 ? c('access.none') : ways === 1 ? c('access.one') : c('access.many', { n: ways }) }}</Pill>
+      <Button data-uaccess :label="c('access.show')" label-key="IconKeyRevoke" @click="showAccess" />
     </FieldRow>
   </SubCard>
 </template>

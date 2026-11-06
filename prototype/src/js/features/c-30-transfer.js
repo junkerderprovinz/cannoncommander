@@ -187,6 +187,7 @@
   // The options every new link has, for a single file as for a collection.
   const linkOptions = (name, dir) => `<div class="well"><div class="eyebrow">Neuer Link</div>
       ${frow('Adresse', `<span class="cs-slugf"><span class="muted mono cs-host">${esc(HOST.replace('https://', ''))}</span><input class="field mono" id="cs-slug" value="${esc(freshSlug(name))}" autocomplete="off" spellcheck="false" aria-label="Ende der Adresse"><button class="btn icon" id="cs-dice" type="button" data-tip="Link neu würfeln" aria-label="Link neu würfeln">${g('IconRetry')}</button></span>`, 'Das Ende der Adresse kannst du selbst schreiben, etwa urlaub-2026. Erlaubt sind Kleinbuchstaben, Ziffern und Bindestriche. Der Würfel macht eine neue Adresse, die sich schwer erraten lässt.')}
+      ${frow('Nachricht an die Gegenseite', '<textarea class="field w" id="cs-msg" rows="2" maxlength="2000" placeholder="etwa: Hier sind die Fotos vom Wochenende"></textarea>', 'Steht auf der Seite des Links über den Dateien, etwa ein Gruß oder ein Hinweis. Darf leer bleiben.')}
       ${frow('Gültig', seg(EXPIRY, '7', 'id="cs-exp"'), 'Danach führt der Link ins Leere. Verlängern kannst du ihn unter Freigaben.')}
       ${frow('Download-Limit', seg(LIMITS, '0', 'id="cs-limit"'), 'Nach so vielen Downloads führt der Link ins Leere. Ansehen im Browser zählt nicht mit.')}
       ${frow('Mit Passwort', sw(false, 'id="cs-pw"'))}
@@ -205,7 +206,7 @@
     if (pw && pass.length < 6) { CC.toast('Das Passwort braucht mindestens 6 Zeichen', 'warn'); $('#cs-pass', s).focus(); return null; }
     const days = +segVal($('#cs-exp', s));
     return { by: CC.user.name, created: Date.now(), expires: days ? Date.now() + days * DAY : null, password: pw, uploads: !!$('#cs-up', s) && swVal($('#cs-up', s)),
-      limit: +segVal($('#cs-limit', s)), notify: swVal($('#cs-notify', s)), views: 0, slug };
+      limit: +segVal($('#cs-limit', s)), notify: swVal($('#cs-notify', s)), message: $('#cs-msg', s).value.trim(), views: 0, slug };
   }
   function publish(link, title) {
     DATA.shares.unshift(link);
