@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Lewe okno",
     "right": "Prawe okno",
@@ -2378,7 +2377,7 @@
     "colChanged": "Zmodyfikowano",
     "noFolder": "Ten folder nie istnieje",
     "unknown": "Nie znam {fields}",
-    "unknownHint": "",
+    "unknownHint": "Rozumiem np. szerokość, wysokość, kodek, wykonawca, aparat, rozmiar, zmieniono, długość i każdą nazwę kolumny",
     "nothing": "Nic nie znaleziono",
     "nothingHint": "Inny folder albo mniej warunków może znajdzie więcej",
     "asTab": "Otwórz jako kartę",
@@ -2412,22 +2411,22 @@
     "menuNewLabel": "Nowe wyszukiwanie",
     "menuNone": "Wpisz wzorzec i zapisz go przyciskiem w polu.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "podatki",
+      "word": "raport"
     },
     "menuExamples": "Przykłady",
     "examples": {
       "mkv": "wszystkie pliki MKV, także w podfolderach",
-      "tag": "",
-      "word": "",
+      "tag": "wszystko z tagiem {tag}",
+      "word": "nazwy, w których występuje {word}",
       "one": "? oznacza dokładnie jeden znak",
       "meta": "filmy 4K w HEVC, z metadanych",
       "week": "wszystko, co zmieniło się w ostatnich 7 dniach"
     },
     "server": "Serwer",
-    "unknownFields": "",
+    "unknownFields": "Nie znam {fields}. Rozumiem np. szerokość, wysokość, kodek, wykonawca, aparat, rozmiar, zmieniono, długość i każdą nazwę kolumny, np. obiektyw albo rok",
     "unknownField": "„{f}:”",
-    "quoted": ""
+    "quoted": "„{text}”"
   },
   "share": {
     "share": "Udostępnij",
@@ -2737,27 +2736,27 @@
     "clipCopy": "Kopiuj do schowka",
     "clipPaste": "Wklej",
     "nothingOn": "Nic z tego nie leży na {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Zostanie pominięty",
+    "sameSkipTip": "W celu leży ten sam plik pod inną ścieżką, np. jako twarde dowiązanie albo przez Disk Share i User Share. Zostaje bez zmian.",
     "sameSkipped": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "Pominięto {n} plik, bo w celu to ten sam plik",
+      "few": "Pominięto {n} pliki, bo w celu to te same pliki",
+      "many": "Pominięto {n} plików, bo w celu to te same pliki",
+      "other": "Pominięto {n} pliku, bo w celu to te same pliki"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Skopiowano: {files} do {to}. {same}",
+    "movedSame": "Przeniesiono: {files} do {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "Nic nie skopiowano. Plik w celu jest tym samym plikiem i zostaje bez zmian",
+      "few": "Nic nie skopiowano. {n} pliki w celu to te same pliki i zostają bez zmian",
+      "many": "Nic nie skopiowano. {n} plików w celu to te same pliki i zostają bez zmian",
+      "other": "Nic nie skopiowano. {n} pliku w celu to te same pliki i zostają bez zmian"
     },
     "nothingMoved": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "Nic nie przeniesiono. Plik w celu jest tym samym plikiem i zostaje bez zmian",
+      "few": "Nic nie przeniesiono. {n} pliki w celu to te same pliki i zostają bez zmian",
+      "many": "Nic nie przeniesiono. {n} plików w celu to te same pliki i zostają bez zmian",
+      "other": "Nic nie przeniesiono. {n} pliku w celu to te same pliki i zostają bez zmian"
     }
   },
   "trash": {
@@ -3417,7 +3416,7 @@
     "gid": "GID",
     "special": "Bity specjalne",
     "dimensions": "Wymiary",
-    "duration": "Czas trwania",
+    "duration": "Długość",
     "vcodec": "Kodek wideo",
     "acodec": "Kodek audio",
     "framerate": "Liczba klatek",
@@ -3439,7 +3438,7 @@
     "abitrate": "Przepływność",
     "samplerate": "Częstotliwość próbkowania",
     "channels": "Kanały",
-    "camera": "Model aparatu",
+    "camera": "Aparat",
     "taken": "Wykonano",
     "make": "Producent aparatu",
     "lens": "Obiektyw",
@@ -3495,38 +3494,38 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Poziomo",
+      "portrait": "Pionowo",
+      "square": "Kwadrat"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Błysk",
+      "off": "Bez błysku"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "{n} kanał",
+      "few": "{n} kanały",
+      "many": "{n} kanałów",
+      "other": "{n} kanału"
     },
     "method": {
-      "none": ""
+      "none": "Brak"
     },
-    "methodNumber": "",
+    "methodNumber": "Metoda {n}",
     "arch": {
-      "all": ""
+      "all": "Wszystkie"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Nieznany"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "szerokość",
+    "height": "wysokość",
+    "vcodec": "kodek",
+    "modified": "zmieniono"
   },
   "kinds": {
     "folder": "Folder",

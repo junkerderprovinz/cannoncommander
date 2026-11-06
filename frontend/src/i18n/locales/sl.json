@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Levo okno",
     "right": "Desno okno",
@@ -2378,7 +2377,7 @@
     "colChanged": "Spremenjeno",
     "noFolder": "Ta mapa ne obstaja",
     "unknown": "{fields} ne poznam",
-    "unknownHint": "",
+    "unknownHint": "Razumem na primer širina, višina, kodek, izvajalec, fotoaparat, velikost, spremenjeno, dolžina in vsako ime stolpca",
     "nothing": "Nič ni najdeno",
     "nothingHint": "Druga mapa ali manj pogojev morda najde več",
     "asTab": "Odpri kot zavihek",
@@ -2412,22 +2411,22 @@
     "menuNewLabel": "Novo iskanje",
     "menuNone": "Vtipkajte vzorec in ga shranite z gumbom v polju.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "davki",
+      "word": "poročilo"
     },
     "menuExamples": "Primeri",
     "examples": {
       "mkv": "vse datoteke MKV, tudi v podmapah",
-      "tag": "",
-      "word": "",
+      "tag": "vse z značko {tag}",
+      "word": "imena, v katerih se pojavi {word}",
       "one": "? pomeni natanko en znak",
       "meta": "filmi 4K v HEVC, iz metapodatkov",
       "week": "vse, kar se je spremenilo v zadnjih 7 dneh"
     },
     "server": "Strežnik",
-    "unknownFields": "",
+    "unknownFields": "{fields} ne poznam. Razumem na primer širina, višina, kodek, izvajalec, fotoaparat, velikost, spremenjeno, dolžina in vsako ime stolpca, na primer objektiv ali leto",
     "unknownField": "„{f}:“",
-    "quoted": ""
+    "quoted": "„{text}“"
   },
   "share": {
     "share": "Deli",
@@ -2737,27 +2736,27 @@
     "clipCopy": "Kopiraj v odložišče",
     "clipPaste": "Prilepi",
     "nothingOn": "Na {disk} ni nič od tega",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Bo preskočeno",
+    "sameSkipTip": "V cilju je ista datoteka pod drugo potjo, na primer kot trda povezava ali prek Disk Share in User Share. Ostane, kot je.",
     "sameSkipped": {
-      "one": "",
-      "two": "",
-      "few": "",
-      "other": ""
+      "one": "Preskočena {n} datoteka, ker je v cilju ista datoteka",
+      "two": "Preskočeni {n} datoteki, ker sta v cilju isti datoteki",
+      "few": "Preskočene {n} datoteke, ker so v cilju iste datoteke",
+      "other": "Preskočenih {n} datotek, ker so v cilju iste datoteke"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Kopirano: {files} v {to}. {same}",
+    "movedSame": "Premaknjeno: {files} v {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "two": "",
-      "few": "",
-      "other": ""
+      "one": "Nič ni kopirano. {n} datoteka v cilju je ista in ostane, kot je",
+      "two": "Nič ni kopirano. {n} datoteki v cilju sta isti in ostaneta, kot sta",
+      "few": "Nič ni kopirano. {n} datoteke v cilju so iste in ostanejo, kot so",
+      "other": "Nič ni kopirano. {n} datotek v cilju je istih in ostanejo, kot so"
     },
     "nothingMoved": {
-      "one": "",
-      "two": "",
-      "few": "",
-      "other": ""
+      "one": "Nič ni premaknjeno. {n} datoteka v cilju je ista in ostane, kot je",
+      "two": "Nič ni premaknjeno. {n} datoteki v cilju sta isti in ostaneta, kot sta",
+      "few": "Nič ni premaknjeno. {n} datoteke v cilju so iste in ostanejo, kot so",
+      "other": "Nič ni premaknjeno. {n} datotek v cilju je istih in ostanejo, kot so"
     }
   },
   "trash": {
@@ -3439,7 +3438,7 @@
     "abitrate": "Bitna hitrost",
     "samplerate": "Frekvenca vzorčenja",
     "channels": "Kanali",
-    "camera": "Model fotoaparata",
+    "camera": "Fotoaparat",
     "taken": "Posneto",
     "make": "Proizvajalec fotoaparata",
     "lens": "Objektiv",
@@ -3495,38 +3494,38 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Ležeče",
+      "portrait": "Pokončno",
+      "square": "Kvadrat"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Sprožena",
+      "off": "Brez bliskavice"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "two": "",
-      "few": "",
-      "other": ""
+      "one": "{n} kanal",
+      "two": "{n} kanala",
+      "few": "{n} kanali",
+      "other": "{n} kanalov"
     },
     "method": {
-      "none": ""
+      "none": "Brez"
     },
-    "methodNumber": "",
+    "methodNumber": "Metoda {n}",
     "arch": {
-      "all": ""
+      "all": "Vse"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Neznan"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "širina",
+    "height": "višina",
+    "vcodec": "kodek",
+    "modified": "spremenjeno"
   },
   "kinds": {
     "folder": "Mapa",

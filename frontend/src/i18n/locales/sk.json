@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Ľavé okno",
     "right": "Pravé okno",
@@ -2378,7 +2377,7 @@
     "colChanged": "Zmenené",
     "noFolder": "Tento priečinok neexistuje",
     "unknown": "{fields} nepoznám",
-    "unknownHint": "",
+    "unknownHint": "Rozumiem napríklad šírka, výška, kodek, interpret, fotoaparát, veľkosť, zmenené, dĺžka a každému názvu stĺpca",
     "nothing": "Nič sa nenašlo",
     "nothingHint": "Iný priečinok alebo menej podmienok možno nájde viac",
     "asTab": "Otvoriť ako kartu",
@@ -2412,22 +2411,22 @@
     "menuNewLabel": "Nové hľadanie",
     "menuNone": "Napíšte vzor a uložte ho tlačidlom v poli.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "dane",
+      "word": "správa"
     },
     "menuExamples": "Príklady",
     "examples": {
       "mkv": "všetky súbory MKV, aj v podpriečinkoch",
-      "tag": "",
-      "word": "",
+      "tag": "všetko so štítkom {tag}",
+      "word": "názvy, v ktorých sa vyskytuje {word}",
       "one": "? znamená práve jeden znak",
       "meta": "filmy 4K v HEVC, z metadát",
       "week": "všetko, čo sa zmenilo za posledných 7 dní"
     },
     "server": "Server",
-    "unknownFields": "",
+    "unknownFields": "{fields} nepoznám. Rozumiem napríklad šírka, výška, kodek, interpret, fotoaparát, veľkosť, zmenené, dĺžka a každému názvu stĺpca, napríklad objektív alebo rok",
     "unknownField": "„{f}:“",
-    "quoted": ""
+    "quoted": "„{text}“"
   },
   "share": {
     "share": "Zdieľať",
@@ -2737,27 +2736,27 @@
     "clipCopy": "Kopírovať do schránky",
     "clipPaste": "Vložiť",
     "nothingOn": "Na {disk} z toho nič neleží",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Preskočí sa",
+    "sameSkipTip": "V cieli leží ten istý súbor pod inou cestou, napríklad ako pevný odkaz alebo cez Disk Share a User Share. Zostane, ako je.",
     "sameSkipped": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "Preskočený {n} súbor, pretože v cieli je to ten istý súbor",
+      "few": "Preskočené {n} súbory, pretože v cieli sú to tie isté súbory",
+      "many": "Preskočených {n} súboru, pretože v cieli sú to tie isté súbory",
+      "other": "Preskočených {n} súborov, pretože v cieli sú to tie isté súbory"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Skopírované: {files} do {to}. {same}",
+    "movedSame": "Presunuté: {files} do {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "Nič sa neskopírovalo. Súbor v cieli je ten istý a zostane, ako je",
+      "few": "Nič sa neskopírovalo. {n} súbory v cieli sú tie isté a zostanú, ako sú",
+      "many": "Nič sa neskopírovalo. {n} súboru v cieli sú tie isté a zostanú, ako sú",
+      "other": "Nič sa neskopírovalo. {n} súborov v cieli sú tie isté a zostanú, ako sú"
     },
     "nothingMoved": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "Nič sa nepresunulo. Súbor v cieli je ten istý a zostane, ako je",
+      "few": "Nič sa nepresunulo. {n} súbory v cieli sú tie isté a zostanú, ako sú",
+      "many": "Nič sa nepresunulo. {n} súboru v cieli sú tie isté a zostanú, ako sú",
+      "other": "Nič sa nepresunulo. {n} súborov v cieli sú tie isté a zostanú, ako sú"
     }
   },
   "trash": {
@@ -3439,7 +3438,7 @@
     "abitrate": "Dátový tok",
     "samplerate": "Vzorkovacia frekvencia",
     "channels": "Kanály",
-    "camera": "Model fotoaparátu",
+    "camera": "Fotoaparát",
     "taken": "Zhotovené",
     "make": "Výrobca fotoaparátu",
     "lens": "Objektív",
@@ -3495,38 +3494,38 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Vodorovne",
+      "portrait": "Zvisle",
+      "square": "Štvorec"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Odpálený",
+      "off": "Bez blesku"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "few": "",
-      "many": "",
-      "other": ""
+      "one": "{n} kanál",
+      "few": "{n} kanály",
+      "many": "{n} kanála",
+      "other": "{n} kanálov"
     },
     "method": {
-      "none": ""
+      "none": "Žiadna"
     },
-    "methodNumber": "",
+    "methodNumber": "Metóda {n}",
     "arch": {
-      "all": ""
+      "all": "Všetky"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Neznámy"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "šírka",
+    "height": "výška",
+    "vcodec": "kodek",
+    "modified": "zmenené"
   },
   "kinds": {
     "folder": "Priečinok",
