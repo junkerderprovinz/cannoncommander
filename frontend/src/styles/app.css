@@ -1,3 +1,4 @@
+@import './motion.css';
 :root { --window-bar: 0px; --gut: 1rem; --row-h: 2.25rem; --side-w: 17rem; }
 :root[data-density="compact"] { --row-h: 1.85rem; }
 :root[data-density="comfortable"] { --row-h: 2.6rem; }
@@ -68,7 +69,7 @@ svg { display: block; }
 .glim-nav-row:has(> .drop) { outline: 2px dashed var(--accent-ink); outline-offset: -2px; }
 #side { --nav-row-h: 2.1rem; }
 .tree-tog { width: 1.1rem; height: 1.1rem; display: grid; place-items: center; flex: none; border-radius: var(--radius-control); color: var(--carbon-text-muted); }
-.tree-tog svg { width: .7rem; height: .7rem; color: currentColor; transform: rotate(-90deg); transition: transform .12s; }
+.tree-tog svg { width: .7rem; height: .7rem; color: currentColor; transform: rotate(-90deg); }
 .tree-tog.open svg { transform: none; }
 .tree-tog:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
 .glim-active .tree-tog { color: var(--accent-contrast); }
@@ -135,7 +136,7 @@ svg { display: block; }
 .panel:not(.active) .row.cursor { outline: none; }
 /* With two panels the one that keys and commands act on stays bright; the other steps back. */
 .app.dual .panel:not(.active) .ptab.cur { background: var(--carbon-surface3); color: var(--carbon-text); }
-.app.dual .panel:not(.active) :is(.list, .crumbs, .lfoot) { opacity: .62; transition: opacity .15s; }
+.app.dual .panel:not(.active) :is(.list, .crumbs, .lfoot) { opacity: .62; transition: opacity var(--motion-control-dur, .15s); }
 .app.dual .panel:not(.active):hover :is(.list, .crumbs, .lfoot) { opacity: .85; }
 .row.up .t { color: var(--carbon-text-sub); }
 .row.hidden .t { color: var(--carbon-text-muted); }
@@ -172,7 +173,6 @@ svg { display: block; }
 :root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+6) { --accent-glyph: #FF832B; }
 :root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+7) { --accent-glyph: #3DDBD9; }
 :root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+8) { --accent-glyph: #FF7EB6; }
-:root[data-rotate] :is(#shortcuts, #tree, .tiles, .list) svg { animation: cc-hue 14s linear infinite; }
 @keyframes cc-hue { to { filter: hue-rotate(360deg); } }
 
 /* Labels, one axis each: buttons, sidebar, tabs and the phone's bottom bar. */
@@ -181,7 +181,6 @@ svg { display: block; }
 :root[data-labels-bottombar="text"] .bottombar button > svg { display: none; }
 :root:is([data-labels-bottombar="glyph"], [data-labels-bottombar="reactive"]) .bottombar button > span { display: none; }
 :root[data-labels-bottombar="reactive"] .bottombar button[aria-current="page"] > span { display: inline; }
-:root[data-motion="off"] *, :root[data-motion="off"] *::before, :root[data-motion="off"] *::after { transition: none !important; animation: none !important; }
 
 .bottombar { display: none; }
 @media (max-width: 1100px) { .app.dual .panels { grid-template-columns: 1fr; } .app.dual .panel:not(.active) { display: none; } }
@@ -321,7 +320,7 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .xmid { position: relative; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
 .xsum { font-size: 12px; color: var(--carbon-text-sub); white-space: nowrap; }
 .xtrack { position: relative; width: 100%; height: 1.9rem; display: grid; place-items: center; }
-.xline { position: absolute; left: 0; right: 0; top: 50%; translate: 0 -50%; height: 2px; background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, transparent) 0 6px, transparent 6px 12px); background-size: 24px 2px; animation: xflow 1s linear infinite; }
+.xline { position: absolute; left: 0; right: 0; top: 50%; translate: 0 -50%; height: 2px; background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, transparent) 0 6px, transparent 6px 12px); background-size: 24px 2px; }
 @keyframes xflow { to { background-position: 24px 0; } }
 .xarrow { position: relative; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-contrast); box-shadow: 0 0 0 4px var(--carbon-surface); }
 .xarrow svg { width: .9rem; height: .9rem; }
@@ -332,13 +331,21 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .xchip small { color: var(--carbon-text-muted); font-size: 11px; flex: none; }
 .xchip.more { color: var(--carbon-text-sub); }
 .xmore summary { cursor: pointer; padding: .55rem 0 .2rem; font-size: 13px; color: var(--carbon-text-sub); list-style: none; display: flex; align-items: center; gap: .4rem; }
-.xmore summary::before { content: "›"; display: inline-block; transition: rotate .15s; }
+.xmore summary::before { content: "›"; display: inline-block; }
 .xmore[open] summary::before { rotate: 90deg; }
 .xdel { display: flex; align-items: center; gap: 1rem; padding: .6rem .3rem; }
 .xbin { width: 3rem; display: grid; place-items: center; flex: none; }
 .xbin svg { width: 2.4rem; height: 2.4rem; color: var(--accent-glyph); }
 .xdel b { display: block; font-size: 16px; font-weight: 600; word-break: break-word; }
 .xdel span { display: block; margin-top: .2rem; font-size: 13px; color: var(--carbon-text-sub); }
-.forever .xbin svg { animation: xshake .4s; }
-@keyframes xshake { 25% { rotate: -8deg; } 75% { rotate: 8deg; } }
-@media (prefers-reduced-motion: reduce) { .xline, .forever .xbin svg { animation: none; } }
+@keyframes xshake { 25% { rotate: calc(var(--motion-bin-tilt, 8deg) * -1); } 75% { rotate: var(--motion-bin-tilt, 8deg); } }
+
+/* The motion of the shell and the transfer windows, timed by the level. Rotating colours and the running dashes stop
+   at off, where a still picture says the same. */
+@media (prefers-reduced-motion: no-preference) {
+  .tree-tog svg { transition: transform var(--motion-control-dur, .12s); }
+  .xmore summary::before { transition: rotate var(--motion-control-dur, .15s); }
+  :root[data-rotate]:not([data-motion="off"]) :is(#shortcuts, #tree, .tiles, .list) svg { animation: cc-hue var(--motion-hue-dur, 14s) linear infinite; }
+  :root:not([data-motion="off"]) .xline { animation: xflow var(--motion-flow-dur, 1s) linear infinite; }
+  .forever .xbin svg { animation: xshake var(--motion-shake-dur, .4s); }
+}

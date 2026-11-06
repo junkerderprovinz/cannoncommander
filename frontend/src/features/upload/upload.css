@@ -1,4 +1,4 @@
-.cu-drop { display: flex; flex-direction: column; border-radius: var(--radius-card); align-items: center; justify-content: center; text-align: center; gap: .35rem; padding: 2rem 1rem; cursor: pointer; width: 100%; color: var(--carbon-text); transition: background .12s; }
+.cu-drop { display: flex; flex-direction: column; border-radius: var(--radius-card); align-items: center; justify-content: center; text-align: center; gap: .35rem; padding: 2rem 1rem; cursor: pointer; width: 100%; color: var(--carbon-text); transition: background var(--motion-control-dur, .12s); }
 .cu-drop svg { width: 2rem; height: 2rem; color: var(--accent-glyph); margin-bottom: .3rem; }
 .cu-drop .t { font-size: 16px; font-weight: 600; }
 .cu-drop .muted { font-size: 13px; }

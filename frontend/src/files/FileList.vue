@@ -5,6 +5,7 @@ import { EmptyState } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { G, glyphComponent } from '@/core/glyphs';
 import { now } from '@/core/format';
+import { dialMs, moving } from '@/core/motion';
 import { prefs, setPref } from '@/core/prefs';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
@@ -106,6 +107,29 @@ watch([v, () => list.value.length, () => prefs.density], () => nextTick(() => {
   if (v.value === 'columns' && el.value) el.value.scrollLeft = el.value.scrollWidth;
 }));
 const onScroll = () => { if (virtual.value && el.value) size.top = el.value.scrollTop; };
+
+// The rows of a folder just opened come in one after another, on GlimStone's stagger dials. A key or a press ends it
+// at once, so the entrance never stands between a key and the row it moves to.
+const entering = ref(false);
+let entered: ReturnType<typeof setTimeout> | undefined;
+function settle() {
+  entering.value = false;
+  clearTimeout(entered);
+  removeEventListener('keydown', settle, true);
+  removeEventListener('pointerdown', settle, true);
+}
+let arrived = false;
+watch(() => F.loaded(props.i) && list.value.length > 0, (ready) => {
+  if (!ready || arrived) return;
+  arrived = true;
+  const lasts = dialMs('--motion-stagger-cap') + dialMs('--motion-stagger-dur');
+  if (!moving() || !lasts) return;
+  entering.value = true;
+  entered = setTimeout(settle, lasts);
+  addEventListener('keydown', settle, true);
+  addEventListener('pointerdown', settle, true);
+}, { immediate: true });
+onBeforeUnmount(settle);
 
 // The cursor stays in sight after a key moved it, also onto a line that is not drawn yet.
 watch(() => [tab.value.cursor, props.i === F.active] as const, async ([cursor, active]) => {
@@ -262,9 +286,10 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
     <Miller v-if="v === 'columns'" :i="i" :list="list" />
     <template v-else>
       <div v-if="virtual && range.before" class="vpad" aria-hidden="true" :style="{ height: pad(range.before) }"></div>
-      <template v-for="d in drawn" :key="d.k ? (d.k.at || '') + d.k.name : d.idx">
+      <template v-for="(d, n) in drawn" :key="d.k ? (d.k.at || '') + d.k.name : d.idx">
         <div v-if="d.head" class="lgroup"><span>{{ groupName(d.head.name) }}</span><span class="glim-num">{{ d.head.count }}</span></div>
-        <ListItem v-else :k="d.k!" :idx="d.idx" :view="v" :path="tab.path" :marked="tab.marked.has(d.k!.name)" :cursor="d.idx === tab.cursor" :cut="cutOf(d.k!)" :mark="F.marks[i]?.[d.k!.name]" />
+        <ListItem v-else :k="d.k!" :idx="d.idx" :view="v" :path="tab.path" :marked="tab.marked.has(d.k!.name)" :cursor="d.idx === tab.cursor" :cut="cutOf(d.k!)" :mark="F.marks[i]?.[d.k!.name]"
+          :class="{ 'glim-stagger-row': entering && !cutOf(d.k!) }" :style="entering ? { '--row-i': n } : undefined" />
       </template>
       <div v-if="virtual && range.after" class="vpad" aria-hidden="true" :style="{ height: pad(range.after) }"></div>
     </template>

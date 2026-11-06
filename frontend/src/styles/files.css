@@ -1,12 +1,12 @@
 /* The file list's parts that the prototype adds from its feature files: the jump bubble, the column window, the
    spacers of a long list and the server's thumbnails, which are pictures rather than drawn svg scenes. */
-.tjump { position: absolute; left: 50%; bottom: 3.2rem; transform: translateX(-50%); z-index: 4; display: flex; align-items: center; gap: .55rem; height: 2.1rem; padding: 0 .9rem; border-radius: var(--radius-pill); font-size: 13px; pointer-events: none; animation: tjump-in .12s ease-out; }
+.tjump { position: absolute; left: 50%; bottom: 3.2rem; transform: translateX(-50%); z-index: 4; display: flex; align-items: center; gap: .55rem; height: 2.1rem; padding: 0 .9rem; border-radius: var(--radius-pill); font-size: 13px; pointer-events: none; }
 .tjump svg { width: .9rem; height: .9rem; color: var(--accent-glyph); }
 .tjump .mono { font-weight: 600; color: var(--carbon-text); }
 .tjump small { color: var(--carbon-text-muted); font-size: 12px; }
 .tjump.miss svg, .tjump.miss .mono { color: var(--status-fail-text, #ff8389); }
-@keyframes tjump-in { from { opacity: 0; translate: 0 .3rem; } }
-@media (prefers-reduced-motion: reduce) { .tjump { animation: none; } }
+@keyframes tjump-in { from { opacity: 0; translate: 0 var(--motion-jump-travel, .3rem); } }
+@media (prefers-reduced-motion: no-preference) { .tjump { animation: tjump-in var(--motion-jump-dur, .12s) ease-out; } }
 
 #col-q { flex: none; }
 .col-cols { columns: 13rem; column-gap: 2rem; }

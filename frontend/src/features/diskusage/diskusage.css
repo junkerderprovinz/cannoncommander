@@ -28,7 +28,7 @@
 .du-kind { display: flex; align-items: center; gap: .5rem; margin: .1rem .2rem .45rem; padding: .2rem .25rem .2rem .7rem; width: fit-content; border-radius: var(--radius-pill); background: color-mix(in srgb, var(--accent) 14%, var(--carbon-surface2)); font-size: 13px; }
 .du-kind > svg { width: .95rem; height: .95rem; color: var(--accent-glyph); }
 .du-map svg { position: absolute; inset: 0; }
-.bk-blk rect { fill: var(--blk); transition: fill .12s; }
+.bk-blk rect { fill: var(--blk); transition: fill var(--motion-control-dur, .12s); }
 .bk-blk text { fill: var(--ink); font-size: 12px; pointer-events: none; }
 .bk-blk text.n { font-weight: 600; }
 .bk-blk text.s { opacity: .8; font-variant-numeric: tabular-nums; }

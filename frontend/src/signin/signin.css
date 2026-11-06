@@ -36,7 +36,7 @@
 .cl-gone .cl-li { display: flex; align-items: center; gap: .6rem; min-height: 1.9rem; }
 .cl-gone .cl-li svg { width: .9rem; height: .9rem; color: var(--status-ok-text); }
 .cl-wait { display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: 1.6rem 0 1.2rem; }
-.cl-spin { width: 2rem; height: 2rem; border-radius: 50%; border: 3px solid var(--carbon-surface3); border-top-color: var(--accent); animation: cl-spin .8s linear infinite; margin-bottom: .4rem; }
-@keyframes cl-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .cl-spin { animation-duration: 2.4s; } }
+.cl-spin { width: 2rem; height: 2rem; border-radius: 50%; border: 3px solid var(--carbon-surface3); border-top-color: var(--accent); animation: cl-spin 2.4s linear infinite; margin-bottom: .4rem; }
+@keyframes cl-spin { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: no-preference) { .cl-spin { animation: cl-spin var(--motion-spin-dur, .8s) linear infinite; } }
 .cl-ver { font-size: 12px; }

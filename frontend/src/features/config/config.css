@@ -11,7 +11,7 @@
 }
 .a-swatches { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
 /* A 28px disc in a 2px ring is 32px, the size of the reset badge beside it. */
-.a-swatch { width: 2rem; height: 2rem; border-radius: var(--radius-pill); flex: none; background: var(--c); border: 2px solid var(--carbon-border, color-mix(in srgb, var(--carbon-text) 16%, transparent)); background-clip: padding-box; transition: transform .12s; }
+.a-swatch { width: 2rem; height: 2rem; border-radius: var(--radius-pill); flex: none; background: var(--c); border: 2px solid var(--carbon-border, color-mix(in srgb, var(--carbon-text) 16%, transparent)); background-clip: padding-box; }
 .a-swatch:hover:not(:disabled) { transform: scale(1.1); }
 .a-swatch[aria-pressed="true"] { border-color: var(--carbon-text); }
 .a-swatch:disabled { cursor: default; }
@@ -70,8 +70,12 @@
 .a-hbtn.on { background: var(--accent); color: var(--accent-contrast); }
 .a-veil { z-index: 90; }
 .a-veil-card { display: flex; align-items: center; gap: .7rem; padding: 1rem 1.3rem; }
-.a-veil-card svg { width: 1.1rem; height: 1.1rem; color: var(--accent-glyph); animation: a-spin 1s linear infinite; }
+.a-veil-card svg { width: 1.1rem; height: 1.1rem; color: var(--accent-glyph); animation: a-spin 2.4s linear infinite; }
 @keyframes a-spin { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: no-preference) {
+  .a-swatch { transition: transform var(--motion-control-dur, .12s); }
+  .a-veil-card svg { animation: a-spin var(--motion-spin-dur, .8s) linear infinite; }
+}
 @media (max-width: 760px) { .a-lhead, .a-arow { grid-template-columns: 2.25rem minmax(0, 1fr) auto; } .a-lhead > :nth-child(n+3):not(:last-child), .a-arow .glim-pill:not(:last-child) { display: none; } .a-stats { grid-template-columns: 1fr 1fr 1fr; } }
 :root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+1) { --accent-glyph: var(--rb-0); }
 :root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+2) { --accent-glyph: var(--rb-1); }

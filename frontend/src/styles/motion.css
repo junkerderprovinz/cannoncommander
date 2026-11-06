@@ -1,0 +1,132 @@
+/* The app's own motion dials, on top of GlimStone's. Every level answers every dial, so a quiet level never keeps a
+   lively number by leaving one out. The bare root holds the lively numbers that wild and a page without the
+   attribute read. Like GlimStone's, the levels apply only when the system has not asked for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    /* A spinner's turn, the glow of a row that just changed, the hue drift of rotating colours, the dashes running
+       along a transfer's route, the bin rocking before something goes for good, and the type-ahead bubble. */
+    --motion-spin-dur: .8s;
+    --motion-fresh-dur: 2.2s;
+    --motion-fresh-glow: 26%;
+    --motion-hue-dur: 14s;
+    --motion-flow-dur: 1s;
+    --motion-bin-tilt: 8deg;
+    --motion-jump-dur: 120ms;
+    --motion-jump-travel: .3rem;
+    /* The light that runs from one panel to the other when a copy or move starts. */
+    --motion-trace-dur: 460ms;
+    --motion-trace-length: 90px;
+    --motion-trace-width: 3px;
+    /* A deleted entry on its way to the trash: how long, how much of the way there it goes, and how much it tips. */
+    --motion-drop-dur: 480ms;
+    --motion-drop-reach: .6;
+    --motion-drop-tilt: 5deg;
+    /* The cannonball's flight and how high its arc rises, and the cloud where it lands. */
+    --motion-cannon-dur: 760ms;
+    --motion-cannon-arc: 90px;
+    --motion-puff-dur: 620ms;
+    --motion-puff-swell: 1.8;
+    /* The smoke over an emptied trash. */
+    --motion-smoke-dur: 1.4s;
+    --motion-smoke-rise: 36px;
+    /* The salute's bursts along the head bar: one burst, its size, and the gap between two. */
+    --motion-salute-dur: 700ms;
+    --motion-salute-burst: 1;
+    --motion-salute-step: 70ms;
+    /* The head bar's kick back. */
+    --motion-recoil-dur: 420ms;
+    --motion-recoil-dist: 8px;
+    /* The tumbleweed crossing an empty folder, and how high it bounces. */
+    --motion-tumble-dur: 2.4s;
+    --motion-tumble-hop: 10px;
+  }
+  :root[data-motion="subtle"] {
+    --motion-spin-dur: 1.2s;
+    --motion-fresh-dur: 1.6s;
+    --motion-fresh-glow: 16%;
+    --motion-hue-dur: 24s;
+    --motion-flow-dur: 1.6s;
+    --motion-bin-tilt: 4deg;
+    --motion-jump-dur: 80ms;
+    --motion-jump-travel: .15rem;
+    --motion-trace-dur: 280ms;
+    --motion-trace-length: 40px;
+    --motion-trace-width: 2px;
+    --motion-drop-dur: 260ms;
+    --motion-drop-reach: .15;
+    --motion-drop-tilt: 0deg;
+    --motion-cannon-dur: 480ms;
+    --motion-cannon-arc: 30px;
+    --motion-puff-dur: 360ms;
+    --motion-puff-swell: 1.3;
+    --motion-smoke-dur: .9s;
+    --motion-smoke-rise: 14px;
+    --motion-salute-dur: 420ms;
+    --motion-salute-burst: .6;
+    --motion-salute-step: 40ms;
+    --motion-recoil-dur: 240ms;
+    --motion-recoil-dist: 2px;
+    --motion-tumble-dur: 1.8s;
+    --motion-tumble-hop: 4px;
+  }
+  :root[data-motion="off"] {
+    /* Slow rather than stopped: a spinner standing still reads as a hang. */
+    --motion-spin-dur: 2.4s;
+    --motion-fresh-dur: 0s;
+    --motion-fresh-glow: 0%;
+    /* Long rather than 0; both stop outright at this level where they are used. */
+    --motion-hue-dur: 60s;
+    --motion-flow-dur: 60s;
+    --motion-bin-tilt: 0deg;
+    --motion-jump-dur: 0s;
+    --motion-jump-travel: 0rem;
+    --motion-trace-dur: 0s;
+    --motion-trace-length: 0px;
+    --motion-trace-width: 0px;
+    --motion-drop-dur: 0s;
+    --motion-drop-reach: 0;
+    --motion-drop-tilt: 0deg;
+    --motion-cannon-dur: 0s;
+    --motion-cannon-arc: 0px;
+    --motion-puff-dur: 0s;
+    --motion-puff-swell: 1;
+    --motion-smoke-dur: 0s;
+    --motion-smoke-rise: 0px;
+    --motion-salute-dur: 0s;
+    --motion-salute-burst: 0;
+    --motion-salute-step: 0s;
+    --motion-recoil-dur: 0s;
+    --motion-recoil-dist: 0px;
+    --motion-tumble-dur: 0s;
+    --motion-tumble-hop: 0px;
+  }
+  :root[data-motion="storm"] {
+    --motion-spin-dur: .5s;
+    --motion-fresh-dur: 3s;
+    --motion-fresh-glow: 40%;
+    --motion-hue-dur: 6s;
+    --motion-flow-dur: .5s;
+    --motion-bin-tilt: 16deg;
+    --motion-jump-dur: 260ms;
+    --motion-jump-travel: .7rem;
+    --motion-trace-dur: 640ms;
+    --motion-trace-length: 150px;
+    --motion-trace-width: 5px;
+    --motion-drop-dur: 720ms;
+    --motion-drop-reach: 1;
+    --motion-drop-tilt: 14deg;
+    --motion-cannon-dur: 980ms;
+    --motion-cannon-arc: 160px;
+    --motion-puff-dur: 900ms;
+    --motion-puff-swell: 2.6;
+    --motion-smoke-dur: 2s;
+    --motion-smoke-rise: 64px;
+    --motion-salute-dur: 1s;
+    --motion-salute-burst: 1.5;
+    --motion-salute-step: 110ms;
+    --motion-recoil-dur: 620ms;
+    --motion-recoil-dist: 14px;
+    --motion-tumble-dur: 1.6s;
+    --motion-tumble-hop: 22px;
+  }
+}
