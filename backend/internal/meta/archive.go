@@ -20,12 +20,12 @@ import (
 const streamLimit = 1 << 30
 
 var zipMethods = map[uint16]string{
-	zip.Store: "Ohne", zip.Deflate: "Deflate", 9: "Deflate64", 12: "BZip2", 14: "LZMA", 93: "Zstandard", 95: "XZ", 98: "PPMd",
+	zip.Store: "none", zip.Deflate: "Deflate", 9: "Deflate64", 12: "BZip2", 14: "LZMA", 93: "Zstandard", 95: "XZ", 98: "PPMd",
 }
 
 // methodByExt is what an archive uses when nothing better can be read.
 var methodByExt = map[string]string{
-	"zip": "Deflate", "7z": "LZMA2", "rar": "RAR", "tar": "Ohne", "gz": "Gzip", "tgz": "Gzip", "bz2": "BZip2",
+	"zip": "Deflate", "7z": "LZMA2", "rar": "RAR", "tar": "none", "gz": "Gzip", "tgz": "Gzip", "bz2": "BZip2",
 	"xz": "XZ", "zst": "Zstandard", "lz4": "LZ4", "cab": "MSZIP",
 }
 
@@ -97,7 +97,7 @@ func zipMethod(zf *zip.File) string {
 	if name, ok := zipMethods[m]; ok {
 		return name
 	}
-	return "Methode " + strconv.Itoa(int(m))
+	return strconv.Itoa(int(m))
 }
 
 func readTar(ctx context.Context, p string, unpack func(io.Reader) (*gzip.Reader, error), rec Record) error {
@@ -230,7 +230,7 @@ func listedMethod(m string) string {
 	case name == "":
 		return ""
 	case name == "Copy" || name == "Store":
-		return "Ohne"
+		return "none"
 	case name == "v5":
 		return "RAR5"
 	case strings.HasPrefix(name, "v"):

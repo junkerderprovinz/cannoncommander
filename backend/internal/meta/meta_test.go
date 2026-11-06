@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
 	"database/sql"
@@ -74,9 +75,9 @@ func TestPhotoColumnsComeFromExif(t *testing.T) {
 	got := valuesOf(t, s, p, "dimensions", "camera", "make", "lens", "focal", "aperture", "exposure", "iso", "flash", "taken", "place", "orientation", "depth", "dpi")
 	expect(t, got, Values{
 		"dimensions": "64 × 48", "camera": "X100VI", "make": "Fujifilm", "lens": "Fujinon 23 mm F2",
-		"focal": "23 mm", "aperture": "f/2,8", "exposure": "1/250 s", "iso": int64(400), "flash": "Kein Blitz",
+		"focal": "23 mm", "aperture": "f/2.8", "exposure": "1/250 s", "iso": int64(400), "flash": "off",
 		"taken": time.Date(2026, 6, 21, 18, 30, 0, 0, time.Local).UnixMilli(), "place": "Wien",
-		"orientation": "Hochformat", "depth": "24 Bit", "dpi": "300 dpi",
+		"orientation": "portrait", "depth": "24 Bit", "dpi": "300 dpi",
 	})
 }
 
@@ -84,7 +85,7 @@ func TestPNGStatesItsDensity(t *testing.T) {
 	s := newService(t)
 	p := writeFile(t, filepath.Join(t.TempDir(), "plan.png"), densePNG(t))
 	got := valuesOf(t, s, p, "dimensions", "depth", "dpi", "orientation", "camera", "flash")
-	expect(t, got, Values{"dimensions": "10 × 20", "depth": "32 Bit", "dpi": "300 dpi", "orientation": "Hochformat"})
+	expect(t, got, Values{"dimensions": "10 × 20", "depth": "32 Bit", "dpi": "300 dpi", "orientation": "portrait"})
 	if _, ok := got["flash"]; ok {
 		t.Error("a picture without camera details claims a flash state")
 	}
@@ -138,7 +139,7 @@ func TestArchivesListTheirContents(t *testing.T) {
 	}
 	files := map[string]string{"docs/a.md": "# A\n", "docs/b.md": "## B\n"}
 	expect(t, valuesOf(t, s, writeFile(t, filepath.Join(dir, "docs.tar"), tarOf(t, files, false)), cols...),
-		Values{"entries": int64(2), "unpacked": int64(9), "method": "Ohne", "archcrypt": false})
+		Values{"entries": int64(2), "unpacked": int64(9), "method": "none", "archcrypt": false})
 	expect(t, valuesOf(t, s, writeFile(t, filepath.Join(dir, "docs.tar.gz"), tarOf(t, files, true)), cols...),
 		Values{"entries": int64(2), "unpacked": int64(9), "method": "Gzip"})
 }
@@ -273,9 +274,9 @@ func TestFFprobeAnswerBecomesColumns(t *testing.T) {
 	rec := Record{}
 	fillAV(&p, rec)
 	expect(t, Values(rec), Values{
-		"width": int64(3840), "height": int64(2160), "vcodec": "HEVC", "framerate": "23,976 fps", "vbitrate": int64(15800),
+		"width": int64(3840), "height": int64(2160), "vcodec": "HEVC", "framerate": "23.976 fps", "vbitrate": int64(15800),
 		"aspect": "16:9", "hdr": "Dolby Vision", "acodec": "DTS-HD MA", "abitrate": "3000 kBit/s", "samplerate": "48 kHz",
-		"channels": "7.1", "duration": int64(7265), "audiotracks": "Deutsch, Englisch", "subtitles": "Deutsch, Unbekannt",
+		"channels": "7.1", "duration": int64(7265), "audiotracks": "de, en", "subtitles": "de, und",
 		"title": "Sintel", "year": int64(2010),
 	})
 
@@ -298,7 +299,7 @@ func TestSevenZipListingBecomesColumns(t *testing.T) {
 	rec := Record{}
 	parseListing(out, rec)
 	expect(t, Values(rec), Values{"entries": int64(2), "unpacked": int64(2000), "method": "LZMA2", "archcrypt": true})
-	if listedMethod("v5:m3:128M") != "RAR5" || listedMethod("Copy") != "Ohne" {
+	if listedMethod("v5:m3:128M") != "RAR5" || listedMethod("Copy") != "none" {
 		t.Error("rar or copy method misnamed")
 	}
 }
@@ -321,14 +322,14 @@ func TestMediaThroughFFprobe(t *testing.T) {
 		"-t", "2", "-c:v", "mpeg4", "-c:a", "aac", "-ac", "2", "-metadata:s:a:0", "language=deu", film)
 	expect(t, valuesOf(t, s, film, "duration", "dimensions", "vcodec", "framerate", "acodec", "audiotracks", "hdr", "aspect", "channels", "samplerate"), Values{
 		"duration": int64(2), "dimensions": "320 × 240", "vcodec": "MPEG-4", "framerate": "25 fps", "acodec": "AAC",
-		"audiotracks": "Deutsch", "hdr": "SDR", "aspect": "4:3", "channels": "Stereo", "samplerate": "48 kHz",
+		"audiotracks": "de", "hdr": "SDR", "aspect": "4:3", "channels": "stereo", "samplerate": "48 kHz",
 	})
 	song := filepath.Join(dir, "01 Lied.flac")
 	ffmpeg(t, "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=44100", "-t", "3", "-ac", "1",
 		"-metadata", "artist=Kevin MacLeod", "-metadata", "title=Calming", "-metadata", "album=Ruhe", "-metadata", "track=4", "-metadata", "date=2019", song)
 	expect(t, valuesOf(t, s, song, "duration", "artist", "title", "album", "track", "year", "acodec", "samplerate", "channels"), Values{
 		"duration": int64(3), "artist": "Kevin MacLeod", "title": "Calming", "album": "Ruhe", "track": int64(4), "year": int64(2019),
-		"acodec": "FLAC", "samplerate": "44,1 kHz", "channels": "Mono",
+		"acodec": "FLAC", "samplerate": "44.1 kHz", "channels": "mono",
 	})
 }
 
@@ -356,5 +357,29 @@ func TestDocumentsThroughMuPDF(t *testing.T) {
 	}
 	if _, err := s.Page(context.Background(), p, 3, 300); err == nil {
 		t.Error("page 3 of 2 was drawn")
+	}
+}
+
+// Words are kept as codes and numbers with a point, so the interface can say
+// them in its own language.
+func TestWordsAreKeptAsCodes(t *testing.T) {
+	for _, c := range []struct{ got, want string }{
+		{channels(1, ""), "mono"},
+		{channels(2, ""), "stereo"},
+		{channels(3, ""), "3"},
+		{channels(6, "5.1(side)"), "5.1"},
+		{language("ger"), "de"},
+		{language("nob"), "no"},
+		{language(""), "und"},
+		{language("tlh"), "tlh"},
+		{aspect("", 1850, 1000), "1.85:1"},
+		{aspect("", 2000, 1000), "2:1"},
+		{zipMethod(&zip.File{FileHeader: zip.FileHeader{Method: 77}}), "77"},
+		{debArches["all"], "all"},
+		{rpmArches["noarch"], "all"},
+	} {
+		if c.got != c.want {
+			t.Errorf("%q, want %q", c.got, c.want)
+		}
 	}
 }

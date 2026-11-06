@@ -138,7 +138,7 @@ func readELF(p string, rec Record) error {
 }
 
 var debArches = map[string]string{
-	"amd64": "x86-64", "i386": "x86", "arm64": "ARM64", "armhf": "ARM", "armel": "ARM", "riscv64": "RISC-V", "all": "Alle",
+	"amd64": "x86-64", "i386": "x86", "arm64": "ARM64", "armhf": "ARM", "armel": "ARM", "riscv64": "RISC-V", "all": "all",
 }
 
 // debName is the file name Debian packages get: name_version_arch.deb.
@@ -244,7 +244,7 @@ const (
 
 var rpmSignatureTags = map[uint32]bool{267: true, 268: true, 1002: true, 1005: true}
 
-var rpmArches = map[string]string{"x86_64": "x86-64", "i386": "x86", "i686": "x86", "aarch64": "ARM64", "armv7hl": "ARM", "noarch": "Alle", "riscv64": "RISC-V"}
+var rpmArches = map[string]string{"x86_64": "x86-64", "i386": "x86", "i686": "x86", "aarch64": "ARM64", "armv7hl": "ARM", "noarch": "all", "riscv64": "RISC-V"}
 
 func readRPM(p string, rec Record) error {
 	fh, err := os.Open(p)

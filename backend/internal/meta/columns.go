@@ -70,14 +70,15 @@ func needs(col string) []string {
 	return nil
 }
 
-// decimal writes a number the German way, with at most prec decimals and
-// no trailing zeros.
+// decimal writes a number with at most prec decimals and no trailing zeros.
+// The point stays a point: the interface writes it the way its language
+// does.
 func decimal(v float64, prec int) string {
 	s := strconv.FormatFloat(v, 'f', prec, 64)
 	if strings.Contains(s, ".") {
 		s = strings.TrimRight(strings.TrimRight(s, "0"), ".")
 	}
-	return strings.Replace(s, ".", ",", 1)
+	return s
 }
 
 func dimensions(rec Record) string {

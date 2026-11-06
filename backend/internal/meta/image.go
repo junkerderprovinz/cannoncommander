@@ -66,11 +66,11 @@ func readImage(_ context.Context, _ *Service, f File, rec Record) error {
 		}
 		switch {
 		case ww > hh:
-			rec["orientation"] = "Querformat"
+			rec["orientation"] = "landscape"
 		case ww < hh:
-			rec["orientation"] = "Hochformat"
+			rec["orientation"] = "portrait"
 		default:
-			rec["orientation"] = "Quadratisch"
+			rec["orientation"] = "square"
 		}
 	}
 	rec["camera"] = strings.TrimSpace(p.model)
@@ -89,9 +89,9 @@ func readImage(_ context.Context, _ *Service, f File, rec Record) error {
 		rec["iso"] = p.iso
 	}
 	if p.flash != nil {
-		rec["flash"] = "Kein Blitz"
+		rec["flash"] = "off"
 		if *p.flash {
-			rec["flash"] = "Ausgelöst"
+			rec["flash"] = "fired"
 		}
 	}
 	if !p.taken.IsZero() {

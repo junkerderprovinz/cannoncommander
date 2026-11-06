@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
@@ -31,6 +32,12 @@ func init() {
 			version TEXT, vendor TEXT, arch TEXT, signed INTEGER,
 			sha256 TEXT, crc32 TEXT, md5 TEXT, sha1 TEXT
 		)`,
+	))
+	// Older rows of pictures, films, archives and programs hold German words
+	// and decimal commas where the interface expects codes, so those files
+	// are read again on the next look.
+	migrate.Register(migrate.Index, migrate.SQL("meta/002_words_as_codes",
+		`DELETE FROM meta_cache WHERE done & `+strconv.Itoa(int(gImage|gAV|gArchive|gProgram))+` != 0`,
 	))
 }
 
