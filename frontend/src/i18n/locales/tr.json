@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Sol panel",
     "right": "Sağ panel",
@@ -2220,7 +2219,7 @@
     "colChanged": "Değiştirilme",
     "noFolder": "Bu klasör yok",
     "unknown": "{fields} tanımıyorum",
-    "unknownHint": "",
+    "unknownHint": "Örneğin genişlik, yükseklik, kodek, sanatçı, kamera, boyut, tarih, süre ve her sütun adını anlarım",
     "nothing": "Bir şey bulunamadı",
     "nothingHint": "Başka bir klasör ya da daha az koşul belki daha fazlasını bulur",
     "asTab": "Sekme olarak aç",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "Yeni arama",
     "menuNone": "Bir desen yaz ve alandaki düğmeyle kaydet.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "vergi",
+      "word": "rapor"
     },
     "menuExamples": "Örnekler",
     "examples": {
       "mkv": "tüm MKV dosyaları, alt klasörlerde de",
-      "tag": "",
-      "word": "",
+      "tag": "{tag} etiketli her şey",
+      "word": "içinde {word} geçen adlar",
       "one": "? tam olarak bir karakter yerine geçer",
       "meta": "HEVC'deki 4K filmler, üst veriden",
       "week": "son 7 günde değişen her şey"
     },
     "server": "Sunucu",
-    "unknownFields": "",
+    "unknownFields": "{fields} tanımıyorum. Örneğin genişlik, yükseklik, kodek, sanatçı, kamera, boyut, tarih, süre ve objektif ya da yıl gibi her sütun adını anlarım",
     "unknownField": "“{f}:”",
-    "quoted": ""
+    "quoted": "“{text}”"
   },
   "share": {
     "share": "Paylaş",
@@ -2553,21 +2552,21 @@
     "clipCopy": "Panoya kopyala",
     "clipPaste": "Yapıştır",
     "nothingOn": "{disk} üzerinde bundan hiçbir şey yok",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Atlanacak",
+    "sameSkipTip": "Hedefte aynı dosya başka bir yolda duruyor, örneğin sabit bağlantı olarak ya da disk share ile user share üzerinden. Olduğu gibi kalır.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "Hedefte aynı dosya olduğu için {n} dosya atlandı",
+      "other": "Hedefte aynı dosya olduğu için {n} dosya atlandı"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Kopyalandı: {files} → {to}. {same}",
+    "movedSame": "Taşındı: {files} → {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "Hiçbir şey kopyalanmadı. Hedefteki dosya aynı dosya ve olduğu gibi kalıyor",
+      "other": "Hiçbir şey kopyalanmadı. Hedefteki {n} dosya aynı dosyalar ve olduğu gibi kalıyor"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "Hiçbir şey taşınmadı. Hedefteki dosya aynı dosya ve olduğu gibi kalıyor",
+      "other": "Hiçbir şey taşınmadı. Hedefteki {n} dosya aynı dosyalar ve olduğu gibi kalıyor"
     }
   },
   "trash": {
@@ -3185,7 +3184,7 @@
     "abitrate": "Bit hızı",
     "samplerate": "Örnekleme hızı",
     "channels": "Kanallar",
-    "camera": "Kamera modeli",
+    "camera": "Kamera",
     "taken": "Çekim",
     "make": "Kamera üreticisi",
     "lens": "Objektif",
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Yatay",
+      "portrait": "Dikey",
+      "square": "Kare"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Patladı",
+      "off": "Flaşsız"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} kanal",
+      "other": "{n} kanal"
     },
     "method": {
-      "none": ""
+      "none": "Yok"
     },
-    "methodNumber": "",
+    "methodNumber": "Yöntem {n}",
     "arch": {
-      "all": ""
+      "all": "Tümü"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Bilinmiyor"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "genişlik",
+    "height": "yükseklik",
+    "vcodec": "kodek",
+    "modified": "tarih"
   },
   "kinds": {
     "folder": "Klasör",
