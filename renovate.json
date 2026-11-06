@@ -3,6 +3,7 @@
   "extends": [
     "config:recommended",
     "helpers:pinGitHubActionDigests",
+    "docker:pinDigests",
     ":semanticCommits",
     ":dependencyDashboard",
     ":enableVulnerabilityAlertsWithLabel(security)"
@@ -14,6 +15,11 @@
   "prConcurrentLimit": 6,
   "packageRules": [
     {
+      "description": "Node stays on 24 until 26 is tested. This covers the node image, node-version in setup-node (looked up as actions/node-versions), .nvmrc, engines and @types/node.",
+      "matchPackageNames": ["node", "actions/node-versions", "@types/node"],
+      "allowedVersions": "<25"
+    },
+    {
       "description": "GitHub Actions: auto-merge minor, patch and digest updates",
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["minor", "patch", "digest"],
@@ -21,6 +27,15 @@
       "automergeType": "branch",
       "commitMessagePrefix": "ci:",
       "labels": ["github-actions"]
+    },
+    {
+      "description": "Docker: auto-merge digest pins and digest refreshes (same tag, new build). Major and minor stay open for review.",
+      "matchManagers": ["dockerfile"],
+      "matchUpdateTypes": ["pinDigest", "digest"],
+      "automerge": true,
+      "automergeType": "branch",
+      "commitMessagePrefix": "ci:",
+      "labels": ["docker"]
     }
   ]
 }

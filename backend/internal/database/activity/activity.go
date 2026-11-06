@@ -4,27 +4,27 @@ import "encoding/json"
 
 // Details holds metadata stored as JSON in the database.
 type Details struct {
-	TargetUsername   string        `json:"targetUsername,omitempty"`
-	Source           string        `json:"source,omitempty"`
-	Path             string        `json:"path,omitempty"`
-	TargetPath       string        `json:"targetPath,omitempty"`
-	ShareHash        string        `json:"shareHash,omitempty"`
-	ShareOwnerUserID uint64        `json:"shareOwnerUserId,omitempty"`
-	Scopes           []ScopeDetail `json:"scopes,omitempty"`
-	TokenName         string        `json:"tokenName,omitempty"` // actor token; API exposes on FrontendEntry only
+	TargetUsername    string        `json:"targetUsername,omitempty"`
+	Source            string        `json:"source,omitempty"`
+	Path              string        `json:"path,omitempty"`
+	TargetPath        string        `json:"targetPath,omitempty"`
+	ShareHash         string        `json:"shareHash,omitempty"`
+	ShareOwnerUserID  uint64        `json:"shareOwnerUserId,omitempty"`
+	Scopes            []ScopeDetail `json:"scopes,omitempty"`
+	TokenName         string        `json:"tokenName,omitempty"`         // actor token; API exposes on FrontendEntry only
 	AffectedTokenName string        `json:"affectedTokenName,omitempty"` // token created/deleted (actor token is TokenName)
-	AuthMethod        string        `json:"authMethod,omitempty"` // actor auth; API exposes on FrontendEntry only
-	LoginMethod      string        `json:"loginMethod,omitempty"`
-	PasskeyName      string        `json:"passkeyName,omitempty"`
-	UpdatedFields    []string      `json:"updatedFields,omitempty"`
-	Changes          []FieldChange `json:"changes,omitempty"`
-	Cached           bool          `json:"cached,omitempty"`
-	FileCount        int           `json:"fileCount,omitempty"`
-	Paths            []string      `json:"paths,omitempty"`
-	Truncated        bool          `json:"truncated,omitempty"`
-	Bytes            int64         `json:"bytes,omitempty"`
-	DurationMs       int64         `json:"durationMs,omitempty"`
-	Error            string        `json:"error,omitempty"`
+	AuthMethod        string        `json:"authMethod,omitempty"`        // actor auth; API exposes on FrontendEntry only
+	LoginMethod       string        `json:"loginMethod,omitempty"`
+	PasskeyName       string        `json:"passkeyName,omitempty"`
+	UpdatedFields     []string      `json:"updatedFields,omitempty"`
+	Changes           []FieldChange `json:"changes,omitempty"`
+	Cached            bool          `json:"cached,omitempty"`
+	FileCount         int           `json:"fileCount,omitempty"`
+	Paths             []string      `json:"paths,omitempty"`
+	Truncated         bool          `json:"truncated,omitempty"`
+	Bytes             int64         `json:"bytes,omitempty"`
+	DurationMs        int64         `json:"durationMs,omitempty"`
+	Error             string        `json:"error,omitempty"`
 }
 
 // ScopeDetail is a user source + path scope for admin/user mutation events.
@@ -42,23 +42,23 @@ type FieldChange struct {
 
 // FrontendDetails is the admin-only detail payload exposed to the API.
 type FrontendDetails struct {
-	TargetUsername string        `json:"targetUsername,omitempty"`
-	Source         string        `json:"source,omitempty"`
-	Path           string        `json:"path,omitempty"`
-	TargetPath     string        `json:"targetPath,omitempty"`
-	Scopes         []ScopeDetail `json:"scopes,omitempty"`
+	TargetUsername    string        `json:"targetUsername,omitempty"`
+	Source            string        `json:"source,omitempty"`
+	Path              string        `json:"path,omitempty"`
+	TargetPath        string        `json:"targetPath,omitempty"`
+	Scopes            []ScopeDetail `json:"scopes,omitempty"`
 	AffectedTokenName string        `json:"affectedTokenName,omitempty"`
-	LoginMethod    string        `json:"loginMethod,omitempty"`
-	PasskeyName    string        `json:"passkeyName,omitempty"`
-	UpdatedFields  []string      `json:"updatedFields,omitempty"`
-	Changes        []FieldChange `json:"changes,omitempty"`
-	Cached         bool          `json:"cached,omitempty"`
-	FileCount      int           `json:"fileCount,omitempty"`
-	Paths          []string      `json:"paths,omitempty"`
-	Truncated      bool          `json:"truncated,omitempty"`
-	Bytes          int64         `json:"bytes,omitempty"`
-	DurationMs     int64         `json:"durationMs,omitempty"`
-	Error          string        `json:"error,omitempty"`
+	LoginMethod       string        `json:"loginMethod,omitempty"`
+	PasskeyName       string        `json:"passkeyName,omitempty"`
+	UpdatedFields     []string      `json:"updatedFields,omitempty"`
+	Changes           []FieldChange `json:"changes,omitempty"`
+	Cached            bool          `json:"cached,omitempty"`
+	FileCount         int           `json:"fileCount,omitempty"`
+	Paths             []string      `json:"paths,omitempty"`
+	Truncated         bool          `json:"truncated,omitempty"`
+	Bytes             int64         `json:"bytes,omitempty"`
+	DurationMs        int64         `json:"durationMs,omitempty"`
+	Error             string        `json:"error,omitempty"`
 }
 
 const maxDetailPaths = 50
@@ -78,23 +78,23 @@ func (d *Details) CapPaths() {
 // ToFrontendDetails maps persisted details to the API shape (drops internal fields).
 func (d Details) ToFrontendDetails() FrontendDetails {
 	return FrontendDetails{
-		TargetUsername: d.TargetUsername,
-		Source:         d.Source,
-		Path:           d.Path,
-		TargetPath:     d.TargetPath,
-		Scopes:         d.Scopes,
+		TargetUsername:    d.TargetUsername,
+		Source:            d.Source,
+		Path:              d.Path,
+		TargetPath:        d.TargetPath,
+		Scopes:            d.Scopes,
 		AffectedTokenName: d.AffectedTokenName,
-		LoginMethod:    d.LoginMethod,
-		PasskeyName:    d.PasskeyName,
-		UpdatedFields:  d.UpdatedFields,
-		Changes:        append([]FieldChange(nil), d.Changes...),
-		Cached:         d.Cached,
-		FileCount:      d.FileCount,
-		Paths:          append([]string(nil), d.Paths...),
-		Truncated:      d.Truncated,
-		Bytes:          d.Bytes,
-		DurationMs:     d.DurationMs,
-		Error:          d.Error,
+		LoginMethod:       d.LoginMethod,
+		PasskeyName:       d.PasskeyName,
+		UpdatedFields:     d.UpdatedFields,
+		Changes:           append([]FieldChange(nil), d.Changes...),
+		Cached:            d.Cached,
+		FileCount:         d.FileCount,
+		Paths:             append([]string(nil), d.Paths...),
+		Truncated:         d.Truncated,
+		Bytes:             d.Bytes,
+		DurationMs:        d.DurationMs,
+		Error:             d.Error,
 	}
 }
 
@@ -194,23 +194,23 @@ type ListRow struct {
 
 // QueryFilter scopes activity queries.
 type QueryFilter struct {
-	From       int64
-	To         int64
-	UserID     uint64
-	UserFilter bool // when true, filter by UserID (including 0 for anonymous)
-	Scope      string // all, files, shares — drives share-scope download matching
-	EventTypes []EventType
-	Source     string
-	PathPrefix string
-	PathGlob   string
+	From             int64
+	To               int64
+	UserID           uint64
+	UserFilter       bool   // when true, filter by UserID (including 0 for anonymous)
+	Scope            string // all, files, shares — drives share-scope download matching
+	EventTypes       []EventType
+	Source           string
+	PathPrefix       string
+	PathGlob         string
 	ShareHash        string
 	ShareOwnerUserID uint64
 	ShareOwnerFilter bool // restrict to shares owned by ShareOwnerUserID
 	Page             int
 	Limit            int
-	Interval   string // minute, hour, day, none — time bucket on the X-axis
-	SplitBy    string // eventType, user, none — series dimension
-	GroupBy    string // maps to Interval when Interval is empty
+	Interval         string // minute, hour, day, none — time bucket on the X-axis
+	SplitBy          string // eventType, user, none — series dimension
+	GroupBy          string // maps to Interval when Interval is empty
 }
 
 // MarshalDetailsJSON serializes details for SQLite storage.

@@ -7,6 +7,7 @@ import { admin } from '@/api/admin';
 import { tl } from '@/i18n';
 import ActivityPage from './ActivityPage.vue';
 import { c } from '@/features/config/shared';
+import { takeAgainFromUrl } from './proof';
 import App from './tabs/App.vue';
 import FileList from './tabs/FileList.vue';
 import General from './tabs/General.vue';
@@ -38,6 +39,7 @@ export default function setup() {
   tab('info', 'IconInfo', 120, Info);
 
   registerView('activity', { page: true, component: ActivityPage });
+  if (takeAgainFromUrl()) go('settings', 'security');
 
   action('settings', { label: tl('config.tabs.title'), g: 'IconGear', run: () => go('settings') });
   action('about', { label: tl('config.actions.about'), g: 'IconInfo', run: () => go('settings', 'info') });

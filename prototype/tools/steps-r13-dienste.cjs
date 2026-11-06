@@ -155,8 +155,8 @@ module.exports = async (page, shot) => {
   await page.setViewportSize({ width: 1600, height: 950 }); await wait(300);
 
   // 8. Install: manifest with share target, icon from the folder glyph, the help entry.
-  console.log('8 manifest:', await page.evaluate(() => {
-    const m = JSON.parse(decodeURIComponent($('link[rel="manifest"]').href.split(',')[1]));
+  console.log('8 manifest:', await page.evaluate(async () => {
+    const m = await (await fetch($('link[rel="manifest"]').href)).json();
     return `${m.name}, ${m.display}, theme ${m.theme_color}, icons ${m.icons.length}, share_target ${m.share_target.method} ${Object.keys(m.share_target.params).join('/')}`;
   }));
   console.log('8 help menu:', await page.evaluate(() => MENUS.find(m => m[0] === 'Hilfe')[1].join(', ')));

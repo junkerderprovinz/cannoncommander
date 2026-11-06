@@ -34,7 +34,7 @@ func TestComputeNextSlotTimeTenMinuteGrid(t *testing.T) {
 func TestScheduleTierBoundsForComplexity(t *testing.T) {
 	n := len(scanScheduleTiers) - 1
 	tests := []struct {
-		c       uint
+		c        uint
 		min, max int
 	}{
 		{0, 0, n},

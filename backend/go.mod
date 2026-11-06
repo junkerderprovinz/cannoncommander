@@ -2,6 +2,8 @@ module github.com/junkerderprovinz/cannoncommander/backend
 
 go 1.27.0
 
+toolchain go1.27.3
+
 require (
 	github.com/alecthomas/kong v1.17.0
 	github.com/bodgit/sevenzip v1.6.5
@@ -22,7 +24,7 @@ require (
 	github.com/gtsteffaniak/go-logger v1.1.0
 	github.com/klauspost/compress v1.20.3
 	github.com/kovidgoyal/imaging v1.9.0
-	github.com/mattn/go-sqlite3 v1.14.52
+	github.com/mattn/go-sqlite3 v1.14.53
 	github.com/nwaples/rardecode/v2 v2.4.6
 	github.com/pquerna/otp v1.5.0
 	github.com/spf13/afero v1.15.0
@@ -55,7 +57,7 @@ require (
 	github.com/fxamacker/cbor/v2 v2.10.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.16 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.8 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
 	github.com/go-playground/locales v0.14.2 // indirect
 	github.com/go-playground/universal-translator v0.18.2 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect

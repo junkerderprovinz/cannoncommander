@@ -16,17 +16,17 @@ var ErrSettingNotFound = errors.New("setting not found")
 // GetSetting retrieves a setting by key
 func (s *SQLStore) GetSetting(key string) ([]byte, error) {
 	query := `SELECT value FROM settings WHERE key = ?`
-	
+
 	var value []byte
 	err := s.db.QueryRow(query, key).Scan(&value)
-	
+
 	if err == sql.ErrNoRows {
 		return nil, fmt.Errorf("%w: %s", ErrSettingNotFound, key)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to get setting: %w", err)
 	}
-	
+
 	return value, nil
 }
 
@@ -69,16 +69,16 @@ func (s *SQLStore) DeleteSetting(key string) error {
 	if err != nil {
 		return fmt.Errorf("failed to delete setting: %w", err)
 	}
-	
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("failed to get rows affected: %w", err)
 	}
-	
+
 	if rowsAffected == 0 {
 		return fmt.Errorf("setting not found")
 	}
-	
+
 	return nil
 }
 
@@ -90,7 +90,7 @@ func (s *SQLStore) GetAllSettings() (map[string][]byte, error) {
 		return nil, fmt.Errorf("failed to get all settings: %w", err)
 	}
 	defer rows.Close()
-	
+
 	settings := make(map[string][]byte)
 	for rows.Next() {
 		var key string
@@ -100,10 +100,10 @@ func (s *SQLStore) GetAllSettings() (map[string][]byte, error) {
 		}
 		settings[key] = value
 	}
-	
+
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("error iterating settings: %w", err)
 	}
-	
+
 	return settings, nil
 }

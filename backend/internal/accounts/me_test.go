@@ -68,18 +68,18 @@ func TestWrongPasswordsBlockThePasswordChange(t *testing.T) {
 func TestTokensListWithoutTheirSecret(t *testing.T) {
 	w := newWorld(t)
 	w.addUser("anna", "user", "/mnt/user")
-	made := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "backup-skript", "rights": "r", "days": 30})))
+	made := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "backup-skript", "rights": "r", "days": 30})))
 	if made.Secret == "" || made.Expires == nil || made.Rights != "r" || made.ID == "" {
 		t.Fatalf("made = %+v", made)
 	}
-	forever := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "nas", "rights": "rw", "days": nil})))
+	forever := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "nas", "rights": "rw", "days": nil})))
 	if forever.Expires != nil {
 		t.Fatalf("a token for always shows an expiry: %+v", forever)
 	}
-	w.must(http.StatusConflict, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "nas", "rights": "rw"}))
-	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "x", "rights": "admin"}))
-	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "", "rights": "r"}))
-	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "WEB_TOKEN_x", "rights": "r"}))
+	w.must(http.StatusConflict, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "nas", "rights": "rw"}))
+	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "x", "rights": "admin"}))
+	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "", "rights": "r"}))
+	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "WEB_TOKEN_x", "rights": "r"}))
 
 	w.must(http.StatusOK, w.req("GET", "/me", nil, "X-Api", made.Secret))
 	rec := w.must(http.StatusOK, w.as("anna", "GET", "/me/tokens", nil))
@@ -95,8 +95,8 @@ func TestTokensListWithoutTheirSecret(t *testing.T) {
 func TestAReadTokenOnlyReads(t *testing.T) {
 	w := newWorld(t)
 	anna := w.addUser("anna", "user", "/mnt/user")
-	read := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "lesen", "rights": "r"}))).Secret
-	write := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "schreiben", "rights": "rw"}))).Secret
+	read := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "lesen", "rights": "r"}))).Secret
+	write := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "schreiben", "rights": "rw"}))).Secret
 
 	me := decode[accounts.Me](t, w.must(http.StatusOK, w.req("GET", "/me", nil, "X-Api", read)))
 	if me.Token == nil || me.Token.Name != "lesen" || me.Token.Rights != "r" {
@@ -127,17 +127,17 @@ func TestAReadTokenOnlyReads(t *testing.T) {
 func TestTokensCannotChangeLogins(t *testing.T) {
 	w := newWorld(t)
 	w.addUser("anna", "user", "/mnt/user")
-	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "voll", "rights": "rw"})))
+	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "voll", "rights": "rw"})))
 	for _, c := range []struct {
 		method, path string
 		body         any
 	}{
-		{"POST", "/me/tokens", map[string]any{"name": "mehr", "rights": "rw"}},
+		{"POST", "/me/tokens", map[string]any{"password": strong, "name": "mehr", "rights": "rw"}},
 		{"DELETE", "/me/tokens/" + tok.ID, nil},
 		{"PUT", "/me/password", map[string]string{"current": strong, "next": "ein-ganz-neues-passwort"}},
 		{"POST", "/me/totp", map[string]any{}},
 		{"DELETE", "/me/totp", map[string]any{"code": "123456"}},
-		{"POST", "/me/passkeys", map[string]any{"name": "laptop"}},
+		{"POST", "/me/passkeys", map[string]any{"password": strong, "name": "laptop"}},
 		{"DELETE", "/me/passkeys/x", nil},
 	} {
 		if rec := w.req(c.method, c.path, c.body, "X-Api", tok.Secret); rec.Code != http.StatusForbidden {
@@ -150,7 +150,7 @@ func TestARevokedTokenStopsAtOnce(t *testing.T) {
 	w := newWorld(t)
 	w.addUser("anna", "user", "/mnt/user")
 	w.addUser("bert", "user", "/mnt/user")
-	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"name": "skript", "rights": "rw"})))
+	tok := decode[accounts.NewToken](t, w.must(http.StatusCreated, w.as("anna", "POST", "/me/tokens", map[string]any{"password": strong, "name": "skript", "rights": "rw"})))
 	w.must(http.StatusOK, w.req("GET", "/me", nil, "X-Api", tok.Secret))
 	w.must(http.StatusNotFound, w.as("bert", "DELETE", "/me/tokens/"+tok.ID, nil))
 	w.must(http.StatusNoContent, w.as("anna", "DELETE", "/me/tokens/"+tok.ID, nil))

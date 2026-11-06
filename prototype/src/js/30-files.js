@@ -128,9 +128,9 @@ const Files = {
       for (const k of items) {
         const choice = decide[k.name] || 'replace';
         if (choice === 'skip') continue;
+        // The server keeps each file's own time, so a copy is no newer than what it copies.
         const copy = JSON.parse(JSON.stringify(k));
         delete copy.kind;
-        copy.time = NOW;
         if (choice === 'both') copy.name = Files.freeName(target, k.name);
         else { replaced.push(...target.children.filter(c => c.name === copy.name)); target.children = target.children.filter(c => c.name !== copy.name); }
         target.children.push(copy);
