@@ -1,4 +1,5 @@
 // Every call to /api/v1 goes through here, so the rest of the app never sees a URL, a header or the wire format.
+import { serverText } from '@/i18n';
 import type { Bookmark, FsItem, FsList, FsMeta, FsText, FsTree, Me, Problem, SearchResult, Volume } from './types';
 
 export const BASE = '/api/v1';
@@ -6,7 +7,7 @@ export const BASE = '/api/v1';
 export class ApiError extends Error {
   // retryAfter is in seconds, for a request the server wants to see again later.
   constructor(readonly status: number, readonly problem?: Problem, readonly retryAfter?: number) {
-    super(problem?.title || `HTTP ${status}`);
+    super(serverText(problem?.code, problem?.params) ?? (problem?.detail || (status >= 500 && serverText('broken')) || problem?.title || `HTTP ${status}`));
   }
 }
 

@@ -36,4 +36,5 @@ export interface SearchResult { path: string; items: SearchHit[]; total: number;
 export interface WatchRequest { clientId: string; paths: string[] }
 export interface Me { name: string; full: string; role: string }
 export interface Bookmark { name: string; path: string; g: string }
-export interface Problem { type: string; title: string; status: number; detail?: string }
+// code and params name the sentence in detail, for the interface to say it in its own language.
+export interface Problem { type: string; title: string; status: number; detail?: string; code?: string; params?: Record<string, unknown> }

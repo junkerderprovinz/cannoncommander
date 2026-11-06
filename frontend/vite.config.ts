@@ -1,4 +1,6 @@
 /// <reference types="vitest/config" />
+import { readdirSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { fileURLToPath, URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
 import { type Connect, defineConfig, type Plugin } from 'vite';
@@ -31,10 +33,25 @@ function sharePage(): Plugin {
   return { name: 'cc-share-page', configureServer: use, configurePreviewServer: use };
 }
 
+// The share page asks for a language with ?share and gets the global texts, the controls' and its own, not the app's.
+function shareTexts(): Plugin {
+  const appOnly = new Set([...readdirSync(fileURLToPath(new URL('./src/features', import.meta.url))), 'signin']);
+  return {
+    name: 'cc-share-texts',
+    enforce: 'pre',
+    async load(id) {
+      const [file, query] = id.split('?');
+      if (query !== 'share' || !file!.endsWith('.json')) return;
+      const all: Record<string, unknown> = JSON.parse(await readFile(file!, 'utf8'));
+      return `export default ${JSON.stringify(Object.fromEntries(Object.entries(all).filter(([k]) => !appOnly.has(k))))}`;
+    },
+  };
+}
+
 const page = (file: string) => fileURLToPath(new URL(file, import.meta.url));
 
 export default defineConfig(({ mode }) => ({
-  plugins: [vue(), sharePage(), ...(mode === 'fixture' ? [fixture()] : [])],
+  plugins: [vue(), sharePage(), shareTexts(), ...(mode === 'fixture' ? [fixture()] : [])],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   // Every source is scanned up front, so a library only a viewer loads later does not make Vite bundle the
   // dependencies again while a page is open.

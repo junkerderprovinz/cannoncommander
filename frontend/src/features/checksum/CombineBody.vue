@@ -5,7 +5,7 @@ import { FieldRow, FieldRowGroup, PathField, Pill, SubCard, Table, TextField, To
 import { computed, watchEffect } from 'vue';
 import { fmtSize } from '@/core/format';
 import { join } from '@/files/paths';
-import { t } from '@/i18n';
+import { byName, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import FinalPath from '@/ui/FinalPath.vue';
 import { plural } from '@/ui/kit';
@@ -17,7 +17,7 @@ const listing = useListing();
 
 const items = computed(() => listing.lists.get(props.st.dir)?.items ?? []);
 const parts = computed(() => items.value.filter((k) => !k.dir && k.name.startsWith(props.st.base + '.') && /^\d{3,}$/.test(k.name.slice(props.st.base.length + 1)))
-  .sort((a, b) => a.name.localeCompare(b.name, 'de', { numeric: true })));
+  .sort((a, b) => byName(a.name, b.name)));
 const missing = computed(() => {
   const nums = parts.value.map((p) => +p.name.slice(props.st.base.length + 1));
   return nums.length ? Array.from({ length: Math.max(...nums) }, (_, i) => i + 1).filter((i) => !nums.includes(i)) : [];

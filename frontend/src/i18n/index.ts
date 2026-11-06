@@ -21,8 +21,8 @@ const infoOf = (code: string) => languages().find((l) => l.code === code);
 const isPseudo = (code: string) => import.meta.env.DEV && PSEUDO.some((l) => l.code === code);
 
 // Each page hands over how it loads a language file, as the share page needs far fewer texts than the app.
-export function useLocales(files: Record<string, Loader>) {
-  loaders = Object.fromEntries(Object.entries(files).map(([path, load]) => [path.match(/([\w-]+)\.json/)![1]!, load]));
+export function useLocales(files: Record<string, () => Promise<unknown>>) {
+  loaders = Object.fromEntries(Object.entries(files).map(([path, load]) => [path.match(/([\w-]+)\.json/)![1]!, load as Loader]));
 }
 
 // The first language of the browser that the app has, matched on the language alone, and English when there is none.
@@ -93,6 +93,25 @@ const ruleOf = (lang: string) => {
 };
 
 export const num = (n: number) => n.toLocaleString(locale());
+
+// Names sort the way the language orders its letters, and numbers inside a name by their value.
+const collators = new Map<string, Intl.Collator>();
+const collator = (numeric: boolean) => {
+  const key = locale() + numeric;
+  if (!collators.has(key)) collators.set(key, new Intl.Collator(locale(), { numeric }));
+  return collators.get(key)!;
+};
+export const byName = (a: string, b: string) => collator(true).compare(a, b);
+export const byText = (a: string, b: string) => collator(false).compare(a, b);
+
+// What the server said as a code with parameters, in the interface's language. A code this interface does not know
+// gives nothing, and the caller shows the server's own sentence instead.
+export function serverText(code?: string, params: Record<string, unknown> = {}): string | undefined {
+  const key = 'server.' + code;
+  if (!code || !chain(state.lang).some((lang) => lookup(tables[lang], key) !== undefined)) return undefined;
+  const { n, ...rest } = Object.fromEntries(Object.entries(params).map(([k, v]) => [k, typeof v === 'number' ? v : String(v)]));
+  return typeof n === 'number' && typeof lookup(tables.de, key) === 'object' ? plural(n, key, rest) : t(key, n === undefined ? rest : { n, ...rest });
+}
 
 // key names the forms of a counted text, one and other in German, and in every language the forms its plural rules
 // ask for. n reaches the text as {n}, written the way the language writes numbers.

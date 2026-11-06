@@ -16,5 +16,5 @@
       "playwright": ["../../prototype/node_modules/playwright/index.d.ts"]
     }
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "../scripts/locales.ts"]
 }

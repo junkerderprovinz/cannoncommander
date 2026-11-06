@@ -6,14 +6,15 @@ import './share.css';
 import { createApp } from 'vue';
 import { applyPrefs } from '@/core/prefs';
 import { installTips } from '@/core/tips';
-import { addMessages, setLanguage } from '@/i18n';
+import { addMessages, setLanguage, useLocales } from '@/i18n';
 import de from './de.json';
 import en from './en.json';
 import SharePage from './SharePage.vue';
 
 addMessages('visit', { de, en });
 applyPrefs();
-// Visitors have no settings here, so the browser's language decides.
-setLanguage(navigator.language?.toLowerCase().startsWith('de') ? 'de' : 'en');
+// Visitors have no settings here, so the browser's language decides. A language loads with only the texts this page shows.
+useLocales(import.meta.glob('../i18n/locales/*.json', { query: '?share', import: 'default' }));
+setLanguage('');
 installTips();
 createApp(SharePage).mount('#root');

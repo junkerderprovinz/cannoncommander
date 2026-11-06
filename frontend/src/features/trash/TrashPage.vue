@@ -8,7 +8,7 @@ import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { isMenuOpen, menu } from '@/core/menu';
 import { go } from '@/core/views';
 import { winStack } from '@/core/windows';
-import { plural, t } from '@/i18n';
+import { byName, byText, plural, t } from '@/i18n';
 import { useTrash } from '@/stores/trash';
 import { objects } from '@/features/jobs/label';
 import { purge, restore } from './trash';
@@ -18,8 +18,8 @@ const trash = useTrash();
 const COLS: SortKey[] = ['name', 'from', 'size', 'deleted'];
 const at = (e: TrashItem) => Date.parse(e.deletedAt) || 0;
 const BY: Record<SortKey, (a: TrashItem, b: TrashItem) => number> = {
-  name: (a, b) => a.name.localeCompare(b.name, 'de', { numeric: true }),
-  from: (a, b) => a.from.localeCompare(b.from, 'de'),
+  name: (a, b) => byName(a.name, b.name),
+  from: (a, b) => byText(a.from, b.from),
   size: (a, b) => a.size - b.size,
   deleted: (a, b) => at(a) - at(b),
 };

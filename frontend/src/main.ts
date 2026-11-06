@@ -20,7 +20,7 @@ import { registerFileActions } from '@/files/actions';
 import FilesView from '@/files/FilesView.vue';
 import { installDragDrop } from '@/files/dnd';
 import { filesKey, installJumpReset } from '@/files/keys';
-import { setLanguage } from '@/i18n';
+import { setLanguage, useLocales } from '@/i18n';
 import SettingsPage from '@/pages/SettingsPage.vue';
 import { usePanels } from '@/stores/panels';
 import { watchWidth } from '@/shell/state';
@@ -30,7 +30,9 @@ import { useUser } from '@/stores/user';
 import App from './App.vue';
 
 applyPrefs();
+useLocales(import.meta.glob('./i18n/locales/*.json', { import: 'default' }));
 setLanguage(prefs.language);
+watch(() => prefs.language, setLanguage);
 matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => prefs.theme === 'system' && applyPrefs());
 installTips();
 

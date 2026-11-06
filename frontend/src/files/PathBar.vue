@@ -5,7 +5,7 @@ import { computed, nextTick, ref, watch } from 'vue';
 import { run } from '@/core/actions';
 import { menu } from '@/core/menu';
 import { prefs } from '@/core/prefs';
-import { t } from '@/i18n';
+import { byName, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { split } from './paths';
@@ -22,7 +22,7 @@ async function psub(e: MouseEvent, folder: string) {
   const r = (e.currentTarget as HTMLElement).getBoundingClientRect(), here = tab.value.path;
   const dirs = (await listing.tree(folder).catch(() => []))
     .filter((k) => prefs.showHidden || !k.name.startsWith('.'))
-    .sort((a, b) => a.name.localeCompare(b.name, 'de', { numeric: true }));
+    .sort((a, b) => byName(a.name, b.name));
   menu(r.left, r.bottom + 4, dirs.map((k) => {
     const onPath = here === k.path || here.startsWith(k.path + '/');
     return { label: k.label || k.name, g: onPath ? 'IconFolderOpen' : 'IconFolder', run: () => F.go(k.path, props.i) };

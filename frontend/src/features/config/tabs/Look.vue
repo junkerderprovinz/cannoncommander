@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Select } from '@glimstone/vue/Select';
 import { Button, Card, ColorPicker, FieldRow, Selector, Toggle } from '@glimstone/vue';
-import { ACCENTS, applyAccent, COLOR_NAMES_DE, DEFAULT_ACCENT, RAINBOW } from '@glimstone/core';
+import { ACCENTS, applyAccent, COLOR_NAMES_DE, DEFAULT_ACCENT, flagEmoji, RAINBOW } from '@glimstone/core';
 import { computed, ref } from 'vue';
 import { G } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
-import { locale, setLanguage } from '@/i18n';
+import { language as current, languages } from '@/i18n';
 import { found, motionPressed, rainbowSwitched, shapePressed } from '../eggs';
 import { c, P } from '@/features/config/shared';
 import { pickerWords, segItems, selectOptions } from '@/ui/kit';
@@ -24,7 +24,9 @@ const motions = computed(() => [['off', c('look.off'), 'IconMotionOff'], ['subtl
   ...(prefs.motion === 'storm' || found.storm ? [['storm', c('look.storm'), 'IconMotionStorm']] : [])] as [string, string, string][]);
 const labelModes = computed(() => [['text', c('look.text'), 'IconLabelText'], ['textGlyph', c('look.textGlyph'), 'IconLabelTextGlyph'], ['glyph', c('look.glyph'), 'IconLabelGlyph'], ['reactive', c('look.reactive'), 'IconLabelReactive']] as [string, string, string][]);
 
-const language = computed({ get: () => prefs.language, set: (v: string) => { setPref('language', v); setLanguage(v); } });
+// Before anyone picks a language the list shows the one the browser asked for, and saves nothing.
+const language = computed({ get: () => prefs.language || current(), set: (v: string) => setPref('language', v) });
+const languageOptions = computed(() => selectOptions(languages().map((l) => [l.code, l.flag ? `${flagEmoji(l.flag)} ${l.name}` : l.name] as [string, string])));
 const rainbow = computed({ get: () => prefs.rainbow, set: (on: boolean) => { rainbowSwitched(on); setPref('rainbow', on); } });
 // Turning rotation on draws a fresh offset at once, so the switch does something visible.
 const rotate = computed({ get: () => prefs.rotate, set: (on: boolean) => { prefs.rotateSeed = on ? 1 + Math.floor(Math.random() * 7) : 0; setPref('rotate', on); } });
@@ -75,7 +77,7 @@ function resetOrder() {
 
 <template>
   <Card :title="c('look.display')">
-    <FieldRow :label="c('look.language')"><Select v-model="language" :options="selectOptions([['de', '🇩🇪 Deutsch'], ['en', '🇬🇧 English']])" rows="menu" /></FieldRow>
+    <FieldRow :label="c('look.language')"><Select v-model="language" :options="languageOptions" rows="menu" /></FieldRow>
     <FieldRow :label="c('look.theme')" :hint="c('look.themeTip')"><Selector v-model="P.theme" :items="segItems([['dark', c('look.dark'), 'IconMoon'], ['light', c('look.light'), 'IconSun'], ['system', c('look.system'), 'IconThemeSystem']])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="c('look.corners')" :hint="c('look.cornersTip')"><Selector id="a-shape" :model-value="prefs.shape" :items="segItems(shapes)" size="sm" activation="manual" inline button-height pairs-on-phone @press="(v) => setPref('shape', shapePressed(v, prefs.shape))" /></FieldRow>
     <FieldRow :label="c('look.motion')" :hint="c('look.motionTip')"><Selector id="a-motion" :model-value="prefs.motion" :items="segItems(motions)" size="sm" activation="manual" inline button-height pairs-on-phone @press="(v) => setPref('motion', motionPressed(v, prefs.motion))" /></FieldRow>
@@ -109,5 +111,5 @@ function resetOrder() {
       </div></FieldRow>
     </template>
   </Card>
-  <ColorPicker v-if="pop" :key="pop.anchor.dataset.preset ?? 'p' + pop.anchor.dataset.palette" :model-value="pop.hex" :anchor="pop.anchor" :names="locale() === 'de' ? COLOR_NAMES_DE : false" :text="pickerWords()" @input="live" @close="closed" />
+  <ColorPicker v-if="pop" :key="pop.anchor.dataset.preset ?? 'p' + pop.anchor.dataset.palette" :model-value="pop.hex" :anchor="pop.anchor" :names="current() === 'de' ? COLOR_NAMES_DE : false" :text="pickerWords()" @input="live" @close="closed" />
 </template>

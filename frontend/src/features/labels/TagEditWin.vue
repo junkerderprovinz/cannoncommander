@@ -4,8 +4,8 @@ import { FieldRow, SubCard, TextField } from '@glimstone/vue';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { G } from '@/core/glyphs';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import { t } from '@/i18n';
-import { byName, type Labelled, useLabels } from '@/stores/labels';
+import { byText, t } from '@/i18n';
+import { type Labelled, useLabels } from '@/stores/labels';
 import { stepFoot } from '@/features/config/shared';
 
 const props = defineProps<{ win: WinEntry; sel: Labelled[]; folder: string }>();
@@ -22,7 +22,7 @@ const stop = watch(loaded, (ok) => {
 }, { immediate: true });
 const fresh = ref('');
 const others = computed(() => all.filter((x) => !picked.has(x)));
-const chosen = computed(() => [...picked].sort(byName));
+const chosen = computed(() => [...picked].sort(byText));
 
 function add() {
   const v = fresh.value.trim().replace(/^#/, '');

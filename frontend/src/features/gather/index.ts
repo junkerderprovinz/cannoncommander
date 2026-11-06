@@ -9,7 +9,7 @@ import { view } from '@/core/views';
 import { win } from '@/core/windows';
 import { join, split } from '@/files/paths';
 import { plural, t, tl } from '@/i18n';
-import { diskName, jobLabel } from '@/features/jobs/label';
+import { diskName, jobError, jobLabel } from '@/features/jobs/label';
 import { useUnraid } from '@/features/unraid/state';
 import { useJobs } from '@/stores/jobs';
 import { usePanels } from '@/stores/panels';
@@ -74,7 +74,7 @@ function gatherWindow() {
       toast(t('gather.running', { label: jobLabel(job) }), 'ok', { label: t('gather.toJobs'), run: () => run('jobs') });
       useJobs().whenDone(job, (j) => {
         if (j.state === 'done') toast(t(mode === 'gather' ? 'gather.gathered' : 'gather.scattered', { name, disk: diskName(disk) }));
-        else if (j.state === 'failed') toast(t('gather.failed', { label: jobLabel(j), error: j.error || '' }), 'fault');
+        else if (j.state === 'failed') toast(t('gather.failed', { label: jobLabel(j), error: jobError(j) }), 'fault');
       });
     } catch (e) {
       toast((e as Error).message, 'warn');

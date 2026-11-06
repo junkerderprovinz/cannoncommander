@@ -13,7 +13,7 @@ import { fmtDate, fmtSize } from '@/core/format';
 import { glyphComponent, glyphOf } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import type { WinEntry } from '@/core/windows';
-import { t } from '@/i18n';
+import { byName, t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
 import { useSearch } from '@/stores/search';
 import { num, plural, setFoot, segItems, selectOptions } from '@/ui/kit';
@@ -40,7 +40,7 @@ const count = computed(() => {
 });
 
 // Folders first, then names in the order people count, as the server sorts its hits.
-const order = (a: Hit, b: Hit) => Number(b.dir) - Number(a.dir) || a.name.localeCompare(b.name, 'de', { numeric: true });
+const order = (a: Hit, b: Hit) => Number(b.dir) - Number(a.dir) || byName(a.name, b.name);
 
 let stop: AbortController | null = null;
 let textJob: Job | null = null;

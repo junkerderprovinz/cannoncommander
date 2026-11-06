@@ -6,7 +6,7 @@ import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { closeBtn, win } from '@/core/windows';
 import { inArchive } from '@/files/paths';
-import { placeName } from '@/features/jobs/label';
+import { jobError, placeName } from '@/features/jobs/label';
 import { t } from '@/i18n';
 import { type RowMark, usePanels } from '@/stores/panels';
 import { plural } from '@/ui/kit';
@@ -73,5 +73,5 @@ export function startSync(L: string, R: string, todo: SyncStep[]) {
   return startJob('sync', { left: L, right: R, steps: todo.map(({ rel, act, to }) => ({ rel, act, to })) }, () => {
     usePanels().marks.splice(0, 2, {}, {});
     toast(t('compare.synced', { steps: plural(todo.length, 'compare.stepCount') }));
-  }, { failed: (j) => t('compare.failed', { error: j.error || j.state }) });
+  }, { failed: (j) => t('compare.failed', { error: jobError(j) || j.state }) });
 }

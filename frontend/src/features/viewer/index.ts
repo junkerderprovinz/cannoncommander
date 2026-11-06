@@ -5,7 +5,7 @@ import { prefs, setPref } from '@/core/prefs';
 import { go, registerView } from '@/core/views';
 import { closeBtn, type FootButton, win } from '@/core/windows';
 import { inArchive } from '@/files/paths';
-import { t, tl } from '@/i18n';
+import { byName, t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { office, type OfficeSetup, rawUrl } from './content';
@@ -26,7 +26,7 @@ function siblings(folder: string, node: FileNode): FileNode[] {
   const F = usePanels(), kind = viewKind(node);
   const list: FileNode[] = folder === F.T().path
     ? F.entries().filter((k) => !k.up && (!k.at || k.at === folder))
-    : [...(useListing().lists.get(folder)?.items || [])].sort((a, b) => a.name.localeCompare(b.name, 'de', { numeric: true }));
+    : [...(useListing().lists.get(folder)?.items || [])].sort((a, b) => byName(a.name, b.name));
   return list.filter((k) => !k.dir && viewKind(k) === kind && shownHere(k));
 }
 

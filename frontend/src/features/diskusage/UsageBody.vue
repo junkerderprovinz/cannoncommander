@@ -14,7 +14,7 @@ import { go as goView, view } from '@/core/views';
 import type { WinEntry } from '@/core/windows';
 import { toEntry } from '@/files/entries';
 import { inArchive, join, parent } from '@/files/paths';
-import { t } from '@/i18n';
+import { byName, t } from '@/i18n';
 import { deleteItems } from '@/features/trash/trash';
 import { usePanels } from '@/stores/panels';
 import Crumbs from '@/ui/Crumbs.vue';
@@ -77,9 +77,9 @@ const rowOf = (u: DiskUsage, it: DiskUsage['items'][number], depth: number): Row
   time: Date.parse(it.mtime) || 0, depth, whole: u.size, canOpen: it.dir && it.files + it.dirs > 0,
 });
 const order = (a: Row, b: Row) => {
-  if (sort.by === 'name') return a.name.localeCompare(b.name, 'de', { numeric: true }) * -sort.dir;
+  if (sort.by === 'name') return byName(a.name, b.name) * -sort.dir;
   const key = sort.by === 'share' ? 'size' : sort.by;
-  return (a[key] - b[key]) * sort.dir || a.name.localeCompare(b.name, 'de', { numeric: true });
+  return (a[key] - b[key]) * sort.dir || byName(a.name, b.name);
 };
 
 function treeRows(): Row[] {

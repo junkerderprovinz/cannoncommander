@@ -2,12 +2,12 @@
 import { computed } from 'vue';
 import { actions, labelOf } from '@/core/actions';
 import { Kbd, SubCard } from '@glimstone/vue';
-import { t } from '@/i18n';
+import { byText, t } from '@/i18n';
 
 const FIXED = ['tab', 'enter', 'insert', 'space', 'ctrlClick', 'shiftClick', 'rightClick', 'f10', 'esc'];
 const rows = computed(() => [
   ...FIXED.map((k) => [t(`shortcuts.fixed.${k}.label`), t(`shortcuts.fixed.${k}.key`)]),
-  ...Object.values(actions).filter((a) => a.key).sort((a, b) => (a.menu || '').localeCompare(b.menu || '')).map((a) => [labelOf(a), a.key!]),
+  ...Object.values(actions).filter((a) => a.key).sort((a, b) => byText(a.menu || '', b.menu || '')).map((a) => [labelOf(a), a.key!]),
 ]);
 </script>
 

@@ -10,6 +10,7 @@ import { plural, t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { useJobs } from '@/stores/jobs';
+import { jobError } from '@/features/jobs/label';
 import { undoAct } from '@/features/undo/act';
 import { freeName, namesIn, reveal } from '@/ui/tools';
 import NameBody from './NameBody.vue';
@@ -69,7 +70,7 @@ export default function setup() {
       F.T().marked = new Set();
       const job = await useJobs().start({ kind: 'move', params: { sources: picked.map((k) => join(folder, k.name)), dest: box, rule: 'skip', newFolder: true } });
       useJobs().whenDone(job, (done) => {
-        if (done.state !== 'done') return toast(done.error || t('names.notMoved'), 'fault');
+        if (done.state !== 'done') return toast(jobError(done) || t('names.notMoved'), 'fault');
         void reveal(box);
         const what = plural(picked.length, 'names.objects');
         toast(t('names.folderMade', { name, what }), 'ok', done.undo ? undoAct(done.undo) : undefined);
@@ -84,7 +85,7 @@ export default function setup() {
     try {
       const job = await useJobs().start({ kind: 'copy', params: { sources: sel.map((k) => join(folder, k.name)), dest: folder, names, rule: 'skip' } });
       useJobs().whenDone(job, (done) => {
-        if (done.state !== 'done') return toast(done.error || t('names.notCopied'), 'fault');
+        if (done.state !== 'done') return toast(jobError(done) || t('names.notCopied'), 'fault');
         const one = names.length === 1 ? names[0]! : '';
         void reveal(join(folder, one || names[0]!));
         toast(one ? t('names.made', { name: one }) : plural(names.length, 'names.copies'), 'ok', done.undo ? undoAct(done.undo) : undefined);

@@ -11,7 +11,7 @@ import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import type { WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
-import { pctOf } from '@/features/jobs/label';
+import { jobError, pctOf } from '@/features/jobs/label';
 import { undoAct } from '@/features/undo/act';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
@@ -59,7 +59,7 @@ async function start() {
     jobs.whenDone(started, async (j) => {
       if (job.value?.id !== j.id) return;
       if (j.state !== 'done') {
-        if (j.state === 'failed') toast(t('duplicates.failed', { error: j.error || j.state }), 'fault');
+        if (j.state === 'failed') toast(t('duplicates.failed', { error: jobError(j) || j.state }), 'fault');
         return;
       }
       const result = (j.result ?? (await tools.job(j.id).catch(() => j)).result) as Duplicates | undefined;

@@ -2,6 +2,7 @@
 import type { Item } from '@/api/client';
 import { DAY } from '@/core/format';
 import { ext, type Kind, kindOf } from '@/core/glyphs';
+import { byName, byText } from '@/i18n';
 
 export type MetaValue = string | number | boolean | null;
 export type Entry = Item & { kind: Kind; up?: boolean; meta?: Record<string, MetaValue> };
@@ -18,12 +19,12 @@ export function nameMatcher(query: string, tagMatch: (k: Item, word: string) => 
 }
 
 export type Comparer = (a: Entry, b: Entry) => number;
-const byName: Comparer = (a, b) => a.name.localeCompare(b.name, 'de', { numeric: true });
+const sortName: Comparer = (a, b) => byName(a.name, b.name);
 export const COMPARERS: Record<string, Comparer> = {
-  name: byName,
+  name: sortName,
   size: (a, b) => a.size - b.size,
   time: (a, b) => a.time - b.time,
-  type: (a, b) => ext(a.name).localeCompare(ext(b.name)) || a.name.localeCompare(b.name, 'de'),
+  type: (a, b) => byText(ext(a.name), ext(b.name)) || byText(a.name, b.name),
 };
 
 export interface SortOptions { sort: string; dir: number; foldersFirst: boolean; comparer?: Comparer | null }
