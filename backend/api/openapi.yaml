@@ -6412,7 +6412,10 @@ components:
           description: |
             What the job found out, for kinds that report more than done or
             failed. For duplicates and contentSearch it can be megabytes, so
-            only GET /jobs/{id} carries it.
+            only GET /jobs/{id} carries it. A copy or move reports here the
+            files it left alone because the target was the same file under
+            another path, such as a disk share and the user share above it:
+            same counts them, samePaths names the first 50 by their source.
         createdAt:
           type: string
           format: date-time

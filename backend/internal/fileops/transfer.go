@@ -36,6 +36,9 @@ const (
 // A job that touched more is not undoable.
 const maxUndoEntries = 10000
 
+// reportPaths is how many paths a result names before it only counts.
+const reportPaths = 50
+
 var (
 	errVerify  = errors.New("checksum mismatch after copying")
 	errSpecial = errors.New("devices, sockets and pipes are not copied")
@@ -253,6 +256,7 @@ type transfer struct {
 	buf     []byte
 	undo    transferUndo
 	tooBig  bool
+	result  transferResult
 	// follow are the labels to carry along once the item is through.
 	follow []labels.Move
 
@@ -326,6 +330,9 @@ func runTransfer(move bool) func(context.Context, *jobs.Run) error {
 			t.follow = t.follow[:0]
 			run.Finish(it.Seq, state, err)
 		}
+		if t.result.Same > 0 {
+			run.SetResult(t.result)
+		}
 		t.record(p, run.Items())
 		return nil
 	}
@@ -398,9 +405,19 @@ func (t *transfer) entry(ctx context.Context, src, dst node, key string, inNew b
 		return false, err
 	}
 
+	same := exists && t.same(src, dst, info, target)
+	if same && !info.IsDir() {
+		t.result.add(src.api)
+		return true, nil
+	}
+
 	replace, merge := false, false
 	if exists {
 		switch {
+		case same:
+			// The folder is gone into, and each file inside answers for
+			// itself.
+			merge = true
 		case t.resumed && ours(info, target):
 			if info.IsDir() {
 				merge = true
@@ -479,13 +496,36 @@ func (t *transfer) entry(ctx context.Context, src, dst node, key string, inNew b
 
 	switch {
 	case info.IsDir():
-		return false, t.dir(ctx, src, dst, key, info, exists && merge, replace, inNew)
+		return false, t.dir(ctx, src, dst, key, info, exists && merge, replace, inNew, same)
 	case info.Mode()&fs.ModeSymlink != 0:
 		return false, t.link(ctx, src, dst, info, replace, inNew)
 	case info.Mode().IsRegular():
 		return false, t.file(ctx, src, dst, info, replace, inNew)
 	}
 	return false, errSpecial
+}
+
+// same reports whether src and dst are one file under two paths: a hard
+// link, a bind mount, or a disk share and the user share above it, which
+// shows its own device and inode numbers. Replacing such a target would take
+// the source with it.
+func (t *transfer) same(src, dst node, info, target fs.FileInfo) bool {
+	return os.SameFile(info, target) || unraidService().SameFile(src.api, dst.api)
+}
+
+// transferResult is what a copy or move reports beyond done and failed.
+type transferResult struct {
+	// Same counts the files left alone because the target was the same file,
+	// and SamePaths names the first of them by their source path.
+	Same      int      `json:"same"`
+	SamePaths []string `json:"samePaths"`
+}
+
+func (r *transferResult) add(p string) {
+	if r.Same < reportPaths {
+		r.SamePaths = append(r.SamePaths, p)
+	}
+	r.Same++
 }
 
 // mayWrite checks the owner's rights at dst. Only the job's top entries were
@@ -527,7 +567,7 @@ func side(n node, info fs.FileInfo) jobs.Side {
 	return s
 }
 
-func (t *transfer) dir(ctx context.Context, src, dst node, key string, info fs.FileInfo, merge, replace, inNew bool) error {
+func (t *transfer) dir(ctx context.Context, src, dst node, key string, info fs.FileInfo, merge, replace, inNew, same bool) error {
 	created := false
 	if !merge {
 		if replace {
@@ -567,7 +607,7 @@ func (t *transfer) dir(ctx context.Context, src, dst node, key string, info fs.F
 		Chown(dst.real, info)
 		_ = os.Chtimes(dst.real, info.ModTime(), info.ModTime())
 	}
-	if t.move && first == nil {
+	if t.move && first == nil && !same {
 		// Skipped entries keep the folder alive, and that is fine.
 		_ = os.Remove(src.real)
 	}
