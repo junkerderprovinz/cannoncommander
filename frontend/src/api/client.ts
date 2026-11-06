@@ -1,4 +1,5 @@
 // Every call to /api/v1 goes through here, so the rest of the app never sees a URL, a header or the wire format.
+import { serverQuery } from '@/files/fields';
 import { serverText } from '@/i18n';
 import type { Bookmark, FsItem, FsList, FsMeta, FsText, FsTree, Me, Problem, SearchResult, Volume } from './types';
 
@@ -111,7 +112,7 @@ export const api = {
   thumbUrl: (path: string, size: 'small' | 'large' = 'small', v?: number) => BASE + '/fs/thumb' + q({ path, size, ...(v ? { v: String(v) } : {}) }),
   // Names below `path` that match `query`, hidden ones only when they are shown.
   async search(path: string, query: string, hidden: boolean, signal?: AbortSignal): Promise<{ items: Item[]; more: boolean; unknown?: string[] }> {
-    const body = (await call<SearchResult>('/search' + q({ path, q: query, hidden: String(hidden) }), { signal })).body!;
+    const body = (await call<SearchResult>('/search' + q({ path, q: serverQuery(query), hidden: String(hidden) }), { signal })).body!;
     return { items: body.items.map((h) => ({ ...toItem(h), at: h.at })), more: !!body.more, unknown: body.unknown ?? [] };
   },
   async watch(clientId: string, paths: string[]): Promise<void> {
