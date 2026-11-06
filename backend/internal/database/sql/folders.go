@@ -1,7 +1,9 @@
 package sql
 
 import (
+	"path"
 	"strings"
+	"time"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqlitebusy"
@@ -171,4 +173,91 @@ func (db *IndexDB) PathsByInode(source string, ino uint64) ([]string, error) {
 		out = append(out, p)
 	}
 	return out, rows.Err()
+}
+
+// Children returns the entries the index holds directly inside dir, a folder
+// index path with a trailing slash, and whether each is a folder.
+func (db *IndexDB) Children(source, dir string) (map[string]bool, error) {
+	rows, err := db.Query(`SELECT path, is_dir FROM index_items WHERE source = ? AND parent_path = ?`, source, dir)
+	if err != nil {
+		return nil, sqlitebusy.Wrap(err)
+	}
+	defer rows.Close()
+	out := map[string]bool{}
+	for rows.Next() {
+		var p string
+		var isDir bool
+		if err := rows.Scan(&p, &isDir); err != nil {
+			return nil, err
+		}
+		out[p] = isDir
+	}
+	return out, rows.Err()
+}
+
+// treeBatch is how many rows one statement of DeleteTrees or MoveTree
+// changes, so a large folder never holds the database for long.
+const treeBatch = 1000
+
+// DeleteTrees removes the rows at paths and, for folders, everything below.
+// Folder paths carry their trailing slash.
+func (db *IndexDB) DeleteTrees(source string, paths []string) error {
+	err := inChunks(paths, func(marks string, args []any) error {
+		_, err := db.Exec(`DELETE FROM index_items WHERE source = ? AND path IN (`+marks+`)`, append([]any{source}, args...)...)
+		return sqlitebusy.Wrap(err)
+	})
+	if err != nil {
+		return err
+	}
+	for _, p := range paths {
+		if !strings.HasSuffix(p, "/") {
+			continue
+		}
+		if err := db.inBatches(`DELETE FROM index_items WHERE rowid IN (
+			SELECT rowid FROM index_items WHERE source = ? AND path > ? AND path < ? LIMIT ?)`,
+			source, p, getNextPathPrefix(p), treeBatch); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// MoveTree gives the row at from, and for a folder every row below it, the
+// path it has under to. Rows already at to are replaced. It reports whether
+// the index held from at all.
+func (db *IndexDB) MoveTree(source, from, to string) (bool, error) {
+	if err := db.DeleteTrees(source, []string{to}); err != nil {
+		return false, err
+	}
+	res, err := db.Exec(`UPDATE OR REPLACE index_items SET path = ?, parent_path = ?, name = ?, last_updated = ?
+		WHERE source = ? AND path = ?`,
+		to, getParentPath(to), path.Base(strings.TrimSuffix(to, "/")), time.Now().Unix(), source, from)
+	if err != nil {
+		return false, sqlitebusy.Wrap(err)
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return false, nil
+	}
+	if !strings.HasSuffix(from, "/") {
+		return true, nil
+	}
+	// Moved rows leave the range, so each batch picks up the next ones.
+	return true, db.inBatches(`UPDATE OR REPLACE index_items
+		SET path = ? || substr(path, length(?) + 1), parent_path = ? || substr(parent_path, length(?) + 1), last_updated = ?
+		WHERE rowid IN (SELECT rowid FROM index_items WHERE source = ? AND path > ? AND path < ? LIMIT ?)`,
+		to, from, to, from, time.Now().Unix(), source, from, getNextPathPrefix(from), treeBatch)
+}
+
+// inBatches runs a statement that changes at most treeBatch rows until it
+// changes fewer.
+func (db *IndexDB) inBatches(query string, args ...any) error {
+	for {
+		res, err := db.Exec(query, args...)
+		if err != nil {
+			return sqlitebusy.Wrap(err)
+		}
+		if n, _ := res.RowsAffected(); n < treeBatch {
+			return nil
+		}
+	}
 }

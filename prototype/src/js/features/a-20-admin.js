@@ -503,7 +503,7 @@
     const pwRow = () => frow('Passwort verlangen', sw(pwOn, 'id="a-shpw"'), 'Wer den Link öffnet, muss erst das Passwort eingeben.')
       + (!pwOn ? '' : s.password && !pwNew ? frow('Passwort', `<span class="a-ctl">${pill('Gesetzt')}${btn('Neu setzen', 'IconKey', 'id="a-shpwnew"')}</span>`) : frow('Passwort', A.pwField('id="a-shpw1"', 'm'), 'Mindestens 6 Zeichen.'));
     w.set(`<div class="well">${frow('Link', A.copyField(shareUrl(s)))}${frow('Pfad', `<span class="pill mono">${esc(s.path)}</span>`)}${frow('Erstellt', pill(`${fmtDate(s.created)} von ${s.by}`))}${frow('Aufrufe', pill(String(s.views), 'glim-num'))}</div>
-      <div class="well">${frow('Läuft ab', dropdown(EXPIRY.map(([v, l]) => [v, v === 'keep' ? (s.expires ? `${l}, ${fmtDate(s.expires)}` : `${l}, nie`) : l]), 'keep', 'id="a-shexp"'))}<div id="a-shpwbox">${pwRow()}</div></div>`,
+      <div class="well">${frow('Nachricht an die Gegenseite', `<textarea class="field w" id="a-shmsg" rows="2" maxlength="2000" placeholder="etwa: Hier sind die Fotos vom Wochenende">${esc(s.message || '')}</textarea>`, 'Steht auf der Seite des Links über den Dateien, etwa ein Gruß oder ein Hinweis. Darf leer bleiben.')}${frow('Läuft ab', dropdown(EXPIRY.map(([v, l]) => [v, v === 'keep' ? (s.expires ? `${l}, ${fmtDate(s.expires)}` : `${l}, nie`) : l]), 'keep', 'id="a-shexp"'))}<div id="a-shpwbox">${pwRow()}</div></div>`,
       [cancel, { label: 'Speichern', g: 'IconSave', primary: true, run: (el) => {
         const pw1 = $('#a-shpw1', el);
         if (pw1 && pw1.value.length < 6) return fail('Das Passwort braucht mindestens 6 Zeichen', pw1);
@@ -511,6 +511,7 @@
         if (exp === 'never') s.expires = null;
         else if (exp !== 'keep') s.expires = A.now() + Number(exp) * DAY;
         s.password = pwOn;
+        s.message = $('#a-shmsg', el).value.trim();
         A.redraw();
         CC.toast('Gespeichert');
       } }]);

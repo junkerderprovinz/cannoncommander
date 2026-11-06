@@ -262,7 +262,7 @@ func (w *Watcher) flush(f *folder) {
 	b := f.batch
 	f.batch, f.timer = nil, nil
 	current := w.folders[f.path] == f
-	h, index, movers := w.hub, w.index, w.movers
+	h, fs, index, movers := w.hub, w.fs, w.index, w.movers
 	w.mu.Unlock()
 	if b == nil || !current {
 		return
@@ -277,14 +277,23 @@ func (w *Watcher) flush(f *folder) {
 	if _, err := h.PublishJSON(EventChanged, hub.FolderTopic(f.path), c); err != nil {
 		logger.Errorf("watch: publish %s: %v", f.path, err)
 	}
-	if index != nil && !b.gone {
-		index.Refresh(f.src, f.index)
-		for d := range b.dirs {
-			if b.removed[d] {
-				index.Refresh(f.src, path.Join(f.index, d))
-			}
+	if index == nil {
+		return
+	}
+	// Rows of a moved folder are moved before the refresh, which would
+	// otherwise read the folder at its new place all over again.
+	for _, m := range b.moves {
+		from, err1 := fs.Resolve(m[0])
+		to, err2 := fs.Resolve(m[1])
+		if err1 == nil && err2 == nil && from.Source != nil && to.Source != nil && to.Source.Name == from.Source.Name {
+			index.Moved(from.Source, from.Index, to.Index)
 		}
 	}
+	if b.gone {
+		index.Removed(f.src, f.index)
+		return
+	}
+	index.Refresh(f.src, f.index)
 }
 
 func (b *batch) change(dir string) Change {

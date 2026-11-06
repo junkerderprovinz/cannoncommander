@@ -16,9 +16,8 @@ import (
 )
 
 type recorder struct {
-	mu        sync.Mutex
-	moves     [][2]string
-	refreshed []string
+	mu    sync.Mutex
+	moves [][2]string
 }
 
 func (r *recorder) Moved(from, to string) {
@@ -27,29 +26,44 @@ func (r *recorder) Moved(from, to string) {
 	r.moves = append(r.moves, [2]string{from, to})
 }
 
-func (r *recorder) Folders(*ccfs.Source, []string) map[string]fsindex.Folder { return nil }
-
-func (r *recorder) FolderSize(*ccfs.Source, string) (int64, bool) { return 0, false }
-
-func (r *recorder) Totals(*ccfs.Source, string) (int64, int64, bool) { return 0, 0, false }
-
-func (r *recorder) Refresh(_ *ccfs.Source, dir string) {
+func (r *recorder) seen() [][2]string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.refreshed = append(r.refreshed, dir)
+	return slices.Clone(r.moves)
 }
 
-func (r *recorder) seen() ([][2]string, []string) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	return slices.Clone(r.moves), slices.Clone(r.refreshed)
+// indexLog writes down what the watcher asks of the index, in order.
+type indexLog struct {
+	mu    sync.Mutex
+	calls []string
 }
+
+func (x *indexLog) add(call string) {
+	x.mu.Lock()
+	defer x.mu.Unlock()
+	x.calls = append(x.calls, call)
+}
+
+func (x *indexLog) seen() []string {
+	x.mu.Lock()
+	defer x.mu.Unlock()
+	return slices.Clone(x.calls)
+}
+
+func (x *indexLog) Folders(*ccfs.Source, []string) map[string]fsindex.Folder { return nil }
+func (x *indexLog) FolderSize(*ccfs.Source, string) (int64, bool)            { return 0, false }
+func (x *indexLog) Totals(*ccfs.Source, string) (int64, int64, bool)         { return 0, 0, false }
+func (x *indexLog) Refresh(_ *ccfs.Source, dir string)                       { x.add("refresh " + dir) }
+func (x *indexLog) Created(_ *ccfs.Source, p string)                         { x.add("created " + p) }
+func (x *indexLog) Removed(_ *ccfs.Source, p string)                         { x.add("removed " + p) }
+func (x *indexLog) Moved(_ *ccfs.Source, from, to string)                    { x.add("moved " + from + " " + to) }
 
 type rig struct {
 	root   string
 	hub    *hub.Hub
 	w      *Watcher
 	rec    *recorder
+	ix     *indexLog
 	client *hub.Client
 }
 
@@ -76,10 +90,10 @@ func newRig(t *testing.T, opts Options, folders ...string) *rig {
 	if err != nil {
 		t.Fatal(err)
 	}
-	r := &rig{root: root, rec: &recorder{}}
+	r := &rig{root: root, rec: &recorder{}, ix: &indexLog{}}
 	r.w = New(opts)
 	r.hub = hub.New(hub.Options{OnTopic: r.w.Topic})
-	r.w.Start(r.hub, fs, r.rec, r.rec)
+	r.w.Start(r.hub, fs, r.ix, r.rec)
 	t.Cleanup(r.w.Close)
 	r.client, _, _ = r.hub.Connect("tab", "jdp", 0)
 	topics := make([]string, len(folders))
@@ -135,7 +149,7 @@ func TestNewFilesShowUp(t *testing.T) {
 		if c.Path != "/mnt/user/downloads" || !slices.Contains(c.Names, "film.mkv.part") || c.Paths[0] != "/mnt/user/downloads" {
 			t.Fatalf("change = %+v", c)
 		}
-		waitFor(t, func() bool { _, refreshed := r.rec.seen(); return slices.Contains(refreshed, "/downloads") })
+		waitFor(t, func() bool { return slices.Contains(r.ix.seen(), "refresh /downloads") })
 	})
 }
 
@@ -179,7 +193,7 @@ func TestRenamesAreReportedAndFollowed(t *testing.T) {
 		if len(c.Renamed) != 1 || c.Renamed[0] != (Rename{From: "film.mkv.part", To: "film.mkv"}) || len(c.Removed) != 0 {
 			t.Fatalf("change = %+v", c)
 		}
-		moves, _ := r.rec.seen()
+		moves := r.rec.seen()
 		if opts.PollOnly {
 			if len(moves) != 0 {
 				t.Fatalf("the poller told movers %v", moves)
@@ -214,7 +228,24 @@ func TestAWatchedFolderThatGoesAwayIsReported(t *testing.T) {
 		if c := r.next(t); !c.Gone || c.Path != "/mnt/user/downloads/unfertig" {
 			t.Fatalf("change = %+v", c)
 		}
+		waitFor(t, func() bool { return slices.Contains(r.ix.seen(), "removed /downloads/unfertig") })
 	})
+}
+
+func TestRenamedFoldersTakeTheirIndexRowsAlong(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("pairing a rename needs inotify")
+	}
+	r := newRig(t, Options{Delay: 30 * time.Millisecond}, "/mnt/user/downloads")
+	if err := os.Rename(filepath.Join(r.root, "downloads", "unfertig"), filepath.Join(r.root, "downloads", "fertig")); err != nil {
+		t.Fatal(err)
+	}
+	r.next(t)
+	waitFor(t, func() bool { return len(r.ix.seen()) >= 2 })
+	want := []string{"moved /downloads/unfertig /downloads/fertig", "refresh /downloads"}
+	if got := r.ix.seen(); !slices.Equal(got, want) {
+		t.Fatalf("index heard %q, want %q", got, want)
+	}
 }
 
 func TestMovesBetweenWatchedFolders(t *testing.T) {
@@ -235,7 +266,7 @@ func TestMovesBetweenWatchedFolders(t *testing.T) {
 	if !slices.Equal(seen["/mnt/user/downloads"].Removed, []string{"Sintel.mkv"}) || !slices.Equal(seen["/mnt/user/filme"].Names, []string{"Sintel.mkv"}) {
 		t.Fatalf("changes = %+v", seen)
 	}
-	moves, _ := r.rec.seen()
+	moves := r.rec.seen()
 	if !slices.Contains(moves, [2]string{"/mnt/user/downloads/Sintel.mkv", "/mnt/user/filme/Sintel.mkv"}) {
 		t.Fatalf("moves = %v", moves)
 	}
