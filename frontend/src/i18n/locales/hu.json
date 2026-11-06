@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Bal ablak",
     "right": "Jobb ablak",
@@ -2220,7 +2219,7 @@
     "colChanged": "Módosítva",
     "noFolder": "Ez a mappa nem létezik",
     "unknown": "Ezeket nem ismerem: {fields}",
-    "unknownHint": "",
+    "unknownHint": "Értem például a szélesség, magasság, kodek, előadó, fényképezőgép, méret, módosítva, hossz mezőket és minden oszlopnevet",
     "nothing": "Nincs találat",
     "nothingHint": "Egy másik mappa vagy kevesebb feltétel talán többet talál",
     "asTab": "Megnyitás lapként",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "Új keresés",
     "menuNone": "Írjon be egy mintát, és mentse a mezőben lévő gombbal.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "adó",
+      "word": "jelentés"
     },
     "menuExamples": "Példák",
     "examples": {
       "mkv": "minden MKV-fájl, az almappákban is",
-      "tag": "",
-      "word": "",
+      "tag": "minden az {tag} címkével",
+      "word": "nevek, amelyekben szerepel: {word}",
       "one": "a ? pontosan egy karaktert jelent",
       "meta": "4K-s filmek HEVC-ben, a metaadatokból",
       "week": "minden, ami az elmúlt 7 napban változott"
     },
     "server": "Szerver",
-    "unknownFields": "",
+    "unknownFields": "Ezeket nem ismerem: {fields}. Értem például a szélesség, magasság, kodek, előadó, fényképezőgép, méret, módosítva, hossz mezőket és minden oszlopnevet, például objektív vagy év",
     "unknownField": "„{f}:”",
-    "quoted": ""
+    "quoted": "„{text}”"
   },
   "share": {
     "share": "Megosztás",
@@ -2553,21 +2552,21 @@
     "clipCopy": "Másolás a vágólapra",
     "clipPaste": "Beillesztés",
     "nothingOn": "Ebből semmi sincs itt: {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Kimarad",
+    "sameSkipTip": "A célban ugyanez a fájl van egy másik útvonalon, például kemény hivatkozásként vagy Disk Share és User Share révén. Változatlan marad.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} fájl kimaradt, mert a célban ugyanaz a fájl",
+      "other": "{n} fájl kimaradt, mert a célban ugyanazok a fájlok"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Másolva: {files}, ide: {to}. {same}",
+    "movedSame": "Áthelyezve: {files}, ide: {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "Semmi sem lett másolva. A célban lévő fájl ugyanaz, és változatlan marad",
+      "other": "Semmi sem lett másolva. A célban lévő {n} fájl ugyanaz, és változatlan marad"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "Semmi sem lett áthelyezve. A célban lévő fájl ugyanaz, és változatlan marad",
+      "other": "Semmi sem lett áthelyezve. A célban lévő {n} fájl ugyanaz, és változatlan marad"
     }
   },
   "trash": {
@@ -3185,7 +3184,7 @@
     "abitrate": "Bitráta",
     "samplerate": "Mintavételi frekvencia",
     "channels": "Csatornák",
-    "camera": "Fényképezőgép típusa",
+    "camera": "Fényképezőgép",
     "taken": "Készült",
     "make": "Fényképezőgép gyártója",
     "lens": "Objektív",
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Fekvő",
+      "portrait": "Álló",
+      "square": "Négyzetes"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Villant",
+      "off": "Vaku nélkül"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Sztereó"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} csatorna",
+      "other": "{n} csatorna"
     },
     "method": {
-      "none": ""
+      "none": "Nincs"
     },
-    "methodNumber": "",
+    "methodNumber": "{n}. módszer",
     "arch": {
-      "all": ""
+      "all": "Mind"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Ismeretlen"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "szélesség",
+    "height": "magasság",
+    "vcodec": "kodek",
+    "modified": "módosítva"
   },
   "kinds": {
     "folder": "Mappa",
