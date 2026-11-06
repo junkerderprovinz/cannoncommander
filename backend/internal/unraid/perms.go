@@ -200,7 +200,7 @@ type PermsResult struct {
 // PreparePerms checks that u may reset the rights below apiPath.
 func (s *Service) PreparePerms(r *ccfs.Resolver, u *users.User, apiPath string) (PermsTask, error) {
 	if u == nil || !u.Permissions.Admin {
-		return PermsTask{}, v1.Errorf(http.StatusForbidden, "admins only")
+		return PermsTask{}, v1.Coded(http.StatusForbidden, "adminsOnly", "admins only")
 	}
 	loc, err := r.Check(u, apiPath, ccfs.Modify)
 	if err != nil {
@@ -218,7 +218,7 @@ func (s *Service) ResumePerms(r *ccfs.Resolver, apiPath string) (PermsTask, erro
 		return PermsTask{}, err
 	}
 	if loc.Virtual() {
-		return PermsTask{}, v1.Errorf(http.StatusBadRequest, "path is not a folder")
+		return PermsTask{}, v1.Coded(http.StatusBadRequest, "notAFolder", "path is not a folder")
 	}
 	return s.permsTask(loc)
 }
@@ -227,11 +227,11 @@ func (s *Service) permsTask(loc ccfs.Location) (PermsTask, error) {
 	kept := s.keptShares()
 	switch {
 	case loc.InArchive():
-		return PermsTask{}, v1.Errorf(http.StatusBadRequest, "path is inside an archive")
+		return PermsTask{}, v1.Coded(http.StatusBadRequest, "inArchive", "path is inside an archive")
 	case keptReason(loc.Path, kept) != "":
 		return PermsTask{}, v1.Errorf(http.StatusConflict, "path keeps its owners: "+keptReason(loc.Path, kept))
 	case !strings.HasPrefix(loc.Path, "/mnt/"):
-		return PermsTask{}, v1.Errorf(http.StatusBadRequest, "rights are only set below /mnt")
+		return PermsTask{}, v1.Coded(http.StatusBadRequest, "rightsBelowMnt", "rights are only set below /mnt")
 	}
 	if err := ccfs.Contained(loc); err != nil {
 		return PermsTask{}, err
@@ -241,7 +241,7 @@ func (s *Service) permsTask(loc ccfs.Location) (PermsTask, error) {
 		return PermsTask{}, err
 	}
 	if !info.IsDir() {
-		return PermsTask{}, v1.Errorf(http.StatusBadRequest, "path is not a folder")
+		return PermsTask{}, v1.Coded(http.StatusBadRequest, "notAFolder", "path is not a folder")
 	}
 	return PermsTask{Path: loc.Path, real: loc.Real, kept: kept}, nil
 }

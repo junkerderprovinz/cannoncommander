@@ -112,11 +112,11 @@ func (h handlers) reset(w http.ResponseWriter, r *http.Request) error {
 	}
 	ip := addressKey(r)
 	if h.svc.resetTries.blocked(ip) {
-		return v1.Errorf(http.StatusTooManyRequests, "too many wrong codes, wait a few minutes")
+		return v1.Coded(http.StatusTooManyRequests, "tooManyTries", "too many wrong codes, wait a few minutes")
 	}
 	code := normalizeCode(in.Code, resetCodeLen)
 	if code == "" {
-		return v1.Errorf(http.StatusBadRequest, "the code has twelve characters, just as it is in the log")
+		return v1.Coded(http.StatusBadRequest, "resetCodeLength", "the code has twelve characters, just as it is in the log")
 	}
 	if err := checkPassword(in.Password); err != nil {
 		return err
@@ -124,12 +124,12 @@ func (h handlers) reset(w http.ResponseWriter, r *http.Request) error {
 	id, ok := h.svc.resets.redeem(code)
 	if !ok {
 		h.svc.resetTries.fail(ip)
-		return v1.Errorf(http.StatusBadRequest, "this code is not right or ran out, please ask for a new one")
+		return v1.Coded(http.StatusBadRequest, "resetCodeWrong", "this code is not right or ran out, please ask for a new one")
 	}
 	h.svc.resetTries.clear(ip)
 	u, err := state.GetUserByID(id)
 	if err != nil {
-		return v1.Errorf(http.StatusBadRequest, "this code is not right or ran out, please ask for a new one")
+		return v1.Coded(http.StatusBadRequest, "resetCodeWrong", "this code is not right or ran out, please ask for a new one")
 	}
 	u.OtpEnabled, u.RequirePasswordChange, u.PasskeyCredentials = false, false, nil
 	if err := state.UpdateUser(&u, in.Password, "password", "otpEnabled", "requirePasswordChange", "PasskeyCredentials"); err != nil {

@@ -40,7 +40,7 @@ type entryData struct {
 	MTime time.Time `json:"mtime,omitzero"`
 }
 
-var errChanged = v1.Errorf(http.StatusConflict, "it changed since, so it is left as it is")
+var errChanged = v1.Coded(http.StatusConflict, "changedSince", "it changed since, so it is left as it is")
 
 func undoRename(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) error {
 	var data renameData
@@ -57,7 +57,7 @@ func undoRename(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage
 	}
 	from, err := s.newEntry(u, data.From)
 	if errors.Is(err, errExists) {
-		return v1.Errorf(http.StatusConflict, "the old name is taken again")
+		return v1.Coded(http.StatusConflict, "oldNameTaken", "the old name is taken again")
 	}
 	if err != nil {
 		return err
@@ -84,7 +84,7 @@ func undoMkdir(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage)
 		return err
 	}
 	if len(entries) > 0 {
-		return v1.Errorf(http.StatusConflict, "the folder is not empty anymore")
+		return v1.Coded(http.StatusConflict, "folderNotEmpty", "the folder is not empty anymore")
 	}
 	if err := os.Remove(loc.Real); err != nil {
 		return err

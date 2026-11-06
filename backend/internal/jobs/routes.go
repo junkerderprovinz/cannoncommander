@@ -189,7 +189,7 @@ func (h handlers) decide(w http.ResponseWriter, r *http.Request) error {
 func (h handlers) find(r *http.Request) (Job, error) {
 	j, ok := h.m.Get(r.PathValue("id"), false)
 	if !ok || !mayTouch(v1.UserFrom(r), j) {
-		return Job{}, v1.Errorf(http.StatusNotFound, "no such job")
+		return Job{}, v1.Coded(http.StatusNotFound, "noJob", "no such job")
 	}
 	return j, nil
 }

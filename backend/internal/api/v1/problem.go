@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/fs"
 	"net/http"
+	"syscall"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -17,6 +18,10 @@ type Problem struct {
 	Status   int    `json:"status"`
 	Detail   string `json:"detail,omitempty"`
 	Instance string `json:"instance,omitempty"`
+	// Code names the sentence in Detail, so an interface can say it in its
+	// own language and fill in Params. Detail stays for every other client.
+	Code   string         `json:"code,omitempty"`
+	Params map[string]any `json:"params,omitempty"`
 }
 
 func (p *Problem) Error() string {
@@ -31,6 +36,51 @@ func Errorf(status int, detail string) *Problem {
 	return &Problem{Title: http.StatusText(status), Status: status, Detail: detail}
 }
 
+// Coded returns a problem whose detail an interface can translate by code.
+func Coded(status int, code, detail string) *Problem {
+	return &Problem{Title: http.StatusText(status), Status: status, Detail: detail, Code: code}
+}
+
+// With returns a copy of p that carries one more parameter, so a problem kept
+// in a variable stays as it is.
+func (p *Problem) With(name string, value any) *Problem {
+	c := *p
+	c.Params = make(map[string]any, len(p.Params)+1)
+	for k, v := range p.Params {
+		c.Params[k] = v
+	}
+	c.Params[name] = value
+	return &c
+}
+
+// CodeOf names what went wrong in err the way a problem would, for errors that
+// reach a client as text, such as the reason a job failed. It also names the
+// file system errors a copy or a delete runs into, which carry no code of their own.
+func CodeOf(err error) (string, map[string]any) {
+	var p *Problem
+	var errno syscall.Errno
+	switch {
+	case errors.As(err, &p):
+		return p.Code, p.Params
+	case errors.As(err, &errno):
+		switch errno {
+		case syscall.ENOSPC:
+			return "noSpace", nil
+		case syscall.EACCES, syscall.EPERM:
+			return "denied", nil
+		case syscall.EROFS:
+			return "readOnly", nil
+		case syscall.ENOENT:
+			return "notFound", nil
+		case syscall.EIO:
+			return "ioError", nil
+		case syscall.ENAMETOOLONG:
+			return "nameTooLong", nil
+		}
+	}
+	return "", nil
+}
+
 // ProblemFor turns any error into a problem. Errors that are not a Problem
 // and not one of the known file system errors become a 500 without detail,
 // so internals do not leak to the client.
@@ -40,15 +90,15 @@ func ProblemFor(err error) *Problem {
 	case errors.As(err, &p):
 		return p
 	case errors.Is(err, ccfs.ErrBadPath):
-		return Errorf(http.StatusBadRequest, "invalid path")
+		return Coded(http.StatusBadRequest, "badPath", "invalid path")
 	case errors.Is(err, ccfs.ErrNotFound), errors.Is(err, fs.ErrNotExist):
-		return Errorf(http.StatusNotFound, "path not found")
+		return Coded(http.StatusNotFound, "notFound", "path not found")
 	case errors.Is(err, ccfs.ErrProtected):
-		return Errorf(http.StatusForbidden, "a rule protects something in this folder")
+		return Coded(http.StatusForbidden, "protected", "a rule protects something in this folder")
 	case errors.Is(err, ccfs.ErrReadOnly):
-		return Errorf(http.StatusForbidden, "path is read only")
+		return Coded(http.StatusForbidden, "readOnly", "path is read only")
 	case errors.Is(err, ccfs.ErrForbidden), errors.Is(err, ccfs.ErrEscape), errors.Is(err, fs.ErrPermission):
-		return Errorf(http.StatusForbidden, "access denied")
+		return Coded(http.StatusForbidden, "denied", "access denied")
 	}
 	return &Problem{Title: http.StatusText(http.StatusInternalServerError), Status: http.StatusInternalServerError}
 }

@@ -44,7 +44,7 @@ func (s *service) editorConfig(r *http.Request, o system.Office, u *users.User, 
 	e := ext(loc.Path)
 	kind, ok := documentTypes[e]
 	if !ok {
-		return nil, v1.Errorf(http.StatusBadRequest, "the office server does not open ."+e+" files")
+		return nil, v1.Coded(http.StatusBadRequest, "officeCannotOpen", "the office server does not open ."+e+" files").With("ext", e)
 	}
 	base := s.base(r)
 	mode := "view"

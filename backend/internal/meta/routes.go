@@ -121,7 +121,7 @@ func (h handlers) page(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if loc.Virtual() || loc.InArchive() {
-		return v1.Errorf(http.StatusUnsupportedMediaType, "this has no pages to show")
+		return v1.Coded(http.StatusUnsupportedMediaType, "noPages", "this has no pages to show")
 	}
 	if err := h.fs.Follows(u, loc, ccfs.Download); err != nil {
 		return err
@@ -132,7 +132,7 @@ func (h handlers) page(w http.ResponseWriter, r *http.Request) error {
 	}
 	ext := extOf(path.Base(loc.Path))
 	if !info.Mode().IsRegular() || !(pagedExts[ext] || officeExts[ext]) {
-		return v1.Errorf(http.StatusUnsupportedMediaType, "this file has no pages to show")
+		return v1.Coded(http.StatusUnsupportedMediaType, "noPages", "this file has no pages to show")
 	}
 	etag := fmt.Sprintf(`"%x-%x-p%d-w%d"`, info.Size(), info.ModTime().UnixNano(), page, width)
 	hdr := w.Header()
@@ -154,9 +154,9 @@ func (h handlers) page(w http.ResponseWriter, r *http.Request) error {
 		hdr.Del("Cache-Control")
 		switch {
 		case errors.Is(err, ErrNoRenderer):
-			return v1.Errorf(http.StatusServiceUnavailable, "pages can not be drawn because MuPDF is missing")
+			return v1.Coded(http.StatusServiceUnavailable, "noMupdf", "pages can not be drawn because MuPDF is missing")
 		case errors.Is(err, ErrNoPage):
-			return v1.Errorf(http.StatusNotFound, "this page does not exist or can not be drawn")
+			return v1.Coded(http.StatusNotFound, "noPage", "this page does not exist or can not be drawn")
 		}
 		return err
 	}

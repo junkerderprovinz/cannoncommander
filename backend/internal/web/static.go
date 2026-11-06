@@ -47,7 +47,7 @@ func appPolicy() string {
 }
 
 // rootFileHandler serves the files the browser asks for by a fixed name: the
-// manifest, its icons and the service worker. A new build keeps their names,
+// manifest of each language, its icons and the service worker. A new build keeps their names,
 // so the browser has to ask again every time.
 func rootFileHandler(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimPrefix(path.Clean(strings.TrimPrefix(r.URL.Path, settings.Config.Http.BaseURL)), "/")

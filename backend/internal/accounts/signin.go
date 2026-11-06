@@ -126,7 +126,7 @@ func (s *pendingSignIns) drop(challenge string) {
 	delete(s.list, challenge)
 }
 
-var errStale = v1.Errorf(http.StatusGone, "this sign in ran out, please start again")
+var errStale = v1.Coded(http.StatusGone, "signInExpired", "this sign in ran out, please start again")
 
 // signInOptions is public, the sign in page asks before anyone is known.
 func (h handlers) signInOptions(w http.ResponseWriter, r *http.Request) error {
@@ -173,11 +173,11 @@ func (h handlers) signIn(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if !settings.Config.Auth.Methods.PasswordAuth.Enabled {
-		return v1.Errorf(http.StatusForbidden, "this server does not take passwords")
+		return v1.Coded(http.StatusForbidden, "noPasswords", "this server does not take passwords")
 	}
 	name := strings.TrimSpace(in.Username)
 	if name == "" || in.Password == "" {
-		return v1.Errorf(http.StatusBadRequest, "name and password are both needed")
+		return v1.Coded(http.StatusBadRequest, "namePasswordNeeded", "name and password are both needed")
 	}
 	ip := addressKey(r)
 	pair := pairKey(name, login.ClientIP(r))
@@ -196,7 +196,7 @@ func (h handlers) signIn(w http.ResponseWriter, r *http.Request) error {
 	if utils.CheckPwd(in.Password, hash) != nil || err != nil || u.LoginMethod != users.LoginMethodPassword {
 		h.svc.signInTries.fail(pair)
 		h.svc.addressTries.fail(ip)
-		return v1.Errorf(http.StatusUnauthorized, "the name or the password is not right")
+		return v1.Coded(http.StatusUnauthorized, "wrongLogin", "the name or the password is not right")
 	}
 	h.svc.signInTries.clear(pair)
 	p := &pendingSignIn{userID: u.ID, hash: u.Password, keep: in.Remember}
@@ -282,7 +282,7 @@ func (h handlers) signInTotp(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if strings.TrimSpace(in.Code) == "" {
-		return v1.Errorf(http.StatusBadRequest, "the code is missing")
+		return v1.Coded(http.StatusBadRequest, "codeMissing", "the code is missing")
 	}
 	if _, ok := h.svc.signIns.get(in.Challenge, stepTotpSetup); ok {
 		return h.finishTotpSetup(w, r, in)
@@ -313,7 +313,7 @@ func (h handlers) finishTotpSetup(w http.ResponseWriter, r *http.Request, in ste
 	}
 	if !h.svc.totp.take(u.ID, p.secret, in.Code) {
 		h.svc.factorTries.fail(key)
-		return v1.Errorf(http.StatusBadRequest, "the code does not match. Is the clock on the phone right?")
+		return v1.Coded(http.StatusBadRequest, "codeMismatch", "the code does not match. Is the clock on the phone right?")
 	}
 	h.svc.factorTries.clear(key)
 	stored, nonce, err := auth.SealTotpSecret(p.secret)
@@ -347,7 +347,7 @@ func (h handlers) signInPassword(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if utils.CheckPwd(in.Password, u.Password) == nil {
-		return v1.Errorf(http.StatusBadRequest, "the new password is the same as the old one")
+		return v1.Coded(http.StatusBadRequest, "samePassword", "the new password is the same as the old one")
 	}
 	u.RequirePasswordChange = false
 	if err := state.UpdateUser(u, in.Password, "password", "requirePasswordChange"); err != nil {
@@ -368,7 +368,7 @@ func (h handlers) signInPassword(w http.ResponseWriter, r *http.Request) error {
 // passkey, so the page needs no name.
 func (h handlers) passkeyOptions(w http.ResponseWriter, r *http.Request) error {
 	if !auth.IsWebAuthnEnabled() {
-		return v1.Errorf(http.StatusConflict, "passkeys are turned off on this server")
+		return v1.Coded(http.StatusConflict, "passkeysOff", "passkeys are turned off on this server")
 	}
 	ip := addressKey(r)
 	if h.svc.addressTries.blocked(ip) {
@@ -396,7 +396,7 @@ func (h handlers) signInPasskey(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if !auth.IsWebAuthnEnabled() {
-		return v1.Errorf(http.StatusConflict, "passkeys are turned off on this server")
+		return v1.Coded(http.StatusConflict, "passkeysOff", "passkeys are turned off on this server")
 	}
 	ip := addressKey(r)
 	if h.svc.addressTries.blocked(ip) {
@@ -411,7 +411,7 @@ func (h handlers) signInPasskey(w http.ResponseWriter, r *http.Request) error {
 	// An account from elsewhere signs in there, where it can also be closed.
 	if err != nil || u.LoginMethod != users.LoginMethodPassword {
 		h.svc.addressTries.fail(ip)
-		return v1.Errorf(http.StatusUnauthorized, "this passkey does not sign in here")
+		return v1.Coded(http.StatusUnauthorized, "passkeyUnknown", "this passkey does not sign in here")
 	}
 	if err := state.UpdateUser(u, "", "PasskeyCredentials"); err != nil {
 		return err
@@ -433,5 +433,5 @@ func (h handlers) signOut(w http.ResponseWriter, r *http.Request) error {
 
 func tooManyTries(w http.ResponseWriter, wait time.Duration) error {
 	w.Header().Set("Retry-After", strconv.Itoa(int(wait.Seconds())+1))
-	return v1.Errorf(http.StatusTooManyRequests, "too many wrong tries, please wait a few minutes")
+	return v1.Coded(http.StatusTooManyRequests, "tooManyTries", "too many wrong tries, please wait a few minutes")
 }

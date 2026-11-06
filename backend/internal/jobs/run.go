@@ -131,9 +131,10 @@ func (r *Run) Begin(seq int) {
 // skipped counts the whole item as handled.
 func (r *Run) Finish(seq int, state string, err error) {
 	r.item(seq, func(it *Item) {
-		it.State, it.Error, it.Resumed = state, "", false
+		it.State, it.Error, it.ErrorCode, it.ErrorParams, it.Resumed = state, "", "", nil, false
 		if err != nil {
 			it.State, it.Error = ItemFailed, errorText(err)
+			it.ErrorCode, it.ErrorParams = v1.CodeOf(err)
 		}
 	})
 	r.m.mu.Lock()

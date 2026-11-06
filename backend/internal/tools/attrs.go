@@ -297,7 +297,7 @@ type linkData struct {
 	Hard   bool   `json:"hard"`
 }
 
-var errLinkChanged = v1.Errorf(http.StatusConflict, "it changed since, so it is left as it is")
+var errLinkChanged = v1.Coded(http.StatusConflict, "changedSince", "it changed since, so it is left as it is")
 
 func (h handlers) link(w http.ResponseWriter, r *http.Request) error {
 	u := v1.UserFrom(r)
@@ -319,7 +319,7 @@ func (h handlers) link(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if _, err := os.Lstat(at.Real); err == nil {
-		return v1.Errorf(http.StatusConflict, "an entry with this name exists already")
+		return v1.Coded(http.StatusConflict, "nameTaken", "an entry with this name exists already")
 	}
 	clean, err := ccfs.Clean(req.Target)
 	if err != nil {
@@ -340,7 +340,7 @@ func (h handlers) link(w http.ResponseWriter, r *http.Request) error {
 		}
 		if err := os.Link(target.Real, at.Real); err != nil {
 			if errors.Is(err, os.ErrExist) {
-				return v1.Errorf(http.StatusConflict, "an entry with this name exists already")
+				return v1.Coded(http.StatusConflict, "nameTaken", "an entry with this name exists already")
 			}
 			return err
 		}

@@ -38,7 +38,7 @@ func (h handlers) archiveFile(u *users.User, loc ccfs.Location) error {
 		return err
 	}
 	if !info.Mode().IsRegular() || archives.FormatOf(loc.Real) == "" {
-		return v1.Errorf(http.StatusBadRequest, "path is not an archive")
+		return v1.Coded(http.StatusBadRequest, "notArchive", "path is not an archive")
 	}
 	return nil
 }
@@ -68,7 +68,7 @@ func (h handlers) archiveList(w http.ResponseWriter, r *http.Request, loc ccfs.L
 	}
 	kids, ok := ix.Children(loc.Inner)
 	if !ok {
-		return v1.Errorf(http.StatusNotFound, "path not found")
+		return v1.Coded(http.StatusNotFound, "notFound", "path not found")
 	}
 	out := Listing{Path: loc.Path, Items: make([]Item, 0, len(kids))}
 	for _, e := range kids {
@@ -84,7 +84,7 @@ func (h handlers) archiveTree(w http.ResponseWriter, r *http.Request, loc ccfs.L
 	}
 	kids, ok := ix.Children(loc.Inner)
 	if !ok {
-		return v1.Errorf(http.StatusNotFound, "path not found")
+		return v1.Coded(http.StatusNotFound, "notFound", "path not found")
 	}
 	out := Tree{Path: loc.Path, Items: []TreeItem{}}
 	outer, _, _ := strings.Cut(loc.Path, ccfs.ArchiveSep)
@@ -112,7 +112,7 @@ func (h handlers) archiveStat(w http.ResponseWriter, r *http.Request, loc ccfs.L
 	}
 	e, ok := ix.Stat(loc.Inner)
 	if !ok {
-		return v1.Errorf(http.StatusNotFound, "path not found")
+		return v1.Coded(http.StatusNotFound, "notFound", "path not found")
 	}
 	out := Stat{Path: loc.Path, Item: archiveItem(e)}
 	if loc.Inner == "/" {
@@ -129,7 +129,7 @@ func (h handlers) readArchived(r *http.Request, loc ccfs.Location, fn func(e arc
 	}
 	err := archives.ReadEntry(loc.Real, archiveOptions(r), loc.Inner, fn)
 	if errors.Is(err, os.ErrNotExist) {
-		return v1.Errorf(http.StatusNotFound, "path not found")
+		return v1.Coded(http.StatusNotFound, "notFound", "path not found")
 	}
 	return archives.Problem(err)
 }

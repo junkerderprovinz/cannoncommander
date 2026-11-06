@@ -86,6 +86,13 @@ components:
           type: string
         instance:
           type: string
+        code:
+          type: string
+          description: Names the sentence in detail, so an interface can say it in its own language.
+        params:
+          type: object
+          additionalProperties: true
+          description: The values the sentence of code is filled with.
     Event:
       type: object
       description: |

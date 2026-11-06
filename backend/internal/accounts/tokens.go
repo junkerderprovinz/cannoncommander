@@ -118,7 +118,7 @@ func tokenByID(u *users.User, id string) (users.AuthToken, error) {
 		}
 	})
 	if tok.Name == "" {
-		return tok, v1.Errorf(http.StatusNotFound, "there is no such token")
+		return tok, v1.Coded(http.StatusNotFound, "noToken", "there is no such token")
 	}
 	return tok, nil
 }
@@ -142,11 +142,11 @@ func (h handlers) createToken(w http.ResponseWriter, r *http.Request) error {
 	name := strings.TrimSpace(in.Name)
 	switch {
 	case name == "":
-		return v1.Errorf(http.StatusBadRequest, "give the token a name")
+		return v1.Coded(http.StatusBadRequest, "tokenNameMissing", "give the token a name")
 	// Session tokens carry the WEB_TOKEN names, and a name with two dots could
 	// pass for a token itself among the keys of the token map.
 	case len(name) > 64 || strings.HasPrefix(name, "WEB_TOKEN") || strings.Count(name, ".") == 2:
-		return v1.Errorf(http.StatusBadRequest, "pick another name for the token")
+		return v1.Coded(http.StatusBadRequest, "tokenNameReserved", "pick another name for the token")
 	case in.Rights != rightsRead && in.Rights != rightsReadWrite:
 		return v1.Errorf(http.StatusBadRequest, "the rights have to be r or rw")
 	case in.Days != nil && (*in.Days < 0 || *in.Days > 3650):
@@ -160,7 +160,7 @@ func (h handlers) createToken(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if _, taken := u.Tokens[name]; taken {
-		return v1.Errorf(http.StatusConflict, "there is a token with this name already")
+		return v1.Coded(http.StatusConflict, "tokenExists", "there is a token with this name already")
 	}
 	life := forever
 	if in.Days != nil && *in.Days > 0 {

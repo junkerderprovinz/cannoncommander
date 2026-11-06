@@ -99,7 +99,7 @@ func (h handlers) empty(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if len(entries) == 0 {
-		return v1.Errorf(http.StatusBadRequest, "the trash is empty")
+		return v1.Coded(http.StatusBadRequest, "trashEmpty", "the trash is empty")
 	}
 	return h.submit(w, r, KindEmpty, entries)
 }

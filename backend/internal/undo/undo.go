@@ -148,7 +148,7 @@ func (l *Log) List(owner string) ([]Step, error) {
 }
 
 // ErrNothing means there is no step to take back.
-var ErrNothing = v1.Errorf(http.StatusNotFound, "nothing to take back")
+var ErrNothing = v1.Coded(http.StatusNotFound, "nothingToUndo", "nothing to take back")
 
 // Take takes back the step id of u, or the newest one when id is empty.
 // A step that runs as a job is gone from the list once the job is queued,
@@ -160,7 +160,7 @@ func (l *Log) Take(ctx context.Context, u *users.User, id string) (Step, *jobs.J
 	}
 	rev, ok := reverserOf(s.Kind)
 	if !ok {
-		return Step{}, nil, v1.Errorf(http.StatusConflict, "this step cannot be taken back")
+		return Step{}, nil, v1.Coded(http.StatusConflict, "cannotUndo", "this step cannot be taken back")
 	}
 	if rev.Inline != nil {
 		if err := rev.Inline(ctx, l.deps, u, data); err != nil {

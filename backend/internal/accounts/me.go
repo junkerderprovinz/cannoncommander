@@ -80,10 +80,10 @@ func (h handlers) putPassword(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if u.LoginMethod != users.LoginMethodPassword {
-		return v1.Errorf(http.StatusConflict, "you sign in through "+string(u.LoginMethod)+", the password is kept there")
+		return v1.Coded(http.StatusConflict, "passwordElsewhere", "you sign in through "+string(u.LoginMethod)+", the password is kept there").With("method", string(u.LoginMethod))
 	}
 	if u.LockPassword {
-		return v1.Errorf(http.StatusForbidden, "your password is locked, an admin can change it")
+		return v1.Coded(http.StatusForbidden, "passwordLocked", "your password is locked, an admin can change it")
 	}
 	if err := h.checkCurrentPassword(&u, in.Current); err != nil {
 		return err
@@ -92,7 +92,7 @@ func (h handlers) putPassword(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if in.Next == in.Current {
-		return v1.Errorf(http.StatusBadRequest, "the new password is the same as the old one")
+		return v1.Coded(http.StatusBadRequest, "samePassword", "the new password is the same as the old one")
 	}
 	u.RequirePasswordChange = false
 	if err := state.UpdateUser(&u, in.Next, "password", "requirePasswordChange"); err != nil {

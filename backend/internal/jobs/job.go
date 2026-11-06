@@ -66,6 +66,10 @@ type Item struct {
 	Bytes int64  `json:"bytes"`
 	Files int64  `json:"files"`
 	Error string `json:"error,omitempty"`
+	// ErrorCode and ErrorParams say Error the way a problem does, for an
+	// interface that shows it in its own language.
+	ErrorCode   string         `json:"errorCode,omitempty"`
+	ErrorParams map[string]any `json:"errorParams,omitempty"`
 	// Ref is kind specific, for example the trash entry to restore.
 	Ref string `json:"-"`
 	// Resumed marks an item that was cut off before, so the kind can tell
@@ -118,28 +122,30 @@ type Job struct {
 	// Place is the place in the waiting line, counted from 1.
 	Place int `json:"place,omitempty"`
 	// Position orders the open jobs.
-	Position      int       `json:"position"`
-	Name          string    `json:"name"`
-	Count         int       `json:"count"`
-	Dest          string    `json:"dest,omitempty"`
-	TotalBytes    int64     `json:"totalBytes"`
-	DoneBytes     int64     `json:"doneBytes"`
-	TotalFiles    int64     `json:"totalFiles"`
-	DoneFiles     int64     `json:"doneFiles"`
-	Rate          float64   `json:"rate"`
-	Left          *float64  `json:"left"`
-	Current       string    `json:"current,omitempty"`
-	Cap           int64     `json:"cap"`
-	WaitForParity bool      `json:"waitForParity"`
-	FailedItems   int       `json:"failedItems"`
-	Error         string    `json:"error,omitempty"`
-	Conflict      *Conflict `json:"conflict,omitempty"`
-	Undo          string    `json:"undo,omitempty"`
-	Result        any       `json:"result,omitempty"`
-	CreatedAt     time.Time `json:"createdAt"`
-	StartedAt     time.Time `json:"startedAt,omitzero"`
-	FinishedAt    time.Time `json:"finishedAt,omitzero"`
-	Items         []Item    `json:"items,omitempty"`
+	Position      int            `json:"position"`
+	Name          string         `json:"name"`
+	Count         int            `json:"count"`
+	Dest          string         `json:"dest,omitempty"`
+	TotalBytes    int64          `json:"totalBytes"`
+	DoneBytes     int64          `json:"doneBytes"`
+	TotalFiles    int64          `json:"totalFiles"`
+	DoneFiles     int64          `json:"doneFiles"`
+	Rate          float64        `json:"rate"`
+	Left          *float64       `json:"left"`
+	Current       string         `json:"current,omitempty"`
+	Cap           int64          `json:"cap"`
+	WaitForParity bool           `json:"waitForParity"`
+	FailedItems   int            `json:"failedItems"`
+	Error         string         `json:"error,omitempty"`
+	ErrorCode     string         `json:"errorCode,omitempty"`
+	ErrorParams   map[string]any `json:"errorParams,omitempty"`
+	Conflict      *Conflict      `json:"conflict,omitempty"`
+	Undo          string         `json:"undo,omitempty"`
+	Result        any            `json:"result,omitempty"`
+	CreatedAt     time.Time      `json:"createdAt"`
+	StartedAt     time.Time      `json:"startedAt,omitzero"`
+	FinishedAt    time.Time      `json:"finishedAt,omitzero"`
+	Items         []Item         `json:"items,omitempty"`
 }
 
 // Plan is what a kind hands the manager for a new job.

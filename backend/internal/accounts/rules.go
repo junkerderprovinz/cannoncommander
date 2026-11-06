@@ -494,11 +494,11 @@ func (h handlers) testRules(w http.ResponseWriter, r *http.Request) error {
 	}
 	target, err := state.GetUserByUsername(strings.TrimSpace(in.User))
 	if err != nil {
-		return v1.Errorf(http.StatusNotFound, "there is no user "+in.User)
+		return v1.Coded(http.StatusNotFound, "noUserNamed", "there is no user "+in.User).With("name", in.User)
 	}
 	p, err := ccfs.Clean(strings.TrimSpace(in.Path))
 	if err != nil {
-		return v1.Errorf(http.StatusBadRequest, "the path has to start with /")
+		return v1.Coded(http.StatusBadRequest, "pathSlash", "the path has to start with /")
 	}
 	return v1.WriteJSON(w, r, http.StatusOK, h.verdict(&target, p))
 }

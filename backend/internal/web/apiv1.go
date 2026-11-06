@@ -102,9 +102,9 @@ func authenticateV1(w http.ResponseWriter, r *http.Request) (*users.User, error)
 	}
 	switch status {
 	case http.StatusUnauthorized, 0:
-		return nil, v1.Errorf(http.StatusUnauthorized, "login required")
+		return nil, v1.Coded(http.StatusUnauthorized, "signInNeeded", "login required")
 	case http.StatusForbidden:
-		return nil, v1.Errorf(http.StatusForbidden, "access denied")
+		return nil, v1.Coded(http.StatusForbidden, "denied", "access denied")
 	}
 	return nil, err
 }

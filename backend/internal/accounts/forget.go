@@ -32,7 +32,7 @@ func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 	}
 	actor := v1.UserFrom(r)
 	if u.ID == actor.ID {
-		return v1.Errorf(http.StatusForbidden, "you cannot delete your own account")
+		return v1.Coded(http.StatusForbidden, "deleteSelf", "you cannot delete your own account")
 	}
 	// What hangs on the login name or grants access goes first, so a new
 	// account with the same name can never inherit it.

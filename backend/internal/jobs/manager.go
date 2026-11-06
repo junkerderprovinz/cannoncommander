@@ -353,7 +353,7 @@ func (m *Manager) List(owner string) []Job {
 func (m *Manager) Pause(id string) (Job, error) {
 	return m.change(id, func(j *job) error {
 		if j.State != Queued && j.State != Running {
-			return v1.Errorf(http.StatusConflict, "only a waiting or running job can be paused")
+			return v1.Coded(http.StatusConflict, "jobNotRunning", "only a waiting or running job can be paused")
 		}
 		j.State = Paused
 		j.allowed = false
@@ -367,7 +367,7 @@ func (m *Manager) Pause(id string) (Job, error) {
 func (m *Manager) Resume(id string) (Job, error) {
 	return m.change(id, func(j *job) error {
 		if j.State != Paused {
-			return v1.Errorf(http.StatusConflict, "the job is not paused")
+			return v1.Coded(http.StatusConflict, "jobNotPaused", "the job is not paused")
 		}
 		j.State = Queued
 		return nil
@@ -378,7 +378,7 @@ func (m *Manager) Resume(id string) (Job, error) {
 func (m *Manager) Cancel(id string) (Job, error) {
 	return m.change(id, func(j *job) error {
 		if !j.State.Open() {
-			return v1.Errorf(http.StatusConflict, "the job has ended already")
+			return v1.Coded(http.StatusConflict, "jobEnded", "the job has ended already")
 		}
 		j.cancelled = true
 		if j.live {
@@ -394,17 +394,17 @@ func (m *Manager) Cancel(id string) (Job, error) {
 func (m *Manager) Retry(id string) (Job, error) {
 	return m.change(id, func(j *job) error {
 		if j.State != Failed && j.State != Cancelled {
-			return v1.Errorf(http.StatusConflict, "only a failed or cancelled job can be retried")
+			return v1.Coded(http.StatusConflict, "jobNotRetryable", "only a failed or cancelled job can be retried")
 		}
 		for i := range j.items {
 			it := &j.items[i]
 			if it.State == ItemFailed || it.State == ItemRunning || it.State == ItemPending {
 				it.Resumed = it.Resumed || it.State != ItemPending
-				it.State, it.Error = ItemPending, ""
+				it.State, it.Error, it.ErrorCode, it.ErrorParams = ItemPending, "", "", nil
 				m.saveItem(j, *it)
 			}
 		}
-		j.State, j.Error, j.FinishedAt, j.cancelled = Queued, "", time.Time{}, false
+		j.State, j.Error, j.ErrorCode, j.ErrorParams, j.FinishedAt, j.cancelled = Queued, "", "", nil, time.Time{}, false
 		j.Position = m.nextPos
 		m.nextPos++
 		j.recount()
@@ -416,7 +416,7 @@ func (m *Manager) Retry(id string) (Job, error) {
 func (m *Manager) Move(id string, to int) (Job, error) {
 	return m.change(id, func(j *job) error {
 		if !j.State.Open() {
-			return v1.Errorf(http.StatusConflict, "the job has ended already")
+			return v1.Coded(http.StatusConflict, "jobEnded", "the job has ended already")
 		}
 		open := m.openJobs()
 		from := slices.Index(open, j)
@@ -460,7 +460,7 @@ func (m *Manager) Decide(id, key, choice string, all bool) (Job, error) {
 	}
 	return m.change(id, func(j *job) error {
 		if j.State != Asking || j.Conflict == nil || j.ask == nil {
-			return v1.Errorf(http.StatusConflict, "the job is not waiting for an answer")
+			return v1.Coded(http.StatusConflict, "jobNotAsking", "the job is not waiting for an answer")
 		}
 		if key != "" && key != j.Conflict.Key {
 			return v1.Errorf(http.StatusConflict, "the job waits for an answer about "+j.Conflict.Key)
@@ -486,10 +486,10 @@ func (m *Manager) Remove(id string) error {
 	defer m.mu.Unlock()
 	j, ok := m.jobs[id]
 	if !ok {
-		return v1.Errorf(http.StatusNotFound, "no such job")
+		return v1.Coded(http.StatusNotFound, "noJob", "no such job")
 	}
 	if j.State.Open() {
-		return v1.Errorf(http.StatusConflict, "the job has not ended yet")
+		return v1.Coded(http.StatusConflict, "jobNotEnded", "the job has not ended yet")
 	}
 	delete(m.jobs, id)
 	m.delete(id)
@@ -581,7 +581,7 @@ func (m *Manager) change(id string, f func(*job) error) (Job, error) {
 	defer m.mu.Unlock()
 	j, ok := m.jobs[id]
 	if !ok {
-		return Job{}, v1.Errorf(http.StatusNotFound, "no such job")
+		return Job{}, v1.Coded(http.StatusNotFound, "noJob", "no such job")
 	}
 	if err := f(j); err != nil {
 		return Job{}, err
@@ -698,10 +698,12 @@ func (m *Manager) end(j *job, err error) []func() {
 		j.State = Cancelled
 	case err != nil:
 		j.State, j.Error = Failed, errorText(err)
+		j.ErrorCode, j.ErrorParams = v1.CodeOf(err)
 	case j.FailedItems > 0:
 		j.State = Failed
 		if j.Error == "" {
 			j.Error = fmt.Sprintf("%d of %d items failed", j.FailedItems, len(j.items))
+			j.ErrorCode, j.ErrorParams = "itemsFailed", map[string]any{"n": j.FailedItems, "total": len(j.items)}
 		}
 	default:
 		j.State = Done
