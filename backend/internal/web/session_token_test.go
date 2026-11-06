@@ -144,3 +144,29 @@ func TestALinkWithATokenDoesNotSignTheVisitorIn(t *testing.T) {
 		t.Fatalf("the link planted a session: %v", setCookie)
 	}
 }
+
+func TestTheSignInTimeComesFromTheSessionAlone(t *testing.T) {
+	setupTestEnv(t)
+	user := createTokenAuthUser(t, "zeit", users.Permissions{Api: true})
+	before := time.Now().Add(-time.Second)
+	session := testSessionToken(t, user, time.Hour)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/me", http.NoBody)
+	req.AddCookie(&http.Cookie{Name: sessionCookieName, Value: session})
+	at, ok := sessionLogin{}.SignedInAt(req)
+	if !ok || at.Before(before) || at.After(time.Now()) {
+		t.Fatalf("signed in at %v, %v", at, ok)
+	}
+
+	raw, _, err := auth.MakeSignedTokenAPI(user, "skript", time.Hour, user.Permissions, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := state.AddApiToken(raw, user.ID); err != nil {
+		t.Fatal(err)
+	}
+	req = httptest.NewRequest(http.MethodGet, "/api/v1/me", http.NoBody)
+	req.Header.Set("Authorization", "Bearer "+raw)
+	if _, ok := (sessionLogin{}).SignedInAt(req); ok {
+		t.Fatal("an API token has no sign in")
+	}
+}

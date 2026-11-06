@@ -5,7 +5,8 @@ import { DAY, now } from '@/core/format';
 import { toast } from '@/core/toast';
 import { t } from '@/i18n';
 
-export interface LinkForm { slug: string; exp: string; limit: string; pw: boolean; pass: string; uploads: boolean; notify: boolean; folder: boolean }
+export interface LinkForm { slug: string; message: string; exp: string; limit: string; pw: boolean; pass: string; uploads: boolean; notify: boolean; folder: boolean }
+export const MESSAGE_MAX = 2000;
 export const SLUG = /^[a-z0-9][a-z0-9-]{2,39}$/;
 
 // A few letters that are hard to guess, then the name, so the address still says what it leads to.
@@ -14,16 +15,17 @@ export function slugFor(name: string) {
   const words = name.toLowerCase().replace(/\.[^.]+$/, '').normalize('NFD').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').slice(0, 18);
   return `${id}-${words || 'link'}`;
 }
-export const newForm = (name: string, folder: boolean): LinkForm => ({ slug: slugFor(name), exp: '7', limit: '0', pw: false, pass: '', uploads: false, notify: false, folder });
+export const newForm = (name: string, folder: boolean): LinkForm => ({ slug: slugFor(name), message: '', exp: '7', limit: '0', pw: false, pass: '', uploads: false, notify: false, folder });
 
 // Checks the form as the server would and says what is wrong, or hands back the request.
 export function readForm(f: LinkForm): Omit<ShareCreate, 'paths'> | null {
-  const slug = f.slug.trim().toLowerCase(), days = Number(f.exp);
+  const slug = f.slug.trim().toLowerCase(), days = Number(f.exp), message = f.message.trim();
   if (!SLUG.test(slug)) { toast(t('share.badSlug'), 'warn'); return null; }
+  if (message.length > MESSAGE_MAX) { toast(t('share.longMessage', { n: MESSAGE_MAX }), 'warn'); return null; }
   if (f.pw && f.pass.length < 6) { toast(t('share.shortPassword'), 'warn'); return null; }
   return {
     slug, expires: days ? new Date(now() + days * DAY).toISOString() : null, limit: Number(f.limit), notify: f.notify,
-    ...(f.pw ? { password: f.pass } : {}), ...(f.folder && f.uploads ? { uploads: true } : {}),
+    ...(message ? { message } : {}), ...(f.pw ? { password: f.pass } : {}), ...(f.folder && f.uploads ? { uploads: true } : {}),
   };
 }
 

@@ -46,6 +46,10 @@ func (f *fakeIndex) Refresh(_ *ccfs.Source, dir string) {
 	f.refreshed = append(f.refreshed, dir)
 }
 
+func (f *fakeIndex) Created(*ccfs.Source, string)       {}
+func (f *fakeIndex) Moved(*ccfs.Source, string, string) {}
+func (f *fakeIndex) Removed(*ccfs.Source, string)       {}
+
 func byName(t *testing.T, items []Item, name string) Item {
 	t.Helper()
 	for _, it := range items {

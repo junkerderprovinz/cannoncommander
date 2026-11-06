@@ -325,3 +325,36 @@ func TestFetchDoesNotWriteThroughALinkPlantedAsItsPartFile(t *testing.T) {
 		t.Error("the fetch wrote outside the source")
 	}
 }
+
+func TestCompareSizesAFolderByWhatTheUserSees(t *testing.T) {
+	e := newEnv(t)
+	protectedShare(e, ccfs.Hidden)
+	e.write("/mnt/user/backups/fotos/frei.txt", "frei")
+	var out struct {
+		Items []Compared `json:"items"`
+	}
+	if code := e.call("anna", "POST", "/tools/compare", CompareRequest{Left: "/mnt/user", Right: "/mnt/user/backups", Top: true}, &out); code != http.StatusOK {
+		t.Fatalf("compare: %d", code)
+	}
+	for _, it := range out.Items {
+		if it.Name != "fotos" {
+			continue
+		}
+		if it.Left == nil || it.Left.Size != int64(len("frei")) || it.State != Same {
+			t.Fatalf("fotos = %+v left %+v", it, it.Left)
+		}
+		return
+	}
+	t.Fatal("fotos is missing")
+}
+
+func TestSyncCountsWhatItCopies(t *testing.T) {
+	e := newEnv(t)
+	protectedShare(e, ccfs.Hidden)
+	e.write("/mnt/user/backups/.keep", "")
+	j := e.run(KindSync, SyncParams{Left: "/mnt/user", Right: "/mnt/user/downloads",
+		Steps: []SyncStep{{Rel: "fotos", Act: "copy", To: "R"}}})
+	if j.TotalBytes != int64(len("frei")) || j.TotalFiles != 2 {
+		t.Fatalf("totals %d bytes, %d files", j.TotalBytes, j.TotalFiles)
+	}
+}

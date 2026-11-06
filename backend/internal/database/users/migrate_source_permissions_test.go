@@ -24,8 +24,8 @@ func TestMigrateToSourcePermissions(t *testing.T) {
 	}
 	perms := user.BackendScopes[0].Permissions
 	if !perms.View || !perms.Download || !perms.Modify || perms.Delete || !perms.Create {
-			t.Fatalf("unexpected perms: %+v", perms)
-		}
+		t.Fatalf("unexpected perms: %+v", perms)
+	}
 	if user.Permissions.Download || user.Permissions.Modify || user.Permissions.Create {
 		t.Fatalf("global file ops should be cleared: %+v", user.Permissions)
 	}

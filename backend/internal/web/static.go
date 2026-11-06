@@ -4,6 +4,7 @@ import (
 	"io/fs"
 	"net/http"
 	"net/url"
+	"path"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -42,7 +43,29 @@ func appPolicy() string {
 	return "default-src 'self'; script-src 'self'" + office +
 		"; style-src 'self' 'unsafe-inline' blob: https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data: blob:" +
 		"; img-src 'self' blob: data:" + office + "; media-src 'self' blob:; connect-src 'self' blob: data:" + office +
-		"; worker-src blob:; frame-src 'self' blob: http: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+		"; worker-src 'self' blob:; frame-src 'self' blob: http: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+}
+
+// rootFileHandler serves the files the browser asks for by a fixed name: the
+// manifest, its icons and the service worker. A new build keeps their names,
+// so the browser has to ask again every time.
+func rootFileHandler(w http.ResponseWriter, r *http.Request) {
+	name := strings.TrimPrefix(path.Clean(strings.TrimPrefix(r.URL.Path, settings.Config.Http.BaseURL)), "/")
+	data, err := fs.ReadFile(assetFs, name)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Cache-Control", "no-cache")
+	setContentType(w, name)
+	_, _ = w.Write(data)
+}
+
+// sharedTooEarly answers a share from another app that arrives before the
+// service worker runs, as on the first share after installing. The files
+// are lost then, but the app still opens.
+func sharedTooEarly(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, settings.Config.Http.BaseURL, http.StatusSeeOther)
 }
 
 func onlyOfficeScriptSrcOrigins() []string {
@@ -90,5 +113,7 @@ func setContentType(w http.ResponseWriter, path string) {
 		w.Header().Set("Content-Type", "font/woff2")
 	case ".json":
 		w.Header().Set("Content-Type", "application/json")
+	case ".webmanifest":
+		w.Header().Set("Content-Type", "application/manifest+json")
 	}
 }

@@ -48,6 +48,9 @@ type Login interface {
 	// EndAll revokes every session of the user except the one with the
 	// token hash keep and returns how many it ended.
 	EndAll(userID uint64, keep string) (int, error)
+	// SignedInAt returns when the session r carries signed in. ok is false
+	// for API tokens.
+	SignedInAt(r *http.Request) (at time.Time, ok bool)
 	// APIToken returns the API token r logs in with. ok is false for
 	// sessions and every other kind of login.
 	APIToken(r *http.Request) (raw string, ok bool)
@@ -178,8 +181,11 @@ type sessionHandlers struct {
 }
 
 func (h sessionHandlers) list(w http.ResponseWriter, r *http.Request) error {
-	uid := strconv.FormatUint(v1.UserFrom(r).ID, 10)
-	rows, err := h.db.QueryContext(r.Context(), `SELECT id, token_hash, created_at, seen_at, user_agent, ip FROM sessions WHERE user_id = ?`, uid)
+	return h.write(w, r, v1.UserFrom(r).ID)
+}
+
+func (h sessionHandlers) write(w http.ResponseWriter, r *http.Request, userID uint64) error {
+	rows, err := h.db.QueryContext(r.Context(), `SELECT id, token_hash, created_at, seen_at, user_agent, ip FROM sessions WHERE user_id = ?`, strconv.FormatUint(userID, 10))
 	if err != nil {
 		return err
 	}
@@ -220,9 +226,12 @@ func (h sessionHandlers) end(w http.ResponseWriter, r *http.Request) error {
 	if err := needSession(r); err != nil {
 		return err
 	}
-	uid := strconv.FormatUint(v1.UserFrom(r).ID, 10)
+	return h.endOne(w, r, v1.UserFrom(r).ID, r.PathValue("id"))
+}
+
+func (h sessionHandlers) endOne(w http.ResponseWriter, r *http.Request, userID uint64, id string) error {
 	var hash string
-	err := h.db.QueryRowContext(r.Context(), `SELECT token_hash FROM sessions WHERE id = ? AND user_id = ?`, r.PathValue("id"), uid).Scan(&hash)
+	err := h.db.QueryRowContext(r.Context(), `SELECT token_hash FROM sessions WHERE id = ? AND user_id = ?`, id, strconv.FormatUint(userID, 10)).Scan(&hash)
 	if errors.Is(err, sql.ErrNoRows) {
 		return v1.Errorf(http.StatusNotFound, "no such session")
 	}
@@ -232,7 +241,7 @@ func (h sessionHandlers) end(w http.ResponseWriter, r *http.Request) error {
 	if err := login.End(hash); err != nil {
 		return err
 	}
-	if _, err := h.db.ExecContext(r.Context(), `DELETE FROM sessions WHERE id = ?`, r.PathValue("id")); err != nil {
+	if _, err := h.db.ExecContext(r.Context(), `DELETE FROM sessions WHERE id = ?`, id); err != nil {
 		return err
 	}
 	w.WriteHeader(http.StatusNoContent)
