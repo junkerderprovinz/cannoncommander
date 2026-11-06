@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Khung trái",
     "right": "Khung phải",
@@ -2141,7 +2140,7 @@
     "colChanged": "Ngày sửa",
     "noFolder": "Thư mục này không tồn tại",
     "unknown": "Tôi không biết {fields}",
-    "unknownHint": "",
+    "unknownHint": "Ví dụ, tôi hiểu rộng, cao, codec, nghệsĩ, máyảnh, kíchthước, sửa, thờilượng và mọi tên cột viết liền",
     "nothing": "Không tìm thấy gì",
     "nothingHint": "Thư mục khác hoặc ít điều kiện hơn có thể cho nhiều kết quả hơn",
     "asTab": "Mở thành thẻ",
@@ -2172,22 +2171,22 @@
     "menuNewLabel": "Tìm kiếm mới",
     "menuNone": "Gõ một mẫu và lưu bằng nút trong ô.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "thuế",
+      "word": "thư"
     },
     "menuExamples": "Ví dụ",
     "examples": {
       "mkv": "mọi tệp MKV, kể cả trong thư mục con",
-      "tag": "",
-      "word": "",
+      "tag": "mọi thứ có thẻ {tag}",
+      "word": "tên có chứa {word}",
       "one": "dấu ? thay cho đúng một ký tự",
       "meta": "phim 4K mã hóa HEVC, theo siêu dữ liệu",
       "week": "mọi thứ thay đổi trong 7 ngày qua"
     },
     "server": "Máy chủ",
-    "unknownFields": "",
+    "unknownFields": "Tôi không biết {fields}. Ví dụ, tôi hiểu rộng, cao, codec, nghệsĩ, máyảnh, kíchthước, sửa, thờilượng và mọi tên cột viết liền như ốngkính hay năm",
     "unknownField": "“{f}:”",
-    "quoted": ""
+    "quoted": "“{text}”"
   },
   "share": {
     "share": "Chia sẻ",
@@ -2461,18 +2460,18 @@
     "clipCopy": "Sao chép vào bộ nhớ tạm",
     "clipPaste": "Dán",
     "nothingOn": "Không có phần nào nằm trên {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Bỏ qua",
+    "sameSkipTip": "Ở đích đã có chính tệp này dưới một đường dẫn khác, ví dụ là liên kết cứng hoặc qua disk share và user share. Tệp được giữ nguyên.",
     "sameSkipped": {
-      "other": ""
+      "other": "Đã bỏ qua {n} tệp vì ở đích chính là các tệp đó"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Đã sao chép: {files} sang {to}. {same}",
+    "movedSame": "Đã di chuyển: {files} sang {to}. {same}",
     "nothingCopied": {
-      "other": ""
+      "other": "Không sao chép gì. {n} tệp ở đích chính là các tệp đó và được giữ nguyên"
     },
     "nothingMoved": {
-      "other": ""
+      "other": "Không di chuyển gì. {n} tệp ở đích chính là các tệp đó và được giữ nguyên"
     }
   },
   "trash": {
@@ -3023,7 +3022,7 @@
     "created": "Ngày tạo",
     "accessed": "Truy cập lần cuối",
     "disksize": "Dung lượng trên đĩa",
-    "kind": "Loại",
+    "kind": "Kiểu",
     "mime": "Kiểu MIME",
     "attributes": "Thuộc tính",
     "statchange": "Đổi trạng thái",
@@ -3058,7 +3057,7 @@
     "abitrate": "Bitrate",
     "samplerate": "Tần số lấy mẫu",
     "channels": "Kênh",
-    "camera": "Kiểu máy ảnh",
+    "camera": "Máy ảnh",
     "taken": "Ngày chụp",
     "make": "Hãng máy ảnh",
     "lens": "Ống kính",
@@ -3114,35 +3113,35 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Ngang",
+      "portrait": "Dọc",
+      "square": "Vuông"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Có đánh đèn",
+      "off": "Không đèn"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "other": ""
+      "other": "{n} kênh"
     },
     "method": {
-      "none": ""
+      "none": "Không nén"
     },
-    "methodNumber": "",
+    "methodNumber": "Phương thức {n}",
     "arch": {
-      "all": ""
+      "all": "Mọi kiến trúc"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Không rõ"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "rộng",
+    "height": "cao",
+    "vcodec": "codec",
+    "modified": "sửa"
   },
   "kinds": {
     "folder": "Thư mục",
