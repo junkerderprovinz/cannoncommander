@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Linkerpaneel",
     "right": "Rechterpaneel",
@@ -2220,7 +2219,7 @@
     "colChanged": "Gewijzigd",
     "noFolder": "Deze map bestaat niet",
     "unknown": "{fields} ken ik niet",
-    "unknownHint": "Ik begrijp bijvoorbeeld width, height, codec, artist, camera, size, modified, duration en elke kolomnaam",
+    "unknownHint": "Ik begrijp bijvoorbeeld breedte, hoogte, codec, artiest, cameramodel, grootte, gewijzigd, duur en elke kolomnaam",
     "nothing": "Niets gevonden",
     "nothingHint": "Een andere map of minder voorwaarden vinden misschien meer",
     "asTab": "Als tabblad openen",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "Nieuwe zoekopdracht",
     "menuNone": "Typ een patroon en sla het op met de knop in het veld.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "belasting",
+      "word": "rapport"
     },
     "menuExamples": "Voorbeelden",
     "examples": {
       "mkv": "alle MKV-bestanden, ook in submappen",
-      "tag": "alles met de tag steuer",
-      "word": "namen waarin bericht voorkomt",
+      "tag": "alles met de tag {tag}",
+      "word": "namen waarin {word} voorkomt",
       "one": "een ? staat voor precies één teken",
       "meta": "4K-films in HEVC, uit de metadata",
       "week": "alles wat in de laatste 7 dagen is gewijzigd"
     },
     "server": "Server",
-    "unknownFields": "{fields} ken ik niet. Ik begrijp bijvoorbeeld width, height, codec, artist, camera, size, modified, duration en elke kolomnaam, zoals lens of year",
+    "unknownFields": "{fields} ken ik niet. Ik begrijp bijvoorbeeld breedte, hoogte, codec, artiest, cameramodel, grootte, gewijzigd, duur en elke kolomnaam, zoals objectief of jaar",
     "unknownField": "„{f}:”",
-    "quoted": ""
+    "quoted": "„{text}”"
   },
   "share": {
     "share": "Delen",
@@ -2553,21 +2552,21 @@
     "clipCopy": "Naar het klembord kopiëren",
     "clipPaste": "Plakken",
     "nothingOn": "Daarvan staat niets op {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Wordt overgeslagen",
+    "sameSkipTip": "Op het doel staat hetzelfde bestand onder een ander pad, bijvoorbeeld als harde koppeling of via een disk share en de user share. Het blijft zoals het is.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} bestand overgeslagen, omdat het op het doel hetzelfde bestand is",
+      "other": "{n} bestanden overgeslagen, omdat het op het doel dezelfde bestanden zijn"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Gekopieerd: {files} naar {to}. {same}",
+    "movedSame": "Verplaatst: {files} naar {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "Niets gekopieerd. Het bestand op het doel is hetzelfde en blijft zoals het is",
+      "other": "Niets gekopieerd. De {n} bestanden op het doel zijn dezelfde en blijven zoals ze zijn"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "Niets verplaatst. Het bestand op het doel is hetzelfde en blijft zoals het is",
+      "other": "Niets verplaatst. De {n} bestanden op het doel zijn dezelfde en blijven zoals ze zijn"
     }
   },
   "trash": {
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Liggend",
+      "portrait": "Staand",
+      "square": "Vierkant"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Geflitst",
+      "off": "Geen flitser"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} kanaal",
+      "other": "{n} kanalen"
     },
     "method": {
-      "none": ""
+      "none": "Geen"
     },
-    "methodNumber": "",
+    "methodNumber": "Methode {n}",
     "arch": {
-      "all": ""
+      "all": "Alle"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Onbekend"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "breedte",
+    "height": "hoogte",
+    "vcodec": "codec",
+    "modified": "gewijzigd"
   },
   "kinds": {
     "folder": "Map",
