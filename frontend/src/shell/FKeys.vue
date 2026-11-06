@@ -12,16 +12,18 @@ const keys = computed(() => FKEYS.map((k) => {
   return a && { k, id: id!, g: a.g!, label: keymap[k] === 'shortcuts' ? t('fkeys.help') : labelOf(a) };
 }).filter((x) => !!x));
 
-// Where the labels of a language do not fit, the bar drops its glyphs before it cuts a word.
+// Where the buttons of a language do not fit side by side, the bar drops its glyphs and some padding.
 const bar = ref<HTMLElement>();
 const tight = ref(false);
 async function fit() {
   tight.value = false;
   await nextTick();
-  tight.value = [...(bar.value?.querySelectorAll<HTMLElement>('.glim-btn-label') ?? [])].some((l) => l.scrollWidth > l.clientWidth + 1 || l.scrollHeight > l.clientHeight + 1);
+  const b = bar.value;
+  tight.value = !!b && (b.scrollWidth > b.clientWidth + 1 || [...b.querySelectorAll<HTMLElement>('.glim-btn-label')].some((l) => l.scrollWidth > l.clientWidth + 1 || l.scrollHeight > l.clientHeight + 1));
 }
 const seen = new ResizeObserver(() => { fit(); });
-onMounted(() => { if (bar.value) seen.observe(bar.value); });
+// Labels are measured again once the font is in, since the fallback font has other widths.
+onMounted(() => { if (bar.value) seen.observe(bar.value); document.fonts?.ready.then(fit); });
 onBeforeUnmount(() => seen.disconnect());
 watch(() => keys.value.map((f) => f.label).join(), fit);
 </script>

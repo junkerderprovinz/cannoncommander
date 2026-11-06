@@ -147,10 +147,12 @@ svg { display: block; }
 .lfoot .u-store { flex-shrink: 1; min-width: 2rem; overflow: hidden; justify-content: start; }
 .lfoot .u-store > svg { flex: none; }
 @media (max-width: 480px) { .lfree .glim-meter { display: none; } }
-/* A long label in the F-key bar takes a second line before it is cut. */
+/* An F-key button shrinks down to its longest word and wraps there, so no label is cut. When even that is too wide, the glyphs and some padding go. */
 .fkeys .glim-btn { height: auto; min-height: 2rem; padding-block: .2rem; }
 .fkeys .glim-btn-label { white-space: normal; text-align: center; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .fkeys.tight .glim-btn-glyph { display: none; }
+.fkeys.tight { gap: .3rem; }
+.fkeys.tight .glim-btn { padding-inline: .5rem; }
 .gcard > .glim-rowmark { position: absolute; top: .75rem; inset-inline-start: .75rem; }
 .view-gallery .gcard > .glim-rowmark { top: .5rem; inset-inline-start: .5rem; }
 .citem > .glim-rowmark { position: absolute; top: .65rem; inset-inline-start: .85rem; }
@@ -160,7 +162,7 @@ svg { display: block; }
 .quickview { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: .8rem; padding: .25rem; }
 
 .fkeys { display: flex; align-items: center; gap: .45rem; padding: .55rem; overflow-x: auto; }
-.fkeys > * { flex: 1 1 auto; min-width: 0; }
+.fkeys > * { flex: 1 1 auto; min-width: min-content; }
 .app:not(.with-fkeys) .fkeys { display: none; }
 
 .glim-subcard > .glim-eyebrow { padding: 0; }
