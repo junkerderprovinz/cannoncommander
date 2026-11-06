@@ -3,7 +3,7 @@ module github.com/gtsteffaniak/filebrowser/backend
 go 1.27.0
 
 require (
-	github.com/alecthomas/kong v1.16.1
+	github.com/alecthomas/kong v1.17.0
 	github.com/asdine/storm/v3 v3.2.1
 	github.com/coreos/go-oidc/v3 v3.21.0
 	github.com/coreos/go-systemd/v22 v22.7.0
