@@ -233,6 +233,11 @@ func (idx *Index) runSerialScanPass() {
 		idx.mu.Lock()
 		idx.schedulerBatch--
 		idx.mu.Unlock()
+		// A pass that broke off keeps the counts of half a scan, which are not
+		// worth saving.
+		if idx.stopping() {
+			return
+		}
 		if err := idx.PostScan(); err != nil {
 			logger.Errorf("PostScan after serial pass: %v", err)
 		}
@@ -240,6 +245,9 @@ func (idx *Index) runSerialScanPass() {
 	}()
 
 	for _, p := range paths {
+		if idx.stopping() {
+			return
+		}
 		idx.mu.RLock()
 		s, ok := idx.scanners[p]
 		idx.mu.RUnlock()
@@ -281,6 +289,9 @@ func (idx *Index) schedulerAdaptiveTick() {
 		firstPath := batch[0].scanPath
 		logger.Debugf("[%s] scheduler: adaptive slot scanners=%d first=%s", idx.Name, len(batch), firstPath)
 		for _, s := range batch {
+			if idx.stopping() {
+				return
+			}
 			var nextRunStr string
 			s.withStatsRLock(func() {
 				if s.nextRun.IsZero() {
@@ -344,11 +355,22 @@ func (idx *Index) runIndexScheduler() {
 	}
 }
 
+// stopScheduler stops the scheduler and the scan it runs, and returns once
+// both are done, so the databases can be closed behind it.
 func (idx *Index) stopScheduler() {
-	idx.schedulerStopOnce.Do(func() {
+	idx.mu.Lock()
+	if !idx.schedulerStopped.Swap(true) {
 		if idx.schedulerStop != nil {
 			logger.Debugf("[%s] scheduler: stop channel closed", idx.Name)
 			close(idx.schedulerStop)
 		}
-	})
+	}
+	idx.mu.Unlock()
+	idx.schedulerRunning.Wait()
+}
+
+// stopping reports whether the scheduler was told to stop, for a scan to
+// break off at its next entry.
+func (idx *Index) stopping() bool {
+	return idx.schedulerStopped.Load()
 }

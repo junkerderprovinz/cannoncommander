@@ -3,9 +3,11 @@ package indexing
 import (
 	stderrors "errors"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -123,7 +125,8 @@ type Index struct {
 	mu                sync.RWMutex
 	activeScannerPath string
 	schedulerStop     chan struct{}
-	schedulerStopOnce sync.Once
+	schedulerStopped  atomic.Bool
+	schedulerRunning  sync.WaitGroup
 	schedulerBatch    int // >0: serial pass in progress; suppresses PostScan inside executeScan
 	// In-memory folder size tracking (not stored in SQLite)
 	folderSizes         map[string]uint64   // path -> size (in-memory only, calculated from children)
@@ -391,14 +394,19 @@ func GetIndexDB() *dbsql.IndexDB {
 	return indexDB
 }
 
-// StopAllScanners stops all scanners for all indexes
+// StopAllScanners stops all scanners for all indexes and waits for them.
 // This should be called during graceful shutdown before closing the database
 func StopAllScanners() {
+	// A scan that saves its stats looks its index up, so the lock is let go
+	// before waiting for it.
 	indexesMutex.Lock()
-	defer indexesMutex.Unlock()
-	for _, idx := range indexes {
-		idx.stopScheduler()
+	all := slices.Collect(maps.Values(indexes))
+	indexesMutex.Unlock()
+	var wg sync.WaitGroup
+	for _, idx := range all {
+		wg.Go(idx.stopScheduler)
 	}
+	wg.Wait()
 }
 
 // SetIndexDBForTesting sets the index database for testing purposes.
@@ -957,7 +965,9 @@ func (idx *Index) processDirectoryItem(file os.FileInfo, indexPath string, subdi
 		// Recursive: index the subdirectory
 		subdirSize, subdirHasPreview, err := idx.indexDirectory(dirPath, opts, scanner)
 		if err != nil {
-			logger.Errorf("Failed to index directory %s: %v", dirPath, err)
+			if !stderrors.Is(err, errScanStopped) {
+				logger.Errorf("Failed to index directory %s: %v", dirPath, err)
+			}
 			return nil, 0, false
 		}
 		// Apply minimum 4KB for directories only in disk usage mode
@@ -1088,6 +1098,9 @@ func (idx *Index) GetDirInfoCore(dirInfo *os.File, stat os.FileInfo, indexPath s
 	indexableHasPreview := false
 
 	for _, file := range files {
+		if scanner != nil && idx.stopping() {
+			return nil, nil, errScanStopped
+		}
 		if indexPath == "/" {
 			file = idx.atRoot(file)
 		}
@@ -1172,6 +1185,11 @@ func (idx *Index) GetDirInfoCore(dirInfo *os.File, stat os.FileInfo, indexPath s
 				idx.incrementScannerFiles()
 			}
 		}
+	}
+
+	// A folder below that stopped halfway leaves this one short.
+	if scanner != nil && idx.stopping() {
+		return nil, nil, errScanStopped
 	}
 
 	// Check ignoreZeroSizeFolders: works consistently regardless of size calculation mode

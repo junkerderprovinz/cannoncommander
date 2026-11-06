@@ -8,7 +8,6 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
-	"time"
 
 	_ "net/http/pprof"
 
@@ -150,9 +149,6 @@ func Start() {
 
 	// Stop all indexing scanners before closing the database
 	indexing.StopAllScanners()
-
-	// Give scanners a moment to finish their current scan operations
-	time.Sleep(100 * time.Millisecond)
 
 	// cleanup temp databases
 	indexDB := indexing.GetIndexDB()
