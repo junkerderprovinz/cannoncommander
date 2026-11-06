@@ -8,6 +8,7 @@ import (
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fschange"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
 )
 
@@ -38,8 +39,17 @@ type Index interface {
 	// Totals counts the files and folders anywhere below dir. ok is false
 	// when the index holds nothing there.
 	Totals(src *ccfs.Source, dir string) (files, dirs int64, ok bool)
-	// Refresh reads dir again after something changed inside it.
+	// Refresh reads dir again after something changed inside it, and a
+	// folder inside that it has not seen before with everything below.
 	Refresh(src *ccfs.Source, dir string)
+	// Created brings in a new file or folder at p, a folder with
+	// everything inside.
+	Created(src *ccfs.Source, p string)
+	// Moved follows an entry from one path to another inside src, so a
+	// renamed folder is not read again.
+	Moved(src *ccfs.Source, from, to string)
+	// Removed drops the entry at p and everything below it.
+	Removed(src *ccfs.Source, p string)
 }
 
 // Scanned returns the index the indexing package builds for each source.
@@ -108,6 +118,60 @@ func (scanned) Refresh(src *ccfs.Source, dir string) {
 	if idx := indexing.Lookup(src.Name); idx != nil {
 		idx.RefreshDirectoryAsync(slashed(dir))
 	}
+}
+
+func (scanned) Created(src *ccfs.Source, p string) {
+	if idx := indexing.Lookup(src.Name); idx != nil && p != "/" {
+		idx.CreatedAsync(p)
+	}
+}
+
+func (scanned) Moved(src *ccfs.Source, from, to string) {
+	if idx := indexing.Lookup(src.Name); idx != nil && from != "/" && to != "/" {
+		idx.MovedAsync(from, to)
+	}
+}
+
+func (scanned) Removed(src *ccfs.Source, p string) {
+	if idx := indexing.Lookup(src.Name); idx != nil && p != "/" {
+		idx.RemovedAsync(p)
+	}
+}
+
+// Follow keeps ix up to date with the changes the app makes itself, as
+// fschange reports them, whether or not anyone has the folder open. It
+// returns a function that stops it.
+func Follow(fs *ccfs.Resolver, ix Index) (stop func()) {
+	at := func(p string) (ccfs.Location, bool) {
+		loc, err := fs.Resolve(p)
+		return loc, err == nil && !loc.Virtual() && !loc.InArchive()
+	}
+	return fschange.Observe(fschange.Observer{
+		Created: func(p string) {
+			if loc, ok := at(p); ok {
+				ix.Created(loc.Source, loc.Index)
+			}
+		},
+		Removed: func(p string) {
+			if loc, ok := at(p); ok {
+				ix.Removed(loc.Source, loc.Index)
+			}
+		},
+		Moved: func(from, to string) {
+			src, okFrom := at(from)
+			dst, okTo := at(to)
+			if okFrom && okTo && src.Source.Name == dst.Source.Name {
+				ix.Moved(src.Source, src.Index, dst.Index)
+				return
+			}
+			if okFrom {
+				ix.Removed(src.Source, src.Index)
+			}
+			if okTo {
+				ix.Created(dst.Source, dst.Index)
+			}
+		},
+	})
 }
 
 // slashed writes a folder the way the index stores it, with a trailing slash.
