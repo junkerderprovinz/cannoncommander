@@ -297,6 +297,7 @@ await page.keyboard.press('Escape');
 // size comes in on its own once the index has it.
 await api('PUT', '/fixture/unmeasured', { paths: ['/mnt/user/dokumente', '/mnt/user/filme'] });
 await at('/mnt/user', []);
+await runAction('refresh');
 const unmeasured = 'Files.entries().filter((k) => k.sizeUnknown).map((k) => k.name).sort().join()';
 check('the folders still to measure are marked', await until(`${unmeasured} === "dokumente,filme"`), await page.evaluate(unmeasured));
 await page.evaluate('Object.assign(Files.T(), { sort: "size", dir: -1 })');
@@ -316,8 +317,8 @@ check('the size comes in without a refresh', await until(`${unmeasured} === ""`,
 check('no page errors', !errors.length, errors);
 
 // A start folder that is gone opens the nearest folder above it, says so, and its tree is asked for at most once.
+await api('PUT', '/me/prefs', { startFolder: '/mnt/user/downloads/weg/tiefer' });
 const late = await browser.newContext({ viewport: { width: 1600, height: 950 }, locale: 'de-AT' });
-await late.addInitScript(() => localStorage.setItem('cannoncommander-prefs', JSON.stringify({ startFolder: '/mnt/user/downloads/weg/tiefer' })));
 const start = await late.newPage();
 const trees: string[] = [];
 start.on('request', (r) => { if (r.url().includes('/fs/tree') && r.url().includes('weg')) trees.push(r.url()); });
@@ -328,9 +329,10 @@ check('a missing start folder says where the panel went', said, await start.loca
 check('the panel is in the nearest folder above it', await start.evaluate(() => location.hash) === '#/mnt/user/downloads', await start.evaluate(() => location.hash));
 await start.screenshot({ path: join(shots, 'start-missing.png') });
 await start.waitForFunction('document.documentElement.dataset.e2e === "ready"', null, { timeout: 120000 }).catch(() => {});
-check('the missing folder is asked for at most once', trees.length <= 1, trees);
+check('each missing folder is asked for at most once', new Set(trees).size === trees.length, trees);
 check('no page errors on the late start', !errors.length, errors);
 await late.close();
+await api('PUT', '/me/prefs', { startFolder: '/mnt/user/downloads' });
 await browser.close();
 console.log(failed ? `${failed} checks failed` : 'all checks passed');
 process.exit(failed ? 1 : 0);

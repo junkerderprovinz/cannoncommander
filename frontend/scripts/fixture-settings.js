@@ -194,7 +194,7 @@ export function settingsFixtureMiddleware() {
   const badUrl = (u) => !!u && !/^https?:\/\/[^/\s]+/.test(u);
 
   const routes = [
-    ['GET', '/me', () => ({ ...wireUser(me()), recovery: S.recovery, lockPassword: false })],
+    ['GET', '/me', () => ({ ...wireUser(me()), home: '/mnt/user', recovery: S.recovery, lockPassword: false })],
     ['PUT', '/me/password', (b) => {
       if (!b.next || b.next.length < 12) return [400, 'the password needs 12 characters'];
       if (!passwords.includes(b.current)) return [403, 'the current password is wrong'];

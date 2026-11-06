@@ -238,6 +238,7 @@ export const sharedFixture = () => (shared ??= createFixture());
 // Connect middleware for Vite's dev and preview servers.
 export function fixtureMiddleware() {
   const fx = sharedFixture();
+  let startFolder = '/mnt/user/downloads';
   const content = contentRoutes(fx.FS);
   const routes = {
     'GET /api/v1/fs/list': (q) => content.list(q.get('path') || '/') || fx.list(q.get('path') || '/'),
@@ -249,9 +250,12 @@ export function fixtureMiddleware() {
     // Settings, shortcuts and watched folders are taken and forgotten; the browser's own copy carries them here.
     'PUT /api/v1/me/bookmarks': (_q, body) => body,
     // The prototype starts in the downloads, which the steps show in the settings, where a real server starts in the
-    // user's home folder.
-    'GET /api/v1/me/prefs': () => ({ startFolder: '/mnt/user/downloads' }),
-    'PUT /api/v1/me/prefs': () => ({}),
+    // user's home folder. The start folder is kept, so a check can start somewhere else.
+    'GET /api/v1/me/prefs': () => ({ startFolder }),
+    'PUT /api/v1/me/prefs': (_q, body) => {
+      if (typeof body.startFolder === 'string') startFolder = body.startFolder;
+      return {};
+    },
     'PUT /api/v1/events/watch': (_q, body) => body,
     'PUT /api/v1/fixture/unmeasured': (_q, body) => fx.setUnmeasured(body.paths),
   };
