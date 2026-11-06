@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue';
 import type { Job } from '@/api/ops';
 import { on } from '@/api/sse';
-import { type ContentHits, type Hit, type SavedSearch, type SearchQuery, toHit, tools } from '@/api/tools';
+import { type ContentHits, type Hit, type SavedSearch, type SearchQuery, serverSearch, toHit, tools } from '@/api/tools';
 import { useJobs } from './jobs';
 
 export const BLANK: SearchQuery = { name: '', text: '', in: '/mnt/user', hidden: false, min: '', max: '', when: 'any', type: 'all' };
@@ -24,12 +24,12 @@ export const useSearch = defineStore('search', () => {
     saved.value = await tools.saved();
   }
   async function save(name: string, query: SearchQuery) {
-    const s = await tools.saveSearch(name, query);
+    const s = await tools.saveSearch(name, serverSearch(query));
     saved.value = [...saved.value, s];
     return s;
   }
   async function rename(s: SavedSearch, name: string) {
-    const got = await tools.changeSearch({ ...s, name });
+    const got = await tools.changeSearch({ ...s, name, query: serverSearch(s.query) });
     saved.value = saved.value.map((x) => (x.id === s.id ? got : x));
   }
   async function remove(s: SavedSearch) {

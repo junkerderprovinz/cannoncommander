@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Job } from '@/api/ops';
 import { emit } from '@/api/sse';
 import { type SavedSearch, tools } from '@/api/tools';
+import { setLanguage } from '@/i18n';
 import { BLANK, useSearch } from './search';
 
 const hit = (name: string, at = '/mnt/user/filme') => ({ name, dir: false, size: 1, mtime: '2026-11-01T10:00:00Z', mode: '0644', at });
@@ -32,6 +33,19 @@ describe('saved searches', () => {
     expect(S.byId(2)!.name).toBe('Alle Filme');
     await S.remove(S.byId(1)!);
     expect(S.saved.map((s) => s.id)).toEqual([2]);
+  });
+
+  it('keeps a search in the words the server reads, so it finds the same in every language', async () => {
+    await setLanguage('de');
+    vi.spyOn(tools, 'saved').mockResolvedValue([saved(1, { name: 'geändert:>01.05.2026 typ:Bild' })]);
+    const save = vi.spyOn(tools, 'saveSearch').mockImplementation(async (name, query) => ({ id: 2, name, query }));
+    const change = vi.spyOn(tools, 'changeSearch').mockImplementation(async (s) => s);
+    const S = useSearch();
+    await S.load();
+    await S.save('4K', { ...BLANK, name: 'breite:>=3840 verschlüsselt:nein', min: '2,5 GB', max: '1.500,5' });
+    expect(save.mock.calls[0]![1]).toMatchObject({ name: 'width:>=3840 encrypted:no', min: '2.5GB', max: '1500.5' });
+    await S.rename(S.byId(1)!, 'Bilder');
+    expect(change.mock.calls[0]![0].query.name).toBe('modified:>2026-05-01 type:img');
   });
 
   it('lists the hits of a search and keeps the old ones while it asks again', async () => {

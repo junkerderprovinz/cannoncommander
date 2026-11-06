@@ -3390,6 +3390,12 @@
     },
     "unknownLanguage": ""
   },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
+  },
   "kinds": {
     "folder": "",
     "link": ""

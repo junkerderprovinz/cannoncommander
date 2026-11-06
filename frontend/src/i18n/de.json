@@ -244,6 +244,12 @@
     },
     "unknownLanguage": "Unbekannt"
   },
+  "searchWords": {
+    "width": "breite",
+    "height": "höhe",
+    "vcodec": "codec",
+    "modified": "geändert"
+  },
   "kinds": {
     "folder": "Ordner",
     "link": "Verknüpfung"

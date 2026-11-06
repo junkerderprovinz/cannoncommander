@@ -1,7 +1,7 @@
 // Search and the tools of the file and tools menus, as backend/internal/{search,prefs,tools,fileops,fsapi,shares}
 // describe them: comparing and syncing folders, comparing files, duplicates, disk usage, batch rename, archives,
 // checksums, clean up, share links and the hand over to ArrowLoop. The long runs start as jobs.
-import { serverQuery } from '@/files/fields';
+import { serverQuery, serverSize } from '@/files/fields';
 import { BASE, call, type Item, json, q, toItem } from './client';
 import type { Job } from './ops';
 import type { FsItem } from './types';
@@ -95,10 +95,15 @@ export type ShareUpdate = Partial<Omit<ShareCreate, 'paths'>> & { reroll?: boole
 const body = async <T>(path: string, init?: RequestInit) => (await call<T>(path, init)).body!;
 const id = encodeURIComponent;
 
+// The criteria in the words, dates and numbers the server reads, which is also how a saved search keeps them, so it
+// finds the same whatever language the interface speaks later.
+export const serverSearch = (s: SearchQuery): SearchQuery => ({ ...s, name: serverQuery(s.name), min: serverSize(s.min), max: serverSize(s.max) });
+
 // The criteria GET /search and the job contentSearch take, from what the window keeps.
-export const searchParams = (s: SearchQuery) => ({
-  path: s.in.trim() || '/', q: serverQuery(s.name), hidden: String(!!s.hidden), type: s.type || 'all', when: s.when || 'any', ...(s.min ? { min: s.min } : {}), ...(s.max ? { max: s.max } : {}),
-});
+export const searchParams = (search: SearchQuery) => {
+  const s = serverSearch(search);
+  return { path: s.in.trim() || '/', q: s.name, hidden: String(!!s.hidden), type: s.type || 'all', when: s.when || 'any', ...(s.min ? { min: s.min } : {}), ...(s.max ? { max: s.max } : {}) };
+};
 
 export const tools = {
   async find(s: SearchQuery, limit: number, signal?: AbortSignal): Promise<Found> {
