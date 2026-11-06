@@ -3435,7 +3435,7 @@
     "year": "Rok",
     "genre": "Gatunek",
     "composer": "Kompozytor",
-    "abitrate": "Przepływność",
+    "abitrate": "Szybkość bitowa",
     "samplerate": "Częstotliwość próbkowania",
     "channels": "Kanały",
     "camera": "Aparat",
