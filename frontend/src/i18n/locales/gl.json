@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panel esquerdo",
     "right": "Panel dereito",
@@ -2220,7 +2219,7 @@
     "colChanged": "Modificado",
     "noFolder": "Este cartafol non existe",
     "unknown": "Non coñezo {fields}",
-    "unknownHint": "Entendo, por exemplo, width, height, codec, artist, camera, size, modified, duration e calquera nome de columna",
+    "unknownHint": "Entendo, por exemplo, ancho, alto, códec, artista, tamaño, modificado, duración e calquera nome de columna",
     "nothing": "Non se atopou nada",
     "nothingHint": "Outro cartafol ou menos condicións quizais atopen máis",
     "asTab": "Abrir como pestana",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "Nova busca",
     "menuNone": "Escribe un patrón e gárdao co botón do campo.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "impostos",
+      "word": "informe"
     },
     "menuExamples": "Exemplos",
     "examples": {
       "mkv": "todos os ficheiros MKV, tamén en subcartafoles",
-      "tag": "todo o que ten a etiqueta steuer",
-      "word": "nomes que conteñen bericht",
+      "tag": "todo o que ten a etiqueta {tag}",
+      "word": "nomes que conteñen {word}",
       "one": "un ? representa exactamente un carácter",
       "meta": "películas 4K en HEVC, segundo os metadatos",
       "week": "todo o que cambiou nos últimos 7 días"
     },
     "server": "Servidor",
-    "unknownFields": "Non coñezo {fields}. Entendo, por exemplo, width, height, codec, artist, camera, size, modified, duration e calquera nome de columna, como lens ou year",
+    "unknownFields": "Non coñezo {fields}. Entendo, por exemplo, ancho, alto, códec, artista, tamaño, modificado, duración e calquera nome de columna, como obxectivo ou ano",
     "unknownField": "«{f}:»",
-    "quoted": ""
+    "quoted": "«{text}»"
   },
   "share": {
     "share": "Compartir",
@@ -2553,21 +2552,21 @@
     "clipCopy": "Copiar ao portapapeis",
     "clipPaste": "Pegar",
     "nothingOn": "Nada diso está en {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Omítese",
+    "sameSkipTip": "No destino xa está o mesmo ficheiro con outra ruta, por exemplo como ligazón dura ou a través dun disk share e o user share. Queda como está.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} ficheiro omitido porque no destino é o mesmo ficheiro",
+      "other": "{n} ficheiros omitidos porque no destino son os mesmos ficheiros"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Copiado: {files} a {to}. {same}",
+    "movedSame": "Movido: {files} a {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "Non se copiou nada. O ficheiro do destino é o mesmo e queda como está",
+      "other": "Non se copiou nada. Os {n} ficheiros do destino son os mesmos e quedan como están"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "Non se moveu nada. O ficheiro do destino é o mesmo e queda como está",
+      "other": "Non se moveu nada. Os {n} ficheiros do destino son os mesmos e quedan como están"
     }
   },
   "trash": {
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Horizontal",
+      "portrait": "Vertical",
+      "square": "Cadrada"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Disparado",
+      "off": "Sen flash"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Estéreo"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} canle",
+      "other": "{n} canles"
     },
     "method": {
-      "none": ""
+      "none": "Sen"
     },
-    "methodNumber": "",
+    "methodNumber": "Método {n}",
     "arch": {
-      "all": ""
+      "all": "Todas"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Descoñecido"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "ancho",
+    "height": "alto",
+    "vcodec": "códec",
+    "modified": "modificado"
   },
   "kinds": {
     "folder": "Cartafol",
