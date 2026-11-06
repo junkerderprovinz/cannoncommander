@@ -5857,7 +5857,10 @@ components:
         size:
           type: integer
           format: int64
-          description: Bytes. For a folder the total size from the index, 0 while the index has not measured it.
+          description: Bytes. For a folder the total size from the index, 0 while sizeUnknown is set.
+        sizeUnknown:
+          type: boolean
+          description: A folder the index has not measured yet, so its size is no total. An empty folder that was measured leaves it out.
         mtime:
           type: string
           format: date-time
@@ -7735,8 +7738,11 @@ components:
       allOf:
         - $ref: "#/components/schemas/Account"
         - type: object
-          required: [recovery, lockPassword]
+          required: [home, recovery, lockPassword]
           properties:
+            home:
+              type: string
+              description: The folder the file manager opens when the user picked no start folder, the user shares or the first other source the user may open.
             recovery:
               type: integer
               description: Recovery codes that are left.

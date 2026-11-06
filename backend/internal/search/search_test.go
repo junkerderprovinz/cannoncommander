@@ -445,7 +445,11 @@ func (x *folderIndex) Folders(_ *ccfs.Source, dirs []string) map[string]fsindex.
 	x.asked++
 	out := map[string]fsindex.Folder{}
 	for _, d := range dirs {
-		out[d] = fsindex.Folder{Size: x.sizes[d]}
+		size, ok := x.sizes[d]
+		if !ok {
+			size = -1
+		}
+		out[d] = fsindex.Folder{Size: size}
 	}
 	return out
 }
@@ -483,5 +487,27 @@ func TestASizeFilterJudgesFoldersWithoutAQueryForEach(t *testing.T) {
 	}
 	if x.asked != 0 {
 		t.Errorf("%d queries for the sizes of folders", x.asked)
+	}
+}
+
+func TestFolderHitsSayWhenTheIndexHasNotMeasuredThemYet(t *testing.T) {
+	f := newFixture(t)
+	res := f.search(t, "jdp", "path", "/mnt/user", "q", "filme", "type", "dir")
+	if len(res.Items) != 1 || !res.Items[0].SizeUnknown {
+		t.Fatalf("folder hit without an index = %+v", res.Items)
+	}
+
+	h := handlers{deps: f.deps}
+	h.deps.Index = &folderIndex{sizes: map[string]int64{"/filme": 5 << 20, "/docs": 0}}
+	items := []Hit{{Name: "filme", Dir: true}, {Name: "docs", Dir: true}, {Name: "fotos", Dir: true}, {Name: "notizen.txt"}}
+	rows := []*row{
+		{Entry: fsindex.Entry{Path: "/mnt/user/filme", Dir: true}},
+		{Entry: fsindex.Entry{Path: "/mnt/user/docs", Dir: true}},
+		{Entry: fsindex.Entry{Path: "/mnt/user/fotos", Dir: true}},
+		{Entry: fsindex.Entry{Path: "/mnt/user/docs/notizen.txt"}},
+	}
+	h.folderSizes(items, rows)
+	if items[0].Size != 5<<20 || items[0].SizeUnknown || items[1].SizeUnknown || !items[2].SizeUnknown || items[3].SizeUnknown {
+		t.Errorf("hits = %+v", items)
 	}
 }

@@ -31,3 +31,24 @@ func TestAdminsReachASourceTheyWereNeverGivenAScopeFor(t *testing.T) {
 		t.Errorf("a read only token of an admin reached a source without a scope: %v", err)
 	}
 }
+
+func TestHomeIsTheFirstPlaceAUserMayOpen(t *testing.T) {
+	r, roots := newResolver(t, nil)
+	shares := users.BackendScope{Path: roots.user, Scope: "/", Permissions: allPerms}
+	cases := []struct {
+		name string
+		u    *users.User
+		want string
+	}{
+		{"admin", user("jdp", true, shares), "/mnt/user"},
+		{"admin without a scope", user("root", true), "/mnt/user"},
+		{"user with a folder of the shares", user("anna", false, users.BackendScope{Path: roots.user, Scope: "/fotos", Permissions: allPerms}), "/mnt/user/fotos"},
+		{"user of the flash drive only", user("stick", false, users.BackendScope{Path: roots.boot, Scope: "/", Permissions: allPerms}), "/boot"},
+		{"user without any place", user("gast", false), "/"},
+	}
+	for _, c := range cases {
+		if got := r.Home(c.u); got != c.want {
+			t.Errorf("%s: home = %q, want %q", c.name, got, c.want)
+		}
+	}
+}

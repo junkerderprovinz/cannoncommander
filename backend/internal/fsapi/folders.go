@@ -35,7 +35,9 @@ func refIn(dir ccfs.Location, item *Item) folderRef {
 
 // describe fills in the entry count, total size, folder picture and remote
 // of the folder rows. The index answers for the folders it knows, the
-// others are read directly within peekBudget.
+// others are read directly within peekBudget. A folder whose size the
+// index has not measured is marked, since its stat size of 0 would read as
+// empty.
 func (h handlers) describe(src *ccfs.Source, refs []folderRef) {
 	var dirs []string
 	for _, r := range refs {
@@ -58,7 +60,9 @@ func (h handlers) describe(src *ccfs.Source, refs []folderRef) {
 		if r.item.Link != "" {
 			continue
 		}
-		if f, ok := known[r.index]; ok {
+		f, ok := known[r.index]
+		r.item.SizeUnknown = !ok || f.Size < 0
+		if ok {
 			n := f.Items
 			r.item.Items = &n
 			if f.Size >= 0 {

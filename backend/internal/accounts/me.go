@@ -14,6 +14,8 @@ import (
 // API token.
 type Me struct {
 	Account
+	// Home is the folder the file manager opens when the user picked none.
+	Home         string     `json:"home"`
 	Recovery     int        `json:"recovery"`
 	LockPassword bool       `json:"lockPassword"`
 	Token        *TokenInfo `json:"token,omitempty"`
@@ -34,7 +36,7 @@ func (h handlers) me(r *http.Request, u *users.User) (Me, error) {
 	if err != nil {
 		return Me{}, err
 	}
-	m := Me{Account: h.account(u, p), Recovery: left, LockPassword: u.LockPassword}
+	m := Me{Account: h.account(u, p), Home: h.fs.Home(u), Recovery: left, LockPassword: u.LockPassword}
 	if raw, ok := login.APIToken(r); ok {
 		if name, found := users.TokenNameByRaw(u.Tokens, raw); found {
 			m.Token = &TokenInfo{Name: name, Rights: rightsOf(u.Tokens[name])}

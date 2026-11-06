@@ -15,7 +15,7 @@ func TestMeShowsTheOwnAccount(t *testing.T) {
 	w := newWorld(t)
 	w.addUser("anna", "user", "/mnt/user/fotos")
 	me := decode[accounts.Me](t, w.must(http.StatusOK, w.as("anna", "GET", "/me", nil)))
-	if me.Name != "anna" || me.Full != "Anna" || me.Role != "user" || me.Scope != "/mnt/user/fotos" || me.Twofa || me.Recovery != 0 || me.Token != nil {
+	if me.Name != "anna" || me.Full != "Anna" || me.Role != "user" || me.Scope != "/mnt/user/fotos" || me.Home != "/mnt/user/fotos" || me.Twofa || me.Recovery != 0 || me.Token != nil {
 		t.Fatalf("me = %+v", me)
 	}
 	// The first request of a session counts as the last login.

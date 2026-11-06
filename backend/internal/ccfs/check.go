@@ -1,11 +1,13 @@
 package ccfs
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"io/fs"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
@@ -325,6 +327,35 @@ func (r *Resolver) carriedEffect(u *users.User, p string) Effect {
 		p = outer
 	}
 	return b.CarryEffect(u, p)
+}
+
+// Home is the folder u starts in: the user shares where u may open them,
+// else the first other source, with the disks and pools last. Inside a
+// source it is the folder u is confined to, and someone who may open
+// nothing gets /.
+func (r *Resolver) Home(u *users.User) string {
+	rank := func(s *Source) int {
+		switch {
+		case s.Mount == "/mnt/user":
+			return 0
+		case s.Device:
+			return 2
+		}
+		return 1
+	}
+	sources := slices.Clone(r.current().sources)
+	slices.SortStableFunc(sources, func(a, b *Source) int { return cmp.Compare(rank(a), rank(b)) })
+	for _, s := range sources {
+		scope, ok := r.scope(u, s)
+		if !ok {
+			continue
+		}
+		top := path.Join(s.Mount, scope)
+		if _, err := r.Check(u, top, View); err == nil {
+			return top
+		}
+	}
+	return "/"
 }
 
 // reaches reports whether some place u may open lies at or below p, or p

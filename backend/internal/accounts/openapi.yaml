@@ -1246,8 +1246,11 @@ components:
       allOf:
         - $ref: "#/components/schemas/Account"
         - type: object
-          required: [recovery, lockPassword]
+          required: [home, recovery, lockPassword]
           properties:
+            home:
+              type: string
+              description: The folder the file manager opens when the user picked no start folder, the user shares or the first other source the user may open.
             recovery:
               type: integer
               description: Recovery codes that are left.

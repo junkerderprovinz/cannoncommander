@@ -540,7 +540,10 @@ components:
         size:
           type: integer
           format: int64
-          description: Bytes. For a folder the total size from the index, 0 while the index has not measured it.
+          description: Bytes. For a folder the total size from the index, 0 while sizeUnknown is set.
+        sizeUnknown:
+          type: boolean
+          description: A folder the index has not measured yet, so its size is no total. An empty folder that was measured leaves it out.
         mtime:
           type: string
           format: date-time

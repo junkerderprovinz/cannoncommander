@@ -44,15 +44,18 @@ func Routes(r *v1.Router) {
 
 // Item is one row of a listing.
 type Item struct {
-	Name   string `json:"name"`
-	Dir    bool   `json:"dir"`
-	Size   int64  `json:"size"`
-	MTime  string `json:"mtime"`
-	Mode   string `json:"mode"`
-	Owner  string `json:"owner,omitempty"`
-	Group  string `json:"group,omitempty"`
-	Hidden bool   `json:"hidden,omitempty"`
-	Link   string `json:"link,omitempty"`
+	Name string `json:"name"`
+	Dir  bool   `json:"dir"`
+	Size int64  `json:"size"`
+	// SizeUnknown marks a folder the index has not measured yet, whose Size
+	// is no total.
+	SizeUnknown bool   `json:"sizeUnknown,omitempty"`
+	MTime       string `json:"mtime"`
+	Mode        string `json:"mode"`
+	Owner       string `json:"owner,omitempty"`
+	Group       string `json:"group,omitempty"`
+	Hidden      bool   `json:"hidden,omitempty"`
+	Link        string `json:"link,omitempty"`
 	// Items counts the entries inside a folder, when known.
 	Items   *int    `json:"items,omitempty"`
 	Format  string  `json:"format,omitempty"`
