@@ -218,6 +218,21 @@ await shot('share-done');
 await closeAll();
 const links = (await api('GET', '/shares')) as { paths: string[]; password: boolean }[];
 check('the server keeps the link', links.some((s) => s.paths[0] === '/mnt/user/dokumente/Mietvertrag.pdf' && s.password), links);
+
+// The message for the visitors can be changed later in Einstellungen, Freigaben.
+await page.locator('[aria-label="Einstellungen"]').first().click();
+await page.getByText('Freigaben', { exact: true }).first().click();
+await wait(400);
+await page.locator('.a-list').getByText('Mietvertrag.pdf', { exact: true }).first().click();
+await wait(400);
+check('the share window offers the message', (await top().locator('#a-shmsg').count()) === 1);
+await top().locator('#a-shmsg').fill('  Hier ist der Vertrag zum Unterschreiben.  ');
+await shot('share-message');
+await primary();
+await wait(400);
+const edited = (await api('GET', '/shares')) as { paths: string[]; message: string }[];
+check('the server keeps the new message', edited.some((s) => s.paths[0] === '/mnt/user/dokumente/Mietvertrag.pdf' && s.message === 'Hier ist der Vertrag zum Unterschreiben.'), edited);
+await closeAll();
 await runAction('collect');
 await at('/mnt/user/fotos/2026', ['IMG_0203.jpg']);
 await runAction('collect');
