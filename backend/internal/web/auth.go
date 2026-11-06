@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4/request"
+	"github.com/golang-jwt/jwt/v5/request"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"

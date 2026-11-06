@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gtsteffaniak/go-logger/logger"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -173,7 +173,7 @@ func readCallback(r *http.Request, secret string) (callback, error) {
 			return nil, fmt.Errorf("unexpected signing method %v", t.Header["alg"])
 		}
 		return []byte(secret), nil
-	})
+	}, jwt.WithStrictDecoding(), jwt.WithIssuedAt())
 	if err != nil {
 		return callback{}, fmt.Errorf("callback not signed with the JWT secret: %w", err)
 	}
