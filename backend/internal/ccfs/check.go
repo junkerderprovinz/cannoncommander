@@ -330,7 +330,7 @@ func (r *Resolver) carriedEffect(u *users.User, p string) Effect {
 // reaches reports whether some place u may open lies at or below p, or p
 // lies inside such a place.
 func (r *Resolver) reaches(u *users.User, p string) bool {
-	for _, s := range r.sources {
+	for _, s := range r.current().sources {
 		scope, ok := r.scope(u, s)
 		if !ok {
 			continue

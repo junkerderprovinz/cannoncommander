@@ -47,12 +47,13 @@ func (r *Resolver) WithDataFolder(dir string) *Resolver {
 	if data, err := os.ReadFile("/proc/self/mountinfo"); err == nil {
 		places = append(places, mountedElsewhere(string(data), dir)...)
 	}
-	out := *r
-	out.closed = nil
-	for _, s := range r.sources {
+	cur := r.current()
+	next := *cur
+	next.marked = nil
+	for _, s := range cur.sources {
 		for _, p := range places {
 			if rel, err := filepath.Rel(s.Root, p); err == nil && rel != "." && inside(s.Root, p) {
-				out.closed = append(out.closed, path.Join(s.Mount, filepath.ToSlash(rel)))
+				next.marked = append(next.marked, path.Join(s.Mount, filepath.ToSlash(rel)))
 			}
 		}
 		// Looking into a disk for the marker would wake it. A disk or pool
@@ -61,23 +62,29 @@ func (r *Resolver) WithDataFolder(dir string) *Resolver {
 			continue
 		}
 		for _, rel := range markedFolders(s.Root) {
-			out.closed = append(out.closed, path.Join(s.Mount, rel))
+			next.marked = append(next.marked, path.Join(s.Mount, rel))
 		}
 	}
-	out.closed = append(out.closed, r.onEveryVolume(out.closed)...)
-	slices.Sort(out.closed)
-	out.closed = slices.Compact(out.closed)
-	return &out
+	next.close()
+	return r.withSet(&next)
+}
+
+// close finds the closed paths: the marked ones, and those of them that lie
+// in the user shares or on a disk or pool also on all the others.
+func (s *sourceSet) close() {
+	s.closed = append(slices.Clone(s.marked), s.onEveryVolume(s.marked)...)
+	slices.Sort(s.closed)
+	s.closed = slices.Compact(s.closed)
 }
 
 // onEveryVolume returns the paths in the user shares and on each disk and pool
 // for those of paths that lie in one of them, since a share folder has the
 // same path on all of them.
-func (r *Resolver) onEveryVolume(paths []string) []string {
+func (s *sourceSet) onEveryVolume(paths []string) []string {
 	var volumes []string
-	for _, s := range r.sources {
-		if s.Device || s.Mount == "/mnt/user" {
-			volumes = append(volumes, s.Mount)
+	for _, src := range s.sources {
+		if src.Device || src.Mount == "/mnt/user" {
+			volumes = append(volumes, src.Mount)
 		}
 	}
 	var out []string
@@ -171,16 +178,17 @@ func markedFolders(root string) []string {
 
 // isClosed reports whether p lies in the app's data.
 func (r *Resolver) isClosed(p string) bool {
-	if len(r.closed) == 0 {
+	closed := r.current().closed
+	if len(closed) == 0 {
 		return false
 	}
 	outer, _, _ := strings.Cut(p, ArchiveSep)
-	return slices.ContainsFunc(r.closed, func(c string) bool { return within(outer, c) })
+	return slices.ContainsFunc(closed, func(c string) bool { return within(outer, c) })
 }
 
 // holdsClosed reports whether the app's data lies below p.
 func (r *Resolver) holdsClosed(p string) bool {
-	return slices.ContainsFunc(r.closed, func(c string) bool { return within(c, p) })
+	return slices.ContainsFunc(r.current().closed, func(c string) bool { return within(c, p) })
 }
 
 func reservedPath(p string) bool {

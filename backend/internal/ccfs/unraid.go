@@ -16,24 +16,48 @@ import (
 // indexed, since a walk over a disk wakes it, and their files show up in the
 // user shares anyway. A configured source at or around one of them wins.
 func (r *Resolver) WithDevices(mnt string, names ...string) *Resolver {
-	out := *r
-	out.devices = slices.Clone(names)
-	out.sources = nil
-	taken := map[string]bool{}
-	for _, s := range r.sources {
-		if s.Device {
-			continue
+	cur := r.current()
+	next := *cur
+	next.configured = nil
+	for _, s := range cur.sources {
+		if !s.Device {
+			next.configured = append(next.configured, s)
 		}
-		c := *s
-		c.AdminOnly = c.AdminOnly || out.AdminOnly(c.Mount)
-		out.sources = append(out.sources, &c)
+	}
+	next.mnt = mnt
+	next.named = slices.Clone(cur.named)
+	return r.withSet(next.withDevices(names))
+}
+
+// SetDevices lays out the pools and disks of WithDevices again, when Unraid
+// adds or takes one away. Requests that run meanwhile see either layout.
+func (r *Resolver) SetDevices(names ...string) {
+	r.set.Store(r.current().withDevices(names))
+}
+
+// withDevices returns s with the pools and disks in names below its mnt.
+func (s *sourceSet) withDevices(names []string) *sourceSet {
+	next := &sourceSet{
+		configured: s.configured, mnt: s.mnt, marked: s.marked,
+		devices: slices.Clone(names), named: slices.Clone(s.named),
+	}
+	for _, name := range names {
+		if !slices.Contains(next.named, name) {
+			next.named = append(next.named, name)
+		}
+	}
+	taken := map[string]bool{}
+	for _, src := range s.configured {
+		c := *src
+		c.AdminOnly = c.AdminOnly || next.adminOnly(c.Mount)
+		next.sources = append(next.sources, &c)
 		taken[strings.ToLower(c.Name)] = true
 	}
-	configured := slices.Clone(out.sources)
+	configured := slices.Clone(next.sources)
 	for _, name := range names {
 		mount := "/mnt/" + name
-		if strings.Contains(name, "/") || slices.ContainsFunc(configured, func(s *Source) bool {
-			return within(mount, s.Mount) || within(s.Mount, mount)
+		if strings.Contains(name, "/") || slices.ContainsFunc(configured, func(c *Source) bool {
+			return within(mount, c.Mount) || within(c.Mount, mount)
 		}) {
 			continue
 		}
@@ -45,12 +69,13 @@ func (r *Resolver) WithDevices(mnt string, names ...string) *Resolver {
 			continue
 		}
 		taken[strings.ToLower(label)] = true
-		out.sources = append(out.sources, &Source{
-			Name: label, Mount: mount, Root: filepath.Join(mnt, name),
+		next.sources = append(next.sources, &Source{
+			Name: label, Mount: mount, Root: filepath.Join(s.mnt, name),
 			AdminOnly: true, Device: true,
 		})
 	}
-	return &out
+	next.close()
+	return next
 }
 
 // deviceLabel names a disk the way the Unraid web interface does, Disk 1 for
@@ -66,12 +91,13 @@ func deviceLabel(name string) string {
 // childOrder puts the user shares first and the pools and disks after them,
 // in the order Unraid lists them, so /mnt reads like the Main page.
 func (r *Resolver) childOrder(dir string, names []string) {
+	devices := r.current().devices
 	rank := func(name string) int {
 		p := path.Join(dir, name)
 		switch {
 		case p == "/mnt/user":
 			return 0
-		case slices.Contains(r.devices, name) && dir == "/mnt":
+		case slices.Contains(devices, name) && dir == "/mnt":
 			return 1
 		}
 		return 2

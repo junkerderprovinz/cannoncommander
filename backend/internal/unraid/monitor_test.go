@@ -81,3 +81,41 @@ func next(t *testing.T, events <-chan hub.Event, typ string) hub.Event {
 		}
 	}
 }
+
+func TestWatchTellsWhenADiskOrPoolComesOrGoes(t *testing.T) {
+	e := newEnv(t)
+	e.writeDiskList(fakeDisks[:3], nil)
+	got := make(chan []string, 4)
+	e.svc.OnDevices(func(devices []string) { got <- devices })
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() {
+		e.svc.Watch(ctx, hub.New(hub.Options{}))
+		close(done)
+	}()
+	defer func() {
+		cancel()
+		<-done
+	}()
+
+	firstRead(t, e.svc)
+	e.writeDisks(nil)
+	if devices := nextDevices(t, got); !slices.Equal(devices, []string{"cache", "disk1", "disk2", "disk3"}) {
+		t.Errorf("after a new disk: %v", devices)
+	}
+	e.writeDiskList(fakeDisks[1:], nil)
+	if devices := nextDevices(t, got); !slices.Equal(devices, []string{"disk1", "disk2", "disk3"}) {
+		t.Errorf("after the pool went: %v", devices)
+	}
+}
+
+func nextDevices(t *testing.T, got <-chan []string) []string {
+	t.Helper()
+	select {
+	case d := <-got:
+		return d
+	case <-time.After(5 * time.Second):
+		t.Fatal("no change of the disks and pools")
+		return nil
+	}
+}
