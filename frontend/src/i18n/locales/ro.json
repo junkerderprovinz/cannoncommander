@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panoul stâng",
     "right": "Panoul drept",
@@ -2299,7 +2298,7 @@
     "colChanged": "Modificat",
     "noFolder": "Acest dosar nu există",
     "unknown": "Nu cunosc {fields}",
-    "unknownHint": "Înțeleg, de exemplu, width, height, codec, artist, camera, size, modified, duration și orice nume de coloană",
+    "unknownHint": "Înțeleg, de exemplu, lățime, înălțime, codec, artist, mărime, modificat, durată și orice nume de coloană",
     "nothing": "Nu s-a găsit nimic",
     "nothingHint": "Alt dosar sau mai puține condiții poate găsesc mai mult",
     "asTab": "Deschide ca filă",
@@ -2332,22 +2331,22 @@
     "menuNewLabel": "Căutare nouă",
     "menuNone": "Scrie un model și salvează-l cu butonul din câmp.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "taxe",
+      "word": "raport"
     },
     "menuExamples": "Exemple",
     "examples": {
       "mkv": "toate fișierele MKV, și din subdosare",
-      "tag": "tot ce are eticheta steuer",
-      "word": "nume care conțin bericht",
+      "tag": "tot ce are eticheta {tag}",
+      "word": "nume care conțin {word}",
       "one": "un ? ține locul exact unui caracter",
       "meta": "filme 4K în HEVC, din metadate",
       "week": "tot ce s-a schimbat în ultimele 7 zile"
     },
     "server": "Server",
-    "unknownFields": "Nu cunosc {fields}. Înțeleg, de exemplu, width, height, codec, artist, camera, size, modified, duration și orice nume de coloană, precum lens sau year",
+    "unknownFields": "Nu cunosc {fields}. Înțeleg, de exemplu, lățime, înălțime, codec, artist, mărime, modificat, durată și orice nume de coloană, precum obiectiv sau an",
     "unknownField": "„{f}:”",
-    "quoted": ""
+    "quoted": "„{text}”"
   },
   "share": {
     "share": "Partajează",
@@ -2645,24 +2644,24 @@
     "clipCopy": "Copiază în clipboard",
     "clipPaste": "Lipește",
     "nothingOn": "Nimic din asta nu se află pe {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Se sare peste",
+    "sameSkipTip": "La destinație se află același fișier sub altă cale, de exemplu ca legătură fixă sau prin disk share și user share. Rămâne cum este.",
     "sameSkipped": {
-      "one": "",
-      "few": "",
-      "other": ""
+      "one": "{n} fișier sărit, pentru că la destinație este același fișier",
+      "few": "{n} fișiere sărite, pentru că la destinație sunt aceleași fișiere",
+      "other": "{n} de fișiere sărite, pentru că la destinație sunt aceleași fișiere"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Copiat: {files} în {to}. {same}",
+    "movedSame": "Mutat: {files} în {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "few": "",
-      "other": ""
+      "one": "Nu s-a copiat nimic. Fișierul de la destinație este același și rămâne cum este",
+      "few": "Nu s-a copiat nimic. Cele {n} fișiere de la destinație sunt aceleași și rămân cum sunt",
+      "other": "Nu s-a copiat nimic. Cele {n} de fișiere de la destinație sunt aceleași și rămân cum sunt"
     },
     "nothingMoved": {
-      "one": "",
-      "few": "",
-      "other": ""
+      "one": "Nu s-a mutat nimic. Fișierul de la destinație este același și rămâne cum este",
+      "few": "Nu s-a mutat nimic. Cele {n} fișiere de la destinație sunt aceleași și rămân cum sunt",
+      "other": "Nu s-a mutat nimic. Cele {n} de fișiere de la destinație sunt aceleași și rămân cum sunt"
     }
   },
   "trash": {
@@ -3368,37 +3367,37 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Peisaj",
+      "portrait": "Portret",
+      "square": "Pătrat"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Declanșat",
+      "off": "Fără bliț"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "few": "",
-      "other": ""
+      "one": "{n} canal",
+      "few": "{n} canale",
+      "other": "{n} de canale"
     },
     "method": {
-      "none": ""
+      "none": "Fără"
     },
-    "methodNumber": "",
+    "methodNumber": "Metoda {n}",
     "arch": {
-      "all": ""
+      "all": "Toate"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Necunoscută"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "lățime",
+    "height": "înălțime",
+    "vcodec": "codec",
+    "modified": "modificat"
   },
   "kinds": {
     "folder": "Dosar",
