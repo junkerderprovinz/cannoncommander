@@ -6129,7 +6129,14 @@ components:
             bytes for unpacked, milliseconds since 1970 for taken, accessed
             and statchange, whole seconds for duration, kBit/s for vbitrate
             and plain figures for the rest. Booleans answer yes or no
-            columns. Text is ready to show, in German.
+            columns. Words are codes for the client to name in its language:
+            orientation is landscape, portrait or square, flash fired or off,
+            channels mono, stereo, a layout such as 5.1 or a count, method
+            none for stored entries or a number for an unknown zip method,
+            arch all for packages that run anywhere. audiotracks and
+            subtitles list two letter language codes where there is one,
+            und for a track that names none. Numbers inside text, such as
+            23.976 fps or f/2.8, have a decimal point.
           additionalProperties:
             type: object
             additionalProperties:
@@ -6262,7 +6269,7 @@ components:
           description: Only for a move. The job makes dest first, and taking the job back also removes it again, so both are one step.
     Preflight:
       type: object
-      required: [dest, count, bytes, files, conflicts, sameDevice, big, parityBusy]
+      required: [dest, count, bytes, files, conflicts, same, sameDevice, big, parityBusy]
       properties:
         dest:
           type: string
@@ -6278,6 +6285,15 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/JobConflict"
+        same:
+          type: array
+          description: |
+            Names at dest that are the same file as their source under
+            another path, through a hard link or a disk share below the user
+            share. The job leaves them alone, so they are no conflict, and
+            bytes and files leave them out.
+          items:
+            type: string
         sameDevice:
           type: boolean
           description: A move that only renames and needs no free space.
@@ -6343,7 +6359,7 @@ components:
           description: Copies and moves from 2 GiB on wait while Unraid checks parity or rebuilds.
         notifyUnraid:
           type: boolean
-          description: Send a notice to Unraid when a long job ends. Needs write access to Unraid in the template.
+          description: Send a notice to Unraid when a long job ends, in English, since Unraid shows it as it is. Needs write access to Unraid in the template.
         notifyAfter:
           type: integer
           format: int64
