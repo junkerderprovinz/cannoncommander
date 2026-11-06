@@ -67,7 +67,7 @@ func (s *service) editorConfig(r *http.Request, o system.Office, u *users.User, 
 		"editorConfig": map[string]any{
 			"mode":        mode,
 			"callbackUrl": base + "/office/callback?token=" + url.QueryEscape(token),
-			"lang":        s.officeLang(r.Context(), u),
+			"lang":        s.officeLang(r.Context(), u, o.Kind),
 			"user":        map[string]any{"id": strconv.FormatUint(u.ID, 10), "name": u.Username},
 		},
 	}
@@ -244,20 +244,33 @@ func publicError(err error) error {
 	return v1.ProblemFor(err)
 }
 
-// officeLang is the language the editor opens in: the one the user picked for
-// the interface, otherwise the locale of the account.
-func (s *service) officeLang(ctx context.Context, u *users.User) string {
+// editorLangs are the codes an editor knows a language by where they differ
+// from the app's. The app writes Serbian in Cyrillic and Portuguese as in
+// Portugal. OnlyOffice reads sr as Serbian in Latin script and keeps Bokmål
+// under no, Collabora keeps it under nb and knows Chinese only with a region.
+var editorLangs = map[string]map[string]string{
+	system.OfficeOnlyOffice: {"sr": "sr-Cyrl-RS", "pt": "pt-PT", "nb": "no"},
+	system.OfficeEuroOffice: {"sr": "sr-Cyrl-RS", "pt": "pt-PT", "nb": "no"},
+	system.OfficeCollabora:  {"no": "nb", "zh": "zh-CN"},
+}
+
+// officeLang is the language the editor of kind opens in: the one the user
+// picked for the interface, otherwise the locale of the account.
+func (s *service) officeLang(ctx context.Context, u *users.User, kind string) string {
 	lang, err := prefs.Language(ctx, s.db, u.ID)
 	if err != nil {
 		logger.Errorf("office language of user %d: %v", u.ID, err)
 	}
-	if lang != "" {
-		return lang
+	if lang == "" {
+		lang = u.Locale
 	}
-	if u.Locale != "" {
-		return u.Locale
+	if lang == "" {
+		lang = "en"
 	}
-	return "en"
+	if code, ok := editorLangs[kind][lang]; ok {
+		return code
+	}
+	return lang
 }
 
 // sameOrigin reports whether two addresses lead to the same scheme, host and
