@@ -1,6 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { api, type Listing } from '@/api/client';
+import { api, ApiError, type Listing } from '@/api/client';
 import { emit, watch } from '@/api/sse';
 import { useListing } from './listing';
 
@@ -32,6 +32,34 @@ describe('listing cache', () => {
     const L = useListing();
     await Promise.all([L.load('/a'), L.load('/a')]);
     expect(fsList).toHaveBeenCalledOnce();
+  });
+});
+
+describe('folder tree', () => {
+  const gone = () => Promise.reject(new ApiError(404));
+
+  it('asks for the folders below a path only once while the first answer is on its way', async () => {
+    const fsTree = vi.spyOn(api, 'fsTree').mockResolvedValue({ path: '/a', items: [] });
+    const L = useListing();
+    await Promise.all([L.tree('/a'), L.tree('/a')]);
+    expect(fsTree).toHaveBeenCalledOnce();
+  });
+
+  it('asks for a folder that is not there only once, however often the tree looks again', async () => {
+    const fsTree = vi.spyOn(api, 'fsTree').mockImplementation(gone);
+    const L = useListing();
+    for (let n = 0; n < 9; n++) await expect(L.tree('/mnt/user/downloads')).rejects.toThrow();
+    expect(fsTree).toHaveBeenCalledOnce();
+  });
+
+  it('asks for a missing folder again once the folder above it changed', async () => {
+    const fsTree = vi.spyOn(api, 'fsTree').mockImplementationOnce(gone).mockResolvedValue({ path: '/a/b', items: [] });
+    const L = useListing();
+    await expect(L.tree('/a/b')).rejects.toThrow();
+    emit({ type: 'fs.changed', topic: 'fs:/a' });
+    await settle();
+    await L.tree('/a/b');
+    expect(fsTree.mock.calls.filter(([p]) => p === '/a/b')).toHaveLength(2);
   });
 });
 

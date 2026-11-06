@@ -18,6 +18,10 @@ export const useListing = defineStore('listing', () => {
   const hits = reactive(new Map<string, Hits>());
   const texts = reactive(new Map<string, string>());
   const pending = new Map<string, Promise<Listing>>();
+  const pendingTrees = new Map<string, Promise<TreeItem[]>>();
+  // The tree looks again whenever another folder arrives, so a folder that failed keeps its error until it or the
+  // folder above it changes, and the server hears about it once.
+  const failedTrees = new Map<string, unknown>();
   const asked = new Map<string, Set<string>>();
   let shown: string[] = [];
 
@@ -28,6 +32,7 @@ export const useListing = defineStore('listing', () => {
       .then((fresh) => {
         const next = fresh ?? have!;
         lists.set(path, next);
+        failedTrees.delete(path);
         return next;
       })
       .finally(() => pending.delete(path));
@@ -37,14 +42,25 @@ export const useListing = defineStore('listing', () => {
 
   async function tree(path: string): Promise<TreeItem[]> {
     if (trees.has(path)) return trees.get(path)!;
-    const got = (await api.fsTree(path)).items;
-    trees.set(path, got);
-    return got;
+    if (failedTrees.has(path)) throw failedTrees.get(path);
+    if (pendingTrees.has(path)) return pendingTrees.get(path)!;
+    const job = api.fsTree(path)
+      .then((got) => {
+        trees.set(path, got.items);
+        return got.items;
+      }, (e: unknown) => {
+        failedTrees.set(path, e);
+        throw e;
+      })
+      .finally(() => pendingTrees.delete(path));
+    pendingTrees.set(path, job);
+    return job;
   }
 
   function invalidate(path: string) {
     lists.delete(path);
     trees.delete(path);
+    for (const p of [...failedTrees.keys()]) if (p === path || parent(p) === path) failedTrees.delete(p);
     for (const key of [...hits.keys()]) if (key.startsWith(path + '\n') || path.startsWith(key.split('\n')[0]! + '/')) hits.delete(key);
     for (const p of [...meta.keys()]) if (parent(p) === path) { meta.delete(p); asked.delete(p); }
   }
