@@ -27,5 +27,5 @@ func JWTSigningKeyFunc() jwt.Keyfunc {
 // claims. Revocation goes by the token string, so the base64 has to be strict:
 // otherwise a revoked token would come back with its signature spelled anew.
 func ParseToken(raw string, claims jwt.Claims) (*jwt.Token, error) {
-	return jwt.ParseWithClaims(raw, claims, JWTSigningKeyFunc(), jwt.WithStrictDecoding(), jwt.WithIssuedAt())
+	return jwt.ParseWithClaims(raw, claims, JWTSigningKeyFunc(), jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}), jwt.WithStrictDecoding(), jwt.WithIssuedAt())
 }
