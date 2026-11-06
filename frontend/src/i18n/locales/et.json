@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Vasak paneel",
     "right": "Parem paneel",
@@ -2220,7 +2219,7 @@
     "colChanged": "Muudetud",
     "noFolder": "Seda kausta pole olemas",
     "unknown": "Tundmatu väli: {fields}",
-    "unknownHint": "",
+    "unknownHint": "Saan aru näiteks sõnadest laius, kõrgus, koodek, esitaja, kaamera, suurus, muudetud, kestus ja kõigist veerunimedest",
     "nothing": "Midagi ei leitud",
     "nothingHint": "Mõni teine kaust või vähem tingimusi võib leida rohkem",
     "asTab": "Ava vahekaardina",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "Uus otsing",
     "menuNone": "Sisesta muster ja salvesta see välja nupuga.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "maksud",
+      "word": "aruanne"
     },
     "menuExamples": "Näited",
     "examples": {
       "mkv": "kõik MKV-failid, ka alamkaustades",
-      "tag": "",
-      "word": "",
+      "tag": "kõik sildiga {tag}",
+      "word": "nimed, milles on {word}",
       "one": "? tähistab täpselt ühte märki",
       "meta": "4K-filmid HEVC-s, metaandmetest",
       "week": "kõik, mis on viimase 7 päeva jooksul muutunud"
     },
     "server": "Server",
-    "unknownFields": "",
+    "unknownFields": "Tundmatu väli: {fields}. Saan aru näiteks sõnadest laius, kõrgus, koodek, esitaja, kaamera, suurus, muudetud, kestus ja kõigist veerunimedest nagu objektiiv või aasta",
     "unknownField": "„{f}:“",
-    "quoted": ""
+    "quoted": "„{text}“"
   },
   "share": {
     "share": "Jaga",
@@ -2553,21 +2552,21 @@
     "clipCopy": "Kopeeri lõikelauale",
     "clipPaste": "Kleebi",
     "nothingOn": "Sellest pole midagi kettal {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Jäetakse vahele",
+    "sameSkipTip": "Sihtkohas on sama fail teise tee all, näiteks kõva lingina või disk-share'i ja user-share'i kaudu. See jääb samaks.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} fail jäeti vahele, sest see on sihtkohas sama fail",
+      "other": "{n} faili jäeti vahele, sest need on sihtkohas samad failid"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Kopeeritud: {files} → {to}. {same}",
+    "movedSame": "Teisaldatud: {files} → {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "Midagi ei kopeeritud. Sihtkohas olev fail on sama ja jääb samaks",
+      "other": "Midagi ei kopeeritud. Sihtkohas olevad {n} faili on samad ja jäävad samaks"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "Midagi ei teisaldatud. Sihtkohas olev fail on sama ja jääb samaks",
+      "other": "Midagi ei teisaldatud. Sihtkohas olevad {n} faili on samad ja jäävad samaks"
     }
   },
   "trash": {
@@ -3185,7 +3184,7 @@
     "abitrate": "Bitikiirus",
     "samplerate": "Diskreetimissagedus",
     "channels": "Kanalid",
-    "camera": "Kaamera mudel",
+    "camera": "Kaamera",
     "taken": "Pildistatud",
     "make": "Kaamera tootja",
     "lens": "Objektiiv",
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Rõhtpaigutus",
+      "portrait": "Püstpaigutus",
+      "square": "Ruut"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Välguga",
+      "off": "Välguta"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} kanal",
+      "other": "{n} kanalit"
     },
     "method": {
-      "none": ""
+      "none": "Puudub"
     },
-    "methodNumber": "",
+    "methodNumber": "Meetod {n}",
     "arch": {
-      "all": ""
+      "all": "Kõik"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Tundmatu"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "laius",
+    "height": "kõrgus",
+    "vcodec": "koodek",
+    "modified": "muudetud"
   },
   "kinds": {
     "folder": "Kaust",
@@ -3283,7 +3282,7 @@
     "arch": "Arhiiv",
     "disk": "Kettatõmmis",
     "pdf": "PDF-dokument",
-    "office": "Office'i dokument",
+    "office": "Office-dokument",
     "text": "Tekstifail",
     "code": "Lähtekood",
     "file": "Fail"
