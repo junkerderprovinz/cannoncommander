@@ -2299,7 +2299,7 @@
     "colChanged": "Mainīts",
     "noFolder": "Šādas mapes nav",
     "unknown": "{fields} es nepazīstu",
-    "unknownHint": "Es saprotu, piemēram, width, height, codec, artist, camera, size, modified, duration un katru kolonnas nosaukumu",
+    "unknownHint": "",
     "nothing": "Nekas nav atrasts",
     "nothingHint": "Cita mape vai mazāk nosacījumu varbūt atradīs vairāk",
     "asTab": "Atvērt kā cilni",
@@ -2331,17 +2331,21 @@
     "menuNew": "Jauna meklēšana ar visiem laukiem (Alt+F7)",
     "menuNewLabel": "Jauna meklēšana",
     "menuNone": "Ieraksti šablonu un saglabā to ar pogu laukā.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Piemēri",
     "examples": {
       "mkv": "visi MKV faili, arī apakšmapēs",
-      "tag": "viss ar birku steuer",
-      "word": "nosaukumi, kuros ir bericht",
+      "tag": "",
+      "word": "",
       "one": "? nozīmē tieši vienu rakstzīmi",
       "meta": "4K filmas HEVC formātā, no metadatiem",
       "week": "viss, kas mainījies pēdējās 7 dienās"
     },
     "server": "Serveris",
-    "unknownFields": "{fields} es nepazīstu. Es saprotu, piemēram, width, height, codec, artist, camera, size, modified, duration un katru kolonnas nosaukumu, piemēram, lens vai year",
+    "unknownFields": "",
     "unknownField": "„{f}:”",
     "quoted": ""
   },
@@ -3389,6 +3393,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Mape",

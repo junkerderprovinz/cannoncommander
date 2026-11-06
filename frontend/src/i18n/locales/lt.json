@@ -2378,7 +2378,7 @@
     "colChanged": "Pakeista",
     "noFolder": "Tokio aplanko nėra",
     "unknown": "{fields} nežinau",
-    "unknownHint": "Suprantu, pvz., width, height, codec, artist, camera, size, modified, duration ir kiekvieną stulpelio pavadinimą",
+    "unknownHint": "",
     "nothing": "Nieko nerasta",
     "nothingHint": "Kitas aplankas ar mažiau sąlygų galbūt ras daugiau",
     "asTab": "Atidaryti kaip skirtuką",
@@ -2411,17 +2411,21 @@
     "menuNew": "Nauja paieška su visais laukais (Alt+F7)",
     "menuNewLabel": "Nauja paieška",
     "menuNone": "Įvesk šabloną ir įrašyk jį lauko mygtuku.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Pavyzdžiai",
     "examples": {
       "mkv": "visi MKV failai, ir poaplankiuose",
-      "tag": "viskas su žyme steuer",
-      "word": "pavadinimai, kuriuose yra bericht",
+      "tag": "",
+      "word": "",
       "one": "? reiškia lygiai vieną simbolį",
       "meta": "4K filmai HEVC formatu, iš metaduomenų",
       "week": "viskas, kas pasikeitė per pastarąsias 7 dienas"
     },
     "server": "Serveris",
-    "unknownFields": "{fields} nežinau. Suprantu, pvz., width, height, codec, artist, camera, size, modified, duration ir kiekvieną stulpelio pavadinimą, pvz., lens ar year",
+    "unknownFields": "",
     "unknownField": "„{f}:“",
     "quoted": ""
   },
@@ -3517,6 +3521,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Aplankas",

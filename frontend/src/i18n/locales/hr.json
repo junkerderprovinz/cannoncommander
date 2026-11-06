@@ -2299,7 +2299,7 @@
     "colChanged": "Izmijenjeno",
     "noFolder": "Ta mapa ne postoji",
     "unknown": "Ne poznajem {fields}",
-    "unknownHint": "Razumijem npr. širina, visina, kodek, izvođač, kamera, veličina, izmijenjeno, trajanje i svaki naziv stupca",
+    "unknownHint": "",
     "nothing": "Ništa nije pronađeno",
     "nothingHint": "Druga mapa ili manje uvjeta možda će pronaći više",
     "asTab": "Otvori kao karticu",
@@ -2331,17 +2331,21 @@
     "menuNew": "Novo pretraživanje sa svim poljima (Alt+F7)",
     "menuNewLabel": "Novo pretraživanje",
     "menuNone": "Upišite uzorak i spremite ga gumbom u polju.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Primjeri",
     "examples": {
       "mkv": "sve MKV datoteke, i u podmapama",
-      "tag": "sve s oznakom steuer",
-      "word": "nazivi u kojima se pojavljuje bericht",
+      "tag": "",
+      "word": "",
       "one": "? stoji za točno jedan znak",
       "meta": "4K filmovi u HEVC-u, iz metapodataka",
       "week": "sve što se promijenilo u zadnjih 7 dana"
     },
     "server": "Poslužitelj",
-    "unknownFields": "Ne poznajem {fields}. Razumijem npr. širina, visina, kodek, izvođač, kamera, veličina, izmijenjeno, trajanje i svaki naziv stupca poput objektiv ili godina",
+    "unknownFields": "",
     "unknownField": "„{f}:“",
     "quoted": ""
   },
@@ -3389,6 +3393,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Mapa",

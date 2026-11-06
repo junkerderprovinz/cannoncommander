@@ -2299,7 +2299,7 @@
     "colChanged": "Modificato",
     "noFolder": "Questa cartella non esiste",
     "unknown": "Non conosco {fields}",
-    "unknownHint": "Capisco per esempio width, height, codec, artist, camera, size, modified, duration e ogni nome di colonna",
+    "unknownHint": "",
     "nothing": "Nessun risultato",
     "nothingHint": "Un'altra cartella o meno condizioni potrebbero trovare di più",
     "asTab": "Apri come scheda",
@@ -2331,17 +2331,21 @@
     "menuNew": "Nuova ricerca con tutti i campi (Alt+F7)",
     "menuNewLabel": "Nuova ricerca",
     "menuNone": "Scrivi un modello e salvalo con il pulsante nel campo.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Esempi",
     "examples": {
       "mkv": "tutti i file MKV, anche nelle sottocartelle",
-      "tag": "tutto ciò che ha il tag steuer",
-      "word": "nomi in cui compare bericht",
+      "tag": "",
+      "word": "",
       "one": "un ? sta per esattamente un carattere",
       "meta": "film 4K in HEVC, dai metadati",
       "week": "tutto ciò che è cambiato negli ultimi 7 giorni"
     },
     "server": "Server",
-    "unknownFields": "Non conosco {fields}. Capisco per esempio width, height, codec, artist, camera, size, modified, duration e ogni nome di colonna come lens o year",
+    "unknownFields": "",
     "unknownField": "«{f}:»",
     "quoted": ""
   },
@@ -3389,6 +3393,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Cartella",

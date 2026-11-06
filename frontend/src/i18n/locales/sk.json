@@ -2378,7 +2378,7 @@
     "colChanged": "Zmenené",
     "noFolder": "Tento priečinok neexistuje",
     "unknown": "{fields} nepoznám",
-    "unknownHint": "Rozumiem napríklad width, height, codec, artist, camera, size, modified, duration a každému názvu stĺpca",
+    "unknownHint": "",
     "nothing": "Nič sa nenašlo",
     "nothingHint": "Iný priečinok alebo menej podmienok možno nájde viac",
     "asTab": "Otvoriť ako kartu",
@@ -2411,17 +2411,21 @@
     "menuNew": "Nové hľadanie so všetkými poľami (Alt+F7)",
     "menuNewLabel": "Nové hľadanie",
     "menuNone": "Napíšte vzor a uložte ho tlačidlom v poli.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Príklady",
     "examples": {
       "mkv": "všetky súbory MKV, aj v podpriečinkoch",
-      "tag": "všetko so štítkom steuer",
-      "word": "názvy, v ktorých sa vyskytuje bericht",
+      "tag": "",
+      "word": "",
       "one": "? znamená práve jeden znak",
       "meta": "filmy 4K v HEVC, z metadát",
       "week": "všetko, čo sa zmenilo za posledných 7 dní"
     },
     "server": "Server",
-    "unknownFields": "{fields} nepoznám. Rozumiem napríklad width, height, codec, artist, camera, size, modified, duration a každému názvu stĺpca, napríklad lens alebo year",
+    "unknownFields": "",
     "unknownField": "„{f}:“",
     "quoted": ""
   },
@@ -3517,6 +3521,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Priečinok",

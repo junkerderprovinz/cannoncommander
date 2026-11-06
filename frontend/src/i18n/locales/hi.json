@@ -2220,7 +2220,7 @@
     "colChanged": "बदला गया",
     "noFolder": "यह फ़ोल्डर मौजूद नहीं है",
     "unknown": "{fields} मैं नहीं जानता",
-    "unknownHint": "मैं उदाहरण के लिए width, height, codec, artist, camera, size, modified, duration और हर कॉलम नाम समझता हूँ",
+    "unknownHint": "",
     "nothing": "कुछ नहीं मिला",
     "nothingHint": "कोई दूसरा फ़ोल्डर या कम शर्तें शायद ज़्यादा ढूँढें",
     "asTab": "टैब के रूप में खोलें",
@@ -2251,17 +2251,21 @@
     "menuNew": "सभी फ़ील्ड के साथ नई खोज (Alt+F7)",
     "menuNewLabel": "नई खोज",
     "menuNone": "कोई पैटर्न लिखें और उसे फ़ील्ड के बटन से सहेजें।",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "उदाहरण",
     "examples": {
       "mkv": "सभी MKV फ़ाइलें, सबफ़ोल्डरों में भी",
-      "tag": "steuer टैग वाली हर चीज़",
-      "word": "वे नाम जिनमें bericht आता है",
+      "tag": "",
+      "word": "",
       "one": "? ठीक एक अक्षर के लिए है",
       "meta": "HEVC में 4K फ़िल्में, मेटाडेटा से",
       "week": "पिछले 7 दिनों में बदली हर चीज़"
     },
     "server": "सर्वर",
-    "unknownFields": "{fields} मैं नहीं जानता। मैं उदाहरण के लिए width, height, codec, artist, camera, size, modified, duration और lens या year जैसे हर कॉलम नाम समझता हूँ",
+    "unknownFields": "",
     "unknownField": "“{f}:”",
     "quoted": ""
   },
@@ -3261,6 +3265,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "फ़ोल्डर",

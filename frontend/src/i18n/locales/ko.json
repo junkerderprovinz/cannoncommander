@@ -2141,7 +2141,7 @@
     "colChanged": "수정한 날짜",
     "noFolder": "이 폴더가 없습니다",
     "unknown": "{fields} 항목은 모릅니다",
-    "unknownHint": "예를 들어 width, height, codec, artist, camera, size, modified, duration과 모든 열 이름을 이해합니다",
+    "unknownHint": "",
     "nothing": "찾지 못했습니다",
     "nothingHint": "다른 폴더를 고르거나 조건을 줄이면 더 찾을 수도 있습니다",
     "asTab": "탭으로 열기",
@@ -2171,17 +2171,21 @@
     "menuNew": "모든 항목으로 새 검색 (Alt+F7)",
     "menuNewLabel": "새 검색",
     "menuNone": "패턴을 입력하고 검색창 안의 버튼으로 저장하세요.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "예시",
     "examples": {
       "mkv": "모든 MKV 파일, 하위 폴더 포함",
-      "tag": "steuer 태그가 붙은 모든 항목",
-      "word": "bericht가 들어간 이름",
+      "tag": "",
+      "word": "",
       "one": "?는 정확히 한 글자를 뜻합니다",
       "meta": "메타데이터 기준 HEVC 4K 영화",
       "week": "지난 7일 동안 바뀐 모든 항목"
     },
     "server": "서버",
-    "unknownFields": "{fields} 항목은 모릅니다. 예를 들어 width, height, codec, artist, camera, size, modified, duration과 lens, year 같은 모든 열 이름을 이해합니다",
+    "unknownFields": "",
     "unknownField": "“{f}:”",
     "quoted": ""
   },
@@ -3133,6 +3137,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "폴더",

@@ -2141,7 +2141,7 @@
     "colChanged": "แก้ไขเมื่อ",
     "noFolder": "ไม่มีโฟลเดอร์นี้",
     "unknown": "ไม่รู้จัก {fields}",
-    "unknownHint": "ที่เข้าใจได้ เช่น width, height, codec, artist, camera, size, modified, duration และชื่อคอลัมน์ทุกชื่อ",
+    "unknownHint": "",
     "nothing": "ไม่พบอะไร",
     "nothingHint": "ลองโฟลเดอร์อื่นหรือลดเงื่อนไขลง อาจพบมากขึ้น",
     "asTab": "เปิดเป็นแท็บ",
@@ -2171,17 +2171,21 @@
     "menuNew": "การค้นหาใหม่พร้อมทุกช่อง (Alt+F7)",
     "menuNewLabel": "การค้นหาใหม่",
     "menuNone": "พิมพ์รูปแบบแล้วบันทึกด้วยปุ่มในช่อง",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "ตัวอย่าง",
     "examples": {
       "mkv": "ไฟล์ MKV ทั้งหมด รวมในโฟลเดอร์ย่อย",
-      "tag": "ทุกอย่างที่มีแท็ก steuer",
-      "word": "ชื่อที่มีคำว่า bericht",
+      "tag": "",
+      "word": "",
       "one": "? แทนอักขระหนึ่งตัวพอดี",
       "meta": "ภาพยนตร์ 4K แบบ HEVC จากเมทาดาทา",
       "week": "ทุกอย่างที่เปลี่ยนใน 7 วันล่าสุด"
     },
     "server": "เซิร์ฟเวอร์",
-    "unknownFields": "ไม่รู้จัก {fields} ที่เข้าใจได้ เช่น width, height, codec, artist, camera, size, modified, duration และชื่อคอลัมน์ทุกชื่อ เช่น lens หรือ year",
+    "unknownFields": "",
     "unknownField": "“{f}:”",
     "quoted": ""
   },
@@ -3133,6 +3137,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "โฟลเดอร์",

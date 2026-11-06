@@ -2378,7 +2378,7 @@
     "colChanged": "Zmodyfikowano",
     "noFolder": "Ten folder nie istnieje",
     "unknown": "Nie znam {fields}",
-    "unknownHint": "Rozumiem np. width, height, codec, artist, camera, size, modified, duration i każdą nazwę kolumny",
+    "unknownHint": "",
     "nothing": "Nic nie znaleziono",
     "nothingHint": "Inny folder albo mniej warunków może znajdzie więcej",
     "asTab": "Otwórz jako kartę",
@@ -2411,17 +2411,21 @@
     "menuNew": "Nowe wyszukiwanie ze wszystkimi polami (Alt+F7)",
     "menuNewLabel": "Nowe wyszukiwanie",
     "menuNone": "Wpisz wzorzec i zapisz go przyciskiem w polu.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Przykłady",
     "examples": {
       "mkv": "wszystkie pliki MKV, także w podfolderach",
-      "tag": "wszystko z tagiem steuer",
-      "word": "nazwy, w których występuje bericht",
+      "tag": "",
+      "word": "",
       "one": "? oznacza dokładnie jeden znak",
       "meta": "filmy 4K w HEVC, z metadanych",
       "week": "wszystko, co zmieniło się w ostatnich 7 dniach"
     },
     "server": "Serwer",
-    "unknownFields": "Nie znam {fields}. Rozumiem np. width, height, codec, artist, camera, size, modified, duration i każdą nazwę kolumny, np. lens albo year",
+    "unknownFields": "",
     "unknownField": "„{f}:”",
     "quoted": ""
   },
@@ -3517,6 +3521,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Folder",

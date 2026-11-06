@@ -2299,7 +2299,7 @@
     "colChanged": "שונה",
     "noFolder": "התיקייה הזו לא קיימת",
     "unknown": "את {fields} אני לא מכיר",
-    "unknownHint": "אני מבין למשל width, height, codec, artist, camera, size, modified, duration וכל שם עמודה",
+    "unknownHint": "",
     "nothing": "לא נמצא כלום",
     "nothingHint": "תיקייה אחרת או פחות תנאים אולי ימצאו יותר",
     "asTab": "פתיחה כלשונית",
@@ -2331,17 +2331,21 @@
     "menuNew": "חיפוש חדש עם כל השדות (Alt+F7)",
     "menuNewLabel": "חיפוש חדש",
     "menuNone": "מקלידים תבנית ושומרים אותה עם הכפתור שבשדה.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "דוגמאות",
     "examples": {
       "mkv": "כל קובצי MKV, גם בתיקיות משנה",
-      "tag": "כל מה שיש לו התגית steuer",
-      "word": "שמות שמופיע בהם bericht",
+      "tag": "",
+      "word": "",
       "one": "? מייצג תו אחד בדיוק",
       "meta": "סרטי 4K ב־HEVC, מהמטא־נתונים",
       "week": "כל מה שהשתנה ב־7 הימים האחרונים"
     },
     "server": "שרת",
-    "unknownFields": "את {fields} אני לא מכיר. אני מבין למשל width, height, codec, artist, camera, size, modified, duration וכל שם עמודה כמו lens או year",
+    "unknownFields": "",
     "unknownField": "„{f}:“",
     "quoted": ""
   },
@@ -3389,6 +3393,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "תיקייה",

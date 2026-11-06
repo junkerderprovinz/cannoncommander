@@ -2378,7 +2378,7 @@
     "colChanged": "Spremenjeno",
     "noFolder": "Ta mapa ne obstaja",
     "unknown": "{fields} ne poznam",
-    "unknownHint": "Razumem na primer width, height, codec, artist, camera, size, modified, duration in vsako ime stolpca",
+    "unknownHint": "",
     "nothing": "Nič ni najdeno",
     "nothingHint": "Druga mapa ali manj pogojev morda najde več",
     "asTab": "Odpri kot zavihek",
@@ -2411,17 +2411,21 @@
     "menuNew": "Novo iskanje z vsemi polji (Alt+F7)",
     "menuNewLabel": "Novo iskanje",
     "menuNone": "Vtipkajte vzorec in ga shranite z gumbom v polju.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Primeri",
     "examples": {
       "mkv": "vse datoteke MKV, tudi v podmapah",
-      "tag": "vse z značko steuer",
-      "word": "imena, v katerih se pojavi bericht",
+      "tag": "",
+      "word": "",
       "one": "? pomeni natanko en znak",
       "meta": "filmi 4K v HEVC, iz metapodatkov",
       "week": "vse, kar se je spremenilo v zadnjih 7 dneh"
     },
     "server": "Strežnik",
-    "unknownFields": "{fields} ne poznam. Razumem na primer width, height, codec, artist, camera, size, modified, duration in vsako ime stolpca, na primer lens ali year",
+    "unknownFields": "",
     "unknownField": "„{f}:“",
     "quoted": ""
   },
@@ -3517,6 +3521,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Mapa",

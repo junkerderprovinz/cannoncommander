@@ -2141,7 +2141,7 @@
     "colChanged": "修改时间",
     "noFolder": "此文件夹不存在",
     "unknown": "我不认识 {fields}",
-    "unknownHint": "我能理解例如 width、height、codec、artist、camera、size、modified、duration 以及每个列名",
+    "unknownHint": "",
     "nothing": "没有找到",
     "nothingHint": "换个文件夹或减少条件也许能找到更多",
     "asTab": "在标签页中打开",
@@ -2171,17 +2171,21 @@
     "menuNew": "使用所有字段的新搜索（Alt+F7）",
     "menuNewLabel": "新搜索",
     "menuNone": "输入一个模式，再用搜索框中的按钮保存。",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "示例",
     "examples": {
       "mkv": "所有 MKV 文件，包括子文件夹中的",
-      "tag": "所有带 steuer 标签的内容",
-      "word": "包含 bericht 的名称",
+      "tag": "",
+      "word": "",
       "one": "? 代表恰好一个字符",
       "meta": "HEVC 编码的 4K 影片，来自元数据",
       "week": "最近 7 天内修改过的所有内容"
     },
     "server": "服务器",
-    "unknownFields": "我不认识 {fields}。我能理解例如 width、height、codec、artist、camera、size、modified、duration 以及每个列名，如 lens 或 year",
+    "unknownFields": "",
     "unknownField": "“{f}:”",
     "quoted": ""
   },
@@ -3133,6 +3137,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "文件夹",

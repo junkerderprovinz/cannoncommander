@@ -71,7 +71,6 @@ func TestFieldsCompareLikeThePrototype(t *testing.T) {
 		{"geändert:2026-10-30", uhd, true},
 		{"datum:2026", uhd, true},
 		{"datum:2025", song, true},
-		{"modified:30.10.2026", uhd, true},
 		{"aufgenommen:2026-06", photo, true},
 		{"aufgenommen:<30d", photo, false},
 		{"dauer:>90", uhd, true},
@@ -84,7 +83,8 @@ func TestFieldsCompareLikeThePrototype(t *testing.T) {
 		{"blende:f/2,8", photo, true},
 		{"blende:=f/2.8", photo, true},
 		{"endung:flac", song, true},
-		{"art:musik", song, true},
+		{"art:music", song, true},
+		{"art:musik", song, false},
 		{"typ:audio", song, true},
 		{"rechte:rw-rw-r", photo, true},
 		{"oktal:664", photo, true},
@@ -94,6 +94,58 @@ func TestFieldsCompareLikeThePrototype(t *testing.T) {
 		if got := matches(t, c.line, c.r); got != c.want {
 			t.Errorf("%q on %s = %v, want %v", c.line, c.r.Name, got, c.want)
 		}
+	}
+}
+
+func TestWordsAreComparedAsCodes(t *testing.T) {
+	photo := entry("IMG_0001.jpg", 5<<20, now, nil)
+	report := entry("Bericht.pdf", 1<<20, now, meta.Values{"encrypted": true, "words": int64(1234)})
+	folder := entry("Urlaub", 0, now, nil)
+	folder.Dir = true
+	cases := []struct {
+		line string
+		r    *row
+		want bool
+	}{
+		{"type:img", photo, true},
+		{"type:=img", photo, true},
+		{"type:bild", photo, false},
+		{"type:pdf", report, true},
+		{"type:folder", folder, true},
+		{"kind:image", photo, true},
+		{"kind:document", report, true},
+		{"kind:folder", folder, true},
+		{"kind:other", entry("x.bin", 1, now, nil), true},
+		{"encrypted:yes", report, true},
+		{"encrypted:no", report, false},
+		{"encrypted:ja", report, false},
+		{"words:1234", report, true},
+		{"words:>1000", report, true},
+	}
+	for _, c := range cases {
+		if got := matches(t, c.line, c.r); got != c.want {
+			t.Errorf("%q on %s = %v, want %v", c.line, c.r.Name, got, c.want)
+		}
+	}
+}
+
+func TestSizeColumnsCompareInBytes(t *testing.T) {
+	zip := entry("fotos.zip", 300<<20, now, meta.Values{"unpacked": int64(3 << 30)})
+	cases := map[string]bool{
+		"unpacked:>2.5GB": true, "unpacked:<2.5GB": false, "unpacked:>4GB": false,
+		"disksize:>200MB": true, "disksize:<1GB": true, "disksize:>1GB": false,
+	}
+	for line, want := range cases {
+		if got := matches(t, line, zip); got != want {
+			t.Errorf("%q = %v, want %v", line, got, want)
+		}
+	}
+}
+
+func TestDatesAreReadInISOOnly(t *testing.T) {
+	r := entry("a.txt", 1, time.Date(2026, 10, 30, 12, 0, 0, 0, time.Local), nil)
+	if !matches(t, "modified:2026-10-30", r) || matches(t, "modified:30.10.2026", r) {
+		t.Error("a date is read some other way than as ISO")
 	}
 }
 

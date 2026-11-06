@@ -2141,7 +2141,7 @@
     "colChanged": "更新日時",
     "noFolder": "このフォルダーは存在しません",
     "unknown": "{fields} はわかりません",
-    "unknownHint": "たとえば width、height、codec、artist、camera、size、modified、duration と、すべての列名がわかります",
+    "unknownHint": "",
     "nothing": "見つかりませんでした",
     "nothingHint": "別のフォルダーにするか条件を減らすと、もっと見つかるかもしれません",
     "asTab": "タブで開く",
@@ -2171,17 +2171,21 @@
     "menuNew": "すべての項目で新しく検索 (Alt+F7)",
     "menuNewLabel": "新しい検索",
     "menuNone": "パターンを入力し、欄の中のボタンで保存します。",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "例",
     "examples": {
       "mkv": "すべての MKV ファイル (サブフォルダーも含む)",
-      "tag": "タグ steuer が付いたものすべて",
-      "word": "bericht を含む名前",
+      "tag": "",
+      "word": "",
       "one": "? はちょうど1文字を表します",
       "meta": "メタデータから HEVC の 4K 映画",
       "week": "過去 7 日間に変更されたものすべて"
     },
     "server": "サーバー",
-    "unknownFields": "{fields} はわかりません。たとえば width、height、codec、artist、camera、size、modified、duration と、lens や year のようなすべての列名がわかります",
+    "unknownFields": "",
     "unknownField": "「{f}:」",
     "quoted": ""
   },
@@ -3133,6 +3137,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "フォルダー",

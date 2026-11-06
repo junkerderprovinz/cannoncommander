@@ -2220,7 +2220,7 @@
     "colChanged": "Muokattu",
     "noFolder": "Tätä kansiota ei ole olemassa",
     "unknown": "Tuntematon kenttä: {fields}",
-    "unknownHint": "Ymmärrän esimerkiksi width, height, codec, artist, camera, size, modified, duration ja kaikki sarakkeiden nimet",
+    "unknownHint": "",
     "nothing": "Mitään ei löytynyt",
     "nothingHint": "Toinen kansio tai vähemmän ehtoja voi löytää enemmän",
     "asTab": "Avaa välilehtenä",
@@ -2251,17 +2251,21 @@
     "menuNew": "Uusi haku kaikilla kentillä (Alt+F7)",
     "menuNewLabel": "Uusi haku",
     "menuNone": "Kirjoita kuvio ja tallenna se kentän painikkeella.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Esimerkit",
     "examples": {
       "mkv": "kaikki MKV-tiedostot, myös alikansioissa",
-      "tag": "kaikki, joilla on tunniste steuer",
-      "word": "nimet, joissa esiintyy bericht",
+      "tag": "",
+      "word": "",
       "one": "? tarkoittaa tasan yhtä merkkiä",
       "meta": "4K-elokuvat HEVC-muodossa, metatiedoista",
       "week": "kaikki, mikä on muuttunut viimeisten 7 päivän aikana"
     },
     "server": "Palvelin",
-    "unknownFields": "Tuntematon kenttä: {fields}. Ymmärrän esimerkiksi width, height, codec, artist, camera, size, modified, duration ja kaikki sarakkeiden nimet, kuten lens tai year",
+    "unknownFields": "",
     "unknownField": "”{f}:”",
     "quoted": ""
   },
@@ -3261,6 +3265,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Kansio",

@@ -60,6 +60,13 @@ func init() {
 		`ALTER TABLE job_items ADD COLUMN error_code TEXT NOT NULL DEFAULT ''`,
 		`ALTER TABLE job_items ADD COLUMN error_params TEXT NOT NULL DEFAULT ''`,
 	))
+	// Text searches were named in German quotes and an index run over every
+	// source in German. The interface quotes and names them in its own
+	// language.
+	migrate.Register(migrate.Main, migrate.SQL("jobs/003_plain_names",
+		`UPDATE jobs SET name = substr(name, 2, length(name) - 2) WHERE kind = 'contentSearch' AND name LIKE '„%“'`,
+		`UPDATE jobs SET name = 'All sources' WHERE kind = 'reindex' AND name = 'Alle Quellen'`,
+	))
 }
 
 // answers are the decisions a job collected, before and while it ran.

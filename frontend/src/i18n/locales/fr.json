@@ -2299,7 +2299,7 @@
     "colChanged": "Modifié",
     "noFolder": "Ce dossier n'existe pas",
     "unknown": "Je ne connais pas {fields}",
-    "unknownHint": "Je comprends par exemple width, height, codec, artist, camera, size, modified, duration et chaque nom de colonne",
+    "unknownHint": "",
     "nothing": "Rien trouvé",
     "nothingHint": "Un autre dossier ou moins de conditions trouveront peut-être davantage",
     "asTab": "Ouvrir dans un onglet",
@@ -2331,17 +2331,21 @@
     "menuNew": "Nouvelle recherche avec tous les champs (Alt+F7)",
     "menuNewLabel": "Nouvelle recherche",
     "menuNone": "Tapez un motif et enregistrez-le avec le bouton dans le champ.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Exemples",
     "examples": {
       "mkv": "tous les fichiers MKV, y compris dans les sous-dossiers",
-      "tag": "tout ce qui porte le mot-clé steuer",
-      "word": "les noms qui contiennent bericht",
+      "tag": "",
+      "word": "",
       "one": "un ? remplace exactement un caractère",
       "meta": "films 4K en HEVC, d'après les métadonnées",
       "week": "tout ce qui a changé ces 7 derniers jours"
     },
     "server": "Serveur",
-    "unknownFields": "Je ne connais pas {fields}. Je comprends par exemple width, height, codec, artist, camera, size, modified, duration et chaque nom de colonne, comme lens ou year",
+    "unknownFields": "",
     "unknownField": "« {f}: »",
     "quoted": ""
   },
@@ -3389,6 +3393,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Dossier",

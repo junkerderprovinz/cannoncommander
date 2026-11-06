@@ -1573,10 +1573,11 @@ paths:
         - $ref: "#/components/parameters/Path"
         - name: q
           in: query
-          description: The name line, with field tests.
+          description: >-
+            The name line, with field tests. A field is named by its column id or its German name. Values are codes where a column shows words, such as type:img, kind:music or encrypted:yes, dates are ISO dates such as 2026-10-30 or ages such as 7d, and sizes are numbers with a point and a unit such as 2.5GB.
           schema:
             type: string
-          example: "*.mkv breite:>=3840"
+          example: "*.mkv width:>=3840 modified:>2026-10-01"
         - name: hidden
           in: query
           schema:

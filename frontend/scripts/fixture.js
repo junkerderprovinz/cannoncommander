@@ -82,10 +82,18 @@ function serverValue(id, text) {
   if (DECIMAL.includes(id)) return text.replace(/(\d),(\d)/g, '$1.$2');
   return text;
 }
+// The search line also names types, kinds and yes or no by code.
+const YES_NO = { Ja: 'yes', Nein: 'no' };
+const LINE_WORDS = {
+  ...WORDS,
+  type: { Ordner: 'folder', 'Verknüpfung': 'link', Bild: 'img', Video: 'video', Audio: 'audio', Archiv: 'arch', Abbild: 'disk', 'PDF-Dokument': 'pdf', 'Office-Dokument': 'office', Textdatei: 'text', Quelltext: 'code', Datei: 'file' },
+  kind: { Ordner: 'folder', Bild: 'image', Video: 'video', Musik: 'music', Archiv: 'archive', Abbild: 'disk', Dokument: 'document', Text: 'text', Quelltext: 'code', Sonstiges: 'other' },
+  ...Object.fromEntries(BOOLEAN.map((id) => [id, YES_NO])),
+};
 // The search line names those codes, which the prototype's field tests know by their German words.
 function germanQuery(line) {
   return line.replace(/\b(\w+):(>=|<=|!=|>|<|=)?(\w+)\b/g, (all, id, op = '', code) => {
-    const word = Object.entries(WORDS[id] ?? {}).find(([, c]) => c === code)?.[0];
+    const word = Object.entries(LINE_WORDS[id] ?? {}).find(([, c]) => c === code)?.[0];
     const lang = (id === 'audiotracks' || id === 'subtitles') && (code === 'und' ? 'Unbekannt' : germanName.of(code));
     return word || lang ? `${id}:${op}"${word || lang}"` : all;
   });

@@ -2536,7 +2536,7 @@
     "colChanged": "التعديل",
     "noFolder": "هذا المجلد غير موجود",
     "unknown": "لا أعرف {fields}",
-    "unknownHint": "أفهم مثلًا width وheight وcodec وartist وcamera وsize وmodified وduration وكل اسم عمود",
+    "unknownHint": "",
     "nothing": "لم يُعثر على شيء",
     "nothingHint": "مجلد آخر أو شروط أقل قد تجد المزيد",
     "asTab": "الفتح كتبويب",
@@ -2571,17 +2571,21 @@
     "menuNew": "بحث جديد بكل الحقول (Alt+F7)",
     "menuNewLabel": "بحث جديد",
     "menuNone": "اكتب نمطًا واحفظه بالزر في الحقل.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "أمثلة",
     "examples": {
       "mkv": "كل ملفات MKV، في المجلدات الفرعية أيضًا",
-      "tag": "كل ما يحمل الوسم steuer",
-      "word": "أسماء تحتوي bericht",
+      "tag": "",
+      "word": "",
       "one": "? تعني حرفًا واحدًا بالضبط",
       "meta": "أفلام 4K بترميز HEVC، من البيانات الوصفية",
       "week": "كل ما تغيّر في آخر 7 أيام"
     },
     "server": "الخادم",
-    "unknownFields": "لا أعرف {fields}. أفهم مثلًا width وheight وcodec وartist وcamera وsize وmodified وduration وكل اسم عمود مثل lens أو year",
+    "unknownFields": "",
     "unknownField": "«{f}:»",
     "quoted": ""
   },
@@ -3773,6 +3777,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "مجلد",

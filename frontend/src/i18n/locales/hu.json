@@ -2220,7 +2220,7 @@
     "colChanged": "Módosítva",
     "noFolder": "Ez a mappa nem létezik",
     "unknown": "Ezeket nem ismerem: {fields}",
-    "unknownHint": "Értem például a width, height, codec, artist, camera, size, modified, duration mezőket és minden oszlopnevet",
+    "unknownHint": "",
     "nothing": "Nincs találat",
     "nothingHint": "Egy másik mappa vagy kevesebb feltétel talán többet talál",
     "asTab": "Megnyitás lapként",
@@ -2251,17 +2251,21 @@
     "menuNew": "Új keresés minden mezővel (Alt+F7)",
     "menuNewLabel": "Új keresés",
     "menuNone": "Írjon be egy mintát, és mentse a mezőben lévő gombbal.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Példák",
     "examples": {
       "mkv": "minden MKV-fájl, az almappákban is",
-      "tag": "minden a steuer címkével",
-      "word": "nevek, amelyekben szerepel a bericht",
+      "tag": "",
+      "word": "",
       "one": "a ? pontosan egy karaktert jelent",
       "meta": "4K-s filmek HEVC-ben, a metaadatokból",
       "week": "minden, ami az elmúlt 7 napban változott"
     },
     "server": "Szerver",
-    "unknownFields": "Ezeket nem ismerem: {fields}. Értem például a width, height, codec, artist, camera, size, modified, duration mezőket és minden oszlopnevet, például lens vagy year",
+    "unknownFields": "",
     "unknownField": "„{f}:”",
     "quoted": ""
   },
@@ -3261,6 +3265,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Mappa",

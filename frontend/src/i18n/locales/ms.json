@@ -2141,7 +2141,7 @@
     "colChanged": "Diubah",
     "noFolder": "Folder ini tidak wujud",
     "unknown": "Saya tidak kenal {fields}",
-    "unknownHint": "Saya faham contohnya width, height, codec, artist, camera, size, modified, duration dan setiap nama lajur",
+    "unknownHint": "",
     "nothing": "Tiada apa ditemui",
     "nothingHint": "Folder lain atau kurang syarat mungkin menemui lebih banyak",
     "asTab": "Buka sebagai tab",
@@ -2171,17 +2171,21 @@
     "menuNew": "Carian baharu dengan semua medan (Alt+F7)",
     "menuNewLabel": "Carian baharu",
     "menuNone": "Taip corak dan simpan dengan butang dalam medan.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Contoh",
     "examples": {
       "mkv": "semua fail MKV, termasuk dalam subfolder",
-      "tag": "semua dengan tag steuer",
-      "word": "nama yang mengandungi bericht",
+      "tag": "",
+      "word": "",
       "one": "? bermaksud tepat satu aksara",
       "meta": "Filem 4K dalam HEVC, daripada metadata",
       "week": "semua yang berubah dalam 7 hari lepas"
     },
     "server": "Pelayan",
-    "unknownFields": "Saya tidak kenal {fields}. Saya faham contohnya width, height, codec, artist, camera, size, modified, duration dan setiap nama lajur seperti lens atau year",
+    "unknownFields": "",
     "unknownField": "“{f}:”",
     "quoted": ""
   },
@@ -3133,6 +3137,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Folder",

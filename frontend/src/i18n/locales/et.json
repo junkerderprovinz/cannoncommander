@@ -2220,7 +2220,7 @@
     "colChanged": "Muudetud",
     "noFolder": "Seda kausta pole olemas",
     "unknown": "Tundmatu väli: {fields}",
-    "unknownHint": "Saan aru näiteks väljadest width, height, codec, artist, camera, size, modified, duration ja kõigist veerunimedest",
+    "unknownHint": "",
     "nothing": "Midagi ei leitud",
     "nothingHint": "Mõni teine kaust või vähem tingimusi võib leida rohkem",
     "asTab": "Ava vahekaardina",
@@ -2251,17 +2251,21 @@
     "menuNew": "Uus otsing kõigi väljadega (Alt+F7)",
     "menuNewLabel": "Uus otsing",
     "menuNone": "Sisesta muster ja salvesta see välja nupuga.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Näited",
     "examples": {
       "mkv": "kõik MKV-failid, ka alamkaustades",
-      "tag": "kõik sildiga steuer",
-      "word": "nimed, milles on bericht",
+      "tag": "",
+      "word": "",
       "one": "? tähistab täpselt ühte märki",
       "meta": "4K-filmid HEVC-s, metaandmetest",
       "week": "kõik, mis on viimase 7 päeva jooksul muutunud"
     },
     "server": "Server",
-    "unknownFields": "Tundmatu väli: {fields}. Saan aru näiteks väljadest width, height, codec, artist, camera, size, modified, duration ja kõigist veerunimedest nagu lens või year",
+    "unknownFields": "",
     "unknownField": "„{f}:“",
     "quoted": ""
   },
@@ -3261,6 +3265,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Kaust",

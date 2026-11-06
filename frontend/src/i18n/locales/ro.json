@@ -2331,6 +2331,10 @@
     "menuNew": "",
     "menuNewLabel": "",
     "menuNone": "",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "",
     "examples": {
       "mkv": "",
@@ -3389,6 +3393,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "",

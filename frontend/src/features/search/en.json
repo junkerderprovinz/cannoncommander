@@ -62,11 +62,12 @@
   "menuNew": "New search with every field (Alt+F7)",
   "menuNewLabel": "New search",
   "menuNone": "Type a pattern and save it with the button in the field.",
+  "exampleWords": { "tag": "tax", "word": "report" },
   "menuExamples": "Examples",
   "examples": {
     "mkv": "every MKV file, in subfolders too",
-    "tag": "everything with the tag steuer",
-    "word": "names that contain bericht",
+    "tag": "everything with the tag {tag}",
+    "word": "names that contain {word}",
     "one": "a ? stands for exactly one character",
     "meta": "4K films in HEVC, from the metadata",
     "week": "everything that changed in the last 7 days"

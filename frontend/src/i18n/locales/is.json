@@ -2220,7 +2220,7 @@
     "colChanged": "Breytt",
     "noFolder": "Þessi mappa er ekki til",
     "unknown": "{fields} þekki ég ekki",
-    "unknownHint": "Ég skil til dæmis width, height, codec, artist, camera, size, modified, duration og öll dálkaheiti",
+    "unknownHint": "",
     "nothing": "Ekkert fannst",
     "nothingHint": "Önnur mappa eða færri skilyrði finna kannski meira",
     "asTab": "Opna sem flipa",
@@ -2251,17 +2251,21 @@
     "menuNew": "Ný leit með öllum reitum (Alt+F7)",
     "menuNewLabel": "Ný leit",
     "menuNone": "Sláðu inn mynstur og vistaðu það með hnappinum í reitnum.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Dæmi",
     "examples": {
       "mkv": "allar MKV-skrár, líka í undirmöppum",
-      "tag": "allt með merkinu steuer",
-      "word": "heiti sem innihalda bericht",
+      "tag": "",
+      "word": "",
       "one": "? stendur fyrir nákvæmlega einn staf",
       "meta": "4K-kvikmyndir í HEVC, úr lýsigögnunum",
       "week": "allt sem hefur breyst síðustu 7 daga"
     },
     "server": "Þjónn",
-    "unknownFields": "{fields} þekki ég ekki. Ég skil til dæmis width, height, codec, artist, camera, size, modified, duration og öll dálkaheiti eins og lens eða year",
+    "unknownFields": "",
     "unknownField": "„{f}:“",
     "quoted": ""
   },
@@ -3261,6 +3265,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Mappa",

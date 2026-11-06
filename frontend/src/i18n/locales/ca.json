@@ -2299,7 +2299,7 @@
     "colChanged": "Modificat",
     "noFolder": "Aquesta carpeta no existeix",
     "unknown": "No conec {fields}",
-    "unknownHint": "Entenc, per exemple, width, height, codec, artist, camera, size, modified, duration i qualsevol nom de columna",
+    "unknownHint": "",
     "nothing": "No s'ha trobat res",
     "nothingHint": "Potser una altra carpeta o menys condicions en troben més",
     "asTab": "Obre com a pestanya",
@@ -2331,17 +2331,21 @@
     "menuNew": "Cerca nova amb tots els camps (Alt+F7)",
     "menuNewLabel": "Cerca nova",
     "menuNone": "Escriviu un patró i deseu-lo amb el botó del camp.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Exemples",
     "examples": {
       "mkv": "tots els fitxers MKV, també a les subcarpetes",
-      "tag": "tot el que té la paraula clau steuer",
-      "word": "noms on apareix bericht",
+      "tag": "",
+      "word": "",
       "one": "un ? representa exactament un caràcter",
       "meta": "pel·lícules 4K en HEVC, segons les metadades",
       "week": "tot el que ha canviat els darrers 7 dies"
     },
     "server": "Servidor",
-    "unknownFields": "No conec {fields}. Entenc, per exemple, width, height, codec, artist, camera, size, modified, duration i qualsevol nom de columna, com lens o year",
+    "unknownFields": "",
     "unknownField": "«{f}:»",
     "quoted": ""
   },
@@ -3389,6 +3393,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Carpeta",

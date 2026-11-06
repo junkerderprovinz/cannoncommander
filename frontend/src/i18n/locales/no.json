@@ -2220,7 +2220,7 @@
     "colChanged": "Endret",
     "noFolder": "Denne mappen finnes ikke",
     "unknown": "{fields} kjenner jeg ikke",
-    "unknownHint": "Jeg forstår for eksempel width, height, codec, artist, camera, size, modified, duration og alle kolonnenavn",
+    "unknownHint": "",
     "nothing": "Fant ingenting",
     "nothingHint": "En annen mappe eller færre betingelser finner kanskje mer",
     "asTab": "Åpne som fane",
@@ -2251,17 +2251,21 @@
     "menuNew": "Nytt søk med alle felt (Alt+F7)",
     "menuNewLabel": "Nytt søk",
     "menuNone": "Skriv et mønster og lagre det med knappen i feltet.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Eksempler",
     "examples": {
       "mkv": "alle MKV-filer, også i undermapper",
-      "tag": "alt med stikkordet steuer",
-      "word": "navn som inneholder bericht",
+      "tag": "",
+      "word": "",
       "one": "et ? står for nøyaktig ett tegn",
       "meta": "4K-filmer i HEVC, fra metadataene",
       "week": "alt som er endret de siste 7 dagene"
     },
     "server": "Server",
-    "unknownFields": "{fields} kjenner jeg ikke. Jeg forstår for eksempel width, height, codec, artist, camera, size, modified, duration og alle kolonnenavn som lens eller year",
+    "unknownFields": "",
     "unknownField": "«{f}:»",
     "quoted": ""
   },
@@ -3261,6 +3265,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Mappe",

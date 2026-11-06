@@ -2378,7 +2378,7 @@
     "colChanged": "Změněno",
     "noFolder": "Tato složka neexistuje",
     "unknown": "{fields} neznám",
-    "unknownHint": "Rozumím třeba width, height, codec, artist, camera, size, modified, duration a každému názvu sloupce",
+    "unknownHint": "",
     "nothing": "Nic nenalezeno",
     "nothingHint": "Jiná složka nebo méně podmínek možná najde víc",
     "asTab": "Otevřít jako kartu",
@@ -2411,17 +2411,21 @@
     "menuNew": "Nové hledání se všemi poli (Alt+F7)",
     "menuNewLabel": "Nové hledání",
     "menuNone": "Napište vzor a uložte ho tlačítkem v poli.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Příklady",
     "examples": {
       "mkv": "všechny soubory MKV, i v podsložkách",
-      "tag": "vše se štítkem steuer",
-      "word": "názvy, ve kterých se vyskytuje bericht",
+      "tag": "",
+      "word": "",
       "one": "? znamená právě jeden znak",
       "meta": "filmy 4K v HEVC, z metadat",
       "week": "vše, co se změnilo za posledních 7 dní"
     },
     "server": "Server",
-    "unknownFields": "{fields} neznám. Rozumím třeba width, height, codec, artist, camera, size, modified, duration a každému názvu sloupce, třeba lens nebo year",
+    "unknownFields": "",
     "unknownField": "„{f}:“",
     "quoted": ""
   },
@@ -3517,6 +3521,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Složka",

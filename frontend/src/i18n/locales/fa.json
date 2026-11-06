@@ -2220,7 +2220,7 @@
     "colChanged": "تغییر",
     "noFolder": "این پوشه وجود ندارد",
     "unknown": "{fields} را نمی‌شناسم",
-    "unknownHint": "مثلاً width، height، codec، artist، camera، size، modified، duration و هر نام ستون را می‌فهمم",
+    "unknownHint": "",
     "nothing": "چیزی پیدا نشد",
     "nothingHint": "پوشهٔ دیگر یا شرط‌های کمتر شاید بیشتر پیدا کند",
     "asTab": "باز کردن به‌صورت زبانه",
@@ -2251,17 +2251,21 @@
     "menuNew": "جست‌وجوی تازه با همهٔ فیلدها (Alt+F7)",
     "menuNewLabel": "جست‌وجوی تازه",
     "menuNone": "الگویی بنویسید و با دکمهٔ درون کادر ذخیره‌اش کنید.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "نمونه‌ها",
     "examples": {
       "mkv": "همهٔ پرونده‌های MKV، در زیرپوشه‌ها هم",
-      "tag": "همه‌چیز با برچسب‌واژهٔ steuer",
-      "word": "نام‌هایی که bericht دارند",
+      "tag": "",
+      "word": "",
       "one": "? به جای دقیقاً یک نویسه است",
       "meta": "فیلم‌های 4K با HEVC، از فراداده",
       "week": "هرچه در 7 روز گذشته تغییر کرده"
     },
     "server": "سرور",
-    "unknownFields": "{fields} را نمی‌شناسم. مثلاً width، height، codec، artist، camera، size، modified، duration و هر نام ستونی مانند lens یا year را می‌فهمم",
+    "unknownFields": "",
     "unknownField": "«{f}:»",
     "quoted": ""
   },
@@ -3261,6 +3265,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "پوشه",

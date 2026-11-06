@@ -2141,7 +2141,7 @@
     "colChanged": "Ngày sửa",
     "noFolder": "Thư mục này không tồn tại",
     "unknown": "Tôi không biết {fields}",
-    "unknownHint": "Ví dụ, tôi hiểu width, height, codec, artist, camera, size, modified, duration và mọi tên cột",
+    "unknownHint": "",
     "nothing": "Không tìm thấy gì",
     "nothingHint": "Thư mục khác hoặc ít điều kiện hơn có thể cho nhiều kết quả hơn",
     "asTab": "Mở thành thẻ",
@@ -2171,17 +2171,21 @@
     "menuNew": "Tìm kiếm mới với mọi trường (Alt+F7)",
     "menuNewLabel": "Tìm kiếm mới",
     "menuNone": "Gõ một mẫu và lưu bằng nút trong ô.",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "Ví dụ",
     "examples": {
       "mkv": "mọi tệp MKV, kể cả trong thư mục con",
-      "tag": "mọi thứ có thẻ steuer",
-      "word": "tên có chứa bericht",
+      "tag": "",
+      "word": "",
       "one": "dấu ? thay cho đúng một ký tự",
       "meta": "phim 4K mã hóa HEVC, theo siêu dữ liệu",
       "week": "mọi thứ thay đổi trong 7 ngày qua"
     },
     "server": "Máy chủ",
-    "unknownFields": "Tôi không biết {fields}. Ví dụ, tôi hiểu width, height, codec, artist, camera, size, modified, duration và mọi tên cột như lens hay year",
+    "unknownFields": "",
     "unknownField": "“{f}:”",
     "quoted": ""
   },
@@ -3133,6 +3137,12 @@
       "all": ""
     },
     "unknownLanguage": ""
+  },
+  "searchWords": {
+    "width": "",
+    "height": "",
+    "vcodec": "",
+    "modified": ""
   },
   "kinds": {
     "folder": "Thư mục",
