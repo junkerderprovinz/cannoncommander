@@ -2251,6 +2251,10 @@
     "menuNew": "",
     "menuNewLabel": "",
     "menuNone": "",
+    "exampleWords": {
+      "tag": "",
+      "word": ""
+    },
     "menuExamples": "",
     "examples": {
       "mkv": "",
