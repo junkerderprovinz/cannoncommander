@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"sync/atomic"
 )
 
 // ArchiveSep separates an archive file from the path inside it, as in
@@ -68,22 +69,45 @@ func (l Location) Virtual() bool { return l.Source == nil }
 // InArchive reports whether the location points into an archive.
 func (l Location) InArchive() bool { return l.Inner != "" }
 
-// Resolver turns API paths into locations. It is immutable once built.
+// Resolver turns API paths into locations. Once built only SetDevices
+// changes it, and that is safe while it is in use.
 type Resolver struct {
-	sources []*Source
-	rules   Rules
-	// devices are the pools and disks Unraid reports, for pools that are
-	// not called cache.
-	devices []string
-	// closed are the API paths where the app's own data shows up.
-	closed    []string
+	rules     Rules
 	exclusive ExclusiveShares
+	set       *atomic.Pointer[sourceSet]
+}
+
+// sourceSet is what a resolver knows about its sources at one moment.
+type sourceSet struct {
+	sources []*Source
+	// configured are the sources from the settings, mnt the folder that holds
+	// the pools and disks in devices. named are all that Unraid ever reported,
+	// for pools that are not called cache: one that went away still belongs
+	// to admins under a source at /mnt.
+	configured []*Source
+	mnt        string
+	devices    []string
+	named      []string
+	// marked are the API paths where the app's own data shows up, and closed
+	// adds them on every volume of the user shares.
+	marked []string
+	closed []string
+}
+
+func (r *Resolver) current() *sourceSet { return r.set.Load() }
+
+// withSet returns a copy of r that starts out with set.
+func (r *Resolver) withSet(set *sourceSet) *Resolver {
+	out := *r
+	out.set = new(atomic.Pointer[sourceSet])
+	out.set.Store(set)
+	return &out
 }
 
 // New builds a resolver. Mounts must be absolute and may not nest inside
 // each other, because then one path would belong to two sources.
 func New(rules Rules, sources ...Source) (*Resolver, error) {
-	r := &Resolver{rules: rules}
+	set := &sourceSet{}
 	for _, s := range sources {
 		mount, err := Clean(s.Mount)
 		if err != nil || mount == "/" {
@@ -91,22 +115,23 @@ func New(rules Rules, sources ...Source) (*Resolver, error) {
 		}
 		s.Mount = mount
 		s.Root = filepath.Clean(s.Root)
-		s.AdminOnly = s.AdminOnly || r.AdminOnly(mount)
-		for _, o := range r.sources {
+		s.AdminOnly = s.AdminOnly || set.adminOnly(mount)
+		for _, o := range set.sources {
 			if within(mount, o.Mount) || within(o.Mount, mount) {
 				return nil, errors.New("sources " + o.Name + " and " + s.Name + " overlap")
 			}
 		}
-		r.sources = append(r.sources, &s)
+		set.sources = append(set.sources, &s)
 	}
-	slices.SortFunc(r.sources, func(a, b *Source) int { return strings.Compare(a.Mount, b.Mount) })
-	return r, nil
+	slices.SortFunc(set.sources, func(a, b *Source) int { return strings.Compare(a.Mount, b.Mount) })
+	return (&Resolver{rules: rules}).withSet(set), nil
 }
 
 // Sources returns the configured sources sorted by mount.
 func (r *Resolver) Sources() []Source {
-	out := make([]Source, len(r.sources))
-	for i, s := range r.sources {
+	sources := r.current().sources
+	out := make([]Source, len(sources))
+	for i, s := range sources {
 		out[i] = *s
 	}
 	return out
@@ -153,7 +178,7 @@ func (r *Resolver) Resolve(p string) (Location, error) {
 	if hasInner {
 		loc.Inner = inner
 	}
-	for _, s := range r.sources {
+	for _, s := range r.current().sources {
 		if !within(outer, s.Mount) {
 			continue
 		}
@@ -183,7 +208,7 @@ func (r *Resolver) Resolve(p string) (Location, error) {
 // are further virtual folders or the mounts of sources.
 func (r *Resolver) VirtualChildren(dir string) []string {
 	var names []string
-	for _, s := range r.sources {
+	for _, s := range r.current().sources {
 		if !within(s.Mount, dir) || s.Mount == dir {
 			continue
 		}
@@ -198,7 +223,7 @@ func (r *Resolver) VirtualChildren(dir string) []string {
 }
 
 func (r *Resolver) isVirtual(p string) bool {
-	for _, s := range r.sources {
+	for _, s := range r.current().sources {
 		if within(s.Mount, p) && s.Mount != p {
 			return true
 		}

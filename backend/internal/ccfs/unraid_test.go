@@ -219,3 +219,64 @@ func TestRulesOnAnExclusiveShareGoByItsUserSharePath(t *testing.T) {
 		t.Errorf("the pool behind the share: %v", err)
 	}
 }
+
+func TestDisksAndPoolsFollowWhatUnraidReports(t *testing.T) {
+	mnt := unraidMnt(t, "disk3/filme")
+	shares := users.BackendScope{Path: filepath.Join(mnt, "user"), Scope: "/", Permissions: allPerms}
+	jdp, anna := user("jdp", true, shares), user("anna", false, shares)
+	r := sharesAndRemotes(t, mnt, nil).WithDevices(mnt, "cache", "disk1")
+
+	r.SetDevices("cache", "disk1", "disk3")
+	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"user", "cache", "disk1", "disk3", "remotes"}) {
+		t.Errorf("/mnt lists %v", got)
+	}
+	if _, err := r.Check(jdp, "/mnt/disk3/filme", View|Create); err != nil {
+		t.Errorf("admin on the new disk: %v", err)
+	}
+	if _, err := r.Check(anna, "/mnt/disk3/filme", View); !errors.Is(err, ErrForbidden) {
+		t.Errorf("plain user on the new disk: %v", err)
+	}
+
+	r.SetDevices("cache", "disk3")
+	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"user", "cache", "disk3", "remotes"}) {
+		t.Errorf("/mnt lists %v", got)
+	}
+	if _, err := r.Check(jdp, "/mnt/disk1/filme", View); !errors.Is(err, ErrNotFound) {
+		t.Errorf("a disk that went away: %v", err)
+	}
+	if !r.AdminOnly("/mnt/disk3") {
+		t.Error("the new disk is open to everyone")
+	}
+}
+
+func TestADiskThatGoesAwayStaysWithAdminsBelowASourceAtMnt(t *testing.T) {
+	mnt := unraidMnt(t, "nvme/vm")
+	all := users.BackendScope{Path: mnt, Scope: "/", Permissions: allPerms}
+	anna := user("anna", false, all)
+	plain, err := New(nil, Source{Name: "Server", Mount: "/mnt", Root: mnt})
+	if err != nil {
+		t.Fatal(err)
+	}
+	r := plain.WithDevices(mnt)
+	r.SetDevices("nvme")
+	r.SetDevices()
+	if _, err := r.Check(anna, "/mnt/nvme/vm", View); !errors.Is(err, ErrForbidden) {
+		t.Errorf("anna on a pool that went away: %v", err)
+	}
+}
+
+func TestTheDataFolderIsClosedOnADiskThatComesLater(t *testing.T) {
+	mnt := unraidMnt(t, "user/appdata/cannoncommander", "disk3/appdata/cannoncommander")
+	if err := os.WriteFile(filepath.Join(mnt, "user", "appdata", "cannoncommander", dataMarker), nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	r := sharesAndRemotes(t, mnt, nil).WithDevices(mnt, "cache").WithDataFolder(t.TempDir())
+	r.SetDevices("cache", "disk3")
+	jdp := user("jdp", true)
+	if _, err := r.Check(jdp, "/mnt/disk3/appdata", View); err != nil {
+		t.Fatalf("the new disk: %v", err)
+	}
+	if _, err := r.Check(jdp, "/mnt/disk3/appdata/cannoncommander", View); !errors.Is(err, ErrNotFound) {
+		t.Errorf("err = %v", err)
+	}
+}

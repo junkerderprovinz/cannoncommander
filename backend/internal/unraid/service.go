@@ -22,6 +22,8 @@ type Service struct {
 	readAt time.Time
 	hub    *hub.Hub
 	index  InodeIndex
+	// onDevices hear when a pool or disk comes or goes.
+	onDevices []func(devices []string)
 }
 
 // InodeIndex finds the other names of a hard link without walking the

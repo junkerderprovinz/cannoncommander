@@ -46,9 +46,11 @@ func mountAPIv1(router *http.ServeMux) error {
 		return err
 	}
 	svc := unraid.Default()
+	var devices []string
 	if st, err := svc.State(); err == nil {
-		resolver = resolver.WithDevices(filepath.Dir(svc.UserShares()), st.Devices()...)
+		devices = st.Devices()
 	}
+	resolver = resolver.WithDevices(filepath.Dir(svc.UserShares()), devices...)
 	resolver = resolver.WithExclusive(svc)
 	if dbPath := settings.Config.Server.DatabaseV2.Path; dbPath != "" {
 		resolver = resolver.WithDataFolder(filepath.Dir(dbPath))
@@ -71,7 +73,8 @@ func mountAPIv1(router *http.ServeMux) error {
 	if m := jobs.For(deps); m != nil {
 		system.OnShutdown(m.Close)
 	}
-	unraid.Default().SetInodeIndex(fsindex.Inodes(resolver))
+	followDevices(svc, resolver, eventHub, devices)
+	svc.SetInodeIndex(fsindex.Inodes(resolver))
 	folderWatch.Start(eventHub, resolver, index, labelMover{deps})
 	system.OnShutdown(fsindex.Follow(resolver, index))
 	prefix := settings.Config.Http.BaseURL + "api/v1"

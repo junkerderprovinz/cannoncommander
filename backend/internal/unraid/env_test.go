@@ -90,9 +90,11 @@ func (e *env) writeVar(extra string) {
 }
 
 // writeDisks writes disks.ini, with the disks in awake spun up.
-func (e *env) writeDisks(awake map[string]bool) {
+func (e *env) writeDisks(awake map[string]bool) { e.writeDiskList(fakeDisks, awake) }
+
+func (e *env) writeDiskList(disks []fakeDisk, awake map[string]bool) {
 	var b strings.Builder
-	for _, d := range fakeDisks {
+	for _, d := range disks {
 		spun := "0"
 		if d.asleep && !awake[d.name] {
 			spun = "1"

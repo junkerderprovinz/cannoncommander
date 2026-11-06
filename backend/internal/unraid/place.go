@@ -127,6 +127,36 @@ func (s *Service) DevicesOf(apiPath string) []string {
 	return out
 }
 
+// SameFile reports whether the API paths a and b lead to one file on a disk or
+// pool, as a disk share and the user share above it do.
+func (s *Service) SameFile(a, b string) bool {
+	st, err := s.State()
+	if err != nil {
+		return false
+	}
+	ia, ok := s.onDevice(st, a)
+	if !ok {
+		return false
+	}
+	ib, ok := s.onDevice(st, b)
+	return ok && os.SameFile(ia, ib)
+}
+
+// onDevice looks up the file behind apiPath on the disk or pool that holds it.
+// In a user share that is the first device that has it, the one Unraid serves.
+func (s *Service) onDevice(st *State, apiPath string) (fs.FileInfo, bool) {
+	p, ok := placeOf(st, apiPath)
+	if !ok {
+		return nil, false
+	}
+	for _, dev := range devicesFor(st, p) {
+		if info, err := os.Lstat(s.real(dev, p.Rel)); err == nil {
+			return info, true
+		}
+	}
+	return nil, false
+}
+
 // otherNames finds the other paths of a hard link on its device, as paths
 // below /mnt/<dev>. complete is false when the walk ran out of time before
 // every name turned up.

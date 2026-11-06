@@ -136,7 +136,7 @@ func TestTheMountTableTellsWhereElseTheDataFolderIs(t *testing.T) {
 func TestTheDataFolderIsClosedInTheUserSharesAndOnEveryPool(t *testing.T) {
 	mnt := unraidMnt(t)
 	r := sharesAndRemotes(t, mnt, nil).WithDevices(mnt, "cache", "fastcache", "disk1")
-	got := r.onEveryVolume([]string{"/mnt/cache/test/cc/config", "/mnt/remotes/x"})
+	got := r.current().onEveryVolume([]string{"/mnt/cache/test/cc/config", "/mnt/remotes/x"})
 	for _, want := range []string{"/mnt/user/test/cc/config", "/mnt/fastcache/test/cc/config", "/mnt/disk1/test/cc/config"} {
 		if !slices.Contains(got, want) {
 			t.Errorf("%s is missing from %v", want, got)
