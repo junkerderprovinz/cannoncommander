@@ -104,6 +104,12 @@ var full = users.SourceFilePermissions{View: true, Download: true, Create: true,
 // shares fotos and backups, plus any extra sources.
 func newEnv(t *testing.T, extra ...ccfs.Source) *env {
 	t.Helper()
+	return newEnvWith(t, nil, extra...)
+}
+
+// newEnvWith is newEnv with a resolver that wrap builds from the plain one.
+func newEnvWith(t *testing.T, wrap func(*ccfs.Resolver) *ccfs.Resolver, extra ...ccfs.Source) *env {
+	t.Helper()
 	root := t.TempDir()
 	for _, d := range []string{"fotos", "backups"} {
 		if err := os.MkdirAll(filepath.Join(root, d), 0o777); err != nil {
@@ -115,6 +121,9 @@ func newEnv(t *testing.T, extra ...ccfs.Source) *env {
 	fsys, err := ccfs.New(e.rules, sources...)
 	if err != nil {
 		t.Fatal(err)
+	}
+	if wrap != nil {
+		fsys = wrap(fsys)
 	}
 	for _, s := range sources {
 		e.roots = append(e.roots, s.Root)

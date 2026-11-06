@@ -593,6 +593,11 @@ func (t *transfer) dir(ctx context.Context, src, dst node, key string, info fs.F
 			continue
 		}
 		if _, err := t.look(src.child(name).api, t.srcPerm); err != nil {
+			// What is hidden stays behind without a word, a disk that went
+			// away on the way does not.
+			if _, err := t.s.fs.Resolve(src.child(name).api); err != nil {
+				return err
+			}
 			continue
 		}
 		if _, err := t.entry(ctx, src.child(name), dst.child(name), key+"/"+name, inNew || created); err != nil {
