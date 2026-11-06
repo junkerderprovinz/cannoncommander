@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "แผงซ้าย",
     "right": "แผงขวา",
@@ -2141,7 +2140,7 @@
     "colChanged": "แก้ไขเมื่อ",
     "noFolder": "ไม่มีโฟลเดอร์นี้",
     "unknown": "ไม่รู้จัก {fields}",
-    "unknownHint": "",
+    "unknownHint": "ที่เข้าใจได้ เช่น กว้าง, สูง, โคเดก, ศิลปิน, กล้อง, ขนาด, แก้ไข, ความยาว และชื่อคอลัมน์ทุกชื่อ",
     "nothing": "ไม่พบอะไร",
     "nothingHint": "ลองโฟลเดอร์อื่นหรือลดเงื่อนไขลง อาจพบมากขึ้น",
     "asTab": "เปิดเป็นแท็บ",
@@ -2172,22 +2171,22 @@
     "menuNewLabel": "การค้นหาใหม่",
     "menuNone": "พิมพ์รูปแบบแล้วบันทึกด้วยปุ่มในช่อง",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "ภาษี",
+      "word": "รายงาน"
     },
     "menuExamples": "ตัวอย่าง",
     "examples": {
       "mkv": "ไฟล์ MKV ทั้งหมด รวมในโฟลเดอร์ย่อย",
-      "tag": "",
-      "word": "",
+      "tag": "ทุกอย่างที่มีแท็ก {tag}",
+      "word": "ชื่อที่มีคำว่า {word}",
       "one": "? แทนอักขระหนึ่งตัวพอดี",
       "meta": "ภาพยนตร์ 4K แบบ HEVC จากเมทาดาทา",
       "week": "ทุกอย่างที่เปลี่ยนใน 7 วันล่าสุด"
     },
     "server": "เซิร์ฟเวอร์",
-    "unknownFields": "",
+    "unknownFields": "ไม่รู้จัก {fields} ที่เข้าใจได้ เช่น กว้าง, สูง, โคเดก, ศิลปิน, กล้อง, ขนาด, แก้ไข, ความยาว และชื่อคอลัมน์ทุกชื่อ เช่น เลนส์ หรือ ปี",
     "unknownField": "“{f}:”",
-    "quoted": ""
+    "quoted": "“{text}”"
   },
   "share": {
     "share": "แชร์",
@@ -2461,18 +2460,18 @@
     "clipCopy": "คัดลอกไปยังคลิปบอร์ด",
     "clipPaste": "วาง",
     "nothingOn": "ไม่มีส่วนใดอยู่บน {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "ข้าม",
+    "sameSkipTip": "ที่ปลายทางมีไฟล์เดียวกันนี้อยู่ใต้พาธอื่น เช่น เป็นฮาร์ดลิงก์ หรือผ่าน disk share และ user share ไฟล์นั้นจะคงไว้ตามเดิม",
     "sameSkipped": {
-      "other": ""
+      "other": "ข้าม {n} ไฟล์ เพราะเป็นไฟล์เดียวกันกับที่ปลายทาง"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "คัดลอกแล้ว: {files} ไปยัง {to} {same}",
+    "movedSame": "ย้ายแล้ว: {files} ไปยัง {to} {same}",
     "nothingCopied": {
-      "other": ""
+      "other": "ไม่ได้คัดลอกอะไร ไฟล์ {n} ไฟล์ที่ปลายทางเป็นไฟล์เดียวกันและคงไว้ตามเดิม"
     },
     "nothingMoved": {
-      "other": ""
+      "other": "ไม่ได้ย้ายอะไร ไฟล์ {n} ไฟล์ที่ปลายทางเป็นไฟล์เดียวกันและคงไว้ตามเดิม"
     }
   },
   "trash": {
@@ -3058,7 +3057,7 @@
     "abitrate": "บิตเรต",
     "samplerate": "อัตราสุ่มตัวอย่าง",
     "channels": "ช่องเสียง",
-    "camera": "รุ่นกล้อง",
+    "camera": "กล้อง",
     "taken": "ถ่ายเมื่อ",
     "make": "ผู้ผลิตกล้อง",
     "lens": "เลนส์",
@@ -3114,35 +3113,35 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "แนวนอน",
+      "portrait": "แนวตั้ง",
+      "square": "จัตุรัส"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "ใช้แฟลช",
+      "off": "ไม่ใช้แฟลช"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "โมโน",
+      "stereo": "สเตอริโอ"
     },
     "channelCount": {
-      "other": ""
+      "other": "{n} ช่อง"
     },
     "method": {
-      "none": ""
+      "none": "ไม่บีบอัด"
     },
-    "methodNumber": "",
+    "methodNumber": "วิธี {n}",
     "arch": {
-      "all": ""
+      "all": "ทุกสถาปัตยกรรม"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "ไม่ทราบ"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "กว้าง",
+    "height": "สูง",
+    "vcodec": "โคเดก",
+    "modified": "แก้ไข"
   },
   "kinds": {
     "folder": "โฟลเดอร์",

@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "پنل راست",
     "right": "پنل چپ",
@@ -2220,7 +2219,7 @@
     "colChanged": "تغییر",
     "noFolder": "این پوشه وجود ندارد",
     "unknown": "{fields} را نمی‌شناسم",
-    "unknownHint": "",
+    "unknownHint": "مثلاً پهنا، ارتفاع، کدک، هنرمند، دوربین، اندازه، تغییر، مدت و هر نام ستون را می‌فهمم",
     "nothing": "چیزی پیدا نشد",
     "nothingHint": "پوشهٔ دیگر یا شرط‌های کمتر شاید بیشتر پیدا کند",
     "asTab": "باز کردن به‌صورت زبانه",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "جست‌وجوی تازه",
     "menuNone": "الگویی بنویسید و با دکمهٔ درون کادر ذخیره‌اش کنید.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "مالیات",
+      "word": "گزارش"
     },
     "menuExamples": "نمونه‌ها",
     "examples": {
       "mkv": "همهٔ پرونده‌های MKV، در زیرپوشه‌ها هم",
-      "tag": "",
-      "word": "",
+      "tag": "همه‌چیز با برچسب‌واژهٔ {tag}",
+      "word": "نام‌هایی که {word} دارند",
       "one": "? به جای دقیقاً یک نویسه است",
       "meta": "فیلم‌های 4K با HEVC، از فراداده",
       "week": "هرچه در 7 روز گذشته تغییر کرده"
     },
     "server": "سرور",
-    "unknownFields": "",
+    "unknownFields": "{fields} را نمی‌شناسم. مثلاً پهنا، ارتفاع، کدک، هنرمند، دوربین، اندازه، تغییر، مدت و هر نام ستونی مانند لنز یا سال را می‌فهمم",
     "unknownField": "«{f}:»",
-    "quoted": ""
+    "quoted": "«{text}»"
   },
   "share": {
     "share": "اشتراک‌گذاری",
@@ -2553,21 +2552,21 @@
     "clipCopy": "رونوشت در بریده‌دان",
     "clipPaste": "چسباندن",
     "nothingOn": "چیزی از آن روی {disk} نیست",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "رد شد",
+    "sameSkipTip": "در مقصد همین پرونده زیر مسیر دیگری هست، مثلاً به‌صورت پیوند سخت یا از راه disk share و user share. همان‌طور می‌ماند.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} پرونده رد شد، چون در مقصد همان پرونده است",
+      "other": "{n} پرونده رد شد، چون در مقصد همان پرونده است"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "رونوشت شد: {files} به {to}. {same}",
+    "movedSame": "جابه‌جا شد: {files} به {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "چیزی رونوشت نشد. {n} پرونده در مقصد همان پرونده‌اند و همان‌طور می‌مانند",
+      "other": "چیزی رونوشت نشد. {n} پرونده در مقصد همان پرونده‌اند و همان‌طور می‌مانند"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "چیزی جابه‌جا نشد. {n} پرونده در مقصد همان پرونده‌اند و همان‌طور می‌مانند",
+      "other": "چیزی جابه‌جا نشد. {n} پرونده در مقصد همان پرونده‌اند و همان‌طور می‌مانند"
     }
   },
   "trash": {
@@ -3185,7 +3184,7 @@
     "abitrate": "نرخ بیت",
     "samplerate": "نرخ نمونه‌برداری",
     "channels": "کانال‌ها",
-    "camera": "مدل دوربین",
+    "camera": "دوربین",
     "taken": "زمان عکس",
     "make": "سازندهٔ دوربین",
     "lens": "لنز",
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "افقی",
+      "portrait": "عمودی",
+      "square": "مربعی"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "زده شد",
+      "off": "بدون فلاش"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "مونو",
+      "stereo": "استریو"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} کانال",
+      "other": "{n} کانال"
     },
     "method": {
-      "none": ""
+      "none": "بدون"
     },
-    "methodNumber": "",
+    "methodNumber": "روش {n}",
     "arch": {
-      "all": ""
+      "all": "همه"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "نامشخص"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "پهنا",
+    "height": "ارتفاع",
+    "vcodec": "کدک",
+    "modified": "تغییر"
   },
   "kinds": {
     "folder": "پوشه",

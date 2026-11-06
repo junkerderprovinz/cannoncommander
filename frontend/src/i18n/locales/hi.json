@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "बायाँ पैनल",
     "right": "दायाँ पैनल",
@@ -2220,7 +2219,7 @@
     "colChanged": "बदला गया",
     "noFolder": "यह फ़ोल्डर मौजूद नहीं है",
     "unknown": "{fields} मैं नहीं जानता",
-    "unknownHint": "",
+    "unknownHint": "मैं उदाहरण के लिए चौड़ाई, ऊँचाई, कोडेक, कलाकार, कैमरा, आकार, बदला, अवधि और हर कॉलम नाम समझता हूँ",
     "nothing": "कुछ नहीं मिला",
     "nothingHint": "कोई दूसरा फ़ोल्डर या कम शर्तें शायद ज़्यादा ढूँढें",
     "asTab": "टैब के रूप में खोलें",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "नई खोज",
     "menuNone": "कोई पैटर्न लिखें और उसे फ़ील्ड के बटन से सहेजें।",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "टैक्स",
+      "word": "रिपोर्ट"
     },
     "menuExamples": "उदाहरण",
     "examples": {
       "mkv": "सभी MKV फ़ाइलें, सबफ़ोल्डरों में भी",
-      "tag": "",
-      "word": "",
+      "tag": "{tag} टैग वाली हर चीज़",
+      "word": "वे नाम जिनमें {word} आता है",
       "one": "? ठीक एक अक्षर के लिए है",
       "meta": "HEVC में 4K फ़िल्में, मेटाडेटा से",
       "week": "पिछले 7 दिनों में बदली हर चीज़"
     },
     "server": "सर्वर",
-    "unknownFields": "",
+    "unknownFields": "{fields} मैं नहीं जानता। मैं उदाहरण के लिए चौड़ाई, ऊँचाई, कोडेक, कलाकार, कैमरा, आकार, बदला, अवधि और लेंस या वर्ष जैसे हर कॉलम नाम समझता हूँ",
     "unknownField": "“{f}:”",
-    "quoted": ""
+    "quoted": "“{text}”"
   },
   "share": {
     "share": "साझा करें",
@@ -2553,21 +2552,21 @@
     "clipCopy": "क्लिपबोर्ड में कॉपी करें",
     "clipPaste": "चिपकाएँ",
     "nothingOn": "इसमें से कुछ भी {disk} पर नहीं है",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "छोड़ा गया",
+    "sameSkipTip": "गंतव्य पर यही फ़ाइल किसी दूसरे पथ पर है, जैसे हार्ड लिंक के रूप में या disk share और user share के ज़रिए। वह जैसी है वैसी रहती है।",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} फ़ाइल छोड़ी गई, क्योंकि गंतव्य पर वही फ़ाइल है",
+      "other": "{n} फ़ाइलें छोड़ी गईं, क्योंकि गंतव्य पर वही फ़ाइलें हैं"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "कॉपी हुआ: {files} को {to} में। {same}",
+    "movedSame": "ले जाया गया: {files} को {to} में। {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "कुछ कॉपी नहीं हुआ। गंतव्य पर {n} फ़ाइल वही है और जैसी है वैसी रहती है",
+      "other": "कुछ कॉपी नहीं हुआ। गंतव्य पर {n} फ़ाइलें वही हैं और जैसी हैं वैसी रहती हैं"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "कुछ नहीं ले जाया गया। गंतव्य पर {n} फ़ाइल वही है और जैसी है वैसी रहती है",
+      "other": "कुछ नहीं ले जाया गया। गंतव्य पर {n} फ़ाइलें वही हैं और जैसी हैं वैसी रहती हैं"
     }
   },
   "trash": {
@@ -3185,7 +3184,7 @@
     "abitrate": "बिट दर",
     "samplerate": "सैंपल दर",
     "channels": "चैनल",
-    "camera": "कैमरा मॉडल",
+    "camera": "कैमरा",
     "taken": "खींची गई",
     "make": "कैमरा निर्माता",
     "lens": "लेंस",
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "लैंडस्केप",
+      "portrait": "पोर्ट्रेट",
+      "square": "वर्गाकार"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "चला",
+      "off": "फ़्लैश नहीं"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "मोनो",
+      "stereo": "स्टीरियो"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} चैनल",
+      "other": "{n} चैनल"
     },
     "method": {
-      "none": ""
+      "none": "बिना"
     },
-    "methodNumber": "",
+    "methodNumber": "विधि {n}",
     "arch": {
-      "all": ""
+      "all": "सभी"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "अज्ञात"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "चौड़ाई",
+    "height": "ऊँचाई",
+    "vcodec": "कोडेक",
+    "modified": "बदला"
   },
   "kinds": {
     "folder": "फ़ोल्डर",
