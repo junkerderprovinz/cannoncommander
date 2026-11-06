@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Vasen paneeli",
     "right": "Oikea paneeli",
@@ -2220,7 +2219,7 @@
     "colChanged": "Muokattu",
     "noFolder": "Tätä kansiota ei ole olemassa",
     "unknown": "Tuntematon kenttä: {fields}",
-    "unknownHint": "",
+    "unknownHint": "Ymmärrän esimerkiksi sanat leveys, korkeus, koodekki, esittäjä, kamera, koko, muokattu, kesto ja kaikki sarakkeiden nimet",
     "nothing": "Mitään ei löytynyt",
     "nothingHint": "Toinen kansio tai vähemmän ehtoja voi löytää enemmän",
     "asTab": "Avaa välilehtenä",
@@ -2252,22 +2251,22 @@
     "menuNewLabel": "Uusi haku",
     "menuNone": "Kirjoita kuvio ja tallenna se kentän painikkeella.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "verot",
+      "word": "raportti"
     },
     "menuExamples": "Esimerkit",
     "examples": {
       "mkv": "kaikki MKV-tiedostot, myös alikansioissa",
-      "tag": "",
-      "word": "",
+      "tag": "kaikki, joilla on tunniste {tag}",
+      "word": "nimet, joissa esiintyy {word}",
       "one": "? tarkoittaa tasan yhtä merkkiä",
       "meta": "4K-elokuvat HEVC-muodossa, metatiedoista",
       "week": "kaikki, mikä on muuttunut viimeisten 7 päivän aikana"
     },
     "server": "Palvelin",
-    "unknownFields": "",
+    "unknownFields": "Tuntematon kenttä: {fields}. Ymmärrän esimerkiksi sanat leveys, korkeus, koodekki, esittäjä, kamera, koko, muokattu, kesto ja kaikki sarakkeiden nimet, kuten objektiivi tai vuosi",
     "unknownField": "”{f}:”",
-    "quoted": ""
+    "quoted": "”{text}”"
   },
   "share": {
     "share": "Jaa",
@@ -2553,21 +2552,21 @@
     "clipCopy": "Kopioi leikepöydälle",
     "clipPaste": "Liitä",
     "nothingOn": "Mitään siitä ei ole levyllä {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Ohitetaan",
+    "sameSkipTip": "Kohteessa on sama tiedosto toisessa polussa, esimerkiksi kovana linkkinä tai disk-sharen ja user-sharen kautta. Se pysyy ennallaan.",
     "sameSkipped": {
-      "one": "",
-      "other": ""
+      "one": "{n} tiedosto ohitettu, koska se on kohteessa sama tiedosto",
+      "other": "{n} tiedostoa ohitettu, koska ne ovat kohteessa samat tiedostot"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Kopioitu: {files} → {to}. {same}",
+    "movedSame": "Siirretty: {files} → {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "other": ""
+      "one": "Mitään ei kopioitu. Kohteessa oleva tiedosto on sama ja pysyy ennallaan",
+      "other": "Mitään ei kopioitu. Kohteessa olevat {n} tiedostoa ovat samat ja pysyvät ennallaan"
     },
     "nothingMoved": {
-      "one": "",
-      "other": ""
+      "one": "Mitään ei siirretty. Kohteessa oleva tiedosto on sama ja pysyy ennallaan",
+      "other": "Mitään ei siirretty. Kohteessa olevat {n} tiedostoa ovat samat ja pysyvät ennallaan"
     }
   },
   "trash": {
@@ -3185,7 +3184,7 @@
     "abitrate": "Bittinopeus",
     "samplerate": "Näytteenottotaajuus",
     "channels": "Kanavat",
-    "camera": "Kameran malli",
+    "camera": "Kamera",
     "taken": "Otettu",
     "make": "Kameran valmistaja",
     "lens": "Objektiivi",
@@ -3241,36 +3240,36 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Vaaka",
+      "portrait": "Pysty",
+      "square": "Neliö"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Laukesi",
+      "off": "Ei salamaa"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stereo"
     },
     "channelCount": {
-      "one": "",
-      "other": ""
+      "one": "{n} kanava",
+      "other": "{n} kanavaa"
     },
     "method": {
-      "none": ""
+      "none": "Pakkaamaton"
     },
-    "methodNumber": "",
+    "methodNumber": "Menetelmä {n}",
     "arch": {
-      "all": ""
+      "all": "Kaikki"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Tuntematon"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "leveys",
+    "height": "korkeus",
+    "vcodec": "koodekki",
+    "modified": "muokattu"
   },
   "kinds": {
     "folder": "Kansio",
