@@ -79,7 +79,7 @@ function bookmarkMenu(e: MouseEvent, b: Bookmark) {
     <Card class="side-card" :title="t('side.bookmarks')">
       <button class="ptab add side-add" data-run="addBookmark" :data-tip="t('side.addBookmark')" @click="run('addBookmark')"><G n="IconAdd" /></button>
       <div id="shortcuts">
-        <SidebarRow v-for="(s, i) in user.bookmarks" :key="s.path" :label="s.name" :glyph="glyphComponent(s.g)" :active="cur === s.path" :data-go="s.path" :data-bm="i" @click="F.go(s.path)" @contextmenu.prevent.stop="bookmarkMenu($event, s)">
+        <SidebarRow v-for="(s, i) in user.bookmarks" :key="s.path" :label="s.name" :glyph="glyphComponent(s.g)" :active="cur === s.path" :data-go="s.path" :data-bm="i" @click="F.reach(s.path)" @contextmenu.prevent.stop="bookmarkMenu($event, s)">
           <template #after><button class="unpin" :data-unpin="i" :data-tip="t('side.unpin')" :aria-label="t('side.unpinLabel', { name: s.name })" @click.stop="unpin(s)"><G n="IconPin" /></button></template>
         </SidebarRow>
         <SidebarRow :label="t('side.trash')" :glyph="glyphComponent('IconTrash')" data-run="openTrash" @click="run('openTrash')"><template #after><span class="meta glim-num">{{ trash.items.length }}</span></template></SidebarRow>

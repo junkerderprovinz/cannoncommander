@@ -21,6 +21,7 @@
   "pasted": "Eingefügt",
   "file": "Datei",
   "fileTip": "Eine Liste wie .sha256, .md5 oder SHA256SUMS. Die Dateien werden in ihrem Ordner gesucht.",
+  "fileExample": "/mnt/user/ordner/dateien.sha256",
   "pastePlaceholder": "Prüfsumme und Dateiname, eine Zeile je Datei",
   "filesIn": "Dateien liegen in",
   "result": "Ergebnis",

@@ -2,7 +2,7 @@
 // its ETag, and an fs.changed event about a folder on screen reads it again at once.
 import { defineStore } from 'pinia';
 import { reactive, shallowReactive } from 'vue';
-import { api, type Item, type Listing } from '@/api/client';
+import { api, ApiError, type Item, type Listing } from '@/api/client';
 import { on, type ServerEvent, watch } from '@/api/sse';
 import type { TreeItem } from '@/api/types';
 import type { MetaValue } from '@/files/entries';
@@ -17,6 +17,8 @@ export const useListing = defineStore('listing', () => {
   const meta = shallowReactive(new Map<string, Record<string, MetaValue>>());
   const hits = reactive(new Map<string, Hits>());
   const texts = reactive(new Map<string, string>());
+  // Folders the server said are not there or not for this user, with its answer, until one reads fine again.
+  const missing = reactive(new Map<string, ApiError>());
   const pending = new Map<string, Promise<Listing>>();
   const pendingTrees = new Map<string, Promise<TreeItem[]>>();
   // The tree looks again whenever another folder arrives, so a folder that failed keeps its error until it or the
@@ -33,7 +35,11 @@ export const useListing = defineStore('listing', () => {
         const next = fresh ?? have!;
         lists.set(path, next);
         failedTrees.delete(path);
+        missing.delete(path);
         return next;
+      }, (e: unknown) => {
+        if (e instanceof ApiError && (e.status === 404 || e.status === 403)) missing.set(path, e);
+        throw e;
       })
       .finally(() => pending.delete(path));
     pending.set(path, job);
@@ -165,5 +171,5 @@ export const useListing = defineStore('listing', () => {
   }
   const placeOf = (path: string) => trees.get(parent(path))?.find((x) => x.path === path);
 
-  return { lists, trees, meta, hits, load, tree, invalidate, changed, setGate, setShown, wantMeta, metaOf, search, text, placeLabel, placeOf };
+  return { lists, trees, meta, hits, missing, load, tree, invalidate, changed, setGate, setShown, wantMeta, metaOf, search, text, placeLabel, placeOf };
 });

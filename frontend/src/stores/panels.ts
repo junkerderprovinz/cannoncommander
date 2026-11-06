@@ -54,9 +54,10 @@ export const usePanels = defineStore('panels', () => {
   const listing = useListing();
   const user = useUser();
   const active = ref(0);
+  const home = user.me.home || '/';
   const panels = reactive<Panel[]>([
-    { tabs: [newTab(hashPath() || prefs.startFolder)], cur: 0 },
-    { tabs: [newTab('/mnt/user')], cur: 0 },
+    { tabs: [newTab(hashPath() || prefs.startFolder || home)], cur: 0 },
+    { tabs: [newTab(home)], cur: 0 },
   ]);
   // The tree opens down to every folder a panel starts in.
   const openTree = reactive(new Set(['/mnt', '/mnt/user', ...panels.flatMap((p) => ancestors(p.tabs[0]!.path))]));
@@ -120,7 +121,8 @@ export const usePanels = defineStore('panels', () => {
 
   // Puts the tab into a folder at once and says whether it moved. go() calls it once the folder is read; on its own it
   // suits a folder already in the cache, such as one the test shim walks into and sets the cursor in right after.
-  function enter(path: string, i = active.value, record = true): boolean {
+  // Without show the view stays where it is, for a tab that moves while the user looks at something else.
+  function enter(path: string, i = active.value, record = true, show = true): boolean {
     const tab = T(i);
     // A locked tab keeps its folder; going elsewhere from it opens the new folder in a tab beside it, as in Krusader.
     if (record && tab.locked && tab.path !== path && !following) {
@@ -140,27 +142,28 @@ export const usePanels = defineStore('panels', () => {
     if (!inArchive(path)) recordVisit(path);
     ancestors(path).forEach((p) => openTree.add(p));
     marks.splice(0, 2, {}, {});
-    if (view.id !== 'files') goView('files');
+    if (show && view.id !== 'files') goView('files');
     syncHash();
     extend.afterGo.forEach((fn) => fn(path, i));
     return true;
   }
 
   // A folder not read yet is read before the tab moves, so one that is not there leaves the panel where it was. A
-  // folder in the cache opens at once, as in the prototype, and is asked for again with its ETag behind it.
-  async function go(path: string, i = active.value, record = true): Promise<void> {
-    for (const hook of extend.beforeGo) if ((await hook(path, i)) === false) return;
+  // folder in the cache opens at once, as in the prototype, and is asked for again with its ETag behind it. Says
+  // whether the tab got there.
+  async function go(path: string, i = active.value, record = true): Promise<boolean> {
+    for (const hook of extend.beforeGo) if ((await hook(path, i)) === false) return false;
     if (listing.lists.has(path)) listing.load(path).catch(() => {});
     else {
       try {
         await listing.load(path);
       } catch (e) {
-        toast(e instanceof ApiError && e.status !== 404 ? e.message : tr('files.notThere'), 'warn');
-        return;
+        toast(e instanceof ApiError && e.status !== 404 ? e.message : tr('files.missing', { path }), 'warn');
+        return false;
       }
     }
     const from = T(i).path;
-    if (!enter(path, i, record)) return;
+    if (!enter(path, i, record)) return false;
     // Synchronised browsing: one step down or up in this panel takes the other panel the same step, where it can follow.
     if (prefs.syncBrowse && prefs.dual && record && !following) {
       const o = T(1 - i);
@@ -169,6 +172,52 @@ export const usePanels = defineStore('panels', () => {
         following = true;
         await go(target, 1 - i).finally(() => { following = false; });
       }
+    }
+    return true;
+  }
+
+  const gone = (e: unknown): e is ApiError => e instanceof ApiError && (e.status === 404 || e.status === 403);
+  const say = (e: unknown) => toast(e instanceof Error ? e.message : String(e), 'warn');
+  const wentUp = (from: string, to: string, why: ApiError) => toast(tr(why.status === 403 ? 'files.closedUp' : 'files.missingUp', { path: from, here: to }), 'warn');
+
+  // The nearest folder above path that is there and open to the user. / always is.
+  async function above(path: string): Promise<string> {
+    let at = path;
+    do at = parent(at);
+    while (at !== '/' && !(await listing.load(at).then(() => true, (e: unknown) => { if (gone(e)) return false; throw e; })));
+    return at;
+  }
+
+  // A place kept from before, such as a bookmark, opens at the nearest folder above it when it is gone.
+  async function reach(path: string, i = active.value): Promise<boolean> {
+    const why = await listing.load(path).then(() => null, (e: unknown) => e);
+    if (!why) return go(path, i);
+    if (!gone(why)) {
+      say(why);
+      return false;
+    }
+    const to = await above(path);
+    if (!(await go(to, i))) return false;
+    wentUp(path, to, why);
+    return true;
+  }
+
+  // A tab whose folder turns out to be gone, kept from an earlier visit or deleted while it was open, moves up to the
+  // nearest folder that is there instead of standing empty.
+  const climbing = new Set<string>();
+  async function giveWay(i: number, from: string, why: ApiError) {
+    const key = `${i}:${from}`;
+    if (climbing.has(key)) return;
+    climbing.add(key);
+    try {
+      const to = await above(from);
+      if (T(i).path !== from) return;
+      enter(to, i, false, false);
+      wentUp(from, to, why);
+    } catch (e) {
+      say(e);
+    } finally {
+      climbing.delete(key);
     }
   }
 
@@ -216,9 +265,12 @@ export const usePanels = defineStore('panels', () => {
   // Every tab shown gets its folder read, also one switched to without going anywhere, and its tree for the view.
   watch(() => panels.map((p) => p.tabs[p.cur]!.path), (paths) => {
     paths.forEach((p) => {
-      if (!listing.lists.has(p)) listing.load(p).catch(() => toast(tr('files.notThere'), 'warn'));
+      if (!listing.lists.has(p)) listing.load(p).catch((e: unknown) => { if (!gone(e)) say(e); });
       if (!inArchive(p)) listing.tree(p).catch(() => {});
     });
+  }, { immediate: true });
+  watch(() => panels.map((p) => listing.missing.get(p.tabs[p.cur]!.path)), (whys) => {
+    whys.forEach((why, i) => { if (why) giveWay(i, T(i).path, why); });
   }, { immediate: true });
   watchEffect(() => listing.setShown(panels.slice(0, prefs.dual ? 2 : 1).map((p) => p.tabs[p.cur]!.path)));
 
@@ -237,10 +289,10 @@ export const usePanels = defineStore('panels', () => {
 
   setActionContext({ sel: () => sel(), here: () => T().path });
   setNavSource({ hash: () => T().path, setActive: (p) => { active.value = p; } });
-  setBookmarkEntries(() => user.bookmarks.map((b) => ({ label: b.name, g: b.g, run: () => { goView('files'); go(b.path); } })));
+  setBookmarkEntries(() => user.bookmarks.map((b) => ({ label: b.name, g: b.g, run: () => { goView('files'); reach(b.path); } })));
 
   return {
-    active, panels, openTree, visited, marks, clip, P, T, other, entries, volume, loaded, sel, cursorEntry, enter, go, open, transfer,
+    active, panels, openTree, visited, marks, clip, P, T, other, entries, volume, loaded, sel, cursorEntry, enter, go, reach, open, transfer,
     viewOf: viewOfTab, setView, groupOf, setGroup,
   };
 });

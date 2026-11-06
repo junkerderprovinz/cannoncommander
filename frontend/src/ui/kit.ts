@@ -17,6 +17,14 @@ export const selectOptions = <V extends string>(choices: readonly Choice<V>[]): 
 
 export { num, plural } from '@/i18n';
 
+// The warning shake of a field or button, started over when it is still running.
+export function shake(el: Element | null | undefined) {
+  if (!el) return;
+  el.classList.remove('glim-shake');
+  void (el as HTMLElement).offsetWidth;
+  el.classList.add('glim-shake');
+}
+
 export async function copyText(text: string, done = t('ui.copied')) {
   if (await writeClipboard(text)) toast(done);
 }

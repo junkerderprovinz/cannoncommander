@@ -12,7 +12,7 @@ import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { cancelBtn, closeBtn, win } from '@/core/windows';
 import type { Entry } from '@/files/entries';
-import { inArchive, join, parent, split } from '@/files/paths';
+import { inArchive, join, outsideArchive, parent, split } from '@/files/paths';
 import { kindLabels } from '@/features/jobs/label';
 import { t, tl } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
@@ -75,7 +75,7 @@ function unpackWindow() {
   const other = F.T(F.other()).path;
   const st: UnpackState = reactive({
     inside, items: inside ? sel : archives, archive: inside ? split(src).find((p) => p.endsWith('::'))!.replace('::', '') : '',
-    dest: inside ? (inArchive(other) ? '/mnt/user/downloads' : other) : prefs.dual && !inArchive(other) ? other : src,
+    dest: inside ? (inArchive(other) ? outsideArchive(src) : other) : prefs.dual && !inArchive(other) ? other : src,
     own: !inside, clash: 'both', password: '', locked: false, ok: false, size: inside ? sel.reduce((a, k) => a + (k.size || 0), 0) : null,
   });
   const paths = archives.map((k) => join(k.at || src, k.name));

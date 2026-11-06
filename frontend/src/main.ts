@@ -27,6 +27,7 @@ import { watchWidth } from '@/shell/state';
 import { installSignOut, session, takeNote } from '@/signin';
 import SignInPage from '@/signin/SignInPage.vue';
 import { useUser } from '@/stores/user';
+import type { Me } from '@/api/types';
 import App from './App.vue';
 
 applyPrefs();
@@ -41,8 +42,10 @@ function startSignIn() {
   createApp({ render: () => [h(SignInPage), h(ToastHost)] }).mount('#root');
 }
 
-function startApp() {
+function startApp(me?: Me) {
   const app = createApp(App).use(createPinia());
+  // The panels start in the user's home folder, so who it is has to be known first.
+  if (me) useUser().me = me;
   registerView('files', { component: FilesView, key: filesKey });
   registerView('settings', { page: true, component: SettingsPage });
   bindDefaults();
