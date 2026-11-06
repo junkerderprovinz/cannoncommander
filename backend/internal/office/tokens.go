@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
 )
 
@@ -98,7 +98,7 @@ func (k *keys) verify(ctx context.Context, token string) (grant, error) {
 			return nil, fmt.Errorf("unexpected signing method %v", t.Header["alg"])
 		}
 		return key, nil
-	})
+	}, jwt.WithStrictDecoding(), jwt.WithIssuedAt())
 	if err != nil || g.Path == "" || g.User == 0 {
 		return grant{}, errBadToken
 	}
