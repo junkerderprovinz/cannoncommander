@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath, URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
 import { type Connect, defineConfig, type Plugin } from 'vite';
+import { LANGUAGES } from './src/i18n/languages';
 
 // Without a server, `--mode fixture` answers /api/v1 from the prototype's test data.
 function fixture(): Plugin {
@@ -48,10 +49,45 @@ function shareTexts(): Plugin {
   };
 }
 
+// Android installs the app from a manifest it can fetch again, so every language gets one beside the German file,
+// with the description in that language where it is translated.
+type Texts = { manifest?: string; install?: { manifest?: string } };
+function manifests(): Plugin {
+  const src = (file: string) => fileURLToPath(new URL(file, import.meta.url));
+  const made = async () => {
+    const base = JSON.parse(await readFile(src('./public/manifest.webmanifest'), 'utf8'));
+    const said = async (file: string, pick: (table: Texts) => string | undefined) => {
+      try { return pick(JSON.parse(await readFile(src(file), 'utf8'))); } catch { return undefined; }
+    };
+    const english = await said('./src/features/install/en.json', (t) => t.manifest);
+    const out: Record<string, string> = {};
+    for (const l of LANGUAGES) {
+      const own = l.code === 'de' ? base.description : l.code === 'en' ? english : await said(`./src/i18n/locales/${l.code}.json`, (t) => t.install?.manifest);
+      out[l.code] = JSON.stringify({ ...base, lang: l.code, dir: l.rtl ? 'rtl' : 'ltr', description: own || english }, null, 2);
+    }
+    return out;
+  };
+  return {
+    name: 'cc-manifests',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        const code = req.url?.match(/^\/manifest\/([\w-]+)\.webmanifest$/)?.[1];
+        const text = code && (await made())[code];
+        if (!text) return next();
+        res.setHeader('Content-Type', 'application/manifest+json');
+        res.end(text);
+      });
+    },
+    async generateBundle() {
+      for (const [code, text] of Object.entries(await made())) this.emitFile({ type: 'asset', fileName: `manifest/${code}.webmanifest`, source: text });
+    },
+  };
+}
+
 const page = (file: string) => fileURLToPath(new URL(file, import.meta.url));
 
 export default defineConfig(({ mode }) => ({
-  plugins: [vue(), sharePage(), shareTexts(), ...(mode === 'fixture' ? [fixture()] : [])],
+  plugins: [vue(), sharePage(), shareTexts(), manifests(), ...(mode === 'fixture' ? [fixture()] : [])],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   // Every source is scanned up front, so a library only a viewer loads later does not make Vite bundle the
   // dependencies again while a page is open.

@@ -75,7 +75,7 @@ export default function setup() {
     openEditor(c.node, c.folder);
   } });
 
-  action('newFile', { label: tl('editor.newFile'), g: 'IconFileText', key: 'Umschalt+F4', needs: 'writable', run: () => {
+  action('newFile', { label: tl('editor.newFile'), g: 'IconFileText', key: 'Shift+F4', needs: 'writable', run: () => {
     if (view.id !== 'files') go('files');
     const F = usePanels(), listing = useListing(), folder = F.T().path;
     const value = t('editor.newName');

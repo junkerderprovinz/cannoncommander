@@ -56,12 +56,12 @@ export default function setup() {
   } });
   // The editor brings its own Neue Datei, which opens the file right away; this one only makes it.
   if (!actions.newFile) {
-    action('newFile', { label: tl('names.newFile'), g: 'IconFileText', key: 'Umschalt+F4', needs: 'writable', run: () => {
+    action('newFile', { label: tl('names.newFile'), g: 'IconFileText', key: 'Shift+F4', needs: 'writable', run: () => {
       const folder = here();
       nameWindow(t('names.newFile'), t('names.newFileName'), t('names.create'), 'IconFileText', (name) => ops.touch(join(folder, name)));
     } });
   }
-  action('folderWithSel', { label: tl('names.folderWithSel'), g: 'IconFolderAdd', key: 'Umschalt+F7', needs: ['sel', 'writable'], run: () => {
+  action('folderWithSel', { label: tl('names.folderWithSel'), g: 'IconFolderAdd', key: 'Shift+F7', needs: ['sel', 'writable'], run: () => {
     const folder = here(), picked = F.sel().filter((k) => !k.at || k.at === folder);
     if (!picked.length) return toast(t('names.onlyHere'), 'warn');
     const hint = plural(picked.length, 'names.goIn');
@@ -78,7 +78,7 @@ export default function setup() {
     }, undefined, hint, 'fws-name');
   } });
 
-  action('duplicate', { label: tl('names.duplicate'), g: 'IconCopy', key: 'Strg+D', needs: ['sel', 'writable'], run: async () => {
+  action('duplicate', { label: tl('names.duplicate'), g: 'IconCopy', key: 'Ctrl+d', needs: ['sel', 'writable'], run: async () => {
     const folder = here(), sel = F.sel(), taken = namesIn(folder);
     const names = sel.map((k) => { const n = copyName(k.name, taken, t('names.copyWord')); taken.add(n); return n; });
     F.T().marked = new Set();

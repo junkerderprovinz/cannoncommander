@@ -162,7 +162,7 @@ function selectPattern() {
 }
 
 export default function setup() {
-  action('multiRename', { label: tl('rename.multi'), g: 'IconPencil', key: 'Strg+M', needs: ['sel', 'writable'], run: multiRename });
+  action('multiRename', { label: tl('rename.multi'), g: 'IconPencil', key: 'Ctrl+m', needs: ['sel', 'writable'], run: multiRename });
   action('renameEditor', { label: tl('rename.editor'), g: 'IconCode', needs: ['sel', 'writable'], run: renameEditor });
   action('selectPattern', { label: tl('rename.pattern'), g: 'IconSelectAll', key: '+', run: selectPattern });
   const edit = MENUS.find(([id]) => id === 'edit')![1];

@@ -179,15 +179,15 @@ export default function setup() {
   action('move', { label: tl('transfer.move'), g: 'IconMove', key: 'F6', needs: ['sel', 'writable'], run: () => transferWindow('move') });
   action('transfer', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: (job: Transfer) => transfer(job) });
 
-  action('clipCut', { label: tl('transfer.clipCut'), g: 'IconMove', key: 'Strg+X', needs: ['sel', 'writable'], run: () => {
+  action('clipCut', { label: tl('transfer.clipCut'), g: 'IconMove', key: 'Ctrl+x', needs: ['sel', 'writable'], run: () => {
     clip.put(true, F.T().path, F.sel().map((k) => k.name));
     toast(plural(clip.clip!.items.length, 'transfer.cut'));
   } });
-  action('clipCopy', { label: tl('transfer.clipCopy'), g: 'IconCopy', key: 'Strg+C', needs: 'sel', run: () => {
+  action('clipCopy', { label: tl('transfer.clipCopy'), g: 'IconCopy', key: 'Ctrl+c', needs: 'sel', run: () => {
     clip.put(false, F.T().path, F.sel().map((k) => k.name));
     toast(plural(clip.clip!.items.length, 'transfer.inClip'));
   } });
-  action('clipPaste', { label: tl('transfer.clipPaste'), g: 'IconPaste', key: 'Strg+V', needs: 'writable', when: () => !!clip.clip, run: paste });
+  action('clipPaste', { label: tl('transfer.clipPaste'), g: 'IconPaste', key: 'Ctrl+v', needs: 'writable', when: () => !!clip.clip, run: paste });
 
   // A job that meets a name on its way asks here, unless someone answers it in another tab first.
   jobs.onAsked((job, conflict) => askRunning(job, conflict));

@@ -115,6 +115,6 @@ function save(st: PropsState) {
 
 export default function setup() {
   action('symlink', { label: tl('props.symlink'), g: 'IconLink', needs: 'sel', run: symlinkWindow });
-  action('props', { label: tl('props.props'), g: 'IconSliders', key: 'Alt+Eingabe', run: () => { void propsWindow(); } });
+  action('props', { label: tl('props.props'), g: 'IconSliders', key: 'Alt+Enter', run: () => { void propsWindow(); } });
   kindLabels.attrsRecursive = (_j, what) => t('props.jobAttrs', { what });
 }

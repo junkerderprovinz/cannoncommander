@@ -33,7 +33,7 @@ export default function setup() {
     note.act = { label: act.label, run: () => { void takeBack({ at: step.at, local: step }); } };
   });
 
-  action('undo', { label: tl('undo.undo'), g: 'IconUndo', key: 'Strg+Z', run: () => {
+  action('undo', { label: tl('undo.undo'), g: 'IconUndo', key: 'Ctrl+z', run: () => {
     const step = undo.list[0];
     if (!step) return toast(t('undo.nothing'), 'warn');
     return takeBack(step);

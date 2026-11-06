@@ -4,7 +4,7 @@ import { t } from '@/i18n';
 
 export type KeyMap = Record<string, string>;
 
-const NAMED = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Delete', 'Insert', 'Escape', ' ', 'Home', 'End', 'PageUp', 'PageDown', 'Backspace'];
+const NAMED = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Delete', 'Insert', 'Escape', ' ', 'Home', 'End', 'PageUp', 'PageDown', 'Backspace', 'Enter', 'Tab'];
 const MODS: Record<string, string> = { Ctrl: 'ctrl', Shift: 'shift', Alt: 'alt' };
 
 // A combo ending in the plus key itself, such as Ctrl++, keeps that plus as its last part.
@@ -20,9 +20,9 @@ export function keyLabel(combo: string): string {
 export const combosOf = (map: KeyMap, id: string) => Object.keys(map).filter((c) => map[c] === id);
 
 // The key a menu shows for an action: the one it came with, if it still has it, else its first.
-export function mainCombo(map: KeyMap, id: string, defaultLabel?: string) {
+export function mainCombo(map: KeyMap, id: string, declared?: string) {
   const own = combosOf(map, id);
-  return own.find((c) => keyLabel(c) === defaultLabel) ?? own[0];
+  return own.find((c) => c === declared) ?? own[0];
 }
 
 // Total Commander's own keys for the actions both programs share.

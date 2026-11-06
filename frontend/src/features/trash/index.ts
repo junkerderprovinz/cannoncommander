@@ -14,7 +14,7 @@ export default function setup() {
   const F = usePanels();
   useTrash().load().catch(() => {});
   action('delete', { label: tl('trash.delete'), g: 'IconTrash', key: 'F8', needs: ['sel', 'writable'], run: () => deleteItems(F.sel(), F.T().path) });
-  action('deleteNow', { label: tl('trash.deleteNow'), g: 'IconTrash', key: 'Umschalt+Entf', needs: ['sel', 'writable'], run: () => deleteItems(F.sel(), F.T().path, { forever: true }) });
+  action('deleteNow', { label: tl('trash.deleteNow'), g: 'IconTrash', key: 'Shift+Delete', needs: ['sel', 'writable'], run: () => deleteItems(F.sel(), F.T().path, { forever: true }) });
   bindKey('Shift+Delete', 'deleteNow');
   registerView('trash', { page: true, component: TrashPage });
   action('openTrash', { label: tl('trash.title'), g: 'IconTrash', run: () => { pick.sel.clear(); go('trash'); } });

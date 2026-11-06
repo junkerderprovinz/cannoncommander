@@ -34,7 +34,7 @@ function onKey(e: KeyboardEvent) {
 }
 
 export default function setup() {
-  action('quickLook', { label: tl('quicklook.title'), g: 'IconEye', key: 'Leertaste', when: () => !!usePanels().cursorEntry(), run: () => {
+  action('quickLook', { label: tl('quicklook.title'), g: 'IconEye', key: ' ', when: () => !!usePanels().cursorEntry(), run: () => {
     if (usePanels().cursorEntry()) look.open = true;
   } });
   addEventListener('keydown', onKey, true);

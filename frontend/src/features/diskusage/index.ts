@@ -11,7 +11,7 @@ import './diskusage.css';
 export default function setup() {
   const F = usePanels();
   countEnded();
-  action('diskUsage', { label: tl('diskusage.title'), g: 'IconDashboard', key: 'Alt+D', run: (start?: string) => {
+  action('diskUsage', { label: tl('diskusage.title'), g: 'IconDashboard', key: 'Alt+d', run: (start?: string) => {
     const here = F.T().path;
     const from = typeof start === 'string' && start ? start : view.id === 'files' && !inArchive(here) ? here : '/mnt/user';
     win({ title: t('diskusage.title'), full: true, cls: 'bk bk-du', body: UsageBody, props: { start: from } });

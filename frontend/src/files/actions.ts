@@ -26,19 +26,19 @@ export function registerFileActions() {
   const F = usePanels();
   const listing = useListing();
 
-  action('single', { label: tl('actions.single'), g: 'IconViewSimple', key: 'Strg+1', checked: () => !prefs.dual, run: () => setPref('dual', false) });
-  action('dual', { label: tl('actions.dual'), g: 'IconCompare', key: 'Strg+2', checked: () => prefs.dual, run: () => setPref('dual', true) });
-  action('sidebar', { label: tl('actions.sidebar'), g: 'IconMenu', key: 'Strg+B', checked: () => prefs.side,
+  action('single', { label: tl('actions.single'), g: 'IconViewSimple', key: 'Ctrl+1', checked: () => !prefs.dual, run: () => setPref('dual', false) });
+  action('dual', { label: tl('actions.dual'), g: 'IconCompare', key: 'Ctrl+2', checked: () => prefs.dual, run: () => setPref('dual', true) });
+  action('sidebar', { label: tl('actions.sidebar'), g: 'IconMenu', key: 'Ctrl+b', checked: () => prefs.side,
     run: () => (innerWidth <= 760 ? (shell.sideOpen = !shell.sideOpen) : setPref('side', !prefs.side)) });
   action('fkeys', { label: tl('actions.fkeys'), g: 'IconKeyboard', checked: () => prefs.fkeys, run: toggle('fkeys') });
-  action('hidden', { label: tl('actions.hidden'), g: 'IconEye', key: 'Strg+H', checked: () => prefs.showHidden, run: toggle('showHidden') });
+  action('hidden', { label: tl('actions.hidden'), g: 'IconEye', key: 'Ctrl+h', checked: () => prefs.showHidden, run: toggle('showHidden') });
   action('extensions', { label: tl('actions.extensions'), g: 'IconFileText', checked: () => prefs.showExt, run: toggle('showExt') });
   action('syncBrowse', { label: tl('actions.syncBrowse'), g: 'IconSync', checked: () => prefs.syncBrowse, run: () => {
     if (!prefs.dual) prefs.dual = true;
     toggle('syncBrowse')();
     toast(prefs.syncBrowse ? t('files.syncOn') : t('files.syncOff'));
   } });
-  action('history', { label: tl('actions.history'), g: 'IconLog', key: 'Alt+Runter', run: () => {
+  action('history', { label: tl('actions.history'), g: 'IconLog', key: 'Alt+ArrowDown', run: () => {
     const r = document.querySelector('.panel.active .pathbar')?.getBoundingClientRect() || { left: 300, bottom: 120 };
     const here = F.T().path, top = topFolders(5, here);
     const recent = F.visited.filter((p) => p !== here && !top.includes(p));
@@ -55,16 +55,16 @@ export function registerFileActions() {
       else Object.assign(tab, { sort: s, dir: 1 });
     } });
   }
-  action('swapPanels', { label: tl('actions.swapPanels'), g: 'IconSync', key: 'Strg+U', needs: 'dual', run: () => { F.panels.reverse(); } });
-  action('equalPanels', { label: tl('actions.equalPanels'), g: 'IconCompare', key: 'Strg+.', needs: 'dual', run: () => F.go(F.T().path, F.other()) });
-  action('refresh', { label: tl('actions.refresh'), g: 'IconRefresh', key: 'Strg+R', run: async () => {
+  action('swapPanels', { label: tl('actions.swapPanels'), g: 'IconSync', key: 'Ctrl+u', needs: 'dual', run: () => { F.panels.reverse(); } });
+  action('equalPanels', { label: tl('actions.equalPanels'), g: 'IconCompare', key: 'Ctrl+.', needs: 'dual', run: () => F.go(F.T().path, F.other()) });
+  action('refresh', { label: tl('actions.refresh'), g: 'IconRefresh', key: 'Ctrl+r', run: async () => {
     listing.changed(F.T().path);
     await listing.load(F.T().path);
     toast(t('files.refreshed'));
   } });
 
-  action('newTab', { label: tl('actions.newTab'), g: 'IconAdd', key: 'Strg+T', run: () => { const p = F.P(); p.tabs.push(newTab(F.T().path)); p.cur = p.tabs.length - 1; } });
-  action('closeTab', { label: tl('actions.closeTab'), g: 'IconClose', key: 'Strg+W', run: () => { const p = F.P(); if (p.tabs.length > 1) { p.tabs.splice(p.cur, 1); p.cur = Math.max(0, p.cur - 1); } } });
+  action('newTab', { label: tl('actions.newTab'), g: 'IconAdd', key: 'Ctrl+t', run: () => { const p = F.P(); p.tabs.push(newTab(F.T().path)); p.cur = p.tabs.length - 1; } });
+  action('closeTab', { label: tl('actions.closeTab'), g: 'IconClose', key: 'Ctrl+w', run: () => { const p = F.P(); if (p.tabs.length > 1) { p.tabs.splice(p.cur, 1); p.cur = Math.max(0, p.cur - 1); } } });
   action('dupTab', { label: tl('actions.dupTab'), g: 'IconCopy', run: () => { const p = F.P(), tab = F.T(); p.tabs.splice(p.cur + 1, 0, { ...newTab(tab.path), sort: tab.sort, dir: tab.dir }); p.cur += 1; } });
   action('lockTab', { label: tl('actions.lockTab'), g: 'IconPin', checked: () => !!F.T().locked, run: () => { F.T().locked = !F.T().locked; } });
   action('closeOtherTabs', { label: tl('actions.closeOtherTabs'), g: 'IconClose', when: () => F.P().tabs.length > 1, run: () => { const p = F.P(); p.tabs = [p.tabs[p.cur]!]; p.cur = 0; } });
@@ -72,7 +72,7 @@ export function registerFileActions() {
   VIEWS.forEach(([id, glyph]) => action('view-' + id, {
     label: tl(`views.${id}`), g: glyph, radio: true, checked: () => F.viewOf(F.T()) === id, run: () => F.setView(F.T(), id),
   }));
-  action('nextView', { label: tl('actions.nextView'), g: 'IconTabApps', key: 'Strg+Umschalt+V', run: () => {
+  action('nextView', { label: tl('actions.nextView'), g: 'IconTabApps', key: 'Ctrl+Shift+v', run: () => {
     const tab = F.T(), k = VIEWS.findIndex((v) => v[0] === F.viewOf(tab)), next = VIEWS[(k + 1) % VIEWS.length]![0];
     F.setView(tab, next);
     toast(t('files.viewNow', { name: t(`views.${next}`) }));
@@ -81,7 +81,7 @@ export function registerFileActions() {
   Object.entries(GROUPS).forEach(([id, gr]) => action('group-' + id, {
     label: tl(`actions.group-${id}`), g: gr.g, radio: true, checked: () => F.groupOf(F.T()) === id, run: () => F.setGroup(F.T(), id),
   }));
-  action('flat', { label: tl('actions.flat'), g: 'IconLog', key: 'Strg+Umschalt+B', checked: () => !!F.T().flat, run: () => {
+  action('flat', { label: tl('actions.flat'), g: 'IconLog', key: 'Ctrl+Shift+b', checked: () => !!F.T().flat, run: () => {
     const tab = F.T();
     Object.assign(tab, { flat: !tab.flat, cursor: 0, marked: new Set() });
   } });
@@ -97,11 +97,11 @@ export function registerFileActions() {
     });
   } });
 
-  action('back', { label: tl('actions.back'), g: 'IconBack', key: 'Alt+Links', run: () => { const tab = F.T(); if (!tab.hist.length) return; tab.fwd.push(tab.path); F.go(tab.hist.pop()!, F.active, false); } });
-  action('forward', { label: tl('actions.forward'), g: 'IconForward', key: 'Alt+Rechts', run: () => { const tab = F.T(); if (!tab.fwd.length) return; tab.hist.push(tab.path); F.go(tab.fwd.pop()!, F.active, false); } });
-  action('up', { label: tl('actions.up'), g: 'IconFolderUp', key: 'Rücktaste', run: () => F.T().path !== '/' && F.open(F.active, { up: true }) });
+  action('back', { label: tl('actions.back'), g: 'IconBack', key: 'Alt+ArrowLeft', run: () => { const tab = F.T(); if (!tab.hist.length) return; tab.fwd.push(tab.path); F.go(tab.hist.pop()!, F.active, false); } });
+  action('forward', { label: tl('actions.forward'), g: 'IconForward', key: 'Alt+ArrowRight', run: () => { const tab = F.T(); if (!tab.fwd.length) return; tab.hist.push(tab.path); F.go(tab.fwd.pop()!, F.active, false); } });
+  action('up', { label: tl('actions.up'), g: 'IconFolderUp', key: 'Backspace', run: () => F.T().path !== '/' && F.open(F.active, { up: true }) });
   action('home', { label: tl('actions.home'), g: 'IconFolder', run: () => F.go('/mnt/user') });
-  action('gotoPath', { label: tl('actions.gotoPath'), g: 'IconPencil', key: 'Strg+L', run: () => {
+  action('gotoPath', { label: tl('actions.gotoPath'), g: 'IconPencil', key: 'Ctrl+l', run: () => {
     if (view.id !== 'files') goView('files');
     F.T().editPath = true;
   } });
@@ -110,13 +110,13 @@ export function registerFileActions() {
     const k = F.sel()[0]!;
     copyInternalLink(join(k.at || F.T().path, k.name));
   } });
-  action('quickFilter', { label: tl('actions.quickFilter'), g: 'IconSearch', key: 'Strg+F', run: () => {
+  action('quickFilter', { label: tl('actions.quickFilter'), g: 'IconSearch', key: 'Ctrl+f', run: () => {
     if (view.id !== 'files') goView('files');
     F.T().qf = true;
   } });
   action('typeJump', { label: tl('actions.typeJump'), g: 'IconSearch', key: t('files.typeJumpKey'), run: () => toast(t('files.typeJumpTip')) });
 
-  action('selectAll', { label: tl('actions.selectAll'), g: 'IconSelectAll', key: 'Strg+A', run: () => { const tab = F.T(); F.entries().filter((k) => !k.up).forEach((k) => tab.marked.add(k.name)); } });
+  action('selectAll', { label: tl('actions.selectAll'), g: 'IconSelectAll', key: 'Ctrl+a', run: () => { const tab = F.T(); F.entries().filter((k) => !k.up).forEach((k) => tab.marked.add(k.name)); } });
   action('invertSel', { label: tl('actions.invertSel'), g: 'IconSync', key: '*', run: () => {
     const tab = F.T();
     F.entries().filter((k) => !k.up).forEach((k) => (tab.marked.has(k.name) ? tab.marked.delete(k.name) : tab.marked.add(k.name)));

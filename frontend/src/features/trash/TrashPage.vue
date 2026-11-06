@@ -54,7 +54,7 @@ function more(ev: MouseEvent) {
       { label: t('trash.restoreSel', { n: sel.length }), g: 'IconRestore', run: () => restore(sel, clear) },
       { label: t('trash.purgeSel', { n: sel.length }), g: 'IconTrash', run: () => purge(sel, false, clear) }, '-',
     ] : []),
-    { label: t('trash.selectAll'), g: 'IconSelectAll', key: 'Strg+A', run: () => list.value.forEach((e) => pick.sel.add(e.id)) },
+    { label: t('trash.selectAll'), g: 'IconSelectAll', key: 'Ctrl+a', run: () => list.value.forEach((e) => pick.sel.add(e.id)) },
     { label: t('trash.empty'), g: 'IconEmpty', run: () => purge(list.value, true, clear) },
   ]), 0);
 }

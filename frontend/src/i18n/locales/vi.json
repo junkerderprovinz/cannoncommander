@@ -1566,6 +1566,7 @@
     "noteName": ""
   },
   "install": {
+    "manifest": "",
     "title": "",
     "already": "",
     "installed": "",
@@ -1683,7 +1684,9 @@
       "End": "",
       "PageUp": "",
       "PageDown": "",
-      "Backspace": ""
+      "Backspace": "",
+      "Enter": "",
+      "Tab": ""
     },
     "preset": "",
     "presetTip": "",
@@ -2083,6 +2086,7 @@
     "matches": ""
   },
   "search": {
+    "field": "",
     "title": "",
     "job": "",
     "name": "",

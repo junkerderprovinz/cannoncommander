@@ -83,7 +83,7 @@ export default function setup() {
     const c = current();
     if (c) openViewer(c.node, c.folder);
   } });
-  action('quickview', { label: tl('viewer.quickview'), g: 'IconEye', key: 'Strg+Q', checked: () => !!prefs.quickview, run: () => {
+  action('quickview', { label: tl('viewer.quickview'), g: 'IconEye', key: 'Ctrl+q', checked: () => !!prefs.quickview, run: () => {
     if (!prefs.dual) setPref('dual', true);
     setPref('quickview', !prefs.quickview);
   } });

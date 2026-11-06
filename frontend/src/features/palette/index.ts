@@ -12,7 +12,7 @@ import { sources } from './rows';
 import { pal } from './state';
 
 export default function setup() {
-  action('palette', { label: tl('palette.title'), g: 'IconBolt', key: 'Strg+K', run: () => {
+  action('palette', { label: tl('palette.title'), g: 'IconBolt', key: 'Ctrl+k', run: () => {
     if (pal.open) { pal.focus++; return; }
     closeMenu();
     pal.open = true;

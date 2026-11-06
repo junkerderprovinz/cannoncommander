@@ -152,8 +152,8 @@ function testWindow() {
 }
 
 export default function setup() {
-  action('pack', { label: tl('archive.pack'), g: 'IconArchive', key: 'Alt+P', needs: 'sel', run: packWindow });
-  action('unpack', { label: tl('archive.unpack'), g: 'IconArchive', key: 'Alt+U', needs: 'sel', run: unpackWindow });
+  action('pack', { label: tl('archive.pack'), g: 'IconArchive', key: 'Alt+p', needs: 'sel', run: packWindow });
+  action('unpack', { label: tl('archive.unpack'), g: 'IconArchive', key: 'Alt+u', needs: 'sel', run: unpackWindow });
   action('testArchive', { label: tl('archive.test'), g: 'IconCheck', needs: 'sel', run: testWindow });
   kindLabels.pack = (_j, what) => t('archive.jobPack', { what });
   kindLabels.unpack = (_j, what) => t('archive.jobUnpack', { what });

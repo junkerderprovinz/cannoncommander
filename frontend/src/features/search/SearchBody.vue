@@ -174,7 +174,7 @@ onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(ti
     <div id="s-list" ref="list" class="bk-list" role="listbox" :aria-label="t('search.hitsLabel')">
       <template v-if="!empty">
         <EmptyState v-if="!res.found" nested :glyph="glyphComponent('IconFolder')" :title="t('search.noFolder')" />
-        <EmptyState v-else-if="res.unknown.length" nested :glyph="glyphComponent('IconInfo')" :title="t('search.unknown', { fields: res.unknown.map((u) => `„${u}:“`).join(', ') })" :hint="t('search.unknownHint')" />
+        <EmptyState v-else-if="res.unknown.length" nested :glyph="glyphComponent('IconInfo')" :title="t('search.unknown', { fields: res.unknown.map((u) => t('search.field', { name: u })).join(', ') })" :hint="t('search.unknownHint')" />
         <template v-else-if="shown.length">
           <div v-for="(h, i) in shown" :key="h.at + '/' + h.name" class="bk-row bk-hit" :class="{ cur: i === cur }" :data-bk-hit="i" role="option" :aria-selected="i === cur" @click="clickHit($event, i)">
             <GlyphTile :glyph="glyphComponent(glyphOf(h))" ground :quiet="!h.dir" /><span class="bk-name">{{ h.name }}</span><span class="bk-path muted mono" :title="h.at || '/'"><bdi>{{ h.at || '/' }}</bdi></span>
