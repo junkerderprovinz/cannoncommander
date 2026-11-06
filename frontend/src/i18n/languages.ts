@@ -1,5 +1,5 @@
 // The languages on offer, each under its own name, in the order of those names, as Wikipedia lists its editions.
-// German is the source; English and German ship with the app, every other language loads from locales/ when picked.
+// German is the source. German and English ship with the app, every other language loads from locales/ when picked.
 export interface LanguageInfo {
   code: string;
   name: string;
