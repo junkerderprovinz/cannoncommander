@@ -161,7 +161,7 @@ export function opsFixture(fx = sharedFixture(), plugins = []) {
     });
     const vol = FS.volumeOf(dest);
     return {
-      dest, count: nodes.length, bytes: Math.round(bytes), files: nodes.reduce((a, [n]) => a + countOf(n), 0), conflicts,
+      dest, count: nodes.length, bytes: Math.round(bytes), files: nodes.reduce((a, [n]) => a + countOf(n), 0), conflicts, same: [],
       sameDevice: kind === 'move' && nodes.every(([, p]) => FS.volumeOf(p) === vol),
       space: { free: Math.round(FS.FREE[vol] || 0), need: Math.round(bytes), enough: bytes <= (FS.FREE[vol] || Infinity) },
       big: bytes >= BIG, parityBusy: parity.busy, unraid: unraidReport(kind, sources, dest),

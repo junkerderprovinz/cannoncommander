@@ -238,6 +238,10 @@ type Preflight struct {
 	Bytes     int64           `json:"bytes"`
 	Files     int64           `json:"files"`
 	Conflicts []jobs.Conflict `json:"conflicts"`
+	// Same names the entries whose target is the same file under another
+	// path. The job leaves them alone, so they are no conflict and carry
+	// nothing.
+	Same []string `json:"same"`
 	// SameDevice says that a move only renames and needs no free space.
 	SameDevice bool   `json:"sameDevice"`
 	Space      *Space `json:"space,omitempty"`
@@ -264,7 +268,7 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	out := Preflight{Dest: dest.Path, Count: len(plan.Items), Conflicts: []jobs.Conflict{}, SameDevice: move}
+	out := Preflight{Dest: dest.Path, Count: len(plan.Items), Conflicts: []jobs.Conflict{}, Same: []string{}, SameDevice: move}
 	destInfo, err := os.Stat(dest.Real)
 	if err != nil {
 		return err
@@ -279,12 +283,6 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
-		b, f, err := preflightSize(r.Context(), s.fs, u, src, move)
-		if err != nil {
-			return err
-		}
-		out.Bytes += b
-		out.Files += f
 		if dev, ok := device(info); !ok || !devKnown || dev != destDev {
 			out.SameDevice = false
 		}
@@ -293,12 +291,24 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 			name = path.Base(src.Path)
 		}
 		dst := node{dest.Path, dest.Real}.child(name)
-		if _, err := s.fs.Check(u, dst.api, ccfs.View); err != nil {
-			continue
+		var target os.FileInfo
+		if _, err := s.fs.Check(u, dst.api, ccfs.View); err == nil {
+			target, _ = os.Lstat(dst.real)
 		}
-		if target, err := os.Lstat(dst.real); err == nil {
+		switch {
+		case target == nil:
+		case os.SameFile(info, target) || unraidService().SameFile(src.Path, dst.api):
+			out.Same = append(out.Same, name)
+			continue
+		default:
 			out.Conflicts = append(out.Conflicts, jobs.NewConflict(name, side(node{src.Path, src.Real}, info), side(dst, target)))
 		}
+		b, f, err := preflightSize(r.Context(), s.fs, u, src, move)
+		if err != nil {
+			return err
+		}
+		out.Bytes += b
+		out.Files += f
 	}
 	need := out.Bytes
 	if out.SameDevice {

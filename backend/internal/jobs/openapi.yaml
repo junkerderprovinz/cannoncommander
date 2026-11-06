@@ -314,7 +314,7 @@ components:
           description: Copies and moves from 2 GiB on wait while Unraid checks parity or rebuilds.
         notifyUnraid:
           type: boolean
-          description: Send a notice to Unraid when a long job ends. Needs write access to Unraid in the template.
+          description: Send a notice to Unraid when a long job ends, in English, since Unraid shows it as it is. Needs write access to Unraid in the template.
         notifyAfter:
           type: integer
           format: int64

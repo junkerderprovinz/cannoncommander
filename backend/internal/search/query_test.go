@@ -41,11 +41,11 @@ func TestNameWordsFollowTheListFilter(t *testing.T) {
 
 func TestFieldsCompareLikeThePrototype(t *testing.T) {
 	uhd := entry("Film.mkv", 30<<30, now.Add(-3*day), meta.Values{
-		"dimensions": "3840 × 2160", "vcodec": "HEVC", "duration": int64(7200), "year": int64(2010), "framerate": "23,976 fps",
+		"dimensions": "3840 × 2160", "vcodec": "HEVC", "duration": int64(7200), "year": int64(2010), "framerate": "23.976 fps",
 	})
 	song := entry("Queen - Bohemian.flac", 40<<20, now.Add(-400*day), meta.Values{"artist": "Queen", "duration": int64(355)})
 	photo := entry("IMG_0001.jpg", 5<<20, now, meta.Values{
-		"camera": "X100VI", "taken": time.Date(2026, 6, 21, 18, 30, 0, 0, time.Local).UnixMilli(), "place": "Wien",
+		"camera": "X100VI", "aperture": "f/2.8", "taken": time.Date(2026, 6, 21, 18, 30, 0, 0, time.Local).UnixMilli(), "place": "Wien",
 	})
 	cases := []struct {
 		line string
@@ -80,6 +80,9 @@ func TestFieldsCompareLikeThePrototype(t *testing.T) {
 		{"jahr:2010", uhd, true},
 		{"jahr:>2000", uhd, true},
 		{"bildrate:<24", uhd, true},
+		{"bildrate:23,976", uhd, true},
+		{"blende:f/2,8", photo, true},
+		{"blende:=f/2.8", photo, true},
 		{"endung:flac", song, true},
 		{"art:musik", song, true},
 		{"typ:audio", song, true},

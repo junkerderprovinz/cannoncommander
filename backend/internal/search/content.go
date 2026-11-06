@@ -70,7 +70,7 @@ func prepareContent(_ context.Context, d v1.Deps, u *users.User, raw json.RawMes
 	p.Path = loc.Path
 	return &jobs.Plan{
 		Params: p,
-		Name:   "„" + p.Text + "“",
+		Name:   p.Text,
 		Dest:   loc.Path,
 		Items:  []jobs.Item{{Path: loc.Path, Name: path.Base(loc.Path)}},
 	}, nil

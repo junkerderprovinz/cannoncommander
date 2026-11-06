@@ -813,7 +813,14 @@ components:
             bytes for unpacked, milliseconds since 1970 for taken, accessed
             and statchange, whole seconds for duration, kBit/s for vbitrate
             and plain figures for the rest. Booleans answer yes or no
-            columns. Text is ready to show, in German.
+            columns. Words are codes for the client to name in its language:
+            orientation is landscape, portrait or square, flash fired or off,
+            channels mono, stereo, a layout such as 5.1 or a count, method
+            none for stored entries or a number for an unknown zip method,
+            arch all for packages that run anywhere. audiotracks and
+            subtitles list two letter language codes where there is one,
+            und for a track that names none. Numbers inside text, such as
+            23.976 fps or f/2.8, have a decimal point.
           additionalProperties:
             type: object
             additionalProperties:

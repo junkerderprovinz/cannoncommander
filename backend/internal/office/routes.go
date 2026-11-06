@@ -145,7 +145,7 @@ func (s *service) config(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
-		address := action + "WOPISrc=" + url.QueryEscape(s.base(r)+"/wopi/files/"+fileID(loc.Path)) + "&lang=" + url.QueryEscape(s.officeLang(r.Context(), u))
+		address := action + "WOPISrc=" + url.QueryEscape(s.base(r)+"/wopi/files/"+fileID(loc.Path)) + "&lang=" + url.QueryEscape(s.officeLang(r.Context(), u, o.Kind))
 		out = Config{Kind: o.Kind, URL: address, Token: token, TTL: expires.UnixMilli()}
 	default:
 		cfg, err := s.editorConfig(r, o, u, loc, info, g, token)

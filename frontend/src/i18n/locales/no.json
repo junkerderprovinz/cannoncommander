@@ -2262,7 +2262,8 @@
     },
     "server": "",
     "unknownFields": "",
-    "unknownField": ""
+    "unknownField": "",
+    "quoted": ""
   },
   "share": {
     "share": "",
@@ -2547,7 +2548,23 @@
     "clipCut": "",
     "clipCopy": "",
     "clipPaste": "",
-    "nothingOn": ""
+    "nothingOn": "",
+    "sameSkip": "",
+    "sameSkipTip": "",
+    "sameSkipped": {
+      "one": "",
+      "other": ""
+    },
+    "copiedSame": "",
+    "movedSame": "",
+    "nothingCopied": {
+      "one": "",
+      "other": ""
+    },
+    "nothingMoved": {
+      "one": "",
+      "other": ""
+    }
   },
   "trash": {
     "delete": "",
@@ -3217,6 +3234,33 @@
     "images": "",
     "programs": "",
     "checksum": ""
+  },
+  "metaValues": {
+    "orientation": {
+      "landscape": "",
+      "portrait": "",
+      "square": ""
+    },
+    "flash": {
+      "fired": "",
+      "off": ""
+    },
+    "channels": {
+      "mono": "",
+      "stereo": ""
+    },
+    "channelCount": {
+      "one": "",
+      "other": ""
+    },
+    "method": {
+      "none": ""
+    },
+    "methodNumber": "",
+    "arch": {
+      "all": ""
+    },
+    "unknownLanguage": ""
   },
   "kinds": {
     "folder": "",

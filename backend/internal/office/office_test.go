@@ -609,3 +609,46 @@ func TestCollaboraOpensInTheLanguageThePersonPicked(t *testing.T) {
 		t.Errorf("no WOPISrc in %s", c.URL)
 	}
 }
+
+func TestEachEditorGetsTheLanguageCodeItKnows(t *testing.T) {
+	cool := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte(discoveryXML)) }))
+	defer cool.Close()
+	for _, c := range []struct {
+		kind, picked, want string
+	}{
+		{system.OfficeOnlyOffice, "no", "no"},
+		{system.OfficeOnlyOffice, "sr", "sr-Cyrl-RS"},
+		{system.OfficeOnlyOffice, "pt", "pt-PT"},
+		{system.OfficeOnlyOffice, "zh", "zh"},
+		{system.OfficeOnlyOffice, "de", "de"},
+		{system.OfficeEuroOffice, "sr", "sr-Cyrl-RS"},
+		{system.OfficeCollabora, "no", "nb"},
+		{system.OfficeCollabora, "sr", "sr"},
+		{system.OfficeCollabora, "pt", "pt"},
+		{system.OfficeCollabora, "zh", "zh-CN"},
+		{system.OfficeCollabora, "de", "de"},
+	} {
+		t.Run(c.kind+" "+c.picked, func(t *testing.T) {
+			f := newFixture(t)
+			f.office = system.Office{Kind: c.kind, URL: "https://office.lan"}
+			if c.kind == system.OfficeCollabora {
+				f.office.URL = cool.URL
+			}
+			f.picksLanguage("jdp", c.picked)
+			_, cfg := f.config("jdp")
+			var got any
+			if c.kind == system.OfficeCollabora {
+				editor, err := url.Parse(cfg.URL)
+				if err != nil {
+					t.Fatal(err)
+				}
+				got = editor.Query().Get("lang")
+			} else {
+				got = cfg.Config["editorConfig"].(map[string]any)["lang"]
+			}
+			if got != c.want {
+				t.Errorf("lang %v, want %s", got, c.want)
+			}
+		})
+	}
+}

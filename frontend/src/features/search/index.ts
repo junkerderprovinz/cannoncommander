@@ -30,7 +30,7 @@ export default function setup() {
     win({ title: t('search.title'), wide: true, cls: 'bk bk-search', body: SearchBody, props: { q } });
   } });
   action('saveSearch', { label: tl('search.saveFilter'), g: 'IconSave', when: () => !!F.T().filter.trim(), run: saveFilter });
-  kindLabels.contentSearch = (j) => t('search.job', { name: j.name, to: placeName(j.dest) });
+  kindLabels.contentSearch = (j) => t('search.job', { name: t('search.quoted', { text: j.name }), to: placeName(j.dest) });
 
   // A panel showing a saved search lists its hits instead of the folder; any step elsewhere ends that.
   addTo('entryFilters', (list, _path, i) => {

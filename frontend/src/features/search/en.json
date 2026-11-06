@@ -73,5 +73,6 @@
   },
   "server": "Server",
   "unknownFields": "I do not know {fields}. I understand width, height, codec, artist, camera, size, modified, duration and every column name such as lens or year",
-  "unknownField": "“{f}:”"
+  "unknownField": "“{f}:”",
+  "quoted": "“{text}”"
 }

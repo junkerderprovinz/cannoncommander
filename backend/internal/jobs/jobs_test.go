@@ -777,3 +777,43 @@ func TestAFinishedBigJobKeepsItsItemsOnlyInTheDatabase(t *testing.T) {
 	e.restart(t)
 	check()
 }
+
+func TestErrorCodesOutlastARestart(t *testing.T) {
+	e := newEnv(t)
+	full := v1.Coded(400, "noSpace", "disk1 is full").With("disk", "disk1")
+	itemsFail := addScript(t, func(ctx context.Context, run *Run) error {
+		for _, it := range run.Items() {
+			var err error
+			if it.Seq == 0 {
+				err = full
+			}
+			run.Finish(it.Seq, ItemDone, err)
+		}
+		return nil
+	})
+	jobFails := addScript(t, func(ctx context.Context, run *Run) error { return full })
+	a := e.submit(t, "test", itemsFail, 2)
+	b := e.submit(t, "test", jobFails, 1)
+	e.waitState(t, a.ID, Failed)
+	e.waitState(t, b.ID, Failed)
+	e.restart(t)
+
+	params := func(m map[string]any) string {
+		raw, _ := json.Marshal(m)
+		return string(raw)
+	}
+	got, _ := e.m.Get(a.ID, true)
+	if got.ErrorCode != "itemsFailed" || params(got.ErrorParams) != `{"n":1,"total":2}` {
+		t.Errorf("job error %q %v", got.ErrorCode, got.ErrorParams)
+	}
+	if it := got.Items[0]; it.ErrorCode != "noSpace" || params(it.ErrorParams) != `{"disk":"disk1"}` {
+		t.Errorf("item error %q %v", it.ErrorCode, it.ErrorParams)
+	}
+	if it := got.Items[1]; it.ErrorCode != "" || it.ErrorParams != nil {
+		t.Errorf("the item that went through has the error %q %v", it.ErrorCode, it.ErrorParams)
+	}
+	got, _ = e.m.Get(b.ID, true)
+	if got.ErrorCode != "noSpace" || params(got.ErrorParams) != `{"disk":"disk1"}` {
+		t.Errorf("job error %q %v", got.ErrorCode, got.ErrorParams)
+	}
+}

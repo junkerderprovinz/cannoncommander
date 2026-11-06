@@ -423,7 +423,7 @@ export function toolsFixture(engine) {
       if (!found) return [404, 'Not found'];
       if (found.unknown.length) return [400, 'these fields are unknown: ' + found.unknown.join(', ')];
       return {
-        name: `„${p.text}“`, dest: p.path, count: 1, files: Math.max(1, found.items.length), total: 0,
+        name: p.text, dest: p.path, count: 1, files: Math.max(1, found.items.length), total: 0,
         apply(j) {
           const want = String(p.text).toLowerCase(), items = [];
           for (const h of found.items) {

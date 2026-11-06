@@ -100,5 +100,12 @@
   "clipCut": "Cut",
   "clipCopy": "Copy to the clipboard",
   "clipPaste": "Paste",
-  "nothingOn": "None of it lies on {disk}"
+  "nothingOn": "None of it lies on {disk}",
+  "sameSkip": "Skipped",
+  "sameSkipTip": "The target holds the same file under another path, for example as a hard link or through a disk share and the user share. It stays as it is.",
+  "sameSkipped": { "one": "{n} file skipped because it is the same file at the target", "other": "{n} files skipped because they are the same files at the target" },
+  "copiedSame": "Copied: {files} to {to}. {same}",
+  "movedSame": "Moved: {files} to {to}. {same}",
+  "nothingCopied": { "one": "Nothing copied. The file at the target is the same one and stays as it is", "other": "Nothing copied. The {n} files at the target are the same ones and stay as they are" },
+  "nothingMoved": { "one": "Nothing moved. The file at the target is the same one and stays as it is", "other": "Nothing moved. The {n} files at the target are the same ones and stay as they are" }
 }

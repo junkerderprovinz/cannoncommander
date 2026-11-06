@@ -119,7 +119,7 @@ func (c column) test(op, v string, now time.Time) test {
 			return ok && n >= 0 && compare(n, op, want)
 		}
 	}
-	low := strings.ToLower(v)
+	low := loose(v)
 	switch op {
 	case "<", ">", "<=", ">=":
 		want := number(v)
@@ -135,12 +135,16 @@ func (c column) test(op, v string, now time.Time) test {
 			return ok && n >= 0 && compare(n, op, want)
 		}
 	case "=":
-		return func(r *row) bool { return strings.ToLower(c.text(r)) == low }
+		return func(r *row) bool { return loose(c.text(r)) == low }
 	case "!=":
-		return func(r *row) bool { return !strings.Contains(strings.ToLower(c.text(r)), low) }
+		return func(r *row) bool { return !strings.Contains(loose(c.text(r)), low) }
 	}
-	return func(r *row) bool { return strings.Contains(strings.ToLower(c.text(r)), low) }
+	return func(r *row) bool { return strings.Contains(loose(c.text(r)), low) }
 }
+
+// loose makes texts comparable without case and with a decimal comma read as
+// a point, so 2,8 finds f/2.8 whichever way the person writes numbers.
+func loose(s string) string { return strings.ReplaceAll(strings.ToLower(s), ",", ".") }
 
 var typeNames = map[string]string{
 	"img": "Bild", "video": "Video", "audio": "Audio", "arch": "Archiv", "disk": "Abbild", "pdf": "PDF-Dokument",

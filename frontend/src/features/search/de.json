@@ -73,5 +73,6 @@
   },
   "server": "Server",
   "unknownFields": "{fields} kenne ich nicht. Ich verstehe etwa breite, höhe, codec, interpret, kamera, größe, geändert, dauer und jeden Spaltennamen wie Objektiv oder Jahr",
-  "unknownField": "„{f}:“"
+  "unknownField": "„{f}:“",
+  "quoted": "„{text}“"
 }

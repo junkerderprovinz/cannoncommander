@@ -8,7 +8,7 @@ import { BLANK, useSearch } from './search';
 const hit = (name: string, at = '/mnt/user/filme') => ({ name, dir: false, size: 1, mtime: '2026-11-01T10:00:00Z', mode: '0644', at });
 const saved = (id: number, over: Partial<SavedSearch['query']> = {}): SavedSearch => ({ id, name: `s${id}`, query: { ...BLANK, name: '*.mkv', ...over } });
 const job = (id: string, state: Job['state'], result?: unknown): Job => ({
-  id, kind: 'contentSearch', owner: 'jdp', state, position: 0, name: '„plex“', count: 1, totalBytes: 0, doneBytes: 0, totalFiles: 1, doneFiles: 0,
+  id, kind: 'contentSearch', owner: 'jdp', state, position: 0, name: 'plex', count: 1, totalBytes: 0, doneBytes: 0, totalFiles: 1, doneFiles: 0,
   rate: 0, left: null, cap: 0, waitForParity: false, failedItems: 0, createdAt: '2026-11-02T09:30:00Z', ...(result ? { result } : {}),
 });
 const tick = () => new Promise((r) => setTimeout(r, 0));

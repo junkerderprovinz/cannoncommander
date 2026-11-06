@@ -549,7 +549,7 @@ components:
           description: Only for a move. The job makes dest first, and taking the job back also removes it again, so both are one step.
     Preflight:
       type: object
-      required: [dest, count, bytes, files, conflicts, sameDevice, big, parityBusy]
+      required: [dest, count, bytes, files, conflicts, same, sameDevice, big, parityBusy]
       properties:
         dest:
           type: string
@@ -565,6 +565,15 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/JobConflict"
+        same:
+          type: array
+          description: |
+            Names at dest that are the same file as their source under
+            another path, through a hard link or a disk share below the user
+            share. The job leaves them alone, so they are no conflict, and
+            bytes and files leave them out.
+          items:
+            type: string
         sameDevice:
           type: boolean
           description: A move that only renames and needs no free space.
