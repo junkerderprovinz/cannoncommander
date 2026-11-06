@@ -7,7 +7,7 @@ import { computed } from 'vue';
 import type { UnraidTransferReport } from '@/api/ops';
 import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { diskName } from '@/features/jobs/label';
 
 export interface SafeWay { way: 'disk' | 'share'; disk: string }
@@ -21,7 +21,7 @@ const disks = computed(() => props.trap.targets.map((d) => [d.disk, t('transfer.
 <template>
   <SubCard class="u-warnwell">
     <div class="u-alert"><G n="IconWarning" /><div><b>{{ t('transfer.sameAlert') }}</b><p>{{ t('transfer.sameText', { disk: fromUser ? dest : from, user: fromUser ? from : dest, verb }) }}</p></div></div>
-    <Table class="u-tbl" :label="t('transfer.wayLabel')" :columns="[{ key: 'path' }, { key: 'disk' }, { key: 'size', end: true }]" :rows="trap.files.slice(0, 6).map((f) => ({ path: f.path, disk: diskName(f.device), size: fmtSize(f.size) }))" :more="trap.files.length > 6 ? t('transfer.more', { n: trap.files.length - 6 }) : undefined" />
+    <Table class="u-tbl" :label="t('transfer.wayLabel')" :columns="[{ key: 'path' }, { key: 'disk' }, { key: 'size', end: true }]" :rows="trap.files.slice(0, 6).map((f) => ({ path: f.path, disk: diskName(f.device), size: fmtSize(f.size) }))" :more="trap.files.length > 6 ? plural(trap.files.length - 6, 'transfer.more') : undefined" />
   </SubCard>
   <SubCard :title="t('transfer.safeWay')" class="bk-form">
     <FieldRow :label="t('transfer.wayLabel')" :hint="t('transfer.wayTip')"><Selector id="u-way" v-model="st.way" :items="segItems(ways)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>

@@ -25,7 +25,7 @@ const head = computed(() => (props.st.inside ? t('archive.fromArchive', { object
 
 <template>
   <SubCard :title="head">
-    <Table :label="t('archive.folder')" :columns="[{ key: 'name' }, { key: 'size', end: true }]" :rows="st.items.slice(0, 5).map((k) => ({ name: k.name, size: fmtSize(k.size) }))" :more="st.items.length > 5 ? t('archive.more', { n: st.items.length - 5 }) : undefined" />
+    <Table :label="t('archive.folder')" :columns="[{ key: 'name' }, { key: 'size', end: true }]" :rows="st.items.slice(0, 5).map((k) => ({ name: k.name, size: fmtSize(k.size) }))" :more="st.items.length > 5 ? plural(st.items.length - 5, 'archive.more') : undefined" />
   </SubCard>
   <SubCard :title="t('archive.target')" class="bk-form">
     <FieldRowGroup>
@@ -37,7 +37,7 @@ const head = computed(() => (props.st.inside ? t('archive.fromArchive', { object
     <FieldRow :label="t('archive.lands')">
       <span id="x-final" class="bk-finalw">
         <Pill v-if="ok === false" tone="fail">{{ t('ui.noFolder') }}</Pill>
-        <template v-else-if="st.own"><FinalPath :path="join(clean(st.dest), stripArchive(st.inside ? st.archive : st.items[0]!.name))" /><Pill v-if="!st.inside && st.items.length > 1">{{ t('archive.more', { n: st.items.length - 1 }) }}</Pill></template>
+        <template v-else-if="st.own"><FinalPath :path="join(clean(st.dest), stripArchive(st.inside ? st.archive : st.items[0]!.name))" /><Pill v-if="!st.inside && st.items.length > 1">{{ plural(st.items.length - 1, 'archive.more') }}</Pill></template>
         <FinalPath v-else :path="clean(st.dest)" />
       </span>
     </FieldRow>

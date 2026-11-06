@@ -14,7 +14,7 @@ import { keysFirst, stepFoot } from '@/features/config/shared';
 import { assign, changed, check, combosOf, keyLabel, type KeyMap, mainCombo, MODIFIER_KEYS, preset, reset } from './keys';
 
 const PRESETS = [['cc', 'CannonCommander'], ['tc', 'Total Commander']] as const;
-const props = defineProps<{ win: WinEntry; current: KeyMap; defaults: KeyMap; defaultLabel: Record<string, string | undefined>; which: 'cc' | 'tc'; apply: (map: KeyMap, which: 'cc' | 'tc') => void }>();
+const props = defineProps<{ win: WinEntry; current: KeyMap; defaults: KeyMap; declared: Record<string, string | undefined>; which: 'cc' | 'tc'; apply: (map: KeyMap, which: 'cc' | 'tc') => void }>();
 const map = ref<KeyMap>({ ...props.current });
 const which = ref(props.which);
 const rec = ref<string | null>(null);
@@ -28,7 +28,7 @@ function groups(): [string, string[]][] {
   const ids = (items: MenuEntry[]): string[] => items.flatMap((it) => (typeof it === 'string' ? [it] : typeof it === 'object' && 'sub' in it && it.sub ? ids(it.sub) : []))
     .filter((id) => actions[id] && !seen.has(id) && !!seen.add(id));
   MENUS.forEach(([, items], i) => out.push([menuName(i), ids(items)]));
-  out.push([t('keys.more'), Object.keys(actions).filter((id) => !seen.has(id) && name(actions[id]!) && (combosOf(props.defaults, id).length || props.defaultLabel[id]))]);
+  out.push([t('keys.more'), Object.keys(actions).filter((id) => !seen.has(id) && name(actions[id]!) && (combosOf(props.defaults, id).length || props.declared[id]))]);
   return out.filter(([, list]) => list.length);
 }
 const shown = computed(() => {
@@ -36,7 +36,7 @@ const shown = computed(() => {
   return groups().map(([g, list]) => [g, list.filter((id) => !q || name(actions[id]!).toLowerCase().includes(q) || combosOf(map.value, id).some((c) => keyLabel(c).toLowerCase().includes(q)))] as const).filter(([, l]) => l.length);
 });
 
-const main = (id: string) => mainCombo(map.value, id, props.defaultLabel[id]);
+const main = (id: string) => mainCombo(map.value, id, props.declared[id]);
 const stop = () => { rec.value = null; pending.value = null; };
 function listen(id: string) {
   rec.value = rec.value === id ? null : id;

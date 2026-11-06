@@ -60,7 +60,7 @@ func (h handlers) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 		return loc, nil, errArchived
 	}
 	if loc.Virtual() {
-		return loc, nil, v1.Errorf(http.StatusBadRequest, "path is a folder")
+		return loc, nil, v1.Coded(http.StatusBadRequest, "isFolder", "path is a folder")
 	}
 	if err := h.fs.Follows(u, loc, perm); err != nil {
 		return loc, nil, err
@@ -70,11 +70,11 @@ func (h handlers) file(u *users.User, p string, perm ccfs.Perm) (ccfs.Location, 
 		return loc, nil, err
 	}
 	if info.IsDir() {
-		return loc, nil, v1.Errorf(http.StatusBadRequest, "path is a folder")
+		return loc, nil, v1.Coded(http.StatusBadRequest, "isFolder", "path is a folder")
 	}
 	// Reading a pipe or a device would hang or never end.
 	if !info.Mode().IsRegular() {
-		return loc, nil, v1.Errorf(http.StatusBadRequest, "path is not a regular file")
+		return loc, nil, v1.Coded(http.StatusBadRequest, "notAFile", "path is not a regular file")
 	}
 	return loc, info, nil
 }
@@ -200,7 +200,9 @@ func (h handlers) hex(w http.ResponseWriter, r *http.Request) error {
 	return v1.WriteJSON(w, r, http.StatusOK, Hex{Path: loc.Path, Size: info.Size(), Offset: offset, Data: data[:n]})
 }
 
-func errBinary() error { return v1.Errorf(http.StatusUnsupportedMediaType, "file is not text") }
+func errBinary() error {
+	return v1.Coded(http.StatusUnsupportedMediaType, "notText", "file is not text")
+}
 
 // decodeText finds the encoding of buf and returns its text. The checks
 // run from the surest sign to the weakest: a byte order mark, then valid

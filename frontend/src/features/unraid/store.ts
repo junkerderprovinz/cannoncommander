@@ -2,7 +2,7 @@
 // way the mover goes and when.
 import type { UnraidShare, UnraidStorage } from '@/api/unraid';
 import { fmtSize } from '@/core/format';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { diskName } from '@/features/jobs/label';
 import { names } from './state';
 
@@ -15,7 +15,7 @@ export function moverWhen(cron?: string) {
   if (NUM.test(h)) return t('unraid.when.at', { time: `${+h}:${m.padStart(2, '0')}` });
   const every = h === '*' ? 1 : Number(h.match(/^\*\/(\d+)$/)?.[1]);
   if (every === 1) return t('unraid.when.hourly');
-  return every > 1 ? t('unraid.when.hours', { n: every }) : t('unraid.when.next');
+  return every > 1 ? plural(every, 'unraid.when.hours') : t('unraid.when.next');
 }
 
 // The pool as the object of a sentence: "auf dem Cache", but "auf fastcache".
@@ -39,7 +39,7 @@ export function shareBadge(sh: UnraidShare, schedule?: string, waiting?: Waiting
   else tip += t('unraid.toSecondary', { pool, disks, when: moverWhen(schedule) });
   if (second && sh.mover === 'toSecondary' && waiting?.files) {
     const size = fmtSize(waiting.size) || '0 B';
-    tip += waiting.files === 1 ? t('unraid.waitingOne', { size, pool }) : t('unraid.waitingMany', { n: waiting.files, size, pool });
+    tip += plural(waiting.files, 'unraid.waiting', { size, pool });
   }
   return { label, glyph: sh.primary.type === 'pool' ? 'IconBolt' : 'IconDatabase', tip };
 }

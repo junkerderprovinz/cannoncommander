@@ -261,7 +261,7 @@ func (s *Service) one(ctx context.Context, where string, args ...any) (*Share, e
 		return nil, err
 	}
 	if len(list) == 0 {
-		return nil, v1.Errorf(http.StatusNotFound, "there is no such link")
+		return nil, v1.Coded(http.StatusNotFound, "noLink", "there is no such link")
 	}
 	return list[0], nil
 }
@@ -344,7 +344,7 @@ func (s *Service) countDownload(ctx context.Context, id string) error {
 	return nil
 }
 
-var errSlugTaken = v1.Errorf(http.StatusConflict, "this address is taken already, the dice finds a free one")
+var errSlugTaken = v1.Coded(http.StatusConflict, "slugTaken", "this address is taken already, the dice finds a free one")
 
 func isUnique(err error) bool {
 	return err != nil && strings.Contains(err.Error(), "UNIQUE")

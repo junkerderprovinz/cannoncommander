@@ -61,10 +61,10 @@ func init() {
 }
 
 var (
-	ErrShareRoot = v1.Errorf(http.StatusBadRequest, "a whole share or volume cannot go to the trash")
-	ErrInBin     = v1.Errorf(http.StatusBadRequest, "this is in the trash already")
-	ErrCrossFS   = v1.Errorf(http.StatusConflict, "this lies on another file system than its trash, delete it instead")
-	ErrNotFound  = v1.Errorf(http.StatusNotFound, "no such entry in the trash")
+	ErrShareRoot = v1.Coded(http.StatusBadRequest, "trashShareRoot", "a whole share or volume cannot go to the trash")
+	ErrInBin     = v1.Coded(http.StatusBadRequest, "inTrash", "this is in the trash already")
+	ErrCrossFS   = v1.Coded(http.StatusConflict, "trashOtherDisk", "this lies on another file system than its trash, delete it instead")
+	ErrNotFound  = v1.Coded(http.StatusNotFound, "notInTrash", "no such entry in the trash")
 )
 
 // Item is one entry in the trash.

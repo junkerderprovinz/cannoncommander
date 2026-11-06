@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue';
 import { me, statusOf } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import { c, fail, stepFoot } from '@/features/config/shared';
+import { c, cn, fail, stepFoot } from '@/features/config/shared';
 import { eyeWords } from '@/ui/kit';
 
 const props = defineProps<{ win: WinEntry; done: () => void }>();
@@ -24,7 +24,7 @@ async function save() {
     return fail(status === 429 ? c('security.tooMany') : status === 403 ? c('security.wrongCurrent') : c('notSaved'), at('#a-pw0'));
   }
   props.win.close();
-  toast(got.ended ? c(got.ended === 1 ? 'security.pwChangedOne' : 'security.pwChangedMany', { n: got.ended }) : c('security.pwChanged'));
+  toast(got.ended ? cn(got.ended, 'security.pwChangedOthers') : c('security.pwChanged'));
   props.done();
 }
 

@@ -1,15 +1,15 @@
-.lfoot .u-store, .lfoot .u-filter { gap: .3rem; margin-left: .6rem; cursor: default; }
+.lfoot .u-store, .lfoot .u-filter { gap: .3rem; margin-inline-start: .6rem; cursor: default; }
 .lfoot .u-store svg, .lfoot .u-filter svg { width: .85rem; height: .85rem; }
 .lfoot .u-filter { cursor: pointer; border: 0; font: inherit; font-size: 12px; }
 .lfoot .u-filter:hover { background: var(--carbon-hover-raised); }
-.name .u-cache { height: 1.1rem; padding: 0 .4rem; font-size: 11px; margin-left: .4rem; background: color-mix(in srgb, var(--carbon-surface2), var(--accent) 14%); }
+.name .u-cache { height: 1.1rem; padding: 0 .4rem; font-size: 11px; margin-inline-start: .4rem; background: color-mix(in srgb, var(--carbon-surface2), var(--accent) 14%); }
 /* The cards keep their second line to the size and the marks; the badge belongs to the rows of the list. */
 .row .meta .u-cache { display: none; }
 .u-moon { display: inline-grid; place-items: center; color: var(--carbon-text-muted); }
 .u-moon svg { width: .85rem; height: .85rem; }
 .glim-active .u-moon { color: var(--accent-contrast); }
 .bk :not(.glim-info-icon) > svg { fill: currentColor; }
-.bk-val { margin-left: auto; text-align: right; color: var(--carbon-text-sub); min-width: 0; }
+.bk-val { margin-inline-start: auto; text-align: end; color: var(--carbon-text-sub); min-width: 0; }
 .bk-pathv { display: flex; align-items: center; gap: .2rem; max-width: 70%; }
 .bk-pathv .bk-path { font-size: 12.5px; }
 .bk-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left; min-width: 0; }

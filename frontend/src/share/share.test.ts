@@ -6,7 +6,7 @@ import en from './en.json';
 import { canPreview } from './preview';
 import SharePage from './SharePage.vue';
 
-addMessages('share', { de, en });
+addMessages('visit', { de, en });
 
 type Answer = { status?: number; body?: unknown };
 let script: Record<string, Answer | Answer[]> = {};

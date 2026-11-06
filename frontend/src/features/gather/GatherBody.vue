@@ -8,14 +8,14 @@ import { computed } from 'vue';
 import type { GatherPlan } from '@/api/ops';
 import { fmtSize } from '@/core/format';
 import { G, glyphComponent } from '@/core/glyphs';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { diskName } from '@/features/jobs/label';
 
 export interface GatherState { path: string; mode: 'gather' | 'scatter'; disk: string; plan: GatherPlan | null; valid: boolean; text: string }
 const props = defineProps<{ st: GatherState }>();
 const MODES = [['gather', t('gather.gather')], ['scatter', t('gather.scatter')]] as const;
 
-const files = (n: number) => (n === 1 ? t('gather.one') : t('gather.many', { n }));
+const files = (n: number) => plural(n, 'gather.files');
 const devices = computed(() => (props.st.plan?.devices ?? []).filter((d) => d.device !== 'cache' || d.files));
 const total = computed(() => devices.value.reduce((a, d) => a + d.now, 0) || 1);
 const options = computed(() => (props.st.plan?.options ?? []).map((o) => [o.disk, props.st.mode === 'gather' ? t('gather.targetOption', { disk: diskName(o.disk), size: fmtSize(o.move) || '0 B' }) : diskName(o.disk)] as const));

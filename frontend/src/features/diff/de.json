@@ -3,7 +3,7 @@
   "pickTwo": "Erst zwei Dateien markieren",
   "pickTwoDual": "Zwei Dateien markieren oder in jedem Fenster eine Datei wählen",
   "same": "Die Dateien sind gleich",
-  "places": { "one": "{n} Stelle", "many": "{n} Stellen" },
+  "places": { "one": "{n} Stelle", "other": "{n} Stellen" },
   "summary": "{places}: {chg} geändert, {del} entfernt, {add} dazu",
   "at": "Stelle {n} von {all}",
   "prev": "Vorherige Stelle",

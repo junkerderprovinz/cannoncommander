@@ -1,4 +1,5 @@
 {
+  "manifest": "Dateimanager für deinen Unraid-Server, mit zwei Fenstern wie Krusader",
   "title": "Als App installieren",
   "already": "CannonCommander läuft schon als App",
   "installed": "CannonCommander ist jetzt als App installiert",

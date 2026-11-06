@@ -7,7 +7,7 @@ import { closeWin } from '@/core/windows';
 import { fmtSize } from '@/core/format';
 import { glyphOf, glyphComponent } from '@/core/glyphs';
 import { inArchive } from '@/files/paths';
-import { t } from '@/i18n';
+import { plural as count, t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 import { ext, joinPath, plural } from '../kinds';
 import type { REmits, RProps } from './types';
@@ -62,6 +62,6 @@ function browse() {
         <span v-if="x.dir"></span><Pill v-else class="glim-num">{{ fmtSize(Math.round(x.size)) }}</Pill>
       </div>
     </div>
-    <div v-if="hidden > 0 || more" class="muted cv-more">{{ more ? t('viewer.arch.limit', { n: LIMIT.toLocaleString() }) : t('viewer.and', { rest: plural(hidden, 'moreEntries') }) }}</div>
+    <div v-if="hidden > 0 || more" class="muted cv-more">{{ more ? count(LIMIT, 'viewer.arch.limit') : t('viewer.and', { rest: plural(hidden, 'moreEntries') }) }}</div>
   </div>
 </template>

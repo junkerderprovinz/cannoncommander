@@ -11,7 +11,7 @@ import { t } from '@/i18n';
 
 const props = defineProps<{ api: ShareApi; dir: string; room?: number }>();
 const emit = defineEmits<{ done: [] }>();
-const s = (key: string, params?: Record<string, string | number>) => t('share.' + key, params);
+const s = (key: string, params?: Record<string, string | number>) => t('visit.' + key, params);
 
 interface Sending { name: string; size: number; sent: number; state: 'wait' | 'run' | 'done' | 'skipped' | 'fail'; note?: string }
 const list = reactive<Sending[]>([]);

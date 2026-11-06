@@ -9,7 +9,7 @@ import type { Preflight, Rule } from '@/api/ops';
 import { fmtSize } from '@/core/format';
 import { G } from '@/core/glyphs';
 import type { Entry } from '@/files/entries';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import ItemChips from './ItemChips.vue';
 import { ensureDir, placeName, sizeOf } from './paths';
 import { RULES } from './rules';
@@ -40,7 +40,7 @@ watch(linkable, (ok) => { if (!ok) props.st.way = props.st.kind; });
   <div class="xroute">
     <div class="xend"><span class="xic"><G n="IconFolderOpen" /></span><b>{{ placeName(st.from) }}</b></div>
     <div class="xmid">
-      <span class="xsum glim-num">{{ st.items.length === 1 ? t('transfer.one') : t('transfer.many', { n: st.items.length }) }} · {{ fmtSize(total) || '0 B' }}</span>
+      <span class="xsum glim-num">{{ plural(st.items.length, 'transfer.objects') }} · {{ fmtSize(total) || '0 B' }}</span>
       <span class="xtrack"><span class="xline"></span><span class="xarrow"><G :n="st.kind === 'copy' ? 'IconCopy' : 'IconMove'" /></span></span>
     </div>
     <div class="xend"><span class="xic"><G n="IconFolder" /></span><b id="xdest">{{ placeName(clean(st.dest)) }}</b></div>

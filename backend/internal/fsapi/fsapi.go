@@ -288,7 +288,7 @@ func (h handlers) folder(u *users.User, p string) (ccfs.Location, error) {
 		return loc, err
 	}
 	if !info.IsDir() {
-		return loc, v1.Errorf(http.StatusBadRequest, "path is not a folder")
+		return loc, v1.Coded(http.StatusBadRequest, "notAFolder", "path is not a folder")
 	}
 	return loc, nil
 }

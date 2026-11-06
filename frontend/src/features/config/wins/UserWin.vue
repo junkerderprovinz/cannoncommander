@@ -6,7 +6,7 @@ import { admin, exists, type Group, type Role, type User } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { cancelBtn, win, type WinEntry } from '@/core/windows';
 import { useUser } from '@/stores/user';
-import { attempt, c, fail, stepFoot } from '@/features/config/shared';
+import { attempt, c, cn, fail, stepFoot } from '@/features/config/shared';
 import { eyeWords, segItems } from '@/ui/kit';
 import { ROLES, roleName } from '../roles';
 import AccessWin from './AccessWin.vue';
@@ -87,7 +87,7 @@ onMounted(() => {
       <Pill>{{ c('users.pwSet') }}</Pill><Button :label="c('users.pwNew')" label-key="IconKey" @click="openPassword" />
     </FieldRow>
     <FieldRow v-if="!isNew" :label="c('access.ways')" :hint="c('access.waysTip')">
-      <Pill v-if="ways !== null">{{ ways === 0 ? c('access.none') : ways === 1 ? c('access.one') : c('access.many', { n: ways }) }}</Pill>
+      <Pill v-if="ways !== null">{{ ways === 0 ? c('access.none') : cn(ways, 'access.active') }}</Pill>
       <Button data-uaccess :label="c('access.show')" label-key="IconKeyRevoke" @click="showAccess" />
     </FieldRow>
   </SubCard>

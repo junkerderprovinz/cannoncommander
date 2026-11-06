@@ -56,7 +56,7 @@ func folder(fsys *ccfs.Resolver, u *users.User, p string, perm ccfs.Perm) (ccfs.
 		return loc, err
 	}
 	if loc.Virtual() || loc.InArchive() {
-		return loc, v1.Errorf(http.StatusBadRequest, "the target has to be a folder inside a source")
+		return loc, v1.Coded(http.StatusBadRequest, "outsideSources", "the target has to be a folder inside a source")
 	}
 	info, err := os.Stat(loc.Real)
 	if err != nil {

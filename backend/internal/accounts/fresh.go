@@ -40,14 +40,14 @@ func (h handlers) confirmOwner(r *http.Request, u *users.User, password string) 
 func (h handlers) checkCurrentPassword(u *users.User, password string) error {
 	key := idOf(u)
 	if h.svc.passwordTries.blocked(key) {
-		return v1.Errorf(http.StatusTooManyRequests, "too many wrong passwords, wait a few minutes")
+		return v1.Coded(http.StatusTooManyRequests, "tooManyTries", "too many wrong passwords, wait a few minutes")
 	}
 	if password == "" {
-		return v1.Errorf(http.StatusBadRequest, "the current password is missing")
+		return v1.Coded(http.StatusBadRequest, "currentPasswordMissing", "the current password is missing")
 	}
 	if utils.CheckPwd(password, u.Password) != nil {
 		h.svc.passwordTries.fail(key)
-		return v1.Errorf(http.StatusForbidden, "the current password is not right")
+		return v1.Coded(http.StatusForbidden, "currentPasswordWrong", "the current password is not right")
 	}
 	h.svc.passwordTries.clear(key)
 	return nil

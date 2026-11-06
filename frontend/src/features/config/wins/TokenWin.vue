@@ -6,7 +6,7 @@ import { me, statusOf, type Token } from '@/api/admin';
 import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type WinEntry } from '@/core/windows';
-import { c, fail, stepFoot } from '@/features/config/shared';
+import { c, cn, fail, stepFoot } from '@/features/config/shared';
 import { copyWords, eyeWords, segItems } from '@/ui/kit';
 import { proofRefused, signInAgain, staleSignIn } from '../proof';
 
@@ -52,7 +52,7 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('security.create'),
   <SubCard v-else>
     <FieldRow :label="c('sources.name')" :hint="c('security.tokenNameTip')"><TextField id="a-tkname" ref="el" v-model="name" :placeholder="c('security.tokenNamePh')" width="medium" /></FieldRow>
     <FieldRow :label="c('security.rights')" :hint="c('security.rightsTip')"><Selector v-model="rights" :items="segItems([['r', c('security.read')], ['rw', c('security.readWrite')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-    <FieldRow :label="c('shares.expires')"><Selector v-model="expires" :items="segItems([['30', c('general.days', { n: 30 })], ['365', c('security.year')], ['never', c('shares.never_')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('shares.expires')"><Selector v-model="expires" :items="segItems([['30', cn(30, 'general.days')], ['365', c('security.year')], ['never', c('shares.never_')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow v-if="password" :label="c('security.current')" :hint="c('security.proofTip')"><PasswordField id="a-tkpw" v-model="current" width="medium" autocomplete="current-password" :text="eyeWords()" @keydown.enter="create" /></FieldRow>
   </SubCard>
 </template>

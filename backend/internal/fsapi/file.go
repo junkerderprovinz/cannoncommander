@@ -72,7 +72,7 @@ func (h handlers) fileGet(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if info.Size() > editMax {
-		return v1.Errorf(http.StatusRequestEntityTooLarge, "this file is too big for the editor")
+		return v1.Coded(http.StatusRequestEntityTooLarge, "tooBigToEdit", "this file is too big for the editor")
 	}
 	buf, err := os.ReadFile(loc.Real)
 	if err != nil {
@@ -119,7 +119,7 @@ func (h handlers) filePut(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) {
-		return v1.Errorf(http.StatusBadRequest, "invalid path")
+		return v1.Coded(http.StatusBadRequest, "badPath", "invalid path")
 	}
 	old, err := os.ReadFile(loc.Real)
 	exists := err == nil
@@ -127,7 +127,7 @@ func (h handlers) filePut(w http.ResponseWriter, r *http.Request) error {
 	case errors.Is(err, fs.ErrNotExist):
 	case err != nil:
 		if info, serr := os.Stat(loc.Real); serr == nil && info.IsDir() {
-			return v1.Errorf(http.StatusBadRequest, "path is a folder")
+			return v1.Coded(http.StatusBadRequest, "isFolder", "path is a folder")
 		}
 		return err
 	}
@@ -147,19 +147,19 @@ func (h handlers) filePut(w http.ResponseWriter, r *http.Request) error {
 			return err
 		}
 		if !info.Mode().IsRegular() {
-			return v1.Errorf(http.StatusBadRequest, "path is not a regular file")
+			return v1.Coded(http.StatusBadRequest, "notAFile", "path is not a regular file")
 		}
 	} else if dir, err := os.Stat(filepath.Dir(loc.Real)); err != nil || !dir.IsDir() {
-		return v1.Errorf(http.StatusConflict, "the folder for this file does not exist")
+		return v1.Coded(http.StatusConflict, "noFolderForFile", "the folder for this file does not exist")
 	}
 
 	// A save is checked against the file as it is on disk, so changes made in
 	// the meantime by someone else are never overwritten unseen.
 	if m := r.Header.Get("If-Match"); m != "" && (!exists || m != "*" && !etagMatches(m, contentTag(old))) {
-		return v1.Errorf(http.StatusPreconditionFailed, "the file changed since it was opened")
+		return v1.Coded(http.StatusPreconditionFailed, "changedWhileOpen", "the file changed since it was opened")
 	}
 	if r.Header.Get("If-None-Match") == "*" && exists {
-		return v1.Errorf(http.StatusPreconditionFailed, "a file of this name exists already")
+		return v1.Coded(http.StatusPreconditionFailed, "nameTaken", "a file of this name exists already")
 	}
 
 	if req.Encoding == "" {
@@ -175,7 +175,7 @@ func (h handlers) filePut(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if len(data) > editMax {
-		return v1.Errorf(http.StatusRequestEntityTooLarge, "this text is too big for the editor")
+		return v1.Coded(http.StatusRequestEntityTooLarge, "tooBigToEdit", "this text is too big for the editor")
 	}
 	if err := writeFile(loc.Real, data, info); err != nil {
 		return err
@@ -207,7 +207,7 @@ func writeFile(real string, data []byte, old os.FileInfo) error {
 	f, err := os.OpenFile(part, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o666)
 	if err != nil {
 		if errors.Is(err, fs.ErrExist) {
-			return v1.Errorf(http.StatusConflict, "this file is being written right now")
+			return v1.Coded(http.StatusConflict, "beingWritten", "this file is being written right now")
 		}
 		return err
 	}
@@ -271,7 +271,7 @@ func encodeText(text, encoding string) ([]byte, error) {
 	case "windows-1252":
 		out, err := charmap.Windows1252.NewEncoder().Bytes([]byte(text))
 		if err != nil {
-			return nil, v1.Errorf(http.StatusUnprocessableEntity, "the text holds characters Windows-1252 cannot store, save it as UTF-8 instead")
+			return nil, v1.Coded(http.StatusUnprocessableEntity, "notWindows1252", "the text holds characters Windows-1252 cannot store, save it as UTF-8 instead")
 		}
 		return out, nil
 	}

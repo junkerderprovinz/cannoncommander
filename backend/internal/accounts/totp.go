@@ -113,7 +113,7 @@ func totpUser(r *http.Request) (users.User, error) {
 		return users.User{}, err
 	}
 	if u.LoginMethod != users.LoginMethodPassword {
-		return users.User{}, v1.Errorf(http.StatusConflict, "two factor login comes with the password, and you sign in through "+string(u.LoginMethod))
+		return users.User{}, v1.Coded(http.StatusConflict, "totpElsewhere", "two factor login comes with the password, and you sign in through "+string(u.LoginMethod)).With("method", string(u.LoginMethod))
 	}
 	return u, nil
 }
@@ -138,7 +138,7 @@ func (h handlers) postTotp(w http.ResponseWriter, r *http.Request) error {
 
 func (h handlers) startTotp(w http.ResponseWriter, r *http.Request, u *users.User) error {
 	if u.TOTPSecret != "" {
-		return v1.Errorf(http.StatusConflict, "two factor login is on already")
+		return v1.Coded(http.StatusConflict, "totpOn", "two factor login is on already")
 	}
 	key, err := auth.NewTotpKey(u.Username)
 	if err != nil {
@@ -154,19 +154,19 @@ func (h handlers) startTotp(w http.ResponseWriter, r *http.Request, u *users.Use
 
 func (h handlers) confirmTotp(w http.ResponseWriter, r *http.Request, u *users.User, code string) error {
 	if u.TOTPSecret != "" {
-		return v1.Errorf(http.StatusConflict, "two factor login is on already")
+		return v1.Coded(http.StatusConflict, "totpOn", "two factor login is on already")
 	}
 	secret, ok := h.svc.totp.waiting(u.ID)
 	if !ok {
-		return v1.Errorf(http.StatusConflict, "the setup ran out, please start it again")
+		return v1.Coded(http.StatusConflict, "setupExpired", "the setup ran out, please start it again")
 	}
 	key := idOf(u)
 	if h.svc.factorTries.blocked(key) {
-		return v1.Errorf(http.StatusTooManyRequests, "too many wrong codes, wait a few minutes")
+		return v1.Coded(http.StatusTooManyRequests, "tooManyTries", "too many wrong codes, wait a few minutes")
 	}
 	if !h.svc.totp.take(u.ID, secret, code) {
 		h.svc.factorTries.fail(key)
-		return v1.Errorf(http.StatusBadRequest, "the code does not match. Is the clock on the phone right?")
+		return v1.Coded(http.StatusBadRequest, "codeMismatch", "the code does not match. Is the clock on the phone right?")
 	}
 	h.svc.factorTries.clear(key)
 	stored, nonce, err := auth.SealTotpSecret(secret)
@@ -200,11 +200,11 @@ func (h handlers) renewRecovery(w http.ResponseWriter, r *http.Request, u *users
 // recovery code is used up by it.
 func (h handlers) secondFactor(u *users.User, code string) error {
 	if u.TOTPSecret == "" {
-		return v1.Errorf(http.StatusConflict, "two factor login is off")
+		return v1.Coded(http.StatusConflict, "totpOff", "two factor login is off")
 	}
 	key := idOf(u)
 	if h.svc.factorTries.blocked(key) {
-		return v1.Errorf(http.StatusTooManyRequests, "too many wrong codes, wait a few minutes")
+		return v1.Coded(http.StatusTooManyRequests, "tooManyTries", "too many wrong codes, wait a few minutes")
 	}
 	secret, err := auth.OpenTotpSecret(u.TOTPSecret, u.TOTPNonce)
 	if err != nil {
@@ -212,7 +212,7 @@ func (h handlers) secondFactor(u *users.User, code string) error {
 	}
 	if !h.svc.totp.take(u.ID, secret, code) && !h.svc.recovery.Redeem(u.ID, code) {
 		h.svc.factorTries.fail(key)
-		return v1.Errorf(http.StatusBadRequest, "this code does not work, take a fresh one from the app or a recovery code")
+		return v1.Coded(http.StatusBadRequest, "totpCodeWrong", "this code does not work, take a fresh one from the app or a recovery code")
 	}
 	h.svc.factorTries.clear(key)
 	return nil
@@ -228,7 +228,7 @@ func (h handlers) disableTotp(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if settings.Config.Auth.Methods.PasswordAuth.EnforcedOtp {
-		return v1.Errorf(http.StatusConflict, "this server asks everyone for two factor login")
+		return v1.Coded(http.StatusConflict, "totpRequired", "this server asks everyone for two factor login")
 	}
 	if err := h.secondFactor(&u, in.Code); err != nil {
 		return err

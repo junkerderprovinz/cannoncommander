@@ -75,11 +75,11 @@ func (h handlers) group(ctx context.Context, name string) (Group, error) {
 func checkGroupName(name string) error {
 	switch {
 	case name == "":
-		return v1.Errorf(http.StatusBadRequest, "give the group a name")
+		return v1.Coded(http.StatusBadRequest, "groupNameMissing", "give the group a name")
 	case !groupName.MatchString(name):
-		return v1.Errorf(http.StatusBadRequest, "only lowercase letters, digits, _ and - please")
+		return v1.Coded(http.StatusBadRequest, "lowercaseOnly", "only lowercase letters, digits, _ and - please")
 	case state.GroupExists(name):
-		return v1.Errorf(http.StatusConflict, "this group exists already")
+		return v1.Coded(http.StatusConflict, "groupExists", "this group exists already")
 	}
 	return nil
 }
@@ -89,7 +89,7 @@ func checkMembers(members []string) ([]string, error) {
 	out := []string{}
 	for _, m := range members {
 		if _, err := state.GetUserByUsername(m); err != nil {
-			return nil, v1.Errorf(http.StatusBadRequest, "there is no user "+m)
+			return nil, v1.Coded(http.StatusBadRequest, "noUserNamed", "there is no user "+m).With("name", m)
 		}
 		if !slices.Contains(out, m) {
 			out = append(out, m)
@@ -132,7 +132,7 @@ func (h handlers) updateGroup(w http.ResponseWriter, r *http.Request) error {
 	}
 	name := r.PathValue("name")
 	if !state.GroupExists(name) {
-		return v1.Errorf(http.StatusNotFound, "there is no such group")
+		return v1.Coded(http.StatusNotFound, "noGroup", "there is no such group")
 	}
 	members := state.GetGroupMembers()[name]
 	if in.Members != nil {
@@ -190,7 +190,7 @@ func (h handlers) dropGroup(ctx context.Context, name string) error {
 func (h handlers) deleteGroup(w http.ResponseWriter, r *http.Request) error {
 	name := r.PathValue("name")
 	if !state.GroupExists(name) {
-		return v1.Errorf(http.StatusNotFound, "there is no such group")
+		return v1.Coded(http.StatusNotFound, "noGroup", "there is no such group")
 	}
 	if err := h.dropGroup(r.Context(), name); err != nil {
 		return err

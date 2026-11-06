@@ -193,9 +193,9 @@ func Problem(err error) error {
 	var unsafe *UnsafeError
 	switch {
 	case errors.Is(err, ErrPassword):
-		return v1.Errorf(http.StatusPreconditionRequired, "the archive needs the right password")
+		return v1.Coded(http.StatusPreconditionRequired, "archivePassword", "the archive needs the right password")
 	case errors.Is(err, ErrUnsupported):
-		return v1.Errorf(http.StatusUnprocessableEntity, "the archive cannot be read")
+		return v1.Coded(http.StatusUnprocessableEntity, "archiveUnreadable", "the archive cannot be read")
 	case errors.As(err, &unsafe):
 		return v1.Errorf(http.StatusUnprocessableEntity, unsafe.Error())
 	}

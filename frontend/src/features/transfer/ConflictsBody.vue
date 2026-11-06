@@ -7,7 +7,7 @@ import type { Choice, ConflictSide, JobConflict } from '@/api/ops';
 import { fmtSize, fmtTime } from '@/core/format';
 import { glyphOf, glyphComponent } from '@/core/glyphs';
 import { split } from '@/files/paths';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { CHOICES, pick } from './rules';
 
 const props = defineProps<{ conflicts: JobConflict[]; dest: string; st: { choice: Record<string, Choice>; all: Choice | null } }>();
@@ -26,12 +26,12 @@ function one(c: JobConflict, v: Choice) {
 }
 const nameOf = (c: JobConflict) => split(c.key).pop() || c.key;
 const newer = (a: ConflictSide, b: ConflictSide) => Date.parse(a.mtime) > Date.parse(b.mtime) + 60000;
-const facts = (n: ConflictSide) => (n.dir ? t('transfer.entries', { n: n.entries ?? 0 }) + ', ' : '') + (fmtSize(n.size) || '0 B');
+const facts = (n: ConflictSide) => (n.dir ? plural(n.entries ?? 0, 'transfer.entries') + ', ' : '') + (fmtSize(n.size) || '0 B');
 </script>
 
 <template>
   <SubCard class="cf-all"><FieldRow :label="t('transfer.forAll')" :hint="t('transfer.forAllTip')"><Selector id="cf-all" v-model="all" :items="segItems(ALL)" size="sm" activation="manual" inline button-height pairs-on-phone @press="forAll" /></FieldRow></SubCard>
-  <SubCard :title="conflicts.length === 1 ? t('transfer.existsOne', { dest: split(dest).pop() || t('jobs.server') }) : t('transfer.existsMany', { n: conflicts.length, dest: split(dest).pop() || t('jobs.server') })">
+  <SubCard :title="plural(conflicts.length, 'transfer.exists', { dest: split(dest).pop() || t('jobs.server') })">
     <div class="cf-list">
       <div v-for="(c, i) in conflicts" :key="c.key" class="cf-row" :data-i="i">
         <div class="cf-name"><GlyphTile :glyph="glyphComponent(c.source.dir ? 'IconFolder' : glyphOf({ name: nameOf(c) }))" /><b>{{ c.key }}</b></div>

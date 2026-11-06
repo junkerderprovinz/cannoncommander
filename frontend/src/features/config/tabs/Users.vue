@@ -6,7 +6,7 @@ import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { useUser } from '@/stores/user';
-import { ago, attempt, c, confirmWin, fail } from '@/features/config/shared';
+import { ago, attempt, c, cn, confirmWin, fail } from '@/features/config/shared';
 import { roleName } from '../roles';
 import GroupWin from '../wins/GroupWin.vue';
 import UserWin from '../wins/UserWin.vue';
@@ -31,7 +31,7 @@ const editGroup = (g: Group | null) => win({ title: g ? c('users.editGroup') : c
 function removeUser(u: User) {
   if (u.role === 'admin' && admins().length === 1) return fail(c('users.lastAdmin'));
   const n = shares.value.filter((s) => s.owner === u.name).length;
-  const first = n ? c('users.removeTextShares', { full: u.full, shares: n === 1 ? c('users.theShare') : c('users.theShares', { n }), name: u.name }) : c('users.removeText', { full: u.full });
+  const first = n ? c('users.removeTextShares', { full: u.full, shares: cn(n, 'users.theShares'), name: u.name }) : c('users.removeText', { full: u.full });
   confirmWin({
     title: c('users.remove'), verb: c('remove'), glyph: 'IconTrash', text: [first, c('users.filesStay')],
     run: async () => { if (!(await attempt(admin.deleteUser(u.name)))) return; await load(); toast(c('removed', { name: u.full })); },
@@ -69,7 +69,7 @@ function removeGroup(g: Group) {
     <div v-if="groups.length" class="a-list">
       <ListRow v-for="g in groups" :key="g.name" :name="g.name" :tip="g.note || null" data-gopen @click="editGroup(g)">
         <template #tile><G n="IconAccounts" /></template>
-        <template #badges><Pill>{{ g.members.length === 1 ? c('users.oneMember') : c('users.members', { n: g.members.length }) }}</Pill></template>
+        <template #badges><Pill>{{ cn(g.members.length, 'users.members') }}</Pill></template>
         <template #actions>
           <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" @click="editGroup(g)" />
           <IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removeGroup(g)" />

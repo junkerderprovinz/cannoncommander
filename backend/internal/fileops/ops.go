@@ -28,7 +28,7 @@ const (
 	StepTouch  = "touch"
 )
 
-var errExists = v1.Errorf(http.StatusConflict, "an entry with this name exists already")
+var errExists = v1.Coded(http.StatusConflict, "nameTaken", "an entry with this name exists already")
 
 // Changed is the answer of the operations that create or rename.
 type Changed struct {
@@ -131,7 +131,7 @@ func (s *Service) rename(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if !ccfs.ValidName(req.Name) {
-		return v1.Errorf(http.StatusBadRequest, "invalid name")
+		return v1.Coded(http.StatusBadRequest, "badName", "invalid name")
 	}
 	from, err := s.existing(u, req.Path, ccfs.Modify)
 	if err != nil {
@@ -183,7 +183,7 @@ func (s *Service) existing(u *users.User, p string, perm ccfs.Perm) (ccfs.Locati
 		return loc, err
 	}
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" {
-		return loc, v1.Errorf(http.StatusBadRequest, "only entries inside a source can be changed")
+		return loc, v1.Coded(http.StatusBadRequest, "outsideSources", "only entries inside a source can be changed")
 	}
 	if _, err := os.Lstat(loc.Real); err != nil {
 		return loc, err
@@ -198,7 +198,7 @@ func (s *Service) newEntry(u *users.User, p string) (ccfs.Location, error) {
 		return loc, err
 	}
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) {
-		return loc, v1.Errorf(http.StatusBadRequest, "invalid path")
+		return loc, v1.Coded(http.StatusBadRequest, "badPath", "invalid path")
 	}
 	parent, err := s.fs.Resolve(path.Dir(loc.Path))
 	if err != nil {

@@ -26,7 +26,7 @@ import { session } from '@/signin';
 import { auth } from '@/api/auth';
 import { topFolders } from '@/files/frequent';
 import { type Clip, useClipboard } from '@/stores/clipboard';
-import { byName, type Colour, type Label, type Tag, useLabels } from '@/stores/labels';
+import { type Colour, type Label, type Tag, useLabels } from '@/stores/labels';
 import type { RowMark } from '@/stores/panels';
 import { COLUMNS, Columns, DEFAULT_COLUMNS } from '@/files/columns';
 import { join, parent, split } from '@/files/paths';
@@ -35,6 +35,7 @@ import { useListing } from '@/stores/listing';
 import { newTab, usePanels } from '@/stores/panels';
 import { useTrash } from '@/stores/trash';
 import { useUser } from '@/stores/user';
+import { byText } from '@/i18n';
 
 // The moment the prototype's made-up data and the fixture on disk were made; the parity runner sets the page clock to it.
 const NOW = Date.UTC(2026, 10, 2, 9, 30);
@@ -262,6 +263,6 @@ export async function installShim() {
   // The colours and tags as the server keeps them right now, in the prototype's shapes.
   const labelsNow = () => getNow<{ colours: Colour[]; tags: Tag[] }>('/labels') ?? { colours: [], tags: [] };
   Object.defineProperty(window, 'LABEL_COLORS', { configurable: true, get: () => labelsNow().colours.map((c) => [c.id, labels.colourName(c), c.hex]) });
-  Object.defineProperty(window, 'Labels', { configurable: true, value: { tags: () => labelsNow().tags.map((x) => x.name).sort(byName) } });
+  Object.defineProperty(window, 'Labels', { configurable: true, value: { tags: () => labelsNow().tags.map((x) => x.name).sort(byText) } });
   document.documentElement.dataset.e2e = 'ready';
 }

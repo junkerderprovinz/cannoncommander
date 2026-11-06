@@ -2,7 +2,7 @@
 import { IconButton } from '@glimstone/vue';
 import { computed } from 'vue';
 import { G, glyphComponent } from '@/core/glyphs';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 import { useSearch } from '@/stores/search';
 
@@ -17,5 +17,5 @@ function leave() {
 </script>
 
 <template>
-  <div v-if="s" class="smart-bar"><G n="IconFilter" /><span>{{ t('search.bar') }} <b>{{ s.name }}</b>{{ t('search.barRest', { n: F.entries(i).length, path: s.query.in }) }}</span><IconButton :tip="t('search.barClose')" :glyph="glyphComponent('IconClose')" data-smart-close @click="leave" /></div>
+  <div v-if="s" class="smart-bar"><G n="IconFilter" /><span>{{ t('search.bar') }} <b>{{ s.name }}</b>{{ plural(F.entries(i).length, 'search.barRest', { path: s.query.in }) }}</span><IconButton :tip="t('search.barClose')" :glyph="glyphComponent('IconClose')" data-smart-close @click="leave" /></div>
 </template>

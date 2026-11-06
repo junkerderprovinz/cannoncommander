@@ -31,6 +31,8 @@ export interface Job {
   waitForParity: boolean;
   failedItems: number;
   error?: string;
+  errorCode?: string;
+  errorParams?: Record<string, unknown>;
   conflict?: JobConflict;
   undo?: string;
   result?: unknown;

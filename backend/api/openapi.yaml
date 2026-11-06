@@ -5796,6 +5796,13 @@ components:
           type: string
         instance:
           type: string
+        code:
+          type: string
+          description: Names the sentence in detail, so an interface can say it in its own language.
+        params:
+          type: object
+          additionalProperties: true
+          description: The values the sentence of code is filled with.
     Event:
       type: object
       description: |
@@ -6403,6 +6410,12 @@ components:
           type: integer
         error:
           type: string
+        errorCode:
+          type: string
+          description: Names the sentence in error the way a problem's code does.
+        errorParams:
+          type: object
+          additionalProperties: true
         conflict:
           $ref: "#/components/schemas/JobConflict"
         undo:
@@ -6452,6 +6465,12 @@ components:
           format: int64
         error:
           type: string
+        errorCode:
+          type: string
+          description: Names the sentence in error the way a problem's code does.
+        errorParams:
+          type: object
+          additionalProperties: true
     JobConflict:
       type: object
       description: A name that exists at the target already. Also the data of job.conflict, together with the job id.

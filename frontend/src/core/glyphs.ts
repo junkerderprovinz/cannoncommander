@@ -13,9 +13,11 @@ export const hasGlyph = (name: string) => name in GLYPHS;
 export const glyph = (name: string): Glyph => GLYPHS[name] ?? GLYPHS.IconFile!;
 
 // Some glyphs leave their paths unfilled and rely on the svg's own fill, as GlimStone's components set it.
+// Glyphs that point along the line of text, which a right to left page mirrors.
+const ALONG = new Set(['IconBack', 'IconForward', 'IconMove']);
 export const G: FunctionalComponent<{ n: string }> = ({ n }) => {
   const d = glyph(n);
-  return h('svg', { viewBox: d.viewBox, fill: 'currentColor', 'aria-hidden': 'true', innerHTML: d.svg });
+  return h('svg', { viewBox: d.viewBox, fill: 'currentColor', 'aria-hidden': 'true', class: ALONG.has(n) ? 'glyph-flip' : undefined, innerHTML: d.svg });
 };
 G.props = ['n'];
 

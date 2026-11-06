@@ -6,7 +6,7 @@ import { action } from '@/core/actions';
 import { addTo } from '@/core/extend';
 import { menu, type MenuEntry, type MenuItem } from '@/core/menu';
 import { win } from '@/core/windows';
-import { t, tl } from '@/i18n';
+import { plural, t, tl } from '@/i18n';
 import { type Labelled, useLabels } from '@/stores/labels';
 import { usePanels } from '@/stores/panels';
 import { addRowMenuItems } from '@/files/menus';
@@ -18,7 +18,7 @@ import TagsWin from './TagsWin.vue';
 export const editColours = () => win({ title: t('labels.colours.title'), body: ColoursWin });
 export const editTags = () => win({ title: t('labels.tags'), body: TagsWin });
 export const editItemTags = (sel: Labelled[], folder: string) => win({
-  title: sel.length === 1 ? t('labels.tagsFor', { name: sel[0]!.name }) : t('labels.tagsForN', { n: sel.length }),
+  title: sel.length === 1 ? t('labels.tagsFor', { name: sel[0]!.name }) : plural(sel.length, 'labels.tagsForN'),
   body: TagEditWin, props: { sel, folder },
 });
 

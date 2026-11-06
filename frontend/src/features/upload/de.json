@@ -11,8 +11,7 @@
   "clear": "Fertige entfernen",
   "progress": "{done} von {all} fertig",
   "bytes": "{done} von {total}",
-  "one": "1 Datei",
-  "many": "{n} Dateien",
+  "files": { "one": "1 Datei", "other": "{n} Dateien" },
   "nothing": "Noch nichts in der Warteschlange",
   "pause": "Anhalten",
   "resume": "Fortsetzen",
@@ -26,7 +25,7 @@
   "go": "Hingehen",
   "failed": {
     "one": "Eine Datei ließ sich nicht hochladen. Wähle sie noch einmal, dann geht es beim letzten Stück weiter.",
-    "many": "{n} Dateien ließen sich nicht hochladen. Wähle sie noch einmal, dann geht es beim letzten Stück weiter."
+    "other": "{n} Dateien ließen sich nicht hochladen. Wähle sie noch einmal, dann geht es beim letzten Stück weiter."
   },
   "oneFailed": "{name} ließ sich nicht hochladen: {error}"
 }

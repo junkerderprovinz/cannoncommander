@@ -7,7 +7,7 @@ import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { useUser } from '@/stores/user';
-import { ago, c } from '@/features/config/shared';
+import { ago, c, cn } from '@/features/config/shared';
 import { copyText } from '@/ui/kit';
 import ShareWin from '../wins/ShareWin.vue';
 
@@ -40,8 +40,8 @@ const edit = (s: Share) => win({ title: c('shares.share'), body: ShareWin, props
           <Pill v-else-if="left(s) == null">{{ c('shares.noExpiry') }}</Pill>
           <Pill v-else :tone="left(s)! < 3 * DAY ? 'warn' : 'neutral'">{{ ago(s.expires!) }}</Pill>
           <Pill v-if="s.password">{{ c('shares.password') }}</Pill>
-          <Pill v-if="s.limit" class="glim-num">{{ c('shares.limit', { n: s.limit }) }}</Pill>
-          <Pill class="glim-num">{{ s.views === 1 ? c('shares.oneView') : c('shares.views', { n: s.views }) }}</Pill>
+          <Pill v-if="s.limit" class="glim-num">{{ cn(s.limit, 'shares.limit') }}</Pill>
+          <Pill class="glim-num">{{ cn(s.views, 'shares.views') }}</Pill>
         </template>
         <template #actions>
           <IconButton :glyph="glyphComponent('IconCopy')" :tip="c('shares.copyLink')" @click="copyText(s.url)" />

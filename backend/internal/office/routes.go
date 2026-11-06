@@ -123,7 +123,7 @@ func (s *service) config(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if o.Kind == system.OfficeNone || o.URL == "" {
-		return v1.Errorf(http.StatusConflict, "no office server is set up")
+		return v1.Coded(http.StatusConflict, "noOffice", "no office server is set up")
 	}
 	u := v1.UserFrom(r)
 	loc, info, err := s.file(u, r.URL.Query().Get("path"), ccfs.Download)

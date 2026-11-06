@@ -9,7 +9,7 @@ import { toast } from '@/core/toast';
 import { view } from '@/core/views';
 import { cancelBtn, closeBtn, win } from '@/core/windows';
 import { inArchive, join, split } from '@/files/paths';
-import { kindLabels } from '@/features/jobs/label';
+import { jobError, kindLabels } from '@/features/jobs/label';
 import { t, tl } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
 import { usePanels } from '@/stores/panels';
@@ -44,7 +44,7 @@ function sumsWindow() {
         if (j.state === 'done') {
           st.result = j.result as ChecksumResult;
           st.rows = st.result.files.map((f) => ({ name: f.name, size: 0, state: 'done', hash: f.hash }));
-        } else if (j.state === 'failed') toast(t('ui.failed', { label: t('checksum.make'), error: j.error || '' }), 'fault');
+        } else if (j.state === 'failed') toast(t('ui.failed', { label: t('checksum.make'), error: jobError(j) }), 'fault');
       });
     } catch (e) {
       toast((e as Error).message, 'warn');
@@ -113,7 +113,7 @@ function verifyWindow() {
       jobs.whenDone(job, (j: Job) => {
         stop();
         if (n !== asked) return;
-        if (j.state !== 'done') { toast(t('ui.failed', { label: t('checksum.verify'), error: j.error || '' }), 'fault'); return; }
+        if (j.state !== 'done') { toast(t('ui.failed', { label: t('checksum.verify'), error: jobError(j) }), 'fault'); return; }
         (j.result as VerifyResult).lines.forEach((l, i) => Object.assign(st.rows![i]!, { state: l.state, algo: l.algo, found: l.state !== 'missing' && l.state !== 'bad' }));
         st.seen = st.rows!.length;
       });
@@ -145,7 +145,7 @@ function splitWindow() {
       void startJob('split', { path: join(k.at || dir, k.name), dest, partSize: partSize(st), sum: st.sum }, (j) => {
         const r = j.result as SplitResult;
         void reveal(r.first);
-        doneToast(t('checksum.splitDone', { n: r.parts, dest }), r.first);
+        doneToast(plural(r.parts, 'checksum.splitDone', { dest }), r.first);
       });
       return true;
     } }],

@@ -96,7 +96,7 @@ function finish(job: Job, items: UpItem[]) {
   Object.assign(job, { state: failed && !n ? 'failed' : 'done', rate: 0, left: null, failedItems: failed, finishedAt: iso(now()) });
   useJobs().localChanged(job, was);
   const path = items[0]?.path || '/';
-  if (n) toast(t('upload.done', { what: n === 1 ? t('upload.one') : t('upload.many', { n }), path }), 'ok', Up.shown ? undefined : { label: t('upload.go'), run: () => { usePanels().go(path); } });
+  if (n) toast(t('upload.done', { what: plural(n, 'upload.files'), path }), 'ok', Up.shown ? undefined : { label: t('upload.go'), run: () => { usePanels().go(path); } });
   if (failed) toast(plural(failed, 'upload.failed'), 'fault');
 }
 

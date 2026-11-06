@@ -76,7 +76,7 @@ func (d *discovery) action(ctx context.Context, client *http.Client, server, ext
 			return src, nil
 		}
 	}
-	return "", v1.Errorf(http.StatusBadRequest, "Collabora does not open ."+ext+" files")
+	return "", v1.Coded(http.StatusBadRequest, "officeCannotOpen", "Collabora does not open ."+ext+" files").With("ext", ext)
 }
 
 func fetchDiscovery(ctx context.Context, client *http.Client, server string) (map[string]string, error) {

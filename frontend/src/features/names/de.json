@@ -8,15 +8,13 @@
   "taken": "Diesen Namen gibt es hier schon",
   "folderWithSel": "Neuer Ordner mit Auswahl",
   "onlyHere": "Das geht nur mit Dateien aus diesem Ordner",
-  "oneGoesIn": "1 Objekt kommt gleich hinein.",
-  "manyGoIn": "{n} Objekte kommen gleich hinein.",
-  "oneObject": "1 Objekt",
-  "manyObjects": "{n} Objekten",
+  "goIn": { "one": "1 Objekt kommt gleich hinein.", "other": "{n} Objekte kommen gleich hinein." },
+  "objects": { "one": "1 Objekt", "other": "{n} Objekten" },
   "folderMade": "„{name}“ mit {what} angelegt",
   "notMoved": "Die Auswahl kam nicht in den neuen Ordner",
   "duplicate": "Hier duplizieren",
   "copyWord": "Kopie",
   "made": "„{name}“ angelegt",
-  "copies": "{n} Kopien angelegt",
+  "copies": { "one": "{n} Kopie angelegt", "other": "{n} Kopien angelegt" },
   "notCopied": "Das Duplizieren hat nicht geklappt"
 }

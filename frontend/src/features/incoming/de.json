@@ -1,8 +1,7 @@
 {
   "title": "Geteilte Dateien hochladen",
-  "one": "1 Datei",
-  "many": "{n} Dateien",
-  "more": "und {n} weitere",
+  "files": { "one": "1 Datei", "other": "{n} Dateien" },
+  "more": { "one": "und {n} weitere", "other": "und {n} weitere" },
   "target": "Ziel",
   "targetTip": "In diesen Ordner kommen die Dateien. Gleichnamige Dateien fragt CannonCommander vorher nach.",
   "upload": "Hochladen",

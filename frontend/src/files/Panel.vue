@@ -9,7 +9,7 @@ import { G, glyphComponent } from '@/core/glyphs';
 import { menu } from '@/core/menu';
 import { prefs } from '@/core/prefs';
 import { Render } from '@/core/Render';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { type Tab, usePanels } from '@/stores/panels';
 import FileList from './FileList.vue';
@@ -81,7 +81,7 @@ function toggleDeep() {
 const marked = computed(() => list.value.filter((k) => !k.up && tab.value.marked.has(k.name)));
 const count = computed(() => {
   const n = list.value.filter((k) => !k.up).length, tb = tab.value;
-  return tb.filter || tb.smart ? t('files.hits', { n }) : tb.flat ? t('files.flatCount', { n }) : n === 1 ? t('files.one') : t('files.many', { n });
+  return plural(n, tb.filter || tb.smart ? 'files.hits' : tb.flat ? 'files.flatCount' : 'files.objects');
 });
 </script>
 

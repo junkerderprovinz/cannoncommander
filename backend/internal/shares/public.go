@@ -31,9 +31,9 @@ import (
 const maxOpenUploads = 20
 
 var (
-	errLocked    = v1.Errorf(http.StatusUnauthorized, "this link needs its password")
-	errNoUploads = v1.Errorf(http.StatusForbidden, "this link takes no uploads")
-	errNotHere   = v1.Errorf(http.StatusNotFound, "there is nothing at this place in the link")
+	errLocked    = v1.Coded(http.StatusUnauthorized, "linkLocked", "this link needs its password")
+	errNoUploads = v1.Coded(http.StatusForbidden, "linkNoUploads", "this link takes no uploads")
+	errNotHere   = v1.Coded(http.StatusNotFound, "linkNothingHere", "there is nothing at this place in the link")
 )
 
 // Public is what a visitor learns about a link. A locked link tells only
@@ -106,7 +106,7 @@ func (s *Service) visit(w http.ResponseWriter, r *http.Request) (*visit, error) 
 		return nil, tooMany(w, wait)
 	}
 	var sh *Share
-	var err error = v1.Errorf(http.StatusNotFound, "there is no such link")
+	var err error = v1.Coded(http.StatusNotFound, "noLink", "there is no such link")
 	if slugPattern.MatchString(slug) {
 		sh, err = s.one(r.Context(), `WHERE slug = ?`, slug)
 	}
@@ -146,7 +146,7 @@ func (s *Service) open(w http.ResponseWriter, r *http.Request) (*visit, error) {
 
 func tooMany(w http.ResponseWriter, wait time.Duration) error {
 	w.Header().Set("Retry-After", strconv.Itoa(int(wait.Seconds())+1))
-	return v1.Errorf(http.StatusTooManyRequests, "too many tries, please wait a few minutes")
+	return v1.Coded(http.StatusTooManyRequests, "tooManyTries", "too many tries, please wait a few minutes")
 }
 
 func (s *Service) publicGet(w http.ResponseWriter, r *http.Request) error {
@@ -230,7 +230,7 @@ func (s *Service) publicUnlock(w http.ResponseWriter, r *http.Request) error {
 		}
 		if utils.CheckPwd(req.Password, sh.passwordHash) != nil {
 			s.guard.fail(key)
-			return v1.Errorf(http.StatusForbidden, "this password is not right")
+			return v1.Coded(http.StatusForbidden, "linkPasswordWrong", "this password is not right")
 		}
 		s.guard.forget(key)
 	}
@@ -424,7 +424,7 @@ func (s *Service) publicUpload(w http.ResponseWriter, r *http.Request) error {
 	parts := strings.Split(req.Name, "/")
 	for _, p := range parts {
 		if !ccfs.ValidName(p) || strings.HasPrefix(p, ".") {
-			return v1.Errorf(http.StatusBadRequest, "this file name is not allowed here")
+			return v1.Coded(http.StatusBadRequest, "linkBadName", "this file name is not allowed here")
 		}
 	}
 	sp, err := s.locate(v, req.Path)
@@ -449,7 +449,7 @@ func (s *Service) publicUpload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if n >= maxOpenUploads {
-		return v1.Errorf(http.StatusTooManyRequests, "many uploads are running through this link, please wait for some of them to finish")
+		return v1.Coded(http.StatusTooManyRequests, "linkBusy", "many uploads are running through this link, please wait for some of them to finish")
 	}
 	// The body above can take as long as the visitor likes, so the first look
 	// at the link may be old by now. Looking after the pending uploads means
@@ -578,11 +578,11 @@ func (s *Service) locate(v *visit, p string) (spot, error) {
 		p = "/" + p
 	}
 	if strings.Contains(p, ccfs.ArchiveSep) {
-		return spot{}, v1.Errorf(http.StatusBadRequest, "invalid path")
+		return spot{}, v1.Coded(http.StatusBadRequest, "badPath", "invalid path")
 	}
 	clean, err := ccfs.Clean(p)
 	if err != nil {
-		return spot{}, v1.Errorf(http.StatusBadRequest, "invalid path")
+		return spot{}, v1.Coded(http.StatusBadRequest, "badPath", "invalid path")
 	}
 	sh := v.sh
 	sp := spot{path: clean, name: path.Base(clean)}

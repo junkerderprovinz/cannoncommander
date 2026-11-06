@@ -7,7 +7,7 @@ import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { Columns } from '@/files/columns';
-import { t, tl } from '@/i18n';
+import { plural, t, tl } from '@/i18n';
 import { newTab, usePanels } from '@/stores/panels';
 import ProfilesBody from './ProfilesBody.vue';
 
@@ -19,7 +19,7 @@ export default function setup() {
   let saved: { path: string; names: string[] } | null = null;
   action('saveSel', { label: tl('profiles.saveSel'), g: 'IconPin', needs: 'sel', run: () => {
     saved = { path: F.T().path, names: F.sel().map((k) => k.name) };
-    toast(t('profiles.selSaved', { n: saved.names.length }));
+    toast(plural(saved.names.length, 'profiles.selSaved'));
   } });
   action('restoreSel', { label: tl('profiles.restoreSel'), g: 'IconRestore', when: () => !!saved, run: async () => {
     const s = saved!;

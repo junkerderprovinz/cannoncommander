@@ -6,7 +6,7 @@ import { compareDirs, syncWindow } from './sync';
 import './compare.css';
 
 export default function setup() {
-  action('compareDirs', { label: tl('compare.title'), g: 'IconCompare', key: 'Strg+Umschalt+C', needs: 'dual', run: compareDirs });
+  action('compareDirs', { label: tl('compare.title'), g: 'IconCompare', key: 'Ctrl+Shift+c', needs: 'dual', run: compareDirs });
   action('sync', { label: tl('compare.sync'), g: 'IconSync', needs: 'dual', run: syncWindow });
   kindLabels.sync = (j) => t('compare.job', { name: j.name, to: placeName(j.dest) });
 }

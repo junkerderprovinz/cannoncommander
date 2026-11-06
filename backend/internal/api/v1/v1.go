@@ -126,7 +126,7 @@ func (r *Router) wrap(op *Operation) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		if op.Access != AccessPublic {
 			if r.auth == nil {
-				WriteError(w, req, Errorf(http.StatusUnauthorized, "login required"))
+				WriteError(w, req, Coded(http.StatusUnauthorized, "signInNeeded", "login required"))
 				return
 			}
 			u, err := r.auth(w, req)
@@ -135,7 +135,7 @@ func (r *Router) wrap(op *Operation) http.Handler {
 				return
 			}
 			if op.Access == AccessAdmin && !u.Permissions.Admin {
-				WriteError(w, req, Errorf(http.StatusForbidden, "admins only"))
+				WriteError(w, req, Coded(http.StatusForbidden, "adminsOnly", "admins only"))
 				return
 			}
 			req = req.WithContext(context.WithValue(req.Context(), userKey{}, u))

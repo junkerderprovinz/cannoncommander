@@ -3,7 +3,7 @@
 import { fmtCount, fmtListDate, fmtSize } from '@/core/format';
 import { ext } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
-import { t } from '@/i18n';
+import { byName, t } from '@/i18n';
 import { shell } from '@/shell/state';
 import type { Comparer, Entry, MetaValue } from './entries';
 import { split } from './paths';
@@ -193,7 +193,7 @@ export const Columns = {
     const c = COLUMNS.find((x) => x.id === sort || x.sort === sort);
     if (!c || ['name', 'size', 'time', 'type'].includes(sort)) return null;
     if (c.num) return (a, b) => c.num!(a) - c.num!(b);
-    return (a, b) => String(c.value(a, '')).localeCompare(String(c.value(b, '')), 'de', { numeric: true });
+    return (a, b) => byName(String(c.value(a, '')), String(c.value(b, '')));
   },
   // The fs/meta columns the panel has to ask for: the visible ones and the one it sorts by.
   metaWanted: (sort: string, extra: string[] = []) => [...new Set([...Columns.visible(), sort, ...extra])].filter((id) => COL[id]?.meta),

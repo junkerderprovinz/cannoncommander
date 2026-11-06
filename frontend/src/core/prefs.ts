@@ -3,6 +3,7 @@ import { ACCENTS, applyAccent, applyDisco, applyMotion, applyRainbow, applyShape
 import { reactive } from 'vue';
 
 export const PREFS_KEY = 'cannoncommander-prefs';
+// An empty language has not been picked yet, and the browser's language stands for it until someone picks one.
 
 export const DEFAULT_PREFS = {
   theme: 'dark', accent: DEFAULT_ACCENT, shape: 'round', motion: 'subtle', quietToasts: false,
@@ -12,7 +13,7 @@ export const DEFAULT_PREFS = {
   speedCap: 0, parityWait: true, notifyDone: false, notifyUnraid: false, notifyAfter: 60,
   columns: ['name', 'size', 'modified'], colWidths: {} as Record<string, number>,
   density: 'medium', showHidden: false, showExt: true, syncBrowse: false, folderSizes: true, foldersFirst: true, liveRefresh: true, dblclick: 'open', fkeys: false, side: true, dual: true,
-  quickview: false, confirmDelete: true, trash: true, trashDays: 30, language: 'de', dateFormat: 'short', startFolder: '/mnt/user/downloads',
+  quickview: false, confirmDelete: true, trash: true, trashDays: 30, language: '', dateFormat: 'short', startFolder: '/mnt/user/downloads',
   folderViews: {} as Record<string, string>, folderGroups: {} as Record<string, string>,
 };
 export type Prefs = typeof DEFAULT_PREFS & Record<string, unknown>;

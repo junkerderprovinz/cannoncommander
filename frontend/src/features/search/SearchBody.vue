@@ -13,7 +13,7 @@ import { fmtDate, fmtSize } from '@/core/format';
 import { glyphComponent, glyphOf } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import type { WinEntry } from '@/core/windows';
-import { t } from '@/i18n';
+import { byName, t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
 import { useSearch } from '@/stores/search';
 import { num, plural, setFoot, segItems, selectOptions } from '@/ui/kit';
@@ -40,7 +40,7 @@ const count = computed(() => {
 });
 
 // Folders first, then names in the order people count, as the server sorts its hits.
-const order = (a: Hit, b: Hit) => Number(b.dir) - Number(a.dir) || a.name.localeCompare(b.name, 'de', { numeric: true });
+const order = (a: Hit, b: Hit) => Number(b.dir) - Number(a.dir) || byName(a.name, b.name);
 
 let stop: AbortController | null = null;
 let textJob: Job | null = null;
@@ -113,7 +113,7 @@ const go = (asTab: boolean) => {
 };
 watch([() => res.value.hits.length, empty, () => res.value.scanned, () => res.value.reading], () => {
   const none = !res.value.hits.length, r = res.value;
-  const start = empty.value ? '' : r.reading ? t('search.reading', { n: num(r.scanned) }) : r.found && !r.unknown.length ? t('search.scanned', { n: num(r.scanned) }) : '';
+  const start = empty.value ? '' : r.reading ? plural(r.scanned, 'search.reading') : r.found && !r.unknown.length ? plural(r.scanned, 'search.scanned') : '';
   setFoot(props.win, start, [
     { label: t('search.asTab'), g: 'IconAdd', disabled: none, run: () => go(true) },
     { label: t('search.openFolder'), g: 'IconFolderOpen', primary: true, disabled: none, run: () => go(false) },
@@ -174,7 +174,7 @@ onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(ti
     <div id="s-list" ref="list" class="bk-list" role="listbox" :aria-label="t('search.hitsLabel')">
       <template v-if="!empty">
         <EmptyState v-if="!res.found" nested :glyph="glyphComponent('IconFolder')" :title="t('search.noFolder')" />
-        <EmptyState v-else-if="res.unknown.length" nested :glyph="glyphComponent('IconInfo')" :title="t('search.unknown', { fields: res.unknown.map((u) => `„${u}:“`).join(', ') })" :hint="t('search.unknownHint')" />
+        <EmptyState v-else-if="res.unknown.length" nested :glyph="glyphComponent('IconInfo')" :title="t('search.unknown', { fields: res.unknown.map((u) => t('search.field', { name: u })).join(', ') })" :hint="t('search.unknownHint')" />
         <template v-else-if="shown.length">
           <div v-for="(h, i) in shown" :key="h.at + '/' + h.name" class="bk-row bk-hit" :class="{ cur: i === cur }" :data-bk-hit="i" role="option" :aria-selected="i === cur" @click="clickHit($event, i)">
             <GlyphTile :glyph="glyphComponent(glyphOf(h))" ground :quiet="!h.dir" /><span class="bk-name">{{ h.name }}</span><span class="bk-path muted mono" :title="h.at || '/'"><bdi>{{ h.at || '/' }}</bdi></span>

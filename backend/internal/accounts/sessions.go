@@ -95,7 +95,7 @@ func Track(db *sql.DB, next v1.Authenticator) v1.Authenticator {
 		if raw, ok := login.APIToken(r); ok {
 			name, _ := users.TokenNameByRaw(u.Tokens, raw)
 			if u.Tokens[name].ReadOnly && !safe(r.Method) {
-				return nil, v1.Errorf(http.StatusForbidden, "this API token may only read")
+				return nil, v1.Coded(http.StatusForbidden, "tokenReadOnly", "this API token may only read")
 			}
 			TokenUsed(r.Context(), db, u, raw)
 			return u, nil
@@ -145,7 +145,7 @@ func safe(method string) bool {
 // API token, so a token can never mint a stronger one or lock its owner out.
 func needSession(r *http.Request) error {
 	if _, ok := login.APIToken(r); ok {
-		return v1.Errorf(http.StatusForbidden, "sign in to change this, an API token cannot")
+		return v1.Coded(http.StatusForbidden, "tokenCannotChange", "sign in to change this, an API token cannot")
 	}
 	return nil
 }
@@ -233,7 +233,7 @@ func (h sessionHandlers) endOne(w http.ResponseWriter, r *http.Request, userID u
 	var hash string
 	err := h.db.QueryRowContext(r.Context(), `SELECT token_hash FROM sessions WHERE id = ? AND user_id = ?`, id, strconv.FormatUint(userID, 10)).Scan(&hash)
 	if errors.Is(err, sql.ErrNoRows) {
-		return v1.Errorf(http.StatusNotFound, "no such session")
+		return v1.Coded(http.StatusNotFound, "noSession", "no such session")
 	}
 	if err != nil {
 		return err

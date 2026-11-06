@@ -6,7 +6,7 @@ import { glyphComponent } from '@/core/glyphs';
 import { winNav } from '@/core/nav';
 import { toast } from '@/core/toast';
 import { closeBtn, type FootButton, type WinEntry } from '@/core/windows';
-import { locale, t } from '@/i18n';
+import { t } from '@/i18n';
 import './texts';
 import './bk.css';
 
@@ -15,9 +15,7 @@ export type Choice<V> = readonly [value: V, label: string, glyph?: string];
 export const segItems = <V extends string | number>(choices: readonly Choice<V>[]): SelectorItem<V>[] => choices.map(([id, label, g]) => ({ id, label, glyph: g ? glyphComponent(g) : undefined }));
 export const selectOptions = <V extends string>(choices: readonly Choice<V>[]): SelectOption<V>[] => choices.map(([value, label, g]) => ({ value, label, glyph: g ? glyphComponent(g) : undefined }));
 
-export const num = (n: number) => n.toLocaleString(locale());
-// key names a pair of texts with one and many under it, such as ui.objects.
-export const plural = (n: number, key: string) => t(`${key}.${n === 1 ? 'one' : 'many'}`, { n: num(n) });
+export { num, plural } from '@/i18n';
 
 export async function copyText(text: string, done = t('ui.copied')) {
   if (await writeClipboard(text)) toast(done);

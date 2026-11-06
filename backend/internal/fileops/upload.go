@@ -162,7 +162,7 @@ func (s *Service) StartUpload(ctx context.Context, u *users.User, share string, 
 		// the upload of another. They resume by id, and a second file of
 		// the same name gets a name of its own.
 		if req.Rule != jobs.Both {
-			return Upload{}, false, v1.Errorf(http.StatusConflict, "someone is uploading a file of this name right now")
+			return Upload{}, false, v1.Coded(http.StatusConflict, "uploadRunning", "someone is uploading a file of this name right now")
 		}
 		if loc, err = s.unclaimed(ctx, loc); err != nil {
 			return Upload{}, false, err
@@ -196,7 +196,7 @@ func (s *Service) StartUpload(ctx context.Context, u *users.User, share string, 
 			return Upload{}, false, err
 		}
 	case err == nil:
-		return Upload{}, false, v1.Errorf(http.StatusConflict, "someone else is uploading a file of this name right now")
+		return Upload{}, false, v1.Coded(http.StatusConflict, "uploadRunning", "someone else is uploading a file of this name right now")
 	case !errors.Is(err, sql.ErrNoRows):
 		return Upload{}, false, err
 	}
@@ -211,11 +211,11 @@ func (s *Service) StartUpload(ctx context.Context, u *users.User, share string, 
 		return out, false, nil
 	}
 	if free, ok := freeSpace(filepath.Dir(loc.Real)); ok && free < req.Size {
-		return Upload{}, false, v1.Errorf(http.StatusInsufficientStorage, "there is not enough free space for this file")
+		return Upload{}, false, v1.Coded(http.StatusInsufficientStorage, "noSpaceForFile", "there is not enough free space for this file")
 	}
 	part := partOf(loc.Real)
 	if _, err := os.Lstat(part); err == nil {
-		return Upload{}, false, v1.Errorf(http.StatusConflict, "this file is being written by a copy right now")
+		return Upload{}, false, v1.Coded(http.StatusConflict, "beingCopied", "this file is being written by a copy right now")
 	}
 	f, err := ccfs.OpenPart(part, os.O_WRONLY|os.O_CREATE|os.O_EXCL)
 	if err != nil {
@@ -270,7 +270,7 @@ func (s *Service) UploadChunk(ctx context.Context, u *users.User, share, id stri
 	f, err := ccfs.OpenPart(part, os.O_WRONLY)
 	if errors.Is(err, fs.ErrNotExist) {
 		_ = s.deleteUpload(ctx, row.id)
-		return Upload{}, v1.Errorf(http.StatusGone, "the part file of this upload is gone, please start again")
+		return Upload{}, v1.Coded(http.StatusGone, "uploadGone", "the part file of this upload is gone, please start again")
 	}
 	if err != nil {
 		return Upload{}, err
@@ -367,7 +367,7 @@ func (s *Service) uploadTarget(u *users.User, p string) (ccfs.Location, error) {
 		return loc, err
 	}
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) || IsPart(path.Base(loc.Path)) {
-		return loc, v1.Errorf(http.StatusBadRequest, "invalid path")
+		return loc, v1.Coded(http.StatusBadRequest, "badPath", "invalid path")
 	}
 	if err := s.fs.Follows(u, loc, ccfs.Create); err != nil {
 		return loc, err
@@ -382,7 +382,7 @@ func (s *Service) uploadTarget(u *users.User, p string) (ccfs.Location, error) {
 		info, err := os.Stat(parent.Real)
 		if err == nil {
 			if !info.IsDir() {
-				return loc, v1.Errorf(http.StatusConflict, "a file stands where a folder of this path should be")
+				return loc, v1.Coded(http.StatusConflict, "fileInTheWay", "a file stands where a folder of this path should be")
 			}
 			break
 		}
@@ -398,7 +398,7 @@ func (s *Service) uploadTarget(u *users.User, p string) (ccfs.Location, error) {
 			return loc, err
 		}
 		if !ccfs.ValidName(path.Base(d.Path)) {
-			return loc, v1.Errorf(http.StatusBadRequest, "invalid path")
+			return loc, v1.Coded(http.StatusBadRequest, "badPath", "invalid path")
 		}
 		if err := os.Mkdir(d.Real, 0o777); err != nil && !errors.Is(err, fs.ErrExist) {
 			return loc, err
@@ -423,7 +423,7 @@ func (s *Service) precheck(u *users.User, loc ccfs.Location, row uploadRow) erro
 		return s.conflict(loc, row, target)
 	case jobs.Replace, jobs.Newer:
 		if target.IsDir() {
-			return v1.Errorf(http.StatusConflict, "a folder of this name is in the way")
+			return v1.Coded(http.StatusConflict, "folderInTheWay", "a folder of this name is in the way")
 		}
 		if _, err := s.fs.Check(u, loc.Path, ccfs.Modify); err != nil {
 			return err
@@ -482,7 +482,7 @@ func (s *Service) finish(ctx context.Context, u *users.User, row uploadRow, land
 			}
 		case jobs.Replace:
 			if target.IsDir() {
-				return Upload{}, v1.Errorf(http.StatusConflict, "a folder of this name is in the way")
+				return Upload{}, v1.Coded(http.StatusConflict, "folderInTheWay", "a folder of this name is in the way")
 			}
 			if _, err := s.fs.Check(u, loc.Path, ccfs.Modify); err != nil {
 				return Upload{}, err

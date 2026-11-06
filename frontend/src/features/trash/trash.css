@@ -3,7 +3,7 @@
 .ct-card { padding: 1.5rem .75rem .6rem; }
 .ct-head, .ct-row { display: grid; grid-template-columns: 1.3rem 2.25rem minmax(0, 1fr) 13rem 6rem 9.5rem 4.4rem; align-items: center; gap: .6rem; padding: 0 .5rem; }
 .ct-head { height: 2.2rem; font-size: 12px; color: var(--carbon-text-muted); }
-.ct-head [data-tsort] { text-align: left; display: inline-flex; align-items: center; gap: .3rem; height: 1.6rem; padding: 0 .35rem; border-radius: var(--radius-control); color: inherit; justify-self: start; }
+.ct-head [data-tsort] { text-align: start; display: inline-flex; align-items: center; gap: .3rem; height: 1.6rem; padding: 0 .35rem; border-radius: var(--radius-control); color: inherit; justify-self: start; }
 .ct-head [data-tsort].r { justify-self: end; }
 .ct-head [data-tsort]:hover { background: var(--carbon-hover); color: var(--carbon-text); }
 .ct-head [data-tsort].sorted { color: var(--carbon-text); }

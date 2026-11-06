@@ -55,11 +55,11 @@ func prepareGather(mode string) func(context.Context, v1.Deps, *users.User, json
 			return nil, err
 		}
 		if !u.Permissions.Admin {
-			return nil, v1.Errorf(http.StatusForbidden, "only admins move files between disks")
+			return nil, v1.Coded(http.StatusForbidden, "adminsOnly", "only admins move files between disks")
 		}
 		p.Mode, p.Path = mode, path.Clean(p.Path)
 		if !strings.HasPrefix(p.Path, "/mnt/user/") {
-			return nil, v1.Errorf(http.StatusBadRequest, "pick a folder in a user share")
+			return nil, v1.Coded(http.StatusBadRequest, "pickShareFolder", "pick a folder in a user share")
 		}
 		st, err := unraidService().State()
 		if err != nil {

@@ -60,7 +60,7 @@ func passkeyUser(r *http.Request, name string) (users.User, error) {
 		return users.User{}, err
 	}
 	if !auth.IsWebAuthnEnabled() {
-		return users.User{}, v1.Errorf(http.StatusConflict, "passkeys are turned off on this server")
+		return users.User{}, v1.Coded(http.StatusConflict, "passkeysOff", "passkeys are turned off on this server")
 	}
 	u, err := current(r)
 	if err != nil {
@@ -68,13 +68,13 @@ func passkeyUser(r *http.Request, name string) (users.User, error) {
 	}
 	switch {
 	case u.LoginMethod != users.LoginMethodPassword:
-		return users.User{}, v1.Errorf(http.StatusConflict, "passkeys come with the password, and you sign in through "+string(u.LoginMethod))
+		return users.User{}, v1.Coded(http.StatusConflict, "passkeysElsewhere", "passkeys come with the password, and you sign in through "+string(u.LoginMethod)).With("method", string(u.LoginMethod))
 	case name == "":
-		return users.User{}, v1.Errorf(http.StatusBadRequest, "give the passkey a name")
+		return users.User{}, v1.Coded(http.StatusBadRequest, "passkeyNameMissing", "give the passkey a name")
 	case len(name) > 64:
-		return users.User{}, v1.Errorf(http.StatusBadRequest, "the name can have at most 64 characters")
+		return users.User{}, v1.Coded(http.StatusBadRequest, "nameLength", "the name can have at most 64 characters").With("n", 64)
 	case slices.ContainsFunc(u.PasskeyCredentials, func(c users.WebAuthnCredential) bool { return c.Name == name }):
-		return users.User{}, v1.Errorf(http.StatusConflict, "there is a passkey with this name already")
+		return users.User{}, v1.Coded(http.StatusConflict, "passkeyExists", "there is a passkey with this name already")
 	}
 	return u, nil
 }
@@ -119,13 +119,13 @@ func (h handlers) postPasskey(w http.ResponseWriter, r *http.Request) error {
 	}
 	session, ok := h.svc.passkeys.take(u.ID, name)
 	if !ok {
-		return v1.Errorf(http.StatusConflict, "the registration ran out, please start it again")
+		return v1.Coded(http.StatusConflict, "registrationExpired", "the registration ran out, please start it again")
 	}
 	if err := auth.GetWebAuthn().FinishRegistrationJSON(&u, session, name, in.Credential); err != nil {
 		if errors.Is(err, ccerrors.ErrPasskeyExists) {
-			return v1.Errorf(http.StatusConflict, "this passkey is registered already")
+			return v1.Coded(http.StatusConflict, "passkeyRegistered", "this passkey is registered already")
 		}
-		return v1.Errorf(http.StatusBadRequest, "the browser did not confirm the passkey, please try again")
+		return v1.Coded(http.StatusBadRequest, "passkeyNotConfirmed", "the browser did not confirm the passkey, please try again")
 	}
 	added := &u.PasskeyCredentials[len(u.PasskeyCredentials)-1]
 	added.Origin, added.LastUsedAt = host, 0
@@ -192,7 +192,7 @@ func (h handlers) deletePasskey(w http.ResponseWriter, r *http.Request) error {
 func removePasskey(u *users.User, id string) (string, error) {
 	i := slices.IndexFunc(u.PasskeyCredentials, func(c users.WebAuthnCredential) bool { return c.ID == id })
 	if i < 0 {
-		return "", v1.Errorf(http.StatusNotFound, "there is no passkey with this id")
+		return "", v1.Coded(http.StatusNotFound, "noPasskey", "there is no passkey with this id")
 	}
 	name := u.PasskeyCredentials[i].Name
 	u.PasskeyCredentials = slices.Delete(u.PasskeyCredentials, i, i+1)

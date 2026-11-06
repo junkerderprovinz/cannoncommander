@@ -1,7 +1,7 @@
 {
   "title": "Keyboard shortcuts",
   "mod": { "ctrl": "Ctrl", "shift": "Shift", "alt": "Alt" },
-  "named": { "ArrowLeft": "Left", "ArrowRight": "Right", "ArrowUp": "Up", "ArrowDown": "Down", "Delete": "Del", "Insert": "Ins", "Escape": "Esc", "Space": "Space", "Home": "Home", "End": "End", "PageUp": "Page up", "PageDown": "Page down", "Backspace": "Backspace" },
+  "named": { "ArrowLeft": "Left", "ArrowRight": "Right", "ArrowUp": "Up", "ArrowDown": "Down", "Delete": "Del", "Insert": "Ins", "Escape": "Esc", "Space": "Space", "Home": "Home", "End": "End", "PageUp": "Page up", "PageDown": "Page down", "Backspace": "Backspace", "Enter": "Enter", "Tab": "Tab" },
   "preset": "Layout", "presetTip": "Total Commander puts packing on Alt+F5, unpacking on Alt+F9 and renaming on Shift+F6, for example. Your own changes go on top.",
   "search": "Search commands", "searchPh": "such as Copy", "more": "More", "noMatch": "No command is called that",
   "change": "Change the key for {action}", "press": "Press a key …", "none": "none", "clear": "Remove key", "undo": "As before",

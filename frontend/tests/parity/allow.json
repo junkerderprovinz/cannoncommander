@@ -1415,8 +1415,8 @@
     "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
    },
    "rv-16-phone": {
-    "pixels": 9553,
-    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show"
+    "pixels": 14400,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show, and the panel's foot keeps to one line where the prototype's wraps, so the list shows one row more"
    },
    "rv-01-main": {
     "pixels": 19473,

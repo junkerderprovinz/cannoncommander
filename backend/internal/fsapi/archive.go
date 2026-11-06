@@ -335,7 +335,7 @@ func readArchiveRequest(r *http.Request) (archiveRequest, error) {
 		return req, v1.Errorf(http.StatusBadRequest, "choose at least one path")
 	}
 	if len(req.Paths) > maxArchivePaths {
-		return req, v1.Errorf(http.StatusBadRequest, "too many paths for one download")
+		return req, v1.Coded(http.StatusBadRequest, "tooManyPaths", "too many paths for one download")
 	}
 	return req, nil
 }
@@ -355,7 +355,7 @@ func (h handlers) archiveStream(w http.ResponseWriter, r *http.Request) error {
 			return err
 		}
 		if loc.Virtual() || loc.InArchive() {
-			return v1.Errorf(http.StatusBadRequest, "only entries inside a source can be downloaded")
+			return v1.Coded(http.StatusBadRequest, "outsideSources", "only entries inside a source can be downloaded")
 		}
 		info, err := os.Stat(loc.Real)
 		if err != nil {

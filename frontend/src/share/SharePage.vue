@@ -8,13 +8,13 @@ import { ApiError } from '@/api/client';
 import { inside, type PublicItem, type PublicListing, type PublicShare, shareApi } from '@/api/share';
 import { fmtCount, fmtDate, fmtListDate, fmtSize } from '@/core/format';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { eyeWords } from '@/ui/kit';
 import { canPreview } from './preview';
 import SharePreview from './SharePreview.vue';
 import ShareUpload from './ShareUpload.vue';
 
-const s = (key: string, params?: Record<string, string | number>) => t('share.' + key, params);
+const s = (key: string, params?: Record<string, string | number>) => t('visit.' + key, params);
 const slug = decodeURIComponent(location.pathname.replace(/\/+$/, '').split('/').pop() || '');
 const api = shareApi(slug);
 
@@ -78,7 +78,7 @@ async function unlock() {
     await load();
   } catch (e) {
     if (e instanceof ApiError && e.status === 403) err.value = s('wrongPassword');
-    else if (e instanceof ApiError && e.status === 429) err.value = s('tooMany', { n: Math.max(1, Math.ceil((e.retryAfter ?? 300) / 60)) });
+    else if (e instanceof ApiError && e.status === 429) err.value = plural(Math.max(1, Math.ceil((e.retryAfter ?? 300) / 60)), 'visit.tooMany');
     else state.value = whyGone(e);
   } finally {
     busy.value = false;
@@ -98,7 +98,7 @@ const meta = computed(() => {
   const out: string[] = [];
   if (p.kind === 'file' && p.size != null) out.push(fmtSize(p.size));
   if (p.kind === 'file' && p.mtime) out.push(fmtDate(Date.parse(p.mtime)));
-  if (p.kind === 'collection' && p.count) out.push(p.count === 1 ? s('oneEntry') : s('entries', { n: fmtCount(p.count) }));
+  if (p.kind === 'collection' && p.count) out.push(plural(p.count, 'visit.entries', { n: fmtCount(p.count) }));
   if (p.expires) out.push(s('until', { date: fmtDate(Date.parse(p.expires)) }));
   return out;
 });

@@ -14,7 +14,7 @@ import { go as goView, view } from '@/core/views';
 import type { WinEntry } from '@/core/windows';
 import { toEntry } from '@/files/entries';
 import { inArchive, join, parent } from '@/files/paths';
-import { t } from '@/i18n';
+import { byName, t } from '@/i18n';
 import { deleteItems } from '@/features/trash/trash';
 import { usePanels } from '@/stores/panels';
 import Crumbs from '@/ui/Crumbs.vue';
@@ -77,9 +77,9 @@ const rowOf = (u: DiskUsage, it: DiskUsage['items'][number], depth: number): Row
   time: Date.parse(it.mtime) || 0, depth, whole: u.size, canOpen: it.dir && it.files + it.dirs > 0,
 });
 const order = (a: Row, b: Row) => {
-  if (sort.by === 'name') return a.name.localeCompare(b.name, 'de', { numeric: true }) * -sort.dir;
+  if (sort.by === 'name') return byName(a.name, b.name) * -sort.dir;
   const key = sort.by === 'share' ? 'size' : sort.by;
-  return (a[key] - b[key]) * sort.dir || a.name.localeCompare(b.name, 'de', { numeric: true });
+  return (a[key] - b[key]) * sort.dir || byName(a.name, b.name);
 };
 
 function treeRows(): Row[] {
@@ -129,7 +129,7 @@ const blocks = computed(() => {
 });
 
 const summary = computed(() => {
-  if (sel.size) return t('diskusage.picked', { n: num(sel.size), size: fmtSize([...sel.values()].reduce((a, r) => a + r.size, 0)) || '0 B' });
+  if (sel.size) return plural(sel.size, 'diskusage.picked', { size: fmtSize([...sel.values()].reduce((a, r) => a + r.size, 0)) || '0 B' });
   const u = here.value;
   if (!u) return ' ';
   return t('diskusage.summary', { size: fmtSize(u.size) || '0 B', files: plural(u.files, 'ui.files'), dirs: plural(u.dirs, 'ui.folders') });
@@ -238,7 +238,7 @@ function context(e: MouseEvent) {
     { label: t('diskusage.showInPanel'), g: 'IconFolderOpen', run: () => reveal(r) },
     { label: t('diskusage.copyPath'), g: 'IconCopy', run: () => copyText(r.path) },
     '-',
-    { label: many ? t('diskusage.deleteMany', { n: sel.size }) : t('diskusage.delete'), g: 'IconTrash', run: remove },
+    { label: many ? plural(sel.size, 'diskusage.deleteMany') : t('diskusage.delete'), g: 'IconTrash', run: remove },
   ]);
 }
 function key(e: KeyboardEvent) {

@@ -60,7 +60,7 @@ type ReindexParams struct {
 
 func prepareReindex(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {
 	if u == nil || !u.Permissions.Admin {
-		return nil, v1.Errorf(http.StatusForbidden, "only admins rebuild the index")
+		return nil, v1.Coded(http.StatusForbidden, "adminsOnly", "only admins rebuild the index")
 	}
 	var p ReindexParams
 	if err := jobs.Decode(raw, &p); err != nil {

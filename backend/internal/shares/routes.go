@@ -98,7 +98,7 @@ type updateRequest struct {
 
 func mayShare(u *users.User) bool { return u.Permissions.Share || u.Permissions.Admin }
 
-var errMayNotShare = v1.Errorf(http.StatusForbidden, "this account may not share files")
+var errMayNotShare = v1.Coded(http.StatusForbidden, "mayNotShare", "this account may not share files")
 
 func (s *Service) mine(w http.ResponseWriter, r *http.Request) error {
 	list, err := s.list(r.Context(), `WHERE owner_id = ?`, ownerKey(v1.UserFrom(r).ID))
@@ -132,7 +132,7 @@ func (s *Service) owned(r *http.Request) (*Share, error) {
 		return nil, err
 	}
 	if sh.OwnerID != u.ID && !u.Permissions.Admin {
-		return nil, v1.Errorf(http.StatusNotFound, "there is no such link")
+		return nil, v1.Coded(http.StatusNotFound, "noLink", "there is no such link")
 	}
 	return sh, nil
 }
@@ -155,7 +155,7 @@ func (s *Service) create(w http.ResponseWriter, r *http.Request) error {
 	sh.Name = strings.TrimSpace(req.Name)
 	if sh.Kind == KindCollection {
 		if !ccfs.ValidName(sh.Name) {
-			return v1.Errorf(http.StatusBadRequest, "give the collection a name, it becomes the folder the other side sees")
+			return v1.Coded(http.StatusBadRequest, "collectionName", "give the collection a name, it becomes the folder the other side sees")
 		}
 	} else {
 		sh.Name = path.Base(sh.Paths[0])
@@ -205,7 +205,7 @@ func (s *Service) update(w http.ResponseWriter, r *http.Request) error {
 	}
 	if req.Name != nil && sh.Kind == KindCollection {
 		if sh.Name = strings.TrimSpace(*req.Name); !ccfs.ValidName(sh.Name) {
-			return v1.Errorf(http.StatusBadRequest, "give the collection a name, it becomes the folder the other side sees")
+			return v1.Coded(http.StatusBadRequest, "collectionName", "give the collection a name, it becomes the folder the other side sees")
 		}
 	}
 	if req.Message != nil {
@@ -239,7 +239,7 @@ func (s *Service) update(w http.ResponseWriter, r *http.Request) error {
 	owner := u
 	if sh.OwnerID != u.ID {
 		if owner, err = UserByID(sh.OwnerID); err != nil {
-			return v1.Errorf(http.StatusConflict, "the account behind this link is gone")
+			return v1.Coded(http.StatusConflict, "linkOwnerGone", "the account behind this link is gone")
 		}
 	}
 	if err := s.checkSettings(owner, sh); err != nil {
@@ -272,10 +272,10 @@ func (s *Service) delete(w http.ResponseWriter, r *http.Request) error {
 // link they make.
 func (s *Service) checkPaths(u *users.User, paths []string) ([]string, string, error) {
 	if len(paths) == 0 {
-		return nil, "", v1.Errorf(http.StatusBadRequest, "choose a file or folder to share")
+		return nil, "", v1.Coded(http.StatusBadRequest, "shareNothing", "choose a file or folder to share")
 	}
 	if len(paths) > maxPaths {
-		return nil, "", v1.Errorf(http.StatusBadRequest, "that is too much for one link")
+		return nil, "", v1.Coded(http.StatusBadRequest, "shareTooMuch", "that is too much for one link")
 	}
 	var out []string
 	seen := map[string]bool{}
@@ -286,10 +286,10 @@ func (s *Service) checkPaths(u *users.User, paths []string) ([]string, string, e
 			return nil, "", err
 		}
 		if loc.InArchive() {
-			return nil, "", v1.Errorf(http.StatusBadRequest, "nothing can be shared from inside an archive")
+			return nil, "", v1.Coded(http.StatusBadRequest, "shareInArchive", "nothing can be shared from inside an archive")
 		}
 		if loc.Virtual() {
-			return nil, "", v1.Errorf(http.StatusBadRequest, "only entries inside a source can be shared")
+			return nil, "", v1.Coded(http.StatusBadRequest, "outsideSources", "only entries inside a source can be shared")
 		}
 		if err := s.fs.Follows(u, loc, ccfs.View|ccfs.Download); err != nil {
 			return nil, "", err
@@ -299,7 +299,7 @@ func (s *Service) checkPaths(u *users.User, paths []string) ([]string, string, e
 			return nil, "", err
 		}
 		if !info.IsDir() && !info.Mode().IsRegular() {
-			return nil, "", v1.Errorf(http.StatusBadRequest, "only files and folders can be shared")
+			return nil, "", v1.Coded(http.StatusBadRequest, "shareOnlyFiles", "only files and folders can be shared")
 		}
 		if seen[loc.Path] {
 			continue
@@ -319,19 +319,19 @@ func (s *Service) checkPaths(u *users.User, paths []string) ([]string, string, e
 
 func (s *Service) checkSettings(owner *users.User, sh *Share) error {
 	if sh.Expires != nil && !sh.Expires.After(time.Now()) {
-		return v1.Errorf(http.StatusBadRequest, "the expiry date lies in the past")
+		return v1.Coded(http.StatusBadRequest, "expiryPast", "the expiry date lies in the past")
 	}
 	if sh.Limit < 0 || sh.UploadLimit < 0 {
 		return v1.Errorf(http.StatusBadRequest, "limits cannot be negative")
 	}
 	if utf8.RuneCountInString(sh.Message) > maxMessage {
-		return v1.Errorf(http.StatusBadRequest, "the message can have at most 2000 characters")
+		return v1.Coded(http.StatusBadRequest, "messageLength", "the message can have at most 2000 characters").With("n", 2000)
 	}
 	if !sh.Uploads {
 		return nil
 	}
 	if sh.Kind != KindFolder {
-		return v1.Errorf(http.StatusBadRequest, "uploads only work for a link to one folder")
+		return v1.Coded(http.StatusBadRequest, "uploadsOneFolder", "uploads only work for a link to one folder")
 	}
 	_, err := s.fs.Check(owner, sh.Paths[0], ccfs.Create)
 	return err
@@ -343,7 +343,7 @@ func (s *Service) pickSlug(r *http.Request, slug, name string) (string, error) {
 		return s.freshSlug(r.Context(), name)
 	}
 	if !slugPattern.MatchString(slug) {
-		return "", v1.Errorf(http.StatusBadRequest, "the address needs 3 to 40 characters: small letters, digits and dashes")
+		return "", v1.Coded(http.StatusBadRequest, "slugRule", "the address needs 3 to 40 characters: small letters, digits and dashes")
 	}
 	var taken int
 	if err := s.db.QueryRowContext(r.Context(), `SELECT COUNT(*) FROM share_links WHERE slug = ?`, slug).Scan(&taken); err != nil {
@@ -357,7 +357,7 @@ func (s *Service) pickSlug(r *http.Request, slug, name string) (string, error) {
 
 func setPassword(sh *Share, pw string) error {
 	if len([]rune(pw)) < minPassword {
-		return v1.Errorf(http.StatusBadRequest, "the password needs at least 6 characters")
+		return v1.Coded(http.StatusBadRequest, "linkPasswordShort", "the password needs at least 6 characters").With("n", 6)
 	}
 	hash, err := utils.HashPwd(pw)
 	if err != nil {

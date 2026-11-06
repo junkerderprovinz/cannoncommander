@@ -156,7 +156,7 @@ func (h handlers) fixpermsScan(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if loc.Virtual() {
-		return v1.Errorf(http.StatusBadRequest, "rights are only set below /mnt")
+		return v1.Coded(http.StatusBadRequest, "rightsBelowMnt", "rights are only set below /mnt")
 	}
 	scan, err := h.svc.ScanPerms(r.Context(), loc)
 	if err != nil {
@@ -190,7 +190,7 @@ func (h handlers) notifyTest(w http.ResponseWriter, r *http.Request) error {
 func writeProblem(err error) error {
 	switch {
 	case errors.Is(err, ErrWriteOff):
-		return v1.Errorf(http.StatusForbidden, "write access to Unraid is switched off")
+		return v1.Coded(http.StatusForbidden, "unraidReadOnly", "write access to Unraid is switched off")
 	case errors.Is(err, ErrUnknownDisk), errors.Is(err, ErrNotUserFolder), errors.Is(err, errBadMode):
 		return v1.Errorf(http.StatusBadRequest, err.Error())
 	}

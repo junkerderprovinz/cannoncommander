@@ -11,11 +11,11 @@ import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import type { WinEntry } from '@/core/windows';
 import { t } from '@/i18n';
-import { pctOf } from '@/features/jobs/label';
+import { jobError, pctOf } from '@/features/jobs/label';
 import { undoAct } from '@/features/undo/act';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
-import { num, plural, setFoot, segItems } from '@/ui/kit';
+import { plural, setFoot, segItems } from '@/ui/kit';
 
 const props = defineProps<{ root: string; win: WinEntry; close: () => void }>();
 const jobs = useJobs();
@@ -59,7 +59,7 @@ async function start() {
     jobs.whenDone(started, async (j) => {
       if (job.value?.id !== j.id) return;
       if (j.state !== 'done') {
-        if (j.state === 'failed') toast(t('duplicates.failed', { error: j.error || j.state }), 'fault');
+        if (j.state === 'failed') toast(t('duplicates.failed', { error: jobError(j) || j.state }), 'fault');
         return;
       }
       const result = (j.result ?? (await tools.job(j.id).catch(() => j)).result) as Duplicates | undefined;
@@ -139,10 +139,10 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
     </div>
     <div id="u-list" class="bk-list">
       <EmptyState v-if="missing" nested :glyph="glyphComponent('IconFolder')" :title="t('duplicates.noFolder')" />
-      <div v-else-if="!res" class="bk-scan"><div>{{ t('duplicates.scanning', { path: root }) }}</div><ProgressBar id="u-bar" class="bar" :value="pct / 100" :label="t('duplicates.scanning', { path: root })" /><div id="u-n" class="glim-num">{{ t('duplicates.files', { n: num(seen) }) }}</div></div>
+      <div v-else-if="!res" class="bk-scan"><div>{{ t('duplicates.scanning', { path: root }) }}</div><ProgressBar id="u-bar" class="bar" :value="pct / 100" :label="t('duplicates.scanning', { path: root })" /><div id="u-n" class="glim-num">{{ plural(seen, 'duplicates.files') }}</div></div>
       <template v-else-if="res.groups.length">
         <section v-for="(g, gi) in res.groups" :key="g.sha256 + gi" class="bk-group">
-          <div class="bk-ghead"><GlyphTile :glyph="glyphComponent(glyphOf({ name: g.name }))" ground quiet /><span class="bk-name">{{ by === 'name' ? g.name : t('duplicates.sameSize', { n: g.copies.length }) }}</span><Pill class="glim-num">{{ t('duplicates.each', { copies: copies(g.copies.length), size: fmtSize(g.size) }) }}</Pill></div>
+          <div class="bk-ghead"><GlyphTile :glyph="glyphComponent(glyphOf({ name: g.name }))" ground quiet /><span class="bk-name">{{ by === 'name' ? g.name : plural(g.copies.length, 'duplicates.sameSize') }}</span><Pill class="glim-num">{{ t('duplicates.each', { copies: copies(g.copies.length), size: fmtSize(g.size) }) }}</Pill></div>
           <div v-for="(c, ci) in g.copies" :key="c.path" class="bk-copy" :class="{ gone: drop.has(c.path) }">
             <span class="bk-path mono" :title="c.path"><bdi>{{ by === 'name' ? c.at : c.path }}</bdi></span>
             <span v-if="g.copies[0]!.mtime === g.copies.at(-1)!.mtime"></span><Pill v-else-if="ci === 0">{{ t('duplicates.newest') }}</Pill><Pill v-else-if="ci === g.copies.length - 1">{{ t('duplicates.oldest') }}</Pill><span v-else></span>
@@ -151,7 +151,7 @@ onBeforeUnmount(() => { clearTimeout(typing); stopJob(); });
           </div>
         </section>
       </template>
-      <EmptyState v-else nested :glyph="glyphComponent('IconCheck')" :title="t('duplicates.none')" :hint="t('duplicates.scanned', { n: num(res.files) })" />
+      <EmptyState v-else nested :glyph="glyphComponent('IconCheck')" :title="t('duplicates.none')" :hint="plural(res.files, 'duplicates.scanned')" />
     </div>
   </SubCard>
 </template>

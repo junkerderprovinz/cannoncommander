@@ -5,7 +5,7 @@ import { computed, onMounted } from 'vue';
 import { fmtSize } from '@/core/format';
 import { glyphOf, glyphComponent } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
-import { t } from '@/i18n';
+import { byName, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { thumbUrl } from '../content';
 import { joinPath, plural, viewKind } from '../kinds';
@@ -18,7 +18,7 @@ const listing = useListing();
 const path = computed(() => joinPath(props.folder, props.n.name));
 const kids = computed(() => (listing.lists.get(path.value)?.items || []).filter((k) => prefs.showHidden || !k.name.startsWith('.')));
 const pics = computed(() => kids.value.filter((k) => viewKind(k) === 'img'));
-const top = computed(() => [...kids.value].sort((a, b) => Number(b.dir) - Number(a.dir) || a.name.localeCompare(b.name, 'de', { numeric: true })));
+const top = computed(() => [...kids.value].sort((a, b) => Number(b.dir) - Number(a.dir) || byName(a.name, b.name)));
 
 function info() {
   const dirs = kids.value.filter((k) => k.dir).length, files = kids.value.length - dirs;

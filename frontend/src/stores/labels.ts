@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue';
 import { call } from '@/api/client';
 import { on } from '@/api/sse';
-import { t } from '@/i18n';
+import { byText, t } from '@/i18n';
 
 export interface Label { colour?: string; tags?: string[] }
 // An empty name stands for one of the colours the app comes with, which the interface names in its own language.
@@ -18,7 +18,6 @@ const joinPath = (dir: string, name: string) => (dir === '/' ? '' : dir) + '/' +
 const splitPath = (p: string): [string, string] => { const at = p.lastIndexOf('/'); return [p.slice(0, at) || '/', p.slice(at + 1)]; };
 
 export const BUILT_IN = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
-export const byName = (a: string, b: string) => a.localeCompare(b, 'de');
 
 export const useLabels = defineStore('labels', () => {
   const colours = ref<Colour[]>([]);
@@ -30,7 +29,7 @@ export const useLabels = defineStore('labels', () => {
     const got = (await call<{ colours: Colour[]; tags: Tag[] }>('/labels')).body;
     if (!got) return;
     colours.value = got.colours;
-    tags.value = [...got.tags].sort((a, b) => byName(a.name, b.name));
+    tags.value = [...got.tags].sort((a, b) => byText(a.name, b.name));
   }
 
   function inFolder(path: string) {
@@ -76,7 +75,7 @@ export const useLabels = defineStore('labels', () => {
   }
   async function saveTags(list: { from?: string; name: string }[]) {
     const got = (await call<{ colours: Colour[]; tags: Tag[] }>('/labels/tags', json('PUT', { tags: list }))).body;
-    if (got) tags.value = [...got.tags].sort((a, b) => byName(a.name, b.name));
+    if (got) tags.value = [...got.tags].sort((a, b) => byText(a.name, b.name));
     forget();
   }
 

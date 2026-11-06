@@ -21,8 +21,8 @@ const count = computed(() => {
   const rows = props.st.rows;
   if (!rows) return t('checksum.result');
   const seen = rows.filter((r) => r.state !== 'wait'), c = (s: VerifyRow['state']) => seen.filter((r) => r.state === s).length;
-  return [plural(rows.length, 'ui.files'), seen.length && t('checksum.okCount', { n: c('ok') }), c('mismatch') && t('checksum.offCount', { n: c('mismatch') }),
-    c('missing') && t('checksum.missingCount', { n: c('missing') })].filter(Boolean).join(', ');
+  return [plural(rows.length, 'ui.files'), seen.length && plural(c('ok'), 'checksum.okCount'), c('mismatch') && plural(c('mismatch'), 'checksum.offCount'),
+    c('missing') && plural(c('missing'), 'checksum.missingCount')].filter(Boolean).join(', ');
 });
 const width = (r: VerifyRow, i: number) => (r.state !== 'wait' || i < props.st.seen ? 1 : i === props.st.seen ? 0.5 : 0);
 </script>

@@ -158,7 +158,7 @@ func declaredTags(r *http.Request, db *sql.DB) ([]string, error) {
 func cleanTag(t string) (string, error) {
 	t = strings.TrimPrefix(strings.TrimSpace(t), "#")
 	if t == "" || utf8.RuneCountInString(t) > maxTagLen || strings.ContainsFunc(t, unicode.IsControl) {
-		return "", v1.Errorf(http.StatusBadRequest, "a tag needs between 1 and 64 characters")
+		return "", v1.Coded(http.StatusBadRequest, "tagLength", "a tag needs between 1 and 64 characters")
 	}
 	return t, nil
 }
@@ -179,7 +179,7 @@ func (h handlers) putColours(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if len(req.Colours) > maxColours {
-		return v1.Errorf(http.StatusBadRequest, "too many colours")
+		return v1.Coded(http.StatusBadRequest, "tooManyColours", "too many colours")
 	}
 	ctx := r.Context()
 	tx, err := h.db.BeginTx(ctx, nil)
@@ -208,7 +208,7 @@ func (h handlers) putColours(w http.ResponseWriter, r *http.Request) error {
 	for i, c := range req.Colours {
 		name := strings.TrimSpace(c.Name)
 		if utf8.RuneCountInString(name) > maxNameLen {
-			return v1.Errorf(http.StatusBadRequest, "a colour name has at most 64 characters")
+			return v1.Coded(http.StatusBadRequest, "colourNameLength", "a colour name has at most 64 characters")
 		}
 		if !hexColour.MatchString(c.Hex) {
 			return v1.Errorf(http.StatusBadRequest, "invalid colour value "+c.Hex)
@@ -263,7 +263,7 @@ func (h handlers) putTags(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if len(req.Tags) > maxTags {
-		return v1.Errorf(http.StatusBadRequest, "too many tags")
+		return v1.Coded(http.StatusBadRequest, "tooManyTags", "too many tags")
 	}
 	rename := map[string]string{}
 	var names []string

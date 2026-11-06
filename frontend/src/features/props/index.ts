@@ -9,7 +9,7 @@ import { toast } from '@/core/toast';
 import { go, view } from '@/core/views';
 import { cancelBtn, win } from '@/core/windows';
 import { inArchive, join, parent, split } from '@/files/paths';
-import { jobLabel, kindLabels } from '@/features/jobs/label';
+import { jobError, jobLabel, kindLabels } from '@/features/jobs/label';
 import { t, tl } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
@@ -107,7 +107,7 @@ function save(st: PropsState) {
     jobs.whenDone(job, (j) => {
       listing.changed(st.dir);
       if (j.state === 'done') toast(t('props.saved', { objects: plural(j.totalFiles, 'ui.objects'), ...said }));
-      else if (j.state === 'failed') toast(t('ui.failed', { label: jobLabel(j), error: j.error || '' }), 'fault');
+      else if (j.state === 'failed') toast(t('ui.failed', { label: jobLabel(j), error: jobError(j) }), 'fault');
     });
   }, (e) => toast(e.message, 'warn'));
   return true;
@@ -115,6 +115,6 @@ function save(st: PropsState) {
 
 export default function setup() {
   action('symlink', { label: tl('props.symlink'), g: 'IconLink', needs: 'sel', run: symlinkWindow });
-  action('props', { label: tl('props.props'), g: 'IconSliders', key: 'Alt+Eingabe', run: () => { void propsWindow(); } });
+  action('props', { label: tl('props.props'), g: 'IconSliders', key: 'Alt+Enter', run: () => { void propsWindow(); } });
   kindLabels.attrsRecursive = (_j, what) => t('props.jobAttrs', { what });
 }

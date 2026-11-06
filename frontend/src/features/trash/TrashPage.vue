@@ -8,7 +8,7 @@ import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { isMenuOpen, menu } from '@/core/menu';
 import { go } from '@/core/views';
 import { winStack } from '@/core/windows';
-import { t } from '@/i18n';
+import { byName, byText, plural, t } from '@/i18n';
 import { useTrash } from '@/stores/trash';
 import { objects } from '@/features/jobs/label';
 import { purge, restore } from './trash';
@@ -18,8 +18,8 @@ const trash = useTrash();
 const COLS: SortKey[] = ['name', 'from', 'size', 'deleted'];
 const at = (e: TrashItem) => Date.parse(e.deletedAt) || 0;
 const BY: Record<SortKey, (a: TrashItem, b: TrashItem) => number> = {
-  name: (a, b) => a.name.localeCompare(b.name, 'de', { numeric: true }),
-  from: (a, b) => a.from.localeCompare(b.from, 'de'),
+  name: (a, b) => byName(a.name, b.name),
+  from: (a, b) => byText(a.from, b.from),
   size: (a, b) => a.size - b.size,
   deleted: (a, b) => at(a) - at(b),
 };
@@ -54,7 +54,7 @@ function more(ev: MouseEvent) {
       { label: t('trash.restoreSel', { n: sel.length }), g: 'IconRestore', run: () => restore(sel, clear) },
       { label: t('trash.purgeSel', { n: sel.length }), g: 'IconTrash', run: () => purge(sel, false, clear) }, '-',
     ] : []),
-    { label: t('trash.selectAll'), g: 'IconSelectAll', key: 'Strg+A', run: () => list.value.forEach((e) => pick.sel.add(e.id)) },
+    { label: t('trash.selectAll'), g: 'IconSelectAll', key: 'Ctrl+a', run: () => list.value.forEach((e) => pick.sel.add(e.id)) },
     { label: t('trash.empty'), g: 'IconEmpty', run: () => purge(list.value, true, clear) },
   ]), 0);
 }
@@ -109,6 +109,6 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
         </div>
       </div>
     </Card>
-    <div v-if="picked.length" class="ct-fab"><Button id="ct-restore" size="key" :label="picked.length === 1 ? t('trash.restore') : t('trash.restoreMany', { n: picked.length })" label-key="IconRestore" tone="accent" @click="restore(picked, clear)" /></div>
+    <div v-if="picked.length" class="ct-fab"><Button id="ct-restore" size="key" :label="picked.length === 1 ? t('trash.restore') : plural(picked.length, 'trash.restoreMany')" label-key="IconRestore" tone="accent" @click="restore(picked, clear)" /></div>
   </div>
 </template>

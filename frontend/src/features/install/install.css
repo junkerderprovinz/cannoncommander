@@ -5,5 +5,5 @@
 .in-way { display: flex; gap: .8rem; align-items: flex-start; padding: .55rem .6rem; border-radius: var(--radius-control); }
 .in-way > svg { width: 1.2rem; height: 1.2rem; flex: none; margin-top: .1rem; color: var(--accent-glyph); }
 .in-way .muted { font-size: 13px; margin-top: .15rem; }
-.in-way .glim-pill { margin-left: .5rem; }
+.in-way .glim-pill { margin-inline-start: .5rem; }
 .in-way.cur { background: var(--carbon-surface3); }

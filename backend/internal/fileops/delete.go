@@ -38,7 +38,7 @@ func prepareDelete(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMe
 			return nil, err
 		}
 		if loc.Virtual() || loc.InArchive() || loc.Index == "/" {
-			return nil, v1.Errorf(http.StatusBadRequest, "only files and folders inside a source can be deleted")
+			return nil, v1.Coded(http.StatusBadRequest, "outsideSources", "only files and folders inside a source can be deleted")
 		}
 		if _, err := os.Lstat(loc.Real); err != nil {
 			return nil, err

@@ -107,11 +107,11 @@ func (h handlers) scopePaths(u *users.User) []string {
 // system, one per source. A folder like /mnt that only leads to sources
 // stands for all of them.
 func (h handlers) scopesFrom(scope *string, role string) ([]users.BackendScope, error) {
-	missing := v1.Errorf(http.StatusBadRequest, "pick the folder the user may see")
+	missing := v1.Coded(http.StatusBadRequest, "pickUserFolder", "pick the folder the user may see")
 	if scope == nil || strings.TrimSpace(*scope) == "" {
 		return nil, missing
 	}
-	notThere := v1.Errorf(http.StatusBadRequest, "this folder does not exist")
+	notThere := v1.Coded(http.StatusBadRequest, "noFolder", "this folder does not exist")
 	p, err := ccfs.Clean(strings.TrimSpace(*scope))
 	if err != nil || strings.Contains(p, ccfs.ArchiveSep) {
 		return nil, notThere
@@ -123,7 +123,7 @@ func (h handlers) scopesFrom(scope *string, role string) ([]users.BackendScope, 
 	perms := rolePerms(role)
 	if !loc.Virtual() {
 		if (loc.Source.AdminOnly || h.fs.AdminOnly(loc.Path)) && role != roleAdmin {
-			return nil, v1.Errorf(http.StatusBadRequest, "only admins may see the single disks and the cache")
+			return nil, v1.Coded(http.StatusBadRequest, "disksAdminsOnly", "only admins may see the single disks and the cache")
 		}
 		if fi, err := os.Stat(loc.Real); err != nil || !fi.IsDir() {
 			return nil, notThere
@@ -242,7 +242,7 @@ func commonFolder(paths []string) string {
 // checkPassword applies the app's minimum and the server's policy.
 func checkPassword(pw string) error {
 	if len(pw) < minPassword {
-		return v1.Errorf(http.StatusBadRequest, "the password needs at least 12 characters")
+		return v1.Coded(http.StatusBadRequest, "passwordShort", "the password needs at least 12 characters").With("n", 12)
 	}
 	if err := settings.ValidatePasswordPolicy(pw); err != nil {
 		return v1.Errorf(http.StatusBadRequest, err.Error())

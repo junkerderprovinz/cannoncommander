@@ -3,7 +3,7 @@
 import { type Action, actions, blocked, labelOf } from '@/core/actions';
 import type { MenuEntry } from '@/core/menu';
 import { MENUS, menuName } from '@/core/menus';
-import { t } from '@/i18n';
+import { byName, byText, t } from '@/i18n';
 
 export interface Row { name: string; g?: string; a?: Action; group?: string; why?: string | null; go?: () => void; score?: number }
 export interface Head { head: string }
@@ -58,7 +58,7 @@ export function lines(q: string): Line[] {
   const all: Row[] = Object.values(actions).filter((a) => labelOf(a) && !a.hidden && a.id !== 'palette').map((a) => ({
     a, name: labelOf(a), g: a.g, group: grp[a.id], why: blocked(a) || (a.when && !a.when() ? t('palette.notNow') : null),
   }));
-  const byName = (x: Row, y: Row) => Number(!!x.why) - Number(!!y.why) || x.name.localeCompare(y.name, 'de');
+  const byName = (x: Row, y: Row) => Number(!!x.why) - Number(!!y.why) || byText(x.name, y.name);
   if (!q.trim()) {
     const first = recent().map((id) => all.find((e) => e.a!.id === id)).filter((e): e is Row => !!e);
     const rest = all.filter((e) => !first.includes(e)).sort(byName);

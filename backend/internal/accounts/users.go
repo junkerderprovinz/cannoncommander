@@ -22,9 +22,9 @@ var loginName = regexp.MustCompile(`^[a-z][a-z0-9._-]{1,31}$`)
 func checkLoginName(name string) error {
 	switch {
 	case name == "":
-		return v1.Errorf(http.StatusBadRequest, "the login name is missing")
+		return v1.Coded(http.StatusBadRequest, "loginNameMissing", "the login name is missing")
 	case !loginName.MatchString(name):
-		return v1.Errorf(http.StatusBadRequest, "the login name needs lowercase letters, at least two characters")
+		return v1.Coded(http.StatusBadRequest, "loginNameRule", "the login name needs lowercase letters, at least two characters")
 	}
 	return nil
 }
@@ -60,7 +60,7 @@ func target(r *http.Request) (users.User, error) {
 		u, err = state.GetUserByUsername(key)
 	}
 	if err != nil {
-		return users.User{}, v1.Errorf(http.StatusNotFound, "there is no such user")
+		return users.User{}, v1.Coded(http.StatusNotFound, "noSuchUser", "there is no such user")
 	}
 	return u, nil
 }
@@ -98,7 +98,7 @@ type UserInput struct {
 func checkGroups(names []string) error {
 	for _, g := range names {
 		if !state.GroupExists(g) {
-			return v1.Errorf(http.StatusBadRequest, "there is no group "+g)
+			return v1.Coded(http.StatusBadRequest, "noGroupNamed", "there is no group "+g).With("name", g)
 		}
 	}
 	return nil
@@ -134,7 +134,7 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if _, err := state.GetUserByUsername(name); err == nil {
-		return v1.Errorf(http.StatusConflict, "this login name is taken")
+		return v1.Coded(http.StatusConflict, "loginNameTaken", "this login name is taken")
 	}
 	role := cmp.Or(deref(in.Role), roleUser)
 	if !validRole(role) {
@@ -148,7 +148,7 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	if in.Password == nil {
-		return v1.Errorf(http.StatusBadRequest, "the password is missing")
+		return v1.Coded(http.StatusBadRequest, "passwordMissing", "the password is missing")
 	}
 	if err := checkPassword(*in.Password); err != nil {
 		return err
@@ -204,7 +204,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 
 	if in.Revoke {
 		if self {
-			return v1.Errorf(http.StatusBadRequest, "end your own sessions, tokens and passkeys under account and security")
+			return v1.Coded(http.StatusBadRequest, "ownSessionsElsewhere", "end your own sessions, tokens and passkeys under account and security")
 		}
 		if err := needSession(r); err != nil {
 			return err
@@ -214,13 +214,13 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 	if in.Name != nil && strings.TrimSpace(*in.Name) != u.Username {
 		name := strings.TrimSpace(*in.Name)
 		if self {
-			return v1.Errorf(http.StatusBadRequest, "you cannot change your own login name")
+			return v1.Coded(http.StatusBadRequest, "ownLoginName", "you cannot change your own login name")
 		}
 		if err := checkLoginName(name); err != nil {
 			return err
 		}
 		if _, err := state.GetUserByUsername(name); err == nil {
-			return v1.Errorf(http.StatusConflict, "this login name is taken")
+			return v1.Coded(http.StatusConflict, "loginNameTaken", "this login name is taken")
 		}
 		u.Username = name
 		fields = append(fields, "username")
@@ -232,7 +232,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 			return v1.Errorf(http.StatusBadRequest, "the role has to be admin, user or readonly")
 		}
 		if role == roleAdmin && self {
-			return v1.Errorf(http.StatusConflict, "only another admin can take away your own admin role")
+			return v1.Coded(http.StatusConflict, "ownAdminRole", "only another admin can take away your own admin role")
 		}
 		role = *in.Role
 		u.Permissions.Admin, u.Permissions.Share = role == roleAdmin, mayShareAs(role)
@@ -250,7 +250,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 	} else if in.Role != nil {
 		u.BackendScopes = h.withRole(u.BackendScopes, role)
 		if len(u.BackendScopes) == 0 {
-			return v1.Errorf(http.StatusBadRequest, "pick the folder the user may see")
+			return v1.Coded(http.StatusBadRequest, "pickUserFolder", "pick the folder the user may see")
 		}
 		fields = append(fields, "backendScopes")
 	}
@@ -264,10 +264,10 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 	password := ""
 	if in.Password != nil {
 		if self {
-			return v1.Errorf(http.StatusBadRequest, "change your own password under account and security")
+			return v1.Coded(http.StatusBadRequest, "ownPasswordElsewhere", "change your own password under account and security")
 		}
 		if u.LoginMethod != users.LoginMethodPassword {
-			return v1.Errorf(http.StatusConflict, "this user signs in through "+string(u.LoginMethod)+", the password is kept there")
+			return v1.Coded(http.StatusConflict, "userPasswordElsewhere", "this user signs in through "+string(u.LoginMethod)+", the password is kept there").With("method", string(u.LoginMethod))
 		}
 		if err := checkPassword(*in.Password); err != nil {
 			return err

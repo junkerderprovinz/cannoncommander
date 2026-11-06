@@ -6,10 +6,11 @@ import { action, actions, run } from '@/core/actions';
 import { toast } from '@/core/toast';
 import { cancelBtn, win } from '@/core/windows';
 import { join } from '@/files/paths';
-import { t, tl } from '@/i18n';
+import { plural, t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { useJobs } from '@/stores/jobs';
+import { jobError } from '@/features/jobs/label';
 import { undoAct } from '@/features/undo/act';
 import { freeName, namesIn, reveal } from '@/ui/tools';
 import NameBody from './NameBody.vue';
@@ -55,39 +56,39 @@ export default function setup() {
   } });
   // The editor brings its own Neue Datei, which opens the file right away; this one only makes it.
   if (!actions.newFile) {
-    action('newFile', { label: tl('names.newFile'), g: 'IconFileText', key: 'Umschalt+F4', needs: 'writable', run: () => {
+    action('newFile', { label: tl('names.newFile'), g: 'IconFileText', key: 'Shift+F4', needs: 'writable', run: () => {
       const folder = here();
       nameWindow(t('names.newFile'), t('names.newFileName'), t('names.create'), 'IconFileText', (name) => ops.touch(join(folder, name)));
     } });
   }
-  action('folderWithSel', { label: tl('names.folderWithSel'), g: 'IconFolderAdd', key: 'Umschalt+F7', needs: ['sel', 'writable'], run: () => {
+  action('folderWithSel', { label: tl('names.folderWithSel'), g: 'IconFolderAdd', key: 'Shift+F7', needs: ['sel', 'writable'], run: () => {
     const folder = here(), picked = F.sel().filter((k) => !k.at || k.at === folder);
     if (!picked.length) return toast(t('names.onlyHere'), 'warn');
-    const hint = picked.length === 1 ? t('names.oneGoesIn') : t('names.manyGoIn', { n: picked.length });
+    const hint = plural(picked.length, 'names.goIn');
     return nameWindow(t('names.folderWithSel'), freeName(namesIn(folder), t('names.newFolder')), t('names.create'), 'IconFolderAdd', async (name) => {
       const box = join(folder, name);
       F.T().marked = new Set();
       const job = await useJobs().start({ kind: 'move', params: { sources: picked.map((k) => join(folder, k.name)), dest: box, rule: 'skip', newFolder: true } });
       useJobs().whenDone(job, (done) => {
-        if (done.state !== 'done') return toast(done.error || t('names.notMoved'), 'fault');
+        if (done.state !== 'done') return toast(jobError(done) || t('names.notMoved'), 'fault');
         void reveal(box);
-        const what = picked.length === 1 ? t('names.oneObject') : t('names.manyObjects', { n: picked.length });
+        const what = plural(picked.length, 'names.objects');
         toast(t('names.folderMade', { name, what }), 'ok', done.undo ? undoAct(done.undo) : undefined);
       });
     }, undefined, hint, 'fws-name');
   } });
 
-  action('duplicate', { label: tl('names.duplicate'), g: 'IconCopy', key: 'Strg+D', needs: ['sel', 'writable'], run: async () => {
+  action('duplicate', { label: tl('names.duplicate'), g: 'IconCopy', key: 'Ctrl+d', needs: ['sel', 'writable'], run: async () => {
     const folder = here(), sel = F.sel(), taken = namesIn(folder);
     const names = sel.map((k) => { const n = copyName(k.name, taken, t('names.copyWord')); taken.add(n); return n; });
     F.T().marked = new Set();
     try {
       const job = await useJobs().start({ kind: 'copy', params: { sources: sel.map((k) => join(folder, k.name)), dest: folder, names, rule: 'skip' } });
       useJobs().whenDone(job, (done) => {
-        if (done.state !== 'done') return toast(done.error || t('names.notCopied'), 'fault');
+        if (done.state !== 'done') return toast(jobError(done) || t('names.notCopied'), 'fault');
         const one = names.length === 1 ? names[0]! : '';
         void reveal(join(folder, one || names[0]!));
-        toast(one ? t('names.made', { name: one }) : t('names.copies', { n: names.length }), 'ok', done.undo ? undoAct(done.undo) : undefined);
+        toast(one ? t('names.made', { name: one }) : plural(names.length, 'names.copies'), 'ok', done.undo ? undoAct(done.undo) : undefined);
       });
     } catch (e) { toast((e as Error).message, 'warn'); }
   } });

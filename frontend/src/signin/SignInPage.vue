@@ -8,7 +8,7 @@ import { ApiError } from '@/api/client';
 import type { Me } from '@/api/types';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { eyeWords } from '@/ui/kit';
 import { leaveNote, session, takeNote } from '.';
 
@@ -57,7 +57,7 @@ function fail(text: string, sel?: string) {
 // The server's answers that mean something to the person at the keyboard. Anything else is a server that is gone.
 function explain(e: unknown, map: Partial<Record<number, string>>, sel?: string) {
   if (e instanceof ApiError) {
-    if (e.status === 429) return fail(s('tooMany', { n: Math.max(1, Math.ceil((e.retryAfter ?? 900) / 60)) }), sel);
+    if (e.status === 429) return fail(plural(Math.max(1, Math.ceil((e.retryAfter ?? 900) / 60)), 'signin.tooMany'), sel);
     if (e.status === 410) {
       pass.value = '';
       go('pw');
@@ -145,7 +145,7 @@ function sendCode() {
 
 function checkNew(): boolean {
   const min = opts.value.minPassword;
-  if (next1.value.length < min) fail(s('short', { n: min }), '#cl-new');
+  if (next1.value.length < min) fail(plural(min, 'signin.short'), '#cl-new');
   else if (next1.value !== next2.value) fail(s('differ'), '#cl-new2');
   else return true;
   return false;
@@ -296,7 +296,7 @@ function toggleRecovery() {
         <div class="cl-fields">
           <FieldRowGroup>
             <FieldRow v-if="step === 'reset'" :label="s('logCode')" :hint="s('logCodeTip')"><TextField id="cl-code" v-model="logCode" class="cl-code" placeholder="XXXX-XXXX-XXXX" spellcheck="false" autocomplete="one-time-code" autocapitalize="characters" width="grow" mono /></FieldRow>
-            <FieldRow :label="s('newPassword')"><PasswordField id="cl-new" v-model="next1" autocomplete="new-password" :placeholder="s('minChars', { n: opts.minPassword })" width="grow" :text="eyeWords()" /></FieldRow>
+            <FieldRow :label="s('newPassword')"><PasswordField id="cl-new" v-model="next1" autocomplete="new-password" :placeholder="plural(opts.minPassword, 'signin.minChars')" width="grow" :text="eyeWords()" /></FieldRow>
             <FieldRow :label="s('repeat')"><PasswordField id="cl-new2" v-model="next2" autocomplete="new-password" width="grow" :text="eyeWords()" /></FieldRow>
           </FieldRowGroup>
         </div>

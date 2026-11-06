@@ -8,8 +8,7 @@ import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { go } from '@/core/views';
 import { win } from '@/core/windows';
-import { locale } from '@/i18n';
-import { ago, attempt, c, confirmWin, fail, soon } from '@/features/config/shared';
+import { ago, attempt, c, cn, confirmWin, fail, soon } from '@/features/config/shared';
 import SourceWin from '../wins/SourceWin.vue';
 
 const sources = ref<Source[]>([]);
@@ -41,7 +40,7 @@ const hasIndex = (s: Source) => s.indexed && !!stateOf(s) && stateOf(s)!.status 
 
 function every(seconds: number) {
   const min = Math.round(seconds / 60);
-  return min < 60 ? c('sources.everyMinutes', { n: min }) : c('sources.everyHours', { n: Math.round(min / 60) });
+  return min < 60 ? cn(min, 'sources.everyMinutes') : cn(Math.round(min / 60), 'sources.everyHours');
 }
 function rowTip(s: Source) {
   const st = stateOf(s);
@@ -85,7 +84,7 @@ function remove(s: Source) {
         <template #badges>
           <Pill class="mono">{{ s.path }}</Pill>
           <Pill v-if="busy(stateOf(s))" class="run">{{ c('sources.readingPill') }}</Pill>
-          <template v-else-if="hasIndex(s)"><Pill>{{ fmtSize(stateOf(s)!.size) }}</Pill><Pill class="glim-num">{{ c('sources.files', { n: stateOf(s)!.files.toLocaleString(locale()) }) }}</Pill></template>
+          <template v-else-if="hasIndex(s)"><Pill>{{ fmtSize(stateOf(s)!.size) }}</Pill><Pill class="glim-num">{{ cn(stateOf(s)!.files, 'sources.files') }}</Pill></template>
           <Pill v-else tone="state">{{ c('sources.noIndex') }}</Pill>
           <Pill v-if="s.readOnly" tone="state">{{ c('sources.readOnly') }}</Pill>
         </template>

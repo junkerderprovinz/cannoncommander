@@ -11,7 +11,7 @@ import { previewKind } from './preview';
 
 const props = defineProps<{ item: PublicItem; src: string; download: string; text: () => Promise<string>; many: boolean }>();
 const emit = defineEmits<{ close: []; step: [by: number] }>();
-const s = (key: string) => t('share.' + key);
+const s = (key: string) => t('visit.' + key);
 
 const words = ref<string | null>(null);
 const box = ref<HTMLElement | null>(null);

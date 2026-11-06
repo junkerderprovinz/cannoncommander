@@ -65,10 +65,10 @@
     "browse": "Wie einen Ordner öffnen",
     "unpacked": "entpackt {size}",
     "unreadable": "In dieses Archiv kann die Vorschau gerade nicht hineinsehen.",
-    "limit": "Die Vorschau zeigt die ersten {n} Einträge."
+    "limit": { "one": "Die Vorschau zeigt den ersten {n} Eintrag.", "other": "Die Vorschau zeigt die ersten {n} Einträge." }
   },
   "hex": {
-    "first": "Erste {n} Byte",
+    "first": { "one": "Erstes {n} Byte", "other": "Erste {n} Byte" },
     "tip": "Für diesen Dateityp gibt es keine Vorschau. Die Hexansicht zeigt den Anfang der Datei, so wie er auf der Platte steht.",
     "sqlite": "SQLite-Datenbank",
     "program": "Programm",
@@ -96,14 +96,14 @@
   "model": { "info": "3D-Modell, {format}", "hint": "Ziehen dreht das Modell, das Mausrad holt es näher" },
   "lang": { "nginx": "Nginx", "config": "Konfiguration", "log": "Log", "subtitle": "Untertitel", "checksum": "Prüfsumme", "text": "Text" },
   "n": {
-    "lines": { "one": "{n} Zeile", "many": "{n} Zeilen" },
-    "pages": { "one": "{n} Seite", "many": "{n} Seiten" },
-    "sheets": { "one": "{n} Blatt", "many": "{n} Blätter" },
-    "slides": { "one": "{n} Folie", "many": "{n} Folien" },
-    "files": { "one": "{n} Datei", "many": "{n} Dateien" },
-    "dirs": { "one": "{n} Ordner", "many": "{n} Ordner" },
-    "morePictures": { "one": "{n} weiteres Bild", "many": "{n} weitere Bilder" },
-    "moreObjects": { "one": "{n} weiteres Objekt", "many": "{n} weitere Objekte" },
-    "moreEntries": { "one": "{n} weiterer Eintrag", "many": "{n} weitere Einträge" }
+    "lines": { "one": "{n} Zeile", "other": "{n} Zeilen" },
+    "pages": { "one": "{n} Seite", "other": "{n} Seiten" },
+    "sheets": { "one": "{n} Blatt", "other": "{n} Blätter" },
+    "slides": { "one": "{n} Folie", "other": "{n} Folien" },
+    "files": { "one": "{n} Datei", "other": "{n} Dateien" },
+    "dirs": { "one": "{n} Ordner", "other": "{n} Ordner" },
+    "morePictures": { "one": "{n} weiteres Bild", "other": "{n} weitere Bilder" },
+    "moreObjects": { "one": "{n} weiteres Objekt", "other": "{n} weitere Objekte" },
+    "moreEntries": { "one": "{n} weiterer Eintrag", "other": "{n} weitere Einträge" }
   }
 }

@@ -126,7 +126,7 @@ func check(ctx context.Context, fsys *ccfs.Resolver, u *users.User, p TransferPa
 			return dest, nil, err
 		}
 		if src.Virtual() || src.InArchive() || src.Index == "/" {
-			return dest, nil, v1.Errorf(http.StatusBadRequest, "only files and folders inside a source can be copied or moved")
+			return dest, nil, v1.Coded(http.StatusBadRequest, "outsideSources", "only files and folders inside a source can be copied or moved")
 		}
 		if _, err := os.Lstat(src.Real); err != nil {
 			return dest, nil, err
@@ -142,16 +142,16 @@ func check(ctx context.Context, fsys *ccfs.Resolver, u *users.User, p TransferPa
 			name = p.Names[i]
 		}
 		if !ccfs.ValidName(name) {
-			return dest, nil, v1.Errorf(http.StatusBadRequest, "invalid name")
+			return dest, nil, v1.Coded(http.StatusBadRequest, "badName", "invalid name")
 		}
 		if _, err := fsys.Entry(u, path.Join(dest.Path, name), destPerm); err != nil {
 			return dest, nil, err
 		}
 		if path.Join(dest.Path, name) == src.Path {
-			return dest, nil, v1.Errorf(http.StatusBadRequest, "source and target are the same folder")
+			return dest, nil, v1.Coded(http.StatusBadRequest, "sameFolder", "source and target are the same folder")
 		}
 		if dest.Path == src.Path || strings.HasPrefix(dest.Path, src.Path+"/") {
-			return dest, nil, v1.Errorf(http.StatusBadRequest, "a folder cannot go into itself")
+			return dest, nil, v1.Coded(http.StatusBadRequest, "intoItself", "a folder cannot go into itself")
 		}
 		p.Sources[i] = src.Path
 		item := jobs.Item{Path: src.Path}
@@ -170,7 +170,7 @@ func freshFolder(fsys *ccfs.Resolver, u *users.User, loc ccfs.Location, move boo
 		return v1.Errorf(http.StatusBadRequest, "only a move can make its folder")
 	}
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) {
-		return v1.Errorf(http.StatusBadRequest, "invalid path")
+		return v1.Coded(http.StatusBadRequest, "badPath", "invalid path")
 	}
 	parent, err := fsys.Reach(u, path.Dir(loc.Path), ccfs.Create)
 	if err != nil {
@@ -202,14 +202,14 @@ func destPermFor(rule string) ccfs.Perm {
 // folder makes sure loc is a real folder that can take entries.
 func folder(loc ccfs.Location) error {
 	if loc.Virtual() || loc.InArchive() {
-		return v1.Errorf(http.StatusBadRequest, "the target has to be a folder inside a source")
+		return v1.Coded(http.StatusBadRequest, "outsideSources", "the target has to be a folder inside a source")
 	}
 	info, err := os.Stat(loc.Real)
 	if err != nil {
 		return err
 	}
 	if !info.IsDir() {
-		return v1.Errorf(http.StatusBadRequest, "the target is not a folder")
+		return v1.Coded(http.StatusBadRequest, "targetNotFolder", "the target is not a folder")
 	}
 	return nil
 }
