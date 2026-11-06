@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panell esquerre",
     "right": "Panell dret",
@@ -2299,7 +2298,7 @@
     "colChanged": "Modificat",
     "noFolder": "Aquesta carpeta no existeix",
     "unknown": "No conec {fields}",
-    "unknownHint": "",
+    "unknownHint": "Entenc, per exemple, amplada, alçada, codec, intèrpret, mida, modificat, durada, any i qualsevol nom de columna",
     "nothing": "No s'ha trobat res",
     "nothingHint": "Potser una altra carpeta o menys condicions en troben més",
     "asTab": "Obre com a pestanya",
@@ -2332,22 +2331,22 @@
     "menuNewLabel": "Cerca nova",
     "menuNone": "Escriviu un patró i deseu-lo amb el botó del camp.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "impostos",
+      "word": "informe"
     },
     "menuExamples": "Exemples",
     "examples": {
       "mkv": "tots els fitxers MKV, també a les subcarpetes",
-      "tag": "",
-      "word": "",
+      "tag": "tot el que té la paraula clau {tag}",
+      "word": "noms on apareix {word}",
       "one": "un ? representa exactament un caràcter",
       "meta": "pel·lícules 4K en HEVC, segons les metadades",
       "week": "tot el que ha canviat els darrers 7 dies"
     },
     "server": "Servidor",
-    "unknownFields": "",
+    "unknownFields": "No conec {fields}. Entenc, per exemple, amplada, alçada, codec, intèrpret, mida, modificat, durada i qualsevol nom de columna, com objectiu o any",
     "unknownField": "«{f}:»",
-    "quoted": ""
+    "quoted": "«{text}»"
   },
   "share": {
     "share": "Comparteix",
@@ -2645,24 +2644,24 @@
     "clipCopy": "Copia al porta-retalls",
     "clipPaste": "Enganxa",
     "nothingOn": "No hi ha res d'això a {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "S'omet",
+    "sameSkipTip": "A la destinació hi ha el mateix fitxer en un altre camí, per exemple com a enllaç dur o a través d'una Disk Share i la User Share. Es queda tal com és.",
     "sameSkipped": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "{n} fitxer omès perquè a la destinació és el mateix fitxer",
+      "many": "{n} fitxers omesos perquè a la destinació són els mateixos fitxers",
+      "other": "{n} fitxers omesos perquè a la destinació són els mateixos fitxers"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Copiat: {files} a {to}. {same}",
+    "movedSame": "Mogut: {files} a {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "No s'ha copiat res. El fitxer de la destinació és el mateix i es queda tal com és",
+      "many": "No s'ha copiat res. Els {n} fitxers de la destinació són els mateixos i es queden tal com són",
+      "other": "No s'ha copiat res. Els {n} fitxers de la destinació són els mateixos i es queden tal com són"
     },
     "nothingMoved": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "No s'ha mogut res. El fitxer de la destinació és el mateix i es queda tal com és",
+      "many": "No s'ha mogut res. Els {n} fitxers de la destinació són els mateixos i es queden tal com són",
+      "other": "No s'ha mogut res. Els {n} fitxers de la destinació són els mateixos i es queden tal com són"
     }
   },
   "trash": {
@@ -3277,7 +3276,7 @@
     "created": "Creat",
     "accessed": "Darrer accés",
     "disksize": "Mida al disc",
-    "kind": "Tipus",
+    "kind": "Categoria",
     "mime": "Tipus MIME",
     "attributes": "Atributs",
     "statchange": "Canvi d'estat",
@@ -3368,37 +3367,37 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Horitzontal",
+      "portrait": "Vertical",
+      "square": "Quadrada"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Disparat",
+      "off": "Sense flaix"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Estèreo"
     },
     "channelCount": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "{n} canal",
+      "many": "{n} canals",
+      "other": "{n} canals"
     },
     "method": {
-      "none": ""
+      "none": "Cap"
     },
-    "methodNumber": "",
+    "methodNumber": "Mètode {n}",
     "arch": {
-      "all": ""
+      "all": "Totes"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Desconeguda"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "amplada",
+    "height": "alçada",
+    "vcodec": "codec",
+    "modified": "modificat"
   },
   "kinds": {
     "folder": "Carpeta",

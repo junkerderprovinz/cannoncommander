@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panel izquierdo",
     "right": "Panel derecho",
@@ -2299,7 +2298,7 @@
     "colChanged": "Modificado",
     "noFolder": "Esta carpeta no existe",
     "unknown": "No conozco {fields}",
-    "unknownHint": "",
+    "unknownHint": "Entiendo, por ejemplo, ancho, alto, codec, artista, tamaño, modificado, duración, año y cualquier nombre de columna",
     "nothing": "No se ha encontrado nada",
     "nothingHint": "Quizá otra carpeta o menos condiciones encuentren más",
     "asTab": "Abrir como pestaña",
@@ -2332,22 +2331,22 @@
     "menuNewLabel": "Búsqueda nueva",
     "menuNone": "Escribe un patrón y guárdalo con el botón del campo.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "impuestos",
+      "word": "informe"
     },
     "menuExamples": "Ejemplos",
     "examples": {
       "mkv": "todos los archivos MKV, también en subcarpetas",
-      "tag": "",
-      "word": "",
+      "tag": "todo lo que tiene la palabra clave {tag}",
+      "word": "nombres en los que aparece {word}",
       "one": "un ? equivale a exactamente un carácter",
       "meta": "películas 4K en HEVC, según los metadatos",
       "week": "todo lo que ha cambiado en los últimos 7 días"
     },
     "server": "Servidor",
-    "unknownFields": "",
+    "unknownFields": "No conozco {fields}. Entiendo, por ejemplo, ancho, alto, codec, artista, tamaño, modificado, duración y cualquier nombre de columna, como objetivo o año",
     "unknownField": "«{f}:»",
-    "quoted": ""
+    "quoted": "«{text}»"
   },
   "share": {
     "share": "Compartir",
@@ -2645,24 +2644,24 @@
     "clipCopy": "Copiar al portapapeles",
     "clipPaste": "Pegar",
     "nothingOn": "Nada de eso está en {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Se omite",
+    "sameSkipTip": "En el destino está el mismo archivo con otra ruta, por ejemplo como enlace duro o a través de un Disk Share y el User Share. Se queda como está.",
     "sameSkipped": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "{n} archivo omitido porque en el destino es el mismo archivo",
+      "many": "{n} archivos omitidos porque en el destino son los mismos archivos",
+      "other": "{n} archivos omitidos porque en el destino son los mismos archivos"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Copiado: {files} a {to}. {same}",
+    "movedSame": "Movido: {files} a {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "No se ha copiado nada. El archivo del destino es el mismo y se queda como está",
+      "many": "No se ha copiado nada. Los {n} archivos del destino son los mismos y se quedan como están",
+      "other": "No se ha copiado nada. Los {n} archivos del destino son los mismos y se quedan como están"
     },
     "nothingMoved": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "No se ha movido nada. El archivo del destino es el mismo y se queda como está",
+      "many": "No se ha movido nada. Los {n} archivos del destino son los mismos y se quedan como están",
+      "other": "No se ha movido nada. Los {n} archivos del destino son los mismos y se quedan como están"
     }
   },
   "trash": {
@@ -3277,7 +3276,7 @@
     "created": "Creado",
     "accessed": "Último acceso",
     "disksize": "Tamaño en disco",
-    "kind": "Tipo",
+    "kind": "Categoría",
     "mime": "Tipo MIME",
     "attributes": "Atributos",
     "statchange": "Cambio de estado",
@@ -3368,37 +3367,37 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Horizontal",
+      "portrait": "Vertical",
+      "square": "Cuadrada"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Disparado",
+      "off": "Sin flash"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Estéreo"
     },
     "channelCount": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "{n} canal",
+      "many": "{n} canales",
+      "other": "{n} canales"
     },
     "method": {
-      "none": ""
+      "none": "Ninguno"
     },
-    "methodNumber": "",
+    "methodNumber": "Método {n}",
     "arch": {
-      "all": ""
+      "all": "Todas"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Desconocido"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "ancho",
+    "height": "alto",
+    "vcodec": "codec",
+    "modified": "modificado"
   },
   "kinds": {
     "folder": "Carpeta",
