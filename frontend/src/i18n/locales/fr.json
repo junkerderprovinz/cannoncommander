@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panneau gauche",
     "right": "Panneau droit",
@@ -2299,7 +2298,7 @@
     "colChanged": "Modifié",
     "noFolder": "Ce dossier n'existe pas",
     "unknown": "Je ne connais pas {fields}",
-    "unknownHint": "",
+    "unknownHint": "Je comprends par exemple largeur, hauteur, codec, artiste, taille, modifié, durée, année et chaque nom de colonne",
     "nothing": "Rien trouvé",
     "nothingHint": "Un autre dossier ou moins de conditions trouveront peut-être davantage",
     "asTab": "Ouvrir dans un onglet",
@@ -2332,22 +2331,22 @@
     "menuNewLabel": "Nouvelle recherche",
     "menuNone": "Tapez un motif et enregistrez-le avec le bouton dans le champ.",
     "exampleWords": {
-      "tag": "",
-      "word": ""
+      "tag": "impôts",
+      "word": "rapport"
     },
     "menuExamples": "Exemples",
     "examples": {
       "mkv": "tous les fichiers MKV, y compris dans les sous-dossiers",
-      "tag": "",
-      "word": "",
+      "tag": "tout ce qui porte le mot-clé {tag}",
+      "word": "les noms qui contiennent {word}",
       "one": "un ? remplace exactement un caractère",
       "meta": "films 4K en HEVC, d'après les métadonnées",
       "week": "tout ce qui a changé ces 7 derniers jours"
     },
     "server": "Serveur",
-    "unknownFields": "",
+    "unknownFields": "Je ne connais pas {fields}. Je comprends par exemple largeur, hauteur, codec, artiste, taille, modifié, durée et chaque nom de colonne, comme objectif ou année",
     "unknownField": "« {f}: »",
-    "quoted": ""
+    "quoted": "« {text} »"
   },
   "share": {
     "share": "Partager",
@@ -2645,24 +2644,24 @@
     "clipCopy": "Copier dans le presse-papiers",
     "clipPaste": "Coller",
     "nothingOn": "Rien de cela ne se trouve sur {disk}",
-    "sameSkip": "",
-    "sameSkipTip": "",
+    "sameSkip": "Ignoré",
+    "sameSkipTip": "La destination contient le même fichier sous un autre chemin, par exemple comme lien physique ou via un Disk Share et le User Share. Il reste tel quel.",
     "sameSkipped": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "{n} fichier ignoré, car c'est le même fichier à la destination",
+      "many": "{n} fichiers ignorés, car ce sont les mêmes fichiers à la destination",
+      "other": "{n} fichiers ignorés, car ce sont les mêmes fichiers à la destination"
     },
-    "copiedSame": "",
-    "movedSame": "",
+    "copiedSame": "Copié : {files} vers {to}. {same}",
+    "movedSame": "Déplacé : {files} vers {to}. {same}",
     "nothingCopied": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "Rien n'a été copié. {n} fichier à la destination est le même et reste tel quel",
+      "many": "Rien n'a été copié. Les {n} fichiers à la destination sont les mêmes et restent tels quels",
+      "other": "Rien n'a été copié. Les {n} fichiers à la destination sont les mêmes et restent tels quels"
     },
     "nothingMoved": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "Rien n'a été déplacé. {n} fichier à la destination est le même et reste tel quel",
+      "many": "Rien n'a été déplacé. Les {n} fichiers à la destination sont les mêmes et restent tels quels",
+      "other": "Rien n'a été déplacé. Les {n} fichiers à la destination sont les mêmes et restent tels quels"
     }
   },
   "trash": {
@@ -3277,7 +3276,7 @@
     "created": "Créé",
     "accessed": "Dernier accès",
     "disksize": "Taille sur le disque",
-    "kind": "Type",
+    "kind": "Catégorie",
     "mime": "Type MIME",
     "attributes": "Attributs",
     "statchange": "Changement d'état",
@@ -3368,37 +3367,37 @@
   },
   "metaValues": {
     "orientation": {
-      "landscape": "",
-      "portrait": "",
-      "square": ""
+      "landscape": "Paysage",
+      "portrait": "Portrait",
+      "square": "Carré"
     },
     "flash": {
-      "fired": "",
-      "off": ""
+      "fired": "Déclenché",
+      "off": "Sans flash"
     },
     "channels": {
-      "mono": "",
-      "stereo": ""
+      "mono": "Mono",
+      "stereo": "Stéréo"
     },
     "channelCount": {
-      "one": "",
-      "many": "",
-      "other": ""
+      "one": "{n} canal",
+      "many": "{n} canaux",
+      "other": "{n} canaux"
     },
     "method": {
-      "none": ""
+      "none": "Aucune"
     },
-    "methodNumber": "",
+    "methodNumber": "Méthode {n}",
     "arch": {
-      "all": ""
+      "all": "Toutes"
     },
-    "unknownLanguage": ""
+    "unknownLanguage": "Inconnue"
   },
   "searchWords": {
-    "width": "",
-    "height": "",
-    "vcodec": "",
-    "modified": ""
+    "width": "largeur",
+    "height": "hauteur",
+    "vcodec": "codec",
+    "modified": "modifié"
   },
   "kinds": {
     "folder": "Dossier",
