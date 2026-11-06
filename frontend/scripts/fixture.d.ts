@@ -26,6 +26,7 @@ export function createFixture(): {
   search(path: string, params: { q?: string; hidden?: boolean | string; type?: string; min?: string; max?: string; when?: string; limit?: number | string }): import('../src/api/types').SearchResult | null;
   text(path: string, lines: number): { text: string } | null;
   thumb(path: string): string | null;
+  setUnmeasured(paths?: string[]): { paths: string[] };
 };
 
 export function sharedFixture(): ReturnType<typeof createFixture>;

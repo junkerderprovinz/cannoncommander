@@ -7,8 +7,8 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { admin, type AppChange, type AppSettings, type IntegrationResult, type OfficeKind, type System, type Tool } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
-import { c, fail, shake } from '@/features/config/shared';
-import { copyWords, eyeWords, selectOptions } from '@/ui/kit';
+import { c, fail } from '@/features/config/shared';
+import { copyWords, eyeWords, selectOptions, shake } from '@/ui/kit';
 
 type Test = 'idle' | 'busy' | 'ok' | 'bad';
 const app = ref<AppSettings | null>(null), sys = ref<System | null>(null);

@@ -4,6 +4,8 @@ export interface FsItem {
   name: string;
   dir: boolean;
   size: number;
+  // A folder the index has not measured yet, whose size of 0 is no total.
+  sizeUnknown?: boolean;
   mtime: string;
   mode: string;
   owner?: string;
@@ -34,7 +36,8 @@ export interface FsText { text: string; encoding?: string }
 export interface SearchHit extends FsItem { at: string }
 export interface SearchResult { path: string; items: SearchHit[]; total: number; more?: boolean; scanned: number; pending?: number; unknown?: string[]; indexed: boolean }
 export interface WatchRequest { clientId: string; paths: string[] }
-export interface Me { name: string; full: string; role: string }
+// home is the folder the file manager opens when no start folder was picked.
+export interface Me { name: string; full: string; role: string; home?: string }
 export interface Bookmark { name: string; path: string; g: string }
 // code and params name the sentence in detail, for the interface to say it in its own language.
 export interface Problem { type: string; title: string; status: number; detail?: string; code?: string; params?: Record<string, unknown> }

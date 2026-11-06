@@ -63,3 +63,12 @@ describe('columns', () => {
     }
   });
 });
+
+describe('size column', () => {
+  const folder = (extra: object) => toEntry(toItem({ name: 'filme', dir: true, size: 0, mtime: '2026-11-02T09:00:00.000Z', mode: '0755', ...extra }));
+
+  it('leaves the size of a folder not measured yet blank, and says 0 B for an empty one', () => {
+    expect(COL.size!.value(folder({ sizeUnknown: true }), '/mnt/user')).toBe('');
+    expect(COL.size!.value(folder({}), '/mnt/user')).toBe('0 B');
+  });
+});

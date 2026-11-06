@@ -7,3 +7,5 @@ export function parent(path: string) {
   return '/' + p.join('/');
 }
 export const inArchive = (path: string) => path.includes('::');
+// The folder that holds the archive path lies in, or path itself outside any archive.
+export const outsideArchive = (path: string) => (inArchive(path) ? parent(path.slice(0, path.indexOf('::'))) : path);

@@ -280,7 +280,59 @@ for (const label of ['Freigeben', 'In die Sammelmappe', 'Herunterladen', 'Verpac
 }
 await shot('row-menu');
 
+// A typed path that is not there keeps the field, which shakes, and the panel stays where it was.
+await closeAll();
+await at('/mnt/user/dokumente', []);
+await runAction('gotoPath');
+await wait(200);
+await page.fill('.panel.active .pathedit', '/mnt/user/dokumente/gibtsnicht');
+await page.keyboard.press('Enter');
+await wait(300);
+check('a typed path that is not there stays in the field and shakes', await page.locator('.panel.active .pathedit.glim-shake').count() === 1);
+check('it names the folder', (await toasts()).some((x) => x.includes('Den Ordner /mnt/user/dokumente/gibtsnicht gibt es nicht')), await toasts());
+check('the panel stays where it was', await page.evaluate('Files.T().path') === '/mnt/user/dokumente');
+await page.keyboard.press('Escape');
+
+// A folder the index has not measured yet shows a quiet mark instead of 0 B, sorts after the measured ones, and its
+// size comes in on its own once the index has it.
+await api('PUT', '/fixture/unmeasured', { paths: ['/mnt/user/dokumente', '/mnt/user/filme'] });
+await at('/mnt/user', []);
+await runAction('refresh');
+const unmeasured = 'Files.entries().filter((k) => k.sizeUnknown).map((k) => k.name).sort().join()';
+check('the folders still to measure are marked', await until(`${unmeasured} === "dokumente,filme"`), await page.evaluate(unmeasured));
+await page.evaluate('Object.assign(Files.T(), { sort: "size", dir: -1 })');
+await wait(300);
+const folders = await page.evaluate('Files.entries().filter((k) => k.dir).map((k) => k.name)') as string[];
+check('they sort after the measured folders', folders.slice(-2).sort().join() === 'dokumente,filme', folders);
+const mark = page.locator('.panel.active .row', { hasText: 'dokumente' }).locator('[data-unmeasured]');
+check('the size column shows a quiet mark with a tip', await mark.count() === 1 && /noch nicht gemessen/.test(await mark.getAttribute('data-tip') || ''), await mark.count());
+await shot('unmeasured');
+await page.evaluate('Files.T().marked = new Set(["dokumente", "fotos"])');
+await wait(200);
+check('the foot says the sum is not the whole', /2 markiert, mindestens /.test(await page.locator('.panel.active .lfoot').innerText()), await page.locator('.panel.active .lfoot').innerText());
+await page.evaluate('Object.assign(Files.T(), { sort: "name", dir: 1, marked: new Set() })');
+await api('PUT', '/fixture/unmeasured', { paths: [] });
+check('the size comes in without a refresh', await until(`${unmeasured} === ""`, 45000), await page.evaluate(unmeasured));
+
 check('no page errors', !errors.length, errors);
+
+// A start folder that is gone opens the nearest folder above it, says so, and its tree is asked for at most once.
+await api('PUT', '/me/prefs', { startFolder: '/mnt/user/downloads/weg/tiefer' });
+const late = await browser.newContext({ viewport: { width: 1600, height: 950 }, locale: 'de-AT' });
+const start = await late.newPage();
+const trees: string[] = [];
+start.on('request', (r) => { if (r.url().includes('/fs/tree') && r.url().includes('weg')) trees.push(r.url()); });
+start.on('pageerror', (e: Error) => errors.push(String(e).slice(0, 300)));
+await start.goto(app);
+const said = await start.waitForFunction(() => [...document.querySelectorAll('.toast')].some((t) => t.textContent?.includes('Den Ordner /mnt/user/downloads/weg/tiefer gibt es nicht, darum bist du jetzt in /mnt/user/downloads')), null, { timeout: 60000 }).then(() => true, () => false);
+check('a missing start folder says where the panel went', said, await start.locator('.toast').allInnerTexts());
+check('the panel is in the nearest folder above it', await start.evaluate(() => location.hash) === '#/mnt/user/downloads', await start.evaluate(() => location.hash));
+await start.screenshot({ path: join(shots, 'start-missing.png') });
+await start.waitForFunction('document.documentElement.dataset.e2e === "ready"', null, { timeout: 120000 }).catch(() => {});
+check('each missing folder is asked for at most once', new Set(trees).size === trees.length, trees);
+check('no page errors on the late start', !errors.length, errors);
+await late.close();
+await api('PUT', '/me/prefs', { startFolder: '/mnt/user/downloads' });
 await browser.close();
 console.log(failed ? `${failed} checks failed` : 'all checks passed');
 process.exit(failed ? 1 : 0);

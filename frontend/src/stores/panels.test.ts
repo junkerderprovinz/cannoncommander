@@ -3,19 +3,24 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, api, toItem } from '@/api/client';
 import { prefs } from '@/core/prefs';
 import { toasts } from '@/core/toast';
+import { emit } from '@/api/sse';
 import { createFixture } from '../../scripts/fixture.js';
-import { usePanels } from './panels';
+import { newTab, usePanels } from './panels';
+import { useUser } from './user';
 
 const fx = createFixture();
+const closed = new Set<string>();
 const settle = () => new Promise((r) => setTimeout(r, 0));
 
 beforeEach(() => {
   setActivePinia(createPinia());
   vi.restoreAllMocks();
   history.replaceState(null, '', '/');
-  Object.assign(prefs, { dual: true, syncBrowse: false, showHidden: false, foldersFirst: true, folderViews: {}, folderGroups: {} });
+  Object.assign(prefs, { dual: true, syncBrowse: false, showHidden: false, foldersFirst: true, folderViews: {}, folderGroups: {}, startFolder: '/mnt/user/downloads' });
   toasts.splice(0);
+  closed.clear();
   vi.spyOn(api, 'fsList').mockImplementation(async (path) => {
+    if (closed.has(path)) throw new ApiError(403);
     const got = fx.list(path);
     if (!got) throw new ApiError(404);
     return { path, items: got.items.map(toItem), etag: path };
@@ -48,9 +53,9 @@ describe('panels', () => {
     await F.go('/mnt/user/filme');
     await F.go('/mnt/user/filme/Sintel (2010)');
     expect(F.T().hist).toEqual(['/mnt/user/downloads', '/mnt/user/filme']);
-    await F.go('/mnt/user/gibtsnicht');
+    expect(await F.go('/mnt/user/gibtsnicht')).toBe(false);
     expect(F.T().path).toBe('/mnt/user/filme/Sintel (2010)');
-    expect(toasts.at(-1)).toMatchObject({ text: 'Diesen Ordner gibt es nicht', kind: 'warn' });
+    expect(toasts.at(-1)).toMatchObject({ text: 'Den Ordner /mnt/user/gibtsnicht gibt es nicht', kind: 'warn' });
   });
 
   it('opens a new tab beside a locked one', async () => {
@@ -124,5 +129,73 @@ describe('panels', () => {
     const F = await panels();
     F.setGroup(F.T(), 'kind');
     expect(names(F).slice(0, 3)).toEqual(['unfertig', 'Big.Buck.Bunny.2008.1080p.mkv', 'album.flac']);
+  });
+});
+
+describe('a folder that is not there', () => {
+  const lastToast = () => toasts.at(-1)?.text;
+
+  it('starts in the home folder the server names when no start folder was picked', async () => {
+    prefs.startFolder = '';
+    useUser().me = { name: 'jdp', full: 'jdp', role: 'admin', home: '/mnt/user/isos' };
+    const F = await panels();
+    expect([F.T(0).path, F.T(1).path]).toEqual(['/mnt/user/isos', '/mnt/user/isos']);
+  });
+
+  it('opens the nearest folder above a start folder that is gone and says so', async () => {
+    prefs.startFolder = '/mnt/user/downloads/weg/tiefer';
+    const F = await panels();
+    await settle();
+    expect(F.T(0).path).toBe('/mnt/user/downloads');
+    expect(names(F)).toContain('setup-notes.md');
+    expect(lastToast()).toBe('Den Ordner /mnt/user/downloads/weg/tiefer gibt es nicht, darum bist du jetzt in /mnt/user/downloads');
+    expect(F.T(0).hist).toEqual([]);
+  });
+
+  it('goes up from a folder the user may not open', async () => {
+    closed.add('/mnt/user/filme');
+    prefs.startFolder = '/mnt/user/filme';
+    const F = await panels();
+    await settle();
+    expect(F.T(0).path).toBe('/mnt/user');
+    expect(lastToast()).toBe('Den Ordner /mnt/user/filme darfst du nicht öffnen, darum bist du jetzt in /mnt/user');
+  });
+
+  it('goes up from a restored tab whose folder is gone once it is shown', async () => {
+    const F = await panels();
+    F.P(0).tabs.push(newTab('/mnt/user/alt'));
+    F.P(0).cur = 1;
+    await settle();
+    await settle();
+    expect(F.T(0).path).toBe('/mnt/user');
+    expect(F.P(0).tabs[0]!.path).toBe('/mnt/user/downloads');
+  });
+
+  it('leaves a folder that was deleted elsewhere while it was open', async () => {
+    const F = await panels();
+    await F.go('/mnt/user/fotos/2026');
+    await settle();
+    closed.add('/mnt/user/fotos/2026');
+    emit({ type: 'fs.changed', topic: 'fs:/mnt/user/fotos/2026' });
+    await settle();
+    await settle();
+    expect(F.T(0).path).toBe('/mnt/user/fotos');
+    expect(lastToast()).toMatch(/^Den Ordner \/mnt\/user\/fotos\/2026 /);
+  });
+
+  it('opens a bookmark whose folder is gone at the nearest folder above it', async () => {
+    const F = await panels();
+    await F.reach('/mnt/user/filme/alt/teil');
+    expect(F.T(0).path).toBe('/mnt/user/filme');
+    expect(F.T(0).hist).toEqual(['/mnt/user/downloads']);
+    expect(lastToast()).toBe('Den Ordner /mnt/user/filme/alt/teil gibt es nicht, darum bist du jetzt in /mnt/user/filme');
+  });
+
+  it('asks for the folders below a missing start folder only once', async () => {
+    prefs.startFolder = '/mnt/user/weg';
+    const F = await panels();
+    await settle();
+    expect(F.T(0).path).toBe('/mnt/user');
+    expect(vi.mocked(api.fsTree).mock.calls.filter(([p]) => p === '/mnt/user/weg').length).toBeLessThanOrEqual(1);
   });
 });

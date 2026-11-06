@@ -21,6 +21,7 @@
   "pasted": "Pasted",
   "file": "File",
   "fileTip": "A list such as .sha256, .md5 or SHA256SUMS. The files are looked for in its folder.",
+  "fileExample": "/mnt/user/folder/files.sha256",
   "pastePlaceholder": "Checksum and file name, one line per file",
   "filesIn": "Files lie in",
   "result": "Result",

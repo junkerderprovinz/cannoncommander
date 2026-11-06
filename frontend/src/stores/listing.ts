@@ -2,7 +2,7 @@
 // its ETag, and an fs.changed event about a folder on screen reads it again at once.
 import { defineStore } from 'pinia';
 import { reactive, shallowReactive } from 'vue';
-import { api, type Item, type Listing } from '@/api/client';
+import { api, ApiError, type Item, type Listing } from '@/api/client';
 import { on, type ServerEvent, watch } from '@/api/sse';
 import type { TreeItem } from '@/api/types';
 import type { MetaValue } from '@/files/entries';
@@ -11,15 +11,24 @@ import { join, parent } from '@/files/paths';
 // unknown names the field tests of the query the server does not know, such as farbe in farbe:rot.
 export interface Hits { items: Item[]; more: boolean; done: boolean; unknown?: string[] }
 
+const SIZE_POLL = 30_000;
+
 export const useListing = defineStore('listing', () => {
   const lists = reactive(new Map<string, Listing>());
   const trees = reactive(new Map<string, TreeItem[]>());
   const meta = shallowReactive(new Map<string, Record<string, MetaValue>>());
   const hits = reactive(new Map<string, Hits>());
   const texts = reactive(new Map<string, string>());
+  // Folders the server said are not there or not for this user, with its answer, until one reads fine again.
+  const missing = reactive(new Map<string, ApiError>());
   const pending = new Map<string, Promise<Listing>>();
+  const pendingTrees = new Map<string, Promise<TreeItem[]>>();
+  // The tree looks again whenever another folder arrives, so a folder that failed keeps its error until it or the
+  // folder above it changes, and the server hears about it once.
+  const failedTrees = new Map<string, unknown>();
   const asked = new Map<string, Set<string>>();
   let shown: string[] = [];
+  let measuring: ReturnType<typeof setTimeout> | undefined;
 
   async function load(path: string): Promise<Listing> {
     if (pending.has(path)) return pending.get(path)!;
@@ -28,7 +37,13 @@ export const useListing = defineStore('listing', () => {
       .then((fresh) => {
         const next = fresh ?? have!;
         lists.set(path, next);
+        failedTrees.delete(path);
+        missing.delete(path);
+        if (shown.includes(path)) awaitSizes();
         return next;
+      }, (e: unknown) => {
+        if (e instanceof ApiError && (e.status === 404 || e.status === 403)) missing.set(path, e);
+        throw e;
       })
       .finally(() => pending.delete(path));
     pending.set(path, job);
@@ -37,14 +52,25 @@ export const useListing = defineStore('listing', () => {
 
   async function tree(path: string): Promise<TreeItem[]> {
     if (trees.has(path)) return trees.get(path)!;
-    const got = (await api.fsTree(path)).items;
-    trees.set(path, got);
-    return got;
+    if (failedTrees.has(path)) throw failedTrees.get(path);
+    if (pendingTrees.has(path)) return pendingTrees.get(path)!;
+    const job = api.fsTree(path)
+      .then((got) => {
+        trees.set(path, got.items);
+        return got.items;
+      }, (e: unknown) => {
+        failedTrees.set(path, e);
+        throw e;
+      })
+      .finally(() => pendingTrees.delete(path));
+    pendingTrees.set(path, job);
+    return job;
   }
 
   function invalidate(path: string) {
     lists.delete(path);
     trees.delete(path);
+    for (const p of [...failedTrees.keys()]) if (p === path || parent(p) === path) failedTrees.delete(p);
     for (const key of [...hits.keys()]) if (key.startsWith(path + '\n') || path.startsWith(key.split('\n')[0]! + '/')) hits.delete(key);
     for (const p of [...meta.keys()]) if (parent(p) === path) { meta.delete(p); asked.delete(p); }
   }
@@ -79,6 +105,17 @@ export const useListing = defineStore('listing', () => {
   function setShown(paths: string[]) {
     shown = [...new Set(paths)];
     watch(shown);
+    awaitSizes();
+  }
+
+  // The index measures a folder long after it is first listed and says nothing when it is done, so a folder on screen
+  // with sizes still to come is asked for again now and then until they are in. The ETag keeps an unchanged answer
+  // small.
+  function awaitSizes() {
+    clearTimeout(measuring);
+    const open = () => shown.filter((p) => lists.get(p)?.items.some((k) => k.sizeUnknown));
+    if (!open().length) return;
+    measuring = setTimeout(() => { Promise.allSettled(open().map(load)).then(awaitSizes); }, SIZE_POLL);
   }
 
   // Asks fs/meta only for the pairs of path and column it has not asked for yet; the rows on screen come in one go.
@@ -149,5 +186,5 @@ export const useListing = defineStore('listing', () => {
   }
   const placeOf = (path: string) => trees.get(parent(path))?.find((x) => x.path === path);
 
-  return { lists, trees, meta, hits, load, tree, invalidate, changed, setGate, setShown, wantMeta, metaOf, search, text, placeLabel, placeOf };
+  return { lists, trees, meta, hits, missing, load, tree, invalidate, changed, setGate, setShown, wantMeta, metaOf, search, text, placeLabel, placeOf };
 });

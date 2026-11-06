@@ -31,7 +31,7 @@ const width = (r: VerifyRow, i: number) => (r.state !== 'wait' || i < props.st.s
   <SubCard class="bk-form">
     <FieldRow :label="t('checksum.sums')"><Selector id="v-mode" v-model="st.mode" :items="segItems(modes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <div class="bk-swap">
-      <div class="bk-swap-a" :hidden="st.mode !== 'file'"><FieldRow :label="t('checksum.file')" :hint="t('checksum.fileTip')"><TextField id="v-file" ref="fileField" v-model="st.file" placeholder="/mnt/user/downloads/datei.sha256" spellcheck="false" autocomplete="off" width="grow" mono @keydown.enter.prevent="check" /></FieldRow></div>
+      <div class="bk-swap-a" :hidden="st.mode !== 'file'"><FieldRow :label="t('checksum.file')" :hint="t('checksum.fileTip')"><TextField id="v-file" ref="fileField" v-model="st.file" :placeholder="t('checksum.fileExample')" spellcheck="false" autocomplete="off" width="grow" mono @keydown.enter.prevent="check" /></FieldRow></div>
       <div class="bk-swap-b" :hidden="st.mode !== 'paste'"><TextArea id="v-text" ref="textField" v-model="st.text" rows="3" :placeholder="t('checksum.pastePlaceholder')" spellcheck="false" mono />
         <FieldRow :label="t('checksum.filesIn')"><PathField v-model="st.dir" v-bind="pathField('v-dir')" /></FieldRow></div>
     </div>

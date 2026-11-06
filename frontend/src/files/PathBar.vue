@@ -8,6 +8,7 @@ import { prefs } from '@/core/prefs';
 import { byName, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
+import { shake } from '@/ui/kit';
 import { split } from './paths';
 
 const props = defineProps<{ i: number }>();
@@ -48,7 +49,7 @@ watch(() => tab.value.editPath, async (on) => {
   input.value?.select();
 }, { immediate: true });
 function key(e: KeyboardEvent) {
-  if (e.key === 'Enter') F.go((e.target as HTMLInputElement).value.trim() || '/', props.i);
+  if (e.key === 'Enter') F.go((e.target as HTMLInputElement).value.trim() || '/', props.i).then((ok) => { if (!ok) shake(input.value); });
   if (e.key === 'Escape') tab.value.editPath = false;
 }
 </script>

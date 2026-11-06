@@ -27,6 +27,7 @@ import { watchWidth } from '@/shell/state';
 import { installSignOut, session, takeNote } from '@/signin';
 import SignInPage from '@/signin/SignInPage.vue';
 import { useUser } from '@/stores/user';
+import type { Me } from '@/api/types';
 import App from './App.vue';
 
 applyPrefs();
@@ -41,8 +42,10 @@ function startSignIn() {
   createApp({ render: () => [h(SignInPage), h(ToastHost)] }).mount('#root');
 }
 
-function startApp() {
+function startApp(me?: Me) {
   const app = createApp(App).use(createPinia());
+  // The panels start in the user's home folder, so who it is has to be known first.
+  if (me) useUser().me = me;
   registerView('files', { component: FilesView, key: filesKey });
   registerView('settings', { page: true, component: SettingsPage });
   bindDefaults();
@@ -59,8 +62,6 @@ function startApp() {
   watchWidth();
   useUser().load();
 
-  // The server's copy of the settings follows the local one; while the server has none, the local copy stands.
-  api.prefs().then(mergeServerPrefs, () => {});
   let saving: ReturnType<typeof setTimeout> | undefined;
   onPrefsSaved((p) => {
     clearTimeout(saving);
@@ -75,5 +76,12 @@ function startApp() {
   if (import.meta.env.VITE_E2E === '1') import('./e2e/shim').then((m) => m.installShim());
 }
 
+// The server's copy of the settings wins over the browser's and names the start folder, so it is read before the
+// panels pick their folders. Without an answer the browser's copy stands.
+async function start(me?: Me) {
+  mergeServerPrefs(await api.prefs().catch(() => ({})));
+  startApp(me);
+}
+
 // Only a clear 401 means signed out. A server that cannot say, as with the fixture's older parts, gets the app.
-api.me().then(startApp, (e) => (e instanceof ApiError && e.status === 401 ? startSignIn() : startApp()));
+api.me().then(start, (e) => (e instanceof ApiError && e.status === 401 ? startSignIn() : start()));

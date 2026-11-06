@@ -8,7 +8,7 @@ import { GB } from '@/core/format';
 import { toast } from '@/core/toast';
 import { view } from '@/core/views';
 import { cancelBtn, closeBtn, win } from '@/core/windows';
-import { inArchive, join, split } from '@/files/paths';
+import { join, outsideArchive, split } from '@/files/paths';
 import { jobError, kindLabels } from '@/features/jobs/label';
 import { t, tl } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
@@ -22,14 +22,12 @@ import VerifyBody, { type VerifyRow, type VerifyState } from './VerifyBody.vue';
 import { lineName, partSize, SUMFILE } from './sums';
 import './checksum.css';
 
-const outside = (dir: string) => (inArchive(dir) ? '/mnt/user/downloads' : dir);
-
 function sumsWindow() {
   const F = usePanels(), jobs = useJobs(), dir = F.T().path, sel = F.sel();
   const loose = sel.filter((k) => !k.dir && !SUMFILE.test(k.name));
   if (!loose.length && !sel.some((k) => k.dir)) return toast(t('checksum.noFiles'), 'warn');
   const base = sel.length === 1 ? sel[0]!.name : (split(dir).pop() || 'pruefsummen').replace('::', '');
-  const st: SumsState = reactive({ algo: 'sha256', rows: [], dir: outside(dir), name: '', touched: false, job: null, result: null });
+  const st: SumsState = reactive({ algo: 'sha256', rows: [], dir: outsideArchive(dir), name: '', touched: false, job: null, result: null });
   const fresh = (): SumRow[] => loose.map((k) => ({ name: k.name, size: k.size || 0, state: 'wait' }));
 
   async function compute() {
@@ -90,7 +88,7 @@ function sumsWindow() {
 
 function verifyWindow() {
   const F = usePanels(), jobs = useJobs(), files = view.id === 'files';
-  const dir = files ? F.T().path : '/mnt/user/downloads';
+  const dir = files ? F.T().path : outsideArchive(F.T().path);
   const cur = files ? F.sel().find((k) => !k.dir && SUMFILE.test(k.name)) : undefined;
   const st: VerifyState = reactive({ mode: cur ? 'file' : 'paste', file: cur ? join(cur.at || dir, cur.name) : '', text: '', dir, rows: null, empty: 'pick', seen: 0 });
   let asked = 0;
@@ -136,7 +134,7 @@ function verifyWindow() {
 
 function splitWindow() {
   const F = usePanels(), dir = F.T().path, k = F.sel().find((x) => !x.dir)!;
-  const st: SplitState = reactive({ k, size: k.size > 4 * GB ? '4096' : k.size > GB ? '1024' : '100', custom: '700', sum: true, dest: outside(dir), count: 0, ok: false });
+  const st: SplitState = reactive({ k, size: k.size > 4 * GB ? '4096' : k.size > GB ? '1024' : '100', custom: '700', sum: true, dest: outsideArchive(dir), count: 0, ok: false });
   const w = win({
     title: t('checksum.split'), cls: 'bk', body: SplitBody, props: { st },
     foot: [{ start: t('ui.background') }, cancelBtn(), { label: t('checksum.split'), g: 'IconCompressMax', primary: true, disabled: true, run: () => {
@@ -157,7 +155,7 @@ function combineWindow() {
   const F = usePanels(), dir = F.T().path, pick = F.sel().find((k) => /\.\d{3,}$/.test(k.name));
   if (!pick) return toast(t('checksum.pickPart'), 'warn');
   const base = pick.name.replace(/\.\d{3,}$/, '');
-  const st: CombineState = reactive({ dir, base, name: base, dest: outside(dir), check: namesIn(dir).has(base + '.sha256'), drop: false, file: '', ok: false });
+  const st: CombineState = reactive({ dir, base, name: base, dest: outsideArchive(dir), check: namesIn(dir).has(base + '.sha256'), drop: false, file: '', ok: false });
   const w = win({
     title: t('checksum.combine'), cls: 'bk', body: CombineBody, props: { st },
     foot: [{ start: t('ui.background') }, cancelBtn(), { label: t('checksum.combine'), g: 'IconMerge', primary: true, disabled: true, run: () => {

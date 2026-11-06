@@ -6,6 +6,7 @@ import { toast } from '@/core/toast';
 import { cancelBtn, type FootButton, win, type WinEntry } from '@/core/windows';
 import { plural, t } from '@/i18n';
 import ConfirmBody from '@/ui/ConfirmBody.vue';
+import { shake } from '@/ui/kit';
 
 export const c = (key: string, params?: Record<string, string | number>) => t('config.' + key, params);
 export const cn = (n: number, key: string, params?: Record<string, string | number>) => plural(n, 'config.' + key, params);
@@ -30,13 +31,6 @@ export function since(at: number) {
   if (d < h) return cn(Math.max(1, Math.round(d / min)), 'since.minutes');
   if (d < DAY) return cn(Math.round(d / h), 'since.hours');
   return cn(Math.round(d / DAY), 'since.days');
-}
-
-export function shake(el: Element | null | undefined) {
-  if (!el) return;
-  el.classList.remove('glim-shake');
-  void (el as HTMLElement).offsetWidth;
-  el.classList.add('glim-shake');
 }
 
 // The warning for a value that cannot be saved: a note, and the field it is about shakes.

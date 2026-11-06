@@ -8,6 +8,7 @@ export interface FileNode {
   name: string;
   dir?: boolean;
   size: number;
+  sizeUnknown?: boolean;
   time: number;
   mode?: string;
   owner?: string;

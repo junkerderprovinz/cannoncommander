@@ -32,14 +32,16 @@ const (
 
 // Hit is one search result: a listing row and the folder it lies in.
 type Hit struct {
-	Name   string `json:"name"`
-	Dir    bool   `json:"dir"`
-	Size   int64  `json:"size"`
-	MTime  string `json:"mtime"`
-	BTime  string `json:"btime,omitempty"`
-	Mode   string `json:"mode"`
-	Hidden bool   `json:"hidden,omitempty"`
-	At     string `json:"at"`
+	Name string `json:"name"`
+	Dir  bool   `json:"dir"`
+	Size int64  `json:"size"`
+	// SizeUnknown marks a folder the index has not measured yet.
+	SizeUnknown bool   `json:"sizeUnknown,omitempty"`
+	MTime       string `json:"mtime"`
+	BTime       string `json:"btime,omitempty"`
+	Mode        string `json:"mode"`
+	Hidden      bool   `json:"hidden,omitempty"`
+	At          string `json:"at"`
 	// Line is where a content search found the text first, counted from 1.
 	Line int `json:"line,omitempty"`
 }
@@ -226,8 +228,11 @@ func (h handlers) finder(ctx context.Context, u *users.User, p Params) *finder {
 }
 
 // folderSizes fills in the total size of the folders among the hits, as
-// far as the index has measured them.
+// far as the index has measured them, and marks the others.
 func (h handlers) folderSizes(items []Hit, rows []*row) {
+	for i, r := range rows {
+		items[i].SizeUnknown = r.Dir
+	}
 	if h.deps.Index == nil {
 		return
 	}
@@ -259,8 +264,9 @@ func (h handlers) folderSizes(items []Hit, rows []*row) {
 		}
 		got := h.deps.Index.Folders(src, dirs)
 		for _, x := range refs {
-			if f, ok := got[x.index]; ok && f.Size > 0 {
+			if f, ok := got[x.index]; ok && f.Size >= 0 {
 				items[x.i].Size = f.Size
+				items[x.i].SizeUnknown = false
 			}
 		}
 	}

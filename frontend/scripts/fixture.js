@@ -110,8 +110,11 @@ export function createFixture() {
   // The prototype makes up inode, links and the sticky bit from the name, and its features settle some of them; the
   // fixture hands the values over as a server would read them.
   const num = (k, id, made) => (k.cols?.[id] ? +k.cols[id] : made);
-  const item = (k) => ({
-    name: k.name, dir: !!k.dir, size: Math.round(k.dir ? FS.totalSize(k) : k.size || 0), mtime: iso(k.time),
+  // Folders the index has not measured yet, as during its first run; PUT /api/v1/fixture/unmeasured names them.
+  const unmeasured = new Set();
+  const sizeOf = (k, at) => (!k.dir ? { size: Math.round(k.size || 0) } : unmeasured.has(FS.join(at, k.name)) ? { size: 0, sizeUnknown: true } : { size: Math.round(FS.totalSize(k)) });
+  const item = (k, at) => ({
+    name: k.name, dir: !!k.dir, ...sizeOf(k, at), mtime: iso(k.time),
     mode: k.dir && h(k, 's') % 7 === 0 ? '1' + k.mode.slice(-3) : k.mode,
     owner: k.owner, group: k.group, ...(k.hidden ? { hidden: true } : {}), ...(k.link ? { link: k.link } : {}),
     ...(k.dir ? { items: FS.kids(k).length } : {}), ...(k.zip ? { archive: true } : {}),
@@ -157,7 +160,7 @@ export function createFixture() {
     hashOf,
     list(path) {
       const n = dirAt(path);
-      return n && { path, items: FS.kids(n).map(item), volume: volume(path) };
+      return n && { path, items: FS.kids(n).map((k) => item(k, path)), volume: volume(path) };
     },
     tree(path) {
       const n = dirAt(path);
@@ -204,9 +207,14 @@ export function createFixture() {
       walk(root, path);
       if (mq.unknown.length) hits.length = 0;
       hits.sort((a, b) => Number(!!b.k.dir) - Number(!!a.k.dir) || a.k.name.localeCompare(b.k.name, 'de', { numeric: true }));
-      return { path, items: hits.slice(0, limit).map((h) => ({ ...item(h.k), at: h.at })), total: hits.length, more: hits.length > limit, scanned, pending: 0, unknown: mq.unknown, indexed: true };
+      return { path, items: hits.slice(0, limit).map((h) => ({ ...item(h.k, h.at), at: h.at })), total: hits.length, more: hits.length > limit, scanned, pending: 0, unknown: mq.unknown, indexed: true };
     },
-    me: () => ({ name: 'jdp', full: 'Junker der Provinz', role: 'Admin' }),
+    me: () => ({ name: 'jdp', full: 'Junker der Provinz', role: 'Admin', home: '/mnt/user' }),
+    setUnmeasured(paths = []) {
+      unmeasured.clear();
+      paths.forEach((p) => unmeasured.add(p));
+      return { paths: [...unmeasured] };
+    },
     bookmarks: () => ({ items: DATA.bookmarks }),
   };
 }
@@ -230,6 +238,7 @@ export const sharedFixture = () => (shared ??= createFixture());
 // Connect middleware for Vite's dev and preview servers.
 export function fixtureMiddleware() {
   const fx = sharedFixture();
+  let startFolder = '/mnt/user/downloads';
   const content = contentRoutes(fx.FS);
   const routes = {
     'GET /api/v1/fs/list': (q) => content.list(q.get('path') || '/') || fx.list(q.get('path') || '/'),
@@ -240,9 +249,15 @@ export function fixtureMiddleware() {
     'GET /api/v1/me/bookmarks': () => fx.bookmarks(),
     // Settings, shortcuts and watched folders are taken and forgotten; the browser's own copy carries them here.
     'PUT /api/v1/me/bookmarks': (_q, body) => body,
-    'GET /api/v1/me/prefs': () => ({}),
-    'PUT /api/v1/me/prefs': () => ({}),
+    // The prototype starts in the downloads, which the steps show in the settings, where a real server starts in the
+    // user's home folder. The start folder is kept, so a check can start somewhere else.
+    'GET /api/v1/me/prefs': () => ({ startFolder }),
+    'PUT /api/v1/me/prefs': (_q, body) => {
+      if (typeof body.startFolder === 'string') startFolder = body.startFolder;
+      return {};
+    },
     'PUT /api/v1/events/watch': (_q, body) => body,
+    'PUT /api/v1/fixture/unmeasured': (_q, body) => fx.setUnmeasured(body.paths),
   };
   return async (req, res, next) => {
     const url = new URL(req.url, 'http://fixture');

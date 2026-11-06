@@ -9,7 +9,7 @@ import { toast } from '@/core/toast';
 import { useUser } from '@/stores/user';
 import { c, cn, fail, P } from '@/features/config/shared';
 
-const start = ref(prefs.startFolder || '/mnt/user/downloads');
+const start = ref(prefs.startFolder || useUser().me.home || '/');
 const field = ref<InstanceType<typeof PathField> | null>(null);
 const CAPS: [number, string][] = [[0, c('general.noCap')], [25, '25 MB/s'], [50, '50 MB/s'], [100, '100 MB/s'], [200, '200 MB/s']];
 const AFTER: [number, string][] = [[0, c('general.always')], [60, c('general.after1m')], [600, c('general.after10m')], [3600, c('general.after1h')]];

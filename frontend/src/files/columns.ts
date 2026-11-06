@@ -71,7 +71,7 @@ const diskSize = (k: Entry) => Math.ceil((k.size || 0) / 4096) * 4096;
 type Def = Omit<Column, 'group' | 'value'> & { value?: Column['value'] };
 const general: Def[] = [
   { id: 'name', width: 'minmax(0, 1fr)', min: 14, sort: 'name', fixed: true, value: (k) => k.name },
-  { id: 'size', width: '6.5rem', r: true, sort: 'size', value: (k) => (k.dir ? (prefs.folderSizes ? fmtSize(k.size) || '0 B' : t('files.objShort', { n: k.items ?? 0 })) : fmtSize(k.size)) },
+  { id: 'size', width: '6.5rem', r: true, sort: 'size', value: (k) => (k.dir ? (prefs.folderSizes ? (k.sizeUnknown ? '' : fmtSize(k.size) || '0 B') : t('files.objShort', { n: k.items ?? 0 })) : fmtSize(k.size)) },
   { id: 'modified', width: '7.5rem', r: true, sort: 'time', value: (k) => fmtListDate(k.time) },
   { id: 'created', width: '7.5rem', r: true, num: (k) => k.btime ?? -1, value: (k) => (k.btime == null ? '' : fmtListDate(k.btime)) },
   { id: 'accessed', width: '7.5rem', r: true, meta: 'date', num: metaNum('accessed') },

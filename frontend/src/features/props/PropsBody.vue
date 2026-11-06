@@ -35,7 +35,7 @@ const typeOf = (k: Item) => (k.link ? t(k.dir ? 'props.linkToDir' : 'props.linkT
 const bytes = computed(() => plural(Math.round(st.size), 'props.bytes'));
 const sizeText = computed(() => {
   const size = fmtSize(st.size) || '0 B';
-  if (!st.counted) return size;
+  if (!st.counted) return st.nodes.some((k) => k.sizeUnknown) ? t('files.unmeasured') : size;
   if (one.value) return one.value.dir ? `${size}, ${st.dirs ? t('props.inDirs', { files: plural(st.files, 'ui.files'), dirs: plural(st.dirs, 'props.dirsWord') }) : plural(st.files, 'ui.files')}` : size;
   return `${size}, ${st.dirs ? t('props.andDirs', { files: plural(st.files, 'ui.files'), dirs: plural(st.dirs, 'props.dirsPlain') }) : plural(st.files, 'ui.files')}`;
 });

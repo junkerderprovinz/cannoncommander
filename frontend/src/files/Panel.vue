@@ -79,6 +79,12 @@ function toggleDeep() {
 }
 
 const marked = computed(() => list.value.filter((k) => !k.up && tab.value.marked.has(k.name)));
+// Folders the index has not measured yet leave the sum short, so it says so rather than give it as the whole.
+const markedText = computed(() => {
+  const n = marked.value.length, size = fmtSize(marked.value.reduce((a, k) => a + k.size, 0));
+  if (!marked.value.some((k) => k.sizeUnknown)) return t('files.marked', { n, size });
+  return size ? t('files.markedAtLeast', { n, size }) : t('files.markedUnmeasured', { n });
+});
 const count = computed(() => {
   const n = list.value.filter((k) => !k.up).length, tb = tab.value;
   return plural(n, tb.filter || tb.smart ? 'files.hits' : tb.flat ? 'files.flatCount' : 'files.objects');
@@ -116,7 +122,7 @@ const count = computed(() => {
     <Render v-for="(bar, n) in extend.panelBars" :key="n" :node="bar(i)" />
     <FileList :key="tab.path + v" :i="i" />
     <div class="lfoot glim-num">
-      <span v-if="marked.length">{{ t('files.marked', { n: marked.length, size: fmtSize(marked.reduce((a, k) => a + k.size, 0)) }) }}<button class="lclear" data-run="unselect" :data-tip="t('files.unselectTip')" :aria-label="t('files.unselect')" @click="run('unselect')"><G n="IconClose" /></button></span>
+      <span v-if="marked.length">{{ markedText }}<button class="lclear" data-run="unselect" :data-tip="t('files.unselectTip')" :aria-label="t('files.unselect')" @click="run('unselect')"><G n="IconClose" /></button></span>
       <span v-else>{{ count }}</span>
       <span v-if="prefs.dual" class="pdots" aria-hidden="true"><i v-for="n in [0, 1]" :key="n" :class="{ on: n === i }" :data-pswitch="n" @click="F.active = n"></i></span>
       <Render v-for="(slot, n) in extend.footerSlots" :key="n" :node="slot(i)" />

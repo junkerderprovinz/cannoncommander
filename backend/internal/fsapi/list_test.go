@@ -93,8 +93,38 @@ func TestListTakesFolderSizesFromTheIndex(t *testing.T) {
 
 	idx.folders["/filme/Sintel (2010)"] = fsindex.Folder{Items: 2, Size: -1}
 	sintel = byName(t, decode[Listing](t, f.get(t, "jdp", "/fs/list", "/mnt/user/filme")).Items, "Sintel (2010)")
-	if *sintel.Items != 2 || sintel.Size != 0 {
+	if *sintel.Items != 2 || sintel.Size != 0 || !sintel.SizeUnknown {
 		t.Fatalf("folder without a measured size = %+v", sintel)
+	}
+}
+
+func TestListTellsAnEmptyFolderFromOneNotMeasuredYet(t *testing.T) {
+	idx := &fakeIndex{folders: map[string]fsindex.Folder{
+		"/musik/Podcasts": {Items: 0, Size: 0},
+		"/musik/Alben":    {Items: 4, Size: -1},
+	}}
+	f := newFixture(t, idx)
+	write(t, filepath.Join(f.share, "musik", "Alben", "a.flac"), 3)
+	write(t, filepath.Join(f.share, "musik", "Hörbücher", "b.mp3"), 3)
+	write(t, filepath.Join(f.share, "musik", "c.mp3"), 3)
+	items := decode[Listing](t, f.get(t, "jdp", "/fs/list", "/mnt/user/musik")).Items
+	if empty := byName(t, items, "Podcasts"); empty.SizeUnknown {
+		t.Errorf("measured empty folder = %+v", empty)
+	}
+	for _, name := range []string{"Alben", "Hörbücher"} {
+		if k := byName(t, items, name); !k.SizeUnknown {
+			t.Errorf("%s has no size from the index but = %+v", name, k)
+		}
+	}
+	if file := byName(t, items, "c.mp3"); file.SizeUnknown {
+		t.Errorf("file = %+v", file)
+	}
+}
+
+func TestStatMarksAFolderNotMeasuredYet(t *testing.T) {
+	f := newFixture(t, &fakeIndex{})
+	if st := decode[Stat](t, f.get(t, "jdp", "/fs/stat", "/mnt/user/filme")); !st.SizeUnknown {
+		t.Fatalf("folder = %+v", st)
 	}
 }
 
