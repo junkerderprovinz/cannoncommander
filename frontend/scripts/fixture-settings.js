@@ -359,7 +359,7 @@ export function settingsFixtureMiddleware() {
         S.reading.add(name);
         clock.setTimeout(() => { S.reading.delete(name); S.index[name].last = clock.now(); }, 2500);
       }
-      return [202, { id: 'j' + clock.now(), kind: 'reindex', name: names.length === 1 ? names[0] : 'Alle Quellen', state: 'queued', owner: ME, createdAt: iso(clock.now()) }];
+      return [202, { id: 'j' + clock.now(), kind: 'reindex', name: names.length === 1 ? names[0] : 'All sources', state: 'queued', owner: ME, createdAt: iso(clock.now()) }];
     }],
     ['GET', '/admin/app', app],
     ['PUT', '/admin/app', (b) => {
