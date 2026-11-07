@@ -34,15 +34,16 @@ const WEED = `<svg viewBox="0 0 14 14" fill="currentColor" fill-rule="evenodd"><
   [0, 60, 120].map((a) => `<path d="${TWIG}" transform="rotate(${a} 7 7)"/>`).join('')}</svg>`;
 const BALL = `<svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="currentColor"/><circle class="fx-shine" cx="4.9" cy="4.9" r="1.5"/></svg>`;
 
-function piece(cls: string, vars: Vars, html = '') {
+function piece(cls: string, vars: Vars, html: string | Node = '', into: Element = host()) {
   const el = document.createElement('div');
   el.className = cls;
   for (const [k, v] of Object.entries(vars)) el.style.setProperty(k, typeof v === 'number' ? `${v}px` : v);
-  el.innerHTML = html;
+  if (typeof html === 'string') el.innerHTML = html;
+  else el.append(html);
   const gone = (e: AnimationEvent) => { if (e.target === el) el.remove(); };
   el.addEventListener('animationend', gone);
   el.addEventListener('animationcancel', gone);
-  host().append(el);
+  into.append(el);
   return el;
 }
 
@@ -64,9 +65,8 @@ export function trace(from: Element, to: Element) {
   piece('fx-trace', { left: b.x, top: b.y, '--fx-dx': b.x - a.x, '--fx-dy': b.y - a.y, '--fx-angle': `${Math.atan2(b.y - a.y, b.x - a.x)}rad` });
 }
 
-const puff = (at: Point, delay: string) => {
-  [-1, 0, 1].forEach((side, i) => piece('fx-puff', { left: at.x, top: at.y, '--fx-side': String(side), '--fx-i': String(i), '--fx-delay': delay }, svg('IconCloud')));
-};
+const puff = (at: Point, delay: string) =>
+  [-1, 0, 1].map((side, i) => piece('fx-puff', { left: at.x, top: at.y, '--fx-side': String(side), '--fx-i': String(i), '--fx-delay': delay }, svg('IconCloud')));
 
 export function cannon(from: Element, to: Element) {
   const a = centre(from), b = centre(to);
@@ -99,4 +99,67 @@ export function salute(bar: Element) {
 export function tumble(box: Element) {
   const r = box.getBoundingClientRect();
   return piece('fx-tumble', { left: r.left, top: r.top, width: r.width, height: r.height }, `<div class="fx-tumble-run"><div class="fx-weed">${WEED}</div></div>`);
+}
+
+// The smoke at the muzzle of the header's cannon as it fires.
+export const muzzleSmoke = (at: Point) => puff(at, '0s');
+
+// The logo's own ball, its shapes copied as they are and cut to their own box, flying to the screen position `to`.
+// Flying left it is mirrored, so it rolls the other way.
+export function flyBall(ball: SVGGraphicsElement, to: number) {
+  const r = ball.getBoundingClientRect(), box = ball.getBBox(), dir = Math.sign(to - r.left) || 1;
+  const drawing = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  drawing.setAttribute('viewBox', `${box.x} ${box.y} ${box.width} ${box.height}`);
+  drawing.append(ball.cloneNode(true));
+  return piece('fx-shot', { left: r.left, top: r.top, width: r.width, height: r.height, '--fx-dx': to - r.left, '--fx-flip': String(dir) }, drawing);
+}
+
+// Cuts a rectangle into rows of cells and every cell into two triangles, with the inner corners pushed about so no
+// two shards match. Corners on the edge only slide along it, so the shards still cover the element exactly.
+export function shards(cols: number, rows: number, rand = Math.random): [number, number][][] {
+  const shake = (i: number, n: number) => (i > 0 && i < n ? (rand() - 0.5) * 0.7 : 0);
+  const grid = Array.from({ length: cols + 1 }, (_, i) => Array.from({ length: rows + 1 }, (_, j): [number, number] =>
+    [((i + shake(i, cols)) / cols) * 100, ((j + shake(j, rows)) / rows) * 100]));
+  return grid.slice(0, -1).flatMap((col, i) => col.slice(0, -1).flatMap((a, j) => {
+    const b = grid[i + 1]![j]!, c = grid[i + 1]![j + 1]!, d = col[j + 1]!;
+    return rand() < 0.5 ? [[a, b, c], [a, c, d]] : [[a, b, d], [b, c, d]];
+  }));
+}
+
+// A copy of the element that still finds its place in the head's styles: its parents come along as boxes that draw
+// nothing, and the hooks that tests and handlers look for stay behind.
+const HOOK = /^(id|tabindex|data-(run|go-view|account|all-menus|menu|tip))$/;
+function lookalike(el: Element, head: Element, r: DOMRect) {
+  const bare = (node: Element) => {
+    for (const n of [node, ...node.querySelectorAll('*')]) for (const { name } of [...n.attributes]) if (HOOK.test(name)) n.removeAttribute(name);
+    return node as HTMLElement;
+  };
+  const copy = bare(el.cloneNode(true) as Element);
+  copy.classList.remove('fx-rebuild');
+  Object.assign(copy.style, { position: 'absolute', left: '0', top: '0', width: `${r.width}px`, height: `${r.height}px`, margin: '0' });
+  let top: Element = copy;
+  for (let p = el.parentElement; p && p !== head; p = p.parentElement) {
+    const shell = bare(p.cloneNode(false) as Element);
+    shell.style.display = 'contents';
+    shell.append(top);
+    top = shell;
+  }
+  return top;
+}
+
+// Breaks an element of the head into shards that fly on the way the ball went, fall and fade. The element itself
+// stays where it is; the caller hides it for as long as its shards are about.
+export function shatter(el: Element, into: Element, dir: number, rand = Math.random) {
+  const r = el.getBoundingClientRect();
+  const cols = Math.min(5, Math.max(2, Math.round(r.width / 26)));
+  return shards(cols, 2, rand).map((poly) => {
+    const fall = document.createElement('div');
+    fall.className = 'fx-shard-fall';
+    fall.style.clipPath = `polygon(${poly.map(([x, y]) => `${x.toFixed(1)}% ${y.toFixed(1)}%`).join(', ')})`;
+    fall.append(lookalike(el, into.parentElement!, r));
+    return piece('fx-shard', {
+      left: r.left, top: r.top, width: r.width, height: r.height,
+      '--fx-sx': String(dir * (0.3 + rand())), '--fx-sy': String(0.5 + rand()), '--fx-kick': String(rand()), '--fx-sr': String(rand() * 2 - 1),
+    }, fall, into);
+  });
 }

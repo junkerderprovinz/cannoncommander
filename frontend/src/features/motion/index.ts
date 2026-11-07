@@ -8,6 +8,7 @@ import { glyphOf } from '@/core/glyphs';
 import { levelOf, lively, moving, stormy } from '@/core/motion';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
+import { view } from '@/core/views';
 import { join } from '@/files/paths';
 import { plural, t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
@@ -15,6 +16,7 @@ import { usePanels } from '@/stores/panels';
 import { useTrash } from '@/stores/trash';
 import { broadside, KONAMI, onceEach, sequence, typedWord } from './cues';
 import { cannon, drop, replay, salute, smoke, trace, tumble } from './fx';
+import { armLogo, stopShot } from './shot';
 import './motion.css';
 
 type Params = { sources?: string[]; dest?: string; paths?: string[] };
@@ -129,4 +131,7 @@ export default function setup() {
   konami();
   kaboom();
   tumbleweed();
+  armLogo();
+  // Another view brings another head, so a shot in flight ends where it is.
+  watch(() => view.id, stopShot);
 }

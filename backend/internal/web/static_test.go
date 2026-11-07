@@ -54,6 +54,7 @@ func TestTheAppCanBeInstalledAndTakeShares(t *testing.T) {
 		"manifest.webmanifest": {Data: []byte(`{"name":"CannonCommander"}`)},
 		"sw.js":                {Data: []byte("addEventListener('fetch', () => {})")},
 		"icons/app-512.png":    {Data: []byte("png")},
+		"icons/favicon.svg":    {Data: []byte("<svg/>")},
 	}
 	settings.Config.Http.BaseURL = "/"
 	router := http.NewServeMux()
@@ -68,6 +69,7 @@ func TestTheAppCanBeInstalledAndTakeShares(t *testing.T) {
 		"/manifest.webmanifest": "application/manifest+json",
 		"/sw.js":                "application/javascript; charset=utf-8",
 		"/icons/app-512.png":    "image/png",
+		"/icons/favicon.svg":    "image/svg+xml",
 	} {
 		rec := do("GET", path)
 		if rec.Code != http.StatusOK || rec.Header().Get("Content-Type") != kind || rec.Header().Get("Cache-Control") != "no-cache" {
