@@ -1,4 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { installTips } from '@/core/tips';
 import { HOLD } from './cues';
 import { armLogo, fire, stopShot, type Times } from './shot';
 
@@ -101,6 +102,36 @@ describe('the shot across the head', () => {
     document.documentElement.dataset.motion = 'off';
     expect(fire(head, TIMES)).toBe(false);
     expect(leftovers()).toBe(0);
+  });
+});
+
+describe('the tip of the logo', () => {
+  const over = () => head.querySelector('.brand svg')!.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+  const tip = () => document.querySelector('.bubble');
+  beforeAll(() => {
+    window.matchMedia ??= (() => ({ matches: false })) as unknown as typeof window.matchMedia;
+    installTips();
+  });
+  beforeEach(() => { head.querySelector('.brand')!.setAttribute('data-tip', 'CannonCommander'); });
+
+  it('goes away as the cannon starts to tremble and stays away until the head is back', () => {
+    over();
+    expect(tip()).not.toBeNull();
+    fire(head, TIMES);
+    expect(tip()).toBeNull();
+    vi.advanceTimersByTime(TIMES.tremble + TIMES.shot / 2);
+    over();
+    expect(tip()).toBeNull();
+    vi.advanceTimersByTime(END);
+    over();
+    expect(tip()).not.toBeNull();
+  });
+
+  it('comes back at once when the shot is stopped', () => {
+    fire(head, TIMES);
+    stopShot();
+    over();
+    expect(tip()).not.toBeNull();
   });
 });
 
