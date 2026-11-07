@@ -6,7 +6,7 @@ export const PREFS_KEY = 'cannoncommander-prefs';
 // An empty language has not been picked yet, and the browser's language stands for it until someone picks one.
 
 export const DEFAULT_PREFS = {
-  theme: 'dark', accent: DEFAULT_ACCENT, shape: 'round', motion: 'subtle', quietToasts: false,
+  theme: 'system', accent: DEFAULT_ACCENT, shape: 'round', motion: 'subtle', quietToasts: false,
   labelsButtons: DEFAULT_LABEL_MODE, labelsSidebar: DEFAULT_LABEL_MODE, labelsTabs: DEFAULT_LABEL_MODE, labelsBottombar: DEFAULT_LABEL_MODE,
   rainbow: false, reactive: false, rotate: false, rotateSeed: 0, disco: false, tabOrder: [] as string[],
   accentPresets: ACCENTS.map((a) => a.hex), palette: [...RAINBOW], jobMode: 'serial', newsSeen: [] as string[], stayDays: 30,
@@ -54,7 +54,9 @@ export function mergeServerPrefs(server: Record<string, unknown>) {
 }
 
 export function applyPrefs(r: HTMLElement = document.documentElement) {
-  r.dataset.theme = prefs.theme === 'system' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : prefs.theme;
+  // Without a theme of its own the page is left to GlimStone's stylesheet, which follows the system as it changes.
+  if (prefs.theme === 'system') delete r.dataset.theme;
+  else r.dataset.theme = prefs.theme;
   applyAccent(prefs.accent);
   applyShape(prefs.shape);
   applyMotion(prefs.motion);

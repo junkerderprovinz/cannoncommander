@@ -34,7 +34,6 @@ applyPrefs();
 useLocales(import.meta.glob('./i18n/locales/*.json', { import: 'default' }));
 setLanguage(prefs.language);
 watch(() => prefs.language, setLanguage);
-matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => prefs.theme === 'system' && applyPrefs());
 installTips();
 
 // Nobody signed in sees only the sign in, so the file manager starts with a session or not at all.

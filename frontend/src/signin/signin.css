@@ -1,33 +1,6 @@
-.cl { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: safe center; gap: 1.2rem; padding: 2rem 1rem 6rem; overflow: auto; }
-.cl.over { position: fixed; inset: 0; z-index: 65; background: var(--carbon-bg); }
-.cl-card { width: min(28rem, 100%); gap: 0; padding: 2rem 1.4rem 1.4rem; flex: none; }
-.cl-form { display: flex; flex-direction: column; gap: 1.2rem; }
-.cl-brand { display: flex; align-items: center; gap: .8rem; padding: .2rem .1rem .3rem; }
-.cl-brand .brand-mark { width: 2.75rem; height: 2.75rem; }
-.cl-brand .brand-mark svg { width: 1.45rem; height: 1.45rem; }
-.cl-brand > span:last-child { display: flex; flex-direction: column; }
-.cl-name { font-size: 20px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
-.cl-brand .muted { font-size: 13px; }
-.cl-fields { display: flex; flex-direction: column; gap: .55rem; }
-.cl .cl-code { text-transform: uppercase; letter-spacing: .12em; }
-.cl .cl-code::placeholder { letter-spacing: .12em; }
-.cl-btns { display: flex; flex-direction: column; gap: .5rem; padding-top: .2rem; }
-.cl-btns > .glim-btn { width: 100%; }
-.cl-forgot { display: flex; align-items: center; gap: .5rem; }
-.cl-forgot > .glim-btn { flex: 1; }
-.cl-err, .cl-note { display: flex; align-items: center; gap: .6rem; padding: .6rem .8rem; border-radius: var(--radius-control); color: var(--carbon-text); font-size: 13px; }
-.cl-err { background: var(--status-fail-bg); }
-.cl-note { background: var(--carbon-surface2); }
-.cl-err svg, .cl-note svg { width: 1rem; height: 1rem; flex: none; }
-.cl-err svg { color: var(--status-fail-text); }
-.cl-note svg { color: var(--accent-glyph); }
-.cl-text { margin: 0; color: var(--carbon-text-sub); line-height: 1.5; }
-.cl-totp { display: flex; flex-direction: column; gap: .8rem; }
-.cl-lab { display: flex; align-items: center; gap: .35rem; }
-.cl-digits { display: grid; grid-template-columns: repeat(6, 1fr); gap: .45rem; }
-.cl-digits .glim-input { height: 3.1rem; text-align: center; font-size: 22px; font-weight: 600; padding: 0; width: 100%; }
-.cl-digits .glim-input:nth-child(3) { margin-inline-end: .5rem; }
-.cl-setup { display: flex; flex-direction: column; gap: .8rem; }
+.cl.over { position: fixed; inset: 0; z-index: 65; overflow: auto; }
+.cl-title { margin: 0; font-size: var(--text-title); font-weight: 600; }
+.cl-text { color: var(--carbon-text-sub); line-height: 1.5; }
 .cl-qr { align-self: center; width: 11rem; height: 11rem; padding: .6rem; border-radius: var(--radius-card); background: #fff; }
 .cl-qr svg { width: 100%; height: 100%; }
 .cl-key { display: flex; flex-direction: column; align-items: center; gap: .2rem; font-size: 12.5px; }
@@ -39,4 +12,3 @@
 .cl-spin { width: 2rem; height: 2rem; border-radius: 50%; border: 3px solid var(--carbon-surface3); border-top-color: var(--accent); animation: cl-spin 2.4s linear infinite; margin-bottom: .4rem; }
 @keyframes cl-spin { to { rotate: 360deg; } }
 @media (prefers-reduced-motion: no-preference) { .cl-spin { animation: cl-spin var(--motion-spin-dur, .8s) linear infinite; } }
-.cl-ver { font-size: 12px; }

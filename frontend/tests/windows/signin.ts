@@ -66,15 +66,29 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await page.goto(base + '/');
   await page.waitForSelector('#cl-user');
   await page.screenshot({ path: join(shots, 'signin.png') });
+  check('the name field has the focus', await page.evaluate(() => document.activeElement?.id === 'cl-user'));
+  check('Sign in waits for a password', await page.isDisabled('[data-signin="submit"]'));
   await page.fill('#cl-user', 'anna');
-  await page.fill('#cl-pass', 'nicht-das-richtige');
+  await page.fill('#cl-password', 'nicht-das-richtige');
   await page.click('#cl-keep');
-  await page.click('.cl-card button[type=submit]');
-  await page.waitForSelector('.cl-err');
-  check('a wrong password is explained', (await page.textContent('.cl-err'))?.includes('Name oder Passwort stimmt nicht'));
+  // The shake lasts a moment, so whether the button wore it is noted as it happens.
+  await page.evaluate(() => {
+    new MutationObserver(() => {
+      if (document.querySelector('[data-signin="submit"]')?.classList.contains('glim-shake')) document.body.dataset.shook = 'yes';
+    }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  });
+  await page.click('[data-signin="submit"]');
+  await page.waitForSelector('.glim-signin-error');
+  check('a wrong password is explained', (await page.textContent('.glim-signin-error'))?.includes('Name oder Passwort stimmt nicht'));
+  await page.waitForFunction(() => document.body.dataset.shook === 'yes', null, { timeout: 3000 }).catch(() => {});
+  check('a wrong password shakes Sign in', await page.evaluate(() => document.body.dataset.shook === 'yes'));
+  check('the password stays selected for the next try', await page.evaluate(() => {
+    const field = document.activeElement as HTMLInputElement | null;
+    return field?.id === 'cl-password' && field.selectionStart === 0 && field.selectionEnd === field.value.length;
+  }));
   await page.screenshot({ path: join(shots, 'signin-wrong.png') });
-  await page.fill('#cl-pass', 'anna-ihr-langes-passwort');
-  await page.click('.cl-card button[type=submit]');
+  await page.fill('#cl-password', 'anna-ihr-langes-passwort');
+  await page.click('[data-signin="submit"]');
   await page.waitForSelector('#app', { timeout: 30000 });
   await page.waitForTimeout(600);
   check('anna sees the file manager with a greeting', (await page.locator('.glim-toast').allInnerTexts()).some((t: string) => t.includes('Hallo Anna')));
@@ -84,7 +98,7 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await page.locator('.glim-menubar-item', { hasText: 'Datei' }).click();
   await page.getByRole('menuitem', { name: /Abmelden/ }).click();
   await page.waitForSelector('#cl-user', { timeout: 30000 });
-  check('signing out leads back to the sign in', (await page.textContent('.cl-note'))?.includes('abgemeldet'));
+  check('signing out leads back to the sign in', (await page.textContent('.glim-signin-note'))?.includes('abgemeldet'));
   check('the sign out ended the session', (await page.evaluate(() => fetch('/api/v1/me').then((r) => r.status))) === 401);
   await page.screenshot({ path: join(shots, 'signed-out.png') });
   await context.close();
@@ -96,15 +110,17 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   await page.goto(base + '/');
   await page.waitForSelector('#cl-user');
   await page.fill('#cl-user', admin);
-  await page.fill('#cl-pass', adminPw);
-  await page.click('.cl-card button[type=submit]');
-  await page.waitForSelector('[data-d="0"]');
+  await page.fill('#cl-password', adminPw);
+  await page.click('[data-signin="submit"]');
+  await page.waitForSelector('#cl-code');
   await page.screenshot({ path: join(shots, 'signin-totp.png') });
-  await page.locator('[data-d="0"]').pressSequentially('000000');
-  await page.waitForSelector('.cl-err');
-  check('a wrong code is explained', (await page.textContent('.cl-err'))?.includes('Code passt nicht'));
+  await page.fill('#cl-code', '000000');
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('.glim-signin-error');
+  check('a wrong code is explained', (await page.textContent('.glim-signin-error'))?.includes('Code passt nicht'));
   // The setup took the code of this time step, so the sign in takes the next one.
-  await page.locator('[data-d="0"]').pressSequentially(totp(setup.body.secret, Date.now() + 30000));
+  await page.fill('#cl-code', totp(setup.body.secret, Date.now() + 30000));
+  await page.keyboard.press('Enter');
   await page.waitForSelector('#app', { timeout: 30000 });
   const cookie = await sessionCookie(context);
   const days = cookie ? (cookie.expires * 1000 - Date.now()) / 86400000 : 0;
@@ -130,8 +146,8 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   check('a passkey is registered', added === 201, added);
   await page.evaluate(() => fetch('/api/v1/auth/logout', { method: 'POST' }));
   await page.goto(base + '/');
-  await page.waitForSelector('[data-cl="passkey"]');
-  await page.click('[data-cl="passkey"]');
+  await page.waitForSelector('[data-signin="passkey"]');
+  await page.click('[data-signin="passkey"]');
   await page.waitForSelector('#app', { timeout: 30000 });
   check('the passkey signs in without name and code', (await page.evaluate(() => fetch('/api/v1/me').then((r) => r.json()))).name === admin);
 
