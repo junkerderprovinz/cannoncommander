@@ -147,7 +147,7 @@
             if (!k.dir && !(exts && exts.includes(FS.ext(k.name)))) continue;
             const hasKids = k.dir && FS.kids(k).some(c => c.dir || (exts && exts.includes(FS.ext(c.name))));
             const isOpen = open.has(p);
-            const glyph = !k.dir ? 'IconFile' : p === '/boot' ? 'IconFlash' : p === '/mnt/remotes' ? 'IconCloud' : FS.FREE[p] ? 'IconZFS' : isOpen ? 'IconFolderOpen' : 'IconFolder';
+            const glyph = !k.dir ? 'IconFile' : p === '/boot' ? 'IconFlash' : p === '/remotes' ? 'IconCloud' : FS.FREE[p] ? 'IconZFS' : isOpen ? 'IconFolderOpen' : 'IconFolder';
             rows.push(`<div class="nav-row tree-row ${chosen === p ? 'cur' : ''}" style="padding-left:${.3 + depth * .85}rem" data-pick="${esc(p)}" data-isdir="${k.dir ? 1 : ''}">
               ${hasKids ? `<button class="tree-tog ${isOpen ? 'open' : ''}" data-ptog="${esc(p)}" aria-label="${isOpen ? 'Zuklappen' : 'Aufklappen'}">${g('IconExpand')}</button>` : '<span class="tree-tog"></span>'}
               ${g(glyph)}<span>${esc(FS.LABEL[p] || k.name)}</span></div>`);

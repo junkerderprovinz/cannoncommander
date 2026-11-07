@@ -93,7 +93,7 @@
     "tokenRejected": "Signing in doesn't work with this token", "signedIn": "Signed in at {who}", "signInFirst": "Sign in with {who} first",
     "missing": "{field} is still missing", "unchanged": "Unchanged",
     "name": "Name", "namePh": "such as nas-cellar", "nameTip": "Lowercase letters, digits and hyphens. rclone knows the remote by this name.", "needName": "Give the remote a name",
-    "mountAt": "Mount at", "mountAtTip": "The files show up under this folder in the file manager and for other containers.", "underMnt": "The folder has to be under /mnt, such as /mnt/remotes/{name}",
+    "mountAt": "Mount at", "mountAtTip": "The files show up under this folder in the file manager.", "underRemotes": "The folder has to be under /remotes, such as /remotes/{name}",
     "connection": "Connection", "connected": "Connected", "testFailed": "The connection doesn't work like this yet", "addedAt": "{name} is mounted at {mount}",
     "signedInPill": "Signed in", "failedPill": "Error", "mountFailed": "Mounting did not work: {error}",
     "savedNotMounted": "{name} is saved, but mounting did not work"

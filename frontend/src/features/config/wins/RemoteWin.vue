@@ -17,7 +17,7 @@ const WIDTHS = { w: 'wide', m: 'medium', s: 'short' } as const;
 const props = defineProps<{ win: WinEntry; remote: Remote | null; all: Remote[]; saved: () => void }>();
 const r = props.remote, isNew = !r;
 const type = ref<RemoteType | null>(r ? typeOf(r.type) : null);
-const draft = reactive<Record<string, string>>({ name: r?.name ?? '', mount: r?.mount ?? '/mnt/remotes/', ...(r?.params ?? {}) });
+const draft = reactive<Record<string, string>>({ name: r?.name ?? '', mount: r?.mount ?? '/remotes/', ...(r?.params ?? {}) });
 const token = ref('');
 const signedIn = computed(() => !!token.value || !!r?.secrets?.includes('token'));
 const query = ref('');
@@ -66,7 +66,7 @@ function showForm() {
 }
 
 function nameTyped() {
-  if (!mountTouched) draft.mount = '/mnt/remotes/' + draft.name.trim().toLowerCase();
+  if (!mountTouched) draft.mount = '/remotes/' + draft.name.trim().toLowerCase();
 }
 
 // The form as rclone takes it. An empty password leaves the saved one in place.
@@ -105,7 +105,7 @@ async function save() {
   const name = draft.name.trim(), mount = draft.mount.trim();
   if (!/^[a-z0-9][a-z0-9_-]*$/.test(name)) return fail(name ? c('lowercaseOnly') : c('remotes.needName'), at('#a-rname'));
   if (props.all.some((x) => x !== r && x.name === name)) return fail(c('nameTaken'), at('#a-rname'));
-  if (!/^\/mnt\/[^/]+\/.+/.test(mount)) return fail(c('remotes.underMnt', { name }), at('#a-rmount'));
+  if (!/^\/remotes\/.+/.test(mount)) return fail(c('remotes.underRemotes', { name }), at('#a-rmount'));
   const m = missing();
   if (m) return fail(...m);
   const done = await attempt(r ? admin.updateRemote(r.name, input()) : admin.addRemote(input()), at('#a-rname'));

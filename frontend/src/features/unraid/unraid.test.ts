@@ -79,7 +79,7 @@ describe('unraid store', () => {
     const U = state();
     expect(U.place('/mnt/user/downloads/a.iso')).toEqual({ vol: 'user', share: 'downloads', rel: 'downloads/a.iso' });
     expect(U.place('/mnt/cache/downloads')).toEqual({ vol: 'cache', share: 'downloads', rel: 'downloads' });
-    expect(U.place('/mnt/remotes/nas')).toBeNull();
+    expect(U.place('/remotes/nas')).toBeNull();
     expect(U.place('/mnt/user/a.zip::/x')).toBeNull();
   });
 

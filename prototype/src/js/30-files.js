@@ -190,7 +190,7 @@ function renderSide() {
       const p = FS.join(path, k.name);
       const hasKids = FS.kids(k).some(c => c.dir);
       const open = Files.openTree.has(p);
-      const glyph = p === '/mnt' ? 'IconDatabase' : p === '/boot' ? 'IconFlash' : p === '/mnt/remotes' ? 'IconCloud' : k.remote ? 'IconNetwork' : FS.FREE[p] ? 'IconZFS' : open ? 'IconFolderOpen' : 'IconFolder';
+      const glyph = p === '/mnt' ? 'IconDatabase' : p === '/boot' ? 'IconFlash' : p === '/remotes' ? 'IconCloud' : k.remote ? 'IconNetwork' : FS.FREE[p] ? 'IconZFS' : open ? 'IconFolderOpen' : 'IconFolder';
       rows.push(`<div class="nav-row tree-row ${cur === p ? 'cur' : ''}" style="padding-left:${.3 + depth * .85}rem" data-go="${esc(p)}" ${k.remote ? `data-tip="${esc(k.remote)}"` : ''}>
         ${hasKids ? `<button class="tree-tog ${open ? 'open' : ''}" data-tog="${esc(p)}" aria-label="${open ? 'Zuklappen' : 'Aufklappen'}">${g('IconExpand')}</button>` : '<span class="tree-tog"></span>'}
         ${g(glyph)}<span>${esc(FS.LABEL[p] || k.name)}</span>${FS.FREE[p] ? `<span class="meta glim-num">${fmtSize(FS.FREE[p])} frei</span>` : ''}</div>`);
@@ -329,7 +329,7 @@ function tileHtml(i, k, idx) {
 // A drive card as in the Explorer's This PC: the volume's glyph, its name, how full it is and what is left.
 function driveHtml(i, k, idx) {
   const t = Files.T(i), p = FS.join(t.path, k.name), free = FS.FREE[p], total = FS.TOTAL[p];
-  const glyph = p === '/boot' ? 'IconFlash' : p === '/mnt/remotes' ? 'IconCloud' : p === '/mnt/user' ? 'IconFiles' : free ? 'IconDatabase' : FS.glyphOf(k);
+  const glyph = p === '/boot' ? 'IconFlash' : p === '/remotes' ? 'IconCloud' : p === '/mnt/user' ? 'IconFiles' : free ? 'IconDatabase' : FS.glyphOf(k);
   const used = free && total ? 1 - free / total : 0;
   return `<div class="row dcard ${rowClass(t, k, idx)}" data-idx="${idx}" draggable="true">${t.marked.has(k.name) ? check() : ''}<span class="dglyph">${g(glyph)}</span>
     <span class="dtext"><span class="t">${esc(FS.LABEL[p] ? `${FS.LABEL[p]} (${k.name})` : k.name)}</span>

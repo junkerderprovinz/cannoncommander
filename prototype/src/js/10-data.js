@@ -42,16 +42,16 @@ const ROOT = D('', [
     D('cache', [D('appdata', []), D('system', [F('docker.img', 40 * GB), F('libvirt.img', 1 * GB)])]),
     D('disk1', [D('filme', []), D('backups', [])]),
     D('disk2', [D('fotos', []), D('musik', [])]),
-    D('remotes', [D('gdrive', [D('Dokumente', [F('Lebenslauf.pdf', 300 * KB)]), F('Notizbuch.md', 6 * KB)], { remote: 'rclone: gdrive' }), D('nas-keller', [D('archiv', [])], { remote: 'SMB: //keller/archiv' })]),
   ]),
+  D('remotes', [D('gdrive', [D('Dokumente', [F('Lebenslauf.pdf', 300 * KB)]), F('Notizbuch.md', 6 * KB)], { remote: 'rclone: gdrive' }), D('nas-keller', [D('archiv', [])], { remote: 'SMB: //keller/archiv' })]),
   D('boot', [F('bzimage', 9 * MB), F('bzroot', 140 * MB), D('config', [F('ident.cfg', 1 * KB), F('go', 1 * KB)])], { owner: 'root', group: 'root' }),
 ]);
 
 const FS = {
   root: ROOT,
-  FREE: { '/mnt/user': 1.4 * TB, '/mnt/cache': 420 * GB, '/mnt/disk1': 610 * GB, '/mnt/disk2': 790 * GB, '/boot': 24 * GB, '/mnt/remotes': 1.8 * TB },
-  TOTAL: { '/mnt/user': 8 * TB, '/mnt/cache': 1 * TB, '/mnt/disk1': 4 * TB, '/mnt/disk2': 4 * TB, '/boot': 32 * GB, '/mnt/remotes': 2 * TB },
-  LABEL: { '/mnt/user': 'Shares', '/mnt/cache': 'Cache', '/mnt/disk1': 'Disk 1', '/mnt/disk2': 'Disk 2', '/boot': 'USB-Stick', '/mnt/remotes': 'Fernziele' },
+  FREE: { '/mnt/user': 1.4 * TB, '/mnt/cache': 420 * GB, '/mnt/disk1': 610 * GB, '/mnt/disk2': 790 * GB, '/boot': 24 * GB, '/remotes': 1.8 * TB },
+  TOTAL: { '/mnt/user': 8 * TB, '/mnt/cache': 1 * TB, '/mnt/disk1': 4 * TB, '/mnt/disk2': 4 * TB, '/boot': 32 * GB, '/remotes': 2 * TB },
+  LABEL: { '/mnt/user': 'Shares', '/mnt/cache': 'Cache', '/mnt/disk1': 'Disk 1', '/mnt/disk2': 'Disk 2', '/boot': 'USB-Stick', '/remotes': 'Fernziele' },
   split: (p) => p.split('/').filter(Boolean),
   join: (path, name) => (path === '/' ? '' : path) + '/' + name,
   parent(path) { const p = FS.split(path); p.pop(); return '/' + p.join('/'); },
@@ -120,7 +120,7 @@ const DATA = {
     { name: 'Shares', path: '/mnt/user', readOnly: false, indexed: true, files: 182344, size: 6.6 * TB },
     { name: 'Cache', path: '/mnt/cache', readOnly: false, indexed: true, files: 4021, size: 580 * GB },
     { name: 'USB-Stick', path: '/boot', readOnly: true, indexed: false, files: 211, size: 8 * GB },
-    { name: 'Fernziele', path: '/mnt/remotes', readOnly: false, indexed: false, files: 0, size: 0 },
+    { name: 'Fernziele', path: '/remotes', readOnly: false, indexed: false, files: 0, size: 0 },
   ],
   rules: [
     { who: 'anna', path: '/mnt/user/backups', rule: 'verbergen' },
@@ -151,8 +151,8 @@ const DATA = {
   ],
   tokens: [{ name: 'backup-skript', created: NOW - 30 * DAY, last: NOW - DAY, rights: 'lesen, schreiben' }],
   remotes: [
-    { name: 'gdrive', type: 'Google Drive', mount: '/mnt/remotes/gdrive', state: 'verbunden' },
-    { name: 'nas-keller', type: 'SMB', mount: '/mnt/remotes/nas-keller', state: 'verbunden' },
+    { name: 'gdrive', type: 'Google Drive', mount: '/remotes/gdrive', state: 'verbunden' },
+    { name: 'nas-keller', type: 'SMB', mount: '/remotes/nas-keller', state: 'verbunden' },
   ],
   bookmarks: [
     { name: 'Downloads', path: '/mnt/user/downloads', g: 'IconDownload' },

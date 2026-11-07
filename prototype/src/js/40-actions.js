@@ -86,7 +86,7 @@ CC.action('addBookmark', { label: 'Verknüpfung anlegen', g: 'IconStar', run: (p
 function addBookmark(path) {
   if (FS.inArchive(path)) return CC.toast('Ein Ordner im Archiv kann keine Verknüpfung werden', 'warn');
   if (DATA.bookmarks.some(b => b.path === path)) return CC.toast('Diese Verknüpfung gibt es schon', 'warn');
-  const glyph = FS.LABEL[path] ? (path === '/boot' ? 'IconFlash' : path === '/mnt/remotes' ? 'IconCloud' : 'IconZFS') : 'IconFolder';
+  const glyph = FS.LABEL[path] ? (path === '/boot' ? 'IconFlash' : path === '/remotes' ? 'IconCloud' : 'IconZFS') : 'IconFolder';
   DATA.bookmarks.push({ name: labelOf(path), path, g: glyph });
   CC.render();
   CC.toast(`Verknüpfung „${labelOf(path)}“ angelegt`);

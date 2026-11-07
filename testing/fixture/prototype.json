@@ -11,7 +11,7 @@
    {
     "name": "mnt",
     "dir": true,
-    "time": 1779787800000,
+    "time": 1781429400000,
     "owner": "nobody",
     "group": "users",
     "mode": "0775",
@@ -13908,137 +13908,137 @@
         ]
        }
       ]
-     },
+     }
+    ]
+   },
+   {
+    "name": "remotes",
+    "dir": true,
+    "time": 1779787800000,
+    "owner": "nobody",
+    "group": "users",
+    "mode": "0775",
+    "children": [
      {
-      "name": "remotes",
+      "name": "gdrive",
       "dir": true,
-      "time": 1777800600000,
+      "time": 1779874200000,
       "owner": "nobody",
       "group": "users",
       "mode": "0775",
+      "remote": "rclone: gdrive",
       "children": [
        {
-        "name": "gdrive",
+        "name": "Dokumente",
         "dir": true,
-        "time": 1789551000000,
+        "time": 1780047000000,
         "owner": "nobody",
         "group": "users",
         "mode": "0775",
-        "remote": "rclone: gdrive",
         "children": [
          {
-          "name": "Dokumente",
-          "dir": true,
-          "time": 1777109400000,
-          "owner": "nobody",
-          "group": "users",
-          "mode": "0775",
-          "children": [
-           {
-            "name": "Lebenslauf.pdf",
-            "size": 307200,
-            "time": 1775231229659,
-            "owner": "nobody",
-            "group": "users",
-            "mode": "0664",
-            "format": "pdf",
-            "view": "pdf",
-            "cols": {
-             "created": "21.01.2026",
-             "accessed": "15.04.2026",
-             "type": "PDF-Dokument",
-             "ext": "pdf",
-             "path": "/mnt/remotes/gdrive/Dokumente",
-             "owner": "nobody",
-             "group": "users",
-             "rights": "-rw-rw-r--",
-             "octal": "664",
-             "pages": "33",
-             "sha256": "2334a3d013dd",
-             "disksize": "300 KB",
-             "kind": "Dokument",
-             "mime": "application/pdf",
-             "attributes": "A",
-             "statchange": "04.04.2026",
-             "disk": "Fernziele",
-             "hardlinks": "1",
-             "inode": "5988083",
-             "blocks": "600",
-             "uid": "99",
-             "gid": "100",
-             "author": "jdp",
-             "lastauthor": "jdp",
-             "doctitle": "Lebenslauf",
-             "subject": "Rechnung",
-             "words": "733",
-             "app": "LibreOffice",
-             "encrypted": "Nein",
-             "crc32": "1e349bf1",
-             "md5": "1834927f2cc1",
-             "sha1": "2e34b521ef97"
-            }
-           }
-          ]
-         },
-         {
-          "name": "Notizbuch.md",
-          "size": 6144,
-          "time": 1773203509087,
+          "name": "Lebenslauf.pdf",
+          "size": 307200,
+          "time": 1774434872054,
           "owner": "nobody",
           "group": "users",
           "mode": "0664",
-          "format": "text",
-          "view": "md",
-          "text": "# Notizbuch\n\n## Ideen\n\n- Fotos automatisch nach Jahr sortieren\n- Backups einmal im Monat testweise zurückspielen\n\n## Bücher\n\n*Der Name des Windes*, angefangen im Oktober.\n",
+          "format": "pdf",
+          "view": "pdf",
           "cols": {
-           "created": "06.09.2025",
-           "accessed": "17.03.2026",
-           "type": "Textdatei",
-           "ext": "md",
-           "path": "/mnt/remotes/gdrive",
+           "created": "12.01.2026",
+           "accessed": "06.04.2026",
+           "type": "PDF-Dokument",
+           "ext": "pdf",
+           "path": "/remotes/gdrive/Dokumente",
            "owner": "nobody",
            "group": "users",
            "rights": "-rw-rw-r--",
            "octal": "664",
-           "sha256": "27e09856f48f",
-           "disksize": "8 KB",
-           "kind": "Text",
-           "mime": "text/markdown",
-           "statchange": "11.03.2026",
+           "pages": "33",
+           "sha256": "2334a3d013dd",
+           "disksize": "300 KB",
+           "kind": "Dokument",
+           "mime": "application/pdf",
+           "attributes": "A",
+           "statchange": "26.03.2026",
            "disk": "Fernziele",
-           "hardlinks": "2",
-           "inode": "3366201",
-           "blocks": "12",
+           "hardlinks": "1",
+           "inode": "5988083",
+           "blocks": "600",
            "uid": "99",
            "gid": "100",
-           "lines": "1.821",
-           "encoding": "UTF-8 mit BOM",
-           "crc32": "1ee08a2b",
-           "md5": "1ce08705dd75",
-           "sha1": "2ee0a35bf3a0"
+           "author": "jdp",
+           "lastauthor": "jdp",
+           "doctitle": "Lebenslauf",
+           "subject": "Rechnung",
+           "words": "733",
+           "app": "LibreOffice",
+           "encrypted": "Nein",
+           "crc32": "1e349bf1",
+           "md5": "1834927f2cc1",
+           "sha1": "2e34b521ef97"
           }
          }
         ]
        },
        {
-        "name": "nas-keller",
+        "name": "Notizbuch.md",
+        "size": 6144,
+        "time": 1788234422754,
+        "owner": "nobody",
+        "group": "users",
+        "mode": "0664",
+        "format": "text",
+        "view": "md",
+        "text": "# Notizbuch\n\n## Ideen\n\n- Fotos automatisch nach Jahr sortieren\n- Backups einmal im Monat testweise zurückspielen\n\n## Bücher\n\n*Der Name des Windes*, angefangen im Oktober.\n",
+        "cols": {
+         "created": "27.02.2026",
+         "accessed": "07.09.2026",
+         "type": "Textdatei",
+         "ext": "md",
+         "path": "/remotes/gdrive",
+         "owner": "nobody",
+         "group": "users",
+         "rights": "-rw-rw-r--",
+         "octal": "664",
+         "sha256": "27e09856f48f",
+         "disksize": "8 KB",
+         "kind": "Text",
+         "mime": "text/markdown",
+         "statchange": "01.09.2026",
+         "disk": "Fernziele",
+         "hardlinks": "2",
+         "inode": "3366201",
+         "blocks": "12",
+         "uid": "99",
+         "gid": "100",
+         "lines": "1.821",
+         "encoding": "UTF-8 mit BOM",
+         "crc32": "1ee08a2b",
+         "md5": "1ce08705dd75",
+         "sha1": "2ee0a35bf3a0"
+        }
+       }
+      ]
+     },
+     {
+      "name": "nas-keller",
+      "dir": true,
+      "time": 1777800600000,
+      "owner": "nobody",
+      "group": "users",
+      "mode": "0775",
+      "remote": "SMB: //keller/archiv",
+      "children": [
+       {
+        "name": "archiv",
         "dir": true,
         "time": 1791883800000,
         "owner": "nobody",
         "group": "users",
         "mode": "0775",
-        "remote": "SMB: //keller/archiv",
-        "children": [
-         {
-          "name": "archiv",
-          "dir": true,
-          "time": 1779874200000,
-          "owner": "nobody",
-          "group": "users",
-          "mode": "0775",
-          "children": []
-         }
-        ]
+        "children": []
        }
       ]
      }
@@ -14216,7 +14216,7 @@
    "/mnt/disk1": 51539607552,
    "/mnt/disk2": 848256040960,
    "/boot": 25769803776,
-   "/mnt/remotes": 1979120929996.8,
+   "/remotes": 1979120929996.8,
    "/mnt/disk3": 1209462790553.6
   },
   "total": {
@@ -14225,7 +14225,7 @@
    "/mnt/disk1": 4398046511104,
    "/mnt/disk2": 4398046511104,
    "/boot": 34359738368,
-   "/mnt/remotes": 2199023255552,
+   "/remotes": 2199023255552,
    "/mnt/disk3": 4398046511104
   },
   "label": {
@@ -14234,7 +14234,7 @@
    "/mnt/disk1": "Disk 1",
    "/mnt/disk2": "Disk 2",
    "/boot": "USB-Stick",
-   "/mnt/remotes": "Fernziele",
+   "/remotes": "Fernziele",
    "/mnt/disk3": "Disk 3"
   }
  },
@@ -14405,7 +14405,7 @@
    },
    {
     "name": "Fernziele",
-    "path": "/mnt/remotes",
+    "path": "/remotes",
     "readOnly": false,
     "indexed": false,
     "files": 0,
@@ -14541,7 +14541,7 @@
    {
     "name": "gdrive",
     "type": "Google Drive",
-    "mount": "/mnt/remotes/gdrive",
+    "mount": "/remotes/gdrive",
     "state": "verbunden",
     "cfg": {
      "account": "junker@example.org",
@@ -14551,7 +14551,7 @@
    {
     "name": "nas-keller",
     "type": "SMB",
-    "mount": "/mnt/remotes/nas-keller",
+    "mount": "/remotes/nas-keller",
     "state": "verbunden",
     "cfg": {
      "host": "keller",

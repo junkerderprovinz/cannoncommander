@@ -15,7 +15,7 @@
 
   /* Quellen */
   DATA.indexing = DATA.indexing || { every: 'daily', last: NOW - 5.5 * 3600000 };
-  const srcGlyph = (s) => s.path === '/boot' ? 'IconFlash' : s.path.startsWith('/mnt/remotes') ? 'IconCloud' : 'IconDatabase';
+  const srcGlyph = (s) => s.path === '/boot' ? 'IconFlash' : s.path.startsWith('/remotes') ? 'IconCloud' : 'IconDatabase';
 
   function reindex(s) {
     if (s.job) return;
@@ -152,10 +152,10 @@
       const account = type.oauth ? frow('Konto', draft.account ? `<span class="a-ctl">${pill(draft.account)}${btn('Anderes Konto', 'IconSignIn', 'id="a-oauth"')}</span>` : btn(`Bei ${type.oauth} anmelden`, 'IconSignIn', 'id="a-oauth"'), 'Öffnet die Anmeldung des Anbieters. CannonCommander bekommt nur ein Token, nie dein Passwort.') : '';
       w.set(`<div class="well"><div class="eyebrow">${esc(type.label)}</div>${account}${fs.map(f => frow(f.l + (f.opt ? ' <small>optional</small>' : ''), ctl(f), f.tip)).join('')}</div>
         <div class="well">${frow('Name', field(draft.name || '', 'id="a-rname" placeholder="etwa nas-keller"', 'm'), 'Kleinbuchstaben, Ziffern und Bindestriche. rclone kennt das Fernziel unter diesem Namen.')}
-          ${frow('Einhängen unter', pathField(draft.mount || '/mnt/remotes/', 'a-rmount'), 'Unter diesem Ordner erscheinen die Dateien im Dateimanager und für andere Container.')}
+          ${frow('Einhängen unter', pathField(draft.mount || '/remotes/', 'a-rmount'), 'Unter diesem Ordner erscheinen die Dateien im Dateimanager.')}
           ${frow('Verbindung', btn(tested ? 'Verbunden' : 'Testen', tested ? 'IconCheck' : 'IconHealth', `id="a-rtest" class="${tested ? 'ok' : ''}"`))}</div>`,
         [...(isNew ? [{ label: 'Zurück', g: 'IconBack', run: () => { read(); showPick(); return false; } }] : []), cancel, { label: isNew ? 'Hinzufügen' : 'Speichern', g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: save }]);
-      $('#a-rname', w.el).addEventListener('input', e => { if (!mountTouched) $('#a-rmount', w.el).value = '/mnt/remotes/' + e.target.value.trim().toLowerCase(); });
+      $('#a-rname', w.el).addEventListener('input', e => { if (!mountTouched) $('#a-rmount', w.el).value = '/remotes/' + e.target.value.trim().toLowerCase(); });
       $('#a-rmount', w.el).addEventListener('input', () => { mountTouched = true; });
       w.el.oninput = () => { if (tested) { tested = false; const b = $('#a-rtest', w.el); b.className = 'btn'; b.innerHTML = g('IconHealth') + 'Testen'; } };
     };
@@ -164,21 +164,21 @@
       const name = draft.name;
       if (!/^[a-z0-9][a-z0-9_-]*$/.test(name)) return fail(name ? 'Nur Kleinbuchstaben, Ziffern, _ und -' : 'Gib dem Fernziel einen Namen', $('#a-rname', el));
       if (DATA.remotes.some(x => x !== r && x.name === name)) return fail('Diesen Namen gibt es schon', $('#a-rname', el));
-      if (!/^\/mnt\/[^/]+\/.+/.test(draft.mount)) return fail('Der Ordner muss unter /mnt liegen, etwa /mnt/remotes/' + name, $('#a-rmount', el));
+      if (!/^\/remotes\/.+/.test(draft.mount)) return fail('Der Ordner muss unter /remotes liegen, etwa /remotes/' + name, $('#a-rmount', el));
       const m = missing();
       if (m) return fail(...m);
       const cfg = { ...draft };
       delete cfg.name; delete cfg.mount;
       if (!isNew && !cfg.pass) cfg.pass = r.cfg.pass;
       const remoteLabel = type.id === 'smb' ? `SMB: //${cfg.host}/${cfg.share}` : `rclone: ${name}`;
-      const parent = FS.nodeAt('/mnt/remotes');
+      const parent = FS.nodeAt('/remotes');
       if (r) {
         const node = FS.kids(parent).find(k => k.name === FS.split(r.mount).pop());
         if (node) Object.assign(node, { name: FS.split(draft.mount).pop(), remote: remoteLabel });
         Object.assign(r, { name, mount: draft.mount, cfg });
       } else {
         DATA.remotes.push({ name, type: type.label, mount: draft.mount, state: 'verbunden', cfg });
-        if (draft.mount.startsWith('/mnt/remotes/') && !FS.kids(parent).some(k => k.name === FS.split(draft.mount).pop())) parent.children.push({ name: FS.split(draft.mount).pop(), dir: true, children: [], time: A.now(), owner: 'nobody', group: 'users', mode: '0775', remote: remoteLabel });
+        if (draft.mount.startsWith('/remotes/') && !FS.kids(parent).some(k => k.name === FS.split(draft.mount).pop())) parent.children.push({ name: FS.split(draft.mount).pop(), dir: true, children: [], time: A.now(), owner: 'nobody', group: 'users', mode: '0775', remote: remoteLabel });
       }
       A.redraw();
       CC.toast(isNew ? `${name} ist eingehängt unter ${draft.mount}` : 'Gespeichert');
@@ -237,7 +237,7 @@
           text: `<p>${esc(r.name)} wird ausgehängt und vergessen, mit den Zugangsdaten.</p><p>Die Dateien bei ${esc(r.type)} bleiben, wo sie sind.</p>`,
           run: () => {
             DATA.remotes = DATA.remotes.filter(x => x !== r);
-            const parent = FS.nodeAt('/mnt/remotes');
+            const parent = FS.nodeAt('/remotes');
             parent.children = parent.children.filter(k => k.name !== FS.split(r.mount).pop());
             A.redraw();
             CC.toast(`${r.name} entfernt`);
