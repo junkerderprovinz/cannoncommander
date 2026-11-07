@@ -264,6 +264,12 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .view-gallery .row.gcard { padding: .2rem; }
 .view-gallery .row .thumb { aspect-ratio: 1; }
 .view-gallery .gcard :is(.t, .meta) { display: none; }
+/* Zoomed cards keep the width the wheel gave them instead of stretching across the row, so every notch shows, but
+   never grow past a narrow panel. The gutter stays put, or a scrollbar that comes and goes would change how many
+   cards fit across, and back again. */
+@property --zoom-tile { syntax: '<length>'; inherits: true; initial-value: 144px; }
+.list.zoomed { grid-template-columns: repeat(auto-fill, min(var(--zoom-tile), 100%)); scrollbar-gutter: stable; }
+.list.zoomed .row .thumb > svg { width: calc(var(--zoom-tile) * .265); height: calc(var(--zoom-tile) * .265); }
 .view-content .row.citem { position: relative; display: grid; grid-template-columns: 3.6rem minmax(0, 1fr) auto; align-items: center; gap: .9rem; height: auto; min-width: 0; padding: .4rem .5rem; }
 .view-content .row + .row { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--carbon-text) 7%, transparent); }
 .citem .thumb svg { width: 1.5rem; height: 1.5rem; }
@@ -364,6 +370,7 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
   :root[data-rotate]:not([data-motion="off"]) :is(#shortcuts, #tree, .tiles, .list) svg { animation: cc-hue var(--motion-hue-dur, 14s) linear infinite; }
   :root:not([data-motion="off"]) .xline { animation: xflow var(--motion-flow-dur, 1s) linear infinite; }
   .forever .xbin svg { animation: xshake var(--motion-shake-dur, .4s); }
+  .list.zoomed { transition: --zoom-tile var(--motion-zoom-dur, 0s) ease-out; }
 }
 
 /* Right to left: arrows that point along the line turn round, and a path cut at its start keeps to the start side. */

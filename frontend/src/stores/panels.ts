@@ -15,6 +15,7 @@ import { type Entry, groupEntries, nameMatcher, shown, sortEntries, toEntry } fr
 import { recordVisit } from '@/files/frequent';
 import { inArchive, join, parent, split } from '@/files/paths';
 import { viewOf } from '@/files/views';
+import type { Zoom } from '@/files/zoom';
 import { t as tr } from '@/i18n';
 import { useClipboard } from './clipboard';
 import { useListing } from './listing';
@@ -72,7 +73,20 @@ export const usePanels = defineStore('panels', () => {
 
   const holdsVolumes = (path: string) => !!listing.trees.get(path)?.some((k) => k.total);
   const viewOfTab = (tab: Pick<Tab, 'path'>) => viewOf(tab.path, prefs.folderViews, holdsVolumes(tab.path));
-  const setView = (tab: Pick<Tab, 'path'>, id: string) => setPref('folderViews', { ...prefs.folderViews, [tab.path]: id });
+  const tileOf = (tab: Pick<Tab, 'path'>): number | undefined => prefs.folderTiles?.[tab.path];
+  // A wheel sends many events a second, so they change the view at once and are saved once it rests.
+  let saving: ReturnType<typeof setTimeout> | undefined;
+  function setZoom(tab: Pick<Tab, 'path'>, z: Zoom, save = true) {
+    const tiles = { ...prefs.folderTiles };
+    if (z.tile === undefined) delete tiles[tab.path];
+    else tiles[tab.path] = z.tile;
+    prefs.folderTiles = tiles;
+    prefs.folderViews = { ...prefs.folderViews, [tab.path]: z.view };
+    clearTimeout(saving);
+    if (save) setPref('folderViews', prefs.folderViews);
+    else saving = setTimeout(() => setPref('folderViews', prefs.folderViews), 300);
+  }
+  const setView = (tab: Pick<Tab, 'path'>, id: string) => setZoom(tab, { view: id });
   const groupOf = (tab: Pick<Tab, 'path'>) => prefs.folderGroups?.[tab.path] || '';
   const setGroup = (tab: Pick<Tab, 'path'>, id: string) => setPref('folderGroups', { ...prefs.folderGroups, [tab.path]: id });
 
@@ -293,6 +307,6 @@ export const usePanels = defineStore('panels', () => {
 
   return {
     active, panels, openTree, visited, marks, clip, P, T, other, entries, volume, loaded, sel, cursorEntry, enter, go, reach, open, transfer,
-    viewOf: viewOfTab, setView, groupOf, setGroup,
+    viewOf: viewOfTab, setView, tileOf, setZoom, groupOf, setGroup,
   };
 });

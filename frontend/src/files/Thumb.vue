@@ -11,7 +11,7 @@ import { COL } from './columns';
 import type { Entry } from './entries';
 import { join } from './paths';
 
-const props = defineProps<{ k: Entry; folder: string }>();
+const props = defineProps<{ k: Entry; folder: string; size?: 'small' | 'large' }>();
 const listing = useListing();
 
 const TEXT_LIKE = ['text', 'code', 'config', 'log', 'subtitle', 'playlist', 'checksum', 'key', 'calendar', 'mail', 'weblink'];
@@ -28,7 +28,7 @@ const tag = computed(() => (f.value === 'pdf' ? 'PDF' : ext(props.k.name).toUppe
 const wave = computed(() => Array.from({ length: 18 }, (_, i) => 20 + (hashOf(props.k.name + i) % 80)));
 const lines = (n: number, short: number[]) => Array.from({ length: n }, (_, i) => short.includes(i));
 const text = computed(() => (TEXT_LIKE.includes(f.value) ? (listing.text(path.value) ?? '').split('\n').slice(0, 16).join('\n') : ''));
-const src = computed(() => api.thumbUrl(path.value, 'small', props.k.time));
+const src = computed(() => api.thumbUrl(path.value, props.size, props.k.time));
 // A file the server cannot picture falls back to the sketch, and a changed file gets another try.
 const pic = ref(true);
 watch(src, () => { pic.value = true; });

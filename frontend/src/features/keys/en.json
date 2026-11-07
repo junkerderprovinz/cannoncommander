@@ -12,6 +12,7 @@
   "fixedHead": "Taken for good",
   "fixedKeys": {
     "tab": { "label": "Switch panel", "key": "Tab" }, "enter": { "label": "Open", "key": "Enter" }, "insert": { "label": "Mark and move on", "key": "Ins" },
-    "space": { "label": "Quick look", "key": "Space" }, "f10": { "label": "Menu bar", "key": "F10" }, "esc": { "label": "Close", "key": "Esc" }
+    "space": { "label": "Quick look", "key": "Space" }, "f10": { "label": "Menu bar", "key": "F10" }, "esc": { "label": "Close", "key": "Esc" },
+    "zoom": { "label": "Zoom the view", "key": "{mod}+Wheel" }
   }
 }
