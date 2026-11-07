@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { BROADSIDE, broadside, KONAMI, onceEach, sequence, typedWord } from './cues';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { BROADSIDE, broadside, HOLD, holdPress, KONAMI, onceEach, sequence, typedWord } from './cues';
 
 const press = (keys: string[], fn: (k: string) => boolean) => keys.map(fn);
 
@@ -70,5 +70,73 @@ describe('the broadside', () => {
     expect(broadside('storm', 100)).toBe(true);
     expect(broadside('storm', 99)).toBe(false);
     expect(broadside('wild', 500)).toBe(false);
+  });
+});
+
+describe('a long press', () => {
+  const setup = (plays = true) => {
+    const fired: number[] = [];
+    const press = holdPress(HOLD, () => (fired.push(Date.now()), plays));
+    return { press, fired };
+  };
+  beforeEach(() => { vi.useFakeTimers(); });
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('lets a short click through', () => {
+    const { press, fired } = setup();
+    press.down();
+    vi.advanceTimersByTime(HOLD - 100);
+    press.up();
+    vi.advanceTimersByTime(HOLD);
+    expect(fired).toEqual([]);
+    expect(press.click()).toBe(true);
+  });
+
+  it('fires once held long enough, while still held', () => {
+    const { press, fired } = setup();
+    press.down();
+    vi.advanceTimersByTime(HOLD - 1);
+    expect(fired).toEqual([]);
+    vi.advanceTimersByTime(1);
+    expect(fired).toHaveLength(1);
+  });
+
+  it('takes the click it ends in, and only that one', () => {
+    const { press } = setup();
+    press.down();
+    vi.advanceTimersByTime(HOLD);
+    press.up();
+    expect(press.click()).toBe(false);
+    expect(press.click()).toBe(true);
+  });
+
+  it('gives the click back when nothing played', () => {
+    const { press, fired } = setup(false);
+    press.down();
+    vi.advanceTimersByTime(HOLD);
+    press.up();
+    expect(fired).toHaveLength(1);
+    expect(press.click()).toBe(true);
+  });
+
+  it('is cancelled by leaving before the time', () => {
+    const { press, fired } = setup();
+    press.down();
+    vi.advanceTimersByTime(HOLD - 100);
+    press.cancel();
+    vi.advanceTimersByTime(HOLD);
+    expect(fired).toEqual([]);
+  });
+
+  it('starts its count again with every press', () => {
+    const { press, fired } = setup();
+    press.down();
+    vi.advanceTimersByTime(HOLD - 100);
+    press.up();
+    press.down();
+    vi.advanceTimersByTime(HOLD - 100);
+    expect(fired).toEqual([]);
+    vi.advanceTimersByTime(100);
+    expect(fired).toHaveLength(1);
   });
 });

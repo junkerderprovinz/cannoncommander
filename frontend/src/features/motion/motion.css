@@ -1,6 +1,6 @@
 /* The pieces fx.ts puts over the page. Each one ends invisible and is taken away at its end, so a piece never stays
    behind on screen. Without motion the layer shows nothing at all. */
-.fx-layer { display: none; }
+.fx-layer, .fx-shards { display: none; }
 
 @keyframes fx-trace {
   from { translate: calc(var(--fx-dx) * -1) calc(var(--fx-dy) * -1); opacity: 0; }
@@ -58,6 +58,56 @@
   45% { translate: 0 calc(var(--motion-tumble-hop, 10px) * -1); animation-timing-function: cubic-bezier(.33, 0, .66, .33); }
 }
 @keyframes fx-weed-roll { from { rotate: -900deg; } to { rotate: 0deg; } }
+
+/* The cannon trembles harder and harder until it fires: the same shake, a little wider each time. */
+@keyframes fx-tremble {
+  4.2% { translate: calc(var(--motion-tremble-dist, 2px) * 0.01) calc(var(--motion-tremble-dist, 2px) * 0.0); }
+  8.3% { translate: calc(var(--motion-tremble-dist, 2px) * -0.03) calc(var(--motion-tremble-dist, 2px) * -0.01); }
+  12.5% { translate: calc(var(--motion-tremble-dist, 2px) * 0.04) calc(var(--motion-tremble-dist, 2px) * 0.03); }
+  16.7% { translate: calc(var(--motion-tremble-dist, 2px) * -0.05) calc(var(--motion-tremble-dist, 2px) * -0.02); }
+  20.8% { translate: calc(var(--motion-tremble-dist, 2px) * 0.11) calc(var(--motion-tremble-dist, 2px) * -0.07); }
+  25% { translate: calc(var(--motion-tremble-dist, 2px) * -0.13) calc(var(--motion-tremble-dist, 2px) * 0.06); }
+  29.2% { translate: calc(var(--motion-tremble-dist, 2px) * 0.09) calc(var(--motion-tremble-dist, 2px) * -0.05); }
+  33.3% { translate: calc(var(--motion-tremble-dist, 2px) * -0.21) calc(var(--motion-tremble-dist, 2px) * 0.1); }
+  37.5% { translate: calc(var(--motion-tremble-dist, 2px) * 0.23) calc(var(--motion-tremble-dist, 2px) * -0.15); }
+  41.7% { translate: calc(var(--motion-tremble-dist, 2px) * -0.2) calc(var(--motion-tremble-dist, 2px) * 0.06); }
+  45.8% { translate: calc(var(--motion-tremble-dist, 2px) * 0.34) calc(var(--motion-tremble-dist, 2px) * 0.17); }
+  50% { translate: calc(var(--motion-tremble-dist, 2px) * -0.3) calc(var(--motion-tremble-dist, 2px) * -0.15); }
+  54.2% { translate: calc(var(--motion-tremble-dist, 2px) * 0.25) calc(var(--motion-tremble-dist, 2px) * 0.25); }
+  58.3% { translate: calc(var(--motion-tremble-dist, 2px) * -0.47) calc(var(--motion-tremble-dist, 2px) * -0.14); }
+  62.5% { translate: calc(var(--motion-tremble-dist, 2px) * 0.47) calc(var(--motion-tremble-dist, 2px) * -0.26); }
+  66.7% { translate: calc(var(--motion-tremble-dist, 2px) * -0.28) calc(var(--motion-tremble-dist, 2px) * 0.34); }
+  70.8% { translate: calc(var(--motion-tremble-dist, 2px) * 0.62) calc(var(--motion-tremble-dist, 2px) * -0.12); }
+  75% { translate: calc(var(--motion-tremble-dist, 2px) * -0.6) calc(var(--motion-tremble-dist, 2px) * 0.27); }
+  79.2% { translate: calc(var(--motion-tremble-dist, 2px) * 0.5) calc(var(--motion-tremble-dist, 2px) * -0.43); }
+  83.3% { translate: calc(var(--motion-tremble-dist, 2px) * -0.77) calc(var(--motion-tremble-dist, 2px) * 0.23); }
+  87.5% { translate: calc(var(--motion-tremble-dist, 2px) * 0.66) calc(var(--motion-tremble-dist, 2px) * -0.41); }
+  91.7% { translate: calc(var(--motion-tremble-dist, 2px) * -0.89) calc(var(--motion-tremble-dist, 2px) * 0.36); }
+  95.8% { translate: calc(var(--motion-tremble-dist, 2px) * 0.94) calc(var(--motion-tremble-dist, 2px) * -0.28); }
+  to { translate: none; }
+}
+@keyframes fx-kick {
+  12% { translate: calc(var(--motion-kick-dist, 6px) * -1) 0; }
+  to { translate: none; }
+}
+@keyframes fx-shot {
+  92% { opacity: 1; }
+  to { translate: var(--fx-dx) 0; opacity: 0; }
+}
+/* A shard flies on the ball's way at a falling pace, and on its own it first jumps a little and then drops. */
+@keyframes fx-shard-x {
+  70% { opacity: 1; }
+  to { translate: calc(var(--fx-sx) * var(--motion-shard-spread, 40px)) 0; opacity: 0; }
+}
+@keyframes fx-shard-y {
+  from { animation-timing-function: cubic-bezier(.33, .66, .66, 1); }
+  22% { translate: 0 calc(var(--fx-kick) * var(--motion-shard-fall, 70px) * -.25); animation-timing-function: cubic-bezier(.4, 0, .9, .5); }
+  to { translate: 0 calc(var(--fx-sy) * var(--motion-shard-fall, 70px)); rotate: calc(var(--fx-sr) * var(--motion-shard-spin, 140deg)); }
+}
+@keyframes fx-rebuild {
+  from { opacity: 0; scale: .7; }
+  to { opacity: 1; scale: none; }
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .fx-layer { display: block; position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }
@@ -123,4 +173,17 @@
     animation: fx-hop calc(var(--motion-tumble-dur, 2.4s) / 4) infinite;
   }
   .fx-weed svg { width: 100%; height: 100%; animation: fx-weed-roll var(--motion-tumble-dur, 2.4s) linear both; }
+
+  /* The shot from the header logo. The shards lie in a layer inside the head, so the copies they are cut from still
+     take the head's own styles. What the ball broke keeps its place and its focus while it is away. */
+  .brand-cannon.fx-tremble { animation: fx-tremble var(--motion-tremble-dur, 900ms) linear both; }
+  .brand-cannon.fx-kick { animation: fx-kick var(--motion-kick-dur, 320ms) cubic-bezier(.2, .8, .3, 1); }
+  .brand-logo.fx-fired .brand-ball, .head .fx-shattered { opacity: 0; }
+  .head .fx-rebuild { animation: fx-rebuild var(--motion-rebuild-dur, 420ms) cubic-bezier(.2, .8, .3, 1.2) both; }
+  .fx-shot { animation: fx-shot var(--motion-shot-dur, 900ms) linear both; scale: var(--fx-flip, 1) 1; }
+  .fx-shot svg { width: 100%; height: 100%; animation: fx-roll var(--motion-shot-dur, 900ms) linear both; }
+  .fx-shards { display: block; position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }
+  .fx-shards > * { position: absolute; }
+  .fx-shard { animation: fx-shard-x var(--motion-shard-dur, 900ms) cubic-bezier(.15, .7, .4, 1) both; }
+  .fx-shard-fall { position: absolute; inset: 0; animation: fx-shard-y var(--motion-shard-dur, 900ms) both; }
 }

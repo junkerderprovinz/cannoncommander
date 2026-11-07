@@ -39,6 +39,20 @@
     /* The tumbleweed crossing an empty folder, and how high it bounces. */
     --motion-tumble-dur: 2.4s;
     --motion-tumble-hop: 10px;
+    /* The cannon in the header logo: how long it trembles before it fires and how far it shakes, its kick back,
+       the ball's way across the head, the shards of what it breaks (how long, how far they fall, how far they fly
+       and how much they turn), and the pause before the head puts itself together and how long that takes. */
+    --motion-tremble-dur: 900ms;
+    --motion-tremble-dist: 2px;
+    --motion-kick-dur: 320ms;
+    --motion-kick-dist: 6px;
+    --motion-shot-dur: 900ms;
+    --motion-shard-dur: 900ms;
+    --motion-shard-fall: 70px;
+    --motion-shard-spread: 40px;
+    --motion-shard-spin: 140deg;
+    --motion-rebuild-wait: 900ms;
+    --motion-rebuild-dur: 420ms;
   }
   :root[data-motion="subtle"] {
     --motion-spin-dur: 1.2s;
@@ -68,6 +82,17 @@
     --motion-recoil-dist: 2px;
     --motion-tumble-dur: 1.8s;
     --motion-tumble-hop: 4px;
+    --motion-tremble-dur: 500ms;
+    --motion-tremble-dist: 1px;
+    --motion-kick-dur: 200ms;
+    --motion-kick-dist: 2px;
+    --motion-shot-dur: 600ms;
+    --motion-shard-dur: 450ms;
+    --motion-shard-fall: 14px;
+    --motion-shard-spread: 8px;
+    --motion-shard-spin: 20deg;
+    --motion-rebuild-wait: 400ms;
+    --motion-rebuild-dur: 240ms;
   }
   :root[data-motion="off"] {
     /* Slow rather than stopped: a spinner standing still reads as a hang. */
@@ -99,6 +124,17 @@
     --motion-recoil-dist: 0px;
     --motion-tumble-dur: 0s;
     --motion-tumble-hop: 0px;
+    --motion-tremble-dur: 0s;
+    --motion-tremble-dist: 0px;
+    --motion-kick-dur: 0s;
+    --motion-kick-dist: 0px;
+    --motion-shot-dur: 0s;
+    --motion-shard-dur: 0s;
+    --motion-shard-fall: 0px;
+    --motion-shard-spread: 0px;
+    --motion-shard-spin: 0deg;
+    --motion-rebuild-wait: 0s;
+    --motion-rebuild-dur: 0s;
   }
   :root[data-motion="storm"] {
     --motion-spin-dur: .5s;
@@ -128,5 +164,16 @@
     --motion-recoil-dist: 14px;
     --motion-tumble-dur: 1.6s;
     --motion-tumble-hop: 22px;
+    --motion-tremble-dur: 1.4s;
+    --motion-tremble-dist: 3.5px;
+    --motion-kick-dur: 460ms;
+    --motion-kick-dist: 11px;
+    --motion-shot-dur: 1.2s;
+    --motion-shard-dur: 1.4s;
+    --motion-shard-fall: 170px;
+    --motion-shard-spread: 110px;
+    --motion-shard-spin: 320deg;
+    --motion-rebuild-wait: 1.3s;
+    --motion-rebuild-dur: 600ms;
   }
 }
