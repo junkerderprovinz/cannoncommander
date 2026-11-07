@@ -26,10 +26,10 @@ export function onceEach() {
 export const BROADSIDE = 100;
 export const broadside = (level: string, count: number) => level === 'storm' && count >= BROADSIDE;
 
-export const HOLD = 700;
+export const HOLD = 300;
 
-// A press on the logo held this long fires the cannon. Only a shot that played takes the click the press ends in, so
-// with motion off the logo stays a plain button.
+// A press on the logo held this long, longer than a click, sets the cannon trembling and then fires it. Only a shot
+// that played takes the click the press ends in, so with motion off the logo stays a plain button.
 export function holdPress(ms: number, fire: () => boolean) {
   let timer: ReturnType<typeof setTimeout> | undefined, took = false;
   const stop = () => { clearTimeout(timer); timer = undefined; };

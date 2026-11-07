@@ -114,13 +114,17 @@ export function gunSmoke(at: Point, size: number, dir: number, rand = Math.rando
 }
 
 // The logo's own ball, its shapes copied as they are and cut to their own box, flying from the screen position `from`
-// to `to`. Flying left it is mirrored, so it rolls the other way.
+// to `to` with a trail of fire behind it. Flying left it is mirrored, so it rolls the other way.
 export function flyBall(ball: SVGGraphicsElement, from: number, to: number) {
   const r = ball.getBoundingClientRect(), box = ball.getBBox(), dir = Math.sign(to - from) || 1;
   const drawing = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   drawing.setAttribute('viewBox', `${box.x} ${box.y} ${box.width} ${box.height}`);
   drawing.append(ball.cloneNode(true));
-  return piece('fx-shot', { left: from, top: r.top, width: r.width, height: r.height, '--fx-dx': to - from, '--fx-flip': String(dir) }, drawing);
+  const shot = piece('fx-shot', { left: from, top: r.top, width: r.width, height: r.height, '--fx-dx': to - from, '--fx-flip': String(dir) }, drawing);
+  const trail = document.createElement('div');
+  trail.className = 'fx-trail';
+  shot.prepend(trail);
+  return shot;
 }
 
 export interface Shard {
