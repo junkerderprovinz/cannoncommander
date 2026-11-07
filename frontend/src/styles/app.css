@@ -16,10 +16,11 @@ svg { display: block; }
 .muted { color: var(--carbon-text-muted); }
 .sub { color: var(--carbon-text-sub); }
 
-/* The room at the bottom matches the prototype, so screenshots of both line up. In the file view without the F-key
-   bar the panels reach down to the same margin as everywhere else. */
+/* The pages keep the prototype's room at the bottom, so screenshots of both line up. The file view keeps the same
+   margin at the bottom as at the top, and the F-key bar and the phone's bottom bar get a row only while they show,
+   since an empty row would still bring its gap. */
 .app { height: 100vh; display: grid; grid-template-rows: auto 1fr auto; gap: var(--gut); padding: var(--gut) var(--gut) 4.75rem; }
-#app:not(.with-fkeys) { padding-bottom: var(--gut); }
+#app { grid-template-rows: auto 1fr; padding-bottom: var(--gut); }
 
 /* Head row: one bar with the brand, the menus and the controls for the whole window. */
 .head { --btn-h: 2.4rem; display: flex; align-items: center; gap: .35rem; min-width: 0; height: 3.4rem; padding: 0 .5rem; }
@@ -206,7 +207,7 @@ svg { display: block; }
 .narrow-only { display: none !important; }
 @media (max-width: 900px) { .menubar { display: none; } .narrow-only { display: inline-flex !important; } }
 @media (max-width: 760px) {
-  .app, #app:not(.with-fkeys) { padding: .75rem; gap: .75rem; }
+  .app, #app { padding: .75rem; gap: .75rem; }
   .side { position: fixed; z-index: 40; margin-top: 0; inset: .75rem auto 4.5rem .75rem; width: min(20rem, calc(100vw - 1.5rem)); }
   .app:not(.side-open) .side { display: none; }
   .head-layout, .head .hback { display: none; }
