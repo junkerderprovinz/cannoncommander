@@ -2,13 +2,14 @@
 import { Button, IconButton, MenuBar, Selector } from '@glimstone/vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { run } from '@/core/actions';
-import { G, glyphComponent } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { menu, resolveItems, toGlim } from '@/core/menu';
 import { allMenuItems, MENUS, menuItems, menuName, setMenuBarOpener } from '@/core/menus';
 import { prefs } from '@/core/prefs';
 import { go, view } from '@/core/views';
 import { t } from '@/i18n';
 import { useUser } from '@/stores/user';
+import { HEAD_LOGO } from './logo';
 import { shell } from './state';
 
 const user = useUser();
@@ -47,7 +48,9 @@ const layouts = computed(() => [
 
 <template>
   <header class="head glim-card">
-    <button class="brand" data-go-view="files" :data-tip="t('head.brand')" :aria-label="t('head.brand')" @click="go('files')"><span class="brand-mark"><G n="IconFolderOpen" /></span></button>
+    <button class="brand" data-go-view="files" :data-tip="t('head.brand')" :aria-label="t('head.brand')" @click="go('files')">
+      <span class="brand-logo" :style="{ aspectRatio: HEAD_LOGO.ratio }"><svg class="brand-cannon" :viewBox="HEAD_LOGO.viewBox" aria-hidden="true" v-html="HEAD_LOGO.cannon" /><svg class="brand-ball" :viewBox="HEAD_LOGO.viewBox" aria-hidden="true" v-html="HEAD_LOGO.ball" /></span>
+    </button>
     <span class="hsep"></span>
     <template v-if="files">
       <MenuBar ref="bar" class="menubar" :label="t('menus.label')" :menus="barMenus" />

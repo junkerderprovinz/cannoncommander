@@ -21,8 +21,13 @@ svg { display: block; }
 
 /* Head row: one bar with the brand, the menus, the command search in the middle and the controls for the whole window. */
 .head { --btn-h: 2.4rem; display: flex; align-items: center; gap: .35rem; min-width: 0; height: 3.4rem; padding: 0 .5rem; }
-.brand { display: flex; align-items: center; gap: .55rem; padding: 0 .25rem; height: 2.4rem; flex: none; border-radius: var(--radius-control); }
+/* A long press on the logo fires its cannon, so the press must not open the phone's own menu or select anything. */
+.brand { display: flex; align-items: center; gap: .55rem; padding: 0 .4rem; height: 2.4rem; flex: none; border-radius: var(--radius-control); touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .brand:hover { background: var(--carbon-surface2); }
+.brand-logo { position: relative; display: block; height: 1.5rem; }
+.brand-logo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Mirrored, the cannon still aims along the head into the app. */
+:root[dir="rtl"] .brand-logo { scale: -1 1; }
 .hsep { width: 1px; height: 1.5rem; margin: 0 .25rem; background: color-mix(in srgb, var(--carbon-text) 12%, transparent); flex: none; }
 .brand-mark { width: 1.9rem; height: 1.9rem; border-radius: var(--radius-control); background: var(--accent); color: var(--accent-contrast); display: grid; place-items: center; }
 .brand-mark svg { width: 1.1rem; height: 1.1rem; }
