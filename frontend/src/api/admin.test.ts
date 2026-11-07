@@ -45,8 +45,8 @@ describe('settings calls', () => {
 
   it('send what the remote form holds in rclone terms', async () => {
     answer(201, {});
-    await admin.addRemote({ name: 'nas', type: 'smb', path: 'archiv', mount: '/mnt/remotes/nas', params: { host: 'keller', pass: 'geheim' } });
-    expect(sent[0]!.body).toEqual({ name: 'nas', type: 'smb', path: 'archiv', mount: '/mnt/remotes/nas', params: { host: 'keller', pass: 'geheim' } });
+    await admin.addRemote({ name: 'nas', type: 'smb', path: 'archiv', mount: '/remotes/nas', params: { host: 'keller', pass: 'geheim' } });
+    expect(sent[0]!.body).toEqual({ name: 'nas', type: 'smb', path: 'archiv', mount: '/remotes/nas', params: { host: 'keller', pass: 'geheim' } });
   });
 
   it('read passkeys together with whether the server takes them', async () => {

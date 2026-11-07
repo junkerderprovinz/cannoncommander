@@ -12,8 +12,9 @@ branches=$(for d in "$root"/mnt/cache "$root"/mnt/disk*; do printf '%s:' "$d"; d
 mergerfs -o allow_other,cache.files=off,category.create=mfs,fsname=shfs "${branches%:}" "$root/mnt/user"
 
 mount --rbind "$root/mnt" /mnt
-mkdir -p /boot /var/local/emhttp
+mkdir -p /boot /remotes /var/local/emhttp
 mount --bind "$root/boot" /boot
+mount --bind "$root/remotes" /remotes
 mount --bind "$root/var/local/emhttp" /var/local/emhttp
 mount --bind "$root/proc/mdstat" /proc/mdstat
 

@@ -93,7 +93,7 @@
     "tokenRejected": "Mit diesem Token klappt die Anmeldung nicht", "signedIn": "Angemeldet bei {who}", "signInFirst": "Erst bei {who} anmelden",
     "missing": "{field} fehlt noch", "unchanged": "Unverändert",
     "name": "Name", "namePh": "etwa nas-keller", "nameTip": "Kleinbuchstaben, Ziffern und Bindestriche. rclone kennt das Fernziel unter diesem Namen.", "needName": "Gib dem Fernziel einen Namen",
-    "mountAt": "Einhängen unter", "mountAtTip": "Unter diesem Ordner erscheinen die Dateien im Dateimanager und für andere Container.", "underMnt": "Der Ordner muss unter /mnt liegen, etwa /mnt/remotes/{name}",
+    "mountAt": "Einhängen unter", "mountAtTip": "Unter diesem Ordner erscheinen die Dateien im Dateimanager.", "underRemotes": "Der Ordner muss unter /remotes liegen, etwa /remotes/{name}",
     "connection": "Verbindung", "connected": "Verbunden", "testFailed": "Die Verbindung klappt so noch nicht", "addedAt": "{name} ist eingehängt unter {mount}",
     "signedInPill": "Angemeldet", "failedPill": "Fehler", "mountFailed": "Das Einhängen hat nicht geklappt: {error}",
     "savedNotMounted": "{name} ist gespeichert, das Einhängen hat aber nicht geklappt"

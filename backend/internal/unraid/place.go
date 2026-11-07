@@ -27,7 +27,7 @@ type Place struct {
 func (p Place) User() bool { return p.Vol == "user" || p.Vol == "user0" }
 
 // placeOf maps a clean API path to its place. ok is false for paths that
-// are not on the array or a pool, such as /mnt/remotes or /boot.
+// are not on the array or a pool, such as /remotes or /boot.
 func placeOf(st *State, apiPath string) (Place, bool) {
 	rest, ok := strings.CutPrefix(apiPath, "/mnt/")
 	if !ok || strings.Contains(apiPath, ccfs.ArchiveSep) {

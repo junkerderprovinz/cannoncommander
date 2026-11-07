@@ -23,17 +23,17 @@ func TestEveryShareHasItsOwnBin(t *testing.T) {
 	fsys, err := ccfs.New(nil,
 		ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: t.TempDir()},
 		ccfs.Source{Name: "disk1", Mount: "/mnt/disk1", Root: t.TempDir()},
-		ccfs.Source{Name: "gdrive", Mount: "/mnt/remotes/gdrive", Root: t.TempDir()},
+		ccfs.Source{Name: "Fernziele", Mount: "/remotes", Root: t.TempDir()},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
 	for p, want := range map[string]string{
-		"/mnt/user/fotos/a.jpg":         "/mnt/user/fotos/.cc-trash",
-		"/mnt/user/fotos/2025/a.jpg":    "/mnt/user/fotos/.cc-trash",
-		"/mnt/disk1/filme/x.mkv":        "/mnt/disk1/filme/.cc-trash",
-		"/mnt/remotes/gdrive/doc/a.pdf": "/mnt/remotes/gdrive/.cc-trash",
-		"/mnt/remotes/gdrive/a.pdf":     "/mnt/remotes/gdrive/.cc-trash",
+		"/mnt/user/fotos/a.jpg":      "/mnt/user/fotos/.cc-trash",
+		"/mnt/user/fotos/2025/a.jpg": "/mnt/user/fotos/.cc-trash",
+		"/mnt/disk1/filme/x.mkv":     "/mnt/disk1/filme/.cc-trash",
+		"/remotes/gdrive/doc/a.pdf":  "/remotes/gdrive/.cc-trash",
+		"/remotes/gdrive/a.pdf":      "/remotes/gdrive/.cc-trash",
 	} {
 		loc, err := fsys.Resolve(p)
 		if err != nil {
@@ -43,7 +43,7 @@ func TestEveryShareHasItsOwnBin(t *testing.T) {
 			t.Errorf("%s: %s, %v", p, got, err)
 		}
 	}
-	for _, p := range []string{"/mnt/user/fotos", "/mnt/remotes/gdrive", "/mnt", "/mnt/user/fotos/.cc-trash/x/a.jpg"} {
+	for _, p := range []string{"/mnt/user/fotos", "/remotes/gdrive", "/remotes", "/mnt", "/mnt/user/fotos/.cc-trash/x/a.jpg"} {
 		loc, err := fsys.Resolve(p)
 		if err != nil {
 			t.Fatal(err)

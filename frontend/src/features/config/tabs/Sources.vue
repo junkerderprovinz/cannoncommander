@@ -35,7 +35,7 @@ async function load() {
 onMounted(() => { load().catch(() => {}); });
 onBeforeUnmount(() => clearInterval(poll));
 
-const glyph = (s: Source) => (s.path === '/boot' ? 'IconFlash' : s.path.startsWith('/mnt/remotes') ? 'IconCloud' : 'IconDatabase');
+const glyph = (s: Source) => (s.path === '/boot' ? 'IconFlash' : s.path.startsWith('/remotes') ? 'IconCloud' : 'IconDatabase');
 const hasIndex = (s: Source) => s.indexed && !!stateOf(s) && stateOf(s)!.status !== 'off';
 
 function every(seconds: number) {

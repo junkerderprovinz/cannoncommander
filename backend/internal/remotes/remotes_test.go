@@ -2,6 +2,7 @@ package remotes
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -10,6 +11,7 @@ import (
 	"testing"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
 )
 
 func ptr(s string) *string { return &s }
@@ -65,13 +67,12 @@ func TestCreateRefusesBadNamesTypesAndFolders(t *testing.T) {
 		{Name: "cc-try-1234", Type: "sftp"},
 		{Name: "b", Type: "nosuchtype"},
 		{Name: "b", Type: ""},
-		{Name: "b", Type: "sftp", Mount: filepath.Join(f.mnt, "b")},
-		{Name: "b", Type: "sftp", Mount: filepath.Join(f.mnt, "user", "b")},
-		{Name: "b", Type: "sftp", Mount: filepath.Join(f.mnt, "disk3", "b")},
+		{Name: "b", Type: "sftp", Mount: filepath.Join(filepath.Dir(f.root), "mnt", "remotes", "b")},
+		{Name: "b", Type: "sftp", Mount: filepath.Join(filepath.Dir(f.root), "mnt", "user", "b")},
 		{Name: "b", Type: "sftp", Mount: filepath.Join(f.root, "a", "inner")},
 		{Name: "b", Type: "sftp", Mount: f.root},
+		{Name: "b", Type: "sftp", Mount: f.root + "-b"},
 		{Name: "b", Type: "sftp", Mount: "relative/b"},
-		{Name: "b", Type: "sftp", Mount: filepath.Join(filepath.Dir(f.mnt), "elsewhere", "b")},
 		{Name: "b", Type: "drive", Params: map[string]string{"token": "not a token"}},
 	} {
 		if code := f.call("jdp", "POST", "/remotes", in, nil); code != 400 {
@@ -236,15 +237,56 @@ func TestMountUnmountAndDelete(t *testing.T) {
 	}
 }
 
-func TestMountWithoutAllowOtherWhenFuseRefusesIt(t *testing.T) {
+func TestMountsAreForThisContainerAlone(t *testing.T) {
 	f := newFixture(t)
-	f.rc.noAllowOther = true
 	var r Remote
 	if code := f.call("jdp", "POST", "/remotes", Input{Name: "mem", Type: "memory"}, &r); code != 201 || !r.Mounted {
 		t.Fatalf("create: %d %+v", code, r)
 	}
-	if len(f.rc.refused) != 1 {
-		t.Fatalf("refused %v", f.rc.refused)
+	if opts := f.rc.opts[r.Mount]; opts["AllowOther"] != nil {
+		t.Fatalf("mount options %v", opts)
+	}
+}
+
+func TestRemotesBelowMntMoveToRemotes(t *testing.T) {
+	db, err := sql.Open("sqlite", filepath.Join(t.TempDir(), "main.sqlite"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { db.Close() })
+	ctx := context.Background()
+	if _, err := migrate.Apply(ctx, db, migrate.Main); err != nil {
+		t.Fatal(err)
+	}
+	st := store{db}
+	for _, r := range []row{
+		{Name: "gdrive", Type: "drive", Mount: "/mnt/remotes/gdrive"},
+		{Name: "nas", Type: "smb", Mount: "/mnt/backup/keller"},
+	} {
+		if err := st.insert(ctx, r); err != nil {
+			t.Fatal(err)
+		}
+	}
+	i := slices.IndexFunc(migrate.Registered(migrate.Main), func(m migrate.Migration) bool { return m.Name == "remotes/002_outside_mnt" })
+	if i < 0 {
+		t.Fatal("the migration is not registered")
+	}
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := migrate.Registered(migrate.Main)[i].Up(ctx, tx); err != nil {
+		t.Fatal(err)
+	}
+	if err := tx.Commit(); err != nil {
+		t.Fatal(err)
+	}
+	rows, err := st.all(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(rows) != 2 || rows[0].Mount != "/remotes/gdrive" || rows[1].Mount != "/remotes/nas" {
+		t.Fatalf("rows %+v", rows)
 	}
 }
 

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
 
@@ -23,27 +22,11 @@ func (s *Service) checkName(name string) error {
 	return nil
 }
 
-// unraidOwned are the folders below /mnt that Unraid and its plugins fill.
-var unraidOwned = regexp.MustCompile(`^(user|user0|rootshare|addons|disks|cache|disk[0-9]+)$`)
-
-// checkMount checks a mount folder: below Mnt, at least two levels deep as
-// in /mnt/remotes/name, outside Unraid's own folders and not inside or
-// around the folder of another remote.
+// checkMount checks a mount folder: below Root, as in /remotes/name, and
+// not inside or around the folder of another remote.
 func (s *Service) checkMount(dir, self string, rows []row) error {
-	bad := v1.Errorf(http.StatusBadRequest, fmt.Sprintf("the folder has to lie below %s, such as %s", s.cfg.Mnt, filepath.Join(s.cfg.Root, "name")))
-	if !filepath.IsAbs(dir) {
-		return bad
-	}
-	rel, err := filepath.Rel(s.cfg.Mnt, dir)
-	if err != nil || rel == "." || strings.HasPrefix(rel, "..") {
-		return bad
-	}
-	parts := strings.Split(filepath.ToSlash(rel), "/")
-	if len(parts) < 2 {
-		return bad
-	}
-	if unraidOwned.MatchString(parts[0]) {
-		return v1.Errorf(http.StatusBadRequest, filepath.Join(s.cfg.Mnt, parts[0])+" belongs to Unraid, pick a folder such as "+filepath.Join(s.cfg.Root, "name"))
+	if !filepath.IsAbs(dir) || dir == s.cfg.Root || !within(dir, s.cfg.Root) {
+		return v1.Errorf(http.StatusBadRequest, fmt.Sprintf("the folder has to lie below %s, such as %s", s.cfg.Root, filepath.Join(s.cfg.Root, "name")))
 	}
 	for _, r := range rows {
 		if r.Name == self {

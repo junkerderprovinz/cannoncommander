@@ -14,7 +14,7 @@
 
 Two panels side by side with tabs, a menu bar and the keys you know from Krusader and Total Commander: F5 copies, F6 moves, F8 deletes. Copies and moves run as jobs in the background, with speed, time left and a rule for files that already exist. Deleted files go to a trash first.
 
-It knows about Unraid: which files sit on the cache and which on the array, sleeping disks, the parity check, hard links and the permissions Unraid itself sets. Folder compare and sync, batch rename, archives, checksums, duplicates, disk usage and a viewer and editor for most file types are built in. Remote storage comes in through rclone and shows up below /mnt/remotes.
+It knows about Unraid: which files sit on the cache and which on the array, sleeping disks, the parity check, hard links and the permissions Unraid itself sets. Folder compare and sync, batch rename, archives, checksums, duplicates, disk usage and a viewer and editor for most file types are built in. Remote storage comes in through rclone. You connect it under Settings, Remotes, and it stays inside the container.
 
 On the first start the container writes a password for the user admin into its log. Sign in with it and pick your own. Users, groups and access rules decide who sees which folder, and two-factor sign-in, passkeys and OIDC are there too.</Overview>
   <Category>Tools:Utilities</Category>
@@ -56,21 +56,11 @@ On the first start the container writes a password for the user admin into its l
     Required="true"
     Mask="false">/mnt</Config>
   <Config
-    Name="Remotes"
-    Target="/mnt/remotes"
-    Default="/mnt/remotes"
-    Mode="rw,shared"
-    Description="Remote storage you add under Settings, Remotes is mounted here through rclone. Shared, so the mounts also show up on the server and in other containers such as a media server."
-    Type="Path"
-    Display="always"
-    Required="false"
-    Mask="false">/mnt/remotes</Config>
-  <Config
     Name="FUSE"
     Target="/dev/fuse"
     Default="/dev/fuse"
     Mode=""
-    Description="rclone needs it to mount remote storage. Together with the SYS_ADMIN capability under Extra Parameters it lets the container mount, and nothing else on the server changes."
+    Description="rclone needs it to mount remote storage. Together with the SYS_ADMIN capability under Extra Parameters it lets rclone mount inside the container, and nothing on the server changes."
     Type="Device"
     Display="advanced"
     Required="false"

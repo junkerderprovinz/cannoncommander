@@ -1,6 +1,6 @@
 accent/shape: [ '#1D99F3', 'square', '#1D99F3' ]
 leaf: leaf
-sources: Shares:/mnt/user, Cache:/mnt/cache, USB-Stick:/boot, Fernziele:/mnt/remotes, Disk 1:/mnt/disk1
+sources: Shares:/mnt/user, Cache:/mnt/cache, USB-Stick:/boot, Fernziele:/remotes, Disk 1:/mnt/disk1
 sessions after pw: Firefox auf Windows | API-Token „backup-skript“
 about -> settings/info
 mounts -> settings/remotes

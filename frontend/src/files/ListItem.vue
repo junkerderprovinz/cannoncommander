@@ -45,7 +45,7 @@ const vol = computed(() => (props.k.dir ? listing.placeOf(join(props.path, props
 const volume = computed(() => (vol.value?.free != null && vol.value.total ? vol.value as { free: number; total: number } : null));
 const driveGlyph = computed(() => {
   const p = join(props.path, props.k.name);
-  return p === '/boot' ? 'IconFlash' : p === '/mnt/remotes' ? 'IconCloud' : p === '/mnt/user' ? 'IconFiles' : volume.value ? 'IconDatabase' : glyphOf(props.k);
+  return p === '/boot' ? 'IconFlash' : p === '/remotes' ? 'IconCloud' : p === '/mnt/user' ? 'IconFiles' : volume.value ? 'IconDatabase' : glyphOf(props.k);
 });
 const driveName = computed(() => (vol.value?.label ? `${vol.value.label} (${props.k.name})` : props.k.name));
 const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL[id]!.value(props.k, props.path)).find(Boolean));

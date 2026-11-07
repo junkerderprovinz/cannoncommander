@@ -69,7 +69,7 @@ function state() {
       { name: 'Shares', path: '/mnt/user', readOnly: false, indexed: true, skipHidden: true, exclude: ['*.tmp', 'appdata/plex/cache'] },
       { name: 'Cache', path: '/mnt/cache', readOnly: false, indexed: true, skipHidden: true, exclude: [] },
       { name: 'USB-Stick', path: '/boot', readOnly: true, indexed: false, skipHidden: true, exclude: [] },
-      { name: 'Fernziele', path: '/mnt/remotes', readOnly: false, indexed: false, skipHidden: true, exclude: [] },
+      { name: 'Fernziele', path: '/remotes', readOnly: false, indexed: false, skipHidden: true, exclude: [] },
     ],
     // What the server runs with, so a saved list that differs asks for a restart.
     running: '',
@@ -110,8 +110,8 @@ function state() {
       },
     },
     remotes: [
-      { name: 'gdrive', type: 'drive', path: '', mount: '/mnt/remotes/gdrive', label: 'rclone: gdrive', mounted: true, mountOnStart: true, params: {}, secrets: ['token'] },
-      { name: 'nas-keller', type: 'smb', path: 'archiv', mount: '/mnt/remotes/nas-keller', label: 'rclone: nas-keller', mounted: true, mountOnStart: true, params: { host: 'keller', user: 'jdp', domain: '' }, secrets: ['pass'] },
+      { name: 'gdrive', type: 'drive', path: '', mount: '/remotes/gdrive', label: 'rclone: gdrive', mounted: true, mountOnStart: true, params: {}, secrets: ['token'] },
+      { name: 'nas-keller', type: 'smb', path: 'archiv', mount: '/remotes/nas-keller', label: 'rclone: nas-keller', mounted: true, mountOnStart: true, params: { host: 'keller', user: 'jdp', domain: '' }, secrets: ['pass'] },
     ],
     app: {
       office: { kind: 'none', url: '', secret: '' },
@@ -355,7 +355,7 @@ export function settingsFixtureMiddleware() {
     ['PUT', '/admin/sources', (b) => {
       if (!b.sources?.length) return [400, 'keep at least one source'];
       for (const s of b.sources) {
-        if (!isDir(s.path) && !['/boot', '/mnt/cache', '/mnt/remotes'].includes(s.path)) return [400, `${s.path} is not a folder on the server`];
+        if (!isDir(s.path) && !['/boot', '/mnt/cache', '/remotes'].includes(s.path)) return [400, `${s.path} is not a folder on the server`];
         if ((s.exclude || []).some((p) => p.includes('/') && p.includes('*'))) return [400, 'a star works in a name, not in a path'];
       }
       S.sources = b.sources.map((s) => ({ readOnly: false, indexed: false, skipHidden: false, exclude: [], ...s }));
@@ -404,7 +404,7 @@ export function settingsFixtureMiddleware() {
       if (S.remotes.some((r) => r.name === b.name)) return [409, 'the name is taken'];
       const params = { ...b.params }, secrets = [];
       for (const k of ['pass', 'secret_access_key', 'token']) if (params[k]) { secrets.push(k); delete params[k]; }
-      const r = { name: b.name, type: b.type, path: b.path || '', mount: b.mount || '/mnt/remotes/' + b.name, label: 'rclone: ' + b.name, mounted: true, mountOnStart: true, params, secrets };
+      const r = { name: b.name, type: b.type, path: b.path || '', mount: b.mount || '/remotes/' + b.name, label: 'rclone: ' + b.name, mounted: true, mountOnStart: true, params, secrets };
       S.remotes.push(r);
       return [201, wireRemote(r)];
     }],

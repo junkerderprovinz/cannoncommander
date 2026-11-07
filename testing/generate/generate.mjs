@@ -1,6 +1,6 @@
 // node testing/generate/generate.mjs [--from prototype.json] [--root /fixture] [--clean] [--no-media]
 // Builds the prototype's server as a real tree: the disks, the cache, the flash drive and the remotes under
-// <root>/mnt and <root>/boot, emhttp's files under <root>/var/local/emhttp and <root>/proc/mdstat.
+// <root>/mnt, <root>/boot and <root>/remotes, emhttp's files under <root>/var/local/emhttp and <root>/proc/mdstat.
 // /mnt/user is left empty, since mergerfs puts it together from the disks the way Unraid's shfs does.
 import { chmodSync, chownSync, closeSync, ftruncateSync, lchownSync, linkSync, lutimesSync, mkdirSync, openSync, readFileSync, rmSync, symlinkSync, utimesSync, writeFileSync, writeSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -37,7 +37,7 @@ const userPath = (p) => p.replace(/^\/mnt\/(cache|disk\d+)(?=\/|$)/, '/mnt/user'
 const deviations = [];
 const deviate = (path, kind, note) => deviations.push({ path: userPath(path), kind, note });
 
-if (opt.clean) for (const d of ['mnt', 'boot', 'var', 'proc']) rmSync(join(root, d), { recursive: true, force: true });
+if (opt.clean) for (const d of ['mnt', 'boot', 'remotes', 'var', 'proc']) rmSync(join(root, d), { recursive: true, force: true });
 
 const child = (n, name) => (n.children || []).find((c) => c.name === name);
 const nodeAt = (path) => path.split('/').filter(Boolean).reduce((n, part) => n && child(n, part), exp.tree);
@@ -181,6 +181,7 @@ const mnt = child(exp.tree, 'mnt');
 for (const v of mnt.children.filter((c) => c.name !== 'user')) build(v, `/mnt/${v.name}`, v.name);
 mkdirSync(join(root, 'mnt', 'user'), { recursive: true });
 build(child(exp.tree, 'boot'), '/boot', 'boot');
+build(child(exp.tree, 'remotes'), '/remotes', 'remotes');
 
 for (const [path, text] of Object.entries(emhttp(exp, join(here, '..', 'emhttp')))) {
   mkdirSync(dirname(join(root, path)), { recursive: true });

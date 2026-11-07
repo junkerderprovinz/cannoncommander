@@ -15,7 +15,7 @@ import (
 func unraidMnt(t *testing.T, dirs ...string) string {
 	t.Helper()
 	mnt := t.TempDir()
-	for _, d := range append([]string{"user/filme", "cache/appdata", "fastcache", "disk1/filme", "disk2", "remotes"}, dirs...) {
+	for _, d := range append([]string{"user/filme", "cache/appdata", "fastcache", "disk1/filme", "disk2"}, dirs...) {
 		if err := os.MkdirAll(filepath.Join(mnt, filepath.FromSlash(d)), 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -27,7 +27,7 @@ func sharesAndRemotes(t *testing.T, mnt string, rules Rules) *Resolver {
 	t.Helper()
 	r, err := New(rules,
 		Source{Name: "Shares", Mount: "/mnt/user", Root: filepath.Join(mnt, "user")},
-		Source{Name: "Fernziele", Mount: "/mnt/remotes", Root: filepath.Join(mnt, "remotes")},
+		Source{Name: "Fernziele", Mount: "/remotes", Root: t.TempDir()},
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -41,8 +41,11 @@ func TestDisksAndPoolsAppearForAdminsAfterTheUserShares(t *testing.T) {
 	shares := users.BackendScope{Path: filepath.Join(mnt, "user"), Scope: "/", Permissions: allPerms}
 	jdp, anna := user("jdp", true, shares), user("anna", false, shares)
 
-	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"user", "cache", "fastcache", "disk1", "disk2", "remotes"}) {
+	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"user", "cache", "fastcache", "disk1", "disk2"}) {
 		t.Errorf("/mnt lists %v", got)
+	}
+	if got := r.VirtualChildren("/"); !slices.Equal(got, []string{"mnt", "remotes"}) {
+		t.Errorf("/ lists %v", got)
 	}
 	labels := map[string]string{}
 	for _, s := range r.Sources() {
@@ -227,7 +230,7 @@ func TestDisksAndPoolsFollowWhatUnraidReports(t *testing.T) {
 	r := sharesAndRemotes(t, mnt, nil).WithDevices(mnt, "cache", "disk1")
 
 	r.SetDevices("cache", "disk1", "disk3")
-	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"user", "cache", "disk1", "disk3", "remotes"}) {
+	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"user", "cache", "disk1", "disk3"}) {
 		t.Errorf("/mnt lists %v", got)
 	}
 	if _, err := r.Check(jdp, "/mnt/disk3/filme", View|Create); err != nil {
@@ -238,7 +241,7 @@ func TestDisksAndPoolsFollowWhatUnraidReports(t *testing.T) {
 	}
 
 	r.SetDevices("cache", "disk3")
-	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"user", "cache", "disk3", "remotes"}) {
+	if got := r.VirtualChildren("/mnt"); !slices.Equal(got, []string{"user", "cache", "disk3"}) {
 		t.Errorf("/mnt lists %v", got)
 	}
 	if _, err := r.Check(jdp, "/mnt/disk1/filme", View); !errors.Is(err, ErrNotFound) {

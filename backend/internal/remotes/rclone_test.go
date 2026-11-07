@@ -38,13 +38,11 @@ func realService(t *testing.T) (*Service, string) {
 	if err := os.WriteFile(filepath.Join(data, "notiz.txt"), []byte("hallo"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	mnt := filepath.Join(base, "mnt")
 	cfg := Config{
 		Binary: bin,
 		Dir:    filepath.Join(base, "config", "rclone"),
 		Socket: filepath.Join(base, "rc", "rclone.sock"),
-		Mnt:    mnt,
-		Root:   filepath.Join(mnt, "remotes"),
+		Root:   filepath.Join(base, "remotes"),
 	}
 	mounting := func(context.Context) (system.Mounting, error) {
 		return system.Mounting{Automount: true, Cache: system.CacheWrites, CacheSize: 1}, nil

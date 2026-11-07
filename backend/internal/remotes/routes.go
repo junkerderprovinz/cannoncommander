@@ -1,4 +1,4 @@
-// Package remotes mounts rclone remotes under /mnt/remotes. rclone runs as
+// Package remotes mounts rclone remotes under /remotes. rclone runs as
 // rclone rcd, a child process with its own rclone.conf, and is driven over
 // its remote control API on a Unix socket.
 package remotes

@@ -15,7 +15,7 @@ export function addBookmark(path: string) {
   if (inArchive(path)) return toast(t('side.archiveNoBookmark'), 'warn');
   if (user.bookmarks.some((b) => b.path === path)) return toast(t('side.bookmarkExists'), 'warn');
   const name = label || split(path).pop() || t('files.server');
-  const g = label ? (path === '/boot' ? 'IconFlash' : path === '/mnt/remotes' ? 'IconCloud' : 'IconZFS') : 'IconFolder';
+  const g = label ? (path === '/boot' ? 'IconFlash' : path === '/remotes' ? 'IconCloud' : 'IconZFS') : 'IconFolder';
   user.bookmarks.push({ name, path, g });
   save();
   toast(t('side.bookmarkAdded', { name }));

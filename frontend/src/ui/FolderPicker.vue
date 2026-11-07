@@ -21,7 +21,7 @@ const opened = ref(['/mnt', ...parts.map((_, k) => '/' + parts.slice(0, k + 1).j
 const files = new Set<string>();
 const ext = (n: string) => (n.includes('.') ? n.split('.').pop()!.toLowerCase() : '');
 const join = (dir: string, name: string) => (dir === '/' ? '' : dir) + '/' + name;
-const closedGlyph = (path: string, remote: boolean, volume: boolean) => (path === '/boot' ? 'IconFlash' : remote || path === '/mnt/remotes' ? 'IconCloud' : volume ? 'IconZFS' : 'IconFolder');
+const closedGlyph = (path: string, remote: boolean, volume: boolean) => (path === '/boot' ? 'IconFlash' : remote || path === '/remotes' ? 'IconCloud' : volume ? 'IconZFS' : 'IconFolder');
 
 async function load(id: string | null) {
   const path = id ?? '/';
