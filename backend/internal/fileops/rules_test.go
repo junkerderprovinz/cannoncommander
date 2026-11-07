@@ -102,7 +102,7 @@ func TestARetryAsksForTheRightsAgain(t *testing.T) {
 	if code := e.call("anna", "POST", "/jobs/"+j.ID+"/cancel", nil, nil); code != http.StatusOK {
 		t.Fatalf("cancel: %d", code)
 	}
-	e.wait(j.ID)
+	e.ended(j.ID)
 	e.rules.set("/mnt/user/fotos", ccfs.Hidden)
 	if err := os.Remove(e.real("/mnt/user/backups/a.jpg")); err != nil {
 		t.Fatal(err)

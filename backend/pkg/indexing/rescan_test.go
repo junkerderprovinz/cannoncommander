@@ -22,12 +22,8 @@ func waitForPasses(t *testing.T, idx *Index, n uint64) {
 func TestRequestFullScanRunsAPassThroughTheScheduler(t *testing.T) {
 	idx := newRestoreTestIndex(t, "rescan", []string{"a", "b"}, persistedScanners("/", "/a/", "/b/"))
 	idx.setupMultiScanner(false)
-	idx.mu.RLock()
-	bootstrap := idx.startupScanPending
-	idx.mu.RUnlock()
-	if bootstrap {
-		waitForPasses(t, idx, 1)
-	}
+	// No folder sizes are stored yet, so the start runs a pass of its own.
+	waitForPasses(t, idx, 1)
 	if err := os.WriteFile(filepath.Join(idx.Path, "a", "neu.txt"), []byte("12345"), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -65,5 +61,29 @@ func TestThePlanNamesTheNextScanAndItsInterval(t *testing.T) {
 	every := idx.ScanEvery()
 	if every < scanScheduleTiers[0] || every > scanScheduleTiers[len(scanScheduleTiers)-1] {
 		t.Errorf("every = %v", every)
+	}
+}
+
+func TestAScanBreaksOffWhenTheSchedulerStops(t *testing.T) {
+	idx := newRestoreTestIndex(t, "stopped", []string{"a/tief"}, persistedScanners("/", "/a/"))
+	idx.setupMultiScannerEx(false, false)
+	if err := os.WriteFile(filepath.Join(idx.Path, "a", "tief", "neu.txt"), []byte("12345"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	idx.stopScheduler()
+	s := idx.scanners["/a/"]
+	var last time.Time
+	s.withStatsRLock(func() { last = s.lastScanned })
+	s.executeScan()
+	if got, _ := idx.db.GetItem("stopped", "/a/tief/neu.txt"); got != nil {
+		t.Error("the scan went on after the stop")
+	}
+	s.withStatsRLock(func() {
+		if !s.lastScanned.Equal(last) || s.fullScanCounter != 0 {
+			t.Errorf("the broken off scan counts as done: last %v, counter %d", s.lastScanned, s.fullScanCounter)
+		}
+	})
+	if metaStore.(*fakeMetaStore).saved != nil {
+		t.Error("half a scan was saved")
 	}
 }

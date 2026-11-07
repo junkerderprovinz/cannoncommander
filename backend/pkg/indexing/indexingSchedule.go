@@ -361,7 +361,11 @@ func (idx *Index) setupMultiScannerEx(isNewDb bool, startSched bool) {
 
 	idx.restoreScannerNextRuns()
 	if startSched {
-		go idx.runIndexScheduler()
+		idx.mu.Lock()
+		if !idx.schedulerStopped.Load() {
+			idx.schedulerRunning.Go(idx.runIndexScheduler)
+		}
+		idx.mu.Unlock()
 	}
 
 	logger.Debugf("Created %d scanners for [%v] (1 root + %d children)", len(topLevelDirs)+1, idx.Name, len(topLevelDirs))

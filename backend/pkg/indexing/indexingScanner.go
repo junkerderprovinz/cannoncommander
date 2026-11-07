@@ -13,6 +13,10 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
+// errScanStopped breaks off a scan when the scheduler stops. What the scan
+// read so far is kept, but nothing counts it as done.
+var errScanStopped = errors.New("scan stopped")
+
 type Scanner struct {
 	scanPath string
 
@@ -57,6 +61,7 @@ func (s *Scanner) withStatsRLock(fn func()) {
 
 // executeScan runs one scan for this scanner (invoked only from the per-index scheduler).
 func (s *Scanner) executeScan() {
+	stopped := false
 	defer func() {
 		if r := recover(); r != nil {
 			logger.Errorf("[%s] Scanner panic recovered: %v", s.scanPath, r)
@@ -65,7 +70,7 @@ func (s *Scanner) executeScan() {
 		s.idx.activeScannerPath = ""
 		batch := s.idx.schedulerBatch > 0
 		s.idx.mu.Unlock()
-		if !batch {
+		if !batch && !stopped {
 			err := s.idx.PostScan()
 			if err != nil {
 				logger.Errorf("Failed to post scan: %v", err)
@@ -95,29 +100,39 @@ func (s *Scanner) executeScan() {
 			s.fullScanCounter = 0
 		}
 	})
-	s.runIndexing(quick)
+	if err := s.runIndexing(quick); err != nil {
+		// The scan that broke off runs again in full or quick, as planned.
+		stopped = true
+		s.withStatsLock(func() {
+			s.fullScanCounter = pre
+		})
+		return
+	}
 	s.updateSchedule()
 }
 
 // runIndexing performs the actual indexing work
-func (s *Scanner) runIndexing(quick bool) {
+func (s *Scanner) runIndexing(quick bool) error {
 	if s.scanPath == "/" {
-		s.runRootScan(quick)
-	} else {
-		s.runChildScan(quick)
+		return s.runRootScan(quick)
 	}
+	return s.runChildScan(quick)
 }
 
-func (s *Scanner) runRootScan(quick bool) {
+func (s *Scanner) runRootScan(quick bool) error {
 	startTime := time.Now()
 
 	if quick {
-		s.runQuickScanRoot()
+		if err := s.runQuickScanRoot(); err != nil {
+			return err
+		}
 		s.statsMu.Lock()
 		s.quickScanTime = int(time.Since(startTime).Seconds())
 		s.statsMu.Unlock()
 	} else {
-		s.runFullScanRoot()
+		if err := s.runFullScanRoot(); err != nil {
+			return err
+		}
 		s.statsMu.Lock()
 		s.fullScanTime = int(time.Since(startTime).Seconds())
 		s.statsMu.Unlock()
@@ -131,9 +146,10 @@ func (s *Scanner) runRootScan(quick bool) {
 	if err := s.idx.db.ShrinkMemory(); err != nil {
 		logger.Errorf("Failed to shrink memory: %v", err)
 	}
+	return nil
 }
 
-func (s *Scanner) runFullScanRoot() {
+func (s *Scanner) runFullScanRoot() error {
 	config := Options{
 		Recursive:     false,
 		IsRoutineScan: true,
@@ -161,6 +177,9 @@ func (s *Scanner) runFullScanRoot() {
 	})
 
 	_, _, err := s.idx.indexDirectory("/", config, s)
+	if errors.Is(err, errScanStopped) {
+		return err
+	}
 	if err != nil {
 		logger.Errorf("Root scanner error: %v", err)
 	}
@@ -178,9 +197,10 @@ func (s *Scanner) runFullScanRoot() {
 		clear(s.idx.scanUpdatedPaths)
 	}
 	s.idx.mu.Unlock()
+	return nil
 }
 
-func (s *Scanner) runQuickScanRoot() {
+func (s *Scanner) runQuickScanRoot() error {
 	s.scanStartTime = time.Now().Unix()
 	s.withStatsLock(func() {
 		s.filesChanged = false
@@ -208,6 +228,9 @@ func (s *Scanner) runQuickScanRoot() {
 	// Check each folder's modtime
 	for _, folderPath := range foldersToCheck {
 		changed, err := s.checkFolderModtime(folderPath)
+		if errors.Is(err, errScanStopped) {
+			return err
+		}
 		if err != nil {
 			errorCount++
 		} else if changed {
@@ -220,20 +243,25 @@ func (s *Scanner) runQuickScanRoot() {
 	s.flushBatch()
 	s.purgeStaleEntries(true, true) // isRoot=true, isQuickScan=true
 	s.syncStatsWithDB()
+	return nil
 }
 
-func (s *Scanner) runChildScan(quick bool) {
+func (s *Scanner) runChildScan(quick bool) error {
 	startTime := time.Now()
 
 	if quick {
 		// Quick scan: iterate folderSizes, check modtimes only (257x faster!)
-		s.runQuickScanChild()
+		if err := s.runQuickScanChild(); err != nil {
+			return err
+		}
 		s.withStatsLock(func() {
 			s.quickScanTime = int(time.Since(startTime).Seconds())
 		})
 	} else {
 		// Full scan: walk filesystem recursively, read all directory contents
-		s.runFullScanChild()
+		if err := s.runFullScanChild(); err != nil {
+			return err
+		}
 		s.withStatsLock(func() {
 			s.fullScanTime = int(time.Since(startTime).Seconds())
 		})
@@ -243,9 +271,10 @@ func (s *Scanner) runChildScan(quick bool) {
 	s.withStatsLock(func() {
 		s.lastScanned = time.Now()
 	})
+	return nil
 }
 
-func (s *Scanner) runFullScanChild() {
+func (s *Scanner) runFullScanChild() error {
 	config := Options{
 		Recursive:     true,
 		IsRoutineScan: true,
@@ -273,10 +302,13 @@ func (s *Scanner) runFullScanChild() {
 	s.batchItems = make([]*iteminfo.FileInfo, 0, batchSize)
 
 	_, _, err := s.idx.indexDirectory(s.scanPath, config, s)
+	if errors.Is(err, errScanStopped) {
+		return err
+	}
 	if err != nil {
 		if isPathGone(err) {
 			s.handlePathGone("full scan")
-			return
+			return nil
 		}
 		logger.Errorf("Scanner [%s] error: %v", s.scanPath, err)
 	} else if config.Recursive && config.IsRoutineScan {
@@ -304,9 +336,10 @@ func (s *Scanner) runFullScanChild() {
 		}
 	}
 	s.idx.mu.Unlock()
+	return nil
 }
 
-func (s *Scanner) runQuickScanChild() {
+func (s *Scanner) runQuickScanChild() error {
 	s.scanStartTime = time.Now().Unix()
 	s.withStatsLock(func() {
 		s.filesChanged = false
@@ -337,6 +370,9 @@ func (s *Scanner) runQuickScanChild() {
 	// Check each folder's modtime
 	for _, folderPath := range foldersToCheck {
 		changed, err := s.checkFolderModtime(folderPath)
+		if errors.Is(err, errScanStopped) {
+			return err
+		}
 		if err != nil {
 			errorCount++
 		} else if changed {
@@ -349,7 +385,7 @@ func (s *Scanner) runQuickScanChild() {
 	s.flushBatch()
 	s.purgeStaleEntries(false, true) // isRoot=false, isQuickScan=true
 	s.syncStatsWithDB()
-
+	return nil
 }
 
 // checkForNewChildDirectories detects new top-level directories and creates scanners for them
@@ -585,6 +621,9 @@ func (s *Scanner) syncStatsWithDB() {
 // checkFolderModtime checks if a folder's modtime changed since last scan
 // Returns (changed, error) where changed=true if modtime is after lastScanned, false otherwise
 func (s *Scanner) checkFolderModtime(folderPath string) (bool, error) {
+	if s.idx.stopping() {
+		return false, errScanStopped
+	}
 	realPath := strings.TrimRight(s.idx.Path, "/") + folderPath
 	realPath = strings.TrimSuffix(realPath, "/")
 
@@ -625,7 +664,9 @@ func (s *Scanner) checkFolderModtime(folderPath string) (bool, error) {
 
 		dirInfo, err := s.idx.GetDirInfo(dir, info, folderPath, opts, s)
 		if err != nil {
-			logger.Errorf("[QUICK_SCAN] Error getting dir info for %s: %v", folderPath, err)
+			if !errors.Is(err, errScanStopped) {
+				logger.Errorf("[QUICK_SCAN] Error getting dir info for %s: %v", folderPath, err)
+			}
 			return true, err
 		}
 

@@ -253,11 +253,23 @@ func (e *env) start(kind string, params any) jobs.Job {
 // wait polls the job until it ended or waits for an answer.
 func (e *env) wait(id string) jobs.Job {
 	e.t.Helper()
+	return e.until(id, func(j jobs.Job) bool { return !j.State.Open() || j.State == jobs.Asking })
+}
+
+// ended polls the job until it has stopped. A cancelled job that waits for
+// an answer still asks until its run has returned.
+func (e *env) ended(id string) jobs.Job {
+	e.t.Helper()
+	return e.until(id, func(j jobs.Job) bool { return !j.State.Open() })
+}
+
+func (e *env) until(id string, done func(jobs.Job) bool) jobs.Job {
+	e.t.Helper()
 	deadline := time.Now().Add(15 * time.Second)
 	for {
 		var j jobs.Job
 		e.call("anna", "GET", "/jobs/"+id, nil, &j)
-		if !j.State.Open() || j.State == jobs.Asking {
+		if done(j) {
 			return j
 		}
 		if time.Now().After(deadline) {
