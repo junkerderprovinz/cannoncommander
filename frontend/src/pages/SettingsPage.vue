@@ -60,7 +60,7 @@ function end() {
   </div>
   <div v-else class="settings">
     <nav ref="tiles" class="tiles" role="tablist" aria-orientation="vertical" :aria-label="t('settings.title')">
-      <button v-for="tab in shown" :key="tab.id" class="stile" :class="{ cur: tab.id === cur.id, dragging: tab.id === dragging }" role="tab" :aria-selected="tab.id === cur.id" draggable="true" :data-stab="tab.id" :data-tip="labelOf(tab)"
+      <button v-for="tab in shown" :key="tab.id" class="stile" :class="{ cur: tab.id === cur.id, dragging: tab.id === dragging }" :data-held="tab.id === dragging || undefined" role="tab" :aria-selected="tab.id === cur.id" draggable="true" :data-stab="tab.id" :data-tip="labelOf(tab)"
         @click="go('settings', tab.id)" @dragstart="start($event, tab.id)" @dragover="over($event, tab.id)" @dragend="end"><G :n="tab.g" /><span>{{ labelOf(tab) }}</span></button>
     </nav>
     <div id="settings-body" class="settings-body"><div id="settings-col" class="settings-col"><component :is="cur.component" :key="cur.id" /></div></div>

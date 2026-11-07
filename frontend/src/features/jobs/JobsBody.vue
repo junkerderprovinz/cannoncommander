@@ -66,8 +66,8 @@ function dragEnd() {
 <template>
   <SubCard><FieldRow :label="t('jobs.modeLabel')" :hint="t('jobs.modeTip')"><Selector id="jobs-mode" v-model="mode" :items="segItems(MODES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow></SubCard>
   <SubCard id="jobs-body">
-    <div v-if="rows.length" ref="list" class="job-list">
-      <div v-for="j in rows" :key="j.id" class="job" :class="{ open: isOpen(j), dragging: dragging === j }" :data-job="j.id" :draggable="isOpen(j) ? 'true' : undefined" :tabindex="isOpen(j) ? 0 : undefined"
+    <div v-if="rows.length" ref="list" class="job-list glim-drag-rows">
+      <div v-for="j in rows" :key="j.id" class="job" :class="{ open: isOpen(j), dragging: dragging === j }" :data-held="dragging === j || undefined" :data-job="j.id" :draggable="isOpen(j) ? 'true' : undefined" :tabindex="isOpen(j) ? 0 : undefined"
         :aria-label="t('jobs.aria', { label: jobLabel(j), pct: Math.round(pctOf(j)), state: t(`jobs.state.${j.state}`) })"
         @keydown="keys(j, $event)" @dragstart="dragStart(j, $event)" @dragover="dragOver(j, $event)" @dragend="dragEnd">
         <span class="job-grip" aria-hidden="true"><G v-if="isOpen(j)" n="IconGrip" /></span>

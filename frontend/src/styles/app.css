@@ -182,8 +182,6 @@ svg { display: block; }
 .app:not(.with-fkeys) .fkeys { display: none; }
 
 .glim-subcard > .glim-eyebrow { padding: 0; }
-/* A native drag leaves the held row in its place, dimmed, and only the rows around it tremble. */
-.glim-drag-armed > .dragging { animation: none; }
 
 
 .glim-toast-stack { bottom: 4.5rem; }

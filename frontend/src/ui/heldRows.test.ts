@@ -46,18 +46,22 @@ describe('a held row', () => {
     await nextTick();
     expect(tiles.classList).toContain('glim-drag-armed');
     expect(tiles.querySelector('[data-stab="general"]')!.classList).toContain('dragging');
+    expect(tiles.querySelectorAll('[data-held="true"]')).toHaveLength(1);
+    expect(tiles.classList).not.toContain('glim-drag-rows');
     drag(tiles.querySelector('[data-stab="general"]')!, 'dragend');
     await nextTick();
     expect(tiles.classList).not.toContain('glim-drag-armed');
   });
 
-  it('sets the other jobs trembling until it is let go', async () => {
+  it('sets the other jobs lifting gently, as full-width rows do, until it is let go', async () => {
     await mount(JobsBody);
     const list = document.querySelector('#jobs-body .job')!.parentElement!;
     expect(list.querySelectorAll(':scope > .job')).toHaveLength(3);
     drag(list.querySelector('[data-job="b"]')!, 'dragstart');
     await nextTick();
     expect(list.classList).toContain('glim-drag-armed');
+    expect(list.classList).toContain('glim-drag-rows');
+    expect([...list.querySelectorAll('[data-held="true"]')].map((el) => (el as HTMLElement).dataset.job)).toEqual(['b']);
     drag(list.querySelector('[data-job="b"]')!, 'dragend');
     await nextTick();
     expect(list.classList).not.toContain('glim-drag-armed');
