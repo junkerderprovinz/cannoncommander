@@ -111,7 +111,7 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 - **Nine ways to look at a folder.** Details with 89 columns to choose from, compact, list, content, columns, tiles, large tiles, a gallery and a drives view. Quick look on the space bar and a preview in the other panel.
 - **Tools for the whole collection.** Search by name, field or content, folder compare and sync, file compare, duplicates, disk usage as a tree or a treemap, batch rename with patterns, archives to pack, unpack and test, checksums, split and join, links and properties.
 - **A viewer and an editor.** Pictures, video, audio, PDF, Markdown, text and code, Office files, e-books, 3D models and archives open in the browser. An Office server such as OnlyOffice or Collabora can edit Office files.
-- **Remote storage.** SFTP, SMB, WebDAV, S3, Google Drive and everything else rclone speaks, mounted below `/mnt/remotes`, where other containers can see it too.
+- **Remote storage.** SFTP, SMB, WebDAV, S3, Google Drive and everything else rclone speaks, browsed like any other folder.
 - **Sharing.** Links with a password, an expiry date and download or upload limits, for one file or a whole collection, with a QR code. A WebDAV server lets you mount your files as a drive.
 - **People and rules.** Users, groups and rules that hide a folder or make it read only, two-factor sign-in, passkeys, API tokens and single sign-on through OIDC.
 - **Colours and tags** for files, saved searches, window profiles, your own key bindings and a Total Commander layout.
@@ -233,7 +233,6 @@ The container reads `/config/config.yaml`, which it writes with good defaults on
 |---|---|
 | `/config` | `config.yaml`, the database with users, settings, jobs and the index, the thumbnail cache and rclone's own configuration |
 | `/mnt` | Your user shares, disks and pools, at the same paths as on the server. Everyone works in the user shares under `/mnt/user`. The disks and pools are for admins alone. Where a file lies, the other names of a hard link and moving a folder onto one disk work right away, and to browse a disk or pool, add it under **Settings > Sources**. On Unraid the access mode is **RW/Slave**, so disks and pools mounted later show up too. |
-| `/mnt/remotes` | Where remote storage is mounted. On Unraid it is mapped with the access mode **RW/Shared**, so the mounts show up on the server and in other containers. |
 | `/var/local/emhttp` | Read only. Unraid's live view of the disks, pools and shares. |
 | `/boot/config` | Read only. The settings of each share, read for placing files and for the Unraid permissions. |
 
@@ -260,7 +259,7 @@ Spinning disks down and sending Unraid notifications go through files and a sock
 
 ### Remote storage
 
-Add SFTP, SMB, WebDAV, S3, Google Drive and others under **Settings > Remotes**. CannonCommander starts rclone itself, keeps its configuration in `/config/rclone` and mounts each remote below `/mnt/remotes`. For this the container needs `/dev/fuse` and the `SYS_ADMIN` capability, which the Unraid template sets for you. A provider that signs in through a browser, such as Google Drive, takes a token you make once with `rclone authorize` on your own computer.
+Add SFTP, SMB, WebDAV, S3, Google Drive and others under **Settings > Remotes**. CannonCommander starts rclone itself, keeps its configuration in `/config/rclone` and mounts each remote below `/remotes` inside the container. The mounts stay there, so neither the server nor other containers see them. For this the container needs `/dev/fuse` and the `SYS_ADMIN` capability, which the Unraid template sets for you. A provider that signs in through a browser, such as Google Drive, takes a token you make once with `rclone authorize` on your own computer.
 
 ### WebDAV
 
