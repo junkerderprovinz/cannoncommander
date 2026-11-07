@@ -16,7 +16,7 @@ beforeEach(() => {
   setActivePinia(createPinia());
   vi.restoreAllMocks();
   history.replaceState(null, '', '/');
-  Object.assign(prefs, { dual: true, syncBrowse: false, showHidden: false, foldersFirst: true, folderViews: {}, folderGroups: {}, startFolder: '/mnt/user/downloads' });
+  Object.assign(prefs, { dual: true, syncBrowse: false, showHidden: false, foldersFirst: true, folderViews: {}, folderGroups: {}, folderTiles: {}, startFolder: '/mnt/user/downloads' });
   toasts.splice(0);
   closed.clear();
   vi.spyOn(api, 'fsList').mockImplementation(async (path) => {
@@ -115,6 +115,22 @@ describe('panels', () => {
     expect(F.viewOf(F.T())).toBe('drives');
     F.setView(F.T(), 'compact');
     expect(F.viewOf(F.T())).toBe('compact');
+  });
+
+  it('keeps the zoomed view and card size with the folder', async () => {
+    const F = await panels();
+    F.setZoom(F.T(), { view: 'large', tile: 200 });
+    expect([F.viewOf(F.T()), F.tileOf(F.T())]).toEqual(['large', 200]);
+    expect(F.tileOf(F.T(1))).toBeUndefined();
+    F.setZoom(F.T(), { view: 'list' });
+    expect([F.viewOf(F.T()), F.tileOf(F.T())]).toEqual(['list', undefined]);
+  });
+
+  it('shows a view picked from the menu at its own size again', async () => {
+    const F = await panels();
+    F.setZoom(F.T(), { view: 'gallery', tile: 320 });
+    F.setView(F.T(), 'gallery');
+    expect(F.tileOf(F.T())).toBeUndefined();
   });
 
   it('acts on the marked rows, or on the one under the cursor', async () => {

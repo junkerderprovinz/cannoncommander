@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Itxi",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Ikuspegiari zooma egin",
+        "key": "{mod}+gurpila"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "hemen: {path}",
     "searchTip": "Bilatu karpeta honetan eta azpian (Ctrl+F edo /)",
     "labelsTip": "Etiketak: bilatu kolorearen edo etiketaren arabera",
-    "viewTip": "Ikuspegia: {name}",
+    "viewTip": "Ikuspegia: {name}. Eutsi {mod} sakatuta eta biratu gurpila zooma egiteko.",
     "equalTip": "Beste panela karpeta honetara (Ctrl+.)",
     "recent": "Azken bisitatuak",
     "noHistory": "Oraindik ez dago historiarik",

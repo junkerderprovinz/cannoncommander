@@ -1853,6 +1853,10 @@
       "esc": {
         "label": "Fechar",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Fazer zoom na vista",
+        "key": "{mod}+roda do rato"
       }
     }
   },
@@ -3492,7 +3496,7 @@
     "foundIn": "em {path}",
     "searchTip": "Pesquisar nesta pasta e abaixo (Ctrl+F ou /)",
     "labelsTip": "Etiquetas: procurar por cor ou palavra-chave",
-    "viewTip": "Vista: {name}",
+    "viewTip": "Vista: {name}. Mantenha {mod} premida e rode a roda do rato para fazer zoom.",
     "equalTip": "O outro painel nesta pasta (Ctrl+.)",
     "recent": "Visitadas recentemente",
     "noHistory": "Ainda sem histórico",

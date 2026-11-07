@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Kapat",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Görünümü yakınlaştır",
+        "key": "{mod}+tekerlek"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "{path} içinde",
     "searchTip": "Bu klasörde ve altında ara (Ctrl+F ya da /)",
     "labelsTip": "Etiketler: renge ya da etikete göre bul",
-    "viewTip": "Görünüm: {name}",
+    "viewTip": "Görünüm: {name}. Yakınlaştırmak için {mod} tuşunu basılı tut ve tekerleği çevir.",
     "equalTip": "Diğer paneli bu klasöre getir (Ctrl+.)",
     "recent": "Son ziyaret edilenler",
     "noHistory": "Henüz geçmiş yok",

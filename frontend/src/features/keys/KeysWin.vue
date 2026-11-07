@@ -9,6 +9,7 @@ import { comboOf } from '@/core/keymap';
 import type { MenuEntry } from '@/core/menu';
 import { MENUS, menuName } from '@/core/menus';
 import { cancelBtn, type WinEntry } from '@/core/windows';
+import { zoomMod } from '@/files/zoom';
 import { t } from '@/i18n';
 import { keysFirst, stepFoot } from '@/features/config/shared';
 import { assign, changed, check, combosOf, keyLabel, type KeyMap, mainCombo, MODIFIER_KEYS, preset, reset } from './keys';
@@ -20,7 +21,7 @@ const which = ref(props.which);
 const rec = ref<string | null>(null);
 const pending = ref<{ combo?: string; msg: string } | null>(null);
 const query = ref('');
-const FIXED = ['tab', 'enter', 'insert', 'space', 'f10', 'esc'];
+const FIXED = ['tab', 'enter', 'insert', 'space', 'f10', 'esc', 'zoom'];
 
 const name = (a: Action) => labelOf(a);
 function groups(): [string, string[]][] {
@@ -106,6 +107,6 @@ onBeforeUnmount(() => stopKeys());
       <EmptyState v-if="!shown.length" nested :glyph="glyphComponent('IconSearch')" :title="t('keys.noMatch')" />
     </div>
     <div class="glim-eyebrow kb-fixedhead">{{ t('keys.fixedHead') }}</div>
-    <div class="kbd-grid"><div v-for="k in FIXED" :key="k"><span>{{ t(`keys.fixedKeys.${k}.label`) }}</span><Kbd>{{ t(`keys.fixedKeys.${k}.key`) }}</Kbd></div></div>
+    <div class="kbd-grid"><div v-for="k in FIXED" :key="k"><span>{{ t(`keys.fixedKeys.${k}.label`) }}</span><Kbd>{{ t(`keys.fixedKeys.${k}.key`, { mod: zoomMod() }) }}</Kbd></div></div>
   </SubCard>
 </template>

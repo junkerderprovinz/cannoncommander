@@ -1731,6 +1731,10 @@
       "esc": {
         "label": "Tutup",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Perbesar atau perkecil tampilan",
+        "key": "{mod}+roda tetikus"
       }
     }
   },
@@ -3230,7 +3234,7 @@
     "foundIn": "di {path}",
     "searchTip": "Cari di folder ini dan di bawahnya (Ctrl+F atau /)",
     "labelsTip": "Label: cari menurut warna atau tag",
-    "viewTip": "Tampilan: {name}",
+    "viewTip": "Tampilan: {name}. Tahan {mod} lalu putar roda tetikus untuk memperbesar atau memperkecil.",
     "equalTip": "Panel lain ke folder ini (Ctrl+.)",
     "recent": "Terakhir dikunjungi",
     "noHistory": "Belum ada riwayat",

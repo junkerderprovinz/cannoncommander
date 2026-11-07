@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Lukk",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Zoom visningen",
+        "key": "{mod}+hjul"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "i {path}",
     "searchTip": "Søk i denne mappen og under (Ctrl+F eller /)",
     "labelsTip": "Etiketter: søk etter farge eller stikkord",
-    "viewTip": "Visning: {name}",
+    "viewTip": "Visning: {name}. Hold inne {mod} og rull med hjulet for å zoome.",
     "equalTip": "Andre panel til denne mappen (Ctrl+.)",
     "recent": "Nylig besøkt",
     "noHistory": "Ingen historikk ennå",

@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Loka",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Stækka eða minnka sýn",
+        "key": "{mod}+hjól"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "í {path}",
     "searchTip": "Leita í þessari möppu og þar fyrir neðan (Ctrl+F eða /)",
     "labelsTip": "Merkingar: leita eftir lit eða merki",
-    "viewTip": "Sýn: {name}",
+    "viewTip": "Sýn: {name}. Haltu {mod} niðri og snúðu hjólinu til að stækka eða minnka.",
     "equalTip": "Hinn gluggann á þessa möppu (Ctrl+.)",
     "recent": "Nýlega heimsótt",
     "noHistory": "Engin saga enn",

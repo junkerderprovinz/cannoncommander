@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Luk",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Zoom visningen",
+        "key": "{mod}+hjul"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "i {path}",
     "searchTip": "Søg i denne mappe og nedenunder (Ctrl+F eller /)",
     "labelsTip": "Mærker: find efter farve eller tag",
-    "viewTip": "Visning: {name}",
+    "viewTip": "Visning: {name}. Hold {mod} nede, og drej på hjulet for at zoome.",
     "equalTip": "Andet panel til denne mappe (Ctrl+.)",
     "recent": "Senest besøgt",
     "noHistory": "Ingen historik endnu",

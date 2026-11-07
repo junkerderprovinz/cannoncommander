@@ -18,6 +18,7 @@ import { tabMenu } from './menus';
 import PathBar from './PathBar.vue';
 import { inArchive, split } from './paths';
 import { VIEWS, viewGlyph } from './views';
+import { zoomMod } from './zoom';
 
 const props = defineProps<{ i: number }>();
 const F = usePanels();
@@ -115,7 +116,7 @@ const count = computed(() => {
         </GlyphField>
         <IconButton v-else :tip="t('files.searchTip')" :glyph="glyphComponent('IconSearch')" data-run="quickFilter" @click="F.active = i; run('quickFilter')" />
         <IconButton :tip="t('files.labelsTip')" :glyph="glyphComponent('IconHash')" data-labelsmenu @click="run('labelsMenu')" />
-        <IconButton :tip="t('files.viewTip', { name: t(`views.${v}`) })" :glyph="glyphComponent(viewGlyph(v))" data-viewmenu @click="F.active = i; viewMenu($event)" />
+        <IconButton :tip="t('files.viewTip', { name: t(`views.${v}`), mod: zoomMod() })" :glyph="glyphComponent(viewGlyph(v))" data-viewmenu @click="F.active = i; viewMenu($event)" />
         <IconButton v-if="prefs.dual" :tip="t('files.equalTip')" :glyph="glyphComponent('IconSync')" data-run="equalPanels" @click="F.active = i; run('equalPanels')" />
       </span>
     </div>

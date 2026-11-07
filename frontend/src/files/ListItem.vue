@@ -19,7 +19,7 @@ import Thumb from './Thumb.vue';
 import { fresh } from './fresh';
 import { ticking } from './touch';
 
-const props = defineProps<{ k: Entry; idx: number; view: string; path: string; marked: boolean; cursor: boolean; cut?: boolean; mark?: Mark }>();
+const props = defineProps<{ k: Entry; idx: number; view: string; path: string; marked: boolean; cursor: boolean; cut?: boolean; mark?: Mark; thumb?: 'small' | 'large' }>();
 const listing = useListing();
 const boxes = computed(() => ticking(props.path) && !props.k.up);
 const glows = computed(() => fresh.has(join(props.k.at || props.path, props.k.name)));
@@ -69,7 +69,7 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
       </template>
     </template>
     <template v-else-if="kind === 'tile'">
-      <Thumb :k="k" :folder="folder" /><RowMark v-if="marked || boxes" :on="marked" />
+      <Thumb :k="k" :folder="folder" :size="thumb" /><RowMark v-if="marked || boxes" :on="marked" />
       <span class="t">{{ k.name }}</span><span class="meta glim-num">{{ objects }}<Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" /></span>
     </template>
     <template v-else-if="kind === 'content'">

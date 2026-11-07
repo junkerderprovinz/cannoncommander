@@ -1853,6 +1853,10 @@
       "esc": {
         "label": "Chiudi",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Zoom della vista",
+        "key": "{mod}+rotellina"
       }
     }
   },
@@ -3492,7 +3496,7 @@
     "foundIn": "in {path}",
     "searchTip": "Cerca in questa cartella e sotto (Ctrl+F o /)",
     "labelsTip": "Etichette: cerca per colore o tag",
-    "viewTip": "Vista: {name}",
+    "viewTip": "Vista: {name}. Tieni premuto {mod} e gira la rotellina per lo zoom.",
     "equalTip": "L'altro pannello su questa cartella (Ctrl+.)",
     "recent": "Visitate di recente",
     "noHistory": "Ancora nessuna cronologia",
