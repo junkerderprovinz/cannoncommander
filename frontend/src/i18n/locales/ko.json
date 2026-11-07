@@ -2937,13 +2937,9 @@
     "brand": "CannonCommander, 파일로 돌아가기",
     "back": "파일로 돌아가기",
     "backTip": "파일로 돌아가기 (Esc)",
-    "layout": "보기",
     "singleTip": "한 패널 (Ctrl+1)",
     "dualTip": "두 패널 (Ctrl+2)",
-    "palette": "명령 검색 (Ctrl+K)",
     "jobs": "작업",
-    "settings": "설정",
-    "settingsClose": "설정 닫기",
     "security": "계정 및 보안",
     "activity": "활동"
   },

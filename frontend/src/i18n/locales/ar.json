@@ -3572,13 +3572,9 @@
     "brand": "CannonCommander، إلى الملفات",
     "back": "العودة إلى الملفات",
     "backTip": "العودة إلى الملفات (Esc)",
-    "layout": "العرض",
     "singleTip": "لوحة واحدة (Ctrl+1)",
     "dualTip": "لوحتان (Ctrl+2)",
-    "palette": "البحث عن أمر (Ctrl+K)",
     "jobs": "المهام",
-    "settings": "الإعدادات",
-    "settingsClose": "إغلاق الإعدادات",
     "security": "الحساب والأمان",
     "activity": "النشاط"
   },

@@ -2937,13 +2937,9 @@
     "brand": "CannonCommander、ファイルに戻る",
     "back": "ファイルに戻る",
     "backTip": "ファイルに戻る (Esc)",
-    "layout": "表示",
     "singleTip": "1パネル (Ctrl+1)",
     "dualTip": "2パネル (Ctrl+2)",
-    "palette": "コマンドを検索 (Ctrl+K)",
     "jobs": "ジョブ",
-    "settings": "設定",
-    "settingsClose": "設定を閉じる",
     "security": "アカウントとセキュリティ",
     "activity": "アクティビティ"
   },

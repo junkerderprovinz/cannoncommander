@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, dosyalara dön",
     "back": "Dosyalara dön",
     "backTip": "Dosyalara dön (Esc)",
-    "layout": "Görünüm",
     "singleTip": "Tek panel (Ctrl+1)",
     "dualTip": "İki panel (Ctrl+2)",
-    "palette": "Komut bul (Ctrl+K)",
     "jobs": "İşler",
-    "settings": "Ayarlar",
-    "settingsClose": "Ayarları kapat",
     "security": "Hesap ve güvenlik",
     "activity": "Etkinlik"
   },

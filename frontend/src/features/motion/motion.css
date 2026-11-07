@@ -90,11 +90,33 @@
   12% { translate: calc(var(--motion-kick-dist, 6px) * -1) 0; }
   to { translate: none; }
 }
+/* The ball rolls back along the ground into the muzzle, turning as it goes, and is gone in the barrel. */
+@keyframes fx-load {
+  to { translate: calc(var(--fx-reach, 150) * -1%) 0; rotate: calc(var(--fx-reach, 150) * -1.15deg); }
+}
+/* The flash at the muzzle and the one where the ball strikes, both over almost before they are seen. */
+@keyframes fx-flash {
+  from { opacity: 1; scale: .2; }
+  30% { opacity: 1; scale: var(--motion-flash-size, 1.25); }
+  to { opacity: 0; scale: calc(var(--motion-flash-size, 1.25) * 1.2); }
+}
+@keyframes fx-gunsmoke {
+  from { opacity: 0; scale: .25; }
+  12% { opacity: .9; }
+  55% { opacity: .65; }
+  to { opacity: 0; scale: var(--motion-gunsmoke-swell, 2.2); translate: calc(var(--fx-gx) * var(--motion-gunsmoke-drift, 38px)) calc(var(--fx-gy) * var(--motion-gunsmoke-drift, 38px) * -1); }
+}
+@keyframes fx-dust {
+  from { opacity: 0; scale: .3; }
+  15% { opacity: .8; }
+  to { opacity: 0; scale: 2.2; translate: calc(var(--fx-gx) * var(--motion-dust-drift, 22px)) calc(var(--fx-gy) * var(--motion-dust-drift, 22px)); }
+}
 @keyframes fx-shot {
   92% { opacity: 1; }
   to { translate: var(--fx-dx) 0; opacity: 0; }
 }
-/* A shard flies on the ball's way at a falling pace, and on its own it first jumps a little and then drops. */
+/* A shard flies on the ball's way and away from the strike at a falling pace, and on its own it first jumps a little,
+   the more the higher it broke off, and then drops, turning about its own middle. */
 @keyframes fx-shard-x {
   70% { opacity: 1; }
   to { translate: calc(var(--fx-sx) * var(--motion-shard-spread, 40px)) 0; opacity: 0; }
@@ -102,7 +124,7 @@
 @keyframes fx-shard-y {
   from { animation-timing-function: cubic-bezier(.33, .66, .66, 1); }
   22% { translate: 0 calc(var(--fx-kick) * var(--motion-shard-fall, 70px) * -.25); animation-timing-function: cubic-bezier(.4, 0, .9, .5); }
-  to { translate: 0 calc(var(--fx-sy) * var(--motion-shard-fall, 70px)); rotate: calc(var(--fx-sr) * var(--motion-shard-spin, 140deg)); }
+  to { translate: 0 calc(var(--fx-sy) * var(--motion-shard-fall, 70px)); rotate: calc(var(--fx-sr) * var(--motion-shard-spin, 140deg)); scale: .85; }
 }
 @keyframes fx-rebuild {
   from { opacity: 0; scale: .7; }
@@ -175,8 +197,45 @@
   .fx-weed svg { width: 100%; height: 100%; animation: fx-weed-roll var(--motion-tumble-dur, 2.4s) linear both; }
 
   /* The shot from the header logo. The shards lie in a layer inside the head, so the copies they are cut from still
-     take the head's own styles. What the ball broke keeps its place and its focus while it is away. */
-  .brand-cannon.fx-tremble { animation: fx-tremble var(--motion-tremble-dur, 900ms) linear both; }
+     take the head's own styles. What the ball broke keeps its place and its focus while it is away. The ball trembles
+     with the cannon, so the cut at the muzzle it vanishes behind stays on the barrel. */
+  :is(.brand-cannon, .brand-ball).fx-tremble { animation: fx-tremble var(--motion-tremble-dur, 900ms) linear both; }
+  .brand-ball.fx-loading { clip-path: inset(0 0 0 var(--fx-muzzle, 75%)); }
+  .brand-ball.fx-loading > g {
+    transform-box: fill-box; transform-origin: center;
+    animation: fx-load calc(var(--motion-tremble-dur, 900ms) * .7) cubic-bezier(.45, 0, .55, 1) calc(var(--motion-tremble-dur, 900ms) * .1) both;
+  }
+  /* Pointing the way the ball goes, from a point at the muzzle. The glow is round, the flare jagged. */
+  .fx-flash {
+    width: calc(var(--fx-size) * 2.2); height: calc(var(--fx-size) * 1.5); margin-top: calc(var(--fx-size) * -.75);
+    transform-origin: left center; rotate: var(--fx-turn, 0deg);
+    animation: fx-flash var(--motion-flash-dur, 200ms) ease-out both;
+  }
+  .fx-flash::before, .fx-flash::after { content: ""; position: absolute; }
+  .fx-flash::before {
+    inset: 5% 35% 5% -25%; border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 55%, #fff), color-mix(in srgb, var(--accent) 40%, transparent) 60%, transparent);
+  }
+  .fx-flash::after {
+    inset: 0;
+    clip-path: polygon(0% 50%, 14% 32%, 18% 6%, 32% 27%, 48% 0%, 54% 30%, 76% 18%, 66% 42%, 100% 50%, 66% 58%, 76% 82%, 54% 70%, 48% 100%, 32% 73%, 18% 94%, 14% 68%);
+    background: radial-gradient(ellipse 60% 55% at 22% 50%, #fff 0 22%, color-mix(in srgb, var(--accent) 35%, #fff) 40%, var(--accent) 70%, color-mix(in srgb, var(--accent) 50%, transparent));
+  }
+  .fx-gunsmoke, .fx-dust, .fx-impact { width: var(--fx-size); height: var(--fx-size); margin: calc(var(--fx-size) / -2) 0 0 calc(var(--fx-size) / -2); border-radius: 50%; }
+  .fx-gunsmoke {
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--carbon-text-muted) 70%, transparent) 30%, color-mix(in srgb, var(--carbon-text-muted) 30%, transparent) 70%, transparent);
+    animation: fx-gunsmoke var(--motion-gunsmoke-dur, 1.4s) cubic-bezier(.2, .7, .3, 1) both;
+    animation-delay: calc(var(--fx-i) * var(--motion-stagger-step, 30ms));
+  }
+  .fx-impact {
+    background: radial-gradient(closest-side, #fff 15%, color-mix(in srgb, var(--accent) 45%, #fff) 35%, color-mix(in srgb, var(--accent) 55%, transparent) 65%, transparent);
+    animation: fx-flash var(--motion-flash-dur, 200ms) ease-out both;
+  }
+  .fx-dust {
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--carbon-text-muted) 60%, transparent) 35%, transparent);
+    animation: fx-dust var(--motion-dust-dur, 650ms) cubic-bezier(.15, .7, .35, 1) both;
+    animation-delay: calc(var(--fx-i) * var(--motion-stagger-step, 30ms));
+  }
   .brand-cannon.fx-kick { animation: fx-kick var(--motion-kick-dur, 320ms) cubic-bezier(.2, .8, .3, 1); }
   .brand-logo.fx-fired .brand-ball, .head .fx-shattered { opacity: 0; }
   .head .fx-rebuild { animation: fx-rebuild var(--motion-rebuild-dur, 420ms) cubic-bezier(.2, .8, .3, 1.2) both; }
@@ -184,6 +243,7 @@
   .fx-shot svg { width: 100%; height: 100%; animation: fx-roll var(--motion-shot-dur, 900ms) linear both; }
   .fx-shards { display: block; position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }
   .fx-shards > * { position: absolute; }
-  .fx-shard { animation: fx-shard-x var(--motion-shard-dur, 900ms) cubic-bezier(.15, .7, .4, 1) both; }
-  .fx-shard-fall { position: absolute; inset: 0; animation: fx-shard-y var(--motion-shard-dur, 900ms) both; }
+  /* The pieces nearest the strike leave first, so the burst spreads from where the ball hit. */
+  .fx-shard { animation: fx-shard-x var(--motion-shard-dur, 900ms) cubic-bezier(.15, .7, .4, 1) both; animation-delay: calc(var(--fx-d, 0) * var(--motion-stagger-step, 30ms)); }
+  .fx-shard-fall { position: absolute; inset: 0; animation: fx-shard-y var(--motion-shard-dur, 900ms) both; animation-delay: inherit; }
 }

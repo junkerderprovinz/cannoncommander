@@ -3191,13 +3191,9 @@
     "brand": "CannonCommander, înapoi la fișiere",
     "back": "Înapoi la fișiere",
     "backTip": "Înapoi la fișiere (Esc)",
-    "layout": "Vizualizare",
     "singleTip": "Un panou (Ctrl+1)",
     "dualTip": "Două panouri (Ctrl+2)",
-    "palette": "Caută o comandă (Ctrl+K)",
     "jobs": "Sarcini",
-    "settings": "Setări",
-    "settingsClose": "Închide setările",
     "security": "Cont și securitate",
     "activity": "Activitate"
   },

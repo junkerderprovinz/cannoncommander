@@ -3318,13 +3318,9 @@
     "brand": "CannonCommander, до файлів",
     "back": "Назад до файлів",
     "backTip": "Назад до файлів (Esc)",
-    "layout": "Вигляд",
     "singleTip": "Одна панель (Ctrl+1)",
     "dualTip": "Дві панелі (Ctrl+2)",
-    "palette": "Знайти команду (Ctrl+K)",
     "jobs": "Завдання",
-    "settings": "Налаштування",
-    "settingsClose": "Закрити налаштування",
     "security": "Обліковий запис і безпека",
     "activity": "Активність"
   },

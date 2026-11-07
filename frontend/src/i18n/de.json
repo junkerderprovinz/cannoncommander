@@ -38,13 +38,9 @@
     "brand": "CannonCommander, zu den Dateien",
     "back": "Zurück zu den Dateien",
     "backTip": "Zurück zu den Dateien (Esc)",
-    "layout": "Ansicht",
     "singleTip": "Ein Fenster (Strg+1)",
     "dualTip": "Zwei Fenster (Strg+2)",
-    "palette": "Befehl suchen (Strg+K)",
     "jobs": "Aufgaben",
-    "settings": "Einstellungen",
-    "settingsClose": "Einstellungen schließen",
     "security": "Konto & Sicherheit",
     "activity": "Aktivität"
   },

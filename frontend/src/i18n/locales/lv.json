@@ -3191,13 +3191,9 @@
     "brand": "CannonCommander, uz failiem",
     "back": "Atpakaļ uz failiem",
     "backTip": "Atpakaļ uz failiem (Esc)",
-    "layout": "Skats",
     "singleTip": "Viens panelis (Ctrl+1)",
     "dualTip": "Divi paneļi (Ctrl+2)",
-    "palette": "Meklēt komandu (Ctrl+K)",
     "jobs": "Uzdevumi",
-    "settings": "Iestatījumi",
-    "settingsClose": "Aizvērt iestatījumus",
     "security": "Konts un drošība",
     "activity": "Darbības"
   },

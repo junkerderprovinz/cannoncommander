@@ -3318,13 +3318,9 @@
     "brand": "CannonCommander, k souborům",
     "back": "Zpět k souborům",
     "backTip": "Zpět k souborům (Esc)",
-    "layout": "Zobrazení",
     "singleTip": "Jedno okno (Ctrl+1)",
     "dualTip": "Dvě okna (Ctrl+2)",
-    "palette": "Hledat příkaz (Ctrl+K)",
     "jobs": "Úlohy",
-    "settings": "Nastavení",
-    "settingsClose": "Zavřít nastavení",
     "security": "Účet a zabezpečení",
     "activity": "Aktivita"
   },

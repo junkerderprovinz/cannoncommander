@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, takaisin tiedostoihin",
     "back": "Takaisin tiedostoihin",
     "backTip": "Takaisin tiedostoihin (Esc)",
-    "layout": "Näkymä",
     "singleTip": "Yksi paneeli (Ctrl+1)",
     "dualTip": "Kaksi paneelia (Ctrl+2)",
-    "palette": "Hae komentoa (Ctrl+K)",
     "jobs": "Työt",
-    "settings": "Asetukset",
-    "settingsClose": "Sulje asetukset",
     "security": "Tili ja turvallisuus",
     "activity": "Toiminta"
   },

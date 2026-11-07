@@ -3318,13 +3318,9 @@
     "brand": "CannonCommander, į failus",
     "back": "Atgal į failus",
     "backTip": "Atgal į failus (Esc)",
-    "layout": "Rodinys",
     "singleTip": "Vienas skydelis (Ctrl+1)",
     "dualTip": "Du skydeliai (Ctrl+2)",
-    "palette": "Ieškoti komandos (Ctrl+K)",
     "jobs": "Užduotys",
-    "settings": "Nustatymai",
-    "settingsClose": "Uždaryti nustatymus",
     "security": "Paskyra ir sauga",
     "activity": "Veikla"
   },

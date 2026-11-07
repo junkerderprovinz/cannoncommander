@@ -3191,13 +3191,9 @@
     "brand": "CannonCommander, retour aux fichiers",
     "back": "Retour aux fichiers",
     "backTip": "Retour aux fichiers (Échap)",
-    "layout": "Affichage",
     "singleTip": "Un panneau (Ctrl+1)",
     "dualTip": "Deux panneaux (Ctrl+2)",
-    "palette": "Chercher une commande (Ctrl+K)",
     "jobs": "Tâches",
-    "settings": "Réglages",
-    "settingsClose": "Fermer les réglages",
     "security": "Compte et sécurité",
     "activity": "Activité"
   },

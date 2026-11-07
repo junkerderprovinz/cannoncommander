@@ -16,14 +16,17 @@ svg { display: block; }
 .muted { color: var(--carbon-text-muted); }
 .sub { color: var(--carbon-text-sub); }
 
-/* The bottom room matches the prototype, so screenshots of both line up. */
+/* The room at the bottom matches the prototype, so screenshots of both line up. In the file view without the F-key
+   bar the panels reach down to the same margin as everywhere else. */
 .app { height: 100vh; display: grid; grid-template-rows: auto 1fr auto; gap: var(--gut); padding: var(--gut) var(--gut) 4.75rem; }
+#app:not(.with-fkeys) { padding-bottom: var(--gut); }
 
-/* Head row: one bar with the brand, the menus, the command search in the middle and the controls for the whole window. */
+/* Head row: one bar with the brand, the menus and the controls for the whole window. */
 .head { --btn-h: 2.4rem; display: flex; align-items: center; gap: .35rem; min-width: 0; height: 3.4rem; padding: 0 .5rem; }
-/* A long press on the logo fires its cannon, so the press must not open the phone's own menu or select anything. */
-.brand { display: flex; align-items: center; gap: .55rem; padding: 0 .4rem; height: 2.4rem; flex: none; border-radius: var(--radius-control); touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-.brand:hover { background: var(--carbon-surface2); }
+/* A long press on the logo fires its cannon, so the press must not open the phone's own menu or select anything. The
+   logo stands bare, with no ground behind it under the pointer; only the keyboard's focus draws a ring around it. */
+.brand { display: flex; align-items: center; gap: .55rem; padding: 0 .4rem; height: 2.4rem; flex: none; border-radius: var(--radius-control); outline: none; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.brand:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .brand-logo { position: relative; display: block; height: 1.5rem; }
 .brand-logo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* Mirrored, the cannon still aims along the head into the app. */
@@ -38,10 +41,10 @@ svg { display: block; }
 
 .count { min-width: 1.25rem; height: 1.25rem; padding: 0 .35rem; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-contrast); font-size: 12px; display: inline-grid; place-items: center; }
 .count.idle { background: var(--carbon-surface3); color: var(--carbon-text); }
-.avatar { width: 2.4rem; height: 2.4rem; border-radius: var(--radius-pill); display: grid; place-items: center; font-weight: 700; background: var(--carbon-surface2); }
-.avatar:hover { background: var(--carbon-surface3); }
-.avatar i { width: 1.9rem; height: 1.9rem; border-radius: 50%; background: var(--carbon-surface3); display: grid; place-items: center; font-style: normal; font-size: 13px; }
-.avatar:hover i { background: var(--accent); color: var(--accent-contrast); }
+/* The head's buttons are one family: GlimStone's Button, filled and round, at the head's height. The layout button
+   washes in the accent while it is pressed, as GlimStone's IconButton does. */
+.head .glim-btn[aria-pressed="true"] { background-color: var(--accent-soft); color: var(--accent-glyph); }
+.avatar .initials { font-size: 13px; font-weight: 700; line-height: 1; }
 
 /* Installed with the window controls folded in, the bar takes the title bar's place and drags the window. */
 @media (display-mode: window-controls-overlay) {
@@ -203,8 +206,8 @@ svg { display: block; }
 .narrow-only { display: none !important; }
 @media (max-width: 900px) { .menubar { display: none; } .narrow-only { display: inline-flex !important; } }
 @media (max-width: 760px) {
-  .app { padding: .75rem .75rem 4.75rem; gap: .75rem; }
-  .side { position: fixed; z-index: 40; margin-top: 0; inset: .75rem auto 8.5rem .75rem; width: min(20rem, calc(100vw - 1.5rem)); }
+  .app, #app:not(.with-fkeys) { padding: .75rem; gap: .75rem; }
+  .side { position: fixed; z-index: 40; margin-top: 0; inset: .75rem auto 4.5rem .75rem; width: min(20rem, calc(100vw - 1.5rem)); }
   .app:not(.side-open) .side { display: none; }
   .head-layout, .head .hback { display: none; }
   .bottombar { display: flex; height: 3rem; padding: 3px; gap: 3px; }

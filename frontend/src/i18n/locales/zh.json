@@ -2937,13 +2937,9 @@
     "brand": "CannonCommander，返回文件",
     "back": "返回文件",
     "backTip": "返回文件（Esc）",
-    "layout": "视图",
     "singleTip": "单面板（Ctrl+1）",
     "dualTip": "双面板（Ctrl+2）",
-    "palette": "搜索命令（Ctrl+K）",
     "jobs": "任务",
-    "settings": "设置",
-    "settingsClose": "关闭设置",
     "security": "账户和安全",
     "activity": "活动"
   },

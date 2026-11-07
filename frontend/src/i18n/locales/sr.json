@@ -3191,13 +3191,9 @@
     "brand": "CannonCommander, на датотеке",
     "back": "Назад на датотеке",
     "backTip": "Назад на датотеке (Esc)",
-    "layout": "Приказ",
     "singleTip": "Један панел (Ctrl+1)",
     "dualTip": "Два панела (Ctrl+2)",
-    "palette": "Тражи команду (Ctrl+K)",
     "jobs": "Послови",
-    "settings": "Подешавања",
-    "settingsClose": "Затвори подешавања",
     "security": "Налог и безбедност",
     "activity": "Активност"
   },

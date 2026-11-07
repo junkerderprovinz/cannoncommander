@@ -3318,13 +3318,9 @@
     "brand": "CannonCommander, k súborom",
     "back": "Späť k súborom",
     "backTip": "Späť k súborom (Esc)",
-    "layout": "Zobrazenie",
     "singleTip": "Jedno okno (Ctrl+1)",
     "dualTip": "Dve okná (Ctrl+2)",
-    "palette": "Hľadať príkaz (Ctrl+K)",
     "jobs": "Úlohy",
-    "settings": "Nastavenia",
-    "settingsClose": "Zavrieť nastavenia",
     "security": "Účet a zabezpečenie",
     "activity": "Aktivita"
   },

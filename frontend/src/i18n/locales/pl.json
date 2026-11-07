@@ -3318,13 +3318,9 @@
     "brand": "CannonCommander, do plików",
     "back": "Wróć do plików",
     "backTip": "Wróć do plików (Esc)",
-    "layout": "Widok",
     "singleTip": "Jedno okno (Ctrl+1)",
     "dualTip": "Dwa okna (Ctrl+2)",
-    "palette": "Szukaj polecenia (Ctrl+K)",
     "jobs": "Zadania",
-    "settings": "Ustawienia",
-    "settingsClose": "Zamknij ustawienia",
     "security": "Konto i bezpieczeństwo",
     "activity": "Aktywność"
   },

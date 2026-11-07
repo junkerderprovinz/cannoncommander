@@ -2937,13 +2937,9 @@
     "brand": "CannonCommander กลับไปที่ไฟล์",
     "back": "กลับไปที่ไฟล์",
     "backTip": "กลับไปที่ไฟล์ (Esc)",
-    "layout": "มุมมอง",
     "singleTip": "แผงเดียว (Ctrl+1)",
     "dualTip": "สองแผง (Ctrl+2)",
-    "palette": "ค้นหาคำสั่ง (Ctrl+K)",
     "jobs": "งาน",
-    "settings": "ตั้งค่า",
-    "settingsClose": "ปิดการตั้งค่า",
     "security": "บัญชีและความปลอดภัย",
     "activity": "กิจกรรม"
   },

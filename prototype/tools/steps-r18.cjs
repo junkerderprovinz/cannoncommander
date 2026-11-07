@@ -1,11 +1,17 @@
 // Round 18: the title bar, the pins on the shortcuts and the house colour picker with name suggestions.
 module.exports = async (page, shot) => {
   const wait = (ms = 350) => page.waitForTimeout(ms);
+  // The app keeps the command search and the settings in the avatar's menu, the prototype has them in the head bar.
+  const head = async (sel, entry) => {
+    if (await page.$(`.head ${sel}`)) return page.click(`.head ${sel}`);
+    await page.click('.head [data-account]'); await page.waitForTimeout(200);
+    await page.click(`.glim-menu-item:has-text("${entry}")`);
+  };
   await page.setViewportSize({ width: 1908, height: 1000 });
   await wait(600);
   console.log('head:', await page.evaluate(() => { const h = $('.head').getBoundingClientRect(); return `${Math.round(h.width)}x${Math.round(h.height)}, magnifier ${!!$('.head [data-run="palette"]')}`; }));
   await shot('r18-1-head');
-  await page.click('.head [data-run="palette"]'); await wait();
+  await head('[data-run="palette"]', 'Befehl suchen'); await wait();
   console.log('palette open:', await page.evaluate(() => !!$('.pal-scrim')));
   await page.keyboard.press('Escape'); await wait();
 

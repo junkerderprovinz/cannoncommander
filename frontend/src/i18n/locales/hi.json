@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, फ़ाइलों पर वापस",
     "back": "फ़ाइलों पर वापस",
     "backTip": "फ़ाइलों पर वापस (Esc)",
-    "layout": "दृश्य",
     "singleTip": "एक पैनल (Ctrl+1)",
     "dualTip": "दो पैनल (Ctrl+2)",
-    "palette": "कमांड खोजें (Ctrl+K)",
     "jobs": "काम",
-    "settings": "सेटिंग्स",
-    "settingsClose": "सेटिंग्स बंद करें",
     "security": "खाता और सुरक्षा",
     "activity": "गतिविधि"
   },

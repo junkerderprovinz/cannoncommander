@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, tilbake til filene",
     "back": "Tilbake til filene",
     "backTip": "Tilbake til filene (Esc)",
-    "layout": "Visning",
     "singleTip": "Ett panel (Ctrl+1)",
     "dualTip": "To paneler (Ctrl+2)",
-    "palette": "Søk etter kommando (Ctrl+K)",
     "jobs": "Jobber",
-    "settings": "Innstillinger",
-    "settingsClose": "Lukk innstillingene",
     "security": "Konto og sikkerhet",
     "activity": "Aktivitet"
   },
