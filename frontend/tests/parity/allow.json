@@ -481,20 +481,20 @@
     "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
    },
    "c-login": {
-    "pixels": 64262,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
+    "pixels": 71480,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in is GlimStone's sign-in card, whose rules win over the prototype's page: the logo large above the centred name, the labels above the fields, every button full width, no pill, no server name and no version, and the code from the app in one field"
    },
    "c-login-totp": {
-    "pixels": 42695,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
+    "pixels": 76030,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in is GlimStone's sign-in card, whose rules win over the prototype's page: the logo large above the centred name, the labels above the fields, every button full width, no pill, no server name and no version, and the code from the app in one field"
    },
    "c-login-reset": {
-    "pixels": 50739,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
+    "pixels": 87150,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in is GlimStone's sign-in card, whose rules win over the prototype's page: the logo large above the centred name, the labels above the fields, every button full width, no pill, no server name and no version, and the code from the app in one field"
    },
    "c-light-view-image": {
-    "pixels": 254721,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "pixels": 265410,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; the code from the app goes in one field that Sign in sends, where the prototype's six boxes send themselves, so the prototype greets where the app says the code is in the log"
    },
    "c-light-view-video": {
     "pixels": 400231,
@@ -518,7 +518,7 @@
    },
    "c-light-login": {
     "pixels": 66213,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in is GlimStone's sign-in card, whose rules win over the prototype's page: the logo large above the centred name, the labels above the fields, every button full width, no pill, no server name and no version, and the code from the app in one field"
    },
    "c-phone-view-image": {
     "pixels": 96382,
@@ -549,7 +549,7 @@
     "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show"
    },
    "c-phone-login": {
-    "pixels": 56512,
+    "pixels": 58140,
     "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show"
    },
    "c-view-image": {
@@ -584,7 +584,13 @@
     "pixels": 83171,
     "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show"
    }
-  }
+  },
+  "lines": [
+   {
+    "pattern": "(?<=^signed in: )(true|false)$",
+    "why": "the code from the app goes in one field that Sign in sends, where the prototype's six boxes send themselves, so the app is still at the sign in when the step file asks"
+   }
+  ]
  },
  "steps-r7-palette": {
   "lines": [
@@ -683,8 +689,8 @@
     "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
    },
    "r7-settings-1600-look": {
-    "pixels": 109550,
-    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
+    "pixels": 111245,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along; the theme stands on System, CannonCommander's default, where the prototype starts on Dunkel"
    },
    "r7-settings-1600-remotes": {
     "pixels": 32436,
@@ -699,8 +705,8 @@
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
    },
    "r7-settings-1200-look": {
-    "pixels": 109549,
-    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
+    "pixels": 111245,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along; the theme stands on System, CannonCommander's default, where the prototype starts on Dunkel"
    },
    "r7-settings-1200-remotes": {
     "pixels": 32435,
@@ -933,8 +939,8 @@
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
    },
    "r19-bv-1-colours-off": {
-    "pixels": 116819,
-    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
+    "pixels": 119289,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along; the theme stands on System, CannonCommander's default, where the prototype starts on Dunkel"
    },
    "r19-bv-2-leaf-storm": {
     "pixels": 116862,
@@ -1415,8 +1421,8 @@
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
    },
    "rv-15-login": {
-    "pixels": 57636,
-    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in stands in GlimStone's Card and FieldRow, and its form keeps a field beside its label"
+    "pixels": 64770,
+    "why": "signing out shows the sign in over the app, as when a session runs out; the prototype draws a page of its own; the sign in is GlimStone's sign-in card, whose rules win over the prototype's page: the logo large above the centred name, the labels above the fields, every button full width, no pill, no server name and no version, and the code from the app in one field"
    },
    "rv-16-phone": {
     "pixels": 17059,
@@ -1451,8 +1457,8 @@
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "rv-10-settings-look": {
-    "pixels": 111556,
-    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
+    "pixels": 113265,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along; the theme stands on System, CannonCommander's default, where the prototype starts on Dunkel"
    },
    "rv-11-settings-users": {
     "pixels": 29973,
@@ -1515,8 +1521,8 @@
     "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
    },
    "r2-settings": {
-    "pixels": 109550,
-    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
+    "pixels": 111245,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along; the theme stands on System, CannonCommander's default, where the prototype starts on Dunkel"
    },
    "r2-glyphs": {
     "pixels": 60294,
@@ -1747,8 +1753,8 @@
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "tour-30-settings-look": {
-    "pixels": 109550,
-    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
+    "pixels": 111245,
+    "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along; the theme stands on System, CannonCommander's default, where the prototype starts on Dunkel"
    },
    "tour-30-settings-remotes": {
     "pixels": 32436,

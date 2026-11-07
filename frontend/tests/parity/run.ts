@@ -292,7 +292,8 @@ const stillMotion = () => {
 async function runSide(browser: Browser, file: string, page: string, dir: string, preview: boolean, setup?: string): Promise<Side> {
   rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
-  const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 1, locale: 'de-AT', timezoneId: 'Europe/Vienna' });
+  // The prototype starts dark, and the app follows the system until someone picks a theme.
+  const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 1, locale: 'de-AT', timezoneId: 'Europe/Vienna', colorScheme: 'dark' });
   const tab: Page = await context.newPage();
   const errors: string[] = [];
   tab.on('pageerror', (e) => errors.push(String(e).slice(0, 300)));
