@@ -124,8 +124,7 @@ func TestTypingReachesTheShellAndComesBack(t *testing.T) {
 		t.Fatal(err)
 	}
 	tm.send("echo round''trip; pwd\n")
-	tm.waitFor("roundtrip")
-	tm.waitFor(`(?m)^` + regexp.QuoteMeta(filepath.Join(e.root, "work")) + `\r?$`)
+	tm.waitFor(`roundtrip\r?\n` + regexp.QuoteMeta(filepath.Join(e.root, "work")) + `\r?\n`)
 }
 
 func TestTheShellFollowsTheWindowSize(t *testing.T) {
