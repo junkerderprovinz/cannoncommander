@@ -76,8 +76,8 @@
     say(`Aufgaben, ${n ? `${n} offen` : 'gerade läuft nichts'}`);
   }
   CC.action('focusSide', { label: 'Zur Seitenleiste springen', g: 'IconMenu', key: 'Alt+1', run: toSide });
-  CC.action('focusLeft', { label: 'Ins linke Fenster springen', g: 'IconViewSimple', key: 'Alt+2', run: () => toList(0) });
-  CC.action('focusRight', { label: 'Ins rechte Fenster springen', g: 'IconCompare', key: 'Alt+3', run: () => toList(1) });
+  CC.action('focusLeft', { label: 'Ins linke Fenster springen', g: 'IconPaneLeft', key: 'Alt+2', run: () => toList(0) });
+  CC.action('focusRight', { label: 'Ins rechte Fenster springen', g: 'IconPaneRight', key: 'Alt+3', run: () => toList(1) });
   CC.action('focusJobs', { label: 'Zu den Aufgaben springen', g: 'IconQueued', key: 'Alt+4', run: toJobs });
   [['Alt+1', 'focusSide'], ['Alt+2', 'focusLeft'], ['Alt+3', 'focusRight'], ['Alt+4', 'focusJobs']].forEach(([k, id]) => CC.bindKey(k, id));
 

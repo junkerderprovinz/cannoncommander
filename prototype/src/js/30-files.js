@@ -239,8 +239,8 @@ function renderPanel(i) {
 
 // Every view renders the same .row elements, so clicks, marks, drags and menus work the same in all of them.
 const VIEWS = [
-  ['details', 'Details', 'IconViewAdvanced'], ['compact', 'Kompakt', 'IconViewSimple'], ['list', 'Liste', 'IconLog'], ['content', 'Inhalt', 'IconFileDoc'],
-  ['columns', 'Spalten', 'IconCompare'], ['tiles', 'Kacheln', 'IconTabApps'], ['large', 'Große Kacheln', 'IconFileImage'], ['gallery', 'Galerie', 'IconFileRaw'],
+  ['details', 'Details', 'IconViewAdvanced'], ['compact', 'Kompakt', 'IconRowCompact'], ['list', 'Liste', 'IconLog'], ['content', 'Inhalt', 'IconFileDoc'],
+  ['columns', 'Spalten', 'IconColumns'], ['tiles', 'Kacheln', 'IconTabApps'], ['large', 'Große Kacheln', 'IconFileImage'], ['gallery', 'Galerie', 'IconFileRaw'],
   ['drives', 'Laufwerke', 'IconDatabase'],
 ];
 const CARD_VIEWS = ['tiles', 'large', 'gallery', 'drives'];

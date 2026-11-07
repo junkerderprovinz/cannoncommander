@@ -13,7 +13,7 @@ export function folderItems(path: string): MenuItem[] {
   return [
     { label: t('ctx.open'), g: 'IconFolderOpen', run: () => F.go(path) },
     { label: t('ctx.internalLink'), g: 'IconLink', run: () => copyInternalLink(path) },
-    { label: t('ctx.openOther'), g: 'IconCompare', run: () => { prefs.dual = true; F.go(path, F.other()); } },
+    { label: t('ctx.openOther'), g: 'IconPaneSend', run: () => { prefs.dual = true; F.go(path, F.other()); } },
     { label: t('ctx.openTab'), g: 'IconAdd', run: () => { const p = F.P(); p.tabs.push(newTab(path)); p.cur = p.tabs.length - 1; } },
     { label: t('ctx.addBookmark'), g: 'IconStar', run: () => addBookmark(path) },
   ];

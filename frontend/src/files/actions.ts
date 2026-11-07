@@ -58,7 +58,7 @@ export function registerFileActions() {
     } });
   }
   action('swapPanels', { label: tl('actions.swapPanels'), g: 'IconSync', key: 'Ctrl+u', needs: 'dual', run: () => { F.panels.reverse(); } });
-  action('equalPanels', { label: tl('actions.equalPanels'), g: 'IconCompare', key: 'Ctrl+.', needs: 'dual', run: () => F.go(F.T().path, F.other()) });
+  action('equalPanels', { label: tl('actions.equalPanels'), g: 'IconPaneSame', key: 'Ctrl+.', needs: 'dual', run: () => F.go(F.T().path, F.other()) });
   action('refresh', { label: tl('actions.refresh'), g: 'IconRefresh', key: 'Ctrl+r', run: async () => {
     listing.changed(F.T().path);
     await listing.load(F.T().path);
