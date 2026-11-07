@@ -145,6 +145,15 @@ describe('share links', () => {
     expect((await api('DELETE', `/shares/${made.body.id}`)).status).toBe(204);
   });
 
+  it('gives a link the public address of the fixture, whatever port the dev server listens on', async () => {
+    const made = await api('POST', '/shares', { paths: ['/mnt/user/dokumente/Mietvertrag.pdf'], slug: 'miete-port', notify: false });
+    const at = async (origin: string) => (await api('GET', `/shares/${made.body.id}/qr?origin=${encodeURIComponent(origin)}`)).body as { url: string; qr: string };
+    const one = await at('http://localhost:58050'), two = await at('http://127.0.0.1:61234/');
+    expect(one.url).toBe('https://dateien.example.org/s/miete-port');
+    expect(two).toEqual(one);
+    expect((await api('DELETE', `/shares/${made.body.id}`)).status).toBe(204);
+  });
+
   it('keeps own rename presets with unique names', async () => {
     expect((await api('PUT', '/me/rename-presets', { items: [{ name: 'a', options: {} }, { name: 'a', options: {} }] })).status).toBe(409);
     expect((await api('PUT', '/me/rename-presets', { items: [{ name: 'Fotos', options: { name: '[A]' } }] })).status).toBe(204);

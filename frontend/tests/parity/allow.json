@@ -224,7 +224,7 @@
    },
    "a-share-win": {
     "pixels": 67200,
-    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; the message for the visitors is GlimStone's TextArea, taller than the prototype's text field, and the window grows with it"
+    "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; the message for the visitors is GlimStone's TextArea, taller than the prototype's text field, and the window grows with it"
    },
    "a-share-revoked": {
     "pixels": 16001,
@@ -450,11 +450,11 @@
    },
    "c-share": {
     "pixels": 69067,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; the message for the visitors is GlimStone's TextArea, taller than the prototype's text field, and the window grows with it; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; the message for the visitors is GlimStone's TextArea, taller than the prototype's text field, and the window grows with it; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
    },
    "c-share-done": {
     "pixels": 53477,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "c-conflict-copy": {
     "pixels": 37699,
@@ -774,11 +774,11 @@
    },
    "r13-5-collection-share": {
     "pixels": 116967,
-    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-5-collection-done": {
     "pixels": 106112,
-    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-5-shares-page": {
     "pixels": 27078,
@@ -786,15 +786,15 @@
    },
    "r13-6-share-options": {
     "pixels": 111354,
-    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-6-share-done": {
     "pixels": 89631,
-    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-6-share-notice": {
     "pixels": 44420,
-    "why": "a link shows the fixture's address and a random end, and its QR code follows; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "r13-7-touch-390": {
     "pixels": 8292,
