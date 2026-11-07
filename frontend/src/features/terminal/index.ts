@@ -1,7 +1,7 @@
 // Terminal hier öffnen: a shell on the server in the folder of the panel, for admins once the switch in the settings
 // is on. Typing cmd, bash or powershell into the path field opens one too, as in Explorer.
 import './terminal.css';
-import { watch, watchEffect } from 'vue';
+import { defineAsyncComponent, watch, watchEffect } from 'vue';
 import { call, q } from '@/api/client';
 import { action, actions } from '@/core/actions';
 import { addTo } from '@/core/extend';
@@ -13,8 +13,10 @@ import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { useUser } from '@/stores/user';
 import { refreshTerminal, terminalAllowed, terminalOn } from './state';
-import TerminalBody from './TerminalBody.vue';
 import { pathCommand } from './words';
+
+// xterm comes in a chunk of its own, fetched when the first terminal opens.
+const TerminalBody = defineAsyncComponent(() => import('./TerminalBody.vue'));
 
 function openWindow(path: string) {
   win({
