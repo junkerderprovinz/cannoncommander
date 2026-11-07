@@ -101,31 +101,76 @@ export function tumble(box: Element) {
   return piece('fx-tumble', { left: r.left, top: r.top, width: r.width, height: r.height }, `<div class="fx-tumble-run"><div class="fx-weed">${WEED}</div></div>`);
 }
 
-// The smoke at the muzzle of the header's cannon as it fires.
-export const muzzleSmoke = (at: Point) => puff(at, '0s');
+// The burst in front of the muzzle as the header's cannon fires, pointing the way the ball goes.
+export const muzzleFlash = (at: Point, size: number, dir: number) =>
+  piece('fx-flash', { left: at.x, top: at.y, '--fx-size': size, '--fx-turn': dir > 0 ? '0deg' : '180deg' });
 
-// The logo's own ball, its shapes copied as they are and cut to their own box, flying to the screen position `to`.
-// Flying left it is mirrored, so it rolls the other way.
-export function flyBall(ball: SVGGraphicsElement, to: number) {
-  const r = ball.getBoundingClientRect(), box = ball.getBBox(), dir = Math.sign(to - r.left) || 1;
-  const drawing = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  drawing.setAttribute('viewBox', `${box.x} ${box.y} ${box.width} ${box.height}`);
-  drawing.append(ball.cloneNode(true));
-  return piece('fx-shot', { left: r.left, top: r.top, width: r.width, height: r.height, '--fx-dx': to - r.left, '--fx-flip': String(dir) }, drawing);
-}
-
-// Cuts a rectangle into rows of cells and every cell into two triangles, with the inner corners pushed about so no
-// two shards match. Corners on the edge only slide along it, so the shards still cover the element exactly.
-export function shards(cols: number, rows: number, rand = Math.random): [number, number][][] {
-  const shake = (i: number, n: number) => (i > 0 && i < n ? (rand() - 0.5) * 0.7 : 0);
-  const grid = Array.from({ length: cols + 1 }, (_, i) => Array.from({ length: rows + 1 }, (_, j): [number, number] =>
-    [((i + shake(i, cols)) / cols) * 100, ((j + shake(j, rows)) / rows) * 100]));
-  return grid.slice(0, -1).flatMap((col, i) => col.slice(0, -1).flatMap((a, j) => {
-    const b = grid[i + 1]![j]!, c = grid[i + 1]![j + 1]!, d = col[j + 1]!;
-    return rand() < 0.5 ? [[a, b, c], [a, c, d]] : [[a, b, d], [b, c, d]];
+// The cloud the shot leaves: soft puffs that start at the muzzle, swell, drift on after the ball and rise.
+export function gunSmoke(at: Point, size: number, dir: number, rand = Math.random) {
+  return [0, 1, 2, 3, 4].map((i) => piece('fx-gunsmoke', {
+    left: at.x + dir * size * (0.2 + i * 0.3), top: at.y + (rand() - 0.5) * size * 0.4, '--fx-size': size * (0.8 + rand() * 0.5),
+    '--fx-gx': String(dir * (0.4 + i * 0.25 + rand() * 0.4)), '--fx-gy': String(0.3 + rand() * 0.7), '--fx-i': String(i),
   }));
 }
 
+// The logo's own ball, its shapes copied as they are and cut to their own box, flying from the screen position `from`
+// to `to`. Flying left it is mirrored, so it rolls the other way.
+export function flyBall(ball: SVGGraphicsElement, from: number, to: number) {
+  const r = ball.getBoundingClientRect(), box = ball.getBBox(), dir = Math.sign(to - from) || 1;
+  const drawing = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  drawing.setAttribute('viewBox', `${box.x} ${box.y} ${box.width} ${box.height}`);
+  drawing.append(ball.cloneNode(true));
+  return piece('fx-shot', { left: from, top: r.top, width: r.width, height: r.height, '--fx-dx': to - from, '--fx-flip': String(dir) }, drawing);
+}
+
+export interface Shard {
+  /** The corners, in percent of the box. */
+  poly: [number, number][];
+  /** The middle of the corners, in percent of the box. */
+  centre: [number, number];
+  /** One unit long, from the strike towards the shard. */
+  out: [number, number];
+  /** How far from the strike, from 0 to 1 for the farthest shard. */
+  dist: number;
+}
+
+// Cracks a w by h box the way a pane breaks where a stone hits it: rays run from the strike to the edge, two jagged
+// rings cross them, and every cell between them is a shard. The cells fill the box exactly, so the pieces still look
+// like the element in the moment it breaks. The strike moves a little inside, where rays can leave it on every side.
+export function shards(w: number, h: number, at: Point, rand = Math.random): Shard[] {
+  const ix = Math.min(8, w * 0.12), iy = Math.min(8, h * 0.12);
+  const P = { x: Math.min(w - ix, Math.max(ix, at.x)), y: Math.min(h - iy, Math.max(iy, at.y)) };
+  const n = Math.max(8, Math.min(14, Math.round((w + h) / 12))), step = (2 * Math.PI) / n, turn = rand() * step;
+  const angles = Array.from({ length: n }, (_, i) => turn + i * step + (rand() - 0.5) * step * 0.6);
+  const rays = angles.map((a) => {
+    const ux = Math.cos(a), uy = Math.sin(a);
+    const reach = Math.min(ux > 0 ? (w - P.x) / ux : ux < 0 ? -P.x / ux : Infinity, uy > 0 ? (h - P.y) / uy : uy < 0 ? -P.y / uy : Infinity);
+    return [0.22 + rand() * 0.2, 0.55 + rand() * 0.22, 1].map((f): [number, number] => [P.x + ux * reach * f, P.y + uy * reach * f]);
+  });
+  const corners: [number, number][] = [[0, 0], [w, 0], [w, h], [0, h]];
+  const past = (from: number, a: number) => (((a - from) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const cells = rays.flatMap((ray, i) => {
+    const next = rays[(i + 1) % n]!, from = angles[i]!, gap = past(from, angles[(i + 1) % n]!);
+    const between = corners.map((c) => ({ c, a: past(from, Math.atan2(c[1] - P.y, c[0] - P.x)) }))
+      .filter(({ a }) => a > 0 && a < gap).sort((x, y) => x.a - y.a).map(({ c }) => c);
+    return [
+      [[P.x, P.y], ray[0]!, next[0]!],
+      [ray[0]!, ray[1]!, next[1]!, next[0]!],
+      [ray[1]!, ray[2]!, ...between, next[2]!, next[1]!],
+    ] as [number, number][][];
+  });
+  const middles = cells.map((c) => [c.reduce((s, p) => s + p[0], 0) / c.length, c.reduce((s, p) => s + p[1], 0) / c.length] as const);
+  const far = Math.max(...middles.map(([x, y]) => Math.hypot(x - P.x, y - P.y)));
+  return cells.map((c, k) => {
+    const [x, y] = middles[k]!, d = Math.hypot(x - P.x, y - P.y) || 1;
+    return {
+      poly: c.map(([px, py]): [number, number] => [(px / w) * 100, (py / h) * 100]),
+      centre: [(x / w) * 100, (y / h) * 100],
+      out: [(x - P.x) / d, (y - P.y) / d],
+      dist: d / far,
+    };
+  });
+}
 // A copy of the element that still finds its place in the head's styles: its parents come along as boxes that draw
 // nothing, and the hooks that tests and handlers look for stay behind.
 const HOOK = /^(id|tabindex|data-(run|go-view|account|all-menus|menu|tip))$/;
@@ -147,19 +192,33 @@ function lookalike(el: Element, head: Element, r: DOMRect) {
   return top;
 }
 
-// Breaks an element of the head into shards that fly on the way the ball went, fall and fade. The element itself
-// stays where it is; the caller hides it for as long as its shards are about.
-export function shatter(el: Element, into: Element, dir: number, rand = Math.random) {
+// Breaks an element of the head where the ball strikes it, at the height `y` on the side it comes from: a short flash
+// and a puff of dust there, and the element bursts into shards that fly on the way the ball went and away from the
+// strike, turn and fall. The element itself stays where it is; the caller hides it while its shards are about.
+export function shatter(el: Element, into: Element, dir: number, y: number, rand = Math.random) {
   const r = el.getBoundingClientRect();
-  const cols = Math.min(5, Math.max(2, Math.round(r.width / 26)));
-  return shards(cols, 2, rand).map((poly) => {
+  const strike = { x: dir > 0 ? r.left : r.right, y: Math.min(r.bottom, Math.max(r.top, y)) };
+  const size = Math.max(14, Math.min(r.height, 40) * 0.7);
+  const bits = shards(r.width, r.height, { x: strike.x - r.left, y: strike.y - r.top }, rand).map((s) => {
     const fall = document.createElement('div');
     fall.className = 'fx-shard-fall';
-    fall.style.clipPath = `polygon(${poly.map(([x, y]) => `${x.toFixed(1)}% ${y.toFixed(1)}%`).join(', ')})`;
+    fall.style.clipPath = `polygon(${s.poly.map(([px, py]) => `${px.toFixed(1)}% ${py.toFixed(1)}%`).join(', ')})`;
+    fall.style.transformOrigin = `${s.centre[0].toFixed(1)}% ${s.centre[1].toFixed(1)}%`;
     fall.append(lookalike(el, into.parentElement!, r));
+    const [ux, uy] = s.out;
     return piece('fx-shard', {
       left: r.left, top: r.top, width: r.width, height: r.height,
-      '--fx-sx': String(dir * (0.3 + rand())), '--fx-sy': String(0.5 + rand()), '--fx-kick': String(rand()), '--fx-sr': String(rand() * 2 - 1),
+      '--fx-sx': String(dir * (0.35 + rand() * 0.6) + ux * (0.5 + rand() * 0.6)),
+      '--fx-sy': String(0.4 + rand() * 0.8 + Math.max(0, uy) * 0.6),
+      '--fx-kick': String(Math.max(0, -uy) * 0.9 + rand() * 0.5),
+      '--fx-sr': String((rand() * 2 - 1) * (1.6 - s.dist)),
+      '--fx-d': String(s.dist),
     }, fall, into);
   });
+  const flash = piece('fx-impact', { left: strike.x, top: strike.y, '--fx-size': size }, '', into);
+  const dust = [0, 1, 2, 3].map((i) => piece('fx-dust', {
+    left: strike.x, top: strike.y, '--fx-size': size * (0.6 + rand() * 0.4), '--fx-i': String(i),
+    '--fx-gx': String(dir * (0.3 + rand() * 0.8)), '--fx-gy': String(rand() * 1.2 - 0.8),
+  }, '', into));
+  return [...bits, flash, ...dust];
 }
