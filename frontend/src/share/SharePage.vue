@@ -5,6 +5,7 @@
 import { Button, Card, EmptyState, FieldRow, IconButton, PasswordField, SubCard } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { ApiError } from '@/api/client';
+import logo from '@/assets/brand/cannoncommander.svg';
 import { inside, type PublicItem, type PublicListing, type PublicShare, shareApi } from '@/api/share';
 import { fmtCount, fmtDate, fmtListDate, fmtSize } from '@/core/format';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
@@ -123,7 +124,7 @@ async function uploaded() {
 <template>
   <div class="sp">
     <header class="sp-head">
-      <span class="brand-mark"><G n="IconFolderOpen" /></span>
+      <img class="sp-logo" :src="logo" alt="">
       <span class="sp-brand"><span class="brand-name">CannonCommander</span><span class="muted">{{ s('sharedWith') }}</span></span>
     </header>
 
