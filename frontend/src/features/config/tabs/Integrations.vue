@@ -8,6 +8,7 @@ import { admin, type AppChange, type AppSettings, type IntegrationResult, type O
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { c, fail } from '@/features/config/shared';
+import { terminalOn } from '@/features/terminal/state';
 import { copyWords, eyeWords, selectOptions, shake } from '@/ui/kit';
 
 type Test = 'idle' | 'busy' | 'ok' | 'bad';
@@ -59,6 +60,11 @@ async function saveSecret() {
 const flag = (k: 'thumbs' | 'video') => computed({ get: () => !!app.value?.previews[k], set: (v: boolean) => { app.value!.previews[k] = v; save({ previews: { [k]: v } }); } });
 const thumbs = flag('thumbs'), video = flag('video');
 const webdav = computed({ get: () => !!app.value?.webdav, set: (v: boolean) => { app.value!.webdav = v; save({ webdav: v }); } });
+// The terminal's commands follow the switch at once, without a fresh look at the server.
+const terminal = computed({ get: () => !!app.value?.terminal, set: (v: boolean) => {
+  app.value!.terminal = v;
+  void save({ terminal: v }).then((ok) => { if (ok) terminalOn.value = v; });
+} });
 const webdavUrl = new URL('dav/', location.origin + import.meta.env.BASE_URL).href;
 const tool = (t?: Tool) => (t?.available ? [t.version, t.path].filter(Boolean).join(', ') : c('integrations.notFound'));
 
@@ -151,6 +157,9 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
         <FieldRow v-if="webdav" :label="c('integrations.address')"><CopyField width="grow" :value="webdavUrl" :label="c('integrations.address')" :text="copyWords()" /></FieldRow>
         <FieldRow label="rclone" :hint="c('integrations.rcloneTip')"><Pill class="mono">{{ sys ? tool(sys.tools.rclone) : '' }}</Pill></FieldRow>
       </FieldRowGroup>
+    </Card>
+    <Card :title="c('integrations.terminalCard')">
+      <FieldRow :label="c('integrations.terminal')" :hint="c('integrations.terminalTip')"><Toggle v-model="terminal" data-it="terminal" /></FieldRow>
     </Card>
   </template>
 </template>

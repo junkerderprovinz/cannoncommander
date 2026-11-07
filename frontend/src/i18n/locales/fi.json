@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV ja rclone",
       "webdav": "WebDAV-palvelin",
       "webdavTip": "Voit liittää tiedostot asemaksi, esimerkiksi Windowsin Resurssienhallinnassa tai puhelinsovelluksessa. Samat käyttäjät ja säännöt pätevät.",
+      "terminalCard": "Pääte",
+      "terminal": "Pääte selaimessa",
+      "terminalTip": "Ylläpitäjät avaavat sillä komentotulkin kansioon, jota he katsovat, myös kirjoittamalla polkuriville cmd tai bash. Se toimii kontissa CannonCommanderin oikeuksin. Joka sen avaa, voi tehdä palvelimella kaiken, mitä CannonCommander saa tehdä.",
       "address": "Osoite",
       "rcloneTip": "Liittää etäkohteet. Ohjelma sisältyy konttiin.",
       "notFound": "Ei löytynyt",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "lisäsi pääsyavaimen",
         "passkeyDelete": "poisti pääsyavaimen",
         "tokenCreate": "loi tunnuksen",
-        "tokenDelete": "perui tunnuksen"
+        "tokenDelete": "perui tunnuksen",
+        "terminalOpen": "avasi päätteen",
+        "terminalClose": "sulki päätteen"
       },
       "target": "Kohde: {path}.",
       "from": "Lähde: {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Pääte",
+    "open": "Avaa pääte tähän",
+    "another": "Toinen pääte",
+    "adminsOnly": "Päätteen voivat avata vain ylläpitäjät.",
+    "off": "Pääte on vielä pois päältä. Voit kytkeä sen päälle kohdassa Asetukset, Integraatiot.",
+    "toSettings": "Asetuksiin",
+    "connecting": "Yhdistetään palvelimeen …",
+    "again": "Aloita uudelleen",
+    "ended": {
+      "idle": "Pääte oli 30 minuuttia käyttämättä ja on nyt suljettu.",
+      "signedOut": "Sinut kirjattiin ulos, joten pääte on suljettu.",
+      "denied": "Et ole enää ylläpitäjä, joten pääte on suljettu.",
+      "off": "Ylläpitäjä kytki päätteen pois päältä asetuksista.",
+      "stopping": "Palvelin pysähtyy, joten pääte on suljettu.",
+      "lost": "Yhteys palvelimeen katkesi."
+    }
+  },
   "touch": {
     "title": "Valintatila",
     "bar": "Valinta",
@@ -3561,6 +3584,9 @@
     "slugTaken": "Tämä osoite on jo käytössä. Noppa löytää vapaan",
     "tagLength": "Tunnisteessa on 1 - 64 merkkiä",
     "targetNotFolder": "Kohde ei ole kansio",
+    "terminalLimit": "Sinulla on jo neljä päätettä auki. Sulje ensin yksi niistä",
+    "terminalOff": "Pääte on pois päältä",
+    "terminalToken": "API-tunnuksella ei voi avata päätettä",
     "tokenCannotChange": "Kirjaudu sisään muuttaaksesi tätä. API-tunnus ei voi tehdä sitä",
     "tokenExists": "Tämän niminen tunnus on jo olemassa",
     "tokenNameMissing": "Anna tunnukselle nimi",

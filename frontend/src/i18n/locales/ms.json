@@ -1013,6 +1013,9 @@
       "webdavRclone": "WebDAV dan rclone",
       "webdav": "Pelayan WebDAV",
       "webdavTip": "Dengan ini anda boleh memasang fail sebagai pemacu, seperti dalam Windows Explorer atau aplikasi telefon. Pengguna dan peraturan yang sama terpakai.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal dalam pelayar",
+      "terminalTip": "Dengan ini pentadbir membuka shell dalam folder yang sedang dilihat, juga dengan menaip cmd atau bash dalam baris laluan. Ia berjalan dalam bekas dengan hak CannonCommander. Sesiapa yang membukanya boleh melakukan apa sahaja pada pelayan yang dibenarkan untuk CannonCommander.",
       "address": "Alamat",
       "rcloneTip": "Melekap storan jauh. Program ini sudah tersedia dalam container.",
       "notFound": "Tidak ditemui",
@@ -1214,7 +1217,9 @@
         "passkeyRegister": "kunci laluan ditambah",
         "passkeyDelete": "kunci laluan dibuang",
         "tokenCreate": "token dicipta",
-        "tokenDelete": "token ditarik balik"
+        "tokenDelete": "token ditarik balik",
+        "terminalOpen": "terminal dibuka",
+        "terminalClose": "terminal ditutup"
       },
       "target": "Ke {path}.",
       "from": "Dari {ip}."
@@ -2335,6 +2340,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Buka terminal di sini",
+    "another": "Satu lagi terminal",
+    "adminsOnly": "Hanya pentadbir boleh membuka terminal.",
+    "off": "Terminal masih dimatikan. Sila hidupkannya dalam Tetapan, Integrasi.",
+    "toSettings": "Ke tetapan",
+    "connecting": "Menyambung ke pelayan …",
+    "again": "Mula semula",
+    "ended": {
+      "idle": "Terminal tidak digunakan selama 30 minit dan kini ditutup.",
+      "signedOut": "Anda telah dilog keluar, jadi terminal ditutup.",
+      "denied": "Anda bukan lagi pentadbir, jadi terminal ditutup.",
+      "off": "Seorang pentadbir mematikan terminal dalam tetapan.",
+      "stopping": "Pelayan sedang berhenti, jadi terminal ditutup.",
+      "lost": "Sambungan ke pelayan terputus."
+    }
+  },
   "touch": {
     "title": "Mod pilih",
     "bar": "Pilihan",
@@ -3425,6 +3448,9 @@
     "slugTaken": "Alamat ini sudah digunakan. Dadu akan mencari yang kosong",
     "tagLength": "Tag mempunyai 1 hingga 64 aksara",
     "targetNotFolder": "Destinasi bukan folder",
+    "terminalLimit": "Anda sudah membuka empat terminal. Sila tutup salah satu dahulu",
+    "terminalOff": "Terminal dimatikan",
+    "terminalToken": "Token API tidak boleh membuka terminal",
     "tokenCannotChange": "Log masuk untuk mengubah ini. Token API tidak boleh melakukannya",
     "tokenExists": "Sudah ada token dengan nama ini",
     "tokenNameMissing": "Beri nama kepada token ini",

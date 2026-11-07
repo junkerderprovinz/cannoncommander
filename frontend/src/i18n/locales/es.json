@@ -1101,6 +1101,9 @@
       "webdavRclone": "WebDAV y rclone",
       "webdav": "Servidor WebDAV",
       "webdavTip": "Te permite conectar los archivos como una unidad, por ejemplo en el Explorador de Windows o en una aplicación del móvil. Se aplican los mismos usuarios y reglas.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal en el navegador",
+      "terminalTip": "Con ella los administradores abren una shell en la carpeta que están viendo, también escribiendo cmd o bash en la barra de ruta. Se ejecuta en el contenedor con los permisos de CannonCommander. Quien la abre puede hacer en el servidor todo lo que CannonCommander puede.",
       "address": "Dirección",
       "rcloneTip": "Monta los remotos. El programa viene con el contenedor.",
       "notFound": "No encontrado",
@@ -1304,7 +1307,9 @@
         "passkeyRegister": "llave de acceso añadida",
         "passkeyDelete": "llave de acceso quitada",
         "tokenCreate": "token creado",
-        "tokenDelete": "token revocado"
+        "tokenDelete": "token revocado",
+        "terminalOpen": "terminal abierta",
+        "terminalClose": "terminal cerrada"
       },
       "target": "A {path}.",
       "from": "Desde {ip}."
@@ -2503,6 +2508,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Abrir terminal aquí",
+    "another": "Otra terminal",
+    "adminsOnly": "Solo los administradores pueden abrir la terminal.",
+    "off": "La terminal sigue desactivada. Puedes activarla en Ajustes, Integraciones.",
+    "toSettings": "Ir a los ajustes",
+    "connecting": "Conectando con el servidor …",
+    "again": "Empezar de nuevo",
+    "ended": {
+      "idle": "La terminal estuvo 30 minutos sin usarse y ahora está cerrada.",
+      "signedOut": "Has cerrado sesión, por eso la terminal está cerrada.",
+      "denied": "Ya no eres administrador, por eso la terminal está cerrada.",
+      "off": "Un administrador desactivó la terminal en los ajustes.",
+      "stopping": "El servidor se está deteniendo, por eso la terminal está cerrada.",
+      "lost": "Se cortó la conexión con el servidor."
+    }
+  },
   "touch": {
     "title": "Modo selección",
     "bar": "Selección",
@@ -3697,6 +3720,9 @@
     "slugTaken": "Esta dirección ya está ocupada. El dado encuentra una libre",
     "tagLength": "Una palabra clave tiene de 1 a 64 caracteres",
     "targetNotFolder": "El destino no es una carpeta",
+    "terminalLimit": "Ya tienes cuatro terminales abiertas. Cierra primero una de ellas, por favor",
+    "terminalOff": "La terminal está desactivada",
+    "terminalToken": "Con un token de API no se puede abrir una terminal",
     "tokenCannotChange": "Inicia sesión para cambiar esto. Un token de API no puede",
     "tokenExists": "Ya hay un token con este nombre",
     "tokenNameMissing": "Dale un nombre al token",

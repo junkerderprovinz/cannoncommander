@@ -1,0 +1,7 @@
+.bk-term .glim-window-body { gap: 0; }
+.term-wrap { position: relative; flex: 1; min-height: 0; display: flex; }
+.term-host { flex: 1; min-width: 0; padding: .5rem; border-radius: var(--radius-control); background: var(--carbon-bg); }
+.term-host.dim { opacity: .55; }
+.term-host .xterm { height: 100%; }
+.term-note { position: absolute; inset-inline: 1rem; top: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0; padding: .6rem .8rem; border-radius: var(--radius-control); background: var(--carbon-surface2); color: var(--carbon-text-muted); font-size: var(--text-meta); }
+.term-lost { background: var(--status-warn-bg); color: var(--status-warn-text); }

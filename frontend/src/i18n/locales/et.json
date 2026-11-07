@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV ja rclone",
       "webdav": "WebDAV-server",
       "webdavTip": "Võimaldab failid draivina ühendada, näiteks Windowsi failihalduris või telefonirakenduses. Kehtivad samad kasutajad ja reeglid.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal brauseris",
+      "terminalTip": "Sellega avavad administraatorid käsukesta kaustas, mida nad parasjagu vaatavad, ka kirjutades teeribale cmd või bash. See töötab konteineris CannonCommanderi õigustega. Kes selle avab, saab serveris teha kõike, mida CannonCommander tohib.",
       "address": "Aadress",
       "rcloneTip": "Haagib kaugsihtkohad. Programm kuulub konteinerisse.",
       "notFound": "Ei leitud",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "lisas pääsuvõtme",
         "passkeyDelete": "eemaldas pääsuvõtme",
         "tokenCreate": "lõi loa",
-        "tokenDelete": "tühistas loa"
+        "tokenDelete": "tühistas loa",
+        "terminalOpen": "avas terminali",
+        "terminalClose": "sulges terminali"
       },
       "target": "Sihtkoht: {path}.",
       "from": "Allikas: {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Ava siin terminal",
+    "another": "Veel üks terminal",
+    "adminsOnly": "Terminali saavad avada ainult administraatorid.",
+    "off": "Terminal on veel välja lülitatud. Saad selle sisse lülitada jaotises Seaded, Integratsioonid.",
+    "toSettings": "Seadete juurde",
+    "connecting": "Ühendan serveriga …",
+    "again": "Alusta uuesti",
+    "ended": {
+      "idle": "Terminal seisis 30 minutit kasutamata ja on nüüd suletud.",
+      "signedOut": "Sind logiti välja, seepärast on terminal suletud.",
+      "denied": "Sa ei ole enam administraator, seepärast on terminal suletud.",
+      "off": "Administraator lülitas terminali seadetes välja.",
+      "stopping": "Server peatub, seepärast on terminal suletud.",
+      "lost": "Ühendus serveriga katkes."
+    }
+  },
   "touch": {
     "title": "Valikurežiim",
     "bar": "Valik",
@@ -3561,6 +3584,9 @@
     "slugTaken": "See aadress on juba kasutusel. Täring leiab vaba",
     "tagLength": "Sildis on 1 kuni 64 märki",
     "targetNotFolder": "Sihtkoht pole kaust",
+    "terminalLimit": "Sul on juba neli terminali avatud. Sulge palun enne üks neist",
+    "terminalOff": "Terminal on välja lülitatud",
+    "terminalToken": "API-loaga ei saa terminali avada",
     "tokenCannotChange": "Selle muutmiseks logi sisse. API-luba seda ei saa",
     "tokenExists": "Sellise nimega luba on juba olemas",
     "tokenNameMissing": "Anna loale nimi",

@@ -1145,6 +1145,9 @@
       "webdavRclone": "WebDAV ir rclone",
       "webdav": "WebDAV serveris",
       "webdavTip": "Leidžia prijungti failus kaip diską, pvz., Windows naršyklėje ar telefono programėlėje. Galioja tie patys naudotojai ir taisyklės.",
+      "terminalCard": "Terminalas",
+      "terminal": "Terminalas naršyklėje",
+      "terminalTip": "Juo administratoriai atidaro apvalkalą aplanke, kurį žiūri, taip pat kelio eilutėje įvedę cmd arba bash. Jis veikia konteineryje su CannonCommander teisėmis. Kas jį atidaro, gali serveryje daryti viską, ką gali CannonCommander.",
       "address": "Adresas",
       "rcloneTip": "Prijungia nuotolines vietas. Programa yra konteineryje.",
       "notFound": "Nerasta",
@@ -1349,7 +1352,9 @@
         "passkeyRegister": "pridėjo slaptaraktį",
         "passkeyDelete": "pašalino slaptaraktį",
         "tokenCreate": "sukūrė žetoną",
-        "tokenDelete": "atšaukė žetoną"
+        "tokenDelete": "atšaukė žetoną",
+        "terminalOpen": "atidarė terminalą",
+        "terminalClose": "uždarė terminalą"
       },
       "target": "Į {path}.",
       "from": "Iš {ip}."
@@ -2585,6 +2590,24 @@
         "label": "Uždaryti filtrą, meniu ar langą",
         "key": "Esc"
       }
+    }
+  },
+  "terminal": {
+    "title": "Terminalas",
+    "open": "Atidaryti terminalą čia",
+    "another": "Dar vienas terminalas",
+    "adminsOnly": "Terminalą gali atidaryti tik administratoriai.",
+    "off": "Terminalas dar išjungtas. Jį gali įjungti skiltyje Nustatymai, Integracijos.",
+    "toSettings": "Į nustatymus",
+    "connecting": "Jungiamasi prie serverio …",
+    "again": "Pradėti iš naujo",
+    "ended": {
+      "idle": "Terminalas 30 minučių nebuvo naudojamas ir dabar uždarytas.",
+      "signedOut": "Tu atsijungei, todėl terminalas uždarytas.",
+      "denied": "Tu nebe administratorius, todėl terminalas uždarytas.",
+      "off": "Administratorius išjungė terminalą nustatymuose.",
+      "stopping": "Serveris stabdomas, todėl terminalas uždarytas.",
+      "lost": "Ryšys su serveriu nutrūko."
     }
   },
   "touch": {
@@ -3833,6 +3856,9 @@
     "slugTaken": "Šis adresas jau užimtas. Kauliukas ras laisvą",
     "tagLength": "Žymėje gali būti nuo 1 iki 64 simbolių",
     "targetNotFolder": "Paskirtis nėra aplankas",
+    "terminalLimit": "Jau turi atidarytus keturis terminalus. Prašom pirma uždaryti vieną iš jų",
+    "terminalOff": "Terminalas išjungtas",
+    "terminalToken": "Su API žetonu terminalo atidaryti negalima",
     "tokenCannotChange": "Prisijunk, kad tai pakeistum. API žetonas to negali",
     "tokenExists": "Žetonas tokiu pavadinimu jau yra",
     "tokenNameMissing": "Suteik žetonui pavadinimą",

@@ -267,6 +267,12 @@ Switch the WebDAV server on under **Settings > Integrations**. It answers at `/d
 
 Windows Explorer only maps a WebDAV drive over https, so for Windows put CannonCommander behind a reverse proxy with a certificate, and map `https://files.example.com/dav/`. macOS Finder, Linux file managers, rclone and phone apps also work over plain http on your own network.
 
+### Terminal
+
+Admins can open a shell on the server in the folder they are looking at: type `cmd`, `bash`, `terminal` or `powershell` into the path field and press Enter, as in Windows Explorer, or pick **Open terminal here** from the Tools menu or the list's context menu. It is a Linux shell inside the container, `bash` where the image has it, running as `PUID:PGID` without the extra capabilities the server keeps. It stays off until you switch it on under **Settings > Integrations**, also when sign-in is turned off.
+
+Think before you switch it on: whoever may open it can do on the server whatever CannonCommander's user may, past every access rule of the file manager. Only signed-in admins get one, never an API token, at most four at a time. A terminal closes after 30 minutes without typing, when the session ends and when the switch goes off. Opening and closing go into the activity log, what is typed does not. With sign-in turned off everybody who reaches the page is an admin, so switching the terminal on then gives all of them a shell.
+
 ### Reverse proxy
 
 CannonCommander works behind Nginx Proxy Manager, SWAG, Traefik or Caddy. Three things matter:
@@ -314,6 +320,7 @@ CannonCommander can read, change and delete everything you map into it, so it de
 - **Users and rules.** Admins see everything. Everyone else stays inside an area of their own, and access rules hide a folder in it or make it read only, for one user or a whole group. The rules apply to the interface, WebDAV, share links and API tokens alike, and disk shares such as `/mnt/disk1` are for admins only.
 - **API tokens** can be read only, and new tokens and passkeys ask for your password again. An admin can see and revoke the sessions, tokens and passkeys of every user.
 - **Unraid write access** is off until you switch it on, because the emhttpd socket controls the whole array.
+- **The terminal** is off until you switch it on, because it hands admins a shell with the rights of CannonCommander's user.
 
 If you find a security problem, please report it privately through [GitHub's security advisories](https://github.com/junkerderprovinz/cannoncommander/security/advisories/new) rather than in a public issue. I will get back to you as soon as I can.
 

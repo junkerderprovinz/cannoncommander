@@ -1145,6 +1145,9 @@
       "webdavRclone": "WebDAV i rclone",
       "webdav": "Serwer WebDAV",
       "webdavTip": "Pozwala podłączyć pliki jako dysk, np. w Eksploratorze Windows albo w aplikacji na telefonie. Obowiązują ci sami użytkownicy i te same reguły.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal w przeglądarce",
+      "terminalTip": "Administratorzy otwierają nim powłokę w folderze, który właśnie oglądają, także wpisując cmd lub bash w wierszu ścieżki. Działa w kontenerze z uprawnieniami CannonCommandera. Kto go otworzy, może na serwerze zrobić wszystko, co wolno CannonCommanderowi.",
       "address": "Adres",
       "rcloneTip": "Montuje zdalne cele. Program jest w kontenerze.",
       "notFound": "Nie znaleziono",
@@ -1349,7 +1352,9 @@
         "passkeyRegister": "dodano klucz dostępu",
         "passkeyDelete": "usunięto klucz dostępu",
         "tokenCreate": "utworzono token",
-        "tokenDelete": "odwołano token"
+        "tokenDelete": "odwołano token",
+        "terminalOpen": "otwarto terminal",
+        "terminalClose": "zamknięto terminal"
       },
       "target": "Cel: {path}.",
       "from": "Z {ip}."
@@ -2585,6 +2590,24 @@
         "label": "Zamknij filtr, menu lub okno",
         "key": "Esc"
       }
+    }
+  },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Otwórz tu terminal",
+    "another": "Kolejny terminal",
+    "adminsOnly": "Terminal mogą otwierać tylko administratorzy.",
+    "off": "Terminal jest jeszcze wyłączony. Możesz go włączyć w Ustawienia, Integracje.",
+    "toSettings": "Do ustawień",
+    "connecting": "Łączenie z serwerem …",
+    "again": "Uruchom ponownie",
+    "ended": {
+      "idle": "Terminal przez 30 minut był nieużywany i jest teraz zamknięty.",
+      "signedOut": "Wylogowano cię, dlatego terminal jest zamknięty.",
+      "denied": "Nie jesteś już administratorem, dlatego terminal jest zamknięty.",
+      "off": "Administrator wyłączył terminal w ustawieniach.",
+      "stopping": "Serwer się zatrzymuje, dlatego terminal jest zamknięty.",
+      "lost": "Połączenie z serwerem zostało przerwane."
     }
   },
   "touch": {
@@ -3833,6 +3856,9 @@
     "slugTaken": "Ten adres jest już zajęty. Kostka znajdzie wolny",
     "tagLength": "Tag ma od 1 do 64 znaków",
     "targetNotFolder": "Cel nie jest folderem",
+    "terminalLimit": "Masz już otwarte cztery terminale. Najpierw zamknij jeden z nich",
+    "terminalOff": "Terminal jest wyłączony",
+    "terminalToken": "Tokenem API nie da się otworzyć terminala",
     "tokenCannotChange": "Zaloguj się, żeby to zmienić. Token API tego nie może",
     "tokenExists": "Token o tej nazwie już istnieje",
     "tokenNameMissing": "Nadaj tokenowi nazwę",

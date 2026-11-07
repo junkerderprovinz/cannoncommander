@@ -198,6 +198,7 @@
     "media": "Videos und Bilder", "thumbs": "Vorschaubilder", "thumbsTip": "Kleine Bilder für Fotos und Videos in der Vorschau. ffmpeg erzeugt sie im Hintergrund.",
     "video": "Videos im Browser abspielen", "videoTip": "Auch Formate wie MKV. ffmpeg wandelt sie dafür beim Abspielen um, das kostet Rechenzeit.", "ffmpegTip": "Ist im Container dabei.",
     "webdavRclone": "WebDAV und rclone", "webdav": "WebDAV-Server", "webdavTip": "Damit bindest du die Dateien als Laufwerk ein, etwa im Windows-Explorer oder in einer Handy-App. Es gelten dieselben Benutzer und Regeln.",
+    "terminalCard": "Terminal", "terminal": "Terminal im Browser", "terminalTip": "Admins öffnen damit eine Shell im Ordner, den sie gerade ansehen, auch mit cmd oder bash in der Pfadzeile. Sie läuft im Container mit den Rechten von CannonCommander. Wer sie öffnet, kann auf dem Server alles tun, was CannonCommander darf.",
     "address": "Adresse", "rcloneTip": "Hängt die Fernziele ein. Das Programm ist im Container dabei.",
     "notFound": "Nicht gefunden", "kept": "Gespeichert",
     "secretWrong": "Der Server lehnt diesen JWT-Schlüssel ab", "notWorking": "Der Server antwortet, die Verbindung klappt aber noch nicht", "alHint": "ArrowLoop plant wiederkehrende Abgleiche. CannonCommander gibt ihm Ordnerpaare aus dem Ordnervergleich.",
@@ -269,7 +270,7 @@
       "delete": "gelöscht", "bulkDelete": "mehreres gelöscht", "archive": "gepackt", "unarchive": "entpackt", "duplicateFinder": "Duplikate gesucht", "shareCreate": "freigegeben",
       "shareUpdate": "Freigabe geändert", "shareDelete": "Freigabe widerrufen", "userCreate": "Benutzer angelegt", "userUpdate": "Benutzer geändert", "userDelete": "Benutzer gelöscht", "accessCreate": "Regel angelegt",
       "accessUpdate": "Regel geändert", "accessDelete": "Regel gelöscht", "quotaCreate": "Kontingent angelegt", "quotaUpdate": "Kontingent geändert", "quotaDelete": "Kontingent gelöscht", "login": "angemeldet",
-      "logout": "abgemeldet", "signup": "registriert", "passkeyRegister": "Passkey hinzugefügt", "passkeyDelete": "Passkey entfernt", "tokenCreate": "Token erstellt", "tokenDelete": "Token widerrufen"
+      "logout": "abgemeldet", "signup": "registriert", "passkeyRegister": "Passkey hinzugefügt", "passkeyDelete": "Passkey entfernt", "tokenCreate": "Token erstellt", "tokenDelete": "Token widerrufen", "terminalOpen": "Terminal geöffnet", "terminalClose": "Terminal geschlossen"
     },
     "target": "Ziel: {path}.", "from": "Von {ip}."
   }

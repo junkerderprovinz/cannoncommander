@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV og rclone",
       "webdav": "WebDAV-server",
       "webdavTip": "Lar deg koble til filene som en stasjon, for eksempel i Windows Utforsker eller i en mobilapp. De samme brukerne og reglene gjelder.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal i nettleseren",
+      "terminalTip": "Med den åpner administratorer et skall i mappen de ser på, også ved å skrive cmd eller bash i stilinjen. Det kjører i containeren med CannonCommanders rettigheter. Den som åpner det, kan gjøre alt på serveren som CannonCommander har lov til.",
       "address": "Adresse",
       "rcloneTip": "Monterer de eksterne målene. Programmet følger med containeren.",
       "notFound": "Ikke funnet",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "la til passnøkkel",
         "passkeyDelete": "fjernet passnøkkel",
         "tokenCreate": "opprettet token",
-        "tokenDelete": "trakk tilbake token"
+        "tokenDelete": "trakk tilbake token",
+        "terminalOpen": "åpnet terminal",
+        "terminalClose": "lukket terminal"
       },
       "target": "Mål: {path}.",
       "from": "Fra {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Åpne terminal her",
+    "another": "En terminal til",
+    "adminsOnly": "Bare administratorer kan åpne terminalen.",
+    "off": "Terminalen er fortsatt slått av. Du kan slå den på under Innstillinger, Integrasjoner.",
+    "toSettings": "Til innstillingene",
+    "connecting": "Kobler til serveren …",
+    "again": "Start på nytt",
+    "ended": {
+      "idle": "Terminalen var ubrukt i 30 minutter og er nå lukket.",
+      "signedOut": "Du ble logget ut, derfor er terminalen lukket.",
+      "denied": "Du er ikke lenger administrator, derfor er terminalen lukket.",
+      "off": "En administrator har slått av terminalen i innstillingene.",
+      "stopping": "Serveren stopper, derfor er terminalen lukket.",
+      "lost": "Forbindelsen til serveren ble brutt."
+    }
+  },
   "touch": {
     "title": "Valgmodus",
     "bar": "Utvalg",
@@ -3561,6 +3584,9 @@
     "slugTaken": "Denne adressen er allerede tatt. Terningen finner en ledig",
     "tagLength": "Et stikkord har 1 til 64 tegn",
     "targetNotFolder": "Målet er ingen mappe",
+    "terminalLimit": "Du har allerede fire terminaler åpne. Lukk en av dem først",
+    "terminalOff": "Terminalen er slått av",
+    "terminalToken": "Et API-token kan ikke åpne en terminal",
     "tokenCannotChange": "Logg inn for å endre dette. Et API-token kan ikke det",
     "tokenExists": "Det finnes allerede et token med dette navnet",
     "tokenNameMissing": "Gi tokenet et navn",

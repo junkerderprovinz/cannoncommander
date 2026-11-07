@@ -198,6 +198,7 @@
     "media": "Videos and pictures", "thumbs": "Thumbnails", "thumbsTip": "Small pictures for photos and videos in the preview. ffmpeg makes them in the background.",
     "video": "Play videos in the browser", "videoTip": "Formats like MKV too. ffmpeg converts them while they play, which takes computing time.", "ffmpegTip": "Comes with the container.",
     "webdavRclone": "WebDAV and rclone", "webdav": "WebDAV server", "webdavTip": "Lets you mount the files as a drive, in Windows Explorer or a phone app for example. The same users and rules apply.",
+    "terminalCard": "Terminal", "terminal": "Terminal in the browser", "terminalTip": "Admins can open a shell in the folder they are looking at, also by typing cmd or bash into the path row. It runs in the container with the rights of CannonCommander. Whoever opens it can do anything on the server that CannonCommander may do.",
     "address": "Address", "rcloneTip": "Mounts the remotes. The program comes with the container.",
     "notFound": "Not found", "kept": "Saved",
     "secretWrong": "The server turns this JWT secret down", "notWorking": "The server answers, but the connection does not work yet", "alHint": "ArrowLoop plans recurring syncs. CannonCommander hands it pairs of folders from the folder comparison.",
@@ -269,7 +270,7 @@
       "delete": "deleted", "bulkDelete": "several deleted", "archive": "packed", "unarchive": "unpacked", "duplicateFinder": "duplicates searched", "shareCreate": "shared",
       "shareUpdate": "share changed", "shareDelete": "share revoked", "userCreate": "user added", "userUpdate": "user changed", "userDelete": "user deleted", "accessCreate": "rule added",
       "accessUpdate": "rule changed", "accessDelete": "rule deleted", "quotaCreate": "quota added", "quotaUpdate": "quota changed", "quotaDelete": "quota deleted", "login": "signed in",
-      "logout": "signed out", "signup": "signed up", "passkeyRegister": "passkey added", "passkeyDelete": "passkey removed", "tokenCreate": "token created", "tokenDelete": "token revoked"
+      "logout": "signed out", "signup": "signed up", "passkeyRegister": "passkey added", "passkeyDelete": "passkey removed", "tokenCreate": "token created", "tokenDelete": "token revoked", "terminalOpen": "terminal opened", "terminalClose": "terminal closed"
     },
     "target": "To {path}.", "from": "From {ip}."
   }

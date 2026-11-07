@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV e rclone",
       "webdav": "Servidor WebDAV",
       "webdavTip": "Permite montar os ficheiros como unha unidade, por exemplo no Explorador de Windows ou nunha aplicación do móbil. Valen os mesmos usuarios e regras.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal no navegador",
+      "terminalTip": "Con el os admins abren unha shell no cartafol que están a ver, tamén escribindo cmd ou bash na barra de ruta. Execútase no contedor cos permisos de CannonCommander. Quen a abre pode facer no servidor todo o que pode CannonCommander.",
       "address": "Enderezo",
       "rcloneTip": "Monta os remotos. O programa vén incluído no contedor.",
       "notFound": "Non atopado",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "chave de acceso engadida",
         "passkeyDelete": "chave de acceso quitada",
         "tokenCreate": "token creado",
-        "tokenDelete": "token revogado"
+        "tokenDelete": "token revogado",
+        "terminalOpen": "terminal aberto",
+        "terminalClose": "terminal pechado"
       },
       "target": "Destino: {path}.",
       "from": "Desde {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Abrir terminal aquí",
+    "another": "Outro terminal",
+    "adminsOnly": "Só os admins poden abrir o terminal.",
+    "off": "O terminal segue desactivado. Podes activalo en Axustes, Integracións.",
+    "toSettings": "Ir aos axustes",
+    "connecting": "Conectando co servidor …",
+    "again": "Comezar de novo",
+    "ended": {
+      "idle": "O terminal estivo 30 minutos sen usarse e agora está pechado.",
+      "signedOut": "Pechaches a sesión, por iso o terminal está pechado.",
+      "denied": "Xa non es admin, por iso o terminal está pechado.",
+      "off": "Un admin desactivou o terminal nos axustes.",
+      "stopping": "O servidor está a deterse, por iso o terminal está pechado.",
+      "lost": "Cortouse a conexión co servidor."
+    }
+  },
   "touch": {
     "title": "Modo de selección",
     "bar": "Selección",
@@ -3561,6 +3584,9 @@
     "slugTaken": "Este enderezo xa está collido. O dado atopa un libre",
     "tagLength": "Unha etiqueta ten de 1 a 64 caracteres",
     "targetNotFolder": "O destino non é un cartafol",
+    "terminalLimit": "Xa tes catro terminais abertos. Pecha primeiro un deles, por favor",
+    "terminalOff": "O terminal está desactivado",
+    "terminalToken": "Cun token de API non se pode abrir un terminal",
     "tokenCannotChange": "Inicia sesión para cambiar isto. Un token de API non pode",
     "tokenExists": "Xa hai un token con este nome",
     "tokenNameMissing": "Ponlle un nome ao token",

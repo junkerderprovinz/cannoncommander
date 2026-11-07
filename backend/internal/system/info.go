@@ -52,6 +52,8 @@ type Features struct {
 	Video  bool       `json:"videoPreview"`
 	WebDAV bool       `json:"webdav"`
 	MuPDF  bool       `json:"mupdf"`
+	// Terminal says whether admins may open a terminal.
+	Terminal bool `json:"terminal"`
 }
 
 // OfficeInfo is Office without the secret.
@@ -150,11 +152,12 @@ func (s *service) info(ctx context.Context) (Info, error) {
 		Tools:   s.tools.get(),
 		Unraid:  UnraidInfo{Socket: unraid.ConfigFromEnv().Write},
 		Feature: Features{
-			Office: OfficeInfo{Kind: app.Office.Kind, URL: app.Office.URL},
-			Thumbs: app.Previews.Thumbs,
-			Video:  app.Previews.Video,
-			WebDAV: app.WebDAV,
-			MuPDF:  settings.Env.MuPdfAvailable,
+			Office:   OfficeInfo{Kind: app.Office.Kind, URL: app.Office.URL},
+			Thumbs:   app.Previews.Thumbs,
+			Video:    app.Previews.Video,
+			WebDAV:   app.WebDAV,
+			MuPDF:    settings.Env.MuPdfAvailable,
+			Terminal: app.Terminal,
 		},
 	}
 	if app.Office.Kind == OfficeNone {

@@ -1,0 +1,18 @@
+{
+  "title": "Terminal",
+  "open": "Terminal hier öffnen",
+  "another": "Noch ein Terminal",
+  "adminsOnly": "Das Terminal können nur Admins öffnen.",
+  "off": "Das Terminal ist noch ausgeschaltet. Du kannst es in den Einstellungen unter Integrationen einschalten.",
+  "toSettings": "Zu den Einstellungen",
+  "connecting": "Verbinde mit dem Server …",
+  "again": "Neu starten",
+  "ended": {
+    "idle": "Das Terminal war 30 Minuten unbenutzt und ist jetzt zu.",
+    "signedOut": "Du bist abgemeldet, darum ist das Terminal zu.",
+    "denied": "Du bist kein Admin mehr, darum ist das Terminal zu.",
+    "off": "Ein Admin hat das Terminal in den Einstellungen ausgeschaltet.",
+    "stopping": "Der Server hält gerade an, darum ist das Terminal zu.",
+    "lost": "Die Verbindung zum Server ist abgerissen."
+  }
+}

@@ -1101,6 +1101,9 @@
       "webdavRclone": "WebDAV și rclone",
       "webdav": "Server WebDAV",
       "webdavTip": "Îți permite să montezi fișierele ca unitate, de exemplu în Exploratorul Windows sau într-o aplicație de telefon. Se aplică aceiași utilizatori și aceleași reguli.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal în browser",
+      "terminalTip": "Cu el adminii deschid un shell în folderul pe care îl văd, și scriind cmd sau bash în bara de cale. Rulează în container cu drepturile lui CannonCommander. Cine îl deschide poate face pe server tot ce are voie CannonCommander.",
       "address": "Adresă",
       "rcloneTip": "Montează destinațiile remote. Programul vine cu containerul.",
       "notFound": "Negăsit",
@@ -1304,7 +1307,9 @@
         "passkeyRegister": "cheie de acces adăugată",
         "passkeyDelete": "cheie de acces eliminată",
         "tokenCreate": "token creat",
-        "tokenDelete": "token revocat"
+        "tokenDelete": "token revocat",
+        "terminalOpen": "terminal deschis",
+        "terminalClose": "terminal închis"
       },
       "target": "Destinație: {path}.",
       "from": "De la {ip}."
@@ -2503,6 +2508,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Deschide terminal aici",
+    "another": "Încă un terminal",
+    "adminsOnly": "Doar adminii pot deschide terminalul.",
+    "off": "Terminalul este încă oprit. Îl poți porni din Setări, Integrări.",
+    "toSettings": "Spre setări",
+    "connecting": "Conectare la server …",
+    "again": "Pornește din nou",
+    "ended": {
+      "idle": "Terminalul a stat nefolosit 30 de minute și acum e închis.",
+      "signedOut": "Ai fost deconectat, de aceea terminalul e închis.",
+      "denied": "Nu mai ești admin, de aceea terminalul e închis.",
+      "off": "Un admin a oprit terminalul din setări.",
+      "stopping": "Serverul se oprește, de aceea terminalul e închis.",
+      "lost": "Conexiunea cu serverul s-a întrerupt."
+    }
+  },
   "touch": {
     "title": "Mod de selecție",
     "bar": "Selecție",
@@ -3697,6 +3720,9 @@
     "slugTaken": "Această adresă e deja folosită. Zarul găsește una liberă",
     "tagLength": "O etichetă are între 1 și 64 de caractere",
     "targetNotFolder": "Destinația nu este un dosar",
+    "terminalLimit": "Ai deja patru terminale deschise. Te rog închide mai întâi unul dintre ele",
+    "terminalOff": "Terminalul este oprit",
+    "terminalToken": "Cu un token API nu se poate deschide un terminal",
     "tokenCannotChange": "Autentifică-te ca să schimbi asta. Un token API nu poate",
     "tokenExists": "Există deja un token cu acest nume",
     "tokenNameMissing": "Dă un nume tokenului",

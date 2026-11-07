@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV eta rclone",
       "webdav": "WebDAV zerbitzaria",
       "webdavTip": "Fitxategiak unitate gisa muntatzeko aukera ematen du, adibidez Windows-eko Fitxategi-arakatzailean edo mugikorreko aplikazio batean. Erabiltzaile eta arau berek balio dute.",
+      "terminalCard": "Terminala",
+      "terminal": "Terminala nabigatzailean",
+      "terminalTip": "Administratzaileek shell bat irekitzen dute ikusten ari diren karpetan, baita bide-barran cmd edo bash idatzita ere. Edukiontzian exekutatzen da, CannonCommander-en baimenekin. Irekitzen duenak CannonCommander-ek egin dezakeen guztia egin dezake zerbitzarian.",
       "address": "Helbidea",
       "rcloneTip": "Urrunekoak muntatzen ditu. Programa edukiontzian dator.",
       "notFound": "Ez da aurkitu",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "sarbide-gakoa gehituta",
         "passkeyDelete": "sarbide-gakoa kenduta",
         "tokenCreate": "tokena sortuta",
-        "tokenDelete": "tokena baliogabetuta"
+        "tokenDelete": "tokena baliogabetuta",
+        "terminalOpen": "terminala irekita",
+        "terminalClose": "terminala itxita"
       },
       "target": "Helburua: {path}.",
       "from": "Jatorria: {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminala",
+    "open": "Ireki terminala hemen",
+    "another": "Beste terminal bat",
+    "adminsOnly": "Administratzaileek bakarrik ireki dezakete terminala.",
+    "off": "Terminala desaktibatuta dago oraindik. Ezarpenak, Integrazioak atalean aktiba dezakezu.",
+    "toSettings": "Joan ezarpenetara",
+    "connecting": "Zerbitzarira konektatzen …",
+    "again": "Hasi berriro",
+    "ended": {
+      "idle": "Terminala 30 minutuz erabili gabe egon da eta orain itxita dago.",
+      "signedOut": "Saioa amaitu zaizu, horregatik dago itxita terminala.",
+      "denied": "Jada ez zara administratzailea, horregatik dago itxita terminala.",
+      "off": "Administratzaile batek terminala desaktibatu du ezarpenetan.",
+      "stopping": "Zerbitzaria gelditzen ari da, horregatik dago itxita terminala.",
+      "lost": "Zerbitzariarekiko konexioa eten da."
+    }
+  },
   "touch": {
     "title": "Hautapen modua",
     "bar": "Hautapena",
@@ -3561,6 +3584,9 @@
     "slugTaken": "Helbide hau hartuta dago jada. Dadoak libre bat aurkitzen du",
     "tagLength": "Etiketa batek 1 eta 64 karaktere artean ditu",
     "targetNotFolder": "Helburua ez da karpeta bat",
+    "terminalLimit": "Lau terminal dituzu irekita jada. Itxi lehenik horietako bat, mesedez",
+    "terminalOff": "Terminala desaktibatuta dago",
+    "terminalToken": "API token batekin ezin da terminalik ireki",
     "tokenCannotChange": "Hasi saioa hau aldatzeko. API token batek ezin du",
     "tokenExists": "Badago jada izen hori duen token bat",
     "tokenNameMissing": "Eman izen bat tokenari",

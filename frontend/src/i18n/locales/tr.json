@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV ve rclone",
       "webdav": "WebDAV sunucusu",
       "webdavTip": "Dosyaları bir sürücü olarak bağlamanı sağlar, örneğin Windows Gezgini'nde ya da bir telefon uygulamasında. Aynı kullanıcılar ve kurallar geçerlidir.",
+      "terminalCard": "Terminal",
+      "terminal": "Tarayıcıda terminal",
+      "terminalTip": "Yöneticiler bununla baktıkları klasörde bir kabuk açar, yol satırına cmd veya bash yazarak da açılır. Kapsayıcıda CannonCommander'ın haklarıyla çalışır. Onu açan, sunucuda CannonCommander'ın yapabildiği her şeyi yapabilir.",
       "address": "Adres",
       "rcloneTip": "Uzak konumları bağlar. Program konteynerle birlikte gelir.",
       "notFound": "Bulunamadı",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "geçiş anahtarı ekledi",
         "passkeyDelete": "geçiş anahtarını kaldırdı",
         "tokenCreate": "token oluşturdu",
-        "tokenDelete": "token'ı geri aldı"
+        "tokenDelete": "token'ı geri aldı",
+        "terminalOpen": "terminal açtı",
+        "terminalClose": "terminal kapattı"
       },
       "target": "Hedef: {path}.",
       "from": "Kaynak: {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Burada terminal aç",
+    "another": "Bir terminal daha",
+    "adminsOnly": "Terminali yalnızca yöneticiler açabilir.",
+    "off": "Terminal hâlâ kapalı. Ayarlar, Entegrasyonlar altında açabilirsin.",
+    "toSettings": "Ayarlara git",
+    "connecting": "Sunucuya bağlanılıyor …",
+    "again": "Yeniden başlat",
+    "ended": {
+      "idle": "Terminal 30 dakika kullanılmadı ve şimdi kapandı.",
+      "signedOut": "Oturumun kapatıldı, bu yüzden terminal kapandı.",
+      "denied": "Artık yönetici değilsin, bu yüzden terminal kapandı.",
+      "off": "Bir yönetici terminali ayarlardan kapattı.",
+      "stopping": "Sunucu duruyor, bu yüzden terminal kapandı.",
+      "lost": "Sunucuyla bağlantı koptu."
+    }
+  },
   "touch": {
     "title": "Seçim modu",
     "bar": "Seçim",
@@ -3561,6 +3584,9 @@
     "slugTaken": "Bu adres zaten alınmış. Zar boşta olan birini bulur",
     "tagLength": "Bir etiket 1 ile 64 karakter arasında olmalı",
     "targetNotFolder": "Hedef bir klasör değil",
+    "terminalLimit": "Zaten dört terminalin açık. Lütfen önce birini kapat",
+    "terminalOff": "Terminal kapalı",
+    "terminalToken": "API token'ı ile terminal açılamaz",
     "tokenCannotChange": "Bunu değiştirmek için giriş yap. Bir API token'ı bunu yapamaz",
     "tokenExists": "Bu adda bir token zaten var",
     "tokenNameMissing": "Token'a bir ad ver",

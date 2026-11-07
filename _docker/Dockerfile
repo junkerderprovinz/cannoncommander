@@ -43,10 +43,14 @@ RUN apk --no-cache add ca-certificates mailcap tzdata curl setpriv 7zip tini
 # rclone mounts the remotes below /remotes, outside the /mnt the container
 # shares with the host, so they stay inside the container.
 RUN apk --no-cache add rclone fuse3 && mkdir /remotes && chown 99:100 /remotes
+# The terminal in the browser gets bash, and the terminfo of the xterm it
+# announces itself as.
+RUN apk --no-cache add bash ncurses-terminfo-base
 # Unraid's own defaults: nobody:users, and files anyone on the network may change.
 ENV PUID=99 \
     PGID=100 \
     UMASK=000 \
+    LANG=C.UTF-8 \
     CC_FFMPEG_PATH="/usr/local/bin/" \
     CC_CONFIG="/config/config.yaml" \
     CC_DATABASE_PATH="/config/cannoncommander.sqlite"

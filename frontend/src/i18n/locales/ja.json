@@ -1013,6 +1013,9 @@
       "webdavRclone": "WebDAV と rclone",
       "webdav": "WebDAV サーバー",
       "webdavTip": "Windows エクスプローラーやスマートフォンのアプリなどで、ファイルをドライブとしてマウントできます。同じユーザーとルールが適用されます。",
+      "terminalCard": "ターミナル",
+      "terminal": "ブラウザーのターミナル",
+      "terminalTip": "管理者は表示中のフォルダーでシェルを開けます。パス欄に cmd や bash と入力しても開きます。シェルはコンテナー内で CannonCommander の権限で動きます。開いた人は、CannonCommander に許されていることをサーバー上ですべて行えます。",
       "address": "アドレス",
       "rcloneTip": "リモートをマウントします。プログラムはコンテナーに含まれています。",
       "notFound": "見つかりません",
@@ -1214,7 +1217,9 @@
         "passkeyRegister": "パスキーの追加",
         "passkeyDelete": "パスキーの削除",
         "tokenCreate": "トークンの作成",
-        "tokenDelete": "トークンの取り消し"
+        "tokenDelete": "トークンの取り消し",
+        "terminalOpen": "ターミナルを開いた",
+        "terminalClose": "ターミナルを閉じた"
       },
       "target": "宛先: {path}。",
       "from": "{ip} から。"
@@ -2335,6 +2340,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "ターミナル",
+    "open": "ここでターミナルを開く",
+    "another": "もう一つのターミナル",
+    "adminsOnly": "ターミナルを開けるのは管理者だけです。",
+    "off": "ターミナルはまだオフです。設定の「連携」でオンにできます。",
+    "toSettings": "設定へ",
+    "connecting": "サーバーに接続しています …",
+    "again": "もう一度開始",
+    "ended": {
+      "idle": "ターミナルが 30 分使われなかったため閉じました。",
+      "signedOut": "ログアウトしたため、ターミナルを閉じました。",
+      "denied": "管理者ではなくなったため、ターミナルを閉じました。",
+      "off": "管理者が設定でターミナルをオフにしました。",
+      "stopping": "サーバーが停止中のため、ターミナルを閉じました。",
+      "lost": "サーバーとの接続が切れました。"
+    }
+  },
   "touch": {
     "title": "選択モード",
     "bar": "選択",
@@ -3425,6 +3448,9 @@
     "slugTaken": "このアドレスはすでに使われています。サイコロで空いているものを探せます",
     "tagLength": "タグは 1 から 64 文字です",
     "targetNotFolder": "宛先がフォルダーではありません",
+    "terminalLimit": "ターミナルがすでに 4 つ開いています。先にどれか 1 つを閉じてください",
+    "terminalOff": "ターミナルはオフです",
+    "terminalToken": "API トークンではターミナルを開けません",
     "tokenCannotChange": "変更するにはログインしてください。API トークンではできません",
     "tokenExists": "この名前のトークンはすでにあります",
     "tokenNameMissing": "トークンに名前を付けてください",

@@ -3,12 +3,12 @@ import { readdirSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath, URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
-import { type Connect, defineConfig, type Plugin } from 'vite';
+import { type Connect, defineConfig, type HttpServer, type Plugin } from 'vite';
 import { LANGUAGES } from './src/i18n/languages';
 
 // Without a server, `--mode fixture` answers /api/v1 from the prototype's test data.
 function fixture(): Plugin {
-  const use = async (server: { middlewares: Connect.Server }) => {
+  const use = async (server: { middlewares: Connect.Server; httpServer: HttpServer | null }) => {
     const { fixtureMiddleware } = await import('./scripts/fixture.js');
     const { opsFixtureMiddleware } = await import('./scripts/fixture-ops.js');
     const { authFixtureMiddleware } = await import('./scripts/fixture-auth.js');
@@ -17,8 +17,11 @@ function fixture(): Plugin {
     server.middlewares.use(authFixtureMiddleware());
     server.middlewares.use(opsFixtureMiddleware());
     const { settingsFixtureMiddleware } = await import('./scripts/fixture-settings.js');
-    server.middlewares.use(settingsFixtureMiddleware());
+    const { terminalUpgrade } = await import('./scripts/fixture-terminal.js');
+    const settings = settingsFixtureMiddleware();
+    server.middlewares.use(settings);
     server.middlewares.use(fixtureMiddleware());
+    server.httpServer?.on('upgrade', terminalUpgrade(settings.terminalOn));
   };
   return { name: 'cc-fixture', configureServer: use, configurePreviewServer: use };
 }
@@ -92,7 +95,7 @@ export default defineConfig(({ mode }) => ({
   // Every source is scanned up front, so a library only a viewer loads later does not make Vite bundle the
   // dependencies again while a page is open.
   optimizeDeps: { entries: ['index.html', 'share.html', 'src/**/*.{ts,vue}', '!src/**/*.test.ts'] },
-  server: mode === 'fixture' ? {} : { proxy: { '/api': process.env.CC_BACKEND || 'http://localhost:8080' } },
+  server: mode === 'fixture' ? {} : { proxy: { '/api': { target: process.env.CC_BACKEND || 'http://localhost:8080', ws: true } } },
   build: {
     outDir: 'dist', emptyOutDir: true, chunkSizeWarningLimit: 900,
     rollupOptions: { input: { app: page('./index.html'), share: page('./share.html') } },

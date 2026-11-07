@@ -1101,6 +1101,9 @@
       "webdavRclone": "WebDAV i rclone",
       "webdav": "WebDAV poslužitelj",
       "webdavTip": "Time datoteke povezujete kao pogon, npr. u Windows Exploreru ili u aplikaciji na telefonu. Vrijede isti korisnici i pravila.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal u pregledniku",
+      "terminalTip": "Administratori njime otvaraju ljusku u mapi koju gledaju, i upisivanjem cmd ili bash u redak putanje. Radi u spremniku s pravima CannonCommandera. Tko ga otvori, može na poslužitelju raditi sve što smije CannonCommander.",
       "address": "Adresa",
       "rcloneTip": "Montira udaljene pohrane. Program je uključen u kontejner.",
       "notFound": "Nije pronađeno",
@@ -1304,7 +1307,9 @@
         "passkeyRegister": "pristupni ključ dodan",
         "passkeyDelete": "pristupni ključ uklonjen",
         "tokenCreate": "token izrađen",
-        "tokenDelete": "token opozvan"
+        "tokenDelete": "token opozvan",
+        "terminalOpen": "terminal otvoren",
+        "terminalClose": "terminal zatvoren"
       },
       "target": "Odredište: {path}.",
       "from": "S {ip}."
@@ -2503,6 +2508,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Otvori terminal ovdje",
+    "another": "Još jedan terminal",
+    "adminsOnly": "Terminal mogu otvoriti samo administratori.",
+    "off": "Terminal je još isključen. Možete ga uključiti u Postavke, Integracije.",
+    "toSettings": "Na postavke",
+    "connecting": "Spajanje na poslužitelj …",
+    "again": "Pokreni ponovno",
+    "ended": {
+      "idle": "Terminal se 30 minuta nije koristio i sada je zatvoren.",
+      "signedOut": "Odjavljeni ste, zato je terminal zatvoren.",
+      "denied": "Više niste administrator, zato je terminal zatvoren.",
+      "off": "Administrator je isključio terminal u postavkama.",
+      "stopping": "Poslužitelj se zaustavlja, zato je terminal zatvoren.",
+      "lost": "Veza s poslužiteljem je prekinuta."
+    }
+  },
   "touch": {
     "title": "Način odabira",
     "bar": "Odabir",
@@ -3697,6 +3720,9 @@
     "slugTaken": "Ta je adresa već zauzeta. Kocka će naći slobodnu",
     "tagLength": "Oznaka ima od 1 do 64 znaka",
     "targetNotFolder": "Odredište nije mapa",
+    "terminalLimit": "Već imate četiri otvorena terminala. Molimo najprije zatvorite jedan od njih",
+    "terminalOff": "Terminal je isključen",
+    "terminalToken": "API tokenom ne može se otvoriti terminal",
     "tokenCannotChange": "Prijavite se da biste to promijenili. API token to ne može",
     "tokenExists": "Token s tim nazivom već postoji",
     "tokenNameMissing": "Dajte tokenu naziv",

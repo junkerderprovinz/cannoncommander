@@ -1101,6 +1101,9 @@
       "webdavRclone": "WebDAV i rclone",
       "webdav": "Servidor WebDAV",
       "webdavTip": "Us permet connectar els fitxers com una unitat, per exemple a l'Explorador del Windows o en una aplicació del mòbil. S'apliquen els mateixos usuaris i regles.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal al navegador",
+      "terminalTip": "Els administradors hi obren un intèrpret d'ordres a la carpeta que estan mirant, també escrivint cmd o bash a la barra del camí. S'executa al contenidor amb els permisos de CannonCommander. Qui l'obre pot fer al servidor tot el que pot fer CannonCommander.",
       "address": "Adreça",
       "rcloneTip": "Munta els remots. El programa ve amb el contenidor.",
       "notFound": "No s'ha trobat",
@@ -1304,7 +1307,9 @@
         "passkeyRegister": "clau d'accés afegida",
         "passkeyDelete": "clau d'accés eliminada",
         "tokenCreate": "testimoni creat",
-        "tokenDelete": "testimoni revocat"
+        "tokenDelete": "testimoni revocat",
+        "terminalOpen": "terminal obert",
+        "terminalClose": "terminal tancat"
       },
       "target": "Cap a {path}.",
       "from": "Des de {ip}."
@@ -2503,6 +2508,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Obre un terminal aquí",
+    "another": "Un altre terminal",
+    "adminsOnly": "Només els administradors poden obrir el terminal.",
+    "off": "El terminal encara està desactivat. El podeu activar a Configuració, Integracions.",
+    "toSettings": "Ves a la configuració",
+    "connecting": "S'està connectant al servidor …",
+    "again": "Torna a començar",
+    "ended": {
+      "idle": "El terminal ha estat 30 minuts sense ús i ara està tancat.",
+      "signedOut": "Heu tancat la sessió, per això el terminal està tancat.",
+      "denied": "Ja no sou administrador, per això el terminal està tancat.",
+      "off": "Un administrador ha desactivat el terminal a la configuració.",
+      "stopping": "El servidor s'està aturant, per això el terminal està tancat.",
+      "lost": "S'ha perdut la connexió amb el servidor."
+    }
+  },
   "touch": {
     "title": "Mode de selecció",
     "bar": "Selecció",
@@ -3697,6 +3720,9 @@
     "slugTaken": "Aquesta adreça ja està agafada. El dau en troba una de lliure",
     "tagLength": "Una paraula clau té d'1 a 64 caràcters",
     "targetNotFolder": "La destinació no és una carpeta",
+    "terminalLimit": "Ja teniu quatre terminals oberts. Tanqueu-ne un primer, si us plau",
+    "terminalOff": "El terminal està desactivat",
+    "terminalToken": "Amb un testimoni d'API no es pot obrir cap terminal",
     "tokenCannotChange": "Inicieu la sessió per canviar això. Un testimoni d'API no pot fer-ho",
     "tokenExists": "Ja hi ha un testimoni amb aquest nom",
     "tokenNameMissing": "Doneu un nom al testimoni",

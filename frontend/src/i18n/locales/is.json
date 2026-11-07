@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV og rclone",
       "webdav": "WebDAV-þjónn",
       "webdavTip": "Gerir þér kleift að tengja skrárnar sem drif, til dæmis í Windows Explorer eða í símaforriti. Sömu notendur og reglur gilda.",
+      "terminalCard": "Útstöð",
+      "terminal": "Útstöð í vafranum",
+      "terminalTip": "Með henni opna stjórnendur skel í möppunni sem þeir eru að skoða, líka með því að slá cmd eða bash inn í slóðarlínuna. Hún keyrir í gámnum með réttindum CannonCommander. Sá sem opnar hana getur gert allt á þjóninum sem CannonCommander má.",
       "address": "Vistfang",
       "rcloneTip": "Tengir fjartengingarnar. Forritið fylgir gámnum.",
       "notFound": "Fannst ekki",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "bætti við aðgangslykli",
         "passkeyDelete": "fjarlægði aðgangslykil",
         "tokenCreate": "bjó til tóka",
-        "tokenDelete": "afturkallaði tóka"
+        "tokenDelete": "afturkallaði tóka",
+        "terminalOpen": "opnaði útstöð",
+        "terminalClose": "lokaði útstöð"
       },
       "target": "Áfangastaður: {path}.",
       "from": "Frá {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Útstöð",
+    "open": "Opna útstöð hér",
+    "another": "Önnur útstöð",
+    "adminsOnly": "Aðeins stjórnendur geta opnað útstöðina.",
+    "off": "Útstöðin er enn óvirk. Þú getur virkjað hana í Stillingar, Samþættingar.",
+    "toSettings": "Í stillingarnar",
+    "connecting": "Tengist þjóninum …",
+    "again": "Byrja aftur",
+    "ended": {
+      "idle": "Útstöðin var ónotuð í 30 mínútur og er nú lokuð.",
+      "signedOut": "Þú varst skráð(ur) út, þess vegna er útstöðinni lokað.",
+      "denied": "Þú ert ekki lengur stjórnandi, þess vegna er útstöðinni lokað.",
+      "off": "Stjórnandi gerði útstöðina óvirka í stillingunum.",
+      "stopping": "Þjónninn er að stöðvast, þess vegna er útstöðinni lokað.",
+      "lost": "Tengingin við þjóninn rofnaði."
+    }
+  },
   "touch": {
     "title": "Valhamur",
     "bar": "Val",
@@ -3561,6 +3584,9 @@
     "slugTaken": "Þetta vistfang er þegar í notkun. Teningurinn finnur laust vistfang",
     "tagLength": "Merki er 1 til 64 stafir",
     "targetNotFolder": "Áfangastaðurinn er ekki mappa",
+    "terminalLimit": "Þú ert nú þegar með fjórar útstöðvar opnar. Lokaðu fyrst einni þeirra",
+    "terminalOff": "Útstöðin er óvirk",
+    "terminalToken": "Ekki er hægt að opna útstöð með API-tóka",
     "tokenCannotChange": "Skráðu þig inn til að breyta þessu. API-tóki getur það ekki",
     "tokenExists": "Tóki með þessu heiti er þegar til",
     "tokenNameMissing": "Gefðu tókanum heiti",

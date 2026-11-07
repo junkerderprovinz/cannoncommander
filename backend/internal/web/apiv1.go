@@ -20,6 +20,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/terminal"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/watch"
@@ -58,6 +59,7 @@ func mountAPIv1(router *http.ServeMux) error {
 	index := fsindex.Scanned()
 	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index, Users: currentUser}
 	accounts.UseLogin(sessionLogin{})
+	terminal.UseGate(terminalGate{guard: originGuard()})
 	h, err := api.NewRouter(deps, accounts.Track(deps.DB, authenticateV1)).Handler()
 	if err != nil {
 		return err

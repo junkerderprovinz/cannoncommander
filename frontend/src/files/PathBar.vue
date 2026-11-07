@@ -3,6 +3,7 @@
 // beside the buttons turns the row into a field to type the path.
 import { computed, nextTick, ref, watch } from 'vue';
 import { run } from '@/core/actions';
+import { extend } from '@/core/extend';
 import { menu } from '@/core/menu';
 import { prefs } from '@/core/prefs';
 import { byName, t } from '@/i18n';
@@ -49,7 +50,11 @@ watch(() => tab.value.editPath, async (on) => {
   input.value?.select();
 }, { immediate: true });
 function key(e: KeyboardEvent) {
-  if (e.key === 'Enter') F.go((e.target as HTMLInputElement).value.trim() || '/', props.i).then((ok) => { if (!ok) shake(input.value); });
+  if (e.key === 'Enter') {
+    const typed = (e.target as HTMLInputElement).value.trim();
+    if (extend.pathWords.some((fn) => fn(typed, props.i))) tab.value.editPath = false;
+    else F.go(typed || '/', props.i).then((ok) => { if (!ok) shake(input.value); });
+  }
   if (e.key === 'Escape') tab.value.editPath = false;
 }
 </script>

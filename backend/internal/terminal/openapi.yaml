@@ -1,0 +1,64 @@
+tag:
+  name: terminal
+  description: |
+    A shell in a folder on the server, for admins. It runs inside the
+    container as the user the server runs as, so whoever opens it can do
+    there whatever that user may. It stays off until an admin switches on
+    terminal in the app settings, also on a server without sign in.
+paths:
+  /terminal:
+    get:
+      operationId: terminalOpen
+      x-access: admin
+      summary: Open a terminal in a folder over a WebSocket
+      description: |
+        With a WebSocket upgrade the server starts a shell in the folder and
+        relays it. Binary messages carry what is typed and what the shell
+        prints. A text message resizes the terminal as
+        {"cols": 120, "rows": 40}. Without an upgrade the call only checks
+        whether a terminal would open and answers 204, since a browser
+        learns nothing about a refused upgrade.
+
+        Only a signed in session of an admin opens one, never an API token,
+        and only from the server's own origin. Each admin has four at most.
+        One ends after 30 minutes without typing, when the session ends or
+        the admin loses the role, when the switch goes off and when the
+        server stops. It closes with 1000 "exited" when the shell exits,
+        4001 "idle", 4003 with "signedOut", "denied" or "off", and 1001
+        when the server stops. Opening and closing go into the activity
+        log, what is typed never does.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: cols
+          in: query
+          description: Columns of the terminal, 80 when left out.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+        - name: rows
+          in: query
+          description: Rows of the terminal, 24 when left out.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+      responses:
+        "101":
+          description: The WebSocket of the terminal.
+        "204":
+          description: A terminal would open here.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          description: Four terminals of this admin are open already.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
