@@ -6,20 +6,16 @@ import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { language, t, tl } from '@/i18n';
-import { iconUrl } from './icon';
 import InstallBody from './InstallBody.vue';
 
 interface InstallPrompt extends Event { prompt(): void; userChoice: Promise<{ outcome: string }> }
 
 // The manifest is a file of the server, as Android only installs an app, and offers it as a share target, from a
-// manifest it can fetch again. The page's own icon and colour follow the accent of the moment.
+// manifest it can fetch again. The icons stand in the page itself, the colour follows the accent of the moment.
 function head() {
-  const icon = iconUrl(prefs.accent);
   const put = (selector: string, make: () => HTMLElement, set: (el: HTMLElement) => void) => set(document.head.querySelector<HTMLElement>(selector) ?? document.head.appendChild(make()));
   const link = (rel: string) => () => Object.assign(document.createElement('link'), { rel });
   put('link[rel="manifest"]', link('manifest'), (el) => { (el as HTMLLinkElement).href = `${import.meta.env.BASE_URL}manifest/${language()}.webmanifest`; });
-  put('link[rel="icon"]', link('icon'), (el) => { (el as HTMLLinkElement).href = icon; });
-  put('link[rel="apple-touch-icon"]', link('apple-touch-icon'), (el) => { (el as HTMLLinkElement).href = icon; });
   put('meta[name="theme-color"]', () => Object.assign(document.createElement('meta'), { name: 'theme-color' }), (el) => { (el as HTMLMetaElement).content = prefs.accent; });
 }
 

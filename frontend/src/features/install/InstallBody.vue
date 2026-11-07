@@ -1,19 +1,17 @@
 <script setup lang="ts">
 // How to put CannonCommander on the home screen or the taskbar, with the way of the browser at hand first in mind.
 import { Pill, SubCard } from '@glimstone/vue';
-import { computed } from 'vue';
 import { G } from '@/core/glyphs';
-import { prefs } from '@/core/prefs';
 import { t } from '@/i18n';
-import { iconUrl } from './icon';
 
 const WAYS = [['chrome', 'IconBrowser'], ['android', 'IconPhone'], ['ios', 'IconPhone'], ['firefox', 'IconBrowser']] as const;
 const mine = () => {
   const ua = navigator.userAgent;
   return /iPhone|iPad|iPod/.test(ua) ? 'ios' : /Firefox/.test(ua) ? 'firefox' : /Android/.test(ua) ? 'android' : 'chrome';
 };
-const icon = computed(() => iconUrl(prefs.accent));
 const at = mine();
+// The app logo on its white tile, as the home screen will show it.
+const icon = `${import.meta.env.BASE_URL}icons/favicon.svg`;
 </script>
 
 <template>
