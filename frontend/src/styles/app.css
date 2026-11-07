@@ -16,8 +16,10 @@ svg { display: block; }
 .muted { color: var(--carbon-text-muted); }
 .sub { color: var(--carbon-text-sub); }
 
-/* The bottom room matches the prototype, so screenshots of both line up. */
+/* The room at the bottom matches the prototype, so screenshots of both line up. In the file view without the F-key
+   bar the panels reach down to the same margin as everywhere else. */
 .app { height: 100vh; display: grid; grid-template-rows: auto 1fr auto; gap: var(--gut); padding: var(--gut) var(--gut) 4.75rem; }
+#app:not(.with-fkeys) { padding-bottom: var(--gut); }
 
 /* Head row: one bar with the brand, the menus, the command search in the middle and the controls for the whole window. */
 .head { --btn-h: 2.4rem; display: flex; align-items: center; gap: .35rem; min-width: 0; height: 3.4rem; padding: 0 .5rem; }
@@ -206,8 +208,8 @@ svg { display: block; }
 .narrow-only { display: none !important; }
 @media (max-width: 900px) { .menubar { display: none; } .narrow-only { display: inline-flex !important; } }
 @media (max-width: 760px) {
-  .app { padding: .75rem .75rem 4.75rem; gap: .75rem; }
-  .side { position: fixed; z-index: 40; margin-top: 0; inset: .75rem auto 8.5rem .75rem; width: min(20rem, calc(100vw - 1.5rem)); }
+  .app, #app:not(.with-fkeys) { padding: .75rem; gap: .75rem; }
+  .side { position: fixed; z-index: 40; margin-top: 0; inset: .75rem auto 4.5rem .75rem; width: min(20rem, calc(100vw - 1.5rem)); }
   .app:not(.side-open) .side { display: none; }
   .head-layout, .head .hback { display: none; }
   .bottombar { display: flex; height: 3rem; padding: 3px; gap: 3px; }
