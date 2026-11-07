@@ -20,7 +20,7 @@ import { BASE, toItem } from '@/api/client';
 import type { FsList } from '@/api/types';
 import type { Activity, Session, Source } from '@/api/admin';
 import type { Share } from '@/api/tools';
-import { watch } from 'vue';
+import { nextTick, watch } from 'vue';
 import { device } from '@/features/config/sessions';
 import { session } from '@/signin';
 import { auth } from '@/api/auth';
@@ -129,18 +129,42 @@ function aliasMenuParts() {
   new MutationObserver(alias).observe(document.body, { childList: true, subtree: true });
 }
 
+// The step files sign in by the prototype's names: its password field, its reset code field and its forgot button.
+// The card's own ids and hooks are GlimStone's, so the old names go onto them, label and all.
+function aliasSignIn() {
+  const rename = (from: string, to: string) => {
+    const field = document.getElementById(from);
+    if (!field) return;
+    document.querySelector(`label[for="${from}"]`)?.setAttribute('for', to);
+    field.id = to;
+  };
+  const alias = () => {
+    rename('cl-password', 'cl-pass');
+    rename('cl-reset-code', 'cl-code');
+    document.querySelectorAll<HTMLElement>('[data-signin="forgot"], [data-signin="passkey"]').forEach((el) => { el.dataset.cl = el.dataset.signin; });
+  };
+  new MutationObserver(alias).observe(document.body, { childList: true, subtree: true });
+}
+
 export async function installShim() {
   installHooks();
   aliasMenuParts();
+  aliasSignIn();
   const listing = useListing(), panels = usePanels(), user = useUser(), clipboard = useClipboard(), labels = useLabels();
   provideOps(provide);
   provideUnraid(provide, (n) => pathOf.get(n));
   provideTools(provide);
   await readAll(listing);
   // Signing out reloads into the sign in, which would take the shim with it. Here the app stays behind the sign in, as
-  // the prototype keeps it, and signing in again brings it back as it was.
+  // the prototype keeps it, and signing in again brings it back as it was. A sign in already showing starts afresh,
+  // as the reload would start it.
   const logout = actions.logout;
-  if (logout) action('logout', { ...logout, run: async () => { await auth.logout().catch(() => {}); session.out = true; } });
+  if (logout) action('logout', { ...logout, run: async () => {
+    await auth.logout().catch(() => {});
+    session.out = false;
+    await nextTick();
+    session.out = true;
+  } });
   // The prototype starts with two tabs on the left and the backups on the right, and the step files count on it. A
   // folder in the address, as after a reload, takes the first tab's place.
   [[hashPath() || '/mnt/user/downloads', '/mnt/user/fotos/2026'], ['/mnt/user/backups']].forEach((paths, i) => Object.assign(panels.P(i), { tabs: paths.map(newTab), cur: 0 }));
