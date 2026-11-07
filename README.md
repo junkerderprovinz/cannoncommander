@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.png">
-    <img src=".github/assets/banner.png" alt="CannonCommander" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/cannoncommander-banner-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/cannoncommander-banner.png" alt="CannonCommander" width="100%">
   </picture>
 </p>
 
