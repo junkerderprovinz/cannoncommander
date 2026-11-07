@@ -1093,8 +1093,8 @@
   ],
   "shots": {
    "v3c-2-limit": {
-    "pixels": 59302,
-    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "pixels": 60540,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; the newest toast is still sliding in when the shot is taken, and with the theme on System the page carries no theme of its own, so that frame lands a pixel or two lower"
    },
    "v3c-3-parity-ask": {
     "pixels": 23191,
