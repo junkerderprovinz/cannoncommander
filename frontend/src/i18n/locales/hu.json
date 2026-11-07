@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, vissza a fájlokhoz",
     "back": "Vissza a fájlokhoz",
     "backTip": "Vissza a fájlokhoz (Esc)",
-    "layout": "Nézet",
     "singleTip": "Egy ablak (Ctrl+1)",
     "dualTip": "Két ablak (Ctrl+2)",
-    "palette": "Parancs keresése (Ctrl+K)",
     "jobs": "Feladatok",
-    "settings": "Beállítások",
-    "settingsClose": "Beállítások bezárása",
     "security": "Fiók és biztonság",
     "activity": "Tevékenység"
   },

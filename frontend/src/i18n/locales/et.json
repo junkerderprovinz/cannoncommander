@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, tagasi failide juurde",
     "back": "Tagasi failide juurde",
     "backTip": "Tagasi failide juurde (Esc)",
-    "layout": "Vaade",
     "singleTip": "Üks paneel (Ctrl+1)",
     "dualTip": "Kaks paneeli (Ctrl+2)",
-    "palette": "Otsi käsku (Ctrl+K)",
     "jobs": "Tööd",
-    "settings": "Seaded",
-    "settingsClose": "Sulge seaded",
     "security": "Konto ja turvalisus",
     "activity": "Tegevus"
   },

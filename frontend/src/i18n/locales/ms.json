@@ -2937,13 +2937,9 @@
     "brand": "CannonCommander, ke fail",
     "back": "Kembali ke fail",
     "backTip": "Kembali ke fail (Esc)",
-    "layout": "Paparan",
     "singleTip": "Satu panel (Ctrl+1)",
     "dualTip": "Dua panel (Ctrl+2)",
-    "palette": "Cari arahan (Ctrl+K)",
     "jobs": "Tugas",
-    "settings": "Tetapan",
-    "settingsClose": "Tutup tetapan",
     "security": "Akaun & keselamatan",
     "activity": "Aktiviti"
   },

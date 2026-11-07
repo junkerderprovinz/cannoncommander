@@ -3191,13 +3191,9 @@
     "brand": "CannonCommander, חזרה לקבצים",
     "back": "חזרה לקבצים",
     "backTip": "חזרה לקבצים (Esc)",
-    "layout": "תצוגה",
     "singleTip": "חלונית אחת (Ctrl+1)",
     "dualTip": "שתי חלוניות (Ctrl+2)",
-    "palette": "חיפוש פקודה (Ctrl+K)",
     "jobs": "משימות",
-    "settings": "הגדרות",
-    "settingsClose": "סגירת ההגדרות",
     "security": "חשבון ואבטחה",
     "activity": "פעילות"
   },

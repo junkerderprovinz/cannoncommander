@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, към файловете",
     "back": "Обратно към файловете",
     "backTip": "Обратно към файловете (Esc)",
-    "layout": "Изглед",
     "singleTip": "Един панел (Ctrl+1)",
     "dualTip": "Два панела (Ctrl+2)",
-    "palette": "Търсене на команда (Ctrl+K)",
     "jobs": "Задачи",
-    "settings": "Настройки",
-    "settingsClose": "Затвори настройките",
     "security": "Акаунт и сигурност",
     "activity": "Активност"
   },

@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, itzuli fitxategietara",
     "back": "Itzuli fitxategietara",
     "backTip": "Itzuli fitxategietara (Esc)",
-    "layout": "Ikuspegia",
     "singleTip": "Panel bat (Ctrl+1)",
     "dualTip": "Bi panel (Ctrl+2)",
-    "palette": "Bilatu komando bat (Ctrl+K)",
     "jobs": "Lanak",
-    "settings": "Ezarpenak",
-    "settingsClose": "Itxi ezarpenak",
     "security": "Kontua eta segurtasuna",
     "activity": "Jarduera"
   },

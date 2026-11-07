@@ -3191,13 +3191,9 @@
     "brand": "CannonCommander, torna als fitxers",
     "back": "Torna als fitxers",
     "backTip": "Torna als fitxers (Esc)",
-    "layout": "Visualització",
     "singleTip": "Un panell (Ctrl+1)",
     "dualTip": "Dos panells (Ctrl+2)",
-    "palette": "Cerca una ordre (Ctrl+K)",
     "jobs": "Tasques",
-    "settings": "Configuració",
-    "settingsClose": "Tanca la configuració",
     "security": "Compte i seguretat",
     "activity": "Activitat"
   },

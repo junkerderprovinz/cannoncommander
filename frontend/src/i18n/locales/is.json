@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, aftur að skránum",
     "back": "Aftur að skránum",
     "backTip": "Aftur að skránum (Esc)",
-    "layout": "Sýn",
     "singleTip": "Einn gluggi (Ctrl+1)",
     "dualTip": "Tveir gluggar (Ctrl+2)",
-    "palette": "Leita að skipun (Ctrl+K)",
     "jobs": "Verk",
-    "settings": "Stillingar",
-    "settingsClose": "Loka stillingum",
     "security": "Aðgangur og öryggi",
     "activity": "Virkni"
   },

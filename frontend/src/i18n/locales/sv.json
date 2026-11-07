@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, tillbaka till filerna",
     "back": "Tillbaka till filerna",
     "backTip": "Tillbaka till filerna (Esc)",
-    "layout": "Vy",
     "singleTip": "En panel (Ctrl+1)",
     "dualTip": "Två paneler (Ctrl+2)",
-    "palette": "Sök kommando (Ctrl+K)",
     "jobs": "Jobb",
-    "settings": "Inställningar",
-    "settingsClose": "Stäng inställningarna",
     "security": "Konto och säkerhet",
     "activity": "Aktivitet"
   },

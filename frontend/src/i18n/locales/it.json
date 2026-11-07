@@ -3191,13 +3191,9 @@
     "brand": "CannonCommander, torna ai file",
     "back": "Torna ai file",
     "backTip": "Torna ai file (Esc)",
-    "layout": "Vista",
     "singleTip": "Un pannello (Ctrl+1)",
     "dualTip": "Due pannelli (Ctrl+2)",
-    "palette": "Cerca comando (Ctrl+K)",
     "jobs": "Lavori",
-    "settings": "Impostazioni",
-    "settingsClose": "Chiudi impostazioni",
     "security": "Account e sicurezza",
     "activity": "Attività"
   },

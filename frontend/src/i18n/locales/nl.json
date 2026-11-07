@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, terug naar de bestanden",
     "back": "Terug naar de bestanden",
     "backTip": "Terug naar de bestanden (Esc)",
-    "layout": "Weergave",
     "singleTip": "Eén paneel (Ctrl+1)",
     "dualTip": "Twee panelen (Ctrl+2)",
-    "palette": "Opdracht zoeken (Ctrl+K)",
     "jobs": "Taken",
-    "settings": "Instellingen",
-    "settingsClose": "Instellingen sluiten",
     "security": "Account en beveiliging",
     "activity": "Activiteit"
   },

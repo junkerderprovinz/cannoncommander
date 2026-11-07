@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, στα αρχεία",
     "back": "Πίσω στα αρχεία",
     "backTip": "Πίσω στα αρχεία (Esc)",
-    "layout": "Προβολή",
     "singleTip": "Ένα πάνελ (Ctrl+1)",
     "dualTip": "Δύο πάνελ (Ctrl+2)",
-    "palette": "Αναζήτηση εντολής (Ctrl+K)",
     "jobs": "Εργασίες",
-    "settings": "Ρυθμίσεις",
-    "settingsClose": "Κλείσιμο ρυθμίσεων",
     "security": "Λογαριασμός και ασφάλεια",
     "activity": "Δραστηριότητα"
   },

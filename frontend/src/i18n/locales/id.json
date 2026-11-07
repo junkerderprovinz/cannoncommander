@@ -2937,13 +2937,9 @@
     "brand": "CannonCommander, ke berkas",
     "back": "Kembali ke berkas",
     "backTip": "Kembali ke berkas (Esc)",
-    "layout": "Tampilan",
     "singleTip": "Satu panel (Ctrl+1)",
     "dualTip": "Dua panel (Ctrl+2)",
-    "palette": "Cari perintah (Ctrl+K)",
     "jobs": "Tugas",
-    "settings": "Pengaturan",
-    "settingsClose": "Tutup pengaturan",
     "security": "Akun & keamanan",
     "activity": "Aktivitas"
   },

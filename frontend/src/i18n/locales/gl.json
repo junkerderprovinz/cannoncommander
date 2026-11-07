@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander, volver aos ficheiros",
     "back": "Volver aos ficheiros",
     "backTip": "Volver aos ficheiros (Esc)",
-    "layout": "Vista",
     "singleTip": "Un panel (Ctrl+1)",
     "dualTip": "Dous paneis (Ctrl+2)",
-    "palette": "Buscar unha orde (Ctrl+K)",
     "jobs": "Tarefas",
-    "settings": "Axustes",
-    "settingsClose": "Pechar os axustes",
     "security": "Conta e seguranza",
     "activity": "Actividade"
   },

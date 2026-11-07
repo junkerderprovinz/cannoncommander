@@ -3191,13 +3191,9 @@
     "brand": "CannonCommander, voltar aos ficheiros",
     "back": "Voltar aos ficheiros",
     "backTip": "Voltar aos ficheiros (Esc)",
-    "layout": "Vista",
     "singleTip": "Um painel (Ctrl+1)",
     "dualTip": "Dois painéis (Ctrl+2)",
-    "palette": "Procurar comando (Ctrl+K)",
     "jobs": "Tarefas",
-    "settings": "Definições",
-    "settingsClose": "Fechar definições",
     "security": "Conta e segurança",
     "activity": "Atividade"
   },

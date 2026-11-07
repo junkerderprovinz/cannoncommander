@@ -3064,13 +3064,9 @@
     "brand": "CannonCommander، بازگشت به پرونده‌ها",
     "back": "بازگشت به پرونده‌ها",
     "backTip": "بازگشت به پرونده‌ها (Esc)",
-    "layout": "نما",
     "singleTip": "یک پنل (Ctrl+1)",
     "dualTip": "دو پنل (Ctrl+2)",
-    "palette": "جست‌وجوی فرمان (Ctrl+K)",
     "jobs": "کارها",
-    "settings": "تنظیمات",
-    "settingsClose": "بستن تنظیمات",
     "security": "حساب و امنیت",
     "activity": "فعالیت"
   },

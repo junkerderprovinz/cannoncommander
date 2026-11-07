@@ -3191,13 +3191,9 @@
     "brand": "CannonCommander, na datoteke",
     "back": "Natrag na datoteke",
     "backTip": "Natrag na datoteke (Esc)",
-    "layout": "Prikaz",
     "singleTip": "Jedan panel (Ctrl+1)",
     "dualTip": "Dva panela (Ctrl+2)",
-    "palette": "Traži naredbu (Ctrl+K)",
     "jobs": "Zadaci",
-    "settings": "Postavke",
-    "settingsClose": "Zatvori postavke",
     "security": "Račun i sigurnost",
     "activity": "Aktivnost"
   },

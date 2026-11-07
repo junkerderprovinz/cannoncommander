@@ -2937,13 +2937,9 @@
     "brand": "CannonCommander, về danh sách tệp",
     "back": "Về danh sách tệp",
     "backTip": "Về danh sách tệp (Esc)",
-    "layout": "Xem",
     "singleTip": "Một khung (Ctrl+1)",
     "dualTip": "Hai khung (Ctrl+2)",
-    "palette": "Tìm lệnh (Ctrl+K)",
     "jobs": "Công việc",
-    "settings": "Cài đặt",
-    "settingsClose": "Đóng cài đặt",
     "security": "Tài khoản và bảo mật",
     "activity": "Hoạt động"
   },
