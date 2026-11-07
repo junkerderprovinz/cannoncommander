@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, vissza a fájlokhoz",
     "back": "Vissza a fájlokhoz",
     "backTip": "Vissza a fájlokhoz (Esc)",
-    "singleTip": "Egy ablak (Ctrl+1)",
-    "dualTip": "Két ablak (Ctrl+2)",
-    "jobs": "Feladatok",
-    "security": "Fiók és biztonság",
+    "toSingle": "Váltás egy ablakra (Ctrl+1)",
+    "toDual": "Váltás két ablakra (Ctrl+2)",
+    "settings": "Beállítások",
+    "running": {
+      "one": "{n} feladat fut",
+      "other": "{n} feladat fut"
+    },
     "activity": "Tevékenység"
   },
   "bottom": {

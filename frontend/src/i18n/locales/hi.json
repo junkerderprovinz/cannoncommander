@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, फ़ाइलों पर वापस",
     "back": "फ़ाइलों पर वापस",
     "backTip": "फ़ाइलों पर वापस (Esc)",
-    "singleTip": "एक पैनल (Ctrl+1)",
-    "dualTip": "दो पैनल (Ctrl+2)",
-    "jobs": "काम",
-    "security": "खाता और सुरक्षा",
+    "toSingle": "एक पैनल पर जाएँ (Ctrl+1)",
+    "toDual": "दो पैनल पर जाएँ (Ctrl+2)",
+    "settings": "सेटिंग्स",
+    "running": {
+      "one": "{n} काम चल रहा है",
+      "other": "{n} काम चल रहे हैं"
+    },
     "activity": "गतिविधि"
   },
   "bottom": {

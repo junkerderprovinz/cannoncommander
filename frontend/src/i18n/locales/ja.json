@@ -2960,10 +2960,12 @@
     "brand": "CannonCommander、ファイルに戻る",
     "back": "ファイルに戻る",
     "backTip": "ファイルに戻る (Esc)",
-    "singleTip": "1パネル (Ctrl+1)",
-    "dualTip": "2パネル (Ctrl+2)",
-    "jobs": "ジョブ",
-    "security": "アカウントとセキュリティ",
+    "toSingle": "1パネルに切り替え (Ctrl+1)",
+    "toDual": "2パネルに切り替え (Ctrl+2)",
+    "settings": "設定",
+    "running": {
+      "other": "{n} 件のジョブを実行中"
+    },
     "activity": "アクティビティ"
   },
   "bottom": {

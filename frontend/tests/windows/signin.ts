@@ -154,8 +154,7 @@ const sessionCookie = async (context: { cookies(): Promise<{ name: string; expir
   // A token from the security tab asks for the password and says so when it is wrong.
   const top = () => page.locator('.win').last();
   const settingsTab = async (name: string) => {
-    await page.locator('.head [data-account]').click();
-    await page.locator('.glim-menu-item', { hasText: 'Einstellungen' }).click();
+    await page.locator('.head [data-run="settings"]').click();
     await page.getByText(name, { exact: true }).first().click();
     await page.waitForTimeout(400);
   };

@@ -16,10 +16,11 @@ svg { display: block; }
 .muted { color: var(--carbon-text-muted); }
 .sub { color: var(--carbon-text-sub); }
 
-/* The room at the bottom matches the prototype, so screenshots of both line up. In the file view without the F-key
-   bar the panels reach down to the same margin as everywhere else. */
+/* The pages keep the prototype's room at the bottom, so screenshots of both line up. The file view keeps the same
+   margin at the bottom as at the top, and the F-key bar and the phone's bottom bar get a row only while they show,
+   since an empty row would still bring its gap. */
 .app { height: 100vh; display: grid; grid-template-rows: auto 1fr auto; gap: var(--gut); padding: var(--gut) var(--gut) 4.75rem; }
-#app:not(.with-fkeys) { padding-bottom: var(--gut); }
+#app { grid-template-rows: auto 1fr; padding-bottom: var(--gut); }
 
 /* Head row: one bar with the brand, the menus and the controls for the whole window. */
 .head { --btn-h: 2.4rem; display: flex; align-items: center; gap: .35rem; min-width: 0; height: 3.4rem; padding: 0 .5rem; }
@@ -45,6 +46,13 @@ svg { display: block; }
    washes in the accent while it is pressed, as GlimStone's IconButton does. */
 .head .glim-btn[aria-pressed="true"] { background-color: var(--accent-soft); color: var(--accent-glyph); }
 .avatar .initials { font-size: 13px; font-weight: 700; line-height: 1; }
+/* The jobs live in the avatar's menu, so the avatar wears their count in its corner while any run. */
+.head .avatar { position: relative; overflow: visible; }
+.head .avatar .count { position: absolute; top: -.3rem; inset-inline-end: -.3rem; min-width: 1.15rem; height: 1.15rem; padding: 0 .3rem; font-size: 11px; box-shadow: 0 0 0 2px var(--carbon-surface); }
+/* The menu titles take the shape and the words of the head's buttons, bare until the pointer is on one or its
+   menu is open. */
+.head .glim-menubar-item { height: var(--btn-h); padding-inline: var(--btn-pad-x); font-size: var(--text-body); font-weight: 500; color: var(--carbon-text); transition: background-color var(--motion-control-dur, .15s); }
+.head .glim-menubar-item:is(:hover, [aria-expanded="true"]) { background-color: var(--carbon-surface3); }
 
 /* Installed with the window controls folded in, the bar takes the title bar's place and drags the window. */
 @media (display-mode: window-controls-overlay) {
@@ -206,7 +214,7 @@ svg { display: block; }
 .narrow-only { display: none !important; }
 @media (max-width: 900px) { .menubar { display: none; } .narrow-only { display: inline-flex !important; } }
 @media (max-width: 760px) {
-  .app, #app:not(.with-fkeys) { padding: .75rem; gap: .75rem; }
+  .app, #app { padding: .75rem; gap: .75rem; }
   .side { position: fixed; z-index: 40; margin-top: 0; inset: .75rem auto 4.5rem .75rem; width: min(20rem, calc(100vw - 1.5rem)); }
   .app:not(.side-open) .side { display: none; }
   .head-layout, .head .hback { display: none; }

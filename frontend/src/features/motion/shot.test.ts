@@ -1,5 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { installTips } from '@/core/tips';
+import { keyframes, rules, sheets } from '@/testing/motionCss';
 import { HOLD } from './cues';
 import { armLogo, fire, stopShot, type Times } from './shot';
 
@@ -67,6 +68,14 @@ describe('the shot across the head', () => {
     expect(flash.style.getPropertyValue('left')).toBe('96px');
     expect(document.querySelectorAll('.fx-gunsmoke').length).toBeGreaterThanOrEqual(4);
     expect(document.querySelector('.fx-puff')).toBeNull();
+  });
+
+  it('trails fire behind the flying ball', () => {
+    fire(head, TIMES);
+    vi.advanceTimersByTime(TIMES.tremble);
+    const shot = document.querySelector('.fx-shot')!;
+    expect(shot.firstElementChild!.classList).toContain('fx-trail');
+    expect(shot.querySelector('svg')).not.toBeNull();
   });
 
   it('sends the ball out of the muzzle rather than from where it lay', () => {
@@ -181,6 +190,12 @@ describe('the press on the logo', () => {
   beforeEach(() => { disarm = armLogo(window, TIMES); });
   afterEach(() => disarm());
 
+  it('starts to tremble within a third of a second of the press', () => {
+    send(brand(), 'pointerdown');
+    vi.advanceTimersByTime(300);
+    expect(head.querySelector('.brand-cannon.fx-tremble')).not.toBeNull();
+  });
+
   it('lets a short click go to the files', () => {
     send(brand(), 'pointerdown');
     vi.advanceTimersByTime(HOLD / 2);
@@ -230,5 +245,29 @@ describe('the press on the logo', () => {
     expect(broken().length).toBeGreaterThan(0);
     window.dispatchEvent(new Event('resize'));
     expect(leftovers()).toBe(0);
+  });
+});
+
+describe('the look of the shot', () => {
+  const css = sheets().find((x) => x.file === 'features/motion/motion.css')!.css;
+  // The swing of every beat of the tremble, as a share of the dial that sets its distance.
+  const beats = () => [...keyframes(css).find((k) => k.name === 'fx-tremble')!.body.matchAll(/([\d.]+)%\s*\{([^}]*)\}/g)]
+    .map((m) => ({ at: +m[1]!, swing: Math.max(...[...m[2]!.matchAll(/--motion-tremble-dist[^)]*\)\s*\*\s*(-?[\d.]+)/g)].map((x) => Math.abs(+x[1]!))), tilt: /--motion-tremble-tilt/.test(m[2]!) }));
+
+  it('trembles visibly from the first beats', () => {
+    expect(beats().filter((b) => b.at <= 10).every((b) => b.swing >= 0.15)).toBe(true);
+  });
+
+  it('shakes hardest and tilts in the last quarter before the shot', () => {
+    const last = beats().filter((b) => b.at >= 75);
+    expect(Math.max(...last.map((b) => b.swing))).toBeGreaterThanOrEqual(1);
+    expect(last.every((b) => b.tilt)).toBe(true);
+  });
+
+  it('burns the muzzle flash and the trail in fire colours rather than the accent', () => {
+    const fiery = rules(css).filter((r) => /\.fx-(flash|trail)\b/.test(r.selector) && /background/.test(r.body));
+    expect(fiery.length).toBeGreaterThanOrEqual(3);
+    expect(fiery.filter((r) => r.body.includes('--accent')).map((r) => r.selector)).toEqual([]);
+    expect(fiery.every((r) => r.body.includes('--fx-fire-'))).toBe(true);
   });
 });

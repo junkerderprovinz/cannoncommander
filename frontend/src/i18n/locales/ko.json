@@ -2960,10 +2960,12 @@
     "brand": "CannonCommander, 파일로 돌아가기",
     "back": "파일로 돌아가기",
     "backTip": "파일로 돌아가기 (Esc)",
-    "singleTip": "한 패널 (Ctrl+1)",
-    "dualTip": "두 패널 (Ctrl+2)",
-    "jobs": "작업",
-    "security": "계정 및 보안",
+    "toSingle": "한 패널로 전환 (Ctrl+1)",
+    "toDual": "두 패널로 전환 (Ctrl+2)",
+    "settings": "설정",
+    "running": {
+      "other": "작업 {n}개 실행 중"
+    },
     "activity": "활동"
   },
   "bottom": {

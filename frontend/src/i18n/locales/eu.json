@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, itzuli fitxategietara",
     "back": "Itzuli fitxategietara",
     "backTip": "Itzuli fitxategietara (Esc)",
-    "singleTip": "Panel bat (Ctrl+1)",
-    "dualTip": "Bi panel (Ctrl+2)",
-    "jobs": "Lanak",
-    "security": "Kontua eta segurtasuna",
+    "toSingle": "Aldatu panel batera (Ctrl+1)",
+    "toDual": "Aldatu bi panelera (Ctrl+2)",
+    "settings": "Ezarpenak",
+    "running": {
+      "one": "Lan {n} martxan",
+      "other": "{n} lan martxan"
+    },
     "activity": "Jarduera"
   },
   "bottom": {

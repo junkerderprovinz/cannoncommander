@@ -3341,10 +3341,15 @@
     "brand": "CannonCommander, k súborom",
     "back": "Späť k súborom",
     "backTip": "Späť k súborom (Esc)",
-    "singleTip": "Jedno okno (Ctrl+1)",
-    "dualTip": "Dve okná (Ctrl+2)",
-    "jobs": "Úlohy",
-    "security": "Účet a zabezpečenie",
+    "toSingle": "Prepnúť na jedno okno (Ctrl+1)",
+    "toDual": "Prepnúť na dve okná (Ctrl+2)",
+    "settings": "Nastavenia",
+    "running": {
+      "one": "Beží {n} úloha",
+      "few": "Bežia {n} úlohy",
+      "many": "Beží {n} úlohy",
+      "other": "Beží {n} úloh"
+    },
     "activity": "Aktivita"
   },
   "bottom": {

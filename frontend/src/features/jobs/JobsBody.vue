@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The jobs window: every job with its progress, the open ones in queue order and movable by arrow, drag or Alt+arrow.
 import { segItems } from '@/ui/kit';
-import { EmptyState, FieldRow, IconButton, Pill, ProgressBar, Selector, SubCard } from '@glimstone/vue';
+import { EmptyState, FieldRow, IconButton, Pill, ProgressBar, Selector, SubCard, useDragArmed } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import type { Job } from '@/api/ops';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
@@ -18,6 +18,8 @@ const MODES = [['serial', t('jobs.serial')], ['parallel', t('jobs.parallel')]] a
 // While a row is dragged the list shows where it would land; the server hears of it on the drop.
 const dragging = ref<Job | null>(null);
 const preview = ref<Job[] | null>(null);
+const list = ref<HTMLElement | null>(null);
+useDragArmed(list, () => dragging.value !== null);
 const rows = computed(() => {
   const open = preview.value ?? jobs.running;
   return [...open, ...jobs.list.filter((j) => !isOpen(j))];
@@ -64,8 +66,8 @@ function dragEnd() {
 <template>
   <SubCard><FieldRow :label="t('jobs.modeLabel')" :hint="t('jobs.modeTip')"><Selector id="jobs-mode" v-model="mode" :items="segItems(MODES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow></SubCard>
   <SubCard id="jobs-body">
-    <template v-if="rows.length">
-      <div v-for="j in rows" :key="j.id" class="job" :class="{ open: isOpen(j), dragging: dragging === j }" :data-job="j.id" :draggable="isOpen(j) ? 'true' : undefined" :tabindex="isOpen(j) ? 0 : undefined"
+    <div v-if="rows.length" ref="list" class="job-list glim-drag-rows">
+      <div v-for="j in rows" :key="j.id" class="job" :class="{ open: isOpen(j), dragging: dragging === j }" :data-held="dragging === j || undefined" :data-job="j.id" :draggable="isOpen(j) ? 'true' : undefined" :tabindex="isOpen(j) ? 0 : undefined"
         :aria-label="t('jobs.aria', { label: jobLabel(j), pct: Math.round(pctOf(j)), state: t(`jobs.state.${j.state}`) })"
         @keydown="keys(j, $event)" @dragstart="dragStart(j, $event)" @dragover="dragOver(j, $event)" @dragend="dragEnd">
         <span class="job-grip" aria-hidden="true"><G v-if="isOpen(j)" n="IconGrip" /></span>
@@ -89,7 +91,7 @@ function dragEnd() {
           <IconButton v-else-if="j.state === 'failed' || j.state === 'cancelled'" :tip="t('jobs.retry')" :glyph="glyphComponent('IconRetry')" data-jact="retry" @click="act(j, 'retry', $event)" />
         </span>
       </div>
-    </template>
+    </div>
     <EmptyState v-else nested :glyph="glyphComponent('IconQueued')" :title="t('jobs.empty')" />
   </SubCard>
 </template>

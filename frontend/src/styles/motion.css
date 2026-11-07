@@ -40,21 +40,25 @@
     --motion-tumble-dur: 2.4s;
     --motion-tumble-hop: 10px;
     /* The cannon in the header logo: how long it trembles before it fires, while the ball rolls into the barrel,
-       and how far it shakes, its kick back, the flash at the muzzle and where the ball strikes (how long and how
-       big), the cloud of smoke (how long, how much it swells and how far it drifts), the ball's way across the head,
-       the shards of what it breaks (how long, how far they fall, how far they fly and how much they turn), the dust
-       where it strikes (how long and how far it flies), and the pause before the head puts itself together and how
-       long that takes. */
+       how far it shakes and how far it rocks at the end, its kick back, the flash at the muzzle and where the ball
+       strikes (how long and how big), the cloud of smoke (how long, how much it swells and how far it drifts), the
+       ball's way across the head and its trail of fire (how many balls long, and how fast it flickers), the shards
+       of what it breaks (how long, how far they fall, how far they fly and how much they turn), the dust where it
+       strikes (how long and how far it flies), and the pause before the head puts itself together and how long
+       that takes. */
     --motion-tremble-dur: 900ms;
-    --motion-tremble-dist: 2px;
+    --motion-tremble-dist: 3.5px;
+    --motion-tremble-tilt: 6deg;
     --motion-kick-dur: 320ms;
     --motion-kick-dist: 6px;
     --motion-flash-dur: 200ms;
-    --motion-flash-size: 1.25;
+    --motion-flash-size: 1.5;
     --motion-gunsmoke-dur: 1.4s;
     --motion-gunsmoke-swell: 2.2;
     --motion-gunsmoke-drift: 38px;
     --motion-shot-dur: 900ms;
+    --motion-trail-length: 3;
+    --motion-trail-flicker: 70ms;
     --motion-shard-dur: 900ms;
     --motion-shard-fall: 70px;
     --motion-shard-spread: 40px;
@@ -95,15 +99,18 @@
     --motion-tumble-dur: 1.8s;
     --motion-tumble-hop: 4px;
     --motion-tremble-dur: 500ms;
-    --motion-tremble-dist: 1px;
+    --motion-tremble-dist: 2px;
+    --motion-tremble-tilt: 3deg;
     --motion-kick-dur: 200ms;
     --motion-kick-dist: 2px;
     --motion-flash-dur: 140ms;
-    --motion-flash-size: .8;
+    --motion-flash-size: .9;
     --motion-gunsmoke-dur: .8s;
     --motion-gunsmoke-swell: 1.5;
     --motion-gunsmoke-drift: 12px;
     --motion-shot-dur: 600ms;
+    --motion-trail-length: 1.5;
+    --motion-trail-flicker: 120ms;
     --motion-shard-dur: 450ms;
     --motion-shard-fall: 14px;
     --motion-shard-spread: 8px;
@@ -146,6 +153,7 @@
     --motion-tumble-hop: 0px;
     --motion-tremble-dur: 0s;
     --motion-tremble-dist: 0px;
+    --motion-tremble-tilt: 0deg;
     --motion-kick-dur: 0s;
     --motion-kick-dist: 0px;
     --motion-flash-dur: 0s;
@@ -154,6 +162,8 @@
     --motion-gunsmoke-swell: 1;
     --motion-gunsmoke-drift: 0px;
     --motion-shot-dur: 0s;
+    --motion-trail-length: 0;
+    --motion-trail-flicker: 0s;
     --motion-shard-dur: 0s;
     --motion-shard-fall: 0px;
     --motion-shard-spread: 0px;
@@ -193,15 +203,18 @@
     --motion-tumble-dur: 1.6s;
     --motion-tumble-hop: 22px;
     --motion-tremble-dur: 1.4s;
-    --motion-tremble-dist: 3.5px;
+    --motion-tremble-dist: 5px;
+    --motion-tremble-tilt: 10deg;
     --motion-kick-dur: 460ms;
     --motion-kick-dist: 11px;
     --motion-flash-dur: 260ms;
-    --motion-flash-size: 1.7;
+    --motion-flash-size: 2;
     --motion-gunsmoke-dur: 2s;
     --motion-gunsmoke-swell: 3;
     --motion-gunsmoke-drift: 64px;
     --motion-shot-dur: 1.2s;
+    --motion-trail-length: 5;
+    --motion-trail-flicker: 50ms;
     --motion-shard-dur: 1.4s;
     --motion-shard-fall: 170px;
     --motion-shard-spread: 110px;

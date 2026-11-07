@@ -2960,10 +2960,12 @@
     "brand": "CannonCommander กลับไปที่ไฟล์",
     "back": "กลับไปที่ไฟล์",
     "backTip": "กลับไปที่ไฟล์ (Esc)",
-    "singleTip": "แผงเดียว (Ctrl+1)",
-    "dualTip": "สองแผง (Ctrl+2)",
-    "jobs": "งาน",
-    "security": "บัญชีและความปลอดภัย",
+    "toSingle": "สลับเป็นแผงเดียว (Ctrl+1)",
+    "toDual": "สลับเป็นสองแผง (Ctrl+2)",
+    "settings": "ตั้งค่า",
+    "running": {
+      "other": "งานกำลังทำอยู่ {n} งาน"
+    },
     "activity": "กิจกรรม"
   },
   "bottom": {

@@ -3214,10 +3214,14 @@
     "brand": "CannonCommander, voltar aos ficheiros",
     "back": "Voltar aos ficheiros",
     "backTip": "Voltar aos ficheiros (Esc)",
-    "singleTip": "Um painel (Ctrl+1)",
-    "dualTip": "Dois painéis (Ctrl+2)",
-    "jobs": "Tarefas",
-    "security": "Conta e segurança",
+    "toSingle": "Mudar para um painel (Ctrl+1)",
+    "toDual": "Mudar para dois painéis (Ctrl+2)",
+    "settings": "Definições",
+    "running": {
+      "one": "{n} tarefa em curso",
+      "many": "{n} de tarefas em curso",
+      "other": "{n} tarefas em curso"
+    },
     "activity": "Atividade"
   },
   "bottom": {

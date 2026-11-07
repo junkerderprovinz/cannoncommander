@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, tilbage til filerne",
     "back": "Tilbage til filerne",
     "backTip": "Tilbage til filerne (Esc)",
-    "singleTip": "Ét panel (Ctrl+1)",
-    "dualTip": "To paneler (Ctrl+2)",
-    "jobs": "Job",
-    "security": "Konto og sikkerhed",
+    "toSingle": "Skift til ét panel (Ctrl+1)",
+    "toDual": "Skift til to paneler (Ctrl+2)",
+    "settings": "Indstillinger",
+    "running": {
+      "one": "{n} job kører",
+      "other": "{n} job kører"
+    },
     "activity": "Aktivitet"
   },
   "bottom": {

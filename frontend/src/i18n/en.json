@@ -38,10 +38,10 @@
     "brand": "CannonCommander, back to the files",
     "back": "Back to the files",
     "backTip": "Back to the files (Esc)",
-    "singleTip": "One panel (Ctrl+1)",
-    "dualTip": "Two panels (Ctrl+2)",
-    "jobs": "Jobs",
-    "security": "Account & security",
+    "toSingle": "Switch to one panel (Ctrl+1)",
+    "toDual": "Switch to two panels (Ctrl+2)",
+    "settings": "Settings",
+    "running": { "one": "{n} job running", "other": "{n} jobs running" },
     "activity": "Activity"
   },
   "bottom": {

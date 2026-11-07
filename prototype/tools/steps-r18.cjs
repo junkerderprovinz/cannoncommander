@@ -1,7 +1,7 @@
 // Round 18: the title bar, the pins on the shortcuts and the house colour picker with name suggestions.
 module.exports = async (page, shot) => {
   const wait = (ms = 350) => page.waitForTimeout(ms);
-  // The app keeps the command search and the settings in the avatar's menu, the prototype has them in the head bar.
+  // The app keeps the command search in the avatar's menu, the prototype has it in the head bar.
   const head = async (sel, entry) => {
     if (await page.$(`.head ${sel}`)) return page.click(`.head ${sel}`);
     await page.click('.head [data-account]'); await page.waitForTimeout(200);

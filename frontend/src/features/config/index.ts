@@ -25,6 +25,8 @@ import NewsWin from './wins/NewsWin.vue';
 
 export default function setup() {
   const tab = (id: string, g: string, order: number, component: typeof General) => settingsTab({ id, label: tl(`config.tabs.${id}`), g, order, component });
+  // The account comes first, as the one part of the settings that is everybody's own.
+  tab('security', 'IconTabSecurity', 5, Security);
   tab('general', 'IconTabGeneral', 10, General);
   tab('look', 'IconTabLook', 20, Look);
   tab('files', 'IconFiles', 30, FileList);
@@ -33,7 +35,6 @@ export default function setup() {
   tab('users', 'IconAccounts', 60, Users);
   tab('rules', 'IconShieldOn', 70, Rules);
   tab('shares', 'IconLink', 80, Shares);
-  tab('security', 'IconTabSecurity', 90, Security);
   tab('integrations', 'IconModules', 100, Integrations);
   tab('app', 'IconTabApp', 110, App);
   tab('info', 'IconInfo', 120, Info);

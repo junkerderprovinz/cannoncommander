@@ -2960,10 +2960,12 @@
     "brand": "CannonCommander, ke berkas",
     "back": "Kembali ke berkas",
     "backTip": "Kembali ke berkas (Esc)",
-    "singleTip": "Satu panel (Ctrl+1)",
-    "dualTip": "Dua panel (Ctrl+2)",
-    "jobs": "Tugas",
-    "security": "Akun & keamanan",
+    "toSingle": "Beralih ke satu panel (Ctrl+1)",
+    "toDual": "Beralih ke dua panel (Ctrl+2)",
+    "settings": "Pengaturan",
+    "running": {
+      "other": "{n} tugas berjalan"
+    },
     "activity": "Aktivitas"
   },
   "bottom": {

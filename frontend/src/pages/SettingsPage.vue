@@ -6,7 +6,7 @@ const remembered: { id?: string } = {};
 <script setup lang="ts">
 // Settings: a column of tiles beside the content, the tab selector turned on its side, and only the content scrolls.
 // A tile can be dragged to another place in the column; the order is kept like any other pref.
-import { Card } from '@glimstone/vue';
+import { Card, useDragArmed } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import { labelOf } from '@/core/actions';
 import { G } from '@/core/glyphs';
@@ -26,6 +26,7 @@ watch(() => cur.value?.id, async () => {
 }, { immediate: true });
 
 const dragging = ref<string | null>(null);
+useDragArmed(tiles, () => dragging.value !== null);
 const order = ref<string[] | null>(null);
 const shown = computed(() => (order.value ? order.value.map((id) => tabs.value.find((x) => x.id === id)!) : tabs.value));
 
@@ -59,7 +60,7 @@ function end() {
   </div>
   <div v-else class="settings">
     <nav ref="tiles" class="tiles" role="tablist" aria-orientation="vertical" :aria-label="t('settings.title')">
-      <button v-for="tab in shown" :key="tab.id" class="stile" :class="{ cur: tab.id === cur.id, dragging: tab.id === dragging }" role="tab" :aria-selected="tab.id === cur.id" draggable="true" :data-stab="tab.id" :data-tip="labelOf(tab)"
+      <button v-for="tab in shown" :key="tab.id" class="stile" :class="{ cur: tab.id === cur.id, dragging: tab.id === dragging }" :data-held="tab.id === dragging || undefined" role="tab" :aria-selected="tab.id === cur.id" draggable="true" :data-stab="tab.id" :data-tip="labelOf(tab)"
         @click="go('settings', tab.id)" @dragstart="start($event, tab.id)" @dragover="over($event, tab.id)" @dragend="end"><G :n="tab.g" /><span>{{ labelOf(tab) }}</span></button>
     </nav>
     <div id="settings-body" class="settings-body"><div id="settings-col" class="settings-col"><component :is="cur.component" :key="cur.id" /></div></div>

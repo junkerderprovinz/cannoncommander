@@ -59,32 +59,41 @@
 }
 @keyframes fx-weed-roll { from { rotate: -900deg; } to { rotate: 0deg; } }
 
-/* The cannon trembles harder and harder until it fires: the same shake, a little wider each time. */
+/* The cannon trembles from the first moment of the press and harder with every beat, rocking more and more toward
+   the end, until it fires: the same shake, wider and more tilted each time. */
 @keyframes fx-tremble {
-  4.2% { translate: calc(var(--motion-tremble-dist, 2px) * 0.01) calc(var(--motion-tremble-dist, 2px) * 0.0); }
-  8.3% { translate: calc(var(--motion-tremble-dist, 2px) * -0.03) calc(var(--motion-tremble-dist, 2px) * -0.01); }
-  12.5% { translate: calc(var(--motion-tremble-dist, 2px) * 0.04) calc(var(--motion-tremble-dist, 2px) * 0.03); }
-  16.7% { translate: calc(var(--motion-tremble-dist, 2px) * -0.05) calc(var(--motion-tremble-dist, 2px) * -0.02); }
-  20.8% { translate: calc(var(--motion-tremble-dist, 2px) * 0.11) calc(var(--motion-tremble-dist, 2px) * -0.07); }
-  25% { translate: calc(var(--motion-tremble-dist, 2px) * -0.13) calc(var(--motion-tremble-dist, 2px) * 0.06); }
-  29.2% { translate: calc(var(--motion-tremble-dist, 2px) * 0.09) calc(var(--motion-tremble-dist, 2px) * -0.05); }
-  33.3% { translate: calc(var(--motion-tremble-dist, 2px) * -0.21) calc(var(--motion-tremble-dist, 2px) * 0.1); }
-  37.5% { translate: calc(var(--motion-tremble-dist, 2px) * 0.23) calc(var(--motion-tremble-dist, 2px) * -0.15); }
-  41.7% { translate: calc(var(--motion-tremble-dist, 2px) * -0.2) calc(var(--motion-tremble-dist, 2px) * 0.06); }
-  45.8% { translate: calc(var(--motion-tremble-dist, 2px) * 0.34) calc(var(--motion-tremble-dist, 2px) * 0.17); }
-  50% { translate: calc(var(--motion-tremble-dist, 2px) * -0.3) calc(var(--motion-tremble-dist, 2px) * -0.15); }
-  54.2% { translate: calc(var(--motion-tremble-dist, 2px) * 0.25) calc(var(--motion-tremble-dist, 2px) * 0.25); }
-  58.3% { translate: calc(var(--motion-tremble-dist, 2px) * -0.47) calc(var(--motion-tremble-dist, 2px) * -0.14); }
-  62.5% { translate: calc(var(--motion-tremble-dist, 2px) * 0.47) calc(var(--motion-tremble-dist, 2px) * -0.26); }
-  66.7% { translate: calc(var(--motion-tremble-dist, 2px) * -0.28) calc(var(--motion-tremble-dist, 2px) * 0.34); }
-  70.8% { translate: calc(var(--motion-tremble-dist, 2px) * 0.62) calc(var(--motion-tremble-dist, 2px) * -0.12); }
-  75% { translate: calc(var(--motion-tremble-dist, 2px) * -0.6) calc(var(--motion-tremble-dist, 2px) * 0.27); }
-  79.2% { translate: calc(var(--motion-tremble-dist, 2px) * 0.5) calc(var(--motion-tremble-dist, 2px) * -0.43); }
-  83.3% { translate: calc(var(--motion-tremble-dist, 2px) * -0.77) calc(var(--motion-tremble-dist, 2px) * 0.23); }
-  87.5% { translate: calc(var(--motion-tremble-dist, 2px) * 0.66) calc(var(--motion-tremble-dist, 2px) * -0.41); }
-  91.7% { translate: calc(var(--motion-tremble-dist, 2px) * -0.89) calc(var(--motion-tremble-dist, 2px) * 0.36); }
-  95.8% { translate: calc(var(--motion-tremble-dist, 2px) * 0.94) calc(var(--motion-tremble-dist, 2px) * -0.28); }
-  to { translate: none; }
+  3.125% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.19) calc(var(--motion-tremble-dist, 3.5px) * -0.06); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.15); }
+  6.25% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.20) calc(var(--motion-tremble-dist, 3.5px) * -0.08); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.15); }
+  9.375% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.21) calc(var(--motion-tremble-dist, 3.5px) * -0.03); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.15); }
+  12.5% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.21) calc(var(--motion-tremble-dist, 3.5px) * 0.00); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.16); }
+  15.62% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.23) calc(var(--motion-tremble-dist, 3.5px) * -0.02); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.17); }
+  18.75% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.24) calc(var(--motion-tremble-dist, 3.5px) * -0.10); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.17); }
+  21.88% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.27) calc(var(--motion-tremble-dist, 3.5px) * 0.08); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.18); }
+  25% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.28) calc(var(--motion-tremble-dist, 3.5px) * -0.08); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.19); }
+  28.12% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.32) calc(var(--motion-tremble-dist, 3.5px) * 0.13); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.21); }
+  31.25% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.34) calc(var(--motion-tremble-dist, 3.5px) * -0.03); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.22); }
+  34.38% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.38) calc(var(--motion-tremble-dist, 3.5px) * -0.16); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.24); }
+  37.5% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.40) calc(var(--motion-tremble-dist, 3.5px) * -0.08); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.25); }
+  40.62% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.40) calc(var(--motion-tremble-dist, 3.5px) * -0.15); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.27); }
+  43.75% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.43) calc(var(--motion-tremble-dist, 3.5px) * 0.13); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.30); }
+  46.88% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.46) calc(var(--motion-tremble-dist, 3.5px) * 0.04); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.32); }
+  50% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.51) calc(var(--motion-tremble-dist, 3.5px) * -0.06); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.35); }
+  53.12% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.54) calc(var(--motion-tremble-dist, 3.5px) * -0.22); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.37); }
+  56.25% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.54) calc(var(--motion-tremble-dist, 3.5px) * -0.16); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.40); }
+  59.38% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.61) calc(var(--motion-tremble-dist, 3.5px) * -0.04); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.44); }
+  62.5% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.63) calc(var(--motion-tremble-dist, 3.5px) * 0.05); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.47); }
+  65.62% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.67) calc(var(--motion-tremble-dist, 3.5px) * -0.13); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.51); }
+  68.75% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.73) calc(var(--motion-tremble-dist, 3.5px) * 0.13); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.54); }
+  71.88% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.73) calc(var(--motion-tremble-dist, 3.5px) * 0.05); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.59); }
+  75% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.79) calc(var(--motion-tremble-dist, 3.5px) * 0.28); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.63); }
+  78.12% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.85) calc(var(--motion-tremble-dist, 3.5px) * -0.17); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.67); }
+  81.25% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.92) calc(var(--motion-tremble-dist, 3.5px) * -0.32); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.72); }
+  84.38% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.91) calc(var(--motion-tremble-dist, 3.5px) * 0.22); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.77); }
+  87.5% { translate: calc(var(--motion-tremble-dist, 3.5px) * -0.92) calc(var(--motion-tremble-dist, 3.5px) * -0.01); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.82); }
+  90.62% { translate: calc(var(--motion-tremble-dist, 3.5px) * 0.95) calc(var(--motion-tremble-dist, 3.5px) * 0.16); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.87); }
+  93.75% { translate: calc(var(--motion-tremble-dist, 3.5px) * -1.08) calc(var(--motion-tremble-dist, 3.5px) * 0.07); rotate: calc(var(--motion-tremble-tilt, 6deg) * -0.93); }
+  96.88% { translate: calc(var(--motion-tremble-dist, 3.5px) * 1.14) calc(var(--motion-tremble-dist, 3.5px) * -0.19); rotate: calc(var(--motion-tremble-tilt, 6deg) * 0.99); }
+  to { translate: none; rotate: none; }
 }
 @keyframes fx-kick {
   12% { translate: calc(var(--motion-kick-dist, 6px) * -1) 0; }
@@ -99,6 +108,15 @@
   from { opacity: 1; scale: .2; }
   30% { opacity: 1; scale: var(--motion-flash-size, 1.25); }
   to { opacity: 0; scale: calc(var(--motion-flash-size, 1.25) * 1.2); }
+}
+/* The ball's trail of fire grows out of the muzzle as it leaves and flickers while it flies. */
+@keyframes fx-trail {
+  from { scale: 0 1; }
+  15% { scale: 1 1; }
+}
+@keyframes fx-flicker {
+  from { opacity: .75; scale: .85 .8; }
+  to { opacity: 1; scale: 1 1.1; }
 }
 @keyframes fx-gunsmoke {
   from { opacity: 0; scale: .25; }
@@ -205,21 +223,27 @@
     transform-box: fill-box; transform-origin: center;
     animation: fx-load calc(var(--motion-tremble-dur, 900ms) * .7) cubic-bezier(.45, 0, .55, 1) calc(var(--motion-tremble-dur, 900ms) * .1) both;
   }
+  /* Fire is the one thing here in colours of its own rather than the theme's: a white core, yellow, orange, and red
+     at the edges, the same on a dark ground and a light one. */
+  .fx-flash, .fx-shot {
+    --fx-fire-core: #fffbe6; --fx-fire-yellow: #ffd23f; --fx-fire-orange: #ff8a1f; --fx-fire-red: #e3341b;
+  }
   /* Pointing the way the ball goes, from a point at the muzzle. The glow is round, the flare jagged. */
   .fx-flash {
     width: calc(var(--fx-size) * 2.2); height: calc(var(--fx-size) * 1.5); margin-top: calc(var(--fx-size) * -.75);
     transform-origin: left center; rotate: var(--fx-turn, 0deg);
+    filter: drop-shadow(0 0 calc(var(--fx-size) * .3) color-mix(in srgb, var(--fx-fire-orange) 70%, transparent));
     animation: fx-flash var(--motion-flash-dur, 200ms) ease-out both;
   }
   .fx-flash::before, .fx-flash::after { content: ""; position: absolute; }
   .fx-flash::before {
     inset: 5% 35% 5% -25%; border-radius: 50%;
-    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 55%, #fff), color-mix(in srgb, var(--accent) 40%, transparent) 60%, transparent);
+    background: radial-gradient(closest-side, var(--fx-fire-core), var(--fx-fire-yellow) 25%, color-mix(in srgb, var(--fx-fire-orange) 85%, transparent) 50%, color-mix(in srgb, var(--fx-fire-red) 50%, transparent) 75%, transparent);
   }
   .fx-flash::after {
     inset: 0;
     clip-path: polygon(0% 50%, 14% 32%, 18% 6%, 32% 27%, 48% 0%, 54% 30%, 76% 18%, 66% 42%, 100% 50%, 66% 58%, 76% 82%, 54% 70%, 48% 100%, 32% 73%, 18% 94%, 14% 68%);
-    background: radial-gradient(ellipse 60% 55% at 22% 50%, #fff 0 22%, color-mix(in srgb, var(--accent) 35%, #fff) 40%, var(--accent) 70%, color-mix(in srgb, var(--accent) 50%, transparent));
+    background: radial-gradient(ellipse 60% 55% at 22% 50%, var(--fx-fire-core) 0 16%, var(--fx-fire-yellow) 32%, var(--fx-fire-orange) 55%, var(--fx-fire-red) 80%, color-mix(in srgb, var(--fx-fire-red) 40%, transparent));
   }
   .fx-gunsmoke, .fx-dust, .fx-impact { width: var(--fx-size); height: var(--fx-size); margin: calc(var(--fx-size) / -2) 0 0 calc(var(--fx-size) / -2); border-radius: 50%; }
   .fx-gunsmoke {
@@ -241,6 +265,20 @@
   .head .fx-rebuild { animation: fx-rebuild var(--motion-rebuild-dur, 420ms) cubic-bezier(.2, .8, .3, 1.2) both; }
   .fx-shot { animation: fx-shot var(--motion-shot-dur, 900ms) linear both; scale: var(--fx-flip, 1) 1; }
   .fx-shot svg { width: 100%; height: 100%; animation: fx-roll var(--motion-shot-dur, 900ms) linear both; }
+  /* Behind the ball in the shot's own frame, which the flip turns round for a shot to the left. Its far end fades
+     out, and the ball covers the near one. */
+  .fx-trail {
+    position: absolute; top: 20%; bottom: 20%; right: 35%; width: calc(var(--motion-trail-length, 3) * 100%);
+    border-radius: 50%; transform-origin: right center;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fx-fire-red) 70%, transparent) 30%, var(--fx-fire-orange) 65%, var(--fx-fire-yellow) 92%);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--fx-fire-orange) 60%, transparent));
+    animation: fx-trail var(--motion-shot-dur, 900ms) cubic-bezier(.2, .7, .3, 1) both;
+  }
+  .fx-trail::before {
+    content: ""; position: absolute; top: 25%; bottom: 25%; left: 40%; right: 0; border-radius: 50%; transform-origin: right center;
+    background: linear-gradient(90deg, transparent, var(--fx-fire-yellow) 55%, var(--fx-fire-core));
+    animation: fx-flicker var(--motion-trail-flicker, 70ms) ease-in-out infinite alternate;
+  }
   .fx-shards { display: block; position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }
   .fx-shards > * { position: absolute; }
   /* The pieces nearest the strike leave first, so the burst spreads from where the ball hit. */

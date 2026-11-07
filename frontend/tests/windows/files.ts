@@ -50,6 +50,24 @@ await page.goto(app);
 check('the shim is ready', await until('document.documentElement.dataset.e2e === "ready"', 120000));
 await wait(600);
 
+// The last card of the file view keeps the same margin to the bottom as the head keeps to the top, with the F-key
+// bar and without it, on a wide window and on a phone.
+const margins = () => page.evaluate(() => {
+  const last = [...document.querySelectorAll('#app > *')].filter((el) => el.getClientRects().length).at(-1)!;
+  return { top: Math.round(document.querySelector('.head')!.getBoundingClientRect().top), bottom: Math.round(innerHeight - last.getBoundingClientRect().bottom) };
+});
+for (const size of [{ width: 1908, height: 960 }, { width: 390, height: 844 }]) {
+  await page.setViewportSize(size);
+  for (const bar of [true, false]) {
+    if (await page.evaluate('CC.prefs.fkeys') !== bar) await runAction('fkeys');
+    await wait(300);
+    const m = await margins();
+    check(`at ${size.width} px ${bar ? 'with' : 'without'} the F-key bar the last card sits on the bottom margin`, m.bottom === m.top, m);
+  }
+}
+await page.setViewportSize({ width: 1600, height: 950 });
+await wait(300);
+
 // Mehrfach umbenennen: the preview comes from the server's dry run, metadata tokens included.
 await at('/mnt/user/fotos/Urlaub', []);
 await page.evaluate('Files.T().marked = new Set(Files.entries().filter((k) => !k.dir).slice(0, 4).map((k) => k.name))');
@@ -220,8 +238,7 @@ const links = (await api('GET', '/shares')) as { paths: string[]; password: bool
 check('the server keeps the link', links.some((s) => s.paths[0] === '/mnt/user/dokumente/Mietvertrag.pdf' && s.password), links);
 
 // The message for the visitors can be changed later in Einstellungen, Freigaben.
-await page.locator('.head [data-account]').click();
-await page.locator('.glim-menu-item', { hasText: 'Einstellungen' }).click();
+await page.locator('.head [data-run="settings"]').click();
 await page.getByText('Freigaben', { exact: true }).first().click();
 await wait(400);
 await page.locator('.a-list').getByText('Mietvertrag.pdf', { exact: true }).first().click();

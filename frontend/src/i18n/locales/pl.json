@@ -3341,10 +3341,15 @@
     "brand": "CannonCommander, do plików",
     "back": "Wróć do plików",
     "backTip": "Wróć do plików (Esc)",
-    "singleTip": "Jedno okno (Ctrl+1)",
-    "dualTip": "Dwa okna (Ctrl+2)",
-    "jobs": "Zadania",
-    "security": "Konto i bezpieczeństwo",
+    "toSingle": "Przełącz na jedno okno (Ctrl+1)",
+    "toDual": "Przełącz na dwa okna (Ctrl+2)",
+    "settings": "Ustawienia",
+    "running": {
+      "one": "Trwa {n} zadanie",
+      "few": "Trwają {n} zadania",
+      "many": "Trwa {n} zadań",
+      "other": "Trwa {n} zadania"
+    },
     "activity": "Aktywność"
   },
   "bottom": {

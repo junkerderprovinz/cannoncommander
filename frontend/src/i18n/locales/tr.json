@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, dosyalara dön",
     "back": "Dosyalara dön",
     "backTip": "Dosyalara dön (Esc)",
-    "singleTip": "Tek panel (Ctrl+1)",
-    "dualTip": "İki panel (Ctrl+2)",
-    "jobs": "İşler",
-    "security": "Hesap ve güvenlik",
+    "toSingle": "Tek panele geç (Ctrl+1)",
+    "toDual": "İki panele geç (Ctrl+2)",
+    "settings": "Ayarlar",
+    "running": {
+      "one": "{n} iş çalışıyor",
+      "other": "{n} iş çalışıyor"
+    },
     "activity": "Etkinlik"
   },
   "bottom": {

@@ -2960,10 +2960,12 @@
     "brand": "CannonCommander，返回文件",
     "back": "返回文件",
     "backTip": "返回文件（Esc）",
-    "singleTip": "单面板（Ctrl+1）",
-    "dualTip": "双面板（Ctrl+2）",
-    "jobs": "任务",
-    "security": "账户和安全",
+    "toSingle": "切换为单面板（Ctrl+1）",
+    "toDual": "切换为双面板（Ctrl+2）",
+    "settings": "设置",
+    "running": {
+      "other": "{n} 个任务正在运行"
+    },
     "activity": "活动"
   },
   "bottom": {

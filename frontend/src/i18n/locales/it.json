@@ -3214,10 +3214,14 @@
     "brand": "CannonCommander, torna ai file",
     "back": "Torna ai file",
     "backTip": "Torna ai file (Esc)",
-    "singleTip": "Un pannello (Ctrl+1)",
-    "dualTip": "Due pannelli (Ctrl+2)",
-    "jobs": "Lavori",
-    "security": "Account e sicurezza",
+    "toSingle": "Passa a un pannello (Ctrl+1)",
+    "toDual": "Passa a due pannelli (Ctrl+2)",
+    "settings": "Impostazioni",
+    "running": {
+      "one": "{n} lavoro in corso",
+      "many": "{n} di lavori in corso",
+      "other": "{n} lavori in corso"
+    },
     "activity": "Attività"
   },
   "bottom": {

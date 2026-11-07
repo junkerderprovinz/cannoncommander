@@ -39,7 +39,9 @@ module.exports = async (page, shot) => {
   console.log('shortcut window has Strg+K:', await page.locator('.kb-row', { hasText: 'Befehl suchen' }).first().evaluate(r => r.innerText.replace(/\s+/g, ' ')));
   await page.keyboard.press('Escape'); await wait();
 
-  const tabs = await page.evaluate(() => CC.orderedTabs().map(t => t.id));
+  // The app lists the account first and the prototype among the others, so both walk the tabs in the prototype's order.
+  const ORDER = ['general', 'look', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'security', 'integrations', 'app', 'info'];
+  const tabs = (await page.evaluate(() => CC.orderedTabs().map(t => t.id))).sort((x, y) => ORDER.indexOf(x) - ORDER.indexOf(y));
   for (const width of [1600, 1200]) {
     await page.setViewportSize({ width, height: 950 });
     for (const id of tabs) {

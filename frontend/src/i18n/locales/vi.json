@@ -2960,10 +2960,12 @@
     "brand": "CannonCommander, về danh sách tệp",
     "back": "Về danh sách tệp",
     "backTip": "Về danh sách tệp (Esc)",
-    "singleTip": "Một khung (Ctrl+1)",
-    "dualTip": "Hai khung (Ctrl+2)",
-    "jobs": "Công việc",
-    "security": "Tài khoản và bảo mật",
+    "toSingle": "Chuyển sang một khung (Ctrl+1)",
+    "toDual": "Chuyển sang hai khung (Ctrl+2)",
+    "settings": "Cài đặt",
+    "running": {
+      "other": "{n} công việc đang chạy"
+    },
     "activity": "Hoạt động"
   },
   "bottom": {
