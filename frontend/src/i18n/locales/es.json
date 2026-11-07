@@ -1853,6 +1853,10 @@
       "esc": {
         "label": "Cerrar",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Hacer zoom en la vista",
+        "key": "{mod}+rueda"
       }
     }
   },
@@ -3492,7 +3496,7 @@
     "foundIn": "en {path}",
     "searchTip": "Buscar en esta carpeta y por debajo (Ctrl+F o /)",
     "labelsTip": "Etiquetas: buscar por color o palabra clave",
-    "viewTip": "Vista: {name}",
+    "viewTip": "Vista: {name}. Mantén {mod} y gira la rueda para hacer zoom.",
     "equalTip": "El otro panel a esta carpeta (Ctrl+.)",
     "recent": "Visitadas recientemente",
     "noHistory": "Aún no hay historial",

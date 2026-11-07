@@ -1731,6 +1731,10 @@
       "esc": {
         "label": "Tutup",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Zum paparan",
+        "key": "{mod}+roda tetikus"
       }
     }
   },
@@ -3230,7 +3234,7 @@
     "foundIn": "dalam {path}",
     "searchTip": "Cari dalam folder ini dan di bawahnya (Ctrl+F atau /)",
     "labelsTip": "Label: cari mengikut warna atau tag",
-    "viewTip": "Paparan: {name}",
+    "viewTip": "Paparan: {name}. Tahan {mod} dan putar roda tetikus untuk zum.",
     "equalTip": "Panel lain ke folder ini (Ctrl+.)",
     "recent": "Terakhir dilawati",
     "noHistory": "Belum ada sejarah",

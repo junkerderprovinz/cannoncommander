@@ -1853,6 +1853,10 @@
       "esc": {
         "label": "Închide",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Zoom pe vizualizare",
+        "key": "{mod}+rotiță"
       }
     }
   },
@@ -3492,7 +3496,7 @@
     "foundIn": "în {path}",
     "searchTip": "Caută în acest dosar și dedesubt (Ctrl+F sau /)",
     "labelsTip": "Etichete: caută după culoare sau etichetă",
-    "viewTip": "Vizualizare: {name}",
+    "viewTip": "Vizualizare: {name}. Ține apăsat {mod} și rotește rotița pentru zoom.",
     "equalTip": "Celălalt panou la acest dosar (Ctrl+.)",
     "recent": "Vizitate recent",
     "noHistory": "Încă niciun istoric",

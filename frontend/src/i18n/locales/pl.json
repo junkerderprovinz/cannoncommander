@@ -1914,6 +1914,10 @@
       "esc": {
         "label": "Zamknij",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Powiększanie widoku",
+        "key": "{mod}+kółko"
       }
     }
   },
@@ -3623,7 +3627,7 @@
     "foundIn": "w {path}",
     "searchTip": "Szukaj w tym folderze i niżej (Ctrl+F lub /)",
     "labelsTip": "Oznaczenia: szukaj według koloru lub tagu",
-    "viewTip": "Widok: {name}",
+    "viewTip": "Widok: {name}. Przytrzymaj {mod} i obróć kółko, aby powiększyć lub pomniejszyć.",
     "equalTip": "Drugie okno na ten folder (Ctrl+.)",
     "recent": "Ostatnio odwiedzane",
     "noHistory": "Jeszcze brak historii",

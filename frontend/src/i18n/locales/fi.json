@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Sulje",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Zoomaa näkymää",
+        "key": "{mod}+rulla"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "kohteessa {path}",
     "searchTip": "Hae tästä kansiosta ja sen alta (Ctrl+F tai /)",
     "labelsTip": "Merkinnät: hae värin tai tunnisteen mukaan",
-    "viewTip": "Näkymä: {name}",
+    "viewTip": "Näkymä: {name}. Zoomaa pitämällä {mod} pohjassa ja pyörittämällä rullaa.",
     "equalTip": "Toinen paneeli tähän kansioon (Ctrl+.)",
     "recent": "Viimeksi käydyt",
     "noHistory": "Ei vielä historiaa",

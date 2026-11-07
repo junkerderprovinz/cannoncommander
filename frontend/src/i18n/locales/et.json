@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Sulge",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Vaate suumimine",
+        "key": "{mod}+rullik"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "asukohas {path}",
     "searchTip": "Otsi selles kaustas ja selle all (Ctrl+F või /)",
     "labelsTip": "Märgistused: otsi värvi või sildi järgi",
-    "viewTip": "Vaade: {name}",
+    "viewTip": "Vaade: {name}. Hoia {mod} all ja keera rullikut, et suumida.",
     "equalTip": "Teine paneel sellesse kausta (Ctrl+.)",
     "recent": "Hiljuti külastatud",
     "noHistory": "Ajalugu veel pole",

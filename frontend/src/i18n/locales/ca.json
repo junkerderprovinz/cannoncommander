@@ -1853,6 +1853,10 @@
       "esc": {
         "label": "Tanca",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Fer zoom a la visualització",
+        "key": "{mod}+roda"
       }
     }
   },
@@ -3492,7 +3496,7 @@
     "foundIn": "a {path}",
     "searchTip": "Cerca en aquesta carpeta i a sota (Ctrl+F o /)",
     "labelsTip": "Etiquetes: cerca per color o paraula clau",
-    "viewTip": "Visualització: {name}",
+    "viewTip": "Visualització: {name}. Manteniu {mod} i gireu la roda per fer zoom.",
     "equalTip": "L'altre panell a aquesta carpeta (Ctrl+.)",
     "recent": "Visitades recentment",
     "noHistory": "Encara no hi ha historial",

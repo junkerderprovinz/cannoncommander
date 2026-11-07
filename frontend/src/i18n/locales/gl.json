@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Pechar",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Facer zoom na vista",
+        "key": "{mod}+roda"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "en {path}",
     "searchTip": "Buscar neste cartafol e por debaixo (Ctrl+F ou /)",
     "labelsTip": "Etiquetas: buscar por cor ou etiqueta",
-    "viewTip": "Vista: {name}",
+    "viewTip": "Vista: {name}. Mantén {mod} e xira a roda para facer zoom.",
     "equalTip": "O outro panel a este cartafol (Ctrl+.)",
     "recent": "Visitados recentemente",
     "noHistory": "Aínda non hai historial",

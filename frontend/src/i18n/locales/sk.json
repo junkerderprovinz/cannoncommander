@@ -1914,6 +1914,10 @@
       "esc": {
         "label": "Zavrieť",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Priblížiť alebo oddialiť zobrazenie",
+        "key": "{mod}+koliesko"
       }
     }
   },
@@ -3623,7 +3627,7 @@
     "foundIn": "v {path}",
     "searchTip": "Hľadať v tomto priečinku a nižšie (Ctrl+F alebo /)",
     "labelsTip": "Označenia: hľadať podľa farby alebo štítka",
-    "viewTip": "Zobrazenie: {name}",
+    "viewTip": "Zobrazenie: {name}. Podržte {mod} a otáčajte kolieskom myši, tým zobrazenie priblížite alebo oddialite.",
     "equalTip": "Druhé okno na tento priečinok (Ctrl+.)",
     "recent": "Naposledy navštívené",
     "noHistory": "Zatiaľ žiadna história",

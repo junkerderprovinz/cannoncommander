@@ -1731,6 +1731,10 @@
       "esc": {
         "label": "Đóng",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Thu phóng kiểu xem",
+        "key": "{mod}+con lăn chuột"
       }
     }
   },
@@ -3230,7 +3234,7 @@
     "foundIn": "trong {path}",
     "searchTip": "Tìm trong thư mục này và bên dưới (Ctrl+F hoặc /)",
     "labelsTip": "Nhãn: tìm theo màu hoặc thẻ",
-    "viewTip": "Kiểu xem: {name}",
+    "viewTip": "Kiểu xem: {name}. Giữ {mod} và xoay con lăn chuột để thu phóng.",
     "equalTip": "Khung kia sang thư mục này (Ctrl+.)",
     "recent": "Đã mở gần đây",
     "noHistory": "Chưa có lịch sử",
