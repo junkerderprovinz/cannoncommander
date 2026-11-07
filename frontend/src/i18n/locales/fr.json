@@ -1101,6 +1101,9 @@
       "webdavRclone": "WebDAV et rclone",
       "webdav": "Serveur WebDAV",
       "webdavTip": "Permet de monter les fichiers comme un lecteur, dans l'Explorateur Windows ou une application mobile par exemple. Les mêmes utilisateurs et règles s'appliquent.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal dans le navigateur",
+      "terminalTip": "Les admins y ouvrent un shell dans le dossier qu'ils regardent, aussi en tapant cmd ou bash dans la barre de chemin. Il tourne dans le conteneur avec les droits de CannonCommander. Qui l'ouvre peut faire sur le serveur tout ce que CannonCommander a le droit de faire.",
       "address": "Adresse",
       "rcloneTip": "Monte les stockages distants. Le programme est fourni avec le conteneur.",
       "notFound": "Introuvable",
@@ -1304,7 +1307,9 @@
         "passkeyRegister": "clé d'accès ajoutée",
         "passkeyDelete": "clé d'accès retirée",
         "tokenCreate": "jeton créé",
-        "tokenDelete": "jeton révoqué"
+        "tokenDelete": "jeton révoqué",
+        "terminalOpen": "terminal ouvert",
+        "terminalClose": "terminal fermé"
       },
       "target": "Vers {path}.",
       "from": "Depuis {ip}."
@@ -2501,6 +2506,24 @@
         "label": "Fermer le filtre, le menu ou la fenêtre",
         "key": "Échap"
       }
+    }
+  },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Ouvrir un terminal ici",
+    "another": "Un autre terminal",
+    "adminsOnly": "Seuls les admins peuvent ouvrir le terminal.",
+    "off": "Le terminal est encore désactivé. Vous pouvez l'activer dans Réglages, Intégrations.",
+    "toSettings": "Aller aux réglages",
+    "connecting": "Connexion au serveur …",
+    "again": "Recommencer",
+    "ended": {
+      "idle": "Le terminal est resté 30 minutes sans être utilisé et il est maintenant fermé.",
+      "signedOut": "Vous avez été déconnecté, le terminal est donc fermé.",
+      "denied": "Vous n'êtes plus admin, le terminal est donc fermé.",
+      "off": "Un admin a désactivé le terminal dans les réglages.",
+      "stopping": "Le serveur s'arrête, le terminal est donc fermé.",
+      "lost": "La connexion au serveur a été coupée."
     }
   },
   "touch": {
@@ -3701,6 +3724,9 @@
     "slugTaken": "Cette adresse est déjà prise. Le dé en trouve une libre",
     "tagLength": "Un mot-clé compte de 1 à 64 caractères",
     "targetNotFolder": "La destination n'est pas un dossier",
+    "terminalLimit": "Vous avez déjà quatre terminaux ouverts. Fermez d'abord l'un d'eux, s'il vous plaît",
+    "terminalOff": "Le terminal est désactivé",
+    "terminalToken": "Un jeton d'API ne peut pas ouvrir de terminal",
     "tokenCannotChange": "Connectez-vous pour modifier cela. Un jeton d'API ne le peut pas",
     "tokenExists": "Un jeton de ce nom existe déjà",
     "tokenNameMissing": "Donnez un nom au jeton",

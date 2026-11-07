@@ -1145,6 +1145,9 @@
       "webdavRclone": "WebDAV a rclone",
       "webdav": "Server WebDAV",
       "webdavTip": "Vďaka tomu pripojíte súbory ako jednotku, napríklad v Prieskumníkovi Windows alebo v aplikácii v telefóne. Platia rovnakí používatelia a pravidlá.",
+      "terminalCard": "Terminál",
+      "terminal": "Terminál v prehliadači",
+      "terminalTip": "Administrátori ním otvoria shell v priečinku, ktorý si práve prezerajú, aj zadaním cmd alebo bash do riadka s cestou. Beží v kontajneri s právami CannonCommandera. Kto ho otvorí, môže na serveri robiť všetko, čo smie CannonCommander.",
       "address": "Adresa",
       "rcloneTip": "Pripája vzdialené ciele. Program je súčasťou kontajnera.",
       "notFound": "Nenájdené",
@@ -1349,7 +1352,9 @@
         "passkeyRegister": "prístupový kľúč pridaný",
         "passkeyDelete": "prístupový kľúč odobraný",
         "tokenCreate": "token vytvorený",
-        "tokenDelete": "token zrušený"
+        "tokenDelete": "token zrušený",
+        "terminalOpen": "terminál otvorený",
+        "terminalClose": "terminál zatvorený"
       },
       "target": "Cieľ: {path}.",
       "from": "Z {ip}."
@@ -2585,6 +2590,24 @@
         "label": "Zavrieť filter, ponuku alebo okno",
         "key": "Esc"
       }
+    }
+  },
+  "terminal": {
+    "title": "Terminál",
+    "open": "Otvoriť terminál tu",
+    "another": "Ďalší terminál",
+    "adminsOnly": "Terminál môžu otvoriť len administrátori.",
+    "off": "Terminál je zatiaľ vypnutý. Zapnúť ho môžete v Nastavenia, Integrácie.",
+    "toSettings": "Do nastavení",
+    "connecting": "Pripája sa k serveru …",
+    "again": "Spustiť znova",
+    "ended": {
+      "idle": "Terminál bol 30 minút nepoužívaný a teraz je zatvorený.",
+      "signedOut": "Boli ste odhlásení, preto je terminál zatvorený.",
+      "denied": "Už nie ste administrátor, preto je terminál zatvorený.",
+      "off": "Administrátor vypol terminál v nastaveniach.",
+      "stopping": "Server sa zastavuje, preto je terminál zatvorený.",
+      "lost": "Spojenie so serverom sa prerušilo."
     }
   },
   "touch": {
@@ -3837,6 +3860,9 @@
     "slugTaken": "Táto adresa je už obsadená. Kocka nájde voľnú",
     "tagLength": "Štítok má 1 až 64 znakov",
     "targetNotFolder": "Cieľ nie je priečinok",
+    "terminalLimit": "Už máte otvorené štyri terminály. Najprv prosím jeden zatvorte",
+    "terminalOff": "Terminál je vypnutý",
+    "terminalToken": "Tokenom API sa terminál otvoriť nedá",
     "tokenCannotChange": "Prihláste sa, aby ste to mohli zmeniť. Token API to nevie",
     "tokenExists": "Token s týmto názvom už existuje",
     "tokenNameMissing": "Pomenujte token",

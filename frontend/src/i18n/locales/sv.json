@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV och rclone",
       "webdav": "WebDAV-server",
       "webdavTip": "Gör att du kan ansluta filerna som en enhet, till exempel i Utforskaren i Windows eller i en mobilapp. Samma användare och regler gäller.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal i webbläsaren",
+      "terminalTip": "Med den öppnar admins ett skal i mappen de tittar på, även genom att skriva cmd eller bash i sökvägsraden. Det körs i containern med CannonCommanders rättigheter. Den som öppnar det kan göra allt på servern som CannonCommander får göra.",
       "address": "Adress",
       "rcloneTip": "Monterar fjärrmålen. Programmet ingår i containern.",
       "notFound": "Hittades inte",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "lade till nyckel",
         "passkeyDelete": "tog bort nyckel",
         "tokenCreate": "skapade token",
-        "tokenDelete": "återkallade token"
+        "tokenDelete": "återkallade token",
+        "terminalOpen": "öppnade terminal",
+        "terminalClose": "stängde terminal"
       },
       "target": "Mål: {path}.",
       "from": "Från {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Öppna terminal här",
+    "another": "En terminal till",
+    "adminsOnly": "Bara admins kan öppna terminalen.",
+    "off": "Terminalen är fortfarande avstängd. Du kan slå på den under Inställningar, Integrationer.",
+    "toSettings": "Till inställningarna",
+    "connecting": "Ansluter till servern …",
+    "again": "Starta om",
+    "ended": {
+      "idle": "Terminalen var oanvänd i 30 minuter och är nu stängd.",
+      "signedOut": "Du loggades ut, därför är terminalen stängd.",
+      "denied": "Du är inte längre admin, därför är terminalen stängd.",
+      "off": "En admin har stängt av terminalen i inställningarna.",
+      "stopping": "Servern stannar, därför är terminalen stängd.",
+      "lost": "Anslutningen till servern bröts."
+    }
+  },
   "touch": {
     "title": "Markeringsläge",
     "bar": "Markering",
@@ -3565,6 +3588,9 @@
     "slugTaken": "Den här adressen är redan upptagen. Tärningen hittar en ledig",
     "tagLength": "En tagg har 1 till 64 tecken",
     "targetNotFolder": "Målet är ingen mapp",
+    "terminalLimit": "Du har redan fyra terminaler öppna. Stäng en av dem först",
+    "terminalOff": "Terminalen är avstängd",
+    "terminalToken": "En API-token kan inte öppna en terminal",
     "tokenCannotChange": "Logga in för att ändra det här. En API-token kan inte det",
     "tokenExists": "Det finns redan en token med det här namnet",
     "tokenNameMissing": "Ge token ett namn",

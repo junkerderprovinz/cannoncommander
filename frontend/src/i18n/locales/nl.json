@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV en rclone",
       "webdav": "WebDAV-server",
       "webdavTip": "Hiermee koppel je de bestanden als station, bijvoorbeeld in Windows Verkenner of in een app op je telefoon. Dezelfde gebruikers en regels gelden.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal in de browser",
+      "terminalTip": "Hiermee openen admins een shell in de map die ze bekijken, ook door cmd of bash in de padregel te typen. Die draait in de container met de rechten van CannonCommander. Wie hem opent, kan op de server alles doen wat CannonCommander mag.",
       "address": "Adres",
       "rcloneTip": "Koppelt de externe doelen. Het programma zit in de container.",
       "notFound": "Niet gevonden",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "passkey toegevoegd",
         "passkeyDelete": "passkey verwijderd",
         "tokenCreate": "token gemaakt",
-        "tokenDelete": "token ingetrokken"
+        "tokenDelete": "token ingetrokken",
+        "terminalOpen": "terminal geopend",
+        "terminalClose": "terminal gesloten"
       },
       "target": "Doel: {path}.",
       "from": "Vanaf {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Terminal hier openen",
+    "another": "Nog een terminal",
+    "adminsOnly": "Alleen admins kunnen de terminal openen.",
+    "off": "De terminal staat nog uit. Je kunt hem aanzetten onder Instellingen, Integraties.",
+    "toSettings": "Naar de instellingen",
+    "connecting": "Verbinden met de server …",
+    "again": "Opnieuw starten",
+    "ended": {
+      "idle": "De terminal is 30 minuten niet gebruikt en is nu dicht.",
+      "signedOut": "Je bent afgemeld, daarom is de terminal dicht.",
+      "denied": "Je bent geen admin meer, daarom is de terminal dicht.",
+      "off": "Een admin heeft de terminal uitgezet in de instellingen.",
+      "stopping": "De server stopt, daarom is de terminal dicht.",
+      "lost": "De verbinding met de server is verbroken."
+    }
+  },
   "touch": {
     "title": "Selectiemodus",
     "bar": "Selectie",
@@ -3565,6 +3588,9 @@
     "slugTaken": "Dit adres is al in gebruik. De dobbelsteen vindt een vrij adres",
     "tagLength": "Een tag heeft 1 tot 64 tekens",
     "targetNotFolder": "Het doel is geen map",
+    "terminalLimit": "Je hebt al vier terminals open. Sluit eerst een ervan",
+    "terminalOff": "De terminal staat uit",
+    "terminalToken": "Met een API-token kun je geen terminal openen",
     "tokenCannotChange": "Log in om dit te wijzigen. Een API-token kan dat niet",
     "tokenExists": "Er bestaat al een token met deze naam",
     "tokenNameMissing": "Geef het token een naam",

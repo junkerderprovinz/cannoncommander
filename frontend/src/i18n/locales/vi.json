@@ -1013,6 +1013,9 @@
       "webdavRclone": "WebDAV và rclone",
       "webdav": "Máy chủ WebDAV",
       "webdavTip": "Cho phép gắn các tệp thành ổ đĩa, ví dụ trong File Explorer của Windows hoặc một ứng dụng điện thoại. Áp dụng cùng người dùng và quy tắc.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal trong trình duyệt",
+      "terminalTip": "Quản trị viên dùng nó để mở shell trong thư mục đang xem, gõ cmd hoặc bash vào dòng đường dẫn cũng được. Shell chạy trong container với quyền của CannonCommander. Ai mở nó thì làm được mọi việc trên máy chủ mà CannonCommander được phép làm.",
       "address": "Địa chỉ",
       "rcloneTip": "Gắn kết các đích từ xa. Chương trình có sẵn trong container.",
       "notFound": "Không tìm thấy",
@@ -1214,7 +1217,9 @@
         "passkeyRegister": "đã thêm passkey",
         "passkeyDelete": "đã gỡ passkey",
         "tokenCreate": "đã tạo token",
-        "tokenDelete": "đã thu hồi token"
+        "tokenDelete": "đã thu hồi token",
+        "terminalOpen": "đã mở terminal",
+        "terminalClose": "đã đóng terminal"
       },
       "target": "Đến {path}.",
       "from": "Từ {ip}."
@@ -2335,6 +2340,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Mở terminal tại đây",
+    "another": "Thêm một terminal",
+    "adminsOnly": "Chỉ quản trị viên mới mở được terminal.",
+    "off": "Terminal vẫn đang tắt. Bạn bật nó trong Cài đặt, Tích hợp nhé.",
+    "toSettings": "Đến phần cài đặt",
+    "connecting": "Đang kết nối với máy chủ …",
+    "again": "Bắt đầu lại",
+    "ended": {
+      "idle": "Terminal không được dùng trong 30 phút nên giờ đã đóng.",
+      "signedOut": "Bạn đã đăng xuất nên terminal đã đóng.",
+      "denied": "Bạn không còn là quản trị viên nên terminal đã đóng.",
+      "off": "Một quản trị viên đã tắt terminal trong phần cài đặt.",
+      "stopping": "Máy chủ đang dừng nên terminal đã đóng.",
+      "lost": "Mất kết nối với máy chủ."
+    }
+  },
   "touch": {
     "title": "Chế độ chọn",
     "bar": "Lựa chọn",
@@ -3429,6 +3452,9 @@
     "slugTaken": "Địa chỉ này đã có người dùng. Xúc xắc sẽ tìm một địa chỉ còn trống",
     "tagLength": "Thẻ dài từ 1 đến 64 ký tự",
     "targetNotFolder": "Đích không phải thư mục",
+    "terminalLimit": "Bạn đã mở bốn terminal rồi. Bạn đóng bớt một cái trước nhé",
+    "terminalOff": "Terminal đang tắt",
+    "terminalToken": "Không thể mở terminal bằng token API",
     "tokenCannotChange": "Hãy đăng nhập để đổi mục này. API token không đổi được",
     "tokenExists": "Đã có token trùng tên",
     "tokenNameMissing": "Hãy đặt tên cho token",

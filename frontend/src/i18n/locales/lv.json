@@ -1101,6 +1101,9 @@
       "webdavRclone": "WebDAV un rclone",
       "webdav": "WebDAV serveris",
       "webdavTip": "Ļauj pievienot failus kā disku, piemēram, Windows pārlūkā vai tālruņa lietotnē. Darbojas tie paši lietotāji un noteikumi.",
+      "terminalCard": "Terminālis",
+      "terminal": "Terminālis pārlūkā",
+      "terminalTip": "Ar to administratori atver čaulu mapē, ko viņi skatās, arī ierakstot ceļa rindā cmd vai bash. Tā darbojas konteinerā ar CannonCommander tiesībām. Kas to atver, var serverī darīt visu, ko drīkst CannonCommander.",
       "address": "Adrese",
       "rcloneTip": "Uzmontē attālās vietas. Programma ir konteinerā.",
       "notFound": "Nav atrasts",
@@ -1304,7 +1307,9 @@
         "passkeyRegister": "pievienoja piekļuves atslēgu",
         "passkeyDelete": "noņēma piekļuves atslēgu",
         "tokenCreate": "izveidoja marķieri",
-        "tokenDelete": "atsauca marķieri"
+        "tokenDelete": "atsauca marķieri",
+        "terminalOpen": "atvēra termināli",
+        "terminalClose": "aizvēra termināli"
       },
       "target": "Uz {path}.",
       "from": "No {ip}."
@@ -2501,6 +2506,24 @@
         "label": "Aizvērt filtru, izvēlni vai logu",
         "key": "Esc"
       }
+    }
+  },
+  "terminal": {
+    "title": "Terminālis",
+    "open": "Atvērt termināli šeit",
+    "another": "Vēl viens terminālis",
+    "adminsOnly": "Termināli var atvērt tikai administratori.",
+    "off": "Terminālis vēl ir izslēgts. Tu vari to ieslēgt sadaļā Iestatījumi, Integrācijas.",
+    "toSettings": "Uz iestatījumiem",
+    "connecting": "Savienojas ar serveri …",
+    "again": "Sākt no jauna",
+    "ended": {
+      "idle": "Terminālis netika lietots 30 minūtes un tagad ir aizvērts.",
+      "signedOut": "Tu tiki izrakstīts, tāpēc terminālis ir aizvērts.",
+      "denied": "Tu vairs neesi administrators, tāpēc terminālis ir aizvērts.",
+      "off": "Administrators izslēdza termināli iestatījumos.",
+      "stopping": "Serveris apstājas, tāpēc terminālis ir aizvērts.",
+      "lost": "Savienojums ar serveri pārtrūka."
     }
   },
   "touch": {
@@ -3701,6 +3724,9 @@
     "slugTaken": "Šī adrese jau ir aizņemta. Kauliņš atradīs brīvu",
     "tagLength": "Birkā var būt no 1 līdz 64 rakstzīmēm",
     "targetNotFolder": "Galamērķis nav mape",
+    "terminalLimit": "Tev jau ir atvērti četri termināļi. Lūdzu, vispirms aizver vienu no tiem",
+    "terminalOff": "Terminālis ir izslēgts",
+    "terminalToken": "Ar API marķieri termināli atvērt nevar",
     "tokenCannotChange": "Piesakies, lai to mainītu. API marķieris to nevar",
     "tokenExists": "Marķieris ar šādu nosaukumu jau ir",
     "tokenNameMissing": "Piešķir marķierim nosaukumu",

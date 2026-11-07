@@ -1013,6 +1013,9 @@
       "webdavRclone": "WebDAV 和 rclone",
       "webdav": "WebDAV 服务器",
       "webdavTip": "可以把文件挂载为驱动器，例如在 Windows 资源管理器或手机应用中。适用相同的用户和规则。",
+      "terminalCard": "终端",
+      "terminal": "浏览器中的终端",
+      "terminalTip": "管理员可以在正在查看的文件夹中打开一个 shell，也可以在路径栏输入 cmd 或 bash 打开。它在容器中以 CannonCommander 的权限运行。打开它的人可以在服务器上做 CannonCommander 能做的一切。",
       "address": "地址",
       "rcloneTip": "用于挂载远程存储。该程序已包含在容器中。",
       "notFound": "未找到",
@@ -1214,7 +1217,9 @@
         "passkeyRegister": "已添加通行密钥",
         "passkeyDelete": "已移除通行密钥",
         "tokenCreate": "已创建令牌",
-        "tokenDelete": "已撤销令牌"
+        "tokenDelete": "已撤销令牌",
+        "terminalOpen": "已打开终端",
+        "terminalClose": "已关闭终端"
       },
       "target": "目标：{path}。",
       "from": "来自 {ip}。"
@@ -2335,6 +2340,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "终端",
+    "open": "在此打开终端",
+    "another": "再开一个终端",
+    "adminsOnly": "只有管理员可以打开终端。",
+    "off": "终端还没有开启。你可以在 设置，集成 中开启它。",
+    "toSettings": "前往设置",
+    "connecting": "正在连接服务器 …",
+    "again": "重新开始",
+    "ended": {
+      "idle": "终端 30 分钟未使用，现已关闭。",
+      "signedOut": "你已退出登录，所以终端已关闭。",
+      "denied": "你不再是管理员，所以终端已关闭。",
+      "off": "有管理员在设置中关闭了终端。",
+      "stopping": "服务器正在停止，所以终端已关闭。",
+      "lost": "与服务器的连接已断开。"
+    }
+  },
   "touch": {
     "title": "选择模式",
     "bar": "选择",
@@ -3429,6 +3452,9 @@
     "slugTaken": "这个地址已被占用。点骰子会找一个可用的",
     "tagLength": "标签需要 1 到 64 个字符",
     "targetNotFolder": "目标不是文件夹",
+    "terminalLimit": "你已经打开了四个终端。请先关闭其中一个",
+    "terminalOff": "终端已关闭",
+    "terminalToken": "无法用 API 令牌打开终端",
     "tokenCannotChange": "请登录后再修改。API 令牌无权这样做",
     "tokenExists": "已有同名的令牌",
     "tokenNameMissing": "给这个令牌起个名字",

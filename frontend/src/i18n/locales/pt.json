@@ -1101,6 +1101,9 @@
       "webdavRclone": "WebDAV e rclone",
       "webdav": "Servidor WebDAV",
       "webdavTip": "Permite ligar os ficheiros como uma unidade, por exemplo no Explorador do Windows ou numa aplicação do telemóvel. Valem os mesmos utilizadores e regras.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal no navegador",
+      "terminalTip": "Com ele os administradores abrem uma shell na pasta que estão a ver, também escrevendo cmd ou bash na barra do caminho. Corre no contentor com os direitos do CannonCommander. Quem o abre pode fazer no servidor tudo o que o CannonCommander pode.",
       "address": "Endereço",
       "rcloneTip": "Monta os remotos. O programa vem com o contentor.",
       "notFound": "Não encontrado",
@@ -1304,7 +1307,9 @@
         "passkeyRegister": "chave de acesso adicionada",
         "passkeyDelete": "chave de acesso removida",
         "tokenCreate": "token criado",
-        "tokenDelete": "token revogado"
+        "tokenDelete": "token revogado",
+        "terminalOpen": "terminal aberto",
+        "terminalClose": "terminal fechado"
       },
       "target": "Para {path}.",
       "from": "De {ip}."
@@ -2501,6 +2506,24 @@
         "label": "Fechar filtro, menu ou janela",
         "key": "Esc"
       }
+    }
+  },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Abrir terminal aqui",
+    "another": "Outro terminal",
+    "adminsOnly": "Só os administradores podem abrir o terminal.",
+    "off": "O terminal ainda está desligado. Pode ligá-lo em Definições, Integrações.",
+    "toSettings": "Ir para as definições",
+    "connecting": "A ligar ao servidor …",
+    "again": "Começar de novo",
+    "ended": {
+      "idle": "O terminal esteve 30 minutos sem uso e agora está fechado.",
+      "signedOut": "Terminou a sessão, por isso o terminal está fechado.",
+      "denied": "Já não é administrador, por isso o terminal está fechado.",
+      "off": "Um administrador desligou o terminal nas definições.",
+      "stopping": "O servidor está a parar, por isso o terminal está fechado.",
+      "lost": "A ligação ao servidor caiu."
     }
   },
   "touch": {
@@ -3701,6 +3724,9 @@
     "slugTaken": "Este endereço já está ocupado. O dado encontra um livre",
     "tagLength": "Uma palavra-chave tem de 1 a 64 carateres",
     "targetNotFolder": "O destino não é uma pasta",
+    "terminalLimit": "Já tem quatro terminais abertos. Feche primeiro um deles, por favor",
+    "terminalOff": "O terminal está desligado",
+    "terminalToken": "Com um token de API não é possível abrir um terminal",
     "tokenCannotChange": "Inicie sessão para alterar isto. Um token de API não pode",
     "tokenExists": "Já existe um token com este nome",
     "tokenNameMissing": "Dê um nome ao token",

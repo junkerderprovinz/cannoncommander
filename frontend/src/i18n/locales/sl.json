@@ -1145,6 +1145,9 @@
       "webdavRclone": "WebDAV in rclone",
       "webdav": "Strežnik WebDAV",
       "webdavTip": "Z njim datoteke priklopite kot pogon, na primer v Raziskovalcu Windows ali v aplikaciji na telefonu. Veljajo isti uporabniki in pravila.",
+      "terminalCard": "Terminal",
+      "terminal": "Terminal v brskalniku",
+      "terminalTip": "S tem skrbniki odprejo lupino v mapi, ki jo gledajo, tudi z vnosom cmd ali bash v vrstico poti. Teče v vsebniku s pravicami CannonCommanderja. Kdor jo odpre, lahko na strežniku počne vse, kar sme CannonCommander.",
       "address": "Naslov",
       "rcloneTip": "Priklopi oddaljene cilje. Program je del vsebnika.",
       "notFound": "Ni najdeno",
@@ -1349,7 +1352,9 @@
         "passkeyRegister": "ključ za dostop dodan",
         "passkeyDelete": "ključ za dostop odstranjen",
         "tokenCreate": "žeton ustvarjen",
-        "tokenDelete": "žeton preklican"
+        "tokenDelete": "žeton preklican",
+        "terminalOpen": "terminal odprt",
+        "terminalClose": "terminal zaprt"
       },
       "target": "Cilj: {path}.",
       "from": "Z {ip}."
@@ -2585,6 +2590,24 @@
         "label": "Zapri filter, meni ali okno",
         "key": "Esc"
       }
+    }
+  },
+  "terminal": {
+    "title": "Terminal",
+    "open": "Odpri terminal tukaj",
+    "another": "Še en terminal",
+    "adminsOnly": "Terminal lahko odprejo samo skrbniki.",
+    "off": "Terminal je še izklopljen. Vklopite ga lahko v Nastavitve, Integracije.",
+    "toSettings": "V nastavitve",
+    "connecting": "Povezovanje s strežnikom …",
+    "again": "Začni znova",
+    "ended": {
+      "idle": "Terminal 30 minut ni bil v uporabi in je zdaj zaprt.",
+      "signedOut": "Odjavljeni ste, zato je terminal zaprt.",
+      "denied": "Niste več skrbnik, zato je terminal zaprt.",
+      "off": "Skrbnik je terminal izklopil v nastavitvah.",
+      "stopping": "Strežnik se ustavlja, zato je terminal zaprt.",
+      "lost": "Povezava s strežnikom se je prekinila."
     }
   },
   "touch": {
@@ -3837,6 +3860,9 @@
     "slugTaken": "Ta naslov je že zaseden. Kocka najde prostega",
     "tagLength": "Značka ima od 1 do 64 znakov",
     "targetNotFolder": "Cilj ni mapa",
+    "terminalLimit": "Odprte imate že štiri terminale. Prosimo, najprej zaprite enega od njih",
+    "terminalOff": "Terminal je izklopljen",
+    "terminalToken": "Z žetonom API terminala ni mogoče odpreti",
     "tokenCannotChange": "Prijavite se, da to spremenite. Žeton API tega ne more",
     "tokenExists": "Žeton s tem imenom že obstaja",
     "tokenNameMissing": "Poimenujte žeton",

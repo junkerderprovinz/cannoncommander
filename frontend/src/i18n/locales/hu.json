@@ -1057,6 +1057,9 @@
       "webdavRclone": "WebDAV és rclone",
       "webdav": "WebDAV-szerver",
       "webdavTip": "Ezzel meghajtóként csatolhatja a fájlokat, például a Windows Intézőben vagy egy telefonos alkalmazásban. Ugyanazok a felhasználók és szabályok érvényesek.",
+      "terminalCard": "Terminál",
+      "terminal": "Terminál a böngészőben",
+      "terminalTip": "Ezzel a rendszergazdák parancsértelmezőt nyitnak abban a mappában, amelyet éppen néznek, akkor is, ha az útvonalsorba cmd vagy bash kerül. A konténerben fut a CannonCommander jogaival. Aki megnyitja, mindent megtehet a szerveren, amit a CannonCommander megtehet.",
       "address": "Cím",
       "rcloneTip": "Csatolja a távoli célokat. A program a konténer része.",
       "notFound": "Nem található",
@@ -1259,7 +1262,9 @@
         "passkeyRegister": "azonosítókulcs hozzáadva",
         "passkeyDelete": "azonosítókulcs eltávolítva",
         "tokenCreate": "token létrehozva",
-        "tokenDelete": "token visszavonva"
+        "tokenDelete": "token visszavonva",
+        "terminalOpen": "terminál megnyitva",
+        "terminalClose": "terminál bezárva"
       },
       "target": "Cél: {path}.",
       "from": "Innen: {ip}."
@@ -2419,6 +2424,24 @@
       }
     }
   },
+  "terminal": {
+    "title": "Terminál",
+    "open": "Terminál megnyitása itt",
+    "another": "Még egy terminál",
+    "adminsOnly": "A terminált csak rendszergazdák nyithatják meg.",
+    "off": "A terminál még ki van kapcsolva. A Beállítások, Integrációk alatt kapcsolhatja be.",
+    "toSettings": "A beállításokhoz",
+    "connecting": "Kapcsolódás a szerverhez …",
+    "again": "Újraindítás",
+    "ended": {
+      "idle": "A terminált 30 percig nem használták, ezért most bezárult.",
+      "signedOut": "Kijelentkezett, ezért a terminál bezárult.",
+      "denied": "Már nem rendszergazda, ezért a terminál bezárult.",
+      "off": "Egy rendszergazda kikapcsolta a terminált a beállításokban.",
+      "stopping": "A szerver leáll, ezért a terminál bezárult.",
+      "lost": "Megszakadt a kapcsolat a szerverrel."
+    }
+  },
   "touch": {
     "title": "Kijelölési mód",
     "bar": "Kijelölés",
@@ -3565,6 +3588,9 @@
     "slugTaken": "Ez a cím már foglalt. A dobókocka talál egy szabadot",
     "tagLength": "Egy címke 1 és 64 karakter közötti",
     "targetNotFolder": "A cél nem mappa",
+    "terminalLimit": "Már négy terminál van nyitva. Kérjük, előbb zárjon be egyet közülük",
+    "terminalOff": "A terminál ki van kapcsolva",
+    "terminalToken": "API-tokennel nem nyitható meg terminál",
     "tokenCannotChange": "Lépjen be a módosításhoz. Egy API-token ezt nem teheti meg",
     "tokenExists": "Ilyen nevű token már létezik",
     "tokenNameMissing": "Adjon nevet a tokennek",
