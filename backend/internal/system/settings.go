@@ -55,6 +55,10 @@ type App struct {
 	Remotes   Mounting  `json:"remotes"`
 	Updates   Updates   `json:"updates"`
 	LogLevel  string    `json:"logLevel"`
+	// Terminal lets admins open a shell in a folder, as the user the server
+	// runs as. It stays off until an admin switches it on, also on a server
+	// without sign in, where everybody is admin.
+	Terminal bool `json:"terminal"`
 }
 
 // Office is the document server that opens office files.

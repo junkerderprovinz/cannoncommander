@@ -449,6 +449,9 @@ components:
               description: Whether the WebDAV server at /dav/ answers.
             mupdf:
               type: boolean
+            terminal:
+              type: boolean
+              description: Whether admins may open a terminal.
     SystemTool:
       type: object
       required: [available]
@@ -594,6 +597,11 @@ components:
         webdav:
           type: boolean
           description: Serve the files over WebDAV at /dav/. Off until an admin switches it on.
+        terminal:
+          type: boolean
+          description: |
+            Let admins open a shell in a folder, as the user the server runs
+            as. Off until an admin switches it on, also without sign in.
         remotes:
           type: object
           properties:

@@ -148,3 +148,28 @@ func TestTheServerGivesUpOnSlowHeadersAndIdleConnectionsOnly(t *testing.T) {
 		t.Errorf("read %v, write %v: uploads, downloads and event streams run as long as they need", srv.ReadTimeout, srv.WriteTimeout)
 	}
 }
+
+func TestAWebSocketFromAnotherOriginIsRefused(t *testing.T) {
+	guard := originGuard()
+	open := func(host string, header map[string]string) error {
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/terminal", nil)
+		req.Host = host
+		req.Header.Set("Upgrade", "websocket")
+		for k, v := range header {
+			req.Header.Set(k, v)
+		}
+		return sameOrigin(guard, req)
+	}
+	for name, header := range map[string]map[string]string{
+		"another port":   {"Origin": "http://192.168.10.10:9000"},
+		"another site":   {"Origin": "https://evil.test", "Sec-Fetch-Site": "cross-site"},
+		"sandboxed page": {"Origin": "null"},
+	} {
+		if open("192.168.10.10:8080", header) == nil {
+			t.Errorf("%s got through", name)
+		}
+	}
+	if err := open("192.168.10.10:8080", map[string]string{"Origin": "http://192.168.10.10:8080"}); err != nil {
+		t.Errorf("the app itself: %v", err)
+	}
+}

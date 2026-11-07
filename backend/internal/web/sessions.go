@@ -105,3 +105,26 @@ func (sessionLogin) PasskeySite(r *http.Request) (rpID, host string) {
 	registerRequestOrigin(r)
 	return deriveRPID(r), requestHost(r)
 }
+
+// terminalGate tells the terminal how a request signed in and where it came
+// from.
+type terminalGate struct {
+	login sessionLogin
+	guard *http.CrossOriginProtection
+}
+
+func (g terminalGate) SameOrigin(r *http.Request) error { return sameOrigin(g.guard, r) }
+
+func (g terminalGate) Session(r *http.Request) (string, bool) {
+	hash, _, ok := g.login.Session(r)
+	return hash, ok
+}
+
+func (g terminalGate) Alive(hash string) bool { return g.login.Alive(hash) }
+
+func (g terminalGate) APIToken(r *http.Request) bool {
+	_, ok := g.login.APIToken(r)
+	return ok
+}
+
+func (terminalGate) Open() bool { return settings.Config.Auth.Methods.NoAuth }

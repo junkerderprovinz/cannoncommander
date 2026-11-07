@@ -17,6 +17,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/stream"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/terminal"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/tools"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
@@ -41,6 +42,7 @@ func NewRouter(deps v1.Deps, auth v1.Authenticator) *v1.Router {
 	unraid.Routes(r)
 	remotes.Routes(r)
 	system.Routes(r)
+	terminal.Routes(r)
 	office.Routes(r)
 	stream.Routes(r)
 	return r

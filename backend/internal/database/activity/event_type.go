@@ -36,6 +36,8 @@ const (
 	EventTokenCreate     EventType = "tokenCreate"
 	EventTokenDelete     EventType = "tokenDelete"
 	EventDuplicateFinder EventType = "duplicateFinder"
+	EventTerminalOpen    EventType = "terminalOpen"
+	EventTerminalClose   EventType = "terminalClose"
 )
 
 // AllEventTypes lists every defined event type for validation and UI filters.
@@ -70,6 +72,8 @@ var AllEventTypes = []EventType{
 	EventTokenCreate,
 	EventTokenDelete,
 	EventDuplicateFinder,
+	EventTerminalOpen,
+	EventTerminalClose,
 }
 
 // FileEventTypes are file and path operations (scope=files).
@@ -166,7 +170,8 @@ func (e EventType) Valid() bool {
 		EventLogin, EventLogout, EventSignup,
 		EventPasskeyRegister, EventPasskeyDelete,
 		EventTokenCreate, EventTokenDelete,
-		EventDuplicateFinder:
+		EventDuplicateFinder,
+		EventTerminalOpen, EventTerminalClose:
 		return true
 	default:
 		return false

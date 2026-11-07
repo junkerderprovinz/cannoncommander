@@ -171,12 +171,7 @@ func StartHttp(ctx context.Context, shutdownComplete chan struct{}) {
 // Origin is compared with the host the browser asked for, and callers without
 // browser headers, such as a document server, pass.
 func crossOrigin(next http.Handler) http.Handler {
-	guard := http.NewCrossOriginProtection()
-	if origin := cspOriginFromURL(settings.Config.Http.ExternalUrl); origin != "" {
-		if err := guard.AddTrustedOrigin(origin); err != nil {
-			logger.Errorf("external address %s: %v", origin, err)
-		}
-	}
+	guard := originGuard()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		seen := r.WithContext(r.Context())
 		seen.Host = requestHost(r)
@@ -186,6 +181,26 @@ func crossOrigin(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+// originGuard trusts the server's own origin and its external address.
+func originGuard() *http.CrossOriginProtection {
+	guard := http.NewCrossOriginProtection()
+	if origin := cspOriginFromURL(settings.Config.Http.ExternalUrl); origin != "" {
+		if err := guard.AddTrustedOrigin(origin); err != nil {
+			logger.Errorf("external address %s: %v", origin, err)
+		}
+	}
+	return guard
+}
+
+// sameOrigin holds r to the rules crossOrigin applies to writes. A WebSocket
+// opens with a GET, which those rules let pass, though it can write as well.
+func sameOrigin(guard *http.CrossOriginProtection, r *http.Request) error {
+	seen := r.WithContext(r.Context())
+	seen.Method = http.MethodPost
+	seen.Host = requestHost(r)
+	return guard.Check(seen)
 }
 
 // securityHeaders sets what every response needs unless its handler knows
