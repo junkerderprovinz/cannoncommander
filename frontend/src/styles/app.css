@@ -174,6 +174,9 @@ svg { display: block; }
 
 
 .glim-toast-stack { bottom: 4.5rem; }
+/* GlimStone's toast holds the end of its entrance, an identity transform that makes the card the box for its fixed
+   children and paints an edge on a half pixel on either side from frame to frame. Holding only the start looks the same. */
+.glim-toast-stack > .glim-toast.glim-toast-card { animation-fill-mode: backwards; }
 .bubble { position: fixed; z-index: 80; max-width: 280px; padding: 7px 10px; font-size: 12px; line-height: 1.45; pointer-events: none; border-radius: var(--radius-control); background: var(--carbon-surface); box-shadow: var(--elevation), var(--hairline); }
 
 /* Full-page views (settings and friends) keep the brand in the corner and centre the rest. */
