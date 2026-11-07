@@ -7,10 +7,11 @@ import { createFixture } from './fixture.js';
 
 const MIN = 60000, HOUR = 60 * MIN, DAY = 24 * HOUR, KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
 const iso = (t) => (t == null ? null : new Date(t).toISOString());
-const json = (res, status, body) => {
+// A refusal may carry the code the interface translates, as [status, detail, code].
+const json = (res, status, body, code) => {
   res.statusCode = status;
   res.setHeader('Content-Type', status >= 400 ? 'application/problem+json' : 'application/json');
-  res.end(status === 204 ? '' : JSON.stringify(status >= 400 ? { type: 'about:blank', title: 'Error', status, detail: body } : body));
+  res.end(status === 204 ? '' : JSON.stringify(status >= 400 ? { type: 'about:blank', title: 'Error', status, detail: body, ...(code ? { code } : {}) } : body));
 };
 const readBody = (req) => new Promise((resolve) => {
   let raw = '';
@@ -116,7 +117,7 @@ function state() {
     app: {
       office: { kind: 'none', url: '', secret: '' },
       arrowloop: { url: 'http://tower.lan:8095', token: 'al-token', paths: { '/mnt/user': '/data' } },
-      previews: { thumbs: true, video: false }, webdav: false,
+      previews: { thumbs: true, video: false }, webdav: false, terminal: false,
       remotes: { automount: true, cache: 'writes', cacheSize: 50 },
       updates: { autoCheck: true }, logLevel: 'info',
     },
@@ -435,8 +436,15 @@ export function settingsFixtureMiddleware() {
         rclone: { available: true, path: '/usr/bin/rclone', version: '1.71.2' },
       },
       unraid: { available: true, socket: false },
-      features: { office: S.app.office.kind === 'none' ? { kind: 'none' } : { kind: S.app.office.kind, url: S.app.office.url }, thumbs: S.app.previews.thumbs, videoPreview: S.app.previews.video, webdav: S.app.webdav, mupdf: true },
+      features: { office: S.app.office.kind === 'none' ? { kind: 'none' } : { kind: S.app.office.kind, url: S.app.office.url }, thumbs: S.app.previews.thumbs, videoPreview: S.app.previews.video, webdav: S.app.webdav, mupdf: true, terminal: S.app.terminal },
     })],
+    // Only the check: the WebSocket itself is fixture-terminal.js, on the upgrade of the same address.
+    ['GET', '/terminal', (_, __, params) => {
+      if (!S.app.terminal) return [403, 'the terminal is switched off', 'terminalOff'];
+      const path = params.get('path') ?? '';
+      if (!isDir(path)) return isFile(path) ? [400, 'a terminal opens in a folder on disk', 'notAFolder'] : [404, 'path not found', 'notFound'];
+      return 204;
+    }],
     ['POST', '/system/update', () => ({ version: '0.1.0', latest: '0.1.0', updateAvailable: false, releaseUrl: 'https://github.com/junkerderprovinz/cannoncommander/releases/tag/v0.1.0' })],
     ['POST', '/unraid/notify/test', () => 204],
 
@@ -499,7 +507,7 @@ export function settingsFixtureMiddleware() {
     });
   }
 
-  return async (req, res, next) => {
+  const middleware = async (req, res, next) => {
     const url = new URL(req.url, 'http://fixture');
     if (!url.pathname.startsWith('/api/v1/')) return next();
     const path = url.pathname.slice('/api/v1'.length);
@@ -510,9 +518,10 @@ export function settingsFixtureMiddleware() {
       const out = fn(req.method === 'GET' || !req.headers['content-length'] ? {} : await readBody(req), m, url.searchParams, req);
       if (out === undefined) return next();
       if (out === 204) return json(res, 204);
-      if (Array.isArray(out)) return json(res, out[0], out[1]);
+      if (Array.isArray(out)) return json(res, out[0], out[1], out[2]);
       return json(res, 200, out);
     }
     next();
   };
+  return Object.assign(middleware, { terminalOn: () => S.app.terminal });
 }

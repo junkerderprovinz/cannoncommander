@@ -20,6 +20,7 @@ const KINDS: Record<string, string> = {
   quotaCreate: 'IconSliders', quotaUpdate: 'IconSliders', quotaDelete: 'IconSliders',
   login: 'IconSignIn', logout: 'IconSignOut', signup: 'IconSignIn',
   passkeyRegister: 'IconKey', passkeyDelete: 'IconKey', tokenCreate: 'IconKey', tokenDelete: 'IconKey',
+  terminalOpen: 'IconCode', terminalClose: 'IconCode',
 };
 const all = ref<Activity[]>([]), users = ref<User[]>([]);
 const act = reactive({ who: null as string | null, what: null as string | null, dir: -1 });

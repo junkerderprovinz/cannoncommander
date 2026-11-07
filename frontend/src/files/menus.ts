@@ -36,7 +36,7 @@ export function rowMenu(x: number, y: number) {
   menu(x, y, items);
 }
 
-export const listMenu = (x: number, y: number) => menu(x, y, ['newFolder', 'newFile', 'upload', 'clipPaste', '-', 'selectAll', 'selectPattern', '-', 'refresh', 'props', 'fixPerms']);
+export const listMenu = (x: number, y: number) => menu(x, y, ['newFolder', 'newFile', 'upload', 'clipPaste', '-', 'selectAll', 'selectPattern', '-', 'refresh', 'props', 'fixPerms', 'terminal']);
 
 export const tabMenu = (x: number, y: number) => menu(x, y, ['newTab', 'dupTab', 'lockTab', '-', 'closeTab', 'closeOtherTabs']);
 

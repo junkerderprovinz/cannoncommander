@@ -10,7 +10,7 @@ export const MENUS: [string, MenuEntry[]][] = [
     { label: tl('menus.group'), g: 'IconFile', sub: ['group-none', 'group-kind', 'group-date', 'group-size'] },
     'flat', 'columns', { head: tl('menus.sort') }, 'sortName', 'sortSize', 'sortTime', 'sortType', '-', 'swapPanels', 'equalPanels', 'profiles', 'refresh']],
   ['go', ['back', 'forward', 'up', 'home', 'gotoPath', 'history', '-', 'BOOKMARKS', '-', 'openTrash', 'openShares', 'openActivity']],
-  ['tools', ['search', 'quickFilter', '-', 'compareDirs', 'sync', 'diff', 'duplicates', 'diskUsage', '-', 'jobs', 'mounts']],
+  ['tools', ['search', 'quickFilter', '-', 'compareDirs', 'sync', 'diff', 'duplicates', 'diskUsage', 'terminal', '-', 'jobs', 'mounts']],
   ['help', ['palette', 'shortcuts', 'whatsNew', 'docs', 'installApp', 'glyphs', '-', 'about']],
 ];
 

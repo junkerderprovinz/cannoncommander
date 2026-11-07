@@ -12,6 +12,8 @@ export interface ExtensionPoints {
   // Returning false from beforeGo stops the change of folder.
   beforeGo: Array<(path: string, panel: number) => boolean | void | Promise<boolean | void>>;
   afterGo: Array<(path: string, panel: number) => void>;
+  // Text typed into the path field that one of these takes as its own, by returning true, goes nowhere else.
+  pathWords: Array<(typed: string, panel: number) => boolean>;
   transferPipeline: Array<(job: Record<string, unknown>) => Record<string, unknown> | null>;
   footerSlots: Array<(panel: number) => VNodeChild>;
   // Inside the search field of the path row, such as its menu, and as bars between the path row and the list.
@@ -31,7 +33,7 @@ export interface ExtensionPoints {
 }
 
 export const extend: ExtensionPoints = {
-  entryFilters: shallowReactive([]), tagMatchers: shallowReactive([]), beforeGo: shallowReactive([]), afterGo: shallowReactive([]), transferPipeline: shallowReactive([]),
+  entryFilters: shallowReactive([]), tagMatchers: shallowReactive([]), beforeGo: shallowReactive([]), afterGo: shallowReactive([]), pathWords: shallowReactive([]), transferPipeline: shallowReactive([]),
   footerSlots: shallowReactive([]), filterSlots: shallowReactive([]), panelBars: shallowReactive([]), tabLabels: shallowReactive([]), nameBadges: shallowReactive([]), thumbProviders: shallowReactive([]), sideRows: shallowReactive([]),
   treeDecorators: shallowReactive([]), propsWells: shallowReactive([]), actionWrappers: shallowReactive([]), onRender: shallowReactive([]), toastHistory: shallowReactive([]),
 };

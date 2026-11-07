@@ -1,0 +1,18 @@
+{
+  "title": "Terminal",
+  "open": "Open terminal here",
+  "another": "Another terminal",
+  "adminsOnly": "Only admins can open the terminal.",
+  "off": "The terminal is still switched off. You can switch it on in the settings under Integrations.",
+  "toSettings": "Go to the settings",
+  "connecting": "Connecting to the server …",
+  "again": "Start again",
+  "ended": {
+    "idle": "The terminal sat unused for 30 minutes and is closed now.",
+    "signedOut": "You were signed out, so the terminal is closed.",
+    "denied": "You are no longer an admin, so the terminal is closed.",
+    "off": "An admin switched the terminal off in the settings.",
+    "stopping": "The server is stopping, so the terminal is closed.",
+    "lost": "The connection to the server dropped."
+  }
+}
