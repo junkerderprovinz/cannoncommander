@@ -3341,10 +3341,15 @@
     "brand": "CannonCommander, k datotekam",
     "back": "Nazaj k datotekam",
     "backTip": "Nazaj k datotekam (Esc)",
-    "singleTip": "Eno okno (Ctrl+1)",
-    "dualTip": "Dve okni (Ctrl+2)",
-    "jobs": "Opravila",
-    "security": "Račun in varnost",
+    "toSingle": "Preklopi na eno okno (Ctrl+1)",
+    "toDual": "Preklopi na dve okni (Ctrl+2)",
+    "settings": "Nastavitve",
+    "running": {
+      "one": "Teče {n} opravilo",
+      "two": "Tečeta {n} opravili",
+      "few": "Tečejo {n} opravila",
+      "other": "Teče {n} opravil"
+    },
     "activity": "Dejavnost"
   },
   "bottom": {

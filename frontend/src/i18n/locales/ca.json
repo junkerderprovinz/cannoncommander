@@ -3214,10 +3214,14 @@
     "brand": "CannonCommander, torna als fitxers",
     "back": "Torna als fitxers",
     "backTip": "Torna als fitxers (Esc)",
-    "singleTip": "Un panell (Ctrl+1)",
-    "dualTip": "Dos panells (Ctrl+2)",
-    "jobs": "Tasques",
-    "security": "Compte i seguretat",
+    "toSingle": "Canvia a un panell (Ctrl+1)",
+    "toDual": "Canvia a dos panells (Ctrl+2)",
+    "settings": "Configuració",
+    "running": {
+      "one": "{n} tasca en curs",
+      "many": "{n} de tasques en curs",
+      "other": "{n} tasques en curs"
+    },
     "activity": "Activitat"
   },
   "bottom": {

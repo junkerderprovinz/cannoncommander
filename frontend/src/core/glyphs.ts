@@ -5,9 +5,16 @@ import { type FunctionalComponent, h } from 'vue';
 import formats from './formats.json';
 
 type Glyph = { viewBox: string; svg: string };
-const GLYPHS: Record<string, Glyph> = Object.fromEntries(
-  coreGlyphs.map((g) => [g.name, { viewBox: g.viewBox, svg: g.svg.replace(/\s+/g, ' ') }]),
-);
+// One panel and two side by side, which GlimStone has no glyph for, drawn in its manner: window frames on the 14 unit
+// grid, with the top edge as wide as a title bar.
+const PANES: Record<string, Glyph> = {
+  IconPaneOne: { viewBox: '0 0 14 14', svg: '<path fill-rule="evenodd" clip-rule="evenodd" d="M2 1h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h9.5a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5Z"/>' },
+  IconPaneTwo: { viewBox: '0 0 14 14', svg: '<path fill-rule="evenodd" clip-rule="evenodd" d="M2 1h2.5a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5ZM9.5 1H12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9.5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5Z"/>' },
+};
+const GLYPHS: Record<string, Glyph> = {
+  ...Object.fromEntries(coreGlyphs.map((g) => [g.name, { viewBox: g.viewBox, svg: g.svg.replace(/\s+/g, ' ') }])),
+  ...PANES,
+};
 
 export const hasGlyph = (name: string) => name in GLYPHS;
 export const glyph = (name: string): Glyph => GLYPHS[name] ?? GLYPHS.IconFile!;

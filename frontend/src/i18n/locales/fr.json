@@ -3214,10 +3214,14 @@
     "brand": "CannonCommander, retour aux fichiers",
     "back": "Retour aux fichiers",
     "backTip": "Retour aux fichiers (Échap)",
-    "singleTip": "Un panneau (Ctrl+1)",
-    "dualTip": "Deux panneaux (Ctrl+2)",
-    "jobs": "Tâches",
-    "security": "Compte et sécurité",
+    "toSingle": "Passer à un panneau (Ctrl+1)",
+    "toDual": "Passer à deux panneaux (Ctrl+2)",
+    "settings": "Réglages",
+    "running": {
+      "one": "{n} tâche en cours",
+      "many": "{n} de tâches en cours",
+      "other": "{n} tâches en cours"
+    },
     "activity": "Activité"
   },
   "bottom": {

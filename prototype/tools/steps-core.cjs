@@ -10,8 +10,7 @@ module.exports = async (page, shot) => {
   // The selection holds hard-linked files, so the copy asks once more before it gives them their own data.
   await page.click('.win-foot .btn:has-text("Trotzdem kopieren")');
   await page.waitForTimeout(3500); await shot('core-after');
-  // The app keeps the settings in the avatar's menu, the prototype has a gear for them in the head bar.
-  if (await page.$('[data-go-view="settings"]')) await page.click('[data-go-view="settings"]');
-  else { await page.click('.head [data-account]'); await page.waitForTimeout(200); await page.click('.glim-menu-item:has-text("Einstellungen")'); }
+  // The prototype's gear in the head bar goes to the settings as a view, the app's settings button runs a command.
+  await page.click('.head :is([data-go-view="settings"], [data-run="settings"])');
   await page.waitForTimeout(300); await shot('core-settings');
 };

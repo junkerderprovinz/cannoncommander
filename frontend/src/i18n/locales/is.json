@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, aftur að skránum",
     "back": "Aftur að skránum",
     "backTip": "Aftur að skránum (Esc)",
-    "singleTip": "Einn gluggi (Ctrl+1)",
-    "dualTip": "Tveir gluggar (Ctrl+2)",
-    "jobs": "Verk",
-    "security": "Aðgangur og öryggi",
+    "toSingle": "Skipta í einn glugga (Ctrl+1)",
+    "toDual": "Skipta í tvo glugga (Ctrl+2)",
+    "settings": "Stillingar",
+    "running": {
+      "one": "{n} verk í gangi",
+      "other": "{n} verk í gangi"
+    },
     "activity": "Virkni"
   },
   "bottom": {

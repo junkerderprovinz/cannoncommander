@@ -3214,10 +3214,14 @@
     "brand": "CannonCommander, חזרה לקבצים",
     "back": "חזרה לקבצים",
     "backTip": "חזרה לקבצים (Esc)",
-    "singleTip": "חלונית אחת (Ctrl+1)",
-    "dualTip": "שתי חלוניות (Ctrl+2)",
-    "jobs": "משימות",
-    "security": "חשבון ואבטחה",
+    "toSingle": "מעבר לחלונית אחת (Ctrl+1)",
+    "toDual": "מעבר לשתי חלוניות (Ctrl+2)",
+    "settings": "הגדרות",
+    "running": {
+      "one": "{n} משימה פועלת",
+      "two": "{n} משימות פועלות",
+      "other": "{n} משימות פועלות"
+    },
     "activity": "פעילות"
   },
   "bottom": {

@@ -3214,10 +3214,14 @@
     "brand": "CannonCommander, volver a los archivos",
     "back": "Volver a los archivos",
     "backTip": "Volver a los archivos (Esc)",
-    "singleTip": "Un panel (Ctrl+1)",
-    "dualTip": "Dos paneles (Ctrl+2)",
-    "jobs": "Tareas",
-    "security": "Cuenta y seguridad",
+    "toSingle": "Cambiar a un panel (Ctrl+1)",
+    "toDual": "Cambiar a dos paneles (Ctrl+2)",
+    "settings": "Ajustes",
+    "running": {
+      "one": "{n} tarea en curso",
+      "many": "{n} de tareas en curso",
+      "other": "{n} tareas en curso"
+    },
     "activity": "Actividad"
   },
   "bottom": {

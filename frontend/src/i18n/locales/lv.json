@@ -3214,10 +3214,14 @@
     "brand": "CannonCommander, uz failiem",
     "back": "Atpakaļ uz failiem",
     "backTip": "Atpakaļ uz failiem (Esc)",
-    "singleTip": "Viens panelis (Ctrl+1)",
-    "dualTip": "Divi paneļi (Ctrl+2)",
-    "jobs": "Uzdevumi",
-    "security": "Konts un drošība",
+    "toSingle": "Pārslēgt uz vienu paneli (Ctrl+1)",
+    "toDual": "Pārslēgt uz diviem paneļiem (Ctrl+2)",
+    "settings": "Iestatījumi",
+    "running": {
+      "zero": "Notiek {n} uzdevumu",
+      "one": "Notiek {n} uzdevums",
+      "other": "Notiek {n} uzdevumi"
+    },
     "activity": "Darbības"
   },
   "bottom": {

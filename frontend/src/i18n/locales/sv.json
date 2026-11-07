@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, tillbaka till filerna",
     "back": "Tillbaka till filerna",
     "backTip": "Tillbaka till filerna (Esc)",
-    "singleTip": "En panel (Ctrl+1)",
-    "dualTip": "Två paneler (Ctrl+2)",
-    "jobs": "Jobb",
-    "security": "Konto och säkerhet",
+    "toSingle": "Byt till en panel (Ctrl+1)",
+    "toDual": "Byt till två paneler (Ctrl+2)",
+    "settings": "Inställningar",
+    "running": {
+      "one": "{n} jobb körs",
+      "other": "{n} jobb körs"
+    },
     "activity": "Aktivitet"
   },
   "bottom": {

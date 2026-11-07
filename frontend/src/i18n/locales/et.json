@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, tagasi failide juurde",
     "back": "Tagasi failide juurde",
     "backTip": "Tagasi failide juurde (Esc)",
-    "singleTip": "Üks paneel (Ctrl+1)",
-    "dualTip": "Kaks paneeli (Ctrl+2)",
-    "jobs": "Tööd",
-    "security": "Konto ja turvalisus",
+    "toSingle": "Lülitu ühele paneelile (Ctrl+1)",
+    "toDual": "Lülitu kahele paneelile (Ctrl+2)",
+    "settings": "Seaded",
+    "running": {
+      "one": "{n} töö käib",
+      "other": "{n} tööd käivad"
+    },
     "activity": "Tegevus"
   },
   "bottom": {

@@ -53,8 +53,7 @@ const shoot = async (page: Page, file: string) => { await page.mouse.move(1590, 
 const rows: string[][] = [];
 for (const theme of ['dark', 'light']) {
   const proto = await open(prototype, theme), mine = await open(app, theme);
-  await mine.click('.head [data-account]');
-  await mine.click('.glim-menu-item:has-text("Einstellungen")');
+  await mine.click('.head [data-run="settings"]');
   for (const tab of TABS) {
     await proto.evaluate((id) => (window as never as { CC: { go(v: string, id: string): void } }).CC.go('settings', id), tab);
     await mine.click(`[data-stab="${tab}"]`);

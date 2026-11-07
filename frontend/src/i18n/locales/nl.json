@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, terug naar de bestanden",
     "back": "Terug naar de bestanden",
     "backTip": "Terug naar de bestanden (Esc)",
-    "singleTip": "Eén paneel (Ctrl+1)",
-    "dualTip": "Twee panelen (Ctrl+2)",
-    "jobs": "Taken",
-    "security": "Account en beveiliging",
+    "toSingle": "Naar één paneel (Ctrl+1)",
+    "toDual": "Naar twee panelen (Ctrl+2)",
+    "settings": "Instellingen",
+    "running": {
+      "one": "{n} taak loopt",
+      "other": "{n} taken lopen"
+    },
     "activity": "Activiteit"
   },
   "bottom": {

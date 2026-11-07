@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, volver aos ficheiros",
     "back": "Volver aos ficheiros",
     "backTip": "Volver aos ficheiros (Esc)",
-    "singleTip": "Un panel (Ctrl+1)",
-    "dualTip": "Dous paneis (Ctrl+2)",
-    "jobs": "Tarefas",
-    "security": "Conta e seguranza",
+    "toSingle": "Cambiar a un panel (Ctrl+1)",
+    "toDual": "Cambiar a dous paneis (Ctrl+2)",
+    "settings": "Axustes",
+    "running": {
+      "one": "{n} tarefa en curso",
+      "other": "{n} tarefas en curso"
+    },
     "activity": "Actividade"
   },
   "bottom": {

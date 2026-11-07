@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander، بازگشت به پرونده‌ها",
     "back": "بازگشت به پرونده‌ها",
     "backTip": "بازگشت به پرونده‌ها (Esc)",
-    "singleTip": "یک پنل (Ctrl+1)",
-    "dualTip": "دو پنل (Ctrl+2)",
-    "jobs": "کارها",
-    "security": "حساب و امنیت",
+    "toSingle": "رفتن به یک پنل (Ctrl+1)",
+    "toDual": "رفتن به دو پنل (Ctrl+2)",
+    "settings": "تنظیمات",
+    "running": {
+      "one": "{n} کار در حال اجرا",
+      "other": "{n} کار در حال اجرا"
+    },
     "activity": "فعالیت"
   },
   "bottom": {

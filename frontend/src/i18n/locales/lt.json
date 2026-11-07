@@ -3341,10 +3341,15 @@
     "brand": "CannonCommander, į failus",
     "back": "Atgal į failus",
     "backTip": "Atgal į failus (Esc)",
-    "singleTip": "Vienas skydelis (Ctrl+1)",
-    "dualTip": "Du skydeliai (Ctrl+2)",
-    "jobs": "Užduotys",
-    "security": "Paskyra ir sauga",
+    "toSingle": "Perjungti į vieną skydelį (Ctrl+1)",
+    "toDual": "Perjungti į du skydelius (Ctrl+2)",
+    "settings": "Nustatymai",
+    "running": {
+      "one": "Vykdoma {n} užduotis",
+      "few": "Vykdomos {n} užduotys",
+      "many": "Vykdoma {n} užduoties",
+      "other": "Vykdoma {n} užduočių"
+    },
     "activity": "Veikla"
   },
   "bottom": {

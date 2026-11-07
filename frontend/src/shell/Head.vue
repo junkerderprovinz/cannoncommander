@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Button, MenuBar } from '@glimstone/vue';
 import { computed, h, onMounted, ref, watch } from 'vue';
-import { run } from '@/core/actions';
+import { actions, run } from '@/core/actions';
 import { glyphComponent } from '@/core/glyphs';
 import { menu, resolveItems, toGlim } from '@/core/menu';
 import { allMenuItems, MENUS, menuItems, menuName, setMenuBarOpener } from '@/core/menus';
 import { prefs } from '@/core/prefs';
 import { go, view } from '@/core/views';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { useUser } from '@/stores/user';
 import { HEAD_LOGO } from './logo';
 import { shell } from './state';
@@ -32,20 +32,22 @@ function allMenus(e: MouseEvent) {
   const r = at(e);
   menu(r.left, r.bottom + 6, allMenuItems());
 }
+// The jobs live in the avatar's menu, so the avatar carries their count while any run.
 function account(e: MouseEvent) {
   const r = at(e);
   menu(r.right - 260, r.bottom + 6, [
     { head: [user.me.full, user.me.role && t(`config.roles.${user.me.role.toLowerCase()}`)].filter(Boolean).join(', ') },
-    'palette', '-', 'settings',
-    { label: t('head.security'), g: 'IconKey', run: () => go('settings', 'security') },
+    'palette', '-',
+    { ...actions.jobs!, count: shell.jobCount || undefined },
     { label: t('head.activity'), g: 'IconLog', run: () => run('openActivity') },
     '-', 'logout',
   ]);
 }
-// One button for the layout: its glyph and its words say what a press does, and it stays pressed while both panels show.
-const flip = computed(() => (prefs.dual
-  ? { id: 'single', glyph: 'IconViewSimple', tip: t('head.singleTip') }
-  : { id: 'dual', glyph: 'IconCompare', tip: t('head.dualTip') }));
+// One button for the layout: its glyph and its words name the layout that shows, the bubble says what a press does,
+// and it stays pressed while both panels show.
+const layout = computed(() => (prefs.dual
+  ? { id: 'single', label: t('actions.dual'), glyph: 'IconPaneTwo', tip: t('head.toSingle') }
+  : { id: 'dual', label: t('actions.single'), glyph: 'IconPaneOne', tip: t('head.toDual') }));
 </script>
 
 <template>
@@ -60,8 +62,8 @@ const flip = computed(() => (prefs.dual
     </template>
     <Button v-else class="hback" :label="t('head.back')" label-key="IconBack" data-go-view="files" :title="t('head.backTip')" @click="go('files')" />
     <span class="spacer"></span>
-    <Button v-if="files" class="head-layout" compact :label="flip.tip" :label-key="null" :glyph="glyphComponent(flip.glyph)" :aria-pressed="prefs.dual" :data-run="flip.id" @click="run(flip.id)" />
-    <Button :compact-below="900" :label="t('head.jobs')" label-key="IconQueued" data-run="jobs" @click="run('jobs')"><template #after><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }">{{ shell.jobCount }}</span></template></Button>
-    <Button class="avatar" compact :label="user.me.full" :label-key="null" :glyph="Initials" data-account @click="account" />
+    <Button v-if="files" class="head-layout" :compact-below="900" :label="layout.label" :label-key="null" :glyph="glyphComponent(layout.glyph)" :title="layout.tip" :aria-pressed="prefs.dual" :data-run="layout.id" @click="run(layout.id)" />
+    <Button :compact-below="900" :label="t('head.settings')" label-key="IconGear" data-run="settings" @click="run('settings')" />
+    <Button class="avatar" compact :label="user.me.full" :label-key="null" :glyph="Initials" :title="shell.jobCount ? plural(shell.jobCount, 'head.running') : undefined" data-account @click="account"><template #after><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }" aria-hidden="true">{{ shell.jobCount }}</span></template></Button>
   </header>
 </template>

@@ -3087,10 +3087,13 @@
     "brand": "CannonCommander, takaisin tiedostoihin",
     "back": "Takaisin tiedostoihin",
     "backTip": "Takaisin tiedostoihin (Esc)",
-    "singleTip": "Yksi paneeli (Ctrl+1)",
-    "dualTip": "Kaksi paneelia (Ctrl+2)",
-    "jobs": "Työt",
-    "security": "Tili ja turvallisuus",
+    "toSingle": "Vaihda yhteen paneeliin (Ctrl+1)",
+    "toDual": "Vaihda kahteen paneeliin (Ctrl+2)",
+    "settings": "Asetukset",
+    "running": {
+      "one": "{n} työ käynnissä",
+      "other": "{n} työtä käynnissä"
+    },
     "activity": "Toiminta"
   },
   "bottom": {

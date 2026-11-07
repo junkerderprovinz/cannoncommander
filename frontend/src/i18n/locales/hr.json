@@ -3214,10 +3214,14 @@
     "brand": "CannonCommander, na datoteke",
     "back": "Natrag na datoteke",
     "backTip": "Natrag na datoteke (Esc)",
-    "singleTip": "Jedan panel (Ctrl+1)",
-    "dualTip": "Dva panela (Ctrl+2)",
-    "jobs": "Zadaci",
-    "security": "Račun i sigurnost",
+    "toSingle": "Prebaci na jedan panel (Ctrl+1)",
+    "toDual": "Prebaci na dva panela (Ctrl+2)",
+    "settings": "Postavke",
+    "running": {
+      "one": "{n} zadatak u tijeku",
+      "few": "{n} zadatka u tijeku",
+      "other": "{n} zadataka u tijeku"
+    },
     "activity": "Aktivnost"
   },
   "bottom": {

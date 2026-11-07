@@ -38,10 +38,10 @@
     "brand": "CannonCommander, zu den Dateien",
     "back": "Zurück zu den Dateien",
     "backTip": "Zurück zu den Dateien (Esc)",
-    "singleTip": "Ein Fenster (Strg+1)",
-    "dualTip": "Zwei Fenster (Strg+2)",
-    "jobs": "Aufgaben",
-    "security": "Konto & Sicherheit",
+    "toSingle": "Auf ein Fenster wechseln (Strg+1)",
+    "toDual": "Auf zwei Fenster wechseln (Strg+2)",
+    "settings": "Einstellungen",
+    "running": { "one": "{n} Aufgabe läuft", "other": "{n} Aufgaben laufen" },
     "activity": "Aktivität"
   },
   "bottom": {

@@ -3214,10 +3214,14 @@
     "brand": "CannonCommander, înapoi la fișiere",
     "back": "Înapoi la fișiere",
     "backTip": "Înapoi la fișiere (Esc)",
-    "singleTip": "Un panou (Ctrl+1)",
-    "dualTip": "Două panouri (Ctrl+2)",
-    "jobs": "Sarcini",
-    "security": "Cont și securitate",
+    "toSingle": "Comută la un panou (Ctrl+1)",
+    "toDual": "Comută la două panouri (Ctrl+2)",
+    "settings": "Setări",
+    "running": {
+      "one": "{n} sarcină în curs",
+      "few": "{n} sarcini în curs",
+      "other": "{n} de sarcini în curs"
+    },
     "activity": "Activitate"
   },
   "bottom": {

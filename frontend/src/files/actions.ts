@@ -26,8 +26,8 @@ export function registerFileActions() {
   const F = usePanels();
   const listing = useListing();
 
-  action('single', { label: tl('actions.single'), g: 'IconViewSimple', key: 'Ctrl+1', radio: true, checked: () => !prefs.dual, run: () => setPref('dual', false) });
-  action('dual', { label: tl('actions.dual'), g: 'IconCompare', key: 'Ctrl+2', radio: true, checked: () => prefs.dual, run: () => setPref('dual', true) });
+  action('single', { label: tl('actions.single'), g: 'IconPaneOne', key: 'Ctrl+1', radio: true, checked: () => !prefs.dual, run: () => setPref('dual', false) });
+  action('dual', { label: tl('actions.dual'), g: 'IconPaneTwo', key: 'Ctrl+2', radio: true, checked: () => prefs.dual, run: () => setPref('dual', true) });
   action('sidebar', { label: tl('actions.sidebar'), g: 'IconMenu', key: 'Ctrl+b', checked: () => prefs.side,
     run: () => (innerWidth <= 760 ? (shell.sideOpen = !shell.sideOpen) : setPref('side', !prefs.side)) });
   action('fkeys', { label: tl('actions.fkeys'), g: 'IconKeyboard', checked: () => prefs.fkeys, run: toggle('fkeys') });

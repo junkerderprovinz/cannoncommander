@@ -238,8 +238,7 @@ const links = (await api('GET', '/shares')) as { paths: string[]; password: bool
 check('the server keeps the link', links.some((s) => s.paths[0] === '/mnt/user/dokumente/Mietvertrag.pdf' && s.password), links);
 
 // The message for the visitors can be changed later in Einstellungen, Freigaben.
-await page.locator('.head [data-account]').click();
-await page.locator('.glim-menu-item', { hasText: 'Einstellungen' }).click();
+await page.locator('.head [data-run="settings"]').click();
 await page.getByText('Freigaben', { exact: true }).first().click();
 await wait(400);
 await page.locator('.a-list').getByText('Mietvertrag.pdf', { exact: true }).first().click();

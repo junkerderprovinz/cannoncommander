@@ -24,7 +24,8 @@ type Params = { sources?: string[]; dest?: string; paths?: string[] };
 // Boxes rather than offsetParent, which an svg does not have.
 const shown = (el: Element | null | undefined): el is Element => !!el && el.getClientRects().length > 0;
 const panelEl = (i: number) => document.querySelector<HTMLElement>(`.panel[data-panel="${i}"] .list`);
-const jobsButton = () => document.querySelector('.head [data-run="jobs"]');
+// The jobs live in the avatar's menu, so a job's way there and its end lead to the avatar.
+const jobsHome = () => document.querySelector('.head [data-account]');
 const panelsShown = () => (prefs.dual ? [0, 1] : [0]);
 
 // The cannon answers the copy command itself, F5 or its menu entry, not a copy dragged across.
@@ -36,7 +37,7 @@ function onStarted(_job: Job, req: JobCreate) {
   if ((req.kind === 'copy' || req.kind === 'move') && p.sources?.length) {
     const from = p.sources[0]!.slice(0, p.sources[0]!.lastIndexOf('/')) || '/';
     const at = (path?: string) => panelsShown().map(panelEl).find((el, i) => shown(el) && F.T(i).path === path) ?? null;
-    const source = at(from) ?? panelEl(F.active), target = at(p.dest) ?? jobsButton();
+    const source = at(from) ?? panelEl(F.active), target = at(p.dest) ?? jobsHome();
     if (shown(source) && shown(target)) {
       if (req.kind === 'copy' && copyCommand && stormy()) cannon(source, target);
       else trace(source, target);
@@ -56,10 +57,10 @@ function onStarted(_job: Job, req: JobCreate) {
 }
 
 function onEnded(job: Job) {
-  const button = jobsButton();
-  if (!moving() || !shown(button)) return;
-  if (job.state === 'done') replay(button, 'glim-confirm');
-  else if (job.state === 'failed') replay(button, 'glim-shake');
+  const home = jobsHome();
+  if (!moving() || !shown(home)) return;
+  if (job.state === 'done') replay(home, 'glim-confirm');
+  else if (job.state === 'failed') replay(home, 'glim-shake');
 }
 
 // The smoke waits for both the job's end and the empty list, which arrive in either order.
