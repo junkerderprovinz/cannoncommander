@@ -91,4 +91,23 @@ describe('job list', () => {
     expect(J.find('q')!.state).toBe('done');
     expect(ended).toHaveBeenCalledOnce();
   });
+
+  it('keeps a cancelled job ended when the answer to the cancel comes back after the end', async () => {
+    const J = useJobs();
+    emit({ type: 'job.created', data: job('c', { state: 'asking' }) });
+    vi.spyOn(ops, 'jobStep').mockImplementation(async (id) => {
+      emit({ type: 'job.done', data: job(id, { state: 'cancelled' }) });
+      return job(id, { state: 'asking' });
+    });
+    await J.cancel(J.find('c')!);
+    expect(J.find('c')!.state).toBe('cancelled');
+  });
+
+  it('puts an ended job back into the queue on a retry', async () => {
+    const J = useJobs();
+    emit({ type: 'job.created', data: job('r', { state: 'cancelled' }) });
+    vi.spyOn(ops, 'jobStep').mockResolvedValue(job('r', { state: 'queued' }));
+    await J.retry(J.find('r')!);
+    expect(J.find('r')!.state).toBe('queued');
+  });
 });

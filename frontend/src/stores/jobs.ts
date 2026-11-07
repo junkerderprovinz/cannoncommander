@@ -59,8 +59,8 @@ export const useJobs = defineStore('jobs', () => {
     for (const j of got) if (!isOpen(j) && known.get(j.id) && isOpen(known.get(j.id)!)) ended(j);
   }
 
-  // A quick job can end, and say so over the event stream, before the answer that created it arrives; that answer
-  // must not put it back into the queue.
+  // A job can end, and say so over the event stream, before the answer to the call that started or changed it
+  // arrives. That answer must not put it back into the queue.
   function adopt(got: Job) {
     const known = find(got.id);
     return known && !isOpen(known) ? known : upsert(got);
@@ -94,7 +94,10 @@ export const useJobs = defineStore('jobs', () => {
   async function step(j: Job, what: 'pause' | 'resume' | 'cancel' | 'retry') {
     const own = local(j);
     if (own) return own[what]?.();
-    upsert(await ops.jobStep(j.id, what));
+    const got = await ops.jobStep(j.id, what);
+    // Only a retry opens an ended job again.
+    if (what === 'retry') upsert(got);
+    else adopt(got);
   }
   const pause = (j: Job) => step(j, j.state === 'paused' ? 'resume' : 'pause');
   const cancel = (j: Job) => step(j, 'cancel');
@@ -107,13 +110,13 @@ export const useJobs = defineStore('jobs', () => {
     const order = [...open];
     order.splice(to, 0, order.splice(from, 1)[0]!);
     order.forEach((x, k) => { if (!local(x)) x.position = k; });
-    upsert(await ops.changeJob(j.id, { position: to }));
+    adopt(await ops.changeJob(j.id, { position: to }));
   }
   async function setCap(j: Job, cap: number) {
-    upsert(await ops.changeJob(j.id, { cap }));
+    adopt(await ops.changeJob(j.id, { cap }));
   }
   async function decide(j: Job, key: string, choice: Parameters<typeof ops.decide>[1]['choice'], all = false) {
-    upsert(await ops.decide(j.id, { key, choice, all }));
+    adopt(await ops.decide(j.id, { key, choice, all }));
   }
 
   // Ended jobs leave the list; the uploads this tab ran go with them.
