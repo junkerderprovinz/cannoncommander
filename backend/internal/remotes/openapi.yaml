@@ -1,8 +1,9 @@
 tag:
   name: remotes
   description: |
-    rclone remotes mounted below /mnt/remotes. rclone runs inside the
-    server with its own rclone.conf in the config folder. Calls that need
+    rclone remotes mounted below /remotes, inside the container and away
+    from the host's /mnt. rclone runs inside the server with its own
+    rclone.conf in the config folder. Calls that need
     it answer 503 while it is missing or still starting.
 paths:
   /remotes:
@@ -35,8 +36,8 @@ paths:
       operationId: remoteCreate
       summary: Add a remote
       description: |
-        Adds the remote to rclone.conf and mounts it, below /mnt/remotes
-        unless mount says otherwise. A mount that fails leaves the remote in
+        Adds the remote to rclone.conf and mounts it at /remotes and its
+        name unless mount names another folder below /remotes. A mount that fails leaves the remote in
         place with the reason in error.
       x-access: admin
       requestBody:
@@ -319,7 +320,7 @@ components:
           description: The folder at the remote that is mounted, the share for SMB, the bucket for S3.
         mount:
           type: string
-          example: /mnt/remotes/gdrive
+          example: /remotes/gdrive
         label:
           type: string
           description: What listings and the tree show on the mounted folder.
@@ -357,7 +358,8 @@ components:
           example: archiv
         mount:
           type: string
-          example: /mnt/remotes/nas-keller
+          description: A folder below /remotes. Left empty it is /remotes and the name.
+          example: /remotes/nas-keller
         params:
           type: object
           description: rclone parameters of the type. Passwords are sent in clear and obscured on the server.

@@ -45,14 +45,13 @@ type fakeRC struct {
 	sections      map[string]map[string]string
 	mounts        map[string]string
 	vfs           map[string]map[string]any
+	opts          map[string]map[string]any
 	calls         []string
-	refused       []string
-	noAllowOther  bool
 	unmountRefuse bool
 }
 
 func newFakeRC(t *testing.T) (*fakeRC, *rcClient) {
-	f := &fakeRC{t: t, sections: map[string]map[string]string{}, mounts: map[string]string{}, vfs: map[string]map[string]any{}}
+	f := &fakeRC{t: t, sections: map[string]map[string]string{}, mounts: map[string]string{}, vfs: map[string]map[string]any{}, opts: map[string]map[string]any{}}
 	srv := httptest.NewServer(f)
 	t.Cleanup(srv.Close)
 	return f, &rcClient{http: srv.Client(), base: srv.URL + "/"}
@@ -146,13 +145,9 @@ func (f *fakeRC) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			f.fail(w, "didn't find section in config file")
 			return
 		}
-		if f.noAllowOther && in.MountOpt["AllowOther"] == true {
-			f.refused = append(f.refused, in.MountPoint)
-			f.fail(w, "fusermount3: option allow_other only allowed if 'user_allow_other' is set in /etc/fuse.conf")
-			return
-		}
 		f.mounts[in.MountPoint] = in.Fs
 		f.vfs[in.MountPoint] = in.VfsOpt
+		f.opts[in.MountPoint] = in.MountOpt
 		reply(map[string]any{})
 	case "mount/unmount":
 		if f.unmountRefuse {
@@ -229,7 +224,6 @@ type fixture struct {
 	h    http.Handler
 	s    *Service
 	rc   *fakeRC
-	mnt  string
 	root string
 }
 
@@ -244,8 +238,7 @@ func newFixture(t *testing.T) *fixture {
 	if _, err := migrate.Apply(context.Background(), db, migrate.Main); err != nil {
 		t.Fatal(err)
 	}
-	mnt := filepath.Join(base, "mnt")
-	cfg := Config{Mnt: mnt, Root: filepath.Join(mnt, "remotes")}
+	cfg := Config{Root: filepath.Join(base, "remotes")}
 	mounting := func(context.Context) (system.Mounting, error) {
 		return system.Mounting{Automount: true, Cache: system.CacheWrites, CacheSize: 10}, nil
 	}
@@ -271,7 +264,7 @@ func newFixture(t *testing.T) *fixture {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return &fixture{t: t, h: h, s: s, rc: fake, mnt: mnt, root: cfg.Root}
+	return &fixture{t: t, h: h, s: s, rc: fake, root: cfg.Root}
 }
 
 func (f *fixture) call(who, method, target string, body any, out any) int {

@@ -40,9 +40,9 @@ LABEL org.opencontainers.image.title="cannoncommander" \
 COPY --from=ffmpeg [ "/ffmpeg", "/ffprobe", "/usr/local/bin/" ]
 # tini reaps the rclone processes the server leaves behind if it dies.
 RUN apk --no-cache add ca-certificates mailcap tzdata curl setpriv 7zip tini
-# rclone mounts the remotes. allow_other lets other containers, such as a
-# media server, read those mounts while the server runs as PUID.
-RUN apk --no-cache add rclone fuse3 && echo user_allow_other >> /etc/fuse.conf
+# rclone mounts the remotes below /remotes, outside the /mnt the container
+# shares with the host, so they stay inside the container.
+RUN apk --no-cache add rclone fuse3 && mkdir /remotes && chown 99:100 /remotes
 # Unraid's own defaults: nobody:users, and files anyone on the network may change.
 ENV PUID=99 \
     PGID=100 \

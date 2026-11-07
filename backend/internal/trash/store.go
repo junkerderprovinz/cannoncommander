@@ -131,7 +131,9 @@ func (s *Store) Close() {
 
 // BinFor returns the API path of the bin folder that takes loc. On a
 // source mounted right below /mnt, such as /mnt/user or /mnt/disk1, every
-// share gets its own, elsewhere the source has one at its top.
+// share gets its own, and so does every remote in /remotes, so a delete
+// never carries files off their disk or out of their cloud. Elsewhere the
+// source has one at its top.
 func BinFor(loc ccfs.Location) (string, error) {
 	if loc.Virtual() || loc.InArchive() {
 		return "", ErrShareRoot
@@ -140,7 +142,7 @@ func BinFor(loc ccfs.Location) (string, error) {
 		return "", ErrInBin
 	}
 	src := loc.Source
-	if path.Dir(src.Mount) == "/mnt" {
+	if path.Dir(src.Mount) == "/mnt" || src.Mount == "/remotes" {
 		share, rest, _ := strings.Cut(strings.TrimPrefix(loc.Index, "/"), "/")
 		if share == "" || rest == "" {
 			return "", ErrShareRoot

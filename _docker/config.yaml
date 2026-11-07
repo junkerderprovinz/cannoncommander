@@ -9,7 +9,7 @@ server:
     - path: "/mnt/user"
       name: "Shares"
     # Remotes are browsed live, indexing them would read whole clouds.
-    - path: "/mnt/remotes"
+    - path: "/remotes"
       name: "Fernziele"
       config:
         rules:

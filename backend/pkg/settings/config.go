@@ -634,6 +634,9 @@ func loadConfigWithDefaults(configFile string, generate bool) error {
 	}
 
 	MigrateLegacyPasswordAdminFromAuth()
+	for _, s := range Config.Server.Sources {
+		s.Path = remotesPath(s.Path)
+	}
 
 	attachSourceDefaultPermissionsFromConfig(filteredConfig)
 

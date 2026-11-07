@@ -307,19 +307,8 @@ func (s *Service) mountOn(ctx context.Context, r row, rows []row) error {
 	if m.Cache != system.CacheOff {
 		vfs["CacheMaxSize"] = fmt.Sprintf("%dM", cacheShare(m.CacheSize, rows))
 	}
-	opts := map[string]any{"VolumeName": r.Name, "AllowOther": true}
-	call := func() error {
-		return s.rc.call(ctx, "mount/mount", map[string]any{"fs": r.fs(), "mountPoint": r.Mount, "vfsOpt": vfs, "mountOpt": opts}, nil)
-	}
-	err = call()
-	// Other containers, a media server say, only see the files with
-	// allow_other, which FUSE grants a user that is not root only when
-	// fuse.conf says so. Mounted without it the files are still here.
-	if err != nil && strings.Contains(err.Error(), "allow_other") {
-		opts["AllowOther"] = false
-		err = call()
-	}
-	return err
+	opts := map[string]any{"VolumeName": r.Name}
+	return s.rc.call(ctx, "mount/mount", map[string]any{"fs": r.fs(), "mountPoint": r.Mount, "vfsOpt": vfs, "mountOpt": opts}, nil)
 }
 
 func (s *Service) unmountRow(ctx context.Context, r row) error {

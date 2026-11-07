@@ -78,7 +78,7 @@ func TestLinkableOnlyWhereTheFileCanStayOnItsDisk(t *testing.T) {
 
 func TestTransferOutsideUnraidReportsNothing(t *testing.T) {
 	e := newEnv(t)
-	rep, err := e.svc.CheckTransfer(context.Background(), Transfer{Kind: "copy", Paths: []string{"/mnt/remotes/nas/a"}, Dest: "/mnt/user/filme"})
+	rep, err := e.svc.CheckTransfer(context.Background(), Transfer{Kind: "copy", Paths: []string{"/remotes/nas/a"}, Dest: "/mnt/user/filme"})
 	if err != nil || rep.Trap != nil || rep.Space != nil || rep.Links != nil || rep.Linkable || len(rep.Wakes) != 0 {
 		t.Errorf("report = %+v, %v", rep, err)
 	}
@@ -115,7 +115,7 @@ func TestWhereShowsAnEmptyFolderOnItsDisk(t *testing.T) {
 
 func TestWhereOffTheArrayIsEmpty(t *testing.T) {
 	e := newEnv(t)
-	for _, p := range []string{"/mnt/remotes/nas", "/boot/config", "/mnt/user/a.zip::/b"} {
+	for _, p := range []string{"/remotes/nas", "/boot/config", "/mnt/user/a.zip::/b"} {
 		w, err := e.svc.Where(context.Background(), p, false)
 		if err != nil || w.Volume != "" || len(w.On) != 0 {
 			t.Errorf("%s: %+v, %v", p, w, err)

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -46,7 +47,20 @@ func ReadStoredSources(file string) (list []StoredSource, ok bool, err error) {
 	if err := json.Unmarshal(data, &list); err != nil {
 		return nil, false, fmt.Errorf("%s: %w", file, err)
 	}
+	for i := range list {
+		list[i].Path = remotesPath(list[i].Path)
+	}
 	return list, true, nil
+}
+
+// remotesPath reads a source at /mnt/remotes as the remotes, which rclone
+// mounts at /remotes. Inside the container /mnt/remotes is the host's own
+// folder, where Unassigned Devices mounts its shares.
+func remotesPath(p string) string {
+	if path.Clean(filepath.ToSlash(p)) == "/mnt/remotes" {
+		return "/remotes"
+	}
+	return p
 }
 
 // WriteStoredSources saves the sources atomically.

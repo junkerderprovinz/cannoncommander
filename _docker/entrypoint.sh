@@ -22,10 +22,13 @@ if [ ! -f "$CC_CONFIG" ]; then
   cp /app/config.default.yaml "$CC_CONFIG"
 fi
 
-# Remotes are mounted below /mnt/remotes. A folder that is already there,
-# made by Unraid's Unassigned Devices say, keeps its owner.
-if [ ! -d /mnt/remotes ]; then
-  mkdir -p /mnt/remotes && chown "$PUID:$PGID" /mnt/remotes
+# rclone mounts the remotes below /remotes as PUID.
+chown "$PUID:$PGID" /remotes
+
+# A path for /mnt/remotes with shared propagation sits inside the /mnt bind,
+# and every start of the container doubles the mounts there on the server.
+if awk '$5 == "/mnt/remotes" && / shared:/ { found = 1 } END { exit !found }' /proc/self/mountinfo; then
+  echo "/mnt/remotes is mapped into this container with shared propagation. Please remove that path from the container settings, because each start doubles the mounts in /mnt/remotes on the server." >&2
 fi
 
 as_user=""

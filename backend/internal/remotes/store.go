@@ -25,6 +25,12 @@ func init() {
 				updated_at INTEGER NOT NULL
 			)`,
 		),
+		// Mount folders lie below /remotes, away from the host's /mnt. A row
+		// outside it gets /remotes and its name, which no other row holds:
+		// names are unique, and when this runs every row lies below /mnt.
+		migrate.SQL("remotes/002_outside_mnt",
+			`UPDATE remotes SET mount = '/remotes/' || name, updated_at = unixepoch() WHERE mount NOT LIKE '/remotes/%'`,
+		),
 	)
 }
 

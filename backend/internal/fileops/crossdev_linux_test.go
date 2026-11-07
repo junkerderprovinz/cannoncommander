@@ -25,13 +25,13 @@ func TestMoveAcrossFileSystemsTakesAFileHiddenByNameAlong(t *testing.T) {
 		t.Skip("no /dev/shm")
 	}
 	t.Cleanup(func() { os.RemoveAll(shm) })
-	e := newEnv(t, ccfs.Source{Name: "shm", Mount: "/mnt/remotes/shm", Root: shm})
+	e := newEnv(t, ccfs.Source{Name: "shm", Mount: "/remotes/shm", Root: shm})
 	if deviceOf(t, e.root) == deviceOf(t, shm) {
 		t.Skip("the temp folder and /dev/shm share a file system")
 	}
 	album := albumWithThumbs(e)
 
-	j := e.run("move", fileops.TransferParams{Sources: []string{album}, Dest: "/mnt/remotes/shm"})
+	j := e.run("move", fileops.TransferParams{Sources: []string{album}, Dest: "/remotes/shm"})
 	if !e.gone(album) {
 		t.Fatal("the hidden file kept the source alive")
 	}
@@ -51,14 +51,14 @@ func TestMoveAcrossFileSystemsCopiesAndRemovesTheSource(t *testing.T) {
 		t.Skip("no /dev/shm")
 	}
 	t.Cleanup(func() { os.RemoveAll(shm) })
-	e := newEnv(t, ccfs.Source{Name: "shm", Mount: "/mnt/remotes/shm", Root: shm})
+	e := newEnv(t, ccfs.Source{Name: "shm", Mount: "/remotes/shm", Root: shm})
 	if deviceOf(t, e.root) == deviceOf(t, shm) {
 		t.Skip("the temp folder and /dev/shm share a file system")
 	}
 	e.write("/mnt/user/fotos/Urlaub/a.jpg", "sonne", old)
 	e.write("/mnt/user/fotos/Urlaub/2025/b.jpg", "strand", old)
 
-	j := e.run("move", fileops.TransferParams{Sources: []string{"/mnt/user/fotos/Urlaub"}, Dest: "/mnt/remotes/shm"})
+	j := e.run("move", fileops.TransferParams{Sources: []string{"/mnt/user/fotos/Urlaub"}, Dest: "/remotes/shm"})
 	if !e.gone("/mnt/user/fotos/Urlaub") {
 		t.Fatal("the source is still there")
 	}

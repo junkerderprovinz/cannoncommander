@@ -118,3 +118,40 @@ func TestSavedSourcesReplaceTheConfiguredOnes(t *testing.T) {
 		t.Fatalf("sources %+v %+v", got[0], got[1])
 	}
 }
+
+func TestASourceAtMntRemotesReadsAsTheRemotes(t *testing.T) {
+	dir := t.TempDir()
+	saved := Config
+	t.Cleanup(func() { Config = saved })
+	cfg := filepath.Join(dir, "config.yaml")
+	yaml := `
+server:
+  sources:
+    - path: "/mnt/user"
+    - path: "/mnt/remotes"
+      name: "Fernziele"
+    - path: "/mnt/remotes/keller_archiv"
+`
+	if err := os.WriteFile(cfg, []byte(yaml), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := loadConfigWithDefaults(cfg, true); err != nil {
+		t.Fatal(err)
+	}
+	var paths []string
+	for _, s := range Config.Server.Sources {
+		paths = append(paths, s.Path)
+	}
+	if !slices.Equal(paths, []string{"/mnt/user", "/remotes", "/mnt/remotes/keller_archiv"}) {
+		t.Errorf("config.yaml gives %v", paths)
+	}
+
+	file := filepath.Join(dir, SourcesFileName)
+	if err := os.WriteFile(file, []byte(`[{"name": "Fernziele", "path": "/mnt/remotes/"}]`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	list, _, err := ReadStoredSources(file)
+	if err != nil || len(list) != 1 || list[0].Path != "/remotes" {
+		t.Errorf("sources.json gives %+v, %v", list, err)
+	}
+}

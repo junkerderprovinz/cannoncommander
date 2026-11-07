@@ -18,9 +18,9 @@ type Config struct {
 	// Socket is the Unix socket rclone rcd listens on. It stays out of Dir,
 	// because Dir may sit on a share where sockets do not work.
 	Socket string
-	// Mnt is the directory mounts go below, Root the default folder for
-	// them.
-	Mnt  string
+	// Root is the folder mounts go below. It lies outside /mnt, which the
+	// container shares with the host, so a mount folder never shows up on
+	// the server.
 	Root string
 }
 
@@ -32,13 +32,11 @@ func ConfigFromEnv() Config {
 		Binary: system.RcloneBinary(),
 		Dir:    filepath.Join(filepath.Dir(settings.Config.Server.DatabaseV2.Path), "rclone"),
 		Socket: filepath.Join(os.TempDir(), "cannoncommander", "rclone.sock"),
-		Mnt:    "/mnt",
-		Root:   "/mnt/remotes",
+		Root:   "/remotes",
 	}
 	for env, dst := range map[string]*string{
 		"CC_RCLONE_DIR":    &c.Dir,
 		"CC_RCLONE_SOCKET": &c.Socket,
-		"CC_REMOTES_MNT":   &c.Mnt,
 		"CC_REMOTES_ROOT":  &c.Root,
 	} {
 		if v := os.Getenv(env); v != "" {

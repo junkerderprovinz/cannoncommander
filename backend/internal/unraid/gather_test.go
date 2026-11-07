@@ -80,7 +80,7 @@ func TestScatterKeepsSubfoldersTogether(t *testing.T) {
 
 func TestGatherNeedsAUserShareFolder(t *testing.T) {
 	e := gatherFixture(t)
-	for _, p := range []string{"/mnt/disk1/filme", "/mnt/user", "/mnt/remotes/x"} {
+	for _, p := range []string{"/mnt/disk1/filme", "/mnt/user", "/remotes/x"} {
 		if _, err := e.svc.PlanGather(context.Background(), GatherRequest{Path: p, Mode: ModeGather}); !errors.Is(err, ErrNotUserFolder) {
 			t.Errorf("%s: %v", p, err)
 		}
