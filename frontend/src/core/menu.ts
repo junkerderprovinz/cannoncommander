@@ -57,18 +57,15 @@ export function closeMenu() {
 
 const text = (v: string | (() => string)) => (typeof v === 'function' ? v() : v);
 
-// An action that switches something on or off closes the menu like any action; only a plain box, such as a column
-// in the column menu, keeps it open so several can be ticked in a row.
 function pick(it: MenuItem) {
-  if (it.id && actions[it.id]) {
-    run(it.id);
-    if (it.checked && !it.radio) {
-      // A menu of the bar is GlimStone's own, and from outside only Escape closes it.
-      if (menuState.list) closeMenu();
-      else document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-    }
-  } else (it.run as (() => unknown) | undefined)?.();
+  if (it.id && actions[it.id]) run(it.id);
+  else (it.run as (() => unknown) | undefined)?.();
 }
+
+// A command that switches something on or off shows its glyph like any other and its state as the tick GlimStone
+// gives a choice, which also closes the menu like any command. Only a plain box, such as a column in the column menu,
+// keeps the box and the open menu, so several can be ticked in a row.
+const asChoice = (it: MenuItem) => !!it.radio || !!(it.checked && it.id && actions[it.id]);
 
 export function toGlim(list: Resolved[]): GlimEntry[] {
   return list.map((it): GlimEntry => {
@@ -84,7 +81,7 @@ export function toGlim(list: Resolved[]): GlimEntry[] {
       ...(it.key ? { shortcut: it.key } : {}),
       ...(it.count != null ? { count: it.count } : {}),
       ...(it.checked ? { checked: it.checked() } : {}),
-      ...(it.radio ? { radio: true } : {}),
+      ...(asChoice(it) ? { radio: true } : {}),
       ...(it.sub ? { sub: toGlim(resolveItems(it.sub)), subId: 'submenu' } : {}),
       disabled: itemOff(it),
       onSelect: () => pick(it),

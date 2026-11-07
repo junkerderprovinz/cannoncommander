@@ -26,8 +26,8 @@ export function registerFileActions() {
   const F = usePanels();
   const listing = useListing();
 
-  action('single', { label: tl('actions.single'), g: 'IconViewSimple', key: 'Ctrl+1', checked: () => !prefs.dual, run: () => setPref('dual', false) });
-  action('dual', { label: tl('actions.dual'), g: 'IconCompare', key: 'Ctrl+2', checked: () => prefs.dual, run: () => setPref('dual', true) });
+  action('single', { label: tl('actions.single'), g: 'IconViewSimple', key: 'Ctrl+1', radio: true, checked: () => !prefs.dual, run: () => setPref('dual', false) });
+  action('dual', { label: tl('actions.dual'), g: 'IconCompare', key: 'Ctrl+2', radio: true, checked: () => prefs.dual, run: () => setPref('dual', true) });
   action('sidebar', { label: tl('actions.sidebar'), g: 'IconMenu', key: 'Ctrl+b', checked: () => prefs.side,
     run: () => (innerWidth <= 760 ? (shell.sideOpen = !shell.sideOpen) : setPref('side', !prefs.side)) });
   action('fkeys', { label: tl('actions.fkeys'), g: 'IconKeyboard', checked: () => prefs.fkeys, run: toggle('fkeys') });
@@ -48,8 +48,10 @@ export function registerFileActions() {
       : [{ head: t('files.noHistory') }]);
   } });
 
-  for (const [id, s] of [['sortName', 'name'], ['sortSize', 'size'], ['sortTime', 'time'], ['sortType', 'type']] as const) {
-    action(id, { label: tl(`actions.${id}`), checked: () => F.T().sort === s, run: () => {
+  // The same glyphs as the groups, so a size or a date looks alike wherever the list is ordered by it.
+  const SORTS = [['sortName', 'name', 'IconLabelText'], ['sortSize', 'size', GROUPS.size!.g], ['sortTime', 'time', GROUPS.date!.g], ['sortType', 'type', GROUPS.kind!.g]] as const;
+  for (const [id, s, g] of SORTS) {
+    action(id, { label: tl(`actions.${id}`), g, radio: true, checked: () => F.T().sort === s, run: () => {
       const tab = F.T();
       if (tab.sort === s) tab.dir *= -1;
       else Object.assign(tab, { sort: s, dir: 1 });
