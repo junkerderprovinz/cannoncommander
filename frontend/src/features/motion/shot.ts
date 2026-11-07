@@ -2,6 +2,7 @@
 // breaks everything it passes. Then the head puts itself together again. Nothing of the app's state is touched, and
 // whatever ends the shot early puts the head back at once, so it cannot be left broken.
 import { dialMs, moving } from '@/core/motion';
+import { quietTips } from '@/core/tips';
 import { HOLD, holdPress } from './cues';
 import { flyBall, muzzleSmoke, replay, shatter } from './fx';
 
@@ -43,9 +44,11 @@ export function fire(head: HTMLElement, times = timesOf()): boolean {
     timers.forEach(clearTimeout);
     for (const el of [layer, ...pieces]) el.remove();
     for (const el of [...hit, cannon, logo, ...head.querySelectorAll('.fx-shattered, .fx-rebuild')]) el.classList.remove('fx-shattered', 'fx-rebuild', 'fx-tremble', 'fx-kick', 'fx-fired');
+    quietTips(false);
     stop = null;
   };
 
+  quietTips(true);
   cannon.classList.add('fx-tremble');
   later(times.tremble, () => {
     cannon.classList.remove('fx-tremble');

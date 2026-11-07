@@ -1914,6 +1914,10 @@
       "esc": {
         "label": "Zavřít",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Přiblížit nebo oddálit zobrazení",
+        "key": "{mod}+kolečko"
       }
     }
   },
@@ -3623,7 +3627,7 @@
     "foundIn": "v {path}",
     "searchTip": "Hledat v této složce a níže (Ctrl+F nebo /)",
     "labelsTip": "Označení: hledat podle barvy nebo štítku",
-    "viewTip": "Zobrazení: {name}",
+    "viewTip": "Zobrazení: {name}. Podržte {mod} a otáčejte kolečkem myši, tím zobrazení přiblížíte nebo oddálíte.",
     "equalTip": "Druhé okno na tuto složku (Ctrl+.)",
     "recent": "Naposledy navštívené",
     "noHistory": "Zatím žádná historie",

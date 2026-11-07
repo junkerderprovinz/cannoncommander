@@ -1853,6 +1853,10 @@
       "esc": {
         "label": "Fermer",
         "key": "Échap"
+      },
+      "zoom": {
+        "label": "Zoomer la vue",
+        "key": "{mod}+molette"
       }
     }
   },
@@ -3492,7 +3496,7 @@
     "foundIn": "dans {path}",
     "searchTip": "Chercher dans ce dossier et en dessous (Ctrl+F ou /)",
     "labelsTip": "Étiquettes : chercher par couleur ou mot-clé",
-    "viewTip": "Vue : {name}",
+    "viewTip": "Vue : {name}. Maintenez {mod} et tournez la molette pour zoomer.",
     "equalTip": "L'autre panneau sur ce dossier (Ctrl+.)",
     "recent": "Visités récemment",
     "noHistory": "Pas encore d'historique",

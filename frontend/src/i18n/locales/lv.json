@@ -1853,6 +1853,10 @@
       "esc": {
         "label": "Aizvērt",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Tālummainīt skatu",
+        "key": "{mod}+ritenītis"
       }
     }
   },
@@ -3492,7 +3496,7 @@
     "foundIn": "mapē {path}",
     "searchTip": "Meklēt šajā mapē un zemāk (Ctrl+F vai /)",
     "labelsTip": "Marķējumi: meklēt pēc krāsas vai birkas",
-    "viewTip": "Skats: {name}",
+    "viewTip": "Skats: {name}. Turi {mod} un griez ritenīti, lai tālummainītu.",
     "equalTip": "Otru paneli uz šo mapi (Ctrl+.)",
     "recent": "Nesen apmeklētās",
     "noHistory": "Vēl nav vēstures",

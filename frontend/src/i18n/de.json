@@ -330,7 +330,7 @@
     "foundIn": "in {path}",
     "searchTip": "In diesem Ordner und darunter suchen (Strg+F oder /)",
     "labelsTip": "Markierungen: nach Farbe oder Schlagwort suchen",
-    "viewTip": "Ansicht: {name}",
+    "viewTip": "Ansicht: {name}. Mit {mod} und dem Mausrad zoomst du.",
     "equalTip": "Anderes Fenster auf diesen Ordner (Strg+.)",
     "recent": "Zuletzt besucht",
     "noHistory": "Noch kein Verlauf",

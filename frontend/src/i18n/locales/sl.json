@@ -1914,6 +1914,10 @@
       "esc": {
         "label": "Zapri",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Povečava pogleda",
+        "key": "{mod}+kolešček"
       }
     }
   },
@@ -3623,7 +3627,7 @@
     "foundIn": "v {path}",
     "searchTip": "Išči v tej mapi in nižje (Ctrl+F ali /)",
     "labelsTip": "Oznake: išči po barvi ali znački",
-    "viewTip": "Pogled: {name}",
+    "viewTip": "Pogled: {name}. Za povečavo pridržite {mod} in zavrtite kolešček.",
     "equalTip": "Drugo okno na to mapo (Ctrl+.)",
     "recent": "Nazadnje obiskano",
     "noHistory": "Še ni zgodovine",

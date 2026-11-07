@@ -845,7 +845,10 @@ export function toolsFixture(engine) {
     ['GET', /^\/shares\/([^/]+)\/qr$/, (_r, _s, _b, [, id], q) => {
       const s = shareAt(id);
       if (!s) return [404, 'there is no such link'];
-      const origin = q.get('origin') || 'http://localhost:5173';
+      // The fixture plays a server behind a proxy at the prototype's public address. The dev server's own address
+      // carries a port that changes from run to run, and with it the link and its QR code.
+      const given = q.get('origin') || '';
+      const origin = !given || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?\/?$/.test(given) ? 'https://dateien.example.org' : given;
       if (!/^https?:\/\/[^/@?#]+\/?$/.test(origin)) return [400, 'origin has to be a scheme and a host, such as https://files.example.org'];
       const url = origin.replace(/\/$/, '') + '/s/' + s.slug;
       return [200, { url, qr: qrSvg(url) }];

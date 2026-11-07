@@ -1731,6 +1731,10 @@
       "esc": {
         "label": "关闭",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "缩放视图",
+        "key": "{mod}+滚轮"
       }
     }
   },
@@ -3230,7 +3234,7 @@
     "foundIn": "位于 {path}",
     "searchTip": "在此文件夹及其子文件夹中搜索（Ctrl+F 或 /）",
     "labelsTip": "标记：按颜色或标签查找",
-    "viewTip": "视图：{name}",
+    "viewTip": "视图：{name}。按住 {mod} 并滚动鼠标滚轮即可缩放。",
     "equalTip": "另一面板转到此文件夹（Ctrl+.）",
     "recent": "最近访问",
     "noHistory": "还没有历史记录",

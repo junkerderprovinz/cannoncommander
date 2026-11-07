@@ -1731,6 +1731,10 @@
       "esc": {
         "label": "닫기",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "보기 확대 및 축소",
+        "key": "{mod}+휠"
       }
     }
   },
@@ -3230,7 +3234,7 @@
     "foundIn": "위치: {path}",
     "searchTip": "이 폴더와 하위 폴더에서 검색 (Ctrl+F 또는 /)",
     "labelsTip": "라벨: 색이나 태그로 찾기",
-    "viewTip": "보기: {name}",
+    "viewTip": "보기: {name}. {mod} 키를 누른 채 휠을 돌리면 확대하거나 축소합니다.",
     "equalTip": "다른 패널을 이 폴더로 (Ctrl+.)",
     "recent": "최근 방문",
     "noHistory": "아직 기록이 없습니다",

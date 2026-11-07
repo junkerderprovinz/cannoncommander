@@ -35,7 +35,16 @@ function qr(secret) {
   }
   return `<svg viewBox="0 0 ${n + 4} ${n + 4}" shape-rendering="crispEdges"><rect width="${n + 4}" height="${n + 4}" fill="#fff"/><g fill="#161616">${rects}</g></svg>`;
 }
-const randomOf = (alphabet, n) => Array.from({ length: n }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('');
+// The secrets and codes only have to look random. Every fixture server draws them from the same sequence, so the
+// windows that show them, and the QR code of the secret, come out the same from run to run.
+let seed = 0;
+const next = () => {
+  seed = (seed + 0x6d2b79f5) | 0;
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+const randomOf = (alphabet, n) => Array.from({ length: n }, () => alphabet[Math.floor(next() * alphabet.length)]).join('');
 const codes = () => Array.from({ length: 8 }, () => `${randomOf('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4)}-${randomOf('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4)}`);
 const b64url = (n) => randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_', n);
 
@@ -132,6 +141,7 @@ const APPDATA = '/mnt/user/appdata/cannoncommander', EXPORTS = APPDATA + '/expor
 const ME = 'jdp';
 
 export function settingsFixtureMiddleware() {
+  seed = 0;
   const fx = createFixture();
   const S = state();
   S.running = JSON.stringify(S.sources);

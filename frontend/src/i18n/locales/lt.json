@@ -1914,6 +1914,10 @@
       "esc": {
         "label": "Uždaryti",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Keisti rodinio mastelį",
+        "key": "{mod}+ratukas"
       }
     }
   },
@@ -3623,7 +3627,7 @@
     "foundIn": "{path}",
     "searchTip": "Ieškoti šiame aplanke ir žemiau (Ctrl+F arba /)",
     "labelsTip": "Žymos: ieškoti pagal spalvą ar žymę",
-    "viewTip": "Rodinys: {name}",
+    "viewTip": "Rodinys: {name}. Laikyk nuspaudęs {mod} ir suk ratuką, kad keistum mastelį.",
     "equalTip": "Kitą skydelį į šį aplanką (Ctrl+.)",
     "recent": "Neseniai lankyti",
     "noHistory": "Istorijos dar nėra",

@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Sluiten",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Weergave zoomen",
+        "key": "{mod}+muiswiel"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "in {path}",
     "searchTip": "In deze map en daaronder zoeken (Ctrl+F of /)",
     "labelsTip": "Labels: zoeken op kleur of tag",
-    "viewTip": "Weergave: {name}",
+    "viewTip": "Weergave: {name}. Houd {mod} ingedrukt en draai aan het wieltje om te zoomen.",
     "equalTip": "Ander paneel naar deze map (Ctrl+.)",
     "recent": "Recent bezocht",
     "noHistory": "Nog geen geschiedenis",

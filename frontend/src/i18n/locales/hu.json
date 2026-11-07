@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Bezárás",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Nézet nagyítása",
+        "key": "{mod}+görgő"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "itt: {path}",
     "searchTip": "Keresés ebben a mappában és lejjebb (Ctrl+F vagy /)",
     "labelsTip": "Jelölések: keresés szín vagy címke szerint",
-    "viewTip": "Nézet: {name}",
+    "viewTip": "Nézet: {name}. Nagyításhoz tartsa lenyomva a(z) {mod} billentyűt, és görgessen.",
     "equalTip": "A másik ablak erre a mappára (Ctrl+.)",
     "recent": "Legutóbb megnyitott",
     "noHistory": "Még nincsenek előzmények",

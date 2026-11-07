@@ -1792,6 +1792,10 @@
       "esc": {
         "label": "Stäng",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Zooma vyn",
+        "key": "{mod}+hjul"
       }
     }
   },
@@ -3361,7 +3365,7 @@
     "foundIn": "i {path}",
     "searchTip": "Sök i den här mappen och nedåt (Ctrl+F eller /)",
     "labelsTip": "Etiketter: sök efter färg eller tagg",
-    "viewTip": "Vy: {name}",
+    "viewTip": "Vy: {name}. Håll ned {mod} och rulla hjulet för att zooma.",
     "equalTip": "Andra panelen till den här mappen (Ctrl+.)",
     "recent": "Nyligen besökta",
     "noHistory": "Ingen historik än",

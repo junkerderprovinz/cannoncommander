@@ -53,6 +53,8 @@
     --motion-shard-spin: 140deg;
     --motion-rebuild-wait: 900ms;
     --motion-rebuild-dur: 420ms;
+    /* Cards growing or shrinking under Ctrl and the wheel, and a folder turning into another view on the way. */
+    --motion-zoom-dur: 180ms;
   }
   :root[data-motion="subtle"] {
     --motion-spin-dur: 1.2s;
@@ -93,6 +95,7 @@
     --motion-shard-spin: 20deg;
     --motion-rebuild-wait: 400ms;
     --motion-rebuild-dur: 240ms;
+    --motion-zoom-dur: 120ms;
   }
   :root[data-motion="off"] {
     /* Slow rather than stopped: a spinner standing still reads as a hang. */
@@ -135,6 +138,7 @@
     --motion-shard-spin: 0deg;
     --motion-rebuild-wait: 0s;
     --motion-rebuild-dur: 0s;
+    --motion-zoom-dur: 0s;
   }
   :root[data-motion="storm"] {
     --motion-spin-dur: .5s;
@@ -175,5 +179,6 @@
     --motion-shard-spin: 320deg;
     --motion-rebuild-wait: 1.3s;
     --motion-rebuild-dur: 600ms;
+    --motion-zoom-dur: 260ms;
   }
 }

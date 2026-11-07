@@ -8,8 +8,15 @@ export function hideTip() {
   bubble = null;
 }
 
+// While the header cannon fires, no bubble covers the shot or points at a control that lies in pieces.
+let quiet = false;
+export function quietTips(on: boolean) {
+  quiet = on;
+  if (on) hideTip();
+}
+
 function onOver(e: MouseEvent) {
-  if (matchMedia('(hover: none)').matches) return;
+  if (quiet || matchMedia('(hover: none)').matches) return;
   const tr = (e.target as Element).closest?.<HTMLElement>('[data-tip]');
   if (!tr) return hideTip();
   if (bubble && bubble._for === tr) return;

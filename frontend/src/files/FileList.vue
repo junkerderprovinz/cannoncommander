@@ -17,6 +17,7 @@ import ListItem from './ListItem.vue';
 import Miller from './Miller.vue';
 import { join } from './paths';
 import { CARD_VIEWS, ROW_VIEWS } from './views';
+import { CARD_STEPS, shownTile, thumbSize, wheelZoom, type Zoom } from './zoom';
 
 const props = defineProps<{ i: number }>();
 const F = usePanels();
@@ -26,6 +27,8 @@ const tab = computed(() => F.T(props.i));
 const list = computed(() => F.entries(props.i));
 const v = computed(() => F.viewOf(tab.value));
 const grid = computed(() => CARD_VIEWS.includes(v.value));
+const tile = computed(() => (CARD_STEPS.some(([id]) => id === v.value) ? F.tileOf(tab.value) : undefined));
+const thumb = computed(() => thumbSize(tile.value, devicePixelRatio));
 const visible = computed(() => Columns.visible());
 const group = computed(() => F.groupOf(tab.value));
 const heads = computed(() => groupHeads(list.value, group.value, now()));
@@ -102,11 +105,65 @@ onMounted(() => {
   if (v.value === 'columns' && el.value) el.value.scrollLeft = el.value.scrollWidth;
 });
 onBeforeUnmount(() => observer?.disconnect());
-watch([v, () => list.value.length, () => prefs.density], () => nextTick(() => {
+watch([v, tile, () => list.value.length, () => prefs.density], () => nextTick(() => {
   measure();
   if (v.value === 'columns' && el.value) el.value.scrollLeft = el.value.scrollWidth;
 }));
 const onScroll = () => { if (virtual.value && el.value) size.top = el.value.scrollTop; };
+
+// Ctrl or Cmd and the wheel zoom this panel only, and only over its files; anywhere else the browser keeps its own
+// page zoom. The entry under the pointer stays under it while the cards grow, or the cursor row where it was.
+interface Anchor { idx: number; fx: number; fy: number; x: number; y: number }
+function anchorOf(e: WheelEvent): Anchor | null {
+  const l = el.value!, over = (e.target as Element).closest<HTMLElement>('.row');
+  const row = over ?? l.querySelector<HTMLElement>(`.row[data-idx="${tab.value.cursor}"]`);
+  if (!row) return null;
+  const box = row.getBoundingClientRect(), at = l.getBoundingClientRect();
+  return over
+    ? { idx: +row.dataset.idx!, fx: (e.clientX - box.left) / box.width, fy: (e.clientY - box.top) / box.height, x: e.clientX - at.left, y: e.clientY - at.top }
+    : { idx: +row.dataset.idx!, fx: 0, fy: 0, x: box.left - at.left, y: box.top - at.top };
+}
+function place(a: Anchor) {
+  const l = el.value;
+  if (!l) return;
+  measure();
+  const row = l.querySelector<HTMLElement>(`.row[data-idx="${a.idx}"]`), at = l.getBoundingClientRect();
+  if (row) {
+    const box = row.getBoundingClientRect();
+    l.scrollTop += box.top + a.fy * box.height - at.top - a.y;
+    l.scrollLeft += box.left + a.fx * box.width - at.left - a.x;
+  } else {
+    const line = lines.value.find((x) => x.head === undefined && a.idx >= x.from && a.idx < x.to);
+    if (line) l.scrollTop = line.y - a.y;
+  }
+  size.top = l.scrollTop;
+}
+// The cards grow over the length of the dial, so the anchor is put back on every frame until they stand.
+let holding = 0;
+function hold(a: Anchor) {
+  const turn = ++holding, until = performance.now() + dialMs('--motion-zoom-dur');
+  const step = () => {
+    if (turn !== holding) return;
+    place(a);
+    if (performance.now() < until) requestAnimationFrame(step);
+  };
+  nextTick(step);
+}
+const zoom = wheelZoom(() => ({ view: v.value, tile: tile.value }), (z: Zoom) => {
+  const swap = z.view !== v.value;
+  F.setZoom(tab.value, z, false);
+  const ms = dialMs('--motion-zoom-dur');
+  if (swap && moving() && ms) nextTick(() => el.value?.animate([{ opacity: 0.35, offset: 0 }], { duration: ms, easing: 'ease-out' }));
+});
+function onWheel(e: WheelEvent) {
+  if (!el.value || !(e.ctrlKey || e.metaKey)) return;
+  const a = anchorOf(e);
+  if (!zoom(e)) return;
+  e.preventDefault();
+  if (a) hold(a);
+}
+onMounted(() => el.value?.addEventListener('wheel', onWheel, { passive: false }));
+onBeforeUnmount(() => el.value?.removeEventListener('wheel', onWheel));
 
 // The rows of a folder just opened come in one after another, on GlimStone's stagger dials. A key or a press ends it
 // at once, so the entrance never stands between a key and the row it moves to.
@@ -277,7 +334,8 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
 </script>
 
 <template>
-  <div ref="el" class="list" :class="[`view-${v}`, { 'grid-view': grid }]" tabindex="0" :style="{ '--cols': Columns.template(), '--minw': Columns.minWidth() }"
+  <div ref="el" class="list" :class="[`view-${v}`, { 'grid-view': grid, zoomed: tile !== undefined }]" tabindex="0"
+    :style="{ '--cols': Columns.template(), '--minw': Columns.minWidth(), '--zoom-tile': shownTile(v, tile) + 'px' }"
     @click="onClick" @contextmenu="onMenu" @scroll.passive="onScroll">
     <div v-if="ROW_VIEWS.includes(v)" class="lhead" data-lhead @pointerdown="onHeadDown">
       <button v-for="id in visible" :key="id" class="lh" :class="{ r: COL[id]!.r, sorted: tab.sort === Columns.sortKey(COL[id]!), moving: colDrag.moved && colDrag.id === id }"
@@ -288,7 +346,7 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
       <div v-if="virtual && range.before" class="vpad" aria-hidden="true" :style="{ height: pad(range.before) }"></div>
       <template v-for="(d, n) in drawn" :key="d.k ? (d.k.at || '') + d.k.name : d.idx">
         <div v-if="d.head" class="lgroup"><span>{{ groupName(d.head.name) }}</span><span class="glim-num">{{ d.head.count }}</span></div>
-        <ListItem v-else :k="d.k!" :idx="d.idx" :view="v" :path="tab.path" :marked="tab.marked.has(d.k!.name)" :cursor="d.idx === tab.cursor" :cut="cutOf(d.k!)" :mark="F.marks[i]?.[d.k!.name]"
+        <ListItem v-else :k="d.k!" :idx="d.idx" :view="v" :path="tab.path" :marked="tab.marked.has(d.k!.name)" :cursor="d.idx === tab.cursor" :cut="cutOf(d.k!)" :mark="F.marks[i]?.[d.k!.name]" :thumb="thumb"
           :class="{ 'glim-stagger-row': entering && !cutOf(d.k!) }" :style="entering ? { '--row-i': n } : undefined" />
       </template>
       <div v-if="virtual && range.after" class="vpad" aria-hidden="true" :style="{ height: pad(range.after) }"></div>

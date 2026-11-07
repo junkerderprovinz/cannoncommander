@@ -1853,6 +1853,10 @@
       "esc": {
         "label": "Zatvori",
         "key": "Esc"
+      },
+      "zoom": {
+        "label": "Zumiranje prikaza",
+        "key": "{mod}+kotačić"
       }
     }
   },
@@ -3492,7 +3496,7 @@
     "foundIn": "u {path}",
     "searchTip": "Traži u ovoj mapi i ispod nje (Ctrl+F ili /)",
     "labelsTip": "Obilježja: traži po boji ili oznaci",
-    "viewTip": "Prikaz: {name}",
+    "viewTip": "Prikaz: {name}. Držite {mod} i okrećite kotačić za zumiranje.",
     "equalTip": "Drugi panel na ovu mapu (Ctrl+.)",
     "recent": "Nedavno posjećeno",
     "noHistory": "Još nema povijesti",

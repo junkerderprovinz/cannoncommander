@@ -330,7 +330,7 @@
     "foundIn": "in {path}",
     "searchTip": "Search this folder and below (Ctrl+F or /)",
     "labelsTip": "Labels: find by colour or tag",
-    "viewTip": "View: {name}",
+    "viewTip": "View: {name}. Hold {mod} and turn the wheel to zoom.",
     "equalTip": "Other panel to this folder (Ctrl+.)",
     "recent": "Recently visited",
     "noHistory": "No history yet",
