@@ -801,8 +801,8 @@
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
    },
    "r13-9-shortcuts": {
-    "pixels": 60565,
-    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "pixels": 60700,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; the fixed keys end with zooming by Ctrl and the wheel, which the prototype does not have"
    },
    "r13-2-smart": {
     "pixels": 51030,
