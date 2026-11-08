@@ -1907,6 +1907,25 @@
     "shot": "Tangkapan skrin {stamp}.{ext}",
     "made": "“{name}” dicipta"
   },
+  "places": {
+    "home": "Folder peribadi",
+    "desktop": "Desktop",
+    "documents": "Dokumen",
+    "downloads": "Muat Turun",
+    "pictures": "Gambar",
+    "music": "Muzik",
+    "videos": "Video",
+    "recent": "Digunakan baru-baru ini",
+    "drives": "Pemacu",
+    "eject": "Keluarkan",
+    "ejectLabel": "Keluarkan {name}",
+    "ejected": "{name} kini selamat untuk dicabut",
+    "ejectedDisc": "{name} telah dikeluarkan",
+    "notMounted": "Belum dilekapkan, satu klik melekapkannya",
+    "arrived": "{name} sudah disambung",
+    "open": "Buka",
+    "gone": "{name} telah dicabut, kini anda di {here}"
+  },
   "profiles": {
     "title": "Profil tetingkap",
     "saved": "Disimpan",
@@ -3255,6 +3274,7 @@
   },
   "side": {
     "bookmarks": "Pintasan",
+    "places": "Tempat",
     "tree": "Pepohon folder",
     "addBookmark": "Tambah folder semasa sebagai pintasan",
     "unpin": "Buang daripada akses pantas",
@@ -3271,6 +3291,13 @@
     "bookmarkAdded": "Pintasan “{name}” ditambah",
     "renameTitle": "Namakan semula pintasan",
     "rename": "Namakan semula"
+  },
+  "drives": {
+    "fixed": "Cakera Setempat",
+    "removable": "Pemacu USB",
+    "optical": "Pemacu DVD",
+    "network": "Pemacu Rangkaian",
+    "volume": "Volum {size}"
   },
   "files": {
     "server": "Pelayan",
@@ -3400,6 +3427,7 @@
     "deleteSelf": "Anda tidak boleh memadam akaun anda sendiri",
     "denied": "Anda tiada kebenaran untuk ini",
     "desktopOnly": "Itu hanya boleh dalam aplikasi desktop",
+    "ejectFailed": "Pemacu belum boleh dikeluarkan. Mungkin masih ada fail terbuka padanya",
     "fileManagerNotSet": "Komputer tidak menerima perubahan itu",
     "disksAdminsOnly": "Hanya pentadbir dapat melihat cakera satu per satu dan Cache",
     "expiryPast": "Tarikh tamat tempoh sudah berlalu",
@@ -3440,6 +3468,7 @@
     "messageLength": {
       "other": "Mesej boleh mempunyai paling banyak {n} aksara"
     },
+    "mountFailed": "Pemacu tidak dapat dilekapkan",
     "nameLength": {
       "other": "Nama boleh mempunyai paling banyak {n} aksara"
     },
@@ -3475,6 +3504,7 @@
     "notText": "Fail ini bukan teks",
     "notWindows1252": "Teks ini mengandungi aksara yang tidak dapat disimpan oleh Windows-1252. Simpan sebagai UTF-8",
     "nothingToUndo": "Tiada apa yang boleh dibuat asal",
+    "noVolume": "Pemacu ini sudah tiada",
     "officeCannotOpen": "Pelayan Office tidak membuka fail .{ext}",
     "oldNameTaken": "Nama lama sudah digunakan semula",
     "outsideSources": "Ini hanya boleh untuk fail dan folder dalam sumber",
@@ -3539,6 +3569,7 @@
     "totpOn": "Log masuk dua faktor sudah dihidupkan",
     "totpRequired": "Pelayan ini mewajibkan log masuk dua faktor untuk semua orang",
     "trashEmpty": "Tong sampah kosong",
+    "trashOnlyHome": "Di sini hanya folder peribadi anda ada tong sampah. Lebih baik padam terus",
     "trashOtherDisk": "Ini berada pada sistem fail yang berlainan daripada tong sampahnya. Lebih baik padam terus",
     "trashShareRoot": "Seluruh Share atau seluruh volum tidak boleh dimasukkan ke tong sampah",
     "unknownApp": "Komputer ini tidak menawarkan aplikasi itu untuk fail ini",

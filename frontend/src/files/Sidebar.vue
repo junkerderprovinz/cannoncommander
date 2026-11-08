@@ -6,6 +6,7 @@ import { run } from '@/core/actions';
 import { extend } from '@/core/extend';
 import { fmtSize } from '@/core/format';
 import { G, glyphComponent } from '@/core/glyphs';
+import { host } from '@/core/host';
 import { menu } from '@/core/menu';
 import { Render } from '@/core/Render';
 import { cancelBtn, win } from '@/core/windows';
@@ -16,6 +17,7 @@ import { usePanels } from '@/stores/panels';
 import { useTrash } from '@/stores/trash';
 import { useUser } from '@/stores/user';
 import { moveBookmark, renameBookmark, unpin } from './bookmarks';
+import { driveGlyph } from './drives';
 import { folderItems } from './menus';
 
 const F = usePanels();
@@ -41,7 +43,7 @@ watchEffect(() => {
   for (const p of ['/', ...F.openTree]) if (!listing.trees.has(p)) listing.tree(p).catch(() => {});
 });
 
-const glyphOf = (k: TreeItem, open: boolean) => k.path === '/mnt' ? 'IconDatabase' : k.path === '/boot' ? 'IconFlash' : k.path === '/remotes' ? 'IconCloud'
+const glyphOf = (k: TreeItem, open: boolean) => k.kind ? driveGlyph(k.kind) : k.path === '/mnt' ? 'IconDatabase' : k.path === '/boot' ? 'IconFlash' : k.path === '/remotes' ? 'IconCloud'
   : k.remote ? 'IconNetwork' : k.free ? 'IconZFS' : open ? 'IconFolderOpen' : 'IconFolder';
 const toggle = (p: string) => (F.openTree.has(p) ? F.openTree.delete(p) : F.openTree.add(p));
 
@@ -76,9 +78,10 @@ function bookmarkMenu(e: MouseEvent, b: Bookmark) {
 
 <template>
   <aside id="side" class="side">
-    <Card class="side-card" :title="t('side.bookmarks')">
+    <Card class="side-card" :title="host.desktop ? t('side.places') : t('side.bookmarks')">
       <button class="ptab add side-add" data-run="addBookmark" :data-tip="t('side.addBookmark')" @click="run('addBookmark')"><G n="IconAdd" /></button>
       <div id="shortcuts">
+        <Render v-for="(row, k) in extend.sideTop" :key="'top' + k" :node="row()" />
         <SidebarRow v-for="(s, i) in user.bookmarks" :key="s.path" :label="s.name" :glyph="glyphComponent(s.g)" :active="cur === s.path" :data-go="s.path" :data-bm="i" @click="F.reach(s.path)" @contextmenu.prevent.stop="bookmarkMenu($event, s)">
           <template #after><button class="unpin" :data-unpin="i" :data-tip="t('side.unpin')" :aria-label="t('side.unpinLabel', { name: s.name })" @click.stop="unpin(s)"><G n="IconPin" /></button></template>
         </SidebarRow>
@@ -86,6 +89,7 @@ function bookmarkMenu(e: MouseEvent, b: Bookmark) {
         <Render v-for="(row, k) in extend.sideRows" :key="k" :node="row()" />
       </div>
     </Card>
+    <Render v-for="(card, k) in extend.sideCards" :key="'card' + k" :node="card()" />
     <Card class="side-card side-tree" :title="t('side.tree')">
       <div id="tree">
         <SidebarRow v-for="{ k, depth, open } in rows" :key="k.path" :depth="depth" :label="k.label || k.name" :glyph="glyphComponent(glyphOf(k, open))" :active="cur === k.path"

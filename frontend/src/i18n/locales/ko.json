@@ -1907,6 +1907,25 @@
     "shot": "스크린샷 {stamp}.{ext}",
     "made": "“{name}” 만듦"
   },
+  "places": {
+    "home": "홈 폴더",
+    "desktop": "바탕 화면",
+    "documents": "문서",
+    "downloads": "다운로드",
+    "pictures": "사진",
+    "music": "음악",
+    "videos": "동영상",
+    "recent": "최근 사용",
+    "drives": "드라이브",
+    "eject": "꺼내기",
+    "ejectLabel": "{name} 꺼내기",
+    "ejected": "이제 {name}을(를) 안전하게 제거할 수 있습니다",
+    "ejectedDisc": "{name}을(를) 꺼냈습니다",
+    "notMounted": "아직 마운트되지 않았습니다. 클릭하면 마운트됩니다",
+    "arrived": "{name}이(가) 연결되었습니다",
+    "open": "열기",
+    "gone": "{name}이(가) 제거되어 지금 {here}에 있습니다"
+  },
   "profiles": {
     "title": "창 프로필",
     "saved": "저장됨",
@@ -3255,6 +3274,7 @@
   },
   "side": {
     "bookmarks": "즐겨찾기",
+    "places": "위치",
     "tree": "폴더 트리",
     "addBookmark": "현재 폴더를 즐겨찾기에 추가",
     "unpin": "빠른 액세스에서 제거",
@@ -3271,6 +3291,13 @@
     "bookmarkAdded": "“{name}” 즐겨찾기를 추가했습니다",
     "renameTitle": "즐겨찾기 이름 바꾸기",
     "rename": "이름 바꾸기"
+  },
+  "drives": {
+    "fixed": "로컬 디스크",
+    "removable": "USB 드라이브",
+    "optical": "DVD 드라이브",
+    "network": "네트워크 드라이브",
+    "volume": "{size} 볼륨"
   },
   "files": {
     "server": "서버",
@@ -3400,6 +3427,7 @@
     "deleteSelf": "내 계정은 삭제할 수 없습니다",
     "denied": "이 작업을 할 권한이 없습니다",
     "desktopOnly": "데스크톱 앱에서만 할 수 있습니다",
+    "ejectFailed": "지금은 드라이브를 꺼낼 수 없습니다. 아직 열려 있는 파일이 있을 수 있습니다",
     "fileManagerNotSet": "컴퓨터가 변경을 받아들이지 않았습니다",
     "disksAdminsOnly": "개별 디스크와 Cache는 관리자만 볼 수 있습니다",
     "expiryPast": "만료일이 이미 지났습니다",
@@ -3440,6 +3468,7 @@
     "messageLength": {
       "other": "메시지는 최대 {n}자입니다"
     },
+    "mountFailed": "드라이브를 마운트하지 못했습니다",
     "nameLength": {
       "other": "이름은 최대 {n}자입니다"
     },
@@ -3475,6 +3504,7 @@
     "notText": "이 파일은 텍스트가 아닙니다",
     "notWindows1252": "Windows-1252로 저장할 수 없는 문자가 들어 있습니다. UTF-8로 저장하세요",
     "nothingToUndo": "되돌릴 것이 없습니다",
+    "noVolume": "이 드라이브는 더 이상 없습니다",
     "officeCannotOpen": "Office 서버는 .{ext} 파일을 열지 않습니다",
     "oldNameTaken": "원래 이름을 다른 항목이 쓰고 있습니다",
     "outsideSources": "소스 안의 파일과 폴더에만 할 수 있습니다",
@@ -3539,6 +3569,7 @@
     "totpOn": "2단계 인증이 이미 켜져 있습니다",
     "totpRequired": "이 서버는 모두에게 2단계 인증을 요구합니다",
     "trashEmpty": "휴지통이 비어 있습니다",
+    "trashOnlyHome": "여기서는 홈 폴더에만 휴지통이 있습니다. 바로 삭제하세요",
     "trashOtherDisk": "휴지통과 다른 파일 시스템에 있습니다. 바로 삭제하세요",
     "trashShareRoot": "Share 전체나 볼륨 전체는 휴지통으로 옮길 수 없습니다",
     "unknownApp": "이 컴퓨터는 이 파일에 그 앱을 제공하지 않습니다",

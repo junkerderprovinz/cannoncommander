@@ -1,0 +1,19 @@
+{
+  "home": "Persönlicher Ordner",
+  "desktop": "Desktop",
+  "documents": "Dokumente",
+  "downloads": "Downloads",
+  "pictures": "Bilder",
+  "music": "Musik",
+  "videos": "Videos",
+  "recent": "Zuletzt verwendet",
+  "drives": "Laufwerke",
+  "eject": "Auswerfen",
+  "ejectLabel": "{name} auswerfen",
+  "ejected": "{name} kannst du jetzt abziehen",
+  "ejectedDisc": "{name} ist ausgeworfen",
+  "notMounted": "Noch nicht eingehängt, ein Klick hängt es ein",
+  "arrived": "{name} ist da",
+  "open": "Öffnen",
+  "gone": "{name} wurde entfernt, du bist jetzt in {here}"
+}

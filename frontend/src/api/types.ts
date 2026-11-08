@@ -25,7 +25,9 @@ export interface FsItem {
 }
 export interface Volume { path: string; label?: string; free: number; total: number }
 export interface FsList { path: string; items: FsItem[]; volume?: Volume }
-export interface TreeItem { name: string; path: string; hasDirs: boolean; label?: string; free?: number; total?: number; remote?: string }
+// kind and eject come with a drive of the computer the desktop app runs on.
+export interface TreeItem { name: string; path: string; hasDirs: boolean; label?: string; free?: number; total?: number; remote?: string; kind?: DriveKind; eject?: boolean }
+export type DriveKind = 'fixed' | 'removable' | 'optical' | 'network' | 'virtual';
 export interface FsTree { path: string; items: TreeItem[] }
 // fs/meta answers per path with the asked columns it knows. Numbers are bytes, milliseconds, seconds of play or plain
 // figures as the column says; booleans are yes or no; text arrives ready to show.

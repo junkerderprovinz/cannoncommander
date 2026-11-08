@@ -2041,6 +2041,25 @@
     "shot": "Captura {stamp}.{ext}",
     "made": "«{name}» creado"
   },
+  "places": {
+    "home": "Carpeta personal",
+    "desktop": "Escritorio",
+    "documents": "Documentos",
+    "downloads": "Descargas",
+    "pictures": "Imágenes",
+    "music": "Música",
+    "videos": "Vídeos",
+    "recent": "Usados recientemente",
+    "drives": "Unidades",
+    "eject": "Expulsar",
+    "ejectLabel": "Expulsar {name}",
+    "ejected": "Ya puedes quitar {name} con seguridad",
+    "ejectedDisc": "{name} se ha expulsado",
+    "notMounted": "Aún no está montado, un clic lo monta",
+    "arrived": "{name} ya está aquí",
+    "open": "Abrir",
+    "gone": "{name} se ha quitado, ahora estás en {here}"
+  },
   "profiles": {
     "title": "Perfiles de ventana",
     "saved": "Guardados",
@@ -3513,6 +3532,7 @@
   },
   "side": {
     "bookmarks": "Accesos directos",
+    "places": "Ubicaciones",
     "tree": "Árbol de carpetas",
     "addBookmark": "Crear acceso directo a la carpeta actual",
     "unpin": "Quitar del acceso rápido",
@@ -3529,6 +3549,13 @@
     "bookmarkAdded": "Acceso directo «{name}» creado",
     "renameTitle": "Cambiar nombre del acceso directo",
     "rename": "Cambiar nombre"
+  },
+  "drives": {
+    "fixed": "Disco local",
+    "removable": "Unidad USB",
+    "optical": "Unidad de DVD",
+    "network": "Unidad de red",
+    "volume": "Volumen de {size}"
   },
   "files": {
     "server": "Servidor",
@@ -3664,6 +3691,7 @@
     "deleteSelf": "No puedes eliminar tu propia cuenta",
     "denied": "No tienes permisos para esto",
     "desktopOnly": "Eso solo funciona en la aplicación de escritorio",
+    "ejectFailed": "Ahora no se puede expulsar la unidad. Quizá aún haya un archivo abierto en ella",
     "fileManagerNotSet": "El ordenador no aceptó el cambio",
     "disksAdminsOnly": "Los discos individuales y el Cache solo los ven los administradores",
     "expiryPast": "La fecha de caducidad ya ha pasado",
@@ -3710,6 +3738,7 @@
       "many": "El mensaje tiene como máximo {n} caracteres",
       "other": "El mensaje tiene como máximo {n} caracteres"
     },
+    "mountFailed": "No se pudo montar la unidad",
     "nameLength": {
       "one": "El nombre tiene como máximo {n} carácter",
       "many": "El nombre tiene como máximo {n} caracteres",
@@ -3747,6 +3776,7 @@
     "notText": "Este archivo no es texto",
     "notWindows1252": "El texto tiene caracteres que Windows-1252 no puede guardar. Guárdalo como UTF-8",
     "nothingToUndo": "No hay nada que deshacer",
+    "noVolume": "Esta unidad ya no está",
     "officeCannotOpen": "El servidor de Office no abre archivos .{ext}",
     "oldNameTaken": "El nombre antiguo vuelve a estar ocupado",
     "outsideSources": "Esto solo funciona con archivos y carpetas dentro de un origen",
@@ -3813,6 +3843,7 @@
     "totpOn": "La autenticación en dos pasos ya está activada",
     "totpRequired": "Este servidor exige a todos la autenticación en dos pasos",
     "trashEmpty": "La papelera está vacía",
+    "trashOnlyHome": "Aquí solo tu carpeta personal tiene papelera. Mejor elimínalo directamente",
     "trashOtherDisk": "Esto está en otro sistema de archivos que su papelera. Mejor elimínalo directamente",
     "trashShareRoot": "Un Share entero o una unidad entera no puede ir a la papelera",
     "unknownApp": "Este ordenador no ofrece esa aplicación para el archivo",

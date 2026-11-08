@@ -1974,6 +1974,25 @@
     "shot": "Skjámynd {stamp}.{ext}",
     "made": "„{name}“ búið til"
   },
+  "places": {
+    "home": "Heimamappa",
+    "desktop": "Skjáborð",
+    "documents": "Skjöl",
+    "downloads": "Niðurhal",
+    "pictures": "Myndir",
+    "music": "Tónlist",
+    "videos": "Myndskeið",
+    "recent": "Nýlega notað",
+    "drives": "Drif",
+    "eject": "Losa",
+    "ejectLabel": "Losa {name}",
+    "ejected": "Nú má fjarlægja {name} örugglega",
+    "ejectedDisc": "{name} hefur verið losað",
+    "notMounted": "Ekki tengt enn, smellur tengir það",
+    "arrived": "{name} er komið",
+    "open": "Opna",
+    "gone": "{name} var fjarlægt, nú ertu í {here}"
+  },
   "profiles": {
     "title": "Gluggasnið",
     "saved": "Vistuð",
@@ -3384,6 +3403,7 @@
   },
   "side": {
     "bookmarks": "Flýtileiðir",
+    "places": "Staðir",
     "tree": "Möppuskipan",
     "addBookmark": "Bæta núverandi möppu við sem flýtileið",
     "unpin": "Losa úr flýtiaðgangi",
@@ -3400,6 +3420,13 @@
     "bookmarkAdded": "Flýtileiðinni „{name}“ bætt við",
     "renameTitle": "Endurnefna flýtileið",
     "rename": "Endurnefna"
+  },
+  "drives": {
+    "fixed": "Staðbundinn diskur",
+    "removable": "USB-drif",
+    "optical": "DVD-drif",
+    "network": "Netdrif",
+    "volume": "{size} gagnasvæði"
   },
   "files": {
     "server": "Þjónn",
@@ -3532,6 +3559,7 @@
     "deleteSelf": "Þú getur ekki eytt þínum eigin aðgangi",
     "denied": "Þú hefur ekki heimild til þessa",
     "desktopOnly": "Þetta gengur bara í skjáborðsforritinu",
+    "ejectFailed": "Ekki er hægt að losa drifið núna. Kannski er skrá á því enn opin",
     "fileManagerNotSet": "Tölvan tók ekki við breytingunni",
     "disksAdminsOnly": "Aðeins stjórnendur sjá einstaka diska og Cache",
     "expiryPast": "Gildistíminn er liðinn",
@@ -3575,6 +3603,7 @@
       "one": "Skilaboðin mega vera mest {n} stafur",
       "other": "Skilaboðin mega vera mest {n} stafir"
     },
+    "mountFailed": "Ekki tókst að tengja drifið",
     "nameLength": {
       "one": "Heitið má vera mest {n} stafur",
       "other": "Heitið má vera mest {n} stafir"
@@ -3611,6 +3640,7 @@
     "notText": "Þessi skrá er ekki texti",
     "notWindows1252": "Textinn inniheldur stafi sem Windows-1252 getur ekki geymt. Vistaðu hann sem UTF-8",
     "nothingToUndo": "Það er ekkert að afturkalla",
+    "noVolume": "Þetta drif er farið",
     "officeCannotOpen": "Office-þjónninn opnar ekki .{ext}-skrár",
     "oldNameTaken": "Gamla heitið er aftur í notkun",
     "outsideSources": "Þetta virkar aðeins fyrir skrár og möppur innan uppsprettu",
@@ -3676,6 +3706,7 @@
     "totpOn": "Þegar er kveikt á tveggja þátta innskráningu",
     "totpRequired": "Þessi þjónn krefst tveggja þátta innskráningar af öllum",
     "trashEmpty": "Ruslið er tómt",
+    "trashOnlyHome": "Hér er aðeins heimamappan þín með rusl. Eyddu því frekar beint",
     "trashOtherDisk": "Þetta er á öðru skráakerfi en ruslið þess. Eyddu því frekar beint",
     "trashShareRoot": "Heil Share eða heilt drif getur ekki farið í ruslið",
     "unknownApp": "Þessi tölva býður ekki upp á þetta forrit fyrir skrána",

@@ -2041,6 +2041,25 @@
     "shot": "Captura {stamp}.{ext}",
     "made": "S'ha creat «{name}»"
   },
+  "places": {
+    "home": "Carpeta personal",
+    "desktop": "Escriptori",
+    "documents": "Documents",
+    "downloads": "Baixades",
+    "pictures": "Imatges",
+    "music": "Música",
+    "videos": "Vídeos",
+    "recent": "Usats recentment",
+    "drives": "Unitats",
+    "eject": "Expulsa",
+    "ejectLabel": "Expulsa {name}",
+    "ejected": "Ja podeu treure {name} amb seguretat",
+    "ejectedDisc": "S'ha expulsat {name}",
+    "notMounted": "Encara no està muntat, un clic el munta",
+    "arrived": "{name} ja és aquí",
+    "open": "Obre",
+    "gone": "S'ha tret {name}, ara sou a {here}"
+  },
   "profiles": {
     "title": "Perfils de finestra",
     "saved": "Desats",
@@ -3513,6 +3532,7 @@
   },
   "side": {
     "bookmarks": "Dreceres",
+    "places": "Llocs",
     "tree": "Arbre de carpetes",
     "addBookmark": "Crea una drecera a la carpeta actual",
     "unpin": "Treu de l'accés ràpid",
@@ -3529,6 +3549,13 @@
     "bookmarkAdded": "S'ha creat la drecera «{name}»",
     "renameTitle": "Canvia el nom de la drecera",
     "rename": "Canvia el nom"
+  },
+  "drives": {
+    "fixed": "Disc local",
+    "removable": "Unitat USB",
+    "optical": "Unitat de DVD",
+    "network": "Unitat de xarxa",
+    "volume": "Volum de {size}"
   },
   "files": {
     "server": "Servidor",
@@ -3664,6 +3691,7 @@
     "deleteSelf": "No podeu suprimir el vostre propi compte",
     "denied": "No teniu permisos per a això",
     "desktopOnly": "Això només funciona a l'aplicació d'escriptori",
+    "ejectFailed": "Ara no es pot expulsar la unitat. Potser encara hi ha un fitxer obert",
     "fileManagerNotSet": "L'ordinador no ha acceptat el canvi",
     "disksAdminsOnly": "Els discs individuals i la Cache només els veuen els administradors",
     "expiryPast": "La data de caducitat ja ha passat",
@@ -3710,6 +3738,7 @@
       "many": "El missatge té com a màxim {n} caràcters",
       "other": "El missatge té com a màxim {n} caràcters"
     },
+    "mountFailed": "No s'ha pogut muntar la unitat",
     "nameLength": {
       "one": "El nom té com a màxim {n} caràcter",
       "many": "El nom té com a màxim {n} caràcters",
@@ -3747,6 +3776,7 @@
     "notText": "Aquest fitxer no és text",
     "notWindows1252": "El text té caràcters que el Windows-1252 no pot desar. Deseu-lo com a UTF-8",
     "nothingToUndo": "No hi ha res per desfer",
+    "noVolume": "Aquesta unitat ja no hi és",
     "officeCannotOpen": "El servidor Office no obre fitxers .{ext}",
     "oldNameTaken": "El nom antic torna a estar agafat",
     "outsideSources": "Això només funciona amb fitxers i carpetes dins d'un origen",
@@ -3813,6 +3843,7 @@
     "totpOn": "L'autenticació de dos factors ja està activada",
     "totpRequired": "Aquest servidor exigeix a tothom l'autenticació de dos factors",
     "trashEmpty": "La paperera és buida",
+    "trashOnlyHome": "Aquí només la vostra carpeta personal té paperera. Millor suprimiu-ho directament",
     "trashOtherDisk": "Això és en un sistema de fitxers diferent del de la seva paperera. Millor suprimiu-ho directament",
     "trashShareRoot": "Una Share sencera o una unitat sencera no pot anar a la paperera",
     "unknownApp": "Aquest ordinador no ofereix aquesta aplicació per al fitxer",

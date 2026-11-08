@@ -2041,6 +2041,25 @@
     "shot": "Captura de ecrã {stamp}.{ext}",
     "made": "«{name}» criado"
   },
+  "places": {
+    "home": "Pasta pessoal",
+    "desktop": "Ambiente de trabalho",
+    "documents": "Documentos",
+    "downloads": "Transferências",
+    "pictures": "Imagens",
+    "music": "Música",
+    "videos": "Vídeos",
+    "recent": "Usados recentemente",
+    "drives": "Unidades",
+    "eject": "Ejetar",
+    "ejectLabel": "Ejetar {name}",
+    "ejected": "Já pode remover {name} em segurança",
+    "ejectedDisc": "{name} foi ejetado",
+    "notMounted": "Ainda não está montado, um clique monta-o",
+    "arrived": "{name} está ligado",
+    "open": "Abrir",
+    "gone": "{name} foi removido, agora está em {here}"
+  },
   "profiles": {
     "title": "Perfis de janela",
     "saved": "Guardados",
@@ -3513,6 +3532,7 @@
   },
   "side": {
     "bookmarks": "Atalhos",
+    "places": "Locais",
     "tree": "Árvore de pastas",
     "addBookmark": "Criar atalho para a pasta atual",
     "unpin": "Remover do acesso rápido",
@@ -3529,6 +3549,13 @@
     "bookmarkAdded": "Atalho «{name}» criado",
     "renameTitle": "Mudar o nome do atalho",
     "rename": "Mudar o nome"
+  },
+  "drives": {
+    "fixed": "Disco Local",
+    "removable": "Unidade USB",
+    "optical": "Unidade de DVD",
+    "network": "Unidade de rede",
+    "volume": "Volume de {size}"
   },
   "files": {
     "server": "Servidor",
@@ -3664,6 +3691,7 @@
     "deleteSelf": "Não pode eliminar a sua própria conta",
     "denied": "Não tem permissões para isto",
     "desktopOnly": "Isso só funciona na aplicação de ambiente de trabalho",
+    "ejectFailed": "Agora não é possível ejetar a unidade. Talvez ainda haja um ficheiro aberto nela",
     "fileManagerNotSet": "O computador não aceitou a alteração",
     "disksAdminsOnly": "Os discos individuais e a Cache só os administradores os veem",
     "expiryPast": "A data de expiração já passou",
@@ -3710,6 +3738,7 @@
       "many": "A mensagem tem no máximo {n} carateres",
       "other": "A mensagem tem no máximo {n} carateres"
     },
+    "mountFailed": "Não foi possível montar a unidade",
     "nameLength": {
       "one": "O nome tem no máximo {n} caráter",
       "many": "O nome tem no máximo {n} carateres",
@@ -3747,6 +3776,7 @@
     "notText": "Este ficheiro não é texto",
     "notWindows1252": "O texto tem carateres que o Windows-1252 não consegue guardar. Guarde-o como UTF-8",
     "nothingToUndo": "Não há nada para anular",
+    "noVolume": "Esta unidade já não está aqui",
     "officeCannotOpen": "O servidor Office não abre ficheiros .{ext}",
     "oldNameTaken": "O nome antigo voltou a estar ocupado",
     "outsideSources": "Isto só funciona com ficheiros e pastas dentro de uma origem",
@@ -3813,6 +3843,7 @@
     "totpOn": "A autenticação de dois fatores já está ligada",
     "totpRequired": "Este servidor exige a todos a autenticação de dois fatores",
     "trashEmpty": "A reciclagem está vazia",
+    "trashOnlyHome": "Aqui só a sua pasta pessoal tem reciclagem. É melhor eliminá-lo diretamente",
     "trashOtherDisk": "Isto está noutro sistema de ficheiros que não o da sua reciclagem. É melhor eliminá-lo diretamente",
     "trashShareRoot": "Uma Share inteira ou uma unidade inteira não pode ir para a reciclagem",
     "unknownApp": "Este computador não oferece essa aplicação para o ficheiro",

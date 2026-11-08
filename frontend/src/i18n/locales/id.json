@@ -1907,6 +1907,25 @@
     "shot": "Tangkapan layar {stamp}.{ext}",
     "made": "“{name}” dibuat"
   },
+  "places": {
+    "home": "Folder pribadi",
+    "desktop": "Desktop",
+    "documents": "Dokumen",
+    "downloads": "Unduhan",
+    "pictures": "Gambar",
+    "music": "Musik",
+    "videos": "Video",
+    "recent": "Baru digunakan",
+    "drives": "Drive",
+    "eject": "Keluarkan",
+    "ejectLabel": "Keluarkan {name}",
+    "ejected": "{name} sekarang aman dilepas",
+    "ejectedDisc": "{name} sudah dikeluarkan",
+    "notMounted": "Belum dikaitkan, satu klik mengaitkannya",
+    "arrived": "{name} sudah terhubung",
+    "open": "Buka",
+    "gone": "{name} dilepas, sekarang Anda di {here}"
+  },
   "profiles": {
     "title": "Profil jendela",
     "saved": "Disimpan",
@@ -3255,6 +3274,7 @@
   },
   "side": {
     "bookmarks": "Pintasan",
+    "places": "Tempat",
     "tree": "Pohon folder",
     "addBookmark": "Tambahkan folder saat ini sebagai pintasan",
     "unpin": "Lepas dari akses cepat",
@@ -3271,6 +3291,13 @@
     "bookmarkAdded": "Pintasan “{name}” ditambahkan",
     "renameTitle": "Ganti nama pintasan",
     "rename": "Ganti nama"
+  },
+  "drives": {
+    "fixed": "Disk Lokal",
+    "removable": "Drive USB",
+    "optical": "Drive DVD",
+    "network": "Drive Jaringan",
+    "volume": "Volume {size}"
   },
   "files": {
     "server": "Server",
@@ -3400,6 +3427,7 @@
     "deleteSelf": "Anda tidak bisa menghapus akun Anda sendiri",
     "denied": "Anda tidak punya izin untuk ini",
     "desktopOnly": "Itu hanya bisa di aplikasi desktop",
+    "ejectFailed": "Drive belum bisa dikeluarkan. Mungkin masih ada berkas yang terbuka di dalamnya",
     "fileManagerNotSet": "Komputer tidak menerima perubahan itu",
     "disksAdminsOnly": "Hanya admin yang melihat disk satu per satu dan Cache",
     "expiryPast": "Tanggal kedaluwarsa sudah lewat",
@@ -3440,6 +3468,7 @@
     "messageLength": {
       "other": "Pesan paling banyak {n} karakter"
     },
+    "mountFailed": "Drive tidak dapat dikaitkan",
     "nameLength": {
       "other": "Nama paling banyak {n} karakter"
     },
@@ -3475,6 +3504,7 @@
     "notText": "Berkas ini bukan teks",
     "notWindows1252": "Teks ini berisi karakter yang tidak bisa disimpan Windows-1252. Simpan sebagai UTF-8",
     "nothingToUndo": "Tidak ada yang bisa diurungkan",
+    "noVolume": "Drive ini sudah tidak ada",
     "officeCannotOpen": "Server Office tidak membuka berkas .{ext}",
     "oldNameTaken": "Nama lama sudah dipakai lagi",
     "outsideSources": "Ini hanya bisa untuk berkas dan folder di dalam sumber",
@@ -3539,6 +3569,7 @@
     "totpOn": "Masuk dua faktor sudah aktif",
     "totpRequired": "Server ini mewajibkan masuk dua faktor untuk semua orang",
     "trashEmpty": "Tempat Sampah kosong",
+    "trashOnlyHome": "Di sini hanya folder pribadi Anda yang punya Tempat Sampah. Sebaiknya hapus langsung",
     "trashOtherDisk": "Ini berada di sistem berkas yang berbeda dari Tempat Sampah-nya. Sebaiknya hapus langsung",
     "trashShareRoot": "Seluruh Share atau seluruh drive tidak bisa dimasukkan ke Tempat Sampah",
     "unknownApp": "Komputer ini tidak menawarkan aplikasi itu untuk file ini",

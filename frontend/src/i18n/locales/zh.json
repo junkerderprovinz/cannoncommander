@@ -1907,6 +1907,25 @@
     "shot": "截图 {stamp}.{ext}",
     "made": "已创建“{name}”"
   },
+  "places": {
+    "home": "主文件夹",
+    "desktop": "桌面",
+    "documents": "文档",
+    "downloads": "下载",
+    "pictures": "图片",
+    "music": "音乐",
+    "videos": "视频",
+    "recent": "最近使用",
+    "drives": "驱动器",
+    "eject": "弹出",
+    "ejectLabel": "弹出 {name}",
+    "ejected": "现在可以安全移除 {name}",
+    "ejectedDisc": "{name} 已弹出",
+    "notMounted": "尚未挂载，点击即可挂载",
+    "arrived": "{name} 已连接",
+    "open": "打开",
+    "gone": "{name} 已移除，你现在位于 {here}"
+  },
   "profiles": {
     "title": "窗口配置",
     "saved": "已保存",
@@ -3255,6 +3274,7 @@
   },
   "side": {
     "bookmarks": "书签",
+    "places": "位置",
     "tree": "文件夹树",
     "addBookmark": "将当前文件夹添加为书签",
     "unpin": "从快速访问中移除",
@@ -3271,6 +3291,13 @@
     "bookmarkAdded": "已添加书签“{name}”",
     "renameTitle": "重命名书签",
     "rename": "重命名"
+  },
+  "drives": {
+    "fixed": "本地磁盘",
+    "removable": "U 盘",
+    "optical": "DVD 驱动器",
+    "network": "网络驱动器",
+    "volume": "{size} 卷"
   },
   "files": {
     "server": "服务器",
@@ -3400,6 +3427,7 @@
     "deleteSelf": "你不能删除自己的账户",
     "denied": "你没有执行此操作的权限",
     "desktopOnly": "这只能在桌面应用中进行",
+    "ejectFailed": "现在无法弹出该驱动器。可能还有文件在上面打开着",
     "fileManagerNotSet": "计算机未接受此更改",
     "disksAdminsOnly": "只有管理员能看到单独的磁盘和 Cache",
     "expiryPast": "过期日期已经过去",
@@ -3440,6 +3468,7 @@
     "messageLength": {
       "other": "留言最多 {n} 个字符"
     },
+    "mountFailed": "无法挂载该驱动器",
     "nameLength": {
       "other": "名称最多 {n} 个字符"
     },
@@ -3475,6 +3504,7 @@
     "notText": "此文件不是文本",
     "notWindows1252": "文本中包含 Windows-1252 无法保存的字符。请保存为 UTF-8",
     "nothingToUndo": "没有可撤销的操作",
+    "noVolume": "这个驱动器已不在了",
     "officeCannotOpen": "Office 服务器无法打开 .{ext} 文件",
     "oldNameTaken": "原来的名称又被占用了",
     "outsideSources": "只能用于源中的文件和文件夹",
@@ -3539,6 +3569,7 @@
     "totpOn": "双重验证已经开启",
     "totpRequired": "此服务器要求所有人使用双重验证",
     "trashEmpty": "回收站是空的",
+    "trashOnlyHome": "这里只有你的主文件夹有回收站。请直接删除",
     "trashOtherDisk": "它与自己的回收站不在同一个文件系统上。请直接删除",
     "trashShareRoot": "整个 Share 或整个卷不能移到回收站",
     "unknownApp": "这台电脑没有为这个文件提供该应用",

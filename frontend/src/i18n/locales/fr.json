@@ -2041,6 +2041,25 @@
     "shot": "Capture {stamp}.{ext}",
     "made": "« {name} » créé"
   },
+  "places": {
+    "home": "Dossier personnel",
+    "desktop": "Bureau",
+    "documents": "Documents",
+    "downloads": "Téléchargements",
+    "pictures": "Images",
+    "music": "Musique",
+    "videos": "Vidéos",
+    "recent": "Utilisés récemment",
+    "drives": "Lecteurs",
+    "eject": "Éjecter",
+    "ejectLabel": "Éjecter {name}",
+    "ejected": "Vous pouvez retirer {name} en toute sécurité",
+    "ejectedDisc": "{name} est éjecté",
+    "notMounted": "Pas encore monté, un clic le monte",
+    "arrived": "{name} est branché",
+    "open": "Ouvrir",
+    "gone": "{name} a été retiré, vous êtes maintenant dans {here}"
+  },
   "profiles": {
     "title": "Profils de fenêtres",
     "saved": "Enregistrés",
@@ -3513,6 +3532,7 @@
   },
   "side": {
     "bookmarks": "Raccourcis",
+    "places": "Emplacements",
     "tree": "Arborescence",
     "addBookmark": "Créer un raccourci vers le dossier actuel",
     "unpin": "Retirer de l'accès rapide",
@@ -3529,6 +3549,13 @@
     "bookmarkAdded": "Raccourci « {name} » créé",
     "renameTitle": "Renommer le raccourci",
     "rename": "Renommer"
+  },
+  "drives": {
+    "fixed": "Disque local",
+    "removable": "Lecteur USB",
+    "optical": "Lecteur DVD",
+    "network": "Lecteur réseau",
+    "volume": "Volume de {size}"
   },
   "files": {
     "server": "Serveur",
@@ -3664,6 +3691,7 @@
     "deleteSelf": "Vous ne pouvez pas supprimer votre propre compte",
     "denied": "Vous n'avez pas les droits pour cela",
     "desktopOnly": "Seule l'application de bureau peut faire cela",
+    "ejectFailed": "Le lecteur ne peut pas être éjecté pour l'instant. Un fichier y est peut-être encore ouvert",
     "fileManagerNotSet": "L'ordinateur n'a pas accepté la modification",
     "disksAdminsOnly": "Seuls les admins voient les disques individuels et le Cache",
     "expiryPast": "La date d'expiration est dans le passé",
@@ -3710,6 +3738,7 @@
       "many": "Le message compte au plus {n} caractères",
       "other": "Le message compte au plus {n} caractères"
     },
+    "mountFailed": "Le lecteur n'a pas pu être monté",
     "nameLength": {
       "one": "Le nom compte au plus {n} caractère",
       "many": "Le nom compte au plus {n} caractères",
@@ -3747,6 +3776,7 @@
     "notText": "Ce fichier n'est pas du texte",
     "notWindows1252": "Le texte contient des caractères que Windows-1252 ne peut pas enregistrer. Enregistrez-le en UTF-8",
     "nothingToUndo": "Il n'y a rien à annuler",
+    "noVolume": "Ce lecteur n'est plus là",
     "officeCannotOpen": "Le serveur Office n'ouvre pas les fichiers .{ext}",
     "oldNameTaken": "L'ancien nom est de nouveau pris",
     "outsideSources": "Cela ne fonctionne qu'avec des fichiers et dossiers d'une source",
@@ -3813,6 +3843,7 @@
     "totpOn": "La connexion à deux facteurs est déjà activée",
     "totpRequired": "Ce serveur exige la connexion à deux facteurs pour tout le monde",
     "trashEmpty": "La corbeille est vide",
+    "trashOnlyHome": "Ici, seul votre dossier personnel a une corbeille. Supprimez-le plutôt directement",
     "trashOtherDisk": "Cela se trouve sur un autre système de fichiers que sa corbeille. Supprimez-le plutôt directement",
     "trashShareRoot": "Un Share entier ou un volume entier ne peut pas aller à la corbeille",
     "unknownApp": "Cet ordinateur ne propose pas cette application pour ce fichier",

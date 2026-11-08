@@ -1974,6 +1974,25 @@
     "shot": "Skjermbilde {stamp}.{ext}",
     "made": "«{name}» er opprettet"
   },
+  "places": {
+    "home": "Hjemmemappe",
+    "desktop": "Skrivebord",
+    "documents": "Dokumenter",
+    "downloads": "Nedlastinger",
+    "pictures": "Bilder",
+    "music": "Musikk",
+    "videos": "Videoer",
+    "recent": "Nylig brukt",
+    "drives": "Stasjoner",
+    "eject": "Løs ut",
+    "ejectLabel": "Løs ut {name}",
+    "ejected": "Du kan nå trygt fjerne {name}",
+    "ejectedDisc": "{name} er løst ut",
+    "notMounted": "Ikke montert ennå, et klikk monterer den",
+    "arrived": "{name} er koblet til",
+    "open": "Åpne",
+    "gone": "{name} ble fjernet, så nå er du i {here}"
+  },
   "profiles": {
     "title": "Panelprofiler",
     "saved": "Lagret",
@@ -3384,6 +3403,7 @@
   },
   "side": {
     "bookmarks": "Snarveier",
+    "places": "Steder",
     "tree": "Mappetre",
     "addBookmark": "Legg til gjeldende mappe som snarvei",
     "unpin": "Fjern fra hurtigtilgang",
@@ -3400,6 +3420,13 @@
     "bookmarkAdded": "Snarveien «{name}» er lagt til",
     "renameTitle": "Gi snarveien nytt navn",
     "rename": "Gi nytt navn"
+  },
+  "drives": {
+    "fixed": "Lokal disk",
+    "removable": "USB-stasjon",
+    "optical": "DVD-stasjon",
+    "network": "Nettverksstasjon",
+    "volume": "{size}-volum"
   },
   "files": {
     "server": "Server",
@@ -3532,6 +3559,7 @@
     "deleteSelf": "Du kan ikke slette din egen konto",
     "denied": "Du har ikke rettigheter til dette",
     "desktopOnly": "Det går bare i skrivebordsappen",
+    "ejectFailed": "Stasjonen kan ikke løses ut nå. Kanskje en fil på den fortsatt er åpen",
     "fileManagerNotSet": "Datamaskinen tok ikke imot endringen",
     "disksAdminsOnly": "Bare administratorer ser de enkelte diskene og Cache",
     "expiryPast": "Utløpsdatoen ligger i fortiden",
@@ -3575,6 +3603,7 @@
       "one": "Meldingen kan ha høyst {n} tegn",
       "other": "Meldingen kan ha høyst {n} tegn"
     },
+    "mountFailed": "Stasjonen kunne ikke monteres",
     "nameLength": {
       "one": "Navnet kan ha høyst {n} tegn",
       "other": "Navnet kan ha høyst {n} tegn"
@@ -3611,6 +3640,7 @@
     "notText": "Denne filen er ikke tekst",
     "notWindows1252": "Teksten inneholder tegn som Windows-1252 ikke kan lagre. Lagre den som UTF-8",
     "nothingToUndo": "Det er ingenting å angre",
+    "noVolume": "Denne stasjonen er borte",
     "officeCannotOpen": "Office-serveren åpner ikke .{ext}-filer",
     "oldNameTaken": "Det gamle navnet er tatt igjen",
     "outsideSources": "Det fungerer bare for filer og mapper inne i en kilde",
@@ -3676,6 +3706,7 @@
     "totpOn": "Tofaktorpålogging er allerede på",
     "totpRequired": "Denne serveren krever tofaktorpålogging av alle",
     "trashEmpty": "Papirkurven er tom",
+    "trashOnlyHome": "Her har bare hjemmemappen din en papirkurv. Slett det heller direkte",
     "trashOtherDisk": "Det ligger på et annet filsystem enn papirkurven sin. Slett det heller direkte",
     "trashShareRoot": "En hel Share eller et helt volum kan ikke legges i papirkurven",
     "unknownApp": "Denne datamaskinen tilbyr ikke den appen for filen",

@@ -5,6 +5,7 @@ import { reactive, shallowReactive } from 'vue';
 import { api, ApiError, type Item, type Listing } from '@/api/client';
 import { on, type ServerEvent, watch } from '@/api/sse';
 import type { TreeItem } from '@/api/types';
+import { driveName } from '@/files/drives';
 import type { MetaValue } from '@/files/entries';
 import { join, parent } from '@/files/paths';
 
@@ -56,8 +57,9 @@ export const useListing = defineStore('listing', () => {
     if (pendingTrees.has(path)) return pendingTrees.get(path)!;
     const job = api.fsTree(path)
       .then((got) => {
-        trees.set(path, got.items);
-        return got.items;
+        const items = got.items.map((k) => (k.kind ? { ...k, label: driveName(k) } : k));
+        trees.set(path, items);
+        return items;
       }, (e: unknown) => {
         failedTrees.set(path, e);
         throw e;

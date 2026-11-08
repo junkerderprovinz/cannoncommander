@@ -276,6 +276,7 @@
   },
   "side": {
     "bookmarks": "Shortcuts",
+    "places": "Places",
     "tree": "Folder tree",
     "addBookmark": "Add the current folder as a shortcut",
     "unpin": "Remove from quick access",
@@ -292,6 +293,13 @@
     "bookmarkAdded": "Shortcut “{name}” added",
     "renameTitle": "Rename shortcut",
     "rename": "Rename"
+  },
+  "drives": {
+    "fixed": "Local Disk",
+    "removable": "USB Drive",
+    "optical": "DVD Drive",
+    "network": "Network Drive",
+    "volume": "{size} Volume"
   },
   "files": {
     "server": "Server",
@@ -415,6 +423,7 @@
     "deleteSelf": "You cannot delete your own account",
     "denied": "You do not have the rights for this",
     "desktopOnly": "Only the desktop app can do that",
+    "ejectFailed": "The drive cannot be ejected right now. Maybe a file on it is still open",
     "fileManagerNotSet": "The computer did not take the change",
     "disksAdminsOnly": "Only admins see the single disks and the cache",
     "expiryPast": "The expiry date lies in the past",
@@ -449,6 +458,7 @@
     "lowercaseOnly": "Only lowercase letters, digits, _ and - please",
     "mayNotShare": "This account may not share files",
     "messageLength": { "one": "The message can have at most {n} character", "other": "The message can have at most {n} characters" },
+    "mountFailed": "The drive could not be mounted",
     "nameLength": { "one": "The name can have at most {n} character", "other": "The name can have at most {n} characters" },
     "namePasswordNeeded": "Name and password are both needed",
     "nameTaken": "This name exists here already",
@@ -482,6 +492,7 @@
     "notText": "This file is not text",
     "notWindows1252": "The text holds characters Windows-1252 cannot store. Save it as UTF-8",
     "nothingToUndo": "There is nothing to take back",
+    "noVolume": "This drive is gone",
     "officeCannotOpen": "The office server does not open .{ext} files",
     "oldNameTaken": "The old name is taken again",
     "outsideSources": "This only works for files and folders inside a source",
@@ -544,6 +555,7 @@
     "totpOn": "Two factor login is on already",
     "totpRequired": "This server asks everyone for two factor login",
     "trashEmpty": "The trash is empty",
+    "trashOnlyHome": "Only your home folder has a trash here. Delete it directly instead",
     "trashOtherDisk": "This lies on another file system than its trash. Delete it instead",
     "trashShareRoot": "A whole share or volume cannot go to the trash",
     "unknownApp": "This computer does not offer that app for the file",

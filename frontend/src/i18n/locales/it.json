@@ -2041,6 +2041,25 @@
     "shot": "Screenshot {stamp}.{ext}",
     "made": "«{name}» creato"
   },
+  "places": {
+    "home": "Cartella home",
+    "desktop": "Desktop",
+    "documents": "Documenti",
+    "downloads": "Download",
+    "pictures": "Immagini",
+    "music": "Musica",
+    "videos": "Video",
+    "recent": "Usati di recente",
+    "drives": "Unità",
+    "eject": "Espelli",
+    "ejectLabel": "Espelli {name}",
+    "ejected": "Ora puoi rimuovere {name} in sicurezza",
+    "ejectedDisc": "{name} è stato espulso",
+    "notMounted": "Non ancora montato, un clic lo monta",
+    "arrived": "{name} è collegato",
+    "open": "Apri",
+    "gone": "{name} è stato rimosso, ora sei in {here}"
+  },
   "profiles": {
     "title": "Profili finestra",
     "saved": "Salvati",
@@ -3513,6 +3532,7 @@
   },
   "side": {
     "bookmarks": "Collegamenti",
+    "places": "Posizioni",
     "tree": "Albero delle cartelle",
     "addBookmark": "Crea un collegamento alla cartella attuale",
     "unpin": "Rimuovi dall'accesso rapido",
@@ -3529,6 +3549,13 @@
     "bookmarkAdded": "Collegamento «{name}» creato",
     "renameTitle": "Rinomina collegamento",
     "rename": "Rinomina"
+  },
+  "drives": {
+    "fixed": "Disco locale",
+    "removable": "Unità USB",
+    "optical": "Unità DVD",
+    "network": "Unità di rete",
+    "volume": "Volume da {size}"
   },
   "files": {
     "server": "Server",
@@ -3664,6 +3691,7 @@
     "deleteSelf": "Non puoi eliminare il tuo account",
     "denied": "Non hai i permessi per questo",
     "desktopOnly": "Si può fare solo nell'app desktop",
+    "ejectFailed": "Ora l'unità non si può espellere. Forse un file è ancora aperto",
     "fileManagerNotSet": "Il computer non ha accettato la modifica",
     "disksAdminsOnly": "I singoli dischi e la Cache li vedono solo gli admin",
     "expiryPast": "La data di scadenza è nel passato",
@@ -3710,6 +3738,7 @@
       "many": "Il messaggio ha al massimo {n} caratteri",
       "other": "Il messaggio ha al massimo {n} caratteri"
     },
+    "mountFailed": "Non è stato possibile montare l'unità",
     "nameLength": {
       "one": "Il nome ha al massimo {n} carattere",
       "many": "Il nome ha al massimo {n} caratteri",
@@ -3747,6 +3776,7 @@
     "notText": "Questo file non è testo",
     "notWindows1252": "Il testo contiene caratteri che Windows-1252 non può salvare. Salvalo come UTF-8",
     "nothingToUndo": "Non c'è nulla da annullare",
+    "noVolume": "Questa unità non c’è più",
     "officeCannotOpen": "Il server Office non apre i file .{ext}",
     "oldNameTaken": "Il vecchio nome è di nuovo occupato",
     "outsideSources": "Funziona solo con file e cartelle dentro un'origine",
@@ -3813,6 +3843,7 @@
     "totpOn": "L'accesso a due fattori è già attivo",
     "totpRequired": "Questo server richiede a tutti l'accesso a due fattori",
     "trashEmpty": "Il cestino è vuoto",
+    "trashOnlyHome": "Qui solo la tua cartella home ha un cestino. Meglio eliminarlo direttamente",
     "trashOtherDisk": "Si trova su un file system diverso da quello del suo cestino. Meglio eliminarlo direttamente",
     "trashShareRoot": "Un'intera Share o un'intera unità non può finire nel cestino",
     "unknownApp": "Questo computer non offre quell'app per il file",

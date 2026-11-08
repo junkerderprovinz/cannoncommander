@@ -2041,6 +2041,25 @@
     "shot": "Captură {stamp}.{ext}",
     "made": "„{name}” a fost creat"
   },
+  "places": {
+    "home": "Dosar personal",
+    "desktop": "Desktop",
+    "documents": "Documente",
+    "downloads": "Descărcări",
+    "pictures": "Imagini",
+    "music": "Muzică",
+    "videos": "Videoclipuri",
+    "recent": "Folosite recent",
+    "drives": "Unități",
+    "eject": "Scoate",
+    "ejectLabel": "Scoate {name}",
+    "ejected": "Acum poți scoate {name} în siguranță",
+    "ejectedDisc": "{name} a fost scoasă",
+    "notMounted": "Încă nu e montată, un clic o montează",
+    "arrived": "{name} e conectată",
+    "open": "Deschide",
+    "gone": "{name} a fost scoasă, acum ești în {here}"
+  },
   "profiles": {
     "title": "Profiluri de panouri",
     "saved": "Salvate",
@@ -3513,6 +3532,7 @@
   },
   "side": {
     "bookmarks": "Scurtături",
+    "places": "Locuri",
     "tree": "Arborele de dosare",
     "addBookmark": "Adaugă dosarul curent ca scurtătură",
     "unpin": "Scoate din acces rapid",
@@ -3529,6 +3549,13 @@
     "bookmarkAdded": "Scurtătura „{name}” a fost adăugată",
     "renameTitle": "Redenumește scurtătura",
     "rename": "Redenumește"
+  },
+  "drives": {
+    "fixed": "Disc local",
+    "removable": "Unitate USB",
+    "optical": "Unitate DVD",
+    "network": "Unitate de rețea",
+    "volume": "Volum de {size}"
   },
   "files": {
     "server": "Server",
@@ -3664,6 +3691,7 @@
     "deleteSelf": "Nu îți poți șterge propriul cont",
     "denied": "Nu ai permisiunile pentru asta",
     "desktopOnly": "Asta merge doar în aplicația desktop",
+    "ejectFailed": "Unitatea nu poate fi scoasă acum. Poate un fișier de pe ea e încă deschis",
     "fileManagerNotSet": "Calculatorul nu a acceptat modificarea",
     "disksAdminsOnly": "Discurile individuale și Cache-ul le văd doar adminii",
     "expiryPast": "Data de expirare este în trecut",
@@ -3710,6 +3738,7 @@
       "few": "Mesajul are cel mult {n} caractere",
       "other": "Mesajul are cel mult {n} de caractere"
     },
+    "mountFailed": "Unitatea nu a putut fi montată",
     "nameLength": {
       "one": "Numele are cel mult {n} caracter",
       "few": "Numele are cel mult {n} caractere",
@@ -3747,6 +3776,7 @@
     "notText": "Acest fișier nu este text",
     "notWindows1252": "Textul are caractere pe care Windows-1252 nu le poate salva. Salvează-l ca UTF-8",
     "nothingToUndo": "Nu e nimic de anulat",
+    "noVolume": "Unitatea asta nu mai e aici",
     "officeCannotOpen": "Serverul Office nu deschide fișiere .{ext}",
     "oldNameTaken": "Numele vechi este din nou ocupat",
     "outsideSources": "Asta merge doar cu fișiere și dosare dintr-o sursă",
@@ -3813,6 +3843,7 @@
     "totpOn": "Autentificarea în doi pași este deja activă",
     "totpRequired": "Acest server cere tuturor autentificarea în doi pași",
     "trashEmpty": "Coșul este gol",
+    "trashOnlyHome": "Aici doar dosarul tău personal are coș. Mai bine șterge-l direct",
     "trashOtherDisk": "Asta se află pe alt sistem de fișiere decât coșul lui. Mai bine șterge-l direct",
     "trashShareRoot": "Un Share întreg sau o unitate întreagă nu poate ajunge în coș",
     "unknownApp": "Acest calculator nu oferă această aplicație pentru fișier",

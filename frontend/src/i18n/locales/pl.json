@@ -2108,6 +2108,25 @@
     "shot": "Zrzut ekranu {stamp}.{ext}",
     "made": "Utworzono „{name}”"
   },
+  "places": {
+    "home": "Folder domowy",
+    "desktop": "Pulpit",
+    "documents": "Dokumenty",
+    "downloads": "Pobrane",
+    "pictures": "Obrazy",
+    "music": "Muzyka",
+    "videos": "Wideo",
+    "recent": "Ostatnio używane",
+    "drives": "Dyski",
+    "eject": "Wysuń",
+    "ejectLabel": "Wysuń {name}",
+    "ejected": "Możesz teraz bezpiecznie odłączyć {name}",
+    "ejectedDisc": "{name} został wysunięty",
+    "notMounted": "Jeszcze niezamontowany, kliknięcie go zamontuje",
+    "arrived": "{name} jest podłączony",
+    "open": "Otwórz",
+    "gone": "{name} został odłączony, jesteś teraz w {here}"
+  },
   "profiles": {
     "title": "Profile okien",
     "saved": "Zapisane",
@@ -3642,6 +3661,7 @@
   },
   "side": {
     "bookmarks": "Skróty",
+    "places": "Miejsca",
     "tree": "Drzewo folderów",
     "addBookmark": "Dodaj bieżący folder jako skrót",
     "unpin": "Odepnij od szybkiego dostępu",
@@ -3658,6 +3678,13 @@
     "bookmarkAdded": "Dodano skrót „{name}”",
     "renameTitle": "Zmień nazwę skrótu",
     "rename": "Zmień nazwę"
+  },
+  "drives": {
+    "fixed": "Dysk lokalny",
+    "removable": "Dysk USB",
+    "optical": "Stacja dysków DVD",
+    "network": "Dysk sieciowy",
+    "volume": "Wolumin {size}"
   },
   "files": {
     "server": "Serwer",
@@ -3796,6 +3823,7 @@
     "deleteSelf": "Nie możesz usunąć własnego konta",
     "denied": "Nie masz do tego uprawnień",
     "desktopOnly": "To działa tylko w aplikacji desktopowej",
+    "ejectFailed": "Teraz nie da się wysunąć dysku. Może jakiś plik na nim jest jeszcze otwarty",
     "fileManagerNotSet": "Komputer nie przyjął zmiany",
     "disksAdminsOnly": "Pojedyncze dyski i Cache widzą tylko administratorzy",
     "expiryPast": "Data wygaśnięcia leży w przeszłości",
@@ -3845,6 +3873,7 @@
       "many": "Wiadomość ma najwyżej {n} znaków",
       "other": "Wiadomość ma najwyżej {n} znaku"
     },
+    "mountFailed": "Nie udało się zamontować dysku",
     "nameLength": {
       "one": "Nazwa ma najwyżej {n} znak",
       "few": "Nazwa ma najwyżej {n} znaki",
@@ -3883,6 +3912,7 @@
     "notText": "Ten plik nie jest tekstem",
     "notWindows1252": "Tekst zawiera znaki, których Windows-1252 nie potrafi zapisać. Zapisz go jako UTF-8",
     "nothingToUndo": "Nie ma nic do cofnięcia",
+    "noVolume": "Tego dysku już nie ma",
     "officeCannotOpen": "Serwer Office nie otwiera plików .{ext}",
     "oldNameTaken": "Stara nazwa jest znów zajęta",
     "outsideSources": "To działa tylko z plikami i folderami w źródle",
@@ -3950,6 +3980,7 @@
     "totpOn": "Logowanie dwuskładnikowe jest już włączone",
     "totpRequired": "Ten serwer wymaga od wszystkich logowania dwuskładnikowego",
     "trashEmpty": "Kosz jest pusty",
+    "trashOnlyHome": "Tu kosz ma tylko twój folder domowy. Lepiej usuń to bezpośrednio",
     "trashOtherDisk": "To leży w innym systemie plików niż jego kosz. Lepiej usuń to bezpośrednio",
     "trashShareRoot": "Cały Share ani cały dysk nie może trafić do kosza",
     "unknownApp": "Ten komputer nie oferuje tej aplikacji dla tego pliku",

@@ -1974,6 +1974,25 @@
     "shot": "Kuvatõmmis {stamp}.{ext}",
     "made": "„{name}“ loodud"
   },
+  "places": {
+    "home": "Kodukaust",
+    "desktop": "Töölaud",
+    "documents": "Dokumendid",
+    "downloads": "Allalaadimised",
+    "pictures": "Pildid",
+    "music": "Muusika",
+    "videos": "Videod",
+    "recent": "Viimati kasutatud",
+    "drives": "Draivid",
+    "eject": "Väljuta",
+    "ejectLabel": "Väljuta {name}",
+    "ejected": "{name} võib nüüd ohutult eemaldada",
+    "ejectedDisc": "{name} on väljutatud",
+    "notMounted": "Pole veel ühendatud, klõps ühendab selle",
+    "arrived": "{name} on ühendatud",
+    "open": "Ava",
+    "gone": "{name} eemaldati, nüüd oled kohas {here}"
+  },
   "profiles": {
     "title": "Paneeliprofiilid",
     "saved": "Salvestatud",
@@ -3384,6 +3403,7 @@
   },
   "side": {
     "bookmarks": "Otseteed",
+    "places": "Asukohad",
     "tree": "Kaustapuu",
     "addBookmark": "Lisa praegune kaust otseteena",
     "unpin": "Eemalda kiirjuurdepääsust",
@@ -3400,6 +3420,13 @@
     "bookmarkAdded": "Otsetee „{name}“ lisatud",
     "renameTitle": "Nimeta otsetee ümber",
     "rename": "Nimeta ümber"
+  },
+  "drives": {
+    "fixed": "Kohalik ketas",
+    "removable": "USB-draiv",
+    "optical": "DVD-draiv",
+    "network": "Võrgudraiv",
+    "volume": "{size} köide"
   },
   "files": {
     "server": "Server",
@@ -3532,6 +3559,7 @@
     "deleteSelf": "Oma kontot ei saa kustutada",
     "denied": "Sul pole selleks õigusi",
     "desktopOnly": "See töötab ainult töölauarakenduses",
+    "ejectFailed": "Draivi ei saa praegu väljutada. Võib-olla on mõni fail sellel veel avatud",
     "fileManagerNotSet": "Arvuti ei võtnud muudatust vastu",
     "disksAdminsOnly": "Üksikuid kettaid ja Cache'i näevad ainult administraatorid",
     "expiryPast": "Aegumiskuupäev on minevikus",
@@ -3575,6 +3603,7 @@
       "one": "Sõnumis on kuni {n} märk",
       "other": "Sõnumis on kuni {n} märki"
     },
+    "mountFailed": "Draivi ei õnnestunud ühendada",
     "nameLength": {
       "one": "Nimes on kuni {n} märk",
       "other": "Nimes on kuni {n} märki"
@@ -3611,6 +3640,7 @@
     "notText": "See fail pole tekst",
     "notWindows1252": "Tekstis on märke, mida Windows-1252 ei suuda salvestada. Salvesta see UTF-8-na",
     "nothingToUndo": "Pole midagi tagasi võtta",
+    "noVolume": "Seda draivi pole enam",
     "officeCannotOpen": "Office'i server ei ava .{ext}-faile",
     "oldNameTaken": "Vana nimi on jälle kasutusel",
     "outsideSources": "See töötab ainult allika sees olevate failide ja kaustadega",
@@ -3676,6 +3706,7 @@
     "totpOn": "Kaheastmeline sisselogimine on juba sees",
     "totpRequired": "See server nõuab kõigilt kaheastmelist sisselogimist",
     "trashEmpty": "Prügikast on tühi",
+    "trashOnlyHome": "Siin on prügikast ainult sinu kodukaustas. Kustuta see pigem otse",
     "trashOtherDisk": "See asub teises failisüsteemis kui selle prügikast. Kustuta see pigem otse",
     "trashShareRoot": "Tervet Share'i või draivi ei saa prügikasti panna",
     "unknownApp": "See arvuti ei paku seda rakendust selle faili jaoks",
