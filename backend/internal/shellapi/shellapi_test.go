@@ -372,3 +372,18 @@ func TestTheCommonIconsAreLookedUpForEverySizeOfARow(t *testing.T) {
 		}
 	}
 }
+
+func TestTheSettingsKeepALabelWithoutTheFileNames(t *testing.T) {
+	onDesktop(t)
+	e := newEnv(t, false)
+	e.pc.actions = []nativeshell.Action{{Entry: nativeshell.Entry{Key: "nemo:scan", Label: "Scan notes.txt", Remember: "Scan %N"}}}
+	_, _, body := e.do(http.MethodGet, "/shell/actions?path=/mnt/user/work/notes.txt", nil)
+	var got struct{ Actions []actionJSON }
+	_ = json.Unmarshal(body, &got)
+	if len(got.Actions) != 1 || got.Actions[0].Label != "Scan notes.txt" {
+		t.Fatalf("the menu shows %+v", got.Actions)
+	}
+	if kept := e.entries(); len(kept) != 1 || kept[0].Label != "Scan %N" {
+		t.Fatalf("kept %+v", kept)
+	}
+}

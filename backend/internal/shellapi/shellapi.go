@@ -209,6 +209,9 @@ func (h *handlers) listActions(w http.ResponseWriter, r *http.Request) error {
 		e := a.Entry
 		if a.Group != "" {
 			e.Label = a.Group + " › " + e.Label
+			if e.Remember != "" {
+				e.Remember = a.Group + " › " + e.Remember
+			}
 		}
 		seen = append(seen, e)
 	}

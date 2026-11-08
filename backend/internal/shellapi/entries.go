@@ -35,7 +35,8 @@ type entryJSON struct {
 }
 
 // remember keeps the rows a menu just held, with their latest label and
-// picture.
+// picture. The label kept is the one without the names of the files the
+// row was shown for.
 func (s entries) remember(ctx context.Context, seen []nativeshell.Entry) error {
 	if len(seen) == 0 {
 		return nil
@@ -47,9 +48,13 @@ func (s entries) remember(ctx context.Context, seen []nativeshell.Entry) error {
 	defer tx.Rollback()
 	at := time.Now().Unix()
 	for _, e := range seen {
+		label := e.Label
+		if e.Remember != "" {
+			label = e.Remember
+		}
 		_, err := tx.ExecContext(ctx, `INSERT INTO shell_menu_entries (key, label, icon, seen_at) VALUES (?, ?, ?, ?)
 			ON CONFLICT (key) DO UPDATE SET label = excluded.label, icon = excluded.icon, seen_at = excluded.seen_at`,
-			e.Key, e.Label, e.Icon, at)
+			e.Key, label, e.Icon, at)
 		if err != nil {
 			return err
 		}
