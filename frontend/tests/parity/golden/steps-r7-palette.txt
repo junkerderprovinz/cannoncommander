@@ -15,6 +15,7 @@ shortcut window has Strg+K: Befehl suchen Strg+K
 1600 look: 3 cards, 1 col, width 832, bottoms 784
 1600 security: 5 cards, 1 col, width 832, bottoms 1030
 1600 files: 3 cards, 1 col, width 832, bottoms 742
+1600 keys: 9 cards, 1 col, width 832, bottoms 5298
 1600 sources: 2 cards, 1 col, width 832, bottoms 523
 1600 remotes: 2 cards, 1 col, width 832, bottoms 477
 1600 users: 2 cards, 1 col, width 832, bottoms 539
@@ -28,6 +29,7 @@ shortcut window has Strg+K: Befehl suchen Strg+K
 1200 look: 3 cards, 1 col, width 832, bottoms 784
 1200 security: 5 cards, 1 col, width 832, bottoms 1030
 1200 files: 3 cards, 1 col, width 832, bottoms 742
+1200 keys: 9 cards, 1 col, width 832, bottoms 5298
 1200 sources: 2 cards, 1 col, width 832, bottoms 523
 1200 remotes: 2 cards, 1 col, width 832, bottoms 477
 1200 users: 2 cards, 1 col, width 832, bottoms 539
