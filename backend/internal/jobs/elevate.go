@@ -48,10 +48,7 @@ func (r *Run) Elevated(ctx context.Context, items []Item, ops []elevate.Op, afte
 	done := make([]bool, len(items))
 	err := elevate.Run(ctx, ops, func(i int, err error) {
 		done[i] = true
-		var oe *elevate.OpError
-		if errors.As(err, &oe) {
-			err = v1.Coded(http.StatusConflict, oe.Code, oe.Msg)
-		}
+		err = ElevationError(err)
 		if err == nil && after != nil {
 			after(items[i])
 		}
@@ -61,14 +58,7 @@ func (r *Run) Elevated(ctx context.Context, items []Item, ops []elevate.Op, afte
 		return ctx.Err()
 	}
 	if err != nil {
-		switch {
-		case errors.Is(err, elevate.ErrDeclined):
-			err = errDeclined
-		case errors.Is(err, elevate.ErrUnsupported):
-			err = errUnsupported
-		case errors.Is(err, elevate.ErrNoHelper):
-			err = errNoHelper
-		}
+		err = ElevationError(err)
 		for i, it := range items {
 			if !done[i] {
 				r.Finish(it.Seq, ItemDone, err)
@@ -76,4 +66,21 @@ func (r *Run) Elevated(ctx context.Context, items []Item, ops []elevate.Op, afte
 		}
 	}
 	return nil
+}
+
+// ElevationError says an error of elevate.Run, or of one of its operations,
+// the way the app's problems do, so the interface can word it.
+func ElevationError(err error) error {
+	var oe *elevate.OpError
+	switch {
+	case errors.As(err, &oe):
+		return v1.Coded(http.StatusConflict, oe.Code, oe.Msg)
+	case errors.Is(err, elevate.ErrDeclined):
+		return errDeclined
+	case errors.Is(err, elevate.ErrUnsupported):
+		return errUnsupported
+	case errors.Is(err, elevate.ErrNoHelper):
+		return errNoHelper
+	}
+	return err
 }
