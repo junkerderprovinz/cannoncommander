@@ -5,11 +5,6 @@ import (
 	"strings"
 )
 
-// fileURI is the file:// URI of an absolute path.
-func fileURI(p string) string {
-	return (&url.URL{Scheme: "file", Path: p}).String()
-}
-
 // filePath is the path of a file:// URI on this computer, or false for any
 // other URI.
 func filePath(uri string) (string, bool) {
@@ -26,7 +21,7 @@ func filePath(uri string) (string, bool) {
 func clipFormats(paths []string, cut bool) (gnome, uris, kde, text string) {
 	list := make([]string, len(paths))
 	for i, p := range paths {
-		list[i] = fileURI(p)
+		list[i] = (&url.URL{Scheme: "file", Path: p}).String()
 	}
 	verb, kde := "copy", "0"
 	if cut {
