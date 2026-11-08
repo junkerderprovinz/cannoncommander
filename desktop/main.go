@@ -88,7 +88,7 @@ func run() error {
 			UniqueID: instanceID(dir),
 			OnSecondInstanceLaunch: sh.secondLaunch,
 		},
-		Windows: application.WindowsOptions{WebviewUserDataPath: filepath.Join(dir, "webview")},
+		Windows: application.WindowsOptions{WebviewUserDataPath: filepath.Join(dir, "webview"), AdditionalBrowserArgs: debugArgs()},
 		Linux:   application.LinuxOptions{ProgramName: "CannonCommander"},
 	})
 	sh.app = app
