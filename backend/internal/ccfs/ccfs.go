@@ -39,6 +39,9 @@ type Source struct {
 	// Device marks a disk or pool that Unraid reports, as opposed to a
 	// source from the settings.
 	Device bool
+	// Drive is what the computer tells about the volume the source is, nil
+	// for a folder that is not a volume of its own.
+	Drive *Drive
 }
 
 // Location is a resolved API path.
@@ -69,11 +72,13 @@ func (l Location) Virtual() bool { return l.Source == nil }
 // InArchive reports whether the location points into an archive.
 func (l Location) InArchive() bool { return l.Inner != "" }
 
-// Resolver turns API paths into locations. Once built only SetDevices
-// changes it, and that is safe while it is in use.
+// Resolver turns API paths into locations. Once built only SetDevices,
+// SetVolumes and opening a network share change it, and that is safe while
+// it is in use.
 type Resolver struct {
 	rules     Rules
 	exclusive ExclusiveShares
+	network   Network
 	set       *atomic.Pointer[sourceSet]
 }
 
@@ -88,6 +93,10 @@ type sourceSet struct {
 	mnt        string
 	devices    []string
 	named      []string
+	// volumes are the drives the computer reports, and shares the network
+	// shares opened so far.
+	volumes []Volume
+	shares  []*Source
 	// marked are the API paths where the app's own data shows up, and closed
 	// adds them on every volume of the user shares.
 	marked []string
@@ -95,6 +104,17 @@ type sourceSet struct {
 }
 
 func (r *Resolver) current() *sourceSet { return r.set.Load() }
+
+// update swaps in the set change makes of the current one. A change that
+// raced with another is made again on top of it.
+func (r *Resolver) update(change func(*sourceSet) *sourceSet) {
+	for {
+		cur := r.set.Load()
+		if r.set.CompareAndSwap(cur, change(cur)) {
+			return
+		}
+	}
+}
 
 // withSet returns a copy of r that starts out with set.
 func (r *Resolver) withSet(set *sourceSet) *Resolver {
@@ -105,29 +125,33 @@ func (r *Resolver) withSet(set *sourceSet) *Resolver {
 }
 
 // New builds a resolver. Mounts must be absolute and may not nest inside
-// each other, because then one path would belong to two sources.
+// each other, because then one path would belong to two sources. A source
+// at / is the exception: like the root of a Linux system it holds the
+// others, and a path belongs to the deepest source it lies in.
 func New(rules Rules, sources ...Source) (*Resolver, error) {
 	set := &sourceSet{}
 	for _, s := range sources {
 		mount, err := Clean(s.Mount)
-		if err != nil || mount == "/" {
-			return nil, errors.New("source " + s.Name + " needs an absolute mount below /")
+		if err != nil {
+			return nil, errors.New("source " + s.Name + " needs an absolute mount")
 		}
 		s.Mount = mount
 		s.Root = filepath.Clean(s.Root)
 		s.AdminOnly = s.AdminOnly || set.adminOnly(mount)
 		for _, o := range set.sources {
-			if within(mount, o.Mount) || within(o.Mount, mount) {
+			if o.Mount == mount || mount != "/" && o.Mount != "/" && (within(mount, o.Mount) || within(o.Mount, mount)) {
 				return nil, errors.New("sources " + o.Name + " and " + s.Name + " overlap")
 			}
 		}
 		set.sources = append(set.sources, &s)
 	}
 	slices.SortFunc(set.sources, func(a, b *Source) int { return strings.Compare(a.Mount, b.Mount) })
+	set.configured = slices.Clone(set.sources)
 	return (&Resolver{rules: rules}).withSet(set), nil
 }
 
-// Sources returns the configured sources sorted by mount.
+// Sources returns the sources, those from the settings first and sorted by
+// mount.
 func (r *Resolver) Sources() []Source {
 	sources := r.current().sources
 	out := make([]Source, len(sources))
@@ -178,7 +202,11 @@ func (r *Resolver) Resolve(p string) (Location, error) {
 	if hasInner {
 		loc.Inner = inner
 	}
-	for _, s := range r.current().sources {
+	sources := r.current().sources
+	// A source at / comes before all others, so looking from the end finds
+	// the deepest source that holds the path.
+	for i := len(sources) - 1; i >= 0; i-- {
+		s := sources[i]
 		if !within(outer, s.Mount) {
 			continue
 		}
@@ -198,6 +226,14 @@ func (r *Resolver) Resolve(p string) (Location, error) {
 		}
 		return loc, nil
 	}
+	if server, share, ok := r.netParts(outer); ok {
+		if share == "" && !hasInner {
+			return loc, nil
+		}
+		if share != "" && r.openShare(server, share) {
+			return r.Resolve(p)
+		}
+	}
 	if hasInner || !r.isVirtual(outer) {
 		return Location{}, ErrNotFound
 	}
@@ -216,6 +252,13 @@ func (r *Resolver) VirtualChildren(dir string) []string {
 		name, _, _ := strings.Cut(rest, "/")
 		if !slices.Contains(names, name) {
 			names = append(names, name)
+		}
+	}
+	if server, share, ok := r.netParts(dir); ok && server != "" && share == "" {
+		for _, name := range r.network.Shares(server) {
+			if !slices.Contains(names, name) {
+				names = append(names, name)
+			}
 		}
 	}
 	r.childOrder(dir, names)

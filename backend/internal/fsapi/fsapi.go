@@ -3,6 +3,7 @@
 package fsapi
 
 import (
+	"cmp"
 	_ "embed"
 	"fmt"
 	"io/fs"
@@ -85,7 +86,8 @@ type Listing struct {
 }
 
 // TreeItem is one subfolder in the answer of GET /fs/tree. Label, Free and
-// Total are set for the folders where a source is mounted.
+// Total are set for the folders where a source is mounted, and Kind and
+// Eject for a drive of the computer the desktop app runs on.
 type TreeItem struct {
 	Name    string `json:"name"`
 	Path    string `json:"path"`
@@ -94,6 +96,8 @@ type TreeItem struct {
 	Free    uint64 `json:"free,omitempty"`
 	Total   uint64 `json:"total,omitempty"`
 	Remote  string `json:"remote,omitempty"`
+	Kind    string `json:"kind,omitempty"`
+	Eject   bool   `json:"eject,omitempty"`
 }
 
 // Tree is the answer of GET /fs/tree.
@@ -214,6 +218,10 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 		}
 		if child.Source != nil && child.Index == "/" {
 			item.Label = child.Source.Name
+			if d := child.Source.Drive; d != nil {
+				item.Label, item.Kind, item.Eject = d.Label, d.Kind, d.Eject
+				item.Remote = cmp.Or(item.Remote, d.Remote)
+			}
 			if v := volumeOf(child.Source); v != nil {
 				item.Free, item.Total = v.Free, v.Total
 			}

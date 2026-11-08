@@ -26,6 +26,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 // DirName is the bin folder at the top of every share or volume. Moving
@@ -65,6 +66,7 @@ var (
 	ErrInBin     = v1.Coded(http.StatusBadRequest, "inTrash", "this is in the trash already")
 	ErrCrossFS   = v1.Coded(http.StatusConflict, "trashOtherDisk", "this lies on another file system than its trash, delete it instead")
 	ErrNotFound  = v1.Coded(http.StatusNotFound, "notInTrash", "no such entry in the trash")
+	ErrNoBin     = v1.Coded(http.StatusBadRequest, "trashOnlyHome", "only the home folder has a trash here, delete it instead")
 )
 
 // Item is one entry in the trash.
@@ -132,8 +134,9 @@ func (s *Store) Close() {
 // BinFor returns the API path of the bin folder that takes loc. On a
 // source mounted right below /mnt, such as /mnt/user or /mnt/disk1, every
 // share gets its own, and so does every remote in /remotes, so a delete
-// never carries files off their disk or out of their cloud. Elsewhere the
-// source has one at its top.
+// never carries files off their disk or out of their cloud. Below a source
+// at /, whose top belongs to the system, the home folder has the one bin.
+// Elsewhere the source has one at its top.
 func BinFor(loc ccfs.Location) (string, error) {
 	if loc.Virtual() || loc.InArchive() {
 		return "", ErrShareRoot
@@ -151,6 +154,13 @@ func BinFor(loc ccfs.Location) (string, error) {
 	}
 	if loc.Index == "/" {
 		return "", ErrShareRoot
+	}
+	if src.Mount == "/" {
+		home := ccfs.MountFor(desktop.Home())
+		if desktop.Home() == "" || !strings.HasPrefix(loc.Path, home+"/") {
+			return "", ErrNoBin
+		}
+		return path.Join(home, DirName), nil
 	}
 	return path.Join(src.Mount, DirName), nil
 }
