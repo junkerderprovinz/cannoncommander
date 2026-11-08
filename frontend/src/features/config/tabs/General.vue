@@ -63,7 +63,7 @@ async function testNote() {
   <Card :title="c('general.jobs')">
     <FieldRow :label="c('general.jobMode')" :hint="c('general.jobModeTip')"><Selector v-model="P.jobMode" :items="segItems([['serial', c('general.serial')], ['parallel', c('general.parallel')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="c('general.speedCap')" :hint="c('general.speedCapTip')"><Selector v-model="P.speedCap" :items="segItems(CAPS)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-    <FieldRow :label="c('general.parityWait')" :hint="c('general.parityWaitTip')"><Toggle :model-value="P.parityWait !== false" @update:model-value="P.parityWait = $event" /></FieldRow>
+    <FieldRow v-if="!U.st || U.available" :label="c('general.parityWait')" :hint="c('general.parityWaitTip')"><Toggle :model-value="P.parityWait !== false" @update:model-value="P.parityWait = $event" /></FieldRow>
     <FieldRow :label="c('general.notifyDone')" :hint="c('general.notifyDoneTip')"><Toggle :model-value="!!P.notifyDone" @update:model-value="notifyDone" /></FieldRow>
     <!-- Off Unraid, as in the desktop app, there is no Unraid to tell. -->
     <FieldRow v-if="!U.st || U.available" :label="c('general.notifyUnraid')" :hint="c('general.notifyUnraidTip')"><Toggle v-model="P.notifyUnraid" /></FieldRow>
