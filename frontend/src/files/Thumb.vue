@@ -4,10 +4,11 @@
 import { computed, ref, watch } from 'vue';
 import { api } from '@/api/client';
 import { extend } from '@/core/extend';
-import { ext, FORMAT_ID, G, glyphOf } from '@/core/glyphs';
+import { ext, FORMAT_ID, G } from '@/core/glyphs';
 import { Render } from '@/core/Render';
 import { useListing } from '@/stores/listing';
 import { COL } from './columns';
+import EntryGlyph from './EntryGlyph.vue';
 import type { Entry } from './entries';
 import { join } from './paths';
 
@@ -21,6 +22,8 @@ const hashOf = (s: string) => { let h = 2166136261; for (const c of s) h = Math.
 
 const path = computed(() => join(props.folder, props.k.name));
 const own = computed(() => extend.thumbProviders.map((fn) => fn(props.k, props.folder)).find((x) => x != null));
+// A picture handed in for the entry's glyph, such as the system's icon, stands in for the sketches too.
+const hasIcon = computed(() => extend.entryIcons.some((fn) => fn(props.k, props.folder, 48)));
 const f = computed(() => FORMAT_ID[ext(props.k.name)] || '');
 const hue = computed(() => hashOf(props.k.name) % 360);
 const stem = computed(() => props.k.name.replace(/\.[^.]+$/, '').replace(/[-_.]+/g, ' '));
@@ -37,23 +40,24 @@ watch(src, () => { pic.value = true; });
 <template>
   <span v-if="own != null" class="thumb"><Render :node="own" /></span>
   <span v-else-if="k.dir && k.picture && pic" class="thumb pic folderpic"><img class="scene" :src="src" loading="lazy" alt="" @error="pic = false"><span class="fbadge"><G n="IconFolder" /></span></span>
-  <span v-else-if="k.dir" class="thumb"><G :n="glyphOf(k)" /></span>
+  <span v-else-if="k.dir" class="thumb"><EntryGlyph :k="k" :folder="folder" :px="48" /></span>
   <span v-else-if="pic && (f === 'image' || f === 'raw' || f === 'video')" class="thumb pic">
     <img class="scene" :src="src" loading="lazy" alt="" @error="pic = false">
     <template v-if="f === 'video'"><span class="play"><G n="IconPlay" /></span><span v-if="k.meta?.duration != null" class="badge glim-num">{{ COL.duration!.value(k, folder) }}</span></template>
   </span>
   <span v-else-if="pic && PAGES.includes(f)" class="thumb paper"><img class="page-pic" :src="src" loading="lazy" alt="" @error="pic = false"><span class="tag" :class="f">{{ tag }}</span></span>
-  <span v-else-if="f === 'audio'" class="thumb cover" :style="{ '--h': hue }">
+  <span v-else-if="f === 'audio' && (pic || !hasIcon)" class="thumb cover" :style="{ '--h': hue }">
     <img v-if="pic" class="scene" :src="src" loading="lazy" alt="" @error="pic = false">
     <template v-else><G n="IconFileAudio" /><span class="wave"><i v-for="(hgt, n) in wave" :key="n" :style="{ height: hgt + '%' }"></i></span></template>
   </span>
+  <span v-else-if="hasIcon" class="thumb"><EntryGlyph :k="k" :folder="folder" :px="48" /></span>
   <span v-else-if="TEXT_LIKE.includes(f)" class="thumb paper"><span class="page code">{{ text }}</span></span>
   <span v-else-if="f === 'pdf' || f === 'doc'" class="thumb paper"><span class="page"><b>{{ stem }}</b><i v-for="(s, n) in lines(9, [3, 8])" :key="n" :class="{ s }"></i></span><span class="tag" :class="f">{{ tag }}</span></span>
   <span v-else-if="f === 'sheet'" class="thumb paper"><span class="page grid"></span><span class="tag sheet">{{ tag }}</span></span>
   <span v-else-if="f === 'slides'" class="thumb paper"><span class="slide"><b>{{ stem }}</b><span class="bars"><i style="height:45%"></i><i style="height:80%"></i><i style="height:60%"></i></span></span><span class="tag slides">{{ tag }}</span></span>
   <span v-else-if="f === 'ebook'" class="thumb paper"><span class="book" :style="{ '--h': hue }"><b>{{ stem }}</b></span></span>
   <span v-else-if="f === 'font'" class="thumb font"><span>Aa</span><small>{{ stem }}</small></span>
-  <span v-else class="thumb"><G :n="glyphOf(k)" /></span>
+  <span v-else class="thumb"><EntryGlyph :k="k" :folder="folder" :px="48" /></span>
 </template>
 
 <style>

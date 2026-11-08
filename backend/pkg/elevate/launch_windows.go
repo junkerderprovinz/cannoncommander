@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"unsafe"
 
 	"golang.org/x/sys/windows"
 
@@ -24,33 +23,6 @@ func init() {
 	}
 }
 
-var procShellExecuteExW = windows.NewLazySystemDLL("shell32.dll").NewProc("ShellExecuteExW")
-
-// shellExecuteInfo is SHELLEXECUTEINFOW in its 64 bit layout.
-type shellExecuteInfo struct {
-	size     uint32
-	mask     uint32
-	hwnd     uintptr
-	verb     *uint16
-	file     *uint16
-	params   *uint16
-	dir      *uint16
-	show     int32
-	instApp  uintptr
-	idList   uintptr
-	class    *uint16
-	keyClass uintptr
-	hotKey   uint32
-	icon     uintptr
-	process  windows.Handle
-}
-
-const (
-	seeMaskNoCloseProcess = 0x40
-	seeMaskNoAsync        = 0x100
-	seeMaskFlagNoUI       = 0x400
-)
-
 // launchHelper starts this program again with the verb runas, which brings
 // up the UAC prompt and returns once it is answered. The secret goes on the
 // command line, which a process without administrator rights cannot read
@@ -66,31 +38,24 @@ func launchHelper(_ context.Context, port int, secret []byte) (func() error, err
 		return nil, err
 	}
 	params, _ := windows.UTF16PtrFromString(fmt.Sprintf("--elevated %d:%x", port, secret))
-	info := shellExecuteInfo{mask: seeMaskNoCloseProcess | seeMaskNoAsync | seeMaskFlagNoUI, verb: verb, file: file, params: params, show: windows.SW_HIDE}
-	info.size = uint32(unsafe.Sizeof(info))
-	err = winshell.Apartment(func() error {
-		info.hwnd = uintptr(winshell.Owner())
-		if ok, _, err := procShellExecuteExW.Call(uintptr(unsafe.Pointer(&info))); ok == 0 {
-			return err
-		}
-		return nil
-	})
+	info := winshell.ExecuteInfo{Mask: winshell.SeeMaskNoCloseProcess | winshell.SeeMaskNoAsync | winshell.SeeMaskFlagNoUI, Verb: verb, File: file, Params: params, Show: windows.SW_HIDE}
+	err = winshell.Execute(&info)
 	if errors.Is(err, windows.ERROR_CANCELLED) {
 		return nil, ErrDeclined
 	}
 	if err != nil {
 		return nil, err
 	}
-	if info.process == 0 {
+	if info.Process == 0 {
 		return nil, ErrNoHelper
 	}
 	return func() error {
-		defer windows.CloseHandle(info.process)
-		if _, err := windows.WaitForSingleObject(info.process, windows.INFINITE); err != nil {
+		defer windows.CloseHandle(info.Process)
+		if _, err := windows.WaitForSingleObject(info.Process, windows.INFINITE); err != nil {
 			return err
 		}
 		var code uint32
-		if err := windows.GetExitCodeProcess(info.process, &code); err != nil {
+		if err := windows.GetExitCodeProcess(info.Process, &code); err != nil {
 			return err
 		}
 		if code != 0 {

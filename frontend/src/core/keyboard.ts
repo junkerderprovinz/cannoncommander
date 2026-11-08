@@ -40,7 +40,7 @@ export function handleKey(e: KeyboardEvent) {
     go('files');
     return;
   }
-  if (e.key === 'F10') { e.preventDefault(); openMenuBar(0); return; }
+  if (e.key === 'F10' && !e.shiftKey) { e.preventDefault(); openMenuBar(0); return; }
   if (typing(e.target)) return;
   const combo = comboOf(e);
   if (currentView()?.claims?.(combo)) return currentView()!.key?.(e, combo);
