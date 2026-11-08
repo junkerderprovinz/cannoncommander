@@ -3839,6 +3839,8 @@
       "many": "Žinutėje gali būti daugiausia {n} simbolio",
       "other": "Žinutėje gali būti daugiausia {n} simbolių"
     },
+    "nameChars": "Windows neleidžia pavadinime nė vieno iš šių simbolių: < > : \" / \\ | ? *",
+    "nameEnd": "Windows sistemoje pavadinimas negali baigtis tašku ar tarpu",
     "nameLength": {
       "one": "Pavadinime gali būti daugiausia {n} simbolis",
       "few": "Pavadinime gali būti daugiausia {n} simboliai",
@@ -3846,6 +3848,7 @@
       "other": "Pavadinime gali būti daugiausia {n} simbolių"
     },
     "namePasswordNeeded": "Reikia vardo ir slaptažodžio",
+    "nameReserved": "Windows šį pavadinimą laiko įrenginiui, pasirinkite kitą",
     "nameTaken": "Toks pavadinimas čia jau yra",
     "nameTooLong": "Pavadinimas per ilgas failų sistemai",
     "noAppDialog": "Šis kompiuteris neturi savo dialogo programai pasirinkti",

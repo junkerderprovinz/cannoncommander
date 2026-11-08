@@ -3569,11 +3569,14 @@
       "one": "A mensaxe ten como máximo {n} carácter",
       "other": "A mensaxe ten como máximo {n} caracteres"
     },
+    "nameChars": "Windows non permite ningún destes caracteres nun nome: < > : \" / \\ | ? *",
+    "nameEnd": "En Windows un nome non pode rematar en punto nin en espazo",
     "nameLength": {
       "one": "O nome ten como máximo {n} carácter",
       "other": "O nome ten como máximo {n} caracteres"
     },
     "namePasswordNeeded": "Fan falta nome e contrasinal",
+    "nameReserved": "Windows reserva este nome para un dispositivo, escolle outro",
     "nameTaken": "Ese nome xa existe aquí",
     "nameTooLong": "O nome é longo de máis para o sistema de ficheiros",
     "noAppDialog": "Este computador non ten un diálogo propio para escoller unha aplicación",

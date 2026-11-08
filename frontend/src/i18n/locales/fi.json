@@ -3569,11 +3569,14 @@
       "one": "Viestissä on enintään {n} merkki",
       "other": "Viestissä on enintään {n} merkkiä"
     },
+    "nameChars": "Windows ei salli nimessä mitään näistä merkeistä: < > : \" / \\ | ? *",
+    "nameEnd": "Windowsissa nimi ei voi päättyä pisteeseen eikä välilyöntiin",
     "nameLength": {
       "one": "Nimessä on enintään {n} merkki",
       "other": "Nimessä on enintään {n} merkkiä"
     },
     "namePasswordNeeded": "Tarvitaan sekä nimi että salasana",
+    "nameReserved": "Windows varaa tämän nimen laitteelle, valitse toinen nimi",
     "nameTaken": "Tämä nimi on jo käytössä täällä",
     "nameTooLong": "Nimi on liian pitkä tiedostojärjestelmälle",
     "noAppDialog": "Tällä tietokoneella ei ole omaa ikkunaa sovelluksen valintaan",

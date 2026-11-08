@@ -3569,11 +3569,14 @@
       "one": "Mezuak gehienez karaktere {n} du",
       "other": "Mezuak gehienez {n} karaktere ditu"
     },
+    "nameChars": "Windowsek ez du karaktere hauetako bat ere onartzen izenetan: < > : \" / \\ | ? *",
+    "nameEnd": "Windowsen izen bat ezin da puntu edo zuriune batekin amaitu",
     "nameLength": {
       "one": "Izenak gehienez karaktere {n} du",
       "other": "Izenak gehienez {n} karaktere ditu"
     },
     "namePasswordNeeded": "Izena eta pasahitza behar dira",
+    "nameReserved": "Windowsek gailu baterako gordetzen du izen hau, aukeratu beste bat",
     "nameTaken": "Izen hori badago jada hemen",
     "nameTooLong": "Izena luzeegia da fitxategi-sistemarako",
     "noAppDialog": "Ordenagailu honek ez du aplikazio bat aukeratzeko bere elkarrizketa-koadrorik",

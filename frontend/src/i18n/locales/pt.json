@@ -3704,12 +3704,15 @@
       "many": "A mensagem tem no máximo {n} carateres",
       "other": "A mensagem tem no máximo {n} carateres"
     },
+    "nameChars": "O Windows não permite nenhum destes caracteres num nome: < > : \" / \\ | ? *",
+    "nameEnd": "No Windows um nome não pode terminar com ponto nem espaço",
     "nameLength": {
       "one": "O nome tem no máximo {n} caráter",
       "many": "O nome tem no máximo {n} carateres",
       "other": "O nome tem no máximo {n} carateres"
     },
     "namePasswordNeeded": "São precisos nome e palavra-passe",
+    "nameReserved": "O Windows reserva este nome para um dispositivo, escolha outro",
     "nameTaken": "Esse nome já existe aqui",
     "nameTooLong": "O nome é demasiado longo para o sistema de ficheiros",
     "noAppDialog": "Este computador não tem uma caixa de diálogo própria para escolher uma aplicação",

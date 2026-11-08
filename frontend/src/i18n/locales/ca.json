@@ -3704,12 +3704,15 @@
       "many": "El missatge té com a màxim {n} caràcters",
       "other": "El missatge té com a màxim {n} caràcters"
     },
+    "nameChars": "Windows no permet cap d'aquests caràcters en un nom: < > : \" / \\ | ? *",
+    "nameEnd": "A Windows un nom no pot acabar amb un punt ni amb un espai",
     "nameLength": {
       "one": "El nom té com a màxim {n} caràcter",
       "many": "El nom té com a màxim {n} caràcters",
       "other": "El nom té com a màxim {n} caràcters"
     },
     "namePasswordNeeded": "Calen el nom i la contrasenya",
+    "nameReserved": "Windows reserva aquest nom per a un dispositiu, tria'n un altre",
     "nameTaken": "Aquest nom ja existeix aquí",
     "nameTooLong": "El nom és massa llarg per al sistema de fitxers",
     "noAppDialog": "Aquest ordinador no té cap diàleg propi per triar una aplicació",

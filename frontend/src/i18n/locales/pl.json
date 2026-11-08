@@ -3839,6 +3839,8 @@
       "many": "Wiadomość ma najwyżej {n} znaków",
       "other": "Wiadomość ma najwyżej {n} znaku"
     },
+    "nameChars": "Windows nie pozwala na żaden z tych znaków w nazwie: < > : \" / \\ | ? *",
+    "nameEnd": "W systemie Windows nazwa nie może kończyć się kropką ani spacją",
     "nameLength": {
       "one": "Nazwa ma najwyżej {n} znak",
       "few": "Nazwa ma najwyżej {n} znaki",
@@ -3846,6 +3848,7 @@
       "other": "Nazwa ma najwyżej {n} znaku"
     },
     "namePasswordNeeded": "Potrzebne są nazwa i hasło",
+    "nameReserved": "Windows rezerwuje tę nazwę dla urządzenia, wybierz inną",
     "nameTaken": "Ta nazwa już tu istnieje",
     "nameTooLong": "Nazwa jest za długa dla systemu plików",
     "noAppDialog": "Ten komputer nie ma własnego okna do wyboru aplikacji",

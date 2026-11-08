@@ -3434,10 +3434,13 @@
     "messageLength": {
       "other": "留言最多 {n} 个字符"
     },
+    "nameChars": "Windows 不允许名称中包含以下任何字符：< > : \" / \\ | ? *",
+    "nameEnd": "在 Windows 中名称不能以句点或空格结尾",
     "nameLength": {
       "other": "名称最多 {n} 个字符"
     },
     "namePasswordNeeded": "名称和密码都必须填写",
+    "nameReserved": "Windows 将此名称保留给设备，请换一个名称",
     "nameTaken": "这里已有同名项",
     "nameTooLong": "名称对文件系统来说太长",
     "noAppDialog": "这台电脑没有自带的对话框来选择应用",

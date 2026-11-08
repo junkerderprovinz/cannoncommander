@@ -3569,11 +3569,14 @@
       "one": "Meldingen kan ha høyst {n} tegn",
       "other": "Meldingen kan ha høyst {n} tegn"
     },
+    "nameChars": "Windows tillater ingen av disse tegnene i et navn: < > : \" / \\ | ? *",
+    "nameEnd": "I Windows kan et navn ikke slutte med punktum eller mellomrom",
     "nameLength": {
       "one": "Navnet kan ha høyst {n} tegn",
       "other": "Navnet kan ha høyst {n} tegn"
     },
     "namePasswordNeeded": "Både navn og passord trengs",
+    "nameReserved": "Windows holder av dette navnet til en enhet, velg et annet",
     "nameTaken": "Dette navnet finnes allerede her",
     "nameTooLong": "Navnet er for langt for filsystemet",
     "noAppDialog": "Denne datamaskinen har ingen egen dialog for å velge en app",

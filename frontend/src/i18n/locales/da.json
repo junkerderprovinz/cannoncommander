@@ -3569,11 +3569,14 @@
       "one": "Beskeden har højst {n} tegn",
       "other": "Beskeden har højst {n} tegn"
     },
+    "nameChars": "Windows tillader ingen af disse tegn i et navn: < > : \" / \\ | ? *",
+    "nameEnd": "I Windows må et navn ikke ende med punktum eller mellemrum",
     "nameLength": {
       "one": "Navnet har højst {n} tegn",
       "other": "Navnet har højst {n} tegn"
     },
     "namePasswordNeeded": "Der skal både navn og adgangskode til",
+    "nameReserved": "Windows holder dette navn til en enhed, vælg venligst et andet",
     "nameTaken": "Det navn findes allerede her",
     "nameTooLong": "Navnet er for langt til filsystemet",
     "noAppDialog": "Denne computer har ingen egen dialog til at vælge en app",

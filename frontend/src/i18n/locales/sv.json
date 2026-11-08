@@ -3569,11 +3569,14 @@
       "one": "Meddelandet får ha högst {n} tecken",
       "other": "Meddelandet får ha högst {n} tecken"
     },
+    "nameChars": "Windows tillåter inget av dessa tecken i ett namn: < > : \" / \\ | ? *",
+    "nameEnd": "I Windows får ett namn inte sluta med punkt eller blanksteg",
     "nameLength": {
       "one": "Namnet får ha högst {n} tecken",
       "other": "Namnet får ha högst {n} tecken"
     },
     "namePasswordNeeded": "Både namn och lösenord behövs",
+    "nameReserved": "Windows håller det här namnet för en enhet, välj ett annat",
     "nameTaken": "Det här namnet finns redan här",
     "nameTooLong": "Namnet är för långt för filsystemet",
     "noAppDialog": "Den här datorn har ingen egen dialog för att välja en app",

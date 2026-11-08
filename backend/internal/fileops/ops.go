@@ -3,13 +3,15 @@ package fileops
 import (
 	"context"
 	"errors"
+	"path/filepath"
 
-	"github.com/gtsteffaniak/go-logger/logger"
 	"io/fs"
 	"net/http"
 	"os"
 	"path"
 	"time"
+
+	"github.com/gtsteffaniak/go-logger/logger"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
@@ -144,6 +146,9 @@ func (s *Service) rename(w http.ResponseWriter, r *http.Request) error {
 		return v1.WriteJSON(w, r, http.StatusOK, Changed{Path: from.Path})
 	}
 	to, err := s.newEntry(u, path.Join(path.Dir(from.Path), req.Name))
+	if err == errExists && sameFile(from.Real, to.Real) {
+		err = nil
+	}
 	if err != nil {
 		return err
 	}
@@ -168,12 +173,22 @@ func preflightSize(ctx context.Context, fsys *ccfs.Resolver, u *users.User, src 
 }
 
 // renameNoReplace renames unless the target exists. A plain rename would
-// silently replace a file of that name.
+// silently replace a file of that name. On NTFS, exFAT and FAT the new name
+// finds the file itself when only its case changes, and that rename goes.
 func renameNoReplace(from, to string) error {
-	if _, err := os.Lstat(to); err == nil {
+	if _, err := os.Lstat(to); err == nil && !sameFile(from, to) {
 		return errExists
 	}
 	return os.Rename(from, to)
+}
+
+func sameFile(a, b string) bool {
+	ia, err := os.Lstat(a)
+	if err != nil {
+		return false
+	}
+	ib, err := os.Lstat(b)
+	return err == nil && os.SameFile(ia, ib)
 }
 
 // existing checks that p exists inside a source and u holds perm there.
@@ -200,6 +215,9 @@ func (s *Service) newEntry(u *users.User, p string) (ccfs.Location, error) {
 	if loc.Virtual() || loc.InArchive() || loc.Index == "/" || !ccfs.ValidName(path.Base(loc.Path)) {
 		return loc, v1.Coded(http.StatusBadRequest, "badPath", "invalid path")
 	}
+	if err := windowsName(loc); err != nil {
+		return loc, err
+	}
 	parent, err := s.fs.Resolve(path.Dir(loc.Path))
 	if err != nil {
 		return loc, err
@@ -211,6 +229,23 @@ func (s *Service) newEntry(u *users.User, p string) (ccfs.Location, error) {
 		return loc, errExists
 	}
 	return loc, nil
+}
+
+// windowsName turns away a name Windows refuses, before the system does it
+// with a message that tells nobody why.
+func windowsName(loc ccfs.Location) error {
+	if !ccfs.WindowsNames(filepath.Dir(loc.Real)) {
+		return nil
+	}
+	switch ccfs.WindowsNameProblem(path.Base(loc.Path)) {
+	case "nameChars":
+		return v1.Coded(http.StatusBadRequest, "nameChars", `Windows allows none of < > : " / \ | ? * in a name`)
+	case "nameEnd":
+		return v1.Coded(http.StatusBadRequest, "nameEnd", "Windows does not allow a name to end with a dot or a space")
+	case "nameReserved":
+		return v1.Coded(http.StatusBadRequest, "nameReserved", "Windows keeps this name for a device")
+	}
+	return nil
 }
 
 // record adds an undo step and returns its id, or "" when the step could

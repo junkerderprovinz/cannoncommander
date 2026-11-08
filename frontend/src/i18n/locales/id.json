@@ -3434,10 +3434,13 @@
     "messageLength": {
       "other": "Pesan paling banyak {n} karakter"
     },
+    "nameChars": "Windows tidak mengizinkan karakter berikut dalam nama: < > : \" / \\ | ? *",
+    "nameEnd": "Di Windows nama tidak boleh diakhiri titik atau spasi",
     "nameLength": {
       "other": "Nama paling banyak {n} karakter"
     },
     "namePasswordNeeded": "Nama dan kata sandi keduanya diperlukan",
+    "nameReserved": "Windows mencadangkan nama ini untuk perangkat, pilih nama lain",
     "nameTaken": "Nama ini sudah ada di sini",
     "nameTooLong": "Nama ini terlalu panjang untuk sistem berkas",
     "noAppDialog": "Komputer ini tidak punya dialog sendiri untuk memilih aplikasi",

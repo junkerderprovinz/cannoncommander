@@ -3569,11 +3569,14 @@
       "one": "Az üzenet legfeljebb {n} karakteres",
       "other": "Az üzenet legfeljebb {n} karakteres"
     },
+    "nameChars": "A Windows nem enged ezek közül egyetlen karaktert sem a névben: < > : \" / \\ | ? *",
+    "nameEnd": "Windowson a név nem végződhet ponttal vagy szóközzel",
     "nameLength": {
       "one": "A név legfeljebb {n} karakteres",
       "other": "A név legfeljebb {n} karakteres"
     },
     "namePasswordNeeded": "Név és jelszó is kell",
+    "nameReserved": "Ezt a nevet a Windows egy eszköznek tartja fenn, válasszon másikat",
     "nameTaken": "Ez a név itt már foglalt",
     "nameTooLong": "A név túl hosszú a fájlrendszernek",
     "noAppDialog": "Ennek a számítógépnek nincs saját párbeszédablaka alkalmazás választásához",

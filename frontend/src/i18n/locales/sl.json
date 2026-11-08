@@ -3839,6 +3839,8 @@
       "few": "Sporočilo ima največ {n} znake",
       "other": "Sporočilo ima največ {n} znakov"
     },
+    "nameChars": "Windows v imenu ne dovoli nobenega od teh znakov: < > : \" / \\ | ? *",
+    "nameEnd": "V sistemu Windows se ime ne sme končati s piko ali presledkom",
     "nameLength": {
       "one": "Ime ima največ {n} znak",
       "two": "Ime ima največ {n} znaka",
@@ -3846,6 +3848,7 @@
       "other": "Ime ima največ {n} znakov"
     },
     "namePasswordNeeded": "Potrebna sta ime in geslo",
+    "nameReserved": "Windows to ime hrani za napravo, izberite drugo",
     "nameTaken": "To ime tukaj že obstaja",
     "nameTooLong": "Ime je predolgo za datotečni sistem",
     "noAppDialog": "Ta računalnik nima lastnega pogovornega okna za izbiro aplikacije",

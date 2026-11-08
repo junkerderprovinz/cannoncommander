@@ -3569,11 +3569,14 @@
       "one": "Sõnumis on kuni {n} märk",
       "other": "Sõnumis on kuni {n} märki"
     },
+    "nameChars": "Windows ei luba nimes ühtki neist märkidest: < > : \" / \\ | ? *",
+    "nameEnd": "Windowsis ei tohi nimi lõppeda punkti ega tühikuga",
     "nameLength": {
       "one": "Nimes on kuni {n} märk",
       "other": "Nimes on kuni {n} märki"
     },
     "namePasswordNeeded": "Vaja on nii nime kui ka parooli",
+    "nameReserved": "Windows hoiab selle nime seadme jaoks, vali palun muu nimi",
     "nameTaken": "See nimi on siin juba olemas",
     "nameTooLong": "Nimi on failisüsteemi jaoks liiga pikk",
     "noAppDialog": "Sellel arvutil pole rakenduse valimiseks oma dialoogi",

@@ -56,6 +56,9 @@ func undoRename(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage
 		return err
 	}
 	from, err := s.newEntry(u, data.From)
+	if errors.Is(err, errExists) && sameFile(to.Real, from.Real) {
+		err = nil
+	}
 	if errors.Is(err, errExists) {
 		return v1.Coded(http.StatusConflict, "oldNameTaken", "the old name is taken again")
 	}

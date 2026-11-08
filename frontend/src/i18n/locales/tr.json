@@ -3569,11 +3569,14 @@
       "one": "Mesaj en fazla {n} karakter olabilir",
       "other": "Mesaj en fazla {n} karakter olabilir"
     },
+    "nameChars": "Windows bir adda bu karakterlerin hiçbirine izin vermez: < > : \" / \\ | ? *",
+    "nameEnd": "Windows'ta bir ad nokta veya boşlukla bitemez",
     "nameLength": {
       "one": "Ad en fazla {n} karakter olabilir",
       "other": "Ad en fazla {n} karakter olabilir"
     },
     "namePasswordNeeded": "Ad ve parola gerekli",
+    "nameReserved": "Windows bu adı bir aygıt için ayırır, lütfen başka bir ad seçin",
     "nameTaken": "Bu ad burada zaten var",
     "nameTooLong": "Ad dosya sistemi için çok uzun",
     "noAppDialog": "Bu bilgisayarın uygulama seçmek için kendi iletişim kutusu yok",

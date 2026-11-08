@@ -3434,10 +3434,13 @@
     "messageLength": {
       "other": "Mesej boleh mempunyai paling banyak {n} aksara"
     },
+    "nameChars": "Windows tidak membenarkan mana-mana aksara ini dalam nama: < > : \" / \\ | ? *",
+    "nameEnd": "Dalam Windows nama tidak boleh berakhir dengan titik atau ruang",
     "nameLength": {
       "other": "Nama boleh mempunyai paling banyak {n} aksara"
     },
     "namePasswordNeeded": "Nama dan kata laluan kedua-duanya diperlukan",
+    "nameReserved": "Windows menyimpan nama ini untuk peranti, sila pilih nama lain",
     "nameTaken": "Nama ini sudah ada di sini",
     "nameTooLong": "Nama ini terlalu panjang untuk sistem fail",
     "noAppDialog": "Komputer ini tiada dialog sendiri untuk memilih aplikasi",

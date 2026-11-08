@@ -3569,11 +3569,14 @@
       "one": "Skilaboðin mega vera mest {n} stafur",
       "other": "Skilaboðin mega vera mest {n} stafir"
     },
+    "nameChars": "Windows leyfir ekkert þessara tákna í nafni: < > : \" / \\ | ? *",
+    "nameEnd": "Í Windows má nafn ekki enda á punkti eða bili",
     "nameLength": {
       "one": "Heitið má vera mest {n} stafur",
       "other": "Heitið má vera mest {n} stafir"
     },
     "namePasswordNeeded": "Bæði heiti og lykilorð þarf",
+    "nameReserved": "Windows tekur þetta nafn frá fyrir tæki, veldu annað",
     "nameTaken": "Þetta heiti er þegar til hér",
     "nameTooLong": "Heitið er of langt fyrir skráakerfið",
     "noAppDialog": "Þessi tölva hefur engan eigin glugga til að velja forrit",

@@ -3434,10 +3434,13 @@
     "messageLength": {
       "other": "メッセージは {n} 文字以内です"
     },
+    "nameChars": "Windows では名前に次の文字は使えません: < > : \" / \\ | ? *",
+    "nameEnd": "Windows では名前の末尾をピリオドや空白にできません",
     "nameLength": {
       "other": "名前は {n} 文字以内です"
     },
     "namePasswordNeeded": "名前とパスワードの両方が必要です",
+    "nameReserved": "Windows はこの名前をデバイス用に予約しています。別の名前を選んでください",
     "nameTaken": "この名前はすでにあります",
     "nameTooLong": "名前がファイルシステムには長すぎます",
     "noAppDialog": "このパソコンにはアプリを選ぶための専用のダイアログがありません",

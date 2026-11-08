@@ -3434,10 +3434,13 @@
     "messageLength": {
       "other": "Lời nhắn dài tối đa {n} ký tự"
     },
+    "nameChars": "Windows không cho phép các ký tự này trong tên: < > : \" / \\ | ? *",
+    "nameEnd": "Trên Windows tên không được kết thúc bằng dấu chấm hoặc khoảng trắng",
     "nameLength": {
       "other": "Tên dài tối đa {n} ký tự"
     },
     "namePasswordNeeded": "Cần cả tên và mật khẩu",
+    "nameReserved": "Windows dành tên này cho một thiết bị, vui lòng chọn tên khác",
     "nameTaken": "Ở đây đã có tên này",
     "nameTooLong": "Tên quá dài đối với hệ thống tệp",
     "noAppDialog": "Máy tính này không có hộp thoại riêng để chọn ứng dụng",

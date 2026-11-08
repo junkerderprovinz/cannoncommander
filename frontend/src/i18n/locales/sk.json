@@ -3839,6 +3839,8 @@
       "many": "Správa má najviac {n} znaku",
       "other": "Správa má najviac {n} znakov"
     },
+    "nameChars": "Windows v názve nepovoľuje žiadny z týchto znakov: < > : \" / \\ | ? *",
+    "nameEnd": "Vo Windows nesmie názov končiť bodkou ani medzerou",
     "nameLength": {
       "one": "Názov má najviac {n} znak",
       "few": "Názov má najviac {n} znaky",
@@ -3846,6 +3848,7 @@
       "other": "Názov má najviac {n} znakov"
     },
     "namePasswordNeeded": "Je potrebné meno aj heslo",
+    "nameReserved": "Toto meno má Windows vyhradené pre zariadenie, vyberte iné",
     "nameTaken": "Tento názov tu už existuje",
     "nameTooLong": "Názov je pre systém súborov príliš dlhý",
     "noAppDialog": "Tento počítač nemá vlastné dialógové okno na výber aplikácie",

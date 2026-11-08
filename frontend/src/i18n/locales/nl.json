@@ -3569,11 +3569,14 @@
       "one": "Het bericht heeft hoogstens {n} teken",
       "other": "Het bericht heeft hoogstens {n} tekens"
     },
+    "nameChars": "Windows staat geen van deze tekens toe in een naam: < > : \" / \\ | ? *",
+    "nameEnd": "In Windows mag een naam niet eindigen op een punt of een spatie",
     "nameLength": {
       "one": "De naam heeft hoogstens {n} teken",
       "other": "De naam heeft hoogstens {n} tekens"
     },
     "namePasswordNeeded": "Naam en wachtwoord zijn allebei nodig",
+    "nameReserved": "Windows houdt deze naam vrij voor een apparaat, kies een andere",
     "nameTaken": "Deze naam bestaat hier al",
     "nameTooLong": "De naam is te lang voor het bestandssysteem",
     "noAppDialog": "Deze computer heeft geen eigen venster om een app te kiezen",

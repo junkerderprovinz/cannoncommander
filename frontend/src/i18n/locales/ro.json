@@ -3704,12 +3704,15 @@
       "few": "Mesajul are cel mult {n} caractere",
       "other": "Mesajul are cel mult {n} de caractere"
     },
+    "nameChars": "Windows nu permite niciunul dintre aceste caractere într-un nume: < > : \" / \\ | ? *",
+    "nameEnd": "În Windows un nume nu se poate termina cu punct sau spațiu",
     "nameLength": {
       "one": "Numele are cel mult {n} caracter",
       "few": "Numele are cel mult {n} caractere",
       "other": "Numele are cel mult {n} de caractere"
     },
     "namePasswordNeeded": "E nevoie de nume și parolă",
+    "nameReserved": "Windows rezervă acest nume pentru un dispozitiv, alege altul",
     "nameTaken": "Acest nume există deja aici",
     "nameTooLong": "Numele este prea lung pentru sistemul de fișiere",
     "noAppDialog": "Acest calculator nu are un dialog propriu pentru alegerea unei aplicații",

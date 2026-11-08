@@ -3704,12 +3704,15 @@
       "many": "Le message compte au plus {n} caractères",
       "other": "Le message compte au plus {n} caractères"
     },
+    "nameChars": "Windows n'autorise aucun de ces caractères dans un nom : < > : \" / \\ | ? *",
+    "nameEnd": "Sous Windows, un nom ne peut pas se terminer par un point ou une espace",
     "nameLength": {
       "one": "Le nom compte au plus {n} caractère",
       "many": "Le nom compte au plus {n} caractères",
       "other": "Le nom compte au plus {n} caractères"
     },
     "namePasswordNeeded": "Il faut un nom et un mot de passe",
+    "nameReserved": "Windows réserve ce nom à un périphérique, choisissez-en un autre",
     "nameTaken": "Ce nom existe déjà ici",
     "nameTooLong": "Le nom est trop long pour le système de fichiers",
     "noAppDialog": "Cet ordinateur n'a pas sa propre boîte de dialogue pour choisir une application",

@@ -3839,6 +3839,8 @@
       "many": "Zpráva má nejvýš {n} znaku",
       "other": "Zpráva má nejvýš {n} znaků"
     },
+    "nameChars": "Windows v názvu nepovoluje žádný z těchto znaků: < > : \" / \\ | ? *",
+    "nameEnd": "Ve Windows nesmí název končit tečkou ani mezerou",
     "nameLength": {
       "one": "Název má nejvýš {n} znak",
       "few": "Název má nejvýš {n} znaky",
@@ -3846,6 +3848,7 @@
       "other": "Název má nejvýš {n} znaků"
     },
     "namePasswordNeeded": "Je potřeba jméno i heslo",
+    "nameReserved": "Toto jméno má Windows vyhrazené pro zařízení, zvolte prosím jiné",
     "nameTaken": "Tento název tu už existuje",
     "nameTooLong": "Název je pro systém souborů příliš dlouhý",
     "noAppDialog": "Tento počítač nemá vlastní dialog pro výběr aplikace",

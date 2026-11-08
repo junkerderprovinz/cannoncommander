@@ -3704,12 +3704,15 @@
       "one": "Ziņā var būt ne vairāk kā {n} rakstzīme",
       "other": "Ziņā var būt ne vairāk kā {n} rakstzīmes"
     },
+    "nameChars": "Windows nosaukumā neatļauj nevienu no šīm rakstzīmēm: < > : \" / \\ | ? *",
+    "nameEnd": "Windows nosaukums nedrīkst beigties ar punktu vai atstarpi",
     "nameLength": {
       "zero": "Nosaukumā var būt ne vairāk kā {n} rakstzīmju",
       "one": "Nosaukumā var būt ne vairāk kā {n} rakstzīme",
       "other": "Nosaukumā var būt ne vairāk kā {n} rakstzīmes"
     },
     "namePasswordNeeded": "Vajag vārdu un paroli",
+    "nameReserved": "Windows šo nosaukumu patur ierīcei, lūdzu, izvēlieties citu",
     "nameTaken": "Šāds nosaukums šeit jau ir",
     "nameTooLong": "Nosaukums ir par garu failu sistēmai",
     "noAppDialog": "Šim datoram nav sava dialoga lietotnes izvēlei",

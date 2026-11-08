@@ -3704,12 +3704,15 @@
       "few": "Poruka ima najviše {n} znaka",
       "other": "Poruka ima najviše {n} znakova"
     },
+    "nameChars": "Windows ne dopušta nijedan od ovih znakova u nazivu: < > : \" / \\ | ? *",
+    "nameEnd": "U Windowsima naziv ne smije završavati točkom ili razmakom",
     "nameLength": {
       "one": "Naziv ima najviše {n} znak",
       "few": "Naziv ima najviše {n} znaka",
       "other": "Naziv ima najviše {n} znakova"
     },
     "namePasswordNeeded": "Potrebni su ime i lozinka",
+    "nameReserved": "Windows čuva ovaj naziv za uređaj, odaberite drugi",
     "nameTaken": "Taj naziv ovdje već postoji",
     "nameTooLong": "Naziv je predug za datotečni sustav",
     "noAppDialog": "Ovo računalo nema vlastiti dijalog za odabir aplikacije",
