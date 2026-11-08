@@ -13,7 +13,7 @@ const SHIPPED = { F5: 'copy', F6: 'move', 'Ctrl+r': 'refresh', 'Alt+p': 'pack', 
 beforeAll(async () => {
   addMessages('keys', { de, en });
   setLanguage('de');
-  for (const id of ['copy', 'move', 'refresh', 'pack', 'palette', 'shortcuts', 'gotoPath', 'quickview', 'back']) action(id, { label: id, run: () => {} });
+  for (const id of ['copy', 'move', 'refresh', 'pack', 'palette', 'shortcuts', 'gotoPath', 'sidePane', 'back']) action(id, { label: id, run: () => {} });
   actions.copy!.key = 'F5';
   for (const [combo, id] of Object.entries(SHIPPED)) bindKey(combo, id);
   // Stored as a whole map, as older settings have it.
@@ -48,7 +48,7 @@ describe('choosing how the app handles', () => {
     useLayout('explorer');
     expect(layout()).toBe('explorer');
     expect(keymap.F5).toBe('refresh');
-    expect(keymap['Alt+p']).toBe('quickview');
+    expect(keymap['Alt+p']).toBe('sidePane');
     expect(keymap['Ctrl+m']).toBe('move');
     expect(layoutKeys('explorer')['Ctrl+m']).toBeUndefined();
   });

@@ -158,14 +158,14 @@ describe('the Explorer layout', () => {
     const map = preset('explorer', { ...DEFAULTS, F3: 'view', Backspace: 'up' }, () => true);
     expect(map.F5).toBe('refresh');
     expect(map['Ctrl+r']).toBe('refresh');
-    expect(map['Alt+p']).toBe('quickview');
+    expect(map['Alt+p']).toBe('sidePane');
     expect(map.Backspace).toBe('back');
     expect(map.F3).toBe('view');
     expect(map['Ctrl+a']).toBe('selectAll');
   });
 
   it('leaves out actions the app does not have', () => {
-    expect(preset('explorer', DEFAULTS, (id) => id !== 'quickview')['Alt+p']).toBe('pack');
+    expect(preset('explorer', DEFAULTS, (id) => id !== 'sidePane')['Alt+p']).toBe('pack');
   });
 });
 
