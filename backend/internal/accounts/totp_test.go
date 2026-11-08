@@ -82,8 +82,11 @@ func TestGuessingCodesIsCutShort(t *testing.T) {
 func TestACodeCountsOnce(t *testing.T) {
 	w := newWorld(t)
 	w.addUser("anna", "user", "/mnt/user")
+	// A code from before the setup belongs to the step the setup took or to
+	// an earlier one, however long the test takes, so it stays used up.
+	asked := time.Now()
 	secret, _ := w.turnOnTotp("anna")
-	used := code(t, secret, time.Now())
+	used := code(t, secret, asked)
 	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/totp", map[string]any{"code": used, "regenerate": true}))
 	next := code(t, secret, time.Now().Add(30*time.Second))
 	w.must(http.StatusOK, w.as("anna", "POST", "/me/totp", map[string]any{"code": next, "regenerate": true}))
