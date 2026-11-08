@@ -1943,6 +1943,14 @@
     },
     "notCopied": "Non se puido duplicar"
   },
+  "openwith": {
+    "menu": "Abrir con",
+    "looking": "Buscando aplicacións …",
+    "none": "Non se atopou ningunha aplicación",
+    "other": "Escoller outra aplicación",
+    "choose": "Escoller unha aplicación",
+    "search": "Buscar aplicacións"
+  },
   "palette": {
     "title": "Buscar unha orde",
     "placeholder": "Buscar unha orde ou un cartafol",
@@ -3504,6 +3512,7 @@
   },
   "server": {
     "adminsOnly": "Iso só o poden facer os admins",
+    "appNotStarted": "{app} non se puido iniciar",
     "archivePassword": "O arquivo precisa o contrasinal correcto",
     "archiveUnreadable": "Non se pode ler o arquivo",
     "badName": "Este nome non vale",
@@ -3573,6 +3582,7 @@
     "namePasswordNeeded": "Fan falta nome e contrasinal",
     "nameTaken": "Ese nome xa existe aquí",
     "nameTooLong": "O nome é longo de máis para o sistema de ficheiros",
+    "noAppDialog": "Este computador non ten un diálogo propio para escoller unha aplicación",
     "noFolder": "Este cartafol non existe",
     "noFolderForFile": "O cartafol para este ficheiro non existe",
     "noGroup": "Ese grupo non existe",
@@ -3668,6 +3678,7 @@
     "trashEmpty": "O lixo está baleiro",
     "trashOtherDisk": "Isto está noutro sistema de ficheiros distinto do seu lixo. Mellor bórrao directamente",
     "trashShareRoot": "Un Share enteiro ou unha unidade enteira non poden ir ao lixo",
+    "unknownApp": "Este computador non ofrece esa aplicación para o ficheiro",
     "unraidReadOnly": "A escritura en Unraid está desactivada",
     "uploadGone": "A parte xa subida perdeuse. Comeza de novo",
     "uploadRunning": "Agora mesmo estase a subir un ficheiro con este nome",

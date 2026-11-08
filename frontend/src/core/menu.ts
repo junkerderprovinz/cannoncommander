@@ -1,17 +1,18 @@
 // The context menu as the app calls it: menu(x, y, items) anywhere, drawn by GlimStone's ContextMenu in MenuHost.vue.
 // Items are action ids, '-' for a separator, {head} for a heading, a plain {label, g, run} or {label, g, sub: [...]},
-// which opens its items to the side.
+// which opens its items to the side. A row with img shows that picture instead of its glyph.
 import type { MenuEntry as GlimEntry } from '@glimstone/vue';
 import { menuIsOpen } from '@glimstone/core';
 import { reactive } from 'vue';
 import { actions, blocked, labelOf, run, type Need } from './actions';
-import { glyphComponent } from './glyphs';
+import { glyphComponent, pictureComponent } from './glyphs';
 import { hideTip } from './tips';
 
 export interface MenuItem {
   id?: string;
   label?: string | (() => string);
   g?: string;
+  img?: string;
   key?: string;
   run?: (...args: never[]) => unknown;
   sub?: MenuEntry[];
@@ -21,6 +22,7 @@ export interface MenuItem {
   count?: number;
   needs?: Need | Need[];
   when?: () => boolean;
+  disabled?: boolean;
 }
 export interface MenuHead { head: string | (() => string); run?: () => unknown; g?: string; tip?: string }
 export type MenuEntry = string | MenuItem | MenuHead;
@@ -33,7 +35,7 @@ export const resolveItems = (items: MenuEntry[]): Resolved[] => items
   .filter((it): it is Resolved => !!it)
   .filter((it, k, a) => it !== '-' || (k > 0 && k < a.length - 1 && a[k - 1] !== '-' && !isHead(a[k - 1])));
 
-export const itemOff = (it: MenuItem) => !!(it.id && actions[it.id] && (blocked({ id: it.id, needs: it.needs }) || (it.when && !it.when())));
+export const itemOff = (it: MenuItem) => !!it.disabled || !!(it.id && actions[it.id] && (blocked({ id: it.id, needs: it.needs }) || (it.when && !it.when())));
 
 export interface MenuOptions { above?: boolean; anchor?: HTMLElement | null }
 
@@ -76,7 +78,7 @@ export function toGlim(list: Resolved[]): GlimEntry[] {
     }
     return {
       label: labelOf(it),
-      ...(it.g && !it.color ? { glyph: glyphComponent(it.g) } : {}),
+      ...(it.img ? { glyph: pictureComponent(it.img) } : it.g && !it.color ? { glyph: glyphComponent(it.g) } : {}),
       ...(it.color ? { color: it.color } : {}),
       ...(it.key ? { shortcut: it.key } : {}),
       ...(it.count != null ? { count: it.count } : {}),

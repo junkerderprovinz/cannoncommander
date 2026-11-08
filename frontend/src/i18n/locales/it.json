@@ -2010,6 +2010,14 @@
     },
     "notCopied": "La duplicazione non è riuscita"
   },
+  "openwith": {
+    "menu": "Apri con",
+    "looking": "Ricerca delle app …",
+    "none": "Nessuna app trovata",
+    "other": "Scegli un'altra app",
+    "choose": "Scegli un'app",
+    "search": "Cerca app"
+  },
   "palette": {
     "title": "Cerca comando",
     "placeholder": "Cerca comando o cartella",
@@ -3636,6 +3644,7 @@
   },
   "server": {
     "adminsOnly": "Solo gli admin possono farlo",
+    "appNotStarted": "Impossibile avviare {app}",
     "archivePassword": "L'archivio richiede la password giusta",
     "archiveUnreadable": "Impossibile leggere l'archivio",
     "badName": "Questo nome non va bene",
@@ -3709,6 +3718,7 @@
     "namePasswordNeeded": "Servono nome e password",
     "nameTaken": "Questo nome esiste già qui",
     "nameTooLong": "Il nome è troppo lungo per il file system",
+    "noAppDialog": "Questo computer non ha una finestra propria per scegliere un'app",
     "noFolder": "Questa cartella non esiste",
     "noFolderForFile": "La cartella per questo file non esiste",
     "noGroup": "Questo gruppo non esiste",
@@ -3805,6 +3815,7 @@
     "trashEmpty": "Il cestino è vuoto",
     "trashOtherDisk": "Si trova su un file system diverso da quello del suo cestino. Meglio eliminarlo direttamente",
     "trashShareRoot": "Un'intera Share o un'intera unità non può finire nel cestino",
+    "unknownApp": "Questo computer non offre quell'app per il file",
     "unraidReadOnly": "La scrittura su Unraid è disattivata",
     "uploadGone": "Il caricamento iniziato non c'è più. Ricomincia",
     "uploadRunning": "Un file con questo nome è in fase di caricamento",

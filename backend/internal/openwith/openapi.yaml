@@ -1,0 +1,147 @@
+tag:
+  name: openwith
+  description: |
+    Opening a file with another program, only in the desktop app, which runs
+    on the user's own computer. The programs are the ones the computer
+    offers for the file, as its own file manager lists them under Open
+    with: Explorer's on Windows, Launch Services on a Mac and the desktop
+    entries for the file's type on Linux.
+paths:
+  /openwith:
+    get:
+      operationId: openWithApps
+      summary: List the programs that open a file
+      description: |
+        The default program comes first. Each carries its icon as a PNG of
+        32 pixels or an SVG, as a data URL. dialog says whether the
+        computer has a dialog of its own to pick another program, as
+        Windows and macOS do. Without one, every=true lists all programs
+        a person can pick from instead.
+      parameters:
+        - $ref: "#/components/parameters/Path"
+        - name: every
+          in: query
+          description: All programs instead of those for the file, where the computer has no dialog for that.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: The programs.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [apps, dialog]
+                properties:
+                  apps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OpenWithApp"
+                  dialog:
+                    type: boolean
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), or no such file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+    post:
+      operationId: openWithOpen
+      summary: Open a file with one of its programs
+      description: |
+        The program is one the list named for the file, or with every one
+        of all programs, and any other is refused. The file goes to the
+        program the way the system's file manager hands it over, never
+        through a shell.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, app]
+              properties:
+                path:
+                  type: string
+                  example: /C/Users/jdp/Documents/notes.txt
+                app:
+                  type: string
+                  description: The id of a program from the list.
+                every:
+                  type: boolean
+      responses:
+        "204":
+          description: The program has the file.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), or no such file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: The program did not start (appNotStarted, with its name).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /openwith/dialog:
+    post:
+      operationId: openWithDialog
+      summary: Pick another program in the system's dialog
+      description: |
+        Shows the computer's own dialog for picking a program, Choose
+        another app on Windows and the application chooser on a Mac, which
+        then opens the file. The answer comes at once and the dialog stays
+        until the person picks or closes it. Linux has no such dialog.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+      responses:
+        "204":
+          description: The dialog is open.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), no dialog on this computer (noAppDialog), or no such file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+components:
+  schemas:
+    OpenWithApp:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+          description: A data URL, left out when the program has no icon.
+        default:
+          type: boolean

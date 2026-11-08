@@ -1943,6 +1943,14 @@
     },
     "notCopied": "Monistaminen epäonnistui"
   },
+  "openwith": {
+    "menu": "Avaa sovelluksessa",
+    "looking": "Etsitään sovelluksia …",
+    "none": "Sovellusta ei löytynyt",
+    "other": "Valitse toinen sovellus",
+    "choose": "Valitse sovellus",
+    "search": "Hae sovelluksia"
+  },
   "palette": {
     "title": "Hae komentoa",
     "placeholder": "Hae komentoa tai kansiota",
@@ -3504,6 +3512,7 @@
   },
   "server": {
     "adminsOnly": "Vain ylläpitäjät voivat tehdä tämän",
+    "appNotStarted": "{app} ei käynnistynyt",
     "archivePassword": "Arkisto tarvitsee oikean salasanan",
     "archiveUnreadable": "Arkistoa ei voi lukea",
     "badName": "Tämä nimi ei kelpaa",
@@ -3573,6 +3582,7 @@
     "namePasswordNeeded": "Tarvitaan sekä nimi että salasana",
     "nameTaken": "Tämä nimi on jo käytössä täällä",
     "nameTooLong": "Nimi on liian pitkä tiedostojärjestelmälle",
+    "noAppDialog": "Tällä tietokoneella ei ole omaa ikkunaa sovelluksen valintaan",
     "noFolder": "Tätä kansiota ei ole olemassa",
     "noFolderForFile": "Tämän tiedoston kansiota ei ole olemassa",
     "noGroup": "Tätä ryhmää ei ole olemassa",
@@ -3668,6 +3678,7 @@
     "trashEmpty": "Roskakori on tyhjä",
     "trashOtherDisk": "Tämä on eri tiedostojärjestelmässä kuin sen roskakori. Poista se mieluummin suoraan",
     "trashShareRoot": "Kokonaista Sharea tai asemaa ei voi siirtää roskakoriin",
+    "unknownApp": "Tämä tietokone ei tarjoa tätä sovellusta tiedostolle",
     "unraidReadOnly": "Kirjoitus Unraidiin on pois käytöstä",
     "uploadGone": "Aloitettu lataus on kadonnut. Aloita uudelleen",
     "uploadRunning": "Samannimistä tiedostoa ladataan juuri nyt",

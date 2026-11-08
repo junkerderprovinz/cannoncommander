@@ -2077,6 +2077,14 @@
     },
     "notCopied": "Podvajanje ni uspelo"
   },
+  "openwith": {
+    "menu": "Odpri z",
+    "looking": "Iskanje aplikacij …",
+    "none": "Ni najdene aplikacije",
+    "other": "Izberite drugo aplikacijo",
+    "choose": "Izberite aplikacijo",
+    "search": "Iskanje po aplikacijah"
+  },
   "palette": {
     "title": "Išči ukaz",
     "placeholder": "Išči ukaz ali mapo",
@@ -3768,6 +3776,7 @@
   },
   "server": {
     "adminsOnly": "To smejo samo skrbniki",
+    "appNotStarted": "Aplikacija {app} se ni zagnala",
     "archivePassword": "Arhiv potrebuje pravo geslo",
     "archiveUnreadable": "Arhiva ni mogoče prebrati",
     "badName": "To ime ne gre",
@@ -3845,6 +3854,7 @@
     "namePasswordNeeded": "Potrebna sta ime in geslo",
     "nameTaken": "To ime tukaj že obstaja",
     "nameTooLong": "Ime je predolgo za datotečni sistem",
+    "noAppDialog": "Ta računalnik nima lastnega pogovornega okna za izbiro aplikacije",
     "noFolder": "Ta mapa ne obstaja",
     "noFolderForFile": "Mapa za to datoteko ne obstaja",
     "noGroup": "Ta skupina ne obstaja",
@@ -3942,6 +3952,7 @@
     "trashEmpty": "Koš je prazen",
     "trashOtherDisk": "To je na drugem datotečnem sistemu kot njegov koš. Raje ga izbrišite neposredno",
     "trashShareRoot": "Cel Share ali cel pogon ne more v koš",
+    "unknownApp": "Ta računalnik za datoteko ne ponuja te aplikacije",
     "unraidReadOnly": "Pisanje v Unraid je izklopljeno",
     "uploadGone": "Začeto nalaganje je izginilo. Začnite znova",
     "uploadRunning": "Datoteka s tem imenom se trenutno nalaga",

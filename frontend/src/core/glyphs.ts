@@ -74,5 +74,11 @@ export function glyphComponent(name: string): FunctionalComponent {
   if (!components.has(name)) components.set(name, () => h(G, { n: name }));
   return components.get(name)!;
 }
+// A picture in a glyph's place, such as another program's icon. GlimStone's menu row takes any component there.
+const pictures = new Map<string, FunctionalComponent>();
+export function pictureComponent(src: string): FunctionalComponent {
+  if (!pictures.has(src)) pictures.set(src, () => h('img', { src, alt: '', class: 'glyph-picture', draggable: false }));
+  return pictures.get(src)!;
+}
 // Button and Window pick a glyph by a key, which in this app is the glyph's own name.
 setGlyphResolver((key) => (hasGlyph(key) ? glyphComponent(key) : undefined));
