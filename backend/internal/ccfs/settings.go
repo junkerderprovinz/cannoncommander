@@ -40,12 +40,16 @@ func FromSettings(cfg *settings.Settings, rules Rules) (*Resolver, error) {
 }
 
 // MountFor returns the API path of a directory on disk. On Linux that is the
-// path itself. A Windows path such as D:\data, which only shows up during
-// development, becomes /D/data.
+// path itself. On Windows D:\data becomes /D/data, and a share such as
+// \\nas\daten\filme becomes /net/nas/daten/filme.
 func MountFor(dir string) string {
-	mount := filepath.ToSlash(dir)
-	if vol := filepath.VolumeName(dir); vol != "" {
-		mount = "/" + strings.TrimSuffix(vol, ":") + strings.TrimPrefix(mount, filepath.ToSlash(vol))
+	vol := filepath.VolumeName(dir)
+	rest := filepath.ToSlash(dir[len(vol):])
+	switch {
+	case vol == "":
+		return rest
+	case strings.HasPrefix(vol, `\\`):
+		return netRoot + "/" + filepath.ToSlash(vol[2:]) + rest
 	}
-	return mount
+	return "/" + strings.TrimSuffix(vol, ":") + rest
 }

@@ -2077,6 +2077,25 @@
     "shot": "Snimka zaslona {stamp}.{ext}",
     "made": "„{name}“ je stvoreno"
   },
+  "places": {
+    "home": "Osobna mapa",
+    "desktop": "Radna površina",
+    "documents": "Dokumenti",
+    "downloads": "Preuzimanja",
+    "pictures": "Slike",
+    "music": "Glazba",
+    "videos": "Videozapisi",
+    "recent": "Nedavno korišteno",
+    "drives": "Pogoni",
+    "eject": "Izbaci",
+    "ejectLabel": "Izbaci {name}",
+    "ejected": "{name} sada možete sigurno ukloniti",
+    "ejectedDisc": "{name} je izbačen",
+    "notMounted": "Još nije montiran, klik ga montira",
+    "arrived": "{name} je priključen",
+    "open": "Otvori",
+    "gone": "{name} je uklonjen, sada ste u {here}"
+  },
   "profiles": {
     "title": "Profili panela",
     "saved": "Spremljeno",
@@ -3577,6 +3596,7 @@
   },
   "side": {
     "bookmarks": "Prečaci",
+    "places": "Mjesta",
     "tree": "Stablo mapa",
     "addBookmark": "Dodaj trenutačnu mapu kao prečac",
     "unpin": "Otkvači iz brzog pristupa",
@@ -3594,7 +3614,15 @@
     "renameTitle": "Preimenuj prečac",
     "rename": "Preimenuj"
   },
+  "drives": {
+    "fixed": "Lokalni disk",
+    "removable": "USB pogon",
+    "optical": "DVD pogon",
+    "network": "Mrežni pogon",
+    "volume": "Volumen od {size}"
+  },
   "files": {
+    "network": "Mreža",
     "server": "Poslužitelj",
     "thisPc": "Ovaj PC",
     "computer": "Računalo",
@@ -3732,6 +3760,7 @@
     "deleteSelf": "Vlastiti račun ne možete izbrisati",
     "denied": "Za to nemate dozvole",
     "desktopOnly": "To ide samo u desktop aplikaciji",
+    "ejectFailed": "Pogon se trenutačno ne može izbaciti. Možda je na njemu još otvorena datoteka",
     "fileManagerNotSet": "Računalo nije prihvatilo promjenu",
     "disksAdminsOnly": "Pojedinačne diskove i Cache vide samo administratori",
     "dragFailed": "Datoteke se nisu mogle izvući van",
@@ -3783,6 +3812,7 @@
       "few": "Poruka ima najviše {n} znaka",
       "other": "Poruka ima najviše {n} znakova"
     },
+    "mountFailed": "Pogon se nije mogao montirati",
     "nameChars": "Windows ne dopušta nijedan od ovih znakova u nazivu: < > : \" / \\ | ? *",
     "nameEnd": "U Windowsima naziv ne smije završavati točkom ili razmakom",
     "nameLength": {
@@ -3827,6 +3857,7 @@
     "notText": "Ova datoteka nije tekst",
     "notWindows1252": "Tekst sadrži znakove koje Windows-1252 ne može spremiti. Spremite ga kao UTF-8",
     "nothingToUndo": "Nema ničega za poništavanje",
+    "noVolume": "Ovog pogona više nema",
     "officeCannotOpen": "Office poslužitelj ne otvara .{ext} datoteke",
     "oldNameTaken": "Stari naziv ponovno je zauzet",
     "outsideSources": "To ide samo s datotekama i mapama u izvoru",
