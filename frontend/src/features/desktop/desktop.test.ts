@@ -12,6 +12,8 @@ import { addMessages, setLanguage } from '@/i18n';
 import { rowMenu } from '@/files/menus';
 import { usePanels } from '@/stores/panels';
 import { useUser } from '@/stores/user';
+import keysDe from '@/features/keys/de.json';
+import keysEn from '@/features/keys/en.json';
 import de from './de.json';
 import en from './en.json';
 import setup from './index';
@@ -21,6 +23,7 @@ import { openHandedOver, takeStartFolders } from './open';
 import { askStyle } from './style';
 
 addMessages('desktop', { de, en });
+addMessages('keys', { de: keysDe, en: keysEn });
 vi.mock('@/core/menu', async (original) => ({ ...(await original<typeof import('@/core/menu')>()), menu: vi.fn() }));
 
 let posted: { path: string; run: boolean }[] = [];
