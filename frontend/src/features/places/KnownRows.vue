@@ -19,7 +19,7 @@ const GLYPHS: Record<PlaceKind, string> = {
 
 <template>
   <template v-if="host.desktop">
-    <SidebarRow v-for="p in places.folders" :key="p.path" :label="t(`places.${p.kind}`)" :glyph="glyphComponent(GLYPHS[p.kind])" :active="F.T().path === p.path"
+    <SidebarRow v-for="p in places.folders" :key="p.path" :label="p.label || t(`places.${p.kind}`)" :glyph="glyphComponent(GLYPHS[p.kind])" :active="F.T().path === p.path"
       :data-go="p.path" :data-place="p.kind" :data-tip="nativePath(p.path, windowsPaths())" @click="F.go(p.path)" @contextmenu.prevent.stop="menu($event.clientX, $event.clientY, folderItems(p.path))" />
   </template>
 </template>

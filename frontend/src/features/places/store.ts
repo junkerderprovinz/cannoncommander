@@ -5,7 +5,8 @@ import { call, json } from '@/api/client';
 import type { DriveKind } from '@/api/types';
 
 export type PlaceKind = 'home' | 'desktop' | 'documents' | 'downloads' | 'pictures' | 'music' | 'videos';
-export interface Place { kind: PlaceKind; path: string }
+// label is the name Explorer gives the folder, as Dokumente for Documents.
+export interface Place { kind: PlaceKind; path: string; label?: string }
 // path is missing while the volume waits to be mounted, as Linux leaves a partition until someone opens it.
 export interface Volume { id: string; path?: string; label?: string; kind: DriveKind; remote?: string; size?: number; eject?: boolean }
 export interface VolumesEvent { added: Volume[]; removed: Volume[] }

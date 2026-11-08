@@ -157,7 +157,7 @@ func TestPlacesAreTheFoldersThatExistAndTheDrives(t *testing.T) {
 	if err := json.Unmarshal(body, &got); status != http.StatusOK || err != nil {
 		t.Fatalf("%d %v", status, err)
 	}
-	want := []folderJSON{{"home", apiPath(home)}, {"documents", apiPath(filepath.Join(home, "Dokumente"))}}
+	want := []folderJSON{{Kind: "home", Path: apiPath(home)}, {Kind: "documents", Path: apiPath(filepath.Join(home, "Dokumente"))}}
 	if !slices.Equal(got.Folders, want) {
 		t.Errorf("folders %+v", got.Folders)
 	}

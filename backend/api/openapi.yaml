@@ -10036,6 +10036,10 @@ components:
         path:
           type: string
           example: /C/Users/jdp/Downloads
+        label:
+          type: string
+          description: The name Explorer shows for the folder, from its desktop.ini, where it has one.
+          example: Downloads
     PlaceVolume:
       type: object
       required: [id, kind]

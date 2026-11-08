@@ -50,10 +50,15 @@ const volume = computed(() => (vol.value?.free != null && vol.value.total ? vol.
 const driveGlyph = computed(() => {
   const p = join(props.path, props.k.name);
   if (vol.value?.kind) return kindGlyph(vol.value.kind);
+  if (p === '/net' && windowsPaths()) return 'IconNetwork';
   return p === '/boot' ? 'IconFlash' : p === '/remotes' ? 'IconCloud' : p === '/mnt/user' ? 'IconFiles' : volume.value ? 'IconDatabase' : glyphOf(props.k);
 });
 // A drive of the computer carries its whole name, letter and all.
-const driveName = computed(() => (vol.value?.kind ? vol.value.label! : vol.value?.label ? `${vol.value.label} (${props.k.name})` : props.k.name));
+const driveName = computed(() => {
+  if (vol.value?.kind) return vol.value.label!;
+  if (props.path === '/' && props.k.name === 'net' && windowsPaths()) return t('files.network');
+  return vol.value?.label ? `${vol.value.label} (${props.k.name})` : props.k.name;
+});
 const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL[id]!.value(props.k, props.path)).find(Boolean));
 </script>
 

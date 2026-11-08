@@ -14,6 +14,7 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
@@ -54,8 +55,9 @@ type handlers struct {
 }
 
 type folderJSON struct {
-	Kind string `json:"kind"`
-	Path string `json:"path"`
+	Kind  string `json:"kind"`
+	Path  string `json:"path"`
+	Label string `json:"label,omitempty"`
 }
 
 type volumeJSON struct {
@@ -102,7 +104,7 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 			continue
 		}
 		if _, err := h.fs.Check(u, p, ccfs.View); err == nil {
-			out.Folders = append(out.Folders, folderJSON{Kind: f.kind, Path: p})
+			out.Folders = append(out.Folders, folderJSON{Kind: f.kind, Path: p, Label: fsapi.FolderLabel(f.path)})
 		}
 	}
 	if vols := desktop.CurrentVolumes(); vols != nil {
