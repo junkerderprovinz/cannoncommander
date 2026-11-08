@@ -105,7 +105,7 @@ async function propsWindow() {
 }
 
 function saveFlags(st: PropsState) {
-  const flags = Object.fromEntries(Object.entries(st.flags).filter(([f, on]) => on !== st.flagsAt[f as WinFlag]));
+  const flags = Object.fromEntries(Object.entries(st.flags).filter(([f, on]) => on !== st.flagsAt[f]));
   if (!Object.keys(flags).length && !st.rec) return true;
   const listing = useListing(), done = (n: number) => { listing.changed(st.dir); toast(t('props.flagsSaved', { objects: plural(n, 'ui.objects') })); };
   tools.attrs({ paths: st.paths, flags: st.rec ? { ...st.flags } : flags, recursive: st.rec }).then((got) => {

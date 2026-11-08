@@ -4,7 +4,6 @@ import { Checkbox, FieldRow, GlyphTile, Pill, SubCard, TextField, Toggle } from 
 // Eigenschaften und Rechte: what the selection is, who owns it, and the nine rights as boxes and as a number.
 import { computed, ref, watch } from 'vue';
 import type { Item } from '@/api/client';
-import type { WinFlag } from '@/api/tools';
 import { extend } from '@/core/extend';
 import { fmtSize, fmtTime } from '@/core/format';
 import { ext, kindOf, glyphComponent, glyphOf } from '@/core/glyphs';
@@ -17,7 +16,7 @@ export interface PropsState {
   nodes: Item[]; paths: string[]; dir: string; self: boolean; ro: boolean; uids: Record<string, number>; gids: Record<string, number>;
   modes: string[]; owners: string[]; groups: string[]; mode: string; owner: string; group: string; rec: boolean;
   size: number; files: number; dirs: number; counted: boolean; label: string;
-  win: boolean; flags: Partial<Record<WinFlag, boolean>>; flagsAt: Partial<Record<WinFlag, boolean>>;
+  win: boolean; flags: Record<string, boolean>; flagsAt: Record<string, boolean>;
 }
 const props = defineProps<{ st: PropsState }>();
 const st = props.st;
