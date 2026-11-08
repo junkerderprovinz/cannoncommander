@@ -5,7 +5,7 @@ import type { Item } from '@/api/client';
 import { host } from '@/core/host';
 import { closeMenu, menuState, toGlim } from '@/core/menu';
 import { prefs } from '@/core/prefs';
-import { loadFeatures } from '@/features';
+import { loadDesktopFeatures, loadFeatures } from '@/features';
 import { registerFileActions } from '@/files/actions';
 import { listMenu, rowMenu } from '@/files/menus';
 import { setLanguage } from '@/i18n';
@@ -24,12 +24,13 @@ function rows(...names: string[]) {
   return toGlim(menuState.list ?? []).filter(isRow).map((r) => r.label);
 }
 
-beforeAll(() => {
+beforeAll(async () => {
   setLanguage('de');
   setActivePinia(createPinia());
   usePanels();
   registerFileActions();
   loadFeatures();
+  await loadDesktopFeatures();
 });
 
 beforeEach(() => {
@@ -76,13 +77,5 @@ describe('the row menu in the desktop app', () => {
   it('opens the menu of the folder itself on Shift in empty space', () => {
     listMenu(5, 6, true);
     expect(posted[0]!.body).toMatchObject({ paths: [HERE], background: true });
-  });
-
-  it('stays the app\'s own in the container', () => {
-    host.desktop = false;
-    expect(rows('Brief.txt')).not.toContain('Weitere Optionen anzeigen');
-    rowMenu(30, 40, true);
-    expect(menuState.list).not.toBeNull();
-    expect(posted).toEqual([]);
   });
 });

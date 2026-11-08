@@ -22,12 +22,11 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fschange"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/sysbin"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 // DirName is the bin folder at the top of every share or volume. Moving
@@ -84,9 +83,8 @@ type Item struct {
 	// Bin is the API path of the entry inside the trash.
 	Bin string `json:"-"`
 
-	// native is where an entry of the system's trash came from on disk, and
-	// outside marks one from beyond the sources, whose Origin is that path.
-	native  string
+	// outside marks an entry of the system's trash from beyond the sources,
+	// whose Origin is the path on disk it came from.
 	outside bool
 }
 
@@ -97,8 +95,8 @@ type Store struct {
 	hub  *hub.Hub
 	fs   *ccfs.Resolver
 	// sys is the trash of the system, which takes the place of the app's own
-	// in the desktop app.
-	sys sysbin.Bin
+	// in the desktop app, or nil.
+	sys systemBin
 
 	ctx  context.Context
 	stop context.CancelFunc
@@ -128,19 +126,11 @@ func For(d v1.Deps) *Store {
 // New returns a store that deletes expired entries once an hour. In the
 // desktop app it uses the trash of the system and takes over what the app's
 // own trash still holds.
-func New(d v1.Deps) *Store {
-	var bin sysbin.Bin
-	if desktop.Active() {
-		var err error
-		if bin, err = sysbin.Open(); err != nil {
-			logger.Warningf("trash: %v, the app keeps its own", err)
-		}
-	}
-	return openWith(d, bin)
-}
+func New(d v1.Deps) *Store { return openWith(d, systemTrash) }
 
-func openWith(d v1.Deps, bin sysbin.Bin) *Store {
-	s := &Store{deps: d, db: d.DB, hub: d.Hub, fs: d.FS, sys: bin, done: make(chan struct{})}
+func openWith(d v1.Deps, sys func(*Store) systemBin) *Store {
+	s := &Store{deps: d, db: d.DB, hub: d.Hub, fs: d.FS, done: make(chan struct{})}
+	s.sys = sys(s)
 	s.ctx, s.stop = context.WithCancel(context.Background())
 	go s.expireLoop()
 	return s
@@ -186,8 +176,8 @@ func InBin(p string) bool {
 // Put moves the entry at loc into its bin and records it for owner. It
 // counts the entry first, which can take a moment for a big folder.
 func (s *Store) Put(ctx context.Context, owner string, loc ccfs.Location) (Item, error) {
-	if s.system(loc) {
-		return s.putSystem(ctx, owner, loc)
+	if s.sys != nil && s.sys.takes(loc) {
+		return s.sys.put(ctx, owner, loc)
 	}
 	bin, err := BinFor(loc)
 	if err != nil {
@@ -248,7 +238,7 @@ func (s *Store) Put(ctx context.Context, owner string, loc ccfs.Location) (Item,
 // taken meanwhile gets a number, as in the prototype.
 func (s *Store) Restore(id string) (string, error) {
 	if s.sys != nil && systemID(id) {
-		return s.restoreSystem(id)
+		return s.sys.restore(id)
 	}
 	it, err := s.Get(id)
 	if err != nil {
@@ -293,7 +283,7 @@ func (s *Store) Restore(id string) (string, error) {
 // job can count and be paused.
 func (s *Store) Drop(ctx context.Context, run *jobs.Run, id string) error {
 	if s.sys != nil && systemID(id) {
-		return s.dropSystem(ctx, run, id)
+		return s.sys.drop(ctx, run, id)
 	}
 	it, err := s.Get(id)
 	if err != nil {
@@ -321,7 +311,7 @@ func (s *Store) Drop(ctx context.Context, run *jobs.Run, id string) error {
 // Get returns one entry.
 func (s *Store) Get(id string) (Item, error) {
 	if s.sys != nil && systemID(id) {
-		return s.getSystem(id)
+		return s.sys.get(id)
 	}
 	items, err := s.query(`WHERE id = ?`, id)
 	if err != nil {
@@ -341,7 +331,7 @@ func (s *Store) getAll(ids []string) (map[string]Item, error) {
 		for _, id := range ids {
 			if !systemID(id) {
 				own = append(own, id)
-			} else if it, err := s.getSystem(id); err == nil {
+			} else if it, err := s.sys.get(id); err == nil {
 				out[id] = it
 			}
 		}
@@ -386,7 +376,7 @@ func (s *Store) List(owner string) ([]Item, error) {
 		out = append(out, it)
 	}
 	if s.sys != nil {
-		sys, err := s.listSystem()
+		sys, err := s.sys.list()
 		if err != nil {
 			return nil, err
 		}
@@ -394,6 +384,39 @@ func (s *Store) List(owner string) ([]Item, error) {
 		slices.SortStableFunc(out, func(a, b Item) int { return b.DeletedAt.Compare(a.DeletedAt) })
 	}
 	return out, nil
+}
+
+// systemBin is the trash of the computer, which the desktop app puts deleted
+// files in. Its ids hold a dot, see systemID.
+type systemBin interface {
+	// takes reports whether loc goes there rather than to the app's own.
+	takes(loc ccfs.Location) bool
+	put(ctx context.Context, owner string, loc ccfs.Location) (Item, error)
+	get(id string) (Item, error)
+	list() ([]Item, error)
+	// restore puts an entry back and returns where it went.
+	restore(id string) (string, error)
+	drop(ctx context.Context, run *jobs.Run, id string) error
+	// takeOver moves what the app's own trash still holds into this one.
+	takeOver()
+}
+
+// systemID tells the ids of the system's trash, which always hold a dot,
+// from those of the app's own.
+func systemID(id string) bool { return strings.Contains(id, ".") }
+
+// mayRestore checks that u may put an entry back. An entry from outside the
+// sources only goes back for an admin, who stands for the person at the
+// computer.
+func (s *Store) mayRestore(u *users.User, it Item) error {
+	if it.outside {
+		if !u.Permissions.Admin {
+			return ccfs.ErrForbidden
+		}
+		return nil
+	}
+	_, err := s.fs.Entry(u, it.Origin, ccfs.Create)
+	return err
 }
 
 // System reports whether the store uses the trash of the system.
@@ -468,7 +491,7 @@ func (s *Store) SetDays(n int) error {
 func (s *Store) expireLoop() {
 	defer close(s.done)
 	if s.sys != nil {
-		s.takeOver()
+		s.sys.takeOver()
 	}
 	s.expire()
 	t := time.NewTicker(expireEvery)

@@ -3,7 +3,7 @@
 import './places.css';
 import { h, watch } from 'vue';
 import { on } from '@/api/sse';
-import { addTo } from '@/core/extend';
+import { addTo, SIDE_ROWS } from '@/core/extend';
 import { G } from '@/core/glyphs';
 import { host } from '@/core/host';
 import { addRowMenuItems } from '@/files/menus';
@@ -17,7 +17,7 @@ import { loadPlaces, places, visited, type VolumesEvent, within } from './store'
 
 export default function setup() {
   addTo('sideTop', () => h(KnownRows));
-  addTo('sideRows', () => h(RecentRows));
+  addTo('sideRows', () => h(RecentRows), SIDE_ROWS.recent);
   addTo('sideCards', () => h(DrivesCard));
   addTo('afterGo', (path) => {
     visited.value++;

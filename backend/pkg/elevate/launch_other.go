@@ -2,6 +2,11 @@
 
 package elevate
 
-import "context"
+import (
+	"context"
+	"io"
+)
 
-func launchHelper(context.Context, int, []byte) (func() error, error) { return nil, ErrUnsupported }
+func launchHelper(context.Context) (io.ReadWriteCloser, []byte, error) {
+	return nil, nil, ErrUnsupported
+}

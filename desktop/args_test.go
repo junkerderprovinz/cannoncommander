@@ -48,3 +48,17 @@ func TestShellPlacesGoToExplorer(t *testing.T) {
 		t.Fatalf("got %+v, passed on %v", got, others)
 	}
 }
+
+// A quoted drive root, "D:\", reaches a program as D:" because the parser
+// reads \" as a quote, as Windows passed it from older registrations.
+func TestADriveRootOpensAlsoWhenItsQuoteWasEscaped(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip("only Windows hands over drive roots")
+	}
+	drive := filepath.VolumeName(t.TempDir())
+	got, _ := handedOver([]string{drive + `"`, drive + `\`}, `C:\`)
+	want := []opening{{Folder: drive + `\`}, {Folder: drive + `\`}}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("got %+v", got)
+	}
+}

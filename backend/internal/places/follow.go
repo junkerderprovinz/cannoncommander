@@ -1,3 +1,5 @@
+//go:build desktop
+
 package places
 
 import (
@@ -15,11 +17,8 @@ import (
 
 // Follow lets fs reach what the desktop app sees of the computer: the shares
 // of other computers by their path, and the drives, which it keeps in step
-// as they come and go. In the container it returns fs as it is.
+// as they come and go.
 func Follow(fs *ccfs.Resolver, h *hub.Hub) *ccfs.Resolver {
-	if !desktop.Active() {
-		return fs
-	}
 	if n := network(); n != nil {
 		fs = fs.WithNetwork(n)
 	}

@@ -1,3 +1,5 @@
+//go:build desktop
+
 package fsapi
 
 import (
@@ -7,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/nativeshell"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 type ownThumbs struct {
@@ -25,13 +26,6 @@ func (o ownThumbs) thumb(context.Context, string, os.FileInfo, string) ([]byte, 
 	return o.data, nil
 }
 
-type noApp struct{}
-
-func (noApp) AutoUpdate() bool         { return false }
-func (noApp) SetAutoUpdate(bool) error { return nil }
-func (noApp) UpdateReady() string      { return "" }
-func (noApp) Restart()                 {}
-
 func TestTheSystemDrawsOnlyWhatTheAppCannot(t *testing.T) {
 	asked := 0
 	system := func(_ context.Context, _ string, px int) ([]byte, error) {
@@ -43,12 +37,6 @@ func TestTheSystemDrawsOnlyWhatTheAppCannot(t *testing.T) {
 	}
 	ctx := context.Background()
 
-	if got, _ := (systemThumbs{own: ownThumbs{}, system: system}).thumb(ctx, "a.docx", nil, "large"); got != nil || asked != 0 {
-		t.Fatalf("the container asked the system: %q", got)
-	}
-
-	desktop.Use(noApp{}, desktop.Options{})
-	t.Cleanup(func() { desktop.Use(nil, desktop.Options{}) })
 	if got, _ := (systemThumbs{own: ownThumbs{data: []byte("own")}, system: system}).thumb(ctx, "a.jpg", nil, "large"); string(got) != "own" || asked != 0 {
 		t.Fatalf("got %q", got)
 	}
@@ -62,8 +50,6 @@ func TestTheSystemDrawsOnlyWhatTheAppCannot(t *testing.T) {
 }
 
 func TestTheSystemStepsInWhenTheAppsOwnFails(t *testing.T) {
-	desktop.Use(noApp{}, desktop.Options{})
-	t.Cleanup(func() { desktop.Use(nil, desktop.Options{}) })
 	broken := errors.New("ffmpeg lacks the scale filter")
 	ctx := context.Background()
 	system := func(context.Context, string, int) ([]byte, error) { return []byte("system"), nil }

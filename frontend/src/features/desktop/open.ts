@@ -1,6 +1,6 @@
 // Folders handed over from outside, by the command line, a second start of the app, Win+E or another program that
 // shows a file in its folder. Each opens in a new tab of the active panel, as Explorer opens a new window for it.
-import { host, windowsPaths } from '@/core/host';
+import { windowsPaths } from '@/core/host';
 import { prefs } from '@/core/prefs';
 import { go as goView, view } from '@/core/views';
 import { typedPath } from '@/files/paths';
@@ -43,6 +43,3 @@ export function takeStartFolders(): Opening[] {
     return [];
   }
 }
-
-// Paths read the way the computer writes them only once the app knows which computer it runs on.
-export const hostKnown = () => host.os !== '';

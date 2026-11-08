@@ -1,3 +1,5 @@
+//go:build desktop
+
 package desktop
 
 // Clipboard is the system clipboard as the desktop app shares files through

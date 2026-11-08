@@ -1,3 +1,5 @@
+//go:build desktop
+
 package launch
 
 import (
@@ -16,7 +18,6 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 // fakeSystem asks before every file named run.sh and remembers what it
@@ -42,19 +43,6 @@ func (s *fakeSystem) run(file string) error {
 	defer s.mu.Unlock()
 	s.started = append(s.started, file)
 	return s.fail
-}
-
-type fakeApp struct{}
-
-func (fakeApp) AutoUpdate() bool         { return true }
-func (fakeApp) SetAutoUpdate(bool) error { return nil }
-func (fakeApp) UpdateReady() string      { return "" }
-func (fakeApp) Restart()                 {}
-
-func onDesktop(t *testing.T) {
-	t.Helper()
-	desktop.Use(fakeApp{}, desktop.Options{})
-	t.Cleanup(func() { desktop.Use(nil, desktop.Options{}) })
 }
 
 type hiddenRules struct{ path string }
@@ -122,18 +110,7 @@ func (e *env) launch(path string, run bool) (int, string) {
 	return resp.StatusCode, p.Code
 }
 
-func TestTheContainerLaunchesNothing(t *testing.T) {
-	e := newEnv(t)
-	if status, code := e.launch("/mnt/user/work/notes.txt", false); status != http.StatusNotFound || code != "desktopOnly" {
-		t.Fatalf("got %d %s", status, code)
-	}
-	if len(e.sys.opened) != 0 {
-		t.Fatalf("opened %v", e.sys.opened)
-	}
-}
-
 func TestAFileOpensInItsProgram(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	if status, code := e.launch("/mnt/user/work/notes.txt", false); status != http.StatusNoContent {
 		t.Fatalf("got %d %s", status, code)
@@ -144,7 +121,6 @@ func TestAFileOpensInItsProgram(t *testing.T) {
 }
 
 func TestAProgramStartsOnlyOnceThePersonSaidSo(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	if status, code := e.launch("/mnt/user/work/run.sh", false); status != http.StatusConflict || code != "askRun" {
 		t.Fatalf("got %d %s", status, code)
@@ -161,7 +137,6 @@ func TestAProgramStartsOnlyOnceThePersonSaidSo(t *testing.T) {
 }
 
 func TestOnlyAFileTheRulesShowOpens(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	for path, want := range map[string]int{
 		"/mnt/user/private/diary.txt": http.StatusForbidden,
@@ -178,7 +153,6 @@ func TestOnlyAFileTheRulesShowOpens(t *testing.T) {
 }
 
 func TestAProgramThatDoesNotStartSaysSo(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	e.sys.fail = errors.New("no program")
 	if status, code := e.launch("/mnt/user/work/notes.txt", false); status != http.StatusBadGateway || code != "notStarted" {

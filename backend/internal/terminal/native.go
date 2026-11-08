@@ -1,14 +1,19 @@
+//go:build desktop
+
 package terminal
 
 import (
 	"net/http"
+	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"slices"
+	"strings"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 // The desktop app runs on the user's own computer, so instead of a shell in
@@ -20,10 +25,9 @@ import (
 var Kinds = []string{"cmd", "sh", "bash", "terminal", "powershell", "pwsh", "wt"}
 
 var (
-	errDesktopOnly = v1.Coded(http.StatusNotFound, "desktopOnly", "only the desktop app opens a terminal window")
-	errKind        = v1.Coded(http.StatusBadRequest, "terminalKind", "kind is one of cmd, sh, bash, terminal, powershell, pwsh or wt")
-	errMissing     = v1.Coded(http.StatusNotFound, "terminalMissing", "that program is not installed here")
-	errNoTerminal  = v1.Coded(http.StatusNotFound, "noTerminal", "no terminal program was found on this computer")
+	errKind       = v1.Coded(http.StatusBadRequest, "terminalKind", "kind is one of cmd, sh, bash, terminal, powershell, pwsh or wt")
+	errMissing    = v1.Coded(http.StatusNotFound, "terminalMissing", "that program is not installed here")
+	errNoTerminal = v1.Coded(http.StatusNotFound, "noTerminal", "no terminal program was found on this computer")
 )
 
 // launch is a terminal program to start in a folder.
@@ -34,6 +38,22 @@ type launch struct {
 	// console asks Windows for a console window of its own, which cmd and
 	// PowerShell need to show up at all.
 	console bool
+}
+
+// native opens the computer's own terminal: pick picks the program for a
+// word and a folder, and start starts it.
+type native struct {
+	pick  func(kind, dir string) (launch, error)
+	start func(launch) error
+}
+
+func newNative() native {
+	return native{
+		pick: func(kind, dir string) (launch, error) {
+			return nativeTerminal(runtime.GOOS, kind, dir, os.Getenv("TERMINAL"), exec.LookPath)
+		},
+		start: startNative,
+	}
 }
 
 // lookFunc finds a program by name the way exec.LookPath does.
@@ -62,13 +82,15 @@ func windowsTerminal(kind, dir string, look lookFunc) (launch, error) {
 		return launch{program: p, dir: dir, console: true}, nil
 	}
 	// Windows Terminal takes the folder as an argument and opens the
-	// profile its user made the default.
+	// profile its user made the default. It reads a semicolon as the start
+	// of another command, also inside an argument, so each one is escaped
+	// as Explorer's Open in Terminal does.
 	wt := func() (launch, error) {
 		p, err := look("wt.exe")
 		if err != nil {
 			return launch{}, err
 		}
-		return launch{program: p, args: []string{"-d", dir}, dir: dir}, nil
+		return launch{program: p, args: []string{"-d", strings.ReplaceAll(dir, ";", `\;`)}, dir: dir}, nil
 	}
 	missing := func(program string) error { return errMissing.With("program", program) }
 	switch kind {
@@ -144,9 +166,6 @@ func linuxTerminal(dir, term string, look lookFunc) (launch, error) {
 
 // openNative is POST /terminal/native.
 func (h *handlers) openNative(w http.ResponseWriter, r *http.Request) error {
-	if !desktop.Active() {
-		return errDesktopOnly
-	}
 	var in struct {
 		Path string `json:"path"`
 		Kind string `json:"kind"`
@@ -162,11 +181,11 @@ func (h *handlers) openNative(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	l, err := h.native(in.Kind, loc.Real)
+	l, err := h.pick(in.Kind, loc.Real)
 	if err != nil {
 		return err
 	}
-	if err := h.launch(l); err != nil {
+	if err := h.start(l); err != nil {
 		return err
 	}
 	h.record(r, u, activitydb.Entry{EventType: activitydb.EventTerminalOpen, Path: loc.Path})

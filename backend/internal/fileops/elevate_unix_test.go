@@ -1,4 +1,4 @@
-//go:build unix
+//go:build desktop && unix
 
 package fileops_test
 

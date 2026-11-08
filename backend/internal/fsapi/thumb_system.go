@@ -1,3 +1,5 @@
+//go:build desktop
+
 package fsapi
 
 import (
@@ -6,13 +8,11 @@ import (
 	"os"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/nativeshell"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
-// systemThumbs draws with the app's own thumbnailer first and, in the
-// desktop app, asks the computer's thumbnail handlers for what that one
-// cannot draw, such as Office files, or videos on a Windows without
-// ffmpeg.
+// systemThumbs draws with the app's own thumbnailer first and asks the
+// computer's thumbnail handlers for what that one cannot draw, such as
+// Office files, or videos on a Windows without ffmpeg.
 type systemThumbs struct {
 	own    thumbnailer
 	system func(ctx context.Context, real string, px int) ([]byte, error)
@@ -28,7 +28,7 @@ var systemEdges = map[string]int{"small": 256, "large": 640}
 
 func (s systemThumbs) thumb(ctx context.Context, real string, info os.FileInfo, size string) ([]byte, error) {
 	data, err := s.own.thumb(ctx, real, info, size)
-	if err == nil || !desktop.Active() {
+	if err == nil {
 		return data, err
 	}
 	// The app's own may also fail outright, as with an ffmpeg that lacks a

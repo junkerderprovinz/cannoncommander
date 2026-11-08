@@ -8,14 +8,18 @@
 #     -v "$PWD/testing/go-test-nonroot.sh:/run.sh:ro" golang:1.27 sh /run.sh
 #
 # It makes /src writable for everyone, so hand it a copy, not the checkout.
+# With the argument desktop, as in `sh /run.sh desktop`, it checks the desktop
+# app's build of the server instead of the container's.
 set -u
+tags=${1:-}
 
 id ci >/dev/null 2>&1 || adduser --disabled-password --gecos "" ci >/dev/null
 chmod -R a+rwX /src
 # Root fills the module cache, which the test user only reads.
 (cd /src/backend && go mod download) || exit 1
 
-cat > /tmp/as-ci.sh <<'EOF'
+echo "export GOFLAGS=-tags=$tags" > /tmp/as-ci.sh
+cat >> /tmp/as-ci.sh <<'EOF'
 export HOME=/tmp/ci-home GOCACHE=/tmp/ci-cache GOMODCACHE=/go/pkg/mod PATH=/usr/local/go/bin:$PATH
 mkdir -p "$HOME"
 cd /src/backend || exit 1
