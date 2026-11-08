@@ -5,14 +5,15 @@ const remembered: { id?: string } = {};
 
 <script setup lang="ts">
 // Settings: a column of tiles beside the content, the tab selector turned on its side, and only the content scrolls.
-// A tile can be dragged to another place in the column; the order is kept like any other pref.
-import { Card, useDragArmed } from '@glimstone/vue';
+// A long press lifts a tile to carry it to another place in the column; the order is kept like any other pref.
+import { Card } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import { labelOf } from '@/core/actions';
 import { G } from '@/core/glyphs';
 import { setPref } from '@/core/prefs';
 import { go, orderedTabs, settingsTabs } from '@/core/views';
 import { t } from '@/i18n';
+import { useReorder } from '@/ui/reorder';
 
 const props = defineProps<{ arg?: unknown }>();
 const tabs = computed(() => orderedTabs(settingsTabs));
@@ -25,32 +26,11 @@ watch(() => cur.value?.id, async () => {
   tiles.value?.querySelector('.stile.cur')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }, { immediate: true });
 
-const dragging = ref<string | null>(null);
-useDragArmed(tiles, () => dragging.value !== null);
-const order = ref<string[] | null>(null);
-const shown = computed(() => (order.value ? order.value.map((id) => tabs.value.find((x) => x.id === id)!) : tabs.value));
+const drag = useReorder({ ids: () => tabs.value.map((x) => x.id), list: tiles, attr: 'data-stab', arm: 'hold', onReorder: (ids) => setPref('tabOrder', ids) });
+const shown = computed(() => drag.order.value.map((id) => tabs.value.find((x) => x.id === id)!));
 
-function start(e: DragEvent, id: string) {
-  dragging.value = id;
-  order.value = tabs.value.map((x) => x.id);
-  if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
-}
-function over(e: DragEvent, id: string) {
-  const ids = order.value;
-  if (!dragging.value || !ids || id === dragging.value) return;
-  e.preventDefault();
-  const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
-  const from = ids.indexOf(dragging.value);
-  ids.splice(from, 1);
-  const at = ids.indexOf(id);
-  ids.splice(e.clientY < r.top + r.height / 2 ? at : at + 1, 0, dragging.value);
-}
-function end() {
-  if (!dragging.value || !order.value) return;
-  const ids = order.value;
-  dragging.value = null;
-  order.value = null;
-  setPref('tabOrder', ids);
+function open(e: MouseEvent, id: string) {
+  if (!drag.endsDrag(e)) go('settings', id);
 }
 </script>
 
@@ -60,8 +40,8 @@ function end() {
   </div>
   <div v-else class="settings">
     <nav ref="tiles" class="tiles" role="tablist" aria-orientation="vertical" :aria-label="t('settings.title')">
-      <button v-for="tab in shown" :key="tab.id" class="stile" :class="{ cur: tab.id === cur.id, dragging: tab.id === dragging }" :data-held="tab.id === dragging || undefined" role="tab" :aria-selected="tab.id === cur.id" draggable="true" :data-stab="tab.id" :data-tip="labelOf(tab)"
-        @click="go('settings', tab.id)" @dragstart="start($event, tab.id)" @dragover="over($event, tab.id)" @dragend="end"><G :n="tab.g" /><span>{{ labelOf(tab) }}</span></button>
+      <button v-for="tab in shown" :key="tab.id" class="stile" :class="[drag.look(tab.id), { cur: tab.id === cur.id }]" role="tab" :aria-selected="tab.id === cur.id" :data-stab="tab.id" :data-tip="labelOf(tab)"
+        @click="open($event, tab.id)" @pointerdown="drag.press($event, tab.id)"><G :n="tab.g" /><span>{{ labelOf(tab) }}</span></button>
     </nav>
     <div id="settings-body" class="settings-body"><div id="settings-col" class="settings-col"><component :is="cur.component" :key="cur.id" /></div></div>
   </div>

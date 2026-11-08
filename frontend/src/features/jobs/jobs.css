@@ -1,7 +1,8 @@
 .job { display: grid; grid-template-columns: 1rem minmax(0, 1fr) 9rem 3.6rem auto; gap: .9rem; align-items: center; min-height: 2.6rem; padding: .25rem .3rem; border-radius: var(--radius-control); }
 .job.open { cursor: grab; }
-.job-list { display: flex; flex-direction: column; gap: .75rem; }
-.job.dragging { opacity: .45; }
+.job-list { position: relative; display: flex; flex-direction: column; gap: .75rem; }
+/* A carried row floats over the rows it passes, so it paints the sub-card's ground. */
+.job:is(.glim-drag-lift, .glim-drag-settle) { background: var(--carbon-surface2); }
 .job:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: -2px; }
 .job-grip svg { width: .9rem; height: .9rem; color: var(--carbon-text-muted); }
 .job-text { min-width: 0; }
