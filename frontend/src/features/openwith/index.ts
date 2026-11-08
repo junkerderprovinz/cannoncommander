@@ -37,7 +37,7 @@ export function openWithItem(path: string): MenuItem {
   }, (e: unknown) => {
     sub.splice(0, sub.length, { label: e instanceof Error ? e.message : String(e), g: 'IconWarning', disabled: true });
   });
-  return { label: tl('openwith.menu'), g: 'IconExternalLink', sub };
+  return { id: 'openWith', label: tl('openwith.menu'), g: 'IconExternalLink', sub };
 }
 
 export default function setup() {

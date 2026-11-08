@@ -23,6 +23,8 @@ export interface ExtensionPoints {
   tabLabels: Array<(tab: Tab) => { name: string; g?: string } | null>;
   nameBadges: Array<(item: Entry, path: string) => VNodeChild>;
   thumbProviders: Array<(item: Entry, path: string) => VNodeChild | null>;
+  // The address of a picture that stands in for an entry's glyph, such as a program's own icon, px pixels square.
+  entryIcons: Array<(item: Entry, path: string, px: number) => string | null>;
   sideRows: Array<() => VNodeChild>;
   treeDecorators: Array<(path: string) => VNodeChild>;
   // Eigenschaften shows these below its head, for the one entry or folder it describes.
@@ -34,7 +36,7 @@ export interface ExtensionPoints {
 
 export const extend: ExtensionPoints = {
   entryFilters: shallowReactive([]), tagMatchers: shallowReactive([]), beforeGo: shallowReactive([]), afterGo: shallowReactive([]), pathWords: shallowReactive([]), transferPipeline: shallowReactive([]),
-  footerSlots: shallowReactive([]), filterSlots: shallowReactive([]), panelBars: shallowReactive([]), tabLabels: shallowReactive([]), nameBadges: shallowReactive([]), thumbProviders: shallowReactive([]), sideRows: shallowReactive([]),
+  footerSlots: shallowReactive([]), filterSlots: shallowReactive([]), panelBars: shallowReactive([]), tabLabels: shallowReactive([]), nameBadges: shallowReactive([]), thumbProviders: shallowReactive([]), entryIcons: shallowReactive([]), sideRows: shallowReactive([]),
   treeDecorators: shallowReactive([]), propsWells: shallowReactive([]), actionWrappers: shallowReactive([]), onRender: shallowReactive([]), toastHistory: shallowReactive([]),
 };
 

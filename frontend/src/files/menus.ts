@@ -11,11 +11,11 @@ import { inArchive, join } from './paths';
 export function folderItems(path: string): MenuItem[] {
   const F = usePanels();
   return [
-    { label: t('ctx.open'), g: 'IconFolderOpen', run: () => F.go(path) },
-    { label: t('ctx.internalLink'), g: 'IconLink', run: () => copyInternalLink(path) },
-    { label: t('ctx.openOther'), g: 'IconPaneSend', run: () => { prefs.dual = true; F.go(path, F.other()); } },
-    { label: t('ctx.openTab'), g: 'IconAdd', run: () => { const p = F.P(); p.tabs.push(newTab(path)); p.cur = p.tabs.length - 1; } },
-    { label: t('ctx.addBookmark'), g: 'IconStar', run: () => addBookmark(path) },
+    { id: 'folderOpen', label: t('ctx.open'), g: 'IconFolderOpen', run: () => F.go(path) },
+    { id: 'folderLink', label: t('ctx.internalLink'), g: 'IconLink', run: () => copyInternalLink(path) },
+    { id: 'folderOther', label: t('ctx.openOther'), g: 'IconPaneSend', run: () => { prefs.dual = true; F.go(path, F.other()); } },
+    { id: 'folderTab', label: t('ctx.openTab'), g: 'IconAdd', run: () => { const p = F.P(); p.tabs.push(newTab(path)); p.cur = p.tabs.length - 1; } },
+    { id: 'folderBookmark', label: t('ctx.addBookmark'), g: 'IconStar', run: () => addBookmark(path) },
   ];
 }
 
@@ -27,7 +27,17 @@ export const addRowMenuItems = (fn: RowExtra) => rowExtras.push(fn);
 const openExtras: RowExtra[] = [];
 export const addOpenMenuItems = (fn: RowExtra) => openExtras.push(fn);
 
-export function rowMenu(x: number, y: number) {
+// A feature may reshape a menu before it opens, such as the settings that hide or move its rows, or take it over by
+// returning null, as the system's own menu does on Shift.
+export type MenuShaper = (kind: 'row' | 'list', items: MenuEntry[], at: { x: number; y: number; shift: boolean }) => MenuEntry[] | null;
+const shapers: MenuShaper[] = [];
+export const shapeMenus = (fn: MenuShaper) => shapers.push(fn);
+function open(kind: 'row' | 'list', items: MenuEntry[], at: { x: number; y: number; shift: boolean }) {
+  const shaped = shapers.reduce<MenuEntry[] | null>((list, fn) => list && fn(kind, list, at), items);
+  if (shaped) menu(at.x, at.y, shaped);
+}
+
+export function rowMenu(x: number, y: number, shift = false) {
   const F = usePanels();
   const tab = F.T(), sel = F.sel(), file = sel.find((k) => !k.dir);
   const oneFolder = sel.length === 1 && sel[0]!.dir && !sel[0]!.up && !inArchive(tab.path);
@@ -37,16 +47,16 @@ export function rowMenu(x: number, y: number) {
     'share', 'collect', 'download', 'pack', 'checksum', 'symlink', ...(sel.length === 2 && sel.every((k) => !k.dir) ? ['diff'] : []), '-',
     ...rowExtras.flatMap((fn) => fn(sel, tab.path)), '-', 'props', 'fixPerms', 'copyPath', '-', 'delete',
   ];
-  menu(x, y, items);
+  open('row', items, { x, y, shift });
 }
 
 // Features add their own rows for the folder itself here, after the ones that make something new in it.
 const listExtras: ((path: string) => MenuEntry[])[] = [];
 export const addListMenuItems = (fn: (typeof listExtras)[number]) => listExtras.push(fn);
 
-export const listMenu = (x: number, y: number) => menu(x, y, [
+export const listMenu = (x: number, y: number, shift = false) => open('list', [
   'newFolder', 'newFile', 'upload', 'clipPaste', ...listExtras.flatMap((fn) => fn(usePanels().T().path)), '-', 'selectAll', 'selectPattern', '-', 'refresh', 'props', 'fixPerms', 'terminal',
-]);
+], { x, y, shift });
 
 export const tabMenu = (x: number, y: number) => menu(x, y, ['newTab', 'dupTab', 'lockTab', '-', 'closeTab', 'closeOtherTabs']);
 

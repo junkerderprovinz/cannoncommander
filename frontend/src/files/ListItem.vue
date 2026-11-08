@@ -12,6 +12,7 @@ import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import type { RowMark as Mark } from '@/stores/panels';
 import { COL, Columns } from './columns';
+import EntryGlyph from './EntryGlyph.vue';
 import type { Entry } from './entries';
 import { join } from './paths';
 import SizeText from './SizeText.vue';
@@ -56,7 +57,7 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
     <template v-if="kind === 'row' || kind === 'flow'">
       <template v-for="id in kind === 'row' ? Columns.visible() : ['name']" :key="id">
         <span v-if="id === 'name'" class="name">
-          <span class="glyph"><RowMark v-if="marked || boxes" :on="marked" /><G v-else :n="glyphOf(k)" /></span><span class="t">{{ shownName }}</span>
+          <span class="glyph"><RowMark v-if="marked || boxes" :on="marked" /><EntryGlyph v-else :k="k" :folder="folder" :px="16" /></span><span class="t">{{ shownName }}</span>
           <Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" />
           <span v-if="k.at && k.at !== path" class="link">{{ t('files.foundIn', { path: k.at.slice(path.length + 1) }) }}</span>
           <span v-if="k.link" class="link">→ {{ k.link }}</span>
