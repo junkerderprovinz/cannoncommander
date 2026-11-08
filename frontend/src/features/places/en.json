@@ -1,0 +1,19 @@
+{
+  "home": "Home",
+  "desktop": "Desktop",
+  "documents": "Documents",
+  "downloads": "Downloads",
+  "pictures": "Pictures",
+  "music": "Music",
+  "videos": "Videos",
+  "recent": "Recent",
+  "drives": "Drives",
+  "eject": "Eject",
+  "ejectLabel": "Eject {name}",
+  "ejected": "{name} is safe to remove",
+  "ejectedDisc": "{name} is ejected",
+  "notMounted": "Not mounted yet, a click mounts it",
+  "arrived": "{name} is here",
+  "open": "Open",
+  "gone": "{name} was removed, so you are in {here} now"
+}
