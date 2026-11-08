@@ -11,7 +11,7 @@ import { MENUS, menuName } from '@/core/menus';
 import { t } from '@/i18n';
 import { assign, changed, check, combosOf, keyLabel, type KeyMap, mainCombo, reservedBy, reset, swap } from './keys';
 import KeyField from './KeyField.vue';
-import { declaredKeys, shippedKeys } from './state';
+import { declaredKeys } from './state';
 
 const props = defineProps<{ map: KeyMap; base: KeyMap; query: string; cards?: boolean }>();
 const emit = defineEmits<{ 'update:map': [map: KeyMap] }>();
@@ -24,7 +24,8 @@ function groups(): [string, string[]][] {
   const ids = (items: MenuEntry[]): string[] => items.flatMap((it) => (typeof it === 'string' ? [it] : typeof it === 'object' && 'sub' in it && it.sub ? ids(it.sub) : []))
     .filter((id) => actions[id] && !seen.has(id) && !!seen.add(id));
   MENUS.forEach(([, items], i) => out.push([menuName(i), ids(items)]));
-  out.push([t('keys.more'), Object.keys(actions).filter((id) => !seen.has(id) && name(actions[id]!) && (combosOf(shippedKeys(), id).length || declaredKeys()[id]))]);
+  // Actions only a row menu or the command search offers can take a key too, apart from those that need their caller.
+  out.push([t('keys.more'), Object.keys(actions).filter((id) => !seen.has(id) && name(actions[id]!) && !actions[id]!.hidden)]);
   return out.filter(([, list]) => list.length);
 }
 const shown = computed(() => {

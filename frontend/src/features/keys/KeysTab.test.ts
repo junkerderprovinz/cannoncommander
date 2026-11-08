@@ -59,6 +59,14 @@ describe('the shortcuts tile', () => {
     expect(keyOf('copy')).toBe('F5');
   });
 
+  it('lists an action that only a row menu offers, so it can get a key, and leaves out one that needs its caller', async () => {
+    action('createShortcut', { label: 'Verknüpfung erstellen', run: () => {} });
+    action('openWith', { label: 'Öffnen mit', hidden: true, run: () => {} });
+    await settle();
+    expect(rows()).toContain('Verknüpfung erstellen');
+    expect(rows()).not.toContain('Öffnen mit');
+  });
+
   it('finds an action by its name or its key', async () => {
     const q = $<HTMLInputElement>('#kt-q')!;
     q.value = 'pack';
