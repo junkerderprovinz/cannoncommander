@@ -5,7 +5,7 @@ import { api } from '@/api/client';
 import { on } from '@/api/sse';
 import { type PermsResult, type PermsScan, unraid } from '@/api/unraid';
 import { action, run } from '@/core/actions';
-import { addTo } from '@/core/extend';
+import { addTo, SIDE_ROWS } from '@/core/extend';
 import { MENUS } from '@/core/menus';
 import { toast } from '@/core/toast';
 import { go as goView, view } from '@/core/views';
@@ -129,7 +129,7 @@ export default function setup() {
 
   addTo('footerSlots', (i) => h(StoreBadge, { i }));
   addTo('nameBadges', (k, path) => h(CacheBadge, { k, path }));
-  addTo('sideRows', () => h(ParityRow));
+  addTo('sideRows', () => h(ParityRow), SIDE_ROWS.parity);
   addTo('treeDecorators', (path) => {
     const dev = path.match(/^\/mnt\/(disk\d+)$/)?.[1];
     return dev ? h(Moon, { dev }) : null;

@@ -16,7 +16,7 @@ import keysDe from '@/features/keys/de.json';
 import keysEn from '@/features/keys/en.json';
 import de from './de.json';
 import en from './en.json';
-import setup from './index';
+import setup from './desktop';
 import { launch } from './launch';
 import { fileManager, followFileManager, setFileManager } from './filemanager';
 import { openHandedOver, takeStartFolders } from './open';
@@ -119,22 +119,12 @@ describe('double click', () => {
     expect(vi.mocked(menu).mock.calls.at(-1)![2]).toContain('launch');
   });
 
-  it('drops download and upload once it knows it is the desktop app', async () => {
-    host.desktop = false;
+  it('drops download and upload, which only copy files already on this computer', () => {
     prefs.desktopStyle = 'commander';
     for (const id of ['download', 'upload']) action(id, { label: id, run: () => {} });
     setup();
-    host.desktop = true;
-    await nextTick();
     expect(actions.download).toBeUndefined();
     expect(actions.upload).toBeUndefined();
-  });
-
-  it('has no launcher in the container', async () => {
-    host.desktop = false;
-    setup();
-    await nextTick();
-    expect(actions.launch).toBeUndefined();
   });
 });
 
