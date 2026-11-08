@@ -186,22 +186,43 @@ func TestTheHelperRunsAsAProcessOfItsOwn(t *testing.T) {
 	}
 }
 
-// TestElevatedForReal asks the system for administrator rights through the
-// real launcher. It needs someone to answer the prompt, or an account that
-// is elevated without one.
-func TestElevatedForReal(t *testing.T) {
-	if os.Getenv("CC_TEST_ELEVATE") == "" {
-		t.Skip("asks for administrator rights; set CC_TEST_ELEVATE=1")
+// realPrompt runs ops through the real launcher. It needs someone to answer
+// the prompt: a person, an account that is elevated without one, or an agent
+// such as pkttyagent, which CC_TEST_ELEVATE_WAIT gives time to register for
+// this process before the prompt comes.
+func realPrompt(t *testing.T, want string, ops []Op) error {
+	t.Helper()
+	if os.Getenv("CC_TEST_ELEVATE") != want {
+		t.Skip("asks for administrator rights; set CC_TEST_ELEVATE=" + want)
 	}
-	dir := t.TempDir()
+	if wait, err := time.ParseDuration(os.Getenv("CC_TEST_ELEVATE_WAIT")); err == nil {
+		fmt.Println("waiting for an agent, pid", os.Getpid())
+		time.Sleep(wait)
+	}
 	var o outcome
-	if err := Run(context.Background(), []Op{{Kind: Mkdir, To: filepath.Join(dir, "als-admin")}}, o.report); err != nil {
-		t.Fatal(err)
-	}
-	if o.errs[0] != nil {
+	err := Run(context.Background(), ops, o.report)
+	if err == nil && o.errs[0] != nil {
 		t.Fatal(o.errs[0])
+	}
+	return err
+}
+
+func TestElevatedForReal(t *testing.T) {
+	dir := t.TempDir()
+	if err := realPrompt(t, "1", []Op{{Kind: Mkdir, To: filepath.Join(dir, "als-admin")}}); err != nil {
+		t.Fatal(err)
 	}
 	if _, err := os.Stat(filepath.Join(dir, "als-admin")); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestElevatedForRealCanBeTurnedDown(t *testing.T) {
+	dir := t.TempDir()
+	if err := realPrompt(t, "decline", []Op{{Kind: Mkdir, To: filepath.Join(dir, "als-admin")}}); !errors.Is(err, ErrDeclined) {
+		t.Fatalf("got %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "als-admin")); err == nil {
+		t.Fatal("the helper did the job")
 	}
 }
