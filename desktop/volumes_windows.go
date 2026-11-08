@@ -13,6 +13,7 @@ import (
 	"golang.org/x/sys/windows"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
 )
 
 var (
@@ -294,80 +295,37 @@ func ejectDrive(root string) error {
 		swShowNormal                = 1
 		firstCommand, lastCommand   = 1, 0x7FFF
 	)
-	return apartment(func() error {
+	return winshell.Apartment(func() error {
 		p, _ := windows.UTF16PtrFromString(root)
 		var pidl unsafe.Pointer
 		r, _, _ := procParseDisplayName.Call(uintptr(unsafe.Pointer(p)), 0, uintptr(unsafe.Pointer(&pidl)), 0, 0)
-		if err := failed(r); err != nil {
+		if err := winshell.Failed(r); err != nil {
 			return fmt.Errorf("find %s: %w", root, err)
 		}
 		defer windows.CoTaskMemFree(pidl)
 		var folder unsafe.Pointer
 		var child uintptr
 		r, _, _ = procBindToParent.Call(uintptr(pidl), uintptr(unsafe.Pointer(&iidShellFolder)), uintptr(unsafe.Pointer(&folder)), uintptr(unsafe.Pointer(&child)))
-		if err := failed(r); err != nil {
+		if err := winshell.Failed(r); err != nil {
 			return err
 		}
-		defer release(folder)
+		defer winshell.Release(folder)
 		var menu unsafe.Pointer
-		if err := failed(method(folder, shellFolderGetUIObjectOf, 0, 1, uintptr(unsafe.Pointer(&child)), uintptr(unsafe.Pointer(&iidContextMenu)), 0, uintptr(unsafe.Pointer(&menu)))); err != nil {
+		if err := winshell.Failed(winshell.Call(folder, shellFolderGetUIObjectOf, 0, 1, uintptr(unsafe.Pointer(&child)), uintptr(unsafe.Pointer(&iidContextMenu)), 0, uintptr(unsafe.Pointer(&menu)))); err != nil {
 			return err
 		}
-		defer release(menu)
+		defer winshell.Release(menu)
 		hmenu, _, _ := procCreatePopupMenu.Call()
 		defer procDestroyMenu.Call(hmenu)
-		if err := failed(method(menu, contextMenuQueryContextMenu, hmenu, 0, firstCommand, lastCommand, 0)); err != nil {
+		if err := winshell.Failed(winshell.Call(menu, contextMenuQueryContextMenu, hmenu, 0, firstCommand, lastCommand, 0)); err != nil {
 			return err
 		}
 		verb, _ := windows.BytePtrFromString("eject")
-		info := cmInvokeCommandInfo{verb: verb, show: swShowNormal}
+		info := cmInvokeCommandInfo{hwnd: uintptr(winshell.Owner()), verb: verb, show: swShowNormal}
 		info.size = uint32(unsafe.Sizeof(info))
-		if err := failed(method(menu, contextMenuInvokeCommand, uintptr(unsafe.Pointer(&info)))); err != nil {
+		if err := winshell.Failed(winshell.Call(menu, contextMenuInvokeCommand, uintptr(unsafe.Pointer(&info)))); err != nil {
 			return fmt.Errorf("eject %s: %w", root, err)
 		}
 		return nil
 	})
-}
-
-// hresult is the error a COM call failed with.
-type hresult uint32
-
-func (h hresult) Error() string { return fmt.Sprintf("HRESULT %#08x", uint32(h)) }
-
-func failed(r uintptr) error {
-	if int32(r) < 0 {
-		return hresult(r)
-	}
-	return nil
-}
-
-// method calls slot n of the COM object obj.
-func method(obj unsafe.Pointer, n int, args ...uintptr) uintptr {
-	vtbl := *(*unsafe.Pointer)(obj)
-	fn := *(*uintptr)(unsafe.Add(vtbl, uintptr(n)*unsafe.Sizeof(uintptr(0))))
-	r, _, _ := syscall.SyscallN(fn, append([]uintptr{uintptr(obj)}, args...)...)
-	return r
-}
-
-func release(obj unsafe.Pointer) {
-	if obj != nil {
-		method(obj, 2)
-	}
-}
-
-// apartment runs fn on a thread of its own in a single-threaded apartment,
-// which the shell's menus expect from their caller.
-func apartment(fn func() error) error {
-	done := make(chan error, 1)
-	go func() {
-		runtime.LockOSThread()
-		defer runtime.UnlockOSThread()
-		if err := windows.CoInitializeEx(0, windows.COINIT_APARTMENTTHREADED|windows.COINIT_DISABLE_OLE1DDE); err != nil {
-			done <- err
-			return
-		}
-		defer windows.CoUninitialize()
-		done <- fn()
-	}()
-	return <-done
 }
