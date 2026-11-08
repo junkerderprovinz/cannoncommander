@@ -289,13 +289,13 @@ function onMenu(e: MouseEvent) {
   F.active = props.i;
   if ((e.target as Element).closest('.lhead')) return columnMenu(e.clientX, e.clientY);
   const row = (e.target as Element).closest<HTMLElement>('.row');
-  if (!row) return listMenu(e.clientX, e.clientY);
+  if (!row) return listMenu(e.clientX, e.clientY, e.shiftKey);
   const tb = tab.value, idx = +row.dataset.idx!, k = list.value[idx]!;
   if (!tb.marked.has(k.name)) {
     tb.marked = new Set();
     tb.cursor = idx;
   }
-  rowMenu(e.clientX, e.clientY);
+  rowMenu(e.clientX, e.clientY, e.shiftKey);
 }
 
 // The grip on a header's right edge sets that column's width, kept in rem like the defaults. A header moves live

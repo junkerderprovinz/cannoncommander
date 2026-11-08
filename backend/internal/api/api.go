@@ -20,6 +20,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/remotes"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/search"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/shellapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/stream"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/terminal"
@@ -49,6 +50,7 @@ func NewRouter(deps v1.Deps, auth v1.Authenticator) *v1.Router {
 	system.Routes(r)
 	terminal.Routes(r)
 	openwith.Routes(r)
+	shellapi.Routes(r)
 	places.Routes(r)
 	clipapi.Routes(r)
 	launch.Routes(r)

@@ -17,6 +17,7 @@ require (
 	github.com/go-playground/validator/v10 v10.30.6
 	github.com/go-webauthn/webauthn v0.18.2
 	github.com/goccy/go-yaml v1.19.2
+	github.com/godbus/dbus/v5 v5.2.2
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/go-cmp v0.7.0
 	github.com/gtsteffaniak/go-cache v1.1.0
