@@ -12,3 +12,17 @@ func sysDetails(info fs.FileInfo, st *fileStat) {
 		st.attrs = d.FileAttributes
 	}
 }
+
+// entryStat takes what reading the folder brought along for a file, which
+// saves a second call per entry. NTFS updates the entry of a folder in its
+// parent late, so a folder is asked itself.
+func entryStat(real string, d fs.DirEntry) (fileStat, error) {
+	if d.IsDir() {
+		return lstatFile(real)
+	}
+	info, err := d.Info()
+	if err != nil {
+		return fileStat{}, err
+	}
+	return fromInfo(info), nil
+}

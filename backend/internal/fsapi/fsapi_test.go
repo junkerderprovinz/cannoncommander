@@ -23,7 +23,7 @@ type fixture struct {
 	cache string
 }
 
-func write(t *testing.T, p string, size int) {
+func write(t testing.TB, p string, size int) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
 		t.Fatal(err)
@@ -33,12 +33,12 @@ func write(t *testing.T, p string, size int) {
 	}
 }
 
-func newFixture(t *testing.T, index ...fsindex.Index) fixture {
+func newFixture(t testing.TB, index ...fsindex.Index) fixture {
 	t.Helper()
 	return newFixtureWith(t, nil, index...)
 }
 
-func newFixtureWith(t *testing.T, rules ccfs.Rules, index ...fsindex.Index) fixture {
+func newFixtureWith(t testing.TB, rules ccfs.Rules, index ...fsindex.Index) fixture {
 	t.Helper()
 	base := t.TempDir()
 	share := filepath.Join(base, "mnt", "user")
@@ -93,7 +93,7 @@ func newFixtureWith(t *testing.T, rules ccfs.Rules, index ...fsindex.Index) fixt
 	return fixture{h: h, share: share, cache: cache}
 }
 
-func (f fixture) get(t *testing.T, user, endpoint, p string, extra ...string) *httptest.ResponseRecorder {
+func (f fixture) get(t testing.TB, user, endpoint, p string, extra ...string) *httptest.ResponseRecorder {
 	t.Helper()
 	q := url.Values{"path": {p}}
 	for i := 0; i+1 < len(extra); i += 2 {

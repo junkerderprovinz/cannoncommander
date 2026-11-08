@@ -167,11 +167,13 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 		if bookkeeping(d.Name()) || !h.fs.Visible(u, seen, d.Name()) {
 			continue
 		}
-		item, err := itemFor(h.fs.RealIn(loc, d.Name()), d.Name())
+		real := h.fs.RealIn(loc, d.Name())
+		st, err := entryStat(real, d)
 		if err != nil {
 			// The entry vanished between reading the folder and looking at it.
 			continue
 		}
+		item := itemFrom(real, d.Name(), st)
 		item.Hidden = item.Hidden || listed[d.Name()]
 		h.targets(&item)
 		out.Items = append(out.Items, item)
@@ -377,6 +379,10 @@ func itemFor(real, name string) (Item, error) {
 	if err != nil {
 		return Item{}, err
 	}
+	return itemFrom(real, name, st), nil
+}
+
+func itemFrom(real, name string, st fileStat) Item {
 	item := Item{Name: name}
 	item.Hidden, item.System = hiddenOf(name, st.attrs)
 	item.Attrs = attrLetters(st.attrs)
@@ -399,7 +405,7 @@ func itemFor(real, name string) (Item, error) {
 		item.Format = FormatOf(name)
 		item.Shortcut = readShortcut(real, name, st.attrs)
 	}
-	return item, nil
+	return item
 }
 
 func fill(item *Item, st fileStat) {
