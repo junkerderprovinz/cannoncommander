@@ -49,6 +49,7 @@ func put(t *testing.T, root, rel string) {
 	if err := os.WriteFile(p, []byte("1234"), 0o644); err != nil {
 		t.Fatal(err)
 	}
+	hideDotted(t, root, rel)
 }
 
 func rows(t *testing.T, idx *Index) []string {

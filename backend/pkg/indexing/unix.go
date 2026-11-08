@@ -12,10 +12,8 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 )
 
-func CheckWindowsHidden(realpath string) bool {
-	// Non-Windows platforms don't support hidden attributes in the same way
-	return false
-}
+// CheckWindowsHidden has no attribute to read outside Windows.
+func CheckWindowsHidden(string) bool { return false }
 
 // getFileSizeByMode returns file size based on config mode
 func getFileSizeByMode(stat *syscall.Stat_t, useLogicalSize bool) uint64 {

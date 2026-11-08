@@ -14,7 +14,8 @@ func ownerOf(real string, item *Item) {
 		return
 	}
 	sid, _, err := sd.Owner()
-	if err != nil || sid == nil {
+	// FAT and exFAT keep no owner, and Windows names everyone instead.
+	if err != nil || sid == nil || sid.IsWellKnown(windows.WinWorldSid) {
 		return
 	}
 	account, domain, _, err := sid.LookupAccount("")

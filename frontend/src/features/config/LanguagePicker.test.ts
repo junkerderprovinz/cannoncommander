@@ -1,17 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createApp, nextTick } from 'vue';
 import { prefs } from '@/core/prefs';
 import { LANGUAGES } from '@/i18n';
 import { SRC } from '@/testing/motionCss';
 import LanguagePicker from './LanguagePicker.vue';
 
-// jsdom draws no layout, and the open list scrolls to the language in use.
-beforeAll(() => {
-  Element.prototype.scrollTo ??= () => {};
-  Element.prototype.scrollIntoView ??= () => {};
-});
 let app: ReturnType<typeof createApp> | undefined;
 beforeEach(async () => {
   prefs.language = 'de';

@@ -104,3 +104,16 @@ func TestAnotherProgramsWindowOwnsNothing(t *testing.T) {
 		}
 	}
 }
+
+func TestAnIndirectStringReadsTheTextOfWindows(t *testing.T) {
+	got, err := IndirectString("@%SystemRoot%" + `\system32\shell32.dll,-21770`)
+	if err != nil || got == "" || got[0] == '@' {
+		t.Errorf("indirect string = %q, %v", got, err)
+	}
+	if got, err := IndirectString("Meine Fotos"); err != nil || got != "Meine Fotos" {
+		t.Errorf("plain text = %q, %v", got, err)
+	}
+	if _, err := IndirectString("@nirgends.dll,-1"); err == nil {
+		t.Error("a reference that leads nowhere reads")
+	}
+}
