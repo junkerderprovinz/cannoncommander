@@ -115,3 +115,24 @@ func TestEquivalentSpellingParsesWithoutStrictDecoding(t *testing.T) {
 		t.Fatalf("equivalent spelling should parse without strict decoding: %v", err)
 	}
 }
+
+func TestParseTokenRejectsOtherHMACAlgorithms(t *testing.T) {
+	origKey := settings.Config.Auth.Key
+	settings.Config.Auth.Key = "test-signing-key-methods"
+	t.Cleanup(func() { settings.Config.Auth.Key = origKey })
+
+	now := time.Now()
+	claims := jwt.RegisteredClaims{IssuedAt: jwt.NewNumericDate(now), ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour))}
+	for _, method := range []jwt.SigningMethod{jwt.SigningMethodHS384, jwt.SigningMethodHS512} {
+		signed, err := jwt.NewWithClaims(method, claims).SignedString([]byte(settings.Config.Auth.Key))
+		if err != nil {
+			t.Fatalf("sign with %s: %v", method.Alg(), err)
+		}
+		if err := parseSessionToken(signed); err == nil {
+			t.Errorf("a token signed with %s and the right key should be rejected", method.Alg())
+		}
+		if err := parseLenient(signed); err != nil {
+			t.Errorf("%s token should parse without the method check: %v", method.Alg(), err)
+		}
+	}
+}
