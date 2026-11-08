@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
@@ -62,13 +63,15 @@ func windowsTerminal(kind, dir string, look lookFunc) (launch, error) {
 		return launch{program: p, dir: dir, console: true}, nil
 	}
 	// Windows Terminal takes the folder as an argument and opens the
-	// profile its user made the default.
+	// profile its user made the default. It reads a semicolon as the start
+	// of another command, also inside an argument, so each one is escaped
+	// as Explorer's Open in Terminal does.
 	wt := func() (launch, error) {
 		p, err := look("wt.exe")
 		if err != nil {
 			return launch{}, err
 		}
-		return launch{program: p, args: []string{"-d", dir}, dir: dir}, nil
+		return launch{program: p, args: []string{"-d", strings.ReplaceAll(dir, ";", `\;`)}, dir: dir}, nil
 	}
 	missing := func(program string) error { return errMissing.With("program", program) }
 	switch kind {
