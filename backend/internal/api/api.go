@@ -6,6 +6,7 @@ package api
 import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/clipapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
@@ -45,6 +46,7 @@ func NewRouter(deps v1.Deps, auth v1.Authenticator) *v1.Router {
 	system.Routes(r)
 	terminal.Routes(r)
 	openwith.Routes(r)
+	clipapi.Routes(r)
 	office.Routes(r)
 	stream.Routes(r)
 	return r
