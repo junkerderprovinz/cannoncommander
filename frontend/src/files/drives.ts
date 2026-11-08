@@ -1,5 +1,6 @@
-// Drives of the computer the desktop app runs on, named the way its own file manager names them: the label the drive
-// was given, or what kind of drive it is, and on Windows its letter, as in USB-Laufwerk (E:).
+// Drives of the computer the desktop app runs on, named the way its own file manager names them: a network drive by
+// its share and server, any other by the label it was given or else by what kind of drive it is, and on Windows with
+// its letter, as in USB-Laufwerk (E:).
 import type { DriveKind } from '@/api/types';
 import { fmtSize } from '@/core/format';
 import { t } from '@/i18n';
@@ -13,8 +14,8 @@ export function driveName(d: DriveLike): string {
   const letter = /^\/([A-Za-z])$/.exec(d.path ?? '')?.[1];
   const share = /^\\\\([^\\]+)\\(.+)$/.exec(d.remote ?? '');
   const kind = d.kind === 'virtual' ? 'fixed' : d.kind ?? 'fixed';
-  const word = d.label
-    || (share ? `${share[2]} (\\\\${share[1]})` : '')
+  const word = (share ? `${share[2]} (\\\\${share[1]})` : '')
+    || d.label
     || (d.kind === 'network' ? d.remote : '')
     || (!letter && d.size ? t('drives.volume', { size: fmtSize(d.size) }) : '')
     || t(`drives.${kind}`);

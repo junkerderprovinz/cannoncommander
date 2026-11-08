@@ -16,7 +16,7 @@ describe('a drive', () => {
   });
 
   it('names a network drive after its share and server', () => {
-    expect(driveName({ path: '/Z', kind: 'network', remote: '\\\\nas\\daten' })).toBe('daten (\\\\nas) (Z:)');
+    expect(driveName({ path: '/Z', kind: 'network', remote: '\\\\nas\\daten', label: 'Archiv' })).toBe('daten (\\\\nas) (Z:)');
     expect(driveName({ path: '/run/user/1000/gvfs/x', kind: 'network', remote: 'smb://nas/daten', label: 'daten' })).toBe('daten');
     expect(driveName({ kind: 'network', remote: 'sftp://pi.local' })).toBe('sftp://pi.local');
   });
