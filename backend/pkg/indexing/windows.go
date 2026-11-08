@@ -10,29 +10,15 @@ import (
 	"golang.org/x/sys/windows"
 )
 
+// CheckWindowsHidden reports the hidden attribute. A system file without it
+// shows in Explorer, so the system attribute alone hides nothing.
 func CheckWindowsHidden(realpath string) bool {
-	// Convert the realpath to a UTF-16 pointer
 	pointer, err := windows.UTF16PtrFromString(realpath)
 	if err != nil {
 		return false
 	}
-
-	// Get the file attributes
 	attributes, err := windows.GetFileAttributes(pointer)
-	if err != nil {
-		return false
-	}
-
-	// Check if the hidden attribute is set
-	if attributes&windows.FILE_ATTRIBUTE_HIDDEN != 0 {
-		return true
-	}
-
-	// Optional: Check for system attribute
-	if attributes&windows.FILE_ATTRIBUTE_SYSTEM != 0 {
-		return true
-	}
-	return false
+	return err == nil && attributes&windows.FILE_ATTRIBUTE_HIDDEN != 0
 }
 
 // getFileSizeByMode returns file size based on config mode

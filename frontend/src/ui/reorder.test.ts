@@ -54,7 +54,6 @@ async function liftTile(id: string, y: number) {
 
 beforeAll(() => {
   for (const [k, get] of Object.entries(layout)) Object.defineProperty(HTMLElement.prototype, k, { configurable: true, get() { return get(this); } });
-  Element.prototype.scrollIntoView ??= () => {};
   setActivePinia(createPinia());
   for (const [i, id] of ['security', 'general', 'look'].entries()) settingsTab({ id, label: id, g: 'IconGear', order: i, component: { render: () => null } });
   const jobs = useJobs();
