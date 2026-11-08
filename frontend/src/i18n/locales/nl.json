@@ -2010,6 +2010,25 @@
     "shot": "Schermafbeelding {stamp}.{ext}",
     "made": "„{name}” aangemaakt"
   },
+  "places": {
+    "home": "Persoonlijke map",
+    "desktop": "Bureaublad",
+    "documents": "Documenten",
+    "downloads": "Downloads",
+    "pictures": "Afbeeldingen",
+    "music": "Muziek",
+    "videos": "Video's",
+    "recent": "Recent gebruikt",
+    "drives": "Stations",
+    "eject": "Uitwerpen",
+    "ejectLabel": "{name} uitwerpen",
+    "ejected": "Je kunt {name} nu veilig verwijderen",
+    "ejectedDisc": "{name} is uitgeworpen",
+    "notMounted": "Nog niet aangekoppeld, een klik koppelt het aan",
+    "arrived": "{name} is aangesloten",
+    "open": "Openen",
+    "gone": "{name} is verwijderd, je bent nu in {here}"
+  },
   "profiles": {
     "title": "Paneelprofielen",
     "saved": "Opgeslagen",
@@ -3446,6 +3465,7 @@
   },
   "side": {
     "bookmarks": "Snelkoppelingen",
+    "places": "Locaties",
     "tree": "Mappenstructuur",
     "addBookmark": "Huidige map als snelkoppeling toevoegen",
     "unpin": "Uit snelle toegang halen",
@@ -3463,7 +3483,15 @@
     "renameTitle": "Snelkoppeling hernoemen",
     "rename": "Hernoemen"
   },
+  "drives": {
+    "fixed": "Lokale schijf",
+    "removable": "USB-station",
+    "optical": "Dvd-station",
+    "network": "Netwerkstation",
+    "volume": "Volume van {size}"
+  },
   "files": {
+    "network": "Netwerk",
     "server": "Server",
     "thisPc": "Deze pc",
     "computer": "Computer",
@@ -3598,6 +3626,7 @@
     "deleteSelf": "Je eigen account kun je niet verwijderen",
     "denied": "Daarvoor heb je de rechten niet",
     "desktopOnly": "Dat kan alleen de desktop-app",
+    "ejectFailed": "Het station kan nu niet worden uitgeworpen. Misschien staat er nog een bestand op open",
     "fileManagerNotSet": "De computer heeft de wijziging niet overgenomen",
     "disksAdminsOnly": "De losse schijven en de Cache zien alleen admins",
     "dragFailed": "De bestanden konden niet naar buiten worden gesleept",
@@ -3646,6 +3675,7 @@
       "one": "Het bericht heeft hoogstens {n} teken",
       "other": "Het bericht heeft hoogstens {n} tekens"
     },
+    "mountFailed": "Het station kon niet worden aangekoppeld",
     "nameChars": "Windows staat geen van deze tekens toe in een naam: < > : \" / \\ | ? *",
     "nameEnd": "In Windows mag een naam niet eindigen op een punt of een spatie",
     "nameLength": {
@@ -3689,6 +3719,7 @@
     "notText": "Dit bestand is geen tekst",
     "notWindows1252": "De tekst bevat tekens die Windows-1252 niet kan opslaan. Sla hem op als UTF-8",
     "nothingToUndo": "Er valt niets terug te draaien",
+    "noVolume": "Dit station is er niet meer",
     "officeCannotOpen": "De officeserver opent geen .{ext}-bestanden",
     "oldNameTaken": "De oude naam is weer in gebruik",
     "outsideSources": "Dit werkt alleen met bestanden en mappen in een bron",

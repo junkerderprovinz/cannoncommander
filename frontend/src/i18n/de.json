@@ -277,6 +277,7 @@
   },
   "side": {
     "bookmarks": "Verknüpfungen",
+    "places": "Orte",
     "tree": "Ordnerbaum",
     "addBookmark": "Aktuellen Ordner als Verknüpfung anlegen",
     "unpin": "Vom Schnellzugriff lösen",
@@ -294,7 +295,15 @@
     "renameTitle": "Verknüpfung umbenennen",
     "rename": "Umbenennen"
   },
+  "drives": {
+    "fixed": "Lokaler Datenträger",
+    "removable": "USB-Laufwerk",
+    "optical": "DVD-Laufwerk",
+    "network": "Netzlaufwerk",
+    "volume": "Datenträger mit {size}"
+  },
   "files": {
+    "network": "Netzwerk",
     "server": "Server",
     "thisPc": "Dieser PC",
     "computer": "Computer",
@@ -420,6 +429,7 @@
     "deleteSelf": "Dein eigenes Konto kannst du nicht löschen",
     "denied": "Dafür fehlen dir die Rechte",
     "desktopOnly": "Das geht nur in der Desktop-App",
+    "ejectFailed": "Das Laufwerk lässt sich gerade nicht auswerfen. Vielleicht ist noch eine Datei darauf offen",
     "fileManagerNotSet": "Der Computer hat die Änderung nicht übernommen",
     "disksAdminsOnly": "Die einzelnen Platten und den Cache sehen nur Admins",
     "dragFailed": "Die Dateien ließen sich nicht hinausziehen",
@@ -459,6 +469,7 @@
     "lowercaseOnly": "Bitte nur Kleinbuchstaben, Ziffern, _ und -",
     "mayNotShare": "Dieses Konto darf keine Dateien freigeben",
     "messageLength": { "one": "Die Nachricht hat höchstens {n} Zeichen", "other": "Die Nachricht hat höchstens {n} Zeichen" },
+    "mountFailed": "Das Laufwerk ließ sich nicht einhängen",
     "nameChars": "Windows erlaubt im Namen keines dieser Zeichen: < > : \" / \\ | ? *",
     "nameEnd": "Unter Windows darf ein Name nicht auf einen Punkt oder ein Leerzeichen enden",
     "nameLength": { "one": "Der Name hat höchstens {n} Zeichen", "other": "Der Name hat höchstens {n} Zeichen" },
@@ -499,6 +510,7 @@
     "notText": "Diese Datei ist kein Text",
     "notWindows1252": "Der Text hat Zeichen, die Windows-1252 nicht speichern kann. Speichere ihn als UTF-8",
     "nothingToUndo": "Es gibt nichts zurückzunehmen",
+    "noVolume": "Dieses Laufwerk ist nicht mehr da",
     "officeCannotOpen": "Der Office-Server öffnet keine .{ext}-Dateien",
     "oldNameTaken": "Der alte Name ist wieder vergeben",
     "outsideSources": "Das geht nur mit Dateien und Ordnern in einer Quelle",

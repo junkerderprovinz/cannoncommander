@@ -1122,8 +1122,8 @@ func (idx *Index) GetDirInfoCore(dirInfo *os.File, stat os.FileInfo, indexPath s
 			shouldSkip = true
 		}
 
-		// Check root include rules
-		if !shouldSkip && indexPath == "/" && !idx.shouldInclude(subfileBaseName) {
+		// Check include rules
+		if !shouldSkip && !idx.shouldInclude(indexPath, subfileBaseName) {
 			shouldSkip = true
 		}
 
@@ -1948,18 +1948,20 @@ func (idx *Index) MakeAbsolutePath(indexPath string) string {
 	return idx.Path + indexPath
 }
 
-func (idx *Index) shouldInclude(baseName string) bool {
-	rules := idx.Config.ResolvedRules
-	hasRules := false
-	if len(rules.IncludeRootItems) > 0 {
-		hasRules = true
-		// Check with trailing slash since includeRootItems are normalized with trailing slashes
-		if _, exists := rules.IncludeRootItems["/"+baseName+"/"]; exists {
+// shouldInclude reports whether the entry name in the folder dir, an index
+// path that ends in a slash, takes part when only some items are included.
+// An included item may lie deeper than the root, as the home folder does in
+// a source at /, so the folders on the way to it take part too.
+func (idx *Index) shouldInclude(dir, name string) bool {
+	items := idx.Config.ResolvedRules.IncludeRootItems
+	if len(items) == 0 {
+		return true
+	}
+	entry := dir + name + "/"
+	for item := range items {
+		if strings.HasPrefix(item, entry) || strings.HasPrefix(entry, item) {
 			return true
 		}
-	}
-	if !hasRules {
-		return true
 	}
 	return false
 }

@@ -2010,6 +2010,25 @@
     "shot": "Pantaila-argazkia {stamp}.{ext}",
     "made": "«{name}» sortuta"
   },
+  "places": {
+    "home": "Karpeta pertsonala",
+    "desktop": "Mahaigaina",
+    "documents": "Dokumentuak",
+    "downloads": "Deskargak",
+    "pictures": "Irudiak",
+    "music": "Musika",
+    "videos": "Bideoak",
+    "recent": "Azken erabiliak",
+    "drives": "Unitateak",
+    "eject": "Egotzi",
+    "ejectLabel": "Egotzi {name}",
+    "ejected": "Orain {name} segurtasunez ken dezakezu",
+    "ejectedDisc": "{name} egotzi da",
+    "notMounted": "Oraindik ez dago muntatuta, klik batek muntatzen du",
+    "arrived": "{name} konektatuta dago",
+    "open": "Ireki",
+    "gone": "{name} kendu da, orain {here} zaude"
+  },
   "profiles": {
     "title": "Panel-profilak",
     "saved": "Gordetakoak",
@@ -3446,6 +3465,7 @@
   },
   "side": {
     "bookmarks": "Lasterbideak",
+    "places": "Lekuak",
     "tree": "Karpeta-zuhaitza",
     "addBookmark": "Gehitu uneko karpeta lasterbide gisa",
     "unpin": "Kendu sarbide azkarretik",
@@ -3463,7 +3483,15 @@
     "renameTitle": "Aldatu lasterbidearen izena",
     "rename": "Aldatu izena"
   },
+  "drives": {
+    "fixed": "Disko lokala",
+    "removable": "USB unitatea",
+    "optical": "DVD unitatea",
+    "network": "Sareko unitatea",
+    "volume": "{size}eko bolumena"
+  },
   "files": {
+    "network": "Sarea",
     "server": "Zerbitzaria",
     "thisPc": "PC hau",
     "computer": "Ordenagailua",
@@ -3598,6 +3626,7 @@
     "deleteSelf": "Ezin duzu zure kontua ezabatu",
     "denied": "Ez duzu horretarako baimenik",
     "desktopOnly": "Hori mahaigaineko aplikazioan bakarrik egin daiteke",
+    "ejectFailed": "Ezin da unitatea orain egotzi. Agian fitxategiren bat irekita dago oraindik",
     "fileManagerNotSet": "Ordenagailuak ez du aldaketa onartu",
     "disksAdminsOnly": "Disko bakoitza eta Cache-a administratzaileek bakarrik ikusten dituzte",
     "dragFailed": "Ezin izan dira fitxategiak kanpora arrastatu",
@@ -3646,6 +3675,7 @@
       "one": "Mezuak gehienez karaktere {n} du",
       "other": "Mezuak gehienez {n} karaktere ditu"
     },
+    "mountFailed": "Ezin izan da unitatea muntatu",
     "nameChars": "Windowsek ez du karaktere hauetako bat ere onartzen izenetan: < > : \" / \\ | ? *",
     "nameEnd": "Windowsen izen bat ezin da puntu edo zuriune batekin amaitu",
     "nameLength": {
@@ -3689,6 +3719,7 @@
     "notText": "Fitxategi hau ez da testua",
     "notWindows1252": "Testuak Windows-1252-k gorde ezin dituen karaktereak ditu. Gorde UTF-8 gisa",
     "nothingToUndo": "Ez dago desegiteko ezer",
+    "noVolume": "Unitate hau jada ez dago",
     "officeCannotOpen": "Office zerbitzariak ez ditu .{ext} fitxategiak irekitzen",
     "oldNameTaken": "Izen zaharra berriro hartuta dago",
     "outsideSources": "Hau iturburu baten barruko fitxategi eta karpetekin bakarrik dabil",

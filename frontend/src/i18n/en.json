@@ -277,6 +277,7 @@
   },
   "side": {
     "bookmarks": "Shortcuts",
+    "places": "Places",
     "tree": "Folder tree",
     "addBookmark": "Add the current folder as a shortcut",
     "unpin": "Remove from quick access",
@@ -294,7 +295,15 @@
     "renameTitle": "Rename shortcut",
     "rename": "Rename"
   },
+  "drives": {
+    "fixed": "Local Disk",
+    "removable": "USB Drive",
+    "optical": "DVD Drive",
+    "network": "Network Drive",
+    "volume": "{size} Volume"
+  },
   "files": {
+    "network": "Network",
     "server": "Server",
     "thisPc": "This PC",
     "computer": "Computer",
@@ -420,6 +429,7 @@
     "deleteSelf": "You cannot delete your own account",
     "denied": "You do not have the rights for this",
     "desktopOnly": "Only the desktop app can do that",
+    "ejectFailed": "The drive cannot be ejected right now. Maybe a file on it is still open",
     "fileManagerNotSet": "The computer did not take the change",
     "disksAdminsOnly": "Only admins see the single disks and the cache",
     "dragFailed": "Dragging the files out did not work",
@@ -459,6 +469,7 @@
     "lowercaseOnly": "Only lowercase letters, digits, _ and - please",
     "mayNotShare": "This account may not share files",
     "messageLength": { "one": "The message can have at most {n} character", "other": "The message can have at most {n} characters" },
+    "mountFailed": "The drive could not be mounted",
     "nameChars": "Windows allows none of these characters in a name: < > : \" / \\ | ? *",
     "nameEnd": "On Windows a name cannot end with a dot or a space",
     "nameLength": { "one": "The name can have at most {n} character", "other": "The name can have at most {n} characters" },
@@ -499,6 +510,7 @@
     "notText": "This file is not text",
     "notWindows1252": "The text holds characters Windows-1252 cannot store. Save it as UTF-8",
     "nothingToUndo": "There is nothing to take back",
+    "noVolume": "This drive is gone",
     "officeCannotOpen": "The office server does not open .{ext} files",
     "oldNameTaken": "The old name is taken again",
     "outsideSources": "This only works for files and folders inside a source",

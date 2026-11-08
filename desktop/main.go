@@ -88,7 +88,7 @@ func run() error {
 			UniqueID: instanceID(dir),
 			OnSecondInstanceLaunch: sh.secondLaunch,
 		},
-		Windows: application.WindowsOptions{WebviewUserDataPath: filepath.Join(dir, "webview")},
+		Windows: application.WindowsOptions{WebviewUserDataPath: filepath.Join(dir, "webview"), AdditionalBrowserArgs: debugArgs()},
 		Linux:   application.LinuxOptions{ProgramName: "CannonCommander"},
 	})
 	sh.app = app
@@ -183,6 +183,7 @@ type shell struct {
 	// which the scheduled task reads. "" for every other copy.
 	machineFile string
 	restart     atomic.Bool
+	volumes     volumeWatch
 	standby
 }
 

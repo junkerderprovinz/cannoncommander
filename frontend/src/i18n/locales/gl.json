@@ -2010,6 +2010,25 @@
     "shot": "Captura {stamp}.{ext}",
     "made": "«{name}» creado"
   },
+  "places": {
+    "home": "Cartafol persoal",
+    "desktop": "Escritorio",
+    "documents": "Documentos",
+    "downloads": "Descargas",
+    "pictures": "Imaxes",
+    "music": "Música",
+    "videos": "Vídeos",
+    "recent": "Usados recentemente",
+    "drives": "Unidades",
+    "eject": "Expulsar",
+    "ejectLabel": "Expulsar {name}",
+    "ejected": "Xa podes quitar {name} con seguridade",
+    "ejectedDisc": "{name} foi expulsado",
+    "notMounted": "Aínda non está montado, un clic móntao",
+    "arrived": "{name} xa está aquí",
+    "open": "Abrir",
+    "gone": "{name} quitouse, agora estás en {here}"
+  },
   "profiles": {
     "title": "Perfís de paneis",
     "saved": "Gardados",
@@ -3446,6 +3465,7 @@
   },
   "side": {
     "bookmarks": "Atallos",
+    "places": "Lugares",
     "tree": "Árbore de cartafoles",
     "addBookmark": "Engadir o cartafol actual como atallo",
     "unpin": "Quitar do acceso rápido",
@@ -3463,7 +3483,15 @@
     "renameTitle": "Renomear o atallo",
     "rename": "Renomear"
   },
+  "drives": {
+    "fixed": "Disco local",
+    "removable": "Unidade USB",
+    "optical": "Unidade de DVD",
+    "network": "Unidade de rede",
+    "volume": "Volume de {size}"
+  },
   "files": {
+    "network": "Rede",
     "server": "Servidor",
     "thisPc": "Este PC",
     "computer": "Computador",
@@ -3598,6 +3626,7 @@
     "deleteSelf": "Non podes borrar a túa propia conta",
     "denied": "Non tes permisos para isto",
     "desktopOnly": "Iso só funciona na aplicación de escritorio",
+    "ejectFailed": "Agora non se pode expulsar a unidade. Quizais aínda haxa un ficheiro aberto nela",
     "fileManagerNotSet": "O ordenador non aceptou o cambio",
     "disksAdminsOnly": "Os discos individuais e a Cache só os ven os admins",
     "dragFailed": "Non se puideron arrastrar os ficheiros fóra",
@@ -3646,6 +3675,7 @@
       "one": "A mensaxe ten como máximo {n} carácter",
       "other": "A mensaxe ten como máximo {n} caracteres"
     },
+    "mountFailed": "Non se puido montar a unidade",
     "nameChars": "Windows non permite ningún destes caracteres nun nome: < > : \" / \\ | ? *",
     "nameEnd": "En Windows un nome non pode rematar en punto nin en espazo",
     "nameLength": {
@@ -3689,6 +3719,7 @@
     "notText": "Este ficheiro non é texto",
     "notWindows1252": "O texto ten caracteres que Windows-1252 non pode gardar. Gárdao como UTF-8",
     "nothingToUndo": "Non hai nada que desfacer",
+    "noVolume": "Esta unidade xa non está",
     "officeCannotOpen": "O servidor de Office non abre ficheiros .{ext}",
     "oldNameTaken": "O nome antigo volve estar collido",
     "outsideSources": "Isto só funciona con ficheiros e cartafoles dentro dunha orixe",
