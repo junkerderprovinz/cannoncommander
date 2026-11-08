@@ -68,7 +68,13 @@ func (h registryHandler) set(exe string, w desktop.Words) error {
 		if err != nil {
 			return err
 		}
-		if err := setDefault(h.classes+`\`+class+`\shell\`+verb+`\command`, `"`+exe+`" "%V"`); err != nil {
+		// A drive root ends in a backslash, which would escape a closing
+		// quote, and never holds a space.
+		arg := `"%V"`
+		if class == "Drive" {
+			arg = `%V`
+		}
+		if err := setDefault(h.classes+`\`+class+`\shell\`+verb+`\command`, `"`+exe+`" `+arg); err != nil {
 			return err
 		}
 	}

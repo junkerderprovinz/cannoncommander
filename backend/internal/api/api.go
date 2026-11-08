@@ -1,6 +1,11 @@
 // Package api wires every feature package into /api/v1. Each package owns
 // its contract and its handlers, so adding an endpoint never touches this
 // file.
+//
+// A package only the desktop app has puts "//go:build desktop" on each of
+// its files and adds a container.go, built without the tag, whose Routes
+// calls r.DesktopContract. The container's server then serves the same
+// document and answers desktopOnly, without any of the package's code.
 package api
 
 import (

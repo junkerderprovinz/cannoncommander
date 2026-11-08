@@ -186,3 +186,23 @@ func TestAPermissionErrorOfAnySystemIsDenied(t *testing.T) {
 		t.Fatalf("got %q", code)
 	}
 }
+
+func TestADesktopContractAnswersDesktopOnly(t *testing.T) {
+	r := NewRouter(Deps{}, func(http.ResponseWriter, *http.Request) (*users.User, error) { return &users.User{}, nil })
+	r.DesktopContract("demo", []byte(sample))
+	h, err := r.Handler()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, method := range []string{http.MethodGet, http.MethodPost} {
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(method, "/demo/7", nil))
+		if rec.Code != http.StatusNotFound || !strings.Contains(rec.Body.String(), `"code":"desktopOnly"`) {
+			t.Errorf("%s: %d %s", method, rec.Code, rec.Body)
+		}
+	}
+	spec, err := r.OpenAPI()
+	if err != nil || !strings.Contains(string(spec), "operationId: demoPost") {
+		t.Fatalf("the contract is not served: %v", err)
+	}
+}

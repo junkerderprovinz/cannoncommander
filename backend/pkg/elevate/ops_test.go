@@ -143,14 +143,12 @@ func TestCopyNeedsAnExistingFolderToLandIn(t *testing.T) {
 	}
 }
 
-func TestDeleteLeavesTheTargetOfALinkAlone(t *testing.T) {
+func TestALinkIsNotDeletedWithRights(t *testing.T) {
 	dir := t.TempDir()
 	file(t, filepath.Join(dir, "ziel", "wichtig.txt"), "x")
-	if err := os.Symlink(filepath.Join(dir, "ziel"), filepath.Join(dir, "link")); err != nil {
-		t.Skip("no symlinks here:", err)
-	}
-	if err := apply(Op{Kind: Delete, From: filepath.Join(dir, "link")}); err != nil {
-		t.Fatal(err)
+	linkDir(t, filepath.Join(dir, "ziel"), filepath.Join(dir, "link"))
+	if err := apply(Op{Kind: Delete, From: filepath.Join(dir, "link")}); err == nil {
+		t.Fatal("the link was deleted")
 	}
 	if read(t, filepath.Join(dir, "ziel", "wichtig.txt")) != "x" {
 		t.Fatal("the link was followed")
@@ -234,5 +232,120 @@ func TestParentsMakesTheFolderToLandIn(t *testing.T) {
 	}
 	if read(t, filepath.Join(dir, "neu", "tief", "a.txt")) != "a" {
 		t.Fatal("not moved into the new folder")
+	}
+}
+
+func TestNothingIsDoneThroughALinkOnTheWay(t *testing.T) {
+	dir, victim := t.TempDir(), t.TempDir()
+	file(t, filepath.Join(victim, "wichtig.txt"), "w")
+	linkDir(t, victim, filepath.Join(dir, "link"))
+	file(t, filepath.Join(dir, "a.txt"), "a")
+	for _, op := range []Op{
+		{Kind: Delete, From: filepath.Join(dir, "link", "wichtig.txt")},
+		{Kind: Delete, From: filepath.Join(dir, "link")},
+		{Kind: Copy, From: filepath.Join(dir, "a.txt"), To: filepath.Join(dir, "link", "a.txt")},
+		{Kind: Move, From: filepath.Join(dir, "link", "wichtig.txt"), To: filepath.Join(dir, "b.txt")},
+		{Kind: Mkdir, To: filepath.Join(dir, "link", "neu")},
+	} {
+		if err := apply(op); err == nil {
+			t.Errorf("%+v went through", op)
+		}
+	}
+	if read(t, filepath.Join(victim, "wichtig.txt")) != "w" {
+		t.Fatal("the file behind the link changed")
+	}
+	for _, p := range []string{"a.txt", "neu"} {
+		if _, err := os.Lstat(filepath.Join(victim, p)); err == nil {
+			t.Errorf("%s landed behind the link", p)
+		}
+	}
+}
+
+func TestAMergeNeverWritesThroughALinkAtTheTarget(t *testing.T) {
+	dir, victim := t.TempDir(), t.TempDir()
+	file(t, filepath.Join(dir, "a", "sub", "x.txt"), "neu")
+	file(t, filepath.Join(victim, "x.txt"), "alt")
+	if err := os.MkdirAll(filepath.Join(dir, "b"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	linkDir(t, victim, filepath.Join(dir, "b", "sub"))
+	err := apply(Op{Kind: Copy, From: filepath.Join(dir, "a"), To: filepath.Join(dir, "b"), Replace: true})
+	if err == nil {
+		t.Error("the merge went into the link")
+	}
+	if read(t, filepath.Join(victim, "x.txt")) != "alt" {
+		t.Fatal("a file behind the link was replaced")
+	}
+}
+
+func TestReplacingAFileLinkReplacesTheLinkItself(t *testing.T) {
+	dir, victim := t.TempDir(), t.TempDir()
+	file(t, filepath.Join(dir, "a", "x.txt"), "neu")
+	file(t, filepath.Join(victim, "x.txt"), "alt")
+	if err := os.MkdirAll(filepath.Join(dir, "b"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(filepath.Join(victim, "x.txt"), filepath.Join(dir, "b", "x.txt")); err != nil {
+		t.Skip("no file links here:", err)
+	}
+	if err := apply(Op{Kind: Copy, From: filepath.Join(dir, "a"), To: filepath.Join(dir, "b"), Replace: true}); err != nil {
+		t.Fatal(err)
+	}
+	if read(t, filepath.Join(victim, "x.txt")) != "alt" {
+		t.Fatal("the file behind the link was written")
+	}
+	if read(t, filepath.Join(dir, "b", "x.txt")) != "neu" {
+		t.Fatal("the copy is missing")
+	}
+}
+
+func TestAMoveWithinOneVolumeIsARename(t *testing.T) {
+	dir := t.TempDir()
+	file(t, filepath.Join(dir, "a", "tief", "x.txt"), "x")
+	file(t, filepath.Join(dir, "b.txt"), "b")
+	file(t, filepath.Join(dir, "ziel", "b.txt"), "alt")
+	before := map[string]os.FileInfo{}
+	for _, p := range []string{"a", "b.txt"} {
+		fi, err := os.Lstat(filepath.Join(dir, p))
+		if err != nil {
+			t.Fatal(err)
+		}
+		// Windows reads a file's identity by its path on first use, and the
+		// path is gone after the move.
+		os.SameFile(fi, fi)
+		before[p] = fi
+	}
+	ops := []Op{
+		{Kind: Move, From: filepath.Join(dir, "a"), To: filepath.Join(dir, "ziel", "a")},
+		{Kind: Move, From: filepath.Join(dir, "b.txt"), To: filepath.Join(dir, "ziel", "b.txt"), Replace: true},
+	}
+	for _, op := range ops {
+		if err := apply(op); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for p, fi := range before {
+		after, err := os.Lstat(filepath.Join(dir, "ziel", p))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !os.SameFile(fi, after) {
+			t.Errorf("%s was copied, not renamed", p)
+		}
+	}
+	if read(t, filepath.Join(dir, "ziel", "b.txt")) != "b" || read(t, filepath.Join(dir, "ziel", "a", "tief", "x.txt")) != "x" {
+		t.Fatal("not moved")
+	}
+}
+
+func TestARenameDoesNotReplaceUnlessTold(t *testing.T) {
+	dir := t.TempDir()
+	file(t, filepath.Join(dir, "b.txt"), "neu")
+	file(t, filepath.Join(dir, "ziel", "b.txt"), "alt")
+	if err := apply(Op{Kind: Move, From: filepath.Join(dir, "b.txt"), To: filepath.Join(dir, "ziel", "b.txt")}); !errors.Is(err, fs.ErrExist) {
+		t.Fatalf("got %v", err)
+	}
+	if read(t, filepath.Join(dir, "ziel", "b.txt")) != "alt" {
+		t.Fatal("replaced")
 	}
 }

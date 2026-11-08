@@ -78,10 +78,10 @@ type job struct {
 	cancelled bool
 	// forget drops the job from the list as soon as it has stopped.
 	forget bool
-	// elevated runs the job's next turn through its kind's Elevate.
+	// elevated runs the job's next turn through its kind's elevation.
 	elevated bool
-	live    bool
-	allowed bool
+	live     bool
+	allowed  bool
 	// pauses counts the pauses asked for, so a short one is not missed.
 	pauses int
 	ask    chan string
@@ -402,7 +402,7 @@ func (m *Manager) retry(id string, elevated bool) (Job, error) {
 		if j.State != Failed && j.State != Cancelled {
 			return v1.Coded(http.StatusConflict, "jobNotRetryable", "only a failed or cancelled job can be retried")
 		}
-		if k, _ := kindOf(j.Kind); elevated && k.Elevate == nil {
+		if elevated && elevation(j.Kind) == nil {
 			return errNotElevatable
 		}
 		j.elevated = elevated
@@ -670,7 +670,7 @@ func (m *Manager) start(j *job) {
 	j.sampleAt, j.sampleBytes = time.Now(), j.DoneBytes
 	do := k.Run
 	if j.elevated {
-		do = k.Elevate
+		do = elevation(j.Kind)
 	}
 	m.wg.Add(1)
 	go func() {

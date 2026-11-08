@@ -4,11 +4,10 @@ import { reactive, watch } from 'vue';
 import { ApiError } from '@/api/client';
 import { type Job, ops, type Preflight, type TransferParams } from '@/api/ops';
 import { action, run } from '@/core/actions';
-import { host } from '@/core/host';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { win, type WinEntry } from '@/core/windows';
-import { toEntry } from '@/files/entries';
+import { type Entry, toEntry } from '@/files/entries';
 import { parent, split } from '@/files/paths';
 import { plural, t, tl } from '@/i18n';
 import { diskName, jobError, jobLabel, objects, placeName } from '@/features/jobs/label';
@@ -19,8 +18,8 @@ import { useJobs } from '@/stores/jobs';
 import { useListing } from '@/stores/listing';
 import { type Transfer, usePanels } from '@/stores/panels';
 import { ask } from './ask';
+import { entriesOf, keep } from './clip';
 import { askRunning, resolveConflicts } from './conflicts';
-import { clipboardWins, dragOut, dropIn, entriesOf, lookSoon, pasteOutside, share } from './outside';
 import LinksBody from './LinksBody.vue';
 import ParityBody from './ParityBody.vue';
 import { ensureDir, pathOf, shareRel } from './paths';
@@ -29,6 +28,11 @@ import TransferBody, { type TransferState } from './TransferBody.vue';
 import './transfer.css';
 
 const verbOf = (kind: 'copy' | 'move') => t(`transfer.${kind}`);
+
+// The computer's clipboard, which desktop.ts hands in, since only the desktop app reaches it.
+let outside: typeof import('./outside') | undefined;
+export const reachOutside = (m: typeof import('./outside')) => { outside = m; };
+const share = (cut: boolean, from: string, rows: Entry[]) => (outside ? outside.share(cut, from, rows) : keep(cut, from, rows));
 const warn = (e: unknown) => toast(e instanceof ApiError ? e.message : String(e), 'warn');
 
 function paramsOf(job: Transfer): TransferParams {
@@ -177,9 +181,9 @@ function transferWindow(kind: 'copy' | 'move') {
 // says whether there was anything, so the paste event can turn a picture or a text into a file instead.
 async function paste() {
   const F = usePanels(), clip = useClipboard(), dest = F.T().path;
-  const outside = await clipboardWins();
-  if (outside && (outside.files.length || outside.skipped)) {
-    await pasteOutside(outside, dest);
+  const got = await outside?.clipboardWins();
+  if (got && (got.files.length || got.skipped)) {
+    await outside!.pasteOutside(got, dest);
     return true;
   }
   const c = clip.clip;
@@ -214,13 +218,6 @@ export default function setup() {
     if (!(await paste())) toast(t('transfer.clipEmpty'), 'warn');
   } });
   action('pasteFiles', { label: tl('transfer.clipPaste'), g: 'IconPaste', hidden: true, needs: 'writable', run: paste });
-  action('dropIn', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: dropIn });
-  action('dragOut', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: dragOut });
-
-  // Another program may have put files on the computer's clipboard while the window was in the background.
-  window.addEventListener('focus', lookSoon);
-  watch(() => host.desktop, lookSoon);
-
   // A job that meets a name on its way asks here, unless someone answers it in another tab first.
   jobs.onAsked((job, conflict) => askRunning(job, conflict));
 }

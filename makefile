@@ -64,7 +64,7 @@ lint-frontend:
 	cd frontend && npm run typecheck
 
 lint-backend:
-	cd backend && GOLANGCI_LINT="$$(cd $(BACKEND_BUILD) && go tool -n golangci-lint)" && "$$GOLANGCI_LINT" run --path-prefix=backend
+	cd backend && GOLANGCI_LINT="$$(cd $(BACKEND_BUILD) && go tool -n golangci-lint)" && "$$GOLANGCI_LINT" run --path-prefix=backend && "$$GOLANGCI_LINT" run --build-tags desktop --path-prefix=backend
 
 lint: lint-backend lint-frontend
 
@@ -74,6 +74,7 @@ check-all: lint test
 
 test-backend:
 	cd backend && go test -race -timeout=30s ./...
+	cd backend && go test -race -timeout=30s -tags desktop ./...
 
 test-frontend:
 	cd frontend && npm run test

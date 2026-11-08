@@ -39,7 +39,7 @@ async function openNative(path: string, kind: string) {
 export async function askTerminal(path: string, kind = 'terminal') {
   if (!useUser().admin()) return toast(t('terminal.adminsOnly'), 'warn');
   if (!terminalOn.value) await refreshTerminal();
-  if (onDesktop.value) return openNative(path, kind);
+  if (import.meta.env.DESKTOP && onDesktop.value) return openNative(path, kind);
   if (!terminalOn.value) return toast(t('terminal.off'), 'warn', { label: t('terminal.toSettings'), run: () => go('settings', 'integrations') });
   try {
     await call('/terminal' + q({ path }));

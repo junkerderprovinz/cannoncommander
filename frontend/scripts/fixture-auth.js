@@ -2,7 +2,7 @@
 // backend/internal/shares. Every password is "cannoncommander", and the ones the prototype's step files type work
 // too. jdp has two factor login with the code 123456 or the recovery code K7QM-3XRP, and neu has to pick a new
 // password first. CC_FIXTURE_SIGNED_OUT=1 starts signed out.
-// Links: k3x9qa-urlaub (folder with the password sonnenschein, takes uploads), m7tq2p-rechnung (one file),
+// Links: k3x9-urlaub (folder with the password sonnenschein, takes uploads), m7tq2p-rechnung (one file),
 // abgelaufen and aufgebraucht (both lead nowhere).
 import { strToU8, zipSync } from 'fflate';
 import { clock } from './fixture-clock.js';
@@ -57,7 +57,7 @@ const folder = (name, children, daysAgo = 3) => ({ name, dir: true, children, ti
 function links() {
   const now = clock.now();
   return {
-    'k3x9qa-urlaub': {
+    'k3x9-urlaub': {
       id: 'urlaub', kind: 'folder', password: 'sonnenschein', uploads: true, room: 2 * 1024 ** 3, expires: now + 14 * DAY,
       message: 'Hallo ihr Lieben,\nhier sind die Fotos vom Urlaub am Meer. Ladet gern eure eigenen dazu!',
       root: folder('Urlaub 2026', [

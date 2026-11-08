@@ -18,7 +18,7 @@ import (
 )
 
 func init() {
-	jobs.RegisterKind(KindDelete, jobs.Kind{Prepare: prepareDelete, Run: runDelete, Elevate: elevateDelete})
+	jobs.RegisterKind(KindDelete, jobs.Kind{Prepare: prepareDelete, Run: runDelete})
 }
 
 func prepareDelete(ctx context.Context, d v1.Deps, u *users.User, raw json.RawMessage) (*jobs.Plan, error) {

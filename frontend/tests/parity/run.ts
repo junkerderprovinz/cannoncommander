@@ -72,9 +72,10 @@ const freePort = () => new Promise<number>((done, fail) => {
 // first server bundles the dependencies anew; the others read that bundle, so they never write it at the same time.
 async function fixtureServer(force = false): Promise<{ url: string; stop: () => void }> {
   const port = await freePort();
-  const child: ChildProcess = spawn(process.execPath, [vite, '--mode', 'fixture', '--port', String(port), '--strictPort', ...(force ? ['--force'] : [])],
+  // localhost may name ::1 first, which a container without IPv6 cannot listen on although Vite says it is ready.
+  const child: ChildProcess = spawn(process.execPath, [vite, '--mode', 'fixture', '--host', '127.0.0.1', '--port', String(port), '--strictPort', ...(force ? ['--force'] : [])],
     { cwd: frontend, env: { ...process.env, VITE_E2E: '1' }, stdio: 'ignore' });
-  const url = `http://localhost:${port}/`;
+  const url = `http://127.0.0.1:${port}/`;
   for (let waited = 0; !(await fetch(url + 'api/v1/me').then((r) => r.ok, () => false)); waited += 250) {
     if (child.exitCode !== null || waited > 120_000) {
       child.kill();

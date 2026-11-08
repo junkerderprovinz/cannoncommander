@@ -330,3 +330,41 @@ func TestFolderSizesGoIntoTheCacheOfTheSpecification(t *testing.T) {
 		t.Fatalf("cache %q, want %q", got, want)
 	}
 }
+
+func TestAVolumesTrashOnlyRestoresOntoThatVolume(t *testing.T) {
+	home := place{dir: "/home/anna/.local/share/Trash"}
+	stick := place{dir: "/media/stick/.Trash-1000", top: "/media/stick"}
+	for _, c := range []struct {
+		pl       place
+		recorded string
+		want     string
+	}{
+		{home, "/home/anna/a.txt", "/home/anna/a.txt"},
+		{home, "a.txt", ""},
+		{stick, "fotos/a.jpg", "/media/stick/fotos/a.jpg"},
+		{stick, "/etc/cron.d/x", ""},
+		{stick, "../../etc/passwd", ""},
+		{stick, "fotos/../../x", ""},
+		{stick, "", ""},
+	} {
+		got, ok := originOf(c.pl, c.recorded)
+		if got != c.want || ok != (c.want != "") {
+			t.Errorf("%s in %s: %q, %v", c.recorded, c.pl.dir, got, ok)
+		}
+	}
+}
+
+func TestAForeignRecordOnAVolumeIsLeftOut(t *testing.T) {
+	top := otherVolume(t)
+	bin := filepath.Join(top, ".Trash-"+strconv.Itoa(os.Getuid()))
+	if _, err := os.Lstat(bin); err == nil {
+		t.Skip(bin + " exists already")
+	}
+	t.Cleanup(func() { os.RemoveAll(bin) })
+	write(t, filepath.Join(bin, "files", "boese"), "x")
+	write(t, filepath.Join(bin, "info", "boese.trashinfo"), "[Trash Info]\nPath=../../etc/cron.d/boese\nDeletionDate=2026-01-01T00:00:00\n")
+	b := homeBin(t, top)
+	if list, _ := b.List(); len(list) != 0 {
+		t.Fatalf("listed %+v", list)
+	}
+}

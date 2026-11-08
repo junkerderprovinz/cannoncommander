@@ -2,17 +2,18 @@
 import { pathField } from '@/ui/picker';
 import { segItems } from '@/ui/kit';
 import { Button, Card, FieldRow, FieldRowGroup, PathField, Selector, Toggle } from '@glimstone/vue';
-import { ref } from 'vue';
+import { defineAsyncComponent, ref } from 'vue';
 import { admin, exists } from '@/api/admin';
 import { host, windowsPaths } from '@/core/host';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
-import DesktopRows from '@/features/desktop/DesktopRows.vue';
 import { useUnraid } from '@/features/unraid/state';
 import { nativePath, typedPath } from '@/files/paths';
 import { useUser } from '@/stores/user';
 import { c, cn, fail, P } from '@/features/config/shared';
 
+// The container build leaves the desktop app's rows out.
+const DesktopRows = import.meta.env.DESKTOP ? defineAsyncComponent(() => import('@/features/desktop/DesktopRows.vue')) : null;
 const U = useUnraid();
 const home = useUser().me.home || '/';
 // The desktop app shows and takes the folder the way the computer writes it.
@@ -62,7 +63,7 @@ async function testNote() {
     <FieldRowGroup>
       <FieldRow :label="c('general.start')" :hint="c('general.startTip')"><PathField ref="field" v-model="start" v-bind="pathField('a-start')" @change="save" @picked="save" /></FieldRow>
       <FieldRow :label="c('general.dblclick')" :hint="c('general.dblclickTip')"><Selector v-model="P.dblclick" :items="segItems(DBLCLICK)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-      <DesktopRows v-if="host.desktop" />
+      <DesktopRows v-if="DesktopRows && host.desktop" />
     </FieldRowGroup>
   </Card>
   <Card :title="c('general.delete')">

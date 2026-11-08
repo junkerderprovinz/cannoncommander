@@ -10,7 +10,7 @@
     "dev": "vite",
     "dev:fixture": "vite --mode fixture",
     "build": "vite build && node scripts/embed.js",
-    "build:docker": "vite build --configLoader runner",
+    "build:docker": "vite build --mode container --configLoader runner",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && vue-tsc --noEmit -p tsconfig.test.json && tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tests/tsconfig.json",
     "test": "vitest run",

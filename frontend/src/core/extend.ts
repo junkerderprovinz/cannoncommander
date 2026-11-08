@@ -43,10 +43,19 @@ export const extend: ExtensionPoints = {
   treeDecorators: shallowReactive([]), propsWells: shallowReactive([]), actionWrappers: shallowReactive([]), onRender: shallowReactive([]), toastHistory: shallowReactive([]),
 };
 
-export function addTo<K extends keyof ExtensionPoints>(point: K, fn: ExtensionPoints[K][number]) {
-  (extend[point] as unknown[]).push(fn);
+const orders = new WeakMap<object, number>();
+
+// The rows below the pinned folders, top to bottom.
+export const SIDE_ROWS = { recent: 10, collection: 20, parity: 30 };
+
+// A lower order comes first, and the same order keeps the order of adding, so a part that loads later, as the desktop
+// app's do, still takes the place it names.
+export function addTo<K extends keyof ExtensionPoints>(point: K, fn: ExtensionPoints[K][number], order = 0) {
+  const list = extend[point] as object[];
+  orders.set(fn, order);
+  const after = list.findIndex((f) => (orders.get(f) ?? 0) > order);
+  list.splice(after < 0 ? list.length : after, 0, fn);
   return () => {
-    const list = extend[point] as unknown[];
     const i = list.indexOf(fn);
     if (i >= 0) list.splice(i, 1);
   };

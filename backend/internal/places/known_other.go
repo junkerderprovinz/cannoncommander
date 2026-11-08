@@ -1,4 +1,4 @@
-//go:build !windows && !linux
+//go:build desktop && !windows && !linux
 
 package places
 

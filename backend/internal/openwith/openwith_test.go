@@ -1,3 +1,5 @@
+//go:build desktop
+
 package openwith
 
 import (
@@ -20,7 +22,6 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 // fakeSystem offers the same programs for every file and remembers what it
@@ -69,19 +70,6 @@ func (s *fakeSystem) started() [][2]string {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	return append([][2]string(nil), s.opened...)
-}
-
-type fakeApp struct{}
-
-func (fakeApp) AutoUpdate() bool         { return true }
-func (fakeApp) SetAutoUpdate(bool) error { return nil }
-func (fakeApp) UpdateReady() string      { return "" }
-func (fakeApp) Restart()                 {}
-
-func onDesktop(t *testing.T) {
-	t.Helper()
-	desktop.Use(fakeApp{}, desktop.Options{})
-	t.Cleanup(func() { desktop.Use(nil, desktop.Options{}) })
 }
 
 type hiddenRules struct{ path string }
@@ -182,25 +170,7 @@ func (e *env) list(path string, every bool) (int, string, listJSON) {
 	return status, code, l
 }
 
-func TestTheContainerOpensNothingWithAnotherProgram(t *testing.T) {
-	e := newEnv(t)
-	calls := []struct{ method, target string }{
-		{http.MethodGet, "/openwith?path=/mnt/user/work/notes.txt"},
-		{http.MethodPost, "/openwith"},
-		{http.MethodPost, "/openwith/dialog"},
-	}
-	for _, c := range calls {
-		if status, code, _ := e.do(c.method, c.target, map[string]string{"path": "/mnt/user/work/notes.txt", "app": "editor"}); status != http.StatusNotFound || code != "desktopOnly" {
-			t.Errorf("%s %s: got %d %s", c.method, c.target, status, code)
-		}
-	}
-	if got := e.sys.started(); len(got) != 0 {
-		t.Fatalf("opened %v", got)
-	}
-}
-
 func TestTheProgramsComeWithTheirIcons(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	status, code, l := e.list("/mnt/user/work/notes.txt", false)
 	if status != http.StatusOK {
@@ -216,7 +186,6 @@ func TestTheProgramsComeWithTheirIcons(t *testing.T) {
 }
 
 func TestEachIconIsMadeOnce(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	for range 3 {
 		e.list("/mnt/user/work/notes.txt", false)
@@ -227,7 +196,6 @@ func TestEachIconIsMadeOnce(t *testing.T) {
 }
 
 func TestOnlyAFileTheUserMayReachIsOffered(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	cases := []struct {
 		name, path string
@@ -263,7 +231,6 @@ func TestOnlyAFileTheUserMayReachIsOffered(t *testing.T) {
 }
 
 func TestAFileOpensWithAProgramOfTheList(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	if status, code, _ := e.do(http.MethodPost, "/openwith", map[string]string{"path": "/mnt/user/work/notes.txt", "app": "code"}); status != http.StatusNoContent {
 		t.Fatalf("got %d %s", status, code)
@@ -275,7 +242,6 @@ func TestAFileOpensWithAProgramOfTheList(t *testing.T) {
 }
 
 func TestAProgramOffTheListIsRefused(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	for _, id := range []string{"calc", "", `C:\Windows\System32\cmd.exe`, "/bin/sh"} {
 		if status, code, _ := e.do(http.MethodPost, "/openwith", map[string]string{"path": "/mnt/user/work/notes.txt", "app": id}); status != http.StatusBadRequest || code != "unknownApp" {
@@ -288,7 +254,6 @@ func TestAProgramOffTheListIsRefused(t *testing.T) {
 }
 
 func TestWithoutADialogEveryProgramCanBePicked(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	_, _, l := e.list("/mnt/user/work/notes.txt", true)
 	if len(l.Apps) != 1 || l.Apps[0].ID != "calc" {
@@ -303,7 +268,6 @@ func TestWithoutADialogEveryProgramCanBePicked(t *testing.T) {
 }
 
 func TestWithADialogTheSystemPicks(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	e.sys.ownDlg = true
 	if status, code, _ := e.list("/mnt/user/work/notes.txt", true); status != http.StatusNotFound || code != "noAppDialog" {
@@ -329,7 +293,6 @@ func TestWithADialogTheSystemPicks(t *testing.T) {
 }
 
 func TestAProgramThatDoesNotStartIsNamed(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	e.sys.fail = errors.New("gone")
 	status, code, body := e.do(http.MethodPost, "/openwith", map[string]string{"path": "/mnt/user/work/notes.txt", "app": "editor"})

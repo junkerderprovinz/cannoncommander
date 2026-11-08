@@ -1,3 +1,5 @@
+//go:build desktop
+
 package jobs
 
 import (
@@ -9,23 +11,21 @@ import (
 )
 
 func init() {
-	RegisterKind("elevatable", Kind{
-		Run: func(ctx context.Context, run *Run) error {
-			for _, it := range run.Items() {
-				if it.State == ItemPending {
-					run.Finish(it.Seq, ItemDone, v1.Coded(403, "denied", "access denied"))
-				}
+	RegisterKind("elevatable", Kind{Run: func(ctx context.Context, run *Run) error {
+		for _, it := range run.Items() {
+			if it.State == ItemPending {
+				run.Finish(it.Seq, ItemDone, v1.Coded(403, "denied", "access denied"))
 			}
-			return nil
-		},
-		Elevate: func(ctx context.Context, run *Run) error {
-			for _, it := range run.Items() {
-				if it.State == ItemPending {
-					run.Finish(it.Seq, ItemDone, nil)
-				}
+		}
+		return nil
+	}})
+	Elevates("elevatable", func(ctx context.Context, run *Run) error {
+		for _, it := range run.Items() {
+			if it.State == ItemPending {
+				run.Finish(it.Seq, ItemDone, nil)
 			}
-			return nil
-		},
+		}
+		return nil
 	})
 }
 
@@ -62,7 +62,7 @@ func TestOnlyKindsThatKnowHowGoOnWithAdministratorRights(t *testing.T) {
 	j := e.submit(t, "test", name, 1)
 	e.waitState(t, j.ID, Failed)
 	if _, err := e.m.Elevate(j.ID); err == nil {
-		t.Fatal("a kind without Elevate went on")
+		t.Fatal("a kind without an elevation went on")
 	}
 }
 

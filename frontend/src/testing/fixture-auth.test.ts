@@ -55,31 +55,31 @@ describe('fixture sign in', () => {
 
 describe('fixture share links', () => {
   it('keeps the folder behind its password', async () => {
-    expect((await api('GET', '/s/k3x9qa-urlaub')).body).toEqual({ slug: 'k3x9qa-urlaub', locked: true });
-    expect((await api('GET', '/s/k3x9qa-urlaub/list')).status).toBe(401);
-    expect((await api('POST', '/s/k3x9qa-urlaub/unlock', { password: 'regen' })).status).toBe(403);
-    const { token } = (await api('POST', '/s/k3x9qa-urlaub/unlock', { password: 'sonnenschein' })).body;
-    const open = (await api('GET', '/s/k3x9qa-urlaub', undefined, { 'X-Share-Token': token })).body;
+    expect((await api('GET', '/s/k3x9-urlaub')).body).toEqual({ slug: 'k3x9-urlaub', locked: true });
+    expect((await api('GET', '/s/k3x9-urlaub/list')).status).toBe(401);
+    expect((await api('POST', '/s/k3x9-urlaub/unlock', { password: 'regen' })).status).toBe(403);
+    const { token } = (await api('POST', '/s/k3x9-urlaub/unlock', { password: 'sonnenschein' })).body;
+    const open = (await api('GET', '/s/k3x9-urlaub', undefined, { 'X-Share-Token': token })).body;
     expect(open).toMatchObject({ locked: false, kind: 'folder', name: 'Urlaub 2026', uploads: true });
     expect(open.message).toContain('Urlaub');
-    const list = (await api('GET', '/s/k3x9qa-urlaub/list?path=/', undefined, { 'X-Share-Token': token })).body;
+    const list = (await api('GET', '/s/k3x9-urlaub/list?path=/', undefined, { 'X-Share-Token': token })).body;
     expect(list.items.map((k: { name: string }) => k.name)).toEqual(['Abends', 'Berge.jpg', 'Reiseplan.md', 'Strand.jpg']);
-    const zip = await api('GET', '/s/k3x9qa-urlaub/raw?path=/&download=1', undefined, { 'X-Share-Token': token });
+    const zip = await api('GET', '/s/k3x9-urlaub/raw?path=/&download=1', undefined, { 'X-Share-Token': token });
     expect(String.fromCharCode(...(zip.body as Uint8Array).slice(0, 2))).toBe('PK');
   });
 
   it('takes an upload in chunks and numbers a name that is taken', async () => {
-    const { token } = (await api('POST', '/s/k3x9qa-urlaub/unlock', { password: 'sonnenschein' })).body;
+    const { token } = (await api('POST', '/s/k3x9-urlaub/unlock', { password: 'sonnenschein' })).body;
     const h = { 'X-Share-Token': token };
-    const up = (await api('POST', '/s/k3x9qa-urlaub/upload', { path: '/', name: 'Berge.jpg', size: 300 * 1024 }, h)).body;
+    const up = (await api('POST', '/s/k3x9-urlaub/upload', { path: '/', name: 'Berge.jpg', size: 300 * 1024 }, h)).body;
     expect(up).toMatchObject({ state: 'open', offset: 0 });
     let state = up;
     while (state.state === 'open') {
       const chunk = new Blob([new Uint8Array(Math.min(state.chunk, state.size - state.offset))]);
-      state = (await api('PUT', `/s/k3x9qa-urlaub/upload/${up.id}`, chunk, { ...h, 'Content-Type': 'application/octet-stream', 'Upload-Offset': String(state.offset) })).body;
+      state = (await api('PUT', `/s/k3x9-urlaub/upload/${up.id}`, chunk, { ...h, 'Content-Type': 'application/octet-stream', 'Upload-Offset': String(state.offset) })).body;
     }
     expect(state.state).toBe('done');
-    const names = (await api('GET', '/s/k3x9qa-urlaub/list?path=/', undefined, h)).body.items.map((k: { name: string }) => k.name);
+    const names = (await api('GET', '/s/k3x9-urlaub/list?path=/', undefined, h)).body.items.map((k: { name: string }) => k.name);
     expect(names).toContain('Berge (2).jpg');
   });
 
