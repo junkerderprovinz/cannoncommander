@@ -6,13 +6,13 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
-	"syscall"
 	"time"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
 )
 
 // recycleBin is the Windows Recycle Bin. Every fixed drive keeps one folder
@@ -245,11 +245,6 @@ const (
 // it in the Recycle Bin. The shell shows nothing except its warning when an
 // item is too big for the Recycle Bin and would be gone for good.
 func shellRecycle(path string) error {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-	if err := windows.CoInitializeEx(0, windows.COINIT_APARTMENTTHREADED); err == nil || errors.Is(err, syscall.Errno(1)) {
-		defer windows.CoUninitialize()
-	}
 	from, err := windows.UTF16FromString(path)
 	if err != nil {
 		return err
@@ -260,7 +255,12 @@ func shellRecycle(path string) error {
 		from:  &from[0],
 		flags: fofAllowUndo | fofNoConfirmation | fofSilent | fofNoErrorUI | fofWantNukeWarning,
 	}
-	r, _, _ := procSHFileOperationW.Call(uintptr(unsafe.Pointer(&op)))
+	var r uintptr
+	winshell.Apartment(func() error {
+		op.hwnd = uintptr(winshell.Owner())
+		r, _, _ = procSHFileOperationW.Call(uintptr(unsafe.Pointer(&op)))
+		return nil
+	})
 	if op.aborted != 0 {
 		return ErrCancelled
 	}

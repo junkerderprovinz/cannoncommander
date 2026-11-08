@@ -5,13 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"runtime"
-	"syscall"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/sysbin"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
 )
 
 func init() {
@@ -61,11 +60,6 @@ func launchHelper(_ context.Context, port int, secret []byte) (func() error, err
 	if err != nil {
 		return nil, err
 	}
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-	if err := windows.CoInitializeEx(0, windows.COINIT_APARTMENTTHREADED); err == nil || errors.Is(err, syscall.Errno(1)) {
-		defer windows.CoUninitialize()
-	}
 	verb, _ := windows.UTF16PtrFromString("runas")
 	file, err := windows.UTF16PtrFromString(exe)
 	if err != nil {
@@ -74,10 +68,17 @@ func launchHelper(_ context.Context, port int, secret []byte) (func() error, err
 	params, _ := windows.UTF16PtrFromString(fmt.Sprintf("--elevated %d:%x", port, secret))
 	info := shellExecuteInfo{mask: seeMaskNoCloseProcess | seeMaskNoAsync | seeMaskFlagNoUI, verb: verb, file: file, params: params, show: windows.SW_HIDE}
 	info.size = uint32(unsafe.Sizeof(info))
-	if ok, _, err := procShellExecuteExW.Call(uintptr(unsafe.Pointer(&info))); ok == 0 {
-		if errors.Is(err, windows.ERROR_CANCELLED) {
-			return nil, ErrDeclined
+	err = winshell.Apartment(func() error {
+		info.hwnd = uintptr(winshell.Owner())
+		if ok, _, err := procShellExecuteExW.Call(uintptr(unsafe.Pointer(&info))); ok == 0 {
+			return err
 		}
+		return nil
+	})
+	if errors.Is(err, windows.ERROR_CANCELLED) {
+		return nil, ErrDeclined
+	}
+	if err != nil {
 		return nil, err
 	}
 	if info.process == 0 {
