@@ -77,4 +77,15 @@ describe('the head', () => {
     expect(layout().textContent).toContain('Ein Fenster');
     expect(layout().dataset.run).toBe('dual');
   });
+
+  it('wears the same look in both layouts, since its words already say which one shows', async () => {
+    // The width stage follows the length of the words, which is not what the look is about.
+    const look = (sel: string) => [...document.querySelector(sel)!.classList].filter((c) => !/^(head-layout|glim-btn-(xs|sm|md|lg))$/.test(c)).sort().join(' ');
+    for (const dual of [true, false]) {
+      prefs.dual = dual;
+      await nextTick();
+      expect(document.querySelector('.head .head-layout')!.hasAttribute('aria-pressed')).toBe(false);
+      expect(look('.head .head-layout')).toBe(look('.head [data-run="settings"]'));
+    }
+  });
 });

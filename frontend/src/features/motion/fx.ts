@@ -2,6 +2,7 @@
 // nothing in it that takes a click. Every piece reads its numbers from the level's dials in motion.css and takes
 // itself away when its animation ends, so a quick level and a slow one leave the page the same.
 import { glyph } from '@/core/glyphs';
+import { type Blast, type Burst, burst, type Picture, splinters } from './burst';
 
 type Vars = Record<string, string | number>;
 interface Point { x: number; y: number }
@@ -127,119 +128,27 @@ export function flyBall(ball: SVGGraphicsElement, from: number, to: number) {
   return shot;
 }
 
-export interface Shard {
-  /** The corners, in percent of the box. */
-  poly: [number, number][];
-  /** The middle of the corners, in percent of the box. */
-  centre: [number, number];
-  /** One unit long, from the strike towards the shard. */
-  out: [number, number];
-  /** How far from the strike, from 0 to 1 for the farthest shard. */
-  dist: number;
-}
-
-// Cracks a w by h box the way a pane breaks where a stone hits it: rays run from the strike to the edge, two jagged
-// rings cross them, and every cell between them is a shard. The cells fill the box exactly, so the pieces still look
-// like the element in the moment it breaks. The strike moves a little inside, where rays can leave it on every side.
-export function shards(w: number, h: number, at: Point, rand = Math.random): Shard[] {
-  const ix = Math.min(8, w * 0.12), iy = Math.min(8, h * 0.12);
-  const P = { x: Math.min(w - ix, Math.max(ix, at.x)), y: Math.min(h - iy, Math.max(iy, at.y)) };
-  const n = Math.max(8, Math.min(14, Math.round((w + h) / 12))), step = (2 * Math.PI) / n, turn = rand() * step;
-  const angles = Array.from({ length: n }, (_, i) => turn + i * step + (rand() - 0.5) * step * 0.6);
-  const rays = angles.map((a) => {
-    const ux = Math.cos(a), uy = Math.sin(a);
-    const reach = Math.min(ux > 0 ? (w - P.x) / ux : ux < 0 ? -P.x / ux : Infinity, uy > 0 ? (h - P.y) / uy : uy < 0 ? -P.y / uy : Infinity);
-    return [0.22 + rand() * 0.2, 0.55 + rand() * 0.22, 1].map((f): [number, number] => [P.x + ux * reach * f, P.y + uy * reach * f]);
-  });
-  const corners: [number, number][] = [[0, 0], [w, 0], [w, h], [0, h]];
-  const past = (from: number, a: number) => (((a - from) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-  const cells = rays.flatMap((ray, i) => {
-    const next = rays[(i + 1) % n]!, from = angles[i]!, gap = past(from, angles[(i + 1) % n]!);
-    const between = corners.map((c) => ({ c, a: past(from, Math.atan2(c[1] - P.y, c[0] - P.x)) }))
-      .filter(({ a }) => a > 0 && a < gap).sort((x, y) => x.a - y.a).map(({ c }) => c);
-    return [
-      [[P.x, P.y], ray[0]!, next[0]!],
-      [ray[0]!, ray[1]!, next[1]!, next[0]!],
-      [ray[1]!, ray[2]!, ...between, next[2]!, next[1]!],
-    ] as [number, number][][];
-  });
-  const middles = cells.map((c) => [c.reduce((s, p) => s + p[0], 0) / c.length, c.reduce((s, p) => s + p[1], 0) / c.length] as const);
-  const far = Math.max(...middles.map(([x, y]) => Math.hypot(x - P.x, y - P.y)));
-  return cells.map((c, k) => {
-    const [x, y] = middles[k]!, d = Math.hypot(x - P.x, y - P.y) || 1;
-    return {
-      poly: c.map(([px, py]): [number, number] => [(px / w) * 100, (py / h) * 100]),
-      centre: [(x / w) * 100, (y / h) * 100],
-      out: [(x - P.x) / d, (y - P.y) / d],
-      dist: d / far,
-    };
-  });
-}
-const HOOK = /^(id|tabindex|data-(run|go-view|account|all-menus|menu|tip))$/;
-const bare = (node: Element) => {
-  for (const n of [node, ...node.querySelectorAll('*')]) for (const { name } of [...n.attributes]) if (HOOK.test(name)) n.removeAttribute(name);
-  return node as HTMLElement;
-};
-
-// The shards fly over the whole page, above everything on it. They lie inside a copy of the head that draws no box
-// of its own, so the copies they are cut from still take the head's styles.
-export function shardLayer(head: Element) {
+// The splinters fly over the whole page, above everything on it, on a canvas in a layer of their own.
+export function shardLayer() {
   const layer = document.createElement('div');
   layer.className = 'fx-shards';
   layer.setAttribute('aria-hidden', 'true');
-  layer.inert = true;
-  const frame = bare(head.cloneNode(false) as Element);
-  frame.style.display = 'contents';
-  layer.append(frame);
   document.body.append(layer);
-  return { layer, frame };
-}
-
-// A copy of the element that still finds its place in the head's styles: its parents come along as boxes that draw
-// nothing, and the hooks that tests and handlers look for stay behind.
-function lookalike(el: Element, head: Element, r: DOMRect) {
-  const copy = bare(el.cloneNode(true) as Element);
-  copy.classList.remove('fx-rebuild');
-  Object.assign(copy.style, { position: 'absolute', left: '0', top: '0', width: `${r.width}px`, height: `${r.height}px`, margin: '0' });
-  let top: Element = copy;
-  for (let p = el.parentElement; p && p !== head; p = p.parentElement) {
-    const shell = bare(p.cloneNode(false) as Element);
-    shell.style.display = 'contents';
-    shell.append(top);
-    top = shell;
-  }
-  return top;
+  return { layer, flight: burst(layer) };
 }
 
 // Breaks an element of the head where the ball strikes it, at the height `y` on the side it comes from: a short flash
-// and a puff of dust there, and the element bursts into shards that keep the ball's momentum, each a little more or
-// less of it, and fly away from the strike as well, turn and fall. The element itself stays where it is; the caller
-// hides it while its shards are about.
-export function shatter(el: Element, head: Element, into: Element, dir: number, y: number, rand = Math.random) {
-  const r = el.getBoundingClientRect();
+// and a puff of dust there, and the picture of the element bursts into splinters that the blast throws out and the
+// ball carries on. The element itself stays where it is; the caller hides it while its splinters are about.
+export function shatter(el: Element, pic: Picture | null, flight: Burst, dir: number, y: number, b: Blast, rand = Math.random) {
+  const r = el.getBoundingClientRect(), into = flight.canvas.parentElement!;
   const strike = { x: dir > 0 ? r.left : r.right, y: Math.min(r.bottom, Math.max(r.top, y)) };
   const size = Math.max(14, Math.min(r.height, 40) * 0.7);
-  const bits = shards(r.width, r.height, { x: strike.x - r.left, y: strike.y - r.top }, rand).map((s) => {
-    const fall = document.createElement('div');
-    fall.className = 'fx-shard-fall';
-    fall.style.clipPath = `polygon(${s.poly.map(([px, py]) => `${px.toFixed(1)}% ${py.toFixed(1)}%`).join(', ')})`;
-    fall.style.transformOrigin = `${s.centre[0].toFixed(1)}% ${s.centre[1].toFixed(1)}%`;
-    fall.append(lookalike(el, head, r));
-    const [ux, uy] = s.out;
-    return piece('fx-shard', {
-      left: r.left, top: r.top, width: r.width, height: r.height,
-      '--fx-carry': String(dir * (0.4 + rand() * 0.7 + (1 - s.dist) * 0.4)),
-      '--fx-sx': String(dir * rand() * 0.4 + ux * (0.5 + rand() * 0.6)),
-      '--fx-sy': String(0.4 + rand() * 0.8 + Math.max(0, uy) * 0.6),
-      '--fx-kick': String(Math.max(0, -uy) * 0.9 + rand() * 0.5),
-      '--fx-sr': String((rand() * 2 - 1) * (1.6 - s.dist)),
-      '--fx-d': String(s.dist),
-    }, fall, into);
-  });
+  if (pic) flight.hit(pic, r.left, r.top, strike, splinters(r.width, r.height, { x: strike.x - r.left, y: strike.y - r.top }, dir, b, rand), dir, b, rand);
   const flash = piece('fx-impact', { left: strike.x, top: strike.y, '--fx-size': size }, '', into);
   const dust = [0, 1, 2, 3].map((i) => piece('fx-dust', {
     left: strike.x, top: strike.y, '--fx-size': size * (0.6 + rand() * 0.4), '--fx-i': String(i),
     '--fx-gx': String(dir * (0.3 + rand() * 0.8)), '--fx-gy': String(rand() * 1.2 - 0.8),
   }, '', into));
-  return [...bits, flash, ...dust];
+  return [flash, ...dust];
 }

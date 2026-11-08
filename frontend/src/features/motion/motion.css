@@ -133,17 +133,6 @@
   92% { opacity: 1; }
   to { translate: var(--fx-dx) 0; opacity: 0; }
 }
-/* A shard flies on with the ball's momentum and away from the strike at a falling pace, and on its own it first jumps
-   a little, the more the higher it broke off, and then drops, turning about its own middle. */
-@keyframes fx-shard-x {
-  70% { opacity: 1; }
-  to { translate: calc(var(--fx-carry, 0) * var(--motion-shard-carry, 180px) + var(--fx-sx) * var(--motion-shard-spread, 60px)) 0; opacity: 0; }
-}
-@keyframes fx-shard-y {
-  from { animation-timing-function: cubic-bezier(.33, .66, .66, 1); }
-  22% { translate: 0 calc(var(--fx-kick) * var(--motion-shard-fall, 160px) * -.25); animation-timing-function: cubic-bezier(.4, 0, .9, .5); }
-  to { translate: 0 calc(var(--fx-sy) * var(--motion-shard-fall, 160px)); rotate: calc(var(--fx-sr) * var(--motion-shard-spin, 140deg)); scale: .85; }
-}
 /* The blast runs through the whole window: a hard jolt, then smaller and smaller ones until it is still. */
 @keyframes fx-quake {
   10% { transform: translate(calc(var(--motion-quake-dist, 4px) * -.6), var(--motion-quake-dist, 4px)); }
@@ -288,10 +277,8 @@
     background: linear-gradient(90deg, transparent, var(--fx-fire-yellow) 55%, var(--fx-fire-core));
     animation: fx-flicker var(--motion-trail-flicker, 70ms) ease-in-out infinite alternate;
   }
-  /* Above the menus and windows too, since a shard flies wherever the blast throws it. */
+  /* Above the menus and windows too, since a splinter flies wherever the blast throws it. */
   .fx-shards { display: block; position: fixed; inset: 0; z-index: 100; pointer-events: none; overflow: hidden; }
-  .fx-shards :is(.fx-shard, .fx-impact, .fx-dust) { position: absolute; }
-  /* The pieces nearest the strike leave first, so the burst spreads from where the ball hit. */
-  .fx-shard { animation: fx-shard-x var(--motion-shard-dur, 1.2s) cubic-bezier(.15, .7, .4, 1) both; animation-delay: calc(var(--fx-d, 0) * var(--motion-stagger-step, 30ms)); }
-  .fx-shard-fall { position: absolute; inset: 0; animation: fx-shard-y var(--motion-shard-dur, 1.2s) both; animation-delay: inherit; }
+  .fx-shards :is(.fx-impact, .fx-dust) { position: absolute; }
+  .fx-burst { position: absolute; inset: 0; width: 100%; height: 100%; }
 }

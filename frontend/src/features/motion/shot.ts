@@ -1,10 +1,11 @@
 // The long press on the header logo: the cannon trembles harder and harder while its ball rolls back into the barrel,
 // then it fires with a flash and a cloud of smoke that shake the whole window, and the ball crosses the head and
-// bursts everything it strikes, its shards flying on over the page. Then the head puts itself together again. Nothing
+// bursts everything it strikes into splinters that fly on over the page. Then the head puts itself together again. Nothing
 // of the app's state is touched, and whatever ends the shot early puts the head back at once, so it cannot be left
 // broken.
 import { dialMs, moving } from '@/core/motion';
 import { quietTips } from '@/core/tips';
+import { type Blast, blastOf, paint } from './burst';
 import { HOLD, holdPress } from './cues';
 import { flyBall, gunSmoke, muzzleFlash, replay, shardLayer, shatter } from './fx';
 
@@ -20,6 +21,10 @@ export const timesOf = (): Times => ({
 
 const shown = (el: Element) => el.getClientRects().length > 0;
 
+// Splinters in flight at once over the whole shot, however many elements the head holds, so a wide head at the storm
+// still draws smoothly.
+const MOST = 1500;
+
 // The menu bar breaks title by title, everything else as one piece.
 const targets = (head: Element) => [...head.children]
   .flatMap((el) => (el.matches('.brand, .spacer') ? [] : el.matches('.menubar') ? [...el.querySelectorAll('.glim-menubar-item')] : [el]))
@@ -29,7 +34,7 @@ let stop: (() => void) | null = null;
 
 export const stopShot = () => stop?.();
 
-export function fire(head: HTMLElement, times = timesOf()): boolean {
+export function fire(head: HTMLElement, times = timesOf(), blast: Blast = blastOf()): boolean {
   if (stop) return true;
   const logo = head.querySelector('.brand-logo'), cannon = logo?.querySelector('.brand-cannon'), rest = logo?.querySelector<SVGSVGElement>('.brand-ball');
   const ball = rest?.querySelector<SVGGraphicsElement>(':scope > g'), barrel = cannon?.firstElementChild;
@@ -37,10 +42,14 @@ export function fire(head: HTMLElement, times = timesOf()): boolean {
 
   const timers: ReturnType<typeof setTimeout>[] = [], pieces: Element[] = [], hit: Element[] = [];
   const later = (ms: number, fn: () => void) => timers.push(setTimeout(fn, ms));
-  const { layer, frame } = shardLayer(head), app = head.closest('.app');
+  const { layer, flight } = shardLayer(), app = head.closest('.app');
+  // Painted while nothing in the head moves yet, and in time for a glyph's image to load.
+  const struck = targets(head), art = new Map(struck.map((el) => [el, paint(el)]));
+  const blow = { ...blast, count: Math.min(blast.count, Math.floor(MOST / struck.length)) };
 
   stop = () => {
     timers.forEach(clearTimeout);
+    flight.stop();
     for (const el of [layer, ...pieces]) el.remove();
     app?.classList.remove('fx-quake');
     for (const el of [...hit, cannon, rest, logo, ...head.querySelectorAll('.fx-shattered, .fx-rebuild')]) el.classList.remove('fx-shattered', 'fx-rebuild', 'fx-tremble', 'fx-loading', 'fx-kick', 'fx-fired');
@@ -75,12 +84,12 @@ export function fire(head: HTMLElement, times = timesOf()): boolean {
     const end = dir > 0 ? h.right + b.width : h.left - b.width;
     pieces.push(flyBall(ball, from, end - (lead - from)), ...gunSmoke({ x: mouth, y }, b.height * 1.3, dir), muzzleFlash({ x: mouth, y }, b.height, dir));
 
-    for (const el of targets(head)) {
+    for (const el of struck) {
       const r = el.getBoundingClientRect();
       const reach = Math.max(0, ((dir > 0 ? r.left : r.right) - lead) * dir) / Math.abs(end - lead);
       later(times.shot * reach, () => {
         if (!el.isConnected) return;
-        pieces.push(...shatter(el, head, frame, dir, y));
+        pieces.push(...shatter(el, art.get(el) ?? null, flight, dir, y, blow));
         el.classList.add('fx-shattered');
         hit.push(el);
       });
@@ -93,7 +102,8 @@ export function fire(head: HTMLElement, times = timesOf()): boolean {
       }));
       logo.classList.remove('fx-fired');
       replay(rest, 'fx-rebuild');
-      later(times.rebuild + hit.length * times.step, () => stop?.());
+      // The layer stays until the last splinter has landed, which on a long flight is after the head is whole again.
+      later(Math.max(times.rebuild + hit.length * times.step, (blow.life + blow.lag) * 1000 - times.wait), () => stop?.());
     });
   });
   return true;

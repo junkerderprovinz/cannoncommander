@@ -42,9 +42,6 @@ svg { display: block; }
 
 .count { min-width: 1.25rem; height: 1.25rem; padding: 0 .35rem; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-contrast); font-size: 12px; display: inline-grid; place-items: center; }
 .count.idle { background: var(--carbon-surface3); color: var(--carbon-text); }
-/* The head's buttons are one family: GlimStone's Button, filled and round, at the head's height. The layout button
-   washes in the accent while it is pressed, as GlimStone's IconButton does. */
-.head .glim-btn[aria-pressed="true"] { background-color: var(--accent-soft); color: var(--accent-glyph); }
 .avatar .initials { font-size: 13px; font-weight: 700; line-height: 1; }
 /* The jobs live in the avatar's menu, so the avatar wears their count in its corner while any run. */
 .head .avatar { position: relative; overflow: visible; }

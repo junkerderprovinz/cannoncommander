@@ -43,8 +43,8 @@ function account(e: MouseEvent) {
     '-', 'logout',
   ]);
 }
-// One button for the layout: its glyph and its words name the layout that shows, the bubble says what a press does,
-// and it stays pressed while both panels show.
+// One button for the layout: its glyph and its words name the layout that shows and the bubble says what a press does.
+// It is not a pressed toggle, since its name already changes with the layout and a reader would hear the state twice.
 const layout = computed(() => (prefs.dual
   ? { id: 'single', label: t('actions.dual'), glyph: 'IconPaneTwo', tip: t('head.toSingle') }
   : { id: 'dual', label: t('actions.single'), glyph: 'IconPaneOne', tip: t('head.toDual') }));
@@ -62,7 +62,7 @@ const layout = computed(() => (prefs.dual
     </template>
     <Button v-else class="hback" :label="t('head.back')" label-key="IconBack" data-go-view="files" :title="t('head.backTip')" @click="go('files')" />
     <span class="spacer"></span>
-    <Button v-if="files" class="head-layout" :compact-below="900" :label="layout.label" :label-key="null" :glyph="glyphComponent(layout.glyph)" :title="layout.tip" :aria-pressed="prefs.dual" :data-run="layout.id" @click="run(layout.id)" />
+    <Button v-if="files" class="head-layout" :compact-below="900" :label="layout.label" :label-key="null" :glyph="glyphComponent(layout.glyph)" :title="layout.tip" :data-run="layout.id" @click="run(layout.id)" />
     <Button :compact-below="900" :label="t('head.settings')" label-key="IconGear" data-run="settings" @click="run('settings')" />
     <Button class="avatar" compact :label="user.me.full" :label-key="null" :glyph="Initials" :title="shell.jobCount ? plural(shell.jobCount, 'head.running') : undefined" data-account @click="account"><template #after><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }" aria-hidden="true">{{ shell.jobCount }}</span></template></Button>
   </header>

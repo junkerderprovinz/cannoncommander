@@ -43,8 +43,9 @@
        how far it shakes and how far it rocks at the end, its kick back, the flash at the muzzle and where the ball
        strikes (how long and how big), the cloud of smoke (how long, how much it swells and how far it drifts), the
        ball's way across the head and its trail of fire (how many balls long, and how fast it flickers), the shake
-       of the whole window as it fires (how long and how far), the shards of what it breaks (how long, how far they
-       fall, how far they fly apart, how far the ball's momentum carries them and how much they turn), the dust
+       of the whole window as it fires (how long and how far), the splinters of what it breaks (how long they fly, how
+       far they fall, how far the blast throws them, how far the ball's momentum carries them, how much they turn,
+       and how many pieces one element breaks into), the dust
        where it strikes (how long and how far it flies), and the pause before the head puts itself together and
        how long that takes. */
     --motion-tremble-dur: 1.2s;
@@ -62,11 +63,12 @@
     --motion-trail-flicker: 70ms;
     --motion-quake-dur: 360ms;
     --motion-quake-dist: 4px;
-    --motion-shard-dur: 1.2s;
-    --motion-shard-fall: 160px;
-    --motion-shard-spread: 60px;
-    --motion-shard-carry: 180px;
-    --motion-shard-spin: 140deg;
+    --motion-shard-dur: 1.6s;
+    --motion-shard-fall: 420px;
+    --motion-shard-spread: 380px;
+    --motion-shard-carry: 300px;
+    --motion-shard-spin: 720deg;
+    --motion-shard-count: 90;
     --motion-dust-dur: 650ms;
     --motion-dust-drift: 22px;
     --motion-rebuild-wait: 1.1s;
@@ -117,11 +119,12 @@
     --motion-trail-flicker: 120ms;
     --motion-quake-dur: 180ms;
     --motion-quake-dist: 1.5px;
-    --motion-shard-dur: 600ms;
-    --motion-shard-fall: 30px;
-    --motion-shard-spread: 12px;
-    --motion-shard-carry: 40px;
-    --motion-shard-spin: 20deg;
+    --motion-shard-dur: 800ms;
+    --motion-shard-fall: 60px;
+    --motion-shard-spread: 70px;
+    --motion-shard-carry: 60px;
+    --motion-shard-spin: 180deg;
+    --motion-shard-count: 28;
     --motion-dust-dur: 400ms;
     --motion-dust-drift: 8px;
     --motion-rebuild-wait: 450ms;
@@ -178,6 +181,7 @@
     --motion-shard-spread: 0px;
     --motion-shard-carry: 0px;
     --motion-shard-spin: 0deg;
+    --motion-shard-count: 0;
     --motion-dust-dur: 0s;
     --motion-dust-drift: 0px;
     --motion-rebuild-wait: 0s;
@@ -227,11 +231,12 @@
     --motion-trail-flicker: 50ms;
     --motion-quake-dur: 520ms;
     --motion-quake-dist: 8px;
-    --motion-shard-dur: 1.8s;
-    --motion-shard-fall: 320px;
-    --motion-shard-spread: 140px;
-    --motion-shard-carry: 360px;
-    --motion-shard-spin: 320deg;
+    --motion-shard-dur: 2.4s;
+    --motion-shard-fall: 720px;
+    --motion-shard-spread: 760px;
+    --motion-shard-carry: 560px;
+    --motion-shard-spin: 1260deg;
+    --motion-shard-count: 180;
     --motion-dust-dur: 900ms;
     --motion-dust-drift: 40px;
     --motion-rebuild-wait: 1.6s;
