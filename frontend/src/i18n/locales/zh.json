@@ -3024,6 +3024,7 @@
     "forward": "前进",
     "up": "上一级",
     "home": "转到 Share",
+    "homeFolder": "转到个人文件夹",
     "gotoPath": "输入路径",
     "selectAll": "全选",
     "invertSel": "反向选择",

@@ -14,3 +14,6 @@ export async function loadHost() {
 // The top of every path, named the way the system names it: the server, or this PC on Windows and the computer
 // elsewhere.
 export const rootName = () => t(!host.desktop ? 'files.server' : host.os === 'windows' ? 'files.thisPc' : 'files.computer');
+
+// In the desktop app on Windows a path reads C:\Users, as everywhere else on that computer.
+export const windowsPaths = () => host.desktop && host.os === 'windows';

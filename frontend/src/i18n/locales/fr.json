@@ -3280,6 +3280,7 @@
     "forward": "Suivant",
     "up": "Remonter d'un niveau",
     "home": "Vers les Shares",
+    "homeFolder": "Vers le dossier personnel",
     "gotoPath": "Saisir un chemin",
     "selectAll": "Tout sélectionner",
     "invertSel": "Inverser la sélection",
