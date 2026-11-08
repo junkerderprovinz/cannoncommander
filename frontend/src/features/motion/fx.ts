@@ -175,14 +175,29 @@ export function shards(w: number, h: number, at: Point, rand = Math.random): Sha
     };
   });
 }
+const HOOK = /^(id|tabindex|data-(run|go-view|account|all-menus|menu|tip))$/;
+const bare = (node: Element) => {
+  for (const n of [node, ...node.querySelectorAll('*')]) for (const { name } of [...n.attributes]) if (HOOK.test(name)) n.removeAttribute(name);
+  return node as HTMLElement;
+};
+
+// The shards fly over the whole page, above everything on it. They lie inside a copy of the head that draws no box
+// of its own, so the copies they are cut from still take the head's styles.
+export function shardLayer(head: Element) {
+  const layer = document.createElement('div');
+  layer.className = 'fx-shards';
+  layer.setAttribute('aria-hidden', 'true');
+  layer.inert = true;
+  const frame = bare(head.cloneNode(false) as Element);
+  frame.style.display = 'contents';
+  layer.append(frame);
+  document.body.append(layer);
+  return { layer, frame };
+}
+
 // A copy of the element that still finds its place in the head's styles: its parents come along as boxes that draw
 // nothing, and the hooks that tests and handlers look for stay behind.
-const HOOK = /^(id|tabindex|data-(run|go-view|account|all-menus|menu|tip))$/;
 function lookalike(el: Element, head: Element, r: DOMRect) {
-  const bare = (node: Element) => {
-    for (const n of [node, ...node.querySelectorAll('*')]) for (const { name } of [...n.attributes]) if (HOOK.test(name)) n.removeAttribute(name);
-    return node as HTMLElement;
-  };
   const copy = bare(el.cloneNode(true) as Element);
   copy.classList.remove('fx-rebuild');
   Object.assign(copy.style, { position: 'absolute', left: '0', top: '0', width: `${r.width}px`, height: `${r.height}px`, margin: '0' });
@@ -197,9 +212,10 @@ function lookalike(el: Element, head: Element, r: DOMRect) {
 }
 
 // Breaks an element of the head where the ball strikes it, at the height `y` on the side it comes from: a short flash
-// and a puff of dust there, and the element bursts into shards that fly on the way the ball went and away from the
-// strike, turn and fall. The element itself stays where it is; the caller hides it while its shards are about.
-export function shatter(el: Element, into: Element, dir: number, y: number, rand = Math.random) {
+// and a puff of dust there, and the element bursts into shards that keep the ball's momentum, each a little more or
+// less of it, and fly away from the strike as well, turn and fall. The element itself stays where it is; the caller
+// hides it while its shards are about.
+export function shatter(el: Element, head: Element, into: Element, dir: number, y: number, rand = Math.random) {
   const r = el.getBoundingClientRect();
   const strike = { x: dir > 0 ? r.left : r.right, y: Math.min(r.bottom, Math.max(r.top, y)) };
   const size = Math.max(14, Math.min(r.height, 40) * 0.7);
@@ -208,11 +224,12 @@ export function shatter(el: Element, into: Element, dir: number, y: number, rand
     fall.className = 'fx-shard-fall';
     fall.style.clipPath = `polygon(${s.poly.map(([px, py]) => `${px.toFixed(1)}% ${py.toFixed(1)}%`).join(', ')})`;
     fall.style.transformOrigin = `${s.centre[0].toFixed(1)}% ${s.centre[1].toFixed(1)}%`;
-    fall.append(lookalike(el, into.parentElement!, r));
+    fall.append(lookalike(el, head, r));
     const [ux, uy] = s.out;
     return piece('fx-shard', {
       left: r.left, top: r.top, width: r.width, height: r.height,
-      '--fx-sx': String(dir * (0.35 + rand() * 0.6) + ux * (0.5 + rand() * 0.6)),
+      '--fx-carry': String(dir * (0.4 + rand() * 0.7 + (1 - s.dist) * 0.4)),
+      '--fx-sx': String(dir * rand() * 0.4 + ux * (0.5 + rand() * 0.6)),
       '--fx-sy': String(0.4 + rand() * 0.8 + Math.max(0, uy) * 0.6),
       '--fx-kick': String(Math.max(0, -uy) * 0.9 + rand() * 0.5),
       '--fx-sr': String((rand() * 2 - 1) * (1.6 - s.dist)),

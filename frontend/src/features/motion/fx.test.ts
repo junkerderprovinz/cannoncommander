@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { shards } from './fx';
+import { shards, shatter } from './fx';
 
 const area = (poly: [number, number][]) => Math.abs(poly.reduce((sum, [x, y], i) => {
   const [nx, ny] = poly[(i + 1) % poly.length]!;
@@ -49,5 +49,34 @@ describe('the shards of a broken element', () => {
       const out = [(cx / 100) * W - AT.x, (cy / 100) * H - AT.y];
       expect(out[0]! * s.out[0] + out[1]! * s.out[1]).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('the burst of a struck element', () => {
+  const struck = () => {
+    document.body.innerHTML = '<header class="head"><nav><button>Datei</button></nav></header><div class="layer"></div>';
+    const el = document.querySelector('button')!;
+    el.getBoundingClientRect = () => ({ left: 200, right: 290, top: 10, bottom: 46, width: 90, height: 36, x: 200, y: 10, toJSON() {} }) as DOMRect;
+    return { el, head: document.querySelector('.head')!, into: document.querySelector('.layer')! };
+  };
+
+  for (const [way, dir] of [['right', 1], ['left', -1]] as const) {
+    it(`carries every shard on with the ball flying ${way}`, () => {
+      const { el, head, into } = struck();
+      shatter(el, head, into, dir, 25, seeded(9));
+      const carry = [...into.querySelectorAll<HTMLElement>('.fx-shard')].map((s) => parseFloat(s.style.getPropertyValue('--fx-carry')));
+      expect(carry.length).toBeGreaterThanOrEqual(24);
+      expect(carry.every((c) => Math.sign(c) === dir)).toBe(true);
+      // Some fly farther than others, so the burst spreads along the way.
+      expect(Math.max(...carry.map(Math.abs)) - Math.min(...carry.map(Math.abs))).toBeGreaterThan(0.3);
+    });
+  }
+
+  it('cuts the shards from copies that sit inside the head they came from', () => {
+    const { el, head, into } = struck();
+    shatter(el, head, into, 1, 25, seeded(9));
+    const copy = into.querySelector('.fx-shard nav button');
+    expect(copy?.textContent).toBe('Datei');
+    expect(head.querySelectorAll('button')).toHaveLength(1);
   });
 });
