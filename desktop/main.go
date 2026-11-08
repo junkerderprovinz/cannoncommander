@@ -225,6 +225,8 @@ func openWindow(app *application.App, state *stateStore) *application.WebviewWin
 		MinHeight:        520,
 		BackgroundColour: application.NewRGB(0x16, 0x16, 0x16),
 		URL:              "/",
+		// Files dropped from other programs reach the page with their paths.
+		EnableFileDrop: true,
 	}
 	if b.Width > 0 && b.Height > 0 {
 		opts.Width, opts.Height = b.Width, b.Height
