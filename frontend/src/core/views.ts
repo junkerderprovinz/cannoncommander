@@ -3,7 +3,7 @@ import { type Component, markRaw, reactive, shallowReactive } from 'vue';
 import { closeMenu } from './menu';
 import { prefs } from './prefs';
 
-// claims names the keys the view keeps for itself for now, before the key map gets them.
+// claims names the keys the view keeps for itself at the moment, before the key map gets them.
 export interface ViewDef { page?: boolean; component: Component; key?: (e: KeyboardEvent, combo: string) => void; claims?: (combo: string) => boolean }
 export const views = shallowReactive<Record<string, ViewDef>>({});
 export const view = reactive({ id: 'files', arg: undefined as unknown });

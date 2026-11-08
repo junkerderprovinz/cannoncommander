@@ -58,7 +58,7 @@ paths:
                       type: string
       responses:
         "200":
-          description: The switch as the computer has it now.
+          description: The switch as the computer has it after the change.
           content:
             application/json:
               schema:
