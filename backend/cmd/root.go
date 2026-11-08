@@ -48,18 +48,34 @@ func Start() {
 	if !keepGoing {
 		return
 	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-signalChan
+		logger.Info("Received shutdown signal. Shutting down gracefully...")
+		cancel()
+	}()
+	serve(ctx, dbExists, legacyEnv)
+	if system.RestartWanted() {
+		logger.Info("Starting again.")
+		if err := system.Restart(); err != nil {
+			logger.Fatalf("Could not start again: %v", err)
+		}
+	}
+}
+
+// serve runs the server until ctx ends and then shuts it down.
+func serve(ctx context.Context, dbExists bool, legacyEnv []string) {
 	system.ApplyStored(context.Background(), state.MainDB())
 	database := fmt.Sprintf("Using existing database  : %v", settings.Config.Server.DatabaseV2.Path)
 	if !dbExists {
 		database = fmt.Sprintf("Creating new database    : %v", settings.Config.Server.DatabaseV2.Path)
 	}
 
-	// Create context and channels for graceful shutdown
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
-
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
 	done := make(chan struct{})             // Signals server has stopped
 	shutdownComplete := make(chan struct{}) // Signals shutdown process is complete
@@ -130,13 +146,12 @@ func Start() {
 		}
 		close(done) // Signal that the server has stopped
 	}()
-	// Wait for a shutdown signal or the server to stop
+	// Wait for the end of ctx or for the server to stop
 	select {
-	case <-signalChan:
-		logger.Info("Received shutdown signal. Shutting down gracefully...")
-		cancel() // Trigger context cancellation
+	case <-ctx.Done():
 	case <-done:
 		logger.Info("Server stopped unexpectedly. Shutting down...")
+		cancel()
 	}
 
 	// Stop all indexing scanners before closing the database
@@ -157,12 +172,6 @@ func Start() {
 		logger.Warningf("failed to clear download spool on shutdown: %v", err)
 	}
 	logger.Info("Shutdown complete.")
-	if system.RestartWanted() {
-		logger.Info("Starting again.")
-		if err := system.Restart(); err != nil {
-			logger.Fatalf("Could not start again: %v", err)
-		}
-	}
 }
 
 func rootCMD(ctx context.Context, serverConfig *settings.Server, shutdownComplete chan struct{}) error {

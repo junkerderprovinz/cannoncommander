@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"os/exec"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -82,6 +84,7 @@ func Routes(r *v1.Router) {
 
 func bind(r *v1.Router, h *handlers) {
 	r.Handle("GET /terminal", h.open)
+	r.Handle("POST /terminal/native", h.openNative)
 }
 
 type handlers struct {
@@ -93,6 +96,9 @@ type handlers struct {
 	// idle is how long a terminal stays open without typing, every how
 	// often access is checked again while it is open.
 	idle, every time.Duration
+	// native picks the desktop's terminal program and launch starts it.
+	native func(kind, dir string) (launch, error)
+	launch func(launch) error
 }
 
 func newHandlers(deps v1.Deps, g Gate) *handlers {
@@ -109,6 +115,10 @@ func newHandlers(deps v1.Deps, g Gate) *handlers {
 		pool:  newPool(maxPerUser),
 		idle:  30 * time.Minute,
 		every: 5 * time.Second,
+		native: func(kind, dir string) (launch, error) {
+			return nativeTerminal(runtime.GOOS, kind, dir, os.Getenv("TERMINAL"), exec.LookPath)
+		},
+		launch: startNative,
 	}
 }
 

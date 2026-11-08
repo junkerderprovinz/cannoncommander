@@ -6,6 +6,8 @@
  *   frontend/public/icons/app-192.png, app-512.png the installed app (manifest, purpose any)
  *   frontend/public/icons/app-maskable-512.png     the tile inside the safe zone, for round and squircle masks
  *   frontend/public/icons/apple-touch-icon.png     180, on white, as iOS fills transparent corners with black
+ *   desktop/build/appicon.png                      1024, the desktop app, from which Wails makes the .ico and .icns
+ *   desktop/installer/icon.png                     256, the Linux menu entry the installer writes
  *
  * Deps (global): @resvg/resvg-js.
  * Run: node .github/assets/gen-icon.mjs
@@ -20,6 +22,7 @@ const require = createRequire(import.meta.url);
 const { Resvg } = require(`${execSync("npm root -g").toString().trim()}/@resvg/resvg-js`);
 const __dir = dirname(fileURLToPath(import.meta.url));
 const icons = join(__dir, "..", "..", "frontend", "public", "icons");
+const desktop = join(__dir, "..", "..", "desktop");
 
 const SRC = join(__dir, "cannoncommander-app.svg");
 const tile = readFileSync(SRC, "utf8");
@@ -47,6 +50,8 @@ copyFileSync(SRC, join(icons, "favicon.svg"));
 console.log(`wrote ${join(icons, "favicon.svg")}`);
 for (const size of [192, 512]) emit(join(icons, `app-${size}.png`), render(tile, size));
 emit(join(icons, "apple-touch-icon.png"), render(tile, 180, "#ffffff"));
+emit(join(desktop, "build", "appicon.png"), render(tile, 1024));
+emit(join(desktop, "installer", "icon.png"), render(tile, 256));
 
 // A mask keeps at least the circle of 40 % radius, so the whole tile goes into the square that circle holds.
 const S = 512, inner = Math.round(S * 0.8 / Math.SQRT2), at = (S - inner) / 2;

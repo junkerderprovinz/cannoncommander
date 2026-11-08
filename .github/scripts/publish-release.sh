@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-# Creates the GitHub release for the pushed tag from its hand-written notes.
+# Creates the GitHub release for the pushed tag from its hand-written notes,
+# with every file at once.
+#
+#   publish-release.sh <file>...
+#
+# gh creates the release as a draft, uploads the files and only then publishes
+# it, so a release is never public without its downloads; if anything fails, gh
+# removes its own draft.
 #
 # Three checks come first, each stopping the run rather than guessing:
 #
@@ -18,6 +25,11 @@ set -euo pipefail
 
 tag=$GITHUB_REF_NAME
 repo=$GITHUB_REPOSITORY
+
+if [ "$#" -eq 0 ]; then
+  echo "::error::no files to publish with $tag" >&2
+  exit 1
+fi
 
 tagged=$(gh api "repos/$repo/commits/$tag" -q .sha)
 if [ "$tagged" != "$GITHUB_SHA" ]; then
@@ -52,8 +64,9 @@ gh release create "$tag" \
   --verify-tag \
   --title "$tag" \
   --notes-file ".github/release-notes/$tag.md" \
-  --latest="$latest"
-echo "published $tag, latest=$latest"
+  --latest="$latest" \
+  "$@"
+echo "published $tag with $# files, latest=$latest"
 
 # The job that moves the image tag reuses this answer instead of deciding again.
 if [ -n "${GITHUB_OUTPUT:-}" ]; then

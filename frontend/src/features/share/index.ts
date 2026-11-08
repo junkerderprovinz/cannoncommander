@@ -5,6 +5,7 @@ import { h, reactive, watch } from 'vue';
 import { on } from '@/api/sse';
 import { type Share, tools } from '@/api/tools';
 import { action, run } from '@/core/actions';
+import { host } from '@/core/host';
 import { addTo } from '@/core/extend';
 import { fmtSize, now } from '@/core/format';
 import { G, glyphComponent } from '@/core/glyphs';
@@ -137,7 +138,8 @@ function download() {
 }
 
 export default function setup() {
-  action('share', { label: tl('share.share'), g: 'IconLink', run: shareWindow });
+  // A link from the desktop app would lead to 127.0.0.1, which reaches nobody else.
+  action('share', { label: tl('share.share'), g: 'IconLink', when: () => !host.desktop, run: shareWindow });
   action('collect', { label: tl('share.collect'), g: 'IconCollector', run: collect });
   action('collection', { label: () => (basket.length ? t('share.collectionCount', { n: basket.length }) : t('share.collection')), g: 'IconCollector', run: collectionWindow });
   action('download', { label: tl('share.download'), g: 'IconDownload', needs: 'sel', run: download });

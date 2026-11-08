@@ -8,7 +8,7 @@ import { useUser } from '@/stores/user';
 import { FakeSocket } from '@/testing/fakeSocket';
 import de from './de.json';
 import en from './en.json';
-import { terminalOn } from './state';
+import { onDesktop, terminalOn } from './state';
 import TerminalBody from './TerminalBody.vue';
 import { askTerminal } from './index';
 
@@ -43,10 +43,18 @@ vi.mock('@xterm/addon-fit', () => ({ FitAddon: class { fit() {} } }));
 vi.mock('@xterm/xterm/css/xterm.css', () => ({}));
 
 let feature = false;
+let deployment = 'container';
+let missing = '';
 let asked: string[] = [];
-function server(url: string) {
+let posted: unknown[] = [];
+function server(url: string, init?: RequestInit) {
   asked.push(url);
-  if (url.startsWith('/api/v1/system')) return Response.json({ features: { terminal: feature }, started: '2026-01-01T00:00:00Z' });
+  if (url.startsWith('/api/v1/system')) return Response.json({ deployment, features: { terminal: feature }, started: '2026-01-01T00:00:00Z' });
+  if (url === '/api/v1/terminal/native') {
+    posted.push(JSON.parse(String(init?.body)));
+    if (missing) return Response.json({ status: 404, code: 'terminalMissing', params: { program: missing } }, { status: 404, headers: { 'Content-Type': 'application/problem+json' } });
+    return new Response(null, { status: 204 });
+  }
   if (url.startsWith('/api/v1/terminal')) return new Response(null, { status: 204 });
   return new Response(null, { status: 404 });
 }
@@ -59,9 +67,13 @@ beforeEach(() => {
   screens.splice(0);
   FakeSocket.all = [];
   asked = [];
+  posted = [];
   feature = false;
+  deployment = 'container';
+  missing = '';
   terminalOn.value = false;
-  vi.stubGlobal('fetch', vi.fn(async (url: string) => server(url)));
+  onDesktop.value = false;
+  vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => server(url, init)));
   vi.stubGlobal('WebSocket', FakeSocket);
   vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} });
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
@@ -107,6 +119,28 @@ describe('askTerminal', () => {
     await askTerminal('/mnt/user');
     await askTerminal('/mnt/user/isos');
     expect(winStack.map((w) => w.props?.path)).toEqual(['/mnt/user', '/mnt/user/isos']);
+  });
+});
+
+describe('in the desktop app', () => {
+  it('opens the own terminal of the computer for the word that was typed, with no window in the page', async () => {
+    as('admin');
+    deployment = 'desktop';
+    feature = true;
+    await askTerminal('/C/Users/jdp', 'powershell');
+    expect(posted).toEqual([{ path: '/C/Users/jdp', kind: 'powershell' }]);
+    expect(winStack).toHaveLength(0);
+    expect(FakeSocket.all).toHaveLength(0);
+    expect(toasts).toHaveLength(0);
+  });
+
+  it('says which program is missing', async () => {
+    as('admin');
+    deployment = 'desktop';
+    feature = true;
+    missing = 'PowerShell 7';
+    await askTerminal('/C/Users/jdp', 'pwsh');
+    expect(toasts.map((x) => x.text)).toEqual(['PowerShell 7 ist auf diesem Rechner nicht installiert']);
   });
 });
 

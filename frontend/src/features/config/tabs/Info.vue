@@ -21,10 +21,14 @@ onMounted(() => {
   admin.system().then((s) => { sys.value = s; }, () => {});
   admin.app().then((a) => { app.value = a; }, () => {});
 });
-const autoCheck = computed({
-  get: () => !!app.value?.updates.autoCheck,
-  set: (v: boolean) => { app.value!.updates.autoCheck = v; admin.saveApp({ updates: { autoCheck: v } }).then(() => toast(c('saved')), () => toast(c('notSaved'), 'warn')); },
-});
+const saveUpdates = (change: Partial<AppSettings['updates']>) => {
+  Object.assign(app.value!.updates, change);
+  admin.saveApp({ updates: change }).then(() => toast(c('saved')), () => toast(c('notSaved'), 'warn'));
+};
+const autoCheck = computed({ get: () => !!app.value?.updates.autoCheck, set: (v: boolean) => saveUpdates({ autoCheck: v }) });
+// Only the desktop app can put a new version in place itself.
+const desktop = computed(() => sys.value?.deployment === 'desktop');
+const autoUpdate = computed({ get: () => desktop.value && !!app.value?.updates.autoUpdate, set: (v: boolean) => { if (desktop.value) saveUpdates({ autoUpdate: v }); } });
 
 // A version number is a plain link to its release page, as in every app of the workshop.
 const plain = (v?: string) => v?.replace(/^v/, '');
@@ -71,15 +75,16 @@ const give = computed(() => [
     </FieldRow>
     <div class="a-foot">
       <Button :label="n ? c('info.newN', { n }) : c('info.new')" label-key="IconWhatsNew" data-run="whatsNew" @click="run('whatsNew')"><template #before><span class="a-dot" :class="{ seen: !n }"></span></template></Button>
-      <Button v-if="update === 'newer'" id="a-update" :label="c('app.newer', { v: latest!.latest })" label-key="IconWhatsNew" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener" />
+      <Button v-if="latest?.ready" id="a-update" :label="c('app.ready', { v: plain(latest.ready)! })" label-key="IconWhatsNew" tone="ok" @click="admin.restart()" />
+      <Button v-else-if="update === 'newer'" id="a-update" :label="c('app.newer', { v: latest!.latest })" label-key="IconWhatsNew" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener" />
       <Button v-else id="a-update" :label="update === 'ok' ? c('info.current') : c('app.check')" :label-key="update === 'ok' ? 'IconCheck' : 'IconSearch'" :tone="update === 'ok' ? 'ok' : 'neutral'" :disabled="update === 'busy'" :title="update === 'ok' ? c('app.check') : undefined" @click="check()" />
     </div>
   </Card>
   <Card v-if="app" :title="c('app.updates')">
     <FieldRowGroup>
-      <FieldRow :label="c('app.autoCheck')" :hint="c('app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
-      <!-- A container cannot replace itself, so this one stays off and says why. -->
-      <FieldRow :label="c('app.autoUpdate')" :hint="c('app.autoUpdateTip')"><Toggle :model-value="false" disabled /></FieldRow>
+      <FieldRow :label="c('app.autoCheck')" :hint="c(desktop ? 'app.autoCheckDesktopTip' : 'app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
+      <!-- A container cannot replace itself, so there this one stays off and says why. -->
+      <FieldRow :label="c('app.autoUpdate')" :hint="c(desktop ? 'app.autoUpdateDesktopTip' : 'app.autoUpdateTip')"><Toggle v-model="autoUpdate" :disabled="!desktop" /></FieldRow>
     </FieldRowGroup>
   </Card>
   <Card :title="c('info.help')" :hint="c('info.helpHint')">

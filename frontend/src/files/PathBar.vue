@@ -4,6 +4,7 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { run } from '@/core/actions';
 import { extend } from '@/core/extend';
+import { rootName } from '@/core/host';
 import { menu } from '@/core/menu';
 import { prefs } from '@/core/prefs';
 import { byName, t } from '@/i18n';
@@ -63,11 +64,11 @@ function key(e: KeyboardEvent) {
   <input v-if="tab.editPath" :id="`pathedit-${i}`" ref="input" class="pathbar pathedit mono" :value="tab.path" :aria-label="t('files.path')" @keydown="key" @blur="tab.editPath = false">
   <div v-else class="pathbar" :class="{ open: tab.pathOpen }" data-pathbar :data-tip="t('files.pathTip')" @click="onBar">
     <button v-if="parts.length > 1" class="pmore" data-pathmore :aria-label="t('files.pathMore')" @click="more">…</button>
-    <button class="pseg" data-go="/" @click="F.go('/', i)">{{ t('files.server') }}</button>
+    <button class="pseg" data-go="/" @click="F.go('/', i)">{{ rootName() }}</button>
     <template v-for="(part, k) in parts" :key="k">
-      <button class="psep" :data-psub="under(k)" :aria-label="t('files.foldersIn', { name: split(under(k)).pop() || t('files.server') })" @click="psub($event, under(k))">›</button>
+      <button class="psep" :data-psub="under(k)" :aria-label="t('files.foldersIn', { name: split(under(k)).pop() || rootName() })" @click="psub($event, under(k))">›</button>
       <button class="pseg" :class="{ last: k === parts.length - 1 }" :data-go="under(k + 1)" @click="F.go(under(k + 1), i)">{{ part.replace('::', '') }}</button>
     </template>
-    <button v-if="hasDirs" class="psep" :data-psub="tab.path" :aria-label="t('files.foldersIn', { name: parts.at(-1) || t('files.server') })" @click="psub($event, tab.path)">›</button>
+    <button v-if="hasDirs" class="psep" :data-psub="tab.path" :aria-label="t('files.foldersIn', { name: parts.at(-1) || rootName() })" @click="psub($event, tab.path)">›</button>
   </div>
 </template>

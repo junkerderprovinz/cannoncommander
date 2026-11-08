@@ -6,9 +6,11 @@ import { ref } from 'vue';
 import { admin, exists } from '@/api/admin';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
+import { useUnraid } from '@/features/unraid/state';
 import { useUser } from '@/stores/user';
 import { c, cn, fail, P } from '@/features/config/shared';
 
+const U = useUnraid();
 const start = ref(prefs.startFolder || useUser().me.home || '/');
 const field = ref<InstanceType<typeof PathField> | null>(null);
 const CAPS: [number, string][] = [[0, c('general.noCap')], [25, '25 MB/s'], [50, '50 MB/s'], [100, '100 MB/s'], [200, '200 MB/s']];
@@ -61,9 +63,10 @@ async function testNote() {
   <Card :title="c('general.jobs')">
     <FieldRow :label="c('general.jobMode')" :hint="c('general.jobModeTip')"><Selector v-model="P.jobMode" :items="segItems([['serial', c('general.serial')], ['parallel', c('general.parallel')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="c('general.speedCap')" :hint="c('general.speedCapTip')"><Selector v-model="P.speedCap" :items="segItems(CAPS)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-    <FieldRow :label="c('general.parityWait')" :hint="c('general.parityWaitTip')"><Toggle :model-value="P.parityWait !== false" @update:model-value="P.parityWait = $event" /></FieldRow>
+    <FieldRow v-if="!U.st || U.available" :label="c('general.parityWait')" :hint="c('general.parityWaitTip')"><Toggle :model-value="P.parityWait !== false" @update:model-value="P.parityWait = $event" /></FieldRow>
     <FieldRow :label="c('general.notifyDone')" :hint="c('general.notifyDoneTip')"><Toggle :model-value="!!P.notifyDone" @update:model-value="notifyDone" /></FieldRow>
-    <FieldRow :label="c('general.notifyUnraid')" :hint="c('general.notifyUnraidTip')"><Toggle v-model="P.notifyUnraid" /></FieldRow>
+    <!-- Off Unraid, as in the desktop app, there is no Unraid to tell. -->
+    <FieldRow v-if="!U.st || U.available" :label="c('general.notifyUnraid')" :hint="c('general.notifyUnraidTip')"><Toggle v-model="P.notifyUnraid" /></FieldRow>
     <template v-if="P.notifyDone || P.notifyUnraid">
       <FieldRow :label="c('general.notifyAfter')" :hint="c('general.notifyAfterTip')"><Selector v-model="P.notifyAfter" :items="segItems(AFTER)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
       <FieldRow :label="c('general.tryIt')"><Button id="f-notify-test" :label="c('general.sendTest')" label-key="IconSendTest" @click="testNote" /></FieldRow>

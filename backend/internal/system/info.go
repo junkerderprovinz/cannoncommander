@@ -9,8 +9,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -18,17 +20,20 @@ var started = time.Now()
 
 // Info is what GET /system answers.
 type Info struct {
-	Version string          `json:"version"`
-	Commit  string          `json:"commit,omitempty"`
-	Release bool            `json:"release"`
-	Go      string          `json:"go"`
-	OS      string          `json:"os"`
-	Arch    string          `json:"arch"`
-	Started time.Time       `json:"started"`
-	Uptime  int64           `json:"uptime"`
-	Tools   map[string]Tool `json:"tools"`
-	Unraid  UnraidInfo      `json:"unraid"`
-	Feature Features        `json:"features"`
+	Version string `json:"version"`
+	Commit  string `json:"commit,omitempty"`
+	// Deployment is "desktop" inside the desktop app and "container"
+	// everywhere else.
+	Deployment string          `json:"deployment"`
+	Release    bool            `json:"release"`
+	Go         string          `json:"go"`
+	OS         string          `json:"os"`
+	Arch       string          `json:"arch"`
+	Started    time.Time       `json:"started"`
+	Uptime     int64           `json:"uptime"`
+	Tools      map[string]Tool `json:"tools"`
+	Unraid     UnraidInfo      `json:"unraid"`
+	Feature    Features        `json:"features"`
 }
 
 // Tool is a helper program the server runs.
@@ -36,6 +41,8 @@ type Tool struct {
 	Available bool   `json:"available"`
 	Path      string `json:"path,omitempty"`
 	Version   string `json:"version,omitempty"`
+	// Checking is set while the desktop app still looks for ffmpeg.
+	Checking bool `json:"checking,omitempty"`
 }
 
 // UnraidInfo says whether the server runs on Unraid and whether the switch
@@ -53,7 +60,8 @@ type Features struct {
 	Video  bool       `json:"videoPreview"`
 	WebDAV bool       `json:"webdav"`
 	MuPDF  bool       `json:"mupdf"`
-	// Terminal says whether admins may open a terminal.
+	// Terminal says whether admins may open a terminal. The desktop app
+	// opens the computer's own terminal and needs no switch for it.
 	Terminal bool `json:"terminal"`
 }
 
@@ -67,15 +75,17 @@ type probe struct {
 	name string
 	args []string
 	path func() string
+	// ffmpeg marks the programs whose path comes from the ffmpeg service.
+	ffmpeg bool
 }
 
 // probes are the helper programs and how they print their version.
 var probes = []probe{
-	{"ffmpeg", []string{"-version"}, func() string { return settings.Env.FFmpegPath }},
-	{"ffprobe", []string{"-version"}, func() string { return settings.Env.FFprobePath }},
-	{"mutool", []string{"-v"}, nil},
-	{"7zz", nil, nil},
-	{"rclone", []string{"version"}, RcloneBinary},
+	{"ffmpeg", []string{"-version"}, func() string { return ffmpeg.Get().FFmpegPath() }, true},
+	{"ffprobe", []string{"-version"}, func() string { return ffmpeg.Get().FFprobePath() }, true},
+	{"mutool", []string{"-v"}, nil, false},
+	{"7zz", nil, nil, false},
+	{"rclone", []string{"version"}, RcloneBinary, false},
 }
 
 // RcloneBinary returns the rclone program, CC_RCLONE_BINARY or the one on
@@ -91,28 +101,46 @@ func RcloneBinary() string {
 var versionNumber = regexp.MustCompile(`\d+\.\d+(?:\.\d+)*`)
 
 // toolbox finds the helper programs once. They come with the image and do
-// not change while the server runs.
+// not change while the server runs. The desktop app looks for ffmpeg after
+// its window opens, and until it has, the answer is not kept.
 type toolbox struct {
-	once  sync.Once
+	mu    sync.Mutex
 	tools map[string]Tool
+	// checking reports whether that look still runs; nil means
+	// ffmpeg.Checking.
+	checking func() bool
 }
 
 func (t *toolbox) get() map[string]Tool {
-	t.once.Do(func() {
-		t.tools = map[string]Tool{}
-		var mu sync.Mutex
-		var wg sync.WaitGroup
-		for _, p := range probes {
-			wg.Go(func() {
-				tool := find(p)
-				mu.Lock()
-				t.tools[p.name] = tool
-				mu.Unlock()
-			})
-		}
-		wg.Wait()
-	})
-	return t.tools
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	if t.tools != nil {
+		return t.tools
+	}
+	checking := ffmpeg.Checking
+	if t.checking != nil {
+		checking = t.checking
+	}
+	pending := checking()
+	tools := map[string]Tool{}
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+	for _, p := range probes {
+		wg.Go(func() {
+			tool := Tool{Checking: true}
+			if !pending || !p.ffmpeg {
+				tool = find(p)
+			}
+			mu.Lock()
+			tools[p.name] = tool
+			mu.Unlock()
+		})
+	}
+	wg.Wait()
+	if !pending {
+		t.tools = tools
+	}
+	return tools
 }
 
 func find(p probe) Tool {
@@ -144,16 +172,17 @@ func (s *service) info(ctx context.Context) (Info, error) {
 	}
 	_, released := version.Release()
 	in := Info{
-		Version: version.Version,
-		Commit:  version.CommitSHA,
-		Release: released,
-		Go:      runtime.Version(),
-		OS:      runtime.GOOS,
-		Arch:    runtime.GOARCH,
-		Started: started.UTC().Truncate(time.Second),
-		Uptime:  int64(time.Since(started) / time.Second),
-		Tools:   s.tools.get(),
-		Unraid:  UnraidInfo{Socket: unraid.ConfigFromEnv().Write},
+		Version:    version.Version,
+		Deployment: "container",
+		Commit:     version.CommitSHA,
+		Release:    released,
+		Go:         runtime.Version(),
+		OS:         runtime.GOOS,
+		Arch:       runtime.GOARCH,
+		Started:    started.UTC().Truncate(time.Second),
+		Uptime:     int64(time.Since(started) / time.Second),
+		Tools:      s.tools.get(),
+		Unraid:     UnraidInfo{Socket: unraid.ConfigFromEnv().Write},
 		Feature: Features{
 			Office:   OfficeInfo{Kind: app.Office.Kind, URL: app.Office.URL},
 			Thumbs:   app.Previews.Thumbs,
@@ -162,6 +191,10 @@ func (s *service) info(ctx context.Context) (Info, error) {
 			MuPDF:    settings.Env.MuPdfAvailable,
 			Terminal: app.Terminal,
 		},
+	}
+	if desktop.Active() {
+		in.Deployment = "desktop"
+		in.Feature.Terminal = true
 	}
 	if app.Office.Kind == OfficeNone {
 		in.Feature.Office.URL = ""

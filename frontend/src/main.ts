@@ -14,6 +14,7 @@ import { applyPrefs, mergeServerPrefs, onPrefsSaved, prefs } from '@/core/prefs'
 import { installTips } from '@/core/tips';
 import { toast } from '@/core/toast';
 import ToastHost from '@/core/ToastHost.vue';
+import { loadHost } from '@/core/host';
 import { registerView } from '@/core/views';
 import { loadFeatures } from '@/features';
 import { registerFileActions } from '@/files/actions';
@@ -60,6 +61,7 @@ function startApp(me?: Me) {
   installNav();
   watchWidth();
   useUser().load();
+  void loadHost();
 
   let saving: ReturnType<typeof setTimeout> | undefined;
   onPrefsSaved((p) => {

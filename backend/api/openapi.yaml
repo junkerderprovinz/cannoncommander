@@ -5367,6 +5367,55 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
       tags: [terminal]
+  /terminal/native:
+    post:
+      operationId: terminalOpenNative
+      x-access: admin
+      summary: Open the computer's own terminal in a folder
+      description: |
+        Only in the desktop app, which runs on the user's own computer. It
+        opens a terminal program in a window of its own instead of a shell
+        in the browser, and needs no switch in the settings. The kind is the
+        word typed into the path field. On Windows cmd opens the Command
+        Prompt, powershell Windows PowerShell, pwsh PowerShell 7, wt Windows
+        Terminal, bash a bash on the PATH, and terminal Windows Terminal
+        where it is installed and the Command Prompt elsewhere. On macOS
+        every kind opens Terminal, on Linux the terminal the desktop names
+        in TERMINAL or x-terminal-emulator, else the first of the common
+        ones that is installed. The opening goes into the activity log.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, kind]
+              properties:
+                path:
+                  type: string
+                  example: /C/Users/jdp/Downloads
+                kind:
+                  type: string
+                  enum: [cmd, sh, bash, terminal, powershell, pwsh, wt]
+      responses:
+        "204":
+          description: The terminal is open.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: |
+            Not the desktop app (desktopOnly), the program the kind names is
+            not installed (terminalMissing, with the program's name), or no
+            terminal program was found at all (noTerminal).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [terminal]
   /office/config:
     get:
       operationId: officeConfig
@@ -8899,6 +8948,10 @@ components:
           type: boolean
         releaseUrl:
           type: string
+        ready:
+          type: string
+          description: The version the desktop app has put in place for its next start.
+          example: 0.2.0
     SettingsFileRequest:
       type: object
       required: [path]
@@ -8934,6 +8987,10 @@ components:
           example: 0.1.0
         commit:
           type: string
+        deployment:
+          type: string
+          enum: [container, desktop]
+          description: desktop inside the desktop app.
         go:
           type: string
           example: go1.27.0
@@ -8988,7 +9045,7 @@ components:
               type: boolean
             terminal:
               type: boolean
-              description: Whether admins may open a terminal.
+              description: Whether admins may open a terminal. Always in the desktop app, which opens the computer's own.
     SystemTool:
       type: object
       required: [available]
@@ -9001,6 +9058,9 @@ components:
         version:
           type: string
           example: 7.1.1
+        checking:
+          type: boolean
+          description: Set while the desktop app still looks for ffmpeg, which it does after its window opens.
     AdminSource:
       type: object
       required: [name, path]
@@ -9156,6 +9216,12 @@ components:
           properties:
             autoCheck:
               type: boolean
+            autoUpdate:
+              type: boolean
+              description: |
+                Let the desktop app download a newer release once a day and
+                put it in place for its next start. A container reports it
+                off and ignores it.
         logLevel:
           type: string
           enum: [error, info, debug]

@@ -51,9 +51,6 @@ type Environment struct {
 	ConfigSourceDefaultPermissions map[string]bool `json:"-"`
 	MuPdfAvailable                 bool            `json:"-"` // used internally if compiled with mupdf support
 	EmbeddedFs                     bool            `json:"-"` // used internally if compiled with embedded fs support
-	FFmpegPath                     string          `json:"-"`
-	FFprobePath                    string          `json:"-"`
-	FFmpegAvailable                bool            `json:"-"`
 }
 
 type Server struct {

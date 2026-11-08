@@ -1,5 +1,7 @@
 package settings
 
+import "github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
+
 func CanConvertImage(ext string) bool {
 	if !MediaEnabled() {
 		return false
@@ -23,5 +25,5 @@ func CanConvertVideo(ext string) bool {
 }
 
 func MediaEnabled() bool {
-	return Env.FFmpegAvailable
+	return ffmpeg.Enabled()
 }

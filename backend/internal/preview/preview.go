@@ -37,10 +37,9 @@ type Service struct {
 	fileCache     diskcache.Interface
 	cacheDir      string // Cache directory used for thumbnails and temp files
 	debug         bool
-	docGenMutex   sync.Mutex            // Mutex to serialize access to doc generation (required for CGO thread safety with go-fitz)
-	ffmpegService *ffmpeg.FFmpegService // Shared FFmpeg service for video and HEIC/JPEG fallback
-	imageSem      chan struct{}         // Semaphore for small image decode/encode (<8MB)
-	imageLargeSem chan struct{}         // Semaphore for large image decode/encode (>=8MB), nil if only 1 processor
+	docGenMutex   sync.Mutex    // Mutex to serialize access to doc generation (required for CGO thread safety with go-fitz)
+	imageSem      chan struct{} // Semaphore for small image decode/encode (<8MB)
+	imageLargeSem chan struct{} // Semaphore for large image decode/encode (>=8MB), nil if only 1 processor
 }
 
 // Calculate split between small and large imaging library processors
@@ -84,9 +83,6 @@ func NewPreviewGenerator(concurrencyLimit int, cacheDir string) *Service {
 		logger.Error(err)
 	}
 
-	// Single shared ffmpeg service initialized during config setup
-	ffmpegService := ffmpeg.Get()
-
 	var imageSem, imageLargeSem chan struct{}
 
 	if concurrencyLimit == 1 {
@@ -118,7 +114,6 @@ func NewPreviewGenerator(concurrencyLimit int, cacheDir string) *Service {
 		fileCache:     fileCache,
 		cacheDir:      actualCacheDir,
 		debug:         settings.Config.Integrations.Media.Debug,
-		ffmpegService: ffmpegService,
 		imageSem:      imageSem,
 		imageLargeSem: imageLargeSem,
 	}
@@ -403,7 +398,7 @@ func handleJPEGFallback(ctx context.Context, s *Service, file iteminfo.ExtendedF
 		return nil, fmt.Errorf("failed to resize preview image (unsupported JPEG format, FFmpeg conversion disabled in settings): %w", originalErr)
 	}
 
-	if s.ffmpegService == nil {
+	if ffmpeg.Get() == nil {
 		return nil, fmt.Errorf("failed to resize preview image (unsupported JPEG format, FFmpeg not available): %w", originalErr)
 	}
 
@@ -502,7 +497,7 @@ func GeneratePreviewWithMD5(ctx context.Context, file iteminfo.ExtendedFileInfo,
 	previewType := determinePreviewType(file)
 	if !fromEmbeddedPreview && (previewType == previewTypeImage ||
 		(previewType == previewTypeDocument && settings.Env.MuPdfAvailable) ||
-		(previewType == previewTypeVideo && settings.Env.FFmpegAvailable)) {
+		(previewType == previewTypeVideo && settings.MediaEnabled())) {
 		if err := service.fileCache.Store(ctx, cacheKey, imageBytes); err != nil {
 			logger.Errorf("failed to cache image: %v", err)
 		}

@@ -98,6 +98,11 @@ type Mounting struct {
 // opens. A container is updated from outside, so nothing here installs one.
 type Updates struct {
 	AutoCheck bool `json:"autoCheck"`
+	// AutoUpdate lets the desktop app put a newer release in place for its
+	// next start. The app keeps the switch itself, since the update task of
+	// a copy installed for all users reads it without this database. A
+	// container reports it off.
+	AutoUpdate bool `json:"autoUpdate"`
 }
 
 // defaults are the settings of a server where nobody saved any yet. They

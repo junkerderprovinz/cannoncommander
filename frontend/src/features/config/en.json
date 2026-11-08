@@ -78,6 +78,7 @@
   },
   "remotes": {
     "title": "Remotes", "add": "Add a remote", "edit": "Edit remote", "remove": "Remove remote", "none": "No remote yet",
+    "noRclone": "rclone is missing on this computer", "noRcloneHint": "CannonCommander mounts remotes with rclone. Install rclone, plus WinFsp on Windows or macFUSE on a Mac, and then start CannonCommander again.",
     "removeText1": "{name} is unmounted and forgotten, along with its credentials.", "removeText2": "The files at {type} stay where they are.",
     "mount": "Mount", "unmount": "Unmount", "mounted": "{name} is mounted", "unmounted": "{name} is unmounted", "unmountedPill": "Unmounted",
     "mounting": "Mounting", "automount": "Mount at start", "automountTip": "Mounts every remote as soon as the container starts.",
@@ -198,10 +199,13 @@
     "wantsSecret": "The server answers but wants the JWT secret", "unreachable": "No office server answers at this address",
     "media": "Videos and pictures", "thumbs": "Thumbnails", "thumbsTip": "Small pictures for photos and videos in the preview. ffmpeg makes them in the background.",
     "video": "Play videos in the browser", "videoTip": "Formats like MKV too. ffmpeg converts them while they play, which takes computing time.", "ffmpegTip": "Comes with the container.",
+    "ffmpegDesktopTip": "CannonCommander uses the ffmpeg installed on your computer. Without it, videos get no preview pictures.",
     "webdavRclone": "WebDAV and rclone", "webdav": "WebDAV server", "webdavTip": "Lets you mount the files as a drive, in Windows Explorer or a phone app for example. The same users and rules apply.",
     "terminalCard": "Terminal", "terminal": "Terminal in the browser", "terminalTip": "Admins can open a shell in the folder they are looking at, also by typing cmd or bash into the path row. It runs in the container with the rights of CannonCommander. Whoever opens it can do anything on the server that CannonCommander may do.",
     "address": "Address", "rcloneTip": "Mounts the remotes. The program comes with the container.",
-    "notFound": "Not found", "kept": "Saved",
+    "rcloneDesktopTip": "Mounts the remotes. Install rclone on your computer and CannonCommander finds it on its next start.",
+    "terminalDesktop": "Your computer's terminal", "terminalDesktopTip": "Type terminal, cmd or powershell into the path field and press Enter, and your computer's terminal opens in the folder you are looking at.",
+    "notFound": "Not found", "checking": "Looking for it", "kept": "Saved",
     "secretWrong": "The server turns this JWT secret down", "notWorking": "The server answers, but the connection does not work yet", "alHint": "ArrowLoop plans recurring syncs. CannonCommander hands it pairs of folders from the folder comparison.",
     "alUrlTip": "The address ArrowLoop has in the browser.", "alToken": "API token", "alTokenTip": "A token from the ArrowLoop settings. With it CannonCommander may add jobs there.",
     "alPaths": "Paths", "alPathsTip": "ArrowLoop often sees the shares under other paths, such as /data instead of /mnt/user. The path here goes on the left, the same folder in ArrowLoop on the right.", "samePaths": "Same as here",
@@ -212,12 +216,18 @@
   "builds": {
     "desktop": "Desktop app", "desktopHint": "CannonCommander as a program on your computer, with this interface in a window of its own. Once the builds are out, you can download them here.",
     "phone": "Phone app", "phoneHint": "The CannonCommander app for Android phones. Once it is out, you will find it here.",
-    "soon": "Soon"
+    "soon": "Soon",
+    "desktopHintOut": "CannonCommander as a program on your computer, with this interface in a window of its own.",
+    "server": "Server", "serverHint": "CannonCommander on your Unraid server or in Docker, so you can reach your files from your other devices too.",
+    "source": "Source code"
   },
   "app": {
     "updates": "Updates", "autoCheck": "Check automatically",
     "autoCheckTip": "While this is on, opening this page asks GitHub once whether a newer CannonCommander is out. It only asks, since a container gets its updates from its container manager.",
     "autoUpdate": "Update automatically", "autoUpdateTip": "A container cannot replace itself from the inside. Update it on Unraid's Docker tab instead, with docker pull or with Watchtower.",
+    "autoCheckDesktopTip": "While this is on, CannonCommander asks GitHub once whenever this page opens whether a newer version is out.",
+    "autoUpdateDesktopTip": "Once a day CannonCommander fetches a newer version, checks it and puts it in place for the next start.",
+    "ready": "Restart for {v}",
     "check": "Look for updates", "checking": "Looking",
     "current": "Up to date, {v}", "newer": "{v} is out",
     "backup": "Back up the settings", "toFile": "Write to a file", "toFileTip": "All settings as a JSON file on the server, without passwords.", "export": "Export",

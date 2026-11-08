@@ -6,8 +6,16 @@ repository.
 """
 
 REPO = "cannoncommander"
+RELEASE = "https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/"
 
 BUTTONS = {
+    # The desktop app comes with every release from the first one on, under
+    # these names without the version (.github/workflows/release.yml).
+    "windows": RELEASE + "cannoncommander-windows-amd64-installer.exe",
+    "windows-portable": RELEASE + "cannoncommander-windows-amd64.zip",
+    "macos": RELEASE + "cannoncommander-macos-universal.zip",
+    "linux": RELEASE + "cannoncommander-linux-amd64-installer",
+    "linux-arm": RELEASE + "cannoncommander-linux-arm64-installer",
     # Not in Community Applications yet, so the button is drawn without a link
     # and says "coming soon". The listing's address goes here once it exists.
     "unraid": None,

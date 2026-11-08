@@ -4,6 +4,7 @@ import { auth } from '@/api/auth';
 import { onSignedOut } from '@/api/client';
 import { disconnect } from '@/api/sse';
 import { action } from '@/core/actions';
+import { host } from '@/core/host';
 import { addMessages, t, tl } from '@/i18n';
 import de from './de.json';
 import en from './en.json';
@@ -32,6 +33,8 @@ export function installSignOut() {
   onSignedOut(() => { session.out = true; });
   action('logout', {
     label: tl('signin.logout'), g: 'IconSignOut',
+    // The desktop app signs nobody in.
+    when: () => !host.desktop,
     run: async () => {
       await auth.logout().catch(() => {});
       disconnect();

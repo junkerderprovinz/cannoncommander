@@ -11,6 +11,7 @@ import (
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/search"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -99,7 +100,16 @@ func (s *service) getApp(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	return v1.WriteJSON(w, r, http.StatusOK, a.public())
+	return v1.WriteJSON(w, r, http.StatusOK, withDesktop(a).public())
+}
+
+// withDesktop fills in what the desktop app keeps itself.
+func withDesktop(a App) App {
+	a.Updates.AutoUpdate = false
+	if app := desktop.Current(); app != nil {
+		a.Updates.AutoUpdate = app.AutoUpdate()
+	}
+	return a
 }
 
 // putApp saves the fields the body carries over the saved ones, so a page
@@ -119,8 +129,10 @@ func (s *service) putApp(w http.ResponseWriter, r *http.Request) error {
 		} `json:"arrowloop"`
 	}
 	_ = json.Unmarshal(body, &sent)
+	app := desktop.Current()
+	var autoUpdate *bool
 	a, err := s.store.update(r.Context(), func(a *App) error {
-		doc := *a
+		doc := withDesktop(*a)
 		if sent.ArrowLoop.Paths != nil {
 			doc.ArrowLoop.Paths = nil
 		}
@@ -129,14 +141,23 @@ func (s *service) putApp(w http.ResponseWriter, r *http.Request) error {
 		if err := dec.Decode(&doc); err != nil {
 			return v1.Errorf(http.StatusBadRequest, "invalid JSON body: "+err.Error())
 		}
+		if app != nil && doc.Updates.AutoUpdate != app.AutoUpdate() {
+			autoUpdate = &doc.Updates.AutoUpdate
+		}
+		doc.Updates.AutoUpdate = false
 		*a = doc
 		return nil
 	})
 	if err != nil {
 		return err
 	}
+	if autoUpdate != nil {
+		if err := app.SetAutoUpdate(*autoUpdate); err != nil {
+			return err
+		}
+	}
 	s.apply(a)
-	return v1.WriteJSON(w, r, http.StatusOK, a.public())
+	return v1.WriteJSON(w, r, http.StatusOK, withDesktop(a).public())
 }
 
 func (s *service) testIntegration(w http.ResponseWriter, r *http.Request) error {

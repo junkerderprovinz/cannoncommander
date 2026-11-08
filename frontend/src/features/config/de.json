@@ -78,6 +78,7 @@
   },
   "remotes": {
     "title": "Fernziele", "add": "Fernziel hinzufügen", "edit": "Fernziel bearbeiten", "remove": "Fernziel entfernen", "none": "Noch kein Fernziel",
+    "noRclone": "rclone fehlt auf diesem Rechner", "noRcloneHint": "Fernziele hängt CannonCommander mit rclone ein. Installiere rclone, unter Windows dazu WinFsp und auf dem Mac macFUSE, und starte CannonCommander danach neu.",
     "removeText1": "{name} wird ausgehängt und vergessen, mit den Zugangsdaten.", "removeText2": "Die Dateien bei {type} bleiben, wo sie sind.",
     "mount": "Einhängen", "unmount": "Aushängen", "mounted": "{name} ist eingehängt", "unmounted": "{name} ist ausgehängt", "unmountedPill": "Ausgehängt",
     "mounting": "Einhängen", "automount": "Beim Start einhängen", "automountTip": "Hängt alle Fernziele ein, sobald der Container startet.",
@@ -198,10 +199,13 @@
     "wantsSecret": "Der Server antwortet, will aber den JWT-Schlüssel", "unreachable": "Unter dieser Adresse antwortet kein Office-Server",
     "media": "Videos und Bilder", "thumbs": "Vorschaubilder", "thumbsTip": "Kleine Bilder für Fotos und Videos in der Vorschau. ffmpeg erzeugt sie im Hintergrund.",
     "video": "Videos im Browser abspielen", "videoTip": "Auch Formate wie MKV. ffmpeg wandelt sie dafür beim Abspielen um, das kostet Rechenzeit.", "ffmpegTip": "Ist im Container dabei.",
+    "ffmpegDesktopTip": "CannonCommander nimmt das ffmpeg, das auf deinem Rechner installiert ist. Ohne ffmpeg fehlen die Vorschaubilder für Videos.",
     "webdavRclone": "WebDAV und rclone", "webdav": "WebDAV-Server", "webdavTip": "Damit bindest du die Dateien als Laufwerk ein, etwa im Windows-Explorer oder in einer Handy-App. Es gelten dieselben Benutzer und Regeln.",
     "terminalCard": "Terminal", "terminal": "Terminal im Browser", "terminalTip": "Admins öffnen damit eine Shell im Ordner, den sie gerade ansehen, auch mit cmd oder bash in der Pfadzeile. Sie läuft im Container mit den Rechten von CannonCommander. Wer sie öffnet, kann auf dem Server alles tun, was CannonCommander darf.",
     "address": "Adresse", "rcloneTip": "Hängt die Fernziele ein. Das Programm ist im Container dabei.",
-    "notFound": "Nicht gefunden", "kept": "Gespeichert",
+    "rcloneDesktopTip": "Hängt die Fernziele ein. Installiere rclone auf deinem Rechner, dann findet CannonCommander es beim nächsten Start.",
+    "terminalDesktop": "Terminal deines Rechners", "terminalDesktopTip": "Tipp etwa terminal, cmd oder powershell in die Pfadzeile und drück Enter. Dann geht das Terminal deines Rechners im Ordner auf, den du gerade ansiehst.",
+    "notFound": "Nicht gefunden", "checking": "Wird gesucht", "kept": "Gespeichert",
     "secretWrong": "Der Server lehnt diesen JWT-Schlüssel ab", "notWorking": "Der Server antwortet, die Verbindung klappt aber noch nicht", "alHint": "ArrowLoop plant wiederkehrende Abgleiche. CannonCommander gibt ihm Ordnerpaare aus dem Ordnervergleich.",
     "alUrlTip": "Die Adresse, unter der ArrowLoop im Browser erreichbar ist.", "alToken": "API-Token", "alTokenTip": "Ein Token aus den Einstellungen von ArrowLoop. Damit darf CannonCommander dort Aufgaben anlegen.",
     "alPaths": "Pfade", "alPathsTip": "ArrowLoop sieht die Freigaben oft unter anderen Pfaden, etwa /data statt /mnt/user. Links steht der Pfad hier, rechts derselbe Ordner in ArrowLoop.", "samePaths": "Wie hier",
@@ -212,12 +216,18 @@
   "builds": {
     "desktop": "Desktop-App", "desktopHint": "CannonCommander als Programm auf deinem Rechner, mit dieser Oberfläche in einem eigenen Fenster. Sobald es die Builds gibt, lädst du sie hier herunter.",
     "phone": "Handy-App", "phoneHint": "Die CannonCommander-App für Android-Handys. Sobald es sie gibt, findest du sie hier.",
-    "soon": "Bald"
+    "soon": "Bald",
+    "desktopHintOut": "CannonCommander als Programm auf deinem Rechner, mit dieser Oberfläche in einem eigenen Fenster.",
+    "server": "Server", "serverHint": "CannonCommander auf deinem Unraid-Server oder in Docker, damit du auch von anderen Geräten aus an deine Dateien kommst.",
+    "source": "Quellcode"
   },
   "app": {
     "updates": "Updates", "autoCheck": "Automatisch prüfen",
     "autoCheckTip": "Solange das an ist, fragt CannonCommander beim Öffnen dieser Seite einmal bei GitHub, ob es eine neuere Version gibt. Es fragt nur, denn ein Container bekommt seine Updates über seinen Container-Manager.",
     "autoUpdate": "Automatisch aktualisieren", "autoUpdateTip": "Ein Container kann sich nicht von innen selbst ersetzen. Aktualisiere ihn stattdessen im Docker-Tab von Unraid, mit docker pull oder mit Watchtower.",
+    "autoCheckDesktopTip": "Solange das an ist, fragt CannonCommander beim Öffnen dieser Seite einmal bei GitHub, ob es eine neuere Version gibt.",
+    "autoUpdateDesktopTip": "Einmal am Tag holt CannonCommander eine neuere Version, prüft sie und setzt sie beim nächsten Start ein.",
+    "ready": "Neu starten für {v}",
     "check": "Nach Updates suchen", "checking": "Suche",
     "current": "Aktuell, {v}", "newer": "{v} ist da",
     "backup": "Einstellungen sichern", "toFile": "In eine Datei schreiben", "toFileTip": "Alle Einstellungen als JSON-Datei auf dem Server, ohne Passwörter.", "export": "Exportieren",

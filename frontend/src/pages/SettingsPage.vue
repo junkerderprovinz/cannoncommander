@@ -16,8 +16,13 @@ import { t } from '@/i18n';
 import { useReorder } from '@/ui/reorder';
 
 const props = defineProps<{ arg?: unknown }>();
-const tabs = computed(() => orderedTabs(settingsTabs));
-const cur = computed(() => tabs.value.find((x) => x.id === (props.arg ?? remembered.id)) ?? tabs.value[0]);
+const tabs = computed(() => orderedTabs(settingsTabs).filter((x) => !x.hidden?.()));
+// A link to a tile left out here opens Allgemein.
+const cur = computed(() => {
+  const want = props.arg ?? remembered.id;
+  const left = settingsTabs.some((x) => x.id === want && x.hidden?.());
+  return tabs.value.find((x) => x.id === (left ? 'general' : want)) ?? tabs.value[0];
+});
 watch(cur, (c) => { remembered.id = c?.id; }, { immediate: true });
 
 const tiles = ref<HTMLElement | null>(null);

@@ -3,13 +3,15 @@ package preview
 import (
 	"context"
 	"fmt"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
 )
 
 // convertHEICToJPEGWithFFmpeg decodes HEIC to JPEG at full resolution via ffmpeg.
 // Tile-grid iPhone HEIC cannot use ffmpeg -vf scale; resize is done later by CreatePreview.
 // Passing non-zero width/height would add -vf scale and fail on those files.
 func (s *Service) convertHEICToJPEGWithFFmpeg(ctx context.Context, filePath string, previewSize string) ([]byte, error) {
-	if s.ffmpegService == nil {
+	svc := ffmpeg.Get()
+	if svc == nil {
 		return nil, fmt.Errorf("FFmpeg is not available")
 	}
 
@@ -27,13 +29,14 @@ func (s *Service) convertHEICToJPEGWithFFmpeg(ctx context.Context, filePath stri
 		quality = "5"
 	}
 
-	return s.ffmpegService.ConvertHEICToJPEG(ctx, filePath, 0, 0, quality)
+	return svc.ConvertHEICToJPEG(ctx, filePath, 0, 0, quality)
 }
 
 // convertImageWithFFmpeg converts any image file (including problematic JPEGs) to resized JPEG using FFmpeg.
 // This is used as a fallback for JPEG files that Go's standard decoder can't handle (extended sequential, etc.)
 func (s *Service) convertImageWithFFmpeg(ctx context.Context, filePath string, previewSize string) ([]byte, error) {
-	if s.ffmpegService == nil {
+	svc := ffmpeg.Get()
+	if svc == nil {
 		return nil, fmt.Errorf("FFmpeg is not available for JPEG fallback")
 	}
 
@@ -55,5 +58,5 @@ func (s *Service) convertImageWithFFmpeg(ctx context.Context, filePath string, p
 		quality = "5"
 	}
 
-	return s.ffmpegService.ConvertImageToJPEG(ctx, filePath, width, height, quality)
+	return svc.ConvertImageToJPEG(ctx, filePath, width, height, quality)
 }

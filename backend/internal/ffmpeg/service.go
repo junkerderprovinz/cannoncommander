@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"sync/atomic"
 
 	goffmpeg "github.com/gtsteffaniak/go-ffmpeg"
 	"github.com/gtsteffaniak/go-ffmpeg/capabilities"
@@ -22,7 +23,38 @@ type Service struct {
 // FFmpegService is kept for existing callers.
 type FFmpegService = Service
 
-var global *Service
+var global atomic.Pointer[Service]
+
+// probing is the end of a look for ffmpeg that runs in the background, nil
+// while none does.
+var probing atomic.Pointer[chan struct{}]
+
+// Probing marks Initialize as running in the background, so Wait holds
+// until the returned function says it has run.
+func Probing() (done func()) {
+	ch := make(chan struct{})
+	probing.Store(&ch)
+	return func() {
+		probing.Store(nil)
+		close(ch)
+	}
+}
+
+// Checking reports whether a look for ffmpeg still runs.
+func Checking() bool { return probing.Load() != nil }
+
+// Wait returns the service once a look that runs has ended, or nil when ctx
+// ends first or there is no ffmpeg.
+func Wait(ctx context.Context) *Service {
+	if p := probing.Load(); p != nil {
+		select {
+		case <-*p:
+		case <-ctx.Done():
+			return nil
+		}
+	}
+	return Get()
+}
 
 // InitOptions configures startup initialization.
 type InitOptions struct {
@@ -59,14 +91,14 @@ func Initialize(ctx context.Context, opts InitOptions) error {
 
 	svc, err := goffmpeg.New(ctx, cfg)
 	if err != nil {
-		global = nil
+		global.Store(nil)
 		return err
 	}
 
-	global = &Service{
+	global.Store(&Service{
 		inner:    svc,
 		cacheDir: opts.CacheDir,
-	}
+	})
 
 	logCapabilities(svc, opts.HardwareAcceleration)
 	return nil
@@ -74,12 +106,13 @@ func Initialize(ctx context.Context, opts InitOptions) error {
 
 // Get returns the initialized service, or nil when ffmpeg is unavailable.
 func Get() *Service {
-	return global
+	return global.Load()
 }
 
 // Enabled reports whether ffmpeg initialized successfully.
 func Enabled() bool {
-	return global != nil && global.inner != nil
+	s := global.Load()
+	return s != nil && s.inner != nil
 }
 
 // FFmpegPath returns the resolved ffmpeg binary path.
