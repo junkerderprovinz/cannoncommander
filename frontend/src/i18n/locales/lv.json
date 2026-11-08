@@ -1527,7 +1527,16 @@
     "jobFrom": "Lejupielādēt: {what} no {host}"
   },
   "filesystem": {
-    "systemFiles": "Rādīt aizsargātos sistēmas failus"
+    "systemFiles": "Rādīt aizsargātos sistēmas failus",
+    "cloud": {
+      "online": "Pieejams tikai tiešsaistē",
+      "local": "Pieejams šajā ierīcē",
+      "pinned": "Vienmēr pieejams šajā ierīcē"
+    },
+    "keep": "Vienmēr paturēt šajā ierīcē",
+    "free": "Atbrīvot vietu",
+    "kept": "Paliek šajā ierīcē: {objects}",
+    "freed": "Vieta atbrīvota: {objects}"
   },
   "gather": {
     "title": "Savākt mapi",
@@ -3645,6 +3654,7 @@
     "groupExists": "Šāda grupa jau ir",
     "groupNameMissing": "Piešķir grupai nosaukumu",
     "inArchive": "Tas atrodas arhīvā",
+    "inCloud": "Fails ir tikai mākonī. Atveriet to vienreiz, un tas būs arī šajā ierīcē",
     "inTrash": "Tas jau ir atkritnē",
     "intoItself": "Mapi nevar ievietot pašā sevī",
     "ioError": "Disks ziņoja par lasīšanas vai rakstīšanas kļūdu",

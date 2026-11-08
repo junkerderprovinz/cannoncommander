@@ -1472,7 +1472,16 @@
     "jobFrom": "Lataa: {what} ({host})"
   },
   "filesystem": {
-    "systemFiles": "Näytä suojatut järjestelmätiedostot"
+    "systemFiles": "Näytä suojatut järjestelmätiedostot",
+    "cloud": {
+      "online": "Käytettävissä vain verkossa",
+      "local": "Käytettävissä tällä laitteella",
+      "pinned": "Aina käytettävissä tällä laitteella"
+    },
+    "keep": "Säilytä aina tällä laitteella",
+    "free": "Vapauta tilaa",
+    "kept": "Pysyy tällä laitteella: {objects}",
+    "freed": "Tilaa vapautettu: {objects}"
   },
   "gather": {
     "title": "Kokoa kansio",
@@ -3513,6 +3522,7 @@
     "groupExists": "Tämä ryhmä on jo olemassa",
     "groupNameMissing": "Anna ryhmälle nimi",
     "inArchive": "Tämä on arkiston sisällä",
+    "inCloud": "Tiedosto on vain pilvessä. Avaa se kerran, niin se on myös tällä laitteella",
     "inTrash": "Tämä on jo roskakorissa",
     "intoItself": "Kansiota ei voi siirtää itseensä",
     "ioError": "Levy ilmoitti luku- tai kirjoitusvirheestä",

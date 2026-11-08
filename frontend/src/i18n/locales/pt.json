@@ -1527,7 +1527,16 @@
     "jobFrom": "Carregar: {what} de {host}"
   },
   "filesystem": {
-    "systemFiles": "Mostrar ficheiros de sistema protegidos"
+    "systemFiles": "Mostrar ficheiros de sistema protegidos",
+    "cloud": {
+      "online": "Disponível apenas online",
+      "local": "Disponível neste dispositivo",
+      "pinned": "Sempre disponível neste dispositivo"
+    },
+    "keep": "Manter sempre neste dispositivo",
+    "free": "Libertar espaço",
+    "kept": "Fica neste dispositivo: {objects}",
+    "freed": "Espaço libertado para {objects}"
   },
   "gather": {
     "title": "Agrupar pasta",
@@ -3645,6 +3654,7 @@
     "groupExists": "Esse grupo já existe",
     "groupNameMissing": "Dê um nome ao grupo",
     "inArchive": "Isto está dentro de um arquivo",
+    "inCloud": "O ficheiro está apenas na nuvem. Abra-o uma vez e passa a estar também neste dispositivo",
     "inTrash": "Isto já está na reciclagem",
     "intoItself": "Uma pasta não pode ir para dentro de si própria",
     "ioError": "O disco comunicou um erro de leitura ou escrita",

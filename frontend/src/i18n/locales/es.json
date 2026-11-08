@@ -1527,7 +1527,16 @@
     "jobFrom": "Cargar: {what} desde {host}"
   },
   "filesystem": {
-    "systemFiles": "Mostrar archivos protegidos del sistema"
+    "systemFiles": "Mostrar archivos protegidos del sistema",
+    "cloud": {
+      "online": "Disponible solo en línea",
+      "local": "Disponible en este dispositivo",
+      "pinned": "Siempre disponible en este dispositivo"
+    },
+    "keep": "Mantener siempre en este dispositivo",
+    "free": "Liberar espacio",
+    "kept": "Se queda en este dispositivo: {objects}",
+    "freed": "Espacio liberado para {objects}"
   },
   "gather": {
     "title": "Agrupar carpeta",
@@ -3645,6 +3654,7 @@
     "groupExists": "Ese grupo ya existe",
     "groupNameMissing": "Dale un nombre al grupo",
     "inArchive": "Esto está dentro de un archivo comprimido",
+    "inCloud": "El archivo solo está en la nube. Ábrelo una vez y estará también en este dispositivo",
     "inTrash": "Esto ya está en la papelera",
     "intoItself": "Una carpeta no puede ir dentro de sí misma",
     "ioError": "El disco ha informado de un error de lectura o escritura",

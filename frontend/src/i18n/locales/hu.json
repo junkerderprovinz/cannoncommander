@@ -1472,7 +1472,16 @@
     "jobFrom": "Letöltés: {what}, innen: {host}"
   },
   "filesystem": {
-    "systemFiles": "Védett rendszerfájlok megjelenítése"
+    "systemFiles": "Védett rendszerfájlok megjelenítése",
+    "cloud": {
+      "online": "Csak online érhető el",
+      "local": "Elérhető ezen az eszközön",
+      "pinned": "Mindig elérhető ezen az eszközön"
+    },
+    "keep": "Mindig tartsa meg ezen az eszközön",
+    "free": "Hely felszabadítása",
+    "kept": "Ezen az eszközön marad: {objects}",
+    "freed": "Hely felszabadítva: {objects}"
   },
   "gather": {
     "title": "Mappa összegyűjtése",
@@ -3513,6 +3522,7 @@
     "groupExists": "Ez a csoport már létezik",
     "groupNameMissing": "Adjon nevet a csoportnak",
     "inArchive": "Ez egy archívumban van",
+    "inCloud": "A fájl csak a felhőben van. Nyissa meg egyszer, és ezen az eszközön is meglesz",
     "inTrash": "Ez már a kukában van",
     "intoItself": "Egy mappa nem kerülhet önmagába",
     "ioError": "A lemez olvasási vagy írási hibát jelzett",

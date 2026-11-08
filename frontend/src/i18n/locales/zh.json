@@ -1417,7 +1417,16 @@
     "jobFrom": "下载：{what}，来自 {host}"
   },
   "filesystem": {
-    "systemFiles": "显示受保护的系统文件"
+    "systemFiles": "显示受保护的系统文件",
+    "cloud": {
+      "online": "仅联机可用",
+      "local": "在此设备上可用",
+      "pinned": "始终在此设备上可用"
+    },
+    "keep": "始终保留在此设备上",
+    "free": "释放空间",
+    "kept": "保留在此设备上：{objects}",
+    "freed": "已为 {objects} 释放空间"
   },
   "gather": {
     "title": "集中文件夹",
@@ -3381,6 +3390,7 @@
     "groupExists": "此组已存在",
     "groupNameMissing": "给这个组起个名字",
     "inArchive": "它位于压缩包内",
+    "inCloud": "该文件仅在云端。打开一次后，它也会保存在此设备上",
     "inTrash": "它已经在回收站中",
     "intoItself": "文件夹不能放进它自己",
     "ioError": "磁盘报告了读取或写入错误",

@@ -1472,7 +1472,16 @@
     "jobFrom": "Descargar: {what} de {host}"
   },
   "filesystem": {
-    "systemFiles": "Amosar os ficheiros do sistema protexidos"
+    "systemFiles": "Amosar os ficheiros do sistema protexidos",
+    "cloud": {
+      "online": "Dispoñible só en liña",
+      "local": "Dispoñible neste dispositivo",
+      "pinned": "Sempre dispoñible neste dispositivo"
+    },
+    "keep": "Manter sempre neste dispositivo",
+    "free": "Liberar espazo",
+    "kept": "Queda neste dispositivo: {objects}",
+    "freed": "Espazo liberado para {objects}"
   },
   "gather": {
     "title": "Xuntar un cartafol",
@@ -3513,6 +3522,7 @@
     "groupExists": "Ese grupo xa existe",
     "groupNameMissing": "Ponlle un nome ao grupo",
     "inArchive": "Isto está dentro dun arquivo",
+    "inCloud": "O ficheiro só está na nube. Ábreo unha vez e estará tamén neste dispositivo",
     "inTrash": "Isto xa está no lixo",
     "intoItself": "Un cartafol non pode ir dentro de si mesmo",
     "ioError": "O disco informou dun erro de lectura ou escritura",

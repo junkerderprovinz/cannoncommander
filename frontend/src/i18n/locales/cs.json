@@ -1582,7 +1582,16 @@
     "jobFrom": "Stahování: {what} z {host}"
   },
   "filesystem": {
-    "systemFiles": "Zobrazit chráněné systémové soubory"
+    "systemFiles": "Zobrazit chráněné systémové soubory",
+    "cloud": {
+      "online": "Dostupné jen online",
+      "local": "Dostupné v tomto zařízení",
+      "pinned": "Vždy dostupné v tomto zařízení"
+    },
+    "keep": "Vždy ponechat v tomto zařízení",
+    "free": "Uvolnit místo",
+    "kept": "Zůstane v tomto zařízení: {objects}",
+    "freed": "Místo uvolněno pro {objects}"
   },
   "gather": {
     "title": "Sloučit složku",
@@ -3777,6 +3786,7 @@
     "groupExists": "Tato skupina už existuje",
     "groupNameMissing": "Pojmenujte skupinu",
     "inArchive": "To leží v archivu",
+    "inCloud": "Soubor je jen v cloudu. Jednou ho otevřete a bude i v tomto zařízení",
     "inTrash": "To už je v koši",
     "intoItself": "Složka nemůže do sebe samé",
     "ioError": "Disk ohlásil chybu čtení nebo zápisu",

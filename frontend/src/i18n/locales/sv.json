@@ -1472,7 +1472,16 @@
     "jobFrom": "Hämta: {what} från {host}"
   },
   "filesystem": {
-    "systemFiles": "Visa skyddade systemfiler"
+    "systemFiles": "Visa skyddade systemfiler",
+    "cloud": {
+      "online": "Endast tillgänglig online",
+      "local": "Tillgänglig på den här enheten",
+      "pinned": "Alltid tillgänglig på den här enheten"
+    },
+    "keep": "Behåll alltid på den här enheten",
+    "free": "Frigör utrymme",
+    "kept": "Stannar på den här enheten: {objects}",
+    "freed": "Utrymme frigjort för {objects}"
   },
   "gather": {
     "title": "Samla en mapp",
@@ -3513,6 +3522,7 @@
     "groupExists": "Den här gruppen finns redan",
     "groupNameMissing": "Ge gruppen ett namn",
     "inArchive": "Det ligger i ett arkiv",
+    "inCloud": "Filen finns bara i molnet. Öppna den en gång så finns den även på den här enheten",
     "inTrash": "Det ligger redan i papperskorgen",
     "intoItself": "En mapp kan inte flyttas in i sig själv",
     "ioError": "Disken rapporterade ett läs- eller skrivfel",

@@ -1417,7 +1417,16 @@
     "jobFrom": "Muat: {what} dari {host}"
   },
   "filesystem": {
-    "systemFiles": "Tampilkan file sistem yang dilindungi"
+    "systemFiles": "Tampilkan file sistem yang dilindungi",
+    "cloud": {
+      "online": "Hanya tersedia online",
+      "local": "Tersedia di perangkat ini",
+      "pinned": "Selalu tersedia di perangkat ini"
+    },
+    "keep": "Selalu simpan di perangkat ini",
+    "free": "Kosongkan ruang",
+    "kept": "Tetap di perangkat ini: {objects}",
+    "freed": "Ruang dikosongkan untuk {objects}"
   },
   "gather": {
     "title": "Kumpulkan folder",
@@ -3381,6 +3390,7 @@
     "groupExists": "Grup ini sudah ada",
     "groupNameMissing": "Beri nama untuk grup ini",
     "inArchive": "Ini ada di dalam arsip",
+    "inCloud": "File hanya ada di cloud. Buka sekali, lalu file juga ada di perangkat ini",
     "inTrash": "Ini sudah ada di Tempat Sampah",
     "intoItself": "Folder tidak bisa masuk ke dirinya sendiri",
     "ioError": "Disk melaporkan kesalahan baca atau tulis",

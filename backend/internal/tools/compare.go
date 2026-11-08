@@ -207,6 +207,9 @@ func sameContent(a, b string) bool {
 }
 
 func fileSum(p string) ([]byte, error) {
+	if ccfs.InCloud(p) {
+		return nil, ccfs.ErrInCloud
+	}
 	f, err := os.Open(p)
 	if err != nil {
 		return nil, err

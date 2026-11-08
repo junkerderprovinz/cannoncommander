@@ -1582,7 +1582,16 @@
     "jobFrom": "Pobieranie: {what} z {host}"
   },
   "filesystem": {
-    "systemFiles": "Pokaż chronione pliki systemowe"
+    "systemFiles": "Pokaż chronione pliki systemowe",
+    "cloud": {
+      "online": "Dostępne tylko online",
+      "local": "Dostępne na tym urządzeniu",
+      "pinned": "Zawsze dostępne na tym urządzeniu"
+    },
+    "keep": "Zawsze zachowuj na tym urządzeniu",
+    "free": "Zwolnij miejsce",
+    "kept": "Zostaje na tym urządzeniu: {objects}",
+    "freed": "Zwolniono miejsce dla: {objects}"
   },
   "gather": {
     "title": "Zbierz folder",
@@ -3777,6 +3786,7 @@
     "groupExists": "Ta grupa już istnieje",
     "groupNameMissing": "Nadaj grupie nazwę",
     "inArchive": "To leży w archiwum",
+    "inCloud": "Plik jest tylko w chmurze. Otwórz go raz, a będzie też na tym urządzeniu",
     "inTrash": "To już jest w koszu",
     "intoItself": "Folder nie może trafić do samego siebie",
     "ioError": "Dysk zgłosił błąd odczytu lub zapisu",

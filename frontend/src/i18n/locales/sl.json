@@ -1582,7 +1582,16 @@
     "jobFrom": "Prenos: {what} z {host}"
   },
   "filesystem": {
-    "systemFiles": "Prikaži zaščitene sistemske datoteke"
+    "systemFiles": "Prikaži zaščitene sistemske datoteke",
+    "cloud": {
+      "online": "Na voljo samo v spletu",
+      "local": "Na voljo v tej napravi",
+      "pinned": "Vedno na voljo v tej napravi"
+    },
+    "keep": "Vedno obdrži v tej napravi",
+    "free": "Sprosti prostor",
+    "kept": "Ostane v tej napravi: {objects}",
+    "freed": "Prostor sproščen za {objects}"
   },
   "gather": {
     "title": "Združi mapo",
@@ -3777,6 +3786,7 @@
     "groupExists": "Ta skupina že obstaja",
     "groupNameMissing": "Poimenujte skupino",
     "inArchive": "To je v arhivu",
+    "inCloud": "Datoteka je samo v oblaku. Odprite jo enkrat in bo tudi v tej napravi",
     "inTrash": "To je že v košu",
     "intoItself": "Mapa ne more v samo sebe",
     "ioError": "Disk je javil napako pri branju ali pisanju",

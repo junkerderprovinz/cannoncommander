@@ -1582,7 +1582,16 @@
     "jobFrom": "Sťahovanie: {what} z {host}"
   },
   "filesystem": {
-    "systemFiles": "Zobraziť chránené systémové súbory"
+    "systemFiles": "Zobraziť chránené systémové súbory",
+    "cloud": {
+      "online": "Dostupné len online",
+      "local": "Dostupné v tomto zariadení",
+      "pinned": "Vždy dostupné v tomto zariadení"
+    },
+    "keep": "Vždy ponechať v tomto zariadení",
+    "free": "Uvoľniť miesto",
+    "kept": "Zostane v tomto zariadení: {objects}",
+    "freed": "Miesto uvoľnené pre {objects}"
   },
   "gather": {
     "title": "Zlúčiť priečinok",
@@ -3777,6 +3786,7 @@
     "groupExists": "Táto skupina už existuje",
     "groupNameMissing": "Pomenujte skupinu",
     "inArchive": "To leží v archíve",
+    "inCloud": "Súbor je len v cloude. Raz ho otvorte a bude aj v tomto zariadení",
     "inTrash": "To už je v koši",
     "intoItself": "Priečinok nemôže do seba samého",
     "ioError": "Disk ohlásil chybu čítania alebo zápisu",

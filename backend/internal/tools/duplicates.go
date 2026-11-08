@@ -269,6 +269,9 @@ func narrowDups(groups [][]dupCandidate, key func(*dupCandidate) (string, bool))
 // partialHash also puts the length of the file into c, because the index
 // may only know the blocks the file takes on its disk.
 func partialHash(ctx context.Context, run *jobs.Run, c *dupCandidate) (string, error) {
+	if ccfs.InCloud(c.Real) {
+		return "", ccfs.ErrInCloud
+	}
 	f, err := ccfs.OpenRegular(c.Real)
 	if err != nil {
 		return "", err
@@ -302,6 +305,9 @@ func partialHash(ctx context.Context, run *jobs.Run, c *dupCandidate) (string, e
 // fullHash reads the whole file through the job's speed limit, so a scan
 // of a big share can be paused and slowed like a copy.
 func fullHash(ctx context.Context, run *jobs.Run, c dupCandidate) (string, error) {
+	if ccfs.InCloud(c.Real) {
+		return "", ccfs.ErrInCloud
+	}
 	f, err := ccfs.OpenRegular(c.Real)
 	if err != nil {
 		return "", err

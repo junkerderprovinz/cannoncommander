@@ -1472,7 +1472,16 @@
     "jobFrom": "İndir: {host} adresinden {what}"
   },
   "filesystem": {
-    "systemFiles": "Korunan sistem dosyalarını göster"
+    "systemFiles": "Korunan sistem dosyalarını göster",
+    "cloud": {
+      "online": "Yalnızca çevrimiçi kullanılabilir",
+      "local": "Bu cihazda kullanılabilir",
+      "pinned": "Her zaman bu cihazda kullanılabilir"
+    },
+    "keep": "Her zaman bu cihazda tut",
+    "free": "Yer aç",
+    "kept": "Bu cihazda kalır: {objects}",
+    "freed": "{objects} için yer açıldı"
   },
   "gather": {
     "title": "Klasörü topla",
@@ -3513,6 +3522,7 @@
     "groupExists": "Bu grup zaten var",
     "groupNameMissing": "Gruba bir ad ver",
     "inArchive": "Bu bir arşivin içinde",
+    "inCloud": "Dosya yalnızca bulutta. Bir kez açın, bu cihazda da olsun",
     "inTrash": "Bu zaten çöp kutusunda",
     "intoItself": "Bir klasör kendi içine giremez",
     "ioError": "Disk bir okuma ya da yazma hatası bildirdi",

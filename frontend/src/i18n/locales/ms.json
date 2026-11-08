@@ -1417,7 +1417,16 @@
     "jobFrom": "Muat: {what} dari {host}"
   },
   "filesystem": {
-    "systemFiles": "Tunjukkan fail sistem yang dilindungi"
+    "systemFiles": "Tunjukkan fail sistem yang dilindungi",
+    "cloud": {
+      "online": "Tersedia dalam talian sahaja",
+      "local": "Tersedia pada peranti ini",
+      "pinned": "Sentiasa tersedia pada peranti ini"
+    },
+    "keep": "Sentiasa simpan pada peranti ini",
+    "free": "Kosongkan ruang",
+    "kept": "Kekal pada peranti ini: {objects}",
+    "freed": "Ruang dikosongkan untuk {objects}"
   },
   "gather": {
     "title": "Himpunkan folder",
@@ -3381,6 +3390,7 @@
     "groupExists": "Kumpulan ini sudah ada",
     "groupNameMissing": "Beri nama kepada kumpulan ini",
     "inArchive": "Ini berada dalam arkib",
+    "inCloud": "Fail ini hanya ada dalam awan. Buka sekali dan ia akan ada pada peranti ini juga",
     "inTrash": "Ini sudah berada dalam tong sampah",
     "intoItself": "Folder tidak boleh masuk ke dalam dirinya sendiri",
     "ioError": "Cakera melaporkan ralat baca atau tulis",

@@ -1527,7 +1527,16 @@
     "jobFrom": "Carrega: {what} des de {host}"
   },
   "filesystem": {
-    "systemFiles": "Mostra els fitxers del sistema protegits"
+    "systemFiles": "Mostra els fitxers del sistema protegits",
+    "cloud": {
+      "online": "Disponible només en línia",
+      "local": "Disponible en aquest dispositiu",
+      "pinned": "Sempre disponible en aquest dispositiu"
+    },
+    "keep": "Mantén sempre en aquest dispositiu",
+    "free": "Allibera espai",
+    "kept": "Es queda en aquest dispositiu: {objects}",
+    "freed": "Espai alliberat per a {objects}"
   },
   "gather": {
     "title": "Agrupa una carpeta",
@@ -3645,6 +3654,7 @@
     "groupExists": "Aquest grup ja existeix",
     "groupNameMissing": "Doneu un nom al grup",
     "inArchive": "Això és dins d'un arxiu",
+    "inCloud": "El fitxer només és al núvol. Obre'l una vegada i també serà en aquest dispositiu",
     "inTrash": "Això ja és a la paperera",
     "intoItself": "Una carpeta no pot anar dins de si mateixa",
     "ioError": "El disc ha informat d'un error de lectura o d'escriptura",

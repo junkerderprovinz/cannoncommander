@@ -1417,7 +1417,16 @@
     "jobFrom": "가져오기: {host}의 {what}"
   },
   "filesystem": {
-    "systemFiles": "보호된 시스템 파일 표시"
+    "systemFiles": "보호된 시스템 파일 표시",
+    "cloud": {
+      "online": "온라인에서만 사용 가능",
+      "local": "이 장치에서 사용 가능",
+      "pinned": "항상 이 장치에서 사용 가능"
+    },
+    "keep": "항상 이 장치에 유지",
+    "free": "공간 확보",
+    "kept": "이 장치에 유지됨: {objects}",
+    "freed": "{objects}의 공간을 확보했습니다"
   },
   "gather": {
     "title": "폴더 모으기",
@@ -3381,6 +3390,7 @@
     "groupExists": "이미 있는 그룹입니다",
     "groupNameMissing": "그룹 이름을 정하세요",
     "inArchive": "압축 파일 안에 있는 항목입니다",
+    "inCloud": "파일이 클라우드에만 있습니다. 한 번 열면 이 장치에도 저장됩니다",
     "inTrash": "이미 휴지통에 있습니다",
     "intoItself": "폴더를 자기 자신 안에 넣을 수 없습니다",
     "ioError": "디스크가 읽기 또는 쓰기 오류를 보고했습니다",

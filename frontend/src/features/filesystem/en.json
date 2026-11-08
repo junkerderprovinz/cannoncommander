@@ -1,3 +1,8 @@
 {
-  "systemFiles": "Show protected system files"
+  "systemFiles": "Show protected system files",
+  "cloud": { "online": "Available online only", "local": "Available on this device", "pinned": "Always available on this device" },
+  "keep": "Always keep on this device",
+  "free": "Free up space",
+  "kept": "Stays on this device: {objects}",
+  "freed": "Space freed for {objects}"
 }

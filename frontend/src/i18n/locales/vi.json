@@ -1417,7 +1417,16 @@
     "jobFrom": "Tải: {what} từ {host}"
   },
   "filesystem": {
-    "systemFiles": "Hiện tệp hệ thống được bảo vệ"
+    "systemFiles": "Hiện tệp hệ thống được bảo vệ",
+    "cloud": {
+      "online": "Chỉ có trực tuyến",
+      "local": "Có trên thiết bị này",
+      "pinned": "Luôn có trên thiết bị này"
+    },
+    "keep": "Luôn giữ trên thiết bị này",
+    "free": "Giải phóng dung lượng",
+    "kept": "Giữ trên thiết bị này: {objects}",
+    "freed": "Đã giải phóng dung lượng cho {objects}"
   },
   "gather": {
     "title": "Gom thư mục",
@@ -3381,6 +3390,7 @@
     "groupExists": "Nhóm này đã có rồi",
     "groupNameMissing": "Hãy đặt tên cho nhóm",
     "inArchive": "Mục này nằm trong tệp nén",
+    "inCloud": "Tệp chỉ có trên đám mây. Mở một lần là tệp cũng có trên thiết bị này",
     "inTrash": "Mục này đã ở trong thùng rác",
     "intoItself": "Thư mục không thể nằm trong chính nó",
     "ioError": "Ổ đĩa báo lỗi đọc hoặc lỗi ghi",

@@ -1,3 +1,8 @@
 {
-  "systemFiles": "Geschützte Systemdateien anzeigen"
+  "systemFiles": "Geschützte Systemdateien anzeigen",
+  "cloud": { "online": "Nur online verfügbar", "local": "Auf diesem Gerät verfügbar", "pinned": "Immer auf diesem Gerät verfügbar" },
+  "keep": "Immer auf diesem Gerät behalten",
+  "free": "Speicher freigeben",
+  "kept": "Bleibt auf diesem Gerät: {objects}",
+  "freed": "Speicher freigegeben für {objects}"
 }

@@ -1527,7 +1527,16 @@
     "jobFrom": "Charger : {what} depuis {host}"
   },
   "filesystem": {
-    "systemFiles": "Afficher les fichiers système protégés"
+    "systemFiles": "Afficher les fichiers système protégés",
+    "cloud": {
+      "online": "Disponible en ligne uniquement",
+      "local": "Disponible sur cet appareil",
+      "pinned": "Toujours disponible sur cet appareil"
+    },
+    "keep": "Toujours conserver sur cet appareil",
+    "free": "Libérer de l'espace",
+    "kept": "Reste sur cet appareil : {objects}",
+    "freed": "Espace libéré pour {objects}"
   },
   "gather": {
     "title": "Regrouper un dossier",
@@ -3645,6 +3654,7 @@
     "groupExists": "Ce groupe existe déjà",
     "groupNameMissing": "Donnez un nom au groupe",
     "inArchive": "Cela se trouve dans une archive",
+    "inCloud": "Le fichier se trouve uniquement dans le cloud. Ouvrez-le une fois et il sera aussi sur cet appareil",
     "inTrash": "C'est déjà dans la corbeille",
     "intoItself": "Un dossier ne peut pas aller dans lui-même",
     "ioError": "Le disque a signalé une erreur de lecture ou d'écriture",

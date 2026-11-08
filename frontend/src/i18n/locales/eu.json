@@ -1472,7 +1472,16 @@
     "jobFrom": "Kargatu: {what}, {host} zerbitzaritik"
   },
   "filesystem": {
-    "systemFiles": "Erakutsi sistemaren fitxategi babestuak"
+    "systemFiles": "Erakutsi sistemaren fitxategi babestuak",
+    "cloud": {
+      "online": "Linean soilik eskuragarri",
+      "local": "Gailu honetan eskuragarri",
+      "pinned": "Beti eskuragarri gailu honetan"
+    },
+    "keep": "Gorde beti gailu honetan",
+    "free": "Askatu lekua",
+    "kept": "Gailu honetan geratzen da: {objects}",
+    "freed": "Lekua askatuta: {objects}"
   },
   "gather": {
     "title": "Bildu karpeta bat",
@@ -3513,6 +3522,7 @@
     "groupExists": "Talde hori badago jada",
     "groupNameMissing": "Eman izen bat taldeari",
     "inArchive": "Hau artxibo baten barruan dago",
+    "inCloud": "Fitxategia hodeian bakarrik dago. Ireki behin eta gailu honetan ere egongo da",
     "inTrash": "Hau zakarrontzian dago jada",
     "intoItself": "Karpeta bat ezin da bere barrura sartu",
     "ioError": "Diskoak irakurtze- edo idazte-errore bat jakinarazi du",

@@ -419,6 +419,7 @@
     "groupExists": "Diese Gruppe gibt es schon",
     "groupNameMissing": "Gib der Gruppe einen Namen",
     "inArchive": "Das liegt in einem Archiv",
+    "inCloud": "Die Datei liegt nur in der Cloud. Öffne sie einmal, dann liegt sie auch auf diesem Gerät",
     "inTrash": "Das liegt schon im Papierkorb",
     "intoItself": "Ein Ordner kann nicht in sich selbst",
     "ioError": "Die Platte hat einen Lesefehler oder Schreibfehler gemeldet",

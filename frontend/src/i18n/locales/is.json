@@ -1472,7 +1472,16 @@
     "jobFrom": "Sækja: {what} frá {host}"
   },
   "filesystem": {
-    "systemFiles": "Sýna varðar kerfisskrár"
+    "systemFiles": "Sýna varðar kerfisskrár",
+    "cloud": {
+      "online": "Aðeins tiltækt á netinu",
+      "local": "Tiltækt í þessu tæki",
+      "pinned": "Alltaf tiltækt í þessu tæki"
+    },
+    "keep": "Geyma alltaf í þessu tæki",
+    "free": "Losa pláss",
+    "kept": "Verður áfram í þessu tæki: {objects}",
+    "freed": "Pláss losað fyrir {objects}"
   },
   "gather": {
     "title": "Safna möppu saman",
@@ -3513,6 +3522,7 @@
     "groupExists": "Þessi hópur er þegar til",
     "groupNameMissing": "Gefðu hópnum heiti",
     "inArchive": "Þetta er í safnskrá",
+    "inCloud": "Skráin er aðeins í skýinu. Opnaðu hana einu sinni og þá er hún líka í þessu tæki",
     "inTrash": "Þetta er þegar í ruslinu",
     "intoItself": "Mappa getur ekki farið inn í sjálfa sig",
     "ioError": "Diskurinn tilkynnti les- eða skrifvillu",

@@ -419,6 +419,7 @@
     "groupExists": "This group exists already",
     "groupNameMissing": "Give the group a name",
     "inArchive": "This is inside an archive",
+    "inCloud": "The file lies in the cloud only. Open it once and it is on this device as well",
     "inTrash": "This is in the trash already",
     "intoItself": "A folder cannot go into itself",
     "ioError": "The disk reported a read or write error",

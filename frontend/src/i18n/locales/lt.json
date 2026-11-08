@@ -1582,7 +1582,16 @@
     "jobFrom": "Atsisiųsti: {what} iš {host}"
   },
   "filesystem": {
-    "systemFiles": "Rodyti apsaugotus sistemos failus"
+    "systemFiles": "Rodyti apsaugotus sistemos failus",
+    "cloud": {
+      "online": "Pasiekiama tik internete",
+      "local": "Pasiekiama šiame įrenginyje",
+      "pinned": "Visada pasiekiama šiame įrenginyje"
+    },
+    "keep": "Visada laikyti šiame įrenginyje",
+    "free": "Atlaisvinti vietos",
+    "kept": "Lieka šiame įrenginyje: {objects}",
+    "freed": "Vieta atlaisvinta: {objects}"
   },
   "gather": {
     "title": "Surinkti aplanką",
@@ -3777,6 +3786,7 @@
     "groupExists": "Tokia grupė jau yra",
     "groupNameMissing": "Suteik grupei pavadinimą",
     "inArchive": "Tai yra archyve",
+    "inCloud": "Failas yra tik debesyje. Atidarykite jį vieną kartą ir jis bus ir šiame įrenginyje",
     "inTrash": "Tai jau šiukšlinėje",
     "intoItself": "Aplankas negali būti perkeltas į save patį",
     "ioError": "Diskas pranešė apie skaitymo ar rašymo klaidą",

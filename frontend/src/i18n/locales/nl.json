@@ -1472,7 +1472,16 @@
     "jobFrom": "Laden: {what} van {host}"
   },
   "filesystem": {
-    "systemFiles": "Beveiligde systeembestanden weergeven"
+    "systemFiles": "Beveiligde systeembestanden weergeven",
+    "cloud": {
+      "online": "Alleen online beschikbaar",
+      "local": "Beschikbaar op dit apparaat",
+      "pinned": "Altijd beschikbaar op dit apparaat"
+    },
+    "keep": "Altijd op dit apparaat bewaren",
+    "free": "Ruimte vrijmaken",
+    "kept": "Blijft op dit apparaat: {objects}",
+    "freed": "Ruimte vrijgemaakt voor {objects}"
   },
   "gather": {
     "title": "Map bundelen",
@@ -3513,6 +3522,7 @@
     "groupExists": "Deze groep bestaat al",
     "groupNameMissing": "Geef de groep een naam",
     "inArchive": "Dit staat in een archief",
+    "inCloud": "Het bestand staat alleen in de cloud. Open het één keer, dan staat het ook op dit apparaat",
     "inTrash": "Dit staat al in de prullenbak",
     "intoItself": "Een map kan niet in zichzelf",
     "ioError": "De schijf meldde een lees- of schrijffout",

@@ -1472,7 +1472,16 @@
     "jobFrom": "Laadi: {what} ({host})"
   },
   "filesystem": {
-    "systemFiles": "Näita kaitstud süsteemifaile"
+    "systemFiles": "Näita kaitstud süsteemifaile",
+    "cloud": {
+      "online": "Saadaval ainult võrgus",
+      "local": "Saadaval selles seadmes",
+      "pinned": "Alati saadaval selles seadmes"
+    },
+    "keep": "Hoia alati selles seadmes",
+    "free": "Vabasta ruumi",
+    "kept": "Jääb sellesse seadmesse: {objects}",
+    "freed": "Ruum vabastatud: {objects}"
   },
   "gather": {
     "title": "Koonda kaust",
@@ -3513,6 +3522,7 @@
     "groupExists": "See rühm on juba olemas",
     "groupNameMissing": "Anna rühmale nimi",
     "inArchive": "See on arhiivis",
+    "inCloud": "Fail on ainult pilves. Ava see korra ja see on ka selles seadmes",
     "inTrash": "See on juba prügikastis",
     "intoItself": "Kausta ei saa iseendasse panna",
     "ioError": "Ketas teatas lugemis- või kirjutamisveast",

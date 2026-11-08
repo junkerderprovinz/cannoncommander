@@ -1472,7 +1472,16 @@
     "jobFrom": "Hent: {what} fra {host}"
   },
   "filesystem": {
-    "systemFiles": "Vis beskyttede systemfiler"
+    "systemFiles": "Vis beskyttede systemfiler",
+    "cloud": {
+      "online": "Kun tilgængelig online",
+      "local": "Tilgængelig på denne enhed",
+      "pinned": "Altid tilgængelig på denne enhed"
+    },
+    "keep": "Behold altid på denne enhed",
+    "free": "Frigør plads",
+    "kept": "Bliver på denne enhed: {objects}",
+    "freed": "Plads frigjort for {objects}"
   },
   "gather": {
     "title": "Saml en mappe",
@@ -3513,6 +3522,7 @@
     "groupExists": "Denne gruppe findes allerede",
     "groupNameMissing": "Giv gruppen et navn",
     "inArchive": "Det ligger i et arkiv",
+    "inCloud": "Filen ligger kun i skyen. Åbn den én gang, så ligger den også på denne enhed",
     "inTrash": "Det ligger allerede i papirkurven",
     "intoItself": "En mappe kan ikke flyttes ind i sig selv",
     "ioError": "Disken meldte en læse- eller skrivefejl",

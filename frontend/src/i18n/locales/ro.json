@@ -1527,7 +1527,16 @@
     "jobFrom": "Descărcare: {what} de la {host}"
   },
   "filesystem": {
-    "systemFiles": "Afișează fișierele de sistem protejate"
+    "systemFiles": "Afișează fișierele de sistem protejate",
+    "cloud": {
+      "online": "Disponibil doar online",
+      "local": "Disponibil pe acest dispozitiv",
+      "pinned": "Mereu disponibil pe acest dispozitiv"
+    },
+    "keep": "Păstrează mereu pe acest dispozitiv",
+    "free": "Eliberează spațiu",
+    "kept": "Rămâne pe acest dispozitiv: {objects}",
+    "freed": "Spațiu eliberat pentru {objects}"
   },
   "gather": {
     "title": "Adună un dosar",
@@ -3645,6 +3654,7 @@
     "groupExists": "Acest grup există deja",
     "groupNameMissing": "Dă un nume grupului",
     "inArchive": "Asta se află într-o arhivă",
+    "inCloud": "Fișierul este doar în cloud. Deschide-l o dată și va fi și pe acest dispozitiv",
     "inTrash": "Asta e deja în coș",
     "intoItself": "Un dosar nu poate intra în el însuși",
     "ioError": "Discul a raportat o eroare de citire sau de scriere",

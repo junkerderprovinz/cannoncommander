@@ -583,6 +583,10 @@ components:
           type: string
           description: The attributes of Windows with the letters of Explorer's column, R read-only, H hidden, S system, A archive, C compressed, E encrypted, O offline, M fetched from the cloud on access, P kept on the device, U free to be dropped, L a link or junction.
           example: RA
+        cloud:
+          type: string
+          enum: [online, local, pinned]
+          description: The state of a file a cloud provider such as OneDrive keeps, as Explorer's status column shows it. An online file gets no thumbnail and no metadata, since reading it would download it.
         link:
           type: string
           description: Target of a symbolic link.

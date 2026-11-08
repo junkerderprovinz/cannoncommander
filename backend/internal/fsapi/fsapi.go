@@ -60,6 +60,9 @@ type Item struct {
 	System bool `json:"system,omitempty"`
 	// Attrs are the attributes of Windows as Explorer's column shows them.
 	Attrs string `json:"attrs,omitempty"`
+	// Cloud is the state of a file a cloud provider keeps: online, local
+	// or pinned.
+	Cloud string `json:"cloud,omitempty"`
 	Link  string `json:"link,omitempty"`
 	// Items counts the entries inside a folder, when known.
 	Items   *int    `json:"items,omitempty"`
@@ -372,6 +375,9 @@ func itemFor(real, name string) (Item, error) {
 	item := Item{Name: name}
 	item.Hidden, item.System = hiddenOf(name, st.attrs)
 	item.Attrs = attrLetters(st.attrs)
+	if st.attrs&(attrReparse|attrOffline|attrPinned|attrUnpinned|attrRecallOnDataAccess) != 0 {
+		item.Cloud = cloudState(st.attrs, !ccfs.CloudOnly(st.attrs) && cloudTagged(real, st.attrs))
+	}
 	if st.mode&fs.ModeSymlink != 0 {
 		if target, err := os.Readlink(real); err == nil {
 			item.Link = filepath.ToSlash(target)

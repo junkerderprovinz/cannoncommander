@@ -15,6 +15,8 @@ export interface FsItem {
   system?: boolean;
   // The attributes of Windows with the letters of Explorer's column, such as RA.
   attrs?: string;
+  // A file a cloud provider keeps: only online, on this device, or always kept on it.
+  cloud?: 'online' | 'local' | 'pinned';
   link?: string;
   items?: number;
   // The server can list what is inside, so the archive opens like a folder.
