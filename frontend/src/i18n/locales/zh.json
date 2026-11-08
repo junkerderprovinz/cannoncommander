@@ -2509,6 +2509,9 @@
       "other": "剪贴板中有 {n} 项"
     },
     "clipEmpty": "剪贴板为空",
+    "leftOut": {
+      "other": "不在此处显示的文件夹中，未处理：{n} 项"
+    },
     "parityTitle": "Parity 检查正在进行",
     "parityAsk": "现在复制还是稍后？",
     "parityText": "Unraid 正在检查 Parity。复制 {size} 会拖慢检查，复制本身也会变慢。",
@@ -3421,6 +3424,7 @@
     "cannotUndo": "这一步无法撤销",
     "changedSince": "它在此期间已被修改，因此保持原样",
     "changedWhileOpen": "自你打开以来，此文件已被修改",
+    "clipboardBusy": "剪贴板正忙。请稍后再试",
     "codeMismatch": "验证码不对。手机上的时钟准确吗？",
     "codeMissing": "缺少验证码",
     "collectionName": "给收集夹起个名字，它会成为对方看到的文件夹",
@@ -3432,6 +3436,7 @@
     "desktopOnly": "这只能在桌面应用中进行",
     "fileManagerNotSet": "计算机未接受此更改",
     "disksAdminsOnly": "只有管理员能看到单独的磁盘和 Cache",
+    "dragFailed": "无法将文件拖出",
     "elevationDeclined": "未授予管理员权限",
     "elevationFailed": "具有管理员权限的辅助程序没有响应",
     "elevationUnsupported": "CannonCommander 无法在此系统上请求管理员权限",
@@ -3507,6 +3512,7 @@
     "notElevatable": "无法以管理员权限继续",
     "notFound": "它已不存在",
     "notInTrash": "它不在回收站中",
+    "notOnDisk": "只有磁盘上的文件才能交给其他程序",
     "notText": "此文件不是文本",
     "notWindows1252": "文本中包含 Windows-1252 无法保存的字符。请保存为 UTF-8",
     "nothingToUndo": "没有可撤销的操作",

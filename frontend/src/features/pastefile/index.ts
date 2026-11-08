@@ -1,9 +1,11 @@
 // Strg+V with a picture or a text from another program: the clipboard's content becomes a file in the open folder,
-// after a look at it and a name. Names cut or copied in the panels go first, as Krusader's own clipboard. It listens
-// to the paste event rather than the key, as only the event carries what other programs put on the clipboard.
+// after a look at it and a name. Names cut or copied in the panels go first, as Krusader's own clipboard, and in the
+// desktop app files copied in Explorer or another file manager. It listens to the paste event rather than the key, as
+// only the event carries what other programs put on the clipboard.
 import './paste.css';
 import { reactive } from 'vue';
 import { run } from '@/core/actions';
+import { host } from '@/core/host';
 import { toast } from '@/core/toast';
 import { view } from '@/core/views';
 import { cancelBtn, win, winStack } from '@/core/windows';
@@ -19,15 +21,18 @@ const stamp = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-$
 
 export default function setup() {
   const F = usePanels(), clip = useClipboard();
-  document.addEventListener('paste', (e) => {
+  document.addEventListener('paste', async (e) => {
     if (view.id !== 'files' || winStack.length || (e.target as Element | null)?.closest?.('input, textarea, select, [contenteditable]')) return;
-    if (clip.clip) { e.preventDefault(); run('clipPaste'); return; }
     const data = e.clipboardData;
     const pic = [...(data?.files || [])].find((f) => f.type.startsWith('image/'));
     const text = data?.getData('text/plain');
+    const folder = F.T().path;
+    if (clip.clip || host.desktop) {
+      e.preventDefault();
+      if (await run('pasteFiles')) return;
+    }
     if (!pic && !text) { toast(t('pastefile.empty'), 'warn'); return; }
     e.preventDefault();
-    const folder = F.T().path;
     if (folder.includes('::')) { toast(t('pastefile.archive'), 'warn'); return; }
     const ext = pic ? (pic.type.split('/')[1] || 'png').replace('jpeg', 'jpg') : 'txt';
     const st = reactive({ name: freeName(namesIn(folder), pic ? t('pastefile.shot', { stamp: stamp(), ext }) : t('pastefile.note')) });

@@ -2509,6 +2509,9 @@
       "other": "クリップボードに {n} 個"
     },
     "clipEmpty": "クリップボードは空です",
+    "leftOut": {
+      "other": "ここに表示されるフォルダーの外にあるため残りました: {n} 個の項目"
+    },
     "parityTitle": "Parity チェック中",
     "parityAsk": "今すぐコピーしますか、あとにしますか？",
     "parityText": "Unraid は今 Parity をチェックしています。{size} のコピーはチェックを遅くし、コピー自体も遅くなります。",
@@ -3421,6 +3424,7 @@
     "cannotUndo": "この操作は元に戻せません",
     "changedSince": "その間に変更されたため、そのままにしました",
     "changedWhileOpen": "開いてからファイルが変更されています",
+    "clipboardBusy": "クリップボードは使用中です。少ししてからもう一度お試しください",
     "codeMismatch": "コードが一致しません。スマートフォンの時計は合っていますか？",
     "codeMissing": "コードがありません",
     "collectionName": "コレクションに名前を付けてください。相手に見えるフォルダー名になります",
@@ -3432,6 +3436,7 @@
     "desktopOnly": "これはデスクトップアプリでのみできます",
     "fileManagerNotSet": "コンピューターが変更を受け付けませんでした",
     "disksAdminsOnly": "個々のディスクと Cache は管理者だけが見られます",
+    "dragFailed": "ファイルを外へドラッグできませんでした",
     "elevationDeclined": "管理者権限が与えられませんでした",
     "elevationFailed": "管理者権限で動くヘルパーが応答しませんでした",
     "elevationUnsupported": "このシステムでは CannonCommander は管理者権限を要求できません",
@@ -3507,6 +3512,7 @@
     "notElevatable": "管理者権限で続行することはできません",
     "notFound": "もう存在しません",
     "notInTrash": "ごみ箱にはありません",
+    "notOnDisk": "別のプログラムに渡せるのはディスク上のファイルだけです",
     "notText": "このファイルはテキストではありません",
     "notWindows1252": "Windows-1252 では保存できない文字が含まれています。UTF-8 で保存してください",
     "nothingToUndo": "元に戻せるものはありません",

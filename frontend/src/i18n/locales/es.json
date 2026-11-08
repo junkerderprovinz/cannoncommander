@@ -2691,6 +2691,11 @@
       "other": "{n} en el portapapeles"
     },
     "clipEmpty": "El portapapeles está vacío",
+    "leftOut": {
+      "one": "Fuera de las carpetas de aquí, se queda: 1 elemento",
+      "many": "Fuera de las carpetas de aquí, se queda: {n} elementos",
+      "other": "Fuera de las carpetas de aquí, se queda: {n} elementos"
+    },
     "parityTitle": "Comprobación de paridad en marcha",
     "parityAsk": "¿Copiar ahora o después?",
     "parityText": "Unraid está comprobando la paridad. Una copia de {size} frena la comprobación y además va más lenta.",
@@ -3685,6 +3690,7 @@
     "cannotUndo": "Este paso no se puede deshacer",
     "changedSince": "Esto ha cambiado mientras tanto y por eso se queda como está",
     "changedWhileOpen": "El archivo ha cambiado desde que lo abriste",
+    "clipboardBusy": "El portapapeles está ocupado. Vuelve a intentarlo en un momento",
     "codeMismatch": "El código no coincide. ¿Tiene el móvil la hora correcta?",
     "codeMissing": "Falta el código",
     "collectionName": "Ponle un nombre a la colección, será la carpeta que vean los visitantes",
@@ -3696,6 +3702,7 @@
     "desktopOnly": "Eso solo funciona en la aplicación de escritorio",
     "fileManagerNotSet": "El ordenador no aceptó el cambio",
     "disksAdminsOnly": "Los discos individuales y el Cache solo los ven los administradores",
+    "dragFailed": "No se pudieron arrastrar los archivos fuera",
     "elevationDeclined": "No se concedieron los permisos de administrador",
     "elevationFailed": "El asistente con permisos de administrador no respondió",
     "elevationUnsupported": "En este sistema CannonCommander no puede pedir permisos de administrador",
@@ -3779,6 +3786,7 @@
     "notElevatable": "Esto no se puede continuar con permisos de administrador",
     "notFound": "Esto ya no existe",
     "notInTrash": "Esto no está en la papelera",
+    "notOnDisk": "Solo los archivos del disco pueden ir a otro programa",
     "notText": "Este archivo no es texto",
     "notWindows1252": "El texto tiene caracteres que Windows-1252 no puede guardar. Guárdalo como UTF-8",
     "nothingToUndo": "No hay nada que deshacer",

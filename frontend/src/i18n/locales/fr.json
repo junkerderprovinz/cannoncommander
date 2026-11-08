@@ -2691,6 +2691,11 @@
       "other": "{n} dans le presse-papiers"
     },
     "clipEmpty": "Le presse-papiers est vide",
+    "leftOut": {
+      "one": "Hors des dossiers affichés ici, reste de côté : {n} élément",
+      "many": "Hors des dossiers affichés ici, reste de côté : {n} éléments",
+      "other": "Hors des dossiers affichés ici, reste de côté : {n} éléments"
+    },
     "parityTitle": "Contrôle de parité en cours",
     "parityAsk": "Copier maintenant ou après ?",
     "parityText": "Unraid contrôle en ce moment la parité. Une copie de {size} ralentit le contrôle et va elle-même plus lentement.",
@@ -3685,6 +3690,7 @@
     "cannotUndo": "Cette étape ne peut pas être annulée",
     "changedSince": "Cela a changé entre-temps et reste donc tel quel",
     "changedWhileOpen": "Le fichier a changé depuis que vous l'avez ouvert",
+    "clipboardBusy": "Le presse-papiers est occupé. Réessayez dans un instant",
     "codeMismatch": "Le code ne correspond pas. L'heure de votre téléphone est-elle juste ?",
     "codeMissing": "Le code manque",
     "collectionName": "Donnez un nom au panier, il devient le dossier que voit le visiteur",
@@ -3696,6 +3702,7 @@
     "desktopOnly": "Seule l'application de bureau peut faire cela",
     "fileManagerNotSet": "L'ordinateur n'a pas accepté la modification",
     "disksAdminsOnly": "Seuls les admins voient les disques individuels et le Cache",
+    "dragFailed": "Impossible de faire glisser les fichiers à l'extérieur",
     "elevationDeclined": "Les droits d'administrateur n'ont pas été accordés",
     "elevationFailed": "L'assistant avec droits d'administrateur n'a pas répondu",
     "elevationUnsupported": "Sur ce système, CannonCommander ne peut pas demander de droits d'administrateur",
@@ -3779,6 +3786,7 @@
     "notElevatable": "Cela ne peut pas continuer avec des droits d'administrateur",
     "notFound": "Cela n'existe plus",
     "notInTrash": "Ce n'est pas dans la corbeille",
+    "notOnDisk": "Seuls les fichiers sur le disque peuvent aller dans un autre programme",
     "notText": "Ce fichier n'est pas du texte",
     "notWindows1252": "Le texte contient des caractères que Windows-1252 ne peut pas enregistrer. Enregistrez-le en UTF-8",
     "nothingToUndo": "Il n'y a rien à annuler",

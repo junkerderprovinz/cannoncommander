@@ -47,6 +47,7 @@
   "cut": { "one": "{n} cut", "other": "{n} cut" },
   "inClip": { "one": "{n} on the clipboard", "other": "{n} on the clipboard" },
   "clipEmpty": "The clipboard is empty",
+  "leftOut": { "one": "1 item stayed behind because it lies outside the folders here", "other": "{n} items stayed behind because they lie outside the folders here" },
   "parityTitle": "Parity check running",
   "parityAsk": "Copy now or afterwards?",
   "parityText": "Unraid is checking parity right now. A copy of {size} slows the check down and runs slower itself.",

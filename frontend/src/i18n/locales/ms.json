@@ -2509,6 +2509,9 @@
       "other": "{n} dalam papan keratan"
     },
     "clipEmpty": "Papan keratan kosong",
+    "leftOut": {
+      "other": "Di luar folder di sini, tertinggal: {n} item"
+    },
     "parityTitle": "Semakan Parity sedang berjalan",
     "parityAsk": "Salin sekarang atau kemudian?",
     "parityText": "Unraid sedang menyemak Parity. Salinan sebesar {size} memperlahankan semakan dan juga berjalan lebih perlahan.",
@@ -3421,6 +3424,7 @@
     "cannotUndo": "Langkah ini tidak boleh dibuat asal",
     "changedSince": "Ini telah berubah sementara itu, jadi ia dibiarkan seperti sedia ada",
     "changedWhileOpen": "Fail ini telah berubah sejak anda membukanya",
+    "clipboardBusy": "Papan keratan sedang sibuk. Cuba lagi sebentar nanti",
     "codeMismatch": "Kod tidak sepadan. Adakah jam pada telefon anda betul?",
     "codeMissing": "Kod masih kosong",
     "collectionName": "Beri nama kepada himpunan ini, ia menjadi folder yang dilihat oleh penerima",
@@ -3432,6 +3436,7 @@
     "desktopOnly": "Itu hanya boleh dalam aplikasi desktop",
     "fileManagerNotSet": "Komputer tidak menerima perubahan itu",
     "disksAdminsOnly": "Hanya pentadbir dapat melihat cakera satu per satu dan Cache",
+    "dragFailed": "Fail tidak dapat diseret keluar",
     "elevationDeclined": "Hak pentadbir tidak diberikan",
     "elevationFailed": "Pembantu dengan hak pentadbir tidak menjawab",
     "elevationUnsupported": "Pada sistem ini CannonCommander tidak boleh meminta hak pentadbir",
@@ -3507,6 +3512,7 @@
     "notElevatable": "Ini tidak boleh diteruskan dengan hak pentadbir",
     "notFound": "Ini sudah tiada",
     "notInTrash": "Ini tiada dalam tong sampah",
+    "notOnDisk": "Hanya fail pada cakera boleh dihantar ke program lain",
     "notText": "Fail ini bukan teks",
     "notWindows1252": "Teks ini mengandungi aksara yang tidak dapat disimpan oleh Windows-1252. Simpan sebagai UTF-8",
     "nothingToUndo": "Tiada apa yang boleh dibuat asal",
