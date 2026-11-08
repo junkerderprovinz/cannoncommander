@@ -43,6 +43,8 @@ func (d Desktop) ThemeName() string {
 	order, fallback := []func() string{gtk, kde}, "Adwaita"
 	if slices.Contains(d.Desktops, "kde") {
 		order, fallback = []func() string{kde, gtk}, "breeze"
+	} else if i := slices.IndexFunc(d.Desktops, func(name string) bool { _, ok := themeSettings[name]; return ok }); i >= 0 {
+		order = []func() string{func() string { return d.gsettingsTheme(themeSettings[d.Desktops[i]]) }, gtk, kde}
 	}
 	for _, read := range order {
 		if name := read(); name != "" {
@@ -50,6 +52,61 @@ func (d Desktop) ThemeName() string {
 		}
 	}
 	return fallback
+}
+
+var errTooBig = errors.New("not a regular file of a sensible size")
+
+// readSmall reads a regular file of at most limit bytes. It looks before it
+// opens, as opening a named pipe would wait for a writer.
+func readSmall(file string, limit int64) ([]byte, error) {
+	info, err := os.Stat(file)
+	if err != nil {
+		return nil, err
+	}
+	if !info.Mode().IsRegular() || info.Size() > limit {
+		return nil, errTooBig
+	}
+	f, err := os.Open(file)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	b, err := io.ReadAll(io.LimitReader(f, limit+1))
+	if err == nil && int64(len(b)) > limit {
+		return nil, errTooBig
+	}
+	return b, err
+}
+
+// themeSetting is where a desktop keeps its icon theme in GSettings: the
+// schema, and the key's path in the dconf database.
+type themeSetting struct{ schema, path string }
+
+// themeSettings are the desktops that keep the icon theme in GSettings
+// rather than in GTK's settings.ini, by their name in XDG_CURRENT_DESKTOP.
+var themeSettings = map[string]themeSetting{
+	"gnome":      {"org.gnome.desktop.interface", "/org/gnome/desktop/interface/icon-theme"},
+	"unity":      {"org.gnome.desktop.interface", "/org/gnome/desktop/interface/icon-theme"},
+	"budgie":     {"org.gnome.desktop.interface", "/org/gnome/desktop/interface/icon-theme"},
+	"pantheon":   {"org.gnome.desktop.interface", "/org/gnome/desktop/interface/icon-theme"},
+	"x-cinnamon": {"org.cinnamon.desktop.interface", "/org/cinnamon/desktop/interface/icon-theme"},
+	"mate":       {"org.mate.interface", "/org/mate/desktop/interface/icon-theme"},
+}
+
+// gsettingsTheme asks gsettings for the theme, which also knows the
+// default, and reads the user's dconf database where gsettings is missing.
+func (d Desktop) gsettingsTheme(s themeSetting) string {
+	if v, err := d.GSetting(s.schema, "icon-theme"); err == nil {
+		if name, ok := UnquoteGVariant(v); ok && name != "" {
+			return name
+		}
+	}
+	b, err := readSmall(filepath.Join(d.Config[0], "dconf", "user"), 8<<20)
+	if err != nil {
+		return ""
+	}
+	name, _ := gvdbString(b, s.path)
+	return name
 }
 
 // Icons finds icons in an icon theme, the themes it inherits from and
