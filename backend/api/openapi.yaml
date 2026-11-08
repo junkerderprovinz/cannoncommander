@@ -9058,6 +9058,9 @@ components:
         version:
           type: string
           example: 7.1.1
+        checking:
+          type: boolean
+          description: Set while the desktop app still looks for ffmpeg, which it does after its window opens.
     AdminSource:
       type: object
       required: [name, path]
