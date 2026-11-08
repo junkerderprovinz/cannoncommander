@@ -1416,6 +1416,9 @@
     "job": "Muat: {what}",
     "jobFrom": "Muat: {what} dari {host}"
   },
+  "filesystem": {
+    "systemFiles": "Tampilkan file sistem yang dilindungi"
+  },
   "gather": {
     "title": "Kumpulkan folder",
     "folder": "Folder",

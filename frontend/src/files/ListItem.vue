@@ -12,7 +12,7 @@ import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import type { RowMark as Mark } from '@/stores/panels';
 import { COL, Columns } from './columns';
-import type { Entry } from './entries';
+import { type Entry, isHidden } from './entries';
 import { join } from './paths';
 import SizeText from './SizeText.vue';
 import Thumb from './Thumb.vue';
@@ -29,7 +29,7 @@ const kind = computed(() => (['details', 'compact'].includes(props.view) ? 'row'
     : props.view === 'content' ? 'content' : props.view === 'drives' ? 'drive' : 'tile'));
 const cls = computed(() => [
   { row: 'row', flow: 'row fitem', content: 'row citem', tile: 'row gcard', drive: 'row dcard' }[kind.value],
-  { dir: props.k.dir, hidden: props.k.hidden || props.k.name.startsWith('.'), marked: props.marked, cursor: props.cursor, cut: props.cut, fresh: glows.value },
+  { dir: props.k.dir, hidden: isHidden(props.k), marked: props.marked, cursor: props.cursor, cut: props.cut, fresh: glows.value },
 ]);
 const folder = computed(() => props.k.at || props.path);
 const shownName = computed(() => {

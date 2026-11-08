@@ -72,6 +72,7 @@ export interface Item {
   owner: string;
   group: string;
   hidden?: boolean;
+  system?: boolean;
   link?: string;
   items?: number;
   archive?: boolean;
@@ -87,7 +88,7 @@ export interface Listing { path: string; items: Item[]; volume?: Volume; etag?: 
 
 export const toItem = (i: FsItem): Item => ({
   name: i.name, dir: i.dir, size: i.size, ...(i.sizeUnknown ? { sizeUnknown: true } : {}), time: Date.parse(i.mtime), mode: i.mode, owner: i.owner ?? '', group: i.group ?? '',
-  ...(i.hidden ? { hidden: true } : {}), ...(i.link ? { link: i.link } : {}), ...(i.items != null ? { items: i.items } : {}),
+  ...(i.hidden ? { hidden: true } : {}), ...(i.system ? { system: true } : {}), ...(i.link ? { link: i.link } : {}), ...(i.items != null ? { items: i.items } : {}),
   ...(i.archive ? { archive: true } : {}), ...(i.btime ? { btime: Date.parse(i.btime) } : {}),
   ...(i.ino != null ? { ino: i.ino } : {}), ...(i.nlink != null ? { nlink: i.nlink } : {}),
   ...(i.uid != null ? { uid: i.uid } : {}), ...(i.gid != null ? { gid: i.gid } : {}), ...(i.picture ? { picture: i.picture } : {}),

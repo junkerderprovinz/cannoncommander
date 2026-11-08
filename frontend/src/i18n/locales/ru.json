@@ -1581,6 +1581,9 @@
     "job": "Загрузка: {what}",
     "jobFrom": "Загрузка: {what} с {host}"
   },
+  "filesystem": {
+    "systemFiles": "Показывать защищённые системные файлы"
+  },
   "gather": {
     "title": "Собрать папку",
     "folder": "Папка",

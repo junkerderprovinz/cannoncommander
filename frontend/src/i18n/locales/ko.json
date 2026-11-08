@@ -1416,6 +1416,9 @@
     "job": "가져오기: {what}",
     "jobFrom": "가져오기: {host}의 {what}"
   },
+  "filesystem": {
+    "systemFiles": "보호된 시스템 파일 표시"
+  },
   "gather": {
     "title": "폴더 모으기",
     "folder": "폴더",

@@ -1471,6 +1471,9 @@
     "job": "Hämta: {what}",
     "jobFrom": "Hämta: {what} från {host}"
   },
+  "filesystem": {
+    "systemFiles": "Visa skyddade systemfiler"
+  },
   "gather": {
     "title": "Samla en mapp",
     "folder": "Mapp",

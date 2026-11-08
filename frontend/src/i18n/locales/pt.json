@@ -1526,6 +1526,9 @@
     "job": "Carregar: {what}",
     "jobFrom": "Carregar: {what} de {host}"
   },
+  "filesystem": {
+    "systemFiles": "Mostrar ficheiros de sistema protegidos"
+  },
   "gather": {
     "title": "Agrupar pasta",
     "folder": "Pasta",

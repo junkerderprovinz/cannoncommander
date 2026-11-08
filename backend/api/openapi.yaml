@@ -6011,7 +6011,10 @@ components:
           description: Number of hard links.
         hidden:
           type: boolean
-          description: The name starts with a dot.
+          description: The system's file manager hides the entry. On Windows that is the hidden attribute, elsewhere a name that starts with a dot or one listed in the folder's .hidden file.
+        system:
+          type: boolean
+          description: A protected file of Windows, hidden and a system file at once, such as desktop.ini.
         link:
           type: string
           description: Target of a symbolic link.
@@ -6082,6 +6085,12 @@ components:
         remote:
           type: string
           description: The rclone remote mounted here.
+        hidden:
+          type: boolean
+          description: The folder is hidden, as in a listing.
+        system:
+          type: boolean
+          description: The folder is a protected folder of Windows.
     FsTree:
       type: object
       required: [path, items]

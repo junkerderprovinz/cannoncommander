@@ -1526,6 +1526,9 @@
     "job": "Carrega: {what}",
     "jobFrom": "Carrega: {what} des de {host}"
   },
+  "filesystem": {
+    "systemFiles": "Mostra els fitxers del sistema protegits"
+  },
   "gather": {
     "title": "Agrupa una carpeta",
     "folder": "Carpeta",

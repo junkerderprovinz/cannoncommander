@@ -1526,6 +1526,9 @@
     "job": "טעינה: {what}",
     "jobFrom": "טעינה: {what} מ־{host}"
   },
+  "filesystem": {
+    "systemFiles": "הצגת קבצי מערכת מוגנים"
+  },
   "gather": {
     "title": "איחוד תיקייה",
     "folder": "תיקייה",

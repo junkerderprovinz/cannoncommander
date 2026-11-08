@@ -1526,6 +1526,9 @@
     "job": "Descărcare: {what}",
     "jobFrom": "Descărcare: {what} de la {host}"
   },
+  "filesystem": {
+    "systemFiles": "Afișează fișierele de sistem protejate"
+  },
   "gather": {
     "title": "Adună un dosar",
     "folder": "Dosar",

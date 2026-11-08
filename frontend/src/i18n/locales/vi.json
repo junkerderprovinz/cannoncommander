@@ -1416,6 +1416,9 @@
     "job": "Tải: {what}",
     "jobFrom": "Tải: {what} từ {host}"
   },
+  "filesystem": {
+    "systemFiles": "Hiện tệp hệ thống được bảo vệ"
+  },
   "gather": {
     "title": "Gom thư mục",
     "folder": "Thư mục",

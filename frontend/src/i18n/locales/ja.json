@@ -1416,6 +1416,9 @@
     "job": "取得: {what}",
     "jobFrom": "取得: {host} から {what}"
   },
+  "filesystem": {
+    "systemFiles": "保護されたシステムファイルを表示"
+  },
   "gather": {
     "title": "フォルダーを集約",
     "folder": "フォルダー",

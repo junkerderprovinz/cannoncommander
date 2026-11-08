@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -150,7 +151,7 @@ func TestListReturnsItemsWithTheirFields(t *testing.T) {
 		t.Fatalf("items = %v", names(l.Items))
 	}
 	hidden, notes := l.Items[0], l.Items[1]
-	if hidden.Name != ".partial-download" || !hidden.Hidden || hidden.Size != 5 {
+	if hidden.Name != ".partial-download" || hidden.Hidden != (runtime.GOOS != "windows") || hidden.Size != 5 {
 		t.Errorf("hidden item = %+v", hidden)
 	}
 	if notes.Name != "setup-notes.md" || notes.Dir || notes.Size != 4 || notes.MTime != "2023-11-14T22:13:20.000Z" || len(notes.Mode) != 4 {

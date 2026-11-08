@@ -1471,6 +1471,9 @@
     "job": "İndir: {what}",
     "jobFrom": "İndir: {host} adresinden {what}"
   },
+  "filesystem": {
+    "systemFiles": "Korunan sistem dosyalarını göster"
+  },
   "gather": {
     "title": "Klasörü topla",
     "folder": "Klasör",

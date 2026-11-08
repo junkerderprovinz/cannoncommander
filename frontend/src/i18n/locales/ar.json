@@ -1691,6 +1691,9 @@
     "job": "تنزيل: {what}",
     "jobFrom": "تنزيل: {what} من {host}"
   },
+  "filesystem": {
+    "systemFiles": "إظهار ملفات النظام المحمية"
+  },
   "gather": {
     "title": "تجميع مجلد",
     "folder": "المجلد",

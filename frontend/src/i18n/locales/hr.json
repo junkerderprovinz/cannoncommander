@@ -1526,6 +1526,9 @@
     "job": "Učitavanje: {what}",
     "jobFrom": "Učitavanje: {what} s {host}"
   },
+  "filesystem": {
+    "systemFiles": "Prikaži zaštićene sistemske datoteke"
+  },
   "gather": {
     "title": "Okupi mapu",
     "folder": "Mapa",

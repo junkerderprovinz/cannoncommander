@@ -55,7 +55,10 @@ type Item struct {
 	Owner       string `json:"owner,omitempty"`
 	Group       string `json:"group,omitempty"`
 	Hidden      bool   `json:"hidden,omitempty"`
-	Link        string `json:"link,omitempty"`
+	// System marks a protected file of the system, which stays hidden
+	// until that is asked for as well.
+	System bool   `json:"system,omitempty"`
+	Link   string `json:"link,omitempty"`
 	// Items counts the entries inside a folder, when known.
 	Items   *int    `json:"items,omitempty"`
 	Format  string  `json:"format,omitempty"`
@@ -94,6 +97,8 @@ type TreeItem struct {
 	Free    uint64 `json:"free,omitempty"`
 	Total   uint64 `json:"total,omitempty"`
 	Remote  string `json:"remote,omitempty"`
+	Hidden  bool   `json:"hidden,omitempty"`
+	System  bool   `json:"system,omitempty"`
 }
 
 // Tree is the answer of GET /fs/tree.
@@ -149,6 +154,7 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	seen := h.seenFrom(loc)
+	listed := hiddenListed(loc.Real)
 	for _, d := range dirents {
 		if bookkeeping(d.Name()) || !h.fs.Visible(u, seen, d.Name()) {
 			continue
@@ -158,6 +164,7 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 			// The entry vanished between reading the folder and looking at it.
 			continue
 		}
+		item.Hidden = item.Hidden || listed[d.Name()]
 		out.Items = append(out.Items, item)
 	}
 	refs := make([]folderRef, 0, len(out.Items))
@@ -182,6 +189,7 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 	}
 	out := Tree{Path: loc.Path, Items: []TreeItem{}}
 	var names []string
+	hidden, system := map[string]bool{}, map[string]bool{}
 	if loc.Virtual() {
 		names = h.fs.VirtualChildren(loc.Path)
 	} else {
@@ -189,9 +197,12 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
+		listed := hiddenListed(loc.Real)
 		for _, d := range dirents {
 			if isDir(loc.Real, d) {
 				names = append(names, d.Name())
+				hidden[d.Name()] = ccfs.HiddenEntry(d) || listed[d.Name()]
+				system[d.Name()] = ccfs.ProtectedEntry(d)
 			}
 		}
 	}
@@ -204,7 +215,7 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			continue
 		}
-		item := TreeItem{Name: name, Path: child.Path, Remote: remoteAt(child.Path)}
+		item := TreeItem{Name: name, Path: child.Path, Remote: remoteAt(child.Path), Hidden: hidden[name], System: system[name]}
 		// Reading a disk to find a folder on it would wake it, and a disk
 		// without any folder is rare enough to show the toggle anyway.
 		if child.Source != nil && child.Source.Device && child.Index == "/" {
@@ -355,7 +366,8 @@ func itemFor(real, name string) (Item, error) {
 	if err != nil {
 		return Item{}, err
 	}
-	item := Item{Name: name, Hidden: strings.HasPrefix(name, ".")}
+	item := Item{Name: name}
+	item.Hidden, item.System = hiddenOf(name, st.attrs)
 	if st.mode&fs.ModeSymlink != 0 {
 		if target, err := os.Readlink(real); err == nil {
 			item.Link = filepath.ToSlash(target)

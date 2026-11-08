@@ -1471,6 +1471,9 @@
     "job": "Lataa: {what}",
     "jobFrom": "Lataa: {what} ({host})"
   },
+  "filesystem": {
+    "systemFiles": "Näytä suojatut järjestelmätiedostot"
+  },
   "gather": {
     "title": "Kokoa kansio",
     "folder": "Kansio",

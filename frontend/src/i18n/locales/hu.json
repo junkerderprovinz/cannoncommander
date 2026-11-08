@@ -1471,6 +1471,9 @@
     "job": "Letöltés: {what}",
     "jobFrom": "Letöltés: {what}, innen: {host}"
   },
+  "filesystem": {
+    "systemFiles": "Védett rendszerfájlok megjelenítése"
+  },
   "gather": {
     "title": "Mappa összegyűjtése",
     "folder": "Mappa",

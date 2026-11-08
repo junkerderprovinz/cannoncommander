@@ -1416,6 +1416,9 @@
     "job": "โหลด: {what}",
     "jobFrom": "โหลด: {what} จาก {host}"
   },
+  "filesystem": {
+    "systemFiles": "แสดงไฟล์ระบบที่ได้รับการป้องกัน"
+  },
   "gather": {
     "title": "รวมโฟลเดอร์",
     "folder": "โฟลเดอร์",

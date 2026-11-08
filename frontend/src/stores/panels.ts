@@ -92,7 +92,7 @@ export const usePanels = defineStore('panels', () => {
 
   // A filter searches the folders below by default; "only here" filters the rows already read.
   function source(tab: Tab): Entry[] | null {
-    const keep = shown(prefs.showHidden);
+    const keep = shown(prefs.showHidden, prefs.showSystem);
     if (tab.filter && tab.deep !== false) return listing.search(tab.path, tab.filter, prefs.showHidden).items.filter(keep).map(toEntry);
     if (tab.flat) return listing.search(tab.path, '*', prefs.showHidden).items.filter((k) => keep(k) && !k.dir).map(toEntry);
     const got = listing.lists.get(tab.path);

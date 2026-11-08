@@ -1471,6 +1471,9 @@
     "job": "Sækja: {what}",
     "jobFrom": "Sækja: {what} frá {host}"
   },
+  "filesystem": {
+    "systemFiles": "Sýna varðar kerfisskrár"
+  },
   "gather": {
     "title": "Safna möppu saman",
     "folder": "Mappa",

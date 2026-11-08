@@ -11,6 +11,7 @@ import { byName, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { shake } from '@/ui/kit';
+import { shown } from './entries';
 import { split } from './paths';
 
 const props = defineProps<{ i: number }>();
@@ -24,7 +25,7 @@ const under = (k: number) => '/' + parts.value.slice(0, k).join('/');
 async function psub(e: MouseEvent, folder: string) {
   const r = (e.currentTarget as HTMLElement).getBoundingClientRect(), here = tab.value.path;
   const dirs = (await listing.tree(folder).catch(() => []))
-    .filter((k) => prefs.showHidden || !k.name.startsWith('.'))
+    .filter(shown(prefs.showHidden, prefs.showSystem))
     .sort((a, b) => byName(a.name, b.name));
   menu(r.left, r.bottom + 4, dirs.map((k) => {
     const onPath = here === k.path || here.startsWith(k.path + '/');

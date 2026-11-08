@@ -1471,6 +1471,9 @@
     "job": "Descargar: {what}",
     "jobFrom": "Descargar: {what} de {host}"
   },
+  "filesystem": {
+    "systemFiles": "Amosar os ficheiros do sistema protexidos"
+  },
   "gather": {
     "title": "Xuntar un cartafol",
     "folder": "Cartafol",

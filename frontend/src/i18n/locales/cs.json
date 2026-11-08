@@ -1581,6 +1581,9 @@
     "job": "Stahování: {what}",
     "jobFrom": "Stahování: {what} z {host}"
   },
+  "filesystem": {
+    "systemFiles": "Zobrazit chráněné systémové soubory"
+  },
   "gather": {
     "title": "Sloučit složku",
     "folder": "Složka",

@@ -1416,6 +1416,9 @@
     "job": "下载：{what}",
     "jobFrom": "下载：{what}，来自 {host}"
   },
+  "filesystem": {
+    "systemFiles": "显示受保护的系统文件"
+  },
   "gather": {
     "title": "集中文件夹",
     "folder": "文件夹",

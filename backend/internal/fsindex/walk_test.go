@@ -11,6 +11,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex/fsindextest"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
 )
 
 func tree(t *testing.T) (string, *ccfs.Resolver) {
@@ -25,6 +26,7 @@ func tree(t *testing.T) (string, *ccfs.Resolver) {
 			t.Fatal(err)
 		}
 	}
+	testutil.Hide(t, filepath.Join(root, "filme", ".versteckt"))
 	r, err := ccfs.New(nil, ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: root})
 	if err != nil {
 		t.Fatal(err)

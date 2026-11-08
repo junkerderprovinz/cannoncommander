@@ -1526,6 +1526,9 @@
     "job": "Charger : {what}",
     "jobFrom": "Charger : {what} depuis {host}"
   },
+  "filesystem": {
+    "systemFiles": "Afficher les fichiers système protégés"
+  },
   "gather": {
     "title": "Regrouper un dossier",
     "folder": "Dossier",

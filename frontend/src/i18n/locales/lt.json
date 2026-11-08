@@ -1581,6 +1581,9 @@
     "job": "Atsisiųsti: {what}",
     "jobFrom": "Atsisiųsti: {what} iš {host}"
   },
+  "filesystem": {
+    "systemFiles": "Rodyti apsaugotus sistemos failus"
+  },
   "gather": {
     "title": "Surinkti aplanką",
     "folder": "Aplankas",

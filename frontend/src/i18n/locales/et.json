@@ -1471,6 +1471,9 @@
     "job": "Laadi: {what}",
     "jobFrom": "Laadi: {what} ({host})"
   },
+  "filesystem": {
+    "systemFiles": "Näita kaitstud süsteemifaile"
+  },
   "gather": {
     "title": "Koonda kaust",
     "folder": "Kaust",

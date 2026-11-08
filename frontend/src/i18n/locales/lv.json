@@ -1526,6 +1526,9 @@
     "job": "Lejupielādēt: {what}",
     "jobFrom": "Lejupielādēt: {what} no {host}"
   },
+  "filesystem": {
+    "systemFiles": "Rādīt aizsargātos sistēmas failus"
+  },
   "gather": {
     "title": "Savākt mapi",
     "folder": "Mape",

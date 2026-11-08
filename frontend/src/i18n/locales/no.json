@@ -1471,6 +1471,9 @@
     "job": "Hent: {what}",
     "jobFrom": "Hent: {what} fra {host}"
   },
+  "filesystem": {
+    "systemFiles": "Vis beskyttede systemfiler"
+  },
   "gather": {
     "title": "Samle en mappe",
     "folder": "Mappe",

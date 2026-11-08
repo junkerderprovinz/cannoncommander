@@ -1581,6 +1581,9 @@
     "job": "Prenos: {what}",
     "jobFrom": "Prenos: {what} z {host}"
   },
+  "filesystem": {
+    "systemFiles": "Prikaži zaščitene sistemske datoteke"
+  },
   "gather": {
     "title": "Združi mapo",
     "folder": "Mapa",

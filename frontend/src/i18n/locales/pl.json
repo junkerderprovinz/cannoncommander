@@ -1581,6 +1581,9 @@
     "job": "Pobieranie: {what}",
     "jobFrom": "Pobieranie: {what} z {host}"
   },
+  "filesystem": {
+    "systemFiles": "Pokaż chronione pliki systemowe"
+  },
   "gather": {
     "title": "Zbierz folder",
     "folder": "Folder",

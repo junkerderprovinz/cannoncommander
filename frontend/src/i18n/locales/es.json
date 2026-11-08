@@ -1526,6 +1526,9 @@
     "job": "Cargar: {what}",
     "jobFrom": "Cargar: {what} desde {host}"
   },
+  "filesystem": {
+    "systemFiles": "Mostrar archivos protegidos del sistema"
+  },
   "gather": {
     "title": "Agrupar carpeta",
     "folder": "Carpeta",

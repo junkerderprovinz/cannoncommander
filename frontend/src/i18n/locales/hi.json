@@ -1471,6 +1471,9 @@
     "job": "लोड करें: {what}",
     "jobFrom": "लोड करें: {host} से {what}"
   },
+  "filesystem": {
+    "systemFiles": "सुरक्षित सिस्टम फ़ाइलें दिखाएँ"
+  },
   "gather": {
     "title": "फ़ोल्डर समेटें",
     "folder": "फ़ोल्डर",

@@ -1471,6 +1471,9 @@
     "job": "Kargatu: {what}",
     "jobFrom": "Kargatu: {what}, {host} zerbitzaritik"
   },
+  "filesystem": {
+    "systemFiles": "Erakutsi sistemaren fitxategi babestuak"
+  },
   "gather": {
     "title": "Bildu karpeta bat",
     "folder": "Karpeta",

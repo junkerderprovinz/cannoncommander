@@ -109,7 +109,7 @@ func (c *comparer) walk(l, r, rel string) error {
 			return err
 		}
 		for _, d := range list {
-			if bookkeeping(d.Name()) || !c.req.Hidden && strings.HasPrefix(d.Name(), ".") {
+			if bookkeeping(d.Name()) || !c.req.Hidden && ccfs.HiddenEntry(d) {
 				continue
 			}
 			if _, err := c.fs.Check(c.u, path.Join(c.sides[i], rel, d.Name()), c.perm); err != nil {

@@ -1471,6 +1471,9 @@
     "job": "Laden: {what}",
     "jobFrom": "Laden: {what} van {host}"
   },
+  "filesystem": {
+    "systemFiles": "Beveiligde systeembestanden weergeven"
+  },
   "gather": {
     "title": "Map bundelen",
     "folder": "Map",

@@ -1471,6 +1471,9 @@
     "job": "بار کردن: {what}",
     "jobFrom": "بار کردن: {what} از {host}"
   },
+  "filesystem": {
+    "systemFiles": "نمایش فایل‌های محافظت‌شده سیستم"
+  },
   "gather": {
     "title": "گردآوری پوشه",
     "folder": "پوشه",

@@ -1581,6 +1581,9 @@
     "job": "Sťahovanie: {what}",
     "jobFrom": "Sťahovanie: {what} z {host}"
   },
+  "filesystem": {
+    "systemFiles": "Zobraziť chránené systémové súbory"
+  },
   "gather": {
     "title": "Zlúčiť priečinok",
     "folder": "Priečinok",

@@ -4,6 +4,7 @@ import { action, actions, run } from '@/core/actions';
 import { prefs, setPref } from '@/core/prefs';
 import { go, registerView } from '@/core/views';
 import { closeBtn, type FootButton, win } from '@/core/windows';
+import { shown } from '@/files/entries';
 import { inArchive } from '@/files/paths';
 import { byName, t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
@@ -19,7 +20,7 @@ export const hooks: { edit: ((n: FileNode, folder: string) => void) | null } = {
 let suite: OfficeSetup = { kind: 'none' };
 export const officeName = (s = suite) => t(`viewer.office.kinds.${s.kind}`);
 
-const shownHere = (k: FileNode) => prefs.showHidden || !k.name.startsWith('.');
+const shownHere = (k: FileNode) => shown(prefs.showHidden, prefs.showSystem)(k);
 
 // The pictures and songs of a folder, in the order the panel shows them when it is the panel's own folder.
 function siblings(folder: string, node: FileNode): FileNode[] {
