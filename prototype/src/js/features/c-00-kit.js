@@ -298,9 +298,9 @@ USE_SSH="yes"
     const e = esc(text);
     if (kind !== 'code' && !['json', 'xml', 'conf', 'cfg'].includes(ext)) return e;
     if (ext === 'go') return e.replace(/(\/\/.*$)|(&quot;[^&]*?&quot;|"[^"\n]*")|\b(package|import|func|var|const|return|if|else|for|range|type|struct|err|nil)\b/gm, (m, c, s, k) => c ? `<i class="c">${c}</i>` : s ? `<i class="s">${s}</i>` : `<i class="k">${k}</i>`);
-    if (['yml', 'yaml'].includes(ext)) return e.replace(/(#.*$)|^(\s*-?\s*)([\w.-]+)(:)|(&quot;.*?&quot;|"[^"\n]*")/gm, (m, c, pre, key, col, s) => c ? `<i class="c">${c}</i>` : s ? `<i class="s">${s}</i>` : `${pre}<i class="k">${key}</i>${col}`);
+    if (['yml', 'yaml'].includes(ext)) return e.replace(/((?<!&)#.*$)|^(\s*-?\s*)([\w.-]+)(:)|(&quot;.*?&quot;|"[^"\n]*")/gm, (m, c, pre, key, col, s) => c ? `<i class="c">${c}</i>` : s ? `<i class="s">${s}</i>` : `${pre}<i class="k">${key}</i>${col}`);
     if (ext === 'json') return e.replace(/(&quot;[^&]*?&quot;)(\s*:)?/g, (m, s, col) => col ? `<i class="k">${s}</i>${col}` : `<i class="s">${s}</i>`);
-    return e.replace(/(#.*$)/gm, '<i class="c">$1</i>').replace(/(&quot;.*?&quot;|"[^"\n]*")/g, '<i class="s">$1</i>');
+    return e.replace(/(&quot;.*?&quot;)|((?<!&)#.*$)/gm, (m, s, c) => s ? `<i class="s">${s}</i>` : `<i class="c">${c}</i>`);
   }
 
   // Made-up pictures: a landscape seeded by the file name, so every photo stays the same photo.
