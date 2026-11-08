@@ -8,8 +8,10 @@ require (
 	github.com/alecthomas/kong v1.17.0
 	github.com/bodgit/sevenzip v1.6.5
 	github.com/boombuler/barcode v1.1.0
+	github.com/coder/websocket v1.8.15
 	github.com/coreos/go-oidc/v3 v3.21.0
 	github.com/coreos/go-systemd/v22 v22.7.0
+	github.com/creack/pty v1.1.24
 	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8
 	github.com/dsoprea/go-exif/v3 v3.0.1
 	github.com/evanoberholster/imagemeta v1.1.0
@@ -51,8 +53,6 @@ require (
 	github.com/andybalholm/brotli v1.2.8 // indirect
 	github.com/bodgit/plumbing v1.3.0 // indirect
 	github.com/bodgit/windows v1.0.1 // indirect
-	github.com/coder/websocket v1.8.15 // indirect
-	github.com/creack/pty v1.1.24 // indirect
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 // indirect
 	github.com/dustin/go-humanize v1.1.0 // indirect
