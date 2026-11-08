@@ -2051,6 +2051,14 @@
     },
     "notCopied": "Duplikování se nepovedlo"
   },
+  "openwith": {
+    "menu": "Otevřít v programu",
+    "looking": "Hledání aplikací …",
+    "none": "Nenašla se žádná aplikace",
+    "other": "Zvolit jinou aplikaci",
+    "choose": "Zvolit aplikaci",
+    "search": "Hledat aplikace"
+  },
   "palette": {
     "title": "Hledat příkaz",
     "placeholder": "Hledat příkaz nebo složku",
@@ -3739,6 +3747,7 @@
   },
   "server": {
     "adminsOnly": "To smějí jen administrátoři",
+    "appNotStarted": "{app} se nepodařilo spustit",
     "archivePassword": "Archiv potřebuje správné heslo",
     "archiveUnreadable": "Archiv nelze přečíst",
     "badName": "Tento název nejde",
@@ -3815,6 +3824,7 @@
     "namePasswordNeeded": "Je potřeba jméno i heslo",
     "nameTaken": "Tento název tu už existuje",
     "nameTooLong": "Název je pro systém souborů příliš dlouhý",
+    "noAppDialog": "Tento počítač nemá vlastní dialog pro výběr aplikace",
     "noFolder": "Tato složka neexistuje",
     "noFolderForFile": "Složka pro tento soubor neexistuje",
     "noGroup": "Tato skupina neexistuje",
@@ -3911,6 +3921,7 @@
     "trashEmpty": "Koš je prázdný",
     "trashOtherDisk": "To leží na jiném systému souborů než jeho koš. Smažte to raději přímo",
     "trashShareRoot": "Celý Share ani celý disk nemůže do koše",
+    "unknownApp": "Tento počítač tuto aplikaci pro soubor nenabízí",
     "unraidReadOnly": "Zápis do Unraid je vypnutý",
     "uploadGone": "Započaté nahrávání zmizelo. Začněte prosím znovu",
     "uploadRunning": "Soubor s tímto názvem se právě nahrává",

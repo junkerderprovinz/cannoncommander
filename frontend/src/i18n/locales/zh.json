@@ -1850,6 +1850,14 @@
     },
     "notCopied": "创建副本失败"
   },
+  "openwith": {
+    "menu": "打开方式",
+    "looking": "正在查找应用 …",
+    "none": "找不到应用",
+    "other": "选择其他应用",
+    "choose": "选择应用",
+    "search": "搜索应用"
+  },
   "palette": {
     "title": "搜索命令",
     "placeholder": "搜索命令或文件夹",
@@ -3343,6 +3351,7 @@
   },
   "server": {
     "adminsOnly": "只有管理员可以这样做",
+    "appNotStarted": "{app} 未能启动",
     "archivePassword": "压缩包需要正确的密码",
     "archiveUnreadable": "无法读取压缩包",
     "badName": "这个名称不可用",
@@ -3407,6 +3416,7 @@
     "namePasswordNeeded": "名称和密码都必须填写",
     "nameTaken": "这里已有同名项",
     "nameTooLong": "名称对文件系统来说太长",
+    "noAppDialog": "这台电脑没有自带的对话框来选择应用",
     "noFolder": "此文件夹不存在",
     "noFolderForFile": "此文件所在的文件夹不存在",
     "noGroup": "此组不存在",
@@ -3500,6 +3510,7 @@
     "trashEmpty": "回收站是空的",
     "trashOtherDisk": "它与自己的回收站不在同一个文件系统上。请直接删除",
     "trashShareRoot": "整个 Share 或整个卷不能移到回收站",
+    "unknownApp": "这台电脑没有为这个文件提供该应用",
     "unraidReadOnly": "对 Unraid 的写入已关闭",
     "uploadGone": "已开始的上传丢失了。请重新开始",
     "uploadRunning": "正在上传一个同名文件",

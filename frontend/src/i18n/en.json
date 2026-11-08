@@ -392,6 +392,7 @@
   },
   "server": {
     "adminsOnly": "Only admins can do that",
+    "appNotStarted": "{app} did not start",
     "archivePassword": "The archive needs the right password",
     "archiveUnreadable": "The archive cannot be read",
     "badName": "This name does not work",
@@ -448,6 +449,7 @@
     "namePasswordNeeded": "Name and password are both needed",
     "nameTaken": "This name exists here already",
     "nameTooLong": "The name is too long for the file system",
+    "noAppDialog": "This computer has no dialog of its own for choosing an app",
     "noFolder": "This folder does not exist",
     "noFolderForFile": "The folder for this file does not exist",
     "noGroup": "There is no such group",
@@ -539,6 +541,7 @@
     "trashEmpty": "The trash is empty",
     "trashOtherDisk": "This lies on another file system than its trash. Delete it instead",
     "trashShareRoot": "A whole share or volume cannot go to the trash",
+    "unknownApp": "This computer does not offer that app for the file",
     "unraidReadOnly": "Write access to Unraid is switched off",
     "uploadGone": "The part of this upload is gone. Please start again",
     "uploadRunning": "A file of this name is being uploaded right now",

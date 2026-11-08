@@ -1984,6 +1984,14 @@
     },
     "notCopied": "A duplicação não resultou"
   },
+  "openwith": {
+    "menu": "Abrir com",
+    "looking": "A procurar aplicações …",
+    "none": "Nenhuma aplicação encontrada",
+    "other": "Escolher outra aplicação",
+    "choose": "Escolher uma aplicação",
+    "search": "Procurar aplicações"
+  },
   "palette": {
     "title": "Procurar comando",
     "placeholder": "Procurar comando ou pasta",
@@ -3607,6 +3615,7 @@
   },
   "server": {
     "adminsOnly": "Só os administradores podem fazer isto",
+    "appNotStarted": "Não foi possível iniciar {app}",
     "archivePassword": "O arquivo precisa da palavra-passe certa",
     "archiveUnreadable": "Não é possível ler o arquivo",
     "badName": "Este nome não serve",
@@ -3679,6 +3688,7 @@
     "namePasswordNeeded": "São precisos nome e palavra-passe",
     "nameTaken": "Esse nome já existe aqui",
     "nameTooLong": "O nome é demasiado longo para o sistema de ficheiros",
+    "noAppDialog": "Este computador não tem uma caixa de diálogo própria para escolher uma aplicação",
     "noFolder": "Esta pasta não existe",
     "noFolderForFile": "A pasta para este ficheiro não existe",
     "noGroup": "Esse grupo não existe",
@@ -3774,6 +3784,7 @@
     "trashEmpty": "A reciclagem está vazia",
     "trashOtherDisk": "Isto está noutro sistema de ficheiros que não o da sua reciclagem. É melhor eliminá-lo diretamente",
     "trashShareRoot": "Uma Share inteira ou uma unidade inteira não pode ir para a reciclagem",
+    "unknownApp": "Este computador não oferece essa aplicação para o ficheiro",
     "unraidReadOnly": "A escrita no Unraid está desligada",
     "uploadGone": "O carregamento iniciado já não existe. Comece novamente",
     "uploadRunning": "Está a ser carregado um ficheiro com este nome",

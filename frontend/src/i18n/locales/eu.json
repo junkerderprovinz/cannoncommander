@@ -1917,6 +1917,14 @@
     },
     "notCopied": "Ezin izan da bikoiztu"
   },
+  "openwith": {
+    "menu": "Ireki honekin",
+    "looking": "Aplikazioak bilatzen …",
+    "none": "Ez da aplikaziorik aurkitu",
+    "other": "Aukeratu beste aplikazio bat",
+    "choose": "Aukeratu aplikazio bat",
+    "search": "Bilatu aplikazioak"
+  },
   "palette": {
     "title": "Bilatu komando bat",
     "placeholder": "Bilatu komando edo karpeta bat",
@@ -3475,6 +3483,7 @@
   },
   "server": {
     "adminsOnly": "Administratzaileek bakarrik egin dezakete hori",
+    "appNotStarted": "Ezin izan da {app} abiarazi",
     "archivePassword": "Artxiboak pasahitz zuzena behar du",
     "archiveUnreadable": "Ezin da artxiboa irakurri",
     "badName": "Izen honek ez du balio",
@@ -3543,6 +3552,7 @@
     "namePasswordNeeded": "Izena eta pasahitza behar dira",
     "nameTaken": "Izen hori badago jada hemen",
     "nameTooLong": "Izena luzeegia da fitxategi-sistemarako",
+    "noAppDialog": "Ordenagailu honek ez du aplikazio bat aukeratzeko bere elkarrizketa-koadrorik",
     "noFolder": "Karpeta hau ez dago",
     "noFolderForFile": "Fitxategi honen karpeta ez dago",
     "noGroup": "Talde hori ez dago",
@@ -3637,6 +3647,7 @@
     "trashEmpty": "Zakarrontzia hutsik dago",
     "trashOtherDisk": "Hau bere zakarrontzia ez den beste fitxategi-sistema batean dago. Hobe duzu zuzenean ezabatzea",
     "trashShareRoot": "Share oso bat edo unitate oso bat ezin da zakarrontzira bota",
+    "unknownApp": "Ordenagailu honek ez du aplikazio hori eskaintzen fitxategi honetarako",
     "unraidReadOnly": "Unraid-en idaztea desaktibatuta dago",
     "uploadGone": "Hasitako igoera galdu da. Hasi berriro",
     "uploadRunning": "Izen hori duen fitxategi bat igotzen ari da une honetan",

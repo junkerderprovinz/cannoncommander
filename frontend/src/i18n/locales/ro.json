@@ -1984,6 +1984,14 @@
     },
     "notCopied": "Duplicarea nu a reușit"
   },
+  "openwith": {
+    "menu": "Deschidere cu",
+    "looking": "Se caută aplicații …",
+    "none": "Nu s-a găsit nicio aplicație",
+    "other": "Alegeți altă aplicație",
+    "choose": "Alegeți o aplicație",
+    "search": "Căutați aplicații"
+  },
   "palette": {
     "title": "Caută o comandă",
     "placeholder": "Caută o comandă sau un dosar",
@@ -3607,6 +3615,7 @@
   },
   "server": {
     "adminsOnly": "Asta pot face doar adminii",
+    "appNotStarted": "{app} nu a pornit",
     "archivePassword": "Arhiva are nevoie de parola corectă",
     "archiveUnreadable": "Arhiva nu poate fi citită",
     "badName": "Acest nume nu merge",
@@ -3679,6 +3688,7 @@
     "namePasswordNeeded": "E nevoie de nume și parolă",
     "nameTaken": "Acest nume există deja aici",
     "nameTooLong": "Numele este prea lung pentru sistemul de fișiere",
+    "noAppDialog": "Acest calculator nu are un dialog propriu pentru alegerea unei aplicații",
     "noFolder": "Acest dosar nu există",
     "noFolderForFile": "Dosarul pentru acest fișier nu există",
     "noGroup": "Acest grup nu există",
@@ -3774,6 +3784,7 @@
     "trashEmpty": "Coșul este gol",
     "trashOtherDisk": "Asta se află pe alt sistem de fișiere decât coșul lui. Mai bine șterge-l direct",
     "trashShareRoot": "Un Share întreg sau o unitate întreagă nu poate ajunge în coș",
+    "unknownApp": "Acest calculator nu oferă această aplicație pentru fișier",
     "unraidReadOnly": "Scrierea în Unraid este dezactivată",
     "uploadGone": "Încărcarea începută s-a pierdut. Te rog începe din nou",
     "uploadRunning": "Un fișier cu acest nume se încarcă chiar acum",
