@@ -48,8 +48,9 @@ export interface CatalogueRow { id: string; label: string; g: string }
 export function rowOf(id: string): CatalogueRow | null {
   const own = ROWS[id];
   if (own) return own.desktop && !host.desktop ? null : { id, label: own.label(), g: own.g };
+  // An action that only shows at times, such as Einfügen with something on the clipboard, is listed all the same.
   const a = actions[id];
-  return a && (!a.when || a.when()) ? { id, label: labelOf(a), g: a.g ?? 'IconFile' } : null;
+  return a ? { id, label: labelOf(a), g: a.g ?? 'IconFile' } : null;
 }
 
 export const idOf = (it: MenuEntry) => (typeof it === 'string' ? (it === '-' ? '' : it) : 'head' in it ? '' : it.id ?? '');
