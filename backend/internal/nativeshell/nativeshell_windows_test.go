@@ -9,6 +9,7 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 	"unsafe"
 
@@ -39,6 +40,30 @@ func TestATypeHasTheIconOfItsSize(t *testing.T) {
 	}
 	if _, _, err := TypeIcon("Documents", true, 32); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestIconsAskedForAtOnceAllArrive(t *testing.T) {
+	iconsMu.Lock()
+	clear(icons)
+	iconsMu.Unlock()
+	var wg sync.WaitGroup
+	failed := make(chan string, 40)
+	for range 4 {
+		for _, n := range []string{"a.cmd", "a.png", "a.pdf", "a.mp4", "a.txt", "a.docx", "a.ini", "a.zip", "a.jpg", "a.dat"} {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				if _, _, err := TypeIcon(n, false, 16); err != nil {
+					failed <- n
+				}
+			}()
+		}
+	}
+	wg.Wait()
+	close(failed)
+	for n := range failed {
+		t.Errorf("no icon for %s", n)
 	}
 }
 

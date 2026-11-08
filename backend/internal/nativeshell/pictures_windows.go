@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"image"
 	"image/png"
+	"runtime"
 	"strconv"
 	"sync"
 	"unsafe"
@@ -86,7 +87,7 @@ func systemIcon(name string, attr uint32, flags uintptr, px int) ([]byte, string
 		return nil, "", err
 	}
 	var out []byte
-	err = winshell.Apartment(func() error {
+	err = onIconThread(func() error {
 		var info fileInfo
 		if r, _, _ := procGetFileInfo.Call(uintptr(unsafe.Pointer(p)), uintptr(attr), uintptr(unsafe.Pointer(&info)), unsafe.Sizeof(info), shgfiSysIconIndex|flags); r == 0 {
 			return ErrNoPicture
@@ -120,6 +121,30 @@ func systemIcon(name string, attr uint32, flags uintptr, px int) ([]byte, string
 		return nil
 	})
 	return out, "image/png", err
+}
+
+var (
+	iconStart sync.Once
+	iconCalls = make(chan func())
+)
+
+// onIconThread runs fn on the one thread that looks up icons, in the shell's
+// apartment. The system's lists of icons hand out wrong or no pictures when
+// several threads ask at once.
+func onIconThread(fn func() error) error {
+	iconStart.Do(func() {
+		go func() {
+			runtime.LockOSThread()
+			// A fresh thread always enters the apartment.
+			_ = windows.CoInitializeEx(0, windows.COINIT_APARTMENTTHREADED|windows.COINIT_DISABLE_OLE1DDE)
+			for call := range iconCalls {
+				call()
+			}
+		}()
+	})
+	done := make(chan error, 1)
+	iconCalls <- func() { done <- fn() }
+	return <-done
 }
 
 func listFor(px int) int {
