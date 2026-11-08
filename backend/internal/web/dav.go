@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
@@ -70,7 +69,7 @@ func davToken(raw string) (dav.Identity, error) {
 		return dav.Identity{}, errNotADavToken
 	}
 	var claims users.AuthToken
-	token, err := jwt.ParseWithClaims(raw, &claims, auth.JWTSigningKeyFunc())
+	token, err := auth.ParseToken(raw, &claims)
 	if err != nil || !token.Valid || claims.RegisteredClaims.ExpiresAt == nil || state.IsTokenRevoked(raw) {
 		return dav.Identity{}, errNotADavToken
 	}
