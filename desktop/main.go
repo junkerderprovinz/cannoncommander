@@ -17,7 +17,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -46,9 +45,14 @@ func main() {
 func run() error {
 	scheduled := flag.Bool("update", false, "update the copy installed for all users and exit, as the installer's scheduled task does")
 	after := flag.Int("after", 0, "wait for the process with this id to end first, as a restart does")
+	flag.Bool("home", false, "open the home folder in a new tab, as Win+E does")
+	fileManager := flag.String("file-manager", "", "on to open the computer's folders here, off to give them back, and exit")
 	flag.Parse()
 	if *scheduled {
 		return updateInstalled()
+	}
+	if *fileManager != "" {
+		return switchFileManager(*fileManager == "on")
 	}
 	if *after > 0 {
 		waitGone(*after, 30*time.Second)
@@ -62,7 +66,10 @@ func run() error {
 		return fmt.Errorf("data folder: %w", err)
 	}
 	state := openState(dir)
+	cwd, _ := os.Getwd()
+	start, places := handedOver(flag.Args(), cwd)
 	sh := &shell{state: state}
+	sh.folders = newFolderHandler()
 
 	// Filled in below, once this is known to be the only copy.
 	var window *application.WebviewWindow
@@ -76,18 +83,13 @@ func run() error {
 		// share one database and one port.
 		SingleInstance: &application.SingleInstanceOptions{
 			UniqueID: instanceID(dir),
-			OnSecondInstanceLaunch: func(application.SecondInstanceData) {
-				if window != nil {
-					window.Restore()
-					window.Show()
-					window.Focus()
-				}
-			},
+			OnSecondInstanceLaunch: sh.secondLaunch,
 		},
 		Windows: application.WindowsOptions{WebviewUserDataPath: filepath.Join(dir, "webview")},
 		Linux:   application.LinuxOptions{ProgramName: "CannonCommander"},
 	})
 	sh.app = app
+	passOn(places)
 
 	port, err := pickPort(state.get().Port)
 	if err != nil {
@@ -142,10 +144,11 @@ func run() error {
 	}
 
 	window = openWindow(app, state)
+	sh.followWindow(window)
 	base := "http://127.0.0.1:" + strconv.Itoa(port)
 	go func() {
 		if waitServing(ctx, base, 2*time.Minute) {
-			window.SetURL(base + desktop.EnterPath + "?key=" + url.QueryEscape(key))
+			window.SetURL(enterURL(base, key, start))
 		}
 	}()
 
@@ -178,6 +181,7 @@ type shell struct {
 	machineFile string
 	restart     atomic.Bool
 	volumes     volumeWatch
+	standby
 }
 
 func (s *shell) AutoUpdate() bool {

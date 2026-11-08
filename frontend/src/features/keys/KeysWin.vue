@@ -5,6 +5,7 @@ import { EmptyState, FieldRow, IconButton, Kbd, Selector, SubCard, TextField } f
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { type Action, actions, labelOf } from '@/core/actions';
 import { G, glyphComponent } from '@/core/glyphs';
+import { host } from '@/core/host';
 import { comboOf } from '@/core/keymap';
 import type { MenuEntry } from '@/core/menu';
 import { MENUS, menuName } from '@/core/menus';
@@ -12,10 +13,11 @@ import { cancelBtn, type WinEntry } from '@/core/windows';
 import { zoomMod } from '@/files/zoom';
 import { t } from '@/i18n';
 import { keysFirst, stepFoot } from '@/features/config/shared';
-import { assign, changed, check, combosOf, keyLabel, type KeyMap, mainCombo, MODIFIER_KEYS, preset, reset } from './keys';
+import { assign, changed, check, combosOf, keyLabel, type KeyMap, mainCombo, MODIFIER_KEYS, type Preset, preset, reset } from './keys';
 
-const PRESETS = [['cc', 'CannonCommander'], ['tc', 'Total Commander']] as const;
-const props = defineProps<{ win: WinEntry; current: KeyMap; defaults: KeyMap; declared: Record<string, string | undefined>; which: 'cc' | 'tc'; apply: (map: KeyMap, which: 'cc' | 'tc') => void }>();
+// Explorer's layout is for the desktop app, which stands in for Explorer.
+const PRESETS: [Preset, string][] = [['cc', 'CannonCommander'], ['tc', 'Total Commander'], ...(host.desktop ? [['explorer', 'Explorer'] as [Preset, string]] : [])];
+const props = defineProps<{ win: WinEntry; current: KeyMap; defaults: KeyMap; declared: Record<string, string | undefined>; which: Preset; apply: (map: KeyMap, which: Preset) => void }>();
 const map = ref<KeyMap>({ ...props.current });
 const which = ref(props.which);
 const rec = ref<string | null>(null);
@@ -63,7 +65,7 @@ function key(e: KeyboardEvent) {
   stop();
 }
 
-function pickPreset(v: 'cc' | 'tc') {
+function pickPreset(v: Preset) {
   map.value = preset(v, props.defaults, (id) => !!actions[id]);
   stop();
 }

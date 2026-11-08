@@ -71,6 +71,9 @@ export function registerFileActions() {
   action('closeTab', { label: tl('actions.closeTab'), g: 'IconClose', key: 'Ctrl+w', run: () => { const p = F.P(); if (p.tabs.length > 1) { p.tabs.splice(p.cur, 1); p.cur = Math.max(0, p.cur - 1); } } });
   action('dupTab', { label: tl('actions.dupTab'), g: 'IconCopy', run: () => { const p = F.P(), tab = F.T(); p.tabs.splice(p.cur + 1, 0, { ...newTab(tab.path), sort: tab.sort, dir: tab.dir }); p.cur += 1; } });
   action('lockTab', { label: tl('actions.lockTab'), g: 'IconPin', checked: () => !!F.T().locked, run: () => { F.T().locked = !F.T().locked; } });
+  const step = (by: number) => () => { const p = F.P(); p.cur = (p.cur + by + p.tabs.length) % p.tabs.length; };
+  action('nextTab', { label: tl('actions.nextTab'), g: 'IconForward', run: step(1) });
+  action('prevTab', { label: tl('actions.prevTab'), g: 'IconBack', run: step(-1) });
   action('closeOtherTabs', { label: tl('actions.closeOtherTabs'), g: 'IconClose', when: () => F.P().tabs.length > 1, run: () => { const p = F.P(); p.tabs = [p.tabs[p.cur]!]; p.cur = 0; } });
 
   VIEWS.forEach(([id, glyph]) => action('view-' + id, {
