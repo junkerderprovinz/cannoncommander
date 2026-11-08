@@ -2503,6 +2503,9 @@
       "other": "{n} di papan klip"
     },
     "clipEmpty": "Papan klip kosong",
+    "leftOut": {
+      "other": "Di luar folder di sini, tertinggal: {n} item"
+    },
     "parityTitle": "Pemeriksaan Parity berjalan",
     "parityAsk": "Salin sekarang atau nanti?",
     "parityText": "Unraid sedang memeriksa Parity. Salinan sebesar {size} memperlambat pemeriksaan dan juga berjalan lebih lambat.",
@@ -3418,6 +3421,7 @@
     "cannotUndo": "Langkah ini tidak bisa diurungkan",
     "changedSince": "Ini sudah berubah sementara itu, jadi dibiarkan seperti adanya",
     "changedWhileOpen": "Berkas ini sudah berubah sejak Anda membukanya",
+    "clipboardBusy": "Papan klip sedang dipakai. Coba lagi sebentar lagi",
     "codeMismatch": "Kodenya tidak cocok. Apakah jam di ponsel Anda benar?",
     "codeMissing": "Kodenya kosong",
     "collectionName": "Beri nama untuk map koleksi ini, nama itu menjadi folder yang dilihat penerima",
@@ -3429,6 +3433,7 @@
     "desktopOnly": "Itu hanya bisa di aplikasi desktop",
     "fileManagerNotSet": "Komputer tidak menerima perubahan itu",
     "disksAdminsOnly": "Hanya admin yang melihat disk satu per satu dan Cache",
+    "dragFailed": "File tidak dapat diseret keluar",
     "elevationDeclined": "Hak administrator tidak diberikan",
     "elevationFailed": "Proses pembantu dengan hak administrator tidak merespons",
     "elevationUnsupported": "Di sistem ini CannonCommander tidak bisa meminta hak administrator",
@@ -3504,6 +3509,7 @@
     "notElevatable": "Ini tidak bisa dilanjutkan dengan hak administrator",
     "notFound": "Ini sudah tidak ada",
     "notInTrash": "Ini tidak ada di Tempat Sampah",
+    "notOnDisk": "Hanya file di disk yang bisa dikirim ke program lain",
     "notText": "Berkas ini bukan teks",
     "notWindows1252": "Teks ini berisi karakter yang tidak bisa disimpan Windows-1252. Simpan sebagai UTF-8",
     "nothingToUndo": "Tidak ada yang bisa diurungkan",

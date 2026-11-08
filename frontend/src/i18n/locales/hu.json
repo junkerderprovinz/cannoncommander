@@ -2594,6 +2594,10 @@
       "other": "{n} a vágólapon"
     },
     "clipEmpty": "A vágólap üres",
+    "leftOut": {
+      "one": "Az itteni mappákon kívül, kimarad: 1 elem",
+      "other": "Az itteni mappákon kívül, kimarad: {n} elem"
+    },
     "parityTitle": "Parity-ellenőrzés fut",
     "parityAsk": "Másolás most vagy utána?",
     "parityText": "Az Unraid épp a Parityt ellenőrzi. Egy {size} méretű másolás lassítja az ellenőrzést, és maga is lassabban fut.",
@@ -3551,6 +3555,7 @@
     "cannotUndo": "Ez a lépés nem vonható vissza",
     "changedSince": "Ez időközben megváltozott, ezért úgy marad, ahogy van",
     "changedWhileOpen": "A fájl megváltozott, mióta megnyitotta",
+    "clipboardBusy": "A vágólap éppen foglalt. Próbáld újra egy pillanat múlva",
     "codeMismatch": "A kód nem jó. Pontosan jár az óra a telefonon?",
     "codeMissing": "Hiányzik a kód",
     "collectionName": "Adjon nevet a gyűjtőnek, ebből lesz a mappa, amelyet a másik fél lát",
@@ -3562,6 +3567,7 @@
     "desktopOnly": "Ez csak az asztali alkalmazásban megy",
     "fileManagerNotSet": "A számítógép nem fogadta el a változtatást",
     "disksAdminsOnly": "Az egyes lemezeket és a Cache-t csak rendszergazdák látják",
+    "dragFailed": "A fájlokat nem sikerült kihúzni",
     "elevationDeclined": "A rendszergazdai jogokat nem adták meg",
     "elevationFailed": "A rendszergazdai jogokkal futó segéd nem válaszolt",
     "elevationUnsupported": "Ezen a rendszeren a CannonCommander nem tud rendszergazdai jogokat kérni",
@@ -3641,6 +3647,7 @@
     "notElevatable": "Ezt nem lehet rendszergazdai jogokkal folytatni",
     "notFound": "Ez már nem létezik",
     "notInTrash": "Ez nincs a kukában",
+    "notOnDisk": "Csak a lemezen lévő fájlok mehetnek másik programba",
     "notText": "Ez a fájl nem szöveg",
     "notWindows1252": "A szövegben olyan karakterek vannak, amelyeket a Windows-1252 nem tud tárolni. Mentse UTF-8-ként",
     "nothingToUndo": "Nincs mit visszavonni",

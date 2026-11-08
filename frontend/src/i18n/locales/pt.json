@@ -2685,6 +2685,11 @@
       "other": "{n} na área de transferência"
     },
     "clipEmpty": "A área de transferência está vazia",
+    "leftOut": {
+      "one": "Fora das pastas daqui, fica para trás: 1 item",
+      "many": "Fora das pastas daqui, fica para trás: {n} itens",
+      "other": "Fora das pastas daqui, fica para trás: {n} itens"
+    },
     "parityTitle": "Verificação de paridade em curso",
     "parityAsk": "Copiar agora ou depois?",
     "parityText": "O Unraid está a verificar a paridade. Uma cópia de {size} atrasa a verificação e ela própria fica mais lenta.",
@@ -3684,6 +3689,7 @@
     "cannotUndo": "Este passo não pode ser anulado",
     "changedSince": "Entretanto isto mudou e por isso fica como está",
     "changedWhileOpen": "O ficheiro mudou desde que o abriu",
+    "clipboardBusy": "A área de transferência está ocupada. Tente de novo daqui a pouco",
     "codeMismatch": "O código não confere. A hora do telemóvel está certa?",
     "codeMissing": "Falta o código",
     "collectionName": "Dê um nome à coleção, ele torna-se a pasta que os visitantes veem",
@@ -3695,6 +3701,7 @@
     "desktopOnly": "Isso só funciona na aplicação de ambiente de trabalho",
     "fileManagerNotSet": "O computador não aceitou a alteração",
     "disksAdminsOnly": "Os discos individuais e a Cache só os administradores os veem",
+    "dragFailed": "Não foi possível arrastar os arquivos para fora",
     "elevationDeclined": "Os privilégios de administrador não foram concedidos",
     "elevationFailed": "O assistente com privilégios de administrador não respondeu",
     "elevationUnsupported": "Neste sistema, o CannonCommander não consegue pedir privilégios de administrador",
@@ -3778,6 +3785,7 @@
     "notElevatable": "Isto não pode continuar com privilégios de administrador",
     "notFound": "Isto já não existe",
     "notInTrash": "Isto não está na reciclagem",
+    "notOnDisk": "Só arquivos no disco podem ir para outro programa",
     "notText": "Este ficheiro não é texto",
     "notWindows1252": "O texto tem carateres que o Windows-1252 não consegue guardar. Guarde-o como UTF-8",
     "nothingToUndo": "Não há nada para anular",
