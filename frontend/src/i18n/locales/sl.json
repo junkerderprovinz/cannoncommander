@@ -1593,7 +1593,14 @@
     "kept": "Ostane v tej napravi: {objects}",
     "freed": "Prostor sproščen za {objects}",
     "createShortcut": "Ustvari bližnjico",
-    "shortcutName": "{name} - bližnjica"
+    "shortcutName": "{name} - bližnjica",
+    "new": "Novo",
+    "shortcut": "Bližnjica",
+    "newShortcut": "Nova bližnjica",
+    "target": "Cilj",
+    "targetTip": "Pot do datoteke ali mape, kot jo zapiše Windows, s pogonom na začetku.",
+    "name": "Ime",
+    "noTarget": "Navedite, kam naj vodi bližnjica"
   },
   "gather": {
     "title": "Združi mapo",
@@ -3868,6 +3875,7 @@
     "noSpace": "Na cilju ni več prostega prostora",
     "noSpaceForFile": "Za to datoteko ni dovolj prostega prostora",
     "noSuchUser": "Ta uporabnik ne obstaja",
+    "noTemplate": "Ta predloga ne obstaja več",
     "noToken": "Ta žeton ne obstaja",
     "noUserNamed": "Uporabnik {name} ne obstaja",
     "notAFile": "To ni navadna datoteka",

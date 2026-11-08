@@ -1483,7 +1483,14 @@
     "kept": "Jääb sellesse seadmesse: {objects}",
     "freed": "Ruum vabastatud: {objects}",
     "createShortcut": "Loo otsetee",
-    "shortcutName": "{name} - otsetee"
+    "shortcutName": "{name} - otsetee",
+    "new": "Uus",
+    "shortcut": "Otsetee",
+    "newShortcut": "Uus otsetee",
+    "target": "Sihtkoht",
+    "targetTip": "Faili või kausta tee nii, nagu Windows selle kirjutab, ketas ees.",
+    "name": "Nimi",
+    "noTarget": "Palun märgi, kuhu otsetee peab viima"
   },
   "gather": {
     "title": "Koonda kaust",
@@ -3596,6 +3603,7 @@
     "noSpace": "Sihtkohas pole enam vaba ruumi",
     "noSpaceForFile": "Selle faili jaoks pole piisavalt vaba ruumi",
     "noSuchUser": "Sellist kasutajat pole",
+    "noTemplate": "Seda malli enam pole",
     "noToken": "Sellist luba pole",
     "noUserNamed": "Kasutajat {name} pole olemas",
     "notAFile": "See pole tavaline fail",

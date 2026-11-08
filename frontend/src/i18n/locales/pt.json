@@ -1538,7 +1538,14 @@
     "kept": "Fica neste dispositivo: {objects}",
     "freed": "Espaço libertado para {objects}",
     "createShortcut": "Criar atalho",
-    "shortcutName": "{name} - atalho"
+    "shortcutName": "{name} - atalho",
+    "new": "Novo",
+    "shortcut": "Atalho",
+    "newShortcut": "Novo atalho",
+    "target": "Destino",
+    "targetTip": "O caminho do ficheiro ou da pasta tal como o Windows o escreve, com a unidade à frente.",
+    "name": "Nome",
+    "noTarget": "Indique para onde o atalho deve levar"
   },
   "gather": {
     "title": "Agrupar pasta",
@@ -3732,6 +3739,7 @@
     "noSpace": "Já não há espaço livre no destino",
     "noSpaceForFile": "Não há espaço livre suficiente para este ficheiro",
     "noSuchUser": "Esse utilizador não existe",
+    "noTemplate": "Este modelo já não existe",
     "noToken": "Esse token não existe",
     "noUserNamed": "O utilizador {name} não existe",
     "notAFile": "Isto não é um ficheiro normal",

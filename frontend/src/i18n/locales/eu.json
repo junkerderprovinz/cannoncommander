@@ -1483,7 +1483,14 @@
     "kept": "Gailu honetan geratzen da: {objects}",
     "freed": "Lekua askatuta: {objects}",
     "createShortcut": "Sortu lasterbidea",
-    "shortcutName": "{name} - lasterbidea"
+    "shortcutName": "{name} - lasterbidea",
+    "new": "Berria",
+    "shortcut": "Lasterbidea",
+    "newShortcut": "Lasterbide berria",
+    "target": "Helburua",
+    "targetTip": "Fitxategiaren edo karpetaren bidea Windowsek idazten duen bezala, unitatea aurrean duela.",
+    "name": "Izena",
+    "noTarget": "Adierazi lasterbideak nora eraman behar duen"
   },
   "gather": {
     "title": "Bildu karpeta bat",
@@ -3596,6 +3603,7 @@
     "noSpace": "Helburuan ez dago leku librerik",
     "noSpaceForFile": "Ez dago leku libre nahikorik fitxategi honetarako",
     "noSuchUser": "Erabiltzaile hori ez dago",
+    "noTemplate": "Txantiloi hau ez dago jada",
     "noToken": "Token hori ez dago",
     "noUserNamed": "{name} erabiltzailea ez dago",
     "notAFile": "Hau ez da fitxategi arrunt bat",

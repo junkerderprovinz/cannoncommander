@@ -1538,7 +1538,14 @@
     "kept": "Paliek šajā ierīcē: {objects}",
     "freed": "Vieta atbrīvota: {objects}",
     "createShortcut": "Izveidot saīsni",
-    "shortcutName": "{name} - saīsne"
+    "shortcutName": "{name} - saīsne",
+    "new": "Jauns",
+    "shortcut": "Saīsne",
+    "newShortcut": "Jauna saīsne",
+    "target": "Mērķis",
+    "targetTip": "Faila vai mapes ceļš tā, kā to raksta Windows, ar disku priekšā.",
+    "name": "Nosaukums",
+    "noTarget": "Lūdzu, norādiet, kurp jāved saīsnei"
   },
   "gather": {
     "title": "Savākt mapi",
@@ -3732,6 +3739,7 @@
     "noSpace": "Galamērķī vairs nav brīvas vietas",
     "noSpaceForFile": "Šim failam nepietiek brīvas vietas",
     "noSuchUser": "Šāda lietotāja nav",
+    "noTemplate": "Šīs veidnes vairs nav",
     "noToken": "Šāda marķiera nav",
     "noUserNamed": "Lietotāja {name} nav",
     "notAFile": "Tas nav parasts fails",

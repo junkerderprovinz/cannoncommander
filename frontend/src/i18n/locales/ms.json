@@ -1428,7 +1428,14 @@
     "kept": "Kekal pada peranti ini: {objects}",
     "freed": "Ruang dikosongkan untuk {objects}",
     "createShortcut": "Cipta pintasan",
-    "shortcutName": "{name} - pintasan"
+    "shortcutName": "{name} - pintasan",
+    "new": "Baharu",
+    "shortcut": "Pintasan",
+    "newShortcut": "Pintasan baharu",
+    "target": "Sasaran",
+    "targetTip": "Laluan fail atau folder seperti yang ditulis Windows, dengan pemacu di hadapan.",
+    "name": "Nama",
+    "noTarget": "Sila nyatakan ke mana pintasan harus menuju"
   },
   "gather": {
     "title": "Himpunkan folder",
@@ -3460,6 +3467,7 @@
     "noSpace": "Tiada ruang kosong lagi pada destinasi",
     "noSpaceForFile": "Ruang kosong tidak mencukupi untuk fail ini",
     "noSuchUser": "Pengguna ini tidak wujud",
+    "noTemplate": "Templat ini sudah tiada",
     "noToken": "Token ini tidak wujud",
     "noUserNamed": "Pengguna {name} tidak wujud",
     "notAFile": "Ini bukan fail biasa",

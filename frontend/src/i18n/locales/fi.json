@@ -1483,7 +1483,14 @@
     "kept": "Pysyy tällä laitteella: {objects}",
     "freed": "Tilaa vapautettu: {objects}",
     "createShortcut": "Luo pikakuvake",
-    "shortcutName": "{name} - pikakuvake"
+    "shortcutName": "{name} - pikakuvake",
+    "new": "Uusi",
+    "shortcut": "Pikakuvake",
+    "newShortcut": "Uusi pikakuvake",
+    "target": "Kohde",
+    "targetTip": "Tiedoston tai kansion polku niin kuin Windows sen kirjoittaa, asema alussa.",
+    "name": "Nimi",
+    "noTarget": "Kerro, minne pikakuvakkeen pitää johtaa"
   },
   "gather": {
     "title": "Kokoa kansio",
@@ -3596,6 +3603,7 @@
     "noSpace": "Kohteessa ei ole enää vapaata tilaa",
     "noSpaceForFile": "Tälle tiedostolle ei ole tarpeeksi vapaata tilaa",
     "noSuchUser": "Tätä käyttäjää ei ole olemassa",
+    "noTemplate": "Tätä mallia ei enää ole",
     "noToken": "Tätä tunnusta ei ole olemassa",
     "noUserNamed": "Käyttäjää {name} ei ole olemassa",
     "notAFile": "Tämä ei ole tavallinen tiedosto",

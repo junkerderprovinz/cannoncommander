@@ -1428,7 +1428,14 @@
     "kept": "このデバイスに保持: {objects}",
     "freed": "{objects} の空き容量を増やしました",
     "createShortcut": "ショートカットの作成",
-    "shortcutName": "{name} - ショートカット"
+    "shortcutName": "{name} - ショートカット",
+    "new": "新規作成",
+    "shortcut": "ショートカット",
+    "newShortcut": "新しいショートカット",
+    "target": "リンク先",
+    "targetTip": "Windows の書き方でのファイルまたはフォルダーのパス。先頭にドライブを付けます。",
+    "name": "名前",
+    "noTarget": "ショートカットのリンク先を入力してください"
   },
   "gather": {
     "title": "フォルダーを集約",
@@ -3460,6 +3467,7 @@
     "noSpace": "宛先に空き容量がありません",
     "noSpaceForFile": "このファイルを置く空き容量が足りません",
     "noSuchUser": "このユーザーは存在しません",
+    "noTemplate": "このテンプレートはもうありません",
     "noToken": "このトークンは存在しません",
     "noUserNamed": "ユーザー {name} は存在しません",
     "notAFile": "通常のファイルではありません",

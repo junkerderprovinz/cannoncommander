@@ -1483,7 +1483,14 @@
     "kept": "Bliver på denne enhed: {objects}",
     "freed": "Plads frigjort for {objects}",
     "createShortcut": "Opret genvej",
-    "shortcutName": "{name} - genvej"
+    "shortcutName": "{name} - genvej",
+    "new": "Ny",
+    "shortcut": "Genvej",
+    "newShortcut": "Ny genvej",
+    "target": "Destination",
+    "targetTip": "Stien til filen eller mappen, som Windows skriver den, med drevet forrest.",
+    "name": "Navn",
+    "noTarget": "Angiv venligst, hvor genvejen skal føre hen"
   },
   "gather": {
     "title": "Saml en mappe",
@@ -3596,6 +3603,7 @@
     "noSpace": "Der er ikke mere ledig plads på målet",
     "noSpaceForFile": "Der er ikke nok ledig plads til denne fil",
     "noSuchUser": "Denne bruger findes ikke",
+    "noTemplate": "Denne skabelon findes ikke længere",
     "noToken": "Dette token findes ikke",
     "noUserNamed": "Brugeren {name} findes ikke",
     "notAFile": "Det er ikke en almindelig fil",

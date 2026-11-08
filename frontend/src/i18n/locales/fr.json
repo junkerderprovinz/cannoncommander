@@ -1538,7 +1538,14 @@
     "kept": "Reste sur cet appareil : {objects}",
     "freed": "Espace libéré pour {objects}",
     "createShortcut": "Créer un raccourci",
-    "shortcutName": "{name} - raccourci"
+    "shortcutName": "{name} - raccourci",
+    "new": "Nouveau",
+    "shortcut": "Raccourci",
+    "newShortcut": "Nouveau raccourci",
+    "target": "Cible",
+    "targetTip": "Le chemin du fichier ou du dossier tel que Windows l'écrit, avec le lecteur au début.",
+    "name": "Nom",
+    "noTarget": "Indiquez où le raccourci doit mener"
   },
   "gather": {
     "title": "Regrouper un dossier",
@@ -3732,6 +3739,7 @@
     "noSpace": "Il n'y a plus de place libre sur la destination",
     "noSpaceForFile": "Il n'y a pas assez de place libre pour ce fichier",
     "noSuchUser": "Cet utilisateur n'existe pas",
+    "noTemplate": "Ce modèle n'existe plus",
     "noToken": "Ce jeton n'existe pas",
     "noUserNamed": "L'utilisateur {name} n'existe pas",
     "notAFile": "Ce n'est pas un fichier ordinaire",

@@ -1593,7 +1593,14 @@
     "kept": "Lieka šiame įrenginyje: {objects}",
     "freed": "Vieta atlaisvinta: {objects}",
     "createShortcut": "Sukurti nuorodą",
-    "shortcutName": "{name} - nuoroda"
+    "shortcutName": "{name} - nuoroda",
+    "new": "Naujas",
+    "shortcut": "Nuoroda",
+    "newShortcut": "Nauja nuoroda",
+    "target": "Paskirtis",
+    "targetTip": "Failo ar aplanko kelias taip, kaip jį rašo Windows, su disku priekyje.",
+    "name": "Pavadinimas",
+    "noTarget": "Nurodykite, kur turi vesti nuoroda"
   },
   "gather": {
     "title": "Surinkti aplanką",
@@ -3868,6 +3875,7 @@
     "noSpace": "Paskirtyje nebėra laisvos vietos",
     "noSpaceForFile": "Šiam failui nepakanka laisvos vietos",
     "noSuchUser": "Tokio naudotojo nėra",
+    "noTemplate": "Šio šablono nebėra",
     "noToken": "Tokio žetono nėra",
     "noUserNamed": "Naudotojo {name} nėra",
     "notAFile": "Tai ne įprastas failas",

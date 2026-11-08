@@ -1483,7 +1483,14 @@
     "kept": "Blijft op dit apparaat: {objects}",
     "freed": "Ruimte vrijgemaakt voor {objects}",
     "createShortcut": "Snelkoppeling maken",
-    "shortcutName": "{name} - snelkoppeling"
+    "shortcutName": "{name} - snelkoppeling",
+    "new": "Nieuw",
+    "shortcut": "Snelkoppeling",
+    "newShortcut": "Nieuwe snelkoppeling",
+    "target": "Doel",
+    "targetTip": "Het pad van het bestand of de map zoals Windows het schrijft, met de schijf vooraan.",
+    "name": "Naam",
+    "noTarget": "Geef aan waar de snelkoppeling naartoe moet leiden"
   },
   "gather": {
     "title": "Map bundelen",
@@ -3596,6 +3603,7 @@
     "noSpace": "Op het doel is geen ruimte meer vrij",
     "noSpaceForFile": "Er is niet genoeg ruimte vrij voor dit bestand",
     "noSuchUser": "Deze gebruiker bestaat niet",
+    "noTemplate": "Deze sjabloon bestaat niet meer",
     "noToken": "Dit token bestaat niet",
     "noUserNamed": "De gebruiker {name} bestaat niet",
     "notAFile": "Dit is geen gewoon bestand",

@@ -1428,7 +1428,14 @@
     "kept": "保留在此设备上：{objects}",
     "freed": "已为 {objects} 释放空间",
     "createShortcut": "创建快捷方式",
-    "shortcutName": "{name} - 快捷方式"
+    "shortcutName": "{name} - 快捷方式",
+    "new": "新建",
+    "shortcut": "快捷方式",
+    "newShortcut": "新建快捷方式",
+    "target": "目标",
+    "targetTip": "按 Windows 的写法填写文件或文件夹的路径，开头是驱动器。",
+    "name": "名称",
+    "noTarget": "请说明快捷方式应指向哪里"
   },
   "gather": {
     "title": "集中文件夹",
@@ -3460,6 +3467,7 @@
     "noSpace": "目标上已没有可用空间",
     "noSpaceForFile": "可用空间不足以存放此文件",
     "noSuchUser": "此用户不存在",
+    "noTemplate": "此模板已不存在",
     "noToken": "此令牌不存在",
     "noUserNamed": "用户 {name} 不存在",
     "notAFile": "这不是普通文件",

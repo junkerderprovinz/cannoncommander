@@ -1483,7 +1483,14 @@
     "kept": "Ezen az eszközön marad: {objects}",
     "freed": "Hely felszabadítva: {objects}",
     "createShortcut": "Parancsikon létrehozása",
-    "shortcutName": "{name} - parancsikon"
+    "shortcutName": "{name} - parancsikon",
+    "new": "Új",
+    "shortcut": "Parancsikon",
+    "newShortcut": "Új parancsikon",
+    "target": "Cél",
+    "targetTip": "A fájl vagy mappa elérési útja úgy, ahogy a Windows írja, elöl a meghajtóval.",
+    "name": "Név",
+    "noTarget": "Adja meg, hová vezessen a parancsikon"
   },
   "gather": {
     "title": "Mappa összegyűjtése",
@@ -3596,6 +3603,7 @@
     "noSpace": "A célon nincs több szabad hely",
     "noSpaceForFile": "Nincs elég szabad hely ehhez a fájlhoz",
     "noSuchUser": "Ez a felhasználó nem létezik",
+    "noTemplate": "Ez a sablon már nem létezik",
     "noToken": "Ez a token nem létezik",
     "noUserNamed": "A(z) {name} felhasználó nem létezik",
     "notAFile": "Ez nem közönséges fájl",

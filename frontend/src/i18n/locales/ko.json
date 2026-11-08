@@ -1428,7 +1428,14 @@
     "kept": "이 장치에 유지됨: {objects}",
     "freed": "{objects}의 공간을 확보했습니다",
     "createShortcut": "바로 가기 만들기",
-    "shortcutName": "{name} - 바로 가기"
+    "shortcutName": "{name} - 바로 가기",
+    "new": "새로 만들기",
+    "shortcut": "바로 가기",
+    "newShortcut": "새 바로 가기",
+    "target": "대상",
+    "targetTip": "Windows가 쓰는 방식의 파일 또는 폴더 경로로, 드라이브를 앞에 씁니다.",
+    "name": "이름",
+    "noTarget": "바로 가기가 연결될 위치를 입력하세요"
   },
   "gather": {
     "title": "폴더 모으기",
@@ -3460,6 +3467,7 @@
     "noSpace": "대상에 남은 공간이 없습니다",
     "noSpaceForFile": "이 파일을 둘 공간이 부족합니다",
     "noSuchUser": "이 사용자가 없습니다",
+    "noTemplate": "이 템플릿은 더 이상 없습니다",
     "noToken": "이 토큰이 없습니다",
     "noUserNamed": "{name} 사용자가 없습니다",
     "notAFile": "일반 파일이 아닙니다",

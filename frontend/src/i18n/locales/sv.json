@@ -1483,7 +1483,14 @@
     "kept": "Stannar på den här enheten: {objects}",
     "freed": "Utrymme frigjort för {objects}",
     "createShortcut": "Skapa genväg",
-    "shortcutName": "{name} - genväg"
+    "shortcutName": "{name} - genväg",
+    "new": "Nytt",
+    "shortcut": "Genväg",
+    "newShortcut": "Ny genväg",
+    "target": "Mål",
+    "targetTip": "Sökvägen till filen eller mappen som Windows skriver den, med enheten först.",
+    "name": "Namn",
+    "noTarget": "Ange vart genvägen ska leda"
   },
   "gather": {
     "title": "Samla en mapp",
@@ -3596,6 +3603,7 @@
     "noSpace": "Det finns inget ledigt utrymme kvar på målet",
     "noSpaceForFile": "Det finns inte tillräckligt med ledigt utrymme för den här filen",
     "noSuchUser": "Den användaren finns inte",
+    "noTemplate": "Den här mallen finns inte längre",
     "noToken": "Den token finns inte",
     "noUserNamed": "Användaren {name} finns inte",
     "notAFile": "Det här är ingen vanlig fil",

@@ -1483,7 +1483,14 @@
     "kept": "Bu cihazda kalır: {objects}",
     "freed": "{objects} için yer açıldı",
     "createShortcut": "Kısayol oluştur",
-    "shortcutName": "{name} - kısayol"
+    "shortcutName": "{name} - kısayol",
+    "new": "Yeni",
+    "shortcut": "Kısayol",
+    "newShortcut": "Yeni kısayol",
+    "target": "Hedef",
+    "targetTip": "Dosyanın veya klasörün yolu, Windows'un yazdığı gibi, başta sürücüyle.",
+    "name": "Ad",
+    "noTarget": "Lütfen kısayolun nereye gideceğini belirtin"
   },
   "gather": {
     "title": "Klasörü topla",
@@ -3596,6 +3603,7 @@
     "noSpace": "Hedefte boş yer kalmadı",
     "noSpaceForFile": "Bu dosya için yeterli boş yer yok",
     "noSuchUser": "Böyle bir kullanıcı yok",
+    "noTemplate": "Bu şablon artık yok",
     "noToken": "Böyle bir token yok",
     "noUserNamed": "{name} kullanıcısı yok",
     "notAFile": "Bu normal bir dosya değil",

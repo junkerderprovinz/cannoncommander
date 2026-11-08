@@ -471,6 +471,7 @@
     "noSpace": "There is no free space left on the target",
     "noSpaceForFile": "There is not enough free space for this file",
     "noSuchUser": "There is no such user",
+    "noTemplate": "This template is gone",
     "noToken": "There is no such token",
     "noUserNamed": "There is no user {name}",
     "notAFile": "This is not a regular file",

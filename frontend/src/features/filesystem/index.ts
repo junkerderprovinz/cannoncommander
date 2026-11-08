@@ -14,6 +14,7 @@ import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { freeName, namesIn, reveal } from '@/ui/tools';
 import CloudBadge from './CloudBadge.vue';
+import { registerNewMenu } from './newmenu';
 
 // Explorer's "always keep on this device" fetches the files, and "free up space" leaves only the placeholder.
 export function keepOnDevice(sel: Item[], folder: string, keep: boolean) {
@@ -46,6 +47,12 @@ export default function setup() {
     if (os !== 'windows') return;
     action('systemFiles', { label: tl('filesystem.systemFiles'), g: 'IconShieldOn', checked: () => !!prefs.showSystem, run: () => setPref('showSystem', !prefs.showSystem) });
     action('createShortcut', { label: tl('filesystem.createShortcut'), g: 'IconLink', needs: ['sel', 'writable'], run: createShortcuts });
+  }, { immediate: true });
+
+  const stop = watch(() => host.desktop, (desktop) => {
+    if (!desktop) return;
+    void registerNewMenu();
+    queueMicrotask(() => stop());
   }, { immediate: true });
 
   addTo('nameBadges', (k) => (k.cloud ? h(CloudBadge, { k }) : null));

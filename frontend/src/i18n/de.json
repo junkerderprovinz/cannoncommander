@@ -471,6 +471,7 @@
     "noSpace": "Auf dem Ziel ist kein Platz mehr frei",
     "noSpaceForFile": "Für diese Datei ist nicht genug Platz frei",
     "noSuchUser": "Diesen Benutzer gibt es nicht",
+    "noTemplate": "Diese Vorlage gibt es nicht mehr",
     "noToken": "Diesen Token gibt es nicht",
     "noUserNamed": "Den Benutzer {name} gibt es nicht",
     "notAFile": "Das ist keine gewöhnliche Datei",

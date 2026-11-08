@@ -1483,7 +1483,14 @@
     "kept": "Queda neste dispositivo: {objects}",
     "freed": "Espazo liberado para {objects}",
     "createShortcut": "Crear atallo",
-    "shortcutName": "{name} - atallo"
+    "shortcutName": "{name} - atallo",
+    "new": "Novo",
+    "shortcut": "Atallo",
+    "newShortcut": "Novo atallo",
+    "target": "Destino",
+    "targetTip": "A ruta do ficheiro ou do cartafol tal como a escribe Windows, coa unidade diante.",
+    "name": "Nome",
+    "noTarget": "Indica onde debe levar o atallo"
   },
   "gather": {
     "title": "Xuntar un cartafol",
@@ -3596,6 +3603,7 @@
     "noSpace": "Non queda espazo libre no destino",
     "noSpaceForFile": "Non hai espazo libre dabondo para este ficheiro",
     "noSuchUser": "Ese usuario non existe",
+    "noTemplate": "Este modelo xa non existe",
     "noToken": "Ese token non existe",
     "noUserNamed": "O usuario {name} non existe",
     "notAFile": "Isto non é un ficheiro normal",

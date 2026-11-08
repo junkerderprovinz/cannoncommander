@@ -1593,7 +1593,14 @@
     "kept": "Zůstane v tomto zařízení: {objects}",
     "freed": "Místo uvolněno pro {objects}",
     "createShortcut": "Vytvořit zástupce",
-    "shortcutName": "{name} - zástupce"
+    "shortcutName": "{name} - zástupce",
+    "new": "Nový",
+    "shortcut": "Zástupce",
+    "newShortcut": "Nový zástupce",
+    "target": "Cíl",
+    "targetTip": "Cesta k souboru nebo složce tak, jak ji píše Windows, s jednotkou na začátku.",
+    "name": "Název",
+    "noTarget": "Zadejte prosím, kam má zástupce vést"
   },
   "gather": {
     "title": "Sloučit složku",
@@ -3868,6 +3875,7 @@
     "noSpace": "V cíli už není volné místo",
     "noSpaceForFile": "Pro tento soubor není dost volného místa",
     "noSuchUser": "Tento uživatel neexistuje",
+    "noTemplate": "Tato šablona už neexistuje",
     "noToken": "Tento token neexistuje",
     "noUserNamed": "Uživatel {name} neexistuje",
     "notAFile": "To není běžný soubor",

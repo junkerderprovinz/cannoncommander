@@ -3,7 +3,7 @@ import { tl } from '@/i18n';
 import type { MenuEntry, MenuItem } from './menu';
 
 export const MENUS: [string, MenuEntry[]][] = [
-  ['file', ['newFolder', 'folderWithSel', 'newFile', 'upload', 'download', '-', 'view', 'edit', 'share', 'props', '-', 'pack', 'unpack', 'checksum', 'checksumVerify', 'split', 'combine', 'symlink', '-', 'delete', 'openTrash', '-', 'logout']],
+  ['file', ['newFolder', 'folderWithSel', 'newFile', 'newMenu', 'upload', 'download', '-', 'view', 'edit', 'share', 'props', '-', 'pack', 'unpack', 'checksum', 'checksumVerify', 'split', 'combine', 'symlink', '-', 'delete', 'openTrash', '-', 'logout']],
   ['edit', ['copy', 'move', 'rename', 'duplicate', 'multiRename', '-', 'clipCut', 'clipCopy', 'clipPaste', '-', 'touchSelect', 'selectAll', 'invertSel', 'selectPattern', 'unselect', 'saveSel', 'restoreSel', '-', 'copyPath', 'internalLink']],
   ['view', ['single', 'dual', 'sidebar', 'quickview', 'fkeys', 'hidden', 'systemFiles', 'extensions', 'syncBrowse', '-',
     { label: tl('menus.look'), g: 'IconTabApps', sub: ['view-details', 'view-compact', 'view-list', 'view-content', 'view-columns', 'view-tiles', 'view-large', 'view-gallery', 'view-drives'] },

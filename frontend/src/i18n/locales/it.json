@@ -1538,7 +1538,14 @@
     "kept": "Resta su questo dispositivo: {objects}",
     "freed": "Spazio liberato per {objects}",
     "createShortcut": "Crea collegamento",
-    "shortcutName": "{name} - collegamento"
+    "shortcutName": "{name} - collegamento",
+    "new": "Nuovo",
+    "shortcut": "Collegamento",
+    "newShortcut": "Nuovo collegamento",
+    "target": "Destinazione",
+    "targetTip": "Il percorso del file o della cartella come lo scrive Windows, con l'unità davanti.",
+    "name": "Nome",
+    "noTarget": "Indica dove deve portare il collegamento"
   },
   "gather": {
     "title": "Raggruppa cartella",
@@ -3732,6 +3739,7 @@
     "noSpace": "Sulla destinazione non c'è più spazio libero",
     "noSpaceForFile": "Non c'è abbastanza spazio libero per questo file",
     "noSuchUser": "Questo utente non esiste",
+    "noTemplate": "Questo modello non esiste più",
     "noToken": "Questo token non esiste",
     "noUserNamed": "L'utente {name} non esiste",
     "notAFile": "Non è un file normale",

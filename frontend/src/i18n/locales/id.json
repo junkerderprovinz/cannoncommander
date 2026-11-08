@@ -1428,7 +1428,14 @@
     "kept": "Tetap di perangkat ini: {objects}",
     "freed": "Ruang dikosongkan untuk {objects}",
     "createShortcut": "Buat pintasan",
-    "shortcutName": "{name} - pintasan"
+    "shortcutName": "{name} - pintasan",
+    "new": "Baru",
+    "shortcut": "Pintasan",
+    "newShortcut": "Pintasan baru",
+    "target": "Target",
+    "targetTip": "Jalur file atau folder seperti yang ditulis Windows, dengan drive di depan.",
+    "name": "Nama",
+    "noTarget": "Tentukan ke mana pintasan harus mengarah"
   },
   "gather": {
     "title": "Kumpulkan folder",
@@ -3460,6 +3467,7 @@
     "noSpace": "Tidak ada ruang kosong lagi di tujuan",
     "noSpaceForFile": "Ruang kosong tidak cukup untuk berkas ini",
     "noSuchUser": "Pengguna ini tidak ada",
+    "noTemplate": "Templat ini sudah tidak ada",
     "noToken": "Token ini tidak ada",
     "noUserNamed": "Pengguna {name} tidak ada",
     "notAFile": "Ini bukan berkas biasa",

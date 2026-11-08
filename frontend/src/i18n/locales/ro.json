@@ -1538,7 +1538,14 @@
     "kept": "Rămâne pe acest dispozitiv: {objects}",
     "freed": "Spațiu eliberat pentru {objects}",
     "createShortcut": "Creează o comandă rapidă",
-    "shortcutName": "{name} - comandă rapidă"
+    "shortcutName": "{name} - comandă rapidă",
+    "new": "Nou",
+    "shortcut": "Comandă rapidă",
+    "newShortcut": "Comandă rapidă nouă",
+    "target": "Țintă",
+    "targetTip": "Calea fișierului sau a dosarului așa cum o scrie Windows, cu unitatea în față.",
+    "name": "Nume",
+    "noTarget": "Spune unde trebuie să ducă comanda rapidă"
   },
   "gather": {
     "title": "Adună un dosar",
@@ -3732,6 +3739,7 @@
     "noSpace": "Pe destinație nu mai e spațiu liber",
     "noSpaceForFile": "Nu e destul spațiu liber pentru acest fișier",
     "noSuchUser": "Acest utilizator nu există",
+    "noTemplate": "Acest șablon nu mai există",
     "noToken": "Acest token nu există",
     "noUserNamed": "Utilizatorul {name} nu există",
     "notAFile": "Acesta nu este un fișier obișnuit",

@@ -1483,7 +1483,14 @@
     "kept": "Blir på denne enheten: {objects}",
     "freed": "Plass frigjort for {objects}",
     "createShortcut": "Opprett snarvei",
-    "shortcutName": "{name} - snarvei"
+    "shortcutName": "{name} - snarvei",
+    "new": "Ny",
+    "shortcut": "Snarvei",
+    "newShortcut": "Ny snarvei",
+    "target": "Mål",
+    "targetTip": "Stien til filen eller mappen slik Windows skriver den, med stasjonen først.",
+    "name": "Navn",
+    "noTarget": "Oppgi hvor snarveien skal føre"
   },
   "gather": {
     "title": "Samle en mappe",
@@ -3596,6 +3603,7 @@
     "noSpace": "Det er ingen ledig plass igjen på målet",
     "noSpaceForFile": "Det er ikke nok ledig plass til denne filen",
     "noSuchUser": "Den brukeren finnes ikke",
+    "noTemplate": "Denne malen finnes ikke lenger",
     "noToken": "Det tokenet finnes ikke",
     "noUserNamed": "Brukeren {name} finnes ikke",
     "notAFile": "Dette er ingen vanlig fil",

@@ -1538,7 +1538,14 @@
     "kept": "נשאר במכשיר זה: {objects}",
     "freed": "המקום פונה עבור {objects}",
     "createShortcut": "יצירת קיצור דרך",
-    "shortcutName": "{name} - קיצור דרך"
+    "shortcutName": "{name} - קיצור דרך",
+    "new": "חדש",
+    "shortcut": "קיצור דרך",
+    "newShortcut": "קיצור דרך חדש",
+    "target": "יעד",
+    "targetTip": "הנתיב של הקובץ או התיקייה כפי ש-Windows כותב אותו, עם הכונן בהתחלה.",
+    "name": "שם",
+    "noTarget": "ציינו לאן קיצור הדרך צריך להוביל"
   },
   "gather": {
     "title": "איחוד תיקייה",
@@ -3732,6 +3739,7 @@
     "noSpace": "לא נשאר מקום פנוי ביעד",
     "noSpaceForFile": "אין מספיק מקום פנוי לקובץ הזה",
     "noSuchUser": "אין משתמש כזה",
+    "noTemplate": "התבנית הזו כבר לא קיימת",
     "noToken": "אין אסימון כזה",
     "noUserNamed": "אין משתמש בשם {name}",
     "notAFile": "זה לא קובץ רגיל",

@@ -706,6 +706,72 @@ paths:
         "409":
           $ref: "#/components/responses/StateConflict"
       tags: [fileops]
+  /fs/templates:
+    get:
+      operationId: fsTemplates
+      summary: List what New offers
+      description: The ShellNew entries Windows registers and the files in the templates folder of a Linux desktop. Empty in the container.
+      responses:
+        "200":
+          description: The templates, sorted by name.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [templates]
+                properties:
+                  templates:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, name, ext, file]
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                          description: What the menu shows, such as the type name of Windows.
+                        ext:
+                          type: string
+                          example: .docx
+                        file:
+                          type: string
+                          description: The name a new file starts out with, without its ending.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [fileops]
+  /fs/new:
+    post:
+      operationId: fsNew
+      summary: Create a file from a template
+      description: Only in the desktop app. Undo removes the file as long as it holds what the template gave it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, template]
+              properties:
+                path:
+                  type: string
+                template:
+                  type: string
+                  description: The id from fs/templates.
+      responses:
+        "201":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [fileops]
   /fs/rename:
     post:
       operationId: fsRename

@@ -1538,7 +1538,14 @@
     "kept": "Es queda en aquest dispositiu: {objects}",
     "freed": "Espai alliberat per a {objects}",
     "createShortcut": "Crea una drecera",
-    "shortcutName": "{name} - drecera"
+    "shortcutName": "{name} - drecera",
+    "new": "Nou",
+    "shortcut": "Drecera",
+    "newShortcut": "Drecera nova",
+    "target": "Destinació",
+    "targetTip": "El camí del fitxer o de la carpeta tal com l'escriu Windows, amb la unitat al davant.",
+    "name": "Nom",
+    "noTarget": "Indica on ha de portar la drecera"
   },
   "gather": {
     "title": "Agrupa una carpeta",
@@ -3732,6 +3739,7 @@
     "noSpace": "No queda espai lliure a la destinació",
     "noSpaceForFile": "No hi ha prou espai lliure per a aquest fitxer",
     "noSuchUser": "Aquest usuari no existeix",
+    "noTemplate": "Aquesta plantilla ja no existeix",
     "noToken": "Aquest testimoni no existeix",
     "noUserNamed": "L'usuari {name} no existeix",
     "notAFile": "Això no és un fitxer normal",

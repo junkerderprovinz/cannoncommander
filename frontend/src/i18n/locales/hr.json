@@ -1538,7 +1538,14 @@
     "kept": "Ostaje na ovom uređaju: {objects}",
     "freed": "Prostor oslobođen za {objects}",
     "createShortcut": "Stvori prečac",
-    "shortcutName": "{name} - prečac"
+    "shortcutName": "{name} - prečac",
+    "new": "Novo",
+    "shortcut": "Prečac",
+    "newShortcut": "Novi prečac",
+    "target": "Cilj",
+    "targetTip": "Putanja datoteke ili mape kako je piše Windows, s pogonom na početku.",
+    "name": "Naziv",
+    "noTarget": "Navedite kamo prečac treba voditi"
   },
   "gather": {
     "title": "Okupi mapu",
@@ -3732,6 +3739,7 @@
     "noSpace": "Na odredištu više nema slobodnog prostora",
     "noSpaceForFile": "Za ovu datoteku nema dovoljno slobodnog prostora",
     "noSuchUser": "Taj korisnik ne postoji",
+    "noTemplate": "Ovaj predložak više ne postoji",
     "noToken": "Taj token ne postoji",
     "noUserNamed": "Korisnik {name} ne postoji",
     "notAFile": "Ovo nije obična datoteka",

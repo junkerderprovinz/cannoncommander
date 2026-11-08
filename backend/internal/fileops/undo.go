@@ -38,6 +38,8 @@ type renameData struct {
 type entryData struct {
 	Path  string    `json:"path"`
 	MTime time.Time `json:"mtime,omitzero"`
+	// Size is what a file made from a template held, 0 for an empty one.
+	Size int64 `json:"size,omitempty"`
 }
 
 var errChanged = v1.Coded(http.StatusConflict, "changedSince", "it changed since, so it is left as it is")
@@ -109,7 +111,7 @@ func undoTouch(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage)
 	if err != nil {
 		return err
 	}
-	if !info.Mode().IsRegular() || info.Size() != 0 || !info.ModTime().Equal(data.MTime) {
+	if !info.Mode().IsRegular() || info.Size() != data.Size || !info.ModTime().Equal(data.MTime) {
 		return errChanged
 	}
 	if err := os.Remove(loc.Real); err != nil {

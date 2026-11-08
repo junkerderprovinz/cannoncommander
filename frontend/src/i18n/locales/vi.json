@@ -1428,7 +1428,14 @@
     "kept": "Giữ trên thiết bị này: {objects}",
     "freed": "Đã giải phóng dung lượng cho {objects}",
     "createShortcut": "Tạo lối tắt",
-    "shortcutName": "{name} - lối tắt"
+    "shortcutName": "{name} - lối tắt",
+    "new": "Mới",
+    "shortcut": "Lối tắt",
+    "newShortcut": "Lối tắt mới",
+    "target": "Đích",
+    "targetTip": "Đường dẫn của tệp hoặc thư mục theo cách Windows viết, có ổ đĩa ở đầu.",
+    "name": "Tên",
+    "noTarget": "Vui lòng cho biết lối tắt sẽ dẫn đến đâu"
   },
   "gather": {
     "title": "Gom thư mục",
@@ -3460,6 +3467,7 @@
     "noSpace": "Đích không còn chỗ trống",
     "noSpaceForFile": "Không đủ chỗ trống cho tệp này",
     "noSuchUser": "Không có người dùng này",
+    "noTemplate": "Mẫu này không còn nữa",
     "noToken": "Không có token này",
     "noUserNamed": "Không có người dùng {name}",
     "notAFile": "Đây không phải tệp thông thường",

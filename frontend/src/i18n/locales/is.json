@@ -1483,7 +1483,14 @@
     "kept": "Verður áfram í þessu tæki: {objects}",
     "freed": "Pláss losað fyrir {objects}",
     "createShortcut": "Búa til flýtileið",
-    "shortcutName": "{name} - flýtileið"
+    "shortcutName": "{name} - flýtileið",
+    "new": "Nýtt",
+    "shortcut": "Flýtileið",
+    "newShortcut": "Ný flýtileið",
+    "target": "Markmið",
+    "targetTip": "Slóð skrárinnar eða möppunnar eins og Windows skrifar hana, með drifið fremst.",
+    "name": "Nafn",
+    "noTarget": "Segðu hvert flýtileiðin á að vísa"
   },
   "gather": {
     "title": "Safna möppu saman",
@@ -3596,6 +3603,7 @@
     "noSpace": "Ekkert laust pláss er eftir á áfangastaðnum",
     "noSpaceForFile": "Ekki er nóg laust pláss fyrir þessa skrá",
     "noSuchUser": "Þessi notandi er ekki til",
+    "noTemplate": "Þetta sniðmát er ekki lengur til",
     "noToken": "Þessi tóki er ekki til",
     "noUserNamed": "Notandinn {name} er ekki til",
     "notAFile": "Þetta er ekki venjuleg skrá",

@@ -1538,7 +1538,14 @@
     "kept": "Se queda en este dispositivo: {objects}",
     "freed": "Espacio liberado para {objects}",
     "createShortcut": "Crear acceso directo",
-    "shortcutName": "{name} - acceso directo"
+    "shortcutName": "{name} - acceso directo",
+    "new": "Nuevo",
+    "shortcut": "Acceso directo",
+    "newShortcut": "Nuevo acceso directo",
+    "target": "Destino",
+    "targetTip": "La ruta del archivo o de la carpeta tal como la escribe Windows, con la unidad delante.",
+    "name": "Nombre",
+    "noTarget": "Indica adónde debe llevar el acceso directo"
   },
   "gather": {
     "title": "Agrupar carpeta",
@@ -3732,6 +3739,7 @@
     "noSpace": "No queda espacio libre en el destino",
     "noSpaceForFile": "No hay espacio libre suficiente para este archivo",
     "noSuchUser": "Ese usuario no existe",
+    "noTemplate": "Esta plantilla ya no existe",
     "noToken": "Ese token no existe",
     "noUserNamed": "El usuario {name} no existe",
     "notAFile": "No es un archivo normal",

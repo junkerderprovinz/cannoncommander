@@ -1593,7 +1593,14 @@
     "kept": "Zostane v tomto zariadení: {objects}",
     "freed": "Miesto uvoľnené pre {objects}",
     "createShortcut": "Vytvoriť odkaz",
-    "shortcutName": "{name} - odkaz"
+    "shortcutName": "{name} - odkaz",
+    "new": "Nový",
+    "shortcut": "Odkaz",
+    "newShortcut": "Nový odkaz",
+    "target": "Cieľ",
+    "targetTip": "Cesta k súboru alebo priečinku tak, ako ju píše Windows, s jednotkou na začiatku.",
+    "name": "Názov",
+    "noTarget": "Zadajte, kam má odkaz viesť"
   },
   "gather": {
     "title": "Zlúčiť priečinok",
@@ -3868,6 +3875,7 @@
     "noSpace": "V cieli už nie je voľné miesto",
     "noSpaceForFile": "Pre tento súbor nie je dosť voľného miesta",
     "noSuchUser": "Tento používateľ neexistuje",
+    "noTemplate": "Táto šablóna už neexistuje",
     "noToken": "Tento token neexistuje",
     "noUserNamed": "Používateľ {name} neexistuje",
     "notAFile": "To nie je bežný súbor",
