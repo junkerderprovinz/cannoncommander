@@ -11,13 +11,14 @@ import { fileManager, loadFileManager, setFileManager } from './filemanager';
 import { type Style, useStyle } from './style';
 
 const STYLES: [Style, string][] = [['commander', t('desktop.commanderName')], ['explorer', t('desktop.explorerName')]];
+const pick = (style: string) => useStyle(style as Style);
 
 onMounted(loadFileManager);
 </script>
 
 <template>
   <FieldRow :label="t('desktop.style')" :hint="t('desktop.styleTip')">
-    <Selector :model-value="prefs.desktopStyle || 'commander'" :items="segItems(STYLES)" size="sm" activation="manual" inline button-height pairs-on-phone @update:model-value="useStyle" />
+    <Selector :model-value="prefs.desktopStyle || 'commander'" :items="segItems(STYLES)" size="sm" activation="manual" inline button-height pairs-on-phone @update:model-value="pick" />
   </FieldRow>
   <FieldRow :label="t('desktop.clickSelect')" :hint="t('desktop.clickSelectTip')">
     <Toggle id="d-clickselect" :model-value="!!prefs.clickSelect" @update:model-value="setPref('clickSelect', $event)" />
