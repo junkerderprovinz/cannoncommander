@@ -1,10 +1,13 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { installTips } from '@/core/tips';
+import { fakeCanvas } from '@/testing/fakeCanvas';
+import type { Blast } from './burst';
 import { gates, inside, keyframes, rules, sheets } from '@/testing/motionCss';
 import { HOLD } from './cues';
 import { armLogo, fire, stopShot, type Times } from './shot';
 
 const TIMES: Times = { tremble: 900, shot: 900, wait: 700, rebuild: 400, step: 30 };
+const BLAST: Blast = { life: 1, spread: 380, carry: 300, fall: 420, spin: 12, count: 90, lag: 0.09 };
 const END = TIMES.tremble + TIMES.shot + TIMES.wait + TIMES.rebuild + 10 * TIMES.step + 100;
 
 // jsdom lays nothing out, so every box is placed by hand along one row.
@@ -28,30 +31,37 @@ function build() {
   place(head, 0, 1000);
   at('.brand', 8, 120); at('.brand-logo', 12, 112); at('.brand-cannon', 12, 112); at('.brand-cannon g', 12, 84); at('.brand-ball g', 100, 24);
   at('.hsep', 140, 1); at('.menubar', 150, 200); at('[data-menu="0"]', 150, 90); at('[data-menu="1"]', 250, 100); at('.spacer', 360, 400);
-  at('#search', 800, 40); at('.avatar', 900, 40);
+  at('#search', 800, 40); at('.avatar', 900, 40); at('.avatar i', 905, 30);
   navigated = 0;
   head.querySelector('.brand')!.addEventListener('click', () => { navigated++; });
 }
 
 const broken = () => [...head.querySelectorAll('.fx-shattered')].map((el) => el.textContent?.trim() || el.classList[0]);
-const leftovers = () => document.querySelectorAll('.fx-shards, .fx-shot, .fx-flash, .fx-gunsmoke, .fx-shard, .fx-tremble, .fx-loading, .fx-fired, .fx-shattered, .fx-rebuild, .fx-quake').length;
+const leftovers = () => document.querySelectorAll('.fx-shards, .fx-shot, .fx-flash, .fx-gunsmoke, .fx-burst, .fx-tremble, .fx-loading, .fx-fired, .fx-shattered, .fx-rebuild, .fx-quake').length;
 
 beforeAll(() => {
   (SVGElement.prototype as unknown as { getBBox: () => DOMRect }).getBBox = () => ({ x: 830, y: 20, width: 170, height: 180 }) as DOMRect;
 });
-beforeEach(() => { vi.useFakeTimers(); build(); delete document.documentElement.dataset.motion; });
-afterEach(() => { stopShot(); vi.useRealTimers(); });
+let canvas: ReturnType<typeof fakeCanvas>;
+beforeEach(() => { vi.useFakeTimers(); canvas = fakeCanvas(); build(); delete document.documentElement.dataset.motion; });
+afterEach(() => { stopShot(); canvas.restore(); vi.useRealTimers(); });
+// The splinters drawn in one frame of the canvas.
+const frame = () => {
+  canvas.reset();
+  vi.advanceTimersByTime(17);
+  return canvas.drawn.splinters;
+};
 
 describe('the shot across the head', () => {
   it('trembles first and breaks nothing before it fires', () => {
-    expect(fire(head, TIMES)).toBe(true);
+    expect(fire(head, TIMES, BLAST)).toBe(true);
     expect(head.querySelector('.brand-cannon')!.classList).toContain('fx-tremble');
     vi.advanceTimersByTime(TIMES.tremble - 1);
     expect(broken()).toEqual([]);
   });
 
   it('loads the ball into the barrel while the cannon trembles', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     const ball = head.querySelector<HTMLElement>('.brand-ball')!;
     expect(ball.classList).toContain('fx-loading');
     expect(ball.classList).toContain('fx-tremble');
@@ -61,7 +71,7 @@ describe('the shot across the head', () => {
   });
 
   it('fires with a flash at the muzzle and a cloud of smoke after it', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble);
     const flash = document.querySelector<HTMLElement>('.fx-flash')!;
     expect(flash).not.toBeNull();
@@ -71,7 +81,7 @@ describe('the shot across the head', () => {
   });
 
   it('trails fire behind the flying ball', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble);
     const shot = document.querySelector('.fx-shot')!;
     expect(shot.firstElementChild!.classList).toContain('fx-trail');
@@ -79,24 +89,24 @@ describe('the shot across the head', () => {
   });
 
   it('sends the ball out of the muzzle rather than from where it lay', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble);
     expect(document.querySelector<HTMLElement>('.fx-shot')!.style.getPropertyValue('left')).toBe('84px');
   });
 
   it('bursts what it strikes from the point of impact, with a flash and a puff of dust there', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble + TIMES.shot * 0.1);
     const layer = document.querySelector('.fx-shards')!;
     expect(layer.querySelectorAll('.fx-impact')).toHaveLength(2);
     expect(layer.querySelectorAll('.fx-dust').length).toBeGreaterThanOrEqual(2 * 3);
-    expect(layer.querySelectorAll('.fx-shard').length).toBeGreaterThanOrEqual(2 * 24);
+    expect(frame()).toBeGreaterThanOrEqual(BLAST.count);
     const impact = layer.querySelector<HTMLElement>('.fx-impact')!;
     expect([impact.style.getPropertyValue('left'), impact.style.getPropertyValue('top')]).toEqual(['140px', '30px']);
   });
 
   it('breaks what the ball passes in the order it passes it, and nothing it never reaches', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble);
     expect(head.querySelector('.brand-logo')!.classList).toContain('fx-fired');
     expect(document.querySelector('.fx-shot')).not.toBeNull();
@@ -108,25 +118,44 @@ describe('the shot across the head', () => {
     expect(head.querySelector('.brand')!.classList).not.toContain('fx-shattered');
   });
 
-  it('draws the shards from copies that carry none of the hooks of the real controls', () => {
-    fire(head, TIMES);
+  it('paints what it can reach before it fires and cuts the splinters from those pictures, copying no control', () => {
+    fire(head, TIMES, BLAST);
+    expect(canvas.drawn.texts).toEqual(['Datei', 'Ansicht', 'Suche', 'AD']);
     vi.advanceTimersByTime(TIMES.tremble + TIMES.shot);
     const layer = document.querySelector('.fx-shards')!;
     expect(layer.getAttribute('aria-hidden')).toBe('true');
-    expect(layer.querySelectorAll('.fx-shard').length).toBeGreaterThanOrEqual(5 * 24);
-    expect(layer.querySelectorAll('[data-run], [data-menu], [data-account], [id]')).toHaveLength(0);
+    expect(frame()).toBeGreaterThanOrEqual(4 * BLAST.count);
+    expect(layer.querySelectorAll('button, [data-run], [data-menu], [data-account], [id]')).toHaveLength(0);
     expect(document.querySelectorAll('[data-run="palette"]')).toHaveLength(1);
   });
 
+  it('keeps the splinters of a wide head to a number the canvas draws smoothly', () => {
+    fire(head, TIMES, { ...BLAST, count: 5000 });
+    vi.advanceTimersByTime(TIMES.tremble + TIMES.shot);
+    const drawn = frame();
+    expect(drawn).toBeGreaterThan(1000);
+    expect(drawn).toBeLessThanOrEqual(1500 * 1.25);
+  });
+
+  it('keeps the layer until the last splinter has landed', () => {
+    const long = { ...BLAST, life: 3 };
+    fire(head, TIMES, long);
+    vi.advanceTimersByTime(TIMES.tremble + TIMES.shot + TIMES.wait + TIMES.rebuild + 10 * TIMES.step);
+    expect(document.querySelector('.fx-shards')).not.toBeNull();
+    expect(frame()).toBeGreaterThan(0);
+    vi.advanceTimersByTime(TIMES.shot + long.life * 1000);
+    expect(leftovers()).toBe(0);
+  });
+
   it('puts the head back together and leaves nothing behind', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(END);
     expect(leftovers()).toBe(0);
     expect(head.children).toHaveLength(6);
   });
 
   it('puts everything back at once when stopped mid-flight', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble + TIMES.shot / 2);
     expect(broken().length).toBeGreaterThan(0);
     stopShot();
@@ -136,9 +165,9 @@ describe('the shot across the head', () => {
   });
 
   it('plays once at a time, however often it is asked', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble + 10);
-    expect(fire(head, TIMES)).toBe(true);
+    expect(fire(head, TIMES, BLAST)).toBe(true);
     expect(document.querySelectorAll('.fx-shot')).toHaveLength(1);
     vi.advanceTimersByTime(END);
     expect(leftovers()).toBe(0);
@@ -146,7 +175,7 @@ describe('the shot across the head', () => {
 
   it('plays nothing with motion off', () => {
     document.documentElement.dataset.motion = 'off';
-    expect(fire(head, TIMES)).toBe(false);
+    expect(fire(head, TIMES, BLAST)).toBe(false);
     vi.advanceTimersByTime(END);
     expect(leftovers()).toBe(0);
   });
@@ -155,7 +184,7 @@ describe('the shot across the head', () => {
     const was = window.matchMedia;
     window.matchMedia = ((q: string) => ({ matches: q.includes('reduce') })) as unknown as typeof window.matchMedia;
     try {
-      expect(fire(head, TIMES)).toBe(false);
+      expect(fire(head, TIMES, BLAST)).toBe(false);
       vi.advanceTimersByTime(END);
       expect(leftovers()).toBe(0);
     } finally {
@@ -164,41 +193,24 @@ describe('the shot across the head', () => {
   });
 
   it('flings the shards in a layer over the whole page rather than inside the head', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble + TIMES.shot * 0.1);
     const layer = document.querySelector('.fx-shards')!;
     expect(layer.parentElement).toBe(document.body);
-    expect(head.querySelector('.fx-shards, .fx-shard')).toBeNull();
-    expect(layer.querySelectorAll('.fx-shard').length).toBeGreaterThanOrEqual(2 * 24);
-  });
-
-  it('keeps the head around the copies, so they still look like the pieces of the head', () => {
-    fire(head, TIMES);
-    vi.advanceTimersByTime(TIMES.tremble + TIMES.shot);
-    const frame = document.querySelector('.fx-shards .fx-shard')!.closest('.head')!;
-    expect(frame).not.toBe(head);
-    expect(frame.closest('.fx-shards')).not.toBeNull();
-    expect(document.querySelectorAll('.fx-shards .head [id], .fx-shards .head[id]')).toHaveLength(0);
+    expect(head.querySelector('.fx-shards, .fx-burst')).toBeNull();
+    expect(layer.querySelector('canvas.fx-burst')).not.toBeNull();
   });
 
   it('takes the layer off the page once the head is back', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble + TIMES.shot);
     expect(document.querySelector('.fx-shards')).not.toBeNull();
     vi.advanceTimersByTime(END);
     expect(document.querySelector('.fx-shards')).toBeNull();
   });
 
-  it('sends every shard on the way the ball flies', () => {
-    fire(head, TIMES);
-    vi.advanceTimersByTime(TIMES.tremble + TIMES.shot);
-    const carry = [...document.querySelectorAll<HTMLElement>('.fx-shard')].map((el) => parseFloat(el.style.getPropertyValue('--fx-carry')));
-    expect(carry.length).toBeGreaterThan(0);
-    expect(carry.every((c) => c > 0)).toBe(true);
-  });
-
   it('shakes the whole window the moment it fires', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     const app = document.querySelector('.app')!;
     vi.advanceTimersByTime(TIMES.tremble - 1);
     expect(app.classList).not.toContain('fx-quake');
@@ -207,7 +219,7 @@ describe('the shot across the head', () => {
   });
 
   it('stops the shake of the window with the shot', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     vi.advanceTimersByTime(TIMES.tremble);
     const app = document.querySelector('.app')!;
     expect(app.classList).toContain('fx-quake');
@@ -228,7 +240,7 @@ describe('the tip of the logo', () => {
   it('goes away as the cannon starts to tremble and stays away until the head is back', () => {
     over();
     expect(tip()).not.toBeNull();
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     expect(tip()).toBeNull();
     vi.advanceTimersByTime(TIMES.tremble + TIMES.shot / 2);
     over();
@@ -239,7 +251,7 @@ describe('the tip of the logo', () => {
   });
 
   it('comes back at once when the shot is stopped', () => {
-    fire(head, TIMES);
+    fire(head, TIMES, BLAST);
     stopShot();
     over();
     expect(tip()).not.toBeNull();
@@ -337,7 +349,7 @@ describe('the look of the shot', () => {
   });
 
   it('grows every dial of the shot from off through subtle and wild to the storm', () => {
-    for (const name of ['tremble-dur', 'tremble-dist', 'tremble-tilt', 'quake-dur', 'quake-dist', 'shard-carry', 'shard-fall', 'shard-spread']) {
+    for (const name of ['tremble-dur', 'tremble-dist', 'tremble-tilt', 'quake-dur', 'quake-dist', 'shard-dur', 'shard-carry', 'shard-fall', 'shard-spread', 'shard-spin', 'shard-count']) {
       const [off, subtle, wild, storm] = ['off', 'subtle', 'wild', 'storm'].map((l) => dial(l, name));
       expect([name, off], name).toEqual([name, 0]);
       expect(0 < subtle! && subtle! < wild! && wild! < storm!, `${name}: ${subtle} ${wild} ${storm}`).toBe(true);
@@ -352,10 +364,11 @@ describe('the look of the shot', () => {
     expect(dial('wild', 'tremble-dist') * peak).toBeGreaterThanOrEqual(6);
   });
 
-  it('flings the shards well past the head', () => {
+  it('throws the splinters far over the page, as an explosion does', () => {
     // The head is 3.4rem high, about 54 px.
-    expect(dial('wild', 'shard-fall')).toBeGreaterThanOrEqual(120);
-    expect(dial('wild', 'shard-carry')).toBeGreaterThanOrEqual(120);
+    for (const name of ['shard-fall', 'shard-spread', 'shard-carry']) expect(dial('wild', name), name).toBeGreaterThanOrEqual(5 * 54);
+    expect(dial('wild', 'shard-count')).toBeGreaterThanOrEqual(60);
+    expect(dial('storm', 'shard-count')).toBeLessThanOrEqual(300);
   });
 
   it('shakes the window for a moment by a few pixels and lets it settle', () => {

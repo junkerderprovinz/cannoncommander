@@ -14,4 +14,7 @@ export function toMs(value: string) {
   return m ? Math.round(parseFloat(m[1]!) * (m[2] === 's' ? 1000 : 1)) : 0;
 }
 
-export const dialMs = (name: string) => toMs(getComputedStyle(document.documentElement).getPropertyValue(name));
+const read = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name);
+export const dialMs = (name: string) => toMs(read(name));
+// A dial that holds a plain number, a length in pixels or an angle in degrees.
+export const dial = (name: string) => parseFloat(read(name)) || 0;
