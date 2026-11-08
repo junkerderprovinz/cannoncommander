@@ -2802,6 +2802,12 @@
       "other": "Ve schránce: {n}"
     },
     "clipEmpty": "Schránka je prázdná",
+    "leftOut": {
+      "one": "Mimo zdejší složky, zůstává: 1 položka",
+      "few": "Mimo zdejší složky, zůstává: {n} položky",
+      "many": "Mimo zdejší složky, zůstává: {n} položky",
+      "other": "Mimo zdejší složky, zůstává: {n} položek"
+    },
     "parityTitle": "Probíhá kontrola Parity",
     "parityAsk": "Kopírovat teď, nebo potom?",
     "parityText": "Unraid právě kontroluje Parity. Kopie {size} kontrolu zpomalí a sama poběží pomaleji.",
@@ -3837,6 +3843,7 @@
     "cannotUndo": "Tento krok nelze vrátit",
     "changedSince": "Mezitím se to změnilo, a proto to zůstane, jak to je",
     "changedWhileOpen": "Soubor se změnil od chvíle, kdy jste ho otevřeli",
+    "clipboardBusy": "Schránka je právě obsazená. Zkuste to prosím za chvíli znovu",
     "codeMismatch": "Kód nesedí. Jdou hodiny v telefonu správně?",
     "codeMissing": "Chybí kód",
     "collectionName": "Pojmenujte sbírku, název se stane složkou, kterou uvidí druhá strana",
@@ -3848,6 +3855,7 @@
     "desktopOnly": "To jde jen v desktopové aplikaci",
     "fileManagerNotSet": "Počítač změnu nepřijal",
     "disksAdminsOnly": "Jednotlivé disky a Cache vidí jen administrátoři",
+    "dragFailed": "Soubory se nepodařilo vytáhnout ven",
     "elevationDeclined": "Oprávnění správce nebylo uděleno",
     "elevationFailed": "Pomocník s oprávněním správce neodpověděl",
     "elevationUnsupported": "V tomto systému nemůže CannonCommander požádat o oprávnění správce",
@@ -3940,6 +3948,7 @@
     "notElevatable": "S oprávněním správce v tom nejde pokračovat",
     "notFound": "To už neexistuje",
     "notInTrash": "To neleží v koši",
+    "notOnDisk": "Do jiného programu mohou jen soubory na disku",
     "notText": "Tento soubor není text",
     "notWindows1252": "Text obsahuje znaky, které Windows-1252 neumí uložit. Uložte ho jako UTF-8",
     "nothingToUndo": "Není co vrátit",

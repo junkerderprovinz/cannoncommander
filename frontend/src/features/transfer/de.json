@@ -47,6 +47,7 @@
   "cut": { "one": "{n} ausgeschnitten", "other": "{n} ausgeschnitten" },
   "inClip": { "one": "{n} in der Ablage", "other": "{n} in der Ablage" },
   "clipEmpty": "Die Ablage ist leer",
+  "leftOut": { "one": "1 Objekt bleibt zurück, weil es außerhalb der Ordner hier liegt", "other": "{n} Objekte bleiben zurück, weil sie außerhalb der Ordner hier liegen" },
   "parityTitle": "Paritätsprüfung läuft",
   "parityAsk": "Jetzt kopieren oder danach?",
   "parityText": "Unraid prüft gerade die Parität. Eine Kopie von {size} bremst die Prüfung und läuft selbst langsamer.",
