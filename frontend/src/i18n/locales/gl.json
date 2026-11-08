@@ -2591,6 +2591,10 @@
       "other": "{n} no portapapeis"
     },
     "clipEmpty": "O portapapeis está baleiro",
+    "leftOut": {
+      "one": "Fóra dos cartafoles de aquí, queda atrás: 1 elemento",
+      "other": "Fóra dos cartafoles de aquí, queda atrás: {n} elementos"
+    },
     "parityTitle": "Comprobación de Parity en curso",
     "parityAsk": "Copiar agora ou despois?",
     "parityText": "Unraid está a comprobar a Parity. Unha copia de {size} frea a comprobación e vai máis lenta ela mesma.",
@@ -3548,6 +3552,7 @@
     "cannotUndo": "Este paso non se pode desfacer",
     "changedSince": "Isto cambiou mentres tanto, así que queda como está",
     "changedWhileOpen": "O ficheiro cambiou desde que o abriches",
+    "clipboardBusy": "O portapapeis está ocupado. Téntao de novo nun momento",
     "codeMismatch": "O código non vale. Ten o móbil a hora ben posta?",
     "codeMissing": "Falta o código",
     "collectionName": "Ponlle un nome á colección, será o cartafol que verá a outra persoa",
@@ -3559,6 +3564,7 @@
     "desktopOnly": "Iso só funciona na aplicación de escritorio",
     "fileManagerNotSet": "O ordenador non aceptou o cambio",
     "disksAdminsOnly": "Os discos individuais e a Cache só os ven os admins",
+    "dragFailed": "Non se puideron arrastrar os ficheiros fóra",
     "elevationDeclined": "Non se concederon os permisos de administrador",
     "elevationFailed": "O asistente con permisos de administrador non respondeu",
     "elevationUnsupported": "Neste sistema CannonCommander non pode pedir permisos de administrador",
@@ -3638,6 +3644,7 @@
     "notElevatable": "Isto non se pode continuar con permisos de administrador",
     "notFound": "Isto xa non existe",
     "notInTrash": "Isto non está no lixo",
+    "notOnDisk": "Só os ficheiros do disco poden ir a outro programa",
     "notText": "Este ficheiro non é texto",
     "notWindows1252": "O texto ten caracteres que Windows-1252 non pode gardar. Gárdao como UTF-8",
     "nothingToUndo": "Non hai nada que desfacer",
