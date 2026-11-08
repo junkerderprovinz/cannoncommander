@@ -119,7 +119,7 @@ function state() {
       arrowloop: { url: 'http://tower.lan:8095', token: 'al-token', paths: { '/mnt/user': '/data' } },
       previews: { thumbs: true, video: false }, webdav: false, terminal: false,
       remotes: { automount: true, cache: 'writes', cacheSize: 50 },
-      updates: { autoCheck: true }, logLevel: 'info',
+      updates: { autoCheck: true, autoUpdate: false }, logLevel: 'info',
     },
     // The switches the server only reads when it starts.
     booted: { autoCheck: true },
@@ -429,7 +429,7 @@ export function settingsFixtureMiddleware() {
     ['POST', '/remotes/test', (b) => (b.params?.host === 'nirgends' ? { ok: false, entries: 0, error: 'dial tcp: no such host' } : { ok: true, entries: 12, total: 4 * TB, used: TB, free: 3 * TB })],
     ['POST', '/remotes/oauth', (b) => (b.token.trim().startsWith('{') ? { token: b.token.trim(), expiry: iso(clock.now() + HOUR) } : [400, 'this is not a token from rclone authorize'])],
     ['GET', '/system', () => ({
-      version: '0.1.0', commit: 'f00dfeed', release: true, go: 'go1.27.0', os: 'linux', arch: 'amd64', started: iso(S.started), uptime: Math.round((clock.now() - S.started) / 1000),
+      version: '0.1.0', commit: 'f00dfeed', release: true, deployment: 'container', go: 'go1.27.0', os: 'linux', arch: 'amd64', started: iso(S.started), uptime: Math.round((clock.now() - S.started) / 1000),
       tools: {
         ffmpeg: { available: true, path: '/usr/bin/ffmpeg', version: '7.1.1' }, ffprobe: { available: true, path: '/usr/bin/ffprobe', version: '7.1.1' },
         mutool: { available: true, path: '/usr/bin/mutool', version: '1.26.3' }, '7zz': { available: true, path: '/usr/bin/7zz', version: '24.09' },

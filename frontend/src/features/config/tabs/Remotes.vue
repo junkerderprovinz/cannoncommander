@@ -2,7 +2,7 @@
 import { segItems } from '@/ui/kit';
 import { Button, Card, EmptyState, FieldRow, IconButton, ListRow, Pill, Selector, Toggle } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
-import { admin, type AppSettings, type Remote } from '@/api/admin';
+import { admin, type AppSettings, type Rclone, type Remote } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
@@ -13,7 +13,9 @@ import RemoteWin from '../wins/RemoteWin.vue';
 type Mounting = AppSettings['remotes'];
 const remotes = ref<Remote[]>([]);
 const mounting = ref<Mounting | null>(null);
-const load = async () => { remotes.value = (await admin.remotes()).remotes; };
+// The container brings rclone along. On a computer of one's own it has to be installed first.
+const rclone = ref<Rclone | null>(null);
+const load = async () => { ({ remotes: remotes.value, rclone: rclone.value } = await admin.remotes()); };
 onMounted(() => { load().catch(() => {}); admin.app().then((a) => { mounting.value = a.remotes; }, () => {}); });
 
 function saveRc(change: Partial<Mounting>) {
@@ -63,6 +65,7 @@ function remove(r: Remote) {
         </template>
       </ListRow>
     </div>
+    <EmptyState v-else-if="rclone && !rclone.installed" nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.noRclone')" :hint="c('remotes.noRcloneHint')" />
     <EmptyState v-else nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.none')" />
     <div class="a-foot"><Button data-add :label="c('remotes.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>

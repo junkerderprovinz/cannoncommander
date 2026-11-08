@@ -66,6 +66,7 @@ const terminal = computed({ get: () => !!app.value?.terminal, set: (v: boolean) 
   void save({ terminal: v }).then((ok) => { if (ok) terminalOn.value = v; });
 } });
 const webdavUrl = new URL('dav/', location.origin + import.meta.env.BASE_URL).href;
+const desktop = computed(() => sys.value?.deployment === 'desktop');
 const tool = (t?: Tool) => (t?.available ? [t.version, t.path].filter(Boolean).join(', ') : c('integrations.notFound'));
 
 const alAddress = computed({ get: () => app.value?.arrowloop.url ?? '', set: (url) => { app.value!.arrowloop.url = url; } });
@@ -135,7 +136,7 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
     <Card :title="c('integrations.media')">
       <FieldRow :label="c('integrations.thumbs')" :hint="c('integrations.thumbsTip')"><Toggle v-model="thumbs" data-it="thumbs" /></FieldRow>
       <FieldRow :label="c('integrations.video')" :hint="c('integrations.videoTip')"><Toggle v-model="video" data-it="videoPreview" /></FieldRow>
-      <FieldRow label="ffmpeg" :hint="c('integrations.ffmpegTip')"><Pill class="mono">{{ sys ? tool(sys.tools.ffmpeg) : '' }}</Pill></FieldRow>
+      <FieldRow label="ffmpeg" :hint="c(desktop ? 'integrations.ffmpegDesktopTip' : 'integrations.ffmpegTip')"><Pill class="mono">{{ sys ? tool(sys.tools.ffmpeg) : '' }}</Pill></FieldRow>
     </Card>
     <Card title="ArrowLoop" :hint="c('integrations.alHint')">
       <FieldRow :label="c('integrations.address')" :hint="c('integrations.alUrlTip')">
@@ -155,11 +156,13 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
       <FieldRowGroup>
         <FieldRow :label="c('integrations.webdav')" :hint="c('integrations.webdavTip')"><Toggle v-model="webdav" data-it="webdav" /></FieldRow>
         <FieldRow v-if="webdav" :label="c('integrations.address')"><CopyField width="grow" :value="webdavUrl" :label="c('integrations.address')" :text="copyWords()" /></FieldRow>
-        <FieldRow label="rclone" :hint="c('integrations.rcloneTip')"><Pill class="mono">{{ sys ? tool(sys.tools.rclone) : '' }}</Pill></FieldRow>
+        <FieldRow label="rclone" :hint="c(desktop ? 'integrations.rcloneDesktopTip' : 'integrations.rcloneTip')"><Pill class="mono">{{ sys ? tool(sys.tools.rclone) : '' }}</Pill></FieldRow>
       </FieldRowGroup>
     </Card>
     <Card :title="c('integrations.terminalCard')">
-      <FieldRow :label="c('integrations.terminal')" :hint="c('integrations.terminalTip')"><Toggle v-model="terminal" data-it="terminal" /></FieldRow>
+      <!-- The desktop app runs on the user's own computer and opens its terminal without a switch. -->
+      <FieldRow v-if="desktop" :label="c('integrations.terminalDesktop')" :hint="c('integrations.terminalDesktopTip')" />
+      <FieldRow v-else :label="c('integrations.terminal')" :hint="c('integrations.terminalTip')"><Toggle v-model="terminal" data-it="terminal" /></FieldRow>
     </Card>
   </template>
 </template>

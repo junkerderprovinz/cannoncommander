@@ -66,7 +66,8 @@ export interface AppSettings {
   webdav: boolean;
   terminal: boolean;
   remotes: { automount: boolean; cache: 'off' | 'writes' | 'full'; cacheSize: number };
-  updates: { autoCheck: boolean };
+  // autoUpdate is the desktop app's own switch; a container reports it off.
+  updates: { autoCheck: boolean; autoUpdate: boolean };
   logLevel: 'error' | 'info' | 'debug';
 }
 // A save sends only what changed, down to a single switch.
@@ -74,11 +75,12 @@ export type AppChange = { [K in keyof AppSettings]?: AppSettings[K] extends obje
 export interface IntegrationResult { kind: string; ok: boolean; reachable: boolean; token?: 'ok' | 'rejected' | 'missing' | 'off' | 'none'; version?: string; error?: string }
 export interface Tool { available: boolean; path?: string; version?: string }
 export interface System {
-  version: string; commit?: string; release: boolean; go: string; os: string; arch: string; started: number; uptime: number;
+  version: string; commit?: string; release: boolean; deployment: 'container' | 'desktop'; go: string; os: string; arch: string; started: number; uptime: number;
   tools: Record<string, Tool>; unraid: { available: boolean; socket: boolean };
   features: { office: { kind: OfficeKind; url?: string }; thumbs: boolean; videoPreview: boolean; webdav: boolean; mupdf: boolean; terminal: boolean };
 }
-export interface UpdateCheck { version: string; latest: string; updateAvailable: boolean; releaseUrl?: string }
+// ready is the version the desktop app has put in place for its next start.
+export interface UpdateCheck { version: string; latest: string; updateAvailable: boolean; releaseUrl?: string; ready?: string }
 export interface Imported { sections: string[]; notes: string[]; restartNeeded: boolean }
 
 type Wire<T, K extends keyof T> = Omit<T, K> & { [P in K]: string | null };

@@ -12,7 +12,7 @@ const { APP, SYS } = vi.hoisted(() => ({
     office: { kind: 'none', url: '' }, arrowloop: { url: '' }, previews: { thumbs: true, video: false }, webdav: false, terminal: false,
     remotes: { automount: true, cache: 'off', cacheSize: 0 }, updates: { autoCheck: true }, logLevel: 'info',
   },
-  SYS: { version: '1.0.0', go: '', os: '', arch: '', started: 0, uptime: 0, tools: {}, unraid: { available: false, socket: false }, features: {} },
+  SYS: { version: '1.0.0', release: false, deployment: 'container', go: '', os: '', arch: '', started: 0, uptime: 0, tools: {}, unraid: { available: false, socket: false }, features: {} },
 }));
 vi.mock('@/api/admin', async (original) => {
   const real = await original<typeof import('@/api/admin')>();
@@ -83,6 +83,31 @@ describe('the settings', () => {
       expect(u.querySelector('.glim-readme-btn-sub')?.textContent).toBe('Bald');
     }
     expect(document.querySelectorAll('.glim-readme-btn-unit a, .glim-readme-btn-unit button')).toHaveLength(0);
+  });
+
+  it('offer a release build the desktop app of its own release', async () => {
+    Object.assign(SYS, { release: true, version: '1.2.0' });
+    try {
+      await cardsOf('app');
+      const links = [...document.querySelectorAll<HTMLAnchorElement>('.glim-readme-btn-unit a')].map((a) => a.getAttribute('href'));
+      const at = 'https://github.com/junkerderprovinz/cannoncommander/releases/download/v1.2.0/cannoncommander-';
+      expect(links).toEqual(['windows-amd64-installer.exe', 'windows-amd64.zip', 'macos-universal.zip', 'linux-amd64-installer', 'linux-arm64-installer'].map((f) => at + f));
+      expect(document.querySelector('.glim-notch-card')?.textContent).not.toContain('Sobald es die Builds gibt');
+    } finally {
+      Object.assign(SYS, { release: false, version: '1.0.0' });
+    }
+  });
+
+  it('offer the server inside the desktop app instead of the desktop app', async () => {
+    SYS.deployment = 'desktop';
+    try {
+      const cards = await cardsOf('app');
+      expect(cards.map((t) => t.split(/\s/)[0])).toEqual(['Server', 'Handy-App']);
+      const names = [...document.querySelectorAll('.glim-readme-btn-unit')].slice(0, 3).map((u) => u.querySelector('.glim-readme-btn-name')?.textContent);
+      expect(names).toEqual(['Unraid', 'Docker', 'Quellcode']);
+    } finally {
+      SYS.deployment = 'container';
+    }
   });
 
   it('keep the settings file and the service on the system tile', async () => {

@@ -8,6 +8,13 @@ import { c } from '@/features/config/shared';
 export const REPO = 'https://github.com/junkerderprovinz/cannoncommander';
 export const MAIL = 'hello@halleluja.design';
 
+// A release carries the desktop app under names without the version, as release.yml attaches them. A build between
+// releases cannot know which release has them.
+export function desktopAsset(sys: Pick<System, 'version' | 'release'> | null, file: string): string | undefined {
+  if (!sys?.release) return undefined;
+  return `${REPO}/releases/download/v${sys.version.replace(/^v/, '')}/cannoncommander-${file}`;
+}
+
 // A build between releases has no release page, so it links to its commit.
 export function versionLink(sys: Pick<System, 'version' | 'commit' | 'release'>): string {
   if (sys.release) return `${REPO}/releases/tag/v${sys.version.replace(/^v/, '')}`;
