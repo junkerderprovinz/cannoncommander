@@ -188,12 +188,20 @@ func linkInfoPath(li []byte) string {
 	}
 	if net := le32(li, 20); flags&2 != 0 && net > 0 && net < len(li) {
 		link := li[net:]
-		nameOff := le32(link, 8)
-		name := ansiz(link, nameOff)
+		nameOff, deviceOff := le32(link, 8), le32(link, 12)
+		name, device := ansiz(link, nameOff), ansiz(link, deviceOff)
 		if nameOff > 0x14 {
 			if u := le32(link, 0x14); u != 0 {
 				name = utf16z(link, u)
 			}
+			if u := le32(link, 0x18); u != 0 {
+				device = utf16z(link, u)
+			}
+		}
+		// A share mapped to a drive letter goes by the letter, as Explorer
+		// shows it, while that drive is still there.
+		if le32(link, 4)&1 != 0 && device != "" && driveExists(device) {
+			return joinWin(device+`\`, suffix)
 		}
 		return joinWin(name, suffix)
 	}
@@ -392,4 +400,9 @@ func Write(p, target string, dir bool) error {
 	put(wide, uint16(0))
 	put(uint32(0))
 	return os.WriteFile(p, b.Bytes(), 0o666)
+}
+
+var driveExists = func(device string) bool {
+	info, err := os.Stat(device + `\`)
+	return err == nil && info.IsDir()
 }
