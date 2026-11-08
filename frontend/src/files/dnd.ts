@@ -153,7 +153,7 @@ export function installDragDrop() {
     e.preventDefault();
     const d = drag, tgt = dropTarget(e.target as Element, d);
     if (!d.native) drag = null;
-    if (tgt) F.transfer(e.shiftKey ? 'move' : 'copy', d.items, tgt.dest, F.T(d.from).path);
+    if (tgt) F.transfer(e.shiftKey ? 'move' : 'copy', d.items, tgt.dest, d.folder);
   });
 
   // The window's side of a drop. On Windows the page passed it the files and gets back their paths. On Linux the
@@ -172,7 +172,7 @@ export function installDragDrop() {
       endDrag();
       ended = null;
       const tgt = dropTarget(el, own);
-      if (tgt) F.transfer(own.shift ? 'move' : 'copy', own.items, tgt.dest, F.T(own.from).path);
+      if (tgt) F.transfer(own.shift ? 'move' : 'copy', own.items, tgt.dest, own.folder);
       return;
     }
     const tgt = dropTarget(el, null);

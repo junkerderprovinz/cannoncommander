@@ -67,4 +67,16 @@ describe('the window of the desktop app', () => {
     expect(dropped).toEqual([]);
     expect(moved.map((j) => [j.kind, j.dest, j.items.map((k) => k.name)])).toEqual([['copy', HERE + '/Bilder', ['notes.txt']]]);
   });
+
+  it('copies from where the drag started after holding still opened the target', async () => {
+    const { file } = panel();
+    const go = document.createElement('div');
+    go.dataset.go = HERE + '/Bilder';
+    document.body.append(go);
+    file.dispatchEvent(Object.assign(new Event('dragstart', { bubbles: true }), { dataTransfer: { setData: () => {}, effectAllowed: '' } }));
+    usePanels().T().path = HERE + '/Bilder';
+    go.dispatchEvent(Object.assign(new Event('drop', { bubbles: true, cancelable: true }), { dataTransfer: { files: [], types: [] } }));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(moved.map((j) => [j.from, j.dest, j.items.map((k) => k.name)])).toEqual([[HERE, HERE + '/Bilder', ['notes.txt']]]);
+  });
 });
