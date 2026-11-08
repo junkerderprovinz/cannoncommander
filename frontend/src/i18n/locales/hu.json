@@ -1931,6 +1931,14 @@
     },
     "notCopied": "A kettőzés nem sikerült"
   },
+  "openwith": {
+    "menu": "Társítás",
+    "looking": "Alkalmazások keresése …",
+    "none": "Nem található alkalmazás",
+    "other": "Másik alkalmazás választása",
+    "choose": "Alkalmazás választása",
+    "search": "Keresés az alkalmazások között"
+  },
   "palette": {
     "title": "Parancs keresése",
     "placeholder": "Parancs vagy mappa keresése",
@@ -3174,6 +3182,7 @@
     "forward": "Előre",
     "up": "Egy szinttel feljebb",
     "home": "A Shares-ekhez",
+    "homeFolder": "A saját mappához",
     "gotoPath": "Útvonal megadása",
     "selectAll": "Összes kijelölése",
     "invertSel": "Kijelölés megfordítása",
@@ -3497,6 +3506,7 @@
   },
   "server": {
     "adminsOnly": "Ezt csak rendszergazdák tehetik meg",
+    "appNotStarted": "A(z) {app} nem indult el",
     "archivePassword": "Az archívumhoz a helyes jelszó kell",
     "archiveUnreadable": "Az archívum nem olvasható",
     "badName": "Ez a név nem jó",
@@ -3566,6 +3576,7 @@
     "namePasswordNeeded": "Név és jelszó is kell",
     "nameTaken": "Ez a név itt már foglalt",
     "nameTooLong": "A név túl hosszú a fájlrendszernek",
+    "noAppDialog": "Ennek a számítógépnek nincs saját párbeszédablaka alkalmazás választásához",
     "noFolder": "Ez a mappa nem létezik",
     "noFolderForFile": "A fájl mappája nem létezik",
     "noGroup": "Ez a csoport nem létezik",
@@ -3660,6 +3671,7 @@
     "trashEmpty": "A kuka üres",
     "trashOtherDisk": "Ez más fájlrendszeren van, mint a kukája. Inkább törölje közvetlenül",
     "trashShareRoot": "Egy teljes Share vagy meghajtó nem kerülhet a kukába",
+    "unknownApp": "Ez a számítógép nem kínálja ezt az alkalmazást a fájlhoz",
     "unraidReadOnly": "Az Unraidbe írás ki van kapcsolva",
     "uploadGone": "A megkezdett feltöltés elveszett. Kérjük, kezdje újra",
     "uploadRunning": "Egy ilyen nevű fájl feltöltése épp folyamatban van",

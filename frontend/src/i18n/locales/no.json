@@ -1931,6 +1931,14 @@
     },
     "notCopied": "Dupliseringen mislyktes"
   },
+  "openwith": {
+    "menu": "Åpne med",
+    "looking": "Ser etter apper …",
+    "none": "Fant ingen app",
+    "other": "Velg en annen app",
+    "choose": "Velg en app",
+    "search": "Søk i apper"
+  },
   "palette": {
     "title": "Søk etter kommando",
     "placeholder": "Søk etter kommando eller mappe",
@@ -3174,6 +3182,7 @@
     "forward": "Frem",
     "up": "Ett nivå opp",
     "home": "Til Shares",
+    "homeFolder": "Til hjemmemappen",
     "gotoPath": "Skriv inn sti",
     "selectAll": "Merk alt",
     "invertSel": "Inverter utvalg",
@@ -3497,6 +3506,7 @@
   },
   "server": {
     "adminsOnly": "Det kan bare administratorer gjøre",
+    "appNotStarted": "{app} startet ikke",
     "archivePassword": "Arkivet trenger riktig passord",
     "archiveUnreadable": "Arkivet kan ikke leses",
     "badName": "Dette navnet fungerer ikke",
@@ -3566,6 +3576,7 @@
     "namePasswordNeeded": "Både navn og passord trengs",
     "nameTaken": "Dette navnet finnes allerede her",
     "nameTooLong": "Navnet er for langt for filsystemet",
+    "noAppDialog": "Denne datamaskinen har ingen egen dialog for å velge en app",
     "noFolder": "Denne mappen finnes ikke",
     "noFolderForFile": "Mappen for denne filen finnes ikke",
     "noGroup": "Den gruppen finnes ikke",
@@ -3660,6 +3671,7 @@
     "trashEmpty": "Papirkurven er tom",
     "trashOtherDisk": "Det ligger på et annet filsystem enn papirkurven sin. Slett det heller direkte",
     "trashShareRoot": "En hel Share eller et helt volum kan ikke legges i papirkurven",
+    "unknownApp": "Denne datamaskinen tilbyr ikke den appen for filen",
     "unraidReadOnly": "Skriving til Unraid er slått av",
     "uploadGone": "Den påbegynte opplastingen er borte. Begynn på nytt",
     "uploadRunning": "En fil med dette navnet lastes opp akkurat nå",

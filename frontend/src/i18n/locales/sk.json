@@ -2065,6 +2065,14 @@
     },
     "notCopied": "Duplikovanie sa nepodarilo"
   },
+  "openwith": {
+    "menu": "Otvoriť v programe",
+    "looking": "Hľadajú sa aplikácie …",
+    "none": "Nenašla sa žiadna aplikácia",
+    "other": "Vybrať inú aplikáciu",
+    "choose": "Vybrať aplikáciu",
+    "search": "Hľadať aplikácie"
+  },
   "palette": {
     "title": "Hľadať príkaz",
     "placeholder": "Hľadať príkaz alebo priečinok",
@@ -3430,6 +3438,7 @@
     "forward": "Dopredu",
     "up": "O úroveň vyššie",
     "home": "Na Shares",
+    "homeFolder": "Do osobného priečinka",
     "gotoPath": "Zadať cestu",
     "selectAll": "Označiť všetko",
     "invertSel": "Obrátiť výber",
@@ -3761,6 +3770,7 @@
   },
   "server": {
     "adminsOnly": "To smú len administrátori",
+    "appNotStarted": "{app} sa nepodarilo spustiť",
     "archivePassword": "Archív potrebuje správne heslo",
     "archiveUnreadable": "Archív sa nedá prečítať",
     "badName": "Tento názov nejde",
@@ -3838,6 +3848,7 @@
     "namePasswordNeeded": "Je potrebné meno aj heslo",
     "nameTaken": "Tento názov tu už existuje",
     "nameTooLong": "Názov je pre systém súborov príliš dlhý",
+    "noAppDialog": "Tento počítač nemá vlastné dialógové okno na výber aplikácie",
     "noFolder": "Tento priečinok neexistuje",
     "noFolderForFile": "Priečinok pre tento súbor neexistuje",
     "noGroup": "Táto skupina neexistuje",
@@ -3934,6 +3945,7 @@
     "trashEmpty": "Kôš je prázdny",
     "trashOtherDisk": "To leží na inom systéme súborov ako jeho kôš. Zmažte to radšej priamo",
     "trashShareRoot": "Celý Share ani celý disk nemôže ísť do koša",
+    "unknownApp": "Tento počítač túto aplikáciu pre súbor neponúka",
     "unraidReadOnly": "Zápis do Unraid je vypnutý",
     "uploadGone": "Začaté nahrávanie zmizlo. Začnite prosím znova",
     "uploadRunning": "Súbor s týmto názvom sa práve nahráva",

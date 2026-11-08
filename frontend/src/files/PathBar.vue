@@ -4,15 +4,16 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { run } from '@/core/actions';
 import { extend } from '@/core/extend';
-import { rootName } from '@/core/host';
+import { host, rootName, windowsPaths } from '@/core/host';
 import { menu } from '@/core/menu';
 import { prefs } from '@/core/prefs';
 import { byName, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
+import { useUser } from '@/stores/user';
 import { shake } from '@/ui/kit';
 import { shown } from './entries';
-import { split } from './paths';
+import { nativePath, split, typedPath } from './paths';
 
 const props = defineProps<{ i: number }>();
 const F = usePanels();
@@ -21,6 +22,8 @@ const tab = computed(() => F.T(props.i));
 const parts = computed(() => split(tab.value.path));
 const hasDirs = computed(() => listing.lists.get(tab.value.path)?.items.some((k) => k.dir) ?? false);
 const under = (k: number) => '/' + parts.value.slice(0, k).join('/');
+// A drive on Windows is C: there, as in Explorer.
+const partName = (part: string, k: number) => (k === 0 && windowsPaths() ? part + ':' : part.replace('::', ''));
 
 async function psub(e: MouseEvent, folder: string) {
   const r = (e.currentTarget as HTMLElement).getBoundingClientRect(), here = tab.value.path;
@@ -55,20 +58,20 @@ function key(e: KeyboardEvent) {
   if (e.key === 'Enter') {
     const typed = (e.target as HTMLInputElement).value.trim();
     if (extend.pathWords.some((fn) => fn(typed, props.i))) tab.value.editPath = false;
-    else F.go(typed || '/', props.i).then((ok) => { if (!ok) shake(input.value); });
+    else F.go(host.desktop ? typedPath(typed, { windows: windowsPaths(), home: useUser().me.home || '/' }) : typed || '/', props.i).then((ok) => { if (!ok) shake(input.value); });
   }
   if (e.key === 'Escape') tab.value.editPath = false;
 }
 </script>
 
 <template>
-  <input v-if="tab.editPath" :id="`pathedit-${i}`" ref="input" class="pathbar pathedit mono" :value="tab.path" :aria-label="t('files.path')" @keydown="key" @blur="tab.editPath = false">
+  <input v-if="tab.editPath" :id="`pathedit-${i}`" ref="input" class="pathbar pathedit mono" :value="nativePath(tab.path, windowsPaths())" :aria-label="t('files.path')" @keydown="key" @blur="tab.editPath = false">
   <div v-else class="pathbar" :class="{ open: tab.pathOpen }" data-pathbar :data-tip="t('files.pathTip')" @click="onBar">
     <button v-if="parts.length > 1" class="pmore" data-pathmore :aria-label="t('files.pathMore')" @click="more">…</button>
     <button class="pseg" data-go="/" @click="F.go('/', i)">{{ rootName() }}</button>
     <template v-for="(part, k) in parts" :key="k">
       <button class="psep" :data-psub="under(k)" :aria-label="t('files.foldersIn', { name: split(under(k)).pop() || rootName() })" @click="psub($event, under(k))">›</button>
-      <button class="pseg" :class="{ last: k === parts.length - 1 }" :data-go="under(k + 1)" @click="F.go(under(k + 1), i)">{{ part.replace('::', '') }}</button>
+      <button class="pseg" :class="{ last: k === parts.length - 1 }" :data-go="under(k + 1)" @click="F.go(under(k + 1), i)">{{ partName(part, k) }}</button>
     </template>
     <button v-if="hasDirs" class="psep" :data-psub="tab.path" :aria-label="t('files.foldersIn', { name: parts.at(-1) || rootName() })" @click="psub($event, tab.path)">›</button>
   </div>

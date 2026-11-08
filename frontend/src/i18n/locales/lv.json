@@ -1998,6 +1998,14 @@
     },
     "notCopied": "Dublēšana neizdevās"
   },
+  "openwith": {
+    "menu": "Atvērt ar",
+    "looking": "Meklē lietotnes …",
+    "none": "Netika atrasta neviena lietotne",
+    "other": "Izvēlēties citu lietotni",
+    "choose": "Izvēlēties lietotni",
+    "search": "Meklēt lietotnes"
+  },
   "palette": {
     "title": "Meklēt komandu",
     "placeholder": "Meklēt komandu vai mapi",
@@ -3302,6 +3310,7 @@
     "forward": "Uz priekšu",
     "up": "Līmeni augstāk",
     "home": "Uz Share",
+    "homeFolder": "Uz personīgo mapi",
     "gotoPath": "Ievadīt ceļu",
     "selectAll": "Atzīmēt visu",
     "invertSel": "Apgriezt atlasi",
@@ -3629,6 +3638,7 @@
   },
   "server": {
     "adminsOnly": "To drīkst tikai administratori",
+    "appNotStarted": "{app} neizdevās palaist",
     "archivePassword": "Arhīvam vajag pareizo paroli",
     "archiveUnreadable": "Arhīvu nevar nolasīt",
     "badName": "Šāds nosaukums neder",
@@ -3702,6 +3712,7 @@
     "namePasswordNeeded": "Vajag vārdu un paroli",
     "nameTaken": "Šāds nosaukums šeit jau ir",
     "nameTooLong": "Nosaukums ir par garu failu sistēmai",
+    "noAppDialog": "Šim datoram nav sava dialoga lietotnes izvēlei",
     "noFolder": "Šādas mapes nav",
     "noFolderForFile": "Šī faila mapes nav",
     "noGroup": "Šādas grupas nav",
@@ -3797,6 +3808,7 @@
     "trashEmpty": "Atkritne ir tukša",
     "trashOtherDisk": "Tas atrodas citā failu sistēmā nekā tā atkritne. Labāk dzēs to tieši",
     "trashShareRoot": "Visu Share vai visu disku nevar ielikt atkritnē",
+    "unknownApp": "Šis dators šim failam šo lietotni nepiedāvā",
     "unraidReadOnly": "Rakstīšana uz Unraid ir izslēgta",
     "uploadGone": "Iesāktā augšupielāde ir pazudusi. Lūdzu, sāc no jauna",
     "uploadRunning": "Fails ar šādu nosaukumu pašlaik tiek augšupielādēts",

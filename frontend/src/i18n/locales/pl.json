@@ -2065,6 +2065,14 @@
     },
     "notCopied": "Duplikowanie się nie powiodło"
   },
+  "openwith": {
+    "menu": "Otwórz za pomocą",
+    "looking": "Szukanie aplikacji …",
+    "none": "Nie znaleziono aplikacji",
+    "other": "Wybierz inną aplikację",
+    "choose": "Wybierz aplikację",
+    "search": "Szukaj aplikacji"
+  },
   "palette": {
     "title": "Szukaj polecenia",
     "placeholder": "Szukaj polecenia lub folderu",
@@ -3430,6 +3438,7 @@
     "forward": "Dalej",
     "up": "Poziom wyżej",
     "home": "Do Shares",
+    "homeFolder": "Do folderu osobistego",
     "gotoPath": "Wpisz ścieżkę",
     "selectAll": "Zaznacz wszystko",
     "invertSel": "Odwróć zaznaczenie",
@@ -3761,6 +3770,7 @@
   },
   "server": {
     "adminsOnly": "To mogą tylko administratorzy",
+    "appNotStarted": "Nie udało się uruchomić {app}",
     "archivePassword": "Archiwum wymaga właściwego hasła",
     "archiveUnreadable": "Nie da się odczytać archiwum",
     "badName": "Ta nazwa nie działa",
@@ -3838,6 +3848,7 @@
     "namePasswordNeeded": "Potrzebne są nazwa i hasło",
     "nameTaken": "Ta nazwa już tu istnieje",
     "nameTooLong": "Nazwa jest za długa dla systemu plików",
+    "noAppDialog": "Ten komputer nie ma własnego okna do wyboru aplikacji",
     "noFolder": "Ten folder nie istnieje",
     "noFolderForFile": "Folder dla tego pliku nie istnieje",
     "noGroup": "Ta grupa nie istnieje",
@@ -3934,6 +3945,7 @@
     "trashEmpty": "Kosz jest pusty",
     "trashOtherDisk": "To leży w innym systemie plików niż jego kosz. Lepiej usuń to bezpośrednio",
     "trashShareRoot": "Cały Share ani cały dysk nie może trafić do kosza",
+    "unknownApp": "Ten komputer nie oferuje tej aplikacji dla tego pliku",
     "unraidReadOnly": "Zapis do Unraid jest wyłączony",
     "uploadGone": "Rozpoczęte przesyłanie przepadło. Zacznij jeszcze raz",
     "uploadRunning": "Plik o tej nazwie jest właśnie przesyłany",

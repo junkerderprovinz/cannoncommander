@@ -1931,6 +1931,14 @@
     },
     "notCopied": "Dupliceren is niet gelukt"
   },
+  "openwith": {
+    "menu": "Openen met",
+    "looking": "Apps zoeken …",
+    "none": "Geen app gevonden",
+    "other": "Een andere app kiezen",
+    "choose": "Een app kiezen",
+    "search": "Apps doorzoeken"
+  },
   "palette": {
     "title": "Opdracht zoeken",
     "placeholder": "Opdracht of map zoeken",
@@ -3174,6 +3182,7 @@
     "forward": "Vooruit",
     "up": "Eén niveau omhoog",
     "home": "Naar de Shares",
+    "homeFolder": "Naar je persoonlijke map",
     "gotoPath": "Pad invoeren",
     "selectAll": "Alles markeren",
     "invertSel": "Selectie omkeren",
@@ -3497,6 +3506,7 @@
   },
   "server": {
     "adminsOnly": "Dat mogen alleen admins",
+    "appNotStarted": "{app} kon niet starten",
     "archivePassword": "Het archief heeft het juiste wachtwoord nodig",
     "archiveUnreadable": "Het archief kan niet worden gelezen",
     "badName": "Deze naam werkt niet",
@@ -3566,6 +3576,7 @@
     "namePasswordNeeded": "Naam en wachtwoord zijn allebei nodig",
     "nameTaken": "Deze naam bestaat hier al",
     "nameTooLong": "De naam is te lang voor het bestandssysteem",
+    "noAppDialog": "Deze computer heeft geen eigen venster om een app te kiezen",
     "noFolder": "Deze map bestaat niet",
     "noFolderForFile": "De map voor dit bestand bestaat niet",
     "noGroup": "Deze groep bestaat niet",
@@ -3660,6 +3671,7 @@
     "trashEmpty": "De prullenbak is leeg",
     "trashOtherDisk": "Dit staat op een ander bestandssysteem dan zijn prullenbak. Verwijder het liever direct",
     "trashShareRoot": "Een hele Share of een heel station kan niet naar de prullenbak",
+    "unknownApp": "Deze computer biedt die app niet aan voor het bestand",
     "unraidReadOnly": "Schrijven naar Unraid staat uit",
     "uploadGone": "De begonnen upload is weg. Begin opnieuw",
     "uploadRunning": "Er wordt nu een bestand met deze naam geüpload",

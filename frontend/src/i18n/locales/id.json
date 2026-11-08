@@ -1864,6 +1864,14 @@
     },
     "notCopied": "Duplikasi gagal"
   },
+  "openwith": {
+    "menu": "Buka dengan",
+    "looking": "Mencari aplikasi …",
+    "none": "Tidak ada aplikasi yang ditemukan",
+    "other": "Pilih aplikasi lain",
+    "choose": "Pilih aplikasi",
+    "search": "Cari aplikasi"
+  },
   "palette": {
     "title": "Cari perintah",
     "placeholder": "Cari perintah atau folder",
@@ -3046,6 +3054,7 @@
     "forward": "Maju",
     "up": "Naik satu tingkat",
     "home": "Ke Share",
+    "homeFolder": "Ke folder pribadi",
     "gotoPath": "Ketik path",
     "selectAll": "Tandai semua",
     "invertSel": "Balik pilihan",
@@ -3365,6 +3374,7 @@
   },
   "server": {
     "adminsOnly": "Hanya admin yang boleh melakukannya",
+    "appNotStarted": "{app} tidak bisa dimulai",
     "archivePassword": "Arsip ini memerlukan kata sandi yang benar",
     "archiveUnreadable": "Arsip ini tidak bisa dibaca",
     "badName": "Nama ini tidak bisa dipakai",
@@ -3430,6 +3440,7 @@
     "namePasswordNeeded": "Nama dan kata sandi keduanya diperlukan",
     "nameTaken": "Nama ini sudah ada di sini",
     "nameTooLong": "Nama ini terlalu panjang untuk sistem berkas",
+    "noAppDialog": "Komputer ini tidak punya dialog sendiri untuk memilih aplikasi",
     "noFolder": "Folder ini tidak ada",
     "noFolderForFile": "Folder untuk berkas ini tidak ada",
     "noGroup": "Grup ini tidak ada",
@@ -3523,6 +3534,7 @@
     "trashEmpty": "Tempat Sampah kosong",
     "trashOtherDisk": "Ini berada di sistem berkas yang berbeda dari Tempat Sampah-nya. Sebaiknya hapus langsung",
     "trashShareRoot": "Seluruh Share atau seluruh drive tidak bisa dimasukkan ke Tempat Sampah",
+    "unknownApp": "Komputer ini tidak menawarkan aplikasi itu untuk file ini",
     "unraidReadOnly": "Akses tulis ke Unraid dimatikan",
     "uploadGone": "Unggahan yang sudah dimulai hilang. Silakan mulai lagi",
     "uploadRunning": "Berkas dengan nama ini sedang diunggah",

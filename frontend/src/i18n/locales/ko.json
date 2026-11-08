@@ -1864,6 +1864,14 @@
     },
     "notCopied": "복제하지 못했습니다"
   },
+  "openwith": {
+    "menu": "연결 프로그램",
+    "looking": "앱을 찾는 중 …",
+    "none": "앱을 찾을 수 없습니다",
+    "other": "다른 앱 선택",
+    "choose": "앱 선택",
+    "search": "앱 검색"
+  },
   "palette": {
     "title": "명령 검색",
     "placeholder": "명령이나 폴더 검색",
@@ -3046,6 +3054,7 @@
     "forward": "앞으로",
     "up": "한 단계 위로",
     "home": "Share로",
+    "homeFolder": "홈 폴더로",
     "gotoPath": "경로 입력",
     "selectAll": "모두 선택",
     "invertSel": "선택 반전",
@@ -3365,6 +3374,7 @@
   },
   "server": {
     "adminsOnly": "관리자만 할 수 있습니다",
+    "appNotStarted": "{app}을(를) 시작하지 못했습니다",
     "archivePassword": "압축 파일에 올바른 비밀번호가 필요합니다",
     "archiveUnreadable": "압축 파일을 읽을 수 없습니다",
     "badName": "이 이름은 쓸 수 없습니다",
@@ -3430,6 +3440,7 @@
     "namePasswordNeeded": "이름과 비밀번호가 모두 필요합니다",
     "nameTaken": "여기에 같은 이름이 이미 있습니다",
     "nameTooLong": "이름이 파일 시스템에 비해 너무 깁니다",
+    "noAppDialog": "이 컴퓨터에는 앱을 고르는 자체 대화 상자가 없습니다",
     "noFolder": "이 폴더가 없습니다",
     "noFolderForFile": "이 파일의 폴더가 없습니다",
     "noGroup": "이 그룹이 없습니다",
@@ -3523,6 +3534,7 @@
     "trashEmpty": "휴지통이 비어 있습니다",
     "trashOtherDisk": "휴지통과 다른 파일 시스템에 있습니다. 바로 삭제하세요",
     "trashShareRoot": "Share 전체나 볼륨 전체는 휴지통으로 옮길 수 없습니다",
+    "unknownApp": "이 컴퓨터는 이 파일에 그 앱을 제공하지 않습니다",
     "unraidReadOnly": "Unraid 쓰기가 꺼져 있습니다",
     "uploadGone": "진행하던 업로드가 사라졌습니다. 처음부터 다시 시작해 주세요",
     "uploadRunning": "같은 이름의 파일이 지금 업로드되고 있습니다",

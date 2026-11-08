@@ -1,0 +1,4 @@
+/* The chooser of every program, which Linux shows in place of a dialog of its own. */
+.ow-choose { display: flex; flex-direction: column; gap: .75rem; min-width: min(26rem, 80vw); }
+.ow-apps { display: flex; flex-direction: column; gap: 2px; max-height: 60vh; overflow-y: auto; }
+.ow-apps .glyph-picture { width: 100%; height: 100%; object-fit: contain; }

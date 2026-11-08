@@ -24,6 +24,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/watch"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -78,6 +79,7 @@ func mountAPIv1(router *http.ServeMux) error {
 	followDevices(svc, resolver, eventHub, devices)
 	svc.SetInodeIndex(fsindex.Inodes(resolver))
 	folderWatch.Start(eventHub, resolver, index, labelMover{deps})
+	desktop.Listen(func(typ string, data any) { _, _ = eventHub.PublishJSON(typ, "", data) })
 	system.OnShutdown(fsindex.Follow(resolver, index))
 	prefix := settings.Config.Http.BaseURL + "api/v1"
 	router.Handle(prefix+"/", http.StripPrefix(prefix, h))

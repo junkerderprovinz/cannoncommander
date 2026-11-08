@@ -1998,6 +1998,14 @@
     },
     "notCopied": "La duplicación no ha funcionado"
   },
+  "openwith": {
+    "menu": "Abrir con",
+    "looking": "Buscando aplicaciones …",
+    "none": "No se encontró ninguna aplicación",
+    "other": "Elegir otra aplicación",
+    "choose": "Elegir una aplicación",
+    "search": "Buscar aplicaciones"
+  },
   "palette": {
     "title": "Buscar comando",
     "placeholder": "Buscar comando o carpeta",
@@ -3302,6 +3310,7 @@
     "forward": "Adelante",
     "up": "Subir un nivel",
     "home": "A los Shares",
+    "homeFolder": "A tu carpeta personal",
     "gotoPath": "Escribir ruta",
     "selectAll": "Seleccionar todo",
     "invertSel": "Invertir selección",
@@ -3629,6 +3638,7 @@
   },
   "server": {
     "adminsOnly": "Solo los administradores pueden hacer esto",
+    "appNotStarted": "{app} no se pudo iniciar",
     "archivePassword": "El archivo comprimido necesita la contraseña correcta",
     "archiveUnreadable": "No se puede leer el archivo comprimido",
     "badName": "Este nombre no sirve",
@@ -3702,6 +3712,7 @@
     "namePasswordNeeded": "Hacen falta nombre y contraseña",
     "nameTaken": "Ese nombre ya existe aquí",
     "nameTooLong": "El nombre es demasiado largo para el sistema de archivos",
+    "noAppDialog": "Este ordenador no tiene un diálogo propio para elegir una aplicación",
     "noFolder": "Esta carpeta no existe",
     "noFolderForFile": "La carpeta para este archivo no existe",
     "noGroup": "Ese grupo no existe",
@@ -3797,6 +3808,7 @@
     "trashEmpty": "La papelera está vacía",
     "trashOtherDisk": "Esto está en otro sistema de archivos que su papelera. Mejor elimínalo directamente",
     "trashShareRoot": "Un Share entero o una unidad entera no puede ir a la papelera",
+    "unknownApp": "Este ordenador no ofrece esa aplicación para el archivo",
     "unraidReadOnly": "La escritura en Unraid está desactivada",
     "uploadGone": "La subida empezada ya no existe. Empieza otra vez",
     "uploadRunning": "Ahora mismo se está subiendo un archivo con este nombre",
