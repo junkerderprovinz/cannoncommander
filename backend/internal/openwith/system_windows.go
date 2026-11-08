@@ -2,12 +2,12 @@ package openwith
 
 import (
 	"errors"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"unsafe"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
 	"golang.org/x/sys/windows"
 )
 
@@ -33,14 +33,14 @@ func (shell) apps(file string) ([]app, error) {
 		return nil, nil
 	}
 	var list []app
-	err := apartment(func() error {
+	err := winshell.Apartment(func() error {
 		friendly, exe := assocString(ext, assocFriendlyName), assocString(ext, assocExecutable)
 		return eachHandler(ext, func(h unsafe.Pointer) bool {
-			id, err := taskString(h, handlerName)
+			id, err := winshell.TaskString(h, handlerName)
 			if err != nil || id == "" {
 				return false
 			}
-			name, err := taskString(h, handlerUIName)
+			name, err := winshell.TaskString(h, handlerUIName)
 			if err != nil || name == "" {
 				name = strings.TrimSuffix(filepath.Base(id), filepath.Ext(id))
 			}
@@ -57,7 +57,7 @@ func (shell) apps(file string) ([]app, error) {
 func iconLocation(h unsafe.Pointer) string {
 	var p *uint16
 	var index int32
-	if failed(method(h, handlerIconLocation, uintptr(unsafe.Pointer(&p)), uintptr(unsafe.Pointer(&index)))) != nil {
+	if winshell.Failed(winshell.Call(h, handlerIconLocation, uintptr(unsafe.Pointer(&p)), uintptr(unsafe.Pointer(&index)))) != nil {
 		return ""
 	}
 	defer windows.CoTaskMemFree(unsafe.Pointer(p))
@@ -81,18 +81,18 @@ var errGone = errors.New("the program is no longer offered for this file")
 // open hands the file to the program the way Explorer does, which also
 // starts a packaged app that has no program file to run.
 func (shell) open(file, id string) error {
-	return apartment(func() error {
+	return winshell.Apartment(func() error {
 		obj, err := dataObject(file)
 		if err != nil {
 			return err
 		}
-		defer releaseObject(obj)
+		defer winshell.Release(obj)
 		invoked := errGone
 		err = eachHandler(filepath.Ext(file), func(h unsafe.Pointer) bool {
-			if name, _ := taskString(h, handlerName); name != id {
+			if name, _ := winshell.TaskString(h, handlerName); name != id {
 				return false
 			}
-			invoked = failed(method(h, handlerInvoke, uintptr(obj)))
+			invoked = winshell.Failed(winshell.Call(h, handlerInvoke, uintptr(obj)))
 			return true
 		})
 		if err != nil {
@@ -124,25 +124,14 @@ func (shell) choose(file string) error {
 	if err != nil {
 		return err
 	}
-	return apartment(func() error {
+	return winshell.Apartment(func() error {
 		info := openAsInfo{file: p, flags: oaifAllowRegistration | oaifRegisterExt | oaifExec}
-		r, _, _ := procOpenWithDialog.Call(uintptr(owner()), uintptr(unsafe.Pointer(&info)))
-		err := failed(r)
+		r, _, _ := procOpenWithDialog.Call(uintptr(winshell.Owner()), uintptr(unsafe.Pointer(&info)))
+		err := winshell.Failed(r)
 		// Closing the dialog without a pick is no failure.
 		if err != nil && uint32(r)&0xffff == uint32(errCancelled) {
 			return nil
 		}
 		return err
 	})
-}
-
-// owner is the app's window, which the person just clicked, so the dialog
-// opens in front of it.
-func owner() windows.HWND {
-	w := windows.GetForegroundWindow()
-	var pid uint32
-	if _, err := windows.GetWindowThreadProcessId(w, &pid); err != nil || int(pid) != os.Getpid() {
-		return 0
-	}
-	return w
 }
