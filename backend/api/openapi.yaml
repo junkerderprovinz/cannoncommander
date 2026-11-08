@@ -1361,10 +1361,11 @@ paths:
       operationId: jobElevate
       summary: Go on with administrator rights
       description: |
-        Only in the desktop app, for copy, move, delete and trash. Runs the
-        failed and unfinished items again through a helper the system starts
-        with administrator rights, after its own prompt: UAC on Windows,
-        pkexec on Linux. Items fail with elevationDeclined when the prompt is
+        Only in the desktop app, for copy, move, delete, trash, restore and
+        undo. Runs the failed and unfinished items again through a helper the
+        system starts with administrator rights, after its own prompt: UAC on
+        Windows, pkexec on Linux. A copy or move leaves behind what a normal
+        one would, and a move into a new folder makes the folder. Items fail with elevationDeclined when the prompt is
         turned down. On Linux, and on drives without a Recycle Bin, items of
         a trash job fail with noSystemTrash.
       responses:
