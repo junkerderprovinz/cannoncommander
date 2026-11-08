@@ -2077,6 +2077,25 @@
     "shot": "Captura {stamp}.{ext}",
     "made": "«{name}» creado"
   },
+  "places": {
+    "home": "Carpeta personal",
+    "desktop": "Escritorio",
+    "documents": "Documentos",
+    "downloads": "Descargas",
+    "pictures": "Imágenes",
+    "music": "Música",
+    "videos": "Vídeos",
+    "recent": "Usados recientemente",
+    "drives": "Unidades",
+    "eject": "Expulsar",
+    "ejectLabel": "Expulsar {name}",
+    "ejected": "Ya puedes quitar {name} con seguridad",
+    "ejectedDisc": "{name} se ha expulsado",
+    "notMounted": "Aún no está montado, un clic lo monta",
+    "arrived": "{name} ya está aquí",
+    "open": "Abrir",
+    "gone": "{name} se ha quitado, ahora estás en {here}"
+  },
   "profiles": {
     "title": "Perfiles de ventana",
     "saved": "Guardados",
@@ -3611,6 +3630,7 @@
   },
   "side": {
     "bookmarks": "Accesos directos",
+    "places": "Ubicaciones",
     "tree": "Árbol de carpetas",
     "addBookmark": "Crear acceso directo a la carpeta actual",
     "unpin": "Quitar del acceso rápido",
@@ -3628,7 +3648,15 @@
     "renameTitle": "Cambiar nombre del acceso directo",
     "rename": "Cambiar nombre"
   },
+  "drives": {
+    "fixed": "Disco local",
+    "removable": "Unidad USB",
+    "optical": "Unidad de DVD",
+    "network": "Unidad de red",
+    "volume": "Volumen de {size}"
+  },
   "files": {
+    "network": "Red",
     "server": "Servidor",
     "thisPc": "Este equipo",
     "computer": "Ordenador",
@@ -3773,6 +3801,7 @@
     "unknownAction": "Esta acción no encaja con los elementos seleccionados",
     "windowNotInFront": "La ventana no estaba en primer plano en ese momento. Inténtalo de nuevo.",
     "systemFailed": "El sistema no ha podido hacerlo ahora mismo",
+    "ejectFailed": "Ahora no se puede expulsar la unidad. Quizá aún haya un archivo abierto en ella",
     "fileManagerNotSet": "El ordenador no aceptó el cambio",
     "disksAdminsOnly": "Los discos individuales y el Cache solo los ven los administradores",
     "dragFailed": "No se pudieron arrastrar los archivos fuera",
@@ -3824,6 +3853,7 @@
       "many": "El mensaje tiene como máximo {n} caracteres",
       "other": "El mensaje tiene como máximo {n} caracteres"
     },
+    "mountFailed": "No se pudo montar la unidad",
     "nameChars": "Windows no permite ninguno de estos caracteres en un nombre: < > : \" / \\ | ? *",
     "nameEnd": "En Windows un nombre no puede terminar en punto ni en espacio",
     "nameLength": {
@@ -3868,6 +3898,7 @@
     "notText": "Este archivo no es texto",
     "notWindows1252": "El texto tiene caracteres que Windows-1252 no puede guardar. Guárdalo como UTF-8",
     "nothingToUndo": "No hay nada que deshacer",
+    "noVolume": "Esta unidad ya no está",
     "officeCannotOpen": "El servidor de Office no abre archivos .{ext}",
     "oldNameTaken": "El nombre antiguo vuelve a estar ocupado",
     "outsideSources": "Esto solo funciona con archivos y carpetas dentro de un origen",

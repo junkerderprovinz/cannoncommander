@@ -23,7 +23,7 @@ const parts = computed(() => split(tab.value.path));
 const hasDirs = computed(() => listing.lists.get(tab.value.path)?.items.some((k) => k.dir) ?? false);
 const under = (k: number) => '/' + parts.value.slice(0, k).join('/');
 // A drive on Windows is C: there, as in Explorer.
-const partName = (part: string, k: number) => (k === 0 && windowsPaths() ? part + ':' : part.replace('::', ''));
+const partName = (part: string, k: number) => (k > 0 || !windowsPaths() ? part.replace('::', '') : part === 'net' ? t('files.network') : part + ':');
 
 async function psub(e: MouseEvent, folder: string) {
   const r = (e.currentTarget as HTMLElement).getBoundingClientRect(), here = tab.value.path;

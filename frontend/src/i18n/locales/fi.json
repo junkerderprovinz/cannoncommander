@@ -2010,6 +2010,25 @@
     "shot": "Kuvakaappaus {stamp}.{ext}",
     "made": "”{name}” luotu"
   },
+  "places": {
+    "home": "Kotikansio",
+    "desktop": "Työpöytä",
+    "documents": "Tiedostot",
+    "downloads": "Lataukset",
+    "pictures": "Kuvat",
+    "music": "Musiikki",
+    "videos": "Videot",
+    "recent": "Viimeksi käytetyt",
+    "drives": "Asemat",
+    "eject": "Poista asema",
+    "ejectLabel": "Poista {name}",
+    "ejected": "{name} on nyt turvallista irrottaa",
+    "ejectedDisc": "{name} on poistettu",
+    "notMounted": "Ei vielä liitetty, napsautus liittää sen",
+    "arrived": "{name} on kytketty",
+    "open": "Avaa",
+    "gone": "{name} irrotettiin, nyt olet kohteessa {here}"
+  },
   "profiles": {
     "title": "Paneeliprofiilit",
     "saved": "Tallennetut",
@@ -3480,6 +3499,7 @@
   },
   "side": {
     "bookmarks": "Pikakuvakkeet",
+    "places": "Sijainnit",
     "tree": "Kansiopuu",
     "addBookmark": "Lisää nykyinen kansio pikakuvakkeeksi",
     "unpin": "Irrota pikakäytöstä",
@@ -3497,7 +3517,15 @@
     "renameTitle": "Nimeä pikakuvake uudelleen",
     "rename": "Nimeä uudelleen"
   },
+  "drives": {
+    "fixed": "Paikallinen levy",
+    "removable": "USB-asema",
+    "optical": "DVD-asema",
+    "network": "Verkkoasema",
+    "volume": "{size}:n taltio"
+  },
   "files": {
+    "network": "Verkko",
     "server": "Palvelin",
     "thisPc": "Tämä tietokone",
     "computer": "Tietokone",
@@ -3639,6 +3667,7 @@
     "unknownAction": "Tämä toiminto ei sovi valittuihin kohteisiin",
     "windowNotInFront": "Ikkuna ei ollut juuri silloin edessä. Yritä uudelleen.",
     "systemFailed": "Järjestelmä ei pystynyt siihen juuri nyt",
+    "ejectFailed": "Asemaa ei voi poistaa nyt. Ehkä jokin sen tiedosto on vielä auki",
     "fileManagerNotSet": "Tietokone ei hyväksynyt muutosta",
     "disksAdminsOnly": "Vain ylläpitäjät näkevät yksittäiset levyt ja Cachen",
     "dragFailed": "Tiedostoja ei voitu vetää ulos",
@@ -3687,6 +3716,7 @@
       "one": "Viestissä on enintään {n} merkki",
       "other": "Viestissä on enintään {n} merkkiä"
     },
+    "mountFailed": "Asemaa ei voitu liittää",
     "nameChars": "Windows ei salli nimessä mitään näistä merkeistä: < > : \" / \\ | ? *",
     "nameEnd": "Windowsissa nimi ei voi päättyä pisteeseen eikä välilyöntiin",
     "nameLength": {
@@ -3730,6 +3760,7 @@
     "notText": "Tämä tiedosto ei ole tekstiä",
     "notWindows1252": "Tekstissä on merkkejä, joita Windows-1252 ei pysty tallentamaan. Tallenna se UTF-8-muodossa",
     "nothingToUndo": "Ei ole mitään kumottavaa",
+    "noVolume": "Tätä asemaa ei enää ole",
     "officeCannotOpen": "Office-palvelin ei avaa .{ext}-tiedostoja",
     "oldNameTaken": "Vanha nimi on taas käytössä",
     "outsideSources": "Tämä toimii vain lähteen sisällä olevilla tiedostoilla ja kansioilla",

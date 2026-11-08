@@ -1943,6 +1943,25 @@
     "shot": "Tangkapan layar {stamp}.{ext}",
     "made": "“{name}” dibuat"
   },
+  "places": {
+    "home": "Folder pribadi",
+    "desktop": "Desktop",
+    "documents": "Dokumen",
+    "downloads": "Unduhan",
+    "pictures": "Gambar",
+    "music": "Musik",
+    "videos": "Video",
+    "recent": "Baru digunakan",
+    "drives": "Drive",
+    "eject": "Keluarkan",
+    "ejectLabel": "Keluarkan {name}",
+    "ejected": "{name} sekarang aman dilepas",
+    "ejectedDisc": "{name} sudah dikeluarkan",
+    "notMounted": "Belum dikaitkan, satu klik mengaitkannya",
+    "arrived": "{name} sudah terhubung",
+    "open": "Buka",
+    "gone": "{name} dilepas, sekarang Anda di {here}"
+  },
   "profiles": {
     "title": "Profil jendela",
     "saved": "Disimpan",
@@ -3349,6 +3368,7 @@
   },
   "side": {
     "bookmarks": "Pintasan",
+    "places": "Tempat",
     "tree": "Pohon folder",
     "addBookmark": "Tambahkan folder saat ini sebagai pintasan",
     "unpin": "Lepas dari akses cepat",
@@ -3366,7 +3386,15 @@
     "renameTitle": "Ganti nama pintasan",
     "rename": "Ganti nama"
   },
+  "drives": {
+    "fixed": "Disk Lokal",
+    "removable": "Drive USB",
+    "optical": "Drive DVD",
+    "network": "Drive Jaringan",
+    "volume": "Volume {size}"
+  },
   "files": {
+    "network": "Jaringan",
     "server": "Server",
     "thisPc": "PC Ini",
     "computer": "Komputer",
@@ -3505,6 +3533,7 @@
     "unknownAction": "Tindakan ini tidak cocok dengan item yang dipilih",
     "windowNotInFront": "Jendela tadi tidak berada di depan. Silakan coba lagi.",
     "systemFailed": "Sistem tidak bisa melakukannya saat ini",
+    "ejectFailed": "Drive belum bisa dikeluarkan. Mungkin masih ada berkas yang terbuka di dalamnya",
     "fileManagerNotSet": "Komputer tidak menerima perubahan itu",
     "disksAdminsOnly": "Hanya admin yang melihat disk satu per satu dan Cache",
     "dragFailed": "File tidak dapat diseret keluar",
@@ -3550,6 +3579,7 @@
     "messageLength": {
       "other": "Pesan paling banyak {n} karakter"
     },
+    "mountFailed": "Drive tidak dapat dikaitkan",
     "nameChars": "Windows tidak mengizinkan karakter berikut dalam nama: < > : \" / \\ | ? *",
     "nameEnd": "Di Windows nama tidak boleh diakhiri titik atau spasi",
     "nameLength": {
@@ -3592,6 +3622,7 @@
     "notText": "Berkas ini bukan teks",
     "notWindows1252": "Teks ini berisi karakter yang tidak bisa disimpan Windows-1252. Simpan sebagai UTF-8",
     "nothingToUndo": "Tidak ada yang bisa diurungkan",
+    "noVolume": "Drive ini sudah tidak ada",
     "officeCannotOpen": "Server Office tidak membuka berkas .{ext}",
     "oldNameTaken": "Nama lama sudah dipakai lagi",
     "outsideSources": "Ini hanya bisa untuk berkas dan folder di dalam sumber",

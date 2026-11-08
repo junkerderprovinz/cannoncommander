@@ -2077,6 +2077,25 @@
     "shot": "Screenshot {stamp}.{ext}",
     "made": "«{name}» creato"
   },
+  "places": {
+    "home": "Cartella home",
+    "desktop": "Desktop",
+    "documents": "Documenti",
+    "downloads": "Download",
+    "pictures": "Immagini",
+    "music": "Musica",
+    "videos": "Video",
+    "recent": "Usati di recente",
+    "drives": "Unità",
+    "eject": "Espelli",
+    "ejectLabel": "Espelli {name}",
+    "ejected": "Ora puoi rimuovere {name} in sicurezza",
+    "ejectedDisc": "{name} è stato espulso",
+    "notMounted": "Non ancora montato, un clic lo monta",
+    "arrived": "{name} è collegato",
+    "open": "Apri",
+    "gone": "{name} è stato rimosso, ora sei in {here}"
+  },
   "profiles": {
     "title": "Profili finestra",
     "saved": "Salvati",
@@ -3611,6 +3630,7 @@
   },
   "side": {
     "bookmarks": "Collegamenti",
+    "places": "Posizioni",
     "tree": "Albero delle cartelle",
     "addBookmark": "Crea un collegamento alla cartella attuale",
     "unpin": "Rimuovi dall'accesso rapido",
@@ -3628,7 +3648,15 @@
     "renameTitle": "Rinomina collegamento",
     "rename": "Rinomina"
   },
+  "drives": {
+    "fixed": "Disco locale",
+    "removable": "Unità USB",
+    "optical": "Unità DVD",
+    "network": "Unità di rete",
+    "volume": "Volume da {size}"
+  },
   "files": {
+    "network": "Rete",
     "server": "Server",
     "thisPc": "Questo PC",
     "computer": "Computer",
@@ -3773,6 +3801,7 @@
     "unknownAction": "Questa azione non è adatta agli elementi selezionati",
     "windowNotInFront": "La finestra non era in primo piano in quel momento. Riprova.",
     "systemFailed": "Il sistema non ci è riuscito in questo momento",
+    "ejectFailed": "Ora l'unità non si può espellere. Forse un file è ancora aperto",
     "fileManagerNotSet": "Il computer non ha accettato la modifica",
     "disksAdminsOnly": "I singoli dischi e la Cache li vedono solo gli admin",
     "dragFailed": "Non è stato possibile trascinare fuori i file",
@@ -3824,6 +3853,7 @@
       "many": "Il messaggio ha al massimo {n} caratteri",
       "other": "Il messaggio ha al massimo {n} caratteri"
     },
+    "mountFailed": "Non è stato possibile montare l'unità",
     "nameChars": "Windows non consente nessuno di questi caratteri in un nome: < > : \" / \\ | ? *",
     "nameEnd": "In Windows un nome non può finire con un punto o uno spazio",
     "nameLength": {
@@ -3868,6 +3898,7 @@
     "notText": "Questo file non è testo",
     "notWindows1252": "Il testo contiene caratteri che Windows-1252 non può salvare. Salvalo come UTF-8",
     "nothingToUndo": "Non c'è nulla da annullare",
+    "noVolume": "Questa unità non c’è più",
     "officeCannotOpen": "Il server Office non apre i file .{ext}",
     "oldNameTaken": "Il vecchio nome è di nuovo occupato",
     "outsideSources": "Funziona solo con file e cartelle dentro un'origine",

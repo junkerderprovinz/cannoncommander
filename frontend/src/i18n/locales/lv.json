@@ -2077,6 +2077,25 @@
     "shot": "Ekrānuzņēmums {stamp}.{ext}",
     "made": "„{name}” izveidots"
   },
+  "places": {
+    "home": "Mājas mape",
+    "desktop": "Darbvirsma",
+    "documents": "Dokumenti",
+    "downloads": "Lejupielādes",
+    "pictures": "Attēli",
+    "music": "Mūzika",
+    "videos": "Video",
+    "recent": "Nesen izmantotās",
+    "drives": "Diski",
+    "eject": "Izstumt",
+    "ejectLabel": "Izstumt {name}",
+    "ejected": "{name} tagad var droši atvienot",
+    "ejectedDisc": "{name} ir izstumts",
+    "notMounted": "Vēl nav piemontēts, klikšķis to piemontēs",
+    "arrived": "{name} ir pievienots",
+    "open": "Atvērt",
+    "gone": "{name} tika atvienots, tagad tu esi {here}"
+  },
   "profiles": {
     "title": "Logu profili",
     "saved": "Saglabāts",
@@ -3611,6 +3630,7 @@
   },
   "side": {
     "bookmarks": "Saīsnes",
+    "places": "Vietas",
     "tree": "Mapju koks",
     "addBookmark": "Izveidot saīsni uz pašreizējo mapi",
     "unpin": "Atspraust no ātrās piekļuves",
@@ -3628,7 +3648,15 @@
     "renameTitle": "Pārdēvēt saīsni",
     "rename": "Pārdēvēt"
   },
+  "drives": {
+    "fixed": "Lokālais disks",
+    "removable": "USB disks",
+    "optical": "DVD diskdzinis",
+    "network": "Tīkla disks",
+    "volume": "{size} sējums"
+  },
   "files": {
+    "network": "Tīkls",
     "server": "Serveris",
     "thisPc": "Šis dators",
     "computer": "Dators",
@@ -3773,6 +3801,7 @@
     "unknownAction": "Šī darbība neatbilst atlasītajiem vienumiem",
     "windowNotInFront": "Logs tobrīd nebija priekšā. Lūdzu, mēģini vēlreiz.",
     "systemFailed": "Sistēmai to tagad neizdevās izdarīt",
+    "ejectFailed": "Disku pašlaik nevar izstumt. Varbūt kāds fails tajā vēl ir atvērts",
     "fileManagerNotSet": "Dators nepieņēma izmaiņas",
     "disksAdminsOnly": "Atsevišķos diskus un Cache redz tikai administratori",
     "dragFailed": "Failus neizdevās izvilkt ārā",
@@ -3824,6 +3853,7 @@
       "one": "Ziņā var būt ne vairāk kā {n} rakstzīme",
       "other": "Ziņā var būt ne vairāk kā {n} rakstzīmes"
     },
+    "mountFailed": "Disku neizdevās piemontēt",
     "nameChars": "Windows nosaukumā neatļauj nevienu no šīm rakstzīmēm: < > : \" / \\ | ? *",
     "nameEnd": "Windows nosaukums nedrīkst beigties ar punktu vai atstarpi",
     "nameLength": {
@@ -3868,6 +3898,7 @@
     "notText": "Šis fails nav teksts",
     "notWindows1252": "Tekstā ir rakstzīmes, ko Windows-1252 nevar saglabāt. Saglabā to kā UTF-8",
     "nothingToUndo": "Nav ko atsaukt",
+    "noVolume": "Šī diska vairs nav",
     "officeCannotOpen": "Office serveris neatver .{ext} failus",
     "oldNameTaken": "Vecais nosaukums atkal ir aizņemts",
     "outsideSources": "Tas darbojas tikai ar failiem un mapēm avotā",

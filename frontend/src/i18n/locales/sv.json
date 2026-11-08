@@ -2010,6 +2010,25 @@
     "shot": "Skärmbild {stamp}.{ext}",
     "made": "”{name}” har skapats"
   },
+  "places": {
+    "home": "Hemmapp",
+    "desktop": "Skrivbord",
+    "documents": "Dokument",
+    "downloads": "Hämtade filer",
+    "pictures": "Bilder",
+    "music": "Musik",
+    "videos": "Videoklipp",
+    "recent": "Senast använda",
+    "drives": "Enheter",
+    "eject": "Mata ut",
+    "ejectLabel": "Mata ut {name}",
+    "ejected": "Du kan nu ta bort {name} på ett säkert sätt",
+    "ejectedDisc": "{name} har matats ut",
+    "notMounted": "Inte monterad än, ett klick monterar den",
+    "arrived": "{name} är ansluten",
+    "open": "Öppna",
+    "gone": "{name} togs bort, så nu är du i {here}"
+  },
   "profiles": {
     "title": "Panelprofiler",
     "saved": "Sparade",
@@ -3480,6 +3499,7 @@
   },
   "side": {
     "bookmarks": "Genvägar",
+    "places": "Platser",
     "tree": "Mappträd",
     "addBookmark": "Lägg till aktuell mapp som genväg",
     "unpin": "Ta bort från snabbåtkomst",
@@ -3497,7 +3517,15 @@
     "renameTitle": "Byt namn på genväg",
     "rename": "Byt namn"
   },
+  "drives": {
+    "fixed": "Lokal disk",
+    "removable": "USB-enhet",
+    "optical": "DVD-enhet",
+    "network": "Nätverksenhet",
+    "volume": "{size}-volym"
+  },
   "files": {
+    "network": "Nätverk",
     "server": "Server",
     "thisPc": "Den här datorn",
     "computer": "Dator",
@@ -3639,6 +3667,7 @@
     "unknownAction": "Den här åtgärden passar inte de markerade objekten",
     "windowNotInFront": "Fönstret låg inte överst just då. Försök igen.",
     "systemFailed": "Systemet klarade inte det just nu",
+    "ejectFailed": "Enheten kan inte matas ut just nu. Kanske är en fil på den fortfarande öppen",
     "fileManagerNotSet": "Datorn tog inte emot ändringen",
     "disksAdminsOnly": "Bara admins ser de enskilda diskarna och Cache",
     "dragFailed": "Filerna kunde inte dras ut",
@@ -3687,6 +3716,7 @@
       "one": "Meddelandet får ha högst {n} tecken",
       "other": "Meddelandet får ha högst {n} tecken"
     },
+    "mountFailed": "Enheten kunde inte monteras",
     "nameChars": "Windows tillåter inget av dessa tecken i ett namn: < > : \" / \\ | ? *",
     "nameEnd": "I Windows får ett namn inte sluta med punkt eller blanksteg",
     "nameLength": {
@@ -3730,6 +3760,7 @@
     "notText": "Den här filen är ingen text",
     "notWindows1252": "Texten innehåller tecken som Windows-1252 inte kan lagra. Spara den som UTF-8",
     "nothingToUndo": "Det finns inget att ångra",
+    "noVolume": "Den här enheten finns inte längre",
     "officeCannotOpen": "Office-servern öppnar inte .{ext}-filer",
     "oldNameTaken": "Det gamla namnet är upptaget igen",
     "outsideSources": "Det fungerar bara för filer och mappar inuti en källa",

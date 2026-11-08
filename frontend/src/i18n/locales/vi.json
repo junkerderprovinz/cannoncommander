@@ -1943,6 +1943,25 @@
     "shot": "Ảnh chụp màn hình {stamp}.{ext}",
     "made": "Đã tạo “{name}”"
   },
+  "places": {
+    "home": "Thư mục cá nhân",
+    "desktop": "Màn hình nền",
+    "documents": "Tài liệu",
+    "downloads": "Tải xuống",
+    "pictures": "Ảnh",
+    "music": "Nhạc",
+    "videos": "Video",
+    "recent": "Dùng gần đây",
+    "drives": "Ổ đĩa",
+    "eject": "Đẩy ra",
+    "ejectLabel": "Đẩy {name} ra",
+    "ejected": "Bây giờ có thể rút {name} an toàn",
+    "ejectedDisc": "Đã đẩy {name} ra",
+    "notMounted": "Chưa được gắn, nhấp một lần để gắn",
+    "arrived": "{name} đã được cắm",
+    "open": "Mở",
+    "gone": "{name} đã được rút, bạn đang ở {here}"
+  },
   "profiles": {
     "title": "Hồ sơ cửa sổ",
     "saved": "Đã lưu",
@@ -3349,6 +3368,7 @@
   },
   "side": {
     "bookmarks": "Lối tắt",
+    "places": "Vị trí",
     "tree": "Cây thư mục",
     "addBookmark": "Thêm thư mục hiện tại làm lối tắt",
     "unpin": "Bỏ khỏi truy cập nhanh",
@@ -3366,7 +3386,15 @@
     "renameTitle": "Đổi tên lối tắt",
     "rename": "Đổi tên"
   },
+  "drives": {
+    "fixed": "Đĩa cục bộ",
+    "removable": "Ổ USB",
+    "optical": "Ổ DVD",
+    "network": "Ổ mạng",
+    "volume": "Ổ đĩa {size}"
+  },
   "files": {
+    "network": "Mạng",
     "server": "Máy chủ",
     "thisPc": "PC này",
     "computer": "Máy tính",
@@ -3505,6 +3533,7 @@
     "unknownAction": "Hành động này không phù hợp với các mục đã chọn",
     "windowNotInFront": "Lúc đó cửa sổ không ở phía trước. Vui lòng thử lại.",
     "systemFailed": "Hệ thống chưa làm được việc đó lúc này",
+    "ejectFailed": "Lúc này chưa thể đẩy ổ ra. Có thể vẫn còn tệp đang mở trên ổ",
     "fileManagerNotSet": "Máy tính không nhận thay đổi",
     "disksAdminsOnly": "Chỉ quản trị viên mới thấy từng Disk và Cache",
     "dragFailed": "Không kéo được các tệp ra ngoài",
@@ -3550,6 +3579,7 @@
     "messageLength": {
       "other": "Lời nhắn dài tối đa {n} ký tự"
     },
+    "mountFailed": "Không gắn được ổ",
     "nameChars": "Windows không cho phép các ký tự này trong tên: < > : \" / \\ | ? *",
     "nameEnd": "Trên Windows tên không được kết thúc bằng dấu chấm hoặc khoảng trắng",
     "nameLength": {
@@ -3592,6 +3622,7 @@
     "notText": "Tệp này không phải văn bản",
     "notWindows1252": "Văn bản có ký tự mà Windows-1252 không lưu được. Hãy lưu dưới dạng UTF-8",
     "nothingToUndo": "Không có gì để hoàn tác",
+    "noVolume": "Ổ này không còn nữa",
     "officeCannotOpen": "Máy chủ Office không mở được tệp .{ext}",
     "oldNameTaken": "Tên cũ đã bị dùng lại",
     "outsideSources": "Việc này chỉ làm được với tệp và thư mục bên trong một nguồn",

@@ -2144,6 +2144,25 @@
     "shot": "Zrzut ekranu {stamp}.{ext}",
     "made": "Utworzono „{name}”"
   },
+  "places": {
+    "home": "Folder domowy",
+    "desktop": "Pulpit",
+    "documents": "Dokumenty",
+    "downloads": "Pobrane",
+    "pictures": "Obrazy",
+    "music": "Muzyka",
+    "videos": "Wideo",
+    "recent": "Ostatnio używane",
+    "drives": "Dyski",
+    "eject": "Wysuń",
+    "ejectLabel": "Wysuń {name}",
+    "ejected": "Możesz teraz bezpiecznie odłączyć {name}",
+    "ejectedDisc": "{name} został wysunięty",
+    "notMounted": "Jeszcze niezamontowany, kliknięcie go zamontuje",
+    "arrived": "{name} jest podłączony",
+    "open": "Otwórz",
+    "gone": "{name} został odłączony, jesteś teraz w {here}"
+  },
   "profiles": {
     "title": "Profile okien",
     "saved": "Zapisane",
@@ -3742,6 +3761,7 @@
   },
   "side": {
     "bookmarks": "Skróty",
+    "places": "Miejsca",
     "tree": "Drzewo folderów",
     "addBookmark": "Dodaj bieżący folder jako skrót",
     "unpin": "Odepnij od szybkiego dostępu",
@@ -3759,7 +3779,15 @@
     "renameTitle": "Zmień nazwę skrótu",
     "rename": "Zmień nazwę"
   },
+  "drives": {
+    "fixed": "Dysk lokalny",
+    "removable": "Dysk USB",
+    "optical": "Stacja dysków DVD",
+    "network": "Dysk sieciowy",
+    "volume": "Wolumin {size}"
+  },
   "files": {
+    "network": "Sieć",
     "server": "Serwer",
     "thisPc": "Ten komputer",
     "computer": "Komputer",
@@ -3907,6 +3935,7 @@
     "unknownAction": "Ta akcja nie pasuje do zaznaczonych elementów",
     "windowNotInFront": "Okno nie było akurat na wierzchu. Spróbuj ponownie.",
     "systemFailed": "System nie dał teraz rady tego zrobić",
+    "ejectFailed": "Teraz nie da się wysunąć dysku. Może jakiś plik na nim jest jeszcze otwarty",
     "fileManagerNotSet": "Komputer nie przyjął zmiany",
     "disksAdminsOnly": "Pojedyncze dyski i Cache widzą tylko administratorzy",
     "dragFailed": "Nie udało się przeciągnąć plików na zewnątrz",
@@ -3961,6 +3990,7 @@
       "many": "Wiadomość ma najwyżej {n} znaków",
       "other": "Wiadomość ma najwyżej {n} znaku"
     },
+    "mountFailed": "Nie udało się zamontować dysku",
     "nameChars": "Windows nie pozwala na żaden z tych znaków w nazwie: < > : \" / \\ | ? *",
     "nameEnd": "W systemie Windows nazwa nie może kończyć się kropką ani spacją",
     "nameLength": {
@@ -4006,6 +4036,7 @@
     "notText": "Ten plik nie jest tekstem",
     "notWindows1252": "Tekst zawiera znaki, których Windows-1252 nie potrafi zapisać. Zapisz go jako UTF-8",
     "nothingToUndo": "Nie ma nic do cofnięcia",
+    "noVolume": "Tego dysku już nie ma",
     "officeCannotOpen": "Serwer Office nie otwiera plików .{ext}",
     "oldNameTaken": "Stara nazwa jest znów zajęta",
     "outsideSources": "To działa tylko z plikami i folderami w źródle",

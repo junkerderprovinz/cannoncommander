@@ -2010,6 +2010,25 @@
     "shot": "Skjermbilde {stamp}.{ext}",
     "made": "«{name}» er opprettet"
   },
+  "places": {
+    "home": "Hjemmemappe",
+    "desktop": "Skrivebord",
+    "documents": "Dokumenter",
+    "downloads": "Nedlastinger",
+    "pictures": "Bilder",
+    "music": "Musikk",
+    "videos": "Videoer",
+    "recent": "Nylig brukt",
+    "drives": "Stasjoner",
+    "eject": "Løs ut",
+    "ejectLabel": "Løs ut {name}",
+    "ejected": "Du kan nå trygt fjerne {name}",
+    "ejectedDisc": "{name} er løst ut",
+    "notMounted": "Ikke montert ennå, et klikk monterer den",
+    "arrived": "{name} er koblet til",
+    "open": "Åpne",
+    "gone": "{name} ble fjernet, så nå er du i {here}"
+  },
   "profiles": {
     "title": "Panelprofiler",
     "saved": "Lagret",
@@ -3480,6 +3499,7 @@
   },
   "side": {
     "bookmarks": "Snarveier",
+    "places": "Steder",
     "tree": "Mappetre",
     "addBookmark": "Legg til gjeldende mappe som snarvei",
     "unpin": "Fjern fra hurtigtilgang",
@@ -3497,7 +3517,15 @@
     "renameTitle": "Gi snarveien nytt navn",
     "rename": "Gi nytt navn"
   },
+  "drives": {
+    "fixed": "Lokal disk",
+    "removable": "USB-stasjon",
+    "optical": "DVD-stasjon",
+    "network": "Nettverksstasjon",
+    "volume": "{size}-volum"
+  },
   "files": {
+    "network": "Nettverk",
     "server": "Server",
     "thisPc": "Denne PC-en",
     "computer": "Datamaskin",
@@ -3639,6 +3667,7 @@
     "unknownAction": "Denne handlingen passer ikke til de valgte elementene",
     "windowNotInFront": "Vinduet var ikke foran akkurat da. Prøv igjen.",
     "systemFailed": "Systemet klarte ikke det akkurat nå",
+    "ejectFailed": "Stasjonen kan ikke løses ut nå. Kanskje en fil på den fortsatt er åpen",
     "fileManagerNotSet": "Datamaskinen tok ikke imot endringen",
     "disksAdminsOnly": "Bare administratorer ser de enkelte diskene og Cache",
     "dragFailed": "Filene kunne ikke dras ut",
@@ -3687,6 +3716,7 @@
       "one": "Meldingen kan ha høyst {n} tegn",
       "other": "Meldingen kan ha høyst {n} tegn"
     },
+    "mountFailed": "Stasjonen kunne ikke monteres",
     "nameChars": "Windows tillater ingen av disse tegnene i et navn: < > : \" / \\ | ? *",
     "nameEnd": "I Windows kan et navn ikke slutte med punktum eller mellomrom",
     "nameLength": {
@@ -3730,6 +3760,7 @@
     "notText": "Denne filen er ikke tekst",
     "notWindows1252": "Teksten inneholder tegn som Windows-1252 ikke kan lagre. Lagre den som UTF-8",
     "nothingToUndo": "Det er ingenting å angre",
+    "noVolume": "Denne stasjonen er borte",
     "officeCannotOpen": "Office-serveren åpner ikke .{ext}-filer",
     "oldNameTaken": "Det gamle navnet er tatt igjen",
     "outsideSources": "Det fungerer bare for filer og mapper inne i en kilde",

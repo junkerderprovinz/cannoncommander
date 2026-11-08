@@ -5,6 +5,16 @@ import (
 	"unicode/utf16"
 )
 
+// FolderLabel is the name Explorer shows for the folder at real, such as
+// Dokumente for Documents, or "" where it shows the folder's own name.
+func FolderLabel(real string) string {
+	st, err := statFile(real)
+	if err != nil {
+		return ""
+	}
+	return labelOf(real, st.attrs)
+}
+
 // localizedName reads LocalizedResourceName from the [.ShellClassInfo] of a
 // desktop.ini, which Windows writes in UTF-16 or in the code page.
 func localizedName(ini []byte) string {

@@ -2010,6 +2010,25 @@
     "shot": "Képernyőkép {stamp}.{ext}",
     "made": "„{name}” létrehozva"
   },
+  "places": {
+    "home": "Saját mappa",
+    "desktop": "Asztal",
+    "documents": "Dokumentumok",
+    "downloads": "Letöltések",
+    "pictures": "Képek",
+    "music": "Zene",
+    "videos": "Videók",
+    "recent": "Legutóbb használt",
+    "drives": "Meghajtók",
+    "eject": "Kiadás",
+    "ejectLabel": "{name} kiadása",
+    "ejected": "{name} most már biztonságosan eltávolítható",
+    "ejectedDisc": "{name} kiadva",
+    "notMounted": "Még nincs csatlakoztatva, egy kattintás csatlakoztatja",
+    "arrived": "{name} csatlakoztatva",
+    "open": "Megnyitás",
+    "gone": "{name} eltávolítva, most itt van: {here}"
+  },
   "profiles": {
     "title": "Ablakprofilok",
     "saved": "Mentve",
@@ -3480,6 +3499,7 @@
   },
   "side": {
     "bookmarks": "Parancsikonok",
+    "places": "Helyek",
     "tree": "Mappafa",
     "addBookmark": "Az aktuális mappa hozzáadása parancsikonként",
     "unpin": "Levétel a gyorselérésről",
@@ -3497,7 +3517,15 @@
     "renameTitle": "Parancsikon átnevezése",
     "rename": "Átnevezés"
   },
+  "drives": {
+    "fixed": "Helyi lemez",
+    "removable": "USB-meghajtó",
+    "optical": "DVD-meghajtó",
+    "network": "Hálózati meghajtó",
+    "volume": "{size} kötet"
+  },
   "files": {
+    "network": "Hálózat",
     "server": "Szerver",
     "thisPc": "Ez a gép",
     "computer": "Számítógép",
@@ -3639,6 +3667,7 @@
     "unknownAction": "Ez a művelet nem illik a kijelölt elemekhez",
     "windowNotInFront": "Az ablak épp nem volt előtérben. Próbálja újra.",
     "systemFailed": "A rendszernek ez most nem sikerült",
+    "ejectFailed": "A meghajtó most nem adható ki. Lehet, hogy egy fájl még nyitva van rajta",
     "fileManagerNotSet": "A számítógép nem fogadta el a változtatást",
     "disksAdminsOnly": "Az egyes lemezeket és a Cache-t csak rendszergazdák látják",
     "dragFailed": "A fájlokat nem sikerült kihúzni",
@@ -3687,6 +3716,7 @@
       "one": "Az üzenet legfeljebb {n} karakteres",
       "other": "Az üzenet legfeljebb {n} karakteres"
     },
+    "mountFailed": "A meghajtót nem sikerült csatlakoztatni",
     "nameChars": "A Windows nem enged ezek közül egyetlen karaktert sem a névben: < > : \" / \\ | ? *",
     "nameEnd": "Windowson a név nem végződhet ponttal vagy szóközzel",
     "nameLength": {
@@ -3730,6 +3760,7 @@
     "notText": "Ez a fájl nem szöveg",
     "notWindows1252": "A szövegben olyan karakterek vannak, amelyeket a Windows-1252 nem tud tárolni. Mentse UTF-8-ként",
     "nothingToUndo": "Nincs mit visszavonni",
+    "noVolume": "Ez a meghajtó már nincs itt",
     "officeCannotOpen": "Az Office-szerver nem nyit meg .{ext} fájlokat",
     "oldNameTaken": "A régi név újra foglalt",
     "outsideSources": "Ez csak egy forráson belüli fájlokkal és mappákkal működik",

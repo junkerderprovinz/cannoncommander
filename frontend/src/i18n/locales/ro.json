@@ -2077,6 +2077,25 @@
     "shot": "Captură {stamp}.{ext}",
     "made": "„{name}” a fost creat"
   },
+  "places": {
+    "home": "Dosar personal",
+    "desktop": "Desktop",
+    "documents": "Documente",
+    "downloads": "Descărcări",
+    "pictures": "Imagini",
+    "music": "Muzică",
+    "videos": "Videoclipuri",
+    "recent": "Folosite recent",
+    "drives": "Unități",
+    "eject": "Scoate",
+    "ejectLabel": "Scoate {name}",
+    "ejected": "Acum poți scoate {name} în siguranță",
+    "ejectedDisc": "{name} a fost scoasă",
+    "notMounted": "Încă nu e montată, un clic o montează",
+    "arrived": "{name} e conectată",
+    "open": "Deschide",
+    "gone": "{name} a fost scoasă, acum ești în {here}"
+  },
   "profiles": {
     "title": "Profiluri de panouri",
     "saved": "Salvate",
@@ -3611,6 +3630,7 @@
   },
   "side": {
     "bookmarks": "Scurtături",
+    "places": "Locuri",
     "tree": "Arborele de dosare",
     "addBookmark": "Adaugă dosarul curent ca scurtătură",
     "unpin": "Scoate din acces rapid",
@@ -3628,7 +3648,15 @@
     "renameTitle": "Redenumește scurtătura",
     "rename": "Redenumește"
   },
+  "drives": {
+    "fixed": "Disc local",
+    "removable": "Unitate USB",
+    "optical": "Unitate DVD",
+    "network": "Unitate de rețea",
+    "volume": "Volum de {size}"
+  },
   "files": {
+    "network": "Rețea",
     "server": "Server",
     "thisPc": "Acest PC",
     "computer": "Computer",
@@ -3773,6 +3801,7 @@
     "unknownAction": "Această acțiune nu se potrivește cu elementele selectate",
     "windowNotInFront": "Fereastra nu era în față chiar atunci. Încearcă din nou.",
     "systemFailed": "Sistemul nu a reușit asta acum",
+    "ejectFailed": "Unitatea nu poate fi scoasă acum. Poate un fișier de pe ea e încă deschis",
     "fileManagerNotSet": "Calculatorul nu a acceptat modificarea",
     "disksAdminsOnly": "Discurile individuale și Cache-ul le văd doar adminii",
     "dragFailed": "Fișierele nu au putut fi trase afară",
@@ -3824,6 +3853,7 @@
       "few": "Mesajul are cel mult {n} caractere",
       "other": "Mesajul are cel mult {n} de caractere"
     },
+    "mountFailed": "Unitatea nu a putut fi montată",
     "nameChars": "Windows nu permite niciunul dintre aceste caractere într-un nume: < > : \" / \\ | ? *",
     "nameEnd": "În Windows un nume nu se poate termina cu punct sau spațiu",
     "nameLength": {
@@ -3868,6 +3898,7 @@
     "notText": "Acest fișier nu este text",
     "notWindows1252": "Textul are caractere pe care Windows-1252 nu le poate salva. Salvează-l ca UTF-8",
     "nothingToUndo": "Nu e nimic de anulat",
+    "noVolume": "Unitatea asta nu mai e aici",
     "officeCannotOpen": "Serverul Office nu deschide fișiere .{ext}",
     "oldNameTaken": "Numele vechi este din nou ocupat",
     "outsideSources": "Asta merge doar cu fișiere și dosare dintr-o sursă",

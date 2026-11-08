@@ -4,18 +4,19 @@ import { menu, type MenuEntry, type MenuItem } from '@/core/menu';
 import { prefs } from '@/core/prefs';
 import { t } from '@/i18n';
 import { newTab, usePanels } from '@/stores/panels';
-import { addBookmark, copyInternalLink } from './bookmarks';
+import { useUser } from '@/stores/user';
+import { addBookmark, copyInternalLink, unpin } from './bookmarks';
 import { COLUMN_GROUPS, COLUMNS, columnLabel, Columns } from './columns';
 import { inArchive, join } from './paths';
 
 export function folderItems(path: string): MenuItem[] {
-  const F = usePanels();
+  const F = usePanels(), pinned = useUser().bookmarks.find((b) => b.path === path);
   return [
     { id: 'folderOpen', label: t('ctx.open'), g: 'IconFolderOpen', run: () => F.go(path) },
     { id: 'folderLink', label: t('ctx.internalLink'), g: 'IconLink', run: () => copyInternalLink(path) },
     { id: 'folderOther', label: t('ctx.openOther'), g: 'IconPaneSend', run: () => { prefs.dual = true; F.go(path, F.other()); } },
     { id: 'folderTab', label: t('ctx.openTab'), g: 'IconAdd', run: () => { const p = F.P(); p.tabs.push(newTab(path)); p.cur = p.tabs.length - 1; } },
-    { id: 'folderBookmark', label: t('ctx.addBookmark'), g: 'IconStar', run: () => addBookmark(path) },
+    pinned ? { label: t('side.unpin'), g: 'IconUnlink', run: () => unpin(pinned) } : { id: 'folderBookmark', label: t('ctx.addBookmark'), g: 'IconStar', run: () => addBookmark(path) },
   ];
 }
 
