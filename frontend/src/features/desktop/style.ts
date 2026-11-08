@@ -3,15 +3,14 @@
 import { prefs, setPref } from '@/core/prefs';
 import { win } from '@/core/windows';
 import { esc } from '@/features/viewer/markdown';
-import { choosePreset } from '@/features/keys';
+import { useLayout } from '@/features/keys';
 import { t } from '@/i18n';
 
 export type Style = 'explorer' | 'commander';
 
 export function useStyle(style: Style) {
   setPref('desktopStyle', style);
-  setPref('clickSelect', style === 'explorer');
-  choosePreset(style === 'explorer' ? 'explorer' : 'cc');
+  useLayout(style === 'explorer' ? 'explorer' : 'cc');
 }
 
 export function askStyle() {

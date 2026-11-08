@@ -1,4 +1,4 @@
-/* The shortcut window with its recording rows, as the prototype draws it. */
+/* The shortcut window and the settings tile with their recording rows, as the prototype draws them. */
 .kb-win { height: min(48rem, calc(100vh - 3rem)); }
 .kb-well { flex: 1; min-height: 0; overflow: auto; }
 .kb-list { display: flex; flex-direction: column; gap: 1rem; }
@@ -13,6 +13,9 @@
 .kb-key:hover, .kb-row.rec .kb-key { background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
 .kb-row.own .kb-key .glim-kbd { background: color-mix(in srgb, var(--accent) 22%, var(--carbon-surface3)); }
 .kb-acts { display: flex; justify-content: flex-end; gap: 2px; }
-.kb-warn { grid-column: 1 / -1; margin: 0 0 .4rem; padding: .35rem .6rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--status-warn-solid, #FF832B) 16%, transparent); font-size: 12.5px; }
+.kb-warn { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: 0 0 .4rem; padding: .35rem .6rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--status-warn-solid, #FF832B) 16%, transparent); font-size: 12.5px; }
+.kb-choice { display: flex; gap: .4rem; margin-left: auto; }
+/* A key the browser keeps stays in the list, dimmed, and its tooltip says why. */
+.kb-off .glim-kbd { opacity: .55; text-decoration: line-through; }
 .kb-fixedhead { margin-top: 1.2rem; }
 @media (max-width: 760px) { .kb-row { grid-template-columns: minmax(0, 1fr) auto auto; } }

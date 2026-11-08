@@ -1,4 +1,4 @@
-// Tastenkürzel selbst belegen: the F1 window lets every action take the key you press, with a Total Commander layout to start from.
+// Tastenkürzel selbst belegen: the F1 window and the settings tile let every action take the key you press, with a Total Commander layout to start from.
 (() => {
   const { seg, segVal, frow, cancel } = CC.ui;
   const KEY = 'cannoncommander-keys';
@@ -64,25 +64,32 @@
     return out.filter(([, list]) => list.length);
   }
 
+  const FIXED = [['Tab', 'Fenster wechseln'], ['Enter', 'Öffnen'], ['Einfg', 'Markieren und weiter'], ['Leertaste', 'Schnellansicht'], ['F10', 'Menüleiste'], ['Esc', 'Schließen']];
+  const fixedGrid = () => `<div class="kbd-grid">${FIXED.map(([k, l]) => `<div><span>${esc(l)}</span><span class="kbd">${esc(k)}</span></div>`).join('')}</div>`;
+  const hits = (list, map, query) => {
+    const q = query.trim().toLowerCase();
+    return list.filter(id => !q || nameOf(CC.actions[id]).toLowerCase().includes(q) || combosOf(map, id).some(c => label(c).toLowerCase().includes(q)));
+  };
+  // A row of the window or the tile. A clash offers the buttons only where the row asks for them.
+  const row = (id, map, base, rec, pending) => {
+    const a = CC.actions[id], own = combosOf(map, id), main = own.find(c => label(c) === DEFAULT_LABEL[id]) || own[0];
+    const changed = combosOf(base, id).sort().join() !== own.sort().join();
+    const recording = rec === id;
+    return `<div class="kb-row ${recording ? 'rec' : ''} ${changed ? 'own' : ''}" data-kb="${id}">
+      <span class="kb-name">${a.g ? g(a.g) : '<span class="ph"></span>'}${esc(nameOf(a))}</span>
+      <button class="kb-key" data-kb-rec="${id}" aria-label="Taste für ${esc(nameOf(a))} ändern">${recording ? '<span class="muted">Taste drücken …</span>' : main ? `<span class="kbd">${esc(label(main))}</span>${own.length > 1 ? `<span class="muted">+${own.length - 1}</span>` : ''}` : '<span class="muted">keine</span>'}</button>
+      <span class="kb-acts">${main ? `<button class="btn icon" data-kb-clear="${id}" data-tip="Taste entfernen" aria-label="Taste entfernen">${g('IconClose')}</button>` : ''}${changed ? `<button class="btn icon" data-kb-reset="${id}" data-tip="Wie vorher" aria-label="Wie vorher">${g('IconUndo')}</button>` : ''}</span>
+      ${recording && pending ? `<div class="kb-warn"><span>${pending.msg}</span>${pending.choice ? `<span class="kb-choice">${own.length ? `<button class="btn" id="kb-swap">${g('IconSync')}Tauschen</button>` : ''}<button class="btn" id="kb-replace">${g('IconCheck')}Ersetzen</button></span>` : ''}</div>` : ''}</div>`;
+  };
+
   function keysWindow() {
     let map = { ...CC.keymap }, which = saved?.preset || 'cc', rec = null, pending = null, query = '';
-    const fixed = [['Tab', 'Fenster wechseln'], ['Enter', 'Öffnen'], ['Einfg', 'Markieren und weiter'], ['Leertaste', 'Schnellansicht'], ['F10', 'Menüleiste'], ['Esc', 'Schließen']];
-    const row = (id) => {
-      const a = CC.actions[id], own = combosOf(map, id), main = own.find(c => label(c) === DEFAULT_LABEL[id]) || own[0];
-      const changed = combosOf(DEFAULT_MAP, id).sort().join() !== own.sort().join();
-      const recording = rec === id;
-      return `<div class="kb-row ${recording ? 'rec' : ''} ${changed ? 'own' : ''}" data-kb="${id}">
-        <span class="kb-name">${a.g ? g(a.g) : '<span class="ph"></span>'}${esc(nameOf(a))}</span>
-        <button class="kb-key" data-kb-rec="${id}" aria-label="Taste für ${esc(nameOf(a))} ändern">${recording ? '<span class="muted">Taste drücken …</span>' : main ? `<span class="kbd">${esc(label(main))}</span>${own.length > 1 ? `<span class="muted">+${own.length - 1}</span>` : ''}` : '<span class="muted">keine</span>'}</button>
-        <span class="kb-acts">${main ? `<button class="btn icon" data-kb-clear="${id}" data-tip="Taste entfernen" aria-label="Taste entfernen">${g('IconClose')}</button>` : ''}${changed ? `<button class="btn icon" data-kb-reset="${id}" data-tip="Wie vorher" aria-label="Wie vorher">${g('IconUndo')}</button>` : ''}</span>
-        ${recording && pending ? `<div class="kb-warn">${pending.msg}</div>` : ''}</div>`;
-    };
     const w = win({
       title: 'Tastenkürzel', wide: true, cls: 'kb-win',
       body: `<div class="well">${frow('Vorlage', seg([['cc', 'CannonCommander'], ['tc', 'Total Commander']], which, 'id="kb-preset"'), 'Total Commander legt etwa Packen auf Alt+F5, Entpacken auf Alt+F9 und Umbenennen auf Umschalt+F6. Eigene Änderungen kommen obendrauf.')}
           ${frow('Befehl suchen', '<input class="field m" id="kb-q" placeholder="etwa Kopieren" autocomplete="off">')}</div>
         <div class="well kb-well"><div class="kb-list" id="kb-list"></div>
-          <div class="eyebrow kb-fixedhead">Fest belegt</div><div class="kbd-grid">${fixed.map(([k, l]) => `<div><span>${esc(l)}</span><span class="kbd">${esc(k)}</span></div>`).join('')}</div></div>`,
+          <div class="eyebrow kb-fixedhead">Fest belegt</div>${fixedGrid()}</div>`,
       foot: [{ start: 'Klick auf eine Taste und drück die neue Kombination' }, { label: 'Alles zurücksetzen', g: 'IconRefresh', run: () => { map = { ...DEFAULT_MAP }; which = 'cc'; $$('#kb-preset button', w).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === 'cc'))); draw(); return false; } },
         cancel, { label: 'Übernehmen', g: 'IconCheck', primary: true, run: () => {
           apply(map);
@@ -95,10 +102,9 @@
       onClose: () => document.removeEventListener('keydown', key, true),
     });
     const draw = () => {
-      const q = query.trim().toLowerCase();
       $('#kb-list', w).innerHTML = groups().map(([menuName, list]) => {
-        const hits = list.filter(id => !q || nameOf(CC.actions[id]).toLowerCase().includes(q) || combosOf(map, id).some(c => label(c).toLowerCase().includes(q)));
-        return hits.length ? `<section class="kb-group"><div class="eyebrow">${esc(menuName)}</div>${hits.map(row).join('')}</section>` : '';
+        const found = hits(list, map, query);
+        return found.length ? `<section class="kb-group"><div class="eyebrow">${esc(menuName)}</div>${found.map(id => row(id, map, preset(which), rec, pending)).join('')}</section>` : '';
       }).join('') || `<div class="empty">${g('IconSearch')}<div>Kein Befehl heißt so</div></div>`;
     };
     const stop = () => { rec = null; pending = null; draw(); };
@@ -114,7 +120,10 @@
       if (/^[\p{L}\d]$/u.test(combo)) { pending = { msg: 'Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.' }; return draw(); }
       const other = map[combo];
       if (other && other !== rec && pending?.combo !== combo) {
-        pending = { combo, msg: `${esc(label(combo))} gehört schon zu „${esc(nameOf(CC.actions[other]))}“. Nochmal drücken übernimmt die Taste, Esc lässt alles, wie es ist.` };
+        const name = esc(nameOf(CC.actions[other]));
+        pending = { combo, choice: true, msg: combosOf(map, rec).length
+          ? `${esc(label(combo))} gehört schon zu „${name}“. Beim Tauschen bekommt „${name}“ deine bisherige Taste. Esc lässt alles, wie es ist.`
+          : `${esc(label(combo))} gehört schon zu „${name}“. Ersetzen holt die Taste hierher, Esc lässt alles, wie es ist.` };
         return draw();
       }
       for (const c of combosOf(map, rec)) delete map[c];
@@ -125,20 +134,130 @@
     document.addEventListener('keydown', key, true);
     w.addEventListener('click', e => {
       const r = e.target.closest('[data-kb-rec]'), c = e.target.closest('[data-kb-clear]'), z = e.target.closest('[data-kb-reset]');
+      if (e.target.closest('#kb-swap, #kb-replace')) {
+        const had = combosOf(map, rec), other = map[pending.combo];
+        for (const k of had) delete map[k];
+        map[pending.combo] = rec;
+        if (e.target.closest('#kb-swap')) for (const k of had) map[k] = other;
+        return stop();
+      }
       if (r) { rec = rec === r.dataset.kbRec ? null : r.dataset.kbRec; pending = null; draw(); if (rec) $(`[data-kb-rec="${rec}"]`, w)?.focus(); return; }
       if (c) { for (const k of combosOf(map, c.dataset.kbClear)) delete map[k]; return stop(); }
       if (z) {
         const id = z.dataset.kbReset;
         for (const k of combosOf(map, id)) delete map[k];
-        for (const k of combosOf(DEFAULT_MAP, id)) if (!map[k]) map[k] = id;
+        for (const k of combosOf(preset(which), id)) if (!map[k]) map[k] = id;
         return stop();
       }
     });
-    w.addEventListener('change', e => { if (e.target.id === 'kb-preset') { which = segVal(e.target); map = preset(which); stop(); } });
+    // Own keys stay on top of the layout picked.
+    w.addEventListener('change', e => {
+      if (e.target.id !== 'kb-preset') return;
+      const next = segVal(e.target);
+      map = withOwn(preset(next), ownOf(preset(which), map));
+      which = next;
+      stop();
+    });
     $('#kb-q', w).addEventListener('input', e => { query = e.target.value; draw(); });
     draw();
   }
   CC.action('shortcuts', { ...CC.actions.shortcuts, run: keysWindow });
+
+  // The settings tile: the layout, which is how the app handles, and every key, changed at once. Own keys stay on top
+  // of a layout chosen later, and the reset here drops them and keeps the layout.
+  const tab = { rec: null, pending: null, query: '' };
+  const onTab = () => CC.view === 'settings' && CC.settingsTab_ === 'keys';
+  const layoutOf = () => saved?.preset || 'cc';
+  const BROWSER = ['Ctrl+n', 'Ctrl+Shift+n', 'Ctrl+t', 'Ctrl+Shift+t', 'Ctrl+w', 'Ctrl+Shift+w', 'Ctrl+Tab', 'Ctrl+Shift+Tab', 'Ctrl+PageUp', 'Ctrl+PageDown', 'Ctrl+Shift+p'];
+  const ownOf = (base, map) => Object.fromEntries([...new Set([...Object.keys(base), ...Object.keys(map)])].filter(c => base[c] !== map[c]).map(c => [c, map[c] || '']));
+  const withOwn = (base, own) => {
+    const map = { ...base };
+    for (const [c, a] of Object.entries(own)) { if (a) map[c] = a; else delete map[c]; }
+    return map;
+  };
+  function commit(map, which) {
+    apply(map);
+    saved = which !== 'cc' || Object.keys(ownOf(preset(which), map)).length ? { map, preset: which } : null;
+    store(saved);
+    tab.rec = null;
+    tab.pending = null;
+    CC.render();
+  }
+  function tabKey(e) {
+    if (!tab.rec || !onTab()) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (MODIFIERS.includes(e.key)) return;
+    if (e.key === 'Escape' && !e.ctrlKey && !e.altKey && !e.shiftKey) { tab.rec = null; tab.pending = null; return CC.render(); }
+    const combo = comboOf(e), map = { ...CC.keymap }, id = tab.rec, key = esc(label(combo));
+    const say = (msg, more = {}) => { tab.pending = { msg, ...more }; CC.render(); };
+    if (['Tab', 'Enter', 'F10'].includes(combo)) return say(`${key} ist fest belegt. Nimm eine andere Taste.`);
+    if (/^[\p{L}\d]$/u.test(combo)) return say('Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.');
+    if (BROWSER.includes(combo)) return say(`${key} behält der Browser für seine Tabs und Fenster. Nimm hier bitte eine andere, in der Desktop-App klappt sie.`);
+    const other = map[combo];
+    if (other && other !== id && tab.pending?.combo !== combo) {
+      const name = esc(nameOf(CC.actions[other]));
+      return say(combosOf(map, id).length
+        ? `${key} gehört schon zu „${name}“. Beim Tauschen bekommt „${name}“ deine bisherige Taste. Esc lässt alles, wie es ist.`
+        : `${key} gehört schon zu „${name}“. Ersetzen holt die Taste hierher, Esc lässt alles, wie es ist.`, { combo, choice: true });
+    }
+    for (const c of combosOf(map, id)) delete map[c];
+    map[combo] = id;
+    commit(map, layoutOf());
+  }
+  // On the window, so it runs before the shell's own keys on the document.
+  addEventListener('keydown', tabKey, true);
+
+  CC.settingsTab({ id: 'keys', label: 'Tastenkürzel', g: 'IconKeyboard', order: 44, render(host) {
+    const which = layoutOf(), base = preset(which), map = CC.keymap;
+    const cards = groups().map(([menuName, list]) => {
+      const found = hits(list, map, tab.query);
+      return found.length ? CC.card(menuName, found.map(id => row(id, map, base, tab.rec, tab.pending)).join('')) : '';
+    }).join('') || CC.card('Tastenkürzel', `<div class="empty">${g('IconSearch')}<div>Kein Befehl heißt so</div></div>`);
+    host.innerHTML = CC.card('Vorlage',
+      frow('Bedienung wie', seg([['cc', 'CannonCommander'], ['tc', 'Total Commander']], which, 'id="kt-layout"'), 'Total Commander legt etwa Packen auf Alt+F5, Entpacken auf Alt+F9 und Umbenennen auf Umschalt+F6. Deine eigenen Tasten bleiben dabei erhalten.')
+      + frow('Eigene Tasten', `<button class="btn" id="kt-reset" ${Object.keys(ownOf(base, map)).length ? '' : 'disabled'}>${g('IconRefresh')}Zurücksetzen</button>`, 'Holt die Tasten der Vorlage zurück. Die Vorlage selbst bleibt.')
+      + frow('Befehl suchen', `<input class="field m" id="kt-q" placeholder="etwa Kopieren" autocomplete="off" value="${esc(tab.query)}">`))
+      + cards + CC.card('Fest belegt', fixedGrid());
+    // Every change draws the tile anew, so the search field gets its focus and caret back.
+    $('#kt-q', host).addEventListener('input', e => {
+      tab.query = e.target.value;
+      CC.render();
+      const q = $('#kt-q');
+      q?.focus();
+      q?.setSelectionRange(tab.query.length, tab.query.length);
+    });
+    $('#kt-layout', host).addEventListener('change', e => {
+      const v = segVal(e.target);
+      commit(withOwn(preset(v), ownOf(base, { ...CC.keymap })), v);
+    });
+    host.addEventListener('click', e => {
+      const r = e.target.closest('[data-kb-rec]'), c = e.target.closest('[data-kb-clear]'), z = e.target.closest('[data-kb-reset]');
+      const m = { ...CC.keymap };
+      if (e.target.closest('#kt-reset')) return commit({ ...base }, which);
+      if (e.target.closest('#kb-swap, #kb-replace')) {
+        const { combo } = tab.pending, id = tab.rec, had = combosOf(m, id), other = m[combo];
+        for (const k of had) delete m[k];
+        m[combo] = id;
+        if (e.target.closest('#kb-swap')) for (const k of had) m[k] = other;
+        return commit(m, which);
+      }
+      if (r) {
+        tab.rec = tab.rec === r.dataset.kbRec ? null : r.dataset.kbRec;
+        tab.pending = null;
+        CC.render();
+        if (tab.rec) $(`[data-kb-rec="${tab.rec}"]`)?.focus();
+        return;
+      }
+      if (c) { for (const k of combosOf(m, c.dataset.kbClear)) delete m[k]; return commit(m, which); }
+      if (z) {
+        const id = z.dataset.kbReset;
+        for (const k of combosOf(m, id)) delete m[k];
+        for (const k of combosOf(base, id)) if (!m[k]) m[k] = id;
+        return commit(m, which);
+      }
+    });
+  } });
 
   CC.css(`
 .kb-win { height: min(48rem, calc(100vh - 3rem)); }
@@ -156,7 +275,8 @@
 .kb-row.own .kb-key .kbd { background: color-mix(in srgb, var(--accent) 22%, var(--carbon-surface3)); }
 .kb-acts { display: flex; justify-content: flex-end; gap: 2px; }
 .kb-acts .btn { width: 1.8rem; height: 1.8rem; background: transparent; }
-.kb-warn { grid-column: 1 / -1; margin: 0 0 .4rem; padding: .35rem .6rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--status-warn-solid, #FF832B) 16%, transparent); font-size: 12.5px; }
+.kb-warn { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: 0 0 .4rem; padding: .35rem .6rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--status-warn-solid, #FF832B) 16%, transparent); font-size: 12.5px; }
+.kb-choice { display: flex; gap: .4rem; margin-left: auto; }
 .kb-fixedhead { margin-top: 1.2rem; }
 @media (max-width: 760px) { .kb-row { grid-template-columns: minmax(0, 1fr) auto auto; } }
 `);
