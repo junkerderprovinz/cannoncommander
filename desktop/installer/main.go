@@ -47,6 +47,7 @@ func main() {
 			// The lock a copy on its usual data folder holds, instanceID in
 			// desktop/main.go.
 			InstanceID: id,
+			Choices:    []pommelporter.Choice{fileManager},
 		})
 	}
 	if err != nil {
