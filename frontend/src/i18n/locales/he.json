@@ -1127,10 +1127,10 @@
     },
     "app": {
       "updates": "עדכונים",
-      "autoCheck": "לחפש עדכונים אוטומטית",
-      "autoCheckTip": "פעם ביום. את העדכון מתקינים בעצמך, ב־Unraid בלשונית Docker.",
-      "image": "Docker image",
-      "tagTip": "הגרסה הזו רצה עכשיו. איזה תג Unraid מושך נקבע בתבנית, latest עוקב אחרי כל גרסה חדשה.",
+      "autoCheck": "בדיקה אוטומטית",
+      "autoCheckTip": "כל עוד זה פעיל, פתיחת הדף הזה שואלת את GitHub פעם אחת אם יצא CannonCommander חדש יותר. זה רק שואל, כי קונטיינר מקבל את העדכונים שלו ממנהל הקונטיינרים.",
+      "autoUpdate": "עדכון אוטומטי",
+      "autoUpdateTip": "קונטיינר לא יכול להחליף את עצמו מבפנים. במקום זאת אפשר לעדכן אותו ב־Unraid בלשונית Docker, עם docker pull או עם Watchtower.",
       "check": "חיפוש עדכונים",
       "checking": "מחפש",
       "current": "עדכני, {v}",
@@ -1178,8 +1178,6 @@
       "notExport": "זה לא קובץ הגדרות מיוצא",
       "imported": "ההגדרות מ־{name} נטענו",
       "noAnswer": "GitHub לא ענה הפעם. כדאי לנסות שוב מאוחר יותר",
-      "restartNeeded": "נדרשת הפעלה מחדש",
-      "restartNeededTip": "כמה הגדרות נכנסות לתוקף רק אחרי הפעלה מחדש.",
       "importedRestart": "{name} נטען. כדאי להפעיל מחדש את CannonCommander כדי שהכול ייכנס לתוקף"
     },
     "info": {

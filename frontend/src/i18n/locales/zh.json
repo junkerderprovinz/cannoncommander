@@ -1039,10 +1039,10 @@
     },
     "app": {
       "updates": "更新",
-      "autoCheck": "自动检查更新",
-      "autoCheckTip": "每天一次。更新需要你自己安装，在 Unraid 的 Docker 标签页中。",
-      "image": "Docker 镜像",
-      "tagTip": "当前运行的是这个版本。Unraid 拉取哪个标签在模板中设置，latest 会跟随每个新版本。",
+      "autoCheck": "自动检查",
+      "autoCheckTip": "开启时，打开此页面会向 GitHub 询问一次是否有更新的 CannonCommander。它只询问，因为容器的更新来自它的容器管理器。",
+      "autoUpdate": "自动更新",
+      "autoUpdateTip": "容器无法从内部替换自己。请改为在 Unraid 的 Docker 标签页中、用 docker pull 或用 Watchtower 来更新。",
       "check": "检查更新",
       "checking": "正在检查",
       "current": "已是最新，{v}",
@@ -1088,8 +1088,6 @@
       "notExport": "这不是导出的设置文件",
       "imported": "已导入 {name} 中的设置",
       "noAnswer": "GitHub 暂时没有响应。请稍后再试",
-      "restartNeeded": "需要重启",
-      "restartNeededTip": "部分设置要重启后才会生效。",
       "importedRestart": "已导入 {name}。重启 CannonCommander 让全部设置生效"
     },
     "info": {

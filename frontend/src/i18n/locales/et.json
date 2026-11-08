@@ -1083,10 +1083,10 @@
     },
     "app": {
       "updates": "Värskendused",
-      "autoCheck": "Otsi värskendusi automaatselt",
-      "autoCheckTip": "Kord päevas. Värskenduse paigaldad ise, Unraidis Dockeri vahekaardil.",
-      "image": "Dockeri tõmmis",
-      "tagTip": "Praegu töötab see versioon. Millist silti Unraid tõmbab, määrad mallis, latest järgib iga uut versiooni.",
+      "autoCheck": "Kontrolli automaatselt",
+      "autoCheckTip": "Kuni see on sees, küsib selle lehe avamine GitHubilt korra, kas uuem CannonCommander on väljas. See ainult küsib, sest konteiner saab värskendused oma konteinerihaldurilt.",
+      "autoUpdate": "Värskenda automaatselt",
+      "autoUpdateTip": "Konteiner ei saa end seestpoolt asendada. Värskenda seda selle asemel Unraidis Dockeri vahekaardil, käsuga docker pull või Watchtoweriga.",
       "check": "Otsi värskendusi",
       "checking": "Otsin",
       "current": "Ajakohane, {v}",
@@ -1133,8 +1133,6 @@
       "notExport": "See pole eksporditud seadete fail",
       "imported": "Seaded võeti üle failist {name}",
       "noAnswer": "GitHub ei vastanud praegu. Proovi hiljem uuesti",
-      "restartNeeded": "Vajab taaskäivitust",
-      "restartNeededTip": "Mõned seaded hakkavad kehtima alles pärast taaskäivitust.",
       "importedRestart": "{name} on üle võetud. Taaskäivita CannonCommander, et kõik kehtima hakkaks"
     },
     "info": {

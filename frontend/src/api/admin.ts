@@ -66,7 +66,6 @@ export interface AppSettings {
   remotes: { automount: boolean; cache: 'off' | 'writes' | 'full'; cacheSize: number };
   updates: { autoCheck: boolean };
   logLevel: 'error' | 'info' | 'debug';
-  restartNeeded?: boolean;
 }
 // A save sends only what changed, down to a single switch.
 export type AppChange = { [K in keyof AppSettings]?: AppSettings[K] extends object ? Partial<AppSettings[K]> : AppSettings[K] };

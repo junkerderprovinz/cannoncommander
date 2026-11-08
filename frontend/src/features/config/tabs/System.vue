@@ -16,7 +16,7 @@ const restarting = ref(false);
 const load = () => Promise.all([admin.app().then((a) => { app.value = a; }), admin.system().then((s) => { sys.value = s; })]);
 onMounted(() => { load().catch(() => {}); });
 
-const save = (change: AppChange) => admin.saveApp(change).then((a) => { app.value!.restartNeeded = a.restartNeeded; toast(c('saved')); }, () => toast(c('notSaved'), 'warn'));
+const save = (change: AppChange) => admin.saveApp(change).then(() => toast(c('saved')), () => toast(c('notSaved'), 'warn'));
 const logLevel = computed({ get: () => app.value?.logLevel ?? 'info', set: (v: AppSettings['logLevel']) => { app.value!.logLevel = v; save({ logLevel: v }); } });
 
 function restart() {
@@ -51,7 +51,7 @@ function restart() {
     </Card>
     <Card :title="c('app.service')">
       <FieldRow :label="c('app.log')" :hint="c('app.logTip')"><Selector v-model="logLevel" :items="segItems([['error', c('app.errors')], ['info', c('app.normal')], ['debug', c('app.verbose')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-      <FieldRow :label="c('app.running')" :hint="app.restartNeeded ? c('app.restartNeededTip') : undefined"><Pill :tone="app.restartNeeded ? 'warn' : 'neutral'">{{ app.restartNeeded ? c('app.restartNeeded') : sys ? since(sys.started) : '' }}</Pill><Button :label="c('app.restart')" label-key="IconRefresh" @click="restart" /></FieldRow>
+      <FieldRow :label="c('app.running')"><Pill>{{ sys ? since(sys.started) : '' }}</Pill><Button :label="c('app.restart')" label-key="IconRefresh" @click="restart" /></FieldRow>
     </Card>
   </template>
   <Teleport v-if="restarting" to="body">

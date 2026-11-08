@@ -1083,10 +1083,10 @@
     },
     "app": {
       "updates": "Güncellemeler",
-      "autoCheck": "Güncellemeleri kendiliğinden ara",
-      "autoCheckTip": "Günde bir kez. Güncellemeyi kendin kurarsın, Unraid'de Docker sekmesinde.",
-      "image": "Docker imajı",
-      "tagTip": "Şu an bu sürüm çalışıyor. Unraid'in hangi etiketi çekeceğini şablonda belirlersin, latest her yeni sürümü izler.",
+      "autoCheck": "Otomatik kontrol et",
+      "autoCheckTip": "Bu açıkken CannonCommander, bu sayfa açıldığında daha yeni bir sürüm çıkıp çıkmadığını GitHub'a bir kez sorar. Yalnızca sorar, çünkü bir konteyner güncellemelerini konteyner yöneticisinden alır.",
+      "autoUpdate": "Otomatik güncelle",
+      "autoUpdateTip": "Bir konteyner kendini içeriden değiştiremez. Bunun yerine onu Unraid'de Docker sekmesinde, docker pull ile ya da Watchtower ile güncelle.",
       "check": "Güncellemeleri ara",
       "checking": "Aranıyor",
       "current": "Güncel, {v}",
@@ -1133,8 +1133,6 @@
       "notExport": "Bu, dışa aktarılmış bir ayar dosyası değil",
       "imported": "Ayarlar {name} dosyasından alındı",
       "noAnswer": "GitHub şu an yanıt vermedi. Lütfen daha sonra yeniden dene",
-      "restartNeeded": "Yeniden başlatma gerekli",
-      "restartNeededTip": "Bazı ayarlar ancak yeniden başlatmadan sonra geçerli olur.",
       "importedRestart": "{name} alındı. Hepsinin geçerli olması için CannonCommander'ı yeniden başlat"
     },
     "info": {

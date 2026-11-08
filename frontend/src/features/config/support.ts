@@ -7,8 +7,6 @@ import { c } from '@/features/config/shared';
 
 export const REPO = 'https://github.com/junkerderprovinz/cannoncommander';
 export const MAIL = 'hello@halleluja.design';
-// The server cannot see which image it runs from, and every release goes to this one.
-export const IMAGE = 'ghcr.io/junkerderprovinz/cannoncommander';
 
 // A build between releases has no release page, so it links to its commit.
 export function versionLink(sys: Pick<System, 'version' | 'commit' | 'release'>): string {

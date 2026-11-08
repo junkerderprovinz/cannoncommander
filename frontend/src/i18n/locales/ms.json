@@ -1039,10 +1039,10 @@
     },
     "app": {
       "updates": "Kemas kini",
-      "autoCheck": "Cari kemas kini secara automatik",
-      "autoCheckTip": "Sekali sehari. Kemas kini dipasang sendiri oleh anda, pada Unraid dalam tab Docker.",
-      "image": "Imej Docker",
-      "tagTip": "Versi ini sedang berjalan. Tag yang diambil oleh Unraid ditetapkan dalam templat, latest mengikut setiap versi baharu.",
+      "autoCheck": "Semak secara automatik",
+      "autoCheckTip": "Selagi ini hidup, membuka halaman ini bertanya sekali kepada GitHub sama ada CannonCommander yang lebih baharu telah keluar. Ia hanya bertanya, kerana bekas mendapat kemas kininya daripada pengurus bekasnya.",
+      "autoUpdate": "Kemas kini secara automatik",
+      "autoUpdateTip": "Bekas tidak boleh menggantikan dirinya dari dalam. Sebaliknya, kemas kini ia pada Unraid dalam tab Docker, dengan docker pull atau dengan Watchtower.",
       "check": "Cari kemas kini",
       "checking": "Mencari",
       "current": "Terkini, {v}",
@@ -1088,8 +1088,6 @@
       "notExport": "Ini bukan fail tetapan yang dieksport",
       "imported": "Tetapan daripada {name} diambil alih",
       "noAnswer": "GitHub tidak menjawab sebentar tadi. Sila cuba lagi nanti",
-      "restartNeeded": "Perlu mula semula",
-      "restartNeededTip": "Beberapa tetapan hanya berkuat kuasa selepas mula semula.",
       "importedRestart": "{name} diambil alih. Mulakan semula CannonCommander supaya semuanya berkuat kuasa"
     },
     "info": {

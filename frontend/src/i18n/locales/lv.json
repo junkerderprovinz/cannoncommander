@@ -1127,10 +1127,10 @@
     },
     "app": {
       "updates": "Atjauninājumi",
-      "autoCheck": "Automātiski meklēt atjauninājumus",
-      "autoCheckTip": "Reizi dienā. Atjauninājumu instalē pats, Unraid cilnē Docker.",
-      "image": "Docker attēls",
-      "tagTip": "Šī versija darbojas pašlaik. Kuru tagu Unraid lejupielādē, nosaki veidnē, latest seko katrai jaunai versijai.",
+      "autoCheck": "Pārbaudīt automātiski",
+      "autoCheckTip": "Kamēr šis ir ieslēgts, atverot šo lapu, GitHub vienreiz tiek pajautāts, vai iznācis jaunāks CannonCommander. Tas tikai jautā, jo konteiners atjauninājumus saņem no sava konteineru pārvaldnieka.",
+      "autoUpdate": "Atjaunināt automātiski",
+      "autoUpdateTip": "Konteiners nevar aizstāt pats sevi no iekšpuses. Tā vietā atjaunini to Unraid cilnē Docker, ar docker pull vai ar Watchtower.",
       "check": "Meklēt atjauninājumus",
       "checking": "Meklē",
       "current": "Aktuāla, {v}",
@@ -1178,8 +1178,6 @@
       "notExport": "Tas nav eksportēts iestatījumu fails",
       "imported": "Iestatījumi pārņemti no {name}",
       "noAnswer": "GitHub pašlaik neatbildēja. Lūdzu, mēģini vēlreiz vēlāk",
-      "restartNeeded": "Vajag restartēt",
-      "restartNeededTip": "Daži iestatījumi stāsies spēkā tikai pēc restartēšanas.",
       "importedRestart": "{name} ir pārņemts. Restartē CannonCommander, lai viss stātos spēkā"
     },
     "info": {

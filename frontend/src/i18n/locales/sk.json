@@ -1171,10 +1171,10 @@
     },
     "app": {
       "updates": "Aktualizácie",
-      "autoCheck": "Automaticky hľadať aktualizácie",
-      "autoCheckTip": "Raz denne. Aktualizáciu si nainštalujete sami, v Unraide na karte Docker.",
-      "image": "Obraz Docker",
-      "tagTip": "Táto verzia práve beží. Ktorý tag Unraid stiahne, určíte v šablóne, latest sleduje každú novú verziu.",
+      "autoCheck": "Kontrolovať automaticky",
+      "autoCheckTip": "Kým je toto zapnuté, otvorenie tejto stránky sa raz spýta GitHubu, či vyšiel novší CannonCommander. Len sa pýta, pretože kontajner dostáva aktualizácie od svojho správcu kontajnerov.",
+      "autoUpdate": "Aktualizovať automaticky",
+      "autoUpdateTip": "Kontajner sa nemôže sám nahradiť zvnútra. Aktualizujte ho namiesto toho v Unraide na karte Docker, cez docker pull alebo cez Watchtower.",
       "check": "Hľadať aktualizácie",
       "checking": "Hľadám",
       "current": "Aktuálne, {v}",
@@ -1223,8 +1223,6 @@
       "notExport": "To nie je exportovaný súbor nastavení",
       "imported": "Nastavenia prevzaté z {name}",
       "noAnswer": "GitHub práve neodpovedal. Skúste to prosím neskôr znova",
-      "restartNeeded": "Potrebný reštart",
-      "restartNeededTip": "Niektoré nastavenia platia až po reštarte.",
       "importedRestart": "{name} je prevzaté. Reštartujte CannonCommander, aby všetko platilo"
     },
     "info": {

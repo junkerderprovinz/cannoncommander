@@ -1083,10 +1083,10 @@
     },
     "app": {
       "updates": "Uppdateringar",
-      "autoCheck": "Sök efter uppdateringar automatiskt",
-      "autoCheckTip": "En gång om dagen. En uppdatering installerar du själv, i Unraid under fliken Docker.",
-      "image": "Docker-image",
-      "tagTip": "Den här versionen körs just nu. Vilken tagg Unraid hämtar bestämmer du i mallen, latest följer varje ny version.",
+      "autoCheck": "Kontrollera automatiskt",
+      "autoCheckTip": "Så länge detta är på frågar den här sidan GitHub en gång när den öppnas om det finns en nyare CannonCommander. Den bara frågar, eftersom en container får sina uppdateringar från sin containerhanterare.",
+      "autoUpdate": "Uppdatera automatiskt",
+      "autoUpdateTip": "En container kan inte ersätta sig själv inifrån. Uppdatera den i stället i Unraid under fliken Docker, med docker pull eller med Watchtower.",
       "check": "Sök efter uppdateringar",
       "checking": "Söker",
       "current": "Aktuell, {v}",
@@ -1133,8 +1133,6 @@
       "notExport": "Det är ingen exporterad inställningsfil",
       "imported": "Inställningarna från {name} har tagits över",
       "noAnswer": "GitHub svarade inte just nu. Försök igen senare",
-      "restartNeeded": "Omstart krävs",
-      "restartNeededTip": "Några inställningar gäller först efter en omstart.",
       "importedRestart": "{name} har tagits över. Starta om CannonCommander så att allt gäller"
     },
     "info": {

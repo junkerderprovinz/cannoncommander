@@ -1127,10 +1127,10 @@
     },
     "app": {
       "updates": "Actualitzacions",
-      "autoCheck": "Cerca actualitzacions automàticament",
-      "autoCheckTip": "Un cop al dia. L'actualització la instal·leu vós, a l'Unraid, a la pestanya Docker.",
-      "image": "Imatge Docker",
-      "tagTip": "Aquesta és la versió que s'executa ara. Quina etiqueta baixa l'Unraid es fixa a la plantilla, latest segueix cada versió nova.",
+      "autoCheck": "Comprova automàticament",
+      "autoCheckTip": "Mentre això estigui activat, obrir aquesta pàgina pregunta un cop a GitHub si hi ha un CannonCommander més nou. Només pregunta, perquè un contenidor rep les actualitzacions del seu gestor de contenidors.",
+      "autoUpdate": "Actualitza automàticament",
+      "autoUpdateTip": "Un contenidor no es pot reemplaçar a si mateix des de dins. Actualitzeu-lo a l'Unraid, a la pestanya Docker, amb docker pull o amb Watchtower.",
       "check": "Cerca actualitzacions",
       "checking": "S'està cercant",
       "current": "Al dia, {v}",
@@ -1178,8 +1178,6 @@
       "notExport": "Això no és un fitxer de configuració exportat",
       "imported": "S'ha adoptat la configuració de {name}",
       "noAnswer": "El GitHub no ha respost ara mateix. Torneu-ho a provar més tard",
-      "restartNeeded": "Cal reiniciar",
-      "restartNeededTip": "Alguns paràmetres només s'apliquen després d'un reinici.",
       "importedRestart": "S'ha adoptat {name}. Reinicieu el CannonCommander perquè tot s'apliqui"
     },
     "info": {

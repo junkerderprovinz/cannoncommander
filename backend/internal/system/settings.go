@@ -94,7 +94,8 @@ type Mounting struct {
 	CacheSize int `json:"cacheSize"`
 }
 
-// Updates is the daily look for a new release.
+// Updates says whether the Info page asks GitHub for a newer release as it
+// opens. A container is updated from outside, so nothing here installs one.
 type Updates struct {
 	AutoCheck bool `json:"autoCheck"`
 }

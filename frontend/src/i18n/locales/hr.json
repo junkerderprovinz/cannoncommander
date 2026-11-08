@@ -1127,10 +1127,10 @@
     },
     "app": {
       "updates": "Ažuriranja",
-      "autoCheck": "Automatski traži ažuriranja",
-      "autoCheckTip": "Jednom dnevno. Ažuriranje instalirate sami, na Unraidu na kartici Docker.",
-      "image": "Docker slika",
-      "tagTip": "Ova verzija trenutačno radi. Koju oznaku Unraid preuzima, određujete u predlošku, latest prati svaku novu verziju.",
+      "autoCheck": "Automatski provjeri",
+      "autoCheckTip": "Dok je ovo uključeno, otvaranje ove stranice jednom pita GitHub je li izašao noviji CannonCommander. Samo pita, jer kontejner dobiva ažuriranja od svog upravitelja kontejnera.",
+      "autoUpdate": "Ažuriraj automatski",
+      "autoUpdateTip": "Kontejner ne može sam sebe zamijeniti iznutra. Umjesto toga ažurirajte ga na Unraidu na kartici Docker, naredbom docker pull ili Watchtowerom.",
       "check": "Potraži ažuriranja",
       "checking": "Tražim",
       "current": "Ažurno, {v}",
@@ -1178,8 +1178,6 @@
       "notExport": "Ovo nije izvezena datoteka postavki",
       "imported": "Postavke iz {name} su preuzete",
       "noAnswer": "GitHub trenutačno nije odgovorio. Pokušajte ponovno kasnije",
-      "restartNeeded": "Potrebno ponovno pokretanje",
-      "restartNeededTip": "Neke postavke vrijede tek nakon ponovnog pokretanja.",
       "importedRestart": "{name} je preuzet. Ponovno pokrenite CannonCommander da bi sve vrijedilo"
     },
     "info": {

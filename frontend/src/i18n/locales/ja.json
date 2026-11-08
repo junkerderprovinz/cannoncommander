@@ -1039,10 +1039,10 @@
     },
     "app": {
       "updates": "アップデート",
-      "autoCheck": "アップデートを自動で確認",
-      "autoCheckTip": "1日1回確認します。インストールは Unraid の Docker タブでご自身で行います。",
-      "image": "Docker イメージ",
-      "tagTip": "現在実行中のバージョンです。Unraid が取得するタグはテンプレートで決まり、latest は新しいバージョンに常に追従します。",
+      "autoCheck": "自動的に確認",
+      "autoCheckTip": "オンの間は、このページを開くと GitHub に新しい CannonCommander が出ているか一度だけ確認します。確認するだけです。コンテナーの更新はコンテナー管理ツールから届きます。",
+      "autoUpdate": "自動的にアップデート",
+      "autoUpdateTip": "コンテナーは内側から自分自身を置き換えられません。代わりに Unraid の Docker タブ、docker pull、または Watchtower で更新してください。",
       "check": "アップデートを確認",
       "checking": "確認中",
       "current": "最新です、{v}",
@@ -1088,8 +1088,6 @@
       "notExport": "書き出した設定ファイルではありません",
       "imported": "{name} の設定を読み込みました",
       "noAnswer": "GitHub から応答がありませんでした。しばらくしてからもう一度お試しください",
-      "restartNeeded": "再起動が必要",
-      "restartNeededTip": "一部の設定は再起動後に有効になります。",
       "importedRestart": "{name} を読み込みました。すべてを有効にするには CannonCommander を再起動してください"
     },
     "info": {

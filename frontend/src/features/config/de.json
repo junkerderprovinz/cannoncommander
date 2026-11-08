@@ -209,8 +209,10 @@
     "alTokenWrong": "ArrowLoop lehnt dieses Token ab"
   },
   "app": {
-    "updates": "Updates", "autoCheck": "Automatisch nach Updates suchen", "autoCheckTip": "Einmal am Tag. Installieren musst du ein Update selbst, auf Unraid im Docker-Tab.",
-    "image": "Docker-Image", "tagTip": "Diese Version läuft gerade. Welchen Tag Unraid holt, legst du im Template fest, latest folgt jeder neuen Version.", "check": "Nach Updates suchen", "checking": "Suche",
+    "updates": "Updates", "autoCheck": "Automatisch prüfen",
+    "autoCheckTip": "Solange das an ist, fragt CannonCommander beim Öffnen dieser Seite einmal bei GitHub, ob es eine neuere Version gibt. Es fragt nur, denn ein Container bekommt seine Updates über seinen Container-Manager.",
+    "autoUpdate": "Automatisch aktualisieren", "autoUpdateTip": "Ein Container kann sich nicht von innen selbst ersetzen. Aktualisiere ihn stattdessen im Docker-Tab von Unraid, mit docker pull oder mit Watchtower.",
+    "check": "Nach Updates suchen", "checking": "Suche",
     "current": "Aktuell, {v}", "newer": "{v} ist da",
     "backup": "Einstellungen sichern", "toFile": "In eine Datei schreiben", "toFileTip": "Alle Einstellungen als JSON-Datei auf dem Server, ohne Passwörter.", "export": "Exportieren",
     "fromFile": "Aus einer Datei holen", "fromFileTip": "Ersetzt die Einstellungen hier durch die aus der Datei.", "import": "Importieren",
@@ -225,7 +227,7 @@
     "importTitle": "Einstellungen importieren", "importFileTip": "Eine Datei, die CannonCommander exportiert hat.", "takeUsers": "Benutzer, Gruppen und Regeln übernehmen",
     "takeUsersTip": "Passwörter, Passkeys und Tokens bleiben hier, wie sie sind.", "noFile": "Diese Datei gibt es nicht", "notExport": "Das ist keine exportierte Einstellungsdatei",
     "imported": "Einstellungen aus {name} übernommen",
-    "noAnswer": "GitHub hat gerade nicht geantwortet. Versuch es bitte später noch einmal", "restartNeeded": "Neustart nötig", "restartNeededTip": "Ein paar Einstellungen gelten erst nach einem Neustart.",
+    "noAnswer": "GitHub hat gerade nicht geantwortet. Versuch es bitte später noch einmal",
     "importedRestart": "{name} ist übernommen. Starte CannonCommander neu, damit alles gilt"
   },
   "info": {

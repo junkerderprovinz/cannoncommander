@@ -1083,10 +1083,10 @@
     },
     "app": {
       "updates": "Eguneraketak",
-      "autoCheck": "Bilatu eguneraketak automatikoki",
-      "autoCheckTip": "Egunean behin. Eguneraketa zuk instalatu behar duzu, Unraid-en Docker fitxan.",
-      "image": "Docker irudia",
-      "tagTip": "Bertsio hau ari da exekutatzen. Unraid-ek zein tag deskargatzen duen template-an erabakitzen duzu, latest-ek bertsio berri guztiak jarraitzen ditu.",
+      "autoCheck": "Egiaztatu automatikoki",
+      "autoCheckTip": "Hau aktibatuta dagoen bitartean, orri hau irekitzean behin galdetzen dio GitHubi CannonCommander berriagorik dagoen. Galdetu baino ez du egiten, edukiontzi batek bere eguneraketak edukiontzi-kudeatzailetik jasotzen baititu.",
+      "autoUpdate": "Eguneratu automatikoki",
+      "autoUpdateTip": "Edukiontzi batek ezin du bere burua barrutik ordezkatu. Eguneratu Unraid-en Docker fitxan, docker pull bidez edo Watchtower bidez.",
       "check": "Bilatu eguneraketak",
       "checking": "Bilatzen",
       "current": "Eguneratuta, {v}",
@@ -1133,8 +1133,6 @@
       "notExport": "Hau ez da esportatutako ezarpen-fitxategi bat",
       "imported": "Ezarpenak {name} fitxategitik hartuta",
       "noAnswer": "GitHub-ek ez du erantzun oraintxe. Saiatu berriro geroago",
-      "restartNeeded": "Berrabiarazi behar da",
-      "restartNeededTip": "Ezarpen batzuek berrabiarazi ondoren bakarrik balio dute.",
       "importedRestart": "{name} hartuta. Berrabiarazi CannonCommander dena aplikatzeko"
     },
     "info": {

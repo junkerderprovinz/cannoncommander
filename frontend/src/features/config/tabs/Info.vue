@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Button, Card, CopyField, FieldRow, FieldRowGroup, Pill, Toggle } from '@glimstone/vue';
+import { Button, Card, FieldRow, FieldRowGroup, Toggle } from '@glimstone/vue';
 import { GLIMSTONE_VERSION } from '@glimstone/core';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { admin, type AppSettings, type System, type UpdateCheck } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { run } from '@/core/actions';
@@ -9,8 +9,7 @@ import { G } from '@/core/glyphs';
 import { win } from '@/core/windows';
 import { NEWS, unseen } from '../help';
 import { c } from '@/features/config/shared';
-import { copyWords } from '@/ui/kit';
-import { bugReport, IMAGE, MAIL, REPO, versionLink } from '../support';
+import { bugReport, MAIL, REPO, versionLink } from '../support';
 import CoffeeWin from '../wins/CoffeeWin.vue';
 import CryptoWin from '../wins/CryptoWin.vue';
 import PaypalWin from '../wins/PaypalWin.vue';
@@ -37,13 +36,16 @@ const versions = computed(() => [
 ]);
 const n = computed(() => unseen());
 
-async function check() {
+// A check nobody pressed for stays quiet when GitHub does not answer.
+async function check(quiet = false) {
   update.value = 'busy';
   const got = await admin.checkUpdate().catch(() => null);
   latest.value = got;
   update.value = !got ? 'idle' : got.updateAvailable ? 'newer' : 'ok';
-  if (!got) toast(c('app.noAnswer'), 'warn');
+  if (!got && !quiet) toast(c('app.noAnswer'), 'warn');
 }
+// Once as the page opens while the switch is on, and once more when it is turned on.
+watch(() => app.value?.updates.autoCheck, (on) => { if (on) void check(true); });
 const open = (url: string) => window.open(url, '_blank', 'noopener');
 // Subject only: a prefilled body reads as a form to fill in.
 const mail = () => open(`mailto:${MAIL}?subject=${encodeURIComponent(c('info.mailSubject'))}`);
@@ -70,14 +72,14 @@ const give = computed(() => [
     <div class="a-foot">
       <Button :label="n ? c('info.newN', { n }) : c('info.new')" label-key="IconWhatsNew" data-run="whatsNew" @click="run('whatsNew')"><template #before><span class="a-dot" :class="{ seen: !n }"></span></template></Button>
       <Button v-if="update === 'newer'" id="a-update" :label="c('app.newer', { v: latest!.latest })" label-key="IconWhatsNew" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener" />
-      <Button v-else id="a-update" :label="update === 'ok' ? c('info.current') : c('app.check')" :label-key="update === 'ok' ? 'IconCheck' : 'IconSearch'" :tone="update === 'ok' ? 'ok' : 'neutral'" :disabled="update === 'busy'" :title="update === 'ok' ? c('app.check') : undefined" @click="check" />
+      <Button v-else id="a-update" :label="update === 'ok' ? c('info.current') : c('app.check')" :label-key="update === 'ok' ? 'IconCheck' : 'IconSearch'" :tone="update === 'ok' ? 'ok' : 'neutral'" :disabled="update === 'busy'" :title="update === 'ok' ? c('app.check') : undefined" @click="check()" />
     </div>
   </Card>
   <Card v-if="app" :title="c('app.updates')">
     <FieldRowGroup>
       <FieldRow :label="c('app.autoCheck')" :hint="c('app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
-      <FieldRow :label="c('app.image')"><CopyField width="grow" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></FieldRow>
-      <FieldRow label="Tag" :hint="c('app.tagTip')"><Pill class="mono">{{ sys?.version ?? '' }}</Pill></FieldRow>
+      <!-- A container cannot replace itself, so this one stays off and says why. -->
+      <FieldRow :label="c('app.autoUpdate')" :hint="c('app.autoUpdateTip')"><Toggle :model-value="false" disabled /></FieldRow>
     </FieldRowGroup>
   </Card>
   <Card :title="c('info.help')" :hint="c('info.helpHint')">

@@ -1171,10 +1171,10 @@
     },
     "app": {
       "updates": "Posodobitve",
-      "autoCheck": "Samodejno išči posodobitve",
-      "autoCheckTip": "Enkrat na dan. Posodobitev namestite sami, v Unraidu na zavihku Docker.",
-      "image": "Slika Docker",
-      "tagTip": "Ta različica trenutno teče. Katero oznako prenese Unraid, določite v predlogi, latest sledi vsaki novi različici.",
+      "autoCheck": "Samodejno preverjaj",
+      "autoCheckTip": "Dokler je to vklopljeno, odprtje te strani enkrat vpraša GitHub, ali je izšel novejši CannonCommander. Samo vpraša, ker vsebnik dobiva posodobitve od svojega upravitelja vsebnikov.",
+      "autoUpdate": "Samodejno posodabljaj",
+      "autoUpdateTip": "Vsebnik se ne more sam zamenjati od znotraj. Namesto tega ga posodobite v Unraidu na zavihku Docker, z docker pull ali z Watchtowerjem.",
       "check": "Išči posodobitve",
       "checking": "Iščem",
       "current": "Ažurno, {v}",
@@ -1223,8 +1223,6 @@
       "notExport": "To ni izvožena datoteka nastavitev",
       "imported": "Nastavitve prevzete iz {name}",
       "noAnswer": "GitHub ravnokar ni odgovoril. Poskusite znova pozneje",
-      "restartNeeded": "Potreben ponovni zagon",
-      "restartNeededTip": "Nekatere nastavitve veljajo šele po ponovnem zagonu.",
       "importedRestart": "{name} je prevzeto. Znova zaženite CannonCommander, da bo vse veljalo"
     },
     "info": {

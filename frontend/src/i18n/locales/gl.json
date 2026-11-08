@@ -1083,10 +1083,10 @@
     },
     "app": {
       "updates": "Actualizacións",
-      "autoCheck": "Buscar actualizacións automaticamente",
-      "autoCheckTip": "Unha vez ao día. A actualización instálala ti, en Unraid na pestana Docker.",
-      "image": "Imaxe Docker",
-      "tagTip": "Esta é a versión que se está a executar. Que tag descarga Unraid decídelo no template, latest segue cada versión nova.",
+      "autoCheck": "Comprobar automaticamente",
+      "autoCheckTip": "Mentres isto estea activado, abrir esta páxina pregúntalle unha vez a GitHub se saíu un CannonCommander máis novo. Só pregunta, porque un contedor recibe as súas actualizacións do seu xestor de contedores.",
+      "autoUpdate": "Actualizar automaticamente",
+      "autoUpdateTip": "Un contedor non se pode substituír a si mesmo desde dentro. Actualízao en Unraid na pestana Docker, con docker pull ou con Watchtower.",
       "check": "Buscar actualizacións",
       "checking": "Buscando",
       "current": "Ao día, {v}",
@@ -1133,8 +1133,6 @@
       "notExport": "Este non é un ficheiro de axustes exportado",
       "imported": "Axustes importados de {name}",
       "noAnswer": "GitHub non respondeu agora. Téntao de novo máis tarde",
-      "restartNeeded": "Cómpre reiniciar",
-      "restartNeededTip": "Algúns axustes só valen despois dun reinicio.",
       "importedRestart": "{name} importado. Reinicia CannonCommander para que valla todo"
     },
     "info": {

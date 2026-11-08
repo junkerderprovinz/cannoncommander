@@ -1127,10 +1127,10 @@
     },
     "app": {
       "updates": "Actualizări",
-      "autoCheck": "Caută actualizări automat",
-      "autoCheckTip": "O dată pe zi. Actualizarea o instalezi tu, în Unraid, în fila Docker.",
-      "image": "Imagine Docker",
-      "tagTip": "Această versiune rulează acum. Ce tag descarcă Unraid stabilești în template, latest urmează fiecare versiune nouă.",
+      "autoCheck": "Verifică automat",
+      "autoCheckTip": "Cât timp e pornit, deschiderea acestei pagini întreabă o dată GitHub dacă a apărut un CannonCommander mai nou. Doar întreabă, pentru că un container își primește actualizările de la managerul lui de containere.",
+      "autoUpdate": "Actualizează automat",
+      "autoUpdateTip": "Un container nu se poate înlocui singur din interior. Actualizează-l în schimb în Unraid, în fila Docker, cu docker pull sau cu Watchtower.",
       "check": "Caută actualizări",
       "checking": "Se caută",
       "current": "La zi, {v}",
@@ -1178,8 +1178,6 @@
       "notExport": "Acesta nu este un fișier de setări exportat",
       "imported": "Setările din {name} au fost preluate",
       "noAnswer": "GitHub nu a răspuns acum. Încearcă din nou mai târziu",
-      "restartNeeded": "Repornire necesară",
-      "restartNeededTip": "Câteva setări se aplică doar după o repornire.",
       "importedRestart": "{name} a fost preluat. Repornește CannonCommander ca totul să se aplice"
     },
     "info": {

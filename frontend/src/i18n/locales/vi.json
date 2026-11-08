@@ -1039,10 +1039,10 @@
     },
     "app": {
       "updates": "Cập nhật",
-      "autoCheck": "Tự động tìm bản cập nhật",
-      "autoCheckTip": "Mỗi ngày một lần. Bạn tự cài bản cập nhật, trên Unraid trong thẻ Docker.",
-      "image": "Docker image",
-      "tagTip": "Phiên bản này đang chạy. Unraid tải tag nào là do bạn đặt trong template, latest đi theo mọi phiên bản mới.",
+      "autoCheck": "Tự động kiểm tra",
+      "autoCheckTip": "Khi bật, mở trang này sẽ hỏi GitHub một lần xem đã có CannonCommander mới hơn chưa. Nó chỉ hỏi, vì container nhận bản cập nhật từ trình quản lý container của nó.",
+      "autoUpdate": "Tự động cập nhật",
+      "autoUpdateTip": "Một container không thể tự thay thế chính nó từ bên trong. Thay vào đó, hãy cập nhật nó trên Unraid trong thẻ Docker, bằng docker pull hoặc bằng Watchtower.",
       "check": "Tìm bản cập nhật",
       "checking": "Đang tìm",
       "current": "Đã mới nhất, {v}",
@@ -1088,8 +1088,6 @@
       "notExport": "Đây không phải tệp cài đặt đã xuất",
       "imported": "Đã nhận cài đặt từ {name}",
       "noAnswer": "GitHub vừa rồi không phản hồi. Bạn thử lại sau nhé",
-      "restartNeeded": "Cần khởi động lại",
-      "restartNeededTip": "Một vài cài đặt chỉ có hiệu lực sau khi khởi động lại.",
       "importedRestart": "Đã nhận {name}. Hãy khởi động lại CannonCommander để mọi thứ có hiệu lực"
     },
     "info": {

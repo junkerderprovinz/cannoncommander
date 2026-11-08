@@ -164,11 +164,7 @@ func (s *service) importFile(ctx context.Context, f exportFile, people bool) (Im
 	if err != nil {
 		return res, err
 	}
-	a, err := s.store.get(ctx)
-	if err != nil {
-		return res, err
-	}
-	res.RestartNeeded = src.RestartNeeded || restartNeeded(a)
+	res.RestartNeeded = src.RestartNeeded
 	return res, nil
 }
 

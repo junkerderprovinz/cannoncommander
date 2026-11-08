@@ -1083,10 +1083,10 @@
     },
     "app": {
       "updates": "Opdateringer",
-      "autoCheck": "Søg automatisk efter opdateringer",
-      "autoCheckTip": "Én gang om dagen. En opdatering installerer du selv, på Unraid under fanen Docker.",
-      "image": "Docker-image",
-      "tagTip": "Denne version kører lige nu. Hvilket tag Unraid henter, bestemmer du i templaten, latest følger hver ny version.",
+      "autoCheck": "Tjek automatisk",
+      "autoCheckTip": "Mens dette er slået til, spørger denne side GitHub én gang, når den åbnes, om der er en nyere CannonCommander. Den spørger kun, for en container får sine opdateringer fra sin containerhåndtering.",
+      "autoUpdate": "Opdater automatisk",
+      "autoUpdateTip": "En container kan ikke erstatte sig selv indefra. Opdater den i stedet på Unraid under fanen Docker, med docker pull eller med Watchtower.",
       "check": "Søg efter opdateringer",
       "checking": "Søger",
       "current": "Opdateret, {v}",
@@ -1133,8 +1133,6 @@
       "notExport": "Det er ikke en eksporteret indstillingsfil",
       "imported": "Indstillinger overtaget fra {name}",
       "noAnswer": "GitHub svarede ikke lige nu. Prøv igen senere",
-      "restartNeeded": "Genstart nødvendig",
-      "restartNeededTip": "Nogle indstillinger gælder først efter en genstart.",
       "importedRestart": "{name} er overtaget. Genstart CannonCommander, så det hele gælder"
     },
     "info": {

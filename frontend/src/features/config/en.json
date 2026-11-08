@@ -209,8 +209,10 @@
     "alTokenWrong": "ArrowLoop turns this token down"
   },
   "app": {
-    "updates": "Updates", "autoCheck": "Look for updates by itself", "autoCheckTip": "Once a day. You install an update yourself, on Unraid in the Docker tab.",
-    "image": "Docker image", "tagTip": "This version runs right now. Which tag Unraid pulls is set in the template, latest follows every new version.", "check": "Look for updates", "checking": "Looking",
+    "updates": "Updates", "autoCheck": "Check automatically",
+    "autoCheckTip": "While this is on, opening this page asks GitHub once whether a newer CannonCommander is out. It only asks, since a container gets its updates from its container manager.",
+    "autoUpdate": "Update automatically", "autoUpdateTip": "A container cannot replace itself from the inside. Update it on Unraid's Docker tab instead, with docker pull or with Watchtower.",
+    "check": "Look for updates", "checking": "Looking",
     "current": "Up to date, {v}", "newer": "{v} is out",
     "backup": "Back up the settings", "toFile": "Write to a file", "toFileTip": "All settings as a JSON file on the server, without passwords.", "export": "Export",
     "fromFile": "Get from a file", "fromFileTip": "Replaces the settings here with the ones from the file.", "import": "Import",
@@ -225,7 +227,7 @@
     "importTitle": "Import settings", "importFileTip": "A file CannonCommander exported.", "takeUsers": "Take over users, groups and rules",
     "takeUsersTip": "Passwords, passkeys and tokens stay here as they are.", "noFile": "There is no such file", "notExport": "That isn't an exported settings file",
     "imported": "Settings taken over from {name}",
-    "noAnswer": "GitHub did not answer just now. Please try again later", "restartNeeded": "Restart needed", "restartNeededTip": "A few settings count only after a restart.",
+    "noAnswer": "GitHub did not answer just now. Please try again later",
     "importedRestart": "{name} is taken over. Restart CannonCommander so all of it counts"
   },
   "info": {

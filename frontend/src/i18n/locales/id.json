@@ -1039,10 +1039,10 @@
     },
     "app": {
       "updates": "Pembaruan",
-      "autoCheck": "Cari pembaruan otomatis",
-      "autoCheckTip": "Sekali sehari. Pembaruan Anda pasang sendiri, di Unraid pada tab Docker.",
-      "image": "Image Docker",
-      "tagTip": "Versi ini yang sedang berjalan. Tag mana yang diambil Unraid diatur di template, latest mengikuti setiap versi baru.",
+      "autoCheck": "Periksa otomatis",
+      "autoCheckTip": "Selama ini aktif, membuka halaman ini bertanya sekali ke GitHub apakah ada CannonCommander yang lebih baru. Ini hanya bertanya, karena kontainer mendapat pembaruannya dari pengelola kontainernya.",
+      "autoUpdate": "Perbarui otomatis",
+      "autoUpdateTip": "Kontainer tidak bisa mengganti dirinya sendiri dari dalam. Sebagai gantinya, perbarui di Unraid pada tab Docker, dengan docker pull atau dengan Watchtower.",
       "check": "Cari pembaruan",
       "checking": "Mencari",
       "current": "Terbaru, {v}",
@@ -1088,8 +1088,6 @@
       "notExport": "Ini bukan berkas pengaturan hasil ekspor",
       "imported": "Pengaturan dari {name} diambil alih",
       "noAnswer": "GitHub sedang tidak menjawab. Silakan coba lagi nanti",
-      "restartNeeded": "Perlu mulai ulang",
-      "restartNeededTip": "Beberapa pengaturan baru berlaku setelah dimulai ulang.",
       "importedRestart": "{name} diambil alih. Mulai ulang CannonCommander agar semuanya berlaku"
     },
     "info": {

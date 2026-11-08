@@ -1083,10 +1083,10 @@
     },
     "app": {
       "updates": "Päivitykset",
-      "autoCheck": "Etsi päivityksiä automaattisesti",
-      "autoCheckTip": "Kerran päivässä. Päivityksen asennat itse, Unraidissa Docker-välilehdellä.",
-      "image": "Docker-image",
-      "tagTip": "Tämä versio on nyt käynnissä. Minkä tunnisteen Unraid hakee, määrität mallissa, latest seuraa jokaista uutta versiota.",
+      "autoCheck": "Tarkista automaattisesti",
+      "autoCheckTip": "Kun tämä on päällä, tämän sivun avaaminen kysyy GitHubilta kerran, onko uudempi CannonCommander julkaistu. Se vain kysyy, koska kontti saa päivityksensä konttien hallinnasta.",
+      "autoUpdate": "Päivitä automaattisesti",
+      "autoUpdateTip": "Kontti ei voi korvata itseään sisältäpäin. Päivitä se sen sijaan Unraidissa Docker-välilehdellä, docker pull -komennolla tai Watchtowerilla.",
       "check": "Etsi päivityksiä",
       "checking": "Etsitään",
       "current": "Ajan tasalla, {v}",
@@ -1133,8 +1133,6 @@
       "notExport": "Tämä ei ole viety asetustiedosto",
       "imported": "Asetukset otettu käyttöön tiedostosta {name}",
       "noAnswer": "GitHub ei vastannut juuri nyt. Yritä myöhemmin uudelleen",
-      "restartNeeded": "Uudelleenkäynnistys tarvitaan",
-      "restartNeededTip": "Jotkin asetukset tulevat voimaan vasta uudelleenkäynnistyksen jälkeen.",
       "importedRestart": "{name} on otettu käyttöön. Käynnistä CannonCommander uudelleen, jotta kaikki tulee voimaan"
     },
     "info": {

@@ -1127,10 +1127,10 @@
     },
     "app": {
       "updates": "Aggiornamenti",
-      "autoCheck": "Cerca aggiornamenti automaticamente",
-      "autoCheckTip": "Una volta al giorno. L'aggiornamento lo installi tu, su Unraid nella scheda Docker.",
-      "image": "Immagine Docker",
-      "tagTip": "Questa è la versione in esecuzione. Quale tag scarica Unraid lo decidi nel template, latest segue ogni nuova versione.",
+      "autoCheck": "Controlla automaticamente",
+      "autoCheckTip": "Finché è attivo, aprire questa pagina chiede una volta a GitHub se è uscito un CannonCommander più recente. Chiede soltanto, perché un container riceve gli aggiornamenti dal suo gestore di container.",
+      "autoUpdate": "Aggiorna automaticamente",
+      "autoUpdateTip": "Un container non può sostituirsi da solo dall'interno. Aggiornalo invece su Unraid nella scheda Docker, con docker pull o con Watchtower.",
       "check": "Cerca aggiornamenti",
       "checking": "Ricerca",
       "current": "Aggiornato, {v}",
@@ -1178,8 +1178,6 @@
       "notExport": "Questo non è un file di impostazioni esportato",
       "imported": "Impostazioni riprese da {name}",
       "noAnswer": "GitHub al momento non ha risposto. Riprova più tardi",
-      "restartNeeded": "Serve un riavvio",
-      "restartNeededTip": "Alcune impostazioni valgono solo dopo un riavvio.",
       "importedRestart": "{name} è stato ripreso. Riavvia CannonCommander perché tutto abbia effetto"
     },
     "info": {

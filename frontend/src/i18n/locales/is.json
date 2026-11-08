@@ -1083,10 +1083,10 @@
     },
     "app": {
       "updates": "Uppfærslur",
-      "autoCheck": "Leita sjálfkrafa að uppfærslum",
-      "autoCheckTip": "Einu sinni á dag. Uppfærslur seturðu upp handvirkt, í Unraid á Docker-flipanum.",
-      "image": "Docker-mynd",
-      "tagTip": "Þessi útgáfa keyrir núna. Hvaða merki Unraid sækir ákveðurðu í sniðmátinu, latest fylgir hverri nýrri útgáfu.",
+      "autoCheck": "Athuga sjálfkrafa",
+      "autoCheckTip": "Á meðan kveikt er á þessu spyr þessi síða GitHub einu sinni þegar hún opnast hvort nýrri CannonCommander sé kominn. Hún spyr bara, því gámur fær uppfærslur frá gámastjóranum sínum.",
+      "autoUpdate": "Uppfæra sjálfkrafa",
+      "autoUpdateTip": "Gámur getur ekki skipt sjálfum sér út innan frá. Uppfærðu hann þess í stað í Unraid á Docker-flipanum, með docker pull eða með Watchtower.",
       "check": "Leita að uppfærslum",
       "checking": "Leita",
       "current": "Nýjasta, {v}",
@@ -1133,8 +1133,6 @@
       "notExport": "Þetta er ekki útflutt stillingaskrá",
       "imported": "Stillingar úr {name} teknar yfir",
       "noAnswer": "GitHub svaraði ekki rétt í þessu. Reyndu aftur síðar",
-      "restartNeeded": "Endurræsingar þörf",
-      "restartNeededTip": "Nokkrar stillingar gilda ekki fyrr en eftir endurræsingu.",
       "importedRestart": "{name} hefur verið tekið yfir. Endurræstu CannonCommander svo allt taki gildi"
     },
     "info": {

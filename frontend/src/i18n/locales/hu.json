@@ -1083,10 +1083,10 @@
     },
     "app": {
       "updates": "Frissítések",
-      "autoCheck": "Frissítések automatikus keresése",
-      "autoCheckTip": "Naponta egyszer. A frissítést Önnek kell telepítenie, az Unraidben a Docker lapon.",
-      "image": "Docker-image",
-      "tagTip": "Most ez a verzió fut. Hogy az Unraid melyik taget tölti le, azt a sablonban állíthatja be, a latest minden új verziót követ.",
+      "autoCheck": "Automatikus ellenőrzés",
+      "autoCheckTip": "Amíg ez be van kapcsolva, az oldal megnyitása egyszer megkérdezi a GitHubot, van-e újabb CannonCommander. Csak kérdez, mert a konténer a frissítéseit a konténerkezelőjétől kapja.",
+      "autoUpdate": "Automatikus frissítés",
+      "autoUpdateTip": "Egy konténer nem tudja belülről lecserélni önmagát. Frissítse inkább az Unraidben a Docker lapon, docker pull paranccsal vagy Watchtowerrel.",
       "check": "Frissítések keresése",
       "checking": "Keresés",
       "current": "Naprakész, {v}",
@@ -1133,8 +1133,6 @@
       "notExport": "Ez nem exportált beállításfájl",
       "imported": "Beállítások átvéve innen: {name}",
       "noAnswer": "A GitHub épp nem válaszolt. Kérjük, próbálja újra később",
-      "restartNeeded": "Újraindítás szükséges",
-      "restartNeededTip": "Néhány beállítás csak újraindítás után lép életbe.",
       "importedRestart": "{name} átvéve. Indítsa újra a CannonCommandert, hogy minden érvénybe lépjen"
     },
     "info": {

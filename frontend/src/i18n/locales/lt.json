@@ -1171,10 +1171,10 @@
     },
     "app": {
       "updates": "Atnaujinimai",
-      "autoCheck": "Ieškoti atnaujinimų automatiškai",
-      "autoCheckTip": "Kartą per dieną. Atnaujinimą įdiegti turi pats, Unraid skirtuke Docker.",
-      "image": "Docker atvaizdas",
-      "tagTip": "Ši versija veikia dabar. Kurią žymę Unraid parsiųs, nustatai šablone, latest seka kiekvieną naują versiją.",
+      "autoCheck": "Tikrinti automatiškai",
+      "autoCheckTip": "Kol tai įjungta, atidarius šį puslapį kartą paklausiama GitHub, ar išėjo naujesnis CannonCommander. Tik klausiama, nes konteineris atnaujinimus gauna iš savo konteinerių tvarkyklės.",
+      "autoUpdate": "Atnaujinti automatiškai",
+      "autoUpdateTip": "Konteineris negali pakeisti savęs iš vidaus. Vietoj to atnaujink jį Unraid skirtuke Docker, komanda docker pull arba su Watchtower.",
       "check": "Ieškoti atnaujinimų",
       "checking": "Ieškoma",
       "current": "Naujausia, {v}",
@@ -1223,8 +1223,6 @@
       "notExport": "Tai ne eksportuotas nustatymų failas",
       "imported": "Nustatymai perimti iš {name}",
       "noAnswer": "GitHub šiuo metu neatsakė. Pabandyk dar kartą vėliau",
-      "restartNeeded": "Reikia paleisti iš naujo",
-      "restartNeededTip": "Kai kurie nustatymai galios tik paleidus iš naujo.",
       "importedRestart": "{name} perimtas. Paleisk CannonCommander iš naujo, kad viskas galiotų"
     },
     "info": {
