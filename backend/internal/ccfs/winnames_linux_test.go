@@ -33,13 +33,14 @@ func TestTheFileSystemsOfWindowsAreKnownByTheirMagic(t *testing.T) {
 	}
 }
 
-// The numbers have to be the kernel's, as its headers name them.
+// The numbers have to be the kernel's, as its headers name them. The two of
+// NTFS live in the drivers' own sources and are not in the header.
 func TestTheMagicNumbersAreTheKernels(t *testing.T) {
 	header, err := os.ReadFile("/usr/include/linux/magic.h")
 	if err != nil {
 		t.Skip("no kernel headers here")
 	}
-	for name, want := range map[string]uint32{"MSDOS_SUPER_MAGIC": unix.MSDOS_SUPER_MAGIC, "EXFAT_SUPER_MAGIC": exfatMagic, "NTFS_SB_MAGIC": ntfsMagic, "FUSE_SUPER_MAGIC": unix.FUSE_SUPER_MAGIC} {
+	for name, want := range map[string]uint32{"MSDOS_SUPER_MAGIC": unix.MSDOS_SUPER_MAGIC, "EXFAT_SUPER_MAGIC": exfatMagic, "FUSE_SUPER_MAGIC": unix.FUSE_SUPER_MAGIC} {
 		m := regexp.MustCompile(`#define\s+` + name + `\s+(0x[0-9a-fA-F]+)`).FindSubmatch(header)
 		if m == nil {
 			t.Errorf("%s is not in magic.h", name)

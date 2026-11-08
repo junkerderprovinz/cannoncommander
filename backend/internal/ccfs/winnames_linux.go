@@ -9,7 +9,9 @@ import (
 )
 
 // The magic numbers of the file systems Windows brings to a stick or a
-// second disk, as statfs reports them for the kernel's own drivers.
+// second disk, as statfs reports them for the kernel's own drivers. exFAT's
+// is in linux/magic.h, the two of NTFS are in the sources of the old ntfs
+// driver and of ntfs3.
 const (
 	exfatMagic = 0x2011BAB0
 	ntfsMagic  = 0x5346544E
