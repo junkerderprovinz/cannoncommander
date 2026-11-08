@@ -362,6 +362,10 @@ components:
           type: boolean
         releaseUrl:
           type: string
+        ready:
+          type: string
+          description: The version the desktop app has put in place for its next start.
+          example: 0.2.0
     SettingsFileRequest:
       type: object
       required: [path]
@@ -397,6 +401,10 @@ components:
           example: 0.1.0
         commit:
           type: string
+        deployment:
+          type: string
+          enum: [container, desktop]
+          description: desktop inside the desktop app.
         go:
           type: string
           example: go1.27.0
@@ -451,7 +459,7 @@ components:
               type: boolean
             terminal:
               type: boolean
-              description: Whether admins may open a terminal.
+              description: Whether admins may open a terminal. Always in the desktop app, which opens the computer's own.
     SystemTool:
       type: object
       required: [available]
@@ -619,6 +627,12 @@ components:
           properties:
             autoCheck:
               type: boolean
+            autoUpdate:
+              type: boolean
+              description: |
+                Let the desktop app download a newer release once a day and
+                put it in place for its next start. A container reports it
+                off and ignores it.
         logLevel:
           type: string
           enum: [error, info, debug]

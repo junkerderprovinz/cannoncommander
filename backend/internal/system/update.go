@@ -23,6 +23,9 @@ type UpdateCheck struct {
 	Latest          string `json:"latest"`
 	UpdateAvailable bool   `json:"updateAvailable"`
 	ReleaseURL      string `json:"releaseUrl,omitempty"`
+	// Ready is the version the desktop app has put in place for its next
+	// start.
+	Ready string `json:"ready,omitempty"`
 }
 
 func (s *service) checkUpdate(ctx context.Context) (UpdateCheck, error) {

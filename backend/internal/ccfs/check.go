@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 // Perm is one right on a path. Several can be combined with |.
@@ -329,11 +330,17 @@ func (r *Resolver) carriedEffect(u *users.User, p string) Effect {
 	return b.CarryEffect(u, p)
 }
 
-// Home is the folder u starts in: the user shares where u may open them,
-// else the first other source, with the disks and pools last. Inside a
+// Home is the folder u starts in: in the desktop app the user's own home
+// folder, else the user shares where u may open them, else the first other
+// source, with the disks and pools last. Inside a
 // source it is the folder u is confined to, and someone who may open
 // nothing gets /.
 func (r *Resolver) Home(u *users.User) string {
+	if home := desktop.Home(); home != "" {
+		if _, err := r.Check(u, MountFor(home), View); err == nil {
+			return MountFor(home)
+		}
+	}
 	rank := func(s *Source) int {
 		switch {
 		case s.Mount == "/mnt/user":

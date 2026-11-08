@@ -18,6 +18,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/events"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -58,7 +59,7 @@ func StartHttp(ctx context.Context, shutdownComplete chan struct{}) {
 
 	srv := &http.Server{
 		Addr:        settings.HTTPListenAddr(settings.Config.Http.ListenAddress, settings.Config.Http.Port),
-		Handler:     muxWithMiddleware(securityHeaders(crossOrigin(router))),
+		Handler:     desktop.Guard(muxWithMiddleware(securityHeaders(crossOrigin(router)))),
 		ConnContext: settings.AttachConnContext,
 	}
 	limitSlowClients(srv)

@@ -18,6 +18,7 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -269,6 +270,9 @@ func (s *service) update(w http.ResponseWriter, r *http.Request) error {
 	out, err := s.cachedUpdate(r.Context())
 	if err != nil {
 		return v1.Errorf(http.StatusBadGateway, err.Error())
+	}
+	if app := desktop.Current(); app != nil {
+		out.Ready = app.UpdateReady()
 	}
 	return v1.WriteJSON(w, r, http.StatusOK, out)
 }

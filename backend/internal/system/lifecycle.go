@@ -6,6 +6,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 var shutdown struct {
@@ -50,8 +52,13 @@ func Restart() error {
 }
 
 // requestRestart lets the answer reach the browser first and then shuts
-// the server down the way a stop signal would.
+// the server down the way a stop signal would. The desktop app ends its
+// window with it and starts itself again.
 func requestRestart() {
+	if app := desktop.Current(); app != nil {
+		time.AfterFunc(500*time.Millisecond, app.Restart)
+		return
+	}
 	restartWanted.Store(true)
 	time.AfterFunc(500*time.Millisecond, stopSelf)
 }

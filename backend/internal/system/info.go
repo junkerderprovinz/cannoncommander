@@ -11,6 +11,7 @@ import (
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -18,17 +19,20 @@ var started = time.Now()
 
 // Info is what GET /system answers.
 type Info struct {
-	Version string          `json:"version"`
-	Commit  string          `json:"commit,omitempty"`
-	Release bool            `json:"release"`
-	Go      string          `json:"go"`
-	OS      string          `json:"os"`
-	Arch    string          `json:"arch"`
-	Started time.Time       `json:"started"`
-	Uptime  int64           `json:"uptime"`
-	Tools   map[string]Tool `json:"tools"`
-	Unraid  UnraidInfo      `json:"unraid"`
-	Feature Features        `json:"features"`
+	Version string `json:"version"`
+	Commit  string `json:"commit,omitempty"`
+	// Deployment is "desktop" inside the desktop app and "container"
+	// everywhere else.
+	Deployment string          `json:"deployment"`
+	Release    bool            `json:"release"`
+	Go         string          `json:"go"`
+	OS         string          `json:"os"`
+	Arch       string          `json:"arch"`
+	Started    time.Time       `json:"started"`
+	Uptime     int64           `json:"uptime"`
+	Tools      map[string]Tool `json:"tools"`
+	Unraid     UnraidInfo      `json:"unraid"`
+	Feature    Features        `json:"features"`
 }
 
 // Tool is a helper program the server runs.
@@ -53,7 +57,8 @@ type Features struct {
 	Video  bool       `json:"videoPreview"`
 	WebDAV bool       `json:"webdav"`
 	MuPDF  bool       `json:"mupdf"`
-	// Terminal says whether admins may open a terminal.
+	// Terminal says whether admins may open a terminal. The desktop app
+	// opens the computer's own terminal and needs no switch for it.
 	Terminal bool `json:"terminal"`
 }
 
@@ -144,16 +149,17 @@ func (s *service) info(ctx context.Context) (Info, error) {
 	}
 	_, released := version.Release()
 	in := Info{
-		Version: version.Version,
-		Commit:  version.CommitSHA,
-		Release: released,
-		Go:      runtime.Version(),
-		OS:      runtime.GOOS,
-		Arch:    runtime.GOARCH,
-		Started: started.UTC().Truncate(time.Second),
-		Uptime:  int64(time.Since(started) / time.Second),
-		Tools:   s.tools.get(),
-		Unraid:  UnraidInfo{Socket: unraid.ConfigFromEnv().Write},
+		Version:    version.Version,
+		Deployment: "container",
+		Commit:     version.CommitSHA,
+		Release:    released,
+		Go:         runtime.Version(),
+		OS:         runtime.GOOS,
+		Arch:       runtime.GOARCH,
+		Started:    started.UTC().Truncate(time.Second),
+		Uptime:     int64(time.Since(started) / time.Second),
+		Tools:      s.tools.get(),
+		Unraid:     UnraidInfo{Socket: unraid.ConfigFromEnv().Write},
 		Feature: Features{
 			Office:   OfficeInfo{Kind: app.Office.Kind, URL: app.Office.URL},
 			Thumbs:   app.Previews.Thumbs,
@@ -162,6 +168,10 @@ func (s *service) info(ctx context.Context) (Info, error) {
 			MuPDF:    settings.Env.MuPdfAvailable,
 			Terminal: app.Terminal,
 		},
+	}
+	if desktop.Active() {
+		in.Deployment = "desktop"
+		in.Feature.Terminal = true
 	}
 	if app.Office.Kind == OfficeNone {
 		in.Feature.Office.URL = ""
