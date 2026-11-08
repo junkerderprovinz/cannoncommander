@@ -23,7 +23,7 @@ func (desktopSystem) asks(file string) bool { return startsSomething(file) }
 func (desktopSystem) open(file string) error {
 	for _, c := range [][]string{{"gio", "open"}, {"xdg-open"}} {
 		if p, err := exec.LookPath(c[0]); err == nil {
-			return start(exec.Command(p, append(c[1:], file)...))
+			return start(exec.Command(p, append(c[1:], toOpen(file))...))
 		}
 	}
 	return errNoOpener

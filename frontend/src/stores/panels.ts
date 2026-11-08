@@ -256,6 +256,10 @@ export const usePanels = defineStore('panels', () => {
       const target = await listing.load(k.link).catch(() => null);
       if (target) return go(k.link, i);
     }
+    // An internet shortcut opens its address in the browser and a launcher of Linux asks before it starts its
+    // program, as a double click does in Explorer and Nautilus.
+    const sc = k.shortcut;
+    if (sc && (sc.kind === 'url' || (sc.kind === 'desktop' && !sc.path)) && actions.launch) return run('launch', join(k.at || tab.path, k.name!));
     // A shortcut to a folder opens the folder, one to a file opens the file where it lies, as in Explorer.
     const to = k.shortcut?.path;
     if (to) {
