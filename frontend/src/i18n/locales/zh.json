@@ -3281,6 +3281,7 @@
     "closedUp": "你无权打开文件夹 {path}，所以你现在在 {here}",
     "empty": "此文件夹为空",
     "emptyHint": "把文件拖到这里即可上传",
+    "emptyHintDesktop": "把文件拖到这里，即可复制到此文件夹",
     "nothingFound": "没有找到 {q}",
     "searchedHere": "只搜索了此文件夹",
     "searchedDeep": "也搜索了所有子文件夹",

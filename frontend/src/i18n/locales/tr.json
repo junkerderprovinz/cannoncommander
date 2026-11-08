@@ -3410,6 +3410,7 @@
     "closedUp": "{path} klasörünü açma iznin yok, bu yüzden şimdi {here} içindesin",
     "empty": "Bu klasör boş",
     "emptyHint": "Yüklemek için dosyaları buraya sürükle",
+    "emptyHintDesktop": "Bu klasöre kopyalamak için dosyaları buraya sürükle",
     "nothingFound": "{q} için bir şey bulunamadı",
     "searchedHere": "Yalnızca bu klasörde arandı",
     "searchedDeep": "Tüm alt klasörlerde de arandı",

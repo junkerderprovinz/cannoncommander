@@ -3539,6 +3539,7 @@
     "closedUp": "Vous ne pouvez pas ouvrir le dossier {path}, vous êtes donc maintenant dans {here}",
     "empty": "Ce dossier est vide",
     "emptyHint": "Déposez des fichiers ici pour les envoyer",
+    "emptyHintDesktop": "Glisse des fichiers ici pour les copier dans ce dossier",
     "nothingFound": "Rien trouvé pour {q}",
     "searchedHere": "Recherche dans ce dossier seulement",
     "searchedDeep": "Recherche aussi dans tous les sous-dossiers",

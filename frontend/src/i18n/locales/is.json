@@ -3410,6 +3410,7 @@
     "closedUp": "Þú mátt ekki opna möppuna {path}, svo þú ert núna í {here}",
     "empty": "Þessi mappa er tóm",
     "emptyHint": "Dragðu skrár hingað til að hlaða þeim upp",
+    "emptyHintDesktop": "Dragðu skrár hingað til að afrita þær í þessa möppu",
     "nothingFound": "Ekkert fannst fyrir {q}",
     "searchedHere": "Aðeins leitað í þessari möppu",
     "searchedDeep": "Líka leitað í öllum undirmöppum",

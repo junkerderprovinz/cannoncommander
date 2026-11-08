@@ -2,7 +2,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import { api, toItem } from '@/api/client';
-import { actions } from '@/core/actions';
+import { action, actions } from '@/core/actions';
 import { menu } from '@/core/menu';
 import { host } from '@/core/host';
 import { prefs } from '@/core/prefs';
@@ -114,6 +114,17 @@ describe('double click', () => {
     F.T().cursor = F.entries().findIndex((k) => k.name === 'a.txt');
     rowMenu(10, 10);
     expect(vi.mocked(menu).mock.calls.at(-1)![2]).toContain('launch');
+  });
+
+  it('drops download and upload once it knows it is the desktop app', async () => {
+    host.desktop = false;
+    prefs.desktopStyle = 'commander';
+    for (const id of ['download', 'upload']) action(id, { label: id, run: () => {} });
+    setup();
+    host.desktop = true;
+    await nextTick();
+    expect(actions.download).toBeUndefined();
+    expect(actions.upload).toBeUndefined();
   });
 
   it('has no launcher in the container', async () => {

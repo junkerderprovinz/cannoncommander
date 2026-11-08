@@ -3539,6 +3539,7 @@
     "closedUp": "Não pode abrir a pasta {path}, por isso está agora em {here}",
     "empty": "Esta pasta está vazia",
     "emptyHint": "Largue ficheiros aqui para os carregar",
+    "emptyHintDesktop": "Arrasta ficheiros para aqui para os copiar para esta pasta",
     "nothingFound": "Nada encontrado para {q}",
     "searchedHere": "Pesquisado só nesta pasta",
     "searchedDeep": "Pesquisado também em todas as subpastas",

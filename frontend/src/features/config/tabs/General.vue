@@ -19,8 +19,9 @@ const home = useUser().me.home || '/';
 const start = ref(nativePath(prefs.startFolder || home, windowsPaths()));
 const field = ref<InstanceType<typeof PathField> | null>(null);
 const CAPS: [number, string][] = [[0, c('general.noCap')], [25, '25 MB/s'], [50, '50 MB/s'], [100, '100 MB/s'], [200, '200 MB/s']];
-// Only the desktop app can hand a file to the computer's own programs.
-const DBLCLICK = [...(host.desktop ? [['system', c('general.system')]] : []), ['open', c('general.open')], ['preview', c('general.preview')], ['download', c('general.download')]] as [string, string][];
+// Only the desktop app can hand a file to the computer's own programs, and there it needs no download.
+const DBLCLICK = (host.desktop ? [['system', c('general.system')], ['open', c('general.open')], ['preview', c('general.preview')]]
+  : [['open', c('general.open')], ['preview', c('general.preview')], ['download', c('general.download')]]) as [string, string][];
 const AFTER: [number, string][] = [[0, c('general.always')], [60, c('general.after1m')], [600, c('general.after10m')], [3600, c('general.after1h')]];
 
 async function save() {

@@ -3668,6 +3668,7 @@
     "closedUp": "Složku {path} nemůžete otevřít, proto jste teď v {here}",
     "empty": "Tato složka je prázdná",
     "emptyHint": "Přetáhněte sem soubory a nahrajte je",
+    "emptyHintDesktop": "Přetáhni sem soubory a zkopírují se do této složky",
     "nothingFound": "Pro {q} nic nenalezeno",
     "searchedHere": "Hledáno jen v této složce",
     "searchedDeep": "Hledáno i ve všech podsložkách",

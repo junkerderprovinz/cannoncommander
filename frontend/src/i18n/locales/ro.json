@@ -3539,6 +3539,7 @@
     "closedUp": "Nu ai voie să deschizi dosarul {path}, așa că acum ești în {here}",
     "empty": "Acest dosar este gol",
     "emptyHint": "Trage fișiere aici ca să le încarci",
+    "emptyHintDesktop": "Trage fișiere aici ca să le copiezi în acest dosar",
     "nothingFound": "Nu s-a găsit nimic pentru {q}",
     "searchedHere": "S-a căutat doar în acest dosar",
     "searchedDeep": "S-a căutat și în toate subdosarele",

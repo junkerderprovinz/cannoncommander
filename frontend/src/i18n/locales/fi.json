@@ -3410,6 +3410,7 @@
     "closedUp": "Et saa avata kansiota {path}, joten olet nyt kansiossa {here}",
     "empty": "Tämä kansio on tyhjä",
     "emptyHint": "Vedä tiedostot tähän ladataksesi ne",
+    "emptyHintDesktop": "Vedä tiedostot tähän kopioidaksesi ne tähän kansioon",
     "nothingFound": "Haulla {q} ei löytynyt mitään",
     "searchedHere": "Haettu vain tästä kansiosta",
     "searchedDeep": "Haettu myös kaikista alikansioista",

@@ -5,6 +5,7 @@ import { EmptyState } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { G, glyphComponent } from '@/core/glyphs';
 import { now } from '@/core/format';
+import { host } from '@/core/host';
 import { dialMs, moving } from '@/core/motion';
 import { prefs, setPref } from '@/core/prefs';
 import { t } from '@/i18n';
@@ -373,6 +374,6 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
       <div v-if="virtual && range.after" class="vpad" aria-hidden="true" :style="{ height: pad(range.after) }"></div>
     </template>
     <div v-if="band.frame.on" class="band" aria-hidden="true" :style="{ left: band.frame.x + 'px', top: band.frame.y + 'px', width: band.frame.w + 'px', height: band.frame.h + 'px' }"></div>
-    <EmptyState v-if="!list.length && F.loaded(i)" nested :glyph="glyphComponent(tab.filter ? 'IconSearch' : 'IconFolder')" :title="tab.filter ? t('files.nothingFound', { q: tab.filter }) : t('files.empty')" :hint="tab.filter ? (tab.deep === false ? t('files.searchedHere') : t('files.searchedDeep')) : t('files.emptyHint')" />
+    <EmptyState v-if="!list.length && F.loaded(i)" nested :glyph="glyphComponent(tab.filter ? 'IconSearch' : 'IconFolder')" :title="tab.filter ? t('files.nothingFound', { q: tab.filter }) : t('files.empty')" :hint="tab.filter ? (tab.deep === false ? t('files.searchedHere') : t('files.searchedDeep')) : t(host.desktop ? 'files.emptyHintDesktop' : 'files.emptyHint')" />
   </div>
 </template>

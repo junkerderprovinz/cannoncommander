@@ -302,6 +302,7 @@
     "closedUp": "Den Ordner {path} darfst du nicht öffnen, darum bist du jetzt in {here}",
     "empty": "Dieser Ordner ist leer",
     "emptyHint": "Dateien hierher ziehen zum Hochladen",
+    "emptyHintDesktop": "Zieh Dateien hierher, um sie in diesen Ordner zu kopieren",
     "nothingFound": "Nichts gefunden für {q}",
     "searchedHere": "Nur in diesem Ordner gesucht",
     "searchedDeep": "Auch in allen Unterordnern gesucht",

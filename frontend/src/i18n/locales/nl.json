@@ -3410,6 +3410,7 @@
     "closedUp": "Je mag de map {path} niet openen, dus je bent nu in {here}",
     "empty": "Deze map is leeg",
     "emptyHint": "Sleep bestanden hierheen om ze te uploaden",
+    "emptyHintDesktop": "Sleep bestanden hierheen om ze naar deze map te kopiëren",
     "nothingFound": "Niets gevonden voor {q}",
     "searchedHere": "Alleen in deze map gezocht",
     "searchedDeep": "Ook in alle submappen gezocht",

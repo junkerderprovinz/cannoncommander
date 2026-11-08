@@ -3281,6 +3281,7 @@
     "closedUp": "{path} 폴더를 열 권한이 없어서 {here}(으)로 이동했습니다",
     "empty": "이 폴더는 비어 있습니다",
     "emptyHint": "파일을 여기로 끌어 오면 업로드됩니다",
+    "emptyHintDesktop": "파일을 여기로 끌어 오면 이 폴더로 복사됩니다",
     "nothingFound": "{q}에 대한 결과가 없습니다",
     "searchedHere": "이 폴더에서만 검색했습니다",
     "searchedDeep": "모든 하위 폴더에서도 검색했습니다",

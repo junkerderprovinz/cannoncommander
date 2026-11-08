@@ -3668,6 +3668,7 @@
     "closedUp": "Brak dostępu do folderu {path}, dlatego otwarto {here}",
     "empty": "Ten folder jest pusty",
     "emptyHint": "Przeciągnij tu pliki, żeby je przesłać",
+    "emptyHintDesktop": "Przeciągnij tu pliki, aby skopiować je do tego folderu",
     "nothingFound": "Nic nie znaleziono dla {q}",
     "searchedHere": "Szukano tylko w tym folderze",
     "searchedDeep": "Szukano też we wszystkich podfolderach",

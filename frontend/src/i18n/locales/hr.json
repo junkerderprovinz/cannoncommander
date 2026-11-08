@@ -3539,6 +3539,7 @@
     "closedUp": "Ne smijete otvoriti mapu {path}, pa ste sada u {here}",
     "empty": "Ova je mapa prazna",
     "emptyHint": "Povucite datoteke ovamo da ih prenesete",
+    "emptyHintDesktop": "Povuci datoteke ovamo da ih kopiraš u ovu mapu",
     "nothingFound": "Ništa nije pronađeno za {q}",
     "searchedHere": "Traženo samo u ovoj mapi",
     "searchedDeep": "Traženo i u svim podmapama",

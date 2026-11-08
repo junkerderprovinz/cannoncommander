@@ -3539,6 +3539,7 @@
     "closedUp": "No puedes abrir la carpeta {path}, así que ahora estás en {here}",
     "empty": "Esta carpeta está vacía",
     "emptyHint": "Arrastra archivos aquí para subirlos",
+    "emptyHintDesktop": "Arrastra archivos aquí para copiarlos a esta carpeta",
     "nothingFound": "No se ha encontrado nada para {q}",
     "searchedHere": "Búsqueda solo en esta carpeta",
     "searchedDeep": "Búsqueda también en todas las subcarpetas",

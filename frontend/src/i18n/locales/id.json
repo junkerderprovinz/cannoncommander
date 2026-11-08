@@ -3281,6 +3281,7 @@
     "closedUp": "Anda tidak boleh membuka folder {path}, jadi Anda sekarang berada di {here}",
     "empty": "Folder ini kosong",
     "emptyHint": "Seret berkas ke sini untuk mengunggahnya",
+    "emptyHintDesktop": "Seret berkas ke sini untuk menyalinnya ke folder ini",
     "nothingFound": "Tidak ada yang ditemukan untuk {q}",
     "searchedHere": "Hanya dicari di folder ini",
     "searchedDeep": "Juga dicari di semua subfolder",

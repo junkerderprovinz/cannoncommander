@@ -3539,6 +3539,7 @@
     "closedUp": "No podeu obrir la carpeta {path}, així que ara sou a {here}",
     "empty": "Aquesta carpeta és buida",
     "emptyHint": "Deixeu anar fitxers aquí per pujar-los",
+    "emptyHintDesktop": "Arrossega fitxers aquí per copiar-los a aquesta carpeta",
     "nothingFound": "No s'ha trobat res per a {q}",
     "searchedHere": "S'ha cercat només en aquesta carpeta",
     "searchedDeep": "S'ha cercat també a totes les subcarpetes",

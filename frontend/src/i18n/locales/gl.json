@@ -3410,6 +3410,7 @@
     "closedUp": "Non podes abrir o cartafol {path}, así que agora estás en {here}",
     "empty": "Este cartafol está baleiro",
     "emptyHint": "Arrastra ficheiros aquí para subilos",
+    "emptyHintDesktop": "Arrastra ficheiros aquí para copialos neste cartafol",
     "nothingFound": "Non se atopou nada para {q}",
     "searchedHere": "Só se buscou neste cartafol",
     "searchedDeep": "Buscouse tamén en todos os subcartafoles",

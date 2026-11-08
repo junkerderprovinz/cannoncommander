@@ -3539,6 +3539,7 @@
     "closedUp": "Mapi {path} tu nedrīksti atvērt, tāpēc tagad tu esi {here}",
     "empty": "Šī mape ir tukša",
     "emptyHint": "Velc failus šeit, lai tos augšupielādētu",
+    "emptyHintDesktop": "Velc failus šeit, lai tos iekopētu šajā mapē",
     "nothingFound": "Nekas nav atrasts pēc {q}",
     "searchedHere": "Meklēts tikai šajā mapē",
     "searchedDeep": "Meklēts arī visās apakšmapēs",
