@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"runtime"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -23,6 +24,7 @@ var (
 	procCreateWindowEx    = user32.NewProc("CreateWindowExW")
 	procDefWindowProc     = user32.NewProc("DefWindowProcW")
 	procGetMessage        = user32.NewProc("GetMessageW")
+	procPeekMessage       = user32.NewProc("PeekMessageW")
 	procDispatchMessage   = user32.NewProc("DispatchMessageW")
 	procCreatePopupMenu   = user32.NewProc("CreatePopupMenu")
 	procDestroyMenu       = user32.NewProc("DestroyMenu")
@@ -41,6 +43,9 @@ const (
 	// Windows sends several messages for one stick: its disk, its volume and
 	// its letter.
 	driveSettleAfterSignal = 300 * time.Millisecond
+	// A disc drive keeps its letter when its tray opens, so the eject waits
+	// for the drive to go no longer than this.
+	ejectSettlesWithin = 5 * time.Second
 )
 
 // volumeWatch tells the server when a drive comes or goes. Windows sends a
@@ -81,7 +86,7 @@ func (w *volumeWatch) signal() {
 	w.later = time.AfterFunc(driveSettleAfterSignal, w.changed)
 }
 
-func (s *shell) Eject(id string) error { return ejectDrive(id + `\`) }
+func (s *shell) Eject(id string) error { return ejectDrive(strings.TrimSuffix(id, ":")) }
 
 func (s *shell) Mount(string) (string, error) {
 	return "", errors.New("Windows mounts its drives by itself")
@@ -282,10 +287,11 @@ type cmInvokeCommandInfo struct {
 	icon   uintptr
 }
 
-// ejectDrive runs the drive's Eject from its menu in Explorer, which
-// releases a stick, opens a disc drive and detaches a disk image, and shows
-// the system's own note when a program still holds a file on it.
-func ejectDrive(root string) error {
+// ejectDrive runs the Eject of the drive at letter from its menu in
+// Explorer, which releases a stick, opens a disc drive and detaches a disk
+// image, and shows the system's own note when a program still holds a file
+// on it.
+func ejectDrive(letter string) error {
 	const (
 		shellFolderGetUIObjectOf    = 10
 		contextMenuQueryContextMenu = 3
@@ -293,6 +299,7 @@ func ejectDrive(root string) error {
 		swShowNormal                = 1
 		firstCommand, lastCommand   = 1, 0x7FFF
 	)
+	root := letter + `:\`
 	return winshell.Apartment(func() error {
 		p, _ := windows.UTF16PtrFromString(root)
 		var pidl unsafe.Pointer
@@ -324,6 +331,25 @@ func ejectDrive(root string) error {
 		if err := winshell.Failed(winshell.Call(menu, contextMenuInvokeCommand, uintptr(unsafe.Pointer(&info)))); err != nil {
 			return fmt.Errorf("eject %s: %w", root, err)
 		}
+		// The shell finishes the eject through this thread's messages, so they
+		// are handled until the drive is gone or it is clear it stays.
+		pumpUntil(time.Now().Add(ejectSettlesWithin), func() bool { return describeDrive(letter) == nil })
 		return nil
 	})
+}
+
+// pumpUntil handles the messages of this thread until done reports true or
+// the deadline passes.
+func pumpUntil(deadline time.Time, done func() bool) {
+	const removeMessage = 1
+	var m msg
+	for !done() && time.Now().Before(deadline) {
+		for {
+			if r, _, _ := procPeekMessage.Call(uintptr(unsafe.Pointer(&m)), 0, 0, 0, removeMessage); r == 0 {
+				break
+			}
+			procDispatchMessage.Call(uintptr(unsafe.Pointer(&m)))
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
 }
