@@ -177,6 +177,7 @@ type shell struct {
 	// which the scheduled task reads. "" for every other copy.
 	machineFile string
 	restart     atomic.Bool
+	volumes     volumeWatch
 }
 
 func (s *shell) AutoUpdate() bool {
