@@ -1,0 +1,12 @@
+{
+  "title": "Administratorrechte nötig",
+  "text": {
+    "copy": "Um {what} hierher zu kopieren, brauchst du Administratorrechte.",
+    "move": "Um {what} hierher zu verschieben, brauchst du Administratorrechte.",
+    "delete": "Um {what} zu löschen, brauchst du Administratorrechte.",
+    "trash": "Um {what} in den Papierkorb zu legen, brauchst du Administratorrechte."
+  },
+  "howWindows": "Mit Fortsetzen fragt Windows nach deiner Erlaubnis, danach macht CannonCommander weiter.",
+  "howLinux": "Mit Fortsetzen fragt das System nach deinem Passwort, danach macht CannonCommander weiter.",
+  "go": "Fortsetzen"
+}

@@ -228,6 +228,26 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/StateConflict"
+  /jobs/{id}/elevate:
+    post:
+      operationId: jobElevate
+      summary: Go on with administrator rights
+      description: |
+        Only in the desktop app, for copy, move, delete and trash. Runs the
+        failed and unfinished items again through a helper the system starts
+        with administrator rights, after its own prompt: UAC on Windows,
+        pkexec on Linux. Items fail with elevationDeclined when the prompt is
+        turned down. On Linux, and on drives without a Recycle Bin, items of
+        a trash job fail with noSystemTrash.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /jobs/{id}/decide:
     post:
       operationId: jobDecide

@@ -46,6 +46,12 @@ tags:
       never copies. Entries go away for good after the days set here.
       Putting things into the trash is the job kind trash. trash.changed
       tells clients to reload the list.
+
+      In the desktop app the trash is the one of the system, the Windows
+      Recycle Bin or the freedesktop.org trash on Linux, and only remotes keep
+      their own. The system decides how long its entries stay, so they have no
+      expiresAt, and a drive without a trash, such as a network drive,
+      refuses with noSystemTrash.
   - name: search
     description: Search by name pattern, fields and content.
   - name: tools
@@ -1433,6 +1439,33 @@ paths:
           required: true
           schema:
             type: string
+  /jobs/{id}/elevate:
+    post:
+      operationId: jobElevate
+      summary: Go on with administrator rights
+      description: |
+        Only in the desktop app, for copy, move, delete and trash. Runs the
+        failed and unfinished items again through a helper the system starts
+        with administrator rights, after its own prompt: UAC on Windows,
+        pkexec on Linux. Items fail with elevationDeclined when the prompt is
+        turned down. On Linux, and on drives without a Recycle Bin, items of
+        a trash job fail with noSystemTrash.
+      responses:
+        "200":
+          $ref: "#/components/responses/JobAnswer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
   /jobs/{id}/decide:
     post:
       operationId: jobDecide
@@ -1551,6 +1584,9 @@ paths:
                     format: int64
                   days:
                     type: integer
+                  system:
+                    type: boolean
+                    description: The list is the trash of the system.
         "401":
           $ref: "#/components/responses/Unauthorized"
       tags: [trash]
@@ -7108,7 +7144,7 @@ components:
           example: 30
     TrashItem:
       type: object
-      required: [id, name, origin, from, dir, size, files, by, deletedAt, expiresAt]
+      required: [id, name, origin, from, dir, size, files, by, deletedAt]
       properties:
         id:
           type: string
@@ -7116,7 +7152,7 @@ components:
           type: string
         origin:
           type: string
-          description: Where the entry was.
+          description: Where the entry was, a path on disk for an entry of the system's trash from outside the sources.
         from:
           type: string
           description: The folder it was in.
@@ -7138,7 +7174,7 @@ components:
         expiresAt:
           type: string
           format: date-time
-          description: When it goes away for good.
+          description: When it goes away for good, left out in the trash of the system.
     SavedSearchInput:
       type: object
       required: [name, query]

@@ -179,3 +179,10 @@ func TestProblemForMapsKnownErrors(t *testing.T) {
 		}
 	}
 }
+
+func TestAPermissionErrorOfAnySystemIsDenied(t *testing.T) {
+	err := &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}
+	if code, _ := CodeOf(err); code != "denied" {
+		t.Fatalf("got %q", code)
+	}
+}
