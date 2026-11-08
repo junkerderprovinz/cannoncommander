@@ -1953,6 +1953,25 @@
     "shot": "スクリーンショット {stamp}.{ext}",
     "made": "「{name}」を作成しました"
   },
+  "places": {
+    "home": "ホーム フォルダー",
+    "desktop": "デスクトップ",
+    "documents": "ドキュメント",
+    "downloads": "ダウンロード",
+    "pictures": "ピクチャ",
+    "music": "ミュージック",
+    "videos": "ビデオ",
+    "recent": "最近使用したフォルダー",
+    "drives": "ドライブ",
+    "eject": "取り出し",
+    "ejectLabel": "{name} を取り出す",
+    "ejected": "{name} を安全に取り外せます",
+    "ejectedDisc": "{name} を取り出しました",
+    "notMounted": "まだマウントされていません。クリックでマウントします",
+    "arrived": "{name} が接続されました",
+    "open": "開く",
+    "gone": "{name} が取り外されたので、{here} に移動しました"
+  },
   "profiles": {
     "title": "ウィンドウのプロファイル",
     "saved": "保存済み",
@@ -3325,6 +3344,7 @@
   },
   "side": {
     "bookmarks": "ブックマーク",
+    "places": "場所",
     "tree": "フォルダーツリー",
     "addBookmark": "現在のフォルダーをブックマークに追加",
     "unpin": "クイックアクセスから外す",
@@ -3342,7 +3362,15 @@
     "renameTitle": "ブックマークの名前を変更",
     "rename": "名前の変更"
   },
+  "drives": {
+    "fixed": "ローカル ディスク",
+    "removable": "USB ドライブ",
+    "optical": "DVD ドライブ",
+    "network": "ネットワーク ドライブ",
+    "volume": "{size} ボリューム"
+  },
   "files": {
+    "network": "ネットワーク",
     "server": "サーバー",
     "thisPc": "PC",
     "computer": "コンピューター",
@@ -3474,6 +3502,7 @@
     "deleteSelf": "自分のアカウントは削除できません",
     "denied": "この操作の権限がありません",
     "desktopOnly": "これはデスクトップアプリでのみできます",
+    "ejectFailed": "今はドライブを取り出せません。開いたままのファイルがあるかもしれません",
     "fileManagerNotSet": "コンピューターが変更を受け付けませんでした",
     "disksAdminsOnly": "個々のディスクと Cache は管理者だけが見られます",
     "dragFailed": "ファイルを外へドラッグできませんでした",
@@ -3519,6 +3548,7 @@
     "messageLength": {
       "other": "メッセージは {n} 文字以内です"
     },
+    "mountFailed": "ドライブをマウントできませんでした",
     "nameChars": "Windows では名前に次の文字は使えません: < > : \" / \\ | ? *",
     "nameEnd": "Windows では名前の末尾をピリオドや空白にできません",
     "nameLength": {
@@ -3561,6 +3591,7 @@
     "notText": "このファイルはテキストではありません",
     "notWindows1252": "Windows-1252 では保存できない文字が含まれています。UTF-8 で保存してください",
     "nothingToUndo": "元に戻せるものはありません",
+    "noVolume": "このドライブはもうありません",
     "officeCannotOpen": "Office サーバーは .{ext} ファイルを開けません",
     "oldNameTaken": "元の名前がほかで使われています",
     "outsideSources": "ソース内のファイルとフォルダーでのみ使えます",

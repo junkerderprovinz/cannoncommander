@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { cut, prototypeSource, runPrototype } from '../testing/prototype';
-import { rank, recordVisit, topFolders } from './frequent';
+import { rank, recentFolders, recordVisit, topFolders } from './frequent';
 
 const NOW = Date.UTC(2026, 10, 2, 9, 30);
 const H = 3600000;
@@ -22,5 +22,13 @@ describe('frequent folders', () => {
     recordVisit('/mnt/user/isos', NOW - 30 * H);
     expect(topFolders(2, '', NOW)).toEqual(['/mnt/user/filme', '/mnt/user/backups']);
     expect(topFolders(8, '/mnt/user/filme', NOW)).toEqual(['/mnt/user/backups', '/mnt/user/isos']);
+  });
+
+  it('lists the folders used last, however often, the latest first', () => {
+    for (let k = 0; k < 6; k++) recordVisit('/C/Users/jdp/Downloads', NOW - 3 * H);
+    recordVisit('/C/Users/jdp/Bilder', NOW - H);
+    recordVisit('/D/Spiele', NOW - 2 * H);
+    expect(recentFolders(2)).toEqual(['/C/Users/jdp/Bilder', '/D/Spiele']);
+    expect(recentFolders(6, ['/D/Spiele'])).toEqual(['/C/Users/jdp/Bilder', '/C/Users/jdp/Downloads']);
   });
 });

@@ -2020,6 +2020,25 @@
     "shot": "Ekran görüntüsü {stamp}.{ext}",
     "made": "“{name}” oluşturuldu"
   },
+  "places": {
+    "home": "Kişisel klasör",
+    "desktop": "Masaüstü",
+    "documents": "Belgeler",
+    "downloads": "İndirilenler",
+    "pictures": "Resimler",
+    "music": "Müzik",
+    "videos": "Videolar",
+    "recent": "Son kullanılanlar",
+    "drives": "Sürücüler",
+    "eject": "Çıkar",
+    "ejectLabel": "{name} sürücüsünü çıkar",
+    "ejected": "{name} artık güvenle çıkarılabilir",
+    "ejectedDisc": "{name} çıkarıldı",
+    "notMounted": "Henüz bağlanmadı, bir tıklama onu bağlar",
+    "arrived": "{name} takıldı",
+    "open": "Aç",
+    "gone": "{name} çıkarıldı, şimdi {here} içindesin"
+  },
   "profiles": {
     "title": "Pencere profilleri",
     "saved": "Kaydedildi",
@@ -3456,6 +3475,7 @@
   },
   "side": {
     "bookmarks": "Kısayollar",
+    "places": "Konumlar",
     "tree": "Klasör ağacı",
     "addBookmark": "Geçerli klasörü kısayol olarak ekle",
     "unpin": "Hızlı erişimden kaldır",
@@ -3473,7 +3493,15 @@
     "renameTitle": "Kısayolu yeniden adlandır",
     "rename": "Yeniden adlandır"
   },
+  "drives": {
+    "fixed": "Yerel Disk",
+    "removable": "USB Sürücü",
+    "optical": "DVD Sürücüsü",
+    "network": "Ağ Sürücüsü",
+    "volume": "{size} birim"
+  },
   "files": {
+    "network": "Ağ",
     "server": "Sunucu",
     "thisPc": "Bu bilgisayar",
     "computer": "Bilgisayar",
@@ -3608,6 +3636,7 @@
     "deleteSelf": "Kendi hesabını silemezsin",
     "denied": "Bunun için iznin yok",
     "desktopOnly": "Bu yalnızca masaüstü uygulamasında olur",
+    "ejectFailed": "Sürücü şu an çıkarılamıyor. Belki üzerinde hâlâ açık bir dosya var",
     "fileManagerNotSet": "Bilgisayar değişikliği kabul etmedi",
     "disksAdminsOnly": "Tek tek diskleri ve Cache'i yalnızca yöneticiler görür",
     "dragFailed": "Dosyalar dışarı sürüklenemedi",
@@ -3656,6 +3685,7 @@
       "one": "Mesaj en fazla {n} karakter olabilir",
       "other": "Mesaj en fazla {n} karakter olabilir"
     },
+    "mountFailed": "Sürücü bağlanamadı",
     "nameChars": "Windows bir adda bu karakterlerin hiçbirine izin vermez: < > : \" / \\ | ? *",
     "nameEnd": "Windows'ta bir ad nokta veya boşlukla bitemez",
     "nameLength": {
@@ -3699,6 +3729,7 @@
     "notText": "Bu dosya metin değil",
     "notWindows1252": "Metinde Windows-1252'nin saklayamadığı karakterler var. UTF-8 olarak kaydet",
     "nothingToUndo": "Geri alınacak bir şey yok",
+    "noVolume": "Bu sürücü artık yok",
     "officeCannotOpen": "Office sunucusu .{ext} dosyalarını açmıyor",
     "oldNameTaken": "Eski ad yeniden kullanımda",
     "outsideSources": "Bu yalnızca bir kaynaktaki dosyalar ve klasörlerle olur",

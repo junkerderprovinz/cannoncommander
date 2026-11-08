@@ -2020,6 +2020,25 @@
     "shot": "Skærmbillede {stamp}.{ext}",
     "made": "»{name}« oprettet"
   },
+  "places": {
+    "home": "Personlig mappe",
+    "desktop": "Skrivebord",
+    "documents": "Dokumenter",
+    "downloads": "Overførsler",
+    "pictures": "Billeder",
+    "music": "Musik",
+    "videos": "Videoer",
+    "recent": "Senest brugt",
+    "drives": "Drev",
+    "eject": "Skub ud",
+    "ejectLabel": "Skub {name} ud",
+    "ejected": "Du kan nu fjerne {name} sikkert",
+    "ejectedDisc": "{name} er skubbet ud",
+    "notMounted": "Endnu ikke monteret, et klik monterer det",
+    "arrived": "{name} er tilsluttet",
+    "open": "Åbn",
+    "gone": "{name} blev fjernet, så nu er du i {here}"
+  },
   "profiles": {
     "title": "Panelprofiler",
     "saved": "Gemte",
@@ -3456,6 +3475,7 @@
   },
   "side": {
     "bookmarks": "Genveje",
+    "places": "Steder",
     "tree": "Mappetræ",
     "addBookmark": "Tilføj den aktuelle mappe som genvej",
     "unpin": "Fjern fra hurtig adgang",
@@ -3473,7 +3493,15 @@
     "renameTitle": "Omdøb genvej",
     "rename": "Omdøb"
   },
+  "drives": {
+    "fixed": "Lokal disk",
+    "removable": "USB-drev",
+    "optical": "Dvd-drev",
+    "network": "Netværksdrev",
+    "volume": "{size}-diskenhed"
+  },
   "files": {
+    "network": "Netværk",
     "server": "Server",
     "thisPc": "Denne pc",
     "computer": "Computer",
@@ -3608,6 +3636,7 @@
     "deleteSelf": "Du kan ikke slette din egen konto",
     "denied": "Du har ikke rettighederne til det",
     "desktopOnly": "Det kan kun skrivebordsappen",
+    "ejectFailed": "Drevet kan ikke skubbes ud lige nu. Måske er en fil på det stadig åben",
     "fileManagerNotSet": "Computeren tog ikke imod ændringen",
     "disksAdminsOnly": "De enkelte diske og Cache kan kun administratorer se",
     "dragFailed": "Filerne kunne ikke trækkes ud",
@@ -3656,6 +3685,7 @@
       "one": "Beskeden har højst {n} tegn",
       "other": "Beskeden har højst {n} tegn"
     },
+    "mountFailed": "Drevet kunne ikke monteres",
     "nameChars": "Windows tillader ingen af disse tegn i et navn: < > : \" / \\ | ? *",
     "nameEnd": "I Windows må et navn ikke ende med punktum eller mellemrum",
     "nameLength": {
@@ -3699,6 +3729,7 @@
     "notText": "Denne fil er ikke tekst",
     "notWindows1252": "Teksten indeholder tegn, som Windows-1252 ikke kan gemme. Gem den som UTF-8",
     "nothingToUndo": "Der er intet at fortryde",
+    "noVolume": "Dette drev er her ikke længere",
     "officeCannotOpen": "Office-serveren åbner ikke .{ext}-filer",
     "oldNameTaken": "Det gamle navn er optaget igen",
     "outsideSources": "Det virker kun med filer og mapper i en kilde",

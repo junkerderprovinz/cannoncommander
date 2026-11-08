@@ -2154,6 +2154,25 @@
     "shot": "Posnetek zaslona {stamp}.{ext}",
     "made": "„{name}“ ustvarjeno"
   },
+  "places": {
+    "home": "Domača mapa",
+    "desktop": "Namizje",
+    "documents": "Dokumenti",
+    "downloads": "Prenosi",
+    "pictures": "Slike",
+    "music": "Glasba",
+    "videos": "Videoposnetki",
+    "recent": "Nedavno uporabljeno",
+    "drives": "Pogoni",
+    "eject": "Izvrzi",
+    "ejectLabel": "Izvrzi {name}",
+    "ejected": "{name} lahko zdaj varno odstranite",
+    "ejectedDisc": "{name} je izvržen",
+    "notMounted": "Še ni priklopljen, klik ga priklopi",
+    "arrived": "{name} je priključen",
+    "open": "Odpri",
+    "gone": "{name} je bil odstranjen, zdaj ste v {here}"
+  },
   "profiles": {
     "title": "Profili oken",
     "saved": "Shranjeno",
@@ -3718,6 +3737,7 @@
   },
   "side": {
     "bookmarks": "Bližnjice",
+    "places": "Mesta",
     "tree": "Drevo map",
     "addBookmark": "Dodaj trenutno mapo kot bližnjico",
     "unpin": "Odpni iz hitrega dostopa",
@@ -3735,7 +3755,15 @@
     "renameTitle": "Preimenuj bližnjico",
     "rename": "Preimenuj"
   },
+  "drives": {
+    "fixed": "Lokalni disk",
+    "removable": "Pogon USB",
+    "optical": "Pogon DVD",
+    "network": "Omrežni pogon",
+    "volume": "Nosilec {size}"
+  },
   "files": {
+    "network": "Omrežje",
     "server": "Strežnik",
     "thisPc": "Ta računalnik",
     "computer": "Računalnik",
@@ -3876,6 +3904,7 @@
     "deleteSelf": "Svojega računa ne morete izbrisati",
     "denied": "Za to nimate pravic",
     "desktopOnly": "To gre samo v namizni aplikaciji",
+    "ejectFailed": "Pogona zdaj ni mogoče izvreči. Morda je na njem še odprta datoteka",
     "fileManagerNotSet": "Računalnik spremembe ni sprejel",
     "disksAdminsOnly": "Posamezne diske in Cache vidijo samo skrbniki",
     "dragFailed": "Datotek ni bilo mogoče povleči ven",
@@ -3930,6 +3959,7 @@
       "few": "Sporočilo ima največ {n} znake",
       "other": "Sporočilo ima največ {n} znakov"
     },
+    "mountFailed": "Pogona ni bilo mogoče priklopiti",
     "nameChars": "Windows v imenu ne dovoli nobenega od teh znakov: < > : \" / \\ | ? *",
     "nameEnd": "V sistemu Windows se ime ne sme končati s piko ali presledkom",
     "nameLength": {
@@ -3975,6 +4005,7 @@
     "notText": "Ta datoteka ni besedilo",
     "notWindows1252": "Besedilo vsebuje znake, ki jih Windows-1252 ne more shraniti. Shranite ga kot UTF-8",
     "nothingToUndo": "Ničesar ni za razveljaviti",
+    "noVolume": "Tega pogona ni več",
     "officeCannotOpen": "Strežnik Office ne odpira datotek .{ext}",
     "oldNameTaken": "Staro ime je spet zasedeno",
     "outsideSources": "To gre samo z datotekami in mapami v viru",

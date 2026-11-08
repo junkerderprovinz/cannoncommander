@@ -2154,6 +2154,25 @@
     "shot": "Ekrano kopija {stamp}.{ext}",
     "made": "„{name}“ sukurtas"
   },
+  "places": {
+    "home": "Asmeninis aplankas",
+    "desktop": "Darbalaukis",
+    "documents": "Dokumentai",
+    "downloads": "Atsisiuntimai",
+    "pictures": "Paveikslėliai",
+    "music": "Muzika",
+    "videos": "Vaizdo įrašai",
+    "recent": "Neseniai naudoti",
+    "drives": "Diskai",
+    "eject": "Išimti",
+    "ejectLabel": "Išimti {name}",
+    "ejected": "{name} dabar galima saugiai ištraukti",
+    "ejectedDisc": "{name} išimtas",
+    "notMounted": "Dar neprijungtas, spustelėjimas jį prijungs",
+    "arrived": "{name} prijungtas",
+    "open": "Atverti",
+    "gone": "{name} ištrauktas, dabar esi {here}"
+  },
   "profiles": {
     "title": "Langų profiliai",
     "saved": "Įrašyta",
@@ -3718,6 +3737,7 @@
   },
   "side": {
     "bookmarks": "Nuorodos",
+    "places": "Vietos",
     "tree": "Aplankų medis",
     "addBookmark": "Sukurti nuorodą į esamą aplanką",
     "unpin": "Atsegti nuo sparčiosios prieigos",
@@ -3735,7 +3755,15 @@
     "renameTitle": "Pervardyti nuorodą",
     "rename": "Pervardyti"
   },
+  "drives": {
+    "fixed": "Vietinis diskas",
+    "removable": "USB diskas",
+    "optical": "DVD įrenginys",
+    "network": "Tinklo diskas",
+    "volume": "{size} tomas"
+  },
   "files": {
+    "network": "Tinklas",
     "server": "Serveris",
     "thisPc": "Šis kompiuteris",
     "computer": "Kompiuteris",
@@ -3876,6 +3904,7 @@
     "deleteSelf": "Savo paskyros ištrinti negali",
     "denied": "Tam neturi teisių",
     "desktopOnly": "Tai įmanoma tik darbalaukio programoje",
+    "ejectFailed": "Disko dabar negalima išimti. Gal jame dar atidarytas failas",
     "fileManagerNotSet": "Kompiuteris nepriėmė pakeitimo",
     "disksAdminsOnly": "Atskirus diskus ir Cache mato tik administratoriai",
     "dragFailed": "Failų nepavyko ištempti laukan",
@@ -3930,6 +3959,7 @@
       "many": "Žinutėje gali būti daugiausia {n} simbolio",
       "other": "Žinutėje gali būti daugiausia {n} simbolių"
     },
+    "mountFailed": "Disko nepavyko prijungti",
     "nameChars": "Windows neleidžia pavadinime nė vieno iš šių simbolių: < > : \" / \\ | ? *",
     "nameEnd": "Windows sistemoje pavadinimas negali baigtis tašku ar tarpu",
     "nameLength": {
@@ -3975,6 +4005,7 @@
     "notText": "Šis failas nėra tekstas",
     "notWindows1252": "Tekste yra simbolių, kurių Windows-1252 negali išsaugoti. Įrašyk jį kaip UTF-8",
     "nothingToUndo": "Nėra ko atšaukti",
+    "noVolume": "Šio disko nebėra",
     "officeCannotOpen": "Office serveris neatidaro .{ext} failų",
     "oldNameTaken": "Senas pavadinimas vėl užimtas",
     "outsideSources": "Tai veikia tik su failais ir aplankais šaltinyje",

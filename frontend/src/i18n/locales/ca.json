@@ -2087,6 +2087,25 @@
     "shot": "Captura {stamp}.{ext}",
     "made": "S'ha creat «{name}»"
   },
+  "places": {
+    "home": "Carpeta personal",
+    "desktop": "Escriptori",
+    "documents": "Documents",
+    "downloads": "Baixades",
+    "pictures": "Imatges",
+    "music": "Música",
+    "videos": "Vídeos",
+    "recent": "Usats recentment",
+    "drives": "Unitats",
+    "eject": "Expulsa",
+    "ejectLabel": "Expulsa {name}",
+    "ejected": "Ja podeu treure {name} amb seguretat",
+    "ejectedDisc": "S'ha expulsat {name}",
+    "notMounted": "Encara no està muntat, un clic el munta",
+    "arrived": "{name} ja és aquí",
+    "open": "Obre",
+    "gone": "S'ha tret {name}, ara sou a {here}"
+  },
   "profiles": {
     "title": "Perfils de finestra",
     "saved": "Desats",
@@ -3587,6 +3606,7 @@
   },
   "side": {
     "bookmarks": "Dreceres",
+    "places": "Llocs",
     "tree": "Arbre de carpetes",
     "addBookmark": "Crea una drecera a la carpeta actual",
     "unpin": "Treu de l'accés ràpid",
@@ -3604,7 +3624,15 @@
     "renameTitle": "Canvia el nom de la drecera",
     "rename": "Canvia el nom"
   },
+  "drives": {
+    "fixed": "Disc local",
+    "removable": "Unitat USB",
+    "optical": "Unitat de DVD",
+    "network": "Unitat de xarxa",
+    "volume": "Volum de {size}"
+  },
   "files": {
+    "network": "Xarxa",
     "server": "Servidor",
     "thisPc": "Aquest ordinador",
     "computer": "Ordinador",
@@ -3742,6 +3770,7 @@
     "deleteSelf": "No podeu suprimir el vostre propi compte",
     "denied": "No teniu permisos per a això",
     "desktopOnly": "Això només funciona a l'aplicació d'escriptori",
+    "ejectFailed": "Ara no es pot expulsar la unitat. Potser encara hi ha un fitxer obert",
     "fileManagerNotSet": "L'ordinador no ha acceptat el canvi",
     "disksAdminsOnly": "Els discs individuals i la Cache només els veuen els administradors",
     "dragFailed": "No s'han pogut arrossegar els fitxers a fora",
@@ -3793,6 +3822,7 @@
       "many": "El missatge té com a màxim {n} caràcters",
       "other": "El missatge té com a màxim {n} caràcters"
     },
+    "mountFailed": "No s'ha pogut muntar la unitat",
     "nameChars": "Windows no permet cap d'aquests caràcters en un nom: < > : \" / \\ | ? *",
     "nameEnd": "A Windows un nom no pot acabar amb un punt ni amb un espai",
     "nameLength": {
@@ -3837,6 +3867,7 @@
     "notText": "Aquest fitxer no és text",
     "notWindows1252": "El text té caràcters que el Windows-1252 no pot desar. Deseu-lo com a UTF-8",
     "nothingToUndo": "No hi ha res per desfer",
+    "noVolume": "Aquesta unitat ja no hi és",
     "officeCannotOpen": "El servidor Office no obre fitxers .{ext}",
     "oldNameTaken": "El nom antic torna a estar agafat",
     "outsideSources": "Això només funciona amb fitxers i carpetes dins d'un origen",

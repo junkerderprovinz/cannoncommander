@@ -37,6 +37,19 @@ describe('paths', () => {
     expect(typedPath('', linux)).toBe('/');
   });
 
+  it('writes a share on the network as Windows does and takes it typed so', () => {
+    expect(nativePath('/net/nas/daten/Filme', true)).toBe('\\\\nas\\daten\\Filme');
+    expect(nativePath('/net/nas', true)).toBe('\\\\nas');
+    expect(nativePath('/net', true)).toBe('\\\\');
+    expect(nativePath('/net/nas/daten', false)).toBe('/net/nas/daten');
+    expect(typedPath('\\\\nas\\daten\\Filme\\', windows)).toBe('/net/nas/daten/Filme');
+    expect(typedPath('\\\\192.168.10.10\\code', windows)).toBe('/net/192.168.10.10/code');
+    expect(typedPath('\\\\nas', windows)).toBe('/net/nas');
+    expect(typedPath('\\\\', windows)).toBe('/net');
+    expect(typedPath('//nas/daten', windows)).toBe('/net/nas/daten');
+    expect(typedPath('file://nas/daten/a%20b', windows)).toBe('/net/nas/daten/a b');
+  });
+
   it('leaves a path inside an archive as it is typed', () => {
     expect(typedPath('/mnt/user/a.zip::/docs', linux)).toBe('/mnt/user/a.zip::/docs');
   });
