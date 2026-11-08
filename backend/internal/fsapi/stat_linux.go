@@ -93,3 +93,7 @@ func modeOf(m uint32) fs.FileMode {
 	}
 	return mode
 }
+
+// entryStat asks statx anyway, since the folder listing of Linux brings
+// neither times nor the birth time along.
+func entryStat(real string, _ fs.DirEntry) (fileStat, error) { return lstatFile(real) }

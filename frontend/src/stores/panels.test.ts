@@ -214,4 +214,11 @@ describe('a folder that is not there', () => {
     expect(F.T(0).path).toBe('/mnt/user');
     expect(vi.mocked(api.fsTree).mock.calls.filter(([p]) => p === '/mnt/user/weg').length).toBeLessThanOrEqual(1);
   });
+
+  it('follows a shortcut to a folder there, as Explorer does', async () => {
+    const F = await panels();
+    await F.go('/mnt/user/downloads');
+    await F.open(0, { name: 'Fotos.lnk', dir: false, shortcut: { kind: 'lnk', target: 'D:/Bilder', path: '/mnt/user/fotos', dir: true } });
+    expect(F.T().path).toBe('/mnt/user/fotos');
+  });
 });

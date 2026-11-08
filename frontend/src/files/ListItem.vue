@@ -6,14 +6,15 @@ import { computed } from 'vue';
 import { extend } from '@/core/extend';
 import { fmtListDate, fmtSize } from '@/core/format';
 import { G, glyphOf } from '@/core/glyphs';
+import { windowsPaths } from '@/core/host';
 import { prefs } from '@/core/prefs';
 import { Render } from '@/core/Render';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import type { RowMark as Mark } from '@/stores/panels';
 import { COL, Columns } from './columns';
-import type { Entry } from './entries';
-import { join } from './paths';
+import { type Entry, isHidden } from './entries';
+import { join, nativePath } from './paths';
 import RenameField from './RenameField.vue';
 import SizeText from './SizeText.vue';
 import Thumb from './Thumb.vue';
@@ -30,11 +31,12 @@ const kind = computed(() => (['details', 'compact'].includes(props.view) ? 'row'
     : props.view === 'content' ? 'content' : props.view === 'drives' ? 'drive' : 'tile'));
 const cls = computed(() => [
   { row: 'row', flow: 'row fitem', content: 'row citem', tile: 'row gcard', drive: 'row dcard' }[kind.value],
-  { dir: props.k.dir, hidden: props.k.hidden || props.k.name.startsWith('.'), marked: props.marked, cursor: props.cursor, cut: props.cut, fresh: glows.value },
+  { dir: props.k.dir, hidden: isHidden(props.k), marked: props.marked, cursor: props.cursor, cut: props.cut, fresh: glows.value },
 ]);
 const folder = computed(() => props.k.at || props.path);
 const shownName = computed(() => {
   const k = props.k;
+  if (k.label) return k.label;
   return prefs.showExt || k.dir || !k.name.includes('.', 1) ? k.name : k.name.slice(0, k.name.lastIndexOf('.'));
 });
 const objects = computed(() => (props.k.dir ? t('files.objShort', { n: props.k.items ?? 0 }) : fmtSize(props.k.size)));
@@ -60,7 +62,7 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
           <span class="glyph"><RowMark v-if="marked || boxes" :on="marked" /><G v-else :n="glyphOf(k)" /></span><RenameField v-if="renaming" :name="k.name" :dir="k.dir" /><span v-else class="t">{{ shownName }}</span>
           <Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" />
           <span v-if="k.at && k.at !== path" class="link">{{ t('files.foundIn', { path: k.at.slice(path.length + 1) }) }}</span>
-          <span v-if="k.link" class="link">→ {{ k.link }}</span>
+          <span v-if="k.link" class="link">→ {{ nativePath(k.link, windowsPaths()) }}</span>
           <Pill v-if="k.archive" tone="state">{{ t('files.archive') }}</Pill>
           <Pill v-if="mark" :tone="toneOf(mark.tone)">{{ mark.label }}</Pill>
         </span>

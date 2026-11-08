@@ -1567,6 +1567,27 @@
     "job": "Carregar: {what}",
     "jobFrom": "Carregar: {what} de {host}"
   },
+  "filesystem": {
+    "systemFiles": "Mostrar ficheiros de sistema protegidos",
+    "cloud": {
+      "online": "Disponível apenas online",
+      "local": "Disponível neste dispositivo",
+      "pinned": "Sempre disponível neste dispositivo"
+    },
+    "keep": "Manter sempre neste dispositivo",
+    "free": "Libertar espaço",
+    "kept": "Fica neste dispositivo: {objects}",
+    "freed": "Espaço libertado para {objects}",
+    "createShortcut": "Criar atalho",
+    "shortcutName": "{name} - atalho",
+    "new": "Novo",
+    "shortcut": "Atalho",
+    "newShortcut": "Novo atalho",
+    "target": "Destino",
+    "targetTip": "O caminho do ficheiro ou da pasta tal como o Windows o escreve, com a unidade à frente.",
+    "name": "Nome",
+    "noTarget": "Indique para onde o atalho deve levar"
+  },
   "gather": {
     "title": "Agrupar pasta",
     "folder": "Pasta",
@@ -2164,7 +2185,15 @@
       "file": "Ficheiro"
     },
     "linkToDir": "Ligação para uma pasta",
-    "linkToFile": "Ligação para um ficheiro"
+    "linkToFile": "Ligação para um ficheiro",
+    "attributes": "Atributos",
+    "flags": {
+      "readOnly": "Só de leitura",
+      "hidden": "Oculto",
+      "archive": "Pronto para arquivar"
+    },
+    "flagsSaved": "Atributos guardados para {objects}",
+    "insideFlagsTip": "Aplica os atributos também a cada ficheiro e pasta lá dentro."
   },
   "quicklook": {
     "title": "Vista rápida",
@@ -3716,6 +3745,7 @@
     "groupExists": "Esse grupo já existe",
     "groupNameMissing": "Dê um nome ao grupo",
     "inArchive": "Isto está dentro de um arquivo",
+    "inCloud": "O ficheiro está apenas na nuvem. Abra-o uma vez e passa a estar também neste dispositivo",
     "inTrash": "Isto já está na reciclagem",
     "intoItself": "Uma pasta não pode ir para dentro de si própria",
     "ioError": "O disco comunicou um erro de leitura ou escrita",
@@ -3753,12 +3783,15 @@
       "many": "A mensagem tem no máximo {n} carateres",
       "other": "A mensagem tem no máximo {n} carateres"
     },
+    "nameChars": "O Windows não permite nenhum destes caracteres num nome: < > : \" / \\ | ? *",
+    "nameEnd": "No Windows um nome não pode terminar com ponto nem espaço",
     "nameLength": {
       "one": "O nome tem no máximo {n} caráter",
       "many": "O nome tem no máximo {n} carateres",
       "other": "O nome tem no máximo {n} carateres"
     },
     "namePasswordNeeded": "São precisos nome e palavra-passe",
+    "nameReserved": "O Windows reserva este nome para um dispositivo, escolha outro",
     "nameTaken": "Esse nome já existe aqui",
     "nameTooLong": "O nome é demasiado longo para o sistema de ficheiros",
     "noAppDialog": "Este computador não tem uma caixa de diálogo própria para escolher uma aplicação",
@@ -3779,6 +3812,7 @@
     "noSpaceForFile": "Não há espaço livre suficiente para este ficheiro",
     "noSuchUser": "Esse utilizador não existe",
     "noSystemTrash": "Esta unidade não tem reciclagem. É melhor eliminá-lo definitivamente",
+    "noTemplate": "Este modelo já não existe",
     "noToken": "Esse token não existe",
     "noUserNamed": "O utilizador {name} não existe",
     "notAFile": "Isto não é um ficheiro normal",
@@ -3868,6 +3902,7 @@
     "uploadRunning": "Está a ser carregado um ficheiro com este nome",
     "uploadsOneFolder": "Os carregamentos só funcionam com uma ligação para uma pasta",
     "userPasswordElsewhere": "Este utilizador inicia sessão através de {method}, a palavra-passe está lá",
+    "windowsOnly": "Isto só existe no Windows",
     "wrongLogin": "O nome ou a palavra-passe não estão certos"
   },
   "visit": {

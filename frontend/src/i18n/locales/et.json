@@ -1512,6 +1512,27 @@
     "job": "Laadi: {what}",
     "jobFrom": "Laadi: {what} ({host})"
   },
+  "filesystem": {
+    "systemFiles": "Näita kaitstud süsteemifaile",
+    "cloud": {
+      "online": "Saadaval ainult võrgus",
+      "local": "Saadaval selles seadmes",
+      "pinned": "Alati saadaval selles seadmes"
+    },
+    "keep": "Hoia alati selles seadmes",
+    "free": "Vabasta ruumi",
+    "kept": "Jääb sellesse seadmesse: {objects}",
+    "freed": "Ruum vabastatud: {objects}",
+    "createShortcut": "Loo otsetee",
+    "shortcutName": "{name} - otsetee",
+    "new": "Uus",
+    "shortcut": "Otsetee",
+    "newShortcut": "Uus otsetee",
+    "target": "Sihtkoht",
+    "targetTip": "Faili või kausta tee nii, nagu Windows selle kirjutab, ketas ees.",
+    "name": "Nimi",
+    "noTarget": "Palun märgi, kuhu otsetee peab viima"
+  },
   "gather": {
     "title": "Koonda kaust",
     "folder": "Kaust",
@@ -2093,7 +2114,15 @@
       "file": "Fail"
     },
     "linkToDir": "Link kaustale",
-    "linkToFile": "Link failile"
+    "linkToFile": "Link failile",
+    "attributes": "Atribuudid",
+    "flags": {
+      "readOnly": "Kirjutuskaitstud",
+      "hidden": "Peidetud",
+      "archive": "Arhiveerimiseks valmis"
+    },
+    "flagsSaved": "Atribuudid salvestatud: {objects}",
+    "insideFlagsTip": "Määrab atribuudid ka igale failile ja kaustale selle all."
   },
   "quicklook": {
     "title": "Kiirvaade",
@@ -3582,6 +3611,7 @@
     "groupExists": "See rühm on juba olemas",
     "groupNameMissing": "Anna rühmale nimi",
     "inArchive": "See on arhiivis",
+    "inCloud": "Fail on ainult pilves. Ava see korra ja see on ka selles seadmes",
     "inTrash": "See on juba prügikastis",
     "intoItself": "Kausta ei saa iseendasse panna",
     "ioError": "Ketas teatas lugemis- või kirjutamisveast",
@@ -3616,11 +3646,14 @@
       "one": "Sõnumis on kuni {n} märk",
       "other": "Sõnumis on kuni {n} märki"
     },
+    "nameChars": "Windows ei luba nimes ühtki neist märkidest: < > : \" / \\ | ? *",
+    "nameEnd": "Windowsis ei tohi nimi lõppeda punkti ega tühikuga",
     "nameLength": {
       "one": "Nimes on kuni {n} märk",
       "other": "Nimes on kuni {n} märki"
     },
     "namePasswordNeeded": "Vaja on nii nime kui ka parooli",
+    "nameReserved": "Windows hoiab selle nime seadme jaoks, vali palun muu nimi",
     "nameTaken": "See nimi on siin juba olemas",
     "nameTooLong": "Nimi on failisüsteemi jaoks liiga pikk",
     "noAppDialog": "Sellel arvutil pole rakenduse valimiseks oma dialoogi",
@@ -3641,6 +3674,7 @@
     "noSpaceForFile": "Selle faili jaoks pole piisavalt vaba ruumi",
     "noSuchUser": "Sellist kasutajat pole",
     "noSystemTrash": "Sellel draivil pole prügikasti. Kustuta see pigem jäädavalt",
+    "noTemplate": "Seda malli enam pole",
     "noToken": "Sellist luba pole",
     "noUserNamed": "Kasutajat {name} pole olemas",
     "notAFile": "See pole tavaline fail",
@@ -3729,6 +3763,7 @@
     "uploadRunning": "Sama nimega faili laaditakse praegu üles",
     "uploadsOneFolder": "Üleslaadimine töötab ainult ühele kaustale viitava lingiga",
     "userPasswordElsewhere": "See kasutaja logib sisse teenuse {method} kaudu, parool on seal",
+    "windowsOnly": "See on olemas ainult Windowsis",
     "wrongLogin": "Nimi või parool pole õige"
   },
   "visit": {

@@ -1457,6 +1457,27 @@
     "job": "가져오기: {what}",
     "jobFrom": "가져오기: {host}의 {what}"
   },
+  "filesystem": {
+    "systemFiles": "보호된 시스템 파일 표시",
+    "cloud": {
+      "online": "온라인에서만 사용 가능",
+      "local": "이 장치에서 사용 가능",
+      "pinned": "항상 이 장치에서 사용 가능"
+    },
+    "keep": "항상 이 장치에 유지",
+    "free": "공간 확보",
+    "kept": "이 장치에 유지됨: {objects}",
+    "freed": "{objects}의 공간을 확보했습니다",
+    "createShortcut": "바로 가기 만들기",
+    "shortcutName": "{name} - 바로 가기",
+    "new": "새로 만들기",
+    "shortcut": "바로 가기",
+    "newShortcut": "새 바로 가기",
+    "target": "대상",
+    "targetTip": "Windows가 쓰는 방식의 파일 또는 폴더 경로로, 드라이브를 앞에 씁니다.",
+    "name": "이름",
+    "noTarget": "바로 가기가 연결될 위치를 입력하세요"
+  },
   "gather": {
     "title": "폴더 모으기",
     "folder": "폴더",
@@ -2022,7 +2043,15 @@
       "file": "파일"
     },
     "linkToDir": "폴더 링크",
-    "linkToFile": "파일 링크"
+    "linkToFile": "파일 링크",
+    "attributes": "특성",
+    "flags": {
+      "readOnly": "읽기 전용",
+      "hidden": "숨김",
+      "archive": "보관 준비됨"
+    },
+    "flagsSaved": "{objects}의 특성을 저장했습니다",
+    "insideFlagsTip": "아래의 모든 파일과 폴더에도 특성을 적용합니다."
   },
   "quicklook": {
     "title": "빠른 보기",
@@ -3448,6 +3477,7 @@
     "groupExists": "이미 있는 그룹입니다",
     "groupNameMissing": "그룹 이름을 정하세요",
     "inArchive": "압축 파일 안에 있는 항목입니다",
+    "inCloud": "파일이 클라우드에만 있습니다. 한 번 열면 이 장치에도 저장됩니다",
     "inTrash": "이미 휴지통에 있습니다",
     "intoItself": "폴더를 자기 자신 안에 넣을 수 없습니다",
     "ioError": "디스크가 읽기 또는 쓰기 오류를 보고했습니다",
@@ -3479,10 +3509,13 @@
     "messageLength": {
       "other": "메시지는 최대 {n}자입니다"
     },
+    "nameChars": "Windows에서는 이름에 다음 문자를 쓸 수 없습니다: < > : \" / \\ | ? *",
+    "nameEnd": "Windows에서는 이름이 마침표나 공백으로 끝날 수 없습니다",
     "nameLength": {
       "other": "이름은 최대 {n}자입니다"
     },
     "namePasswordNeeded": "이름과 비밀번호가 모두 필요합니다",
+    "nameReserved": "Windows가 이 이름을 장치용으로 예약해 두었습니다. 다른 이름을 고르세요",
     "nameTaken": "여기에 같은 이름이 이미 있습니다",
     "nameTooLong": "이름이 파일 시스템에 비해 너무 깁니다",
     "noAppDialog": "이 컴퓨터에는 앱을 고르는 자체 대화 상자가 없습니다",
@@ -3503,6 +3536,7 @@
     "noSpaceForFile": "이 파일을 둘 공간이 부족합니다",
     "noSuchUser": "이 사용자가 없습니다",
     "noSystemTrash": "이 드라이브에는 휴지통이 없습니다. 영구 삭제하세요",
+    "noTemplate": "이 템플릿은 더 이상 없습니다",
     "noToken": "이 토큰이 없습니다",
     "noUserNamed": "{name} 사용자가 없습니다",
     "notAFile": "일반 파일이 아닙니다",
@@ -3590,6 +3624,7 @@
     "uploadRunning": "같은 이름의 파일이 지금 업로드되고 있습니다",
     "uploadsOneFolder": "업로드는 폴더 하나를 가리키는 링크에서만 됩니다",
     "userPasswordElsewhere": "이 사용자는 {method} 방식으로 로그인하므로 비밀번호는 그쪽에서 관리합니다",
+    "windowsOnly": "Windows에서만 쓸 수 있습니다",
     "wrongLogin": "이름 또는 비밀번호가 맞지 않습니다"
   },
   "visit": {

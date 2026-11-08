@@ -1512,6 +1512,27 @@
     "job": "Letöltés: {what}",
     "jobFrom": "Letöltés: {what}, innen: {host}"
   },
+  "filesystem": {
+    "systemFiles": "Védett rendszerfájlok megjelenítése",
+    "cloud": {
+      "online": "Csak online érhető el",
+      "local": "Elérhető ezen az eszközön",
+      "pinned": "Mindig elérhető ezen az eszközön"
+    },
+    "keep": "Mindig tartsa meg ezen az eszközön",
+    "free": "Hely felszabadítása",
+    "kept": "Ezen az eszközön marad: {objects}",
+    "freed": "Hely felszabadítva: {objects}",
+    "createShortcut": "Parancsikon létrehozása",
+    "shortcutName": "{name} - parancsikon",
+    "new": "Új",
+    "shortcut": "Parancsikon",
+    "newShortcut": "Új parancsikon",
+    "target": "Cél",
+    "targetTip": "A fájl vagy mappa elérési útja úgy, ahogy a Windows írja, elöl a meghajtóval.",
+    "name": "Név",
+    "noTarget": "Adja meg, hová vezessen a parancsikon"
+  },
   "gather": {
     "title": "Mappa összegyűjtése",
     "folder": "Mappa",
@@ -2093,7 +2114,15 @@
       "file": "Fájl"
     },
     "linkToDir": "Hivatkozás mappára",
-    "linkToFile": "Hivatkozás fájlra"
+    "linkToFile": "Hivatkozás fájlra",
+    "attributes": "Attribútumok",
+    "flags": {
+      "readOnly": "Írásvédett",
+      "hidden": "Rejtett",
+      "archive": "Archiválásra kész"
+    },
+    "flagsSaved": "Attribútumok mentve: {objects}",
+    "insideFlagsTip": "Az attribútumokat minden alatta lévő fájlra és mappára is beállítja."
   },
   "quicklook": {
     "title": "Gyorsnézet",
@@ -3582,6 +3611,7 @@
     "groupExists": "Ez a csoport már létezik",
     "groupNameMissing": "Adjon nevet a csoportnak",
     "inArchive": "Ez egy archívumban van",
+    "inCloud": "A fájl csak a felhőben van. Nyissa meg egyszer, és ezen az eszközön is meglesz",
     "inTrash": "Ez már a kukában van",
     "intoItself": "Egy mappa nem kerülhet önmagába",
     "ioError": "A lemez olvasási vagy írási hibát jelzett",
@@ -3616,11 +3646,14 @@
       "one": "Az üzenet legfeljebb {n} karakteres",
       "other": "Az üzenet legfeljebb {n} karakteres"
     },
+    "nameChars": "A Windows nem enged ezek közül egyetlen karaktert sem a névben: < > : \" / \\ | ? *",
+    "nameEnd": "Windowson a név nem végződhet ponttal vagy szóközzel",
     "nameLength": {
       "one": "A név legfeljebb {n} karakteres",
       "other": "A név legfeljebb {n} karakteres"
     },
     "namePasswordNeeded": "Név és jelszó is kell",
+    "nameReserved": "Ezt a nevet a Windows egy eszköznek tartja fenn, válasszon másikat",
     "nameTaken": "Ez a név itt már foglalt",
     "nameTooLong": "A név túl hosszú a fájlrendszernek",
     "noAppDialog": "Ennek a számítógépnek nincs saját párbeszédablaka alkalmazás választásához",
@@ -3641,6 +3674,7 @@
     "noSpaceForFile": "Nincs elég szabad hely ehhez a fájlhoz",
     "noSuchUser": "Ez a felhasználó nem létezik",
     "noSystemTrash": "Ezen a meghajtón nincs kuka. Inkább törölje véglegesen",
+    "noTemplate": "Ez a sablon már nem létezik",
     "noToken": "Ez a token nem létezik",
     "noUserNamed": "A(z) {name} felhasználó nem létezik",
     "notAFile": "Ez nem közönséges fájl",
@@ -3729,6 +3763,7 @@
     "uploadRunning": "Egy ilyen nevű fájl feltöltése épp folyamatban van",
     "uploadsOneFolder": "Feltöltés csak egyetlen mappára mutató hivatkozásnál működik",
     "userPasswordElsewhere": "Ez a felhasználó ezen keresztül lép be: {method}, a jelszó ott van",
+    "windowsOnly": "Ez csak Windowson létezik",
     "wrongLogin": "A név vagy a jelszó nem stimmel"
   },
   "visit": {

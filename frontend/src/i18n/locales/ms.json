@@ -1457,6 +1457,27 @@
     "job": "Muat: {what}",
     "jobFrom": "Muat: {what} dari {host}"
   },
+  "filesystem": {
+    "systemFiles": "Tunjukkan fail sistem yang dilindungi",
+    "cloud": {
+      "online": "Tersedia dalam talian sahaja",
+      "local": "Tersedia pada peranti ini",
+      "pinned": "Sentiasa tersedia pada peranti ini"
+    },
+    "keep": "Sentiasa simpan pada peranti ini",
+    "free": "Kosongkan ruang",
+    "kept": "Kekal pada peranti ini: {objects}",
+    "freed": "Ruang dikosongkan untuk {objects}",
+    "createShortcut": "Cipta pintasan",
+    "shortcutName": "{name} - pintasan",
+    "new": "Baharu",
+    "shortcut": "Pintasan",
+    "newShortcut": "Pintasan baharu",
+    "target": "Sasaran",
+    "targetTip": "Laluan fail atau folder seperti yang ditulis Windows, dengan pemacu di hadapan.",
+    "name": "Nama",
+    "noTarget": "Sila nyatakan ke mana pintasan harus menuju"
+  },
   "gather": {
     "title": "Himpunkan folder",
     "folder": "Folder",
@@ -2022,7 +2043,15 @@
       "file": "Fail"
     },
     "linkToDir": "Pautan ke folder",
-    "linkToFile": "Pautan ke fail"
+    "linkToFile": "Pautan ke fail",
+    "attributes": "Atribut",
+    "flags": {
+      "readOnly": "Baca sahaja",
+      "hidden": "Tersembunyi",
+      "archive": "Sedia untuk diarkibkan"
+    },
+    "flagsSaved": "Atribut disimpan untuk {objects}",
+    "insideFlagsTip": "Turut menetapkan atribut bagi setiap fail dan folder di bawahnya."
   },
   "quicklook": {
     "title": "Lihat pantas",
@@ -3448,6 +3477,7 @@
     "groupExists": "Kumpulan ini sudah ada",
     "groupNameMissing": "Beri nama kepada kumpulan ini",
     "inArchive": "Ini berada dalam arkib",
+    "inCloud": "Fail ini hanya ada dalam awan. Buka sekali dan ia akan ada pada peranti ini juga",
     "inTrash": "Ini sudah berada dalam tong sampah",
     "intoItself": "Folder tidak boleh masuk ke dalam dirinya sendiri",
     "ioError": "Cakera melaporkan ralat baca atau tulis",
@@ -3479,10 +3509,13 @@
     "messageLength": {
       "other": "Mesej boleh mempunyai paling banyak {n} aksara"
     },
+    "nameChars": "Windows tidak membenarkan mana-mana aksara ini dalam nama: < > : \" / \\ | ? *",
+    "nameEnd": "Dalam Windows nama tidak boleh berakhir dengan titik atau ruang",
     "nameLength": {
       "other": "Nama boleh mempunyai paling banyak {n} aksara"
     },
     "namePasswordNeeded": "Nama dan kata laluan kedua-duanya diperlukan",
+    "nameReserved": "Windows menyimpan nama ini untuk peranti, sila pilih nama lain",
     "nameTaken": "Nama ini sudah ada di sini",
     "nameTooLong": "Nama ini terlalu panjang untuk sistem fail",
     "noAppDialog": "Komputer ini tiada dialog sendiri untuk memilih aplikasi",
@@ -3503,6 +3536,7 @@
     "noSpaceForFile": "Ruang kosong tidak mencukupi untuk fail ini",
     "noSuchUser": "Pengguna ini tidak wujud",
     "noSystemTrash": "Pemacu ini tiada tong sampah. Lebih baik padam terus",
+    "noTemplate": "Templat ini sudah tiada",
     "noToken": "Token ini tidak wujud",
     "noUserNamed": "Pengguna {name} tidak wujud",
     "notAFile": "Ini bukan fail biasa",
@@ -3590,6 +3624,7 @@
     "uploadRunning": "Fail dengan nama ini sedang dimuat naik",
     "uploadsOneFolder": "Muat naik hanya boleh untuk pautan ke satu folder",
     "userPasswordElsewhere": "Pengguna ini log masuk melalui {method}, kata laluannya disimpan di sana",
+    "windowsOnly": "Ini hanya ada dalam Windows",
     "wrongLogin": "Nama atau kata laluan tidak betul"
   },
   "visit": {

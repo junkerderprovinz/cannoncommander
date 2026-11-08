@@ -13,3 +13,5 @@ func sysDetails(info fs.FileInfo, st *fileStat) {
 		st.ids, st.uid, st.gid = true, s.Uid, s.Gid
 	}
 }
+
+func entryStat(real string, _ fs.DirEntry) (fileStat, error) { return lstatFile(real) }

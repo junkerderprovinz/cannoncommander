@@ -1622,6 +1622,27 @@
     "job": "Stahování: {what}",
     "jobFrom": "Stahování: {what} z {host}"
   },
+  "filesystem": {
+    "systemFiles": "Zobrazit chráněné systémové soubory",
+    "cloud": {
+      "online": "Dostupné jen online",
+      "local": "Dostupné v tomto zařízení",
+      "pinned": "Vždy dostupné v tomto zařízení"
+    },
+    "keep": "Vždy ponechat v tomto zařízení",
+    "free": "Uvolnit místo",
+    "kept": "Zůstane v tomto zařízení: {objects}",
+    "freed": "Místo uvolněno pro {objects}",
+    "createShortcut": "Vytvořit zástupce",
+    "shortcutName": "{name} - zástupce",
+    "new": "Nový",
+    "shortcut": "Zástupce",
+    "newShortcut": "Nový zástupce",
+    "target": "Cíl",
+    "targetTip": "Cesta k souboru nebo složce tak, jak ji píše Windows, s jednotkou na začátku.",
+    "name": "Název",
+    "noTarget": "Zadejte prosím, kam má zástupce vést"
+  },
   "gather": {
     "title": "Sloučit složku",
     "folder": "Složka",
@@ -2235,7 +2256,15 @@
       "file": "Soubor"
     },
     "linkToDir": "Odkaz na složku",
-    "linkToFile": "Odkaz na soubor"
+    "linkToFile": "Odkaz na soubor",
+    "attributes": "Atributy",
+    "flags": {
+      "readOnly": "Jen pro čtení",
+      "hidden": "Skrytý",
+      "archive": "Připraveno k archivaci"
+    },
+    "flagsSaved": "Atributy uloženy pro {objects}",
+    "insideFlagsTip": "Nastaví atributy i pro každý soubor a složku uvnitř."
   },
   "quicklook": {
     "title": "Rychlý náhled",
@@ -3850,6 +3879,7 @@
     "groupExists": "Tato skupina už existuje",
     "groupNameMissing": "Pojmenujte skupinu",
     "inArchive": "To leží v archivu",
+    "inCloud": "Soubor je jen v cloudu. Jednou ho otevřete a bude i v tomto zařízení",
     "inTrash": "To už je v koši",
     "intoItself": "Složka nemůže do sebe samé",
     "ioError": "Disk ohlásil chybu čtení nebo zápisu",
@@ -3890,6 +3920,8 @@
       "many": "Zpráva má nejvýš {n} znaku",
       "other": "Zpráva má nejvýš {n} znaků"
     },
+    "nameChars": "Windows v názvu nepovoluje žádný z těchto znaků: < > : \" / \\ | ? *",
+    "nameEnd": "Ve Windows nesmí název končit tečkou ani mezerou",
     "nameLength": {
       "one": "Název má nejvýš {n} znak",
       "few": "Název má nejvýš {n} znaky",
@@ -3897,6 +3929,7 @@
       "other": "Název má nejvýš {n} znaků"
     },
     "namePasswordNeeded": "Je potřeba jméno i heslo",
+    "nameReserved": "Toto jméno má Windows vyhrazené pro zařízení, zvolte prosím jiné",
     "nameTaken": "Tento název tu už existuje",
     "nameTooLong": "Název je pro systém souborů příliš dlouhý",
     "noAppDialog": "Tento počítač nemá vlastní dialog pro výběr aplikace",
@@ -3917,6 +3950,7 @@
     "noSpaceForFile": "Pro tento soubor není dost volného místa",
     "noSuchUser": "Tento uživatel neexistuje",
     "noSystemTrash": "Tento disk nemá koš. Smažte to raději trvale",
+    "noTemplate": "Tato šablona už neexistuje",
     "noToken": "Tento token neexistuje",
     "noUserNamed": "Uživatel {name} neexistuje",
     "notAFile": "To není běžný soubor",
@@ -4007,6 +4041,7 @@
     "uploadRunning": "Soubor s tímto názvem se právě nahrává",
     "uploadsOneFolder": "Nahrávání funguje jen u odkazu na jednu složku",
     "userPasswordElsewhere": "Tento uživatel se přihlašuje přes {method}, heslo je tam",
+    "windowsOnly": "To je jen ve Windows",
     "wrongLogin": "Jméno nebo heslo nesouhlasí"
   },
   "visit": {

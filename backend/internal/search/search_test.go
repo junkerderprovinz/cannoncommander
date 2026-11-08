@@ -60,6 +60,7 @@ func newFixture(t *testing.T) *fixture {
 	put(t, filepath.Join(share, "filme", "Sintel (2010)", "poster.jpg"), "jpg", 0)
 	put(t, filepath.Join(share, "filme", "Serie", "Serie.S01E02.mkv"), "mkv", 0)
 	put(t, filepath.Join(share, "filme", ".versteckt", "geheim.mkv"), "mkv", 0)
+	testutil.Hide(t, filepath.Join(share, "filme", ".versteckt"))
 	put(t, filepath.Join(share, "fotos", "2025", "IMG_0002.jpg"), "a", 0)
 	put(t, filepath.Join(share, "fotos", "2025", "IMG_10.jpg"), "b", 0)
 	put(t, filepath.Join(share, "fotos", "2025", "IMG_9.jpg"), "c", 0)
