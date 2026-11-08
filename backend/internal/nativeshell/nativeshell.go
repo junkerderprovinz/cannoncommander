@@ -15,6 +15,9 @@ var (
 	// ErrUnknownAction is returned for an action that does not fit the
 	// files it should run on.
 	ErrUnknownAction = errors.New("no such action for these files")
+	// ErrNotInFront is returned when a menu should open over the app's
+	// window while another program's window is in front.
+	ErrNotInFront = errors.New("the app's window is not in front")
 )
 
 // Entry is a row of the system's menu that another program put there, as

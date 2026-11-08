@@ -28,7 +28,7 @@ var contract []byte
 // Routes registers the contract and the handlers that exist.
 func Routes(r *v1.Router) {
 	r.Contract("fsapi", contract)
-	h := handlers{fs: r.Deps().FS, index: r.Deps().Index, thumbs: previewThumbs{}}
+	h := handlers{fs: r.Deps().FS, index: r.Deps().Index, thumbs: withSystemThumbs(previewThumbs{})}
 	r.Handle("GET /fs/list", h.list)
 	r.Handle("GET /fs/tree", h.tree)
 	r.Handle("GET /fs/stat", h.stat)

@@ -91,8 +91,6 @@ const (
 	afterInvoke = 10 * time.Second
 )
 
-var errNotInFront = errors.New("the app's window is not in front")
-
 // errCancelledByUser is what a row returns when the person closes the
 // dialog it opened, such as the prompt for administrator rights.
 var errCancelledByUser = winshell.HRESULT(0x800704c7)
@@ -166,7 +164,7 @@ func NativeMenu() bool { return true }
 func ShowMenu(files []string, o MenuOptions) ([]Entry, error) {
 	owner := winshell.Owner()
 	if owner == 0 {
-		return nil, errNotInFront
+		return nil, ErrNotInFront
 	}
 	menuMu.Lock()
 	defer menuMu.Unlock()

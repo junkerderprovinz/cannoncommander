@@ -100,6 +100,14 @@ tags:
       offers for the file, as its own file manager lists them under Open
       with: Explorer's on Windows, Launch Services on a Mac and the desktop
       entries for the file's type on Linux.
+  - name: shell
+    description: |
+      What the computer's own file manager offers for files, only in the
+      desktop app, which runs on the user's own computer: Explorer's context
+      menu and properties dialog on Windows, the actions other file managers
+      add on Linux, starting a program as administrator, and the system's
+      icons. The rows other programs put into the menu are kept, so a person
+      can hide the ones they never want to see.
   - name: launch
     description: |
       Opening a file the way a double click in the computer's own file
@@ -5560,6 +5568,356 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
       tags: [openwith]
+  /shell:
+    get:
+      operationId: shellOffers
+      summary: What the computer's file manager offers here
+      description: |
+        menu is native where the system draws its own context menu, as
+        Windows does, and actions where the app lists what other file
+        managers add. runAs lists the file types the computer starts as
+        administrator.
+      responses:
+        "200":
+          description: What is offered.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [menu, properties, runAs]
+                properties:
+                  menu:
+                    type: string
+                    enum: [native, actions]
+                  properties:
+                    type: boolean
+                  runAs:
+                    type: array
+                    items:
+                      type: string
+                      example: .exe
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/ShellDesktopOnly"
+      tags: [shell]
+  /shell/menu:
+    post:
+      operationId: shellMenu
+      summary: Show the system's context menu
+      description: |
+        Shows the computer's own menu for the items, which share a folder,
+        over the window at x and y, counted in pixels of the screen from the
+        top left of the window's inside. The rows the person hid are left
+        out. The answer comes once the menu has closed and the picked row
+        has started. extended adds the rows Windows shows only with Shift.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths, x, y]
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+                  example: [/C/Users/jdp/Documents/notes.txt]
+                x:
+                  type: integer
+                y:
+                  type: integer
+                extended:
+                  type: boolean
+      responses:
+        "204":
+          description: The menu has closed.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), a computer without a menu of its own (noSystemMenu), or no such item.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: Another program's window is in front (windowNotInFront).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          $ref: "#/components/responses/ShellFailed"
+      tags: [shell]
+  /shell/actions:
+    get:
+      operationId: shellActions
+      summary: List what other file managers add for the items
+      description: |
+        The Dolphin service menus, Nemo actions, Nautilus scripts and
+        Thunar custom actions that fit the items, without the hidden ones.
+        A computer that draws its own menu has none.
+      parameters:
+        - name: path
+          in: query
+          required: true
+          description: An item, once for each.
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+      responses:
+        "200":
+          description: The actions.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [actions]
+                properties:
+                  actions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ShellAction"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ShellDesktopOnly"
+        "502":
+          $ref: "#/components/responses/ShellFailed"
+      tags: [shell]
+    post:
+      operationId: shellRunAction
+      summary: Run an action another file manager adds
+      description: |
+        The action has to be one the list names for the items. It runs the
+        way its own file manager runs it, never through a shell.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths, key]
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+                key:
+                  type: string
+      responses:
+        "204":
+          description: The action has started.
+        "400":
+          description: No such action for the items (unknownAction), or a bad request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ShellDesktopOnly"
+        "502":
+          $ref: "#/components/responses/ShellFailed"
+      tags: [shell]
+  /shell/properties:
+    post:
+      operationId: shellProperties
+      summary: Open the system's properties dialog
+      description: |
+        Explorer's properties dialog on Windows, with security, details and
+        previous versions, or the dialog of another file manager on Linux.
+        The answer comes once the dialog is open.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths]
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "204":
+          description: The dialog is open.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), no such dialog on this computer (noPropertiesDialog), or no such item.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          $ref: "#/components/responses/ShellFailed"
+      tags: [shell]
+  /shell/runas:
+    post:
+      operationId: shellRunAs
+      summary: Start a program as administrator
+      description: |
+        Windows asks the person first. A no there is no failure.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+      responses:
+        "204":
+          description: The program started, or the person said no.
+        "400":
+          description: Not a program the computer starts as administrator (notAProgram), or a bad request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ShellDesktopOnly"
+        "502":
+          $ref: "#/components/responses/ShellFailed"
+      tags: [shell]
+  /shell/icon:
+    get:
+      operationId: shellIcon
+      summary: The system's icon of an item or a type
+      description: |
+        With path the icon of that item, which for a program, a shortcut or
+        a folder may be its own. With name the icon of files of that type,
+        or of folders with dir=true, without looking at any file. A PNG, or
+        an SVG from a Linux icon theme. With v, the item's change time, the
+        icon may be kept for good.
+      parameters:
+        - name: path
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: dir
+          in: query
+          schema:
+            type: boolean
+        - name: size
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: ["16", "32", "48", "256"]
+        - name: v
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The icon.
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/svg+xml:
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), or no icon.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [shell]
+  /shell/entries:
+    get:
+      operationId: shellEntries
+      summary: List the rows other programs put into the system's menu
+      description: |
+        Every row the app has seen in the system's menu or among the
+        actions, with its picture and whether the person hid it.
+      responses:
+        "200":
+          description: The rows, by label.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [entries]
+                properties:
+                  entries:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ShellEntry"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/ShellDesktopOnly"
+      tags: [shell]
+  /shell/entries/hidden:
+    put:
+      operationId: shellHideEntries
+      summary: Choose the rows to hide
+      description: |
+        The rows named by keys are hidden and every other one shows again,
+        so an empty list shows them all.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [keys]
+              properties:
+                keys:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "204":
+          description: Done.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/ShellDesktopOnly"
+      tags: [shell]
   /launch:
     post:
       operationId: launchOpen
@@ -6167,6 +6525,18 @@ components:
             $ref: "#/components/schemas/Problem"
     RcloneUnavailable:
       description: rclone is not installed or not running yet.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    ShellDesktopOnly:
+      description: Not the desktop app (desktopOnly), or no such item.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    ShellFailed:
+      description: The computer could not do it (systemFailed).
       content:
         application/problem+json:
           schema:
@@ -9510,6 +9880,34 @@ components:
           description: A data URL, left out when the program has no icon.
         default:
           type: boolean
+    ShellEntry:
+      type: object
+      required: [key, label, hidden]
+      properties:
+        key:
+          type: string
+          description: The row's verb where it has one, its text otherwise.
+          example: verb:7-zip.compress
+        label:
+          type: string
+        icon:
+          type: string
+          description: A data URL, left out when the row has no picture.
+        hidden:
+          type: boolean
+    ShellAction:
+      type: object
+      required: [key, label]
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        icon:
+          type: string
+        group:
+          type: string
+          description: The submenu the action sits in.
     FileManagerState:
       type: object
       required: [on]

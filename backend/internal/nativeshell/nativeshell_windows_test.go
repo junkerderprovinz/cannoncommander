@@ -148,7 +148,7 @@ func TestHiddenRowsLeaveNoStraySeparators(t *testing.T) {
 }
 
 func TestAMenuNeedsTheAppInFront(t *testing.T) {
-	if _, err := ShowMenu([]string{os.TempDir()}, MenuOptions{}); !errors.Is(err, errNotInFront) {
+	if _, err := ShowMenu([]string{os.TempDir()}, MenuOptions{}); !errors.Is(err, ErrNotInFront) {
 		t.Fatalf("got %v", err)
 	}
 }
