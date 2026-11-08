@@ -1,6 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, api, toItem } from '@/api/client';
+import { action, actions } from '@/core/actions';
 import { prefs } from '@/core/prefs';
 import { toasts } from '@/core/toast';
 import { emit } from '@/api/sse';
@@ -220,5 +221,16 @@ describe('a folder that is not there', () => {
     await F.go('/mnt/user/downloads');
     await F.open(0, { name: 'Fotos.lnk', dir: false, shortcut: { kind: 'lnk', target: 'D:/Bilder', path: '/mnt/user/fotos', dir: true } });
     expect(F.T().path).toBe('/mnt/user/fotos');
+  });
+
+  it('hands an internet shortcut and a launcher to the launcher of the desktop', async () => {
+    const F = await panels();
+    await F.go('/mnt/user/downloads');
+    const launch = vi.fn();
+    action('launch', { label: 'launch', run: launch });
+    await F.open(0, { name: 'Wetter.url', dir: false, shortcut: { kind: 'url', target: 'https://wetter.example/' } });
+    await F.open(0, { name: 'editor.desktop', dir: false, shortcut: { kind: 'desktop', target: 'gedit %U', name: 'Texteditor' } });
+    expect(launch.mock.calls).toEqual([['/mnt/user/downloads/Wetter.url'], ['/mnt/user/downloads/editor.desktop']]);
+    delete actions.launch;
   });
 });

@@ -149,6 +149,35 @@ describe('the shortcuts tile', () => {
     expect(prefs.keys).toBeNull();
   });
 
+  it('asks before a reset takes its key back from another action, and can swap the two back', async () => {
+    await rebind('copy');
+    await press('F6');
+    button('Tauschen').click();
+    await settle();
+    $('[data-kb-reset="copy"]')!.click();
+    await settle();
+    expect(warning()).toContain('F5 gehört schon zu „Verschieben“');
+    expect(keymap.F5).toBe('move');
+    button('Tauschen').click();
+    await settle();
+    expect(keymap.F5).toBe('copy');
+    expect(keymap.F6).toBe('move');
+    expect(prefs.keys).toBeNull();
+  });
+
+  it('lets a reset take its key back and says the other action is left without one', async () => {
+    await rebind('copy');
+    await press('F6');
+    button('Tauschen').click();
+    await settle();
+    $('[data-kb-reset="copy"]')!.click();
+    await settle();
+    button('Ersetzen').click();
+    await settle();
+    expect(keymap.F5).toBe('copy');
+    expect(keyOf('move')).toBe('keine');
+  });
+
   it('puts every key back, and only offers to once there is something to put back', async () => {
     const all = $<HTMLButtonElement>('#kt-reset')!;
     expect(all.disabled).toBe(true);

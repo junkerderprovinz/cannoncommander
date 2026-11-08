@@ -30,3 +30,20 @@ func TestWindowsShowsTheLocalizedNameOfAFolder(t *testing.T) {
 		t.Errorf("a folder without the attribute got %q", got)
 	}
 }
+
+func TestADesktopIniThatPointsToAnotherComputerIsNotRead(t *testing.T) {
+	f := newFixture(t)
+	dir := filepath.Join(f.share, "Fremd")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	ini := "[.ShellClassInfo]\r\nLocalizedResourceName=@" + `\127.0.0.1\c$\Windows\System32\shell32.dll,-21813` + "\r\n"
+	if err := os.WriteFile(filepath.Join(dir, "desktop.ini"), []byte(ini), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	setAttrs(t, dir, windows.FILE_ATTRIBUTE_READONLY|windows.FILE_ATTRIBUTE_DIRECTORY)
+	l := decode[Listing](t, f.get(t, "jdp", "/fs/list", "/mnt/user"))
+	if got := byName(t, l.Items, "Fremd").Label; got != "" {
+		t.Errorf("the folder took its name from another computer: %q", got)
+	}
+}

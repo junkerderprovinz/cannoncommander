@@ -42,8 +42,10 @@ const maxOps = 100000
 // jobWait is how long the helper waits for its job once it called.
 const jobWait = 30 * time.Second
 
-// launch starts the helper with administrator rights and returns a function
-// that waits for it to end. It blocks while the prompt is open.
+// launch starts the helper with administrator rights and returns the line to
+// it once the helper called back, with the secret that signs the job, or
+// none where the line itself vouches for both ends. It blocks while the
+// prompt is open.
 var launch = launchHelper
 
 // The messages, one JSON value each. The helper proves first that it knows
@@ -98,38 +100,19 @@ func Run(ctx context.Context, ops []Op, report func(i int, err error)) error {
 	if err != nil {
 		return err
 	}
-	secret := make([]byte, 32)
-	rand.Read(secret)
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	conn, secret, err := launch(ctx)
 	if err != nil {
 		return err
-	}
-	defer ln.Close()
-	found := make(chan net.Conn, 1)
-	go welcome(ln, secret, found)
-	wait, err := launch(ctx, ln.Addr().(*net.TCPAddr).Port, secret)
-	if err != nil {
-		return err
-	}
-	ended := make(chan error, 1)
-	go func() { ended <- wait() }()
-
-	var conn net.Conn
-	select {
-	case conn = <-found:
-	case err := <-ended:
-		if errors.Is(err, ErrDeclined) {
-			return err
-		}
-		return ErrNoHelper
-	case <-ctx.Done():
-		return ctx.Err()
 	}
 	defer conn.Close()
 	stop := context.AfterFunc(ctx, func() { conn.Close() })
 	defer stop()
 
-	if err := json.NewEncoder(conn).Encode(job{Ops: ops, MAC: hex.EncodeToString(sign(secret, text))}); err != nil {
+	j := job{Ops: ops}
+	if secret != nil {
+		j.MAC = hex.EncodeToString(sign(secret, text))
+	}
+	if err := json.NewEncoder(conn).Encode(j); err != nil {
 		return err
 	}
 	dec := json.NewDecoder(bufio.NewReader(conn))
@@ -158,6 +141,38 @@ func Run(ctx context.Context, ops []Op, report func(i int, err error)) error {
 	return nil
 }
 
+// overTCP is the line over a loopback port, for systems where the parent
+// cannot tell the helper by its process: start runs the helper with the port
+// and the secret, and the first caller that proves the secret is taken.
+func overTCP(ctx context.Context, start func(port int, secret []byte) (func() error, error)) (io.ReadWriteCloser, []byte, error) {
+	secret := make([]byte, 32)
+	rand.Read(secret)
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		return nil, nil, err
+	}
+	defer ln.Close()
+	found := make(chan net.Conn, 1)
+	go welcome(ln, secret, found)
+	wait, err := start(ln.Addr().(*net.TCPAddr).Port, secret)
+	if err != nil {
+		return nil, nil, err
+	}
+	ended := make(chan error, 1)
+	go func() { ended <- wait() }()
+	select {
+	case conn := <-found:
+		return conn, secret, nil
+	case err := <-ended:
+		if errors.Is(err, ErrDeclined) {
+			return nil, nil, err
+		}
+		return nil, nil, ErrNoHelper
+	case <-ctx.Done():
+		return nil, nil, ctx.Err()
+	}
+}
+
 // welcome hands on the first connection that proves the secret. Any other
 // program on the computer can connect to the port too, so others are closed
 // and the wait goes on.
@@ -179,47 +194,46 @@ func welcome(ln net.Listener, secret []byte, found chan<- net.Conn) {
 	}
 }
 
-// Serve is the helper. arg is the parent's port, followed on Windows by a
-// colon and the secret in hex; elsewhere the secret comes as the first line
-// of stdin, since the command line of a process is public there.
+// Serve is the helper. On Windows arg is "pipe:" with the name of the
+// parent's pipe and the parent's process id, and the pipe vouches for both
+// ends. Elsewhere arg is the parent's port, and the secret comes as the first
+// line of stdin, since every user can read the command line of a process;
+// tests in one process hand it on after a colon instead.
 func Serve(arg string, stdin io.Reader) error {
-	port, key, _ := strings.Cut(arg, ":")
-	if key == "" && stdin != nil {
-		line, err := bufio.NewReader(io.LimitReader(stdin, 256)).ReadString('\n')
-		if err != nil && line == "" {
-			return err
-		}
-		key = line
+	var conn io.ReadWriteCloser
+	var secret []byte
+	var err error
+	if pipe, ok := strings.CutPrefix(arg, "pipe:"); ok {
+		conn, err = dialPipe(pipe)
+	} else {
+		conn, secret, err = dialTCP(arg, stdin)
 	}
-	secret, err := hex.DecodeString(strings.TrimSpace(key))
-	if err != nil || len(secret) < 16 {
-		return errUntrusted
-	}
-	if n, err := strconv.Atoi(port); err != nil || n < 1 || n > 65535 {
-		return ErrBadOp
-	}
-	conn, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", port), 10*time.Second)
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
-	conn.SetDeadline(time.Now().Add(jobWait))
 	enc := json.NewEncoder(conn)
-	if err := enc.Encode(hello{Proof: hex.EncodeToString(sign(secret, "helper"))}); err != nil {
-		return err
+	if secret != nil {
+		if err := enc.Encode(hello{Proof: hex.EncodeToString(sign(secret, "helper"))}); err != nil {
+			return err
+		}
 	}
 	var j job
 	if err := json.NewDecoder(io.LimitReader(conn, 64<<20)).Decode(&j); err != nil {
 		return err
 	}
-	text, err := jobText(j.Ops)
-	if err != nil || !proven(secret, text, j.MAC) {
-		return errUntrusted
+	if secret != nil {
+		text, err := jobText(j.Ops)
+		if err != nil || !proven(secret, text, j.MAC) {
+			return errUntrusted
+		}
 	}
 	if len(j.Ops) == 0 || len(j.Ops) > maxOps {
 		return ErrBadOp
 	}
-	conn.SetDeadline(time.Time{})
+	if c, ok := conn.(net.Conn); ok {
+		c.SetDeadline(time.Time{})
+	}
 	for i, op := range j.Ops {
 		r := result{I: i}
 		if err := apply(op); err != nil {
@@ -232,15 +246,41 @@ func Serve(arg string, stdin io.Reader) error {
 	return enc.Encode(result{Done: true})
 }
 
+func dialTCP(arg string, stdin io.Reader) (net.Conn, []byte, error) {
+	port, key, _ := strings.Cut(arg, ":")
+	if key == "" && stdin != nil {
+		line, err := bufio.NewReader(io.LimitReader(stdin, 256)).ReadString('\n')
+		if err != nil && line == "" {
+			return nil, nil, err
+		}
+		key = line
+	}
+	secret, err := hex.DecodeString(strings.TrimSpace(key))
+	if err != nil || len(secret) < 16 {
+		return nil, nil, errUntrusted
+	}
+	if n, err := strconv.Atoi(port); err != nil || n < 1 || n > 65535 {
+		return nil, nil, ErrBadOp
+	}
+	conn, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", port), 10*time.Second)
+	if err != nil {
+		return nil, nil, err
+	}
+	conn.SetDeadline(time.Now().Add(jobWait))
+	return conn, secret, nil
+}
+
 // InProcess makes Run hand its jobs to a helper in this process, with the
 // rights the process has, for the tests of the packages that use Run. It
 // returns the function that undoes it.
 func InProcess() (undo func()) {
 	was := launch
-	launch = func(_ context.Context, port int, secret []byte) (func() error, error) {
-		done := make(chan error, 1)
-		go func() { done <- Serve(fmt.Sprintf("%d:%x", port, secret), nil) }()
-		return func() error { return <-done }, nil
+	launch = func(ctx context.Context) (io.ReadWriteCloser, []byte, error) {
+		return overTCP(ctx, func(port int, secret []byte) (func() error, error) {
+			done := make(chan error, 1)
+			go func() { done <- Serve(fmt.Sprintf("%d:%x", port, secret), nil) }()
+			return func() error { return <-done }, nil
+		})
 	}
 	return func() { launch = was }
 }

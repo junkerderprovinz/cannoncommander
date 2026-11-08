@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/winres"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -75,7 +75,7 @@ func shellNew(k registry.Key, ext, prog string) (Template, bool) {
 		return Template{}, false
 	}
 	item, _, _ := k.GetStringValue("ItemName")
-	item = winres.String(item)
+	item, _ = winshell.IndirectString(item)
 	t.Name = typeName(prog)
 	if t.Name == "" {
 		t.Name = item
@@ -131,7 +131,7 @@ func typeName(prog string) string {
 	}
 	defer k.Close()
 	if v, _, err := k.GetStringValue("FriendlyTypeName"); err == nil {
-		if s := winres.String(v); s != "" {
+		if s, _ := winshell.IndirectString(v); s != "" {
 			return s
 		}
 	}

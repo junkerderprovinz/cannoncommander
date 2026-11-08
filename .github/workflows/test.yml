@@ -27,7 +27,7 @@ jobs:
       # alone, and an import that slips past the tag would put them back.
       - name: Check that the server leaves out the desktop app's packages
         run: |
-          if go list -deps . | grep -E '/internal/(nativeshell|sysbin|xdg)$|/pkg/(elevate|winshell)$'; then
+          if go list -deps . | grep -E '/internal/(nativeshell|plainpath|sysbin|xdg)$|/pkg/(elevate|winshell)$'; then
             echo "::error::the container's server imports what only the desktop app needs"
             exit 1
           fi

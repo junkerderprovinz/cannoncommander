@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"os/exec"
@@ -76,7 +77,7 @@ func TestAJobRunsThroughTheHelper(t *testing.T) {
 func TestRunRefusesABadOpBeforeAskingForRights(t *testing.T) {
 	asked := false
 	was := launch
-	launch = func(context.Context, int, []byte) (func() error, error) { asked = true; return nil, errors.New("no") }
+	launch = viaTCP(func(int, []byte) (func() error, error) { asked = true; return nil, errors.New("no") })
 	t.Cleanup(func() { launch = was })
 	err := Run(context.Background(), []Op{{Kind: Delete, From: "relative"}}, func(int, error) {})
 	if !errors.Is(err, ErrBadOp) || asked {
@@ -86,7 +87,7 @@ func TestRunRefusesABadOpBeforeAskingForRights(t *testing.T) {
 
 func TestADeclinedPromptEndsTheRun(t *testing.T) {
 	was := launch
-	launch = func(context.Context, int, []byte) (func() error, error) { return nil, ErrDeclined }
+	launch = viaTCP(func(int, []byte) (func() error, error) { return nil, ErrDeclined })
 	t.Cleanup(func() { launch = was })
 	err := Run(context.Background(), []Op{{Kind: Mkdir, To: filepath.Join(t.TempDir(), "x")}}, func(int, error) {})
 	if !errors.Is(err, ErrDeclined) {
@@ -96,7 +97,7 @@ func TestADeclinedPromptEndsTheRun(t *testing.T) {
 
 func TestAHelperThatNeverCallsEndsTheRun(t *testing.T) {
 	was := launch
-	launch = func(context.Context, int, []byte) (func() error, error) { return func() error { return nil }, nil }
+	launch = viaTCP(func(int, []byte) (func() error, error) { return func() error { return nil }, nil })
 	t.Cleanup(func() { launch = was })
 	err := Run(context.Background(), []Op{{Kind: Mkdir, To: filepath.Join(t.TempDir(), "x")}}, func(int, error) {})
 	if !errors.Is(err, ErrNoHelper) {
@@ -107,7 +108,7 @@ func TestAHelperThatNeverCallsEndsTheRun(t *testing.T) {
 func TestTheParentTurnsAwayAStrangerAndWaitsForTheHelper(t *testing.T) {
 	dir := t.TempDir()
 	was := launch
-	launch = func(_ context.Context, port int, secret []byte) (func() error, error) {
+	launch = viaTCP(func(port int, secret []byte) (func() error, error) {
 		stranger, err := net.Dial("tcp", "127.0.0.1:"+strconv.Itoa(port))
 		if err != nil {
 			return nil, err
@@ -121,7 +122,7 @@ func TestTheParentTurnsAwayAStrangerAndWaitsForTheHelper(t *testing.T) {
 		done := make(chan error, 1)
 		go func() { done <- Serve(fmt.Sprintf("%d:%x", port, secret), nil) }()
 		return func() error { return <-done }, nil
-	}
+	})
 	t.Cleanup(func() { launch = was })
 	var o outcome
 	if err := Run(context.Background(), []Op{{Kind: Mkdir, To: filepath.Join(dir, "x")}}, o.report); err != nil {
@@ -164,15 +165,15 @@ func TestTheHelperDoesNothingForAJobWithoutTheSecret(t *testing.T) {
 
 func TestTheHelperRunsAsAProcessOfItsOwn(t *testing.T) {
 	was := launch
-	launch = func(ctx context.Context, port int, secret []byte) (func() error, error) {
-		cmd := exec.CommandContext(ctx, os.Args[0], "--elevated", strconv.Itoa(port))
+	launch = viaTCP(func(port int, secret []byte) (func() error, error) {
+		cmd := exec.Command(os.Args[0], "--elevated", strconv.Itoa(port))
 		cmd.Stdin = strings.NewReader(hex.EncodeToString(secret) + "\n")
 		cmd.Stderr = os.Stderr
 		if err := cmd.Start(); err != nil {
 			return nil, err
 		}
 		return cmd.Wait, nil
-	}
+	})
 	t.Cleanup(func() { launch = was })
 	dir := t.TempDir()
 	file(t, filepath.Join(dir, "a", "x.txt"), "x")
@@ -228,7 +229,7 @@ func TestElevatedForRealCanBeTurnedDown(t *testing.T) {
 
 func TestAPromptThatTakesItsTimeIsWaitedFor(t *testing.T) {
 	was := launch
-	launch = func(_ context.Context, port int, secret []byte) (func() error, error) {
+	launch = viaTCP(func(port int, secret []byte) (func() error, error) {
 		done := make(chan error, 1)
 		go func() {
 			// Someone typing a password, longer than the helper waits for its job.
@@ -236,7 +237,7 @@ func TestAPromptThatTakesItsTimeIsWaitedFor(t *testing.T) {
 			done <- Serve(fmt.Sprintf("%d:%x", port, secret), nil)
 		}()
 		return func() error { return <-done }, nil
-	}
+	})
 	t.Cleanup(func() { launch = was })
 	if testing.Short() {
 		t.Skip("waits half a minute")
@@ -246,4 +247,9 @@ func TestAPromptThatTakesItsTimeIsWaitedFor(t *testing.T) {
 	if err := Run(context.Background(), []Op{{Kind: Mkdir, To: filepath.Join(dir, "x")}}, o.report); err != nil || o.errs[0] != nil {
 		t.Fatalf("got %v, %v", err, o.errs)
 	}
+}
+
+// viaTCP is a launcher over the loopback line whose helper start runs.
+func viaTCP(start func(port int, secret []byte) (func() error, error)) func(context.Context) (io.ReadWriteCloser, []byte, error) {
+	return func(ctx context.Context) (io.ReadWriteCloser, []byte, error) { return overTCP(ctx, start) }
 }

@@ -83,9 +83,8 @@ type Item struct {
 	// Bin is the API path of the entry inside the trash.
 	Bin string `json:"-"`
 
-	// native is where an entry of the system's trash came from on disk, and
-	// outside marks one from beyond the sources, whose Origin is that path.
-	native  string
+	// outside marks an entry of the system's trash from beyond the sources,
+	// whose Origin is the path on disk it came from.
 	outside bool
 }
 

@@ -433,6 +433,7 @@ func TestGetDirInfoCore_IndexableListing(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	hide(t, filepath.Join(root, ".hidden.txt"), false)
 
 	idx := &Index{
 		Source: settings.Source{

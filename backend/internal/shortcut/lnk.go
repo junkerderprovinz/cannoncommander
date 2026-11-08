@@ -300,6 +300,9 @@ var longNameAt = map[int]int{3: 0x14, 7: 0x1C, 8: 0x1E, 9: 0x2E}
 // entryName prefers the long name of the extension block to the 8.3 name
 // the item starts with.
 func entryName(item []byte) string {
+	if len(item) < 12 {
+		return ""
+	}
 	if item[0]&0x04 != 0 {
 		return utf16z(item, 12)
 	}

@@ -98,6 +98,19 @@ export function reset(map: KeyMap, base: KeyMap, action: string): KeyMap {
   return next;
 }
 
+// The layout's keys of an action that another action has taken.
+export const heldBack = (map: KeyMap, base: KeyMap, action: string) => combosOf(base, action).filter((c) => map[c] && map[c] !== action);
+
+// A reset that takes the layout's keys back. With swap the action that held them gets the keys this one had instead.
+export function restore(map: KeyMap, base: KeyMap, action: string, swapped: boolean): KeyMap {
+  const holder = map[heldBack(map, base, action)[0] ?? ''], had = combosOf(map, action);
+  const next = { ...map };
+  for (const c of had) delete next[c];
+  for (const c of combosOf(base, action)) next[c] = action;
+  if (swapped && holder) for (const c of had) if (!next[c]) next[c] = holder;
+  return next;
+}
+
 export const changed = (map: KeyMap, base: KeyMap, action: string) => combosOf(base, action).sort().join() !== combosOf(map, action).sort().join();
 
 // Own keys are kept as what they change in a layout, an empty action for a key taken away, so a layout chosen later
