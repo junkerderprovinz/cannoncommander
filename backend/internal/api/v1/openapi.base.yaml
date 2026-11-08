@@ -100,7 +100,8 @@ components:
         id as "id:", and this object as "data:". Reconnect with the
         Last-Event-ID header (or lastEventId query) to receive what was
         missed. A resync event means the gap was too large and the client
-        should reload its state.
+        should reload its state. In the desktop app, the app itself sends
+        events whose type starts with "desktop.".
       required: [id, type, time]
       properties:
         id:

@@ -1,11 +1,12 @@
 // The server's event stream. EventSource sends Last-Event-ID itself after a reconnect, so missed events arrive late, not never.
 // Each tab has its own client id; the folders it shows are registered under it, and fs.changed comes only for those.
+// In the desktop app the app itself speaks on the same stream, with types that start with desktop.
 import { api, BASE } from './client';
 
 export type EventType =
   | 'job.created' | 'job.progress' | 'job.state' | 'job.conflict' | 'job.done' | 'fs.changed' | 'trash.changed' | 'labels.changed'
   | 'undo.changed' | 'share.opened' | 'unraid.parity' | 'unraid.spin' | 'index.progress' | 'search.hits' | 'prefs.changed' | 'notify'
-  | 'heartbeat' | 'resync';
+  | 'heartbeat' | 'resync' | `desktop.${string}`;
 
 // One frame as the hub writes it: the topic names what it is about, such as fs:/mnt/user/filme.
 export interface ServerEvent<T = unknown> { id?: number; type: EventType; topic?: string; time?: string; data?: T }

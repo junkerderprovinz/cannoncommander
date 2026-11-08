@@ -3309,6 +3309,7 @@
     "forward": "Uz priekšu",
     "up": "Līmeni augstāk",
     "home": "Uz Share",
+    "homeFolder": "Uz personīgo mapi",
     "gotoPath": "Ievadīt ceļu",
     "selectAll": "Atzīmēt visu",
     "invertSel": "Apgriezt atlasi",

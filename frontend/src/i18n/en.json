@@ -78,6 +78,7 @@
     "forward": "Forward",
     "up": "Up one level",
     "home": "To the shares",
+    "homeFolder": "To your home folder",
     "gotoPath": "Type a path",
     "selectAll": "Select all",
     "invertSel": "Invert selection",
