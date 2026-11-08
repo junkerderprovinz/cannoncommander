@@ -61,3 +61,19 @@ func TestAProgramWindowsDoesNotOfferIsNotStarted(t *testing.T) {
 		t.Fatalf("got %v", err)
 	}
 }
+
+func TestAPackagedAppsPictureLosesItsClearMargin(t *testing.T) {
+	img := image.NewNRGBA(image.Rect(0, 0, 48, 48))
+	for y := 12; y < 36; y++ {
+		for x := 16; x < 32; x++ {
+			img.Pix[img.PixOffset(x, y)+3] = 0xff
+		}
+	}
+	if got := trimmed(img).Bounds(); got != image.Rect(16, 12, 32, 36) {
+		t.Fatalf("got %v", got)
+	}
+	clear := image.NewNRGBA(image.Rect(0, 0, 8, 8))
+	if got := trimmed(clear).Bounds(); got != clear.Bounds() {
+		t.Fatalf("a clear picture became %v", got)
+	}
+}

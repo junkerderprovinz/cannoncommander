@@ -25,7 +25,11 @@ func iconImage(where string) (image.Image, error) {
 		if err != nil {
 			return nil, err
 		}
-		return png.Decode(bytes.NewReader(b))
+		img, err := png.Decode(bytes.NewReader(b))
+		if err != nil {
+			return nil, err
+		}
+		return trimmed(img), nil
 	}
 	at := strings.LastIndexByte(where, ',')
 	if at < 0 {
@@ -36,6 +40,27 @@ func iconImage(where string) (image.Image, error) {
 		return nil, errNoIcon
 	}
 	return extractIcon(where[:at], index)
+}
+
+// trimmed cuts the clear margin off a packaged app's image, which leaves
+// room around the picture for a tile that a menu row does not draw.
+func trimmed(img image.Image) image.Image {
+	b := img.Bounds()
+	opaque := image.Rectangle{}
+	for y := b.Min.Y; y < b.Max.Y; y++ {
+		for x := b.Min.X; x < b.Max.X; x++ {
+			if _, _, _, a := img.At(x, y).RGBA(); a != 0 {
+				opaque = opaque.Union(image.Rect(x, y, x+1, y+1))
+			}
+		}
+	}
+	sub, ok := img.(interface {
+		SubImage(image.Rectangle) image.Image
+	})
+	if opaque.Empty() || !ok {
+		return img
+	}
+	return sub.SubImage(opaque)
 }
 
 func indirectString(s string) (string, error) {
