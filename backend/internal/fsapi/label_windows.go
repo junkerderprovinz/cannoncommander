@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/winres"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
 )
 
 // labelOf is the name Explorer shows for a folder, such as Dokumente for
@@ -24,5 +24,6 @@ func labelOf(real string, attrs uint32) string {
 	if err != nil {
 		return ""
 	}
-	return winres.String(localizedName(ini))
+	name, _ := winshell.IndirectString(localizedName(ini))
+	return name
 }
