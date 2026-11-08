@@ -23,7 +23,7 @@ const (
 )
 
 func init() {
-	jobs.RegisterKind(KindTrash, jobs.Kind{Prepare: prepareTrash, Run: runTrash})
+	jobs.RegisterKind(KindTrash, jobs.Kind{Prepare: prepareTrash, Run: runTrash, Elevate: elevateTrash})
 	jobs.RegisterKind(KindRestore, jobs.Kind{Run: runRestore})
 	jobs.RegisterKind(KindEmpty, jobs.Kind{Run: runEmpty})
 	undo.Register(KindTrash, undo.Reverser{Job: undoTrash})
@@ -104,7 +104,13 @@ func runTrash(ctx context.Context, run *jobs.Run) error {
 		}
 		run.Finish(it.Seq, jobs.ItemDone, err)
 	}
+	recordUndo(run)
+	return nil
+}
 
+// recordUndo makes the entries a trash job put in the bin one step to take
+// back.
+func recordUndo(run *jobs.Run) {
 	var ids []string
 	var first jobs.Item
 	for _, it := range run.Items() {
@@ -121,7 +127,6 @@ func runTrash(ctx context.Context, run *jobs.Run) error {
 			run.SetUndo(step.ID)
 		}
 	}
-	return nil
 }
 
 func undoTrash(_ context.Context, run *jobs.Run, data json.RawMessage) error {
@@ -149,7 +154,12 @@ func (s *Store) restoreFor(run *jobs.Run, id string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if _, _, err := run.Entry(it.Origin, ccfs.Create); err != nil {
+	if it.outside {
+		err = run.RequireAdmin()
+	} else {
+		_, _, err = run.Entry(it.Origin, ccfs.Create)
+	}
+	if err != nil {
 		return "", err
 	}
 	return s.Restore(id)

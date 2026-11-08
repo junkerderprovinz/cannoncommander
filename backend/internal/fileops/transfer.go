@@ -45,8 +45,8 @@ var (
 )
 
 func init() {
-	jobs.RegisterKind(KindCopy, jobs.Kind{Prepare: prepare(false), Run: runTransfer(false), Heavy: true})
-	jobs.RegisterKind(KindMove, jobs.Kind{Prepare: prepare(true), Run: runTransfer(true), Heavy: true})
+	jobs.RegisterKind(KindCopy, jobs.Kind{Prepare: prepare(false), Run: runTransfer(false), Elevate: elevateTransfer(false), Heavy: true})
+	jobs.RegisterKind(KindMove, jobs.Kind{Prepare: prepare(true), Run: runTransfer(true), Elevate: elevateTransfer(true), Heavy: true})
 }
 
 // TransferParams are the params of copy and move.

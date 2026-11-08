@@ -173,6 +173,10 @@ type Kind struct {
 	// Run does the work. It is called again with the same items after a
 	// restart or a retry and has to skip what is done already.
 	Run func(ctx context.Context, run *Run) error
+	// Elevate does the open items again with administrator rights, in the
+	// desktop app, once the job failed for lack of them. Kinds without it
+	// cannot go on that way.
+	Elevate func(ctx context.Context, run *Run) error
 	// Heavy kinds wait for a parity check once they are big.
 	Heavy bool
 	// BigResult kinds can find megabytes, which would go out with every
