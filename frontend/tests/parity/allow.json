@@ -215,7 +215,7 @@
     "why": "GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
    },
    "a-share-win": {
-    "pixels": 84557,
+    "pixels": 93425,
     "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; the message for the visitors is GlimStone's TextArea, taller than the prototype's text field, and the window grows with it. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
    },
    "a-share-revoked": {
@@ -744,9 +744,17 @@
     "pixels": 48191,
     "why": "GlimStone's Card, FieldRow, Selector and Button, with the keys as GlimStone's Kbd and IconButton: rows stand further apart and the rows of a page end further down; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
    },
+   "r7-settings-1600-ctxmenu": {
+    "pixels": 38760,
+    "why": "GlimStone's Card, FieldRow, IconButton and Toggle for the rows of the menus: the rows of a card start a little further down; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
+   },
    "r7-settings-1200-keys": {
     "pixels": 46290,
     "why": "GlimStone's Card, FieldRow, Selector and Button, with the keys as GlimStone's Kbd and IconButton: rows stand further apart and the rows of a page end further down; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
+   },
+   "r7-settings-1200-ctxmenu": {
+    "pixels": 36857,
+    "why": "GlimStone's Card, FieldRow, IconButton and Toggle for the rows of the menus: the rows of a card start a little further down; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
    }
   }
  },
@@ -799,7 +807,7 @@
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "r13-5-collection-share": {
-    "pixels": 123410,
+    "pixels": 131656,
     "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "r13-5-collection-done": {
@@ -811,7 +819,7 @@
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
    },
    "r13-6-share-options": {
-    "pixels": 116587,
+    "pixels": 129320,
     "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "r13-6-share-done": {
@@ -1811,6 +1819,10 @@
    "tour-30-settings-keys": {
     "pixels": 48191,
     "why": "GlimStone's Card, FieldRow, Selector and Button, with the keys as GlimStone's Kbd and IconButton: rows stand further apart and the rows of a page end further down; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
+   },
+   "tour-30-settings-ctxmenu": {
+    "pixels": 38760,
+    "why": "GlimStone's Card, FieldRow, IconButton and Toggle for the rows of the menus: the rows of a card start a little further down; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
    }
   },
   "lines": [
