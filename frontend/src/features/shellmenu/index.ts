@@ -12,6 +12,7 @@ import { bindKey } from '@/core/keymap';
 import type { MenuEntry } from '@/core/menu';
 import { prefs } from '@/core/prefs';
 import { settingsTab } from '@/core/views';
+import type { Entry } from '@/files/entries';
 import { addOpenMenuItems, type MenuShaper, shapeMenus } from '@/files/menus';
 import { inArchive, join } from '@/files/paths';
 import { t, tl } from '@/i18n';
@@ -42,6 +43,13 @@ const shaper: MenuShaper = (kind, items, { x, y, shift }) => {
   return shape(kind, more ? [...items, '-', more] : items);
 };
 
+// programFor is the program the selection names, when Windows offers to start it as administrator.
+function programFor(sel: Entry[], path: string): string | null {
+  const one = sel.length === 1 ? sel[0]! : null;
+  if (!host.desktop || !one || one.dir || one.up || inArchive(path) || !shell.runAs.includes('.' + ext(one.name))) return null;
+  return join(one.at || path, one.name);
+}
+
 // Shift+F10 opens the menu where the cursor row is, or that of the folder when no row is picked.
 function fromKeyboard() {
   const at = document.querySelector('.panel.active .row.cursor')?.getBoundingClientRect();
@@ -53,11 +61,10 @@ function fromKeyboard() {
 export default function setup() {
   watch(() => host.desktop, (on) => { if (on) loadShell().catch(warn); }, { immediate: true });
   shapeMenus(shaper);
-  addOpenMenuItems((sel, path) => {
-    const one = sel.length === 1 ? sel[0]! : null;
-    if (!host.desktop || !one || one.dir || one.up || inArchive(path) || !shell.runAs.includes('.' + ext(one.name))) return [];
-    return [{ id: 'runAs', label: t('shellmenu.runAs'), g: 'IconShieldOn', run: () => runAsAdmin(join(one.at || path, one.name)) }];
-  });
+  // An action of its own, so it can take a key like any other.
+  const here = () => { const F = usePanels(); return programFor(F.sel(), F.T().path); };
+  action('runAs', { label: tl('shellmenu.runAs'), g: 'IconShieldOn', when: () => !!here(), run: () => { const p = here(); if (p) void runAsAdmin(p); } });
+  addOpenMenuItems((sel, path) => (programFor(sel, path) ? ['runAs'] : []));
   action('systemMenu', { label: tl('shellmenu.more'), g: 'IconMore', when: () => host.desktop && !!shell.menu, run: fromKeyboard });
   bindKey('Shift+F10', 'systemMenu');
   addTo('entryIcons', (k, folder, px) => iconUrl(k, folder, px, prefs.systemIcons === true));
