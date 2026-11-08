@@ -1,6 +1,5 @@
-// Package desktop is where the desktop app plugs into the server it runs in
-// its own process. In the container nothing calls Use, and every function here
-// answers the way a server on its own would.
+//go:build desktop
+
 package desktop
 
 import (
@@ -12,18 +11,6 @@ import (
 	"strings"
 	"sync"
 )
-
-// App is what the desktop app offers the server.
-type App interface {
-	// AutoUpdate reports whether the app may put a newer release in place by
-	// itself, and SetAutoUpdate changes that.
-	AutoUpdate() bool
-	SetAutoUpdate(on bool) error
-	// UpdateReady is the version waiting for the next start, or "".
-	UpdateReady() string
-	// Restart ends the app and starts it again.
-	Restart()
-}
 
 // Options is how the desktop app runs the server.
 type Options struct {

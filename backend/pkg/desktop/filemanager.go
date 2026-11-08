@@ -1,3 +1,5 @@
+//go:build desktop
+
 package desktop
 
 // FileManager is what a desktop app offers that can take the place of the

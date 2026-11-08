@@ -1,3 +1,5 @@
+//go:build desktop
+
 package clipapi
 
 import (
@@ -161,7 +163,7 @@ func (e *env) do(method, target string, body any) (int, string, []byte) {
 	return resp.StatusCode, p.Code, b.Bytes()
 }
 
-func TestTheContainerKeepsItsOwnClipboard(t *testing.T) {
+func TestWithoutAnAppNoFileReachesAnotherProgram(t *testing.T) {
 	e := newEnv(t)
 	calls := []struct {
 		method, target string
@@ -170,7 +172,6 @@ func TestTheContainerKeepsItsOwnClipboard(t *testing.T) {
 		{http.MethodGet, "/clipboard", nil},
 		{http.MethodPut, "/clipboard", map[string]any{"paths": []string{"/home/jdp/work/notes.txt"}}},
 		{http.MethodPost, "/clipboard/moved", map[string]any{"files": []string{"/home/jdp/work/notes.txt"}}},
-		{http.MethodPost, "/dragdrop/in", map[string]any{"paths": []string{e.real("work/notes.txt")}, "to": "/home/jdp"}},
 		{http.MethodPost, "/dragdrop/out", map[string]any{"paths": []string{"/home/jdp/work/notes.txt"}}},
 	}
 	for _, c := range calls {

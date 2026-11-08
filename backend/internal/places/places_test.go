@@ -1,3 +1,5 @@
+//go:build desktop
+
 package places
 
 import (
@@ -123,17 +125,6 @@ func (e *env) do(method, target string, body any) (int, string, []byte) {
 	var p v1.Problem
 	_ = json.Unmarshal(b.Bytes(), &p)
 	return resp.StatusCode, p.Code, b.Bytes()
-}
-
-func TestTheContainerKnowsNoPlaces(t *testing.T) {
-	e := newEnv(t, func(string) []folder { return nil })
-	for _, c := range []struct{ method, target string }{
-		{http.MethodGet, "/places"}, {http.MethodPost, "/places/eject"}, {http.MethodPost, "/places/mount"},
-	} {
-		if status, code, _ := e.do(c.method, c.target, map[string]string{"id": "E:"}); status != http.StatusNotFound || code != "desktopOnly" {
-			t.Errorf("%s %s: %d %s", c.method, c.target, status, code)
-		}
-	}
 }
 
 func TestPlacesAreTheFoldersThatExistAndTheDrives(t *testing.T) {

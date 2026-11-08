@@ -74,9 +74,10 @@ function run(command, commandArgs, { cwd = desktop, env = {} } = {}) {
   }
 }
 
+// The desktop tag compiles in the parts of the server that only the app has.
 function goBuild(out, { goos, goarch, tags, ldflags = '', env = {} }) {
   run('go', [
-    'build', '-tags', tags, '-trimpath', '-buildvcs=false',
+    'build', '-tags', `desktop,${tags}`, '-trimpath', '-buildvcs=false',
     '-ldflags', `-s -w ${ldflags} ${versionFlags}`,
     '-o', out, '.',
   ], { env: { GOOS: goos, GOARCH: goarch, CGO_ENABLED: '1', ...env } })

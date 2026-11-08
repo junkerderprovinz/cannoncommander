@@ -1,3 +1,5 @@
+//go:build !desktop
+
 package fileops_test
 
 import (

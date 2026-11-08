@@ -1,0 +1,51 @@
+package main
+
+import "github.com/junkerderprovinz/pommelporter"
+
+// stays names what an uninstall leaves in the person's AppData: the settings
+// and the database with the shortcuts, colours and tags, in the app's own
+// words for them.
+var stays = map[string]pommelporter.Stay{
+	"ar": {Item: "إعداداتك واختصاراتك وألوانك ووسومك", Note: "إعداداتك واختصاراتك وألوانك ووسومك ما زالت موجودة."},
+	"bg": {Item: "Твоите настройки, преки пътища, цветове и етикети", Note: "Твоите настройки, преки пътища, цветове и етикети са все още тук."},
+	"ca": {Item: "La teva configuració, les dreceres, els colors i les paraules clau", Note: "La teva configuració, les dreceres, els colors i les paraules clau encara hi són."},
+	"cs": {Item: "Tvoje nastavení, zkratky, barvy a štítky", Note: "Tvoje nastavení, zkratky, barvy a štítky tu zůstávají."},
+	"da": {Item: "Dine indstillinger, genveje, farver og tags", Note: "Dine indstillinger, genveje, farver og tags er der stadig."},
+	"de": {Item: "Deine Einstellungen, Verknüpfungen, Farben und Schlagworte", Note: "Deine Einstellungen, Verknüpfungen, Farben und Schlagworte sind noch da."},
+	"el": {Item: "Οι ρυθμίσεις, οι συντομεύσεις, τα χρώματα και οι ετικέτες σου", Note: "Οι ρυθμίσεις, οι συντομεύσεις, τα χρώματα και οι ετικέτες σου είναι ακόμα εδώ."},
+	"en": {Item: "Your settings, shortcuts, colours and tags", Note: "Your settings, shortcuts, colours and tags are still there."},
+	"es": {Item: "Tus ajustes, accesos directos, colores y palabras clave", Note: "Tus ajustes, accesos directos, colores y palabras clave siguen ahí."},
+	"et": {Item: "Sinu seaded, otseteed, värvid ja sildid", Note: "Sinu seaded, otseteed, värvid ja sildid on endiselt alles."},
+	"eu": {Item: "Zure ezarpenak, lasterbideak, koloreak eta etiketak", Note: "Zure ezarpenak, lasterbideak, koloreak eta etiketak hor jarraitzen dute."},
+	"fa": {Item: "تنظیمات، میان‌برها، رنگ‌ها و برچسب‌واژه‌هایت", Note: "تنظیمات، میان‌برها، رنگ‌ها و برچسب‌واژه‌هایت هنوز سر جایشان هستند."},
+	"fi": {Item: "Asetuksesi, pikakuvakkeesi, värisi ja tunnisteesi", Note: "Asetuksesi, pikakuvakkeesi, värisi ja tunnisteesi ovat yhä tallessa."},
+	"fr": {Item: "Tes réglages, raccourcis, couleurs et mots-clés", Note: "Tes réglages, raccourcis, couleurs et mots-clés sont toujours là."},
+	"gl": {Item: "Os teus axustes, atallos, cores e etiquetas", Note: "Os teus axustes, atallos, cores e etiquetas seguen aí."},
+	"he": {Item: "ההגדרות, קיצורי הדרך, הצבעים והתגיות שלך", Note: "ההגדרות, קיצורי הדרך, הצבעים והתגיות שלך עדיין כאן."},
+	"hi": {Item: "आपकी सेटिंग्स, शॉर्टकट, रंग और टैग", Note: "आपकी सेटिंग्स, शॉर्टकट, रंग और टैग अब भी मौजूद हैं।"},
+	"hr": {Item: "Tvoje postavke, prečaci, boje i oznake", Note: "Tvoje postavke, prečaci, boje i oznake još su tu."},
+	"hu": {Item: "A beállításaid, parancsikonjaid, színeid és címkéid", Note: "A beállításaid, parancsikonjaid, színeid és címkéid megmaradnak."},
+	"id": {Item: "Pengaturan, pintasan, warna, dan tag milikmu", Note: "Pengaturan, pintasan, warna, dan tag milikmu masih ada."},
+	"is": {Item: "Stillingarnar þínar, flýtileiðir, litir og merki", Note: "Stillingarnar þínar, flýtileiðir, litir og merki eru enn til staðar."},
+	"it": {Item: "Le tue impostazioni, i collegamenti, i colori e i tag", Note: "Le tue impostazioni, i collegamenti, i colori e i tag sono ancora qui."},
+	"ja": {Item: "設定、ブックマーク、色、タグ", Note: "設定、ブックマーク、色、タグはそのまま残ります。"},
+	"ko": {Item: "설정, 즐겨찾기, 색, 태그", Note: "설정, 즐겨찾기, 색, 태그는 그대로 남아 있습니다."},
+	"lt": {Item: "Tavo nustatymai, nuorodos, spalvos ir žymės", Note: "Tavo nustatymai, nuorodos, spalvos ir žymės vis dar liko."},
+	"lv": {Item: "Tavi iestatījumi, saīsnes, krāsas un birkas", Note: "Tavi iestatījumi, saīsnes, krāsas un birkas joprojām ir saglabāti."},
+	"ms": {Item: "Tetapan, pintasan, warna dan tag anda", Note: "Tetapan, pintasan, warna dan tag anda masih ada."},
+	"nl": {Item: "Je instellingen, snelkoppelingen, kleuren en tags", Note: "Je instellingen, snelkoppelingen, kleuren en tags zijn er nog."},
+	"no": {Item: "Innstillingene, snarveiene, fargene og stikkordene dine", Note: "Innstillingene, snarveiene, fargene og stikkordene dine er der fortsatt."},
+	"pl": {Item: "Twoje ustawienia, skróty, kolory i tagi", Note: "Twoje ustawienia, skróty, kolory i tagi wciąż tu są."},
+	"pt": {Item: "As tuas definições, atalhos, cores e palavras-chave", Note: "As tuas definições, atalhos, cores e palavras-chave continuam cá."},
+	"ro": {Item: "Setările, scurtăturile, culorile și etichetele tale", Note: "Setările, scurtăturile, culorile și etichetele tale sunt încă aici."},
+	"ru": {Item: "Твои настройки, ярлыки, цвета и теги", Note: "Твои настройки, ярлыки, цвета и теги остаются на месте."},
+	"sk": {Item: "Tvoje nastavenia, skratky, farby a štítky", Note: "Tvoje nastavenia, skratky, farby a štítky tu zostávajú."},
+	"sl": {Item: "Tvoje nastavitve, bližnjice, barve in značke", Note: "Tvoje nastavitve, bližnjice, barve in značke so še vedno tu."},
+	"sr": {Item: "Твоја подешавања, пречице, боје и ознаке", Note: "Твоја подешавања, пречице, боје и ознаке су и даље ту."},
+	"sv": {Item: "Dina inställningar, genvägar, färger och taggar", Note: "Dina inställningar, genvägar, färger och taggar finns kvar."},
+	"th": {Item: "การตั้งค่า ทางลัด สี และแท็กของคุณ", Note: "การตั้งค่า ทางลัด สี และแท็กของคุณยังอยู่ครบ"},
+	"tr": {Item: "Ayarların, kısayolların, renklerin ve etiketlerin", Note: "Ayarların, kısayolların, renklerin ve etiketlerin yerinde duruyor."},
+	"uk": {Item: "Твої налаштування, ярлики, кольори й теги", Note: "Твої налаштування, ярлики, кольори й теги залишаються на місці."},
+	"vi": {Item: "Cài đặt, lối tắt, màu và thẻ của bạn", Note: "Cài đặt, lối tắt, màu và thẻ của bạn vẫn còn nguyên."},
+	"zh": {Item: "你的设置、书签、颜色和标签", Note: "你的设置、书签、颜色和标签仍然保留。"},
+}

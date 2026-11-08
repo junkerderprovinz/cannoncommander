@@ -92,6 +92,8 @@ const page = (file: string) => fileURLToPath(new URL(file, import.meta.url));
 export default defineConfig(({ mode }) => ({
   plugins: [vue(), sharePage(), shareTexts(), manifests(), ...(mode === 'fixture' ? [fixture()] : [])],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+  // `--mode container` builds the interface for the image, where the desktop app's modules would be dead weight.
+  define: { 'import.meta.env.DESKTOP': JSON.stringify(mode !== 'container') },
   // Every source is scanned up front, so a library only a viewer loads later does not make Vite bundle the
   // dependencies again while a page is open.
   optimizeDeps: { entries: ['index.html', 'share.html', 'src/**/*.{ts,vue}', '!src/**/*.test.ts'] },

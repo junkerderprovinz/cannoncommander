@@ -2,14 +2,13 @@
 // and files dragged out of it. Paths on disk only travel between the window and the server, which keeps to the
 // sources, so a file outside all of them is left out and everything else takes the panels' own way with its undo.
 import { ApiError, call, json } from '@/api/client';
-import { host } from '@/core/host';
 import { toast } from '@/core/toast';
-import { type Entry, toEntry } from '@/files/entries';
-import { join, parent, split } from '@/files/paths';
+import type { Entry } from '@/files/entries';
+import { parent } from '@/files/paths';
 import { plural } from '@/i18n';
 import { useClipboard } from '@/stores/clipboard';
-import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
+import { entriesOf, keep } from './clip';
 
 export interface Outside { files: string[]; cut: boolean; skipped: number }
 type Dropped = Outside & { sameVolume: boolean };
@@ -20,7 +19,6 @@ const signature = (o: Outside | null) => (o ? (o.cut ? 'cut\n' : 'copy\n') + o.f
 // The files on the computer's clipboard, or null where the app does not reach it.
 export async function readClipboard(): Promise<Outside | null> {
   const clip = useClipboard();
-  if (!host.desktop) return null;
   try {
     const got = (await call<Outside>('/clipboard')).body!;
     clip.system = got.files.length;
@@ -42,9 +40,7 @@ export function lookSoon() {
 // an archive, stay in the app's own clipboard until another program puts something newer on the computer's.
 export async function share(cut: boolean, from: string, rows: Pick<Entry, 'name' | 'at'>[]) {
   const clip = useClipboard();
-  const paths = rows.map((k) => join(k.at || from, k.name));
-  clip.put(cut, from, rows.map((k) => k.name), rows.some((k) => k.at && k.at !== from) ? paths : undefined);
-  if (!host.desktop) return;
+  const paths = keep(cut, from, rows);
   try {
     await call('/clipboard', json('PUT', { paths, cut }));
     clip.clear();
@@ -62,22 +58,6 @@ export async function clipboardWins(): Promise<Outside | null> {
   if (!got || (clip.clip && signature(got) === clip.under)) return null;
   clip.clear();
   return got;
-}
-
-// The rows of files from anywhere, each with the folder it lies in, as a search result carries them.
-export async function entriesOf(files: string[]): Promise<Entry[]> {
-  const byFolder = new Map<string, Set<string>>();
-  for (const f of files) {
-    const dir = parent(f);
-    if (!byFolder.has(dir)) byFolder.set(dir, new Set());
-    byFolder.get(dir)!.add(split(f).at(-1)!);
-  }
-  const listing = useListing(), out: Entry[] = [];
-  for (const [dir, names] of byFolder) {
-    const got = await listing.load(dir);
-    out.push(...got.items.filter((k) => names.has(k.name)).map((k) => ({ ...toEntry(k), at: dir })));
-  }
-  return out;
 }
 
 async function bring(kind: 'copy' | 'move', files: string[], skipped: number, dest: string) {
@@ -100,10 +80,8 @@ export async function pasteOutside(got: Outside, dest: string) {
 }
 
 // Files dropped from another program go the way Explorer takes them: Shift moves and Ctrl copies, and otherwise they
-// move on the same drive and are copied from another one. As an action it may be run without any files, so it keeps
-// to the desktop app, the only place with other programs on the same computer.
+// move on the same drive and are copied from another one.
 export async function dropIn(paths: string[], dest: string, how: 'copy' | 'move' | 'auto') {
-  if (!host.desktop) return;
   let got: Dropped;
   try {
     got = (await call<Dropped>('/dragdrop/in', json('POST', { paths, to: dest }))).body!;
@@ -113,10 +91,8 @@ export async function dropIn(paths: string[], dest: string, how: 'copy' | 'move'
   await bring(how === 'auto' ? (got.sameVolume ? 'move' : 'copy') : how, got.files, got.skipped, dest);
 }
 
-// The drag goes on in the system's own drag loop and the answer comes when the files are dropped somewhere. Like
-// dropIn it keeps to the desktop app.
+// The drag goes on in the system's own drag loop and the answer comes when the files are dropped somewhere.
 export async function dragOut(paths: string[]) {
-  if (!host.desktop) return;
   try {
     await call('/dragdrop/out', json('POST', { paths }));
   } catch (e) {

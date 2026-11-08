@@ -1,3 +1,5 @@
+//go:build desktop
+
 package fileops
 
 import (
@@ -15,6 +17,12 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/elevate"
 )
+
+func init() {
+	jobs.Elevates(KindDelete, elevateDelete)
+	jobs.Elevates(KindCopy, elevateTransfer(false))
+	jobs.Elevates(KindMove, elevateTransfer(true))
+}
 
 // elevateDelete deletes the open items with administrator rights. The rights
 // in the app are checked here as for any delete; the helper only gets the

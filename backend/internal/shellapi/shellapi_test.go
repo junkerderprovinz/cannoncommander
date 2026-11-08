@@ -1,3 +1,5 @@
+//go:build desktop
+
 package shellapi
 
 import (
@@ -19,22 +21,8 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/nativeshell"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 	_ "modernc.org/sqlite"
 )
-
-type fakeApp struct{}
-
-func (fakeApp) AutoUpdate() bool         { return true }
-func (fakeApp) SetAutoUpdate(bool) error { return nil }
-func (fakeApp) UpdateReady() string      { return "" }
-func (fakeApp) Restart()                 {}
-
-func onDesktop(t *testing.T) {
-	t.Helper()
-	desktop.Use(fakeApp{}, desktop.Options{})
-	t.Cleanup(func() { desktop.Use(nil, desktop.Options{}) })
-}
 
 type hiddenRules struct{ path string }
 
@@ -197,25 +185,7 @@ func (e *env) entries() []entryJSON {
 	return out.Entries
 }
 
-func TestTheContainerHasNoSystemShell(t *testing.T) {
-	e := newEnv(t, true)
-	for _, c := range [][2]string{
-		{"GET", "/shell"}, {"POST", "/shell/menu"}, {"GET", "/shell/actions?path=/mnt/user/work/notes.txt"},
-		{"POST", "/shell/actions"}, {"POST", "/shell/properties"}, {"POST", "/shell/runas"},
-		{"GET", "/shell/icon?size=32&name=a.txt"}, {"GET", "/shell/entries"}, {"PUT", "/shell/entries/hidden"},
-	} {
-		resp, code, _ := e.do(c[0], c[1], map[string]any{"paths": []string{"/mnt/user/work/notes.txt"}, "path": "/mnt/user/work/setup.exe", "x": 1, "y": 1})
-		if resp.StatusCode != http.StatusNotFound || code != "desktopOnly" {
-			t.Errorf("%s %s: got %d %s", c[0], c[1], resp.StatusCode, code)
-		}
-	}
-	if len(e.pc.shown)+len(e.pc.elevated)+len(e.pc.props) != 0 {
-		t.Fatal("the container reached the computer")
-	}
-}
-
 func TestTheOffersNameTheProgramsThatRunAsAdministrator(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t, true)
 	_, _, body := e.do(http.MethodGet, "/shell", nil)
 	var got offersJSON
@@ -234,7 +204,6 @@ func TestTheOffersNameTheProgramsThatRunAsAdministrator(t *testing.T) {
 }
 
 func TestAHiddenRowStaysOutOfTheNextMenuAndCanComeBack(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t, true)
 	e.pc.menuRows = []nativeshell.Entry{{Key: "verb:7-zip", Label: "7-Zip", Icon: "data:image/png;base64,AA=="}, {Key: "text:Senden an", Label: "Senden an"}}
 	menu := map[string]any{"paths": []string{"/mnt/user/work/notes.txt", "/mnt/user/work/setup.exe"}, "x": 10, "y": 20}
@@ -268,7 +237,6 @@ func TestAHiddenRowStaysOutOfTheNextMenuAndCanComeBack(t *testing.T) {
 }
 
 func TestAMenuIsForItemsOfOneFolderTheRulesShow(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t, true)
 	for paths, want := range map[string]string{
 		"/mnt/user/work/notes.txt,/mnt/user/other/b.txt": "notOneFolder",
@@ -285,7 +253,6 @@ func TestAMenuIsForItemsOfOneFolderTheRulesShow(t *testing.T) {
 }
 
 func TestHiddenActionsDropOutAndUnknownOnesDoNotRun(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t, false)
 	e.pc.actions = []nativeshell.Action{
 		{Entry: nativeshell.Entry{Key: "nemo:shrink", Label: "Shrink"}, Group: "Images"},
@@ -312,7 +279,6 @@ func TestHiddenActionsDropOutAndUnknownOnesDoNotRun(t *testing.T) {
 }
 
 func TestOnlyAProgramStartsAsAdministrator(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t, true)
 	for _, p := range []string{"/mnt/user/work/notes.txt", "/mnt/user/work"} {
 		if resp, code, _ := e.do(http.MethodPost, "/shell/runas", map[string]string{"path": p}); resp.StatusCode != http.StatusBadRequest || code != "notAProgram" {
@@ -328,7 +294,6 @@ func TestOnlyAProgramStartsAsAdministrator(t *testing.T) {
 }
 
 func TestPropertiesNeedADialog(t *testing.T) {
-	onDesktop(t)
 	linux := newEnv(t, false)
 	if resp, code, _ := linux.do(http.MethodPost, "/shell/properties", map[string]any{"paths": []string{"/mnt/user/work/notes.txt"}}); resp.StatusCode != http.StatusNotFound || code != "noPropertiesDialog" {
 		t.Fatalf("got %d %s", resp.StatusCode, code)
@@ -340,7 +305,6 @@ func TestPropertiesNeedADialog(t *testing.T) {
 }
 
 func TestAnIconComesByTypeOrByItem(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t, true)
 	resp, _, body := e.do(http.MethodGet, "/shell/icon?size=32&name=../../secret/report.pdf", nil)
 	if resp.StatusCode != http.StatusOK || string(body) != "type of report.pdf" || !strings.Contains(resp.Header.Get("Cache-Control"), "max-age=86400") {

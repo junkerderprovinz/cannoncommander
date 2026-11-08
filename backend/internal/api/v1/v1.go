@@ -91,6 +91,23 @@ func (r *Router) Handle(pattern string, h HandlerFunc) {
 	op.handler = h
 }
 
+// DesktopContract adds the contract of a package only the desktop app has and
+// binds DesktopOnly to each of its operations. The container's server
+// registers such packages this way, so both builds serve one document.
+func (r *Router) DesktopContract(name string, spec []byte) {
+	first := len(r.ops)
+	r.Contract(name, spec)
+	for _, op := range r.ops[first:] {
+		op.handler = DesktopOnly
+	}
+}
+
+var errDesktopOnly = Coded(http.StatusNotFound, "desktopOnly", "only the desktop app offers this")
+
+// DesktopOnly is the handler of an operation in a build without the desktop
+// app.
+func DesktopOnly(http.ResponseWriter, *http.Request) error { return errDesktopOnly }
+
 // Authenticator returns what finds the user behind a request, for a handler that
 // runs for a long time and has to ask again.
 func (r *Router) Authenticator() Authenticator { return r.auth }

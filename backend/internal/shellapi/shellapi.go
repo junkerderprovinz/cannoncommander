@@ -1,3 +1,5 @@
+//go:build desktop
+
 // Package shellapi gives the desktop app's window what the computer's own
 // file manager offers for files: its context menu, its properties dialog,
 // starting a program as administrator, and its icons.
@@ -16,21 +18,19 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/nativeshell"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 //go:embed openapi.yaml
 var contract []byte
 
 var (
-	errDesktopOnly = v1.Coded(http.StatusNotFound, "desktopOnly", "only the desktop app talks to the computer's file manager")
-	errNoMenu      = v1.Coded(http.StatusNotFound, "noSystemMenu", "this computer draws no menu of its own")
-	errNoDialog    = v1.Coded(http.StatusNotFound, "noPropertiesDialog", "this computer has no properties dialog to show")
-	errNotProgram  = v1.Coded(http.StatusBadRequest, "notAProgram", "this file is no program the computer starts as administrator")
-	errOneFolder   = v1.Coded(http.StatusBadRequest, "notOneFolder", "the items are not all in one folder")
-	errUnknown     = v1.Coded(http.StatusBadRequest, "unknownAction", "no such action for these files")
-	errNotInFront  = v1.Coded(http.StatusConflict, "windowNotInFront", "the window is not in front")
-	errFailed      = v1.Coded(http.StatusBadGateway, "systemFailed", "the computer could not do that")
+	errNoMenu     = v1.Coded(http.StatusNotFound, "noSystemMenu", "this computer draws no menu of its own")
+	errNoDialog   = v1.Coded(http.StatusNotFound, "noPropertiesDialog", "this computer has no properties dialog to show")
+	errNotProgram = v1.Coded(http.StatusBadRequest, "notAProgram", "this file is no program the computer starts as administrator")
+	errOneFolder  = v1.Coded(http.StatusBadRequest, "notOneFolder", "the items are not all in one folder")
+	errUnknown    = v1.Coded(http.StatusBadRequest, "unknownAction", "no such action for these files")
+	errNotInFront = v1.Coded(http.StatusConflict, "windowNotInFront", "the window is not in front")
+	errFailed     = v1.Coded(http.StatusBadGateway, "systemFailed", "the computer could not do that")
 )
 
 // programs are the types Windows may offer to start as administrator. Only
@@ -72,31 +72,21 @@ func Routes(r *v1.Router) {
 }
 
 func bind(r *v1.Router, h *handlers) {
-	r.Handle("GET /shell", desktopOnly(h.offers))
-	r.Handle("POST /shell/menu", desktopOnly(h.menu))
-	r.Handle("GET /shell/actions", desktopOnly(h.listActions))
-	r.Handle("POST /shell/actions", desktopOnly(h.runAction))
-	r.Handle("POST /shell/properties", desktopOnly(h.properties))
-	r.Handle("POST /shell/runas", desktopOnly(h.runAs))
-	r.Handle("GET /shell/icon", desktopOnly(h.icon))
-	r.Handle("GET /shell/entries", desktopOnly(h.entries))
-	r.Handle("PUT /shell/entries/hidden", desktopOnly(h.hide))
+	r.Handle("GET /shell", h.offers)
+	r.Handle("POST /shell/menu", h.menu)
+	r.Handle("GET /shell/actions", h.listActions)
+	r.Handle("POST /shell/actions", h.runAction)
+	r.Handle("POST /shell/properties", h.properties)
+	r.Handle("POST /shell/runas", h.runAs)
+	r.Handle("GET /shell/icon", h.icon)
+	r.Handle("GET /shell/entries", h.entries)
+	r.Handle("PUT /shell/entries/hidden", h.hide)
 }
 
 type handlers struct {
 	deps v1.Deps
 	sys  system
 	seen entries
-}
-
-// desktopOnly wraps a handler that only the desktop app answers.
-func desktopOnly(fn v1.HandlerFunc) v1.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
-		if !desktop.Active() {
-			return errDesktopOnly
-		}
-		return fn(w, r)
-	}
 }
 
 type offersJSON struct {

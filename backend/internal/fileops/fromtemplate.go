@@ -1,3 +1,5 @@
+//go:build desktop
+
 package fileops
 
 import (
@@ -11,17 +13,12 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fschange"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/templates"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
-// templates lists what New offers in the desktop app. The container offers
-// none, a server has no programs of its own to make documents for.
+// templates lists what New offers: the documents the computer's programs
+// make.
 func (s *Service) templates(w http.ResponseWriter, r *http.Request) error {
-	list := []templates.Template{}
-	if desktop.Active() {
-		list = templates.List()
-	}
-	return v1.WriteJSON(w, r, http.StatusOK, map[string]any{"templates": list})
+	return v1.WriteJSON(w, r, http.StatusOK, map[string]any{"templates": templates.List()})
 }
 
 type templateRequest struct {
@@ -36,9 +33,6 @@ func (s *Service) fromTemplate(w http.ResponseWriter, r *http.Request) error {
 	var req templateRequest
 	if err := v1.DecodeJSON(r, &req); err != nil {
 		return err
-	}
-	if !desktop.Active() {
-		return v1.Coded(http.StatusBadRequest, "desktopOnly", "templates belong to the desktop app")
 	}
 	loc, err := s.newEntry(u, req.Path)
 	if err != nil {

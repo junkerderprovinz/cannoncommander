@@ -1,3 +1,5 @@
+//go:build desktop
+
 package trash
 
 import (
@@ -38,6 +40,9 @@ func newFakeBin(dir string) *fakeBin {
 	}
 	return &fakeBin{dir: dir, entries: map[string]sysbin.Entry{}}
 }
+
+// of is the store's trash of the system, kept in f.
+func (f *fakeBin) of(s *Store) systemBin { return &osBin{Store: s, bin: f} }
 
 func (f *fakeBin) Put(p string) (sysbin.Entry, error) { return f.Adopt(p, p, time.Now()) }
 
@@ -112,7 +117,7 @@ func newSystemStore(t *testing.T) (*Store, string, *fakeBin) {
 		t.Fatal(err)
 	}
 	bin := newFakeBin(filepath.Join(root, "$Recycle.Bin"))
-	s := openWith(v1.Deps{FS: fsys, DB: testutil.MainDB(t)}, bin)
+	s := openWith(v1.Deps{FS: fsys, DB: testutil.MainDB(t)}, bin.of)
 	t.Cleanup(s.Close)
 	return s, root, bin
 }
@@ -264,7 +269,7 @@ func TestRemotesKeepTheAppsOwnTrash(t *testing.T) {
 		t.Fatal(err)
 	}
 	bin := newFakeBin(filepath.Join(root, "$Recycle.Bin"))
-	s := openWith(v1.Deps{FS: fsys, DB: testutil.MainDB(t)}, bin)
+	s := openWith(v1.Deps{FS: fsys, DB: testutil.MainDB(t)}, bin.of)
 	t.Cleanup(s.Close)
 	os.MkdirAll(filepath.Join(remotes, "gdrive"), 0o755)
 	os.WriteFile(filepath.Join(remotes, "gdrive", "a.txt"), []byte("wolke"), 0o644)
@@ -302,9 +307,9 @@ func TestTheOldTrashMovesIntoTheSystemTrash(t *testing.T) {
 	old.Close()
 
 	bin := newFakeBin(filepath.Join(root, "$Recycle.Bin"))
-	s := openWith(deps, bin)
+	s := openWith(deps, bin.of)
 	t.Cleanup(s.Close)
-	s.takeOver()
+	s.sys.takeOver()
 
 	got := map[string]sysbin.Entry{}
 	for _, e := range bin.entries {
@@ -326,7 +331,7 @@ func TestTheOldTrashMovesIntoTheSystemTrash(t *testing.T) {
 	if rows != 0 {
 		t.Errorf("%d rows left", rows)
 	}
-	s.takeOver()
+	s.sys.takeOver()
 	if len(bin.entries) != 2 {
 		t.Errorf("a second round changed the trash: %d entries", len(bin.entries))
 	}
@@ -346,7 +351,7 @@ func oldBin(t *testing.T, root, id, name string) (*Store, *fakeBin) {
 		t.Fatal(err)
 	}
 	bin := newFakeBin(filepath.Join(root, "$Recycle.Bin"))
-	s := openWith(deps, bin)
+	s := openWith(deps, bin.of)
 	t.Cleanup(s.Close)
 	return s, bin
 }
@@ -366,7 +371,7 @@ func TestLeftoversWithoutARecordStayWhereTheyAre(t *testing.T) {
 	lost := filepath.Join(root, DirName, "zz", "verloren.txt")
 	file(t, lost, "?")
 	s, bin := oldBin(t, root, "other", "x.txt")
-	s.takeOver()
+	s.sys.takeOver()
 	if len(bin.entries) != 0 {
 		t.Fatalf("taken over: %+v", bin.entries)
 	}
@@ -380,7 +385,7 @@ func TestATrashFolderThatIsALinkIsLeftAlone(t *testing.T) {
 	file(t, filepath.Join(victim, "abc", "Dokumente.txt"), "privat")
 	linkDir(t, victim, filepath.Join(root, DirName))
 	s, bin := oldBin(t, root, "abc", "Dokumente.txt")
-	s.takeOver()
+	s.sys.takeOver()
 	if len(bin.entries) != 0 {
 		t.Fatalf("taken over: %+v", bin.entries)
 	}
@@ -397,7 +402,7 @@ func TestAHolderThatIsALinkIsLeftAlone(t *testing.T) {
 	}
 	linkDir(t, victim, filepath.Join(root, DirName, "abc"))
 	s, bin := oldBin(t, root, "abc", "Dokumente.txt")
-	s.takeOver()
+	s.sys.takeOver()
 	if len(bin.entries) != 0 {
 		t.Fatalf("taken over: %+v", bin.entries)
 	}

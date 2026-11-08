@@ -1,3 +1,5 @@
+//go:build desktop
+
 // Package openwith opens a file in the desktop app with one of the programs
 // the computer offers for it, as the system's own file manager does.
 package openwith
@@ -17,7 +19,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/xdg"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 //go:embed openapi.yaml
@@ -28,11 +29,10 @@ var contract []byte
 const iconSize = 32
 
 var (
-	errDesktopOnly = v1.Coded(http.StatusNotFound, "desktopOnly", "only the desktop app opens a file in another program")
-	errNotAFile    = v1.Coded(http.StatusBadRequest, "notAFile", "path is not a regular file")
-	errUnknownApp  = v1.Coded(http.StatusBadRequest, "unknownApp", "the computer offers no such program for this file")
-	errNoDialog    = v1.Coded(http.StatusNotFound, "noAppDialog", "this computer has no dialog to pick a program")
-	errNotStarted  = v1.Coded(http.StatusBadGateway, "appNotStarted", "the program did not start")
+	errNotAFile   = v1.Coded(http.StatusBadRequest, "notAFile", "path is not a regular file")
+	errUnknownApp = v1.Coded(http.StatusBadRequest, "unknownApp", "the computer offers no such program for this file")
+	errNoDialog   = v1.Coded(http.StatusNotFound, "noAppDialog", "this computer has no dialog to pick a program")
+	errNotStarted = v1.Coded(http.StatusBadGateway, "appNotStarted", "the program did not start")
 
 	errNoIcon = errors.New("no icon")
 )
@@ -105,9 +105,6 @@ type listJSON struct {
 
 // list is GET /openwith.
 func (h *handlers) list(w http.ResponseWriter, r *http.Request) error {
-	if !desktop.Active() {
-		return errDesktopOnly
-	}
 	q := r.URL.Query()
 	loc, err := h.file(v1.UserFrom(r), q.Get("path"))
 	if err != nil {
@@ -126,9 +123,6 @@ func (h *handlers) list(w http.ResponseWriter, r *http.Request) error {
 
 // open is POST /openwith.
 func (h *handlers) open(w http.ResponseWriter, r *http.Request) error {
-	if !desktop.Active() {
-		return errDesktopOnly
-	}
 	var in struct {
 		Path  string `json:"path"`
 		App   string `json:"app"`
@@ -161,9 +155,6 @@ func (h *handlers) open(w http.ResponseWriter, r *http.Request) error {
 // dialog is POST /openwith/dialog. The dialog stays open after the answer,
 // as long as the person takes to pick.
 func (h *handlers) dialog(w http.ResponseWriter, r *http.Request) error {
-	if !desktop.Active() {
-		return errDesktopOnly
-	}
 	if !h.sys.dialog() {
 		return errNoDialog
 	}

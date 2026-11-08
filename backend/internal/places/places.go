@@ -1,3 +1,5 @@
+//go:build desktop
+
 // Package places is what the desktop app shows of the computer itself: the
 // folders every user has, such as Downloads, and the drives, which come and
 // go as sticks are plugged in and shares are opened.
@@ -22,10 +24,9 @@ import (
 var contract []byte
 
 var (
-	errDesktopOnly = v1.Coded(http.StatusNotFound, "desktopOnly", "only the desktop app knows the computer's places")
-	errNoVolume    = v1.Coded(http.StatusNotFound, "noVolume", "the computer has no such drive")
-	errNoEject     = v1.Coded(http.StatusConflict, "ejectFailed", "the drive could not be ejected")
-	errNoMount     = v1.Coded(http.StatusConflict, "mountFailed", "the drive could not be mounted")
+	errNoVolume = v1.Coded(http.StatusNotFound, "noVolume", "the computer has no such drive")
+	errNoEject  = v1.Coded(http.StatusConflict, "ejectFailed", "the drive could not be ejected")
+	errNoMount  = v1.Coded(http.StatusConflict, "mountFailed", "the drive could not be mounted")
 )
 
 // folder is one of the folders the computer keeps for every user. kind is
@@ -93,9 +94,6 @@ func apiPath(dir string) string { return path.Clean(ccfs.MountFor(dir)) }
 
 // list is GET /places.
 func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
-	if !desktop.Active() {
-		return errDesktopOnly
-	}
 	u := v1.UserFrom(r)
 	out := listJSON{Folders: []folderJSON{}, Volumes: []volumeJSON{}}
 	for _, f := range h.known(desktop.Home()) {
@@ -124,9 +122,6 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 
 // volume finds the volume a request names.
 func volume(r *http.Request) (desktop.Volumes, desktop.Volume, error) {
-	if !desktop.Active() {
-		return nil, desktop.Volume{}, errDesktopOnly
-	}
 	var in struct {
 		ID string `json:"id"`
 	}
