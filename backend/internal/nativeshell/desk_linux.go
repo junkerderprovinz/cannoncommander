@@ -26,6 +26,8 @@ type desk struct {
 	// asks the session bus about a name. Tests replace both.
 	root     fs.FS
 	hasOwner func(name string) bool
+	// bwrap is the program that sandboxes thumbnailers, or "".
+	bwrap string
 }
 
 var (
@@ -49,6 +51,7 @@ func newDesk(d xdg.Desktop, last *desk) *desk {
 	k := &desk{Desktop: d, db: d.MimeDB(), theme: d.ThemeName(), userDirs: d.UserDirs(), thumbnailers: d.Thumbnailers(), read: time.Now(),
 		root: os.DirFS("/"), hasOwner: nameHasOwner,
 	}
+	k.bwrap = sandboxProgram(d.Look, k.root)
 	if last != nil && last.theme == k.theme {
 		k.icons = last.icons
 	} else {

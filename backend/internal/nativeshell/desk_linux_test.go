@@ -26,6 +26,7 @@ type fixture struct {
 	root   fstest.MapFS
 	owners []string
 	output func(program string, args ...string) ([]byte, error)
+	bwrap  string
 }
 
 func newFixture(t *testing.T) *fixture {
@@ -102,6 +103,7 @@ func (f *fixture) desk() *desk {
 	k := newDesk(d, nil)
 	k.root = f.root
 	k.hasOwner = func(name string) bool { return slices.Contains(f.owners, name) }
+	k.bwrap = f.bwrap
 	return k
 }
 

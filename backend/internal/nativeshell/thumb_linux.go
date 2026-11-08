@@ -51,8 +51,10 @@ func (k *desk) thumbnail(ctx context.Context, file string, px int) ([]byte, erro
 	if failed(root, name, uri, mtime) {
 		return nil, ErrNoPicture
 	}
+	// Without a sandbox no thumbnailer runs, since the file may come from
+	// anyone and thumbnailers have a long history of holes.
 	t, ok := k.thumbnailerFor(file)
-	if !ok {
+	if !ok || k.bwrap == "" {
 		return nil, ErrNoPicture
 	}
 	select {
@@ -66,7 +68,7 @@ func (k *desk) thumbnail(ctx context.Context, file string, px int) ([]byte, erro
 		return b, nil
 	}
 	text := map[string]string{"Thumb::URI": uri, "Thumb::MTime": strconv.FormatInt(mtime, 10)}
-	b, err := draw(ctx, t, file, xdg.ThumbnailSizes[size].Edge)
+	b, err := k.draw(ctx, t, file, xdg.ThumbnailSizes[size].Edge)
 	if err == nil {
 		b, err = xdg.SetPNGText(b, text)
 	}
@@ -87,9 +89,9 @@ func (k *desk) thumbnail(ctx context.Context, file string, px int) ([]byte, erro
 
 var errNotDrawn = errors.New("the thumbnailer wrote no PNG")
 
-// draw runs a thumbnailer on file and returns what it drew. It gives up
-// after 20 seconds.
-func draw(ctx context.Context, t xdg.Thumbnailer, file string, edge int) ([]byte, error) {
+// draw runs a thumbnailer on file in a sandbox and returns what it drew.
+// It gives up after 20 seconds.
+func (k *desk) draw(ctx context.Context, t xdg.Thumbnailer, file string, edge int) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	tmp, err := os.MkdirTemp("", "cc-thumbnail-")
@@ -97,11 +99,13 @@ func draw(ctx context.Context, t xdg.Thumbnailer, file string, edge int) ([]byte
 		return nil, err
 	}
 	defer os.RemoveAll(tmp)
-	out := filepath.Join(tmp, "thumbnail.png")
-	args, err := t.Command(file, out, edge)
+	// The input keeps its extension, which some thumbnailers go by.
+	inside := "/tmp/input" + filepath.Ext(file)
+	args, err := t.Command(inside, "/tmp/thumbnail.png", edge)
 	if err != nil {
 		return nil, err
 	}
+	args = bwrapArgs(k.bwrap, k.root, tmp, file, inside, args)
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
 	cmd.Dir = tmp
 	// A process group of its own lets a timeout end whatever the
@@ -114,7 +118,7 @@ func draw(ctx context.Context, t xdg.Thumbnailer, file string, edge int) ([]byte
 		}
 		return nil, err
 	}
-	b, err := os.ReadFile(out)
+	b, err := os.ReadFile(filepath.Join(tmp, "thumbnail.png"))
 	if err != nil {
 		return nil, errNotDrawn
 	}
