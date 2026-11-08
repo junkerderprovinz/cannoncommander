@@ -64,6 +64,9 @@ type Item struct {
 	// Cloud is the state of a file a cloud provider keeps: online, local
 	// or pinned.
 	Cloud string `json:"cloud,omitempty"`
+	// Label is the name Explorer shows for a folder, such as Dokumente for
+	// Documents.
+	Label string `json:"label,omitempty"`
 	// Shortcut says where a .lnk, .url or .desktop file leads.
 	Shortcut *shortcut.Shortcut `json:"shortcut,omitempty"`
 	Link     string             `json:"link,omitempty"`
@@ -401,7 +404,9 @@ func itemFrom(real, name string, st fileStat) Item {
 		}
 	}
 	fill(&item, st)
-	if !item.Dir {
+	if item.Dir {
+		item.Label = labelOf(real, st.attrs)
+	} else {
 		item.Format = FormatOf(name)
 		item.Shortcut = readShortcut(real, name, st.attrs)
 	}

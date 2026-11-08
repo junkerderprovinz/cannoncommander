@@ -34,6 +34,7 @@ const cls = computed(() => [
 const folder = computed(() => props.k.at || props.path);
 const shownName = computed(() => {
   const k = props.k;
+  if (k.label) return k.label;
   return prefs.showExt || k.dir || !k.name.includes('.', 1) ? k.name : k.name.slice(0, k.name.lastIndexOf('.'));
 });
 const objects = computed(() => (props.k.dir ? t('files.objShort', { n: props.k.items ?? 0 }) : fmtSize(props.k.size)));

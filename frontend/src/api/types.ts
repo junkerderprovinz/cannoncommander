@@ -19,6 +19,8 @@ export interface FsItem {
   cloud?: 'online' | 'local' | 'pinned';
   // Where a .lnk, .url or .desktop file leads; path is set when the target lies on a source.
   shortcut?: Shortcut;
+  // The name Explorer shows for a folder, such as Dokumente for Documents.
+  label?: string;
   link?: string;
   items?: number;
   // The server can list what is inside, so the archive opens like a folder.

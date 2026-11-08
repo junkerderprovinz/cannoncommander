@@ -6177,6 +6177,9 @@ components:
         link:
           type: string
           description: Target of a symbolic link or a junction of Windows, as a path of the API when a source holds it.
+        label:
+          type: string
+          description: The name Explorer shows for a folder, from the LocalizedResourceName of its desktop.ini, such as Dokumente for Documents.
         shortcut:
           type: object
           description: Where a .lnk or .url file of Windows or a .desktop launcher of Linux leads. Only the desktop app reads them.
