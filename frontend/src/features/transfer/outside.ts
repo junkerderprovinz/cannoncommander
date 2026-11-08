@@ -100,8 +100,10 @@ export async function pasteOutside(got: Outside, dest: string) {
 }
 
 // Files dropped from another program go the way Explorer takes them: Shift moves and Ctrl copies, and otherwise they
-// move on the same drive and are copied from another one.
+// move on the same drive and are copied from another one. As an action it may be run without any files, so it keeps
+// to the desktop app, the only place with other programs on the same computer.
 export async function dropIn(paths: string[], dest: string, how: 'copy' | 'move' | 'auto') {
+  if (!host.desktop) return;
   let got: Dropped;
   try {
     got = (await call<Dropped>('/dragdrop/in', json('POST', { paths, to: dest }))).body!;
@@ -111,8 +113,10 @@ export async function dropIn(paths: string[], dest: string, how: 'copy' | 'move'
   await bring(how === 'auto' ? (got.sameVolume ? 'move' : 'copy') : how, got.files, got.skipped, dest);
 }
 
-// The drag goes on in the system's own drag loop and the answer comes when the files are dropped somewhere.
+// The drag goes on in the system's own drag loop and the answer comes when the files are dropped somewhere. Like
+// dropIn it keeps to the desktop app.
 export async function dragOut(paths: string[]) {
+  if (!host.desktop) return;
   try {
     await call('/dragdrop/out', json('POST', { paths }));
   } catch (e) {

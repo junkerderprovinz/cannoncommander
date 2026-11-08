@@ -143,6 +143,16 @@ describe('the clipboard shared with other programs', () => {
   });
 });
 
+describe('the container', () => {
+  it('asks the server nothing about other programs, even when every action runs without its arguments', async () => {
+    host.desktop = false;
+    for (const id of ['dropIn', 'dragOut', 'pasteFiles']) await run(id);
+    await settle();
+    expect(sent).toEqual([]);
+    expect(looks).toBe(0);
+  });
+});
+
 describe('the window coming to the front', () => {
   it('looks at the clipboard once for a burst of focus events', async () => {
     vi.useFakeTimers();
