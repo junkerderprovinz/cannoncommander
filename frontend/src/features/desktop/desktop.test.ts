@@ -40,7 +40,7 @@ beforeEach(() => {
   answer = null;
   Object.assign(host, { desktop: true, os: 'linux' });
   vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => server(url, init)));
-  const file = (name: string) => toItem({ name, dir: false, size: 1, mtime: '2026-11-08T10:00:00Z', mode: 420 });
+  const file = (name: string) => toItem({ name, dir: false, size: 1, mtime: '2026-11-08T10:00:00Z', mode: '644' });
   vi.spyOn(api, 'fsList').mockImplementation(async (path) => ({ path, items: [file('a.txt'), file('b.txt')], etag: path }));
   vi.spyOn(api, 'fsTree').mockResolvedValue({ path: '/', items: [] });
   useUser().me = { name: 'jdp', full: '', role: 'admin', home: '/C/Users/jdp' };
@@ -84,7 +84,7 @@ describe('double click', () => {
     prefs.dblclick = 'system';
     const F = usePanels();
     F.T().path = '/home/jdp/Briefe';
-    await F.open(0, { name: 'brief.odt', kind: 'doc' });
+    await F.open(0, { name: 'brief.odt', kind: 'office' });
     await settle();
     expect(posted).toEqual([{ path: '/home/jdp/Briefe/brief.odt', run: false }]);
     prefs.dblclick = 'open';

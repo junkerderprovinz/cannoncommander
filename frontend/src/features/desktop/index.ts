@@ -19,11 +19,11 @@ export default function setup() {
       return;
     }
     action('launch', {
-      label: tl('desktop.launch'), g: 'IconExternalLink', needs: 'sel', when: () => F.sel().some((k) => !k.dir),
+      label: tl('desktop.launch'), g: 'IconExternalLink', when: () => F.sel().some((k) => !k.dir),
       run: (path?: string) => {
         const k = F.sel().find((e) => !e.dir);
         const target = path ?? (k && join(k.at || F.T().path, k.name));
-        if (target) return launch(target);
+        return target ? launch(target) : undefined;
       },
     });
   });
