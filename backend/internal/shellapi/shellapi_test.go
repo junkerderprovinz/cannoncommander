@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -355,5 +356,19 @@ func TestAnIconComesByTypeOrByItem(t *testing.T) {
 	}
 	if resp, _, _ := e.do(http.MethodGet, "/shell/icon?size=20&name=a.txt", nil); resp.StatusCode != http.StatusBadRequest {
 		t.Fatalf("an odd size got %d", resp.StatusCode)
+	}
+}
+
+func TestTheCommonIconsAreLookedUpForEverySizeOfARow(t *testing.T) {
+	asked := map[string]int{}
+	sys := system{typeIcon: func(name string, dir bool, px int) ([]byte, string, error) {
+		asked[name+"@"+strconv.Itoa(px)]++
+		return nil, "", nativeshell.ErrNoPicture
+	}}
+	(&handlers{sys: sys}).warmIcons()
+	for _, want := range []string{"file.png@16", "file.pdf@48", "file.mp4@32", "folder@16"} {
+		if asked[want] != 1 {
+			t.Errorf("%s asked %d times", want, asked[want])
+		}
 	}
 }

@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
@@ -68,7 +69,32 @@ var native = system{
 // Routes registers the contract and the handlers.
 func Routes(r *v1.Router) {
 	r.Contract("shell", contract)
-	bind(r, &handlers{deps: r.Deps(), sys: native, seen: entries{r.Deps().DB}})
+	h := &handlers{deps: r.Deps(), sys: native, seen: entries{r.Deps().DB}}
+	bind(r, h)
+	if desktop.Active() {
+		go h.warmIcons()
+	}
+}
+
+// commonTypes are the types whose icons the desktop app looks up when it
+// starts, before a folder asks. Windows takes seconds over the first icon of
+// a type that a packaged app owns, such as pictures, PDFs and videos.
+var commonTypes = []string{
+	"file.txt", "file.pdf", "file.png", "file.jpg", "file.jpeg", "file.gif", "file.webp", "file.heic", "file.svg",
+	"file.mp4", "file.mkv", "file.mov", "file.mp3", "file.flac", "file.wav", "file.zip", "file.7z", "file.rar",
+	"file.docx", "file.xlsx", "file.pptx", "file.odt", "file.md", "file.json", "file.log", "file.html", "file.cmd",
+	"file.bat", "file.ps1", "file.exe", "file.msi", "file.iso", "file",
+}
+
+func (h *handlers) warmIcons() {
+	start := time.Now()
+	for _, px := range []int{16, 48, 32} {
+		for _, name := range commonTypes {
+			_, _, _ = h.sys.typeIcon(name, false, px)
+		}
+		_, _, _ = h.sys.typeIcon("folder", true, px)
+	}
+	logger.Infof("looked up the icons of %d types in %s", len(commonTypes)+1, time.Since(start))
 }
 
 func bind(r *v1.Router, h *handlers) {
