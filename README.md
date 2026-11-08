@@ -217,6 +217,14 @@ docker run -d --name cannoncommander -p 8480:80 \
 
 CannonCommander shows the folders below `/mnt/user`, the way Unraid lays out its shares. On another server, keep your folders there or change the source in `/config/config.yaml`. [compose.yaml](compose.yaml) does the same with `docker compose up -d`. Without `--device /dev/fuse` and `SYS_ADMIN` everything works except mounting remote storage.
 
+### Desktop app
+
+CannonCommander also runs as a program on Windows, macOS and Linux, with the same interface in a window of its own. Take the installer from the download buttons above, or the zip from the [releases page](https://github.com/junkerderprovinz/cannoncommander/releases/latest), which runs from any folder. On a Mac, unzip it and move CannonCommander into Applications. The app is not signed by Apple or Microsoft, so the first start may ask whether you trust it.
+
+The panels open in your home folder. On Windows every drive is a source, on a Mac your home folder and `/Volumes`, on Linux your home folder and whichever of `/media`, `/run/media` and `/mnt` exist. **Settings > Sources** changes that list. The configuration, the database and the log live in a `CannonCommander` folder in `%APPDATA%` on Windows, `~/Library/Application Support` on a Mac and `~/.config` on Linux.
+
+There is no sign-in. The app's server listens on 127.0.0.1 only and answers its own window and nothing else on the computer. Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. You can switch that off under **Settings > Info**. Remote storage needs [rclone](https://rclone.org) on the computer, and on Windows [WinFsp](https://winfsp.dev) or on a Mac [macFUSE](https://osxfuse.github.io) for the mounts. The Mac and Linux builds show PDF pages as pictures, the Windows build does not yet.
+
 ### First sign-in
 
 Open port 8480 in a browser. On the first start the container writes a password for the user `admin` into its log, in a line that starts with `Generated initial admin password`. On Unraid, click the container's icon and choose **Logs**. Sign in with it and pick a new password of at least 12 characters. After that you can add users under **Settings > Users & groups**.
@@ -272,6 +280,8 @@ Windows Explorer only maps a WebDAV drive over https, so for Windows put CannonC
 Admins can open a shell on the server in the folder they are looking at: type `cmd`, `bash`, `terminal` or `powershell` into the path field and press Enter, as in Windows Explorer, or pick **Open terminal here** from the Tools menu or the list's context menu. It is a Linux shell inside the container, `bash` where the image has it, running as `PUID:PGID` without the extra capabilities the server keeps. It stays off until you switch it on under **Settings > Integrations**, also when sign-in is turned off.
 
 Think before you switch it on: whoever may open it can do on the server whatever CannonCommander's user may, past every access rule of the file manager. Only signed-in admins get one, never an API token, at most four at a time. A terminal closes after 30 minutes without typing, when the session ends and when the switch goes off. Opening and closing go into the activity log, what is typed does not. With sign-in turned off everybody who reaches the page is an admin, so switching the terminal on then gives all of them a shell.
+
+In the desktop app the same words open your own computer's terminal in a window of its own, with no switch to turn on. On Windows `cmd` opens the Command Prompt, `powershell` Windows PowerShell, `pwsh` PowerShell 7 and `wt` Windows Terminal, and `terminal` opens Windows Terminal where it is installed and the Command Prompt otherwise. A Mac opens Terminal for every word, and Linux the terminal your desktop names in `TERMINAL` or `x-terminal-emulator`, else the first common one it finds.
 
 ### Reverse proxy
 
@@ -337,6 +347,8 @@ docker build -t cannoncommander -f _docker/Dockerfile .
 ```
 
 That builds the same image the releases use, with ffmpeg, MuPDF, rclone and 7-Zip inside. To work on the code, `make setup` installs the tools and `make run` starts the server with a test configuration. Without a server, `npm run dev:fixture` in `frontend/` runs the interface against made-up files. [CONTRIBUTING.md](CONTRIBUTING.md) explains the layout and the checks.
+
+The desktop app builds on the system it is for with `node scripts/desktop.mjs`, and `--installer` adds the installer on Windows and Linux. It needs the Wails CLI in the version `desktop/go.mod` names and a C compiler for SQLite: MinGW on Windows, the Xcode tools on a Mac, and on Linux gcc with the GTK 3 and WebKitGTK 4.1 headers.
 
 <br>
 

@@ -22,6 +22,7 @@ The first release of CannonCommander: a two-pane file manager for Unraid that ru
 - **Users, groups and access rules** that hide a folder or make it read only, two-factor sign-in with recovery codes, passkeys, API tokens that can be read only, single sign-on through OIDC, and an activity log.
 - **Colours and tags for files**, frequent folders, shortcuts and pictures for folders, and a link to [ArrowLoop](https://github.com/junkerderprovinz/arrowloop) that turns a pair of folders from the comparison into a recurring sync.
 - **A container image** for amd64 and arm64 with ffmpeg, MuPDF, rclone and 7-Zip inside, and an Unraid template. It runs as nobody:users with Unraid's file permissions by default.
+- **A desktop app for Windows, macOS and Linux**: the same interface in a window of its own, on your own folders and drives, with nobody to sign in. Typing `cmd`, `powershell`, `pwsh`, `wt` or `terminal` into the path field opens your computer's terminal in that folder. It updates itself once a day, checks every download against the release's checksums and puts the new version in place for the next start.
 
 ## 🎨 Design
 
