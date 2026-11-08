@@ -3,6 +3,7 @@ import { reactive } from 'vue';
 import { action } from '@/core/actions';
 import { menu } from '@/core/menu';
 import { openMenuBar } from '@/core/menus';
+import { host, windowsPaths } from '@/core/host';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { go as goView, view } from '@/core/views';
@@ -11,13 +12,14 @@ import { t, tl } from '@/i18n';
 import { shell } from '@/shell/state';
 import { useListing } from '@/stores/listing';
 import { newTab, usePanels } from '@/stores/panels';
+import { useUser } from '@/stores/user';
 import { copyText } from '@/ui/kit';
 import { addBookmark, copyInternalLink } from './bookmarks';
 import { Columns } from './columns';
 import ColumnsBody from './ColumnsBody.vue';
 import { GROUPS } from './entries';
 import { topFolders } from './frequent';
-import { join } from './paths';
+import { join, nativePath } from './paths';
 import { VIEWS } from './views';
 
 const toggle = (k: string) => () => setPref(k, !prefs[k]);
@@ -102,7 +104,8 @@ export function registerFileActions() {
   action('back', { label: tl('actions.back'), g: 'IconBack', key: 'Alt+ArrowLeft', run: () => { const tab = F.T(); if (!tab.hist.length) return; tab.fwd.push(tab.path); F.go(tab.hist.pop()!, F.active, false); } });
   action('forward', { label: tl('actions.forward'), g: 'IconForward', key: 'Alt+ArrowRight', run: () => { const tab = F.T(); if (!tab.fwd.length) return; tab.hist.push(tab.path); F.go(tab.fwd.pop()!, F.active, false); } });
   action('up', { label: tl('actions.up'), g: 'IconFolderUp', key: 'Backspace', run: () => F.T().path !== '/' && F.open(F.active, { up: true }) });
-  action('home', { label: tl('actions.home'), g: 'IconFolder', run: () => F.go('/mnt/user') });
+  // The container opens the shares, the desktop app the person's own folder.
+  action('home', { label: () => t(host.desktop ? 'actions.homeFolder' : 'actions.home'), g: 'IconFolder', run: () => F.go(host.desktop ? useUser().me.home || '/' : '/mnt/user') });
   action('gotoPath', { label: tl('actions.gotoPath'), g: 'IconPencil', key: 'Ctrl+l', run: () => {
     if (view.id !== 'files') goView('files');
     F.T().editPath = true;
@@ -124,7 +127,7 @@ export function registerFileActions() {
     F.entries().filter((k) => !k.up).forEach((k) => (tab.marked.has(k.name) ? tab.marked.delete(k.name) : tab.marked.add(k.name)));
   } });
   action('unselect', { label: tl('actions.unselect'), g: 'IconClearSelection', key: '-', run: () => { F.T().marked = new Set(); } });
-  action('copyPath', { label: tl('actions.copyPath'), g: 'IconLink', needs: 'sel', run: () => copyText(F.sel().map((k) => join(k.at || F.T().path, k.name)).join('\n'), t('files.pathCopied')) });
+  action('copyPath', { label: tl('actions.copyPath'), g: 'IconLink', needs: 'sel', run: () => copyText(F.sel().map((k) => nativePath(join(k.at || F.T().path, k.name), windowsPaths())).join('\n'), t('files.pathCopied')) });
 
   action('settings', { label: tl('actions.settings'), g: 'IconGear', run: () => goView('settings') });
   action('menuBar', { label: tl('actions.menuBar'), g: 'IconMenu', key: 'F10', run: () => openMenuBar(0) });
