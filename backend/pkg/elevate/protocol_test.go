@@ -95,10 +95,9 @@ func TestADeclinedPromptEndsTheRun(t *testing.T) {
 }
 
 func TestAHelperThatNeverCallsEndsTheRun(t *testing.T) {
-	was, wait := launch, connectWait
+	was := launch
 	launch = func(context.Context, int, []byte) (func() error, error) { return func() error { return nil }, nil }
-	connectWait = time.Second
-	t.Cleanup(func() { launch, connectWait = was, wait })
+	t.Cleanup(func() { launch = was })
 	err := Run(context.Background(), []Op{{Kind: Mkdir, To: filepath.Join(t.TempDir(), "x")}}, func(int, error) {})
 	if !errors.Is(err, ErrNoHelper) {
 		t.Fatalf("got %v", err)
@@ -224,5 +223,27 @@ func TestElevatedForRealCanBeTurnedDown(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(dir, "als-admin")); err == nil {
 		t.Fatal("the helper did the job")
+	}
+}
+
+func TestAPromptThatTakesItsTimeIsWaitedFor(t *testing.T) {
+	was := launch
+	launch = func(_ context.Context, port int, secret []byte) (func() error, error) {
+		done := make(chan error, 1)
+		go func() {
+			// Someone typing a password, longer than the helper waits for its job.
+			time.Sleep(jobWait + time.Second)
+			done <- Serve(fmt.Sprintf("%d:%x", port, secret), nil)
+		}()
+		return func() error { return <-done }, nil
+	}
+	t.Cleanup(func() { launch = was })
+	if testing.Short() {
+		t.Skip("waits half a minute")
+	}
+	dir := t.TempDir()
+	var o outcome
+	if err := Run(context.Background(), []Op{{Kind: Mkdir, To: filepath.Join(dir, "x")}}, o.report); err != nil || o.errs[0] != nil {
+		t.Fatalf("got %v, %v", err, o.errs)
 	}
 }
