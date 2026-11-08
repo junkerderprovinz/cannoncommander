@@ -31,6 +31,13 @@ export async function readClipboard(): Promise<Outside | null> {
   }
 }
 
+// The window hears a burst of focus events as it comes to the front, and one look at the clipboard answers them all.
+let looking: ReturnType<typeof setTimeout> | undefined;
+export function lookSoon() {
+  clearTimeout(looking);
+  looking = setTimeout(() => { void readClipboard(); }, 150);
+}
+
 // Names cut or copied in a panel go onto the computer's clipboard as files. Those it cannot take, such as files inside
 // an archive, stay in the app's own clipboard until another program puts something newer on the computer's.
 export async function share(cut: boolean, from: string, names: string[]) {

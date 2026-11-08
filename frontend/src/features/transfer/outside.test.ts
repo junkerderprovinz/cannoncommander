@@ -21,6 +21,7 @@ let onClipboard: Outside;
 let putFails: boolean;
 let sameVolume: boolean;
 let sent: { method: string; url: string; body: unknown }[] = [];
+let looks = 0;
 let jobs: Transfer[] = [];
 
 function server(url: string, init?: RequestInit) {
@@ -30,7 +31,10 @@ function server(url: string, init?: RequestInit) {
     const path = new URL(url, 'http://x').searchParams.get('path')!;
     return new Response(null, { status: useListing().lists.has(path) ? 304 : 404 });
   }
-  if (url === '/api/v1/clipboard' && method === 'GET') return Response.json(onClipboard);
+  if (url === '/api/v1/clipboard' && method === 'GET') {
+    looks++;
+    return Response.json(onClipboard);
+  }
   if (url === '/api/v1/clipboard' && putFails) return Response.json({ code: 'notOnDisk', detail: 'only files on disk' }, { status: 400 });
   if (url === '/api/v1/dragdrop/in') {
     const { paths } = JSON.parse(String(init!.body)) as { paths: string[] };
@@ -65,6 +69,7 @@ beforeEach(() => {
   putFails = false;
   sameVolume = false;
   sent = [];
+  looks = 0;
   jobs = [];
   toasts.splice(0);
   vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => server(url, init)));
@@ -120,6 +125,20 @@ describe('the clipboard shared with other programs', () => {
   it('turns text into a file when the clipboard holds no files', async () => {
     onClipboard = { files: [], cut: false, skipped: 0 };
     expect(await run('pasteFiles')).toBe(false);
+  });
+});
+
+describe('the window coming to the front', () => {
+  it('looks at the clipboard once for a burst of focus events', async () => {
+    vi.useFakeTimers();
+    try {
+      for (let k = 0; k < 3; k++) window.dispatchEvent(new Event('focus'));
+      await vi.runAllTimersAsync();
+    } finally {
+      vi.useRealTimers();
+    }
+    await settle();
+    expect(looks).toBe(1);
   });
 });
 

@@ -20,7 +20,7 @@ import { useListing } from '@/stores/listing';
 import { type Transfer, usePanels } from '@/stores/panels';
 import { ask } from './ask';
 import { askRunning, resolveConflicts } from './conflicts';
-import { clipboardWins, dragOut, dropIn, pasteOutside, readClipboard, share } from './outside';
+import { clipboardWins, dragOut, dropIn, lookSoon, pasteOutside, share } from './outside';
 import LinksBody from './LinksBody.vue';
 import ParityBody from './ParityBody.vue';
 import { ensureDir, pathOf, shareRel } from './paths';
@@ -219,8 +219,8 @@ export default function setup() {
   action('dragOut', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: dragOut });
 
   // Another program may have put files on the computer's clipboard while the window was in the background.
-  window.addEventListener('focus', () => { void readClipboard(); });
-  watch(() => host.desktop, () => { void readClipboard(); });
+  window.addEventListener('focus', lookSoon);
+  watch(() => host.desktop, lookSoon);
 
   // A job that meets a name on its way asks here, unless someone answers it in another tab first.
   jobs.onAsked((job, conflict) => askRunning(job, conflict));
