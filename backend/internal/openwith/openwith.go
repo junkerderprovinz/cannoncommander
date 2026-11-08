@@ -3,12 +3,10 @@
 package openwith
 
 import (
-	"bytes"
 	_ "embed"
 	"encoding/base64"
 	"errors"
 	"image"
-	"image/png"
 	"net/http"
 	"os"
 	"slices"
@@ -18,8 +16,8 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/xdg"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
-	"golang.org/x/image/draw"
 )
 
 //go:embed openapi.yaml
@@ -262,22 +260,9 @@ func dataURL(mediaType string, b []byte) string {
 
 // pngIcon scales img into the square of an icon in the menu.
 func pngIcon(img image.Image) (string, error) {
-	b := img.Bounds()
-	if b.Empty() {
-		return "", errors.New("empty image")
-	}
-	w, h := iconSize, iconSize
-	if b.Dx() > b.Dy() {
-		h = max(1, iconSize*b.Dy()/b.Dx())
-	} else {
-		w = max(1, iconSize*b.Dx()/b.Dy())
-	}
-	small := image.NewNRGBA(image.Rect(0, 0, iconSize, iconSize))
-	at := image.Rect((iconSize-w)/2, (iconSize-h)/2, (iconSize-w)/2+w, (iconSize-h)/2+h)
-	draw.CatmullRom.Scale(small, at, img, b, draw.Over, nil)
-	var out bytes.Buffer
-	if err := png.Encode(&out, small); err != nil {
+	b, err := xdg.ScaleIcon(img, iconSize)
+	if err != nil {
 		return "", err
 	}
-	return dataURL("image/png", out.Bytes()), nil
+	return dataURL("image/png", b), nil
 }
