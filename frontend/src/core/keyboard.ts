@@ -28,6 +28,8 @@ export function handleKey(e: KeyboardEvent) {
     }
     return;
   }
+  // An open dropdown takes its own keys, so Escape closes the list and not the window or page behind it.
+  if (document.querySelector('.glim-select-content[data-state="open"]')) return;
   if (winStack.length) {
     if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); if (!winStack.at(-1)!.locked) closeWin(); }
     return;

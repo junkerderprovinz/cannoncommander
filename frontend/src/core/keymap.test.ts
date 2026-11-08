@@ -128,4 +128,16 @@ describe('keyboard layers', () => {
     press('Escape');
     expect(view.id).toBe('files');
   });
+
+  it('leaves Escape to an open dropdown, in a page and in a window', () => {
+    const list = Object.assign(document.body.appendChild(document.createElement('ul')), { className: 'glim-select-content' });
+    list.dataset.state = 'open';
+    view.id = 'settings';
+    press('Escape', {}, list);
+    expect(view.id).toBe('settings');
+    win({ title: 'Eins', body: '' });
+    press('Escape', {}, list);
+    expect(winStack).toHaveLength(1);
+    list.remove();
+  });
 });
