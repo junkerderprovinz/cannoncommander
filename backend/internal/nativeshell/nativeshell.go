@@ -27,6 +27,9 @@ type Entry struct {
 	// one, its text otherwise.
 	Key   string
 	Label string
+	// Remember is the label kept for the settings, without the names of the
+	// files it was shown for. Empty means Label.
+	Remember string
 	// Icon is the row's picture as a data URL, or "".
 	Icon string
 }

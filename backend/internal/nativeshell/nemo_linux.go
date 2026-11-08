@@ -34,10 +34,12 @@ func (k *desk) nemo(sel selection) []action {
 				continue
 			}
 			command = inActionDir(dir, command)
-			first := filepath.Base(sel.items[0].path)
-			label = strings.NewReplacer("%N", first, "%f", first, "%%", "%").Replace(label)
+			shown, remember := nemoLabel(label, g, sel), fill(label, nil)
+			if remember == shown {
+				remember = ""
+			}
 			out = append(out, action{
-				Action: Action{Entry: Entry{Key: "nemo:" + name, Label: label}},
+				Action: Action{Entry: Entry{Key: "nemo:" + name, Label: shown, Remember: remember}},
 				icon:   g.String("Icon-Name"),
 				launches: func(sel selection) ([]launch, error) {
 					args, err := nemoCommand(command, g, sel)
@@ -131,6 +133,16 @@ func nemoCommand(command string, g xdg.Group, sel selection) ([]string, error) {
 	if strings.EqualFold(g["Quote"], "double") {
 		quote = doubleQuote
 	}
+	return splitArgv(fill(command, nemoCodes(g, sel, quote)))
+}
+
+// nemoLabel fills the same codes into a label, as Nemo does, without the
+// quotes a command needs.
+func nemoLabel(label string, g xdg.Group, sel selection) string {
+	return fill(label, nemoCodes(g, sel, func(s string) string { return s }))
+}
+
+func nemoCodes(g xdg.Group, sel selection, quote func(string) string) map[byte]string {
 	sep := g.String("Separator")
 	if sep == "" {
 		sep = " "
@@ -143,7 +155,7 @@ func nemoCommand(command string, g xdg.Group, sel selection) ([]string, error) {
 		return strings.Join(quoted, sep)
 	}
 	first := filepath.Base(sel.items[0].path)
-	return splitArgv(fill(command, map[byte]string{
+	return map[byte]string{
 		'U': each(sel.uris()),
 		'F': each(sel.paths()),
 		'P': quote(sel.dir),
@@ -153,5 +165,5 @@ func nemoCommand(command string, g xdg.Group, sel selection) ([]string, error) {
 		'e': quote(strings.TrimSuffix(first, filepath.Ext(first))),
 		'D': "",
 		'X': "",
-	}))
+	}
 }
