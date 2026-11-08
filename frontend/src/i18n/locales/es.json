@@ -1343,7 +1343,15 @@
     "runTitle": "¿Iniciar el programa?",
     "runText": "{name} es un programa. ¿Quieres iniciarlo o solo echarle un vistazo?",
     "run": "Iniciar",
-    "show": "Echar un vistazo"
+    "show": "Echar un vistazo",
+    "fmLabel": "Usar como gestor de archivos predeterminado",
+    "fmTipWindows": "Un doble clic en una carpeta del Explorador, Win+E y las carpetas de otros programas se abrirán aquí. Para que vaya rápido, CannonCommander espera en el área de notificación cuando lo cierras. Al desactivarlo, el Explorador lo recupera todo.",
+    "fmTipLinux": "Las carpetas de otros programas se abrirán aquí, también «Mostrar en carpeta» desde el navegador. Para que vaya rápido, CannonCommander espera en la bandeja del sistema cuando lo cierras. Al desactivarlo, tu gestor de archivos anterior lo recupera todo.",
+    "fmNowOn": "Genial, tus carpetas ya se abren en CannonCommander",
+    "fmNowOff": "Tus carpetas vuelven a abrirse como antes",
+    "fmOpen": "Abrir en CannonCommander",
+    "fmShow": "Mostrar CannonCommander",
+    "fmQuit": "Salir"
   },
   "diff": {
     "title": "Comparar archivos",
@@ -3635,6 +3643,7 @@
     "deleteSelf": "No puedes eliminar tu propia cuenta",
     "denied": "No tienes permisos para esto",
     "desktopOnly": "Eso solo funciona en la aplicación de escritorio",
+    "fileManagerNotSet": "El ordenador no aceptó el cambio",
     "disksAdminsOnly": "Los discos individuales y el Cache solo los ven los administradores",
     "expiryPast": "La fecha de caducidad ya ha pasado",
     "fileInTheWay": "Hay un archivo donde debería ir una carpeta",

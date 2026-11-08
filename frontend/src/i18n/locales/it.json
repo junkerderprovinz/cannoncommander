@@ -1343,7 +1343,15 @@
     "runTitle": "Avviare il programma?",
     "runText": "{name} è un programma. Vuoi avviarlo o solo dargli un'occhiata?",
     "run": "Avvia",
-    "show": "Dai un'occhiata"
+    "show": "Dai un'occhiata",
+    "fmLabel": "Imposta come gestore file predefinito",
+    "fmTipWindows": "Un doppio clic su una cartella in Esplora file, Win+E e le cartelle di altri programmi si aprono allora qui. Perché sia veloce, CannonCommander aspetta nell'area di notifica dopo la chiusura. Disattivato, Esplora file riprende tutto.",
+    "fmTipLinux": "Le cartelle di altri programmi si aprono allora qui, anche «Mostra nella cartella» dal browser. Perché sia veloce, CannonCommander aspetta nell'area di notifica dopo la chiusura. Disattivato, il tuo gestore file precedente riprende tutto.",
+    "fmNowOn": "Ottimo, le tue cartelle ora si aprono in CannonCommander",
+    "fmNowOff": "Le tue cartelle si aprono di nuovo come prima",
+    "fmOpen": "Apri in CannonCommander",
+    "fmShow": "Mostra CannonCommander",
+    "fmQuit": "Esci"
   },
   "diff": {
     "title": "Confronta file",
@@ -3635,6 +3643,7 @@
     "deleteSelf": "Non puoi eliminare il tuo account",
     "denied": "Non hai i permessi per questo",
     "desktopOnly": "Si può fare solo nell'app desktop",
+    "fileManagerNotSet": "Il computer non ha accettato la modifica",
     "disksAdminsOnly": "I singoli dischi e la Cache li vedono solo gli admin",
     "expiryPast": "La data di scadenza è nel passato",
     "fileInTheWay": "Dove dovrebbe stare una cartella c'è un file",

@@ -1298,7 +1298,15 @@
     "runTitle": "Programma starten?",
     "runText": "{name} is een programma. Wil je het starten of er alleen even naar kijken?",
     "run": "Starten",
-    "show": "Bekijken"
+    "show": "Bekijken",
+    "fmLabel": "Instellen als standaard bestandsbeheerder",
+    "fmTipWindows": "Een dubbelklik op een map in de Verkenner, Win+E en mappen uit andere programma's openen dan hier. Zodat dat snel gaat, wacht CannonCommander na het sluiten in het systeemvak. Uitgeschakeld krijgt de Verkenner alles terug.",
+    "fmTipLinux": "Mappen uit andere programma's openen dan hier, ook 'In map tonen' vanuit de browser. Zodat dat snel gaat, wacht CannonCommander na het sluiten in het systeemvak. Uitgeschakeld krijgt je vorige bestandsbeheerder alles terug.",
+    "fmNowOn": "Fijn, je mappen openen nu in CannonCommander",
+    "fmNowOff": "Je mappen openen weer zoals vroeger",
+    "fmOpen": "Openen in CannonCommander",
+    "fmShow": "CannonCommander tonen",
+    "fmQuit": "Afsluiten"
   },
   "diff": {
     "title": "Bestanden vergelijken",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Je eigen account kun je niet verwijderen",
     "denied": "Daarvoor heb je de rechten niet",
     "desktopOnly": "Dat kan alleen de desktop-app",
+    "fileManagerNotSet": "De computer heeft de wijziging niet overgenomen",
     "disksAdminsOnly": "De losse schijven en de Cache zien alleen admins",
     "expiryPast": "De vervaldatum ligt in het verleden",
     "fileInTheWay": "Waar een map hoort, staat een bestand",

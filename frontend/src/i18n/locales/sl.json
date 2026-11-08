@@ -1388,7 +1388,15 @@
     "runTitle": "Zaženem program?",
     "runText": "{name} je program. Ga želiš zagnati ali si ga samo ogledati?",
     "run": "Zaženi",
-    "show": "Oglej si"
+    "show": "Oglej si",
+    "fmLabel": "Nastavi kot privzeti upravitelj datotek",
+    "fmTipWindows": "Dvoklik na mapo v Raziskovalcu, Win+E in mape iz drugih programov se potem odprejo tukaj. Da gre hitro, CannonCommander po zaprtju čaka v območju za obvestila. Ko je izklopljeno, Raziskovalec dobi vse nazaj.",
+    "fmTipLinux": "Mape iz drugih programov se potem odprejo tukaj, tudi »Pokaži v mapi« iz brskalnika. Da gre hitro, CannonCommander po zaprtju čaka v sistemski vrstici. Ko je izklopljeno, dosedanji upravitelj datotek dobi vse nazaj.",
+    "fmNowOn": "Odlično, tvoje mape se zdaj odpirajo v CannonCommanderju",
+    "fmNowOff": "Tvoje mape se spet odpirajo kot prej",
+    "fmOpen": "Odpri v CannonCommanderju",
+    "fmShow": "Pokaži CannonCommander",
+    "fmQuit": "Končaj"
   },
   "diff": {
     "title": "Primerjaj datoteki",
@@ -3767,6 +3775,7 @@
     "deleteSelf": "Svojega računa ne morete izbrisati",
     "denied": "Za to nimate pravic",
     "desktopOnly": "To gre samo v namizni aplikaciji",
+    "fileManagerNotSet": "Računalnik spremembe ni sprejel",
     "disksAdminsOnly": "Posamezne diske in Cache vidijo samo skrbniki",
     "expiryPast": "Datum poteka je v preteklosti",
     "fileInTheWay": "Kjer bi morala biti mapa, je datoteka",

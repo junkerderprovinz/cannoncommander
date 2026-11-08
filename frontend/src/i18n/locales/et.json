@@ -1298,7 +1298,15 @@
     "runTitle": "Kas käivitada programm?",
     "runText": "{name} on programm. Kas soovid selle käivitada või lihtsalt vaadata?",
     "run": "Käivita",
-    "show": "Vaata"
+    "show": "Vaata",
+    "fmLabel": "Määra vaikimisi failihalduriks",
+    "fmTipWindows": "Topeltklõps kaustal Exploreris, Win+E ja teiste programmide kaustad avanevad siis siin. Et see käiks kiiresti, ootab CannonCommander pärast sulgemist teavitusalal. Välja lülitatuna saab Explorer kõik tagasi.",
+    "fmTipLinux": "Teiste programmide kaustad avanevad siis siin, ka brauseri „Näita kaustas“. Et see käiks kiiresti, ootab CannonCommander pärast sulgemist süsteemisalves. Välja lülitatuna saab senine failihaldur kõik tagasi.",
+    "fmNowOn": "Tore, sinu kaustad avanevad nüüd CannonCommanderis",
+    "fmNowOff": "Sinu kaustad avanevad jälle nagu varem",
+    "fmOpen": "Ava CannonCommanderis",
+    "fmShow": "Näita CannonCommanderit",
+    "fmQuit": "Välju"
   },
   "diff": {
     "title": "Võrdle faile",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Oma kontot ei saa kustutada",
     "denied": "Sul pole selleks õigusi",
     "desktopOnly": "See töötab ainult töölauarakenduses",
+    "fileManagerNotSet": "Arvuti ei võtnud muudatust vastu",
     "disksAdminsOnly": "Üksikuid kettaid ja Cache'i näevad ainult administraatorid",
     "expiryPast": "Aegumiskuupäev on minevikus",
     "fileInTheWay": "Kausta kohal on fail",

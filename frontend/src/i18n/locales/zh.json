@@ -1253,7 +1253,15 @@
     "runTitle": "启动程序?",
     "runText": "{name} 是一个程序。要启动它，还是只看看内容?",
     "run": "启动",
-    "show": "查看"
+    "show": "查看",
+    "fmLabel": "设为默认文件管理器",
+    "fmTipWindows": "之后在资源管理器中双击文件夹、按 Win+E 以及其他程序打开的文件夹都会在这里打开。为了打开得快，关闭后 CannonCommander 会在通知区域等待。关闭此项后，一切都交还给资源管理器。",
+    "fmTipLinux": "之后其他程序打开的文件夹都会在这里打开，包括浏览器中的“在文件夹中显示”。为了打开得快，关闭后 CannonCommander 会在系统托盘中等待。关闭此项后，一切都交还给你之前的文件管理器。",
+    "fmNowOn": "太好了，你的文件夹现在会在 CannonCommander 中打开",
+    "fmNowOff": "你的文件夹又会像以前一样打开",
+    "fmOpen": "在 CannonCommander 中打开",
+    "fmShow": "显示 CannonCommander",
+    "fmQuit": "退出"
   },
   "diff": {
     "title": "比较文件",
@@ -3371,6 +3379,7 @@
     "deleteSelf": "你不能删除自己的账户",
     "denied": "你没有执行此操作的权限",
     "desktopOnly": "这只能在桌面应用中进行",
+    "fileManagerNotSet": "计算机未接受此更改",
     "disksAdminsOnly": "只有管理员能看到单独的磁盘和 Cache",
     "expiryPast": "过期日期已经过去",
     "fileInTheWay": "应该是文件夹的位置上有一个文件",

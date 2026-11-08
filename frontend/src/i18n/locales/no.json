@@ -1298,7 +1298,15 @@
     "runTitle": "Starte programmet?",
     "runText": "{name} er et program. Vil du starte det eller bare se på det?",
     "run": "Start",
-    "show": "Se på det"
+    "show": "Se på det",
+    "fmLabel": "Gjør til standard filbehandler",
+    "fmTipWindows": "Et dobbeltklikk på en mappe i Utforsker, Win+E og mapper fra andre programmer åpnes da her. For at det skal gå raskt, venter CannonCommander i varslingsområdet etter at du lukker det. Slått av får Utforsker alt tilbake.",
+    "fmTipLinux": "Mapper fra andre programmer åpnes da her, også «Vis i mappe» fra nettleseren. For at det skal gå raskt, venter CannonCommander i systemstatusfeltet etter at du lukker det. Slått av får den forrige filbehandleren din alt tilbake.",
+    "fmNowOn": "Flott, mappene dine åpnes nå i CannonCommander",
+    "fmNowOff": "Mappene dine åpnes som før igjen",
+    "fmOpen": "Åpne i CannonCommander",
+    "fmShow": "Vis CannonCommander",
+    "fmQuit": "Avslutt"
   },
   "diff": {
     "title": "Sammenlign filer",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Du kan ikke slette din egen konto",
     "denied": "Du har ikke rettigheter til dette",
     "desktopOnly": "Det går bare i skrivebordsappen",
+    "fileManagerNotSet": "Datamaskinen tok ikke imot endringen",
     "disksAdminsOnly": "Bare administratorer ser de enkelte diskene og Cache",
     "expiryPast": "Utløpsdatoen ligger i fortiden",
     "fileInTheWay": "Det ligger en fil der en mappe hører hjemme",

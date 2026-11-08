@@ -1343,7 +1343,15 @@
     "runTitle": "Lancer le programme ?",
     "runText": "{name} est un programme. Tu veux le lancer ou juste y jeter un œil ?",
     "run": "Lancer",
-    "show": "Y jeter un œil"
+    "show": "Y jeter un œil",
+    "fmLabel": "Définir comme gestionnaire de fichiers par défaut",
+    "fmTipWindows": "Un double-clic sur un dossier dans l'Explorateur, Win+E et les dossiers venant d'autres programmes s'ouvrent alors ici. Pour que ce soit rapide, CannonCommander attend dans la zone de notification une fois fermé. Désactivé, l'Explorateur récupère tout.",
+    "fmTipLinux": "Les dossiers venant d'autres programmes s'ouvrent alors ici, y compris « Afficher dans le dossier » depuis le navigateur. Pour que ce soit rapide, CannonCommander attend dans la zone de notification une fois fermé. Désactivé, ton ancien gestionnaire de fichiers récupère tout.",
+    "fmNowOn": "Super, tes dossiers s'ouvrent maintenant dans CannonCommander",
+    "fmNowOff": "Tes dossiers s'ouvrent de nouveau comme avant",
+    "fmOpen": "Ouvrir dans CannonCommander",
+    "fmShow": "Afficher CannonCommander",
+    "fmQuit": "Quitter"
   },
   "diff": {
     "title": "Comparer des fichiers",
@@ -3635,6 +3643,7 @@
     "deleteSelf": "Vous ne pouvez pas supprimer votre propre compte",
     "denied": "Vous n'avez pas les droits pour cela",
     "desktopOnly": "Seule l'application de bureau peut faire cela",
+    "fileManagerNotSet": "L'ordinateur n'a pas accepté la modification",
     "disksAdminsOnly": "Seuls les admins voient les disques individuels et le Cache",
     "expiryPast": "La date d'expiration est dans le passé",
     "fileInTheWay": "Un fichier se trouve là où doit aller un dossier",

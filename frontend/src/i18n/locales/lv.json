@@ -1343,7 +1343,15 @@
     "runTitle": "Palaist programmu?",
     "runText": "{name} ir programma. Vai vēlies to palaist vai tikai apskatīt?",
     "run": "Palaist",
-    "show": "Apskatīt"
+    "show": "Apskatīt",
+    "fmLabel": "Iestatīt kā noklusējuma failu pārvaldnieku",
+    "fmTipWindows": "Dubultklikšķis uz mapes pārlūkā Explorer, Win+E un mapes no citām programmām tad atvērsies šeit. Lai tas notiktu ātri, CannonCommander pēc aizvēršanas gaida paziņojumu apgabalā. Izslēdzot Explorer visu saņem atpakaļ.",
+    "fmTipLinux": "Mapes no citām programmām tad atvērsies šeit, arī pārlūka „Rādīt mapē“. Lai tas notiktu ātri, CannonCommander pēc aizvēršanas gaida sistēmas teknē. Izslēdzot iepriekšējais failu pārvaldnieks visu saņem atpakaļ.",
+    "fmNowOn": "Lieliski, tavas mapes tagad atveras CannonCommander",
+    "fmNowOff": "Tavas mapes atkal atveras kā agrāk",
+    "fmOpen": "Atvērt CannonCommander",
+    "fmShow": "Rādīt CannonCommander",
+    "fmQuit": "Iziet"
   },
   "diff": {
     "title": "Salīdzināt failus",
@@ -3635,6 +3643,7 @@
     "deleteSelf": "Savu kontu tu nevari dzēst",
     "denied": "Tev tam nav tiesību",
     "desktopOnly": "Tas iespējams tikai darbvirsmas lietotnē",
+    "fileManagerNotSet": "Dators nepieņēma izmaiņas",
     "disksAdminsOnly": "Atsevišķos diskus un Cache redz tikai administratori",
     "expiryPast": "Derīguma termiņš ir pagātnē",
     "fileInTheWay": "Tur, kur jābūt mapei, ir fails",

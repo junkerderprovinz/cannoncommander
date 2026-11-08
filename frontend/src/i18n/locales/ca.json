@@ -1343,7 +1343,15 @@
     "runTitle": "Vols iniciar el programa?",
     "runText": "{name} és un programa. Vols iniciar-lo o només fer-hi una ullada?",
     "run": "Inicia",
-    "show": "Mira-ho"
+    "show": "Mira-ho",
+    "fmLabel": "Defineix-lo com a gestor de fitxers predeterminat",
+    "fmTipWindows": "Un doble clic sobre una carpeta a l'Explorador, Win+E i les carpetes d'altres programes s'obriran aquí. Perquè vagi de pressa, CannonCommander espera a l'àrea de notificacions quan el tanques. Si ho desactives, l'Explorador ho recupera tot.",
+    "fmTipLinux": "Les carpetes d'altres programes s'obriran aquí, també «Mostra a la carpeta» del navegador. Perquè vagi de pressa, CannonCommander espera a la safata del sistema quan el tanques. Si ho desactives, el gestor de fitxers d'abans ho recupera tot.",
+    "fmNowOn": "Fantàstic, ara les teves carpetes s'obren a CannonCommander",
+    "fmNowOff": "Les teves carpetes tornen a obrir-se com abans",
+    "fmOpen": "Obre a CannonCommander",
+    "fmShow": "Mostra CannonCommander",
+    "fmQuit": "Surt"
   },
   "diff": {
     "title": "Compara fitxers",
@@ -3635,6 +3643,7 @@
     "deleteSelf": "No podeu suprimir el vostre propi compte",
     "denied": "No teniu permisos per a això",
     "desktopOnly": "Això només funciona a l'aplicació d'escriptori",
+    "fileManagerNotSet": "L'ordinador no ha acceptat el canvi",
     "disksAdminsOnly": "Els discs individuals i la Cache només els veuen els administradors",
     "expiryPast": "La data de caducitat ja ha passat",
     "fileInTheWay": "Hi ha un fitxer on hauria d'anar una carpeta",

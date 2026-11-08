@@ -1298,7 +1298,15 @@
     "runTitle": "Iniciar o programa?",
     "runText": "{name} é un programa. Queres inicialo ou só botarlle unha ollada?",
     "run": "Iniciar",
-    "show": "Botar unha ollada"
+    "show": "Botar unha ollada",
+    "fmLabel": "Usar como xestor de ficheiros predeterminado",
+    "fmTipWindows": "Un dobre clic nun cartafol do Explorador, Win+E e os cartafoles doutros programas abriranse aquí. Para que vaia rápido, CannonCommander agarda na área de notificacións cando o pechas. Ao desactivalo, o Explorador recupera todo.",
+    "fmTipLinux": "Os cartafoles doutros programas abriranse aquí, tamén «Amosar no cartafol» desde o navegador. Para que vaia rápido, CannonCommander agarda na bandexa do sistema cando o pechas. Ao desactivalo, o teu xestor de ficheiros anterior recupera todo.",
+    "fmNowOn": "Xenial, os teus cartafoles ábrense agora en CannonCommander",
+    "fmNowOff": "Os teus cartafoles volven abrirse coma antes",
+    "fmOpen": "Abrir en CannonCommander",
+    "fmShow": "Amosar CannonCommander",
+    "fmQuit": "Saír"
   },
   "diff": {
     "title": "Comparar ficheiros",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Non podes borrar a túa propia conta",
     "denied": "Non tes permisos para isto",
     "desktopOnly": "Iso só funciona na aplicación de escritorio",
+    "fileManagerNotSet": "O ordenador non aceptou o cambio",
     "disksAdminsOnly": "Os discos individuais e a Cache só os ven os admins",
     "expiryPast": "A data de caducidade xa pasou",
     "fileInTheWay": "Hai un ficheiro onde debería ir un cartafol",

@@ -1253,7 +1253,15 @@
     "runTitle": "Mulakan program?",
     "runText": "{name} ialah program. Mahu memulakannya atau hanya melihatnya?",
     "run": "Mulakan",
-    "show": "Lihat"
+    "show": "Lihat",
+    "fmLabel": "Jadikan pengurus fail lalai",
+    "fmTipWindows": "Klik dua kali pada folder dalam Explorer, Win+E dan folder daripada program lain akan dibuka di sini. Supaya pantas, CannonCommander menunggu di kawasan pemberitahuan selepas ditutup. Jika dimatikan, Explorer mendapat semuanya semula.",
+    "fmTipLinux": "Folder daripada program lain akan dibuka di sini, termasuk \"Tunjukkan dalam folder\" daripada pelayar. Supaya pantas, CannonCommander menunggu di dulang sistem selepas ditutup. Jika dimatikan, pengurus fail anda sebelum ini mendapat semuanya semula.",
+    "fmNowOn": "Bagus, folder anda kini dibuka dalam CannonCommander",
+    "fmNowOff": "Folder anda dibuka seperti dahulu semula",
+    "fmOpen": "Buka dalam CannonCommander",
+    "fmShow": "Tunjukkan CannonCommander",
+    "fmQuit": "Keluar"
   },
   "diff": {
     "title": "Bandingkan fail",
@@ -3371,6 +3379,7 @@
     "deleteSelf": "Anda tidak boleh memadam akaun anda sendiri",
     "denied": "Anda tiada kebenaran untuk ini",
     "desktopOnly": "Itu hanya boleh dalam aplikasi desktop",
+    "fileManagerNotSet": "Komputer tidak menerima perubahan itu",
     "disksAdminsOnly": "Hanya pentadbir dapat melihat cakera satu per satu dan Cache",
     "expiryPast": "Tarikh tamat tempoh sudah berlalu",
     "fileInTheWay": "Ada fail di tempat yang sepatutnya untuk folder",

@@ -1253,7 +1253,15 @@
     "runTitle": "프로그램을 실행할까요?",
     "runText": "{name}은(는) 프로그램입니다. 실행할까요, 아니면 내용만 볼까요?",
     "run": "실행",
-    "show": "내용 보기"
+    "show": "내용 보기",
+    "fmLabel": "기본 파일 관리자로 설정",
+    "fmTipWindows": "탐색기에서 폴더를 두 번 클릭하거나 Win+E를 누르거나 다른 프로그램에서 폴더를 열면 여기서 열립니다. 빠르게 열리도록 CannonCommander는 닫은 뒤에도 알림 영역에서 기다립니다. 끄면 모두 탐색기로 돌아갑니다.",
+    "fmTipLinux": "다른 프로그램에서 여는 폴더가 여기서 열립니다. 브라우저의 '폴더에서 보기'도 마찬가지입니다. 빠르게 열리도록 CannonCommander는 닫은 뒤에도 시스템 트레이에서 기다립니다. 끄면 모두 이전 파일 관리자로 돌아갑니다.",
+    "fmNowOn": "좋아요, 이제 폴더가 CannonCommander에서 열립니다",
+    "fmNowOff": "폴더가 다시 예전처럼 열립니다",
+    "fmOpen": "CannonCommander에서 열기",
+    "fmShow": "CannonCommander 보기",
+    "fmQuit": "종료"
   },
   "diff": {
     "title": "파일 비교",
@@ -3371,6 +3379,7 @@
     "deleteSelf": "내 계정은 삭제할 수 없습니다",
     "denied": "이 작업을 할 권한이 없습니다",
     "desktopOnly": "데스크톱 앱에서만 할 수 있습니다",
+    "fileManagerNotSet": "컴퓨터가 변경을 받아들이지 않았습니다",
     "disksAdminsOnly": "개별 디스크와 Cache는 관리자만 볼 수 있습니다",
     "expiryPast": "만료일이 이미 지났습니다",
     "fileInTheWay": "폴더가 있어야 할 자리에 파일이 있습니다",

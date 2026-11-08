@@ -82,19 +82,14 @@ func enterURL(base, key string, open []opening) string {
 
 // secondLaunch shows what a second start of the app hands over in the window
 // that is open already, and brings that window to the front.
-func secondLaunch(window *application.WebviewWindow, d application.SecondInstanceData) {
+func (s *shell) secondLaunch(d application.SecondInstanceData) {
+	var open []opening
 	if len(d.Args) > 1 {
-		open, places := handedOver(d.Args[1:], d.WorkingDir)
+		var places []string
+		open, places = handedOver(d.Args[1:], d.WorkingDir)
 		passOn(places)
-		if len(open) > 0 {
-			desktop.Emit("open", open)
-		}
 	}
-	if window != nil {
-		window.Restore()
-		window.Show()
-		window.Focus()
-	}
+	s.show(open)
 }
 
 // passOn hands places of the Windows shell to Explorer, which alone can show

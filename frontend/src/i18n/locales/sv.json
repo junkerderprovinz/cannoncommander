@@ -1298,7 +1298,15 @@
     "runTitle": "Starta programmet?",
     "runText": "{name} är ett program. Vill du starta det eller bara titta på det?",
     "run": "Starta",
-    "show": "Titta på det"
+    "show": "Titta på det",
+    "fmLabel": "Gör till standardfilhanterare",
+    "fmTipWindows": "Ett dubbelklick på en mapp i Utforskaren, Win+E och mappar från andra program öppnas då här. För att det ska gå snabbt väntar CannonCommander i meddelandefältet efter att du stängt det. Avstängt får Utforskaren tillbaka allt.",
+    "fmTipLinux": "Mappar från andra program öppnas då här, även ”Visa i mapp” från webbläsaren. För att det ska gå snabbt väntar CannonCommander i systemfältet efter att du stängt det. Avstängt får din tidigare filhanterare tillbaka allt.",
+    "fmNowOn": "Härligt, dina mappar öppnas nu i CannonCommander",
+    "fmNowOff": "Dina mappar öppnas som förut igen",
+    "fmOpen": "Öppna i CannonCommander",
+    "fmShow": "Visa CannonCommander",
+    "fmQuit": "Avsluta"
   },
   "diff": {
     "title": "Jämför filer",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Du kan inte ta bort ditt eget konto",
     "denied": "Du har inte behörighet för det här",
     "desktopOnly": "Det går bara i skrivbordsappen",
+    "fileManagerNotSet": "Datorn tog inte emot ändringen",
     "disksAdminsOnly": "Bara admins ser de enskilda diskarna och Cache",
     "expiryPast": "Utgångsdatumet ligger i det förflutna",
     "fileInTheWay": "Det ligger en fil där en mapp ska vara",

@@ -3,5 +3,13 @@
   "runTitle": "Programm starten?",
   "runText": "{name} ist ein Programm. Möchtest du es starten oder lieber nur anschauen?",
   "run": "Starten",
-  "show": "Anschauen"
+  "show": "Anschauen",
+  "fmLabel": "Als Standard-Dateimanager festlegen",
+  "fmTipWindows": "Ein Doppelklick auf einen Ordner im Explorer, Win+E und Ordner aus anderen Programmen öffnen sich dann hier. Damit das flott geht, wartet CannonCommander nach dem Schließen im Infobereich. Ausgeschaltet bekommt der Explorer alles zurück.",
+  "fmTipLinux": "Ordner aus anderen Programmen öffnen sich dann hier, auch „Im Ordner anzeigen“ aus dem Browser. Damit das flott geht, wartet CannonCommander nach dem Schließen im Infobereich. Ausgeschaltet bekommt dein bisheriger Dateimanager alles zurück.",
+  "fmNowOn": "Schön, deine Ordner öffnen sich jetzt in CannonCommander",
+  "fmNowOff": "Deine Ordner öffnen sich wieder wie vorher",
+  "fmOpen": "In CannonCommander öffnen",
+  "fmShow": "CannonCommander zeigen",
+  "fmQuit": "Beenden"
 }

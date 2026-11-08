@@ -1298,7 +1298,15 @@
     "runTitle": "Start programmet?",
     "runText": "{name} er et program. Vil du starte det eller bare kigge på det?",
     "run": "Start",
-    "show": "Kig på det"
+    "show": "Kig på det",
+    "fmLabel": "Gør til standard-filhåndtering",
+    "fmTipWindows": "Et dobbeltklik på en mappe i Stifinder, Win+E og mapper fra andre programmer åbner så her. For at det går hurtigt, venter CannonCommander i meddelelsesområdet, når du lukker den. Slået fra får Stifinder det hele tilbage.",
+    "fmTipLinux": "Mapper fra andre programmer åbner så her, også \"Vis i mappe\" fra browseren. For at det går hurtigt, venter CannonCommander i systembakken, når du lukker den. Slået fra får din tidligere filhåndtering det hele tilbage.",
+    "fmNowOn": "Dejligt, dine mapper åbner nu i CannonCommander",
+    "fmNowOff": "Dine mapper åbner igen som før",
+    "fmOpen": "Åbn i CannonCommander",
+    "fmShow": "Vis CannonCommander",
+    "fmQuit": "Afslut"
   },
   "diff": {
     "title": "Sammenlign filer",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Du kan ikke slette din egen konto",
     "denied": "Du har ikke rettighederne til det",
     "desktopOnly": "Det kan kun skrivebordsappen",
+    "fileManagerNotSet": "Computeren tog ikke imod ændringen",
     "disksAdminsOnly": "De enkelte diske og Cache kan kun administratorer se",
     "expiryPast": "Udløbsdatoen ligger i fortiden",
     "fileInTheWay": "Der ligger en fil, hvor en mappe hører til",

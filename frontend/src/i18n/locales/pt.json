@@ -1343,7 +1343,15 @@
     "runTitle": "Iniciar o programa?",
     "runText": "{name} é um programa. Queres iniciá-lo ou só dar uma vista de olhos?",
     "run": "Iniciar",
-    "show": "Dar uma vista de olhos"
+    "show": "Dar uma vista de olhos",
+    "fmLabel": "Definir como gestor de ficheiros predefinido",
+    "fmTipWindows": "Um duplo clique numa pasta no Explorador, Win+E e as pastas de outros programas passam a abrir aqui. Para ser rápido, o CannonCommander espera na área de notificação depois de fechado. Desativado, o Explorador recebe tudo de volta.",
+    "fmTipLinux": "As pastas de outros programas passam a abrir aqui, também \"Mostrar na pasta\" a partir do navegador. Para ser rápido, o CannonCommander espera na bandeja do sistema depois de fechado. Desativado, o teu gestor de ficheiros anterior recebe tudo de volta.",
+    "fmNowOn": "Ótimo, as tuas pastas abrem agora no CannonCommander",
+    "fmNowOff": "As tuas pastas voltam a abrir como antes",
+    "fmOpen": "Abrir no CannonCommander",
+    "fmShow": "Mostrar o CannonCommander",
+    "fmQuit": "Sair"
   },
   "diff": {
     "title": "Comparar ficheiros",
@@ -3635,6 +3643,7 @@
     "deleteSelf": "Não pode eliminar a sua própria conta",
     "denied": "Não tem permissões para isto",
     "desktopOnly": "Isso só funciona na aplicação de ambiente de trabalho",
+    "fileManagerNotSet": "O computador não aceitou a alteração",
     "disksAdminsOnly": "Os discos individuais e a Cache só os administradores os veem",
     "expiryPast": "A data de expiração já passou",
     "fileInTheWay": "Está um ficheiro onde deveria estar uma pasta",

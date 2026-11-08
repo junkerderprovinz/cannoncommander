@@ -1298,7 +1298,15 @@
     "runTitle": "Elindítod a programot?",
     "runText": "{name} egy program. Elindítanád, vagy csak megnéznéd?",
     "run": "Indítás",
-    "show": "Megnézem"
+    "show": "Megnézem",
+    "fmLabel": "Legyen az alapértelmezett fájlkezelő",
+    "fmTipWindows": "Ilyenkor a mappára duplán kattintás az Intézőben, a Win+E és más programok mappái itt nyílnak meg. Hogy ez gyors legyen, a CannonCommander bezárás után az értesítési területen vár. Kikapcsolva az Intéző mindent visszakap.",
+    "fmTipLinux": "Ilyenkor más programok mappái itt nyílnak meg, a böngésző „Megjelenítés mappában” parancsa is. Hogy ez gyors legyen, a CannonCommander bezárás után a tálcán vár. Kikapcsolva az eddigi fájlkezelőd mindent visszakap.",
+    "fmNowOn": "Nagyszerű, a mappáid mostantól a CannonCommanderben nyílnak meg",
+    "fmNowOff": "A mappáid újra úgy nyílnak meg, mint korábban",
+    "fmOpen": "Megnyitás a CannonCommanderben",
+    "fmShow": "CannonCommander megjelenítése",
+    "fmQuit": "Kilépés"
   },
   "diff": {
     "title": "Fájlok összehasonlítása",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "A saját fiókját nem törölheti",
     "denied": "Ehhez nincs jogosultsága",
     "desktopOnly": "Ez csak az asztali alkalmazásban megy",
+    "fileManagerNotSet": "A számítógép nem fogadta el a változtatást",
     "disksAdminsOnly": "Az egyes lemezeket és a Cache-t csak rendszergazdák látják",
     "expiryPast": "A lejárati dátum a múltban van",
     "fileInTheWay": "Ahová mappa való, ott egy fájl van",

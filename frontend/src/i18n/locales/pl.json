@@ -1388,7 +1388,15 @@
     "runTitle": "Uruchomić program?",
     "runText": "{name} to program. Chcesz go uruchomić czy tylko obejrzeć?",
     "run": "Uruchom",
-    "show": "Obejrzyj"
+    "show": "Obejrzyj",
+    "fmLabel": "Ustaw jako domyślny menedżer plików",
+    "fmTipWindows": "Dwuklik na folderze w Eksploratorze, Win+E i foldery z innych programów otworzą się wtedy tutaj. Żeby działało to szybko, CannonCommander po zamknięciu czeka w obszarze powiadomień. Po wyłączeniu Eksplorator dostaje wszystko z powrotem.",
+    "fmTipLinux": "Foldery z innych programów otworzą się wtedy tutaj, także „Pokaż w folderze” z przeglądarki. Żeby działało to szybko, CannonCommander po zamknięciu czeka w zasobniku systemowym. Po wyłączeniu wszystko wraca do twojego dotychczasowego menedżera plików.",
+    "fmNowOn": "Świetnie, twoje foldery otwierają się teraz w CannonCommanderze",
+    "fmNowOff": "Twoje foldery znów otwierają się jak wcześniej",
+    "fmOpen": "Otwórz w CannonCommanderze",
+    "fmShow": "Pokaż CannonCommandera",
+    "fmQuit": "Zakończ"
   },
   "diff": {
     "title": "Porównaj pliki",
@@ -3767,6 +3775,7 @@
     "deleteSelf": "Nie możesz usunąć własnego konta",
     "denied": "Nie masz do tego uprawnień",
     "desktopOnly": "To działa tylko w aplikacji desktopowej",
+    "fileManagerNotSet": "Komputer nie przyjął zmiany",
     "disksAdminsOnly": "Pojedyncze dyski i Cache widzą tylko administratorzy",
     "expiryPast": "Data wygaśnięcia leży w przeszłości",
     "fileInTheWay": "Tam, gdzie powinien być folder, leży plik",

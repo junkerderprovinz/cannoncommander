@@ -1253,7 +1253,15 @@
     "runTitle": "Chạy chương trình?",
     "runText": "{name} là một chương trình. Bạn muốn chạy nó hay chỉ xem qua?",
     "run": "Chạy",
-    "show": "Xem qua"
+    "show": "Xem qua",
+    "fmLabel": "Đặt làm trình quản lý tệp mặc định",
+    "fmTipWindows": "Khi đó, nhấp đúp vào thư mục trong Explorer, Win+E và thư mục từ các chương trình khác sẽ mở ở đây. Để mở nhanh, CannonCommander chờ trong vùng thông báo sau khi bạn đóng nó. Khi tắt, Explorer nhận lại mọi thứ.",
+    "fmTipLinux": "Khi đó, thư mục từ các chương trình khác sẽ mở ở đây, kể cả \"Hiện trong thư mục\" từ trình duyệt. Để mở nhanh, CannonCommander chờ trong khay hệ thống sau khi bạn đóng nó. Khi tắt, trình quản lý tệp trước đây nhận lại mọi thứ.",
+    "fmNowOn": "Tuyệt, thư mục của bạn giờ mở trong CannonCommander",
+    "fmNowOff": "Thư mục của bạn lại mở như trước",
+    "fmOpen": "Mở trong CannonCommander",
+    "fmShow": "Hiện CannonCommander",
+    "fmQuit": "Thoát"
   },
   "diff": {
     "title": "So sánh tệp",
@@ -3371,6 +3379,7 @@
     "deleteSelf": "Bạn không thể xóa tài khoản của chính mình",
     "denied": "Bạn không có quyền làm việc này",
     "desktopOnly": "Việc này chỉ làm được trong ứng dụng máy tính",
+    "fileManagerNotSet": "Máy tính không nhận thay đổi",
     "disksAdminsOnly": "Chỉ quản trị viên mới thấy từng Disk và Cache",
     "expiryPast": "Ngày hết hạn đã qua",
     "fileInTheWay": "Có một tệp nằm ở chỗ dành cho thư mục",

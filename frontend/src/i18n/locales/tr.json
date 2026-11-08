@@ -1298,7 +1298,15 @@
     "runTitle": "Program başlatılsın mı?",
     "runText": "{name} bir program. Başlatmak mı istersin, yoksa sadece göz atmak mı?",
     "run": "Başlat",
-    "show": "Göz at"
+    "show": "Göz at",
+    "fmLabel": "Varsayılan dosya yöneticisi yap",
+    "fmTipWindows": "Explorer'da bir klasöre çift tıklama, Win+E ve başka programlardan gelen klasörler o zaman burada açılır. Hızlı olsun diye CannonCommander kapattıktan sonra bildirim alanında bekler. Kapatıldığında her şey Explorer'a geri döner.",
+    "fmTipLinux": "Başka programlardan gelen klasörler o zaman burada açılır, tarayıcıdaki \"Klasörde göster\" de. Hızlı olsun diye CannonCommander kapattıktan sonra sistem tepsisinde bekler. Kapatıldığında her şey önceki dosya yöneticine geri döner.",
+    "fmNowOn": "Harika, klasörlerin artık CannonCommander'da açılıyor",
+    "fmNowOff": "Klasörlerin yine eskisi gibi açılıyor",
+    "fmOpen": "CannonCommander'da aç",
+    "fmShow": "CannonCommander'ı göster",
+    "fmQuit": "Çık"
   },
   "diff": {
     "title": "Dosyaları karşılaştır",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Kendi hesabını silemezsin",
     "denied": "Bunun için iznin yok",
     "desktopOnly": "Bu yalnızca masaüstü uygulamasında olur",
+    "fileManagerNotSet": "Bilgisayar değişikliği kabul etmedi",
     "disksAdminsOnly": "Tek tek diskleri ve Cache'i yalnızca yöneticiler görür",
     "expiryPast": "Bitiş tarihi geçmişte",
     "fileInTheWay": "Klasörün olması gereken yerde bir dosya var",

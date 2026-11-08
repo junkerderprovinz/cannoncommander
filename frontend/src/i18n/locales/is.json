@@ -1298,7 +1298,15 @@
     "runTitle": "Ræsa forritið?",
     "runText": "{name} er forrit. Viltu ræsa það eða bara skoða það?",
     "run": "Ræsa",
-    "show": "Skoða"
+    "show": "Skoða",
+    "fmLabel": "Gera að sjálfgefnum skráastjóra",
+    "fmTipWindows": "Tvísmellur á möppu í Explorer, Win+E og möppur úr öðrum forritum opnast þá hér. Svo það gangi hratt bíður CannonCommander á tilkynningasvæðinu eftir að þú lokar því. Slökkt fær Explorer allt aftur.",
+    "fmTipLinux": "Möppur úr öðrum forritum opnast þá hér, líka „Sýna í möppu“ úr vafranum. Svo það gangi hratt bíður CannonCommander í kerfisbakkanum eftir að þú lokar því. Slökkt fær fyrri skráastjórinn þinn allt aftur.",
+    "fmNowOn": "Frábært, möppurnar þínar opnast nú í CannonCommander",
+    "fmNowOff": "Möppurnar þínar opnast aftur eins og áður",
+    "fmOpen": "Opna í CannonCommander",
+    "fmShow": "Sýna CannonCommander",
+    "fmQuit": "Hætta"
   },
   "diff": {
     "title": "Bera saman skrár",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Þú getur ekki eytt þínum eigin aðgangi",
     "denied": "Þú hefur ekki heimild til þessa",
     "desktopOnly": "Þetta gengur bara í skjáborðsforritinu",
+    "fileManagerNotSet": "Tölvan tók ekki við breytingunni",
     "disksAdminsOnly": "Aðeins stjórnendur sjá einstaka diska og Cache",
     "expiryPast": "Gildistíminn er liðinn",
     "fileInTheWay": "Skrá er þar sem mappa á að vera",

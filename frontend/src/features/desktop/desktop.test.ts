@@ -14,13 +14,24 @@ import de from './de.json';
 import en from './en.json';
 import setup from './index';
 import { launch } from './launch';
+import { fileManager, followFileManager, setFileManager } from './filemanager';
 import { openHandedOver, takeStartFolders } from './open';
 
 addMessages('desktop', { de, en });
 
 let posted: { path: string; run: boolean }[] = [];
 let answer: Response | null = null;
+let switched: { on: boolean; words: Record<string, string> }[] = [];
+let managerOn = false;
 function server(url: string, init?: RequestInit) {
+  if (url === '/api/v1/filemanager') {
+    if (init?.method === 'PUT') {
+      const body = JSON.parse(String(init.body));
+      switched.push(body);
+      managerOn = body.on;
+    }
+    return Response.json({ on: managerOn });
+  }
   if (url === '/api/v1/launch') {
     posted.push(JSON.parse(String(init?.body)));
     return answer ?? new Response(null, { status: 204 });
@@ -38,6 +49,8 @@ beforeEach(() => {
   winStack.splice(0);
   posted = [];
   answer = null;
+  switched = [];
+  managerOn = false;
   Object.assign(host, { desktop: true, os: 'linux' });
   vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => server(url, init)));
   const file = (name: string) => toItem({ name, dir: false, size: 1, mtime: '2026-11-08T10:00:00Z', mode: '644' });
@@ -116,5 +129,26 @@ describe('folders handed over', () => {
     expect(location.search).toBe('');
     expect(location.hash).toBe('#/home/jdp');
     expect(takeStartFolders()).toEqual([]);
+  });
+});
+
+describe('default file manager', () => {
+  it('switches on with the words of the window and back off', async () => {
+    await setFileManager(true);
+    expect(fileManager.on).toBe(true);
+    expect(switched[0]).toEqual({ on: true, words: { open: 'In CannonCommander öffnen', show: 'CannonCommander zeigen', quit: 'Beenden' } });
+    expect(toasts.at(-1)?.text).toBe('Schön, deine Ordner öffnen sich jetzt in CannonCommander');
+    await setFileManager(false);
+    expect(fileManager.on).toBe(false);
+    expect(toasts.at(-1)?.text).toBe('Deine Ordner öffnen sich wieder wie vorher');
+  });
+
+  it('writes the entry again at every start while it is on, and only then', async () => {
+    await followFileManager();
+    expect(switched).toEqual([]);
+    managerOn = true;
+    await followFileManager();
+    expect(switched.map((s) => s.on)).toEqual([true]);
+    expect(toasts).toHaveLength(0);
   });
 });

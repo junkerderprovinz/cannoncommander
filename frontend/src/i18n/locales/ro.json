@@ -1343,7 +1343,15 @@
     "runTitle": "Pornești programul?",
     "runText": "{name} este un program. Vrei să-l pornești sau doar să te uiți la el?",
     "run": "Pornește",
-    "show": "Uită-te"
+    "show": "Uită-te",
+    "fmLabel": "Setează ca manager de fișiere implicit",
+    "fmTipWindows": "Un dublu clic pe un dosar în Explorer, Win+E și dosarele din alte programe se deschid atunci aici. Ca să meargă repede, CannonCommander așteaptă în zona de notificare după ce îl închizi. Dezactivat, Explorer primește totul înapoi.",
+    "fmTipLinux": "Dosarele din alte programe se deschid atunci aici, inclusiv „Arată în dosar” din browser. Ca să meargă repede, CannonCommander așteaptă în zona de sistem după ce îl închizi. Dezactivat, managerul tău de fișiere de dinainte primește totul înapoi.",
+    "fmNowOn": "Minunat, dosarele tale se deschid acum în CannonCommander",
+    "fmNowOff": "Dosarele tale se deschid din nou ca înainte",
+    "fmOpen": "Deschide în CannonCommander",
+    "fmShow": "Arată CannonCommander",
+    "fmQuit": "Ieșire"
   },
   "diff": {
     "title": "Compară fișiere",
@@ -3635,6 +3643,7 @@
     "deleteSelf": "Nu îți poți șterge propriul cont",
     "denied": "Nu ai permisiunile pentru asta",
     "desktopOnly": "Asta merge doar în aplicația desktop",
+    "fileManagerNotSet": "Calculatorul nu a acceptat modificarea",
     "disksAdminsOnly": "Discurile individuale și Cache-ul le văd doar adminii",
     "expiryPast": "Data de expirare este în trecut",
     "fileInTheWay": "Acolo unde trebuie un dosar se află un fișier",

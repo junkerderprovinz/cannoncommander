@@ -1298,7 +1298,15 @@
     "runTitle": "Käynnistetäänkö ohjelma?",
     "runText": "{name} on ohjelma. Haluatko käynnistää sen vai vain katsoa sitä?",
     "run": "Käynnistä",
-    "show": "Katso"
+    "show": "Katso",
+    "fmLabel": "Aseta oletustiedostonhallinnaksi",
+    "fmTipWindows": "Kaksoisnapsautus kansioon Resurssienhallinnassa, Win+E ja muiden ohjelmien kansiot avautuvat silloin täällä. Jotta se käy nopeasti, CannonCommander odottaa sulkemisen jälkeen ilmaisinalueella. Pois päältä Resurssienhallinta saa kaiken takaisin.",
+    "fmTipLinux": "Muiden ohjelmien kansiot avautuvat silloin täällä, myös selaimen ”Näytä kansiossa”. Jotta se käy nopeasti, CannonCommander odottaa sulkemisen jälkeen ilmoitusalueella. Pois päältä aiempi tiedostonhallintasi saa kaiken takaisin.",
+    "fmNowOn": "Hienoa, kansiosi avautuvat nyt CannonCommanderissa",
+    "fmNowOff": "Kansiosi avautuvat taas kuten ennen",
+    "fmOpen": "Avaa CannonCommanderissa",
+    "fmShow": "Näytä CannonCommander",
+    "fmQuit": "Lopeta"
   },
   "diff": {
     "title": "Vertaa tiedostoja",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Et voi poistaa omaa tiliäsi",
     "denied": "Sinulla ei ole tähän oikeuksia",
     "desktopOnly": "Se onnistuu vain työpöytäsovelluksessa",
+    "fileManagerNotSet": "Tietokone ei hyväksynyt muutosta",
     "disksAdminsOnly": "Vain ylläpitäjät näkevät yksittäiset levyt ja Cachen",
     "expiryPast": "Vanhenemispäivä on menneisyydessä",
     "fileInTheWay": "Kansion paikalla on tiedosto",

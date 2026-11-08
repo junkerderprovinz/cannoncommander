@@ -412,6 +412,7 @@
     "deleteSelf": "You cannot delete your own account",
     "denied": "You do not have the rights for this",
     "desktopOnly": "Only the desktop app can do that",
+    "fileManagerNotSet": "The computer did not take the change",
     "disksAdminsOnly": "Only admins see the single disks and the cache",
     "expiryPast": "The expiry date lies in the past",
     "fileInTheWay": "A file stands where a folder belongs",

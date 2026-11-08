@@ -1253,7 +1253,15 @@
     "runTitle": "Jalankan program?",
     "runText": "{name} adalah program. Mau menjalankannya atau hanya melihatnya?",
     "run": "Jalankan",
-    "show": "Lihat"
+    "show": "Lihat",
+    "fmLabel": "Jadikan pengelola berkas bawaan",
+    "fmTipWindows": "Klik ganda pada folder di Explorer, Win+E, dan folder dari program lain akan terbuka di sini. Agar cepat, CannonCommander menunggu di area notifikasi setelah ditutup. Jika dimatikan, Explorer mendapatkan semuanya kembali.",
+    "fmTipLinux": "Folder dari program lain akan terbuka di sini, termasuk \"Tampilkan di folder\" dari peramban. Agar cepat, CannonCommander menunggu di baki sistem setelah ditutup. Jika dimatikan, pengelola berkas sebelumnya mendapatkan semuanya kembali.",
+    "fmNowOn": "Bagus, folder kamu sekarang terbuka di CannonCommander",
+    "fmNowOff": "Folder kamu kembali terbuka seperti sebelumnya",
+    "fmOpen": "Buka di CannonCommander",
+    "fmShow": "Tampilkan CannonCommander",
+    "fmQuit": "Keluar"
   },
   "diff": {
     "title": "Bandingkan berkas",
@@ -3371,6 +3379,7 @@
     "deleteSelf": "Anda tidak bisa menghapus akun Anda sendiri",
     "denied": "Anda tidak punya izin untuk ini",
     "desktopOnly": "Itu hanya bisa di aplikasi desktop",
+    "fileManagerNotSet": "Komputer tidak menerima perubahan itu",
     "disksAdminsOnly": "Hanya admin yang melihat disk satu per satu dan Cache",
     "expiryPast": "Tanggal kedaluwarsa sudah lewat",
     "fileInTheWay": "Ada berkas di tempat yang seharusnya untuk folder",

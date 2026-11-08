@@ -1298,7 +1298,15 @@
     "runTitle": "Programa abiarazi?",
     "runText": "{name} programa bat da. Abiarazi nahi duzu ala begiratu bat eman besterik ez?",
     "run": "Abiarazi",
-    "show": "Begiratu"
+    "show": "Begiratu",
+    "fmLabel": "Ezarri fitxategi-kudeatzaile lehenetsi gisa",
+    "fmTipWindows": "Arakatzailean karpeta baten gainean klik bikoitza, Win+E eta beste programetako karpetak hemen irekiko dira. Azkar joan dadin, CannonCommander jakinarazpen-eremuan geratzen da itxi ondoren. Desaktibatuta, Arakatzaileak dena berreskuratzen du.",
+    "fmTipLinux": "Beste programetako karpetak hemen irekiko dira, baita nabigatzaileko «Erakutsi karpetan» ere. Azkar joan dadin, CannonCommander sistemaren erretiluan geratzen da itxi ondoren. Desaktibatuta, aurreko fitxategi-kudeatzaileak dena berreskuratzen du.",
+    "fmNowOn": "Primeran, zure karpetak CannonCommander-en irekitzen dira orain",
+    "fmNowOff": "Zure karpetak lehen bezala irekitzen dira berriro",
+    "fmOpen": "Ireki CannonCommander-en",
+    "fmShow": "Erakutsi CannonCommander",
+    "fmQuit": "Irten"
   },
   "diff": {
     "title": "Konparatu fitxategiak",
@@ -3503,6 +3511,7 @@
     "deleteSelf": "Ezin duzu zure kontua ezabatu",
     "denied": "Ez duzu horretarako baimenik",
     "desktopOnly": "Hori mahaigaineko aplikazioan bakarrik egin daiteke",
+    "fileManagerNotSet": "Ordenagailuak ez du aldaketa onartu",
     "disksAdminsOnly": "Disko bakoitza eta Cache-a administratzaileek bakarrik ikusten dituzte",
     "expiryPast": "Iraungitze-data iraganean dago",
     "fileInTheWay": "Karpeta bat egon beharko lukeen lekuan fitxategi bat dago",

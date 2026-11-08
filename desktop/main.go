@@ -46,9 +46,13 @@ func run() error {
 	scheduled := flag.Bool("update", false, "update the copy installed for all users and exit, as the installer's scheduled task does")
 	after := flag.Int("after", 0, "wait for the process with this id to end first, as a restart does")
 	flag.Bool("home", false, "open the home folder in a new tab, as Win+E does")
+	fileManager := flag.String("file-manager", "", "on to open the computer's folders here, off to give them back, and exit")
 	flag.Parse()
 	if *scheduled {
 		return updateInstalled()
+	}
+	if *fileManager != "" {
+		return switchFileManager(*fileManager == "on")
 	}
 	if *after > 0 {
 		waitGone(*after, 30*time.Second)
@@ -65,6 +69,7 @@ func run() error {
 	cwd, _ := os.Getwd()
 	start, places := handedOver(flag.Args(), cwd)
 	sh := &shell{state: state}
+	sh.folders = newFolderHandler()
 
 	// Filled in below, once this is known to be the only copy.
 	var window *application.WebviewWindow
@@ -78,7 +83,7 @@ func run() error {
 		// share one database and one port.
 		SingleInstance: &application.SingleInstanceOptions{
 			UniqueID: instanceID(dir),
-			OnSecondInstanceLaunch: func(d application.SecondInstanceData) { secondLaunch(window, d) },
+			OnSecondInstanceLaunch: sh.secondLaunch,
 		},
 		Windows: application.WindowsOptions{WebviewUserDataPath: filepath.Join(dir, "webview")},
 		Linux:   application.LinuxOptions{ProgramName: "CannonCommander"},
@@ -139,6 +144,7 @@ func run() error {
 	}
 
 	window = openWindow(app, state)
+	sh.followWindow(window)
 	base := "http://127.0.0.1:" + strconv.Itoa(port)
 	go func() {
 		if waitServing(ctx, base, 2*time.Minute) {
@@ -174,6 +180,7 @@ type shell struct {
 	// which the scheduled task reads. "" for every other copy.
 	machineFile string
 	restart     atomic.Bool
+	standby
 }
 
 func (s *shell) AutoUpdate() bool {

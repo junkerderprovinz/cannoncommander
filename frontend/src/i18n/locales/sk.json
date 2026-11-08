@@ -1388,7 +1388,15 @@
     "runTitle": "Spustiť program?",
     "runText": "{name} je program. Chceš ho spustiť, alebo si ho len pozrieť?",
     "run": "Spustiť",
-    "show": "Pozrieť"
+    "show": "Pozrieť",
+    "fmLabel": "Nastaviť ako predvoleného správcu súborov",
+    "fmTipWindows": "Dvojklik na priečinok v Prieskumníkovi, Win+E a priečinky z iných programov sa potom otvoria tu. Aby to bolo rýchle, CannonCommander po zatvorení čaká v oblasti oznámení. Po vypnutí dostane Prieskumník všetko späť.",
+    "fmTipLinux": "Priečinky z iných programov sa potom otvoria tu, aj „Zobraziť v priečinku“ z prehliadača. Aby to bolo rýchle, CannonCommander po zatvorení čaká v systémovej lište. Po vypnutí dostane všetko späť tvoj doterajší správca súborov.",
+    "fmNowOn": "Skvelé, tvoje priečinky sa teraz otvárajú v CannonCommanderi",
+    "fmNowOff": "Tvoje priečinky sa opäť otvárajú ako predtým",
+    "fmOpen": "Otvoriť v CannonCommanderi",
+    "fmShow": "Zobraziť CannonCommander",
+    "fmQuit": "Ukončiť"
   },
   "diff": {
     "title": "Porovnať súbory",
@@ -3767,6 +3775,7 @@
     "deleteSelf": "Vlastný účet zmazať nemôžete",
     "denied": "Na to nemáte povolenia",
     "desktopOnly": "To ide len v desktopovej aplikácii",
+    "fileManagerNotSet": "Počítač zmenu neprijal",
     "disksAdminsOnly": "Jednotlivé disky a Cache vidia len administrátori",
     "expiryPast": "Dátum vypršania je v minulosti",
     "fileInTheWay": "Tam, kam patrí priečinok, leží súbor",

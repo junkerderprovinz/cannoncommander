@@ -1388,7 +1388,15 @@
     "runTitle": "Paleisti programą?",
     "runText": "{name} yra programa. Nori ją paleisti ar tik pažiūrėti?",
     "run": "Paleisti",
-    "show": "Pažiūrėti"
+    "show": "Pažiūrėti",
+    "fmLabel": "Nustatyti kaip numatytąją failų tvarkyklę",
+    "fmTipWindows": "Dukart spustelėjus aplanką naršyklėje, Win+E ir kitų programų aplankai tada atsidarys čia. Kad tai vyktų greitai, uždarius CannonCommander laukia pranešimų srityje. Išjungus viskas grįžta failų naršyklei.",
+    "fmTipLinux": "Kitų programų aplankai tada atsidarys čia, taip pat naršyklės „Rodyti aplanke“. Kad tai vyktų greitai, uždarius CannonCommander laukia sistemos dėkle. Išjungus viskas grįžta ankstesnei failų tvarkyklei.",
+    "fmNowOn": "Puiku, tavo aplankai dabar atsidaro CannonCommander",
+    "fmNowOff": "Tavo aplankai vėl atsidaro kaip anksčiau",
+    "fmOpen": "Atidaryti CannonCommander",
+    "fmShow": "Rodyti CannonCommander",
+    "fmQuit": "Išeiti"
   },
   "diff": {
     "title": "Lyginti failus",
@@ -3767,6 +3775,7 @@
     "deleteSelf": "Savo paskyros ištrinti negali",
     "denied": "Tam neturi teisių",
     "desktopOnly": "Tai įmanoma tik darbalaukio programoje",
+    "fileManagerNotSet": "Kompiuteris nepriėmė pakeitimo",
     "disksAdminsOnly": "Atskirus diskus ir Cache mato tik administratoriai",
     "expiryPast": "Galiojimo pabaiga yra praeityje",
     "fileInTheWay": "Ten, kur turi būti aplankas, yra failas",

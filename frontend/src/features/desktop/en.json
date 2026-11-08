@@ -3,5 +3,13 @@
   "runTitle": "Start the program?",
   "runText": "{name} is a program. Would you like to start it, or just have a look at it?",
   "run": "Start",
-  "show": "Look at it"
+  "show": "Look at it",
+  "fmLabel": "Make it the default file manager",
+  "fmTipWindows": "A double click on a folder in Explorer, Win+E and folders from other programs then open here. So that this is quick, CannonCommander waits in the notification area after you close it. Switched off, Explorer gets everything back.",
+  "fmTipLinux": "Folders from other programs then open here, also Show in folder from the browser. So that this is quick, CannonCommander waits in the tray after you close it. Switched off, your previous file manager gets everything back.",
+  "fmNowOn": "Lovely, your folders now open in CannonCommander",
+  "fmNowOff": "Your folders open as before again",
+  "fmOpen": "Open in CannonCommander",
+  "fmShow": "Show CannonCommander",
+  "fmQuit": "Quit"
 }

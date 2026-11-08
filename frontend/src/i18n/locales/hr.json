@@ -1343,7 +1343,15 @@
     "runTitle": "Pokrenuti program?",
     "runText": "{name} je program. Želiš li ga pokrenuti ili ga samo pogledati?",
     "run": "Pokreni",
-    "show": "Pogledaj"
+    "show": "Pogledaj",
+    "fmLabel": "Postavi kao zadani upravitelj datoteka",
+    "fmTipWindows": "Dvostruki klik na mapu u Exploreru, Win+E i mape iz drugih programa tada se otvaraju ovdje. Da bi to bilo brzo, CannonCommander nakon zatvaranja čeka u području obavijesti. Kad je isključeno, Explorer dobiva sve natrag.",
+    "fmTipLinux": "Mape iz drugih programa tada se otvaraju ovdje, i „Prikaži u mapi” iz preglednika. Da bi to bilo brzo, CannonCommander nakon zatvaranja čeka u sistemskoj traci. Kad je isključeno, tvoj dosadašnji upravitelj datoteka dobiva sve natrag.",
+    "fmNowOn": "Odlično, tvoje se mape sada otvaraju u CannonCommanderu",
+    "fmNowOff": "Tvoje se mape opet otvaraju kao prije",
+    "fmOpen": "Otvori u CannonCommanderu",
+    "fmShow": "Prikaži CannonCommander",
+    "fmQuit": "Zatvori"
   },
   "diff": {
     "title": "Usporedi datoteke",
@@ -3635,6 +3643,7 @@
     "deleteSelf": "Vlastiti račun ne možete izbrisati",
     "denied": "Za to nemate dozvole",
     "desktopOnly": "To ide samo u desktop aplikaciji",
+    "fileManagerNotSet": "Računalo nije prihvatilo promjenu",
     "disksAdminsOnly": "Pojedinačne diskove i Cache vide samo administratori",
     "expiryPast": "Datum isteka je u prošlosti",
     "fileInTheWay": "Ondje gdje treba biti mapa nalazi se datoteka",

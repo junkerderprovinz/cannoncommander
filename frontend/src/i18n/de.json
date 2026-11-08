@@ -412,6 +412,7 @@
     "deleteSelf": "Dein eigenes Konto kannst du nicht löschen",
     "denied": "Dafür fehlen dir die Rechte",
     "desktopOnly": "Das geht nur in der Desktop-App",
+    "fileManagerNotSet": "Der Computer hat die Änderung nicht übernommen",
     "disksAdminsOnly": "Die einzelnen Platten und den Cache sehen nur Admins",
     "expiryPast": "Das Ablaufdatum liegt in der Vergangenheit",
     "fileInTheWay": "Wo ein Ordner hingehört, liegt eine Datei",
