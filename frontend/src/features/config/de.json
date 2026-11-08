@@ -170,7 +170,8 @@
     "needCurrent": "Das aktuelle Passwort fehlt noch", "newShort": "Das neue Passwort braucht mindestens 12 Zeichen", "sameAsOld": "Das neue Passwort ist dasselbe wie das alte",
     "newDiffer": "Die beiden neuen Passwörter sind nicht gleich", "wrongCurrent": "Das aktuelle Passwort stimmt nicht",
     "pwChanged": "Passwort geändert", "pwChangedOthers": { "one": "Passwort geändert, ein anderes Gerät ist abgemeldet", "other": "Passwort geändert, {n} andere Geräte sind abgemeldet" },
-    "passkeys": "Passkeys", "noPasskey": "Noch kein Passkey", "addPasskey": "Passkey hinzufügen", "removePasskey": "Passkey entfernen",
+    "passkeys": "Passkeys", "noPasskey": "Noch kein Passkey", "passkeyHint": "Ein Passkey meldet dich ohne Passwort an. Er gilt nur unter der Adresse, unter der du ihn anlegst.", "noPasskeyHere": "Hier lässt sich kein Passkey anlegen",
+    "passkeyBrowser": "Dieser Browser bietet hier keine Passkeys an. Das geht nur über HTTPS oder auf localhost.", "addPasskey": "Passkey hinzufügen", "removePasskey": "Passkey entfernen",
     "removePasskeyText": "{name} meldet dich danach nicht mehr an. Das Passwort gilt weiter.", "passkeyRemoved": "Passkey {name} entfernt", "passkeyAdded": "Passkey {name} hinzugefügt",
     "passkeyTip": "Gilt nur unter {origin}. Das Passwort gilt daneben weiter.", "passkeyNameTip": "Damit erkennst du den Passkey in der Liste wieder.", "passkeyNamePh": "etwa Laptop",
     "needPasskeyName": "Gib dem Passkey einen Namen", "confirmPasskey": "Bestätige den Passkey im Fenster deines Browsers", "passkeyFailed": "Der Browser hat den Passkey nicht angelegt",
@@ -185,7 +186,7 @@
     "read": "Lesen", "readWrite": "Lesen und schreiben", "rights": "Rechte", "rightsTip": "Das Token darf nie mehr als du selbst.", "year": "1 Jahr",
     "tokenNameTip": "Wofür das Token da ist. Es steht später in der Liste der Tokens.", "tokenNamePh": "etwa backup-skript", "needTokenName": "Gib dem Token einen Namen",
     "copyNow": "Kopier das Token jetzt. CannonCommander zeigt es danach nie wieder, du kannst nur ein neues erstellen.", "tokenCreatedToast": "Token {name} erstellt",
-    "pwLocked": "Dein Passwort ändert hier nur ein Admin, oder du meldest dich über einen anderen Dienst an.", "passkeysOff": "Passkeys sind auf diesem Server ausgeschaltet", "tooMany": "Zu viele Versuche. Probier es bitte in 15 Minuten noch einmal",
+    "pwLocked": "Dein Passwort ändert hier nur ein Admin, oder du meldest dich über einen anderen Dienst an.", "tooMany": "Zu viele Versuche. Probier es bitte in 15 Minuten noch einmal",
     "proofTip": "CannonCommander fragt bei jedem neuen Zugang danach, damit nur du einen anlegen kannst.", "signInAgain": "Neu anmelden", "staleTitle": "Bitte melde dich kurz neu an",
     "staleToken": "Für ein neues Token muss die Anmeldung frisch sein. Danach öffnet sich dieses Fenster wieder.", "stalePasskey": "Für einen neuen Passkey muss die Anmeldung frisch sein. Danach öffnet sich dieses Fenster wieder."
   },

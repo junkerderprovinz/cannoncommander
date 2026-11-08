@@ -3,10 +3,12 @@ import { segItems } from '@/ui/kit';
 import { Button, Card, EmptyState, FieldRow, IconButton, ListRow, Pill, Selector } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { type Account, me, type Passkey, type Passkeys, type Session, type Token } from '@/api/admin';
+import { browserHasPasskeys } from '@/api/webauthn';
 import { fmtDate } from '@/core/format';
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
+import { serverText } from '@/i18n';
 import { ago, attempt, c, cn, confirmWin, P } from '@/features/config/shared';
 import { takePending } from '../proof';
 import { device } from '../sessions';
@@ -18,7 +20,7 @@ import TokenWin from '../wins/TokenWin.vue';
 import TotpWin from '../wins/TotpWin.vue';
 
 const acc = ref<Account | null>(null);
-const keys = ref<Passkeys>({ enabled: true, items: [] }), sessions = ref<Session[]>([]), tokens = ref<Token[]>([]);
+const keys = ref<Passkeys>({ blocked: null, items: [] }), sessions = ref<Session[]>([]), tokens = ref<Token[]>([]);
 async function load() {
   const [a, p, s, t] = await Promise.allSettled([me.account(), me.passkeys(), me.sessions(), me.tokens()]);
   if (a.status === 'fulfilled') acc.value = a.value;
@@ -31,10 +33,16 @@ onMounted(async () => {
   await load().catch(() => {});
   const again = takePending();
   if (again === 'token') addToken();
-  else if (again === 'passkey' && keys.value.enabled) addPasskey();
+  else if (again === 'passkey' && !noPasskey.value) addPasskey();
 });
 const others = computed(() => sessions.value.filter((s) => !s.current));
 const passkeys = computed(() => keys.value.items);
+// Why no passkey can be added from here, or '' when one can.
+const noPasskey = computed(() => {
+  const b = keys.value.blocked;
+  if (b) return serverText(b.code, b.params) ?? b.detail ?? b.title;
+  return browserHasPasskeys() ? '' : c('security.passkeyBrowser');
+});
 // Some accounts sign in elsewhere or have their password kept by the admin, and then it is not changed here.
 const ownPassword = computed(() => !!acc.value && acc.value.loginMethod === 'password' && !acc.value.lockPassword);
 // New tokens and passkeys ask for the password of an account that has one, even one only the admin may change.
@@ -92,8 +100,9 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
         <template #actions><IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="removePasskey(p)" /></template>
       </ListRow>
     </div>
-    <EmptyState v-else nested :glyph="glyphComponent('IconKey')" :title="keys.enabled ? c('security.noPasskey') : c('security.passkeysOff')" />
-    <div v-if="keys.enabled" class="a-foot"><Button data-pkadd :label="c('security.addPasskey')" label-key="IconAdd" @click="addPasskey" /></div>
+    <EmptyState v-if="noPasskey" nested :glyph="glyphComponent('IconKey')" :title="c('security.noPasskeyHere')" :hint="noPasskey" />
+    <EmptyState v-else-if="!passkeys.length" nested :glyph="glyphComponent('IconKey')" :title="c('security.noPasskey')" :hint="c('security.passkeyHint')" />
+    <div v-if="!noPasskey" class="a-foot"><Button data-pkadd :label="c('security.addPasskey')" label-key="IconAdd" @click="addPasskey" /></div>
   </Card>
   <Card :title="c('security.sessions')">
     <div v-if="sessions.length" class="a-list">

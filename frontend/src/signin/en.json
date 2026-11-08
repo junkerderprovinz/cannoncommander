@@ -53,6 +53,6 @@
   "same": "Please pick a password other than the old one.",
   "badReset": "The code is not right or ran out. Please ask for a new one.",
   "passkeyFailed": "This passkey does not sign in here.",
-  "passkeyOff": "Passkeys are turned off on this server.",
+  "passkeyNotHere": "Passkeys don't work at this address.",
   "offline": "CannonCommander does not answer right now. Please try again in a moment."
 }

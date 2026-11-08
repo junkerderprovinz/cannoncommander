@@ -170,7 +170,8 @@
     "needCurrent": "The current password is still missing", "newShort": "The new password needs at least 12 characters", "sameAsOld": "The new password is the same as the old one",
     "newDiffer": "The two new passwords aren't the same", "wrongCurrent": "The current password isn't right",
     "pwChanged": "Password changed", "pwChangedOthers": { "one": "Password changed, one other device is signed out", "other": "Password changed, {n} other devices are signed out" },
-    "passkeys": "Passkeys", "noPasskey": "No passkey yet", "addPasskey": "Add a passkey", "removePasskey": "Remove passkey",
+    "passkeys": "Passkeys", "noPasskey": "No passkey yet", "passkeyHint": "A passkey signs you in without the password. It only works at the address where you add it.", "noPasskeyHere": "No passkey can be added here",
+    "passkeyBrowser": "This browser doesn't offer passkeys here. That only works over HTTPS or on localhost.", "addPasskey": "Add a passkey", "removePasskey": "Remove passkey",
     "removePasskeyText": "{name} won't sign you in after this. The password keeps working.", "passkeyRemoved": "Passkey {name} removed", "passkeyAdded": "Passkey {name} added",
     "passkeyTip": "Only works at {origin}. The password keeps working beside it.", "passkeyNameTip": "So you recognise the passkey in the list.", "passkeyNamePh": "such as Laptop",
     "needPasskeyName": "Give the passkey a name", "confirmPasskey": "Confirm the passkey in your browser's window", "passkeyFailed": "The browser didn't create the passkey",
@@ -185,7 +186,7 @@
     "read": "Read", "readWrite": "Read and write", "rights": "Rights", "rightsTip": "The token may never do more than you.", "year": "1 year",
     "tokenNameTip": "What the token is for. It shows up later in the list of tokens.", "tokenNamePh": "such as backup-script", "needTokenName": "Give the token a name",
     "copyNow": "Copy the token now. CannonCommander never shows it again, you can only create a new one.", "tokenCreatedToast": "Token {name} created",
-    "pwLocked": "Only an admin changes your password here, or you sign in through another service.", "passkeysOff": "Passkeys are switched off on this server", "tooMany": "Too many tries. Please try again in 15 minutes",
+    "pwLocked": "Only an admin changes your password here, or you sign in through another service.", "tooMany": "Too many tries. Please try again in 15 minutes",
     "proofTip": "CannonCommander asks for it before every new way in, so only you can add one.", "signInAgain": "Sign in again", "staleTitle": "Please sign in once more",
     "staleToken": "A new token needs a fresh sign-in. This window opens again right after.", "stalePasskey": "A new passkey needs a fresh sign-in. This window opens again right after."
   },

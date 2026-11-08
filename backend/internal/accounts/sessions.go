@@ -67,7 +67,8 @@ type Login interface {
 	// ClientIP returns the address of the client behind any proxy.
 	ClientIP(r *http.Request) string
 	// PasskeySite readies passkeys for the address r came in on and returns
-	// the relying party id and the host as the browser shows it.
+	// the relying party id and the host as the browser shows it. rpID is ""
+	// for an address a browser keeps no passkey for.
 	PasskeySite(r *http.Request) (rpID, host string)
 }
 

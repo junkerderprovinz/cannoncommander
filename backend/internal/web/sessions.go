@@ -224,8 +224,7 @@ func (sessionLogin) Renew(w http.ResponseWriter, r *http.Request, u *users.User)
 func (sessionLogin) ClientIP(r *http.Request) string { return GetRemoteIP(r) }
 
 func (sessionLogin) PasskeySite(r *http.Request) (rpID, host string) {
-	registerRequestOrigin(r)
-	return deriveRPID(r), requestHost(r)
+	return registerRequestOrigin(r), requestHost(r)
 }
 
 // terminalGate tells the terminal how a request signed in and where it came

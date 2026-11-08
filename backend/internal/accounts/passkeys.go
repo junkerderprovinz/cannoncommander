@@ -16,6 +16,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	ccerrors "github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // Passkey is one registered passkey. Origin is the host it works for.
@@ -27,10 +28,34 @@ type Passkey struct {
 	Last    *time.Time `json:"last"`
 }
 
-// PasskeyList says whether the server takes passkeys at all.
+// PasskeyList holds the passkeys of the user. Blocked says why no passkey
+// can be added from here, and is missing when one can.
 type PasskeyList struct {
-	Enabled bool      `json:"enabled"`
-	Items   []Passkey `json:"items"`
+	Blocked *v1.Problem `json:"blocked,omitempty"`
+	Items   []Passkey   `json:"items"`
+}
+
+var (
+	errNoHostName  = v1.Coded(http.StatusConflict, "passkeyNeedsHostName", "passkeys need a host name, and this page is open on an IP address")
+	errNoPasswords = v1.Coded(http.StatusConflict, "noPasswords", "this server does not take passwords, and passkeys come with them")
+)
+
+// passkeysBlocked says why u cannot add a passkey from where r came in, or
+// returns nil when they can. A passkey stands beside the password, so the
+// account and the server need one.
+func passkeysBlocked(r *http.Request, u *users.User) *v1.Problem {
+	rpID, _ := login.PasskeySite(r)
+	switch {
+	case u.LoginMethod != users.LoginMethodPassword:
+		return v1.Coded(http.StatusConflict, "passkeysElsewhere", "passkeys come with the password, and you sign in through "+string(u.LoginMethod)).With("method", string(u.LoginMethod))
+	case !settings.Config.Auth.Methods.PasswordAuth.Enabled:
+		return errNoPasswords
+	case u.Password == "":
+		return v1.Coded(http.StatusConflict, "passwordFirst", "set a password before adding a passkey")
+	case rpID == "":
+		return errNoHostName
+	}
+	return nil
 }
 
 func passkeyOf(c users.WebAuthnCredential) Passkey {
@@ -42,7 +67,7 @@ func (h handlers) listPasskeys(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	return v1.WriteJSON(w, r, http.StatusOK, PasskeyList{Enabled: auth.IsWebAuthnEnabled(), Items: passkeysOf(&u)})
+	return v1.WriteJSON(w, r, http.StatusOK, PasskeyList{Blocked: passkeysBlocked(r, &u), Items: passkeysOf(&u)})
 }
 
 func passkeysOf(u *users.User) []Passkey {
@@ -59,16 +84,14 @@ func passkeyUser(r *http.Request, name string) (users.User, error) {
 	if err := needSession(r); err != nil {
 		return users.User{}, err
 	}
-	if !auth.IsWebAuthnEnabled() {
-		return users.User{}, v1.Coded(http.StatusConflict, "passkeysOff", "passkeys are turned off on this server")
-	}
 	u, err := current(r)
 	if err != nil {
 		return users.User{}, err
 	}
+	if p := passkeysBlocked(r, &u); p != nil {
+		return users.User{}, p
+	}
 	switch {
-	case u.LoginMethod != users.LoginMethodPassword:
-		return users.User{}, v1.Coded(http.StatusConflict, "passkeysElsewhere", "passkeys come with the password, and you sign in through "+string(u.LoginMethod)).With("method", string(u.LoginMethod))
 	case name == "":
 		return users.User{}, v1.Coded(http.StatusBadRequest, "passkeyNameMissing", "give the passkey a name")
 	case len(name) > 64:

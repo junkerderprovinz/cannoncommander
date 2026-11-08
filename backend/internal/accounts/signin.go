@@ -131,9 +131,10 @@ var errStale = v1.Coded(http.StatusGone, "signInExpired", "this sign in ran out,
 // signInOptions is public, the sign in page asks before anyone is known.
 func (h handlers) signInOptions(w http.ResponseWriter, r *http.Request) error {
 	methods := settings.Config.Auth.Methods
+	_, noPasskey := passkeySite(r)
 	out := SignInOptions{
 		Password: methods.PasswordAuth.Enabled,
-		Passkey:  auth.IsWebAuthnEnabled(),
+		Passkey:  noPasskey == nil,
 		Server:   serverName(),
 		Version:  version.Version,
 		MinPass:  max(minPassword, settings.PasswordMinLength()),
@@ -364,17 +365,31 @@ func (h handlers) signInPassword(w http.ResponseWriter, r *http.Request) error {
 	return h.nextStep(w, r, &fresh, p, in.Challenge)
 }
 
+// passkeySite returns the relying party id for a passkey sign in from where
+// r came in. Passkeys come with the password, so a server without
+// passwords takes none.
+func passkeySite(r *http.Request) (string, error) {
+	if !settings.Config.Auth.Methods.PasswordAuth.Enabled {
+		return "", errNoPasswords
+	}
+	rpID, _ := login.PasskeySite(r)
+	if rpID == "" {
+		return "", errNoHostName
+	}
+	return rpID, nil
+}
+
 // passkeyOptions starts a sign in with a passkey. The browser picks the
 // passkey, so the page needs no name.
 func (h handlers) passkeyOptions(w http.ResponseWriter, r *http.Request) error {
-	if !auth.IsWebAuthnEnabled() {
-		return v1.Coded(http.StatusConflict, "passkeysOff", "passkeys are turned off on this server")
+	rpID, err := passkeySite(r)
+	if err != nil {
+		return err
 	}
 	ip := addressKey(r)
 	if h.svc.addressTries.blocked(ip) {
 		return tooManyTries(w, h.svc.addressTries.wait(ip))
 	}
-	rpID, _ := login.PasskeySite(r)
 	id, assertion, err := auth.GetWebAuthn().BeginPasskeyLogin(rpID)
 	if err != nil {
 		return err
@@ -395,15 +410,14 @@ func (h handlers) signInPasskey(w http.ResponseWriter, r *http.Request) error {
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
 	}
-	if !auth.IsWebAuthnEnabled() {
-		return v1.Coded(http.StatusConflict, "passkeysOff", "passkeys are turned off on this server")
+	// The site has to be known before the answer is checked against it.
+	if _, err := passkeySite(r); err != nil {
+		return err
 	}
 	ip := addressKey(r)
 	if h.svc.addressTries.blocked(ip) {
 		return tooManyTries(w, h.svc.addressTries.wait(ip))
 	}
-	// The site has to be known before the answer is checked against it.
-	login.PasskeySite(r)
 	u, err := auth.GetWebAuthn().FinishPasskeyLogin(in.Challenge, in.Credential)
 	if errors.Is(err, ccerrors.ErrPasskeyInvalidSession) {
 		return errStale

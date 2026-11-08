@@ -35,14 +35,10 @@ type WebAuthnService struct {
 
 var webAuthnInstance *WebAuthnService
 
+// InitWebAuthn sets up passkeys, which every server takes. The relying party
+// follows the host of each request, see EnsureRPID.
 func InitWebAuthn(users ports.UserReader) error {
-	cfg := &settings.Config.Auth.Methods.PasskeyAuth
-	if !cfg.Enabled {
-		webAuthnInstance = nil
-		return nil
-	}
-
-	waCfg, err := deriveWebAuthnConfig(cfg)
+	waCfg, err := deriveWebAuthnConfig(&settings.Config.Auth.Methods.PasskeyAuth)
 	if err != nil {
 		return fmt.Errorf("webauthn config derivation failed: %w", err)
 	}
@@ -63,10 +59,6 @@ func InitWebAuthn(users ports.UserReader) error {
 
 func GetWebAuthn() *WebAuthnService {
 	return webAuthnInstance
-}
-
-func IsWebAuthnEnabled() bool {
-	return webAuthnInstance != nil
 }
 
 // maxPasskeyOrigins bounds the list, since anyone can send any Host header.

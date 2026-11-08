@@ -198,10 +198,18 @@ describe('the sign in page', () => {
   it('says nothing when the passkey prompt is closed', async () => {
     script['GET /auth/options'] = { body: { password: true, passkey: true, oidc: null, server: '', version: '', minPassword: 12 } };
     script['POST /auth/passkey/options'] = { body: { challenge: 'p1', options: { publicKey: { challenge: 'AAAA', allowCredentials: [] } } } };
+    vi.stubGlobal('PublicKeyCredential', class {});
     vi.stubGlobal('navigator', { ...navigator, credentials: { get: () => Promise.reject(new DOMException('closed', 'NotAllowedError')) } });
     await mount({});
     press('passkey');
     await settle();
     expect(document.querySelector('.glim-signin-error')).toBeNull();
+  });
+
+  it('offers no passkey in a browser that keeps none here', async () => {
+    script['GET /auth/options'] = { body: { password: true, passkey: true, oidc: null, server: '', version: '', minPassword: 12 } };
+    vi.stubGlobal('PublicKeyCredential', undefined);
+    await mount({});
+    expect(document.querySelector('[data-signin="passkey"]')).toBeNull();
   });
 });

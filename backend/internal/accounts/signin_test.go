@@ -290,8 +290,14 @@ func TestAPasskeyFromElsewhereDoesNotSignIn(t *testing.T) {
 	}
 }
 
-func TestPasskeySignInNeedsTheServerToTakePasskeys(t *testing.T) {
+func TestPasskeySignInNeedsAHostNameAndPasswords(t *testing.T) {
 	w := signInWorld(t)
+	answer := map[string]any{"challenge": "x", "credential": map[string]any{}}
+	w.login.onIP = true
 	w.must(http.StatusConflict, w.req("POST", "/auth/passkey/options", nil))
-	w.must(http.StatusConflict, w.req("POST", "/auth/passkey", map[string]any{"challenge": "x", "credential": map[string]any{}}))
+	w.must(http.StatusConflict, w.req("POST", "/auth/passkey", answer))
+	w.login.onIP = false
+	settings.Config.Auth.Methods.PasswordAuth.Enabled = false
+	w.must(http.StatusConflict, w.req("POST", "/auth/passkey/options", nil))
+	w.must(http.StatusConflict, w.req("POST", "/auth/passkey", answer))
 }

@@ -7,6 +7,7 @@ import { shake } from '@glimstone/core';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { auth, type SignIn, type SignInOptions, type TotpSetup } from '@/api/auth';
 import { ApiError } from '@/api/client';
+import { browserHasPasskeys } from '@/api/webauthn';
 import type { Me } from '@/api/types';
 import logo from '@/assets/brand/cannoncommander.svg';
 import { G } from '@/core/glyphs';
@@ -139,7 +140,7 @@ async function passkey(): Promise<SignInAnswer> {
   try {
     return proceed(await auth.passkey(keep.value));
   } catch (e) {
-    if (e instanceof ApiError) return { error: reason(e, { 401: s('passkeyFailed'), 409: s('passkeyOff') }) };
+    if (e instanceof ApiError) return { error: reason(e, { 401: s('passkeyFailed'), 409: s('passkeyNotHere') }) };
     // The browser's own window was closed or found no passkey, which needs no scolding.
     if (e instanceof DOMException && e.name === 'NotAllowedError') return {};
     return { error: s('passkeyFailed') };
@@ -228,7 +229,7 @@ function oidc() {
     :logo="logo"
     app-name="CannonCommander"
     :text="text"
-    :passkey="opts.passkey"
+    :passkey="opts.passkey && browserHasPasskeys()"
     reset
     :min-password="opts.minPassword"
     :note="note"
