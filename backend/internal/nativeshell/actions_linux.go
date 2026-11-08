@@ -3,7 +3,6 @@ package nativeshell
 import (
 	"cmp"
 	"encoding/base64"
-	"errors"
 	"os"
 	"os/exec"
 	"slices"
@@ -32,8 +31,6 @@ type launch struct {
 	dir  string
 	env  []string
 }
-
-var errUnknownAction = errors.New("no such action for these files")
 
 // NativeMenu reports whether the system draws the menu of files itself,
 // which no Linux desktop offers to another program.
@@ -71,7 +68,7 @@ func RunAction(files []string, key string) error {
 	all := k.actions(sel)
 	i := slices.IndexFunc(all, func(a action) bool { return a.Key == key })
 	if i < 0 {
-		return errUnknownAction
+		return ErrUnknownAction
 	}
 	launches, err := all[i].launches(sel)
 	if err != nil {

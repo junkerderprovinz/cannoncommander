@@ -12,6 +12,9 @@ var (
 	// ErrNoPicture is returned when the system has no icon or thumbnail for
 	// a file.
 	ErrNoPicture = errors.New("the system has no picture for this file")
+	// ErrUnknownAction is returned for an action that does not fit the
+	// files it should run on.
+	ErrUnknownAction = errors.New("no such action for these files")
 )
 
 // Entry is a row of the system's menu that another program put there, as

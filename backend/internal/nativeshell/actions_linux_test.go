@@ -71,10 +71,10 @@ func TestRunActionRefusesAnActionTheFilesDoNotHave(t *testing.T) {
 	f.write(filepath.Join(f.system, "nemo", "actions", "img.nemo_action"), "[Nemo Action]\nName=Image\nExec=false %F\nSelection=s\nMimetypes=image/*;\n")
 	f.install()
 	png, txt := f.files("a.png")[0], f.files("notes.txt")[0]
-	if err := RunAction([]string{txt}, "nemo:img.nemo_action"); !errors.Is(err, errUnknownAction) {
+	if err := RunAction([]string{txt}, "nemo:img.nemo_action"); !errors.Is(err, ErrUnknownAction) {
 		t.Errorf("a text: %v", err)
 	}
-	if err := RunAction([]string{png}, "nemo:other.nemo_action"); !errors.Is(err, errUnknownAction) {
+	if err := RunAction([]string{png}, "nemo:other.nemo_action"); !errors.Is(err, ErrUnknownAction) {
 		t.Errorf("an unknown key: %v", err)
 	}
 	if err := RunAction([]string{filepath.Join(f.work, "gone.png")}, "nemo:img.nemo_action"); err == nil {
