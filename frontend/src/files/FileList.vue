@@ -11,6 +11,7 @@ import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { COL, columnLabel, Columns } from './columns';
+import { useBand } from './band';
 import { type Entry, groupHeads } from './entries';
 import { columnMenu, listMenu, rowMenu } from './menus';
 import ListItem from './ListItem.vue';
@@ -219,9 +220,26 @@ function sortBy(key: string) {
   else Object.assign(tb, { sort: key, dir: 1 });
 }
 
-// Two clicks are paired here instead of by dblclick, so a Shift or Ctrl click never opens anything.
+// With the selection as in Explorer, a drag on free space draws a frame; the column view picks in its own columns.
+const band = useBand({
+  rows: () => [...(el.value?.querySelectorAll<HTMLElement>(':scope > .row') ?? [])],
+  nameAt: (idx) => (list.value[idx] && !list.value[idx]!.up ? list.value[idx]!.name : ''),
+  marked: () => tab.value.marked,
+  mark: (names) => { tab.value.marked = names; },
+});
+const banding = () => prefs.clickSelect && v.value !== 'columns';
+const onDown = (e: PointerEvent) => { if (banding()) band.down(e, ROW_VIEWS.includes(v.value)); };
+const onDragStart = (e: DragEvent) => {
+  if (!band.holding()) return;
+  e.preventDefault();
+  e.stopPropagation();
+};
+
+// Two clicks are paired here instead of by dblclick, so a Shift or Ctrl click never opens anything. As in a
+// commander, a click only moves the cursor and Ctrl or Shift mark; as in Explorer, a click marks the entry alone.
 let lastClick: { idx?: number; panel?: number; at?: number } = {};
 function onClick(e: MouseEvent) {
+  if (band.drawn()) return;
   const target = e.target as Element;
   const row = target.closest<HTMLElement>('.row');
   const tb = tab.value;
@@ -229,9 +247,12 @@ function onClick(e: MouseEvent) {
     const idx = +row.dataset.idx!, l = list.value;
     if (e.shiftKey) {
       const [a, b] = [Math.min(tb.cursor, idx), Math.max(tb.cursor, idx)];
+      if (prefs.clickSelect) tb.marked = new Set();
       for (let k = a; k <= b; k++) if (!l[k]!.up) tb.marked.add(l[k]!.name);
     } else if (e.ctrlKey || e.metaKey) {
       if (!l[idx]!.up) tb.marked.has(l[idx]!.name) ? tb.marked.delete(l[idx]!.name) : tb.marked.add(l[idx]!.name);
+    } else if (prefs.clickSelect) {
+      tb.marked = l[idx]!.up ? new Set() : new Set([l[idx]!.name]);
     }
     const again = lastClick.idx === idx && lastClick.panel === props.i && e.timeStamp - lastClick.at! < 450 && !e.shiftKey && !e.ctrlKey;
     lastClick = { idx, panel: props.i, at: e.timeStamp };
@@ -336,7 +357,7 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
 <template>
   <div ref="el" class="list" :class="[`view-${v}`, { 'grid-view': grid, zoomed: tile !== undefined }]" tabindex="0"
     :style="{ '--cols': Columns.template(), '--minw': Columns.minWidth(), '--zoom-tile': shownTile(v, tile) + 'px' }"
-    @click="onClick" @contextmenu="onMenu" @scroll.passive="onScroll">
+    @click="onClick" @contextmenu="onMenu" @scroll.passive="onScroll" @pointerdown="onDown" @dragstart.capture="onDragStart">
     <div v-if="ROW_VIEWS.includes(v)" class="lhead" data-lhead @pointerdown="onHeadDown">
       <button v-for="id in visible" :key="id" class="lh" :class="{ r: COL[id]!.r, sorted: tab.sort === Columns.sortKey(COL[id]!), moving: colDrag.moved && colDrag.id === id }"
         :data-sort="Columns.sortKey(COL[id]!)" :data-colid="id" @click="onHeadClick($event, Columns.sortKey(COL[id]!))">{{ columnLabel(id) }}<G v-if="tab.sort === Columns.sortKey(COL[id]!)" :n="tab.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /><span v-if="!COL[id]!.fixed" class="lh-grip" :data-grip="id" aria-hidden="true" @dblclick.stop="fit(id)"></span></button>
@@ -351,6 +372,7 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
       </template>
       <div v-if="virtual && range.after" class="vpad" aria-hidden="true" :style="{ height: pad(range.after) }"></div>
     </template>
+    <div v-if="band.frame.on" class="band" aria-hidden="true" :style="{ left: band.frame.x + 'px', top: band.frame.y + 'px', width: band.frame.w + 'px', height: band.frame.h + 'px' }"></div>
     <EmptyState v-if="!list.length && F.loaded(i)" nested :glyph="glyphComponent(tab.filter ? 'IconSearch' : 'IconFolder')" :title="tab.filter ? t('files.nothingFound', { q: tab.filter }) : t('files.empty')" :hint="tab.filter ? (tab.deep === false ? t('files.searchedHere') : t('files.searchedDeep')) : t('files.emptyHint')" />
   </div>
 </template>

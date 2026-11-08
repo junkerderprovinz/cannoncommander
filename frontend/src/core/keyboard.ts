@@ -43,6 +43,7 @@ export function handleKey(e: KeyboardEvent) {
   if (e.key === 'F10') { e.preventDefault(); openMenuBar(0); return; }
   if (typing(e.target)) return;
   const combo = comboOf(e);
+  if (currentView()?.claims?.(combo)) return currentView()!.key?.(e, combo);
   const id = keymap[combo];
   if (id && actions[id]) { e.preventDefault(); run(id); return; }
   currentView()?.key?.(e, combo);

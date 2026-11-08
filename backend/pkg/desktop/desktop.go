@@ -7,6 +7,7 @@ import (
 	"crypto/subtle"
 	"net"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"sync"
@@ -70,7 +71,7 @@ func Home() string {
 const CookieName = "cc_desktop"
 
 // EnterPath is where the window starts: it trades the key in the query for
-// the cookie and goes on to the interface.
+// the cookie and goes on to the interface, with the folders to open, if any.
 const EnterPath = "/desktop/enter"
 
 // Guard lets through only what the window sends. The server listens on
@@ -99,7 +100,11 @@ func Guard(next http.Handler) http.Handler {
 				Name: CookieName, Value: key, Path: "/",
 				HttpOnly: true, SameSite: http.SameSiteStrictMode,
 			})
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			to := "/"
+			if open := r.URL.Query().Get("open"); open != "" {
+				to += "?" + url.Values{"open": {open}}.Encode()
+			}
+			http.Redirect(w, r, to, http.StatusSeeOther)
 			return
 		}
 		c, err := r.Cookie(CookieName)

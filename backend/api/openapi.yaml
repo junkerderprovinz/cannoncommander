@@ -106,6 +106,17 @@ tags:
       offers for the file, as its own file manager lists them under Open
       with: Explorer's on Windows, Launch Services on a Mac and the desktop
       entries for the file's type on Linux.
+  - name: launch
+    description: |
+      Opening a file the way a double click in the computer's own file
+      manager does, only in the desktop app, which runs on the user's own
+      computer: a document in its program, a program by running it.
+  - name: filemanager
+    description: |
+      The desktop app in the place of the computer's own file manager, on
+      Windows and Linux. Folders that other programs, Explorer, Win+E or the
+      desktop open then come to the app, and it stays in the tray after its
+      window closes so they show quickly.
   - name: office
     description: |
       Office files in OnlyOffice, Euro-Office or Collabora, as chosen in
@@ -5585,6 +5596,133 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
       tags: [openwith]
+  /launch:
+    post:
+      operationId: launchOpen
+      summary: Open a file in its program or run it
+      description: |
+        A document opens in the program the computer has for its type, on
+        Windows through the shell as Explorer opens it, elsewhere through
+        gio or xdg-open. A program starts, after the warnings Windows shows
+        for files from the internet. On Linux an executable file or a
+        desktop entry starts only with run, as the file managers there ask
+        first, and without it the answer is 409 askRun.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+                  example: /C/Users/jdp/Documents/notes.txt
+                run:
+                  type: boolean
+                  description: The person chose to run the program.
+      responses:
+        "204":
+          description: The file is open or the program started.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), or no such file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: The file is a program and run was not set (askRun).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: The file did not open (notStarted).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [launch]
+  /filemanager:
+    get:
+      operationId: fileManagerGet
+      summary: Whether the computer opens its folders in the app
+      responses:
+        "200":
+          description: The switch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileManagerState"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app on Windows or Linux (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [filemanager]
+    put:
+      operationId: fileManagerSet
+      summary: Make the app the computer's file manager or give the place back
+      description: |
+        On Windows the app writes its entry for folders and drives and for
+        Win+E below HKCU\Software\Classes; on Linux the default for
+        inode/directory and the D-Bus service org.freedesktop.FileManager1.
+        Off gives the place back to the program that had it before. The
+        words name the app in the folder's context menu and in its tray
+        menu, in the language of the window.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [on]
+              properties:
+                on:
+                  type: boolean
+                words:
+                  type: object
+                  properties:
+                    open:
+                      type: string
+                      example: In CannonCommander öffnen
+                    show:
+                      type: string
+                    quit:
+                      type: string
+      responses:
+        "200":
+          description: The switch as the computer has it after the change.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileManagerState"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app on Windows or Linux (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: The computer did not take the change (fileManagerNotSet).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [filemanager]
   /office/config:
     get:
       operationId: officeConfig
@@ -9407,6 +9545,12 @@ components:
           type: string
           description: A data URL, left out when the program has no icon.
         default:
+          type: boolean
+    FileManagerState:
+      type: object
+      required: [on]
+      properties:
+        on:
           type: boolean
     OfficeConfig:
       type: object
