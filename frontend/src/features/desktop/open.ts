@@ -1,6 +1,7 @@
 // Folders handed over from outside, by the command line, a second start of the app, Win+E or another program that
 // shows a file in its folder. Each opens in a new tab of the active panel, as Explorer opens a new window for it.
 import { host, windowsPaths } from '@/core/host';
+import { prefs } from '@/core/prefs';
 import { go as goView, view } from '@/core/views';
 import { typedPath } from '@/files/paths';
 import { useListing } from '@/stores/listing';
@@ -21,7 +22,9 @@ export async function openHandedOver(list: Opening[]) {
     if (!o.select) continue;
     await listing.load(path).catch(() => null);
     const at = F.entries().findIndex((k) => k.name === o.select);
-    if (at >= 0) F.T().cursor = at;
+    if (at < 0) continue;
+    F.T().cursor = at;
+    if (prefs.clickSelect) F.T().marked = new Set([o.select]);
   }
 }
 

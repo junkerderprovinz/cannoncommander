@@ -121,7 +121,17 @@ describe('folders handed over', () => {
     const tabs = F.P().tabs.slice(before);
     expect(tabs.map((t) => t.path)).toEqual(['/C/Users/jdp/Downloads', '/C/Users/jdp']);
     expect(tabs[0]!.cursor).toBe(1);
+    expect(tabs[0]!.marked.size).toBe(0);
     expect(F.P().cur).toBe(F.P().tabs.length - 1);
+  });
+
+  it('mark the file that was named when the selection works as in Explorer', async () => {
+    host.os = 'windows';
+    prefs.clickSelect = true;
+    const F = usePanels();
+    await openHandedOver([{ folder: 'C:\\Users\\jdp\\Downloads', select: 'a.txt' }]);
+    expect([...F.T().marked]).toEqual(['a.txt']);
+    prefs.clickSelect = false;
   });
 
   it('come once with the start of the window and leave its address', () => {
