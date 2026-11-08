@@ -29,6 +29,10 @@ const homeFlag = "--home"
 
 var driveURI = regexp.MustCompile(`^/[A-Za-z]:`)
 
+// quotedRoot is a drive root handed over as "D:\", which reaches the program
+// as D:" since the backslash escapes the closing quote.
+var quotedRoot = regexp.MustCompile(`^[A-Za-z]:"$`)
+
 // handedOver turns the arguments of a start, as the command line, a second
 // launch or another program hands them over, into what the window opens.
 // Relative paths count from dir. Places of the Windows shell that are no
@@ -47,6 +51,9 @@ func handedOver(args []string, dir string) (open []opening, places []string) {
 			continue
 		}
 		p := a
+		if runtime.GOOS == "windows" && quotedRoot.MatchString(a) {
+			p = a[:2] + `\`
+		}
 		if u, err := url.Parse(a); err == nil && u.Scheme == "file" {
 			p = u.Path
 			if driveURI.MatchString(p) {
