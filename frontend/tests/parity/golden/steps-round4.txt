@@ -3,4 +3,4 @@ columns: 89 problems: none
 header menu items: 0
 rows for "codec": 0
 rows for "fotos": 0
-shortcut menu: Öffnen |   Im anderen Fenster öffnen | In neuem Tab öffnen |   Umbenennen |   Nach oben |   Nach unten |   Vom Schnellzugriff lösen
+shortcut menu: Öffnen | Im anderen Fenster öffnen | In neuem Tab öffnen |   Umbenennen |   Nach oben |   Nach unten |   Vom Schnellzugriff lösen
