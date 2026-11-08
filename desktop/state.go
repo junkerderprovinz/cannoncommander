@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"sync"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 // State is what the desktop app keeps between two starts, beside the server's
@@ -22,6 +24,9 @@ type State struct {
 	// Window is where the window was when it closed, and whether it filled
 	// the screen. Zero means nobody moved it yet.
 	Window Bounds `json:"window"`
+	// Words label the tray icon's menu while the app is the computer's file
+	// manager, in the language of the window.
+	Words desktop.Words `json:"words"`
 }
 
 // Bounds is a window's place in device independent pixels.

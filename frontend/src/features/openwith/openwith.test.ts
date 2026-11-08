@@ -78,10 +78,11 @@ beforeEach(() => {
 });
 
 describe('Öffnen mit', () => {
-  it('stands below Ansehen and Bearbeiten for one file in the desktop app', async () => {
+  it('stands below Ansehen, Bearbeiten and Öffnen for one file in the desktop app', async () => {
     const rows = await menuFor('Brief.txt');
     const labels = rows.map((r) => r.label);
-    expect(labels.indexOf('Öffnen mit')).toBe(labels.indexOf('Bearbeiten') + 1);
+    expect(labels.indexOf('Öffnen')).toBe(labels.indexOf('Bearbeiten') + 1);
+    expect(labels.indexOf('Öffnen mit')).toBe(labels.indexOf('Öffnen') + 1);
     expect(asked).toEqual([`/api/v1/openwith?path=${encodeURIComponent(HERE + '/Brief.txt')}`]);
   });
 
