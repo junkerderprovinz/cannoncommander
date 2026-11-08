@@ -9,6 +9,10 @@
 @media (max-width: 900px) { .settings { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) {
 }
+/* The language field keeps one width whatever is picked, and a flag is wider than the square a glyph gets. */
+.a-lang .glim-select-trigger { width: 12rem; }
+:is(.a-lang, #a-langs) .glim-select-glyph { width: auto; height: auto; }
+#a-langs .glim-select-item { gap: .625rem; }
 .a-swatches { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
 /* A 28px disc in a 2px ring is 32px, the size of the reset badge beside it. */
 .a-swatch { width: 2rem; height: 2rem; border-radius: var(--radius-pill); flex: none; background: var(--c); border: 2px solid var(--carbon-border, color-mix(in srgb, var(--carbon-text) 16%, transparent)); background-clip: padding-box; }
