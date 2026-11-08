@@ -293,7 +293,10 @@ func (b *freedesktop) entry(pl place, name string, sizes *sizeCache) (Entry, err
 // volume could have written it.
 func originOf(pl place, recorded string) (string, bool) {
 	if pl.top == "" {
-		return filepath.Clean(recorded), filepath.IsAbs(recorded)
+		if !filepath.IsAbs(recorded) {
+			return "", false
+		}
+		return filepath.Clean(recorded), true
 	}
 	if filepath.IsAbs(recorded) || !filepath.IsLocal(recorded) {
 		return "", false
