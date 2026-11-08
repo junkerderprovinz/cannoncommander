@@ -36,6 +36,9 @@ export default function setup() {
   const stopFollowing = watch(() => host.desktop, (desktop) => {
     if (!desktop) return;
     stopFollowing();
+    // A download only copies into the window's own download folder and an upload copies over HTTP, where every file
+    // is on this computer already.
+    for (const id of ['download', 'upload']) delete actions[id];
     void followFileManager();
     if (!prefs.desktopStyle) askStyle();
   });

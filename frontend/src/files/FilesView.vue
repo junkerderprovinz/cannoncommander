@@ -6,6 +6,7 @@ import { prefs } from '@/core/prefs';
 import { usePanels } from '@/stores/panels';
 import QuickviewPanel from '@/features/viewer/QuickviewPanel.vue';
 import Panel from './Panel.vue';
+import SidePane from './SidePane.vue';
 import Sidebar from './Sidebar.vue';
 
 const F = usePanels();
@@ -21,10 +22,11 @@ onUpdated(() => extend.onRender.forEach((fn) => fn()));
 </script>
 
 <template>
-  <Sidebar /><div id="panels" class="panels">
+  <Sidebar /><div id="panels" class="panels" :class="{ paned: prefs.sidePane }">
     <template v-for="i in prefs.dual ? [0, 1] : [0]" :key="i">
       <QuickviewPanel v-if="prefs.quickview && prefs.dual && i !== F.active" :i="i" />
       <Panel v-else :i="i" />
     </template>
+    <SidePane v-if="prefs.sidePane" />
   </div>
 </template>

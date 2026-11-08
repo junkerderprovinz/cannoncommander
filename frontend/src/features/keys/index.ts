@@ -53,8 +53,9 @@ function open() {
 // The layout a choice of style brings, as the F1 window would pick it.
 export function choosePreset(id: Preset) {
   const map = preset(id, defaults, (a) => !!actions[a]);
-  apply(map);
+  // Saved first, since a menu shows a key of a layout's own only once the layout is saved.
   setPref('keys', id === 'cc' ? null : { map, preset: id });
+  apply(map);
 }
 
 export default function setup() {
