@@ -2047,7 +2047,15 @@
       "file": "Файл"
     },
     "linkToDir": "Връзка към папка",
-    "linkToFile": "Връзка към файл"
+    "linkToFile": "Връзка към файл",
+    "attributes": "Атрибути",
+    "flags": {
+      "readOnly": "Само за четене",
+      "hidden": "Скрит",
+      "archive": "Готов за архивиране"
+    },
+    "flagsSaved": "Атрибутите са запазени за {objects}",
+    "insideFlagsTip": "Задава атрибутите и за всеки файл и папка вътре."
   },
   "quicklook": {
     "title": "Бърз преглед",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "В момента се качва файл с това име",
     "uploadsOneFolder": "Качване става само при връзка към една папка",
     "userPasswordElsewhere": "Този потребител влиза чрез {method}, паролата се пази там",
+    "windowsOnly": "Това съществува само в Windows",
     "wrongLogin": "Името или паролата са грешни"
   },
   "visit": {

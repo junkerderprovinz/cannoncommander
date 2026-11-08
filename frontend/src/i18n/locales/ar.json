@@ -2331,7 +2331,15 @@
       "file": "ملف"
     },
     "linkToDir": "رابط إلى مجلد",
-    "linkToFile": "رابط إلى ملف"
+    "linkToFile": "رابط إلى ملف",
+    "attributes": "السمات",
+    "flags": {
+      "readOnly": "للقراءة فقط",
+      "hidden": "مخفي",
+      "archive": "جاهز للأرشفة"
+    },
+    "flagsSaved": "تم حفظ السمات لـ {objects}",
+    "insideFlagsTip": "يضبط السمات أيضًا لكل ملف ومجلد بداخله."
   },
   "quicklook": {
     "title": "العرض السريع",
@@ -4193,6 +4201,7 @@
     "uploadRunning": "يُرفع الآن ملف بهذا الاسم",
     "uploadsOneFolder": "الرفع يعمل فقط مع رابط إلى مجلد واحد",
     "userPasswordElsewhere": "هذا المستخدم يسجّل الدخول عبر {method}، وكلمة المرور محفوظة هناك",
+    "windowsOnly": "هذا متاح في Windows فقط",
     "wrongLogin": "الاسم أو كلمة المرور غير صحيحة"
   },
   "visit": {

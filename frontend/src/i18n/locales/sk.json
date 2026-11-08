@@ -2189,7 +2189,15 @@
       "file": "Súbor"
     },
     "linkToDir": "Odkaz na priečinok",
-    "linkToFile": "Odkaz na súbor"
+    "linkToFile": "Odkaz na súbor",
+    "attributes": "Atribúty",
+    "flags": {
+      "readOnly": "Iba na čítanie",
+      "hidden": "Skrytý",
+      "archive": "Pripravené na archiváciu"
+    },
+    "flagsSaved": "Atribúty uložené pre {objects}",
+    "insideFlagsTip": "Nastaví atribúty aj pre každý súbor a priečinok vo vnútri."
   },
   "quicklook": {
     "title": "Rýchly náhľad",
@@ -3919,6 +3927,7 @@
     "uploadRunning": "Súbor s týmto názvom sa práve nahráva",
     "uploadsOneFolder": "Nahrávanie funguje len pri odkaze na jeden priečinok",
     "userPasswordElsewhere": "Tento používateľ sa prihlasuje cez {method}, heslo je tam",
+    "windowsOnly": "Toto existuje iba vo Windows",
     "wrongLogin": "Meno alebo heslo nesedí"
   },
   "visit": {

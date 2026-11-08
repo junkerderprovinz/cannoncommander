@@ -2047,7 +2047,15 @@
       "file": "Tiedosto"
     },
     "linkToDir": "Linkki kansioon",
-    "linkToFile": "Linkki tiedostoon"
+    "linkToFile": "Linkki tiedostoon",
+    "attributes": "Määritteet",
+    "flags": {
+      "readOnly": "Vain luku",
+      "hidden": "Piilotettu",
+      "archive": "Valmis arkistoitavaksi"
+    },
+    "flagsSaved": "Määritteet tallennettu: {objects}",
+    "insideFlagsTip": "Asettaa määritteet myös jokaiselle alla olevalle tiedostolle ja kansiolle."
   },
   "quicklook": {
     "title": "Pikakatselu",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "Samannimistä tiedostoa ladataan juuri nyt",
     "uploadsOneFolder": "Lataaminen palvelimelle toimii vain yhteen kansioon osoittavalla linkillä",
     "userPasswordElsewhere": "Tämä käyttäjä kirjautuu palvelun {method} kautta, salasana on siellä",
+    "windowsOnly": "Tämä on vain Windowsissa",
     "wrongLogin": "Nimi tai salasana on väärä"
   },
   "visit": {

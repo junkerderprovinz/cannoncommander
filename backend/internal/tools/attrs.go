@@ -41,6 +41,9 @@ type AttrsParams struct {
 	Owner string     `json:"owner,omitempty"`
 	Group string     `json:"group,omitempty"`
 	MTime *time.Time `json:"mtime,omitempty"`
+	// Flags turns attributes of Windows on and off: readOnly, hidden,
+	// archive and pinned.
+	Flags map[string]bool `json:"flags,omitempty"`
 	// Recursive also changes everything inside folders and runs as a job.
 	Recursive bool `json:"recursive,omitempty"`
 }
@@ -50,10 +53,14 @@ type attrs struct {
 	setMode  bool
 	uid, gid int
 	mtime    *time.Time
+	flags    map[string]bool
 }
 
 func (p AttrsParams) parse() (attrs, error) {
-	a := attrs{uid: -1, gid: -1, mtime: p.MTime}
+	a := attrs{uid: -1, gid: -1, mtime: p.MTime, flags: p.Flags}
+	if err := checkFlags(p.Flags); err != nil {
+		return a, err
+	}
 	if p.Mode != "" {
 		m, err := strconv.ParseUint(p.Mode, 8, 32)
 		if err != nil || m > 0o7777 {
@@ -81,7 +88,7 @@ func (p AttrsParams) parse() (attrs, error) {
 			return a, err
 		}
 	}
-	if !a.setMode && a.uid < 0 && a.gid < 0 && a.mtime == nil {
+	if !a.setMode && a.uid < 0 && a.gid < 0 && a.mtime == nil && len(a.flags) == 0 {
 		return a, badRequest("nothing to change")
 	}
 	return a, nil
@@ -137,6 +144,9 @@ func (a attrs) apply(p string, info fs.FileInfo) error {
 		if err := os.Chtimes(p, *a.mtime, *a.mtime); err != nil {
 			return err
 		}
+	}
+	if len(a.flags) > 0 && !link {
+		return setFlags(p, a.flags)
 	}
 	return nil
 }

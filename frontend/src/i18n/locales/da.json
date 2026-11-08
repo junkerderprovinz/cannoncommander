@@ -2047,7 +2047,15 @@
       "file": "Fil"
     },
     "linkToDir": "Link til en mappe",
-    "linkToFile": "Link til en fil"
+    "linkToFile": "Link til en fil",
+    "attributes": "Attributter",
+    "flags": {
+      "readOnly": "Skrivebeskyttet",
+      "hidden": "Skjult",
+      "archive": "Klar til arkivering"
+    },
+    "flagsSaved": "Attributter gemt for {objects}",
+    "insideFlagsTip": "Sætter også attributterne for alle filer og mapper herunder."
   },
   "quicklook": {
     "title": "Hurtigvisning",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "En fil med dette navn uploades lige nu",
     "uploadsOneFolder": "Upload virker kun med et link til én mappe",
     "userPasswordElsewhere": "Denne bruger logger ind via {method}, adgangskoden ligger der",
+    "windowsOnly": "Det findes kun i Windows",
     "wrongLogin": "Navn eller adgangskode er forkert"
   },
   "visit": {

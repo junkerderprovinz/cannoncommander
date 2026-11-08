@@ -1976,7 +1976,15 @@
       "file": "Tệp"
     },
     "linkToDir": "Liên kết đến thư mục",
-    "linkToFile": "Liên kết đến tệp"
+    "linkToFile": "Liên kết đến tệp",
+    "attributes": "Thuộc tính",
+    "flags": {
+      "readOnly": "Chỉ đọc",
+      "hidden": "Ẩn",
+      "archive": "Sẵn sàng lưu trữ"
+    },
+    "flagsSaved": "Đã lưu thuộc tính cho {objects}",
+    "insideFlagsTip": "Áp dụng thuộc tính cho mọi tệp và thư mục bên trong."
   },
   "quicklook": {
     "title": "Xem nhanh",
@@ -3508,6 +3516,7 @@
     "uploadRunning": "Một tệp trùng tên đang được tải lên",
     "uploadsOneFolder": "Chỉ tải lên được qua liên kết đến một thư mục",
     "userPasswordElsewhere": "Người dùng này đăng nhập qua {method}, mật khẩu được giữ ở đó",
+    "windowsOnly": "Chỉ có trên Windows",
     "wrongLogin": "Tên hoặc mật khẩu không đúng"
   },
   "visit": {

@@ -2047,7 +2047,15 @@
       "file": "پرونده"
     },
     "linkToDir": "پیوند به پوشه",
-    "linkToFile": "پیوند به پرونده"
+    "linkToFile": "پیوند به پرونده",
+    "attributes": "ویژگی‌ها",
+    "flags": {
+      "readOnly": "فقط خواندنی",
+      "hidden": "مخفی",
+      "archive": "آماده بایگانی"
+    },
+    "flagsSaved": "ویژگی‌ها برای {objects} ذخیره شد",
+    "insideFlagsTip": "ویژگی‌ها را برای همه فایل‌ها و پوشه‌های زیرین هم تنظیم می‌کند."
   },
   "quicklook": {
     "title": "نگاه سریع",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "پرونده‌ای با این نام اکنون در حال بارگذاری است",
     "uploadsOneFolder": "بارگذاری فقط برای پیوند به یک پوشه کار می‌کند",
     "userPasswordElsewhere": "این کاربر از راه {method} وارد می‌شود و گذرواژه همان‌جاست",
+    "windowsOnly": "این فقط در Windows وجود دارد",
     "wrongLogin": "نام یا گذرواژه درست نیست"
   },
   "visit": {

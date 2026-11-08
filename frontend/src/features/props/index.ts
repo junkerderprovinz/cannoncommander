@@ -1,9 +1,10 @@
 // Symbolische Verknüpfung and Eigenschaften und Rechte: what an entry is, who owns it and who may do what with it.
 import { reactive, watch } from 'vue';
-import type { Item } from '@/api/client';
+import { api, type Item } from '@/api/client';
 import type { Job } from '@/api/ops';
-import { tools } from '@/api/tools';
+import { tools, type WinFlag } from '@/api/tools';
 import { action, run } from '@/core/actions';
+import { host } from '@/core/host';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { go, view } from '@/core/views';
@@ -45,6 +46,9 @@ function symlinkWindow() {
   }, { immediate: true });
 }
 
+// Windows keeps attributes instead of the nine rights, and the properties show those Explorer does.
+const FLAGS: [Exclude<WinFlag, 'pinned'>, string][] = [['readOnly', 'R'], ['hidden', 'H'], ['archive', 'A']];
+
 // Names the panels cannot look up anywhere: the ones Unraid uses for its shares.
 const UIDS: Record<string, number> = { root: 0, nobody: 99 };
 const GIDS: Record<string, number> = { root: 0, users: 100 };
@@ -72,7 +76,16 @@ async function propsWindow() {
     nodes, paths, dir, self, ro, uids, gids, modes, owners, groups, mode: modes[0]!, owner: owners.length > 1 ? '' : owners[0]!, group: groups.length > 1 ? '' : groups[0]!,
     rec: false, size: nodes.reduce((a, k) => a + (k.size || 0), 0), files: nodes.filter((k) => !k.dir).length, dirs: 0, counted: !nodes.some((k) => k.dir),
     label: self ? (listing.placeLabel(dir) || split(dir).pop() || t('props.server')).replace('::', '') : '',
+    win: host.os === 'windows', flags: {}, flagsAt: {},
   });
+  if (st.win) {
+    for (const [f, letter] of FLAGS) st.flags[f] = st.flagsAt[f] = nodes.every((k) => (k.attrs ?? '').includes(letter));
+    // A listing on Windows leaves the owner out, since it costs a call of its own for every file.
+    st.owner = '';
+    Promise.all(paths.slice(0, 50).map((p) => api.fsStat(p).catch(() => null))).then((got) => {
+      st.owner = [...new Set(got.map((k) => k?.owner).filter(Boolean))].join(', ');
+    });
+  }
   // Folders count what lies below them from the index, so the size and the numbers are there without a walk.
   const folders = nodes.map((k, i) => [k, paths[i]!] as const).filter(([k]) => k.dir && !k.link);
   if (folders.length && !inArchive(dir)) {
@@ -91,8 +104,25 @@ async function propsWindow() {
   });
 }
 
+function saveFlags(st: PropsState) {
+  const flags = Object.fromEntries(Object.entries(st.flags).filter(([f, on]) => on !== st.flagsAt[f as WinFlag]));
+  if (!Object.keys(flags).length && !st.rec) return true;
+  const listing = useListing(), done = (n: number) => { listing.changed(st.dir); toast(t('props.flagsSaved', { objects: plural(n, 'ui.objects') })); };
+  tools.attrs({ paths: st.paths, flags: st.rec ? { ...st.flags } : flags, recursive: st.rec }).then((got) => {
+    if ('changed' in got) return done(got.changed);
+    const jobs = useJobs(), job = jobs.upsert(got as Job);
+    toast(t('ui.running', { label: jobLabel(job) }), 'ok', { label: t('ui.toJobs'), run: () => run('jobs') });
+    jobs.whenDone(job, (j) => {
+      if (j.state === 'done') done(j.totalFiles);
+      else if (j.state === 'failed') toast(t('ui.failed', { label: jobLabel(j), error: jobError(j) }), 'fault');
+    });
+  }, (e) => toast(e.message, 'warn'));
+  return true;
+}
+
 function save(st: PropsState) {
   if (st.ro) return false;
+  if (st.win) return saveFlags(st);
   if (!/^[0-7]{4}$/.test(st.mode)) { toast(t('props.badMode'), 'warn'); return false; }
   const req = { paths: st.paths, mode: st.mode, ...(st.owner ? { owner: st.owner } : {}), ...(st.group ? { group: st.group } : {}), recursive: st.rec };
   const said = { owner: st.owner || t('props.ownerStays'), group: st.group || t('props.groupStays'), mode: st.mode.slice(1) };

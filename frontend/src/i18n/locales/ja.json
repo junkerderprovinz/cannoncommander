@@ -1976,7 +1976,15 @@
       "file": "ファイル"
     },
     "linkToDir": "フォルダーへのリンク",
-    "linkToFile": "ファイルへのリンク"
+    "linkToFile": "ファイルへのリンク",
+    "attributes": "属性",
+    "flags": {
+      "readOnly": "読み取り専用",
+      "hidden": "隠しファイル",
+      "archive": "アーカイブ可能"
+    },
+    "flagsSaved": "{objects} の属性を保存しました",
+    "insideFlagsTip": "中のすべてのファイルとフォルダーにも属性を設定します。"
   },
   "quicklook": {
     "title": "クイックルック",
@@ -3508,6 +3516,7 @@
     "uploadRunning": "同じ名前のファイルを今アップロードしています",
     "uploadsOneFolder": "アップロードできるのは1つのフォルダーへのリンクだけです",
     "userPasswordElsewhere": "このユーザーは {method} でログインするため、パスワードはそちらで管理されています",
+    "windowsOnly": "これは Windows でのみ使えます",
     "wrongLogin": "名前またはパスワードが正しくありません"
   },
   "visit": {

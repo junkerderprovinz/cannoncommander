@@ -544,6 +544,7 @@
     "uploadRunning": "A file of this name is being uploaded right now",
     "uploadsOneFolder": "Uploads only work for a link to one folder",
     "userPasswordElsewhere": "This user signs in through {method}, the password is kept there",
+    "windowsOnly": "This only exists on Windows",
     "wrongLogin": "The name or the password is not right"
   }
 }

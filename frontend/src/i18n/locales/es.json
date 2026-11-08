@@ -2118,7 +2118,15 @@
       "file": "Archivo"
     },
     "linkToDir": "Enlace a una carpeta",
-    "linkToFile": "Enlace a un archivo"
+    "linkToFile": "Enlace a un archivo",
+    "attributes": "Atributos",
+    "flags": {
+      "readOnly": "Solo lectura",
+      "hidden": "Oculto",
+      "archive": "Listo para archivar"
+    },
+    "flagsSaved": "Atributos guardados para {objects}",
+    "insideFlagsTip": "También aplica los atributos a cada archivo y carpeta de dentro."
   },
   "quicklook": {
     "title": "Vista rápida",
@@ -3782,6 +3790,7 @@
     "uploadRunning": "Ahora mismo se está subiendo un archivo con este nombre",
     "uploadsOneFolder": "Las subidas solo funcionan con un enlace a una carpeta",
     "userPasswordElsewhere": "Este usuario inicia sesión mediante {method}, la contraseña está allí",
+    "windowsOnly": "Esto solo existe en Windows",
     "wrongLogin": "El nombre o la contraseña no son correctos"
   },
   "visit": {

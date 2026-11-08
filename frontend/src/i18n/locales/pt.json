@@ -2118,7 +2118,15 @@
       "file": "Ficheiro"
     },
     "linkToDir": "Ligação para uma pasta",
-    "linkToFile": "Ligação para um ficheiro"
+    "linkToFile": "Ligação para um ficheiro",
+    "attributes": "Atributos",
+    "flags": {
+      "readOnly": "Só de leitura",
+      "hidden": "Oculto",
+      "archive": "Pronto para arquivar"
+    },
+    "flagsSaved": "Atributos guardados para {objects}",
+    "insideFlagsTip": "Aplica os atributos também a cada ficheiro e pasta lá dentro."
   },
   "quicklook": {
     "title": "Vista rápida",
@@ -3782,6 +3790,7 @@
     "uploadRunning": "Está a ser carregado um ficheiro com este nome",
     "uploadsOneFolder": "Os carregamentos só funcionam com uma ligação para uma pasta",
     "userPasswordElsewhere": "Este utilizador inicia sessão através de {method}, a palavra-passe está lá",
+    "windowsOnly": "Isto só existe no Windows",
     "wrongLogin": "O nome ou a palavra-passe não estão certos"
   },
   "visit": {

@@ -2047,7 +2047,15 @@
       "file": "Fail"
     },
     "linkToDir": "Link kaustale",
-    "linkToFile": "Link failile"
+    "linkToFile": "Link failile",
+    "attributes": "Atribuudid",
+    "flags": {
+      "readOnly": "Kirjutuskaitstud",
+      "hidden": "Peidetud",
+      "archive": "Arhiveerimiseks valmis"
+    },
+    "flagsSaved": "Atribuudid salvestatud: {objects}",
+    "insideFlagsTip": "Määrab atribuudid ka igale failile ja kaustale selle all."
   },
   "quicklook": {
     "title": "Kiirvaade",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "Sama nimega faili laaditakse praegu üles",
     "uploadsOneFolder": "Üleslaadimine töötab ainult ühele kaustale viitava lingiga",
     "userPasswordElsewhere": "See kasutaja logib sisse teenuse {method} kaudu, parool on seal",
+    "windowsOnly": "See on olemas ainult Windowsis",
     "wrongLogin": "Nimi või parool pole õige"
   },
   "visit": {

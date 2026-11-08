@@ -2118,7 +2118,15 @@
       "file": "Fails"
     },
     "linkToDir": "Saite uz mapi",
-    "linkToFile": "Saite uz failu"
+    "linkToFile": "Saite uz failu",
+    "attributes": "Atribūti",
+    "flags": {
+      "readOnly": "Tikai lasāms",
+      "hidden": "Slēpts",
+      "archive": "Gatavs arhivēšanai"
+    },
+    "flagsSaved": "Atribūti saglabāti: {objects}",
+    "insideFlagsTip": "Iestata atribūtus arī katram failam un mapei zem tās."
   },
   "quicklook": {
     "title": "Ātrais skats",
@@ -3782,6 +3790,7 @@
     "uploadRunning": "Fails ar šādu nosaukumu pašlaik tiek augšupielādēts",
     "uploadsOneFolder": "Augšupielāde darbojas tikai ar saiti uz vienu mapi",
     "userPasswordElsewhere": "Šis lietotājs piesakās caur {method}, parole glabājas tur",
+    "windowsOnly": "Tas ir pieejams tikai Windows",
     "wrongLogin": "Vārds vai parole nav pareiza"
   },
   "visit": {

@@ -1976,7 +1976,15 @@
       "file": "파일"
     },
     "linkToDir": "폴더 링크",
-    "linkToFile": "파일 링크"
+    "linkToFile": "파일 링크",
+    "attributes": "특성",
+    "flags": {
+      "readOnly": "읽기 전용",
+      "hidden": "숨김",
+      "archive": "보관 준비됨"
+    },
+    "flagsSaved": "{objects}의 특성을 저장했습니다",
+    "insideFlagsTip": "아래의 모든 파일과 폴더에도 특성을 적용합니다."
   },
   "quicklook": {
     "title": "빠른 보기",
@@ -3508,6 +3516,7 @@
     "uploadRunning": "같은 이름의 파일이 지금 업로드되고 있습니다",
     "uploadsOneFolder": "업로드는 폴더 하나를 가리키는 링크에서만 됩니다",
     "userPasswordElsewhere": "이 사용자는 {method} 방식으로 로그인하므로 비밀번호는 그쪽에서 관리합니다",
+    "windowsOnly": "Windows에서만 쓸 수 있습니다",
     "wrongLogin": "이름 또는 비밀번호가 맞지 않습니다"
   },
   "visit": {

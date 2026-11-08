@@ -1976,7 +1976,15 @@
       "file": "Fail"
     },
     "linkToDir": "Pautan ke folder",
-    "linkToFile": "Pautan ke fail"
+    "linkToFile": "Pautan ke fail",
+    "attributes": "Atribut",
+    "flags": {
+      "readOnly": "Baca sahaja",
+      "hidden": "Tersembunyi",
+      "archive": "Sedia untuk diarkibkan"
+    },
+    "flagsSaved": "Atribut disimpan untuk {objects}",
+    "insideFlagsTip": "Turut menetapkan atribut bagi setiap fail dan folder di bawahnya."
   },
   "quicklook": {
     "title": "Lihat pantas",
@@ -3508,6 +3516,7 @@
     "uploadRunning": "Fail dengan nama ini sedang dimuat naik",
     "uploadsOneFolder": "Muat naik hanya boleh untuk pautan ke satu folder",
     "userPasswordElsewhere": "Pengguna ini log masuk melalui {method}, kata laluannya disimpan di sana",
+    "windowsOnly": "Ini hanya ada dalam Windows",
     "wrongLogin": "Nama atau kata laluan tidak betul"
   },
   "visit": {

@@ -2118,7 +2118,15 @@
       "file": "File"
     },
     "linkToDir": "Collegamento a una cartella",
-    "linkToFile": "Collegamento a un file"
+    "linkToFile": "Collegamento a un file",
+    "attributes": "Attributi",
+    "flags": {
+      "readOnly": "Sola lettura",
+      "hidden": "Nascosto",
+      "archive": "Pronto per l'archiviazione"
+    },
+    "flagsSaved": "Attributi salvati per {objects}",
+    "insideFlagsTip": "Imposta gli attributi anche per ogni file e cartella al suo interno."
   },
   "quicklook": {
     "title": "Anteprima rapida",
@@ -3782,6 +3790,7 @@
     "uploadRunning": "Un file con questo nome è in fase di caricamento",
     "uploadsOneFolder": "I caricamenti funzionano solo con un link a una cartella",
     "userPasswordElsewhere": "Questo utente accede tramite {method}, la password si trova lì",
+    "windowsOnly": "Questo esiste solo su Windows",
     "wrongLogin": "Il nome o la password non sono corretti"
   },
   "visit": {

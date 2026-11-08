@@ -2047,7 +2047,15 @@
       "file": "Fájl"
     },
     "linkToDir": "Hivatkozás mappára",
-    "linkToFile": "Hivatkozás fájlra"
+    "linkToFile": "Hivatkozás fájlra",
+    "attributes": "Attribútumok",
+    "flags": {
+      "readOnly": "Írásvédett",
+      "hidden": "Rejtett",
+      "archive": "Archiválásra kész"
+    },
+    "flagsSaved": "Attribútumok mentve: {objects}",
+    "insideFlagsTip": "Az attribútumokat minden alatta lévő fájlra és mappára is beállítja."
   },
   "quicklook": {
     "title": "Gyorsnézet",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "Egy ilyen nevű fájl feltöltése épp folyamatban van",
     "uploadsOneFolder": "Feltöltés csak egyetlen mappára mutató hivatkozásnál működik",
     "userPasswordElsewhere": "Ez a felhasználó ezen keresztül lép be: {method}, a jelszó ott van",
+    "windowsOnly": "Ez csak Windowson létezik",
     "wrongLogin": "A név vagy a jelszó nem stimmel"
   },
   "visit": {

@@ -2047,7 +2047,15 @@
       "file": "Dosya"
     },
     "linkToDir": "Bir klasöre bağlantı",
-    "linkToFile": "Bir dosyaya bağlantı"
+    "linkToFile": "Bir dosyaya bağlantı",
+    "attributes": "Öznitelikler",
+    "flags": {
+      "readOnly": "Salt okunur",
+      "hidden": "Gizli",
+      "archive": "Arşivlemeye hazır"
+    },
+    "flagsSaved": "{objects} için öznitelikler kaydedildi",
+    "insideFlagsTip": "Öznitelikleri altındaki her dosya ve klasöre de uygular."
   },
   "quicklook": {
     "title": "Hızlı bakış",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "Bu adda bir dosya şu an yükleniyor",
     "uploadsOneFolder": "Yüklemeler yalnızca tek bir klasöre giden bağlantıda olur",
     "userPasswordElsewhere": "Bu kullanıcı {method} üzerinden giriş yapıyor, parola orada tutuluyor",
+    "windowsOnly": "Bu yalnızca Windows'ta var",
     "wrongLogin": "Ad ya da parola doğru değil"
   },
   "visit": {

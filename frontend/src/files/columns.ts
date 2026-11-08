@@ -83,7 +83,7 @@ const general: Def[] = [
   { id: 'disksize', width: '7rem', r: true, num: (k) => (k.dir ? -1 : diskSize(k)), value: (k) => (k.dir ? '' : fmtSize(diskSize(k)) || '0 B') },
   { id: 'kind', width: '6.5rem', value: (k) => t(`groups.${k.dir ? 'folder' : KIND_KEY[k.kind] || 'other'}`) },
   { id: 'mime', width: '10rem', mono: true, value: (k) => (k.dir ? 'inode/directory' : MIME[ext(k.name)] || 'application/octet-stream') },
-  { id: 'attributes', width: '5rem', mono: true, value: (k) => [isHidden(k) ? 'H' : '', k.system ? 'S' : '', k.link ? 'L' : '', +(k.mode || '0664').slice(-3)[0]! < 6 ? 'R' : ''].join('') },
+  { id: 'attributes', width: '5rem', mono: true, value: (k) => k.attrs ?? [isHidden(k) ? 'H' : '', k.system ? 'S' : '', k.link ? 'L' : '', +(k.mode || '0664').slice(-3)[0]! < 6 ? 'R' : ''].join('') },
   { id: 'statchange', width: '7.5rem', r: true, meta: 'date', num: metaNum('statchange') },
 ];
 const storage: Def[] = [

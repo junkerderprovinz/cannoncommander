@@ -2189,7 +2189,15 @@
       "file": "Soubor"
     },
     "linkToDir": "Odkaz na složku",
-    "linkToFile": "Odkaz na soubor"
+    "linkToFile": "Odkaz na soubor",
+    "attributes": "Atributy",
+    "flags": {
+      "readOnly": "Jen pro čtení",
+      "hidden": "Skrytý",
+      "archive": "Připraveno k archivaci"
+    },
+    "flagsSaved": "Atributy uloženy pro {objects}",
+    "insideFlagsTip": "Nastaví atributy i pro každý soubor a složku uvnitř."
   },
   "quicklook": {
     "title": "Rychlý náhled",
@@ -3919,6 +3927,7 @@
     "uploadRunning": "Soubor s tímto názvem se právě nahrává",
     "uploadsOneFolder": "Nahrávání funguje jen u odkazu na jednu složku",
     "userPasswordElsewhere": "Tento uživatel se přihlašuje přes {method}, heslo je tam",
+    "windowsOnly": "To je jen ve Windows",
     "wrongLogin": "Jméno nebo heslo nesouhlasí"
   },
   "visit": {

@@ -57,8 +57,10 @@ type Item struct {
 	Hidden      bool   `json:"hidden,omitempty"`
 	// System marks a protected file of the system, which stays hidden
 	// until that is asked for as well.
-	System bool   `json:"system,omitempty"`
-	Link   string `json:"link,omitempty"`
+	System bool `json:"system,omitempty"`
+	// Attrs are the attributes of Windows as Explorer's column shows them.
+	Attrs string `json:"attrs,omitempty"`
+	Link  string `json:"link,omitempty"`
 	// Items counts the entries inside a folder, when known.
 	Items   *int    `json:"items,omitempty"`
 	Format  string  `json:"format,omitempty"`
@@ -254,6 +256,7 @@ func (h handlers) stat(w http.ResponseWriter, r *http.Request) error {
 	if out.Item, err = itemFor(loc.Real, path.Base(loc.Path)); err != nil {
 		return err
 	}
+	ownerOf(loc.Real, &out.Item)
 	if out.Dir && out.Link == "" {
 		h.describe(loc.Source, []folderRef{{index: loc.Index, real: loc.Real, path: loc.Path, item: &out.Item}})
 		if h.index != nil {
@@ -368,6 +371,7 @@ func itemFor(real, name string) (Item, error) {
 	}
 	item := Item{Name: name}
 	item.Hidden, item.System = hiddenOf(name, st.attrs)
+	item.Attrs = attrLetters(st.attrs)
 	if st.mode&fs.ModeSymlink != 0 {
 		if target, err := os.Readlink(real); err == nil {
 			item.Link = filepath.ToSlash(target)

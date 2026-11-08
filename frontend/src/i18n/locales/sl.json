@@ -2189,7 +2189,15 @@
       "file": "Datoteka"
     },
     "linkToDir": "Povezava do mape",
-    "linkToFile": "Povezava do datoteke"
+    "linkToFile": "Povezava do datoteke",
+    "attributes": "Atributi",
+    "flags": {
+      "readOnly": "Samo za branje",
+      "hidden": "Skrito",
+      "archive": "Pripravljeno za arhiviranje"
+    },
+    "flagsSaved": "Atributi shranjeni za {objects}",
+    "insideFlagsTip": "Nastavi atribute tudi za vsako datoteko in mapo v njej."
   },
   "quicklook": {
     "title": "Hitri predogled",
@@ -3919,6 +3927,7 @@
     "uploadRunning": "Datoteka s tem imenom se trenutno nalaga",
     "uploadsOneFolder": "Nalaganje deluje samo pri povezavi na eno mapo",
     "userPasswordElsewhere": "Ta uporabnik se prijavlja prek {method}, geslo je tam",
+    "windowsOnly": "To obstaja samo v sistemu Windows",
     "wrongLogin": "Ime ali geslo ni pravilno"
   },
   "visit": {

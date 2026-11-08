@@ -21,11 +21,4 @@ type fileStat struct {
 	attrs uint32
 }
 
-// The attributes of Windows that a listing reads, with the values of
-// winnt.h, so the rules built on them can be tested anywhere.
-const (
-	attrHidden = 0x2
-	attrSystem = 0x4
-)
-
 func (s fileStat) isDir() bool { return s.mode.IsDir() }

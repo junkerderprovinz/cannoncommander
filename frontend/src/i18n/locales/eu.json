@@ -2047,7 +2047,15 @@
       "file": "Fitxategia"
     },
     "linkToDir": "Karpeta baterako esteka",
-    "linkToFile": "Fitxategi baterako esteka"
+    "linkToFile": "Fitxategi baterako esteka",
+    "attributes": "Atributuak",
+    "flags": {
+      "readOnly": "Irakurtzeko soilik",
+      "hidden": "Ezkutua",
+      "archive": "Artxibatzeko prest"
+    },
+    "flagsSaved": "Atributuak gordeta: {objects}",
+    "insideFlagsTip": "Barruko fitxategi eta karpeta guztiei ere ezartzen dizkie atributuak."
   },
   "quicklook": {
     "title": "Bista azkarra",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "Izen hori duen fitxategi bat igotzen ari da une honetan",
     "uploadsOneFolder": "Igoerak karpeta baterako esteka batekin bakarrik dabiltza",
     "userPasswordElsewhere": "Erabiltzaile honek {method} bidez hasten du saioa, eta pasahitza han dago",
+    "windowsOnly": "Hau Windowsen bakarrik dago",
     "wrongLogin": "Izena edo pasahitza ez dira zuzenak"
   },
   "visit": {

@@ -2189,7 +2189,15 @@
       "file": "Plik"
     },
     "linkToDir": "Dowiązanie do folderu",
-    "linkToFile": "Dowiązanie do pliku"
+    "linkToFile": "Dowiązanie do pliku",
+    "attributes": "Atrybuty",
+    "flags": {
+      "readOnly": "Tylko do odczytu",
+      "hidden": "Ukryty",
+      "archive": "Gotowy do archiwizacji"
+    },
+    "flagsSaved": "Zapisano atrybuty dla: {objects}",
+    "insideFlagsTip": "Ustawia atrybuty także dla każdego pliku i folderu poniżej."
   },
   "quicklook": {
     "title": "Szybki podgląd",
@@ -3919,6 +3927,7 @@
     "uploadRunning": "Plik o tej nazwie jest właśnie przesyłany",
     "uploadsOneFolder": "Przesyłanie działa tylko przy linku do jednego folderu",
     "userPasswordElsewhere": "Ten użytkownik loguje się przez {method}, hasło jest tam",
+    "windowsOnly": "To istnieje tylko w systemie Windows",
     "wrongLogin": "Nazwa lub hasło są nieprawidłowe"
   },
   "visit": {

@@ -2189,7 +2189,15 @@
       "file": "Failas"
     },
     "linkToDir": "Nuoroda į aplanką",
-    "linkToFile": "Nuoroda į failą"
+    "linkToFile": "Nuoroda į failą",
+    "attributes": "Atributai",
+    "flags": {
+      "readOnly": "Tik skaityti",
+      "hidden": "Paslėptas",
+      "archive": "Paruošta archyvuoti"
+    },
+    "flagsSaved": "Atributai išsaugoti: {objects}",
+    "insideFlagsTip": "Nustato atributus ir kiekvienam failui bei aplankui viduje."
   },
   "quicklook": {
     "title": "Greitoji peržiūra",
@@ -3919,6 +3927,7 @@
     "uploadRunning": "Failas tokiu pavadinimu dabar įkeliamas",
     "uploadsOneFolder": "Įkelti galima tik per nuorodą į vieną aplanką",
     "userPasswordElsewhere": "Šis naudotojas prisijungia per {method}, slaptažodis laikomas ten",
+    "windowsOnly": "Tai yra tik Windows sistemoje",
     "wrongLogin": "Vardas arba slaptažodis neteisingas"
   },
   "visit": {

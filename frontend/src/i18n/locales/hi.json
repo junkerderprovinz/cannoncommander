@@ -2047,7 +2047,15 @@
       "file": "फ़ाइल"
     },
     "linkToDir": "फ़ोल्डर का लिंक",
-    "linkToFile": "फ़ाइल का लिंक"
+    "linkToFile": "फ़ाइल का लिंक",
+    "attributes": "विशेषताएँ",
+    "flags": {
+      "readOnly": "केवल पढ़ने योग्य",
+      "hidden": "छिपा हुआ",
+      "archive": "संग्रह के लिए तैयार"
+    },
+    "flagsSaved": "{objects} के लिए विशेषताएँ सहेजी गईं",
+    "insideFlagsTip": "इसके अंदर की हर फ़ाइल और फ़ोल्डर पर भी विशेषताएँ लगाता है।"
   },
   "quicklook": {
     "title": "झटपट झलक",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "इस नाम की एक फ़ाइल अभी अपलोड हो रही है",
     "uploadsOneFolder": "अपलोड सिर्फ़ एक फ़ोल्डर वाले लिंक पर चलते हैं",
     "userPasswordElsewhere": "यह उपयोगकर्ता {method} से लॉग इन करता है, पासवर्ड वहीं रखा है",
+    "windowsOnly": "यह केवल Windows में है",
     "wrongLogin": "नाम या पासवर्ड सही नहीं है"
   },
   "visit": {

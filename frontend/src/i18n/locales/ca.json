@@ -2118,7 +2118,15 @@
       "file": "Fitxer"
     },
     "linkToDir": "Enllaç a una carpeta",
-    "linkToFile": "Enllaç a un fitxer"
+    "linkToFile": "Enllaç a un fitxer",
+    "attributes": "Atributs",
+    "flags": {
+      "readOnly": "Només de lectura",
+      "hidden": "Ocult",
+      "archive": "A punt per arxivar"
+    },
+    "flagsSaved": "Atributs desats per a {objects}",
+    "insideFlagsTip": "Aplica els atributs també a cada fitxer i carpeta de dins."
   },
   "quicklook": {
     "title": "Vista ràpida",
@@ -3782,6 +3790,7 @@
     "uploadRunning": "S'està pujant un fitxer amb aquest nom ara mateix",
     "uploadsOneFolder": "Les pujades només funcionen amb un enllaç a una carpeta",
     "userPasswordElsewhere": "Aquest usuari inicia la sessió mitjançant {method}, la contrasenya és allà",
+    "windowsOnly": "Això només existeix a Windows",
     "wrongLogin": "El nom o la contrasenya no són correctes"
   },
   "visit": {

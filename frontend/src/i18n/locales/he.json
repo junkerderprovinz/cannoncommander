@@ -2118,7 +2118,15 @@
       "file": "קובץ"
     },
     "linkToDir": "קישור לתיקייה",
-    "linkToFile": "קישור לקובץ"
+    "linkToFile": "קישור לקובץ",
+    "attributes": "מאפיינים",
+    "flags": {
+      "readOnly": "קריאה בלבד",
+      "hidden": "מוסתר",
+      "archive": "מוכן לארכוב"
+    },
+    "flagsSaved": "המאפיינים נשמרו עבור {objects}",
+    "insideFlagsTip": "מגדיר את המאפיינים גם לכל קובץ ותיקייה שבתוכו."
   },
   "quicklook": {
     "title": "תצוגה מהירה",
@@ -3782,6 +3790,7 @@
     "uploadRunning": "קובץ בשם הזה מועלה כרגע",
     "uploadsOneFolder": "העלאות עובדות רק בקישור לתיקייה אחת",
     "userPasswordElsewhere": "המשתמש הזה מתחבר דרך {method}, והסיסמה נמצאת שם",
+    "windowsOnly": "זה קיים רק ב-Windows",
     "wrongLogin": "השם או הסיסמה לא נכונים"
   },
   "visit": {

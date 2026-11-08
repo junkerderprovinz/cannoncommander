@@ -2047,7 +2047,15 @@
       "file": "Bestand"
     },
     "linkToDir": "Koppeling naar een map",
-    "linkToFile": "Koppeling naar een bestand"
+    "linkToFile": "Koppeling naar een bestand",
+    "attributes": "Kenmerken",
+    "flags": {
+      "readOnly": "Alleen-lezen",
+      "hidden": "Verborgen",
+      "archive": "Klaar voor archivering"
+    },
+    "flagsSaved": "Kenmerken opgeslagen voor {objects}",
+    "insideFlagsTip": "Stelt de kenmerken ook in voor elk bestand en elke map eronder."
   },
   "quicklook": {
     "title": "Snelle weergave",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "Er wordt nu een bestand met deze naam geüpload",
     "uploadsOneFolder": "Uploaden werkt alleen bij een link naar één map",
     "userPasswordElsewhere": "Deze gebruiker logt in via {method}, het wachtwoord staat daar",
+    "windowsOnly": "Dit bestaat alleen in Windows",
     "wrongLogin": "Naam of wachtwoord klopt niet"
   },
   "visit": {

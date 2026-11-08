@@ -2047,7 +2047,15 @@
       "file": "Skrá"
     },
     "linkToDir": "Tengill á möppu",
-    "linkToFile": "Tengill á skrá"
+    "linkToFile": "Tengill á skrá",
+    "attributes": "Eigindi",
+    "flags": {
+      "readOnly": "Skrifvarið",
+      "hidden": "Falið",
+      "archive": "Tilbúið til geymslu"
+    },
+    "flagsSaved": "Eigindi vistuð fyrir {objects}",
+    "insideFlagsTip": "Setur eigindin líka á allar skrár og möppur fyrir neðan."
   },
   "quicklook": {
     "title": "Flýtiskoðun",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "Verið er að hlaða upp skrá með þessu heiti núna",
     "uploadsOneFolder": "Upphleðsla virkar aðeins með tengli á eina möppu",
     "userPasswordElsewhere": "Þessi notandi skráir sig inn í gegnum {method}, lykilorðið er geymt þar",
+    "windowsOnly": "Þetta er aðeins til í Windows",
     "wrongLogin": "Heitið eða lykilorðið er ekki rétt"
   },
   "visit": {

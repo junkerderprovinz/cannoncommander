@@ -2047,7 +2047,15 @@
       "file": "Ficheiro"
     },
     "linkToDir": "Ligazón a un cartafol",
-    "linkToFile": "Ligazón a un ficheiro"
+    "linkToFile": "Ligazón a un ficheiro",
+    "attributes": "Atributos",
+    "flags": {
+      "readOnly": "Só lectura",
+      "hidden": "Oculto",
+      "archive": "Listo para arquivar"
+    },
+    "flagsSaved": "Atributos gardados para {objects}",
+    "insideFlagsTip": "Aplica os atributos tamén a cada ficheiro e cartafol de dentro."
   },
   "quicklook": {
     "title": "Vista rápida",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "Agora mesmo estase a subir un ficheiro con este nome",
     "uploadsOneFolder": "As subidas só funcionan cunha ligazón a un cartafol",
     "userPasswordElsewhere": "Este usuario inicia sesión mediante {method}, e o contrasinal está alí",
+    "windowsOnly": "Isto só existe en Windows",
     "wrongLogin": "O nome ou o contrasinal non son correctos"
   },
   "visit": {

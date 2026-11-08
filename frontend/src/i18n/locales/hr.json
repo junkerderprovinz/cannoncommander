@@ -2118,7 +2118,15 @@
       "file": "Datoteka"
     },
     "linkToDir": "Veza na mapu",
-    "linkToFile": "Veza na datoteku"
+    "linkToFile": "Veza na datoteku",
+    "attributes": "Atributi",
+    "flags": {
+      "readOnly": "Samo za čitanje",
+      "hidden": "Skriveno",
+      "archive": "Spremno za arhiviranje"
+    },
+    "flagsSaved": "Atributi spremljeni za {objects}",
+    "insideFlagsTip": "Postavlja atribute i za svaku datoteku i mapu ispod."
   },
   "quicklook": {
     "title": "Brzi pregled",
@@ -3782,6 +3790,7 @@
     "uploadRunning": "Datoteka s tim nazivom upravo se prenosi",
     "uploadsOneFolder": "Prijenos radi samo za poveznicu na jednu mapu",
     "userPasswordElsewhere": "Ovaj se korisnik prijavljuje preko {method}, lozinka se čuva ondje",
+    "windowsOnly": "To postoji samo u Windowsima",
     "wrongLogin": "Ime ili lozinka nisu točni"
   },
   "visit": {

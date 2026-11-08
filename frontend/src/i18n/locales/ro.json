@@ -2118,7 +2118,15 @@
       "file": "Fișier"
     },
     "linkToDir": "Legătură către un dosar",
-    "linkToFile": "Legătură către un fișier"
+    "linkToFile": "Legătură către un fișier",
+    "attributes": "Atribute",
+    "flags": {
+      "readOnly": "Doar citire",
+      "hidden": "Ascuns",
+      "archive": "Gata de arhivare"
+    },
+    "flagsSaved": "Atribute salvate pentru {objects}",
+    "insideFlagsTip": "Setează atributele și pentru fiecare fișier și dosar din interior."
   },
   "quicklook": {
     "title": "Previzualizare rapidă",
@@ -3782,6 +3790,7 @@
     "uploadRunning": "Un fișier cu acest nume se încarcă chiar acum",
     "uploadsOneFolder": "Încărcările merg doar cu un link către un dosar",
     "userPasswordElsewhere": "Acest utilizator se autentifică prin {method}, parola se află acolo",
+    "windowsOnly": "Aceasta există doar în Windows",
     "wrongLogin": "Numele sau parola nu sunt corecte"
   },
   "visit": {

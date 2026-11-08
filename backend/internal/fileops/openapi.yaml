@@ -201,6 +201,18 @@ paths:
                 mtime:
                   type: string
                   format: date-time
+                flags:
+                  type: object
+                  description: Attributes of Windows to turn on or off. pinned keeps a cloud file on the device, false frees its space. Elsewhere the answer is 400 windowsOnly.
+                  properties:
+                    readOnly:
+                      type: boolean
+                    hidden:
+                      type: boolean
+                    archive:
+                      type: boolean
+                    pinned:
+                      type: boolean
                 recursive:
                   type: boolean
       responses:

@@ -1976,7 +1976,15 @@
       "file": "Berkas"
     },
     "linkToDir": "Tautan ke folder",
-    "linkToFile": "Tautan ke berkas"
+    "linkToFile": "Tautan ke berkas",
+    "attributes": "Atribut",
+    "flags": {
+      "readOnly": "Hanya baca",
+      "hidden": "Tersembunyi",
+      "archive": "Siap diarsipkan"
+    },
+    "flagsSaved": "Atribut disimpan untuk {objects}",
+    "insideFlagsTip": "Juga menerapkan atribut ke setiap file dan folder di dalamnya."
   },
   "quicklook": {
     "title": "Lihat cepat",
@@ -3508,6 +3516,7 @@
     "uploadRunning": "Berkas dengan nama ini sedang diunggah",
     "uploadsOneFolder": "Unggahan hanya bisa untuk tautan ke satu folder",
     "userPasswordElsewhere": "Pengguna ini masuk lewat {method}, kata sandinya disimpan di sana",
+    "windowsOnly": "Ini hanya ada di Windows",
     "wrongLogin": "Nama atau kata sandi salah"
   },
   "visit": {

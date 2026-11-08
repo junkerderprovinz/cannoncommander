@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import type { Item } from '@/api/client';
 import { host } from '@/core/host';
-import { isHidden, shown } from './entries';
+import { COL } from './columns';
+import { isHidden, shown, toEntry } from './entries';
 
 const item = (name: string, more: Partial<Item> = {}): Item => ({ name, dir: false, size: 0, time: 0, mode: '0644', owner: '', group: '', ...more });
 const names = (list: Item[], showHidden: boolean, showSystem?: boolean) => list.filter(shown(showHidden, showSystem)).map((k) => k.name);
@@ -28,5 +29,19 @@ describe('what a folder hides', () => {
     expect(names(list, true)).toEqual(['notes.txt', '.bashrc', 'Thumbs.db']);
     expect(names(list, true, true)).toEqual(['notes.txt', '.bashrc', 'Thumbs.db', 'desktop.ini']);
     expect(names(list, false, true)).toEqual(['notes.txt', '.bashrc']);
+  });
+});
+
+describe('the attributes column', () => {
+  const attrs = (k: Item) => COL.attributes!.value(toEntry(k), '/');
+
+  it('shows the letters of Explorer as Windows reports them', () => {
+    Object.assign(host, { desktop: true, os: 'windows' });
+    expect(attrs(item('vertrag.pdf', { attrs: 'RA', mode: '0444' }))).toBe('RA');
+  });
+
+  it('builds them from the name and the rights elsewhere', () => {
+    Object.assign(host, { desktop: false, os: 'linux' });
+    expect(attrs(item('.bashrc', { mode: '0444' }))).toBe('HR');
   });
 });

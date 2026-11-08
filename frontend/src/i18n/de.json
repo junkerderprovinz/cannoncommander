@@ -544,6 +544,7 @@
     "uploadRunning": "Eine Datei mit diesem Namen wird gerade hochgeladen",
     "uploadsOneFolder": "Uploads gehen nur bei einem Link auf einen Ordner",
     "userPasswordElsewhere": "Dieser Benutzer meldet sich über {method} an, das Passwort liegt dort",
+    "windowsOnly": "Das gibt es nur unter Windows",
     "wrongLogin": "Name oder Passwort stimmen nicht"
   }
 }

@@ -2047,7 +2047,15 @@
       "file": "Fil"
     },
     "linkToDir": "Länk till en mapp",
-    "linkToFile": "Länk till en fil"
+    "linkToFile": "Länk till en fil",
+    "attributes": "Attribut",
+    "flags": {
+      "readOnly": "Skrivskyddad",
+      "hidden": "Dold",
+      "archive": "Klar för arkivering"
+    },
+    "flagsSaved": "Attribut sparade för {objects}",
+    "insideFlagsTip": "Sätter attributen även för varje fil och mapp under."
   },
   "quicklook": {
     "title": "Snabbvisning",
@@ -3645,6 +3653,7 @@
     "uploadRunning": "En fil med det här namnet laddas upp just nu",
     "uploadsOneFolder": "Uppladdning fungerar bara med en länk till en mapp",
     "userPasswordElsewhere": "Den här användaren loggar in via {method}, lösenordet finns där",
+    "windowsOnly": "Det finns bara i Windows",
     "wrongLogin": "Namnet eller lösenordet stämmer inte"
   },
   "visit": {

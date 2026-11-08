@@ -2118,7 +2118,15 @@
       "file": "Fichier"
     },
     "linkToDir": "Lien vers un dossier",
-    "linkToFile": "Lien vers un fichier"
+    "linkToFile": "Lien vers un fichier",
+    "attributes": "Attributs",
+    "flags": {
+      "readOnly": "Lecture seule",
+      "hidden": "Masqué",
+      "archive": "Prêt pour l'archivage"
+    },
+    "flagsSaved": "Attributs enregistrés pour {objects}",
+    "insideFlagsTip": "Applique aussi les attributs à chaque fichier et dossier en dessous."
   },
   "quicklook": {
     "title": "Aperçu rapide",
@@ -3782,6 +3790,7 @@
     "uploadRunning": "Un fichier de ce nom est en cours d'envoi",
     "uploadsOneFolder": "Les envois ne fonctionnent qu'avec un lien vers un dossier",
     "userPasswordElsewhere": "Cet utilisateur se connecte via {method}, le mot de passe se trouve là-bas",
+    "windowsOnly": "Cela n'existe que sous Windows",
     "wrongLogin": "Le nom ou le mot de passe n'est pas le bon"
   },
   "visit": {

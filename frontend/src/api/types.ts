@@ -13,6 +13,8 @@ export interface FsItem {
   hidden?: boolean;
   // A protected file of the system, which stays hidden until that is asked for as well.
   system?: boolean;
+  // The attributes of Windows with the letters of Explorer's column, such as RA.
+  attrs?: string;
   link?: string;
   items?: number;
   // The server can list what is inside, so the archive opens like a folder.
