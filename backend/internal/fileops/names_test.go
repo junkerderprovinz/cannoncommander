@@ -66,3 +66,14 @@ func TestWindowsTurnsAwayTheNamesExplorerRefuses(t *testing.T) {
 		t.Errorf("a name that only starts like a device: %d", got)
 	}
 }
+
+func TestARenameOntoAHardLinkOfTheSameFileIsRefused(t *testing.T) {
+	e := newEnv(t)
+	e.write("/mnt/user/fotos/a.txt", "a", old)
+	if err := os.Link(e.real("/mnt/user/fotos/a.txt"), e.real("/mnt/user/fotos/b.txt")); err != nil {
+		t.Skip("no hard links here")
+	}
+	if code := e.call("anna", "POST", "/fs/rename", map[string]string{"path": "/mnt/user/fotos/a.txt", "name": "b.txt"}, nil); code != http.StatusConflict {
+		t.Errorf("rename onto the second name of the file: %d", code)
+	}
+}

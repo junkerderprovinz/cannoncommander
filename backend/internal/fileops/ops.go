@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"path/filepath"
+	"strings"
 
 	"io/fs"
 	"net/http"
@@ -182,7 +183,13 @@ func renameNoReplace(from, to string) error {
 	return os.Rename(from, to)
 }
 
+// sameFile reports a name that differs only in case and finds the file
+// itself. A second hard link of the file has a name of its own, and a
+// rename onto it would do nothing at all.
 func sameFile(a, b string) bool {
+	if !strings.EqualFold(filepath.Base(a), filepath.Base(b)) {
+		return false
+	}
 	ia, err := os.Lstat(a)
 	if err != nil {
 		return false
