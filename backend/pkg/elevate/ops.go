@@ -185,8 +185,14 @@ func apply(o Op) error {
 		}
 		skip[filepath.ToSlash(rel)] = true
 	}
-	if o.Kind == Move && len(skip) == 0 && errors.Is(err, fs.ErrNotExist) && filepath.Dir(o.From) == filepath.Dir(o.To) {
-		return src.Rename(from, to)
+	// Within one volume a move is a rename relative to the two checked
+	// folders, which is quick and leaves nothing half done. Only across
+	// volumes, or to merge or leave parts behind, it copies and deletes.
+	if o.Kind == Move && len(skip) == 0 && (errors.Is(err, fs.ErrNotExist) || !(info.IsDir() && target.IsDir())) {
+		err := renameAt(src, from, dst, to)
+		if err == nil || !crossVolume(err) {
+			return err
+		}
 	}
 	if err := copyTree(src, from, dst, to, ".", skip); err != nil {
 		return err
@@ -218,7 +224,7 @@ func openDir(dir string, create bool) (*os.Root, error) {
 				fi, err = r.Lstat(part)
 			}
 		}
-		if err == nil && plainpath.Link(fi) {
+		if err == nil && plainpath.Link(fi, at) {
 			err = &fs.PathError{Op: "open", Path: at, Err: plainpath.ErrLink}
 		}
 		var next *os.Root
@@ -255,11 +261,13 @@ func copyTree(src *os.Root, from string, dst *os.Root, to, rel string, skip map[
 			return err
 		}
 		return dst.Symlink(dest, to)
-	case plainpath.Link(info):
+	case link(src, from, info):
 		return &fs.PathError{Op: "copy", Path: from, Err: plainpath.ErrLink}
 	case info.IsDir():
 		return copyDir(src, from, dst, to, rel, skip, info)
-	case info.Mode().IsRegular():
+	// A cloud placeholder or deduplicated file on Windows is a reparse point
+	// with data of its own, which reading fetches.
+	case info.Mode().IsRegular(), runtime.GOOS == "windows" && info.Mode().Type() == fs.ModeIrregular:
 		return copyFile(src, from, dst, to, info)
 	}
 	return &fs.PathError{Op: "copy", Path: from, Err: errors.ErrUnsupported}
@@ -270,7 +278,7 @@ func copyDir(src *os.Root, from string, dst *os.Root, to, rel string, skip map[s
 	switch {
 	case errors.Is(err, fs.ErrNotExist):
 		err = dst.Mkdir(to, info.Mode().Perm())
-	case err == nil && plainpath.Link(t):
+	case err == nil && link(dst, to, t):
 		err = &fs.PathError{Op: "copy", Path: to, Err: plainpath.ErrLink}
 	case err == nil && !t.IsDir():
 		if err = dst.Remove(to); err == nil {
@@ -311,7 +319,7 @@ func copyFile(src *os.Root, from string, dst *os.Root, to string, info fs.FileIn
 	}
 	defer in.Close()
 	if t, err := dst.Lstat(to); err == nil {
-		if t.IsDir() && !plainpath.Link(t) {
+		if t.IsDir() && !link(dst, to, t) {
 			err = dst.RemoveAll(to)
 		} else {
 			err = dst.Remove(to)
@@ -347,7 +355,7 @@ func removeTree(r *os.Root, name, rel string, skip map[string]bool) error {
 	if err != nil {
 		return err
 	}
-	if !info.IsDir() || plainpath.Link(info) {
+	if !info.IsDir() || link(r, name, info) {
 		return r.Remove(name)
 	}
 	sub, err := r.OpenRoot(name)
@@ -368,6 +376,11 @@ func removeTree(r *os.Root, name, rel string, skip map[string]bool) error {
 		return err
 	}
 	return r.Remove(name)
+}
+
+// link reports whether name in r, which fi describes, is a link.
+func link(r *os.Root, name string, fi fs.FileInfo) bool {
+	return plainpath.Link(fi, filepath.Join(r.Name(), name))
 }
 
 func readDir(r *os.Root) ([]fs.DirEntry, error) {

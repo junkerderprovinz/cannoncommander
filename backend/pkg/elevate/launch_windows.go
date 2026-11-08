@@ -9,18 +9,31 @@ import (
 
 	"golang.org/x/sys/windows"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/plainpath"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/sysbin"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
 )
 
+// put puts path in the Recycle Bin.
+var put = func(path string) error {
+	b, err := sysbin.Open()
+	if err != nil {
+		return err
+	}
+	_, err = b.Put(path)
+	return err
+}
+
+// The shell works by path, so the folders above path are held open while it
+// does, and none of them can be renamed or swapped for a junction meanwhile.
 func init() {
 	recycle = func(path string) error {
-		b, err := sysbin.Open()
+		release, err := plainpath.Hold(path)
 		if err != nil {
 			return err
 		}
-		_, err = b.Put(path)
-		return err
+		defer release()
+		return put(path)
 	}
 }
 

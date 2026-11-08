@@ -20,7 +20,7 @@ func Check(p string) error {
 	if err != nil {
 		return err
 	}
-	if Link(fi) {
+	if Link(fi, p) {
 		return &fs.PathError{Op: "check", Path: p, Err: ErrLink}
 	}
 	return nil
