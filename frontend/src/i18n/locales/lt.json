@@ -2635,7 +2635,7 @@
     "reset": "Pradinis meniu",
     "resetTip": "Vėl rodo visus įrašus įprasta tvarka.",
     "resetButton": "Atkurti",
-    "othersTitle": "Kitų programų įrašai",
+    "othersTitle": "Sistemos meniu įrašai",
     "othersHintWindows": "Viskas, ką CannonCommander iki šiol matė Windows meniu. Tai, ką paslepi, ten nebebus nuo kito atidarymo.",
     "othersHintLinux": "Programų Dolphin, Nemo, Nautilus ir Thunar veiksmai, kuriuos CannonCommander iki šiol pasiūlė. Tai, ką paslepi, nebebus nuo kito atidarymo.",
     "search": "Ieškoti įrašų",

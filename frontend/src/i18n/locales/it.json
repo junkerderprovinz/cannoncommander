@@ -2551,7 +2551,7 @@
     "reset": "Menu originale",
     "resetTip": "Mostra di nuovo tutte le voci, nell'ordine consueto.",
     "resetButton": "Ripristina",
-    "othersTitle": "Voci di altre app",
+    "othersTitle": "Voci del menu di sistema",
     "othersHintWindows": "Tutto ciò che CannonCommander ha visto finora nel menu di Windows. Ciò che nascondi lì sparisce dalla prossima apertura.",
     "othersHintLinux": "Azioni di Dolphin, Nemo, Nautilus e Thunar che CannonCommander ha proposto finora. Ciò che nascondi sparisce dalla prossima apertura.",
     "search": "Cerca voci",

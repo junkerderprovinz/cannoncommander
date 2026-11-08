@@ -2383,7 +2383,7 @@
     "reset": "元のメニュー",
     "resetTip": "すべての項目をいつもの順序で再び表示します。",
     "resetButton": "リセット",
-    "othersTitle": "ほかのアプリの項目",
+    "othersTitle": "システムのメニューの項目",
     "othersHintWindows": "CannonCommander がこれまでに Windows のメニューで見た項目です。非表示にした項目は、次に開いたときから表示されません。",
     "othersHintLinux": "CannonCommander がこれまでに表示した Dolphin、Nemo、Nautilus、Thunar のアクションです。非表示にした項目は、次に開いたときから表示されません。",
     "search": "項目を検索",

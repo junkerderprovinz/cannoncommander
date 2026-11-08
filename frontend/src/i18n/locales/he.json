@@ -2551,7 +2551,7 @@
     "reset": "התפריט המקורי",
     "resetTip": "מציג שוב את כל הפריטים בסדר הרגיל.",
     "resetButton": "איפוס",
-    "othersTitle": "פריטים מאפליקציות אחרות",
+    "othersTitle": "פריטים בתפריט המערכת",
     "othersHintWindows": "כל מה ש־CannonCommander ראה עד עכשיו בתפריט של Windows. מה שמסתירים נעלם משם מהפתיחה הבאה.",
     "othersHintLinux": "פעולות מ־Dolphin, Nemo, Nautilus ו־Thunar ש־CannonCommander הציע עד עכשיו. מה שמסתירים נעלם מהפתיחה הבאה.",
     "search": "חיפוש פריטים",

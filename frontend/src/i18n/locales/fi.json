@@ -2467,7 +2467,7 @@
     "reset": "Alkuperäinen valikko",
     "resetTip": "Näyttää taas kaikki kohteet tavallisessa järjestyksessä.",
     "resetButton": "Palauta",
-    "othersTitle": "Muiden sovellusten kohteet",
+    "othersTitle": "Järjestelmän valikon kohteet",
     "othersHintWindows": "Kaikki, mitä CannonCommander on tähän mennessä nähnyt Windowsin valikossa. Piilottamasi kohteet puuttuvat sieltä seuraavasta avauksesta alkaen.",
     "othersHintLinux": "Sovellusten Dolphin, Nemo, Nautilus ja Thunar toiminnot, joita CannonCommander on tähän mennessä tarjonnut. Piilottamasi kohteet puuttuvat seuraavasta avauksesta alkaen.",
     "search": "Hae kohteita",

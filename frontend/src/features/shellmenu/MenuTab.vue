@@ -51,8 +51,8 @@ const flip = (entry: ShellEntry, shown: boolean) => hideOthers((others.value ?? 
         <ListRow v-for="(r, i) in g" :key="r.id" :name="r.label" :class="{ 'sm-off': isHidden(kind, r.id) }" :data-menu-row="`${kind}:${r.id}`">
           <template #tile><G :n="r.g" /></template>
           <template #actions>
-            <IconButton :glyph="glyphComponent('IconMoveUp')" :tip="t('shellmenu.up', { name: r.label })" :disabled="i === 0" @click="move(kind, r.id, -1)" />
-            <IconButton :glyph="glyphComponent('IconMoveDown')" :tip="t('shellmenu.down', { name: r.label })" :disabled="i === g.length - 1" @click="move(kind, r.id, 1)" />
+            <IconButton class="sm-move" :glyph="glyphComponent('IconMoveUp')" :tip="t('shellmenu.up', { name: r.label })" :disabled="i === 0" @click="move(kind, r.id, -1)" />
+            <IconButton class="sm-move" :glyph="glyphComponent('IconMoveDown')" :tip="t('shellmenu.down', { name: r.label })" :disabled="i === g.length - 1" @click="move(kind, r.id, 1)" />
             <Toggle :model-value="!isHidden(kind, r.id)" :label="t('shellmenu.show', { name: r.label })" hide-label @update:model-value="(on: boolean) => setHidden(kind, r.id, !on)" />
           </template>
         </ListRow>
@@ -61,9 +61,9 @@ const flip = (entry: ShellEntry, shown: boolean) => hideOthers((others.value ?? 
     <FieldRow :label="t('shellmenu.reset')" :hint="t('shellmenu.resetTip')"><Button :label="t('shellmenu.resetButton')" label-key="IconResetArrow" :disabled="!customised(kind)" @click="resetMenu(kind)" /></FieldRow>
   </Card>
   <Card v-if="host.desktop && shell.menu" :title="t('shellmenu.othersTitle')" :hint="t(shell.menu === 'native' ? 'shellmenu.othersHintWindows' : 'shellmenu.othersHintLinux')">
-    <TextField v-if="(others?.length ?? 0) > 8" v-model="filter" :label="t('shellmenu.search')" width="grow" />
+    <FieldRow v-if="(others?.length ?? 0) > 8" :label="t('shellmenu.search')"><TextField v-model="filter" :aria-label="t('shellmenu.search')" width="grow" /></FieldRow>
     <div v-if="found.length" class="sm-others">
-      <ListRow v-for="e in found" :key="e.key" :name="e.label" :tip="e.key.replace(/^(verb|text):/, '')" :class="{ 'sm-off': e.hidden }" :data-entry="e.key">
+      <ListRow v-for="e in found" :key="e.key" :name="e.label" :class="{ 'sm-off': e.hidden }" :data-entry="e.key">
         <template #tile><img v-if="e.icon" :src="e.icon" alt="" class="glyph-picture"><G v-else n="IconApp" /></template>
         <template #actions><Toggle :model-value="!e.hidden" :label="t('shellmenu.show', { name: e.label })" hide-label @update:model-value="(on: boolean) => flip(e, on)" /></template>
       </ListRow>

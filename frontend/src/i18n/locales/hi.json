@@ -2467,7 +2467,7 @@
     "reset": "मूल मेनू",
     "resetTip": "सभी प्रविष्टियाँ फिर से सामान्य क्रम में दिखाता है।",
     "resetButton": "रीसेट करें",
-    "othersTitle": "दूसरे ऐप की प्रविष्टियाँ",
+    "othersTitle": "सिस्टम मेनू की प्रविष्टियाँ",
     "othersHintWindows": "अब तक CannonCommander ने Windows के मेनू में जो कुछ देखा है। आप जो छिपाते हैं, वह अगली बार खुलने से वहाँ नहीं दिखेगा।",
     "othersHintLinux": "Dolphin, Nemo, Nautilus और Thunar की वे कार्रवाइयाँ जो CannonCommander ने अब तक दी हैं। आप जो छिपाते हैं, वह अगली बार खुलने से नहीं दिखेगा।",
     "search": "प्रविष्टियाँ खोजें",

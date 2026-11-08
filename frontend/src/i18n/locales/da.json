@@ -2467,7 +2467,7 @@
     "reset": "Oprindelig menu",
     "resetTip": "Viser alle punkter igen i den vante rækkefølge.",
     "resetButton": "Nulstil",
-    "othersTitle": "Punkter fra andre apps",
+    "othersTitle": "Punkter i systemmenuen",
     "othersHintWindows": "Alt, hvad CannonCommander indtil nu har set i Windows-menuen. Det, du skjuler, mangler der fra næste gang, den åbnes.",
     "othersHintLinux": "Handlinger fra Dolphin, Nemo, Nautilus og Thunar, som CannonCommander indtil nu har tilbudt. Det, du skjuler, mangler fra næste gang, menuen åbnes.",
     "search": "Søg i punkter",

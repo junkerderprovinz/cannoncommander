@@ -2467,7 +2467,7 @@
     "reset": "Eredeti menü",
     "resetTip": "Újra megjelenít minden bejegyzést a megszokott sorrendben.",
     "resetButton": "Visszaállítás",
-    "othersTitle": "Más alkalmazások bejegyzései",
+    "othersTitle": "A rendszer menüjének bejegyzései",
     "othersHintWindows": "Minden, amit a CannonCommander eddig a Windows menüjében látott. Amit elrejt, az a következő megnyitástól hiányzik onnan.",
     "othersHintLinux": "A Dolphin, Nemo, Nautilus és Thunar műveletei, amelyeket a CannonCommander eddig felkínált. Amit elrejt, az a következő megnyitástól hiányzik.",
     "search": "Bejegyzések keresése",

@@ -2551,7 +2551,7 @@
     "reset": "Sākotnējā izvēlne",
     "resetTip": "Atkal rāda visus ierakstus ierastajā secībā.",
     "resetButton": "Atiestatīt",
-    "othersTitle": "Citu lietotņu ieraksti",
+    "othersTitle": "Sistēmas izvēlnes ieraksti",
     "othersHintWindows": "Viss, ko CannonCommander līdz šim redzējis Windows izvēlnē. Ko tu paslēp, tas tur pazūd no nākamās atvēršanas.",
     "othersHintLinux": "Darbības no Dolphin, Nemo, Nautilus un Thunar, ko CannonCommander līdz šim piedāvājis. Ko tu paslēp, tas pazūd no nākamās atvēršanas.",
     "search": "Meklēt ierakstus",

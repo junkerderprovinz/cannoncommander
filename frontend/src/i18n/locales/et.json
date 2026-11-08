@@ -2467,7 +2467,7 @@
     "reset": "Algne menüü",
     "resetTip": "Näitab jälle kõiki kirjeid tavalises järjekorras.",
     "resetButton": "Lähtesta",
-    "othersTitle": "Teiste rakenduste kirjed",
+    "othersTitle": "Süsteemi menüü kirjed",
     "othersHintWindows": "Kõik, mida CannonCommander on seni Windowsi menüüs näinud. Mida sa peidad, see puudub seal järgmisest avamisest alates.",
     "othersHintLinux": "Rakenduste Dolphin, Nemo, Nautilus ja Thunar toimingud, mida CannonCommander on seni pakkunud. Mida sa peidad, see puudub järgmisest avamisest alates.",
     "search": "Otsi kirjeid",

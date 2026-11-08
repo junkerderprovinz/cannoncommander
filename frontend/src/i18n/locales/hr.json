@@ -2551,7 +2551,7 @@
     "reset": "Izvorni izbornik",
     "resetTip": "Ponovno prikazuje sve stavke uobičajenim redoslijedom.",
     "resetButton": "Vrati na zadano",
-    "othersTitle": "Stavke drugih aplikacija",
+    "othersTitle": "Stavke u izborniku sustava",
     "othersHintWindows": "Sve što je CannonCommander dosad vidio u izborniku sustava Windows. Ono što sakrijete ondje nedostaje od sljedećeg otvaranja.",
     "othersHintLinux": "Radnje iz aplikacija Dolphin, Nemo, Nautilus i Thunar koje je CannonCommander dosad ponudio. Ono što sakrijete nedostaje od sljedećeg otvaranja.",
     "search": "Pretraži stavke",

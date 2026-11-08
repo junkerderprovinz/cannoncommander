@@ -2551,7 +2551,7 @@
     "reset": "Menu d'origine",
     "resetTip": "Affiche de nouveau toutes les entrées, dans l'ordre habituel.",
     "resetButton": "Réinitialiser",
-    "othersTitle": "Entrées d'autres applications",
+    "othersTitle": "Entrées du menu du système",
     "othersHintWindows": "Tout ce que CannonCommander a déjà vu dans le menu de Windows. Ce que vous masquez n'y apparaît plus à la prochaine ouverture.",
     "othersHintLinux": "Les actions de Dolphin, Nemo, Nautilus et Thunar que CannonCommander a déjà proposées. Ce que vous masquez n'apparaît plus à la prochaine ouverture.",
     "search": "Rechercher des entrées",

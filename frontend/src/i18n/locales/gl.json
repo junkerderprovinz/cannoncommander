@@ -2467,7 +2467,7 @@
     "reset": "Menú orixinal",
     "resetTip": "Volve amosar todas as entradas na orde habitual.",
     "resetButton": "Restablecer",
-    "othersTitle": "Entradas doutras aplicacións",
+    "othersTitle": "Entradas do menú do sistema",
     "othersHintWindows": "Todo o que CannonCommander viu ata agora no menú de Windows. O que agoches xa non estará alí a próxima vez que se abra.",
     "othersHintLinux": "Accións de Dolphin, Nemo, Nautilus e Thunar que CannonCommander ofreceu ata agora. O que agoches xa non estará a próxima vez que se abra.",
     "search": "Buscar entradas",

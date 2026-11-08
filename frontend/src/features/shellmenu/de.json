@@ -14,7 +14,7 @@
   "reset": "Ursprüngliches Menü",
   "resetTip": "Zeigt wieder alle Einträge in der gewohnten Reihenfolge.",
   "resetButton": "Zurücksetzen",
-  "othersTitle": "Einträge anderer Programme",
+  "othersTitle": "Einträge im Menü des Systems",
   "othersHintWindows": "Alles, was CannonCommander schon im Menü von Windows gesehen hat. Was du ausblendest, fehlt dort ab dem nächsten Öffnen.",
   "othersHintLinux": "Aktionen aus Dolphin, Nemo, Nautilus und Thunar, die CannonCommander schon angeboten hat. Was du ausblendest, fehlt ab dem nächsten Öffnen.",
   "search": "Einträge suchen",

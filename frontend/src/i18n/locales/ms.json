@@ -2383,7 +2383,7 @@
     "reset": "Menu asal",
     "resetTip": "Menunjukkan semula semua entri mengikut susunan biasa.",
     "resetButton": "Tetapkan semula",
-    "othersTitle": "Entri daripada aplikasi lain",
+    "othersTitle": "Entri dalam menu sistem",
     "othersHintWindows": "Semua yang telah dilihat oleh CannonCommander dalam menu Windows setakat ini. Apa yang anda sembunyikan tiada lagi di sana mulai pembukaan seterusnya.",
     "othersHintLinux": "Tindakan daripada Dolphin, Nemo, Nautilus dan Thunar yang telah ditawarkan oleh CannonCommander setakat ini. Apa yang anda sembunyikan tiada lagi mulai pembukaan seterusnya.",
     "search": "Cari entri",

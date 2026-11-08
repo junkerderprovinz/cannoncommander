@@ -2383,7 +2383,7 @@
     "reset": "Menu gốc",
     "resetTip": "Hiện lại tất cả các mục theo thứ tự quen thuộc.",
     "resetButton": "Đặt lại",
-    "othersTitle": "Mục từ ứng dụng khác",
+    "othersTitle": "Mục trong menu hệ thống",
     "othersHintWindows": "Mọi thứ CannonCommander đã thấy trong menu của Windows cho đến nay. Những gì bạn ẩn sẽ không còn ở đó từ lần mở tiếp theo.",
     "othersHintLinux": "Các hành động từ Dolphin, Nemo, Nautilus và Thunar mà CannonCommander đã đưa ra cho đến nay. Những gì bạn ẩn sẽ không còn từ lần mở tiếp theo.",
     "search": "Tìm mục",

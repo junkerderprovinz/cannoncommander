@@ -2467,7 +2467,7 @@
     "reset": "Özgün menü",
     "resetTip": "Tüm girişleri her zamanki sırayla yeniden gösterir.",
     "resetButton": "Sıfırla",
-    "othersTitle": "Diğer uygulamaların girişleri",
+    "othersTitle": "Sistem menüsündeki girişler",
     "othersHintWindows": "CannonCommander'ın şimdiye kadar Windows menüsünde gördüğü her şey. Gizlediğin şey bir sonraki açılışta orada olmaz.",
     "othersHintLinux": "Dolphin, Nemo, Nautilus ve Thunar'dan CannonCommander'ın şimdiye kadar sunduğu eylemler. Gizlediğin şey bir sonraki açılışta olmaz.",
     "search": "Girişlerde ara",

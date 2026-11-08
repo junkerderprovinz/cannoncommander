@@ -14,7 +14,7 @@
   "reset": "Original menu",
   "resetTip": "Shows every entry again, in the usual order.",
   "resetButton": "Reset",
-  "othersTitle": "Entries from other apps",
+  "othersTitle": "Entries in the system menu",
   "othersHintWindows": "Everything CannonCommander has seen in the Windows menu so far. What you hide is gone the next time it opens.",
   "othersHintLinux": "Actions from Dolphin, Nemo, Nautilus and Thunar that CannonCommander has offered so far. What you hide is gone the next time it opens.",
   "search": "Search entries",

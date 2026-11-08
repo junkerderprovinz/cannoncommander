@@ -2383,7 +2383,7 @@
     "reset": "원래 메뉴",
     "resetTip": "모든 항목을 평소 순서대로 다시 표시합니다.",
     "resetButton": "초기화",
-    "othersTitle": "다른 앱의 항목",
+    "othersTitle": "시스템 메뉴의 항목",
     "othersHintWindows": "CannonCommander가 지금까지 Windows 메뉴에서 본 모든 항목입니다. 숨긴 항목은 다음에 열 때부터 나타나지 않습니다.",
     "othersHintLinux": "CannonCommander가 지금까지 제공한 Dolphin, Nemo, Nautilus, Thunar의 작업입니다. 숨긴 항목은 다음에 열 때부터 나타나지 않습니다.",
     "search": "항목 검색",

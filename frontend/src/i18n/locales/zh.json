@@ -2383,7 +2383,7 @@
     "reset": "原始菜单",
     "resetTip": "按通常顺序重新显示所有条目。",
     "resetButton": "重置",
-    "othersTitle": "其他应用的条目",
+    "othersTitle": "系统菜单中的条目",
     "othersHintWindows": "CannonCommander 目前在 Windows 菜单中见过的所有条目。你隐藏的条目从下次打开起不再出现。",
     "othersHintLinux": "CannonCommander 目前提供过的 Dolphin、Nemo、Nautilus 和 Thunar 操作。你隐藏的条目从下次打开起不再出现。",
     "search": "搜索条目",

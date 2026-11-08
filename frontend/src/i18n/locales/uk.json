@@ -2635,7 +2635,7 @@
     "reset": "Початкове меню",
     "resetTip": "Знову показує всі пункти у звичному порядку.",
     "resetButton": "Скинути",
-    "othersTitle": "Пункти інших програм",
+    "othersTitle": "Пункти системного меню",
     "othersHintWindows": "Усе, що CannonCommander уже бачив у меню Windows. Те, що ви сховаєте, зникне звідти під час наступного відкриття.",
     "othersHintLinux": "Дії з Dolphin, Nemo, Nautilus і Thunar, які CannonCommander уже пропонував. Те, що ви сховаєте, зникне під час наступного відкриття.",
     "search": "Пошук пунктів",

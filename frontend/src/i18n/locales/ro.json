@@ -2551,7 +2551,7 @@
     "reset": "Meniul original",
     "resetTip": "Arată din nou toate intrările, în ordinea obișnuită.",
     "resetButton": "Resetează",
-    "othersTitle": "Intrări din alte aplicații",
+    "othersTitle": "Intrări din meniul sistemului",
     "othersHintWindows": "Tot ce a văzut CannonCommander până acum în meniul Windows. Ce ascunzi lipsește de acolo de la următoarea deschidere.",
     "othersHintLinux": "Acțiuni din Dolphin, Nemo, Nautilus și Thunar pe care CannonCommander le-a oferit până acum. Ce ascunzi lipsește de la următoarea deschidere.",
     "search": "Caută intrări",

@@ -2467,7 +2467,7 @@
     "reset": "Upprunaleg valmynd",
     "resetTip": "Sýnir aftur allar færslur í venjulegri röð.",
     "resetButton": "Endurstilla",
-    "othersTitle": "Færslur frá öðrum forritum",
+    "othersTitle": "Færslur í kerfisvalmyndinni",
     "othersHintWindows": "Allt sem CannonCommander hefur séð í Windows-valmyndinni hingað til. Það sem þú felur vantar þar næst þegar hún opnast.",
     "othersHintLinux": "Aðgerðir úr Dolphin, Nemo, Nautilus og Thunar sem CannonCommander hefur boðið upp á hingað til. Það sem þú felur vantar næst þegar valmyndin opnast.",
     "search": "Leita í færslum",

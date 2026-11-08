@@ -2467,7 +2467,7 @@
     "reset": "Opprinnelig meny",
     "resetTip": "Viser alle oppføringer igjen i vanlig rekkefølge.",
     "resetButton": "Tilbakestill",
-    "othersTitle": "Oppføringer fra andre apper",
+    "othersTitle": "Oppføringer i systemmenyen",
     "othersHintWindows": "Alt CannonCommander har sett i Windows-menyen så langt. Det du skjuler, er borte derfra neste gang den åpnes.",
     "othersHintLinux": "Handlinger fra Dolphin, Nemo, Nautilus og Thunar som CannonCommander har tilbudt så langt. Det du skjuler, er borte neste gang menyen åpnes.",
     "search": "Søk i oppføringer",

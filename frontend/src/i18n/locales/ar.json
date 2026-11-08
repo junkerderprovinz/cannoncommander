@@ -2803,7 +2803,7 @@
     "reset": "القائمة الأصلية",
     "resetTip": "يعرض كل العناصر مجددًا بالترتيب المعتاد.",
     "resetButton": "إعادة الضبط",
-    "othersTitle": "عناصر من تطبيقات أخرى",
+    "othersTitle": "عناصر قائمة النظام",
     "othersHintWindows": "كل ما رآه CannonCommander حتى الآن في قائمة Windows. ما تخفيه يختفي من هناك عند الفتح التالي.",
     "othersHintLinux": "إجراءات من Dolphin وNemo وNautilus وThunar عرضها CannonCommander حتى الآن. ما تخفيه يختفي عند الفتح التالي.",
     "search": "البحث في العناصر",

@@ -2467,7 +2467,7 @@
     "reset": "Ursprunglig meny",
     "resetTip": "Visar alla poster igen i den vanliga ordningen.",
     "resetButton": "Återställ",
-    "othersTitle": "Poster från andra appar",
+    "othersTitle": "Poster i systemmenyn",
     "othersHintWindows": "Allt som CannonCommander har sett i Windows-menyn hittills. Det du döljer saknas där nästa gång den öppnas.",
     "othersHintLinux": "Åtgärder från Dolphin, Nemo, Nautilus och Thunar som CannonCommander har erbjudit hittills. Det du döljer saknas nästa gång menyn öppnas.",
     "search": "Sök poster",

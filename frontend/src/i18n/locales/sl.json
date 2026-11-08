@@ -2635,7 +2635,7 @@
     "reset": "Izvirni meni",
     "resetTip": "Znova pokaže vse vnose v običajnem vrstnem redu.",
     "resetButton": "Ponastavi",
-    "othersTitle": "Vnosi drugih programov",
+    "othersTitle": "Vnosi v sistemskem meniju",
     "othersHintWindows": "Vse, kar je CannonCommander doslej videl v meniju sistema Windows. Kar skrijete, tam ob naslednjem odpiranju manjka.",
     "othersHintLinux": "Dejanja iz programov Dolphin, Nemo, Nautilus in Thunar, ki jih je CannonCommander doslej ponudil. Kar skrijete, ob naslednjem odpiranju manjka.",
     "search": "Iskanje vnosov",

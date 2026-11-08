@@ -2551,7 +2551,7 @@
     "reset": "Menú original",
     "resetTip": "Vuelve a mostrar todas las entradas en el orden habitual.",
     "resetButton": "Restablecer",
-    "othersTitle": "Entradas de otras aplicaciones",
+    "othersTitle": "Entradas del menú del sistema",
     "othersHintWindows": "Todo lo que CannonCommander ha visto hasta ahora en el menú de Windows. Lo que ocultes ya no aparecerá allí la próxima vez que se abra.",
     "othersHintLinux": "Acciones de Dolphin, Nemo, Nautilus y Thunar que CannonCommander ha ofrecido hasta ahora. Lo que ocultes ya no aparecerá la próxima vez que se abra.",
     "search": "Buscar entradas",

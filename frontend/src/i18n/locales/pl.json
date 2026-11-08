@@ -2635,7 +2635,7 @@
     "reset": "Pierwotne menu",
     "resetTip": "Znów pokazuje wszystkie pozycje w zwykłej kolejności.",
     "resetButton": "Resetuj",
-    "othersTitle": "Pozycje innych aplikacji",
+    "othersTitle": "Pozycje w menu systemowym",
     "othersHintWindows": "Wszystko, co CannonCommander dotąd widział w menu Windows. To, co ukryjesz, zniknie stamtąd przy następnym otwarciu.",
     "othersHintLinux": "Akcje z aplikacji Dolphin, Nemo, Nautilus i Thunar, które CannonCommander dotąd zaproponował. To, co ukryjesz, zniknie przy następnym otwarciu.",
     "search": "Szukaj pozycji",

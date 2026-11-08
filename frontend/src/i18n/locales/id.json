@@ -2383,7 +2383,7 @@
     "reset": "Menu asli",
     "resetTip": "Menampilkan lagi semua entri dalam urutan biasa.",
     "resetButton": "Atur ulang",
-    "othersTitle": "Entri dari aplikasi lain",
+    "othersTitle": "Entri di menu sistem",
     "othersHintWindows": "Semua yang sejauh ini dilihat CannonCommander di menu Windows. Yang Anda sembunyikan tidak ada lagi di sana mulai pembukaan berikutnya.",
     "othersHintLinux": "Tindakan dari Dolphin, Nemo, Nautilus, dan Thunar yang sejauh ini ditawarkan CannonCommander. Yang Anda sembunyikan tidak ada lagi mulai pembukaan berikutnya.",
     "search": "Cari entri",

@@ -2635,7 +2635,7 @@
     "reset": "Pôvodná ponuka",
     "resetTip": "Znova zobrazí všetky položky v obvyklom poradí.",
     "resetButton": "Obnoviť",
-    "othersTitle": "Položky iných aplikácií",
+    "othersTitle": "Položky systémovej ponuky",
     "othersHintWindows": "Všetko, čo CannonCommander doteraz videl v ponuke Windows. Čo skryjete, tam od ďalšieho otvorenia chýba.",
     "othersHintLinux": "Akcie z aplikácií Dolphin, Nemo, Nautilus a Thunar, ktoré CannonCommander doteraz ponúkol. Čo skryjete, od ďalšieho otvorenia chýba.",
     "search": "Hľadať položky",
