@@ -46,3 +46,21 @@ func TestAClearedClipboardHoldsNoFiles(t *testing.T) {
 		t.Fatalf("got %v cut=%v err=%v", got, cut, err)
 	}
 }
+
+func TestFilesFromSeveralFoldersShareTheClipboard(t *testing.T) {
+	paths := []string{filepath.Join(t.TempDir(), "a.txt"), filepath.Join(t.TempDir(), "b.txt")}
+	for _, p := range paths {
+		if err := os.WriteFile(p, []byte("x"), 0o666); err != nil {
+			t.Fatal(err)
+		}
+	}
+	s := &shell{}
+	t.Cleanup(func() { _ = s.ClearClipboard() })
+	if err := s.CopyFiles(paths, false); err != nil {
+		t.Fatal(err)
+	}
+	got, _, err := s.ClipboardFiles()
+	if err != nil || !slices.Equal(got, paths) {
+		t.Fatalf("got %v %v, want %v", got, err, paths)
+	}
+}

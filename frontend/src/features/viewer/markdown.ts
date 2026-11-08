@@ -91,9 +91,11 @@ export function highlight(text: string, kind: string, e: string): string {
       (m, c, str, k) => (c ? `<i class="c">${c}</i>` : str ? `<i class="s">${str}</i>` : `<i class="k">${k}</i>`));
   }
   if (e === 'yml' || e === 'yaml') {
-    return s.replace(/(#.*$)|^(\s*-?\s*)([\w.-]+)(:)|(&quot;.*?&quot;|"[^"\n]*")/gm,
+    return s.replace(/((?<!&)#.*$)|^(\s*-?\s*)([\w.-]+)(:)|(&quot;.*?&quot;|"[^"\n]*")/gm,
       (m, c, pre, key, col, str) => (c ? `<i class="c">${c}</i>` : str ? `<i class="s">${str}</i>` : `${pre}<i class="k">${key}</i>${col}`));
   }
   if (e === 'json') return s.replace(/(&quot;[^&]*?&quot;)(\s*:)?/g, (m, str, col) => (col ? `<i class="k">${str}</i>${col}` : `<i class="s">${str}</i>`));
-  return s.replace(/(#.*$)/gm, '<i class="c">$1</i>').replace(/(&quot;.*?&quot;|"[^"\n]*")/g, '<i class="s">$1</i>');
+  // One pass, so whichever of a string and a comment starts first wins and the markup put in is never matched again.
+  // The # of an entity such as &#39; starts no comment.
+  return s.replace(/(&quot;.*?&quot;)|((?<!&)#.*$)/gm, (m, str, c) => (str ? `<i class="s">${str}</i>` : `<i class="c">${c}</i>`));
 }

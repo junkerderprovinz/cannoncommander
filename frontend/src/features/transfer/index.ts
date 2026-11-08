@@ -20,7 +20,7 @@ import { useListing } from '@/stores/listing';
 import { type Transfer, usePanels } from '@/stores/panels';
 import { ask } from './ask';
 import { askRunning, resolveConflicts } from './conflicts';
-import { clipboardWins, dragOut, dropIn, pasteOutside, readClipboard, share } from './outside';
+import { clipboardWins, dragOut, dropIn, entriesOf, lookSoon, pasteOutside, share } from './outside';
 import LinksBody from './LinksBody.vue';
 import ParityBody from './ParityBody.vue';
 import { ensureDir, pathOf, shareRel } from './paths';
@@ -185,9 +185,8 @@ async function paste() {
   const c = clip.clip;
   if (!c) return false;
   try {
-    const got = await useListing().load(c.from);
-    const items = got.items.filter((k) => c.items.includes(k.name)).map(toEntry);
-    await F.transfer(c.cut ? 'move' : 'copy', items, dest, c.from);
+    const items = c.paths ? await entriesOf(c.paths) : (await useListing().load(c.from)).items.filter((k) => c.items.includes(k.name)).map(toEntry);
+    await F.transfer(c.cut ? 'move' : 'copy', items, dest, c.paths ? parent(c.paths[0]!) : c.from);
     if (c.cut) clip.clear();
   } catch (e) {
     warn(e);
@@ -202,14 +201,14 @@ export default function setup() {
   action('transfer', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: (job: Transfer) => transfer(job) });
 
   action('clipCut', { label: tl('transfer.clipCut'), g: 'IconMove', key: 'Ctrl+x', needs: ['sel', 'writable'], run: () => {
-    const names = F.sel().map((k) => k.name);
-    void share(true, F.T().path, names);
-    toast(plural(names.length, 'transfer.cut'));
+    const rows = F.sel();
+    void share(true, F.T().path, rows);
+    toast(plural(rows.length, 'transfer.cut'));
   } });
   action('clipCopy', { label: tl('transfer.clipCopy'), g: 'IconCopy', key: 'Ctrl+c', needs: 'sel', run: () => {
-    const names = F.sel().map((k) => k.name);
-    void share(false, F.T().path, names);
-    toast(plural(names.length, 'transfer.inClip'));
+    const rows = F.sel();
+    void share(false, F.T().path, rows);
+    toast(plural(rows.length, 'transfer.inClip'));
   } });
   action('clipPaste', { label: tl('transfer.clipPaste'), g: 'IconPaste', key: 'Ctrl+v', needs: 'writable', when: () => clip.ready(), run: async () => {
     if (!(await paste())) toast(t('transfer.clipEmpty'), 'warn');
@@ -219,8 +218,8 @@ export default function setup() {
   action('dragOut', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: dragOut });
 
   // Another program may have put files on the computer's clipboard while the window was in the background.
-  window.addEventListener('focus', () => { void readClipboard(); });
-  watch(() => host.desktop, () => { void readClipboard(); });
+  window.addEventListener('focus', lookSoon);
+  watch(() => host.desktop, lookSoon);
 
   // A job that meets a name on its way asks here, unless someone answers it in another tab first.
   jobs.onAsked((job, conflict) => askRunning(job, conflict));

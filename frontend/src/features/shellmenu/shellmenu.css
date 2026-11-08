@@ -1,0 +1,13 @@
+/* The tile Kontextmenü: each group of a menu as a block of rows, the way the menu draws its separators. */
+.sm-groups { display: flex; flex-direction: column; gap: .75rem; }
+.sm-group { display: flex; flex-direction: column; gap: 2px; }
+.sm-group + .sm-group { padding-top: .75rem; border-top: 1px solid color-mix(in srgb, var(--carbon-text) 12%, transparent); }
+.sm-others { display: flex; flex-direction: column; gap: 2px; max-height: 26rem; overflow-y: auto; }
+.sm-others .glyph-picture { width: 100%; height: 100%; object-fit: contain; }
+/* A hidden row stays in the list, dimmed, so it can be brought back where it was. */
+.sm-off .glim-list-row-title, .sm-off .glim-list-row-tile { opacity: .45; }
+/* A row's switch shows its state and stays in sight, while the arrows that move it come up with the pointer or the focus. */
+.sm-groups .glim-list-row-actions, .sm-others .glim-list-row-actions { opacity: 1; }
+.sm-move { opacity: 0; transition: opacity var(--motion-control-dur) ease; }
+.glim-list-row:is(:hover, :focus-within) .sm-move { opacity: 1; }
+@media (hover: none) { .sm-move { opacity: 1; } }

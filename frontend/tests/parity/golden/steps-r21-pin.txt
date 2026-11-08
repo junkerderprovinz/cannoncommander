@@ -1,0 +1,6 @@
+pinned at the start: /mnt/user/downloads, /mnt/user/appdata, /mnt/user/filme, /mnt/user/fotos, /mnt/user/backups
+menu of a folder: Öffnen | Internen Link kopieren | Im anderen Fenster öffnen | In neuem Tab öffnen | Als Verknüpfung anlegen
+pinned after adding: /mnt/user/downloads, /mnt/user/appdata, /mnt/user/filme, /mnt/user/fotos, /mnt/user/backups, /mnt/user/isos
+menu of the pinned folder: Öffnen | Internen Link kopieren | Im anderen Fenster öffnen | In neuem Tab öffnen | Vom Schnellzugriff lösen
+pinned after unpinning: /mnt/user/downloads, /mnt/user/appdata, /mnt/user/filme, /mnt/user/fotos, /mnt/user/backups
+menu of the folder again: Öffnen | Internen Link kopieren | Im anderen Fenster öffnen | In neuem Tab öffnen | Als Verknüpfung anlegen

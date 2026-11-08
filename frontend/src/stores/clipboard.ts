@@ -4,7 +4,8 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export interface Clip { cut: boolean; from: string; items: string[] }
+// paths names every item in full when they come from several folders, as a search or the flat view shows them.
+export interface Clip { cut: boolean; from: string; items: string[]; paths?: string[] }
 
 export const useClipboard = defineStore('clipboard', () => {
   const clip = ref<Clip | null>(null);
@@ -13,7 +14,7 @@ export const useClipboard = defineStore('clipboard', () => {
   // What the computer's clipboard held when clip got names it could not take, such as files inside an archive. Once
   // it holds something else, that came later and wins.
   const under = ref('');
-  const put = (cut: boolean, from: string, items: string[]) => { clip.value = { cut, from, items }; };
+  const put = (cut: boolean, from: string, items: string[], paths?: string[]) => { clip.value = { cut, from, items, paths }; };
   const clear = () => { clip.value = null; };
   const ready = () => !!clip.value || !!system.value;
   return { clip, system, under, put, clear, ready };

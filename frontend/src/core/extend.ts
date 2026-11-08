@@ -23,6 +23,8 @@ export interface ExtensionPoints {
   tabLabels: Array<(tab: Tab) => { name: string; g?: string } | null>;
   nameBadges: Array<(item: Entry, path: string) => VNodeChild>;
   thumbProviders: Array<(item: Entry, path: string) => VNodeChild | null>;
+  // The address of a picture that stands in for an entry's glyph, such as a program's own icon, px pixels square.
+  entryIcons: Array<(item: Entry, path: string, px: number) => string | null>;
   // The sidebar's first card holds sideTop above the pinned folders and sideRows below them; sideCards come next.
   sideTop: Array<() => VNodeChild>;
   sideRows: Array<() => VNodeChild>;
@@ -37,7 +39,7 @@ export interface ExtensionPoints {
 
 export const extend: ExtensionPoints = {
   entryFilters: shallowReactive([]), tagMatchers: shallowReactive([]), beforeGo: shallowReactive([]), afterGo: shallowReactive([]), pathWords: shallowReactive([]), transferPipeline: shallowReactive([]),
-  footerSlots: shallowReactive([]), filterSlots: shallowReactive([]), panelBars: shallowReactive([]), tabLabels: shallowReactive([]), nameBadges: shallowReactive([]), thumbProviders: shallowReactive([]), sideTop: shallowReactive([]), sideRows: shallowReactive([]), sideCards: shallowReactive([]),
+  footerSlots: shallowReactive([]), filterSlots: shallowReactive([]), panelBars: shallowReactive([]), tabLabels: shallowReactive([]), nameBadges: shallowReactive([]), thumbProviders: shallowReactive([]), entryIcons: shallowReactive([]), sideTop: shallowReactive([]), sideRows: shallowReactive([]), sideCards: shallowReactive([]),
   treeDecorators: shallowReactive([]), propsWells: shallowReactive([]), actionWrappers: shallowReactive([]), onRender: shallowReactive([]), toastHistory: shallowReactive([]),
 };
 
