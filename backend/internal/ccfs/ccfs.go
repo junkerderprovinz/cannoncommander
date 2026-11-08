@@ -136,7 +136,7 @@ func New(rules Rules, sources ...Source) (*Resolver, error) {
 			return nil, errors.New("source " + s.Name + " needs an absolute mount")
 		}
 		s.Mount = mount
-		s.Root = filepath.Clean(s.Root)
+		s.Root = cleanRoot(s.Root)
 		s.AdminOnly = s.AdminOnly || set.adminOnly(mount)
 		for _, o := range set.sources {
 			if o.Mount == mount || mount != "/" && o.Mount != "/" && (within(mount, o.Mount) || within(o.Mount, mount)) {

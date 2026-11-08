@@ -3,6 +3,7 @@ package ccfs
 import (
 	"errors"
 	"testing"
+	"time"
 )
 
 func TestMountForPutsSharesBelowNet(t *testing.T) {
@@ -16,6 +17,26 @@ func TestMountForPutsSharesBelowNet(t *testing.T) {
 		if got := MountFor(in); got != want {
 			t.Errorf("MountFor(%s) = %s, want %s", in, got, want)
 		}
+	}
+}
+
+func TestTheTopOfAShareResolves(t *testing.T) {
+	r, err := New(nil, Source{Name: "daten", Mount: "/net/nas/daten", Root: `\\nas\daten`})
+	if err != nil {
+		t.Fatal(err)
+	}
+	done := make(chan Location, 1)
+	go func() {
+		loc, _ := r.Resolve("/net/nas/daten")
+		done <- loc
+	}()
+	select {
+	case loc := <-done:
+		if loc.Real != `\\nas\daten\` {
+			t.Fatalf("got %+v", loc)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("resolving the top of a share does not return")
 	}
 }
 

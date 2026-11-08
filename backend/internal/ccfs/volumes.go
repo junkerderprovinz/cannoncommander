@@ -34,7 +34,7 @@ type Volume struct {
 func (r *Resolver) SetVolumes(vols []Volume) {
 	list := make([]Volume, len(vols))
 	for i, v := range vols {
-		v.Root = filepath.Clean(v.Root)
+		v.Root = cleanRoot(v.Root)
 		list[i] = v
 	}
 	r.update(func(cur *sourceSet) *sourceSet {
@@ -110,6 +110,17 @@ func isDriveRoot(p string) bool {
 	return vol != "" && strings.TrimRight(p[len(vol):], `\/`) == ""
 }
 
+// cleanRoot cleans the folder on disk a source starts at. The top of a share
+// keeps its closing backslash, as the top of a drive does, because
+// filepath.Rel never returns for \\nas\daten against \\nas\daten\.
+func cleanRoot(p string) string {
+	p = filepath.Clean(p)
+	if strings.HasPrefix(p, `\\`) && p == filepath.VolumeName(p) {
+		return p + `\`
+	}
+	return p
+}
+
 // netRoot is the API path of the network, where \\nas\daten shows up as
 // /net/nas/daten.
 const netRoot = "/net"
@@ -155,7 +166,7 @@ func (r *Resolver) openShare(server, share string) bool {
 	if !ok {
 		return false
 	}
-	src := &Source{Name: share, Mount: mount, Root: filepath.Clean(root), Drive: &Drive{Kind: "network", Remote: root}}
+	src := &Source{Name: share, Mount: mount, Root: cleanRoot(root), Drive: &Drive{Kind: "network", Remote: root}}
 	r.update(func(cur *sourceSet) *sourceSet {
 		if slices.ContainsFunc(cur.shares, func(s *Source) bool { return s.Mount == mount }) {
 			return cur
