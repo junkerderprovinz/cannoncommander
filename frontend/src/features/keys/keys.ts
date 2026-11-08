@@ -30,7 +30,7 @@ export const TOTAL_COMMANDER: KeyMap = { 'Alt+F5': 'pack', 'Alt+F9': 'unpack', '
 
 // Explorer's keys where they differ from a commander's. They come on top, so Ctrl+R still refreshes beside F5, and
 // F3 stays with the viewer, as Space does.
-export const EXPLORER: KeyMap = { F5: 'refresh', 'Alt+d': 'gotoPath', 'Ctrl+Shift+c': 'copyPath', Backspace: 'back', 'Alt+p': 'quickview', 'Ctrl+d': 'delete' };
+export const EXPLORER: KeyMap = { F5: 'refresh', 'Alt+d': 'gotoPath', 'Ctrl+Shift+c': 'copyPath', Backspace: 'back', 'Alt+p': 'sidePane', 'Ctrl+d': 'delete' };
 
 export type Preset = 'cc' | 'tc' | 'explorer';
 

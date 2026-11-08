@@ -2,7 +2,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import { api, toItem } from '@/api/client';
-import { actions } from '@/core/actions';
+import { action, actions } from '@/core/actions';
 import { menu } from '@/core/menu';
 import { host } from '@/core/host';
 import { prefs } from '@/core/prefs';
@@ -12,6 +12,8 @@ import { addMessages, setLanguage } from '@/i18n';
 import { rowMenu } from '@/files/menus';
 import { usePanels } from '@/stores/panels';
 import { useUser } from '@/stores/user';
+import keysDe from '@/features/keys/de.json';
+import keysEn from '@/features/keys/en.json';
 import de from './de.json';
 import en from './en.json';
 import setup from './index';
@@ -21,6 +23,7 @@ import { openHandedOver, takeStartFolders } from './open';
 import { askStyle } from './style';
 
 addMessages('desktop', { de, en });
+addMessages('keys', { de: keysDe, en: keysEn });
 vi.mock('@/core/menu', async (original) => ({ ...(await original<typeof import('@/core/menu')>()), menu: vi.fn() }));
 
 let posted: { path: string; run: boolean }[] = [];
@@ -116,6 +119,17 @@ describe('double click', () => {
     expect(vi.mocked(menu).mock.calls.at(-1)![2]).toContain('launch');
   });
 
+  it('drops download and upload once it knows it is the desktop app', async () => {
+    host.desktop = false;
+    prefs.desktopStyle = 'commander';
+    for (const id of ['download', 'upload']) action(id, { label: id, run: () => {} });
+    setup();
+    host.desktop = true;
+    await nextTick();
+    expect(actions.download).toBeUndefined();
+    expect(actions.upload).toBeUndefined();
+  });
+
   it('has no launcher in the container', async () => {
     host.desktop = false;
     setup();
@@ -185,12 +199,14 @@ describe('first start', () => {
 
   it('asks once how the app should handle and opens files in their programs', () => {
     Object.assign(prefs, { desktopStyle: '', clickSelect: false, dblclick: 'open', keys: null });
+    action('sidePane', { label: 'Vorschaubereich', run: () => {} });
     askStyle();
     expect(winStack.map((w) => w.title)).toEqual(['Wie im Explorer oder wie ein Commander?']);
     expect(prefs.dblclick).toBe('system');
     answer('Wie im Explorer');
     expect(prefs).toMatchObject({ desktopStyle: 'explorer', clickSelect: true });
     expect((prefs.keys as { preset: string }).preset).toBe('explorer');
+    expect(actions.sidePane!.key).toBe('Alt+P');
   });
 
   it('stays a commander when the question is closed without an answer', () => {

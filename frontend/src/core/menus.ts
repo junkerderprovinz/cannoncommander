@@ -5,7 +5,7 @@ import type { MenuEntry, MenuItem } from './menu';
 export const MENUS: [string, MenuEntry[]][] = [
   ['file', ['newFolder', 'folderWithSel', 'newFile', 'upload', 'download', '-', 'view', 'edit', 'share', 'props', '-', 'pack', 'unpack', 'checksum', 'checksumVerify', 'split', 'combine', 'symlink', '-', 'delete', 'openTrash', '-', 'logout']],
   ['edit', ['copy', 'move', 'rename', 'duplicate', 'multiRename', '-', 'clipCut', 'clipCopy', 'clipPaste', '-', 'touchSelect', 'selectAll', 'invertSel', 'selectPattern', 'unselect', 'saveSel', 'restoreSel', '-', 'copyPath', 'internalLink']],
-  ['view', ['single', 'dual', 'sidebar', 'quickview', 'fkeys', 'hidden', 'extensions', 'syncBrowse', '-',
+  ['view', ['single', 'dual', 'sidebar', 'quickview', 'sidePane', 'fkeys', 'hidden', 'extensions', 'syncBrowse', '-',
     { label: tl('menus.look'), g: 'IconTabApps', sub: ['view-details', 'view-compact', 'view-list', 'view-content', 'view-columns', 'view-tiles', 'view-large', 'view-gallery', 'view-drives'] },
     { label: tl('menus.group'), g: 'IconFile', sub: ['group-none', 'group-kind', 'group-date', 'group-size'] },
     'flat', 'columns', { head: tl('menus.sort') }, 'sortName', 'sortSize', 'sortTime', 'sortType', '-', 'swapPanels', 'equalPanels', 'profiles', 'refresh']],
