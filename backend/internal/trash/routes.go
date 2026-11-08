@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
-	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 )
@@ -41,6 +40,9 @@ type listing struct {
 	Count int    `json:"count"`
 	Bytes int64  `json:"bytes"`
 	Days  int    `json:"days"`
+	// System says that the list is the trash of the operating system, which
+	// decides itself how long entries stay.
+	System bool `json:"system,omitempty"`
 }
 
 func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
@@ -48,7 +50,7 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	out := listing{Items: items, Count: len(items), Days: h.s.Days()}
+	out := listing{Items: items, Count: len(items), Days: h.s.Days(), System: h.s.System()}
 	for _, it := range items {
 		out.Bytes += it.Size
 	}
@@ -73,7 +75,7 @@ func (h handlers) restore(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	for _, e := range entries {
-		if _, err := h.s.fs.Entry(u, e.Origin, ccfs.Create); err != nil {
+		if err := h.s.mayRestore(u, e); err != nil {
 			return err
 		}
 	}
@@ -121,7 +123,8 @@ func (h handlers) submit(w http.ResponseWriter, r *http.Request, kind string, en
 }
 
 // pick returns the entries with the given ids. An entry of somebody else
-// does not exist for a user who is not an admin.
+// does not exist for a user who is not an admin. The system's trash has no
+// owners.
 func (h handlers) pick(u *users.User, ids []string) ([]Item, error) {
 	found, err := h.s.getAll(ids)
 	if err != nil {
@@ -131,7 +134,7 @@ func (h handlers) pick(u *users.User, ids []string) ([]Item, error) {
 	seen := make(map[string]bool, len(ids))
 	for _, id := range ids {
 		it, ok := found[id]
-		if !ok || !u.Permissions.Admin && it.By != u.Username {
+		if !ok || !u.Permissions.Admin && !systemID(id) && it.By != u.Username {
 			return nil, ErrNotFound
 		}
 		if !seen[id] {

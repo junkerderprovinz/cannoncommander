@@ -77,7 +77,9 @@ type job struct {
 	cancel    context.CancelFunc
 	cancelled bool
 	// forget drops the job from the list as soon as it has stopped.
-	forget  bool
+	forget bool
+	// elevated runs the job's next turn through its kind's Elevate.
+	elevated bool
 	live    bool
 	allowed bool
 	// pauses counts the pauses asked for, so a short one is not missed.
@@ -392,10 +394,18 @@ func (m *Manager) Cancel(id string) (Job, error) {
 
 // Retry runs the failed and unfinished items of an ended job again.
 func (m *Manager) Retry(id string) (Job, error) {
+	return m.retry(id, false)
+}
+
+func (m *Manager) retry(id string, elevated bool) (Job, error) {
 	return m.change(id, func(j *job) error {
 		if j.State != Failed && j.State != Cancelled {
 			return v1.Coded(http.StatusConflict, "jobNotRetryable", "only a failed or cancelled job can be retried")
 		}
+		if k, _ := kindOf(j.Kind); elevated && k.Elevate == nil {
+			return errNotElevatable
+		}
+		j.elevated = elevated
 		for i := range j.items {
 			it := &j.items[i]
 			if it.State == ItemFailed || it.State == ItemRunning || it.State == ItemPending {
@@ -658,10 +668,14 @@ func (m *Manager) start(j *job) {
 	j.inflightBytes, j.inflightFiles = 0, 0
 	j.recount()
 	j.sampleAt, j.sampleBytes = time.Now(), j.DoneBytes
+	do := k.Run
+	if j.elevated {
+		do = k.Elevate
+	}
 	m.wg.Add(1)
 	go func() {
 		defer m.wg.Done()
-		err := runKind(ctx, k, &Run{m: m, j: j})
+		err := runKind(ctx, do, &Run{m: m, j: j})
 		m.mu.Lock()
 		hooks := m.end(j, err)
 		m.mu.Unlock()
@@ -671,20 +685,20 @@ func (m *Manager) start(j *job) {
 	}()
 }
 
-func runKind(ctx context.Context, k Kind, r *Run) (err error) {
+func runKind(ctx context.Context, do func(context.Context, *Run) error, r *Run) (err error) {
 	defer func() {
 		if p := recover(); p != nil {
 			err = fmt.Errorf("job crashed: %v", p)
 			logger.Errorf("jobs: %s %s: %v", r.j.Kind, r.j.ID, p)
 		}
 	}()
-	return k.Run(ctx, r)
+	return do(ctx, r)
 }
 
 // end closes a job after its run returned, or right away when it never
 // ran. It returns the finish hooks to call once m.mu is released.
 func (m *Manager) end(j *job, err error) []func() {
-	j.live, j.allowed = false, false
+	j.live, j.allowed, j.elevated = false, false, false
 	if j.cancel != nil {
 		j.cancel()
 	}
