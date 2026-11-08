@@ -5,6 +5,7 @@
 import { dropIndex, type DropRect } from '@glimstone/core';
 import { useDragArmed } from '@glimstone/vue';
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
+import { quietTips } from '@/core/tips';
 
 const LIFT = 'glim-drag-lift';
 const SHIFT = 'glim-drag-shift';
@@ -86,6 +87,8 @@ export function useReorder({ ids, list, attr, arm, onReorder }: ReorderOptions) 
   let swallow = false;
 
   useDragArmed(list, () => held.value !== null);
+  // A bubble would stay behind where the carried item was, or point at one that is sliding away.
+  watch(held, (id) => quietTips(id !== null));
 
   const nodes = () => Array.from(list.value?.querySelectorAll<HTMLElement>(`[${attr}]`) ?? []);
   const nodeOf = (id: string) => nodes().find((n) => n.getAttribute(attr) === id);

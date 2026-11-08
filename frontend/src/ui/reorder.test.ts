@@ -5,6 +5,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { createApp, nextTick } from 'vue';
 import type { Job } from '@/api/ops';
 import { prefs } from '@/core/prefs';
+import { installTips } from '@/core/tips';
 import { settingsTab } from '@/core/views';
 import JobsBody from '@/features/jobs/JobsBody.vue';
 import SettingsPage from '@/pages/SettingsPage.vue';
@@ -71,6 +72,7 @@ afterEach(() => {
   document.body.innerHTML = '';
   vi.useRealTimers();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 describe('a carried settings tile', () => {
@@ -86,6 +88,22 @@ describe('a carried settings tile', () => {
     point(document, 'pointerup', 70);
     await nextTick();
     expect(tiles.classList).not.toContain('glim-drag-armed');
+  });
+
+  it('keeps tip bubbles away while it is carried', async () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
+    installTips();
+    await mount(SettingsPage);
+    tile('general').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    expect(document.querySelector('.bubble')).not.toBeNull();
+    await liftTile('general', 70);
+    expect(document.querySelector('.bubble')).toBeNull();
+    tile('look').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    expect(document.querySelector('.bubble')).toBeNull();
+    point(document, 'pointerup', 70);
+    await nextTick();
+    tile('look').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    expect(document.querySelector('.bubble')).not.toBeNull();
   });
 
   it('does not lift on a short click', async () => {
