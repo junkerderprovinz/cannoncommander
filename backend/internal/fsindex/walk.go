@@ -155,7 +155,7 @@ func walkDisk(ctx context.Context, real, api string, fn func(Entry) error) error
 		}
 		e := Entry{
 			Path: path.Join(api, d.Name()), Real: p, Name: d.Name(), Dir: info.IsDir(),
-			MTime: info.ModTime(), Hidden: strings.HasPrefix(d.Name(), "."), Mode: modeBits(info.Mode()),
+			MTime: info.ModTime(), Hidden: ccfs.HiddenEntry(d), Mode: modeBits(info.Mode()),
 		}
 		link := info.Mode()&fs.ModeSymlink != 0
 		if link {

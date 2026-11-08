@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -22,7 +23,7 @@ type fixture struct {
 	cache string
 }
 
-func write(t *testing.T, p string, size int) {
+func write(t testing.TB, p string, size int) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
 		t.Fatal(err)
@@ -32,12 +33,12 @@ func write(t *testing.T, p string, size int) {
 	}
 }
 
-func newFixture(t *testing.T, index ...fsindex.Index) fixture {
+func newFixture(t testing.TB, index ...fsindex.Index) fixture {
 	t.Helper()
 	return newFixtureWith(t, nil, index...)
 }
 
-func newFixtureWith(t *testing.T, rules ccfs.Rules, index ...fsindex.Index) fixture {
+func newFixtureWith(t testing.TB, rules ccfs.Rules, index ...fsindex.Index) fixture {
 	t.Helper()
 	base := t.TempDir()
 	share := filepath.Join(base, "mnt", "user")
@@ -92,7 +93,7 @@ func newFixtureWith(t *testing.T, rules ccfs.Rules, index ...fsindex.Index) fixt
 	return fixture{h: h, share: share, cache: cache}
 }
 
-func (f fixture) get(t *testing.T, user, endpoint, p string, extra ...string) *httptest.ResponseRecorder {
+func (f fixture) get(t testing.TB, user, endpoint, p string, extra ...string) *httptest.ResponseRecorder {
 	t.Helper()
 	q := url.Values{"path": {p}}
 	for i := 0; i+1 < len(extra); i += 2 {
@@ -150,7 +151,7 @@ func TestListReturnsItemsWithTheirFields(t *testing.T) {
 		t.Fatalf("items = %v", names(l.Items))
 	}
 	hidden, notes := l.Items[0], l.Items[1]
-	if hidden.Name != ".partial-download" || !hidden.Hidden || hidden.Size != 5 {
+	if hidden.Name != ".partial-download" || hidden.Hidden != (runtime.GOOS != "windows") || hidden.Size != 5 {
 		t.Errorf("hidden item = %+v", hidden)
 	}
 	if notes.Name != "setup-notes.md" || notes.Dir || notes.Size != 4 || notes.MTime != "2023-11-14T22:13:20.000Z" || len(notes.Mode) != 4 {

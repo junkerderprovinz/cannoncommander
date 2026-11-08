@@ -1512,6 +1512,27 @@
     "job": "Descargar: {what}",
     "jobFrom": "Descargar: {what} de {host}"
   },
+  "filesystem": {
+    "systemFiles": "Amosar os ficheiros do sistema protexidos",
+    "cloud": {
+      "online": "Dispoñible só en liña",
+      "local": "Dispoñible neste dispositivo",
+      "pinned": "Sempre dispoñible neste dispositivo"
+    },
+    "keep": "Manter sempre neste dispositivo",
+    "free": "Liberar espazo",
+    "kept": "Queda neste dispositivo: {objects}",
+    "freed": "Espazo liberado para {objects}",
+    "createShortcut": "Crear atallo",
+    "shortcutName": "{name} - atallo",
+    "new": "Novo",
+    "shortcut": "Atallo",
+    "newShortcut": "Novo atallo",
+    "target": "Destino",
+    "targetTip": "A ruta do ficheiro ou do cartafol tal como a escribe Windows, coa unidade diante.",
+    "name": "Nome",
+    "noTarget": "Indica onde debe levar o atallo"
+  },
   "gather": {
     "title": "Xuntar un cartafol",
     "folder": "Cartafol",
@@ -2093,7 +2114,15 @@
       "file": "Ficheiro"
     },
     "linkToDir": "Ligazón a un cartafol",
-    "linkToFile": "Ligazón a un ficheiro"
+    "linkToFile": "Ligazón a un ficheiro",
+    "attributes": "Atributos",
+    "flags": {
+      "readOnly": "Só lectura",
+      "hidden": "Oculto",
+      "archive": "Listo para arquivar"
+    },
+    "flagsSaved": "Atributos gardados para {objects}",
+    "insideFlagsTip": "Aplica os atributos tamén a cada ficheiro e cartafol de dentro."
   },
   "quicklook": {
     "title": "Vista rápida",
@@ -3582,6 +3611,7 @@
     "groupExists": "Ese grupo xa existe",
     "groupNameMissing": "Ponlle un nome ao grupo",
     "inArchive": "Isto está dentro dun arquivo",
+    "inCloud": "O ficheiro só está na nube. Ábreo unha vez e estará tamén neste dispositivo",
     "inTrash": "Isto xa está no lixo",
     "intoItself": "Un cartafol non pode ir dentro de si mesmo",
     "ioError": "O disco informou dun erro de lectura ou escritura",
@@ -3616,11 +3646,14 @@
       "one": "A mensaxe ten como máximo {n} carácter",
       "other": "A mensaxe ten como máximo {n} caracteres"
     },
+    "nameChars": "Windows non permite ningún destes caracteres nun nome: < > : \" / \\ | ? *",
+    "nameEnd": "En Windows un nome non pode rematar en punto nin en espazo",
     "nameLength": {
       "one": "O nome ten como máximo {n} carácter",
       "other": "O nome ten como máximo {n} caracteres"
     },
     "namePasswordNeeded": "Fan falta nome e contrasinal",
+    "nameReserved": "Windows reserva este nome para un dispositivo, escolle outro",
     "nameTaken": "Ese nome xa existe aquí",
     "nameTooLong": "O nome é longo de máis para o sistema de ficheiros",
     "noAppDialog": "Este computador non ten un diálogo propio para escoller unha aplicación",
@@ -3641,6 +3674,7 @@
     "noSpaceForFile": "Non hai espazo libre dabondo para este ficheiro",
     "noSuchUser": "Ese usuario non existe",
     "noSystemTrash": "Esta unidade non ten lixo. Mellor bórrao definitivamente",
+    "noTemplate": "Este modelo xa non existe",
     "noToken": "Ese token non existe",
     "noUserNamed": "O usuario {name} non existe",
     "notAFile": "Isto non é un ficheiro normal",
@@ -3729,6 +3763,7 @@
     "uploadRunning": "Agora mesmo estase a subir un ficheiro con este nome",
     "uploadsOneFolder": "As subidas só funcionan cunha ligazón a un cartafol",
     "userPasswordElsewhere": "Este usuario inicia sesión mediante {method}, e o contrasinal está alí",
+    "windowsOnly": "Isto só existe en Windows",
     "wrongLogin": "O nome ou o contrasinal non son correctos"
   },
   "visit": {

@@ -92,7 +92,7 @@ export const usePanels = defineStore('panels', () => {
 
   // A filter searches the folders below by default; "only here" filters the rows already read.
   function source(tab: Tab): Entry[] | null {
-    const keep = shown(prefs.showHidden);
+    const keep = shown(prefs.showHidden, prefs.showSystem);
     if (tab.filter && tab.deep !== false) return listing.search(tab.path, tab.filter, prefs.showHidden).items.filter(keep).map(toEntry);
     if (tab.flat) return listing.search(tab.path, '*', prefs.showHidden).items.filter((k) => keep(k) && !k.dir).map(toEntry);
     const got = listing.lists.get(tab.path);
@@ -255,6 +255,16 @@ export const usePanels = defineStore('panels', () => {
     if (k.link) {
       const target = await listing.load(k.link).catch(() => null);
       if (target) return go(k.link, i);
+    }
+    // A shortcut to a folder opens the folder, one to a file opens the file where it lies, as in Explorer.
+    const to = k.shortcut?.path;
+    if (to) {
+      if (await listing.load(to).catch(() => null)) return go(to, i);
+      if (parent(to) !== T(i).path) await go(parent(to), i);
+      const idx = entries(i).findIndex((e) => e.name === split(to).pop());
+      if (idx < 0) return;
+      T(i).cursor = idx;
+      return open(i, entries(i)[idx]!);
     }
     if (k.dir) return go(join(tab.path, k.name!), i);
     if (k.archive) return go(join(tab.path, k.name + '::'), i);

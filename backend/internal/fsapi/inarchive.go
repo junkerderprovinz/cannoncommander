@@ -46,7 +46,7 @@ func (h handlers) archiveFile(u *users.User, loc ccfs.Location) error {
 func archiveItem(e archives.Entry) Item {
 	name := path.Base(e.Name)
 	it := Item{Name: name, Dir: e.Dir, Size: e.Size, MTime: formatTime(e.ModTime), Mode: modeString(e.Mode),
-		Hidden: strings.HasPrefix(name, "."), Link: e.Link}
+		Hidden: ccfs.HiddenByName(name), Link: e.Link}
 	if !e.Dir {
 		it.Format = FormatOf(name)
 	}

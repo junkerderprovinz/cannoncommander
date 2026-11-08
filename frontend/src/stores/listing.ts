@@ -6,7 +6,7 @@ import { api, ApiError, type Item, type Listing } from '@/api/client';
 import { on, type ServerEvent, watch } from '@/api/sse';
 import type { TreeItem } from '@/api/types';
 import type { MetaValue } from '@/files/entries';
-import { join, parent } from '@/files/paths';
+import { join, parent, split } from '@/files/paths';
 
 // unknown names the field tests of the query the server does not know, such as farbe in farbe:rot.
 export interface Hits { items: Item[]; more: boolean; done: boolean; unknown?: string[] }
@@ -179,10 +179,11 @@ export const useListing = defineStore('listing', () => {
   function placeLabel(path: string): string | undefined {
     for (const items of trees.values()) {
       const hit = items.find((x) => x.path === path);
-      if (hit) return hit.label;
+      if (hit?.label) return hit.label;
     }
     for (const l of lists.values()) if (l.volume?.path === path) return l.volume.label;
-    return undefined;
+    // A folder Explorer names in the language of the system, such as Dokumente for Documents.
+    return lists.get(parent(path))?.items.find((k) => k.name === split(path).pop())?.label;
   }
   const placeOf = (path: string) => trees.get(parent(path))?.find((x) => x.path === path);
 

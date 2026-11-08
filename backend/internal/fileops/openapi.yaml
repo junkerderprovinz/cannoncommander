@@ -63,6 +63,70 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/StateConflict"
+  /fs/templates:
+    get:
+      operationId: fsTemplates
+      summary: List what New offers
+      description: The ShellNew entries Windows registers and the files in the templates folder of a Linux desktop. Empty in the container.
+      responses:
+        "200":
+          description: The templates, sorted by name.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [templates]
+                properties:
+                  templates:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, name, ext, file]
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                          description: What the menu shows, such as the type name of Windows.
+                        ext:
+                          type: string
+                          example: .docx
+                        file:
+                          type: string
+                          description: The name a new file starts out with, without its ending.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /fs/new:
+    post:
+      operationId: fsNew
+      summary: Create a file from a template
+      description: Only in the desktop app. Undo removes the file as long as it holds what the template gave it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, template]
+              properties:
+                path:
+                  type: string
+                template:
+                  type: string
+                  description: The id from fs/templates.
+      responses:
+        "201":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
   /fs/rename:
     post:
       operationId: fsRename
@@ -139,7 +203,9 @@ paths:
       description: |
         A symbolic link may point to something that does not exist yet,
         but only to a place inside a source the user may see. A hard link
-        needs an existing file on the same source.
+        needs an existing file on the same source. On Windows a link to a
+        folder becomes a junction when the user lacks the right for a
+        symbolic link, and with shortcut the link is a .lnk file.
       requestBody:
         required: true
         content:
@@ -156,6 +222,9 @@ paths:
                   description: Where the link is created.
                 hard:
                   type: boolean
+                shortcut:
+                  type: boolean
+                  description: Write a .lnk file of Windows to an existing target. Elsewhere the answer is 400 windowsOnly.
       responses:
         "201":
           $ref: "#/components/responses/FsChanged"
@@ -201,6 +270,18 @@ paths:
                 mtime:
                   type: string
                   format: date-time
+                flags:
+                  type: object
+                  description: Attributes of Windows to turn on or off. pinned keeps a cloud file on the device, false frees its space. Elsewhere the answer is 400 windowsOnly.
+                  properties:
+                    readOnly:
+                      type: boolean
+                    hidden:
+                      type: boolean
+                    archive:
+                      type: boolean
+                    pinned:
+                      type: boolean
                 recursive:
                   type: boolean
       responses:

@@ -1567,6 +1567,27 @@
     "job": "Carica: {what}",
     "jobFrom": "Carica: {what} da {host}"
   },
+  "filesystem": {
+    "systemFiles": "Mostra i file di sistema protetti",
+    "cloud": {
+      "online": "Disponibile solo online",
+      "local": "Disponibile su questo dispositivo",
+      "pinned": "Sempre disponibile su questo dispositivo"
+    },
+    "keep": "Mantieni sempre su questo dispositivo",
+    "free": "Libera spazio",
+    "kept": "Resta su questo dispositivo: {objects}",
+    "freed": "Spazio liberato per {objects}",
+    "createShortcut": "Crea collegamento",
+    "shortcutName": "{name} - collegamento",
+    "new": "Nuovo",
+    "shortcut": "Collegamento",
+    "newShortcut": "Nuovo collegamento",
+    "target": "Destinazione",
+    "targetTip": "Il percorso del file o della cartella come lo scrive Windows, con l'unità davanti.",
+    "name": "Nome",
+    "noTarget": "Indica dove deve portare il collegamento"
+  },
   "gather": {
     "title": "Raggruppa cartella",
     "folder": "Cartella",
@@ -2164,7 +2185,15 @@
       "file": "File"
     },
     "linkToDir": "Collegamento a una cartella",
-    "linkToFile": "Collegamento a un file"
+    "linkToFile": "Collegamento a un file",
+    "attributes": "Attributi",
+    "flags": {
+      "readOnly": "Sola lettura",
+      "hidden": "Nascosto",
+      "archive": "Pronto per l'archiviazione"
+    },
+    "flagsSaved": "Attributi salvati per {objects}",
+    "insideFlagsTip": "Imposta gli attributi anche per ogni file e cartella al suo interno."
   },
   "quicklook": {
     "title": "Anteprima rapida",
@@ -3716,6 +3745,7 @@
     "groupExists": "Questo gruppo esiste già",
     "groupNameMissing": "Dai un nome al gruppo",
     "inArchive": "Si trova in un archivio",
+    "inCloud": "Il file si trova solo nel cloud. Aprilo una volta e sarà anche su questo dispositivo",
     "inTrash": "È già nel cestino",
     "intoItself": "Una cartella non può andare dentro sé stessa",
     "ioError": "Il disco ha segnalato un errore di lettura o scrittura",
@@ -3753,12 +3783,15 @@
       "many": "Il messaggio ha al massimo {n} caratteri",
       "other": "Il messaggio ha al massimo {n} caratteri"
     },
+    "nameChars": "Windows non consente nessuno di questi caratteri in un nome: < > : \" / \\ | ? *",
+    "nameEnd": "In Windows un nome non può finire con un punto o uno spazio",
     "nameLength": {
       "one": "Il nome ha al massimo {n} carattere",
       "many": "Il nome ha al massimo {n} caratteri",
       "other": "Il nome ha al massimo {n} caratteri"
     },
     "namePasswordNeeded": "Servono nome e password",
+    "nameReserved": "Windows riserva questo nome a un dispositivo, scegline un altro",
     "nameTaken": "Questo nome esiste già qui",
     "nameTooLong": "Il nome è troppo lungo per il file system",
     "noAppDialog": "Questo computer non ha una finestra propria per scegliere un'app",
@@ -3779,6 +3812,7 @@
     "noSpaceForFile": "Non c'è abbastanza spazio libero per questo file",
     "noSuchUser": "Questo utente non esiste",
     "noSystemTrash": "Questa unità non ha un cestino. Meglio eliminarlo definitivamente",
+    "noTemplate": "Questo modello non esiste più",
     "noToken": "Questo token non esiste",
     "noUserNamed": "L'utente {name} non esiste",
     "notAFile": "Non è un file normale",
@@ -3868,6 +3902,7 @@
     "uploadRunning": "Un file con questo nome è in fase di caricamento",
     "uploadsOneFolder": "I caricamenti funzionano solo con un link a una cartella",
     "userPasswordElsewhere": "Questo utente accede tramite {method}, la password si trova lì",
+    "windowsOnly": "Questo esiste solo su Windows",
     "wrongLogin": "Il nome o la password non sono corretti"
   },
   "visit": {

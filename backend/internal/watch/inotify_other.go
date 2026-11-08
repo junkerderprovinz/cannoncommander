@@ -1,4 +1,4 @@
-//go:build !linux
+//go:build !linux && !windows
 
 package watch
 
@@ -7,8 +7,8 @@ import (
 	"io/fs"
 )
 
-// notifier stands in for inotify where there is none. Development on
-// Windows polls every folder.
+// notifier stands in where the system tells of no changes, so every folder
+// is polled.
 type notifier struct{}
 
 func newNotifier(*Watcher) (*notifier, error) { return nil, errors.ErrUnsupported }

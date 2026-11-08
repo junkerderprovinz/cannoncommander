@@ -1457,6 +1457,27 @@
     "job": "下载：{what}",
     "jobFrom": "下载：{what}，来自 {host}"
   },
+  "filesystem": {
+    "systemFiles": "显示受保护的系统文件",
+    "cloud": {
+      "online": "仅联机可用",
+      "local": "在此设备上可用",
+      "pinned": "始终在此设备上可用"
+    },
+    "keep": "始终保留在此设备上",
+    "free": "释放空间",
+    "kept": "保留在此设备上：{objects}",
+    "freed": "已为 {objects} 释放空间",
+    "createShortcut": "创建快捷方式",
+    "shortcutName": "{name} - 快捷方式",
+    "new": "新建",
+    "shortcut": "快捷方式",
+    "newShortcut": "新建快捷方式",
+    "target": "目标",
+    "targetTip": "按 Windows 的写法填写文件或文件夹的路径，开头是驱动器。",
+    "name": "名称",
+    "noTarget": "请说明快捷方式应指向哪里"
+  },
   "gather": {
     "title": "集中文件夹",
     "folder": "文件夹",
@@ -2022,7 +2043,15 @@
       "file": "文件"
     },
     "linkToDir": "指向文件夹的链接",
-    "linkToFile": "指向文件的链接"
+    "linkToFile": "指向文件的链接",
+    "attributes": "属性",
+    "flags": {
+      "readOnly": "只读",
+      "hidden": "隐藏",
+      "archive": "可以存档"
+    },
+    "flagsSaved": "已保存 {objects} 的属性",
+    "insideFlagsTip": "同时为其下的每个文件和文件夹设置属性。"
   },
   "quicklook": {
     "title": "快速查看",
@@ -3448,6 +3477,7 @@
     "groupExists": "此组已存在",
     "groupNameMissing": "给这个组起个名字",
     "inArchive": "它位于压缩包内",
+    "inCloud": "该文件仅在云端。打开一次后，它也会保存在此设备上",
     "inTrash": "它已经在回收站中",
     "intoItself": "文件夹不能放进它自己",
     "ioError": "磁盘报告了读取或写入错误",
@@ -3479,10 +3509,13 @@
     "messageLength": {
       "other": "留言最多 {n} 个字符"
     },
+    "nameChars": "Windows 不允许名称中包含以下任何字符：< > : \" / \\ | ? *",
+    "nameEnd": "在 Windows 中名称不能以句点或空格结尾",
     "nameLength": {
       "other": "名称最多 {n} 个字符"
     },
     "namePasswordNeeded": "名称和密码都必须填写",
+    "nameReserved": "Windows 将此名称保留给设备，请换一个名称",
     "nameTaken": "这里已有同名项",
     "nameTooLong": "名称对文件系统来说太长",
     "noAppDialog": "这台电脑没有自带的对话框来选择应用",
@@ -3503,6 +3536,7 @@
     "noSpaceForFile": "可用空间不足以存放此文件",
     "noSuchUser": "此用户不存在",
     "noSystemTrash": "此驱动器没有回收站。请直接永久删除",
+    "noTemplate": "此模板已不存在",
     "noToken": "此令牌不存在",
     "noUserNamed": "用户 {name} 不存在",
     "notAFile": "这不是普通文件",
@@ -3590,6 +3624,7 @@
     "uploadRunning": "正在上传一个同名文件",
     "uploadsOneFolder": "只有指向单个文件夹的链接才能上传",
     "userPasswordElsewhere": "该用户通过 {method} 登录，密码由那里管理",
+    "windowsOnly": "仅在 Windows 中可用",
     "wrongLogin": "名称或密码不正确"
   },
   "visit": {

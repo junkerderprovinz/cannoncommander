@@ -5,7 +5,7 @@ import { ext } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
 import { byName, t } from '@/i18n';
 import { shell } from '@/shell/state';
-import type { Comparer, Entry, MetaValue } from './entries';
+import { type Comparer, type Entry, isHidden, type MetaValue } from './entries';
 import { decimals, metaWord } from './metaText';
 import { split } from './paths';
 
@@ -75,15 +75,15 @@ const general: Def[] = [
   { id: 'modified', width: '7.5rem', r: true, sort: 'time', value: (k) => fmtListDate(k.time) },
   { id: 'created', width: '7.5rem', r: true, num: (k) => k.btime ?? -1, value: (k) => (k.btime == null ? '' : fmtListDate(k.btime)) },
   { id: 'accessed', width: '7.5rem', r: true, meta: 'date', num: metaNum('accessed') },
-  { id: 'type', width: '8.5rem', sort: 'type', value: (k) => (k.dir ? t('kinds.folder') : k.link ? t('kinds.link') : ext(k.name) ? t(`types.${k.kind}`) : t('types.file')) },
+  { id: 'type', width: '8.5rem', sort: 'type', value: (k) => (k.dir ? t('kinds.folder') : k.link || k.shortcut ? t('kinds.link') : ext(k.name) ? t(`types.${k.kind}`) : t('types.file')) },
   { id: 'ext', width: '5rem', value: (k) => (k.dir ? '' : ext(k.name)) },
   { id: 'items', width: '5.5rem', r: true, num: (k) => (k.dir ? k.items ?? 0 : -1), value: (k) => (k.dir ? String(k.items ?? '') : '') },
   { id: 'path', width: '11rem', value: (_k, path) => path },
-  { id: 'link', width: '11rem', value: (k) => k.link || '' },
+  { id: 'link', width: '11rem', value: (k) => k.link || k.shortcut?.target || '' },
   { id: 'disksize', width: '7rem', r: true, num: (k) => (k.dir ? -1 : diskSize(k)), value: (k) => (k.dir ? '' : fmtSize(diskSize(k)) || '0 B') },
   { id: 'kind', width: '6.5rem', value: (k) => t(`groups.${k.dir ? 'folder' : KIND_KEY[k.kind] || 'other'}`) },
   { id: 'mime', width: '10rem', mono: true, value: (k) => (k.dir ? 'inode/directory' : MIME[ext(k.name)] || 'application/octet-stream') },
-  { id: 'attributes', width: '5rem', mono: true, value: (k) => [k.hidden || k.name.startsWith('.') ? 'H' : '', k.link ? 'L' : '', +(k.mode || '0664').slice(-3)[0]! < 6 ? 'R' : ''].join('') },
+  { id: 'attributes', width: '5rem', mono: true, value: (k) => k.attrs ?? [isHidden(k) ? 'H' : '', k.system ? 'S' : '', k.link ? 'L' : '', +(k.mode || '0664').slice(-3)[0]! < 6 ? 'R' : ''].join('') },
   { id: 'statchange', width: '7.5rem', r: true, meta: 'date', num: metaNum('statchange') },
 ];
 const storage: Def[] = [

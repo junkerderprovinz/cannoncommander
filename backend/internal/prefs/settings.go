@@ -38,7 +38,7 @@ var kinds = map[string]kind{
 	"labelsButtons": kindString, "labelsSidebar": kindString, "labelsTabs": kindString, "labelsBottombar": kindString,
 	"rainbow": kindBool, "reactive": kindBool, "rotate": kindBool, "tabOrder": kindArray,
 	"columns": kindArray, "colWidths": kindObject,
-	"density": kindString, "showHidden": kindBool, "showExt": kindBool, "syncBrowse": kindBool, "folderSizes": kindBool,
+	"density": kindString, "showHidden": kindBool, "showSystem": kindBool, "showExt": kindBool, "syncBrowse": kindBool, "folderSizes": kindBool,
 	"foldersFirst": kindBool, "dblclick": kindString, "fkeys": kindBool, "side": kindBool, "dual": kindBool,
 	"quickview": kindBool, "confirmDelete": kindBool, "trash": kindBool, "trashDays": kindNumber, "stayDays": kindNumber,
 	"language": kindString, "dateFormat": kindString, "startFolder": kindString,

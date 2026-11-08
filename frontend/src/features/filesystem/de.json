@@ -1,0 +1,17 @@
+{
+  "systemFiles": "Geschützte Systemdateien anzeigen",
+  "cloud": { "online": "Nur online verfügbar", "local": "Auf diesem Gerät verfügbar", "pinned": "Immer auf diesem Gerät verfügbar" },
+  "keep": "Immer auf diesem Gerät behalten",
+  "free": "Speicher freigeben",
+  "kept": "Bleibt auf diesem Gerät: {objects}",
+  "freed": "Speicher freigegeben für {objects}",
+  "createShortcut": "Verknüpfung erstellen",
+  "shortcutName": "{name} - Verknüpfung",
+  "new": "Neu",
+  "shortcut": "Verknüpfung",
+  "newShortcut": "Neue Verknüpfung",
+  "target": "Ziel",
+  "targetTip": "Der Pfad der Datei oder des Ordners, so wie Windows ihn schreibt, mit dem Laufwerk vorne.",
+  "name": "Name",
+  "noTarget": "Gib bitte an, wohin die Verknüpfung führen soll"
+}
