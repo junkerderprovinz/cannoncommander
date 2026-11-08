@@ -13,7 +13,7 @@ export const DEFAULT_PREFS = {
   speedCap: 0, parityWait: true, notifyDone: false, notifyUnraid: false, notifyAfter: 60,
   columns: ['name', 'size', 'modified'], colWidths: {} as Record<string, number>,
   density: 'medium', showHidden: false, showExt: true, syncBrowse: false, folderSizes: true, foldersFirst: true, liveRefresh: true, dblclick: 'open', clickSelect: false, desktopStyle: '', fkeys: false, side: true, dual: true,
-  quickview: false, confirmDelete: true, trash: true, trashDays: 30, language: '', dateFormat: 'short', startFolder: '',
+  quickview: false, sidePane: false, confirmDelete: true, trash: true, trashDays: 30, language: '', dateFormat: 'short', startFolder: '',
   folderViews: {} as Record<string, string>, folderGroups: {} as Record<string, string>, folderTiles: {} as Record<string, number>,
 };
 export type Prefs = typeof DEFAULT_PREFS & Record<string, unknown>;
