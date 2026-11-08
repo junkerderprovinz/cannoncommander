@@ -4,10 +4,12 @@ import (
 	"errors"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 	"time"
 	"unicode"
+	"unicode/utf8"
 	"unsafe"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
@@ -143,6 +145,8 @@ type shown struct {
 	paths map[windows.Handle]string
 	seen  []Entry
 	known map[string]bool
+	// names are the selected files' names, which no stored label keeps.
+	names []string
 }
 
 var (
@@ -197,7 +201,7 @@ func showMenu(owner windows.HWND, files []string, o MenuOptions) (*shown, error)
 	if err != nil {
 		return nil, err
 	}
-	m := &shown{cm: cm, hidden: o.Hidden, paths: map[windows.Handle]string{}, known: map[string]bool{}}
+	m := &shown{cm: cm, hidden: o.Hidden, paths: map[windows.Handle]string{}, known: map[string]bool{}, names: namesOf(files)}
 	if m.hidden == nil {
 		m.hidden = func(string) bool { return false }
 	}
@@ -316,7 +320,9 @@ func (m *shown) prune(menu windows.Handle, path string) {
 		if ok, _, _ := procGetMenuItemInfo.Call(uintptr(menu), uintptr(i), 1, uintptr(unsafe.Pointer(&it))); ok == 0 || it.ftype&mftSep != 0 {
 			continue
 		}
-		label := m.text(menu, i, it.cch)
+		// A row may name the files it is for, as 7-Zip's Add to "x.zip" does,
+		// and its key and the label kept for the settings must fit every file.
+		label := withoutNames(m.text(menu, i, it.cch), m.names)
 		if label == "" {
 			continue
 		}
@@ -358,6 +364,30 @@ func (m *shown) text(menu windows.Handle, i int, cch uint32) string {
 		return ""
 	}
 	return cleanLabel(windows.UTF16ToString(buf))
+}
+
+// namesOf lists the names of files, and of each also its name without the
+// ending, longest first so the full name goes before the shorter one.
+// Names too short to be told from a word stay out.
+func namesOf(files []string) []string {
+	var names []string
+	for _, f := range files {
+		base := filepath.Base(f)
+		for _, n := range []string{base, strings.TrimSuffix(base, filepath.Ext(base))} {
+			if utf8.RuneCountInString(n) >= 3 && !slices.Contains(names, n) {
+				names = append(names, n)
+			}
+		}
+	}
+	slices.SortFunc(names, func(a, b string) int { return len(b) - len(a) })
+	return names
+}
+
+func withoutNames(label string, names []string) string {
+	for _, n := range names {
+		label = strings.ReplaceAll(label, n, "…")
+	}
+	return label
 }
 
 // cleanLabel drops what a row shows besides its name: the & before its

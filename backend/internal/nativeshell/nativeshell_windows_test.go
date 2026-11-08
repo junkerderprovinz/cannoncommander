@@ -177,3 +177,18 @@ func TestAMenuNeedsTheAppInFront(t *testing.T) {
 		t.Fatalf("got %v", err)
 	}
 }
+
+func TestAStoredLabelKeepsNoNameOfTheFilesItWasShownFor(t *testing.T) {
+	names := namesOf([]string{filepath.Join("C:", "x", "Notizen.txt"), filepath.Join("C:", "x", "Bericht 2025.docx"), filepath.Join("C:", "x", "a.md")})
+	for in, want := range map[string]string{
+		"Zu \"Notizen.zip\" hinzufügen":        "Zu \"….zip\" hinzufügen",
+		"Notizen.txt öffnen":                   "… öffnen",
+		"Bericht 2025.docx teilen":             "… teilen",
+		"Mit Microsoft Defender überprüfen...": "Mit Microsoft Defender überprüfen...",
+		"Als Pfad kopieren":                    "Als Pfad kopieren",
+	} {
+		if got := withoutNames(in, names); got != want {
+			t.Errorf("%q: got %q, want %q", in, got, want)
+		}
+	}
+}

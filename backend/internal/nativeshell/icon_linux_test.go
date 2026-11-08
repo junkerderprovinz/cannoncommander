@@ -4,8 +4,10 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
+	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/xdg"
@@ -102,5 +104,37 @@ func TestIconsComeBackAsPictures(t *testing.T) {
 	}
 	if _, _, err := TypeIcon("x", true, 32); !errors.Is(err, ErrNoPicture) {
 		t.Errorf("no folder icon: %v", err)
+	}
+}
+
+func TestAnIconNamedByAFileMustBeASmallPicture(t *testing.T) {
+	f := newFixture(t)
+	f.iconTheme("32x32/mimetypes/text-x-generic.svg")
+	passwd := f.write(filepath.Join(f.home, "passwd"), "root:x:0:0:root:/root:/bin/bash\n")
+	big := f.write(filepath.Join(f.home, "big.png"), "png")
+	if err := os.Truncate(big, 2<<20); err != nil {
+		t.Fatal(err)
+	}
+	fifo := filepath.Join(f.home, "fifo.png")
+	if err := syscall.Mkfifo(fifo, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	ok := f.write(filepath.Join(f.home, "ok.png"), "png")
+	for name, icon := range map[string]string{"text.desktop": passwd, "big.desktop": big, "fifo.desktop": fifo, "ok.desktop": ok} {
+		f.write(filepath.Join(f.work, name), "[Desktop Entry]\nType=Application\nName=X\nIcon="+icon+"\nExec=x\n")
+	}
+	appImage := f.files("Tool.AppImage")[0]
+	sum := md5.Sum([]byte(xdg.FileURI(appImage)))
+	f.write(filepath.Join(f.user, "icons", "hicolor", "48x48", "apps", "appimagekit_"+hex.EncodeToString(sum[:])+"_tool.png"), "png")
+	if err := os.Truncate(filepath.Join(f.user, "icons", "hicolor", "48x48", "apps", "appimagekit_"+hex.EncodeToString(sum[:])+"_tool.png"), 2<<20); err != nil {
+		t.Fatal(err)
+	}
+	k := f.desk()
+	generic := filepath.Join(f.system, "icons", "Test", "32x32/mimetypes/text-x-generic.svg")
+	cases := map[string]string{"text.desktop": generic, "big.desktop": generic, "fifo.desktop": generic, "ok.desktop": ok, "Tool.AppImage": generic}
+	for name, want := range cases {
+		if got, _ := k.iconOf(filepath.Join(f.work, name), 32); got != want {
+			t.Errorf("%s: got %s, want %s", name, got, want)
+		}
 	}
 }
