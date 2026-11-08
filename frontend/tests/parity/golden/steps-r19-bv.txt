@@ -12,8 +12,8 @@ palette after reset: #FF8389 #FF832B #FCC419 #6FDC8C #3DDBD9 #1D99F3 #BE95FF #FF
 accent row dimmed while rainbow on: true presets disabled: true
 accent: #1D99F3 picker: true
 accent after reset: #FCC419
-info cards: Version  | Hilfe  | Über CannonCommander
-version row: VERSION CannonCommander 0.1.0 GlimStone 4.0.0 rclone 1.71.2 Neu · 8 Nach Updates suchen
+info cards: Version  | Updates | Hilfe  | Über CannonCommander
+version row: VERSION CannonCommander 0.1.0 GlimStone 4.0.0 rclone 1.71.2 Neu · 8 Aktuell
 quantum gone: true
 update: Aktuell
 crypto: rwMK2nXqChT4JYWVypMypnpctDcM9jgWmG | Kein Destination Tag und kein Memo nötig.
