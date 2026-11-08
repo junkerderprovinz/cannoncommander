@@ -4,12 +4,16 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/shortcut"
 )
 
 var errNoOpener = errors.New("neither gio nor xdg-open is installed")
@@ -23,10 +27,27 @@ func (desktopSystem) asks(file string) bool { return startsSomething(file) }
 func (desktopSystem) open(file string) error {
 	for _, c := range [][]string{{"gio", "open"}, {"xdg-open"}} {
 		if p, err := exec.LookPath(c[0]); err == nil {
-			return start(exec.Command(p, append(c[1:], file)...))
+			return start(exec.Command(p, append(c[1:], toOpen(file))...))
 		}
 	}
 	return errNoOpener
+}
+
+// toOpen gives the address of an internet shortcut of Windows, which the
+// Linux desktops know no program for, so a double click opens the page as
+// it does in Explorer. Only addresses of the web and of mail are handed on.
+func toOpen(file string) string {
+	if shortcut.KindOf(file) != shortcut.URL {
+		return file
+	}
+	sc, err := shortcut.Read(file)
+	if err != nil {
+		return file
+	}
+	if u, err := url.Parse(sc.Target); err == nil && slices.Contains([]string{"http", "https", "ftp", "mailto"}, strings.ToLower(u.Scheme)) {
+		return sc.Target
+	}
+	return file
 }
 
 func (desktopSystem) run(file string) error {
