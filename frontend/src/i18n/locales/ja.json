@@ -3032,6 +3032,7 @@
     "forward": "進む",
     "up": "1つ上の階層へ",
     "home": "Share へ",
+    "homeFolder": "ホームフォルダーへ",
     "gotoPath": "パスを入力",
     "selectAll": "すべて選択",
     "invertSel": "選択を反転",

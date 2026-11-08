@@ -3288,6 +3288,7 @@
     "forward": "Naprijed",
     "up": "Razina gore",
     "home": "Na Shareove",
+    "homeFolder": "U osobnu mapu",
     "gotoPath": "Unesi putanju",
     "selectAll": "Označi sve",
     "invertSel": "Obrni odabir",
