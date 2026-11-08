@@ -94,6 +94,9 @@ svg { display: block; }
 
 .panels { flex: 1; min-width: 0; display: grid; grid-template-columns: 1fr; gap: var(--gut); }
 .app.dual .panels { grid-template-columns: 1fr 1fr; }
+.panels.paned { grid-template-columns: 1fr minmax(16rem, 22rem); }
+.app.dual .panels.paned { grid-template-columns: 1fr 1fr minmax(16rem, 22rem); }
+.sidepane { min-width: 0; display: flex; flex-direction: column; }
 .panel { position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 0; padding: 1.35rem .75rem .5rem; margin-top: .9rem; }
 
 /* Tabs ride on the panel's top edge like heading badges; the open one is filled, the others stay quiet. */
@@ -213,7 +216,8 @@ svg { display: block; }
 :root[data-labels-bottombar="reactive"] .bottombar button[aria-current="page"] > span { display: inline; }
 
 .bottombar { display: none; }
-@media (max-width: 1100px) { .app.dual .panels { grid-template-columns: 1fr; } .app.dual .panel:not(.active) { display: none; } }
+@media (max-width: 1100px) { .app.dual .panels { grid-template-columns: 1fr; } .app.dual .panel:not(.active) { display: none; } .panels.paned, .app.dual .panels.paned { grid-template-columns: 1fr minmax(14rem, 18rem); } }
+@media (max-width: 760px) { .sidepane { display: none; } .panels.paned, .app.dual .panels.paned { grid-template-columns: 1fr; } }
 .narrow-only { display: none !important; }
 @media (max-width: 900px) { .menubar { display: none; } .narrow-only { display: inline-flex !important; } }
 @media (max-width: 760px) {
