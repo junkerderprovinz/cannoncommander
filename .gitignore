@@ -4,6 +4,7 @@
 *.bak
 *.log
 *.mjs
+!/scripts/desktop.mjs
 _old
 .idea/
 /backend/backend

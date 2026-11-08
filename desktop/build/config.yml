@@ -1,0 +1,12 @@
+# What `wails3 update build-assets` writes into the Windows manifest and version
+# resource, the macOS Info.plist and the installer. scripts/desktop.mjs runs it
+# on every build and passes the version, which comes from the git tag.
+version: '3'
+
+info:
+  companyName: "junkerderprovinz"
+  productName: "CannonCommander"
+  productIdentifier: "com.junkerderprovinz.cannoncommander"
+  description: "A two-pane file manager."
+  copyright: "junkerderprovinz"
+  comments: "A two-pane file manager."

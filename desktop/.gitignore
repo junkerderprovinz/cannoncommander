@@ -1,0 +1,7 @@
+# scripts/desktop.mjs writes these on every build.
+/build/*
+!/build/appicon.png
+!/build/config.yml
+*.syso
+/desktop
+/desktop.exe
