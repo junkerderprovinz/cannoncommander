@@ -303,6 +303,7 @@
     "empty": "This folder is empty",
     "emptyHint": "Drop files here to upload them",
     "emptyHintDesktop": "Drag files here to copy them into this folder",
+    "renameField": "New name",
     "nothingFound": "Nothing found for {q}",
     "searchedHere": "Searched this folder only",
     "searchedDeep": "Searched all subfolders too",

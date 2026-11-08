@@ -3411,6 +3411,7 @@
     "empty": "See kaust on tühi",
     "emptyHint": "Lohista failid üleslaadimiseks siia",
     "emptyHintDesktop": "Lohista failid siia, et need sellesse kausta kopeerida",
+    "renameField": "Uus nimi",
     "nothingFound": "Päringule {q} ei leitud midagi",
     "searchedHere": "Otsiti ainult sellest kaustast",
     "searchedDeep": "Otsiti ka kõigist alamkaustadest",

@@ -3540,6 +3540,7 @@
     "empty": "Aquesta carpeta és buida",
     "emptyHint": "Deixeu anar fitxers aquí per pujar-los",
     "emptyHintDesktop": "Arrossega fitxers aquí per copiar-los a aquesta carpeta",
+    "renameField": "Nom nou",
     "nothingFound": "No s'ha trobat res per a {q}",
     "searchedHere": "S'ha cercat només en aquesta carpeta",
     "searchedDeep": "S'ha cercat també a totes les subcarpetes",

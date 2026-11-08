@@ -3669,6 +3669,7 @@
     "empty": "Ten folder jest pusty",
     "emptyHint": "Przeciągnij tu pliki, żeby je przesłać",
     "emptyHintDesktop": "Przeciągnij tu pliki, aby skopiować je do tego folderu",
+    "renameField": "Nowa nazwa",
     "nothingFound": "Nic nie znaleziono dla {q}",
     "searchedHere": "Szukano tylko w tym folderze",
     "searchedDeep": "Szukano też we wszystkich podfolderach",

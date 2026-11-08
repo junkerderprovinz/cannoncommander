@@ -3282,6 +3282,7 @@
     "empty": "Folder ini kosong",
     "emptyHint": "Seret fail ke sini untuk memuat naiknya",
     "emptyHintDesktop": "Seret fail ke sini untuk menyalinnya ke dalam folder ini",
+    "renameField": "Nama baharu",
     "nothingFound": "Tiada apa ditemui untuk {q}",
     "searchedHere": "Dicari dalam folder ini sahaja",
     "searchedDeep": "Turut dicari dalam semua subfolder",

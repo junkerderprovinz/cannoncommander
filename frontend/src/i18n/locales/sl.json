@@ -3669,6 +3669,7 @@
     "empty": "Ta mapa je prazna",
     "emptyHint": "Povlecite datoteke sem, da jih naložite",
     "emptyHintDesktop": "Povleci datoteke sem, da jih kopiraš v to mapo",
+    "renameField": "Novo ime",
     "nothingFound": "Za {q} ni nič najdeno",
     "searchedHere": "Iskano samo v tej mapi",
     "searchedDeep": "Iskano tudi v vseh podmapah",

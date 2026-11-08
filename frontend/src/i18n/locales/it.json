@@ -3540,6 +3540,7 @@
     "empty": "Questa cartella è vuota",
     "emptyHint": "Trascina qui i file per caricarli",
     "emptyHintDesktop": "Trascina qui i file per copiarli in questa cartella",
+    "renameField": "Nuovo nome",
     "nothingFound": "Nessun risultato per {q}",
     "searchedHere": "Cercato solo in questa cartella",
     "searchedDeep": "Cercato anche in tutte le sottocartelle",

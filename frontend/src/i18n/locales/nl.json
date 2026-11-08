@@ -3411,6 +3411,7 @@
     "empty": "Deze map is leeg",
     "emptyHint": "Sleep bestanden hierheen om ze te uploaden",
     "emptyHintDesktop": "Sleep bestanden hierheen om ze naar deze map te kopiëren",
+    "renameField": "Nieuwe naam",
     "nothingFound": "Niets gevonden voor {q}",
     "searchedHere": "Alleen in deze map gezocht",
     "searchedDeep": "Ook in alle submappen gezocht",

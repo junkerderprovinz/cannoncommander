@@ -147,6 +147,8 @@ svg { display: block; }
 .row.marked { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .row.marked:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
 .row.marked .t { color: var(--carbon-text); }
+.rn-field { flex: 1 1 auto; min-width: 6rem; height: 1.6em; margin: 0; padding: 0 .35rem; border: 1px solid var(--accent); border-radius: 4px; outline: none; background: var(--carbon-surface3); color: var(--carbon-text); font: inherit; }
+.gcard .rn-field, .citem .rn-field { width: 100%; }
 .band { position: fixed; z-index: 5; pointer-events: none; border: 1px solid var(--accent); border-radius: 2px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
 .row.cut { opacity: .55; }
 .panel.active .row.cursor { outline: 2px solid var(--accent-ink); outline-offset: -2px; }

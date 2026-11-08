@@ -3411,6 +3411,7 @@
     "empty": "Þessi mappa er tóm",
     "emptyHint": "Dragðu skrár hingað til að hlaða þeim upp",
     "emptyHintDesktop": "Dragðu skrár hingað til að afrita þær í þessa möppu",
+    "renameField": "Nýtt heiti",
     "nothingFound": "Ekkert fannst fyrir {q}",
     "searchedHere": "Aðeins leitað í þessari möppu",
     "searchedDeep": "Líka leitað í öllum undirmöppum",

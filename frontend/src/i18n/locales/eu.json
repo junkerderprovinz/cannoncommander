@@ -3411,6 +3411,7 @@
     "empty": "Karpeta hau hutsik dago",
     "emptyHint": "Arrastatu fitxategiak hona igotzeko",
     "emptyHintDesktop": "Arrastatu fitxategiak hona karpeta honetara kopiatzeko",
+    "renameField": "Izen berria",
     "nothingFound": "Ez da ezer aurkitu: {q}",
     "searchedHere": "Karpeta honetan bakarrik bilatu da",
     "searchedDeep": "Azpikarpeta guztietan ere bilatu da",

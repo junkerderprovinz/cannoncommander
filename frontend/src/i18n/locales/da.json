@@ -3411,6 +3411,7 @@
     "empty": "Denne mappe er tom",
     "emptyHint": "Træk filer hertil for at uploade dem",
     "emptyHintDesktop": "Træk filer hertil for at kopiere dem til denne mappe",
+    "renameField": "Nyt navn",
     "nothingFound": "Intet fundet for {q}",
     "searchedHere": "Kun søgt i denne mappe",
     "searchedDeep": "Også søgt i alle undermapper",

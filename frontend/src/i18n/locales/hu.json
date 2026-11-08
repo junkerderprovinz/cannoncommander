@@ -3411,6 +3411,7 @@
     "empty": "Ez a mappa üres",
     "emptyHint": "Húzza ide a fájlokat a feltöltéshez",
     "emptyHintDesktop": "Húzz ide fájlokat, hogy ebbe a mappába másold őket",
+    "renameField": "Új név",
     "nothingFound": "Nincs találat erre: {q}",
     "searchedHere": "Csak ebben a mappában keresett",
     "searchedDeep": "Minden almappában is keresett",

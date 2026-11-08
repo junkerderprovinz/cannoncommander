@@ -3540,6 +3540,7 @@
     "empty": "Esta carpeta está vacía",
     "emptyHint": "Arrastra archivos aquí para subirlos",
     "emptyHintDesktop": "Arrastra archivos aquí para copiarlos a esta carpeta",
+    "renameField": "Nuevo nombre",
     "nothingFound": "No se ha encontrado nada para {q}",
     "searchedHere": "Búsqueda solo en esta carpeta",
     "searchedDeep": "Búsqueda también en todas las subcarpetas",

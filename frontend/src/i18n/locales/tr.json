@@ -3411,6 +3411,7 @@
     "empty": "Bu klasör boş",
     "emptyHint": "Yüklemek için dosyaları buraya sürükle",
     "emptyHintDesktop": "Bu klasöre kopyalamak için dosyaları buraya sürükle",
+    "renameField": "Yeni ad",
     "nothingFound": "{q} için bir şey bulunamadı",
     "searchedHere": "Yalnızca bu klasörde arandı",
     "searchedDeep": "Tüm alt klasörlerde de arandı",

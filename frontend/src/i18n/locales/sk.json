@@ -3669,6 +3669,7 @@
     "empty": "Tento priečinok je prázdny",
     "emptyHint": "Presuňte sem súbory a nahrajte ich",
     "emptyHintDesktop": "Pretiahni sem súbory a skopírujú sa do tohto priečinka",
+    "renameField": "Nový názov",
     "nothingFound": "Pre {q} sa nič nenašlo",
     "searchedHere": "Hľadané len v tomto priečinku",
     "searchedDeep": "Hľadané aj vo všetkých podpriečinkoch",

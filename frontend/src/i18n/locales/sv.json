@@ -3411,6 +3411,7 @@
     "empty": "Den här mappen är tom",
     "emptyHint": "Dra hit filer för att ladda upp dem",
     "emptyHintDesktop": "Dra filer hit för att kopiera dem till den här mappen",
+    "renameField": "Nytt namn",
     "nothingFound": "Inget hittades för {q}",
     "searchedHere": "Sökte bara i den här mappen",
     "searchedDeep": "Sökte även i alla undermappar",
