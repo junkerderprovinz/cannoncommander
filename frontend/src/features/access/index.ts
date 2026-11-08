@@ -78,8 +78,8 @@ export default function setup() {
     say(n ? plural(n, 'access.jobsOpen') : t('access.jobsIdle'));
   }
   action('focusSide', { label: tl('access.focusSide'), g: 'IconMenu', key: 'Alt+1', run: toSide });
-  action('focusLeft', { label: tl('access.focusLeft'), g: 'IconViewSimple', key: 'Alt+2', run: () => toList(0) });
-  action('focusRight', { label: tl('access.focusRight'), g: 'IconCompare', key: 'Alt+3', run: () => toList(1) });
+  action('focusLeft', { label: tl('access.focusLeft'), g: 'IconPaneLeft', key: 'Alt+2', run: () => toList(0) });
+  action('focusRight', { label: tl('access.focusRight'), g: 'IconPaneRight', key: 'Alt+3', run: () => toList(1) });
   action('focusJobs', { label: tl('access.focusJobs'), g: 'IconQueued', key: 'Alt+4', run: toJobs });
 
   // In the sidebar the arrows walk its rows; the frame's keys would move the list's cursor instead.

@@ -56,7 +56,7 @@ for (const [id, s, l] of [['sortName', 'name', 'Name'], ['sortSize', 'size', 'Gr
   CC.action(id, { label: l, checked: () => Files.T().sort === s, run: () => { const t = Files.T(); if (t.sort === s) t.dir *= -1; else Object.assign(t, { sort: s, dir: 1 }); CC.render(); } });
 }
 CC.action('swapPanels', { label: 'Fenster tauschen', g: 'IconSync', key: 'Strg+U', needs: 'dual', run: () => { Files.panels.reverse(); CC.render(); } });
-CC.action('equalPanels', { label: 'Anderes Fenster hierher', g: 'IconCompare', key: 'Strg+.', needs: 'dual', run: () => Files.go(Files.T().path, Files.other()) });
+CC.action('equalPanels', { label: 'Anderes Fenster hierher', g: 'IconPaneSame', key: 'Strg+.', needs: 'dual', run: () => Files.go(Files.T().path, Files.other()) });
 CC.action('refresh', { label: 'Aktualisieren', g: 'IconRefresh', key: 'Strg+R', run: () => { CC.render(); CC.toast('Neu eingelesen'); } });
 CC.action('newTab', { label: 'Neuer Tab', g: 'IconAdd', key: 'Strg+T', run: () => { const p = Files.P(); p.tabs.push(newTab(Files.T().path)); p.cur = p.tabs.length - 1; CC.render(); } });
 CC.action('closeTab', { label: 'Tab schließen', g: 'IconClose', key: 'Strg+W', run: () => { const p = Files.P(); if (p.tabs.length > 1) { p.tabs.splice(p.cur, 1); p.cur = Math.max(0, p.cur - 1); CC.render(); } } });
@@ -94,7 +94,7 @@ function addBookmark(path) {
 function bookmarkMenu(x, y, b) {
   menu(x, y, [
     { label: 'Öffnen', g: 'IconFolderOpen', run: () => Files.go(b.path) },
-    { label: 'Im anderen Fenster öffnen', g: 'IconCompare', run: () => { CC.prefs.dual = true; Files.go(b.path, Files.other()); } },
+    { label: 'Im anderen Fenster öffnen', g: 'IconPaneSend', run: () => { CC.prefs.dual = true; Files.go(b.path, Files.other()); } },
     { label: 'In neuem Tab öffnen', g: 'IconAdd', run: () => { const p = Files.P(); p.tabs.push(newTab(b.path)); p.cur = p.tabs.length - 1; CC.render(); } },
     '-',
     { label: 'Umbenennen', g: 'IconPencil', run: () => win({ title: 'Verknüpfung umbenennen', body: `<div class="well">${frow('Name', `<input class="field m" id="bmn" value="${esc(b.name)}">`)}</div>`,
@@ -121,7 +121,7 @@ function folderItems(path) {
   return [
     { label: 'Öffnen', g: 'IconFolderOpen', run: () => Files.go(path) },
     { label: 'Internen Link kopieren', g: 'IconLink', run: () => CC.copyInternalLink(path) },
-    { label: 'Im anderen Fenster öffnen', g: 'IconCompare', run: () => { CC.prefs.dual = true; Files.go(path, Files.other()); } },
+    { label: 'Im anderen Fenster öffnen', g: 'IconPaneSend', run: () => { CC.prefs.dual = true; Files.go(path, Files.other()); } },
     { label: 'In neuem Tab öffnen', g: 'IconAdd', run: () => { const p = Files.P(); p.tabs.push(newTab(path)); p.cur = p.tabs.length - 1; CC.render(); } },
     { label: 'Als Verknüpfung anlegen', g: 'IconStar', run: () => addBookmark(path) },
   ];
