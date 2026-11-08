@@ -446,6 +446,7 @@
       "startSaved": "起始文件夹已保存",
       "dblclick": "双击文件时",
       "dblclickTip": "双击文件夹总是打开它。",
+      "system": "默认程序",
       "open": "打开",
       "preview": "预览",
       "download": "下载",
@@ -1246,6 +1247,13 @@
       "target": "目标：{path}。",
       "from": "来自 {ip}。"
     }
+  },
+  "desktop": {
+    "launch": "打开",
+    "runTitle": "启动程序?",
+    "runText": "{name} 是一个程序。要启动它，还是只看看内容?",
+    "run": "启动",
+    "show": "查看"
   },
   "diff": {
     "title": "比较文件",
@@ -3427,6 +3435,7 @@
     "noToken": "此令牌不存在",
     "noUserNamed": "用户 {name} 不存在",
     "notAFile": "这不是普通文件",
+    "notStarted": "无法打开文件",
     "notAFolder": "这不是文件夹",
     "notArchive": "这不是压缩包",
     "noTerminal": "CannonCommander 在这台电脑上找不到终端程序",

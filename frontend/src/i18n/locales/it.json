@@ -508,6 +508,7 @@
       "startSaved": "Cartella iniziale salvata",
       "dblclick": "Doppio clic su un file",
       "dblclickTip": "Un doppio clic su una cartella la apre sempre.",
+      "system": "Programma predefinito",
       "open": "Apri",
       "preview": "Anteprima",
       "download": "Scarica",
@@ -1336,6 +1337,13 @@
       "target": "Verso {path}.",
       "from": "Da {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Apri",
+    "runTitle": "Avviare il programma?",
+    "runText": "{name} è un programma. Vuoi avviarlo o solo dargli un'occhiata?",
+    "run": "Avvia",
+    "show": "Dai un'occhiata"
   },
   "diff": {
     "title": "Confronta file",
@@ -3699,6 +3707,7 @@
     "noToken": "Questo token non esiste",
     "noUserNamed": "L'utente {name} non esiste",
     "notAFile": "Non è un file normale",
+    "notStarted": "Non è stato possibile aprire il file",
     "notAFolder": "Non è una cartella",
     "notArchive": "Non è un archivio",
     "noTerminal": "CannonCommander non trova nessun programma di terminale su questo computer",

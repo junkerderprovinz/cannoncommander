@@ -477,6 +477,7 @@
       "startSaved": "Hasierako karpeta gordeta",
       "dblclick": "Klik bikoitza fitxategi batean",
       "dblclickTip": "Karpeta batean klik bikoitza eginez gero, beti irekitzen da.",
+      "system": "Programa lehenetsia",
       "open": "Ireki",
       "preview": "Aurrebista",
       "download": "Deskargatu",
@@ -1291,6 +1292,13 @@
       "target": "Helburua: {path}.",
       "from": "Jatorria: {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Ireki",
+    "runTitle": "Programa abiarazi?",
+    "runText": "{name} programa bat da. Abiarazi nahi duzu ala begiratu bat eman besterik ez?",
+    "run": "Abiarazi",
+    "show": "Begiratu"
   },
   "diff": {
     "title": "Konparatu fitxategiak",
@@ -3563,6 +3571,7 @@
     "noToken": "Token hori ez dago",
     "noUserNamed": "{name} erabiltzailea ez dago",
     "notAFile": "Hau ez da fitxategi arrunt bat",
+    "notStarted": "Ezin izan da fitxategia ireki",
     "notAFolder": "Hau ez da karpeta bat",
     "notArchive": "Hau ez da artxibo bat",
     "noTerminal": "CannonCommanderrek ez du terminal-programarik aurkitzen ordenagailu honetan",

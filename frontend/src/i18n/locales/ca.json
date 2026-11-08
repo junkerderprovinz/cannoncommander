@@ -508,6 +508,7 @@
       "startSaved": "S'ha desat la carpeta inicial",
       "dblclick": "Doble clic en un fitxer",
       "dblclickTip": "Un doble clic en una carpeta sempre l'obre.",
+      "system": "Programa predeterminat",
       "open": "Obre",
       "preview": "Previsualitza",
       "download": "Baixa",
@@ -1336,6 +1337,13 @@
       "target": "Cap a {path}.",
       "from": "Des de {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Obre",
+    "runTitle": "Vols iniciar el programa?",
+    "runText": "{name} és un programa. Vols iniciar-lo o només fer-hi una ullada?",
+    "run": "Inicia",
+    "show": "Mira-ho"
   },
   "diff": {
     "title": "Compara fitxers",
@@ -3699,6 +3707,7 @@
     "noToken": "Aquest testimoni no existeix",
     "noUserNamed": "L'usuari {name} no existeix",
     "notAFile": "Això no és un fitxer normal",
+    "notStarted": "No s'ha pogut obrir el fitxer",
     "notAFolder": "Això no és una carpeta",
     "notArchive": "Això no és un arxiu",
     "noTerminal": "CannonCommander no troba cap programa de terminal en aquest ordinador",

@@ -446,6 +446,7 @@
       "startSaved": "Folder mula disimpan",
       "dblclick": "Klik dua kali pada fail",
       "dblclickTip": "Klik dua kali pada folder sentiasa membukanya.",
+      "system": "Program lalai",
       "open": "Buka",
       "preview": "Pratonton",
       "download": "Muat turun",
@@ -1246,6 +1247,13 @@
       "target": "Ke {path}.",
       "from": "Dari {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Buka",
+    "runTitle": "Mulakan program?",
+    "runText": "{name} ialah program. Mahu memulakannya atau hanya melihatnya?",
+    "run": "Mulakan",
+    "show": "Lihat"
   },
   "diff": {
     "title": "Bandingkan fail",
@@ -3427,6 +3435,7 @@
     "noToken": "Token ini tidak wujud",
     "noUserNamed": "Pengguna {name} tidak wujud",
     "notAFile": "Ini bukan fail biasa",
+    "notStarted": "Fail tidak dapat dibuka",
     "notAFolder": "Ini bukan folder",
     "notArchive": "Ini bukan arkib",
     "noTerminal": "CannonCommander tidak menemui program terminal pada komputer ini",

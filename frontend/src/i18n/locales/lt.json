@@ -539,6 +539,7 @@
       "startSaved": "Pradinis aplankas įrašytas",
       "dblclick": "Dukart spustelėjus failą",
       "dblclickTip": "Dukart spustelėjus aplanką jis visada atsidaro.",
+      "system": "Numatytoji programa",
       "open": "Atidaryti",
       "preview": "Peržiūrėti",
       "download": "Atsisiųsti",
@@ -1381,6 +1382,13 @@
       "target": "Į {path}.",
       "from": "Iš {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Atidaryti",
+    "runTitle": "Paleisti programą?",
+    "runText": "{name} yra programa. Nori ją paleisti ar tik pažiūrėti?",
+    "run": "Paleisti",
+    "show": "Pažiūrėti"
   },
   "diff": {
     "title": "Lyginti failus",
@@ -3835,6 +3843,7 @@
     "noToken": "Tokio žetono nėra",
     "noUserNamed": "Naudotojo {name} nėra",
     "notAFile": "Tai ne įprastas failas",
+    "notStarted": "Failo atidaryti nepavyko",
     "notAFolder": "Tai ne aplankas",
     "notArchive": "Tai ne archyvas",
     "noTerminal": "CannonCommander šiame kompiuteryje neranda jokios terminalo programos",

@@ -446,6 +446,7 @@
       "startSaved": "Đã lưu thư mục khởi đầu",
       "dblclick": "Nhấp đúp vào tệp",
       "dblclickTip": "Nhấp đúp vào thư mục luôn mở thư mục đó.",
+      "system": "Chương trình mặc định",
       "open": "Mở",
       "preview": "Xem trước",
       "download": "Tải xuống",
@@ -1246,6 +1247,13 @@
       "target": "Đến {path}.",
       "from": "Từ {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Mở",
+    "runTitle": "Chạy chương trình?",
+    "runText": "{name} là một chương trình. Bạn muốn chạy nó hay chỉ xem qua?",
+    "run": "Chạy",
+    "show": "Xem qua"
   },
   "diff": {
     "title": "So sánh tệp",
@@ -3427,6 +3435,7 @@
     "noToken": "Không có token này",
     "noUserNamed": "Không có người dùng {name}",
     "notAFile": "Đây không phải tệp thông thường",
+    "notStarted": "Không mở được tệp",
     "notAFolder": "Đây không phải thư mục",
     "notArchive": "Đây không phải tệp nén",
     "noTerminal": "CannonCommander không tìm thấy chương trình terminal nào trên máy tính này",

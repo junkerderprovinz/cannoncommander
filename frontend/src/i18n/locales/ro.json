@@ -508,6 +508,7 @@
       "startSaved": "Dosarul de pornire a fost salvat",
       "dblclick": "Dublu clic pe un fișier",
       "dblclickTip": "Un dublu clic pe un dosar îl deschide întotdeauna.",
+      "system": "Program implicit",
       "open": "Deschide",
       "preview": "Previzualizare",
       "download": "Descarcă",
@@ -1336,6 +1337,13 @@
       "target": "Destinație: {path}.",
       "from": "De la {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Deschide",
+    "runTitle": "Pornești programul?",
+    "runText": "{name} este un program. Vrei să-l pornești sau doar să te uiți la el?",
+    "run": "Pornește",
+    "show": "Uită-te"
   },
   "diff": {
     "title": "Compară fișiere",
@@ -3699,6 +3707,7 @@
     "noToken": "Acest token nu există",
     "noUserNamed": "Utilizatorul {name} nu există",
     "notAFile": "Acesta nu este un fișier obișnuit",
+    "notStarted": "Fișierul nu a putut fi deschis",
     "notAFolder": "Acesta nu este un dosar",
     "notArchive": "Aceasta nu este o arhivă",
     "noTerminal": "CannonCommander nu găsește niciun program de terminal pe acest calculator",

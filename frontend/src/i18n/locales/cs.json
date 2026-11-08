@@ -539,6 +539,7 @@
       "startSaved": "Výchozí složka uložena",
       "dblclick": "Dvojklik na soubor",
       "dblclickTip": "Dvojklik na složku ji vždy otevře.",
+      "system": "Výchozí program",
       "open": "Otevřít",
       "preview": "Náhled",
       "download": "Stáhnout",
@@ -1381,6 +1382,13 @@
       "target": "Cíl: {path}.",
       "from": "Z {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Otevřít",
+    "runTitle": "Spustit program?",
+    "runText": "{name} je program. Chceš ho spustit, nebo si ho jen prohlédnout?",
+    "run": "Spustit",
+    "show": "Prohlédnout"
   },
   "diff": {
     "title": "Porovnat soubory",
@@ -3835,6 +3843,7 @@
     "noToken": "Tento token neexistuje",
     "noUserNamed": "Uživatel {name} neexistuje",
     "notAFile": "To není běžný soubor",
+    "notStarted": "Soubor se nepodařilo otevřít",
     "notAFolder": "To není složka",
     "notArchive": "To není archiv",
     "noTerminal": "CannonCommander na tomto počítači nenašel žádný terminál",

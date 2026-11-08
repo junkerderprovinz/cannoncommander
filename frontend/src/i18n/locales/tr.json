@@ -477,6 +477,7 @@
       "startSaved": "Başlangıç klasörü kaydedildi",
       "dblclick": "Dosyaya çift tıklama",
       "dblclickTip": "Bir klasöre çift tıklamak onu her zaman açar.",
+      "system": "Varsayılan program",
       "open": "Aç",
       "preview": "Önizle",
       "download": "İndir",
@@ -1291,6 +1292,13 @@
       "target": "Hedef: {path}.",
       "from": "Kaynak: {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Aç",
+    "runTitle": "Program başlatılsın mı?",
+    "runText": "{name} bir program. Başlatmak mı istersin, yoksa sadece göz atmak mı?",
+    "run": "Başlat",
+    "show": "Göz at"
   },
   "diff": {
     "title": "Dosyaları karşılaştır",
@@ -3563,6 +3571,7 @@
     "noToken": "Böyle bir token yok",
     "noUserNamed": "{name} kullanıcısı yok",
     "notAFile": "Bu normal bir dosya değil",
+    "notStarted": "Dosya açılamadı",
     "notAFolder": "Bu bir klasör değil",
     "notArchive": "Bu bir arşiv değil",
     "noTerminal": "CannonCommander bu bilgisayarda hiçbir terminal programı bulamıyor",

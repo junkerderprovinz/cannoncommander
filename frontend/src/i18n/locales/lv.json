@@ -508,6 +508,7 @@
       "startSaved": "Sākuma mape saglabāta",
       "dblclick": "Dubultklikšķis uz faila",
       "dblclickTip": "Dubultklikšķis uz mapes to vienmēr atver.",
+      "system": "Noklusējuma programma",
       "open": "Atvērt",
       "preview": "Priekšskatīt",
       "download": "Lejupielādēt",
@@ -1336,6 +1337,13 @@
       "target": "Uz {path}.",
       "from": "No {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Atvērt",
+    "runTitle": "Palaist programmu?",
+    "runText": "{name} ir programma. Vai vēlies to palaist vai tikai apskatīt?",
+    "run": "Palaist",
+    "show": "Apskatīt"
   },
   "diff": {
     "title": "Salīdzināt failus",
@@ -3699,6 +3707,7 @@
     "noToken": "Šāda marķiera nav",
     "noUserNamed": "Lietotāja {name} nav",
     "notAFile": "Tas nav parasts fails",
+    "notStarted": "Failu neizdevās atvērt",
     "notAFolder": "Tā nav mape",
     "notArchive": "Tas nav arhīvs",
     "noTerminal": "CannonCommander šajā datorā neatrod nevienu termināļa programmu",

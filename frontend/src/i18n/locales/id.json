@@ -446,6 +446,7 @@
       "startSaved": "Folder awal disimpan",
       "dblclick": "Klik ganda pada berkas",
       "dblclickTip": "Klik ganda pada folder selalu membukanya.",
+      "system": "Program bawaan",
       "open": "Buka",
       "preview": "Pratinjau",
       "download": "Unduh",
@@ -1246,6 +1247,13 @@
       "target": "Ke {path}.",
       "from": "Dari {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Buka",
+    "runTitle": "Jalankan program?",
+    "runText": "{name} adalah program. Mau menjalankannya atau hanya melihatnya?",
+    "run": "Jalankan",
+    "show": "Lihat"
   },
   "diff": {
     "title": "Bandingkan berkas",
@@ -3427,6 +3435,7 @@
     "noToken": "Token ini tidak ada",
     "noUserNamed": "Pengguna {name} tidak ada",
     "notAFile": "Ini bukan berkas biasa",
+    "notStarted": "Berkas tidak dapat dibuka",
     "notAFolder": "Ini bukan folder",
     "notArchive": "Ini bukan arsip",
     "noTerminal": "CannonCommander tidak menemukan program terminal di komputer ini",

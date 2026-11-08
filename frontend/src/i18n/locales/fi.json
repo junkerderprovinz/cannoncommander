@@ -477,6 +477,7 @@
       "startSaved": "Aloituskansio tallennettu",
       "dblclick": "Tiedoston kaksoisnapsautus",
       "dblclickTip": "Kansion kaksoisnapsautus avaa sen aina.",
+      "system": "Oletusohjelma",
       "open": "Avaa",
       "preview": "Esikatsele",
       "download": "Lataa",
@@ -1291,6 +1292,13 @@
       "target": "Kohde: {path}.",
       "from": "Lähde: {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Avaa",
+    "runTitle": "Käynnistetäänkö ohjelma?",
+    "runText": "{name} on ohjelma. Haluatko käynnistää sen vai vain katsoa sitä?",
+    "run": "Käynnistä",
+    "show": "Katso"
   },
   "diff": {
     "title": "Vertaa tiedostoja",
@@ -3563,6 +3571,7 @@
     "noToken": "Tätä tunnusta ei ole olemassa",
     "noUserNamed": "Käyttäjää {name} ei ole olemassa",
     "notAFile": "Tämä ei ole tavallinen tiedosto",
+    "notStarted": "Tiedostoa ei voitu avata",
     "notAFolder": "Tämä ei ole kansio",
     "notArchive": "Tämä ei ole arkisto",
     "noTerminal": "CannonCommander ei löydä tältä tietokoneelta pääteohjelmaa",

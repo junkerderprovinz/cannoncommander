@@ -477,6 +477,7 @@
       "startSaved": "Algkaust salvestatud",
       "dblclick": "Topeltklõps failil",
       "dblclickTip": "Topeltklõps kaustal avab selle alati.",
+      "system": "Vaikeprogramm",
       "open": "Ava",
       "preview": "Eelvaade",
       "download": "Laadi alla",
@@ -1291,6 +1292,13 @@
       "target": "Sihtkoht: {path}.",
       "from": "Allikas: {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Ava",
+    "runTitle": "Kas käivitada programm?",
+    "runText": "{name} on programm. Kas soovid selle käivitada või lihtsalt vaadata?",
+    "run": "Käivita",
+    "show": "Vaata"
   },
   "diff": {
     "title": "Võrdle faile",
@@ -3563,6 +3571,7 @@
     "noToken": "Sellist luba pole",
     "noUserNamed": "Kasutajat {name} pole olemas",
     "notAFile": "See pole tavaline fail",
+    "notStarted": "Faili ei õnnestunud avada",
     "notAFolder": "See pole kaust",
     "notArchive": "See pole arhiiv",
     "noTerminal": "CannonCommander ei leia selles arvutis ühtegi terminaliprogrammi",

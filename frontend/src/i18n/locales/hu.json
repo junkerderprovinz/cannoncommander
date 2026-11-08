@@ -477,6 +477,7 @@
       "startSaved": "Kezdőmappa mentve",
       "dblclick": "Dupla kattintás egy fájlon",
       "dblclickTip": "Mappán a dupla kattintás mindig megnyitja azt.",
+      "system": "Alapértelmezett program",
       "open": "Megnyitás",
       "preview": "Előnézet",
       "download": "Letöltés",
@@ -1291,6 +1292,13 @@
       "target": "Cél: {path}.",
       "from": "Innen: {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Megnyitás",
+    "runTitle": "Elindítod a programot?",
+    "runText": "{name} egy program. Elindítanád, vagy csak megnéznéd?",
+    "run": "Indítás",
+    "show": "Megnézem"
   },
   "diff": {
     "title": "Fájlok összehasonlítása",
@@ -3563,6 +3571,7 @@
     "noToken": "Ez a token nem létezik",
     "noUserNamed": "A(z) {name} felhasználó nem létezik",
     "notAFile": "Ez nem közönséges fájl",
+    "notStarted": "A fájlt nem sikerült megnyitni",
     "notAFolder": "Ez nem mappa",
     "notArchive": "Ez nem archívum",
     "noTerminal": "A CannonCommander nem talál terminálprogramot ezen a számítógépen",

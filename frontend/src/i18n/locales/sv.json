@@ -477,6 +477,7 @@
       "startSaved": "Startmappen har sparats",
       "dblclick": "Dubbelklick på en fil",
       "dblclickTip": "Ett dubbelklick på en mapp öppnar den alltid.",
+      "system": "Standardprogram",
       "open": "Öppna",
       "preview": "Förhandsgranska",
       "download": "Ladda ned",
@@ -1291,6 +1292,13 @@
       "target": "Mål: {path}.",
       "from": "Från {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Öppna",
+    "runTitle": "Starta programmet?",
+    "runText": "{name} är ett program. Vill du starta det eller bara titta på det?",
+    "run": "Starta",
+    "show": "Titta på det"
   },
   "diff": {
     "title": "Jämför filer",
@@ -3563,6 +3571,7 @@
     "noToken": "Den token finns inte",
     "noUserNamed": "Användaren {name} finns inte",
     "notAFile": "Det här är ingen vanlig fil",
+    "notStarted": "Filen kunde inte öppnas",
     "notAFolder": "Det här är ingen mapp",
     "notArchive": "Det här är inget arkiv",
     "noTerminal": "CannonCommander hittar inget terminalprogram på den här datorn",

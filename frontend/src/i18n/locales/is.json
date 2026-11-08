@@ -477,6 +477,7 @@
       "startSaved": "Upphafsmappa vistuð",
       "dblclick": "Tvísmellt á skrá",
       "dblclickTip": "Tvísmellur á möppu opnar hana alltaf.",
+      "system": "Sjálfgefið forrit",
       "open": "Opna",
       "preview": "Forskoðun",
       "download": "Sækja",
@@ -1291,6 +1292,13 @@
       "target": "Áfangastaður: {path}.",
       "from": "Frá {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Opna",
+    "runTitle": "Ræsa forritið?",
+    "runText": "{name} er forrit. Viltu ræsa það eða bara skoða það?",
+    "run": "Ræsa",
+    "show": "Skoða"
   },
   "diff": {
     "title": "Bera saman skrár",
@@ -3563,6 +3571,7 @@
     "noToken": "Þessi tóki er ekki til",
     "noUserNamed": "Notandinn {name} er ekki til",
     "notAFile": "Þetta er ekki venjuleg skrá",
+    "notStarted": "Ekki tókst að opna skrána",
     "notAFolder": "Þetta er ekki mappa",
     "notArchive": "Þetta er ekki safnskrá",
     "noTerminal": "CannonCommander finnur ekkert útstöðvarforrit á þessari tölvu",

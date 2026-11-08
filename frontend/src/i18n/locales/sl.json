@@ -539,6 +539,7 @@
       "startSaved": "Začetna mapa shranjena",
       "dblclick": "Dvoklik na datoteko",
       "dblclickTip": "Dvoklik na mapo jo vedno odpre.",
+      "system": "Privzeti program",
       "open": "Odpri",
       "preview": "Predogled",
       "download": "Prenesi",
@@ -1381,6 +1382,13 @@
       "target": "Cilj: {path}.",
       "from": "Z {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Odpri",
+    "runTitle": "Zaženem program?",
+    "runText": "{name} je program. Ga želiš zagnati ali si ga samo ogledati?",
+    "run": "Zaženi",
+    "show": "Oglej si"
   },
   "diff": {
     "title": "Primerjaj datoteki",
@@ -3835,6 +3843,7 @@
     "noToken": "Ta žeton ne obstaja",
     "noUserNamed": "Uporabnik {name} ne obstaja",
     "notAFile": "To ni navadna datoteka",
+    "notStarted": "Datoteke ni bilo mogoče odpreti",
     "notAFolder": "To ni mapa",
     "notArchive": "To ni arhiv",
     "noTerminal": "CannonCommander na tem računalniku ne najde nobenega terminala",

@@ -477,6 +477,7 @@
       "startSaved": "Startmap opgeslagen",
       "dblclick": "Dubbelklik op een bestand",
       "dblclickTip": "Een dubbelklik op een map opent die altijd.",
+      "system": "Standaardprogramma",
       "open": "Openen",
       "preview": "Voorbeeld",
       "download": "Downloaden",
@@ -1291,6 +1292,13 @@
       "target": "Doel: {path}.",
       "from": "Vanaf {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Openen",
+    "runTitle": "Programma starten?",
+    "runText": "{name} is een programma. Wil je het starten of er alleen even naar kijken?",
+    "run": "Starten",
+    "show": "Bekijken"
   },
   "diff": {
     "title": "Bestanden vergelijken",
@@ -3563,6 +3571,7 @@
     "noToken": "Dit token bestaat niet",
     "noUserNamed": "De gebruiker {name} bestaat niet",
     "notAFile": "Dit is geen gewoon bestand",
+    "notStarted": "Het bestand kon niet worden geopend",
     "notAFolder": "Dit is geen map",
     "notArchive": "Dit is geen archief",
     "noTerminal": "CannonCommander vindt geen terminalprogramma op deze computer",

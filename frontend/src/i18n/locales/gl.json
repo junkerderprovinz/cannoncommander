@@ -477,6 +477,7 @@
       "startSaved": "Cartafol inicial gardado",
       "dblclick": "Dobre clic nun ficheiro",
       "dblclickTip": "Un dobre clic nun cartafol sempre o abre.",
+      "system": "Programa predeterminado",
       "open": "Abrir",
       "preview": "Vista previa",
       "download": "Descargar",
@@ -1291,6 +1292,13 @@
       "target": "Destino: {path}.",
       "from": "Desde {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Abrir",
+    "runTitle": "Iniciar o programa?",
+    "runText": "{name} é un programa. Queres inicialo ou só botarlle unha ollada?",
+    "run": "Iniciar",
+    "show": "Botar unha ollada"
   },
   "diff": {
     "title": "Comparar ficheiros",
@@ -3563,6 +3571,7 @@
     "noToken": "Ese token non existe",
     "noUserNamed": "O usuario {name} non existe",
     "notAFile": "Isto non é un ficheiro normal",
+    "notStarted": "Non se puido abrir o ficheiro",
     "notAFolder": "Isto non é un cartafol",
     "notArchive": "Isto non é un arquivo",
     "noTerminal": "CannonCommander non atopa ningún programa de terminal neste computador",

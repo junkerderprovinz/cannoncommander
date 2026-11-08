@@ -477,6 +477,7 @@
       "startSaved": "Startmappe gemt",
       "dblclick": "Dobbeltklik på en fil",
       "dblclickTip": "Et dobbeltklik på en mappe åbner den altid.",
+      "system": "Standardprogram",
       "open": "Åbn",
       "preview": "Forhåndsvisning",
       "download": "Download",
@@ -1291,6 +1292,13 @@
       "target": "Mål: {path}.",
       "from": "Fra {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Åbn",
+    "runTitle": "Start programmet?",
+    "runText": "{name} er et program. Vil du starte det eller bare kigge på det?",
+    "run": "Start",
+    "show": "Kig på det"
   },
   "diff": {
     "title": "Sammenlign filer",
@@ -3563,6 +3571,7 @@
     "noToken": "Dette token findes ikke",
     "noUserNamed": "Brugeren {name} findes ikke",
     "notAFile": "Det er ikke en almindelig fil",
+    "notStarted": "Filen kunne ikke åbnes",
     "notAFolder": "Det er ikke en mappe",
     "notArchive": "Det er ikke et arkiv",
     "noTerminal": "CannonCommander finder intet terminalprogram på denne computer",

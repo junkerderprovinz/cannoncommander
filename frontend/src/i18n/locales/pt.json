@@ -508,6 +508,7 @@
       "startSaved": "Pasta inicial guardada",
       "dblclick": "Duplo clique num ficheiro",
       "dblclickTip": "Um duplo clique numa pasta abre-a sempre.",
+      "system": "Programa predefinido",
       "open": "Abrir",
       "preview": "Pré-visualizar",
       "download": "Transferir",
@@ -1336,6 +1337,13 @@
       "target": "Para {path}.",
       "from": "De {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Abrir",
+    "runTitle": "Iniciar o programa?",
+    "runText": "{name} é um programa. Queres iniciá-lo ou só dar uma vista de olhos?",
+    "run": "Iniciar",
+    "show": "Dar uma vista de olhos"
   },
   "diff": {
     "title": "Comparar ficheiros",
@@ -3699,6 +3707,7 @@
     "noToken": "Esse token não existe",
     "noUserNamed": "O utilizador {name} não existe",
     "notAFile": "Isto não é um ficheiro normal",
+    "notStarted": "Não foi possível abrir o ficheiro",
     "notAFolder": "Isto não é uma pasta",
     "notArchive": "Isto não é um arquivo",
     "noTerminal": "O CannonCommander não encontra nenhum programa de terminal neste computador",

@@ -4,6 +4,7 @@ import { segItems } from '@/ui/kit';
 import { Button, Card, FieldRow, FieldRowGroup, PathField, Selector, Toggle } from '@glimstone/vue';
 import { ref } from 'vue';
 import { admin, exists } from '@/api/admin';
+import { host } from '@/core/host';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { useUnraid } from '@/features/unraid/state';
@@ -14,6 +15,8 @@ const U = useUnraid();
 const start = ref(prefs.startFolder || useUser().me.home || '/');
 const field = ref<InstanceType<typeof PathField> | null>(null);
 const CAPS: [number, string][] = [[0, c('general.noCap')], [25, '25 MB/s'], [50, '50 MB/s'], [100, '100 MB/s'], [200, '200 MB/s']];
+// Only the desktop app can hand a file to the computer's own programs.
+const DBLCLICK = [...(host.desktop ? [['system', c('general.system')]] : []), ['open', c('general.open')], ['preview', c('general.preview')], ['download', c('general.download')]] as [string, string][];
 const AFTER: [number, string][] = [[0, c('general.always')], [60, c('general.after1m')], [600, c('general.after10m')], [3600, c('general.after1h')]];
 
 async function save() {
@@ -52,7 +55,7 @@ async function testNote() {
   <Card :title="c('general.use')">
     <FieldRowGroup>
       <FieldRow :label="c('general.start')" :hint="c('general.startTip')"><PathField ref="field" v-model="start" v-bind="pathField('a-start')" @change="save" @picked="save" /></FieldRow>
-      <FieldRow :label="c('general.dblclick')" :hint="c('general.dblclickTip')"><Selector v-model="P.dblclick" :items="segItems([['open', c('general.open')], ['preview', c('general.preview')], ['download', c('general.download')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+      <FieldRow :label="c('general.dblclick')" :hint="c('general.dblclickTip')"><Selector v-model="P.dblclick" :items="segItems(DBLCLICK)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     </FieldRowGroup>
   </Card>
   <Card :title="c('general.delete')">

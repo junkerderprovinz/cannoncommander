@@ -539,6 +539,7 @@
       "startSaved": "Zapisano folder startowy",
       "dblclick": "Podwójne kliknięcie pliku",
       "dblclickTip": "Podwójne kliknięcie folderu zawsze go otwiera.",
+      "system": "Program domyślny",
       "open": "Otwórz",
       "preview": "Podgląd",
       "download": "Pobierz",
@@ -1381,6 +1382,13 @@
       "target": "Cel: {path}.",
       "from": "Z {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Otwórz",
+    "runTitle": "Uruchomić program?",
+    "runText": "{name} to program. Chcesz go uruchomić czy tylko obejrzeć?",
+    "run": "Uruchom",
+    "show": "Obejrzyj"
   },
   "diff": {
     "title": "Porównaj pliki",
@@ -3835,6 +3843,7 @@
     "noToken": "Ten token nie istnieje",
     "noUserNamed": "Użytkownik {name} nie istnieje",
     "notAFile": "To nie jest zwykły plik",
+    "notStarted": "Nie udało się otworzyć pliku",
     "notAFolder": "To nie jest folder",
     "notArchive": "To nie jest archiwum",
     "noTerminal": "CannonCommander nie znajduje na tym komputerze żadnego programu terminala",

@@ -446,6 +446,7 @@
       "startSaved": "시작 폴더를 저장했습니다",
       "dblclick": "파일을 두 번 클릭하면",
       "dblclickTip": "폴더는 두 번 클릭하면 항상 열립니다.",
+      "system": "기본 프로그램",
       "open": "열기",
       "preview": "미리 보기",
       "download": "다운로드",
@@ -1246,6 +1247,13 @@
       "target": "대상: {path}.",
       "from": "출처: {ip}."
     }
+  },
+  "desktop": {
+    "launch": "열기",
+    "runTitle": "프로그램을 실행할까요?",
+    "runText": "{name}은(는) 프로그램입니다. 실행할까요, 아니면 내용만 볼까요?",
+    "run": "실행",
+    "show": "내용 보기"
   },
   "diff": {
     "title": "파일 비교",
@@ -3427,6 +3435,7 @@
     "noToken": "이 토큰이 없습니다",
     "noUserNamed": "{name} 사용자가 없습니다",
     "notAFile": "일반 파일이 아닙니다",
+    "notStarted": "파일을 열 수 없습니다",
     "notAFolder": "폴더가 아닙니다",
     "notArchive": "압축 파일이 아닙니다",
     "noTerminal": "이 컴퓨터에서 터미널 프로그램을 찾지 못했습니다",

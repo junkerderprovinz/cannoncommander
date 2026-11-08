@@ -539,6 +539,7 @@
       "startSaved": "Úvodný priečinok uložený",
       "dblclick": "Dvojklik na súbor",
       "dblclickTip": "Dvojklik na priečinok ho vždy otvorí.",
+      "system": "Predvolený program",
       "open": "Otvoriť",
       "preview": "Náhľad",
       "download": "Stiahnuť",
@@ -1381,6 +1382,13 @@
       "target": "Cieľ: {path}.",
       "from": "Z {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Otvoriť",
+    "runTitle": "Spustiť program?",
+    "runText": "{name} je program. Chceš ho spustiť, alebo si ho len pozrieť?",
+    "run": "Spustiť",
+    "show": "Pozrieť"
   },
   "diff": {
     "title": "Porovnať súbory",
@@ -3835,6 +3843,7 @@
     "noToken": "Tento token neexistuje",
     "noUserNamed": "Používateľ {name} neexistuje",
     "notAFile": "To nie je bežný súbor",
+    "notStarted": "Súbor sa nepodarilo otvoriť",
     "notAFolder": "To nie je priečinok",
     "notArchive": "To nie je archív",
     "noTerminal": "CannonCommander na tomto počítači nenašiel žiadny terminál",

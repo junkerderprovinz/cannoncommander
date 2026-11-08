@@ -1,0 +1,7 @@
+{
+  "launch": "Öffnen",
+  "runTitle": "Programm starten?",
+  "runText": "{name} ist ein Programm. Möchtest du es starten oder lieber nur anschauen?",
+  "run": "Starten",
+  "show": "Anschauen"
+}

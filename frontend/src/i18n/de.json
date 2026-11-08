@@ -468,6 +468,7 @@
     "noToken": "Diesen Token gibt es nicht",
     "noUserNamed": "Den Benutzer {name} gibt es nicht",
     "notAFile": "Das ist keine gewöhnliche Datei",
+    "notStarted": "Die Datei ließ sich nicht öffnen",
     "notAFolder": "Das ist kein Ordner",
     "notArchive": "Das ist kein Archiv",
     "noTerminal": "CannonCommander findet auf diesem Rechner kein Terminal-Programm",

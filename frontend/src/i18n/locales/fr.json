@@ -508,6 +508,7 @@
       "startSaved": "Dossier de départ enregistré",
       "dblclick": "Double-clic sur un fichier",
       "dblclickTip": "Un double-clic sur un dossier l'ouvre toujours.",
+      "system": "Programme par défaut",
       "open": "Ouvrir",
       "preview": "Aperçu",
       "download": "Télécharger",
@@ -1336,6 +1337,13 @@
       "target": "Vers {path}.",
       "from": "Depuis {ip}."
     }
+  },
+  "desktop": {
+    "launch": "Ouvrir",
+    "runTitle": "Lancer le programme ?",
+    "runText": "{name} est un programme. Tu veux le lancer ou juste y jeter un œil ?",
+    "run": "Lancer",
+    "show": "Y jeter un œil"
   },
   "diff": {
     "title": "Comparer des fichiers",
@@ -3699,6 +3707,7 @@
     "noToken": "Ce jeton n'existe pas",
     "noUserNamed": "L'utilisateur {name} n'existe pas",
     "notAFile": "Ce n'est pas un fichier ordinaire",
+    "notStarted": "Le fichier n'a pas pu s'ouvrir",
     "notAFolder": "Ce n'est pas un dossier",
     "notArchive": "Ce n'est pas une archive",
     "noTerminal": "CannonCommander ne trouve aucun programme de terminal sur cet ordinateur",
