@@ -83,6 +83,13 @@ describe('the helpers the prototype shares', () => {
     }
   });
 
+  it('keeps its own markup and escaped quotes out of comments and strings', () => {
+    expect(highlight("$log = Join-Path $PSScriptRoot 'e-gui.log' # where \"it\" goes", 'code', 'ps1'))
+      .toBe('$log = Join-Path $PSScriptRoot &#39;e-gui.log&#39; <i class="c"># where &quot;it&quot; goes</i>');
+    expect(highlight('Write-Host "a # b"', 'code', 'ps1')).toBe('Write-Host <i class="s">&quot;a # b&quot;</i>');
+    expect(highlight("name: 'x' # note", 'code', 'yaml')).toBe('<i class="k">name</i>: &#39;x&#39; <i class="c"># note</i>');
+  });
+
   it('keeps links to the web and drops script addresses', () => {
     expect(md('[Handbuch](https://docs.unraid.net)')).toContain('href="https://docs.unraid.net"');
     expect(md('[klick](javascript:void)')).toBe('<p>klick</p>');

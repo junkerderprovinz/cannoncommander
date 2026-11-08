@@ -83,8 +83,6 @@ export function installDragDrop() {
     clearDrop();
   }
   const paths = (d: Drag) => d.items.map((k) => join(k.at || d.folder, k.name));
-  // The same folder for every row, which the shell needs to hand them over.
-  const oneFolder = (items: Entry[]) => items.every((k) => (k.at || '') === (items[0]!.at || ''));
 
   document.addEventListener('dragstart', (e) => {
     const row = (e.target as Element).closest?.<HTMLElement>('.row');
@@ -95,7 +93,7 @@ export function installDragDrop() {
     if (!k) return;
     if (!tab.marked.has(k.name)) tab.marked = new Set([k.name]);
     drag = { from: F.active, items: F.sel(), folder: tab.path, shift: e.shiftKey };
-    const onDisk = host.desktop && !inArchive(tab.path) && oneFolder(drag.items);
+    const onDisk = host.desktop && !inArchive(tab.path) && drag.items.every((k) => !inArchive(k.at || ''));
     // WebView2 drags only within the page, so on Windows the shell's own drag carries the files, inside the window as
     // well, where the page sees it like any other and drops it the usual way.
     if (onDisk && host.os === 'windows') {

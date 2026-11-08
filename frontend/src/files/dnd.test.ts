@@ -79,4 +79,13 @@ describe('the window of the desktop app', () => {
     await new Promise((r) => setTimeout(r, 0));
     expect(moved.map((j) => [j.from, j.dest, j.items.map((k) => k.name)])).toEqual([[HERE, HERE + '/Bilder', ['notes.txt']]]);
   });
+
+  it('drops onto a drive in This PC like onto any folder', () => {
+    usePanels().T().path = '/';
+    useListing().lists.set('/', { path: '/', items: [item('C', true), item('net', true)] });
+    document.body.innerHTML = `<div class="panel" data-panel="0"><div class="list"><div class="row dir dcard" data-idx="0"></div><div class="row dir dcard" data-idx="1"></div></div></div>`;
+    document.elementFromPoint = () => document.querySelector('.dcard');
+    hooks().handlePlatformFileDrop(['C:\\Temp\\a.txt'], 10, 10);
+    expect(dropped).toEqual([[['C:\\Temp\\a.txt'], '/C', 'auto']]);
+  });
 });
