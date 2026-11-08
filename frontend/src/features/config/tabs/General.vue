@@ -4,16 +4,19 @@ import { segItems } from '@/ui/kit';
 import { Button, Card, FieldRow, FieldRowGroup, PathField, Selector, Toggle } from '@glimstone/vue';
 import { ref } from 'vue';
 import { admin, exists } from '@/api/admin';
-import { host } from '@/core/host';
+import { host, windowsPaths } from '@/core/host';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import DesktopRows from '@/features/desktop/DesktopRows.vue';
 import { useUnraid } from '@/features/unraid/state';
+import { nativePath, typedPath } from '@/files/paths';
 import { useUser } from '@/stores/user';
 import { c, cn, fail, P } from '@/features/config/shared';
 
 const U = useUnraid();
-const start = ref(prefs.startFolder || useUser().me.home || '/');
+const home = useUser().me.home || '/';
+// The desktop app shows and takes the folder the way the computer writes it.
+const start = ref(nativePath(prefs.startFolder || home, windowsPaths()));
 const field = ref<InstanceType<typeof PathField> | null>(null);
 const CAPS: [number, string][] = [[0, c('general.noCap')], [25, '25 MB/s'], [50, '50 MB/s'], [100, '100 MB/s'], [200, '200 MB/s']];
 // Only the desktop app can hand a file to the computer's own programs.
@@ -21,9 +24,10 @@ const DBLCLICK = [...(host.desktop ? [['system', c('general.system')]] : []), ['
 const AFTER: [number, string][] = [[0, c('general.always')], [60, c('general.after1m')], [600, c('general.after10m')], [3600, c('general.after1h')]];
 
 async function save() {
-  const v = start.value.trim();
+  const v = host.desktop ? typedPath(start.value, { windows: windowsPaths(), home }) : start.value.trim();
   if (!(await exists(v))) return fail(c('noFolder'), field.value?.input);
   setPref('startFolder', v);
+  start.value = nativePath(v, windowsPaths());
   toast(c('general.startSaved'));
 }
 
