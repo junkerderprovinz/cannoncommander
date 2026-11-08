@@ -1984,6 +1984,14 @@
     },
     "notCopied": "La duplicació no ha funcionat"
   },
+  "openwith": {
+    "menu": "Obre amb",
+    "looking": "S'estan cercant aplicacions …",
+    "none": "No s'ha trobat cap aplicació",
+    "other": "Tria una altra aplicació",
+    "choose": "Tria una aplicació",
+    "search": "Cerca aplicacions"
+  },
   "palette": {
     "title": "Cerca una ordre",
     "placeholder": "Cerca una ordre o una carpeta",
@@ -3607,6 +3615,7 @@
   },
   "server": {
     "adminsOnly": "Només els administradors poden fer això",
+    "appNotStarted": "{app} no s'ha pogut iniciar",
     "archivePassword": "L'arxiu necessita la contrasenya correcta",
     "archiveUnreadable": "No es pot llegir l'arxiu",
     "badName": "Aquest nom no és vàlid",
@@ -3679,6 +3688,7 @@
     "namePasswordNeeded": "Calen el nom i la contrasenya",
     "nameTaken": "Aquest nom ja existeix aquí",
     "nameTooLong": "El nom és massa llarg per al sistema de fitxers",
+    "noAppDialog": "Aquest ordinador no té cap diàleg propi per triar una aplicació",
     "noFolder": "Aquesta carpeta no existeix",
     "noFolderForFile": "La carpeta d'aquest fitxer no existeix",
     "noGroup": "Aquest grup no existeix",
@@ -3774,6 +3784,7 @@
     "trashEmpty": "La paperera és buida",
     "trashOtherDisk": "Això és en un sistema de fitxers diferent del de la seva paperera. Millor suprimiu-ho directament",
     "trashShareRoot": "Una Share sencera o una unitat sencera no pot anar a la paperera",
+    "unknownApp": "Aquest ordinador no ofereix aquesta aplicació per al fitxer",
     "unraidReadOnly": "L'escriptura a l'Unraid està desactivada",
     "uploadGone": "La pujada començada ja no existeix. Torneu a començar",
     "uploadRunning": "S'està pujant un fitxer amb aquest nom ara mateix",

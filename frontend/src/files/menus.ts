@@ -19,16 +19,20 @@ export function folderItems(path: string): MenuItem[] {
   ];
 }
 
+type RowExtra = (sel: ReturnType<ReturnType<typeof usePanels>['sel']>, path: string) => MenuEntry[];
 // Features add their own rows for the selection here, such as colours and tags, between sharing and properties.
-const rowExtras: ((sel: ReturnType<ReturnType<typeof usePanels>['sel']>, path: string) => MenuEntry[])[] = [];
-export const addRowMenuItems = (fn: (typeof rowExtras)[number]) => rowExtras.push(fn);
+const rowExtras: RowExtra[] = [];
+export const addRowMenuItems = (fn: RowExtra) => rowExtras.push(fn);
+// Rows that open files another way stand below Ansehen and Bearbeiten, where Explorer keeps Öffnen mit.
+const openExtras: RowExtra[] = [];
+export const addOpenMenuItems = (fn: RowExtra) => openExtras.push(fn);
 
 export function rowMenu(x: number, y: number) {
   const F = usePanels();
   const tab = F.T(), sel = F.sel(), file = sel.find((k) => !k.dir);
   const oneFolder = sel.length === 1 && sel[0]!.dir && !sel[0]!.up && !inArchive(tab.path);
   const items: MenuEntry[] = [
-    ...(oneFolder ? folderItems(join(tab.path, sel[0]!.name)) : ['view', 'edit', ...(file?.archive || sel[0]?.kind === 'arch' ? ['unpack', 'testArchive'] : [])]), '-',
+    ...(oneFolder ? folderItems(join(tab.path, sel[0]!.name)) : ['view', 'edit', ...openExtras.flatMap((fn) => fn(sel, tab.path)), ...(file?.archive || sel[0]?.kind === 'arch' ? ['unpack', 'testArchive'] : [])]), '-',
     'copy', 'move', 'rename', 'clipCut', 'clipCopy', '-',
     'share', 'collect', 'download', 'pack', 'checksum', 'symlink', ...(sel.length === 2 && sel.every((k) => !k.dir) ? ['diff'] : []), '-',
     ...rowExtras.flatMap((fn) => fn(sel, tab.path)), '-', 'props', 'fixPerms', 'copyPath', '-', 'delete',

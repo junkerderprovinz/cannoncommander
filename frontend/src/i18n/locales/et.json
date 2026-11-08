@@ -1917,6 +1917,14 @@
     },
     "notCopied": "Dubleerimine ebaõnnestus"
   },
+  "openwith": {
+    "menu": "Ava rakendusega",
+    "looking": "Otsin rakendusi …",
+    "none": "Rakendust ei leitud",
+    "other": "Vali muu rakendus",
+    "choose": "Vali rakendus",
+    "search": "Otsi rakendusi"
+  },
   "palette": {
     "title": "Otsi käsku",
     "placeholder": "Otsi käsku või kausta",
@@ -3475,6 +3483,7 @@
   },
   "server": {
     "adminsOnly": "Seda tohivad teha ainult administraatorid",
+    "appNotStarted": "{app} ei käivitunud",
     "archivePassword": "Arhiiv vajab õiget parooli",
     "archiveUnreadable": "Arhiivi ei saa lugeda",
     "badName": "See nimi ei sobi",
@@ -3543,6 +3552,7 @@
     "namePasswordNeeded": "Vaja on nii nime kui ka parooli",
     "nameTaken": "See nimi on siin juba olemas",
     "nameTooLong": "Nimi on failisüsteemi jaoks liiga pikk",
+    "noAppDialog": "Sellel arvutil pole rakenduse valimiseks oma dialoogi",
     "noFolder": "Seda kausta pole olemas",
     "noFolderForFile": "Selle faili kausta pole olemas",
     "noGroup": "Sellist rühma pole",
@@ -3637,6 +3647,7 @@
     "trashEmpty": "Prügikast on tühi",
     "trashOtherDisk": "See asub teises failisüsteemis kui selle prügikast. Kustuta see pigem otse",
     "trashShareRoot": "Tervet Share'i või draivi ei saa prügikasti panna",
+    "unknownApp": "See arvuti ei paku seda rakendust selle faili jaoks",
     "unraidReadOnly": "Kirjutamine Unraidi on välja lülitatud",
     "uploadGone": "Alustatud üleslaadimine on kadunud. Alusta uuesti",
     "uploadRunning": "Sama nimega faili laaditakse praegu üles",

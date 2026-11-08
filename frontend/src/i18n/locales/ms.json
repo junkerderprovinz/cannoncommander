@@ -1850,6 +1850,14 @@
     },
     "notCopied": "Penduaan gagal"
   },
+  "openwith": {
+    "menu": "Buka dengan",
+    "looking": "Mencari aplikasi …",
+    "none": "Tiada aplikasi ditemui",
+    "other": "Pilih aplikasi lain",
+    "choose": "Pilih aplikasi",
+    "search": "Cari aplikasi"
+  },
   "palette": {
     "title": "Cari arahan",
     "placeholder": "Cari arahan atau folder",
@@ -3343,6 +3351,7 @@
   },
   "server": {
     "adminsOnly": "Hanya pentadbir boleh melakukannya",
+    "appNotStarted": "{app} tidak dapat dimulakan",
     "archivePassword": "Arkib ini memerlukan kata laluan yang betul",
     "archiveUnreadable": "Arkib ini tidak dapat dibaca",
     "badName": "Nama ini tidak boleh digunakan",
@@ -3407,6 +3416,7 @@
     "namePasswordNeeded": "Nama dan kata laluan kedua-duanya diperlukan",
     "nameTaken": "Nama ini sudah ada di sini",
     "nameTooLong": "Nama ini terlalu panjang untuk sistem fail",
+    "noAppDialog": "Komputer ini tiada dialog sendiri untuk memilih aplikasi",
     "noFolder": "Folder ini tidak wujud",
     "noFolderForFile": "Folder untuk fail ini tidak wujud",
     "noGroup": "Kumpulan ini tidak wujud",
@@ -3500,6 +3510,7 @@
     "trashEmpty": "Tong sampah kosong",
     "trashOtherDisk": "Ini berada pada sistem fail yang berlainan daripada tong sampahnya. Lebih baik padam terus",
     "trashShareRoot": "Seluruh Share atau seluruh volum tidak boleh dimasukkan ke tong sampah",
+    "unknownApp": "Komputer ini tidak menawarkan aplikasi itu untuk fail ini",
     "unraidReadOnly": "Akses tulis ke Unraid dimatikan",
     "uploadGone": "Muat naik yang sudah dimulakan telah hilang. Sila mulakan semula",
     "uploadRunning": "Fail dengan nama ini sedang dimuat naik",

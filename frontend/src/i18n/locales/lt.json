@@ -2051,6 +2051,14 @@
     },
     "notCopied": "Dubliuoti nepavyko"
   },
+  "openwith": {
+    "menu": "Atidaryti naudojant",
+    "looking": "Ieškoma programų …",
+    "none": "Programų nerasta",
+    "other": "Pasirinkti kitą programą",
+    "choose": "Pasirinkti programą",
+    "search": "Ieškoti programų"
+  },
   "palette": {
     "title": "Ieškoti komandos",
     "placeholder": "Ieškoti komandos ar aplanko",
@@ -3739,6 +3747,7 @@
   },
   "server": {
     "adminsOnly": "Tai gali tik administratoriai",
+    "appNotStarted": "{app} nepavyko paleisti",
     "archivePassword": "Archyvui reikia teisingo slaptažodžio",
     "archiveUnreadable": "Archyvo perskaityti nepavyksta",
     "badName": "Toks pavadinimas netinka",
@@ -3815,6 +3824,7 @@
     "namePasswordNeeded": "Reikia vardo ir slaptažodžio",
     "nameTaken": "Toks pavadinimas čia jau yra",
     "nameTooLong": "Pavadinimas per ilgas failų sistemai",
+    "noAppDialog": "Šis kompiuteris neturi savo dialogo programai pasirinkti",
     "noFolder": "Tokio aplanko nėra",
     "noFolderForFile": "Šio failo aplanko nėra",
     "noGroup": "Tokios grupės nėra",
@@ -3911,6 +3921,7 @@
     "trashEmpty": "Šiukšlinė tuščia",
     "trashOtherDisk": "Tai yra kitoje failų sistemoje nei jo šiukšlinė. Geriau ištrink tiesiogiai",
     "trashShareRoot": "Viso Share ar viso disko negalima perkelti į šiukšlinę",
+    "unknownApp": "Šis kompiuteris šiam failui tos programos nesiūlo",
     "unraidReadOnly": "Rašymas į Unraid išjungtas",
     "uploadGone": "Pradėtas įkėlimas dingo. Pradėk iš naujo",
     "uploadRunning": "Failas tokiu pavadinimu dabar įkeliamas",
