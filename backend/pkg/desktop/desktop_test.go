@@ -3,6 +3,7 @@ package desktop
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -75,5 +76,16 @@ func TestTheContainerIsLeftAlone(t *testing.T) {
 	h.ServeHTTP(rec, httptest.NewRequest("GET", "http://nas.local/api/v1/system", nil))
 	if rec.Code != http.StatusTeapot || Active() {
 		t.Fatalf("a server without the desktop app answered %d", rec.Code)
+	}
+}
+
+func TestTheWindowKeepsTheFoldersItStartsWith(t *testing.T) {
+	h := guarded(t)
+	rec := httptest.NewRecorder()
+	open := `[{"folder":"D:\\Daten"}]`
+	h.ServeHTTP(rec, httptest.NewRequest("GET", "http://127.0.0.1:47321"+EnterPath+"?"+url.Values{"key": {"s3cret"}, "open": {open}}.Encode(), nil))
+	loc, err := url.Parse(rec.Header().Get("Location"))
+	if rec.Code != http.StatusSeeOther || err != nil || loc.Path != "/" || loc.Query().Get("open") != open || loc.Query().Has("key") {
+		t.Fatalf("got %d to %q", rec.Code, rec.Header().Get("Location"))
 	}
 }
