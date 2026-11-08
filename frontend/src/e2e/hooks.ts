@@ -57,7 +57,7 @@ function nameSelects() {
     if (open && list.parentElement !== document.body) document.body.append(list);
     if (!open && list.parentElement === document.body) closedLists().append(list);
   });
-  document.querySelectorAll<HTMLElement>('.glim-select-content--menu').forEach((list) => {
+  document.querySelectorAll<HTMLElement>('.glim-select-content').forEach((list) => {
     const group = list.querySelector<HTMLElement>('.glim-select-group');
     if (group) group.id = list.dataset.state === 'open' ? 'menu' : '';
     list.querySelectorAll<HTMLElement>('[role=option]').forEach((row) => {

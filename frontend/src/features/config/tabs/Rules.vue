@@ -93,7 +93,7 @@ const probeState = { who: 'anna', path: '/mnt/user/backups' };
   </Card>
   <Card :title="c('rules.probe')">
     <FieldRowGroup>
-      <FieldRow :label="c('rules.who')"><Select v-model="probe.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" rows="menu" /></FieldRow>
+      <FieldRow :label="c('rules.who')"><Select v-model="probe.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" /></FieldRow>
       <FieldRow :label="c('rules.path')"><PathField v-model="probe.path" v-bind="pathField('a-ppath')" /></FieldRow>
       <FieldRow :label="c('rules.result')" :hint="c('rules.resultTip')"><Pill :tone="result.tone">{{ result.word }}</Pill><InfoBubble :tip="result.why" /></FieldRow>
     </FieldRowGroup>

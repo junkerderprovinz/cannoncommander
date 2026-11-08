@@ -77,7 +77,7 @@ function resetOrder() {
 
 <template>
   <Card :title="c('look.display')">
-    <FieldRow :label="c('look.language')"><Select v-model="language" :options="languageOptions" rows="menu" /></FieldRow>
+    <FieldRow :label="c('look.language')"><Select v-model="language" :options="languageOptions" /></FieldRow>
     <FieldRow :label="c('look.theme')" :hint="c('look.themeTip')"><Selector v-model="P.theme" :items="segItems([['dark', c('look.dark'), 'IconMoon'], ['light', c('look.light'), 'IconSun'], ['system', c('look.system'), 'IconThemeSystem']])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="c('look.corners')" :hint="c('look.cornersTip')"><Selector id="a-shape" :model-value="prefs.shape" :items="segItems(shapes)" size="sm" activation="manual" inline button-height pairs-on-phone @press="(v) => setPref('shape', shapePressed(v, prefs.shape))" /></FieldRow>
     <FieldRow :label="c('look.motion')" :hint="c('look.motionTip')"><Selector id="a-motion" :model-value="prefs.motion" :items="segItems(motions)" size="sm" activation="manual" inline button-height pairs-on-phone @press="(v) => setPref('motion', motionPressed(v, prefs.motion))" /></FieldRow>

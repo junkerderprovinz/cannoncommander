@@ -50,9 +50,9 @@ onMounted(async () => {
 <template>
   <SubCard>
     <FieldRow :label="c('rules.appliesTo')"><Selector id="a-rkind" v-model="kindModel" :items="segItems([['user', c('rules.user')], ['group', c('rules.groupWord')], ['all', c('rules.all')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-    <FieldRow v-if="kind === 'user'" :label="c('rules.user')"><Select v-model="d.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" rows="menu" /></FieldRow>
+    <FieldRow v-if="kind === 'user'" :label="c('rules.user')"><Select v-model="d.who" :options="selectOptions(users.map((u) => [u.name, u.full]))" /></FieldRow>
     <FieldRow v-else-if="kind === 'group'" :label="c('rules.groupWord')">
-      <Select v-if="groups.length" v-model="d.who" :options="selectOptions(groups.map((g) => ['@' + g, g]))" rows="menu" />
+      <Select v-if="groups.length" v-model="d.who" :options="selectOptions(groups.map((g) => ['@' + g, g]))" />
       <Pill v-else tone="state">{{ c('users.noGroups') }}</Pill>
     </FieldRow>
   </SubCard>

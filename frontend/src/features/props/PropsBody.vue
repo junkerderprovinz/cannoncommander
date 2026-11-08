@@ -78,8 +78,8 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
       </template>
     </SubCard>
     <SubCard :title="t('props.owning')" class="bk-form">
-      <FieldRow :label="t('props.owner')" :hint="t('props.ownerTip')"><span class="bk-idf"><Select id="r-owner" v-model="st.owner" :trigger-attrs="{ 'data-val': st.owner }" :disabled="st.ro" :options="selectOptions(owners)" rows="menu" /><Pill id="r-uid" class="glim-num">{{ idOf(st.uids, st.owner, 'UID') }}</Pill></span></FieldRow>
-      <FieldRow :label="t('props.group')"><span class="bk-idf"><Select id="r-group" v-model="st.group" :trigger-attrs="{ 'data-val': st.group }" :disabled="st.ro" :options="selectOptions(groups)" rows="menu" /><Pill id="r-gid" class="glim-num">{{ idOf(st.gids, st.group, 'GID') }}</Pill></span></FieldRow>
+      <FieldRow :label="t('props.owner')" :hint="t('props.ownerTip')"><span class="bk-idf"><Select id="r-owner" v-model="st.owner" :trigger-attrs="{ 'data-val': st.owner }" :disabled="st.ro" :options="selectOptions(owners)" /><Pill id="r-uid" class="glim-num">{{ idOf(st.uids, st.owner, 'UID') }}</Pill></span></FieldRow>
+      <FieldRow :label="t('props.group')"><span class="bk-idf"><Select id="r-group" v-model="st.group" :trigger-attrs="{ 'data-val': st.group }" :disabled="st.ro" :options="selectOptions(groups)" /><Pill id="r-gid" class="glim-num">{{ idOf(st.gids, st.group, 'GID') }}</Pill></span></FieldRow>
       <FieldRow :label="t('props.inside')" :hint="anyDir ? t('props.insideTip') : t('props.onlyDirs')"><Toggle id="r-rec" v-model="st.rec" :disabled="!anyDir || st.ro" /></FieldRow>
     </SubCard>
   </div>
