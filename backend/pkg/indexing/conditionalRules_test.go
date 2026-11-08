@@ -1,6 +1,7 @@
 package indexing
 
 import (
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -488,19 +489,20 @@ func TestShouldSkip_HiddenFiles(t *testing.T) {
 	idx := setupConditionalTestIndex(nil)
 	idx.Config.ResolvedRules.NoRules = false
 	idx.Config.ResolvedRules.IgnoreAllHidden = true
+	root := tree(t, ".hiddenfile", "file.txt", ".hidden/file.txt")
 
 	tests := []struct {
 		path       string
 		shouldSkip bool
 	}{
-		{"/.hiddenfile", true},       // Hidden file (starts with .)
-		{"/file.txt", false},         // Regular file
-		{"/.hidden/file.txt", false}, // File in hidden directory (but file itself isn't hidden)
+		{"/.hiddenfile", true},
+		{"/file.txt", false},
+		// The file itself is not hidden, only the folder it lies in.
+		{"/.hidden/file.txt", false},
 	}
 
 	for _, tt := range tests {
-		// For hidden file test, extract if the path starts with "/."
-		isHiddenPath := IsHidden(tt.path)
+		isHiddenPath := IsHidden(filepath.Join(root, filepath.FromSlash(tt.path)))
 		result := idx.ShouldSkip(false, tt.path, isHiddenPath, false, false)
 		if result != tt.shouldSkip {
 			t.Errorf("path=%s: expected shouldSkip=%v, got %v",
@@ -615,6 +617,8 @@ func TestIsViewableWithParentCheck_RecursiveParentWalking(t *testing.T) {
 	}
 	// Enable global hidden folder blocking
 	idx.Config.ResolvedRules.IgnoreAllHidden = true
+	idx.Path = tree(t, "private/subfolder/deep/nested/", "private/secret.txt", "public/documents/",
+		".hiddenDir/nested.txt", "subfolderExclusions/.hiddenDir/nested.txt")
 
 	tests := []struct {
 		name        string
