@@ -30,9 +30,8 @@ func CheckForUpdates() (updateInfo, error) {
 	// --- Configuration ---
 	repoOwner := "junkerderprovinz"
 	repoName := "cannoncommander"
-	currentVersion := version.Version
-	isDevMode := os.Getenv("CC_DEVMODE") == "true"
-	if currentVersion == "untracked" || currentVersion == "testing" || currentVersion == "" || isDevMode {
+	currentVersion, released := version.Release()
+	if !released || os.Getenv("CC_DEVMODE") == "true" {
 		return updateInfo{}, nil
 	}
 	splitVersion := strings.Split(currentVersion, "-")

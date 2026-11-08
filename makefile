@@ -39,18 +39,18 @@ update:
 build: build-frontend build-backend
 
 build-docker:
-	docker build --build-arg="VERSION=testing" --build-arg="REVISION=n/a" -t cannoncommander -f _docker/Dockerfile .
+	docker build --build-arg="REVISION=$$(git rev-parse HEAD)" -t cannoncommander -f _docker/Dockerfile .
 
 build-backend:
 	@echo "Building backend..."
-	cd backend && go build -o cannoncommander --ldflags="-w -s -X 'github.com/junkerderprovinz/cannoncommander/backend/internal/version.CommitSHA=testingCommit' -X 'github.com/junkerderprovinz/cannoncommander/backend/internal/version.Version=testing'"
+	cd backend && go build -o cannoncommander --ldflags="-w -s"
 	@echo "Backend built"
 
 # The server embeds the build. For a live interface, run `npm run dev` in
 # frontend/ next to this; Vite sends /api on to the server.
 run: build-frontend setup-gofitz-cgo
 	cd backend && CGO_ENABLED=1 go run --tags=mupdf \
-	--ldflags="-w -s -X 'github.com/junkerderprovinz/cannoncommander/backend/internal/version.CommitSHA=testingCommit' -X 'github.com/junkerderprovinz/cannoncommander/backend/internal/version.Version=testing'" . -c test_config.yaml
+	--ldflags="-w -s" . -c test_config.yaml
 
 generate-config:
 	cd backend && CC_GENERATE_CONFIG=true go run .
