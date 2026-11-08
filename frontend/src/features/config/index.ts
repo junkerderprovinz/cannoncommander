@@ -8,6 +8,7 @@ import { tl } from '@/i18n';
 import ActivityPage from './ActivityPage.vue';
 import { c } from '@/features/config/shared';
 import { takeAgainFromUrl } from './proof';
+import Apps from './tabs/Apps.vue';
 import FileList from './tabs/FileList.vue';
 import General from './tabs/General.vue';
 import Info from './tabs/Info.vue';
@@ -25,19 +26,20 @@ import NewsWin from './wins/NewsWin.vue';
 
 export default function setup() {
   const tab = (id: string, g: string, order: number, component: typeof General) => settingsTab({ id, label: tl(`config.tabs.${id}`), g, order, component });
-  // The account comes first, as the one part of the settings that is everybody's own.
-  tab('security', 'IconTabSecurity', 5, Security);
+  // Allgemein and Aussehen open the settings, as in the other apps, and the account follows as the part that is everybody's own.
   tab('general', 'IconTabGeneral', 10, General);
   tab('look', 'IconTabLook', 20, Look);
-  tab('files', 'IconFiles', 30, FileList);
-  tab('sources', 'IconTabStorage', 40, Sources);
-  tab('remotes', 'IconCloud', 50, Remotes);
-  tab('users', 'IconAccounts', 60, Users);
-  tab('rules', 'IconShieldOn', 70, Rules);
-  tab('shares', 'IconLink', 80, Shares);
+  tab('security', 'IconTabSecurity', 30, Security);
+  tab('files', 'IconFiles', 40, FileList);
+  tab('sources', 'IconTabStorage', 50, Sources);
+  tab('remotes', 'IconCloud', 60, Remotes);
+  tab('users', 'IconAccounts', 70, Users);
+  tab('rules', 'IconShieldOn', 80, Rules);
+  tab('shares', 'IconLink', 90, Shares);
   tab('integrations', 'IconModules', 100, Integrations);
-  tab('system', 'IconTabSystem', 110, System);
-  tab('info', 'IconInfo', 120, Info);
+  tab('app', 'IconTabApp', 110, Apps);
+  tab('system', 'IconTabSystem', 120, System);
+  tab('info', 'IconInfo', 130, Info);
 
   registerView('activity', { page: true, component: ActivityPage });
   if (takeAgainFromUrl()) go('settings', 'security');

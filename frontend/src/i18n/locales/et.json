@@ -388,6 +388,7 @@
       "shares": "Jagamised",
       "security": "Konto ja turvalisus",
       "integrations": "Integratsioonid",
+      "app": "Rakendused",
       "system": "Süsteem",
       "info": "Teave"
     },
@@ -1082,6 +1083,13 @@
       "alUnreachable": "Sellel aadressil ei vasta ükski ArrowLoop",
       "alWantsToken": "ArrowLoop vastab, aga tahab luba",
       "alTokenWrong": "ArrowLoop lükkab selle loa tagasi"
+    },
+    "builds": {
+      "desktop": "Töölauarakendus",
+      "desktopHint": "CannonCommander programmina sinu arvutis, see liides omaette aknas. Kui väljalasked ilmuvad, saad need siit alla laadida.",
+      "phone": "Telefonirakendus",
+      "phoneHint": "CannonCommanderi rakendus Android-telefonidele. Kui see ilmub, leiad selle siit.",
+      "soon": "Varsti"
     },
     "app": {
       "updates": "Värskendused",

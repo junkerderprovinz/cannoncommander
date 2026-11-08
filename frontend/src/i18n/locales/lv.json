@@ -410,6 +410,7 @@
       "shares": "Koplietojumi",
       "security": "Konts un drošība",
       "integrations": "Integrācijas",
+      "app": "Lietotnes",
       "system": "Sistēma",
       "info": "Informācija"
     },
@@ -1126,6 +1127,13 @@
       "alUnreachable": "Šajā adresē ArrowLoop neatbild",
       "alWantsToken": "ArrowLoop atbild, bet grib marķieri",
       "alTokenWrong": "ArrowLoop noraida šo marķieri"
+    },
+    "builds": {
+      "desktop": "Darbvirsmas lietotne",
+      "desktopHint": "CannonCommander kā programma tavā datorā, ar šo saskarni savā logā. Kad izlaidumi būs pieejami, varēsi tos lejupielādēt šeit.",
+      "phone": "Tālruņa lietotne",
+      "phoneHint": "CannonCommander lietotne Android tālruņiem. Kad tā būs pieejama, atradīsi to šeit.",
+      "soon": "Drīzumā"
     },
     "app": {
       "updates": "Atjauninājumi",

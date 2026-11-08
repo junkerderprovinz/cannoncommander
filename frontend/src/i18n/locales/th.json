@@ -366,6 +366,7 @@
       "shares": "การแชร์",
       "security": "บัญชีและความปลอดภัย",
       "integrations": "การเชื่อมต่อ",
+      "app": "แอป",
       "system": "ระบบ",
       "info": "ข้อมูล"
     },
@@ -1038,6 +1039,13 @@
       "alUnreachable": "ไม่มี ArrowLoop ตอบกลับที่ที่อยู่นี้",
       "alWantsToken": "ArrowLoop ตอบกลับ แต่ต้องการโทเค็น",
       "alTokenWrong": "ArrowLoop ปฏิเสธโทเค็นนี้"
+    },
+    "builds": {
+      "desktop": "แอปเดสก์ท็อป",
+      "desktopHint": "CannonCommander ในรูปโปรแกรมบนคอมพิวเตอร์ของคุณ โดยหน้าจอนี้อยู่ในหน้าต่างของตัวเอง เมื่อบิลด์ออกแล้ว คุณดาวน์โหลดได้ที่นี่",
+      "phone": "แอปมือถือ",
+      "phoneHint": "แอป CannonCommander สำหรับมือถือ Android เมื่อออกแล้ว คุณจะพบได้ที่นี่",
+      "soon": "เร็ว ๆ นี้"
     },
     "app": {
       "updates": "อัปเดต",

@@ -1,9 +1,10 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createApp, nextTick } from 'vue';
-import { settingsTabs } from '@/core/views';
+import { go, settingsTabs, view } from '@/core/views';
 import { addMessages } from '@/i18n';
 import de from './de.json';
+import { NEWS } from './help';
 import setup from '.';
 
 const { APP, SYS } = vi.hoisted(() => ({
@@ -20,7 +21,11 @@ vi.mock('@/api/admin', async (original) => {
 
 beforeAll(() => {
   setActivePinia(createPinia());
+  // The README buttons fit their words to their width, which jsdom does not measure.
+  vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} });
   addMessages('config', { de });
+  // The address the sign in provider sends the person back to, for the token window.
+  history.replaceState(null, '', '/?again=token');
   setup();
 });
 
@@ -43,20 +48,41 @@ async function cardsOf(id: string) {
 }
 
 describe('the settings', () => {
-  it('open on the account and its security', () => {
-    expect(settingsTabs[0]?.id).toBe('security');
-    expect(settingsTabs.filter((t) => t.id === 'security')).toHaveLength(1);
+  it('start with Allgemein and Aussehen', () => {
+    expect(settingsTabs.slice(0, 2).map((t) => t.id)).toEqual(['general', 'look']);
+    expect(['general', 'look'].map(label)).toEqual(['Allgemein', 'Aussehen']);
   });
 
-  it('end on integrations, system and info, as in BombVault, with no tile of their own for the app', () => {
-    expect(settingsTabs.map((t) => t.id)).toEqual(['security', 'general', 'look', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'integrations', 'system', 'info']);
+  it('put the account third and end on integrations, apps, system and info, as in BombVault', () => {
+    expect(settingsTabs.map((t) => t.id)).toEqual(['general', 'look', 'security', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'integrations', 'app', 'system', 'info']);
+  });
+
+  it('lead to the account after signing in again and from the news', () => {
+    expect(view).toMatchObject({ id: 'settings', arg: 'security' });
+    go('files');
+    NEWS.find((n) => n.id === 'security')!.go();
+    expect(view).toMatchObject({ id: 'settings', arg: 'security' });
   });
 
   it('name the tiles the other apps share as they do', () => {
+    expect(label('app')).toBe('Apps');
+    expect(tile('app')!.g).toBe('IconTabApp');
     expect(label('system')).toBe('System');
     expect(tile('system')!.g).toBe('IconTabSystem');
     expect(label('integrations')).toBe('Anbindungen');
     expect(label('info')).toBe('Info');
+  });
+
+  it('offer the desktop and phone builds on the apps tile, each still to come', async () => {
+    const cards = await cardsOf('app');
+    expect(cards.map((t) => t.split(/\s/)[0])).toEqual(['Desktop-App', 'Handy-App']);
+    const units = [...document.querySelectorAll('.glim-readme-btn-unit')];
+    expect(units.map((u) => u.querySelector('.glim-readme-btn-name')?.textContent)).toEqual(['Windows', 'macOS', 'Linux', 'Google Play', 'F-Droid', 'Android']);
+    for (const u of units) {
+      expect(u.classList).toContain('glim-readme-btn-soon');
+      expect(u.querySelector('.glim-readme-btn-sub')?.textContent).toBe('Bald');
+    }
+    expect(document.querySelectorAll('.glim-readme-btn-unit a, .glim-readme-btn-unit button')).toHaveLength(0);
   });
 
   it('keep the settings file and the service on the system tile', async () => {

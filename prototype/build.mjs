@@ -52,6 +52,7 @@ const html = read('src', 'index.html')
   .replace('/*APPCSS*/', () => read('src', 'css', 'app.css'))
   .replace('/*GLYPHS*/', () => JSON.stringify(Object.fromEntries([...used].map(n => [n, glyphs[n]]))))
   .replace('/*FORMATS*/', () => JSON.stringify(formats))
+  .replace('/*MARKS*/', () => read('vendor', 'marks.json'))
   .replace('/*APP*/', () => js)
   .replace('<!--PINNWAND-->', () => board(`window.PW_ROUND = ${round}; window.PW_CHANGES = ${JSON.stringify(changes.map(c => ({ route: '/cannoncommander.html', ...c })))};`, pinnwand));
 mkdirSync(join(here, 'dist'), { recursive: true });

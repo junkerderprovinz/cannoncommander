@@ -432,6 +432,7 @@
       "shares": "Sdílení",
       "security": "Účet a zabezpečení",
       "integrations": "Integrace",
+      "app": "Aplikace",
       "system": "Systém",
       "info": "Informace"
     },
@@ -1170,6 +1171,13 @@
       "alUnreachable": "Na této adrese neodpovídá žádný ArrowLoop",
       "alWantsToken": "ArrowLoop odpovídá, ale chce token",
       "alTokenWrong": "ArrowLoop tento token odmítá"
+    },
+    "builds": {
+      "desktop": "Aplikace pro počítač",
+      "desktopHint": "CannonCommander jako program na tvém počítači, s tímto rozhraním ve vlastním okně. Jakmile sestavení vyjdou, stáhneš je tady.",
+      "phone": "Aplikace pro telefon",
+      "phoneHint": "Aplikace CannonCommander pro telefony s Androidem. Jakmile vyjde, najdeš ji tady.",
+      "soon": "Brzy"
     },
     "app": {
       "updates": "Aktualizace",

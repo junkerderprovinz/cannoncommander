@@ -366,6 +366,7 @@
       "shares": "分享",
       "security": "账户和安全",
       "integrations": "集成",
+      "app": "应用",
       "system": "系统",
       "info": "信息"
     },
@@ -1038,6 +1039,13 @@
       "alUnreachable": "这个地址上没有 ArrowLoop 响应",
       "alWantsToken": "ArrowLoop 有响应，但需要令牌",
       "alTokenWrong": "ArrowLoop 拒绝了这个令牌"
+    },
+    "builds": {
+      "desktop": "桌面应用",
+      "desktopHint": "作为电脑上的程序运行的 CannonCommander，这个界面在它自己的窗口里打开。版本发布后，你可以在这里下载。",
+      "phone": "手机应用",
+      "phoneHint": "适用于 Android 手机的 CannonCommander 应用。发布后，你会在这里找到它。",
+      "soon": "即将推出"
     },
     "app": {
       "updates": "更新",

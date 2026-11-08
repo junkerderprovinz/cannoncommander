@@ -11,7 +11,7 @@ const { chromium } = createRequire(join(root, 'prototype', 'package.json'))('pla
 const app = process.argv[2] || 'http://localhost:5191/';
 const shots = resolve(process.argv[3] || join(root, 'prototype', 'shots'));
 const prototype = 'file:///' + join(root, 'prototype', 'dist', 'cannoncommander.html').split('\\').join('/');
-const TABS = ['general', 'look', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'security', 'integrations', 'system', 'info'];
+const TABS = ['general', 'look', 'security', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'integrations', 'app', 'system', 'info'];
 mkdirSync(shots, { recursive: true });
 
 const browser = await chromium.launch();

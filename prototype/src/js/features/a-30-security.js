@@ -133,7 +133,7 @@
 
   const sessionGlyph = (s) => s.device.startsWith('API-Token') ? 'IconKey' : /Android|iPhone|Handy/.test(s.device) ? 'IconPhone' : 'IconBrowser';
 
-  CC.settingsTab({ id: 'security', label: 'Konto & Sicherheit', g: 'IconTabSecurity', order: 90, render(host) {
+  CC.settingsTab({ id: 'security', label: 'Konto & Sicherheit', g: 'IconTabSecurity', order: 30, render(host) {
     const acc = DATA.account, u = me();
     const others = DATA.sessions.filter(s => !s.current && !s.device.startsWith('API-Token'));
     host.innerHTML = CC.card('Anmeldung',

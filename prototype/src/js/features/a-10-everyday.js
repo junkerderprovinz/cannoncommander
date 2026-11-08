@@ -195,7 +195,7 @@
     });
   } });
 
-  CC.settingsTab({ id: 'files', label: 'Dateiliste', g: 'IconFiles', order: 30, render(host) {
+  CC.settingsTab({ id: 'files', label: 'Dateiliste', g: 'IconFiles', order: 40, render(host) {
     const p = CC.prefs;
     const sample = A.now() - 2 * DAY;
     host.innerHTML = CC.card('Liste',

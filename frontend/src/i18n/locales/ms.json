@@ -366,6 +366,7 @@
       "shares": "Pautan kongsi",
       "security": "Akaun & keselamatan",
       "integrations": "Integrasi",
+      "app": "Aplikasi",
       "system": "Sistem",
       "info": "Maklumat"
     },
@@ -1038,6 +1039,13 @@
       "alUnreachable": "Tiada ArrowLoop yang menjawab di alamat ini",
       "alWantsToken": "ArrowLoop menjawab, tetapi memerlukan token",
       "alTokenWrong": "ArrowLoop menolak token ini"
+    },
+    "builds": {
+      "desktop": "Aplikasi desktop",
+      "desktopHint": "CannonCommander sebagai program pada komputer anda, dengan antara muka ini dalam tetingkapnya sendiri. Sebaik sahaja binaan dikeluarkan, anda boleh memuat turunnya di sini.",
+      "phone": "Aplikasi telefon",
+      "phoneHint": "Aplikasi CannonCommander untuk telefon Android. Sebaik sahaja ia dikeluarkan, anda akan menemuinya di sini.",
+      "soon": "Akan datang"
     },
     "app": {
       "updates": "Kemas kini",

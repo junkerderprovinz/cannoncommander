@@ -1,7 +1,7 @@
 {
   "tabs": {
     "title": "Einstellungen", "general": "Allgemein", "look": "Aussehen", "files": "Dateiliste", "sources": "Quellen", "remotes": "Fernziele",
-    "users": "Benutzer & Gruppen", "rules": "Zugriffsregeln", "shares": "Freigaben", "security": "Konto & Sicherheit", "integrations": "Anbindungen", "system": "System", "info": "Info"
+    "users": "Benutzer & Gruppen", "rules": "Zugriffsregeln", "shares": "Freigaben", "security": "Konto & Sicherheit", "integrations": "Anbindungen", "app": "Apps", "system": "System", "info": "Info"
   },
   "actions": { "about": "Über CannonCommander", "activity": "Aktivität", "docs": "Handbuch", "whatsNew": "Neuigkeiten" },
   "add": "Hinzufügen", "added": "{name} hinzugefügt", "back": "Zurück", "checking": "Prüfe", "copied": "Kopiert", "copy": "Kopieren", "done": "Fertig",
@@ -208,6 +208,11 @@
     "here": "Pfad hier", "there": "Pfad in ArrowLoop", "addPath": "Pfad hinzufügen",
     "fullPaths": "Beide Pfade beginnen mit /", "alUnreachable": "Unter dieser Adresse antwortet kein ArrowLoop", "alWantsToken": "ArrowLoop antwortet, will aber ein Token",
     "alTokenWrong": "ArrowLoop lehnt dieses Token ab"
+  },
+  "builds": {
+    "desktop": "Desktop-App", "desktopHint": "CannonCommander als Programm auf deinem Rechner, mit dieser Oberfläche in einem eigenen Fenster. Sobald es die Builds gibt, lädst du sie hier herunter.",
+    "phone": "Handy-App", "phoneHint": "Die CannonCommander-App für Android-Handys. Sobald es sie gibt, findest du sie hier.",
+    "soon": "Bald"
   },
   "app": {
     "updates": "Updates", "autoCheck": "Automatisch prüfen",

@@ -388,6 +388,7 @@
       "shares": "Delinger",
       "security": "Konto og sikkerhet",
       "integrations": "Integrasjoner",
+      "app": "Apper",
       "system": "System",
       "info": "Info"
     },
@@ -1082,6 +1083,13 @@
       "alUnreachable": "Ingen ArrowLoop svarer på denne adressen",
       "alWantsToken": "ArrowLoop svarer, men vil ha et token",
       "alTokenWrong": "ArrowLoop avviser dette tokenet"
+    },
+    "builds": {
+      "desktop": "Skrivebordsapp",
+      "desktopHint": "CannonCommander som et program på datamaskinen din, med dette grensesnittet i et eget vindu. Når byggene er ute, kan du laste dem ned her.",
+      "phone": "Mobilapp",
+      "phoneHint": "CannonCommander-appen for Android-telefoner. Når den er ute, finner du den her.",
+      "soon": "Snart"
     },
     "app": {
       "updates": "Oppdateringer",
