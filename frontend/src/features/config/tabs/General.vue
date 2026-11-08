@@ -4,6 +4,7 @@ import { segItems } from '@/ui/kit';
 import { Button, Card, FieldRow, FieldRowGroup, PathField, Selector, Toggle } from '@glimstone/vue';
 import { ref } from 'vue';
 import { admin, exists } from '@/api/admin';
+import { host } from '@/core/host';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { useUnraid } from '@/features/unraid/state';
@@ -58,7 +59,7 @@ async function testNote() {
   <Card :title="c('general.delete')">
     <FieldRow :label="c('general.confirm')" :hint="c('general.confirmTip')"><Toggle v-model="P.confirmDelete" /></FieldRow>
     <FieldRow :label="c('general.trash')" :hint="c('general.trashTip')"><Toggle v-model="P.trash" /></FieldRow>
-    <FieldRow v-if="P.trash" :label="c('general.keep')" :hint="c('general.keepTip')"><Selector v-model="P.trashDays" :items="segItems([7, 14, 30, 90].map((n) => [n, cn(n, 'general.days')]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow v-if="P.trash && !host.desktop" :label="c('general.keep')" :hint="c('general.keepTip')"><Selector v-model="P.trashDays" :items="segItems([7, 14, 30, 90].map((n) => [n, cn(n, 'general.days')]))" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </Card>
   <Card :title="c('general.jobs')">
     <FieldRow :label="c('general.jobMode')" :hint="c('general.jobModeTip')"><Selector v-model="P.jobMode" :items="segItems([['serial', c('general.serial')], ['parallel', c('general.parallel')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
