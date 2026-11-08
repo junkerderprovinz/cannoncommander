@@ -3454,6 +3454,7 @@
     "volume": "Том от {size}"
   },
   "files": {
+    "network": "Мрежа",
     "server": "Сървър",
     "thisPc": "Този компютър",
     "computer": "Компютър",

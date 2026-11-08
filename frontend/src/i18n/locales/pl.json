@@ -3714,6 +3714,7 @@
     "volume": "Wolumin {size}"
   },
   "files": {
+    "network": "Sieć",
     "server": "Serwer",
     "thisPc": "Ten komputer",
     "computer": "Komputer",

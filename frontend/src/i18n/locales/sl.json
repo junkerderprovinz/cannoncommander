@@ -3714,6 +3714,7 @@
     "volume": "Nosilec {size}"
   },
   "files": {
+    "network": "Omrežje",
     "server": "Strežnik",
     "thisPc": "Ta računalnik",
     "computer": "Računalnik",

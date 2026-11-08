@@ -3584,6 +3584,7 @@
     "volume": "Volum de {size}"
   },
   "files": {
+    "network": "Xarxa",
     "server": "Servidor",
     "thisPc": "Aquest ordinador",
     "computer": "Ordinador",

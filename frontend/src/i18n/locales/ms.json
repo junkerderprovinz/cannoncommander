@@ -3324,6 +3324,7 @@
     "volume": "Volum {size}"
   },
   "files": {
+    "network": "Rangkaian",
     "server": "Pelayan",
     "thisPc": "PC ini",
     "computer": "Komputer",

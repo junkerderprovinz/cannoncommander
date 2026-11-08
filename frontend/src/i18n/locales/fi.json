@@ -3454,6 +3454,7 @@
     "volume": "{size}:n taltio"
   },
   "files": {
+    "network": "Verkko",
     "server": "Palvelin",
     "thisPc": "Tämä tietokone",
     "computer": "Tietokone",

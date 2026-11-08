@@ -3454,6 +3454,7 @@
     "volume": "{size}-volym"
   },
   "files": {
+    "network": "Nätverk",
     "server": "Server",
     "thisPc": "Den här datorn",
     "computer": "Dator",

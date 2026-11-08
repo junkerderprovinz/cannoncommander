@@ -3454,6 +3454,7 @@
     "volume": "{size}eko bolumena"
   },
   "files": {
+    "network": "Sarea",
     "server": "Zerbitzaria",
     "thisPc": "PC hau",
     "computer": "Ordenagailua",

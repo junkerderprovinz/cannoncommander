@@ -3454,6 +3454,7 @@
     "volume": "Volume van {size}"
   },
   "files": {
+    "network": "Netwerk",
     "server": "Server",
     "thisPc": "Deze pc",
     "computer": "Computer",

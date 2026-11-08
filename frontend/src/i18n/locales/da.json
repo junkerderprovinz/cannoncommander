@@ -3454,6 +3454,7 @@
     "volume": "{size}-diskenhed"
   },
   "files": {
+    "network": "Netværk",
     "server": "Server",
     "thisPc": "Denne pc",
     "computer": "Computer",

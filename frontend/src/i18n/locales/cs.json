@@ -3714,6 +3714,7 @@
     "volume": "Svazek {size}"
   },
   "files": {
+    "network": "Síť",
     "server": "Server",
     "thisPc": "Tento počítač",
     "computer": "Počítač",

@@ -3324,6 +3324,7 @@
     "volume": "{size} 볼륨"
   },
   "files": {
+    "network": "네트워크",
     "server": "서버",
     "thisPc": "내 PC",
     "computer": "컴퓨터",

@@ -3454,6 +3454,7 @@
     "volume": "{size} birim"
   },
   "files": {
+    "network": "Ağ",
     "server": "Sunucu",
     "thisPc": "Bu bilgisayar",
     "computer": "Bilgisayar",

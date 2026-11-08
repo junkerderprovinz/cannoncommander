@@ -3584,6 +3584,7 @@
     "volume": "Волумен од {size}"
   },
   "files": {
+    "network": "Мрежа",
     "server": "Сервер",
     "thisPc": "Овај рачунар",
     "computer": "Рачунар",

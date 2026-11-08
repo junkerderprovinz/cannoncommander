@@ -302,6 +302,7 @@
     "volume": "Datenträger mit {size}"
   },
   "files": {
+    "network": "Netzwerk",
     "server": "Server",
     "thisPc": "Dieser PC",
     "computer": "Computer",

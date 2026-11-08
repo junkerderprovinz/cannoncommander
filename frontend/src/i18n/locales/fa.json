@@ -3454,6 +3454,7 @@
     "volume": "حجم {size}"
   },
   "files": {
+    "network": "شبکه",
     "server": "سرور",
     "thisPc": "این رایانه",
     "computer": "رایانه",

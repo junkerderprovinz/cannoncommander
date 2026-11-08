@@ -3324,6 +3324,7 @@
     "volume": "{size} ボリューム"
   },
   "files": {
+    "network": "ネットワーク",
     "server": "サーバー",
     "thisPc": "PC",
     "computer": "コンピューター",

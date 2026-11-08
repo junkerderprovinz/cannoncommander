@@ -3714,6 +3714,7 @@
     "volume": "Том {size}"
   },
   "files": {
+    "network": "Сеть",
     "server": "Сервер",
     "thisPc": "Этот компьютер",
     "computer": "Компьютер",

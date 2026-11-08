@@ -3454,6 +3454,7 @@
     "volume": "{size} kötet"
   },
   "files": {
+    "network": "Hálózat",
     "server": "Szerver",
     "thisPc": "Ez a gép",
     "computer": "Számítógép",

@@ -3324,6 +3324,7 @@
     "volume": "{size} 卷"
   },
   "files": {
+    "network": "网络",
     "server": "服务器",
     "thisPc": "此电脑",
     "computer": "计算机",

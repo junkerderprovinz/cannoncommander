@@ -3454,6 +3454,7 @@
     "volume": "{size} वॉल्यूम"
   },
   "files": {
+    "network": "नेटवर्क",
     "server": "सर्वर",
     "thisPc": "यह पीसी",
     "computer": "कंप्यूटर",

@@ -5,9 +5,11 @@ import { reactive, shallowReactive } from 'vue';
 import { api, ApiError, type Item, type Listing } from '@/api/client';
 import { on, type ServerEvent, watch } from '@/api/sse';
 import type { TreeItem } from '@/api/types';
+import { windowsPaths } from '@/core/host';
 import { driveName } from '@/files/drives';
 import type { MetaValue } from '@/files/entries';
 import { join, parent } from '@/files/paths';
+import { t } from '@/i18n';
 
 // unknown names the field tests of the query the server does not know, such as farbe in farbe:rot.
 export interface Hits { items: Item[]; more: boolean; done: boolean; unknown?: string[] }
@@ -57,7 +59,7 @@ export const useListing = defineStore('listing', () => {
     if (pendingTrees.has(path)) return pendingTrees.get(path)!;
     const job = api.fsTree(path)
       .then((got) => {
-        const items = got.items.map((k) => (k.kind ? { ...k, label: driveName(k) } : k));
+        const items = got.items.map((k) => (k.kind ? { ...k, label: driveName(k) } : k.path === '/net' && windowsPaths() ? { ...k, label: t('files.network') } : k));
         trees.set(path, items);
         return items;
       }, (e: unknown) => {

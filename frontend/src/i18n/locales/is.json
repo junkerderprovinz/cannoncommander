@@ -3454,6 +3454,7 @@
     "volume": "{size} gagnasvæði"
   },
   "files": {
+    "network": "Net",
     "server": "Þjónn",
     "thisPc": "Þessi tölva",
     "computer": "Tölva",

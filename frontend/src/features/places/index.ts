@@ -13,13 +13,17 @@ import { eject, ejectableAt, volumesChanged } from './actions';
 import DrivesCard from './DrivesCard.vue';
 import KnownRows from './KnownRows.vue';
 import RecentRows from './RecentRows.vue';
-import { loadPlaces, visited, type VolumesEvent } from './store';
+import { loadPlaces, places, visited, type VolumesEvent, within } from './store';
 
 export default function setup() {
   addTo('sideTop', () => h(KnownRows));
   addTo('sideRows', () => h(RecentRows));
   addTo('sideCards', () => h(DrivesCard));
-  addTo('afterGo', () => { visited.value++; });
+  addTo('afterGo', (path) => {
+    visited.value++;
+    // A share opened by its path joins the drives the first time.
+    if (path.startsWith('/net/') && path.split('/').length > 3 && !places.volumes.some((v) => within(path, v))) void loadPlaces().catch(() => {});
+  });
   addTo('treeDecorators', (path) => {
     const v = ejectableAt(path);
     return v && h('button', {

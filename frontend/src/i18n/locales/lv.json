@@ -3584,6 +3584,7 @@
     "volume": "{size} sējums"
   },
   "files": {
+    "network": "Tīkls",
     "server": "Serveris",
     "thisPc": "Šis dators",
     "computer": "Dators",

@@ -3584,6 +3584,7 @@
     "volume": "Volum de {size}"
   },
   "files": {
+    "network": "Rețea",
     "server": "Server",
     "thisPc": "Acest PC",
     "computer": "Computer",

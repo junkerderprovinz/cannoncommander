@@ -3584,6 +3584,7 @@
     "volume": "Volume de {size}"
   },
   "files": {
+    "network": "Réseau",
     "server": "Serveur",
     "thisPc": "Ce PC",
     "computer": "Ordinateur",

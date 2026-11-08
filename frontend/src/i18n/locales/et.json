@@ -3454,6 +3454,7 @@
     "volume": "{size} köide"
   },
   "files": {
+    "network": "Võrk",
     "server": "Server",
     "thisPc": "See arvuti",
     "computer": "Arvuti",

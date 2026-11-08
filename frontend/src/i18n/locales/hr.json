@@ -3584,6 +3584,7 @@
     "volume": "Volumen od {size}"
   },
   "files": {
+    "network": "Mreža",
     "server": "Poslužitelj",
     "thisPc": "Ovaj PC",
     "computer": "Računalo",

@@ -18,13 +18,14 @@ export async function openVolume(v: Volume, panel?: number) {
   }
 }
 
-// The panels on the drive move to the top of the computer, and says whether one did.
+// The panels on the drive move to the top of the computer at once, before the folder they showed is found missing,
+// and says whether one did.
 function leave(v: Volume): boolean {
   const F = usePanels();
   let moved = false;
   F.panels.forEach((p, i) => {
     if (within(p.tabs[p.cur]!.path, v)) {
-      void F.go('/', i);
+      F.enter('/', i);
       moved = true;
     }
   });

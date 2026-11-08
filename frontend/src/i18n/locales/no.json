@@ -3454,6 +3454,7 @@
     "volume": "{size}-volum"
   },
   "files": {
+    "network": "Nettverk",
     "server": "Server",
     "thisPc": "Denne PC-en",
     "computer": "Datamaskin",

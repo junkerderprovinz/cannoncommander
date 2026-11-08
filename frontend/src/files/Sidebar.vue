@@ -43,7 +43,7 @@ watchEffect(() => {
   for (const p of ['/', ...F.openTree]) if (!listing.trees.has(p)) listing.tree(p).catch(() => {});
 });
 
-const glyphOf = (k: TreeItem, open: boolean) => k.kind ? driveGlyph(k.kind) : k.path === '/mnt' ? 'IconDatabase' : k.path === '/boot' ? 'IconFlash' : k.path === '/remotes' ? 'IconCloud'
+const glyphOf = (k: TreeItem, open: boolean) => k.kind ? driveGlyph(k.kind) : k.path === '/net' ? 'IconNetwork' : k.path === '/mnt' ? 'IconDatabase' : k.path === '/boot' ? 'IconFlash' : k.path === '/remotes' ? 'IconCloud'
   : k.remote ? 'IconNetwork' : k.free ? 'IconZFS' : open ? 'IconFolderOpen' : 'IconFolder';
 const toggle = (p: string) => (F.openTree.has(p) ? F.openTree.delete(p) : F.openTree.add(p));
 

@@ -3714,6 +3714,7 @@
     "volume": "Zväzok {size}"
   },
   "files": {
+    "network": "Sieť",
     "server": "Server",
     "thisPc": "Tento počítač",
     "computer": "Počítač",

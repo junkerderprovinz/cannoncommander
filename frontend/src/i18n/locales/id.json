@@ -3324,6 +3324,7 @@
     "volume": "Volume {size}"
   },
   "files": {
+    "network": "Jaringan",
     "server": "Server",
     "thisPc": "PC Ini",
     "computer": "Komputer",

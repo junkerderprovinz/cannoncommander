@@ -3714,6 +3714,7 @@
     "volume": "{size} tomas"
   },
   "files": {
+    "network": "Tinklas",
     "server": "Serveris",
     "thisPc": "Šis kompiuteris",
     "computer": "Kompiuteris",
