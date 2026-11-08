@@ -22,6 +22,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 const (
@@ -327,9 +328,20 @@ func setupMedia(generate bool) {
 		Config.Integrations.Media.Convert.VideoPreview[k] = v
 	}
 
-	if !generate && !isGoTest() {
-		setupFFmpegIntegration()
+	if generate || isGoTest() {
+		return
 	}
+	// The desktop app shows its window as soon as the server listens, and
+	// ffmpeg's look at the hardware takes half a minute on some computers.
+	if desktop.Active() {
+		done := ffmpeg.Probing()
+		go func() {
+			defer done()
+			setupFFmpegIntegration()
+		}()
+		return
+	}
+	setupFFmpegIntegration()
 }
 
 func isGoTest() bool {
@@ -355,21 +367,7 @@ func setupFFmpegIntegration() {
 	})
 	if err != nil {
 		logger.Warningf("ffmpeg unavailable: %v", err)
-		Env.FFmpegAvailable = false
-		Env.FFmpegPath = ""
-		Env.FFprobePath = ""
-		return
 	}
-
-	svc := ffmpeg.Get()
-	if svc == nil {
-		Env.FFmpegAvailable = false
-		return
-	}
-
-	Env.FFmpegAvailable = true
-	Env.FFmpegPath = svc.FFmpegPath()
-	Env.FFprobePath = svc.FFprobePath()
 }
 
 func setupSources(generate bool) {

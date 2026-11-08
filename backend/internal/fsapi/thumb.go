@@ -12,6 +12,7 @@ import (
 	"github.com/dhowden/tag"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/preview"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
@@ -153,6 +154,10 @@ func (previewThumbs) thumb(ctx context.Context, real string, info os.FileInfo, s
 	file := iteminfo.ExtendedFileInfo{RealPath: real}
 	file.Name, file.Size, file.ModTime = info.Name(), info.Size(), info.ModTime()
 	file.DetectType(real, false)
+	// The desktop app may still be looking for ffmpeg, which these need.
+	if strings.HasPrefix(file.Type, "video/") || file.Type == "image/heic" || file.Type == "image/heif" {
+		ffmpeg.Wait(ctx)
+	}
 	file.HasPreview = previewable(&file)
 	if !file.HasPreview {
 		return nil, errNoThumb

@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
@@ -40,6 +41,8 @@ type Tool struct {
 	Available bool   `json:"available"`
 	Path      string `json:"path,omitempty"`
 	Version   string `json:"version,omitempty"`
+	// Checking is set while the desktop app still looks for ffmpeg.
+	Checking bool `json:"checking,omitempty"`
 }
 
 // UnraidInfo says whether the server runs on Unraid and whether the switch
@@ -72,15 +75,17 @@ type probe struct {
 	name string
 	args []string
 	path func() string
+	// ffmpeg marks the programs whose path comes from the ffmpeg service.
+	ffmpeg bool
 }
 
 // probes are the helper programs and how they print their version.
 var probes = []probe{
-	{"ffmpeg", []string{"-version"}, func() string { return settings.Env.FFmpegPath }},
-	{"ffprobe", []string{"-version"}, func() string { return settings.Env.FFprobePath }},
-	{"mutool", []string{"-v"}, nil},
-	{"7zz", nil, nil},
-	{"rclone", []string{"version"}, RcloneBinary},
+	{"ffmpeg", []string{"-version"}, func() string { return ffmpeg.Get().FFmpegPath() }, true},
+	{"ffprobe", []string{"-version"}, func() string { return ffmpeg.Get().FFprobePath() }, true},
+	{"mutool", []string{"-v"}, nil, false},
+	{"7zz", nil, nil, false},
+	{"rclone", []string{"version"}, RcloneBinary, false},
 }
 
 // RcloneBinary returns the rclone program, CC_RCLONE_BINARY or the one on
@@ -96,28 +101,46 @@ func RcloneBinary() string {
 var versionNumber = regexp.MustCompile(`\d+\.\d+(?:\.\d+)*`)
 
 // toolbox finds the helper programs once. They come with the image and do
-// not change while the server runs.
+// not change while the server runs. The desktop app looks for ffmpeg after
+// its window opens, and until it has, the answer is not kept.
 type toolbox struct {
-	once  sync.Once
+	mu    sync.Mutex
 	tools map[string]Tool
+	// checking reports whether that look still runs; nil means
+	// ffmpeg.Checking.
+	checking func() bool
 }
 
 func (t *toolbox) get() map[string]Tool {
-	t.once.Do(func() {
-		t.tools = map[string]Tool{}
-		var mu sync.Mutex
-		var wg sync.WaitGroup
-		for _, p := range probes {
-			wg.Go(func() {
-				tool := find(p)
-				mu.Lock()
-				t.tools[p.name] = tool
-				mu.Unlock()
-			})
-		}
-		wg.Wait()
-	})
-	return t.tools
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	if t.tools != nil {
+		return t.tools
+	}
+	checking := ffmpeg.Checking
+	if t.checking != nil {
+		checking = t.checking
+	}
+	pending := checking()
+	tools := map[string]Tool{}
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+	for _, p := range probes {
+		wg.Go(func() {
+			tool := Tool{Checking: true}
+			if !pending || !p.ffmpeg {
+				tool = find(p)
+			}
+			mu.Lock()
+			tools[p.name] = tool
+			mu.Unlock()
+		})
+	}
+	wg.Wait()
+	if !pending {
+		t.tools = tools
+	}
+	return tools
 }
 
 func find(p probe) Tool {

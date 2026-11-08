@@ -8,6 +8,7 @@ import (
 
 	"github.com/gtsteffaniak/go-ffmpeg/ops"
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
 )
 
 // GenerateVideoPreview generates a single preview image from a video using ffmpeg.
@@ -16,7 +17,8 @@ import (
 // percentageSeek: percentage of video duration to seek to (0–100).
 // Returns: JPEG image bytes.
 func (s *Service) GenerateVideoPreview(ctx context.Context, videoPath, previewSize string, percentageSeek int) ([]byte, error) {
-	if s.ffmpegService == nil {
+	svc := ffmpeg.Get()
+	if svc == nil {
 		logger.Errorf("FFmpeg service not available for file '%s'", videoPath)
 		return nil, fmt.Errorf("FFmpeg service not available")
 	}
@@ -33,7 +35,7 @@ func (s *Service) GenerateVideoPreview(ctx context.Context, videoPath, previewSi
 	}
 
 	var buf bytes.Buffer
-	err = s.ffmpegService.VideoPreview(ctx, &buf, ops.PreviewOptions{
+	err = svc.VideoPreview(ctx, &buf, ops.PreviewOptions{
 		Input:       videoPath,
 		SeekPercent: float64(percentageSeek),
 		Width:       params.width,
