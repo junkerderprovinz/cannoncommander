@@ -1306,7 +1306,17 @@
     "fmNowOff": "Je mappen openen weer zoals vroeger",
     "fmOpen": "Openen in CannonCommander",
     "fmShow": "CannonCommander tonen",
-    "fmQuit": "Afsluiten"
+    "fmQuit": "Afsluiten",
+    "style": "Bediening zoals",
+    "styleTip": "Bepaalt de toetsen en het selecteren met de muis. Daarna kun je ze ook los aanpassen, de toetsen met F1.",
+    "clickSelect": "Selecteren zoals in de Verkenner",
+    "clickSelectTip": "Een klik selecteert een bestand, een kader met de muis selecteert er meerdere en de selectie volgt de pijltoetsen. Uit is het zoals in een Commander: een klik verplaatst alleen de cursor en je markeert met Ctrl, Shift of Insert.",
+    "styleTitle": "Zoals in de Verkenner of zoals een Commander?",
+    "styleText": "Fijn dat je er bent! Hoe wil je CannonCommander gebruiken? Je kunt het altijd aanpassen in de instellingen onder Algemeen.",
+    "explorerName": "Zoals in de Verkenner",
+    "explorerHow": "Een klik selecteert een bestand, een kader met de muis selecteert er meerdere. F5 vernieuwt, Backspace gaat terug en Alt+D springt naar de padbalk.",
+    "commanderName": "Zoals een Commander",
+    "commanderHow": "Een klik verplaatst de cursor en je markeert met Ctrl, Shift of Insert. F5 kopieert en F6 verplaatst naar het andere paneel."
   },
   "diff": {
     "title": "Bestanden vergelijken",
@@ -3164,6 +3174,8 @@
     "dupTab": "Tabblad dupliceren",
     "lockTab": "Tabblad vergrendelen",
     "closeOtherTabs": "Andere tabbladen sluiten",
+    "nextTab": "Volgend tabblad",
+    "prevTab": "Vorig tabblad",
     "back": "Terug",
     "forward": "Vooruit",
     "up": "Eén niveau omhoog",

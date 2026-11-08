@@ -1306,7 +1306,17 @@
     "fmNowOff": "Möppurnar þínar opnast aftur eins og áður",
     "fmOpen": "Opna í CannonCommander",
     "fmShow": "Sýna CannonCommander",
-    "fmQuit": "Hætta"
+    "fmQuit": "Hætta",
+    "style": "Notkun eins og",
+    "styleTip": "Ákveður lyklana og val með músinni. Síðan geturðu breytt hvoru fyrir sig, lyklunum með F1.",
+    "clickSelect": "Val eins og í Explorer",
+    "clickSelectTip": "Smellur velur skrá, rammi með músinni velur nokkrar, og valið fylgir örvalyklunum. Slökkt er það eins og í Commander: smellur færir aðeins bendilinn og merkt er með Ctrl, Shift eða Insert.",
+    "styleTitle": "Eins og í Explorer eða eins og Commander?",
+    "styleText": "Gaman að hafa þig hér! Hvernig viltu nota CannonCommander? Þú getur breytt því hvenær sem er í stillingum undir Almennt.",
+    "explorerName": "Eins og í Explorer",
+    "explorerHow": "Smellur velur skrá, rammi með músinni velur nokkrar. F5 endurnýjar, Backspace fer til baka og Alt+D fer í slóðastikuna.",
+    "commanderName": "Eins og Commander",
+    "commanderHow": "Smellur færir bendilinn og merkt er með Ctrl, Shift eða Insert. F5 afritar og F6 færir yfir á hinn gluggann."
   },
   "diff": {
     "title": "Bera saman skrár",
@@ -3164,6 +3174,8 @@
     "dupTab": "Tvöfalda flipa",
     "lockTab": "Læsa flipa",
     "closeOtherTabs": "Loka öðrum flipum",
+    "nextTab": "Næsti flipi",
+    "prevTab": "Fyrri flipi",
     "back": "Til baka",
     "forward": "Áfram",
     "up": "Upp um eitt stig",

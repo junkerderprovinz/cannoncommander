@@ -1306,7 +1306,17 @@
     "fmNowOff": "Dine mapper åbner igen som før",
     "fmOpen": "Åbn i CannonCommander",
     "fmShow": "Vis CannonCommander",
-    "fmQuit": "Afslut"
+    "fmQuit": "Afslut",
+    "style": "Betjening som",
+    "styleTip": "Bestemmer tasterne og markeringen med musen. Bagefter kan du ændre hver for sig, tasterne med F1.",
+    "clickSelect": "Markering som i Stifinder",
+    "clickSelectTip": "Et klik markerer en fil, en ramme med musen markerer flere, og markeringen følger piletasterne. Slået fra er det som i en Commander: et klik flytter kun markøren, og der markeres med Ctrl, Shift eller Insert.",
+    "styleTitle": "Som i Stifinder eller som en Commander?",
+    "styleText": "Dejligt, at du er her! Hvordan vil du bruge CannonCommander? Du kan altid ændre det i indstillingerne under Generelt.",
+    "explorerName": "Som i Stifinder",
+    "explorerHow": "Et klik markerer en fil, en ramme med musen markerer flere. F5 opdaterer, Backspace går tilbage, og Alt+D hopper til stilinjen.",
+    "commanderName": "Som en Commander",
+    "commanderHow": "Et klik flytter markøren, og der markeres med Ctrl, Shift eller Insert. F5 kopierer, og F6 flytter til det andet panel."
   },
   "diff": {
     "title": "Sammenlign filer",
@@ -3164,6 +3174,8 @@
     "dupTab": "Duplikér fane",
     "lockTab": "Lås fane",
     "closeOtherTabs": "Luk andre faner",
+    "nextTab": "Næste fane",
+    "prevTab": "Forrige fane",
     "back": "Tilbage",
     "forward": "Frem",
     "up": "Et niveau op",

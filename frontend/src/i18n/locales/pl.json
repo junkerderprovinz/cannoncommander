@@ -1396,7 +1396,17 @@
     "fmNowOff": "Twoje foldery znów otwierają się jak wcześniej",
     "fmOpen": "Otwórz w CannonCommanderze",
     "fmShow": "Pokaż CannonCommandera",
-    "fmQuit": "Zakończ"
+    "fmQuit": "Zakończ",
+    "style": "Obsługa jak",
+    "styleTip": "Ustala klawisze i zaznaczanie myszą. Potem możesz zmienić każde z osobna, klawisze przez F1.",
+    "clickSelect": "Zaznaczanie jak w Eksploratorze",
+    "clickSelectTip": "Kliknięcie zaznacza plik, ramka myszą zaznacza kilka, a zaznaczenie podąża za strzałkami. Wyłączone działa jak w Commanderze: kliknięcie tylko przesuwa kursor, a zaznacza się klawiszem Ctrl, Shift lub Insert.",
+    "styleTitle": "Jak w Eksploratorze czy jak Commander?",
+    "styleText": "Miło, że jesteś! Jak chcesz obsługiwać CannonCommandera? Możesz to w każdej chwili zmienić w ustawieniach w sekcji Ogólne.",
+    "explorerName": "Jak w Eksploratorze",
+    "explorerHow": "Kliknięcie zaznacza plik, ramka myszą zaznacza kilka. F5 odświeża, Backspace wraca, a Alt+D przechodzi do paska ścieżki.",
+    "commanderName": "Jak Commander",
+    "commanderHow": "Kliknięcie przesuwa kursor, a zaznacza się klawiszem Ctrl, Shift lub Insert. F5 kopiuje, a F6 przenosi do drugiego panelu."
   },
   "diff": {
     "title": "Porównaj pliki",
@@ -3420,6 +3430,8 @@
     "dupTab": "Duplikuj kartę",
     "lockTab": "Zablokuj kartę",
     "closeOtherTabs": "Zamknij inne karty",
+    "nextTab": "Następna karta",
+    "prevTab": "Poprzednia karta",
     "back": "Wstecz",
     "forward": "Dalej",
     "up": "Poziom wyżej",

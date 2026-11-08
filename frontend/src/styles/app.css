@@ -144,6 +144,7 @@ svg { display: block; }
 .row.marked { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .row.marked:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
 .row.marked .t { color: var(--carbon-text); }
+.band { position: fixed; z-index: 5; pointer-events: none; border: 1px solid var(--accent); border-radius: 2px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
 .row.cut { opacity: .55; }
 .panel.active .row.cursor { outline: 2px solid var(--accent-ink); outline-offset: -2px; }
 .panel:not(.active) .row.cursor { outline: none; }

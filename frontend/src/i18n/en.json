@@ -74,6 +74,8 @@
     "dupTab": "Duplicate tab",
     "lockTab": "Lock tab",
     "closeOtherTabs": "Close other tabs",
+    "nextTab": "Next tab",
+    "prevTab": "Previous tab",
     "back": "Back",
     "forward": "Forward",
     "up": "Up one level",

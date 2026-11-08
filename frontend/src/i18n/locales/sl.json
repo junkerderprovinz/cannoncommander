@@ -1396,7 +1396,17 @@
     "fmNowOff": "Tvoje mape se spet odpirajo kot prej",
     "fmOpen": "Odpri v CannonCommanderju",
     "fmShow": "Pokaži CannonCommander",
-    "fmQuit": "Končaj"
+    "fmQuit": "Končaj",
+    "style": "Uporaba kot",
+    "styleTip": "Določi tipke in izbiranje z miško. Pozneje lahko vsako spremeniš posebej, tipke s F1.",
+    "clickSelect": "Izbiranje kot v Raziskovalcu",
+    "clickSelectTip": "Klik izbere datoteko, okvir z miško jih izbere več, izbira pa sledi puščicam. Izklopljeno je kot v Commanderju: klik le premakne kazalko, označuje pa se s Ctrl, Shift ali Insert.",
+    "styleTitle": "Kot v Raziskovalcu ali kot Commander?",
+    "styleText": "Lepo, da si tukaj! Kako želiš uporabljati CannonCommander? To lahko kadar koli spremeniš v nastavitvah pod Splošno.",
+    "explorerName": "Kot v Raziskovalcu",
+    "explorerHow": "Klik izbere datoteko, okvir z miško jih izbere več. F5 osveži, Backspace gre nazaj, Alt+D pa skoči v vrstico s potjo.",
+    "commanderName": "Kot Commander",
+    "commanderHow": "Klik premakne kazalko, označuje pa se s Ctrl, Shift ali Insert. F5 kopira, F6 pa premakne v drugo ploščo."
   },
   "diff": {
     "title": "Primerjaj datoteki",
@@ -3420,6 +3430,8 @@
     "dupTab": "Podvoji zavihek",
     "lockTab": "Zakleni zavihek",
     "closeOtherTabs": "Zapri druge zavihke",
+    "nextTab": "Naslednji zavihek",
+    "prevTab": "Prejšnji zavihek",
     "back": "Nazaj",
     "forward": "Naprej",
     "up": "Raven višje",

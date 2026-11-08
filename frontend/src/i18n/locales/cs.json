@@ -1396,7 +1396,17 @@
     "fmNowOff": "Tvoje složky se zase otevírají jako dřív",
     "fmOpen": "Otevřít v CannonCommanderu",
     "fmShow": "Zobrazit CannonCommander",
-    "fmQuit": "Ukončit"
+    "fmQuit": "Ukončit",
+    "style": "Ovládání jako",
+    "styleTip": "Určuje klávesy a výběr myší. Obojí pak můžeš měnit i zvlášť, klávesy přes F1.",
+    "clickSelect": "Výběr jako v Průzkumníku",
+    "clickSelectTip": "Klik vybere soubor, rámeček myší vybere několik a výběr sleduje šipky. Vypnuto je to jako v Commanderu: klik jen posune kurzor a označuje se pomocí Ctrl, Shift nebo Insert.",
+    "styleTitle": "Jako v Průzkumníku, nebo jako Commander?",
+    "styleText": "Moc rádi tě tu vidíme! Jak chceš CannonCommander ovládat? Kdykoli to můžeš změnit v nastavení v části Obecné.",
+    "explorerName": "Jako v Průzkumníku",
+    "explorerHow": "Klik vybere soubor, rámeček myší vybere několik. F5 obnoví, Backspace jde zpět a Alt+D skočí do řádku s cestou.",
+    "commanderName": "Jako Commander",
+    "commanderHow": "Klik posune kurzor a označuje se pomocí Ctrl, Shift nebo Insert. F5 kopíruje a F6 přesouvá do druhého panelu."
   },
   "diff": {
     "title": "Porovnat soubory",
@@ -3420,6 +3430,8 @@
     "dupTab": "Duplikovat kartu",
     "lockTab": "Zamknout kartu",
     "closeOtherTabs": "Zavřít ostatní karty",
+    "nextTab": "Další karta",
+    "prevTab": "Předchozí karta",
     "back": "Zpět",
     "forward": "Vpřed",
     "up": "O úroveň výš",

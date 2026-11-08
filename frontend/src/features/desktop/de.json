@@ -11,5 +11,15 @@
   "fmNowOff": "Deine Ordner öffnen sich wieder wie vorher",
   "fmOpen": "In CannonCommander öffnen",
   "fmShow": "CannonCommander zeigen",
-  "fmQuit": "Beenden"
+  "fmQuit": "Beenden",
+  "style": "Bedienung wie",
+  "styleTip": "Legt die Tasten und die Auswahl mit der Maus fest. Beides kannst du danach auch einzeln ändern, die Tasten mit F1.",
+  "clickSelect": "Auswahl wie im Explorer",
+  "clickSelectTip": "Ein Klick wählt eine Datei aus, ein Rahmen mit der Maus wählt mehrere, und die Auswahl folgt den Pfeiltasten. Aus ist es wie in einem Commander: Ein Klick setzt nur den Cursor, markiert wird mit Strg, Umschalt oder Einfg.",
+  "styleTitle": "Wie im Explorer oder wie ein Commander?",
+  "styleText": "Schön, dass du da bist! Wie möchtest du CannonCommander bedienen? Du kannst das jederzeit in den Einstellungen unter Allgemein ändern.",
+  "explorerName": "Wie im Explorer",
+  "explorerHow": "Ein Klick wählt eine Datei, ein Rahmen mit der Maus wählt mehrere. F5 lädt neu, die Rücktaste geht zurück und Alt+D springt in die Pfadzeile.",
+  "commanderName": "Wie ein Commander",
+  "commanderHow": "Ein Klick setzt den Cursor, markiert wird mit Strg, Umschalt oder Einfg. F5 kopiert und F6 verschiebt ins andere Panel."
 }

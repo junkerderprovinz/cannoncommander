@@ -1,16 +1,19 @@
 // What only the desktop app does, where CannonCommander stands in for the computer's own file manager: files open in
-// their programs, folders handed over from outside open in a tab, and the computer may send all its folders here.
+// their programs, folders handed over from outside open in a tab, the first start asks how the app should handle,
+// and the computer may send all its folders here.
 import './desktop.css';
 import { watch, watchEffect } from 'vue';
 import { on } from '@/api/sse';
 import { action, actions } from '@/core/actions';
 import { host } from '@/core/host';
+import { prefs } from '@/core/prefs';
 import { join } from '@/files/paths';
 import { tl } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 import { followFileManager } from './filemanager';
 import { launch } from './launch';
 import { hostKnown, type Opening, openHandedOver, takeStartFolders } from './open';
+import { askStyle } from './style';
 
 export default function setup() {
   const F = usePanels();
@@ -33,6 +36,7 @@ export default function setup() {
     if (!desktop) return;
     stopFollowing();
     void followFileManager();
+    if (!prefs.desktopStyle) askStyle();
   });
   on('desktop.open', (e) => { void openHandedOver((e.data as Opening[] | undefined) ?? []); });
   const start = takeStartFolders();

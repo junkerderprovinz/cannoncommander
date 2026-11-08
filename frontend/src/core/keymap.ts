@@ -8,7 +8,7 @@ export const DEFAULT_KEYS: Record<string, string> = {
   'Ctrl+x': 'clipCut', 'Ctrl+c': 'clipCopy',
   F1: 'shortcuts', F2: 'rename', F3: 'view', F4: 'edit', 'Shift+F4': 'newFile', F5: 'copy', F6: 'move', F7: 'newFolder', F8: 'delete', F9: 'search', F10: 'menuBar', Delete: 'delete', 'Ctrl+Shift+n': 'newFolder',
   'Ctrl+d': 'duplicate', 'Shift+F7': 'folderWithSel', 'Alt+1': 'focusSide', 'Alt+2': 'focusLeft', 'Alt+3': 'focusRight', 'Alt+4': 'focusJobs',
-  'Alt+F7': 'search', 'Alt+ArrowDown': 'history', 'Ctrl+m': 'multiRename', 'Ctrl+Shift+c': 'compareDirs', 'Ctrl+Shift+v': 'nextView', 'Ctrl+Shift+b': 'flat', 'Alt+Enter': 'props', 'Alt+p': 'pack', 'Alt+u': 'unpack', 'Alt+d': 'diskUsage',
+  'Alt+F7': 'search', 'Ctrl+e': 'search', 'Alt+ArrowUp': 'up', 'Ctrl+Tab': 'nextTab', 'Ctrl+Shift+Tab': 'prevTab', 'Alt+ArrowDown': 'history', 'Ctrl+m': 'multiRename', 'Ctrl+Shift+c': 'compareDirs', 'Ctrl+Shift+v': 'nextView', 'Ctrl+Shift+b': 'flat', 'Alt+Enter': 'props', 'Alt+p': 'pack', 'Alt+u': 'unpack', 'Alt+d': 'diskUsage',
 };
 
 export const keymap = reactive<Record<string, string>>({});

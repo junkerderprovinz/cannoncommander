@@ -1306,7 +1306,17 @@
     "fmNowOff": "Zure karpetak lehen bezala irekitzen dira berriro",
     "fmOpen": "Ireki CannonCommander-en",
     "fmShow": "Erakutsi CannonCommander",
-    "fmQuit": "Irten"
+    "fmQuit": "Irten",
+    "style": "Erabilera honen antzera",
+    "styleTip": "Teklak eta saguarekin hautatzeko modua zehazten ditu. Gero bakoitza bere aldetik alda dezakezu, teklak F1ekin.",
+    "clickSelect": "Hautapena Arakatzailean bezala",
+    "clickSelectTip": "Klik batek fitxategi bat hautatzen du, saguarekin egindako markoak hainbat, eta hautapenak geziei jarraitzen die. Desaktibatuta Commander batean bezala da: klikak kurtsorea bakarrik mugitzen du, eta Ctrl, Shift edo Insert-ekin markatzen da.",
+    "styleTitle": "Arakatzailean bezala ala Commander baten antzera?",
+    "styleText": "Pozten gara hemen izateaz! Nola erabili nahi duzu CannonCommander? Edozein unetan alda dezakezu ezarpenetan, Orokorra atalean.",
+    "explorerName": "Arakatzailean bezala",
+    "explorerHow": "Klik batek fitxategi bat hautatzen du, saguarekin egindako markoak hainbat. F5ek freskatzen du, Atzera teklak atzera egiten du eta Alt+D bide-barrara doa.",
+    "commanderName": "Commander baten antzera",
+    "commanderHow": "Klikak kurtsorea mugitzen du, eta Ctrl, Shift edo Insert-ekin markatzen da. F5ek kopiatzen du eta F6k beste panelera eramaten du."
   },
   "diff": {
     "title": "Konparatu fitxategiak",
@@ -3164,6 +3174,8 @@
     "dupTab": "Bikoiztu fitxa",
     "lockTab": "Blokeatu fitxa",
     "closeOtherTabs": "Itxi beste fitxak",
+    "nextTab": "Hurrengo fitxa",
+    "prevTab": "Aurreko fitxa",
     "back": "Atzera",
     "forward": "Aurrera",
     "up": "Maila bat gora",

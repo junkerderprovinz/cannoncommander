@@ -1351,7 +1351,17 @@
     "fmNowOff": "Le tue cartelle si aprono di nuovo come prima",
     "fmOpen": "Apri in CannonCommander",
     "fmShow": "Mostra CannonCommander",
-    "fmQuit": "Esci"
+    "fmQuit": "Esci",
+    "style": "Uso come",
+    "styleTip": "Imposta i tasti e la selezione col mouse. Dopo puoi cambiarli anche uno per uno, i tasti con F1.",
+    "clickSelect": "Selezione come in Esplora file",
+    "clickSelectTip": "Un clic seleziona un file, un riquadro tracciato col mouse ne seleziona diversi e la selezione segue le frecce. Disattivato è come in un Commander: un clic sposta solo il cursore e si marca con Ctrl, Maiusc o Ins.",
+    "styleTitle": "Come in Esplora file o come un Commander?",
+    "styleText": "Che bello averti qui! Come vuoi usare CannonCommander? Puoi cambiarlo quando vuoi nelle impostazioni, sotto Generale.",
+    "explorerName": "Come in Esplora file",
+    "explorerHow": "Un clic seleziona un file, un riquadro col mouse ne seleziona diversi. F5 aggiorna, Backspace torna indietro e Alt+D passa alla barra del percorso.",
+    "commanderName": "Come un Commander",
+    "commanderHow": "Un clic sposta il cursore e si marca con Ctrl, Maiusc o Ins. F5 copia e F6 sposta nell'altro pannello."
   },
   "diff": {
     "title": "Confronta file",
@@ -3292,6 +3302,8 @@
     "dupTab": "Duplica scheda",
     "lockTab": "Blocca scheda",
     "closeOtherTabs": "Chiudi le altre schede",
+    "nextTab": "Scheda successiva",
+    "prevTab": "Scheda precedente",
     "back": "Indietro",
     "forward": "Avanti",
     "up": "Livello superiore",

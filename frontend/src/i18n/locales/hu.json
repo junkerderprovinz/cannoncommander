@@ -1306,7 +1306,17 @@
     "fmNowOff": "A mappáid újra úgy nyílnak meg, mint korábban",
     "fmOpen": "Megnyitás a CannonCommanderben",
     "fmShow": "CannonCommander megjelenítése",
-    "fmQuit": "Kilépés"
+    "fmQuit": "Kilépés",
+    "style": "Kezelés mint",
+    "styleTip": "Beállítja a billentyűket és az egeres kijelölést. Utána mindkettő külön is módosítható, a billentyűk az F1-gyel.",
+    "clickSelect": "Kijelölés, mint az Intézőben",
+    "clickSelectTip": "Egy kattintás kijelöl egy fájlt, egérrel húzott keret többet, és a kijelölés követi a nyílbillentyűket. Kikapcsolva olyan, mint egy Commanderben: a kattintás csak a kurzort mozgatja, jelölni Ctrl, Shift vagy Insert billentyűvel lehet.",
+    "styleTitle": "Mint az Intézőben, vagy mint egy Commander?",
+    "styleText": "Örülünk, hogy itt vagy! Hogyan szeretnéd használni a CannonCommandert? Bármikor módosíthatod a beállításokban, az Általános részben.",
+    "explorerName": "Mint az Intézőben",
+    "explorerHow": "Egy kattintás kijelöl egy fájlt, egérrel húzott keret többet. Az F5 frissít, a Backspace visszalép, az Alt+D pedig az útvonalsávra ugrik.",
+    "commanderName": "Mint egy Commander",
+    "commanderHow": "A kattintás a kurzort mozgatja, jelölni Ctrl, Shift vagy Insert billentyűvel lehet. Az F5 másol, az F6 áthelyez a másik panelre."
   },
   "diff": {
     "title": "Fájlok összehasonlítása",
@@ -3164,6 +3174,8 @@
     "dupTab": "Lap kettőzése",
     "lockTab": "Lap zárolása",
     "closeOtherTabs": "Többi lap bezárása",
+    "nextTab": "Következő lap",
+    "prevTab": "Előző lap",
     "back": "Vissza",
     "forward": "Előre",
     "up": "Egy szinttel feljebb",

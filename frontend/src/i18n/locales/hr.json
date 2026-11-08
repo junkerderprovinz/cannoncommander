@@ -1351,7 +1351,17 @@
     "fmNowOff": "Tvoje se mape opet otvaraju kao prije",
     "fmOpen": "Otvori u CannonCommanderu",
     "fmShow": "Prikaži CannonCommander",
-    "fmQuit": "Zatvori"
+    "fmQuit": "Zatvori",
+    "style": "Upravljanje kao",
+    "styleTip": "Određuje tipke i odabir mišem. Poslije možeš svako zasebno promijeniti, tipke s F1.",
+    "clickSelect": "Odabir kao u Exploreru",
+    "clickSelectTip": "Klik odabire datoteku, okvir mišem odabire više njih, a odabir prati strelice. Kad je isključeno, kao u Commanderu: klik samo pomiče kursor, a označava se s Ctrl, Shift ili Insert.",
+    "styleTitle": "Kao u Exploreru ili kao Commander?",
+    "styleText": "Drago nam je što si tu! Kako želiš koristiti CannonCommander? To uvijek možeš promijeniti u postavkama pod Općenito.",
+    "explorerName": "Kao u Exploreru",
+    "explorerHow": "Klik odabire datoteku, okvir mišem odabire više njih. F5 osvježava, Backspace ide natrag, a Alt+D skače u traku putanje.",
+    "commanderName": "Kao Commander",
+    "commanderHow": "Klik pomiče kursor, a označava se s Ctrl, Shift ili Insert. F5 kopira, a F6 premješta u drugu ploču."
   },
   "diff": {
     "title": "Usporedi datoteke",
@@ -3292,6 +3302,8 @@
     "dupTab": "Udvostruči karticu",
     "lockTab": "Zaključaj karticu",
     "closeOtherTabs": "Zatvori ostale kartice",
+    "nextTab": "Sljedeća kartica",
+    "prevTab": "Prethodna kartica",
     "back": "Natrag",
     "forward": "Naprijed",
     "up": "Razina gore",

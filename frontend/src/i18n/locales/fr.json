@@ -1351,7 +1351,17 @@
     "fmNowOff": "Tes dossiers s'ouvrent de nouveau comme avant",
     "fmOpen": "Ouvrir dans CannonCommander",
     "fmShow": "Afficher CannonCommander",
-    "fmQuit": "Quitter"
+    "fmQuit": "Quitter",
+    "style": "Utilisation comme",
+    "styleTip": "Définit les touches et la sélection à la souris. Tu peux ensuite modifier chacun séparément, les touches avec F1.",
+    "clickSelect": "Sélection comme dans l'Explorateur",
+    "clickSelectTip": "Un clic sélectionne un fichier, un cadre tracé à la souris en sélectionne plusieurs et la sélection suit les flèches. Désactivé, c'est comme dans un Commander : un clic déplace seulement le curseur et on marque avec Ctrl, Maj ou Inser.",
+    "styleTitle": "Comme dans l'Explorateur ou comme un Commander ?",
+    "styleText": "Ravi de t'accueillir ! Comment veux-tu utiliser CannonCommander ? Tu peux le changer à tout moment dans les réglages, sous Général.",
+    "explorerName": "Comme dans l'Explorateur",
+    "explorerHow": "Un clic sélectionne un fichier, un cadre tracé à la souris en sélectionne plusieurs. F5 actualise, Retour arrière revient en arrière et Alt+D va dans la barre de chemin.",
+    "commanderName": "Comme un Commander",
+    "commanderHow": "Un clic déplace le curseur et on marque avec Ctrl, Maj ou Inser. F5 copie et F6 déplace vers l'autre panneau."
   },
   "diff": {
     "title": "Comparer des fichiers",
@@ -3292,6 +3302,8 @@
     "dupTab": "Dupliquer l'onglet",
     "lockTab": "Verrouiller l'onglet",
     "closeOtherTabs": "Fermer les autres onglets",
+    "nextTab": "Onglet suivant",
+    "prevTab": "Onglet précédent",
     "back": "Précédent",
     "forward": "Suivant",
     "up": "Remonter d'un niveau",

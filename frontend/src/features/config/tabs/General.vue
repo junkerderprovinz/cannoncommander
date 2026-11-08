@@ -7,7 +7,7 @@ import { admin, exists } from '@/api/admin';
 import { host } from '@/core/host';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
-import FileManagerRow from '@/features/desktop/FileManagerRow.vue';
+import DesktopRows from '@/features/desktop/DesktopRows.vue';
 import { useUnraid } from '@/features/unraid/state';
 import { useUser } from '@/stores/user';
 import { c, cn, fail, P } from '@/features/config/shared';
@@ -57,7 +57,7 @@ async function testNote() {
     <FieldRowGroup>
       <FieldRow :label="c('general.start')" :hint="c('general.startTip')"><PathField ref="field" v-model="start" v-bind="pathField('a-start')" @change="save" @picked="save" /></FieldRow>
       <FieldRow :label="c('general.dblclick')" :hint="c('general.dblclickTip')"><Selector v-model="P.dblclick" :items="segItems(DBLCLICK)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-      <FileManagerRow v-if="host.desktop" />
+      <DesktopRows v-if="host.desktop" />
     </FieldRowGroup>
   </Card>
   <Card :title="c('general.delete')">

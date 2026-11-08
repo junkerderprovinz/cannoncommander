@@ -1351,7 +1351,17 @@
     "fmNowOff": "Dosarele tale se deschid din nou ca înainte",
     "fmOpen": "Deschide în CannonCommander",
     "fmShow": "Arată CannonCommander",
-    "fmQuit": "Ieșire"
+    "fmQuit": "Ieșire",
+    "style": "Utilizare ca",
+    "styleTip": "Stabilește tastele și selecția cu mouse-ul. Apoi le poți schimba pe fiecare separat, tastele cu F1.",
+    "clickSelect": "Selecție ca în Explorer",
+    "clickSelectTip": "Un clic selectează un fișier, un cadru tras cu mouse-ul selectează mai multe, iar selecția urmează săgețile. Dezactivat e ca într-un Commander: clicul doar mută cursorul, iar marcarea se face cu Ctrl, Shift sau Insert.",
+    "styleTitle": "Ca în Explorer sau ca un Commander?",
+    "styleText": "Ne bucurăm că ești aici! Cum vrei să folosești CannonCommander? Poți schimba oricând în setări, la General.",
+    "explorerName": "Ca în Explorer",
+    "explorerHow": "Un clic selectează un fișier, un cadru cu mouse-ul selectează mai multe. F5 reîmprospătează, Backspace merge înapoi, iar Alt+D sare în bara de cale.",
+    "commanderName": "Ca un Commander",
+    "commanderHow": "Clicul mută cursorul, iar marcarea se face cu Ctrl, Shift sau Insert. F5 copiază, iar F6 mută în celălalt panou."
   },
   "diff": {
     "title": "Compară fișiere",
@@ -3292,6 +3302,8 @@
     "dupTab": "Duplică fila",
     "lockTab": "Blochează fila",
     "closeOtherTabs": "Închide celelalte file",
+    "nextTab": "Fila următoare",
+    "prevTab": "Fila anterioară",
     "back": "Înapoi",
     "forward": "Înainte",
     "up": "Un nivel mai sus",

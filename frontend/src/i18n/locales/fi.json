@@ -1306,7 +1306,17 @@
     "fmNowOff": "Kansiosi avautuvat taas kuten ennen",
     "fmOpen": "Avaa CannonCommanderissa",
     "fmShow": "Näytä CannonCommander",
-    "fmQuit": "Lopeta"
+    "fmQuit": "Lopeta",
+    "style": "Käyttö kuin",
+    "styleTip": "Määrittää näppäimet ja hiirellä valitsemisen. Kumpaakin voi myöhemmin muuttaa erikseen, näppäimiä F1:llä.",
+    "clickSelect": "Valinta kuten Resurssienhallinnassa",
+    "clickSelectTip": "Napsautus valitsee tiedoston, hiirellä piirretty kehys valitsee useita, ja valinta seuraa nuolinäppäimiä. Pois päältä se toimii kuin Commanderissa: napsautus siirtää vain kohdistinta, ja merkitään Ctrl-, Shift- tai Insert-näppäimellä.",
+    "styleTitle": "Kuten Resurssienhallinnassa vai kuin Commander?",
+    "styleText": "Kiva, että olet täällä! Miten haluat käyttää CannonCommanderia? Voit muuttaa sitä milloin tahansa asetuksissa kohdassa Yleiset.",
+    "explorerName": "Kuten Resurssienhallinnassa",
+    "explorerHow": "Napsautus valitsee tiedoston, hiirellä piirretty kehys useita. F5 päivittää, askelpalautin palaa takaisin ja Alt+D siirtyy polkuriville.",
+    "commanderName": "Kuin Commander",
+    "commanderHow": "Napsautus siirtää kohdistinta, ja merkitään Ctrl-, Shift- tai Insert-näppäimellä. F5 kopioi ja F6 siirtää toiseen paneeliin."
   },
   "diff": {
     "title": "Vertaa tiedostoja",
@@ -3164,6 +3174,8 @@
     "dupTab": "Monista välilehti",
     "lockTab": "Lukitse välilehti",
     "closeOtherTabs": "Sulje muut välilehdet",
+    "nextTab": "Seuraava välilehti",
+    "prevTab": "Edellinen välilehti",
     "back": "Takaisin",
     "forward": "Eteenpäin",
     "up": "Taso ylöspäin",

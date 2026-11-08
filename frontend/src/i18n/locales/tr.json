@@ -1306,7 +1306,17 @@
     "fmNowOff": "Klasörlerin yine eskisi gibi açılıyor",
     "fmOpen": "CannonCommander'da aç",
     "fmShow": "CannonCommander'ı göster",
-    "fmQuit": "Çık"
+    "fmQuit": "Çık",
+    "style": "Kullanım biçimi",
+    "styleTip": "Tuşları ve fareyle seçimi belirler. Sonra her birini ayrı ayrı değiştirebilirsin, tuşları F1 ile.",
+    "clickSelect": "Explorer'daki gibi seçim",
+    "clickSelectTip": "Bir tıklama bir dosyayı seçer, fareyle çizilen çerçeve birkaçını seçer ve seçim ok tuşlarını izler. Kapalıyken Commander'daki gibidir: tıklama yalnızca imleci taşır, işaretleme Ctrl, Shift veya Insert ile yapılır.",
+    "styleTitle": "Explorer'daki gibi mi, Commander gibi mi?",
+    "styleText": "Burada olmana sevindik! CannonCommander'ı nasıl kullanmak istersin? Bunu ayarlarda Genel altında istediğin zaman değiştirebilirsin.",
+    "explorerName": "Explorer'daki gibi",
+    "explorerHow": "Bir tıklama bir dosyayı, fareyle çizilen çerçeve birkaçını seçer. F5 yeniler, Backspace geri gider ve Alt+D yol çubuğuna atlar.",
+    "commanderName": "Commander gibi",
+    "commanderHow": "Tıklama imleci taşır, işaretleme Ctrl, Shift veya Insert ile yapılır. F5 kopyalar, F6 diğer panele taşır."
   },
   "diff": {
     "title": "Dosyaları karşılaştır",
@@ -3164,6 +3174,8 @@
     "dupTab": "Sekmeyi çoğalt",
     "lockTab": "Sekmeyi kilitle",
     "closeOtherTabs": "Diğer sekmeleri kapat",
+    "nextTab": "Sonraki sekme",
+    "prevTab": "Önceki sekme",
     "back": "Geri",
     "forward": "İleri",
     "up": "Bir üst düzey",

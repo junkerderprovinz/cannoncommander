@@ -1306,7 +1306,17 @@
     "fmNowOff": "Dina mappar öppnas som förut igen",
     "fmOpen": "Öppna i CannonCommander",
     "fmShow": "Visa CannonCommander",
-    "fmQuit": "Avsluta"
+    "fmQuit": "Avsluta",
+    "style": "Hantering som",
+    "styleTip": "Bestämmer tangenterna och hur musen markerar. Efteråt kan du ändra var för sig, tangenterna med F1.",
+    "clickSelect": "Markering som i Utforskaren",
+    "clickSelectTip": "Ett klick markerar en fil, en ram med musen markerar flera och markeringen följer piltangenterna. Avstängt är det som i en Commander: ett klick flyttar bara markören och du markerar med Ctrl, Shift eller Insert.",
+    "styleTitle": "Som i Utforskaren eller som en Commander?",
+    "styleText": "Kul att du är här! Hur vill du använda CannonCommander? Du kan ändra det när som helst i inställningarna under Allmänt.",
+    "explorerName": "Som i Utforskaren",
+    "explorerHow": "Ett klick markerar en fil, en ram med musen markerar flera. F5 uppdaterar, Backsteg går tillbaka och Alt+D hoppar till sökvägsfältet.",
+    "commanderName": "Som en Commander",
+    "commanderHow": "Ett klick flyttar markören och du markerar med Ctrl, Shift eller Insert. F5 kopierar och F6 flyttar till den andra panelen."
   },
   "diff": {
     "title": "Jämför filer",
@@ -3164,6 +3174,8 @@
     "dupTab": "Duplicera flik",
     "lockTab": "Lås flik",
     "closeOtherTabs": "Stäng andra flikar",
+    "nextTab": "Nästa flik",
+    "prevTab": "Föregående flik",
     "back": "Bakåt",
     "forward": "Framåt",
     "up": "En nivå upp",

@@ -16,6 +16,7 @@ import setup from './index';
 import { launch } from './launch';
 import { fileManager, followFileManager, setFileManager } from './filemanager';
 import { openHandedOver, takeStartFolders } from './open';
+import { askStyle } from './style';
 
 addMessages('desktop', { de, en });
 
@@ -150,5 +151,30 @@ describe('default file manager', () => {
     await followFileManager();
     expect(switched.map((s) => s.on)).toEqual([true]);
     expect(toasts).toHaveLength(0);
+  });
+});
+
+describe('first start', () => {
+  const answer = (label: string) => {
+    const w = winStack.at(-1)!;
+    w.foot.find((f) => f.label === label)!.run!(document.body);
+    w.close();
+  };
+
+  it('asks once how the app should handle and opens files in their programs', () => {
+    Object.assign(prefs, { desktopStyle: '', clickSelect: false, dblclick: 'open', keys: null });
+    askStyle();
+    expect(winStack.map((w) => w.title)).toEqual(['Wie im Explorer oder wie ein Commander?']);
+    expect(prefs.dblclick).toBe('system');
+    answer('Wie im Explorer');
+    expect(prefs).toMatchObject({ desktopStyle: 'explorer', clickSelect: true });
+    expect((prefs.keys as { preset: string }).preset).toBe('explorer');
+  });
+
+  it('stays a commander when the question is closed without an answer', () => {
+    Object.assign(prefs, { desktopStyle: '', clickSelect: true, keys: null });
+    askStyle();
+    winStack.at(-1)!.close();
+    expect(prefs).toMatchObject({ desktopStyle: 'commander', clickSelect: false, keys: null });
   });
 });

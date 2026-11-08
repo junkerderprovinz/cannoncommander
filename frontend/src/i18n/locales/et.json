@@ -1306,7 +1306,17 @@
     "fmNowOff": "Sinu kaustad avanevad jälle nagu varem",
     "fmOpen": "Ava CannonCommanderis",
     "fmShow": "Näita CannonCommanderit",
-    "fmQuit": "Välju"
+    "fmQuit": "Välju",
+    "style": "Kasutus nagu",
+    "styleTip": "Määrab klahvid ja hiirega valimise. Hiljem saad kumbagi eraldi muuta, klahve F1 kaudu.",
+    "clickSelect": "Valik nagu Exploreris",
+    "clickSelectTip": "Klõps valib faili, hiirega raam valib mitu ja valik järgib nooleklahve. Välja lülitatuna on nagu Commanderis: klõps liigutab ainult kursorit ja märgitakse Ctrl, Shift või Insert abil.",
+    "styleTitle": "Nagu Exploreris või nagu Commander?",
+    "styleText": "Tore, et sa siin oled! Kuidas soovid CannonCommanderit kasutada? Saad seda igal ajal seadetes jaotises Üldine muuta.",
+    "explorerName": "Nagu Exploreris",
+    "explorerHow": "Klõps valib faili, hiirega raam valib mitu. F5 värskendab, Backspace läheb tagasi ja Alt+D hüppab teeribale.",
+    "commanderName": "Nagu Commander",
+    "commanderHow": "Klõps liigutab kursorit ja märgitakse Ctrl, Shift või Insert abil. F5 kopeerib ja F6 teisaldab teisele paneelile."
   },
   "diff": {
     "title": "Võrdle faile",
@@ -3164,6 +3174,8 @@
     "dupTab": "Dubleeri vahekaart",
     "lockTab": "Lukusta vahekaart",
     "closeOtherTabs": "Sulge teised vahekaardid",
+    "nextTab": "Järgmine vaheleht",
+    "prevTab": "Eelmine vaheleht",
     "back": "Tagasi",
     "forward": "Edasi",
     "up": "Üks tase üles",

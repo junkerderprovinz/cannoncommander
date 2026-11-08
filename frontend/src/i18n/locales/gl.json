@@ -1306,7 +1306,17 @@
     "fmNowOff": "Os teus cartafoles volven abrirse coma antes",
     "fmOpen": "Abrir en CannonCommander",
     "fmShow": "Amosar CannonCommander",
-    "fmQuit": "Saír"
+    "fmQuit": "Saír",
+    "style": "Manéxase coma",
+    "styleTip": "Define as teclas e a selección co rato. Despois podes cambiar cada cousa por separado, as teclas con F1.",
+    "clickSelect": "Selección como no Explorador",
+    "clickSelectTip": "Un clic selecciona un ficheiro, un marco co rato selecciona varios e a selección segue as frechas. Desactivado é coma nun Commander: un clic só move o cursor e márcase con Ctrl, Maiús ou Insert.",
+    "styleTitle": "Como no Explorador ou coma un Commander?",
+    "styleText": "Que ben que esteas aquí! Como queres usar CannonCommander? Podes cambialo cando queiras nos axustes, en Xeral.",
+    "explorerName": "Como no Explorador",
+    "explorerHow": "Un clic selecciona un ficheiro, un marco co rato selecciona varios. F5 actualiza, Retroceso volve atrás e Alt+D salta á barra da ruta.",
+    "commanderName": "Coma un Commander",
+    "commanderHow": "Un clic move o cursor e márcase con Ctrl, Maiús ou Insert. F5 copia e F6 move ao outro panel."
   },
   "diff": {
     "title": "Comparar ficheiros",
@@ -3164,6 +3174,8 @@
     "dupTab": "Duplicar a pestana",
     "lockTab": "Bloquear a pestana",
     "closeOtherTabs": "Pechar as outras pestanas",
+    "nextTab": "Seguinte lapela",
+    "prevTab": "Lapela anterior",
     "back": "Atrás",
     "forward": "Adiante",
     "up": "Subir un nivel",

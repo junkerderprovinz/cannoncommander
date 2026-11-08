@@ -1306,7 +1306,17 @@
     "fmNowOff": "Mappene dine åpnes som før igjen",
     "fmOpen": "Åpne i CannonCommander",
     "fmShow": "Vis CannonCommander",
-    "fmQuit": "Avslutt"
+    "fmQuit": "Avslutt",
+    "style": "Bruk som",
+    "styleTip": "Bestemmer tastene og markering med musen. Etterpå kan du endre hver for seg, tastene med F1.",
+    "clickSelect": "Markering som i Utforsker",
+    "clickSelectTip": "Et klikk markerer en fil, en ramme med musen markerer flere, og markeringen følger piltastene. Slått av er det som i en Commander: et klikk flytter bare markøren, og du markerer med Ctrl, Shift eller Insert.",
+    "styleTitle": "Som i Utforsker eller som en Commander?",
+    "styleText": "Hyggelig at du er her! Hvordan vil du bruke CannonCommander? Du kan når som helst endre det i innstillingene under Generelt.",
+    "explorerName": "Som i Utforsker",
+    "explorerHow": "Et klikk markerer en fil, en ramme med musen markerer flere. F5 oppdaterer, Backspace går tilbake og Alt+D hopper til stilinjen.",
+    "commanderName": "Som en Commander",
+    "commanderHow": "Et klikk flytter markøren, og du markerer med Ctrl, Shift eller Insert. F5 kopierer og F6 flytter til det andre panelet."
   },
   "diff": {
     "title": "Sammenlign filer",
@@ -3164,6 +3174,8 @@
     "dupTab": "Dupliser fane",
     "lockTab": "Lås fane",
     "closeOtherTabs": "Lukk andre faner",
+    "nextTab": "Neste fane",
+    "prevTab": "Forrige fane",
     "back": "Tilbake",
     "forward": "Frem",
     "up": "Ett nivå opp",

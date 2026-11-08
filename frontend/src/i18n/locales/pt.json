@@ -1351,7 +1351,17 @@
     "fmNowOff": "As tuas pastas voltam a abrir como antes",
     "fmOpen": "Abrir no CannonCommander",
     "fmShow": "Mostrar o CannonCommander",
-    "fmQuit": "Sair"
+    "fmQuit": "Sair",
+    "style": "Utilização como",
+    "styleTip": "Define as teclas e a seleção com o rato. Depois podes alterar cada uma em separado, as teclas com F1.",
+    "clickSelect": "Seleção como no Explorador",
+    "clickSelectTip": "Um clique seleciona um ficheiro, um quadro desenhado com o rato seleciona vários e a seleção segue as setas. Desativado é como num Commander: um clique só move o cursor e marca-se com Ctrl, Shift ou Insert.",
+    "styleTitle": "Como no Explorador ou como um Commander?",
+    "styleText": "Que bom ter-te aqui! Como queres usar o CannonCommander? Podes mudar isto a qualquer momento nas definições, em Geral.",
+    "explorerName": "Como no Explorador",
+    "explorerHow": "Um clique seleciona um ficheiro, um quadro com o rato seleciona vários. F5 atualiza, Backspace volta atrás e Alt+D salta para a barra do caminho.",
+    "commanderName": "Como um Commander",
+    "commanderHow": "Um clique move o cursor e marca-se com Ctrl, Shift ou Insert. F5 copia e F6 move para o outro painel."
   },
   "diff": {
     "title": "Comparar ficheiros",
@@ -3292,6 +3302,8 @@
     "dupTab": "Duplicar separador",
     "lockTab": "Bloquear separador",
     "closeOtherTabs": "Fechar os outros separadores",
+    "nextTab": "Separador seguinte",
+    "prevTab": "Separador anterior",
     "back": "Voltar",
     "forward": "Avançar",
     "up": "Subir um nível",

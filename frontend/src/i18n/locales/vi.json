@@ -1261,7 +1261,17 @@
     "fmNowOff": "Thư mục của bạn lại mở như trước",
     "fmOpen": "Mở trong CannonCommander",
     "fmShow": "Hiện CannonCommander",
-    "fmQuit": "Thoát"
+    "fmQuit": "Thoát",
+    "style": "Cách dùng giống",
+    "styleTip": "Đặt phím tắt và cách chọn bằng chuột. Sau đó bạn có thể đổi từng thứ riêng, phím tắt bằng F1.",
+    "clickSelect": "Chọn như trong Explorer",
+    "clickSelectTip": "Một cú nhấp chọn một tệp, kéo khung bằng chuột chọn nhiều tệp và vùng chọn đi theo phím mũi tên. Khi tắt thì giống Commander: nhấp chỉ di chuyển con trỏ, đánh dấu bằng Ctrl, Shift hoặc Insert.",
+    "styleTitle": "Giống Explorer hay giống Commander?",
+    "styleText": "Rất vui có bạn ở đây! Bạn muốn dùng CannonCommander theo cách nào? Bạn có thể đổi bất cứ lúc nào trong phần cài đặt, mục Chung.",
+    "explorerName": "Giống Explorer",
+    "explorerHow": "Một cú nhấp chọn một tệp, khung kéo bằng chuột chọn nhiều tệp. F5 làm mới, Backspace quay lại và Alt+D nhảy tới thanh đường dẫn.",
+    "commanderName": "Giống Commander",
+    "commanderHow": "Nhấp để di chuyển con trỏ, đánh dấu bằng Ctrl, Shift hoặc Insert. F5 sao chép và F6 di chuyển sang bảng kia."
   },
   "diff": {
     "title": "So sánh tệp",
@@ -3036,6 +3046,8 @@
     "dupTab": "Nhân bản thẻ",
     "lockTab": "Khóa thẻ",
     "closeOtherTabs": "Đóng các thẻ khác",
+    "nextTab": "Thẻ tiếp theo",
+    "prevTab": "Thẻ trước",
     "back": "Lùi",
     "forward": "Tiến",
     "up": "Lên một cấp",
