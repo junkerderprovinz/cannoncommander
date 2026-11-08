@@ -3,11 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import { api, toItem } from '@/api/client';
 import { actions } from '@/core/actions';
+import { menu } from '@/core/menu';
 import { host } from '@/core/host';
 import { prefs } from '@/core/prefs';
 import { toasts } from '@/core/toast';
 import { winStack } from '@/core/windows';
 import { addMessages, setLanguage } from '@/i18n';
+import { rowMenu } from '@/files/menus';
 import { usePanels } from '@/stores/panels';
 import { useUser } from '@/stores/user';
 import de from './de.json';
@@ -19,6 +21,7 @@ import { openHandedOver, takeStartFolders } from './open';
 import { askStyle } from './style';
 
 addMessages('desktop', { de, en });
+vi.mock('@/core/menu', async (original) => ({ ...(await original<typeof import('@/core/menu')>()), menu: vi.fn() }));
 
 let posted: { path: string; run: boolean }[] = [];
 let answer: Response | null = null;
@@ -102,6 +105,15 @@ describe('double click', () => {
     await settle();
     expect(posted).toEqual([{ path: '/home/jdp/Briefe/brief.odt', run: false }]);
     prefs.dblclick = 'open';
+  });
+
+  it('offers Öffnen for a file in its context menu', async () => {
+    setup();
+    const F = usePanels();
+    await settle();
+    F.T().cursor = F.entries().findIndex((k) => k.name === 'a.txt');
+    rowMenu(10, 10);
+    expect(vi.mocked(menu).mock.calls.at(-1)![2]).toContain('launch');
   });
 
   it('has no launcher in the container', async () => {
