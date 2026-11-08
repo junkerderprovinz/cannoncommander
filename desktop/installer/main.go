@@ -48,6 +48,7 @@ func main() {
 			// desktop/main.go.
 			InstanceID: id,
 			Choices:    []pommelporter.Choice{fileManager},
+			Stays:      stays,
 		})
 	}
 	if err != nil {
