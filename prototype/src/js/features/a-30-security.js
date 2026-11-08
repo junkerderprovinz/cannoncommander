@@ -138,7 +138,7 @@
     const others = DATA.sessions.filter(s => !s.current && !s.device.startsWith('API-Token'));
     host.innerHTML = CC.card('Anmeldung',
       frow('Passwort', `<span class="a-ctl">${pill('Geändert ' + A.ago(acc.pwChanged))}${btn('Ändern', 'IconKey', 'data-pw')}</span>`, 'Ein neues Passwort meldet dich auf allen anderen Geräten ab. Diese Sitzung bleibt angemeldet.')
-      + frow('Angemeldet bleiben', seg([[1, '1 Tag'], [7, '7 Tage'], [30, '30 Tage']], acc.stayDays, 'id="a-stay"'), 'Danach fragt CannonCommander wieder nach dem Passwort.'))
+      + frow('Angemeldet bleiben', seg([[1, '1 Tag'], [7, '7 Tage'], [30, '30 Tage']], acc.stayDays, 'id="a-stay"'), 'Die Zeit zählt ab deinem letzten Besuch. Kommst du so lange nicht vorbei, fragt CannonCommander wieder nach dem Passwort.'))
       + CC.card('Zwei-Faktor-Authentifizierung', u.twofa
         ? frow('Status', `<span class="a-ctl">${pill('An', 'ok')}${btn('Ausschalten', 'IconShieldOff', 'data-2off')}</span>`, 'Nach dem Passwort fragt CannonCommander nach einem Code aus deiner App.')
           + frow('Wiederherstellungscodes', `<span class="a-ctl">${pill(`${acc.recovery} übrig`, acc.recovery < 3 ? 'warn' : '')}${btn('Neu erzeugen', 'IconRefresh', 'data-2codes')}</span>`, 'Jeder Code meldet dich einmal an, falls das Handy fehlt. Neue Codes machen die alten ungültig.')
