@@ -8,7 +8,9 @@ permissions:
   contents: read
 
 jobs:
-  go:
+  # The server is one module that the container builds without the desktop
+  # tag and the desktop app with it, so each build gets a job of its own.
+  go-container:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -21,6 +23,28 @@ jobs:
           cache-dependency-path: backend/go.sum
       - run: go vet ./...
       - run: go test -race ./...
+      # The packages that reach into the computer belong to the desktop app
+      # alone, and an import that slips past the tag would put them back.
+      - name: Check that the server leaves out the desktop app's packages
+        run: |
+          if go list -deps . | grep -E '/internal/(nativeshell|sysbin|xdg)$|/pkg/(elevate|winshell)$'; then
+            echo "::error::the container's server imports what only the desktop app needs"
+            exit 1
+          fi
+
+  go-desktop:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - run: go vet -tags desktop ./...
+      - run: go test -race -tags desktop ./...
 
   frontend:
     runs-on: ubuntu-latest

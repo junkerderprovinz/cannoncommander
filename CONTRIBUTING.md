@@ -29,11 +29,13 @@ For work on the interface, start the server and then run `npm run dev` in `front
 ## Checks
 
 ```bash
-make test          # go test -race ./... and the Vitest suite
-make lint          # golangci-lint and the type check
+make test          # go test -race ./... for both builds of the server, and the Vitest suite
+make lint          # golangci-lint for both builds, and the type check
 ```
 
-Some Go tests need Linux (inotify, Unraid's files under `/var/local/emhttp`), so CI runs them on Ubuntu. CI also runs them as a normal user, and root passes permission checks that fail there, so `testing/go-test-nonroot.sh` runs `go vet` and `go test -race` as a normal user in a `golang` container; how to start it is at the top of the script. After a change to an API contract, regenerate the OpenAPI document with `go run ./scripts/openapi` in `backend/`.
+The server is built twice from the same code. The container leaves out the desktop app's parts, and the desktop app adds them with the `desktop` build tag. A package only the app has puts `//go:build desktop` on its files and keeps a `container.go` beside them, which serves its contract and answers `desktopOnly`. The interface does the same with `desktop.ts` files, which `npm run build:docker` leaves out.
+
+Some Go tests need Linux (inotify, Unraid's files under `/var/local/emhttp`), so CI runs them on Ubuntu. CI also runs them as a normal user, and root passes permission checks that fail there, so `testing/go-test-nonroot.sh` runs `go vet` and `go test -race` as a normal user in a `golang` container, with the argument `desktop` for the app's build; how to start it is at the top of the script. After a change to an API contract, regenerate the OpenAPI document with `go run ./scripts/openapi` in `backend/`.
 
 ## Pull requests
 
