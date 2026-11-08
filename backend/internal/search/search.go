@@ -8,7 +8,6 @@ import (
 	"os"
 	"slices"
 	"strconv"
-	"strings"
 	"time"
 
 	"golang.org/x/text/collate"
@@ -72,7 +71,7 @@ func formatTime(t time.Time) string {
 func hitOf(r *row) Hit {
 	h := Hit{
 		Name: r.Name, Dir: r.Dir, Size: r.Size, MTime: formatTime(r.MTime), At: r.At,
-		Mode: fmt.Sprintf("%04o", r.mode()), Hidden: r.Hidden || strings.HasPrefix(r.Name, "."),
+		Mode: fmt.Sprintf("%04o", r.mode()), Hidden: r.Hidden || ccfs.HiddenByName(r.Name),
 	}
 	if !r.Created.IsZero() {
 		h.BTime = formatTime(r.Created)

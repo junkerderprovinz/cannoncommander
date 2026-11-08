@@ -12,6 +12,7 @@ import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { useUser } from '@/stores/user';
 import { shake } from '@/ui/kit';
+import { shown } from './entries';
 import { nativePath, split, typedPath } from './paths';
 
 const props = defineProps<{ i: number }>();
@@ -27,7 +28,7 @@ const partName = (part: string, k: number) => (k > 0 || !windowsPaths() ? part.r
 async function psub(e: MouseEvent, folder: string) {
   const r = (e.currentTarget as HTMLElement).getBoundingClientRect(), here = tab.value.path;
   const dirs = (await listing.tree(folder).catch(() => []))
-    .filter((k) => prefs.showHidden || !k.name.startsWith('.'))
+    .filter(shown(prefs.showHidden, prefs.showSystem))
     .sort((a, b) => byName(a.name, b.name));
   menu(r.left, r.bottom + 4, dirs.map((k) => {
     const onPath = here === k.path || here.startsWith(k.path + '/');

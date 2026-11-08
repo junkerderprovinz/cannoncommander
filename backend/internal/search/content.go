@@ -180,6 +180,9 @@ const sniff = 8 << 10
 // findIn looks for needle, in lower case, in the file and returns the line
 // of the first match.
 func findIn(ctx context.Context, real string, needle []byte) (line int, found bool, err error) {
+	if ccfs.InCloud(real) {
+		return 0, false, ccfs.ErrInCloud
+	}
 	fh, err := ccfs.OpenRegular(real)
 	if err != nil {
 		return 0, false, err

@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
 	dbsql "github.com/junkerderprovinz/cannoncommander/backend/internal/database/sql"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
@@ -70,7 +71,7 @@ func Scan(t testing.TB, db *dbsql.IndexDB, source, root string) {
 		}
 		fi := &iteminfo.FileInfo{ItemInfo: iteminfo.ItemInfo{
 			Name: d.Name(), Size: info.Size(), ModTime: info.ModTime(), Type: "text/plain",
-			Hidden: strings.HasPrefix(d.Name(), "."),
+			Hidden: ccfs.HiddenEntry(d),
 		}}
 		if d.IsDir() {
 			fi.Type, fi.Size = "directory", 0

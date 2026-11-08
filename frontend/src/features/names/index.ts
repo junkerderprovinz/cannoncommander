@@ -3,8 +3,10 @@
 import { reactive } from 'vue';
 import { type FsChanged, ops } from '@/api/ops';
 import { action, actions, run } from '@/core/actions';
+import { host } from '@/core/host';
 import { toast } from '@/core/toast';
 import { cancelBtn, win } from '@/core/windows';
+import { onInlineSave, startInline } from '@/files/inline';
 import { join } from '@/files/paths';
 import { plural, t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
@@ -25,6 +27,22 @@ export function copyName(name: string, taken: Set<string>, word: string) {
   }
 }
 
+// After a rename the cursor follows the entry to its new place in the list.
+async function follow(folder: string, panel: number, name: string) {
+  const F = usePanels();
+  await useListing().load(folder).catch(() => null);
+  const idx = F.entries(panel).findIndex((e) => e.name === name);
+  if (idx >= 0 && F.T(panel).path === folder) F.T(panel).cursor = idx;
+}
+
+function renameInline(folder: string, from: string, to: string, panel: number) {
+  if (useListing().lists.get(folder)?.items.some((k) => k.name === to)) return Promise.resolve(toast(t('names.taken'), 'warn'));
+  return ops.rename(join(folder, from), to).then(() => follow(folder, panel, to), (e) => toast(e.message, 'warn'));
+}
+
+// The row shows the field only where the entry is drawn as a row of its own, not in the column view.
+const drawnRow = (panel: number, idx: number) => !!document.querySelector(`.panel[data-panel="${panel}"] .list:not(.view-columns) > .row[data-idx="${idx}"] .t`);
+
 function nameWindow(title: string, value: string, verb: string, glyph: string, apply: (name: string) => Promise<FsChanged | void>, old?: string, hint?: string, field?: string) {
   const F = usePanels(), listing = useListing(), folder = F.T().path, panel = F.active;
   const taken = (name: string) => !!listing.lists.get(folder)?.items.some((k) => k.name === name);
@@ -36,11 +54,7 @@ function nameWindow(title: string, value: string, verb: string, glyph: string, a
       if (!name) return false;
       if (name !== old && taken(name)) { toast(t('names.taken'), 'warn'); return false; }
       if (name === old) return true;
-      apply(name).then(async () => {
-        await listing.load(folder).catch(() => null);
-        const idx = F.entries(panel).findIndex((e) => e.name === name);
-        if (idx >= 0 && F.T(panel).path === folder) F.T(panel).cursor = idx;
-      }, (e) => toast(e.message, 'warn'));
+      apply(name).then(() => follow(folder, panel, name), (e) => toast(e.message, 'warn'));
       return true;
     } }],
   });
@@ -48,6 +62,7 @@ function nameWindow(title: string, value: string, verb: string, glyph: string, a
 
 export default function setup() {
   const F = usePanels();
+  onInlineSave(renameInline);
   const here = () => F.T().path;
 
   action('newFolder', { label: tl('names.newFolder'), g: 'IconFolderAdd', key: 'F7', needs: 'writable', run: () => {
@@ -96,7 +111,9 @@ export default function setup() {
   action('rename', { label: tl('names.rename'), g: 'IconPencil', key: 'F2', needs: ['sel', 'writable'], run: () => {
     const sel = F.sel();
     if (sel.length > 1 && actions.multiRename) return run('multiRename');
-    const k = sel[0]!, folder = k.at || here();
+    const k = sel[0]!, folder = k.at || here(), idx = F.entries().indexOf(k);
+    // The desktop app renames in the row, as the computer's own file manager does; the browser keeps the window.
+    if (host.desktop && drawnRow(F.active, idx)) return startInline(F.active, folder, k.name);
     return nameWindow(t('names.rename'), k.name, t('names.rename'), 'IconPencil', (name) => ops.rename(join(folder, k.name), name), k.name);
   } });
 }

@@ -2,11 +2,14 @@ package fileops
 
 import (
 	"context"
+	"errors"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fschange"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
@@ -59,8 +62,14 @@ func elevateTransfer(move bool) func(context.Context, *jobs.Run) error {
 		if err != nil {
 			return err
 		}
-		if err := folder(dest); err != nil {
-			return err
+		// The folder of a move into a new folder may be what was refused, and
+		// the helper makes it on the way.
+		_, missing := os.Lstat(dest.Real)
+		fresh := p.NewFolder && errors.Is(missing, fs.ErrNotExist)
+		if !fresh {
+			if err := folder(dest); err != nil {
+				return err
+			}
 		}
 		kind := elevate.Copy
 		if move {
@@ -74,6 +83,7 @@ func elevateTransfer(move bool) func(context.Context, *jobs.Run) error {
 				continue
 			}
 			op, target, skip, err := planElevated(ctx, run, it, dest, kind, srcPerm, dstPerm)
+			op.Parents = fresh
 			if ctx.Err() != nil {
 				return ctx.Err()
 			}
@@ -125,6 +135,9 @@ func planElevated(ctx context.Context, run *jobs.Run, it jobs.Item, dest ccfs.Lo
 		return op, "", false, err
 	}
 	op = elevate.Op{Kind: kind, From: src.Real, To: to.Real}
+	if op.Skip, err = leftBehind(ctx, run.Deps().FS, u, src, srcPerm, kind == elevate.Move); err != nil {
+		return op, "", false, err
+	}
 	there, err := os.Lstat(to.Real)
 	if err != nil {
 		return op, target, false, nil
@@ -155,4 +168,34 @@ func planElevated(ctx context.Context, run *jobs.Run, it jobs.Item, dest ccfs.Lo
 		target, op.To = path.Join(dest.Path, free), filepath.Join(dest.Real, free)
 	}
 	return op, target, false, nil
+}
+
+// leftBehind lists what a normal copy or move of src leaves where it is: part
+// files, and what the owner may not see or, for a move, may not take along.
+func leftBehind(ctx context.Context, fsys *ccfs.Resolver, u *users.User, src ccfs.Location, perm ccfs.Perm, move bool) ([]string, error) {
+	check := fsys.Check
+	if move {
+		check = fsys.CheckCarried
+	}
+	var out []string
+	err := filepath.WalkDir(src.Real, func(p string, d fs.DirEntry, err error) error {
+		if err != nil || p == src.Real {
+			return err
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		rel, err := filepath.Rel(src.Real, p)
+		if err != nil {
+			return err
+		}
+		if _, err := check(u, path.Join(src.Path, filepath.ToSlash(rel)), perm); err != nil || IsPart(d.Name()) {
+			out = append(out, p)
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
+		}
+		return nil
+	})
+	return out, err
 }

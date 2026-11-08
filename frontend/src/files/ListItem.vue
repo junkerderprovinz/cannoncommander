@@ -6,6 +6,7 @@ import { computed } from 'vue';
 import { extend } from '@/core/extend';
 import { fmtListDate, fmtSize } from '@/core/format';
 import { G, glyphOf } from '@/core/glyphs';
+import { windowsPaths } from '@/core/host';
 import { prefs } from '@/core/prefs';
 import { Render } from '@/core/Render';
 import { t } from '@/i18n';
@@ -13,14 +14,15 @@ import { useListing } from '@/stores/listing';
 import type { RowMark as Mark } from '@/stores/panels';
 import { COL, Columns } from './columns';
 import { driveGlyph as kindGlyph } from './drives';
-import type { Entry } from './entries';
-import { join } from './paths';
+import { type Entry, isHidden } from './entries';
+import { join, nativePath } from './paths';
+import RenameField from './RenameField.vue';
 import SizeText from './SizeText.vue';
 import Thumb from './Thumb.vue';
 import { fresh } from './fresh';
 import { ticking } from './touch';
 
-const props = defineProps<{ k: Entry; idx: number; view: string; path: string; marked: boolean; cursor: boolean; cut?: boolean; mark?: Mark; thumb?: 'small' | 'large' }>();
+const props = defineProps<{ k: Entry; idx: number; view: string; path: string; marked: boolean; cursor: boolean; cut?: boolean; mark?: Mark; thumb?: 'small' | 'large'; renaming?: boolean }>();
 const listing = useListing();
 const boxes = computed(() => ticking(props.path) && !props.k.up);
 const glows = computed(() => fresh.has(join(props.k.at || props.path, props.k.name)));
@@ -30,11 +32,12 @@ const kind = computed(() => (['details', 'compact'].includes(props.view) ? 'row'
     : props.view === 'content' ? 'content' : props.view === 'drives' ? 'drive' : 'tile'));
 const cls = computed(() => [
   { row: 'row', flow: 'row fitem', content: 'row citem', tile: 'row gcard', drive: 'row dcard' }[kind.value],
-  { dir: props.k.dir, hidden: props.k.hidden || props.k.name.startsWith('.'), marked: props.marked, cursor: props.cursor, cut: props.cut, fresh: glows.value },
+  { dir: props.k.dir, hidden: isHidden(props.k), marked: props.marked, cursor: props.cursor, cut: props.cut, fresh: glows.value },
 ]);
 const folder = computed(() => props.k.at || props.path);
 const shownName = computed(() => {
   const k = props.k;
+  if (k.label) return k.label;
   return prefs.showExt || k.dir || !k.name.includes('.', 1) ? k.name : k.name.slice(0, k.name.lastIndexOf('.'));
 });
 const objects = computed(() => (props.k.dir ? t('files.objShort', { n: props.k.items ?? 0 }) : fmtSize(props.k.size)));
@@ -55,14 +58,14 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
 </script>
 
 <template>
-  <div :class="cls" :data-idx="idx" draggable="true" :data-tip="kind === 'tile' ? k.name : undefined">
+  <div :class="cls" :data-idx="idx" :draggable="!renaming" :data-tip="kind === 'tile' ? k.name : undefined">
     <template v-if="kind === 'row' || kind === 'flow'">
       <template v-for="id in kind === 'row' ? Columns.visible() : ['name']" :key="id">
         <span v-if="id === 'name'" class="name">
-          <span class="glyph"><RowMark v-if="marked || boxes" :on="marked" /><G v-else :n="glyphOf(k)" /></span><span class="t">{{ shownName }}</span>
+          <span class="glyph"><RowMark v-if="marked || boxes" :on="marked" /><G v-else :n="glyphOf(k)" /></span><RenameField v-if="renaming" :name="k.name" :dir="k.dir" /><span v-else class="t">{{ shownName }}</span>
           <Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" />
           <span v-if="k.at && k.at !== path" class="link">{{ t('files.foundIn', { path: k.at.slice(path.length + 1) }) }}</span>
-          <span v-if="k.link" class="link">→ {{ k.link }}</span>
+          <span v-if="k.link" class="link">→ {{ nativePath(k.link, windowsPaths()) }}</span>
           <Pill v-if="k.archive" tone="state">{{ t('files.archive') }}</Pill>
           <Pill v-if="mark" :tone="toneOf(mark.tone)">{{ mark.label }}</Pill>
         </span>
@@ -73,11 +76,11 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
     </template>
     <template v-else-if="kind === 'tile'">
       <Thumb :k="k" :folder="folder" :size="thumb" /><RowMark v-if="marked || boxes" :on="marked" />
-      <span class="t">{{ k.name }}</span><span class="meta glim-num">{{ objects }}<Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" /></span>
+      <RenameField v-if="renaming" :name="k.name" :dir="k.dir" /><span v-else class="t">{{ k.name }}</span><span class="meta glim-num">{{ objects }}<Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" /></span>
     </template>
     <template v-else-if="kind === 'content'">
       <Thumb :k="k" :folder="folder" /><RowMark v-if="marked || boxes" :on="marked" />
-      <span class="c-main"><span class="t">{{ k.name }}</span><span class="c-sub">{{ COL.type!.value(k, path) }} · {{ fmtListDate(k.time) }}</span></span>
+      <span class="c-main"><RenameField v-if="renaming" :name="k.name" :dir="k.dir" /><span v-else class="t">{{ k.name }}</span><span class="c-sub">{{ COL.type!.value(k, path) }} · {{ fmtListDate(k.time) }}</span></span>
       <span class="c-side glim-num"><span>{{ objects }}</span><span v-if="extra">{{ extra }}</span></span>
     </template>
     <template v-else>

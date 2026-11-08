@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/meta"
 )
@@ -290,7 +291,7 @@ var columns = withMeta(map[string]column{
 	}},
 	"attributes": {text: func(r *row) string {
 		var b strings.Builder
-		if r.Hidden || strings.HasPrefix(r.Name, ".") {
+		if r.Hidden || ccfs.HiddenByName(r.Name) {
 			b.WriteByte('H')
 		}
 		if r.stat().link {

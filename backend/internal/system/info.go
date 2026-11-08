@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/archives"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ffmpeg"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
@@ -84,7 +85,7 @@ var probes = []probe{
 	{"ffmpeg", []string{"-version"}, func() string { return ffmpeg.Get().FFmpegPath() }, true},
 	{"ffprobe", []string{"-version"}, func() string { return ffmpeg.Get().FFprobePath() }, true},
 	{"mutool", []string{"-v"}, nil, false},
-	{"7zz", nil, nil, false},
+	{"7zz", nil, func() string { return archives.Find("7zz", "7z") }, false},
 	{"rclone", []string{"version"}, RcloneBinary, false},
 }
 

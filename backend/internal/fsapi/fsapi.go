@@ -20,6 +20,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/meta"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/shortcut"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 )
 
@@ -56,7 +57,20 @@ type Item struct {
 	Owner       string `json:"owner,omitempty"`
 	Group       string `json:"group,omitempty"`
 	Hidden      bool   `json:"hidden,omitempty"`
-	Link        string `json:"link,omitempty"`
+	// System marks a protected file of the system, which stays hidden
+	// until that is asked for as well.
+	System bool `json:"system,omitempty"`
+	// Attrs are the attributes of Windows as Explorer's column shows them.
+	Attrs string `json:"attrs,omitempty"`
+	// Cloud is the state of a file a cloud provider keeps: online, local
+	// or pinned.
+	Cloud string `json:"cloud,omitempty"`
+	// Label is the name Explorer shows for a folder, such as Dokumente for
+	// Documents.
+	Label string `json:"label,omitempty"`
+	// Shortcut says where a .lnk, .url or .desktop file leads.
+	Shortcut *shortcut.Shortcut `json:"shortcut,omitempty"`
+	Link     string             `json:"link,omitempty"`
 	// Items counts the entries inside a folder, when known.
 	Items   *int    `json:"items,omitempty"`
 	Format  string  `json:"format,omitempty"`
@@ -98,6 +112,8 @@ type TreeItem struct {
 	Remote  string `json:"remote,omitempty"`
 	Kind    string `json:"kind,omitempty"`
 	Eject   bool   `json:"eject,omitempty"`
+	Hidden  bool   `json:"hidden,omitempty"`
+	System  bool   `json:"system,omitempty"`
 }
 
 // Tree is the answer of GET /fs/tree.
@@ -153,15 +169,20 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	seen := h.seenFrom(loc)
+	listed := hiddenListed(loc.Real)
 	for _, d := range dirents {
 		if bookkeeping(d.Name()) || !h.fs.Visible(u, seen, d.Name()) {
 			continue
 		}
-		item, err := itemFor(h.fs.RealIn(loc, d.Name()), d.Name())
+		real := h.fs.RealIn(loc, d.Name())
+		st, err := entryStat(real, d)
 		if err != nil {
 			// The entry vanished between reading the folder and looking at it.
 			continue
 		}
+		item := itemFrom(real, d.Name(), st)
+		item.Hidden = item.Hidden || listed[d.Name()]
+		h.targets(&item)
 		out.Items = append(out.Items, item)
 	}
 	refs := make([]folderRef, 0, len(out.Items))
@@ -186,6 +207,7 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 	}
 	out := Tree{Path: loc.Path, Items: []TreeItem{}}
 	var names []string
+	hidden, system := map[string]bool{}, map[string]bool{}
 	if loc.Virtual() {
 		names = h.fs.VirtualChildren(loc.Path)
 	} else {
@@ -193,9 +215,12 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
+		listed := hiddenListed(loc.Real)
 		for _, d := range dirents {
 			if isDir(loc.Real, d) {
 				names = append(names, d.Name())
+				hidden[d.Name()] = ccfs.HiddenEntry(d) || listed[d.Name()]
+				system[d.Name()] = ccfs.ProtectedEntry(d)
 			}
 		}
 	}
@@ -208,7 +233,7 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			continue
 		}
-		item := TreeItem{Name: name, Path: child.Path, Remote: remoteAt(child.Path)}
+		item := TreeItem{Name: name, Path: child.Path, Remote: remoteAt(child.Path), Hidden: hidden[name], System: system[name]}
 		// Reading a disk to find a folder on it would wake it, and a disk
 		// without any folder is rare enough to show the toggle anyway.
 		if child.Source != nil && child.Source.Device && child.Index == "/" {
@@ -251,6 +276,8 @@ func (h handlers) stat(w http.ResponseWriter, r *http.Request) error {
 	if out.Item, err = itemFor(loc.Real, path.Base(loc.Path)); err != nil {
 		return err
 	}
+	ownerOf(loc.Real, &out.Item)
+	h.targets(&out.Item)
 	if out.Dir && out.Link == "" {
 		h.describe(loc.Source, []folderRef{{index: loc.Index, real: loc.Real, path: loc.Path, item: &out.Item}})
 		if h.index != nil {
@@ -363,8 +390,19 @@ func itemFor(real, name string) (Item, error) {
 	if err != nil {
 		return Item{}, err
 	}
-	item := Item{Name: name, Hidden: strings.HasPrefix(name, ".")}
-	if st.mode&fs.ModeSymlink != 0 {
+	return itemFrom(real, name, st), nil
+}
+
+func itemFrom(real, name string, st fileStat) Item {
+	item := Item{Name: name}
+	item.Hidden, item.System = hiddenOf(name, st.attrs)
+	item.Attrs = attrLetters(st.attrs)
+	if st.attrs&(attrReparse|attrOffline|attrPinned|attrUnpinned|attrRecallOnDataAccess) != 0 {
+		item.Cloud = cloudState(st.attrs, !ccfs.CloudOnly(st.attrs) && cloudTagged(real, st.attrs))
+	}
+	// A junction of Windows is a link to a folder that needs no rights to
+	// make, and Go reports it as an irregular file.
+	if st.mode&fs.ModeSymlink != 0 || st.mode&fs.ModeIrregular != 0 && st.attrs&attrReparse != 0 {
 		if target, err := os.Readlink(real); err == nil {
 			item.Link = filepath.ToSlash(target)
 		}
@@ -374,10 +412,13 @@ func itemFor(real, name string) (Item, error) {
 		}
 	}
 	fill(&item, st)
-	if !item.Dir {
+	if item.Dir {
+		item.Label = labelOf(real, st.attrs)
+	} else {
 		item.Format = FormatOf(name)
+		item.Shortcut = readShortcut(real, name, st.attrs)
 	}
-	return item, nil
+	return item
 }
 
 func fill(item *Item, st fileStat) {

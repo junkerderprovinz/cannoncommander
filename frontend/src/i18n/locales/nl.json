@@ -1485,10 +1485,13 @@
       "copy": "Om {what} hierheen te kopiëren, heb je beheerdersrechten nodig.",
       "move": "Om {what} hierheen te verplaatsen, heb je beheerdersrechten nodig.",
       "delete": "Om {what} te verwijderen, heb je beheerdersrechten nodig.",
-      "trash": "Om {what} naar de prullenbak te verplaatsen, heb je beheerdersrechten nodig."
+      "trash": "Om {what} naar de prullenbak te verplaatsen, heb je beheerdersrechten nodig.",
+      "restore": "Om {what} terug te zetten, heb je beheerdersrechten nodig.",
+      "undo": "Om {what} ongedaan te maken, heb je beheerdersrechten nodig."
     },
     "howWindows": "Met Doorgaan vraagt Windows om je toestemming, daarna gaat CannonCommander verder.",
     "howLinux": "Met Doorgaan vraagt het systeem om je wachtwoord, daarna gaat CannonCommander verder.",
+    "declined": "Prima, zonder beheerdersrechten blijft {what} zoals het was.",
     "go": "Doorgaan"
   },
   "fetch": {
@@ -1508,6 +1511,27 @@
     "go": "Erheen",
     "job": "Laden: {what}",
     "jobFrom": "Laden: {what} van {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Beveiligde systeembestanden weergeven",
+    "cloud": {
+      "online": "Alleen online beschikbaar",
+      "local": "Beschikbaar op dit apparaat",
+      "pinned": "Altijd beschikbaar op dit apparaat"
+    },
+    "keep": "Altijd op dit apparaat bewaren",
+    "free": "Ruimte vrijmaken",
+    "kept": "Blijft op dit apparaat: {objects}",
+    "freed": "Ruimte vrijgemaakt voor {objects}",
+    "createShortcut": "Snelkoppeling maken",
+    "shortcutName": "{name} - snelkoppeling",
+    "new": "Nieuw",
+    "shortcut": "Snelkoppeling",
+    "newShortcut": "Nieuwe snelkoppeling",
+    "target": "Doel",
+    "targetTip": "Het pad van het bestand of de map zoals Windows het schrijft, met de schijf vooraan.",
+    "name": "Naam",
+    "noTarget": "Geef aan waar de snelkoppeling naartoe moet leiden"
   },
   "gather": {
     "title": "Map bundelen",
@@ -2109,7 +2133,15 @@
       "file": "Bestand"
     },
     "linkToDir": "Koppeling naar een map",
-    "linkToFile": "Koppeling naar een bestand"
+    "linkToFile": "Koppeling naar een bestand",
+    "attributes": "Kenmerken",
+    "flags": {
+      "readOnly": "Alleen-lezen",
+      "hidden": "Verborgen",
+      "archive": "Klaar voor archivering"
+    },
+    "flagsSaved": "Kenmerken opgeslagen voor {objects}",
+    "insideFlagsTip": "Stelt de kenmerken ook in voor elk bestand en elke map eronder."
   },
   "quicklook": {
     "title": "Snelle weergave",
@@ -2739,6 +2771,10 @@
     "purgeSel": "Selectie definitief verwijderen ({n})",
     "selectAll": "Alles selecteren",
     "empty": "Prullenbak legen",
+    "emptySystem": {
+      "one": "Dit leegt de hele {bin} met het ene item erin.",
+      "other": "Dit leegt de hele {bin}: alle {n} items, ook die van andere programma's."
+    },
     "andMore": {
       "one": "en nog {n}",
       "other": "en nog {n}"
@@ -3226,6 +3262,7 @@
     "dupTab": "Tabblad dupliceren",
     "lockTab": "Tabblad vergrendelen",
     "closeOtherTabs": "Andere tabbladen sluiten",
+    "sidePane": "Voorbeeldvenster",
     "nextTab": "Volgend tabblad",
     "prevTab": "Vorig tabblad",
     "back": "Terug",
@@ -3463,6 +3500,9 @@
     "closedUp": "Je mag de map {path} niet openen, dus je bent nu in {here}",
     "empty": "Deze map is leeg",
     "emptyHint": "Sleep bestanden hierheen om ze te uploaden",
+    "emptyHintDesktop": "Sleep bestanden hierheen om ze naar deze map te kopiëren",
+    "renameField": "Nieuwe naam",
+    "sidePaneEmpty": "Kies een bestand en het verschijnt hier",
     "nothingFound": "Niets gevonden voor {q}",
     "searchedHere": "Alleen in deze map gezocht",
     "searchedDeep": "Ook in alle submappen gezocht",
@@ -3600,6 +3640,7 @@
     "groupExists": "Deze groep bestaat al",
     "groupNameMissing": "Geef de groep een naam",
     "inArchive": "Dit staat in een archief",
+    "inCloud": "Het bestand staat alleen in de cloud. Open het één keer, dan staat het ook op dit apparaat",
     "inTrash": "Dit staat al in de prullenbak",
     "intoItself": "Een map kan niet in zichzelf",
     "ioError": "De schijf meldde een lees- of schrijffout",
@@ -3635,11 +3676,14 @@
       "other": "Het bericht heeft hoogstens {n} tekens"
     },
     "mountFailed": "Het station kon niet worden aangekoppeld",
+    "nameChars": "Windows staat geen van deze tekens toe in een naam: < > : \" / \\ | ? *",
+    "nameEnd": "In Windows mag een naam niet eindigen op een punt of een spatie",
     "nameLength": {
       "one": "De naam heeft hoogstens {n} teken",
       "other": "De naam heeft hoogstens {n} tekens"
     },
     "namePasswordNeeded": "Naam en wachtwoord zijn allebei nodig",
+    "nameReserved": "Windows houdt deze naam vrij voor een apparaat, kies een andere",
     "nameTaken": "Deze naam bestaat hier al",
     "nameTooLong": "De naam is te lang voor het bestandssysteem",
     "noAppDialog": "Deze computer heeft geen eigen venster om een app te kiezen",
@@ -3660,6 +3704,7 @@
     "noSpaceForFile": "Er is niet genoeg ruimte vrij voor dit bestand",
     "noSuchUser": "Deze gebruiker bestaat niet",
     "noSystemTrash": "Dit station heeft geen prullenbak. Verwijder het liever definitief",
+    "noTemplate": "Deze sjabloon bestaat niet meer",
     "noToken": "Dit token bestaat niet",
     "noUserNamed": "De gebruiker {name} bestaat niet",
     "notAFile": "Dit is geen gewoon bestand",
@@ -3749,6 +3794,7 @@
     "uploadRunning": "Er wordt nu een bestand met deze naam geüpload",
     "uploadsOneFolder": "Uploaden werkt alleen bij een link naar één map",
     "userPasswordElsewhere": "Deze gebruiker logt in via {method}, het wachtwoord staat daar",
+    "windowsOnly": "Dit bestaat alleen in Windows",
     "wrongLogin": "Naam of wachtwoord klopt niet"
   },
   "visit": {

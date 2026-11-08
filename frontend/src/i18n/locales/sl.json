@@ -1595,10 +1595,13 @@
       "copy": "Da kopirate {what} sem, potrebujete skrbniške pravice.",
       "move": "Da premaknete {what} sem, potrebujete skrbniške pravice.",
       "delete": "Da izbrišete {what}, potrebujete skrbniške pravice.",
-      "trash": "Da premaknete {what} v koš, potrebujete skrbniške pravice."
+      "trash": "Da premaknete {what} v koš, potrebujete skrbniške pravice.",
+      "restore": "Da obnovite {what}, potrebujete skrbniške pravice.",
+      "undo": "Da razveljavite {what}, potrebujete skrbniške pravice."
     },
     "howWindows": "Ko nadaljujete, Windows vpraša za vaše dovoljenje, nato CannonCommander nadaljuje.",
     "howLinux": "Ko nadaljujete, sistem vpraša za vaše geslo, nato CannonCommander nadaljuje.",
+    "declined": "Prav, brez skrbniških pravic {what} ostane, kot je bilo.",
     "go": "Nadaljuj"
   },
   "fetch": {
@@ -1618,6 +1621,27 @@
     "go": "Pojdi tja",
     "job": "Prenos: {what}",
     "jobFrom": "Prenos: {what} z {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Prikaži zaščitene sistemske datoteke",
+    "cloud": {
+      "online": "Na voljo samo v spletu",
+      "local": "Na voljo v tej napravi",
+      "pinned": "Vedno na voljo v tej napravi"
+    },
+    "keep": "Vedno obdrži v tej napravi",
+    "free": "Sprosti prostor",
+    "kept": "Ostane v tej napravi: {objects}",
+    "freed": "Prostor sproščen za {objects}",
+    "createShortcut": "Ustvari bližnjico",
+    "shortcutName": "{name} - bližnjica",
+    "new": "Novo",
+    "shortcut": "Bližnjica",
+    "newShortcut": "Nova bližnjica",
+    "target": "Cilj",
+    "targetTip": "Pot do datoteke ali mape, kot jo zapiše Windows, s pogonom na začetku.",
+    "name": "Ime",
+    "noTarget": "Navedite, kam naj vodi bližnjica"
   },
   "gather": {
     "title": "Združi mapo",
@@ -2251,7 +2275,15 @@
       "file": "Datoteka"
     },
     "linkToDir": "Povezava do mape",
-    "linkToFile": "Povezava do datoteke"
+    "linkToFile": "Povezava do datoteke",
+    "attributes": "Atributi",
+    "flags": {
+      "readOnly": "Samo za branje",
+      "hidden": "Skrito",
+      "archive": "Pripravljeno za arhiviranje"
+    },
+    "flagsSaved": "Atributi shranjeni za {objects}",
+    "insideFlagsTip": "Nastavi atribute tudi za vsako datoteko in mapo v njej."
   },
   "quicklook": {
     "title": "Hitri predogled",
@@ -2935,6 +2967,12 @@
     "purgeSel": "Dokončno izbriši izbor ({n})",
     "selectAll": "Izberi vse",
     "empty": "Izprazni koš",
+    "emptySystem": {
+      "one": "Izprazni se ves {bin} z {n} elementom.",
+      "two": "Izprazni se ves {bin}: skupaj {n} elementa, tudi iz drugih programov.",
+      "few": "Izprazni se ves {bin}: skupaj {n} elementi, tudi iz drugih programov.",
+      "other": "Izprazni se ves {bin}: skupaj {n} elementov, tudi iz drugih programov."
+    },
     "andMore": {
       "one": "in še {n}",
       "two": "in še {n}",
@@ -3484,6 +3522,7 @@
     "dupTab": "Podvoji zavihek",
     "lockTab": "Zakleni zavihek",
     "closeOtherTabs": "Zapri druge zavihke",
+    "sidePane": "Podokno za predogled",
     "nextTab": "Naslednji zavihek",
     "prevTab": "Prejšnji zavihek",
     "back": "Nazaj",
@@ -3723,6 +3762,9 @@
     "closedUp": "Mape {path} ne smete odpreti, zato ste zdaj v {here}",
     "empty": "Ta mapa je prazna",
     "emptyHint": "Povlecite datoteke sem, da jih naložite",
+    "emptyHintDesktop": "Povleci datoteke sem, da jih kopiraš v to mapo",
+    "renameField": "Novo ime",
+    "sidePaneEmpty": "Izberi datoteko in prikazala se bo tukaj",
     "nothingFound": "Za {q} ni nič najdeno",
     "searchedHere": "Iskano samo v tej mapi",
     "searchedDeep": "Iskano tudi v vseh podmapah",
@@ -3866,6 +3908,7 @@
     "groupExists": "Ta skupina že obstaja",
     "groupNameMissing": "Poimenujte skupino",
     "inArchive": "To je v arhivu",
+    "inCloud": "Datoteka je samo v oblaku. Odprite jo enkrat in bo tudi v tej napravi",
     "inTrash": "To je že v košu",
     "intoItself": "Mapa ne more v samo sebe",
     "ioError": "Disk je javil napako pri branju ali pisanju",
@@ -3907,6 +3950,8 @@
       "other": "Sporočilo ima največ {n} znakov"
     },
     "mountFailed": "Pogona ni bilo mogoče priklopiti",
+    "nameChars": "Windows v imenu ne dovoli nobenega od teh znakov: < > : \" / \\ | ? *",
+    "nameEnd": "V sistemu Windows se ime ne sme končati s piko ali presledkom",
     "nameLength": {
       "one": "Ime ima največ {n} znak",
       "two": "Ime ima največ {n} znaka",
@@ -3914,6 +3959,7 @@
       "other": "Ime ima največ {n} znakov"
     },
     "namePasswordNeeded": "Potrebna sta ime in geslo",
+    "nameReserved": "Windows to ime hrani za napravo, izberite drugo",
     "nameTaken": "To ime tukaj že obstaja",
     "nameTooLong": "Ime je predolgo za datotečni sistem",
     "noAppDialog": "Ta računalnik nima lastnega pogovornega okna za izbiro aplikacije",
@@ -3934,6 +3980,7 @@
     "noSpaceForFile": "Za to datoteko ni dovolj prostega prostora",
     "noSuchUser": "Ta uporabnik ne obstaja",
     "noSystemTrash": "Ta pogon nima koša. Raje ga dokončno izbrišite",
+    "noTemplate": "Ta predloga ne obstaja več",
     "noToken": "Ta žeton ne obstaja",
     "noUserNamed": "Uporabnik {name} ne obstaja",
     "notAFile": "To ni navadna datoteka",
@@ -4025,6 +4072,7 @@
     "uploadRunning": "Datoteka s tem imenom se trenutno nalaga",
     "uploadsOneFolder": "Nalaganje deluje samo pri povezavi na eno mapo",
     "userPasswordElsewhere": "Ta uporabnik se prijavlja prek {method}, geslo je tam",
+    "windowsOnly": "To obstaja samo v sistemu Windows",
     "wrongLogin": "Ime ali geslo ni pravilno"
   },
   "visit": {

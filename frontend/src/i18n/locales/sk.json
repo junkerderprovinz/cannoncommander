@@ -1595,10 +1595,13 @@
       "copy": "Aby ste sem mohli skopírovať {what}, potrebujete oprávnenia správcu.",
       "move": "Aby ste sem mohli presunúť {what}, potrebujete oprávnenia správcu.",
       "delete": "Aby ste mohli zmazať {what}, potrebujete oprávnenia správcu.",
-      "trash": "Aby ste mohli presunúť {what} do koša, potrebujete oprávnenia správcu."
+      "trash": "Aby ste mohli presunúť {what} do koša, potrebujete oprávnenia správcu.",
+      "restore": "Aby ste mohli obnoviť {what}, potrebujete oprávnenia správcu.",
+      "undo": "Aby ste mohli vrátiť späť {what}, potrebujete oprávnenia správcu."
     },
     "howWindows": "Po kliknutí na Pokračovať požiada Windows o vaše povolenie a potom CannonCommander pokračuje.",
     "howLinux": "Po kliknutí na Pokračovať požiada systém o vaše heslo a potom CannonCommander pokračuje.",
+    "declined": "V poriadku, bez oprávnení správcu zostane {what} tak, ako bolo.",
     "go": "Pokračovať"
   },
   "fetch": {
@@ -1618,6 +1621,27 @@
     "go": "Prejsť",
     "job": "Sťahovanie: {what}",
     "jobFrom": "Sťahovanie: {what} z {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Zobraziť chránené systémové súbory",
+    "cloud": {
+      "online": "Dostupné len online",
+      "local": "Dostupné v tomto zariadení",
+      "pinned": "Vždy dostupné v tomto zariadení"
+    },
+    "keep": "Vždy ponechať v tomto zariadení",
+    "free": "Uvoľniť miesto",
+    "kept": "Zostane v tomto zariadení: {objects}",
+    "freed": "Miesto uvoľnené pre {objects}",
+    "createShortcut": "Vytvoriť odkaz",
+    "shortcutName": "{name} - odkaz",
+    "new": "Nový",
+    "shortcut": "Odkaz",
+    "newShortcut": "Nový odkaz",
+    "target": "Cieľ",
+    "targetTip": "Cesta k súboru alebo priečinku tak, ako ju píše Windows, s jednotkou na začiatku.",
+    "name": "Názov",
+    "noTarget": "Zadajte, kam má odkaz viesť"
   },
   "gather": {
     "title": "Zlúčiť priečinok",
@@ -2251,7 +2275,15 @@
       "file": "Súbor"
     },
     "linkToDir": "Odkaz na priečinok",
-    "linkToFile": "Odkaz na súbor"
+    "linkToFile": "Odkaz na súbor",
+    "attributes": "Atribúty",
+    "flags": {
+      "readOnly": "Iba na čítanie",
+      "hidden": "Skrytý",
+      "archive": "Pripravené na archiváciu"
+    },
+    "flagsSaved": "Atribúty uložené pre {objects}",
+    "insideFlagsTip": "Nastaví atribúty aj pre každý súbor a priečinok vo vnútri."
   },
   "quicklook": {
     "title": "Rýchly náhľad",
@@ -2935,6 +2967,12 @@
     "purgeSel": "Natrvalo zmazať výber ({n})",
     "selectAll": "Vybrať všetko",
     "empty": "Vyprázdniť kôš",
+    "emptySystem": {
+      "one": "Vyprázdni sa celý {bin} s jeho jedinou položkou.",
+      "few": "Vyprázdni sa celý {bin}: všetky {n} položky, aj tie z iných programov.",
+      "many": "Vyprázdni sa celý {bin}: {n} položky, aj tie z iných programov.",
+      "other": "Vyprázdni sa celý {bin}: všetkých {n} položiek, aj tie z iných programov."
+    },
     "andMore": {
       "one": "a ešte {n}",
       "few": "a ešte {n}",
@@ -3484,6 +3522,7 @@
     "dupTab": "Duplikovať kartu",
     "lockTab": "Zamknúť kartu",
     "closeOtherTabs": "Zavrieť ostatné karty",
+    "sidePane": "Tabla ukážky",
     "nextTab": "Ďalšia karta",
     "prevTab": "Predchádzajúca karta",
     "back": "Späť",
@@ -3723,6 +3762,9 @@
     "closedUp": "Priečinok {path} nemôžete otvoriť, preto ste teraz v {here}",
     "empty": "Tento priečinok je prázdny",
     "emptyHint": "Presuňte sem súbory a nahrajte ich",
+    "emptyHintDesktop": "Pretiahni sem súbory a skopírujú sa do tohto priečinka",
+    "renameField": "Nový názov",
+    "sidePaneEmpty": "Vyber súbor a zobrazí sa tu",
     "nothingFound": "Pre {q} sa nič nenašlo",
     "searchedHere": "Hľadané len v tomto priečinku",
     "searchedDeep": "Hľadané aj vo všetkých podpriečinkoch",
@@ -3866,6 +3908,7 @@
     "groupExists": "Táto skupina už existuje",
     "groupNameMissing": "Pomenujte skupinu",
     "inArchive": "To leží v archíve",
+    "inCloud": "Súbor je len v cloude. Raz ho otvorte a bude aj v tomto zariadení",
     "inTrash": "To už je v koši",
     "intoItself": "Priečinok nemôže do seba samého",
     "ioError": "Disk ohlásil chybu čítania alebo zápisu",
@@ -3907,6 +3950,8 @@
       "other": "Správa má najviac {n} znakov"
     },
     "mountFailed": "Jednotku sa nepodarilo pripojiť",
+    "nameChars": "Windows v názve nepovoľuje žiadny z týchto znakov: < > : \" / \\ | ? *",
+    "nameEnd": "Vo Windows nesmie názov končiť bodkou ani medzerou",
     "nameLength": {
       "one": "Názov má najviac {n} znak",
       "few": "Názov má najviac {n} znaky",
@@ -3914,6 +3959,7 @@
       "other": "Názov má najviac {n} znakov"
     },
     "namePasswordNeeded": "Je potrebné meno aj heslo",
+    "nameReserved": "Toto meno má Windows vyhradené pre zariadenie, vyberte iné",
     "nameTaken": "Tento názov tu už existuje",
     "nameTooLong": "Názov je pre systém súborov príliš dlhý",
     "noAppDialog": "Tento počítač nemá vlastné dialógové okno na výber aplikácie",
@@ -3934,6 +3980,7 @@
     "noSpaceForFile": "Pre tento súbor nie je dosť voľného miesta",
     "noSuchUser": "Tento používateľ neexistuje",
     "noSystemTrash": "Tento disk nemá kôš. Zmažte to radšej natrvalo",
+    "noTemplate": "Táto šablóna už neexistuje",
     "noToken": "Tento token neexistuje",
     "noUserNamed": "Používateľ {name} neexistuje",
     "notAFile": "To nie je bežný súbor",
@@ -4025,6 +4072,7 @@
     "uploadRunning": "Súbor s týmto názvom sa práve nahráva",
     "uploadsOneFolder": "Nahrávanie funguje len pri odkaze na jeden priečinok",
     "userPasswordElsewhere": "Tento používateľ sa prihlasuje cez {method}, heslo je tam",
+    "windowsOnly": "Toto existuje iba vo Windows",
     "wrongLogin": "Meno alebo heslo nesedí"
   },
   "visit": {

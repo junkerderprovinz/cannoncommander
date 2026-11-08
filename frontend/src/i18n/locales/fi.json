@@ -1485,10 +1485,13 @@
       "copy": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit kopioida {what} tänne.",
       "move": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit siirtää {what} tänne.",
       "delete": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit poistaa {what}.",
-      "trash": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit siirtää {what} roskakoriin."
+      "trash": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit siirtää {what} roskakoriin.",
+      "restore": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit palauttaa {what}.",
+      "undo": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit kumota {what}."
     },
     "howWindows": "Kun jatkat, Windows pyytää lupaasi ja sitten CannonCommander jatkaa.",
     "howLinux": "Kun jatkat, järjestelmä kysyy salasanaasi ja sitten CannonCommander jatkaa.",
+    "declined": "Selvä, ilman järjestelmänvalvojan oikeuksia {what} pysyy ennallaan.",
     "go": "Jatka"
   },
   "fetch": {
@@ -1508,6 +1511,27 @@
     "go": "Siirry",
     "job": "Lataa: {what}",
     "jobFrom": "Lataa: {what} ({host})"
+  },
+  "filesystem": {
+    "systemFiles": "Näytä suojatut järjestelmätiedostot",
+    "cloud": {
+      "online": "Käytettävissä vain verkossa",
+      "local": "Käytettävissä tällä laitteella",
+      "pinned": "Aina käytettävissä tällä laitteella"
+    },
+    "keep": "Säilytä aina tällä laitteella",
+    "free": "Vapauta tilaa",
+    "kept": "Pysyy tällä laitteella: {objects}",
+    "freed": "Tilaa vapautettu: {objects}",
+    "createShortcut": "Luo pikakuvake",
+    "shortcutName": "{name} - pikakuvake",
+    "new": "Uusi",
+    "shortcut": "Pikakuvake",
+    "newShortcut": "Uusi pikakuvake",
+    "target": "Kohde",
+    "targetTip": "Tiedoston tai kansion polku niin kuin Windows sen kirjoittaa, asema alussa.",
+    "name": "Nimi",
+    "noTarget": "Kerro, minne pikakuvakkeen pitää johtaa"
   },
   "gather": {
     "title": "Kokoa kansio",
@@ -2109,7 +2133,15 @@
       "file": "Tiedosto"
     },
     "linkToDir": "Linkki kansioon",
-    "linkToFile": "Linkki tiedostoon"
+    "linkToFile": "Linkki tiedostoon",
+    "attributes": "Määritteet",
+    "flags": {
+      "readOnly": "Vain luku",
+      "hidden": "Piilotettu",
+      "archive": "Valmis arkistoitavaksi"
+    },
+    "flagsSaved": "Määritteet tallennettu: {objects}",
+    "insideFlagsTip": "Asettaa määritteet myös jokaiselle alla olevalle tiedostolle ja kansiolle."
   },
   "quicklook": {
     "title": "Pikakatselu",
@@ -2739,6 +2771,10 @@
     "purgeSel": "Poista valitut lopullisesti ({n})",
     "selectAll": "Valitse kaikki",
     "empty": "Tyhjennä roskakori",
+    "emptySystem": {
+      "one": "Näin tyhjenee koko {bin} ja sen ainoa kohde.",
+      "other": "Näin tyhjenee koko {bin}: kaikki {n} kohdetta, myös muiden ohjelmien."
+    },
     "andMore": {
       "one": "ja {n} muu",
       "other": "ja {n} muuta"
@@ -3226,6 +3262,7 @@
     "dupTab": "Monista välilehti",
     "lockTab": "Lukitse välilehti",
     "closeOtherTabs": "Sulje muut välilehdet",
+    "sidePane": "Esikatseluruutu",
     "nextTab": "Seuraava välilehti",
     "prevTab": "Edellinen välilehti",
     "back": "Takaisin",
@@ -3463,6 +3500,9 @@
     "closedUp": "Et saa avata kansiota {path}, joten olet nyt kansiossa {here}",
     "empty": "Tämä kansio on tyhjä",
     "emptyHint": "Vedä tiedostot tähän ladataksesi ne",
+    "emptyHintDesktop": "Vedä tiedostot tähän kopioidaksesi ne tähän kansioon",
+    "renameField": "Uusi nimi",
+    "sidePaneEmpty": "Valitse tiedosto, niin se näkyy tässä",
     "nothingFound": "Haulla {q} ei löytynyt mitään",
     "searchedHere": "Haettu vain tästä kansiosta",
     "searchedDeep": "Haettu myös kaikista alikansioista",
@@ -3600,6 +3640,7 @@
     "groupExists": "Tämä ryhmä on jo olemassa",
     "groupNameMissing": "Anna ryhmälle nimi",
     "inArchive": "Tämä on arkiston sisällä",
+    "inCloud": "Tiedosto on vain pilvessä. Avaa se kerran, niin se on myös tällä laitteella",
     "inTrash": "Tämä on jo roskakorissa",
     "intoItself": "Kansiota ei voi siirtää itseensä",
     "ioError": "Levy ilmoitti luku- tai kirjoitusvirheestä",
@@ -3635,11 +3676,14 @@
       "other": "Viestissä on enintään {n} merkkiä"
     },
     "mountFailed": "Asemaa ei voitu liittää",
+    "nameChars": "Windows ei salli nimessä mitään näistä merkeistä: < > : \" / \\ | ? *",
+    "nameEnd": "Windowsissa nimi ei voi päättyä pisteeseen eikä välilyöntiin",
     "nameLength": {
       "one": "Nimessä on enintään {n} merkki",
       "other": "Nimessä on enintään {n} merkkiä"
     },
     "namePasswordNeeded": "Tarvitaan sekä nimi että salasana",
+    "nameReserved": "Windows varaa tämän nimen laitteelle, valitse toinen nimi",
     "nameTaken": "Tämä nimi on jo käytössä täällä",
     "nameTooLong": "Nimi on liian pitkä tiedostojärjestelmälle",
     "noAppDialog": "Tällä tietokoneella ei ole omaa ikkunaa sovelluksen valintaan",
@@ -3660,6 +3704,7 @@
     "noSpaceForFile": "Tälle tiedostolle ei ole tarpeeksi vapaata tilaa",
     "noSuchUser": "Tätä käyttäjää ei ole olemassa",
     "noSystemTrash": "Tällä asemalla ei ole roskakoria. Poista se mieluummin lopullisesti",
+    "noTemplate": "Tätä mallia ei enää ole",
     "noToken": "Tätä tunnusta ei ole olemassa",
     "noUserNamed": "Käyttäjää {name} ei ole olemassa",
     "notAFile": "Tämä ei ole tavallinen tiedosto",
@@ -3749,6 +3794,7 @@
     "uploadRunning": "Samannimistä tiedostoa ladataan juuri nyt",
     "uploadsOneFolder": "Lataaminen palvelimelle toimii vain yhteen kansioon osoittavalla linkillä",
     "userPasswordElsewhere": "Tämä käyttäjä kirjautuu palvelun {method} kautta, salasana on siellä",
+    "windowsOnly": "Tämä on vain Windowsissa",
     "wrongLogin": "Nimi tai salasana on väärä"
   },
   "visit": {

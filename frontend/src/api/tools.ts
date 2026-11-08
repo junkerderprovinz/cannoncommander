@@ -8,6 +8,8 @@ import type { FsItem } from './types';
 
 // The search window's criteria as it keeps them and as a saved search stores them.
 export interface SearchQuery { name: string; text: string; in: string; hidden: boolean; min: string; max: string; when: string; type: string }
+// The attributes of Windows the properties turn on and off; pinned keeps a cloud file on the device.
+export type WinFlag = 'readOnly' | 'hidden' | 'archive' | 'pinned';
 export interface SavedSearch { id: number; name: string; query: SearchQuery }
 
 export type Hit = Item & { at: string; line?: number };
@@ -139,8 +141,9 @@ export const tools = {
   deleteProfile: (id: number) => call(`/me/profiles/${id}`, { method: 'DELETE' }),
 
   symlink: (target: string, path: string) => body<{ path: string; undo?: string }>('/fs/link', json('POST', { target, path })),
+  shortcut: (target: string, path: string) => body<{ path: string; undo?: string }>('/fs/link', json('POST', { target, path, shortcut: true })),
   // Answers how many entries changed, or with recursive the job that changes them.
-  attrs: (req: { paths: string[]; mode?: string; owner?: string; group?: string; recursive?: boolean }) =>
+  attrs: (req: { paths: string[]; mode?: string; owner?: string; group?: string; flags?: Partial<Record<WinFlag, boolean>>; recursive?: boolean }) =>
     body<{ changed: number } | Job>('/fs/attrs', json('PATCH', req)),
 
   cleanupScan: (path: string, signal?: AbortSignal) => body<CleanupScan>('/tools/cleanup/scan', { ...json('POST', { path }), signal }),

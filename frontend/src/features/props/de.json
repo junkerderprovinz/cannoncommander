@@ -79,5 +79,9 @@
     "file": "Datei"
   },
   "linkToDir": "Verknüpfung auf einen Ordner",
-  "linkToFile": "Verknüpfung auf eine Datei"
+  "linkToFile": "Verknüpfung auf eine Datei",
+  "attributes": "Attribute",
+  "flags": { "readOnly": "Schreibgeschützt", "hidden": "Versteckt", "archive": "Bereit zum Archivieren" },
+  "flagsSaved": "Attribute gespeichert für {objects}",
+  "insideFlagsTip": "Setzt die Attribute auch für jede Datei und jeden Ordner darunter."
 }

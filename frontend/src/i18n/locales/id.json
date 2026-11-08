@@ -1430,10 +1430,13 @@
       "copy": "Anda perlu hak administrator untuk menyalin {what} ke sini.",
       "move": "Anda perlu hak administrator untuk memindahkan {what} ke sini.",
       "delete": "Anda perlu hak administrator untuk menghapus {what}.",
-      "trash": "Anda perlu hak administrator untuk memasukkan {what} ke Tempat Sampah."
+      "trash": "Anda perlu hak administrator untuk memasukkan {what} ke Tempat Sampah.",
+      "restore": "Anda perlu hak administrator untuk memulihkan {what}.",
+      "undo": "Anda perlu hak administrator untuk membatalkan {what}."
     },
     "howWindows": "Dengan Lanjutkan, Windows meminta izin Anda, lalu CannonCommander melanjutkan.",
     "howLinux": "Dengan Lanjutkan, sistem meminta kata sandi Anda, lalu CannonCommander melanjutkan.",
+    "declined": "Baik, tanpa hak administrator {what} tetap seperti semula.",
     "go": "Lanjutkan"
   },
   "fetch": {
@@ -1453,6 +1456,27 @@
     "go": "Ke sana",
     "job": "Muat: {what}",
     "jobFrom": "Muat: {what} dari {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Tampilkan file sistem yang dilindungi",
+    "cloud": {
+      "online": "Hanya tersedia online",
+      "local": "Tersedia di perangkat ini",
+      "pinned": "Selalu tersedia di perangkat ini"
+    },
+    "keep": "Selalu simpan di perangkat ini",
+    "free": "Kosongkan ruang",
+    "kept": "Tetap di perangkat ini: {objects}",
+    "freed": "Ruang dikosongkan untuk {objects}",
+    "createShortcut": "Buat pintasan",
+    "shortcutName": "{name} - pintasan",
+    "new": "Baru",
+    "shortcut": "Pintasan",
+    "newShortcut": "Pintasan baru",
+    "target": "Target",
+    "targetTip": "Jalur file atau folder seperti yang ditulis Windows, dengan drive di depan.",
+    "name": "Nama",
+    "noTarget": "Tentukan ke mana pintasan harus mengarah"
   },
   "gather": {
     "title": "Kumpulkan folder",
@@ -2038,7 +2062,15 @@
       "file": "Berkas"
     },
     "linkToDir": "Tautan ke folder",
-    "linkToFile": "Tautan ke berkas"
+    "linkToFile": "Tautan ke berkas",
+    "attributes": "Atribut",
+    "flags": {
+      "readOnly": "Hanya baca",
+      "hidden": "Tersembunyi",
+      "archive": "Siap diarsipkan"
+    },
+    "flagsSaved": "Atribut disimpan untuk {objects}",
+    "insideFlagsTip": "Juga menerapkan atribut ke setiap file dan folder di dalamnya."
   },
   "quicklook": {
     "title": "Lihat cepat",
@@ -2641,6 +2673,9 @@
     "purgeSel": "Hapus pilihan permanen ({n})",
     "selectAll": "Pilih semua",
     "empty": "Kosongkan Tempat Sampah",
+    "emptySystem": {
+      "other": "Ini mengosongkan seluruh {bin}: semua {n} item, termasuk dari program lain."
+    },
     "andMore": {
       "other": "dan {n} lainnya"
     },
@@ -3097,6 +3132,7 @@
     "dupTab": "Duplikasi tab",
     "lockTab": "Kunci tab",
     "closeOtherTabs": "Tutup tab lain",
+    "sidePane": "Panel pratinjau",
     "nextTab": "Tab berikutnya",
     "prevTab": "Tab sebelumnya",
     "back": "Kembali",
@@ -3333,6 +3369,9 @@
     "closedUp": "Anda tidak boleh membuka folder {path}, jadi Anda sekarang berada di {here}",
     "empty": "Folder ini kosong",
     "emptyHint": "Seret berkas ke sini untuk mengunggahnya",
+    "emptyHintDesktop": "Seret berkas ke sini untuk menyalinnya ke folder ini",
+    "renameField": "Nama baru",
+    "sidePaneEmpty": "Pilih berkas, lalu berkas itu tampil di sini",
     "nothingFound": "Tidak ada yang ditemukan untuk {q}",
     "searchedHere": "Hanya dicari di folder ini",
     "searchedDeep": "Juga dicari di semua subfolder",
@@ -3467,6 +3506,7 @@
     "groupExists": "Grup ini sudah ada",
     "groupNameMissing": "Beri nama untuk grup ini",
     "inArchive": "Ini ada di dalam arsip",
+    "inCloud": "File hanya ada di cloud. Buka sekali, lalu file juga ada di perangkat ini",
     "inTrash": "Ini sudah ada di Tempat Sampah",
     "intoItself": "Folder tidak bisa masuk ke dirinya sendiri",
     "ioError": "Disk melaporkan kesalahan baca atau tulis",
@@ -3499,10 +3539,13 @@
       "other": "Pesan paling banyak {n} karakter"
     },
     "mountFailed": "Drive tidak dapat dikaitkan",
+    "nameChars": "Windows tidak mengizinkan karakter berikut dalam nama: < > : \" / \\ | ? *",
+    "nameEnd": "Di Windows nama tidak boleh diakhiri titik atau spasi",
     "nameLength": {
       "other": "Nama paling banyak {n} karakter"
     },
     "namePasswordNeeded": "Nama dan kata sandi keduanya diperlukan",
+    "nameReserved": "Windows mencadangkan nama ini untuk perangkat, pilih nama lain",
     "nameTaken": "Nama ini sudah ada di sini",
     "nameTooLong": "Nama ini terlalu panjang untuk sistem berkas",
     "noAppDialog": "Komputer ini tidak punya dialog sendiri untuk memilih aplikasi",
@@ -3523,6 +3566,7 @@
     "noSpaceForFile": "Ruang kosong tidak cukup untuk berkas ini",
     "noSuchUser": "Pengguna ini tidak ada",
     "noSystemTrash": "Drive ini tidak punya Tempat Sampah. Sebaiknya hapus permanen saja",
+    "noTemplate": "Templat ini sudah tidak ada",
     "noToken": "Token ini tidak ada",
     "noUserNamed": "Pengguna {name} tidak ada",
     "notAFile": "Ini bukan berkas biasa",
@@ -3611,6 +3655,7 @@
     "uploadRunning": "Berkas dengan nama ini sedang diunggah",
     "uploadsOneFolder": "Unggahan hanya bisa untuk tautan ke satu folder",
     "userPasswordElsewhere": "Pengguna ini masuk lewat {method}, kata sandinya disimpan di sana",
+    "windowsOnly": "Ini hanya ada di Windows",
     "wrongLogin": "Nama atau kata sandi salah"
   },
   "visit": {

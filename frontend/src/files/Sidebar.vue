@@ -6,9 +6,10 @@ import { run } from '@/core/actions';
 import { extend } from '@/core/extend';
 import { fmtSize } from '@/core/format';
 import { G, glyphComponent } from '@/core/glyphs';
-import { host } from '@/core/host';
+import { host, windowsPaths } from '@/core/host';
 import { menu } from '@/core/menu';
 import { Render } from '@/core/Render';
+import { prefs } from '@/core/prefs';
 import { cancelBtn, win } from '@/core/windows';
 import { t } from '@/i18n';
 import type { Bookmark, TreeItem } from '@/api/types';
@@ -18,6 +19,7 @@ import { useTrash } from '@/stores/trash';
 import { useUser } from '@/stores/user';
 import { moveBookmark, renameBookmark, unpin } from './bookmarks';
 import { driveGlyph } from './drives';
+import { shown } from './entries';
 import { folderItems } from './menus';
 
 const F = usePanels();
@@ -30,6 +32,8 @@ const rows = computed(() => {
   const out: { k: TreeItem; depth: number; open: boolean }[] = [];
   const walk = (path: string, depth: number) => {
     for (const k of listing.trees.get(path) ?? []) {
+      // The tree of Explorer leaves out what the list hides, such as AppData and $Recycle.Bin.
+      if (windowsPaths() && !shown(prefs.showHidden, prefs.showSystem)(k)) continue;
       const open = F.openTree.has(k.path);
       out.push({ k, depth, open });
       if (open) walk(k.path, depth + 1);

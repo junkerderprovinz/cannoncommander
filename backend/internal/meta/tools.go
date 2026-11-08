@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/archives"
 )
 
 // toolTimeout bounds one run of a helper program. A file on a disk that has
@@ -35,13 +37,7 @@ func (t *tools) find(names ...string) (string, bool) {
 	if p, ok := t.paths[key]; ok && (p != "" || time.Since(t.at[key]) < lookAgain) {
 		return p, p != ""
 	}
-	p := ""
-	for _, n := range names {
-		if found, err := exec.LookPath(n); err == nil {
-			p = found
-			break
-		}
-	}
+	p := archives.Find(names...)
 	t.paths[key], t.at[key] = p, time.Now()
 	return p, p != ""
 }
