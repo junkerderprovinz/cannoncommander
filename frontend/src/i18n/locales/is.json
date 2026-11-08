@@ -2591,6 +2591,10 @@
       "other": "{n} á klippiborðinu"
     },
     "clipEmpty": "Klippiborðið er tómt",
+    "leftOut": {
+      "one": "Utan möppanna hér, verður eftir: {n} atriði",
+      "other": "Utan möppanna hér, verður eftir: {n} atriði"
+    },
     "parityTitle": "Jöfnunarathugun í gangi",
     "parityAsk": "Afrita núna eða á eftir?",
     "parityText": "Unraid er að athuga jöfnunina núna. Afritun upp á {size} hægir á athuguninni og gengur sjálf hægar.",
@@ -3544,6 +3548,7 @@
     "cannotUndo": "Ekki er hægt að afturkalla þetta skref",
     "changedSince": "Þetta hefur breyst síðan og helst því óbreytt",
     "changedWhileOpen": "Skráin hefur breyst síðan þú opnaðir hana",
+    "clipboardBusy": "Klippiborðið er upptekið. Reyndu aftur eftir smástund",
     "codeMismatch": "Kóðinn passar ekki. Er klukkan í símanum rétt?",
     "codeMissing": "Kóðann vantar",
     "collectionName": "Gefðu safnmöppunni heiti, það verður mappan sem viðtakandinn sér",
@@ -3555,6 +3560,7 @@
     "desktopOnly": "Þetta gengur bara í skjáborðsforritinu",
     "fileManagerNotSet": "Tölvan tók ekki við breytingunni",
     "disksAdminsOnly": "Aðeins stjórnendur sjá einstaka diska og Cache",
+    "dragFailed": "Ekki tókst að draga skrárnar út",
     "elevationDeclined": "Stjórnandaréttindi voru ekki veitt",
     "elevationFailed": "Hjálparforritið með stjórnandaréttindi svaraði ekki",
     "elevationUnsupported": "Á þessu kerfi getur CannonCommander ekki beðið um stjórnandaréttindi",
@@ -3634,6 +3640,7 @@
     "notElevatable": "Ekki er hægt að halda þessu áfram með stjórnandaréttindum",
     "notFound": "Þetta er ekki lengur til",
     "notInTrash": "Þetta er ekki í ruslinu",
+    "notOnDisk": "Aðeins skrár á diski geta farið í annað forrit",
     "notText": "Þessi skrá er ekki texti",
     "notWindows1252": "Textinn inniheldur stafi sem Windows-1252 getur ekki geymt. Vistaðu hann sem UTF-8",
     "nothingToUndo": "Það er ekkert að afturkalla",

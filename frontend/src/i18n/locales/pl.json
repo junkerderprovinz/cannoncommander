@@ -2773,6 +2773,12 @@
       "other": "W schowku: {n}"
     },
     "clipEmpty": "Schowek jest pusty",
+    "leftOut": {
+      "one": "Poza tutejszymi folderami, zostaje: 1 element",
+      "few": "Poza tutejszymi folderami, zostaje: {n} elementy",
+      "many": "Poza tutejszymi folderami, zostaje: {n} elementów",
+      "other": "Poza tutejszymi folderami, zostaje: {n} elementu"
+    },
     "parityTitle": "Trwa sprawdzanie Parity",
     "parityAsk": "Kopiować teraz czy potem?",
     "parityText": "Unraid właśnie sprawdza Parity. Kopia {size} spowolni sprawdzanie i sama będzie wolniejsza.",
@@ -3808,6 +3814,7 @@
     "cannotUndo": "Tego kroku nie da się cofnąć",
     "changedSince": "To się w międzyczasie zmieniło i dlatego zostaje bez zmian",
     "changedWhileOpen": "Plik zmienił się od chwili otwarcia",
+    "clipboardBusy": "Schowek jest teraz zajęty. Spróbuj ponownie za chwilę",
     "codeMismatch": "Kod nie pasuje. Czy zegar w telefonie dobrze chodzi?",
     "codeMissing": "Brakuje kodu",
     "collectionName": "Nadaj zbiorowi nazwę, stanie się folderem, który zobaczy druga strona",
@@ -3819,6 +3826,7 @@
     "desktopOnly": "To działa tylko w aplikacji desktopowej",
     "fileManagerNotSet": "Komputer nie przyjął zmiany",
     "disksAdminsOnly": "Pojedyncze dyski i Cache widzą tylko administratorzy",
+    "dragFailed": "Nie udało się przeciągnąć plików na zewnątrz",
     "elevationDeclined": "Nie przyznano uprawnień administratora",
     "elevationFailed": "Pomocnik z uprawnieniami administratora nie odpowiedział",
     "elevationUnsupported": "W tym systemie CannonCommander nie może poprosić o uprawnienia administratora",
@@ -3906,6 +3914,7 @@
     "notElevatable": "Tego nie da się kontynuować z uprawnieniami administratora",
     "notFound": "Tego już nie ma",
     "notInTrash": "To nie leży w koszu",
+    "notOnDisk": "Do innego programu mogą trafić tylko pliki na dysku",
     "notText": "Ten plik nie jest tekstem",
     "notWindows1252": "Tekst zawiera znaki, których Windows-1252 nie potrafi zapisać. Zapisz go jako UTF-8",
     "nothingToUndo": "Nie ma nic do cofnięcia",

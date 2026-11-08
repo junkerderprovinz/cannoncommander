@@ -2773,6 +2773,12 @@
       "other": "V odložišču: {n}"
     },
     "clipEmpty": "Odložišče je prazno",
+    "leftOut": {
+      "one": "Zunaj tukajšnjih map, ostane: {n} element",
+      "two": "Zunaj tukajšnjih map, ostane: {n} elementa",
+      "few": "Zunaj tukajšnjih map, ostane: {n} elementi",
+      "other": "Zunaj tukajšnjih map, ostane: {n} elementov"
+    },
     "parityTitle": "Poteka preverjanje Parity",
     "parityAsk": "Kopiram zdaj ali pozneje?",
     "parityText": "Unraid ravno preverja Parity. Kopija {size} upočasni preverjanje in sama teče počasneje.",
@@ -3808,6 +3814,7 @@
     "cannotUndo": "Tega koraka ni mogoče razveljaviti",
     "changedSince": "To se je medtem spremenilo in zato ostane, kot je",
     "changedWhileOpen": "Datoteka se je spremenila, odkar ste jo odprli",
+    "clipboardBusy": "Odložišče je trenutno zasedeno. Poskusite znova čez trenutek",
     "codeMismatch": "Koda se ne ujema. Ali ura na telefonu teče prav?",
     "codeMissing": "Koda manjka",
     "collectionName": "Poimenujte zbirko, ime postane mapa, ki jo vidi druga stran",
@@ -3819,6 +3826,7 @@
     "desktopOnly": "To gre samo v namizni aplikaciji",
     "fileManagerNotSet": "Računalnik spremembe ni sprejel",
     "disksAdminsOnly": "Posamezne diske in Cache vidijo samo skrbniki",
+    "dragFailed": "Datotek ni bilo mogoče povleči ven",
     "elevationDeclined": "Skrbniške pravice niso bile odobrene",
     "elevationFailed": "Pomočnik s skrbniškimi pravicami se ni odzval",
     "elevationUnsupported": "V tem sistemu CannonCommander ne more zaprositi za skrbniške pravice",
@@ -3906,6 +3914,7 @@
     "notElevatable": "Tega ni mogoče nadaljevati s skrbniškimi pravicami",
     "notFound": "Tega ni več",
     "notInTrash": "To ni v košu",
+    "notOnDisk": "V drug program lahko gredo le datoteke na disku",
     "notText": "Ta datoteka ni besedilo",
     "notWindows1252": "Besedilo vsebuje znake, ki jih Windows-1252 ne more shraniti. Shranite ga kot UTF-8",
     "nothingToUndo": "Ničesar ni za razveljaviti",

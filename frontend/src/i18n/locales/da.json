@@ -2591,6 +2591,10 @@
       "other": "{n} i udklipsholderen"
     },
     "clipEmpty": "Udklipsholderen er tom",
+    "leftOut": {
+      "one": "Uden for mapperne her, bliver tilbage: 1 element",
+      "other": "Uden for mapperne her, bliver tilbage: {n} elementer"
+    },
     "parityTitle": "Parity-tjek kører",
     "parityAsk": "Kopiér nu eller bagefter?",
     "parityText": "Unraid tjekker Parity lige nu. En kopi på {size} bremser tjekket og kører selv langsommere.",
@@ -3544,6 +3548,7 @@
     "cannotUndo": "Dette trin kan ikke fortrydes",
     "changedSince": "Det er ændret i mellemtiden og bliver derfor, som det er",
     "changedWhileOpen": "Filen er ændret, siden du åbnede den",
+    "clipboardBusy": "Udklipsholderen er optaget lige nu. Prøv igen om et øjeblik",
     "codeMismatch": "Koden passer ikke. Går uret på telefonen rigtigt?",
     "codeMissing": "Koden mangler",
     "collectionName": "Giv samlingen et navn, det bliver til den mappe, modtageren ser",
@@ -3555,6 +3560,7 @@
     "desktopOnly": "Det kan kun skrivebordsappen",
     "fileManagerNotSet": "Computeren tog ikke imod ændringen",
     "disksAdminsOnly": "De enkelte diske og Cache kan kun administratorer se",
+    "dragFailed": "Filerne kunne ikke trækkes ud",
     "elevationDeclined": "Administratorrettighederne blev ikke givet",
     "elevationFailed": "Hjælperen med administratorrettigheder svarede ikke",
     "elevationUnsupported": "På dette system kan CannonCommander ikke bede om administratorrettigheder",
@@ -3634,6 +3640,7 @@
     "notElevatable": "Det kan ikke fortsætte med administratorrettigheder",
     "notFound": "Det findes ikke længere",
     "notInTrash": "Det ligger ikke i papirkurven",
+    "notOnDisk": "Kun filer på disken kan gå til et andet program",
     "notText": "Denne fil er ikke tekst",
     "notWindows1252": "Teksten indeholder tegn, som Windows-1252 ikke kan gemme. Gem den som UTF-8",
     "nothingToUndo": "Der er intet at fortryde",

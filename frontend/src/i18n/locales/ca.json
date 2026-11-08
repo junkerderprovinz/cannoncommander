@@ -2682,6 +2682,11 @@
       "other": "{n} al porta-retalls"
     },
     "clipEmpty": "El porta-retalls és buit",
+    "leftOut": {
+      "one": "Fora de les carpetes d'aquí, es queda: 1 element",
+      "many": "Fora de les carpetes d'aquí, es queda: {n} elements",
+      "other": "Fora de les carpetes d'aquí, es queda: {n} elements"
+    },
     "parityTitle": "Comprovació de paritat en curs",
     "parityAsk": "Voleu copiar ara o després?",
     "parityText": "L'Unraid està comprovant la paritat. Una còpia de {size} alenteix la comprovació i també va més lenta.",
@@ -3676,6 +3681,7 @@
     "cannotUndo": "Aquest pas no es pot desfer",
     "changedSince": "Això ha canviat mentrestant i per això es queda tal com és",
     "changedWhileOpen": "El fitxer ha canviat des que el vau obrir",
+    "clipboardBusy": "El porta-retalls està ocupat. Torneu-ho a provar d'aquí a un moment",
     "codeMismatch": "El codi no coincideix. El mòbil té l'hora correcta?",
     "codeMissing": "Falta el codi",
     "collectionName": "Doneu un nom a la col·lecció, serà la carpeta que vegin els visitants",
@@ -3687,6 +3693,7 @@
     "desktopOnly": "Això només funciona a l'aplicació d'escriptori",
     "fileManagerNotSet": "L'ordinador no ha acceptat el canvi",
     "disksAdminsOnly": "Els discs individuals i la Cache només els veuen els administradors",
+    "dragFailed": "No s'han pogut arrossegar els fitxers a fora",
     "elevationDeclined": "No s'han concedit els permisos d'administrador",
     "elevationFailed": "L'assistent amb permisos d'administrador no ha respost",
     "elevationUnsupported": "En aquest sistema, CannonCommander no pot demanar permisos d'administrador",
@@ -3770,6 +3777,7 @@
     "notElevatable": "Això no es pot continuar amb permisos d'administrador",
     "notFound": "Això ja no existeix",
     "notInTrash": "Això no és a la paperera",
+    "notOnDisk": "Només els fitxers del disc poden anar a un altre programa",
     "notText": "Aquest fitxer no és text",
     "notWindows1252": "El text té caràcters que el Windows-1252 no pot desar. Deseu-lo com a UTF-8",
     "nothingToUndo": "No hi ha res per desfer",

@@ -2591,6 +2591,10 @@
       "other": "{n} arbelean"
     },
     "clipEmpty": "Arbela hutsik dago",
+    "leftOut": {
+      "one": "Hemengo karpetetatik kanpo, atzean geratzen da: Elementu 1",
+      "other": "Hemengo karpetetatik kanpo, atzean geratzen da: {n} elementu"
+    },
     "parityTitle": "Parity egiaztapena martxan",
     "parityAsk": "Kopiatu orain ala gero?",
     "parityText": "Unraid Parity egiaztatzen ari da une honetan. {size} kopia batek egiaztapena moteltzen du, eta bera ere motelago doa.",
@@ -3544,6 +3548,7 @@
     "cannotUndo": "Urrats hau ezin da desegin",
     "changedSince": "Bitartean aldatu egin da, eta horregatik dagoen bezala geratzen da",
     "changedWhileOpen": "Fitxategia aldatu egin da ireki zenuenetik",
+    "clipboardBusy": "Arbela lanpetuta dago. Saiatu berriro une batean",
     "codeMismatch": "Kodeak ez du balio. Mugikorraren ordua zuzena da?",
     "codeMissing": "Kodea falta da",
     "collectionName": "Eman izen bat bildumari, beste aldeak ikusiko duen karpeta bihurtuko da",
@@ -3555,6 +3560,7 @@
     "desktopOnly": "Hori mahaigaineko aplikazioan bakarrik egin daiteke",
     "fileManagerNotSet": "Ordenagailuak ez du aldaketa onartu",
     "disksAdminsOnly": "Disko bakoitza eta Cache-a administratzaileek bakarrik ikusten dituzte",
+    "dragFailed": "Ezin izan dira fitxategiak kanpora arrastatu",
     "elevationDeclined": "Ez dira administratzaile-baimenak eman",
     "elevationFailed": "Administratzaile-baimenak dituen laguntzaileak ez du erantzun",
     "elevationUnsupported": "Sistema honetan CannonCommanderrek ezin ditu administratzaile-baimenak eskatu",
@@ -3634,6 +3640,7 @@
     "notElevatable": "Hau ezin da administratzaile-baimenekin jarraitu",
     "notFound": "Hau ez dago jada",
     "notInTrash": "Hau ez dago zakarrontzian",
+    "notOnDisk": "Diskoko fitxategiak bakarrik joan daitezke beste programa batera",
     "notText": "Fitxategi hau ez da testua",
     "notWindows1252": "Testuak Windows-1252-k gorde ezin dituen karaktereak ditu. Gorde UTF-8 gisa",
     "nothingToUndo": "Ez dago desegiteko ezer",

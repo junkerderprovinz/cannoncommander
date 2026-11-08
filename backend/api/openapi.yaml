@@ -106,6 +106,13 @@ tags:
       offers for the file, as its own file manager lists them under Open
       with: Explorer's on Windows, Launch Services on a Mac and the desktop
       entries for the file's type on Linux.
+  - name: clipapi
+    description: |
+      Files shared with the other programs on the computer, only in the
+      desktop app: the system clipboard as Explorer and the file managers of
+      Linux use it, files dropped on the window and files dragged out of it.
+      Files arrive as paths on disk and go on as the paths of the sources that
+      hold them, so a file outside every source never reaches the panels.
   - name: launch
     description: |
       Opening a file the way a double click in the computer's own file
@@ -5596,6 +5603,224 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
       tags: [openwith]
+  /clipboard:
+    get:
+      operationId: clipboardFiles
+      summary: Read the files on the system clipboard
+      description: |
+        The files another program or the app itself copied or cut, as paths
+        of the sources. Files outside every source, hidden from the person
+        or gone count as skipped. A clipboard with text or a picture holds
+        no files.
+      responses:
+        "200":
+          description: The files.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClipboardFiles"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app, or one that cannot reach the clipboard (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: The clipboard could not be reached (clipboardBusy).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [clipapi]
+    put:
+      operationId: clipboardPut
+      summary: Put files on the system clipboard
+      description: |
+        The files go on the clipboard as the system's file manager puts them
+        there, so Explorer or a file manager pastes them, cut ones as a
+        move. Each needs the rights to view and download it, a cut one to
+        delete it too, and a link has to lead inside its source.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths]
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+                  example: [/C/Users/jdp/Documents/notes.txt]
+                cut:
+                  type: boolean
+      responses:
+        "204":
+          description: The files are on the clipboard.
+        "400":
+          description: A path inside an archive or no path on disk (notOnDisk).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), or no such file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: The clipboard could not be reached (clipboardBusy).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [clipapi]
+  /clipboard/moved:
+    post:
+      operationId: clipboardMoved
+      summary: Say that the cut files on the clipboard were moved
+      description: |
+        Empties the clipboard as a file manager does after it moved cut
+        files, so the program they came from stops showing them as cut. It
+        does so only while the clipboard still holds exactly these files.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [files]
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "204":
+          description: Done, or the clipboard holds something else by now.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: The clipboard could not be reached (clipboardBusy).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [clipapi]
+  /dragdrop/in:
+    post:
+      operationId: dragDropIn
+      summary: Find the files another program dropped on the window
+      description: |
+        Takes the paths on disk the window received and the folder they are
+        dropped on. sameVolume says whether they all lie on the drive or file
+        system of that folder, where Explorer moves rather than copies.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths, to]
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+                  example: ['C:\Users\jdp\Desktop\notes.txt']
+                to:
+                  type: string
+                  example: /C/Temp
+      responses:
+        "200":
+          description: The files.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ClipboardFiles"
+                  - type: object
+                    required: [sameVolume]
+                    properties:
+                      sameVolume:
+                        type: boolean
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), or no such folder.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [clipapi]
+  /dragdrop/out:
+    post:
+      operationId: dragDropOut
+      summary: Drag files out of the window
+      description: |
+        Hands the files to the system's drag and drop from where the pointer
+        is, so they can be dropped on Explorer, the desktop or another
+        program, which then copies or moves them by its own rules. The
+        answer comes once they are dropped or the drag is given up. Each
+        file needs the rights to view and download it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paths]
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "204":
+          description: The drag is over.
+        "400":
+          description: A path inside an archive or no path on disk (notOnDisk).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app, or one that drags no files out (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: The drag did not start (dragFailed).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [clipapi]
   /launch:
     post:
       operationId: launchOpen
@@ -9546,6 +9771,19 @@ components:
           description: A data URL, left out when the program has no icon.
         default:
           type: boolean
+    ClipboardFiles:
+      type: object
+      required: [files, cut, skipped]
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+        cut:
+          type: boolean
+        skipped:
+          type: integer
+          description: Files left out, outside every source, hidden or gone.
     FileManagerState:
       type: object
       required: [on]
