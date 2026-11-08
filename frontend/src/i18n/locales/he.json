@@ -410,6 +410,7 @@
       "shares": "שיתופים",
       "security": "חשבון ואבטחה",
       "integrations": "אינטגרציות",
+      "app": "אפליקציות",
       "system": "מערכת",
       "info": "מידע"
     },
@@ -1126,6 +1127,13 @@
       "alUnreachable": "שום ArrowLoop לא עונה בכתובת הזו",
       "alWantsToken": "ArrowLoop עונה, אבל רוצה אסימון",
       "alTokenWrong": "ArrowLoop דוחה את האסימון הזה"
+    },
+    "builds": {
+      "desktop": "אפליקציית שולחן עבודה",
+      "desktopHint": "CannonCommander כתוכנה במחשב שלך, עם הממשק הזה בחלון משלו. כשהגרסאות ייצאו, אפשר יהיה להוריד אותן מכאן.",
+      "phone": "אפליקציית טלפון",
+      "phoneHint": "אפליקציית CannonCommander לטלפונים עם Android. כשהיא תצא, תמצא אותה כאן.",
+      "soon": "בקרוב"
     },
     "app": {
       "updates": "עדכונים",

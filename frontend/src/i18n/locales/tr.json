@@ -388,6 +388,7 @@
       "shares": "Paylaşımlar",
       "security": "Hesap ve güvenlik",
       "integrations": "Entegrasyonlar",
+      "app": "Uygulamalar",
       "system": "Sistem",
       "info": "Bilgi"
     },
@@ -1082,6 +1083,13 @@
       "alUnreachable": "Bu adreste yanıt veren bir ArrowLoop yok",
       "alWantsToken": "ArrowLoop yanıt veriyor ama bir token istiyor",
       "alTokenWrong": "ArrowLoop bu token'ı reddediyor"
+    },
+    "builds": {
+      "desktop": "Masaüstü uygulaması",
+      "desktopHint": "Bilgisayarında bir program olarak CannonCommander, bu arayüz de kendi penceresinde. Sürümler çıkınca onları buradan indirebilirsin.",
+      "phone": "Telefon uygulaması",
+      "phoneHint": "Android telefonlar için CannonCommander uygulaması. Çıkınca onu burada bulacaksın.",
+      "soon": "Yakında"
     },
     "app": {
       "updates": "Güncellemeler",

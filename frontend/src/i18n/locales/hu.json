@@ -388,6 +388,7 @@
       "shares": "Megosztások",
       "security": "Fiók és biztonság",
       "integrations": "Integrációk",
+      "app": "Alkalmazások",
       "system": "Rendszer",
       "info": "Információ"
     },
@@ -1082,6 +1083,13 @@
       "alUnreachable": "Ezen a címen nem válaszol ArrowLoop",
       "alWantsToken": "Az ArrowLoop válaszol, de tokent kér",
       "alTokenWrong": "Az ArrowLoop elutasítja ezt a tokent"
+    },
+    "builds": {
+      "desktop": "Asztali alkalmazás",
+      "desktopHint": "A CannonCommander programként a számítógépeden, ez a felület egy saját ablakban. Amint megjelennek a változatok, innen töltheted le őket.",
+      "phone": "Telefonos alkalmazás",
+      "phoneHint": "A CannonCommander alkalmazás Android telefonokra. Amint megjelenik, itt találod.",
+      "soon": "Hamarosan"
     },
     "app": {
       "updates": "Frissítések",

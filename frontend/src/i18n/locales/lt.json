@@ -432,6 +432,7 @@
       "shares": "Bendrinimai",
       "security": "Paskyra ir sauga",
       "integrations": "Integracijos",
+      "app": "Programos",
       "system": "Sistema",
       "info": "Informacija"
     },
@@ -1170,6 +1171,13 @@
       "alUnreachable": "Šiuo adresu ArrowLoop neatsako",
       "alWantsToken": "ArrowLoop atsako, bet nori žetono",
       "alTokenWrong": "ArrowLoop atmeta šį žetoną"
+    },
+    "builds": {
+      "desktop": "Darbalaukio programa",
+      "desktopHint": "CannonCommander kaip programa tavo kompiuteryje, su šia sąsaja atskirame lange. Kai išleidimai pasirodys, galėsi juos atsisiųsti čia.",
+      "phone": "Telefono programėlė",
+      "phoneHint": "CannonCommander programėlė Android telefonams. Kai ji pasirodys, rasi ją čia.",
+      "soon": "Netrukus"
     },
     "app": {
       "updates": "Atnaujinimai",

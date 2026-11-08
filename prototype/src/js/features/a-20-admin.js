@@ -62,7 +62,7 @@
     });
   }
 
-  CC.settingsTab({ id: 'sources', label: 'Quellen', g: 'IconTabStorage', order: 40, render(host) {
+  CC.settingsTab({ id: 'sources', label: 'Quellen', g: 'IconTabStorage', order: 50, render(host) {
     const rows = DATA.sources.map((s, i) => row({
       tile: g(srcGlyph(s)), name: s.name, attr: `data-open="${i}"`,
       badges: [pill(s.path, 'mono'), s.job ? pill('Liest ein', 'run') : s.indexed ? pill(fmtSize(s.size)) + pill(`${s.files.toLocaleString('de-AT')} Dateien`, 'glim-num') : pill('Kein Index', 'state'), s.readOnly ? pill('Nur lesen', 'state') : ''],
@@ -212,7 +212,7 @@
     type ? showForm() : showPick();
   }
 
-  CC.settingsTab({ id: 'remotes', label: 'Fernziele', g: 'IconCloud', order: 50, render(host) {
+  CC.settingsTab({ id: 'remotes', label: 'Fernziele', g: 'IconCloud', order: 60, render(host) {
     const rc = DATA.rclone;
     const rows = DATA.remotes.map((r, i) => row({
       tile: g(typeOf(r.type).g), name: r.name, attr: `data-open="${i}"`,
@@ -342,7 +342,7 @@
     });
   }
 
-  CC.settingsTab({ id: 'users', label: 'Benutzer & Gruppen', g: 'IconAccounts', order: 60, render(host) {
+  CC.settingsTab({ id: 'users', label: 'Benutzer & Gruppen', g: 'IconAccounts', order: 70, render(host) {
     const urows = DATA.users.map((u, i) => row({
       tile: `<i>${esc(initials(u))}</i>`, name: u.full, attr: `data-uopen="${i}"`,
       tip: `Meldet sich als ${u.name} an.${u.groups.length ? ` Gruppen: ${u.groups.join(', ')}.` : ''}${u.twofa ? ' Mit Zwei-Faktor-Authentifizierung.' : ''}`,
@@ -454,7 +454,7 @@
   }
 
   let probe = { who: 'anna', path: '/mnt/user/backups' };
-  CC.settingsTab({ id: 'rules', label: 'Zugriffsregeln', g: 'IconShieldOn', order: 70, render(host) {
+  CC.settingsTab({ id: 'rules', label: 'Zugriffsregeln', g: 'IconShieldOn', order: 80, render(host) {
     const n = DATA.rules.length;
     const rows = DATA.rules.map((r, i) => row({
       tile: g((RULES.find(x => x[0] === r.rule) || RULES[0])[2]), name: r.path, mono: true, attr: `data-open="${i}"`,
@@ -520,7 +520,7 @@
     box.addEventListener('click', e => { if (e.target.closest('#a-shpwnew')) { pwNew = true; box.innerHTML = pwRow(); wireControls(box); $('#a-shpw1', box).focus(); } });
   }
 
-  CC.settingsTab({ id: 'shares', label: 'Freigaben', g: 'IconLink', order: 80, render(host) {
+  CC.settingsTab({ id: 'shares', label: 'Freigaben', g: 'IconLink', order: 90, render(host) {
     const rows = DATA.shares.map((s, i) => {
       const left = s.expires ? s.expires - A.now() : null;
       return row({

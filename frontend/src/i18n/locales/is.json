@@ -388,6 +388,7 @@
       "shares": "Deilingar",
       "security": "Aðgangur og öryggi",
       "integrations": "Tengingar",
+      "app": "Forrit",
       "system": "Kerfi",
       "info": "Upplýsingar"
     },
@@ -1082,6 +1083,13 @@
       "alUnreachable": "Ekkert ArrowLoop svarar á þessu vistfangi",
       "alWantsToken": "ArrowLoop svarar en vill fá tóka",
       "alTokenWrong": "ArrowLoop hafnar þessum tóka"
+    },
+    "builds": {
+      "desktop": "Skjáborðsforrit",
+      "desktopHint": "CannonCommander sem forrit á tölvunni þinni, með þetta viðmót í eigin glugga. Þegar útgáfurnar koma út geturðu sótt þær hér.",
+      "phone": "Símaforrit",
+      "phoneHint": "CannonCommander-forritið fyrir Android-síma. Þegar það kemur út finnurðu það hér.",
+      "soon": "Væntanlegt"
     },
     "app": {
       "updates": "Uppfærslur",

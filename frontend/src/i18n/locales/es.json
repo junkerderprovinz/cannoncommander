@@ -410,6 +410,7 @@
       "shares": "Compartidos",
       "security": "Cuenta y seguridad",
       "integrations": "Integraciones",
+      "app": "Apps",
       "system": "Sistema",
       "info": "Info"
     },
@@ -1126,6 +1127,13 @@
       "alUnreachable": "No responde ningún ArrowLoop en esta dirección",
       "alWantsToken": "ArrowLoop responde, pero pide un token",
       "alTokenWrong": "ArrowLoop rechaza este token"
+    },
+    "builds": {
+      "desktop": "Aplicación de escritorio",
+      "desktopHint": "CannonCommander como programa en tu ordenador, con esta interfaz en una ventana propia. Cuando salgan las versiones, podrás descargarlas aquí.",
+      "phone": "App para móvil",
+      "phoneHint": "La app de CannonCommander para móviles Android. Cuando salga, la encontrarás aquí.",
+      "soon": "Pronto"
     },
     "app": {
       "updates": "Actualizaciones",

@@ -1,7 +1,7 @@
 {
   "tabs": {
     "title": "Settings", "general": "General", "look": "Appearance", "files": "File list", "sources": "Sources", "remotes": "Remotes",
-    "users": "Users & groups", "rules": "Access rules", "shares": "Shares", "security": "Account & security", "integrations": "Integrations", "system": "System", "info": "Info"
+    "users": "Users & groups", "rules": "Access rules", "shares": "Shares", "security": "Account & security", "integrations": "Integrations", "app": "Apps", "system": "System", "info": "Info"
   },
   "actions": { "about": "About CannonCommander", "activity": "Activity", "docs": "Handbook", "whatsNew": "What's new" },
   "add": "Add", "added": "{name} added", "back": "Back", "checking": "Checking", "copied": "Copied", "copy": "Copy", "done": "Done",
@@ -208,6 +208,11 @@
     "here": "Path here", "there": "Path in ArrowLoop", "addPath": "Add a path",
     "fullPaths": "Both paths start with /", "alUnreachable": "No ArrowLoop answers at this address", "alWantsToken": "ArrowLoop answers, but wants a token",
     "alTokenWrong": "ArrowLoop turns this token down"
+  },
+  "builds": {
+    "desktop": "Desktop app", "desktopHint": "CannonCommander as a program on your computer, with this interface in a window of its own. Once the builds are out, you can download them here.",
+    "phone": "Phone app", "phoneHint": "The CannonCommander app for Android phones. Once it is out, you will find it here.",
+    "soon": "Soon"
   },
   "app": {
     "updates": "Updates", "autoCheck": "Check automatically",

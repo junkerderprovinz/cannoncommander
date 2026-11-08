@@ -410,6 +410,7 @@
       "shares": "Partajări",
       "security": "Cont și securitate",
       "integrations": "Integrări",
+      "app": "Aplicații",
       "system": "Sistem",
       "info": "Info"
     },
@@ -1126,6 +1127,13 @@
       "alUnreachable": "La această adresă nu răspunde niciun ArrowLoop",
       "alWantsToken": "ArrowLoop răspunde, dar vrea un token",
       "alTokenWrong": "ArrowLoop respinge acest token"
+    },
+    "builds": {
+      "desktop": "Aplicația desktop",
+      "desktopHint": "CannonCommander ca program pe calculatorul tău, cu această interfață într-o fereastră proprie. De îndată ce apar versiunile, le poți descărca de aici.",
+      "phone": "Aplicația de telefon",
+      "phoneHint": "Aplicația CannonCommander pentru telefoane Android. De îndată ce apare, o găsești aici.",
+      "soon": "În curând"
     },
     "app": {
       "updates": "Actualizări",

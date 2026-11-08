@@ -1,4 +1,4 @@
-// Integrationen, App and Info, the help actions and the activity page.
+// Integrationen, Apps, System and Info, the help actions and the activity page.
 (() => {
   const A = CC.admin;
   const { pill, row, list, foot, btn, field, fail } = A;
@@ -101,7 +101,7 @@
       } });
   }
 
-  CC.settingsTab({ id: 'system', label: 'System', g: 'IconTabSystem', order: 110, render(host) {
+  CC.settingsTab({ id: 'system', label: 'System', g: 'IconTabSystem', order: 120, render(host) {
     const ap = DATA.app;
     host.innerHTML = CC.card('Einstellungen sichern',
         frow('In eine Datei schreiben', btn('Exportieren', 'IconExport', 'id="a-export"'), 'Alle Einstellungen als JSON-Datei auf dem Server, ohne Passwörter.')
@@ -136,6 +136,23 @@
   const readmeBtn = ({ tile, mark, glyph, name, sub, attr }) => `<div class="glim-readme-btn-unit group ${tile}"><button class="glim-readme-btn glim-brand-tile" ${attr}><span class="glim-readme-btn-mark ${mark}">${g(glyph)}</span><span class="glim-readme-btn-text"><span class="glim-readme-btn-name">${esc(name)}</span>${sub ? `<span class="glim-readme-btn-sub">${esc(sub)}</span>` : ''}</span></button></div>`;
   // The hint rides inside the heading badge, so a card explains itself without a line of its own.
   const hinted = (title, hint, inner) => CC.card(title, inner).replace('</span><div class="card-body">', ` ${info(hint)}</span><div class="card-body">`);
+
+  /* Apps */
+  // The other forms of CannonCommander, none of them out yet, so every button says it is still to come.
+  const soonBtn = ({ tile, mark, svg, name }) => `<div class="glim-readme-btn-unit group ${tile} glim-readme-btn-soon"><span class="glim-readme-btn" aria-disabled="true" aria-label="${esc(name)} Bald"><span class="glim-readme-btn-mark ${mark || ''}" aria-hidden="true">${svg}</span><span class="glim-readme-btn-text"><span class="glim-readme-btn-name">${esc(name)}</span><span class="glim-readme-btn-sub">Bald</span></span></span></div>`;
+  const builds = (list) => `<div class="glim-readme-btn-rows">${list.map(soonBtn).join('')}</div>`;
+  CC.settingsTab({ id: 'app', label: 'Apps', g: 'IconTabApp', order: 110, render(host) {
+    host.innerHTML = hinted('Desktop-App', 'CannonCommander als Programm auf deinem Rechner, mit dieser Oberfläche in einem eigenen Fenster. Sobald es die Builds gibt, lädst du sie hier herunter.', builds([
+      { tile: 'glim-tile-windows', mark: 'glim-windows-mark', svg: MARKS.windows, name: 'Windows' },
+      { tile: 'glim-tile-apple', svg: MARKS.apple, name: 'macOS' },
+      { tile: 'glim-tile-linux', svg: MARKS.linux, name: 'Linux' },
+    ]))
+      + hinted('Handy-App', 'Die CannonCommander-App für Android-Handys. Sobald es sie gibt, findest du sie hier.', builds([
+        { tile: 'glim-tile-play', svg: MARKS.play, name: 'Google Play' },
+        { tile: 'glim-tile-fdroid', svg: MARKS.fdroid, name: 'F-Droid' },
+        { tile: 'glim-tile-android', mark: 'glim-android-mark', svg: MARKS.android, name: 'Android' },
+      ]));
+  } });
   const MAIL = 'hello@halleluja.design';
 
   function bugReport() {
@@ -175,7 +192,7 @@
       foot: [cancel, { label: 'Zu Buy Me a Coffee', g: 'IconCoffee', primary: true, run: () => { window.open('https://buymeacoffee.com/junkerderprovinz', '_blank', 'noopener'); } }] });
   }
 
-  CC.settingsTab({ id: 'info', label: 'Info', g: 'IconInfo', order: 120, render(host) {
+  CC.settingsTab({ id: 'info', label: 'Info', g: 'IconInfo', order: 130, render(host) {
     const n = unseen();
     host.innerHTML = hinted('Version', 'Ein Klick auf eine Versionsnummer öffnet ihre Release-Seite.',
       frow('CannonCommander', vlink('app'))

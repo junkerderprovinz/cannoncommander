@@ -388,6 +388,7 @@
       "shares": "Partekatzeak",
       "security": "Kontua eta segurtasuna",
       "integrations": "Integrazioak",
+      "app": "Aplikazioak",
       "system": "Sistema",
       "info": "Informazioa"
     },
@@ -1082,6 +1083,13 @@
       "alUnreachable": "Helbide honetan ez du ArrowLoop-ek erantzuten",
       "alWantsToken": "ArrowLoop-ek erantzuten du, baina token bat nahi du",
       "alTokenWrong": "ArrowLoop-ek token hau baztertzen du"
+    },
+    "builds": {
+      "desktop": "Mahaigaineko aplikazioa",
+      "desktopHint": "CannonCommander programa gisa zure ordenagailuan, interfaze hau bere leihoan duela. Bertsioak ateratzen direnean, hemendik deskargatu ahal izango dituzu.",
+      "phone": "Telefono-aplikazioa",
+      "phoneHint": "Android telefonoetarako CannonCommander aplikazioa. Ateratzen denean, hemen aurkituko duzu.",
+      "soon": "Laster"
     },
     "app": {
       "updates": "Eguneraketak",

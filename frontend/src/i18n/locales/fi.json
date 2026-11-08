@@ -388,6 +388,7 @@
       "shares": "Jaot",
       "security": "Tili ja turvallisuus",
       "integrations": "Integraatiot",
+      "app": "Sovellukset",
       "system": "Järjestelmä",
       "info": "Tietoja"
     },
@@ -1082,6 +1083,13 @@
       "alUnreachable": "Tässä osoitteessa ei vastaa ArrowLoop",
       "alWantsToken": "ArrowLoop vastaa, mutta haluaa tunnuksen",
       "alTokenWrong": "ArrowLoop hylkää tämän tunnuksen"
+    },
+    "builds": {
+      "desktop": "Työpöytäsovellus",
+      "desktopHint": "CannonCommander ohjelmana tietokoneellasi, ja tämä käyttöliittymä omassa ikkunassaan. Kun versiot julkaistaan, voit ladata ne täältä.",
+      "phone": "Puhelinsovellus",
+      "phoneHint": "CannonCommander-sovellus Android-puhelimille. Kun se julkaistaan, löydät sen täältä.",
+      "soon": "Tulossa"
     },
     "app": {
       "updates": "Päivitykset",

@@ -10,7 +10,7 @@ module.exports = async (page, shot) => {
     await page.setViewportSize({ width: 1600, height: 950 });
   };
   const closeWin = async () => { await page.keyboard.press('Escape'); await wait(150); };
-  const tabs = ['general', 'look', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'security', 'integrations', 'system', 'info'];
+  const tabs = ['general', 'look', 'security', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'integrations', 'app', 'system', 'info'];
 
   for (const theme of ['dark', 'light']) {
     await page.evaluate((t) => CC.setPref('theme', t), theme);

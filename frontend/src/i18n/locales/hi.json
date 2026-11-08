@@ -388,6 +388,7 @@
       "shares": "साझा लिंक",
       "security": "खाता और सुरक्षा",
       "integrations": "इंटीग्रेशन",
+      "app": "ऐप्स",
       "system": "सिस्टम",
       "info": "जानकारी"
     },
@@ -1082,6 +1083,13 @@
       "alUnreachable": "इस पते पर कोई ArrowLoop जवाब नहीं देता",
       "alWantsToken": "ArrowLoop जवाब देता है, पर टोकन चाहता है",
       "alTokenWrong": "ArrowLoop यह टोकन ठुकराता है"
+    },
+    "builds": {
+      "desktop": "डेस्कटॉप ऐप",
+      "desktopHint": "आपके कंप्यूटर पर एक प्रोग्राम के रूप में CannonCommander, यह इंटरफ़ेस अपनी अलग विंडो में। बिल्ड आते ही आप उन्हें यहीं से डाउनलोड कर पाएँगे।",
+      "phone": "फ़ोन ऐप",
+      "phoneHint": "Android फ़ोन के लिए CannonCommander ऐप। आते ही आप इसे यहीं पाएँगे।",
+      "soon": "जल्द ही"
     },
     "app": {
       "updates": "अपडेट",

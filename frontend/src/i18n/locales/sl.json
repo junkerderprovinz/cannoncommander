@@ -432,6 +432,7 @@
       "shares": "Deljenja",
       "security": "Račun in varnost",
       "integrations": "Integracije",
+      "app": "Aplikacije",
       "system": "Sistem",
       "info": "Informacije"
     },
@@ -1170,6 +1171,13 @@
       "alUnreachable": "Na tem naslovu ne odgovarja noben ArrowLoop",
       "alWantsToken": "ArrowLoop odgovarja, vendar želi žeton",
       "alTokenWrong": "ArrowLoop ta žeton zavrača"
+    },
+    "builds": {
+      "desktop": "Namizna aplikacija",
+      "desktopHint": "CannonCommander kot program na tvojem računalniku, s tem vmesnikom v lastnem oknu. Ko bodo izdaje na voljo, jih lahko preneseš tukaj.",
+      "phone": "Aplikacija za telefon",
+      "phoneHint": "Aplikacija CannonCommander za telefone z Androidom. Ko bo na voljo, jo najdeš tukaj.",
+      "soon": "Kmalu"
     },
     "app": {
       "updates": "Posodobitve",

@@ -366,6 +366,7 @@
       "shares": "Chia sẻ",
       "security": "Tài khoản và bảo mật",
       "integrations": "Tích hợp",
+      "app": "Ứng dụng",
       "system": "Hệ thống",
       "info": "Thông tin"
     },
@@ -1038,6 +1039,13 @@
       "alUnreachable": "Không có ArrowLoop nào phản hồi ở địa chỉ này",
       "alWantsToken": "ArrowLoop có phản hồi nhưng cần token",
       "alTokenWrong": "ArrowLoop từ chối token này"
+    },
+    "builds": {
+      "desktop": "Ứng dụng máy tính",
+      "desktopHint": "CannonCommander dưới dạng một chương trình trên máy tính của bạn, với giao diện này trong một cửa sổ riêng. Khi các bản dựng ra mắt, bạn có thể tải chúng xuống tại đây.",
+      "phone": "Ứng dụng điện thoại",
+      "phoneHint": "Ứng dụng CannonCommander cho điện thoại Android. Khi ra mắt, bạn sẽ tìm thấy nó tại đây.",
+      "soon": "Sắp có"
     },
     "app": {
       "updates": "Cập nhật",

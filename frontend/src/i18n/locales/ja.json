@@ -366,6 +366,7 @@
       "shares": "共有リンク",
       "security": "アカウントとセキュリティ",
       "integrations": "連携",
+      "app": "アプリ",
       "system": "システム",
       "info": "情報"
     },
@@ -1038,6 +1039,13 @@
       "alUnreachable": "このアドレスで応答する ArrowLoop はありません",
       "alWantsToken": "ArrowLoop は応答していますが、トークンが必要です",
       "alTokenWrong": "ArrowLoop がこのトークンを拒否しました"
+    },
+    "builds": {
+      "desktop": "デスクトップアプリ",
+      "desktopHint": "パソコン上のプログラムとして動く CannonCommander で、この画面が専用のウィンドウで開きます。ビルドが公開されたら、ここからダウンロードできます。",
+      "phone": "スマートフォンアプリ",
+      "phoneHint": "Android スマートフォン向けの CannonCommander アプリです。公開されたら、ここに表示されます。",
+      "soon": "近日公開"
     },
     "app": {
       "updates": "アップデート",

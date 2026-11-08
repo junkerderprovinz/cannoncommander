@@ -476,6 +476,7 @@
       "shares": "المشاركات",
       "security": "الحساب والأمان",
       "integrations": "التكاملات",
+      "app": "التطبيقات",
       "system": "النظام",
       "info": "معلومات"
     },
@@ -1258,6 +1259,13 @@
       "alUnreachable": "لا يستجيب ArrowLoop على هذا العنوان",
       "alWantsToken": "ArrowLoop يستجيب لكنه يريد رمزًا",
       "alTokenWrong": "ArrowLoop يرفض هذا الرمز"
+    },
+    "builds": {
+      "desktop": "تطبيق سطح المكتب",
+      "desktopHint": "CannonCommander كبرنامج على حاسوبك، وهذه الواجهة في نافذة خاصة بها. وحين تصدر النسخ، يمكنك تنزيلها من هنا.",
+      "phone": "تطبيق الهاتف",
+      "phoneHint": "تطبيق CannonCommander لهواتف Android. وحين يصدر، ستجده هنا.",
+      "soon": "قريبًا"
     },
     "app": {
       "updates": "التحديثات",

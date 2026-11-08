@@ -388,6 +388,7 @@
       "shares": "Gedeeld",
       "security": "Account en beveiliging",
       "integrations": "Integraties",
+      "app": "Apps",
       "system": "Systeem",
       "info": "Info"
     },
@@ -1082,6 +1083,13 @@
       "alUnreachable": "Op dit adres antwoordt geen ArrowLoop",
       "alWantsToken": "ArrowLoop antwoordt, maar wil een token",
       "alTokenWrong": "ArrowLoop weigert dit token"
+    },
+    "builds": {
+      "desktop": "Desktop-app",
+      "desktopHint": "CannonCommander als programma op je computer, met deze interface in een eigen venster. Zodra de builds uit zijn, download je ze hier.",
+      "phone": "Telefoonapp",
+      "phoneHint": "De CannonCommander-app voor Android-telefoons. Zodra de app uit is, vind je hem hier.",
+      "soon": "Binnenkort"
     },
     "app": {
       "updates": "Updates",
