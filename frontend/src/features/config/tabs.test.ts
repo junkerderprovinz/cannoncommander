@@ -4,6 +4,7 @@ import { createApp, nextTick } from 'vue';
 import { go, settingsTabs, view } from '@/core/views';
 import { addMessages } from '@/i18n';
 import de from './de.json';
+import setupKeys from '@/features/keys';
 import { NEWS } from './help';
 import setup from '.';
 
@@ -27,6 +28,7 @@ beforeAll(() => {
   // The address the sign in provider sends the person back to, for the token window.
   history.replaceState(null, '', '/?again=token');
   setup();
+  setupKeys();
 });
 
 let app: ReturnType<typeof createApp> | undefined;
@@ -54,7 +56,7 @@ describe('the settings', () => {
   });
 
   it('put the account third and end on integrations, apps, system and info, as in BombVault', () => {
-    expect(settingsTabs.map((t) => t.id)).toEqual(['general', 'look', 'security', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'integrations', 'app', 'system', 'info']);
+    expect(settingsTabs.map((t) => t.id)).toEqual(['general', 'look', 'security', 'files', 'keys', 'sources', 'remotes', 'users', 'rules', 'shares', 'integrations', 'app', 'system', 'info']);
   });
 
   it('lead to the account after signing in again and from the news', () => {

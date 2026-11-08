@@ -52,15 +52,27 @@ export function preset(id: Preset, defaults: KeyMap, known: (action: string) => 
 export const FIXED = ['Tab', 'Enter', 'F10'];
 export const MODIFIER_KEYS = ['Control', 'Shift', 'Alt', 'Meta', 'AltGraph', 'CapsLock'];
 
-export type Verdict = { ok: true } | { ok: false; reason: 'fixed' | 'letter' } | { ok: false; reason: 'taken'; other: string };
+// A browser never hands these to a page, so in a tab of the container they would do nothing. The desktop app's web
+// view has no tabs and lets the app have them.
+const BROWSER = ['Ctrl+n', 'Ctrl+Shift+n', 'Ctrl+t', 'Ctrl+Shift+t', 'Ctrl+w', 'Ctrl+Shift+w', 'Ctrl+Tab', 'Ctrl+Shift+Tab', 'Ctrl+PageUp', 'Ctrl+PageDown', 'Ctrl+Shift+p'];
+const SYSTEM = ['Alt+Tab', 'Alt+Shift+Tab', 'Alt+F4', 'Alt+ ', 'Ctrl+Escape', 'Ctrl+Alt+Delete'];
 
-// Whether `combo` may go to `action`. A key another action has asks first, and pressing it again (`confirmed`) takes it.
-export function check(map: KeyMap, combo: string, action: string, confirmed: boolean): Verdict {
+export type Reserved = 'browser' | 'system';
+export function reservedBy(combo: string, desktop: boolean): Reserved | undefined {
+  if (SYSTEM.includes(combo)) return 'system';
+  return !desktop && BROWSER.includes(combo) ? 'browser' : undefined;
+}
+
+export type Verdict = { ok: true } | { ok: false; reason: 'fixed' | 'letter' | Reserved } | { ok: false; reason: 'taken'; other: string };
+
+export function check(map: KeyMap, combo: string, action: string, desktop: boolean): Verdict {
   if (FIXED.includes(combo)) return { ok: false, reason: 'fixed' };
   // Single letters and digits belong to typing to jump in the list.
   if (/^[\p{L}\d]$/u.test(combo)) return { ok: false, reason: 'letter' };
+  const reserved = reservedBy(combo, desktop);
+  if (reserved) return { ok: false, reason: reserved };
   const other = map[combo];
-  if (other && other !== action && !confirmed) return { ok: false, reason: 'taken', other };
+  if (other && other !== action) return { ok: false, reason: 'taken', other };
   return { ok: true };
 }
 
@@ -71,11 +83,38 @@ export function assign(map: KeyMap, combo: string, action: string): KeyMap {
   return next;
 }
 
-export function reset(map: KeyMap, defaults: KeyMap, action: string): KeyMap {
-  const next = { ...map };
-  for (const c of combosOf(next, action)) delete next[c];
-  for (const c of combosOf(defaults, action)) if (!next[c]) next[c] = action;
+// The action takes the key, and the action that had it gets the keys this one had.
+export function swap(map: KeyMap, combo: string, action: string): KeyMap {
+  const other = map[combo], had = combosOf(map, action);
+  const next = assign(map, combo, action);
+  if (other) for (const c of had) next[c] = other;
   return next;
 }
 
-export const changed = (map: KeyMap, defaults: KeyMap, action: string) => combosOf(defaults, action).sort().join() !== combosOf(map, action).sort().join();
+export function reset(map: KeyMap, base: KeyMap, action: string): KeyMap {
+  const next = { ...map };
+  for (const c of combosOf(next, action)) delete next[c];
+  for (const c of combosOf(base, action)) if (!next[c]) next[c] = action;
+  return next;
+}
+
+export const changed = (map: KeyMap, base: KeyMap, action: string) => combosOf(base, action).sort().join() !== combosOf(map, action).sort().join();
+
+// Own keys are kept as what they change in a layout, an empty action for a key taken away, so a layout chosen later
+// and keys a newer version ships still reach someone who has keys of their own.
+export type OwnKeys = Record<string, string>;
+
+export function ownKeys(base: KeyMap, map: KeyMap): OwnKeys {
+  const own: OwnKeys = {};
+  for (const c of new Set([...Object.keys(base), ...Object.keys(map)])) if (base[c] !== map[c]) own[c] = map[c] ?? '';
+  return own;
+}
+
+export function withOwn(base: KeyMap, own: OwnKeys): KeyMap {
+  const map = { ...base };
+  for (const [c, a] of Object.entries(own)) {
+    if (a) map[c] = a;
+    else delete map[c];
+  }
+  return map;
+}
