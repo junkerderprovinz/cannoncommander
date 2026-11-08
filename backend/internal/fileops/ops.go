@@ -177,10 +177,28 @@ func preflightSize(ctx context.Context, fsys *ccfs.Resolver, u *users.User, src 
 // silently replace a file of that name. On NTFS, exFAT and FAT the new name
 // finds the file itself when only its case changes, and that rename goes.
 func renameNoReplace(from, to string) error {
-	if _, err := os.Lstat(to); err == nil && !sameFile(from, to) {
-		return errExists
+	if _, err := os.Lstat(to); err == nil {
+		if !sameFile(from, to) {
+			return errExists
+		}
+		return renameCase(from, to)
 	}
 	return os.Rename(from, to)
+}
+
+// renameCase changes only the case of a name. FAT and exFAT take a rename to
+// the same name as done and keep the old case, so the file goes through a
+// hidden name of its own first, as Explorer does it.
+func renameCase(from, to string) error {
+	via := filepath.Join(filepath.Dir(from), "."+filepath.Base(from)+PartSuffix)
+	if err := os.Rename(from, via); err != nil {
+		return err
+	}
+	if err := os.Rename(via, to); err != nil {
+		_ = os.Rename(via, from)
+		return err
+	}
+	return nil
 }
 
 // sameFile reports a name that differs only in case and finds the file

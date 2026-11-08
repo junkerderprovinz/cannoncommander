@@ -12,9 +12,10 @@ import (
 
 // shortcutKinds are the shortcut files the desktop of each system opens:
 // Explorer follows .lnk and .url, Nautilus and Dolphin start .desktop
-// launchers. The container leaves all of them as plain files.
+// launchers, and the desktop app opens the address of a .url on Linux as
+// well. The container leaves all of them as plain files.
 var shortcutKinds = map[string]bool{
-	shortcut.Lnk: runtime.GOOS == "windows", shortcut.URL: runtime.GOOS == "windows",
+	shortcut.Lnk: runtime.GOOS == "windows", shortcut.URL: runtime.GOOS == "windows" || runtime.GOOS == "linux",
 	shortcut.Desktop: runtime.GOOS == "linux",
 }
 
