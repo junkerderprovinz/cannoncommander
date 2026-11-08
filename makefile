@@ -39,7 +39,7 @@ update:
 build: build-frontend build-backend
 
 build-docker:
-	docker build --build-arg="REVISION=$$(git rev-parse HEAD)" -t cannoncommander -f _docker/Dockerfile .
+	docker build --build-arg="VERSION=$$(git describe --tags --always)" --build-arg="REVISION=$$(git rev-parse HEAD)" -t cannoncommander -f _docker/Dockerfile .
 
 build-backend:
 	@echo "Building backend..."

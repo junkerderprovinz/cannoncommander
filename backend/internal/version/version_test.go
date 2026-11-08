@@ -15,9 +15,32 @@ func TestBuildWithoutStampStillHasAVersion(t *testing.T) {
 		{"v1.4.0", "abc1234", "fedcba9", "v1.4.0", "abc1234"},
 	}
 	for _, tt := range tests {
-		v, c := settle(tt.version, tt.commit, tt.vcs)
+		v, c := settle(tt.version, tt.commit, tt.vcs, unstamped)
 		if v != tt.wantVersion || c != tt.wantCommit {
 			t.Errorf("settle(%q, %q, %q) = %q, %q, want %q, %q", tt.version, tt.commit, tt.vcs, v, c, tt.wantVersion, tt.wantCommit)
+		}
+	}
+}
+
+const unstamped = "$Format:%(describe:tags) %H$\n"
+
+func TestSourceFromGitArchiveKnowsItsVersion(t *testing.T) {
+	const sha = "0d6116a76e0c1263c5efa241bc8f7f01b5b619e7"
+	tests := []struct {
+		version, commit, archive string
+		wantVersion              string
+		wantCommit               string
+	}{
+		{"", "", "v1.4.0-3-g0d6116a7 " + sha + "\n", "v1.4.0-3-g0d6116a7", sha},
+		{"", "", "v1.4.0 " + sha + "\r\n", "v1.4.0", sha},
+		{"", "", " " + sha + "\n", "dev-0d6116a", sha},
+		{"v1.5.0", "abc1234", "v1.4.0-3-g0d6116a7 " + sha + "\n", "v1.5.0", "abc1234"},
+		{"", "", unstamped, "dev", "unknown"},
+	}
+	for _, tt := range tests {
+		v, c := settle(tt.version, tt.commit, "", tt.archive)
+		if v != tt.wantVersion || c != tt.wantCommit {
+			t.Errorf("settle(%q, %q, %q) = %q, %q, want %q, %q", tt.version, tt.commit, tt.archive, v, c, tt.wantVersion, tt.wantCommit)
 		}
 	}
 }

@@ -3,6 +3,7 @@ package version
 
 import (
 	"cmp"
+	_ "embed"
 	"regexp"
 	"runtime/debug"
 	"strings"
@@ -18,14 +19,26 @@ var (
 	CommitSHA string
 )
 
+// archive is filled in by git archive through export-subst, so source handed
+// over as an archive, without its .git, still knows where it came from.
+//
+//go:embed archive.txt
+var archive string
+
 func init() {
-	Version, CommitSHA = settle(Version, CommitSHA, vcsRevision())
+	Version, CommitSHA = settle(Version, CommitSHA, vcsRevision(), archive)
 }
 
-// settle fills in what the build left empty: the commit Go recorded from the
-// checkout if there was one, and a version of dev plus that commit.
-func settle(version, commit, vcs string) (string, string) {
-	commit = cmp.Or(commit, vcs, "unknown")
+// settle fills in what the build left empty: the describe and commit git
+// archive wrote, the commit Go recorded from the checkout, and failing those
+// a version of dev plus the commit.
+func settle(version, commit, vcs, archive string) (string, string) {
+	var described, archived string
+	if !strings.HasPrefix(archive, "$Format") {
+		described, archived, _ = strings.Cut(strings.TrimRight(archive, "\r\n"), " ")
+	}
+	commit = cmp.Or(commit, archived, vcs, "unknown")
+	version = cmp.Or(version, described)
 	if version == "" {
 		version = "dev"
 		if commit != "unknown" {
