@@ -149,7 +149,12 @@ func (s *Store) restoreFor(run *jobs.Run, id string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if _, _, err := run.Entry(it.Origin, ccfs.Create); err != nil {
+	if it.outside {
+		err = run.RequireAdmin()
+	} else {
+		_, _, err = run.Entry(it.Origin, ccfs.Create)
+	}
+	if err != nil {
 		return "", err
 	}
 	return s.Restore(id)
