@@ -20,7 +20,7 @@ import { loadFeatures } from '@/features';
 import { registerFileActions } from '@/files/actions';
 import FilesView from '@/files/FilesView.vue';
 import { installDragDrop } from '@/files/dnd';
-import { filesKey, installJumpReset } from '@/files/keys';
+import { filesKey, installJumpReset, typingClaims } from '@/files/keys';
 import { setLanguage, useLocales } from '@/i18n';
 import SettingsPage from '@/pages/SettingsPage.vue';
 import { usePanels } from '@/stores/panels';
@@ -46,7 +46,7 @@ function startApp(me?: Me) {
   const app = createApp(App).use(createPinia());
   // The panels start in the user's home folder, so who it is has to be known first.
   if (me) useUser().me = me;
-  registerView('files', { component: FilesView, key: filesKey });
+  registerView('files', { component: FilesView, key: filesKey, claims: typingClaims });
   registerView('settings', { page: true, component: SettingsPage });
   bindDefaults();
   usePanels();

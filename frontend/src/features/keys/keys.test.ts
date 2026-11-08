@@ -85,6 +85,22 @@ describe('the Total Commander layout', () => {
   });
 });
 
+describe('the Explorer layout', () => {
+  it('puts Explorer keys on top and keeps the viewer on F3', () => {
+    const map = preset('explorer', { ...DEFAULTS, F3: 'view', Backspace: 'up' }, () => true);
+    expect(map.F5).toBe('refresh');
+    expect(map['Ctrl+r']).toBe('refresh');
+    expect(map['Alt+p']).toBe('quickview');
+    expect(map.Backspace).toBe('back');
+    expect(map.F3).toBe('view');
+    expect(map['Ctrl+a']).toBe('selectAll');
+  });
+
+  it('leaves out actions the app does not have', () => {
+    expect(preset('explorer', DEFAULTS, (id) => id !== 'quickview')['Alt+p']).toBe('pack');
+  });
+});
+
 describe('the key a menu shows', () => {
   it('stays the shipped one while the action still has it', () => {
     setLanguage('de');

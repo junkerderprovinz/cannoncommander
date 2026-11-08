@@ -259,6 +259,8 @@ export const usePanels = defineStore('panels', () => {
     if (k.dir) return go(join(tab.path, k.name!), i);
     if (k.archive) return go(join(tab.path, k.name + '::'), i);
     const how = prefs.dblclick;
+    // Only the desktop app has the launcher, and a file inside an archive has no place on disk to hand over.
+    if (how === 'system' && actions.launch && !inArchive(tab.path)) return run('launch', join(k.at || tab.path, k.name!));
     if (how === 'download') return run('download');
     if (how === 'open' && ['text', 'code'].includes(k.kind!) && actions.edit) return run('edit');
     return run('view');

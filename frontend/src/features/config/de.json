@@ -14,7 +14,7 @@
   "picker": { "folder": "Ordner", "file": "Datei" },
   "general": {
     "use": "Bedienung", "start": "Startordner", "startTip": "Dieser Ordner öffnet sich nach dem Anmelden im linken Fenster.", "startSaved": "Startordner gespeichert",
-    "dblclick": "Doppelklick auf eine Datei", "dblclickTip": "Ein Doppelklick auf einen Ordner öffnet ihn immer.", "open": "Öffnen", "preview": "Vorschau", "download": "Herunterladen",
+    "dblclick": "Doppelklick auf eine Datei", "dblclickTip": "Ein Doppelklick auf einen Ordner öffnet ihn immer.", "system": "Standardprogramm", "open": "Öffnen", "preview": "Vorschau", "download": "Herunterladen",
     "delete": "Löschen", "confirm": "Vor dem Löschen fragen", "confirmTip": "Zeigt vor dem Löschen, was alles weggeht.",
     "trash": "Papierkorb verwenden", "trashTip": "Gelöschtes landet erst im Papierkorb und lässt sich von dort zurückholen. Ohne Papierkorb ist es sofort weg.",
     "keep": "Aufbewahren", "keepTip": "Danach leert sich der Papierkorb von selbst.", "days": { "one": "{n} Tag", "other": "{n} Tage" },
