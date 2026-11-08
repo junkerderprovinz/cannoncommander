@@ -1481,7 +1481,9 @@
     "keep": "इस डिवाइस पर हमेशा रखें",
     "free": "जगह खाली करें",
     "kept": "इस डिवाइस पर रहेगा: {objects}",
-    "freed": "{objects} के लिए जगह खाली की गई"
+    "freed": "{objects} के लिए जगह खाली की गई",
+    "createShortcut": "शॉर्टकट बनाएँ",
+    "shortcutName": "{name} - शॉर्टकट"
   },
   "gather": {
     "title": "फ़ोल्डर समेटें",

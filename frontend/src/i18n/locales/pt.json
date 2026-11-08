@@ -1536,7 +1536,9 @@
     "keep": "Manter sempre neste dispositivo",
     "free": "Libertar espaço",
     "kept": "Fica neste dispositivo: {objects}",
-    "freed": "Espaço libertado para {objects}"
+    "freed": "Espaço libertado para {objects}",
+    "createShortcut": "Criar atalho",
+    "shortcutName": "{name} - atalho"
   },
   "gather": {
     "title": "Agrupar pasta",

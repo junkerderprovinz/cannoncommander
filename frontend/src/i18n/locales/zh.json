@@ -1426,7 +1426,9 @@
     "keep": "始终保留在此设备上",
     "free": "释放空间",
     "kept": "保留在此设备上：{objects}",
-    "freed": "已为 {objects} 释放空间"
+    "freed": "已为 {objects} 释放空间",
+    "createShortcut": "创建快捷方式",
+    "shortcutName": "{name} - 快捷方式"
   },
   "gather": {
     "title": "集中文件夹",

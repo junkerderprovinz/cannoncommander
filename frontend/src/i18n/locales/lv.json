@@ -1536,7 +1536,9 @@
     "keep": "Vienmēr paturēt šajā ierīcē",
     "free": "Atbrīvot vietu",
     "kept": "Paliek šajā ierīcē: {objects}",
-    "freed": "Vieta atbrīvota: {objects}"
+    "freed": "Vieta atbrīvota: {objects}",
+    "createShortcut": "Izveidot saīsni",
+    "shortcutName": "{name} - saīsne"
   },
   "gather": {
     "title": "Savākt mapi",

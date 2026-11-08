@@ -1591,7 +1591,9 @@
     "keep": "Vedno obdrži v tej napravi",
     "free": "Sprosti prostor",
     "kept": "Ostane v tej napravi: {objects}",
-    "freed": "Prostor sproščen za {objects}"
+    "freed": "Prostor sproščen za {objects}",
+    "createShortcut": "Ustvari bližnjico",
+    "shortcutName": "{name} - bližnjica"
   },
   "gather": {
     "title": "Združi mapo",

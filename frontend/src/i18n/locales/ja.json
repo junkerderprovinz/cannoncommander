@@ -1426,7 +1426,9 @@
     "keep": "常にこのデバイス上に保持する",
     "free": "空き容量を増やす",
     "kept": "このデバイスに保持: {objects}",
-    "freed": "{objects} の空き容量を増やしました"
+    "freed": "{objects} の空き容量を増やしました",
+    "createShortcut": "ショートカットの作成",
+    "shortcutName": "{name} - ショートカット"
   },
   "gather": {
     "title": "フォルダーを集約",

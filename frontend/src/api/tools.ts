@@ -141,6 +141,7 @@ export const tools = {
   deleteProfile: (id: number) => call(`/me/profiles/${id}`, { method: 'DELETE' }),
 
   symlink: (target: string, path: string) => body<{ path: string; undo?: string }>('/fs/link', json('POST', { target, path })),
+  shortcut: (target: string, path: string) => body<{ path: string; undo?: string }>('/fs/link', json('POST', { target, path, shortcut: true })),
   // Answers how many entries changed, or with recursive the job that changes them.
   attrs: (req: { paths: string[]; mode?: string; owner?: string; group?: string; flags?: Partial<Record<WinFlag, boolean>>; recursive?: boolean }) =>
     body<{ changed: number } | Job>('/fs/attrs', json('PATCH', req)),

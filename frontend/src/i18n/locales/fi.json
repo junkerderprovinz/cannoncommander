@@ -1481,7 +1481,9 @@
     "keep": "Säilytä aina tällä laitteella",
     "free": "Vapauta tilaa",
     "kept": "Pysyy tällä laitteella: {objects}",
-    "freed": "Tilaa vapautettu: {objects}"
+    "freed": "Tilaa vapautettu: {objects}",
+    "createShortcut": "Luo pikakuvake",
+    "shortcutName": "{name} - pikakuvake"
   },
   "gather": {
     "title": "Kokoa kansio",

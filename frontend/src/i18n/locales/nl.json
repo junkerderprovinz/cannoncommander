@@ -1481,7 +1481,9 @@
     "keep": "Altijd op dit apparaat bewaren",
     "free": "Ruimte vrijmaken",
     "kept": "Blijft op dit apparaat: {objects}",
-    "freed": "Ruimte vrijgemaakt voor {objects}"
+    "freed": "Ruimte vrijgemaakt voor {objects}",
+    "createShortcut": "Snelkoppeling maken",
+    "shortcutName": "{name} - snelkoppeling"
   },
   "gather": {
     "title": "Map bundelen",

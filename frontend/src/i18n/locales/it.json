@@ -1536,7 +1536,9 @@
     "keep": "Mantieni sempre su questo dispositivo",
     "free": "Libera spazio",
     "kept": "Resta su questo dispositivo: {objects}",
-    "freed": "Spazio liberato per {objects}"
+    "freed": "Spazio liberato per {objects}",
+    "createShortcut": "Crea collegamento",
+    "shortcutName": "{name} - collegamento"
   },
   "gather": {
     "title": "Raggruppa cartella",

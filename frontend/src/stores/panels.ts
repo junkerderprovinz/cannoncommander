@@ -256,6 +256,16 @@ export const usePanels = defineStore('panels', () => {
       const target = await listing.load(k.link).catch(() => null);
       if (target) return go(k.link, i);
     }
+    // A shortcut to a folder opens the folder, one to a file opens the file where it lies, as in Explorer.
+    const to = k.shortcut?.path;
+    if (to) {
+      if (await listing.load(to).catch(() => null)) return go(to, i);
+      if (parent(to) !== T(i).path) await go(parent(to), i);
+      const idx = entries(i).findIndex((e) => e.name === split(to).pop());
+      if (idx < 0) return;
+      T(i).cursor = idx;
+      return open(i, entries(i)[idx]!);
+    }
     if (k.dir) return go(join(tab.path, k.name!), i);
     if (k.archive) return go(join(tab.path, k.name + '::'), i);
     const how = prefs.dblclick;

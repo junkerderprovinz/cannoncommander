@@ -1536,7 +1536,9 @@
     "keep": "שמור תמיד במכשיר זה",
     "free": "פינוי מקום",
     "kept": "נשאר במכשיר זה: {objects}",
-    "freed": "המקום פונה עבור {objects}"
+    "freed": "המקום פונה עבור {objects}",
+    "createShortcut": "יצירת קיצור דרך",
+    "shortcutName": "{name} - קיצור דרך"
   },
   "gather": {
     "title": "איחוד תיקייה",

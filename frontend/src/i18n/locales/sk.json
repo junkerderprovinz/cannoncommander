@@ -1591,7 +1591,9 @@
     "keep": "Vždy ponechať v tomto zariadení",
     "free": "Uvoľniť miesto",
     "kept": "Zostane v tomto zariadení: {objects}",
-    "freed": "Miesto uvoľnené pre {objects}"
+    "freed": "Miesto uvoľnené pre {objects}",
+    "createShortcut": "Vytvoriť odkaz",
+    "shortcutName": "{name} - odkaz"
   },
   "gather": {
     "title": "Zlúčiť priečinok",

@@ -1481,7 +1481,9 @@
     "keep": "Her zaman bu cihazda tut",
     "free": "Yer aç",
     "kept": "Bu cihazda kalır: {objects}",
-    "freed": "{objects} için yer açıldı"
+    "freed": "{objects} için yer açıldı",
+    "createShortcut": "Kısayol oluştur",
+    "shortcutName": "{name} - kısayol"
   },
   "gather": {
     "title": "Klasörü topla",

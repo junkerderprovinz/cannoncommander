@@ -1481,7 +1481,9 @@
     "keep": "Behold altid på denne enhed",
     "free": "Frigør plads",
     "kept": "Bliver på denne enhed: {objects}",
-    "freed": "Plads frigjort for {objects}"
+    "freed": "Plads frigjort for {objects}",
+    "createShortcut": "Opret genvej",
+    "shortcutName": "{name} - genvej"
   },
   "gather": {
     "title": "Saml en mappe",

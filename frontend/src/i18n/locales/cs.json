@@ -1591,7 +1591,9 @@
     "keep": "Vždy ponechat v tomto zařízení",
     "free": "Uvolnit místo",
     "kept": "Zůstane v tomto zařízení: {objects}",
-    "freed": "Místo uvolněno pro {objects}"
+    "freed": "Místo uvolněno pro {objects}",
+    "createShortcut": "Vytvořit zástupce",
+    "shortcutName": "{name} - zástupce"
   },
   "gather": {
     "title": "Sloučit složku",

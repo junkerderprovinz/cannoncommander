@@ -1536,7 +1536,9 @@
     "keep": "Mantén sempre en aquest dispositiu",
     "free": "Allibera espai",
     "kept": "Es queda en aquest dispositiu: {objects}",
-    "freed": "Espai alliberat per a {objects}"
+    "freed": "Espai alliberat per a {objects}",
+    "createShortcut": "Crea una drecera",
+    "shortcutName": "{name} - drecera"
   },
   "gather": {
     "title": "Agrupa una carpeta",

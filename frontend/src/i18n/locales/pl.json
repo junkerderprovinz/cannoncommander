@@ -1591,7 +1591,9 @@
     "keep": "Zawsze zachowuj na tym urządzeniu",
     "free": "Zwolnij miejsce",
     "kept": "Zostaje na tym urządzeniu: {objects}",
-    "freed": "Zwolniono miejsce dla: {objects}"
+    "freed": "Zwolniono miejsce dla: {objects}",
+    "createShortcut": "Utwórz skrót",
+    "shortcutName": "{name} - skrót"
   },
   "gather": {
     "title": "Zbierz folder",

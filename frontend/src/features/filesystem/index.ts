@@ -11,6 +11,8 @@ import { addRowMenuItems } from '@/files/menus';
 import { join } from '@/files/paths';
 import { plural, t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
+import { usePanels } from '@/stores/panels';
+import { freeName, namesIn, reveal } from '@/ui/tools';
 import CloudBadge from './CloudBadge.vue';
 
 // Explorer's "always keep on this device" fetches the files, and "free up space" leaves only the placeholder.
@@ -22,14 +24,37 @@ export function keepOnDevice(sel: Item[], folder: string, keep: boolean) {
   }, (e) => toast(e.message, 'warn'));
 }
 
+// Explorer's "Create shortcut" puts a .lnk next to each selected entry.
+export async function createShortcuts() {
+  const F = usePanels(), folder = F.T().path, taken = namesIn(folder);
+  let last = '';
+  for (const k of F.sel()) {
+    last = freeName(taken, t('filesystem.shortcutName', { name: k.name }) + '.lnk');
+    taken.add(last);
+    try {
+      await tools.shortcut(join(k.at || folder, k.name), join(folder, last));
+    } catch (e) {
+      return toast((e as Error).message, 'warn');
+    }
+  }
+  if (last) await reveal(join(folder, last));
+}
+
 export default function setup() {
   // Only Windows has protected system files, and the server says where it runs after the start.
   watch(() => host.os, (os) => {
     if (os !== 'windows') return;
     action('systemFiles', { label: tl('filesystem.systemFiles'), g: 'IconShieldOn', checked: () => !!prefs.showSystem, run: () => setPref('showSystem', !prefs.showSystem) });
+    action('createShortcut', { label: tl('filesystem.createShortcut'), g: 'IconLink', needs: ['sel', 'writable'], run: createShortcuts });
   }, { immediate: true });
 
   addTo('nameBadges', (k) => (k.cloud ? h(CloudBadge, { k }) : null));
+  // A launcher of the Linux desktop names itself; a command line says little.
+  addTo('nameBadges', (k) => {
+    const sc = k.shortcut, to = sc?.kind === 'desktop' ? sc.name : sc?.target;
+    return to ? h('span', { class: 'link' }, `→ ${to}`) : null;
+  });
+  addRowMenuItems(() => (host.os === 'windows' ? ['createShortcut'] : []));
   addRowMenuItems((sel, path) => (sel.some((k) => k.cloud) ? [
     { label: t('filesystem.keep'), g: 'IconPin', run: () => keepOnDevice(sel, path, true) },
     { label: t('filesystem.free'), g: 'IconCloud', run: () => keepOnDevice(sel, path, false) },

@@ -1591,7 +1591,9 @@
     "keep": "Visada laikyti šiame įrenginyje",
     "free": "Atlaisvinti vietos",
     "kept": "Lieka šiame įrenginyje: {objects}",
-    "freed": "Vieta atlaisvinta: {objects}"
+    "freed": "Vieta atlaisvinta: {objects}",
+    "createShortcut": "Sukurti nuorodą",
+    "shortcutName": "{name} - nuoroda"
   },
   "gather": {
     "title": "Surinkti aplanką",

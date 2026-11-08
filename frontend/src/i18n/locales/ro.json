@@ -1536,7 +1536,9 @@
     "keep": "Păstrează mereu pe acest dispozitiv",
     "free": "Eliberează spațiu",
     "kept": "Rămâne pe acest dispozitiv: {objects}",
-    "freed": "Spațiu eliberat pentru {objects}"
+    "freed": "Spațiu eliberat pentru {objects}",
+    "createShortcut": "Creează o comandă rapidă",
+    "shortcutName": "{name} - comandă rapidă"
   },
   "gather": {
     "title": "Adună un dosar",

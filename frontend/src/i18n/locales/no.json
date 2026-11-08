@@ -1481,7 +1481,9 @@
     "keep": "Behold alltid på denne enheten",
     "free": "Frigjør plass",
     "kept": "Blir på denne enheten: {objects}",
-    "freed": "Plass frigjort for {objects}"
+    "freed": "Plass frigjort for {objects}",
+    "createShortcut": "Opprett snarvei",
+    "shortcutName": "{name} - snarvei"
   },
   "gather": {
     "title": "Samle en mappe",

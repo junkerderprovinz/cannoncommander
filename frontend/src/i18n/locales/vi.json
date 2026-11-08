@@ -1426,7 +1426,9 @@
     "keep": "Luôn giữ trên thiết bị này",
     "free": "Giải phóng dung lượng",
     "kept": "Giữ trên thiết bị này: {objects}",
-    "freed": "Đã giải phóng dung lượng cho {objects}"
+    "freed": "Đã giải phóng dung lượng cho {objects}",
+    "createShortcut": "Tạo lối tắt",
+    "shortcutName": "{name} - lối tắt"
   },
   "gather": {
     "title": "Gom thư mục",

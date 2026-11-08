@@ -1481,7 +1481,9 @@
     "keep": "Geyma alltaf í þessu tæki",
     "free": "Losa pláss",
     "kept": "Verður áfram í þessu tæki: {objects}",
-    "freed": "Pláss losað fyrir {objects}"
+    "freed": "Pláss losað fyrir {objects}",
+    "createShortcut": "Búa til flýtileið",
+    "shortcutName": "{name} - flýtileið"
   },
   "gather": {
     "title": "Safna möppu saman",

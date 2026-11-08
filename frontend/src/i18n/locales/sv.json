@@ -1481,7 +1481,9 @@
     "keep": "Behåll alltid på den här enheten",
     "free": "Frigör utrymme",
     "kept": "Stannar på den här enheten: {objects}",
-    "freed": "Utrymme frigjort för {objects}"
+    "freed": "Utrymme frigjort för {objects}",
+    "createShortcut": "Skapa genväg",
+    "shortcutName": "{name} - genväg"
   },
   "gather": {
     "title": "Samla en mapp",

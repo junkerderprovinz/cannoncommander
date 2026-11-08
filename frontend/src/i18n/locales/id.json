@@ -1426,7 +1426,9 @@
     "keep": "Selalu simpan di perangkat ini",
     "free": "Kosongkan ruang",
     "kept": "Tetap di perangkat ini: {objects}",
-    "freed": "Ruang dikosongkan untuk {objects}"
+    "freed": "Ruang dikosongkan untuk {objects}",
+    "createShortcut": "Buat pintasan",
+    "shortcutName": "{name} - pintasan"
   },
   "gather": {
     "title": "Kumpulkan folder",

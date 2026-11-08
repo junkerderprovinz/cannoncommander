@@ -1536,7 +1536,9 @@
     "keep": "Uvijek zadrži na ovom uređaju",
     "free": "Oslobodi prostor",
     "kept": "Ostaje na ovom uređaju: {objects}",
-    "freed": "Prostor oslobođen za {objects}"
+    "freed": "Prostor oslobođen za {objects}",
+    "createShortcut": "Stvori prečac",
+    "shortcutName": "{name} - prečac"
   },
   "gather": {
     "title": "Okupi mapu",

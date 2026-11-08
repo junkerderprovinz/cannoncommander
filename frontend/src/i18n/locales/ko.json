@@ -1426,7 +1426,9 @@
     "keep": "항상 이 장치에 유지",
     "free": "공간 확보",
     "kept": "이 장치에 유지됨: {objects}",
-    "freed": "{objects}의 공간을 확보했습니다"
+    "freed": "{objects}의 공간을 확보했습니다",
+    "createShortcut": "바로 가기 만들기",
+    "shortcutName": "{name} - 바로 가기"
   },
   "gather": {
     "title": "폴더 모으기",

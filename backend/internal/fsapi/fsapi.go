@@ -19,6 +19,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/meta"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/shortcut"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 )
 
@@ -63,7 +64,9 @@ type Item struct {
 	// Cloud is the state of a file a cloud provider keeps: online, local
 	// or pinned.
 	Cloud string `json:"cloud,omitempty"`
-	Link  string `json:"link,omitempty"`
+	// Shortcut says where a .lnk, .url or .desktop file leads.
+	Shortcut *shortcut.Shortcut `json:"shortcut,omitempty"`
+	Link     string             `json:"link,omitempty"`
 	// Items counts the entries inside a folder, when known.
 	Items   *int    `json:"items,omitempty"`
 	Format  string  `json:"format,omitempty"`
@@ -170,6 +173,7 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 			continue
 		}
 		item.Hidden = item.Hidden || listed[d.Name()]
+		h.targets(&item)
 		out.Items = append(out.Items, item)
 	}
 	refs := make([]folderRef, 0, len(out.Items))
@@ -260,6 +264,7 @@ func (h handlers) stat(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	ownerOf(loc.Real, &out.Item)
+	h.targets(&out.Item)
 	if out.Dir && out.Link == "" {
 		h.describe(loc.Source, []folderRef{{index: loc.Index, real: loc.Real, path: loc.Path, item: &out.Item}})
 		if h.index != nil {
@@ -378,7 +383,9 @@ func itemFor(real, name string) (Item, error) {
 	if st.attrs&(attrReparse|attrOffline|attrPinned|attrUnpinned|attrRecallOnDataAccess) != 0 {
 		item.Cloud = cloudState(st.attrs, !ccfs.CloudOnly(st.attrs) && cloudTagged(real, st.attrs))
 	}
-	if st.mode&fs.ModeSymlink != 0 {
+	// A junction of Windows is a link to a folder that needs no rights to
+	// make, and Go reports it as an irregular file.
+	if st.mode&fs.ModeSymlink != 0 || st.mode&fs.ModeIrregular != 0 && st.attrs&attrReparse != 0 {
 		if target, err := os.Readlink(real); err == nil {
 			item.Link = filepath.ToSlash(target)
 		}
@@ -390,6 +397,7 @@ func itemFor(real, name string) (Item, error) {
 	fill(&item, st)
 	if !item.Dir {
 		item.Format = FormatOf(name)
+		item.Shortcut = readShortcut(real, name, st.attrs)
 	}
 	return item, nil
 }

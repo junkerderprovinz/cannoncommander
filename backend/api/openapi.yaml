@@ -777,7 +777,9 @@ paths:
       description: |
         A symbolic link may point to something that does not exist yet,
         but only to a place inside a source the user may see. A hard link
-        needs an existing file on the same source.
+        needs an existing file on the same source. On Windows a link to a
+        folder becomes a junction when the user lacks the right for a
+        symbolic link, and with shortcut the link is a .lnk file.
       requestBody:
         required: true
         content:
@@ -794,6 +796,9 @@ paths:
                   description: Where the link is created.
                 hard:
                   type: boolean
+                shortcut:
+                  type: boolean
+                  description: Write a .lnk file of Windows to an existing target. Elsewhere the answer is 400 windowsOnly.
       responses:
         "201":
           $ref: "#/components/responses/FsChanged"
@@ -6037,7 +6042,30 @@ components:
           description: The state of a file a cloud provider such as OneDrive keeps, as Explorer's status column shows it. An online file gets no thumbnail and no metadata, since reading it would download it.
         link:
           type: string
-          description: Target of a symbolic link.
+          description: Target of a symbolic link or a junction of Windows, as a path of the API when a source holds it.
+        shortcut:
+          type: object
+          description: Where a .lnk or .url file of Windows or a .desktop launcher of Linux leads. Only the desktop app reads them.
+          required: [kind]
+          properties:
+            kind:
+              type: string
+              enum: [lnk, url, desktop]
+            target:
+              type: string
+              description: The path, network path, address or command the file names.
+            path:
+              type: string
+              description: The target as a path of the API, when a source holds it.
+            dir:
+              type: boolean
+            args:
+              type: string
+            name:
+              type: string
+              description: The name a launcher shows.
+            icon:
+              type: string
         items:
           type: integer
           description: Entries directly inside a folder. Missing when neither the index nor a quick look could count them.

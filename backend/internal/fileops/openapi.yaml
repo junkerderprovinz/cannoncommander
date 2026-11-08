@@ -139,7 +139,9 @@ paths:
       description: |
         A symbolic link may point to something that does not exist yet,
         but only to a place inside a source the user may see. A hard link
-        needs an existing file on the same source.
+        needs an existing file on the same source. On Windows a link to a
+        folder becomes a junction when the user lacks the right for a
+        symbolic link, and with shortcut the link is a .lnk file.
       requestBody:
         required: true
         content:
@@ -156,6 +158,9 @@ paths:
                   description: Where the link is created.
                 hard:
                   type: boolean
+                shortcut:
+                  type: boolean
+                  description: Write a .lnk file of Windows to an existing target. Elsewhere the answer is 400 windowsOnly.
       responses:
         "201":
           $ref: "#/components/responses/FsChanged"

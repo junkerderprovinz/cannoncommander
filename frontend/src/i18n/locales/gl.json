@@ -1481,7 +1481,9 @@
     "keep": "Manter sempre neste dispositivo",
     "free": "Liberar espazo",
     "kept": "Queda neste dispositivo: {objects}",
-    "freed": "Espazo liberado para {objects}"
+    "freed": "Espazo liberado para {objects}",
+    "createShortcut": "Crear atallo",
+    "shortcutName": "{name} - atallo"
   },
   "gather": {
     "title": "Xuntar un cartafol",

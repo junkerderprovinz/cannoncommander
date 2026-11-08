@@ -4,5 +4,7 @@
   "keep": "Immer auf diesem Gerät behalten",
   "free": "Speicher freigeben",
   "kept": "Bleibt auf diesem Gerät: {objects}",
-  "freed": "Speicher freigegeben für {objects}"
+  "freed": "Speicher freigegeben für {objects}",
+  "createShortcut": "Verknüpfung erstellen",
+  "shortcutName": "{name} - Verknüpfung"
 }

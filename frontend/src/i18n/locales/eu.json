@@ -1481,7 +1481,9 @@
     "keep": "Gorde beti gailu honetan",
     "free": "Askatu lekua",
     "kept": "Gailu honetan geratzen da: {objects}",
-    "freed": "Lekua askatuta: {objects}"
+    "freed": "Lekua askatuta: {objects}",
+    "createShortcut": "Sortu lasterbidea",
+    "shortcutName": "{name} - lasterbidea"
   },
   "gather": {
     "title": "Bildu karpeta bat",

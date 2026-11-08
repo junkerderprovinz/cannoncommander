@@ -10,6 +10,7 @@ import (
 	"os/user"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"time"
 
@@ -18,6 +19,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fschange"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/shortcut"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
 )
 
@@ -293,18 +295,21 @@ func runAttrs(ctx context.Context, run *jobs.Run) error {
 	return nil
 }
 
-// LinkRequest creates a symbolic link at Path pointing to Target, or with
-// Hard a second name for the file Target.
+// LinkRequest creates a symbolic link at Path pointing to Target, with
+// Hard a second name for the file Target, and with Shortcut a .lnk file of
+// Windows.
 type LinkRequest struct {
-	Target string `json:"target"`
-	Path   string `json:"path"`
-	Hard   bool   `json:"hard,omitempty"`
+	Target   string `json:"target"`
+	Path     string `json:"path"`
+	Hard     bool   `json:"hard,omitempty"`
+	Shortcut bool   `json:"shortcut,omitempty"`
 }
 
 type linkData struct {
-	Path   string `json:"path"`
-	Target string `json:"target"`
-	Hard   bool   `json:"hard"`
+	Path     string `json:"path"`
+	Target   string `json:"target"`
+	Hard     bool   `json:"hard"`
+	Shortcut bool   `json:"shortcut,omitempty"`
 }
 
 var errLinkChanged = v1.Coded(http.StatusConflict, "changedSince", "it changed since, so it is left as it is")
@@ -338,6 +343,9 @@ func (h handlers) link(w http.ResponseWriter, r *http.Request) error {
 	if clean == at.Path {
 		return badRequest("a link cannot point to itself")
 	}
+	if req.Shortcut && runtime.GOOS != "windows" {
+		return v1.Coded(http.StatusBadRequest, "windowsOnly", "shortcut files belong to Windows")
+	}
 	if req.Hard {
 		// Writing to either name changes the one file, so the link takes the
 		// right to change it.
@@ -364,15 +372,25 @@ func (h handlers) link(w http.ResponseWriter, r *http.Request) error {
 		if target.Virtual() || target.InArchive() {
 			return badRequest("the target has to lie inside a source")
 		}
-		if err := os.Symlink(target.Real, at.Real); err != nil {
-			return err
+		if req.Shortcut {
+			info, err := os.Stat(target.Real)
+			if err == nil {
+				err = shortcut.Write(at.Real, target.Real, info.IsDir())
+			}
+			if err != nil {
+				return err
+			}
+		} else if err := os.Symlink(target.Real, at.Real); err != nil {
+			if err = linkWithoutRights(target.Real, at.Real, err); err != nil {
+				return err
+			}
 		}
 	}
 	fschange.Created(at.Path)
 	out := map[string]string{"path": at.Path}
 	if l := undo.For(h.deps); l != nil {
 		step := undo.Step{Kind: StepLink, Name: path.Base(at.Path), Count: 1, Path: path.Dir(at.Path)}
-		if s, err := l.Record(u.Username, step, linkData{Path: at.Path, Target: clean, Hard: req.Hard}); err == nil {
+		if s, err := l.Record(u.Username, step, linkData{Path: at.Path, Target: clean, Hard: req.Hard, Shortcut: req.Shortcut}); err == nil {
 			out["undo"] = s.ID
 		}
 	}
@@ -393,7 +411,11 @@ func undoLink(_ context.Context, d v1.Deps, u *users.User, raw json.RawMessage) 
 		if err != nil || !os.SameFile(info, tinfo) {
 			return errLinkChanged
 		}
-	} else if info.Mode()&fs.ModeSymlink == 0 {
+	} else if data.Shortcut {
+		if !info.Mode().IsRegular() || shortcut.KindOf(info.Name()) != shortcut.Lnk {
+			return errLinkChanged
+		}
+	} else if info.Mode()&(fs.ModeSymlink|fs.ModeIrregular) == 0 {
 		return errLinkChanged
 	}
 	if err := os.Remove(at.Real); err != nil {

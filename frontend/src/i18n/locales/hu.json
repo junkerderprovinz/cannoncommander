@@ -1481,7 +1481,9 @@
     "keep": "Mindig tartsa meg ezen az eszközön",
     "free": "Hely felszabadítása",
     "kept": "Ezen az eszközön marad: {objects}",
-    "freed": "Hely felszabadítva: {objects}"
+    "freed": "Hely felszabadítva: {objects}",
+    "createShortcut": "Parancsikon létrehozása",
+    "shortcutName": "{name} - parancsikon"
   },
   "gather": {
     "title": "Mappa összegyűjtése",

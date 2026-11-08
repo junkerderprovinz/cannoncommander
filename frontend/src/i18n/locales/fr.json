@@ -1536,7 +1536,9 @@
     "keep": "Toujours conserver sur cet appareil",
     "free": "Libérer de l'espace",
     "kept": "Reste sur cet appareil : {objects}",
-    "freed": "Espace libéré pour {objects}"
+    "freed": "Espace libéré pour {objects}",
+    "createShortcut": "Créer un raccourci",
+    "shortcutName": "{name} - raccourci"
   },
   "gather": {
     "title": "Regrouper un dossier",

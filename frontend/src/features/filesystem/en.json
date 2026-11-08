@@ -4,5 +4,7 @@
   "keep": "Always keep on this device",
   "free": "Free up space",
   "kept": "Stays on this device: {objects}",
-  "freed": "Space freed for {objects}"
+  "freed": "Space freed for {objects}",
+  "createShortcut": "Create shortcut",
+  "shortcutName": "{name} - Shortcut"
 }

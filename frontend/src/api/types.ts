@@ -17,6 +17,8 @@ export interface FsItem {
   attrs?: string;
   // A file a cloud provider keeps: only online, on this device, or always kept on it.
   cloud?: 'online' | 'local' | 'pinned';
+  // Where a .lnk, .url or .desktop file leads; path is set when the target lies on a source.
+  shortcut?: Shortcut;
   link?: string;
   items?: number;
   // The server can list what is inside, so the archive opens like a folder.
@@ -29,6 +31,7 @@ export interface FsItem {
   // A folder's poster.jpg, folder.jpg or cover.jpg, which the card views show for it.
   picture?: string;
 }
+export interface Shortcut { kind: 'lnk' | 'url' | 'desktop'; target?: string; path?: string; dir?: boolean; args?: string; name?: string; icon?: string }
 export interface Volume { path: string; label?: string; free: number; total: number }
 export interface FsList { path: string; items: FsItem[]; volume?: Volume }
 export interface TreeItem { name: string; path: string; hasDirs: boolean; label?: string; free?: number; total?: number; remote?: string; hidden?: boolean; system?: boolean }

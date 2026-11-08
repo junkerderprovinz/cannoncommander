@@ -1481,7 +1481,9 @@
     "keep": "Hoia alati selles seadmes",
     "free": "Vabasta ruumi",
     "kept": "Jääb sellesse seadmesse: {objects}",
-    "freed": "Ruum vabastatud: {objects}"
+    "freed": "Ruum vabastatud: {objects}",
+    "createShortcut": "Loo otsetee",
+    "shortcutName": "{name} - otsetee"
   },
   "gather": {
     "title": "Koonda kaust",

@@ -31,7 +31,7 @@ const pick = (known: Record<string, number>, cur: string[]) => {
 const owners = pick(st.uids, st.owners), groups = pick(st.gids, st.groups);
 const idOf = (known: Record<string, number>, name: string, word: string) => (name ? `${word} ${known[name] ?? '?'}` : word);
 
-const typeOf = (k: Item) => (k.link ? t(k.dir ? 'props.linkToDir' : 'props.linkToFile')
+const typeOf = (k: Item) => (k.link || k.shortcut ? t(k.dir || k.shortcut?.dir ? 'props.linkToDir' : 'props.linkToFile')
   : t(`props.kinds.${kindOf(k)}`) + (k.dir || !ext(k.name) ? '' : `, ${ext(k.name).toUpperCase()}`));
 const bytes = computed(() => plural(Math.round(st.size), 'props.bytes'));
 const sizeText = computed(() => {
@@ -67,7 +67,7 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
       <template v-if="one">
         <FieldRow :label="t('props.kind')"><span class="bk-val">{{ typeOf(one) }}</span></FieldRow>
         <FieldRow :label="t('props.place')"><span class="bk-val bk-pathv"><span class="bk-path mono" :title="st.paths[0]"><bdi>{{ st.paths[0] }}</bdi></span><CopyBtn :text="st.paths[0]!" :tip="t('props.copyPath')" /></span></FieldRow>
-        <FieldRow v-if="one.link" :label="t('props.pointsTo')"><span class="bk-val bk-pathv"><span class="bk-path mono"><bdi>{{ one.link }}</bdi></span><CopyBtn :text="one.link" :tip="t('props.copyTarget')" /></span></FieldRow>
+        <FieldRow v-if="one.link || one.shortcut?.target" :label="t('props.pointsTo')"><span class="bk-val bk-pathv"><span class="bk-path mono"><bdi>{{ one.link || one.shortcut?.target }}</bdi></span><CopyBtn :text="(one.link || one.shortcut?.target)!" :tip="t('props.copyTarget')" /></span></FieldRow>
         <FieldRow :label="t('props.size')"><span class="bk-val glim-num" :data-tip="bytes">{{ sizeText }}</span></FieldRow>
         <FieldRow :label="t('props.changed')"><span class="bk-val glim-num">{{ fmtTime(one.time) }}</span></FieldRow>
         <FieldRow v-if="one.btime" :label="t('props.created')"><span class="bk-val glim-num">{{ fmtTime(one.btime) }}</span></FieldRow>

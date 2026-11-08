@@ -1481,7 +1481,9 @@
     "keep": "همیشه در این دستگاه نگه دار",
     "free": "آزاد کردن فضا",
     "kept": "در این دستگاه می‌ماند: {objects}",
-    "freed": "فضا برای {objects} آزاد شد"
+    "freed": "فضا برای {objects} آزاد شد",
+    "createShortcut": "ایجاد میانبر",
+    "shortcutName": "{name} - میانبر"
   },
   "gather": {
     "title": "گردآوری پوشه",

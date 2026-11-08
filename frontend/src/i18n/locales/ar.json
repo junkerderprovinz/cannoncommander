@@ -1701,7 +1701,9 @@
     "keep": "الاحتفاظ دائمًا على هذا الجهاز",
     "free": "تحرير مساحة",
     "kept": "يبقى على هذا الجهاز: {objects}",
-    "freed": "تم تحرير المساحة لـ {objects}"
+    "freed": "تم تحرير المساحة لـ {objects}",
+    "createShortcut": "إنشاء اختصار",
+    "shortcutName": "{name} - اختصار"
   },
   "gather": {
     "title": "تجميع مجلد",
