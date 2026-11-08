@@ -5,6 +5,7 @@ import { go, settingsTabs, view } from '@/core/views';
 import { addMessages } from '@/i18n';
 import de from './de.json';
 import setupKeys from '@/features/keys';
+import setupShellMenu from '@/features/shellmenu';
 import { NEWS } from './help';
 import setup from '.';
 
@@ -28,6 +29,8 @@ beforeAll(() => {
   // The address the sign in provider sends the person back to, for the token window.
   history.replaceState(null, '', '/?again=token');
   setup();
+  // The context menu's tile comes first here, so the order cannot rest on which feature loads first.
+  setupShellMenu();
   setupKeys();
 });
 
@@ -56,7 +59,7 @@ describe('the settings', () => {
   });
 
   it('put the account third and end on integrations, apps, system and info, as in BombVault', () => {
-    expect(settingsTabs.map((t) => t.id)).toEqual(['general', 'look', 'security', 'files', 'keys', 'sources', 'remotes', 'users', 'rules', 'shares', 'integrations', 'app', 'system', 'info']);
+    expect(settingsTabs.map((t) => t.id)).toEqual(['general', 'look', 'security', 'files', 'keys', 'ctxmenu', 'sources', 'remotes', 'users', 'rules', 'shares', 'integrations', 'app', 'system', 'info']);
   });
 
   it('lead to the account after signing in again and from the news', () => {

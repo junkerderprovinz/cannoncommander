@@ -30,7 +30,7 @@ function open() {
 }
 
 export default function setup() {
-  settingsTab({ id: 'keys', label: tl('keys.title'), g: 'IconKeyboard', order: 45, component: KeysTab });
+  settingsTab({ id: 'keys', label: tl('keys.title'), g: 'IconKeyboard', order: 44, component: KeysTab });
   queueMicrotask(() => {
     startKeys();
     watch(language, () => applyKeys({ ...keymap }));

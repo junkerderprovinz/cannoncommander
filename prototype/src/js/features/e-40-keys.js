@@ -208,7 +208,7 @@
   // On the window, so it runs before the shell's own keys on the document.
   addEventListener('keydown', tabKey, true);
 
-  CC.settingsTab({ id: 'keys', label: 'Tastenkürzel', g: 'IconKeyboard', order: 45, render(host) {
+  CC.settingsTab({ id: 'keys', label: 'Tastenkürzel', g: 'IconKeyboard', order: 44, render(host) {
     const which = layoutOf(), base = preset(which), map = CC.keymap;
     const cards = groups().map(([menuName, list]) => {
       const found = hits(list, map, tab.query);
