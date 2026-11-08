@@ -314,8 +314,8 @@ func (ic *Icons) inDir(dir, name string) string {
 // size of a menu icon first, then larger ones that scale down well.
 var appIconSizes = []string{"32x32", "48x48", "64x64", "scalable", "128x128", "256x256", "512x512", "24x24", "22x22", "16x16"}
 
-// AppIcon finds the file of the icon a desktop entry names in hicolor, the
-// other themes or the old pixmaps folder. It needs no index.theme, so it
+// AppIcon finds the file of the icon a desktop entry names, by its path
+// or in hicolor, the other themes or the old pixmaps folder. It needs no index.theme, so it
 // also finds icons of themes a program brought along.
 func (d Desktop) AppIcon(name string) (string, bool) {
 	exists := func(p string) bool {
@@ -323,7 +323,7 @@ func (d Desktop) AppIcon(name string) (string, bool) {
 		return err == nil && info.Mode().IsRegular()
 	}
 	if filepath.IsAbs(name) {
-		return name, exists(name)
+		return name, IconFile(name)
 	}
 	if name == "" || strings.ContainsAny(name, `/\`) {
 		return "", false
@@ -362,29 +362,55 @@ func (d Desktop) AppIcon(name string) (string, bool) {
 	return "", false
 }
 
-// LoadIcon reads an icon file for a square of px pixels: an SVG as it is,
-// and any other picture as a PNG scaled into the square.
-func LoadIcon(file string, px int) ([]byte, string, error) {
+// iconLimit is the largest icon file read, and iconEdge the largest PNG
+// decoded, since a desktop entry may name any file as its icon.
+const (
+	iconLimit = 1 << 20
+	iconEdge  = 4096
+)
+
+// IconFile reports whether file can be read as an icon: a PNG or an SVG,
+// regular and small.
+func IconFile(file string) bool {
 	switch strings.ToLower(filepath.Ext(file)) {
-	case ".svg":
-		b, err := os.ReadFile(file)
-		return b, "image/svg+xml", err
-	case ".svgz":
-		f, err := os.Open(file)
-		if err != nil {
-			return nil, "", err
-		}
-		defer f.Close()
-		z, err := gzip.NewReader(f)
-		if err != nil {
-			return nil, "", err
-		}
-		b, err := io.ReadAll(io.LimitReader(z, 16<<20))
-		return b, "image/svg+xml", err
+	case ".png", ".svg", ".svgz":
+		info, err := os.Stat(file)
+		return err == nil && info.Mode().IsRegular() && info.Size() <= iconLimit
 	}
-	b, err := os.ReadFile(file)
+	return false
+}
+
+// LoadIcon reads an icon file for a square of px pixels: an SVG as it is,
+// and a PNG scaled into the square. It reads only what IconFile accepts.
+func LoadIcon(file string, px int) ([]byte, string, error) {
+	ext := strings.ToLower(filepath.Ext(file))
+	if ext != ".png" && ext != ".svg" && ext != ".svgz" {
+		return nil, "", errTooBig
+	}
+	b, err := readSmall(file, iconLimit)
 	if err != nil {
 		return nil, "", err
+	}
+	switch ext {
+	case ".svg":
+		return b, "image/svg+xml", nil
+	case ".svgz":
+		z, err := gzip.NewReader(bytes.NewReader(b))
+		if err != nil {
+			return nil, "", err
+		}
+		svg, err := io.ReadAll(io.LimitReader(z, 4*iconLimit+1))
+		if err == nil && len(svg) > 4*iconLimit {
+			err = errTooBig
+		}
+		return svg, "image/svg+xml", err
+	}
+	cfg, err := png.DecodeConfig(bytes.NewReader(b))
+	if err != nil {
+		return nil, "", err
+	}
+	if cfg.Width > iconEdge || cfg.Height > iconEdge {
+		return nil, "", errTooBig
 	}
 	img, err := png.Decode(bytes.NewReader(b))
 	if err != nil {
