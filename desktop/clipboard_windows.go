@@ -44,10 +44,6 @@ const (
 	cfUnicodeText = 13
 	cfHDrop       = 15
 	gmemMoveable  = 2
-
-	dropCopy = 1
-	dropMove = 2
-	dropLink = 4
 )
 
 // dropEffectFormat is where Explorer says whether files on the clipboard are
@@ -88,7 +84,7 @@ func (*shell) ClipboardFiles() ([]string, bool, error) {
 	if h, _, _ := procGetClipboardData.Call(dropEffectFormat()); h != 0 {
 		if b := globalBytes(h); len(b) >= 4 {
 			effect := binary.LittleEndian.Uint32(b)
-			cut = effect&dropMove != 0 && effect&dropCopy == 0
+			cut = effect&winshell.DropMove != 0 && effect&winshell.DropCopy == 0
 		}
 	}
 	return paths, cut, nil
@@ -98,9 +94,9 @@ func (*shell) ClipboardFiles() ([]string, bool, error) {
 // paths as text beside them for a program that only takes text.
 func (*shell) CopyFiles(paths []string, cut bool) error {
 	effect := make([]byte, 4)
-	binary.LittleEndian.PutUint32(effect, dropCopy|dropLink)
+	binary.LittleEndian.PutUint32(effect, winshell.DropCopy|winshell.DropLink)
 	if cut {
-		binary.LittleEndian.PutUint32(effect, dropMove)
+		binary.LittleEndian.PutUint32(effect, winshell.DropMove)
 	}
 	text := utf16.Encode([]rune(strings.Join(paths, "\r\n") + "\x00"))
 	formats := []struct {
