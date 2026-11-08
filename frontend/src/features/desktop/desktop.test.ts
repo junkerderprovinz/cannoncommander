@@ -196,12 +196,14 @@ describe('first start', () => {
 
   it('asks once how the app should handle and opens files in their programs', () => {
     Object.assign(prefs, { desktopStyle: '', clickSelect: false, dblclick: 'open', keys: null });
+    action('sidePane', { label: 'Vorschaubereich', run: () => {} });
     askStyle();
     expect(winStack.map((w) => w.title)).toEqual(['Wie im Explorer oder wie ein Commander?']);
     expect(prefs.dblclick).toBe('system');
     answer('Wie im Explorer');
     expect(prefs).toMatchObject({ desktopStyle: 'explorer', clickSelect: true });
     expect((prefs.keys as { preset: string }).preset).toBe('explorer');
+    expect(actions.sidePane!.key).toBe('Alt+P');
   });
 
   it('stays a commander when the question is closed without an answer', () => {
