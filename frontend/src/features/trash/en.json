@@ -43,6 +43,7 @@
   "purgeSel": "Delete selection for good ({n})",
   "selectAll": "Select all",
   "empty": "Empty the trash",
+  "emptySystem": { "one": "This empties the whole {bin} with its one entry.", "other": "This empties the whole {bin}: all {n} entries, those from other programs too." },
   "andMore": { "one": "and {n} more", "other": "and {n} more" },
   "gone": "Afterwards it is gone and cannot be restored.",
   "restored": "{what} restored",

@@ -1,7 +1,7 @@
 // Deleting into the trash or for good, and restoring or purging what waits in it. Every one of these runs as a job;
 // its toast comes once the job is through.
 import { reactive, watch } from 'vue';
-import { type Job, ops, type TrashItem } from '@/api/ops';
+import { type Job, type JobItem, ops, type TrashItem } from '@/api/ops';
 import { fmtSize } from '@/core/format';
 import { host, windowsPaths } from '@/core/host';
 import { prefs } from '@/core/prefs';
@@ -9,7 +9,7 @@ import { toast } from '@/core/toast';
 import { cancelBtn, win } from '@/core/windows';
 import type { Entry } from '@/files/entries';
 import { nativePath } from '@/files/paths';
-import { t } from '@/i18n';
+import { plural, t } from '@/i18n';
 import { confirmWin } from '@/features/config/shared';
 import { objects } from '@/features/jobs/label';
 import { pathOf } from '@/features/transfer/paths';
@@ -29,13 +29,21 @@ function whenThrough(job: Job, ok: (j: Job) => void, fail: (j: Job) => unknown =
 // The trash of Windows or of the Linux desktop, in the desktop app.
 export const binName = () => t(host.os === 'windows' ? 'trash.binWindows' : 'trash.binSystem');
 
-// A drive without a trash, such as a network drive, gets the question the Explorer asks: delete for good instead? A
-// refusal for lack of rights is left to the offer to go on as administrator.
+// A refusal for lack of rights, and the answer to the offer to go on as administrator, are the elevate feature's to
+// tell.
+const elevation = (j: Job, items: JobItem[]) => host.desktop && (j.errorCode === 'denied' || items.some((i) => i.errorCode === 'denied' || i.errorCode === 'elevationDeclined'));
+
+async function failedUnlessElevation(j: Job) {
+  const items = (await ops.job(j.id).catch(() => null))?.items ?? [];
+  if (!elevation(j, items)) failed(j);
+}
+
+// A drive without a trash, such as a network drive, gets the question the Explorer asks: delete for good instead?
 async function trashFailed(j: Job, after?: () => void) {
   const items = (await ops.job(j.id).catch(() => null))?.items ?? [];
   const homeless = items.filter((i) => i.errorCode === 'noSystemTrash');
   if (!homeless.length) {
-    if (!host.desktop || !items.some((i) => i.errorCode === 'denied')) failed(j);
+    if (!elevation(j, items)) failed(j);
     return;
   }
   const what = homeless.length === 1 ? homeless[0]!.name || homeless[0]!.path : objects(homeless.length);
@@ -100,7 +108,7 @@ export async function restore(list: TrashItem[], done?: () => void) {
     const job = await useTrash().restore(list);
     done?.();
     whenThrough(job, () => toast(from.length === 1 ? t('trash.restoredTo', { what, from: nativePath(from[0]!, windowsPaths()) }) : t('trash.restored', { what }), 'ok',
-      from.length === 1 ? { label: t('trash.go'), run: () => { usePanels().go(from[0]!); } } : undefined));
+      from.length === 1 ? { label: t('trash.go'), run: () => { usePanels().go(from[0]!); } } : undefined), (j) => failedUnlessElevation(j));
   } catch (e) {
     toast((e as Error).message, 'warn');
   }
@@ -109,8 +117,10 @@ export async function restore(list: TrashItem[], done?: () => void) {
 export function purge(list: TrashItem[], all = false, done?: () => void) {
   if (!list.length) return;
   const size = sizeOf(list), what = objects(list.length);
+  // Emptying the trash of the system takes what other programs put there too, so the window says so.
+  const whole = all && useTrash().system ? plural(list.length, 'trash.emptySystem', { bin: binName() }) : undefined;
   win({
-    title: all ? t('trash.empty') : t('trash.purge'), body: PurgeBody, props: { list, what, size },
+    title: all ? t('trash.empty') : t('trash.purge'), body: PurgeBody, props: { list, what, size, whole },
     foot: [cancelBtn(), { label: all ? t('trash.empty') : t('trash.purge'), g: all ? 'IconEmpty' : 'IconTrash', primary: true, run: () => {
       const trash = useTrash();
       (all ? trash.empty() : trash.purge(list)).then((job) => {
