@@ -1,3 +1,5 @@
+//go:build desktop
+
 // Package launch opens a file in the desktop app as a double click in the
 // computer's own file manager does: a document in its program, a program by
 // running it.
@@ -11,17 +13,15 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 //go:embed openapi.yaml
 var contract []byte
 
 var (
-	errDesktopOnly = v1.Coded(http.StatusNotFound, "desktopOnly", "only the desktop app opens a file in its program")
-	errNotAFile    = v1.Coded(http.StatusBadRequest, "notAFile", "path is not a regular file")
-	errAskRun      = v1.Coded(http.StatusConflict, "askRun", "the file is a program, run it only when asked to")
-	errNotStarted  = v1.Coded(http.StatusBadGateway, "notStarted", "the file did not open")
+	errNotAFile   = v1.Coded(http.StatusBadRequest, "notAFile", "path is not a regular file")
+	errAskRun     = v1.Coded(http.StatusConflict, "askRun", "the file is a program, run it only when asked to")
+	errNotStarted = v1.Coded(http.StatusBadGateway, "notStarted", "the file did not open")
 )
 
 // system is how the computer opens files.
@@ -52,9 +52,6 @@ type handlers struct {
 
 // launch is POST /launch.
 func (h *handlers) launch(w http.ResponseWriter, r *http.Request) error {
-	if !desktop.Active() {
-		return errDesktopOnly
-	}
 	var in struct {
 		Path string `json:"path"`
 		Run  bool   `json:"run"`

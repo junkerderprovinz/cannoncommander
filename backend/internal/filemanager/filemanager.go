@@ -1,3 +1,5 @@
+//go:build desktop
+
 // Package filemanager is the switch that makes the desktop app the
 // computer's file manager, so folders other programs open come to it.
 package filemanager

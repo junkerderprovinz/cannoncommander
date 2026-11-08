@@ -1,3 +1,5 @@
+//go:build desktop
+
 // Package clipapi lets the desktop app exchange files with the other
 // programs on the computer: through the system clipboard, and by dragging
 // files in from Explorer or a file manager and out to them. Files come and
@@ -134,9 +136,6 @@ func (h handlers) moved(w http.ResponseWriter, r *http.Request) error {
 // dropped is POST /dragdrop/in: files another program dropped on the window,
 // as paths on disk, and the folder they are going to.
 func (h handlers) dropped(w http.ResponseWriter, r *http.Request) error {
-	if !desktop.Active() {
-		return errDesktopOnly
-	}
 	var in struct {
 		Paths []string `json:"paths"`
 		To    string   `json:"to"`

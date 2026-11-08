@@ -4,7 +4,7 @@ import type { Item } from '@/api/client';
 import { actions, run } from '@/core/actions';
 import { host } from '@/core/host';
 import { toasts } from '@/core/toast';
-import { loadFeatures } from '@/features';
+import { loadDesktopFeatures, loadFeatures } from '@/features';
 import { registerFileActions } from '@/files/actions';
 import { setLanguage } from '@/i18n';
 import { useClipboard } from '@/stores/clipboard';
@@ -47,12 +47,13 @@ const settle = () => new Promise((r) => setTimeout(r, 0));
 const calls = (url: string) => sent.filter((s) => s.url === '/api/v1' + url);
 const names = (job: Transfer) => job.items.map((k) => k.at + '/' + k.name);
 
-beforeAll(() => {
+beforeAll(async () => {
   setLanguage('en');
   setActivePinia(createPinia());
   usePanels();
   registerFileActions();
   loadFeatures();
+  await loadDesktopFeatures();
   actions.transfer = { ...actions.transfer!, run: ((job: Transfer) => { jobs.push(job); return { id: 'j1' }; }) as never };
 });
 
@@ -83,15 +84,6 @@ describe('the clipboard shared with other programs', () => {
     expect(calls('/clipboard')).toEqual([{ method: 'PUT', url: '/api/v1/clipboard', body: { paths: [HERE + '/Fotos', HERE + '/Brief.txt'], cut: true } }]);
     expect(useClipboard().clip).toBeNull();
     expect(useClipboard().ready()).toBe(true);
-  });
-
-  it('stays with the app in the container', async () => {
-    host.desktop = false;
-    usePanels().T().marked = new Set(['Brief.txt']);
-    run('clipCopy');
-    await settle();
-    expect(sent).toEqual([]);
-    expect(useClipboard().clip).toEqual({ cut: false, from: HERE, items: ['Brief.txt'] });
   });
 
   it('pastes files cut in Explorer as a move and then empties the clipboard', async () => {
@@ -129,27 +121,11 @@ describe('the clipboard shared with other programs', () => {
     run('clipCopy');
     await settle();
     expect(calls('/clipboard')).toEqual([{ method: 'PUT', url: '/api/v1/clipboard', body: { paths: [TEMP + '/a.txt', HERE + '/Brief.txt'], cut: false } }]);
-    host.desktop = false;
-    run('clipCut');
-    F.T().path = '/C/Ziel';
-    useListing().lists.set('/C/Ziel', { path: '/C/Ziel', items: [] });
-    await run('clipPaste');
-    expect(jobs.map((j) => [j.kind, j.dest, names(j)])).toEqual([['move', '/C/Ziel', [TEMP + '/a.txt', HERE + '/Brief.txt']]]);
   });
 
   it('turns text into a file when the clipboard holds no files', async () => {
     onClipboard = { files: [], cut: false, skipped: 0 };
     expect(await run('pasteFiles')).toBe(false);
-  });
-});
-
-describe('the container', () => {
-  it('asks the server nothing about other programs, even when every action runs without its arguments', async () => {
-    host.desktop = false;
-    for (const id of ['dropIn', 'dragOut', 'pasteFiles']) await run(id);
-    await settle();
-    expect(sent).toEqual([]);
-    expect(looks).toBe(0);
   });
 });
 

@@ -96,7 +96,7 @@ jobs:
       - name: Test the desktop module
         working-directory: desktop
         shell: bash
-        run: CGO_ENABLED=1 go test ./...
+        run: CGO_ENABLED=1 go test -tags desktop ./...
 
       # Builds the interface, has Wails write the manifest, icons, version
       # resource and Info.plist, and compiles; on Windows and Linux it also

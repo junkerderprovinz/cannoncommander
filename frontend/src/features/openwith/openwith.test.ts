@@ -7,7 +7,7 @@ import { host } from '@/core/host';
 import { menuState, toGlim } from '@/core/menu';
 import { toasts } from '@/core/toast';
 import { winStack } from '@/core/windows';
-import { loadFeatures } from '@/features';
+import { loadDesktopFeatures, loadFeatures } from '@/features';
 import { registerFileActions } from '@/files/actions';
 import { rowMenu } from '@/files/menus';
 import { setLanguage } from '@/i18n';
@@ -50,12 +50,13 @@ async function menuFor(...names: string[]) {
 }
 const openWithRow = (rows: Row[]) => rows.find((r) => r.label === 'Öffnen mit');
 
-beforeAll(() => {
+beforeAll(async () => {
   setLanguage('de');
   setActivePinia(createPinia());
   usePanels();
   registerFileActions();
   loadFeatures();
+  await loadDesktopFeatures();
 });
 
 beforeEach(() => {

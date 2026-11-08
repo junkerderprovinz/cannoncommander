@@ -1,3 +1,5 @@
+//go:build desktop
+
 package desktop
 
 // Volume is a drive or a file system the computer reports.

@@ -6,7 +6,7 @@ import { on } from '@/api/sse';
 import { type Share, tools } from '@/api/tools';
 import { action, run } from '@/core/actions';
 import { host } from '@/core/host';
-import { addTo } from '@/core/extend';
+import { addTo, SIDE_ROWS } from '@/core/extend';
 import { fmtSize, now } from '@/core/format';
 import { G, glyphComponent } from '@/core/glyphs';
 import { MENUS } from '@/core/menus';
@@ -145,7 +145,7 @@ export default function setup() {
   action('download', { label: tl('share.download'), g: 'IconDownload', needs: 'sel', run: download });
   addTo('sideRows', () => (basket.length
     ? h(SidebarRow, { label: t('share.collection'), glyph: glyphComponent('IconCollector'), 'data-run': 'collection', onClick: () => run('collection') }, { after: () => h('span', { class: 'meta glim-num' }, String(basket.length)) })
-    : null));
+    : null), SIDE_ROWS.collection);
   const file = MENUS.find(([id]) => id === 'file')![1];
   if (!file.includes('collect')) file.splice(file.indexOf('share') + 1, 0, 'collect', 'collection');
   // The server tells every opening; a note only comes for links that asked for one.

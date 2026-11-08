@@ -1,3 +1,5 @@
+//go:build desktop
+
 package filemanager
 
 import (
@@ -102,7 +104,7 @@ func TestTheSwitchTurnsTheAppIntoTheFileManagerAndBack(t *testing.T) {
 }
 
 func TestOnlyADesktopAppThatCanHasTheSwitch(t *testing.T) {
-	for name, app := range map[string]desktop.App{"container": nil, "older app": plainApp{}, "Mac": &managerApp{unsupported: true}} {
+	for name, app := range map[string]desktop.App{"no app": nil, "older app": plainApp{}, "Mac": &managerApp{unsupported: true}} {
 		srv := server(t, app)
 		for _, method := range []string{http.MethodGet, http.MethodPut} {
 			if status, code, _ := call(t, srv, method, map[string]any{"on": true}); status != http.StatusNotFound || code != "desktopOnly" {
