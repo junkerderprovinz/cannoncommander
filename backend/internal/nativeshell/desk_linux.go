@@ -2,6 +2,7 @@ package nativeshell
 
 import (
 	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -21,6 +22,10 @@ type desk struct {
 	userDirs     map[string]string
 	thumbnailers []xdg.Thumbnailer
 	read         time.Time
+	// root is the file system /proc and /sys are read from, and hasOwner
+	// asks the session bus about a name. Tests replace both.
+	root     fs.FS
+	hasOwner func(name string) bool
 }
 
 var (
@@ -41,7 +46,9 @@ func current() *desk {
 // newDesk reads d. It keeps the icons of last while the theme stays the
 // same, since they remember every folder they have looked into.
 func newDesk(d xdg.Desktop, last *desk) *desk {
-	k := &desk{Desktop: d, db: d.MimeDB(), theme: d.ThemeName(), userDirs: d.UserDirs(), thumbnailers: d.Thumbnailers(), read: time.Now()}
+	k := &desk{Desktop: d, db: d.MimeDB(), theme: d.ThemeName(), userDirs: d.UserDirs(), thumbnailers: d.Thumbnailers(), read: time.Now(),
+		root: os.DirFS("/"), hasOwner: nameHasOwner,
+	}
 	if last != nil && last.theme == k.theme {
 		k.icons = last.icons
 	} else {
