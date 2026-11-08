@@ -88,6 +88,7 @@ func TestAThumbnailComesFromTheCacheWhileItFitsTheFile(t *testing.T) {
 // arguments to a log and then runs body.
 func (f *fixture) thumbnailer(body string) (log string) {
 	log = filepath.Join(f.home, "thumbnailer.log")
+	f.bwrap = f.script(filepath.Join(f.home, "bin", "bwrap"), fakeBwrap)
 	program := f.script(filepath.Join(f.home, "bin", "thumbnail me"), "#!/bin/sh\nfor a in \"$@\"; do printf '[%s]' \"$a\" >> "+shellQuote(log)+"; done\necho >> "+shellQuote(log)+"\n"+body+"\n")
 	f.write(filepath.Join(f.system, "thumbnailers", "test.thumbnailer"), "[Thumbnailer Entry]\nExec=\""+program+"\" -s %s %i %o %u\nMimeType=image/png;\n")
 	return log
@@ -116,9 +117,15 @@ func TestAThumbnailerDrawsAndTheCacheKeepsIt(t *testing.T) {
 		t.Errorf("folder %v %v", dir, err)
 	}
 	logged, _ := os.ReadFile(log)
-	args := regexp.MustCompile(`^\[-s\]\[256\]\[` + regexp.QuoteMeta(file) + `\]\[/[^\]]+/thumbnail\.png\]\[` + regexp.QuoteMeta(uri) + `\]\n$`)
+	// The thumbnailer sees the paths inside the sandbox, which the stand-in
+	// for bwrap turned back into its private folder.
+	args := regexp.MustCompile(`^\[-s\]\[256\]\[/[^\]]+/input\.png\]\[/[^\]]+/thumbnail\.png\]\[file:///tmp/input\.png\]\n$`)
 	if !args.Match(logged) {
 		t.Errorf("arguments %q", logged)
+	}
+	sandbox, _ := os.ReadFile(filepath.Join(f.home, "bin", "bwrap.log"))
+	if !strings.Contains(string(sandbox), "\n--ro-bind\n"+file+"\n/tmp/input.png\n") || !strings.Contains(string(sandbox), "\n--clearenv\n") {
+		t.Errorf("sandbox %q", sandbox)
 	}
 	if again, err := k.thumbnail(context.Background(), file, 200); err != nil || !bytes.Equal(again, b) {
 		t.Errorf("again: %v", err)
