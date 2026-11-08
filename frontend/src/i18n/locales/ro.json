@@ -2716,6 +2716,11 @@
       "other": "{n} în clipboard"
     },
     "clipEmpty": "Clipboardul este gol",
+    "leftOut": {
+      "one": "În afara folderelor de aici, rămâne: 1 element",
+      "few": "În afara folderelor de aici, rămâne: {n} elemente",
+      "other": "În afara folderelor de aici, rămâne: {n} de elemente"
+    },
     "parityTitle": "Verificarea Parity rulează",
     "parityAsk": "Copiezi acum sau după?",
     "parityText": "Unraid verifică acum Parity. O copie de {size} încetinește verificarea și merge și ea mai încet.",
@@ -3710,6 +3715,7 @@
     "cannotUndo": "Acest pas nu poate fi anulat",
     "changedSince": "S-a schimbat între timp, așa că rămâne cum este",
     "changedWhileOpen": "Fișierul s-a schimbat de când l-ai deschis",
+    "clipboardBusy": "Clipboardul este ocupat acum. Încearcă din nou peste o clipă",
     "codeMismatch": "Codul nu se potrivește. Merge corect ceasul telefonului?",
     "codeMissing": "Lipsește codul",
     "collectionName": "Dă un nume colecției, el devine dosarul pe care îl vede cealaltă parte",
@@ -3728,6 +3734,7 @@
     "systemFailed": "Sistemul nu a reușit asta acum",
     "fileManagerNotSet": "Calculatorul nu a acceptat modificarea",
     "disksAdminsOnly": "Discurile individuale și Cache-ul le văd doar adminii",
+    "dragFailed": "Fișierele nu au putut fi trase afară",
     "elevationDeclined": "Drepturile de administrator nu au fost acordate",
     "elevationFailed": "Asistentul cu drepturi de administrator nu a răspuns",
     "elevationUnsupported": "Pe acest sistem CannonCommander nu poate cere drepturi de administrator",
@@ -3811,6 +3818,7 @@
     "notElevatable": "Asta nu poate continua cu drepturi de administrator",
     "notFound": "Asta nu mai există",
     "notInTrash": "Asta nu este în coș",
+    "notOnDisk": "Doar fișierele de pe disc pot merge într-un alt program",
     "notText": "Acest fișier nu este text",
     "notWindows1252": "Textul are caractere pe care Windows-1252 nu le poate salva. Salvează-l ca UTF-8",
     "nothingToUndo": "Nu e nimic de anulat",

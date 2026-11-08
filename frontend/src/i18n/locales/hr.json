@@ -2716,6 +2716,11 @@
       "other": "{n} u međuspremniku"
     },
     "clipEmpty": "Međuspremnik je prazan",
+    "leftOut": {
+      "one": "Izvan ovdašnjih mapa, ostaje: {n} stavka",
+      "few": "Izvan ovdašnjih mapa, ostaje: {n} stavke",
+      "other": "Izvan ovdašnjih mapa, ostaje: {n} stavki"
+    },
     "parityTitle": "Provjera Parity je u tijeku",
     "parityAsk": "Kopirati sada ili poslije?",
     "parityText": "Unraid upravo provjerava Parity. Kopija od {size} usporava provjeru i sama ide sporije.",
@@ -3710,6 +3715,7 @@
     "cannotUndo": "Ovaj se korak ne može poništiti",
     "changedSince": "Ovo se u međuvremenu promijenilo i zato ostaje kakvo jest",
     "changedWhileOpen": "Datoteka se promijenila otkako ste je otvorili",
+    "clipboardBusy": "Međuspremnik je trenutačno zauzet. Pokušajte ponovno za trenutak",
     "codeMismatch": "Kôd ne odgovara. Ide li sat na telefonu točno?",
     "codeMissing": "Kôd nedostaje",
     "collectionName": "Dajte zbirci naziv, on postaje mapa koju vidi primatelj",
@@ -3728,6 +3734,7 @@
     "systemFailed": "Sustav to sada nije uspio",
     "fileManagerNotSet": "Računalo nije prihvatilo promjenu",
     "disksAdminsOnly": "Pojedinačne diskove i Cache vide samo administratori",
+    "dragFailed": "Datoteke se nisu mogle izvući van",
     "elevationDeclined": "Administratorska prava nisu dodijeljena",
     "elevationFailed": "Pomoćnik s administratorskim pravima nije se javio",
     "elevationUnsupported": "Na ovom sustavu CannonCommander ne može zatražiti administratorska prava",
@@ -3811,6 +3818,7 @@
     "notElevatable": "Ovo se ne može nastaviti s administratorskim pravima",
     "notFound": "Ovo više ne postoji",
     "notInTrash": "Ovo nije u smeću",
+    "notOnDisk": "Samo datoteke na disku mogu ići u drugi program",
     "notText": "Ova datoteka nije tekst",
     "notWindows1252": "Tekst sadrži znakove koje Windows-1252 ne može spremiti. Spremite ga kao UTF-8",
     "nothingToUndo": "Nema ničega za poništavanje",

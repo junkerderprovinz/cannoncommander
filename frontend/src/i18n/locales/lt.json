@@ -2807,6 +2807,12 @@
       "other": "Iškarpinėje: {n}"
     },
     "clipEmpty": "Iškarpinė tuščia",
+    "leftOut": {
+      "one": "Už čia esančių aplankų ribų, liko: {n} elementas",
+      "few": "Už čia esančių aplankų ribų, liko: {n} elementai",
+      "many": "Už čia esančių aplankų ribų, liko: {n} elemento",
+      "other": "Už čia esančių aplankų ribų, liko: {n} elementų"
+    },
     "parityTitle": "Vyksta lyginumo patikra",
     "parityAsk": "Kopijuoti dabar ar po to?",
     "parityText": "Unraid šiuo metu tikrina lyginumą. {size} kopija sulėtina patikrą ir pati vyksta lėčiau.",
@@ -3842,6 +3848,7 @@
     "cannotUndo": "Šio žingsnio atšaukti negalima",
     "changedSince": "Tai tuo metu pasikeitė, todėl lieka kaip yra",
     "changedWhileOpen": "Failas pasikeitė nuo tada, kai jį atidarei",
+    "clipboardBusy": "Iškarpinė šiuo metu užimta. Bandyk dar kartą po akimirkos",
     "codeMismatch": "Kodas netinka. Ar telefono laikrodis rodo teisingai?",
     "codeMissing": "Trūksta kodo",
     "collectionName": "Suteik rinkiniui pavadinimą, jis taps aplanku, kurį mato kita pusė",
@@ -3860,6 +3867,7 @@
     "systemFailed": "Sistemai dabar to padaryti nepavyko",
     "fileManagerNotSet": "Kompiuteris nepriėmė pakeitimo",
     "disksAdminsOnly": "Atskirus diskus ir Cache mato tik administratoriai",
+    "dragFailed": "Failų nepavyko ištempti laukan",
     "elevationDeclined": "Administratoriaus teisės nesuteiktos",
     "elevationFailed": "Pagalbinė programa su administratoriaus teisėmis neatsakė",
     "elevationUnsupported": "Šioje sistemoje CannonCommander negali paprašyti administratoriaus teisių",
@@ -3947,6 +3955,7 @@
     "notElevatable": "To negalima tęsti su administratoriaus teisėmis",
     "notFound": "To nebėra",
     "notInTrash": "To nėra šiukšlinėje",
+    "notOnDisk": "Į kitą programą gali keliauti tik diske esantys failai",
     "notText": "Šis failas nėra tekstas",
     "notWindows1252": "Tekste yra simbolių, kurių Windows-1252 negali išsaugoti. Įrašyk jį kaip UTF-8",
     "nothingToUndo": "Nėra ko atšaukti",

@@ -4,6 +4,7 @@ import { reactive, watch } from 'vue';
 import { ApiError } from '@/api/client';
 import { type Job, ops, type Preflight, type TransferParams } from '@/api/ops';
 import { action, run } from '@/core/actions';
+import { host } from '@/core/host';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { win, type WinEntry } from '@/core/windows';
@@ -19,6 +20,7 @@ import { useListing } from '@/stores/listing';
 import { type Transfer, usePanels } from '@/stores/panels';
 import { ask } from './ask';
 import { askRunning, resolveConflicts } from './conflicts';
+import { clipboardWins, dragOut, dropIn, pasteOutside, readClipboard, share } from './outside';
 import LinksBody from './LinksBody.vue';
 import ParityBody from './ParityBody.vue';
 import { ensureDir, pathOf, shareRel } from './paths';
@@ -171,15 +173,26 @@ function transferWindow(kind: 'copy' | 'move') {
   watch(() => st.pf, () => { w.foot = w.foot.map((f) => (f.primary ? primary() : f)); });
 }
 
-function paste() {
-  const F = usePanels(), clip = useClipboard(), c = clip.clip;
-  if (!c) return toast(t('transfer.clipEmpty'), 'warn');
-  const listing = useListing();
-  listing.load(c.from).then((got) => {
+// Ctrl+V and the menu: in the desktop app the files on the computer's clipboard, else the names in the app's own. It
+// says whether there was anything, so the paste event can turn a picture or a text into a file instead.
+async function paste() {
+  const F = usePanels(), clip = useClipboard(), dest = F.T().path;
+  const outside = await clipboardWins();
+  if (outside && (outside.files.length || outside.skipped)) {
+    await pasteOutside(outside, dest);
+    return true;
+  }
+  const c = clip.clip;
+  if (!c) return false;
+  try {
+    const got = await useListing().load(c.from);
     const items = got.items.filter((k) => c.items.includes(k.name)).map(toEntry);
-    F.transfer(c.cut ? 'move' : 'copy', items, F.T().path, c.from);
+    await F.transfer(c.cut ? 'move' : 'copy', items, dest, c.from);
     if (c.cut) clip.clear();
-  }, warn);
+  } catch (e) {
+    warn(e);
+  }
+  return true;
 }
 
 export default function setup() {
@@ -189,14 +202,25 @@ export default function setup() {
   action('transfer', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: (job: Transfer) => transfer(job) });
 
   action('clipCut', { label: tl('transfer.clipCut'), g: 'IconMove', key: 'Ctrl+x', needs: ['sel', 'writable'], run: () => {
-    clip.put(true, F.T().path, F.sel().map((k) => k.name));
-    toast(plural(clip.clip!.items.length, 'transfer.cut'));
+    const names = F.sel().map((k) => k.name);
+    void share(true, F.T().path, names);
+    toast(plural(names.length, 'transfer.cut'));
   } });
   action('clipCopy', { label: tl('transfer.clipCopy'), g: 'IconCopy', key: 'Ctrl+c', needs: 'sel', run: () => {
-    clip.put(false, F.T().path, F.sel().map((k) => k.name));
-    toast(plural(clip.clip!.items.length, 'transfer.inClip'));
+    const names = F.sel().map((k) => k.name);
+    void share(false, F.T().path, names);
+    toast(plural(names.length, 'transfer.inClip'));
   } });
-  action('clipPaste', { label: tl('transfer.clipPaste'), g: 'IconPaste', key: 'Ctrl+v', needs: 'writable', when: () => !!clip.clip, run: paste });
+  action('clipPaste', { label: tl('transfer.clipPaste'), g: 'IconPaste', key: 'Ctrl+v', needs: 'writable', when: () => clip.ready(), run: async () => {
+    if (!(await paste())) toast(t('transfer.clipEmpty'), 'warn');
+  } });
+  action('pasteFiles', { label: tl('transfer.clipPaste'), g: 'IconPaste', hidden: true, needs: 'writable', run: paste });
+  action('dropIn', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: dropIn });
+  action('dragOut', { label: tl('transfer.copy'), g: 'IconCopy', hidden: true, run: dragOut });
+
+  // Another program may have put files on the computer's clipboard while the window was in the background.
+  window.addEventListener('focus', () => { void readClipboard(); });
+  watch(() => host.desktop, () => { void readClipboard(); });
 
   // A job that meets a name on its way asks here, unless someone answers it in another tab first.
   jobs.onAsked((job, conflict) => askRunning(job, conflict));
