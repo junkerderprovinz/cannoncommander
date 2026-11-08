@@ -43,6 +43,7 @@
   "purgeSel": "Auswahl endgültig löschen ({n})",
   "selectAll": "Alles auswählen",
   "empty": "Papierkorb leeren",
+  "emptySystem": { "one": "Das leert den ganzen {bin} mit seinem einen Eintrag.", "other": "Das leert den ganzen {bin}: alle {n} Einträge, auch die aus anderen Programmen." },
   "andMore": { "one": "und {n} weitere", "other": "und {n} weitere" },
   "gone": "Danach ist es weg und lässt sich nicht wiederherstellen.",
   "restored": "{what} wiederhergestellt",

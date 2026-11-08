@@ -1485,10 +1485,13 @@
       "copy": "Du skal have administratorrettigheder for at kopiere {what} hertil.",
       "move": "Du skal have administratorrettigheder for at flytte {what} hertil.",
       "delete": "Du skal have administratorrettigheder for at slette {what}.",
-      "trash": "Du skal have administratorrettigheder for at lægge {what} i papirkurven."
+      "trash": "Du skal have administratorrettigheder for at lægge {what} i papirkurven.",
+      "restore": "Du skal have administratorrettigheder for at gendanne {what}.",
+      "undo": "Du skal have administratorrettigheder for at fortryde {what}."
     },
     "howWindows": "Med Fortsæt beder Windows om din tilladelse, og derefter fortsætter CannonCommander.",
     "howLinux": "Med Fortsæt beder systemet om din adgangskode, og derefter fortsætter CannonCommander.",
+    "declined": "Helt i orden, uden administratorrettigheder forbliver {what}, som det var.",
     "go": "Fortsæt"
   },
   "fetch": {
@@ -2720,6 +2723,10 @@
     "purgeSel": "Slet det valgte for altid ({n})",
     "selectAll": "Vælg alt",
     "empty": "Tøm papirkurven",
+    "emptySystem": {
+      "one": "Det tømmer hele {bin} med dens ene element.",
+      "other": "Det tømmer hele {bin}: alle {n} elementer, også dem fra andre programmer."
+    },
     "andMore": {
       "one": "og {n} mere",
       "other": "og {n} mere"

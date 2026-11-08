@@ -1540,10 +1540,13 @@
       "copy": "Para copiar {what} para aqui, precisa de privilégios de administrador.",
       "move": "Para mover {what} para aqui, precisa de privilégios de administrador.",
       "delete": "Para eliminar {what}, precisa de privilégios de administrador.",
-      "trash": "Para enviar {what} para a reciclagem, precisa de privilégios de administrador."
+      "trash": "Para enviar {what} para a reciclagem, precisa de privilégios de administrador.",
+      "restore": "Para restaurar {what}, precisa de privilégios de administrador.",
+      "undo": "Para anular {what}, precisa de privilégios de administrador."
     },
     "howWindows": "Ao continuar, o Windows pede a sua autorização e depois o CannonCommander prossegue.",
     "howLinux": "Ao continuar, o sistema pede a sua palavra-passe e depois o CannonCommander prossegue.",
+    "declined": "Muito bem, sem privilégios de administrador {what} fica como estava.",
     "go": "Continuar"
   },
   "fetch": {
@@ -2818,6 +2821,11 @@
     "purgeSel": "Eliminar seleção definitivamente ({n})",
     "selectAll": "Selecionar tudo",
     "empty": "Esvaziar a reciclagem",
+    "emptySystem": {
+      "one": "Isto esvazia toda a {bin}, com {n} item.",
+      "many": "Isto esvazia toda a {bin}: todos os {n} itens, incluindo os de outros programas.",
+      "other": "Isto esvazia toda a {bin}: todos os {n} itens, incluindo os de outros programas."
+    },
     "andMore": {
       "one": "e mais {n}",
       "many": "e mais {n}",

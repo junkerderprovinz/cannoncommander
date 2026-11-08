@@ -1485,10 +1485,13 @@
       "copy": "Du behöver administratörsbehörighet för att kopiera {what} hit.",
       "move": "Du behöver administratörsbehörighet för att flytta {what} hit.",
       "delete": "Du behöver administratörsbehörighet för att ta bort {what}.",
-      "trash": "Du behöver administratörsbehörighet för att lägga {what} i papperskorgen."
+      "trash": "Du behöver administratörsbehörighet för att lägga {what} i papperskorgen.",
+      "restore": "Du behöver administratörsbehörighet för att återställa {what}.",
+      "undo": "Du behöver administratörsbehörighet för att ångra {what}."
     },
     "howWindows": "Med Fortsätt ber Windows om ditt tillstånd, och sedan fortsätter CannonCommander.",
     "howLinux": "Med Fortsätt ber systemet om ditt lösenord, och sedan fortsätter CannonCommander.",
+    "declined": "Okej, utan administratörsbehörighet förblir {what} som det var.",
     "go": "Fortsätt"
   },
   "fetch": {
@@ -2720,6 +2723,10 @@
     "purgeSel": "Ta bort markerade permanent ({n})",
     "selectAll": "Markera allt",
     "empty": "Töm papperskorgen",
+    "emptySystem": {
+      "one": "Det här tömmer hela {bin} med dess enda objekt.",
+      "other": "Det här tömmer hela {bin}: alla {n} objekt, även de från andra program."
+    },
     "andMore": {
       "one": "och {n} till",
       "other": "och {n} till"

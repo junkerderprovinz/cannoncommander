@@ -1485,10 +1485,13 @@
       "copy": "Para copiar {what} aquí, precisas permisos de administrador.",
       "move": "Para mover {what} aquí, precisas permisos de administrador.",
       "delete": "Para borrar {what}, precisas permisos de administrador.",
-      "trash": "Para levar {what} ao lixo, precisas permisos de administrador."
+      "trash": "Para levar {what} ao lixo, precisas permisos de administrador.",
+      "restore": "Para restaurar {what}, precisas permisos de administrador.",
+      "undo": "Para desfacer {what}, precisas permisos de administrador."
     },
     "howWindows": "Con Continuar, Windows pídeche permiso e despois CannonCommander segue.",
     "howLinux": "Con Continuar, o sistema pídeche o contrasinal e despois CannonCommander segue.",
+    "declined": "Vale, sen permisos de administrador {what} queda como estaba.",
     "go": "Continuar"
   },
   "fetch": {
@@ -2720,6 +2723,10 @@
     "purgeSel": "Borrar a selección definitivamente ({n})",
     "selectAll": "Seleccionar todo",
     "empty": "Baleirar o lixo",
+    "emptySystem": {
+      "one": "Isto baleira todo o {bin} co seu único elemento.",
+      "other": "Isto baleira todo o {bin}: os {n} elementos, tamén os doutros programas."
+    },
     "andMore": {
       "one": "e {n} máis",
       "other": "e {n} máis"

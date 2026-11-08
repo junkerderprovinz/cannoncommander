@@ -1485,10 +1485,13 @@
       "copy": "{what} hona kopiatzeko, administratzaile-baimenak behar dituzu.",
       "move": "{what} hona eramateko, administratzaile-baimenak behar dituzu.",
       "delete": "{what} ezabatzeko, administratzaile-baimenak behar dituzu.",
-      "trash": "{what} zakarrontzira botatzeko, administratzaile-baimenak behar dituzu."
+      "trash": "{what} zakarrontzira botatzeko, administratzaile-baimenak behar dituzu.",
+      "restore": "{what} leheneratzeko, administratzaile-baimenak behar dituzu.",
+      "undo": "{what} desegiteko, administratzaile-baimenak behar dituzu."
     },
     "howWindows": "Jarraitu sakatuta, Windowsek zure baimena eskatuko du, eta gero CannonCommanderrek jarraituko du.",
     "howLinux": "Jarraitu sakatuta, sistemak zure pasahitza eskatuko du, eta gero CannonCommanderrek jarraituko du.",
+    "declined": "Ados, administratzaile-baimenik gabe {what} zegoen bezala geratzen da.",
     "go": "Jarraitu"
   },
   "fetch": {
@@ -2720,6 +2723,10 @@
     "purgeSel": "Ezabatu hautapena betiko ({n})",
     "selectAll": "Hautatu dena",
     "empty": "Hustu zakarrontzia",
+    "emptySystem": {
+      "one": "Honek {bin} osorik husten du, bere sarrera bakarrarekin.",
+      "other": "Honek {bin} osorik husten du: {n} sarrera guztiak, beste programenak ere bai."
+    },
     "andMore": {
       "one": "eta beste {n}",
       "other": "eta beste {n}"

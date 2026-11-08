@@ -2,6 +2,7 @@ package trash
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"io/fs"
 	"net/http"
@@ -139,19 +140,9 @@ func (s *Store) listSystem() ([]Item, error) {
 // restoreSystem puts an entry back where it came from, as Restore does for
 // the app's own trash.
 func (s *Store) restoreSystem(id string) (string, error) {
-	e, err := s.sys.Get(id)
+	e, it, err := s.restorable(id)
 	if err != nil {
-		return "", systemErr(err)
-	}
-	it := s.itemOf(e)
-	if !it.outside {
-		parent, err := s.fs.Resolve(it.From)
-		if err != nil {
-			return "", err
-		}
-		if err := ccfs.Contained(parent); err != nil {
-			return "", err
-		}
+		return "", err
 	}
 	dir := filepath.Dir(e.Origin)
 	if err := os.MkdirAll(dir, 0o777); err != nil {
@@ -163,6 +154,32 @@ func (s *Store) restoreSystem(id string) (string, error) {
 	if err := s.sys.Restore(id, to); err != nil {
 		return "", systemErr(err)
 	}
+	return s.restored(it, to), nil
+}
+
+// restorable is the entry id of the system's trash, once its old folder is
+// known to stay inside its source.
+func (s *Store) restorable(id string) (sysbin.Entry, Item, error) {
+	e, err := s.sys.Get(id)
+	if err != nil {
+		return sysbin.Entry{}, Item{}, systemErr(err)
+	}
+	it := s.itemOf(e)
+	if !it.outside {
+		parent, err := s.fs.Resolve(it.From)
+		if err != nil {
+			return e, it, err
+		}
+		if err := ccfs.Contained(parent); err != nil {
+			return e, it, err
+		}
+	}
+	return e, it, nil
+}
+
+// restored tells about an entry that came back to the path to and returns
+// that path, as the API has it where it can.
+func (s *Store) restored(it Item, to string) string {
 	back, ok := s.apiPath(to)
 	if ok {
 		s.carry(context.Background(), it.Bin, back)
@@ -170,7 +187,104 @@ func (s *Store) restoreSystem(id string) (string, error) {
 		back = to
 	}
 	s.changed()
-	return back, nil
+	return back
+}
+
+// restoreOp is the helper's operation that puts an entry of the system's
+// trash back with administrator rights, after the checks a normal restore
+// makes. It returns where the entry lands.
+func (s *Store) restoreOp(run *jobs.Run, id string) (elevate.Op, Item, string, error) {
+	if s.sys == nil || !systemID(id) {
+		return elevate.Op{}, Item{}, "", errOwnBin
+	}
+	e, it, err := s.restorable(id)
+	if err == nil && it.outside {
+		err = run.RequireAdmin()
+	} else if err == nil {
+		_, _, err = run.Entry(it.Origin, ccfs.Create)
+	}
+	if err != nil {
+		return elevate.Op{}, it, "", err
+	}
+	dir := filepath.Dir(e.Origin)
+	to := filepath.Join(dir, ccfs.FreeName(dir, e.Name))
+	return elevate.Op{Kind: elevate.Move, From: e.Path, To: to, Parents: true}, it, to, nil
+}
+
+var errOwnBin = v1.Coded(http.StatusConflict, "notElevatable", "this cannot go on with administrator rights")
+
+// elevateRestore puts entries back with administrator rights, for a folder
+// that refuses the person.
+func elevateRestore(ctx context.Context, run *jobs.Run) error {
+	s := For(run.Deps())
+	if s == nil {
+		return errors.New("no trash")
+	}
+	var items []jobs.Item
+	var ops []elevate.Op
+	back := map[int]func(){}
+	for _, it := range run.Items() {
+		if it.State != jobs.ItemPending {
+			continue
+		}
+		op, entry, to, err := s.restoreOp(run, it.Ref)
+		if err != nil {
+			run.Finish(it.Seq, jobs.ItemDone, err)
+			continue
+		}
+		id := it.Ref
+		items, ops = append(items, it), append(ops, op)
+		back[it.Seq] = func() { s.settle(id, entry, to) }
+	}
+	return run.Elevated(ctx, items, ops, func(it jobs.Item) { back[it.Seq]() })
+}
+
+// settle finishes a restore the helper did: the record goes and the panels
+// hear of it.
+func (s *Store) settle(id string, it Item, to string) {
+	if err := s.sys.Forget(id); err != nil {
+		logger.Errorf("trash: %v", err)
+	}
+	s.restored(it, to)
+}
+
+// elevateUndoTrash takes a trash step back with administrator rights.
+func elevateUndoTrash(ctx context.Context, run *jobs.Run, data json.RawMessage) error {
+	s := For(run.Deps())
+	if s == nil {
+		return errors.New("no trash")
+	}
+	var d undoData
+	if err := json.Unmarshal(data, &d); err != nil {
+		return err
+	}
+	var errs []error
+	var ops []elevate.Op
+	var back []func()
+	for _, id := range d.IDs {
+		op, entry, to, err := s.restoreOp(run, id)
+		if errors.Is(err, ErrNotFound) {
+			continue
+		}
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		ops, back = append(ops, op), append(back, func() { s.settle(id, entry, to) })
+	}
+	if len(ops) > 0 {
+		err := elevate.Run(ctx, ops, func(i int, err error) {
+			if err != nil {
+				errs = append(errs, jobs.ElevationError(err))
+			} else {
+				back[i]()
+			}
+		})
+		if err != nil {
+			errs = append(errs, jobs.ElevationError(err))
+		}
+	}
+	return errors.Join(errs...)
 }
 
 func (s *Store) dropSystem(ctx context.Context, run *jobs.Run, id string) error {

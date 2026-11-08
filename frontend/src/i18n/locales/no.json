@@ -1485,10 +1485,13 @@
       "copy": "Du trenger administratorrettigheter for å kopiere {what} hit.",
       "move": "Du trenger administratorrettigheter for å flytte {what} hit.",
       "delete": "Du trenger administratorrettigheter for å slette {what}.",
-      "trash": "Du trenger administratorrettigheter for å legge {what} i papirkurven."
+      "trash": "Du trenger administratorrettigheter for å legge {what} i papirkurven.",
+      "restore": "Du trenger administratorrettigheter for å gjenopprette {what}.",
+      "undo": "Du trenger administratorrettigheter for å angre {what}."
     },
     "howWindows": "Med Fortsett ber Windows om tillatelsen din, og så fortsetter CannonCommander.",
     "howLinux": "Med Fortsett ber systemet om passordet ditt, og så fortsetter CannonCommander.",
+    "declined": "Helt greit, uten administratorrettigheter blir {what} som det var.",
     "go": "Fortsett"
   },
   "fetch": {
@@ -2720,6 +2723,10 @@
     "purgeSel": "Slett utvalget for godt ({n})",
     "selectAll": "Velg alt",
     "empty": "Tøm papirkurven",
+    "emptySystem": {
+      "one": "Dette tømmer hele {bin} med det ene elementet.",
+      "other": "Dette tømmer hele {bin}: alle {n} elementene, også de fra andre programmer."
+    },
     "andMore": {
       "one": "og {n} til",
       "other": "og {n} til"

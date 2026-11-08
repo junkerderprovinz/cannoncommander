@@ -43,7 +43,7 @@ func init() {
 		)`,
 		`CREATE INDEX undo_ops_owner ON undo_ops (owner, created_at)`,
 	))
-	jobs.RegisterKind(JobKind, jobs.Kind{Run: runUndo})
+	jobs.RegisterKind(JobKind, jobs.Kind{Run: runUndo, Elevate: elevateUndo})
 }
 
 // Step is one thing that can be taken back. Name, Count, Path and To are
@@ -64,6 +64,9 @@ type Step struct {
 type Reverser struct {
 	Inline func(ctx context.Context, d v1.Deps, u *users.User, data json.RawMessage) error
 	Job    func(ctx context.Context, run *jobs.Run, data json.RawMessage) error
+	// Elevate does Job with administrator rights, in the desktop app, once it
+	// failed for lack of them.
+	Elevate func(ctx context.Context, run *jobs.Run, data json.RawMessage) error
 }
 
 var (
@@ -250,7 +253,15 @@ type jobParams struct {
 	Data json.RawMessage `json:"data"`
 }
 
-func runUndo(ctx context.Context, run *jobs.Run) error {
+func runUndo(ctx context.Context, run *jobs.Run) error { return undoWith(ctx, run, false) }
+
+func elevateUndo(ctx context.Context, run *jobs.Run) error { return undoWith(ctx, run, true) }
+
+var errNotElevatable = v1.Coded(http.StatusConflict, "notElevatable", "this cannot go on with administrator rights")
+
+// undoWith takes the job's step back, with administrator rights when
+// elevated.
+func undoWith(ctx context.Context, run *jobs.Run, elevated bool) error {
 	var p jobParams
 	if err := run.Params(&p); err != nil {
 		return err
@@ -259,12 +270,18 @@ func runUndo(ctx context.Context, run *jobs.Run) error {
 	if !ok || rev.Job == nil {
 		return fmt.Errorf("cannot take back %s", p.Kind)
 	}
+	do := rev.Job
+	if elevated {
+		if do = rev.Elevate; do == nil {
+			return errNotElevatable
+		}
+	}
 	for _, it := range run.Items() {
 		if it.State != jobs.ItemPending {
 			continue
 		}
 		run.Begin(it.Seq)
-		err := rev.Job(ctx, run, p.Data)
+		err := do(ctx, run, p.Data)
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}

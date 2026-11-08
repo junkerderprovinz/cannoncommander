@@ -1485,10 +1485,13 @@
       "copy": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit kopioida {what} tänne.",
       "move": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit siirtää {what} tänne.",
       "delete": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit poistaa {what}.",
-      "trash": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit siirtää {what} roskakoriin."
+      "trash": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit siirtää {what} roskakoriin.",
+      "restore": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit palauttaa {what}.",
+      "undo": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit kumota {what}."
     },
     "howWindows": "Kun jatkat, Windows pyytää lupaasi ja sitten CannonCommander jatkaa.",
     "howLinux": "Kun jatkat, järjestelmä kysyy salasanaasi ja sitten CannonCommander jatkaa.",
+    "declined": "Selvä, ilman järjestelmänvalvojan oikeuksia {what} pysyy ennallaan.",
     "go": "Jatka"
   },
   "fetch": {
@@ -2720,6 +2723,10 @@
     "purgeSel": "Poista valitut lopullisesti ({n})",
     "selectAll": "Valitse kaikki",
     "empty": "Tyhjennä roskakori",
+    "emptySystem": {
+      "one": "Näin tyhjenee koko {bin} ja sen ainoa kohde.",
+      "other": "Näin tyhjenee koko {bin}: kaikki {n} kohdetta, myös muiden ohjelmien."
+    },
     "andMore": {
       "one": "ja {n} muu",
       "other": "ja {n} muuta"
