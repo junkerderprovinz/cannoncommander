@@ -6,7 +6,9 @@ import SettingsPage from './SettingsPage.vue';
 
 const body = (id: string) => defineComponent({ render: () => h('p', { 'data-body': id }) });
 
+// jsdom draws no layout, and the page scrolls the current tile into view.
 beforeAll(() => {
+  Element.prototype.scrollIntoView ??= () => {};
   settingsTabs.splice(0);
   settingsTab({ id: 'general', label: 'Allgemein', g: 'IconTabGeneral', order: 10, component: body('general') });
   settingsTab({ id: 'look', label: 'Aussehen', g: 'IconTabLook', order: 20, component: body('look') });
