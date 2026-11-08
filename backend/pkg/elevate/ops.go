@@ -1,9 +1,11 @@
 // Package elevate does file operations with administrator rights for the
 // desktop app, the way the Explorer goes on after "You need administrator
 // permission". The app starts a second copy of itself through UAC on Windows
-// or pkexec on Linux, hands it one job over a loopback connection that both
-// sides prove with a secret, and the copy exits once the job is through. It
-// knows a handful of operations on plain absolute paths and runs no programs.
+// or pkexec on Linux and hands it one job, on Windows over a pipe where each
+// side checks the other's process, on Linux over a loopback connection that
+// both sides prove with a secret from stdin. The copy exits once the job is
+// through. It knows a handful of operations on plain absolute paths, follows
+// no links and runs no programs.
 package elevate
 
 import (
@@ -12,9 +14,12 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
-	"syscall"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/plainpath"
 )
 
 // The operations the helper knows.
@@ -103,44 +108,70 @@ func within(p, root string) bool {
 // Bin.
 var recycle func(path string) error
 
+// apply does one operation. The paths were chosen while the prompt was open,
+// and whoever runs the app could have put a link into them since, so right
+// before the work every part of both paths is checked, and the work itself
+// goes through folder handles opened one level at a time, which no link
+// leads out of. A merge never goes into a link at the target, and a file is
+// made anew rather than written through whatever was there.
 func apply(o Op) error {
 	if err := o.check(); err != nil {
 		return err
 	}
-	switch o.Kind {
-	case Delete:
-		if _, err := os.Lstat(o.From); err != nil {
+	for _, p := range []string{o.From, o.To} {
+		if p == "" {
+			continue
+		}
+		if err := plainpath.Path(p); err != nil {
 			return err
 		}
-		return os.RemoveAll(o.From)
+	}
+	switch o.Kind {
+	case Delete:
+		parent, err := openDir(filepath.Dir(o.From), false)
+		if err != nil {
+			return err
+		}
+		defer parent.Close()
+		name := filepath.Base(o.From)
+		if _, err := parent.Lstat(name); err != nil {
+			return err
+		}
+		return parent.RemoveAll(name)
 	case Recycle:
 		if recycle == nil {
 			return fmt.Errorf("%w: no Recycle Bin here", ErrBadOp)
 		}
 		return recycle(o.From)
 	case Mkdir:
-		return os.Mkdir(o.To, 0o777)
+		parent, err := openDir(filepath.Dir(o.To), false)
+		if err != nil {
+			return err
+		}
+		defer parent.Close()
+		return parent.Mkdir(filepath.Base(o.To), 0o777)
 	}
-	info, err := os.Lstat(o.From)
+	src, err := openDir(filepath.Dir(o.From), false)
 	if err != nil {
 		return err
 	}
-	if o.Parents {
-		if err := os.MkdirAll(filepath.Dir(o.To), 0o777); err != nil {
-			return err
-		}
-	}
-	if st, err := os.Stat(filepath.Dir(o.To)); err != nil {
+	defer src.Close()
+	dst, err := openDir(filepath.Dir(o.To), o.Parents)
+	if err != nil {
 		return err
-	} else if !st.IsDir() {
-		return &fs.PathError{Op: o.Kind, Path: filepath.Dir(o.To), Err: syscall.ENOTDIR}
 	}
-	target, err := os.Lstat(o.To)
+	defer dst.Close()
+	from, to := filepath.Base(o.From), filepath.Base(o.To)
+	info, err := src.Lstat(from)
+	if err != nil {
+		return err
+	}
+	target, err := dst.Lstat(to)
 	switch {
 	case err == nil && !o.Replace:
 		return &fs.PathError{Op: o.Kind, Path: o.To, Err: fs.ErrExist}
 	case err == nil && !(info.IsDir() && target.IsDir()):
-		if err := os.RemoveAll(o.To); err != nil {
+		if err := dst.RemoveAll(to); err != nil {
 			return err
 		}
 	case err != nil && !errors.Is(err, fs.ErrNotExist):
@@ -148,114 +179,148 @@ func apply(o Op) error {
 	}
 	skip := make(map[string]bool, len(o.Skip))
 	for _, p := range o.Skip {
-		skip[p] = true
-	}
-	if o.Kind == Copy {
-		return copyTree(o.From, o.To, skip)
-	}
-	if len(skip) == 0 && (errors.Is(err, fs.ErrNotExist) || !info.IsDir() || !target.IsDir()) {
-		if err := os.Rename(o.From, o.To); err == nil {
-			return nil
+		rel, err := filepath.Rel(o.From, p)
+		if err != nil {
+			return ErrBadOp
 		}
+		skip[filepath.ToSlash(rel)] = true
 	}
-	return moveTree(o.From, o.To, skip)
+	if o.Kind == Move && len(skip) == 0 && errors.Is(err, fs.ErrNotExist) && filepath.Dir(o.From) == filepath.Dir(o.To) {
+		return src.Rename(from, to)
+	}
+	if err := copyTree(src, from, dst, to, ".", skip); err != nil {
+		return err
+	}
+	if o.Kind == Move {
+		return removeTree(src, from, ".", skip)
+	}
+	return nil
 }
 
-// moveTree moves from to to entry by entry, merging into a folder that is
-// there. What skip names stays, and so do the folders that hold it.
-func moveTree(from, to string, skip map[string]bool) error {
-	info, err := os.Lstat(from)
+// openDir opens dir as a handle, going down from the top of its volume one
+// folder at a time and refusing a link on the way. With create, the missing
+// folders are made.
+func openDir(dir string, create bool) (*os.Root, error) {
+	vol := filepath.VolumeName(dir)
+	r, err := os.OpenRoot(vol + string(filepath.Separator))
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if !info.IsDir() {
-		if t, err := os.Lstat(to); err == nil && t.IsDir() {
-			if err := os.RemoveAll(to); err != nil {
-				return err
-			}
-		}
-		if err := os.Rename(from, to); err == nil {
-			return nil
-		}
-		if err := copyTree(from, to, nil); err != nil {
-			return err
-		}
-		return os.Remove(from)
-	}
-	if err := os.Mkdir(to, info.Mode().Perm()); err != nil && !errors.Is(err, fs.ErrExist) {
-		return err
-	}
-	entries, err := os.ReadDir(from)
-	if err != nil {
-		return err
-	}
-	for _, e := range entries {
-		p := filepath.Join(from, e.Name())
-		if skip[p] {
+	at := vol
+	for _, part := range strings.Split(dir[len(vol):], string(filepath.Separator)) {
+		if part == "" {
 			continue
 		}
-		if err := moveTree(p, filepath.Join(to, e.Name()), skip); err != nil {
-			return err
+		at += string(filepath.Separator) + part
+		fi, err := r.Lstat(part)
+		if create && errors.Is(err, fs.ErrNotExist) {
+			if err = r.Mkdir(part, 0o777); err == nil || errors.Is(err, fs.ErrExist) {
+				fi, err = r.Lstat(part)
+			}
 		}
+		if err == nil && plainpath.Link(fi) {
+			err = &fs.PathError{Op: "open", Path: at, Err: plainpath.ErrLink}
+		}
+		var next *os.Root
+		if err == nil {
+			next, err = r.OpenRoot(part)
+		}
+		r.Close()
+		if err != nil {
+			return nil, err
+		}
+		r = next
 	}
-	os.Chtimes(to, info.ModTime(), info.ModTime())
-	if left, err := os.ReadDir(from); err != nil || len(left) > 0 {
-		return err
-	}
-	return os.Remove(from)
+	return r, nil
 }
 
-// copyTree copies from to to, merging into a folder that is there and
-// replacing files in it. Links are copied as links, never followed, and what
-// skip names is left out.
-func copyTree(from, to string, skip map[string]bool) error {
-	if skip[from] {
+// copyTree copies from in src to to in dst, merging into a folder that is
+// there and replacing files in it. Links in the source are copied as links,
+// and what skip names, by its path below the item with slashes, is left out.
+func copyTree(src *os.Root, from string, dst *os.Root, to, rel string, skip map[string]bool) error {
+	if skip[rel] {
 		return nil
 	}
-	info, err := os.Lstat(from)
+	info, err := src.Lstat(from)
 	if err != nil {
 		return err
 	}
 	switch {
-	case info.Mode()&fs.ModeSymlink != 0:
-		dest, err := os.Readlink(from)
+	case info.Mode()&fs.ModeSymlink != 0 && runtime.GOOS != "windows":
+		dest, err := src.Readlink(from)
 		if err != nil {
 			return err
 		}
-		os.Remove(to)
-		return os.Symlink(dest, to)
+		if err := dst.Remove(to); err != nil && !errors.Is(err, fs.ErrNotExist) {
+			return err
+		}
+		return dst.Symlink(dest, to)
+	case plainpath.Link(info):
+		return &fs.PathError{Op: "copy", Path: from, Err: plainpath.ErrLink}
 	case info.IsDir():
-		if err := os.Mkdir(to, info.Mode().Perm()); err != nil && !errors.Is(err, fs.ErrExist) {
-			return err
-		}
-		entries, err := os.ReadDir(from)
-		if err != nil {
-			return err
-		}
-		for _, e := range entries {
-			if err := copyTree(filepath.Join(from, e.Name()), filepath.Join(to, e.Name()), skip); err != nil {
-				return err
-			}
-		}
-		return os.Chtimes(to, info.ModTime(), info.ModTime())
+		return copyDir(src, from, dst, to, rel, skip, info)
 	case info.Mode().IsRegular():
-		return copyFile(from, to, info)
+		return copyFile(src, from, dst, to, info)
 	}
 	return &fs.PathError{Op: "copy", Path: from, Err: errors.ErrUnsupported}
 }
 
-func copyFile(from, to string, info fs.FileInfo) error {
-	in, err := os.Open(from)
+func copyDir(src *os.Root, from string, dst *os.Root, to, rel string, skip map[string]bool, info fs.FileInfo) error {
+	t, err := dst.Lstat(to)
+	switch {
+	case errors.Is(err, fs.ErrNotExist):
+		err = dst.Mkdir(to, info.Mode().Perm())
+	case err == nil && plainpath.Link(t):
+		err = &fs.PathError{Op: "copy", Path: to, Err: plainpath.ErrLink}
+	case err == nil && !t.IsDir():
+		if err = dst.Remove(to); err == nil {
+			err = dst.Mkdir(to, info.Mode().Perm())
+		}
+	}
+	if err != nil {
+		return err
+	}
+	in, err := src.OpenRoot(from)
 	if err != nil {
 		return err
 	}
 	defer in.Close()
-	if t, err := os.Lstat(to); err == nil && t.IsDir() {
-		if err := os.RemoveAll(to); err != nil {
+	out, err := dst.OpenRoot(to)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	entries, err := readDir(in)
+	if err != nil {
+		return err
+	}
+	for _, e := range entries {
+		if err := copyTree(in, e.Name(), out, e.Name(), path.Join(rel, e.Name()), skip); err != nil {
 			return err
 		}
 	}
-	out, err := os.OpenFile(to, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode().Perm())
+	return dst.Chtimes(to, info.ModTime(), info.ModTime())
+}
+
+// copyFile writes a new file at to. Whatever was there goes first, so a link
+// planted at to is replaced, never written through.
+func copyFile(src *os.Root, from string, dst *os.Root, to string, info fs.FileInfo) error {
+	in, err := src.OpenFile(from, os.O_RDONLY|noFollow, 0)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+	if t, err := dst.Lstat(to); err == nil {
+		if t.IsDir() && !plainpath.Link(t) {
+			err = dst.RemoveAll(to)
+		} else {
+			err = dst.Remove(to)
+		}
+		if err != nil {
+			return err
+		}
+	}
+	out, err := dst.OpenFile(to, os.O_CREATE|os.O_EXCL|os.O_WRONLY|noFollow, info.Mode().Perm())
 	if err != nil {
 		return err
 	}
@@ -266,7 +331,52 @@ func copyFile(from, to string, info fs.FileInfo) error {
 	if err := out.Close(); err != nil {
 		return err
 	}
-	return os.Chtimes(to, info.ModTime(), info.ModTime())
+	return dst.Chtimes(to, info.ModTime(), info.ModTime())
+}
+
+// removeTree removes what a move took along: all of name but what skip
+// names, and the folders that still hold something of that stay.
+func removeTree(r *os.Root, name, rel string, skip map[string]bool) error {
+	if len(skip) == 0 {
+		return r.RemoveAll(name)
+	}
+	if skip[rel] {
+		return nil
+	}
+	info, err := r.Lstat(name)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() || plainpath.Link(info) {
+		return r.Remove(name)
+	}
+	sub, err := r.OpenRoot(name)
+	if err != nil {
+		return err
+	}
+	entries, err := readDir(sub)
+	if err == nil {
+		for _, e := range entries {
+			if err = removeTree(sub, e.Name(), path.Join(rel, e.Name()), skip); err != nil {
+				break
+			}
+		}
+	}
+	left, _ := readDir(sub)
+	sub.Close()
+	if err != nil || len(left) > 0 {
+		return err
+	}
+	return r.Remove(name)
+}
+
+func readDir(r *os.Root) ([]fs.DirEntry, error) {
+	f, err := r.Open(".")
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	return f.ReadDir(-1)
 }
 
 // codeOf names a failure the way the server's problems do, so the app shows

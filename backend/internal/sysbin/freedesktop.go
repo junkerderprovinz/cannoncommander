@@ -76,9 +76,11 @@ func (b *freedesktop) put(path, origin string, deleted time.Time) (Entry, error)
 	}
 	recorded := origin
 	if pl.top != "" {
-		if rel, err := filepath.Rel(pl.top, origin); err == nil && !strings.HasPrefix(rel, "..") {
-			recorded = rel
+		rel, err := filepath.Rel(pl.top, origin)
+		if err != nil || !filepath.IsLocal(rel) {
+			return Entry{}, ErrNoBin
 		}
+		recorded = rel
 	}
 	deleted = deleted.Truncate(time.Second)
 	name, err := reserve(pl, filepath.Base(origin), formatTrashInfo(recorded, deleted))
@@ -265,19 +267,16 @@ func (b *freedesktop) entry(pl place, name string, sizes *sizeCache) (Entry, err
 	if err != nil {
 		return Entry{}, ErrNotFound
 	}
-	origin := ti.Path
-	if !filepath.IsAbs(origin) {
-		if pl.top == "" {
-			return Entry{}, ErrNotFound
-		}
-		origin = filepath.Join(pl.top, origin)
+	origin, ok := originOf(pl, ti.Path)
+	if !ok {
+		return Entry{}, ErrNotFound
 	}
 	data := filepath.Join(pl.dir, "files", name)
 	st, err := os.Lstat(data)
 	if err != nil {
 		return Entry{}, ErrNotFound
 	}
-	e := Entry{ID: makeID(pl.key(), name), Name: filepath.Base(origin), Origin: filepath.Clean(origin), Path: data, Dir: st.IsDir(), Size: st.Size(), Deleted: ti.Deleted}
+	e := Entry{ID: makeID(pl.key(), name), Name: filepath.Base(origin), Origin: origin, Path: data, Dir: st.IsDir(), Size: st.Size(), Deleted: ti.Deleted}
 	if e.Dir {
 		if sizes == nil {
 			sizes = readSizes(pl)
@@ -286,6 +285,23 @@ func (b *freedesktop) entry(pl place, name string, sizes *sizeCache) (Entry, err
 		e.Size = sizes.of(name, data, pl.info(name))
 	}
 	return e, nil
+}
+
+// originOf reads the path a record holds. The trash of the home folder
+// records absolute paths. That of a volume records them relative to its top,
+// and a path that leads elsewhere is refused, since anybody who brings the
+// volume could have written it.
+func originOf(pl place, recorded string) (string, bool) {
+	if pl.top == "" {
+		if !filepath.IsAbs(recorded) {
+			return "", false
+		}
+		return filepath.Clean(recorded), true
+	}
+	if filepath.IsAbs(recorded) || !filepath.IsLocal(recorded) {
+		return "", false
+	}
+	return filepath.Join(pl.top, recorded), true
 }
 
 func (b *freedesktop) Restore(id, to string) error {

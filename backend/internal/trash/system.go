@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/fs"
 	"net/http"
 	"os"
@@ -21,6 +22,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fschange"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/plainpath"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/sysbin"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/elevate"
 )
@@ -324,10 +326,15 @@ func (s *Store) mayRestore(u *users.User, it Item) error {
 	return err
 }
 
-// takeOver moves what the app's own trash holds into the system's, keeping
-// where and when each entry was deleted, and removes the emptied folders. It
-// runs on every start of the desktop app and finds nothing to do once the
+// takeOver moves the entries the app's own trash recorded into the system's,
+// keeping where and when each was deleted, and removes the emptied folders.
+// It runs on every start of the desktop app and finds nothing to do once the
 // move is through.
+//
+// The trash folder sits at the top of a drive, where other accounts may make
+// folders too, and so may whoever made a USB disk. Only records count, and a
+// trash folder, holder or entry that is a link or belongs to someone else
+// stays where it is, so nobody can steer the move at somebody's profile.
 func (s *Store) takeOver() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -349,53 +356,50 @@ func (s *Store) takeOver() {
 		if err != nil {
 			continue
 		}
+		holder := filepath.Dir(held.Real)
+		bin := filepath.Dir(holder)
+		if err := ownPlain(bin, holder); err != nil {
+			logger.Warningf("trash: leaving %s where it is: %v", held.Real, err)
+			continue
+		}
+		if err := plainpath.Check(held.Real); err != nil && !errors.Is(err, fs.ErrNotExist) {
+			logger.Warningf("trash: leaving %s where it is: %v", held.Real, err)
+			continue
+		}
 		if _, err := s.sys.Adopt(held.Real, origin.Real, it.DeletedAt); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			logger.Errorf("trash: moving %s into the trash of the system: %v", held.Real, err)
 			continue
 		}
 		s.forget(it.ID)
-		os.Remove(filepath.Dir(held.Real))
-		bins = append(bins, filepath.Dir(filepath.Dir(held.Real)))
-	}
-	for _, src := range s.fs.Sources() {
-		if src.Mount != "/remotes" {
-			bins = append(bins, filepath.Join(src.Root, DirName))
-		}
+		os.Remove(holder)
+		bins = append(bins, bin)
 	}
 	slices.Sort(bins)
 	for _, bin := range slices.Compact(bins) {
-		s.adoptLeftovers(bin)
+		if ownPlain(bin) == nil && os.Remove(bin) == nil {
+			logger.Infof("trash: moved %s into the trash of the system", bin)
+		}
 	}
 	if len(items) > 0 {
 		s.changed()
 	}
 }
 
-// adoptLeftovers takes over what lies in an old trash folder without a
-// record, as if it had been deleted from the folder that holds the trash.
-func (s *Store) adoptLeftovers(bin string) {
-	holders, err := os.ReadDir(bin)
-	if err != nil {
-		return
-	}
-	top := filepath.Dir(bin)
-	for _, h := range holders {
-		dir := filepath.Join(bin, h.Name())
-		at := time.Now()
-		if info, err := h.Info(); err == nil {
-			at = info.ModTime()
+// ownPlain checks that every one of dirs is a plain folder of this account.
+func ownPlain(dirs ...string) error {
+	for _, d := range dirs {
+		if err := plainpath.Check(d); err != nil {
+			return err
 		}
-		inner, _ := os.ReadDir(dir)
-		for _, e := range inner {
-			if _, err := s.sys.Adopt(filepath.Join(dir, e.Name()), filepath.Join(top, e.Name()), at); err != nil {
-				logger.Errorf("trash: moving %s into the trash of the system: %v", filepath.Join(dir, e.Name()), err)
-			}
+		mine, err := plainpath.Mine(d)
+		if err != nil {
+			return err
 		}
-		os.Remove(dir)
+		if !mine {
+			return fmt.Errorf("%s belongs to another account", d)
+		}
 	}
-	if os.Remove(bin) == nil {
-		logger.Infof("trash: moved %s into the trash of the system", bin)
-	}
+	return nil
 }
 
 // elevateTrash puts the open items in the Recycle Bin with administrator

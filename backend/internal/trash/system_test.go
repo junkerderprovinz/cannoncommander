@@ -300,9 +300,6 @@ func TestTheOldTrashMovesIntoTheSystemTrash(t *testing.T) {
 	when := time.Date(2026, 9, 1, 12, 0, 0, 0, time.Local)
 	old.db.Exec(`UPDATE trash_items SET deleted_at = ? WHERE id = ?`, when.UnixMilli(), a.ID)
 	old.Close()
-	lost := filepath.Join(root, DirName, "zz", "verloren.txt")
-	os.MkdirAll(filepath.Dir(lost), 0o755)
-	os.WriteFile(lost, []byte("?"), 0o644)
 
 	bin := newFakeBin(filepath.Join(root, "$Recycle.Bin"))
 	s := openWith(deps, bin)
@@ -313,7 +310,7 @@ func TestTheOldTrashMovesIntoTheSystemTrash(t *testing.T) {
 	for _, e := range bin.entries {
 		got[e.Origin] = e
 	}
-	for _, p := range []string{filepath.Join(root, "Bilder", "a.jpg"), filepath.Join(root, "Briefe", "b.odt"), filepath.Join(root, "verloren.txt")} {
+	for _, p := range []string{filepath.Join(root, "Bilder", "a.jpg"), filepath.Join(root, "Briefe", "b.odt")} {
 		if _, ok := got[p]; !ok {
 			t.Errorf("%s is not in the system trash: %+v", p, bin.entries)
 		}
@@ -330,7 +327,81 @@ func TestTheOldTrashMovesIntoTheSystemTrash(t *testing.T) {
 		t.Errorf("%d rows left", rows)
 	}
 	s.takeOver()
-	if len(bin.entries) != 3 {
+	if len(bin.entries) != 2 {
 		t.Errorf("a second round changed the trash: %d entries", len(bin.entries))
+	}
+}
+
+// oldBin is a store on a drive at root with one record of the app's own
+// trash, for the file name in the holder id, whatever lies there.
+func oldBin(t *testing.T, root, id, name string) (*Store, *fakeBin) {
+	t.Helper()
+	fsys, err := ccfs.New(nil, ccfs.Source{Name: "C:", Mount: "/C", Root: root})
+	if err != nil {
+		t.Fatal(err)
+	}
+	deps := v1.Deps{FS: fsys, DB: testutil.MainDB(t)}
+	if _, err := deps.DB.Exec(`INSERT INTO trash_items (id, owner, name, origin, bin, dir, size, files, deleted_at)
+		VALUES (?, 'anna', ?, ?, ?, 0, 1, 1, 1)`, id, name, "/C/"+name, "/C/"+DirName+"/"+id+"/"+name); err != nil {
+		t.Fatal(err)
+	}
+	bin := newFakeBin(filepath.Join(root, "$Recycle.Bin"))
+	s := openWith(deps, bin)
+	t.Cleanup(s.Close)
+	return s, bin
+}
+
+func file(t *testing.T, p, body string) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestLeftoversWithoutARecordStayWhereTheyAre(t *testing.T) {
+	root := t.TempDir()
+	lost := filepath.Join(root, DirName, "zz", "verloren.txt")
+	file(t, lost, "?")
+	s, bin := oldBin(t, root, "other", "x.txt")
+	s.takeOver()
+	if len(bin.entries) != 0 {
+		t.Fatalf("taken over: %+v", bin.entries)
+	}
+	if _, err := os.Stat(lost); err != nil {
+		t.Fatal("the leftover went away")
+	}
+}
+
+func TestATrashFolderThatIsALinkIsLeftAlone(t *testing.T) {
+	root, victim := t.TempDir(), t.TempDir()
+	file(t, filepath.Join(victim, "abc", "Dokumente.txt"), "privat")
+	linkDir(t, victim, filepath.Join(root, DirName))
+	s, bin := oldBin(t, root, "abc", "Dokumente.txt")
+	s.takeOver()
+	if len(bin.entries) != 0 {
+		t.Fatalf("taken over: %+v", bin.entries)
+	}
+	if _, err := os.Stat(filepath.Join(victim, "abc", "Dokumente.txt")); err != nil {
+		t.Fatal("the file behind the link went away")
+	}
+}
+
+func TestAHolderThatIsALinkIsLeftAlone(t *testing.T) {
+	root, victim := t.TempDir(), t.TempDir()
+	file(t, filepath.Join(victim, "Dokumente.txt"), "privat")
+	if err := os.MkdirAll(filepath.Join(root, DirName), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	linkDir(t, victim, filepath.Join(root, DirName, "abc"))
+	s, bin := oldBin(t, root, "abc", "Dokumente.txt")
+	s.takeOver()
+	if len(bin.entries) != 0 {
+		t.Fatalf("taken over: %+v", bin.entries)
+	}
+	if _, err := os.Stat(filepath.Join(victim, "Dokumente.txt")); err != nil {
+		t.Fatal("the file behind the link went away")
 	}
 }
