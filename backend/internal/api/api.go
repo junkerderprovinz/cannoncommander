@@ -7,10 +7,12 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/clipapi"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/filemanager"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/launch"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/office"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/openwith"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
@@ -47,6 +49,8 @@ func NewRouter(deps v1.Deps, auth v1.Authenticator) *v1.Router {
 	terminal.Routes(r)
 	openwith.Routes(r)
 	clipapi.Routes(r)
+	launch.Routes(r)
+	filemanager.Routes(r)
 	office.Routes(r)
 	stream.Routes(r)
 	return r

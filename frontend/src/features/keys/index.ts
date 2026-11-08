@@ -9,10 +9,10 @@ import { setTipSource } from '@/core/tips';
 import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { language, t } from '@/i18n';
-import { type KeyMap, keyLabel, mainCombo } from './keys';
+import { type KeyMap, keyLabel, mainCombo, type Preset, preset } from './keys';
 import KeysWin from './KeysWin.vue';
 
-interface Saved { map: KeyMap; preset: 'cc' | 'tc' }
+interface Saved { map: KeyMap; preset: Preset }
 let defaults: KeyMap = {};
 // The key each action names for itself, which also covers keys the panels handle outside the map, such as Backspace.
 let declared: Record<string, string | undefined> = {};
@@ -40,7 +40,7 @@ function open() {
     title: t('keys.title'), wide: true, cls: 'kb-win', body: KeysWin,
     props: {
       current: { ...keymap }, defaults, declared, which: saved()?.preset ?? 'cc',
-      apply: (map: KeyMap, which: 'cc' | 'tc') => {
+      apply: (map: KeyMap, which: Preset) => {
         apply(map);
         const own = JSON.stringify(map) !== JSON.stringify(defaults);
         setPref('keys', own ? { map, preset: which } : null);
@@ -48,6 +48,13 @@ function open() {
       },
     },
   });
+}
+
+// The layout a choice of style brings, as the F1 window would pick it.
+export function choosePreset(id: Preset) {
+  const map = preset(id, defaults, (a) => !!actions[a]);
+  apply(map);
+  setPref('keys', id === 'cc' ? null : { map, preset: id });
 }
 
 export default function setup() {
