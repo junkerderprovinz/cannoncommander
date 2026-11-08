@@ -15,7 +15,7 @@ import (
 
 func TestOneClientBehindAnUnnamedProxyDoesNotLockOutEveryone(t *testing.T) {
 	w := signInWorld(t)
-	turnOnPasskeys(t)
+	passkeysAtCannon(t)
 	w.addUser("anna", "user", "/mnt/user")
 	viaProxy := []string{"X-IP", "172.18.0.2", "X-Forwarded-For", "203.0.113.9"}
 	for i := range 25 {
@@ -48,7 +48,7 @@ func TestGuessingFromAcrossAnIPv6NetworkIsCutShort(t *testing.T) {
 
 func TestResettingThePasswordRemovesPasskeys(t *testing.T) {
 	w := signInWorld(t)
-	turnOnPasskeys(t)
+	passkeysAtCannon(t)
 	log := catchCodes(t)
 	w.addUser("anna", "user", "/mnt/user")
 	key := newAuthenticator(t)
@@ -104,7 +104,7 @@ func TestATokenCannotEndASession(t *testing.T) {
 
 func TestAnAccountFromElsewhereGetsNoPasskey(t *testing.T) {
 	w := signInWorld(t)
-	turnOnPasskeys(t)
+	passkeysAtCannon(t)
 	anna := w.addUser("anna", "user", "/mnt/user")
 	key := newAuthenticator(t)
 	w.addPasskey("anna", key)
@@ -123,7 +123,7 @@ func TestAnAccountFromElsewhereGetsNoPasskey(t *testing.T) {
 
 func TestAPasskeyDoesNotWipeTheCountOfAnAddress(t *testing.T) {
 	w := signInWorld(t)
-	turnOnPasskeys(t)
+	passkeysAtCannon(t)
 	w.addUser("anna", "user", "/mnt/user")
 	key := newAuthenticator(t)
 	w.addPasskey("anna", key)

@@ -20,7 +20,7 @@ func TestANewTokenNeedsTheCurrentPassword(t *testing.T) {
 
 func TestANewPasskeyNeedsTheCurrentPassword(t *testing.T) {
 	w := newWorld(t)
-	turnOnPasskeys(t)
+	passkeysAtCannon(t)
 	w.addUser("anna", "user", "/mnt/user")
 	w.must(http.StatusBadRequest, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": "Laptop"}))
 	w.must(http.StatusForbidden, w.as("anna", "POST", "/me/passkeys", map[string]any{"name": "Laptop", "password": "geraten-geraten"}))
