@@ -286,7 +286,7 @@ func TestASharedTrashNeedsTheStickyBit(t *testing.T) {
 func TestMountsLeaveOutTheKernelsOwn(t *testing.T) {
 	info := "22 1 0:21 / /proc rw,nosuid - proc proc rw\n" +
 		"36 1 8:1 / / rw,relatime shared:1 - ext4 /dev/sda1 rw\n" +
-		"40 36 8:17 / /media/anna/USB\040Stick rw,nosuid shared:7 - vfat /dev/sdb1 rw\n" +
+		`40 36 8:17 / /media/anna/USB\040Stick rw,nosuid shared:7 - vfat /dev/sdb1 rw` + "\n" +
 		"broken line\n"
 	got := parseMounts(info)
 	if len(got) != 2 || got[0] != "/" || got[1] != "/media/anna/USB Stick" {
