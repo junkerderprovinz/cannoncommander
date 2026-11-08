@@ -83,19 +83,20 @@
     eye.dataset.tip = show ? 'Verbergen' : 'Anzeigen';
   });
 
-  // A dropdown is a field-shaped trigger that opens the shared menu under it.
+  // A dropdown is a field-shaped trigger that opens the shared menu under it. An option may carry a flag instead of a glyph.
+  const mark = (o) => (o[3] ? `<span class="fi fi-${o[3]}"></span>` : o[2] ? g(o[2]) : '');
   const dropdown = (opts, cur, attr = '', cls = 'm') => {
     const o = opts.find(x => x[0] === cur) || opts[0];
-    return `<button class="field ${cls} a-dd" data-dd="${esc(JSON.stringify(opts))}" data-val="${esc(o[0])}" ${attr}><span>${o[2] ? g(o[2]) : ''}${esc(o[1])}</span>${g('IconExpand')}</button>`;
+    return `<button class="field ${cls} a-dd" data-dd="${esc(JSON.stringify(opts))}" data-val="${esc(o[0])}" ${attr}><span>${mark(o)}${esc(o[1])}</span>${g('IconExpand')}</button>`;
   };
   document.addEventListener('click', e => {
     const dd = e.target.closest('.a-dd');
     if (!dd) return;
     e.stopPropagation();
     const opts = JSON.parse(dd.dataset.dd), r = dd.getBoundingClientRect();
-    menu(r.left, r.bottom + 6, opts.map(([v, l, gl]) => ({ label: l, g: gl, radio: true, checked: () => v === dd.dataset.val, run: () => {
-      dd.dataset.val = v;
-      dd.querySelector('span').innerHTML = (gl ? g(gl) : '') + esc(l);
+    menu(r.left, r.bottom + 6, opts.map((o) => ({ label: o[1], g: o[2], radio: true, checked: () => o[0] === dd.dataset.val, run: () => {
+      dd.dataset.val = o[0];
+      dd.querySelector('span').innerHTML = mark(o) + esc(o[1]);
       dd.dispatchEvent(new Event('change', { bubbles: true }));
       dd.focus();
     } })));

@@ -131,7 +131,7 @@
     const labelModes = [['text', 'Text', 'IconLabelText'], ['textGlyph', 'Text und Symbol', 'IconLabelTextGlyph'], ['glyph', 'Symbol', 'IconLabelGlyph'], ['reactive', 'Reaktiv', 'IconLabelReactive']];
     const ordered = (CC.prefs.tabOrder || []).length > 0;
     host.innerHTML = CC.card('Darstellung',
-      frow('Sprache', A.dropdown([['de', '🇩🇪 Deutsch'], ['en', '🇬🇧 English']], p.language, 'data-pref="language"'))
+      frow('Sprache', A.dropdown([['de', 'Deutsch', null, 'de'], ['en', 'English', null, 'gb']], p.language, 'data-pref="language"'))
       + frow('Design', seg([['dark', 'Dunkel', 'IconMoon'], ['light', 'Hell', 'IconSun'], ['system', 'System', 'IconThemeSystem']], p.theme, 'data-pref="theme"'), 'System folgt der Einstellung deines Geräts.')
       + frow('Ecken', seg(shapes, p.shape, 'data-k-focus="shape" id="a-shape"'), 'Wie rund Karten, Knöpfe und Fenster sind.')
       + frow('Animation', seg(motions, p.motion, 'data-k-focus="motion" id="a-motion"'), 'Wie lebhaft Fenster und Seiten hereinkommen. Wenn dein System weniger Bewegung wünscht, gilt das immer.')
