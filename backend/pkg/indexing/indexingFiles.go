@@ -6,7 +6,6 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
-	"runtime"
 	"slices"
 	"strings"
 	"sync"
@@ -16,6 +15,7 @@ import (
 	"github.com/gtsteffaniak/go-cache/cache"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/adapters/fs/fileutils"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/dbindex"
 	dbsql "github.com/junkerderprovinz/cannoncommander/backend/internal/database/sql"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
@@ -1654,15 +1654,12 @@ func (idx *Index) SyncFolderSizesToDB() error {
 	return nil
 }
 
+// IsHidden decides as the listings do: by the hidden attribute on Windows,
+// as Explorer does, and by the dot in front of the name elsewhere. The
+// trash and the part files of the app stay out of the index everywhere.
 func IsHidden(realPath string) bool {
-	if filepath.Base(realPath)[0] == '.' {
-		return true
-	}
-	if runtime.GOOS == "windows" {
-		return CheckWindowsHidden(realPath)
-	}
-	// Default behavior for non-Windows systems
-	return false
+	name := filepath.Base(realPath)
+	return ccfs.HiddenByName(name) || ccfs.Reserved(name) || CheckWindowsHidden(realPath)
 }
 
 // setFilePreviewFlags determines if a file should have a preview based on its type

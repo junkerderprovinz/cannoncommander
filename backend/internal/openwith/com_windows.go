@@ -11,11 +11,10 @@ var (
 	shell32 = windows.NewLazySystemDLL("shell32.dll")
 	shlwapi = windows.NewLazySystemDLL("shlwapi.dll")
 
-	procEnumHandlers       = shell32.NewProc("SHAssocEnumHandlers")
-	procItemFromPath       = shell32.NewProc("SHCreateItemFromParsingName")
-	procOpenWithDialog     = shell32.NewProc("SHOpenWithDialog")
-	procAssocQueryString   = shlwapi.NewProc("AssocQueryStringW")
-	procLoadIndirectString = shlwapi.NewProc("SHLoadIndirectString")
+	procEnumHandlers     = shell32.NewProc("SHAssocEnumHandlers")
+	procItemFromPath     = shell32.NewProc("SHCreateItemFromParsingName")
+	procOpenWithDialog   = shell32.NewProc("SHOpenWithDialog")
+	procAssocQueryString = shlwapi.NewProc("AssocQueryStringW")
 )
 
 var (

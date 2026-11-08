@@ -19,8 +19,6 @@ import { t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 
 beforeAll(() => {
-  // The palette scrolls its picked row into view, which jsdom does not draw.
-  Element.prototype.scrollIntoView ??= () => {};
   setActivePinia(createPinia());
   usePanels();
   registerFileActions();

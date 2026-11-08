@@ -3,7 +3,7 @@ import { setLanguage } from '@/i18n';
 import { addMessages } from '@/i18n';
 import de from './de.json';
 import en from './en.json';
-import { assign, changed, check, combosOf, keyLabel, mainCombo, ownKeys, preset, reservedBy, reset, swap, withOwn } from './keys';
+import { assign, changed, check, combosOf, heldBack, keyLabel, mainCombo, ownKeys, preset, reservedBy, reset, restore, swap, withOwn } from './keys';
 
 addMessages('keys', { de, en });
 const DEFAULTS = { 'Ctrl+a': 'selectAll', F2: 'rename', F5: 'copy', 'Alt+p': 'pack', 'Alt+u': 'unpack', 'Ctrl+r': 'refresh', 'Alt+ArrowDown': 'history' };
@@ -83,6 +83,28 @@ describe('a new key', () => {
     expect(combosOf(back, 'copy')).toEqual([]);
     expect(back['Ctrl+r']).toBeUndefined();
     expect(back.F5).toBe('refresh');
+  });
+});
+
+describe('a reset whose key another action has taken', () => {
+  const swapped = swap(DEFAULTS, 'F2', 'copy');
+
+  it('knows which of its keys are held elsewhere', () => {
+    expect(heldBack(swapped, DEFAULTS, 'copy')).toEqual(['F5']);
+    expect(heldBack(DEFAULTS, DEFAULTS, 'copy')).toEqual([]);
+  });
+
+  it('can swap them back', () => {
+    const map = restore(swapped, DEFAULTS, 'copy', true);
+    expect(combosOf(map, 'copy')).toEqual(['F5']);
+    expect(combosOf(map, 'rename')).toEqual(['F2']);
+  });
+
+  it('can take the key and leave the other action without it', () => {
+    const map = restore(swapped, DEFAULTS, 'copy', false);
+    expect(combosOf(map, 'copy')).toEqual(['F5']);
+    expect(combosOf(map, 'rename')).toEqual([]);
+    expect(map.F2).toBeUndefined();
   });
 });
 

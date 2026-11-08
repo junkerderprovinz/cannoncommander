@@ -9,14 +9,15 @@ import { host } from '@/core/host';
 import type { MenuEntry } from '@/core/menu';
 import { MENUS, menuName } from '@/core/menus';
 import { t } from '@/i18n';
-import { assign, changed, check, combosOf, keyLabel, type KeyMap, mainCombo, reservedBy, reset, swap } from './keys';
+import { assign, changed, check, combosOf, heldBack, keyLabel, type KeyMap, mainCombo, reservedBy, reset, restore, swap } from './keys';
 import KeyField from './KeyField.vue';
 import { declaredKeys } from './state';
 
 const props = defineProps<{ map: KeyMap; base: KeyMap; query: string; cards?: boolean }>();
 const emit = defineEmits<{ 'update:map': [map: KeyMap] }>();
 const rec = ref<string | null>(null);
-const pending = ref<{ msg: string; combo?: string; other?: string } | null>(null);
+// What a row says: why a key cannot be taken, or the choice a clash leaves, which a reset can ask for too.
+const pending = ref<{ id: string; msg: string; combo?: string; other?: string; reset?: boolean } | null>(null);
 
 const name = (a: Action) => labelOf(a);
 function groups(): [string, string[]][] {
@@ -52,7 +53,7 @@ function listen(id: string) {
   pending.value = null;
 }
 function leave(e: FocusEvent, id: string) {
-  if (rec.value === id && !(e.currentTarget as Element).contains(e.relatedTarget as Node | null)) stop();
+  if ((rec.value === id || pending.value?.id === id) && !(e.currentTarget as Element).contains(e.relatedTarget as Node | null)) stop();
 }
 
 function press(combo: string) {
@@ -61,15 +62,28 @@ function press(combo: string) {
   if (v.ok) return set(assign(props.map, combo, id));
   const key = keyLabel(combo);
   if (v.reason !== 'taken') {
-    pending.value = { msg: t(`keys.${v.reason}`, { key }) };
+    pending.value = { id, msg: t(`keys.${v.reason}`, { key }) };
     return;
   }
   // Pressing the same key once more takes it without the buttons.
   if (pending.value?.combo === combo) return set(assign(props.map, combo, id));
-  const other = name(actions[v.other]!);
-  pending.value = { combo, other: v.other, msg: t(combosOf(props.map, id).length ? 'keys.taken' : 'keys.takenAlone', { key, action: other }) };
+  pending.value = clash(id, combo, v.other);
 }
-const take = (how: typeof swap) => set(how(props.map, pending.value!.combo!, rec.value!));
+const clash = (id: string, combo: string, other: string, back?: boolean) => ({
+  id, combo, other, reset: back,
+  msg: t(combosOf(props.map, id).length ? 'keys.taken' : 'keys.takenAlone', { key: keyLabel(combo), action: name(actions[other]!) }),
+});
+function take(swapped: boolean) {
+  const { id, combo, reset: back } = pending.value!;
+  set(back ? restore(props.map, props.base, id, swapped) : (swapped ? swap : assign)(props.map, combo!, id));
+}
+// A reset whose key another action has taken asks first, so that action never ends up without a key unnoticed.
+function undo(id: string) {
+  const held = heldBack(props.map, props.base, id)[0];
+  if (!held) return set(reset(props.map, props.base, id));
+  rec.value = null;
+  pending.value = clash(id, held, props.map[held]!, true);
+}
 const clear = (id: string) => set(Object.fromEntries(Object.entries(props.map).filter(([, a]) => a !== id)));
 </script>
 
@@ -85,13 +99,13 @@ const clear = (id: string) => set(Object.fromEntries(Object.entries(props.map).f
         @click="listen(id)" @press="press" @cancel="stop" />
       <span class="kb-acts">
         <IconButton v-if="main(id)" :tip="t('keys.clear')" :glyph="glyphComponent('IconClose')" :data-kb-clear="id" @click="clear(id)" />
-        <IconButton v-if="changed(map, base, id)" :tip="t('keys.undo')" :glyph="glyphComponent('IconUndo')" :data-kb-reset="id" @click="set(reset(map, base, id))" />
+        <IconButton v-if="changed(map, base, id)" :tip="t('keys.undo')" :glyph="glyphComponent('IconUndo')" :data-kb-reset="id" @click="undo(id)" />
       </span>
-      <div v-if="rec === id && pending" class="kb-warn" role="alert">
+      <div v-if="pending?.id === id" class="kb-warn" role="alert">
         <span>{{ pending.msg }}</span>
         <span v-if="pending.other" class="kb-choice">
-          <Button v-if="combosOf(map, id).length" id="kb-swap" :label="t('keys.swap')" label-key="IconSync" @click="take(swap)" />
-          <Button id="kb-replace" :label="t('keys.replace')" label-key="IconCheck" @click="take(assign)" />
+          <Button v-if="combosOf(map, id).length" id="kb-swap" :label="t('keys.swap')" label-key="IconSync" @click="take(true)" />
+          <Button id="kb-replace" :label="t('keys.replace')" label-key="IconCheck" @click="take(false)" />
         </span>
       </div>
     </div>

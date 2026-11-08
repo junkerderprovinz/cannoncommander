@@ -7,10 +7,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"unsafe"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
-	"golang.org/x/sys/windows"
 )
 
 // iconImage loads the icon at where, which is a file and the index of an
@@ -18,7 +16,7 @@ import (
 // image, which starts with "@{".
 func iconImage(where string) (image.Image, error) {
 	if strings.HasPrefix(where, "@{") {
-		file, err := indirectString(where)
+		file, err := winshell.IndirectString(where)
 		if err != nil {
 			return nil, err
 		}
@@ -62,17 +60,4 @@ func trimmed(img image.Image) image.Image {
 		return img
 	}
 	return sub.SubImage(opaque)
-}
-
-func indirectString(s string) (string, error) {
-	p, err := windows.UTF16PtrFromString(s)
-	if err != nil {
-		return "", err
-	}
-	buf := make([]uint16, 1024)
-	r, _, _ := procLoadIndirectString.Call(uintptr(unsafe.Pointer(p)), uintptr(unsafe.Pointer(&buf[0])), uintptr(len(buf)), 0)
-	if err := winshell.Failed(r); err != nil {
-		return "", err
-	}
-	return windows.UTF16ToString(buf), nil
 }
