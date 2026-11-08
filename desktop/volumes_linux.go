@@ -103,23 +103,23 @@ func udisksVolumes(objs udisksObjects) []desktop.Volume {
 	var out []desktop.Volume
 	for p, ifaces := range objs {
 		block, fs := ifaces[udisksBlock], ifaces[udisksFS]
-		if block == nil || fs == nil || flag(block, "HintIgnore") {
+		if block == nil || fs == nil || boolProp(block, "HintIgnore") {
 			continue
 		}
-		v := desktop.Volume{ID: string(p), Root: firstMount(fs["MountPoints"]), Label: text(block, "IdLabel"), Kind: "fixed"}
+		v := desktop.Volume{ID: string(p), Root: firstMount(fs["MountPoints"]), Label: stringProp(block, "IdLabel"), Kind: "fixed"}
 		if size, ok := block["Size"].Value().(uint64); ok {
 			v.Size = size
 		}
-		drive := objs[objectPath(block, "Drive")][udisksDrive]
+		drive := objs[pathProp(block, "Drive")][udisksDrive]
 		switch {
 		case ifaces[udisksLoop] != nil:
 			v.Kind, v.Eject = "virtual", true
-		case drive != nil && flag(drive, "Optical"):
+		case drive != nil && boolProp(drive, "Optical"):
 			v.Kind, v.Eject = "optical", true
-		case drive != nil && (flag(drive, "Removable") || slices.Contains([]string{"usb", "sdio", "ieee1394"}, text(drive, "ConnectionBus"))):
-			v.Kind, v.Eject = "removable", flag(drive, "Ejectable") || flag(drive, "CanPowerOff")
+		case drive != nil && (boolProp(drive, "Removable") || slices.Contains([]string{"usb", "sdio", "ieee1394"}, stringProp(drive, "ConnectionBus"))):
+			v.Kind, v.Eject = "removable", boolProp(drive, "Ejectable") || boolProp(drive, "CanPowerOff")
 		}
-		if flag(block, "HintSystem") && v.Kind == "fixed" && !userMount(v.Root) {
+		if boolProp(block, "HintSystem") && v.Kind == "fixed" && !userMount(v.Root) {
 			continue
 		}
 		out = append(out, v)
@@ -139,17 +139,17 @@ func userMount(root string) bool {
 	return false
 }
 
-func flag(props map[string]dbus.Variant, name string) bool {
+func boolProp(props map[string]dbus.Variant, name string) bool {
 	b, _ := props[name].Value().(bool)
 	return b
 }
 
-func text(props map[string]dbus.Variant, name string) string {
+func stringProp(props map[string]dbus.Variant, name string) string {
 	s, _ := props[name].Value().(string)
 	return s
 }
 
-func objectPath(props map[string]dbus.Variant, name string) dbus.ObjectPath {
+func pathProp(props map[string]dbus.Variant, name string) dbus.ObjectPath {
 	p, _ := props[name].Value().(dbus.ObjectPath)
 	return p
 }
@@ -188,9 +188,9 @@ func (s *shell) Eject(id string) error {
 		return errors.New("udisks2 does not know this volume")
 	}
 	none := map[string]dbus.Variant{}
-	drive := objectPath(ifaces[udisksBlock], "Drive")
+	drive := pathProp(ifaces[udisksBlock], "Drive")
 	for p, other := range objs {
-		if p != dbus.ObjectPath(id) && (drive == "/" || objectPath(other[udisksBlock], "Drive") != drive) {
+		if p != dbus.ObjectPath(id) && (drive == "/" || pathProp(other[udisksBlock], "Drive") != drive) {
 			continue
 		}
 		if fs := other[udisksFS]; fs != nil && firstMount(fs["MountPoints"]) != "" {
@@ -204,9 +204,9 @@ func (s *shell) Eject(id string) error {
 	}
 	props := objs[drive][udisksDrive]
 	switch {
-	case flag(props, "Ejectable"):
+	case boolProp(props, "Ejectable"):
 		return conn.Object(udisks, drive).Call(udisksDrive+".Eject", 0, none).Err
-	case flag(props, "CanPowerOff"):
+	case boolProp(props, "CanPowerOff"):
 		return conn.Object(udisks, drive).Call(udisksDrive+".PowerOff", 0, none).Err
 	}
 	return nil
