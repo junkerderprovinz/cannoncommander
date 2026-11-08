@@ -17,6 +17,11 @@ export function recordVisit(path: string, now = Date.now()) {
   try { localStorage.setItem(KEY, JSON.stringify(all)); } catch { /* the ranking just stays where it was */ }
 }
 
+// The folders used last, the latest first, leaving out those in skip.
+export function recentFolders(n = 6, skip: string[] = [], visits = read()) {
+  return Object.entries(visits).filter(([p]) => !skip.includes(p)).sort((a, b) => b[1].t - a[1].t).slice(0, n).map(([p]) => p);
+}
+
 export function topFolders(n = 8, skip = '', now = Date.now(), visits = read()) {
   return Object.entries(visits).filter(([p]) => p !== skip).sort((a, b) => rank(b[1], now) - rank(a[1], now)).slice(0, n).map(([p]) => p);
 }

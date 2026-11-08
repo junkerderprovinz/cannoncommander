@@ -1,0 +1,169 @@
+tag:
+  name: places
+  description: |
+    The computer's own places, only in the desktop app: the folders the
+    system keeps for every user, such as Downloads, and the drives, which
+    come and go while the app runs. When one comes or goes the event
+    stream says so as desktop.volumes, with the volumes that were added
+    and removed.
+paths:
+  /places:
+    get:
+      operationId: places
+      summary: List the computer's folders and drives
+      description: |
+        folders are the user's home folder, Desktop, Documents, Downloads,
+        Pictures, Music and Videos where they exist, in the places the
+        system keeps them: the known folders on Windows and the XDG user
+        folders on Linux. volumes are the drives, sticks, discs, disk
+        images and network shares, mounted or not, and the shares of other
+        computers opened by their path.
+      responses:
+        "200":
+          description: The places.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [folders, volumes]
+                properties:
+                  folders:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Place"
+                  volumes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PlaceVolume"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /places/eject:
+    post:
+      operationId: ejectVolume
+      summary: Eject a drive
+      description: |
+        Ejects a stick, a disc or a disk image the way the system's file
+        manager does, so it can be pulled safely. The drive leaves the
+        list once the system lets it go.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaceVolumeRef"
+      responses:
+        "204":
+          description: The drive is ejected.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly), or no such drive (noVolume).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: The drive cannot be ejected, or a program still uses it (ejectFailed).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /places/mount:
+    post:
+      operationId: mountVolume
+      summary: Mount a drive
+      description: |
+        Mounts a volume that waits to be mounted, as Linux leaves a
+        partition until someone opens it, and answers where it went. A
+        volume that is mounted already answers its folder.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaceVolumeRef"
+      responses:
+        "200":
+          description: Where the volume is.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [path]
+                properties:
+                  path:
+                    type: string
+                    example: /run/media/jdp/STICK
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly), or no such drive (noVolume).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: The system did not mount it (mountFailed).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+components:
+  schemas:
+    Place:
+      type: object
+      required: [kind, path]
+      properties:
+        kind:
+          type: string
+          enum: [home, desktop, documents, downloads, pictures, music, videos]
+        path:
+          type: string
+          example: /C/Users/jdp/Downloads
+        label:
+          type: string
+          description: The name Explorer shows for the folder, from its desktop.ini, where it has one.
+          example: Downloads
+    PlaceVolume:
+      type: object
+      required: [id, kind]
+      properties:
+        id:
+          type: string
+          description: Names the volume for eject and mount, such as E:.
+        path:
+          type: string
+          description: Where the volume is, left out while it waits to be mounted.
+          example: /E
+        label:
+          type: string
+          description: The name the volume was given, left out when it has none.
+        kind:
+          type: string
+          enum: [fixed, removable, optical, network, virtual]
+        remote:
+          type: string
+          description: The share behind a network volume.
+          example: \\nas\daten
+        size:
+          type: integer
+          format: int64
+          description: The size in bytes, where the system knows it.
+        eject:
+          type: boolean
+    PlaceVolumeRef:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: string

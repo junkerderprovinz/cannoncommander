@@ -1,0 +1,2 @@
+/* A volume Linux has not mounted yet reads quieter until a click mounts it. */
+.side-drives .unmounted { color: var(--carbon-text-muted); }

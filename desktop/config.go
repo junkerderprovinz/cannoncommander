@@ -19,15 +19,30 @@ type source struct {
 	// Indexed sources take part in the search. A whole drive is left out,
 	// since reading all of it would keep the computer busy for a long time.
 	Indexed bool
+	// Include is the one folder inside an indexed source that the search
+	// covers, as the home folder inside /, or "" for all of it.
+	Include string
+}
+
+// storedSource is a source as sources.json keeps it, which the settings page
+// edits.
+type storedSource struct {
+	Name       string   `json:"name"`
+	Path       string   `json:"path"`
+	ReadOnly   bool     `json:"readOnly"`
+	Indexed    bool     `json:"indexed"`
+	SkipHidden bool     `json:"skipHidden"`
+	Exclude    []string `json:"exclude"`
 }
 
 // serverConfig is the configuration the desktop app hands the server, written
 // anew on every start. YAML reads JSON, which escapes a Windows path safely.
 func serverConfig(dir string, port int, sources []source) ([]byte, error) {
 	type rule struct {
-		FolderPath   string `json:"folderPath"`
-		Viewable     bool   `json:"viewable,omitempty"`
-		IgnoreHidden bool   `json:"ignoreHidden,omitempty"`
+		FolderPath      string `json:"folderPath,omitempty"`
+		Viewable        bool   `json:"viewable,omitempty"`
+		IgnoreHidden    bool   `json:"ignoreHidden,omitempty"`
+		IncludeRootItem string `json:"includeRootItem,omitempty"`
 	}
 	type src struct {
 		Path   string `json:"path"`
@@ -40,6 +55,9 @@ func serverConfig(dir string, port int, sources []source) ([]byte, error) {
 	for _, s := range sources {
 		e := src{Path: s.Path, Name: s.Name}
 		e.Config.Rules = []rule{{FolderPath: "/", Viewable: !s.Indexed, IgnoreHidden: s.Indexed}}
+		if s.Include != "" {
+			e.Config.Rules = append(e.Config.Rules, rule{IncludeRootItem: s.Include})
+		}
 		list = append(list, e)
 	}
 	cfg := map[string]any{
@@ -68,7 +86,8 @@ const logFile = "cannoncommander.log"
 // writeServerConfig writes config.yaml, and on the first start sources.json
 // with the default places, which the settings page edits from then on. The
 // sources in config.yaml only satisfy the server, which wants at least one;
-// sources.json replaces them.
+// sources.json replaces them. A sources.json that still holds what an older
+// release put there by default gets today's default.
 func writeServerConfig(dir string, port int, sources []source) (string, error) {
 	body, err := serverConfig(dir, port, sources)
 	if err != nil {
@@ -79,26 +98,24 @@ func writeServerConfig(dir string, port int, sources []source) (string, error) {
 		return "", err
 	}
 	stored := filepath.Join(dir, "sources.json")
-	if _, err := os.Stat(stored); errors.Is(err, fs.ErrNotExist) {
-		type entry struct {
-			Name       string   `json:"name"`
-			Path       string   `json:"path"`
-			ReadOnly   bool     `json:"readOnly"`
-			Indexed    bool     `json:"indexed"`
-			SkipHidden bool     `json:"skipHidden"`
-			Exclude    []string `json:"exclude"`
+	raw, err := os.ReadFile(stored)
+	if err == nil {
+		var saved []storedSource
+		if json.Unmarshal(raw, &saved) != nil || !outdated(saved) {
+			return path, nil
 		}
-		list := make([]entry, 0, len(sources))
-		for _, s := range sources {
-			list = append(list, entry{Name: s.Name, Path: s.Path, Indexed: s.Indexed, SkipHidden: s.Indexed, Exclude: []string{}})
-		}
-		raw, err := json.MarshalIndent(list, "", "  ")
-		if err != nil {
-			return "", err
-		}
-		if err := os.WriteFile(stored, append(raw, '\n'), 0o600); err != nil {
-			return "", err
-		}
+	} else if !errors.Is(err, fs.ErrNotExist) {
+		return "", err
+	}
+	list := make([]storedSource, 0, len(sources))
+	for _, s := range sources {
+		list = append(list, storedSource{Name: s.Name, Path: s.Path, Indexed: s.Indexed, SkipHidden: s.Indexed, Exclude: []string{}})
+	}
+	if raw, err = json.MarshalIndent(list, "", "  "); err != nil {
+		return "", err
+	}
+	if err := os.WriteFile(stored, append(raw, '\n'), 0o600); err != nil {
+		return "", err
 	}
 	return path, nil
 }

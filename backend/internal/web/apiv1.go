@@ -17,6 +17,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/places"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
@@ -57,6 +58,7 @@ func mountAPIv1(router *http.ServeMux) error {
 	if dbPath := settings.Config.Server.DatabaseV2.Path; dbPath != "" {
 		resolver = resolver.WithDataFolder(filepath.Dir(dbPath))
 	}
+	resolver = places.Follow(resolver, eventHub)
 	index := fsindex.Scanned()
 	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index, Users: currentUser}
 	accounts.UseLogin(sessionLogin{})

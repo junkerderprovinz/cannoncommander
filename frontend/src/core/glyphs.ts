@@ -15,6 +15,10 @@ const DRAWN: Record<string, Glyph> = {
   IconPaneSend: { viewBox: '0 0 14 14', svg: '<path fill-rule="evenodd" clip-rule="evenodd" d="M2 1h2.5a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5ZM9.5 1H12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9.5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5Z"/><path d="M10.1 6.1l2 1.65-2 1.65Z"/>' },
   IconPaneSame: { viewBox: '0 0 14 14', svg: '<path fill-rule="evenodd" clip-rule="evenodd" d="M2 1h2.5a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5ZM9.5 1H12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9.5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5Z"/><path d="M2.5 6.6h1.5v1.1H2.5ZM2.5 8.4h1.5v1.1H2.5ZM10 6.6h1.5v1.1H10ZM10 8.4h1.5v1.1H10Z"/>' },
   IconColumns: { viewBox: '0 0 14 14', svg: '<path fill-rule="evenodd" clip-rule="evenodd" d="M2 1h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm-.25 2.25v7.5c0 .28.22.5.5.5h2.4V2.75h-2.4a.5.5 0 0 0-.5.5Zm4.15-.5v8.5h2.2V2.75Zm3.45 0v8.5h2.4a.5.5 0 0 0 .5-.5v-7.5a.5.5 0 0 0-.5-.5Z"/>' },
+  // The places of the desktop app: the home folder, the folders used last and a drive to eject.
+  IconHome: { viewBox: '0 0 14 14', svg: '<path d="M6.35.6a1 1 0 0 1 1.3 0l6 5.1a.75.75 0 0 1-.48 1.32H12.5V13a1 1 0 0 1-1 1H9V9.75a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75V14H2.5a1 1 0 0 1-1-1V7.02H.83A.75.75 0 0 1 .35 5.7Z"/>' },
+  IconClock: { viewBox: '0 0 14 14', svg: '<path fill-rule="evenodd" clip-rule="evenodd" d="M7 0a7 7 0 1 1 0 14A7 7 0 0 1 7 0Zm-.75 3.25v4.06l2.72 2.72 1.06-1.06-2.28-2.28V3.25Z"/>' },
+  IconEject: { viewBox: '0 0 14 14', svg: '<path d="M6.2 1.9a1 1 0 0 1 1.6 0l4.7 6A1 1 0 0 1 11.7 9.5H2.3a1 1 0 0 1-.8-1.6Z"/><rect x="1.5" y="11" width="11" height="2" rx="1"/>' },
 };
 const GLYPHS: Record<string, Glyph> = {
   ...Object.fromEntries(coreGlyphs.map((g) => [g.name, { viewBox: g.viewBox, svg: g.svg.replace(/\s+/g, ' ') }])),

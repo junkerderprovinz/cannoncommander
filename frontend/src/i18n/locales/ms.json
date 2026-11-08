@@ -1943,6 +1943,25 @@
     "shot": "Tangkapan skrin {stamp}.{ext}",
     "made": "“{name}” dicipta"
   },
+  "places": {
+    "home": "Folder peribadi",
+    "desktop": "Desktop",
+    "documents": "Dokumen",
+    "downloads": "Muat Turun",
+    "pictures": "Gambar",
+    "music": "Muzik",
+    "videos": "Video",
+    "recent": "Digunakan baru-baru ini",
+    "drives": "Pemacu",
+    "eject": "Keluarkan",
+    "ejectLabel": "Keluarkan {name}",
+    "ejected": "{name} kini selamat untuk dicabut",
+    "ejectedDisc": "{name} telah dikeluarkan",
+    "notMounted": "Belum dilekapkan, satu klik melekapkannya",
+    "arrived": "{name} sudah disambung",
+    "open": "Buka",
+    "gone": "{name} telah dicabut, kini anda di {here}"
+  },
   "profiles": {
     "title": "Profil tetingkap",
     "saved": "Disimpan",
@@ -3315,6 +3334,7 @@
   },
   "side": {
     "bookmarks": "Pintasan",
+    "places": "Tempat",
     "tree": "Pepohon folder",
     "addBookmark": "Tambah folder semasa sebagai pintasan",
     "unpin": "Buang daripada akses pantas",
@@ -3332,7 +3352,15 @@
     "renameTitle": "Namakan semula pintasan",
     "rename": "Namakan semula"
   },
+  "drives": {
+    "fixed": "Cakera Setempat",
+    "removable": "Pemacu USB",
+    "optical": "Pemacu DVD",
+    "network": "Pemacu Rangkaian",
+    "volume": "Volum {size}"
+  },
   "files": {
+    "network": "Rangkaian",
     "server": "Pelayan",
     "thisPc": "PC ini",
     "computer": "Komputer",
@@ -3464,6 +3492,7 @@
     "deleteSelf": "Anda tidak boleh memadam akaun anda sendiri",
     "denied": "Anda tiada kebenaran untuk ini",
     "desktopOnly": "Itu hanya boleh dalam aplikasi desktop",
+    "ejectFailed": "Pemacu belum boleh dikeluarkan. Mungkin masih ada fail terbuka padanya",
     "fileManagerNotSet": "Komputer tidak menerima perubahan itu",
     "disksAdminsOnly": "Hanya pentadbir dapat melihat cakera satu per satu dan Cache",
     "dragFailed": "Fail tidak dapat diseret keluar",
@@ -3509,6 +3538,7 @@
     "messageLength": {
       "other": "Mesej boleh mempunyai paling banyak {n} aksara"
     },
+    "mountFailed": "Pemacu tidak dapat dilekapkan",
     "nameChars": "Windows tidak membenarkan mana-mana aksara ini dalam nama: < > : \" / \\ | ? *",
     "nameEnd": "Dalam Windows nama tidak boleh berakhir dengan titik atau ruang",
     "nameLength": {
@@ -3551,6 +3581,7 @@
     "notText": "Fail ini bukan teks",
     "notWindows1252": "Teks ini mengandungi aksara yang tidak dapat disimpan oleh Windows-1252. Simpan sebagai UTF-8",
     "nothingToUndo": "Tiada apa yang boleh dibuat asal",
+    "noVolume": "Pemacu ini sudah tiada",
     "officeCannotOpen": "Pelayan Office tidak membuka fail .{ext}",
     "oldNameTaken": "Nama lama sudah digunakan semula",
     "outsideSources": "Ini hanya boleh untuk fail dan folder dalam sumber",

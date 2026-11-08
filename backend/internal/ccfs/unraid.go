@@ -16,66 +16,53 @@ import (
 // indexed, since a walk over a disk wakes it, and their files show up in the
 // user shares anyway. A configured source at or around one of them wins.
 func (r *Resolver) WithDevices(mnt string, names ...string) *Resolver {
-	cur := r.current()
-	next := *cur
-	next.configured = nil
-	for _, s := range cur.sources {
-		if !s.Device {
-			next.configured = append(next.configured, s)
-		}
-	}
+	next := *r.current()
 	next.mnt = mnt
-	next.named = slices.Clone(cur.named)
 	return r.withSet(next.withDevices(names))
 }
 
 // SetDevices lays out the pools and disks of WithDevices again, when Unraid
 // adds or takes one away. Requests that run meanwhile see either layout.
 func (r *Resolver) SetDevices(names ...string) {
-	r.set.Store(r.current().withDevices(names))
+	r.update(func(cur *sourceSet) *sourceSet { return cur.withDevices(names) })
 }
 
 // withDevices returns s with the pools and disks in names below its mnt.
 func (s *sourceSet) withDevices(names []string) *sourceSet {
-	next := &sourceSet{
-		configured: s.configured, mnt: s.mnt, marked: s.marked,
-		devices: slices.Clone(names), named: slices.Clone(s.named),
-	}
+	next := *s
+	next.devices = slices.Clone(names)
+	next.named = slices.Clone(s.named)
 	for _, name := range names {
 		if !slices.Contains(next.named, name) {
 			next.named = append(next.named, name)
 		}
 	}
-	taken := map[string]bool{}
-	for _, src := range s.configured {
-		c := *src
-		c.AdminOnly = c.AdminOnly || next.adminOnly(c.Mount)
-		next.sources = append(next.sources, &c)
-		taken[strings.ToLower(c.Name)] = true
-	}
-	configured := slices.Clone(next.sources)
-	for _, name := range names {
+	return next.laidOut()
+}
+
+// deviceSources are the pools and disks in s.devices that no other source
+// covers, named so that no name is taken twice.
+func (s *sourceSet) deviceSources(covered func(mount string) bool, names map[string]bool) []*Source {
+	var out []*Source
+	for _, name := range s.devices {
 		mount := "/mnt/" + name
-		if strings.Contains(name, "/") || slices.ContainsFunc(configured, func(c *Source) bool {
-			return within(mount, c.Mount) || within(c.Mount, mount)
-		}) {
+		if strings.Contains(name, "/") || covered(mount) {
 			continue
 		}
 		label := deviceLabel(name)
-		if taken[strings.ToLower(label)] {
+		if names[strings.ToLower(label)] {
 			label = name
 		}
-		if taken[strings.ToLower(label)] {
+		if names[strings.ToLower(label)] {
 			continue
 		}
-		taken[strings.ToLower(label)] = true
-		next.sources = append(next.sources, &Source{
+		names[strings.ToLower(label)] = true
+		out = append(out, &Source{
 			Name: label, Mount: mount, Root: filepath.Join(s.mnt, name),
 			AdminOnly: true, Device: true,
 		})
 	}
-	next.close()
-	return next
+	return out
 }
 
 // deviceLabel names a disk the way the Unraid web interface does, Disk 1 for

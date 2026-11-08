@@ -2077,6 +2077,25 @@
     "shot": "Captura de ecrã {stamp}.{ext}",
     "made": "«{name}» criado"
   },
+  "places": {
+    "home": "Pasta pessoal",
+    "desktop": "Ambiente de trabalho",
+    "documents": "Documentos",
+    "downloads": "Transferências",
+    "pictures": "Imagens",
+    "music": "Música",
+    "videos": "Vídeos",
+    "recent": "Usados recentemente",
+    "drives": "Unidades",
+    "eject": "Ejetar",
+    "ejectLabel": "Ejetar {name}",
+    "ejected": "Já pode remover {name} em segurança",
+    "ejectedDisc": "{name} foi ejetado",
+    "notMounted": "Ainda não está montado, um clique monta-o",
+    "arrived": "{name} está ligado",
+    "open": "Abrir",
+    "gone": "{name} foi removido, agora está em {here}"
+  },
   "profiles": {
     "title": "Perfis de janela",
     "saved": "Guardados",
@@ -3577,6 +3596,7 @@
   },
   "side": {
     "bookmarks": "Atalhos",
+    "places": "Locais",
     "tree": "Árvore de pastas",
     "addBookmark": "Criar atalho para a pasta atual",
     "unpin": "Remover do acesso rápido",
@@ -3594,7 +3614,15 @@
     "renameTitle": "Mudar o nome do atalho",
     "rename": "Mudar o nome"
   },
+  "drives": {
+    "fixed": "Disco Local",
+    "removable": "Unidade USB",
+    "optical": "Unidade de DVD",
+    "network": "Unidade de rede",
+    "volume": "Volume de {size}"
+  },
   "files": {
+    "network": "Rede",
     "server": "Servidor",
     "thisPc": "Este PC",
     "computer": "Computador",
@@ -3732,6 +3760,7 @@
     "deleteSelf": "Não pode eliminar a sua própria conta",
     "denied": "Não tem permissões para isto",
     "desktopOnly": "Isso só funciona na aplicação de ambiente de trabalho",
+    "ejectFailed": "Agora não é possível ejetar a unidade. Talvez ainda haja um ficheiro aberto nela",
     "fileManagerNotSet": "O computador não aceitou a alteração",
     "disksAdminsOnly": "Os discos individuais e a Cache só os administradores os veem",
     "dragFailed": "Não foi possível arrastar os arquivos para fora",
@@ -3783,6 +3812,7 @@
       "many": "A mensagem tem no máximo {n} carateres",
       "other": "A mensagem tem no máximo {n} carateres"
     },
+    "mountFailed": "Não foi possível montar a unidade",
     "nameChars": "O Windows não permite nenhum destes caracteres num nome: < > : \" / \\ | ? *",
     "nameEnd": "No Windows um nome não pode terminar com ponto nem espaço",
     "nameLength": {
@@ -3827,6 +3857,7 @@
     "notText": "Este ficheiro não é texto",
     "notWindows1252": "O texto tem carateres que o Windows-1252 não consegue guardar. Guarde-o como UTF-8",
     "nothingToUndo": "Não há nada para anular",
+    "noVolume": "Esta unidade já não está aqui",
     "officeCannotOpen": "O servidor Office não abre ficheiros .{ext}",
     "oldNameTaken": "O nome antigo voltou a estar ocupado",
     "outsideSources": "Isto só funciona com ficheiros e pastas dentro de uma origem",

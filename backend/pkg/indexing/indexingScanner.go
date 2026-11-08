@@ -463,7 +463,7 @@ func (s *Scanner) getTopLevelDirs() []string {
 			logger.Debugf("Skipping scanner creation for omitted directory: %s", realPath)
 			continue
 		}
-		if !s.idx.shouldInclude(baseName) {
+		if !s.idx.shouldInclude("/", baseName) {
 			logger.Debugf("Skipping scanner creation for non-included directory: %s", realPath)
 			continue
 		}

@@ -2144,6 +2144,25 @@
     "shot": "Snímek obrazovky {stamp}.{ext}",
     "made": "„{name}“ vytvořeno"
   },
+  "places": {
+    "home": "Domovská složka",
+    "desktop": "Plocha",
+    "documents": "Dokumenty",
+    "downloads": "Stažené soubory",
+    "pictures": "Obrázky",
+    "music": "Hudba",
+    "videos": "Videa",
+    "recent": "Naposledy použité",
+    "drives": "Jednotky",
+    "eject": "Vysunout",
+    "ejectLabel": "Vysunout {name}",
+    "ejected": "{name} teď můžete bezpečně odpojit",
+    "ejectedDisc": "{name} je vysunuta",
+    "notMounted": "Ještě není připojeno, kliknutím ho připojíte",
+    "arrived": "{name} je připojena",
+    "open": "Otevřít",
+    "gone": "{name} byla odebrána, teď jste v {here}"
+  },
   "profiles": {
     "title": "Profily oken",
     "saved": "Uložené",
@@ -3708,6 +3727,7 @@
   },
   "side": {
     "bookmarks": "Zkratky",
+    "places": "Místa",
     "tree": "Strom složek",
     "addBookmark": "Přidat aktuální složku jako zkratku",
     "unpin": "Odepnout z rychlého přístupu",
@@ -3725,7 +3745,15 @@
     "renameTitle": "Přejmenovat zkratku",
     "rename": "Přejmenovat"
   },
+  "drives": {
+    "fixed": "Místní disk",
+    "removable": "Jednotka USB",
+    "optical": "Jednotka DVD",
+    "network": "Síťová jednotka",
+    "volume": "Svazek {size}"
+  },
   "files": {
+    "network": "Síť",
     "server": "Server",
     "thisPc": "Tento počítač",
     "computer": "Počítač",
@@ -3866,6 +3894,7 @@
     "deleteSelf": "Vlastní účet smazat nemůžete",
     "denied": "K tomu nemáte oprávnění",
     "desktopOnly": "To jde jen v desktopové aplikaci",
+    "ejectFailed": "Jednotku teď nejde vysunout. Možná je na ní ještě otevřený soubor",
     "fileManagerNotSet": "Počítač změnu nepřijal",
     "disksAdminsOnly": "Jednotlivé disky a Cache vidí jen administrátoři",
     "dragFailed": "Soubory se nepodařilo vytáhnout ven",
@@ -3920,6 +3949,7 @@
       "many": "Zpráva má nejvýš {n} znaku",
       "other": "Zpráva má nejvýš {n} znaků"
     },
+    "mountFailed": "Jednotku se nepodařilo připojit",
     "nameChars": "Windows v názvu nepovoluje žádný z těchto znaků: < > : \" / \\ | ? *",
     "nameEnd": "Ve Windows nesmí název končit tečkou ani mezerou",
     "nameLength": {
@@ -3965,6 +3995,7 @@
     "notText": "Tento soubor není text",
     "notWindows1252": "Text obsahuje znaky, které Windows-1252 neumí uložit. Uložte ho jako UTF-8",
     "nothingToUndo": "Není co vrátit",
+    "noVolume": "Tato jednotka už tu není",
     "officeCannotOpen": "Server Office neotevírá soubory .{ext}",
     "oldNameTaken": "Starý název je znovu obsazený",
     "outsideSources": "To jde jen se soubory a složkami ve zdroji",
