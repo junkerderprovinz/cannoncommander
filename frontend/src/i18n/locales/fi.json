@@ -924,7 +924,7 @@
       "changedAgo": "Muutettu {ago}",
       "change": "Vaihda",
       "stay": "Pysy kirjautuneena",
-      "stayTip": "Sen jälkeen CannonCommander kysyy salasanaa uudelleen.",
+      "stayTip": "Aika lasketaan viimeisestä käynnistäsi. Jos et käy niin pitkään aikaan, CannonCommander kysyy salasanaa uudelleen.",
       "day1": "1 päivä",
       "twofa": "Kaksivaiheinen tunnistautuminen",
       "status": "Tila",

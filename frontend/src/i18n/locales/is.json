@@ -924,7 +924,7 @@
       "changedAgo": "Breytt {ago}",
       "change": "Breyta",
       "stay": "Vera áfram innskráð",
-      "stayTip": "Eftir það biður CannonCommander aftur um lykilorðið.",
+      "stayTip": "Tíminn telst frá síðustu heimsókn þinni. Ef þú kemur ekki svo lengi biður CannonCommander aftur um lykilorðið.",
       "day1": "1 dagur",
       "twofa": "Tveggja þátta auðkenning",
       "status": "Staða",

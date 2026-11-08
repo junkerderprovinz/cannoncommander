@@ -883,7 +883,7 @@
       "changedAgo": "Đã đổi {ago}",
       "change": "Đổi",
       "stay": "Giữ đăng nhập",
-      "stayTip": "Sau thời gian này CannonCommander sẽ hỏi lại mật khẩu.",
+      "stayTip": "Thời gian được tính từ lần ghé gần nhất của bạn. Nếu bạn không ghé lâu như vậy, CannonCommander sẽ hỏi lại mật khẩu.",
       "day1": "1 ngày",
       "twofa": "Xác thực hai lớp",
       "status": "Trạng thái",

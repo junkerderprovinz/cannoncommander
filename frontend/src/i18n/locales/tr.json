@@ -924,7 +924,7 @@
       "changedAgo": "{ago} değiştirildi",
       "change": "Değiştir",
       "stay": "Oturumu açık tut",
-      "stayTip": "Bundan sonra CannonCommander parolayı yeniden sorar.",
+      "stayTip": "Süre son ziyaretinden itibaren sayılır. Bu kadar süre uğramazsan CannonCommander parolayı yeniden sorar.",
       "day1": "1 gün",
       "twofa": "İki adımlı doğrulama",
       "status": "Durum",

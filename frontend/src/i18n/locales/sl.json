@@ -1006,7 +1006,7 @@
       "changedAgo": "Spremenjeno {ago}",
       "change": "Spremeni",
       "stay": "Ostani prijavljen",
-      "stayTip": "Nato CannonCommander znova vpraša za geslo.",
+      "stayTip": "Čas se šteje od vašega zadnjega obiska. Če se toliko časa ne oglasite, CannonCommander znova vpraša za geslo.",
       "day1": "1 dan",
       "twofa": "Dvostopenjsko preverjanje",
       "status": "Stanje",

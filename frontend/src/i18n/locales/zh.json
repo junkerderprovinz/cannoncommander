@@ -883,7 +883,7 @@
       "changedAgo": "修改于 {ago}",
       "change": "修改",
       "stay": "保持登录",
-      "stayTip": "超过这个时间，CannonCommander 会再次要求输入密码。",
+      "stayTip": "时间从你上次访问算起。如果这么久都没来，CannonCommander 会再次要求输入密码。",
       "day1": "1 天",
       "twofa": "双重验证",
       "status": "状态",

@@ -965,7 +965,7 @@
       "changedAgo": "Schimbată {ago}",
       "change": "Schimbă",
       "stay": "Rămâi autentificat",
-      "stayTip": "După aceea, CannonCommander cere din nou parola.",
+      "stayTip": "Timpul se numără de la ultima ta vizită. Dacă nu treci pe aici atâta vreme, CannonCommander cere din nou parola.",
       "day1": "1 zi",
       "twofa": "Autentificare în doi pași",
       "status": "Stare",

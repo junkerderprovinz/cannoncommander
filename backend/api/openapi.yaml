@@ -3081,9 +3081,10 @@ paths:
         password when a new password is due, totpSetup when the server asks
         everyone for two factor login and the account has none yet. A
         challenge works for five minutes. With remember the session lasts
-        the days of the setting stayDays (30 when unset) through browser
-        restarts, without it the session ends with the browser and after
-        12 hours at most. Five wrong passwords for one name from one
+        through browser restarts until it goes unused for the days of the
+        setting stayDays (30 when unset), as a visit once a day renews its
+        token. Without it the session ends with the browser and after 12
+        hours at most. Five wrong passwords for one name from one
         address, or twenty from one address, wait 15 minutes.
       x-access: public
       requestBody:

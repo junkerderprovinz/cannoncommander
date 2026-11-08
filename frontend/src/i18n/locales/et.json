@@ -924,7 +924,7 @@
       "changedAgo": "Muudetud {ago}",
       "change": "Muuda",
       "stay": "Jää sisse logituks",
-      "stayTip": "Seejärel küsib CannonCommander uuesti parooli.",
+      "stayTip": "Aeg loetakse sinu viimasest külastusest. Kui sind nii kaua ei ole, küsib CannonCommander uuesti parooli.",
       "day1": "1 päev",
       "twofa": "Kaheastmeline autentimine",
       "status": "Olek",

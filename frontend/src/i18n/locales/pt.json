@@ -965,7 +965,7 @@
       "changedAgo": "Alterada {ago}",
       "change": "Alterar",
       "stay": "Manter sessão iniciada",
-      "stayTip": "Depois disso, o CannonCommander volta a pedir a palavra-passe.",
+      "stayTip": "O tempo conta a partir da sua última visita. Se não voltar durante esse tempo, o CannonCommander volta a pedir a palavra-passe.",
       "day1": "1 dia",
       "twofa": "Autenticação de dois fatores",
       "status": "Estado",

@@ -924,7 +924,7 @@
       "changedAgo": "Endret {ago}",
       "change": "Endre",
       "stay": "Forbli pålogget",
-      "stayTip": "Deretter spør CannonCommander etter passordet igjen.",
+      "stayTip": "Tiden regnes fra ditt siste besøk. Er du borte så lenge, spør CannonCommander etter passordet igjen.",
       "day1": "1 dag",
       "twofa": "Tofaktorautentisering",
       "status": "Status",

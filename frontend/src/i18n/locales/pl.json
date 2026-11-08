@@ -1006,7 +1006,7 @@
       "changedAgo": "Zmieniono {ago}",
       "change": "Zmień",
       "stay": "Nie wylogowuj",
-      "stayTip": "Potem CannonCommander znów zapyta o hasło.",
+      "stayTip": "Czas liczy się od twojej ostatniej wizyty. Jeśli nie zajrzysz przez ten czas, CannonCommander znów zapyta o hasło.",
       "day1": "1 dzień",
       "twofa": "Uwierzytelnianie dwuskładnikowe",
       "status": "Stan",

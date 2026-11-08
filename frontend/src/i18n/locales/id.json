@@ -883,7 +883,7 @@
       "changedAgo": "Diubah {ago}",
       "change": "Ubah",
       "stay": "Tetap masuk",
-      "stayTip": "Setelah itu CannonCommander meminta kata sandi lagi.",
+      "stayTip": "Waktunya dihitung dari kunjungan terakhir Anda. Jika Anda tidak datang selama itu, CannonCommander meminta kata sandi lagi.",
       "day1": "1 hari",
       "twofa": "Autentikasi dua faktor",
       "status": "Status",

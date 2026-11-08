@@ -965,7 +965,7 @@
       "changedAgo": "Modificata {ago}",
       "change": "Modifica",
       "stay": "Resta connesso",
-      "stayTip": "Dopo questo tempo CannonCommander chiede di nuovo la password.",
+      "stayTip": "Il tempo conta dalla tua ultima visita. Se non passi per tutto questo tempo, CannonCommander chiede di nuovo la password.",
       "day1": "1 giorno",
       "twofa": "Autenticazione a due fattori",
       "status": "Stato",

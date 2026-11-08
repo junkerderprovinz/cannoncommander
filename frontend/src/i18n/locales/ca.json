@@ -965,7 +965,7 @@
       "changedAgo": "Canviada {ago}",
       "change": "Canvia",
       "stay": "Mantén la sessió iniciada",
-      "stayTip": "Després, el CannonCommander torna a demanar la contrasenya.",
+      "stayTip": "El temps compta des de la vostra darrera visita. Si no hi torneu en tot aquest temps, el CannonCommander us tornarà a demanar la contrasenya.",
       "day1": "1 dia",
       "twofa": "Autenticació de dos factors",
       "status": "Estat",

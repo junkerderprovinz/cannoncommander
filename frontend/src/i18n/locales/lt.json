@@ -1006,7 +1006,7 @@
       "changedAgo": "Pakeista {ago}",
       "change": "Keisti",
       "stay": "Likti prisijungus",
-      "stayTip": "Po to CannonCommander vėl paprašys slaptažodžio.",
+      "stayTip": "Laikas skaičiuojamas nuo tavo paskutinio apsilankymo. Jei tiek laiko neužsuksi, CannonCommander vėl paprašys slaptažodžio.",
       "day1": "1 diena",
       "twofa": "Dviejų veiksnių autentifikavimas",
       "status": "Būsena",

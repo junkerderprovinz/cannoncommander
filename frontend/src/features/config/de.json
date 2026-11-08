@@ -154,7 +154,7 @@
   },
   "security": {
     "signIn": "Anmeldung", "pwTip": "Ein neues Passwort meldet dich auf allen anderen Geräten ab. Diese Sitzung bleibt angemeldet.", "changedAgo": "Geändert {ago}", "change": "Ändern",
-    "stay": "Angemeldet bleiben", "stayTip": "Danach fragt CannonCommander wieder nach dem Passwort.", "day1": "1 Tag",
+    "stay": "Angemeldet bleiben", "stayTip": "Die Zeit zählt ab deinem letzten Besuch. Kommst du so lange nicht vorbei, fragt CannonCommander wieder nach dem Passwort.", "day1": "1 Tag",
     "twofa": "Zwei-Faktor-Authentifizierung", "status": "Status", "on": "An", "off": "Aus",
     "onTip": "Nach dem Passwort fragt CannonCommander nach einem Code aus deiner App.", "offTip": "Nach dem Passwort fragt CannonCommander zusätzlich nach einem Code aus einer App auf deinem Handy.",
     "turnOff": "Ausschalten", "setUp": "Einrichten", "codes": "Wiederherstellungscodes", "codesTip": "Jeder Code meldet dich einmal an, falls das Handy fehlt. Neue Codes machen die alten ungültig.",

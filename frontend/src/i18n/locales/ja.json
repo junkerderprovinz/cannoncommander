@@ -883,7 +883,7 @@
       "changedAgo": "{ago}に変更",
       "change": "変更",
       "stay": "ログインしたままにする",
-      "stayTip": "この期間が過ぎると、CannonCommander は再びパスワードを求めます。",
+      "stayTip": "期間は最後にアクセスした時点から数えます。その間一度もアクセスしないと、CannonCommander は再びパスワードを求めます。",
       "day1": "1 日",
       "twofa": "二要素認証",
       "status": "状態",

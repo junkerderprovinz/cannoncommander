@@ -442,22 +442,56 @@ func (s *Storage) RevokeTokenHash(tokenHash string) error {
 }
 
 // RevokeSessions ends every session of the user except the one whose token
-// hash is keep, and returns how many it ended. API tokens keep working.
+// hash is keep, and returns how many it ended. API tokens keep working. A
+// retired token ends too, but counts with the token that replaced it.
 func (s *Storage) RevokeSessions(userID uint64, keep string) (int, error) {
 	s.mux.RLock()
 	var hashes []string
+	live := 0
 	for hash, info := range s.HashedTokens {
 		if info.UserID == userID && info.IsSession && hash != keep {
 			hashes = append(hashes, hash)
+			if _, retired := s.RevokedTokens[hash]; !retired {
+				live++
+			}
 		}
 	}
 	s.mux.RUnlock()
-	for i, hash := range hashes {
+	for _, hash := range hashes {
 		if err := s.RevokeTokenHash(hash); err != nil {
-			return i, err
+			return 0, err
 		}
 	}
-	return len(hashes), nil
+	return live, nil
+}
+
+// RetireToken lets a renewed session token work on for BearerTokenGrace, so
+// requests already on their way with it still pass. A token that is retired
+// or revoked already stays as it is.
+func (s *Storage) RetireToken(tokenString string) error {
+	tokenHash := utils.HashSHA256(tokenString)
+	now := time.Now().Unix()
+	var rollback tokenRevokeRollback
+	s.mux.Lock()
+	if _, done := s.RevokedTokens[tokenHash]; done {
+		s.mux.Unlock()
+		return nil
+	}
+	rollback.capture(s, tokenHash)
+	s.RevokedTokens[tokenHash] = now
+	sqlStore := s.sqlStore
+	s.mux.Unlock()
+
+	if sqlStore == nil {
+		return nil
+	}
+	if err := sqlStore.PersistTokenRetirement(tokenHash, now, nil); err != nil {
+		s.mux.Lock()
+		rollback.apply(s)
+		s.mux.Unlock()
+		return err
+	}
+	return nil
 }
 
 type tokenRevokeRollback struct {
@@ -491,14 +525,6 @@ func (rb *tokenRevokeRollback) apply(s *Storage) {
 	} else {
 		delete(s.RevokedTokens, rb.tokenHash)
 	}
-}
-
-type tokenRetireRollback struct {
-	tokenHash       string
-	hadTokenRevoked bool
-	tokenRevokedAt  int64
-	prunedRevoked   map[string]int64
-	prunedHashed    map[string]HashedTokenInfo
 }
 
 // IsTokenRevoked reports whether a token is revoked. Retired session tokens are

@@ -94,6 +94,10 @@ func (l *fakeLogin) Start(w http.ResponseWriter, _ *http.Request, u *users.User,
 	return nil
 }
 
+func (l *fakeLogin) Renew(http.ResponseWriter, *http.Request, *users.User) (string, bool) {
+	return "", false
+}
+
 func (l *fakeLogin) Stop(w http.ResponseWriter, r *http.Request) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()

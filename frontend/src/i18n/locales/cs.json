@@ -1006,7 +1006,7 @@
       "changedAgo": "Změněno {ago}",
       "change": "Změnit",
       "stay": "Zůstat přihlášen",
-      "stayTip": "Potom se CannonCommander znovu zeptá na heslo.",
+      "stayTip": "Doba se počítá od vaší poslední návštěvy. Když tak dlouho nepřijdete, CannonCommander se znovu zeptá na heslo.",
       "day1": "1 den",
       "twofa": "Dvoufázové ověření",
       "status": "Stav",

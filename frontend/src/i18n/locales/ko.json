@@ -883,7 +883,7 @@
       "changedAgo": "{ago} 변경",
       "change": "변경",
       "stay": "로그인 유지",
-      "stayTip": "이 기간이 지나면 CannonCommander가 다시 비밀번호를 묻습니다.",
+      "stayTip": "이 기간은 마지막 방문부터 셉니다. 그동안 한 번도 오지 않으면 CannonCommander가 다시 비밀번호를 묻습니다.",
       "day1": "1일",
       "twofa": "2단계 인증",
       "status": "상태",

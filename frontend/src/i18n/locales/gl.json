@@ -924,7 +924,7 @@
       "changedAgo": "Cambiado {ago}",
       "change": "Cambiar",
       "stay": "Manter a sesión",
-      "stayTip": "Despois diso, CannonCommander volve pedir o contrasinal.",
+      "stayTip": "O tempo conta desde a túa última visita. Se non volves en todo ese tempo, CannonCommander volve pedir o contrasinal.",
       "day1": "1 día",
       "twofa": "Autenticación en dous pasos",
       "status": "Estado",

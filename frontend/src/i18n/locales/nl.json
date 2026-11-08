@@ -924,7 +924,7 @@
       "changedAgo": "Gewijzigd {ago}",
       "change": "Wijzigen",
       "stay": "Ingelogd blijven",
-      "stayTip": "Daarna vraagt CannonCommander weer om het wachtwoord.",
+      "stayTip": "De tijd telt vanaf je laatste bezoek. Kom je zo lang niet langs, dan vraagt CannonCommander weer om het wachtwoord.",
       "day1": "1 dag",
       "twofa": "Tweestapsverificatie",
       "status": "Status",

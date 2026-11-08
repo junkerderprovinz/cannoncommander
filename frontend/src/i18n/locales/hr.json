@@ -965,7 +965,7 @@
       "changedAgo": "Promijenjena {ago}",
       "change": "Promijeni",
       "stay": "Zadrži prijavu",
-      "stayTip": "Nakon toga CannonCommander ponovno traži lozinku.",
+      "stayTip": "Vrijeme se računa od vašeg zadnjeg posjeta. Ako toliko dugo ne navratite, CannonCommander ponovno traži lozinku.",
       "day1": "1 dan",
       "twofa": "Dvofaktorska autentifikacija",
       "status": "Stanje",

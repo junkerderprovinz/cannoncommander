@@ -965,7 +965,7 @@
       "changedAgo": "Mainīta {ago}",
       "change": "Mainīt",
       "stay": "Palikt pieteiktam",
-      "stayTip": "Pēc tam CannonCommander atkal prasīs paroli.",
+      "stayTip": "Laiks tiek skaitīts no tava pēdējā apmeklējuma. Ja tik ilgi neienāksi, CannonCommander atkal prasīs paroli.",
       "day1": "1 diena",
       "twofa": "Divu faktoru autentifikācija",
       "status": "Statuss",

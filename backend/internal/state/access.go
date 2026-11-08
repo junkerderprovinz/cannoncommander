@@ -108,6 +108,15 @@ func RevokeSessions(userID uint64, keep string) (int, error) {
 	return accessDb.RevokeSessions(userID, keep)
 }
 
+// RetireSessionToken lets a renewed session token work on for
+// BearerTokenGrace.
+func RetireSessionToken(tokenString string) error {
+	if accessDb == nil {
+		return fmt.Errorf("access storage not available")
+	}
+	return accessDb.RetireToken(tokenString)
+}
+
 func RemoveApiToken(tokenString string) error {
 	return accessDb.RemoveApiToken(tokenString)
 }

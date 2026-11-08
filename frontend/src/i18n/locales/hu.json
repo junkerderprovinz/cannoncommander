@@ -924,7 +924,7 @@
       "changedAgo": "Módosítva: {ago}",
       "change": "Módosítás",
       "stay": "Belépve maradás",
-      "stayTip": "Utána a CannonCommander újra kéri a jelszót.",
+      "stayTip": "Az idő az utolsó látogatásától számít. Ha ennyi ideig nem jár erre, a CannonCommander újra kéri a jelszót.",
       "day1": "1 nap",
       "twofa": "Kétlépcsős azonosítás",
       "status": "Állapot",

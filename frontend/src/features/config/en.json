@@ -154,7 +154,7 @@
   },
   "security": {
     "signIn": "Signing in", "pwTip": "A new password signs you out on every other device. This session stays signed in.", "changedAgo": "Changed {ago}", "change": "Change",
-    "stay": "Stay signed in", "stayTip": "After that CannonCommander asks for the password again.", "day1": "1 day",
+    "stay": "Stay signed in", "stayTip": "The time counts from your last visit. If you stay away that long, CannonCommander asks for the password again.", "day1": "1 day",
     "twofa": "Two-factor authentication", "status": "Status", "on": "On", "off": "Off",
     "onTip": "After the password CannonCommander asks for a code from your app.", "offTip": "After the password CannonCommander also asks for a code from an app on your phone.",
     "turnOff": "Turn off", "setUp": "Set up", "codes": "Recovery codes", "codesTip": "Each code signs you in once if your phone is missing. New codes make the old ones invalid.",
