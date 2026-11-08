@@ -40,6 +40,7 @@ export interface Job {
   startedAt?: string;
   finishedAt?: string;
 }
+export interface JobItem { seq: number; path: string; name?: string; state: string; error?: string; errorCode?: string }
 export interface JobProgress { id: string; totalBytes: number; doneBytes: number; totalFiles: number; doneFiles: number; rate: number; left: number | null; current?: string }
 export interface JobSettings { mode: 'serial' | 'parallel'; cap: number; parityWait: boolean; notifyUnraid: boolean; notifyAfter: number }
 
@@ -93,9 +94,11 @@ export interface TrashItem {
   files: number;
   by: string;
   deletedAt: string;
-  expiresAt: string;
+  // The trash of the system decides itself when an entry goes.
+  expiresAt?: string;
 }
-export interface TrashList { items: TrashItem[]; count: number; bytes: number; days: number }
+// system: the list is the trash of the operating system, in the desktop app.
+export interface TrashList { items: TrashItem[]; count: number; bytes: number; days: number; system?: boolean }
 
 export interface UndoStep { id: string; kind: 'rename' | 'renameBatch' | 'mkdir' | 'touch' | 'link' | 'copy' | 'move' | 'trash'; at: string; name: string; count: number; path?: string; to?: string }
 
@@ -123,11 +126,12 @@ const id = encodeURIComponent;
 
 export const ops = {
   jobs: async () => (await body<{ jobs: Job[] }>('/jobs')).jobs,
+  job: (job: string) => body<Job & { items?: JobItem[] }>(`/jobs/${id(job)}`),
   startJob: (req: JobCreate) => body<Job>('/jobs', json('POST', req)),
   clearJobs: () => body<{ removed: number }>('/jobs', { method: 'DELETE' }),
   changeJob: (job: string, change: { position?: number; cap?: number }) => body<Job>(`/jobs/${id(job)}`, json('PATCH', change)),
   removeJob: (job: string) => call(`/jobs/${id(job)}`, { method: 'DELETE' }),
-  jobStep: (job: string, step: 'pause' | 'resume' | 'cancel' | 'retry') => body<Job>(`/jobs/${id(job)}/${step}`, { method: 'POST' }),
+  jobStep: (job: string, step: 'pause' | 'resume' | 'cancel' | 'retry' | 'elevate') => body<Job>(`/jobs/${id(job)}/${step}`, { method: 'POST' }),
   decide: (job: string, answer: { key?: string; choice: Choice; all?: boolean }) => body<Job>(`/jobs/${id(job)}/decide`, json('POST', answer)),
   jobSettings: () => body<JobSettings>('/jobs/settings'),
   saveJobSettings: (s: JobSettings) => body<JobSettings>('/jobs/settings', json('PUT', s)),

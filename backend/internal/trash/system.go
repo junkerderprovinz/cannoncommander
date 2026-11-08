@@ -21,6 +21,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/sysbin"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/elevate"
 )
 
 var (
@@ -281,4 +282,65 @@ func (s *Store) adoptLeftovers(bin string) {
 	if os.Remove(bin) == nil {
 		logger.Infof("trash: moved %s into the trash of the system", bin)
 	}
+}
+
+// elevateTrash puts the open items in the Recycle Bin with administrator
+// rights. Where the helper cannot recycle, on Linux, where root has no trash
+// of the person, or on a drive without one, the items fail as having no
+// trash, which offers to delete them for good.
+func elevateTrash(ctx context.Context, run *jobs.Run) error {
+	s := For(run.Deps())
+	if s == nil {
+		return errors.New("no trash")
+	}
+	var items []jobs.Item
+	var ops []elevate.Op
+	origins := map[int]string{}
+	for _, it := range run.Items() {
+		if it.State != jobs.ItemPending {
+			continue
+		}
+		loc, u, err := run.Entry(it.Path, ccfs.Delete)
+		if err == nil {
+			err = run.Deps().FS.Carry(ctx, u, loc, ccfs.Delete)
+		}
+		if err == nil && (!s.system(loc) || !elevate.Recycles()) {
+			err = ErrNoBin
+		}
+		if err != nil {
+			run.Finish(it.Seq, jobs.ItemDone, err)
+			continue
+		}
+		items, ops, origins[it.Seq] = append(items, it), append(ops, elevate.Op{Kind: elevate.Recycle, From: loc.Real}), loc.Real
+	}
+	since := time.Now().Add(-2 * time.Second)
+	err := run.Elevated(ctx, items, ops, func(it jobs.Item) {
+		if found, ok := s.recycled(origins[it.Seq], since); ok {
+			run.SetRef(it.Seq, found.ID)
+			s.carry(ctx, it.Path, found.Bin)
+		} else {
+			s.carry(ctx, it.Path, "")
+		}
+		s.changed()
+	})
+	recordUndo(run)
+	return err
+}
+
+// recycled finds the entry that the helper put in the trash from origin.
+func (s *Store) recycled(origin string, since time.Time) (Item, bool) {
+	entries, err := s.sys.List()
+	if err != nil {
+		return Item{}, false
+	}
+	var found sysbin.Entry
+	for _, e := range entries {
+		if strings.EqualFold(e.Origin, origin) && !e.Deleted.Before(since) && e.Deleted.After(found.Deleted) {
+			found = e
+		}
+	}
+	if found.ID == "" {
+		return Item{}, false
+	}
+	return s.itemOf(found), true
 }

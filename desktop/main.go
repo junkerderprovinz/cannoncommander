@@ -47,6 +47,9 @@ func run() error {
 	scheduled := flag.Bool("update", false, "update the copy installed for all users and exit, as the installer's scheduled task does")
 	after := flag.Int("after", 0, "wait for the process with this id to end first, as a restart does")
 	flag.Parse()
+	if *elevated != "" {
+		return serveElevated()
+	}
 	if *scheduled {
 		return updateInstalled()
 	}

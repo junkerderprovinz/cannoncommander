@@ -34,6 +34,7 @@ func Routes(r *v1.Router) {
 	r.Handle("POST /jobs/{id}/resume", h.action(m.Resume))
 	r.Handle("POST /jobs/{id}/cancel", h.action(m.Cancel))
 	r.Handle("POST /jobs/{id}/retry", h.action(m.Retry))
+	r.Handle("POST /jobs/{id}/elevate", h.action(m.Elevate))
 	r.Handle("POST /jobs/{id}/decide", h.decide)
 }
 
