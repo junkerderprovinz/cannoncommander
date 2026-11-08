@@ -1485,10 +1485,13 @@
       "copy": "Et {what} siia kopeerida, on sul vaja administraatori õigusi.",
       "move": "Et {what} siia teisaldada, on sul vaja administraatori õigusi.",
       "delete": "Et {what} kustutada, on sul vaja administraatori õigusi.",
-      "trash": "Et {what} prügikasti panna, on sul vaja administraatori õigusi."
+      "trash": "Et {what} prügikasti panna, on sul vaja administraatori õigusi.",
+      "restore": "Et {what} taastada, on sul vaja administraatori õigusi.",
+      "undo": "Et {what} tagasi võtta, on sul vaja administraatori õigusi."
     },
     "howWindows": "Jätkamisel küsib Windows sinu luba ja siis jätkab CannonCommander.",
     "howLinux": "Jätkamisel küsib süsteem sinu parooli ja siis jätkab CannonCommander.",
+    "declined": "Selge, ilma administraatori õigusteta jääb {what} nii, nagu oli.",
     "go": "Jätka"
   },
   "fetch": {
@@ -2720,6 +2723,10 @@
     "purgeSel": "Kustuta valitud jäädavalt ({n})",
     "selectAll": "Vali kõik",
     "empty": "Tühjenda prügikast",
+    "emptySystem": {
+      "one": "Nii tühjeneb kogu {bin} koos selle ainsa kirjega.",
+      "other": "Nii tühjeneb kogu {bin}: kõik {n} kirjet, ka teiste programmide omad."
+    },
     "andMore": {
       "one": "ja veel {n}",
       "other": "ja veel {n}"
@@ -3207,6 +3214,7 @@
     "dupTab": "Dubleeri vahekaart",
     "lockTab": "Lukusta vahekaart",
     "closeOtherTabs": "Sulge teised vahekaardid",
+    "sidePane": "Eelvaatepaan",
     "nextTab": "Järgmine vaheleht",
     "prevTab": "Eelmine vaheleht",
     "back": "Tagasi",
@@ -3435,6 +3443,9 @@
     "closedUp": "Kausta {path} ei tohi sa avada, seega oled nüüd kaustas {here}",
     "empty": "See kaust on tühi",
     "emptyHint": "Lohista failid üleslaadimiseks siia",
+    "emptyHintDesktop": "Lohista failid siia, et need sellesse kausta kopeerida",
+    "renameField": "Uus nimi",
+    "sidePaneEmpty": "Vali fail ja see kuvatakse siin",
     "nothingFound": "Päringule {q} ei leitud midagi",
     "searchedHere": "Otsiti ainult sellest kaustast",
     "searchedDeep": "Otsiti ka kõigist alamkaustadest",

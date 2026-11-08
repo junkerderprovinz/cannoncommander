@@ -1540,10 +1540,13 @@
       "copy": "Para copiar {what} aquí, necesitas permisos de administrador.",
       "move": "Para mover {what} aquí, necesitas permisos de administrador.",
       "delete": "Para eliminar {what}, necesitas permisos de administrador.",
-      "trash": "Para llevar {what} a la papelera, necesitas permisos de administrador."
+      "trash": "Para llevar {what} a la papelera, necesitas permisos de administrador.",
+      "restore": "Para restaurar {what}, necesitas permisos de administrador.",
+      "undo": "Para deshacer {what}, necesitas permisos de administrador."
     },
     "howWindows": "Con Continuar, Windows te pide permiso y después CannonCommander sigue.",
     "howLinux": "Con Continuar, el sistema te pide tu contraseña y después CannonCommander sigue.",
+    "declined": "Vale, sin permisos de administrador {what} se queda como estaba.",
     "go": "Continuar"
   },
   "fetch": {
@@ -2818,6 +2821,11 @@
     "purgeSel": "Eliminar la selección definitivamente ({n})",
     "selectAll": "Seleccionar todo",
     "empty": "Vaciar la papelera",
+    "emptySystem": {
+      "one": "Esto vacía toda la {bin} con su único elemento.",
+      "many": "Esto vacía toda la {bin}: los {n} elementos, también los de otros programas.",
+      "other": "Esto vacía toda la {bin}: los {n} elementos, también los de otros programas."
+    },
     "andMore": {
       "one": "y {n} más",
       "many": "y {n} más",
@@ -3336,6 +3344,7 @@
     "dupTab": "Duplicar pestaña",
     "lockTab": "Bloquear pestaña",
     "closeOtherTabs": "Cerrar las demás pestañas",
+    "sidePane": "Panel de vista previa",
     "nextTab": "Pestaña siguiente",
     "prevTab": "Pestaña anterior",
     "back": "Atrás",
@@ -3565,6 +3574,9 @@
     "closedUp": "No puedes abrir la carpeta {path}, así que ahora estás en {here}",
     "empty": "Esta carpeta está vacía",
     "emptyHint": "Arrastra archivos aquí para subirlos",
+    "emptyHintDesktop": "Arrastra archivos aquí para copiarlos a esta carpeta",
+    "renameField": "Nuevo nombre",
+    "sidePaneEmpty": "Elige un archivo y se mostrará aquí",
     "nothingFound": "No se ha encontrado nada para {q}",
     "searchedHere": "Búsqueda solo en esta carpeta",
     "searchedDeep": "Búsqueda también en todas las subcarpetas",

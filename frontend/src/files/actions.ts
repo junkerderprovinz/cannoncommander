@@ -32,6 +32,7 @@ export function registerFileActions() {
   action('dual', { label: tl('actions.dual'), g: 'IconPaneTwo', key: 'Ctrl+2', radio: true, checked: () => prefs.dual, run: () => setPref('dual', true) });
   action('sidebar', { label: tl('actions.sidebar'), g: 'IconMenu', key: 'Ctrl+b', checked: () => prefs.side,
     run: () => (innerWidth <= 760 ? (shell.sideOpen = !shell.sideOpen) : setPref('side', !prefs.side)) });
+  action('sidePane', { label: tl('actions.sidePane'), g: 'IconPaneRight', checked: () => !!prefs.sidePane, run: toggle('sidePane') });
   action('fkeys', { label: tl('actions.fkeys'), g: 'IconKeyboard', checked: () => prefs.fkeys, run: toggle('fkeys') });
   action('hidden', { label: tl('actions.hidden'), g: 'IconEye', key: 'Ctrl+h', checked: () => prefs.showHidden, run: toggle('showHidden') });
   action('extensions', { label: tl('actions.extensions'), g: 'IconFileText', checked: () => prefs.showExt, run: toggle('showExt') });

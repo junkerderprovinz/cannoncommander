@@ -1540,10 +1540,13 @@
       "copy": "Da biste ovamo kopirali {what}, trebate administratorska prava.",
       "move": "Da biste ovamo premjestili {what}, trebate administratorska prava.",
       "delete": "Da biste izbrisali {what}, trebate administratorska prava.",
-      "trash": "Da biste premjestili {what} u smeće, trebate administratorska prava."
+      "trash": "Da biste premjestili {what} u smeće, trebate administratorska prava.",
+      "restore": "Da biste vratili {what}, trebate administratorska prava.",
+      "undo": "Da biste poništili {what}, trebate administratorska prava."
     },
     "howWindows": "Kad nastavite, Windows traži vaše dopuštenje, a zatim CannonCommander nastavlja.",
     "howLinux": "Kad nastavite, sustav traži vašu lozinku, a zatim CannonCommander nastavlja.",
+    "declined": "U redu, bez administratorskih prava {what} ostaje kako je bilo.",
     "go": "Nastavi"
   },
   "fetch": {
@@ -2818,6 +2821,11 @@
     "purgeSel": "Trajno izbriši odabrano ({n})",
     "selectAll": "Odaberi sve",
     "empty": "Isprazni smeće",
+    "emptySystem": {
+      "one": "Prazni se cijelo {bin} s {n} stavkom.",
+      "few": "Prazni se cijelo {bin}: sve {n} stavke, i one iz drugih programa.",
+      "other": "Prazni se cijelo {bin}: svih {n} stavki, i one iz drugih programa."
+    },
     "andMore": {
       "one": "i još {n}",
       "few": "i još {n}",
@@ -3336,6 +3344,7 @@
     "dupTab": "Udvostruči karticu",
     "lockTab": "Zaključaj karticu",
     "closeOtherTabs": "Zatvori ostale kartice",
+    "sidePane": "Okno pretpregleda",
     "nextTab": "Sljedeća kartica",
     "prevTab": "Prethodna kartica",
     "back": "Natrag",
@@ -3565,6 +3574,9 @@
     "closedUp": "Ne smijete otvoriti mapu {path}, pa ste sada u {here}",
     "empty": "Ova je mapa prazna",
     "emptyHint": "Povucite datoteke ovamo da ih prenesete",
+    "emptyHintDesktop": "Povuci datoteke ovamo da ih kopiraš u ovu mapu",
+    "renameField": "Novi naziv",
+    "sidePaneEmpty": "Odaberi datoteku i prikazat će se ovdje",
     "nothingFound": "Ništa nije pronađeno za {q}",
     "searchedHere": "Traženo samo u ovoj mapi",
     "searchedDeep": "Traženo i u svim podmapama",

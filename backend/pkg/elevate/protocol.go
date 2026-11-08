@@ -39,9 +39,8 @@ func (e *OpError) Error() string { return e.Msg }
 // maxOps keeps a job to what one selection in the app can hold.
 const maxOps = 100000
 
-// connectWait is how long the parent waits for the helper once the prompt is
-// answered, and how long the helper takes at most to get its job.
-var connectWait = 30 * time.Second
+// jobWait is how long the helper waits for its job once it called.
+const jobWait = 30 * time.Second
 
 // launch starts the helper with administrator rights and returns a function
 // that waits for it to end. It blocks while the prompt is open.
@@ -122,8 +121,6 @@ func Run(ctx context.Context, ops []Op, report func(i int, err error)) error {
 		if errors.Is(err, ErrDeclined) {
 			return err
 		}
-		return ErrNoHelper
-	case <-time.After(connectWait):
 		return ErrNoHelper
 	case <-ctx.Done():
 		return ctx.Err()
@@ -206,7 +203,7 @@ func Serve(arg string, stdin io.Reader) error {
 		return err
 	}
 	defer conn.Close()
-	conn.SetDeadline(time.Now().Add(connectWait))
+	conn.SetDeadline(time.Now().Add(jobWait))
 	enc := json.NewEncoder(conn)
 	if err := enc.Encode(hello{Proof: hex.EncodeToString(sign(secret, "helper"))}); err != nil {
 		return err

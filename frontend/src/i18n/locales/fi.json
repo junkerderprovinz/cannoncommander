@@ -1485,10 +1485,13 @@
       "copy": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit kopioida {what} tänne.",
       "move": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit siirtää {what} tänne.",
       "delete": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit poistaa {what}.",
-      "trash": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit siirtää {what} roskakoriin."
+      "trash": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit siirtää {what} roskakoriin.",
+      "restore": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit palauttaa {what}.",
+      "undo": "Tarvitset järjestelmänvalvojan oikeudet, jotta voit kumota {what}."
     },
     "howWindows": "Kun jatkat, Windows pyytää lupaasi ja sitten CannonCommander jatkaa.",
     "howLinux": "Kun jatkat, järjestelmä kysyy salasanaasi ja sitten CannonCommander jatkaa.",
+    "declined": "Selvä, ilman järjestelmänvalvojan oikeuksia {what} pysyy ennallaan.",
     "go": "Jatka"
   },
   "fetch": {
@@ -2720,6 +2723,10 @@
     "purgeSel": "Poista valitut lopullisesti ({n})",
     "selectAll": "Valitse kaikki",
     "empty": "Tyhjennä roskakori",
+    "emptySystem": {
+      "one": "Näin tyhjenee koko {bin} ja sen ainoa kohde.",
+      "other": "Näin tyhjenee koko {bin}: kaikki {n} kohdetta, myös muiden ohjelmien."
+    },
     "andMore": {
       "one": "ja {n} muu",
       "other": "ja {n} muuta"
@@ -3207,6 +3214,7 @@
     "dupTab": "Monista välilehti",
     "lockTab": "Lukitse välilehti",
     "closeOtherTabs": "Sulje muut välilehdet",
+    "sidePane": "Esikatseluruutu",
     "nextTab": "Seuraava välilehti",
     "prevTab": "Edellinen välilehti",
     "back": "Takaisin",
@@ -3435,6 +3443,9 @@
     "closedUp": "Et saa avata kansiota {path}, joten olet nyt kansiossa {here}",
     "empty": "Tämä kansio on tyhjä",
     "emptyHint": "Vedä tiedostot tähän ladataksesi ne",
+    "emptyHintDesktop": "Vedä tiedostot tähän kopioidaksesi ne tähän kansioon",
+    "renameField": "Uusi nimi",
+    "sidePaneEmpty": "Valitse tiedosto, niin se näkyy tässä",
     "nothingFound": "Haulla {q} ei löytynyt mitään",
     "searchedHere": "Haettu vain tästä kansiosta",
     "searchedDeep": "Haettu myös kaikista alikansioista",

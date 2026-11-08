@@ -1595,10 +1595,13 @@
       "copy": "Kad nukopijuotum {what} čia, reikia administratoriaus teisių.",
       "move": "Kad perkeltum {what} čia, reikia administratoriaus teisių.",
       "delete": "Kad ištrintum {what}, reikia administratoriaus teisių.",
-      "trash": "Kad perkeltum {what} į šiukšlinę, reikia administratoriaus teisių."
+      "trash": "Kad perkeltum {what} į šiukšlinę, reikia administratoriaus teisių.",
+      "restore": "Kad atkurtum {what}, reikia administratoriaus teisių.",
+      "undo": "Kad atšauktum {what}, reikia administratoriaus teisių."
     },
     "howWindows": "Kai tęsi, Windows paprašys tavo leidimo, o tada CannonCommander tęs darbą.",
     "howLinux": "Kai tęsi, sistema paprašys tavo slaptažodžio, o tada CannonCommander tęs darbą.",
+    "declined": "Gerai, be administratoriaus teisių {what} lieka kaip buvo.",
     "go": "Tęsti"
   },
   "fetch": {
@@ -2916,6 +2919,12 @@
     "purgeSel": "Ištrinti pasirinktus visam laikui ({n})",
     "selectAll": "Pasirinkti viską",
     "empty": "Ištuštinti šiukšlinę",
+    "emptySystem": {
+      "one": "Ištuštinama visa {bin}: {n} elementas, taip pat iš kitų programų.",
+      "few": "Ištuštinama visa {bin}: visi {n} elementai, taip pat iš kitų programų.",
+      "many": "Ištuštinama visa {bin}: {n} elemento, taip pat iš kitų programų.",
+      "other": "Ištuštinama visa {bin}: iš viso {n} elementų, taip pat iš kitų programų."
+    },
     "andMore": {
       "one": "ir dar {n}",
       "few": "ir dar {n}",
@@ -3465,6 +3474,7 @@
     "dupTab": "Dubliuoti skirtuką",
     "lockTab": "Užrakinti skirtuką",
     "closeOtherTabs": "Uždaryti kitus skirtukus",
+    "sidePane": "Peržiūros sritis",
     "nextTab": "Kita kortelė",
     "prevTab": "Ankstesnė kortelė",
     "back": "Atgal",
@@ -3695,6 +3705,9 @@
     "closedUp": "Aplanko {path} atidaryti negali, todėl dabar esi {here}",
     "empty": "Šis aplankas tuščias",
     "emptyHint": "Nutempk failus čia, kad juos įkeltum",
+    "emptyHintDesktop": "Nuvilk failus čia, kad nukopijuotum juos į šį aplanką",
+    "renameField": "Naujas pavadinimas",
+    "sidePaneEmpty": "Pasirink failą ir jis bus parodytas čia",
     "nothingFound": "Nieko nerasta pagal {q}",
     "searchedHere": "Ieškota tik šiame aplanke",
     "searchedDeep": "Ieškota ir visuose poaplankiuose",

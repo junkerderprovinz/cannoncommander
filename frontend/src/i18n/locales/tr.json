@@ -1485,10 +1485,13 @@
       "copy": "{what} ancak yönetici haklarıyla buraya kopyalanabilir.",
       "move": "{what} ancak yönetici haklarıyla buraya taşınabilir.",
       "delete": "{what} ancak yönetici haklarıyla silinebilir.",
-      "trash": "{what} ancak yönetici haklarıyla çöp kutusuna atılabilir."
+      "trash": "{what} ancak yönetici haklarıyla çöp kutusuna atılabilir.",
+      "restore": "{what} ancak yönetici haklarıyla geri yüklenebilir.",
+      "undo": "{what} ancak yönetici haklarıyla geri alınabilir."
     },
     "howWindows": "Devam'a bastığında Windows iznini ister, ardından CannonCommander devam eder.",
     "howLinux": "Devam'a bastığında sistem parolanı ister, ardından CannonCommander devam eder.",
+    "declined": "Tamam, yönetici hakları olmadan {what} olduğu gibi kalır.",
     "go": "Devam"
   },
   "fetch": {
@@ -2720,6 +2723,10 @@
     "purgeSel": "Seçimi kalıcı olarak sil ({n})",
     "selectAll": "Tümünü seç",
     "empty": "Çöp kutusunu boşalt",
+    "emptySystem": {
+      "one": "Bu işlemle {bin} tek öğesiyle birlikte tamamen boşalır.",
+      "other": "Bu işlemle {bin} tamamen boşalır: {n} öğenin hepsi, başka programlardan gelenler de."
+    },
     "andMore": {
       "one": "ve {n} tane daha",
       "other": "ve {n} tane daha"
@@ -3207,6 +3214,7 @@
     "dupTab": "Sekmeyi çoğalt",
     "lockTab": "Sekmeyi kilitle",
     "closeOtherTabs": "Diğer sekmeleri kapat",
+    "sidePane": "Önizleme bölmesi",
     "nextTab": "Sonraki sekme",
     "prevTab": "Önceki sekme",
     "back": "Geri",
@@ -3435,6 +3443,9 @@
     "closedUp": "{path} klasörünü açma iznin yok, bu yüzden şimdi {here} içindesin",
     "empty": "Bu klasör boş",
     "emptyHint": "Yüklemek için dosyaları buraya sürükle",
+    "emptyHintDesktop": "Bu klasöre kopyalamak için dosyaları buraya sürükle",
+    "renameField": "Yeni ad",
+    "sidePaneEmpty": "Bir dosya seç, burada görünsün",
     "nothingFound": "{q} için bir şey bulunamadı",
     "searchedHere": "Yalnızca bu klasörde arandı",
     "searchedDeep": "Tüm alt klasörlerde de arandı",

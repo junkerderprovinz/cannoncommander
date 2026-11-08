@@ -1430,10 +1430,13 @@
       "copy": "Anda perlukan hak pentadbir untuk menyalin {what} ke sini.",
       "move": "Anda perlukan hak pentadbir untuk memindahkan {what} ke sini.",
       "delete": "Anda perlukan hak pentadbir untuk memadam {what}.",
-      "trash": "Anda perlukan hak pentadbir untuk memasukkan {what} ke dalam tong sampah."
+      "trash": "Anda perlukan hak pentadbir untuk memasukkan {what} ke dalam tong sampah.",
+      "restore": "Anda perlukan hak pentadbir untuk memulihkan {what}.",
+      "undo": "Anda perlukan hak pentadbir untuk membuat asal {what}."
     },
     "howWindows": "Dengan Teruskan, Windows meminta kebenaran anda, kemudian CannonCommander menyambung kerja.",
     "howLinux": "Dengan Teruskan, sistem meminta kata laluan anda, kemudian CannonCommander menyambung kerja.",
+    "declined": "Baiklah, tanpa hak pentadbir {what} kekal seperti asal.",
     "go": "Teruskan"
   },
   "fetch": {
@@ -2622,6 +2625,9 @@
     "purgeSel": "Padam pilihan terus ({n})",
     "selectAll": "Pilih semua",
     "empty": "Kosongkan tong sampah",
+    "emptySystem": {
+      "other": "Ini mengosongkan seluruh {bin}: kesemua {n} item, termasuk daripada program lain."
+    },
     "andMore": {
       "other": "dan {n} lagi"
     },
@@ -3078,6 +3084,7 @@
     "dupTab": "Pendua tab",
     "lockTab": "Kunci tab",
     "closeOtherTabs": "Tutup tab lain",
+    "sidePane": "Anak tetingkap pratonton",
     "nextTab": "Tab seterusnya",
     "prevTab": "Tab sebelumnya",
     "back": "Kembali",
@@ -3305,6 +3312,9 @@
     "closedUp": "Anda tidak dibenarkan membuka folder {path}, jadi anda kini berada di {here}",
     "empty": "Folder ini kosong",
     "emptyHint": "Seret fail ke sini untuk memuat naiknya",
+    "emptyHintDesktop": "Seret fail ke sini untuk menyalinnya ke dalam folder ini",
+    "renameField": "Nama baharu",
+    "sidePaneEmpty": "Pilih fail dan ia dipaparkan di sini",
     "nothingFound": "Tiada apa ditemui untuk {q}",
     "searchedHere": "Dicari dalam folder ini sahaja",
     "searchedDeep": "Turut dicari dalam semua subfolder",

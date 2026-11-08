@@ -1540,10 +1540,13 @@
       "copy": "Per copiar {what} aquí, necessiteu permisos d'administrador.",
       "move": "Per moure {what} aquí, necessiteu permisos d'administrador.",
       "delete": "Per suprimir {what}, necessiteu permisos d'administrador.",
-      "trash": "Per enviar {what} a la paperera, necessiteu permisos d'administrador."
+      "trash": "Per enviar {what} a la paperera, necessiteu permisos d'administrador.",
+      "restore": "Per restaurar {what}, necessiteu permisos d'administrador.",
+      "undo": "Per desfer {what}, necessiteu permisos d'administrador."
     },
     "howWindows": "Amb Continua, el Windows us demana permís i després CannonCommander segueix.",
     "howLinux": "Amb Continua, el sistema us demana la contrasenya i després CannonCommander segueix.",
+    "declined": "D'acord, sense permisos d'administrador {what} es queda com estava.",
     "go": "Continua"
   },
   "fetch": {
@@ -2818,6 +2821,11 @@
     "purgeSel": "Suprimeix definitivament la selecció ({n})",
     "selectAll": "Selecciona-ho tot",
     "empty": "Buida la paperera",
+    "emptySystem": {
+      "one": "Això buida tota la {bin} amb el seu únic element.",
+      "many": "Això buida tota la {bin}: tots els {n} elements, també els d'altres programes.",
+      "other": "Això buida tota la {bin}: tots els {n} elements, també els d'altres programes."
+    },
     "andMore": {
       "one": "i {n} més",
       "many": "i {n} més",
@@ -3336,6 +3344,7 @@
     "dupTab": "Duplica la pestanya",
     "lockTab": "Bloqueja la pestanya",
     "closeOtherTabs": "Tanca les altres pestanyes",
+    "sidePane": "Panell de previsualització",
     "nextTab": "Pestanya següent",
     "prevTab": "Pestanya anterior",
     "back": "Enrere",
@@ -3565,6 +3574,9 @@
     "closedUp": "No podeu obrir la carpeta {path}, així que ara sou a {here}",
     "empty": "Aquesta carpeta és buida",
     "emptyHint": "Deixeu anar fitxers aquí per pujar-los",
+    "emptyHintDesktop": "Arrossega fitxers aquí per copiar-los a aquesta carpeta",
+    "renameField": "Nom nou",
+    "sidePaneEmpty": "Tria un fitxer i es mostrarà aquí",
     "nothingFound": "No s'ha trobat res per a {q}",
     "searchedHere": "S'ha cercat només en aquesta carpeta",
     "searchedDeep": "S'ha cercat també a totes les subcarpetes",

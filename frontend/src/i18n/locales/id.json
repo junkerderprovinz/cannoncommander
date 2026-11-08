@@ -1430,10 +1430,13 @@
       "copy": "Anda perlu hak administrator untuk menyalin {what} ke sini.",
       "move": "Anda perlu hak administrator untuk memindahkan {what} ke sini.",
       "delete": "Anda perlu hak administrator untuk menghapus {what}.",
-      "trash": "Anda perlu hak administrator untuk memasukkan {what} ke Tempat Sampah."
+      "trash": "Anda perlu hak administrator untuk memasukkan {what} ke Tempat Sampah.",
+      "restore": "Anda perlu hak administrator untuk memulihkan {what}.",
+      "undo": "Anda perlu hak administrator untuk membatalkan {what}."
     },
     "howWindows": "Dengan Lanjutkan, Windows meminta izin Anda, lalu CannonCommander melanjutkan.",
     "howLinux": "Dengan Lanjutkan, sistem meminta kata sandi Anda, lalu CannonCommander melanjutkan.",
+    "declined": "Baik, tanpa hak administrator {what} tetap seperti semula.",
     "go": "Lanjutkan"
   },
   "fetch": {
@@ -2622,6 +2625,9 @@
     "purgeSel": "Hapus pilihan permanen ({n})",
     "selectAll": "Pilih semua",
     "empty": "Kosongkan Tempat Sampah",
+    "emptySystem": {
+      "other": "Ini mengosongkan seluruh {bin}: semua {n} item, termasuk dari program lain."
+    },
     "andMore": {
       "other": "dan {n} lainnya"
     },
@@ -3078,6 +3084,7 @@
     "dupTab": "Duplikasi tab",
     "lockTab": "Kunci tab",
     "closeOtherTabs": "Tutup tab lain",
+    "sidePane": "Panel pratinjau",
     "nextTab": "Tab berikutnya",
     "prevTab": "Tab sebelumnya",
     "back": "Kembali",
@@ -3305,6 +3312,9 @@
     "closedUp": "Anda tidak boleh membuka folder {path}, jadi Anda sekarang berada di {here}",
     "empty": "Folder ini kosong",
     "emptyHint": "Seret berkas ke sini untuk mengunggahnya",
+    "emptyHintDesktop": "Seret berkas ke sini untuk menyalinnya ke folder ini",
+    "renameField": "Nama baru",
+    "sidePaneEmpty": "Pilih berkas, lalu berkas itu tampil di sini",
     "nothingFound": "Tidak ada yang ditemukan untuk {q}",
     "searchedHere": "Hanya dicari di folder ini",
     "searchedDeep": "Juga dicari di semua subfolder",

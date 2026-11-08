@@ -1540,10 +1540,13 @@
       "copy": "Lai šeit kopētu {what}, tev vajag administratora tiesības.",
       "move": "Lai šeit pārvietotu {what}, tev vajag administratora tiesības.",
       "delete": "Lai izdzēstu {what}, tev vajag administratora tiesības.",
-      "trash": "Lai ievietotu {what} atkritnē, tev vajag administratora tiesības."
+      "trash": "Lai ievietotu {what} atkritnē, tev vajag administratora tiesības.",
+      "restore": "Lai atjaunotu {what}, tev vajag administratora tiesības.",
+      "undo": "Lai atsauktu {what}, tev vajag administratora tiesības."
     },
     "howWindows": "Kad turpināsi, Windows lūgs tavu atļauju, un pēc tam CannonCommander turpinās darbu.",
     "howLinux": "Kad turpināsi, sistēma prasīs tavu paroli, un pēc tam CannonCommander turpinās darbu.",
+    "declined": "Labi, bez administratora tiesībām {what} paliek, kā bija.",
     "go": "Turpināt"
   },
   "fetch": {
@@ -2818,6 +2821,11 @@
     "purgeSel": "Dzēst atlasīto neatgriezeniski ({n})",
     "selectAll": "Atlasīt visu",
     "empty": "Iztukšot atkritni",
+    "emptySystem": {
+      "zero": "Tiek iztukšota visa {bin}: {n} vienumu, arī no citām programmām.",
+      "one": "Tiek iztukšota visa {bin}: {n} vienums, arī no citām programmām.",
+      "other": "Tiek iztukšota visa {bin}: visi {n} vienumi, arī no citām programmām."
+    },
     "andMore": {
       "zero": "un vēl {n}",
       "one": "un vēl {n}",
@@ -3336,6 +3344,7 @@
     "dupTab": "Dublēt cilni",
     "lockTab": "Bloķēt cilni",
     "closeOtherTabs": "Aizvērt citas cilnes",
+    "sidePane": "Priekšskatījuma rūts",
     "nextTab": "Nākamā cilne",
     "prevTab": "Iepriekšējā cilne",
     "back": "Atpakaļ",
@@ -3565,6 +3574,9 @@
     "closedUp": "Mapi {path} tu nedrīksti atvērt, tāpēc tagad tu esi {here}",
     "empty": "Šī mape ir tukša",
     "emptyHint": "Velc failus šeit, lai tos augšupielādētu",
+    "emptyHintDesktop": "Velc failus šeit, lai tos iekopētu šajā mapē",
+    "renameField": "Jauns nosaukums",
+    "sidePaneEmpty": "Izvēlies failu, un tas parādīsies šeit",
     "nothingFound": "Nekas nav atrasts pēc {q}",
     "searchedHere": "Meklēts tikai šajā mapē",
     "searchedDeep": "Meklēts arī visās apakšmapēs",

@@ -1430,10 +1430,13 @@
       "copy": "{what} をここにコピーするには管理者権限が必要です。",
       "move": "{what} をここに移動するには管理者権限が必要です。",
       "delete": "{what} を削除するには管理者権限が必要です。",
-      "trash": "{what} をごみ箱に移動するには管理者権限が必要です。"
+      "trash": "{what} をごみ箱に移動するには管理者権限が必要です。",
+      "restore": "{what} を復元するには管理者権限が必要です。",
+      "undo": "{what} を元に戻すには管理者権限が必要です。"
     },
     "howWindows": "続行すると Windows が許可を求め、その後 CannonCommander が処理を続けます。",
     "howLinux": "続行するとシステムがパスワードを求め、その後 CannonCommander が処理を続けます。",
+    "declined": "わかりました。管理者権限がないため、{what} はそのままです。",
     "go": "続行"
   },
   "fetch": {
@@ -2622,6 +2625,9 @@
     "purgeSel": "選択項目を完全に削除 ({n})",
     "selectAll": "すべて選択",
     "empty": "ごみ箱を空にする",
+    "emptySystem": {
+      "other": "{bin}全体を空にします。ほかのプログラムのものも含め、{n} 件すべてが対象です。"
+    },
     "andMore": {
       "other": "ほか {n} 件"
     },
@@ -3078,6 +3084,7 @@
     "dupTab": "タブを複製",
     "lockTab": "タブをロック",
     "closeOtherTabs": "ほかのタブを閉じる",
+    "sidePane": "プレビュー ウィンドウ",
     "nextTab": "次のタブ",
     "prevTab": "前のタブ",
     "back": "戻る",
@@ -3305,6 +3312,9 @@
     "closedUp": "フォルダー {path} を開く権限がないため、{here} に移動しました",
     "empty": "このフォルダーは空です",
     "emptyHint": "ここにファイルをドロップしてアップロード",
+    "emptyHintDesktop": "ここにファイルをドラッグすると、このフォルダーにコピーされます",
+    "renameField": "新しい名前",
+    "sidePaneEmpty": "ファイルを選ぶとここに表示されます",
     "nothingFound": "{q} は見つかりませんでした",
     "searchedHere": "このフォルダーのみ検索しました",
     "searchedDeep": "すべてのサブフォルダーも検索しました",

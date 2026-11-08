@@ -1540,10 +1540,13 @@
       "copy": "Pour copier {what} ici, il vous faut des droits d'administrateur.",
       "move": "Pour déplacer {what} ici, il vous faut des droits d'administrateur.",
       "delete": "Pour supprimer {what}, il vous faut des droits d'administrateur.",
-      "trash": "Pour mettre {what} à la corbeille, il vous faut des droits d'administrateur."
+      "trash": "Pour mettre {what} à la corbeille, il vous faut des droits d'administrateur.",
+      "restore": "Pour restaurer {what}, il vous faut des droits d'administrateur.",
+      "undo": "Pour annuler {what}, il vous faut des droits d'administrateur."
     },
     "howWindows": "Avec Continuer, Windows vous demande votre autorisation, puis CannonCommander poursuit.",
     "howLinux": "Avec Continuer, le système vous demande votre mot de passe, puis CannonCommander poursuit.",
+    "declined": "D'accord. Sans droits d'administrateur, {what} reste tel quel.",
     "go": "Continuer"
   },
   "fetch": {
@@ -2818,6 +2821,11 @@
     "purgeSel": "Supprimer définitivement la sélection ({n})",
     "selectAll": "Tout sélectionner",
     "empty": "Vider la corbeille",
+    "emptySystem": {
+      "one": "Cela vide toute la {bin} : {n} élément en tout.",
+      "many": "Cela vide toute la {bin} : les {n} éléments, y compris ceux d'autres programmes.",
+      "other": "Cela vide toute la {bin} : les {n} éléments, y compris ceux d'autres programmes."
+    },
     "andMore": {
       "one": "et {n} autre",
       "many": "et {n} autres",
@@ -3336,6 +3344,7 @@
     "dupTab": "Dupliquer l'onglet",
     "lockTab": "Verrouiller l'onglet",
     "closeOtherTabs": "Fermer les autres onglets",
+    "sidePane": "Volet de visualisation",
     "nextTab": "Onglet suivant",
     "prevTab": "Onglet précédent",
     "back": "Précédent",
@@ -3565,6 +3574,9 @@
     "closedUp": "Vous ne pouvez pas ouvrir le dossier {path}, vous êtes donc maintenant dans {here}",
     "empty": "Ce dossier est vide",
     "emptyHint": "Déposez des fichiers ici pour les envoyer",
+    "emptyHintDesktop": "Glisse des fichiers ici pour les copier dans ce dossier",
+    "renameField": "Nouveau nom",
+    "sidePaneEmpty": "Choisis un fichier et il s'affiche ici",
     "nothingFound": "Rien trouvé pour {q}",
     "searchedHere": "Recherche dans ce dossier seulement",
     "searchedDeep": "Recherche aussi dans tous les sous-dossiers",

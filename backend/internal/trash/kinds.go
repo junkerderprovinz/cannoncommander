@@ -24,9 +24,9 @@ const (
 
 func init() {
 	jobs.RegisterKind(KindTrash, jobs.Kind{Prepare: prepareTrash, Run: runTrash, Elevate: elevateTrash})
-	jobs.RegisterKind(KindRestore, jobs.Kind{Run: runRestore})
+	jobs.RegisterKind(KindRestore, jobs.Kind{Run: runRestore, Elevate: elevateRestore})
 	jobs.RegisterKind(KindEmpty, jobs.Kind{Run: runEmpty})
-	undo.Register(KindTrash, undo.Reverser{Job: undoTrash})
+	undo.Register(KindTrash, undo.Reverser{Job: undoTrash, Elevate: elevateUndoTrash})
 }
 
 // PathsParams are the params of the trash and delete kinds.
