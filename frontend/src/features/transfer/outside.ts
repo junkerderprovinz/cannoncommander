@@ -35,19 +35,20 @@ export async function readClipboard(): Promise<Outside | null> {
 let looking: ReturnType<typeof setTimeout> | undefined;
 export function lookSoon() {
   clearTimeout(looking);
-  looking = setTimeout(() => { void readClipboard(); }, 150);
+  looking = setTimeout(() => { void readClipboard(); }, 500);
 }
 
 // Names cut or copied in a panel go onto the computer's clipboard as files. Those it cannot take, such as files inside
 // an archive, stay in the app's own clipboard until another program puts something newer on the computer's.
-export async function share(cut: boolean, from: string, names: string[]) {
+export async function share(cut: boolean, from: string, rows: Pick<Entry, 'name' | 'at'>[]) {
   const clip = useClipboard();
-  clip.put(cut, from, names);
+  const paths = rows.map((k) => join(k.at || from, k.name));
+  clip.put(cut, from, rows.map((k) => k.name), rows.some((k) => k.at && k.at !== from) ? paths : undefined);
   if (!host.desktop) return;
   try {
-    await call('/clipboard', json('PUT', { paths: names.map((n) => join(from, n)), cut }));
+    await call('/clipboard', json('PUT', { paths, cut }));
     clip.clear();
-    clip.system = names.length;
+    clip.system = rows.length;
   } catch {
     clip.under = signature(await readClipboard());
   }
@@ -64,7 +65,7 @@ export async function clipboardWins(): Promise<Outside | null> {
 }
 
 // The rows of files from anywhere, each with the folder it lies in, as a search result carries them.
-async function entriesOf(files: string[]): Promise<Entry[]> {
+export async function entriesOf(files: string[]): Promise<Entry[]> {
   const byFolder = new Map<string, Set<string>>();
   for (const f of files) {
     const dir = parent(f);

@@ -114,12 +114,27 @@ describe('the clipboard shared with other programs', () => {
     onClipboard = { files: [TEMP + '/c.txt'], cut: false, skipped: 0 };
     const zip = HERE + '/Akten.zip::/';
     useListing().lists.set(zip, { path: zip, items: [item('Liste.txt')] });
-    await share(false, zip, ['Liste.txt']);
+    await share(false, zip, [{ name: 'Liste.txt' }]);
     await run('clipPaste');
     expect(jobs.map((j) => [j.from, j.items.map((k) => k.name)])).toEqual([[zip, ['Liste.txt']]]);
     onClipboard = { files: [TEMP + '/a.txt'], cut: false, skipped: 0 };
     await run('clipPaste');
     expect(jobs.map((j) => j.from)).toEqual([zip, TEMP]);
+  });
+
+  it('takes rows from several folders, as a search shows them', async () => {
+    const F = usePanels();
+    useListing().lists.set(HERE, { path: HERE, items: [item('Brief.txt'), { ...item('a.txt'), at: TEMP }] });
+    F.T().marked = new Set(['Brief.txt', 'a.txt']);
+    run('clipCopy');
+    await settle();
+    expect(calls('/clipboard')).toEqual([{ method: 'PUT', url: '/api/v1/clipboard', body: { paths: [TEMP + '/a.txt', HERE + '/Brief.txt'], cut: false } }]);
+    host.desktop = false;
+    run('clipCut');
+    F.T().path = '/C/Ziel';
+    useListing().lists.set('/C/Ziel', { path: '/C/Ziel', items: [] });
+    await run('clipPaste');
+    expect(jobs.map((j) => [j.kind, j.dest, names(j)])).toEqual([['move', '/C/Ziel', [TEMP + '/a.txt', HERE + '/Brief.txt']]]);
   });
 
   it('turns text into a file when the clipboard holds no files', async () => {
