@@ -7,7 +7,7 @@ import { addTo } from '@/core/extend';
 import { host } from '@/core/host';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
-import { addRowMenuItems } from '@/files/menus';
+import { addListMenuItems, addRowMenuItems } from '@/files/menus';
 import { join } from '@/files/paths';
 import { plural, t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
@@ -62,6 +62,7 @@ export default function setup() {
     return to ? h('span', { class: 'link' }, `→ ${to}`) : null;
   });
   addRowMenuItems(() => (host.os === 'windows' ? ['createShortcut'] : []));
+  addListMenuItems(() => ['newMenu']);
   addRowMenuItems((sel, path) => (sel.some((k) => k.cloud) ? [
     { label: t('filesystem.keep'), g: 'IconPin', run: () => keepOnDevice(sel, path, true) },
     { label: t('filesystem.free'), g: 'IconCloud', run: () => keepOnDevice(sel, path, false) },

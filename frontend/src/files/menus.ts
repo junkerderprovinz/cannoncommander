@@ -40,7 +40,13 @@ export function rowMenu(x: number, y: number) {
   menu(x, y, items);
 }
 
-export const listMenu = (x: number, y: number) => menu(x, y, ['newFolder', 'newFile', 'newMenu', 'upload', 'clipPaste', '-', 'selectAll', 'selectPattern', '-', 'refresh', 'props', 'fixPerms', 'terminal']);
+// Features add their own rows for the folder itself here, after the ones that make something new in it.
+const listExtras: ((path: string) => MenuEntry[])[] = [];
+export const addListMenuItems = (fn: (typeof listExtras)[number]) => listExtras.push(fn);
+
+export const listMenu = (x: number, y: number) => menu(x, y, [
+  'newFolder', 'newFile', 'upload', 'clipPaste', ...listExtras.flatMap((fn) => fn(usePanels().T().path)), '-', 'selectAll', 'selectPattern', '-', 'refresh', 'props', 'fixPerms', 'terminal',
+]);
 
 export const tabMenu = (x: number, y: number) => menu(x, y, ['newTab', 'dupTab', 'lockTab', '-', 'closeTab', 'closeOtherTabs']);
 

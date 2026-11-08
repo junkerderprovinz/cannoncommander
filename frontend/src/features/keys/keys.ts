@@ -28,8 +28,18 @@ export function mainCombo(map: KeyMap, id: string, declared?: string) {
 // Total Commander's own keys for the actions both programs share.
 export const TOTAL_COMMANDER: KeyMap = { 'Alt+F5': 'pack', 'Alt+F9': 'unpack', 'Ctrl+b': 'flat', 'Shift+F6': 'rename', F2: 'refresh', 'Shift+F2': 'compareDirs', 'Ctrl+d': 'addBookmark', 'Alt+F8': 'history' };
 
-export function preset(id: 'cc' | 'tc', defaults: KeyMap, known: (action: string) => boolean): KeyMap {
+// Explorer's keys where they differ from a commander's. They come on top, so Ctrl+R still refreshes beside F5, and
+// F3 stays with the viewer, as Space does.
+export const EXPLORER: KeyMap = { F5: 'refresh', 'Alt+d': 'gotoPath', 'Ctrl+Shift+c': 'copyPath', Backspace: 'back', 'Alt+p': 'quickview', 'Ctrl+d': 'delete' };
+
+export type Preset = 'cc' | 'tc' | 'explorer';
+
+export function preset(id: Preset, defaults: KeyMap, known: (action: string) => boolean): KeyMap {
   const map = { ...defaults };
+  if (id === 'explorer') {
+    for (const [combo, act] of Object.entries(EXPLORER)) if (known(act)) map[combo] = act;
+    return map;
+  }
   if (id !== 'tc') return map;
   for (const [combo, act] of Object.entries(TOTAL_COMMANDER)) {
     if (!known(act)) continue;

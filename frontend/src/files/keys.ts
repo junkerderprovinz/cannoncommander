@@ -79,6 +79,11 @@ function plainKey(e: KeyboardEvent, combo: string) {
     if (k && !k.up) t.marked.has(k.name) ? t.marked.delete(k.name) : t.marked.add(k.name);
     move(t.cursor + 1);
   };
+  // As in Explorer, the marks follow the cursor, and Shift takes the entries it passes along.
+  const take = () => {
+    const k = list[t.cursor];
+    if (k && !k.up) t.marked.add(k.name);
+  };
   const keys: Record<string, () => unknown> = {
     Tab: () => { if (prefs.dual && !prefs.quickview) F.active = F.other(); },
     ArrowDown: () => move(t.cursor + (grid ? across(false) : 1)), ArrowUp: () => move(t.cursor - (grid ? across(false) : 1)),
@@ -92,6 +97,10 @@ function plainKey(e: KeyboardEvent, combo: string) {
     Enter: () => list[t.cursor] && F.open(F.active, list[t.cursor]!),
     Backspace: () => t.path !== '/' && F.open(F.active, { up: true }),
     Insert: markStep, ' ': () => run('quickLook'),
+    ...(prefs.clickSelect ? {
+      'Shift+ArrowDown': () => { take(); move(t.cursor + 1); take(); },
+      'Shift+ArrowUp': () => { take(); move(t.cursor - 1); take(); },
+    } : {}),
     Escape: () => {
       if (t.qf || t.filter) Object.assign(t, { qf: false, filter: '', cursor: 0 });
       else if (Object.keys(F.marks[0]!).length || Object.keys(F.marks[1]!).length) F.marks.splice(0, 2, {}, {});
@@ -101,7 +110,17 @@ function plainKey(e: KeyboardEvent, combo: string) {
   if (keys[combo]) {
     e.preventDefault();
     keys[combo]!();
+    if (prefs.clickSelect && STEPS.includes(combo)) {
+      const k = F.entries()[F.T().cursor];
+      F.T().marked = k && !k.up ? new Set([k.name]) : new Set();
+    }
   }
 }
+
+const STEPS = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'PageDown', 'PageUp'];
+
+// While letters are typed to jump, Backspace and the arrows belong to the typing, also where the key map gives them
+// to an action, as Backspace in Explorer's layout.
+export const typingClaims = (combo: string) => !!jump.text && ['Backspace', 'Escape', 'ArrowUp', 'ArrowDown'].includes(combo);
 
 export const installJumpReset = () => document.addEventListener('mousedown', () => { if (jump.text) jumpEnd(); });

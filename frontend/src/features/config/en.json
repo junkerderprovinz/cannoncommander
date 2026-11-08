@@ -14,7 +14,7 @@
   "picker": { "folder": "Folder", "file": "File" },
   "general": {
     "use": "Handling", "start": "Start folder", "startTip": "This folder opens in the left panel after you sign in.", "startSaved": "Start folder saved",
-    "dblclick": "Double click on a file", "dblclickTip": "A double click on a folder always opens it.", "open": "Open", "preview": "Preview", "download": "Download",
+    "dblclick": "Double click on a file", "dblclickTip": "A double click on a folder always opens it.", "system": "Default program", "open": "Open", "preview": "Preview", "download": "Download",
     "delete": "Deleting", "confirm": "Ask before deleting", "confirmTip": "Shows everything that goes before it is deleted.",
     "trash": "Use the bin", "trashTip": "Deleted things land in the bin first and can be brought back from there. Without the bin they are gone at once.",
     "keep": "Keep for", "keepTip": "After that the bin empties itself.", "days": { "one": "{n} day", "other": "{n} days" },
