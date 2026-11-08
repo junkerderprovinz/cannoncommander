@@ -1,8 +1,9 @@
 name: Release
 
-# Fires on the version tag, builds and pushes the image for it and publishes the
-# hand-written notes as the GitHub release. The release comes last, once the
-# image exists, and the image's `latest` tag follows it, so the badge, the
+# Fires on the version tag, builds and pushes the image for it, builds the
+# desktop app and publishes the hand-written notes as the GitHub release with
+# the desktop files. The release comes last, once the image and every desktop
+# build exist, and the image's `latest` tag follows it, so the badge, the
 # release page and `docker pull` name the same version. A failed build leaves no
 # release; re-running the failed jobs finishes it.
 on:
@@ -46,11 +47,14 @@ jobs:
     # The Docker Hub token, for the copy the Unraid template pulls.
     secrets: inherit
 
+  desktop:
+    needs: notes
+    uses: ./.github/workflows/desktop.yml
+
   publish:
-    needs: container
-    if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: [container, desktop]
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     permissions:
       contents: write
     outputs:
@@ -58,11 +62,49 @@ jobs:
       latest: ${{ steps.publish.outputs.latest }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: cannoncommander-*
+          path: bundles
+          merge-multiple: true
+
+      # Every file under a name without the version, because
+      # /releases/latest/download/ takes an exact name only, and the README
+      # buttons and the desktop app's update ask for these. Each build says its
+      # version itself: the exe's properties, Info and `cannoncommander
+      # version`.
+      - name: Package
+        run: |
+          set -eu
+          mkdir -p dist
+          for slug in windows-amd64 macos-universal linux-amd64 linux-arm64; do
+            cp "bundles/cannoncommander-${slug}.zip" "dist/cannoncommander-${slug}.zip"
+          done
+          cp bundles/cannoncommander-windows-amd64-installer.exe dist/
+          cp bundles/cannoncommander-linux-amd64-installer bundles/cannoncommander-linux-arm64-installer dist/
+          chmod +x dist/cannoncommander-linux-*-installer
+          ls -lh dist
+
+      # The desktop app checks the zip it updates to against this list. Run
+      # inside dist/ so the entries are bare file names, which is what both
+      # desktop/update and a manual `sha256sum -c` expect.
+      - name: Checksums
+        run: |
+          set -eu
+          (cd dist && sha256sum *.zip *.exe cannoncommander-linux-*-installer > checksums.txt)
+          cat dist/checksums.txt
+
+      # Only from a pushed tag; a dispatched run stops after packaging. The
+      # checks before publishing, and the rule for "Latest", are in the script.
+      # checksums.txt is named on its own, since the globs before it do not
+      # take it.
       - name: Publish
         id: publish
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash .github/scripts/publish-release.sh
+        run: bash .github/scripts/publish-release.sh dist/*.zip dist/*.exe dist/cannoncommander-linux-*-installer dist/checksums.txt
 
   # `latest` on the image means the newest released version. It follows the
   # answer publish-release.sh gave for the release's "Latest" badge, so a
@@ -70,6 +112,7 @@ jobs:
   # one cannot drag it back. imagetools copies the manifest, nothing is rebuilt.
   image-latest:
     needs: publish
+    if: github.event_name == 'push' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

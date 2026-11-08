@@ -1,0 +1,194 @@
+name: Desktop
+
+# Builds the desktop app as artifacts, by hand or from release.yml. It attaches
+# nothing itself: release.yml publishes the release with every file at once
+# once this and the image are done.
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        # platform names the target, which desktop/update's Assets is checked
+        # against; args is what scripts/desktop.mjs builds. Every build is
+        # native: the database and WebKitGTK are linked through cgo, and no
+        # runner brings a C compiler for Windows on ARM.
+        include:
+          - os: windows-latest
+            platform: windows/amd64
+            slug: windows-amd64
+            args: "--arch amd64 --installer"
+          - os: macos-latest
+            platform: darwin/universal
+            slug: macos-universal
+            args: ""
+          - os: ubuntu-latest
+            platform: linux/amd64
+            slug: linux-amd64
+            args: "--arch amd64 --installer"
+          - os: ubuntu-24.04-arm
+            platform: linux/arm64
+            slug: linux-arm64
+            args: "--arch arm64 --installer"
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      # The version stamp is `git describe`, which needs the tags a shallow
+      # checkout lacks.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      # The server's go.mod, whose go directive and toolchain the desktop
+      # module compiles through its replace.
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: backend/go.mod
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # No libayatana-appindicator3-dev: the app has no tray icon.
+      - name: Install Linux system deps
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      # The image comes with MinGW, and the database needs it through cgo.
+      - name: Check the C compiler
+        if: runner.os == 'Windows'
+        shell: bash
+        run: gcc --version | head -1
+
+      # The CLI must match the library version in desktop/go.mod, so it is read
+      # from there and the step fails if it cannot find it. sed rather than
+      # grep -P, which BSD grep on macOS lacks. The CLI links the Linux webview
+      # too, and without the tag it wants GTK 4, which the runner does not
+      # have; elsewhere the tag changes nothing.
+      - name: Install the Wails CLI
+        working-directory: desktop
+        shell: bash
+        run: |
+          version=$(sed -n 's|.*github\.com/wailsapp/wails/v3 \(v[0-9][0-9A-Za-z.-]*\).*|\1|p' go.mod | head -1)
+          if [ -z "$version" ]; then
+            echo "could not read the wails version out of desktop/go.mod" >&2
+            exit 1
+          fi
+          go install -tags gtk3 github.com/wailsapp/wails/v3/cmd/wails3@"$version"
+
+      - name: Install the interface dependencies
+        run: npm --prefix frontend ci --no-audit --no-fund
+
+      # Worked out once, on the clean tree, so the build does not call itself
+      # dirty after npm and Wails have written their files.
+      - name: Work out the version
+        shell: bash
+        run: echo "CC_VERSION=$(git describe --tags --always --dirty)" >> "$GITHUB_ENV"
+
+      - name: Test the desktop module
+        working-directory: desktop
+        shell: bash
+        run: CGO_ENABLED=1 go test ./...
+
+      # Builds the interface, has Wails write the manifest, icons, version
+      # resource and Info.plist, and compiles; on Windows and Linux it also
+      # makes the installer.
+      - name: Build
+        run: node scripts/desktop.mjs ${{ matrix.args }}
+
+      # A bundle that builds can still die on start. The app runs for a while
+      # on a throwaway data folder and has to be alive with no crash in its
+      # log.
+      - name: Start the app
+        if: runner.os == 'macOS'
+        shell: bash
+        env:
+          CC_DATA: ${{ runner.temp }}/cc-data
+        run: |
+          out="$RUNNER_TEMP/cc-start.log"
+          desktop/build/bin/CannonCommander.app/Contents/MacOS/CannonCommander > "$out" 2>&1 &
+          pid=$!
+          sleep 30
+          if ! kill -0 "$pid" 2>/dev/null; then
+            cat "$out" "$CC_DATA/cannoncommander.log" || true
+            echo "::error::CannonCommander exited within 30 seconds of starting"
+            exit 1
+          fi
+          kill "$pid"
+          wait "$pid" 2>/dev/null || true
+          cat "$out" "$CC_DATA/cannoncommander.log" || true
+          if grep -Eq "SIGTRAP|panic:|fatal error|\[FATAL\]" "$out" "$CC_DATA/cannoncommander.log"; then
+            echo "::error::the start log shows a crash"
+            exit 1
+          fi
+
+      # What a first install on Windows goes through: the installer, a start,
+      # and the uninstaller from the Apps entry.
+      - name: Install, start and uninstall
+        if: runner.os == 'Windows'
+        shell: pwsh
+        timeout-minutes: 10
+        run: |
+          $installer = Get-Item desktop/build/installer/CannonCommander-*-installer.exe
+          $setup = Start-Process -FilePath $installer.FullName -ArgumentList '/S' -Wait -PassThru
+          if ($setup.ExitCode -ne 0) { throw "the installer exited with code $($setup.ExitCode)" }
+          $key = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\CannonCommander'
+          $entry = Get-ItemProperty $key -ErrorAction SilentlyContinue
+          if (-not $entry) { throw "the installer left no uninstall entry" }
+          $exe = Join-Path $entry.InstallLocation 'CannonCommander.exe'
+          if (-not (Test-Path $exe)) { throw "$exe is missing" }
+
+          $env:CC_DATA = Join-Path $env:RUNNER_TEMP 'cc-data'
+          $app = Start-Process -FilePath $exe -PassThru
+          $log = Join-Path $env:CC_DATA 'cannoncommander.log'
+          $deadline = (Get-Date).AddMinutes(3)
+          do {
+            Start-Sleep -Seconds 3
+            if ($app.HasExited) { throw "CannonCommander exited with code $($app.ExitCode)" }
+          } until (((Test-Path $log) -and (Select-String -Path $log -Pattern 'Running at' -Quiet)) -or (Get-Date) -gt $deadline)
+          Get-Content $log
+          if (-not (Select-String -Path $log -Pattern 'Running at' -Quiet)) { throw "the server did not start within three minutes" }
+          if (Select-String -Path $log -Pattern '\[FATAL\]' -Quiet) { throw "the server log shows a fatal error" }
+          Stop-Process -Id $app.Id -Force
+          Start-Sleep -Seconds 3
+
+          # The quiet form, since the uninstaller's window would wait for a click.
+          Start-Process -FilePath cmd.exe -ArgumentList '/c', $entry.QuietUninstallString -Wait
+          if (Test-Path $key) { throw "the uninstaller left its entry behind" }
+          if (Test-Path $exe) { throw "the uninstaller left $exe behind" }
+
+      # Zipped on the build runner because artifacts lose file modes, which
+      # would leave the Linux and macOS binaries without their execute bit. The
+      # zip holds the program alone at its root, which desktop/update expects,
+      # and -y keeps symlinks inside the .app.
+      - name: Zip the bundle
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          cd desktop/build/bin
+          zip -qry "$GITHUB_WORKSPACE/cannoncommander-${{ matrix.slug }}.zip" .
+          if [ -d ../installer ]; then
+            cp ../installer/CannonCommander-*-installer "$GITHUB_WORKSPACE/cannoncommander-${{ matrix.slug }}-installer"
+          fi
+      - name: Zip the bundle
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path desktop/build/bin/CannonCommander.exe -DestinationPath "cannoncommander-${{ matrix.slug }}.zip"
+          Copy-Item desktop/build/installer/CannonCommander-*-installer.exe "cannoncommander-${{ matrix.slug }}-installer.exe"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: cannoncommander-${{ matrix.slug }}
+          path: |
+            cannoncommander-${{ matrix.slug }}.zip
+            cannoncommander-${{ matrix.slug }}-installer*
+          if-no-files-found: error
