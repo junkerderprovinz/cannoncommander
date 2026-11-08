@@ -19,10 +19,16 @@ const F = usePanels(), listing = useListing(), user = useUser();
 const open = ref((() => { try { return localStorage.getItem(KEY) === '1'; } catch { return false; } })());
 watch(open, (on) => { try { localStorage.setItem(KEY, on ? '1' : '0'); } catch { /* it opens folded next time */ } });
 
+// A folder on a drive letter the computer has no more, such as a pulled stick, waits until the drive is back.
+const onMissingDrive = (path: string) => {
+  const letter = /^\/[A-Za-z](?=\/|$)/.exec(path)?.[0];
+  return !!letter && windowsPaths() && places.volumes.length > 0 && !places.volumes.some((v) => v.path === letter);
+};
 const rows = computed(() => {
   void visited.value;
   const shown = ['/', ...places.folders.map((p) => p.path), ...user.bookmarks.map((b) => b.path)];
-  return recentFolders(6, shown).map((path) => ({ path, name: listing.placeLabel(path) || split(path).pop() || rootName() }));
+  return recentFolders(12, shown).filter((path) => !onMissingDrive(path)).slice(0, 6)
+    .map((path) => ({ path, name: listing.placeLabel(path) || split(path).pop() || rootName() }));
 });
 </script>
 
