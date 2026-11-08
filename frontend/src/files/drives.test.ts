@@ -4,7 +4,7 @@ import { driveName } from './drives';
 
 beforeAll(() => {
   setLanguage('de');
-  addMessages('drives', { de: { fixed: 'Lokaler Datenträger', removable: 'USB-Laufwerk', optical: 'DVD-Laufwerk', network: 'Netzlaufwerk', volume: '{size}-Datenträger' } });
+  addMessages('drives', { de: { fixed: 'Lokaler Datenträger', removable: 'USB-Laufwerk', optical: 'DVD-Laufwerk', network: 'Netzlaufwerk', volume: 'Datenträger mit {size}' } });
 });
 
 describe('a drive', () => {
@@ -22,7 +22,7 @@ describe('a drive', () => {
   });
 
   it('without a label or a letter goes by its size, as on Linux', () => {
-    expect(driveName({ kind: 'fixed', size: 16e9 })).toMatch(/^16.*-Datenträger$/);
+    expect(driveName({ kind: 'fixed', size: 16 * 2 ** 30 })).toMatch(/^Datenträger mit 16/);
     expect(driveName({ path: '/run/media/jdp/URLAUB', kind: 'removable', label: 'URLAUB' })).toBe('URLAUB');
   });
 });

@@ -299,7 +299,7 @@
     "removable": "USB-Laufwerk",
     "optical": "DVD-Laufwerk",
     "network": "Netzlaufwerk",
-    "volume": "{size}-Datenträger"
+    "volume": "Datenträger mit {size}"
   },
   "files": {
     "server": "Server",
