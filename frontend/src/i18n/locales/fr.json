@@ -1996,6 +1996,14 @@
     },
     "notCopied": "La duplication a échoué"
   },
+  "openwith": {
+    "menu": "Ouvrir avec",
+    "looking": "Recherche d'applications …",
+    "none": "Aucune application trouvée",
+    "other": "Choisir une autre application",
+    "choose": "Choisir une application",
+    "search": "Rechercher des applications"
+  },
   "palette": {
     "title": "Chercher une commande",
     "placeholder": "Chercher une commande ou un dossier",
@@ -3628,6 +3636,7 @@
   },
   "server": {
     "adminsOnly": "Seuls les admins peuvent faire cela",
+    "appNotStarted": "{app} n'a pas pu démarrer",
     "archivePassword": "L'archive a besoin du bon mot de passe",
     "archiveUnreadable": "Impossible de lire l'archive",
     "badName": "Ce nom ne convient pas",
@@ -3703,6 +3712,7 @@
     "namePasswordNeeded": "Il faut un nom et un mot de passe",
     "nameTaken": "Ce nom existe déjà ici",
     "nameTooLong": "Le nom est trop long pour le système de fichiers",
+    "noAppDialog": "Cet ordinateur n'a pas sa propre boîte de dialogue pour choisir une application",
     "noFolder": "Ce dossier n'existe pas",
     "noFolderForFile": "Le dossier de ce fichier n'existe pas",
     "noGroup": "Ce groupe n'existe pas",
@@ -3801,6 +3811,7 @@
     "trashEmpty": "La corbeille est vide",
     "trashOtherDisk": "Cela se trouve sur un autre système de fichiers que sa corbeille. Supprimez-le plutôt directement",
     "trashShareRoot": "Un Share entier ou un volume entier ne peut pas aller à la corbeille",
+    "unknownApp": "Cet ordinateur ne propose pas cette application pour ce fichier",
     "unraidReadOnly": "L'écriture vers Unraid est désactivée",
     "uploadGone": "L'envoi commencé n'existe plus. Recommencez",
     "uploadRunning": "Un fichier de ce nom est en cours d'envoi",

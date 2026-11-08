@@ -392,6 +392,7 @@
   },
   "server": {
     "adminsOnly": "Das dürfen nur Admins",
+    "appNotStarted": "{app} ließ sich nicht starten",
     "archivePassword": "Das Archiv braucht das richtige Passwort",
     "archiveUnreadable": "Das Archiv lässt sich nicht lesen",
     "badName": "Dieser Name geht nicht",
@@ -451,6 +452,7 @@
     "namePasswordNeeded": "Es braucht Name und Passwort",
     "nameTaken": "Diesen Namen gibt es hier schon",
     "nameTooLong": "Der Name ist für das Dateisystem zu lang",
+    "noAppDialog": "Dieser Rechner hat keinen eigenen Dialog, um eine App auszuwählen",
     "noFolder": "Diesen Ordner gibt es nicht",
     "noFolderForFile": "Den Ordner für diese Datei gibt es nicht",
     "noGroup": "Diese Gruppe gibt es nicht",
@@ -545,6 +547,7 @@
     "trashEmpty": "Der Papierkorb ist leer",
     "trashOtherDisk": "Das liegt auf einem anderen Dateisystem als sein Papierkorb. Lösch es lieber direkt",
     "trashShareRoot": "Ein ganzer Share oder ein ganzes Laufwerk kann nicht in den Papierkorb",
+    "unknownApp": "Diese App bietet der Rechner für die Datei nicht an",
     "unraidReadOnly": "Das Schreiben auf Unraid ist ausgeschaltet",
     "uploadGone": "Der angefangene Upload ist weg. Fang bitte noch einmal an",
     "uploadRunning": "Eine Datei mit diesem Namen wird gerade hochgeladen",

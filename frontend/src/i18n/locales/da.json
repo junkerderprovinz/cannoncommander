@@ -1929,6 +1929,14 @@
     },
     "notCopied": "Duplikeringen lykkedes ikke"
   },
+  "openwith": {
+    "menu": "Åbn med",
+    "looking": "Leder efter apps …",
+    "none": "Ingen app fundet",
+    "other": "Vælg en anden app",
+    "choose": "Vælg en app",
+    "search": "Søg i apps"
+  },
   "palette": {
     "title": "Find en kommando",
     "placeholder": "Find en kommando eller mappe",
@@ -3496,6 +3504,7 @@
   },
   "server": {
     "adminsOnly": "Det må kun administratorer",
+    "appNotStarted": "{app} kunne ikke starte",
     "archivePassword": "Arkivet kræver den rigtige adgangskode",
     "archiveUnreadable": "Arkivet kan ikke læses",
     "badName": "Dette navn går ikke",
@@ -3567,6 +3576,7 @@
     "namePasswordNeeded": "Der skal både navn og adgangskode til",
     "nameTaken": "Det navn findes allerede her",
     "nameTooLong": "Navnet er for langt til filsystemet",
+    "noAppDialog": "Denne computer har ingen egen dialog til at vælge en app",
     "noFolder": "Denne mappe findes ikke",
     "noFolderForFile": "Mappen til denne fil findes ikke",
     "noGroup": "Denne gruppe findes ikke",
@@ -3664,6 +3674,7 @@
     "trashEmpty": "Papirkurven er tom",
     "trashOtherDisk": "Det ligger på et andet filsystem end sin papirkurv. Slet det hellere direkte",
     "trashShareRoot": "En hel Share eller et helt drev kan ikke lægges i papirkurven",
+    "unknownApp": "Denne computer tilbyder ikke den app til filen",
     "unraidReadOnly": "Skrivning til Unraid er slået fra",
     "uploadGone": "Den påbegyndte upload er væk. Start venligst forfra",
     "uploadRunning": "En fil med dette navn uploades lige nu",

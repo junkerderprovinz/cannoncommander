@@ -1862,6 +1862,14 @@
     },
     "notCopied": "Nhân bản không thành công"
   },
+  "openwith": {
+    "menu": "Mở bằng",
+    "looking": "Đang tìm ứng dụng …",
+    "none": "Không tìm thấy ứng dụng nào",
+    "other": "Chọn ứng dụng khác",
+    "choose": "Chọn ứng dụng",
+    "search": "Tìm ứng dụng"
+  },
   "palette": {
     "title": "Tìm lệnh",
     "placeholder": "Tìm lệnh hoặc thư mục",
@@ -3364,6 +3372,7 @@
   },
   "server": {
     "adminsOnly": "Chỉ quản trị viên mới được làm việc này",
+    "appNotStarted": "Không khởi động được {app}",
     "archivePassword": "Tệp nén cần đúng mật khẩu",
     "archiveUnreadable": "Không đọc được tệp nén",
     "badName": "Tên này không dùng được",
@@ -3431,6 +3440,7 @@
     "namePasswordNeeded": "Cần cả tên và mật khẩu",
     "nameTaken": "Ở đây đã có tên này",
     "nameTooLong": "Tên quá dài đối với hệ thống tệp",
+    "noAppDialog": "Máy tính này không có hộp thoại riêng để chọn ứng dụng",
     "noFolder": "Thư mục này không tồn tại",
     "noFolderForFile": "Thư mục cho tệp này không tồn tại",
     "noGroup": "Không có nhóm này",
@@ -3527,6 +3537,7 @@
     "trashEmpty": "Thùng rác đang trống",
     "trashOtherDisk": "Mục này nằm trên hệ thống tệp khác với thùng rác của nó. Tốt hơn hãy xóa trực tiếp",
     "trashShareRoot": "Không thể đưa cả một Share hay cả một ổ đĩa vào thùng rác",
+    "unknownApp": "Máy tính này không cung cấp ứng dụng đó cho tệp này",
     "unraidReadOnly": "Quyền ghi vào Unraid đang tắt",
     "uploadGone": "Phần đã tải lên không còn nữa. Bạn bắt đầu lại nhé",
     "uploadRunning": "Một tệp trùng tên đang được tải lên",

@@ -1996,6 +1996,14 @@
     },
     "notCopied": "Udvostručavanje nije uspjelo"
   },
+  "openwith": {
+    "menu": "Otvori pomoću",
+    "looking": "Traženje aplikacija …",
+    "none": "Nije pronađena nijedna aplikacija",
+    "other": "Odaberite drugu aplikaciju",
+    "choose": "Odaberite aplikaciju",
+    "search": "Pretraži aplikacije"
+  },
   "palette": {
     "title": "Traži naredbu",
     "placeholder": "Traži naredbu ili mapu",
@@ -3628,6 +3636,7 @@
   },
   "server": {
     "adminsOnly": "To smiju samo administratori",
+    "appNotStarted": "Aplikacija {app} nije se pokrenula",
     "archivePassword": "Arhiva traži ispravnu lozinku",
     "archiveUnreadable": "Arhiva se ne može pročitati",
     "badName": "Taj naziv ne ide",
@@ -3703,6 +3712,7 @@
     "namePasswordNeeded": "Potrebni su ime i lozinka",
     "nameTaken": "Taj naziv ovdje već postoji",
     "nameTooLong": "Naziv je predug za datotečni sustav",
+    "noAppDialog": "Ovo računalo nema vlastiti dijalog za odabir aplikacije",
     "noFolder": "Ta mapa ne postoji",
     "noFolderForFile": "Mapa za ovu datoteku ne postoji",
     "noGroup": "Ta grupa ne postoji",
@@ -3801,6 +3811,7 @@
     "trashEmpty": "Smeće je prazno",
     "trashOtherDisk": "Ovo je na drugom datotečnom sustavu od svojeg smeća. Radije ga izbrišite izravno",
     "trashShareRoot": "Cijeli Share ili cijeli pogon ne može u smeće",
+    "unknownApp": "Ovo računalo ne nudi tu aplikaciju za datoteku",
     "unraidReadOnly": "Pisanje u Unraid je isključeno",
     "uploadGone": "Započeti prijenos je nestao. Počnite ispočetka",
     "uploadRunning": "Datoteka s tim nazivom upravo se prenosi",

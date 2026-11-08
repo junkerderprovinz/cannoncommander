@@ -1929,6 +1929,14 @@
     },
     "notCopied": "Dupliceringen misslyckades"
   },
+  "openwith": {
+    "menu": "Öppna med",
+    "looking": "Letar efter appar …",
+    "none": "Ingen app hittades",
+    "other": "Välj en annan app",
+    "choose": "Välj en app",
+    "search": "Sök bland appar"
+  },
   "palette": {
     "title": "Sök kommando",
     "placeholder": "Sök kommando eller mapp",
@@ -3496,6 +3504,7 @@
   },
   "server": {
     "adminsOnly": "Det får bara admins göra",
+    "appNotStarted": "{app} startade inte",
     "archivePassword": "Arkivet behöver rätt lösenord",
     "archiveUnreadable": "Arkivet kan inte läsas",
     "badName": "Det här namnet fungerar inte",
@@ -3567,6 +3576,7 @@
     "namePasswordNeeded": "Både namn och lösenord behövs",
     "nameTaken": "Det här namnet finns redan här",
     "nameTooLong": "Namnet är för långt för filsystemet",
+    "noAppDialog": "Den här datorn har ingen egen dialog för att välja en app",
     "noFolder": "Den här mappen finns inte",
     "noFolderForFile": "Mappen för den här filen finns inte",
     "noGroup": "Den gruppen finns inte",
@@ -3664,6 +3674,7 @@
     "trashEmpty": "Papperskorgen är tom",
     "trashOtherDisk": "Det ligger på ett annat filsystem än sin papperskorg. Ta bort det direkt i stället",
     "trashShareRoot": "En hel Share eller en hel volym kan inte läggas i papperskorgen",
+    "unknownApp": "Den här datorn erbjuder inte den appen för filen",
     "unraidReadOnly": "Skrivning till Unraid är avstängd",
     "uploadGone": "Den påbörjade uppladdningen är borta. Börja om",
     "uploadRunning": "En fil med det här namnet laddas upp just nu",

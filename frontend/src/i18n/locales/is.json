@@ -1929,6 +1929,14 @@
     },
     "notCopied": "Tvöföldunin tókst ekki"
   },
+  "openwith": {
+    "menu": "Opna með",
+    "looking": "Leita að forritum …",
+    "none": "Ekkert forrit fannst",
+    "other": "Velja annað forrit",
+    "choose": "Velja forrit",
+    "search": "Leita í forritum"
+  },
   "palette": {
     "title": "Leita að skipun",
     "placeholder": "Leita að skipun eða möppu",
@@ -3496,6 +3504,7 @@
   },
   "server": {
     "adminsOnly": "Aðeins stjórnendur mega gera þetta",
+    "appNotStarted": "{app} ræstist ekki",
     "archivePassword": "Safnskráin þarf rétt lykilorð",
     "archiveUnreadable": "Ekki er hægt að lesa safnskrána",
     "badName": "Þetta heiti gengur ekki",
@@ -3567,6 +3576,7 @@
     "namePasswordNeeded": "Bæði heiti og lykilorð þarf",
     "nameTaken": "Þetta heiti er þegar til hér",
     "nameTooLong": "Heitið er of langt fyrir skráakerfið",
+    "noAppDialog": "Þessi tölva hefur engan eigin glugga til að velja forrit",
     "noFolder": "Þessi mappa er ekki til",
     "noFolderForFile": "Mappan fyrir þessa skrá er ekki til",
     "noGroup": "Þessi hópur er ekki til",
@@ -3664,6 +3674,7 @@
     "trashEmpty": "Ruslið er tómt",
     "trashOtherDisk": "Þetta er á öðru skráakerfi en ruslið þess. Eyddu því frekar beint",
     "trashShareRoot": "Heil Share eða heilt drif getur ekki farið í ruslið",
+    "unknownApp": "Þessi tölva býður ekki upp á þetta forrit fyrir skrána",
     "unraidReadOnly": "Slökkt er á skrifum í Unraid",
     "uploadGone": "Upphleðslan sem var hafin er horfin. Byrjaðu aftur",
     "uploadRunning": "Verið er að hlaða upp skrá með þessu heiti núna",

@@ -11,6 +11,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/office"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/openwith"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/remotes"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/search"
@@ -43,6 +44,7 @@ func NewRouter(deps v1.Deps, auth v1.Authenticator) *v1.Router {
 	remotes.Routes(r)
 	system.Routes(r)
 	terminal.Routes(r)
+	openwith.Routes(r)
 	office.Routes(r)
 	stream.Routes(r)
 	return r

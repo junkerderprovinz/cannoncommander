@@ -1862,6 +1862,14 @@
     },
     "notCopied": "複製できませんでした"
   },
+  "openwith": {
+    "menu": "プログラムから開く",
+    "looking": "アプリを探しています …",
+    "none": "アプリが見つかりません",
+    "other": "別のプログラムを選択",
+    "choose": "アプリを選択",
+    "search": "アプリを検索"
+  },
   "palette": {
     "title": "コマンドを検索",
     "placeholder": "コマンドまたはフォルダーを検索",
@@ -3364,6 +3372,7 @@
   },
   "server": {
     "adminsOnly": "この操作は管理者だけができます",
+    "appNotStarted": "{app} を起動できませんでした",
     "archivePassword": "アーカイブには正しいパスワードが必要です",
     "archiveUnreadable": "アーカイブを読み込めません",
     "badName": "この名前は使えません",
@@ -3431,6 +3440,7 @@
     "namePasswordNeeded": "名前とパスワードの両方が必要です",
     "nameTaken": "この名前はすでにあります",
     "nameTooLong": "名前がファイルシステムには長すぎます",
+    "noAppDialog": "このパソコンにはアプリを選ぶための専用のダイアログがありません",
     "noFolder": "このフォルダーは存在しません",
     "noFolderForFile": "このファイルのフォルダーが存在しません",
     "noGroup": "このグループは存在しません",
@@ -3527,6 +3537,7 @@
     "trashEmpty": "ごみ箱は空です",
     "trashOtherDisk": "ごみ箱と別のファイルシステムにあります。直接削除してください",
     "trashShareRoot": "Share 全体やボリューム全体はごみ箱に移動できません",
+    "unknownApp": "このパソコンはこのファイルにそのアプリを提供していません",
     "unraidReadOnly": "Unraid への書き込みはオフになっています",
     "uploadGone": "途中までのアップロードが失われました。最初からやり直してください",
     "uploadRunning": "同じ名前のファイルを今アップロードしています",

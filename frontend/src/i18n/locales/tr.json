@@ -1929,6 +1929,14 @@
     },
     "notCopied": "Çoğaltma başarısız oldu"
   },
+  "openwith": {
+    "menu": "Birlikte aç",
+    "looking": "Uygulamalar aranıyor …",
+    "none": "Uygulama bulunamadı",
+    "other": "Başka bir uygulama seç",
+    "choose": "Bir uygulama seç",
+    "search": "Uygulamalarda ara"
+  },
   "palette": {
     "title": "Komut bul",
     "placeholder": "Komut ya da klasör bul",
@@ -3496,6 +3504,7 @@
   },
   "server": {
     "adminsOnly": "Bunu yalnızca yöneticiler yapabilir",
+    "appNotStarted": "{app} başlatılamadı",
     "archivePassword": "Arşiv için doğru parola gerekiyor",
     "archiveUnreadable": "Arşiv okunamıyor",
     "badName": "Bu ad olmaz",
@@ -3567,6 +3576,7 @@
     "namePasswordNeeded": "Ad ve parola gerekli",
     "nameTaken": "Bu ad burada zaten var",
     "nameTooLong": "Ad dosya sistemi için çok uzun",
+    "noAppDialog": "Bu bilgisayarın uygulama seçmek için kendi iletişim kutusu yok",
     "noFolder": "Bu klasör yok",
     "noFolderForFile": "Bu dosyanın klasörü yok",
     "noGroup": "Böyle bir grup yok",
@@ -3664,6 +3674,7 @@
     "trashEmpty": "Çöp kutusu boş",
     "trashOtherDisk": "Bu, çöp kutusundan farklı bir dosya sisteminde. Onu doğrudan silsen daha iyi",
     "trashShareRoot": "Bütün bir Share ya da bütün bir sürücü çöp kutusuna atılamaz",
+    "unknownApp": "Bu bilgisayar bu dosya için o uygulamayı sunmuyor",
     "unraidReadOnly": "Unraid'e yazma kapalı",
     "uploadGone": "Başlanan yükleme kayboldu. Lütfen yeniden başla",
     "uploadRunning": "Bu adda bir dosya şu an yükleniyor",
