@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"image"
 	"image/png"
+	"os"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"sync"
@@ -64,8 +66,12 @@ var (
 
 // Icon is the icon Explorer shows for the file or folder at file, about px
 // pixels square, as a PNG. A program, a shortcut or a folder with an icon of
-// its own gets that one.
+// its own gets that one, unless it lies on another computer.
 func Icon(file string, px int) ([]byte, string, error) {
+	if reachesOut(file) {
+		info, err := os.Stat(file)
+		return TypeIcon(filepath.Base(file), err == nil && info.IsDir(), px)
+	}
 	return systemIcon(file, 0, 0, px)
 }
 
