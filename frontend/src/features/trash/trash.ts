@@ -3,11 +3,12 @@
 import { reactive, watch } from 'vue';
 import { type Job, ops, type TrashItem } from '@/api/ops';
 import { fmtSize } from '@/core/format';
-import { host } from '@/core/host';
+import { host, windowsPaths } from '@/core/host';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { cancelBtn, win } from '@/core/windows';
 import type { Entry } from '@/files/entries';
+import { nativePath } from '@/files/paths';
 import { t } from '@/i18n';
 import { confirmWin } from '@/features/config/shared';
 import { objects } from '@/features/jobs/label';
@@ -98,7 +99,7 @@ export async function restore(list: TrashItem[], done?: () => void) {
   try {
     const job = await useTrash().restore(list);
     done?.();
-    whenThrough(job, () => toast(from.length === 1 ? t('trash.restoredTo', { what, from: from[0]! }) : t('trash.restored', { what }), 'ok',
+    whenThrough(job, () => toast(from.length === 1 ? t('trash.restoredTo', { what, from: nativePath(from[0]!, windowsPaths()) }) : t('trash.restored', { what }), 'ok',
       from.length === 1 ? { label: t('trash.go'), run: () => { usePanels().go(from[0]!); } } : undefined));
   } catch (e) {
     toast((e as Error).message, 'warn');

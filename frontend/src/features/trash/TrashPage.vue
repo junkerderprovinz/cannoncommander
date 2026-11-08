@@ -5,9 +5,11 @@ import { computed, onBeforeUnmount, onMounted } from 'vue';
 import type { TrashItem } from '@/api/ops';
 import { DAY, fmtDate, fmtSize } from '@/core/format';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
+import { windowsPaths } from '@/core/host';
 import { isMenuOpen, menu } from '@/core/menu';
 import { go } from '@/core/views';
 import { winStack } from '@/core/windows';
+import { nativePath } from '@/files/paths';
 import { byName, byText, plural, t } from '@/i18n';
 import { useTrash } from '@/stores/trash';
 import { objects } from '@/features/jobs/label';
@@ -100,7 +102,7 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
           <button class="ct-mark" data-mark :aria-label="t('trash.mark')"><G n="IconCheck" /></button>
           <GlyphTile :glyph="glyphComponent(e.dir ? 'IconFolder' : glyphOf({ name: e.name }))" :active="pick.sel.has(e.id)" />
           <span class="t">{{ e.name }}</span>
-          <Pill class="mono col-from" :data-tip="e.from">{{ e.from }}</Pill>
+          <Pill class="mono col-from" :data-tip="nativePath(e.from, windowsPaths())">{{ nativePath(e.from, windowsPaths()) }}</Pill>
           <Pill class="glim-num col-size">{{ fmtSize(e.size) || '0 B' }}</Pill>
           <Pill v-if="e.by" class="glim-num col-deleted" :data-tip="t('trash.byTip', { by: e.by, date: goneOn(e) })">{{ fmtDate(at(e)) }}, {{ e.by }}</Pill>
           <Pill v-else class="glim-num col-deleted">{{ fmtDate(at(e)) }}</Pill>
