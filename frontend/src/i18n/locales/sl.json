@@ -1595,10 +1595,13 @@
       "copy": "Da kopirate {what} sem, potrebujete skrbniške pravice.",
       "move": "Da premaknete {what} sem, potrebujete skrbniške pravice.",
       "delete": "Da izbrišete {what}, potrebujete skrbniške pravice.",
-      "trash": "Da premaknete {what} v koš, potrebujete skrbniške pravice."
+      "trash": "Da premaknete {what} v koš, potrebujete skrbniške pravice.",
+      "restore": "Da obnovite {what}, potrebujete skrbniške pravice.",
+      "undo": "Da razveljavite {what}, potrebujete skrbniške pravice."
     },
     "howWindows": "Ko nadaljujete, Windows vpraša za vaše dovoljenje, nato CannonCommander nadaljuje.",
     "howLinux": "Ko nadaljujete, sistem vpraša za vaše geslo, nato CannonCommander nadaljuje.",
+    "declined": "Prav, brez skrbniških pravic {what} ostane, kot je bilo.",
     "go": "Nadaljuj"
   },
   "fetch": {
@@ -2910,6 +2913,12 @@
     "purgeSel": "Dokončno izbriši izbor ({n})",
     "selectAll": "Izberi vse",
     "empty": "Izprazni koš",
+    "emptySystem": {
+      "one": "Izprazni se ves {bin} z {n} elementom.",
+      "two": "Izprazni se ves {bin}: skupaj {n} elementa, tudi iz drugih programov.",
+      "few": "Izprazni se ves {bin}: skupaj {n} elementi, tudi iz drugih programov.",
+      "other": "Izprazni se ves {bin}: skupaj {n} elementov, tudi iz drugih programov."
+    },
     "andMore": {
       "one": "in še {n}",
       "two": "in še {n}",

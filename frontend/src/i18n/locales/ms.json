@@ -1430,10 +1430,13 @@
       "copy": "Anda perlukan hak pentadbir untuk menyalin {what} ke sini.",
       "move": "Anda perlukan hak pentadbir untuk memindahkan {what} ke sini.",
       "delete": "Anda perlukan hak pentadbir untuk memadam {what}.",
-      "trash": "Anda perlukan hak pentadbir untuk memasukkan {what} ke dalam tong sampah."
+      "trash": "Anda perlukan hak pentadbir untuk memasukkan {what} ke dalam tong sampah.",
+      "restore": "Anda perlukan hak pentadbir untuk memulihkan {what}.",
+      "undo": "Anda perlukan hak pentadbir untuk membuat asal {what}."
     },
     "howWindows": "Dengan Teruskan, Windows meminta kebenaran anda, kemudian CannonCommander menyambung kerja.",
     "howLinux": "Dengan Teruskan, sistem meminta kata laluan anda, kemudian CannonCommander menyambung kerja.",
+    "declined": "Baiklah, tanpa hak pentadbir {what} kekal seperti asal.",
     "go": "Teruskan"
   },
   "fetch": {
@@ -2619,6 +2622,9 @@
     "purgeSel": "Padam pilihan terus ({n})",
     "selectAll": "Pilih semua",
     "empty": "Kosongkan tong sampah",
+    "emptySystem": {
+      "other": "Ini mengosongkan seluruh {bin}: kesemua {n} item, termasuk daripada program lain."
+    },
     "andMore": {
       "other": "dan {n} lagi"
     },

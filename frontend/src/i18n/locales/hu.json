@@ -1485,10 +1485,13 @@
       "copy": "{what} ide másolásához rendszergazdai jogokra van szüksége.",
       "move": "{what} ide áthelyezéséhez rendszergazdai jogokra van szüksége.",
       "delete": "{what} törléséhez rendszergazdai jogokra van szüksége.",
-      "trash": "{what} kukába helyezéséhez rendszergazdai jogokra van szüksége."
+      "trash": "{what} kukába helyezéséhez rendszergazdai jogokra van szüksége.",
+      "restore": "{what} visszaállításához rendszergazdai jogokra van szüksége.",
+      "undo": "{what} visszavonásához rendszergazdai jogokra van szüksége."
     },
     "howWindows": "Ha a Folytatásra kattint, a Windows az engedélyét kéri, aztán a CannonCommander folytatja.",
     "howLinux": "Ha a Folytatásra kattint, a rendszer a jelszavát kéri, aztán a CannonCommander folytatja.",
+    "declined": "Rendben, rendszergazdai jogok nélkül {what} úgy marad, ahogy volt.",
     "go": "Folytatás"
   },
   "fetch": {
@@ -2716,6 +2719,10 @@
     "purgeSel": "Kijelöltek végleges törlése ({n})",
     "selectAll": "Összes kijelölése",
     "empty": "Kuka ürítése",
+    "emptySystem": {
+      "one": "Ezzel teljesen kiürül {bin} az egyetlen elemével együtt.",
+      "other": "Ezzel teljesen kiürül {bin}: összesen {n} elem, a más programokból származók is."
+    },
     "andMore": {
       "one": "és még {n}",
       "other": "és még {n}"

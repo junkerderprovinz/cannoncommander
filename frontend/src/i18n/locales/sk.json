@@ -1595,10 +1595,13 @@
       "copy": "Aby ste sem mohli skopírovať {what}, potrebujete oprávnenia správcu.",
       "move": "Aby ste sem mohli presunúť {what}, potrebujete oprávnenia správcu.",
       "delete": "Aby ste mohli zmazať {what}, potrebujete oprávnenia správcu.",
-      "trash": "Aby ste mohli presunúť {what} do koša, potrebujete oprávnenia správcu."
+      "trash": "Aby ste mohli presunúť {what} do koša, potrebujete oprávnenia správcu.",
+      "restore": "Aby ste mohli obnoviť {what}, potrebujete oprávnenia správcu.",
+      "undo": "Aby ste mohli vrátiť späť {what}, potrebujete oprávnenia správcu."
     },
     "howWindows": "Po kliknutí na Pokračovať požiada Windows o vaše povolenie a potom CannonCommander pokračuje.",
     "howLinux": "Po kliknutí na Pokračovať požiada systém o vaše heslo a potom CannonCommander pokračuje.",
+    "declined": "V poriadku, bez oprávnení správcu zostane {what} tak, ako bolo.",
     "go": "Pokračovať"
   },
   "fetch": {
@@ -2910,6 +2913,12 @@
     "purgeSel": "Natrvalo zmazať výber ({n})",
     "selectAll": "Vybrať všetko",
     "empty": "Vyprázdniť kôš",
+    "emptySystem": {
+      "one": "Vyprázdni sa celý {bin} s jeho jedinou položkou.",
+      "few": "Vyprázdni sa celý {bin}: všetky {n} položky, aj tie z iných programov.",
+      "many": "Vyprázdni sa celý {bin}: {n} položky, aj tie z iných programov.",
+      "other": "Vyprázdni sa celý {bin}: všetkých {n} položiek, aj tie z iných programov."
+    },
     "andMore": {
       "one": "a ešte {n}",
       "few": "a ešte {n}",

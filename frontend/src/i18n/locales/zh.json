@@ -1430,10 +1430,13 @@
       "copy": "要把 {what} 复制到这里，你需要管理员权限。",
       "move": "要把 {what} 移动到这里，你需要管理员权限。",
       "delete": "要删除 {what}，你需要管理员权限。",
-      "trash": "要把 {what} 移到回收站，你需要管理员权限。"
+      "trash": "要把 {what} 移到回收站，你需要管理员权限。",
+      "restore": "要还原 {what}，你需要管理员权限。",
+      "undo": "要撤销 {what}，你需要管理员权限。"
     },
     "howWindows": "点击继续后，Windows 会请求你的许可，然后 CannonCommander 接着完成。",
     "howLinux": "点击继续后，系统会询问你的密码，然后 CannonCommander 接着完成。",
+    "declined": "好的，没有管理员权限，{what} 保持原样。",
     "go": "继续"
   },
   "fetch": {
@@ -2619,6 +2622,9 @@
     "purgeSel": "永久删除所选（{n}）",
     "selectAll": "全选",
     "empty": "清空回收站",
+    "emptySystem": {
+      "other": "这会清空整个{bin}：全部 {n} 项，包括其他程序的项目。"
+    },
     "andMore": {
       "other": "以及另外 {n} 项"
     },

@@ -1540,10 +1540,13 @@
       "copy": "Lai šeit kopētu {what}, tev vajag administratora tiesības.",
       "move": "Lai šeit pārvietotu {what}, tev vajag administratora tiesības.",
       "delete": "Lai izdzēstu {what}, tev vajag administratora tiesības.",
-      "trash": "Lai ievietotu {what} atkritnē, tev vajag administratora tiesības."
+      "trash": "Lai ievietotu {what} atkritnē, tev vajag administratora tiesības.",
+      "restore": "Lai atjaunotu {what}, tev vajag administratora tiesības.",
+      "undo": "Lai atsauktu {what}, tev vajag administratora tiesības."
     },
     "howWindows": "Kad turpināsi, Windows lūgs tavu atļauju, un pēc tam CannonCommander turpinās darbu.",
     "howLinux": "Kad turpināsi, sistēma prasīs tavu paroli, un pēc tam CannonCommander turpinās darbu.",
+    "declined": "Labi, bez administratora tiesībām {what} paliek, kā bija.",
     "go": "Turpināt"
   },
   "fetch": {
@@ -2813,6 +2816,11 @@
     "purgeSel": "Dzēst atlasīto neatgriezeniski ({n})",
     "selectAll": "Atlasīt visu",
     "empty": "Iztukšot atkritni",
+    "emptySystem": {
+      "zero": "Tiek iztukšota visa {bin}: {n} vienumu, arī no citām programmām.",
+      "one": "Tiek iztukšota visa {bin}: {n} vienums, arī no citām programmām.",
+      "other": "Tiek iztukšota visa {bin}: visi {n} vienumi, arī no citām programmām."
+    },
     "andMore": {
       "zero": "un vēl {n}",
       "one": "un vēl {n}",

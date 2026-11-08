@@ -1540,10 +1540,13 @@
       "copy": "Pour copier {what} ici, il vous faut des droits d'administrateur.",
       "move": "Pour déplacer {what} ici, il vous faut des droits d'administrateur.",
       "delete": "Pour supprimer {what}, il vous faut des droits d'administrateur.",
-      "trash": "Pour mettre {what} à la corbeille, il vous faut des droits d'administrateur."
+      "trash": "Pour mettre {what} à la corbeille, il vous faut des droits d'administrateur.",
+      "restore": "Pour restaurer {what}, il vous faut des droits d'administrateur.",
+      "undo": "Pour annuler {what}, il vous faut des droits d'administrateur."
     },
     "howWindows": "Avec Continuer, Windows vous demande votre autorisation, puis CannonCommander poursuit.",
     "howLinux": "Avec Continuer, le système vous demande votre mot de passe, puis CannonCommander poursuit.",
+    "declined": "D'accord. Sans droits d'administrateur, {what} reste tel quel.",
     "go": "Continuer"
   },
   "fetch": {
@@ -2813,6 +2816,11 @@
     "purgeSel": "Supprimer définitivement la sélection ({n})",
     "selectAll": "Tout sélectionner",
     "empty": "Vider la corbeille",
+    "emptySystem": {
+      "one": "Cela vide toute la {bin} : {n} élément en tout.",
+      "many": "Cela vide toute la {bin} : les {n} éléments, y compris ceux d'autres programmes.",
+      "other": "Cela vide toute la {bin} : les {n} éléments, y compris ceux d'autres programmes."
+    },
     "andMore": {
       "one": "et {n} autre",
       "many": "et {n} autres",

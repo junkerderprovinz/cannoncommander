@@ -1540,10 +1540,13 @@
       "copy": "Per copiare {what} qui, ti servono i diritti di amministratore.",
       "move": "Per spostare {what} qui, ti servono i diritti di amministratore.",
       "delete": "Per eliminare {what}, ti servono i diritti di amministratore.",
-      "trash": "Per spostare {what} nel cestino, ti servono i diritti di amministratore."
+      "trash": "Per spostare {what} nel cestino, ti servono i diritti di amministratore.",
+      "restore": "Per ripristinare {what}, ti servono i diritti di amministratore.",
+      "undo": "Per annullare {what}, ti servono i diritti di amministratore."
     },
     "howWindows": "Con Continua, Windows ti chiede il permesso e poi CannonCommander va avanti.",
     "howLinux": "Con Continua, il sistema ti chiede la password e poi CannonCommander va avanti.",
+    "declined": "Va bene, senza diritti di amministratore {what} resta com'era.",
     "go": "Continua"
   },
   "fetch": {
@@ -2813,6 +2816,11 @@
     "purgeSel": "Elimina definitivamente la selezione ({n})",
     "selectAll": "Seleziona tutto",
     "empty": "Svuota il cestino",
+    "emptySystem": {
+      "one": "Questo svuota tutto il {bin} con il suo unico elemento.",
+      "many": "Questo svuota tutto il {bin}: tutti i {n} elementi, anche quelli di altri programmi.",
+      "other": "Questo svuota tutto il {bin}: tutti i {n} elementi, anche quelli di altri programmi."
+    },
     "andMore": {
       "one": "e {n} altro",
       "many": "e altri {n}",

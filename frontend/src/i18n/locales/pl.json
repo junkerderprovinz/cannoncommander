@@ -1595,10 +1595,13 @@
       "copy": "Aby skopiować tu {what}, potrzebujesz uprawnień administratora.",
       "move": "Aby przenieść tu {what}, potrzebujesz uprawnień administratora.",
       "delete": "Aby usunąć {what}, potrzebujesz uprawnień administratora.",
-      "trash": "Aby przenieść {what} do kosza, potrzebujesz uprawnień administratora."
+      "trash": "Aby przenieść {what} do kosza, potrzebujesz uprawnień administratora.",
+      "restore": "Aby przywrócić {what}, potrzebujesz uprawnień administratora.",
+      "undo": "Aby cofnąć {what}, potrzebujesz uprawnień administratora."
     },
     "howWindows": "Po kliknięciu Kontynuuj Windows poprosi o twoją zgodę, a potem CannonCommander będzie działać dalej.",
     "howLinux": "Po kliknięciu Kontynuuj system poprosi o twoje hasło, a potem CannonCommander będzie działać dalej.",
+    "declined": "W porządku, bez uprawnień administratora {what} zostaje tak, jak było.",
     "go": "Kontynuuj"
   },
   "fetch": {
@@ -2910,6 +2913,12 @@
     "purgeSel": "Usuń zaznaczone na zawsze ({n})",
     "selectAll": "Zaznacz wszystko",
     "empty": "Opróżnij kosz",
+    "emptySystem": {
+      "one": "Zostanie opróżniony cały {bin} z jego jedynym elementem.",
+      "few": "Zostanie opróżniony cały {bin}: wszystkie {n} elementy, także te z innych programów.",
+      "many": "Zostanie opróżniony cały {bin}: łącznie {n} elementów, także te z innych programów.",
+      "other": "Zostanie opróżniony cały {bin}: łącznie {n} elementu, także z innych programów."
+    },
     "andMore": {
       "one": "i jeszcze {n}",
       "few": "i jeszcze {n}",

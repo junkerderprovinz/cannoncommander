@@ -1540,10 +1540,13 @@
       "copy": "Ca să copiezi {what} aici, ai nevoie de drepturi de administrator.",
       "move": "Ca să muți {what} aici, ai nevoie de drepturi de administrator.",
       "delete": "Ca să ștergi {what}, ai nevoie de drepturi de administrator.",
-      "trash": "Ca să muți {what} în coș, ai nevoie de drepturi de administrator."
+      "trash": "Ca să muți {what} în coș, ai nevoie de drepturi de administrator.",
+      "restore": "Ca să restaurezi {what}, ai nevoie de drepturi de administrator.",
+      "undo": "Ca să anulezi {what}, ai nevoie de drepturi de administrator."
     },
     "howWindows": "Cu Continuă, Windows îți cere permisiunea, apoi CannonCommander merge mai departe.",
     "howLinux": "Cu Continuă, sistemul îți cere parola, apoi CannonCommander merge mai departe.",
+    "declined": "Bine, fără drepturi de administrator {what} rămâne cum era.",
     "go": "Continuă"
   },
   "fetch": {
@@ -2813,6 +2816,11 @@
     "purgeSel": "Șterge definitiv selecția ({n})",
     "selectAll": "Selectează tot",
     "empty": "Golește coșul",
+    "emptySystem": {
+      "one": "Asta golește tot {bin} cu singurul lui element.",
+      "few": "Asta golește tot {bin}: toate cele {n} elemente, inclusiv cele din alte programe.",
+      "other": "Asta golește tot {bin}: toate cele {n} de elemente, inclusiv cele din alte programe."
+    },
     "andMore": {
       "one": "și încă {n}",
       "few": "și încă {n}",

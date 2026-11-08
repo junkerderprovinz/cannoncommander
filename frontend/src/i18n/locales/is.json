@@ -1485,10 +1485,13 @@
       "copy": "Þú þarft stjórnandaréttindi til að afrita {what} hingað.",
       "move": "Þú þarft stjórnandaréttindi til að færa {what} hingað.",
       "delete": "Þú þarft stjórnandaréttindi til að eyða {what}.",
-      "trash": "Þú þarft stjórnandaréttindi til að setja {what} í ruslið."
+      "trash": "Þú þarft stjórnandaréttindi til að setja {what} í ruslið.",
+      "restore": "Þú þarft stjórnandaréttindi til að endurheimta {what}.",
+      "undo": "Þú þarft stjórnandaréttindi til að afturkalla {what}."
     },
     "howWindows": "Með Halda áfram biður Windows um leyfi þitt og svo heldur CannonCommander áfram.",
     "howLinux": "Með Halda áfram biður kerfið um lykilorðið þitt og svo heldur CannonCommander áfram.",
+    "declined": "Allt í lagi, án stjórnandaréttinda helst {what} eins og það var.",
     "go": "Halda áfram"
   },
   "fetch": {
@@ -2716,6 +2719,10 @@
     "purgeSel": "Eyða valinu endanlega ({n})",
     "selectAll": "Velja allt",
     "empty": "Tæma ruslið",
+    "emptySystem": {
+      "one": "Þetta tæmir allt {bin}: {n} atriði í heildina.",
+      "other": "Þetta tæmir allt {bin}: öll {n} atriðin, líka þau frá öðrum forritum."
+    },
     "andMore": {
       "one": "og {n} í viðbót",
       "other": "og {n} í viðbót"
