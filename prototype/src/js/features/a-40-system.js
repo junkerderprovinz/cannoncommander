@@ -182,6 +182,9 @@
       + frow('GlimStone', vlink('glimstone'), 'Die Designsprache, in der CannonCommander gebaut ist')
       + frow('rclone', vlink('rclone'), 'Die Brücke zu den Fernzielen')
       + foot(`<button class="btn" data-run="whatsNew"><span class="a-dot ${n ? '' : 'seen'}"></span>${g('IconWhatsNew')}${n ? `Neu · ${n}` : 'Neu'}</button><button class="btn" id="a-update">${g('IconSearch')}Nach Updates suchen</button>`))
+      + CC.card('Updates',
+        frow('Automatisch prüfen', sw(DATA.app.autoCheck, 'id="a-auto"'), 'Solange das an ist, fragt CannonCommander beim Öffnen dieser Seite einmal bei GitHub, ob es eine neuere Version gibt. Es fragt nur, denn ein Container bekommt seine Updates über seinen Container-Manager.')
+        + frow('Automatisch aktualisieren', sw(false, 'disabled'), 'Ein Container kann sich nicht von innen selbst ersetzen. Aktualisiere ihn stattdessen im Docker-Tab von Unraid, mit docker pull oder mit Watchtower.'))
       + hinted('Hilfe', 'Für einen Fehlerbericht lädst du eine Datei mit den Einstellungen und dem Zustand der Aufgaben herunter, ohne Passwörter, Schlüssel und Zugangsdaten. Häng sie an ein Issue auf GitHub, dann sieht man, was auf deinem Server passiert ist.', `<div class="a-about">
         <p>Probleme, Wünsche oder Verbesserungsvorschläge? Mach gern ein Issue auf GitHub auf, oder schick eine E-Mail.</p>
         <div class="glim-readme-btn-rows">${readmeBtn({ tile: 'glim-tile-github', mark: 'glim-github-mark', glyph: 'IconGithub', name: 'GitHub', attr: 'id="a-github"' })}${readmeBtn({ tile: 'glim-tile-house', mark: 'glim-house-mark', glyph: 'IconMail', name: 'E-Mail', attr: 'id="a-mail"' })}${readmeBtn({ tile: 'glim-tile-docs', mark: 'glim-docs-mark', glyph: 'IconManual', name: 'Handbuch', sub: 'Öffnen', attr: 'data-run="docs"' })}${readmeBtn({ tile: 'glim-tile-github', mark: 'glim-github-mark', glyph: 'IconDiagnostics', name: 'Fehlerbericht', sub: 'Herunterladen', attr: 'id="a-bug"' })}</div></div>`)
@@ -197,11 +200,15 @@
     // Subject only: a prefilled body reads as a form to fill in.
     $('#a-mail', host).addEventListener('click', () => window.open(`mailto:${MAIL}?subject=${encodeURIComponent('CannonCommander Rückmeldung')}`, '_blank', 'noopener'));
     const up = $('#a-update', host);
+    const current = () => { up.disabled = false; up.classList.add('ok'); up.innerHTML = `${g('IconCheck')}Aktuell`; up.dataset.tip = 'Nach Updates suchen'; };
     up.addEventListener('click', () => {
       up.disabled = true;
       up.innerHTML = `${g('IconSearch')}Nach Updates suchen`;
-      setTimeout(() => { up.disabled = false; up.classList.add('ok'); up.innerHTML = `${g('IconCheck')}Aktuell`; up.dataset.tip = 'Nach Updates suchen'; }, 900);
+      setTimeout(current, 900);
     });
+    // With the switch on, the page asks GitHub as it opens, and the made-up answer is always that nothing newer is out.
+    if (DATA.app.autoCheck) current();
+    $('#a-auto', host).addEventListener('change', e => { DATA.app.autoCheck = swVal(e.target); if (DATA.app.autoCheck) current(); CC.toast('Gespeichert'); });
   } });
 
   function whatsNewWin() {
