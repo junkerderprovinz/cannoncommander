@@ -10,6 +10,7 @@ import (
 var (
 	procParseDisplayName = shell32.NewProc("SHParseDisplayName")
 	procBindToParent     = shell32.NewProc("SHBindToParent")
+	procBindToObject     = shell32.NewProc("SHBindToObject")
 	procCreateDataObject = shell32.NewProc("SHCreateDataObject")
 	procPathFromIDList   = shell32.NewProc("SHGetPathFromIDListEx")
 	procILClone          = shell32.NewProc("ILClone")
@@ -144,6 +145,22 @@ func (s *Selection) UIObject(owner windows.HWND, iid *windows.GUID) (unsafe.Poin
 func (s *Selection) DataObject() (unsafe.Pointer, error) {
 	var out unsafe.Pointer
 	r, _, _ := procCreateDataObject.Call(uintptr(s.parent), uintptr(len(s.children)), uintptr(unsafe.Pointer(&s.children[0])), 0, uintptr(unsafe.Pointer(&IIDDataObject)), uintptr(unsafe.Pointer(&out)))
+	if err := Failed(r); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Folder is the shell's object for the folder at path, an IShellFolder the
+// caller releases.
+func Folder(path string) (unsafe.Pointer, error) {
+	l, err := ParseName(path)
+	if err != nil {
+		return nil, err
+	}
+	defer l.Free()
+	var out unsafe.Pointer
+	r, _, _ := procBindToObject.Call(0, uintptr(l), 0, uintptr(unsafe.Pointer(&IIDShellFolder)), uintptr(unsafe.Pointer(&out)))
 	if err := Failed(r); err != nil {
 		return nil, err
 	}

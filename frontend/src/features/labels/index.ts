@@ -27,11 +27,11 @@ export function labelMenuItems(sel: Labelled[], folder: string): MenuItem[] {
   const labels = useLabels();
   const now = sel.length === 1 ? labels.of(sel[0]!, folder).colour : null;
   return [
-    { label: t('labels.colour'), g: 'IconTabLook', sub: [
+    { id: 'labelColour', label: t('labels.colour'), g: 'IconTabLook', sub: [
       ...labels.colours.map((x) => ({ label: now === x.id ? t('labels.isSet', { name: labels.colourName(x) }) : labels.colourName(x), color: x.hex, run: () => labels.set(sel, folder, { colour: x.id }) })),
       '-', { label: t('labels.noColour'), g: 'IconClose', run: () => labels.set(sel, folder, { colour: '' }) },
     ] },
-    { label: t('labels.tags'), g: 'IconHash', run: () => editItemTags(sel, folder) },
+    { id: 'labelTags', label: t('labels.tags'), g: 'IconHash', run: () => editItemTags(sel, folder) },
   ];
 }
 

@@ -41,7 +41,7 @@ export function blocked(a: Pick<Action, 'id' | 'needs'>): string | null {
   const need = ([] as Need[]).concat(a.needs || []);
   const sel = context.sel();
   if (need.includes('sel') && !sel.length) return t('core.needSel');
-  if (need.length && !['copy', 'move', 'delete'].includes(a.id) && sel.some((k) => k.at && k.at !== context.here())) return t('core.ownFolder');
+  if (need.length && !['copy', 'move', 'delete', 'clipCut', 'clipCopy'].includes(a.id) && sel.some((k) => k.at && k.at !== context.here())) return t('core.ownFolder');
   if (need.includes('file') && !sel.some((k) => !k.dir)) return t('core.needFile');
   if (need.includes('dual') && !prefs.dual) return t('core.needDual');
   if (need.includes('writable') && inArchive(context.here())) return t('core.archiveOnly');

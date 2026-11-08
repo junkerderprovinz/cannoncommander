@@ -31,16 +31,24 @@ export async function readClipboard(): Promise<Outside | null> {
   }
 }
 
+// The window hears a burst of focus events as it comes to the front, and one look at the clipboard answers them all.
+let looking: ReturnType<typeof setTimeout> | undefined;
+export function lookSoon() {
+  clearTimeout(looking);
+  looking = setTimeout(() => { void readClipboard(); }, 500);
+}
+
 // Names cut or copied in a panel go onto the computer's clipboard as files. Those it cannot take, such as files inside
 // an archive, stay in the app's own clipboard until another program puts something newer on the computer's.
-export async function share(cut: boolean, from: string, names: string[]) {
+export async function share(cut: boolean, from: string, rows: Pick<Entry, 'name' | 'at'>[]) {
   const clip = useClipboard();
-  clip.put(cut, from, names);
+  const paths = rows.map((k) => join(k.at || from, k.name));
+  clip.put(cut, from, rows.map((k) => k.name), rows.some((k) => k.at && k.at !== from) ? paths : undefined);
   if (!host.desktop) return;
   try {
-    await call('/clipboard', json('PUT', { paths: names.map((n) => join(from, n)), cut }));
+    await call('/clipboard', json('PUT', { paths, cut }));
     clip.clear();
-    clip.system = names.length;
+    clip.system = rows.length;
   } catch {
     clip.under = signature(await readClipboard());
   }
@@ -57,7 +65,7 @@ export async function clipboardWins(): Promise<Outside | null> {
 }
 
 // The rows of files from anywhere, each with the folder it lies in, as a search result carries them.
-async function entriesOf(files: string[]): Promise<Entry[]> {
+export async function entriesOf(files: string[]): Promise<Entry[]> {
   const byFolder = new Map<string, Set<string>>();
   for (const f of files) {
     const dir = parent(f);
@@ -92,8 +100,10 @@ export async function pasteOutside(got: Outside, dest: string) {
 }
 
 // Files dropped from another program go the way Explorer takes them: Shift moves and Ctrl copies, and otherwise they
-// move on the same drive and are copied from another one.
+// move on the same drive and are copied from another one. As an action it may be run without any files, so it keeps
+// to the desktop app, the only place with other programs on the same computer.
 export async function dropIn(paths: string[], dest: string, how: 'copy' | 'move' | 'auto') {
+  if (!host.desktop) return;
   let got: Dropped;
   try {
     got = (await call<Dropped>('/dragdrop/in', json('POST', { paths, to: dest }))).body!;
@@ -103,8 +113,10 @@ export async function dropIn(paths: string[], dest: string, how: 'copy' | 'move'
   await bring(how === 'auto' ? (got.sameVolume ? 'move' : 'copy') : how, got.files, got.skipped, dest);
 }
 
-// The drag goes on in the system's own drag loop and the answer comes when the files are dropped somewhere.
+// The drag goes on in the system's own drag loop and the answer comes when the files are dropped somewhere. Like
+// dropIn it keeps to the desktop app.
 export async function dragOut(paths: string[]) {
+  if (!host.desktop) return;
   try {
     await call('/dragdrop/out', json('POST', { paths }));
   } catch (e) {

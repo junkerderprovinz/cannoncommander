@@ -118,12 +118,13 @@ document.addEventListener('click', e => {
   unpin(DATA.bookmarks[+pin.dataset.unpin]);
 }, true);
 function folderItems(path) {
+  const pinned = DATA.bookmarks.find(b => b.path === path);
   return [
     { label: 'Öffnen', g: 'IconFolderOpen', run: () => Files.go(path) },
     { label: 'Internen Link kopieren', g: 'IconLink', run: () => CC.copyInternalLink(path) },
     { label: 'Im anderen Fenster öffnen', g: 'IconPaneSend', run: () => { CC.prefs.dual = true; Files.go(path, Files.other()); } },
     { label: 'In neuem Tab öffnen', g: 'IconAdd', run: () => { const p = Files.P(); p.tabs.push(newTab(path)); p.cur = p.tabs.length - 1; CC.render(); } },
-    { label: 'Als Verknüpfung anlegen', g: 'IconStar', run: () => addBookmark(path) },
+    pinned ? { label: 'Vom Schnellzugriff lösen', g: 'IconUnlink', run: () => unpin(pinned) } : { label: 'Als Verknüpfung anlegen', g: 'IconStar', run: () => addBookmark(path) },
   ];
 }
 const folderMenu = (x, y, path) => menu(x, y, folderItems(path));
