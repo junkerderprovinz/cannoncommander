@@ -78,3 +78,22 @@ func TestOnlyATaggedBuildIsARelease(t *testing.T) {
 		}
 	}
 }
+
+func TestLinkPointsAtTheReleaseOrElseTheCommit(t *testing.T) {
+	const repo = "https://github.com/junkerderprovinz/cannoncommander"
+	tests := []struct{ version, commit, want string }{
+		{"v1.4.0", "abc1234", repo + "/releases/tag/v1.4.0"},
+		{"1.4.0", "abc1234", repo + "/releases/tag/v1.4.0"},
+		{"v1.4.0-3-gabc1234", "abc1234def", repo + "/commit/abc1234def"},
+		{"dev-abc1234", "abc1234def", repo + "/commit/abc1234def"},
+		{"dev", "unknown", repo},
+	}
+	saved, savedCommit := Version, CommitSHA
+	t.Cleanup(func() { Version, CommitSHA = saved, savedCommit })
+	for _, tt := range tests {
+		Version, CommitSHA = tt.version, tt.commit
+		if got := Link(); got != tt.want {
+			t.Errorf("Link() with %q, %q = %q, want %q", tt.version, tt.commit, got, tt.want)
+		}
+	}
+}

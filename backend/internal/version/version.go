@@ -75,3 +75,16 @@ func Release() (string, bool) {
 	}
 	return v, true
 }
+
+// Link returns the release page of a release build, and the commit of any
+// other build whose commit is known.
+func Link() string {
+	const repo = "https://github.com/junkerderprovinz/cannoncommander"
+	if v, ok := Release(); ok {
+		return repo + "/releases/tag/" + v
+	}
+	if CommitSHA == "unknown" {
+		return repo
+	}
+	return repo + "/commit/" + CommitSHA
+}
