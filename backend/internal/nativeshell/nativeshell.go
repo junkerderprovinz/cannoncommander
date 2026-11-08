@@ -38,6 +38,9 @@ type MenuOptions struct {
 	X, Y int
 	// Extended adds the rows Explorer shows only while Shift is held.
 	Extended bool
+	// Background asks for the menu of the folder itself, which Explorer
+	// shows on the empty space of a folder, for the one folder in files.
+	Background bool
 	// Hidden reports whether the person hid the row with this key.
 	Hidden func(key string) bool
 }

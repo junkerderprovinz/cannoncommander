@@ -50,6 +50,8 @@ paths:
         top left of the window's inside. The rows the person hid are left
         out. The answer comes once the menu has closed and the picked row
         has started. extended adds the rows Windows shows only with Shift.
+        background asks for the menu of the empty space of the one folder
+        in paths.
       requestBody:
         required: true
         content:
@@ -68,6 +70,8 @@ paths:
                 y:
                   type: integer
                 extended:
+                  type: boolean
+                background:
                   type: boolean
       responses:
         "204":

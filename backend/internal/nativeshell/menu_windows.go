@@ -193,12 +193,7 @@ func ShowMenu(files []string, o MenuOptions) ([]Entry, error) {
 }
 
 func showMenu(owner windows.HWND, files []string, o MenuOptions) (*shown, error) {
-	sel, err := winshell.Select(files)
-	if err != nil {
-		return nil, err
-	}
-	defer sel.Close()
-	cm, err := sel.UIObject(owner, &iidContextMenu)
+	cm, err := contextMenu(owner, files, o.Background)
 	if err != nil {
 		return nil, err
 	}
@@ -216,6 +211,9 @@ func showMenu(owner windows.HWND, files []string, o MenuOptions) (*shown, error)
 	}
 	defer procDestroyMenu.Call(hmenu)
 	flags := uintptr(cmfItemMenu)
+	if o.Background {
+		flags = 0
+	}
 	if o.Extended {
 		flags |= cmfExtendedVerbs
 	}
@@ -243,6 +241,28 @@ func showMenu(owner windows.HWND, files []string, o MenuOptions) (*shown, error)
 		return m, nil
 	}
 	return m, m.invoke(owner, int(cmd)-firstCommand, filepath.Dir(files[0]), pt.x, pt.y)
+}
+
+// contextMenu is the IContextMenu of the selected items, or with background
+// that of the empty space of the one folder in files.
+func contextMenu(owner windows.HWND, files []string, background bool) (unsafe.Pointer, error) {
+	if background {
+		folder, err := winshell.Folder(files[0])
+		if err != nil {
+			return nil, err
+		}
+		defer winshell.Release(folder)
+		var cm unsafe.Pointer
+		const createViewObject = 8
+		err = winshell.Failed(winshell.Call(folder, createViewObject, uintptr(owner), uintptr(unsafe.Pointer(&iidContextMenu)), uintptr(unsafe.Pointer(&cm))))
+		return cm, err
+	}
+	sel, err := winshell.Select(files)
+	if err != nil {
+		return nil, err
+	}
+	defer sel.Close()
+	return sel.UIObject(owner, &iidContextMenu)
 }
 
 func (m *shown) invoke(owner windows.HWND, offset int, dir string, x, y int32) error {

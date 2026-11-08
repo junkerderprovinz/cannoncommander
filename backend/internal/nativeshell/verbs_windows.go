@@ -17,7 +17,6 @@ var (
 	shlwapi = windows.NewLazySystemDLL("shlwapi.dll")
 
 	procMultiFileProperties = shell32.NewProc("SHMultiFileProperties")
-	procShellExecuteEx      = shell32.NewProc("ShellExecuteExW")
 	procAssocQueryString    = shlwapi.NewProc("AssocQueryStringW")
 	procEnumThreadWindows   = user32.NewProc("EnumThreadWindows")
 	procIsWindowVisible     = user32.NewProc("IsWindowVisible")
@@ -61,21 +60,6 @@ func CanRunAsAdmin(file string) bool {
 	return r == 0
 }
 
-type shellExecuteInfo struct {
-	size, mask  uint32
-	hwnd        windows.HWND
-	verb, file  *uint16
-	params, dir *uint16
-	show        int32
-	instApp     windows.Handle
-	idList      uintptr
-	class       *uint16
-	classKey    windows.Handle
-	hotKey      uint32
-	icon        windows.Handle
-	process     windows.Handle
-}
-
 // RunAsAdmin starts file with administrator rights. Windows asks the person
 // first, and a no there is no failure.
 func RunAsAdmin(file string) error {
@@ -91,18 +75,11 @@ func RunAsAdmin(file string) error {
 		return err
 	}
 	verb, _ := windows.UTF16PtrFromString("runas")
-	const seeMaskNoAsync = 0x100
-	info := shellExecuteInfo{mask: seeMaskNoAsync, hwnd: winshell.Owner(), verb: verb, file: f, dir: dir, show: windows.SW_SHOWNORMAL}
-	info.size = uint32(unsafe.Sizeof(info))
-	return winshell.Apartment(func() error {
-		if ok, _, err := procShellExecuteEx.Call(uintptr(unsafe.Pointer(&info))); ok == 0 {
-			if errors.Is(err, windows.ERROR_CANCELLED) {
-				return nil
-			}
-			return err
-		}
+	err = winshell.Execute(&winshell.ExecuteInfo{Mask: winshell.SeeMaskNoAsync, Verb: verb, File: f, Dir: dir, Show: windows.SW_SHOWNORMAL})
+	if errors.Is(err, windows.ERROR_CANCELLED) {
 		return nil
-	})
+	}
+	return err
 }
 
 // keepAnswering runs fn in a single-threaded apartment and returns its

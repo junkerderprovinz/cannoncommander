@@ -128,10 +128,11 @@ func (h *handlers) menu(w http.ResponseWriter, r *http.Request) error {
 		return errNoMenu
 	}
 	var in struct {
-		Paths    []string `json:"paths"`
-		X        int      `json:"x"`
-		Y        int      `json:"y"`
-		Extended bool     `json:"extended"`
+		Paths      []string `json:"paths"`
+		X          int      `json:"x"`
+		Y          int      `json:"y"`
+		Extended   bool     `json:"extended"`
+		Background bool     `json:"background"`
 	}
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
@@ -140,11 +141,16 @@ func (h *handlers) menu(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	if in.Background {
+		if info, err := os.Stat(files[0]); err != nil || !info.IsDir() || len(files) > 1 {
+			return v1.Errorf(http.StatusBadRequest, "the menu of a folder's empty space is for one folder")
+		}
+	}
 	hidden, err := h.seen.hidden(r.Context())
 	if err != nil {
 		return err
 	}
-	seen, err := h.sys.showMenu(files, nativeshell.MenuOptions{X: in.X, Y: in.Y, Extended: in.Extended, Hidden: func(k string) bool { return hidden[k] }})
+	seen, err := h.sys.showMenu(files, nativeshell.MenuOptions{X: in.X, Y: in.Y, Extended: in.Extended, Background: in.Background, Hidden: func(k string) bool { return hidden[k] }})
 	if rerr := h.seen.remember(r.Context(), seen); rerr != nil {
 		logger.Errorf("keeping the rows of the system menu: %v", rerr)
 	}
