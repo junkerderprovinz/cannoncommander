@@ -48,6 +48,16 @@ func TestEachWordOpensItsProgramOnWindows(t *testing.T) {
 	}
 }
 
+func TestAFolderWithASemicolonStaysOneFolderForWindowsTerminal(t *testing.T) {
+	l, err := nativeTerminal("windows", "wt", `C:\Temp\a;calc;b`, "", installed("wt.exe"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := []string{"-d", `C:\Temp\a\;calc\;b`}; !slices.Equal(l.args, want) || l.dir != `C:\Temp\a;calc;b` {
+		t.Fatalf("got %+v", l)
+	}
+}
+
 func TestWithoutWindowsTerminalTheDefaultIsTheCommandPrompt(t *testing.T) {
 	l, err := nativeTerminal("windows", "terminal", `C:\Work`, "", installed("cmd.exe", "powershell.exe"))
 	if err != nil || l.program != "/bin/cmd.exe" || !l.console {

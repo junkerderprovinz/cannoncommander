@@ -72,7 +72,7 @@ func TestFoldersDrivesAndWinEOpenHereAndGoBack(t *testing.T) {
 		h.classes + `\Drive\shell`:                             verb,
 		h.classes + `\Directory\shell\` + verb:                 "In CannonCommander öffnen",
 		h.classes + `\Directory\shell\` + verb + `\command`:    `"` + exe + `" "%V"`,
-		h.classes + `\Drive\shell\` + verb + `\command`:        `"` + exe + `" "%V"`,
+		h.classes + `\Drive\shell\` + verb + `\command`:        `"` + exe + `" %V`,
 		h.classes + `\` + openNewWindow + `\command`:           `"` + exe + `" --home`,
 	} {
 		if got := value(t, path, ""); got != want {
