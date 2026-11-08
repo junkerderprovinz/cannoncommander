@@ -78,6 +78,10 @@ func CodeOf(err error) (string, map[string]any) {
 			return "nameTooLong", nil
 		}
 	}
+	// Windows says ERROR_ACCESS_DENIED, which is no EACCES.
+	if errors.Is(err, fs.ErrPermission) {
+		return "denied", nil
+	}
 	return "", nil
 }
 

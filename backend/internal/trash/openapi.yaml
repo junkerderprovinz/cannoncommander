@@ -6,6 +6,12 @@ tag:
     never copies. Entries go away for good after the days set here.
     Putting things into the trash is the job kind trash. trash.changed
     tells clients to reload the list.
+
+    In the desktop app the trash is the one of the system, the Windows
+    Recycle Bin or the freedesktop.org trash on Linux, and only remotes keep
+    their own. The system decides how long its entries stay, so they have no
+    expiresAt, and a drive without a trash, such as a network drive,
+    refuses with noSystemTrash.
 paths:
   /trash:
     get:
@@ -32,6 +38,9 @@ paths:
                     format: int64
                   days:
                     type: integer
+                  system:
+                    type: boolean
+                    description: The list is the trash of the system.
         "401":
           $ref: "#/components/responses/Unauthorized"
   /trash/restore:
@@ -144,7 +153,7 @@ components:
           example: 30
     TrashItem:
       type: object
-      required: [id, name, origin, from, dir, size, files, by, deletedAt, expiresAt]
+      required: [id, name, origin, from, dir, size, files, by, deletedAt]
       properties:
         id:
           type: string
@@ -152,7 +161,7 @@ components:
           type: string
         origin:
           type: string
-          description: Where the entry was.
+          description: Where the entry was, a path on disk for an entry of the system's trash from outside the sources.
         from:
           type: string
           description: The folder it was in.
@@ -174,4 +183,4 @@ components:
         expiresAt:
           type: string
           format: date-time
-          description: When it goes away for good.
+          description: When it goes away for good, left out in the trash of the system.

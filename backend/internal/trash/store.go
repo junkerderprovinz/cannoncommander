@@ -26,6 +26,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/sysbin"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
@@ -66,7 +67,6 @@ var (
 	ErrInBin     = v1.Coded(http.StatusBadRequest, "inTrash", "this is in the trash already")
 	ErrCrossFS   = v1.Coded(http.StatusConflict, "trashOtherDisk", "this lies on another file system than its trash, delete it instead")
 	ErrNotFound  = v1.Coded(http.StatusNotFound, "notInTrash", "no such entry in the trash")
-	ErrNoBin     = v1.Coded(http.StatusBadRequest, "trashOnlyHome", "only the home folder has a trash here, delete it instead")
 )
 
 // Item is one entry in the trash.
@@ -80,9 +80,14 @@ type Item struct {
 	Files     int64     `json:"files"`
 	By        string    `json:"by"`
 	DeletedAt time.Time `json:"deletedAt"`
-	ExpiresAt time.Time `json:"expiresAt"`
+	ExpiresAt time.Time `json:"expiresAt,omitzero"`
 	// Bin is the API path of the entry inside the trash.
 	Bin string `json:"-"`
+
+	// native is where an entry of the system's trash came from on disk, and
+	// outside marks one from beyond the sources, whose Origin is that path.
+	native  string
+	outside bool
 }
 
 // Store keeps the trash of every share and volume.
@@ -91,6 +96,9 @@ type Store struct {
 	db   *sql.DB
 	hub  *hub.Hub
 	fs   *ccfs.Resolver
+	// sys is the trash of the system, which takes the place of the app's own
+	// in the desktop app.
+	sys sysbin.Bin
 
 	ctx  context.Context
 	stop context.CancelFunc
@@ -117,9 +125,22 @@ func For(d v1.Deps) *Store {
 	return s
 }
 
-// New returns a store that deletes expired entries once an hour.
+// New returns a store that deletes expired entries once an hour. In the
+// desktop app it uses the trash of the system and takes over what the app's
+// own trash still holds.
 func New(d v1.Deps) *Store {
-	s := &Store{deps: d, db: d.DB, hub: d.Hub, fs: d.FS, done: make(chan struct{})}
+	var bin sysbin.Bin
+	if desktop.Active() {
+		var err error
+		if bin, err = sysbin.Open(); err != nil {
+			logger.Warningf("trash: %v, the app keeps its own", err)
+		}
+	}
+	return openWith(d, bin)
+}
+
+func openWith(d v1.Deps, bin sysbin.Bin) *Store {
+	s := &Store{deps: d, db: d.DB, hub: d.Hub, fs: d.FS, sys: bin, done: make(chan struct{})}
 	s.ctx, s.stop = context.WithCancel(context.Background())
 	go s.expireLoop()
 	return s
@@ -134,9 +155,8 @@ func (s *Store) Close() {
 // BinFor returns the API path of the bin folder that takes loc. On a
 // source mounted right below /mnt, such as /mnt/user or /mnt/disk1, every
 // share gets its own, and so does every remote in /remotes, so a delete
-// never carries files off their disk or out of their cloud. Below a source
-// at /, whose top belongs to the system, the home folder has the one bin.
-// Elsewhere the source has one at its top.
+// never carries files off their disk or out of their cloud. Elsewhere the
+// source has one at its top.
 func BinFor(loc ccfs.Location) (string, error) {
 	if loc.Virtual() || loc.InArchive() {
 		return "", ErrShareRoot
@@ -155,13 +175,6 @@ func BinFor(loc ccfs.Location) (string, error) {
 	if loc.Index == "/" {
 		return "", ErrShareRoot
 	}
-	if src.Mount == "/" {
-		home := ccfs.MountFor(desktop.Home())
-		if desktop.Home() == "" || !strings.HasPrefix(loc.Path, home+"/") {
-			return "", ErrNoBin
-		}
-		return path.Join(home, DirName), nil
-	}
 	return path.Join(src.Mount, DirName), nil
 }
 
@@ -173,6 +186,9 @@ func InBin(p string) bool {
 // Put moves the entry at loc into its bin and records it for owner. It
 // counts the entry first, which can take a moment for a big folder.
 func (s *Store) Put(ctx context.Context, owner string, loc ccfs.Location) (Item, error) {
+	if s.system(loc) {
+		return s.putSystem(ctx, owner, loc)
+	}
 	bin, err := BinFor(loc)
 	if err != nil {
 		return Item{}, err
@@ -231,6 +247,9 @@ func (s *Store) Put(ctx context.Context, owner string, loc ccfs.Location) (Item,
 // landed. Missing folders on the way are created again, and a name that is
 // taken meanwhile gets a number, as in the prototype.
 func (s *Store) Restore(id string) (string, error) {
+	if s.sys != nil && systemID(id) {
+		return s.restoreSystem(id)
+	}
 	it, err := s.Get(id)
 	if err != nil {
 		return "", err
@@ -273,6 +292,9 @@ func (s *Store) Restore(id string) (string, error) {
 // Drop deletes an entry for good. With a run it goes file by file, so the
 // job can count and be paused.
 func (s *Store) Drop(ctx context.Context, run *jobs.Run, id string) error {
+	if s.sys != nil && systemID(id) {
+		return s.dropSystem(ctx, run, id)
+	}
 	it, err := s.Get(id)
 	if err != nil {
 		return err
@@ -298,6 +320,9 @@ func (s *Store) Drop(ctx context.Context, run *jobs.Run, id string) error {
 
 // Get returns one entry.
 func (s *Store) Get(id string) (Item, error) {
+	if s.sys != nil && systemID(id) {
+		return s.getSystem(id)
+	}
 	items, err := s.query(`WHERE id = ?`, id)
 	if err != nil {
 		return Item{}, err
@@ -311,6 +336,17 @@ func (s *Store) Get(id string) (Item, error) {
 // getAll returns the entries with the given ids, as far as they exist.
 func (s *Store) getAll(ids []string) (map[string]Item, error) {
 	out := make(map[string]Item, len(ids))
+	if s.sys != nil {
+		var own []string
+		for _, id := range ids {
+			if !systemID(id) {
+				own = append(own, id)
+			} else if it, err := s.getSystem(id); err == nil {
+				out[id] = it
+			}
+		}
+		ids = own
+	}
 	for chunk := range slices.Chunk(ids, idChunk) {
 		args := make([]any, len(chunk))
 		for i, id := range chunk {
@@ -328,7 +364,8 @@ func (s *Store) getAll(ids []string) (map[string]Item, error) {
 }
 
 // List returns the entries of owner, or of everybody when owner is empty,
-// newest first. Entries whose files vanished from the bin are dropped.
+// newest first. Entries whose files vanished from the bin are dropped. The
+// system's trash belongs to the person at the computer and is listed whole.
 func (s *Store) List(owner string) ([]Item, error) {
 	where, args := `WHERE 1 = 1`, []any{}
 	if owner != "" {
@@ -348,8 +385,19 @@ func (s *Store) List(owner string) ([]Item, error) {
 		}
 		out = append(out, it)
 	}
+	if s.sys != nil {
+		sys, err := s.listSystem()
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, sys...)
+		slices.SortStableFunc(out, func(a, b Item) int { return b.DeletedAt.Compare(a.DeletedAt) })
+	}
 	return out, nil
 }
+
+// System reports whether the store uses the trash of the system.
+func (s *Store) System() bool { return s.sys != nil }
 
 func (s *Store) query(tail string, args ...any) ([]Item, error) {
 	rows, err := s.db.Query(`SELECT id, owner, name, origin, bin, dir, size, files, deleted_at FROM trash_items `+tail, args...)
@@ -419,6 +467,9 @@ func (s *Store) SetDays(n int) error {
 
 func (s *Store) expireLoop() {
 	defer close(s.done)
+	if s.sys != nil {
+		s.takeOver()
+	}
 	s.expire()
 	t := time.NewTicker(expireEvery)
 	defer t.Stop()

@@ -5,13 +5,15 @@ import { computed, onBeforeUnmount, onMounted } from 'vue';
 import type { TrashItem } from '@/api/ops';
 import { DAY, fmtDate, fmtSize } from '@/core/format';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
+import { windowsPaths } from '@/core/host';
 import { isMenuOpen, menu } from '@/core/menu';
 import { go } from '@/core/views';
 import { winStack } from '@/core/windows';
+import { nativePath } from '@/files/paths';
 import { byName, byText, plural, t } from '@/i18n';
 import { useTrash } from '@/stores/trash';
 import { objects } from '@/features/jobs/label';
-import { purge, restore } from './trash';
+import { binName, purge, restore } from './trash';
 import { pick, type SortKey } from './pick';
 
 const trash = useTrash();
@@ -27,7 +29,7 @@ const list = computed(() => trash.items.slice().sort((a, b) => BY[pick.sort](a, 
 const picked = computed(() => list.value.filter((e) => pick.sel.has(e.id)));
 const total = computed(() => list.value.reduce((a, e) => a + e.size, 0));
 const next = computed(() => trash.items.reduce<TrashItem | null>((a, e) => (!a || at(e) < at(a) ? e : a), null));
-const goneOn = (e: TrashItem) => fmtDate(Date.parse(e.expiresAt) || at(e) + trash.days * DAY);
+const goneOn = (e: TrashItem) => fmtDate(Date.parse(e.expiresAt ?? '') || at(e) + trash.days * DAY);
 const clear = () => pick.sel.clear();
 
 function sortBy(k: SortKey) {
@@ -81,13 +83,14 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
 <template>
   <div v-if="!list.length" class="page-inner ct">
     <Card :title="t('trash.title')">
-      <EmptyState class="ct-empty" nested :glyph="glyphComponent('IconTrash')" :title="t('trash.emptyTitle')" :hint="t('trash.emptyText', { days: trash.days })"><Button :label="t('trash.toFiles')" label-key="IconFiles" data-go-view="files" @click="go('files')" /></EmptyState>
+      <EmptyState class="ct-empty" nested :glyph="glyphComponent('IconTrash')" :title="t('trash.emptyTitle')" :hint="trash.system ? t('trash.emptyTextSystem', { bin: binName() }) : t('trash.emptyText', { days: trash.days })"><Button :label="t('trash.toFiles')" label-key="IconFiles" data-go-view="files" @click="go('files')" /></EmptyState>
     </Card>
   </div>
   <div v-else class="page-inner ct">
     <Card :title="t('trash.title')">
       <FieldRow :label="t('trash.content')"><Pill class="glim-num">{{ t('trash.contentPill', { what: objects(list.length), size: fmtSize(total) }) }}</Pill></FieldRow>
-      <FieldRow v-if="next" :label="t('trash.next')" :hint="t('trash.nextTip', { days: trash.days })"><Pill>{{ next.name }}</Pill><Pill class="glim-num">{{ t('trash.nextOn', { date: goneOn(next) }) }}</Pill></FieldRow>
+      <FieldRow v-if="trash.system" :label="t('trash.where')" :hint="t('trash.whereTip')"><Pill>{{ binName() }}</Pill></FieldRow>
+      <FieldRow v-else-if="next" :label="t('trash.next')" :hint="t('trash.nextTip', { days: trash.days })"><Pill>{{ next.name }}</Pill><Pill class="glim-num">{{ t('trash.nextOn', { date: goneOn(next) }) }}</Pill></FieldRow>
     </Card>
     <Card class="ct-card" :title="t('trash.listTitle')">
       <div class="ct-head" role="row"><span></span><span></span>
@@ -99,9 +102,10 @@ onBeforeUnmount(() => removeEventListener('keydown', keys, true));
           <button class="ct-mark" data-mark :aria-label="t('trash.mark')"><G n="IconCheck" /></button>
           <GlyphTile :glyph="glyphComponent(e.dir ? 'IconFolder' : glyphOf({ name: e.name }))" :active="pick.sel.has(e.id)" />
           <span class="t">{{ e.name }}</span>
-          <Pill class="mono col-from" :data-tip="e.from">{{ e.from }}</Pill>
+          <Pill class="mono col-from" :data-tip="nativePath(e.from, windowsPaths())">{{ nativePath(e.from, windowsPaths()) }}</Pill>
           <Pill class="glim-num col-size">{{ fmtSize(e.size) || '0 B' }}</Pill>
-          <Pill class="glim-num col-deleted" :data-tip="t('trash.byTip', { by: e.by, date: goneOn(e) })">{{ fmtDate(at(e)) }}, {{ e.by }}</Pill>
+          <Pill v-if="e.by" class="glim-num col-deleted" :data-tip="t('trash.byTip', { by: e.by, date: goneOn(e) })">{{ fmtDate(at(e)) }}, {{ e.by }}</Pill>
+          <Pill v-else class="glim-num col-deleted">{{ fmtDate(at(e)) }}</Pill>
           <span class="ct-acts">
             <IconButton :tip="t('trash.restore')" :glyph="glyphComponent('IconRestore')" data-act="restore" @click.stop="restore([e], clear)" />
             <IconButton :tip="t('trash.purge')" :glyph="glyphComponent('IconTrash')" data-act="purge" @click.stop="purge([e], false, clear)" />

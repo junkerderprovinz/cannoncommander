@@ -48,6 +48,9 @@ func run() error {
 	flag.Bool("home", false, "open the home folder in a new tab, as Win+E does")
 	fileManager := flag.String("file-manager", "", "on to open the computer's folders here, off to give them back, and exit")
 	flag.Parse()
+	if *elevated != "" {
+		return serveElevated()
+	}
 	if *scheduled {
 		return updateInstalled()
 	}

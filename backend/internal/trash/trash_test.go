@@ -15,7 +15,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 func TestMain(m *testing.M) { os.Exit(testutil.Main(m)) }
@@ -248,32 +247,6 @@ func BenchmarkPrepareTwentyThousandPaths(b *testing.B) {
 	for b.Loop() {
 		if _, err := prepareTrash(context.Background(), v1.Deps{FS: fsys}, anna, raw); err != nil {
 			b.Fatal(err)
-		}
-	}
-}
-
-type someApp struct{}
-
-func (someApp) AutoUpdate() bool         { return false }
-func (someApp) SetAutoUpdate(bool) error { return nil }
-func (someApp) UpdateReady() string      { return "" }
-func (someApp) Restart()                 {}
-
-func TestBelowTheRootOnlyTheHomeFolderHasABin(t *testing.T) {
-	desktop.Use(someApp{}, desktop.Options{Home: "/home/jdp"})
-	t.Cleanup(func() { desktop.Use(nil, desktop.Options{}) })
-	fsys, err := ccfs.New(nil, ccfs.Source{Name: "Computer", Mount: "/", Root: t.TempDir()})
-	if err != nil {
-		t.Fatal(err)
-	}
-	loc, _ := fsys.Resolve("/home/jdp/Bilder/strand.jpg")
-	if got, err := BinFor(loc); err != nil || got != "/home/jdp/.cc-trash" {
-		t.Errorf("in the home folder: %s, %v", got, err)
-	}
-	for _, p := range []string{"/etc/hosts", "/home/jdp", "/home/anna/x"} {
-		loc, _ := fsys.Resolve(p)
-		if _, err := BinFor(loc); !errors.Is(err, ErrNoBin) {
-			t.Errorf("%s: %v", p, err)
 		}
 	}
 }
