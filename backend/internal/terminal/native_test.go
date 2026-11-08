@@ -1,3 +1,5 @@
+//go:build desktop
+
 package terminal
 
 import (
@@ -9,7 +11,6 @@ import (
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
 // installed finds the programs it names, each in a folder of its own name.
@@ -97,30 +98,16 @@ func TestLinuxWithoutATerminalSaysSo(t *testing.T) {
 	}
 }
 
-type fakeApp struct{}
-
-func (fakeApp) AutoUpdate() bool         { return true }
-func (fakeApp) SetAutoUpdate(bool) error { return nil }
-func (fakeApp) UpdateReady() string      { return "" }
-func (fakeApp) Restart()                 {}
-
-func onDesktop(t *testing.T) {
-	t.Helper()
-	desktop.Use(fakeApp{}, desktop.Options{})
-	t.Cleanup(func() { desktop.Use(nil, desktop.Options{}) })
-}
-
 func (e *env) native(body any) (int, string) {
 	e.t.Helper()
 	return e.do(e.request(http.MethodPost, "/terminal/native", body))
 }
 
 func TestTheDesktopOpensItsTerminalInTheFolder(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	var started []launch
-	e.h.native = func(kind, dir string) (launch, error) { return launch{program: kind, dir: dir}, nil }
-	e.h.launch = func(l launch) error { started = append(started, l); return nil }
+	e.h.pick = func(kind, dir string) (launch, error) { return launch{program: kind, dir: dir}, nil }
+	e.h.start = func(l launch) error { started = append(started, l); return nil }
 
 	if status, code := e.native(map[string]string{"path": "/mnt/user/work", "kind": "cmd"}); status != http.StatusNoContent {
 		t.Fatalf("got %d %s", status, code)
@@ -134,11 +121,10 @@ func TestTheDesktopOpensItsTerminalInTheFolder(t *testing.T) {
 }
 
 func TestTheDesktopTerminalNeedsNoSwitch(t *testing.T) {
-	onDesktop(t)
 	e := newEnv(t)
 	e.switchOn(false)
-	e.h.launch = func(launch) error { return nil }
-	e.h.native = func(kind, dir string) (launch, error) { return launch{program: kind, dir: dir}, nil }
+	e.h.start = func(launch) error { return nil }
+	e.h.pick = func(kind, dir string) (launch, error) { return launch{program: kind, dir: dir}, nil }
 	if status, code := e.native(map[string]string{"path": "/mnt/user/work", "kind": "terminal"}); status != http.StatusNoContent {
 		t.Fatalf("got %d %s", status, code)
 	}
@@ -146,23 +132,18 @@ func TestTheDesktopTerminalNeedsNoSwitch(t *testing.T) {
 
 func TestTheNativeTerminalIsRefused(t *testing.T) {
 	cases := []struct {
-		name    string
-		desktop bool
-		body    map[string]string
-		status  int
-		code    string
+		name   string
+		body   map[string]string
+		status int
+		code   string
 	}{
-		{"in the container", false, map[string]string{"path": "/mnt/user/work", "kind": "cmd"}, http.StatusNotFound, "desktopOnly"},
-		{"for an unknown word", true, map[string]string{"path": "/mnt/user/work", "kind": "calc"}, http.StatusBadRequest, "terminalKind"},
-		{"in a file", true, map[string]string{"path": "/mnt/user/work/notes.txt", "kind": "cmd"}, http.StatusBadRequest, "notAFolder"},
+		{"for an unknown word", map[string]string{"path": "/mnt/user/work", "kind": "calc"}, http.StatusBadRequest, "terminalKind"},
+		{"in a file", map[string]string{"path": "/mnt/user/work/notes.txt", "kind": "cmd"}, http.StatusBadRequest, "notAFolder"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			if c.desktop {
-				onDesktop(t)
-			}
 			e := newEnv(t)
-			e.h.launch = func(launch) error {
+			e.h.start = func(launch) error {
 				t.Fatal("a terminal opened")
 				return nil
 			}

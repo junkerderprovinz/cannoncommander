@@ -1,3 +1,5 @@
+//go:build desktop
+
 package trash
 
 import (
@@ -38,6 +40,9 @@ func newFakeBin(dir string) *fakeBin {
 	}
 	return &fakeBin{dir: dir, entries: map[string]sysbin.Entry{}}
 }
+
+// of is the store's trash of the system, kept in f.
+func (f *fakeBin) of(s *Store) systemBin { return &osBin{Store: s, bin: f} }
 
 func (f *fakeBin) Put(p string) (sysbin.Entry, error) { return f.Adopt(p, p, time.Now()) }
 
@@ -112,7 +117,7 @@ func newSystemStore(t *testing.T) (*Store, string, *fakeBin) {
 		t.Fatal(err)
 	}
 	bin := newFakeBin(filepath.Join(root, "$Recycle.Bin"))
-	s := openWith(v1.Deps{FS: fsys, DB: testutil.MainDB(t)}, bin)
+	s := openWith(v1.Deps{FS: fsys, DB: testutil.MainDB(t)}, bin.of)
 	t.Cleanup(s.Close)
 	return s, root, bin
 }
@@ -264,7 +269,7 @@ func TestRemotesKeepTheAppsOwnTrash(t *testing.T) {
 		t.Fatal(err)
 	}
 	bin := newFakeBin(filepath.Join(root, "$Recycle.Bin"))
-	s := openWith(v1.Deps{FS: fsys, DB: testutil.MainDB(t)}, bin)
+	s := openWith(v1.Deps{FS: fsys, DB: testutil.MainDB(t)}, bin.of)
 	t.Cleanup(s.Close)
 	os.MkdirAll(filepath.Join(remotes, "gdrive"), 0o755)
 	os.WriteFile(filepath.Join(remotes, "gdrive", "a.txt"), []byte("wolke"), 0o644)
@@ -305,9 +310,9 @@ func TestTheOldTrashMovesIntoTheSystemTrash(t *testing.T) {
 	os.WriteFile(lost, []byte("?"), 0o644)
 
 	bin := newFakeBin(filepath.Join(root, "$Recycle.Bin"))
-	s := openWith(deps, bin)
+	s := openWith(deps, bin.of)
 	t.Cleanup(s.Close)
-	s.takeOver()
+	s.sys.takeOver()
 
 	got := map[string]sysbin.Entry{}
 	for _, e := range bin.entries {
@@ -329,7 +334,7 @@ func TestTheOldTrashMovesIntoTheSystemTrash(t *testing.T) {
 	if rows != 0 {
 		t.Errorf("%d rows left", rows)
 	}
-	s.takeOver()
+	s.sys.takeOver()
 	if len(bin.entries) != 3 {
 		t.Errorf("a second round changed the trash: %d entries", len(bin.entries))
 	}

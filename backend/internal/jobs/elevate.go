@@ -2,21 +2,34 @@ package jobs
 
 import (
 	"context"
-	"errors"
 	"net/http"
-	"path"
+	"sync"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/elevate"
 )
 
+var errNotElevatable = v1.Coded(http.StatusConflict, "notElevatable", "this job cannot go on with administrator rights")
+
 var (
-	errNotElevatable = v1.Coded(http.StatusConflict, "notElevatable", "this job cannot go on with administrator rights")
-	errDeclined      = v1.Coded(http.StatusForbidden, "elevationDeclined", "administrator rights were not given")
-	errNoHelper      = v1.Coded(http.StatusBadGateway, "elevationFailed", "the helper with administrator rights did not answer")
-	errUnsupported   = v1.Coded(http.StatusNotImplemented, "elevationUnsupported", "administrator rights cannot be asked for on this system")
+	elevationsMu sync.RWMutex
+	elevations   = map[string]func(ctx context.Context, run *Run) error{}
 )
+
+// Elevates lets a kind do its open items again with administrator rights,
+// once the job failed for lack of them. Only the desktop build registers
+// such steps, and a kind without one cannot go on that way.
+func Elevates(kind string, step func(ctx context.Context, run *Run) error) {
+	elevationsMu.Lock()
+	defer elevationsMu.Unlock()
+	elevations[kind] = step
+}
+
+func elevation(kind string) func(ctx context.Context, run *Run) error {
+	elevationsMu.RLock()
+	defer elevationsMu.RUnlock()
+	return elevations[kind]
+}
 
 // Elevate runs the failed and unfinished items of an ended job again with
 // administrator rights. Only the desktop app asks for them, since the server
@@ -26,61 +39,4 @@ func (m *Manager) Elevate(id string) (Job, error) {
 		return Job{}, errNotElevatable
 	}
 	return m.retry(id, true)
-}
-
-// Elevated has the helper with administrator rights do ops[i] for items[i]
-// and finishes each item with what came of it. after runs for every item
-// whose operation went through. The items that the helper never got to fail
-// with the reason, such as a prompt that was turned down.
-func (r *Run) Elevated(ctx context.Context, items []Item, ops []elevate.Op, after func(Item)) error {
-	if len(items) == 0 {
-		return nil
-	}
-	for i, it := range items {
-		r.Begin(it.Seq)
-		if ops[i].From != "" {
-			if b, f, err := TreeSize(ctx, ops[i].From); err == nil {
-				r.Measure(it.Seq, b, f)
-			}
-		}
-	}
-	r.Current(path.Base(items[0].Path))
-	done := make([]bool, len(items))
-	err := elevate.Run(ctx, ops, func(i int, err error) {
-		done[i] = true
-		err = ElevationError(err)
-		if err == nil && after != nil {
-			after(items[i])
-		}
-		r.Finish(items[i].Seq, ItemDone, err)
-	})
-	if ctx.Err() != nil {
-		return ctx.Err()
-	}
-	if err != nil {
-		err = ElevationError(err)
-		for i, it := range items {
-			if !done[i] {
-				r.Finish(it.Seq, ItemDone, err)
-			}
-		}
-	}
-	return nil
-}
-
-// ElevationError says an error of elevate.Run, or of one of its operations,
-// the way the app's problems do, so the interface can word it.
-func ElevationError(err error) error {
-	var oe *elevate.OpError
-	switch {
-	case errors.As(err, &oe):
-		return v1.Coded(http.StatusConflict, oe.Code, oe.Msg)
-	case errors.Is(err, elevate.ErrDeclined):
-		return errDeclined
-	case errors.Is(err, elevate.ErrUnsupported):
-		return errUnsupported
-	case errors.Is(err, elevate.ErrNoHelper):
-		return errNoHelper
-	}
-	return err
 }
