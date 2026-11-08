@@ -19,7 +19,7 @@ func TestALinkIsNoPlainEntry(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if got := !Link(fi); got != want {
+		if got := !Link(fi, p); got != want {
 			t.Errorf("%s plain: %v", p, got)
 		}
 	}

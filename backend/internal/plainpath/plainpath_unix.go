@@ -9,8 +9,9 @@ import (
 	"syscall"
 )
 
-// Link reports whether fi, from Lstat, is a link.
-func Link(fi fs.FileInfo) bool { return fi.Mode()&fs.ModeSymlink != 0 }
+// Link reports whether the entry at path, which fi describes from Lstat, is
+// a link.
+func Link(fi fs.FileInfo, _ string) bool { return fi.Mode()&fs.ModeSymlink != 0 }
 
 // Mine reports whether p itself, not what it may point to, belongs to the
 // user running the program.
