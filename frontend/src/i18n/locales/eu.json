@@ -1485,10 +1485,13 @@
       "copy": "{what} hona kopiatzeko, administratzaile-baimenak behar dituzu.",
       "move": "{what} hona eramateko, administratzaile-baimenak behar dituzu.",
       "delete": "{what} ezabatzeko, administratzaile-baimenak behar dituzu.",
-      "trash": "{what} zakarrontzira botatzeko, administratzaile-baimenak behar dituzu."
+      "trash": "{what} zakarrontzira botatzeko, administratzaile-baimenak behar dituzu.",
+      "restore": "{what} leheneratzeko, administratzaile-baimenak behar dituzu.",
+      "undo": "{what} desegiteko, administratzaile-baimenak behar dituzu."
     },
     "howWindows": "Jarraitu sakatuta, Windowsek zure baimena eskatuko du, eta gero CannonCommanderrek jarraituko du.",
     "howLinux": "Jarraitu sakatuta, sistemak zure pasahitza eskatuko du, eta gero CannonCommanderrek jarraituko du.",
+    "declined": "Ados, administratzaile-baimenik gabe {what} zegoen bezala geratzen da.",
     "go": "Jarraitu"
   },
   "fetch": {
@@ -1508,6 +1511,27 @@
     "go": "Joan hara",
     "job": "Kargatu: {what}",
     "jobFrom": "Kargatu: {what}, {host} zerbitzaritik"
+  },
+  "filesystem": {
+    "systemFiles": "Erakutsi sistemaren fitxategi babestuak",
+    "cloud": {
+      "online": "Linean soilik eskuragarri",
+      "local": "Gailu honetan eskuragarri",
+      "pinned": "Beti eskuragarri gailu honetan"
+    },
+    "keep": "Gorde beti gailu honetan",
+    "free": "Askatu lekua",
+    "kept": "Gailu honetan geratzen da: {objects}",
+    "freed": "Lekua askatuta: {objects}",
+    "createShortcut": "Sortu lasterbidea",
+    "shortcutName": "{name} - lasterbidea",
+    "new": "Berria",
+    "shortcut": "Lasterbidea",
+    "newShortcut": "Lasterbide berria",
+    "target": "Helburua",
+    "targetTip": "Fitxategiaren edo karpetaren bidea Windowsek idazten duen bezala, unitatea aurrean duela.",
+    "name": "Izena",
+    "noTarget": "Adierazi lasterbideak nora eraman behar duen"
   },
   "gather": {
     "title": "Bildu karpeta bat",
@@ -2090,7 +2114,15 @@
       "file": "Fitxategia"
     },
     "linkToDir": "Karpeta baterako esteka",
-    "linkToFile": "Fitxategi baterako esteka"
+    "linkToFile": "Fitxategi baterako esteka",
+    "attributes": "Atributuak",
+    "flags": {
+      "readOnly": "Irakurtzeko soilik",
+      "hidden": "Ezkutua",
+      "archive": "Artxibatzeko prest"
+    },
+    "flagsSaved": "Atributuak gordeta: {objects}",
+    "insideFlagsTip": "Barruko fitxategi eta karpeta guztiei ere ezartzen dizkie atributuak."
   },
   "quicklook": {
     "title": "Bista azkarra",
@@ -2754,6 +2786,10 @@
     "purgeSel": "Ezabatu hautapena betiko ({n})",
     "selectAll": "Hautatu dena",
     "empty": "Hustu zakarrontzia",
+    "emptySystem": {
+      "one": "Honek {bin} osorik husten du, bere sarrera bakarrarekin.",
+      "other": "Honek {bin} osorik husten du: {n} sarrera guztiak, beste programenak ere bai."
+    },
     "andMore": {
       "one": "eta beste {n}",
       "other": "eta beste {n}"
@@ -3241,6 +3277,7 @@
     "dupTab": "Bikoiztu fitxa",
     "lockTab": "Blokeatu fitxa",
     "closeOtherTabs": "Itxi beste fitxak",
+    "sidePane": "Aurrebista-panela",
     "nextTab": "Hurrengo fitxa",
     "prevTab": "Aurreko fitxa",
     "back": "Atzera",
@@ -3469,6 +3506,9 @@
     "closedUp": "Ezin duzu {path} karpeta ireki, beraz {here} karpetan zaude orain",
     "empty": "Karpeta hau hutsik dago",
     "emptyHint": "Arrastatu fitxategiak hona igotzeko",
+    "emptyHintDesktop": "Arrastatu fitxategiak hona karpeta honetara kopiatzeko",
+    "renameField": "Izen berria",
+    "sidePaneEmpty": "Aukeratu fitxategi bat eta hemen agertuko da",
     "nothingFound": "Ez da ezer aurkitu: {q}",
     "searchedHere": "Karpeta honetan bakarrik bilatu da",
     "searchedDeep": "Azpikarpeta guztietan ere bilatu da",
@@ -3612,6 +3652,7 @@
     "groupExists": "Talde hori badago jada",
     "groupNameMissing": "Eman izen bat taldeari",
     "inArchive": "Hau artxibo baten barruan dago",
+    "inCloud": "Fitxategia hodeian bakarrik dago. Ireki behin eta gailu honetan ere egongo da",
     "inTrash": "Hau zakarrontzian dago jada",
     "intoItself": "Karpeta bat ezin da bere barrura sartu",
     "ioError": "Diskoak irakurtze- edo idazte-errore bat jakinarazi du",
@@ -3646,11 +3687,14 @@
       "one": "Mezuak gehienez karaktere {n} du",
       "other": "Mezuak gehienez {n} karaktere ditu"
     },
+    "nameChars": "Windowsek ez du karaktere hauetako bat ere onartzen izenetan: < > : \" / \\ | ? *",
+    "nameEnd": "Windowsen izen bat ezin da puntu edo zuriune batekin amaitu",
     "nameLength": {
       "one": "Izenak gehienez karaktere {n} du",
       "other": "Izenak gehienez {n} karaktere ditu"
     },
     "namePasswordNeeded": "Izena eta pasahitza behar dira",
+    "nameReserved": "Windowsek gailu baterako gordetzen du izen hau, aukeratu beste bat",
     "nameTaken": "Izen hori badago jada hemen",
     "nameTooLong": "Izena luzeegia da fitxategi-sistemarako",
     "noAppDialog": "Ordenagailu honek ez du aplikazio bat aukeratzeko bere elkarrizketa-koadrorik",
@@ -3671,6 +3715,7 @@
     "noSpaceForFile": "Ez dago leku libre nahikorik fitxategi honetarako",
     "noSuchUser": "Erabiltzaile hori ez dago",
     "noSystemTrash": "Unitate honek ez du zakarrontzirik. Hobe duzu betiko ezabatzea",
+    "noTemplate": "Txantiloi hau ez dago jada",
     "noToken": "Token hori ez dago",
     "noUserNamed": "{name} erabiltzailea ez dago",
     "notAFile": "Hau ez da fitxategi arrunt bat",
@@ -3759,6 +3804,7 @@
     "uploadRunning": "Izen hori duen fitxategi bat igotzen ari da une honetan",
     "uploadsOneFolder": "Igoerak karpeta baterako esteka batekin bakarrik dabiltza",
     "userPasswordElsewhere": "Erabiltzaile honek {method} bidez hasten du saioa, eta pasahitza han dago",
+    "windowsOnly": "Hau Windowsen bakarrik dago",
     "wrongLogin": "Izena edo pasahitza ez dira zuzenak"
   },
   "visit": {

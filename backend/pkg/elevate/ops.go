@@ -33,12 +33,16 @@ var ErrBadOp = errors.New("not an operation the helper does")
 
 // Op is one operation. Copy and Move take From to To, which must not exist
 // unless Replace is set; then a folder is merged into the one at To and
-// anything else at To is replaced.
+// anything else at To is replaced. Skip names what lies below From and stays
+// behind, which is what the app hides from the person. Parents makes the
+// missing folders above To first.
 type Op struct {
-	Kind    string `json:"kind"`
-	From    string `json:"from,omitempty"`
-	To      string `json:"to,omitempty"`
-	Replace bool   `json:"replace,omitempty"`
+	Kind    string   `json:"kind"`
+	From    string   `json:"from,omitempty"`
+	To      string   `json:"to,omitempty"`
+	Replace bool     `json:"replace,omitempty"`
+	Skip    []string `json:"skip,omitempty"`
+	Parents bool     `json:"parents,omitempty"`
 }
 
 func (o Op) check() error {
@@ -65,6 +69,14 @@ func (o Op) check() error {
 	}
 	if (o.Kind == Copy || o.Kind == Move) && within(o.To, o.From) {
 		return ErrBadOp
+	}
+	if len(o.Skip) > 0 && o.Kind != Copy && o.Kind != Move || o.Parents && o.Kind != Copy && o.Kind != Move {
+		return ErrBadOp
+	}
+	for _, p := range o.Skip {
+		if !plain(p) || p == o.From || !within(p, o.From) {
+			return ErrBadOp
+		}
 	}
 	return nil
 }
@@ -113,6 +125,11 @@ func apply(o Op) error {
 	if err != nil {
 		return err
 	}
+	if o.Parents {
+		if err := os.MkdirAll(filepath.Dir(o.To), 0o777); err != nil {
+			return err
+		}
+	}
 	if st, err := os.Stat(filepath.Dir(o.To)); err != nil {
 		return err
 	} else if !st.IsDir() {
@@ -129,23 +146,72 @@ func apply(o Op) error {
 	case err != nil && !errors.Is(err, fs.ErrNotExist):
 		return err
 	}
-	if o.Kind == Move {
-		if errors.Is(err, fs.ErrNotExist) || !info.IsDir() || !target.IsDir() {
-			if err := os.Rename(o.From, o.To); err == nil {
-				return nil
+	skip := make(map[string]bool, len(o.Skip))
+	for _, p := range o.Skip {
+		skip[p] = true
+	}
+	if o.Kind == Copy {
+		return copyTree(o.From, o.To, skip)
+	}
+	if len(skip) == 0 && (errors.Is(err, fs.ErrNotExist) || !info.IsDir() || !target.IsDir()) {
+		if err := os.Rename(o.From, o.To); err == nil {
+			return nil
+		}
+	}
+	return moveTree(o.From, o.To, skip)
+}
+
+// moveTree moves from to to entry by entry, merging into a folder that is
+// there. What skip names stays, and so do the folders that hold it.
+func moveTree(from, to string, skip map[string]bool) error {
+	info, err := os.Lstat(from)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() {
+		if t, err := os.Lstat(to); err == nil && t.IsDir() {
+			if err := os.RemoveAll(to); err != nil {
+				return err
 			}
 		}
-		if err := copyTree(o.From, o.To); err != nil {
+		if err := os.Rename(from, to); err == nil {
+			return nil
+		}
+		if err := copyTree(from, to, nil); err != nil {
 			return err
 		}
-		return os.RemoveAll(o.From)
+		return os.Remove(from)
 	}
-	return copyTree(o.From, o.To)
+	if err := os.Mkdir(to, info.Mode().Perm()); err != nil && !errors.Is(err, fs.ErrExist) {
+		return err
+	}
+	entries, err := os.ReadDir(from)
+	if err != nil {
+		return err
+	}
+	for _, e := range entries {
+		p := filepath.Join(from, e.Name())
+		if skip[p] {
+			continue
+		}
+		if err := moveTree(p, filepath.Join(to, e.Name()), skip); err != nil {
+			return err
+		}
+	}
+	os.Chtimes(to, info.ModTime(), info.ModTime())
+	if left, err := os.ReadDir(from); err != nil || len(left) > 0 {
+		return err
+	}
+	return os.Remove(from)
 }
 
 // copyTree copies from to to, merging into a folder that is there and
-// replacing files in it. Links are copied as links, never followed.
-func copyTree(from, to string) error {
+// replacing files in it. Links are copied as links, never followed, and what
+// skip names is left out.
+func copyTree(from, to string, skip map[string]bool) error {
+	if skip[from] {
+		return nil
+	}
 	info, err := os.Lstat(from)
 	if err != nil {
 		return err
@@ -167,7 +233,7 @@ func copyTree(from, to string) error {
 			return err
 		}
 		for _, e := range entries {
-			if err := copyTree(filepath.Join(from, e.Name()), filepath.Join(to, e.Name())); err != nil {
+			if err := copyTree(filepath.Join(from, e.Name()), filepath.Join(to, e.Name()), skip); err != nil {
 				return err
 			}
 		}

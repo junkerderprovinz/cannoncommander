@@ -1595,10 +1595,13 @@
       "copy": "Aby skopiować tu {what}, potrzebujesz uprawnień administratora.",
       "move": "Aby przenieść tu {what}, potrzebujesz uprawnień administratora.",
       "delete": "Aby usunąć {what}, potrzebujesz uprawnień administratora.",
-      "trash": "Aby przenieść {what} do kosza, potrzebujesz uprawnień administratora."
+      "trash": "Aby przenieść {what} do kosza, potrzebujesz uprawnień administratora.",
+      "restore": "Aby przywrócić {what}, potrzebujesz uprawnień administratora.",
+      "undo": "Aby cofnąć {what}, potrzebujesz uprawnień administratora."
     },
     "howWindows": "Po kliknięciu Kontynuuj Windows poprosi o twoją zgodę, a potem CannonCommander będzie działać dalej.",
     "howLinux": "Po kliknięciu Kontynuuj system poprosi o twoje hasło, a potem CannonCommander będzie działać dalej.",
+    "declined": "W porządku, bez uprawnień administratora {what} zostaje tak, jak było.",
     "go": "Kontynuuj"
   },
   "fetch": {
@@ -1618,6 +1621,27 @@
     "go": "Przejdź",
     "job": "Pobieranie: {what}",
     "jobFrom": "Pobieranie: {what} z {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Pokaż chronione pliki systemowe",
+    "cloud": {
+      "online": "Dostępne tylko online",
+      "local": "Dostępne na tym urządzeniu",
+      "pinned": "Zawsze dostępne na tym urządzeniu"
+    },
+    "keep": "Zawsze zachowuj na tym urządzeniu",
+    "free": "Zwolnij miejsce",
+    "kept": "Zostaje na tym urządzeniu: {objects}",
+    "freed": "Zwolniono miejsce dla: {objects}",
+    "createShortcut": "Utwórz skrót",
+    "shortcutName": "{name} - skrót",
+    "new": "Nowy",
+    "shortcut": "Skrót",
+    "newShortcut": "Nowy skrót",
+    "target": "Element docelowy",
+    "targetTip": "Ścieżka pliku lub folderu tak, jak zapisuje ją Windows, z dyskiem na początku.",
+    "name": "Nazwa",
+    "noTarget": "Podaj, dokąd ma prowadzić skrót"
   },
   "gather": {
     "title": "Zbierz folder",
@@ -2232,7 +2256,15 @@
       "file": "Plik"
     },
     "linkToDir": "Dowiązanie do folderu",
-    "linkToFile": "Dowiązanie do pliku"
+    "linkToFile": "Dowiązanie do pliku",
+    "attributes": "Atrybuty",
+    "flags": {
+      "readOnly": "Tylko do odczytu",
+      "hidden": "Ukryty",
+      "archive": "Gotowy do archiwizacji"
+    },
+    "flagsSaved": "Zapisano atrybuty dla: {objects}",
+    "insideFlagsTip": "Ustawia atrybuty także dla każdego pliku i folderu poniżej."
   },
   "quicklook": {
     "title": "Szybki podgląd",
@@ -2950,6 +2982,12 @@
     "purgeSel": "Usuń zaznaczone na zawsze ({n})",
     "selectAll": "Zaznacz wszystko",
     "empty": "Opróżnij kosz",
+    "emptySystem": {
+      "one": "Zostanie opróżniony cały {bin} z jego jedynym elementem.",
+      "few": "Zostanie opróżniony cały {bin}: wszystkie {n} elementy, także te z innych programów.",
+      "many": "Zostanie opróżniony cały {bin}: łącznie {n} elementów, także te z innych programów.",
+      "other": "Zostanie opróżniony cały {bin}: łącznie {n} elementu, także z innych programów."
+    },
     "andMore": {
       "one": "i jeszcze {n}",
       "few": "i jeszcze {n}",
@@ -3499,6 +3537,7 @@
     "dupTab": "Duplikuj kartę",
     "lockTab": "Zablokuj kartę",
     "closeOtherTabs": "Zamknij inne karty",
+    "sidePane": "Okienko podglądu",
     "nextTab": "Następna karta",
     "prevTab": "Poprzednia karta",
     "back": "Wstecz",
@@ -3729,6 +3768,9 @@
     "closedUp": "Brak dostępu do folderu {path}, dlatego otwarto {here}",
     "empty": "Ten folder jest pusty",
     "emptyHint": "Przeciągnij tu pliki, żeby je przesłać",
+    "emptyHintDesktop": "Przeciągnij tu pliki, aby skopiować je do tego folderu",
+    "renameField": "Nowa nazwa",
+    "sidePaneEmpty": "Wybierz plik, a pojawi się tutaj",
     "nothingFound": "Nic nie znaleziono dla {q}",
     "searchedHere": "Szukano tylko w tym folderze",
     "searchedDeep": "Szukano też we wszystkich podfolderach",
@@ -3878,6 +3920,7 @@
     "groupExists": "Ta grupa już istnieje",
     "groupNameMissing": "Nadaj grupie nazwę",
     "inArchive": "To leży w archiwum",
+    "inCloud": "Plik jest tylko w chmurze. Otwórz go raz, a będzie też na tym urządzeniu",
     "inTrash": "To już jest w koszu",
     "intoItself": "Folder nie może trafić do samego siebie",
     "ioError": "Dysk zgłosił błąd odczytu lub zapisu",
@@ -3918,6 +3961,8 @@
       "many": "Wiadomość ma najwyżej {n} znaków",
       "other": "Wiadomość ma najwyżej {n} znaku"
     },
+    "nameChars": "Windows nie pozwala na żaden z tych znaków w nazwie: < > : \" / \\ | ? *",
+    "nameEnd": "W systemie Windows nazwa nie może kończyć się kropką ani spacją",
     "nameLength": {
       "one": "Nazwa ma najwyżej {n} znak",
       "few": "Nazwa ma najwyżej {n} znaki",
@@ -3925,6 +3970,7 @@
       "other": "Nazwa ma najwyżej {n} znaku"
     },
     "namePasswordNeeded": "Potrzebne są nazwa i hasło",
+    "nameReserved": "Windows rezerwuje tę nazwę dla urządzenia, wybierz inną",
     "nameTaken": "Ta nazwa już tu istnieje",
     "nameTooLong": "Nazwa jest za długa dla systemu plików",
     "noAppDialog": "Ten komputer nie ma własnego okna do wyboru aplikacji",
@@ -3945,6 +3991,7 @@
     "noSpaceForFile": "Za mało wolnego miejsca na ten plik",
     "noSuchUser": "Ten użytkownik nie istnieje",
     "noSystemTrash": "Ten dysk nie ma kosza. Lepiej usuń to na zawsze",
+    "noTemplate": "Ten szablon już nie istnieje",
     "noToken": "Ten token nie istnieje",
     "noUserNamed": "Użytkownik {name} nie istnieje",
     "notAFile": "To nie jest zwykły plik",
@@ -4035,6 +4082,7 @@
     "uploadRunning": "Plik o tej nazwie jest właśnie przesyłany",
     "uploadsOneFolder": "Przesyłanie działa tylko przy linku do jednego folderu",
     "userPasswordElsewhere": "Ten użytkownik loguje się przez {method}, hasło jest tam",
+    "windowsOnly": "To istnieje tylko w systemie Windows",
     "wrongLogin": "Nazwa lub hasło są nieprawidłowe"
   },
   "visit": {

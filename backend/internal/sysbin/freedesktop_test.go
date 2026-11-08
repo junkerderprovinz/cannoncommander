@@ -293,3 +293,40 @@ func TestMountsLeaveOutTheKernelsOwn(t *testing.T) {
 		t.Fatalf("got %q", got)
 	}
 }
+
+func TestFolderSizesGoIntoTheCacheOfTheSpecification(t *testing.T) {
+	b := homeBin(t)
+	p := filepath.Join(t.TempDir(), "Ur laub")
+	write(t, filepath.Join(p, "a.jpg"), "12345")
+	write(t, filepath.Join(p, "b.jpg"), "123")
+	if _, err := b.Put(p); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := b.List(); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(filepath.Join(b.home, "info", "Ur laub.trashinfo"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	cache := filepath.Join(b.home, "directorysizes")
+	want := "8 " + strconv.FormatInt(info.ModTime().Unix(), 10) + " Ur%20laub\n"
+	if got, _ := os.ReadFile(cache); string(got) != want {
+		t.Fatalf("cache %q, want %q", got, want)
+	}
+
+	// The cache is read, not the folder, while the info file is unchanged.
+	os.WriteFile(cache, []byte("999 "+strconv.FormatInt(info.ModTime().Unix(), 10)+" Ur%20laub\n12 1 weg\n"), 0o600)
+	list, _ := b.List()
+	if len(list) != 1 || list[0].Size != 999 {
+		t.Fatalf("list %+v", list)
+	}
+	// A line for an entry that is gone goes, and a stale one is measured again.
+	os.WriteFile(cache, []byte("999 1 Ur%20laub\n12 1 weg\n"), 0o600)
+	if list, _ := b.List(); list[0].Size != 8 {
+		t.Fatalf("stale size kept: %+v", list)
+	}
+	if got, _ := os.ReadFile(cache); string(got) != want {
+		t.Fatalf("cache %q, want %q", got, want)
+	}
+}

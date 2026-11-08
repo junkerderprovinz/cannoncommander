@@ -1540,10 +1540,13 @@
       "copy": "Ca să copiezi {what} aici, ai nevoie de drepturi de administrator.",
       "move": "Ca să muți {what} aici, ai nevoie de drepturi de administrator.",
       "delete": "Ca să ștergi {what}, ai nevoie de drepturi de administrator.",
-      "trash": "Ca să muți {what} în coș, ai nevoie de drepturi de administrator."
+      "trash": "Ca să muți {what} în coș, ai nevoie de drepturi de administrator.",
+      "restore": "Ca să restaurezi {what}, ai nevoie de drepturi de administrator.",
+      "undo": "Ca să anulezi {what}, ai nevoie de drepturi de administrator."
     },
     "howWindows": "Cu Continuă, Windows îți cere permisiunea, apoi CannonCommander merge mai departe.",
     "howLinux": "Cu Continuă, sistemul îți cere parola, apoi CannonCommander merge mai departe.",
+    "declined": "Bine, fără drepturi de administrator {what} rămâne cum era.",
     "go": "Continuă"
   },
   "fetch": {
@@ -1563,6 +1566,27 @@
     "go": "Mergi acolo",
     "job": "Descărcare: {what}",
     "jobFrom": "Descărcare: {what} de la {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Afișează fișierele de sistem protejate",
+    "cloud": {
+      "online": "Disponibil doar online",
+      "local": "Disponibil pe acest dispozitiv",
+      "pinned": "Mereu disponibil pe acest dispozitiv"
+    },
+    "keep": "Păstrează mereu pe acest dispozitiv",
+    "free": "Eliberează spațiu",
+    "kept": "Rămâne pe acest dispozitiv: {objects}",
+    "freed": "Spațiu eliberat pentru {objects}",
+    "createShortcut": "Creează o comandă rapidă",
+    "shortcutName": "{name} - comandă rapidă",
+    "new": "Nou",
+    "shortcut": "Comandă rapidă",
+    "newShortcut": "Comandă rapidă nouă",
+    "target": "Țintă",
+    "targetTip": "Calea fișierului sau a dosarului așa cum o scrie Windows, cu unitatea în față.",
+    "name": "Nume",
+    "noTarget": "Spune unde trebuie să ducă comanda rapidă"
   },
   "gather": {
     "title": "Adună un dosar",
@@ -2161,7 +2185,15 @@
       "file": "Fișier"
     },
     "linkToDir": "Legătură către un dosar",
-    "linkToFile": "Legătură către un fișier"
+    "linkToFile": "Legătură către un fișier",
+    "attributes": "Atribute",
+    "flags": {
+      "readOnly": "Doar citire",
+      "hidden": "Ascuns",
+      "archive": "Gata de arhivare"
+    },
+    "flagsSaved": "Atribute salvate pentru {objects}",
+    "insideFlagsTip": "Setează atributele și pentru fiecare fișier și dosar din interior."
   },
   "quicklook": {
     "title": "Previzualizare rapidă",
@@ -2852,6 +2884,11 @@
     "purgeSel": "Șterge definitiv selecția ({n})",
     "selectAll": "Selectează tot",
     "empty": "Golește coșul",
+    "emptySystem": {
+      "one": "Asta golește tot {bin} cu singurul lui element.",
+      "few": "Asta golește tot {bin}: toate cele {n} elemente, inclusiv cele din alte programe.",
+      "other": "Asta golește tot {bin}: toate cele {n} de elemente, inclusiv cele din alte programe."
+    },
     "andMore": {
       "one": "și încă {n}",
       "few": "și încă {n}",
@@ -3370,6 +3407,7 @@
     "dupTab": "Duplică fila",
     "lockTab": "Blochează fila",
     "closeOtherTabs": "Închide celelalte file",
+    "sidePane": "Panou de examinare",
     "nextTab": "Fila următoare",
     "prevTab": "Fila anterioară",
     "back": "Înapoi",
@@ -3599,6 +3637,9 @@
     "closedUp": "Nu ai voie să deschizi dosarul {path}, așa că acum ești în {here}",
     "empty": "Acest dosar este gol",
     "emptyHint": "Trage fișiere aici ca să le încarci",
+    "emptyHintDesktop": "Trage fișiere aici ca să le copiezi în acest dosar",
+    "renameField": "Nume nou",
+    "sidePaneEmpty": "Alege un fișier și apare aici",
     "nothingFound": "Nu s-a găsit nimic pentru {q}",
     "searchedHere": "S-a căutat doar în acest dosar",
     "searchedDeep": "S-a căutat și în toate subdosarele",
@@ -3745,6 +3786,7 @@
     "groupExists": "Acest grup există deja",
     "groupNameMissing": "Dă un nume grupului",
     "inArchive": "Asta se află într-o arhivă",
+    "inCloud": "Fișierul este doar în cloud. Deschide-l o dată și va fi și pe acest dispozitiv",
     "inTrash": "Asta e deja în coș",
     "intoItself": "Un dosar nu poate intra în el însuși",
     "ioError": "Discul a raportat o eroare de citire sau de scriere",
@@ -3782,12 +3824,15 @@
       "few": "Mesajul are cel mult {n} caractere",
       "other": "Mesajul are cel mult {n} de caractere"
     },
+    "nameChars": "Windows nu permite niciunul dintre aceste caractere într-un nume: < > : \" / \\ | ? *",
+    "nameEnd": "În Windows un nume nu se poate termina cu punct sau spațiu",
     "nameLength": {
       "one": "Numele are cel mult {n} caracter",
       "few": "Numele are cel mult {n} caractere",
       "other": "Numele are cel mult {n} de caractere"
     },
     "namePasswordNeeded": "E nevoie de nume și parolă",
+    "nameReserved": "Windows rezervă acest nume pentru un dispozitiv, alege altul",
     "nameTaken": "Acest nume există deja aici",
     "nameTooLong": "Numele este prea lung pentru sistemul de fișiere",
     "noAppDialog": "Acest calculator nu are un dialog propriu pentru alegerea unei aplicații",
@@ -3808,6 +3853,7 @@
     "noSpaceForFile": "Nu e destul spațiu liber pentru acest fișier",
     "noSuchUser": "Acest utilizator nu există",
     "noSystemTrash": "Unitatea aceasta nu are coș. Mai bine șterge-l definitiv",
+    "noTemplate": "Acest șablon nu mai există",
     "noToken": "Acest token nu există",
     "noUserNamed": "Utilizatorul {name} nu există",
     "notAFile": "Acesta nu este un fișier obișnuit",
@@ -3897,6 +3943,7 @@
     "uploadRunning": "Un fișier cu acest nume se încarcă chiar acum",
     "uploadsOneFolder": "Încărcările merg doar cu un link către un dosar",
     "userPasswordElsewhere": "Acest utilizator se autentifică prin {method}, parola se află acolo",
+    "windowsOnly": "Aceasta există doar în Windows",
     "wrongLogin": "Numele sau parola nu sunt corecte"
   },
   "visit": {

@@ -337,6 +337,9 @@ func runChecksum(ctx context.Context, run *jobs.Run) error {
 }
 
 func hashFile(ctx context.Context, run *jobs.Run, a Algo, p string) (string, error) {
+	if ccfs.InCloud(p) {
+		return "", ccfs.ErrInCloud
+	}
 	f, err := os.Open(p)
 	if err != nil {
 		return "", err

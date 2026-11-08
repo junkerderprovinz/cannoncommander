@@ -170,3 +170,69 @@ func TestCodesNameTheCommonFailures(t *testing.T) {
 		}
 	}
 }
+
+func TestCopyLeavesTheSkippedEntriesOut(t *testing.T) {
+	dir := t.TempDir()
+	file(t, filepath.Join(dir, "a", "offen.txt"), "o")
+	file(t, filepath.Join(dir, "a", "geheim.txt"), "g")
+	file(t, filepath.Join(dir, "a", "privat", "x.txt"), "x")
+	op := Op{Kind: Copy, From: filepath.Join(dir, "a"), To: filepath.Join(dir, "b"), Skip: []string{filepath.Join(dir, "a", "geheim.txt"), filepath.Join(dir, "a", "privat")}}
+	if err := apply(op); err != nil {
+		t.Fatal(err)
+	}
+	if read(t, filepath.Join(dir, "b", "offen.txt")) != "o" {
+		t.Fatal("the open file is missing")
+	}
+	for _, p := range []string{"geheim.txt", "privat"} {
+		if _, err := os.Lstat(filepath.Join(dir, "b", p)); !errors.Is(err, fs.ErrNotExist) {
+			t.Errorf("%s was copied", p)
+		}
+	}
+}
+
+func TestMoveLeavesTheSkippedEntriesWhereTheyAre(t *testing.T) {
+	dir := t.TempDir()
+	file(t, filepath.Join(dir, "a", "offen.txt"), "o")
+	file(t, filepath.Join(dir, "a", "tief", "geheim.txt"), "g")
+	file(t, filepath.Join(dir, "a", "tief", "auch.txt"), "a")
+	op := Op{Kind: Move, From: filepath.Join(dir, "a"), To: filepath.Join(dir, "b"), Skip: []string{filepath.Join(dir, "a", "tief", "geheim.txt")}}
+	if err := apply(op); err != nil {
+		t.Fatal(err)
+	}
+	if read(t, filepath.Join(dir, "b", "offen.txt")) != "o" || read(t, filepath.Join(dir, "b", "tief", "auch.txt")) != "a" {
+		t.Fatal("not moved")
+	}
+	if read(t, filepath.Join(dir, "a", "tief", "geheim.txt")) != "g" {
+		t.Fatal("the skipped file did not stay")
+	}
+	if _, err := os.Lstat(filepath.Join(dir, "b", "tief", "geheim.txt")); err == nil {
+		t.Fatal("the skipped file went along")
+	}
+	if _, err := os.Lstat(filepath.Join(dir, "a", "offen.txt")); err == nil {
+		t.Fatal("a moved file stayed")
+	}
+}
+
+func TestSkipStaysInsideTheSource(t *testing.T) {
+	dir := t.TempDir()
+	for _, skip := range [][]string{{filepath.Join(dir, "anderswo")}, {filepath.Join(dir, "a")}, {"relativ"}} {
+		op := Op{Kind: Copy, From: filepath.Join(dir, "a"), To: filepath.Join(dir, "b"), Skip: skip}
+		if err := op.check(); !errors.Is(err, ErrBadOp) {
+			t.Errorf("%v passed: %v", skip, err)
+		}
+	}
+	if err := (Op{Kind: Delete, From: filepath.Join(dir, "a"), Skip: []string{filepath.Join(dir, "a", "x")}}).check(); !errors.Is(err, ErrBadOp) {
+		t.Error("a delete took a skip list")
+	}
+}
+
+func TestParentsMakesTheFolderToLandIn(t *testing.T) {
+	dir := t.TempDir()
+	file(t, filepath.Join(dir, "a.txt"), "a")
+	if err := apply(Op{Kind: Move, From: filepath.Join(dir, "a.txt"), To: filepath.Join(dir, "neu", "tief", "a.txt"), Parents: true}); err != nil {
+		t.Fatal(err)
+	}
+	if read(t, filepath.Join(dir, "neu", "tief", "a.txt")) != "a" {
+		t.Fatal("not moved into the new folder")
+	}
+}

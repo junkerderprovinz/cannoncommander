@@ -4,9 +4,12 @@
     "copy": "You need administrator rights to copy {what} here.",
     "move": "You need administrator rights to move {what} here.",
     "delete": "You need administrator rights to delete {what}.",
-    "trash": "You need administrator rights to put {what} in the trash."
+    "trash": "You need administrator rights to put {what} in the trash.",
+    "restore": "You need administrator rights to restore {what}.",
+    "undo": "You need administrator rights to take {what} back."
   },
   "howWindows": "Continue asks Windows for your permission, and then CannonCommander carries on.",
   "howLinux": "Continue asks the system for your password, and then CannonCommander carries on.",
+  "declined": "All right, without administrator rights {what} stays as it was.",
   "go": "Continue"
 }

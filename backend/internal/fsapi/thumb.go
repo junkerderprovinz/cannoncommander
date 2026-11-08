@@ -148,6 +148,12 @@ func etagMatches(header, tag string) bool {
 type previewThumbs struct{}
 
 func (previewThumbs) thumb(ctx context.Context, real string, info os.FileInfo, size string) ([]byte, error) {
+	// Drawing the picture would read the file and so fetch it from the cloud.
+	// The system's thumbnailer behind this one asks the cloud's provider,
+	// which knows how to do without.
+	if ccfs.InCloudInfo(info) {
+		return nil, errNoThumb
+	}
 	if preview.GetService() == nil || settings.Config.Server.DisablePreviews {
 		return nil, errNoThumb
 	}

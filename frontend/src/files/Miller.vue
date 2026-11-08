@@ -8,7 +8,7 @@ import { prefs } from '@/core/prefs';
 import { byName } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
-import type { Entry } from './entries';
+import { type Entry, shown } from './entries';
 import ListItem from './ListItem.vue';
 import { join, split } from './paths';
 
@@ -29,7 +29,7 @@ watchEffect(() => {
 });
 
 const kids = (folder: string): Item[] => (listing.lists.get(folder)?.items ?? [])
-  .filter((k) => prefs.showHidden || !k.name.startsWith('.'))
+  .filter(shown(prefs.showHidden, prefs.showSystem))
   .sort((a, b) => (b.dir ? 1 : 0) - (a.dir ? 1 : 0) || byName(a.name, b.name));
 const label = (folder: string, k: Item) => listing.placeLabel(join(folder, k.name)) || k.name;
 </script>

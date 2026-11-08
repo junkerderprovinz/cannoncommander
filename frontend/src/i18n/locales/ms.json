@@ -1430,10 +1430,13 @@
       "copy": "Anda perlukan hak pentadbir untuk menyalin {what} ke sini.",
       "move": "Anda perlukan hak pentadbir untuk memindahkan {what} ke sini.",
       "delete": "Anda perlukan hak pentadbir untuk memadam {what}.",
-      "trash": "Anda perlukan hak pentadbir untuk memasukkan {what} ke dalam tong sampah."
+      "trash": "Anda perlukan hak pentadbir untuk memasukkan {what} ke dalam tong sampah.",
+      "restore": "Anda perlukan hak pentadbir untuk memulihkan {what}.",
+      "undo": "Anda perlukan hak pentadbir untuk membuat asal {what}."
     },
     "howWindows": "Dengan Teruskan, Windows meminta kebenaran anda, kemudian CannonCommander menyambung kerja.",
     "howLinux": "Dengan Teruskan, sistem meminta kata laluan anda, kemudian CannonCommander menyambung kerja.",
+    "declined": "Baiklah, tanpa hak pentadbir {what} kekal seperti asal.",
     "go": "Teruskan"
   },
   "fetch": {
@@ -1453,6 +1456,27 @@
     "go": "Pergi ke sana",
     "job": "Muat: {what}",
     "jobFrom": "Muat: {what} dari {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Tunjukkan fail sistem yang dilindungi",
+    "cloud": {
+      "online": "Tersedia dalam talian sahaja",
+      "local": "Tersedia pada peranti ini",
+      "pinned": "Sentiasa tersedia pada peranti ini"
+    },
+    "keep": "Sentiasa simpan pada peranti ini",
+    "free": "Kosongkan ruang",
+    "kept": "Kekal pada peranti ini: {objects}",
+    "freed": "Ruang dikosongkan untuk {objects}",
+    "createShortcut": "Cipta pintasan",
+    "shortcutName": "{name} - pintasan",
+    "new": "Baharu",
+    "shortcut": "Pintasan",
+    "newShortcut": "Pintasan baharu",
+    "target": "Sasaran",
+    "targetTip": "Laluan fail atau folder seperti yang ditulis Windows, dengan pemacu di hadapan.",
+    "name": "Nama",
+    "noTarget": "Sila nyatakan ke mana pintasan harus menuju"
   },
   "gather": {
     "title": "Himpunkan folder",
@@ -2019,7 +2043,15 @@
       "file": "Fail"
     },
     "linkToDir": "Pautan ke folder",
-    "linkToFile": "Pautan ke fail"
+    "linkToFile": "Pautan ke fail",
+    "attributes": "Atribut",
+    "flags": {
+      "readOnly": "Baca sahaja",
+      "hidden": "Tersembunyi",
+      "archive": "Sedia untuk diarkibkan"
+    },
+    "flagsSaved": "Atribut disimpan untuk {objects}",
+    "insideFlagsTip": "Turut menetapkan atribut bagi setiap fail dan folder di bawahnya."
   },
   "quicklook": {
     "title": "Lihat pantas",
@@ -2656,6 +2688,9 @@
     "purgeSel": "Padam pilihan terus ({n})",
     "selectAll": "Pilih semua",
     "empty": "Kosongkan tong sampah",
+    "emptySystem": {
+      "other": "Ini mengosongkan seluruh {bin}: kesemua {n} item, termasuk daripada program lain."
+    },
     "andMore": {
       "other": "dan {n} lagi"
     },
@@ -3112,6 +3147,7 @@
     "dupTab": "Pendua tab",
     "lockTab": "Kunci tab",
     "closeOtherTabs": "Tutup tab lain",
+    "sidePane": "Anak tetingkap pratonton",
     "nextTab": "Tab seterusnya",
     "prevTab": "Tab sebelumnya",
     "back": "Kembali",
@@ -3339,6 +3375,9 @@
     "closedUp": "Anda tidak dibenarkan membuka folder {path}, jadi anda kini berada di {here}",
     "empty": "Folder ini kosong",
     "emptyHint": "Seret fail ke sini untuk memuat naiknya",
+    "emptyHintDesktop": "Seret fail ke sini untuk menyalinnya ke dalam folder ini",
+    "renameField": "Nama baharu",
+    "sidePaneEmpty": "Pilih fail dan ia dipaparkan di sini",
     "nothingFound": "Tiada apa ditemui untuk {q}",
     "searchedHere": "Dicari dalam folder ini sahaja",
     "searchedDeep": "Turut dicari dalam semua subfolder",
@@ -3479,6 +3518,7 @@
     "groupExists": "Kumpulan ini sudah ada",
     "groupNameMissing": "Beri nama kepada kumpulan ini",
     "inArchive": "Ini berada dalam arkib",
+    "inCloud": "Fail ini hanya ada dalam awan. Buka sekali dan ia akan ada pada peranti ini juga",
     "inTrash": "Ini sudah berada dalam tong sampah",
     "intoItself": "Folder tidak boleh masuk ke dalam dirinya sendiri",
     "ioError": "Cakera melaporkan ralat baca atau tulis",
@@ -3510,10 +3550,13 @@
     "messageLength": {
       "other": "Mesej boleh mempunyai paling banyak {n} aksara"
     },
+    "nameChars": "Windows tidak membenarkan mana-mana aksara ini dalam nama: < > : \" / \\ | ? *",
+    "nameEnd": "Dalam Windows nama tidak boleh berakhir dengan titik atau ruang",
     "nameLength": {
       "other": "Nama boleh mempunyai paling banyak {n} aksara"
     },
     "namePasswordNeeded": "Nama dan kata laluan kedua-duanya diperlukan",
+    "nameReserved": "Windows menyimpan nama ini untuk peranti, sila pilih nama lain",
     "nameTaken": "Nama ini sudah ada di sini",
     "nameTooLong": "Nama ini terlalu panjang untuk sistem fail",
     "noAppDialog": "Komputer ini tiada dialog sendiri untuk memilih aplikasi",
@@ -3534,6 +3577,7 @@
     "noSpaceForFile": "Ruang kosong tidak mencukupi untuk fail ini",
     "noSuchUser": "Pengguna ini tidak wujud",
     "noSystemTrash": "Pemacu ini tiada tong sampah. Lebih baik padam terus",
+    "noTemplate": "Templat ini sudah tiada",
     "noToken": "Token ini tidak wujud",
     "noUserNamed": "Pengguna {name} tidak wujud",
     "notAFile": "Ini bukan fail biasa",
@@ -3621,6 +3665,7 @@
     "uploadRunning": "Fail dengan nama ini sedang dimuat naik",
     "uploadsOneFolder": "Muat naik hanya boleh untuk pautan ke satu folder",
     "userPasswordElsewhere": "Pengguna ini log masuk melalui {method}, kata laluannya disimpan di sana",
+    "windowsOnly": "Ini hanya ada dalam Windows",
     "wrongLogin": "Nama atau kata laluan tidak betul"
   },
   "visit": {

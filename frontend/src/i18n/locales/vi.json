@@ -1430,10 +1430,13 @@
       "copy": "Bạn cần quyền quản trị để sao chép {what} vào đây.",
       "move": "Bạn cần quyền quản trị để di chuyển {what} vào đây.",
       "delete": "Bạn cần quyền quản trị để xóa {what}.",
-      "trash": "Bạn cần quyền quản trị để đưa {what} vào thùng rác."
+      "trash": "Bạn cần quyền quản trị để đưa {what} vào thùng rác.",
+      "restore": "Bạn cần quyền quản trị để khôi phục {what}.",
+      "undo": "Bạn cần quyền quản trị để hoàn tác {what}."
     },
     "howWindows": "Khi bạn bấm Tiếp tục, Windows sẽ xin phép bạn, sau đó CannonCommander làm tiếp.",
     "howLinux": "Khi bạn bấm Tiếp tục, hệ thống sẽ hỏi mật khẩu của bạn, sau đó CannonCommander làm tiếp.",
+    "declined": "Được rồi, không có quyền quản trị thì {what} vẫn giữ nguyên.",
     "go": "Tiếp tục"
   },
   "fetch": {
@@ -1453,6 +1456,27 @@
     "go": "Đến đó",
     "job": "Tải: {what}",
     "jobFrom": "Tải: {what} từ {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Hiện tệp hệ thống được bảo vệ",
+    "cloud": {
+      "online": "Chỉ có trực tuyến",
+      "local": "Có trên thiết bị này",
+      "pinned": "Luôn có trên thiết bị này"
+    },
+    "keep": "Luôn giữ trên thiết bị này",
+    "free": "Giải phóng dung lượng",
+    "kept": "Giữ trên thiết bị này: {objects}",
+    "freed": "Đã giải phóng dung lượng cho {objects}",
+    "createShortcut": "Tạo lối tắt",
+    "shortcutName": "{name} - lối tắt",
+    "new": "Mới",
+    "shortcut": "Lối tắt",
+    "newShortcut": "Lối tắt mới",
+    "target": "Đích",
+    "targetTip": "Đường dẫn của tệp hoặc thư mục theo cách Windows viết, có ổ đĩa ở đầu.",
+    "name": "Tên",
+    "noTarget": "Vui lòng cho biết lối tắt sẽ dẫn đến đâu"
   },
   "gather": {
     "title": "Gom thư mục",
@@ -2019,7 +2043,15 @@
       "file": "Tệp"
     },
     "linkToDir": "Liên kết đến thư mục",
-    "linkToFile": "Liên kết đến tệp"
+    "linkToFile": "Liên kết đến tệp",
+    "attributes": "Thuộc tính",
+    "flags": {
+      "readOnly": "Chỉ đọc",
+      "hidden": "Ẩn",
+      "archive": "Sẵn sàng lưu trữ"
+    },
+    "flagsSaved": "Đã lưu thuộc tính cho {objects}",
+    "insideFlagsTip": "Áp dụng thuộc tính cho mọi tệp và thư mục bên trong."
   },
   "quicklook": {
     "title": "Xem nhanh",
@@ -2656,6 +2688,9 @@
     "purgeSel": "Xóa vĩnh viễn mục đã chọn ({n})",
     "selectAll": "Chọn tất cả",
     "empty": "Dọn sạch thùng rác",
+    "emptySystem": {
+      "other": "Việc này dọn sạch toàn bộ {bin}: cả {n} mục, kể cả của các chương trình khác."
+    },
     "andMore": {
       "other": "và {n} mục khác"
     },
@@ -3112,6 +3147,7 @@
     "dupTab": "Nhân bản thẻ",
     "lockTab": "Khóa thẻ",
     "closeOtherTabs": "Đóng các thẻ khác",
+    "sidePane": "Ngăn xem trước",
     "nextTab": "Thẻ tiếp theo",
     "prevTab": "Thẻ trước",
     "back": "Lùi",
@@ -3339,6 +3375,9 @@
     "closedUp": "Bạn không được mở thư mục {path}, nên bạn đang ở {here}",
     "empty": "Thư mục này trống",
     "emptyHint": "Thả tệp vào đây để tải lên",
+    "emptyHintDesktop": "Kéo tệp vào đây để sao chép vào thư mục này",
+    "renameField": "Tên mới",
+    "sidePaneEmpty": "Chọn một tệp, tệp sẽ hiện ở đây",
     "nothingFound": "Không tìm thấy gì cho {q}",
     "searchedHere": "Chỉ tìm trong thư mục này",
     "searchedDeep": "Đã tìm cả trong mọi thư mục con",
@@ -3479,6 +3518,7 @@
     "groupExists": "Nhóm này đã có rồi",
     "groupNameMissing": "Hãy đặt tên cho nhóm",
     "inArchive": "Mục này nằm trong tệp nén",
+    "inCloud": "Tệp chỉ có trên đám mây. Mở một lần là tệp cũng có trên thiết bị này",
     "inTrash": "Mục này đã ở trong thùng rác",
     "intoItself": "Thư mục không thể nằm trong chính nó",
     "ioError": "Ổ đĩa báo lỗi đọc hoặc lỗi ghi",
@@ -3510,10 +3550,13 @@
     "messageLength": {
       "other": "Lời nhắn dài tối đa {n} ký tự"
     },
+    "nameChars": "Windows không cho phép các ký tự này trong tên: < > : \" / \\ | ? *",
+    "nameEnd": "Trên Windows tên không được kết thúc bằng dấu chấm hoặc khoảng trắng",
     "nameLength": {
       "other": "Tên dài tối đa {n} ký tự"
     },
     "namePasswordNeeded": "Cần cả tên và mật khẩu",
+    "nameReserved": "Windows dành tên này cho một thiết bị, vui lòng chọn tên khác",
     "nameTaken": "Ở đây đã có tên này",
     "nameTooLong": "Tên quá dài đối với hệ thống tệp",
     "noAppDialog": "Máy tính này không có hộp thoại riêng để chọn ứng dụng",
@@ -3534,6 +3577,7 @@
     "noSpaceForFile": "Không đủ chỗ trống cho tệp này",
     "noSuchUser": "Không có người dùng này",
     "noSystemTrash": "Ổ đĩa này không có thùng rác. Tốt hơn hãy xóa vĩnh viễn",
+    "noTemplate": "Mẫu này không còn nữa",
     "noToken": "Không có token này",
     "noUserNamed": "Không có người dùng {name}",
     "notAFile": "Đây không phải tệp thông thường",
@@ -3621,6 +3665,7 @@
     "uploadRunning": "Một tệp trùng tên đang được tải lên",
     "uploadsOneFolder": "Chỉ tải lên được qua liên kết đến một thư mục",
     "userPasswordElsewhere": "Người dùng này đăng nhập qua {method}, mật khẩu được giữ ở đó",
+    "windowsOnly": "Chỉ có trên Windows",
     "wrongLogin": "Tên hoặc mật khẩu không đúng"
   },
   "visit": {

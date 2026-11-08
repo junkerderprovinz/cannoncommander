@@ -1485,10 +1485,13 @@
       "copy": "Du behöver administratörsbehörighet för att kopiera {what} hit.",
       "move": "Du behöver administratörsbehörighet för att flytta {what} hit.",
       "delete": "Du behöver administratörsbehörighet för att ta bort {what}.",
-      "trash": "Du behöver administratörsbehörighet för att lägga {what} i papperskorgen."
+      "trash": "Du behöver administratörsbehörighet för att lägga {what} i papperskorgen.",
+      "restore": "Du behöver administratörsbehörighet för att återställa {what}.",
+      "undo": "Du behöver administratörsbehörighet för att ångra {what}."
     },
     "howWindows": "Med Fortsätt ber Windows om ditt tillstånd, och sedan fortsätter CannonCommander.",
     "howLinux": "Med Fortsätt ber systemet om ditt lösenord, och sedan fortsätter CannonCommander.",
+    "declined": "Okej, utan administratörsbehörighet förblir {what} som det var.",
     "go": "Fortsätt"
   },
   "fetch": {
@@ -1508,6 +1511,27 @@
     "go": "Gå dit",
     "job": "Hämta: {what}",
     "jobFrom": "Hämta: {what} från {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Visa skyddade systemfiler",
+    "cloud": {
+      "online": "Endast tillgänglig online",
+      "local": "Tillgänglig på den här enheten",
+      "pinned": "Alltid tillgänglig på den här enheten"
+    },
+    "keep": "Behåll alltid på den här enheten",
+    "free": "Frigör utrymme",
+    "kept": "Stannar på den här enheten: {objects}",
+    "freed": "Utrymme frigjort för {objects}",
+    "createShortcut": "Skapa genväg",
+    "shortcutName": "{name} - genväg",
+    "new": "Nytt",
+    "shortcut": "Genväg",
+    "newShortcut": "Ny genväg",
+    "target": "Mål",
+    "targetTip": "Sökvägen till filen eller mappen som Windows skriver den, med enheten först.",
+    "name": "Namn",
+    "noTarget": "Ange vart genvägen ska leda"
   },
   "gather": {
     "title": "Samla en mapp",
@@ -2090,7 +2114,15 @@
       "file": "Fil"
     },
     "linkToDir": "Länk till en mapp",
-    "linkToFile": "Länk till en fil"
+    "linkToFile": "Länk till en fil",
+    "attributes": "Attribut",
+    "flags": {
+      "readOnly": "Skrivskyddad",
+      "hidden": "Dold",
+      "archive": "Klar för arkivering"
+    },
+    "flagsSaved": "Attribut sparade för {objects}",
+    "insideFlagsTip": "Sätter attributen även för varje fil och mapp under."
   },
   "quicklook": {
     "title": "Snabbvisning",
@@ -2754,6 +2786,10 @@
     "purgeSel": "Ta bort markerade permanent ({n})",
     "selectAll": "Markera allt",
     "empty": "Töm papperskorgen",
+    "emptySystem": {
+      "one": "Det här tömmer hela {bin} med dess enda objekt.",
+      "other": "Det här tömmer hela {bin}: alla {n} objekt, även de från andra program."
+    },
     "andMore": {
       "one": "och {n} till",
       "other": "och {n} till"
@@ -3241,6 +3277,7 @@
     "dupTab": "Duplicera flik",
     "lockTab": "Lås flik",
     "closeOtherTabs": "Stäng andra flikar",
+    "sidePane": "Förhandsgranskningsfönster",
     "nextTab": "Nästa flik",
     "prevTab": "Föregående flik",
     "back": "Bakåt",
@@ -3469,6 +3506,9 @@
     "closedUp": "Du får inte öppna mappen {path}, så nu är du i {here}",
     "empty": "Den här mappen är tom",
     "emptyHint": "Dra hit filer för att ladda upp dem",
+    "emptyHintDesktop": "Dra filer hit för att kopiera dem till den här mappen",
+    "renameField": "Nytt namn",
+    "sidePaneEmpty": "Välj en fil så visas den här",
     "nothingFound": "Inget hittades för {q}",
     "searchedHere": "Sökte bara i den här mappen",
     "searchedDeep": "Sökte även i alla undermappar",
@@ -3612,6 +3652,7 @@
     "groupExists": "Den här gruppen finns redan",
     "groupNameMissing": "Ge gruppen ett namn",
     "inArchive": "Det ligger i ett arkiv",
+    "inCloud": "Filen finns bara i molnet. Öppna den en gång så finns den även på den här enheten",
     "inTrash": "Det ligger redan i papperskorgen",
     "intoItself": "En mapp kan inte flyttas in i sig själv",
     "ioError": "Disken rapporterade ett läs- eller skrivfel",
@@ -3646,11 +3687,14 @@
       "one": "Meddelandet får ha högst {n} tecken",
       "other": "Meddelandet får ha högst {n} tecken"
     },
+    "nameChars": "Windows tillåter inget av dessa tecken i ett namn: < > : \" / \\ | ? *",
+    "nameEnd": "I Windows får ett namn inte sluta med punkt eller blanksteg",
     "nameLength": {
       "one": "Namnet får ha högst {n} tecken",
       "other": "Namnet får ha högst {n} tecken"
     },
     "namePasswordNeeded": "Både namn och lösenord behövs",
+    "nameReserved": "Windows håller det här namnet för en enhet, välj ett annat",
     "nameTaken": "Det här namnet finns redan här",
     "nameTooLong": "Namnet är för långt för filsystemet",
     "noAppDialog": "Den här datorn har ingen egen dialog för att välja en app",
@@ -3671,6 +3715,7 @@
     "noSpaceForFile": "Det finns inte tillräckligt med ledigt utrymme för den här filen",
     "noSuchUser": "Den användaren finns inte",
     "noSystemTrash": "Den här enheten har ingen papperskorg. Ta bort det permanent i stället",
+    "noTemplate": "Den här mallen finns inte längre",
     "noToken": "Den token finns inte",
     "noUserNamed": "Användaren {name} finns inte",
     "notAFile": "Det här är ingen vanlig fil",
@@ -3759,6 +3804,7 @@
     "uploadRunning": "En fil med det här namnet laddas upp just nu",
     "uploadsOneFolder": "Uppladdning fungerar bara med en länk till en mapp",
     "userPasswordElsewhere": "Den här användaren loggar in via {method}, lösenordet finns där",
+    "windowsOnly": "Det finns bara i Windows",
     "wrongLogin": "Namnet eller lösenordet stämmer inte"
   },
   "visit": {

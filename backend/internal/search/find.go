@@ -112,7 +112,7 @@ func (f *finder) visit(ctx context.Context, e fsindex.Entry, hit func(*row) erro
 	if Bookkeeping(e.Name) {
 		return fs.SkipDir
 	}
-	hidden := e.Hidden || strings.HasPrefix(e.Name, ".")
+	hidden := e.Hidden || ccfs.HiddenByName(e.Name)
 	if hidden && !f.p.Hidden {
 		return fs.SkipDir
 	}

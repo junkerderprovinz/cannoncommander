@@ -1540,10 +1540,13 @@
       "copy": "Da biste ovamo kopirali {what}, trebate administratorska prava.",
       "move": "Da biste ovamo premjestili {what}, trebate administratorska prava.",
       "delete": "Da biste izbrisali {what}, trebate administratorska prava.",
-      "trash": "Da biste premjestili {what} u smeće, trebate administratorska prava."
+      "trash": "Da biste premjestili {what} u smeće, trebate administratorska prava.",
+      "restore": "Da biste vratili {what}, trebate administratorska prava.",
+      "undo": "Da biste poništili {what}, trebate administratorska prava."
     },
     "howWindows": "Kad nastavite, Windows traži vaše dopuštenje, a zatim CannonCommander nastavlja.",
     "howLinux": "Kad nastavite, sustav traži vašu lozinku, a zatim CannonCommander nastavlja.",
+    "declined": "U redu, bez administratorskih prava {what} ostaje kako je bilo.",
     "go": "Nastavi"
   },
   "fetch": {
@@ -1563,6 +1566,27 @@
     "go": "Idi onamo",
     "job": "Učitavanje: {what}",
     "jobFrom": "Učitavanje: {what} s {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Prikaži zaštićene sistemske datoteke",
+    "cloud": {
+      "online": "Dostupno samo na mreži",
+      "local": "Dostupno na ovom uređaju",
+      "pinned": "Uvijek dostupno na ovom uređaju"
+    },
+    "keep": "Uvijek zadrži na ovom uređaju",
+    "free": "Oslobodi prostor",
+    "kept": "Ostaje na ovom uređaju: {objects}",
+    "freed": "Prostor oslobođen za {objects}",
+    "createShortcut": "Stvori prečac",
+    "shortcutName": "{name} - prečac",
+    "new": "Novo",
+    "shortcut": "Prečac",
+    "newShortcut": "Novi prečac",
+    "target": "Cilj",
+    "targetTip": "Putanja datoteke ili mape kako je piše Windows, s pogonom na početku.",
+    "name": "Naziv",
+    "noTarget": "Navedite kamo prečac treba voditi"
   },
   "gather": {
     "title": "Okupi mapu",
@@ -2161,7 +2185,15 @@
       "file": "Datoteka"
     },
     "linkToDir": "Veza na mapu",
-    "linkToFile": "Veza na datoteku"
+    "linkToFile": "Veza na datoteku",
+    "attributes": "Atributi",
+    "flags": {
+      "readOnly": "Samo za čitanje",
+      "hidden": "Skriveno",
+      "archive": "Spremno za arhiviranje"
+    },
+    "flagsSaved": "Atributi spremljeni za {objects}",
+    "insideFlagsTip": "Postavlja atribute i za svaku datoteku i mapu ispod."
   },
   "quicklook": {
     "title": "Brzi pregled",
@@ -2852,6 +2884,11 @@
     "purgeSel": "Trajno izbriši odabrano ({n})",
     "selectAll": "Odaberi sve",
     "empty": "Isprazni smeće",
+    "emptySystem": {
+      "one": "Prazni se cijelo {bin} s {n} stavkom.",
+      "few": "Prazni se cijelo {bin}: sve {n} stavke, i one iz drugih programa.",
+      "other": "Prazni se cijelo {bin}: svih {n} stavki, i one iz drugih programa."
+    },
     "andMore": {
       "one": "i još {n}",
       "few": "i još {n}",
@@ -3370,6 +3407,7 @@
     "dupTab": "Udvostruči karticu",
     "lockTab": "Zaključaj karticu",
     "closeOtherTabs": "Zatvori ostale kartice",
+    "sidePane": "Okno pretpregleda",
     "nextTab": "Sljedeća kartica",
     "prevTab": "Prethodna kartica",
     "back": "Natrag",
@@ -3599,6 +3637,9 @@
     "closedUp": "Ne smijete otvoriti mapu {path}, pa ste sada u {here}",
     "empty": "Ova je mapa prazna",
     "emptyHint": "Povucite datoteke ovamo da ih prenesete",
+    "emptyHintDesktop": "Povuci datoteke ovamo da ih kopiraš u ovu mapu",
+    "renameField": "Novi naziv",
+    "sidePaneEmpty": "Odaberi datoteku i prikazat će se ovdje",
     "nothingFound": "Ništa nije pronađeno za {q}",
     "searchedHere": "Traženo samo u ovoj mapi",
     "searchedDeep": "Traženo i u svim podmapama",
@@ -3745,6 +3786,7 @@
     "groupExists": "Ta grupa već postoji",
     "groupNameMissing": "Dajte grupi naziv",
     "inArchive": "Ovo je u arhivi",
+    "inCloud": "Datoteka je samo u oblaku. Otvorite je jednom i bit će i na ovom uređaju",
     "inTrash": "Ovo je već u smeću",
     "intoItself": "Mapa ne može u samu sebe",
     "ioError": "Disk je javio pogrešku čitanja ili pisanja",
@@ -3782,12 +3824,15 @@
       "few": "Poruka ima najviše {n} znaka",
       "other": "Poruka ima najviše {n} znakova"
     },
+    "nameChars": "Windows ne dopušta nijedan od ovih znakova u nazivu: < > : \" / \\ | ? *",
+    "nameEnd": "U Windowsima naziv ne smije završavati točkom ili razmakom",
     "nameLength": {
       "one": "Naziv ima najviše {n} znak",
       "few": "Naziv ima najviše {n} znaka",
       "other": "Naziv ima najviše {n} znakova"
     },
     "namePasswordNeeded": "Potrebni su ime i lozinka",
+    "nameReserved": "Windows čuva ovaj naziv za uređaj, odaberite drugi",
     "nameTaken": "Taj naziv ovdje već postoji",
     "nameTooLong": "Naziv je predug za datotečni sustav",
     "noAppDialog": "Ovo računalo nema vlastiti dijalog za odabir aplikacije",
@@ -3808,6 +3853,7 @@
     "noSpaceForFile": "Za ovu datoteku nema dovoljno slobodnog prostora",
     "noSuchUser": "Taj korisnik ne postoji",
     "noSystemTrash": "Ovaj pogon nema smeće. Radije ga trajno izbrišite",
+    "noTemplate": "Ovaj predložak više ne postoji",
     "noToken": "Taj token ne postoji",
     "noUserNamed": "Korisnik {name} ne postoji",
     "notAFile": "Ovo nije obična datoteka",
@@ -3897,6 +3943,7 @@
     "uploadRunning": "Datoteka s tim nazivom upravo se prenosi",
     "uploadsOneFolder": "Prijenos radi samo za poveznicu na jednu mapu",
     "userPasswordElsewhere": "Ovaj se korisnik prijavljuje preko {method}, lozinka se čuva ondje",
+    "windowsOnly": "To postoji samo u Windowsima",
     "wrongLogin": "Ime ili lozinka nisu točni"
   },
   "visit": {

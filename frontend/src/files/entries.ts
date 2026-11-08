@@ -2,12 +2,17 @@
 import type { Item } from '@/api/client';
 import { DAY } from '@/core/format';
 import { ext, type Kind, kindOf } from '@/core/glyphs';
+import { host } from '@/core/host';
 import { byName, byText } from '@/i18n';
 
 export type MetaValue = string | number | boolean | null;
 export type Entry = Item & { kind: Kind; up?: boolean; meta?: Record<string, MetaValue> };
 
-export const shown = (showHidden: boolean) => (k: Item) => showHidden || (!k.hidden && !k.name.startsWith('.'));
+// Explorer shows dot files and hides by the attribute alone, which the server reads; elsewhere the dot hides as well.
+export const isHidden = (k: { name: string; hidden?: boolean }) => !!k.hidden || (host.os !== 'windows' && k.name.startsWith('.'));
+// Protected system files such as desktop.ini stay back until they are asked for on their own.
+export const shown = (showHidden: boolean, showSystem = false) => (k: { name: string; hidden?: boolean; system?: boolean }) =>
+  (showHidden || !isHidden(k)) && (showSystem || !k.system);
 
 // Words in a search match anywhere in the name; a word with * or ? is a pattern for the whole name, so *.mkv finds
 // every film, and a word starting with # finds a tag or a colour.

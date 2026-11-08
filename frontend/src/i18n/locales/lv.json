@@ -1540,10 +1540,13 @@
       "copy": "Lai šeit kopētu {what}, tev vajag administratora tiesības.",
       "move": "Lai šeit pārvietotu {what}, tev vajag administratora tiesības.",
       "delete": "Lai izdzēstu {what}, tev vajag administratora tiesības.",
-      "trash": "Lai ievietotu {what} atkritnē, tev vajag administratora tiesības."
+      "trash": "Lai ievietotu {what} atkritnē, tev vajag administratora tiesības.",
+      "restore": "Lai atjaunotu {what}, tev vajag administratora tiesības.",
+      "undo": "Lai atsauktu {what}, tev vajag administratora tiesības."
     },
     "howWindows": "Kad turpināsi, Windows lūgs tavu atļauju, un pēc tam CannonCommander turpinās darbu.",
     "howLinux": "Kad turpināsi, sistēma prasīs tavu paroli, un pēc tam CannonCommander turpinās darbu.",
+    "declined": "Labi, bez administratora tiesībām {what} paliek, kā bija.",
     "go": "Turpināt"
   },
   "fetch": {
@@ -1563,6 +1566,27 @@
     "go": "Doties turp",
     "job": "Lejupielādēt: {what}",
     "jobFrom": "Lejupielādēt: {what} no {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Rādīt aizsargātos sistēmas failus",
+    "cloud": {
+      "online": "Pieejams tikai tiešsaistē",
+      "local": "Pieejams šajā ierīcē",
+      "pinned": "Vienmēr pieejams šajā ierīcē"
+    },
+    "keep": "Vienmēr paturēt šajā ierīcē",
+    "free": "Atbrīvot vietu",
+    "kept": "Paliek šajā ierīcē: {objects}",
+    "freed": "Vieta atbrīvota: {objects}",
+    "createShortcut": "Izveidot saīsni",
+    "shortcutName": "{name} - saīsne",
+    "new": "Jauns",
+    "shortcut": "Saīsne",
+    "newShortcut": "Jauna saīsne",
+    "target": "Mērķis",
+    "targetTip": "Faila vai mapes ceļš tā, kā to raksta Windows, ar disku priekšā.",
+    "name": "Nosaukums",
+    "noTarget": "Lūdzu, norādiet, kurp jāved saīsnei"
   },
   "gather": {
     "title": "Savākt mapi",
@@ -2161,7 +2185,15 @@
       "file": "Fails"
     },
     "linkToDir": "Saite uz mapi",
-    "linkToFile": "Saite uz failu"
+    "linkToFile": "Saite uz failu",
+    "attributes": "Atribūti",
+    "flags": {
+      "readOnly": "Tikai lasāms",
+      "hidden": "Slēpts",
+      "archive": "Gatavs arhivēšanai"
+    },
+    "flagsSaved": "Atribūti saglabāti: {objects}",
+    "insideFlagsTip": "Iestata atribūtus arī katram failam un mapei zem tās."
   },
   "quicklook": {
     "title": "Ātrais skats",
@@ -2852,6 +2884,11 @@
     "purgeSel": "Dzēst atlasīto neatgriezeniski ({n})",
     "selectAll": "Atlasīt visu",
     "empty": "Iztukšot atkritni",
+    "emptySystem": {
+      "zero": "Tiek iztukšota visa {bin}: {n} vienumu, arī no citām programmām.",
+      "one": "Tiek iztukšota visa {bin}: {n} vienums, arī no citām programmām.",
+      "other": "Tiek iztukšota visa {bin}: visi {n} vienumi, arī no citām programmām."
+    },
     "andMore": {
       "zero": "un vēl {n}",
       "one": "un vēl {n}",
@@ -3370,6 +3407,7 @@
     "dupTab": "Dublēt cilni",
     "lockTab": "Bloķēt cilni",
     "closeOtherTabs": "Aizvērt citas cilnes",
+    "sidePane": "Priekšskatījuma rūts",
     "nextTab": "Nākamā cilne",
     "prevTab": "Iepriekšējā cilne",
     "back": "Atpakaļ",
@@ -3599,6 +3637,9 @@
     "closedUp": "Mapi {path} tu nedrīksti atvērt, tāpēc tagad tu esi {here}",
     "empty": "Šī mape ir tukša",
     "emptyHint": "Velc failus šeit, lai tos augšupielādētu",
+    "emptyHintDesktop": "Velc failus šeit, lai tos iekopētu šajā mapē",
+    "renameField": "Jauns nosaukums",
+    "sidePaneEmpty": "Izvēlies failu, un tas parādīsies šeit",
     "nothingFound": "Nekas nav atrasts pēc {q}",
     "searchedHere": "Meklēts tikai šajā mapē",
     "searchedDeep": "Meklēts arī visās apakšmapēs",
@@ -3745,6 +3786,7 @@
     "groupExists": "Šāda grupa jau ir",
     "groupNameMissing": "Piešķir grupai nosaukumu",
     "inArchive": "Tas atrodas arhīvā",
+    "inCloud": "Fails ir tikai mākonī. Atveriet to vienreiz, un tas būs arī šajā ierīcē",
     "inTrash": "Tas jau ir atkritnē",
     "intoItself": "Mapi nevar ievietot pašā sevī",
     "ioError": "Disks ziņoja par lasīšanas vai rakstīšanas kļūdu",
@@ -3782,12 +3824,15 @@
       "one": "Ziņā var būt ne vairāk kā {n} rakstzīme",
       "other": "Ziņā var būt ne vairāk kā {n} rakstzīmes"
     },
+    "nameChars": "Windows nosaukumā neatļauj nevienu no šīm rakstzīmēm: < > : \" / \\ | ? *",
+    "nameEnd": "Windows nosaukums nedrīkst beigties ar punktu vai atstarpi",
     "nameLength": {
       "zero": "Nosaukumā var būt ne vairāk kā {n} rakstzīmju",
       "one": "Nosaukumā var būt ne vairāk kā {n} rakstzīme",
       "other": "Nosaukumā var būt ne vairāk kā {n} rakstzīmes"
     },
     "namePasswordNeeded": "Vajag vārdu un paroli",
+    "nameReserved": "Windows šo nosaukumu patur ierīcei, lūdzu, izvēlieties citu",
     "nameTaken": "Šāds nosaukums šeit jau ir",
     "nameTooLong": "Nosaukums ir par garu failu sistēmai",
     "noAppDialog": "Šim datoram nav sava dialoga lietotnes izvēlei",
@@ -3808,6 +3853,7 @@
     "noSpaceForFile": "Šim failam nepietiek brīvas vietas",
     "noSuchUser": "Šāda lietotāja nav",
     "noSystemTrash": "Šim diskam nav atkritnes. Labāk dzēs to neatgriezeniski",
+    "noTemplate": "Šīs veidnes vairs nav",
     "noToken": "Šāda marķiera nav",
     "noUserNamed": "Lietotāja {name} nav",
     "notAFile": "Tas nav parasts fails",
@@ -3897,6 +3943,7 @@
     "uploadRunning": "Fails ar šādu nosaukumu pašlaik tiek augšupielādēts",
     "uploadsOneFolder": "Augšupielāde darbojas tikai ar saiti uz vienu mapi",
     "userPasswordElsewhere": "Šis lietotājs piesakās caur {method}, parole glabājas tur",
+    "windowsOnly": "Tas ir pieejams tikai Windows",
     "wrongLogin": "Vārds vai parole nav pareiza"
   },
   "visit": {

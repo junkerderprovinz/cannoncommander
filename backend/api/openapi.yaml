@@ -738,6 +738,72 @@ paths:
         "409":
           $ref: "#/components/responses/StateConflict"
       tags: [fileops]
+  /fs/templates:
+    get:
+      operationId: fsTemplates
+      summary: List what New offers
+      description: The ShellNew entries Windows registers and the files in the templates folder of a Linux desktop. Empty in the container.
+      responses:
+        "200":
+          description: The templates, sorted by name.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [templates]
+                properties:
+                  templates:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, name, ext, file]
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                          description: What the menu shows, such as the type name of Windows.
+                        ext:
+                          type: string
+                          example: .docx
+                        file:
+                          type: string
+                          description: The name a new file starts out with, without its ending.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [fileops]
+  /fs/new:
+    post:
+      operationId: fsNew
+      summary: Create a file from a template
+      description: Only in the desktop app. Undo removes the file as long as it holds what the template gave it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, template]
+              properties:
+                path:
+                  type: string
+                template:
+                  type: string
+                  description: The id from fs/templates.
+      responses:
+        "201":
+          $ref: "#/components/responses/FsChanged"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [fileops]
   /fs/rename:
     post:
       operationId: fsRename
@@ -816,7 +882,9 @@ paths:
       description: |
         A symbolic link may point to something that does not exist yet,
         but only to a place inside a source the user may see. A hard link
-        needs an existing file on the same source.
+        needs an existing file on the same source. On Windows a link to a
+        folder becomes a junction when the user lacks the right for a
+        symbolic link, and with shortcut the link is a .lnk file.
       requestBody:
         required: true
         content:
@@ -833,6 +901,9 @@ paths:
                   description: Where the link is created.
                 hard:
                   type: boolean
+                shortcut:
+                  type: boolean
+                  description: Write a .lnk file of Windows to an existing target. Elsewhere the answer is 400 windowsOnly.
       responses:
         "201":
           $ref: "#/components/responses/FsChanged"
@@ -879,6 +950,18 @@ paths:
                 mtime:
                   type: string
                   format: date-time
+                flags:
+                  type: object
+                  description: Attributes of Windows to turn on or off. pinned keeps a cloud file on the device, false frees its space. Elsewhere the answer is 400 windowsOnly.
+                  properties:
+                    readOnly:
+                      type: boolean
+                    hidden:
+                      type: boolean
+                    archive:
+                      type: boolean
+                    pinned:
+                      type: boolean
                 recursive:
                   type: boolean
       responses:
@@ -1376,10 +1459,11 @@ paths:
       operationId: jobElevate
       summary: Go on with administrator rights
       description: |
-        Only in the desktop app, for copy, move, delete and trash. Runs the
-        failed and unfinished items again through a helper the system starts
-        with administrator rights, after its own prompt: UAC on Windows,
-        pkexec on Linux. Items fail with elevationDeclined when the prompt is
+        Only in the desktop app, for copy, move, delete, trash, restore and
+        undo. Runs the failed and unfinished items again through a helper the
+        system starts with administrator rights, after its own prompt: UAC on
+        Windows, pkexec on Linux. A copy or move leaves behind what a normal
+        one would, and a move into a new folder makes the folder. Items fail with elevationDeclined when the prompt is
         turned down. On Linux, and on drives without a Recycle Bin, items of
         a trash job fail with noSystemTrash.
       responses:
@@ -6901,7 +6985,7 @@ components:
           example: "0664"
         owner:
           type: string
-          description: User name, or the number when the container does not know it.
+          description: User name, or the number when the container does not know it. On Windows only fs/stat names the owner, with the computer or domain in front.
         group:
           type: string
         uid:
@@ -6918,10 +7002,47 @@ components:
           description: Number of hard links.
         hidden:
           type: boolean
-          description: The name starts with a dot.
+          description: The system's file manager hides the entry. On Windows that is the hidden attribute, elsewhere a name that starts with a dot or one listed in the folder's .hidden file.
+        system:
+          type: boolean
+          description: A protected file of Windows, hidden and a system file at once, such as desktop.ini.
+        attrs:
+          type: string
+          description: The attributes of Windows with the letters of Explorer's column, R read-only, H hidden, S system, A archive, C compressed, E encrypted, O offline, M fetched from the cloud on access, P kept on the device, U free to be dropped, L a link or junction.
+          example: RA
+        cloud:
+          type: string
+          enum: [online, local, pinned]
+          description: The state of a file a cloud provider such as OneDrive keeps, as Explorer's status column shows it. An online file gets no thumbnail and no metadata, since reading it would download it.
         link:
           type: string
-          description: Target of a symbolic link.
+          description: Target of a symbolic link or a junction of Windows, as a path of the API when a source holds it.
+        label:
+          type: string
+          description: The name Explorer shows for a folder, from the LocalizedResourceName of its desktop.ini, such as Dokumente for Documents.
+        shortcut:
+          type: object
+          description: Where a .lnk or .url file of Windows or a .desktop launcher of Linux leads. Only the desktop app reads them.
+          required: [kind]
+          properties:
+            kind:
+              type: string
+              enum: [lnk, url, desktop]
+            target:
+              type: string
+              description: The path, network path, address or command the file names.
+            path:
+              type: string
+              description: The target as a path of the API, when a source holds it.
+            dir:
+              type: boolean
+            args:
+              type: string
+            name:
+              type: string
+              description: The name a launcher shows.
+            icon:
+              type: string
         items:
           type: integer
           description: Entries directly inside a folder. Missing when neither the index nor a quick look could count them.
@@ -6989,6 +7110,12 @@ components:
         remote:
           type: string
           description: The rclone remote mounted here.
+        hidden:
+          type: boolean
+          description: The folder is hidden, as in a listing.
+        system:
+          type: boolean
+          description: The folder is a protected folder of Windows.
     FsTree:
       type: object
       required: [path, items]

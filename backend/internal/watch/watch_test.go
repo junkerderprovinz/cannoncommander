@@ -67,14 +67,14 @@ type rig struct {
 	client *hub.Client
 }
 
-// modes runs a test against the poller everywhere and against inotify
-// where the platform has it.
+// modes runs a test against the poller everywhere and against what the
+// system tells, inotify or ReadDirectoryChangesW, where it has that.
 func modes(t *testing.T, run func(t *testing.T, opts Options)) {
 	t.Run("poll", func(t *testing.T) {
 		run(t, Options{PollOnly: true, Poll: 40 * time.Millisecond, Delay: 30 * time.Millisecond})
 	})
-	if runtime.GOOS == "linux" {
-		t.Run("inotify", func(t *testing.T) { run(t, Options{Delay: 30 * time.Millisecond}) })
+	if runtime.GOOS == "linux" || runtime.GOOS == "windows" {
+		t.Run("notify", func(t *testing.T) { run(t, Options{Delay: 30 * time.Millisecond}) })
 	}
 }
 
@@ -183,7 +183,7 @@ func TestRenamesAreReportedAndFollowed(t *testing.T) {
 			t.Fatal(err)
 		}
 		c := r.next(t)
-		if runtime.GOOS == "windows" {
+		if runtime.GOOS == "windows" && opts.PollOnly {
 			// Without inodes the poller sees a file go and another come.
 			if !slices.Equal(c.Removed, []string{"film.mkv.part"}) || !slices.Equal(c.Names, []string{"film.mkv"}) {
 				t.Fatalf("change = %+v", c)
@@ -233,8 +233,8 @@ func TestAWatchedFolderThatGoesAwayIsReported(t *testing.T) {
 }
 
 func TestRenamedFoldersTakeTheirIndexRowsAlong(t *testing.T) {
-	if runtime.GOOS != "linux" {
-		t.Skip("pairing a rename needs inotify")
+	if runtime.GOOS != "linux" && runtime.GOOS != "windows" {
+		t.Skip("pairing a rename needs the system to tell of it")
 	}
 	r := newRig(t, Options{Delay: 30 * time.Millisecond}, "/mnt/user/downloads")
 	if err := os.Rename(filepath.Join(r.root, "downloads", "unfertig"), filepath.Join(r.root, "downloads", "fertig")); err != nil {

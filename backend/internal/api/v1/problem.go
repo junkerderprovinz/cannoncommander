@@ -62,6 +62,8 @@ func CodeOf(err error) (string, map[string]any) {
 	switch {
 	case errors.As(err, &p):
 		return p.Code, p.Params
+	case errors.Is(err, ccfs.ErrInCloud):
+		return "inCloud", nil
 	case errors.As(err, &errno):
 		switch errno {
 		case syscall.ENOSPC:
@@ -99,6 +101,8 @@ func ProblemFor(err error) *Problem {
 		return Coded(http.StatusNotFound, "notFound", "path not found")
 	case errors.Is(err, ccfs.ErrProtected):
 		return Coded(http.StatusForbidden, "protected", "a rule protects something in this folder")
+	case errors.Is(err, ccfs.ErrInCloud):
+		return Coded(http.StatusConflict, "inCloud", "the file lies in the cloud only")
 	case errors.Is(err, ccfs.ErrReadOnly):
 		return Coded(http.StatusForbidden, "readOnly", "path is read only")
 	case errors.Is(err, ccfs.ErrForbidden), errors.Is(err, ccfs.ErrEscape), errors.Is(err, fs.ErrPermission):

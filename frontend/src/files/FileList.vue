@@ -5,6 +5,7 @@ import { EmptyState } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { G, glyphComponent } from '@/core/glyphs';
 import { now } from '@/core/format';
+import { host } from '@/core/host';
 import { dialMs, moving } from '@/core/motion';
 import { prefs, setPref } from '@/core/prefs';
 import { t } from '@/i18n';
@@ -12,6 +13,7 @@ import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { COL, columnLabel, Columns } from './columns';
 import { useBand } from './band';
+import { editing, endInline, inline, startInline } from './inline';
 import { type Entry, groupHeads } from './entries';
 import { columnMenu, listMenu, rowMenu } from './menus';
 import ListItem from './ListItem.vue';
@@ -110,6 +112,8 @@ watch([v, tile, () => list.value.length, () => prefs.density], () => nextTick(()
   measure();
   if (v.value === 'columns' && el.value) el.value.scrollLeft = el.value.scrollWidth;
 }));
+watch(() => tab.value.path, () => { if (inline.panel === props.i) endInline(); });
+onBeforeUnmount(() => clearTimeout(slow));
 const onScroll = () => { if (virtual.value && el.value) size.top = el.value.scrollTop; };
 
 // Ctrl or Cmd and the wheel zoom this panel only, and only over its files; anywhere else the browser keeps its own
@@ -238,13 +242,18 @@ const onDragStart = (e: DragEvent) => {
 // Two clicks are paired here instead of by dblclick, so a Shift or Ctrl click never opens anything. As in a
 // commander, a click only moves the cursor and Ctrl or Shift mark; as in Explorer, a click marks the entry alone.
 let lastClick: { idx?: number; panel?: number; at?: number } = {};
+// In the desktop app a second, slow click on the name of the entry under the cursor renames it in place, as in
+// Explorer. A double click cancels it.
+let slow: ReturnType<typeof setTimeout> | undefined;
 function onClick(e: MouseEvent) {
+  clearTimeout(slow);
   if (band.drawn()) return;
   const target = e.target as Element;
   const row = target.closest<HTMLElement>('.row');
   const tb = tab.value;
   if (row) {
     const idx = +row.dataset.idx!, l = list.value;
+    const named = host.desktop && tb.cursor === idx && !!target.closest('.t') && !e.shiftKey && !e.ctrlKey && !e.metaKey && !l[idx]!.up;
     if (e.shiftKey) {
       const [a, b] = [Math.min(tb.cursor, idx), Math.max(tb.cursor, idx)];
       if (prefs.clickSelect) tb.marked = new Set();
@@ -260,6 +269,9 @@ function onClick(e: MouseEvent) {
     if (again) {
       lastClick = {};
       F.open(props.i, l[idx]!);
+    } else if (named) {
+      const k = l[idx]!;
+      slow = setTimeout(() => { if (tab.value.cursor === idx) startInline(props.i, k.at || tb.path, k.name); }, 500);
     }
     return;
   }
@@ -367,12 +379,12 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
       <div v-if="virtual && range.before" class="vpad" aria-hidden="true" :style="{ height: pad(range.before) }"></div>
       <template v-for="(d, n) in drawn" :key="d.k ? (d.k.at || '') + d.k.name : d.idx">
         <div v-if="d.head" class="lgroup"><span>{{ groupName(d.head.name) }}</span><span class="glim-num">{{ d.head.count }}</span></div>
-        <ListItem v-else :k="d.k!" :idx="d.idx" :view="v" :path="tab.path" :marked="tab.marked.has(d.k!.name)" :cursor="d.idx === tab.cursor" :cut="cutOf(d.k!)" :mark="F.marks[i]?.[d.k!.name]" :thumb="thumb"
+        <ListItem v-else :k="d.k!" :idx="d.idx" :view="v" :path="tab.path" :marked="tab.marked.has(d.k!.name)" :cursor="d.idx === tab.cursor" :cut="cutOf(d.k!)" :mark="F.marks[i]?.[d.k!.name]" :thumb="thumb" :renaming="editing(i, d.k!.at || tab.path, d.k!.name)"
           :class="{ 'glim-stagger-row': entering && !cutOf(d.k!) }" :style="entering ? { '--row-i': n } : undefined" />
       </template>
       <div v-if="virtual && range.after" class="vpad" aria-hidden="true" :style="{ height: pad(range.after) }"></div>
     </template>
     <div v-if="band.frame.on" class="band" aria-hidden="true" :style="{ left: band.frame.x + 'px', top: band.frame.y + 'px', width: band.frame.w + 'px', height: band.frame.h + 'px' }"></div>
-    <EmptyState v-if="!list.length && F.loaded(i)" nested :glyph="glyphComponent(tab.filter ? 'IconSearch' : 'IconFolder')" :title="tab.filter ? t('files.nothingFound', { q: tab.filter }) : t('files.empty')" :hint="tab.filter ? (tab.deep === false ? t('files.searchedHere') : t('files.searchedDeep')) : t('files.emptyHint')" />
+    <EmptyState v-if="!list.length && F.loaded(i)" nested :glyph="glyphComponent(tab.filter ? 'IconSearch' : 'IconFolder')" :title="tab.filter ? t('files.nothingFound', { q: tab.filter }) : t('files.empty')" :hint="tab.filter ? (tab.deep === false ? t('files.searchedHere') : t('files.searchedDeep')) : t(host.desktop ? 'files.emptyHintDesktop' : 'files.emptyHint')" />
   </div>
 </template>

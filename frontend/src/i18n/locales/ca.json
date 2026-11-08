@@ -1540,10 +1540,13 @@
       "copy": "Per copiar {what} aquí, necessiteu permisos d'administrador.",
       "move": "Per moure {what} aquí, necessiteu permisos d'administrador.",
       "delete": "Per suprimir {what}, necessiteu permisos d'administrador.",
-      "trash": "Per enviar {what} a la paperera, necessiteu permisos d'administrador."
+      "trash": "Per enviar {what} a la paperera, necessiteu permisos d'administrador.",
+      "restore": "Per restaurar {what}, necessiteu permisos d'administrador.",
+      "undo": "Per desfer {what}, necessiteu permisos d'administrador."
     },
     "howWindows": "Amb Continua, el Windows us demana permís i després CannonCommander segueix.",
     "howLinux": "Amb Continua, el sistema us demana la contrasenya i després CannonCommander segueix.",
+    "declined": "D'acord, sense permisos d'administrador {what} es queda com estava.",
     "go": "Continua"
   },
   "fetch": {
@@ -1563,6 +1566,27 @@
     "go": "Ves-hi",
     "job": "Carrega: {what}",
     "jobFrom": "Carrega: {what} des de {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Mostra els fitxers del sistema protegits",
+    "cloud": {
+      "online": "Disponible només en línia",
+      "local": "Disponible en aquest dispositiu",
+      "pinned": "Sempre disponible en aquest dispositiu"
+    },
+    "keep": "Mantén sempre en aquest dispositiu",
+    "free": "Allibera espai",
+    "kept": "Es queda en aquest dispositiu: {objects}",
+    "freed": "Espai alliberat per a {objects}",
+    "createShortcut": "Crea una drecera",
+    "shortcutName": "{name} - drecera",
+    "new": "Nou",
+    "shortcut": "Drecera",
+    "newShortcut": "Drecera nova",
+    "target": "Destinació",
+    "targetTip": "El camí del fitxer o de la carpeta tal com l'escriu Windows, amb la unitat al davant.",
+    "name": "Nom",
+    "noTarget": "Indica on ha de portar la drecera"
   },
   "gather": {
     "title": "Agrupa una carpeta",
@@ -2161,7 +2185,15 @@
       "file": "Fitxer"
     },
     "linkToDir": "Enllaç a una carpeta",
-    "linkToFile": "Enllaç a un fitxer"
+    "linkToFile": "Enllaç a un fitxer",
+    "attributes": "Atributs",
+    "flags": {
+      "readOnly": "Només de lectura",
+      "hidden": "Ocult",
+      "archive": "A punt per arxivar"
+    },
+    "flagsSaved": "Atributs desats per a {objects}",
+    "insideFlagsTip": "Aplica els atributs també a cada fitxer i carpeta de dins."
   },
   "quicklook": {
     "title": "Vista ràpida",
@@ -2852,6 +2884,11 @@
     "purgeSel": "Suprimeix definitivament la selecció ({n})",
     "selectAll": "Selecciona-ho tot",
     "empty": "Buida la paperera",
+    "emptySystem": {
+      "one": "Això buida tota la {bin} amb el seu únic element.",
+      "many": "Això buida tota la {bin}: tots els {n} elements, també els d'altres programes.",
+      "other": "Això buida tota la {bin}: tots els {n} elements, també els d'altres programes."
+    },
     "andMore": {
       "one": "i {n} més",
       "many": "i {n} més",
@@ -3370,6 +3407,7 @@
     "dupTab": "Duplica la pestanya",
     "lockTab": "Bloqueja la pestanya",
     "closeOtherTabs": "Tanca les altres pestanyes",
+    "sidePane": "Panell de previsualització",
     "nextTab": "Pestanya següent",
     "prevTab": "Pestanya anterior",
     "back": "Enrere",
@@ -3599,6 +3637,9 @@
     "closedUp": "No podeu obrir la carpeta {path}, així que ara sou a {here}",
     "empty": "Aquesta carpeta és buida",
     "emptyHint": "Deixeu anar fitxers aquí per pujar-los",
+    "emptyHintDesktop": "Arrossega fitxers aquí per copiar-los a aquesta carpeta",
+    "renameField": "Nom nou",
+    "sidePaneEmpty": "Tria un fitxer i es mostrarà aquí",
     "nothingFound": "No s'ha trobat res per a {q}",
     "searchedHere": "S'ha cercat només en aquesta carpeta",
     "searchedDeep": "S'ha cercat també a totes les subcarpetes",
@@ -3745,6 +3786,7 @@
     "groupExists": "Aquest grup ja existeix",
     "groupNameMissing": "Doneu un nom al grup",
     "inArchive": "Això és dins d'un arxiu",
+    "inCloud": "El fitxer només és al núvol. Obre'l una vegada i també serà en aquest dispositiu",
     "inTrash": "Això ja és a la paperera",
     "intoItself": "Una carpeta no pot anar dins de si mateixa",
     "ioError": "El disc ha informat d'un error de lectura o d'escriptura",
@@ -3782,12 +3824,15 @@
       "many": "El missatge té com a màxim {n} caràcters",
       "other": "El missatge té com a màxim {n} caràcters"
     },
+    "nameChars": "Windows no permet cap d'aquests caràcters en un nom: < > : \" / \\ | ? *",
+    "nameEnd": "A Windows un nom no pot acabar amb un punt ni amb un espai",
     "nameLength": {
       "one": "El nom té com a màxim {n} caràcter",
       "many": "El nom té com a màxim {n} caràcters",
       "other": "El nom té com a màxim {n} caràcters"
     },
     "namePasswordNeeded": "Calen el nom i la contrasenya",
+    "nameReserved": "Windows reserva aquest nom per a un dispositiu, tria'n un altre",
     "nameTaken": "Aquest nom ja existeix aquí",
     "nameTooLong": "El nom és massa llarg per al sistema de fitxers",
     "noAppDialog": "Aquest ordinador no té cap diàleg propi per triar una aplicació",
@@ -3808,6 +3853,7 @@
     "noSpaceForFile": "No hi ha prou espai lliure per a aquest fitxer",
     "noSuchUser": "Aquest usuari no existeix",
     "noSystemTrash": "Aquesta unitat no té paperera. Millor suprimiu-ho definitivament",
+    "noTemplate": "Aquesta plantilla ja no existeix",
     "noToken": "Aquest testimoni no existeix",
     "noUserNamed": "L'usuari {name} no existeix",
     "notAFile": "Això no és un fitxer normal",
@@ -3897,6 +3943,7 @@
     "uploadRunning": "S'està pujant un fitxer amb aquest nom ara mateix",
     "uploadsOneFolder": "Les pujades només funcionen amb un enllaç a una carpeta",
     "userPasswordElsewhere": "Aquest usuari inicia la sessió mitjançant {method}, la contrasenya és allà",
+    "windowsOnly": "Això només existeix a Windows",
     "wrongLogin": "El nom o la contrasenya no són correctes"
   },
   "visit": {

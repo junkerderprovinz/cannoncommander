@@ -16,6 +16,7 @@ export interface PropsState {
   nodes: Item[]; paths: string[]; dir: string; self: boolean; ro: boolean; uids: Record<string, number>; gids: Record<string, number>;
   modes: string[]; owners: string[]; groups: string[]; mode: string; owner: string; group: string; rec: boolean;
   size: number; files: number; dirs: number; counted: boolean; label: string;
+  win: boolean; flags: Record<string, boolean>; flagsAt: Record<string, boolean>;
 }
 const props = defineProps<{ st: PropsState }>();
 const st = props.st;
@@ -30,7 +31,7 @@ const pick = (known: Record<string, number>, cur: string[]) => {
 const owners = pick(st.uids, st.owners), groups = pick(st.gids, st.groups);
 const idOf = (known: Record<string, number>, name: string, word: string) => (name ? `${word} ${known[name] ?? '?'}` : word);
 
-const typeOf = (k: Item) => (k.link ? t(k.dir ? 'props.linkToDir' : 'props.linkToFile')
+const typeOf = (k: Item) => (k.link || k.shortcut ? t(k.dir || k.shortcut?.dir ? 'props.linkToDir' : 'props.linkToFile')
   : t(`props.kinds.${kindOf(k)}`) + (k.dir || !ext(k.name) ? '' : `, ${ext(k.name).toUpperCase()}`));
 const bytes = computed(() => plural(Math.round(st.size), 'props.bytes'));
 const sizeText = computed(() => {
@@ -43,6 +44,7 @@ const title = computed(() => (one.value ? (st.self ? st.label : one.value.name) 
 const newest = computed(() => Math.max(...st.nodes.map((k) => k.time)));
 
 const WHO = [0, 1, 2], BITS = [4, 2, 1];
+const FLAGS = ['readOnly', 'hidden', 'archive'] as const;
 const on = (who: number, bit: number) => !!(Number(st.mode[1 + who]) & bit);
 function flip(who: number, bit: number) {
   const digits = [...st.mode];
@@ -65,7 +67,7 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
       <template v-if="one">
         <FieldRow :label="t('props.kind')"><span class="bk-val">{{ typeOf(one) }}</span></FieldRow>
         <FieldRow :label="t('props.place')"><span class="bk-val bk-pathv"><span class="bk-path mono" :title="st.paths[0]"><bdi>{{ st.paths[0] }}</bdi></span><CopyBtn :text="st.paths[0]!" :tip="t('props.copyPath')" /></span></FieldRow>
-        <FieldRow v-if="one.link" :label="t('props.pointsTo')"><span class="bk-val bk-pathv"><span class="bk-path mono"><bdi>{{ one.link }}</bdi></span><CopyBtn :text="one.link" :tip="t('props.copyTarget')" /></span></FieldRow>
+        <FieldRow v-if="one.link || one.shortcut?.target" :label="t('props.pointsTo')"><span class="bk-val bk-pathv"><span class="bk-path mono"><bdi>{{ one.link || one.shortcut?.target }}</bdi></span><CopyBtn :text="(one.link || one.shortcut?.target)!" :tip="t('props.copyTarget')" /></span></FieldRow>
         <FieldRow :label="t('props.size')"><span class="bk-val glim-num" :data-tip="bytes">{{ sizeText }}</span></FieldRow>
         <FieldRow :label="t('props.changed')"><span class="bk-val glim-num">{{ fmtTime(one.time) }}</span></FieldRow>
         <FieldRow v-if="one.btime" :label="t('props.created')"><span class="bk-val glim-num">{{ fmtTime(one.btime) }}</span></FieldRow>
@@ -77,14 +79,23 @@ const symbolic = computed(() => (one.value?.dir ? 'd' : '-') + [...st.mode.slice
         <FieldRow :label="t('props.lastChanged')"><span class="bk-val glim-num">{{ fmtTime(newest) }}</span></FieldRow>
       </template>
     </SubCard>
-    <SubCard :title="t('props.owning')" class="bk-form">
+    <SubCard v-if="st.win" :title="t('props.owning')" class="bk-form">
+      <FieldRow :label="t('props.owner')"><span id="r-owner" class="bk-val">{{ st.owner }}</span></FieldRow>
+      <FieldRow :label="t('props.inside')" :hint="anyDir ? t('props.insideFlagsTip') : t('props.onlyDirs')"><Toggle id="r-rec" v-model="st.rec" :disabled="!anyDir || st.ro" /></FieldRow>
+    </SubCard>
+    <SubCard v-else :title="t('props.owning')" class="bk-form">
       <FieldRow :label="t('props.owner')" :hint="t('props.ownerTip')"><span class="bk-idf"><Select id="r-owner" v-model="st.owner" :trigger-attrs="{ 'data-val': st.owner }" :disabled="st.ro" :options="selectOptions(owners)" /><Pill id="r-uid" class="glim-num">{{ idOf(st.uids, st.owner, 'UID') }}</Pill></span></FieldRow>
       <FieldRow :label="t('props.group')"><span class="bk-idf"><Select id="r-group" v-model="st.group" :trigger-attrs="{ 'data-val': st.group }" :disabled="st.ro" :options="selectOptions(groups)" /><Pill id="r-gid" class="glim-num">{{ idOf(st.gids, st.group, 'GID') }}</Pill></span></FieldRow>
       <FieldRow :label="t('props.inside')" :hint="anyDir ? t('props.insideTip') : t('props.onlyDirs')"><Toggle id="r-rec" v-model="st.rec" :disabled="!anyDir || st.ro" /></FieldRow>
     </SubCard>
   </div>
   <template v-if="one && !st.ro"><Render v-for="(well, n) in extend.propsWells" :key="n" :node="well(st.paths[0]!)" /></template>
-  <SubCard class="bk-form"><div class="bk-tools"><span class="glim-eyebrow">{{ t('props.rights') }}</span><Pill v-if="st.modes.length > 1" :data-tip="t('props.mixedTip')" tone="warn">{{ t('props.mixed') }}</Pill></div>
+  <SubCard v-if="st.win" class="bk-form"><div class="bk-tools"><span class="glim-eyebrow">{{ t('props.attributes') }}</span></div>
+    <div class="bk-flags">
+      <Checkbox v-for="f in FLAGS" :key="f" v-model="st.flags[f]" :data-bk-flag="f" :label="t(`props.flags.${f}`)" :disabled="st.ro" />
+    </div>
+  </SubCard>
+  <SubCard v-else class="bk-form"><div class="bk-tools"><span class="glim-eyebrow">{{ t('props.rights') }}</span><Pill v-if="st.modes.length > 1" :data-tip="t('props.mixedTip')" tone="warn">{{ t('props.mixed') }}</Pill></div>
     <div class="bk-perms">
       <span></span><span v-for="bit in BITS" :key="bit" class="bk-ph">{{ t(`props.bits.${bit}`) }}</span>
       <template v-for="who in WHO" :key="who">

@@ -11,6 +11,16 @@ export interface FsItem {
   owner?: string;
   group?: string;
   hidden?: boolean;
+  // A protected file of the system, which stays hidden until that is asked for as well.
+  system?: boolean;
+  // The attributes of Windows with the letters of Explorer's column, such as RA.
+  attrs?: string;
+  // A file a cloud provider keeps: only online, on this device, or always kept on it.
+  cloud?: 'online' | 'local' | 'pinned';
+  // Where a .lnk, .url or .desktop file leads; path is set when the target lies on a source.
+  shortcut?: Shortcut;
+  // The name Explorer shows for a folder, such as Dokumente for Documents.
+  label?: string;
   link?: string;
   items?: number;
   // The server can list what is inside, so the archive opens like a folder.
@@ -23,9 +33,10 @@ export interface FsItem {
   // A folder's poster.jpg, folder.jpg or cover.jpg, which the card views show for it.
   picture?: string;
 }
+export interface Shortcut { kind: 'lnk' | 'url' | 'desktop'; target?: string; path?: string; dir?: boolean; args?: string; name?: string; icon?: string }
 export interface Volume { path: string; label?: string; free: number; total: number }
 export interface FsList { path: string; items: FsItem[]; volume?: Volume }
-export interface TreeItem { name: string; path: string; hasDirs: boolean; label?: string; free?: number; total?: number; remote?: string }
+export interface TreeItem { name: string; path: string; hasDirs: boolean; label?: string; free?: number; total?: number; remote?: string; hidden?: boolean; system?: boolean }
 export interface FsTree { path: string; items: TreeItem[] }
 // fs/meta answers per path with the asked columns it knows. Numbers are bytes, milliseconds, seconds of play or plain
 // figures as the column says; booleans are yes or no; text arrives ready to show.

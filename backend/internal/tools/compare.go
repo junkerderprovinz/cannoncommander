@@ -109,7 +109,7 @@ func (c *comparer) walk(l, r, rel string) error {
 			return err
 		}
 		for _, d := range list {
-			if bookkeeping(d.Name()) || !c.req.Hidden && strings.HasPrefix(d.Name(), ".") {
+			if bookkeeping(d.Name()) || !c.req.Hidden && ccfs.HiddenEntry(d) {
 				continue
 			}
 			if _, err := c.fs.Check(c.u, path.Join(c.sides[i], rel, d.Name()), c.perm); err != nil {
@@ -207,6 +207,9 @@ func sameContent(a, b string) bool {
 }
 
 func fileSum(p string) ([]byte, error) {
+	if ccfs.InCloud(p) {
+		return nil, ccfs.ErrInCloud
+	}
 	f, err := os.Open(p)
 	if err != nil {
 		return nil, err
