@@ -40,7 +40,7 @@ func newFixture(t testing.TB, index ...fsindex.Index) fixture {
 
 func newFixtureWith(t testing.TB, rules ccfs.Rules, index ...fsindex.Index) fixture {
 	t.Helper()
-	base := t.TempDir()
+	base := fixtureBase(t)
 	share := filepath.Join(base, "mnt", "user")
 	cache := filepath.Join(base, "mnt", "cache")
 	boot := filepath.Join(base, "boot")
