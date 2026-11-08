@@ -1481,10 +1481,13 @@
       "copy": "Du skal have administratorrettigheder for at kopiere {what} hertil.",
       "move": "Du skal have administratorrettigheder for at flytte {what} hertil.",
       "delete": "Du skal have administratorrettigheder for at slette {what}.",
-      "trash": "Du skal have administratorrettigheder for at lægge {what} i papirkurven."
+      "trash": "Du skal have administratorrettigheder for at lægge {what} i papirkurven.",
+      "restore": "Du skal have administratorrettigheder for at gendanne {what}.",
+      "undo": "Du skal have administratorrettigheder for at fortryde {what}."
     },
     "howWindows": "Med Fortsæt beder Windows om din tilladelse, og derefter fortsætter CannonCommander.",
     "howLinux": "Med Fortsæt beder systemet om din adgangskode, og derefter fortsætter CannonCommander.",
+    "declined": "Helt i orden, uden administratorrettigheder forbliver {what}, som det var.",
     "go": "Fortsæt"
   },
   "fetch": {
@@ -1504,6 +1507,27 @@
     "go": "Gå dertil",
     "job": "Hent: {what}",
     "jobFrom": "Hent: {what} fra {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Vis beskyttede systemfiler",
+    "cloud": {
+      "online": "Kun tilgængelig online",
+      "local": "Tilgængelig på denne enhed",
+      "pinned": "Altid tilgængelig på denne enhed"
+    },
+    "keep": "Behold altid på denne enhed",
+    "free": "Frigør plads",
+    "kept": "Bliver på denne enhed: {objects}",
+    "freed": "Plads frigjort for {objects}",
+    "createShortcut": "Opret genvej",
+    "shortcutName": "{name} - genvej",
+    "new": "Ny",
+    "shortcut": "Genvej",
+    "newShortcut": "Ny genvej",
+    "target": "Destination",
+    "targetTip": "Stien til filen eller mappen, som Windows skriver den, med drevet forrest.",
+    "name": "Navn",
+    "noTarget": "Angiv venligst, hvor genvejen skal føre hen"
   },
   "gather": {
     "title": "Saml en mappe",
@@ -2100,7 +2124,15 @@
       "file": "Fil"
     },
     "linkToDir": "Link til en mappe",
-    "linkToFile": "Link til en fil"
+    "linkToFile": "Link til en fil",
+    "attributes": "Attributter",
+    "flags": {
+      "readOnly": "Skrivebeskyttet",
+      "hidden": "Skjult",
+      "archive": "Klar til arkivering"
+    },
+    "flagsSaved": "Attributter gemt for {objects}",
+    "insideFlagsTip": "Sætter også attributterne for alle filer og mapper herunder."
   },
   "quicklook": {
     "title": "Hurtigvisning",
@@ -2730,6 +2762,10 @@
     "purgeSel": "Slet det valgte for altid ({n})",
     "selectAll": "Vælg alt",
     "empty": "Tøm papirkurven",
+    "emptySystem": {
+      "one": "Det tømmer hele {bin} med dens ene element.",
+      "other": "Det tømmer hele {bin}: alle {n} elementer, også dem fra andre programmer."
+    },
     "andMore": {
       "one": "og {n} mere",
       "other": "og {n} mere"
@@ -3585,6 +3621,7 @@
     "groupExists": "Denne gruppe findes allerede",
     "groupNameMissing": "Giv gruppen et navn",
     "inArchive": "Det ligger i et arkiv",
+    "inCloud": "Filen ligger kun i skyen. Åbn den én gang, så ligger den også på denne enhed",
     "inTrash": "Det ligger allerede i papirkurven",
     "intoItself": "En mappe kan ikke flyttes ind i sig selv",
     "ioError": "Disken meldte en læse- eller skrivefejl",
@@ -3619,11 +3656,14 @@
       "one": "Beskeden har højst {n} tegn",
       "other": "Beskeden har højst {n} tegn"
     },
+    "nameChars": "Windows tillader ingen af disse tegn i et navn: < > : \" / \\ | ? *",
+    "nameEnd": "I Windows må et navn ikke ende med punktum eller mellemrum",
     "nameLength": {
       "one": "Navnet har højst {n} tegn",
       "other": "Navnet har højst {n} tegn"
     },
     "namePasswordNeeded": "Der skal både navn og adgangskode til",
+    "nameReserved": "Windows holder dette navn til en enhed, vælg venligst et andet",
     "nameTaken": "Det navn findes allerede her",
     "nameTooLong": "Navnet er for langt til filsystemet",
     "noAppDialog": "Denne computer har ingen egen dialog til at vælge en app",
@@ -3644,6 +3684,7 @@
     "noSpaceForFile": "Der er ikke nok ledig plads til denne fil",
     "noSuchUser": "Denne bruger findes ikke",
     "noSystemTrash": "Dette drev har ingen papirkurv. Slet det hellere for altid",
+    "noTemplate": "Denne skabelon findes ikke længere",
     "noToken": "Dette token findes ikke",
     "noUserNamed": "Brugeren {name} findes ikke",
     "notAFile": "Det er ikke en almindelig fil",
@@ -3732,6 +3773,7 @@
     "uploadRunning": "En fil med dette navn uploades lige nu",
     "uploadsOneFolder": "Upload virker kun med et link til én mappe",
     "userPasswordElsewhere": "Denne bruger logger ind via {method}, adgangskoden ligger der",
+    "windowsOnly": "Det findes kun i Windows",
     "wrongLogin": "Navn eller adgangskode er forkert"
   },
   "visit": {

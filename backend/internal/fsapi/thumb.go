@@ -91,6 +91,12 @@ func (h handlers) thumb(w http.ResponseWriter, r *http.Request) error {
 		w.WriteHeader(http.StatusNotModified)
 		return nil
 	}
+	// Drawing the picture would read the file and so fetch it from the cloud.
+	if ccfs.InCloudInfo(info) {
+		hdr.Del("ETag")
+		hdr.Del("Cache-Control")
+		return noThumb()
+	}
 	data, err := h.thumbs.thumb(r.Context(), real, info, size)
 	var ctype string
 	if err == nil {

@@ -189,3 +189,15 @@ describe('folder sizes still to come', () => {
     }
   });
 });
+
+describe('the name of a place', () => {
+  it('takes the name Explorer shows for a folder, as its listing gives it', () => {
+    const L = useListing();
+    const users = listing('/C/Users', ['Public']);
+    users.items[0]!.label = 'Öffentlich';
+    L.lists.set('/C/Users', users);
+    L.trees.set('/C/Users', [{ name: 'Public', path: '/C/Users/Public', hasDirs: true }]);
+    expect(L.placeLabel('/C/Users/Public')).toBe('Öffentlich');
+    expect(L.placeLabel('/C/Users/Anna')).toBeUndefined();
+  });
+});

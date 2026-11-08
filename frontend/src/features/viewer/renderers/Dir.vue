@@ -5,6 +5,7 @@ import { computed, onMounted } from 'vue';
 import { glyphOf, glyphComponent } from '@/core/glyphs';
 import { prefs } from '@/core/prefs';
 import { byName, t } from '@/i18n';
+import { shown } from '@/files/entries';
 import SizeText from '@/files/SizeText.vue';
 import { useListing } from '@/stores/listing';
 import { thumbUrl } from '../content';
@@ -16,7 +17,7 @@ const emit = defineEmits<REmits>();
 const listing = useListing();
 
 const path = computed(() => joinPath(props.folder, props.n.name));
-const kids = computed(() => (listing.lists.get(path.value)?.items || []).filter((k) => prefs.showHidden || !k.name.startsWith('.')));
+const kids = computed(() => (listing.lists.get(path.value)?.items || []).filter(shown(prefs.showHidden, prefs.showSystem)));
 const pics = computed(() => kids.value.filter((k) => viewKind(k) === 'img'));
 const top = computed(() => [...kids.value].sort((a, b) => Number(b.dir) - Number(a.dir) || byName(a.name, b.name)));
 

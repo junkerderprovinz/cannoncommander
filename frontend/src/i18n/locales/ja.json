@@ -1426,10 +1426,13 @@
       "copy": "{what} をここにコピーするには管理者権限が必要です。",
       "move": "{what} をここに移動するには管理者権限が必要です。",
       "delete": "{what} を削除するには管理者権限が必要です。",
-      "trash": "{what} をごみ箱に移動するには管理者権限が必要です。"
+      "trash": "{what} をごみ箱に移動するには管理者権限が必要です。",
+      "restore": "{what} を復元するには管理者権限が必要です。",
+      "undo": "{what} を元に戻すには管理者権限が必要です。"
     },
     "howWindows": "続行すると Windows が許可を求め、その後 CannonCommander が処理を続けます。",
     "howLinux": "続行するとシステムがパスワードを求め、その後 CannonCommander が処理を続けます。",
+    "declined": "わかりました。管理者権限がないため、{what} はそのままです。",
     "go": "続行"
   },
   "fetch": {
@@ -1449,6 +1452,27 @@
     "go": "移動",
     "job": "取得: {what}",
     "jobFrom": "取得: {host} から {what}"
+  },
+  "filesystem": {
+    "systemFiles": "保護されたシステムファイルを表示",
+    "cloud": {
+      "online": "オンラインでのみ利用可能",
+      "local": "このデバイスで利用可能",
+      "pinned": "常にこのデバイスで利用可能"
+    },
+    "keep": "常にこのデバイス上に保持する",
+    "free": "空き容量を増やす",
+    "kept": "このデバイスに保持: {objects}",
+    "freed": "{objects} の空き容量を増やしました",
+    "createShortcut": "ショートカットの作成",
+    "shortcutName": "{name} - ショートカット",
+    "new": "新規作成",
+    "shortcut": "ショートカット",
+    "newShortcut": "新しいショートカット",
+    "target": "リンク先",
+    "targetTip": "Windows の書き方でのファイルまたはフォルダーのパス。先頭にドライブを付けます。",
+    "name": "名前",
+    "noTarget": "ショートカットのリンク先を入力してください"
   },
   "gather": {
     "title": "フォルダーを集約",
@@ -2029,7 +2053,15 @@
       "file": "ファイル"
     },
     "linkToDir": "フォルダーへのリンク",
-    "linkToFile": "ファイルへのリンク"
+    "linkToFile": "ファイルへのリンク",
+    "attributes": "属性",
+    "flags": {
+      "readOnly": "読み取り専用",
+      "hidden": "隠しファイル",
+      "archive": "アーカイブ可能"
+    },
+    "flagsSaved": "{objects} の属性を保存しました",
+    "insideFlagsTip": "中のすべてのファイルとフォルダーにも属性を設定します。"
   },
   "quicklook": {
     "title": "クイックルック",
@@ -2632,6 +2664,9 @@
     "purgeSel": "選択項目を完全に削除 ({n})",
     "selectAll": "すべて選択",
     "empty": "ごみ箱を空にする",
+    "emptySystem": {
+      "other": "{bin}全体を空にします。ほかのプログラムのものも含め、{n} 件すべてが対象です。"
+    },
     "andMore": {
       "other": "ほか {n} 件"
     },
@@ -3452,6 +3487,7 @@
     "groupExists": "このグループはすでにあります",
     "groupNameMissing": "グループに名前を付けてください",
     "inArchive": "これはアーカイブ内にあります",
+    "inCloud": "このファイルはクラウドにのみあります。一度開くと、このデバイスにも保存されます",
     "inTrash": "これはすでにごみ箱にあります",
     "intoItself": "フォルダーをそれ自身の中には入れられません",
     "ioError": "ディスクが読み取りまたは書き込みのエラーを報告しました",
@@ -3483,10 +3519,13 @@
     "messageLength": {
       "other": "メッセージは {n} 文字以内です"
     },
+    "nameChars": "Windows では名前に次の文字は使えません: < > : \" / \\ | ? *",
+    "nameEnd": "Windows では名前の末尾をピリオドや空白にできません",
     "nameLength": {
       "other": "名前は {n} 文字以内です"
     },
     "namePasswordNeeded": "名前とパスワードの両方が必要です",
+    "nameReserved": "Windows はこの名前をデバイス用に予約しています。別の名前を選んでください",
     "nameTaken": "この名前はすでにあります",
     "nameTooLong": "名前がファイルシステムには長すぎます",
     "noAppDialog": "このパソコンにはアプリを選ぶための専用のダイアログがありません",
@@ -3507,6 +3546,7 @@
     "noSpaceForFile": "このファイルを置く空き容量が足りません",
     "noSuchUser": "このユーザーは存在しません",
     "noSystemTrash": "このドライブにはごみ箱がありません。完全に削除してください",
+    "noTemplate": "このテンプレートはもうありません",
     "noToken": "このトークンは存在しません",
     "noUserNamed": "ユーザー {name} は存在しません",
     "notAFile": "通常のファイルではありません",
@@ -3594,6 +3634,7 @@
     "uploadRunning": "同じ名前のファイルを今アップロードしています",
     "uploadsOneFolder": "アップロードできるのは1つのフォルダーへのリンクだけです",
     "userPasswordElsewhere": "このユーザーは {method} でログインするため、パスワードはそちらで管理されています",
+    "windowsOnly": "これは Windows でのみ使えます",
     "wrongLogin": "名前またはパスワードが正しくありません"
   },
   "visit": {

@@ -53,3 +53,6 @@ func usage(dir string) (free, total uint64, ok bool) {
 	bs := uint64(st.Bsize)
 	return uint64(st.Bavail) * bs, uint64(st.Blocks) * bs, true
 }
+
+// ownerOf has nothing to add, a listing names the owner already.
+func ownerOf(string, *Item) {}

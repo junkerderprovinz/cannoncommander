@@ -5,6 +5,7 @@ import { menu } from '@/core/menu';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { go as goView, view } from '@/core/views';
+import { isHidden } from '@/files/entries';
 import { cancelBtn, win, winStack } from '@/core/windows';
 import { split } from '@/files/paths';
 import { t } from '@/i18n';
@@ -75,7 +76,7 @@ export function savedMenu(s: SavedSearch, x: number, y: number) {
 // A hit opens where it lives with the cursor on it; a hidden one first turns hidden files on, or it could not be seen.
 export async function openHit(hit: Hit, asTab: boolean) {
   const F = usePanels();
-  if (!prefs.showHidden && (hit.hidden || hit.name.startsWith('.'))) setPref('showHidden', true);
+  if (!prefs.showHidden && isHidden(hit)) setPref('showHidden', true);
   const dir = hit.at || '/';
   if (asTab) {
     const p = F.P();

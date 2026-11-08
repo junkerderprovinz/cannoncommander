@@ -1481,10 +1481,13 @@
       "copy": "{what} ancak yönetici haklarıyla buraya kopyalanabilir.",
       "move": "{what} ancak yönetici haklarıyla buraya taşınabilir.",
       "delete": "{what} ancak yönetici haklarıyla silinebilir.",
-      "trash": "{what} ancak yönetici haklarıyla çöp kutusuna atılabilir."
+      "trash": "{what} ancak yönetici haklarıyla çöp kutusuna atılabilir.",
+      "restore": "{what} ancak yönetici haklarıyla geri yüklenebilir.",
+      "undo": "{what} ancak yönetici haklarıyla geri alınabilir."
     },
     "howWindows": "Devam'a bastığında Windows iznini ister, ardından CannonCommander devam eder.",
     "howLinux": "Devam'a bastığında sistem parolanı ister, ardından CannonCommander devam eder.",
+    "declined": "Tamam, yönetici hakları olmadan {what} olduğu gibi kalır.",
     "go": "Devam"
   },
   "fetch": {
@@ -1504,6 +1507,27 @@
     "go": "Oraya git",
     "job": "İndir: {what}",
     "jobFrom": "İndir: {host} adresinden {what}"
+  },
+  "filesystem": {
+    "systemFiles": "Korunan sistem dosyalarını göster",
+    "cloud": {
+      "online": "Yalnızca çevrimiçi kullanılabilir",
+      "local": "Bu cihazda kullanılabilir",
+      "pinned": "Her zaman bu cihazda kullanılabilir"
+    },
+    "keep": "Her zaman bu cihazda tut",
+    "free": "Yer aç",
+    "kept": "Bu cihazda kalır: {objects}",
+    "freed": "{objects} için yer açıldı",
+    "createShortcut": "Kısayol oluştur",
+    "shortcutName": "{name} - kısayol",
+    "new": "Yeni",
+    "shortcut": "Kısayol",
+    "newShortcut": "Yeni kısayol",
+    "target": "Hedef",
+    "targetTip": "Dosyanın veya klasörün yolu, Windows'un yazdığı gibi, başta sürücüyle.",
+    "name": "Ad",
+    "noTarget": "Lütfen kısayolun nereye gideceğini belirtin"
   },
   "gather": {
     "title": "Klasörü topla",
@@ -2100,7 +2124,15 @@
       "file": "Dosya"
     },
     "linkToDir": "Bir klasöre bağlantı",
-    "linkToFile": "Bir dosyaya bağlantı"
+    "linkToFile": "Bir dosyaya bağlantı",
+    "attributes": "Öznitelikler",
+    "flags": {
+      "readOnly": "Salt okunur",
+      "hidden": "Gizli",
+      "archive": "Arşivlemeye hazır"
+    },
+    "flagsSaved": "{objects} için öznitelikler kaydedildi",
+    "insideFlagsTip": "Öznitelikleri altındaki her dosya ve klasöre de uygular."
   },
   "quicklook": {
     "title": "Hızlı bakış",
@@ -2730,6 +2762,10 @@
     "purgeSel": "Seçimi kalıcı olarak sil ({n})",
     "selectAll": "Tümünü seç",
     "empty": "Çöp kutusunu boşalt",
+    "emptySystem": {
+      "one": "Bu işlemle {bin} tek öğesiyle birlikte tamamen boşalır.",
+      "other": "Bu işlemle {bin} tamamen boşalır: {n} öğenin hepsi, başka programlardan gelenler de."
+    },
     "andMore": {
       "one": "ve {n} tane daha",
       "other": "ve {n} tane daha"
@@ -3585,6 +3621,7 @@
     "groupExists": "Bu grup zaten var",
     "groupNameMissing": "Gruba bir ad ver",
     "inArchive": "Bu bir arşivin içinde",
+    "inCloud": "Dosya yalnızca bulutta. Bir kez açın, bu cihazda da olsun",
     "inTrash": "Bu zaten çöp kutusunda",
     "intoItself": "Bir klasör kendi içine giremez",
     "ioError": "Disk bir okuma ya da yazma hatası bildirdi",
@@ -3619,11 +3656,14 @@
       "one": "Mesaj en fazla {n} karakter olabilir",
       "other": "Mesaj en fazla {n} karakter olabilir"
     },
+    "nameChars": "Windows bir adda bu karakterlerin hiçbirine izin vermez: < > : \" / \\ | ? *",
+    "nameEnd": "Windows'ta bir ad nokta veya boşlukla bitemez",
     "nameLength": {
       "one": "Ad en fazla {n} karakter olabilir",
       "other": "Ad en fazla {n} karakter olabilir"
     },
     "namePasswordNeeded": "Ad ve parola gerekli",
+    "nameReserved": "Windows bu adı bir aygıt için ayırır, lütfen başka bir ad seçin",
     "nameTaken": "Bu ad burada zaten var",
     "nameTooLong": "Ad dosya sistemi için çok uzun",
     "noAppDialog": "Bu bilgisayarın uygulama seçmek için kendi iletişim kutusu yok",
@@ -3644,6 +3684,7 @@
     "noSpaceForFile": "Bu dosya için yeterli boş yer yok",
     "noSuchUser": "Böyle bir kullanıcı yok",
     "noSystemTrash": "Bu sürücüde çöp kutusu yok. Kalıcı olarak silsen daha iyi",
+    "noTemplate": "Bu şablon artık yok",
     "noToken": "Böyle bir token yok",
     "noUserNamed": "{name} kullanıcısı yok",
     "notAFile": "Bu normal bir dosya değil",
@@ -3732,6 +3773,7 @@
     "uploadRunning": "Bu adda bir dosya şu an yükleniyor",
     "uploadsOneFolder": "Yüklemeler yalnızca tek bir klasöre giden bağlantıda olur",
     "userPasswordElsewhere": "Bu kullanıcı {method} üzerinden giriş yapıyor, parola orada tutuluyor",
+    "windowsOnly": "Bu yalnızca Windows'ta var",
     "wrongLogin": "Ad ya da parola doğru değil"
   },
   "visit": {

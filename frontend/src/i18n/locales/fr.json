@@ -1536,10 +1536,13 @@
       "copy": "Pour copier {what} ici, il vous faut des droits d'administrateur.",
       "move": "Pour déplacer {what} ici, il vous faut des droits d'administrateur.",
       "delete": "Pour supprimer {what}, il vous faut des droits d'administrateur.",
-      "trash": "Pour mettre {what} à la corbeille, il vous faut des droits d'administrateur."
+      "trash": "Pour mettre {what} à la corbeille, il vous faut des droits d'administrateur.",
+      "restore": "Pour restaurer {what}, il vous faut des droits d'administrateur.",
+      "undo": "Pour annuler {what}, il vous faut des droits d'administrateur."
     },
     "howWindows": "Avec Continuer, Windows vous demande votre autorisation, puis CannonCommander poursuit.",
     "howLinux": "Avec Continuer, le système vous demande votre mot de passe, puis CannonCommander poursuit.",
+    "declined": "D'accord. Sans droits d'administrateur, {what} reste tel quel.",
     "go": "Continuer"
   },
   "fetch": {
@@ -1559,6 +1562,27 @@
     "go": "Y aller",
     "job": "Charger : {what}",
     "jobFrom": "Charger : {what} depuis {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Afficher les fichiers système protégés",
+    "cloud": {
+      "online": "Disponible en ligne uniquement",
+      "local": "Disponible sur cet appareil",
+      "pinned": "Toujours disponible sur cet appareil"
+    },
+    "keep": "Toujours conserver sur cet appareil",
+    "free": "Libérer de l'espace",
+    "kept": "Reste sur cet appareil : {objects}",
+    "freed": "Espace libéré pour {objects}",
+    "createShortcut": "Créer un raccourci",
+    "shortcutName": "{name} - raccourci",
+    "new": "Nouveau",
+    "shortcut": "Raccourci",
+    "newShortcut": "Nouveau raccourci",
+    "target": "Cible",
+    "targetTip": "Le chemin du fichier ou du dossier tel que Windows l'écrit, avec le lecteur au début.",
+    "name": "Nom",
+    "noTarget": "Indiquez où le raccourci doit mener"
   },
   "gather": {
     "title": "Regrouper un dossier",
@@ -2171,7 +2195,15 @@
       "file": "Fichier"
     },
     "linkToDir": "Lien vers un dossier",
-    "linkToFile": "Lien vers un fichier"
+    "linkToFile": "Lien vers un fichier",
+    "attributes": "Attributs",
+    "flags": {
+      "readOnly": "Lecture seule",
+      "hidden": "Masqué",
+      "archive": "Prêt pour l'archivage"
+    },
+    "flagsSaved": "Attributs enregistrés pour {objects}",
+    "insideFlagsTip": "Applique aussi les attributs à chaque fichier et dossier en dessous."
   },
   "quicklook": {
     "title": "Aperçu rapide",
@@ -2828,6 +2860,11 @@
     "purgeSel": "Supprimer définitivement la sélection ({n})",
     "selectAll": "Tout sélectionner",
     "empty": "Vider la corbeille",
+    "emptySystem": {
+      "one": "Cela vide toute la {bin} : {n} élément en tout.",
+      "many": "Cela vide toute la {bin} : les {n} éléments, y compris ceux d'autres programmes.",
+      "other": "Cela vide toute la {bin} : les {n} éléments, y compris ceux d'autres programmes."
+    },
     "andMore": {
       "one": "et {n} autre",
       "many": "et {n} autres",
@@ -3718,6 +3755,7 @@
     "groupExists": "Ce groupe existe déjà",
     "groupNameMissing": "Donnez un nom au groupe",
     "inArchive": "Cela se trouve dans une archive",
+    "inCloud": "Le fichier se trouve uniquement dans le cloud. Ouvrez-le une fois et il sera aussi sur cet appareil",
     "inTrash": "C'est déjà dans la corbeille",
     "intoItself": "Un dossier ne peut pas aller dans lui-même",
     "ioError": "Le disque a signalé une erreur de lecture ou d'écriture",
@@ -3755,12 +3793,15 @@
       "many": "Le message compte au plus {n} caractères",
       "other": "Le message compte au plus {n} caractères"
     },
+    "nameChars": "Windows n'autorise aucun de ces caractères dans un nom : < > : \" / \\ | ? *",
+    "nameEnd": "Sous Windows, un nom ne peut pas se terminer par un point ou une espace",
     "nameLength": {
       "one": "Le nom compte au plus {n} caractère",
       "many": "Le nom compte au plus {n} caractères",
       "other": "Le nom compte au plus {n} caractères"
     },
     "namePasswordNeeded": "Il faut un nom et un mot de passe",
+    "nameReserved": "Windows réserve ce nom à un périphérique, choisissez-en un autre",
     "nameTaken": "Ce nom existe déjà ici",
     "nameTooLong": "Le nom est trop long pour le système de fichiers",
     "noAppDialog": "Cet ordinateur n'a pas sa propre boîte de dialogue pour choisir une application",
@@ -3781,6 +3822,7 @@
     "noSpaceForFile": "Il n'y a pas assez de place libre pour ce fichier",
     "noSuchUser": "Cet utilisateur n'existe pas",
     "noSystemTrash": "Ce lecteur n'a pas de corbeille. Supprimez-le plutôt définitivement",
+    "noTemplate": "Ce modèle n'existe plus",
     "noToken": "Ce jeton n'existe pas",
     "noUserNamed": "L'utilisateur {name} n'existe pas",
     "notAFile": "Ce n'est pas un fichier ordinaire",
@@ -3870,6 +3912,7 @@
     "uploadRunning": "Un fichier de ce nom est en cours d'envoi",
     "uploadsOneFolder": "Les envois ne fonctionnent qu'avec un lien vers un dossier",
     "userPasswordElsewhere": "Cet utilisateur se connecte via {method}, le mot de passe se trouve là-bas",
+    "windowsOnly": "Cela n'existe que sous Windows",
     "wrongLogin": "Le nom ou le mot de passe n'est pas le bon"
   },
   "visit": {

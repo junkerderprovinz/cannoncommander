@@ -1481,10 +1481,13 @@
       "copy": "Þú þarft stjórnandaréttindi til að afrita {what} hingað.",
       "move": "Þú þarft stjórnandaréttindi til að færa {what} hingað.",
       "delete": "Þú þarft stjórnandaréttindi til að eyða {what}.",
-      "trash": "Þú þarft stjórnandaréttindi til að setja {what} í ruslið."
+      "trash": "Þú þarft stjórnandaréttindi til að setja {what} í ruslið.",
+      "restore": "Þú þarft stjórnandaréttindi til að endurheimta {what}.",
+      "undo": "Þú þarft stjórnandaréttindi til að afturkalla {what}."
     },
     "howWindows": "Með Halda áfram biður Windows um leyfi þitt og svo heldur CannonCommander áfram.",
     "howLinux": "Með Halda áfram biður kerfið um lykilorðið þitt og svo heldur CannonCommander áfram.",
+    "declined": "Allt í lagi, án stjórnandaréttinda helst {what} eins og það var.",
     "go": "Halda áfram"
   },
   "fetch": {
@@ -1504,6 +1507,27 @@
     "go": "Fara þangað",
     "job": "Sækja: {what}",
     "jobFrom": "Sækja: {what} frá {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Sýna varðar kerfisskrár",
+    "cloud": {
+      "online": "Aðeins tiltækt á netinu",
+      "local": "Tiltækt í þessu tæki",
+      "pinned": "Alltaf tiltækt í þessu tæki"
+    },
+    "keep": "Geyma alltaf í þessu tæki",
+    "free": "Losa pláss",
+    "kept": "Verður áfram í þessu tæki: {objects}",
+    "freed": "Pláss losað fyrir {objects}",
+    "createShortcut": "Búa til flýtileið",
+    "shortcutName": "{name} - flýtileið",
+    "new": "Nýtt",
+    "shortcut": "Flýtileið",
+    "newShortcut": "Ný flýtileið",
+    "target": "Markmið",
+    "targetTip": "Slóð skrárinnar eða möppunnar eins og Windows skrifar hana, með drifið fremst.",
+    "name": "Nafn",
+    "noTarget": "Segðu hvert flýtileiðin á að vísa"
   },
   "gather": {
     "title": "Safna möppu saman",
@@ -2100,7 +2124,15 @@
       "file": "Skrá"
     },
     "linkToDir": "Tengill á möppu",
-    "linkToFile": "Tengill á skrá"
+    "linkToFile": "Tengill á skrá",
+    "attributes": "Eigindi",
+    "flags": {
+      "readOnly": "Skrifvarið",
+      "hidden": "Falið",
+      "archive": "Tilbúið til geymslu"
+    },
+    "flagsSaved": "Eigindi vistuð fyrir {objects}",
+    "insideFlagsTip": "Setur eigindin líka á allar skrár og möppur fyrir neðan."
   },
   "quicklook": {
     "title": "Flýtiskoðun",
@@ -2730,6 +2762,10 @@
     "purgeSel": "Eyða valinu endanlega ({n})",
     "selectAll": "Velja allt",
     "empty": "Tæma ruslið",
+    "emptySystem": {
+      "one": "Þetta tæmir allt {bin}: {n} atriði í heildina.",
+      "other": "Þetta tæmir allt {bin}: öll {n} atriðin, líka þau frá öðrum forritum."
+    },
     "andMore": {
       "one": "og {n} í viðbót",
       "other": "og {n} í viðbót"
@@ -3585,6 +3621,7 @@
     "groupExists": "Þessi hópur er þegar til",
     "groupNameMissing": "Gefðu hópnum heiti",
     "inArchive": "Þetta er í safnskrá",
+    "inCloud": "Skráin er aðeins í skýinu. Opnaðu hana einu sinni og þá er hún líka í þessu tæki",
     "inTrash": "Þetta er þegar í ruslinu",
     "intoItself": "Mappa getur ekki farið inn í sjálfa sig",
     "ioError": "Diskurinn tilkynnti les- eða skrifvillu",
@@ -3619,11 +3656,14 @@
       "one": "Skilaboðin mega vera mest {n} stafur",
       "other": "Skilaboðin mega vera mest {n} stafir"
     },
+    "nameChars": "Windows leyfir ekkert þessara tákna í nafni: < > : \" / \\ | ? *",
+    "nameEnd": "Í Windows má nafn ekki enda á punkti eða bili",
     "nameLength": {
       "one": "Heitið má vera mest {n} stafur",
       "other": "Heitið má vera mest {n} stafir"
     },
     "namePasswordNeeded": "Bæði heiti og lykilorð þarf",
+    "nameReserved": "Windows tekur þetta nafn frá fyrir tæki, veldu annað",
     "nameTaken": "Þetta heiti er þegar til hér",
     "nameTooLong": "Heitið er of langt fyrir skráakerfið",
     "noAppDialog": "Þessi tölva hefur engan eigin glugga til að velja forrit",
@@ -3644,6 +3684,7 @@
     "noSpaceForFile": "Ekki er nóg laust pláss fyrir þessa skrá",
     "noSuchUser": "Þessi notandi er ekki til",
     "noSystemTrash": "Þetta drif er ekki með rusl. Eyddu því frekar endanlega",
+    "noTemplate": "Þetta sniðmát er ekki lengur til",
     "noToken": "Þessi tóki er ekki til",
     "noUserNamed": "Notandinn {name} er ekki til",
     "notAFile": "Þetta er ekki venjuleg skrá",
@@ -3732,6 +3773,7 @@
     "uploadRunning": "Verið er að hlaða upp skrá með þessu heiti núna",
     "uploadsOneFolder": "Upphleðsla virkar aðeins með tengli á eina möppu",
     "userPasswordElsewhere": "Þessi notandi skráir sig inn í gegnum {method}, lykilorðið er geymt þar",
+    "windowsOnly": "Þetta er aðeins til í Windows",
     "wrongLogin": "Heitið eða lykilorðið er ekki rétt"
   },
   "visit": {

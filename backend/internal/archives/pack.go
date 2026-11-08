@@ -56,20 +56,6 @@ var (
 	RarProgram = program("CC_RAR", "rar")
 )
 
-// program picks the variable key or the first of names on the PATH. The
-// image has 7zz, Debian and most distributions call the same program 7z.
-func program(key string, names ...string) string {
-	if v := os.Getenv(key); v != "" {
-		return v
-	}
-	for _, n := range names {
-		if _, err := exec.LookPath(n); err == nil {
-			return n
-		}
-	}
-	return names[0]
-}
-
 // CanPack reports whether f can be written on this server.
 func CanPack(f Format) bool {
 	switch f {

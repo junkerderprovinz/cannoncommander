@@ -17,6 +17,8 @@ type fileStat struct {
 	// ids reports whether uid and gid were read.
 	ids      bool
 	uid, gid uint32
+	// attrs are the file attributes of Windows, zero elsewhere.
+	attrs uint32
 }
 
 func (s fileStat) isDir() bool { return s.mode.IsDir() }

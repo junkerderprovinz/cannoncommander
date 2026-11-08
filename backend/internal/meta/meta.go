@@ -17,6 +17,7 @@ import (
 
 	"github.com/gtsteffaniak/go-logger/logger"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/meta/places"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
@@ -239,6 +240,11 @@ func containsField(list []string, f string) bool {
 
 // read runs the readers of the missing groups and stores what they found.
 func (s *Service) read(ctx context.Context, f File, e entry, missing group) entry {
+	// The tags of a file in the cloud are inside the file, and reading them
+	// would fetch all of it.
+	if ccfs.InCloud(f.Real) {
+		return e
+	}
 	got := Record{}
 	for _, r := range readers {
 		if missing&r.g == 0 {

@@ -1591,10 +1591,13 @@
       "copy": "Kad nukopijuotum {what} čia, reikia administratoriaus teisių.",
       "move": "Kad perkeltum {what} čia, reikia administratoriaus teisių.",
       "delete": "Kad ištrintum {what}, reikia administratoriaus teisių.",
-      "trash": "Kad perkeltum {what} į šiukšlinę, reikia administratoriaus teisių."
+      "trash": "Kad perkeltum {what} į šiukšlinę, reikia administratoriaus teisių.",
+      "restore": "Kad atkurtum {what}, reikia administratoriaus teisių.",
+      "undo": "Kad atšauktum {what}, reikia administratoriaus teisių."
     },
     "howWindows": "Kai tęsi, Windows paprašys tavo leidimo, o tada CannonCommander tęs darbą.",
     "howLinux": "Kai tęsi, sistema paprašys tavo slaptažodžio, o tada CannonCommander tęs darbą.",
+    "declined": "Gerai, be administratoriaus teisių {what} lieka kaip buvo.",
     "go": "Tęsti"
   },
   "fetch": {
@@ -1614,6 +1617,27 @@
     "go": "Eiti ten",
     "job": "Atsisiųsti: {what}",
     "jobFrom": "Atsisiųsti: {what} iš {host}"
+  },
+  "filesystem": {
+    "systemFiles": "Rodyti apsaugotus sistemos failus",
+    "cloud": {
+      "online": "Pasiekiama tik internete",
+      "local": "Pasiekiama šiame įrenginyje",
+      "pinned": "Visada pasiekiama šiame įrenginyje"
+    },
+    "keep": "Visada laikyti šiame įrenginyje",
+    "free": "Atlaisvinti vietos",
+    "kept": "Lieka šiame įrenginyje: {objects}",
+    "freed": "Vieta atlaisvinta: {objects}",
+    "createShortcut": "Sukurti nuorodą",
+    "shortcutName": "{name} - nuoroda",
+    "new": "Naujas",
+    "shortcut": "Nuoroda",
+    "newShortcut": "Nauja nuoroda",
+    "target": "Paskirtis",
+    "targetTip": "Failo ar aplanko kelias taip, kaip jį rašo Windows, su disku priekyje.",
+    "name": "Pavadinimas",
+    "noTarget": "Nurodykite, kur turi vesti nuoroda"
   },
   "gather": {
     "title": "Surinkti aplanką",
@@ -2242,7 +2266,15 @@
       "file": "Failas"
     },
     "linkToDir": "Nuoroda į aplanką",
-    "linkToFile": "Nuoroda į failą"
+    "linkToFile": "Nuoroda į failą",
+    "attributes": "Atributai",
+    "flags": {
+      "readOnly": "Tik skaityti",
+      "hidden": "Paslėptas",
+      "archive": "Paruošta archyvuoti"
+    },
+    "flagsSaved": "Atributai išsaugoti: {objects}",
+    "insideFlagsTip": "Nustato atributus ir kiekvienam failui bei aplankui viduje."
   },
   "quicklook": {
     "title": "Greitoji peržiūra",
@@ -2926,6 +2958,12 @@
     "purgeSel": "Ištrinti pasirinktus visam laikui ({n})",
     "selectAll": "Pasirinkti viską",
     "empty": "Ištuštinti šiukšlinę",
+    "emptySystem": {
+      "one": "Ištuštinama visa {bin}: {n} elementas, taip pat iš kitų programų.",
+      "few": "Ištuštinama visa {bin}: visi {n} elementai, taip pat iš kitų programų.",
+      "many": "Ištuštinama visa {bin}: {n} elemento, taip pat iš kitų programų.",
+      "other": "Ištuštinama visa {bin}: iš viso {n} elementų, taip pat iš kitų programų."
+    },
     "andMore": {
       "one": "ir dar {n}",
       "few": "ir dar {n}",
@@ -3851,6 +3889,7 @@
     "groupExists": "Tokia grupė jau yra",
     "groupNameMissing": "Suteik grupei pavadinimą",
     "inArchive": "Tai yra archyve",
+    "inCloud": "Failas yra tik debesyje. Atidarykite jį vieną kartą ir jis bus ir šiame įrenginyje",
     "inTrash": "Tai jau šiukšlinėje",
     "intoItself": "Aplankas negali būti perkeltas į save patį",
     "ioError": "Diskas pranešė apie skaitymo ar rašymo klaidą",
@@ -3891,6 +3930,8 @@
       "many": "Žinutėje gali būti daugiausia {n} simbolio",
       "other": "Žinutėje gali būti daugiausia {n} simbolių"
     },
+    "nameChars": "Windows neleidžia pavadinime nė vieno iš šių simbolių: < > : \" / \\ | ? *",
+    "nameEnd": "Windows sistemoje pavadinimas negali baigtis tašku ar tarpu",
     "nameLength": {
       "one": "Pavadinime gali būti daugiausia {n} simbolis",
       "few": "Pavadinime gali būti daugiausia {n} simboliai",
@@ -3898,6 +3939,7 @@
       "other": "Pavadinime gali būti daugiausia {n} simbolių"
     },
     "namePasswordNeeded": "Reikia vardo ir slaptažodžio",
+    "nameReserved": "Windows šį pavadinimą laiko įrenginiui, pasirinkite kitą",
     "nameTaken": "Toks pavadinimas čia jau yra",
     "nameTooLong": "Pavadinimas per ilgas failų sistemai",
     "noAppDialog": "Šis kompiuteris neturi savo dialogo programai pasirinkti",
@@ -3918,6 +3960,7 @@
     "noSpaceForFile": "Šiam failui nepakanka laisvos vietos",
     "noSuchUser": "Tokio naudotojo nėra",
     "noSystemTrash": "Šis diskas neturi šiukšlinės. Geriau ištrink visam laikui",
+    "noTemplate": "Šio šablono nebėra",
     "noToken": "Tokio žetono nėra",
     "noUserNamed": "Naudotojo {name} nėra",
     "notAFile": "Tai ne įprastas failas",
@@ -4008,6 +4051,7 @@
     "uploadRunning": "Failas tokiu pavadinimu dabar įkeliamas",
     "uploadsOneFolder": "Įkelti galima tik per nuorodą į vieną aplanką",
     "userPasswordElsewhere": "Šis naudotojas prisijungia per {method}, slaptažodis laikomas ten",
+    "windowsOnly": "Tai yra tik Windows sistemoje",
     "wrongLogin": "Vardas arba slaptažodis neteisingas"
   },
   "visit": {

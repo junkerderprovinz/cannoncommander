@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 	"syscall"
 	"time"
 )
@@ -25,16 +24,6 @@ type freedesktop struct {
 	home   string
 	uid    int
 	mounts func() ([]string, error)
-
-	mu    sync.Mutex
-	sizes map[string]sizeMemo
-}
-
-// sizeMemo keeps the size of a folder in the trash, which only changes when
-// the entry is replaced, and then its info file is new.
-type sizeMemo struct {
-	stamp time.Time
-	size  int64
 }
 
 // Open returns the trash of the person running the app.
@@ -103,7 +92,7 @@ func (b *freedesktop) put(path, origin string, deleted time.Time) (Entry, error)
 		}
 		return Entry{}, err
 	}
-	return b.entry(pl, name)
+	return b.entry(pl, name, nil)
 }
 
 // reserve claims a name in the trash by creating its info file, which the
@@ -227,15 +216,19 @@ func (b *freedesktop) List() ([]Entry, error) {
 		if err != nil {
 			continue
 		}
+		sizes := readSizes(pl)
+		folders := map[string]bool{}
 		for _, n := range names {
 			name, ok := strings.CutSuffix(n.Name(), ".trashinfo")
 			if !ok {
 				continue
 			}
-			if e, err := b.entry(pl, name); err == nil {
+			if e, err := b.entry(pl, name, sizes); err == nil {
 				out = append(out, e)
+				folders[name] = e.Dir
 			}
 		}
+		sizes.save(folders)
 	}
 	return out, nil
 }
@@ -245,7 +238,7 @@ func (b *freedesktop) Get(id string) (Entry, error) {
 	if err != nil {
 		return Entry{}, err
 	}
-	return b.entry(pl, name)
+	return b.entry(pl, name, nil)
 }
 
 func (b *freedesktop) find(id string) (place, string, error) {
@@ -261,7 +254,9 @@ func (b *freedesktop) find(id string) (place, string, error) {
 	return place{}, "", ErrNotFound
 }
 
-func (b *freedesktop) entry(pl place, name string) (Entry, error) {
+// entry reads one entry. The size of a folder comes from sizes, or from the
+// trash's own cache when sizes is nil.
+func (b *freedesktop) entry(pl place, name string, sizes *sizeCache) (Entry, error) {
 	raw, err := os.ReadFile(pl.info(name))
 	if err != nil {
 		return Entry{}, ErrNotFound
@@ -284,38 +279,13 @@ func (b *freedesktop) entry(pl place, name string) (Entry, error) {
 	}
 	e := Entry{ID: makeID(pl.key(), name), Name: filepath.Base(origin), Origin: filepath.Clean(origin), Path: data, Dir: st.IsDir(), Size: st.Size(), Deleted: ti.Deleted}
 	if e.Dir {
-		e.Size = b.folderSize(data, pl.info(name))
+		if sizes == nil {
+			sizes = readSizes(pl)
+			defer sizes.save(nil)
+		}
+		e.Size = sizes.of(name, data, pl.info(name))
 	}
 	return e, nil
-}
-
-func (b *freedesktop) folderSize(dir, info string) int64 {
-	st, err := os.Stat(info)
-	if err != nil {
-		return 0
-	}
-	b.mu.Lock()
-	m, ok := b.sizes[dir]
-	b.mu.Unlock()
-	if ok && m.stamp.Equal(st.ModTime()) {
-		return m.size
-	}
-	var size int64
-	filepath.WalkDir(dir, func(_ string, d fs.DirEntry, err error) error {
-		if err == nil && d.Type().IsRegular() {
-			if fi, err := d.Info(); err == nil {
-				size += fi.Size()
-			}
-		}
-		return nil
-	})
-	b.mu.Lock()
-	if b.sizes == nil {
-		b.sizes = map[string]sizeMemo{}
-	}
-	b.sizes[dir] = sizeMemo{stamp: st.ModTime(), size: size}
-	b.mu.Unlock()
-	return size
 }
 
 func (b *freedesktop) Restore(id, to string) error {
@@ -323,7 +293,7 @@ func (b *freedesktop) Restore(id, to string) error {
 	if err != nil {
 		return err
 	}
-	e, err := b.entry(pl, name)
+	e, err := b.entry(pl, name, nil)
 	if err != nil {
 		return err
 	}

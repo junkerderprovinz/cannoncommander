@@ -79,5 +79,9 @@
     "file": "File"
   },
   "linkToDir": "Link to a folder",
-  "linkToFile": "Link to a file"
+  "linkToFile": "Link to a file",
+  "attributes": "Attributes",
+  "flags": { "readOnly": "Read-only", "hidden": "Hidden", "archive": "Ready for archiving" },
+  "flagsSaved": "Attributes saved for {objects}",
+  "insideFlagsTip": "Also sets the attributes for every file and folder below."
 }

@@ -433,6 +433,7 @@
     "groupExists": "This group exists already",
     "groupNameMissing": "Give the group a name",
     "inArchive": "This is inside an archive",
+    "inCloud": "The file lies in the cloud only. Open it once and it is on this device as well",
     "inTrash": "This is in the trash already",
     "intoItself": "A folder cannot go into itself",
     "ioError": "The disk reported a read or write error",
@@ -458,8 +459,11 @@
     "lowercaseOnly": "Only lowercase letters, digits, _ and - please",
     "mayNotShare": "This account may not share files",
     "messageLength": { "one": "The message can have at most {n} character", "other": "The message can have at most {n} characters" },
+    "nameChars": "Windows allows none of these characters in a name: < > : \" / \\ | ? *",
+    "nameEnd": "On Windows a name cannot end with a dot or a space",
     "nameLength": { "one": "The name can have at most {n} character", "other": "The name can have at most {n} characters" },
     "namePasswordNeeded": "Name and password are both needed",
+    "nameReserved": "Windows keeps this name for a device, please pick another one",
     "nameTaken": "This name exists here already",
     "nameTooLong": "The name is too long for the file system",
     "noAppDialog": "This computer has no dialog of its own for choosing an app",
@@ -480,6 +484,7 @@
     "noSpaceForFile": "There is not enough free space for this file",
     "noSuchUser": "There is no such user",
     "noSystemTrash": "This drive has no trash. Delete it for good instead",
+    "noTemplate": "This template is gone",
     "noToken": "There is no such token",
     "noUserNamed": "There is no user {name}",
     "notAFile": "This is not a regular file",
@@ -565,6 +570,7 @@
     "uploadRunning": "A file of this name is being uploaded right now",
     "uploadsOneFolder": "Uploads only work for a link to one folder",
     "userPasswordElsewhere": "This user signs in through {method}, the password is kept there",
+    "windowsOnly": "This only exists on Windows",
     "wrongLogin": "The name or the password is not right"
   }
 }
