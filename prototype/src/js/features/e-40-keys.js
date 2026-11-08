@@ -70,6 +70,31 @@
     const q = query.trim().toLowerCase();
     return list.filter(id => !q || nameOf(CC.actions[id]).toLowerCase().includes(q) || combosOf(map, id).some(c => label(c).toLowerCase().includes(q)));
   };
+  // The layout's keys of an action that another action has taken.
+  const heldBack = (map, base, id) => combosOf(base, id).filter(c => map[c] && map[c] !== id);
+  // The action takes the key, and with swap the action that had it gets the keys this one had.
+  const takeKey = (map, combo, id, swapped) => {
+    const next = { ...map }, had = combosOf(next, id), other = next[combo];
+    for (const k of had) delete next[k];
+    next[combo] = id;
+    if (swapped && other) for (const k of had) next[k] = other;
+    return next;
+  };
+  // A reset that takes the layout's keys back. With swap the action that held them gets the keys this one had instead.
+  const restore = (map, base, id, swapped) => {
+    const holder = map[heldBack(map, base, id)[0]], had = combosOf(map, id), next = { ...map };
+    for (const k of had) delete next[k];
+    for (const k of combosOf(base, id)) next[k] = id;
+    if (swapped && holder) for (const k of had) if (!next[k]) next[k] = holder;
+    return next;
+  };
+  const clash = (map, id, combo, reset = false) => {
+    const name = esc(nameOf(CC.actions[map[combo]]));
+    return { id, combo, reset, choice: true, msg: combosOf(map, id).length
+      ? `${esc(label(combo))} gehört schon zu „${name}“. Beim Tauschen bekommt „${name}“ deine bisherige Taste. Esc lässt alles, wie es ist.`
+      : `${esc(label(combo))} gehört schon zu „${name}“. Ersetzen holt die Taste hierher, Esc lässt alles, wie es ist.` };
+  };
+
   // A row of the window or the tile. A clash offers the buttons only where the row asks for them.
   const row = (id, map, base, rec, pending) => {
     const a = CC.actions[id], own = combosOf(map, id), main = own.find(c => label(c) === DEFAULT_LABEL[id]) || own[0];
@@ -79,7 +104,7 @@
       <span class="kb-name">${a.g ? g(a.g) : '<span class="ph"></span>'}${esc(nameOf(a))}</span>
       <button class="kb-key" data-kb-rec="${id}" aria-label="Taste für ${esc(nameOf(a))} ändern">${recording ? '<span class="muted">Taste drücken …</span>' : main ? `<span class="kbd">${esc(label(main))}</span>${own.length > 1 ? `<span class="muted">+${own.length - 1}</span>` : ''}` : '<span class="muted">keine</span>'}</button>
       <span class="kb-acts">${main ? `<button class="btn icon" data-kb-clear="${id}" data-tip="Taste entfernen" aria-label="Taste entfernen">${g('IconClose')}</button>` : ''}${changed ? `<button class="btn icon" data-kb-reset="${id}" data-tip="Wie vorher" aria-label="Wie vorher">${g('IconUndo')}</button>` : ''}</span>
-      ${recording && pending ? `<div class="kb-warn"><span>${pending.msg}</span>${pending.choice ? `<span class="kb-choice">${own.length ? `<button class="btn" id="kb-swap">${g('IconSync')}Tauschen</button>` : ''}<button class="btn" id="kb-replace">${g('IconCheck')}Ersetzen</button></span>` : ''}</div>` : ''}</div>`;
+      ${pending?.id === id ? `<div class="kb-warn"><span>${pending.msg}</span>${pending.choice ? `<span class="kb-choice">${own.length ? `<button class="btn" id="kb-swap">${g('IconSync')}Tauschen</button>` : ''}<button class="btn" id="kb-replace">${g('IconCheck')}Ersetzen</button></span>` : ''}</div>` : ''}</div>`;
   };
 
   function keysWindow() {
@@ -116,14 +141,11 @@
       if (MODIFIERS.includes(e.key)) return;
       if (e.key === 'Escape' && !e.ctrlKey && !e.altKey && !e.shiftKey) return stop();
       const combo = comboOf(e);
-      if (['Tab', 'Enter', 'F10'].includes(combo)) { pending = { msg: `${esc(label(combo))} ist fest belegt. Nimm eine andere Taste.` }; return draw(); }
-      if (/^[\p{L}\d]$/u.test(combo)) { pending = { msg: 'Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.' }; return draw(); }
+      if (['Tab', 'Enter', 'F10'].includes(combo)) { pending = { id: rec, msg: `${esc(label(combo))} ist fest belegt. Nimm eine andere Taste.` }; return draw(); }
+      if (/^[\p{L}\d]$/u.test(combo)) { pending = { id: rec, msg: 'Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.' }; return draw(); }
       const other = map[combo];
       if (other && other !== rec && pending?.combo !== combo) {
-        const name = esc(nameOf(CC.actions[other]));
-        pending = { combo, choice: true, msg: combosOf(map, rec).length
-          ? `${esc(label(combo))} gehört schon zu „${name}“. Beim Tauschen bekommt „${name}“ deine bisherige Taste. Esc lässt alles, wie es ist.`
-          : `${esc(label(combo))} gehört schon zu „${name}“. Ersetzen holt die Taste hierher, Esc lässt alles, wie es ist.` };
+        pending = clash(map, rec, combo);
         return draw();
       }
       for (const c of combosOf(map, rec)) delete map[c];
@@ -135,16 +157,16 @@
     w.addEventListener('click', e => {
       const r = e.target.closest('[data-kb-rec]'), c = e.target.closest('[data-kb-clear]'), z = e.target.closest('[data-kb-reset]');
       if (e.target.closest('#kb-swap, #kb-replace')) {
-        const had = combosOf(map, rec), other = map[pending.combo];
-        for (const k of had) delete map[k];
-        map[pending.combo] = rec;
-        if (e.target.closest('#kb-swap')) for (const k of had) map[k] = other;
+        const swapped = !!e.target.closest('#kb-swap');
+        map = pending.reset ? restore(map, preset(which), pending.id, swapped) : takeKey(map, pending.combo, pending.id, swapped);
         return stop();
       }
       if (r) { rec = rec === r.dataset.kbRec ? null : r.dataset.kbRec; pending = null; draw(); if (rec) $(`[data-kb-rec="${rec}"]`, w)?.focus(); return; }
       if (c) { for (const k of combosOf(map, c.dataset.kbClear)) delete map[k]; return stop(); }
       if (z) {
-        const id = z.dataset.kbReset;
+        // A reset whose key another action has taken asks first, as a clash does.
+        const id = z.dataset.kbReset, held = heldBack(map, preset(which), id)[0];
+        if (held) { rec = null; pending = clash(map, id, held, true); return draw(); }
         for (const k of combosOf(map, id)) delete map[k];
         for (const k of combosOf(preset(which), id)) if (!map[k]) map[k] = id;
         return stop();
@@ -190,17 +212,12 @@
     if (MODIFIERS.includes(e.key)) return;
     if (e.key === 'Escape' && !e.ctrlKey && !e.altKey && !e.shiftKey) { tab.rec = null; tab.pending = null; return CC.render(); }
     const combo = comboOf(e), map = { ...CC.keymap }, id = tab.rec, key = esc(label(combo));
-    const say = (msg, more = {}) => { tab.pending = { msg, ...more }; CC.render(); };
+    const say = (msg) => { tab.pending = { id, msg }; CC.render(); };
     if (['Tab', 'Enter', 'F10'].includes(combo)) return say(`${key} ist fest belegt. Nimm eine andere Taste.`);
     if (/^[\p{L}\d]$/u.test(combo)) return say('Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.');
     if (BROWSER.includes(combo)) return say(`${key} behält der Browser für seine Tabs und Fenster. Nimm hier bitte eine andere, in der Desktop-App klappt sie.`);
     const other = map[combo];
-    if (other && other !== id && tab.pending?.combo !== combo) {
-      const name = esc(nameOf(CC.actions[other]));
-      return say(combosOf(map, id).length
-        ? `${key} gehört schon zu „${name}“. Beim Tauschen bekommt „${name}“ deine bisherige Taste. Esc lässt alles, wie es ist.`
-        : `${key} gehört schon zu „${name}“. Ersetzen holt die Taste hierher, Esc lässt alles, wie es ist.`, { combo, choice: true });
-    }
+    if (other && other !== id && tab.pending?.combo !== combo) { tab.pending = clash(map, id, combo); return CC.render(); }
     for (const c of combosOf(map, id)) delete map[c];
     map[combo] = id;
     commit(map, layoutOf());
@@ -236,11 +253,8 @@
       const m = { ...CC.keymap };
       if (e.target.closest('#kt-reset')) return commit({ ...base }, which);
       if (e.target.closest('#kb-swap, #kb-replace')) {
-        const { combo } = tab.pending, id = tab.rec, had = combosOf(m, id), other = m[combo];
-        for (const k of had) delete m[k];
-        m[combo] = id;
-        if (e.target.closest('#kb-swap')) for (const k of had) m[k] = other;
-        return commit(m, which);
+        const { id, combo, reset } = tab.pending, swapped = !!e.target.closest('#kb-swap');
+        return commit(reset ? restore(m, base, id, swapped) : takeKey(m, combo, id, swapped), which);
       }
       if (r) {
         tab.rec = tab.rec === r.dataset.kbRec ? null : r.dataset.kbRec;
@@ -251,7 +265,8 @@
       }
       if (c) { for (const k of combosOf(m, c.dataset.kbClear)) delete m[k]; return commit(m, which); }
       if (z) {
-        const id = z.dataset.kbReset;
+        const id = z.dataset.kbReset, held = heldBack(m, base, id)[0];
+        if (held) { tab.rec = null; tab.pending = clash(m, id, held, true); return CC.render(); }
         for (const k of combosOf(m, id)) delete m[k];
         for (const k of combosOf(base, id)) if (!m[k]) m[k] = id;
         return commit(m, which);

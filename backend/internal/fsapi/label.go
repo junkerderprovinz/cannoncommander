@@ -41,3 +41,34 @@ func localizedName(ini []byte) string {
 	}
 	return ""
 }
+
+// localResource lets through a reference only to a text in a program of
+// Windows itself, rewritten to its full path. Any other file the folder
+// names would be loaded just because the folder is listed, and a path to
+// another computer would hand it the login of whoever looks at the folder.
+func localResource(ref, systemRoot string) (string, bool) {
+	if !strings.HasPrefix(ref, "@") {
+		return ref, true
+	}
+	comma := strings.LastIndexByte(ref, ',')
+	if comma < 0 || systemRoot == "" {
+		return "", false
+	}
+	file, id := strings.ReplaceAll(ref[1:comma], "/", `\`), ref[comma+1:]
+	if len(id) < 2 || id[0] != '-' || strings.Trim(id[1:], "0123456789") != "" {
+		return "", false
+	}
+	for _, v := range []string{"%SystemRoot%", "%windir%"} {
+		if len(file) >= len(v) && strings.EqualFold(file[:len(v)], v) {
+			file = systemRoot + file[len(v):]
+		}
+	}
+	if !strings.ContainsAny(file, `\:`) {
+		file = systemRoot + `\System32\` + file
+	}
+	inside := len(file) > len(systemRoot)+1 && strings.EqualFold(file[:len(systemRoot)+1], systemRoot+`\`)
+	if !inside || strings.Contains(file, `\..\`) || strings.ContainsAny(file, "%?*") {
+		return "", false
+	}
+	return "@" + file + "," + id, true
+}
