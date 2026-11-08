@@ -388,7 +388,7 @@
       "shares": "Paylaşımlar",
       "security": "Hesap ve güvenlik",
       "integrations": "Entegrasyonlar",
-      "app": "Uygulama",
+      "system": "Sistem",
       "info": "Bilgi"
     },
     "actions": {
@@ -924,7 +924,7 @@
       "changedAgo": "{ago} değiştirildi",
       "change": "Değiştir",
       "stay": "Oturumu açık tut",
-      "stayTip": "Bundan sonra CannonCommander parolayı yeniden sorar.",
+      "stayTip": "Süre son ziyaretinden itibaren sayılır. Bu kadar süre uğramazsan CannonCommander parolayı yeniden sorar.",
       "day1": "1 gün",
       "twofa": "İki adımlı doğrulama",
       "status": "Durum",
@@ -978,6 +978,9 @@
       },
       "passkeys": "Geçiş anahtarları",
       "noPasskey": "Henüz geçiş anahtarı yok",
+      "passkeyHint": "Geçiş anahtarı seni parolasız içeri alır. Yalnızca onu oluşturduğun adreste çalışır.",
+      "noPasskeyHere": "Burada geçiş anahtarı oluşturulamaz",
+      "passkeyBrowser": "Bu tarayıcı burada geçiş anahtarı sunmuyor. Bu yalnızca HTTPS üzerinden ya da localhost'ta çalışır.",
       "addPasskey": "Geçiş anahtarı ekle",
       "removePasskey": "Geçiş anahtarını kaldır",
       "removePasskeyText": "{name} bundan sonra seni içeri almaz. Parola geçerli kalır.",
@@ -1026,7 +1029,6 @@
       "copyNow": "Token'ı şimdi kopyala. CannonCommander onu bir daha göstermez, yalnızca yenisini oluşturabilirsin.",
       "tokenCreatedToast": "{name} token'ı oluşturuldu",
       "pwLocked": "Parolanı burada yalnızca bir yönetici değiştirir ya da başka bir hizmet üzerinden giriş yaparsın.",
-      "passkeysOff": "Geçiş anahtarları bu sunucuda kapalı",
       "tooMany": "Çok fazla deneme. Lütfen 15 dakika sonra yeniden dene",
       "proofTip": "CannonCommander her yeni erişimden önce bunu sorar, böylece yalnızca sen ekleyebilirsin.",
       "signInAgain": "Yeniden giriş yap",
@@ -1083,10 +1085,10 @@
     },
     "app": {
       "updates": "Güncellemeler",
-      "autoCheck": "Güncellemeleri kendiliğinden ara",
-      "autoCheckTip": "Günde bir kez. Güncellemeyi kendin kurarsın, Unraid'de Docker sekmesinde.",
-      "image": "Docker imajı",
-      "tagTip": "Şu an bu sürüm çalışıyor. Unraid'in hangi etiketi çekeceğini şablonda belirlersin, latest her yeni sürümü izler.",
+      "autoCheck": "Otomatik kontrol et",
+      "autoCheckTip": "Bu açıkken CannonCommander, bu sayfa açıldığında daha yeni bir sürüm çıkıp çıkmadığını GitHub'a bir kez sorar. Yalnızca sorar, çünkü bir konteyner güncellemelerini konteyner yöneticisinden alır.",
+      "autoUpdate": "Otomatik güncelle",
+      "autoUpdateTip": "Bir konteyner kendini içeriden değiştiremez. Bunun yerine onu Unraid'de Docker sekmesinde, docker pull ile ya da Watchtower ile güncelle.",
       "check": "Güncellemeleri ara",
       "checking": "Aranıyor",
       "current": "Güncel, {v}",
@@ -1133,8 +1135,6 @@
       "notExport": "Bu, dışa aktarılmış bir ayar dosyası değil",
       "imported": "Ayarlar {name} dosyasından alındı",
       "noAnswer": "GitHub şu an yanıt vermedi. Lütfen daha sonra yeniden dene",
-      "restartNeeded": "Yeniden başlatma gerekli",
-      "restartNeededTip": "Bazı ayarlar ancak yeniden başlatmadan sonra geçerli olur.",
       "importedRestart": "{name} alındı. Hepsinin geçerli olması için CannonCommander'ı yeniden başlat"
     },
     "info": {
@@ -3553,12 +3553,13 @@
     "ownSessionsElsewhere": "Kendi oturumlarını, token'larını ve geçiş anahtarlarını Hesap ve güvenlik altında sonlandırırsın",
     "passkeyExists": "Bu adda bir geçiş anahtarı zaten var",
     "passkeyNameMissing": "Geçiş anahtarına bir ad ver",
+    "passkeyNeedsHostName": "Geçiş anahtarları bir ana makine adı ister, bu sayfa ise bir IP adresiyle açık. CannonCommander'ı adıyla aç, o zaman çalışır",
     "passkeyNotConfirmed": "Tarayıcı geçiş anahtarını onaylamadı. Lütfen yeniden dene",
     "passkeyRegistered": "Bu geçiş anahtarı zaten kayıtlı",
     "passkeyUnknown": "Bu geçiş anahtarıyla burada giriş yapılmaz",
     "passkeysElsewhere": "Geçiş anahtarları parolaya bağlıdır, sen ise {method} üzerinden giriş yapıyorsun",
-    "passkeysOff": "Geçiş anahtarları bu sunucuda kapalı",
     "passwordElsewhere": "{method} üzerinden giriş yapıyorsun, parola orada tutuluyor",
+    "passwordFirst": "Geçiş anahtarı parolayla birlikte gelir, bu hesabın ise henüz parolası yok",
     "passwordLocked": "Parolan kilitli. Bir yönetici onu değiştirebilir",
     "passwordMissing": "Parola eksik",
     "passwordShort": {
@@ -3745,7 +3746,7 @@
     "same": "Lütfen öncekinden farklı bir parola seç.",
     "badReset": "Kod doğru değil ya da süresi doldu. Lütfen yenisini iste.",
     "passkeyFailed": "Bu geçiş anahtarıyla burada giriş olmuyor.",
-    "passkeyOff": "Geçiş anahtarları bu sunucuda kapalı.",
+    "passkeyNotHere": "Geçiş anahtarları bu adreste çalışmıyor.",
     "offline": "CannonCommander şu an yanıt vermiyor. Birazdan yeniden dene."
   },
   "ui": {

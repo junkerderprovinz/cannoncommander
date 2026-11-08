@@ -53,6 +53,6 @@
   "same": "Nimm bitte ein anderes Passwort als bisher.",
   "badReset": "Der Code stimmt nicht oder ist abgelaufen. Hol dir bitte einen neuen.",
   "passkeyFailed": "Mit diesem Passkey klappt die Anmeldung hier nicht.",
-  "passkeyOff": "Passkeys sind auf diesem Server ausgeschaltet.",
+  "passkeyNotHere": "Unter dieser Adresse gehen keine Passkeys.",
   "offline": "CannonCommander antwortet gerade nicht. Versuch es gleich noch einmal."
 }

@@ -1,11 +1,12 @@
 // The long press on the header logo: the cannon trembles harder and harder while its ball rolls back into the barrel,
-// then it fires with a flash and a cloud of smoke, and the ball crosses the head and bursts everything it strikes.
-// Then the head puts itself together again. Nothing of the app's state is touched, and whatever ends the shot early
-// puts the head back at once, so it cannot be left broken.
+// then it fires with a flash and a cloud of smoke that shake the whole window, and the ball crosses the head and
+// bursts everything it strikes, its shards flying on over the page. Then the head puts itself together again. Nothing
+// of the app's state is touched, and whatever ends the shot early puts the head back at once, so it cannot be left
+// broken.
 import { dialMs, moving } from '@/core/motion';
 import { quietTips } from '@/core/tips';
 import { HOLD, holdPress } from './cues';
-import { flyBall, gunSmoke, muzzleFlash, replay, shatter } from './fx';
+import { flyBall, gunSmoke, muzzleFlash, replay, shardLayer, shatter } from './fx';
 
 export interface Times { tremble: number; shot: number; wait: number; rebuild: number; step: number }
 
@@ -21,7 +22,7 @@ const shown = (el: Element) => el.getClientRects().length > 0;
 
 // The menu bar breaks title by title, everything else as one piece.
 const targets = (head: Element) => [...head.children]
-  .flatMap((el) => (el.matches('.brand, .spacer, .fx-shards') ? [] : el.matches('.menubar') ? [...el.querySelectorAll('.glim-menubar-item')] : [el]))
+  .flatMap((el) => (el.matches('.brand, .spacer') ? [] : el.matches('.menubar') ? [...el.querySelectorAll('.glim-menubar-item')] : [el]))
   .filter(shown);
 
 let stop: (() => void) | null = null;
@@ -36,15 +37,12 @@ export function fire(head: HTMLElement, times = timesOf()): boolean {
 
   const timers: ReturnType<typeof setTimeout>[] = [], pieces: Element[] = [], hit: Element[] = [];
   const later = (ms: number, fn: () => void) => timers.push(setTimeout(fn, ms));
-  const layer = document.createElement('div');
-  layer.className = 'fx-shards';
-  layer.setAttribute('aria-hidden', 'true');
-  layer.inert = true;
-  head.append(layer);
+  const { layer, frame } = shardLayer(head), app = head.closest('.app');
 
   stop = () => {
     timers.forEach(clearTimeout);
     for (const el of [layer, ...pieces]) el.remove();
+    app?.classList.remove('fx-quake');
     for (const el of [...hit, cannon, rest, logo, ...head.querySelectorAll('.fx-shattered, .fx-rebuild')]) el.classList.remove('fx-shattered', 'fx-rebuild', 'fx-tremble', 'fx-loading', 'fx-kick', 'fx-fired');
     rest.style.removeProperty('--fx-muzzle');
     rest.style.removeProperty('--fx-reach');
@@ -67,6 +65,7 @@ export function fire(head: HTMLElement, times = timesOf()): boolean {
     cannon.classList.remove('fx-tremble');
     rest.classList.remove('fx-tremble', 'fx-loading');
     replay(cannon, 'fx-kick');
+    if (app) replay(app, 'fx-quake');
     logo.classList.add('fx-fired');
 
     const h = head.getBoundingClientRect(), y = b.top + b.height / 2;
@@ -81,7 +80,7 @@ export function fire(head: HTMLElement, times = timesOf()): boolean {
       const reach = Math.max(0, ((dir > 0 ? r.left : r.right) - lead) * dir) / Math.abs(end - lead);
       later(times.shot * reach, () => {
         if (!el.isConnected) return;
-        pieces.push(...shatter(el, layer, dir, y));
+        pieces.push(...shatter(el, head, frame, dir, y));
         el.classList.add('fx-shattered');
         hit.push(el);
       });

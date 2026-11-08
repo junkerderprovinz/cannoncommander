@@ -33,6 +33,8 @@ type fakeLogin struct {
 	stopped []string
 	// signedIn is when every session signed in, now when it is zero.
 	signedIn time.Time
+	// onIP makes every request come in on an IP address.
+	onIP bool
 }
 
 func (l *fakeLogin) SignedInAt(r *http.Request) (time.Time, bool) {
@@ -94,6 +96,10 @@ func (l *fakeLogin) Start(w http.ResponseWriter, _ *http.Request, u *users.User,
 	return nil
 }
 
+func (l *fakeLogin) Renew(http.ResponseWriter, *http.Request, *users.User) (string, bool) {
+	return "", false
+}
+
 func (l *fakeLogin) Stop(w http.ResponseWriter, r *http.Request) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -110,6 +116,9 @@ func (l *fakeLogin) ClientIP(r *http.Request) string {
 }
 
 func (l *fakeLogin) PasskeySite(*http.Request) (string, string) {
+	if l.onIP {
+		return "", "192.168.10.10:8443"
+	}
 	return "cannon.lan", "cannon.lan:8443"
 }
 

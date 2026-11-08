@@ -58,12 +58,17 @@ type Login interface {
 	// zero the session lasts that long, through browser restarts. Without,
 	// it ends with the browser.
 	Start(w http.ResponseWriter, r *http.Request, u *users.User, keep time.Duration) error
+	// Renew gives the session r carries a new token when it stays signed in
+	// and its token is due, and returns the hash of the new one. ok is false
+	// when the token stays.
+	Renew(w http.ResponseWriter, r *http.Request, u *users.User) (hash string, ok bool)
 	// Stop ends the session r carries and clears its cookie.
 	Stop(w http.ResponseWriter, r *http.Request) error
 	// ClientIP returns the address of the client behind any proxy.
 	ClientIP(r *http.Request) string
 	// PasskeySite readies passkeys for the address r came in on and returns
-	// the relying party id and the host as the browser shows it.
+	// the relying party id and the host as the browser shows it. rpID is ""
+	// for an address a browser keeps no passkey for.
 	PasskeySite(r *http.Request) (rpID, host string)
 }
 
@@ -84,8 +89,8 @@ var (
 
 // Track wraps the authenticator of /api/v1. Every session that makes a
 // request shows up in the list with its browser, address and last use, API
-// tokens remember when they were used, and a read only token gets no
-// further than reading.
+// tokens remember when they were used, a read only token gets no further
+// than reading, and a session that stays signed in is renewed.
 func Track(db *sql.DB, next v1.Authenticator) v1.Authenticator {
 	return func(w http.ResponseWriter, r *http.Request) (*users.User, error) {
 		u, err := next(w, r)
@@ -101,7 +106,17 @@ func Track(db *sql.DB, next v1.Authenticator) v1.Authenticator {
 			return u, nil
 		}
 		hash, ip, ok := login.Session(r)
-		if !ok || !due(hash) {
+		if !ok {
+			return u, nil
+		}
+		if next, renewed := login.Renew(w, r, u); renewed {
+			// The session keeps its place in the list under its new token.
+			if _, err := db.ExecContext(r.Context(), `UPDATE sessions SET token_hash = ? WHERE token_hash = ?`, next, hash); err != nil {
+				logger.Errorf("move renewed session: %v", err)
+			}
+			hash = next
+		}
+		if !due(hash) {
 			return u, nil
 		}
 		now := time.Now().Unix()

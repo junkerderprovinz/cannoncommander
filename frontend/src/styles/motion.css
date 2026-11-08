@@ -42,13 +42,14 @@
     /* The cannon in the header logo: how long it trembles before it fires, while the ball rolls into the barrel,
        how far it shakes and how far it rocks at the end, its kick back, the flash at the muzzle and where the ball
        strikes (how long and how big), the cloud of smoke (how long, how much it swells and how far it drifts), the
-       ball's way across the head and its trail of fire (how many balls long, and how fast it flickers), the shards
-       of what it breaks (how long, how far they fall, how far they fly and how much they turn), the dust where it
-       strikes (how long and how far it flies), and the pause before the head puts itself together and how long
-       that takes. */
-    --motion-tremble-dur: 900ms;
-    --motion-tremble-dist: 3.5px;
-    --motion-tremble-tilt: 6deg;
+       ball's way across the head and its trail of fire (how many balls long, and how fast it flickers), the shake
+       of the whole window as it fires (how long and how far), the shards of what it breaks (how long, how far they
+       fall, how far they fly apart, how far the ball's momentum carries them and how much they turn), the dust
+       where it strikes (how long and how far it flies), and the pause before the head puts itself together and
+       how long that takes. */
+    --motion-tremble-dur: 1.2s;
+    --motion-tremble-dist: 5.5px;
+    --motion-tremble-tilt: 9deg;
     --motion-kick-dur: 320ms;
     --motion-kick-dist: 6px;
     --motion-flash-dur: 200ms;
@@ -59,13 +60,16 @@
     --motion-shot-dur: 900ms;
     --motion-trail-length: 3;
     --motion-trail-flicker: 70ms;
-    --motion-shard-dur: 900ms;
-    --motion-shard-fall: 70px;
-    --motion-shard-spread: 40px;
+    --motion-quake-dur: 360ms;
+    --motion-quake-dist: 4px;
+    --motion-shard-dur: 1.2s;
+    --motion-shard-fall: 160px;
+    --motion-shard-spread: 60px;
+    --motion-shard-carry: 180px;
     --motion-shard-spin: 140deg;
     --motion-dust-dur: 650ms;
     --motion-dust-drift: 22px;
-    --motion-rebuild-wait: 900ms;
+    --motion-rebuild-wait: 1.1s;
     --motion-rebuild-dur: 420ms;
     /* Cards growing or shrinking under Ctrl and the wheel, and a folder turning into another view on the way. */
     --motion-zoom-dur: 180ms;
@@ -98,9 +102,9 @@
     --motion-recoil-dist: 2px;
     --motion-tumble-dur: 1.8s;
     --motion-tumble-hop: 4px;
-    --motion-tremble-dur: 500ms;
-    --motion-tremble-dist: 2px;
-    --motion-tremble-tilt: 3deg;
+    --motion-tremble-dur: 700ms;
+    --motion-tremble-dist: 3px;
+    --motion-tremble-tilt: 4deg;
     --motion-kick-dur: 200ms;
     --motion-kick-dist: 2px;
     --motion-flash-dur: 140ms;
@@ -111,13 +115,16 @@
     --motion-shot-dur: 600ms;
     --motion-trail-length: 1.5;
     --motion-trail-flicker: 120ms;
-    --motion-shard-dur: 450ms;
-    --motion-shard-fall: 14px;
-    --motion-shard-spread: 8px;
+    --motion-quake-dur: 180ms;
+    --motion-quake-dist: 1.5px;
+    --motion-shard-dur: 600ms;
+    --motion-shard-fall: 30px;
+    --motion-shard-spread: 12px;
+    --motion-shard-carry: 40px;
     --motion-shard-spin: 20deg;
     --motion-dust-dur: 400ms;
     --motion-dust-drift: 8px;
-    --motion-rebuild-wait: 400ms;
+    --motion-rebuild-wait: 450ms;
     --motion-rebuild-dur: 240ms;
     --motion-zoom-dur: 120ms;
   }
@@ -164,9 +171,12 @@
     --motion-shot-dur: 0s;
     --motion-trail-length: 0;
     --motion-trail-flicker: 0s;
+    --motion-quake-dur: 0s;
+    --motion-quake-dist: 0px;
     --motion-shard-dur: 0s;
     --motion-shard-fall: 0px;
     --motion-shard-spread: 0px;
+    --motion-shard-carry: 0px;
     --motion-shard-spin: 0deg;
     --motion-dust-dur: 0s;
     --motion-dust-drift: 0px;
@@ -202,9 +212,9 @@
     --motion-recoil-dist: 14px;
     --motion-tumble-dur: 1.6s;
     --motion-tumble-hop: 22px;
-    --motion-tremble-dur: 1.4s;
-    --motion-tremble-dist: 5px;
-    --motion-tremble-tilt: 10deg;
+    --motion-tremble-dur: 1.8s;
+    --motion-tremble-dist: 8px;
+    --motion-tremble-tilt: 14deg;
     --motion-kick-dur: 460ms;
     --motion-kick-dist: 11px;
     --motion-flash-dur: 260ms;
@@ -215,13 +225,16 @@
     --motion-shot-dur: 1.2s;
     --motion-trail-length: 5;
     --motion-trail-flicker: 50ms;
-    --motion-shard-dur: 1.4s;
-    --motion-shard-fall: 170px;
-    --motion-shard-spread: 110px;
+    --motion-quake-dur: 520ms;
+    --motion-quake-dist: 8px;
+    --motion-shard-dur: 1.8s;
+    --motion-shard-fall: 320px;
+    --motion-shard-spread: 140px;
+    --motion-shard-carry: 360px;
     --motion-shard-spin: 320deg;
     --motion-dust-dur: 900ms;
     --motion-dust-drift: 40px;
-    --motion-rebuild-wait: 1.3s;
+    --motion-rebuild-wait: 1.6s;
     --motion-rebuild-dur: 600ms;
     --motion-zoom-dur: 260ms;
   }

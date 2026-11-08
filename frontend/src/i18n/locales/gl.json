@@ -388,7 +388,7 @@
       "shares": "Compartidos",
       "security": "Conta e seguranza",
       "integrations": "Integracións",
-      "app": "Aplicación",
+      "system": "Sistema",
       "info": "Información"
     },
     "actions": {
@@ -924,7 +924,7 @@
       "changedAgo": "Cambiado {ago}",
       "change": "Cambiar",
       "stay": "Manter a sesión",
-      "stayTip": "Despois diso, CannonCommander volve pedir o contrasinal.",
+      "stayTip": "O tempo conta desde a túa última visita. Se non volves en todo ese tempo, CannonCommander volve pedir o contrasinal.",
       "day1": "1 día",
       "twofa": "Autenticación en dous pasos",
       "status": "Estado",
@@ -978,6 +978,9 @@
       },
       "passkeys": "Chaves de acceso",
       "noPasskey": "Aínda non hai chaves de acceso",
+      "passkeyHint": "Unha chave de acceso inicia a túa sesión sen o contrasinal. Só funciona no enderezo onde a creas.",
+      "noPasskeyHere": "Aquí non se pode crear ningunha chave de acceso",
+      "passkeyBrowser": "Este navegador non ofrece chaves de acceso aquí. Só funciona con HTTPS ou en localhost.",
       "addPasskey": "Engadir unha chave de acceso",
       "removePasskey": "Quitar a chave de acceso",
       "removePasskeyText": "Despois diso, {name} xa non iniciará a túa sesión. O contrasinal segue valendo.",
@@ -1026,7 +1029,6 @@
       "copyNow": "Copia o token agora. CannonCommander non o volverá amosar, só poderás crear outro.",
       "tokenCreatedToast": "Token {name} creado",
       "pwLocked": "Aquí o teu contrasinal só o cambia un admin, ou inicias sesión mediante outro servizo.",
-      "passkeysOff": "As chaves de acceso están desactivadas neste servidor",
       "tooMany": "Demasiados intentos. Téntao de novo dentro de 15 minutos",
       "proofTip": "CannonCommander pídeo antes de cada acceso novo, para que só ti poidas crealo.",
       "signInAgain": "Iniciar sesión de novo",
@@ -1083,10 +1085,10 @@
     },
     "app": {
       "updates": "Actualizacións",
-      "autoCheck": "Buscar actualizacións automaticamente",
-      "autoCheckTip": "Unha vez ao día. A actualización instálala ti, en Unraid na pestana Docker.",
-      "image": "Imaxe Docker",
-      "tagTip": "Esta é a versión que se está a executar. Que tag descarga Unraid decídelo no template, latest segue cada versión nova.",
+      "autoCheck": "Comprobar automaticamente",
+      "autoCheckTip": "Mentres isto estea activado, abrir esta páxina pregúntalle unha vez a GitHub se saíu un CannonCommander máis novo. Só pregunta, porque un contedor recibe as súas actualizacións do seu xestor de contedores.",
+      "autoUpdate": "Actualizar automaticamente",
+      "autoUpdateTip": "Un contedor non se pode substituír a si mesmo desde dentro. Actualízao en Unraid na pestana Docker, con docker pull ou con Watchtower.",
       "check": "Buscar actualizacións",
       "checking": "Buscando",
       "current": "Ao día, {v}",
@@ -1133,8 +1135,6 @@
       "notExport": "Este non é un ficheiro de axustes exportado",
       "imported": "Axustes importados de {name}",
       "noAnswer": "GitHub non respondeu agora. Téntao de novo máis tarde",
-      "restartNeeded": "Cómpre reiniciar",
-      "restartNeededTip": "Algúns axustes só valen despois dun reinicio.",
       "importedRestart": "{name} importado. Reinicia CannonCommander para que valla todo"
     },
     "info": {
@@ -3553,12 +3553,13 @@
     "ownSessionsElsewhere": "As túas propias sesións, tokens e chaves de acceso péchalos en Conta e seguranza",
     "passkeyExists": "Xa hai unha chave de acceso con este nome",
     "passkeyNameMissing": "Ponlle un nome á chave de acceso",
+    "passkeyNeedsHostName": "As chaves de acceso precisan un nome de servidor, e esta páxina está aberta cun enderezo IP. Abre CannonCommander polo seu nome e funcionará",
     "passkeyNotConfirmed": "O navegador non confirmou a chave de acceso. Téntao de novo",
     "passkeyRegistered": "Esta chave de acceso xa está rexistrada",
     "passkeyUnknown": "Con esta chave de acceso non se inicia sesión aquí",
     "passkeysElsewhere": "As chaves de acceso van co contrasinal, e ti inicias sesión mediante {method}",
-    "passkeysOff": "As chaves de acceso están desactivadas neste servidor",
     "passwordElsewhere": "Inicias sesión mediante {method}, e o contrasinal está alí",
+    "passwordFirst": "Unha chave de acceso vai co contrasinal, e esta conta aínda non ten ningún",
     "passwordLocked": "O teu contrasinal está bloqueado. Un admin pode cambialo",
     "passwordMissing": "Falta o contrasinal",
     "passwordShort": {
@@ -3745,7 +3746,7 @@
     "same": "Escolle un contrasinal distinto do anterior.",
     "badReset": "O código non é correcto ou caducou. Pide un novo.",
     "passkeyFailed": "Con esta chave de acceso non se pode iniciar sesión aquí.",
-    "passkeyOff": "As chaves de acceso están desactivadas neste servidor.",
+    "passkeyNotHere": "As chaves de acceso non funcionan neste enderezo.",
     "offline": "CannonCommander non responde agora mesmo. Téntao de novo nun intre."
   },
   "ui": {

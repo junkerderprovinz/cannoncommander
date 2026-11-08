@@ -432,7 +432,7 @@
       "shares": "Udostępnienia",
       "security": "Konto i bezpieczeństwo",
       "integrations": "Integracje",
-      "app": "Aplikacja",
+      "system": "System",
       "info": "Informacje"
     },
     "actions": {
@@ -1006,7 +1006,7 @@
       "changedAgo": "Zmieniono {ago}",
       "change": "Zmień",
       "stay": "Nie wylogowuj",
-      "stayTip": "Potem CannonCommander znów zapyta o hasło.",
+      "stayTip": "Czas liczy się od twojej ostatniej wizyty. Jeśli nie zajrzysz przez ten czas, CannonCommander znów zapyta o hasło.",
       "day1": "1 dzień",
       "twofa": "Uwierzytelnianie dwuskładnikowe",
       "status": "Stan",
@@ -1064,6 +1064,9 @@
       },
       "passkeys": "Klucze dostępu",
       "noPasskey": "Jeszcze brak klucza dostępu",
+      "passkeyHint": "Klucz dostępu loguje cię bez hasła. Działa tylko pod adresem, pod którym go utworzysz.",
+      "noPasskeyHere": "Tutaj nie da się utworzyć klucza dostępu",
+      "passkeyBrowser": "Ta przeglądarka nie oferuje tutaj kluczy dostępu. Działa to tylko przez HTTPS albo na localhost.",
       "addPasskey": "Dodaj klucz dostępu",
       "removePasskey": "Usuń klucz dostępu",
       "removePasskeyText": "{name} nie będzie cię już logować. Hasło nadal działa.",
@@ -1114,7 +1117,6 @@
       "copyNow": "Skopiuj token teraz. CannonCommander już nigdy go nie pokaże, możesz tylko utworzyć nowy.",
       "tokenCreatedToast": "Utworzono token {name}",
       "pwLocked": "Twoje hasło zmienia tu tylko administrator, albo logujesz się przez inną usługę.",
-      "passkeysOff": "Klucze dostępu są wyłączone na tym serwerze",
       "tooMany": "Za dużo prób. Spróbuj ponownie za 15 minut",
       "proofTip": "CannonCommander pyta o to przy każdym nowym dostępie, żeby nikt poza tobą nie mógł go dodać.",
       "signInAgain": "Zaloguj się ponownie",
@@ -1171,10 +1173,10 @@
     },
     "app": {
       "updates": "Aktualizacje",
-      "autoCheck": "Szukaj aktualizacji automatycznie",
-      "autoCheckTip": "Raz dziennie. Aktualizację instalujesz sam, w Unraid na karcie Docker.",
-      "image": "Obraz Docker",
-      "tagTip": "Ta wersja właśnie działa. Który tag pobiera Unraid, ustawiasz w szablonie, latest podąża za każdą nową wersją.",
+      "autoCheck": "Sprawdzaj automatycznie",
+      "autoCheckTip": "Dopóki to jest włączone, otwarcie tej strony raz pyta GitHub, czy wyszedł nowszy CannonCommander. Tylko pyta, bo kontener dostaje aktualizacje od swojego menedżera kontenerów.",
+      "autoUpdate": "Aktualizuj automatycznie",
+      "autoUpdateTip": "Kontener nie może zastąpić się sam od środka. Zamiast tego zaktualizuj go w Unraid na karcie Docker, przez docker pull albo przez Watchtower.",
       "check": "Szukaj aktualizacji",
       "checking": "Szukam",
       "current": "Aktualna, {v}",
@@ -1223,8 +1225,6 @@
       "notExport": "To nie jest wyeksportowany plik ustawień",
       "imported": "Przejęto ustawienia z {name}",
       "noAnswer": "GitHub właśnie nie odpowiedział. Spróbuj ponownie później",
-      "restartNeeded": "Wymagany restart",
-      "restartNeededTip": "Niektóre ustawienia zaczną obowiązywać dopiero po restarcie.",
       "importedRestart": "Przejęto {name}. Uruchom CannonCommander ponownie, żeby wszystko zaczęło obowiązywać"
     },
     "info": {
@@ -3825,12 +3825,13 @@
     "ownSessionsElsewhere": "Swoje sesje, tokeny i klucze dostępu zakończysz w Konto i bezpieczeństwo",
     "passkeyExists": "Klucz dostępu o tej nazwie już istnieje",
     "passkeyNameMissing": "Nadaj kluczowi dostępu nazwę",
+    "passkeyNeedsHostName": "Klucze dostępu wymagają nazwy hosta, a ta strona jest otwarta przez adres IP. Otwórz CannonCommander pod jego nazwą i zadziała",
     "passkeyNotConfirmed": "Przeglądarka nie potwierdziła klucza dostępu. Spróbuj jeszcze raz",
     "passkeyRegistered": "Ten klucz dostępu jest już zarejestrowany",
     "passkeyUnknown": "Tym kluczem dostępu nie można się tu zalogować",
     "passkeysElsewhere": "Klucze dostępu należą do hasła, a ty logujesz się przez {method}",
-    "passkeysOff": "Klucze dostępu są wyłączone na tym serwerze",
     "passwordElsewhere": "Logujesz się przez {method}, hasło jest tam",
+    "passwordFirst": "Klucz dostępu idzie w parze z hasłem, a to konto jeszcze go nie ma",
     "passwordLocked": "Twoje hasło jest zablokowane. Administrator może je zmienić",
     "passwordMissing": "Brakuje hasła",
     "passwordShort": {
@@ -4029,7 +4030,7 @@
     "same": "Wybierz inne hasło niż dotychczasowe.",
     "badReset": "Kod jest nieprawidłowy albo wygasł. Poproś o nowy.",
     "passkeyFailed": "Tym kluczem dostępu nie da się tu zalogować.",
-    "passkeyOff": "Klucze dostępu są wyłączone na tym serwerze.",
+    "passkeyNotHere": "Pod tym adresem klucze dostępu nie działają.",
     "offline": "CannonCommander teraz nie odpowiada. Spróbuj ponownie za chwilę."
   },
   "ui": {

@@ -366,7 +366,7 @@
       "shares": "Tautan berbagi",
       "security": "Akun & keamanan",
       "integrations": "Integrasi",
-      "app": "Aplikasi",
+      "system": "Sistem",
       "info": "Info"
     },
     "actions": {
@@ -883,7 +883,7 @@
       "changedAgo": "Diubah {ago}",
       "change": "Ubah",
       "stay": "Tetap masuk",
-      "stayTip": "Setelah itu CannonCommander meminta kata sandi lagi.",
+      "stayTip": "Waktunya dihitung dari kunjungan terakhir Anda. Jika Anda tidak datang selama itu, CannonCommander meminta kata sandi lagi.",
       "day1": "1 hari",
       "twofa": "Autentikasi dua faktor",
       "status": "Status",
@@ -935,6 +935,9 @@
       },
       "passkeys": "Passkey",
       "noPasskey": "Belum ada passkey",
+      "passkeyHint": "Passkey membuat Anda masuk tanpa kata sandi. Passkey hanya berfungsi di alamat tempat Anda membuatnya.",
+      "noPasskeyHere": "Passkey tidak bisa dibuat di sini",
+      "passkeyBrowser": "Browser ini tidak menawarkan passkey di sini. Itu hanya berfungsi lewat HTTPS atau di localhost.",
       "addPasskey": "Tambah passkey",
       "removePasskey": "Hapus passkey",
       "removePasskeyText": "{name} tidak bisa lagi membuat Anda masuk setelah ini. Kata sandi tetap berlaku.",
@@ -982,7 +985,6 @@
       "copyNow": "Salin token sekarang. CannonCommander tidak akan menampilkannya lagi, Anda hanya bisa membuat yang baru.",
       "tokenCreatedToast": "Token {name} dibuat",
       "pwLocked": "Kata sandi Anda di sini hanya bisa diubah admin, atau Anda masuk lewat layanan lain.",
-      "passkeysOff": "Passkey dimatikan di server ini",
       "tooMany": "Terlalu banyak percobaan. Silakan coba lagi dalam 15 menit",
       "proofTip": "CannonCommander menanyakannya sebelum setiap akses baru, agar hanya Anda yang bisa menambahkannya.",
       "signInAgain": "Masuk lagi",
@@ -1039,10 +1041,10 @@
     },
     "app": {
       "updates": "Pembaruan",
-      "autoCheck": "Cari pembaruan otomatis",
-      "autoCheckTip": "Sekali sehari. Pembaruan Anda pasang sendiri, di Unraid pada tab Docker.",
-      "image": "Image Docker",
-      "tagTip": "Versi ini yang sedang berjalan. Tag mana yang diambil Unraid diatur di template, latest mengikuti setiap versi baru.",
+      "autoCheck": "Periksa otomatis",
+      "autoCheckTip": "Selama ini aktif, membuka halaman ini bertanya sekali ke GitHub apakah ada CannonCommander yang lebih baru. Ini hanya bertanya, karena kontainer mendapat pembaruannya dari pengelola kontainernya.",
+      "autoUpdate": "Perbarui otomatis",
+      "autoUpdateTip": "Kontainer tidak bisa mengganti dirinya sendiri dari dalam. Sebagai gantinya, perbarui di Unraid pada tab Docker, dengan docker pull atau dengan Watchtower.",
       "check": "Cari pembaruan",
       "checking": "Mencari",
       "current": "Terbaru, {v}",
@@ -1088,8 +1090,6 @@
       "notExport": "Ini bukan berkas pengaturan hasil ekspor",
       "imported": "Pengaturan dari {name} diambil alih",
       "noAnswer": "GitHub sedang tidak menjawab. Silakan coba lagi nanti",
-      "restartNeeded": "Perlu mulai ulang",
-      "restartNeededTip": "Beberapa pengaturan baru berlaku setelah dimulai ulang.",
       "importedRestart": "{name} diambil alih. Mulai ulang CannonCommander agar semuanya berlaku"
     },
     "info": {
@@ -3417,12 +3417,13 @@
     "ownSessionsElsewhere": "Sesi, token, dan passkey Anda sendiri diakhiri di Akun & keamanan",
     "passkeyExists": "Sudah ada passkey dengan nama ini",
     "passkeyNameMissing": "Beri nama untuk passkey ini",
+    "passkeyNeedsHostName": "Passkey memerlukan nama host, dan halaman ini dibuka lewat alamat IP. Buka CannonCommander dengan namanya, maka passkey akan berfungsi",
     "passkeyNotConfirmed": "Browser tidak mengonfirmasi passkey. Silakan coba lagi",
     "passkeyRegistered": "Passkey ini sudah terdaftar",
     "passkeyUnknown": "Passkey ini tidak bisa dipakai untuk masuk di sini",
     "passkeysElsewhere": "Passkey terkait dengan kata sandi, dan Anda masuk lewat {method}",
-    "passkeysOff": "Passkey dimatikan di server ini",
     "passwordElsewhere": "Anda masuk lewat {method}, kata sandinya disimpan di sana",
+    "passwordFirst": "Passkey terkait dengan kata sandi, dan akun ini belum punya kata sandi",
     "passwordLocked": "Kata sandi Anda dikunci. Admin bisa mengubahnya",
     "passwordMissing": "Kata sandi kosong",
     "passwordShort": {
@@ -3603,7 +3604,7 @@
     "same": "Silakan pilih kata sandi yang berbeda dari sebelumnya.",
     "badReset": "Kodenya salah atau sudah kedaluwarsa. Silakan minta yang baru.",
     "passkeyFailed": "Passkey ini tidak bisa dipakai untuk masuk di sini.",
-    "passkeyOff": "Passkey dimatikan di server ini.",
+    "passkeyNotHere": "Passkey tidak berfungsi di alamat ini.",
     "offline": "CannonCommander sedang tidak menjawab. Silakan coba lagi sebentar lagi."
   },
   "ui": {

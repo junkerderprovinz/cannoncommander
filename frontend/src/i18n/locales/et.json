@@ -388,7 +388,7 @@
       "shares": "Jagamised",
       "security": "Konto ja turvalisus",
       "integrations": "Integratsioonid",
-      "app": "Rakendus",
+      "system": "Süsteem",
       "info": "Teave"
     },
     "actions": {
@@ -924,7 +924,7 @@
       "changedAgo": "Muudetud {ago}",
       "change": "Muuda",
       "stay": "Jää sisse logituks",
-      "stayTip": "Seejärel küsib CannonCommander uuesti parooli.",
+      "stayTip": "Aeg loetakse sinu viimasest külastusest. Kui sind nii kaua ei ole, küsib CannonCommander uuesti parooli.",
       "day1": "1 päev",
       "twofa": "Kaheastmeline autentimine",
       "status": "Olek",
@@ -978,6 +978,9 @@
       },
       "passkeys": "Pääsuvõtmed",
       "noPasskey": "Pääsuvõtit veel pole",
+      "passkeyHint": "Pääsuvõti logib sind sisse ilma paroolita. See töötab ainult aadressil, kus sa selle lood.",
+      "noPasskeyHere": "Siin ei saa pääsuvõtit luua",
+      "passkeyBrowser": "See brauser ei paku siin pääsuvõtmeid. See töötab ainult HTTPS-i kaudu või localhostis.",
       "addPasskey": "Lisa pääsuvõti",
       "removePasskey": "Eemalda pääsuvõti",
       "removePasskeyText": "{name} ei logi sind pärast seda enam sisse. Parool kehtib edasi.",
@@ -1026,7 +1029,6 @@
       "copyNow": "Kopeeri luba nüüd. CannonCommander ei näita seda enam kunagi, saad ainult uue luua.",
       "tokenCreatedToast": "Luba {name} loodud",
       "pwLocked": "Sinu parooli saab siin muuta ainult administraator, või logid sisse mõne teise teenuse kaudu.",
-      "passkeysOff": "Pääsuvõtmed on selles serveris välja lülitatud",
       "tooMany": "Liiga palju katseid. Proovi 15 minuti pärast uuesti",
       "proofTip": "CannonCommander küsib seda enne iga uut juurdepääsu, et ainult sina saaksid seda lisada.",
       "signInAgain": "Logi uuesti sisse",
@@ -1083,10 +1085,10 @@
     },
     "app": {
       "updates": "Värskendused",
-      "autoCheck": "Otsi värskendusi automaatselt",
-      "autoCheckTip": "Kord päevas. Värskenduse paigaldad ise, Unraidis Dockeri vahekaardil.",
-      "image": "Dockeri tõmmis",
-      "tagTip": "Praegu töötab see versioon. Millist silti Unraid tõmbab, määrad mallis, latest järgib iga uut versiooni.",
+      "autoCheck": "Kontrolli automaatselt",
+      "autoCheckTip": "Kuni see on sees, küsib selle lehe avamine GitHubilt korra, kas uuem CannonCommander on väljas. See ainult küsib, sest konteiner saab värskendused oma konteinerihaldurilt.",
+      "autoUpdate": "Värskenda automaatselt",
+      "autoUpdateTip": "Konteiner ei saa end seestpoolt asendada. Värskenda seda selle asemel Unraidis Dockeri vahekaardil, käsuga docker pull või Watchtoweriga.",
       "check": "Otsi värskendusi",
       "checking": "Otsin",
       "current": "Ajakohane, {v}",
@@ -1133,8 +1135,6 @@
       "notExport": "See pole eksporditud seadete fail",
       "imported": "Seaded võeti üle failist {name}",
       "noAnswer": "GitHub ei vastanud praegu. Proovi hiljem uuesti",
-      "restartNeeded": "Vajab taaskäivitust",
-      "restartNeededTip": "Mõned seaded hakkavad kehtima alles pärast taaskäivitust.",
       "importedRestart": "{name} on üle võetud. Taaskäivita CannonCommander, et kõik kehtima hakkaks"
     },
     "info": {
@@ -3553,12 +3553,13 @@
     "ownSessionsElsewhere": "Oma seansid, load ja pääsuvõtmed lõpetad jaotises Konto ja turvalisus",
     "passkeyExists": "Sellise nimega pääsuvõti on juba olemas",
     "passkeyNameMissing": "Anna pääsuvõtmele nimi",
+    "passkeyNeedsHostName": "Pääsuvõtmed vajavad hostinime, aga see leht on avatud IP-aadressi kaudu. Ava CannonCommander selle nime all, siis see töötab",
     "passkeyNotConfirmed": "Brauser ei kinnitanud pääsuvõtit. Proovi uuesti",
     "passkeyRegistered": "See pääsuvõti on juba registreeritud",
     "passkeyUnknown": "Selle pääsuvõtmega siia sisse ei logita",
     "passkeysElsewhere": "Pääsuvõtmed käivad koos parooliga ja sina logid sisse teenuse {method} kaudu",
-    "passkeysOff": "Pääsuvõtmed on selles serveris välja lülitatud",
     "passwordElsewhere": "Logid sisse teenuse {method} kaudu, parool on seal",
+    "passwordFirst": "Pääsuvõti käib koos parooliga ja sellel kontol pole veel parooli",
     "passwordLocked": "Sinu parool on lukus. Administraator saab seda muuta",
     "passwordMissing": "Parool puudub",
     "passwordShort": {
@@ -3745,7 +3746,7 @@
     "same": "Vali palun vanast erinev parool.",
     "badReset": "Kood pole õige või on aegunud. Küsi uus.",
     "passkeyFailed": "Selle pääsuvõtmega siin sisse logida ei saa.",
-    "passkeyOff": "Pääsuvõtmed on selles serveris välja lülitatud.",
+    "passkeyNotHere": "Sellel aadressil pääsuvõtmed ei tööta.",
     "offline": "CannonCommander ei vasta praegu. Proovi kohe uuesti."
   },
   "ui": {

@@ -187,15 +187,20 @@ paths:
       summary: Passkeys
       responses:
         "200":
-          description: The passkeys, and whether the server takes passkeys.
+          description: |
+            The passkeys. blocked says why no passkey can be added from
+            here and is missing when one can: the account signs in
+            elsewhere or has no password, the server takes no passwords, or
+            the page is open on an IP address, where browsers keep no
+            passkey.
           content:
             application/json:
               schema:
                 type: object
-                required: [enabled, items]
+                required: [items]
                 properties:
-                  enabled:
-                    type: boolean
+                  blocked:
+                    $ref: "#/components/schemas/Problem"
                   items:
                     type: array
                     items:
@@ -259,7 +264,7 @@ paths:
         "403":
           $ref: "#/components/responses/FreshProof"
         "409":
-          description: Passkeys are turned off, the account signs in elsewhere, the name or the passkey is taken, or the first step ran out.
+          description: The account signs in elsewhere or has no password, the server takes no passwords, the page is open on an IP address, the name or the passkey is taken, or the first step ran out.
         "429":
           description: Too many wrong passwords.
   /me/passkeys/{id}:
@@ -426,9 +431,10 @@ paths:
         password when a new password is due, totpSetup when the server asks
         everyone for two factor login and the account has none yet. A
         challenge works for five minutes. With remember the session lasts
-        the days of the setting stayDays (30 when unset) through browser
-        restarts, without it the session ends with the browser and after
-        12 hours at most. Five wrong passwords for one name from one
+        through browser restarts until it goes unused for the days of the
+        setting stayDays (30 when unset), as a visit once a day renews its
+        token. Without it the session ends with the browser and after 12
+        hours at most. Five wrong passwords for one name from one
         address, or twenty from one address, wait 15 minutes.
       x-access: public
       requestBody:
@@ -562,7 +568,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/PasskeyChallenge"
         "409":
-          description: Passkeys are turned off on this server.
+          description: The server takes no passwords, which passkeys come with, or the page is open on an IP address.
           content:
             application/problem+json:
               schema:
@@ -607,7 +613,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "409":
-          description: Passkeys are turned off on this server.
+          description: The server takes no passwords, which passkeys come with, or the page is open on an IP address.
           content:
             application/problem+json:
               schema:

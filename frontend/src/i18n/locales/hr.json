@@ -410,7 +410,7 @@
       "shares": "Dijeljene poveznice",
       "security": "Račun i sigurnost",
       "integrations": "Integracije",
-      "app": "Aplikacija",
+      "system": "Sustav",
       "info": "Informacije"
     },
     "actions": {
@@ -965,7 +965,7 @@
       "changedAgo": "Promijenjena {ago}",
       "change": "Promijeni",
       "stay": "Zadrži prijavu",
-      "stayTip": "Nakon toga CannonCommander ponovno traži lozinku.",
+      "stayTip": "Vrijeme se računa od vašeg zadnjeg posjeta. Ako toliko dugo ne navratite, CannonCommander ponovno traži lozinku.",
       "day1": "1 dan",
       "twofa": "Dvofaktorska autentifikacija",
       "status": "Stanje",
@@ -1021,6 +1021,9 @@
       },
       "passkeys": "Pristupni ključevi",
       "noPasskey": "Još nema pristupnog ključa",
+      "passkeyHint": "Pristupni ključ prijavljuje vas bez lozinke. Radi samo na adresi na kojoj ga izradite.",
+      "noPasskeyHere": "Ovdje se ne može izraditi pristupni ključ",
+      "passkeyBrowser": "Ovaj preglednik ovdje ne nudi pristupne ključeve. To radi samo preko HTTPS-a ili na localhostu.",
       "addPasskey": "Dodaj pristupni ključ",
       "removePasskey": "Ukloni pristupni ključ",
       "removePasskeyText": "{name} vas nakon toga više ne prijavljuje. Lozinka i dalje vrijedi.",
@@ -1070,7 +1073,6 @@
       "copyNow": "Kopirajte token sada. CannonCommander ga poslije više nikad ne prikazuje, možete samo izraditi novi.",
       "tokenCreatedToast": "Token {name} je izrađen",
       "pwLocked": "Vašu lozinku ovdje mijenja samo administrator, ili se prijavljujete preko druge usluge.",
-      "passkeysOff": "Pristupni ključevi isključeni su na ovom poslužitelju",
       "tooMany": "Previše pokušaja. Pokušajte ponovno za 15 minuta",
       "proofTip": "CannonCommander to traži prije svakog novog pristupa, da ga samo vi možete dodati.",
       "signInAgain": "Ponovno se prijavi",
@@ -1127,10 +1129,10 @@
     },
     "app": {
       "updates": "Ažuriranja",
-      "autoCheck": "Automatski traži ažuriranja",
-      "autoCheckTip": "Jednom dnevno. Ažuriranje instalirate sami, na Unraidu na kartici Docker.",
-      "image": "Docker slika",
-      "tagTip": "Ova verzija trenutačno radi. Koju oznaku Unraid preuzima, određujete u predlošku, latest prati svaku novu verziju.",
+      "autoCheck": "Automatski provjeri",
+      "autoCheckTip": "Dok je ovo uključeno, otvaranje ove stranice jednom pita GitHub je li izašao noviji CannonCommander. Samo pita, jer kontejner dobiva ažuriranja od svog upravitelja kontejnera.",
+      "autoUpdate": "Ažuriraj automatski",
+      "autoUpdateTip": "Kontejner ne može sam sebe zamijeniti iznutra. Umjesto toga ažurirajte ga na Unraidu na kartici Docker, naredbom docker pull ili Watchtowerom.",
       "check": "Potraži ažuriranja",
       "checking": "Tražim",
       "current": "Ažurno, {v}",
@@ -1178,8 +1180,6 @@
       "notExport": "Ovo nije izvezena datoteka postavki",
       "imported": "Postavke iz {name} su preuzete",
       "noAnswer": "GitHub trenutačno nije odgovorio. Pokušajte ponovno kasnije",
-      "restartNeeded": "Potrebno ponovno pokretanje",
-      "restartNeededTip": "Neke postavke vrijede tek nakon ponovnog pokretanja.",
       "importedRestart": "{name} je preuzet. Ponovno pokrenite CannonCommander da bi sve vrijedilo"
     },
     "info": {
@@ -3689,12 +3689,13 @@
     "ownSessionsElsewhere": "Svoje sesije, tokene i pristupne ključeve završavate pod Račun i sigurnost",
     "passkeyExists": "Pristupni ključ s tim nazivom već postoji",
     "passkeyNameMissing": "Dajte pristupnom ključu naziv",
+    "passkeyNeedsHostName": "Pristupnim ključevima treba naziv hosta, a ova je stranica otvorena preko IP adrese. Otvorite CannonCommander pod njegovim imenom i radit će",
     "passkeyNotConfirmed": "Preglednik nije potvrdio pristupni ključ. Pokušajte ponovno",
     "passkeyRegistered": "Taj je pristupni ključ već registriran",
     "passkeyUnknown": "Ovim se pristupnim ključem ovdje ne prijavljuje",
     "passkeysElsewhere": "Pristupni ključevi idu uz lozinku, a vi se prijavljujete preko {method}",
-    "passkeysOff": "Pristupni ključevi isključeni su na ovom poslužitelju",
     "passwordElsewhere": "Prijavljujete se preko {method}, lozinka se čuva ondje",
+    "passwordFirst": "Pristupni ključ ide uz lozinku, a ovaj račun još nema lozinku",
     "passwordLocked": "Vaša je lozinka zaključana. Administrator je može promijeniti",
     "passwordMissing": "Lozinka nedostaje",
     "passwordShort": {
@@ -3887,7 +3888,7 @@
     "same": "Odaberite lozinku drukčiju od dosadašnje.",
     "badReset": "Kôd nije točan ili je istekao. Zatražite novi.",
     "passkeyFailed": "Ovim pristupnim ključem prijava ovdje ne radi.",
-    "passkeyOff": "Pristupni ključevi isključeni su na ovom poslužitelju.",
+    "passkeyNotHere": "Na ovoj adresi pristupni ključevi ne rade.",
     "offline": "CannonCommander trenutačno ne odgovara. Pokušajte ponovno za trenutak."
   },
   "ui": {

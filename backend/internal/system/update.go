@@ -56,8 +56,9 @@ func (s *service) checkUpdate(ctx context.Context) (UpdateCheck, error) {
 		return out, err
 	}
 	out.Latest, out.ReleaseURL = strings.TrimPrefix(rel.Tag, "v"), rel.URL
-	cur, latest := "v"+current, "v"+out.Latest
-	out.UpdateAvailable = semver.IsValid(cur) && semver.IsValid(latest) && semver.Compare(latest, cur) > 0
+	cur, released := version.Release()
+	latest := "v" + out.Latest
+	out.UpdateAvailable = released && semver.IsValid(latest) && semver.Compare(latest, cur) > 0
 	return out, nil
 }
 

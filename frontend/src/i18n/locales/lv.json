@@ -410,7 +410,7 @@
       "shares": "Koplietojumi",
       "security": "Konts un drošība",
       "integrations": "Integrācijas",
-      "app": "Lietotne",
+      "system": "Sistēma",
       "info": "Informācija"
     },
     "actions": {
@@ -965,7 +965,7 @@
       "changedAgo": "Mainīta {ago}",
       "change": "Mainīt",
       "stay": "Palikt pieteiktam",
-      "stayTip": "Pēc tam CannonCommander atkal prasīs paroli.",
+      "stayTip": "Laiks tiek skaitīts no tava pēdējā apmeklējuma. Ja tik ilgi neienāksi, CannonCommander atkal prasīs paroli.",
       "day1": "1 diena",
       "twofa": "Divu faktoru autentifikācija",
       "status": "Statuss",
@@ -1021,6 +1021,9 @@
       },
       "passkeys": "Piekļuves atslēgas",
       "noPasskey": "Vēl nav piekļuves atslēgas",
+      "passkeyHint": "Piekļuves atslēga tevi piesaka bez paroles. Tā darbojas tikai adresē, kurā to izveidoji.",
+      "noPasskeyHere": "Šeit piekļuves atslēgu izveidot nevar",
+      "passkeyBrowser": "Šī pārlūkprogramma šeit nepiedāvā piekļuves atslēgas. Tas darbojas tikai caur HTTPS vai localhost.",
       "addPasskey": "Pievienot piekļuves atslēgu",
       "removePasskey": "Noņemt piekļuves atslēgu",
       "removePasskeyText": "{name} pēc tam tevi vairs nepieteiks. Parole darbojas tālāk.",
@@ -1070,7 +1073,6 @@
       "copyNow": "Nokopē marķieri tagad. CannonCommander to vairs nekad nerādīs, vari tikai izveidot jaunu.",
       "tokenCreatedToast": "Marķieris {name} izveidots",
       "pwLocked": "Tavu paroli šeit maina tikai administrators, vai arī tu piesakies caur citu pakalpojumu.",
-      "passkeysOff": "Piekļuves atslēgas šajā serverī ir izslēgtas",
       "tooMany": "Pārāk daudz mēģinājumu. Lūdzu, mēģini vēlreiz pēc 15 minūtēm",
       "proofTip": "CannonCommander to prasa pirms katras jaunas piekļuves, lai to pievienot varētu tikai tu.",
       "signInAgain": "Pieteikties no jauna",
@@ -1127,10 +1129,10 @@
     },
     "app": {
       "updates": "Atjauninājumi",
-      "autoCheck": "Automātiski meklēt atjauninājumus",
-      "autoCheckTip": "Reizi dienā. Atjauninājumu instalē pats, Unraid cilnē Docker.",
-      "image": "Docker attēls",
-      "tagTip": "Šī versija darbojas pašlaik. Kuru tagu Unraid lejupielādē, nosaki veidnē, latest seko katrai jaunai versijai.",
+      "autoCheck": "Pārbaudīt automātiski",
+      "autoCheckTip": "Kamēr šis ir ieslēgts, atverot šo lapu, GitHub vienreiz tiek pajautāts, vai iznācis jaunāks CannonCommander. Tas tikai jautā, jo konteiners atjauninājumus saņem no sava konteineru pārvaldnieka.",
+      "autoUpdate": "Atjaunināt automātiski",
+      "autoUpdateTip": "Konteiners nevar aizstāt pats sevi no iekšpuses. Tā vietā atjaunini to Unraid cilnē Docker, ar docker pull vai ar Watchtower.",
       "check": "Meklēt atjauninājumus",
       "checking": "Meklē",
       "current": "Aktuāla, {v}",
@@ -1178,8 +1180,6 @@
       "notExport": "Tas nav eksportēts iestatījumu fails",
       "imported": "Iestatījumi pārņemti no {name}",
       "noAnswer": "GitHub pašlaik neatbildēja. Lūdzu, mēģini vēlreiz vēlāk",
-      "restartNeeded": "Vajag restartēt",
-      "restartNeededTip": "Daži iestatījumi stāsies spēkā tikai pēc restartēšanas.",
       "importedRestart": "{name} ir pārņemts. Restartē CannonCommander, lai viss stātos spēkā"
     },
     "info": {
@@ -3689,12 +3689,13 @@
     "ownSessionsElsewhere": "Savas sesijas, marķierus un piekļuves atslēgas beidz sadaļā Konts un drošība",
     "passkeyExists": "Piekļuves atslēga ar šādu nosaukumu jau ir",
     "passkeyNameMissing": "Piešķir piekļuves atslēgai nosaukumu",
+    "passkeyNeedsHostName": "Piekļuves atslēgām vajag resursdatora nosaukumu, bet šī lapa ir atvērta caur IP adresi. Atver CannonCommander ar tā nosaukumu, un tad tas darbosies",
     "passkeyNotConfirmed": "Pārlūks neapstiprināja piekļuves atslēgu. Lūdzu, mēģini vēlreiz",
     "passkeyRegistered": "Šī piekļuves atslēga jau ir reģistrēta",
     "passkeyUnknown": "Ar šo piekļuves atslēgu šeit nepiesakās",
     "passkeysElsewhere": "Piekļuves atslēgas ir saistītas ar paroli, bet tu piesakies caur {method}",
-    "passkeysOff": "Piekļuves atslēgas šajā serverī ir izslēgtas",
     "passwordElsewhere": "Tu piesakies caur {method}, parole glabājas tur",
+    "passwordFirst": "Piekļuves atslēga iet kopā ar paroli, bet šim kontam paroles vēl nav",
     "passwordLocked": "Tava parole ir bloķēta. To var mainīt administrators",
     "passwordMissing": "Trūkst paroles",
     "passwordShort": {
@@ -3887,7 +3888,7 @@
     "same": "Lūdzu, izvēlies citu paroli nekā iepriekš.",
     "badReset": "Kods nav pareizs vai ir beidzies. Lūdzu, pieprasi jaunu.",
     "passkeyFailed": "Ar šo piekļuves atslēgu šeit pieteikties neizdodas.",
-    "passkeyOff": "Piekļuves atslēgas šajā serverī ir izslēgtas.",
+    "passkeyNotHere": "Šajā adresē piekļuves atslēgas nedarbojas.",
     "offline": "CannonCommander pašlaik neatbild. Mēģini vēlreiz pēc brīža."
   },
   "ui": {

@@ -10,7 +10,7 @@ module.exports = async (page, shot) => {
     await page.setViewportSize({ width: 1600, height: 950 });
   };
   const closeWin = async () => { await page.keyboard.press('Escape'); await wait(150); };
-  const tabs = ['general', 'look', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'security', 'integrations', 'app', 'info'];
+  const tabs = ['general', 'look', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'security', 'integrations', 'system', 'info'];
 
   for (const theme of ['dark', 'light']) {
     await page.evaluate((t) => CC.setPref('theme', t), theme);
@@ -126,19 +126,17 @@ module.exports = async (page, shot) => {
   await page.click('.win-foot .btn.primary'); await wait(300);
   await full('a-security-after');
 
-  // Integrations test, app export, info.
+  // Integrations test, settings export, info.
   await tab('integrations');
   await page.click('[data-it="webdav"]'); await wait(300);
   await page.fill('#a-oourl', 'https://office.tower.lan');
   await page.click('#a-ootest'); await wait(1000);
   await full('a-integrations-after');
-  await tab('app');
+  await tab('system');
   await page.click('#a-export'); await wait();
   await page.click('.win-foot .btn.primary'); await wait(300);
   await shot('a-export-done');
   await closeWin();
-  await page.click('#a-upd'); await wait(1000);
-  await shot('a-app-after');
   await tab('info');
   await page.hover('#a-coffee'); await wait(300);
   await shot('a-info-hover');

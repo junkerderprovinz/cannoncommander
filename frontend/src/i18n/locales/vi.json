@@ -366,7 +366,7 @@
       "shares": "Chia sẻ",
       "security": "Tài khoản và bảo mật",
       "integrations": "Tích hợp",
-      "app": "Ứng dụng",
+      "system": "Hệ thống",
       "info": "Thông tin"
     },
     "actions": {
@@ -883,7 +883,7 @@
       "changedAgo": "Đã đổi {ago}",
       "change": "Đổi",
       "stay": "Giữ đăng nhập",
-      "stayTip": "Sau thời gian này CannonCommander sẽ hỏi lại mật khẩu.",
+      "stayTip": "Thời gian được tính từ lần ghé gần nhất của bạn. Nếu bạn không ghé lâu như vậy, CannonCommander sẽ hỏi lại mật khẩu.",
       "day1": "1 ngày",
       "twofa": "Xác thực hai lớp",
       "status": "Trạng thái",
@@ -935,6 +935,9 @@
       },
       "passkeys": "Passkey",
       "noPasskey": "Chưa có passkey",
+      "passkeyHint": "Passkey giúp bạn đăng nhập mà không cần mật khẩu. Nó chỉ dùng được ở địa chỉ nơi bạn tạo nó.",
+      "noPasskeyHere": "Không thể tạo passkey ở đây",
+      "passkeyBrowser": "Trình duyệt này không cung cấp passkey ở đây. Chỉ dùng được qua HTTPS hoặc trên localhost.",
       "addPasskey": "Thêm passkey",
       "removePasskey": "Gỡ passkey",
       "removePasskeyText": "Sau đó {name} không đăng nhập cho bạn được nữa. Mật khẩu vẫn dùng được.",
@@ -982,7 +985,6 @@
       "copyNow": "Hãy sao chép token ngay. CannonCommander sẽ không bao giờ hiện lại nó, bạn chỉ có thể tạo token mới.",
       "tokenCreatedToast": "Đã tạo token {name}",
       "pwLocked": "Mật khẩu của bạn ở đây chỉ quản trị viên đổi được, hoặc bạn đăng nhập qua một dịch vụ khác.",
-      "passkeysOff": "Passkey đã bị tắt trên máy chủ này",
       "tooMany": "Thử quá nhiều lần. Bạn thử lại sau 15 phút nhé",
       "proofTip": "CannonCommander hỏi điều này trước mỗi cách truy cập mới, để chỉ bạn mới tạo được.",
       "signInAgain": "Đăng nhập lại",
@@ -1039,10 +1041,10 @@
     },
     "app": {
       "updates": "Cập nhật",
-      "autoCheck": "Tự động tìm bản cập nhật",
-      "autoCheckTip": "Mỗi ngày một lần. Bạn tự cài bản cập nhật, trên Unraid trong thẻ Docker.",
-      "image": "Docker image",
-      "tagTip": "Phiên bản này đang chạy. Unraid tải tag nào là do bạn đặt trong template, latest đi theo mọi phiên bản mới.",
+      "autoCheck": "Tự động kiểm tra",
+      "autoCheckTip": "Khi bật, mở trang này sẽ hỏi GitHub một lần xem đã có CannonCommander mới hơn chưa. Nó chỉ hỏi, vì container nhận bản cập nhật từ trình quản lý container của nó.",
+      "autoUpdate": "Tự động cập nhật",
+      "autoUpdateTip": "Một container không thể tự thay thế chính nó từ bên trong. Thay vào đó, hãy cập nhật nó trên Unraid trong thẻ Docker, bằng docker pull hoặc bằng Watchtower.",
       "check": "Tìm bản cập nhật",
       "checking": "Đang tìm",
       "current": "Đã mới nhất, {v}",
@@ -1088,8 +1090,6 @@
       "notExport": "Đây không phải tệp cài đặt đã xuất",
       "imported": "Đã nhận cài đặt từ {name}",
       "noAnswer": "GitHub vừa rồi không phản hồi. Bạn thử lại sau nhé",
-      "restartNeeded": "Cần khởi động lại",
-      "restartNeededTip": "Một vài cài đặt chỉ có hiệu lực sau khi khởi động lại.",
       "importedRestart": "Đã nhận {name}. Hãy khởi động lại CannonCommander để mọi thứ có hiệu lực"
     },
     "info": {
@@ -3417,12 +3417,13 @@
     "ownSessionsElsewhere": "Bạn kết thúc phiên, token và passkey của chính mình trong Tài khoản và bảo mật",
     "passkeyExists": "Đã có passkey trùng tên",
     "passkeyNameMissing": "Hãy đặt tên cho passkey",
+    "passkeyNeedsHostName": "Passkey cần tên máy chủ, mà trang này đang mở qua địa chỉ IP. Hãy mở CannonCommander bằng tên của nó là được",
     "passkeyNotConfirmed": "Trình duyệt chưa xác nhận passkey. Bạn thử lại nhé",
     "passkeyRegistered": "Passkey này đã được đăng ký",
     "passkeyUnknown": "Passkey này không dùng để đăng nhập ở đây",
     "passkeysElsewhere": "Passkey đi kèm mật khẩu, mà bạn đăng nhập qua {method}",
-    "passkeysOff": "Passkey đã bị tắt trên máy chủ này",
     "passwordElsewhere": "Bạn đăng nhập qua {method}, mật khẩu được giữ ở đó",
+    "passwordFirst": "Passkey đi kèm mật khẩu, mà tài khoản này chưa có mật khẩu",
     "passwordLocked": "Mật khẩu của bạn đã bị khóa. Quản trị viên có thể đổi nó",
     "passwordMissing": "Còn thiếu mật khẩu",
     "passwordShort": {
@@ -3603,7 +3604,7 @@
     "same": "Bạn chọn mật khẩu khác với mật khẩu cũ nhé.",
     "badReset": "Mã không đúng hoặc đã hết hạn. Bạn lấy mã mới nhé.",
     "passkeyFailed": "Không đăng nhập được ở đây bằng passkey này.",
-    "passkeyOff": "Passkey đã bị tắt trên máy chủ này.",
+    "passkeyNotHere": "Passkey không dùng được ở địa chỉ này.",
     "offline": "CannonCommander hiện không phản hồi. Bạn thử lại sau giây lát nhé."
   },
   "ui": {

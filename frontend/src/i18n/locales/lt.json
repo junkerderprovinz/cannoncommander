@@ -432,7 +432,7 @@
       "shares": "Bendrinimai",
       "security": "Paskyra ir sauga",
       "integrations": "Integracijos",
-      "app": "Programa",
+      "system": "Sistema",
       "info": "Informacija"
     },
     "actions": {
@@ -1006,7 +1006,7 @@
       "changedAgo": "Pakeista {ago}",
       "change": "Keisti",
       "stay": "Likti prisijungus",
-      "stayTip": "Po to CannonCommander vėl paprašys slaptažodžio.",
+      "stayTip": "Laikas skaičiuojamas nuo tavo paskutinio apsilankymo. Jei tiek laiko neužsuksi, CannonCommander vėl paprašys slaptažodžio.",
       "day1": "1 diena",
       "twofa": "Dviejų veiksnių autentifikavimas",
       "status": "Būsena",
@@ -1064,6 +1064,9 @@
       },
       "passkeys": "Slaptaraktai",
       "noPasskey": "Slaptaraktų dar nėra",
+      "passkeyHint": "Slaptaraktis prijungia tave be slaptažodžio. Jis veikia tik tuo adresu, kuriuo jį sukūrei.",
+      "noPasskeyHere": "Čia slaptarakčio sukurti negalima",
+      "passkeyBrowser": "Ši naršyklė čia slaptarakčių nesiūlo. Tai veikia tik per HTTPS arba localhost.",
       "addPasskey": "Pridėti slaptaraktį",
       "removePasskey": "Pašalinti slaptaraktį",
       "removePasskeyText": "{name} po to tavęs nebeprijungs. Slaptažodis toliau galioja.",
@@ -1114,7 +1117,6 @@
       "copyNow": "Nusikopijuok žetoną dabar. CannonCommander jo daugiau neberodys, galėsi tik sukurti naują.",
       "tokenCreatedToast": "Žetonas {name} sukurtas",
       "pwLocked": "Tavo slaptažodį čia keičia tik administratorius, arba tu prisijungi per kitą paslaugą.",
-      "passkeysOff": "Slaptaraktai šiame serveryje išjungti",
       "tooMany": "Per daug bandymų. Pabandyk dar kartą po 15 minučių",
       "proofTip": "CannonCommander to klausia prieš kiekvieną naują prieigą, kad ją pridėti galėtum tik tu.",
       "signInAgain": "Prisijungti iš naujo",
@@ -1171,10 +1173,10 @@
     },
     "app": {
       "updates": "Atnaujinimai",
-      "autoCheck": "Ieškoti atnaujinimų automatiškai",
-      "autoCheckTip": "Kartą per dieną. Atnaujinimą įdiegti turi pats, Unraid skirtuke Docker.",
-      "image": "Docker atvaizdas",
-      "tagTip": "Ši versija veikia dabar. Kurią žymę Unraid parsiųs, nustatai šablone, latest seka kiekvieną naują versiją.",
+      "autoCheck": "Tikrinti automatiškai",
+      "autoCheckTip": "Kol tai įjungta, atidarius šį puslapį kartą paklausiama GitHub, ar išėjo naujesnis CannonCommander. Tik klausiama, nes konteineris atnaujinimus gauna iš savo konteinerių tvarkyklės.",
+      "autoUpdate": "Atnaujinti automatiškai",
+      "autoUpdateTip": "Konteineris negali pakeisti savęs iš vidaus. Vietoj to atnaujink jį Unraid skirtuke Docker, komanda docker pull arba su Watchtower.",
       "check": "Ieškoti atnaujinimų",
       "checking": "Ieškoma",
       "current": "Naujausia, {v}",
@@ -1223,8 +1225,6 @@
       "notExport": "Tai ne eksportuotas nustatymų failas",
       "imported": "Nustatymai perimti iš {name}",
       "noAnswer": "GitHub šiuo metu neatsakė. Pabandyk dar kartą vėliau",
-      "restartNeeded": "Reikia paleisti iš naujo",
-      "restartNeededTip": "Kai kurie nustatymai galios tik paleidus iš naujo.",
       "importedRestart": "{name} perimtas. Paleisk CannonCommander iš naujo, kad viskas galiotų"
     },
     "info": {
@@ -3825,12 +3825,13 @@
     "ownSessionsElsewhere": "Savo seansus, žetonus ir slaptaraktus užbaigi skiltyje Paskyra ir sauga",
     "passkeyExists": "Slaptaraktis tokiu pavadinimu jau yra",
     "passkeyNameMissing": "Suteik slaptaraktiui pavadinimą",
+    "passkeyNeedsHostName": "Slaptaraktams reikia pagrindinio kompiuterio vardo, o šis puslapis atvertas per IP adresą. Atverk CannonCommander jo vardu, tada veiks",
     "passkeyNotConfirmed": "Naršyklė nepatvirtino slaptaraktio. Pabandyk dar kartą",
     "passkeyRegistered": "Šis slaptaraktis jau užregistruotas",
     "passkeyUnknown": "Su šiuo slaptaraktiu čia neprisijungiama",
     "passkeysElsewhere": "Slaptaraktai susiję su slaptažodžiu, o tu prisijungi per {method}",
-    "passkeysOff": "Slaptaraktai šiame serveryje išjungti",
     "passwordElsewhere": "Tu prisijungi per {method}, slaptažodis laikomas ten",
+    "passwordFirst": "Slaptaraktis eina kartu su slaptažodžiu, o ši paskyra slaptažodžio dar neturi",
     "passwordLocked": "Tavo slaptažodis užrakintas. Jį pakeisti gali administratorius",
     "passwordMissing": "Trūksta slaptažodžio",
     "passwordShort": {
@@ -4029,7 +4030,7 @@
     "same": "Pasirink kitą slaptažodį nei ankstesnis.",
     "badReset": "Kodas neteisingas arba nebegalioja. Gauk naują.",
     "passkeyFailed": "Su šiuo slaptaraktiu čia prisijungti nepavyksta.",
-    "passkeyOff": "Slaptaraktai šiame serveryje išjungti.",
+    "passkeyNotHere": "Šiuo adresu slaptaraktai neveikia.",
     "offline": "CannonCommander šiuo metu neatsako. Pabandyk dar kartą po akimirkos."
   },
   "ui": {

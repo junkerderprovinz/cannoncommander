@@ -16,7 +16,7 @@
   const today = new Date(NOW).toISOString().slice(0, 10);
 
   /* Integrationen */
-  CC.settingsTab({ id: 'integrations', label: 'Integrationen', g: 'IconModules', order: 100, render(host) {
+  CC.settingsTab({ id: 'integrations', label: 'Anbindungen', g: 'IconModules', order: 100, render(host) {
     const it = DATA.integrations, rc = DATA.rclone;
     host.innerHTML = CC.card('OnlyOffice',
       frow('Server-Adresse', `<span class="a-ctl">${field(it.officeUrl, 'id="a-oourl" placeholder="https://office.tower.lan"')}${btn('Testen', 'IconHealth', 'id="a-ootest"')}</span>`, 'Mit einem OnlyOffice-Server öffnen sich Word-, Excel- und PowerPoint-Dateien zum Bearbeiten im Browser.')
@@ -101,30 +101,18 @@
       } });
   }
 
-  CC.settingsTab({ id: 'app', label: 'App', g: 'IconTabApp', order: 110, render(host) {
+  CC.settingsTab({ id: 'system', label: 'System', g: 'IconTabSystem', order: 110, render(host) {
     const ap = DATA.app;
-    host.innerHTML = CC.card('Updates',
-      frow('Automatisch nach Updates suchen', sw(ap.autoCheck, 'id="a-auto"'), 'Einmal am Tag. Installieren musst du ein Update selbst, auf Unraid im Docker-Tab.')
-      + frow('Docker-Image', A.copyField(ap.image))
-      + frow('Tag', pill(ap.tag, 'mono'), 'Den Tag legst du im Unraid-Template fest. latest folgt jeder neuen Version.')
-      + foot(btn('Nach Updates suchen', 'IconSync', 'id="a-upd"')))
-      + CC.card('Einstellungen sichern',
+    host.innerHTML = CC.card('Einstellungen sichern',
         frow('In eine Datei schreiben', btn('Exportieren', 'IconExport', 'id="a-export"'), 'Alle Einstellungen als JSON-Datei auf dem Server, ohne Passwörter.')
         + frow('Aus einer Datei holen', btn('Importieren', 'IconImport', 'id="a-import"'), 'Ersetzt die Einstellungen hier durch die aus der Datei.'))
       + CC.card('Dienst',
         frow('Protokoll', seg([['error', 'Nur Fehler'], ['info', 'Normal'], ['debug', 'Ausführlich']], ap.logLevel, 'id="a-log"'), 'Wie viel CannonCommander ins Container-Log schreibt. Auf Unraid: Docker-Tab, CannonCommander, Logs.')
         + frow('Läuft', `<span class="a-ctl">${pill(A.ago(ap.started).replace('vor ', 'seit '))}${btn('Neu starten', 'IconRefresh', 'id="a-restart"')}</span>`));
-    $('#a-auto', host).addEventListener('change', e => { ap.autoCheck = swVal(e.target); CC.toast('Gespeichert'); });
     $('#a-log', host).addEventListener('change', e => { ap.logLevel = segVal(e.target); CC.toast('Gespeichert'); });
     $('#a-export', host).addEventListener('click', exportWin);
     $('#a-import', host).addEventListener('click', importWin);
     $('#a-restart', host).addEventListener('click', restart);
-    $('#a-upd', host).addEventListener('click', e => {
-      const b = e.currentTarget;
-      b.disabled = true;
-      b.innerHTML = g('IconSync') + 'Suche';
-      setTimeout(() => { b.disabled = false; b.className = 'btn ok'; b.innerHTML = `${g('IconUpToDate')}Aktuell, ${esc(DATA.version.app)}`; }, 900);
-    });
   } });
 
   /* Info */
@@ -194,6 +182,9 @@
       + frow('GlimStone', vlink('glimstone'), 'Die Designsprache, in der CannonCommander gebaut ist')
       + frow('rclone', vlink('rclone'), 'Die Brücke zu den Fernzielen')
       + foot(`<button class="btn" data-run="whatsNew"><span class="a-dot ${n ? '' : 'seen'}"></span>${g('IconWhatsNew')}${n ? `Neu · ${n}` : 'Neu'}</button><button class="btn" id="a-update">${g('IconSearch')}Nach Updates suchen</button>`))
+      + CC.card('Updates',
+        frow('Automatisch prüfen', sw(DATA.app.autoCheck, 'id="a-auto"'), 'Solange das an ist, fragt CannonCommander beim Öffnen dieser Seite einmal bei GitHub, ob es eine neuere Version gibt. Es fragt nur, denn ein Container bekommt seine Updates über seinen Container-Manager.')
+        + frow('Automatisch aktualisieren', sw(false, 'disabled'), 'Ein Container kann sich nicht von innen selbst ersetzen. Aktualisiere ihn stattdessen im Docker-Tab von Unraid, mit docker pull oder mit Watchtower.'))
       + hinted('Hilfe', 'Für einen Fehlerbericht lädst du eine Datei mit den Einstellungen und dem Zustand der Aufgaben herunter, ohne Passwörter, Schlüssel und Zugangsdaten. Häng sie an ein Issue auf GitHub, dann sieht man, was auf deinem Server passiert ist.', `<div class="a-about">
         <p>Probleme, Wünsche oder Verbesserungsvorschläge? Mach gern ein Issue auf GitHub auf, oder schick eine E-Mail.</p>
         <div class="glim-readme-btn-rows">${readmeBtn({ tile: 'glim-tile-github', mark: 'glim-github-mark', glyph: 'IconGithub', name: 'GitHub', attr: 'id="a-github"' })}${readmeBtn({ tile: 'glim-tile-house', mark: 'glim-house-mark', glyph: 'IconMail', name: 'E-Mail', attr: 'id="a-mail"' })}${readmeBtn({ tile: 'glim-tile-docs', mark: 'glim-docs-mark', glyph: 'IconManual', name: 'Handbuch', sub: 'Öffnen', attr: 'data-run="docs"' })}${readmeBtn({ tile: 'glim-tile-github', mark: 'glim-github-mark', glyph: 'IconDiagnostics', name: 'Fehlerbericht', sub: 'Herunterladen', attr: 'id="a-bug"' })}</div></div>`)
@@ -209,11 +200,15 @@
     // Subject only: a prefilled body reads as a form to fill in.
     $('#a-mail', host).addEventListener('click', () => window.open(`mailto:${MAIL}?subject=${encodeURIComponent('CannonCommander Rückmeldung')}`, '_blank', 'noopener'));
     const up = $('#a-update', host);
+    const current = () => { up.disabled = false; up.classList.add('ok'); up.innerHTML = `${g('IconCheck')}Aktuell`; up.dataset.tip = 'Nach Updates suchen'; };
     up.addEventListener('click', () => {
       up.disabled = true;
       up.innerHTML = `${g('IconSearch')}Nach Updates suchen`;
-      setTimeout(() => { up.disabled = false; up.classList.add('ok'); up.innerHTML = `${g('IconCheck')}Aktuell`; up.dataset.tip = 'Nach Updates suchen'; }, 900);
+      setTimeout(current, 900);
     });
+    // With the switch on, the page asks GitHub as it opens, and the made-up answer is always that nothing newer is out.
+    if (DATA.app.autoCheck) current();
+    $('#a-auto', host).addEventListener('change', e => { DATA.app.autoCheck = swVal(e.target); if (DATA.app.autoCheck) current(); CC.toast('Gespeichert'); });
   } });
 
   function whatsNewWin() {

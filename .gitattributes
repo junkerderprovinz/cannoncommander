@@ -1,1 +1,2 @@
 *.sh text eol=lf
+backend/internal/version/archive.txt export-subst

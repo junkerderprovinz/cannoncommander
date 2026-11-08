@@ -55,7 +55,7 @@ watch(linkable, (ok) => { if (!ok) props.st.way = props.st.kind; });
         <span id="xsame" class="xsame"><Pill v-for="n in same.slice(0, 3)" :key="n" tone="state">{{ n }}</Pill><Pill v-if="same.length > 3">{{ plural(same.length - 3, 'transfer.more') }}</Pill></span>
       </FieldRow>
       <FieldRow v-if="linkable" :label="t('transfer.way')" :hint="t('transfer.linkTip')"><Selector id="how" v-model="st.way" :items="segItems(ways)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-      <FieldRow :label="t('transfer.clash')" :hint="t('transfer.clashTip')"><Select id="clash" v-model="st.rule" :trigger-attrs="{ 'data-val': st.rule }" :options="selectOptions(RULES())" rows="menu" /></FieldRow>
+      <FieldRow :label="t('transfer.clash')" :hint="t('transfer.clashTip')"><Select id="clash" v-model="st.rule" :trigger-attrs="{ 'data-val': st.rule }" :options="selectOptions(RULES())" /></FieldRow>
     </FieldRowGroup>
     <details class="xmore"><summary>{{ t('transfer.moreOptions') }}</summary>
       <FieldRow :label="t('transfer.keepAttrs')" :hint="t('transfer.keepAttrsTip')"><Toggle v-model="st.keepAttrs" /></FieldRow>

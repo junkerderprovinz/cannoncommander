@@ -388,7 +388,7 @@
       "shares": "Delinger",
       "security": "Konto og sikkerhed",
       "integrations": "Integrationer",
-      "app": "App",
+      "system": "System",
       "info": "Info"
     },
     "actions": {
@@ -924,7 +924,7 @@
       "changedAgo": "Ændret {ago}",
       "change": "Skift",
       "stay": "Forbliv logget ind",
-      "stayTip": "Derefter beder CannonCommander om adgangskoden igen.",
+      "stayTip": "Tiden tæller fra dit seneste besøg. Kommer du ikke forbi så længe, beder CannonCommander om adgangskoden igen.",
       "day1": "1 dag",
       "twofa": "Totrinsbekræftelse",
       "status": "Status",
@@ -978,6 +978,9 @@
       },
       "passkeys": "Adgangsnøgler",
       "noPasskey": "Ingen adgangsnøgle endnu",
+      "passkeyHint": "En adgangsnøgle logger dig ind uden adgangskoden. Den virker kun på den adresse, hvor du opretter den.",
+      "noPasskeyHere": "Her kan der ikke oprettes en adgangsnøgle",
+      "passkeyBrowser": "Denne browser tilbyder ikke adgangsnøgler her. Det virker kun over HTTPS eller på localhost.",
       "addPasskey": "Tilføj adgangsnøgle",
       "removePasskey": "Fjern adgangsnøgle",
       "removePasskeyText": "{name} logger dig ikke ind længere bagefter. Adgangskoden virker fortsat.",
@@ -1026,7 +1029,6 @@
       "copyNow": "Kopiér tokenet nu. CannonCommander viser det aldrig igen, du kan kun oprette et nyt.",
       "tokenCreatedToast": "Token {name} er oprettet",
       "pwLocked": "Din adgangskode ændres her kun af en administrator, eller du logger ind via en anden tjeneste.",
-      "passkeysOff": "Adgangsnøgler er slået fra på denne server",
       "tooMany": "For mange forsøg. Prøv igen om 15 minutter",
       "proofTip": "CannonCommander spørger om det ved hver ny adgang, så kun du kan oprette en.",
       "signInAgain": "Log ind igen",
@@ -1083,10 +1085,10 @@
     },
     "app": {
       "updates": "Opdateringer",
-      "autoCheck": "Søg automatisk efter opdateringer",
-      "autoCheckTip": "Én gang om dagen. En opdatering installerer du selv, på Unraid under fanen Docker.",
-      "image": "Docker-image",
-      "tagTip": "Denne version kører lige nu. Hvilket tag Unraid henter, bestemmer du i templaten, latest følger hver ny version.",
+      "autoCheck": "Tjek automatisk",
+      "autoCheckTip": "Mens dette er slået til, spørger denne side GitHub én gang, når den åbnes, om der er en nyere CannonCommander. Den spørger kun, for en container får sine opdateringer fra sin containerhåndtering.",
+      "autoUpdate": "Opdater automatisk",
+      "autoUpdateTip": "En container kan ikke erstatte sig selv indefra. Opdater den i stedet på Unraid under fanen Docker, med docker pull eller med Watchtower.",
       "check": "Søg efter opdateringer",
       "checking": "Søger",
       "current": "Opdateret, {v}",
@@ -1133,8 +1135,6 @@
       "notExport": "Det er ikke en eksporteret indstillingsfil",
       "imported": "Indstillinger overtaget fra {name}",
       "noAnswer": "GitHub svarede ikke lige nu. Prøv igen senere",
-      "restartNeeded": "Genstart nødvendig",
-      "restartNeededTip": "Nogle indstillinger gælder først efter en genstart.",
       "importedRestart": "{name} er overtaget. Genstart CannonCommander, så det hele gælder"
     },
     "info": {
@@ -3553,12 +3553,13 @@
     "ownSessionsElsewhere": "Dine egne sessioner, tokens og adgangsnøgler afslutter du under Konto og sikkerhed",
     "passkeyExists": "Der findes allerede en adgangsnøgle med dette navn",
     "passkeyNameMissing": "Giv adgangsnøglen et navn",
+    "passkeyNeedsHostName": "Adgangsnøgler kræver et værtsnavn, og denne side er åbnet via en IP-adresse. Åbn CannonCommander under dets navn, så virker det",
     "passkeyNotConfirmed": "Browseren bekræftede ikke adgangsnøglen. Prøv igen",
     "passkeyRegistered": "Denne adgangsnøgle er allerede registreret",
     "passkeyUnknown": "Denne adgangsnøgle logger ikke ind her",
     "passkeysElsewhere": "Adgangsnøgler hører til adgangskoden, og du logger ind via {method}",
-    "passkeysOff": "Adgangsnøgler er slået fra på denne server",
     "passwordElsewhere": "Du logger ind via {method}, adgangskoden ligger der",
+    "passwordFirst": "En adgangsnøgle hører til adgangskoden, og denne konto har ikke nogen endnu",
     "passwordLocked": "Din adgangskode er låst. En administrator kan ændre den",
     "passwordMissing": "Adgangskoden mangler",
     "passwordShort": {
@@ -3745,7 +3746,7 @@
     "same": "Vælg venligst en anden adgangskode end den hidtidige.",
     "badReset": "Koden er forkert eller udløbet. Bed om en ny.",
     "passkeyFailed": "Denne adgangsnøgle kan ikke logge ind her.",
-    "passkeyOff": "Adgangsnøgler er slået fra på denne server.",
+    "passkeyNotHere": "Adgangsnøgler virker ikke på denne adresse.",
     "offline": "CannonCommander svarer ikke lige nu. Prøv igen om et øjeblik."
   },
   "ui": {

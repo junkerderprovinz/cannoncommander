@@ -489,7 +489,7 @@ func setupAuth(generate bool) {
 		Config.Auth.Methods.PasswordAuth.AdminPassword = "admin"
 	}
 	if Config.Auth.Methods.PasswordAuth.Enabled {
-		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "password")
+		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "password", "passkey")
 	}
 	if Config.Auth.Methods.NoAuth {
 		logger.Warning("Configured with no authentication, this is not recommended.")
@@ -506,15 +506,11 @@ func setupAuth(generate bool) {
 			warnOidcProxyHeaders()
 		}
 	}
-	if Config.Auth.Methods.PasskeyAuth.Enabled || generate {
-		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "passkey")
-		logger.Info("Passkey Auth configured successfully")
-	}
 
 	// use password auth as default if no auth methods are set
 	if len(Config.Auth.AuthMethods) == 0 {
 		Config.Auth.Methods.PasswordAuth.Enabled = true
-		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "password")
+		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "password", "passkey")
 	}
 }
 

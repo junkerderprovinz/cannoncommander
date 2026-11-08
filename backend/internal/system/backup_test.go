@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 )
 
 func TestExportLeavesSecretsOutAndImportBringsSettingsBack(t *testing.T) {
@@ -132,5 +133,30 @@ func TestUpdateCheckComparesWithTheNewestRelease(t *testing.T) {
 	f.svc.releases, f.svc.updates.at = none.URL, f.svc.updates.at.AddDate(0, 0, -1)
 	if code := f.call("anna", "POST", "/system/update", "", &out); code != 200 || out.UpdateAvailable || out.Latest != out.Version {
 		t.Fatalf("without releases: %d %+v", code, out)
+	}
+}
+
+func TestOnlyAReleaseIsOfferedAnUpdate(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{"tag_name":"v1.4.0","html_url":"https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.4.0"}`))
+	}))
+	defer srv.Close()
+	saved := version.Version
+	t.Cleanup(func() { version.Version = saved })
+	for current, want := range map[string]bool{
+		"v1.3.2":            true,
+		"1.3.2":             true,
+		"v1.4.0":            false,
+		"v1.4.0-3-gabc1234": false,
+		"dev-abc1234":       false,
+		"dev":               false,
+	} {
+		version.Version = current
+		f := newFixture(t)
+		f.svc.releases = srv.URL
+		var out UpdateCheck
+		if code := f.call("anna", "POST", "/system/update", "", &out); code != 200 || out.UpdateAvailable != want || out.Latest != "1.4.0" {
+			t.Errorf("%s: %d %+v", current, code, out)
+		}
 	}
 }

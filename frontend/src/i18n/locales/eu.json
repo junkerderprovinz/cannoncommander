@@ -388,7 +388,7 @@
       "shares": "Partekatzeak",
       "security": "Kontua eta segurtasuna",
       "integrations": "Integrazioak",
-      "app": "Aplikazioa",
+      "system": "Sistema",
       "info": "Informazioa"
     },
     "actions": {
@@ -924,7 +924,7 @@
       "changedAgo": "Aldatuta: {ago}",
       "change": "Aldatu",
       "stay": "Mantendu saioa irekita",
-      "stayTip": "Denbora hori igarota, CannonCommander-ek berriro eskatzen du pasahitza.",
+      "stayTip": "Denbora azken bisitatik zenbatzen da. Hainbeste denboran itzultzen ez bazara, CannonCommander-ek berriro eskatuko dizu pasahitza.",
       "day1": "Egun 1",
       "twofa": "Bi urratseko autentifikazioa",
       "status": "Egoera",
@@ -978,6 +978,9 @@
       },
       "passkeys": "Sarbide-gakoak",
       "noPasskey": "Oraindik ez dago sarbide-gakorik",
+      "passkeyHint": "Sarbide-gako batekin pasahitzik gabe hasten duzu saioa. Sortu duzun helbidean bakarrik dabil.",
+      "noPasskeyHere": "Hemen ezin da sarbide-gakorik sortu",
+      "passkeyBrowser": "Nabigatzaile honek ez du sarbide-gakorik eskaintzen hemen. HTTPS bidez edo localhost-en bakarrik dabil.",
       "addPasskey": "Gehitu sarbide-gakoa",
       "removePasskey": "Kendu sarbide-gakoa",
       "removePasskeyText": "Horren ondoren, {name} gakoarekin ezingo duzu saioa hasi. Pasahitzak balio du oraindik.",
@@ -1026,7 +1029,6 @@
       "copyNow": "Kopiatu tokena orain. CannonCommander-ek ez du berriro erakutsiko, beste bat sortu besterik ez duzu egin ahal izango.",
       "tokenCreatedToast": "{name} tokena sortuta",
       "pwLocked": "Hemen administratzaile batek bakarrik alda dezake zure pasahitza, edo beste zerbitzu baten bidez hasten duzu saioa.",
-      "passkeysOff": "Sarbide-gakoak desaktibatuta daude zerbitzari honetan",
       "tooMany": "Saiakera gehiegi. Saiatu berriro 15 minutu barru",
       "proofTip": "CannonCommander-ek sarbide berri bakoitzaren aurretik eskatzen du, zuk bakarrik sortu ahal izateko.",
       "signInAgain": "Hasi saioa berriro",
@@ -1083,10 +1085,10 @@
     },
     "app": {
       "updates": "Eguneraketak",
-      "autoCheck": "Bilatu eguneraketak automatikoki",
-      "autoCheckTip": "Egunean behin. Eguneraketa zuk instalatu behar duzu, Unraid-en Docker fitxan.",
-      "image": "Docker irudia",
-      "tagTip": "Bertsio hau ari da exekutatzen. Unraid-ek zein tag deskargatzen duen template-an erabakitzen duzu, latest-ek bertsio berri guztiak jarraitzen ditu.",
+      "autoCheck": "Egiaztatu automatikoki",
+      "autoCheckTip": "Hau aktibatuta dagoen bitartean, orri hau irekitzean behin galdetzen dio GitHubi CannonCommander berriagorik dagoen. Galdetu baino ez du egiten, edukiontzi batek bere eguneraketak edukiontzi-kudeatzailetik jasotzen baititu.",
+      "autoUpdate": "Eguneratu automatikoki",
+      "autoUpdateTip": "Edukiontzi batek ezin du bere burua barrutik ordezkatu. Eguneratu Unraid-en Docker fitxan, docker pull bidez edo Watchtower bidez.",
       "check": "Bilatu eguneraketak",
       "checking": "Bilatzen",
       "current": "Eguneratuta, {v}",
@@ -1133,8 +1135,6 @@
       "notExport": "Hau ez da esportatutako ezarpen-fitxategi bat",
       "imported": "Ezarpenak {name} fitxategitik hartuta",
       "noAnswer": "GitHub-ek ez du erantzun oraintxe. Saiatu berriro geroago",
-      "restartNeeded": "Berrabiarazi behar da",
-      "restartNeededTip": "Ezarpen batzuek berrabiarazi ondoren bakarrik balio dute.",
       "importedRestart": "{name} hartuta. Berrabiarazi CannonCommander dena aplikatzeko"
     },
     "info": {
@@ -3553,12 +3553,13 @@
     "ownSessionsElsewhere": "Zure saioak, tokenak eta sarbide-gakoak Kontua eta segurtasuna atalean amaitzen dituzu",
     "passkeyExists": "Badago jada izen hori duen sarbide-gako bat",
     "passkeyNameMissing": "Eman izen bat sarbide-gakoari",
+    "passkeyNeedsHostName": "Sarbide-gakoek ostalari-izena behar dute, eta orri hau IP helbide baten bidez dago irekita. Ireki CannonCommander bere izenarekin, eta ibiliko da",
     "passkeyNotConfirmed": "Nabigatzaileak ez du sarbide-gakoa berretsi. Saiatu berriro",
     "passkeyRegistered": "Sarbide-gako hau erregistratuta dago jada",
     "passkeyUnknown": "Sarbide-gako honekin ezin da hemen saioa hasi",
     "passkeysElsewhere": "Sarbide-gakoak pasahitzarekin batera doaz, eta zuk {method} bidez hasten duzu saioa",
-    "passkeysOff": "Sarbide-gakoak desaktibatuta daude zerbitzari honetan",
     "passwordElsewhere": "{method} bidez hasten duzu saioa, eta pasahitza han dago",
+    "passwordFirst": "Sarbide-gakoa pasahitzarekin batera doa, eta kontu honek ez du oraindik pasahitzik",
     "passwordLocked": "Zure pasahitza blokeatuta dago. Administratzaile batek alda dezake",
     "passwordMissing": "Pasahitza falta da",
     "passwordShort": {
@@ -3745,7 +3746,7 @@
     "same": "Aukeratu lehengoaz bestelako pasahitz bat.",
     "badReset": "Kodea ez da zuzena edo iraungi egin da. Eskatu berri bat.",
     "passkeyFailed": "Sarbide-gako honekin ezin da hemen saioa hasi.",
-    "passkeyOff": "Sarbide-gakoak desaktibatuta daude zerbitzari honetan.",
+    "passkeyNotHere": "Sarbide-gakoek ez dute helbide honetan funtzionatzen.",
     "offline": "CannonCommander-ek ez du erantzuten une honetan. Saiatu berriro une batean."
   },
   "ui": {

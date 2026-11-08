@@ -4,3 +4,9 @@
 .a-tree { max-height: 22rem; gap: 2px; padding: .5rem; border-radius: var(--radius-card); }
 .ce-ask { display: flex; gap: .75rem; align-items: flex-start; line-height: 1.5; }
 .ce-ask svg { width: 1.2rem; height: 1.2rem; color: var(--accent-glyph); flex: none; margin-top: .1rem; }
+/* A dropdown stands on the same filled ground as the text fields beside it, as in BombVault and KnightLoader. In a
+   well or a sub-card GlimStone's own rule, which weighs more, lifts it a step as it does the fields there. */
+.glim-select-trigger:not(.glim-select-trigger--inset) { border-color: transparent; background: var(--carbon-surface2); }
+.glim-select-trigger:not(.glim-select-trigger--inset):hover { background: var(--carbon-surface3); }
+/* The open list is as wide as its trigger and only grows for a longer choice. */
+.glim-select-content { min-width: var(--reference-width, 0px); max-width: min(92vw, 28rem); }

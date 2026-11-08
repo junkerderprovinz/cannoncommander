@@ -18,3 +18,7 @@ Attribution 4.0 License (https://creativecommons.org/licenses/by/4.0/).
 The download buttons in .github/assets/download-buttons/ carry marks from
 Font Awesome Free (CC BY 4.0) and Dashboard Icons (Apache-2.0); their sources are
 listed in scripts/brand-paths/README.md.
+
+The flags in frontend/src/i18n/flags.css come from flag-icons
+(https://github.com/lipis/flag-icons), Copyright Panayiotis Lipiridis, licensed
+under the MIT License.

@@ -1,0 +1,99 @@
+package version
+
+import "testing"
+
+func TestBuildWithoutStampStillHasAVersion(t *testing.T) {
+	tests := []struct {
+		version, commit, vcs string
+		wantVersion          string
+		wantCommit           string
+	}{
+		{"", "", "", "dev", "unknown"},
+		{"", "", "0123456789abcdef0123456789abcdef01234567", "dev-0123456", "0123456789abcdef0123456789abcdef01234567"},
+		{"", "abc1234", "", "dev-abc1234", "abc1234"},
+		{"v1.4.0", "", "", "v1.4.0", "unknown"},
+		{"v1.4.0", "abc1234", "fedcba9", "v1.4.0", "abc1234"},
+	}
+	for _, tt := range tests {
+		v, c := settle(tt.version, tt.commit, tt.vcs, unstamped)
+		if v != tt.wantVersion || c != tt.wantCommit {
+			t.Errorf("settle(%q, %q, %q) = %q, %q, want %q, %q", tt.version, tt.commit, tt.vcs, v, c, tt.wantVersion, tt.wantCommit)
+		}
+	}
+}
+
+const unstamped = "$Format:%(describe:tags) %H$\n"
+
+func TestSourceFromGitArchiveKnowsItsVersion(t *testing.T) {
+	const sha = "0d6116a76e0c1263c5efa241bc8f7f01b5b619e7"
+	tests := []struct {
+		version, commit, archive string
+		wantVersion              string
+		wantCommit               string
+	}{
+		{"", "", "v1.4.0-3-g0d6116a7 " + sha + "\n", "v1.4.0-3-g0d6116a7", sha},
+		{"", "", "v1.4.0 " + sha + "\r\n", "v1.4.0", sha},
+		{"", "", " " + sha + "\n", "dev-0d6116a", sha},
+		{"v1.5.0", "abc1234", "v1.4.0-3-g0d6116a7 " + sha + "\n", "v1.5.0", "abc1234"},
+		{"", "", unstamped, "dev", "unknown"},
+	}
+	for _, tt := range tests {
+		v, c := settle(tt.version, tt.commit, "", tt.archive)
+		if v != tt.wantVersion || c != tt.wantCommit {
+			t.Errorf("settle(%q, %q, %q) = %q, %q, want %q, %q", tt.version, tt.commit, tt.archive, v, c, tt.wantVersion, tt.wantCommit)
+		}
+	}
+}
+
+func TestVersionAndCommitAreNeverEmpty(t *testing.T) {
+	if Version == "" || CommitSHA == "" {
+		t.Fatalf("version %q, commit %q", Version, CommitSHA)
+	}
+}
+
+func TestOnlyATaggedBuildIsARelease(t *testing.T) {
+	tests := []struct {
+		version string
+		want    string
+		ok      bool
+	}{
+		{"v1.4.0", "v1.4.0", true},
+		{"1.4.0", "v1.4.0", true},
+		{"v2.1.4-beta", "v2.1.4-beta", true},
+		{"v1.4.0-3-gabc1234", "", false},
+		{"v1.4.0-3-gabc1234-dirty", "", false},
+		{"v1.4.0-dirty", "", false},
+		{"abc1234", "", false},
+		{"dev", "", false},
+		{"dev-abc1234", "", false},
+		{"testing", "", false},
+	}
+	saved := Version
+	t.Cleanup(func() { Version = saved })
+	for _, tt := range tests {
+		Version = tt.version
+		got, ok := Release()
+		if got != tt.want || ok != tt.ok {
+			t.Errorf("Release() with %q = %q, %v, want %q, %v", tt.version, got, ok, tt.want, tt.ok)
+		}
+	}
+}
+
+func TestLinkPointsAtTheReleaseOrElseTheCommit(t *testing.T) {
+	const repo = "https://github.com/junkerderprovinz/cannoncommander"
+	tests := []struct{ version, commit, want string }{
+		{"v1.4.0", "abc1234", repo + "/releases/tag/v1.4.0"},
+		{"1.4.0", "abc1234", repo + "/releases/tag/v1.4.0"},
+		{"v1.4.0-3-gabc1234", "abc1234def", repo + "/commit/abc1234def"},
+		{"dev-abc1234", "abc1234def", repo + "/commit/abc1234def"},
+		{"dev", "unknown", repo},
+	}
+	saved, savedCommit := Version, CommitSHA
+	t.Cleanup(func() { Version, CommitSHA = saved, savedCommit })
+	for _, tt := range tests {
+		Version, CommitSHA = tt.version, tt.commit
+		if got := Link(); got != tt.want {
+			t.Errorf("Link() with %q, %q = %q, want %q", tt.version, tt.commit, got, tt.want)
+		}
+	}
+}

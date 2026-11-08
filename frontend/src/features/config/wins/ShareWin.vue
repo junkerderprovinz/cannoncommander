@@ -53,7 +53,7 @@ onMounted(() => stepFoot(props.win, [cancelBtn(), { label: c('save'), g: 'IconSa
   </SubCard>
   <SubCard>
     <FieldRow :label="c('shares.message')" :hint="c('shares.messageTip')"><TextArea id="a-shmsg" v-model="message" :maxlength="MESSAGE_MAX" rows="2" :placeholder="c('shares.messagePlaceholder')" width="wide" /></FieldRow>
-    <FieldRow :label="c('shares.expires')"><Select v-model="expiry" :options="selectOptions(options())" rows="menu" /></FieldRow>
+    <FieldRow :label="c('shares.expires')"><Select v-model="expiry" :options="selectOptions(options())" /></FieldRow>
     <div id="a-shpwbox">
       <FieldRow :label="c('shares.askPw')" :hint="c('shares.askPwTip')"><Toggle v-model="pwOn" /></FieldRow>
       <template v-if="pwOn">

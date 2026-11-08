@@ -12,9 +12,9 @@ import (
 // picked a number on the security page.
 const defaultStayDays = 30
 
-// StaySignedIn returns how long a session of the user lasts when they ask to
-// stay signed in. It follows the user's setting stayDays, which is kept with
-// the user and not per device.
+// StaySignedIn returns how long a session of the user that stays signed in
+// lasts after the last visit. It follows the user's setting stayDays, which
+// is kept with the user and not per device.
 func StaySignedIn(ctx context.Context, db *sql.DB, userID uint64) (time.Duration, error) {
 	s, err := loadDoc(ctx, db, `SELECT data FROM user_prefs WHERE user_id = ?`, strconv.FormatUint(userID, 10))
 	if err != nil {

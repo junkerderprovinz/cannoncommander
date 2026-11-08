@@ -117,8 +117,8 @@ func (versionCmd) Run() error {
 	fmt.Printf(`CannonCommander, a two-panel file manager for Unraid
 	Version 	 : %v
 	Commit 		 : %v
-	Release Info 	 : https://github.com/junkerderprovinz/cannoncommander/releases/tag/%v
-`, version.Version, version.CommitSHA, version.Version)
+	Link 		 : %v
+`, version.Version, version.CommitSHA, version.Link())
 	return nil
 }
 

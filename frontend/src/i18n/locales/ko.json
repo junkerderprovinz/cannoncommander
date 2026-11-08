@@ -366,7 +366,7 @@
       "shares": "공유 링크",
       "security": "계정 및 보안",
       "integrations": "연동",
-      "app": "앱",
+      "system": "시스템",
       "info": "정보"
     },
     "actions": {
@@ -883,7 +883,7 @@
       "changedAgo": "{ago} 변경",
       "change": "변경",
       "stay": "로그인 유지",
-      "stayTip": "이 기간이 지나면 CannonCommander가 다시 비밀번호를 묻습니다.",
+      "stayTip": "이 기간은 마지막 방문부터 셉니다. 그동안 한 번도 오지 않으면 CannonCommander가 다시 비밀번호를 묻습니다.",
       "day1": "1일",
       "twofa": "2단계 인증",
       "status": "상태",
@@ -935,6 +935,9 @@
       },
       "passkeys": "패스키",
       "noPasskey": "아직 패스키가 없습니다",
+      "passkeyHint": "패스키를 쓰면 비밀번호 없이 로그인할 수 있습니다. 패스키는 만든 주소에서만 작동합니다.",
+      "noPasskeyHere": "여기서는 패스키를 만들 수 없습니다",
+      "passkeyBrowser": "이 브라우저는 여기서 패스키를 제공하지 않습니다. HTTPS나 localhost에서만 됩니다.",
       "addPasskey": "패스키 추가",
       "removePasskey": "패스키 제거",
       "removePasskeyText": "이후 {name} 패스키로는 로그인할 수 없습니다. 비밀번호는 계속 쓸 수 있습니다.",
@@ -982,7 +985,6 @@
       "copyNow": "지금 토큰을 복사하세요. CannonCommander는 다시 보여 주지 않으며, 새로 만드는 수밖에 없습니다.",
       "tokenCreatedToast": "{name} 토큰을 만들었습니다",
       "pwLocked": "여기서 내 비밀번호는 관리자만 바꿀 수 있습니다. 아니면 다른 서비스로 로그인하고 있습니다.",
-      "passkeysOff": "이 서버에서는 패스키가 꺼져 있습니다",
       "tooMany": "시도 횟수가 너무 많습니다. 15분 후에 다시 시도해 주세요",
       "proofTip": "새 접근 수단을 추가할 때마다 CannonCommander가 확인을 요청하므로 본인만 추가할 수 있습니다.",
       "signInAgain": "다시 로그인",
@@ -1039,10 +1041,10 @@
     },
     "app": {
       "updates": "업데이트",
-      "autoCheck": "업데이트 자동 확인",
-      "autoCheckTip": "하루에 한 번 확인합니다. 설치는 Unraid의 Docker 탭에서 직접 하세요.",
-      "image": "Docker 이미지",
-      "tagTip": "지금 실행 중인 버전입니다. Unraid가 가져올 태그는 템플릿에서 정하며, latest는 새 버전을 항상 따라갑니다.",
+      "autoCheck": "자동으로 확인",
+      "autoCheckTip": "켜 두면 이 페이지를 열 때 GitHub에 더 새로운 CannonCommander가 있는지 한 번 묻습니다. 묻기만 합니다. 컨테이너는 컨테이너 관리자에서 업데이트를 받기 때문입니다.",
+      "autoUpdate": "자동으로 업데이트",
+      "autoUpdateTip": "컨테이너는 내부에서 스스로를 교체할 수 없습니다. 대신 Unraid의 Docker 탭에서, docker pull 또는 Watchtower로 업데이트하세요.",
       "check": "업데이트 확인",
       "checking": "확인 중",
       "current": "최신 버전, {v}",
@@ -1088,8 +1090,6 @@
       "notExport": "내보낸 설정 파일이 아닙니다",
       "imported": "{name} 파일의 설정을 가져왔습니다",
       "noAnswer": "GitHub가 지금 응답하지 않았습니다. 나중에 다시 시도해 주세요",
-      "restartNeeded": "다시 시작 필요",
-      "restartNeededTip": "일부 설정은 다시 시작한 뒤에 적용됩니다.",
       "importedRestart": "{name} 파일을 가져왔습니다. 모두 적용하려면 CannonCommander를 다시 시작하세요"
     },
     "info": {
@@ -3417,12 +3417,13 @@
     "ownSessionsElsewhere": "내 세션, 토큰, 패스키는 ‘계정 및 보안’에서 끝내세요",
     "passkeyExists": "같은 이름의 패스키가 이미 있습니다",
     "passkeyNameMissing": "패스키 이름을 정하세요",
+    "passkeyNeedsHostName": "패스키에는 호스트 이름이 필요한데 이 페이지는 IP 주소로 열려 있습니다. CannonCommander를 이름으로 열면 됩니다",
     "passkeyNotConfirmed": "브라우저가 패스키를 확인하지 않았습니다. 다시 시도해 주세요",
     "passkeyRegistered": "이미 등록된 패스키입니다",
     "passkeyUnknown": "이 패스키로는 여기에 로그인할 수 없습니다",
     "passkeysElsewhere": "패스키는 비밀번호와 함께 쓰는데, 지금은 {method} 방식으로 로그인하고 있습니다",
-    "passkeysOff": "이 서버에서는 패스키가 꺼져 있습니다",
     "passwordElsewhere": "{method} 방식으로 로그인하므로 비밀번호는 그쪽에서 관리합니다",
+    "passwordFirst": "패스키는 비밀번호와 함께 쓰는데, 이 계정에는 아직 비밀번호가 없습니다",
     "passwordLocked": "비밀번호가 잠겨 있습니다. 관리자가 바꿀 수 있습니다",
     "passwordMissing": "비밀번호가 없습니다",
     "passwordShort": {
@@ -3603,7 +3604,7 @@
     "same": "이전과 다른 비밀번호를 고르세요.",
     "badReset": "코드가 맞지 않거나 만료되었습니다. 새 코드를 받으세요.",
     "passkeyFailed": "이 패스키로는 여기에 로그인할 수 없습니다.",
-    "passkeyOff": "이 서버에서는 패스키가 꺼져 있습니다.",
+    "passkeyNotHere": "이 주소에서는 패스키를 쓸 수 없습니다.",
     "offline": "CannonCommander가 지금 응답하지 않습니다. 잠시 후 다시 시도해 주세요."
   },
   "ui": {

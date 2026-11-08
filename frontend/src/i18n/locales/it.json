@@ -410,7 +410,7 @@
       "shares": "Condivisioni",
       "security": "Account e sicurezza",
       "integrations": "Integrazioni",
-      "app": "App",
+      "system": "Sistema",
       "info": "Info"
     },
     "actions": {
@@ -965,7 +965,7 @@
       "changedAgo": "Modificata {ago}",
       "change": "Modifica",
       "stay": "Resta connesso",
-      "stayTip": "Dopo questo tempo CannonCommander chiede di nuovo la password.",
+      "stayTip": "Il tempo conta dalla tua ultima visita. Se non passi per tutto questo tempo, CannonCommander chiede di nuovo la password.",
       "day1": "1 giorno",
       "twofa": "Autenticazione a due fattori",
       "status": "Stato",
@@ -1021,6 +1021,9 @@
       },
       "passkeys": "Passkey",
       "noPasskey": "Ancora nessuna passkey",
+      "passkeyHint": "Una passkey ti fa accedere senza password. Funziona solo all'indirizzo in cui la crei.",
+      "noPasskeyHere": "Qui non si può creare una passkey",
+      "passkeyBrowser": "Questo browser qui non offre passkey. Funziona solo tramite HTTPS o su localhost.",
       "addPasskey": "Aggiungi passkey",
       "removePasskey": "Rimuovi passkey",
       "removePasskeyText": "Dopo, {name} non ti farà più accedere. La password continua a valere.",
@@ -1070,7 +1073,6 @@
       "copyNow": "Copia il token adesso. CannonCommander non lo mostrerà mai più, potrai solo crearne uno nuovo.",
       "tokenCreatedToast": "Token {name} creato",
       "pwLocked": "Qui solo un admin cambia la tua password, oppure accedi tramite un altro servizio.",
-      "passkeysOff": "Le passkey sono disattivate su questo server",
       "tooMany": "Troppi tentativi. Riprova tra 15 minuti",
       "proofTip": "CannonCommander la chiede prima di ogni nuovo accesso, così solo tu puoi crearne uno.",
       "signInAgain": "Accedi di nuovo",
@@ -1127,10 +1129,10 @@
     },
     "app": {
       "updates": "Aggiornamenti",
-      "autoCheck": "Cerca aggiornamenti automaticamente",
-      "autoCheckTip": "Una volta al giorno. L'aggiornamento lo installi tu, su Unraid nella scheda Docker.",
-      "image": "Immagine Docker",
-      "tagTip": "Questa è la versione in esecuzione. Quale tag scarica Unraid lo decidi nel template, latest segue ogni nuova versione.",
+      "autoCheck": "Controlla automaticamente",
+      "autoCheckTip": "Finché è attivo, aprire questa pagina chiede una volta a GitHub se è uscito un CannonCommander più recente. Chiede soltanto, perché un container riceve gli aggiornamenti dal suo gestore di container.",
+      "autoUpdate": "Aggiorna automaticamente",
+      "autoUpdateTip": "Un container non può sostituirsi da solo dall'interno. Aggiornalo invece su Unraid nella scheda Docker, con docker pull o con Watchtower.",
       "check": "Cerca aggiornamenti",
       "checking": "Ricerca",
       "current": "Aggiornato, {v}",
@@ -1178,8 +1180,6 @@
       "notExport": "Questo non è un file di impostazioni esportato",
       "imported": "Impostazioni riprese da {name}",
       "noAnswer": "GitHub al momento non ha risposto. Riprova più tardi",
-      "restartNeeded": "Serve un riavvio",
-      "restartNeededTip": "Alcune impostazioni valgono solo dopo un riavvio.",
       "importedRestart": "{name} è stato ripreso. Riavvia CannonCommander perché tutto abbia effetto"
     },
     "info": {
@@ -3689,12 +3689,13 @@
     "ownSessionsElsewhere": "Le tue sessioni, i token e le passkey li chiudi in Account e sicurezza",
     "passkeyExists": "Esiste già una passkey con questo nome",
     "passkeyNameMissing": "Dai un nome alla passkey",
+    "passkeyNeedsHostName": "Le passkey hanno bisogno di un nome host, e questa pagina è aperta tramite un indirizzo IP. Apri CannonCommander con il suo nome e funzionerà",
     "passkeyNotConfirmed": "Il browser non ha confermato la passkey. Riprova",
     "passkeyRegistered": "Questa passkey è già registrata",
     "passkeyUnknown": "Con questa passkey non si accede qui",
     "passkeysElsewhere": "Le passkey vanno con la password, e tu accedi tramite {method}",
-    "passkeysOff": "Le passkey sono disattivate su questo server",
     "passwordElsewhere": "Accedi tramite {method}, la password si trova lì",
+    "passwordFirst": "Una passkey va con la password, e questo account non ne ha ancora una",
     "passwordLocked": "La tua password è bloccata. Un admin può cambiarla",
     "passwordMissing": "Manca la password",
     "passwordShort": {
@@ -3887,7 +3888,7 @@
     "same": "Scegli una password diversa da quella di prima.",
     "badReset": "Il codice non è corretto o è scaduto. Chiedine uno nuovo.",
     "passkeyFailed": "Con questa passkey l'accesso qui non funziona.",
-    "passkeyOff": "Le passkey sono disattivate su questo server.",
+    "passkeyNotHere": "Le passkey non funzionano a questo indirizzo.",
     "offline": "CannonCommander al momento non risponde. Riprova tra un attimo."
   },
   "ui": {

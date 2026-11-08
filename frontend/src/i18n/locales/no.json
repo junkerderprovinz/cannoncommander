@@ -388,7 +388,7 @@
       "shares": "Delinger",
       "security": "Konto og sikkerhet",
       "integrations": "Integrasjoner",
-      "app": "App",
+      "system": "System",
       "info": "Info"
     },
     "actions": {
@@ -924,7 +924,7 @@
       "changedAgo": "Endret {ago}",
       "change": "Endre",
       "stay": "Forbli pålogget",
-      "stayTip": "Deretter spør CannonCommander etter passordet igjen.",
+      "stayTip": "Tiden regnes fra ditt siste besøk. Er du borte så lenge, spør CannonCommander etter passordet igjen.",
       "day1": "1 dag",
       "twofa": "Tofaktorautentisering",
       "status": "Status",
@@ -978,6 +978,9 @@
       },
       "passkeys": "Passnøkler",
       "noPasskey": "Ingen passnøkkel ennå",
+      "passkeyHint": "En passnøkkel logger deg inn uten passordet. Den virker bare på adressen der du lager den.",
+      "noPasskeyHere": "Her kan det ikke lages noen passnøkkel",
+      "passkeyBrowser": "Denne nettleseren tilbyr ikke passnøkler her. Det virker bare over HTTPS eller på localhost.",
       "addPasskey": "Legg til passnøkkel",
       "removePasskey": "Fjern passnøkkel",
       "removePasskeyText": "{name} logger deg ikke inn lenger etter dette. Passordet gjelder fortsatt.",
@@ -1026,7 +1029,6 @@
       "copyNow": "Kopier tokenet nå. CannonCommander viser det aldri igjen, du kan bare opprette et nytt.",
       "tokenCreatedToast": "Tokenet {name} er opprettet",
       "pwLocked": "Her kan bare en admin endre passordet ditt, ellers logger du inn via en annen tjeneste.",
-      "passkeysOff": "Passnøkler er slått av på denne serveren",
       "tooMany": "For mange forsøk. Prøv igjen om 15 minutter",
       "proofTip": "CannonCommander spør om det før hver nye tilgang, så bare du kan legge til en.",
       "signInAgain": "Logg inn på nytt",
@@ -1083,10 +1085,10 @@
     },
     "app": {
       "updates": "Oppdateringer",
-      "autoCheck": "Se etter oppdateringer automatisk",
-      "autoCheckTip": "Én gang om dagen. En oppdatering installerer du selv, i Unraid under fanen Docker.",
-      "image": "Docker-image",
-      "tagTip": "Denne versjonen kjører nå. Hvilken tagg Unraid henter, bestemmer du i malen, latest følger hver nye versjon.",
+      "autoCheck": "Sjekk automatisk",
+      "autoCheckTip": "Så lenge dette er på, spør denne siden GitHub én gang når den åpnes om det finnes en nyere CannonCommander. Den bare spør, for en container får oppdateringene sine fra containerbehandleren sin.",
+      "autoUpdate": "Oppdater automatisk",
+      "autoUpdateTip": "En container kan ikke erstatte seg selv innenfra. Oppdater den i stedet i Unraid under fanen Docker, med docker pull eller med Watchtower.",
       "check": "Se etter oppdateringer",
       "checking": "Ser etter",
       "current": "Oppdatert, {v}",
@@ -1133,8 +1135,6 @@
       "notExport": "Det er ingen eksportert innstillingsfil",
       "imported": "Innstillingene fra {name} er overtatt",
       "noAnswer": "GitHub svarte ikke akkurat nå. Prøv igjen senere",
-      "restartNeeded": "Omstart kreves",
-      "restartNeededTip": "Noen innstillinger gjelder først etter en omstart.",
       "importedRestart": "{name} er overtatt. Start CannonCommander på nytt så alt gjelder"
     },
     "info": {
@@ -3553,12 +3553,13 @@
     "ownSessionsElsewhere": "Dine egne økter, tokens og passnøkler avslutter du under Konto og sikkerhet",
     "passkeyExists": "Det finnes allerede en passnøkkel med dette navnet",
     "passkeyNameMissing": "Gi passnøkkelen et navn",
+    "passkeyNeedsHostName": "Passnøkler trenger et vertsnavn, og denne siden er åpnet via en IP-adresse. Åpne CannonCommander under navnet sitt, så virker det",
     "passkeyNotConfirmed": "Nettleseren bekreftet ikke passnøkkelen. Prøv igjen",
     "passkeyRegistered": "Denne passnøkkelen er allerede registrert",
     "passkeyUnknown": "Denne passnøkkelen logger ikke inn her",
     "passkeysElsewhere": "Passnøkler hører sammen med passordet, og du logger inn via {method}",
-    "passkeysOff": "Passnøkler er slått av på denne serveren",
     "passwordElsewhere": "Du logger inn via {method}, passordet ligger der",
+    "passwordFirst": "En passnøkkel hører sammen med passordet, og denne kontoen har ikke noe ennå",
     "passwordLocked": "Passordet ditt er låst. En admin kan endre det",
     "passwordMissing": "Passordet mangler",
     "passwordShort": {
@@ -3745,7 +3746,7 @@
     "same": "Velg et annet passord enn det gamle.",
     "badReset": "Koden stemmer ikke eller er utløpt. Be om en ny.",
     "passkeyFailed": "Denne passnøkkelen logger ikke inn her.",
-    "passkeyOff": "Passnøkler er slått av på denne serveren.",
+    "passkeyNotHere": "Passnøkler virker ikke på denne adressen.",
     "offline": "CannonCommander svarer ikke akkurat nå. Prøv igjen om litt."
   },
   "ui": {

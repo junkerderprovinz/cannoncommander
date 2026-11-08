@@ -1,7 +1,7 @@
 {
   "tabs": {
     "title": "Settings", "general": "General", "look": "Appearance", "files": "File list", "sources": "Sources", "remotes": "Remotes",
-    "users": "Users & groups", "rules": "Access rules", "shares": "Shares", "security": "Account & security", "integrations": "Integrations", "app": "App", "info": "Info"
+    "users": "Users & groups", "rules": "Access rules", "shares": "Shares", "security": "Account & security", "integrations": "Integrations", "system": "System", "info": "Info"
   },
   "actions": { "about": "About CannonCommander", "activity": "Activity", "docs": "Handbook", "whatsNew": "What's new" },
   "add": "Add", "added": "{name} added", "back": "Back", "checking": "Checking", "copied": "Copied", "copy": "Copy", "done": "Done",
@@ -154,7 +154,7 @@
   },
   "security": {
     "signIn": "Signing in", "pwTip": "A new password signs you out on every other device. This session stays signed in.", "changedAgo": "Changed {ago}", "change": "Change",
-    "stay": "Stay signed in", "stayTip": "After that CannonCommander asks for the password again.", "day1": "1 day",
+    "stay": "Stay signed in", "stayTip": "The time counts from your last visit. If you stay away that long, CannonCommander asks for the password again.", "day1": "1 day",
     "twofa": "Two-factor authentication", "status": "Status", "on": "On", "off": "Off",
     "onTip": "After the password CannonCommander asks for a code from your app.", "offTip": "After the password CannonCommander also asks for a code from an app on your phone.",
     "turnOff": "Turn off", "setUp": "Set up", "codes": "Recovery codes", "codesTip": "Each code signs you in once if your phone is missing. New codes make the old ones invalid.",
@@ -170,7 +170,8 @@
     "needCurrent": "The current password is still missing", "newShort": "The new password needs at least 12 characters", "sameAsOld": "The new password is the same as the old one",
     "newDiffer": "The two new passwords aren't the same", "wrongCurrent": "The current password isn't right",
     "pwChanged": "Password changed", "pwChangedOthers": { "one": "Password changed, one other device is signed out", "other": "Password changed, {n} other devices are signed out" },
-    "passkeys": "Passkeys", "noPasskey": "No passkey yet", "addPasskey": "Add a passkey", "removePasskey": "Remove passkey",
+    "passkeys": "Passkeys", "noPasskey": "No passkey yet", "passkeyHint": "A passkey signs you in without the password. It only works at the address where you add it.", "noPasskeyHere": "No passkey can be added here",
+    "passkeyBrowser": "This browser doesn't offer passkeys here. That only works over HTTPS or on localhost.", "addPasskey": "Add a passkey", "removePasskey": "Remove passkey",
     "removePasskeyText": "{name} won't sign you in after this. The password keeps working.", "passkeyRemoved": "Passkey {name} removed", "passkeyAdded": "Passkey {name} added",
     "passkeyTip": "Only works at {origin}. The password keeps working beside it.", "passkeyNameTip": "So you recognise the passkey in the list.", "passkeyNamePh": "such as Laptop",
     "needPasskeyName": "Give the passkey a name", "confirmPasskey": "Confirm the passkey in your browser's window", "passkeyFailed": "The browser didn't create the passkey",
@@ -185,7 +186,7 @@
     "read": "Read", "readWrite": "Read and write", "rights": "Rights", "rightsTip": "The token may never do more than you.", "year": "1 year",
     "tokenNameTip": "What the token is for. It shows up later in the list of tokens.", "tokenNamePh": "such as backup-script", "needTokenName": "Give the token a name",
     "copyNow": "Copy the token now. CannonCommander never shows it again, you can only create a new one.", "tokenCreatedToast": "Token {name} created",
-    "pwLocked": "Only an admin changes your password here, or you sign in through another service.", "passkeysOff": "Passkeys are switched off on this server", "tooMany": "Too many tries. Please try again in 15 minutes",
+    "pwLocked": "Only an admin changes your password here, or you sign in through another service.", "tooMany": "Too many tries. Please try again in 15 minutes",
     "proofTip": "CannonCommander asks for it before every new way in, so only you can add one.", "signInAgain": "Sign in again", "staleTitle": "Please sign in once more",
     "staleToken": "A new token needs a fresh sign-in. This window opens again right after.", "stalePasskey": "A new passkey needs a fresh sign-in. This window opens again right after."
   },
@@ -209,8 +210,10 @@
     "alTokenWrong": "ArrowLoop turns this token down"
   },
   "app": {
-    "updates": "Updates", "autoCheck": "Look for updates by itself", "autoCheckTip": "Once a day. You install an update yourself, on Unraid in the Docker tab.",
-    "image": "Docker image", "tagTip": "This version runs right now. Which tag Unraid pulls is set in the template, latest follows every new version.", "check": "Look for updates", "checking": "Looking",
+    "updates": "Updates", "autoCheck": "Check automatically",
+    "autoCheckTip": "While this is on, opening this page asks GitHub once whether a newer CannonCommander is out. It only asks, since a container gets its updates from its container manager.",
+    "autoUpdate": "Update automatically", "autoUpdateTip": "A container cannot replace itself from the inside. Update it on Unraid's Docker tab instead, with docker pull or with Watchtower.",
+    "check": "Look for updates", "checking": "Looking",
     "current": "Up to date, {v}", "newer": "{v} is out",
     "backup": "Back up the settings", "toFile": "Write to a file", "toFileTip": "All settings as a JSON file on the server, without passwords.", "export": "Export",
     "fromFile": "Get from a file", "fromFileTip": "Replaces the settings here with the ones from the file.", "import": "Import",
@@ -225,7 +228,7 @@
     "importTitle": "Import settings", "importFileTip": "A file CannonCommander exported.", "takeUsers": "Take over users, groups and rules",
     "takeUsersTip": "Passwords, passkeys and tokens stay here as they are.", "noFile": "There is no such file", "notExport": "That isn't an exported settings file",
     "imported": "Settings taken over from {name}",
-    "noAnswer": "GitHub did not answer just now. Please try again later", "restartNeeded": "Restart needed", "restartNeededTip": "A few settings count only after a restart.",
+    "noAnswer": "GitHub did not answer just now. Please try again later",
     "importedRestart": "{name} is taken over. Restart CannonCommander so all of it counts"
   },
   "info": {

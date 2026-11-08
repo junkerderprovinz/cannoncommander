@@ -225,7 +225,7 @@ Open port 8480 in a browser. On the first start the container writes a password 
 
 ## 5. Configuration
 
-The container reads `/config/config.yaml`, which it writes with good defaults on the first start. Most settings live in the interface under **Settings**, and an admin can export them all from **Settings > App**.
+The container reads `/config/config.yaml`, which it writes with good defaults on the first start. Most settings live in the interface under **Settings**, and an admin can export them all from **Settings > System**.
 
 ### Folders
 

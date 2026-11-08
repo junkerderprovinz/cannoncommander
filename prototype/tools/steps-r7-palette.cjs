@@ -40,7 +40,7 @@ module.exports = async (page, shot) => {
   await page.keyboard.press('Escape'); await wait();
 
   // The app lists the account first and the prototype among the others, so both walk the tabs in the prototype's order.
-  const ORDER = ['general', 'look', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'security', 'integrations', 'app', 'info'];
+  const ORDER = ['general', 'look', 'files', 'sources', 'remotes', 'users', 'rules', 'shares', 'security', 'integrations', 'system', 'info'];
   const tabs = (await page.evaluate(() => CC.orderedTabs().map(t => t.id))).sort((x, y) => ORDER.indexOf(x) - ORDER.indexOf(y));
   for (const width of [1600, 1200]) {
     await page.setViewportSize({ width, height: 950 });

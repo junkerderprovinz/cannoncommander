@@ -432,7 +432,7 @@
       "shares": "Zdieľania",
       "security": "Účet a zabezpečenie",
       "integrations": "Integrácie",
-      "app": "Aplikácia",
+      "system": "Systém",
       "info": "Informácie"
     },
     "actions": {
@@ -1006,7 +1006,7 @@
       "changedAgo": "Zmenené {ago}",
       "change": "Zmeniť",
       "stay": "Zostať prihlásený",
-      "stayTip": "Potom sa CannonCommander znova spýta na heslo.",
+      "stayTip": "Čas sa počíta od vašej poslednej návštevy. Ak tak dlho neprídete, CannonCommander sa znova spýta na heslo.",
       "day1": "1 deň",
       "twofa": "Dvojfaktorové overenie",
       "status": "Stav",
@@ -1064,6 +1064,9 @@
       },
       "passkeys": "Prístupové kľúče",
       "noPasskey": "Zatiaľ žiadny prístupový kľúč",
+      "passkeyHint": "Prístupový kľúč vás prihlási bez hesla. Platí len na adrese, kde ho vytvoríte.",
+      "noPasskeyHere": "Tu sa prístupový kľúč vytvoriť nedá",
+      "passkeyBrowser": "Tento prehliadač tu prístupové kľúče neponúka. Funguje to len cez HTTPS alebo na localhost.",
       "addPasskey": "Pridať prístupový kľúč",
       "removePasskey": "Odobrať prístupový kľúč",
       "removePasskeyText": "{name} vás potom už neprihlási. Heslo platí ďalej.",
@@ -1114,7 +1117,6 @@
       "copyNow": "Skopírujte token teraz. CannonCommander ho už nikdy neukáže, môžete len vytvoriť nový.",
       "tokenCreatedToast": "Token {name} vytvorený",
       "pwLocked": "Vaše heslo tu mení len administrátor, alebo sa prihlasujete cez inú službu.",
-      "passkeysOff": "Prístupové kľúče sú na tomto serveri vypnuté",
       "tooMany": "Príliš veľa pokusov. Skúste to prosím znova o 15 minút",
       "proofTip": "CannonCommander sa na to pýta pri každom novom prístupe, aby ho mohli pridať len vy.",
       "signInAgain": "Znova sa prihlásiť",
@@ -1171,10 +1173,10 @@
     },
     "app": {
       "updates": "Aktualizácie",
-      "autoCheck": "Automaticky hľadať aktualizácie",
-      "autoCheckTip": "Raz denne. Aktualizáciu si nainštalujete sami, v Unraide na karte Docker.",
-      "image": "Obraz Docker",
-      "tagTip": "Táto verzia práve beží. Ktorý tag Unraid stiahne, určíte v šablóne, latest sleduje každú novú verziu.",
+      "autoCheck": "Kontrolovať automaticky",
+      "autoCheckTip": "Kým je toto zapnuté, otvorenie tejto stránky sa raz spýta GitHubu, či vyšiel novší CannonCommander. Len sa pýta, pretože kontajner dostáva aktualizácie od svojho správcu kontajnerov.",
+      "autoUpdate": "Aktualizovať automaticky",
+      "autoUpdateTip": "Kontajner sa nemôže sám nahradiť zvnútra. Aktualizujte ho namiesto toho v Unraide na karte Docker, cez docker pull alebo cez Watchtower.",
       "check": "Hľadať aktualizácie",
       "checking": "Hľadám",
       "current": "Aktuálne, {v}",
@@ -1223,8 +1225,6 @@
       "notExport": "To nie je exportovaný súbor nastavení",
       "imported": "Nastavenia prevzaté z {name}",
       "noAnswer": "GitHub práve neodpovedal. Skúste to prosím neskôr znova",
-      "restartNeeded": "Potrebný reštart",
-      "restartNeededTip": "Niektoré nastavenia platia až po reštarte.",
       "importedRestart": "{name} je prevzaté. Reštartujte CannonCommander, aby všetko platilo"
     },
     "info": {
@@ -3825,12 +3825,13 @@
     "ownSessionsElsewhere": "Svoje relácie, tokeny a prístupové kľúče ukončíte v Účet a zabezpečenie",
     "passkeyExists": "Prístupový kľúč s týmto názvom už existuje",
     "passkeyNameMissing": "Pomenujte prístupový kľúč",
+    "passkeyNeedsHostName": "Prístupové kľúče potrebujú názov hostiteľa a táto stránka je otvorená cez IP adresu. Otvorte CannonCommander pod jeho menom a pôjde to",
     "passkeyNotConfirmed": "Prehliadač prístupový kľúč nepotvrdil. Skúste to prosím znova",
     "passkeyRegistered": "Tento prístupový kľúč je už zaregistrovaný",
     "passkeyUnknown": "S týmto prístupovým kľúčom sa tu prihlásiť nedá",
     "passkeysElsewhere": "Prístupové kľúče patria k heslu a vy sa prihlasujete cez {method}",
-    "passkeysOff": "Prístupové kľúče sú na tomto serveri vypnuté",
     "passwordElsewhere": "Prihlasujete sa cez {method}, heslo je tam",
+    "passwordFirst": "Prístupový kľúč patrí k heslu a tento účet zatiaľ žiadne nemá",
     "passwordLocked": "Vaše heslo je zamknuté. Administrátor ho môže zmeniť",
     "passwordMissing": "Chýba heslo",
     "passwordShort": {
@@ -4029,7 +4030,7 @@
     "same": "Zvoľte prosím iné heslo ako doteraz.",
     "badReset": "Kód nesedí alebo vypršal. Vyžiadajte si prosím nový.",
     "passkeyFailed": "S týmto prístupovým kľúčom sa tu prihlásiť nedá.",
-    "passkeyOff": "Prístupové kľúče sú na tomto serveri vypnuté.",
+    "passkeyNotHere": "Na tejto adrese prístupové kľúče nefungujú.",
     "offline": "CannonCommander teraz neodpovedá. Skúste to o chvíľu znova."
   },
   "ui": {

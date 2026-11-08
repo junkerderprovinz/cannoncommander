@@ -388,7 +388,7 @@
       "shares": "Jaot",
       "security": "Tili ja turvallisuus",
       "integrations": "Integraatiot",
-      "app": "Sovellus",
+      "system": "Järjestelmä",
       "info": "Tietoja"
     },
     "actions": {
@@ -924,7 +924,7 @@
       "changedAgo": "Muutettu {ago}",
       "change": "Vaihda",
       "stay": "Pysy kirjautuneena",
-      "stayTip": "Sen jälkeen CannonCommander kysyy salasanaa uudelleen.",
+      "stayTip": "Aika lasketaan viimeisestä käynnistäsi. Jos et käy niin pitkään aikaan, CannonCommander kysyy salasanaa uudelleen.",
       "day1": "1 päivä",
       "twofa": "Kaksivaiheinen tunnistautuminen",
       "status": "Tila",
@@ -978,6 +978,9 @@
       },
       "passkeys": "Pääsyavaimet",
       "noPasskey": "Ei vielä pääsyavainta",
+      "passkeyHint": "Pääsyavain kirjaa sinut sisään ilman salasanaa. Se toimii vain osoitteessa, jossa luot sen.",
+      "noPasskeyHere": "Tässä ei voi luoda pääsyavainta",
+      "passkeyBrowser": "Tämä selain ei tarjoa pääsyavaimia tässä. Se toimii vain HTTPS:n kautta tai localhostissa.",
       "addPasskey": "Lisää pääsyavain",
       "removePasskey": "Poista pääsyavain",
       "removePasskeyText": "{name} ei tämän jälkeen enää kirjaa sinua sisään. Salasana toimii edelleen.",
@@ -1026,7 +1029,6 @@
       "copyNow": "Kopioi tunnus nyt. CannonCommander ei näytä sitä enää koskaan, voit vain luoda uuden.",
       "tokenCreatedToast": "Tunnus {name} luotu",
       "pwLocked": "Salasanasi voi vaihtaa täällä vain ylläpitäjä, tai kirjaudut toisen palvelun kautta.",
-      "passkeysOff": "Pääsyavaimet ovat pois käytöstä tällä palvelimella",
       "tooMany": "Liian monta yritystä. Yritä uudelleen 15 minuutin kuluttua",
       "proofTip": "CannonCommander kysyy tätä ennen jokaista uutta pääsyä, jotta vain sinä voit lisätä sellaisen.",
       "signInAgain": "Kirjaudu uudelleen",
@@ -1083,10 +1085,10 @@
     },
     "app": {
       "updates": "Päivitykset",
-      "autoCheck": "Etsi päivityksiä automaattisesti",
-      "autoCheckTip": "Kerran päivässä. Päivityksen asennat itse, Unraidissa Docker-välilehdellä.",
-      "image": "Docker-image",
-      "tagTip": "Tämä versio on nyt käynnissä. Minkä tunnisteen Unraid hakee, määrität mallissa, latest seuraa jokaista uutta versiota.",
+      "autoCheck": "Tarkista automaattisesti",
+      "autoCheckTip": "Kun tämä on päällä, tämän sivun avaaminen kysyy GitHubilta kerran, onko uudempi CannonCommander julkaistu. Se vain kysyy, koska kontti saa päivityksensä konttien hallinnasta.",
+      "autoUpdate": "Päivitä automaattisesti",
+      "autoUpdateTip": "Kontti ei voi korvata itseään sisältäpäin. Päivitä se sen sijaan Unraidissa Docker-välilehdellä, docker pull -komennolla tai Watchtowerilla.",
       "check": "Etsi päivityksiä",
       "checking": "Etsitään",
       "current": "Ajan tasalla, {v}",
@@ -1133,8 +1135,6 @@
       "notExport": "Tämä ei ole viety asetustiedosto",
       "imported": "Asetukset otettu käyttöön tiedostosta {name}",
       "noAnswer": "GitHub ei vastannut juuri nyt. Yritä myöhemmin uudelleen",
-      "restartNeeded": "Uudelleenkäynnistys tarvitaan",
-      "restartNeededTip": "Jotkin asetukset tulevat voimaan vasta uudelleenkäynnistyksen jälkeen.",
       "importedRestart": "{name} on otettu käyttöön. Käynnistä CannonCommander uudelleen, jotta kaikki tulee voimaan"
     },
     "info": {
@@ -3553,12 +3553,13 @@
     "ownSessionsElsewhere": "Omat istuntosi, tunnuksesi ja pääsyavaimesi lopetat kohdassa Tili ja turvallisuus",
     "passkeyExists": "Tämän niminen pääsyavain on jo olemassa",
     "passkeyNameMissing": "Anna pääsyavaimelle nimi",
+    "passkeyNeedsHostName": "Pääsyavaimet tarvitsevat isäntänimen, ja tämä sivu on avattu IP-osoitteella. Avaa CannonCommander sen nimellä, niin se toimii",
     "passkeyNotConfirmed": "Selain ei vahvistanut pääsyavainta. Yritä uudelleen",
     "passkeyRegistered": "Tämä pääsyavain on jo rekisteröity",
     "passkeyUnknown": "Tällä pääsyavaimella ei kirjauduta tänne",
     "passkeysElsewhere": "Pääsyavaimet kuuluvat salasanaan, ja kirjaudut palvelun {method} kautta",
-    "passkeysOff": "Pääsyavaimet ovat pois käytöstä tällä palvelimella",
     "passwordElsewhere": "Kirjaudut palvelun {method} kautta, salasana on siellä",
+    "passwordFirst": "Pääsyavain kuuluu salasanan rinnalle, eikä tällä tilillä ole vielä salasanaa",
     "passwordLocked": "Salasanasi on lukittu. Ylläpitäjä voi vaihtaa sen",
     "passwordMissing": "Salasana puuttuu",
     "passwordShort": {
@@ -3745,7 +3746,7 @@
     "same": "Valitse jokin muu salasana kuin vanha.",
     "badReset": "Koodi on väärä tai vanhentunut. Pyydä uusi.",
     "passkeyFailed": "Tällä pääsyavaimella ei voi kirjautua tänne.",
-    "passkeyOff": "Pääsyavaimet ovat pois käytöstä tällä palvelimella.",
+    "passkeyNotHere": "Pääsyavaimet eivät toimi tässä osoitteessa.",
     "offline": "CannonCommander ei vastaa juuri nyt. Yritä hetken päästä uudelleen."
   },
   "ui": {

@@ -21,8 +21,8 @@ shortcut window has Strg+K: Befehl suchen Strg+K
 1600 shares: 1 cards, 1 col, width 832, bottoms 229
 1600 security: 5 cards, 1 col, width 832, bottoms 1030
 1600 integrations: 3 cards, 1 col, width 832, bottoms 576
-1600 app: 3 cards, 1 col, width 832, bottoms 624
-1600 info: 3 cards, 1 col, width 832, bottoms 818
+1600 system: 2 cards, 1 col, width 832, bottoms 376
+1600 info: 4 cards, 1 col, width 832, bottoms 976
 1200 general: 3 cards, 1 col, width 832, bottoms 742
 1200 look: 3 cards, 1 col, width 832, bottoms 784
 1200 files: 3 cards, 1 col, width 832, bottoms 742
@@ -33,5 +33,5 @@ shortcut window has Strg+K: Befehl suchen Strg+K
 1200 shares: 1 cards, 1 col, width 832, bottoms 229
 1200 security: 5 cards, 1 col, width 832, bottoms 1030
 1200 integrations: 3 cards, 1 col, width 832, bottoms 576
-1200 app: 3 cards, 1 col, width 832, bottoms 624
-1200 info: 3 cards, 1 col, width 832, bottoms 818
+1200 system: 2 cards, 1 col, width 832, bottoms 376
+1200 info: 4 cards, 1 col, width 832, bottoms 976

@@ -97,7 +97,7 @@ function remove(s: Source) {
     </div>
     <EmptyState v-else nested :glyph="glyphComponent('IconDatabase')" :title="c('sources.none')" />
     <FieldRow v-if="restartNeeded" :label="c('sources.restart')" :hint="c('sources.restartTip')">
-      <Pill tone="warn">{{ c('sources.restartPill') }}</Pill><Button :label="c('sources.toRestart')" label-key="IconRefresh" @click="go('settings', 'app')" />
+      <Pill tone="warn">{{ c('sources.restartPill') }}</Pill><Button :label="c('sources.toRestart')" label-key="IconRefresh" @click="go('settings', 'system')" />
     </FieldRow>
     <div class="a-foot"><Button data-add :label="c('sources.add')" label-key="IconAdd" @click="edit(null)" /></div>
   </Card>

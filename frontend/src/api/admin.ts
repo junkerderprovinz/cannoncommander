@@ -2,6 +2,7 @@
 // milliseconds, so the pages compare and format them like every other date.
 import { ApiError, call } from './client';
 import { type Share as WireShare, shareUrl, tools } from './tools';
+import type { Problem } from './types';
 import { creationOptions, credentialJSON } from './webauthn';
 
 const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
@@ -54,7 +55,8 @@ export interface Share extends Omit<WireShare, 'created' | 'expires'> { created:
 export interface Session { id: string; created: number; seen: number; userAgent: string; ip: string; current: boolean }
 export interface Token { id: string; name: string; created: number; last: number | null; rights: 'r' | 'rw'; expires: number | null }
 export interface Passkey { id: string; name: string; origin: string; created: number; last: number | null }
-export interface Passkeys { enabled: boolean; items: Passkey[] }
+// blocked says why no passkey can be added from this address, null when one can.
+export interface Passkeys { blocked: Problem | null; items: Passkey[] }
 export interface Activity { id: number; t: number; who: string; what: string; obj: string; path?: string; target?: string; ip?: string; details: Record<string, unknown> }
 export type OfficeKind = 'none' | 'onlyoffice' | 'eurooffice' | 'collabora';
 export interface AppSettings {
@@ -66,14 +68,13 @@ export interface AppSettings {
   remotes: { automount: boolean; cache: 'off' | 'writes' | 'full'; cacheSize: number };
   updates: { autoCheck: boolean };
   logLevel: 'error' | 'info' | 'debug';
-  restartNeeded?: boolean;
 }
 // A save sends only what changed, down to a single switch.
 export type AppChange = { [K in keyof AppSettings]?: AppSettings[K] extends object ? Partial<AppSettings[K]> : AppSettings[K] };
 export interface IntegrationResult { kind: string; ok: boolean; reachable: boolean; token?: 'ok' | 'rejected' | 'missing' | 'off' | 'none'; version?: string; error?: string }
 export interface Tool { available: boolean; path?: string; version?: string }
 export interface System {
-  version: string; commit?: string; go: string; os: string; arch: string; started: number; uptime: number;
+  version: string; commit?: string; release: boolean; go: string; os: string; arch: string; started: number; uptime: number;
   tools: Record<string, Tool>; unraid: { available: boolean; socket: boolean };
   features: { office: { kind: OfficeKind; url?: string }; thumbs: boolean; videoPreview: boolean; webdav: boolean; mupdf: boolean; terminal: boolean };
 }
@@ -148,7 +149,7 @@ export const me = {
   createToken: (name: string, rights: Token['rights'], days: number | null, password?: string) =>
     write<{ secret: string }>('POST', '/me/tokens', { name, rights, days, password }),
   deleteToken: (id: string) => write('DELETE', `/me/tokens/${at(id)}`),
-  passkeys: async (): Promise<Passkeys> => { const p = await get<{ enabled: boolean; items: Wire<Passkey, 'created' | 'last'>[] }>('/me/passkeys'); return { enabled: p.enabled, items: p.items.map(passkey) }; },
+  passkeys: async (): Promise<Passkeys> => { const p = await get<{ blocked?: Problem; items: Wire<Passkey, 'created' | 'last'>[] }>('/me/passkeys'); return { blocked: p.blocked ?? null, items: p.items.map(passkey) }; },
   // Two steps on one path: the name brings the options, the browser's answer to them adds the passkey.
   async addPasskey(name: string, password?: string): Promise<void> {
     const { options } = await write<{ options: { publicKey: Record<string, unknown> } }>('POST', '/me/passkeys', { name, password });

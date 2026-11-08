@@ -11,6 +11,9 @@ ARG BUILDPLATFORM
 
 FROM gtstef/ffmpeg:9.0.2-decode AS ffmpeg
 FROM golang:1.27-alpine AS base
+# CI stamps the git describe and the commit. Without them the binary reads
+# both from backend/internal/version/archive.txt, which git archive fills in,
+# and a plain checkout calls itself dev.
 ARG VERSION
 ARG REVISION
 WORKDIR /app

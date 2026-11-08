@@ -19,6 +19,8 @@ export function toB64url(buf: ArrayBuffer | ArrayBufferView): string {
 }
 
 const ctor = () => (typeof PublicKeyCredential === 'undefined' ? undefined : (PublicKeyCredential as Ctor));
+// Browsers offer passkeys only over HTTPS and on localhost, elsewhere PublicKeyCredential is missing.
+export const browserHasPasskeys = () => ctor() !== undefined;
 const withIds = (list: unknown) => (Array.isArray(list) ? list.map((c: Json) => ({ ...c, id: fromB64url(c.id as string) })) : list);
 
 export function creationOptions(options: { publicKey: Json }): CredentialCreationOptions {

@@ -410,7 +410,7 @@
       "shares": "Comparticions",
       "security": "Compte i seguretat",
       "integrations": "Integracions",
-      "app": "Aplicació",
+      "system": "Sistema",
       "info": "Informació"
     },
     "actions": {
@@ -965,7 +965,7 @@
       "changedAgo": "Canviada {ago}",
       "change": "Canvia",
       "stay": "Mantén la sessió iniciada",
-      "stayTip": "Després, el CannonCommander torna a demanar la contrasenya.",
+      "stayTip": "El temps compta des de la vostra darrera visita. Si no hi torneu en tot aquest temps, el CannonCommander us tornarà a demanar la contrasenya.",
       "day1": "1 dia",
       "twofa": "Autenticació de dos factors",
       "status": "Estat",
@@ -1021,6 +1021,9 @@
       },
       "passkeys": "Claus d'accés",
       "noPasskey": "Encara no hi ha cap clau d'accés",
+      "passkeyHint": "Una clau d'accés us permet iniciar la sessió sense la contrasenya. Només funciona a l'adreça on la creeu.",
+      "noPasskeyHere": "Aquí no es pot crear cap clau d'accés",
+      "passkeyBrowser": "Aquest navegador no ofereix claus d'accés aquí. Només funciona amb HTTPS o a localhost.",
       "addPasskey": "Afegeix una clau d'accés",
       "removePasskey": "Elimina la clau d'accés",
       "removePasskeyText": "Després, {name} ja no us permetrà iniciar la sessió. La contrasenya continua valent.",
@@ -1070,7 +1073,6 @@
       "copyNow": "Copieu el testimoni ara. El CannonCommander no el tornarà a mostrar mai, només en podreu crear un de nou.",
       "tokenCreatedToast": "S'ha creat el testimoni {name}",
       "pwLocked": "Aquí només un administrador canvia la vostra contrasenya, o bé inicieu la sessió mitjançant un altre servei.",
-      "passkeysOff": "Les claus d'accés estan desactivades en aquest servidor",
       "tooMany": "Massa intents. Torneu-ho a provar d'aquí a 15 minuts",
       "proofTip": "El CannonCommander ho demana abans de cada accés nou, perquè només vós en pugueu crear un.",
       "signInAgain": "Torna a iniciar la sessió",
@@ -1127,10 +1129,10 @@
     },
     "app": {
       "updates": "Actualitzacions",
-      "autoCheck": "Cerca actualitzacions automàticament",
-      "autoCheckTip": "Un cop al dia. L'actualització la instal·leu vós, a l'Unraid, a la pestanya Docker.",
-      "image": "Imatge Docker",
-      "tagTip": "Aquesta és la versió que s'executa ara. Quina etiqueta baixa l'Unraid es fixa a la plantilla, latest segueix cada versió nova.",
+      "autoCheck": "Comprova automàticament",
+      "autoCheckTip": "Mentre això estigui activat, obrir aquesta pàgina pregunta un cop a GitHub si hi ha un CannonCommander més nou. Només pregunta, perquè un contenidor rep les actualitzacions del seu gestor de contenidors.",
+      "autoUpdate": "Actualitza automàticament",
+      "autoUpdateTip": "Un contenidor no es pot reemplaçar a si mateix des de dins. Actualitzeu-lo a l'Unraid, a la pestanya Docker, amb docker pull o amb Watchtower.",
       "check": "Cerca actualitzacions",
       "checking": "S'està cercant",
       "current": "Al dia, {v}",
@@ -1178,8 +1180,6 @@
       "notExport": "Això no és un fitxer de configuració exportat",
       "imported": "S'ha adoptat la configuració de {name}",
       "noAnswer": "El GitHub no ha respost ara mateix. Torneu-ho a provar més tard",
-      "restartNeeded": "Cal reiniciar",
-      "restartNeededTip": "Alguns paràmetres només s'apliquen després d'un reinici.",
       "importedRestart": "S'ha adoptat {name}. Reinicieu el CannonCommander perquè tot s'apliqui"
     },
     "info": {
@@ -3689,12 +3689,13 @@
     "ownSessionsElsewhere": "Les vostres sessions, testimonis i claus d'accés els tanqueu a Compte i seguretat",
     "passkeyExists": "Ja hi ha una clau d'accés amb aquest nom",
     "passkeyNameMissing": "Doneu un nom a la clau d'accés",
+    "passkeyNeedsHostName": "Les claus d'accés necessiten un nom d'amfitrió, i aquesta pàgina està oberta amb una adreça IP. Obriu el CannonCommander pel seu nom i funcionarà",
     "passkeyNotConfirmed": "El navegador no ha confirmat la clau d'accés. Torneu-ho a provar",
     "passkeyRegistered": "Aquesta clau d'accés ja està registrada",
     "passkeyUnknown": "Amb aquesta clau d'accés no s'inicia la sessió aquí",
     "passkeysElsewhere": "Les claus d'accés van amb la contrasenya, i vós inicieu la sessió mitjançant {method}",
-    "passkeysOff": "Les claus d'accés estan desactivades en aquest servidor",
     "passwordElsewhere": "Inicieu la sessió mitjançant {method}, la contrasenya és allà",
+    "passwordFirst": "Una clau d'accés va amb la contrasenya, i aquest compte encara no en té",
     "passwordLocked": "La vostra contrasenya està bloquejada. Un administrador la pot canviar",
     "passwordMissing": "Falta la contrasenya",
     "passwordShort": {
@@ -3887,7 +3888,7 @@
     "same": "Trieu una contrasenya diferent de l'anterior.",
     "badReset": "El codi no és correcte o ha caducat. Demaneu-ne un de nou.",
     "passkeyFailed": "Amb aquesta clau d'accés no es pot iniciar la sessió aquí.",
-    "passkeyOff": "Les claus d'accés estan desactivades en aquest servidor.",
+    "passkeyNotHere": "Les claus d'accés no funcionen en aquesta adreça.",
     "offline": "El CannonCommander no respon ara mateix. Torneu-ho a provar d'aquí a un moment."
   },
   "ui": {

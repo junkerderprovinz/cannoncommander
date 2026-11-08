@@ -1,13 +1,14 @@
 <script setup lang="ts">
 // The jobs window: every job with its progress, the open ones in queue order and movable by arrow, drag or Alt+arrow.
 import { segItems } from '@/ui/kit';
-import { EmptyState, FieldRow, IconButton, Pill, ProgressBar, Selector, SubCard, useDragArmed } from '@glimstone/vue';
+import { EmptyState, FieldRow, IconButton, Pill, ProgressBar, Selector, SubCard } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import type { Job } from '@/api/ops';
 import { G, glyphOf, glyphComponent } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
 import { t } from '@/i18n';
 import { isOpen, useJobs } from '@/stores/jobs';
+import { useReorder } from '@/ui/reorder';
 import { factsOf, jobLabel, pctOf } from './label';
 import { answer, limitMenu } from './steps';
 
@@ -15,13 +16,17 @@ const jobs = useJobs();
 const mode = computed({ get: () => (prefs.jobMode === 'parallel' ? 'parallel' : 'serial'), set: (v) => setPref('jobMode', v) });
 const MODES = [['serial', t('jobs.serial')], ['parallel', t('jobs.parallel')]] as const;
 
-// While a row is dragged the list shows where it would land; the server hears of it on the drop.
-const dragging = ref<Job | null>(null);
-const preview = ref<Job[] | null>(null);
+// While a row is carried the others make room for it; the server hears of the new place on the drop.
 const list = ref<HTMLElement | null>(null);
-useDragArmed(list, () => dragging.value !== null);
+const drag = useReorder({
+  ids: () => jobs.running.map((j) => j.id), list, attr: 'data-movable', arm: 'move',
+  onReorder: (ids, id) => {
+    const j = jobs.running.find((x) => x.id === id);
+    if (j) jobs.move(j, ids.indexOf(id));
+  },
+});
 const rows = computed(() => {
-  const open = preview.value ?? jobs.running;
+  const open = drag.order.value.map((id) => jobs.running.find((j) => j.id === id)!);
   return [...open, ...jobs.list.filter((j) => !isOpen(j))];
 });
 const waitingPlace = (j: Job) => jobs.running.filter((x) => x.state === 'queued').indexOf(j);
@@ -39,27 +44,9 @@ function keys(j: Job, e: KeyboardEvent) {
   e.preventDefault();
   step(j, e.key === 'ArrowUp' ? -1 : 1);
 }
-function dragStart(j: Job, e: DragEvent) {
-  if (!isOpen(j)) return;
-  dragging.value = j;
-  preview.value = [...jobs.running];
-  e.dataTransfer!.effectAllowed = 'move';
-}
-function dragOver(j: Job, e: DragEvent) {
-  const d = dragging.value, list = preview.value;
-  if (!d || !list || !isOpen(j) || j === d) return;
-  e.preventDefault();
-  const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
-  const rest = list.filter((x) => x !== d);
-  const at = rest.indexOf(j) + (e.clientY < r.top + r.height / 2 ? 0 : 1);
-  rest.splice(at, 0, d);
-  preview.value = rest;
-}
-function dragEnd() {
-  const d = dragging.value, to = preview.value?.indexOf(d!) ?? -1;
-  dragging.value = null;
-  preview.value = null;
-  if (d && to >= 0) jobs.move(d, to);
+// A press on one of the row's buttons belongs to the button.
+function press(j: Job, e: PointerEvent) {
+  if (isOpen(j) && !(e.target as Element).closest('button')) drag.press(e, j.id);
 }
 </script>
 
@@ -67,9 +54,9 @@ function dragEnd() {
   <SubCard><FieldRow :label="t('jobs.modeLabel')" :hint="t('jobs.modeTip')"><Selector id="jobs-mode" v-model="mode" :items="segItems(MODES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow></SubCard>
   <SubCard id="jobs-body">
     <div v-if="rows.length" ref="list" class="job-list glim-drag-rows">
-      <div v-for="j in rows" :key="j.id" class="job" :class="{ open: isOpen(j), dragging: dragging === j }" :data-held="dragging === j || undefined" :data-job="j.id" :draggable="isOpen(j) ? 'true' : undefined" :tabindex="isOpen(j) ? 0 : undefined"
+      <div v-for="j in rows" :key="j.id" class="job" :class="[drag.look(j.id), { open: isOpen(j) }]" :data-job="j.id" :data-movable="isOpen(j) ? j.id : undefined" :tabindex="isOpen(j) ? 0 : undefined"
         :aria-label="t('jobs.aria', { label: jobLabel(j), pct: Math.round(pctOf(j)), state: t(`jobs.state.${j.state}`) })"
-        @keydown="keys(j, $event)" @dragstart="dragStart(j, $event)" @dragover="dragOver(j, $event)" @dragend="dragEnd">
+        @keydown="keys(j, $event)" @pointerdown="press(j, $event)">
         <span class="job-grip" aria-hidden="true"><G v-if="isOpen(j)" n="IconGrip" /></span>
         <div class="job-text">
           <div class="job-label">{{ jobLabel(j) }}</div>

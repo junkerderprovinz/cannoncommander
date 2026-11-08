@@ -152,7 +152,7 @@ onBeforeUnmount(() => stopKeys());
         </template>
         <FieldRow v-for="f in fields" :key="f.k" :label="f.l" :hint="f.tip">
           <template #label>{{ f.l }}<template v-if="f.opt">{{ ' ' }}<small>{{ c('optional') }}</small></template></template>
-          <Select v-if="f.dd" v-model="draft[f.k]" :data-rf="f.k" :options="selectOptions(f.dd)" rows="menu" />
+          <Select v-if="f.dd" v-model="draft[f.k]" :data-rf="f.k" :options="selectOptions(f.dd)" />
           <PasswordField v-else-if="f.pw" v-model="draft[f.k]" width="medium" :data-rf="f.k" :placeholder="isNew ? '' : c('remotes.unchanged')" autocomplete="new-password" :text="eyeWords()" />
           <TextField v-else v-model="draft[f.k]" :width="WIDTHS[(f.w ?? 'm') as keyof typeof WIDTHS]" :data-rf="f.k" :placeholder="f.ph" />
         </FieldRow>

@@ -165,7 +165,7 @@ onBeforeUnmount(() => { stop?.abort(); dropTextJob(); offHits(); clearTimeout(ti
       <FieldRow :label="t('search.in')"><PathField v-model="q.in" v-bind="pathField('s-in')" /></FieldRow>
       <FieldRow :label="t('search.hidden')" :hint="t('search.hiddenTip')"><Toggle id="s-hidden" v-model="q.hidden" /></FieldRow>
       <FieldRow :label="t('search.size')" :hint="t('search.sizeTip')"><span class="bk-range"><TextField id="s-min" v-model="q.min" class="bk-num glim-num" :placeholder="t('search.from')" autocomplete="off" /><span class="muted">{{ t('search.to') }}</span><TextField id="s-max" v-model="q.max" class="bk-num glim-num" :placeholder="t('search.any')" autocomplete="off" /></span></FieldRow>
-      <FieldRow :label="t('search.when')"><Select id="s-when" v-model="q.when" :trigger-attrs="{ 'data-val': q.when }" :options="selectOptions(WHEN)" rows="menu" /></FieldRow>
+      <FieldRow :label="t('search.when')"><Select id="s-when" v-model="q.when" :trigger-attrs="{ 'data-val': q.when }" :options="selectOptions(WHEN)" /></FieldRow>
       <FieldRow wide :label="t('search.type')"><Selector id="s-type" v-model="q.type" :items="segItems(TYPES)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     </FieldRowGroup>
   </SubCard>

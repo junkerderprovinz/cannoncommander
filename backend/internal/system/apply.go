@@ -3,33 +3,13 @@ package system
 import (
 	"context"
 	"database/sql"
-	"sync"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-// boot remembers the settings that only take effect at start, so the
-// settings page can say when a restart is due.
-var boot struct {
-	once      sync.Once
-	autoCheck bool
-}
-
-func captureBoot() {
-	boot.once.Do(func() {
-		boot.autoCheck = !settings.Config.Server.DisableUpdateCheck
-	})
-}
-
-func restartNeeded(a App) bool {
-	captureBoot()
-	return a.Updates.AutoCheck != boot.autoCheck
-}
-
 // ApplyStored puts the saved settings into the running config. It runs
-// before the web server registers its routes, because the update check is only
-// looked at once.
+// before the web server starts, so the first request already sees them.
 func ApplyStored(ctx context.Context, db *sql.DB) {
 	if db != nil {
 		a, saved, err := readApp(ctx, db)
@@ -39,7 +19,6 @@ func ApplyStored(ctx context.Context, db *sql.DB) {
 			apply(a)
 		}
 	}
-	captureBoot()
 }
 
 // apply puts settings into effect in the running server.
@@ -54,7 +33,6 @@ func apply(a App) {
 	}
 	c.Server.DisablePreviews = !a.Previews.Thumbs
 	c.Http.DisableWebDAV = !a.WebDAV
-	c.Server.DisableUpdateCheck = !a.Updates.AutoCheck
 	if err := settings.SetLogLevel(a.LogLevel); err != nil {
 		logger.Errorf("log level: %v", err)
 	}

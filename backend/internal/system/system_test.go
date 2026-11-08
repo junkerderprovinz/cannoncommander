@@ -17,6 +17,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -117,12 +118,12 @@ func (f *fixture) call(who, method, target, body string, out any) int {
 
 func TestAppSettingsSaveFieldByFieldAndHideSecrets(t *testing.T) {
 	f := newFixture(t)
-	var doc appDoc
+	var doc App
 	if code := f.call("jdp", "GET", "/admin/app", "", &doc); code != 200 {
 		t.Fatalf("get: %d", code)
 	}
 	if doc.Office.Kind != OfficeNone || doc.LogLevel != "info" || doc.Remotes.Cache != CacheWrites || doc.Remotes.CacheSize != 50 || !doc.Remotes.Automount {
-		t.Fatalf("defaults %+v", doc.App)
+		t.Fatalf("defaults %+v", doc)
 	}
 
 	body := `{"office":{"kind":"onlyoffice","url":"https://office.tower.lan/","secret":"geheim"},"arrowloop":{"url":"http://arrowloop.lan:8080","token":"t0k"}}`
@@ -130,7 +131,7 @@ func TestAppSettingsSaveFieldByFieldAndHideSecrets(t *testing.T) {
 		t.Fatalf("put: %d", code)
 	}
 	if doc.Office.Secret != "" || !doc.Office.SecretSet || doc.ArrowLoop.Token != "" || !doc.ArrowLoop.TokenSet {
-		t.Fatalf("secrets leak or are not marked: %+v", doc.App)
+		t.Fatalf("secrets leak or are not marked: %+v", doc)
 	}
 	if doc.Office.URL != "https://office.tower.lan" {
 		t.Fatalf("url %q", doc.Office.URL)
@@ -139,8 +140,8 @@ func TestAppSettingsSaveFieldByFieldAndHideSecrets(t *testing.T) {
 		t.Fatalf("applied %+v", last.Office)
 	}
 
-	// One switch at a time, and what the page read goes back unchanged.
-	if code := f.call("jdp", "PUT", "/admin/app", `{"logLevel":"debug","restartNeeded":false}`, &doc); code != 200 {
+	// One switch at a time.
+	if code := f.call("jdp", "PUT", "/admin/app", `{"logLevel":"debug"}`, &doc); code != 200 {
 		t.Fatalf("put level: %d", code)
 	}
 	got, err := f.svc.store.get(context.Background())
@@ -175,9 +176,9 @@ func TestAppSettingsSaveFieldByFieldAndHideSecrets(t *testing.T) {
 
 func TestArrowLoopPathsAreReplacedAsAWhole(t *testing.T) {
 	f := newFixture(t)
-	put := func(body string, want int) appDoc {
+	put := func(body string, want int) App {
 		t.Helper()
-		var doc appDoc
+		var doc App
 		if code := f.call("jdp", "PUT", "/admin/app", body, &doc); code != want {
 			t.Fatalf("%s: %d, want %d", body, code, want)
 		}
@@ -332,6 +333,19 @@ func TestSystemReportsVersionToolsAndOffice(t *testing.T) {
 	}
 }
 
+func TestSystemSaysWhetherTheBuildIsARelease(t *testing.T) {
+	saved := version.Version
+	t.Cleanup(func() { version.Version = saved })
+	for current, want := range map[string]bool{"v1.4.0": true, "v1.4.0-3-gabc1234": false, "dev-abc1234": false} {
+		version.Version = current
+		f := newFixture(t)
+		var in Info
+		if code := f.call("anna", "GET", "/system", "", &in); code != 200 || in.Release != want || in.Version != current {
+			t.Errorf("%s: %d %+v", current, code, in)
+		}
+	}
+}
+
 func TestVersionNumberIsFoundInToolOutput(t *testing.T) {
 	for out, want := range map[string]string{
 		"ffmpeg version 7.1.1-static https://johnvansickle.com Copyright": "7.1.1",
@@ -352,11 +366,11 @@ func TestWebDAVStartsOffAndTheSwitchWorksAtOnce(t *testing.T) {
 	settings.Config.Http.DisableWebDAV = true
 
 	f := newFixture(t)
-	var doc appDoc
+	var doc App
 	if code := f.call("jdp", "GET", "/admin/app", "", &doc); code != 200 || doc.WebDAV {
 		t.Fatalf("%d, webdav %v", code, doc.WebDAV)
 	}
-	if code := f.call("jdp", "PUT", "/admin/app", `{"webdav":true}`, &doc); code != 200 || !doc.WebDAV || doc.RestartNeeded {
+	if code := f.call("jdp", "PUT", "/admin/app", `{"webdav":true}`, &doc); code != 200 || !doc.WebDAV {
 		t.Fatalf("%d, %+v", code, doc)
 	}
 	apply(f.applied[len(f.applied)-1])
@@ -370,5 +384,29 @@ func TestWebDAVStartsOffAndTheSwitchWorksAtOnce(t *testing.T) {
 	apply(App{LogLevel: "info"})
 	if !settings.Config.Http.DisableWebDAV {
 		t.Fatal("switching it off did not reach the running server")
+	}
+}
+
+func TestUpdateSwitchFollowsTheConfigAndNeedsNoRestart(t *testing.T) {
+	saved := settings.Config
+	t.Cleanup(func() { settings.Config = saved })
+	settings.Config.Server.DisableUpdateCheck = true
+
+	f := newFixture(t)
+	var doc map[string]any
+	if code := f.call("jdp", "GET", "/admin/app", "", &doc); code != 200 || doc["updates"].(map[string]any)["autoCheck"] != false {
+		t.Fatalf("%d, %v", code, doc["updates"])
+	}
+	for _, on := range []string{"true", "false", "true"} {
+		if code := f.call("jdp", "PUT", "/admin/app", `{"updates":{"autoCheck":`+on+`}}`, &doc); code != 200 {
+			t.Fatalf("%s: %d", on, code)
+		}
+		if doc["restartNeeded"] == true {
+			t.Fatalf("switching to %s asks for a restart", on)
+		}
+	}
+	got, err := f.svc.store.get(context.Background())
+	if err != nil || !got.Updates.AutoCheck {
+		t.Fatalf("stored %+v, %v", got.Updates, err)
 	}
 }

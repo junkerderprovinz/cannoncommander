@@ -388,7 +388,7 @@
       "shares": "Megosztások",
       "security": "Fiók és biztonság",
       "integrations": "Integrációk",
-      "app": "Alkalmazás",
+      "system": "Rendszer",
       "info": "Információ"
     },
     "actions": {
@@ -924,7 +924,7 @@
       "changedAgo": "Módosítva: {ago}",
       "change": "Módosítás",
       "stay": "Belépve maradás",
-      "stayTip": "Utána a CannonCommander újra kéri a jelszót.",
+      "stayTip": "Az idő az utolsó látogatásától számít. Ha ennyi ideig nem jár erre, a CannonCommander újra kéri a jelszót.",
       "day1": "1 nap",
       "twofa": "Kétlépcsős azonosítás",
       "status": "Állapot",
@@ -978,6 +978,9 @@
       },
       "passkeys": "Azonosítókulcsok",
       "noPasskey": "Még nincs azonosítókulcs",
+      "passkeyHint": "Az azonosítókulccsal jelszó nélkül lép be. Csak azon a címen működik, ahol létrehozza.",
+      "noPasskeyHere": "Itt nem hozható létre azonosítókulcs",
+      "passkeyBrowser": "Ez a böngésző itt nem kínál azonosítókulcsot. Ez csak HTTPS-en vagy a localhoston működik.",
       "addPasskey": "Azonosítókulcs hozzáadása",
       "removePasskey": "Azonosítókulcs eltávolítása",
       "removePasskeyText": "Ezután ez nem lépteti be többé: {name}. A jelszó továbbra is érvényes.",
@@ -1026,7 +1029,6 @@
       "copyNow": "Másolja ki a tokent most. A CannonCommander többé nem mutatja meg, csak újat hozhat létre.",
       "tokenCreatedToast": "Token létrehozva: {name}",
       "pwLocked": "A jelszavát itt csak rendszergazda módosíthatja, vagy egy másik szolgáltatáson keresztül lép be.",
-      "passkeysOff": "Az azonosítókulcsok ki vannak kapcsolva ezen a szerveren",
       "tooMany": "Túl sok próbálkozás. Kérjük, próbálja újra 15 perc múlva",
       "proofTip": "A CannonCommander minden új hozzáférésnél rákérdez, hogy csak Ön vehessen fel újat.",
       "signInAgain": "Újra belépés",
@@ -1083,10 +1085,10 @@
     },
     "app": {
       "updates": "Frissítések",
-      "autoCheck": "Frissítések automatikus keresése",
-      "autoCheckTip": "Naponta egyszer. A frissítést Önnek kell telepítenie, az Unraidben a Docker lapon.",
-      "image": "Docker-image",
-      "tagTip": "Most ez a verzió fut. Hogy az Unraid melyik taget tölti le, azt a sablonban állíthatja be, a latest minden új verziót követ.",
+      "autoCheck": "Automatikus ellenőrzés",
+      "autoCheckTip": "Amíg ez be van kapcsolva, az oldal megnyitása egyszer megkérdezi a GitHubot, van-e újabb CannonCommander. Csak kérdez, mert a konténer a frissítéseit a konténerkezelőjétől kapja.",
+      "autoUpdate": "Automatikus frissítés",
+      "autoUpdateTip": "Egy konténer nem tudja belülről lecserélni önmagát. Frissítse inkább az Unraidben a Docker lapon, docker pull paranccsal vagy Watchtowerrel.",
       "check": "Frissítések keresése",
       "checking": "Keresés",
       "current": "Naprakész, {v}",
@@ -1133,8 +1135,6 @@
       "notExport": "Ez nem exportált beállításfájl",
       "imported": "Beállítások átvéve innen: {name}",
       "noAnswer": "A GitHub épp nem válaszolt. Kérjük, próbálja újra később",
-      "restartNeeded": "Újraindítás szükséges",
-      "restartNeededTip": "Néhány beállítás csak újraindítás után lép életbe.",
       "importedRestart": "{name} átvéve. Indítsa újra a CannonCommandert, hogy minden érvénybe lépjen"
     },
     "info": {
@@ -3553,12 +3553,13 @@
     "ownSessionsElsewhere": "A saját munkameneteit, tokenjeit és azonosítókulcsait a Fiók és biztonság alatt zárhatja le",
     "passkeyExists": "Ilyen nevű azonosítókulcs már létezik",
     "passkeyNameMissing": "Adjon nevet az azonosítókulcsnak",
+    "passkeyNeedsHostName": "Az azonosítókulcsokhoz gépnév kell, ez az oldal pedig IP-címen van megnyitva. Nyissa meg a CannonCommandert a nevén, és működni fog",
     "passkeyNotConfirmed": "A böngésző nem erősítette meg az azonosítókulcsot. Kérjük, próbálja újra",
     "passkeyRegistered": "Ez az azonosítókulcs már regisztrálva van",
     "passkeyUnknown": "Ezzel az azonosítókulccsal itt nem lehet belépni",
     "passkeysElsewhere": "Az azonosítókulcsok a jelszóhoz tartoznak, Ön pedig ezen keresztül lép be: {method}",
-    "passkeysOff": "Az azonosítókulcsok ki vannak kapcsolva ezen a szerveren",
     "passwordElsewhere": "Ön ezen keresztül lép be: {method}, a jelszó ott van",
+    "passwordFirst": "Az azonosítókulcs a jelszó mellé jár, ennek a fióknak pedig még nincs jelszava",
     "passwordLocked": "A jelszava zárolva van. Egy rendszergazda módosíthatja",
     "passwordMissing": "Hiányzik a jelszó",
     "passwordShort": {
@@ -3745,7 +3746,7 @@
     "same": "Kérjük, az eddigitől eltérő jelszót válasszon.",
     "badReset": "A kód nem stimmel, vagy lejárt. Kérjen egy újat.",
     "passkeyFailed": "Ezzel az azonosítókulccsal itt nem lehet belépni.",
-    "passkeyOff": "Az azonosítókulcsok ki vannak kapcsolva ezen a szerveren.",
+    "passkeyNotHere": "Ezen a címen nem működnek az azonosítókulcsok.",
     "offline": "A CannonCommander most nem válaszol. Kérjük, próbálja újra egy pillanat múlva."
   },
   "ui": {

@@ -130,11 +130,12 @@ type OidcConfig struct {
 	Verifier     *oidc.IDTokenVerifier `json:"-"`            // OIDC verifier
 }
 
-// PasskeyAuthConfig configures WebAuthn / Passkey authentication as a second factor.
+// PasskeyAuthConfig configures passkeys. They are always on, so Enabled is
+// only read for config files that still carry it.
 type PasskeyAuthConfig struct {
-	Enabled         bool     `json:"enabled"`         // whether to enable passkey MFA
+	Enabled         bool     `json:"enabled"`         // has no effect, passkeys are always on
 	RPDisplayName   string   `json:"rpDisplayName"`   // the Relying Party display name (defaults to frontend name)
-	RPID            string   `json:"rpId"`            // the Relying Party ID; if empty, auto-derived from base URL host
+	RPID            string   `json:"rpId"`            // the Relying Party ID until a request names its host, which every passkey request does
 	RPOrigins       []string `json:"rpOrigins"`       // allowed origins; if empty, auto-derived from base URL
 	LoginButtonText string   `json:"loginButtonText"` // custom text for the passkey login button
 }

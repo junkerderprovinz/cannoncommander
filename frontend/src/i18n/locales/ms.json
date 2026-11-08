@@ -366,7 +366,7 @@
       "shares": "Pautan kongsi",
       "security": "Akaun & keselamatan",
       "integrations": "Integrasi",
-      "app": "Aplikasi",
+      "system": "Sistem",
       "info": "Maklumat"
     },
     "actions": {
@@ -883,7 +883,7 @@
       "changedAgo": "Diubah {ago}",
       "change": "Ubah",
       "stay": "Kekal log masuk",
-      "stayTip": "Selepas itu CannonCommander meminta kata laluan semula.",
+      "stayTip": "Masa dikira dari lawatan terakhir anda. Jika anda tidak datang selama itu, CannonCommander meminta kata laluan semula.",
       "day1": "1 hari",
       "twofa": "Pengesahan dua faktor",
       "status": "Status",
@@ -935,6 +935,9 @@
       },
       "passkeys": "Kunci laluan",
       "noPasskey": "Belum ada kunci laluan",
+      "passkeyHint": "Kunci laluan melog masuk anda tanpa kata laluan. Ia hanya berfungsi di alamat tempat anda menciptanya.",
+      "noPasskeyHere": "Kunci laluan tidak boleh dicipta di sini",
+      "passkeyBrowser": "Pelayar ini tidak menawarkan kunci laluan di sini. Ia hanya berfungsi melalui HTTPS atau pada localhost.",
       "addPasskey": "Tambah kunci laluan",
       "removePasskey": "Buang kunci laluan",
       "removePasskeyText": "{name} tidak akan melog masuk anda lagi selepas ini. Kata laluan terus berfungsi.",
@@ -982,7 +985,6 @@
       "copyNow": "Salin token sekarang. CannonCommander tidak akan menunjukkannya lagi, anda hanya boleh mencipta yang baharu.",
       "tokenCreatedToast": "Token {name} dicipta",
       "pwLocked": "Kata laluan anda di sini hanya boleh diubah oleh pentadbir, atau anda log masuk melalui perkhidmatan lain.",
-      "passkeysOff": "Kunci laluan dimatikan pada pelayan ini",
       "tooMany": "Terlalu banyak cubaan. Sila cuba lagi dalam 15 minit",
       "proofTip": "CannonCommander memintanya sebelum setiap akses baharu, supaya hanya anda yang boleh menambahnya.",
       "signInAgain": "Log masuk semula",
@@ -1039,10 +1041,10 @@
     },
     "app": {
       "updates": "Kemas kini",
-      "autoCheck": "Cari kemas kini secara automatik",
-      "autoCheckTip": "Sekali sehari. Kemas kini dipasang sendiri oleh anda, pada Unraid dalam tab Docker.",
-      "image": "Imej Docker",
-      "tagTip": "Versi ini sedang berjalan. Tag yang diambil oleh Unraid ditetapkan dalam templat, latest mengikut setiap versi baharu.",
+      "autoCheck": "Semak secara automatik",
+      "autoCheckTip": "Selagi ini hidup, membuka halaman ini bertanya sekali kepada GitHub sama ada CannonCommander yang lebih baharu telah keluar. Ia hanya bertanya, kerana bekas mendapat kemas kininya daripada pengurus bekasnya.",
+      "autoUpdate": "Kemas kini secara automatik",
+      "autoUpdateTip": "Bekas tidak boleh menggantikan dirinya dari dalam. Sebaliknya, kemas kini ia pada Unraid dalam tab Docker, dengan docker pull atau dengan Watchtower.",
       "check": "Cari kemas kini",
       "checking": "Mencari",
       "current": "Terkini, {v}",
@@ -1088,8 +1090,6 @@
       "notExport": "Ini bukan fail tetapan yang dieksport",
       "imported": "Tetapan daripada {name} diambil alih",
       "noAnswer": "GitHub tidak menjawab sebentar tadi. Sila cuba lagi nanti",
-      "restartNeeded": "Perlu mula semula",
-      "restartNeededTip": "Beberapa tetapan hanya berkuat kuasa selepas mula semula.",
       "importedRestart": "{name} diambil alih. Mulakan semula CannonCommander supaya semuanya berkuat kuasa"
     },
     "info": {
@@ -3417,12 +3417,13 @@
     "ownSessionsElsewhere": "Sesi, token dan kunci laluan anda sendiri ditamatkan dalam Akaun & keselamatan",
     "passkeyExists": "Sudah ada kunci laluan dengan nama ini",
     "passkeyNameMissing": "Beri nama kepada kunci laluan ini",
+    "passkeyNeedsHostName": "Kunci laluan memerlukan nama hos, dan halaman ini dibuka melalui alamat IP. Buka CannonCommander dengan namanya dan ia akan berfungsi",
     "passkeyNotConfirmed": "Pelayar tidak mengesahkan kunci laluan. Sila cuba lagi",
     "passkeyRegistered": "Kunci laluan ini sudah didaftarkan",
     "passkeyUnknown": "Kunci laluan ini tidak boleh digunakan untuk log masuk di sini",
     "passkeysElsewhere": "Kunci laluan berkait dengan kata laluan, dan anda log masuk melalui {method}",
-    "passkeysOff": "Kunci laluan dimatikan pada pelayan ini",
     "passwordElsewhere": "Anda log masuk melalui {method}, kata laluannya disimpan di sana",
+    "passwordFirst": "Kunci laluan datang bersama kata laluan, dan akaun ini belum ada kata laluan",
     "passwordLocked": "Kata laluan anda dikunci. Pentadbir boleh mengubahnya",
     "passwordMissing": "Kata laluan masih kosong",
     "passwordShort": {
@@ -3603,7 +3604,7 @@
     "same": "Sila pilih kata laluan yang berbeza daripada sebelum ini.",
     "badReset": "Kod tidak betul atau sudah tamat tempoh. Sila minta yang baharu.",
     "passkeyFailed": "Kunci laluan ini tidak boleh digunakan untuk log masuk di sini.",
-    "passkeyOff": "Kunci laluan dimatikan pada pelayan ini.",
+    "passkeyNotHere": "Kunci laluan tidak berfungsi di alamat ini.",
     "offline": "CannonCommander tidak menjawab buat masa ini. Sila cuba lagi sebentar lagi."
   },
   "ui": {

@@ -432,7 +432,7 @@
       "shares": "Deljenja",
       "security": "Račun in varnost",
       "integrations": "Integracije",
-      "app": "Aplikacija",
+      "system": "Sistem",
       "info": "Informacije"
     },
     "actions": {
@@ -1006,7 +1006,7 @@
       "changedAgo": "Spremenjeno {ago}",
       "change": "Spremeni",
       "stay": "Ostani prijavljen",
-      "stayTip": "Nato CannonCommander znova vpraša za geslo.",
+      "stayTip": "Čas se šteje od vašega zadnjega obiska. Če se toliko časa ne oglasite, CannonCommander znova vpraša za geslo.",
       "day1": "1 dan",
       "twofa": "Dvostopenjsko preverjanje",
       "status": "Stanje",
@@ -1064,6 +1064,9 @@
       },
       "passkeys": "Ključi za dostop",
       "noPasskey": "Še ni ključa za dostop",
+      "passkeyHint": "Ključ za dostop vas prijavi brez gesla. Deluje samo na naslovu, kjer ga ustvarite.",
+      "noPasskeyHere": "Tukaj ključa za dostop ni mogoče ustvariti",
+      "passkeyBrowser": "Ta brskalnik tukaj ne ponuja ključev za dostop. To deluje samo prek HTTPS ali na localhost.",
       "addPasskey": "Dodaj ključ za dostop",
       "removePasskey": "Odstrani ključ za dostop",
       "removePasskeyText": "{name} vas nato ne bo več prijavil. Geslo velja še naprej.",
@@ -1114,7 +1117,6 @@
       "copyNow": "Kopirajte žeton zdaj. CannonCommander ga ne bo nikoli več pokazal, ustvarite lahko samo novega.",
       "tokenCreatedToast": "Žeton {name} ustvarjen",
       "pwLocked": "Vaše geslo tukaj spremeni samo skrbnik, ali pa se prijavite prek druge storitve.",
-      "passkeysOff": "Ključi za dostop so na tem strežniku izklopljeni",
       "tooMany": "Preveč poskusov. Poskusite znova čez 15 minut",
       "proofTip": "CannonCommander to vpraša pri vsakem novem dostopu, da ga lahko dodate samo vi.",
       "signInAgain": "Znova se prijavite",
@@ -1171,10 +1173,10 @@
     },
     "app": {
       "updates": "Posodobitve",
-      "autoCheck": "Samodejno išči posodobitve",
-      "autoCheckTip": "Enkrat na dan. Posodobitev namestite sami, v Unraidu na zavihku Docker.",
-      "image": "Slika Docker",
-      "tagTip": "Ta različica trenutno teče. Katero oznako prenese Unraid, določite v predlogi, latest sledi vsaki novi različici.",
+      "autoCheck": "Samodejno preverjaj",
+      "autoCheckTip": "Dokler je to vklopljeno, odprtje te strani enkrat vpraša GitHub, ali je izšel novejši CannonCommander. Samo vpraša, ker vsebnik dobiva posodobitve od svojega upravitelja vsebnikov.",
+      "autoUpdate": "Samodejno posodabljaj",
+      "autoUpdateTip": "Vsebnik se ne more sam zamenjati od znotraj. Namesto tega ga posodobite v Unraidu na zavihku Docker, z docker pull ali z Watchtowerjem.",
       "check": "Išči posodobitve",
       "checking": "Iščem",
       "current": "Ažurno, {v}",
@@ -1223,8 +1225,6 @@
       "notExport": "To ni izvožena datoteka nastavitev",
       "imported": "Nastavitve prevzete iz {name}",
       "noAnswer": "GitHub ravnokar ni odgovoril. Poskusite znova pozneje",
-      "restartNeeded": "Potreben ponovni zagon",
-      "restartNeededTip": "Nekatere nastavitve veljajo šele po ponovnem zagonu.",
       "importedRestart": "{name} je prevzeto. Znova zaženite CannonCommander, da bo vse veljalo"
     },
     "info": {
@@ -3825,12 +3825,13 @@
     "ownSessionsElsewhere": "Svoje seje, žetone in ključe za dostop končate pod Račun in varnost",
     "passkeyExists": "Ključ za dostop s tem imenom že obstaja",
     "passkeyNameMissing": "Poimenujte ključ za dostop",
+    "passkeyNeedsHostName": "Ključi za dostop potrebujejo ime gostitelja, ta stran pa je odprta prek naslova IP. Odprite CannonCommander pod njegovim imenom in bo delovalo",
     "passkeyNotConfirmed": "Brskalnik ni potrdil ključa za dostop. Poskusite znova",
     "passkeyRegistered": "Ta ključ za dostop je že registriran",
     "passkeyUnknown": "S tem ključem za dostop se tukaj ni mogoče prijaviti",
     "passkeysElsewhere": "Ključi za dostop spadajo h geslu, vi pa se prijavljate prek {method}",
-    "passkeysOff": "Ključi za dostop so na tem strežniku izklopljeni",
     "passwordElsewhere": "Prijavljate se prek {method}, geslo je tam",
+    "passwordFirst": "Ključ za dostop spada h geslu, ta račun pa gesla še nima",
     "passwordLocked": "Vaše geslo je zaklenjeno. Skrbnik ga lahko spremeni",
     "passwordMissing": "Geslo manjka",
     "passwordShort": {
@@ -4029,7 +4030,7 @@
     "same": "Izberite drugo geslo kot doslej.",
     "badReset": "Koda ni pravilna ali je potekla. Zahtevajte novo.",
     "passkeyFailed": "S tem ključem za dostop se tukaj ni mogoče prijaviti.",
-    "passkeyOff": "Ključi za dostop so na tem strežniku izklopljeni.",
+    "passkeyNotHere": "Na tem naslovu ključi za dostop ne delujejo.",
     "offline": "CannonCommander trenutno ne odgovarja. Poskusite znova čez trenutek."
   },
   "ui": {

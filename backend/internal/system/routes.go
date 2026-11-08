@@ -21,7 +21,6 @@ var contract []byte
 // operations belong to the search package, which owns the indexer.
 func Routes(r *v1.Router) {
 	r.Contract("system", contract)
-	captureBoot()
 	s := &service{
 		deps:        r.Deps(),
 		store:       storeFor(r.Deps()),
@@ -95,20 +94,12 @@ func (s *service) putSources(w http.ResponseWriter, r *http.Request) error {
 	return v1.WriteJSON(w, r, http.StatusOK, out)
 }
 
-// appDoc is the settings as the page reads and saves them.
-type appDoc struct {
-	App
-	// RestartNeeded is only ever sent. A page that saves what it read
-	// sends it back, which does no harm.
-	RestartNeeded bool `json:"restartNeeded"`
-}
-
 func (s *service) getApp(w http.ResponseWriter, r *http.Request) error {
 	a, err := s.store.get(r.Context())
 	if err != nil {
 		return err
 	}
-	return v1.WriteJSON(w, r, http.StatusOK, appDoc{App: a.public(), RestartNeeded: restartNeeded(a)})
+	return v1.WriteJSON(w, r, http.StatusOK, a.public())
 }
 
 // putApp saves the fields the body carries over the saved ones, so a page
@@ -129,7 +120,7 @@ func (s *service) putApp(w http.ResponseWriter, r *http.Request) error {
 	}
 	_ = json.Unmarshal(body, &sent)
 	a, err := s.store.update(r.Context(), func(a *App) error {
-		doc := appDoc{App: *a}
+		doc := *a
 		if sent.ArrowLoop.Paths != nil {
 			doc.ArrowLoop.Paths = nil
 		}
@@ -138,14 +129,14 @@ func (s *service) putApp(w http.ResponseWriter, r *http.Request) error {
 		if err := dec.Decode(&doc); err != nil {
 			return v1.Errorf(http.StatusBadRequest, "invalid JSON body: "+err.Error())
 		}
-		*a = doc.App
+		*a = doc
 		return nil
 	})
 	if err != nil {
 		return err
 	}
 	s.apply(a)
-	return v1.WriteJSON(w, r, http.StatusOK, appDoc{App: a.public(), RestartNeeded: restartNeeded(a)})
+	return v1.WriteJSON(w, r, http.StatusOK, a.public())
 }
 
 func (s *service) testIntegration(w http.ResponseWriter, r *http.Request) error {

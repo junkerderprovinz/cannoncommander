@@ -34,7 +34,7 @@ func (w *world) started() int {
 func TestTheSignInPageLearnsTheWaysIn(t *testing.T) {
 	w := signInWorld(t)
 	got := decode[accounts.SignInOptions](t, w.must(http.StatusOK, w.req("GET", "/auth/options", nil)))
-	if !got.Password || got.Passkey || got.OIDC != nil || got.MinPass < 12 || got.Version == "" {
+	if !got.Password || !got.Passkey || got.OIDC != nil || got.MinPass < 12 || got.Version == "" {
 		t.Fatalf("options = %+v", got)
 	}
 	settings.Config.Auth.Methods.OidcAuth.Enabled = true
@@ -249,7 +249,7 @@ func (w *world) passkeyChallenge() accounts.PasskeyChallenge {
 
 func TestAPasskeySignsInWithoutAName(t *testing.T) {
 	w := signInWorld(t)
-	turnOnPasskeys(t)
+	passkeysAtCannon(t)
 	w.addUser("anna", "user", "/mnt/user")
 	w.turnOnTotp("anna")
 	key := newAuthenticator(t)
@@ -270,7 +270,7 @@ func TestAPasskeySignsInWithoutAName(t *testing.T) {
 
 func TestAPasskeyFromElsewhereDoesNotSignIn(t *testing.T) {
 	w := signInWorld(t)
-	turnOnPasskeys(t)
+	passkeysAtCannon(t)
 	w.addUser("anna", "user", "/mnt/user")
 	key := newAuthenticator(t)
 	w.addPasskey("anna", key)
@@ -290,8 +290,14 @@ func TestAPasskeyFromElsewhereDoesNotSignIn(t *testing.T) {
 	}
 }
 
-func TestPasskeySignInNeedsTheServerToTakePasskeys(t *testing.T) {
+func TestPasskeySignInNeedsAHostNameAndPasswords(t *testing.T) {
 	w := signInWorld(t)
+	answer := map[string]any{"challenge": "x", "credential": map[string]any{}}
+	w.login.onIP = true
 	w.must(http.StatusConflict, w.req("POST", "/auth/passkey/options", nil))
-	w.must(http.StatusConflict, w.req("POST", "/auth/passkey", map[string]any{"challenge": "x", "credential": map[string]any{}}))
+	w.must(http.StatusConflict, w.req("POST", "/auth/passkey", answer))
+	w.login.onIP = false
+	settings.Config.Auth.Methods.PasswordAuth.Enabled = false
+	w.must(http.StatusConflict, w.req("POST", "/auth/passkey/options", nil))
+	w.must(http.StatusConflict, w.req("POST", "/auth/passkey", answer))
 }

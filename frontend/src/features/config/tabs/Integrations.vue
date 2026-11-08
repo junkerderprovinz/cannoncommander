@@ -122,7 +122,7 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
   <template v-if="app && office">
     <Card :title="c('integrations.office')">
       <FieldRow :label="c('integrations.officeKind')" :hint="c('integrations.officeKindTip')">
-        <Select v-model="kind" :options="selectOptions([['none', c('integrations.none')], ['onlyoffice', 'OnlyOffice'], ['eurooffice', 'Euro-Office'], ['collabora', 'Collabora Online']])" rows="menu" />
+        <Select v-model="kind" :options="selectOptions([['none', c('integrations.none')], ['onlyoffice', 'OnlyOffice'], ['eurooffice', 'Euro-Office'], ['collabora', 'Collabora Online']])" />
       </FieldRow>
       <template v-if="kind !== 'none'">
         <FieldRow :label="c('integrations.url')" :hint="c('integrations.urlTip')">

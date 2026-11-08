@@ -410,7 +410,7 @@
       "shares": "Partajări",
       "security": "Cont și securitate",
       "integrations": "Integrări",
-      "app": "Aplicație",
+      "system": "Sistem",
       "info": "Info"
     },
     "actions": {
@@ -965,7 +965,7 @@
       "changedAgo": "Schimbată {ago}",
       "change": "Schimbă",
       "stay": "Rămâi autentificat",
-      "stayTip": "După aceea, CannonCommander cere din nou parola.",
+      "stayTip": "Timpul se numără de la ultima ta vizită. Dacă nu treci pe aici atâta vreme, CannonCommander cere din nou parola.",
       "day1": "1 zi",
       "twofa": "Autentificare în doi pași",
       "status": "Stare",
@@ -1021,6 +1021,9 @@
       },
       "passkeys": "Chei de acces",
       "noPasskey": "Încă nicio cheie de acces",
+      "passkeyHint": "O cheie de acces te autentifică fără parolă. Funcționează doar la adresa la care o creezi.",
+      "noPasskeyHere": "Aici nu se poate crea o cheie de acces",
+      "passkeyBrowser": "Acest browser nu oferă chei de acces aici. Merge doar prin HTTPS sau pe localhost.",
       "addPasskey": "Adaugă o cheie de acces",
       "removePasskey": "Elimină cheia de acces",
       "removePasskeyText": "După aceea, {name} nu te mai autentifică. Parola rămâne valabilă.",
@@ -1070,7 +1073,6 @@
       "copyNow": "Copiază tokenul acum. CannonCommander nu îl mai arată niciodată, poți doar să creezi altul.",
       "tokenCreatedToast": "Tokenul {name} a fost creat",
       "pwLocked": "Parola ta o schimbă aici doar un admin, sau te autentifici prin alt serviciu.",
-      "passkeysOff": "Cheile de acces sunt dezactivate pe acest server",
       "tooMany": "Prea multe încercări. Încearcă din nou peste 15 minute",
       "proofTip": "CannonCommander o cere înainte de fiecare acces nou, ca doar tu să poți crea unul.",
       "signInAgain": "Autentifică-te din nou",
@@ -1127,10 +1129,10 @@
     },
     "app": {
       "updates": "Actualizări",
-      "autoCheck": "Caută actualizări automat",
-      "autoCheckTip": "O dată pe zi. Actualizarea o instalezi tu, în Unraid, în fila Docker.",
-      "image": "Imagine Docker",
-      "tagTip": "Această versiune rulează acum. Ce tag descarcă Unraid stabilești în template, latest urmează fiecare versiune nouă.",
+      "autoCheck": "Verifică automat",
+      "autoCheckTip": "Cât timp e pornit, deschiderea acestei pagini întreabă o dată GitHub dacă a apărut un CannonCommander mai nou. Doar întreabă, pentru că un container își primește actualizările de la managerul lui de containere.",
+      "autoUpdate": "Actualizează automat",
+      "autoUpdateTip": "Un container nu se poate înlocui singur din interior. Actualizează-l în schimb în Unraid, în fila Docker, cu docker pull sau cu Watchtower.",
       "check": "Caută actualizări",
       "checking": "Se caută",
       "current": "La zi, {v}",
@@ -1178,8 +1180,6 @@
       "notExport": "Acesta nu este un fișier de setări exportat",
       "imported": "Setările din {name} au fost preluate",
       "noAnswer": "GitHub nu a răspuns acum. Încearcă din nou mai târziu",
-      "restartNeeded": "Repornire necesară",
-      "restartNeededTip": "Câteva setări se aplică doar după o repornire.",
       "importedRestart": "{name} a fost preluat. Repornește CannonCommander ca totul să se aplice"
     },
     "info": {
@@ -3689,12 +3689,13 @@
     "ownSessionsElsewhere": "Sesiunile, tokenurile și cheile tale de acces le închei la Cont și securitate",
     "passkeyExists": "Există deja o cheie de acces cu acest nume",
     "passkeyNameMissing": "Dă un nume cheii de acces",
+    "passkeyNeedsHostName": "Cheile de acces au nevoie de un nume de gazdă, iar pagina aceasta e deschisă printr-o adresă IP. Deschide CannonCommander după numele lui și va merge",
     "passkeyNotConfirmed": "Browserul nu a confirmat cheia de acces. Încearcă din nou",
     "passkeyRegistered": "Această cheie de acces este deja înregistrată",
     "passkeyUnknown": "Cu această cheie de acces nu te poți autentifica aici",
     "passkeysElsewhere": "Cheile de acces țin de parolă, iar tu te autentifici prin {method}",
-    "passkeysOff": "Cheile de acces sunt dezactivate pe acest server",
     "passwordElsewhere": "Te autentifici prin {method}, parola se află acolo",
+    "passwordFirst": "O cheie de acces vine împreună cu parola, iar acest cont nu are încă una",
     "passwordLocked": "Parola ta este blocată. Un admin o poate schimba",
     "passwordMissing": "Lipsește parola",
     "passwordShort": {
@@ -3887,7 +3888,7 @@
     "same": "Te rog alege altă parolă decât cea de până acum.",
     "badReset": "Codul nu este corect sau a expirat. Te rog cere unul nou.",
     "passkeyFailed": "Cu această cheie de acces autentificarea nu merge aici.",
-    "passkeyOff": "Cheile de acces sunt dezactivate pe acest server.",
+    "passkeyNotHere": "Cheile de acces nu merg la această adresă.",
     "offline": "CannonCommander nu răspunde acum. Încearcă din nou peste o clipă."
   },
   "ui": {

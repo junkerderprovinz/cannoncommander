@@ -28,10 +28,29 @@ func TestDeriveRPIDTrustProxyHeaders(t *testing.T) {
 		req.Host = "127.0.0.1:8080"
 		req.Header.Set("X-Forwarded-Host", "evil.example.com")
 
-		if got := deriveRPID(req); got != "127.0.0.1" {
-			t.Fatalf("deriveRPID() = %q, want 127.0.0.1", got)
+		if got := deriveRPID(req); got != "" {
+			t.Fatalf("deriveRPID() = %q, want none for the bare address", got)
 		}
 	})
+}
+
+func TestAPasskeyBelongsToTheHostNameTheBrowserAskedFor(t *testing.T) {
+	for host, want := range map[string]string{
+		"cannon.lan:8443":    "cannon.lan",
+		"Files.Example.com":  "files.example.com",
+		"localhost:8080":     "localhost",
+		"192.168.10.10:8080": "",
+		"192.168.10.10":      "",
+		"[fd00::10]:8080":    "",
+		"[::1]":              "",
+		"":                   "",
+	} {
+		req := httptest.NewRequest("GET", "/", nil)
+		req.Host = host
+		if got := deriveRPID(req); got != want {
+			t.Errorf("deriveRPID(%q) = %q, want %q", host, got, want)
+		}
+	}
 }
 
 func TestWebAuthnRequestOriginTrustProxyHeaders(t *testing.T) {

@@ -366,7 +366,7 @@
       "shares": "分享",
       "security": "账户和安全",
       "integrations": "集成",
-      "app": "应用",
+      "system": "系统",
       "info": "信息"
     },
     "actions": {
@@ -883,7 +883,7 @@
       "changedAgo": "修改于 {ago}",
       "change": "修改",
       "stay": "保持登录",
-      "stayTip": "超过这个时间，CannonCommander 会再次要求输入密码。",
+      "stayTip": "时间从你上次访问算起。如果这么久都没来，CannonCommander 会再次要求输入密码。",
       "day1": "1 天",
       "twofa": "双重验证",
       "status": "状态",
@@ -935,6 +935,9 @@
       },
       "passkeys": "通行密钥",
       "noPasskey": "还没有通行密钥",
+      "passkeyHint": "通行密钥让你无需密码即可登录。它只在你创建它的地址上有效。",
+      "noPasskeyHere": "此处无法创建通行密钥",
+      "passkeyBrowser": "此浏览器在这里不提供通行密钥。只有通过 HTTPS 或在 localhost 上才可以。",
       "addPasskey": "添加通行密钥",
       "removePasskey": "移除通行密钥",
       "removePasskeyText": "此后 {name} 将不能再让你登录。密码仍然有效。",
@@ -982,7 +985,6 @@
       "copyNow": "现在就复制令牌。CannonCommander 之后不会再显示它，你只能再创建一个新的。",
       "tokenCreatedToast": "已创建令牌 {name}",
       "pwLocked": "这里只有管理员能修改你的密码，或者你是通过其他服务登录的。",
-      "passkeysOff": "此服务器已关闭通行密钥",
       "tooMany": "尝试次数过多。请 15 分钟后再试",
       "proofTip": "每次添加新的访问方式前，CannonCommander 都会要求验证，确保只有你本人能添加。",
       "signInAgain": "重新登录",
@@ -1039,10 +1041,10 @@
     },
     "app": {
       "updates": "更新",
-      "autoCheck": "自动检查更新",
-      "autoCheckTip": "每天一次。更新需要你自己安装，在 Unraid 的 Docker 标签页中。",
-      "image": "Docker 镜像",
-      "tagTip": "当前运行的是这个版本。Unraid 拉取哪个标签在模板中设置，latest 会跟随每个新版本。",
+      "autoCheck": "自动检查",
+      "autoCheckTip": "开启时，打开此页面会向 GitHub 询问一次是否有更新的 CannonCommander。它只询问，因为容器的更新来自它的容器管理器。",
+      "autoUpdate": "自动更新",
+      "autoUpdateTip": "容器无法从内部替换自己。请改为在 Unraid 的 Docker 标签页中、用 docker pull 或用 Watchtower 来更新。",
       "check": "检查更新",
       "checking": "正在检查",
       "current": "已是最新，{v}",
@@ -1088,8 +1090,6 @@
       "notExport": "这不是导出的设置文件",
       "imported": "已导入 {name} 中的设置",
       "noAnswer": "GitHub 暂时没有响应。请稍后再试",
-      "restartNeeded": "需要重启",
-      "restartNeededTip": "部分设置要重启后才会生效。",
       "importedRestart": "已导入 {name}。重启 CannonCommander 让全部设置生效"
     },
     "info": {
@@ -3417,12 +3417,13 @@
     "ownSessionsElsewhere": "你自己的会话、令牌和通行密钥请在“账户和安全”中结束",
     "passkeyExists": "已有同名的通行密钥",
     "passkeyNameMissing": "给这个通行密钥起个名字",
+    "passkeyNeedsHostName": "通行密钥需要主机名，而此页面是通过 IP 地址打开的。用名称打开 CannonCommander 就可以了",
     "passkeyNotConfirmed": "浏览器没有确认通行密钥。请再试一次",
     "passkeyRegistered": "此通行密钥已注册",
     "passkeyUnknown": "此通行密钥不能在这里登录",
     "passkeysElsewhere": "通行密钥依附于密码登录，而你是通过 {method} 登录的",
-    "passkeysOff": "此服务器已关闭通行密钥",
     "passwordElsewhere": "你通过 {method} 登录，密码由那里管理",
+    "passwordFirst": "通行密钥要配合密码使用，而这个账户还没有密码",
     "passwordLocked": "你的密码已被锁定。管理员可以修改它",
     "passwordMissing": "缺少密码",
     "passwordShort": {
@@ -3603,7 +3604,7 @@
     "same": "请换一个与之前不同的密码。",
     "badReset": "验证码不正确或已过期。请重新获取。",
     "passkeyFailed": "此通行密钥无法在这里登录。",
-    "passkeyOff": "此服务器已关闭通行密钥。",
+    "passkeyNotHere": "此地址无法使用通行密钥。",
     "offline": "CannonCommander 目前没有响应。请稍后再试。"
   },
   "ui": {

@@ -388,7 +388,7 @@
       "shares": "Gedeeld",
       "security": "Account en beveiliging",
       "integrations": "Integraties",
-      "app": "App",
+      "system": "Systeem",
       "info": "Info"
     },
     "actions": {
@@ -924,7 +924,7 @@
       "changedAgo": "Gewijzigd {ago}",
       "change": "Wijzigen",
       "stay": "Ingelogd blijven",
-      "stayTip": "Daarna vraagt CannonCommander weer om het wachtwoord.",
+      "stayTip": "De tijd telt vanaf je laatste bezoek. Kom je zo lang niet langs, dan vraagt CannonCommander weer om het wachtwoord.",
       "day1": "1 dag",
       "twofa": "Tweestapsverificatie",
       "status": "Status",
@@ -978,6 +978,9 @@
       },
       "passkeys": "Passkeys",
       "noPasskey": "Nog geen passkey",
+      "passkeyHint": "Met een passkey log je in zonder wachtwoord. Hij werkt alleen op het adres waar je hem aanmaakt.",
+      "noPasskeyHere": "Hier kan geen passkey worden aangemaakt",
+      "passkeyBrowser": "Deze browser biedt hier geen passkeys aan. Dat werkt alleen via HTTPS of op localhost.",
       "addPasskey": "Passkey toevoegen",
       "removePasskey": "Passkey verwijderen",
       "removePasskeyText": "{name} logt je daarna niet meer in. Het wachtwoord blijft werken.",
@@ -1026,7 +1029,6 @@
       "copyNow": "Kopieer het token nu. CannonCommander toont het daarna nooit meer, je kunt alleen een nieuw maken.",
       "tokenCreatedToast": "Token {name} gemaakt",
       "pwLocked": "Je wachtwoord wijzigt hier alleen een admin, of je logt in via een andere dienst.",
-      "passkeysOff": "Passkeys staan uit op deze server",
       "tooMany": "Te veel pogingen. Probeer het over 15 minuten nog eens",
       "proofTip": "CannonCommander vraagt hierom bij elke nieuwe toegang, zodat alleen jij er een kunt aanmaken.",
       "signInAgain": "Opnieuw inloggen",
@@ -1083,10 +1085,10 @@
     },
     "app": {
       "updates": "Updates",
-      "autoCheck": "Automatisch naar updates zoeken",
-      "autoCheckTip": "Eén keer per dag. Een update installeer je zelf, op Unraid in het tabblad Docker.",
-      "image": "Docker-image",
-      "tagTip": "Deze versie draait nu. Welke tag Unraid ophaalt, leg je vast in het template, latest volgt elke nieuwe versie.",
+      "autoCheck": "Automatisch controleren",
+      "autoCheckTip": "Zolang dit aan staat, vraagt het openen van deze pagina GitHub één keer of er een nieuwere CannonCommander is. Het vraagt alleen, want een container krijgt zijn updates van zijn containerbeheer.",
+      "autoUpdate": "Automatisch bijwerken",
+      "autoUpdateTip": "Een container kan zichzelf niet van binnenuit vervangen. Werk hem in plaats daarvan bij op Unraid in het tabblad Docker, met docker pull of met Watchtower.",
       "check": "Naar updates zoeken",
       "checking": "Zoeken",
       "current": "Actueel, {v}",
@@ -1133,8 +1135,6 @@
       "notExport": "Dit is geen geëxporteerd instellingenbestand",
       "imported": "Instellingen uit {name} overgenomen",
       "noAnswer": "GitHub antwoordde net niet. Probeer het later nog eens",
-      "restartNeeded": "Herstart nodig",
-      "restartNeededTip": "Een paar instellingen gelden pas na een herstart.",
       "importedRestart": "{name} is overgenomen. Herstart CannonCommander zodat alles geldt"
     },
     "info": {
@@ -3553,12 +3553,13 @@
     "ownSessionsElsewhere": "Je eigen sessies, tokens en passkeys beëindig je onder Account en beveiliging",
     "passkeyExists": "Er bestaat al een passkey met deze naam",
     "passkeyNameMissing": "Geef de passkey een naam",
+    "passkeyNeedsHostName": "Passkeys hebben een hostnaam nodig, en deze pagina is via een IP-adres geopend. Open CannonCommander onder zijn naam, dan werkt het",
     "passkeyNotConfirmed": "De browser heeft de passkey niet bevestigd. Probeer het nog eens",
     "passkeyRegistered": "Deze passkey is al geregistreerd",
     "passkeyUnknown": "Met deze passkey log je hier niet in",
     "passkeysElsewhere": "Passkeys horen bij het wachtwoord, en jij logt in via {method}",
-    "passkeysOff": "Passkeys staan uit op deze server",
     "passwordElsewhere": "Je logt in via {method}, het wachtwoord staat daar",
+    "passwordFirst": "Een passkey hoort bij het wachtwoord, en dit account heeft er nog geen",
     "passwordLocked": "Je wachtwoord is vergrendeld. Een admin kan het wijzigen",
     "passwordMissing": "Het wachtwoord ontbreekt",
     "passwordShort": {
@@ -3745,7 +3746,7 @@
     "same": "Kies een ander wachtwoord dan het vorige.",
     "badReset": "De code klopt niet of is verlopen. Vraag een nieuwe aan.",
     "passkeyFailed": "Met deze passkey lukt het inloggen hier niet.",
-    "passkeyOff": "Passkeys staan uit op deze server.",
+    "passkeyNotHere": "Passkeys werken niet op dit adres.",
     "offline": "CannonCommander antwoordt nu niet. Probeer het zo meteen nog eens."
   },
   "ui": {

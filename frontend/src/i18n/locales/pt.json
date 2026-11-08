@@ -410,7 +410,7 @@
       "shares": "Partilhas",
       "security": "Conta e segurança",
       "integrations": "Integrações",
-      "app": "Aplicação",
+      "system": "Sistema",
       "info": "Info"
     },
     "actions": {
@@ -965,7 +965,7 @@
       "changedAgo": "Alterada {ago}",
       "change": "Alterar",
       "stay": "Manter sessão iniciada",
-      "stayTip": "Depois disso, o CannonCommander volta a pedir a palavra-passe.",
+      "stayTip": "O tempo conta a partir da sua última visita. Se não voltar durante esse tempo, o CannonCommander volta a pedir a palavra-passe.",
       "day1": "1 dia",
       "twofa": "Autenticação de dois fatores",
       "status": "Estado",
@@ -1021,6 +1021,9 @@
       },
       "passkeys": "Chaves de acesso",
       "noPasskey": "Ainda não há nenhuma chave de acesso",
+      "passkeyHint": "Uma chave de acesso inicia a sua sessão sem a palavra-passe. Só funciona no endereço onde a criar.",
+      "noPasskeyHere": "Aqui não é possível criar uma chave de acesso",
+      "passkeyBrowser": "Este navegador não oferece chaves de acesso aqui. Só funciona através de HTTPS ou em localhost.",
       "addPasskey": "Adicionar chave de acesso",
       "removePasskey": "Remover chave de acesso",
       "removePasskeyText": "Depois disto, {name} deixa de iniciar a sua sessão. A palavra-passe continua a valer.",
@@ -1070,7 +1073,6 @@
       "copyNow": "Copie o token agora. O CannonCommander nunca mais o mostra, só pode criar um novo.",
       "tokenCreatedToast": "Token {name} criado",
       "pwLocked": "Aqui só um administrador altera a sua palavra-passe, ou então inicia sessão através de outro serviço.",
-      "passkeysOff": "As chaves de acesso estão desligadas neste servidor",
       "tooMany": "Demasiadas tentativas. Tente novamente daqui a 15 minutos",
       "proofTip": "O CannonCommander pede-a antes de cada novo acesso, para que só você possa criar um.",
       "signInAgain": "Iniciar sessão novamente",
@@ -1127,10 +1129,10 @@
     },
     "app": {
       "updates": "Atualizações",
-      "autoCheck": "Procurar atualizações automaticamente",
-      "autoCheckTip": "Uma vez por dia. A atualização é instalada por si, no Unraid, no separador Docker.",
-      "image": "Imagem Docker",
-      "tagTip": "Esta é a versão que está a correr. A tag que o Unraid descarrega define-se no modelo, latest segue cada nova versão.",
+      "autoCheck": "Verificar automaticamente",
+      "autoCheckTip": "Enquanto isto estiver ligado, abrir esta página pergunta uma vez ao GitHub se saiu um CannonCommander mais recente. Só pergunta, porque um contentor recebe as atualizações do seu gestor de contentores.",
+      "autoUpdate": "Atualizar automaticamente",
+      "autoUpdateTip": "Um contentor não se consegue substituir a si próprio a partir de dentro. Atualize-o antes no Unraid, no separador Docker, com docker pull ou com Watchtower.",
       "check": "Procurar atualizações",
       "checking": "A procurar",
       "current": "Atualizado, {v}",
@@ -1178,8 +1180,6 @@
       "notExport": "Isto não é um ficheiro de definições exportado",
       "imported": "Definições adotadas de {name}",
       "noAnswer": "O GitHub não respondeu agora. Tente novamente mais tarde",
-      "restartNeeded": "É preciso reiniciar",
-      "restartNeededTip": "Algumas definições só se aplicam depois de um reinício.",
       "importedRestart": "{name} foi adotado. Reinicie o CannonCommander para que tudo se aplique"
     },
     "info": {
@@ -3689,12 +3689,13 @@
     "ownSessionsElsewhere": "As suas próprias sessões, tokens e chaves de acesso terminam-se em Conta e segurança",
     "passkeyExists": "Já existe uma chave de acesso com este nome",
     "passkeyNameMissing": "Dê um nome à chave de acesso",
+    "passkeyNeedsHostName": "As chaves de acesso precisam de um nome de anfitrião, e esta página está aberta por um endereço IP. Abra o CannonCommander pelo seu nome e funciona",
     "passkeyNotConfirmed": "O navegador não confirmou a chave de acesso. Tente novamente",
     "passkeyRegistered": "Esta chave de acesso já está registada",
     "passkeyUnknown": "Com esta chave de acesso não se inicia sessão aqui",
     "passkeysElsewhere": "As chaves de acesso acompanham a palavra-passe, e inicia sessão através de {method}",
-    "passkeysOff": "As chaves de acesso estão desligadas neste servidor",
     "passwordElsewhere": "Inicia sessão através de {method}, a palavra-passe está lá",
+    "passwordFirst": "Uma chave de acesso acompanha a palavra-passe, e esta conta ainda não tem nenhuma",
     "passwordLocked": "A sua palavra-passe está bloqueada. Um administrador pode alterá-la",
     "passwordMissing": "Falta a palavra-passe",
     "passwordShort": {
@@ -3887,7 +3888,7 @@
     "same": "Escolha uma palavra-passe diferente da anterior.",
     "badReset": "O código não está certo ou expirou. Peça um novo.",
     "passkeyFailed": "Com esta chave de acesso não é possível iniciar sessão aqui.",
-    "passkeyOff": "As chaves de acesso estão desligadas neste servidor.",
+    "passkeyNotHere": "As chaves de acesso não funcionam neste endereço.",
     "offline": "O CannonCommander não está a responder neste momento. Tente novamente daqui a pouco."
   },
   "ui": {

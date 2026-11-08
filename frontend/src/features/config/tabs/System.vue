@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Card, CopyField, FieldRow, FieldRowGroup, Pill, Selector, Toggle } from '@glimstone/vue';
+import { Button, Card, FieldRow, Pill, Selector } from '@glimstone/vue';
 import { computed, onMounted, ref } from 'vue';
 import { admin, type AppChange, type AppSettings, type System } from '@/api/admin';
 import { G } from '@/core/glyphs';
@@ -7,27 +7,17 @@ import { toast } from '@/core/toast';
 import { win } from '@/core/windows';
 import { shell } from '@/shell/state';
 import { c, cn, confirmWin, since } from '@/features/config/shared';
-import { copyWords, segItems } from '@/ui/kit';
+import { segItems } from '@/ui/kit';
 import ExportWin from '../wins/ExportWin.vue';
 import ImportWin from '../wins/ImportWin.vue';
-import { IMAGE } from '../support';
 
 const app = ref<AppSettings | null>(null), sys = ref<System | null>(null);
-const update = ref<'idle' | 'busy' | string>('idle');
 const restarting = ref(false);
 const load = () => Promise.all([admin.app().then((a) => { app.value = a; }), admin.system().then((s) => { sys.value = s; })]);
 onMounted(() => { load().catch(() => {}); });
 
-const save = (change: AppChange) => admin.saveApp(change).then((a) => { app.value!.restartNeeded = a.restartNeeded; toast(c('saved')); }, () => toast(c('notSaved'), 'warn'));
-const autoCheck = computed({ get: () => !!app.value?.updates.autoCheck, set: (v: boolean) => { app.value!.updates.autoCheck = v; save({ updates: { autoCheck: v } }); } });
+const save = (change: AppChange) => admin.saveApp(change).then(() => toast(c('saved')), () => toast(c('notSaved'), 'warn'));
 const logLevel = computed({ get: () => app.value?.logLevel ?? 'info', set: (v: AppSettings['logLevel']) => { app.value!.logLevel = v; save({ logLevel: v }); } });
-
-async function check() {
-  update.value = 'busy';
-  const got = await admin.checkUpdate().catch(() => null);
-  update.value = got ? (got.updateAvailable ? c('app.newer', { v: got.latest }) : c('app.current', { v: got.latest })) : 'idle';
-  if (!got) toast(c('app.noAnswer'), 'warn');
-}
 
 function restart() {
   const n = shell.jobCount;
@@ -55,23 +45,13 @@ function restart() {
 
 <template>
   <template v-if="app">
-    <Card :title="c('app.updates')">
-      <FieldRowGroup>
-        <FieldRow :label="c('app.autoCheck')" :hint="c('app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
-        <FieldRow :label="c('app.image')"><CopyField width="grow" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></FieldRow>
-        <FieldRow label="Tag" :hint="c('app.tagTip')"><Pill class="mono">{{ sys?.version ?? '' }}</Pill></FieldRow>
-      </FieldRowGroup>
-      <div class="a-foot">
-        <Button id="a-upd" :class="{ ok: update !== 'idle' && update !== 'busy' }" :label="update === 'idle' ? c('app.check') : update === 'busy' ? c('app.checking') : update" :label-key="update !== 'idle' && update !== 'busy' ? 'IconUpToDate' : 'IconSync'" :disabled="update === 'busy'" @click="check" />
-      </div>
-    </Card>
     <Card :title="c('app.backup')">
       <FieldRow :label="c('app.toFile')" :hint="c('app.toFileTip')"><Button id="a-export" :label="c('app.export')" label-key="IconExport" @click="win({ title: c('app.exportTitle'), body: ExportWin })" /></FieldRow>
       <FieldRow :label="c('app.fromFile')" :hint="c('app.fromFileTip')"><Button id="a-import" :label="c('app.import')" label-key="IconImport" @click="win({ title: c('app.importTitle'), body: ImportWin })" /></FieldRow>
     </Card>
     <Card :title="c('app.service')">
       <FieldRow :label="c('app.log')" :hint="c('app.logTip')"><Selector v-model="logLevel" :items="segItems([['error', c('app.errors')], ['info', c('app.normal')], ['debug', c('app.verbose')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
-      <FieldRow :label="c('app.running')" :hint="app.restartNeeded ? c('app.restartNeededTip') : undefined"><Pill :tone="app.restartNeeded ? 'warn' : 'neutral'">{{ app.restartNeeded ? c('app.restartNeeded') : sys ? since(sys.started) : '' }}</Pill><Button :label="c('app.restart')" label-key="IconRefresh" @click="restart" /></FieldRow>
+      <FieldRow :label="c('app.running')"><Pill>{{ sys ? since(sys.started) : '' }}</Pill><Button :label="c('app.restart')" label-key="IconRefresh" @click="restart" /></FieldRow>
     </Card>
   </template>
   <Teleport v-if="restarting" to="body">
