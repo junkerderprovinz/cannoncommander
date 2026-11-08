@@ -1,7 +1,7 @@
 {
   "tabs": {
     "title": "Settings", "general": "General", "look": "Appearance", "files": "File list", "sources": "Sources", "remotes": "Remotes",
-    "users": "Users & groups", "rules": "Access rules", "shares": "Shares", "security": "Account & security", "integrations": "Integrations", "app": "App", "info": "Info"
+    "users": "Users & groups", "rules": "Access rules", "shares": "Shares", "security": "Account & security", "integrations": "Integrations", "system": "System", "info": "Info"
   },
   "actions": { "about": "About CannonCommander", "activity": "Activity", "docs": "Handbook", "whatsNew": "What's new" },
   "add": "Add", "added": "{name} added", "back": "Back", "checking": "Checking", "copied": "Copied", "copy": "Copy", "done": "Done",

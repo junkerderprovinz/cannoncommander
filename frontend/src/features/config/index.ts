@@ -8,7 +8,6 @@ import { tl } from '@/i18n';
 import ActivityPage from './ActivityPage.vue';
 import { c } from '@/features/config/shared';
 import { takeAgainFromUrl } from './proof';
-import App from './tabs/App.vue';
 import FileList from './tabs/FileList.vue';
 import General from './tabs/General.vue';
 import Info from './tabs/Info.vue';
@@ -19,6 +18,7 @@ import Rules from './tabs/Rules.vue';
 import Security from './tabs/Security.vue';
 import Shares from './tabs/Shares.vue';
 import Sources from './tabs/Sources.vue';
+import System from './tabs/System.vue';
 import Users from './tabs/Users.vue';
 import DocsWin from './wins/DocsWin.vue';
 import NewsWin from './wins/NewsWin.vue';
@@ -36,7 +36,7 @@ export default function setup() {
   tab('rules', 'IconShieldOn', 70, Rules);
   tab('shares', 'IconLink', 80, Shares);
   tab('integrations', 'IconModules', 100, Integrations);
-  tab('app', 'IconTabApp', 110, App);
+  tab('system', 'IconTabSystem', 110, System);
   tab('info', 'IconInfo', 120, Info);
 
   registerView('activity', { page: true, component: ActivityPage });

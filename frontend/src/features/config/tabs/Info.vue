@@ -1,23 +1,31 @@
 <script setup lang="ts">
-import { Button, Card, FieldRow } from '@glimstone/vue';
+import { Button, Card, CopyField, FieldRow, FieldRowGroup, Pill, Toggle } from '@glimstone/vue';
 import { GLIMSTONE_VERSION } from '@glimstone/core';
 import { computed, onMounted, ref } from 'vue';
-import { admin, type System, type UpdateCheck } from '@/api/admin';
+import { admin, type AppSettings, type System, type UpdateCheck } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { run } from '@/core/actions';
 import { G } from '@/core/glyphs';
 import { win } from '@/core/windows';
 import { NEWS, unseen } from '../help';
 import { c } from '@/features/config/shared';
-import { bugReport, MAIL, REPO, versionLink } from '../support';
+import { copyWords } from '@/ui/kit';
+import { bugReport, IMAGE, MAIL, REPO, versionLink } from '../support';
 import CoffeeWin from '../wins/CoffeeWin.vue';
 import CryptoWin from '../wins/CryptoWin.vue';
 import PaypalWin from '../wins/PaypalWin.vue';
 
-const sys = ref<System | null>(null);
+const sys = ref<System | null>(null), app = ref<AppSettings | null>(null);
 const update = ref<'idle' | 'busy' | 'ok' | 'newer'>('idle');
 const latest = ref<UpdateCheck | null>(null);
-onMounted(() => { admin.system().then((s) => { sys.value = s; }, () => {}); });
+onMounted(() => {
+  admin.system().then((s) => { sys.value = s; }, () => {});
+  admin.app().then((a) => { app.value = a; }, () => {});
+});
+const autoCheck = computed({
+  get: () => !!app.value?.updates.autoCheck,
+  set: (v: boolean) => { app.value!.updates.autoCheck = v; admin.saveApp({ updates: { autoCheck: v } }).then(() => toast(c('saved')), () => toast(c('notSaved'), 'warn')); },
+});
 
 // A version number is a plain link to its release page, as in every app of the workshop.
 const plain = (v?: string) => v?.replace(/^v/, '');
@@ -64,6 +72,13 @@ const give = computed(() => [
       <Button v-if="update === 'newer'" id="a-update" :label="c('app.newer', { v: latest!.latest })" label-key="IconWhatsNew" :href="latest?.releaseUrl || REPO + '/releases'" target="_blank" rel="noopener" />
       <Button v-else id="a-update" :label="update === 'ok' ? c('info.current') : c('app.check')" :label-key="update === 'ok' ? 'IconCheck' : 'IconSearch'" :tone="update === 'ok' ? 'ok' : 'neutral'" :disabled="update === 'busy'" :title="update === 'ok' ? c('app.check') : undefined" @click="check" />
     </div>
+  </Card>
+  <Card v-if="app" :title="c('app.updates')">
+    <FieldRowGroup>
+      <FieldRow :label="c('app.autoCheck')" :hint="c('app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
+      <FieldRow :label="c('app.image')"><CopyField width="grow" :value="IMAGE" :label="c('app.image')" :text="copyWords()" /></FieldRow>
+      <FieldRow label="Tag" :hint="c('app.tagTip')"><Pill class="mono">{{ sys?.version ?? '' }}</Pill></FieldRow>
+    </FieldRowGroup>
   </Card>
   <Card :title="c('info.help')" :hint="c('info.helpHint')">
     <div class="a-about">
