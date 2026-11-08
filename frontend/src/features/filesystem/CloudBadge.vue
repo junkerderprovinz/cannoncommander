@@ -13,6 +13,7 @@ const GLYPH: Record<string, string> = { online: 'IconCloud', local: 'IconCheck',
 </template>
 
 <style scoped>
-.fs-cloud { display: inline-flex; margin-inline-start: .35rem; opacity: .75; }
+.fs-cloud { display: inline-flex; flex: none; margin-inline-start: .35rem; color: var(--carbon-text-muted); }
+.fs-cloud > svg { width: .95rem; height: .95rem; }
 .fs-cloud.pinned, .fs-cloud.local { color: var(--status-ok-text); }
 </style>
