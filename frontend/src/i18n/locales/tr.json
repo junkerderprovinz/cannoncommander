@@ -2610,6 +2610,10 @@
       "other": "Panoda {n} öğe"
     },
     "clipEmpty": "Pano boş",
+    "leftOut": {
+      "one": "Buradaki klasörlerin dışında olduğu için geride kaldı: 1 öğe",
+      "other": "Buradaki klasörlerin dışında olduğu için geride kaldı: {n} öğe"
+    },
     "parityTitle": "Parite denetimi çalışıyor",
     "parityAsk": "Şimdi mi kopyalansın, sonra mı?",
     "parityText": "Unraid şu an pariteyi denetliyor. {size} boyutunda bir kopya denetimi yavaşlatır ve kendisi de daha yavaş çalışır.",
@@ -3571,6 +3575,7 @@
     "cannotUndo": "Bu adım geri alınamaz",
     "changedSince": "Bu arada değişti, bu yüzden olduğu gibi kalıyor",
     "changedWhileOpen": "Dosya sen açtığından beri değişti",
+    "clipboardBusy": "Pano şu anda meşgul. Birazdan yeniden dene",
     "codeMismatch": "Kod tutmuyor. Telefonundaki saat doğru mu?",
     "codeMissing": "Kod eksik",
     "collectionName": "Toplama klasörüne bir ad ver, karşı tarafın gördüğü klasör o olur",
@@ -3583,6 +3588,7 @@
     "ejectFailed": "Sürücü şu an çıkarılamıyor. Belki üzerinde hâlâ açık bir dosya var",
     "fileManagerNotSet": "Bilgisayar değişikliği kabul etmedi",
     "disksAdminsOnly": "Tek tek diskleri ve Cache'i yalnızca yöneticiler görür",
+    "dragFailed": "Dosyalar dışarı sürüklenemedi",
     "elevationDeclined": "Yönetici hakları verilmedi",
     "elevationFailed": "Yönetici haklarıyla çalışan yardımcı yanıt vermedi",
     "elevationUnsupported": "CannonCommander bu sistemde yönetici hakları isteyemez",
@@ -3663,6 +3669,7 @@
     "notElevatable": "Bu, yönetici haklarıyla devam ettirilemez",
     "notFound": "Bu artık yok",
     "notInTrash": "Bu çöp kutusunda değil",
+    "notOnDisk": "Başka bir programa yalnızca diskteki dosyalar gidebilir",
     "notText": "Bu dosya metin değil",
     "notWindows1252": "Metinde Windows-1252'nin saklayamadığı karakterler var. UTF-8 olarak kaydet",
     "nothingToUndo": "Geri alınacak bir şey yok",

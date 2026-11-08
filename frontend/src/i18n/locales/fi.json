@@ -2610,6 +2610,10 @@
       "other": "{n} leikepöydällä"
     },
     "clipEmpty": "Leikepöytä on tyhjä",
+    "leftOut": {
+      "one": "Täkäläisten kansioiden ulkopuolella, jää pois: {n} kohde",
+      "other": "Täkäläisten kansioiden ulkopuolella, jää pois: {n} kohdetta"
+    },
     "parityTitle": "Pariteettitarkistus käynnissä",
     "parityAsk": "Kopioidaanko nyt vai myöhemmin?",
     "parityText": "Unraid tarkistaa juuri nyt pariteettia. Kopio, jonka koko on {size}, hidastaa tarkistusta ja on itsekin hitaampi.",
@@ -3571,6 +3575,7 @@
     "cannotUndo": "Tätä vaihetta ei voi kumota",
     "changedSince": "Tämä on muuttunut sillä välin ja jää siksi ennalleen",
     "changedWhileOpen": "Tiedosto on muuttunut sen jälkeen, kun avasit sen",
+    "clipboardBusy": "Leikepöytä on juuri nyt varattu. Yritä hetken päästä uudelleen",
     "codeMismatch": "Koodi ei täsmää. Onko puhelimen kello oikeassa ajassa?",
     "codeMissing": "Koodi puuttuu",
     "collectionName": "Anna kokoelmalle nimi, siitä tulee kansio, jonka vastaanottaja näkee",
@@ -3583,6 +3588,7 @@
     "ejectFailed": "Asemaa ei voi poistaa nyt. Ehkä jokin sen tiedosto on vielä auki",
     "fileManagerNotSet": "Tietokone ei hyväksynyt muutosta",
     "disksAdminsOnly": "Vain ylläpitäjät näkevät yksittäiset levyt ja Cachen",
+    "dragFailed": "Tiedostoja ei voitu vetää ulos",
     "elevationDeclined": "Järjestelmänvalvojan oikeuksia ei myönnetty",
     "elevationFailed": "Järjestelmänvalvojan oikeuksin toimiva apuohjelma ei vastannut",
     "elevationUnsupported": "Tässä järjestelmässä CannonCommander ei voi pyytää järjestelmänvalvojan oikeuksia",
@@ -3663,6 +3669,7 @@
     "notElevatable": "Tätä ei voi jatkaa järjestelmänvalvojan oikeuksin",
     "notFound": "Tätä ei ole enää olemassa",
     "notInTrash": "Tämä ei ole roskakorissa",
+    "notOnDisk": "Vain levyllä olevat tiedostot voivat siirtyä toiseen ohjelmaan",
     "notText": "Tämä tiedosto ei ole tekstiä",
     "notWindows1252": "Tekstissä on merkkejä, joita Windows-1252 ei pysty tallentamaan. Tallenna se UTF-8-muodossa",
     "nothingToUndo": "Ei ole mitään kumottavaa",

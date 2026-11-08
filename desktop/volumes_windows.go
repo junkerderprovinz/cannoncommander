@@ -17,9 +17,7 @@ import (
 )
 
 var (
-	user32  = windows.NewLazySystemDLL("user32.dll")
-	shell32 = windows.NewLazySystemDLL("shell32.dll")
-	mpr     = windows.NewLazySystemDLL("mpr.dll")
+	mpr = windows.NewLazySystemDLL("mpr.dll")
 
 	procRegisterClassEx   = user32.NewProc("RegisterClassExW")
 	procCreateWindowEx    = user32.NewProc("CreateWindowExW")

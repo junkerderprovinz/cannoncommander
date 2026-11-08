@@ -2610,6 +2610,10 @@
       "other": "{n} lõikelaual"
     },
     "clipEmpty": "Lõikelaud on tühi",
+    "leftOut": {
+      "one": "Siinsetest kaustadest väljas, jääb maha: {n} üksus",
+      "other": "Siinsetest kaustadest väljas, jääb maha: {n} üksust"
+    },
     "parityTitle": "Paarsuskontroll käib",
     "parityAsk": "Kopeerida kohe või hiljem?",
     "parityText": "Unraid kontrollib praegu paarsust. {size} suurune koopia aeglustab kontrolli ja on ise aeglasem.",
@@ -3571,6 +3575,7 @@
     "cannotUndo": "Seda sammu ei saa tagasi võtta",
     "changedSince": "See on vahepeal muutunud ja jääb seetõttu nii, nagu on",
     "changedWhileOpen": "Fail on muutunud pärast seda, kui sa selle avasid",
+    "clipboardBusy": "Lõikelaud on praegu hõivatud. Proovi kohe uuesti",
     "codeMismatch": "Kood ei sobi. Kas telefoni kell käib õigesti?",
     "codeMissing": "Kood puudub",
     "collectionName": "Anna kogumikule nimi, sellest saab kaust, mida saaja näeb",
@@ -3583,6 +3588,7 @@
     "ejectFailed": "Draivi ei saa praegu väljutada. Võib-olla on mõni fail sellel veel avatud",
     "fileManagerNotSet": "Arvuti ei võtnud muudatust vastu",
     "disksAdminsOnly": "Üksikuid kettaid ja Cache'i näevad ainult administraatorid",
+    "dragFailed": "Faile ei õnnestunud välja lohistada",
     "elevationDeclined": "Administraatori õigusi ei antud",
     "elevationFailed": "Administraatori õigustega abiline ei vastanud",
     "elevationUnsupported": "Selles süsteemis ei saa CannonCommander administraatori õigusi küsida",
@@ -3663,6 +3669,7 @@
     "notElevatable": "Seda ei saa administraatori õigustega jätkata",
     "notFound": "Seda pole enam olemas",
     "notInTrash": "See pole prügikastis",
+    "notOnDisk": "Teise programmi saab anda ainult kettal olevaid faile",
     "notText": "See fail pole tekst",
     "notWindows1252": "Tekstis on märke, mida Windows-1252 ei suuda salvestada. Salvesta see UTF-8-na",
     "nothingToUndo": "Pole midagi tagasi võtta",

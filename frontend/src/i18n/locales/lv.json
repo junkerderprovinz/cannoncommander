@@ -2701,6 +2701,11 @@
       "other": "Starpliktuvē: {n}"
     },
     "clipEmpty": "Starpliktuve ir tukša",
+    "leftOut": {
+      "zero": "Ārpus šeit esošajām mapēm, palika: {n} vienumu",
+      "one": "Ārpus šeit esošajām mapēm, palika: {n} vienums",
+      "other": "Ārpus šeit esošajām mapēm, palika: {n} vienumi"
+    },
     "parityTitle": "Notiek paritātes pārbaude",
     "parityAsk": "Kopēt tagad vai pēc tam?",
     "parityText": "Unraid pašlaik pārbauda paritāti. {size} kopija palēnina pārbaudi un pati darbojas lēnāk.",
@@ -3703,6 +3708,7 @@
     "cannotUndo": "Šo soli nevar atsaukt",
     "changedSince": "Tas pa to laiku ir mainījies, tāpēc paliek, kā ir",
     "changedWhileOpen": "Fails ir mainījies, kopš to atvēri",
+    "clipboardBusy": "Starpliktuve pašlaik ir aizņemta. Mēģini vēlreiz pēc brīža",
     "codeMismatch": "Kods neder. Vai tālruņa pulkstenis rāda pareizi?",
     "codeMissing": "Trūkst koda",
     "collectionName": "Piešķir krājumam nosaukumu, tas kļūs par mapi, ko redz otra puse",
@@ -3715,6 +3721,7 @@
     "ejectFailed": "Disku pašlaik nevar izstumt. Varbūt kāds fails tajā vēl ir atvērts",
     "fileManagerNotSet": "Dators nepieņēma izmaiņas",
     "disksAdminsOnly": "Atsevišķos diskus un Cache redz tikai administratori",
+    "dragFailed": "Failus neizdevās izvilkt ārā",
     "elevationDeclined": "Administratora tiesības netika piešķirtas",
     "elevationFailed": "Palīgs ar administratora tiesībām neatbildēja",
     "elevationUnsupported": "Šajā sistēmā CannonCommander nevar pieprasīt administratora tiesības",
@@ -3799,6 +3806,7 @@
     "notElevatable": "To nevar turpināt ar administratora tiesībām",
     "notFound": "Tā vairs nav",
     "notInTrash": "Tas nav atkritnē",
+    "notOnDisk": "Uz citu programmu var nodot tikai diskā esošus failus",
     "notText": "Šis fails nav teksts",
     "notWindows1252": "Tekstā ir rakstzīmes, ko Windows-1252 nevar saglabāt. Saglabā to kā UTF-8",
     "nothingToUndo": "Nav ko atsaukt",

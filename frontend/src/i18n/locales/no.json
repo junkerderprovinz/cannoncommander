@@ -2610,6 +2610,10 @@
       "other": "{n} på utklippstavlen"
     },
     "clipEmpty": "Utklippstavlen er tom",
+    "leftOut": {
+      "one": "Utenfor mappene her, blir igjen: {n} element",
+      "other": "Utenfor mappene her, blir igjen: {n} elementer"
+    },
     "parityTitle": "Paritetssjekk pågår",
     "parityAsk": "Kopiere nå eller etterpå?",
     "parityText": "Unraid sjekker pariteten akkurat nå. En kopi på {size} bremser sjekken og går selv saktere.",
@@ -3571,6 +3575,7 @@
     "cannotUndo": "Dette steget kan ikke angres",
     "changedSince": "Det er endret siden og blir derfor som det er",
     "changedWhileOpen": "Filen er endret siden du åpnet den",
+    "clipboardBusy": "Utklippstavlen er opptatt akkurat nå. Prøv igjen om et øyeblikk",
     "codeMismatch": "Koden stemmer ikke. Går klokken riktig på mobilen?",
     "codeMissing": "Koden mangler",
     "collectionName": "Gi samlingen et navn, det blir mappen mottakeren ser",
@@ -3583,6 +3588,7 @@
     "ejectFailed": "Stasjonen kan ikke løses ut nå. Kanskje en fil på den fortsatt er åpen",
     "fileManagerNotSet": "Datamaskinen tok ikke imot endringen",
     "disksAdminsOnly": "Bare administratorer ser de enkelte diskene og Cache",
+    "dragFailed": "Filene kunne ikke dras ut",
     "elevationDeclined": "Administratorrettighetene ble ikke gitt",
     "elevationFailed": "Hjelperen med administratorrettigheter svarte ikke",
     "elevationUnsupported": "På dette systemet kan ikke CannonCommander be om administratorrettigheter",
@@ -3663,6 +3669,7 @@
     "notElevatable": "Dette kan ikke fortsette med administratorrettigheter",
     "notFound": "Det finnes ikke lenger",
     "notInTrash": "Det ligger ikke i papirkurven",
+    "notOnDisk": "Bare filer på disken kan gå til et annet program",
     "notText": "Denne filen er ikke tekst",
     "notWindows1252": "Teksten inneholder tegn som Windows-1252 ikke kan lagre. Lagre den som UTF-8",
     "nothingToUndo": "Det er ingenting å angre",
