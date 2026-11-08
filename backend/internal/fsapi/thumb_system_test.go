@@ -10,9 +10,15 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
-type ownThumbs struct{ data []byte }
+type ownThumbs struct {
+	data []byte
+	err  error
+}
 
 func (o ownThumbs) thumb(context.Context, string, os.FileInfo, string) ([]byte, error) {
+	if o.err != nil {
+		return nil, o.err
+	}
 	if o.data == nil {
 		return nil, errNoThumb
 	}
@@ -52,5 +58,20 @@ func TestTheSystemDrawsOnlyWhatTheAppCannot(t *testing.T) {
 	none := func(context.Context, string, int) ([]byte, error) { return nil, nativeshell.ErrNoPicture }
 	if _, err := (systemThumbs{own: ownThumbs{}, system: none}).thumb(ctx, "a.bin", nil, "large"); !errors.Is(err, errNoThumb) {
 		t.Fatalf("got %v", err)
+	}
+}
+
+func TestTheSystemStepsInWhenTheAppsOwnFails(t *testing.T) {
+	desktop.Use(noApp{}, desktop.Options{})
+	t.Cleanup(func() { desktop.Use(nil, desktop.Options{}) })
+	broken := errors.New("ffmpeg lacks the scale filter")
+	ctx := context.Background()
+	system := func(context.Context, string, int) ([]byte, error) { return []byte("system"), nil }
+	if got, err := (systemThumbs{own: ownThumbs{err: broken}, system: system}).thumb(ctx, "a.mp4", nil, "small"); err != nil || string(got) != "system" {
+		t.Fatalf("got %q %v", got, err)
+	}
+	none := func(context.Context, string, int) ([]byte, error) { return nil, nativeshell.ErrNoPicture }
+	if _, err := (systemThumbs{own: ownThumbs{err: broken}, system: none}).thumb(ctx, "a.mp4", nil, "small"); !errors.Is(err, broken) {
+		t.Fatalf("the app's own failure got lost: %v", err)
 	}
 }

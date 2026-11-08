@@ -11,7 +11,7 @@ import (
 
 // systemThumbs draws with the app's own thumbnailer first and, in the
 // desktop app, asks the computer's thumbnail handlers for what that one
-// has no picture of, such as Office files, or videos on a Windows without
+// cannot draw, such as Office files, or videos on a Windows without
 // ffmpeg.
 type systemThumbs struct {
 	own    thumbnailer
@@ -28,12 +28,17 @@ var systemEdges = map[string]int{"small": 256, "large": 640}
 
 func (s systemThumbs) thumb(ctx context.Context, real string, info os.FileInfo, size string) ([]byte, error) {
 	data, err := s.own.thumb(ctx, real, info, size)
-	if !errors.Is(err, errNoThumb) || !desktop.Active() {
+	if err == nil || !desktop.Active() {
 		return data, err
 	}
-	data, err = s.system(ctx, real, systemEdges[size])
-	if errors.Is(err, nativeshell.ErrNoPicture) || errors.Is(err, nativeshell.ErrUnsupported) {
-		return nil, errNoThumb
+	// The app's own may also fail outright, as with an ffmpeg that lacks a
+	// filter, and then the system's handler gets its turn as well.
+	sys, serr := s.system(ctx, real, systemEdges[size])
+	if serr != nil {
+		if errors.Is(serr, nativeshell.ErrNoPicture) || errors.Is(serr, nativeshell.ErrUnsupported) {
+			return nil, err
+		}
+		return nil, serr
 	}
-	return data, err
+	return sys, nil
 }
