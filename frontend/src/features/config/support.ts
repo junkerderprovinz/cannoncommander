@@ -1,6 +1,6 @@
 // Where help comes from, and the bug report: a file with the settings and the state of the jobs, without passwords,
 // keys or credentials, to attach to an issue.
-import { admin } from '@/api/admin';
+import { admin, type System } from '@/api/admin';
 import { prefs } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { c } from '@/features/config/shared';
@@ -9,6 +9,12 @@ export const REPO = 'https://github.com/junkerderprovinz/cannoncommander';
 export const MAIL = 'hello@halleluja.design';
 // The server cannot see which image it runs from, and every release goes to this one.
 export const IMAGE = 'ghcr.io/junkerderprovinz/cannoncommander';
+
+// A build between releases has no release page, so it links to its commit.
+export function versionLink(sys: Pick<System, 'version' | 'commit' | 'release'>): string {
+  if (sys.release) return `${REPO}/releases/tag/v${sys.version.replace(/^v/, '')}`;
+  return sys.commit && sys.commit !== 'unknown' ? `${REPO}/commit/${sys.commit}` : REPO;
+}
 
 export async function bugReport() {
   const [sys, sources, remotes, users] = await Promise.allSettled([admin.system(), admin.sources(), admin.remotes(), admin.users()]);

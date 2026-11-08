@@ -9,7 +9,7 @@ import { G } from '@/core/glyphs';
 import { win } from '@/core/windows';
 import { NEWS, unseen } from '../help';
 import { c } from '@/features/config/shared';
-import { bugReport, MAIL, REPO } from '../support';
+import { bugReport, MAIL, REPO, versionLink } from '../support';
 import CoffeeWin from '../wins/CoffeeWin.vue';
 import CryptoWin from '../wins/CryptoWin.vue';
 import PaypalWin from '../wins/PaypalWin.vue';
@@ -20,10 +20,12 @@ const latest = ref<UpdateCheck | null>(null);
 onMounted(() => { admin.system().then((s) => { sys.value = s; }, () => {}); });
 
 // A version number is a plain link to its release page, as in every app of the workshop.
+const plain = (v?: string) => v?.replace(/^v/, '');
+const rclone = computed(() => plain(sys.value?.tools.rclone?.version));
 const versions = computed(() => [
-  { name: 'CannonCommander', v: sys.value?.version, href: REPO + '/releases/tag/v' },
-  { name: 'GlimStone', v: GLIMSTONE_VERSION, href: 'https://github.com/junkerderprovinz/glimstone/releases/tag/v', tip: c('info.glimstoneTip') },
-  { name: 'rclone', v: sys.value?.tools.rclone?.version, href: 'https://github.com/rclone/rclone/releases/tag/v', tip: c('info.rcloneTip') },
+  { name: 'CannonCommander', v: plain(sys.value?.version), href: sys.value ? versionLink(sys.value) : undefined },
+  { name: 'GlimStone', v: plain(GLIMSTONE_VERSION), href: 'https://github.com/junkerderprovinz/glimstone/releases/tag/v' + plain(GLIMSTONE_VERSION), tip: c('info.glimstoneTip') },
+  { name: 'rclone', v: rclone.value, href: 'https://github.com/rclone/rclone/releases/tag/v' + rclone.value, tip: c('info.rcloneTip') },
 ]);
 const n = computed(() => unseen());
 
@@ -55,7 +57,7 @@ const give = computed(() => [
 <template>
   <Card :title="c('info.version')" :hint="c('info.versionHint')">
     <FieldRow v-for="x in versions" :key="x.name" :label="x.name" :hint="x.tip">
-      <a v-if="x.v" class="a-vlink glim-num" :href="x.href + x.v" target="_blank" rel="noopener">{{ String(x.v).replace(/^v/, '') }}</a>
+      <a v-if="x.v" class="a-vlink glim-num" :href="x.href" target="_blank" rel="noopener">{{ x.v }}</a>
     </FieldRow>
     <div class="a-foot">
       <Button :label="n ? c('info.newN', { n }) : c('info.new')" label-key="IconWhatsNew" data-run="whatsNew" @click="run('whatsNew')"><template #before><span class="a-dot" :class="{ seen: !n }"></span></template></Button>

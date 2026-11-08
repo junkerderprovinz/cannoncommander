@@ -17,6 +17,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -329,6 +330,19 @@ func TestSystemReportsVersionToolsAndOffice(t *testing.T) {
 	f.h.ServeHTTP(rec2, again)
 	if rec2.Code != http.StatusNotModified {
 		t.Fatalf("second get: %d", rec2.Code)
+	}
+}
+
+func TestSystemSaysWhetherTheBuildIsARelease(t *testing.T) {
+	saved := version.Version
+	t.Cleanup(func() { version.Version = saved })
+	for current, want := range map[string]bool{"v1.4.0": true, "v1.4.0-3-gabc1234": false, "dev-abc1234": false} {
+		version.Version = current
+		f := newFixture(t)
+		var in Info
+		if code := f.call("anna", "GET", "/system", "", &in); code != 200 || in.Release != want || in.Version != current {
+			t.Errorf("%s: %d %+v", current, code, in)
+		}
 	}
 }
 

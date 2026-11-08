@@ -20,6 +20,7 @@ var started = time.Now()
 type Info struct {
 	Version string          `json:"version"`
 	Commit  string          `json:"commit,omitempty"`
+	Release bool            `json:"release"`
 	Go      string          `json:"go"`
 	OS      string          `json:"os"`
 	Arch    string          `json:"arch"`
@@ -141,9 +142,11 @@ func (s *service) info(ctx context.Context) (Info, error) {
 	if err != nil {
 		return Info{}, err
 	}
+	_, released := version.Release()
 	in := Info{
 		Version: version.Version,
 		Commit:  version.CommitSHA,
+		Release: released,
 		Go:      runtime.Version(),
 		OS:      runtime.GOOS,
 		Arch:    runtime.GOARCH,

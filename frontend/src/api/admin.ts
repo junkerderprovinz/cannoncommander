@@ -73,7 +73,7 @@ export type AppChange = { [K in keyof AppSettings]?: AppSettings[K] extends obje
 export interface IntegrationResult { kind: string; ok: boolean; reachable: boolean; token?: 'ok' | 'rejected' | 'missing' | 'off' | 'none'; version?: string; error?: string }
 export interface Tool { available: boolean; path?: string; version?: string }
 export interface System {
-  version: string; commit?: string; go: string; os: string; arch: string; started: number; uptime: number;
+  version: string; commit?: string; release: boolean; go: string; os: string; arch: string; started: number; uptime: number;
   tools: Record<string, Tool>; unraid: { available: boolean; socket: boolean };
   features: { office: { kind: OfficeKind; url?: string }; thumbs: boolean; videoPreview: boolean; webdav: boolean; mupdf: boolean; terminal: boolean };
 }
