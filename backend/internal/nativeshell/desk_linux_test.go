@@ -89,7 +89,7 @@ func (f *fixture) desktop() xdg.Desktop {
 	}
 }
 
-// desk reads the desktop as it is now.
+// desk reads the current desktop.
 func (f *fixture) desk() *desk { return newDesk(f.desktop(), nil) }
 
 // install makes the desktop the one the exported functions see.

@@ -257,7 +257,7 @@ func TestAHiddenRowStaysOutOfTheNextMenuAndCanComeBack(t *testing.T) {
 		t.Fatalf("hidden %v", e.pc.hiddenAt)
 	}
 	if got := e.entries(); !got[0].Hidden {
-		t.Fatal("the hidden row is no longer listed as hidden")
+		t.Fatal("the hidden row is listed as shown")
 	}
 
 	e.do(http.MethodPut, "/shell/entries/hidden", map[string]any{"keys": []string{}})
