@@ -2462,6 +2462,9 @@
       "other": "클립보드에 {n}개"
     },
     "clipEmpty": "클립보드가 비어 있습니다",
+    "leftOut": {
+      "other": "여기 폴더 밖에 있어 남겨졌습니다: 항목 {n}개"
+    },
     "parityTitle": "Parity 검사 진행 중",
     "parityAsk": "지금 복사할까요, 나중에 할까요?",
     "parityText": "Unraid가 지금 Parity를 검사하고 있습니다. {size} 크기의 복사는 검사를 늦추고 복사 자체도 느려집니다.",
@@ -3363,6 +3366,7 @@
     "cannotUndo": "이 단계는 되돌릴 수 없습니다",
     "changedSince": "그 사이 바뀌었기 때문에 그대로 둡니다",
     "changedWhileOpen": "파일을 연 뒤에 파일이 바뀌었습니다",
+    "clipboardBusy": "클립보드가 사용 중입니다. 잠시 후 다시 시도해 주세요",
     "codeMismatch": "코드가 맞지 않습니다. 휴대폰 시계가 정확한가요?",
     "codeMissing": "코드가 없습니다",
     "collectionName": "모음의 이름을 정하세요. 받는 사람에게 보이는 폴더 이름이 됩니다",
@@ -3373,6 +3377,7 @@
     "denied": "이 작업을 할 권한이 없습니다",
     "desktopOnly": "데스크톱 앱에서만 할 수 있습니다",
     "disksAdminsOnly": "개별 디스크와 Cache는 관리자만 볼 수 있습니다",
+    "dragFailed": "파일을 밖으로 끌어낼 수 없습니다",
     "expiryPast": "만료일이 이미 지났습니다",
     "fileInTheWay": "폴더가 있어야 할 자리에 파일이 있습니다",
     "folderInTheWay": "같은 이름의 폴더가 가로막고 있습니다",
@@ -3442,6 +3447,7 @@
     "noTerminal": "이 컴퓨터에서 터미널 프로그램을 찾지 못했습니다",
     "notFound": "더 이상 없습니다",
     "notInTrash": "휴지통에 없습니다",
+    "notOnDisk": "다른 프로그램에는 디스크에 있는 파일만 보낼 수 있습니다",
     "notText": "이 파일은 텍스트가 아닙니다",
     "notWindows1252": "Windows-1252로 저장할 수 없는 문자가 들어 있습니다. UTF-8로 저장하세요",
     "nothingToUndo": "되돌릴 것이 없습니다",

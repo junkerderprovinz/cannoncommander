@@ -2553,6 +2553,10 @@
       "other": "{n} lõikelaual"
     },
     "clipEmpty": "Lõikelaud on tühi",
+    "leftOut": {
+      "one": "Siinsetest kaustadest väljas, jääb maha: {n} üksus",
+      "other": "Siinsetest kaustadest väljas, jääb maha: {n} üksust"
+    },
     "parityTitle": "Paarsuskontroll käib",
     "parityAsk": "Kopeerida kohe või hiljem?",
     "parityText": "Unraid kontrollib praegu paarsust. {size} suurune koopia aeglustab kontrolli ja on ise aeglasem.",
@@ -3495,6 +3499,7 @@
     "cannotUndo": "Seda sammu ei saa tagasi võtta",
     "changedSince": "See on vahepeal muutunud ja jääb seetõttu nii, nagu on",
     "changedWhileOpen": "Fail on muutunud pärast seda, kui sa selle avasid",
+    "clipboardBusy": "Lõikelaud on praegu hõivatud. Proovi kohe uuesti",
     "codeMismatch": "Kood ei sobi. Kas telefoni kell käib õigesti?",
     "codeMissing": "Kood puudub",
     "collectionName": "Anna kogumikule nimi, sellest saab kaust, mida saaja näeb",
@@ -3505,6 +3510,7 @@
     "denied": "Sul pole selleks õigusi",
     "desktopOnly": "See töötab ainult töölauarakenduses",
     "disksAdminsOnly": "Üksikuid kettaid ja Cache'i näevad ainult administraatorid",
+    "dragFailed": "Faile ei õnnestunud välja lohistada",
     "expiryPast": "Aegumiskuupäev on minevikus",
     "fileInTheWay": "Kausta kohal on fail",
     "folderInTheWay": "Sama nimega kaust on ees",
@@ -3578,6 +3584,7 @@
     "noTerminal": "CannonCommander ei leia selles arvutis ühtegi terminaliprogrammi",
     "notFound": "Seda pole enam olemas",
     "notInTrash": "See pole prügikastis",
+    "notOnDisk": "Teise programmi saab anda ainult kettal olevaid faile",
     "notText": "See fail pole tekst",
     "notWindows1252": "Tekstis on märke, mida Windows-1252 ei suuda salvestada. Salvesta see UTF-8-na",
     "nothingToUndo": "Pole midagi tagasi võtta",

@@ -2553,6 +2553,10 @@
       "other": "{n} på utklippstavlen"
     },
     "clipEmpty": "Utklippstavlen er tom",
+    "leftOut": {
+      "one": "Utenfor mappene her, blir igjen: {n} element",
+      "other": "Utenfor mappene her, blir igjen: {n} elementer"
+    },
     "parityTitle": "Paritetssjekk pågår",
     "parityAsk": "Kopiere nå eller etterpå?",
     "parityText": "Unraid sjekker pariteten akkurat nå. En kopi på {size} bremser sjekken og går selv saktere.",
@@ -3495,6 +3499,7 @@
     "cannotUndo": "Dette steget kan ikke angres",
     "changedSince": "Det er endret siden og blir derfor som det er",
     "changedWhileOpen": "Filen er endret siden du åpnet den",
+    "clipboardBusy": "Utklippstavlen er opptatt akkurat nå. Prøv igjen om et øyeblikk",
     "codeMismatch": "Koden stemmer ikke. Går klokken riktig på mobilen?",
     "codeMissing": "Koden mangler",
     "collectionName": "Gi samlingen et navn, det blir mappen mottakeren ser",
@@ -3505,6 +3510,7 @@
     "denied": "Du har ikke rettigheter til dette",
     "desktopOnly": "Det går bare i skrivebordsappen",
     "disksAdminsOnly": "Bare administratorer ser de enkelte diskene og Cache",
+    "dragFailed": "Filene kunne ikke dras ut",
     "expiryPast": "Utløpsdatoen ligger i fortiden",
     "fileInTheWay": "Det ligger en fil der en mappe hører hjemme",
     "folderInTheWay": "En mappe med dette navnet er i veien",
@@ -3578,6 +3584,7 @@
     "noTerminal": "CannonCommander finner ikke noe terminalprogram på denne datamaskinen",
     "notFound": "Det finnes ikke lenger",
     "notInTrash": "Det ligger ikke i papirkurven",
+    "notOnDisk": "Bare filer på disken kan gå til et annet program",
     "notText": "Denne filen er ikke tekst",
     "notWindows1252": "Teksten inneholder tegn som Windows-1252 ikke kan lagre. Lagre den som UTF-8",
     "nothingToUndo": "Det er ingenting å angre",

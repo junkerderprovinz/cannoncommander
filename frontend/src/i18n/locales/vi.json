@@ -2462,6 +2462,9 @@
       "other": "{n} trong bộ nhớ tạm"
     },
     "clipEmpty": "Bộ nhớ tạm đang trống",
+    "leftOut": {
+      "other": "Nằm ngoài các thư mục ở đây nên bị bỏ lại: {n} mục"
+    },
     "parityTitle": "Đang kiểm tra Parity",
     "parityAsk": "Sao chép ngay hay để sau?",
     "parityText": "Unraid đang kiểm tra Parity. Một bản sao {size} sẽ làm chậm việc kiểm tra và chính nó cũng chạy chậm hơn.",
@@ -3363,6 +3366,7 @@
     "cannotUndo": "Không thể hoàn tác bước này",
     "changedSince": "Mục này đã thay đổi từ lúc đó, nên được giữ nguyên",
     "changedWhileOpen": "Tệp đã thay đổi từ lúc bạn mở nó",
+    "clipboardBusy": "Bộ nhớ tạm đang bận. Hãy thử lại sau giây lát",
     "codeMismatch": "Mã không khớp. Đồng hồ trên điện thoại của bạn có đúng không?",
     "codeMissing": "Còn thiếu mã",
     "collectionName": "Hãy đặt tên cho bộ sưu tập, tên đó sẽ thành thư mục người nhận thấy",
@@ -3373,6 +3377,7 @@
     "denied": "Bạn không có quyền làm việc này",
     "desktopOnly": "Việc này chỉ làm được trong ứng dụng máy tính",
     "disksAdminsOnly": "Chỉ quản trị viên mới thấy từng Disk và Cache",
+    "dragFailed": "Không kéo được các tệp ra ngoài",
     "expiryPast": "Ngày hết hạn đã qua",
     "fileInTheWay": "Có một tệp nằm ở chỗ dành cho thư mục",
     "folderInTheWay": "Một thư mục trùng tên đang cản đường",
@@ -3442,6 +3447,7 @@
     "noTerminal": "CannonCommander không tìm thấy chương trình terminal nào trên máy tính này",
     "notFound": "Mục này không còn nữa",
     "notInTrash": "Mục này không nằm trong thùng rác",
+    "notOnDisk": "Chỉ các tệp trên ổ đĩa mới chuyển được sang chương trình khác",
     "notText": "Tệp này không phải văn bản",
     "notWindows1252": "Văn bản có ký tự mà Windows-1252 không lưu được. Hãy lưu dưới dạng UTF-8",
     "nothingToUndo": "Không có gì để hoàn tác",

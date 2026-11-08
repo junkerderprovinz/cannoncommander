@@ -2553,6 +2553,10 @@
       "other": "{n} op het klembord"
     },
     "clipEmpty": "Het klembord is leeg",
+    "leftOut": {
+      "one": "Buiten de mappen hier, blijft achter: 1 item",
+      "other": "Buiten de mappen hier, blijft achter: {n} items"
+    },
     "parityTitle": "Parity-check loopt",
     "parityAsk": "Nu kopiëren of daarna?",
     "parityText": "Unraid controleert nu de Parity. Een kopie van {size} remt de check af en loopt zelf ook langzamer.",
@@ -3495,6 +3499,7 @@
     "cannotUndo": "Deze stap kan niet worden teruggedraaid",
     "changedSince": "Dat is intussen gewijzigd en blijft daarom zoals het is",
     "changedWhileOpen": "Het bestand is gewijzigd sinds je het opende",
+    "clipboardBusy": "Het klembord is even bezet. Probeer het zo nog eens",
     "codeMismatch": "De code klopt niet. Loopt de klok op je telefoon goed?",
     "codeMissing": "De code ontbreekt",
     "collectionName": "Geef de verzameling een naam, die wordt de map die de andere kant ziet",
@@ -3505,6 +3510,7 @@
     "denied": "Daarvoor heb je de rechten niet",
     "desktopOnly": "Dat kan alleen de desktop-app",
     "disksAdminsOnly": "De losse schijven en de Cache zien alleen admins",
+    "dragFailed": "De bestanden konden niet naar buiten worden gesleept",
     "expiryPast": "De vervaldatum ligt in het verleden",
     "fileInTheWay": "Waar een map hoort, staat een bestand",
     "folderInTheWay": "Een map met deze naam zit in de weg",
@@ -3578,6 +3584,7 @@
     "noTerminal": "CannonCommander vindt geen terminalprogramma op deze computer",
     "notFound": "Dit bestaat niet meer",
     "notInTrash": "Dit staat niet in de prullenbak",
+    "notOnDisk": "Alleen bestanden op de schijf kunnen naar een ander programma",
     "notText": "Dit bestand is geen tekst",
     "notWindows1252": "De tekst bevat tekens die Windows-1252 niet kan opslaan. Sla hem op als UTF-8",
     "nothingToUndo": "Er valt niets terug te draaien",

@@ -2553,6 +2553,10 @@
       "other": "{n} i Urklipp"
     },
     "clipEmpty": "Urklipp är tomt",
+    "leftOut": {
+      "one": "Utanför mapparna här, blir kvar: {n} objekt",
+      "other": "Utanför mapparna här, blir kvar: {n} objekt"
+    },
     "parityTitle": "Paritetskontroll pågår",
     "parityAsk": "Kopiera nu eller efteråt?",
     "parityText": "Unraid kontrollerar pariteten just nu. En kopia på {size} saktar ned kontrollen och går själv långsammare.",
@@ -3495,6 +3499,7 @@
     "cannotUndo": "Det här steget kan inte ångras",
     "changedSince": "Det har ändrats sedan dess och förblir därför som det är",
     "changedWhileOpen": "Filen har ändrats sedan du öppnade den",
+    "clipboardBusy": "Urklipp är upptaget just nu. Försök igen om en stund",
     "codeMismatch": "Koden stämmer inte. Går klockan rätt i mobilen?",
     "codeMissing": "Koden saknas",
     "collectionName": "Ge samlingen ett namn, det blir mappen som mottagaren ser",
@@ -3505,6 +3510,7 @@
     "denied": "Du har inte behörighet för det här",
     "desktopOnly": "Det går bara i skrivbordsappen",
     "disksAdminsOnly": "Bara admins ser de enskilda diskarna och Cache",
+    "dragFailed": "Filerna kunde inte dras ut",
     "expiryPast": "Utgångsdatumet ligger i det förflutna",
     "fileInTheWay": "Det ligger en fil där en mapp ska vara",
     "folderInTheWay": "En mapp med det här namnet är i vägen",
@@ -3578,6 +3584,7 @@
     "noTerminal": "CannonCommander hittar inget terminalprogram på den här datorn",
     "notFound": "Det finns inte längre",
     "notInTrash": "Det ligger inte i papperskorgen",
+    "notOnDisk": "Bara filer på disken kan gå till ett annat program",
     "notText": "Den här filen är ingen text",
     "notWindows1252": "Texten innehåller tecken som Windows-1252 inte kan lagra. Spara den som UTF-8",
     "nothingToUndo": "Det finns inget att ångra",
