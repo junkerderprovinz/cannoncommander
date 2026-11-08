@@ -11,7 +11,7 @@ import { t } from '@/i18n';
 import { stepFoot } from '@/features/config/shared';
 import { type KeyMap, ownKeys, type Preset, withOwn } from './keys';
 import KeysList from './KeysList.vue';
-import { layout, layoutItems, layoutKeys } from './state';
+import { layout, layoutItems, layoutKeys, shippedKeys } from './state';
 
 const props = defineProps<{ win: WinEntry; apply: (map: KeyMap, which: Preset) => void }>();
 const map = ref<KeyMap>({ ...keymap });
@@ -29,7 +29,7 @@ function pickLayout(v: Preset) {
 onMounted(() => {
   stepFoot(props.win, [
     { start: t('keys.hint') },
-    { label: t('keys.resetAll'), g: 'IconRefresh', run: () => { map.value = { ...base.value }; return false; } },
+    { label: t('keys.resetAll'), g: 'IconRefresh', run: () => { map.value = { ...shippedKeys() }; which.value = 'cc'; return false; } },
     cancelBtn(),
     { label: t('labels.take'), g: 'IconCheck', primary: true, run: () => props.apply(map.value, which.value) },
   ]);
@@ -42,7 +42,7 @@ onMounted(() => {
     <FieldRow :label="t('keys.search')"><TextField id="kb-q" v-model="query" :placeholder="t('keys.searchPh')" autocomplete="off" width="medium" /></FieldRow>
   </SubCard>
   <SubCard class="kb-well">
-    <KeysList v-model:map="map" :base="base" :query="query" />
+    <div id="kb-list" class="kb-list"><KeysList v-model:map="map" :base="base" :query="query" /></div>
     <div class="glim-eyebrow kb-fixedhead">{{ t('keys.fixedHead') }}</div>
     <div class="kbd-grid"><div v-for="k in FIXED" :key="k"><span>{{ t(`keys.fixedKeys.${k}.label`) }}</span><Kbd>{{ t(`keys.fixedKeys.${k}.key`, { mod: zoomMod() }) }}</Kbd></div></div>
   </SubCard>

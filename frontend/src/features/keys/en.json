@@ -12,7 +12,7 @@
   "swap": "Swap", "replace": "Replace",
   "browser": "The browser keeps {key} for its tabs and windows. Please pick another one here, it works in the desktop app.", "system": "{key} belongs to the system and never reaches CannonCommander. Please pick another key.",
   "browserHere": "The browser keeps this key. It works in the desktop app.", "systemHere": "This key belongs to the system.",
-  "hint": "Click a key and press the new combination", "resetAll": "Reset everything", "own": "Your own keys", "resetAllTip": "Brings back the layout's keys. The layout itself stays.",
+  "hint": "Click a key and press the new combination", "resetAll": "Reset everything", "own": "Your own keys", "reset": "Reset", "resetTip": "Brings back the layout's keys. The layout itself stays.",
   "ownNow": "Your shortcuts work everywhere now", "asShipped": "The shortcuts are back as shipped",
   "fixedHead": "Taken for good",
   "fixedKeys": {

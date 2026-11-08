@@ -26,8 +26,8 @@ const change = (map: KeyMap) => commit(map, layout());
     <FieldRow v-if="host.desktop" :label="t('keys.clickSelect')" :hint="t('keys.clickSelectTip')">
       <Toggle id="d-clickselect" :model-value="!!prefs.clickSelect" @update:model-value="setPref('clickSelect', $event)" />
     </FieldRow>
-    <FieldRow :label="t('keys.own')" :hint="t('keys.resetAllTip')">
-      <Button id="kt-reset" :label="t('keys.resetAll')" label-key="IconRefresh" :disabled="!hasOwnKeys()" @click="change({ ...base })" />
+    <FieldRow :label="t('keys.own')" :hint="t('keys.resetTip')">
+      <Button id="kt-reset" :label="t('keys.reset')" label-key="IconRefresh" :disabled="!hasOwnKeys()" @click="change({ ...base })" />
     </FieldRow>
     <FieldRow :label="t('keys.search')">
       <TextField id="kt-q" v-model="query" :placeholder="t('keys.searchPh')" autocomplete="off" width="medium" />

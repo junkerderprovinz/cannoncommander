@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Every action with its key, grouped as in the menu bar: as cards in the settings tile, as sections in the F1 window.
+// Every action with its key, grouped as in the menu bar: as cards of the settings tile, as sections in the F1 window's list.
 // A click on a key listens for the new one. A key another action has asks first whether to swap or to replace.
 import { Button, Card, EmptyState, IconButton } from '@glimstone/vue';
 import { computed, ref } from 'vue';
@@ -73,29 +73,27 @@ const clear = (id: string) => set(Object.fromEntries(Object.entries(props.map).f
 </script>
 
 <template>
-  <div :id="cards ? undefined : 'kb-list'" class="kb-list" :class="{ 'kb-cards': cards }">
-    <component :is="cards ? Card : 'section'" v-for="[group, list] in shown" :key="group" class="kb-group" v-bind="cards ? { title: group } : {}">
-      <div v-if="!cards" class="glim-eyebrow">{{ group }}</div>
-      <div v-for="id in list" :key="id" class="kb-row" :class="{ rec: rec === id, own: changed(map, base, id) }" :data-kb="id" @focusout="leave($event, id)">
-        <span class="kb-name"><G v-if="actions[id]!.g" :n="actions[id]!.g!" /><span v-else class="ph"></span>{{ name(actions[id]!) }}</span>
-        <KeyField
-          :value="main(id) && keyLabel(main(id)!)" :more="combosOf(map, id).length - 1" :blocked="blocked(main(id))"
-          :listening="rec === id" :listening-text="t('keys.press')" :empty-text="t('keys.none')"
-          :data-kb-rec="id" :aria-label="t('keys.change', { action: name(actions[id]!) })"
-          @click="listen(id)" @press="press" @cancel="stop" />
-        <span class="kb-acts">
-          <IconButton v-if="main(id)" :tip="t('keys.clear')" :glyph="glyphComponent('IconClose')" :data-kb-clear="id" @click="clear(id)" />
-          <IconButton v-if="changed(map, base, id)" :tip="t('keys.undo')" :glyph="glyphComponent('IconUndo')" :data-kb-reset="id" @click="set(reset(map, base, id))" />
+  <component :is="cards ? Card : 'section'" v-for="[group, list] in shown" :key="group" class="kb-group" v-bind="cards ? { title: group } : {}">
+    <div v-if="!cards" class="glim-eyebrow">{{ group }}</div>
+    <div v-for="id in list" :key="id" class="kb-row" :class="{ rec: rec === id, own: changed(map, base, id) }" :data-kb="id" @focusout="leave($event, id)">
+      <span class="kb-name"><G v-if="actions[id]!.g" :n="actions[id]!.g!" /><span v-else class="ph"></span>{{ name(actions[id]!) }}</span>
+      <KeyField
+        :value="main(id) && keyLabel(main(id)!)" :more="combosOf(map, id).length - 1" :blocked="blocked(main(id))"
+        :listening="rec === id" :listening-text="t('keys.press')" :empty-text="t('keys.none')"
+        :data-kb-rec="id" :aria-label="t('keys.change', { action: name(actions[id]!) })"
+        @click="listen(id)" @press="press" @cancel="stop" />
+      <span class="kb-acts">
+        <IconButton v-if="main(id)" :tip="t('keys.clear')" :glyph="glyphComponent('IconClose')" :data-kb-clear="id" @click="clear(id)" />
+        <IconButton v-if="changed(map, base, id)" :tip="t('keys.undo')" :glyph="glyphComponent('IconUndo')" :data-kb-reset="id" @click="set(reset(map, base, id))" />
+      </span>
+      <div v-if="rec === id && pending" class="kb-warn" role="alert">
+        <span>{{ pending.msg }}</span>
+        <span v-if="pending.other" class="kb-choice">
+          <Button v-if="combosOf(map, id).length" id="kb-swap" :label="t('keys.swap')" label-key="IconSync" @click="take(swap)" />
+          <Button id="kb-replace" :label="t('keys.replace')" label-key="IconCheck" @click="take(assign)" />
         </span>
-        <div v-if="rec === id && pending" class="kb-warn" role="alert">
-          <span>{{ pending.msg }}</span>
-          <span v-if="pending.other" class="kb-choice">
-            <Button v-if="combosOf(map, id).length" id="kb-swap" :label="t('keys.swap')" label-key="IconSync" @click="take(swap)" />
-            <Button id="kb-replace" :label="t('keys.replace')" label-key="IconCheck" @click="take(assign)" />
-          </span>
-        </div>
       </div>
-    </component>
-    <EmptyState v-if="!shown.length" nested :glyph="glyphComponent('IconSearch')" :title="t('keys.noMatch')" />
-  </div>
+    </div>
+  </component>
+  <component :is="cards ? Card : 'div'" v-if="!shown.length"><EmptyState nested :glyph="glyphComponent('IconSearch')" :title="t('keys.noMatch')" /></component>
 </template>

@@ -17,7 +17,5 @@
 .kb-choice { display: flex; gap: .4rem; margin-left: auto; }
 /* A key the browser keeps stays in the list, dimmed, and its tooltip says why. */
 .kb-off .glim-kbd { opacity: .55; text-decoration: line-through; }
-/* In the tile every menu is a card of its own among the others. */
-.kb-list.kb-cards { display: contents; }
 .kb-fixedhead { margin-top: 1.2rem; }
 @media (max-width: 760px) { .kb-row { grid-template-columns: minmax(0, 1fr) auto auto; } }
