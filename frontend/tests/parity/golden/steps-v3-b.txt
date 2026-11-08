@@ -17,7 +17,7 @@
 9820 from multi rename: Im Editor umbenennen
 9821 window: Tastenkürzel, 100 rows
 9821 filter: Kopieren | Kopieren in die Ablage | Pfad kopieren | Internen Link kopieren
-9821 conflict: Strg+K gehört schon zu „Befehl suchen“. Nochmal drücken übernimmt die Taste, Esc lässt alles, wie es ist.
+9821 conflict: Strg+K gehört schon zu „Befehl suchen“. Beim Tauschen bekommt „Befehl suchen“ deine bisherige Taste. Esc lässt alles, wie es ist.  TauschenErsetzen
 9821 copy now: Strg+K | palette: keine
 9821 single letter: Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.
 9821 applied: copy Strg+K, newFolder Strg+Alt+N, palette none, Ctrl+k copy, F5 none
@@ -26,7 +26,7 @@
 9821 Ctrl+k runs: Kopieren
 9821 stored: true
 9821 after reload: copy Strg+K, Ctrl+k copy
-9821 tc preset: pack Alt+F5, unpack Alt+F9, rename Umschalt+F6, flat Strg+B, compareDirs Umschalt+F2, copy F5
+9821 tc preset: pack Alt+F5, unpack Alt+F9, rename Umschalt+F6, flat Strg+B, compareDirs Umschalt+F2, copy Strg+K
 9821 reset: copy F5, palette Strg+K, stored false
 9831 groups: Leere Ordner 1 Papierkorb | Leere Dateien 1 Papierkorb | Temp-Reste 5 Papierkorb | Kaputte Verknüpfungen 1 Papierkorb | Falsche Endung 1 Umbenennen | Problematische Namen 2 Umbenennen
 9831 primary: 5 löschen, 3 umbenennen
