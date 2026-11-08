@@ -678,7 +678,7 @@ export function toolsFixture(engine) {
   const SLUG = /^[a-z0-9][a-z0-9-]{2,39}$/;
   const t0 = now();
   const shares = [
-    { id: 's1', slug: 'k3x9qa-urlaub', kind: 'folder', name: 'Urlaub', paths: ['/mnt/user/fotos/Urlaub'], owner: 'jdp', created: t0 - 5 * DAY, expires: t0 + 25 * DAY, password: true, limit: 0, downloads: 3, views: 14, uploads: false, uploadLimit: 0, uploaded: 0, notify: false, message: '' },
+    { id: 's1', slug: 'k3x9-urlaub', kind: 'folder', name: 'Urlaub', paths: ['/mnt/user/fotos/Urlaub'], owner: 'jdp', created: t0 - 5 * DAY, expires: t0 + 25 * DAY, password: true, limit: 0, downloads: 3, views: 14, uploads: false, uploadLimit: 0, uploaded: 0, notify: false, message: '' },
     { id: 's2', slug: 'p7q2mv-rechnung', kind: 'file', name: 'Rechnung-Oktober.pdf', paths: ['/mnt/user/dokumente/Rechnung-Oktober.pdf'], owner: 'jdp', created: t0 - DAY, expires: t0 + 6 * DAY, password: false, limit: 5, downloads: 1, views: 2, uploads: false, uploadLimit: 0, uploaded: 0, notify: true, message: '' },
   ];
   const shareOut = (s) => ({
