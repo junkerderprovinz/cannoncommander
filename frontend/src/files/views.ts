@@ -2,8 +2,8 @@
 import { parent } from './paths';
 
 export const VIEWS: [id: string, glyph: string][] = [
-  ['details', 'IconViewAdvanced'], ['compact', 'IconViewSimple'], ['list', 'IconLog'], ['content', 'IconFileDoc'],
-  ['columns', 'IconCompare'], ['tiles', 'IconTabApps'], ['large', 'IconFileImage'], ['gallery', 'IconFileRaw'], ['drives', 'IconDatabase'],
+  ['details', 'IconViewAdvanced'], ['compact', 'IconRowCompact'], ['list', 'IconLog'], ['content', 'IconFileDoc'],
+  ['columns', 'IconColumns'], ['tiles', 'IconTabApps'], ['large', 'IconFileImage'], ['gallery', 'IconFileRaw'], ['drives', 'IconDatabase'],
 ];
 export const CARD_VIEWS = ['tiles', 'large', 'gallery', 'drives'];
 // Only these two show the column header.

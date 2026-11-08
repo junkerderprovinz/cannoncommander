@@ -13,8 +13,9 @@ import Palette from '@/features/palette/Palette.vue';
 import { lines } from '@/features/palette/rows';
 import { pal } from '@/features/palette/state';
 import { registerFileActions } from '@/files/actions';
-import { listMenu, rowMenu, tabMenu } from '@/files/menus';
+import { folderItems, listMenu, rowMenu, tabMenu } from '@/files/menus';
 import { VIEWS } from '@/files/views';
+import { t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 
 beforeAll(() => {
@@ -85,6 +86,20 @@ describe('glyphs', () => {
     expect(rows.filter((r) => r.firstElementChild?.tagName !== 'svg').map((r) => r.querySelector('.t')?.textContent)).toEqual([]);
     app.unmount();
     pal.open = false;
+  });
+
+  it('stand for one thing each among the commands about panels, views and comparing', () => {
+    const openOther = folderItems('/').find((it) => it.label === t('ctx.openOther'));
+    const spots: [meaning: string, glyph: string | undefined][] = [
+      ['one panel', actions.single?.g], ['two panels', actions.dual?.g],
+      ['the left panel', actions.focusLeft?.g], ['the right panel', actions.focusRight?.g],
+      ['the other panel', openOther?.g], ['the same folder in both panels', actions.equalPanels?.g],
+      ['comparing', actions.compareDirs?.g], ['comparing', actions.diff?.g], ['no grouping', actions['group-none']?.g],
+      ...VIEWS.map(([v, g]): [string, string] => [`the ${v} view`, g]),
+    ];
+    const meanings = new Map<string, Set<string>>();
+    for (const [m, g = 'none'] of spots) meanings.set(g, (meanings.get(g) ?? new Set()).add(m));
+    expect([...meanings].filter(([, ms]) => ms.size > 1).map(([g, ms]) => `${g}: ${[...ms].join(', ')}`)).toEqual([]);
   });
 
   it('are not swapped for a tick box in a menu, which shows a state rather than the command', () => {

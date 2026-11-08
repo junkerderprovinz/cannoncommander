@@ -245,5 +245,70 @@
       14
     ],
     "svg": "<path fill=\"currentColor\" fill-rule=\"evenodd\" d=\"M2.625 0.5H11.375A0.625 0.625 0 0 1 12 1.125V1.125A0.625 0.625 0 0 1 11.375 1.75H2.625A0.625 0.625 0 0 1 2 1.125V1.125A0.625 0.625 0 0 1 2.625 0.5ZM2.625 12.25H11.375A0.625 0.625 0 0 1 12 12.875V12.875A0.625 0.625 0 0 1 11.375 13.5H2.625A0.625 0.625 0 0 1 2 12.875V12.875A0.625 0.625 0 0 1 2.625 12.25ZM3 1.75H11V3.2C11 5 8.4 6.2 8.4 7C8.4 7.8 11 9 11 10.8V12.25H3V10.8C3 9 5.6 7.8 5.6 7C5.6 6.2 3 5 3 3.2ZM4.4 2.9H9.6C9.3 4.1 7.5 5.1 7 5.7C6.5 5.1 4.7 4.1 4.4 2.9Z\"></path>"
+  },
+  {
+    "name": "IconPaneLeft",
+    "means": "The left of two panels",
+    "source": "cannoncommander",
+    "viewBox": "0 0 14 14",
+    "ink": [
+      0,
+      0,
+      14,
+      14
+    ],
+    "svg": "<path d=\"M2 1h2.5a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Z\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M9.5 1H12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9.5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5Z\"/>"
+  },
+  {
+    "name": "IconPaneRight",
+    "means": "The right of two panels",
+    "source": "cannoncommander",
+    "viewBox": "0 0 14 14",
+    "ink": [
+      0,
+      0,
+      14,
+      14
+    ],
+    "svg": "<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M2 1h2.5a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5Z\"/><path d=\"M9.5 1H12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9.5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Z\"/>"
+  },
+  {
+    "name": "IconPaneSend",
+    "means": "Open a folder in the other panel",
+    "source": "cannoncommander",
+    "viewBox": "0 0 14 14",
+    "ink": [
+      0,
+      0,
+      14,
+      14
+    ],
+    "svg": "<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M2 1h2.5a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5ZM9.5 1H12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9.5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5Z\"/><path d=\"M10.1 6.1l2 1.65-2 1.65Z\"/>"
+  },
+  {
+    "name": "IconPaneSame",
+    "means": "The same folder in both panels",
+    "source": "cannoncommander",
+    "viewBox": "0 0 14 14",
+    "ink": [
+      0,
+      0,
+      14,
+      14
+    ],
+    "svg": "<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M2 1h2.5a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5ZM9.5 1H12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9.5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm.25 3.5a.5.5 0 0 0-.5.5v5.75a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5Z\"/><path d=\"M2.5 6.6h1.5v1.1H2.5ZM2.5 8.4h1.5v1.1H2.5ZM10 6.6h1.5v1.1H10ZM10 8.4h1.5v1.1H10Z\"/>"
+  },
+  {
+    "name": "IconColumns",
+    "means": "The column view",
+    "source": "cannoncommander",
+    "viewBox": "0 0 14 14",
+    "ink": [
+      0,
+      0,
+      14,
+      14
+    ],
+    "svg": "<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M2 1h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Zm-.25 2.25v7.5c0 .28.22.5.5.5h2.4V2.75h-2.4a.5.5 0 0 0-.5.5Zm4.15-.5v8.5h2.2V2.75Zm3.45 0v8.5h2.4a.5.5 0 0 0 .5-.5v-7.5a.5.5 0 0 0-.5-.5Z\"/>"
   }
 ]
