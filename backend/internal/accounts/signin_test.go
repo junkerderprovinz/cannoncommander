@@ -116,6 +116,7 @@ func TestPasswordsCanBeTurnedOff(t *testing.T) {
 func TestTwoFactorSignInTakesEachCodeOnce(t *testing.T) {
 	w := signInWorld(t)
 	w.addUser("anna", "user", "/mnt/user")
+	asked := time.Now()
 	secret, codes := w.turnOnTotp("anna")
 	before := w.started()
 
@@ -127,8 +128,9 @@ func TestTwoFactorSignInTakesEachCodeOnce(t *testing.T) {
 		return w.req("POST", "/auth/totp", map[string]string{"challenge": challenge, "code": code})
 	}
 	w.must(http.StatusBadRequest, totp(step.Challenge, "000000"))
-	// The setup took the code of this time step already.
-	w.must(http.StatusBadRequest, totp(step.Challenge, code(t, secret, time.Now())))
+	// The setup took the code of its time step, and a code from before it
+	// belongs to that step or an earlier one.
+	w.must(http.StatusBadRequest, totp(step.Challenge, code(t, secret, asked)))
 	next := code(t, secret, time.Now().Add(30*time.Second))
 	done := decode[accounts.SignIn](t, w.must(http.StatusOK, totp(step.Challenge, next)))
 	if done.Next != "done" || done.Me.Name != "anna" || w.started() != before+1 || w.login.kept[len(w.login.kept)-1] == 0 {
