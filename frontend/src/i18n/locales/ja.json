@@ -1028,6 +1028,7 @@
       "terminalDesktop": "パソコンのターミナル",
       "terminalDesktopTip": "パス欄に terminal、cmd、powershell などと入力して Enter を押すと、今見ているフォルダーでパソコンのターミナルが開きます。",
       "notFound": "見つかりません",
+      "checking": "検索中",
       "kept": "保存しました",
       "secretWrong": "サーバーがこの JWT シークレットを拒否しました",
       "notWorking": "サーバーは応答していますが、まだ接続できません",
@@ -3236,6 +3237,8 @@
   },
   "files": {
     "server": "サーバー",
+    "thisPc": "PC",
+    "computer": "コンピューター",
     "missing": "フォルダー {path} は存在しません",
     "missingUp": "フォルダー {path} は存在しないため、{here} に移動しました",
     "closedUp": "フォルダー {path} を開く権限がないため、{here} に移動しました",

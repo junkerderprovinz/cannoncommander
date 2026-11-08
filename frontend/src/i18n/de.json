@@ -292,6 +292,8 @@
   },
   "files": {
     "server": "Server",
+    "thisPc": "Dieser PC",
+    "computer": "Computer",
     "missing": "Den Ordner {path} gibt es nicht",
     "missingUp": "Den Ordner {path} gibt es nicht, darum bist du jetzt in {here}",
     "closedUp": "Den Ordner {path} darfst du nicht öffnen, darum bist du jetzt in {here}",

@@ -1072,6 +1072,7 @@
       "terminalDesktop": "Útstöð tölvunnar þinnar",
       "terminalDesktopTip": "Skrifaðu til dæmis terminal, cmd eða powershell í slóðarreitinn og ýttu á Enter. Þá opnast útstöð tölvunnar þinnar í möppunni sem þú ert að skoða.",
       "notFound": "Fannst ekki",
+      "checking": "Leitar",
       "kept": "Vistað",
       "secretWrong": "Þjónninn hafnar þessu JWT-leyndarmáli",
       "notWorking": "Þjónninn svarar, en tengingin virkar ekki enn",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Þjónn",
+    "thisPc": "Þessi tölva",
+    "computer": "Tölva",
     "missing": "Mappan {path} er ekki til",
     "missingUp": "Mappan {path} er ekki til, svo þú ert núna í {here}",
     "closedUp": "Þú mátt ekki opna möppuna {path}, svo þú ert núna í {here}",

@@ -1116,6 +1116,7 @@
       "terminalDesktop": "Terminal tvog računala",
       "terminalDesktopTip": "Upiši na primjer terminal, cmd ili powershell u polje putanje i pritisni Enter. Tada se terminal tvog računala otvara u mapi koju gledaš.",
       "notFound": "Nije pronađeno",
+      "checking": "Traži se",
       "kept": "Spremljeno",
       "secretWrong": "Poslužitelj odbija ovaj JWT ključ",
       "notWorking": "Poslužitelj odgovara, ali veza još ne radi",
@@ -3494,6 +3495,8 @@
   },
   "files": {
     "server": "Poslužitelj",
+    "thisPc": "Ovaj PC",
+    "computer": "Računalo",
     "missing": "Mapa {path} ne postoji",
     "missingUp": "Mapa {path} ne postoji, pa ste sada u {here}",
     "closedUp": "Ne smijete otvoriti mapu {path}, pa ste sada u {here}",

@@ -1072,6 +1072,7 @@
       "terminalDesktop": "Zure ordenagailuko terminala",
       "terminalDesktopTip": "Idatzi adibidez terminal, cmd edo powershell bide-eremuan eta sakatu Enter. Orduan zure ordenagailuko terminala irekiko da ikusten ari zaren karpetan.",
       "notFound": "Ez da aurkitu",
+      "checking": "Bilatzen",
       "kept": "Gordeta",
       "secretWrong": "Zerbitzariak JWT gako hau baztertzen du",
       "notWorking": "Zerbitzariak erantzuten du, baina konexioak ez du oraindik funtzionatzen",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Zerbitzaria",
+    "thisPc": "PC hau",
+    "computer": "Ordenagailua",
     "missing": "{path} karpeta ez dago",
     "missingUp": "{path} karpeta ez dago, beraz {here} karpetan zaude orain",
     "closedUp": "Ezin duzu {path} karpeta ireki, beraz {here} karpetan zaude orain",

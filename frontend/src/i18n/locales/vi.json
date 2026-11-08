@@ -1028,6 +1028,7 @@
       "terminalDesktop": "Terminal của máy tính bạn",
       "terminalDesktopTip": "Gõ ví dụ terminal, cmd hoặc powershell vào ô đường dẫn rồi nhấn Enter. Terminal của máy tính bạn sẽ mở trong thư mục bạn đang xem.",
       "notFound": "Không tìm thấy",
+      "checking": "Đang tìm",
       "kept": "Đã lưu",
       "secretWrong": "Máy chủ từ chối khóa JWT này",
       "notWorking": "Máy chủ có phản hồi, nhưng kết nối chưa được",
@@ -3236,6 +3237,8 @@
   },
   "files": {
     "server": "Máy chủ",
+    "thisPc": "PC này",
+    "computer": "Máy tính",
     "missing": "Thư mục {path} không tồn tại",
     "missingUp": "Thư mục {path} không tồn tại, nên bạn đang ở {here}",
     "closedUp": "Bạn không được mở thư mục {path}, nên bạn đang ở {here}",

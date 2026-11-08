@@ -1116,6 +1116,7 @@
       "terminalDesktop": "El terminal del teu ordinador",
       "terminalDesktopTip": "Escriu per exemple terminal, cmd o powershell al camp del camí i prem Enter. Aleshores s'obre el terminal del teu ordinador a la carpeta que estàs mirant.",
       "notFound": "No s'ha trobat",
+      "checking": "S'està cercant",
       "kept": "Desat",
       "secretWrong": "El servidor rebutja aquesta clau JWT",
       "notWorking": "El servidor respon, però la connexió encara no funciona",
@@ -3494,6 +3495,8 @@
   },
   "files": {
     "server": "Servidor",
+    "thisPc": "Aquest ordinador",
+    "computer": "Ordinador",
     "missing": "La carpeta {path} no existeix",
     "missingUp": "La carpeta {path} no existeix, així que ara sou a {here}",
     "closedUp": "No podeu obrir la carpeta {path}, així que ara sou a {here}",

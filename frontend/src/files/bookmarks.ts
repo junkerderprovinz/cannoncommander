@@ -2,6 +2,7 @@
 // server right away, so the shortcuts follow the person to the next device.
 import { api } from '@/api/client';
 import type { Bookmark } from '@/api/types';
+import { rootName } from '@/core/host';
 import { toast } from '@/core/toast';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
@@ -14,7 +15,7 @@ export function addBookmark(path: string) {
   const user = useUser(), label = useListing().placeLabel(path);
   if (inArchive(path)) return toast(t('side.archiveNoBookmark'), 'warn');
   if (user.bookmarks.some((b) => b.path === path)) return toast(t('side.bookmarkExists'), 'warn');
-  const name = label || split(path).pop() || t('files.server');
+  const name = label || split(path).pop() || rootName();
   const g = label ? (path === '/boot' ? 'IconFlash' : path === '/remotes' ? 'IconCloud' : 'IconZFS') : 'IconFolder';
   user.bookmarks.push({ name, path, g });
   save();

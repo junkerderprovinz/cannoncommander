@@ -1116,6 +1116,7 @@
       "terminalDesktop": "Tava datora terminālis",
       "terminalDesktopTip": "Ieraksti ceļa laukā, piemēram, terminal, cmd vai powershell un nospied Enter. Tad tava datora terminālis atveras mapē, kuru pašlaik skaties.",
       "notFound": "Nav atrasts",
+      "checking": "Tiek meklēts",
       "kept": "Saglabāts",
       "secretWrong": "Serveris noraida šo JWT atslēgu",
       "notWorking": "Serveris atbild, bet savienojums vēl nedarbojas",
@@ -3494,6 +3495,8 @@
   },
   "files": {
     "server": "Serveris",
+    "thisPc": "Šis dators",
+    "computer": "Dators",
     "missing": "Mapes {path} nav",
     "missingUp": "Mapes {path} nav, tāpēc tagad tu esi {here}",
     "closedUp": "Mapi {path} tu nedrīksti atvērt, tāpēc tagad tu esi {here}",

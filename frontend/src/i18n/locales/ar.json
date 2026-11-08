@@ -1248,6 +1248,7 @@
       "terminalDesktop": "طرفية حاسوبك",
       "terminalDesktopTip": "اكتب مثلًا terminal أو cmd أو powershell في حقل المسار واضغط Enter، فتنفتح طرفية حاسوبك في المجلد الذي تراه الآن.",
       "notFound": "غير موجود",
+      "checking": "جارٍ البحث",
       "kept": "حُفظ",
       "secretWrong": "الخادم يرفض مفتاح JWT هذا",
       "notWorking": "الخادم يستجيب، لكن الاتصال لا يعمل بعد",
@@ -3881,6 +3882,8 @@
   },
   "files": {
     "server": "الخادم",
+    "thisPc": "هذا الكمبيوتر",
+    "computer": "الكمبيوتر",
     "missing": "المجلد {path} غير موجود",
     "missingUp": "المجلد {path} غير موجود، لذا أنت الآن في {here}",
     "closedUp": "لا يمكنك فتح المجلد {path}، لذا أنت الآن في {here}",

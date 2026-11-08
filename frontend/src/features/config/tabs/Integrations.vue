@@ -67,7 +67,7 @@ const terminal = computed({ get: () => !!app.value?.terminal, set: (v: boolean) 
 } });
 const webdavUrl = new URL('dav/', location.origin + import.meta.env.BASE_URL).href;
 const desktop = computed(() => sys.value?.deployment === 'desktop');
-const tool = (t?: Tool) => (t?.available ? [t.version, t.path].filter(Boolean).join(', ') : c('integrations.notFound'));
+const tool = (t?: Tool) => (t?.checking ? c('integrations.checking') : t?.available ? [t.version, t.path].filter(Boolean).join(', ') : c('integrations.notFound'));
 
 const alAddress = computed({ get: () => app.value?.arrowloop.url ?? '', set: (url) => { app.value!.arrowloop.url = url; } });
 const alTest = computed(() => tests.arrowloop);

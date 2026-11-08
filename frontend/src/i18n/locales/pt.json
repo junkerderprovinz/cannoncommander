@@ -1116,6 +1116,7 @@
       "terminalDesktop": "O terminal do teu computador",
       "terminalDesktopTip": "Escreve por exemplo terminal, cmd ou powershell no campo do caminho e prime Enter. O terminal do teu computador abre na pasta que estás a ver.",
       "notFound": "Não encontrado",
+      "checking": "A procurar",
       "kept": "Guardado",
       "secretWrong": "O servidor recusa esta chave JWT",
       "notWorking": "O servidor responde, mas a ligação ainda não funciona",
@@ -3494,6 +3495,8 @@
   },
   "files": {
     "server": "Servidor",
+    "thisPc": "Este PC",
+    "computer": "Computador",
     "missing": "A pasta {path} não existe",
     "missingUp": "A pasta {path} não existe, por isso está agora em {here}",
     "closedUp": "Não pode abrir a pasta {path}, por isso está agora em {here}",

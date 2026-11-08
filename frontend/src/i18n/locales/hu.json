@@ -1072,6 +1072,7 @@
       "terminalDesktop": "A számítógéped terminálja",
       "terminalDesktopTip": "Írd be például a terminal, cmd vagy powershell szót az útvonal mezőbe, és nyomj Entert. Ekkor a számítógéped terminálja abban a mappában nyílik meg, amelyet éppen nézel.",
       "notFound": "Nem található",
+      "checking": "Keresés",
       "kept": "Mentve",
       "secretWrong": "A szerver elutasítja ezt a JWT-kulcsot",
       "notWorking": "A szerver válaszol, de a kapcsolat még nem működik",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Szerver",
+    "thisPc": "Ez a gép",
+    "computer": "Számítógép",
     "missing": "A(z) {path} mappa nem létezik",
     "missingUp": "A(z) {path} mappa nem létezik, ezért most itt van: {here}",
     "closedUp": "A(z) {path} mappát nem nyithatja meg, ezért most itt van: {here}",

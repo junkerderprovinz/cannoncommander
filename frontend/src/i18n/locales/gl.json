@@ -1072,6 +1072,7 @@
       "terminalDesktop": "O terminal do teu computador",
       "terminalDesktopTip": "Escribe por exemplo terminal, cmd ou powershell no campo da ruta e preme Intro. Así ábrese o terminal do teu computador no cartafol que estás a ver.",
       "notFound": "Non atopado",
+      "checking": "Buscando",
       "kept": "Gardado",
       "secretWrong": "O servidor rexeita esta chave JWT",
       "notWorking": "O servidor responde, pero a conexión aínda non funciona",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Servidor",
+    "thisPc": "Este PC",
+    "computer": "Computador",
     "missing": "O cartafol {path} non existe",
     "missingUp": "O cartafol {path} non existe, así que agora estás en {here}",
     "closedUp": "Non podes abrir o cartafol {path}, así que agora estás en {here}",

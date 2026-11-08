@@ -1116,6 +1116,7 @@
       "terminalDesktop": "Le terminal de votre ordinateur",
       "terminalDesktopTip": "Tapez par exemple terminal, cmd ou powershell dans le champ du chemin et appuyez sur Entrée. Le terminal de votre ordinateur s'ouvre alors dans le dossier que vous regardez.",
       "notFound": "Introuvable",
+      "checking": "Recherche en cours",
       "kept": "Enregistré",
       "secretWrong": "Le serveur refuse cette clé JWT",
       "notWorking": "Le serveur répond, mais la connexion ne fonctionne pas encore",
@@ -3494,6 +3495,8 @@
   },
   "files": {
     "server": "Serveur",
+    "thisPc": "Ce PC",
+    "computer": "Ordinateur",
     "missing": "Le dossier {path} n'existe pas",
     "missingUp": "Le dossier {path} n'existe pas, vous êtes donc maintenant dans {here}",
     "closedUp": "Vous ne pouvez pas ouvrir le dossier {path}, vous êtes donc maintenant dans {here}",

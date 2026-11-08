@@ -1160,6 +1160,7 @@
       "terminalDesktop": "Terminál tvého počítače",
       "terminalDesktopTip": "Napiš do pole s cestou třeba terminal, cmd nebo powershell a stiskni Enter. Pak se terminál tvého počítače otevře ve složce, kterou právě prohlížíš.",
       "notFound": "Nenalezeno",
+      "checking": "Hledá se",
       "kept": "Uloženo",
       "secretWrong": "Server tento klíč JWT odmítá",
       "notWorking": "Server odpovídá, ale spojení zatím nefunguje",
@@ -3623,6 +3624,8 @@
   },
   "files": {
     "server": "Server",
+    "thisPc": "Tento počítač",
+    "computer": "Počítač",
     "missing": "Složka {path} neexistuje",
     "missingUp": "Složka {path} neexistuje, proto jste teď v {here}",
     "closedUp": "Složku {path} nemůžete otevřít, proto jste teď v {here}",

@@ -1072,6 +1072,7 @@
       "terminalDesktop": "Terminalen på datamaskinen din",
       "terminalDesktopTip": "Skriv for eksempel terminal, cmd eller powershell i stifeltet og trykk Enter. Da åpnes terminalen på datamaskinen din i mappen du ser på.",
       "notFound": "Ikke funnet",
+      "checking": "Søker",
       "kept": "Lagret",
       "secretWrong": "Serveren avviser denne JWT-hemmeligheten",
       "notWorking": "Serveren svarer, men tilkoblingen fungerer ikke ennå",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Server",
+    "thisPc": "Denne PC-en",
+    "computer": "Datamaskin",
     "missing": "Mappen {path} finnes ikke",
     "missingUp": "Mappen {path} finnes ikke, så du er nå i {here}",
     "closedUp": "Du har ikke lov til å åpne mappen {path}, så du er nå i {here}",

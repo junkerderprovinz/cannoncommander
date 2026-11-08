@@ -1072,6 +1072,7 @@
       "terminalDesktop": "Bilgisayarının terminali",
       "terminalDesktopTip": "Yol alanına örneğin terminal, cmd ya da powershell yaz ve Enter'a bas. Bilgisayarının terminali o an baktığın klasörde açılır.",
       "notFound": "Bulunamadı",
+      "checking": "Aranıyor",
       "kept": "Kaydedildi",
       "secretWrong": "Sunucu bu JWT anahtarını reddediyor",
       "notWorking": "Sunucu yanıt veriyor ama bağlantı henüz çalışmıyor",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Sunucu",
+    "thisPc": "Bu bilgisayar",
+    "computer": "Bilgisayar",
     "missing": "{path} klasörü yok",
     "missingUp": "{path} klasörü yok, bu yüzden şimdi {here} içindesin",
     "closedUp": "{path} klasörünü açma iznin yok, bu yüzden şimdi {here} içindesin",

@@ -1028,6 +1028,7 @@
       "terminalDesktop": "컴퓨터의 터미널",
       "terminalDesktopTip": "경로 칸에 terminal, cmd, powershell 등을 입력하고 Enter를 누르면 지금 보고 있는 폴더에서 컴퓨터의 터미널이 열립니다.",
       "notFound": "찾을 수 없음",
+      "checking": "찾는 중",
       "kept": "저장됨",
       "secretWrong": "서버가 이 JWT 비밀 키를 거부했습니다",
       "notWorking": "서버가 응답하지만 아직 연결되지 않습니다",
@@ -3236,6 +3237,8 @@
   },
   "files": {
     "server": "서버",
+    "thisPc": "내 PC",
+    "computer": "컴퓨터",
     "missing": "{path} 폴더가 없습니다",
     "missingUp": "{path} 폴더가 없어서 {here}(으)로 이동했습니다",
     "closedUp": "{path} 폴더를 열 권한이 없어서 {here}(으)로 이동했습니다",

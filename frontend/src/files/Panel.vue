@@ -4,6 +4,7 @@ import { GlyphField, IconButton, Meter } from '@glimstone/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import { actions, run } from '@/core/actions';
 import { extend } from '@/core/extend';
+import { rootName } from '@/core/host';
 import { fmtSize } from '@/core/format';
 import { G, glyphComponent } from '@/core/glyphs';
 import { menu } from '@/core/menu';
@@ -32,7 +33,7 @@ const active = computed(() => props.i === F.active);
 const vol = computed(() => F.volume(props.i));
 
 const labelOf = (tb: Tab) => extend.tabLabels.reduce<{ name: string; g?: string } | null>((got, fn) => got ?? fn(tb), null);
-const tabName = (tb: Tab) => labelOf(tb)?.name ?? (listing.placeLabel(tb.path) || split(tb.path).pop() || t('files.server')).replace('::', '');
+const tabName = (tb: Tab) => labelOf(tb)?.name ?? (listing.placeLabel(tb.path) || split(tb.path).pop() || rootName()).replace('::', '');
 const used = (free: number, total: number) => `${Math.round((1 - free / total) * 100)}%`;
 
 function activate() {

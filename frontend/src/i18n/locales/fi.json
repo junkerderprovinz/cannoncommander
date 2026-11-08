@@ -1072,6 +1072,7 @@
       "terminalDesktop": "Tietokoneesi pääte",
       "terminalDesktopTip": "Kirjoita polkukenttään esimerkiksi terminal, cmd tai powershell ja paina Enter. Silloin tietokoneesi pääte avautuu kansioon, jota katsot.",
       "notFound": "Ei löytynyt",
+      "checking": "Etsitään",
       "kept": "Tallennettu",
       "secretWrong": "Palvelin hylkää tämän JWT-salaisuuden",
       "notWorking": "Palvelin vastaa, mutta yhteys ei vielä toimi",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Palvelin",
+    "thisPc": "Tämä tietokone",
+    "computer": "Tietokone",
     "missing": "Kansiota {path} ei ole olemassa",
     "missingUp": "Kansiota {path} ei ole olemassa, joten olet nyt kansiossa {here}",
     "closedUp": "Et saa avata kansiota {path}, joten olet nyt kansiossa {here}",

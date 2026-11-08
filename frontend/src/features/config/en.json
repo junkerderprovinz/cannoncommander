@@ -205,7 +205,7 @@
     "address": "Address", "rcloneTip": "Mounts the remotes. The program comes with the container.",
     "rcloneDesktopTip": "Mounts the remotes. Install rclone on your computer and CannonCommander finds it on its next start.",
     "terminalDesktop": "Your computer's terminal", "terminalDesktopTip": "Type terminal, cmd or powershell into the path field and press Enter, and your computer's terminal opens in the folder you are looking at.",
-    "notFound": "Not found", "kept": "Saved",
+    "notFound": "Not found", "checking": "Looking for it", "kept": "Saved",
     "secretWrong": "The server turns this JWT secret down", "notWorking": "The server answers, but the connection does not work yet", "alHint": "ArrowLoop plans recurring syncs. CannonCommander hands it pairs of folders from the folder comparison.",
     "alUrlTip": "The address ArrowLoop has in the browser.", "alToken": "API token", "alTokenTip": "A token from the ArrowLoop settings. With it CannonCommander may add jobs there.",
     "alPaths": "Paths", "alPathsTip": "ArrowLoop often sees the shares under other paths, such as /data instead of /mnt/user. The path here goes on the left, the same folder in ArrowLoop on the right.", "samePaths": "Same as here",

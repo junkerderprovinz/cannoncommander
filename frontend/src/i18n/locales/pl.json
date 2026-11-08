@@ -1160,6 +1160,7 @@
       "terminalDesktop": "Terminal twojego komputera",
       "terminalDesktopTip": "Wpisz w polu ścieżki na przykład terminal, cmd albo powershell i naciśnij Enter. Wtedy terminal twojego komputera otworzy się w folderze, który właśnie oglądasz.",
       "notFound": "Nie znaleziono",
+      "checking": "Wyszukiwanie",
       "kept": "Zapisano",
       "secretWrong": "Serwer odrzuca ten klucz JWT",
       "notWorking": "Serwer odpowiada, ale połączenie jeszcze nie działa",
@@ -3623,6 +3624,8 @@
   },
   "files": {
     "server": "Serwer",
+    "thisPc": "Ten komputer",
+    "computer": "Komputer",
     "missing": "Folder {path} nie istnieje",
     "missingUp": "Folder {path} nie istnieje, dlatego otwarto {here}",
     "closedUp": "Brak dostępu do folderu {path}, dlatego otwarto {here}",

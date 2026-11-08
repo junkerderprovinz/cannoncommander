@@ -1116,6 +1116,7 @@
       "terminalDesktop": "Terminalul calculatorului tău",
       "terminalDesktopTip": "Scrie de exemplu terminal, cmd sau powershell în câmpul căii și apasă Enter. Atunci terminalul calculatorului tău se deschide în dosarul pe care îl vezi.",
       "notFound": "Negăsit",
+      "checking": "Se caută",
       "kept": "Salvat",
       "secretWrong": "Serverul respinge această cheie JWT",
       "notWorking": "Serverul răspunde, dar conexiunea nu merge încă",
@@ -3494,6 +3495,8 @@
   },
   "files": {
     "server": "Server",
+    "thisPc": "Acest PC",
+    "computer": "Computer",
     "missing": "Dosarul {path} nu există",
     "missingUp": "Dosarul {path} nu există, așa că acum ești în {here}",
     "closedUp": "Nu ai voie să deschizi dosarul {path}, așa că acum ești în {here}",

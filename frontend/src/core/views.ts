@@ -15,7 +15,8 @@ export function go(id: string, arg?: unknown) {
 }
 export const currentView = () => views[view.id] ?? views.files;
 
-export interface SettingsTab { id: string; label: string | (() => string); g: string; order: number; component: Component }
+// hidden leaves a tile out where it means nothing, such as the sign in in the desktop app.
+export interface SettingsTab { id: string; label: string | (() => string); g: string; order: number; component: Component; hidden?: () => boolean }
 export const settingsTabs = shallowReactive<SettingsTab[]>([]);
 export function settingsTab(def: SettingsTab) {
   settingsTabs.push({ ...def, component: markRaw(def.component) });

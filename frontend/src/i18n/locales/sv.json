@@ -1072,6 +1072,7 @@
       "terminalDesktop": "Din dators terminal",
       "terminalDesktopTip": "Skriv till exempel terminal, cmd eller powershell i sökvägsfältet och tryck Enter. Då öppnas din dators terminal i mappen du tittar på.",
       "notFound": "Hittades inte",
+      "checking": "Söker",
       "kept": "Sparat",
       "secretWrong": "Servern avvisar den här JWT-hemligheten",
       "notWorking": "Servern svarar, men anslutningen fungerar inte än",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Server",
+    "thisPc": "Den här datorn",
+    "computer": "Dator",
     "missing": "Mappen {path} finns inte",
     "missingUp": "Mappen {path} finns inte, så nu är du i {here}",
     "closedUp": "Du får inte öppna mappen {path}, så nu är du i {here}",

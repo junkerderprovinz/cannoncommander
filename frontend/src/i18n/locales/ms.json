@@ -1028,6 +1028,7 @@
       "terminalDesktop": "Terminal komputer anda",
       "terminalDesktopTip": "Taip contohnya terminal, cmd atau powershell dalam medan laluan dan tekan Enter. Terminal komputer anda akan dibuka dalam folder yang sedang anda lihat.",
       "notFound": "Tidak ditemui",
+      "checking": "Sedang dicari",
       "kept": "Disimpan",
       "secretWrong": "Pelayan menolak kunci JWT ini",
       "notWorking": "Pelayan menjawab, tetapi sambungan belum berjaya",
@@ -3236,6 +3237,8 @@
   },
   "files": {
     "server": "Pelayan",
+    "thisPc": "PC ini",
+    "computer": "Komputer",
     "missing": "Folder {path} tidak wujud",
     "missingUp": "Folder {path} tidak wujud, jadi anda kini berada di {here}",
     "closedUp": "Anda tidak dibenarkan membuka folder {path}, jadi anda kini berada di {here}",

@@ -1072,6 +1072,7 @@
       "terminalDesktop": "De terminal van je computer",
       "terminalDesktopTip": "Typ bijvoorbeeld terminal, cmd of powershell in het padveld en druk op Enter. Dan opent de terminal van je computer in de map die je bekijkt.",
       "notFound": "Niet gevonden",
+      "checking": "Wordt gezocht",
       "kept": "Opgeslagen",
       "secretWrong": "De server weigert deze JWT-sleutel",
       "notWorking": "De server antwoordt, maar de verbinding werkt nog niet",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Server",
+    "thisPc": "Deze pc",
+    "computer": "Computer",
     "missing": "De map {path} bestaat niet",
     "missingUp": "De map {path} bestaat niet, dus je bent nu in {here}",
     "closedUp": "Je mag de map {path} niet openen, dus je bent nu in {here}",

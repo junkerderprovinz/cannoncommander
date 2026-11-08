@@ -1072,6 +1072,7 @@
       "terminalDesktop": "Sinu arvuti terminal",
       "terminalDesktopTip": "Kirjuta teeväljale näiteks terminal, cmd või powershell ja vajuta Enter. Siis avaneb sinu arvuti terminal kaustas, mida parajasti vaatad.",
       "notFound": "Ei leitud",
+      "checking": "Otsitakse",
       "kept": "Salvestatud",
       "secretWrong": "Server lükkab selle JWT-saladuse tagasi",
       "notWorking": "Server vastab, aga ühendus ei tööta veel",
@@ -3365,6 +3366,8 @@
   },
   "files": {
     "server": "Server",
+    "thisPc": "See arvuti",
+    "computer": "Arvuti",
     "missing": "Kausta {path} pole olemas",
     "missingUp": "Kausta {path} pole olemas, seega oled nüüd kaustas {here}",
     "closedUp": "Kausta {path} ei tohi sa avada, seega oled nüüd kaustas {here}",

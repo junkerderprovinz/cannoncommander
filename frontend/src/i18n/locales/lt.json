@@ -1160,6 +1160,7 @@
       "terminalDesktop": "Tavo kompiuterio terminalas",
       "terminalDesktopTip": "Įrašyk kelio lauke, pavyzdžiui, terminal, cmd arba powershell ir paspausk Enter. Tada tavo kompiuterio terminalas atsidarys aplanke, kurį dabar žiūri.",
       "notFound": "Nerasta",
+      "checking": "Ieškoma",
       "kept": "Įrašyta",
       "secretWrong": "Serveris atmeta šį JWT raktą",
       "notWorking": "Serveris atsako, bet ryšys dar neveikia",
@@ -3623,6 +3624,8 @@
   },
   "files": {
     "server": "Serveris",
+    "thisPc": "Šis kompiuteris",
+    "computer": "Kompiuteris",
     "missing": "Aplanko {path} nėra",
     "missingUp": "Aplanko {path} nėra, todėl dabar esi {here}",
     "closedUp": "Aplanko {path} atidaryti negali, todėl dabar esi {here}",

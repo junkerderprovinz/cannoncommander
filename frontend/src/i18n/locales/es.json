@@ -1116,6 +1116,7 @@
       "terminalDesktop": "El terminal de tu ordenador",
       "terminalDesktopTip": "Escribe por ejemplo terminal, cmd o powershell en el campo de ruta y pulsa Intro. Así se abre el terminal de tu ordenador en la carpeta que estás viendo.",
       "notFound": "No encontrado",
+      "checking": "Buscando",
       "kept": "Guardado",
       "secretWrong": "El servidor rechaza esta clave JWT",
       "notWorking": "El servidor responde, pero la conexión todavía no funciona",
@@ -3494,6 +3495,8 @@
   },
   "files": {
     "server": "Servidor",
+    "thisPc": "Este equipo",
+    "computer": "Ordenador",
     "missing": "La carpeta {path} no existe",
     "missingUp": "La carpeta {path} no existe, así que ahora estás en {here}",
     "closedUp": "No puedes abrir la carpeta {path}, así que ahora estás en {here}",

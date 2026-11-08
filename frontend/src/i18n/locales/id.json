@@ -1028,6 +1028,7 @@
       "terminalDesktop": "Terminal komputermu",
       "terminalDesktopTip": "Ketik misalnya terminal, cmd, atau powershell di kolom jalur lalu tekan Enter. Terminal komputermu akan terbuka di folder yang sedang kamu lihat.",
       "notFound": "Tidak ditemukan",
+      "checking": "Sedang dicari",
       "kept": "Disimpan",
       "secretWrong": "Server menolak kunci JWT ini",
       "notWorking": "Server menjawab, tetapi koneksinya belum berhasil",
@@ -3236,6 +3237,8 @@
   },
   "files": {
     "server": "Server",
+    "thisPc": "PC Ini",
+    "computer": "Komputer",
     "missing": "Folder {path} tidak ada",
     "missingUp": "Folder {path} tidak ada, jadi Anda sekarang berada di {here}",
     "closedUp": "Anda tidak boleh membuka folder {path}, jadi Anda sekarang berada di {here}",

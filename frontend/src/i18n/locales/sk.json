@@ -1160,6 +1160,7 @@
       "terminalDesktop": "Terminál tvojho počítača",
       "terminalDesktopTip": "Napíš do poľa s cestou napríklad terminal, cmd alebo powershell a stlač Enter. Potom sa terminál tvojho počítača otvorí v priečinku, ktorý práve pozeráš.",
       "notFound": "Nenájdené",
+      "checking": "Hľadá sa",
       "kept": "Uložené",
       "secretWrong": "Server tento kľúč JWT odmieta",
       "notWorking": "Server odpovedá, ale spojenie zatiaľ nefunguje",
@@ -3623,6 +3624,8 @@
   },
   "files": {
     "server": "Server",
+    "thisPc": "Tento počítač",
+    "computer": "Počítač",
     "missing": "Priečinok {path} neexistuje",
     "missingUp": "Priečinok {path} neexistuje, preto ste teraz v {here}",
     "closedUp": "Priečinok {path} nemôžete otvoriť, preto ste teraz v {here}",

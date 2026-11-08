@@ -1028,6 +1028,7 @@
       "terminalDesktop": "你电脑的终端",
       "terminalDesktopTip": "在路径栏输入 terminal、cmd 或 powershell 等并按 Enter，你电脑的终端就会在你正在看的文件夹中打开。",
       "notFound": "未找到",
+      "checking": "正在查找",
       "kept": "已保存",
       "secretWrong": "服务器拒绝了这个 JWT 密钥",
       "notWorking": "服务器有响应，但连接还不成功",
@@ -3236,6 +3237,8 @@
   },
   "files": {
     "server": "服务器",
+    "thisPc": "此电脑",
+    "computer": "计算机",
     "missing": "文件夹 {path} 不存在",
     "missingUp": "文件夹 {path} 不存在，所以你现在在 {here}",
     "closedUp": "你无权打开文件夹 {path}，所以你现在在 {here}",

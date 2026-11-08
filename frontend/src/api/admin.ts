@@ -73,7 +73,8 @@ export interface AppSettings {
 // A save sends only what changed, down to a single switch.
 export type AppChange = { [K in keyof AppSettings]?: AppSettings[K] extends object ? Partial<AppSettings[K]> : AppSettings[K] };
 export interface IntegrationResult { kind: string; ok: boolean; reachable: boolean; token?: 'ok' | 'rejected' | 'missing' | 'off' | 'none'; version?: string; error?: string }
-export interface Tool { available: boolean; path?: string; version?: string }
+// checking is set while the desktop app still looks for ffmpeg.
+export interface Tool { available: boolean; path?: string; version?: string; checking?: boolean }
 export interface System {
   version: string; commit?: string; release: boolean; deployment: 'container' | 'desktop'; go: string; os: string; arch: string; started: number; uptime: number;
   tools: Record<string, Tool>; unraid: { available: boolean; socket: boolean };

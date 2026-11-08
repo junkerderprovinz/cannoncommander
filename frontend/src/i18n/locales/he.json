@@ -1116,6 +1116,7 @@
       "terminalDesktop": "המסוף של המחשב שלך",
       "terminalDesktopTip": "הקלד למשל terminal, cmd או powershell בשדה הנתיב ולחץ Enter. אז נפתח המסוף של המחשב שלך בתיקייה שאתה מסתכל עליה.",
       "notFound": "לא נמצא",
+      "checking": "מחפש",
       "kept": "נשמר",
       "secretWrong": "השרת דוחה את מפתח ה־JWT הזה",
       "notWorking": "השרת עונה, אבל החיבור עוד לא עובד",
@@ -3494,6 +3495,8 @@
   },
   "files": {
     "server": "שרת",
+    "thisPc": "מחשב זה",
+    "computer": "מחשב",
     "missing": "התיקייה {path} לא קיימת",
     "missingUp": "התיקייה {path} לא קיימת, לכן עכשיו אתה ב־{here}",
     "closedUp": "אין לך הרשאה לפתוח את התיקייה {path}, לכן עכשיו אתה ב־{here}",
