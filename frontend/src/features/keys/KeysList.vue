@@ -45,9 +45,14 @@ function main(id: string) {
   const m = mainCombo(props.map, id, declaredKeys()[id]);
   return m && !usable(m) ? combosOf(props.map, id).find(usable) ?? m : m;
 }
-const blocked = (combo?: string) => {
-  const why = combo && reservedBy(combo, host.desktop);
+const blocked = (combo: string) => {
+  const why = reservedBy(combo, host.desktop);
   return why ? t(`keys.${why}Here`) : undefined;
+};
+// Every key of a row, the one menus show first.
+const chips = (id: string) => {
+  const first = main(id);
+  return [...(first ? [first] : []), ...combosOf(props.map, id).filter((c) => c !== first)].map((c) => ({ label: keyLabel(c), blocked: blocked(c) }));
 };
 
 const stop = () => { rec.value = null; pending.value = null; };
@@ -98,13 +103,13 @@ const clear = (id: string) => set(Object.fromEntries(Object.entries(props.map).f
     <div v-for="id in list" :key="id" class="kb-row" :class="{ rec: rec === id, own: changed(map, base, id) }" :data-kb="id" @focusout="leave($event, id)">
       <span class="kb-name"><G v-if="actions[id]!.g" :n="actions[id]!.g!" /><span v-else class="ph"></span>{{ name(actions[id]!) }}</span>
       <KeyField
-        :value="main(id) && keyLabel(main(id)!)" :more="combosOf(map, id).length - 1" :blocked="blocked(main(id))"
+        :keys="chips(id)"
         :listening="rec === id" :listening-text="t('keys.press')" :empty-text="t('keys.none')"
         :data-kb-rec="id" :aria-label="t('keys.change', { action: name(actions[id]!) })"
         @click="listen(id)" @press="press" @cancel="stop" />
       <span class="kb-acts">
+        <IconButton v-if="changed(map, base, id)" :tip="t('keys.reset')" :glyph="glyphComponent('IconResetArrow')" :data-kb-reset="id" @click="undo(id)" />
         <IconButton v-if="main(id)" :tip="t('keys.clear')" :glyph="glyphComponent('IconTrash')" :data-kb-clear="id" @click="clear(id)" />
-        <IconButton v-if="changed(map, base, id)" :tip="t('keys.undo')" :glyph="glyphComponent('IconUndo')" :data-kb-reset="id" @click="undo(id)" />
       </span>
       <div v-if="pending?.id === id" class="kb-warn" role="alert">
         <span>{{ pending.msg }}</span>

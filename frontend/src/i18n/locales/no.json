@@ -1931,7 +1931,6 @@
     "press": "Trykk en tast …",
     "none": "ingen",
     "clear": "Slett tast",
-    "undo": "Som før",
     "fixed": "{key} er fast tildelt. Velg en annen tast.",
     "letter": "Enkeltbokstaver og sifre brukes av hurtigsøket. Legg til Ctrl, Alt eller en F-tast.",
     "taken": "{key} hører allerede til «{action}». Ved bytte får «{action}» tasten du har nå. Esc lar alt være som det er.",

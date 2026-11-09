@@ -1869,7 +1869,6 @@
     "press": "Tekan tombol …",
     "none": "tidak ada",
     "clear": "Hapus tombol",
-    "undo": "Seperti sebelumnya",
     "fixed": "{key} sudah tetap. Pilih tombol lain.",
     "letter": "Huruf dan angka tunggal dipakai pencarian cepat. Tambahkan Ctrl, Alt, atau tombol F.",
     "taken": "{key} sudah dipakai untuk “{action}”. Dengan Tukar, “{action}” mendapat tombol Anda yang sekarang. Esc membiarkan semuanya seperti semula.",

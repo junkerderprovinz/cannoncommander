@@ -1993,7 +1993,6 @@
     "press": "Apasă o tastă…",
     "none": "niciuna",
     "clear": "Șterge tasta",
-    "undo": "Ca înainte",
     "fixed": "{key} este rezervată. Alege altă tastă.",
     "letter": "Literele și cifrele singure sunt pentru căutarea rapidă. Adaugă Ctrl, Alt sau o tastă F.",
     "taken": "{key} este deja folosită pentru „{action}”. La schimbare, „{action}” primește tasta ta de acum. Esc lasă totul cum este.",

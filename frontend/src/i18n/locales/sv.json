@@ -1931,7 +1931,6 @@
     "press": "Tryck på en tangent …",
     "none": "ingen",
     "clear": "Ta bort tangent",
-    "undo": "Som förut",
     "fixed": "{key} är fast tilldelad. Välj en annan tangent.",
     "letter": "Enstaka bokstäver och siffror används av snabbsökningen. Lägg till Ctrl, Alt eller en F-tangent.",
     "taken": "{key} hör redan till ”{action}”. Vid byte får ”{action}” din nuvarande tangent. Esc lämnar allt som det är.",

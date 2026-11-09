@@ -1869,7 +1869,6 @@
     "press": "Nhấn một phím …",
     "none": "không có",
     "clear": "Xóa phím",
-    "undo": "Như trước",
     "fixed": "{key} đã được gán cố định. Hãy chọn phím khác.",
     "letter": "Chữ cái và chữ số đơn lẻ dành cho tìm nhanh. Hãy thêm Ctrl, Alt hoặc một phím F.",
     "taken": "{key} đã thuộc về “{action}”. Khi hoán đổi, “{action}” sẽ nhận phím hiện tại của bạn. Esc để giữ nguyên mọi thứ.",

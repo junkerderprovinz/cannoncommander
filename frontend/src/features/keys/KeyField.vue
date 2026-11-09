@@ -8,15 +8,12 @@ import { keysFirst } from '@/features/config/shared';
 import { MODIFIER_KEYS } from './keys';
 
 const props = defineProps<{
-  /** The key as it reads, or nothing for none. */
-  value?: string;
-  /** How many more keys the action has beside the one shown. */
-  more?: number;
+  /** Every key the action has, as it reads, each with why it does nothing here if it does not: such a key shows
+   *  dimmed and says so in its tooltip. */
+  keys: { label: string; blocked?: string }[];
   listening: boolean;
   listeningText: string;
   emptyText: string;
-  /** Why the key does nothing here: it shows dimmed and says so in its tooltip. */
-  blocked?: string;
 }>();
 const emit = defineEmits<{ press: [combo: string]; cancel: [] }>();
 const el = ref<HTMLButtonElement | null>(null);
@@ -41,9 +38,8 @@ onBeforeUnmount(() => stop?.());
 <template>
   <button ref="el" type="button" class="kb-key" :aria-pressed="listening">
     <span v-if="listening" class="muted">{{ listeningText }}</span>
-    <template v-else-if="value">
-      <span :class="{ 'kb-off': blocked }" :data-tip="blocked"><Kbd>{{ value }}</Kbd></span>
-      <span v-if="more" class="muted">+{{ more }}</span>
+    <template v-else-if="keys.length">
+      <span v-for="k in keys" :key="k.label" :class="{ 'kb-off': k.blocked }" :data-tip="k.blocked"><Kbd>{{ k.label }}</Kbd></span>
     </template>
     <span v-else class="muted">{{ emptyText }}</span>
   </button>

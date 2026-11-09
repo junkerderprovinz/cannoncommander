@@ -1993,7 +1993,6 @@
     "press": "Nospied taustiņu …",
     "none": "nav",
     "clear": "Dzēst taustiņu",
-    "undo": "Kā iepriekš",
     "fixed": "{key} ir piešķirts pastāvīgi. Izvēlies citu taustiņu.",
     "letter": "Atsevišķi burti un cipari ir ātrajai meklēšanai. Pievieno Ctrl, Alt vai F taustiņu.",
     "taken": "{key} jau pieder komandai „{action}”. Samainot komanda „{action}” saņem tavu līdzšinējo taustiņu. Esc atstāj visu, kā ir.",

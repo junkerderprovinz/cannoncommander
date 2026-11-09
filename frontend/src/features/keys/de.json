@@ -7,7 +7,7 @@
   "vim": "Vim-Tasten im Editor", "vimTip": "Der Editor arbeitet dann wie Vim, mit Normal- und Einfügemodus. Mit :w speicherst du, mit :q schließt du die Datei.",
   "clickSelect": "Auswahl wie im Explorer", "clickSelectTip": "Ein Klick wählt eine Datei aus, ein Rahmen mit der Maus wählt mehrere, und die Auswahl folgt den Pfeiltasten. Aus ist es wie in einem Commander: Ein Klick setzt nur den Cursor, markiert wird mit Strg, Umschalt oder Einfg.",
   "search": "Befehl suchen", "searchPh": "etwa Kopieren", "more": "Weitere", "scope": { "editor": "Editor" }, "noMatch": "Kein Befehl heißt so",
-  "change": "Taste für {action} ändern", "press": "Taste drücken …", "none": "keine", "clear": "Taste löschen", "undo": "Wie vorher",
+  "change": "Taste für {action} ändern", "press": "Taste drücken …", "none": "keine", "clear": "Taste löschen",
   "fixed": "{key} ist fest belegt. Nimm eine andere Taste.", "letter": "Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.",
   "taken": "{key} gehört schon zu „{action}“. Beim Tauschen bekommt „{action}“ deine bisherige Taste. Esc lässt alles, wie es ist.", "takenAlone": "{key} gehört schon zu „{action}“. Ersetzen holt die Taste hierher, Esc lässt alles, wie es ist.",
   "swap": "Tauschen", "replace": "Ersetzen",

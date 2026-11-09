@@ -1931,7 +1931,6 @@
     "press": "Nyomjon meg egy billentyűt …",
     "none": "nincs",
     "clear": "Billentyű törlése",
-    "undo": "Mint korábban",
     "fixed": "A(z) {key} véglegesen foglalt. Válasszon másik billentyűt.",
     "letter": "Az egyes betűk és számjegyek a gyorskeresésé. Tegyen hozzá Ctrl-t, Alt-ot vagy egy F-billentyűt.",
     "taken": "A(z) {key} már ehhez tartozik: „{action}”. Felcseréléskor a(z) „{action}” megkapja az eddigi billentyűjét. Az Esc mindent úgy hagy, ahogy van.",

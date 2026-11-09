@@ -1993,7 +1993,6 @@
     "press": "Appuyez sur une touche…",
     "none": "aucune",
     "clear": "Supprimer la touche",
-    "undo": "Comme avant",
     "fixed": "{key} est réservée. Choisissez une autre touche.",
     "letter": "Les lettres et chiffres seuls servent à la recherche rapide. Ajoutez Ctrl, Alt ou une touche F.",
     "taken": "{key} est déjà attribuée à « {action} ». Échanger donne à « {action} » votre touche actuelle. Échap laisse tout tel quel.",

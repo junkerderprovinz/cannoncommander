@@ -2055,7 +2055,6 @@
     "press": "Stiskněte klávesu …",
     "none": "žádná",
     "clear": "Odstranit klávesu",
-    "undo": "Jako předtím",
     "fixed": "{key} je pevně přiřazená. Zvolte jinou klávesu.",
     "letter": "Jednotlivá písmena a číslice patří rychlému hledání. Přidejte Ctrl, Alt nebo klávesu F.",
     "taken": "{key} už patří k „{action}“. Při prohození dostane „{action}“ vaši dosavadní klávesu. Esc nechá vše, jak je.",
