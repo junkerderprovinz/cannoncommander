@@ -3,9 +3,11 @@
 package desktop
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"regexp"
 	"testing"
 )
 
@@ -16,12 +18,25 @@ func guarded(t *testing.T) http.Handler {
 	return Guard(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusTeapot) }))
 }
 
+var replaced = regexp.MustCompile(`location\.replace\((.*?)\)`)
+
+// entered is where the enter page sends the window on.
+func entered(t *testing.T, rec *httptest.ResponseRecorder) string {
+	t.Helper()
+	m := replaced.FindStringSubmatch(rec.Body.String())
+	var to string
+	if rec.Code != http.StatusOK || m == nil || json.Unmarshal([]byte(m[1]), &to) != nil {
+		t.Fatalf("got %d %q", rec.Code, rec.Body.String())
+	}
+	return to
+}
+
 func TestTheWindowEntersWithTheKeyAndKeepsItInACookie(t *testing.T) {
 	h := guarded(t)
 	rec := httptest.NewRecorder()
 	h.ServeHTTP(rec, httptest.NewRequest("GET", "http://127.0.0.1:47321"+EnterPath+"?key=s3cret", nil))
-	if rec.Code != http.StatusSeeOther || rec.Header().Get("Location") != "/" {
-		t.Fatalf("got %d to %q", rec.Code, rec.Header().Get("Location"))
+	if to := entered(t, rec); to != "/" {
+		t.Fatalf("goes on to %q", to)
 	}
 	cookies := rec.Result().Cookies()
 	if len(cookies) != 1 || cookies[0].Value != "s3cret" || !cookies[0].HttpOnly || cookies[0].SameSite != http.SameSiteStrictMode {
@@ -86,8 +101,9 @@ func TestTheWindowKeepsTheFoldersItStartsWith(t *testing.T) {
 	rec := httptest.NewRecorder()
 	open := `[{"folder":"D:\\Daten"}]`
 	h.ServeHTTP(rec, httptest.NewRequest("GET", "http://127.0.0.1:47321"+EnterPath+"?"+url.Values{"key": {"s3cret"}, "open": {open}}.Encode(), nil))
-	loc, err := url.Parse(rec.Header().Get("Location"))
-	if rec.Code != http.StatusSeeOther || err != nil || loc.Path != "/" || loc.Query().Get("open") != open || loc.Query().Has("key") {
-		t.Fatalf("got %d to %q", rec.Code, rec.Header().Get("Location"))
+	to := entered(t, rec)
+	loc, err := url.Parse(to)
+	if err != nil || loc.Path != "/" || loc.Query().Get("open") != open || loc.Query().Has("key") {
+		t.Fatalf("goes on to %q", to)
 	}
 }
