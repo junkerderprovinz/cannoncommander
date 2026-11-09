@@ -642,6 +642,8 @@
   CC.css(`
 .pill.run { background: var(--accent); color: var(--accent-contrast); }
 .a-pickhead { display: flex; justify-content: flex-end; }
+/* A picker window is at most 85 % of the screen tall, as GlimStone's are. */
+.win:has(.a-picks) { max-height: 85vh; }
 .a-picks { display: flex; flex-direction: column; gap: 1.5rem; }
 .a-pgroup { display: flex; flex-direction: column; gap: .75rem; }
 .a-pgroup > .eyebrow { margin: 0; padding: 0; font-weight: 400; }
