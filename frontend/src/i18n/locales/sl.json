@@ -3891,6 +3891,7 @@
     "volume": "Nosilec {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} prosto",
     "network": "Omrežje",
     "server": "Strežnik",
     "thisPc": "Ta računalnik",

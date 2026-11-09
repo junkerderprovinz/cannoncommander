@@ -3759,6 +3759,7 @@
     "volume": "אמצעי אחסון בגודל {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} פנויים",
     "network": "רשת",
     "server": "שרת",
     "thisPc": "מחשב זה",

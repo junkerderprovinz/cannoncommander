@@ -3627,6 +3627,7 @@
     "volume": "{size} birim"
   },
   "files": {
+    "freeOn": "{name}: {size} boş",
     "network": "Ağ",
     "server": "Sunucu",
     "thisPc": "Bu bilgisayar",

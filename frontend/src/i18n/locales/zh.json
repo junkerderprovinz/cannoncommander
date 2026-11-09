@@ -3495,6 +3495,7 @@
     "volume": "{size} 卷"
   },
   "files": {
+    "freeOn": "{name}：可用 {size}",
     "network": "网络",
     "server": "服务器",
     "thisPc": "此电脑",

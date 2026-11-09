@@ -3891,6 +3891,7 @@
     "volume": "Zväzok {size}"
   },
   "files": {
+    "freeOn": "{name}: voľných {size}",
     "network": "Sieť",
     "server": "Server",
     "thisPc": "Tento počítač",

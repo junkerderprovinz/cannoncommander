@@ -3627,6 +3627,7 @@
     "volume": "Τόμος {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} ελεύθερα",
     "network": "Δίκτυο",
     "server": "Διακομιστής",
     "thisPc": "Αυτός ο υπολογιστής",

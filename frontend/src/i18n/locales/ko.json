@@ -3495,6 +3495,7 @@
     "volume": "{size} 볼륨"
   },
   "files": {
+    "freeOn": "{name}: {size} 사용 가능",
     "network": "네트워크",
     "server": "서버",
     "thisPc": "내 PC",

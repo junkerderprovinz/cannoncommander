@@ -3759,6 +3759,7 @@
     "volume": "Volumen de {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} libres",
     "network": "Red",
     "server": "Servidor",
     "thisPc": "Este equipo",

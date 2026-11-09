@@ -3627,6 +3627,7 @@
     "volume": "{size}eko bolumena"
   },
   "files": {
+    "freeOn": "{name}: {size} libre",
     "network": "Sarea",
     "server": "Zerbitzaria",
     "thisPc": "PC hau",

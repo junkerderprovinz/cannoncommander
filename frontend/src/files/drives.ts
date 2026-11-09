@@ -1,7 +1,7 @@
 // Drives of the computer the desktop app runs on, named the way its own file manager names them: a network drive by
 // its share and server, as daten (\\nas) in Explorer and daten auf nas in Nautilus, any other by the label it was
 // given or else by what kind of drive it is, and on Windows with its letter, as in USB-Laufwerk (E:).
-import type { DriveKind } from '@/api/types';
+import type { DriveKind, Volume } from '@/api/types';
 import { fmtSize } from '@/core/format';
 import { t } from '@/i18n';
 
@@ -23,3 +23,8 @@ export function driveName(d: DriveLike): string {
     || t(`drives.${kind}`);
   return letter ? `${word} (${letter.toUpperCase()}:)` : word;
 }
+
+// What the footer says about the space left where a folder lies, naming a drive of the computer as the
+// drives card does.
+export const freeText = (v: Volume) =>
+  v.kind && v.label ? t('files.freeOn', { name: v.label, size: fmtSize(v.free) }) : t('files.free', { size: fmtSize(v.free) });

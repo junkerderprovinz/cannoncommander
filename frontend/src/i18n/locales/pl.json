@@ -3891,6 +3891,7 @@
     "volume": "Wolumin {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} wolne",
     "network": "Sieć",
     "server": "Serwer",
     "thisPc": "Ten komputer",

@@ -3495,6 +3495,7 @@
     "volume": "โวลุ่ม {size}"
   },
   "files": {
+    "freeOn": "{name}: ว่าง {size}",
     "network": "เครือข่าย",
     "server": "เซิร์ฟเวอร์",
     "thisPc": "พีซีเครื่องนี้",

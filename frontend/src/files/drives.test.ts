@@ -1,9 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { addMessages, setLanguage } from '@/i18n';
-import { driveName } from './drives';
+import { driveName, freeText } from './drives';
 
 beforeAll(() => {
   setLanguage('de');
+  addMessages('files', { de: { free: '{size} frei', freeOn: '{name}: {size} frei' } });
   addMessages('drives', { de: { fixed: 'Lokaler Datenträger', removable: 'USB-Laufwerk', optical: 'DVD-Laufwerk', network: 'Netzlaufwerk', volume: 'Datenträger mit {size}', shareOn: '{share} auf {server}' } });
 });
 
@@ -25,5 +26,12 @@ describe('a drive', () => {
   it('without a label or a letter goes by its size, as on Linux', () => {
     expect(driveName({ kind: 'fixed', size: 16 * 2 ** 30 })).toMatch(/^Datenträger mit 16/);
     expect(driveName({ path: '/run/media/jdp/URLAUB', kind: 'removable', label: 'URLAUB' })).toBe('URLAUB');
+  });
+});
+
+describe('the free space in the footer', () => {
+  it('names a drive of the computer and leaves a source of the server unnamed', () => {
+    expect(freeText({ path: '/run/user/1000/gvfs/smb-share:server=localhost,share=ccshare', label: 'ccshare auf localhost', kind: 'network', free: 22 * 2 ** 30, total: 40 * 2 ** 30 })).toMatch(/^ccshare auf localhost: 22.* frei$/);
+    expect(freeText({ path: '/mnt/user', label: 'Shares', free: 2 ** 30, total: 2 ** 31 })).toMatch(/^1.* frei$/);
   });
 });

@@ -3759,6 +3759,7 @@
     "volume": "Volum de {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} lliures",
     "network": "Xarxa",
     "server": "Servidor",
     "thisPc": "Aquest ordinador",

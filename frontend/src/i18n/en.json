@@ -304,6 +304,7 @@
     "volume": "{size} Volume"
   },
   "files": {
+    "freeOn": "{name}: {size} free",
     "network": "Network",
     "server": "Server",
     "thisPc": "This PC",
