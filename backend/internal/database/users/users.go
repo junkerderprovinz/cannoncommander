@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	jwt "github.com/golang-jwt/jwt/v4"
+	jwt "github.com/golang-jwt/jwt/v5"
 )
 
 // ProfileStorageVersion is the user version after nested profile JSON in user_data.

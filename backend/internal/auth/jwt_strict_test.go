@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
@@ -63,21 +63,21 @@ func invalidSignatureSpelling(token string) string {
 }
 
 func parseSessionToken(tokenString string) error {
-	keyFunc := JWTSigningKeyFunc()
 	var tk users.AuthToken
-	_, err := jwt.ParseWithClaims(tokenString, &tk, keyFunc)
+	_, err := ParseToken(tokenString, &tk)
 	return err
 }
 
-func TestDecodeStrictRejectsEquivalentSpelling(t *testing.T) {
+func parseLenient(tokenString string) error {
+	var tk users.AuthToken
+	_, err := jwt.ParseWithClaims(tokenString, &tk, JWTSigningKeyFunc())
+	return err
+}
+
+func TestParseTokenRejectsEquivalentSpelling(t *testing.T) {
 	origKey := settings.Config.Auth.Key
-	origStrict := jwt.DecodeStrict
 	settings.Config.Auth.Key = "test-signing-key-strict-decode"
-	jwt.DecodeStrict = true
-	t.Cleanup(func() {
-		settings.Config.Auth.Key = origKey
-		jwt.DecodeStrict = origStrict
-	})
+	t.Cleanup(func() { settings.Config.Auth.Key = origKey })
 
 	user := &users.User{ID: 1, FrontendUser: users.FrontendUser{Username: "alice"}}
 	canonical, _, err := MakeSignedTokenAPI(user, "WEB_TOKEN_test", time.Hour, user.Permissions, false)
@@ -86,12 +86,12 @@ func TestDecodeStrictRejectsEquivalentSpelling(t *testing.T) {
 	}
 
 	if err := parseSessionToken(canonical); err != nil {
-		t.Fatalf("canonical token should parse under strict mode: %v", err)
+		t.Fatalf("canonical token should parse: %v", err)
 	}
 
 	respelled := equivalentSpelling(canonical)
 	if err := parseSessionToken(respelled); err == nil {
-		t.Fatal("equivalent spelling should be rejected when jwt.DecodeStrict is true")
+		t.Fatal("an equivalent spelling should be rejected")
 	}
 
 	tampered := invalidSignatureSpelling(canonical)
@@ -100,15 +100,10 @@ func TestDecodeStrictRejectsEquivalentSpelling(t *testing.T) {
 	}
 }
 
-func TestEquivalentSpellingParsesWithoutStrictMode(t *testing.T) {
+func TestEquivalentSpellingParsesWithoutStrictDecoding(t *testing.T) {
 	origKey := settings.Config.Auth.Key
-	origStrict := jwt.DecodeStrict
 	settings.Config.Auth.Key = "test-signing-key-strict-decode"
-	jwt.DecodeStrict = false
-	t.Cleanup(func() {
-		settings.Config.Auth.Key = origKey
-		jwt.DecodeStrict = origStrict
-	})
+	t.Cleanup(func() { settings.Config.Auth.Key = origKey })
 
 	user := &users.User{ID: 1, FrontendUser: users.FrontendUser{Username: "alice"}}
 	canonical, _, err := MakeSignedTokenAPI(user, "WEB_TOKEN_test", time.Hour, user.Permissions, false)
@@ -116,7 +111,28 @@ func TestEquivalentSpellingParsesWithoutStrictMode(t *testing.T) {
 		t.Fatalf("MakeSignedTokenAPI: %v", err)
 	}
 	respelled := equivalentSpelling(canonical)
-	if err := parseSessionToken(respelled); err != nil {
-		t.Fatalf("equivalent spelling should parse without strict mode (documents pre-fix behavior): %v", err)
+	if err := parseLenient(respelled); err != nil {
+		t.Fatalf("equivalent spelling should parse without strict decoding: %v", err)
+	}
+}
+
+func TestParseTokenRejectsOtherHMACAlgorithms(t *testing.T) {
+	origKey := settings.Config.Auth.Key
+	settings.Config.Auth.Key = "test-signing-key-methods"
+	t.Cleanup(func() { settings.Config.Auth.Key = origKey })
+
+	now := time.Now()
+	claims := jwt.RegisteredClaims{IssuedAt: jwt.NewNumericDate(now), ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour))}
+	for _, method := range []jwt.SigningMethod{jwt.SigningMethodHS384, jwt.SigningMethodHS512} {
+		signed, err := jwt.NewWithClaims(method, claims).SignedString([]byte(settings.Config.Auth.Key))
+		if err != nil {
+			t.Fatalf("sign with %s: %v", method.Alg(), err)
+		}
+		if err := parseSessionToken(signed); err == nil {
+			t.Errorf("a token signed with %s and the right key should be rejected", method.Alg())
+		}
+		if err := parseLenient(signed); err != nil {
+			t.Errorf("%s token should parse without the method check: %v", method.Alg(), err)
+		}
 	}
 }
