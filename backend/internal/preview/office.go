@@ -9,7 +9,7 @@ import (
 	"io"
 	"net/http"
 
-	jwt "github.com/golang-jwt/jwt/v4"
+	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 

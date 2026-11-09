@@ -16,7 +16,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	_ "modernc.org/sqlite"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"

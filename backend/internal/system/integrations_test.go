@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // fakeOffice is a document server that wants tokens signed with secret,

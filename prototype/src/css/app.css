@@ -314,7 +314,7 @@ textarea.field { height: auto; padding: .6rem .7rem; resize: vertical; }
 :root[data-l-sidebar="text"] #side .nav-row > svg { display: none; }
 :root:is([data-l-sidebar="glyph"], [data-l-sidebar="reactive"]) #side .nav-row > span:not(.meta) { display: none; }
 :root[data-l-sidebar="reactive"] #side .nav-row:is(:hover, .cur) > span:not(.meta) { display: inline; }
-:root[data-l-tabs="text"] :is(.seg button, .stile) > svg { display: none; }
+:root[data-l-tabs="text"] .seg button > svg { display: none; }
 :root:is([data-l-tabs="glyph"], [data-l-tabs="reactive"]) .seg button:has(> svg) { font-size: 0; gap: 0; }
 :root[data-l-tabs="reactive"] .seg button:has(> svg):is(:hover, [aria-pressed="true"]) { font-size: 14px; gap: .4rem; }
 :root:is([data-l-tabs="glyph"], [data-l-tabs="reactive"]) .stile > span { display: none; }

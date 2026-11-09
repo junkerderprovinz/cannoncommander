@@ -60,7 +60,7 @@ onBeforeUnmount(() => clearTimeout(entered));
   <div v-else class="settings">
     <nav ref="tiles" class="tiles" role="tablist" aria-orientation="vertical" :aria-label="t('settings.title')">
       <button v-for="(tab, n) in shown" :key="tab.id" class="stile" :class="[drag.look(tab.id), { cur: tab.id === cur.id, 'glim-stagger-row': entering }]"
-        :style="{ '--row-i': entering ? n : undefined }" role="tab" :aria-selected="tab.id === cur.id" :data-stab="tab.id" :data-tip="labelOf(tab)"
+        :style="{ '--row-i': entering ? n : undefined }" role="tab" :aria-selected="tab.id === cur.id" :data-stab="tab.id" :data-tip="labelOf(tab)" :aria-label="labelOf(tab)"
         @click="open($event, tab.id)" @pointerdown="drag.press($event, tab.id)"><G :n="tab.g" /><span>{{ labelOf(tab) }}</span></button>
     </nav>
     <div id="settings-body" class="settings-body"><div id="settings-col" :key="cur.id" class="settings-col glim-tab-slide" :style="{ '--tab-dir': dir }"><component :is="cur.component" /></div></div>
