@@ -32,7 +32,7 @@ function pick(app: App) {
 
 <template>
   <div class="ow-choose">
-    <TextField v-model="filter" :label="t('openwith.search')" width="grow" />
+    <TextField v-model="filter" :label="t('openwith.search')" width="fill" />
     <div v-if="shown.length" class="ow-apps">
       <ListRow v-for="a in shown" :key="a.id" :name="a.name" :data-app="a.id" @click="pick(a)">
         <template #tile><img v-if="a.icon" :src="a.icon" alt="" class="glyph-picture" /><G v-else n="IconApp" /></template>

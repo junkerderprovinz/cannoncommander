@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"syscall"
 	"time"
 
@@ -48,13 +47,7 @@ func (desktopEntries) open(file, id string) error {
 		return errUnknownApp
 	}
 	if gio, err := exec.LookPath("gio"); err == nil {
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-		defer cancel()
-		out, err := exec.CommandContext(ctx, gio, "launch", e.File, file).CombinedOutput()
-		if err != nil {
-			return fmt.Errorf("%w: %s", err, strings.TrimSpace(string(out)))
-		}
-		return nil
+		return gioLaunch(gio, e.File, file)
 	}
 	runs, err := xdg.Expand(e, []string{file})
 	if err != nil {
@@ -69,5 +62,18 @@ func (desktopEntries) open(file, id string) error {
 		return err
 	}
 	go func() { _ = cmd.Wait() }()
+	return nil
+}
+
+// gioLaunch starts the program of a desktop entry with gio. The program
+// inherits gio's output, so a pipe there would hold the request until the
+// program quits, and a pipe closed early could kill the program on its next
+// write. gio's output goes nowhere.
+func gioLaunch(gio, entry, file string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := exec.CommandContext(ctx, gio, "launch", entry, file).Run(); err != nil {
+		return fmt.Errorf("gio launch %s: %w", filepath.Base(entry), err)
+	}
 	return nil
 }
