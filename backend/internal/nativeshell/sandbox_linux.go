@@ -3,12 +3,14 @@ package nativeshell
 import (
 	"context"
 	"io/fs"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/elevate"
 )
 
 // sandboxEnv is all of an environment a thumbnailer gets, as names and
@@ -103,4 +105,27 @@ func findSandbox(look func(string) (string, error), root fs.FS) sandbox {
 	}
 	sandboxes.found[bwrap] = s
 	return s
+}
+
+// Sandboxing says how the system's thumbnails come about here, and whether
+// the kernel's restriction on user namespaces is what keeps the sandbox out.
+func Sandboxing() SandboxState {
+	k := current()
+	restrict, _ := fs.ReadFile(k.root, "proc/sys/kernel/apparmor_restrict_unprivileged_userns")
+	_, err := os.Stat(elevate.ProfileFile)
+	return SandboxState{
+		Sandboxed: k.sandbox.program != "", Service: k.service != nil,
+		Restricted: strings.TrimSpace(string(restrict)) == "1", Allowed: err == nil,
+	}
+}
+
+// Resandbox forgets what the probe found, so the next thumbnail tries bwrap
+// again, as after the app's AppArmor profile came or went.
+func Resandbox() {
+	sandboxes.Lock()
+	clear(sandboxes.found)
+	sandboxes.Unlock()
+	deskMu.Lock()
+	shared = nil
+	deskMu.Unlock()
 }

@@ -124,3 +124,10 @@ func showsWindows() bool {
 	procEnumThreadWindows.Call(uintptr(windows.GetCurrentThreadId()), countWindow, uintptr(unsafe.Pointer(&found)))
 	return found
 }
+
+// Sandboxing says nothing on Windows, where the shell's own thumbnail
+// handlers draw.
+func Sandboxing() SandboxState { return SandboxState{} }
+
+// Resandbox has nothing to forget on Windows.
+func Resandbox() {}

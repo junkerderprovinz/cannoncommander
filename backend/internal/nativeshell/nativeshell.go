@@ -56,3 +56,14 @@ type Action struct {
 	// Group is the submenu the row sits in, or "".
 	Group string
 }
+
+// SandboxState says how the system's thumbnails come about here.
+type SandboxState struct {
+	// Sandboxed says thumbnailers run in a sandbox, and Service that the
+	// desktop's thumbnail service draws them.
+	Sandboxed, Service bool
+	// Restricted says the kernel keeps user namespaces from programs
+	// without an AppArmor profile, as Ubuntu does since 24.04, and Allowed
+	// that the app's own profile is in place.
+	Restricted, Allowed bool
+}

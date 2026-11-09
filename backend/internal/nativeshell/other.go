@@ -25,3 +25,7 @@ func Icon(string, int) ([]byte, string, error) { return nil, "", ErrUnsupported 
 func TypeIcon(string, bool, int) ([]byte, string, error) { return nil, "", ErrUnsupported }
 
 func Thumbnail(context.Context, string, int) ([]byte, error) { return nil, ErrUnsupported }
+
+func Sandboxing() SandboxState { return SandboxState{} }
+
+func Resandbox() {}
