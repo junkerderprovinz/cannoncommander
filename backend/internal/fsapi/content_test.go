@@ -251,3 +251,27 @@ func TestHexReturnsTheAskedBytes(t *testing.T) {
 		t.Errorf("too long: %d", rec.Code)
 	}
 }
+
+func TestTextReadsTheEncodingAsked(t *testing.T) {
+	f := newFixture(t)
+	put(t, filepath.Join(f.share, "texte", "euro.txt"), []byte{'5', ' ', 0xA4})
+	cases := []struct{ encoding, text string }{
+		{"windows-1252", "5 ¤"},
+		{"iso-8859-15", "5 €"},
+		{"utf-8", "5 \uFFFD"},
+		{"koi8-r", "5 ╓"},
+	}
+	for _, c := range cases {
+		got := decode[Text](t, f.get(t, "jdp", "/fs/text", "/mnt/user/texte/euro.txt", "encoding", c.encoding))
+		if got.Encoding != c.encoding || got.Text != c.text {
+			t.Errorf("%s = %+v", c.encoding, got)
+		}
+	}
+	put(t, filepath.Join(f.share, "texte", "le.txt"), []byte{0xFF, 0xFE, 'H', 0, 'i', 0})
+	if got := decode[Text](t, f.get(t, "jdp", "/fs/text", "/mnt/user/texte/le.txt", "encoding", "utf-16le")); got.Text != "Hi" {
+		t.Errorf("utf-16le keeps its byte order mark: %q", got.Text)
+	}
+	if rec := f.get(t, "jdp", "/fs/text", "/mnt/user/texte/euro.txt", "encoding", "ebcdic"); rec.Code != http.StatusBadRequest {
+		t.Errorf("an unknown encoding: %d", rec.Code)
+	}
+}

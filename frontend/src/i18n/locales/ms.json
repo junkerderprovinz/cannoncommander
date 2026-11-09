@@ -3630,7 +3630,7 @@
     "notInTrash": "Ini tiada dalam tong sampah",
     "notOnDisk": "Hanya fail pada cakera boleh dihantar ke program lain",
     "notText": "Fail ini bukan teks",
-    "notWindows1252": "Teks ini mengandungi aksara yang tidak dapat disimpan oleh Windows-1252. Simpan sebagai UTF-8",
+    "notEncodable": "Teks ini mengandungi aksara yang tidak dapat disimpan oleh {encoding}. Simpan sebagai UTF-8",
     "nothingToUndo": "Tiada apa yang boleh dibuat asal",
     "noVolume": "Pemacu ini sudah tiada",
     "officeCannotOpen": "Pelayan Office tidak membuka fail .{ext}",

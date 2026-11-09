@@ -3630,7 +3630,7 @@
     "notInTrash": "Ini tidak ada di Tempat Sampah",
     "notOnDisk": "Hanya file di disk yang bisa dikirim ke program lain",
     "notText": "Berkas ini bukan teks",
-    "notWindows1252": "Teks ini berisi karakter yang tidak bisa disimpan Windows-1252. Simpan sebagai UTF-8",
+    "notEncodable": "Teks ini berisi karakter yang tidak bisa disimpan {encoding}. Simpan sebagai UTF-8",
     "nothingToUndo": "Tidak ada yang bisa diurungkan",
     "noVolume": "Drive ini sudah tidak ada",
     "officeCannotOpen": "Server Office tidak membuka berkas .{ext}",

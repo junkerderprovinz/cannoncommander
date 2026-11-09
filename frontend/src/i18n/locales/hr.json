@@ -3906,7 +3906,7 @@
     "notInTrash": "Ovo nije u smeću",
     "notOnDisk": "Samo datoteke na disku mogu ići u drugi program",
     "notText": "Ova datoteka nije tekst",
-    "notWindows1252": "Tekst sadrži znakove koje Windows-1252 ne može spremiti. Spremite ga kao UTF-8",
+    "notEncodable": "Tekst sadrži znakove koje {encoding} ne može spremiti. Spremite ga kao UTF-8",
     "nothingToUndo": "Nema ničega za poništavanje",
     "noVolume": "Ovog pogona više nema",
     "officeCannotOpen": "Office poslužitelj ne otvara .{ext} datoteke",

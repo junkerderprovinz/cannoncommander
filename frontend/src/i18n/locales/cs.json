@@ -4044,7 +4044,7 @@
     "notInTrash": "To neleží v koši",
     "notOnDisk": "Do jiného programu mohou jen soubory na disku",
     "notText": "Tento soubor není text",
-    "notWindows1252": "Text obsahuje znaky, které Windows-1252 neumí uložit. Uložte ho jako UTF-8",
+    "notEncodable": "Text obsahuje znaky, které {encoding} neumí uložit. Uložte ho jako UTF-8",
     "nothingToUndo": "Není co vrátit",
     "noVolume": "Tato jednotka už tu není",
     "officeCannotOpen": "Server Office neotevírá soubory .{ext}",

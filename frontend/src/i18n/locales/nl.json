@@ -3768,7 +3768,7 @@
     "notInTrash": "Dit staat niet in de prullenbak",
     "notOnDisk": "Alleen bestanden op de schijf kunnen naar een ander programma",
     "notText": "Dit bestand is geen tekst",
-    "notWindows1252": "De tekst bevat tekens die Windows-1252 niet kan opslaan. Sla hem op als UTF-8",
+    "notEncodable": "De tekst bevat tekens die {encoding} niet kan opslaan. Sla hem op als UTF-8",
     "nothingToUndo": "Er valt niets terug te draaien",
     "noVolume": "Dit station is er niet meer",
     "officeCannotOpen": "De officeserver opent geen .{ext}-bestanden",

@@ -3768,7 +3768,7 @@
     "notInTrash": "See pole prügikastis",
     "notOnDisk": "Teise programmi saab anda ainult kettal olevaid faile",
     "notText": "See fail pole tekst",
-    "notWindows1252": "Tekstis on märke, mida Windows-1252 ei suuda salvestada. Salvesta see UTF-8-na",
+    "notEncodable": "Tekstis on märke, mida {encoding} ei suuda salvestada. Salvesta see UTF-8-na",
     "nothingToUndo": "Pole midagi tagasi võtta",
     "noVolume": "Seda draivi pole enam",
     "officeCannotOpen": "Office'i server ei ava .{ext}-faile",

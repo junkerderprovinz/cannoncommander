@@ -3768,7 +3768,7 @@
     "notInTrash": "Hau ez dago zakarrontzian",
     "notOnDisk": "Diskoko fitxategiak bakarrik joan daitezke beste programa batera",
     "notText": "Fitxategi hau ez da testua",
-    "notWindows1252": "Testuak Windows-1252-k gorde ezin dituen karaktereak ditu. Gorde UTF-8 gisa",
+    "notEncodable": "Testuak {encoding}-k gorde ezin dituen karaktereak ditu. Gorde UTF-8 gisa",
     "nothingToUndo": "Ez dago desegiteko ezer",
     "noVolume": "Unitate hau jada ez dago",
     "officeCannotOpen": "Office zerbitzariak ez ditu .{ext} fitxategiak irekitzen",

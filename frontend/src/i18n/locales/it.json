@@ -3906,7 +3906,7 @@
     "notInTrash": "Non è nel cestino",
     "notOnDisk": "Solo i file sul disco possono andare in un altro programma",
     "notText": "Questo file non è testo",
-    "notWindows1252": "Il testo contiene caratteri che Windows-1252 non può salvare. Salvalo come UTF-8",
+    "notEncodable": "Il testo contiene caratteri che {encoding} non può salvare. Salvalo come UTF-8",
     "nothingToUndo": "Non c'è nulla da annullare",
     "noVolume": "Questa unità non c’è più",
     "officeCannotOpen": "Il server Office non apre i file .{ext}",

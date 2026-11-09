@@ -3768,7 +3768,7 @@
     "notInTrash": "Det ligger ikke i papirkurven",
     "notOnDisk": "Bare filer på disken kan gå til et annet program",
     "notText": "Denne filen er ikke tekst",
-    "notWindows1252": "Teksten inneholder tegn som Windows-1252 ikke kan lagre. Lagre den som UTF-8",
+    "notEncodable": "Teksten inneholder tegn som {encoding} ikke kan lagre. Lagre den som UTF-8",
     "nothingToUndo": "Det er ingenting å angre",
     "noVolume": "Denne stasjonen er borte",
     "officeCannotOpen": "Office-serveren åpner ikke .{ext}-filer",

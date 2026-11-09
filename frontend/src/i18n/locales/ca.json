@@ -3906,7 +3906,7 @@
     "notInTrash": "Això no és a la paperera",
     "notOnDisk": "Només els fitxers del disc poden anar a un altre programa",
     "notText": "Aquest fitxer no és text",
-    "notWindows1252": "El text té caràcters que el Windows-1252 no pot desar. Deseu-lo com a UTF-8",
+    "notEncodable": "El text té caràcters que el {encoding} no pot desar. Deseu-lo com a UTF-8",
     "nothingToUndo": "No hi ha res per desfer",
     "noVolume": "Aquesta unitat ja no hi és",
     "officeCannotOpen": "El servidor Office no obre fitxers .{ext}",

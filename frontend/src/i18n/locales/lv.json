@@ -3906,7 +3906,7 @@
     "notInTrash": "Tas nav atkritnē",
     "notOnDisk": "Uz citu programmu var nodot tikai diskā esošus failus",
     "notText": "Šis fails nav teksts",
-    "notWindows1252": "Tekstā ir rakstzīmes, ko Windows-1252 nevar saglabāt. Saglabā to kā UTF-8",
+    "notEncodable": "Tekstā ir rakstzīmes, ko {encoding} nevar saglabāt. Saglabā to kā UTF-8",
     "nothingToUndo": "Nav ko atsaukt",
     "noVolume": "Šī diska vairs nav",
     "officeCannotOpen": "Office serveris neatver .{ext} failus",

@@ -4044,7 +4044,7 @@
     "notInTrash": "To nie leży w koszu",
     "notOnDisk": "Do innego programu mogą trafić tylko pliki na dysku",
     "notText": "Ten plik nie jest tekstem",
-    "notWindows1252": "Tekst zawiera znaki, których Windows-1252 nie potrafi zapisać. Zapisz go jako UTF-8",
+    "notEncodable": "Tekst zawiera znaki, których {encoding} nie potrafi zapisać. Zapisz go jako UTF-8",
     "nothingToUndo": "Nie ma nic do cofnięcia",
     "noVolume": "Tego dysku już nie ma",
     "officeCannotOpen": "Serwer Office nie otwiera plików .{ext}",

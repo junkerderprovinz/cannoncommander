@@ -3630,7 +3630,7 @@
     "notInTrash": "ごみ箱にはありません",
     "notOnDisk": "別のプログラムに渡せるのはディスク上のファイルだけです",
     "notText": "このファイルはテキストではありません",
-    "notWindows1252": "Windows-1252 では保存できない文字が含まれています。UTF-8 で保存してください",
+    "notEncodable": "{encoding} では保存できない文字が含まれています。UTF-8 で保存してください",
     "nothingToUndo": "元に戻せるものはありません",
     "noVolume": "このドライブはもうありません",
     "officeCannotOpen": "Office サーバーは .{ext} ファイルを開けません",

@@ -438,6 +438,12 @@ paths:
         Windows-1252. Needs the download right.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: encoding
+          in: query
+          description: Decodes the text in this encoding instead of finding it, for a file the guess gets wrong.
+          schema:
+            type: string
+            enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
         - name: max
           in: query
           description: Bytes to read at most.
@@ -514,11 +520,17 @@ paths:
       operationId: fsFileGet
       summary: File content for the editor
       description: |
-        The whole text of a file up to 16 MiB, decoded like fs/text. The
-        ETag follows the bytes, and a save sends it back in If-Match. Needs
-        the download right.
+        The whole text of a file up to 16 MiB, decoded like fs/text and, with
+        encoding, in the encoding asked for. The ETag follows the bytes, and
+        a save sends it back in If-Match. Needs the download right.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: encoding
+          in: query
+          description: Decodes the text in this encoding instead of finding it, for a file the guess gets wrong.
+          schema:
+            type: string
+            enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
       responses:
         "200":
           description: The text.
@@ -587,7 +599,7 @@ paths:
                   type: string
                 encoding:
                   type: string
-                  enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+                  enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
                 eol:
                   type: string
                   enum: [lf, crlf, cr]
@@ -634,7 +646,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "422":
-          description: The text holds characters the encoding cannot store.
+          description: The text holds characters the encoding cannot store (notEncodable, with the encoding's name).
           content:
             application/problem+json:
               schema:
@@ -7291,7 +7303,7 @@ components:
           format: date-time
         encoding:
           type: string
-          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
         eol:
           type: string
           enum: [lf, crlf, cr, mixed]
@@ -7315,7 +7327,7 @@ components:
           format: date-time
         encoding:
           type: string
-          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
         eol:
           type: string
           enum: [lf, crlf, cr, mixed]

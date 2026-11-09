@@ -3906,7 +3906,7 @@
     "notInTrash": "Ce n'est pas dans la corbeille",
     "notOnDisk": "Seuls les fichiers sur le disque peuvent aller dans un autre programme",
     "notText": "Ce fichier n'est pas du texte",
-    "notWindows1252": "Le texte contient des caractères que Windows-1252 ne peut pas enregistrer. Enregistrez-le en UTF-8",
+    "notEncodable": "Le texte contient des caractères que {encoding} ne peut pas enregistrer. Enregistrez-le en UTF-8",
     "nothingToUndo": "Il n'y a rien à annuler",
     "noVolume": "Ce lecteur n'est plus là",
     "officeCannotOpen": "Le serveur Office n'ouvre pas les fichiers .{ext}",

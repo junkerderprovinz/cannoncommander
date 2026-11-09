@@ -3768,7 +3768,7 @@
     "notInTrash": "Det ligger inte i papperskorgen",
     "notOnDisk": "Bara filer på disken kan gå till ett annat program",
     "notText": "Den här filen är ingen text",
-    "notWindows1252": "Texten innehåller tecken som Windows-1252 inte kan lagra. Spara den som UTF-8",
+    "notEncodable": "Texten innehåller tecken som {encoding} inte kan lagra. Spara den som UTF-8",
     "nothingToUndo": "Det finns inget att ångra",
     "noVolume": "Den här enheten finns inte längre",
     "officeCannotOpen": "Office-servern öppnar inte .{ext}-filer",

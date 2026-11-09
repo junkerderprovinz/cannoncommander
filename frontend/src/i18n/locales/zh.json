@@ -3630,7 +3630,7 @@
     "notInTrash": "它不在回收站中",
     "notOnDisk": "只有磁盘上的文件才能交给其他程序",
     "notText": "此文件不是文本",
-    "notWindows1252": "文本中包含 Windows-1252 无法保存的字符。请保存为 UTF-8",
+    "notEncodable": "文本中包含 {encoding} 无法保存的字符。请保存为 UTF-8",
     "nothingToUndo": "没有可撤销的操作",
     "noVolume": "这个驱动器已不在了",
     "officeCannotOpen": "Office 服务器无法打开 .{ext} 文件",

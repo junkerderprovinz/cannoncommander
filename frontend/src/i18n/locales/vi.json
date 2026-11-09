@@ -3630,7 +3630,7 @@
     "notInTrash": "Mục này không nằm trong thùng rác",
     "notOnDisk": "Chỉ các tệp trên ổ đĩa mới chuyển được sang chương trình khác",
     "notText": "Tệp này không phải văn bản",
-    "notWindows1252": "Văn bản có ký tự mà Windows-1252 không lưu được. Hãy lưu dưới dạng UTF-8",
+    "notEncodable": "Văn bản có ký tự mà {encoding} không lưu được. Hãy lưu dưới dạng UTF-8",
     "nothingToUndo": "Không có gì để hoàn tác",
     "noVolume": "Ổ này không còn nữa",
     "officeCannotOpen": "Máy chủ Office không mở được tệp .{ext}",

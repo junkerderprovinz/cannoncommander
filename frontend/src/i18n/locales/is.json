@@ -3768,7 +3768,7 @@
     "notInTrash": "Þetta er ekki í ruslinu",
     "notOnDisk": "Aðeins skrár á diski geta farið í annað forrit",
     "notText": "Þessi skrá er ekki texti",
-    "notWindows1252": "Textinn inniheldur stafi sem Windows-1252 getur ekki geymt. Vistaðu hann sem UTF-8",
+    "notEncodable": "Textinn inniheldur stafi sem {encoding} getur ekki geymt. Vistaðu hann sem UTF-8",
     "nothingToUndo": "Það er ekkert að afturkalla",
     "noVolume": "Þetta drif er farið",
     "officeCannotOpen": "Office-þjónninn opnar ekki .{ext}-skrár",

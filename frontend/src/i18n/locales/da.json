@@ -3768,7 +3768,7 @@
     "notInTrash": "Det ligger ikke i papirkurven",
     "notOnDisk": "Kun filer på disken kan gå til et andet program",
     "notText": "Denne fil er ikke tekst",
-    "notWindows1252": "Teksten indeholder tegn, som Windows-1252 ikke kan gemme. Gem den som UTF-8",
+    "notEncodable": "Teksten indeholder tegn, som {encoding} ikke kan gemme. Gem den som UTF-8",
     "nothingToUndo": "Der er intet at fortryde",
     "noVolume": "Dette drev er her ikke længere",
     "officeCannotOpen": "Office-serveren åbner ikke .{ext}-filer",

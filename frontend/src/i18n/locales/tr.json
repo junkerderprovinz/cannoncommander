@@ -3768,7 +3768,7 @@
     "notInTrash": "Bu çöp kutusunda değil",
     "notOnDisk": "Başka bir programa yalnızca diskteki dosyalar gidebilir",
     "notText": "Bu dosya metin değil",
-    "notWindows1252": "Metinde Windows-1252'nin saklayamadığı karakterler var. UTF-8 olarak kaydet",
+    "notEncodable": "Metinde {encoding}'nin saklayamadığı karakterler var. UTF-8 olarak kaydet",
     "nothingToUndo": "Geri alınacak bir şey yok",
     "noVolume": "Bu sürücü artık yok",
     "officeCannotOpen": "Office sunucusu .{ext} dosyalarını açmıyor",

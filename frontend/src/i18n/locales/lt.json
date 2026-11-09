@@ -4044,7 +4044,7 @@
     "notInTrash": "To nėra šiukšlinėje",
     "notOnDisk": "Į kitą programą gali keliauti tik diske esantys failai",
     "notText": "Šis failas nėra tekstas",
-    "notWindows1252": "Tekste yra simbolių, kurių Windows-1252 negali išsaugoti. Įrašyk jį kaip UTF-8",
+    "notEncodable": "Tekste yra simbolių, kurių {encoding} negali išsaugoti. Įrašyk jį kaip UTF-8",
     "nothingToUndo": "Nėra ko atšaukti",
     "noVolume": "Šio disko nebėra",
     "officeCannotOpen": "Office serveris neatidaro .{ext} failų",

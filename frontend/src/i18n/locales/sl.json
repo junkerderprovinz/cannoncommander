@@ -4044,7 +4044,7 @@
     "notInTrash": "To ni v košu",
     "notOnDisk": "V drug program lahko gredo le datoteke na disku",
     "notText": "Ta datoteka ni besedilo",
-    "notWindows1252": "Besedilo vsebuje znake, ki jih Windows-1252 ne more shraniti. Shranite ga kot UTF-8",
+    "notEncodable": "Besedilo vsebuje znake, ki jih {encoding} ne more shraniti. Shranite ga kot UTF-8",
     "nothingToUndo": "Ničesar ni za razveljaviti",
     "noVolume": "Tega pogona ni več",
     "officeCannotOpen": "Strežnik Office ne odpira datotek .{ext}",

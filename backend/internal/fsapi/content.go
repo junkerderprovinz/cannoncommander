@@ -139,7 +139,7 @@ func (h handlers) text(w http.ResponseWriter, r *http.Request) error {
 	}
 	loc, info, err := h.file(v1.UserFrom(r), q.Get("path"), ccfs.Download)
 	if errors.Is(err, errArchived) {
-		return h.archiveText(w, r, loc, limit)
+		return h.archiveText(w, r, loc, limit, q.Get("encoding"))
 	}
 	if err != nil {
 		return err
@@ -154,7 +154,7 @@ func (h handlers) text(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	truncated := int64(len(buf)) < info.Size()
-	enc, text, err := decodeText(buf, truncated)
+	enc, text, err := readText(buf, q.Get("encoding"), truncated)
 	if err != nil {
 		return err
 	}

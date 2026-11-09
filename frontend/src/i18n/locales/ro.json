@@ -3906,7 +3906,7 @@
     "notInTrash": "Asta nu este în coș",
     "notOnDisk": "Doar fișierele de pe disc pot merge într-un alt program",
     "notText": "Acest fișier nu este text",
-    "notWindows1252": "Textul are caractere pe care Windows-1252 nu le poate salva. Salvează-l ca UTF-8",
+    "notEncodable": "Textul are caractere pe care {encoding} nu le poate salva. Salvează-l ca UTF-8",
     "nothingToUndo": "Nu e nimic de anulat",
     "noVolume": "Unitatea asta nu mai e aici",
     "officeCannotOpen": "Serverul Office nu deschide fișiere .{ext}",

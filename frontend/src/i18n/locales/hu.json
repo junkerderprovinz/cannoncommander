@@ -3768,7 +3768,7 @@
     "notInTrash": "Ez nincs a kukában",
     "notOnDisk": "Csak a lemezen lévő fájlok mehetnek másik programba",
     "notText": "Ez a fájl nem szöveg",
-    "notWindows1252": "A szövegben olyan karakterek vannak, amelyeket a Windows-1252 nem tud tárolni. Mentse UTF-8-ként",
+    "notEncodable": "A szövegben olyan karakterek vannak, amelyeket a {encoding} nem tud tárolni. Mentse UTF-8-ként",
     "nothingToUndo": "Nincs mit visszavonni",
     "noVolume": "Ez a meghajtó már nincs itt",
     "officeCannotOpen": "Az Office-szerver nem nyit meg .{ext} fájlokat",

@@ -3768,7 +3768,7 @@
     "notInTrash": "Tämä ei ole roskakorissa",
     "notOnDisk": "Vain levyllä olevat tiedostot voivat siirtyä toiseen ohjelmaan",
     "notText": "Tämä tiedosto ei ole tekstiä",
-    "notWindows1252": "Tekstissä on merkkejä, joita Windows-1252 ei pysty tallentamaan. Tallenna se UTF-8-muodossa",
+    "notEncodable": "Tekstissä on merkkejä, joita {encoding} ei pysty tallentamaan. Tallenna se UTF-8-muodossa",
     "nothingToUndo": "Ei ole mitään kumottavaa",
     "noVolume": "Tätä asemaa ei enää ole",
     "officeCannotOpen": "Office-palvelin ei avaa .{ext}-tiedostoja",
