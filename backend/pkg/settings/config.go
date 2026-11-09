@@ -785,7 +785,7 @@ func SetDefaults(generate bool) Settings {
 				BatchSize:             1000,
 				CacheSizeMB:           32,
 				DisableReuse:          false,
-				StartupIntegrityCheck: IndexStartupIntegrityQuickCheck,
+				StartupIntegrityCheck: IndexStartupIntegrityProbe,
 			},
 			Filesystem: Filesystem{
 				CreateFilePermission:      "644",

@@ -58,7 +58,7 @@ server:
     cacheSizeMB: 32                       # size of the SQLite cache in MB
     walMode: false                        # enable the more complex WAL journaling mode. Slower, more memory usage, but better for deployments with constant user activity.
     disableReuse: false                   # enable to always create a new indexing database on startup.
-    startupIntegrityCheck: "quickCheck"   # the method used to check the integrity of the index database on startup (default: quickCheck)  validate:omitempty,oneof=quickCheck probe off
+    startupIntegrityCheck: "probe"        # the method used to check the integrity of the index database on startup (default: probe)  validate:omitempty,oneof=quickCheck probe off
   database:                               # SQLite database configuration
     path: "cannoncommander.sqlite"        # path to SQLite database file
     activity:                             # activity audit logging configuration
@@ -83,15 +83,15 @@ auth:
       groupsClaim: "groups"               # the JSON field name to read groups from. Default is "groups"
       userIdentifier: "preferred_username" # the field value to use as the username. Default is "preferred_username". Other common values are "email" or "username", or "phone"
       disableVerifyTLS: false             # disable TLS verification (insecure, for testing only)
-      logoutRedirectUrl: ""               # if provider logout url is provided, filebrowser will also redirect to logout url. Custom logout query params are respected.
+      logoutRedirectUrl: ""               # if provider logout url is provided, the server will also redirect to logout url. Custom logout query params are respected.
       clientId: ""                        # secret: client id of the OIDC application
       clientSecret: ""                    # secret: client secret of the OIDC application
       issuerUrl: ""                       # authorization URL of the OIDC provider
       scopes: "openid email profile"      # scopes to request from the OIDC provider
     passkey:                              #  validate:omitempty
-      enabled: false                      # whether to enable passkey MFA
+      enabled: false                      # has no effect, passkeys are always on
       rpDisplayName: ""                   # the Relying Party display name (defaults to frontend name)
-      rpId: ""                            # the Relying Party ID; if empty, auto-derived from base URL host
+      rpId: ""                            # the Relying Party ID until a request names its host, which every passkey request does
       rpOrigins:                          # allowed origins; if empty, auto-derived from base URL
       loginButtonText: ""                 # custom text for the passkey login button
   key: ""                                 # secret: HMAC key for JWT tokens. If unset in config/env, one is generated and stored in the application database.
@@ -103,7 +103,7 @@ frontend:
 integrations:
   office:                                 #  validate:omitempty
     url: ""                               # The URL to the OnlyOffice Document Server, needs to be accessible to the user.  validate:required
-    internalUrl: ""                       # An optional internal address that the filebrowser server can use to communicate with the OnlyOffice Document Server, could be useful to bypass proxy.
+    internalUrl: ""                       # An optional internal address that the server can use to communicate with the OnlyOffice Document Server, could be useful to bypass proxy.
     secret: ""                            # secret: authentication key for OnlyOffice integration  validate:required
     viewOnly: false                       # view only mode for OnlyOffice
   media:                                  #  validate:omitempty
@@ -135,14 +135,14 @@ integrations:
     extractEmbeddedSubtitles: false       # extract embedded subtitles from media files
     hardwareAcceleration: false           # enable hardware acceleration for ffmpeg if available
 http:
-  socket: ""                              # socket to listen on - eg. /var/run/filebrowser.sock
+  socket: ""                              # socket to listen on - eg. /var/run/cannoncommander.sock
   tlsKey: ""                              # path to TLS key
   tlsCert: ""                             # path to TLS cert
   port: 80                                # port to listen on
   listen: ""                              # address to listen on (default: 0.0.0.0)
   baseURL: "/"                            # base URL for the server, the subpath that the server is running on.
   externalUrl: ""                         # used by share links if set (eg. http://mydomain.com)
-  internalUrl: ""                         # used by integrations if set, this is the base domain that an integration service will use to communicate with filebrowser (eg. http://localhost:8080)
+  internalUrl: ""                         # used by integrations if set, this is the base domain that an integration service will use to communicate with the server (eg. http://localhost:8080)
   disableWebDAV: true                     # keeps the WebDAV server off until an admin switches it on in the settings (default: true)
   trustProxyHeaders: false                # honor X-Forwarded-* and X-Real-IP from a reverse proxy (default: false)
   trustedProxies:                         # IPs/CIDRs of trusted proxies; forwarded client headers are only honored when the socket peer matches one of these (default: empty = forwarded headers ignored)

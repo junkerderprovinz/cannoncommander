@@ -24,11 +24,11 @@ func TestNormalizeStartupIntegrityMode(t *testing.T) {
 		in   string
 		want string
 	}{
-		{"", settings.IndexStartupIntegrityQuickCheck},
+		{"", settings.IndexStartupIntegrityProbe},
 		{"quickCheck", settings.IndexStartupIntegrityQuickCheck},
 		{"probe", settings.IndexStartupIntegrityProbe},
 		{"off", settings.IndexStartupIntegrityOff},
-		{"not-a-real-mode", settings.IndexStartupIntegrityQuickCheck},
+		{"not-a-real-mode", settings.IndexStartupIntegrityProbe},
 	}
 	for _, tt := range tests {
 		if got := normalizeStartupIntegrityMode(tt.in); got != tt.want {

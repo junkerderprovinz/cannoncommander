@@ -215,3 +215,11 @@ func TestConfigLoadWithoutServerMap(t *testing.T) {
 		})
 	}
 }
+
+// The index is a cache that rebuilds itself, and a full quick_check of a large
+// one holds the server back for minutes on every start.
+func TestIndexStartupCheckDefaultsToProbe(t *testing.T) {
+	if got := SetDefaults(false).Server.IndexSqlConfig.StartupIntegrityCheck; got != IndexStartupIntegrityProbe {
+		t.Errorf("default startup check = %q, want %q", got, IndexStartupIntegrityProbe)
+	}
+}
