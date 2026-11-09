@@ -1,4 +1,4 @@
-sidebar cards: 2
+sidebar cards: 3
 quick look open: 1 IMG_0202.jpg
 after arrow: IMG_0203.jpg cursor 3
 closed with space: 0 marked: 0

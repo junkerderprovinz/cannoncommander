@@ -2,8 +2,11 @@ package remotes
 
 import (
 	"context"
+	"crypto/ed25519"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"maps"
 	"net/http"
 	"net/http/httptest"
@@ -13,6 +16,7 @@ import (
 	"sync"
 	"testing"
 
+	"golang.org/x/crypto/ssh"
 	_ "modernc.org/sqlite"
 
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
@@ -27,14 +31,31 @@ const fakeProviders = `{"providers":[
   {"Name":"user","Help":"SSH username."},
   {"Name":"port","DefaultStr":"22","Help":"SSH port number."},
   {"Name":"pass","IsPassword":true,"Help":"SSH password."},
-  {"Name":"key_file","Advanced":true,"Help":"Path to PEM-encoded private key file."}]},
+  {"Name":"key_file","Advanced":true,"Help":"Path to PEM-encoded private key file."},
+  {"Name":"host_keys","Advanced":true,"Help":"Pinned host keys for this remote."}]},
  {"Name":"smb","Description":"SMB / CIFS","Options":[
   {"Name":"host","Required":true},{"Name":"user"},{"Name":"pass","IsPassword":true},{"Name":"domain","DefaultStr":"WORKGROUP"}]},
+ {"Name":"webdav","Description":"WebDAV","Options":[
+  {"Name":"url","Required":true,"Help":"URL of http host to connect to.\nE.g. https://example.com."},
+  {"Name":"vendor","Help":"Name of the WebDAV site/service/software you are using.","Examples":[{"Value":"nextcloud","Help":"Nextcloud"},{"Value":"other","Help":"Other site/service or software"}]},
+  {"Name":"user"},{"Name":"pass","IsPassword":true},{"Name":"bearer_token","Sensitive":true}]},
+ {"Name":"azureblob","Description":"Microsoft Azure Blob Storage","Options":[
+  {"Name":"account","Sensitive":true},{"Name":"sas_url","Sensitive":true}]},
+ {"Name":"zzz","Description":"Something new","Options":[]},
  {"Name":"drive","Description":"Google Drive","Options":[
   {"Name":"client_id"},{"Name":"client_secret"},{"Name":"token","Advanced":true},{"Name":"scope"}]},
  {"Name":"memory","Description":"In memory object storage system.","Options":[]},
  {"Name":"tardigrade","Description":"Storj (old name)","Hide":true,"Options":[]}
 ]}`
+
+// fakeKey is the host key every SSH server of the tests shows.
+var fakeKey = func() HostKey {
+	pub, err := ssh.NewPublicKey(ed25519.NewKeyFromSeed(make([]byte, ed25519.SeedSize)).Public())
+	if err != nil {
+		panic(err)
+	}
+	return HostKey{Pin: pub.Type() + " " + base64.StdEncoding.EncodeToString(pub.Marshal()), Fingerprint: ssh.FingerprintSHA256(pub)}
+}()
 
 // fakeRC answers like rclone rcd with a config in memory. Google Drive asks
 // its questions after the token the way rclone does.
@@ -47,7 +68,27 @@ type fakeRC struct {
 	vfs           map[string]map[string]any
 	opts          map[string]map[string]any
 	calls         []string
+	lists         []string
 	unmountRefuse bool
+}
+
+// remoteOf reads the parameters and the path of an fs, a section name or a
+// connection string such as :sftp,host=nas,pass="x":path.
+func (f *fakeRC) remoteOf(fs string) (map[string]string, string) {
+	if !strings.HasPrefix(fs, ":") {
+		name, path, _ := strings.Cut(fs, ":")
+		return f.sections[name], path
+	}
+	body := fs[1:]
+	end := strings.LastIndex(body, ":")
+	params := map[string]string{}
+	parts := strings.Split(body[:end], ",")
+	params["type"] = parts[0]
+	for _, kv := range parts[1:] {
+		k, v, _ := strings.Cut(kv, "=")
+		params[k] = strings.ReplaceAll(strings.Trim(v, `"`), `""`, `"`)
+	}
+	return params, body[end+1:]
 }
 
 func newFakeRC(t *testing.T) (*fakeRC, *rcClient) {
@@ -163,12 +204,22 @@ func (f *fakeRC) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		reply(map[string]any{"mountPoints": out})
 	case "operations/list":
-		name, _, _ := strings.Cut(in.Fs, ":")
-		if f.sections[name]["host"] == "down" {
+		f.lists = append(f.lists, in.Fs)
+		params, path := f.remoteOf(in.Fs)
+		switch {
+		case params == nil:
+			f.fail(w, "didn't find section in config file")
+		case params["host"] == "down":
 			f.fail(w, "couldn't connect SSH: dial tcp: connection refused")
-			return
+		case params["host"] == "moved" && params[hostKeysKey] != fakeKey.Pin:
+			f.fail(w, "couldn't connect SSH: ssh: handshake failed: host key mismatch")
+		case path == "nope" || (params["type"] == "webdav" && strings.HasSuffix(params["url"], "/wrong")):
+			f.fail(w, "error listing \"\": directory not found")
+		case params["type"] == "smb" && path == "":
+			reply(map[string]any{"list": []map[string]any{{"Name": "archiv", "IsDir": true}, {"Name": "fotos", "IsDir": true}, {"Name": "readme.txt"}}})
+		default:
+			reply(map[string]any{"list": []map[string]any{{"Name": "a"}, {"Name": "b"}}})
 		}
-		reply(map[string]any{"list": []map[string]any{{"Name": "a"}, {"Name": "b"}}})
 	case "operations/about":
 		reply(map[string]int64{"total": 100, "used": 40, "free": 60})
 	default:
@@ -200,8 +251,16 @@ func (f *fakeRC) driveQuestions(sec map[string]string, in rcIn) map[string]any {
 		}
 	case "*oauth-token":
 		sec["token"] = result
+	case "choose_drive":
+		sec["drive_id"] = result
+		return ask("teamdrive", "config_change_team_drive", "false", false)
 	case "teamdrive":
 		return map[string]any{"State": ""}
+	}
+	if strings.Contains(sec["token"], "two-drives") && sec["drive_id"] == "" {
+		q := ask("choose_drive", "config_driveid", "mine", false)
+		q["Option"].(map[string]any)["Examples"] = []map[string]string{{"Value": "mine", "Help": "My Drive"}, {"Value": "team", "Help": "Team Drive"}}
+		return q
 	}
 	return ask("teamdrive", "config_change_team_drive", "false", false)
 }
@@ -245,6 +304,12 @@ func newFixture(t *testing.T) *fixture {
 	s := newService(cfg, store{db}, mounting)
 	fake, client := newFakeRC(t)
 	s.rc = client
+	s.readKey = func(_ context.Context, host, _ string) (HostKey, error) {
+		if host == "down" {
+			return HostKey{}, errors.New("dial tcp: connection refused")
+		}
+		return fakeKey, nil
+	}
 
 	people := map[string]*users.User{"jdp": {ID: 1}, "anna": {ID: 2}}
 	for name, u := range people {

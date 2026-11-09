@@ -1,4 +1,4 @@
-sidebar badges: Verknüpfungen | Ordnerbaum
+sidebar badges: Verknüpfungen | Fernziele | Ordnerbaum
 buttons in quick look head: 0 details visible: 0
 after I, details visible: 1
 closed: 0

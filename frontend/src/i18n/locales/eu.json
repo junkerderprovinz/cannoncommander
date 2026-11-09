@@ -1,4 +1,72 @@
 {
+  "trash": {
+    "delete": "Ezabatu",
+    "deleteNow": "Ezabatu betiko",
+    "deleteOne": "Ezabatu {name}",
+    "deleteMany": {
+      "one": "Ezabatu {n} elementu",
+      "other": "Ezabatu {n} elementu"
+    },
+    "toTrash": "Zakarrontzira",
+    "toTrashTip": "{days} egun geratzen da zakarrontzian eta leheneratu daiteke. Etengailu hau gabe berehala desagertzen da.",
+    "toTrashTipSystem": "Helmuga {bin} da, eta leheneratu daiteke. Etengailu hau gabe berehala desagertzen da.",
+    "whereTrash": "{size}, zakarrontzira doa eta {days} egunez leheneratu daiteke",
+    "whereSystem": "{size}, helmuga {bin} da eta leheneratu daiteke",
+    "whereGone": "{size}, gero betiko desagertzen da",
+    "forever": "Ezabatu betiko",
+    "inTrash": "{what} zakarrontzian",
+    "deleted": "{what} ezabatuta",
+    "title": "Zakarrontzia",
+    "binWindows": "Windowsen zakarrontzia",
+    "binSystem": "sistemaren zakarrontzia",
+    "emptyTitle": "Zakarrontzia hutsik dago",
+    "emptyText": "Ezabatzen duzuna {days} egun geratzen da hemen, betiko desagertu aurretik.",
+    "emptyTextSystem": "Ezabatzen duzunaren helmuga {bin} da. Hemen berreskuratzen duzu, beste edozein fitxategi-kudeatzailetan bezala.",
+    "toFiles": "Joan fitxategietara",
+    "content": "Edukia",
+    "contentPill": "{what}, {size}",
+    "next": "Hurrengo betiko ezabatzea",
+    "nextOn": "{date}",
+    "nextTip": "Zakarrontziko guztia betiko kentzen da ezabatu eta {days} egunera. Epea Ezarpenak, Fitxategiak atalean ezartzen duzu.",
+    "where": "Kokapena",
+    "whereTip": "Mahaigaineko aplikazioan, CannonCommanderrek sistemaren zakarrontzia erabiltzen du. Sistemak erabakitzen du gauzak zenbat denboraz gordetzen dituen.",
+    "listTitle": "Ezabatutako elementuak",
+    "col": {
+      "name": "Izena",
+      "from": "Jatorria",
+      "size": "Tamaina",
+      "deleted": "Ezabatuta"
+    },
+    "more": "Gehiago",
+    "mark": "Hautatu",
+    "byTip": "{by} erabiltzaileak ezabatua, betiko desagertuko da {date} egunean",
+    "restore": "Leheneratu",
+    "restoreMany": {
+      "one": "Leheneratu {n}",
+      "other": "Leheneratu {n}"
+    },
+    "purge": "Ezabatu betiko",
+    "restoreSel": "Leheneratu hautapena ({n})",
+    "purgeSel": "Ezabatu hautapena betiko ({n})",
+    "selectAll": "Hautatu dena",
+    "empty": "Hustu zakarrontzia",
+    "emptySystem": {
+      "one": "Honek {bin} osorik husten du, bere sarrera bakarrarekin.",
+      "other": "Honek {bin} osorik husten du: {n} sarrera guztiak, beste programenak ere bai."
+    },
+    "andMore": {
+      "one": "eta beste {n}",
+      "other": "eta beste {n}"
+    },
+    "gone": "Gero desagertu egiten da eta ezin da leheneratu.",
+    "restored": "{what} leheneratuta",
+    "restoredTo": "{what} leheneratuta hemen: {from}",
+    "go": "Joan hara",
+    "purged": "{what} betiko ezabatuta, {size} libre",
+    "failed": "Ez du funtzionatu: {error}",
+    "noBinTitle": "Ez dago zakarrontzirik unitate honetan",
+    "noBinText": "{what} zakarrontzirik gabeko unitate batean dago, sareko unitate batean adibidez. Betiko ezabatu nahi duzu horren ordez? Gero ezin izango da leheneratu."
+  },
   "access": {
     "left": "Ezkerreko panela",
     "right": "Eskuineko panela",
@@ -26,6 +94,37 @@
     "focusLeft": "Joan ezkerreko panelera",
     "focusRight": "Joan eskuineko panelera",
     "focusJobs": "Joan lanetara"
+  },
+  "undo": {
+    "undo": "Desegin",
+    "list": "Azken ekintzak",
+    "head": "Desegin",
+    "empty": "Oraindik ez dago desegiteko ezer",
+    "nothing": "Hemen ez dago desegiteko ezer",
+    "taken": "Desegina: {label}",
+    "items": {
+      "one": "{n} elementu",
+      "other": "{n} elementu"
+    },
+    "justNow": "oraintxe",
+    "minutes": {
+      "one": "duela {n} min",
+      "other": "duela {n} min"
+    },
+    "hours": {
+      "one": "duela {n} h",
+      "other": "duela {n} h"
+    },
+    "kind": {
+      "rename": "«{name}» izena «{to}» bihurtu da",
+      "mkdir": "«{name}» karpeta sortuta",
+      "touch": "«{name}» fitxategia sortuta",
+      "copy": "{what} kopiatuta → {to}",
+      "move": "{what} mugituta → {to}",
+      "trash": "{what} zakarrontzira bidalita",
+      "renameBatch": "{what}: izena aldatuta",
+      "link": "«{name}» esteka sortuta"
+    }
   },
   "archive": {
     "pack": "Konprimatu",
@@ -108,6 +207,122 @@
     "lockedTip": "Artxiboa zifratuta dago. Erauztean pasahitza eskatuko du.",
     "inArchive": "Ezin da ezer konprimatu artxibo baten barrutik"
   },
+  "unraid": {
+    "and": " eta ",
+    "cache": "Cache",
+    "array": "Array",
+    "theCache": "Cache",
+    "wakesOne": "{disks} lotan dago eta orain esnatzen ari da, segundo batzuk behar ditu",
+    "wakesMany": "{disks} lotan daude eta orain esnatzen ari dira, segundo batzuk behar dituzte",
+    "parity": {
+      "check": "Parity egiaztapena",
+      "rebuild": "Rebuild",
+      "clear": "Disko berria prestatzen"
+    },
+    "parityTip": "Zerbitzarian exekutatzen da, lan handiak itxaroten ari dira bitartean",
+    "parityPausedTip": "Pausatuta dago orain, zure lanak ohi bezala dabiltza bitartean",
+    "parityDone": "Parity egiaztapena amaitu da, zain zeuden lanek jarraitzen dute orain",
+    "pct": "% {pct}",
+    "diskShare": "Disk share",
+    "diskShareTip": "Zuzenean {disk} diskoan zaude. Ez kopiatu edo mugitu hemendik /mnt/user-era edo alderantziz, bestela Unraid-ek fitxategiak 0 bytera moztu ditzake.",
+    "diskAsleep": " Diskoa lotan dago, zerrenda indizetik dator.",
+    "only": "{store} bakarrik",
+    "shareTip": "{share} share-a: biltegi nagusia {first}{second}. ",
+    "secondary": ", bigarren biltegia {second}",
+    "noSecondary": ", bigarren biltegirik ez",
+    "stays": "Dena hemen geratzen da: {pool}.",
+    "straight": "Fitxategi berriak zuzenean hona doaz: {disks}.",
+    "toPrimary": "Fitxategi berriak {pool} biltegira doaz, eta Mover-ek Array-ean ({disks}) geratzen dena hara eramaten du.",
+    "toSecondary": "Fitxategi berriak {pool} biltegira doaz, eta Mover-ek {disks} diskoetara eramaten ditu, {when}.",
+    "waiting": {
+      "one": " Hemen fitxategi bat dago oraindik, {size}, {pool} biltegian.",
+      "other": " Hemen {n} fitxategi daude oraindik, {size}, {pool} biltegian."
+    },
+    "when": {
+      "at": "{time}etan",
+      "hourly": "orduro",
+      "hours": {
+        "one": "orduro",
+        "other": "{n} orduro"
+      },
+      "next": "hurrengo exekuzioan"
+    },
+    "cacheFile": "Oraindik {pool} biltegian dago, Mover-ek Array-era eramango du fitxategia",
+    "cacheDir": "Hemen barruan zerbait dago oraindik {pool} biltegian",
+    "cacheOnly": "Cache-n bakarrik",
+    "cachePill": "Cache bakarrik",
+    "filterOff": "Desaktibatu iragazkia",
+    "onCache": {
+      "one": "{n} Cache-n",
+      "other": "{n} Cache-n"
+    },
+    "moonTip": "{disk} lotan dago. CannonCommander-ek bere karpetak indizetik erakusten ditu, fitxategi bat irekitzeak bakarrik esnatzen du.",
+    "spinDown": "Lokartu diskoak",
+    "sleepsOne": "{disks} lotan dago orain",
+    "sleepsMany": "{disks} lotan daude orain",
+    "perms": {
+      "title": "Ezarri baimenak Unraid-en eran",
+      "folder": "Karpeta",
+      "owner": "Jabea",
+      "ownerValue": "nobody:users (99:100)",
+      "ownerTip": "Horrela, Unraid-eko fitxategiak share-enak, Docker edukiontzienak eta sarearenak dira, denenak berdin.",
+      "rights": "Baimenak",
+      "rightsValue": "Karpetak 0777, fitxategiak 0666",
+      "rightsTip": "Denek irakurri eta idatz dezakete, karpetak ireki daitezke. Gero ez da fitxategirik exekutagarria izango.",
+      "affects": "Eragina du",
+      "affectsValue": "{files}, {dirs}",
+      "atLeast": "gutxienez {what}",
+      "counting": "zenbatzen",
+      "files": {
+        "one": "Fitxategi 1",
+        "other": "{n} fitxategi"
+      },
+      "dirs": {
+        "one": "Karpeta 1",
+        "other": "{n} karpeta"
+      },
+      "warnTitle": "Hau ezin da desegin",
+      "warnText": "{name} barruko guztiak baimen hauek jasotzen ditu, baita nahita bestela ezarri dituzun fitxategiek ere.",
+      "keptSome": " Karpeta hauek dauden bezala geratzen dira:",
+      "keptNone": " Hemen ez dago kanpoan utzi behar den ezer.",
+      "blockedTitle": "CannonCommander-ek ez du hemen baimenik ezartzen",
+      "blockedArchive": "Artxibo baten barruan ezin da ezer aldatu.",
+      "blockedText": "{path} honi dagokio: {own}. Han edukiontziek, VMek edo USB memoriak beren jabe eta baimenak behar dituzte.",
+      "reason": {
+        "appdata": "Edukiontzien datuak",
+        "system": "Docker eta VMak",
+        "domains": "VM irudiak",
+        "flash": "USB memoria"
+      },
+      "background": "Lan gisa exekutatzen da atzeko planoan",
+      "start": "Ezarri baimenak",
+      "running": "Baimenak ezartzen hemen: {name}",
+      "toJobs": "Lanak",
+      "objects": {
+        "one": "Elementu 1",
+        "other": "{n} elementu"
+      },
+      "kept": {
+        "one": "Karpeta 1",
+        "other": "{n} karpeta"
+      },
+      "done": "Baimenak ezarrita: {what}",
+      "doneKept": "Baimenak ezarrita: {what}, {kept} kanpoan utzita",
+      "failed": "Ezin izan dira baimenak ezarri hemen: {name}: {error}",
+      "server": "Zerbitzaria"
+    },
+    "where": {
+      "title": "Kokapena",
+      "on": "Hemen dago",
+      "onTip": "Datuak benetan dauden diskoa edo Pool-a. /mnt/user azpiko user share-ak disko guztiak batera erakusten ditu.",
+      "nothing": "ezer ez",
+      "links": "Esteka gogorrak",
+      "linksNone": "bat ere ez, bide hau bakarrik",
+      "linksTip": "Fitxategi bera bide hauetan ere badago. Behin bakarrik hartzen du lekua. Share muga batetik kopiatzeak edo mugitzeak fitxategi bereizi bihurtzen ditu.",
+      "copyPath": "Kopiatu bidea",
+      "copied": "Bidea kopiatuta"
+    }
+  },
   "arrowloop": {
     "title": "Programatu ArrowLoop-en",
     "name": "Izena",
@@ -127,6 +342,47 @@
     "notSet": "ArrowLoop ez dago oraindik konfiguratuta. Ezarpenak eta Integrazioak atalean idatz ditzakezu helbidea eta tokena.",
     "noAnswer": "ArrowLoop-ek ez du lana onartzen orain: {why}",
     "taken": "ArrowLoop-ek badu izen hori duen lan bat"
+  },
+  "upload": {
+    "title": "Igo",
+    "dropHere": "Arrastatu fitxategiak hona",
+    "orClick": "edo egin klik aukeratzeko",
+    "target": "Helburua",
+    "targetTip": "Igotako fitxategiak panel aktiboan irekita dagoen karpetara doaz. Izen bereko fitxategiak badaude, CannonCommander-ek lehenik galdetzen du.",
+    "queue": "Ilara",
+    "queueTip": "Fitxategi handiak 10 MBko zatitan igotzen dira. Konexioa eteten bada, igoerak amaitutako azken zatitik jarraitzen du, baita orria berriro kargatu ondoren ere, fitxategia berriro aukeratzen duzunean.",
+    "pauseAll": "Pausatu guztiak",
+    "resumeAll": "Jarraitu guztiak",
+    "clear": "Kendu amaitutakoak",
+    "progress": "{done}/{all} eginda",
+    "bytes": "{done}/{total}",
+    "files": {
+      "one": "Fitxategi 1",
+      "other": "{n} fitxategi"
+    },
+    "nothing": "Oraindik ez dago ezer ilaran",
+    "pause": "Pausatu",
+    "resume": "Jarraitu",
+    "cancel": "Utzi",
+    "state": {
+      "waiting": "zain",
+      "running": "martxan",
+      "paused": "pausatuta",
+      "done": "eginda",
+      "cancelled": "bertan behera",
+      "failed": "huts egin du"
+    },
+    "keepsRunning": "Martxan jarraitzen du leihoa itxi arren",
+    "pickFolder": "Aukeratu karpeta",
+    "pickFiles": "Aukeratu fitxategiak",
+    "notHere": "Ezin da ezer igo karpeta honetara",
+    "done": "{what} igota hona: {path}",
+    "go": "Joan hara",
+    "failed": {
+      "one": "Ezin izan da fitxategi bat igo. Aukeratu berriro, eta igoerak azken zatitik jarraituko du.",
+      "other": "Ezin izan dira {n} fitxategi igo. Aukeratu berriro, eta igoerak azken zatitik jarraituko du."
+    },
+    "oneFailed": "Ezin izan da {name} igo: {error}"
   },
   "checksum": {
     "make": "Sortu kontrol-baturak",
@@ -230,6 +486,196 @@
     "combinedChecked": "Elkartuta eta egiaztatuta: {path}",
     "sumWrong": "{file} fitxategiaren kontrol-batura ez dator bat. Zatiak dauden lekuan geratzen dira."
   },
+  "viewer": {
+    "title": "Ikusi",
+    "quickview": "Aurrebista beste panelean",
+    "download": "Deskargatu",
+    "edit": "Editatu",
+    "share": "Partekatu",
+    "unpack": "Erauzi",
+    "openIn": "Ireki {name} bidez",
+    "changed": "aldatuta: {time}",
+    "preview": "Aurrebista",
+    "pickFile": "Aukeratu fitxategi bat ezkerrean",
+    "failed": "Une honetan ezin da fitxategi hau irakurri.",
+    "and": "eta {rest}",
+    "img": {
+      "of": "{i}/{n}",
+      "fit": "Doitu",
+      "prev": "Aurreko irudia",
+      "prevTip": "Aurreko irudia (ezkerreko gezia)",
+      "next": "Hurrengo irudia",
+      "nextTip": "Hurrengo irudia (eskuineko gezia)"
+    },
+    "media": {
+      "play": "Erreproduzitu",
+      "playTip": "Erreproduzitu (zuriunea)",
+      "pause": "Pausatu",
+      "pauseTip": "Pausatu (zuriunea)",
+      "position": "Posizioa",
+      "subs": "Azpitituluak",
+      "audio": "Audio-pista",
+      "off": "Desaktibatuta",
+      "track": "{n}. pista",
+      "subFile": "Azpititulu-fitxategia",
+      "playBig": "Erreproduzitu leiho handian (F3)",
+      "prevTrack": "Aurreko pista",
+      "nextTrack": "Hurrengo pista",
+      "cantPlay": "Barkatu, nabigatzaileak ezin du fitxategi hau erreproduzitu. Deskargatzeak beti funtzionatzen du, ordea."
+    },
+    "langs": {
+      "de": "Alemana",
+      "en": "Ingelesa",
+      "fr": "Frantsesa",
+      "es": "Gaztelania",
+      "it": "Italiera",
+      "nl": "Nederlandera",
+      "pl": "Poloniera",
+      "cs": "Txekiera",
+      "hu": "Hungariera",
+      "tr": "Turkiera",
+      "pt": "Portugesa",
+      "ru": "Errusiera",
+      "ja": "Japoniera"
+    },
+    "text": {
+      "wrap": "Doitu lerroak",
+      "truncated": "Hasiera bakarrik",
+      "cut": "laburtuta"
+    },
+    "md": {
+      "rendered": "Errendatuta",
+      "source": "Iturburua"
+    },
+    "pages": {
+      "of": "{i}/{n} orria",
+      "page": "{n}. orria",
+      "prev": "Aurreko orria",
+      "prevTip": "Aurreko orria (PgUp)",
+      "next": "Hurrengo orria",
+      "nextTip": "Hurrengo orria (PgDn)"
+    },
+    "slides": {
+      "of": "{i}/{n} diapositiba",
+      "slide": "{n}. diapositiba",
+      "prev": "Aurreko diapositiba",
+      "next": "Hurrengo diapositiba"
+    },
+    "office": {
+      "doc": "Testu-dokumentua",
+      "sheet": "Kalkulu-orria",
+      "none": "Formatu honen aurrebistak Office zerbitzari bat behar du. Ezarpenak, Integrazioak atalean gehi dezakezu.",
+      "unreachable": "{name} ez dago eskuragarri une honetan. Hala ere, fitxategia deskarga dezakezu.",
+      "kinds": {
+        "none": "Office",
+        "onlyoffice": "OnlyOffice",
+        "eurooffice": "Euro-Office",
+        "collabora": "Collabora"
+      }
+    },
+    "arch": {
+      "browse": "Ireki karpeta bat bezala",
+      "unpacked": "{size} erauzita",
+      "unreadable": "Aurrebistak ezin du artxibo honen barrura begiratu une honetan.",
+      "limit": {
+        "one": "Aurrebistak lehen sarrera erakusten du ({n}).",
+        "other": "Aurrebistak lehen {n} sarrerak erakusten ditu."
+      }
+    },
+    "hex": {
+      "first": {
+        "one": "Lehen {n} bytea",
+        "other": "Lehen {n} byteak"
+      },
+      "tip": "Fitxategi mota honetarako ez dago aurrebistarik. Bista hamaseitarrak fitxategiaren hasiera erakusten du, diskoan dagoen bezala.",
+      "sqlite": "SQLite datu-basea",
+      "program": "Programa",
+      "binary": "Fitxategi bitarra"
+    },
+    "disk": {
+      "eyebrow": "Irudia",
+      "format": "Formatua",
+      "iso": "ISO 9660",
+      "raw": "Disko-irudi gordina",
+      "label": "Etiketa",
+      "boot": "Honekin abiarazten da",
+      "used": "Okupatuta",
+      "usedTip": "Irudia sakabanatua da. Diskoan benetan barruan duena bakarrik hartzen du.",
+      "sum": "Kontrol-batura",
+      "sumThere": "ondoan dago",
+      "sumNone": "bat ere ez",
+      "sumTip": "Irudiaren ondoan .sha256 fitxategi bat dago. Fitxategia, Egiaztatu kontrol-baturak menuan biak konparatzen dituzu.",
+      "parts": "Partizioak",
+      "content": "Edukia"
+    },
+    "dir": {
+      "none": "hutsik",
+      "empty": "Karpeta hau hutsik dago"
+    },
+    "details": {
+      "size": "Tamaina",
+      "content": "Edukia",
+      "format": "Formatua",
+      "changed": "Aldatuta",
+      "owner": "Jabea",
+      "rights": "Baimenak"
+    },
+    "epub": {
+      "book": "Liburu elektronikoa",
+      "prev": "Aurreko orria",
+      "next": "Hurrengo orria"
+    },
+    "model": {
+      "info": "3D eredua, {format}",
+      "hint": "Arrastatu eredua biratzeko, saguaren gurpilarekin hurbiltzen da"
+    },
+    "lang": {
+      "nginx": "Nginx",
+      "config": "Konfigurazioa",
+      "log": "Erregistroa",
+      "subtitle": "Azpitituluak",
+      "checksum": "Kontrol-batura",
+      "text": "Testua"
+    },
+    "n": {
+      "lines": {
+        "one": "{n} lerro",
+        "other": "{n} lerro"
+      },
+      "pages": {
+        "one": "{n} orri",
+        "other": "{n} orri"
+      },
+      "sheets": {
+        "one": "{n} orri",
+        "other": "{n} orri"
+      },
+      "slides": {
+        "one": "{n} diapositiba",
+        "other": "{n} diapositiba"
+      },
+      "files": {
+        "one": "{n} fitxategi",
+        "other": "{n} fitxategi"
+      },
+      "dirs": {
+        "one": "{n} karpeta",
+        "other": "{n} karpeta"
+      },
+      "morePictures": {
+        "one": "Beste irudi {n}",
+        "other": "Beste {n} irudi"
+      },
+      "moreObjects": {
+        "one": "Beste elementu {n}",
+        "other": "Beste {n} elementu"
+      },
+      "moreEntries": {
+        "one": "Beste sarrera {n}",
+        "other": "Beste {n} sarrera"
+      }
+    }
+  },
   "cleanup": {
     "title": "Garbitu",
     "searchIn": "Bilatu hemen",
@@ -310,6 +756,25 @@
       "gif": "GIF irudia",
       "zip": "ZIP artxiboa"
     }
+  },
+  "remotes": {
+    "title": "Urrunekoak",
+    "failed": "Errorea",
+    "unmounted": "Desmuntatuta",
+    "mountedTip": "Muntatuta, klik batek irekitzen du",
+    "unmountedTip": "Une honetan ez dago muntatuta",
+    "failedTip": "Ezin izan da muntatu: {error}",
+    "nowMounted": "{name} muntatuta dago",
+    "nowUnmounted": "{name} desmuntatuta dago",
+    "askAdmin": "{name} ez dago une honetan muntatuta. Administratzaile batek ezarpenetan munta dezake.",
+    "open": "Ireki",
+    "pin": "Ainguratu sarbide azkarrean",
+    "unpin": "Kendu sarbide azkarretik",
+    "pinLabel": "Ainguratu {name} sarbide azkarrean",
+    "unpinLabel": "Kendu {name} sarbide azkarretik",
+    "mount": "Muntatu",
+    "unmount": "Desmuntatu",
+    "settings": "Kudeatu urrunekoak"
   },
   "compare": {
     "title": "Konparatu karpetak",
@@ -673,7 +1138,7 @@
       "remove": "Kendu urrunekoa",
       "none": "Oraindik ez dago urrunekorik",
       "noRclone": "rclone falta da ordenagailu honetan",
-      "noRcloneHint": "CannonCommanderrek rclone-rekin muntatzen ditu urrunekoak. Instalatu rclone, Windowsen WinFsp ere eta Macen macFUSE, eta ondoren abiarazi berriro CannonCommander.",
+      "noRcloneHint": "CannonCommander-ek rclone-rekin muntatzen ditu urrunekoak, eta rclone edukiontziarekin batera dator. Instalatu rclone zerbitzari honetan eta abiarazi berriro CannonCommander.",
       "removeText1": "{name} desmuntatu eta ahaztu egiten da, sarbide-datuekin batera.",
       "removeText2": "{type} zerbitzuko fitxategiak dauden lekuan geratzen dira.",
       "mount": "Muntatu",
@@ -691,24 +1156,6 @@
       "cacheFull": "Osoa",
       "atMost": "Gehienez",
       "atMostTip": "/mnt/cache/appdata/cannoncommander/rclone karpetan dago.",
-      "sftpSub": "SSH duten zerbitzariak",
-      "smbSub": "NAS eta Windows",
-      "webdavSub": "Nextcloud eta gehiago",
-      "signIn": "Hasi saioa {who} bidez",
-      "searchType": "Bilatu mota",
-      "noType": "Ez da ezer aurkitu. SFTP eta WebDAV ia edozein zerbitzaritan dabiltza.",
-      "host": "Zerbitzaria",
-      "share": "Partekatutako baliabidea",
-      "user": "Erabiltzailea",
-      "password": "Pasahitza",
-      "domain": "Domeinua",
-      "url": "Helbidea",
-      "vendor": "Hornitzailea",
-      "other": "Beste bat",
-      "endpoint": "Amaiera-puntua",
-      "endpointTip": "AWS ez denean bakarrik behar da.",
-      "folder": "Hornitzailearen karpeta",
-      "folderTip": "Utzi hutsik dena hartzeko. Bestela, karpeta hori bakarrik, adibidez /Argazkiak.",
       "account": "Kontua",
       "accountTip": "CannonCommander-ek token bat bakarrik jasotzen du, inoiz ez zure pasahitza.",
       "signInAt": "Hasi saioa {who} zerbitzuan",
@@ -731,14 +1178,158 @@
       "mountAt": "Muntatu hemen",
       "mountAtTip": "Karpeta honen azpian agertzen dira fitxategiak fitxategi-kudeatzailean.",
       "underRemotes": "Karpetak /remotes azpian egon behar du, adibidez /remotes/{name}",
-      "connection": "Konexioa",
       "connected": "Konektatuta",
-      "testFailed": "Konexioak ez du oraindik horrela funtzionatzen",
       "addedAt": "{name} hemen muntatuta dago: {mount}",
       "signedInPill": "Saioa hasita",
       "failedPill": "Errorea",
       "mountFailed": "Ezin izan da muntatu: {error}",
-      "savedNotMounted": "{name} gordeta dago, baina ezin izan da muntatu"
+      "savedNotMounted": "{name} gordeta dago, baina ezin izan da muntatu",
+      "search": "Bilatu hornitzaileak",
+      "loading": "rclone-ri galdetzen zeri irits dakiokeen",
+      "noCatalog": "rclone-k ez du oraindik erantzuten",
+      "unknownType": "rclone honek ez du {type} backendik",
+      "pickMore": "rclone-ren beste backend batzuk: {count}",
+      "searchNone": "Ezer ez dator bat «{query}»-rekin. Beste zerbitzu gehienek {s3} edo {webdav} erabiliz funtzionatzen dute.",
+      "g": {
+        "cloud": "Hodeiak",
+        "storage": "Objektu-biltegia",
+        "protocol": "Zerbitzariak eta protokoloak"
+      },
+      "p": {
+        "smb": "SMB / Windows partekatzea",
+        "s3": "S3rekin bateragarria",
+        "crypt": "Zifratua",
+        "alias": "Ezizena",
+        "archive": "Artxibo-fitxategiak",
+        "cache": "Cachea",
+        "chunker": "Zatitan banatua",
+        "combine": "Urruneko konbinatuak",
+        "compress": "Konprimitua",
+        "hasher": "Kontrol-baturak",
+        "union": "Urruneko bateratuak",
+        "memory": "Memorian"
+      },
+      "ph": {
+        "smb": "NAS batean edo Windows ordenagailu batean partekatutako karpeta bat.",
+        "sftp": "SSH bidez iristen zaren zerbitzari bat.",
+        "webdav": "Edozein WebDAV zerbitzari. Nextcloud, ownCloud, OpenCloud eta OxiCloud-ek beren lauza dute Hodeiak atalean.",
+        "ftp": "FTP zerbitzari bat, zifratuta edo zifratu gabe.",
+        "http": "Irakurtzeko soilik, web zerbitzari arrunt batetik.",
+        "crypt": "Beste urruneko bat biltzen du eta bertan sartzen dena zifratzen du.",
+        "s3": "Amazon S3 eta haren protokoloa hitz egiten duten zerbitzu ugariak.",
+        "hidrive": "IONOS-en hodeiko biltegia.",
+        "icloud": "Zure Apple ID-aren pasahitzarekin eta rclone config-eko konfiantza-token batekin hasten du saioa. 30 egunen buruan Apple-k berriro galdetzen du.",
+        "googlephotos": "Argazkiak soilik, eta batez ere irakurtzeko.",
+        "selfHosted": "Zuk zeuk kudeatzen duzun objektu-biltegia. Bere amaiera-puntuaren helbidea behar du.",
+        "doi": "Argitaratutako ikerketa-datu multzo bat irakurtzen du bere DOIaren bidez.",
+        "alias": "Dagoeneko duzun urruneko baten bigarren izena, edo haren barruko karpeta batena.",
+        "archive": "Beste urruneko bateko ZIP eta Squashfs fitxategiak irakurtzen ditu, deskonprimitu gabe.",
+        "cache": "Beste urruneko baten kopia lokala gordetzen du. rclone-k ez du gehiago garatzen.",
+        "chunker": "Fitxategi handiak zatitan banatzen ditu, fitxategi-tamainari muga jartzen dioten zerbitzuetarako.",
+        "combine": "Hainbat urruneko bakar baten karpeta gisa erakusten ditu.",
+        "compress": "Beste urruneko bat biltzen du eta bertan sartzen dena konprimitzen du.",
+        "hasher": "Kontrol-baturak gordetzen ditu berezkorik ez duen urruneko batentzat.",
+        "union": "Hainbat urrunekoren edukia bakar batean batzen du.",
+        "memory": "Fitxategiak memorian gordetzen ditu rclone gelditu arte. Probak egiteko ona."
+      },
+      "o": {
+        "user": "Erabiltzaile-izena",
+        "pass": "Pasahitza",
+        "host": "Zerbitzaria",
+        "url": "Helbidea",
+        "port": "Ataka",
+        "domain": "Domeinua",
+        "vendor": "Zerbitzari mota",
+        "provider": "Hornitzailea",
+        "region": "Eskualdea",
+        "endpoint": "Amaiera-puntua",
+        "account": "Kontua",
+        "key": "Gakoa",
+        "keyFile": "Gako-fitxategia",
+        "accessKey": "Sarbide-gakoa",
+        "secretKey": "Gako sekretua",
+        "accessGrant": "Sarbide-baimena",
+        "clientId": "Bezeroaren IDa",
+        "clientSecret": "Bezeroaren sekretua",
+        "remote": "Bildu beharreko urrunekoa",
+        "library": "Liburutegia",
+        "hostname": "Ostalari-izena",
+        "scope": "Baimenak",
+        "twoFactor": "Bi faktoreko kodea",
+        "shareName": "Partekatzearen izena",
+        "upstreams": "Batu beharreko urrunekoak",
+        "accessToken": "Sarbide-tokena",
+        "apiKey": "API gakoa",
+        "apiUrl": "API helbidea",
+        "apiPassword": "API pasahitza",
+        "passphrase": "Pasaesaldia",
+        "tls": "TLS",
+        "explicitTls": "TLS esplizitua",
+        "hostKeys": "Ainguratutako zerbitzari-gakoak"
+      },
+      "oh": {
+        "url": "Biltegiaren helbide osoa, zerbitzariaren izenaren ondoko bidea barne. Hodei batek bere ezarpenetan erakusten du, WebDAV atalean.",
+        "user": "Saioa hasteko erabiltzen duzun izena, ez bistaratzeko izena.",
+        "pass": "Kontu honen pasahitza. Zerbitzuak aplikazio-pasahitzak eskaintzen baditu, horietako bat seguruagoa da.",
+        "passCloud": "Hemen aplikazio-pasahitz bat doa, ez zure saio-hasierako pasahitza. Nextcloud-ek Ezarpenak, Segurtasuna atalean sortzen du, eta OpenCloud-ek Kontua, Aplikazio-tokenak atalean.",
+        "host": "Makinaren izena edo IPa, adibidez nas edo 192.168.1.20, http:// gabe eta biderik gabe.",
+        "port": "Zerbitzuak bere ohiko atakan entzuten ez badu bakarrik.",
+        "accessKey": "Gakoaren IDa, bikotearen erdi laburragoa eta publikoa.",
+        "secretKey": "Bikotearen erdi sekretua. Behin bakarrik erakusten da, gakoa sortzean.",
+        "endpoint": "Zure zerbitzariaren helbidea atakarekin, adibidez http://192.168.1.20:9000. Amazon berarentzat, utzi hutsik.",
+        "region": "Bucketa dagoen eskualdea. Norberak kudeatutako biltegiek normalean edozein hitz onartzen dute, eta us-east-1 ia beti dabil.",
+        "vendor": "Zer WebDAV zerbitzari mota den. Zalantzarik baduzu, aukeratu other.",
+        "keyFile": "Gako pribaturako bidea, CannonCommander exekutatzen den zerbitzarian.",
+        "remote": "Honen oinarrian dagoen urrunekoa, nahi baduzu karpeta batekin, adibidez nas:argazkiak.",
+        "upstreams": "Batu beharreko urrunekoak, zuriunez bereizita, adibidez nas:argazkiak cloud:argazkiak.",
+        "passphrase": "Hura gabe ezin da gordetakoa berriro irakurri. Gorde kopia bat leku seguru batean.",
+        "hostKeys": "Zerbitzariak bere burua egiaztatzeko erabili zuen gakoa. Inoiz beste bat erakusten badu, CannonCommander-ek baztertu egiten du.",
+        "shape": "Itxura hau du: {shape}",
+        "serverDefault": "Zerbitzariak {value} espero du, bere ezarpenek besterik esaten ez badute.",
+        "authAppPassword": "Erabili zure kontuaren segurtasun-ezarpenetako aplikazio-pasahitz bat. Bi urratseko saio-hasierarekin, saio-hasierako pasahitzak ez du hemen funtzionatzen.",
+        "authAccessKey": "Zerbitzuaren kontsolako gako-bikote bat. Sekretua normalean behin bakarrik erakusten da.",
+        "authApiKey": "Zerbitzuaren ezarpenetako API gako bat.",
+        "authLogin": "Beste edozein lekutan erabiltzen dituzun erabiltzaile-izen eta pasahitz berak.",
+        "authLoginToken": "Kontuaren segurtasun-orriko saio-hasierako token pertsonal bat. Probak behin trukatzen du saio-hasiera iraunkor baten truke.",
+        "authWhere": "Hemen sortzen duzu: {url}",
+        "rcloneName": "rclone-k eremu honi {name} deitzen dio."
+      },
+      "q": {
+        "drive": "Unitatea",
+        "workspace": "Lan-eremua",
+        "team": "Taldea",
+        "other": "Aukera",
+        "hint": "Zure saioak bat baino gehiago irekitzen ditu. Aukeratu bat eta probatu berriro.",
+        "pick": "Aukeratu bat"
+      },
+      "path": {
+        "folder": "Karpeta",
+        "share": "Partekatzea",
+        "bucket": "Bucketa"
+      },
+      "pathTip": {
+        "folder": "Utzi hutsik denerako, edo idatzi karpeta bat, adibidez /Argazkiak.",
+        "share": "Zerbitzariko karpeta partekatua. Hura gabeko proba batek partekatzeak zerrendatzen ditu aukeratzeko.",
+        "bucket": "Utzi hutsik gakoak ikusten dituen bucket guztietarako, edo idatzi bat."
+      },
+      "pickShare": "Aukeratu partekatzea",
+      "hostKey": "Zerbitzari-gakoa",
+      "hostKeyTip": "Konparatu zure zerbitzariak erakusten duen hatz-markarekin, adibidez ssh-keygen -lf erabiliz. Gordetzean, urrunekoak gako hau bera gogoratzen du.",
+      "more": "Ezarpen gehiago",
+      "moreCount": "Beste aukera batzuk: {count}",
+      "moreTip": "rclone-k urruneko mota honetarako eskaintzen duen gainerako guztia. Balio lehenetsiak egokiak izaten dira gehienetan.",
+      "moreShow": "Erakutsi",
+      "moreHide": "Ezkutatu",
+      "ok": "Konektatuta",
+      "okFree": "Konektatuta, {free} libre",
+      "notConnected": "Konektatu gabe",
+      "fail": {
+        "missing": "Saio-hasierak funtzionatzen du, baina {path} ez dago han",
+        "timeout": "Urrunekoak ez du garaiz erantzun",
+        "hostKey": "Zerbitzariak gordetakoa ez den beste gako bat erakusten du. Berriro instalatu bada, hustu ainguratutako zerbitzari-gakoak eta probatu berriro. Bestela, baliteke norbait tartean entzuten egotea.",
+        "address": "Saio-hasierak funtzionatzen du, baina helbide honetan ez dago ezer",
+        "other": "rclone-k dio: {error}"
+      }
     },
     "roles": {
       "admin": "Administratzailea",
@@ -2855,452 +3446,6 @@
     "nothingMoved": {
       "one": "Ez da ezer mugitu. Helburuko fitxategia bera da eta dagoen bezala geratzen da",
       "other": "Ez da ezer mugitu. Helburuko {n} fitxategiak berak dira eta dauden bezala geratzen dira"
-    }
-  },
-  "trash": {
-    "delete": "Ezabatu",
-    "deleteNow": "Ezabatu betiko",
-    "deleteOne": "Ezabatu {name}",
-    "deleteMany": {
-      "one": "Ezabatu {n} elementu",
-      "other": "Ezabatu {n} elementu"
-    },
-    "toTrash": "Zakarrontzira",
-    "toTrashTip": "{days} egun geratzen da zakarrontzian eta leheneratu daiteke. Etengailu hau gabe berehala desagertzen da.",
-    "toTrashTipSystem": "Helmuga {bin} da, eta leheneratu daiteke. Etengailu hau gabe berehala desagertzen da.",
-    "whereTrash": "{size}, zakarrontzira doa eta {days} egunez leheneratu daiteke",
-    "whereSystem": "{size}, helmuga {bin} da eta leheneratu daiteke",
-    "whereGone": "{size}, gero betiko desagertzen da",
-    "forever": "Ezabatu betiko",
-    "inTrash": "{what} zakarrontzian",
-    "deleted": "{what} ezabatuta",
-    "title": "Zakarrontzia",
-    "binWindows": "Windowsen zakarrontzia",
-    "binSystem": "sistemaren zakarrontzia",
-    "emptyTitle": "Zakarrontzia hutsik dago",
-    "emptyText": "Ezabatzen duzuna {days} egun geratzen da hemen, betiko desagertu aurretik.",
-    "emptyTextSystem": "Ezabatzen duzunaren helmuga {bin} da. Hemen berreskuratzen duzu, beste edozein fitxategi-kudeatzailetan bezala.",
-    "toFiles": "Joan fitxategietara",
-    "content": "Edukia",
-    "contentPill": "{what}, {size}",
-    "next": "Hurrengo betiko ezabatzea",
-    "nextOn": "{date}",
-    "nextTip": "Zakarrontziko guztia betiko kentzen da ezabatu eta {days} egunera. Epea Ezarpenak, Fitxategiak atalean ezartzen duzu.",
-    "where": "Kokapena",
-    "whereTip": "Mahaigaineko aplikazioan, CannonCommanderrek sistemaren zakarrontzia erabiltzen du. Sistemak erabakitzen du gauzak zenbat denboraz gordetzen dituen.",
-    "listTitle": "Ezabatutako elementuak",
-    "col": {
-      "name": "Izena",
-      "from": "Jatorria",
-      "size": "Tamaina",
-      "deleted": "Ezabatuta"
-    },
-    "more": "Gehiago",
-    "mark": "Hautatu",
-    "byTip": "{by} erabiltzaileak ezabatua, betiko desagertuko da {date} egunean",
-    "restore": "Leheneratu",
-    "restoreMany": {
-      "one": "Leheneratu {n}",
-      "other": "Leheneratu {n}"
-    },
-    "purge": "Ezabatu betiko",
-    "restoreSel": "Leheneratu hautapena ({n})",
-    "purgeSel": "Ezabatu hautapena betiko ({n})",
-    "selectAll": "Hautatu dena",
-    "empty": "Hustu zakarrontzia",
-    "emptySystem": {
-      "one": "Honek {bin} osorik husten du, bere sarrera bakarrarekin.",
-      "other": "Honek {bin} osorik husten du: {n} sarrera guztiak, beste programenak ere bai."
-    },
-    "andMore": {
-      "one": "eta beste {n}",
-      "other": "eta beste {n}"
-    },
-    "gone": "Gero desagertu egiten da eta ezin da leheneratu.",
-    "restored": "{what} leheneratuta",
-    "restoredTo": "{what} leheneratuta hemen: {from}",
-    "go": "Joan hara",
-    "purged": "{what} betiko ezabatuta, {size} libre",
-    "failed": "Ez du funtzionatu: {error}",
-    "noBinTitle": "Ez dago zakarrontzirik unitate honetan",
-    "noBinText": "{what} zakarrontzirik gabeko unitate batean dago, sareko unitate batean adibidez. Betiko ezabatu nahi duzu horren ordez? Gero ezin izango da leheneratu."
-  },
-  "undo": {
-    "undo": "Desegin",
-    "list": "Azken ekintzak",
-    "head": "Desegin",
-    "empty": "Oraindik ez dago desegiteko ezer",
-    "nothing": "Hemen ez dago desegiteko ezer",
-    "taken": "Desegina: {label}",
-    "items": {
-      "one": "{n} elementu",
-      "other": "{n} elementu"
-    },
-    "justNow": "oraintxe",
-    "minutes": {
-      "one": "duela {n} min",
-      "other": "duela {n} min"
-    },
-    "hours": {
-      "one": "duela {n} h",
-      "other": "duela {n} h"
-    },
-    "kind": {
-      "rename": "«{name}» izena «{to}» bihurtu da",
-      "mkdir": "«{name}» karpeta sortuta",
-      "touch": "«{name}» fitxategia sortuta",
-      "copy": "{what} kopiatuta → {to}",
-      "move": "{what} mugituta → {to}",
-      "trash": "{what} zakarrontzira bidalita",
-      "renameBatch": "{what}: izena aldatuta",
-      "link": "«{name}» esteka sortuta"
-    }
-  },
-  "unraid": {
-    "and": " eta ",
-    "cache": "Cache",
-    "array": "Array",
-    "theCache": "Cache",
-    "wakesOne": "{disks} lotan dago eta orain esnatzen ari da, segundo batzuk behar ditu",
-    "wakesMany": "{disks} lotan daude eta orain esnatzen ari dira, segundo batzuk behar dituzte",
-    "parity": {
-      "check": "Parity egiaztapena",
-      "rebuild": "Rebuild",
-      "clear": "Disko berria prestatzen"
-    },
-    "parityTip": "Zerbitzarian exekutatzen da, lan handiak itxaroten ari dira bitartean",
-    "parityPausedTip": "Pausatuta dago orain, zure lanak ohi bezala dabiltza bitartean",
-    "parityDone": "Parity egiaztapena amaitu da, zain zeuden lanek jarraitzen dute orain",
-    "pct": "% {pct}",
-    "diskShare": "Disk share",
-    "diskShareTip": "Zuzenean {disk} diskoan zaude. Ez kopiatu edo mugitu hemendik /mnt/user-era edo alderantziz, bestela Unraid-ek fitxategiak 0 bytera moztu ditzake.",
-    "diskAsleep": " Diskoa lotan dago, zerrenda indizetik dator.",
-    "only": "{store} bakarrik",
-    "shareTip": "{share} share-a: biltegi nagusia {first}{second}. ",
-    "secondary": ", bigarren biltegia {second}",
-    "noSecondary": ", bigarren biltegirik ez",
-    "stays": "Dena hemen geratzen da: {pool}.",
-    "straight": "Fitxategi berriak zuzenean hona doaz: {disks}.",
-    "toPrimary": "Fitxategi berriak {pool} biltegira doaz, eta Mover-ek Array-ean ({disks}) geratzen dena hara eramaten du.",
-    "toSecondary": "Fitxategi berriak {pool} biltegira doaz, eta Mover-ek {disks} diskoetara eramaten ditu, {when}.",
-    "waiting": {
-      "one": " Hemen fitxategi bat dago oraindik, {size}, {pool} biltegian.",
-      "other": " Hemen {n} fitxategi daude oraindik, {size}, {pool} biltegian."
-    },
-    "when": {
-      "at": "{time}etan",
-      "hourly": "orduro",
-      "hours": {
-        "one": "orduro",
-        "other": "{n} orduro"
-      },
-      "next": "hurrengo exekuzioan"
-    },
-    "cacheFile": "Oraindik {pool} biltegian dago, Mover-ek Array-era eramango du fitxategia",
-    "cacheDir": "Hemen barruan zerbait dago oraindik {pool} biltegian",
-    "cacheOnly": "Cache-n bakarrik",
-    "cachePill": "Cache bakarrik",
-    "filterOff": "Desaktibatu iragazkia",
-    "onCache": {
-      "one": "{n} Cache-n",
-      "other": "{n} Cache-n"
-    },
-    "moonTip": "{disk} lotan dago. CannonCommander-ek bere karpetak indizetik erakusten ditu, fitxategi bat irekitzeak bakarrik esnatzen du.",
-    "spinDown": "Lokartu diskoak",
-    "sleepsOne": "{disks} lotan dago orain",
-    "sleepsMany": "{disks} lotan daude orain",
-    "perms": {
-      "title": "Ezarri baimenak Unraid-en eran",
-      "folder": "Karpeta",
-      "owner": "Jabea",
-      "ownerValue": "nobody:users (99:100)",
-      "ownerTip": "Horrela, Unraid-eko fitxategiak share-enak, Docker edukiontzienak eta sarearenak dira, denenak berdin.",
-      "rights": "Baimenak",
-      "rightsValue": "Karpetak 0777, fitxategiak 0666",
-      "rightsTip": "Denek irakurri eta idatz dezakete, karpetak ireki daitezke. Gero ez da fitxategirik exekutagarria izango.",
-      "affects": "Eragina du",
-      "affectsValue": "{files}, {dirs}",
-      "atLeast": "gutxienez {what}",
-      "counting": "zenbatzen",
-      "files": {
-        "one": "Fitxategi 1",
-        "other": "{n} fitxategi"
-      },
-      "dirs": {
-        "one": "Karpeta 1",
-        "other": "{n} karpeta"
-      },
-      "warnTitle": "Hau ezin da desegin",
-      "warnText": "{name} barruko guztiak baimen hauek jasotzen ditu, baita nahita bestela ezarri dituzun fitxategiek ere.",
-      "keptSome": " Karpeta hauek dauden bezala geratzen dira:",
-      "keptNone": " Hemen ez dago kanpoan utzi behar den ezer.",
-      "blockedTitle": "CannonCommander-ek ez du hemen baimenik ezartzen",
-      "blockedArchive": "Artxibo baten barruan ezin da ezer aldatu.",
-      "blockedText": "{path} honi dagokio: {own}. Han edukiontziek, VMek edo USB memoriak beren jabe eta baimenak behar dituzte.",
-      "reason": {
-        "appdata": "Edukiontzien datuak",
-        "system": "Docker eta VMak",
-        "domains": "VM irudiak",
-        "flash": "USB memoria"
-      },
-      "background": "Lan gisa exekutatzen da atzeko planoan",
-      "start": "Ezarri baimenak",
-      "running": "Baimenak ezartzen hemen: {name}",
-      "toJobs": "Lanak",
-      "objects": {
-        "one": "Elementu 1",
-        "other": "{n} elementu"
-      },
-      "kept": {
-        "one": "Karpeta 1",
-        "other": "{n} karpeta"
-      },
-      "done": "Baimenak ezarrita: {what}",
-      "doneKept": "Baimenak ezarrita: {what}, {kept} kanpoan utzita",
-      "failed": "Ezin izan dira baimenak ezarri hemen: {name}: {error}",
-      "server": "Zerbitzaria"
-    },
-    "where": {
-      "title": "Kokapena",
-      "on": "Hemen dago",
-      "onTip": "Datuak benetan dauden diskoa edo Pool-a. /mnt/user azpiko user share-ak disko guztiak batera erakusten ditu.",
-      "nothing": "ezer ez",
-      "links": "Esteka gogorrak",
-      "linksNone": "bat ere ez, bide hau bakarrik",
-      "linksTip": "Fitxategi bera bide hauetan ere badago. Behin bakarrik hartzen du lekua. Share muga batetik kopiatzeak edo mugitzeak fitxategi bereizi bihurtzen ditu.",
-      "copyPath": "Kopiatu bidea",
-      "copied": "Bidea kopiatuta"
-    }
-  },
-  "upload": {
-    "title": "Igo",
-    "dropHere": "Arrastatu fitxategiak hona",
-    "orClick": "edo egin klik aukeratzeko",
-    "target": "Helburua",
-    "targetTip": "Igotako fitxategiak panel aktiboan irekita dagoen karpetara doaz. Izen bereko fitxategiak badaude, CannonCommander-ek lehenik galdetzen du.",
-    "queue": "Ilara",
-    "queueTip": "Fitxategi handiak 10 MBko zatitan igotzen dira. Konexioa eteten bada, igoerak amaitutako azken zatitik jarraitzen du, baita orria berriro kargatu ondoren ere, fitxategia berriro aukeratzen duzunean.",
-    "pauseAll": "Pausatu guztiak",
-    "resumeAll": "Jarraitu guztiak",
-    "clear": "Kendu amaitutakoak",
-    "progress": "{done}/{all} eginda",
-    "bytes": "{done}/{total}",
-    "files": {
-      "one": "Fitxategi 1",
-      "other": "{n} fitxategi"
-    },
-    "nothing": "Oraindik ez dago ezer ilaran",
-    "pause": "Pausatu",
-    "resume": "Jarraitu",
-    "cancel": "Utzi",
-    "state": {
-      "waiting": "zain",
-      "running": "martxan",
-      "paused": "pausatuta",
-      "done": "eginda",
-      "cancelled": "bertan behera",
-      "failed": "huts egin du"
-    },
-    "keepsRunning": "Martxan jarraitzen du leihoa itxi arren",
-    "pickFolder": "Aukeratu karpeta",
-    "pickFiles": "Aukeratu fitxategiak",
-    "notHere": "Ezin da ezer igo karpeta honetara",
-    "done": "{what} igota hona: {path}",
-    "go": "Joan hara",
-    "failed": {
-      "one": "Ezin izan da fitxategi bat igo. Aukeratu berriro, eta igoerak azken zatitik jarraituko du.",
-      "other": "Ezin izan dira {n} fitxategi igo. Aukeratu berriro, eta igoerak azken zatitik jarraituko du."
-    },
-    "oneFailed": "Ezin izan da {name} igo: {error}"
-  },
-  "viewer": {
-    "title": "Ikusi",
-    "quickview": "Aurrebista beste panelean",
-    "download": "Deskargatu",
-    "edit": "Editatu",
-    "share": "Partekatu",
-    "unpack": "Erauzi",
-    "openIn": "Ireki {name} bidez",
-    "changed": "aldatuta: {time}",
-    "preview": "Aurrebista",
-    "pickFile": "Aukeratu fitxategi bat ezkerrean",
-    "failed": "Une honetan ezin da fitxategi hau irakurri.",
-    "and": "eta {rest}",
-    "img": {
-      "of": "{i}/{n}",
-      "fit": "Doitu",
-      "prev": "Aurreko irudia",
-      "prevTip": "Aurreko irudia (ezkerreko gezia)",
-      "next": "Hurrengo irudia",
-      "nextTip": "Hurrengo irudia (eskuineko gezia)"
-    },
-    "media": {
-      "play": "Erreproduzitu",
-      "playTip": "Erreproduzitu (zuriunea)",
-      "pause": "Pausatu",
-      "pauseTip": "Pausatu (zuriunea)",
-      "position": "Posizioa",
-      "subs": "Azpitituluak",
-      "audio": "Audio-pista",
-      "off": "Desaktibatuta",
-      "track": "{n}. pista",
-      "subFile": "Azpititulu-fitxategia",
-      "playBig": "Erreproduzitu leiho handian (F3)",
-      "prevTrack": "Aurreko pista",
-      "nextTrack": "Hurrengo pista",
-      "cantPlay": "Barkatu, nabigatzaileak ezin du fitxategi hau erreproduzitu. Deskargatzeak beti funtzionatzen du, ordea."
-    },
-    "langs": {
-      "de": "Alemana",
-      "en": "Ingelesa",
-      "fr": "Frantsesa",
-      "es": "Gaztelania",
-      "it": "Italiera",
-      "nl": "Nederlandera",
-      "pl": "Poloniera",
-      "cs": "Txekiera",
-      "hu": "Hungariera",
-      "tr": "Turkiera",
-      "pt": "Portugesa",
-      "ru": "Errusiera",
-      "ja": "Japoniera"
-    },
-    "text": {
-      "wrap": "Doitu lerroak",
-      "truncated": "Hasiera bakarrik",
-      "cut": "laburtuta"
-    },
-    "md": {
-      "rendered": "Errendatuta",
-      "source": "Iturburua"
-    },
-    "pages": {
-      "of": "{i}/{n} orria",
-      "page": "{n}. orria",
-      "prev": "Aurreko orria",
-      "prevTip": "Aurreko orria (PgUp)",
-      "next": "Hurrengo orria",
-      "nextTip": "Hurrengo orria (PgDn)"
-    },
-    "slides": {
-      "of": "{i}/{n} diapositiba",
-      "slide": "{n}. diapositiba",
-      "prev": "Aurreko diapositiba",
-      "next": "Hurrengo diapositiba"
-    },
-    "office": {
-      "doc": "Testu-dokumentua",
-      "sheet": "Kalkulu-orria",
-      "none": "Formatu honen aurrebistak Office zerbitzari bat behar du. Ezarpenak, Integrazioak atalean gehi dezakezu.",
-      "unreachable": "{name} ez dago eskuragarri une honetan. Hala ere, fitxategia deskarga dezakezu.",
-      "kinds": {
-        "none": "Office",
-        "onlyoffice": "OnlyOffice",
-        "eurooffice": "Euro-Office",
-        "collabora": "Collabora"
-      }
-    },
-    "arch": {
-      "browse": "Ireki karpeta bat bezala",
-      "unpacked": "{size} erauzita",
-      "unreadable": "Aurrebistak ezin du artxibo honen barrura begiratu une honetan.",
-      "limit": {
-        "one": "Aurrebistak lehen sarrera erakusten du ({n}).",
-        "other": "Aurrebistak lehen {n} sarrerak erakusten ditu."
-      }
-    },
-    "hex": {
-      "first": {
-        "one": "Lehen {n} bytea",
-        "other": "Lehen {n} byteak"
-      },
-      "tip": "Fitxategi mota honetarako ez dago aurrebistarik. Bista hamaseitarrak fitxategiaren hasiera erakusten du, diskoan dagoen bezala.",
-      "sqlite": "SQLite datu-basea",
-      "program": "Programa",
-      "binary": "Fitxategi bitarra"
-    },
-    "disk": {
-      "eyebrow": "Irudia",
-      "format": "Formatua",
-      "iso": "ISO 9660",
-      "raw": "Disko-irudi gordina",
-      "label": "Etiketa",
-      "boot": "Honekin abiarazten da",
-      "used": "Okupatuta",
-      "usedTip": "Irudia sakabanatua da. Diskoan benetan barruan duena bakarrik hartzen du.",
-      "sum": "Kontrol-batura",
-      "sumThere": "ondoan dago",
-      "sumNone": "bat ere ez",
-      "sumTip": "Irudiaren ondoan .sha256 fitxategi bat dago. Fitxategia, Egiaztatu kontrol-baturak menuan biak konparatzen dituzu.",
-      "parts": "Partizioak",
-      "content": "Edukia"
-    },
-    "dir": {
-      "none": "hutsik",
-      "empty": "Karpeta hau hutsik dago"
-    },
-    "details": {
-      "size": "Tamaina",
-      "content": "Edukia",
-      "format": "Formatua",
-      "changed": "Aldatuta",
-      "owner": "Jabea",
-      "rights": "Baimenak"
-    },
-    "epub": {
-      "book": "Liburu elektronikoa",
-      "prev": "Aurreko orria",
-      "next": "Hurrengo orria"
-    },
-    "model": {
-      "info": "3D eredua, {format}",
-      "hint": "Arrastatu eredua biratzeko, saguaren gurpilarekin hurbiltzen da"
-    },
-    "lang": {
-      "nginx": "Nginx",
-      "config": "Konfigurazioa",
-      "log": "Erregistroa",
-      "subtitle": "Azpitituluak",
-      "checksum": "Kontrol-batura",
-      "text": "Testua"
-    },
-    "n": {
-      "lines": {
-        "one": "{n} lerro",
-        "other": "{n} lerro"
-      },
-      "pages": {
-        "one": "{n} orri",
-        "other": "{n} orri"
-      },
-      "sheets": {
-        "one": "{n} orri",
-        "other": "{n} orri"
-      },
-      "slides": {
-        "one": "{n} diapositiba",
-        "other": "{n} diapositiba"
-      },
-      "files": {
-        "one": "{n} fitxategi",
-        "other": "{n} fitxategi"
-      },
-      "dirs": {
-        "one": "{n} karpeta",
-        "other": "{n} karpeta"
-      },
-      "morePictures": {
-        "one": "Beste irudi {n}",
-        "other": "Beste {n} irudi"
-      },
-      "moreObjects": {
-        "one": "Beste elementu {n}",
-        "other": "Beste {n} elementu"
-      },
-      "moreEntries": {
-        "one": "Beste sarrera {n}",
-        "other": "Beste {n} sarrera"
-      }
     }
   },
   "core": {

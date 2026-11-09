@@ -112,9 +112,6 @@ func run() error {
 		return fmt.Errorf("write the configuration: %w", err)
 	}
 	trimLog(filepath.Join(dir, logFile))
-	// rclone mounts the remotes below the data folder, as the container does
-	// below /remotes.
-	os.Setenv("CC_REMOTES_ROOT", filepath.Join(dir, "remotes"))
 
 	installed := isInstalled()
 	if installed {
@@ -161,8 +158,8 @@ func run() error {
 	})
 	err = app.Run()
 	stop()
-	// The server closes its database and ends its rclone; a shutdown that
-	// hangs is cut short so the program still ends.
+	// The server closes its database, and a shutdown that hangs is cut short
+	// so the program still ends.
 	select {
 	case <-served:
 	case <-time.After(30 * time.Second):

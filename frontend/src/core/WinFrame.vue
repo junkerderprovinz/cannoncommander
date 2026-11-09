@@ -18,7 +18,7 @@ const actions = computed<WindowAction[]>(() => props.w.foot.flatMap((f, k) => (f
   primary: f.primary,
   disabled: f.disabled,
   wayOut: isWayOut(f),
-  attrs: { 'data-f': String(k) },
+  attrs: { ...f.attrs, 'data-f': String(k), ...(f.tone ? { 'data-tone': f.tone } : {}) },
   onClick: () => { press(f); return false as const; },
 }])));
 const text = computed(() => ({ cancel: t('core.cancel'), close: t('core.close') }));

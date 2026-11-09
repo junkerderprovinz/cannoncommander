@@ -1,4 +1,4 @@
-sidebar cards: Verknüpfungen | Ordnerbaum
+sidebar cards: Verknüpfungen | Fernziele | Ordnerbaum
 tree: backups 107 GB 58 % 13 1 01.11.2026 | system 41 GB 22 % 2 0 02.11.2026 | isos 13 GB 7 % 4 0 02.11.2026 | downloads 12 GB 7 % 21 3 02.11.2026 | filme 7,6 GB 4 % 8 4 11.10.2026 | serien 4,3 GB 2 % 7 2 21.10.2026
 foot: 185 GB in 129 Dateien und 35 Ordnern delete disabled: true
 expanded: backups 107 GB 58 % 13 1 01.11.2026 | vm-win11-2026-10-01.img 64 GB 60 % 06.05.2026 | appdata-2026-10-31.tar.zst 18 GB 17 % 28.01.2026 | appdata-2026-10-24.tar.zst 18 GB 17 % 27.09.2026 | ubuntu-24.04.3-desktop-amd64.iso 6,1 GB 6 % 10.10.2026 | flash-2026-10-31.zip 412 MB 0 % 14.01.2026
