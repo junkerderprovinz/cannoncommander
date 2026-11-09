@@ -13,6 +13,13 @@
 .stile { user-select: none; -webkit-touch-callout: none; }
 .settings-body { overflow: auto; min-height: 0; padding: 0 2rem 2rem; }
 .settings-col { max-width: 52rem; display: flex; flex-direction: column; gap: 2.5rem; padding-top: .8rem; }
+/* A wide window has room for the names. Tiles that show their glyphs alone keep to the narrow column all the same,
+   and tiles that show their words alone drop the glyph, which stays wherever the column is too narrow for words. */
+@media (min-width: 1025px) {
+  :root[data-labels-tabs="glyph"] .settings { grid-template-columns: 3.25rem minmax(0, 1fr); }
+  :root[data-labels-tabs="glyph"] .stile { justify-content: center; padding: 0; }
+  :root[data-labels-tabs="text"] .stile > svg { display: none; }
+}
 @media (max-width: 1024px) { .settings { grid-template-columns: 3.25rem minmax(0, 1fr); } .stile { justify-content: center; padding: 0; } .stile span { display: none !important; } }
 @media (max-width: 600px) {
   .settings { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }

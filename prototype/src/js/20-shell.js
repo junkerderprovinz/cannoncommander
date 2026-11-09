@@ -98,7 +98,7 @@ CC.registerView('settings', {
     if (!cur) { host.innerHTML = `<div class="page-inner">${CC.card('Einstellungen', '<p class="muted">Noch keine Einstellungen gebaut.</p>')}</div>`; return; }
     CC.settingsTab_ = cur.id;
     host.innerHTML = `<div class="settings">
-      <nav class="tiles" role="tablist" aria-orientation="vertical" aria-label="Einstellungen">${tabs.map(t => `<button class="stile ${t.id === cur.id ? 'cur' : ''}" role="tab" aria-selected="${t.id === cur.id}" draggable="true" data-stab="${t.id}" data-tip="${esc(t.label)}">${g(t.g)}<span>${esc(t.label)}</span></button>`).join('')}</nav>
+      <nav class="tiles" role="tablist" aria-orientation="vertical" aria-label="Einstellungen">${tabs.map(t => `<button class="stile ${t.id === cur.id ? 'cur' : ''}" role="tab" aria-selected="${t.id === cur.id}" draggable="true" data-stab="${t.id}" data-tip="${esc(t.label)}" aria-label="${esc(t.label)}">${g(t.g)}<span>${esc(t.label)}</span></button>`).join('')}</nav>
       <div class="settings-body" id="settings-body"><div class="settings-col" id="settings-col"></div></div></div>`;
     cur.render($('#settings-col'));
     $('.stile.cur')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -120,6 +120,13 @@ CC.css(`
 .stile.dragging { opacity: .4; }
 .settings-body { overflow: auto; min-height: 0; padding: 0 2rem 2rem; }
 .settings-col { max-width: 52rem; display: flex; flex-direction: column; gap: 2.5rem; padding-top: .8rem; }
+/* A wide window has room for the names. Tiles that show their glyphs alone keep to the narrow column all the same,
+   and tiles that show their words alone drop the glyph, which stays wherever the column is too narrow for words. */
+@media (min-width: 1025px) {
+  :root[data-l-tabs="glyph"] .settings { grid-template-columns: 3.25rem minmax(0, 1fr); }
+  :root[data-l-tabs="glyph"] .stile { justify-content: center; padding: 0; }
+  :root[data-l-tabs="text"] .stile > svg { display: none; }
+}
 @media (max-width: 1024px) { .settings { grid-template-columns: 3.25rem minmax(0, 1fr); } .stile { justify-content: center; padding: 0; } .stile span { display: none !important; } }
 @media (max-width: 600px) {
   .settings { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }

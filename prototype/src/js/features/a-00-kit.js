@@ -329,7 +329,6 @@
 .btn.bad { background: color-mix(in srgb, var(--carbon-surface2), #ff8389 40%); }
 .win .well .seg, .card-body .well .seg { background: var(--carbon-surface3); }
 .win .well .seg button:not([aria-pressed="true"]):hover, .card-body .well .seg button:not([aria-pressed="true"]):hover { background: var(--carbon-hover-raised); }
-@media (max-width: 900px) { .settings { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) {
   .settings-body .frow, .win .frow { flex-wrap: wrap; }
   .settings-body .frow > .seg, .win .frow > .seg { flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; }
