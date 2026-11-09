@@ -226,3 +226,21 @@ func TestASecondLookTriesTheSandboxAgain(t *testing.T) {
 		t.Errorf("still known: %v", sandboxes.found)
 	}
 }
+
+// A Flatpak cannot make namespaces, and the AppArmor profile would not
+// change that, so it neither tries bwrap nor offers the profile.
+func TestAFlatpakNeitherTriesTheSandboxNorOffersTheProfile(t *testing.T) {
+	t.Setenv("FLATPAK_ID", "io.github.junkerderprovinz.cannoncommander")
+	warned := noteWarnings(t)
+	looked := false
+	look := func(string) (string, error) { looked = true; return "/usr/bin/bwrap", nil }
+	if s := findSandbox(look, fstest.MapFS{}); s.program != "" || looked || len(*warned) != 0 {
+		t.Errorf("got %+v, looked for bwrap %v, warned %q", s, looked, *warned)
+	}
+	f := newFixture(t)
+	f.root = fstest.MapFS{"proc/sys/kernel/apparmor_restrict_unprivileged_userns": &fstest.MapFile{Data: []byte("1\n")}}
+	f.install()
+	if got := Sandboxing(); got.Sandboxed || got.Restricted || got.Allowed || got.Profiled {
+		t.Errorf("got %+v", got)
+	}
+}

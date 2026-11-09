@@ -69,6 +69,27 @@ func TestTheDesktopIsReadFromTheEnvironment(t *testing.T) {
 	}
 }
 
+func TestAFlatpakReadsTheComputersDesktop(t *testing.T) {
+	env := map[string]string{
+		"HOME": "/home/jdp", "FLATPAK_ID": "io.github.junkerderprovinz.cannoncommander",
+		"XDG_DATA_HOME":       "/home/jdp/.var/app/io.github.junkerderprovinz.cannoncommander/data",
+		"XDG_CONFIG_HOME":     "/home/jdp/.var/app/io.github.junkerderprovinz.cannoncommander/config",
+		"XDG_CACHE_HOME":      "/home/jdp/.var/app/io.github.junkerderprovinz.cannoncommander/cache",
+		"XDG_DATA_DIRS":       "/app/share:/usr/share:/usr/share/runtime/share:/run/host/share",
+		"HOST_XDG_CACHE_HOME": "/srv/cache",
+	}
+	d := FromEnv(func(k string) string { return env[k] }, nil)
+	if !slices.Equal(d.Data, []string{"/home/jdp/.local/share", "/run/host/usr/local/share", "/run/host/usr/share", "/usr/share"}) {
+		t.Errorf("data %q", d.Data)
+	}
+	if !slices.Equal(d.Config, []string{"/home/jdp/.config", "/run/host/etc/xdg"}) {
+		t.Errorf("config %q", d.Config)
+	}
+	if d.ThumbnailDir() != "/srv/cache/thumbnails" {
+		t.Errorf("thumbnails in %q, not in the cache the computer's file managers share", d.ThumbnailDir())
+	}
+}
+
 func TestTheLanguageListComesBeforeTheLocale(t *testing.T) {
 	env := map[string]string{"LANG": "en_US.UTF-8", "LC_MESSAGES": "fr_FR.UTF-8", "LANGUAGE": "de_AT:pt_BR@latin"}
 	d := FromEnv(func(k string) string { return env[k] }, nil)

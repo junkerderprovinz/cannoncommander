@@ -26,9 +26,10 @@ const saveUpdates = (change: Partial<AppSettings['updates']>) => {
   admin.saveApp({ updates: change }).then(() => toast(c('saved')), () => toast(c('notSaved'), 'warn'));
 };
 const autoCheck = computed({ get: () => !!app.value?.updates.autoCheck, set: (v: boolean) => saveUpdates({ autoCheck: v }) });
-// Only the desktop app can put a new version in place itself.
+// Only the desktop app can put a new version in place itself, and not as a Flatpak, which the software centre updates.
 const desktop = computed(() => sys.value?.deployment === 'desktop');
-const autoUpdate = computed({ get: () => desktop.value && !!app.value?.updates.autoUpdate, set: (v: boolean) => { if (desktop.value) saveUpdates({ autoUpdate: v }); } });
+const selfUpdating = computed(() => desktop.value && !sys.value?.flatpak);
+const autoUpdate = computed({ get: () => selfUpdating.value && !!app.value?.updates.autoUpdate, set: (v: boolean) => { if (selfUpdating.value) saveUpdates({ autoUpdate: v }); } });
 
 // A version number is a plain link to its release page, as in every app of the workshop.
 const plain = (v?: string) => v?.replace(/^v/, '');
@@ -83,8 +84,8 @@ const give = computed(() => [
   <Card v-if="app" :title="c('app.updates')">
     <FieldRowGroup>
       <FieldRow :label="c('app.autoCheck')" :hint="c(desktop ? 'app.autoCheckDesktopTip' : 'app.autoCheckTip')"><Toggle v-model="autoCheck" /></FieldRow>
-      <!-- A container cannot replace itself, so there this one stays off and says why. -->
-      <FieldRow :label="c('app.autoUpdate')" :hint="c(desktop ? 'app.autoUpdateDesktopTip' : 'app.autoUpdateTip')"><Toggle v-model="autoUpdate" :disabled="!desktop" /></FieldRow>
+      <!-- A container and a Flatpak cannot replace themselves, so there this one stays off and says why. -->
+      <FieldRow :label="c('app.autoUpdate')" :hint="c(sys?.flatpak ? 'app.autoUpdateFlatpakTip' : desktop ? 'app.autoUpdateDesktopTip' : 'app.autoUpdateTip')"><Toggle v-model="autoUpdate" :disabled="!selfUpdating" /></FieldRow>
     </FieldRowGroup>
   </Card>
   <Card :title="c('info.help')" :hint="c('info.helpHint')">

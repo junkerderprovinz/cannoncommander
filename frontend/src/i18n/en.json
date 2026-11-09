@@ -530,6 +530,7 @@
     "notAFolder": "This is not a folder",
     "notArchive": "This is not an archive",
     "noTerminal": "CannonCommander finds no terminal program on this computer",
+    "terminalFlatpak": "As a Flatpak, CannonCommander cannot open this computer's terminal",
     "notElevatable": "This cannot go on with administrator rights",
     "notFound": "This is not there any more",
     "notInTrash": "This is not in the trash",

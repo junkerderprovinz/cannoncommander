@@ -243,6 +243,7 @@
     "autoUpdate": "Automatisch aktualisieren", "autoUpdateTip": "Ein Container kann sich nicht von innen selbst ersetzen. Aktualisiere ihn stattdessen im Docker-Tab von Unraid, mit docker pull oder mit Watchtower.",
     "autoCheckDesktopTip": "Solange das an ist, fragt CannonCommander beim Öffnen dieser Seite einmal bei GitHub, ob es eine neuere Version gibt.",
     "autoUpdateDesktopTip": "Einmal am Tag holt CannonCommander eine neuere Version, prüft sie und setzt sie beim nächsten Start ein.",
+    "autoUpdateFlatpakTip": "Das Flatpak bekommt seine Updates über dein Software-Center oder mit flatpak update.",
     "ready": "Neu starten für {v}",
     "check": "Nach Updates suchen", "checking": "Suche",
     "current": "Aktuell, {v}", "newer": "{v} ist da",
