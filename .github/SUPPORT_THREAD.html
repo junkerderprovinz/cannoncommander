@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+  Unraid Community Applications support thread for CannonCommander.
+  Structure: name and claim -> banner -> buttons -> What is this? ->
+  Highlights & Features -> Requirements -> Bugs, Problems, Wishes -> Credits
+  -> disclaimer.
+  The forum drops <style> and class attributes, so sizes are attributes and the
+  buttons sit in a one-row table to stay side by side.
+  Paste into the Unraid forum editor's source view.
+  Title: [Support] junkerderprovinz - CannonCommander
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[Support] junkerderprovinz - CannonCommander</title>
+</head>
+<body>
+
+<h1 style="text-align:center">CannonCommander</h1>
+<p style="text-align:center"><em>A two-pane file manager for Unraid that runs in your browser.</em></p>
+
+<p style="text-align:center">
+  <a href="https://github.com/junkerderprovinz/cannoncommander">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/cannoncommander-banner-logo.png" alt="CannonCommander" width="100%">
+  </a>
+</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><p><a href="https://ca.unraid.net/apps?q=cannoncommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/support-buttons/install-on-unraid.svg" alt="Install on Unraid" width="240"></a></p></td>
+      <td><p><a href="https://github.com/junkerderprovinz/cannoncommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/support-buttons/view-on-github.svg" alt="View on GitHub" width="240"></a></p></td>
+      <td><p><a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/support-buttons/buy-me-a-coffee.svg" alt="Buy me a coffee" width="240"></a></p></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>What is this?</h2>
+<p>Krusader and Total Commander are quick because you work in two panels side by side and press
+F5 to copy from one to the other. CannonCommander brings that way of working to your Unraid
+server, in the browser and without a desktop in a container. It knows about Unraid: which files
+sit on the cache and which on the array, sleeping disks, the parity check and the permissions
+Unraid sets. Remote storage comes in through <a href="https://rclone.org">rclone</a>, and a
+built-in MCP server lets an AI assistant work with your files under your own rights. The same
+interface also runs as a desktop app for Windows, macOS and Linux.</p>
+
+<h2>Highlights &amp; Features</h2>
+<ul>
+  <li>Two panels with tabs, a menu bar, a command search on Ctrl+K and the keys you know from Krusader: F3 views, F4 edits, F5 copies, F6 moves, F7 makes a folder and F8 deletes</li>
+  <li>Copies, moves and deletes run as jobs in the background, with speed, time left, pause, a speed limit and a rule for files that already exist, and they pick up again after a restart</li>
+  <li>Deleted files go to a trash on the same share first, and the last actions can be undone</li>
+  <li>Unraid in view: a badge on files that still sit on the cache, a warning before a copy wakes a sleeping disk, the parity check in the sidebar, and Set permissions the Unraid way to hand files to <code>nobody:users</code></li>
+  <li>Nine views per tab, quick look on the space bar and a preview in the other panel</li>
+  <li>Folder compare and sync, file compare, duplicates, disk usage as a tree or a treemap, batch rename with patterns, archives, checksums, split and join</li>
+  <li>A viewer and editor for pictures, video, audio, PDF, Markdown, code, Office files, e-books and 3D models, and an Office server such as OnlyOffice or Collabora can edit Office files</li>
+  <li>SFTP, SMB, WebDAV, S3, Google Drive and everything else rclone speaks, mounted inside the container so the server and other containers never see them</li>
+  <li>Share links with a password, an expiry date and download or upload limits, and a WebDAV server to mount your files as a drive</li>
+  <li>Users, groups and access rules, two-factor sign-in, passkeys, API tokens and single sign-on through OIDC</li>
+  <li>An MCP server for Claude, ChatGPT, Cursor and other assistants: each key gets its owner's rights, reads only until you allow writing, and never deletes anything for good</li>
+  <li>A desktop app for Windows, macOS and Linux with the same interface, from the <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest">releases page</a></li>
+  <li>English and German, light and dark themes</li>
+  <li>Images: <code>junkerderprovinz/cannoncommander:latest</code> on Docker Hub and <code>ghcr.io/junkerderprovinz/cannoncommander:latest</code>, for amd64 and arm64</li>
+</ul>
+
+<h2>Requirements</h2>
+<ul>
+  <li>Unraid 6.10+</li>
+  <li>On the first start the container writes a password for the user <code>admin</code> into its log (Docker tab, CannonCommander icon, Logs). Sign in with it and pick a new one of at least 12 characters</li>
+  <li>Keep the WebUI on your own network. To reach it from outside, put it behind a reverse proxy with https or use a VPN such as WireGuard or Tailscale</li>
+  <li>Remote storage needs <code>/dev/fuse</code> and the <code>SYS_ADMIN</code> capability, and the template sets both for you</li>
+  <li>Spinning disks down and Unraid notifications are off by default. To switch them on, set <code>CC_UNRAID_SOCKET</code> to <code>true</code> and map the paths the template describes</li>
+</ul>
+
+<h2>Bugs, Problems, Wishes</h2>
+<p>Something not working, a question or an idea? The best place for it is an issue on GitHub:
+<a href="https://github.com/junkerderprovinz/cannoncommander/issues">github.com/junkerderprovinz/cannoncommander/issues</a>.
+Everything stays in one place there, and nothing gets lost in a long thread.</p>
+<p>For a bug, whether you post it there or here, these help:</p>
+<ul>
+  <li>Unraid version (Settings → System Information)</li>
+  <li>Image tag (<code>latest</code> or a pinned version), or for the desktop app your system and the app's version</li>
+  <li>Output of <code>docker logs --tail 200 CannonCommander</code></li>
+  <li>What you did, what you expected and what happened instead</li>
+  <li>For remote storage, which kind it is (SFTP, SMB, S3 and so on)</li>
+</ul>
+
+<h2>Credits</h2>
+<p>CannonCommander started from the code of
+<a href="https://github.com/gtsteffaniak/filebrowser">FileBrowser Quantum</a> by Graham Steffaniak
+and contributors, which itself grew out of
+<a href="https://github.com/filebrowser/filebrowser">File Browser</a>. Both are under the Apache
+License 2.0, and their notices are kept in the repo's
+<a href="https://github.com/junkerderprovinz/cannoncommander/blob/main/NOTICE">NOTICE</a> file.
+Thank you to everyone who worked on them before us. Remote storage runs on
+<a href="https://rclone.org">rclone</a>, and the image brings <a href="https://ffmpeg.org">ffmpeg</a>,
+<a href="https://mupdf.com">MuPDF</a> and <a href="https://www.7-zip.org">7-Zip</a> for video, PDF
+and archives. If CannonCommander has earned a place on your server, toss a coin to your knight:
+you can <a href="https://buymeacoffee.com/junkerderprovinz">buy me a coffee</a>.</p>
+
+<hr>
+
+<p style="text-align:center"><em>Self-hosted, AGPL-3.0 licensed: you run it, you own your data and the responsibility.</em></p>
+
+</body>
+</html>
