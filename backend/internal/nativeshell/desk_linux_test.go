@@ -103,7 +103,11 @@ func (f *fixture) desk() *desk {
 	k := newDesk(d, nil)
 	k.root = f.root
 	k.hasOwner = func(name string) bool { return slices.Contains(f.owners, name) }
-	k.bwrap = f.bwrap
+	k.sandbox = sandbox{}
+	if f.bwrap != "" {
+		k.sandbox = sandbox{program: f.bwrap, isolate: isolations[0]}
+	}
+	k.service = nil
 	return k
 }
 

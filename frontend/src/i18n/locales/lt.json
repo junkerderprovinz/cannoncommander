@@ -2712,7 +2712,8 @@
     "propsSystemTip": "Atidaro tavo darbalaukio failų tvarkytuvės dialogo langą.",
     "propsOpen": "Atidaryti",
     "icons": "Sistemos piktogramos",
-    "iconsTip": "Visame sąraše rodo tavo sistemos piktogramas. Programos ir nuorodos savo piktogramą rodo ir be šio jungiklio."
+    "iconsTip": "Visame sąraše rodo tavo sistemos piktogramas. Programos ir nuorodos savo piktogramą rodo ir be šio jungiklio.",
+    "iconsTipLinux": "Visame sąraše rodo tavo sistemos piktogramas. Programos ir nuorodos savo piktogramą rodo bet kuriuo atveju. Miniatiūras CannonCommander piešia tik izoliuotoje aplinkoje. Kur to padaryti negalima, pavyzdžiui, Ubuntu 24.04, matai tik tas, kurias tavo failų tvarkytuvė jau sukūrė."
   },
   "shortcuts": {
     "title": "Spartieji klavišai",

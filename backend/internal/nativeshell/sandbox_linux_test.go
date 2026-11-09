@@ -3,6 +3,7 @@ package nativeshell
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -10,6 +11,8 @@ import (
 	"strings"
 	"testing"
 	"testing/fstest"
+
+	"github.com/gtsteffaniak/go-logger/logger"
 )
 
 // fakeBwrap stands in for bwrap: it notes its arguments next to itself,
@@ -64,7 +67,7 @@ func TestTheSandboxIsBuiltLikeGnomeDesktops(t *testing.T) {
 		{"only /usr", fstest.MapFS{"usr/bin/true": file, "lib32": file}, nil},
 	}
 	for _, c := range cases {
-		got := bwrapArgs("/usr/bin/bwrap", c.root, "/tmp/cc-thumbnail-1", "/home/u/a;rm -rf ~.png", "/tmp/input.png",
+		got := bwrapArgs("/usr/bin/bwrap", isolations[0], c.root, "/tmp/cc-thumbnail-1", "/home/u/a;rm -rf ~.png", "/tmp/input.png",
 			[]string{"gdk-pixbuf-thumbnailer", "-s", "256", "/tmp/input.png", "/tmp/thumbnail.png"})
 		if want := slices.Concat(head, c.layout, tail); !slices.Equal(got, want) {
 			t.Errorf("%s:\ngot  %q\nwant %q", c.name, got, want)
@@ -113,20 +116,67 @@ func TestBwrapIsTrustedOnlyAfterItRanOnce(t *testing.T) {
 		}
 	}
 	root := fstest.MapFS{}
-	if got := sandboxProgram(look(""), root); got != "" {
-		t.Errorf("missing: got %s", got)
+	noteWarnings(t)
+	if got := findSandbox(look(""), root); got.program != "" {
+		t.Errorf("missing: got %+v", got)
 	}
-	if got := sandboxProgram(look(broken), root); got != "" {
-		t.Errorf("broken: got %s", got)
+	if got := findSandbox(look(broken), root); got.program != "" {
+		t.Errorf("broken: got %+v", got)
 	}
 	for range 2 {
-		if got := sandboxProgram(look(works), root); got != works {
-			t.Errorf("works: got %s", got)
+		if got := findSandbox(look(works), root); got.program != works || !slices.Equal(got.isolate, isolations[0]) {
+			t.Errorf("works: got %+v", got)
 		}
 	}
 	b, _ := os.ReadFile(runs)
 	lines := strings.Split(strings.TrimSpace(string(b)), "\n")
-	if len(lines) != 2 || !strings.HasSuffix(lines[1], "--setenv GIO_USE_VFS local -- true") {
+	if len(lines) != len(isolations)+1 || !strings.HasSuffix(lines[len(lines)-1], "--setenv GIO_USE_VFS local -- true") {
 		t.Errorf("runs %q", lines)
+	}
+}
+
+func refusingBwrap(t *testing.T, refuse, reason string) string {
+	t.Helper()
+	p := filepath.Join(t.TempDir(), "bwrap")
+	script := "#!/bin/sh\nfor a do case \"$a\" in " + refuse + ") echo '" + reason + "' >&2; exit 1 ;; esac; done\nexit 0\n"
+	if err := os.WriteFile(p, []byte(script), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	return p
+}
+
+func noteWarnings(t *testing.T) *[]string {
+	t.Helper()
+	var warned []string
+	warn = func(format string, args ...any) { warned = append(warned, fmt.Sprintf(format, args...)) }
+	t.Cleanup(func() { warn = logger.Warningf })
+	return &warned
+}
+
+func TestASandboxFallsBackToTheNamespacesThisKernelAllows(t *testing.T) {
+	bwrap := refusingBwrap(t, "--unshare-all", "bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted")
+	warned := noteWarnings(t)
+	look := func(string) (string, error) { return bwrap, nil }
+	for range 2 {
+		if s := findSandbox(look, fstest.MapFS{}); s.program != bwrap || !slices.Equal(s.isolate, isolations[1]) {
+			t.Fatalf("got %+v", s)
+		}
+	}
+	if len(*warned) != 1 || !strings.Contains((*warned)[0], "RTM_NEWADDR") {
+		t.Errorf("warned %q", *warned)
+	}
+}
+
+func TestWhereNoSandboxWorksItsReasonsAreLoggedOnce(t *testing.T) {
+	bwrap := refusingBwrap(t, "--*", "bwrap: setting up uid map: Permission denied")
+	warned := noteWarnings(t)
+	look := func(string) (string, error) { return bwrap, nil }
+	for range 2 {
+		if s := findSandbox(look, fstest.MapFS{}); s.program != "" {
+			t.Fatalf("got %+v", s)
+		}
+	}
+	if len(*warned) != len(isolations)+1 || !strings.Contains((*warned)[1], "uid map") {
+		t.Errorf("warned %q", *warned)
 	}
 }

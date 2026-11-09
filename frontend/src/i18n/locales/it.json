@@ -2628,7 +2628,8 @@
     "propsSystemTip": "Apre la finestra di dialogo del file manager del tuo desktop.",
     "propsOpen": "Apri",
     "icons": "Icone di sistema",
-    "iconsTip": "Mostra ovunque nell'elenco le icone del tuo sistema. Programmi e collegamenti mostrano la propria icona anche con questa opzione disattivata."
+    "iconsTip": "Mostra ovunque nell'elenco le icone del tuo sistema. Programmi e collegamenti mostrano la propria icona anche con questa opzione disattivata.",
+    "iconsTipLinux": "Mostra ovunque nell'elenco le icone del tuo sistema. Programmi e collegamenti mostrano comunque la propria icona. CannonCommander crea le miniature solo in un ambiente isolato. Dove non è possibile, come su Ubuntu 24.04, vedi solo quelle che il tuo file manager ha già creato."
   },
   "shortcuts": {
     "title": "Scorciatoie da tastiera",

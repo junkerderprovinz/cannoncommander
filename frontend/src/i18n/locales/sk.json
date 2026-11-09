@@ -2712,7 +2712,8 @@
     "propsSystemTip": "Otvorí dialógové okno správcu súborov vášho pracovného prostredia.",
     "propsOpen": "Otvoriť",
     "icons": "Systémové ikony",
-    "iconsTip": "Zobrazí v celom zozname ikony vášho systému. Programy a odkazy zobrazujú vlastnú ikonu aj bez tohto prepínača."
+    "iconsTip": "Zobrazí v celom zozname ikony vášho systému. Programy a odkazy zobrazujú vlastnú ikonu aj bez tohto prepínača.",
+    "iconsTipLinux": "Zobrazí v celom zozname ikony vášho systému. Programy a odkazy zobrazujú vlastnú ikonu tak či tak. Náhľady kreslí CannonCommander iba v izolovanom prostredí. Kde to nejde, napríklad v Ubuntu 24.04, uvidíte iba tie, ktoré už vytvoril váš správca súborov."
   },
   "shortcuts": {
     "title": "Klávesové skratky",

@@ -2544,7 +2544,8 @@
     "propsSystemTip": "Öppnar dialogrutan i skrivbordets filhanterare.",
     "propsOpen": "Öppna",
     "icons": "Systemikoner",
-    "iconsTip": "Visar systemets ikoner överallt i listan. Program och genvägar visar sin egen ikon även när detta är av."
+    "iconsTip": "Visar systemets ikoner överallt i listan. Program och genvägar visar sin egen ikon även när detta är av.",
+    "iconsTipLinux": "Visar systemets ikoner överallt i listan. Program och genvägar visar sin egen ikon ändå. CannonCommander ritar bara miniatyrer i en isolerad miljö. Där det inte går, som på Ubuntu 24.04, ser du bara dem som din filhanterare redan har skapat."
   },
   "shortcuts": {
     "title": "Kortkommandon",

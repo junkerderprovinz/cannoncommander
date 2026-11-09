@@ -2460,7 +2460,8 @@
     "propsSystemTip": "Membuka dialog pengelola berkas desktop Anda.",
     "propsOpen": "Buka",
     "icons": "Ikon sistem",
-    "iconsTip": "Menampilkan ikon sistem Anda di seluruh daftar. Program dan pintasan tetap menampilkan ikonnya sendiri meski sakelar ini mati."
+    "iconsTip": "Menampilkan ikon sistem Anda di seluruh daftar. Program dan pintasan tetap menampilkan ikonnya sendiri meski sakelar ini mati.",
+    "iconsTipLinux": "Menampilkan ikon sistem Anda di seluruh daftar. Program dan pintasan tetap menampilkan ikonnya sendiri. CannonCommander hanya membuat gambar mini di lingkungan yang terisolasi. Jika itu tidak memungkinkan, seperti di Ubuntu 24.04, Anda hanya melihat yang sudah dibuat oleh pengelola berkas Anda."
   },
   "shortcuts": {
     "title": "Pintasan keyboard",

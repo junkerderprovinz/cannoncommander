@@ -2628,7 +2628,8 @@
     "propsSystemTip": "Abre a caixa de diálogo do gestor de ficheiros do seu ambiente de trabalho.",
     "propsOpen": "Abrir",
     "icons": "Ícones do sistema",
-    "iconsTip": "Mostra em toda a lista os ícones do seu sistema. Programas e atalhos mostram o próprio ícone mesmo com isto desligado."
+    "iconsTip": "Mostra em toda a lista os ícones do seu sistema. Programas e atalhos mostram o próprio ícone mesmo com isto desligado.",
+    "iconsTipLinux": "Mostra em toda a lista os ícones do seu sistema. Programas e atalhos mostram sempre o próprio ícone. O CannonCommander só gera miniaturas num ambiente isolado. Onde isso não é possível, como no Ubuntu 24.04, vê apenas as que o seu gestor de ficheiros já criou."
   },
   "shortcuts": {
     "title": "Atalhos de teclado",

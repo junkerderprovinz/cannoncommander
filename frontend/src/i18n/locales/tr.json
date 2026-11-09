@@ -2544,7 +2544,8 @@
     "propsSystemTip": "Masaüstünün dosya yöneticisinin iletişim kutusunu açar.",
     "propsOpen": "Aç",
     "icons": "Sistem simgeleri",
-    "iconsTip": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar bu anahtar kapalıyken de kendi simgelerini gösterir."
+    "iconsTip": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar bu anahtar kapalıyken de kendi simgelerini gösterir.",
+    "iconsTipLinux": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar zaten kendi simgelerini gösterir. CannonCommander küçük resimleri yalnızca yalıtılmış bir ortamda çizer. Bunun mümkün olmadığı yerlerde, örneğin Ubuntu 24.04'te, yalnızca dosya yöneticinin daha önce oluşturduklarını görürsün."
   },
   "shortcuts": {
     "title": "Klavye kısayolları",

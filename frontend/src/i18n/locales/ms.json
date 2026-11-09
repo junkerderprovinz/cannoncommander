@@ -2460,7 +2460,8 @@
     "propsSystemTip": "Membuka dialog pengurus fail desktop anda.",
     "propsOpen": "Buka",
     "icons": "Ikon sistem",
-    "iconsTip": "Menunjukkan ikon sistem anda di seluruh senarai. Program dan pintasan tetap menunjukkan ikon sendiri walaupun suis ini dimatikan."
+    "iconsTip": "Menunjukkan ikon sistem anda di seluruh senarai. Program dan pintasan tetap menunjukkan ikon sendiri walaupun suis ini dimatikan.",
+    "iconsTipLinux": "Menunjukkan ikon sistem anda di seluruh senarai. Program dan pintasan tetap menunjukkan ikon sendiri. CannonCommander hanya melukis lakaran kenit dalam persekitaran terpencil. Jika itu tidak boleh dilakukan, seperti pada Ubuntu 24.04, anda hanya melihat yang telah dibuat oleh pengurus fail anda."
   },
   "shortcuts": {
     "title": "Pintasan papan kekunci",

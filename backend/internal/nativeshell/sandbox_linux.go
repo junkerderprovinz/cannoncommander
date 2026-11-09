@@ -7,6 +7,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/gtsteffaniak/go-logger/logger"
 )
 
 // sandboxEnv is all of an environment a thumbnailer gets, as names and
@@ -14,12 +16,21 @@ import (
 // cache for the one run.
 var sandboxEnv = []string{"PATH", "/usr/local/bin:/usr/bin:/bin", "HOME", "/tmp", "GIO_USE_VFS", "local"}
 
+// isolations are the namespaces bwrap shuts a thumbnailer into, strongest
+// first. Some kernels refuse a process the loopback of a network namespace
+// but allow the others, so the second leaves the network out.
+var isolations = [][]string{
+	{"--unshare-all"},
+	{"--unshare-user-try", "--unshare-ipc", "--unshare-pid", "--unshare-uts", "--unshare-cgroup-try"},
+}
+
 // bwrapArgs wraps cmd in bubblewrap the way gnome-desktop runs its
 // thumbnailers: the system's programs and libraries read-only, outDir as a
-// private /tmp with the input read-only inside it at inside, no network and
-// none of this process's environment. root is the file system at /, read
-// to tell which of /bin, /lib and the others are links into /usr.
-func bwrapArgs(bwrap string, root fs.FS, outDir, input, inside string, cmd []string) []string {
+// private /tmp with the input read-only inside it at inside, the namespaces
+// of isolate and none of this process's environment. root is the file
+// system at /, read to tell which of /bin, /lib and the others are links
+// into /usr.
+func bwrapArgs(bwrap string, isolate []string, root fs.FS, outDir, input, inside string, cmd []string) []string {
 	args := []string{bwrap, "--ro-bind", "/usr", "/usr", "--ro-bind-try", "/etc/ld.so.cache", "/etc/ld.so.cache"}
 	for _, dir := range []string{"bin", "lib64", "lib", "lib32", "sbin"} {
 		if target, err := fs.ReadLink(root, dir); err == nil && strings.TrimPrefix(target, "/") == "usr/"+dir {
@@ -33,7 +44,9 @@ func bwrapArgs(bwrap string, root fs.FS, outDir, input, inside string, cmd []str
 	for _, dir := range []string{"/etc/alternatives", "/etc/fonts", "/var/cache/fontconfig"} {
 		args = append(args, "--ro-bind-try", dir, dir)
 	}
-	args = append(args, "--proc", "/proc", "--dev", "/dev", "--chdir", "/", "--unshare-all", "--die-with-parent", "--new-session", "--clearenv")
+	args = append(args, "--proc", "/proc", "--dev", "/dev", "--chdir", "/")
+	args = append(args, isolate...)
+	args = append(args, "--die-with-parent", "--new-session", "--clearenv")
 	for i := 0; i < len(sandboxEnv); i += 2 {
 		args = append(args, "--setenv", sandboxEnv[i], sandboxEnv[i+1])
 	}
@@ -43,31 +56,51 @@ func bwrapArgs(bwrap string, root fs.FS, outDir, input, inside string, cmd []str
 	return append(append(args, "--"), cmd...)
 }
 
-var sandboxes = struct {
-	sync.Mutex
-	works map[string]bool
-}{works: map[string]bool{}}
+// sandbox is bwrap and the namespaces it can make here, or no program
+// where it cannot shut a thumbnailer in.
+type sandbox struct {
+	program string
+	isolate []string
+}
 
-// sandboxProgram is bwrap where it can set up a sandbox here, or "". Where
-// user namespaces are off, as in many containers, bwrap is there and still
-// fails, so it is tried once with a program that does nothing.
-func sandboxProgram(look func(string) (string, error), root fs.FS) string {
+var (
+	sandboxes = struct {
+		sync.Mutex
+		found map[string]sandbox
+	}{found: map[string]sandbox{}}
+	warn = logger.Warningf
+)
+
+// findSandbox is the strongest sandbox bwrap can set up here. Where the
+// kernel restricts user namespaces, as Ubuntu does since 24.04, or a
+// container keeps them off, bwrap is there and still fails, so each way is
+// tried once with a program that does nothing, and why one failed is
+// logged that once.
+func findSandbox(look func(string) (string, error), root fs.FS) sandbox {
 	bwrap, err := look("bwrap")
 	if err != nil {
-		return ""
+		return sandbox{}
 	}
 	sandboxes.Lock()
 	defer sandboxes.Unlock()
-	works, tried := sandboxes.works[bwrap]
-	if !tried {
+	if s, tried := sandboxes.found[bwrap]; tried {
+		return s
+	}
+	var s sandbox
+	for _, isolate := range isolations {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		args := bwrapArgs(bwrap, root, "", "", "", []string{"true"})
-		works = exec.CommandContext(ctx, args[0], args[1:]...).Run() == nil
-		sandboxes.works[bwrap] = works
+		args := bwrapArgs(bwrap, isolate, root, "", "", "", []string{"true"})
+		out, err := exec.CommandContext(ctx, args[0], args[1:]...).CombinedOutput()
+		cancel()
+		if err == nil {
+			s = sandbox{program: bwrap, isolate: isolate}
+			break
+		}
+		warn("bwrap cannot shut thumbnailers in with %s here: %v %s", strings.Join(isolate, " "), err, strings.TrimSpace(string(out)))
 	}
-	if !works {
-		return ""
+	if s.program == "" {
+		warn("no thumbnailer of the system runs without a sandbox, so only the shared cache and a thumbnail service give pictures")
 	}
-	return bwrap
+	sandboxes.found[bwrap] = s
+	return s
 }
