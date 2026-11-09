@@ -138,6 +138,9 @@ module.exports = async (page, shot) => {
   await shot('a-export-done');
   await closeWin();
   await tab('info');
+  // A hover scrolls a button that peeks out only to its nearest edge but centres one out of sight, so a few pixels of
+  // page height would leave the two pages at different places.
+  await page.evaluate(() => document.querySelector('#a-coffee').scrollIntoView({ block: 'end' }));
   await page.hover('#a-coffee'); await wait(300);
   await shot('a-info-hover');
 
