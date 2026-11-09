@@ -2629,7 +2629,14 @@
     "propsOpen": "Abrir",
     "icons": "Iconos del sistema",
     "iconsTip": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono aunque esto esté desactivado.",
-    "iconsTipLinux": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono de todos modos. CannonCommander solo genera miniaturas dentro de un entorno aislado. Donde eso no es posible, como en Ubuntu 24.04, solo ves las que tu administrador de archivos ya ha creado."
+    "iconsTipLinux": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono de todos modos. CannonCommander solo genera miniaturas dentro de un entorno aislado. Donde eso no es posible, como en Ubuntu 24.04, solo ves las que tu administrador de archivos ya ha creado.",
+    "thumbs": "Miniaturas",
+    "thumbsTip": "Ubuntu solo deja entrar a un programa en un entorno aislado con un permiso propio. Al activarlo, CannonCommander añade una pequeña regla de AppArmor, que pide tu contraseña, y desde entonces genera las miniaturas por sí mismo. Al desactivarlo, la regla desaparece.",
+    "thumbsOnButton": "Activar las miniaturas del sistema",
+    "thumbsOffButton": "Desactivar las miniaturas del sistema",
+    "thumbsOn": "Listo, a partir de ahora CannonCommander genera las miniaturas por sí mismo.",
+    "thumbsOff": "Desactivado, la regla de AppArmor ya no está.",
+    "thumbsStillOut": "La regla está puesta, pero el entorno aislado sigue sin funcionar, lo sentimos."
   },
   "shortcuts": {
     "title": "Atajos de teclado",

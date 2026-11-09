@@ -2545,7 +2545,14 @@
     "propsOpen": "Åbn",
     "icons": "Systemikoner",
     "iconsTip": "Viser dit systems ikoner overalt i listen. Programmer og genveje viser deres eget ikon, også uden denne kontakt.",
-    "iconsTipLinux": "Viser dit systems ikoner overalt i listen. Programmer og genveje viser deres eget ikon under alle omstændigheder. CannonCommander tegner kun miniaturer i et afskærmet miljø. Hvor det ikke kan lade sig gøre, som på Ubuntu 24.04, ser du kun dem, din filhåndtering allerede har lavet."
+    "iconsTipLinux": "Viser dit systems ikoner overalt i listen. Programmer og genveje viser deres eget ikon under alle omstændigheder. CannonCommander tegner kun miniaturer i et afskærmet miljø. Hvor det ikke kan lade sig gøre, som på Ubuntu 24.04, ser du kun dem, din filhåndtering allerede har lavet.",
+    "thumbs": "Miniaturer",
+    "thumbsTip": "Ubuntu lukker kun et program ind i et afskærmet miljø med en særlig tilladelse. Når du slår det til, opretter CannonCommander en lille AppArmor-regel, som beder om din adgangskode, og tegner derefter selv miniaturer. Når du slår det fra, forsvinder reglen igen.",
+    "thumbsOnButton": "Slå systemminiaturer til",
+    "thumbsOffButton": "Slå systemminiaturer fra",
+    "thumbsOn": "Færdig, CannonCommander tegner nu selv miniaturer.",
+    "thumbsOff": "Slået fra, AppArmor-reglen er væk igen.",
+    "thumbsStillOut": "Reglen er på plads, men det afskærmede miljø virker desværre stadig ikke."
   },
   "shortcuts": {
     "title": "Tastaturgenveje",

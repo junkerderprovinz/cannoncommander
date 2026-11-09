@@ -2545,7 +2545,14 @@
     "propsOpen": "Openen",
     "icons": "Systeempictogrammen",
     "iconsTip": "Toont overal in de lijst de pictogrammen van je systeem. Programma's en snelkoppelingen tonen hun eigen pictogram ook zonder deze schakelaar.",
-    "iconsTipLinux": "Toont overal in de lijst de pictogrammen van je systeem. Programma's en snelkoppelingen tonen hoe dan ook hun eigen pictogram. CannonCommander maakt miniaturen alleen afgeschermd. Waar dat niet kan, zoals op Ubuntu 24.04, zie je alleen de miniaturen die je bestandsbeheer al heeft gemaakt."
+    "iconsTipLinux": "Toont overal in de lijst de pictogrammen van je systeem. Programma's en snelkoppelingen tonen hoe dan ook hun eigen pictogram. CannonCommander maakt miniaturen alleen afgeschermd. Waar dat niet kan, zoals op Ubuntu 24.04, zie je alleen de miniaturen die je bestandsbeheer al heeft gemaakt.",
+    "thumbs": "Miniaturen",
+    "thumbsTip": "Ubuntu laat een programma alleen met een eigen toestemming afgeschermd draaien. Bij inschakelen maakt CannonCommander met je wachtwoord een kleine AppArmor-regel aan en maakt daarna zelf miniaturen. Bij uitschakelen verdwijnt de regel weer.",
+    "thumbsOnButton": "Systeemminiaturen inschakelen",
+    "thumbsOffButton": "Systeemminiaturen uitschakelen",
+    "thumbsOn": "Klaar, CannonCommander maakt vanaf nu zelf miniaturen.",
+    "thumbsOff": "Uitgeschakeld, de AppArmor-regel is weer weg.",
+    "thumbsStillOut": "De regel staat er, maar afschermen lukt helaas nog steeds niet."
   },
   "shortcuts": {
     "title": "Sneltoetsen",

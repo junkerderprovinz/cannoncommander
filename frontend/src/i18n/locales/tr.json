@@ -2545,7 +2545,14 @@
     "propsOpen": "Aç",
     "icons": "Sistem simgeleri",
     "iconsTip": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar bu anahtar kapalıyken de kendi simgelerini gösterir.",
-    "iconsTipLinux": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar zaten kendi simgelerini gösterir. CannonCommander küçük resimleri yalnızca yalıtılmış bir ortamda çizer. Bunun mümkün olmadığı yerlerde, örneğin Ubuntu 24.04'te, yalnızca dosya yöneticinin daha önce oluşturduklarını görürsün."
+    "iconsTipLinux": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar zaten kendi simgelerini gösterir. CannonCommander küçük resimleri yalnızca yalıtılmış bir ortamda çizer. Bunun mümkün olmadığı yerlerde, örneğin Ubuntu 24.04'te, yalnızca dosya yöneticinin daha önce oluşturduklarını görürsün.",
+    "thumbs": "Küçük resimler",
+    "thumbsTip": "Ubuntu bir programı yalıtılmış ortama yalnızca ayrı bir izinle alır. Açtığında CannonCommander küçük bir AppArmor kuralı ekler, bunun için parolanı sorar ve bundan sonra küçük resimleri kendisi çizer. Kapattığında kural yeniden kalkar.",
+    "thumbsOnButton": "Sistem küçük resimlerini aç",
+    "thumbsOffButton": "Sistem küçük resimlerini kapat",
+    "thumbsOn": "Tamam, CannonCommander artık küçük resimleri kendisi çiziyor.",
+    "thumbsOff": "Kapatıldı, AppArmor kuralı kaldırıldı.",
+    "thumbsStillOut": "Kural yerinde ama yalıtılmış ortam ne yazık ki hâlâ çalışmıyor."
   },
   "shortcuts": {
     "title": "Klavye kısayolları",

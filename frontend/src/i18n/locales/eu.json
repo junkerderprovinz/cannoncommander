@@ -2545,7 +2545,14 @@
     "propsOpen": "Ireki",
     "icons": "Sistemaren ikonoak",
     "iconsTip": "Zure sistemaren ikonoak erakusten ditu zerrenda osoan. Programek eta lasterbideek beren ikonoa erakusten dute aukera hau desaktibatuta egonda ere.",
-    "iconsTipLinux": "Zure sistemaren ikonoak erakusten ditu zerrenda osoan. Programek eta lasterbideek beren ikonoa erakusten dute nolanahi ere. CannonCommanderrek ingurune isolatu batean bakarrik sortzen ditu koadro txikiak. Hori ezinezkoa den lekuetan, Ubuntu 24.04n adibidez, zure fitxategi-kudeatzaileak jada sortutakoak bakarrik ikusten dituzu."
+    "iconsTipLinux": "Zure sistemaren ikonoak erakusten ditu zerrenda osoan. Programek eta lasterbideek beren ikonoa erakusten dute nolanahi ere. CannonCommanderrek ingurune isolatu batean bakarrik sortzen ditu koadro txikiak. Hori ezinezkoa den lekuetan, Ubuntu 24.04n adibidez, zure fitxategi-kudeatzaileak jada sortutakoak bakarrik ikusten dituzu.",
+    "thumbs": "Koadro txikiak",
+    "thumbsTip": "Ubuntuk baimen berezi batekin bakarrik uzten dio programa bati ingurune isolatu batean sartzen. Aktibatzean, CannonCommanderrek AppArmor arau txiki bat gehitzen du, zure pasahitza eskatuz, eta handik aurrera berak sortzen ditu koadro txikiak. Desaktibatzean, araua desagertu egiten da.",
+    "thumbsOnButton": "Aktibatu sistemaren koadro txikiak",
+    "thumbsOffButton": "Desaktibatu sistemaren koadro txikiak",
+    "thumbsOn": "Eginda, hemendik aurrera CannonCommanderrek berak sortzen ditu koadro txikiak.",
+    "thumbsOff": "Desaktibatuta, AppArmor araua kendu da.",
+    "thumbsStillOut": "Araua hor dago, baina ingurune isolatuak oraindik ez du funtzionatzen, sentitzen dugu."
   },
   "shortcuts": {
     "title": "Lasterbide-teklak",

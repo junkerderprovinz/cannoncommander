@@ -11,7 +11,10 @@ import { inArchive, join } from '@/files/paths';
 import { t } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 
-export interface Offers { menu: '' | 'native' | 'actions'; properties: boolean; runAs: string[] }
+// Thumbnails says how thumbnails get drawn on Linux and whether the AppArmor rule that lets the sandbox in is wanted or
+// already there.
+export interface Thumbnails { way: 'sandbox' | 'service' | 'cache'; restricted: boolean; allowed: boolean }
+export interface Offers { menu: '' | 'native' | 'actions'; properties: boolean; runAs: string[]; thumbnails?: Thumbnails }
 export interface ShellAction { key: string; label: string; icon?: string; group?: string }
 export interface ShellEntry { key: string; label: string; icon?: string; hidden: boolean }
 
@@ -140,3 +143,11 @@ export async function loadEntries(): Promise<ShellEntry[]> {
 }
 
 export const hideEntries = (keys: string[]) => call('/shell/entries/hidden', json('PUT', { keys }));
+
+export const sandboxOffered = () => !!shell.thumbnails && (shell.thumbnails.allowed || (shell.thumbnails.restricted && shell.thumbnails.way !== 'sandbox'));
+
+// setThumbnails puts the AppArmor rule in place or takes it away, which asks for the administrator's password.
+export async function setThumbnails(allow: boolean) {
+  const { body } = await call<Thumbnails>('/shell/thumbnails', json('POST', { allow }));
+  if (body) shell.thumbnails = body;
+}

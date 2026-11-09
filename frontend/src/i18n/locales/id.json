@@ -2461,7 +2461,14 @@
     "propsOpen": "Buka",
     "icons": "Ikon sistem",
     "iconsTip": "Menampilkan ikon sistem Anda di seluruh daftar. Program dan pintasan tetap menampilkan ikonnya sendiri meski sakelar ini mati.",
-    "iconsTipLinux": "Menampilkan ikon sistem Anda di seluruh daftar. Program dan pintasan tetap menampilkan ikonnya sendiri. CannonCommander hanya membuat gambar mini di lingkungan yang terisolasi. Jika itu tidak memungkinkan, seperti di Ubuntu 24.04, Anda hanya melihat yang sudah dibuat oleh pengelola berkas Anda."
+    "iconsTipLinux": "Menampilkan ikon sistem Anda di seluruh daftar. Program dan pintasan tetap menampilkan ikonnya sendiri. CannonCommander hanya membuat gambar mini di lingkungan yang terisolasi. Jika itu tidak memungkinkan, seperti di Ubuntu 24.04, Anda hanya melihat yang sudah dibuat oleh pengelola berkas Anda.",
+    "thumbs": "Gambar mini",
+    "thumbsTip": "Ubuntu hanya mengizinkan program masuk ke lingkungan yang terisolasi dengan izin tersendiri. Saat diaktifkan, CannonCommander menambahkan aturan AppArmor kecil, yang meminta kata sandi Anda, lalu membuat gambar mini sendiri. Saat dinonaktifkan, aturan itu hilang lagi.",
+    "thumbsOnButton": "Aktifkan gambar mini sistem",
+    "thumbsOffButton": "Nonaktifkan gambar mini sistem",
+    "thumbsOn": "Selesai, mulai sekarang CannonCommander membuat gambar mini sendiri.",
+    "thumbsOff": "Dinonaktifkan, aturan AppArmor sudah dihapus.",
+    "thumbsStillOut": "Aturannya sudah ada, tetapi lingkungan yang terisolasi masih belum berfungsi, maaf."
   },
   "shortcuts": {
     "title": "Pintasan keyboard",

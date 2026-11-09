@@ -31,5 +31,12 @@
   "propsOpen": "Open",
   "icons": "System icons",
   "iconsTip": "Shows your system's icons throughout the list. Programs and shortcuts show their own icon even with this off.",
-  "iconsTipLinux": "Shows your system's icons throughout the list. Programs and shortcuts show their own icon either way. CannonCommander only draws thumbnails in a sandbox. Where that isn't possible, as on Ubuntu 24.04, you only see the ones your file manager has already made."
+  "iconsTipLinux": "Shows your system's icons throughout the list. Programs and shortcuts show their own icon either way. CannonCommander only draws thumbnails in a sandbox. Where that isn't possible, as on Ubuntu 24.04, you only see the ones your file manager has already made.",
+  "thumbs": "Thumbnails",
+  "thumbsTip": "Ubuntu only lets a program into a sandbox with a permission of its own. Turning this on adds a small AppArmor rule for CannonCommander, which asks for your password, and from then on it draws thumbnails itself. Turning it off removes the rule again.",
+  "thumbsOnButton": "Turn on system thumbnails",
+  "thumbsOffButton": "Turn off system thumbnails",
+  "thumbsOn": "Done. CannonCommander draws thumbnails itself from now on.",
+  "thumbsOff": "Turned off. The AppArmor rule is gone again.",
+  "thumbsStillOut": "The rule is in place, but the sandbox still doesn't work, sorry."
 }

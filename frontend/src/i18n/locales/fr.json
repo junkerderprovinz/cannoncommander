@@ -2629,7 +2629,14 @@
     "propsOpen": "Ouvrir",
     "icons": "Icônes du système",
     "iconsTip": "Affiche partout dans la liste les icônes de votre système. Les programmes et les raccourcis gardent leur propre icône même sans cette option.",
-    "iconsTipLinux": "Affiche partout dans la liste les icônes de votre système. Les programmes et les raccourcis gardent de toute façon leur propre icône. CannonCommander ne dessine les miniatures que dans un bac à sable. Là où ce n'est pas possible, comme sous Ubuntu 24.04, vous ne voyez que celles que votre gestionnaire de fichiers a déjà créées."
+    "iconsTipLinux": "Affiche partout dans la liste les icônes de votre système. Les programmes et les raccourcis gardent de toute façon leur propre icône. CannonCommander ne dessine les miniatures que dans un bac à sable. Là où ce n'est pas possible, comme sous Ubuntu 24.04, vous ne voyez que celles que votre gestionnaire de fichiers a déjà créées.",
+    "thumbs": "Miniatures",
+    "thumbsTip": "Ubuntu ne laisse un programme entrer dans un bac à sable qu'avec une autorisation propre. Pour l'activer, CannonCommander ajoute une petite règle AppArmor, ce qui demande votre mot de passe, puis dessine lui-même les miniatures. En le désactivant, la règle disparaît.",
+    "thumbsOnButton": "Activer les miniatures du système",
+    "thumbsOffButton": "Désactiver les miniatures du système",
+    "thumbsOn": "C'est fait, CannonCommander dessine désormais lui-même les miniatures.",
+    "thumbsOff": "Désactivé, la règle AppArmor a disparu.",
+    "thumbsStillOut": "La règle est en place, mais le bac à sable ne fonctionne toujours pas, désolé."
   },
   "shortcuts": {
     "title": "Raccourcis clavier",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button, Card, ColorPicker, FieldRow, Selector, Toggle } from '@glimstone/vue';
 import { ACCENTS, applyAccent, COLOR_NAMES_DE, DEFAULT_ACCENT, RAINBOW } from '@glimstone/core';
-import { computed, ref } from 'vue';
+import { computed, defineAsyncComponent, ref } from 'vue';
 import { G } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
@@ -11,6 +11,8 @@ import { found, motionPressed, rainbowSwitched, shapePressed } from '../eggs';
 import { c, P } from '@/features/config/shared';
 import { pickerWords, segItems } from '@/ui/kit';
 import LanguagePicker from '../LanguagePicker.vue';
+
+const SandboxRow = import.meta.env.DESKTOP ? defineAsyncComponent(() => import('@/features/shellmenu/SandboxRow.vue')) : null;
 
 const PRESETS = ACCENTS.map((a) => a.hex);
 const same = (a: string[], b: string[]) => a.length === b.length && a.every((x, i) => x.toLowerCase() === b[i]!.toLowerCase());
@@ -81,6 +83,7 @@ function resetOrder() {
     <FieldRow :label="c('look.motion')" :hint="c('look.motionTip')"><Selector id="a-motion" :model-value="prefs.motion" :items="segItems(motions)" size="sm" activation="manual" inline button-height pairs-on-phone @press="(v) => setPref('motion', motionPressed(v, prefs.motion))" /></FieldRow>
     <FieldRow :label="c('look.quiet')" :hint="c('look.quietTip')"><Toggle v-model="P.quietToasts" /></FieldRow>
     <FieldRow v-if="host.desktop" :label="t('shellmenu.icons')" :hint="t(host.os === 'linux' ? 'shellmenu.iconsTipLinux' : 'shellmenu.iconsTip')"><Toggle :model-value="prefs.systemIcons === true" data-pref="systemIcons" @update:model-value="(on: boolean) => setPref('systemIcons', on)" /></FieldRow>
+    <SandboxRow v-if="SandboxRow && host.desktop && host.os === 'linux'" />
     <FieldRow :label="c('look.order')" :hint="c('look.orderTip')"><Button id="a-order-reset" :label="c('look.reset')" label-key="IconRefresh" :disabled="!ordered" @click="resetOrder" /></FieldRow>
   </Card>
   <Card :title="c('look.labels')">

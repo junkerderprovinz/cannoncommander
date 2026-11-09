@@ -2629,7 +2629,14 @@
     "propsOpen": "Abrir",
     "icons": "Ícones do sistema",
     "iconsTip": "Mostra em toda a lista os ícones do seu sistema. Programas e atalhos mostram o próprio ícone mesmo com isto desligado.",
-    "iconsTipLinux": "Mostra em toda a lista os ícones do seu sistema. Programas e atalhos mostram sempre o próprio ícone. O CannonCommander só gera miniaturas num ambiente isolado. Onde isso não é possível, como no Ubuntu 24.04, vê apenas as que o seu gestor de ficheiros já criou."
+    "iconsTipLinux": "Mostra em toda a lista os ícones do seu sistema. Programas e atalhos mostram sempre o próprio ícone. O CannonCommander só gera miniaturas num ambiente isolado. Onde isso não é possível, como no Ubuntu 24.04, vê apenas as que o seu gestor de ficheiros já criou.",
+    "thumbs": "Miniaturas",
+    "thumbsTip": "O Ubuntu só deixa um programa entrar num ambiente isolado com uma permissão própria. Ao ligar, o CannonCommander cria uma pequena regra do AppArmor, que pede a sua palavra-passe, e passa a gerar as miniaturas sozinho. Ao desligar, a regra desaparece.",
+    "thumbsOnButton": "Ligar as miniaturas do sistema",
+    "thumbsOffButton": "Desligar as miniaturas do sistema",
+    "thumbsOn": "Pronto, a partir de agora o CannonCommander gera as miniaturas sozinho.",
+    "thumbsOff": "Desligado, a regra do AppArmor já não existe.",
+    "thumbsStillOut": "A regra está criada, mas o ambiente isolado continua a não funcionar, lamentamos."
   },
   "shortcuts": {
     "title": "Atalhos de teclado",
