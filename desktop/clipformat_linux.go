@@ -15,14 +15,20 @@ func filePath(uri string) (string, bool) {
 	return u.Path, true
 }
 
+// fileURIs turns paths on this computer into file:// URIs.
+func fileURIs(paths []string) []string {
+	uris := make([]string, len(paths))
+	for i, p := range paths {
+		uris[i] = (&url.URL{Scheme: "file", Path: p}).String()
+	}
+	return uris
+}
+
 // clipFormats writes files the ways Linux file managers read them: the list
 // GNOME and its kin share, which starts with copy or cut, the plain URI
 // list, KDE's mark for a cut and the paths as text.
 func clipFormats(paths []string, cut bool) (gnome, uris, kde, text string) {
-	list := make([]string, len(paths))
-	for i, p := range paths {
-		list[i] = (&url.URL{Scheme: "file", Path: p}).String()
-	}
+	list := fileURIs(paths)
 	verb, kde := "copy", "0"
 	if cut {
 		verb, kde = "cut", "1"

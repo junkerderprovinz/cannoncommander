@@ -16,6 +16,7 @@ const hooks = () => (window as unknown as { _wails: Hooks })._wails;
 let dropped: unknown[][] = [];
 let moved: Transfer[] = [];
 let invoked: string[] = [];
+let dragged: unknown[] = [];
 
 // A panel with a folder row and the list around it, the way the files view lays them out.
 function panel() {
@@ -27,6 +28,7 @@ beforeAll(() => {
   setActivePinia(createPinia());
   usePanels();
   action('dropIn', { label: 'drop', run: (...args: unknown[]) => { dropped.push(args); } });
+  action('dragOut', { label: 'drag', run: (paths: unknown) => { dragged.push(paths); } });
   action('transfer', { label: 'transfer', run: ((job: Transfer) => { moved.push(job); }) as never });
   (window as unknown as { _wails: Partial<Hooks> })._wails = { invoke: (m: string) => invoked.push(m) };
   installDragDrop();
@@ -40,6 +42,7 @@ beforeEach(() => {
   Object.assign(host, { desktop: true, os: 'linux' });
   dropped = [];
   moved = [];
+  dragged = [];
   vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 304 })));
 });
 
@@ -57,10 +60,17 @@ describe('the window of the desktop app', () => {
     expect(dropped).toEqual([[['/tmp/a.txt'], HERE + '/Bilder', 'auto'], [['/tmp/b.txt'], HERE, 'auto']]);
   });
 
+  it('hands a drag of files on disk to the system drag on Linux', () => {
+    const { file } = panel();
+    const start = Object.assign(new Event('dragstart', { bubbles: true, cancelable: true }), { dataTransfer: { setData: () => {}, effectAllowed: '' } });
+    file.dispatchEvent(start);
+    expect(start.defaultPrevented).toBe(true);
+    expect(dragged).toEqual([[HERE + '/notes.txt']]);
+  });
+
   it('takes the drop of a drag of its own on Linux as a drag inside the panels', async () => {
     const { folder, file } = panel();
     file.dispatchEvent(Object.assign(new Event('dragstart', { bubbles: true }), { dataTransfer: { setData: () => {}, effectAllowed: '' } }));
-    file.dispatchEvent(Object.assign(new Event('dragend', { bubbles: true })));
     document.elementFromPoint = () => folder;
     hooks().handlePlatformFileDrop([HERE + '/notes.txt'], 10, 10);
     await new Promise((r) => setTimeout(r, 0));
