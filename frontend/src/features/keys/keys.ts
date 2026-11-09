@@ -1,4 +1,4 @@
-// Keys of your own: which combo runs which action, how a combo reads, the Total Commander layout to start from and the
+// Keys of your own: which combo runs which action, how a combo reads, the layouts to start from and the
 // rules a new key has to pass. Pure, so the window and the tests share it.
 import { t } from '@/i18n';
 
@@ -25,27 +25,15 @@ export function mainCombo(map: KeyMap, id: string, declared?: string) {
   return own.find((c) => c === declared) ?? own[0];
 }
 
-// Total Commander's own keys for the actions both programs share.
-export const TOTAL_COMMANDER: KeyMap = { 'Alt+F5': 'pack', 'Alt+F9': 'unpack', 'Ctrl+b': 'flat', 'Shift+F6': 'rename', F2: 'refresh', 'Shift+F2': 'compareDirs', 'Ctrl+d': 'addBookmark', 'Alt+F8': 'history' };
-
 // Explorer's keys where they differ from a commander's. They come on top, so Ctrl+R still refreshes beside F5, and
 // F3 stays with the viewer, as Space does.
 export const EXPLORER: KeyMap = { F5: 'refresh', 'Alt+d': 'gotoPath', 'Ctrl+Shift+c': 'copyPath', Backspace: 'back', 'Alt+p': 'sidePane', 'Ctrl+d': 'delete' };
 
-export type Preset = 'cc' | 'tc' | 'explorer';
+export type Preset = 'cc' | 'explorer';
 
 export function preset(id: Preset, defaults: KeyMap, known: (action: string) => boolean): KeyMap {
   const map = { ...defaults };
-  if (id === 'explorer') {
-    for (const [combo, act] of Object.entries(EXPLORER)) if (known(act)) map[combo] = act;
-    return map;
-  }
-  if (id !== 'tc') return map;
-  for (const [combo, act] of Object.entries(TOTAL_COMMANDER)) {
-    if (!known(act)) continue;
-    for (const c of combosOf(map, act)) delete map[c];
-    map[combo] = act;
-  }
+  if (id === 'explorer') for (const [combo, act] of Object.entries(EXPLORER)) if (known(act)) map[combo] = act;
   return map;
 }
 

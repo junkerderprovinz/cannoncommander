@@ -114,7 +114,7 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 - **Remote storage.** SFTP, SMB, WebDAV, S3, Google Drive and everything else rclone speaks, browsed like any other folder.
 - **Sharing.** Links with a password, an expiry date and download or upload limits, for one file or a whole collection, with a QR code. A WebDAV server lets you mount your files as a drive.
 - **People and rules.** Users, groups and rules that hide a folder or make it read only, two-factor sign-in, passkeys, API tokens and single sign-on through OIDC.
-- **Colours and tags** for files, saved searches, window profiles, your own key bindings and a Total Commander layout.
+- **Colours and tags** for files, saved searches, window profiles and your own key bindings.
 - **[ArrowLoop](https://github.com/junkerderprovinz/arrowloop) on call.** A folder pair from the comparison becomes a recurring sync job in ArrowLoop with one click.
 - **Looks like the rest of the house.** The interface uses [GlimStone](https://github.com/junkerderprovinz/glimstone), in light and dark, with your own accent colour, and speaks English and German.
 

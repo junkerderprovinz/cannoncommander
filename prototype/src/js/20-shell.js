@@ -107,6 +107,8 @@ CC.registerView('settings', {
 });
 CC.css(`
 .page-app .page:has(.settings) { overflow: hidden; }
+/* On a wide screen the tiles reach down to the margin, as the panels do. A phone keeps its room for the bottom bar. */
+@media (min-width: 761px) { .page-app:has(.settings) { padding-bottom: var(--gut); } }
 .settings { display: grid; grid-template-columns: 12.75rem minmax(0, 1fr); gap: .5rem; height: 100%; }
 .tiles { display: flex; flex-direction: column; gap: 4px; overflow: auto; padding: 0 .5rem 0 .25rem; scrollbar-width: none; }
 .stile { flex: 1 0 0; min-height: 2.5rem; display: flex; align-items: center; gap: .65rem; padding: 0 .9rem; border-radius: var(--radius-control); background: var(--carbon-surface2); color: var(--carbon-text); font-size: 15px; line-height: 20px; text-align: left; }

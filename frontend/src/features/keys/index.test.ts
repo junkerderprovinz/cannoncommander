@@ -56,8 +56,17 @@ describe('choosing how the app handles', () => {
   it('selects as in Explorer only with the Explorer layout', () => {
     useLayout('explorer');
     expect(prefs.clickSelect).toBe(true);
-    useLayout('tc');
+    useLayout('cc');
     expect(prefs.clickSelect).toBe(false);
+  });
+
+  it('turns a stored Total Commander layout into the Commander one and keeps the own keys', () => {
+    prefs.keys = { preset: 'tc', own: { 'Ctrl+m': 'move' } };
+    expect(layout()).toBe('cc');
+    prefs.keys = { preset: 'tc', map: { ...SHIPPED, 'Ctrl+m': 'move' } };
+    expect(layout()).toBe('cc');
+    commit({ ...SHIPPED, 'Ctrl+m': 'move' }, layout());
+    expect(prefs.keys).toEqual({ preset: 'cc', own: { 'Ctrl+m': 'move' } });
   });
 
   it('keeps a separate choice of selection when only keys change', () => {
