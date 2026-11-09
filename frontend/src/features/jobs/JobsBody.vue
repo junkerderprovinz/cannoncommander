@@ -59,7 +59,7 @@ function press(j: Job, e: PointerEvent) {
         @keydown="keys(j, $event)" @pointerdown="press(j, $event)">
         <span class="job-grip" aria-hidden="true"><G v-if="isOpen(j)" n="IconGrip" /></span>
         <div class="job-text">
-          <div class="job-label">{{ jobLabel(j) }}</div>
+          <div class="job-label">{{ jobLabel(j) }}<Pill v-if="j.via" class="job-via">{{ t('jobs.via', { name: j.via }) }}</Pill></div>
           <div class="sub glim-num">{{ factsOf({ ...j, place: j.place ?? waitingPlace(j) + 1 }) }}</div>
           <div v-if="j.state === 'running' && j.totalFiles > 1 && j.current" class="job-file mono" :data-tip="t('jobs.inWork')"><G :n="glyphOf({ name: j.current })" /><span>{{ j.current }}</span></div>
         </div>

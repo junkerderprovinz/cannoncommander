@@ -115,7 +115,11 @@ func (h handlers) drop(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (h handlers) submit(w http.ResponseWriter, r *http.Request, kind string, entries []Item) error {
-	j, err := h.m.Submit(v1.UserFrom(r).Username, kind, plan(entries), 0, false)
+	p := plan(entries)
+	if a, ok := v1.AgentFrom(r); ok {
+		p.Via = a.Name
+	}
+	j, err := h.m.Submit(v1.UserFrom(r).Username, kind, p, 0, false)
 	if err != nil {
 		return err
 	}

@@ -56,6 +56,14 @@ const randomOf = (alphabet, n) => Array.from({ length: n }, () => alphabet[Math.
 const codes = () => Array.from({ length: 8 }, () => `${randomOf('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4)}-${randomOf('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4)}`);
 const b64url = (n) => randomOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_', n);
 
+function mcpKey(id, owner, label, client, hint, canWrite, created, last, calls) {
+  const sec = (t) => Math.floor(t / 1000);
+  return {
+    id, owner, viaOAuth: false, label, client, hint, canWrite, createdAt: sec(created), rotatedAt: 0, lastUsedAt: sec(last), lastUsedFrom: '192.168.10.16',
+    revokedAt: 0, revokedReason: '', unusable: '', callsToday: calls,
+  };
+}
+
 function state() {
   const now = clock.now();
   const person = (id, name, full, role, scope, groups, last, more = {}) => ({
@@ -141,6 +149,21 @@ function state() {
     },
     exports: [],
     totpSecret: '',
+    // The MCP server's keys in the shape GET /mcp/keys sends them, with Unix seconds.
+    mcp: {
+      keys: [
+        mcpKey('a1b2c3d4e5f60718293a4b5c6d7e8f90', 'jdp', 'Claude Code auf dem Laptop', 'claude-code', 'q7Xe', false, now - 9 * DAY, now - 12 * MIN, 14),
+        mcpKey('0f1e2d3c4b5a69788796a5b4c3d2e1f0', 'jdp', 'Cursor', 'cursor', 'Lm3k', true, now - 30 * DAY, now - 2 * DAY, 0),
+        mcpKey('9a8b7c6d5e4f30211203f4e5d6c7b8a9', 'anna', 'LM Studio', 'lmstudio', 'Zr8p', false, now - 6 * DAY, now - 3 * HOUR, 5),
+      ],
+      revoked: [{ ...mcpKey('5c4b3a29180716253443526170819203', 'jdp', 'Erster Versuch', '', 'Tt0a', false, now - 40 * DAY, now - 39 * DAY, 0), revokedAt: Math.floor((now - 38 * DAY) / 1000), revokedReason: 'owner' }],
+      events: [
+        { at: Math.floor((now - 12 * MIN) / 1000), tool: 'list_folder', outcome: 'ok' },
+        { at: Math.floor((now - 13 * MIN) / 1000), tool: 'move_items', outcome: 'read_only_key' },
+        { at: Math.floor((now - 14 * MIN) / 1000), tool: 'search_files', outcome: 'ok' },
+      ],
+      oauth: { enabled: false, issuer: '' },
+    },
   };
 }
 
@@ -496,6 +519,74 @@ export function settingsFixtureMiddleware() {
       }
       return { items: out };
     }],
+    ['GET', '/mcp/keys', (_, __, q) => {
+      const view = (k) => ({ ...k, own: k.owner === ME });
+      const mine = (k) => q.get('all') === 'true' || k.owner === ME;
+      return {
+        endpointPath: 'mcp', limit: 10, signIn: true, hostAllowsKeys: true, desktop: false,
+        writeLimits: { entriesPerCall: 25, entriesPerHour: 200, filesPerCall: 10000, bytesPerCall: 53687091200, callsPerMinute: 120 },
+        keys: S.mcp.keys.filter(mine).map(view), revoked: S.mcp.revoked.filter(mine).map(view),
+        oauth: { possible: true, ...S.mcp.oauth, active: S.mcp.oauth.enabled && !!S.mcp.oauth.issuer, grantLimit: 10 },
+      };
+    }],
+    ['POST', '/mcp/keys', (b) => {
+      const refused = wrongPassword(b);
+      if (refused) return refused;
+      const label = (b.label || '').trim();
+      if (!label || label.length > 64) return [400, 'a key needs a name of 1 to 64 characters', 'mcpKeyLabel'];
+      if (S.mcp.keys.some((k) => k.owner === ME && k.label === label)) return [409, 'another active key has this name', 'mcpKeyLabelTaken'];
+      const key = 'ccmcp_' + b64url(40);
+      const item = mcpKey(randomOf('0123456789abcdef', 32), ME, label, b.client || '', key.slice(-4), !!b.canWrite, clock.now(), 0, 0);
+      item.lastUsedAt = 0;
+      S.mcp.keys.push(item);
+      return [201, { key, item: { ...item, own: true } }];
+    }],
+    ['PATCH', /^\/mcp\/keys\/([0-9a-f]{32})$/, (b, [id]) => {
+      const k = S.mcp.keys.find((x) => x.id === id);
+      if (!k) return [404, 'there is no such key', 'mcpKeyNotFound'];
+      if (b.canWrite && !k.canWrite) {
+        if (k.owner !== ME) return [403, 'only the account a key belongs to can do this', 'mcpKeyNotYours'];
+        const refused = wrongPassword(b);
+        if (refused) return refused;
+      }
+      if (b.label !== undefined) k.label = b.label.trim();
+      if (b.canWrite !== undefined) k.canWrite = b.canWrite;
+      return { ...k, own: k.owner === ME };
+    }],
+    ['POST', /^\/mcp\/keys\/([0-9a-f]{32})\/rotate$/, (b, [id]) => {
+      const k = S.mcp.keys.find((x) => x.id === id && x.owner === ME);
+      if (!k) return [404, 'there is no such key', 'mcpKeyNotFound'];
+      const refused = wrongPassword(b);
+      if (refused) return refused;
+      const key = 'ccmcp_' + b64url(40);
+      Object.assign(k, { hint: key.slice(-4), rotatedAt: Math.floor(clock.now() / 1000) });
+      return { key, item: { ...k, own: true } };
+    }],
+    ['POST', /^\/mcp\/keys\/([0-9a-f]{32})\/revoke$/, (_, [id]) => {
+      const k = S.mcp.keys.find((x) => x.id === id);
+      if (!k) return [404, 'there is no such key', 'mcpKeyNotFound'];
+      S.mcp.keys = S.mcp.keys.filter((x) => x !== k);
+      S.mcp.revoked.unshift({ ...k, revokedAt: Math.floor(clock.now() / 1000), revokedReason: k.owner === ME ? 'owner' : 'admin' });
+      return 204;
+    }],
+    ['DELETE', /^\/mcp\/keys\/([0-9a-f]{32})$/, (_, [id]) => {
+      if (S.mcp.keys.some((x) => x.id === id)) return [409, 'revoke the key before removing it', 'mcpKeyActive'];
+      S.mcp.revoked = S.mcp.revoked.filter((x) => x.id !== id);
+      return 204;
+    }],
+    ['GET', /^\/mcp\/keys\/([0-9a-f]{32})\/activity$/, (_, [id]) => ({ events: id === S.mcp.keys[0]?.id ? S.mcp.events : [] })],
+    ['PUT', '/mcp/oauth', (b) => {
+      const issuer = (b.issuer || '').trim().replace(/\/$/, '');
+      if (b.enabled && !/^https:\/\/[^/\s?#]+$/.test(issuer)) return [400, 'the public address is an https address without a path', 'mcpOAuthIssuer'];
+      S.mcp.oauth = { enabled: !!b.enabled, issuer };
+      return { possible: true, ...S.mcp.oauth, active: S.mcp.oauth.enabled && !!issuer, grantLimit: 10 };
+    }],
+    ['GET', '/mcp/oauth/authorize', (_, __, q) => {
+      if (!S.mcp.oauth.enabled) return [404, 'sign-in through OAuth is not switched on', 'oauthOff'];
+      if (!q.get('client_id')) return [400, 'this client is not registered here', 'oauthUnknownClient'];
+      return { client: { id: q.get('client_id'), name: 'Claude', known: 'claude', redirectHost: 'claude.ai', loopback: false }, account: ME, password: true, ticket: 'fixture-ticket', limitReached: false, grantLimit: 10 };
+    }],
+    ['POST', '/mcp/oauth/authorize', (b) => ({ redirect: `https://claude.ai/api/mcp/auth_callback?${b.allow ? 'code=fixture' : 'error=access_denied'}` })],
     // The app's own folder appears once the container has run, so exports have somewhere to go.
     ['GET', '/fs/list', (_, __, q) => {
       const p = q.get('path');

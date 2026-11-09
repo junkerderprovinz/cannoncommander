@@ -6,7 +6,7 @@ import { closeBtn, type WinEntry } from '@/core/windows';
 import { c, stepFoot } from '@/features/config/shared';
 
 const props = defineProps<{ win: WinEntry }>();
-const PARTS = ['panels', 'mark', 'find', 'share', 'rights'];
+const PARTS = ['panels', 'mark', 'find', 'share', 'rights', 'mcp'];
 onMounted(() => stepFoot(props.win, [{ label: c('docs.keys'), g: 'IconKeyboard', run: () => { setTimeout(() => run('shortcuts'), 0); } }, closeBtn()]));
 </script>
 

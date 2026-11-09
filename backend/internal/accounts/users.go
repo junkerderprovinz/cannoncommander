@@ -298,7 +298,7 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 	}
 	if password != "" {
 		// A new password set by an admin logs the user out everywhere.
-		if _, err := login.EndAll(u.ID, ""); err != nil {
+		if _, err := endSessions(r.Context(), h.db, &u, ""); err != nil {
 			return err
 		}
 		if err := passwordChanged(r.Context(), h.db, idOf(&u)); err != nil {

@@ -4,7 +4,7 @@ import { auth } from '@/api/auth';
 import { ApiError } from '@/api/client';
 import { c } from './shared';
 
-export type Again = 'token' | 'passkey';
+export type Again = 'token' | 'passkey' | 'mcp';
 
 export const staleSignIn = (e: unknown) => e instanceof ApiError && e.status === 403 && e.problem?.type === 'fresh-sign-in';
 
@@ -17,7 +17,7 @@ export function proofRefused(e: unknown): string | null {
   return null;
 }
 
-// The provider sends the person back to the security tab, which opens the same window again.
+// The provider sends the person back to the tab that asked, which opens the same window again.
 export async function signInAgain(again: Again) {
   const url = (await auth.options().catch(() => null))?.oidc?.url ?? 'api/auth/oidc/login';
   location.assign(url + '?redirect=' + encodeURIComponent(location.pathname + '?again=' + again));
@@ -25,15 +25,15 @@ export async function signInAgain(again: Again) {
 
 let pending: Again | null = null;
 
-export function takeAgainFromUrl(): boolean {
+export function takeAgainFromUrl(): Again | null {
   const params = new URLSearchParams(location.search);
   const again = params.get('again');
-  if (again !== 'token' && again !== 'passkey') return false;
+  if (again !== 'token' && again !== 'passkey' && again !== 'mcp') return null;
   pending = again;
   params.delete('again');
   const rest = params.toString();
   history.replaceState(history.state, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
-  return true;
+  return again;
 }
 
 export function takePending(): Again | null {

@@ -50,6 +50,8 @@ const CC = {
   user: { name: 'jdp', full: 'Junker der Provinz', role: 'Admin' },
   signedIn: true,
 };
+// A const stays off window, and frontend/tests/parity/settings.ts reaches the page through window.CC.
+window.CC = CC;
 
 CC.css = (text) => { const s = document.createElement('style'); s.textContent = text; document.head.appendChild(s); };
 

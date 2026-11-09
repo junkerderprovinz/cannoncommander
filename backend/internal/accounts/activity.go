@@ -15,15 +15,19 @@ import (
 // Obj names what it was about in a few words, and Path and Target are
 // absolute paths when the event touched files.
 type ActivityEntry struct {
-	ID      int64                      `json:"id"`
-	T       time.Time                  `json:"t"`
-	Who     string                     `json:"who"`
-	What    string                     `json:"what"`
-	Obj     string                     `json:"obj"`
-	Path    string                     `json:"path,omitempty"`
-	Target  string                     `json:"target,omitempty"`
-	IP      string                     `json:"ip,omitempty"`
-	Details activitydb.FrontendDetails `json:"details"`
+	ID     int64     `json:"id"`
+	T      time.Time `json:"t"`
+	Who    string    `json:"who"`
+	What   string    `json:"what"`
+	Obj    string    `json:"obj"`
+	Path   string    `json:"path,omitempty"`
+	Target string    `json:"target,omitempty"`
+	IP     string    `json:"ip,omitempty"`
+	// AuthMethod and TokenName name the API token or the key of the MCP
+	// server something was done with.
+	AuthMethod string                     `json:"authMethod,omitempty"`
+	TokenName  string                     `json:"tokenName,omitempty"`
+	Details    activitydb.FrontendDetails `json:"details"`
 }
 
 // ActivityPage is one page of the activity log, the newest entry first.
@@ -68,14 +72,16 @@ func (h handlers) absolute(source, p string) string {
 
 func (h handlers) entry(e activitydb.FrontendEntry) ActivityEntry {
 	out := ActivityEntry{
-		ID:      e.ID,
-		T:       time.Unix(e.CreatedAt, 0).UTC(),
-		Who:     e.Username,
-		What:    string(e.EventType),
-		Path:    h.absolute(e.Source, e.Path),
-		Target:  h.absolute(e.Source, e.TargetPath),
-		IP:      e.IPAddress,
-		Details: e.Details,
+		ID:         e.ID,
+		T:          time.Unix(e.CreatedAt, 0).UTC(),
+		Who:        e.Username,
+		What:       string(e.EventType),
+		Path:       h.absolute(e.Source, e.Path),
+		Target:     h.absolute(e.Source, e.TargetPath),
+		IP:         e.IPAddress,
+		AuthMethod: e.AuthMethod,
+		TokenName:  e.TokenName,
+		Details:    e.Details,
 	}
 	d := e.Details
 	switch {

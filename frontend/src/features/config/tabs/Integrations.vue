@@ -3,7 +3,7 @@
 // Collabora speaks WOPI. ArrowLoop takes folder pairs as recurring jobs and sees the shares under paths of its own.
 import { Select } from '@glimstone/vue/Select';
 import { Button, Card, CopyField, FieldRow, FieldRowGroup, IconButton, PasswordField, Pill, TextField, Toggle } from '@glimstone/vue';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, defineAsyncComponent, onMounted, reactive, ref } from 'vue';
 import { admin, type AppChange, type AppSettings, type IntegrationResult, type OfficeKind, type System, type Tool } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
@@ -12,6 +12,8 @@ import { terminalOn } from '@/features/terminal/state';
 import { copyWords, eyeWords, selectOptions, shake } from '@/ui/kit';
 
 type Test = 'idle' | 'busy' | 'ok' | 'bad';
+// The card carries the marks of thirty clients, which only this tab needs.
+const McpCard = defineAsyncComponent(() => import('../mcp/McpCard.vue'));
 const app = ref<AppSettings | null>(null), sys = ref<System | null>(null);
 const secret = ref(''), alToken = ref('');
 const paths = ref<{ here: string; there: string }[]>([]);
@@ -165,4 +167,6 @@ const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad'
       <FieldRow v-else :label="c('integrations.terminal')" :hint="c('integrations.terminalTip')"><Toggle v-model="terminal" data-it="terminal" /></FieldRow>
     </Card>
   </template>
+  <!-- Every account has keys of its own, so the card does not wait for the settings only admins may read. -->
+  <McpCard />
 </template>

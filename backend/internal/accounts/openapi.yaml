@@ -1475,5 +1475,11 @@ components:
           description: Where a move or copy went.
         ip:
           type: string
+        authMethod:
+          type: string
+          description: How the person signed in for this, apiKey for an API token and mcp for an assistant with a key of the MCP server.
+        tokenName:
+          type: string
+          description: The name of that token or key.
         details:
           type: object

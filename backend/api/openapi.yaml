@@ -148,6 +148,20 @@ tags:
       user's rights are checked again on every call.
   - name: events
     description: The server event stream and the folders a client watches.
+  - name: mcp
+    description: |
+      The MCP server lets an assistant such as Claude or ChatGPT work with the
+      files of an account. It talks Streamable HTTP at /mcp, outside this API,
+      one JSON-RPC message per POST, and answers 404 while no key exists and
+      sign-in through OAuth is off. Every key belongs to one account and works
+      with exactly its rights and access rules. A key reads by default; with
+      its write switch on it may also create folders, copy, move, rename, move
+      to the trash and restore, each change as a job the user can undo.
+
+      These operations manage the keys of the signed-in account. Admins also
+      see and revoke the keys of everybody else. Making a key, replacing one
+      and switching writing on need a session, never an API token, and the
+      account's password or a fresh sign-in.
 paths:
   /fs/list:
     get:
@@ -6977,6 +6991,328 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
       tags: [events]
+  /mcp/keys:
+    get:
+      operationId: mcpKeys
+      summary: The keys of the account, with the endpoint and its limits
+      parameters:
+        - name: all
+          in: query
+          description: Admins only. Lists the keys of every account.
+          schema:
+            type: boolean
+        - name: since
+          in: query
+          description: Unix time of the browser's midnight, where the calls of today start counting.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: The keys.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpKeys"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [mcp]
+    post:
+      operationId: mcpKeyCreate
+      summary: Make a key
+      description: The key comes back this once and is stored only as a fingerprint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [label]
+              properties:
+                label:
+                  type: string
+                  description: 1 to 64 characters, unique among the account's active keys.
+                client:
+                  type: string
+                  description: The id of the client tile the key was made for, 1 to 32 lower-case letters, digits and dashes.
+                canWrite:
+                  type: boolean
+                  default: false
+                password:
+                  type: string
+                  description: The account's password. An account without one signs in again instead.
+      responses:
+        "201":
+          $ref: "#/components/responses/McpKeySecret"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [mcp]
+  /mcp/keys/{id}:
+    parameters:
+      - $ref: "#/components/parameters/McpKeyId"
+    patch:
+      operationId: mcpKeyUpdate
+      summary: Rename a key or set its write switch
+      description: Only the owner switches writing on, with the password. An admin may switch it off for anybody.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                label:
+                  type: string
+                canWrite:
+                  type: boolean
+                password:
+                  type: string
+      responses:
+        "200":
+          description: The key as it is now.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpKey"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [mcp]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+    delete:
+      operationId: mcpKeyPurge
+      summary: Remove a revoked key with its log
+      responses:
+        "204":
+          description: Removed.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [mcp]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /mcp/keys/{id}/rotate:
+    parameters:
+      - $ref: "#/components/parameters/McpKeyId"
+    post:
+      operationId: mcpKeyRotate
+      summary: Replace a key
+      description: The key keeps its name, switch and log; the old one stops working at once. Only the owner.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/McpKeySecret"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [mcp]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /mcp/keys/{id}/revoke:
+    parameters:
+      - $ref: "#/components/parameters/McpKeyId"
+    post:
+      operationId: mcpKeyRevoke
+      summary: Revoke a key or a client signed in through OAuth
+      responses:
+        "204":
+          description: Revoked.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [mcp]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /mcp/keys/{id}/activity:
+    parameters:
+      - $ref: "#/components/parameters/McpKeyId"
+    get:
+      operationId: mcpKeyActivity
+      summary: The log of a key
+      description: Its tool calls and the requests the endpoint refused, newest first. Arguments are never kept.
+      responses:
+        "200":
+          description: The log.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [events]
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/McpEvent"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [mcp]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /mcp/oauth:
+    put:
+      operationId: mcpOAuthSet
+      summary: Switch sign-in through OAuth on or off
+      description: Needs a server people sign in to. Switching off, or a new public address, revokes every client signed in through OAuth.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [enabled]
+              properties:
+                enabled:
+                  type: boolean
+                issuer:
+                  type: string
+                  description: The public https address of CannonCommander, without a path.
+      responses:
+        "200":
+          description: The settings as stored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpOAuth"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      tags: [mcp]
+  /mcp/oauth/authorize:
+    get:
+      operationId: mcpConsentInfo
+      summary: Check an authorization request for the consent page
+      description: |
+        Takes the query the client sent to /oauth/authorize. Every fault goes
+        to the page and none back to the client, so the page is never an open
+        redirector. Answers a ticket the page allows or denies with.
+      parameters:
+        - {name: client_id, in: query, required: true, schema: {type: string}}
+        - {name: redirect_uri, in: query, required: true, schema: {type: string}}
+        - {name: response_type, in: query, required: true, schema: {type: string}}
+        - {name: code_challenge, in: query, required: true, schema: {type: string}}
+        - {name: code_challenge_method, in: query, required: true, schema: {type: string}}
+        - {name: state, in: query, schema: {type: string}}
+        - {name: resource, in: query, schema: {type: string}}
+        - {name: scope, in: query, schema: {type: string}}
+      responses:
+        "200":
+          description: What the page shows.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpConsent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      tags: [mcp]
+    post:
+      operationId: mcpConsent
+      summary: Allow or deny a client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ticket, allow]
+              properties:
+                ticket:
+                  type: string
+                allow:
+                  type: boolean
+                canWrite:
+                  type: boolean
+                  default: false
+                password:
+                  type: string
+                  description: Needed to allow, as for making a key. An account without a password signs in again instead.
+      responses:
+        "200":
+          description: Where the browser goes on to.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [redirect]
+                properties:
+                  redirect:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/StateConflict"
+      tags: [mcp]
 components:
   securitySchemes:
     bearer:
@@ -7029,6 +7365,13 @@ components:
       required: true
       schema:
         type: string
+    McpKeyId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^[0-9a-f]{32}$"
   responses:
     NotImplemented:
       description: Part of the contract, not built yet.
@@ -7197,6 +7540,18 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
+    McpKeySecret:
+      description: The key, shown this once, and its row.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [key, item]
+            properties:
+              key:
+                type: string
+              item:
+                $ref: "#/components/schemas/McpKey"
   schemas:
     Problem:
       type: object
@@ -7854,6 +8209,9 @@ components:
           type: string
         owner:
           type: string
+        via:
+          type: string
+          description: The key of the MCP server an assistant started the job with, missing for a job its owner started.
         state:
           type: string
           enum: [queued, running, paused, asking, done, failed, cancelled]
@@ -9436,6 +9794,12 @@ components:
           description: Where a move or copy went.
         ip:
           type: string
+        authMethod:
+          type: string
+          description: How the person signed in for this, apiKey for an API token and mcp for an assistant with a key of the MCP server.
+        tokenName:
+          type: string
+          description: The name of that token or key.
         details:
           type: object
     Share:
@@ -10830,3 +11194,164 @@ components:
           maxItems: 64
           items:
             type: string
+    McpKeys:
+      type: object
+      required: [endpointPath, limit, signIn, hostAllowsKeys, desktop, writeLimits, keys, revoked, oauth]
+      properties:
+        endpointPath:
+          type: string
+          description: Where the endpoint is, below the app's base address.
+        limit:
+          type: integer
+          description: Active keys per account.
+        signIn:
+          type: boolean
+          description: The server asks people to sign in.
+        hostAllowsKeys:
+          type: boolean
+          description: A key can be made from the address this request came in on.
+        desktop:
+          type: boolean
+        writeLimits:
+          type: object
+          required: [entriesPerCall, entriesPerHour, filesPerCall, bytesPerCall, callsPerMinute]
+          properties:
+            entriesPerCall:
+              type: integer
+            entriesPerHour:
+              type: integer
+            filesPerCall:
+              type: integer
+            bytesPerCall:
+              type: integer
+              format: int64
+            callsPerMinute:
+              type: integer
+        keys:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpKey"
+        revoked:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpKey"
+        oauth:
+          $ref: "#/components/schemas/McpOAuth"
+        stats:
+          type: object
+          description: Admins only. How the endpoint answered and how the tools went since the server started.
+          properties:
+            requests:
+              type: object
+              additionalProperties:
+                type: integer
+            tools:
+              type: object
+              additionalProperties:
+                type: integer
+    McpKey:
+      type: object
+      required: [id, owner, viaOAuth, label, client, hint, canWrite, createdAt, rotatedAt, lastUsedAt, lastUsedFrom, revokedAt, revokedReason, unusable, callsToday, own]
+      properties:
+        id:
+          type: string
+        owner:
+          type: string
+          description: The account the key works for.
+        own:
+          type: boolean
+          description: The key belongs to the signed-in account.
+        viaOAuth:
+          type: boolean
+        label:
+          type: string
+        client:
+          type: string
+        hint:
+          type: string
+          description: The last four characters of the key.
+        canWrite:
+          type: boolean
+        createdAt:
+          type: integer
+          format: int64
+        rotatedAt:
+          type: integer
+          format: int64
+        lastUsedAt:
+          type: integer
+          format: int64
+        lastUsedFrom:
+          type: string
+        revokedAt:
+          type: integer
+          format: int64
+        revokedReason:
+          type: string
+        unusable:
+          type: string
+          description: Why the key no longer works although nobody revoked it, such as signingKeyChanged.
+        callsToday:
+          type: integer
+    McpOAuth:
+      type: object
+      required: [possible, enabled, issuer, active, grantLimit]
+      properties:
+        possible:
+          type: boolean
+          description: The server can offer it at all, which needs people to sign in.
+        enabled:
+          type: boolean
+        issuer:
+          type: string
+        active:
+          type: boolean
+        resource:
+          type: string
+          description: The address a cloud connector is given, the endpoint under the public address.
+        grantLimit:
+          type: integer
+    McpEvent:
+      type: object
+      required: [at, tool, outcome]
+      properties:
+        at:
+          type: integer
+          format: int64
+        tool:
+          type: string
+          description: Empty for a request the endpoint refused before any tool ran.
+        outcome:
+          type: string
+          description: ok, or the code of the refusal.
+        jobId:
+          type: string
+    McpConsent:
+      type: object
+      required: [client, ticket, account, password, limitReached, grantLimit]
+      properties:
+        client:
+          type: object
+          required: [id, name, known, redirectHost, loopback]
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            known:
+              type: string
+            redirectHost:
+              type: string
+            loopback:
+              type: boolean
+        account:
+          type: string
+        password:
+          type: boolean
+          description: The account signs in with a password, which Allow then asks for. Any other account needs a sign-in from the last minutes instead.
+        ticket:
+          type: string
+        limitReached:
+          type: boolean
+        grantLimit:
+          type: integer

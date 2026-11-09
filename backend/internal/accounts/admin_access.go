@@ -88,7 +88,7 @@ func (h handlers) endUserSession(w http.ResponseWriter, r *http.Request) error {
 
 // revokeAll ends every session, API token and passkey of u.
 func (h handlers) revokeAll(r *http.Request, u *users.User) error {
-	if _, err := login.EndAll(u.ID, ""); err != nil {
+	if _, err := endSessions(r.Context(), h.db, u, ""); err != nil {
 		return err
 	}
 	if err := h.revokeTokens(r, u); err != nil {

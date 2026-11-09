@@ -57,5 +57,6 @@
   "notifyFailed": "Job failed",
   "notifyBody": "{label}, after {took}",
   "took": { "s": "{n} s", "min": "{n} min", "h": "{n} h" },
-  "settingsFailed": "The job settings could not be saved. Only admins can change them."
+  "settingsFailed": "The job settings could not be saved. Only admins can change them.",
+  "via": "via {name}"
 }

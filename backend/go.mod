@@ -28,6 +28,7 @@ require (
 	github.com/klauspost/compress v1.20.3
 	github.com/kovidgoyal/imaging v1.9.0
 	github.com/mattn/go-sqlite3 v1.14.53
+	github.com/modelcontextprotocol/go-sdk v1.8.0
 	github.com/nwaples/rardecode/v2 v2.4.6
 	github.com/pquerna/otp v1.5.0
 	github.com/spf13/afero v1.15.0
@@ -67,6 +68,7 @@ require (
 	github.com/go-webauthn/x v0.3.1 // indirect
 	github.com/golang/geo v0.0.0-20261029132150-f51d36688936 // indirect
 	github.com/google/go-tpm v0.9.8 // indirect
+	github.com/google/jsonschema-go v0.4.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/klauspost/cpuid/v2 v2.4.2 // indirect
@@ -82,9 +84,12 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rogpeppe/go-internal v1.16.0 // indirect
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd // indirect
+	github.com/segmentio/asm v1.1.3 // indirect
+	github.com/segmentio/encoding v0.5.4 // indirect
 	github.com/stangelandcl/ppmd v0.1.1 // indirect
 	github.com/tinylib/msgp v1.6.5 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
+	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	go4.org v0.0.0-20261028031214-ed6929a230fe // indirect
 	golang.org/x/sync v0.24.0 // indirect
