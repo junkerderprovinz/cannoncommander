@@ -5,7 +5,9 @@ import { host } from '@/core/host';
 import { menuState } from '@/core/menu';
 import type { MenuItem } from '@/core/menu';
 import type { Entry } from '@/files/entries';
-import { actionRows, canAsk, iconUrl, sandboxOffered, setThumbnails, shell, systemMenu } from './shell';
+import { winStack } from '@/core/windows';
+import { shell as app } from '@/shell/state';
+import { actionRows, canAsk, iconUrl, restartApp, sandboxOffered, setThumbnails, shell, systemMenu } from './shell';
 
 const entry = (name: string, more: Partial<Entry> = {}) => ({ name, time: 7, ...more }) as Entry;
 
@@ -13,8 +15,8 @@ let posted: { url: string; body: unknown }[] = [];
 let actions: unknown[] = [];
 function server(url: string, init?: RequestInit) {
   if (init?.method === 'POST') {
-    posted.push({ url, body: JSON.parse(String(init.body)) });
-    if (url === '/api/v1/shell/thumbnails') return Response.json({ way: 'sandbox', restricted: true, allowed: true });
+    posted.push({ url, body: init.body ? JSON.parse(String(init.body)) : undefined });
+    if (url === '/api/v1/shell/thumbnails') return Response.json({ way: 'cache', restricted: true, allowed: true, restart: true });
     return new Response(null, { status: 204 });
   }
   if (url.startsWith('/api/v1/shell/actions?')) return Response.json({ actions });
@@ -103,20 +105,41 @@ describe('thumbnails behind AppArmor', () => {
   it('offers the rule only where the kernel keeps the sandbox out, and taking it away once it is there', () => {
     shell.thumbnails = undefined;
     expect(sandboxOffered()).toBe(false);
-    shell.thumbnails = { way: 'cache', restricted: false, allowed: false };
+    shell.thumbnails = { way: 'cache', restricted: false, allowed: false, restart: false };
     expect(sandboxOffered()).toBe(false);
-    shell.thumbnails = { way: 'cache', restricted: true, allowed: false };
+    shell.thumbnails = { way: 'cache', restricted: true, allowed: false, restart: false };
     expect(sandboxOffered()).toBe(true);
-    shell.thumbnails = { way: 'sandbox', restricted: true, allowed: false };
+    shell.thumbnails = { way: 'sandbox', restricted: true, allowed: false, restart: false };
     expect(sandboxOffered()).toBe(false);
-    shell.thumbnails = { way: 'sandbox', restricted: true, allowed: true };
+    shell.thumbnails = { way: 'sandbox', restricted: true, allowed: true, restart: false };
+    expect(sandboxOffered()).toBe(true);
+  });
+
+  it('stays on offer while a restart is still due', () => {
+    shell.thumbnails = { way: 'sandbox', restricted: true, allowed: false, restart: true };
     expect(sandboxOffered()).toBe(true);
   });
 
   it('takes the state the server finds after the rule changed', async () => {
-    shell.thumbnails = { way: 'cache', restricted: true, allowed: false };
+    shell.thumbnails = { way: 'cache', restricted: true, allowed: false, restart: false };
     await setThumbnails(true);
     expect(posted).toEqual([{ url: '/api/v1/shell/thumbnails', body: { allow: true } }]);
-    expect(shell.thumbnails).toEqual({ way: 'sandbox', restricted: true, allowed: true });
+    expect(shell.thumbnails).toEqual({ way: 'cache', restricted: true, allowed: true, restart: true });
+  });
+
+  it('restarts the app at once with nothing running', async () => {
+    app.jobCount = 0;
+    restartApp();
+    await vi.waitFor(() => expect(posted.map((p) => p.url)).toEqual(['/api/v1/admin/app/restart']));
+  });
+
+  it('asks first while jobs still run', () => {
+    app.jobCount = 2;
+    const before = winStack.length;
+    restartApp();
+    expect(winStack.length).toBe(before + 1);
+    expect(posted).toEqual([]);
+    winStack.at(-1)!.close();
+    app.jobCount = 0;
   });
 });

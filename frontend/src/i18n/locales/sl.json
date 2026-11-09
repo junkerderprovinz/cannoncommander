@@ -2800,12 +2800,15 @@
     "iconsTip": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice pokažejo svojo ikono tudi brez tega stikala.",
     "iconsTipLinux": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice tako ali tako pokažejo svojo ikono. CannonCommander riše sličice le v izoliranem okolju. Kjer to ne gre, na primer v Ubuntu 24.04, vidite le tiste, ki jih je vaš upravitelj datotek že ustvaril.",
     "thumbs": "Sličice",
-    "thumbsTip": "Ubuntu spusti program v izolirano okolje le z lastnim dovoljenjem. Ob vklopu CannonCommander doda majhno pravilo AppArmor, ki zahteva vaše geslo, in nato sam riše sličice. Ob izklopu pravilo spet izgine.",
+    "thumbsTip": "Ubuntu spusti program v izolirano okolje le z lastnim dovoljenjem. Ob vklopu CannonCommander doda majhno pravilo AppArmor, ki zahteva vaše geslo, in po vnovičnem zagonu sam riše sličice. Ob izklopu pravilo spet izgine, tudi to velja šele po vnovičnem zagonu.",
     "thumbsOnButton": "Vklopi sistemske sličice",
     "thumbsOffButton": "Izklopi sistemske sličice",
     "thumbsOn": "Končano, CannonCommander zdaj sam riše sličice.",
     "thumbsOff": "Izklopljeno, pravila AppArmor ni več.",
-    "thumbsStillOut": "Pravilo je tu, a izolirano okolje žal še vedno ne deluje."
+    "thumbsStillOut": "Pravilo je tu, a izolirano okolje žal še vedno ne deluje.",
+    "thumbsOnRestart": "Pravilo je tu. Po vnovičnem zagonu CannonCommander sam riše sličice.",
+    "thumbsOffRestart": "Pravila ni več. Povsem izklopljeno bo po vnovičnem zagonu.",
+    "restartNow": "Znova zaženi zdaj"
   },
   "shortcuts": {
     "title": "Bližnjice na tipkovnici",

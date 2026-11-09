@@ -2630,12 +2630,15 @@
     "iconsTip": "Viser systemets ikoner overalt i listen. Programmer og snarveier viser sitt eget ikon også når dette er av.",
     "iconsTipLinux": "Viser systemets ikoner overalt i listen. Programmer og snarveier viser sitt eget ikon uansett. CannonCommander lager bare miniatyrbilder i et isolert miljø. Der det ikke går, som på Ubuntu 24.04, ser du bare dem filbehandleren din allerede har laget.",
     "thumbs": "Miniatyrbilder",
-    "thumbsTip": "Ubuntu slipper bare et program inn i et isolert miljø med en egen tillatelse. Når du slår det på, legger CannonCommander til en liten AppArmor-regel, som ber om passordet ditt, og lager deretter miniatyrbilder selv. Når du slår det av, forsvinner regelen igjen.",
+    "thumbsTip": "Ubuntu slipper bare et program inn i et isolert miljø med en egen tillatelse. Når du slår det på, legger CannonCommander til en liten AppArmor-regel, som ber om passordet ditt, og lager etter en omstart miniatyrbilder selv. Når du slår det av, forsvinner regelen igjen, og det gjelder også først etter en omstart.",
     "thumbsOnButton": "Slå på systemets miniatyrbilder",
     "thumbsOffButton": "Slå av systemets miniatyrbilder",
     "thumbsOn": "Ferdig, CannonCommander lager nå miniatyrbilder selv.",
     "thumbsOff": "Slått av, AppArmor-regelen er borte igjen.",
-    "thumbsStillOut": "Regelen er på plass, men det isolerte miljøet fungerer dessverre fortsatt ikke."
+    "thumbsStillOut": "Regelen er på plass, men det isolerte miljøet fungerer dessverre fortsatt ikke.",
+    "thumbsOnRestart": "Regelen er på plass. Etter en omstart lager CannonCommander miniatyrbilder selv.",
+    "thumbsOffRestart": "Regelen er borte. Helt av er det etter en omstart.",
+    "restartNow": "Start på nytt nå"
   },
   "shortcuts": {
     "title": "Hurtigtaster",

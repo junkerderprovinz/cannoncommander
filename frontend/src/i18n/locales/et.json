@@ -2630,12 +2630,15 @@
     "iconsTip": "Näitab kogu loendis sinu süsteemi ikoone. Programmid ja otseteed näitavad oma ikooni ka siis, kui see lüliti on väljas.",
     "iconsTipLinux": "Näitab kogu loendis sinu süsteemi ikoone. Programmid ja otseteed näitavad oma ikooni niikuinii. CannonCommander joonistab pisipilte ainult eraldatud keskkonnas. Kus see ei õnnestu, näiteks Ubuntu 24.04 puhul, näed ainult neid, mille sinu failihaldur on juba teinud.",
     "thumbs": "Pisipildid",
-    "thumbsTip": "Ubuntu laseb programmi eraldatud keskkonda ainult eraldi loaga. Sisselülitamisel lisab CannonCommander väikese AppArmori reegli, mis küsib sinu parooli, ja joonistab seejärel pisipildid ise. Väljalülitamisel kaob reegel jälle.",
+    "thumbsTip": "Ubuntu laseb programmi eraldatud keskkonda ainult eraldi loaga. Sisselülitamisel lisab CannonCommander väikese AppArmori reegli, mis küsib sinu parooli, ja pärast taaskäivitust joonistab pisipildid ise. Väljalülitamisel kaob reegel jälle, ka see kehtib pärast taaskäivitust.",
     "thumbsOnButton": "Lülita süsteemi pisipildid sisse",
     "thumbsOffButton": "Lülita süsteemi pisipildid välja",
     "thumbsOn": "Valmis, nüüdsest joonistab CannonCommander pisipildid ise.",
     "thumbsOff": "Välja lülitatud, AppArmori reegel on jälle läinud.",
-    "thumbsStillOut": "Reegel on olemas, aga eraldatud keskkond kahjuks ikka ei tööta."
+    "thumbsStillOut": "Reegel on olemas, aga eraldatud keskkond kahjuks ikka ei tööta.",
+    "thumbsOnRestart": "Reegel on olemas. Pärast taaskäivitust joonistab CannonCommander pisipildid ise.",
+    "thumbsOffRestart": "Reegel on läinud. Täiesti väljas on see pärast taaskäivitust.",
+    "restartNow": "Taaskäivita kohe"
   },
   "shortcuts": {
     "title": "Kiirklahvid",

@@ -2715,12 +2715,15 @@
     "iconsTip": "Visā sarakstā rāda tavas sistēmas ikonas. Programmas un saīsnes rāda savu ikonu arī bez šī slēdža.",
     "iconsTipLinux": "Visā sarakstā rāda tavas sistēmas ikonas. Programmas un saīsnes savu ikonu rāda jebkurā gadījumā. Sīktēlus CannonCommander zīmē tikai izolētā vidē. Kur tas nav iespējams, piemēram, Ubuntu 24.04, tu redzi tikai tos, ko tavs failu pārvaldnieks jau ir izveidojis.",
     "thumbs": "Sīktēli",
-    "thumbsTip": "Ubuntu ielaiž programmu izolētā vidē tikai ar atsevišķu atļauju. Ieslēdzot CannonCommander pievieno nelielu AppArmor kārtulu, kas prasīs tavu paroli, un turpmāk pats zīmē sīktēlus. Izslēdzot kārtula atkal pazūd.",
+    "thumbsTip": "Ubuntu ielaiž programmu izolētā vidē tikai ar atsevišķu atļauju. Ieslēdzot CannonCommander pievieno nelielu AppArmor kārtulu, kas prasīs tavu paroli, un pēc restartēšanas pats zīmē sīktēlus. Izslēdzot kārtula atkal pazūd, un arī tas stājas spēkā pēc restartēšanas.",
     "thumbsOnButton": "Ieslēgt sistēmas sīktēlus",
     "thumbsOffButton": "Izslēgt sistēmas sīktēlus",
     "thumbsOn": "Gatavs, turpmāk CannonCommander pats zīmē sīktēlus.",
     "thumbsOff": "Izslēgts, AppArmor kārtulas vairs nav.",
-    "thumbsStillOut": "Kārtula ir vietā, bet izolētā vide diemžēl joprojām nedarbojas."
+    "thumbsStillOut": "Kārtula ir vietā, bet izolētā vide diemžēl joprojām nedarbojas.",
+    "thumbsOnRestart": "Kārtula ir vietā. Pēc restartēšanas CannonCommander pats zīmē sīktēlus.",
+    "thumbsOffRestart": "Kārtulas vairs nav. Pilnībā izslēgts tas būs pēc restartēšanas.",
+    "restartNow": "Restartēt tagad"
   },
   "shortcuts": {
     "title": "Īsinājumtaustiņi",

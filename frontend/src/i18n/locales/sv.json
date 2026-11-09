@@ -2630,12 +2630,15 @@
     "iconsTip": "Visar systemets ikoner överallt i listan. Program och genvägar visar sin egen ikon även när detta är av.",
     "iconsTipLinux": "Visar systemets ikoner överallt i listan. Program och genvägar visar sin egen ikon ändå. CannonCommander ritar bara miniatyrer i en isolerad miljö. Där det inte går, som på Ubuntu 24.04, ser du bara dem som din filhanterare redan har skapat.",
     "thumbs": "Miniatyrer",
-    "thumbsTip": "Ubuntu släpper bara in ett program i en isolerad miljö med en egen behörighet. När du slår på det lägger CannonCommander till en liten AppArmor-regel, som ber om ditt lösenord, och ritar sedan miniatyrer själv. När du slår av det försvinner regeln igen.",
+    "thumbsTip": "Ubuntu släpper bara in ett program i en isolerad miljö med en egen behörighet. När du slår på det lägger CannonCommander till en liten AppArmor-regel, som ber om ditt lösenord, och ritar efter en omstart miniatyrer själv. När du slår av det försvinner regeln igen, och det gäller också först efter en omstart.",
     "thumbsOnButton": "Slå på systemminiatyrer",
     "thumbsOffButton": "Slå av systemminiatyrer",
     "thumbsOn": "Klart, CannonCommander ritar nu miniatyrer själv.",
     "thumbsOff": "Avstängt, AppArmor-regeln är borta igen.",
-    "thumbsStillOut": "Regeln finns, men den isolerade miljön fungerar tyvärr fortfarande inte."
+    "thumbsStillOut": "Regeln finns, men den isolerade miljön fungerar tyvärr fortfarande inte.",
+    "thumbsOnRestart": "Regeln finns. Efter en omstart ritar CannonCommander miniatyrer själv.",
+    "thumbsOffRestart": "Regeln är borta. Helt avstängt är det efter en omstart.",
+    "restartNow": "Starta om nu"
   },
   "shortcuts": {
     "title": "Kortkommandon",

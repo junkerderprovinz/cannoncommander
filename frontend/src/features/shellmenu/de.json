@@ -33,10 +33,13 @@
   "iconsTip": "Zeigt in der Liste überall die Symbole deines Systems. Programme und Verknüpfungen zeigen ihr eigenes Symbol auch ohne diesen Schalter.",
   "iconsTipLinux": "Zeigt in der Liste überall die Symbole deines Systems. Programme und Verknüpfungen zeigen ihr eigenes Symbol auch so. Vorschaubilder zeichnet CannonCommander nur abgeschottet. Wo das nicht geht, etwa unter Ubuntu 24.04, siehst du nur die, die dein Dateimanager schon angelegt hat.",
   "thumbs": "Vorschaubilder",
-  "thumbsTip": "Ubuntu lässt Programme nur mit eigener Erlaubnis in eine abgeschottete Umgebung. Zum Einschalten legt CannonCommander mit deinem Passwort eine kleine AppArmor-Regel an und zeichnet danach Vorschaubilder selbst. Beim Ausschalten verschwindet die Regel wieder.",
+  "thumbsTip": "Ubuntu lässt Programme nur mit eigener Erlaubnis in eine abgeschottete Umgebung. Zum Einschalten legt CannonCommander mit deinem Passwort eine kleine AppArmor-Regel an und zeichnet nach einem Neustart Vorschaubilder selbst. Beim Ausschalten verschwindet die Regel wieder, ganz aus ist sie ebenfalls nach einem Neustart.",
   "thumbsOnButton": "Vorschaubilder des Systems einschalten",
   "thumbsOffButton": "Vorschaubilder des Systems ausschalten",
   "thumbsOn": "Fertig, ab jetzt zeichnet CannonCommander Vorschaubilder selbst.",
   "thumbsOff": "Ausgeschaltet, die AppArmor-Regel ist wieder weg.",
-  "thumbsStillOut": "Die Regel ist da, aber abschotten klappt leider noch immer nicht."
+  "thumbsStillOut": "Die Regel ist da, aber abschotten klappt leider noch immer nicht.",
+  "thumbsOnRestart": "Die Regel ist da. Nach einem Neustart zeichnet CannonCommander Vorschaubilder selbst.",
+  "thumbsOffRestart": "Die Regel ist weg. Ganz aus ist sie nach einem Neustart.",
+  "restartNow": "Jetzt neu starten"
 }
