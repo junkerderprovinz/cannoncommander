@@ -277,7 +277,8 @@
     "mark": { "title": "Markieren", "text": "Einfg markiert eine Zeile und springt zur nächsten, die Leertaste zeigt die Datei groß in der Schnellansicht. Strg+Klick nimmt einzelne dazu, Umschalt+Klick einen ganzen Bereich. Mit + markierst du nach Muster, etwa alle *.jpg." },
     "find": { "title": "Finden", "text": "Ein / öffnet den Schnellfilter im aktuellen Ordner. Alt+F7 sucht auf dem ganzen Server, schnell dank des Index unter Einstellungen, Quellen." },
     "share": { "title": "Teilen und Fernziele", "text": "Über Datei, Freigeben bekommst du einen Link mit Ablaufdatum und auf Wunsch einem Passwort. Google Drive, ein NAS oder einen anderen Server hängst du unter Einstellungen, Fernziele ein. Danach liegen sie im Ordnerbaum wie jeder andere Ordner." },
-    "rights": { "title": "Wer was darf", "text": "Jede Person hat eine Rolle und einen Bereich, aus dem sie nicht herauskommt. Zugriffsregeln verbergen darin einzelne Ordner oder machen sie schreibgeschützt. Unter Konto und Sicherheit schaltest du die Zwei-Faktor-Authentifizierung ein." }
+    "rights": { "title": "Wer was darf", "text": "Jede Person hat eine Rolle und einen Bereich, aus dem sie nicht herauskommt. Zugriffsregeln verbergen darin einzelne Ordner oder machen sie schreibgeschützt. Unter Konto und Sicherheit schaltest du die Zwei-Faktor-Authentifizierung ein." },
+    "mcp": { "title": "KI-Assistenten", "text": "Unter Einstellungen, Anbindungen, MCP-Server verbindest du Claude, ChatGPT oder einen anderen Assistenten mit deinen Dateien. Er sieht nur, was du auch siehst, und liest erst einmal nur. Schreiben erlaubst du ihm mit einem Schalter, und jede Änderung lässt sich rückgängig machen." }
   },
   "activity": {
     "overview": "Überblick", "entries": "Einträge", "inFilter": "Einträge im Filter", "ofAll": "{n} von {all}", "today": "Heute", "people": "Personen", "reset": "Filter zurücksetzen",
@@ -288,8 +289,93 @@
       "delete": "gelöscht", "bulkDelete": "mehreres gelöscht", "archive": "gepackt", "unarchive": "entpackt", "duplicateFinder": "Duplikate gesucht", "shareCreate": "freigegeben",
       "shareUpdate": "Freigabe geändert", "shareDelete": "Freigabe widerrufen", "userCreate": "Benutzer angelegt", "userUpdate": "Benutzer geändert", "userDelete": "Benutzer gelöscht", "accessCreate": "Regel angelegt",
       "accessUpdate": "Regel geändert", "accessDelete": "Regel gelöscht", "quotaCreate": "Kontingent angelegt", "quotaUpdate": "Kontingent geändert", "quotaDelete": "Kontingent gelöscht", "login": "angemeldet",
-      "logout": "abgemeldet", "signup": "registriert", "passkeyRegister": "Passkey hinzugefügt", "passkeyDelete": "Passkey entfernt", "tokenCreate": "Token erstellt", "tokenDelete": "Token widerrufen", "terminalOpen": "Terminal geöffnet", "terminalClose": "Terminal geschlossen"
+      "logout": "abgemeldet", "signup": "registriert", "passkeyRegister": "Passkey hinzugefügt", "passkeyDelete": "Passkey entfernt", "tokenCreate": "Token erstellt", "tokenDelete": "Token widerrufen", "terminalOpen": "Terminal geöffnet", "terminalClose": "Terminal geschlossen", "folderCreate": "Ordner angelegt", "trash": "in den Papierkorb gelegt", "restore": "wiederhergestellt"
     },
-    "target": "Ziel: {path}.", "from": "Von {ip}."
+    "target": "Ziel: {path}.", "from": "Von {ip}.", "viaKey": "über {name}"
+  },
+  "mcp": {
+    "title": "MCP-Server", "hint": "Damit arbeitet ein KI-Assistent wie Claude oder ChatGPT mit deinen Dateien, mit genau deinen Rechten und Zugriffsregeln. Ein Schlüssel liest nur, bis du ihm das Schreiben erlaubst.",
+    "status": "Status", "statusOff": "Aus, noch kein Schlüssel", "statusOn": { "one": "An, {n} Schlüssel aktiv", "other": "An, {n} Schlüssel aktiv" },
+    "statusOAuth": "An, wartet auf die Anmeldung eines Clients", "statusNone": "Aus, gerade funktioniert kein Schlüssel",
+    "endpoint": "Endpunkt", "endpointTip": "Hier verbindet sich dein Assistent. Er spricht Streamable HTTP und schickt den Schlüssel im Header Authorization oder X-API-Key.",
+    "desktopPort": "Die Desktop-App ist nur auf diesem Rechner erreichbar. Ist ihr Port beim Start schon belegt, nimmt sie einen anderen. Dann trägst du die neue Adresse einfach im Client nach.",
+    "hostRefused": "Diese Seite ist als {host} geöffnet. Ohne Anmeldung legt CannonCommander Schlüssel nur unter einer IP-Adresse oder einem lokalen Namen wie tower.local an, damit das keine Webseite aus dem Internet kann. Öffne CannonCommander dafür bitte über seine lokale Adresse.",
+    "connect": "Client verbinden", "connectTip": "Wähl deinen Client, dann bekommt er einen eigenen Schlüssel und du die passende Konfiguration zum Kopieren. Was der Assistent liest, etwa Ordner, Dateinamen oder den Inhalt einer Textdatei, geht an den KI-Anbieter dahinter.",
+    "choose": "Client wählen", "search": "Clients suchen", "noMatch": "Kein Client passt. Jeder andere verbindet sich über Anderer Client.",
+    "local": "Auf deinem Rechner", "cloud": "In der Cloud", "other": "Anderer Client",
+    "cloudTip": "Diese Dienste rufen CannonCommander von den Servern ihres Anbieters auf. CannonCommander muss dafür aus dem Internet erreichbar sein, mit einem Zertifikat, dem Browser vertrauen, etwa hinter einem Reverse Proxy. Ein Login am Proxy darf die Oberfläche schützen, /mcp muss aber ohne ihn durchkommen.",
+    "kind": { "terminal": "Terminal", "editor": "Editor", "desktop": "Desktop-App", "vscode": "VS-Code-Erweiterung", "localModels": "Lokale Modelle", "automation": "Automatisierung", "webChat": "Web-Chat" },
+    "keys": "Deine Schlüssel", "noKeys": "Noch kein Schlüssel. Verbinde einen Client, dann legt CannonCommander einen für ihn an.",
+    "write": "Schreiben", "writeTip": "Mit dem Schreiben legt der Assistent Ordner an, kopiert, verschiebt, benennt um, legt in den Papierkorb und holt daraus zurück. Jede Änderung ist eine Aufgabe, die du rückgängig machen kannst, und endgültig gelöscht wird nie etwas. Höchstens {perCall} Einträge pro Aufruf und {perHour} pro Stunde.",
+    "callsToday": { "one": "{n} Aufruf heute", "other": "{n} Aufrufe heute" }, "rotatedAt": "Ersetzt am {date}.", "createdAt": "Angelegt am {date}.",
+    "unusable": "Gilt nicht mehr", "unusableTip": "Der Signierschlüssel des Servers hat sich geändert, deshalb passt dieser Schlüssel nicht mehr. Ersetz ihn und trag den neuen im Client ein.",
+    "rename": "Umbenennen", "renamed": "Name gespeichert", "namePh": "etwa Claude Code auf dem Laptop", "needName": "Gib dem Schlüssel einen Namen",
+    "replace": "Ersetzen", "replaceTitle": "Schlüssel ersetzen", "replaceText": "{name} bekommt einen neuen Schlüssel, der alte gilt sofort nicht mehr. Trag den neuen danach in jedem Client ein, der ihn benutzt.", "replaced": "Schlüssel {name} ersetzt",
+    "revokeTitle": "Schlüssel widerrufen", "revokeText": "{name} gilt danach nicht mehr. Aufgaben, die er gestartet hat, behalten seinen Namen.", "revoked": "Schlüssel {name} widerrufen",
+    "revokedList": { "one": "{n} widerrufener Schlüssel", "other": "{n} widerrufene Schlüssel" }, "revokedAt": "Widerrufen am {date}",
+    "purgeTitle": "Schlüssel entfernen", "purgeText": "{name} verschwindet mit seinem Protokoll aus der Liste.",
+    "writeTitle": "Schreiben erlauben", "writeAsk": "{name} darf danach auch Dateien ändern.", "writeOn": "{name} darf jetzt schreiben", "writeOff": "{name} darf nur noch lesen",
+    "copyNow": "Kopier den Schlüssel jetzt. CannonCommander behält nur einen Fingerabdruck davon und kann ihn nicht noch einmal zeigen.",
+    "stale": "Für diesen Schritt muss deine Anmeldung frisch sein. Danach geht es hier gleich weiter.",
+    "log": "Protokoll", "logEmpty": "Dieser Schlüssel hat CannonCommander noch nicht aufgerufen.", "request": "Anfrage",
+    "logKept": "CannonCommander hebt die Aufrufe eines Schlüssels bis zu einem Monat auf. Was der Assistent geschickt hat, speichert es nie, den Schlüssel selbst auch nicht.",
+    "outcome": {
+      "ok": "erledigt", "not_permitted": "abgelehnt, das darf der Schlüssel nicht", "read_only_key": "abgelehnt, der Schlüssel darf nur lesen", "rate_limited": "abgelehnt, zu viele Anfragen",
+      "batch_refused": "abgelehnt, keine Sammelanfragen", "hourly_limit": "abgelehnt, das Stundenlimit ist erreicht", "too_many": "abgelehnt, zu viele Einträge auf einmal", "too_big": "abgelehnt, zu groß",
+      "invalid_arguments": "abgelehnt, die Angaben passten nicht", "not_found": "nichts gefunden", "timeout": "nicht rechtzeitig fertig", "failed": "fehlgeschlagen", "other": "endete mit {code}"
+    },
+    "oauth": "Anmeldung über OAuth", "oauthTip": "Für ChatGPT, Claude auf claude.ai und andere Dienste, die keinen Schlüssel annehmen. Sie schicken dich auf eine Seite von CannonCommander, dort meldest du dich an und erlaubst den Zugriff. Ausschalten meldet jeden dieser Clients ab.",
+    "oauthNeedsSignIn": "Das geht nur, wenn sich bei CannonCommander alle anmelden.",
+    "issuer": "Öffentliche Adresse", "issuerTip": "Die https-Adresse ohne Pfad, unter der CannonCommander aus dem Internet erreichbar ist, etwa https://files.example.com. Ändert sie sich, meldet sich jeder Client neu an.",
+    "oauthSaved": "Anmeldung über OAuth gespeichert", "connector": "Connector-URL", "connectorTip": "Diese Adresse trägst du im Cloud-Assistenten ein. Die Anmeldeseite findet er von dort selbst.",
+    "dialogTitle": "{name} verbinden", "stepKey": "Schlüssel", "stepConfig": "CannonCommander in {name} eintragen", "stepConfigOther": "Einstellungen für den Client",
+    "stepWait": "Warten auf den ersten Aufruf", "stepDone": "Verbunden", "stepSignIn": "Warten auf die Anmeldung",
+    "newKey": "Neuer Schlüssel", "existingKey": "Vorhandener Schlüssel", "pickHint": "CannonCommander hat jeden Schlüssel nur einmal gezeigt. Hast du ihn nicht mehr, leg lieber einen neuen an.",
+    "makeKey": "Schlüssel anlegen", "made": "Schlüssel {name} angelegt", "full": "Du hast schon {n} aktive Schlüssel. Widerrufe einen, dann ist wieder Platz.",
+    "copyCommand": "Befehl kopieren", "copyConfig": "Konfiguration kopieren", "copySettings": "Einstellungen kopieren", "copyConnector": "Connector-URL kopieren",
+    "setup": {
+      "command": "Führ das einmal in einem Terminal aus.", "file": "Füg das in die Konfigurationsdatei ein, neben die Server, die dort schon stehen.", "form": "Trag diese Werte in {app} unter {ui} ein.",
+      "other": "Jeder Client, der Streamable HTTP spricht, kann das. Trag die Werte dort ein, wo er nach einem entfernten MCP-Server fragt, den Schlüssel in einem der beiden Header.",
+      "fileUi": "In {app} öffnet {ui} die Datei.", "paste": "Du kannst es auch in {app} unter {ui} einfügen.", "where": "Wo die Datei liegt", "node": "Dafür braucht es Node.js, denn mcp-remote verbindet {app} mit CannonCommander.",
+      "chatgpt": "Öffne in ChatGPT Einstellungen, Apps & Connectors und schalte unter Erweiterte Einstellungen den Entwicklermodus ein. Wähl dann Erstellen, gib dem Connector einen Namen, füg die Connector-URL als MCP-Server-URL ein, wähl OAuth als Authentifizierung und erstell ihn.",
+      "claude": "Öffne auf claude.ai Einstellungen, Connectors und wähl Benutzerdefinierten Connector hinzufügen. Gib ihm einen Namen, füg die Connector-URL ein, lass OAuth-Client-ID und Secret leer und füg ihn hinzu. Wähl danach Verbinden.",
+      "proxy": "Der Dienst ruft /mcp, /oauth/ und /.well-known/ von seinen eigenen Servern auf. Ein Reverse Proxy mit eigenem Login muss diese Pfade durchlassen.",
+      "oauthOff": "Dafür schaltet ein Admin zuerst die Anmeldung über OAuth ein, unter Einstellungen, Anbindungen, MCP-Server."
+    },
+    "key": {
+      "keyFile": "Speicher den Schlüssel in einer Textdatei als Zeile X-API-Key: <key> und trag den Pfad dieser Datei in die Konfiguration ein. {app} kennt dann nur den Pfad, so taucht der Schlüssel weder dort noch in der Prozessliste auf.",
+      "keyFileTip": "Schreib Pfade in JSON mit normalen Schrägstrichen, etwa C:/Users/anna/cannoncommander-key.txt, denn ein einzelner Backslash ist kein gültiges JSON. Lass im Pfad der Schlüsseldatei keine Leerzeichen, sonst gibt {app} ihn unter Windows in zwei Teilen an npx weiter.",
+      "env": "{app} liest den Schlüssel aus der Umgebungsvariable {var}.",
+      "envTip": "Setz sie einmal als Benutzer-Umgebungsvariable, unter Windows in Einstellungen, System, Info, Erweiterte Systemeinstellungen, Umgebungsvariablen, unter macOS und Linux in deinem Shell-Profil. Starte {app} danach neu. Mit setx oder export an der Eingabeaufforderung bliebe der Schlüssel in deinem Shell-Verlauf.",
+      "envUnsure": "Schickt {app} den Namen der Variable statt des Schlüssels, schreib den Schlüssel an ihrer Stelle in die Datei und behalt die Datei für dich.",
+      "prompt": "{app} fragt beim ersten Start des Servers nach dem Schlüssel und legt ihn in seinem eigenen Geheimnisspeicher ab. In der Datei steht also kein Schlüssel.",
+      "dotenv": "{app} liest den Schlüssel aus der Zeile {var}=<key> in {file}. Behalt diese Datei für dich.",
+      "inFile": "{app} kann den Schlüssel nirgendwo sonst lesen, deshalb steht er im Klartext in dieser Datei. Behalt die Datei für dich und halt sie aus geteilten Ordnern und der Versionsverwaltung heraus.",
+      "inApp": "{app} speichert den Schlüssel in seinen eigenen Einstellungen, laut seiner Dokumentation unverschlüsselt. Wer diese Einstellungen öffnen kann, kann ihn lesen.",
+      "credential": "{app} speichert den Schlüssel verschlüsselt bei seinen Zugangsdaten. Leg damit Zugangsdaten vom Typ Bearer Auth an und wähl sie am Knoten aus.",
+      "vendor": "{app} speichert den Schlüssel auf den Servern seines Anbieters und schickt ihn bei jedem Aufruf mit.",
+      "other": "Kann der Client den Schlüssel aus einer Umgebungsvariable, einer Geheimnisabfrage oder dem Schlüsselbund des Systems lesen, nimm das, statt ihn in seine Einstellungen zu schreiben."
+    },
+    "note": {
+      "perplexity": "Bisher verbindet sich nur die Mac-App von Perplexity mit MCP-Servern auf deinem Rechner oder in deinem Netz, die Windows-App und die Website können das noch nicht.",
+      "grok": "Die Dokumentation von Grok zeigt sein Formular für Connectoren nicht im Detail. Bietet es nur eine Anmeldung und kein Feld für einen Header, kann Grok noch keinen Schlüssel von CannonCommander nutzen."
+    },
+    "waitLine": "Warten, bis {app} CannonCommander aufruft", "waitLineOther": "Warten, bis der Client CannonCommander aufruft",
+    "waitHint": "Starte {app} neu, damit es den neuen Server lädt, und lass es CannonCommander einmal benutzen. Beim ersten Aufruf wird das hier grün.",
+    "firstCall": "Der erste Aufruf mit {name} kam um {time} an. Viel Spaß!", "signInWait": "Warten, bis sich {app} anmeldet",
+    "signInHint": "{app} öffnet eine Seite von CannonCommander. Melde dich dort an und wähl Erlauben.", "signedIn": "{name} hat sich um {time} angemeldet. Viel Spaß!",
+    "all": "Schlüssel aller Konten", "allTip": "Hier siehst du die Schlüssel der anderen Konten. Du kannst einem das Schreiben wieder wegnehmen oder ihn widerrufen. Erlauben kann es nur, wem der Schlüssel gehört.",
+    "noOthers": "Die anderen Konten haben noch keinen Schlüssel.", "onlyOwner": "Schreiben erlauben kann nur {owner}",
+    "consent": {
+      "title": "Zugriff erlauben?", "asks": "{name} möchte als {account} mit deinen Dateien in CannonCommander arbeiten.",
+      "reads": "Der Client kann dann Ordner auflisten, Dateien suchen und Textdateien lesen, immer mit genau deinen Rechten.",
+      "writeTip": "Ist das an, darf der Client auch Ordner anlegen, kopieren, verschieben, umbenennen und in den Papierkorb legen. Endgültig gelöscht wird nie etwas, und du kannst es später unter Einstellungen, Anbindungen, MCP-Server ändern.",
+      "unverified": "CannonCommander kennt diesen Client nicht, den Namen oben hat er sich selbst gegeben. Erlaub ihn nur, wenn du die Anmeldung gerade selbst gestartet hast.",
+      "known": "Erlaub ihn nur, wenn du die Anmeldung gerade selbst gestartet hast. Ein Link von jemand anderem könnte sein eigenes {name}-Konto mit deinen Dateien verbinden.",
+      "loopback": "Dieser Client kehrt zu einem Programm auf deinem Rechner zurück, und jedes Programm dort könnte sich als er ausgeben. Erlaub ihn nur, wenn du die Anmeldung gerade selbst gestartet hast.",
+      "allow": "Erlauben", "deny": "Ablehnen", "returnsTo": "Deine Antwort führt zurück zu {host}.", "returning": "Zurück zu {host}", "unnamed": "Ein Client ohne Namen",
+      "full": "Du hast schon {n} angemeldete Clients. Widerrufe einen unter Einstellungen, Anbindungen, MCP-Server und starte die Anmeldung dann neu.",
+      "failed": "Die Anfrage ließ sich nicht prüfen. Lad die Seite bitte neu."
+    }
   }
 }

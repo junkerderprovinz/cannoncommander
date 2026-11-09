@@ -7,6 +7,7 @@
 .job-grip svg { width: .9rem; height: .9rem; color: var(--carbon-text-muted); }
 .job-text { min-width: 0; }
 .job-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.job-via { margin-inline-start: .5rem; vertical-align: middle; }
 .job .sub { font-size: 12px; }
 .job-file { display: flex; align-items: center; gap: .35rem; font-size: 12px; color: var(--carbon-text-sub); min-width: 0; }
 .job-file svg { width: .8rem; height: .8rem; flex: none; color: var(--accent-glyph); }
