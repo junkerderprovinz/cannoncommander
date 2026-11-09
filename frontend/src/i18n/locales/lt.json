@@ -2055,7 +2055,6 @@
     "press": "Paspausk klavišą …",
     "none": "nėra",
     "clear": "Ištrinti klavišą",
-    "undo": "Kaip anksčiau",
     "fixed": "{key} priskirtas visam laikui. Rinkis kitą klavišą.",
     "letter": "Pavienės raidės ir skaitmenys skirti greitajai paieškai. Pridėk Ctrl, Alt arba F klavišą.",
     "taken": "{key} jau priklauso komandai „{action}“. Sukeitus komanda „{action}“ gauna tavo dabartinį klavišą. Esc palieka viską kaip yra.",

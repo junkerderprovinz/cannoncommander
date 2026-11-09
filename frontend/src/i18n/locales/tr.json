@@ -1931,7 +1931,6 @@
     "press": "Bir tuşa bas …",
     "none": "yok",
     "clear": "Tuşu sil",
-    "undo": "Önceki gibi",
     "fixed": "{key} sabit atanmış. Başka bir tuş seç.",
     "letter": "Tek harfler ve rakamlar hızlı arama içindir. Ctrl, Alt ya da bir F tuşu ekle.",
     "taken": "{key} zaten “{action}” komutuna ait. Yer değiştirirsen “{action}” şu anki tuşunu alır. Esc her şeyi olduğu gibi bırakır.",

@@ -1993,7 +1993,6 @@
     "press": "Pritisnite tipku…",
     "none": "nema",
     "clear": "Izbriši tipku",
-    "undo": "Kao prije",
     "fixed": "{key} je trajno zauzeta. Odaberite drugu tipku.",
     "letter": "Pojedinačna slova i znamenke koristi brzo pretraživanje. Dodajte Ctrl, Alt ili F tipku.",
     "taken": "{key} već pripada naredbi „{action}“. Razmjenom naredba „{action}“ dobiva vašu dosadašnju tipku. Esc ostavlja sve kako jest.",

@@ -1931,7 +1931,6 @@
     "press": "Paina näppäintä …",
     "none": "ei mitään",
     "clear": "Poista näppäin",
-    "undo": "Kuten ennen",
     "fixed": "{key} on kiinteästi varattu. Valitse toinen näppäin.",
     "letter": "Yksittäiset kirjaimet ja numerot kuuluvat pikahaulle. Lisää Ctrl, Alt tai F-näppäin.",
     "taken": "{key} kuuluu jo toiminnolle ”{action}”. Kun vaihdat, ”{action}” saa nykyisen näppäimesi. Esc jättää kaiken ennalleen.",

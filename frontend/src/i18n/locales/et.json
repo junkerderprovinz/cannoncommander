@@ -1931,7 +1931,6 @@
     "press": "Vajuta klahvi …",
     "none": "puudub",
     "clear": "Kustuta klahv",
-    "undo": "Nagu enne",
     "fixed": "{key} on püsivalt hõivatud. Vali teine klahv.",
     "letter": "Üksikud tähed ja numbrid kuuluvad kiirotsingule. Lisa Ctrl, Alt või F-klahv.",
     "taken": "{key} kuulub juba käsule „{action}“. Vahetamisel saab „{action}“ sinu praeguse klahvi. Esc jätab kõik nii, nagu on.",

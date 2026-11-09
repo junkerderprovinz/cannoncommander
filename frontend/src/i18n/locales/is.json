@@ -1931,7 +1931,6 @@
     "press": "Ýttu á lykil …",
     "none": "enginn",
     "clear": "Eyða lykli",
-    "undo": "Eins og áður",
     "fixed": "{key} er fastbundinn. Veldu annan lykil.",
     "letter": "Stakir bókstafir og tölustafir tilheyra flýtileitinni. Bættu við Ctrl, Alt eða F-lykli.",
     "taken": "{key} tilheyrir þegar „{action}“. Við víxlun fær „{action}“ núverandi lykilinn þinn. Esc lætur allt vera eins og það er.",

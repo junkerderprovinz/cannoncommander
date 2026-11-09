@@ -41,6 +41,7 @@ afterEach(() => {
 
 const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T & HTMLElement>(sel);
 const rows = () => [...document.querySelectorAll('.kb-row .kb-name')].map((n) => n.textContent!.trim());
+const chips = (id: string) => [...document.querySelectorAll(`[data-kb-rec="${id}"] .glim-kbd`)].map((k) => k.textContent!.trim());
 const keyOf = (id: string) => $(`[data-kb-rec="${id}"]`)!.textContent!.trim();
 const warning = () => $('.kb-warn')?.textContent?.trim();
 async function press(key: string, mods: KeyboardEventInit = {}) {
@@ -51,10 +52,10 @@ async function rebind(id: string) {
   $(`[data-kb-rec="${id}"]`)!.click();
   await settle();
 }
-// The trash glyph as GlimStone draws it, which every delete button in the app wears.
-const trash = () => {
+// A glyph as GlimStone draws it, to tell which one a button wears.
+const drawn = (name: string) => {
   const host = document.body.appendChild(document.createElement('div'));
-  createApp({ render: () => h(glyphComponent('IconTrash')) }).mount(host);
+  createApp({ render: () => h(glyphComponent(name)) }).mount(host);
   const svg = host.innerHTML;
   host.remove();
   return svg;
@@ -214,13 +215,29 @@ describe('the shortcuts tile', () => {
     [...document.querySelectorAll<HTMLButtonElement>('#kt-layout button')].find((b) => b.textContent?.trim() === 'Wie im Explorer')!.click();
     await settle();
     expect(keymap.F5).toBe('refresh');
-    expect(keyOf('refresh')).toBe('F5+1');
+    expect(chips('refresh')).toEqual(['F5', 'Strg+R']);
+  });
+
+  it('shows every key of an action as a chip of its own', () => {
+    expect(chips('newTab')).toEqual(['Strg+T', 'Strg+N']);
+    expect(keyOf('newTab')).not.toContain('+1');
+  });
+
+  it('puts a changed key back with a reset button named for it', async () => {
+    await rebind('copy');
+    await press('F5', { ctrlKey: true });
+    const back = $('[data-kb-reset="copy"]')!;
+    expect(back.getAttribute('aria-label')).toBe('Zurücksetzen');
+    expect(back.querySelector('svg')?.outerHTML).toBe(drawn('IconResetArrow'));
+    back.click();
+    await settle();
+    expect(keymap.F5).toBe('copy');
   });
 
   it('deletes a key with a trash button named for it', async () => {
     const del = $('[data-kb-clear="copy"]')!;
     expect(del.getAttribute('aria-label')).toBe('Taste löschen');
-    expect(del.querySelector('svg')?.outerHTML).toBe(trash());
+    expect(del.querySelector('svg')?.outerHTML).toBe(drawn('IconTrash'));
     del.click();
     await settle();
     expect(keymap.F5).toBeUndefined();
