@@ -351,6 +351,9 @@ components:
           type: string
         owner:
           type: string
+        via:
+          type: string
+          description: The key of the MCP server an assistant started the job with, missing for a job its owner started.
         state:
           type: string
           enum: [queued, running, paused, asking, done, failed, cancelled]

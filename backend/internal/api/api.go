@@ -18,6 +18,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/launch"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/mcpapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/office"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/openwith"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/places"
@@ -62,5 +63,6 @@ func NewRouter(deps v1.Deps, auth v1.Authenticator) *v1.Router {
 	filemanager.Routes(r)
 	office.Routes(r)
 	stream.Routes(r)
+	mcpapi.Routes(r)
 	return r
 }

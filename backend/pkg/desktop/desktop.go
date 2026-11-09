@@ -59,6 +59,10 @@ func Home() string {
 // CookieName holds the key in the window.
 const CookieName = "cc_desktop"
 
+// MCPPath is the endpoint of the MCP server. An assistant has no window and
+// no cookie; it brings a key of its own, which the endpoint checks.
+const MCPPath = "/mcp"
+
 // EnterPath is where the window starts: it trades the key in the query for
 // the cookie and goes on to the interface, with the folders to open, if any.
 const EnterPath = "/desktop/enter"
@@ -78,6 +82,10 @@ func Guard(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !loopbackHost(r.Host, port) {
 			http.Error(w, "this address is for the CannonCommander window", http.StatusMisdirectedRequest)
+			return
+		}
+		if r.URL.Path == MCPPath {
+			next.ServeHTTP(w, r)
 			return
 		}
 		if r.URL.Path == EnterPath {

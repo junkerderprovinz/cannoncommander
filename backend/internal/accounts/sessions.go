@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"errors"
+	"net"
 	"net/http"
 	"slices"
 	"strconv"
@@ -154,6 +155,38 @@ func TokenUsed(ctx context.Context, db *sql.DB, u *users.User, raw string) {
 
 func safe(method string) bool {
 	return method == http.MethodGet || method == http.MethodHead || method == http.MethodOptions
+}
+
+// SessionHash returns the hash of the session r signed in with. ok is false
+// for an API token and for every request without a session.
+func SessionHash(r *http.Request) (hash string, ok bool) {
+	if login == nil {
+		return "", false
+	}
+	hash, _, ok = login.Session(r)
+	return hash, ok
+}
+
+// ByAPIToken reports whether r signed in with an API token.
+func ByAPIToken(r *http.Request) bool {
+	if login == nil {
+		return false
+	}
+	_, ok := login.APIToken(r)
+	return ok
+}
+
+// ClientIP returns the address of the client behind r, behind any proxy the
+// config trusts.
+func ClientIP(r *http.Request) string {
+	if login == nil {
+		host, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			return r.RemoteAddr
+		}
+		return host
+	}
+	return login.ClientIP(r)
 }
 
 // needSession refuses changes to logins and credentials that come with an

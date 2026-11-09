@@ -275,7 +275,7 @@ func (m *Manager) Submit(owner, kind string, p *Plan, capBytes int64, waitForPar
 	}
 	j := &job{params: params, limiter: rate.NewLimiter(limitOf(capBytes), Chunk)}
 	j.ID = strings.ToLower(rand.Text()[:16])
-	j.Kind, j.Owner, j.Dest = kind, owner, p.Dest
+	j.Kind, j.Owner, j.Dest, j.Via = kind, owner, p.Dest, p.Via
 	j.State = Queued
 	j.Cap, j.WaitForParity = capBytes, waitForParity
 	j.CreatedAt = time.Now()

@@ -22,6 +22,14 @@ import (
 // ownTables are the tables of this package with rows per user.
 var ownTables = []string{"sessions", "account_profiles", "recovery_codes", "token_use", "oidc_identities"}
 
+// onDelete holds what other packages drop when an account goes.
+var onDelete []func(ctx context.Context, d v1.Deps, userID uint64) error
+
+// OnDelete adds f to what runs before an account is deleted. A package that
+// hands out credentials of its own revokes them there. It is meant for init
+// functions.
+func OnDelete(f func(ctx context.Context, d v1.Deps, userID uint64) error) { onDelete = append(onDelete, f) }
+
 // deleteUser removes an account with everything that hangs on it: shares,
 // jobs, undo steps, rules, settings and sessions. Files stay where they are,
 // and its trash stays for admins until the clean up deletes it.
@@ -53,6 +61,11 @@ func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 	}
 	if err := h.svc.rules.dropWho(r.Context(), u.Username); err != nil {
 		return err
+	}
+	for _, f := range onDelete {
+		if err := f(r.Context(), h.deps, u.ID); err != nil {
+			return err
+		}
 	}
 	if err := state.DeleteUser(u.ID); err != nil {
 		return err

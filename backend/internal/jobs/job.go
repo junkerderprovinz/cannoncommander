@@ -115,6 +115,9 @@ type Job struct {
 	ID    string `json:"id"`
 	Kind  string `json:"kind"`
 	Owner string `json:"owner"`
+	// Via names the assistant that started the job through a key of the MCP
+	// server, empty for a job the owner started.
+	Via   string `json:"via,omitempty"`
 	State State  `json:"state"`
 	// Reason says why a queued job does not run: "parity" while it waits
 	// for a parity check, empty while it waits for its turn.
@@ -156,6 +159,7 @@ type Plan struct {
 	// of the first item.
 	Name  string
 	Dest  string
+	Via   string
 	Items []Item
 	// Answers are decisions taken before the start, keyed like
 	// Conflict.Key.
