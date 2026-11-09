@@ -876,7 +876,7 @@
         "url": "Polni naslov shrambe, skupaj s potjo za imenom strežnika. Oblak ga pokaže v svojih nastavitvah pod WebDAV.",
         "user": "Ime, s katerim se prijavite, ne prikazno ime.",
         "pass": "Geslo tega računa. Če storitev ponuja gesla za aplikacije, je eno od njih varnejše.",
-        "passCloud": "Sem spada geslo za aplikacijo, ne vaše geslo za prijavo. Nextcloud ga ustvari pod Nastavitve, Varnost, OpenCloud pod Račun, Žetoni aplikacij.",
+        "passCloud": "Sem spada geslo za aplikacijo, ne vaše geslo za prijavo. Nextcloud ga ustvari pod Osebne nastavitve, Varnostna opozorila, OpenCloud pod Account, App Tokens.",
         "host": "Ime ali IP računalnika, na primer nas ali 192.168.1.20, brez http:// in brez poti.",
         "port": "Samo če storitev ne posluša na svojih običajnih vratih.",
         "accessKey": "ID ključa, krajša in javna polovica para.",

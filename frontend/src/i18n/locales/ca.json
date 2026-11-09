@@ -841,7 +841,7 @@
         "url": "L'adreça completa de l'emmagatzematge, amb el camí que va després del nom del servidor. Un núvol la mostra a la seva configuració, a WebDAV.",
         "user": "El nom amb què inicieu la sessió, no el nom visible.",
         "pass": "La contrasenya d'aquest compte. Si el servei ofereix contrasenyes d'aplicació, una d'aquestes és més segura.",
-        "passCloud": "Aquí hi va una contrasenya d'aplicació, no la vostra contrasenya d'inici de sessió. El Nextcloud en crea una a Paràmetres, Seguretat, i l'OpenCloud a Compte, Testimonis d'aplicació.",
+        "passCloud": "Aquí hi va una contrasenya d'aplicació, no la vostra contrasenya d'inici de sessió. El Nextcloud en crea una a Paràmetres personals, Seguretat, i l'OpenCloud a Compte, Tokens d'aplicació.",
         "host": "El nom o la IP de l'ordinador, per exemple nas o 192.168.1.20, sense http:// i sense camí.",
         "port": "Només si el servei no escolta al seu port habitual.",
         "accessKey": "L'ID de la clau, la meitat més curta i pública del parell.",

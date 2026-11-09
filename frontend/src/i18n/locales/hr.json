@@ -841,7 +841,7 @@
         "url": "Puna adresa pohrane, s putanjom iza naziva poslužitelja. Oblak je prikazuje u svojim postavkama pod WebDAV.",
         "user": "Ime kojim se prijavljujete, ne ime za prikaz.",
         "pass": "Lozinka ovog računa. Ako usluga nudi lozinke aplikacija, jedna od njih je sigurnija.",
-        "passCloud": "Ovdje ide lozinka aplikacije, ne vaša lozinka za prijavu. Nextcloud je stvara pod Postavke, Sigurnost, a OpenCloud pod Račun, Tokeni aplikacija.",
+        "passCloud": "Ovdje ide lozinka aplikacije, ne vaša lozinka za prijavu. Nextcloud je stvara pod Osobne postavke, Sigurnost, a OpenCloud pod Account, App Tokens.",
         "host": "Naziv ili IP računala, npr. nas ili 192.168.1.20, bez http:// i bez putanje.",
         "port": "Samo ako usluga ne sluša na svom uobičajenom portu.",
         "accessKey": "ID ključa, kraća i javna polovica para.",

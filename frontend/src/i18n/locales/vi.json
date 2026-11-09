@@ -771,7 +771,7 @@
         "url": "Địa chỉ đầy đủ của kho lưu trữ, kèm đường dẫn sau tên máy chủ. Dịch vụ đám mây hiển thị nó trong phần cài đặt, mục WebDAV.",
         "user": "Tên bạn dùng để đăng nhập, không phải tên hiển thị.",
         "pass": "Mật khẩu của tài khoản này. Nếu dịch vụ có mật khẩu ứng dụng, dùng một cái như vậy sẽ an toàn hơn.",
-        "passCloud": "Ở đây cần mật khẩu ứng dụng, không phải mật khẩu đăng nhập của bạn. Nextcloud tạo nó trong Cài đặt, Bảo mật, còn OpenCloud trong Tài khoản, App tokens.",
+        "passCloud": "Ở đây cần mật khẩu ứng dụng, không phải mật khẩu đăng nhập của bạn. Nextcloud tạo nó trong Personal settings, Bảo mật, còn OpenCloud trong Account, App Tokens.",
         "host": "Tên hoặc IP của máy, ví dụ nas hay 192.168.1.20, không có http:// và không có đường dẫn.",
         "port": "Chỉ khi dịch vụ không lắng nghe ở cổng thông thường của nó.",
         "accessKey": "ID của khóa, nửa ngắn hơn và công khai của cặp khóa.",

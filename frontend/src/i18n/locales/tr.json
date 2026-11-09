@@ -806,7 +806,7 @@
         "url": "Depolamanın tam adresi, sunucu adından sonraki yolla birlikte. Bir bulut bunu ayarlarında WebDAV altında gösterir.",
         "user": "Giriş yaptığın ad, görünen ad değil.",
         "pass": "Bu hesabın parolası. Hizmet uygulama parolaları sunuyorsa bunlardan biri daha güvenlidir.",
-        "passCloud": "Buraya giriş parolan değil, bir uygulama parolası girer. Nextcloud bunu Ayarlar, Güvenlik altında, OpenCloud ise Hesap, Uygulama token'ları altında oluşturur.",
+        "passCloud": "Buraya giriş parolan değil, bir uygulama parolası girer. Nextcloud bunu Kişisel ayarlar, Güvenlik altında, OpenCloud ise Account, App Tokens altında oluşturur.",
         "host": "Makinenin adı ya da IP'si, örneğin nas veya 192.168.1.20, http:// olmadan ve yol olmadan.",
         "port": "Yalnızca hizmet her zamanki portunda dinlemiyorsa.",
         "accessKey": "Anahtar kimliği, çiftin daha kısa ve herkese açık yarısı.",

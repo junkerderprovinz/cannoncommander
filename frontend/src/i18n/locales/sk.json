@@ -876,7 +876,7 @@
         "url": "Celá adresa úložiska aj s cestou za názvom servera. Cloud ju ukazuje vo svojich nastaveniach pod WebDAV.",
         "user": "Meno, ktorým sa prihlasujete, nie zobrazované meno.",
         "pass": "Heslo tohto účtu. Ak služba ponúka heslá aplikácií, niektoré z nich je bezpečnejšie.",
-        "passCloud": "Sem patrí heslo aplikácie, nie vaše prihlasovacie heslo. Nextcloud ho vytvorí v Nastavenia, Zabezpečenie, OpenCloud v Účet, Tokeny aplikácií.",
+        "passCloud": "Sem patrí heslo aplikácie, nie vaše prihlasovacie heslo. Nextcloud ho vytvorí v časti Osobné nastavenia, Zabezpečenie, OpenCloud v časti Account, App Tokens.",
         "host": "Názov alebo IP počítača, napríklad nas alebo 192.168.1.20, bez http:// a bez cesty.",
         "port": "Len ak služba nepočúva na svojom obvyklom porte.",
         "accessKey": "ID kľúča, kratšia a verejná polovica páru.",

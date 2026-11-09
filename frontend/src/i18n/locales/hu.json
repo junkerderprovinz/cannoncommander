@@ -806,7 +806,7 @@
         "url": "A tároló teljes címe, a szervernév utáni útvonallal együtt. A felhők a beállításaikban, a WebDAV résznél mutatják.",
         "user": "A név, amellyel bejelentkezik, nem a megjelenített név.",
         "pass": "Ennek a fióknak a jelszava. Ahol a szolgáltatás alkalmazásjelszót kínál, az biztonságosabb.",
-        "passCloud": "Ide alkalmazásjelszó kell, nem a bejelentkezési jelszava. A Nextcloud a Beállítások, Biztonság alatt hoz létre ilyet, az OpenCloud a Fiók, Alkalmazástokenek alatt.",
+        "passCloud": "Ide alkalmazásjelszó kell, nem a bejelentkezési jelszava. A Nextcloud a Személyes beállítások, Biztonság alatt hoz létre ilyet, az OpenCloud a Fiók, Alkalmazás tokenek alatt.",
         "host": "A gép neve vagy IP-címe, például nas vagy 192.168.1.20, http:// és útvonal nélkül.",
         "port": "Csak ha a szolgáltatás nem a szokásos portján figyel.",
         "accessKey": "A kulcsazonosító, a pár rövidebb és nyilvános fele.",

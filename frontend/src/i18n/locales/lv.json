@@ -841,13 +841,13 @@
         "url": "Pilna krātuves adrese kopā ar ceļu aiz servera nosaukuma. Mākonis to rāda savos iestatījumos pie WebDAV.",
         "user": "Vārds, ar kuru piesakies, nevis attēlojamais vārds.",
         "pass": "Šī konta parole. Ja pakalpojums piedāvā lietotņu paroles, kāda no tām ir drošāka.",
-        "passCloud": "Šeit jāievada lietotnes parole, nevis tava pieteikšanās parole. Nextcloud to izveido sadaļā Iestatījumi, Drošība, OpenCloud sadaļā Konts, Lietotņu marķieri.",
+        "passCloud": "Šeit jāievada lietotnes parole, nevis tava pieteikšanās parole. Nextcloud to izveido sadaļā Personiskie iestatījumi, Drošība, OpenCloud sadaļā Account, App Tokens.",
         "host": "Datora nosaukums vai IP, piemēram, nas vai 192.168.1.20, bez http:// un bez ceļa.",
         "port": "Tikai tad, ja pakalpojums neklausās savā ierastajā portā.",
         "accessKey": "Atslēgas ID, īsākā un publiskā pāra puse.",
         "secretKey": "Pāra slepenā puse. To parāda tikai vienreiz, kad atslēgu izveido.",
         "endpoint": "Tava servera adrese ar portu, piemēram, http://192.168.1.20:9000. Pašam Amazon atstāj tukšu.",
-        "region": "Reģions, kurā atrodas spainis. Pašu uzturētas krātuves parasti pieņem jebkuru vārdu, un us-east-1 der gandrīz vienmēr.",
+        "region": "Reģions, kurā atrodas bucket. Pašu uzturētas krātuves parasti pieņem jebkuru vārdu, un us-east-1 der gandrīz vienmēr.",
         "vendor": "Kāds tas ir WebDAV serveris. Ja neesi drošs, izvēlies other.",
         "keyFile": "Ceļš uz privāto atslēgu serverī, kurā darbojas CannonCommander.",
         "remote": "Attālā vieta, uz kuras balstās šī, ja gribi, ar mapi, piemēram, nas:photos.",
@@ -875,12 +875,12 @@
       "path": {
         "folder": "Mape",
         "share": "Koplietojums",
-        "bucket": "Spainis"
+        "bucket": "Bucket"
       },
       "pathTip": {
         "folder": "Atstāj tukšu, lai redzētu visu, vai norādi mapi, piemēram, /Photos.",
         "share": "Koplietotā mape serverī. Pārbaude bez tās parāda koplietojumus, no kuriem izvēlēties.",
-        "bucket": "Atstāj tukšu visiem spaiņiem, ko atslēga redz, vai norādi vienu."
+        "bucket": "Atstāj tukšu visiem bucket, ko atslēga redz, vai norādi vienu."
       },
       "pickShare": "Izvēlies koplietojumu",
       "hostKey": "Servera atslēga",

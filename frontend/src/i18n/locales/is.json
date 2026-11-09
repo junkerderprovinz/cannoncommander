@@ -806,7 +806,7 @@
         "url": "Fullt vistfang geymslunnar, með slóðinni á eftir heiti netþjónsins. Ský sýnir það í stillingunum sínum undir WebDAV.",
         "user": "Nafnið sem þú skráir þig inn með, ekki birtingarnafnið.",
         "pass": "Lykilorð þessa aðgangs. Þar sem þjónustan býður upp á forritalykilorð er eitt þeirra öruggara.",
-        "passCloud": "Hér á að vera forritalykilorð, ekki innskráningarlykilorðið þitt. Nextcloud býr það til undir Stillingar, Öryggi, og OpenCloud undir Aðgangur, Forritatókar.",
+        "passCloud": "Hér á að vera forritalykilorð, ekki innskráningarlykilorðið þitt. Nextcloud býr það til undir Persónulegar stillingar, Öryggi, og OpenCloud undir Account, App Tokens.",
         "host": "Heiti eða IP-tala vélarinnar, til dæmis nas eða 192.168.1.20, án http:// og án slóðar.",
         "port": "Aðeins ef þjónustan hlustar ekki á venjulegu gáttinni sinni.",
         "accessKey": "Auðkenni lykilsins, styttri og opinberi helmingur parsins.",

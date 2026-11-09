@@ -806,7 +806,7 @@
         "url": "Tallennustilan koko osoite polkuineen palvelimen nimen perässä. Pilvi näyttää sen asetuksissaan kohdassa WebDAV.",
         "user": "Nimi, jolla kirjaudut sisään, ei näyttönimi.",
         "pass": "Tämän tilin salasana. Jos palvelu tarjoaa sovellussalasanoja, sellainen on turvallisempi.",
-        "passCloud": "Tähän kuuluu sovellussalasana, ei kirjautumissalasanasi. Nextcloudissa sen luo kohdassa Asetukset, Turvallisuus ja OpenCloudissa kohdassa Tili, Sovellustunnisteet.",
+        "passCloud": "Tähän kuuluu sovellussalasana, ei kirjautumissalasanasi. Nextcloudissa sen luo kohdassa Henkilökohtaiset asetukset, Turvallisuus ja OpenCloudissa kohdassa Tili, Sovelluspoletit.",
         "host": "Koneen nimi tai IP, esimerkiksi nas tai 192.168.1.20, ilman http://-alkua ja ilman polkua.",
         "port": "Vain jos palvelu ei kuuntele tavallisessa portissaan.",
         "accessKey": "Avaimen tunnus, parin lyhyempi ja julkinen puolisko.",

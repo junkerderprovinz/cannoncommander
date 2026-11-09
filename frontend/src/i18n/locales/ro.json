@@ -841,7 +841,7 @@
         "url": "Adresa completă a stocării, cu tot cu calea de după numele serverului. Un cloud o arată în setările lui, la WebDAV.",
         "user": "Numele cu care te autentifici, nu numele afișat.",
         "pass": "Parola acestui cont. Dacă serviciul oferă parole de aplicație, una dintre ele e mai sigură.",
-        "passCloud": "Aici pui o parolă de aplicație, nu parola de autentificare. Nextcloud o creează la Setări, Securitate, iar OpenCloud la Cont, Tokenuri de aplicație.",
+        "passCloud": "Aici pui o parolă de aplicație, nu parola de autentificare. Nextcloud o creează la Setări personale, Securitate, iar OpenCloud la Account, App Tokens.",
         "host": "Numele sau IP-ul mașinii, de exemplu nas sau 192.168.1.20, fără http:// și fără cale.",
         "port": "Doar dacă serviciul nu ascultă pe portul lui obișnuit.",
         "accessKey": "ID-ul cheii, jumătatea mai scurtă și publică a perechii.",
