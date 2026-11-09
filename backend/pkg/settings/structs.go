@@ -29,7 +29,7 @@ type Http struct {
 	ListenAddress     string   `json:"listen"`            // address to listen on (default: 0.0.0.0)
 	BaseURL           string   `json:"baseURL"`           // base URL for the server, the subpath that the server is running on.
 	ExternalUrl       string   `json:"externalUrl"`       // used by share links if set (eg. http://mydomain.com)
-	InternalUrl       string   `json:"internalUrl"`       // used by integrations if set, this is the base domain that an integration service will use to communicate with filebrowser (eg. http://localhost:8080)
+	InternalUrl       string   `json:"internalUrl"`       // used by integrations if set, this is the base domain that an integration service will use to communicate with the server (eg. http://localhost:8080)
 	DisableWebDAV     bool     `json:"disableWebDAV"`     // keeps the WebDAV server off until an admin switches it on in the settings (default: true)
 	TrustProxyHeaders bool     `json:"trustProxyHeaders"` // honor X-Forwarded-* and X-Real-IP from a reverse proxy (default: false)
 	TrustedProxies    []string `json:"trustedProxies"`    // IPs/CIDRs of trusted proxies; forwarded client headers are only honored when the socket peer matches one of these (default: empty = forwarded headers ignored)
@@ -94,9 +94,9 @@ type Filesystem struct {
 
 // Index SQL startup integrity modes (IndexSqlConfig.StartupIntegrityCheck).
 const (
-	// IndexStartupIntegrityQuickCheck runs PRAGMA quick_check (default). Slower on very large DBs but thorough.
+	// IndexStartupIntegrityQuickCheck runs PRAGMA quick_check, which reads the whole index and takes minutes on a large one.
 	IndexStartupIntegrityQuickCheck = "quickCheck"
-	// IndexStartupIntegrityProbe verifies sqlite_master and optionally one row read only; fast for large indexes.
+	// IndexStartupIntegrityProbe reads the schema and one row, which is enough for a cache that rebuilds itself (default).
 	IndexStartupIntegrityProbe = "probe"
 	// IndexStartupIntegrityOff skips startup checks beyond sql.Open Ping; least safe, fastest boot.
 	IndexStartupIntegrityOff = "off"
@@ -107,7 +107,7 @@ type IndexSqlConfig struct {
 	CacheSizeMB           int    `json:"cacheSizeMB"`                                                                     // size of the SQLite cache in MB
 	WalMode               bool   `json:"walMode"`                                                                         // enable the more complex WAL journaling mode. Slower, more memory usage, but better for deployments with constant user activity.
 	DisableReuse          bool   `json:"disableReuse"`                                                                    // enable to always create a new indexing database on startup.
-	StartupIntegrityCheck string `json:"startupIntegrityCheck,omitempty" validate:"omitempty,oneof=quickCheck probe off"` // the method used to check the integrity of the index database on startup (default: quickCheck)
+	StartupIntegrityCheck string `json:"startupIntegrityCheck,omitempty" validate:"omitempty,oneof=quickCheck probe off"` // the method used to check the integrity of the index database on startup (default: probe)
 }
 
 type Integrations struct {

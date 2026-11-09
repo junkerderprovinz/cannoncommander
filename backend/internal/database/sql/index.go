@@ -123,15 +123,15 @@ func NewIndexDB(name string, journalMode string, batchSize int, cacheSizeMB int,
 
 func normalizeStartupIntegrityMode(m string) string {
 	switch m {
-	case "", settings.IndexStartupIntegrityQuickCheck:
+	case settings.IndexStartupIntegrityQuickCheck:
 		return settings.IndexStartupIntegrityQuickCheck
-	case settings.IndexStartupIntegrityProbe:
+	case "", settings.IndexStartupIntegrityProbe:
 		return settings.IndexStartupIntegrityProbe
 	case settings.IndexStartupIntegrityOff:
 		return settings.IndexStartupIntegrityOff
 	default:
-		logger.Warningf("[DB_INIT] unknown indexSqlConfig.startupIntegrityCheck %q, using %s", m, settings.IndexStartupIntegrityQuickCheck)
-		return settings.IndexStartupIntegrityQuickCheck
+		logger.Warningf("[DB_INIT] unknown indexSqlConfig.startupIntegrityCheck %q, using %s", m, settings.IndexStartupIntegrityProbe)
+		return settings.IndexStartupIntegrityProbe
 	}
 }
 
