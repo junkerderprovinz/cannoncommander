@@ -161,10 +161,13 @@ type thumbsJSON struct {
 	// AppArmor profile lifts, and Allowed that the profile is in place.
 	Restricted bool `json:"restricted"`
 	Allowed    bool `json:"allowed"`
+	// Restart says the profile came or went after the app started, which
+	// keeps the AppArmor label it started with until it starts again.
+	Restart bool `json:"restart"`
 }
 
 func thumbsOf(s nativeshell.SandboxState) thumbsJSON {
-	out := thumbsJSON{Way: "cache", Restricted: s.Restricted, Allowed: s.Allowed}
+	out := thumbsJSON{Way: "cache", Restricted: s.Restricted, Allowed: s.Allowed, Restart: s.Restricted && s.Allowed != s.Profiled}
 	switch {
 	case s.Sandboxed:
 		out.Way = "sandbox"
