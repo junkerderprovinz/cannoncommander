@@ -6,10 +6,14 @@ reads both and draws every path in the button's one ink.
 
 ## Sources and licences
 
-**Font Awesome Free 6.7.2**, from <https://fontawesome.com>: `docker.txt` from
-the `brands` set and `zip.txt`, which is `file-zipper` from the `solid` set. The
-icons are **CC BY 4.0**, which asks for attribution and nothing else. Copyright
-2024 Fonticons, Inc.
+**Font Awesome Free 6.7.2**, from <https://fontawesome.com>: `docker.txt`,
+`windows.txt`, `apple.txt` and `linux.txt` from the `brands` set and `zip.txt`,
+which is `file-zipper` from the `solid` set. The icons are **CC BY 4.0**, which
+asks for attribution and nothing else. Copyright 2024 Fonticons, Inc.
+
+**Simple Icons** (<https://simpleicons.org>): `flatpak.txt`. The path is
+**CC0 1.0**, and Flatpak's mark itself is **CC BY 3.0**
+(<https://flatpak.org/press>).
 
 **Dashboard Icons** (`homarr-labs/dashboard-icons`,
 <https://dashboardicons.com>): `unraid.txt`, its `unraid.svg` with the gradient
@@ -43,7 +47,8 @@ company's product is left out, and that provider shows a glyph instead.
 
 ## Trademarks
 
-Docker, Unraid and every provider mark are trademarks of their owners. Each
-mark sits on the button for that platform or the tile that connects to that
-service, unmodified apart from its colour, to name it, and nothing here
-claims endorsement by or affiliation with any of them.
+Docker, Unraid, Windows, Apple, Linux, Flatpak and every provider mark are
+trademarks of their owners. Each mark sits on the button for that platform or
+the tile that connects to that service, unmodified apart from its colour, to
+name it, and nothing here claims endorsement by or affiliation with any of
+them.
