@@ -22,6 +22,7 @@ import FilesView from '@/files/FilesView.vue';
 import { installDragDrop } from '@/files/dnd';
 import { filesKey, installJumpReset, typingClaims } from '@/files/keys';
 import { setLanguage, useLocales } from '@/i18n';
+import { keepConsentQuery, onConsentPage } from '@/pages/consent';
 import SettingsPage from '@/pages/SettingsPage.vue';
 import { usePanels } from '@/stores/panels';
 import { watchWidth } from '@/shell/state';
@@ -84,5 +85,17 @@ async function start(me?: Me) {
   startApp(me);
 }
 
-// Only a clear 401 means signed out. A server that cannot say, as with the fixture's older parts, gets the app.
-api.me().then(start, (e) => (e instanceof ApiError && e.status === 401 ? startSignIn() : start()));
+async function startConsent() {
+  const { default: ConsentPage } = await import('@/pages/ConsentPage.vue');
+  createApp({ render: () => [h(ConsentPage), h(ToastHost)] }).mount('#root');
+}
+
+// Only a clear 401 means signed out. A server that cannot say, as with the fixture's older parts, gets the app. The
+// consent page needs a session too, so somebody signed out signs in first and lands on it again.
+const signedOut = (e: unknown) => e instanceof ApiError && e.status === 401;
+if (onConsentPage()) {
+  keepConsentQuery();
+  api.me().then(startConsent, (e) => (signedOut(e) ? startSignIn() : startConsent()));
+} else {
+  api.me().then(start, (e) => (signedOut(e) ? startSignIn() : start()));
+}

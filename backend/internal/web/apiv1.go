@@ -17,6 +17,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/mcpapi"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/places"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/shares"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
@@ -63,7 +64,7 @@ func mountAPIv1(router *http.ServeMux) error {
 	deps := v1.Deps{FS: resolver, Hub: eventHub, DB: db, Index: index, Users: currentUser}
 	accounts.UseLogin(sessionLogin{})
 	terminal.UseGate(terminalGate{guard: originGuard()})
-	h, err := api.NewRouter(deps, accounts.Track(deps.DB, authenticateV1)).Handler()
+	h, err := api.NewRouter(deps, mcpapi.Authenticate(accounts.Track(deps.DB, authenticateV1))).Handler()
 	if err != nil {
 		return err
 	}
@@ -85,6 +86,9 @@ func mountAPIv1(router *http.ServeMux) error {
 	system.OnShutdown(fsindex.Follow(resolver, index))
 	prefix := settings.Config.Http.BaseURL + "api/v1"
 	router.Handle(prefix+"/", http.StripPrefix(prefix, h))
+	if s := mcpapi.For(deps); s != nil {
+		s.Mount(router, settings.Config.Http.BaseURL, h)
+	}
 	mountDAV(router, deps)
 	return nil
 }

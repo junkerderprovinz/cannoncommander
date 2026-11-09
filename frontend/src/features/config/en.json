@@ -289,7 +289,8 @@
     "mark": { "title": "Marking", "text": "Insert marks a row and moves to the next one, the space bar shows the file large in the quick look. Ctrl+click adds single ones, Shift+click a whole range. With + you mark by pattern, such as every *.jpg." },
     "find": { "title": "Finding", "text": "A / opens the quick filter in the current folder. Alt+F7 searches the whole server, fast thanks to the index under Settings, Sources." },
     "share": { "title": "Sharing and remotes", "text": "File, Share gives you a link with an expiry date and, if you like, a password. Google Drive, a NAS or another server you mount under Settings, Remotes. After that they sit in the folder tree like any other folder." },
-    "rights": { "title": "Who may do what", "text": "Everybody has a role and an area they can't leave. Access rules hide single folders in it or make them read only. Under Account and security you turn on two-factor authentication." }
+    "rights": { "title": "Who may do what", "text": "Everybody has a role and an area they can't leave. Access rules hide single folders in it or make them read only. Under Account and security you turn on two-factor authentication." },
+    "mcp": { "title": "AI assistants", "text": "Under Settings, Integrations, MCP server you connect Claude, ChatGPT or another assistant to your files. It sees only what you see and starts out reading only. You allow writing with a switch, and every change can be undone." }
   },
   "activity": {
     "overview": "Overview", "entries": "Entries", "inFilter": "Entries in the filter", "ofAll": "{n} of {all}", "today": "Today", "people": "People", "reset": "Reset the filter",
@@ -300,8 +301,96 @@
       "delete": "deleted", "bulkDelete": "several deleted", "archive": "packed", "unarchive": "unpacked", "duplicateFinder": "duplicates searched", "shareCreate": "shared",
       "shareUpdate": "share changed", "shareDelete": "share revoked", "userCreate": "user added", "userUpdate": "user changed", "userDelete": "user deleted", "accessCreate": "rule added",
       "accessUpdate": "rule changed", "accessDelete": "rule deleted", "quotaCreate": "quota added", "quotaUpdate": "quota changed", "quotaDelete": "quota deleted", "login": "signed in",
-      "logout": "signed out", "signup": "signed up", "passkeyRegister": "passkey added", "passkeyDelete": "passkey removed", "tokenCreate": "token created", "tokenDelete": "token revoked", "terminalOpen": "terminal opened", "terminalClose": "terminal closed"
+      "logout": "signed out", "signup": "signed up", "passkeyRegister": "passkey added", "passkeyDelete": "passkey removed", "tokenCreate": "token created", "tokenDelete": "token revoked", "terminalOpen": "terminal opened", "terminalClose": "terminal closed", "folderCreate": "folder created", "trash": "moved to the trash", "restore": "restored"
     },
-    "target": "To {path}.", "from": "From {ip}."
+    "target": "To {path}.", "from": "From {ip}.", "viaKey": "via {name}"
+  },
+  "mcp": {
+    "title": "MCP server", "hint": "Lets an AI assistant such as Claude or ChatGPT work with your files, with exactly your rights and access rules. A key only reads until you allow it to write.",
+    "status": "Status", "statusOff": "Off, no key yet", "statusOn": { "one": "On, {n} key active", "other": "On, {n} keys active" },
+    "statusOAuth": "On, waiting for a client to sign in", "statusNone": "Off, no key works right now",
+    "endpoint": "Endpoint", "endpointTip": "Your assistant connects here. It speaks Streamable HTTP and sends the key in the Authorization or X-API-Key header.",
+    "desktopPort": "The desktop app can only be reached from this computer. If its port is taken when it starts, it picks another one. Then just enter the new address in your client.",
+    "hostRefused": "This page was opened as {host}. Without sign-in, CannonCommander only makes keys under an IP address or a local name such as tower.local, so no web page on the internet can. Please open CannonCommander by its local address for this.",
+    "connect": "Connect a client", "connectTip": "Pick your client and it gets a key of its own, and you get the matching configuration to copy. What the assistant reads, such as folders, file names or the contents of a text file, goes to the AI provider behind it.",
+    "choose": "Choose a client", "search": "Search clients", "noMatch": "No client matches. Any other one connects through Other client.",
+    "local": "On your computer", "cloud": "In the cloud", "other": "Other client",
+    "cloudTip": "These services call CannonCommander from their vendor's servers. CannonCommander then has to be reachable from the internet with a certificate browsers trust, for example behind a reverse proxy. A login on the proxy may guard the interface, but /mcp has to get through without it.",
+    "kind": { "terminal": "Terminal", "editor": "Editor", "desktop": "Desktop app", "vscode": "VS Code extension", "localModels": "Local models", "automation": "Automation", "webChat": "Web chat" },
+    "keys": "Your keys", "noKeys": "No key yet. Connect a client and CannonCommander makes one for it.",
+    "write": "Write", "writeTip": "With writing on, the assistant creates folders, copies, moves, renames, moves to the trash and restores from it. Every change is a job you can undo, and nothing is ever deleted for good. At most {perCall} entries per call and {perHour} per hour.",
+    "callsToday": { "one": "{n} call today", "other": "{n} calls today" }, "rotatedAt": "Replaced on {date}.", "createdAt": "Made on {date}.",
+    "unusable": "No longer valid", "unusableTip": "The server's signing key has changed, so this key no longer fits. Replace it and enter the new one in your client.",
+    "rename": "Rename", "renamed": "Name saved", "namePh": "e.g. Claude Code on the laptop", "needName": "Give the key a name",
+    "replace": "Replace", "replaceTitle": "Replace key", "replaceText": "{name} gets a new key, and the old one stops working at once. Then enter the new one in every client that uses it.", "replaced": "Key {name} replaced",
+    "revokeTitle": "Revoke key", "revokeText": "{name} stops working. Jobs it started keep its name.", "revoked": "Key {name} revoked",
+    "revokedList": { "one": "{n} revoked key", "other": "{n} revoked keys" }, "revokedAt": "Revoked on {date}",
+    "purgeTitle": "Remove key", "purgeText": "{name} leaves the list together with its log.",
+    "writeTitle": "Allow writing", "writeAsk": "{name} may then change files too.", "writeOn": "{name} may write now", "writeOff": "{name} may only read now",
+    "copyNow": "Copy the key now. CannonCommander keeps only a fingerprint of it and cannot show it again.",
+    "stale": "This step needs a fresh sign-in. Afterwards you carry on right here.",
+    "log": "Log", "logEmpty": "This key has not called CannonCommander yet.", "request": "Request",
+    "logKept": "CannonCommander keeps a key's calls for up to a month. It never stores what the assistant sent, nor the key itself.",
+    "outcome": {
+      "ok": "done", "not_permitted": "refused, this key may not do that", "read_only_key": "refused, the key may only read", "rate_limited": "refused, too many requests",
+      "batch_refused": "refused, no batch requests", "hourly_limit": "refused, the hourly limit is reached", "too_many": "refused, too many entries at once", "too_big": "refused, too big",
+      "invalid_arguments": "refused, the arguments did not fit", "not_found": "nothing found", "timeout": "not finished in time", "failed": "failed",
+      "read_only": "refused, the folder is read only", "in_archive": "refused, that lies inside an archive", "source_root": "refused, that is a whole source",
+      "binary": "refused, that is not a text file", "busy": "refused, a search is still running", "name_taken": "refused, the name is taken already", "unknown_fields": "refused, unknown fields in the search",
+      "other": "ended with {code}"
+    },
+    "oauth": "Sign-in through OAuth", "oauthTip": "For ChatGPT, Claude on claude.ai and other services that cannot take a key. They send you to a CannonCommander page where you sign in and allow access. Switching it off signs every one of these clients out.",
+    "oauthNeedsSignIn": "This only works when everybody signs in to CannonCommander.",
+    "issuer": "Public address", "issuerTip": "The https address without a path under which CannonCommander is reachable from the internet, such as https://files.example.com. If it changes, every client signs in again.",
+    "oauthSaved": "Sign-in through OAuth saved", "connector": "Connector URL", "connectorTip": "Enter this address in the cloud assistant. It finds the sign-in page from there by itself.",
+    "dialogTitle": "Connect {name}", "stepKey": "Key", "stepConfig": "Add CannonCommander to {name}", "stepConfigOther": "Settings for the client",
+    "stepWait": "Waiting for the first call", "stepDone": "Connected", "stepSignIn": "Waiting for the sign-in",
+    "newKey": "New key", "existingKey": "Existing key", "pickHint": "CannonCommander showed each key only once. If you no longer have it, better make a new one.",
+    "makeKey": "Make key", "made": "Key {name} made", "full": "You already have {n} active keys. Revoke one and there is room again.",
+    "copyCommand": "Copy command", "copyConfig": "Copy configuration", "copySettings": "Copy settings", "copyConnector": "Copy connector URL",
+    "setup": {
+      "command": "Run this once in a terminal.", "file": "Add this to the configuration file, next to any servers already there.", "form": "Enter these values in {app} under {ui}.",
+      "other": "Any client that speaks Streamable HTTP can do this. Enter the values where it asks for a remote MCP server, with the key in either header.",
+      "fileUi": "In {app}, {ui} opens the file.", "paste": "You can also paste it in {app} under {ui}.", "where": "Where the file lives", "node": "This needs Node.js, because mcp-remote connects {app} to CannonCommander.",
+      "chatgpt": "In ChatGPT, open Settings, Apps & Connectors and switch on Developer mode under Advanced settings. Then choose Create, give the connector a name, paste the connector URL as the MCP server URL, pick OAuth as authentication and create it.",
+      "claude": "On claude.ai, open Settings, Connectors and choose Add custom connector. Give it a name, paste the connector URL, leave the OAuth client ID and secret empty and add it. Then choose Connect.",
+      "proxy": "The service calls /mcp, /oauth/ and /.well-known/ from its own servers. A reverse proxy with a login of its own has to let these paths through.",
+      "oauthOff": "For this an admin first switches on sign-in through OAuth, under Settings, Integrations, MCP server."
+    },
+    "key": {
+      "keyFile": "Save the key in a text file as the line X-API-Key: <key> and put the path of that file into the configuration. {app} then only knows the path, so the key shows up neither there nor in the process list.",
+      "keyFileTip": "Write paths in JSON with forward slashes, such as C:/Users/anna/cannoncommander-key.txt, since a single backslash is not valid JSON. Keep spaces out of the key file's path, or on Windows {app} hands it to npx in two pieces.",
+      "env": "{app} reads the key from the environment variable {var}.",
+      "envTip": "Set it once as a user environment variable, on Windows under Settings, System, About, Advanced system settings, Environment Variables, and on macOS and Linux in your shell profile. Then start {app} again. Typing it with setx or export at a prompt would leave the key in your shell history.",
+      "envUnsure": "If {app} sends the variable's name instead of the key, write the key into the file in its place and keep that file to yourself.",
+      "prompt": "{app} asks for the key the first time it starts the server and keeps it in its own secret storage, so the file holds no key.",
+      "dotenv": "{app} reads the key from the line {var}=<key> in {file}. Keep that file to yourself.",
+      "inFile": "{app} cannot read the key from anywhere else, so it sits in this file in plain text. Keep the file to yourself and out of shared folders and version control.",
+      "inApp": "{app} keeps the key in its own settings, unencrypted according to its documentation. Anyone who can open those settings can read it.",
+      "credential": "{app} keeps the key encrypted with its credentials. Create a Bearer Auth credential with it and pick that on the node.",
+      "vendor": "{app} keeps the key on its vendor's servers and sends it with every call.",
+      "other": "If the client can read the key from an environment variable, a secret prompt or the system keychain, use that rather than writing it into its settings."
+    },
+    "note": {
+      "perplexity": "So far only Perplexity's Mac app connects to MCP servers on your computer or network, the Windows app and the website cannot yet.",
+      "grok": "Grok's documentation does not show its connector form in detail. If it offers only a sign-in and no field for a header, Grok cannot use a CannonCommander key yet."
+    },
+    "waitLine": "Waiting for {app} to call CannonCommander", "waitLineOther": "Waiting for the client to call CannonCommander",
+    "waitHint": "Start {app} again so it loads the new server, then let it use CannonCommander once. This turns green on the first call.",
+    "firstCall": "The first call with {name} arrived at {time}. Have fun!", "signInWait": "Waiting for {app} to sign in",
+    "signInHint": "{app} opens a CannonCommander page. Sign in there and choose Allow.", "signedIn": "{name} signed in at {time}. Have fun!",
+    "all": "Keys of all accounts", "allTip": "Here you see the keys of the other accounts. You can take writing away from one or revoke it. Only the key's owner can allow writing.",
+    "noOthers": "The other accounts have no key yet.", "onlyOwner": "Only {owner} can allow writing",
+    "consent": {
+      "title": "Allow access?", "asks": "{name} would like to work with your files in CannonCommander as {account}.",
+      "reads": "The client can then list folders, search for files and read text files, always with exactly your rights.",
+      "writeTip": "With this on, the client may also create folders, copy, move, rename and move to the trash. Nothing is ever deleted for good, and you can change this later under Settings, Integrations, MCP server.",
+      "unverified": "CannonCommander does not know this client, and it chose the name above itself. Only allow it if you started this sign-in yourself a moment ago.",
+      "known": "Only allow it if you started this sign-in yourself a moment ago. A link from someone else could connect their own {name} account to your files.",
+      "loopback": "This client returns to a program on your computer, and any program there could claim to be it. Only allow it if you started this sign-in yourself a moment ago.",
+      "allow": "Allow", "deny": "Deny", "returnsTo": "Your answer takes you back to {host}.", "returning": "Returning to {host}", "unnamed": "An unnamed client",
+      "full": "You already have {n} signed-in clients. Revoke one under Settings, Integrations, MCP server, then start the sign-in again.",
+      "failed": "The request could not be checked. Please reload the page."
+    }
   }
 }

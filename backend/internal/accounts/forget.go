@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"net/http"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/activity"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/prefs"
@@ -21,6 +23,50 @@ import (
 
 // ownTables are the tables of this package with rows per user.
 var ownTables = []string{"sessions", "account_profiles", "recovery_codes", "token_use", "oidc_identities"}
+
+// onDelete holds what other packages drop when an account goes.
+var onDelete []func(ctx context.Context, d v1.Deps, userID uint64) error
+
+// OnDelete adds f to what runs before an account is deleted. A package that
+// hands out credentials of its own revokes them there. It is meant for init
+// functions.
+func OnDelete(f func(ctx context.Context, d v1.Deps, userID uint64) error) {
+	onDelete = append(onDelete, f)
+}
+
+// ended holds what other packages end with the sessions of an account and
+// with its API tokens.
+var ended struct {
+	sessions, tokens []func(ctx context.Context, db *sql.DB, userID uint64) error
+}
+
+// OnSessionsEnd adds f to what ends when every session of an account ends,
+// as after a new password, for a credential that came in through a session.
+// It is meant for init functions.
+func OnSessionsEnd(f func(ctx context.Context, db *sql.DB, userID uint64) error) {
+	ended.sessions = append(ended.sessions, f)
+}
+
+// OnTokensEnd adds f to what ends with the API tokens of an account, for a
+// credential that lasts like one. It is meant for init functions.
+func OnTokensEnd(f func(ctx context.Context, db *sql.DB, userID uint64) error) {
+	ended.tokens = append(ended.tokens, f)
+}
+
+// endSessions logs u out everywhere but the session keep, along with what
+// came in through a session.
+func endSessions(ctx context.Context, db *sql.DB, u *users.User, keep string) (int, error) {
+	n, err := login.EndAll(u.ID, keep)
+	if err != nil {
+		return n, err
+	}
+	for _, f := range ended.sessions {
+		if err := f(ctx, db, u.ID); err != nil {
+			return n, err
+		}
+	}
+	return n, nil
+}
 
 // deleteUser removes an account with everything that hangs on it: shares,
 // jobs, undo steps, rules, settings and sessions. Files stay where they are,
@@ -53,6 +99,11 @@ func (h handlers) deleteUser(w http.ResponseWriter, r *http.Request) error {
 	}
 	if err := h.svc.rules.dropWho(r.Context(), u.Username); err != nil {
 		return err
+	}
+	for _, f := range onDelete {
+		if err := f(r.Context(), h.deps, u.ID); err != nil {
+			return err
+		}
 	}
 	if err := state.DeleteUser(u.ID); err != nil {
 		return err

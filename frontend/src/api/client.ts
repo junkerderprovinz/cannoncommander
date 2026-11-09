@@ -26,7 +26,7 @@ interface Got<T> { body: T | null; etag?: string }
 export const writes = { at: 0 };
 
 export async function call<T>(path: string, init: RequestInit & { etag?: string } = {}): Promise<Got<T>> {
-  if (init.method && init.method !== 'GET' && !/^\/(me|events|jobs\/settings|unraid\/notify)\b/.test(path)) writes.at = Date.now();
+  if (init.method && init.method !== 'GET' && !/^\/(me|mcp|events|jobs\/settings|unraid\/notify)\b/.test(path)) writes.at = Date.now();
   const headers = new Headers(init.headers);
   headers.set('Accept', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);

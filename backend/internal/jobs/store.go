@@ -67,6 +67,9 @@ func init() {
 		`UPDATE jobs SET name = substr(name, 2, length(name) - 2) WHERE kind = 'contentSearch' AND name LIKE '„%“'`,
 		`UPDATE jobs SET name = 'All sources' WHERE kind = 'reindex' AND name = 'Alle Quellen'`,
 	))
+	migrate.Register(migrate.Main, migrate.SQL("jobs/004_via",
+		`ALTER TABLE jobs ADD COLUMN via TEXT NOT NULL DEFAULT ''`,
+	))
 }
 
 // answers are the decisions a job collected, before and while it ran.
@@ -108,10 +111,10 @@ func (m *Manager) insert(j *job) error {
 		return err
 	}
 	defer tx.Rollback()
-	if _, err := tx.Exec(`INSERT INTO jobs (id, kind, owner, state, position, name, dest, params, answers, cap,
+	if _, err := tx.Exec(`INSERT INTO jobs (id, kind, owner, via, state, position, name, dest, params, answers, cap,
 		wait_parity, done_bytes, done_files, current, error, undo, result, created_at, started_at, finished_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, '', '', '', '', ?, 0, 0)`,
-		j.ID, j.Kind, j.Owner, j.State, j.Position, j.Name, j.Dest, string(j.params), j.answersJSON(), j.Cap,
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, '', '', '', '', ?, 0, 0)`,
+		j.ID, j.Kind, j.Owner, j.Via, j.State, j.Position, j.Name, j.Dest, string(j.params), j.answersJSON(), j.Cap,
 		b2i(j.WaitForParity), ms(j.CreatedAt)); err != nil {
 		return err
 	}
@@ -185,7 +188,7 @@ func (m *Manager) exec(query string, args ...any) {
 }
 
 func (m *Manager) load(ctx context.Context) ([]*job, error) {
-	rows, err := m.db.QueryContext(ctx, `SELECT id, kind, owner, state, position, name, dest, params, answers, cap,
+	rows, err := m.db.QueryContext(ctx, `SELECT id, kind, owner, via, state, position, name, dest, params, answers, cap,
 		wait_parity, done_bytes, done_files, current, error, error_code, error_params, undo, result, created_at, started_at,
 		finished_at FROM jobs`)
 	if err != nil {
@@ -198,7 +201,7 @@ func (m *Manager) load(ctx context.Context) ([]*job, error) {
 		var params, ans, result, errParams string
 		var waitParity int
 		var created, started, finished int64
-		if err := rows.Scan(&j.ID, &j.Kind, &j.Owner, &j.State, &j.Position, &j.Name, &j.Dest, &params, &ans, &j.Cap,
+		if err := rows.Scan(&j.ID, &j.Kind, &j.Owner, &j.Via, &j.State, &j.Position, &j.Name, &j.Dest, &params, &ans, &j.Cap,
 			&waitParity, &j.DoneBytes, &j.DoneFiles, &j.Current, &j.Error, &j.ErrorCode, &errParams, &j.Undo, &result, &created,
 			&started, &finished); err != nil {
 			rows.Close()

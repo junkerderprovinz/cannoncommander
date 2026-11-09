@@ -38,6 +38,9 @@ const (
 	EventDuplicateFinder EventType = "duplicateFinder"
 	EventTerminalOpen    EventType = "terminalOpen"
 	EventTerminalClose   EventType = "terminalClose"
+	EventFolderCreate    EventType = "folderCreate"
+	EventTrash           EventType = "trash"
+	EventRestore         EventType = "restore"
 )
 
 // AllEventTypes lists every defined event type for validation and UI filters.
@@ -74,6 +77,9 @@ var AllEventTypes = []EventType{
 	EventDuplicateFinder,
 	EventTerminalOpen,
 	EventTerminalClose,
+	EventFolderCreate,
+	EventTrash,
+	EventRestore,
 }
 
 // FileEventTypes are file and path operations (scope=files).
@@ -88,6 +94,9 @@ var FileEventTypes = []EventType{
 	EventBulkDelete,
 	EventArchive,
 	EventUnarchive,
+	EventFolderCreate,
+	EventTrash,
+	EventRestore,
 }
 
 // AccessEventTypes are access rule mutations (scope=access).
@@ -171,7 +180,8 @@ func (e EventType) Valid() bool {
 		EventPasskeyRegister, EventPasskeyDelete,
 		EventTokenCreate, EventTokenDelete,
 		EventDuplicateFinder,
-		EventTerminalOpen, EventTerminalClose:
+		EventTerminalOpen, EventTerminalClose,
+		EventFolderCreate, EventTrash, EventRestore:
 		return true
 	default:
 		return false

@@ -46,7 +46,8 @@ export default function setup() {
   tab('info', 'IconInfo', 130, Info);
 
   registerView('activity', { page: true, component: ActivityPage });
-  if (takeAgainFromUrl()) go('settings', 'security');
+  const again = takeAgainFromUrl();
+  if (again) go('settings', again === 'mcp' ? 'integrations' : 'security');
 
   action('settings', { label: tl('config.tabs.title'), g: 'IconGear', run: () => go('settings') });
   action('about', { label: tl('config.actions.about'), g: 'IconInfo', run: () => go('settings', 'info') });

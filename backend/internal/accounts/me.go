@@ -104,7 +104,7 @@ func (h handlers) putPassword(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	keep, _, _ := login.Session(r)
-	ended, err := login.EndAll(u.ID, keep)
+	ended, err := endSessions(r.Context(), h.db, &u, keep)
 	if err != nil {
 		return err
 	}

@@ -71,6 +71,9 @@ func (h handlers) create(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	if a, ok := v1.AgentFrom(r); ok {
+		plan.Via = a.Name
+	}
 	j, err := h.m.Submit(u.Username, req.Kind, plan, req.Cap, req.WaitForParity)
 	if err != nil {
 		return err

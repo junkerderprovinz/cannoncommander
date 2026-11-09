@@ -1,6 +1,7 @@
 package accounts
 
 import (
+	"database/sql"
 	"net/http"
 	"time"
 
@@ -33,6 +34,16 @@ func (h handlers) confirmOwner(r *http.Request, u *users.User, password string) 
 		return errStaleSignIn
 	}
 	return nil
+}
+
+// ConfirmOwner is confirmOwner for a credential another package hands out,
+// such as a key of the MCP server.
+func ConfirmOwner(r *http.Request, db *sql.DB, u *users.User, password string) error {
+	svc, err := serviceFor(db)
+	if err != nil {
+		return err
+	}
+	return handlers{db: db, svc: svc}.confirmOwner(r, u, password)
 }
 
 // checkCurrentPassword checks the password u signs in with. Wrong ones count

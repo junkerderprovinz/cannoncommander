@@ -1,0 +1,86 @@
+/* The MCP card, its windows and the consent page. */
+.mcp-mark { display: contents; }
+.mcp-mark svg { width: 100%; height: 100%; display: block; }
+.mcp-row-mark { display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.25rem; flex: none; color: var(--carbon-text); }
+.mcp-row-mark svg { width: 100%; height: 100%; display: block; }
+.mcp-row-mark .glim-mark-hover { display: none; }
+.mcp-row-mark.big { width: 2.25rem; height: 1.75rem; }
+
+/* The client tiles, three across a wide window and two on a phone. A tile's class sits beside the house tile
+   GlimStone gives it, so it carries one class more to win. */
+.mcp-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .8125rem; }
+.mcp-pick .glim-readme-btn-unit { display: flex; }
+.mcp-pick .glim-readme-btn { flex: 1; width: auto; }
+.mcp-pick .glim-readme-btn-unit:is(:hover, :focus-within) .glim-readme-btn-sub { opacity: 1; }
+.mcp-group { margin: 1rem 0 .5rem; font-size: 13px; font-weight: 600; color: var(--carbon-text-sub); display: flex; align-items: center; gap: .4rem; }
+@media (max-width: 760px) { .mcp-pick { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; } }
+
+/* The brands' own colours, with white ink wherever it reaches 2:1 on the fill. */
+.glim-readme-btn-unit.glim-tile-anythingllm { --tile: #020617; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-antigravity { --tile: #4285f4; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-chatgpt { --tile: #10a37f; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-claude { --tile: #d97757; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-cline { --tile: #e8912d; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-openai { --tile: #000000; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-continue { --tile: #005dc7; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-copilot { --tile: #8957e5; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-cursor { --tile: #000000; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-gemini { --tile: #4285f4; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-goose { --tile: #ff6d3b; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-grok { --tile: #000000; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-jan { --tile: #f17455; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-jetbrains { --tile: #000000; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-kimi { --tile: #007cff; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-lmstudio { --tile: #4f46e5; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-mistral { --tile: #fa520f; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-msty { --tile: #7c5cfc; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-n8n { --tile: #ea4b71; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-openwebui { --tile: #0a0a0a; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-opencode { --tile: #211e1e; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-perplexity { --tile: #20808d; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-qwen { --tile: #615ced; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-roocode { --tile: #000000; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-visualstudio { --tile: #5c2d91; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-vscode { --tile: #007acc; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-warp { --tile: #01a4ff; --tile-ink: #ffffff; }
+.glim-readme-btn-unit.glim-tile-windsurf { --tile: #58e5c0; --tile-ink: #161616; }
+.glim-readme-btn-unit.glim-tile-zed { --tile: #0866ff; --tile-ink: #ffffff; }
+
+/* A mark colour that reads as a hole on the dark button is lifted there; the lit tile swaps in the single colour
+   mark anyway. */
+[data-theme="dark"] .mcp-lift .glim-mark-rest { filter: brightness(1.55); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme]) .mcp-lift .glim-mark-rest { filter: brightness(1.55); } }
+
+.mcp-who { display: flex; align-items: center; gap: .75rem; }
+.mcp-who b { display: block; font-weight: 600; overflow-wrap: anywhere; }
+.mcp-who small { display: block; font-size: 12px; color: var(--carbon-text-sub); overflow-wrap: anywhere; }
+.mcp-snippet { margin: 0; padding: .6rem .8rem; border-radius: var(--radius-control); background: var(--carbon-surface2); font-size: 12px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; direction: ltr; text-align: start; }
+.mcp-paths { display: grid; grid-template-columns: auto 1fr; gap: .15rem .8rem; margin: 0; font-size: 12px; }
+.mcp-paths dt { color: var(--carbon-text-muted); }
+.mcp-paths dd { margin: 0; overflow-wrap: anywhere; direction: ltr; text-align: start; }
+.mcp-step { display: flex; flex-direction: column; align-items: flex-start; gap: .6rem; }
+.mcp-step > * { max-width: 100%; }
+.mcp-step pre { align-self: stretch; }
+.mcp-line { display: flex; align-items: flex-start; gap: .55rem; margin: 0; }
+.mcp-dot { width: .5rem; height: .5rem; margin-top: .45rem; border-radius: 50%; flex: none; background: var(--accent); }
+.mcp-dot.ok { background: var(--status-ok-solid); }
+.mcp-keys { display: flex; flex-direction: column; gap: .35rem; align-self: stretch; }
+.mcp-keys button { display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem; border-radius: var(--radius-control); background: var(--carbon-surface2); text-align: start; }
+.mcp-keys button:hover { background: var(--carbon-surface3); }
+.mcp-keys button[aria-pressed="true"] { box-shadow: inset 0 0 0 1.5px var(--accent-text, var(--accent)); }
+.mcp-log { display: flex; flex-direction: column; gap: .3rem; font-size: 13px; }
+.mcp-log > div { display: flex; flex-wrap: wrap; gap: .2rem .6rem; }
+.mcp-log .warn { color: var(--status-warn-text); }
+.mcp-muted { color: var(--carbon-text-muted); }
+@keyframes mcp-breathe { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="off"]) .mcp-dot:not(.ok) { animation: mcp-breathe var(--motion-pulse-dur, 1.4s) ease-in-out infinite; }
+}
+
+.consent { min-height: 100vh; display: grid; place-items: center; padding: 1rem; background: var(--carbon-background); }
+.consent-card { width: 100%; max-width: 28rem; display: flex; flex-direction: column; gap: 1.1rem; }
+.consent-card p { margin: 0; line-height: 1.55; }
+.consent-card .sub { color: var(--carbon-text-sub); }
+.consent-answer { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .75rem; }
+@media (pointer: coarse) { .consent-answer .glim-btn { --btn-h: 2.75rem; } }
+.mcp-pick.mcp-alone { margin-top: 1rem; }

@@ -114,6 +114,7 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 - **Remote storage.** SFTP, SMB, WebDAV, S3, Google Drive and everything else rclone speaks, browsed like any other folder.
 - **Sharing.** Links with a password, an expiry date and download or upload limits, for one file or a whole collection, with a QR code. A WebDAV server lets you mount your files as a drive.
 - **People and rules.** Users, groups and rules that hide a folder or make it read only, two-factor sign-in, passkeys, API tokens and single sign-on through OIDC.
+- **AI assistants, with your rights.** A built-in MCP server lets Claude, ChatGPT, Cursor and other assistants browse, search and read your files, and with your say-so tidy them up.
 - **Colours and tags** for files, saved searches, window profiles and your own key bindings.
 - **[ArrowLoop](https://github.com/junkerderprovinz/arrowloop) on call.** A folder pair from the comparison becomes a recurring sync job in ArrowLoop with one click.
 - **Looks like the rest of the house.** The interface uses [GlimStone](https://github.com/junkerderprovinz/glimstone), in light and dark, with your own accent colour, and speaks English and German.
@@ -283,6 +284,14 @@ Think before you switch it on: whoever may open it can do on the server whatever
 
 In the desktop app the same words open your own computer's terminal in a window of its own, with no switch to turn on. On Windows `cmd` opens the Command Prompt, `powershell` Windows PowerShell, `pwsh` PowerShell 7 and `wt` Windows Terminal, and `terminal` opens Windows Terminal where it is installed and the Command Prompt otherwise. A Mac opens Terminal for every word, and Linux the terminal your desktop names in `TERMINAL` or `x-terminal-emulator`, else the first common one it finds.
 
+### MCP server
+
+CannonCommander has an MCP server, so an AI assistant such as Claude Code, Claude Desktop, Cursor or ChatGPT can work with your files. Open **Settings > Integrations > MCP server**, pick your client and follow the three steps there: CannonCommander makes a key for it, shows the configuration to copy and turns green once the client calls for the first time. The endpoint is `/mcp` below the address you open CannonCommander at.
+
+Every key belongs to one account and gets exactly that account's rights and access rules, so an assistant never sees more than its owner does. A new key only reads: it lists folders, searches and reads text files. Writing is a switch per key and asks for your password first. With it on, the assistant can create folders, copy, move, rename, move things to the trash and restore them, each change a job you can follow and undo. It never deletes anything for good, and it is held to 25 entries per call and 200 per hour. A key's log shows what it did, and the activity log names the key next to each change.
+
+Cloud assistants such as ChatGPT and Claude on claude.ai cannot take a key. An admin can switch on sign-in through OAuth under the same card, with the public https address CannonCommander is reachable at. The assistant then sends you to a CannonCommander page where you sign in and allow it. In the desktop app the endpoint is `http://127.0.0.1:<port>/mcp` on your own computer, and the port can change when another program has taken it.
+
 ### Reverse proxy
 
 CannonCommander works behind Nginx Proxy Manager, SWAG, Traefik or Caddy. Three things matter:
@@ -331,6 +340,7 @@ CannonCommander can read, change and delete everything you map into it, so it de
 - **API tokens** can be read only, and new tokens and passkeys ask for your password again. An admin can see and revoke the sessions, tokens and passkeys of every user.
 - **Unraid write access** is off until you switch it on, because the emhttpd socket controls the whole array.
 - **The terminal** is off until you switch it on, because it hands admins a shell with the rights of CannonCommander's user.
+- **MCP keys** read until you allow writing, which asks for your password again, and the server keeps only a fingerprint of each key. An admin can see every account's keys, take writing away and revoke them.
 
 If you find a security problem, please report it privately through [GitHub's security advisories](https://github.com/junkerderprovinz/cannoncommander/security/advisories/new) rather than in a public issue. I will get back to you as soon as I can.
 
