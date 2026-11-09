@@ -64,6 +64,8 @@
 .a-arow { min-height: 2.6rem; border-radius: var(--radius-control); cursor: pointer; outline: none; }
 .a-arow:not([data-open]) { cursor: default; }
 .a-via { flex: none; }
+/* A long word for a kind stays in its column instead of running into the name before it. */
+.a-arow > .glim-pill { min-width: 0; max-width: 100%; overflow: hidden; }
 .a-arow:hover, .a-arow:focus-visible { background: var(--carbon-hover); }
 .a-name { display: flex; align-items: center; gap: .4rem; min-width: 0; white-space: nowrap; }
 .a-name .t { overflow: hidden; text-overflow: ellipsis; }

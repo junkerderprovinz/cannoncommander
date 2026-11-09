@@ -289,7 +289,7 @@
       "delete": "gelöscht", "bulkDelete": "mehreres gelöscht", "archive": "gepackt", "unarchive": "entpackt", "duplicateFinder": "Duplikate gesucht", "shareCreate": "freigegeben",
       "shareUpdate": "Freigabe geändert", "shareDelete": "Freigabe widerrufen", "userCreate": "Benutzer angelegt", "userUpdate": "Benutzer geändert", "userDelete": "Benutzer gelöscht", "accessCreate": "Regel angelegt",
       "accessUpdate": "Regel geändert", "accessDelete": "Regel gelöscht", "quotaCreate": "Kontingent angelegt", "quotaUpdate": "Kontingent geändert", "quotaDelete": "Kontingent gelöscht", "login": "angemeldet",
-      "logout": "abgemeldet", "signup": "registriert", "passkeyRegister": "Passkey hinzugefügt", "passkeyDelete": "Passkey entfernt", "tokenCreate": "Token erstellt", "tokenDelete": "Token widerrufen", "terminalOpen": "Terminal geöffnet", "terminalClose": "Terminal geschlossen", "folderCreate": "Ordner angelegt", "trash": "in den Papierkorb gelegt", "restore": "wiederhergestellt"
+      "logout": "abgemeldet", "signup": "registriert", "passkeyRegister": "Passkey hinzugefügt", "passkeyDelete": "Passkey entfernt", "tokenCreate": "Token erstellt", "tokenDelete": "Token widerrufen", "terminalOpen": "Terminal geöffnet", "terminalClose": "Terminal geschlossen", "folderCreate": "Ordner angelegt", "trash": "in den Papierkorb", "restore": "wiederhergestellt"
     },
     "target": "Ziel: {path}.", "from": "Von {ip}.", "viaKey": "über {name}"
   },
@@ -322,7 +322,10 @@
     "outcome": {
       "ok": "erledigt", "not_permitted": "abgelehnt, das darf der Schlüssel nicht", "read_only_key": "abgelehnt, der Schlüssel darf nur lesen", "rate_limited": "abgelehnt, zu viele Anfragen",
       "batch_refused": "abgelehnt, keine Sammelanfragen", "hourly_limit": "abgelehnt, das Stundenlimit ist erreicht", "too_many": "abgelehnt, zu viele Einträge auf einmal", "too_big": "abgelehnt, zu groß",
-      "invalid_arguments": "abgelehnt, die Angaben passten nicht", "not_found": "nichts gefunden", "timeout": "nicht rechtzeitig fertig", "failed": "fehlgeschlagen", "other": "endete mit {code}"
+      "invalid_arguments": "abgelehnt, die Angaben passten nicht", "not_found": "nichts gefunden", "timeout": "nicht rechtzeitig fertig", "failed": "fehlgeschlagen",
+      "read_only": "abgelehnt, der Ordner ist schreibgeschützt", "in_archive": "abgelehnt, das liegt in einem Archiv", "source_root": "abgelehnt, das ist eine ganze Quelle",
+      "binary": "abgelehnt, das ist keine Textdatei", "busy": "abgelehnt, eine Suche läuft noch", "name_taken": "abgelehnt, den Namen gibt es schon", "unknown_fields": "abgelehnt, unbekannte Felder in der Suche",
+      "other": "endete mit {code}"
     },
     "oauth": "Anmeldung über OAuth", "oauthTip": "Für ChatGPT, Claude auf claude.ai und andere Dienste, die keinen Schlüssel annehmen. Sie schicken dich auf eine Seite von CannonCommander, dort meldest du dich an und erlaubst den Zugriff. Ausschalten meldet jeden dieser Clients ab.",
     "oauthNeedsSignIn": "Das geht nur, wenn sich bei CannonCommander alle anmelden.",

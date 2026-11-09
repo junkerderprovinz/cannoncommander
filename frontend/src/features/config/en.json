@@ -322,7 +322,10 @@
     "outcome": {
       "ok": "done", "not_permitted": "refused, this key may not do that", "read_only_key": "refused, the key may only read", "rate_limited": "refused, too many requests",
       "batch_refused": "refused, no batch requests", "hourly_limit": "refused, the hourly limit is reached", "too_many": "refused, too many entries at once", "too_big": "refused, too big",
-      "invalid_arguments": "refused, the arguments did not fit", "not_found": "nothing found", "timeout": "not finished in time", "failed": "failed", "other": "ended with {code}"
+      "invalid_arguments": "refused, the arguments did not fit", "not_found": "nothing found", "timeout": "not finished in time", "failed": "failed",
+      "read_only": "refused, the folder is read only", "in_archive": "refused, that lies inside an archive", "source_root": "refused, that is a whole source",
+      "binary": "refused, that is not a text file", "busy": "refused, a search is still running", "name_taken": "refused, the name is taken already", "unknown_fields": "refused, unknown fields in the search",
+      "other": "ended with {code}"
     },
     "oauth": "Sign-in through OAuth", "oauthTip": "For ChatGPT, Claude on claude.ai and other services that cannot take a key. They send you to a CannonCommander page where you sign in and allow access. Switching it off signs every one of these clients out.",
     "oauthNeedsSignIn": "This only works when everybody signs in to CannonCommander.",

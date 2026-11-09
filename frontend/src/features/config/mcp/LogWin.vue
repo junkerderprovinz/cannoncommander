@@ -12,7 +12,8 @@ const props = defineProps<{ win: WinEntry; k: McpKey }>();
 const events = ref<McpEvent[] | null>(null), failed = ref(false);
 
 // A code the server adds later shows as it came.
-const KNOWN = ['ok', 'not_permitted', 'read_only_key', 'rate_limited', 'batch_refused', 'hourly_limit', 'too_many', 'too_big', 'invalid_arguments', 'not_found', 'timeout', 'failed'];
+const KNOWN = ['ok', 'not_permitted', 'read_only_key', 'rate_limited', 'batch_refused', 'hourly_limit', 'too_many', 'too_big', 'invalid_arguments', 'not_found', 'timeout', 'failed',
+  'read_only', 'in_archive', 'source_root', 'binary', 'busy', 'name_taken', 'unknown_fields'];
 const outcome = (e: McpEvent) => (KNOWN.includes(e.outcome) ? c(`mcp.outcome.${e.outcome}`) : c('mcp.outcome.other', { code: e.outcome }));
 
 onMounted(() => {
