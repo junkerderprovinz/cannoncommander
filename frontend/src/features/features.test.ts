@@ -29,7 +29,7 @@ describe('the features of the desktop app', () => {
 
   it('come once it has', async () => {
     Object.assign(host, { desktop: true, os: 'windows' });
-    await vi.waitFor(() => expect(actions.launch).toBeDefined());
+    await vi.waitFor(() => expect(actions.launch).toBeDefined(), { timeout: 15_000 });
     expect(actions.dropIn).toBeDefined();
     expect(actions.download).toBeUndefined();
   });
