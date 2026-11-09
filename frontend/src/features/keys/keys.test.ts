@@ -198,3 +198,21 @@ describe('the key a menu shows', () => {
     expect(mainCombo(map, 'copy', 'F5')).toBe('F5');
   });
 });
+
+describe('keys of a scope', () => {
+  const map = { ...DEFAULTS, 'Ctrl+d': 'duplicate', 'editor:Ctrl+d': 'editorDuplicateLine' };
+
+  it('reads without the scope', () => {
+    setLanguage('de');
+    expect(keyLabel('editor:Ctrl+Shift+ArrowUp')).toBe('Strg+Umschalt+Hoch');
+  });
+
+  it('meets only keys of its own scope', () => {
+    expect(check(map, 'editor:Ctrl+r', 'editorGotoLine', false)).toEqual({ ok: true });
+    expect(check(map, 'editor:Ctrl+d', 'editorGotoLine', false)).toEqual({ ok: false, reason: 'taken', other: 'editorDuplicateLine' });
+    expect(check(map, 'editor:g', 'editorGotoLine', false)).toEqual({ ok: false, reason: 'letter' });
+    expect(check(map, 'editor:Tab', 'editorGotoLine', false)).toEqual({ ok: false, reason: 'fixed' });
+    expect(check(map, 'editor:Ctrl+w', 'editorCloseTab', false)).toEqual({ ok: false, reason: 'browser' });
+    expect(check(map, 'editor:Ctrl+w', 'editorCloseTab', true)).toEqual({ ok: true });
+  });
+});

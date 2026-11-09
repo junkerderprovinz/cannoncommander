@@ -4,6 +4,7 @@
 import { Button, Card, EmptyState, IconButton } from '@glimstone/vue';
 import { computed, ref } from 'vue';
 import { type Action, actions, labelOf } from '@/core/actions';
+import { inScope } from '@/core/keymap';
 import { G, glyphComponent } from '@/core/glyphs';
 import { host } from '@/core/host';
 import type { MenuEntry } from '@/core/menu';
@@ -26,7 +27,10 @@ function groups(): [string, string[]][] {
     .filter((id) => actions[id] && !seen.has(id) && !!seen.add(id));
   MENUS.forEach(([, items], i) => out.push([menuName(i), ids(items)]));
   // Actions only a row menu or the command search offers can take a key too, apart from those that need their caller.
-  out.push([t('keys.more'), Object.keys(actions).filter((id) => !seen.has(id) && name(actions[id]!) && !actions[id]!.hidden)]);
+  out.push([t('keys.more'), Object.keys(actions).filter((id) => !seen.has(id) && name(actions[id]!) && !actions[id]!.hidden && !actions[id]!.scope)]);
+  // Each scope, such as the editor, gets a group of its own, as its keys only count there.
+  const scoped = Object.values(actions).filter((a) => a.scope && name(a));
+  for (const scope of new Set(scoped.map((a) => a.scope!))) out.push([t(`keys.scope.${scope}`), scoped.filter((a) => a.scope === scope).map((a) => a.id)]);
   return out.filter(([, list]) => list.length);
 }
 const shown = computed(() => {
@@ -56,8 +60,9 @@ function leave(e: FocusEvent, id: string) {
   if ((rec.value === id || pending.value?.id === id) && !(e.currentTarget as Element).contains(e.relatedTarget as Node | null)) stop();
 }
 
-function press(combo: string) {
-  const id = rec.value!;
+function press(pressed: string) {
+  const id = rec.value!, scope = actions[id]!.scope;
+  const combo = scope ? inScope(scope, pressed) : pressed;
   const v = check(props.map, combo, id, host.desktop);
   if (v.ok) return set(assign(props.map, combo, id));
   const key = keyLabel(combo);
