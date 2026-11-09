@@ -152,7 +152,7 @@ export default function setup() {
   COL.disk!.value = (k) => (typeof k.meta?.disk === 'string' ? k.meta.disk.split(', ').filter(Boolean).map(diskName).join(', ') : '');
 
   action('cacheOnly', { label: tl('unraid.cacheOnly'), g: 'IconFilter', when: () => U.available, checked: () => !!F.T().cacheOnly, run: cacheOnly });
-  action('fixPerms', { label: tl('unraid.perms.title'), g: 'IconShieldOn', when: () => user.admin(), run: fixPerms });
+  action('fixPerms', { label: tl('unraid.perms.title'), g: 'IconShieldOn', when: () => user.admin() && U.available, run: fixPerms });
   action('spinDown', { label: tl('unraid.spinDown'), g: 'IconSleep', when: () => user.admin() && !!U.st?.write && U.disks.some((d) => !d.spundown), run: spinDown });
 
   const menu = (id: string) => MENUS.find(([m]) => m === id)![1];

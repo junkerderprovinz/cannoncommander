@@ -11,6 +11,7 @@ import type { Entry } from '@/files/entries';
 import { nativePath } from '@/files/paths';
 import { plural, t } from '@/i18n';
 import { confirmWin } from '@/features/config/shared';
+import { answeredBy, elevationAnswers } from '@/features/elevate/answers';
 import { objects } from '@/features/jobs/label';
 import { pathOf } from '@/features/transfer/paths';
 import { undoAct } from '@/features/undo/act';
@@ -29,13 +30,8 @@ function whenThrough(job: Job, ok: (j: Job) => void, fail: (j: Job) => unknown =
 // The trash of Windows or of the Linux desktop, in the desktop app.
 export const binName = () => t(host.os === 'windows' ? 'trash.binWindows' : 'trash.binSystem');
 
-// A refusal for lack of rights, and the answer to the offer to go on as administrator, are the elevate feature's to
-// tell.
-const elevation = (j: Job, items: JobItem[]) => host.desktop && (j.errorCode === 'denied' || items.some((i) => i.errorCode === 'denied' || i.errorCode === 'elevationDeclined'));
-
 async function failedUnlessElevation(j: Job) {
-  const items = (await ops.job(j.id).catch(() => null))?.items ?? [];
-  if (!elevation(j, items)) failed(j);
+  if (!(await elevationAnswers(j))) failed(j);
 }
 
 // A drive without a trash, such as a network drive, gets the question the Explorer asks: delete for good instead?
@@ -43,7 +39,7 @@ async function trashFailed(j: Job, after?: () => void) {
   const items = (await ops.job(j.id).catch(() => null))?.items ?? [];
   const homeless = items.filter((i) => i.errorCode === 'noSystemTrash');
   if (!homeless.length) {
-    if (!elevation(j, items)) failed(j);
+    if (!answeredBy(j, items)) failed(j);
     return;
   }
   const what = homeless.length === 1 ? homeless[0]!.name || homeless[0]!.path : objects(homeless.length);
