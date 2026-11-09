@@ -10580,7 +10580,7 @@ components:
           type: boolean
     ShellThumbnails:
       type: object
-      required: [way, restricted, allowed]
+      required: [way, restricted, allowed, restart]
       properties:
         way:
           type: string
@@ -10595,6 +10595,11 @@ components:
         allowed:
           type: boolean
           description: The app's AppArmor profile is in place.
+        restart:
+          type: boolean
+          description: |
+            The profile came or went after the app started. The app keeps
+            the AppArmor label it started with until it starts again.
     ShellEntry:
       type: object
       required: [key, label, hidden]

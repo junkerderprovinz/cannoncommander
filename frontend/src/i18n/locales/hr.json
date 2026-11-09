@@ -2715,12 +2715,15 @@
     "iconsTip": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci prikazuju vlastitu ikonu i bez ovog prekidača.",
     "iconsTipLinux": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci ionako prikazuju vlastitu ikonu. CannonCommander crta minijature samo u izoliranom okruženju. Gdje to nije moguće, kao na Ubuntu 24.04, vidite samo one koje je vaš upravitelj datoteka već izradio.",
     "thumbs": "Minijature",
-    "thumbsTip": "Ubuntu pušta program u izolirano okruženje samo uz vlastito dopuštenje. Pri uključivanju CannonCommander dodaje malo pravilo AppArmor, koje traži vašu lozinku, i zatim sam crta minijature. Pri isključivanju pravilo opet nestaje.",
+    "thumbsTip": "Ubuntu pušta program u izolirano okruženje samo uz vlastito dopuštenje. Pri uključivanju CannonCommander dodaje malo pravilo AppArmor, koje traži vašu lozinku, i nakon ponovnog pokretanja sam crta minijature. Pri isključivanju pravilo odmah nestaje.",
     "thumbsOnButton": "Uključi minijature sustava",
     "thumbsOffButton": "Isključi minijature sustava",
     "thumbsOn": "Gotovo, CannonCommander sada sam crta minijature.",
     "thumbsOff": "Isključeno, pravilo AppArmor opet je uklonjeno.",
-    "thumbsStillOut": "Pravilo je postavljeno, ali izolirano okruženje nažalost još uvijek ne radi."
+    "thumbsStillOut": "Pravilo je postavljeno, ali izolirano okruženje nažalost još uvijek ne radi.",
+    "thumbsOnRestart": "Pravilo je postavljeno. Nakon ponovnog pokretanja CannonCommander sam crta minijature.",
+    "thumbsOffRestart": "Pravilo je uklonjeno. Potpuno isključeno bit će nakon ponovnog pokretanja.",
+    "restartNow": "Ponovno pokreni sada"
   },
   "shortcuts": {
     "title": "Tipkovnički prečaci",
@@ -3759,6 +3762,7 @@
     "volume": "Volumen od {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} slobodno",
     "network": "Mreža",
     "server": "Poslužitelj",
     "thisPc": "Ovaj PC",

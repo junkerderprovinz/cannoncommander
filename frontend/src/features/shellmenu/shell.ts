@@ -1,6 +1,7 @@
 // What the computer's own file manager offers in the desktop app: Explorer's menu on Windows, the actions of the other
 // file managers on Linux, its properties dialog, starting a program as administrator and its icons.
 import { reactive } from 'vue';
+import { admin } from '@/api/admin';
 import { BASE, call, json, q } from '@/api/client';
 import { host } from '@/core/host';
 import { menu, type MenuEntry } from '@/core/menu';
@@ -9,11 +10,13 @@ import { ext } from '@/core/glyphs';
 import type { Entry } from '@/files/entries';
 import { inArchive, join } from '@/files/paths';
 import { t } from '@/i18n';
+import { c, cn, confirmWin } from '@/features/config/shared';
+import { shell as app } from '@/shell/state';
 import { usePanels } from '@/stores/panels';
 
 // Thumbnails says how thumbnails get drawn on Linux and whether the AppArmor rule that lets the sandbox in is wanted or
-// already there.
-export interface Thumbnails { way: 'sandbox' | 'service' | 'cache'; restricted: boolean; allowed: boolean }
+// already there. The app takes a change of the rule on only when it starts again, which restart says is still due.
+export interface Thumbnails { way: 'sandbox' | 'service' | 'cache'; restricted: boolean; allowed: boolean; restart: boolean }
 export interface Offers { menu: '' | 'native' | 'actions'; properties: boolean; runAs: string[]; thumbnails?: Thumbnails }
 export interface ShellAction { key: string; label: string; icon?: string; group?: string }
 export interface ShellEntry { key: string; label: string; icon?: string; hidden: boolean }
@@ -144,10 +147,21 @@ export async function loadEntries(): Promise<ShellEntry[]> {
 
 export const hideEntries = (keys: string[]) => call('/shell/entries/hidden', json('PUT', { keys }));
 
-export const sandboxOffered = () => !!shell.thumbnails && (shell.thumbnails.allowed || (shell.thumbnails.restricted && shell.thumbnails.way !== 'sandbox'));
+export function sandboxOffered() {
+  const th = shell.thumbnails;
+  return !!th && (th.allowed || th.restart || (th.restricted && th.way !== 'sandbox'));
+}
 
 // setThumbnails puts the AppArmor rule in place or takes it away, which asks for the administrator's password.
 export async function setThumbnails(allow: boolean) {
   const { body } = await call<Thumbnails>('/shell/thumbnails', json('POST', { allow }));
   if (body) shell.thumbnails = body;
+}
+
+// restartApp starts the desktop app again in place, and asks first while jobs still run, since they stop with it.
+export function restartApp() {
+  const run = () => admin.restart().catch(warn);
+  const n = app.jobCount;
+  if (!n) return void run();
+  confirmWin({ title: c('app.restart'), verb: c('app.restart'), glyph: 'IconRefresh', text: [c('app.restartText'), cn(n, 'app.restartJobs')], run });
 }

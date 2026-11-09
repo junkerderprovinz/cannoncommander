@@ -1,5 +1,5 @@
 // An action is anything the menu bar, the context menu, a key or a button can run.
-import { shallowReactive } from 'vue';
+import { shallowReactive, watch } from 'vue';
 import { t } from '@/i18n';
 import { extend } from './extend';
 import { prefs } from './prefs';
@@ -31,6 +31,17 @@ export type ActionDef = Omit<Action, 'id'>;
 export const actions = shallowReactive<Record<string, Action>>({});
 
 export const action = (id: string, def: ActionDef) => { actions[id] = { id, ...def }; };
+
+// actionsWhere keeps defs registered while where holds and takes them away when it does not. An action a place lacks,
+// such as a tool of Unraid in the desktop app, then shows in no menu, key list or search rather than greyed out.
+export function actionsWhere(where: () => boolean, defs: Record<string, ActionDef>) {
+  watch(where, (on) => {
+    for (const [id, def] of Object.entries(defs)) {
+      if (on) action(id, def);
+      else delete actions[id];
+    }
+  }, { immediate: true, flush: 'sync' });
+}
 export const labelOf = (a: { label?: string | (() => string) }) => (typeof a.label === 'function' ? a.label() : a.label ?? '');
 
 export interface SelItem { name: string; dir?: boolean; at?: string }

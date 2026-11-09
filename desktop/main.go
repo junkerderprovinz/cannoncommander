@@ -79,7 +79,7 @@ func run() error {
 	app := application.New(application.Options{
 		Name:        "CannonCommander",
 		Description: "A two-pane file manager",
-		Icon:        appIcon,
+		Icon:        windowIcon(),
 		// Shown while the server starts; the window then goes over to it.
 		Assets: application.AssetOptions{Handler: http.HandlerFunc(splash)},
 		// A second launch brings the first window back, since two copies would

@@ -4,7 +4,9 @@
   const KEY = 'cannoncommander-keys';
   const NAMED = { ArrowLeft: 'Links', ArrowRight: 'Rechts', ArrowUp: 'Hoch', ArrowDown: 'Runter', Delete: 'Entf', Insert: 'Einfg', Escape: 'Esc', ' ': 'Leertaste', Home: 'Pos1', End: 'Ende', PageUp: 'Bild auf', PageDown: 'Bild ab', Backspace: 'Rück' };
   // A combo ending in the plus key itself, such as Ctrl++, keeps that plus as its last part.
-  const label = (combo) => {
+  // A key of a scope, such as the editor's, carries the scope in front, editor:Ctrl+d, and reads without it.
+  const label = (scoped) => {
+    const combo = scoped.replace(/^[a-z]+:(?=.)/, '');
     const parts = combo.endsWith('++') ? [...combo.slice(0, -2).split('+'), '+'] : combo.split('+');
     return parts.map((p, i) => i < parts.length - 1 ? { Ctrl: 'Strg', Shift: 'Umschalt', Alt: 'Alt' }[p] || p : NAMED[p] || (p.length === 1 ? p.toUpperCase() : p)).join('+');
   };
@@ -42,11 +44,15 @@
     return now ? tip.split(was).join(now) : tip.replace(` (${was})`, '');
   };
 
+  const SCOPES = { editor: 'Editor' };
   function groups() {
     const seen = new Set(), out = [];
     const ids = (items) => items.flatMap(it => typeof it === 'string' ? [it] : it?.sub ? ids(it.sub) : []).filter(id => CC.actions[id] && !seen.has(id) && seen.add(id));
     for (const [menuName, items] of MENUS) out.push([menuName, ids(items)]);
-    out.push(['Weitere', Object.keys(CC.actions).filter(id => !seen.has(id) && nameOf(CC.actions[id]) && (combosOf(DEFAULT_MAP, id).length || DEFAULT_LABEL[id]))]);
+    out.push(['Weitere', Object.keys(CC.actions).filter(id => !seen.has(id) && !CC.actions[id].scope && nameOf(CC.actions[id]) && (combosOf(DEFAULT_MAP, id).length || DEFAULT_LABEL[id]))]);
+    // Each scope gets a group of its own, as its keys only count there.
+    const scoped = Object.values(CC.actions).filter(a => a.scope);
+    for (const scope of new Set(scoped.map(a => a.scope))) out.push([SCOPES[scope] || scope, scoped.filter(a => a.scope === scope).map(a => a.id)]);
     return out.filter(([, list]) => list.length);
   }
 
@@ -181,11 +187,12 @@
     e.stopPropagation();
     if (MODIFIERS.includes(e.key)) return;
     if (e.key === 'Escape' && !e.ctrlKey && !e.altKey && !e.shiftKey) { tab.rec = null; tab.pending = null; return CC.render(); }
-    const combo = comboOf(e), map = { ...CC.keymap }, id = tab.rec, key = esc(label(combo));
+    const id = tab.rec, scope = CC.actions[id]?.scope, bare = comboOf(e), combo = scope ? `${scope}:${bare}` : bare;
+    const map = { ...CC.keymap }, key = esc(label(combo));
     const say = (msg) => { tab.pending = { id, msg }; CC.render(); };
-    if (['Tab', 'Enter', 'F10'].includes(combo)) return say(`${key} ist fest belegt. Nimm eine andere Taste.`);
-    if (/^[\p{L}\d]$/u.test(combo)) return say('Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.');
-    if (BROWSER.includes(combo)) return say(`${key} behält der Browser für seine Tabs und Fenster. Nimm hier bitte eine andere, in der Desktop-App klappt sie.`);
+    if (['Tab', 'Enter', 'F10'].includes(bare)) return say(`${key} ist fest belegt. Nimm eine andere Taste.`);
+    if (/^[\p{L}\d]$/u.test(bare)) return say('Einzelne Buchstaben und Ziffern braucht die Schnellsuche. Nimm Strg, Alt oder eine F-Taste dazu.');
+    if (BROWSER.includes(bare)) return say(`${key} behält der Browser für seine Tabs und Fenster. Nimm hier bitte eine andere, in der Desktop-App klappt sie.`);
     const other = map[combo];
     if (other && other !== id && tab.pending?.combo !== combo) { tab.pending = clash(map, id, combo); return CC.render(); }
     for (const c of combosOf(map, id)) delete map[c];
@@ -202,9 +209,11 @@
       return found.length ? CC.card(menuName, found.map(id => row(id, map, base, tab.rec, tab.pending)).join('')) : '';
     }).join('') || CC.card('Tastenkürzel', `<div class="empty">${g('IconSearch')}<div>Kein Befehl heißt so</div></div>`);
     host.innerHTML = CC.card('Bedienung',
-      frow('Eigene Tasten', `<button class="btn" id="kt-reset" ${Object.keys(ownOf(base, map)).length ? '' : 'disabled'}>${g('IconRefresh')}Zurücksetzen</button>`, 'Nimmt deine eigenen Tasten zurück.')
+      frow('Vim-Tasten im Editor', sw(CC.prefs.editorVim, 'id="kt-vim"'), 'Der Editor arbeitet dann wie Vim, mit Normal- und Einfügemodus. Mit :w speicherst du, mit :q schließt du die Datei.')
+      + frow('Eigene Tasten', `<button class="btn" id="kt-reset" ${Object.keys(ownOf(base, map)).length ? '' : 'disabled'}>${g('IconRefresh')}Zurücksetzen</button>`, 'Nimmt deine eigenen Tasten zurück.')
       + frow('Befehl suchen', `<input class="field m" id="kt-q" placeholder="etwa Kopieren" autocomplete="off" value="${esc(tab.query)}">`))
       + cards + CC.card('Fest belegt', fixedGrid());
+    $('#kt-vim', host).addEventListener('change', e => CC.setPref('editorVim', swVal(e.target)));
     // Every change draws the tile anew, so the search field gets its focus and caret back.
     $('#kt-q', host).addEventListener('input', e => {
       tab.query = e.target.value;

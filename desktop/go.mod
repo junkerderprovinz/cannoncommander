@@ -10,6 +10,7 @@ require (
 	github.com/godbus/dbus/v5 v5.2.2
 	github.com/junkerderprovinz/cannoncommander/backend v0.0.0
 	github.com/wailsapp/wails/v3 v3.1.0
+	golang.org/x/image v0.47.0
 	golang.org/x/sys v0.49.0
 )
 
@@ -77,7 +78,6 @@ require (
 	github.com/yeka/zip v0.0.0-20231116150916-03d6312748a9 // indirect
 	go4.org v0.0.0-20261028031214-ed6929a230fe // indirect
 	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/image v0.47.0 // indirect
 	golang.org/x/mod v0.42.0 // indirect
 	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/oauth2 v0.37.0 // indirect

@@ -4,7 +4,7 @@ import { h, reactive, watchEffect } from 'vue';
 import { api } from '@/api/client';
 import { on } from '@/api/sse';
 import { type PermsResult, type PermsScan, unraid } from '@/api/unraid';
-import { action, run } from '@/core/actions';
+import { actionsWhere, run } from '@/core/actions';
 import { addTo, SIDE_ROWS } from '@/core/extend';
 import { MENUS } from '@/core/menus';
 import { toast } from '@/core/toast';
@@ -151,9 +151,11 @@ export default function setup() {
   // The server names the disks as Unraid does; the column calls them what the tree calls them.
   COL.disk!.value = (k) => (typeof k.meta?.disk === 'string' ? k.meta.disk.split(', ').filter(Boolean).map(diskName).join(', ') : '');
 
-  action('cacheOnly', { label: tl('unraid.cacheOnly'), g: 'IconFilter', when: () => U.available, checked: () => !!F.T().cacheOnly, run: cacheOnly });
-  action('fixPerms', { label: tl('unraid.perms.title'), g: 'IconShieldOn', when: () => user.admin() && U.available, run: fixPerms });
-  action('spinDown', { label: tl('unraid.spinDown'), g: 'IconSleep', when: () => user.admin() && !!U.st?.write && U.disks.some((d) => !d.spundown), run: spinDown });
+  actionsWhere(() => U.available, {
+    cacheOnly: { label: tl('unraid.cacheOnly'), g: 'IconFilter', checked: () => !!F.T().cacheOnly, run: cacheOnly },
+    fixPerms: { label: tl('unraid.perms.title'), g: 'IconShieldOn', when: () => user.admin(), run: fixPerms },
+    spinDown: { label: tl('unraid.spinDown'), g: 'IconSleep', when: () => user.admin() && !!U.st?.write && U.disks.some((d) => !d.spundown), run: spinDown },
+  });
 
   const menu = (id: string) => MENUS.find(([m]) => m === id)![1];
   const place = (list: unknown[], id: string, after: string[]) => {

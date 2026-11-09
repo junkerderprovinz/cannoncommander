@@ -2800,12 +2800,15 @@
     "iconsTip": "Zobrazí v celém seznamu ikony vašeho systému. Programy a zástupci zobrazují vlastní ikonu i bez tohoto přepínače.",
     "iconsTipLinux": "Zobrazí v celém seznamu ikony vašeho systému. Programy a zástupci zobrazují vlastní ikonu tak jako tak. Náhledy kreslí CannonCommander jen v izolovaném prostředí. Kde to nejde, třeba v Ubuntu 24.04, uvidíte jen ty, které už vytvořil váš správce souborů.",
     "thumbs": "Náhledy",
-    "thumbsTip": "Ubuntu pustí program do izolovaného prostředí jen s vlastním povolením. Při zapnutí přidá CannonCommander malé pravidlo AppArmor, které si řekne o vaše heslo, a pak kreslí náhledy sám. Při vypnutí pravidlo zase zmizí.",
+    "thumbsTip": "Ubuntu pustí program do izolovaného prostředí jen s vlastním povolením. Při zapnutí přidá CannonCommander malé pravidlo AppArmor, které si řekne o vaše heslo, a po restartu kreslí náhledy sám. Při vypnutí pravidlo hned zase zmizí.",
     "thumbsOnButton": "Zapnout systémové náhledy",
     "thumbsOffButton": "Vypnout systémové náhledy",
     "thumbsOn": "Hotovo, CannonCommander teď kreslí náhledy sám.",
     "thumbsOff": "Vypnuto, pravidlo AppArmor je zase pryč.",
-    "thumbsStillOut": "Pravidlo je na místě, ale izolované prostředí bohužel pořád nefunguje."
+    "thumbsStillOut": "Pravidlo je na místě, ale izolované prostředí bohužel pořád nefunguje.",
+    "thumbsOnRestart": "Pravidlo je na místě. Po restartu kreslí CannonCommander náhledy sám.",
+    "thumbsOffRestart": "Pravidlo je pryč. Úplně vypnuté je po restartu.",
+    "restartNow": "Restartovat teď"
   },
   "shortcuts": {
     "title": "Klávesové zkratky",
@@ -3891,6 +3894,7 @@
     "volume": "Svazek {size}"
   },
   "files": {
+    "freeOn": "{name}: volných {size}",
     "network": "Síť",
     "server": "Server",
     "thisPc": "Tento počítač",

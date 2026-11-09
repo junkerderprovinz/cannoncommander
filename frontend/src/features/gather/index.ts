@@ -1,7 +1,7 @@
 // Ordner bündeln for admins: the server plans, the window shows the plan, and the move runs as a gather or scatter job.
 import { reactive, watch } from 'vue';
 import { type GatherPlan, type Job, ops } from '@/api/ops';
-import { action, run } from '@/core/actions';
+import { actionsWhere, run } from '@/core/actions';
 import { fmtSize } from '@/core/format';
 import { MENUS } from '@/core/menus';
 import { toast } from '@/core/toast';
@@ -84,7 +84,7 @@ function gatherWindow() {
 
 export default function setup() {
   const user = useUser(), U = useUnraid();
-  action('gather', { label: tl('gather.title'), g: 'IconMerge', when: () => user.admin() && U.available, run: gatherWindow });
+  actionsWhere(() => U.available, { gather: { label: tl('gather.title'), g: 'IconMerge', when: () => user.admin(), run: gatherWindow } });
   const tools = MENUS.find(([id]) => id === 'tools')![1];
   if (!tools.includes('gather')) tools.splice(tools.indexOf('diskUsage') + 1, 0, 'gather');
 }

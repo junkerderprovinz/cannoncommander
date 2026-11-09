@@ -40,7 +40,7 @@
   function entries(q) {
     const grp = groups();
     const extra = CC.paletteSources.map(s => ({ head: s.head, rows: s.list().map(r => ({ ...r, a: { g: r.g }, group: s.head })) }));
-    const all = Object.values(CC.actions).filter(a => a.label && a.id !== 'palette').map(a => ({
+    const all = Object.values(CC.actions).filter(a => a.label && !a.scope && a.id !== 'palette').map(a => ({
       a, name: typeof a.label === 'function' ? a.label() : a.label, group: grp[a.id],
       why: CC.blocked(a) || (a.when && !a.when() ? 'Gerade nicht möglich' : null),
     }));

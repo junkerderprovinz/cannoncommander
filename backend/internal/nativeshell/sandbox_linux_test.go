@@ -191,8 +191,27 @@ func TestTheStateSaysWhenTheKernelKeepsTheSandboxOut(t *testing.T) {
 	f.root = fstest.MapFS{"proc/sys/kernel/apparmor_restrict_unprivileged_userns": &fstest.MapFile{Data: []byte("0\n")}}
 	f.bwrap = "/usr/bin/bwrap"
 	f.install()
-	if got := Sandboxing(); !got.Sandboxed || got.Restricted {
+	if got := Sandboxing(); !got.Sandboxed || got.Restricted || got.Profiled {
 		t.Errorf("got %+v", got)
+	}
+}
+
+func TestTheStateSaysWhetherTheAppRunsUnderItsProfile(t *testing.T) {
+	f := newFixture(t)
+	for _, c := range []struct {
+		file, label string
+		want        bool
+	}{
+		{"proc/self/attr/apparmor/current", "cannoncommander-userns (unconfined)\n", true},
+		{"proc/self/attr/current", "cannoncommander-userns (unconfined)\n", true},
+		{"proc/self/attr/apparmor/current", "unconfined\n", false},
+		{"proc/self/attr/current", "cannoncommander-userns-other (enforce)\n", false},
+	} {
+		f.root = fstest.MapFS{c.file: &fstest.MapFile{Data: []byte(c.label)}}
+		f.install()
+		if got := Sandboxing().Profiled; got != c.want {
+			t.Errorf("%s %q: got %v", c.file, c.label, got)
+		}
 	}
 }
 
