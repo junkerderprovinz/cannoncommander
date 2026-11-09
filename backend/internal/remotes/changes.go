@@ -56,13 +56,13 @@ func (s *Service) create(ctx context.Context, in Input, mount bool) (Remote, err
 	if err := s.checkMount(r.Mount, "", rows); err != nil {
 		return Remote{}, err
 	}
-	set, _, token, err := s.params(ctx, p, in.Params)
+	set, _, token, picked, err := s.params(ctx, p, in.Params)
 	if err != nil {
 		return Remote{}, err
 	}
-	if err := s.createSection(ctx, name, r.Type, set, token); err != nil {
+	if err := s.createSection(ctx, name, r.Type, set, token, withSetupAnswers(r.Type, picked)); err != nil {
 		s.forget(name)
-		return Remote{}, err
+		return Remote{}, asked(err)
 	}
 	if err := s.db.insert(ctx, r); err != nil {
 		s.forget(name)
@@ -126,10 +126,11 @@ func (s *Service) Update(ctx context.Context, name string, in Input) (Remote, er
 	if err != nil {
 		return Remote{}, err
 	}
-	set, unset, token, err := s.params(ctx, p, in.Params)
+	set, unset, token, picked, err := s.params(ctx, p, in.Params)
 	if err != nil {
 		return Remote{}, err
 	}
+	picked = withSetupAnswers(old.Type, picked)
 	stored, err := s.section(ctx, name)
 	if err != nil {
 		return Remote{}, err
@@ -154,14 +155,14 @@ func (s *Service) Update(ctx context.Context, name string, in Input) (Remote, er
 		for k, v := range set {
 			full[k] = v
 		}
-		if err := s.createSection(ctx, next.Name, next.Type, full, token); err != nil {
+		if err := s.createSection(ctx, next.Name, next.Type, full, token, picked); err != nil {
 			s.forget(next.Name)
-			return Remote{}, err
+			return Remote{}, asked(err)
 		}
 		s.forget(name)
 		s.noteError(name, nil)
-	} else if err := s.updateSection(ctx, name, set, unset, token); err != nil {
-		return Remote{}, err
+	} else if err := s.updateSection(ctx, name, set, unset, token, picked); err != nil {
+		return Remote{}, asked(err)
 	}
 	if err := s.db.replace(ctx, name, next); err != nil {
 		return Remote{}, err
@@ -263,6 +264,15 @@ func (s *Service) Unmount(ctx context.Context, name string) (Remote, error) {
 	return s.Get(ctx, name, true)
 }
 
+// asked turns a question of rclone's setup into an answer the interface
+// knows to meet with a test, which shows the question.
+func asked(err error) error {
+	if q, ok := errors.AsType[errAsks](err); ok {
+		return v1.Coded(http.StatusConflict, "setupQuestion", "rclone's setup asks "+q.q.Name+" first, test the remote to answer it")
+	}
+	return err
+}
+
 func mountMessage(err error) string {
 	var rc *rcError
 	if errors.As(err, &rc) {
@@ -290,6 +300,9 @@ func (s *Service) mountRow(ctx context.Context, r row, rows []row) error {
 }
 
 func (s *Service) mountOn(ctx context.Context, r row, rows []row) error {
+	if err := s.pinSaved(ctx, r.Name); err != nil {
+		return err
+	}
 	clearStale(r.Mount)
 	if err := os.MkdirAll(r.Mount, 0o777); err != nil {
 		return err

@@ -91,132 +91,230 @@
 
   /* Fernziele */
   DATA.rclone = DATA.rclone || { automount: true, cache: 'writes', cacheSize: 50, version: '1.71.2', path: '/usr/bin/rclone' };
-  const TYPES = [
-    { id: 'sftp', label: 'SFTP', g: 'IconNetwork', sub: 'Server mit SSH' },
-    { id: 'smb', label: 'SMB', g: 'IconNetwork', sub: 'NAS und Windows' },
-    { id: 'webdav', label: 'WebDAV', g: 'IconBrowser', sub: 'Nextcloud und mehr' },
-    { id: 's3', label: 'S3', g: 'IconCloud', sub: 'AWS, MinIO, R2' },
-    { id: 'gdrive', label: 'Google Drive', g: 'IconCloud', sub: 'Anmelden bei Google', oauth: 'Google' },
-    { id: 'onedrive', label: 'OneDrive', g: 'IconCloud', sub: 'Anmelden bei Microsoft', oauth: 'Microsoft' },
-    { id: 'dropbox', label: 'Dropbox', g: 'IconCloud', sub: 'Anmelden bei Dropbox', oauth: 'Dropbox' },
-  ];
-  const typeOf = (label) => TYPES.find(t => t.label === label || t.id === label) || TYPES[0];
-  const FIELDS = {
-    sftp: [{ k: 'host', l: 'Server', ph: 'nas.lan' }, { k: 'port', l: 'Port', def: '22', w: 's' }, { k: 'user', l: 'Benutzer' }, { k: 'pass', l: 'Passwort', pw: true }],
-    smb: [{ k: 'host', l: 'Server', ph: 'keller' }, { k: 'share', l: 'Freigabe', ph: 'archiv' }, { k: 'user', l: 'Benutzer' }, { k: 'pass', l: 'Passwort', pw: true }, { k: 'domain', l: 'Domäne', ph: 'WORKGROUP', opt: true }],
-    webdav: [{ k: 'url', l: 'Adresse', ph: 'https://cloud.example.org/remote.php/dav/files/jdp', w: 'w' }, { k: 'vendor', l: 'Anbieter', dd: [['nextcloud', 'Nextcloud'], ['owncloud', 'ownCloud'], ['other', 'Andere']] }, { k: 'user', l: 'Benutzer' }, { k: 'pass', l: 'Passwort', pw: true }],
-    s3: [{ k: 'provider', l: 'Anbieter', dd: [['aws', 'AWS'], ['minio', 'MinIO'], ['wasabi', 'Wasabi'], ['r2', 'Cloudflare R2'], ['other', 'Andere']] }, { k: 'endpoint', l: 'Endpunkt', ph: 'https://s3.eu-central-1.amazonaws.com', w: 'w', opt: true, tip: 'Nur nötig, wenn es nicht AWS ist.' }, { k: 'region', l: 'Region', ph: 'eu-central-1' }, { k: 'key', l: 'Access Key' }, { k: 'secret', l: 'Secret Key', pw: true }, { k: 'bucket', l: 'Bucket' }],
-    oauth: [{ k: 'folder', l: 'Ordner beim Anbieter', ph: '/', opt: true, tip: 'Leer lassen für alles. Sonst nur dieser Ordner, etwa /Fotos.' }],
+  const RT = REMOTE_TEXTS.config;
+  const say = (text, vars = {}) => text.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+  const GROUPS = ['cloud', 'storage', 'protocol'];
+  const WORD_NAMES = new Set(['smb', 's3', 'crypt', 'alias', 'archive', 'cache', 'chunker', 'combine', 'compress', 'hasher', 'union', 'memory']);
+  const pName = (p) => (WORD_NAMES.has(p.id) ? RT.p[p.id] : p.name);
+  const nameAndKind = (label) => { const at = label.indexOf(' / '); return at < 0 ? { name: label } : { name: label.slice(0, at), sub: label.slice(at + 3) }; };
+  const HINTS = { smb: 'smb', sftp: 'sftp', webdav: 'webdav', ftp: 'ftp', http: 'http', crypt: 'crypt', s3: 's3', hidrive: 'hidrive', icloud: 'icloud',
+    googlephotos: 'googlephotos', minio: 'selfHosted', seaweedfs: 'selfHosted', ceph: 'selfHosted', garage: 'selfHosted', doi: 'doi', alias: 'alias',
+    archive: 'archive', cache: 'cache', chunker: 'chunker', combine: 'combine', compress: 'compress', hasher: 'hasher', union: 'union', memory: 'memory' };
+  const pHint = (id) => (HINTS[id] ? RT.ph[HINTS[id]] : '');
+  const markOf = (mark) => (BRANDS.marks[mark] ? { svg: BRANDS.marks[mark], tile: BRANDS.tiles[mark] } : { glyph: mark && GLYPHS[mark] ? mark : 'IconCloud' });
+  const markHtml = (m) => (m.svg ? `<span class="glim-brand-svg" aria-hidden="true">${m.svg}</span>` : g(m.glyph));
+  const LABELS = { user: 'user', username: 'user', pass: 'pass', password: 'pass', host: 'host', url: 'url', port: 'port', domain: 'domain', vendor: 'vendor',
+    provider: 'provider', region: 'region', endpoint: 'endpoint', account: 'account', key: 'key', key_file: 'keyFile', access_key_id: 'accessKey',
+    secret_access_key: 'secretKey', access_grant: 'accessGrant', client_id: 'clientId', client_secret: 'clientSecret', remote: 'remote', library: 'library',
+    hostname: 'hostname', scope: 'scope', '2fa': 'twoFactor', share_name: 'shareName', upstreams: 'upstreams', access_token: 'accessToken', api_key: 'apiKey',
+    api_url: 'apiUrl', api_password: 'apiPassword', passphrase: 'passphrase', tls: 'tls', explicit_tls: 'explicitTls', host_keys: 'hostKeys' };
+  const optLabel = (n) => (LABELS[n] ? RT.o[LABELS[n]] : n);
+  const OWN = { url: 'url', user: 'user', username: 'user', pass: 'pass', password: 'pass', host: 'host', port: 'port', access_key_id: 'accessKey',
+    secret_access_key: 'secretKey', endpoint: 'endpoint', region: 'region', vendor: 'vendor', key_file: 'keyFile', remote: 'remote', upstreams: 'upstreams',
+    passphrase: 'passphrase', host_keys: 'hostKeys' };
+  const SECRET_FIELDS = new Set(['pass', 'password', 'secret_access_key', 'key', 'api_key', 'token', 'access_token', 'private_key']);
+  const AUTH = { apppassword: 'authAppPassword', accesskey: 'authAccessKey', apikey: 'authApiKey', login: 'authLogin', logintoken: 'authLoginToken' };
+  function optHint(o, p, type) {
+    let own = OWN[o.name] ? RT.oh[OWN[o.name]] : '';
+    if ((o.name === 'pass' || o.name === 'password') && type === 'webdav') own = RT.oh.passCloud;
+    const about = [];
+    if (o.name === 'url' && p?.urlHint) about.push(say(RT.oh.shape, { shape: p.urlHint }));
+    if (p?.defaults?.[o.name]) about.push(say(RT.oh.serverDefault, { value: p.defaults[o.name] }));
+    if (SECRET_FIELDS.has(o.name) && p?.auth && AUTH[p.auth] && type !== 'webdav') { about.push(RT.oh[AUTH[p.auth]]); own = ''; }
+    if (SECRET_FIELDS.has(o.name) && p?.authUrl) about.push(say(RT.oh.authWhere, { url: p.authUrl }));
+    const named = LABELS[o.name] ? say(RT.oh.rcloneName, { name: o.name }) : '';
+    return own || about.length || named ? [own, ...about, named].filter(Boolean).join(' ') : o.help || '';
+  }
+  const applies = (filter, value) => {
+    if (!filter) return true;
+    const not = filter.startsWith('!');
+    const hit = !!value && (not ? filter.slice(1) : filter).split(',').includes(value);
+    return not ? !hit : hit;
   };
-  const SEED = { gdrive: { account: 'junker@example.org', folder: '' }, 'nas-keller': { host: 'keller', share: 'archiv', user: 'jdp', domain: '' } };
+  const suggest = (product, taken) => {
+    const base = product.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'remote';
+    let n = base;
+    for (let k = 2; taken.includes(n); k++) n = `${base}-${k}`;
+    return n;
+  };
+  const kindOf = (r) => { const p = REMOTES.providers.find(x => x.id === r.provider); return p ? pName(p) : r.type; };
+  const remoteMark = (r) => markOf(REMOTES.providers.find(x => x.id === r.provider)?.mark);
+  const PICKED = new Set(['vendor', 'provider']), WIDE = new Set(['url', 'endpoint', 'host_keys', 'remote', 'upstreams']);
+  const SEED = { gdrive: {}, 'nas-keller': { host: 'keller', user: 'jdp', domain: '' } };
   DATA.remotes.forEach(r => { r.cfg = r.cfg || { ...(SEED[r.name] || {}) }; });
 
   function remoteWin(r) {
     const isNew = !r;
-    const w = A.stepWin({ title: isNew ? 'Fernziel hinzufügen' : 'Fernziel bearbeiten', wide: true });
-    let type = r ? typeOf(r.type) : null;
-    const draft = r ? { name: r.name, mount: r.mount, ...r.cfg } : {};
-    let mountTouched = !!r, tested = false;
+    const w = A.stepWin({ title: isNew ? RT.add : RT.edit, wide: true });
+    const taken = DATA.remotes.filter(x => x !== r).map(x => x.name);
+    let provider = r ? REMOTES.providers.find(p => p.id === r.provider) || null : null;
+    let typeId = r ? r.type : '';
+    const values = r ? { ...r.cfg } : {};
+    let name = r?.name || '', mount = r?.mount || '/remotes/', path = r?.path || '';
+    let nameTouched = !!r, mountTouched = !!r, signedIn = !!r && r.type === 'drive', signing = false;
+    let result = null, testing = false, more = false, shares = [];
+    const type = () => REMOTES.types.find(t => t.id === typeId);
+    const who = () => (provider ? pName(provider) : type()?.description || typeId);
 
+    const tile = (p) => {
+      const m = markOf(p.mark), lit = m.tile, { name: n, sub } = nameAndKind(pName(p)), hint = pHint(p.id), bubble = p.group === 'protocol' ? hint : '';
+      return `<li data-type="${p.id}" ${!bubble && hint ? `title="${esc(hint)}"` : ''} ${lit ? `style="--provider-tile:${lit.tile};--provider-ink:${lit.ink}"` : ''}>
+        <div class="glim-readme-btn-unit group glim-tile-house"><button type="button" class="glim-readme-btn glim-brand-tile" aria-label="${esc(sub ? n + ' ' + sub : n)}">
+        <span class="glim-readme-btn-mark ${m.svg ? '' : 'a-pglyph'}" aria-hidden="true">${markHtml(m)}</span><span class="glim-readme-btn-text"><span class="glim-readme-btn-name">${esc(n)}</span>${sub ? `<span class="glim-readme-btn-sub">${esc(sub)}</span>` : ''}</span></button>
+        <span class="glim-readme-btn-sheen" aria-hidden="true"></span>${bubble ? `<span class="glim-readme-btn-hint">${info(bubble)}</span>` : ''}</div></li>`;
+    };
     const pick = (q = '') => {
-      const shown = TYPES.filter(t => (t.label + ' ' + t.sub).toLowerCase().includes(q.toLowerCase()));
-      return shown.length ? shown.map(t => `<button class="a-tile" data-type="${t.id}"><span class="tile">${g(t.g)}</span><span><b>${esc(t.label)}</b><small>${esc(t.sub)}</small></span></button>`).join('')
-        : `<div class="empty">${g('IconSearch')}<div>Nichts gefunden. SFTP und WebDAV passen auf fast jeden Server.</div></div>`;
+      q = q.trim().toLowerCase();
+      const hit = (words) => !q || words.some(x => x.toLowerCase().includes(q));
+      const sorted = [...REMOTES.providers].sort((a, b) => pName(a).localeCompare(pName(b), undefined, { sensitivity: 'base' }));
+      const groups = GROUPS.map(gr => ({ gr, ps: sorted.filter(p => p.group === gr && hit([pName(p), p.name, p.backend])), un: gr === 'protocol' ? REMOTES.unlisted.filter(b => hit([b])) : [] }))
+        .filter(x => x.ps.length + x.un.length);
+      if (!groups.length) {
+        const nm = (id, fb) => { const p = REMOTES.providers.find(x => x.id === id); return p ? nameAndKind(pName(p)).name : fb; };
+        return `<p class="a-pnone">${esc(say(RT.searchNone, { query: q, s3: nm('s3', 'S3'), webdav: nm('webdav', 'WebDAV') }))}</p>`;
+      }
+      return groups.map(x => `<section class="a-pgroup" data-group="${x.gr}"><h3 class="eyebrow">${esc(RT.g[x.gr])}</h3><ul class="glim-provider-pick">${x.ps.map(tile).join('')}</ul>
+        ${x.un.length ? `<h4 class="a-pmore">${esc(say(RT.pickMore, { count: x.un.length }))}</h4><ul class="a-ppills">${x.un.map(b => `<li><button type="button" class="a-ppill" data-type="${esc(b)}">${esc(b)}</button></li>`).join('')}</ul>` : ''}</section>`).join('');
     };
     const showPick = () => {
-      w.set(`<div class="a-pickhead"><input class="field m" id="a-rq" placeholder="Typ suchen" aria-label="Typ suchen"></div><div class="a-tiles" id="a-tiles">${pick()}</div>`, [cancel]);
-      const tiles = $('#a-tiles', w.el);
-      tiles.style.minHeight = tiles.offsetHeight + 'px';
-      $('#a-rq', w.el).addEventListener('input', e => { tiles.innerHTML = pick(e.target.value); });
-      $('#a-rq', w.el).addEventListener('keydown', e => { if (e.key === 'Escape' && e.target.value) { e.stopPropagation(); e.target.value = ''; tiles.innerHTML = pick(); } });
+      typeId = '';
+      w.set(`<div class="a-pickhead"><input class="field m" id="a-rq" placeholder="${esc(RT.search)}" aria-label="${esc(RT.search)}"></div><div class="a-picks" id="a-picks">${pick()}</div>`, [cancel]);
+      const picks = $('#a-picks', w.el);
+      picks.style.minHeight = picks.offsetHeight + 'px';
+      $('#a-rq', w.el).addEventListener('input', e => { picks.innerHTML = pick(e.target.value); });
+      $('#a-rq', w.el).addEventListener('keydown', e => { if (e.key === 'Escape' && e.target.value) { e.stopPropagation(); e.target.value = ''; picks.innerHTML = pick(); } });
+    };
+
+    const split = () => {
+      const t = type(), preset = provider?.preset || {};
+      const shown = t.options.filter(o => applies(o.provider, values.provider) && !(t.oauth && o.name === 'token'));
+      const first = shown.filter(o => (o.required || o.essential) && preset[o.name] === undefined);
+      return { first, rest: shown.filter(o => !first.includes(o)) };
+    };
+    const control = (o) => {
+      const ch = (o.examples || []).filter(e => applies(e.provider, values.provider)).map(e => [e.value, e.help || e.value]);
+      const ph = provider?.defaults?.[o.name] || o.default || ch[0]?.[0] || '';
+      if (o.type === 'bool') return sw((values[o.name] || o.default) === 'true', `data-rf="${o.name}"`);
+      if ((o.exclusive || PICKED.has(o.name)) && ch.length) return dropdown([['', ph], ...ch].filter((c, k) => k || !ch.some(x => x[0] === '')), values[o.name] || '', `data-rf="${o.name}"`);
+      if (o.secret) return A.pwField(`data-rf="${o.name}" value="${esc(values[o.name] || '')}" placeholder="${esc(r?.secrets?.includes(o.name) ? RT.unchanged : ph)}"`, 'm mono');
+      return field(values[o.name] || '', `data-rf="${o.name}" placeholder="${esc(ph)}" spellcheck="false"`, WIDE.has(o.name) ? 'w mono' : 'm mono');
+    };
+    const optRow = (o) => frow(esc(optLabel(o.name)), control(o), optHint(o, provider, typeId));
+    const verdict = () => {
+      if (!result) return '';
+      if (result.ok) return result.free != null ? say(RT.okFree, { free: fmtSize(result.free) }) : RT.ok;
+      return say(RT.fail.other, { error: result.error || '' });
     };
     const read = () => {
-      $$('[data-rf]', w.el).forEach(i => { draft[i.dataset.rf] = i.classList.contains('a-dd') ? i.dataset.val : i.value.trim(); });
-      draft.name = $('#a-rname', w.el).value.trim();
-      draft.mount = $('#a-rmount', w.el).value.trim();
+      $$('[data-rf]', w.el).forEach(i => {
+        const v = i.classList.contains('a-dd') ? i.dataset.val : i.classList.contains('sw') ? String(i.getAttribute('aria-checked') === 'true') : i.value.trim();
+        if (i.dataset.rf === 'path') path = v; else values[i.dataset.rf] = v;
+      });
+      if ($('#a-rname', w.el)) { name = $('#a-rname', w.el).value.trim(); mount = $('#a-rmount', w.el).value.trim(); }
     };
     const missing = () => {
-      for (const f of FIELDS[type.oauth ? 'oauth' : type.id]) {
-        if (f.opt || f.dd) continue;
-        if (f.pw && !isNew) continue;
-        if (!draft[f.k]) return [`${f.l} fehlt noch`, $(`[data-rf="${f.k}"]`, w.el)];
+      for (const o of split().first) {
+        if (!o.required || values[o.name] || o.default || (o.secret && r?.secrets?.includes(o.name))) continue;
+        return [say(RT.missing, { field: optLabel(o.name) }), $(`[data-rf="${o.name}"]`, w.el)];
       }
-      if (type.oauth && !draft.account) return [`Erst bei ${type.oauth} anmelden`, $('#a-oauth', w.el)];
+      if (type().oauth && !signedIn) return [say(RT.signInFirst, { who: who() }), $('#a-oauth', w.el)];
       return null;
     };
     const showForm = () => {
-      const fs = FIELDS[type.oauth ? 'oauth' : type.id];
-      const ctl = (f) => f.dd ? dropdown(f.dd, draft[f.k] || f.dd[0][0], `data-rf="${f.k}"`)
-        : f.pw ? A.pwField(`data-rf="${f.k}" ${!isNew ? 'placeholder="Unverändert"' : ''}`, 'm')
-        : field(draft[f.k] || '', `data-rf="${f.k}" placeholder="${esc(f.ph || '')}"`, f.w || 'm');
-      const account = type.oauth ? frow('Konto', draft.account ? `<span class="a-ctl">${pill(draft.account)}${btn('Anderes Konto', 'IconSignIn', 'id="a-oauth"')}</span>` : btn(`Bei ${type.oauth} anmelden`, 'IconSignIn', 'id="a-oauth"'), 'Öffnet die Anmeldung des Anbieters. CannonCommander bekommt nur ein Token, nie dein Passwort.') : '';
-      w.set(`<div class="well"><div class="eyebrow">${esc(type.label)}</div>${account}${fs.map(f => frow(f.l + (f.opt ? ' <small>optional</small>' : ''), ctl(f), f.tip)).join('')}</div>
-        <div class="well">${frow('Name', field(draft.name || '', 'id="a-rname" placeholder="etwa nas-keller"', 'm'), 'Kleinbuchstaben, Ziffern und Bindestriche. rclone kennt das Fernziel unter diesem Namen.')}
-          ${frow('Einhängen unter', pathField(draft.mount || '/remotes/', 'a-rmount'), 'Unter diesem Ordner erscheinen die Dateien im Dateimanager.')}
-          ${frow('Verbindung', btn(tested ? 'Verbunden' : 'Testen', tested ? 'IconCheck' : 'IconHealth', `id="a-rtest" class="${tested ? 'ok' : ''}"`))}</div>`,
-        [...(isNew ? [{ label: 'Zurück', g: 'IconBack', run: () => { read(); showPick(); return false; } }] : []), cancel, { label: isNew ? 'Hinzufügen' : 'Speichern', g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: save }]);
-      $('#a-rname', w.el).addEventListener('input', e => { if (!mountTouched) $('#a-rmount', w.el).value = '/remotes/' + e.target.value.trim().toLowerCase(); });
+      const t = type(), { first, rest } = split(), word = t.pathHint;
+      const account = t.oauth ? frow(RT.account, signedIn ? `<span class="a-ctl">${pill(RT.signedInPill, 'ok')}${btn(RT.otherAccount, 'IconSignIn', 'id="a-oauth"')}</span>` : btn(say(RT.signInAt, { who: who() }), 'IconSignIn', 'id="a-oauth"'), RT.accountTip)
+        + (signing ? `${frow(RT.onYourPc, A.copyField(t.authorize || `rclone authorize "${t.id}"`), RT.onYourPcTip)}${frow(RT.token, field('', `id="a-rtoken" placeholder="${esc(RT.tokenPh)}" spellcheck="false"`, 'w') + btn(RT.takeToken, 'IconCheck', 'id="a-rtake"'))}` : '') : '';
+      const pathCtl = shares.length ? dropdown(shares.map(s => [s, s]), path || shares[0], 'data-rf="path"') : field(path, `data-rf="path" placeholder="${word === 'folder' ? '/' : ''}" spellcheck="false"`, 'm mono');
+      const tested = { label: testing ? 'Prüfe' : !result ? 'Testen' : result.ok ? RT.connected : RT.notConnected, g: testing ? 'IconRefresh' : !result ? 'IconHealth' : result.ok ? 'IconCheck' : 'IconClose',
+        id: 'a-rtest', tone: result ? (result.ok ? 'ok' : 'danger') : '', run: () => { test(); return false; } };
+      w.set(`<div class="a-rform"><div class="well"><div class="eyebrow">${esc(who())}${provider && pHint(provider.id) ? ' ' + info(pHint(provider.id)) : ''}</div>${account}${first.map(optRow).join('')}
+          ${frow(`${esc(RT.path[word])} <small>optional</small>`, pathCtl, RT.pathTip[word])}
+          ${result?.hostKey ? frow(RT.hostKey, `<span class="a-hostkey mono" data-hostkey>${esc(result.hostKey.fingerprint)}</span>`, RT.hostKeyTip) : ''}</div>
+        ${rest.length ? `<div class="well"><div class="eyebrow">${esc(RT.more)}</div>${frow(esc(say(RT.moreCount, { count: rest.length })), btn(more ? RT.moreHide : RT.moreShow, more ? 'IconCollapse' : 'IconExpand', 'id="a-rmore"'), RT.moreTip)}${more ? rest.map(optRow).join('') : ''}</div>` : ''}
+        <div class="well">${frow(RT.name, field(name, `id="a-rname" placeholder="${esc(RT.namePh)}"`, 'm'), RT.nameTip)}${frow(RT.mountAt, pathField(mount, 'a-rmount'), RT.mountAtTip)}</div></div>`,
+        [{ start: esc(verdict()) }, ...(isNew ? [{ label: 'Zurück', g: 'IconBack', run: () => { read(); showPick(); return false; } }] : []), cancel, tested,
+          { label: isNew ? 'Hinzufügen' : 'Speichern', g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: save }]);
+      $('#a-rname', w.el).addEventListener('input', e => { nameTouched = true; if (!mountTouched) $('#a-rmount', w.el).value = '/remotes/' + e.target.value.trim().toLowerCase(); });
       $('#a-rmount', w.el).addEventListener('input', () => { mountTouched = true; });
-      w.el.oninput = () => { if (tested) { tested = false; const b = $('#a-rtest', w.el); b.className = 'btn'; b.innerHTML = g('IconHealth') + 'Testen'; } };
+      w.el.oninput = w.el.onchange = (e) => {
+        if (e.target.id === 'a-rq' || !result) return;
+        result = null;
+        const b = $('#a-rtest', w.el);
+        b.className = 'btn';
+        b.innerHTML = g('IconHealth') + 'Testen';
+        $('.win-foot .start', w.el).textContent = '';
+      };
     };
-    const save = (el) => {
+    function choose(p, backend) {
+      provider = p;
+      typeId = backend;
+      for (const k of Object.keys(values)) delete values[k];
+      Object.assign(values, p?.preset || {});
+      if (!nameTouched) { name = suggest(p?.name || backend, taken); if (!mountTouched) mount = '/remotes/' + name; }
+      result = null; shares = []; more = false; signedIn = false; signing = false;
+      showForm();
+    }
+    function test() {
       read();
-      const name = draft.name;
-      if (!/^[a-z0-9][a-z0-9_-]*$/.test(name)) return fail(name ? 'Nur Kleinbuchstaben, Ziffern, _ und -' : 'Gib dem Fernziel einen Namen', $('#a-rname', el));
-      if (DATA.remotes.some(x => x !== r && x.name === name)) return fail('Diesen Namen gibt es schon', $('#a-rname', el));
-      if (!/^\/remotes\/.+/.test(draft.mount)) return fail('Der Ordner muss unter /remotes liegen, etwa /remotes/' + name, $('#a-rmount', el));
       const m = missing();
       if (m) return fail(...m);
-      const cfg = { ...draft };
-      delete cfg.name; delete cfg.mount;
-      if (!isNew && !cfg.pass) cfg.pass = r.cfg.pass;
-      const remoteLabel = type.id === 'smb' ? `SMB: //${cfg.host}/${cfg.share}` : `rclone: ${name}`;
+      testing = true;
+      result = null;
+      showForm();
+      setTimeout(() => {
+        testing = false;
+        result = values.host === 'nirgends' ? { ok: false, error: 'dial tcp: no such host' } : { ok: true, free: 3 * TB, ...(typeId === 'sftp' ? { hostKey: { fingerprint: 'SHA256:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU' } } : {}) };
+        if (typeId === 'smb' && !path && result.ok) shares = ['archiv', 'fotos', 'backup'];
+        showForm();
+        if (!result.ok) A.shake($('#a-rtest', w.el));
+      }, 700);
+    }
+    const save = (el) => {
+      read();
+      if (!/^[a-z0-9][a-z0-9_-]*$/.test(name)) return fail(name ? 'Nur Kleinbuchstaben, Ziffern, _ und -' : RT.needName, $('#a-rname', el));
+      if (taken.includes(name)) return fail('Diesen Namen gibt es schon', $('#a-rname', el));
+      if (!/^\/remotes\/.+/.test(mount)) return fail(say(RT.underRemotes, { name }), $('#a-rmount', el));
+      const m = missing();
+      if (m) return fail(...m);
+      const remoteLabel = typeId === 'smb' ? `SMB: //${values.host}/${path}` : `rclone: ${name}`;
       const parent = FS.nodeAt('/remotes');
       if (r) {
         const node = FS.kids(parent).find(k => k.name === FS.split(r.mount).pop());
-        if (node) Object.assign(node, { name: FS.split(draft.mount).pop(), remote: remoteLabel });
-        Object.assign(r, { name, mount: draft.mount, cfg });
+        if (node) Object.assign(node, { name: FS.split(mount).pop(), remote: remoteLabel });
+        Object.assign(r, { name, mount, path, cfg: { ...values } });
       } else {
-        DATA.remotes.push({ name, type: type.label, mount: draft.mount, state: 'verbunden', cfg });
-        if (draft.mount.startsWith('/remotes/') && !FS.kids(parent).some(k => k.name === FS.split(draft.mount).pop())) parent.children.push({ name: FS.split(draft.mount).pop(), dir: true, children: [], time: A.now(), owner: 'nobody', group: 'users', mode: '0775', remote: remoteLabel });
+        DATA.remotes.push({ name, type: typeId, provider: provider?.id, mount, path, state: 'verbunden', cfg: { ...values } });
+        if (!FS.kids(parent).some(k => k.name === FS.split(mount).pop())) parent.children.push({ name: FS.split(mount).pop(), dir: true, children: [], time: A.now(), owner: 'nobody', group: 'users', mode: '0775', remote: remoteLabel });
       }
       A.redraw();
-      CC.toast(isNew ? `${name} ist eingehängt unter ${draft.mount}` : 'Gespeichert');
+      CC.toast(isNew ? say(RT.addedAt, { name, mount }) : 'Gespeichert');
     };
     w.el.addEventListener('click', e => {
       const t = e.target.closest('[data-type]');
-      if (t) {
-        type = TYPES.find(x => x.id === t.dataset.type);
-        FIELDS[type.oauth ? 'oauth' : type.id].forEach(f => { if (f.def && !draft[f.k]) draft[f.k] = f.def; });
-        tested = false;
-        showForm();
+      if (t && !typeId) {
+        const p = REMOTES.providers.find(x => x.id === t.dataset.type);
+        choose(p || null, p ? p.backend : t.dataset.type);
         return;
       }
-      if (e.target.closest('#a-oauth')) {
-        read();
-        draft.account = draft.account ? 'familie@example.org' : 'junker@example.org';
-        CC.toast(`Angemeldet bei ${type.oauth} als ${draft.account}`);
-        showForm();
+      if (e.target.closest('#a-oauth')) { read(); signing = true; showForm(); return; }
+      if (e.target.closest('#a-rtake')) {
+        const tok = $('#a-rtoken', w.el).value.trim();
+        if (!tok) return fail(RT.needToken, $('#a-rtoken', w.el));
+        if (!tok.startsWith('{')) return fail(RT.tokenRejected, $('#a-rtoken', w.el));
+        read(); signedIn = true; signing = false; showForm();
+        CC.toast(say(RT.signedIn, { who: who() }));
         return;
       }
-      const test = e.target.closest('#a-rtest');
-      if (test) {
-        read();
-        const m = missing();
-        if (m) { fail(m[0], test); return; }
-        test.disabled = true;
-        test.innerHTML = g('IconRefresh') + 'Prüfe';
-        setTimeout(() => { tested = true; test.disabled = false; test.className = 'btn ok'; test.innerHTML = g('IconCheck') + 'Verbunden'; }, 700);
-      }
+      if (e.target.closest('#a-rmore')) { read(); more = !more; showForm(); }
     });
-    type ? showForm() : showPick();
+    typeId ? showForm() : showPick();
   }
 
   CC.settingsTab({ id: 'remotes', label: 'Fernziele', g: 'IconCloud', order: 60, render(host) {
     const rc = DATA.rclone;
     const rows = DATA.remotes.map((r, i) => row({
-      tile: g(typeOf(r.type).g), name: r.name, attr: `data-open="${i}"`,
-      badges: [pill(r.type), pill(r.mount, 'mono'), r.state !== 'verbunden' ? pill('Ausgehängt', 'state') : ''],
+      tile: markHtml(remoteMark(r)), name: r.name, attr: `data-open="${i}"`,
+      badges: [pill(kindOf(r)), pill(r.mount, 'mono'), r.state !== 'verbunden' ? pill('Ausgehängt', 'state') : ''],
       acts: [r.state === 'verbunden' ? bareBtn('IconUnlink', 'Aushängen', `data-mount="${i}"`) : bareBtn('IconLink', 'Einhängen', `data-mount="${i}"`), bareBtn('IconPencil', 'Bearbeiten', `data-open="${i}"`), bareBtn('IconTrash', 'Entfernen', `data-del="${i}"`)],
     }));
     host.innerHTML = CC.card('Fernziele', list(rows, ['IconCloud', 'Noch kein Fernziel']) + foot(btn('Fernziel hinzufügen', 'IconAdd', 'data-add')))
@@ -544,15 +642,19 @@
   CC.css(`
 .pill.run { background: var(--accent); color: var(--accent-contrast); }
 .a-pickhead { display: flex; justify-content: flex-end; }
-.a-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .8125rem; align-content: start; }
-.a-tile { display: flex; align-items: center; gap: .7rem; height: 3.4rem; padding: 0 .9rem 0 .6rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); text-align: left; }
-.a-tile:hover, .a-tile:focus-visible { background: var(--accent); color: var(--accent-contrast); }
-.a-tile:hover .tile, .a-tile:focus-visible .tile { background: color-mix(in srgb, var(--accent-contrast) 14%, transparent); }
-.a-tile:hover .tile svg, .a-tile:focus-visible .tile svg { color: var(--accent-contrast); }
-.a-tile .tile { background: var(--carbon-surface3); }
-.a-tile .tile svg { color: var(--accent-glyph); }
-.a-tile b { display: block; font-weight: 600; }
-.a-tile small { display: block; font-size: 12px; opacity: .75; }
-.a-tiles .empty { grid-column: 1 / -1; }
+/* A picker window is at most 85 % of the screen tall, as GlimStone's are. */
+.win:has(.a-picks) { max-height: 85vh; }
+.a-picks { display: flex; flex-direction: column; gap: 1.5rem; }
+.a-pgroup { display: flex; flex-direction: column; gap: .75rem; }
+.a-pgroup > .eyebrow { margin: 0; padding: 0; font-weight: 400; }
+.a-pglyph { color: var(--accent-glyph); }
+.glim-readme-btn-unit:is(:hover, :focus-within) .a-pglyph { color: inherit; }
+.a-pmore { margin: .25rem 0 0; font-size: 12px; font-weight: 400; color: var(--carbon-text-muted); }
+.a-ppills { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.a-ppill { width: 100%; padding: .5rem .75rem; overflow: hidden; border-radius: var(--radius-pill); background: var(--carbon-surface2); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.a-ppill:hover, .a-ppill:focus-visible { background: var(--carbon-surface3); }
+.a-pnone { padding: 1.5rem 0; text-align: center; color: var(--carbon-text-muted); }
+.a-hostkey { overflow-wrap: anywhere; }
+.a-rform { display: flex; flex-direction: column; gap: .8rem; }
 `);
 })();

@@ -326,10 +326,10 @@ func TestTypesPutTheCommonOnesFirst(t *testing.T) {
 	for _, ty := range out.Types {
 		ids = append(ids, ty.ID)
 	}
-	if strings.Join(ids, ",") != "sftp,smb,drive,memory" {
+	if strings.Join(ids, ",") != "sftp,smb,webdav,drive,memory,azureblob,zzz" {
 		t.Fatalf("order %v", ids)
 	}
-	drive, sftp := out.Types[2], out.Types[0]
+	drive, sftp := out.Types[3], out.Types[0]
 	if !drive.OAuth || drive.Authorize != `rclone authorize "drive"` || sftp.OAuth || out.Types[1].PathHint != "share" {
 		t.Fatalf("types %+v", out.Types)
 	}

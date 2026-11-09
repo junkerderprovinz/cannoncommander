@@ -117,6 +117,16 @@ document.addEventListener('click', e => {
   e.stopImmediatePropagation();
   unpin(DATA.bookmarks[+pin.dataset.unpin]);
 }, true);
+document.addEventListener('click', e => {
+  const pin = CC.view === 'files' && e.target.closest('[data-pin]');
+  if (!pin) return;
+  e.stopImmediatePropagation();
+  const r = DATA.remotes.find(x => x.name === pin.dataset.pin), b = DATA.bookmarks.find(x => x.path === r.mount);
+  if (b) return unpin(b);
+  DATA.bookmarks.push({ name: r.name, path: r.mount, g: 'IconCloud' });
+  CC.render();
+  CC.toast(`Verknüpfung „${r.name}“ angelegt`);
+}, true);
 function folderItems(path) {
   const pinned = DATA.bookmarks.find(b => b.path === path);
   return [

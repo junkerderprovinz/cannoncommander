@@ -1,0 +1,19 @@
+{
+  "title": "Remotes",
+  "failed": "Error",
+  "unmounted": "Unmounted",
+  "mountedTip": "Mounted, a click opens it",
+  "unmountedTip": "Not mounted right now",
+  "failedTip": "Mounting didn't work: {error}",
+  "nowMounted": "{name} is mounted",
+  "nowUnmounted": "{name} is unmounted",
+  "askAdmin": "{name} isn't mounted right now. An admin can mount it in the settings.",
+  "open": "Open",
+  "pin": "Pin to quick access",
+  "unpin": "Remove from quick access",
+  "pinLabel": "Pin {name} to quick access",
+  "unpinLabel": "Remove {name} from quick access",
+  "mount": "Mount",
+  "unmount": "Unmount",
+  "settings": "Manage remotes"
+}

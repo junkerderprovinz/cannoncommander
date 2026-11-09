@@ -1,125 +1,218 @@
 <script setup lang="ts">
-// A remote in two steps: first the kind, then its fields. Google, Microsoft and Dropbox sign in through
-// rclone authorize on a computer with a browser, and the token it prints is pasted here.
-import { pathField } from '@/ui/picker';
+// A new remote starts with the product, picked by name and logo, and goes on to its fields in the same window, so
+// nobody has to know that Nextcloud is WebDAV underneath. The fields come from rclone's own description of the
+// backend: what it needs first, everything else folded below. Google, Microsoft and the other clouds that sign in
+// through a browser get the token from rclone authorize on a computer with one, pasted here.
+import { BrandMark, Button, CopyField, EmptyState, FieldRow, FieldRowGroup, PathField, Pill, ReadmeButton, SubCard, TextField } from '@glimstone/vue';
 import { Select } from '@glimstone/vue/Select';
-import { Button, CopyField, EmptyState, FieldRow, FieldRowGroup, GlyphTile, PasswordField, PathField, Pill, SubCard, TextField } from '@glimstone/vue';
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-import { admin, type Remote, type RemoteInput } from '@/api/admin';
-import { glyphComponent } from '@/core/glyphs';
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, shallowRef, watch, watchEffect } from 'vue';
+import { admin, type Provider, type Remote, type RemoteCatalog, type RemoteInput, type RemoteTest, type SetupQuestion } from '@/api/admin';
+import { ApiError } from '@/api/client';
+import { fmtSize } from '@/core/format';
+import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type FootButton, type WinEntry } from '@/core/windows';
-import { attempt, c, fail, keysFirst, stepFoot } from '@/features/config/shared';
-import { copyWords, eyeWords, selectOptions } from '@/ui/kit';
-import { type RemoteType, remoteFields, remoteTypes, typeOf } from '../remotes';
+import { c, fail, keysFirst, stepFoot } from '@/features/config/shared';
+import { pathField } from '@/ui/picker';
+import { copyWords, shake } from '@/ui/kit';
+import { GROUPS, loadCatalog, markOf, nameAndKind, optionLabel, providerHint, providerName, questionLabel, splitOptions, suggestName } from '../remotes';
+import RemoteField from './RemoteField.vue';
 
-const WIDTHS = { w: 'wide', m: 'medium', s: 'short' } as const;
 const props = defineProps<{ win: WinEntry; remote: Remote | null; all: Remote[]; saved: () => void }>();
 const r = props.remote, isNew = !r;
-const type = ref<RemoteType | null>(r ? typeOf(r.type) : null);
-const draft = reactive<Record<string, string>>({ name: r?.name ?? '', mount: r?.mount ?? '/remotes/', ...(r?.params ?? {}) });
-const token = ref('');
+const taken = props.all.filter((x) => x !== r).map((x) => x.name);
+
+const cat = shallowRef<RemoteCatalog | null>(null);
+const broken = ref('');
+const provider = shallowRef<Provider | null>(null);
+const typeId = ref(r?.type ?? '');
+const type = computed(() => cat.value?.types.find((t) => t.id === typeId.value) ?? null);
+
+const values = reactive<Record<string, string>>({ ...(r?.params ?? {}) });
+const name = ref(r?.name ?? ''), mount = ref(r?.mount ?? '/remotes/'), path = ref(r?.path ?? '');
+let mountTouched = !!r, nameTouched = !!r;
+const token = ref(''), signing = ref(false), pasted = ref('');
 const signedIn = computed(() => !!token.value || !!r?.secrets?.includes('token'));
+
 const query = ref('');
-const tested = ref<'no' | 'busy' | 'ok'>('no');
-const signing = ref(false), pasted = ref('');
-let mountTouched = !!r;
+const floor = ref(0), tiles = ref<HTMLElement | null>(null);
+const more = ref(false);
+const testing = ref(false);
+const result = ref<RemoteTest | null>(null);
+// What a test brought that outlives the next change: the question to answer and the shares to pick from.
+const question = ref<SetupQuestion | null>(null);
+const shares = ref<string[]>([]);
 const at = (sel: string) => props.win.el?.querySelector(sel) ?? null;
-// A changed field needs a new test before the button says it is connected again.
-watch(draft, () => { if (tested.value === 'ok') tested.value = 'no'; });
 
-const shown = computed(() => remoteTypes().filter((t) => (t.label + ' ' + t.sub).toLowerCase().includes(query.value.toLowerCase())));
-const fields = computed(() => (type.value ? remoteFields(type.value) : []));
+watch([values, path, token], () => { result.value = null; });
 
-function missing(): [string, Element | null] | null {
-  for (const f of fields.value) {
-    if (f.opt || f.dd || (f.pw && !isNew)) continue;
-    if (!draft[f.k]?.trim()) return [c('remotes.missing', { field: f.l }), at(`[data-rf="${f.k}"]`)];
+const who = computed(() => (provider.value ? providerName(provider.value) : type.value?.description ?? typeId.value));
+const split = computed(() => (type.value ? splitOptions(type.value, provider.value?.preset, values) : { first: [], rest: [] }));
+const pathWord = computed(() => type.value?.pathHint ?? 'folder');
+
+// Products in the reader's alphabet, found by the name shown and by rclone's own, which is what a guide online uses.
+const sorted = computed(() => [...(cat.value?.providers ?? [])].sort((a, b) => providerName(a).localeCompare(providerName(b), undefined, { sensitivity: 'base' })));
+const groups = computed(() => {
+  const q = query.value.trim().toLowerCase();
+  const hit = (words: string[]) => !q || words.some((w) => w.toLowerCase().includes(q));
+  return GROUPS.map((g) => ({
+    g,
+    providers: sorted.value.filter((p) => p.group === g && hit([providerName(p), p.name, p.backend])),
+    unlisted: g === 'protocol' ? (cat.value?.unlisted ?? []).filter((b) => hit([b])) : [],
+  })).filter((x) => x.providers.length + x.unlisted.length > 0);
+});
+const tileName = (id: string, fallback: string) => {
+  const p = cat.value?.providers.find((x) => x.id === id);
+  return p ? nameAndKind(providerName(p)).name : fallback;
+};
+const tileStyle = (p: Provider) => {
+  const lit = markOf(p.mark).tile;
+  return lit ? { '--provider-tile': lit.tile, '--provider-ink': lit.ink } : undefined;
+};
+
+function choose(p: Provider | null, backend: string) {
+  provider.value = p;
+  typeId.value = backend;
+  for (const k of Object.keys(values)) delete values[k];
+  Object.assign(values, p?.preset ?? {});
+  if (!nameTouched) {
+    name.value = suggestName(p?.name ?? backend, taken);
+    if (!mountTouched) mount.value = '/remotes/' + name.value;
   }
-  if (type.value?.oauth && !signedIn.value) return [c('remotes.signInFirst', { who: type.value.oauth }), at('#a-oauth')];
+  token.value = '';
+  question.value = null;
+  shares.value = [];
+  more.value = false;
+  nextTick(() => (props.win.el?.querySelector('.a-rform input') as HTMLInputElement | null)?.focus());
+}
+function back() {
+  typeId.value = '';
+  provider.value = null;
+  nextTick(() => (at('#a-rq') as HTMLInputElement | null)?.focus());
+}
+
+const fieldOf = (k: string) => at(`[data-rf="${k}"]`);
+function missing(): [string, Element | null] | null {
+  for (const o of split.value.first) {
+    if (!o.required || values[o.name]?.trim() || o.default || (o.secret && r?.secrets?.includes(o.name))) continue;
+    return [c('remotes.missing', { field: optionLabel(o.name) }), fieldOf(o.name)];
+  }
+  if (type.value?.oauth && !signedIn.value) return [c('remotes.signInFirst', { who: who.value }), at('#a-oauth')];
   return null;
 }
 
-function choose(t: RemoteType) {
-  type.value = t;
-  defaults(t);
-  tested.value = 'no';
-  showForm();
-}
-
-function defaults(t: RemoteType) {
-  for (const f of remoteFields(t)) {
-    if (f.path && r) draft[f.k] ??= r.path;
-    if (!draft[f.k]) draft[f.k] = f.def ?? f.dd?.[0]?.[0] ?? '';
-  }
-}
-
-function showPick() {
-  type.value = null;
-  stepFoot(props.win, [cancelBtn()]);
-  nextTick(() => (at('#a-rq') as HTMLInputElement | null)?.focus());
-}
-function showForm() {
-  const foot: FootButton[] = [...(isNew ? [{ label: c('back'), g: 'IconBack', run: () => { showPick(); return false; } }] : []), cancelBtn(),
-    { label: isNew ? c('add') : c('save'), g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: () => { save(); return false; } }];
-  stepFoot(props.win, foot);
-}
-
-function nameTyped() {
-  if (!mountTouched) draft.mount = '/remotes/' + draft.name.trim().toLowerCase();
-}
-
-// The form as rclone takes it. An empty password leaves the saved one in place.
+// The form as rclone takes it. An empty field clears its parameter, except a secret, which stays as saved, and the
+// host key the last test showed holds the remote to that server.
 function input(): RemoteInput {
   const params: Record<string, string> = {};
-  let path = '';
-  for (const f of fields.value) {
-    const v = draft[f.k]?.trim() ?? '';
-    if (f.path) path = v;
-    else params[f.k] = v;
+  for (const [k, v] of Object.entries(values)) {
+    if (v.trim() || r?.params?.[k] !== undefined) params[k] = v.trim();
   }
   if (token.value) params.token = token.value;
-  return { name: draft.name.trim(), type: type.value!.id, path, mount: draft.mount.trim(), params };
+  const key = result.value?.hostKey;
+  if (key && !params.host_keys) params.host_keys = key.pin;
+  return { name: name.value.trim(), type: typeId.value, path: path.value.trim(), mount: mount.value.trim(), params };
 }
 
 async function test() {
   const m = missing();
   if (m) return fail(...m);
-  tested.value = 'busy';
-  const got = await admin.testRemote({ ...input(), ...(r ? { name: r.name } : {}) }).catch(() => null);
-  tested.value = got?.ok ? 'ok' : 'no';
-  if (!got?.ok) fail(c('remotes.testFailed'), at('#a-rtest'));
+  testing.value = true;
+  result.value = null;
+  let got: RemoteTest;
+  try {
+    got = await admin.testRemote({ ...input(), ...(r ? { name: r.name } : {}) });
+  } catch (e) {
+    got = { ok: false, entries: 0, error: e instanceof Error ? e.message : String(e) };
+  }
+  testing.value = false;
+  if (got.question) {
+    question.value = got.question;
+    await nextTick();
+    shake(fieldOf(got.question.name));
+    return;
+  }
+  result.value = got;
+  if (got.shares) shares.value = got.shares;
+  if (!got.ok) shake(at('#a-rtest'));
 }
+
+// The verdict at the start of the foot, beside the button that carries it.
+const verdict = computed(() => {
+  const x = result.value;
+  if (!x) return '';
+  if (x.ok) return x.free != null ? c('remotes.okFree', { free: fmtSize(x.free) }) : c('remotes.ok');
+  if (x.failure === 'missing') return c('remotes.fail.missing', { path: path.value.trim() });
+  if (x.failure) return c(`remotes.fail.${x.failure}`);
+  return c('remotes.fail.other', { error: x.error ?? '' });
+});
 
 async function useToken() {
   if (!pasted.value.trim()) return fail(c('remotes.needToken'), at('#a-rtoken'));
-  const got = await admin.remoteToken(type.value!.id, pasted.value.trim()).catch(() => null);
+  const got = await admin.remoteToken(typeId.value, pasted.value.trim()).catch(() => null);
   if (!got?.token) return fail(c('remotes.tokenRejected'), at('#a-rtoken'));
   token.value = got.token;
   signing.value = false;
   pasted.value = '';
-  toast(c('remotes.signedIn', { who: type.value!.oauth! }));
+  toast(c('remotes.signedIn', { who: who.value }));
 }
 
 async function save() {
-  const name = draft.name.trim(), mount = draft.mount.trim();
-  if (!/^[a-z0-9][a-z0-9_-]*$/.test(name)) return fail(name ? c('lowercaseOnly') : c('remotes.needName'), at('#a-rname'));
-  if (props.all.some((x) => x !== r && x.name === name)) return fail(c('nameTaken'), at('#a-rname'));
-  if (!/^\/remotes\/.+/.test(mount)) return fail(c('remotes.underRemotes', { name }), at('#a-rmount'));
-  const m = missing();
-  if (m) return fail(...m);
-  const done = await attempt(r ? admin.updateRemote(r.name, input()) : admin.addRemote(input()), at('#a-rname'));
-  if (!done) return;
+  const n = name.value.trim(), m = mount.value.trim();
+  if (!/^[a-z0-9][a-z0-9_-]*$/.test(n)) return fail(n ? c('lowercaseOnly') : c('remotes.needName'), at('#a-rname'));
+  if (taken.includes(n)) return fail(c('nameTaken'), at('#a-rname'));
+  if (!/^\/remotes\/.+/.test(m)) return fail(c('remotes.underRemotes', { name: n }), at('#a-rmount'));
+  const miss = missing();
+  if (miss) return fail(...miss);
+  let out: Remote;
+  try {
+    out = r ? await admin.updateRemote(r.name, input()) : await admin.addRemote(input());
+  } catch (e) {
+    // rclone's setup has a choice to make first, which the test brings up.
+    if (e instanceof ApiError && e.problem?.code === 'setupQuestion') return void test();
+    return fail(c('notSaved'), at('#a-rname'));
+  }
   props.win.close();
-  toast(done.value.error ? c('remotes.savedNotMounted', { name }) : isNew ? c('remotes.addedAt', { name, mount }) : c('saved'), done.value.error ? 'warn' : 'ok');
+  toast(out.error ? c('remotes.savedNotMounted', { name: n }) : isNew ? c('remotes.addedAt', { name: n, mount: m }) : c('saved'), out.error ? 'warn' : 'ok');
   props.saved();
+}
+
+watchEffect(() => {
+  if (!typeId.value) return stepFoot(props.win, [cancelBtn()]);
+  const x = result.value;
+  const tested: FootButton = {
+    label: testing.value ? c('checking') : !x ? c('test') : x.ok ? c('remotes.connected') : c('remotes.notConnected'),
+    g: testing.value ? 'IconRefresh' : !x ? 'IconHealth' : x.ok ? 'IconCheck' : 'IconClose',
+    tone: x ? (x.ok ? 'ok' : 'danger') : undefined,
+    disabled: testing.value,
+    attrs: { id: 'a-rtest' },
+    run: () => { void test(); return false; },
+  };
+  stepFoot(props.win, [
+    { start: verdict.value },
+    ...(isNew ? [{ label: c('back'), g: 'IconBack', run: () => { back(); return false; } }] : []),
+    cancelBtn(),
+    tested,
+    { label: isNew ? c('add') : c('save'), g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: () => { void save(); return false; } },
+  ]);
+});
+
+function nameTyped() {
+  nameTouched = true;
+  if (!mountTouched) mount.value = '/remotes/' + name.value.trim().toLowerCase();
 }
 
 let stopKeys = () => {};
 onMounted(() => {
-  if (type.value) { defaults(type.value); showForm(); }
-  else showPick();
-  // Escape in the type search empties it first and closes the window only when it is empty.
+  loadCatalog().then(async (got) => {
+    cat.value = got;
+    if (r) provider.value = got.providers.find((p) => p.id === r.provider) ?? null;
+    await nextTick();
+    // The window keeps the height it opened with while a search narrows the tiles.
+    floor.value = tiles.value?.offsetHeight ?? 0;
+    (at('#a-rq') as HTMLInputElement | null)?.focus();
+  }, (e: unknown) => { broken.value = e instanceof Error ? e.message : String(e); });
+  // Escape in the search empties it first and closes the window only when it is empty.
   stopKeys = keysFirst((e) => {
     if (e.key !== 'Escape' || !query.value || document.activeElement?.id !== 'a-rq') return;
     e.preventDefault();
@@ -131,40 +224,68 @@ onBeforeUnmount(() => stopKeys());
 </script>
 
 <template>
-  <template v-if="!type">
-      <div class="a-pickhead"><TextField id="a-rq" v-model="query" :placeholder="c('remotes.searchType')" :aria-label="c('remotes.searchType')" width="medium" /></div>
-      <div id="a-tiles" class="a-tiles">
-        <button v-for="t in shown" :key="t.id" class="a-tile" :data-type="t.id" @click="choose(t)"><GlyphTile :glyph="glyphComponent(t.g)" /><span><b>{{ t.label }}</b><small>{{ t.sub }}</small></span></button>
-        <EmptyState v-if="!shown.length" nested :glyph="glyphComponent('IconSearch')" :title="c('remotes.noType')" />
-      </div>
-    </template>
-    <template v-else>
-      <SubCard :title="type.label">
-        <FieldRow v-if="type.oauth" :label="c('remotes.account')" :hint="c('remotes.accountTip')">
-          <template v-if="signedIn"><Pill tone="ok">{{ c('remotes.signedInPill') }}</Pill><Button id="a-oauth" :label="c('remotes.otherAccount')" label-key="IconSignIn" @click="signing = true" /></template>
-          <Button v-else id="a-oauth" :label="c('remotes.signInAt', { who: type.oauth })" label-key="IconSignIn" @click="signing = true" />
-        </FieldRow>
-        <template v-if="type.oauth && signing">
-          <FieldRowGroup>
-            <FieldRow :label="c('remotes.onYourPc')" :hint="c('remotes.onYourPcTip')"><CopyField width="grow" :value="`rclone authorize &quot;${type.id}&quot;`" :label="c('remotes.onYourPc')" :text="copyWords()" /></FieldRow>
-            <FieldRow :label="c('remotes.token')"><TextField id="a-rtoken" v-model="pasted" :placeholder="c('remotes.tokenPh')" spellcheck="false" autocomplete="off" width="wide" mono @keydown.enter="useToken" /><Button :label="c('remotes.takeToken')" label-key="IconCheck" @click="useToken" /></FieldRow>
-          </FieldRowGroup>
+  <EmptyState v-if="broken" nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.noCatalog')" :hint="broken" />
+  <EmptyState v-else-if="!cat" nested :title="c('remotes.loading')" />
+  <template v-else-if="!typeId">
+    <div class="a-pickhead"><TextField id="a-rq" v-model="query" :placeholder="c('remotes.search')" :aria-label="c('remotes.search')" width="medium" /></div>
+    <div ref="tiles" class="a-picks" :style="floor ? { minHeight: floor + 'px' } : undefined">
+      <section v-for="grp in groups" :key="grp.g" class="a-pgroup" :data-group="grp.g">
+        <h3 class="glim-eyebrow">{{ c(`remotes.g.${grp.g}`) }}</h3>
+        <ul class="glim-provider-pick">
+          <li v-for="p in grp.providers" :key="p.id" :data-type="p.id" :title="p.group === 'protocol' ? undefined : providerHint(p.id)" :style="tileStyle(p)">
+            <ReadmeButton brand="house" :parts="[{ ...nameAndKind(providerName(p)), onClick: () => choose(p, p.backend) }]" :hint="p.group === 'protocol' ? providerHint(p.id) : undefined"
+              :mark-class="markOf(p.mark).svg ? undefined : 'a-pglyph'">
+              <template #mark><BrandMark v-if="markOf(p.mark).svg" :svg="markOf(p.mark).svg!" /><G v-else :n="markOf(p.mark).glyph" /></template>
+            </ReadmeButton>
+          </li>
+        </ul>
+        <template v-if="grp.unlisted.length">
+          <h4 class="a-pmore">{{ c('remotes.pickMore', { count: grp.unlisted.length }) }}</h4>
+          <ul class="a-ppills">
+            <li v-for="b in grp.unlisted" :key="b"><button type="button" class="a-ppill" :data-type="b" @click="choose(null, b)">{{ b }}</button></li>
+          </ul>
         </template>
-        <FieldRow v-for="f in fields" :key="f.k" :label="f.l" :hint="f.tip">
-          <template #label>{{ f.l }}<template v-if="f.opt">{{ ' ' }}<small>{{ c('optional') }}</small></template></template>
-          <Select v-if="f.dd" v-model="draft[f.k]" :data-rf="f.k" :options="selectOptions(f.dd)" />
-          <PasswordField v-else-if="f.pw" v-model="draft[f.k]" width="medium" :data-rf="f.k" :placeholder="isNew ? '' : c('remotes.unchanged')" autocomplete="new-password" :text="eyeWords()" />
-          <TextField v-else v-model="draft[f.k]" :width="WIDTHS[(f.w ?? 'm') as keyof typeof WIDTHS]" :data-rf="f.k" :placeholder="f.ph" />
-        </FieldRow>
-      </SubCard>
-      <SubCard>
-        <FieldRowGroup>
-          <FieldRow :label="c('remotes.name')" :hint="c('remotes.nameTip')"><TextField id="a-rname" v-model="draft.name" :placeholder="c('remotes.namePh')" width="medium" @input="nameTyped" /></FieldRow>
-          <FieldRow :label="c('remotes.mountAt')" :hint="c('remotes.mountAtTip')"><PathField v-model="draft.mount" v-bind="pathField('a-rmount')" @input="mountTouched = true" /></FieldRow>
-        </FieldRowGroup>
-        <FieldRow :label="c('remotes.connection')">
-          <Button id="a-rtest" :class="{ ok: tested === 'ok' }" :label="tested === 'ok' ? c('remotes.connected') : tested === 'busy' ? c('checking') : c('test')" :label-key="tested === 'ok' ? 'IconCheck' : tested === 'busy' ? 'IconRefresh' : 'IconHealth'" :disabled="tested === 'busy'" @click="test" />
-        </FieldRow>
-      </SubCard>
-    </template>
+      </section>
+      <p v-if="!groups.length" class="a-pnone">{{ c('remotes.searchNone', { query: query.trim(), s3: tileName('s3', 'S3'), webdav: tileName('webdav', 'WebDAV') }) }}</p>
+    </div>
+  </template>
+  <EmptyState v-else-if="!type" nested :title="c('remotes.unknownType', { type: typeId })" />
+  <div v-else class="a-rform">
+    <SubCard :title="who" :hint="provider ? providerHint(provider.id) : undefined">
+      <FieldRow v-if="type.oauth" :label="c('remotes.account')" :hint="c('remotes.accountTip')">
+        <template v-if="signedIn"><Pill tone="ok">{{ c('remotes.signedInPill') }}</Pill><Button id="a-oauth" :label="c('remotes.otherAccount')" label-key="IconSignIn" @click="signing = true" /></template>
+        <Button v-else id="a-oauth" :label="c('remotes.signInAt', { who })" label-key="IconSignIn" @click="signing = true" />
+      </FieldRow>
+      <FieldRowGroup v-if="type.oauth && signing">
+        <FieldRow :label="c('remotes.onYourPc')" :hint="c('remotes.onYourPcTip')"><CopyField width="grow" :value="type.authorize ?? `rclone authorize &quot;${type.id}&quot;`" :label="c('remotes.onYourPc')" :text="copyWords()" /></FieldRow>
+        <FieldRow :label="c('remotes.token')"><TextField id="a-rtoken" v-model="pasted" :placeholder="c('remotes.tokenPh')" spellcheck="false" autocomplete="off" width="wide" mono @keydown.enter="useToken" /><Button :label="c('remotes.takeToken')" label-key="IconCheck" @click="useToken" /></FieldRow>
+      </FieldRowGroup>
+      <RemoteField v-for="o in split.first" :key="o.name" :o="o" :values="values" :provider="provider" :type="type.id" :saved="r?.secrets?.includes(o.name) ?? false" />
+      <FieldRow :label="c(`remotes.path.${pathWord}`)" :hint="c(`remotes.pathTip.${pathWord}`)">
+        <template #label>{{ c(`remotes.path.${pathWord}`) }}{{ ' ' }}<small>{{ c('optional') }}</small></template>
+        <Select v-if="shares.length" v-model="path" :options="shares.map((s) => ({ value: s, label: s }))" :placeholder="c('remotes.pickShare')" :trigger-attrs="{ 'data-rf': 'path' }" />
+        <TextField v-else v-model="path" width="medium" data-rf="path" :placeholder="pathWord === 'folder' ? '/' : ''" spellcheck="false" mono />
+      </FieldRow>
+      <FieldRow v-if="question" :label="questionLabel(question.name)" :hint="c('remotes.q.hint')">
+        <Select v-model="values[question.name]" :options="question.choices.map((x) => ({ value: x.value, label: x.help || x.value }))" :placeholder="c('remotes.q.pick')" :trigger-attrs="{ 'data-rf': question.name }" />
+      </FieldRow>
+      <FieldRow v-if="result?.hostKey" :label="c('remotes.hostKey')" :hint="c('remotes.hostKeyTip')">
+        <span class="a-hostkey mono" data-hostkey>{{ result.hostKey.fingerprint }}</span>
+      </FieldRow>
+    </SubCard>
+    <SubCard v-if="split.rest.length" :title="c('remotes.more')">
+      <FieldRow :label="c('remotes.moreCount', { count: split.rest.length })" :hint="c('remotes.moreTip')">
+        <Button id="a-rmore" :label="more ? c('remotes.moreHide') : c('remotes.moreShow')" :label-key="more ? 'IconCollapse' : 'IconExpand'" @click="more = !more" />
+      </FieldRow>
+      <template v-if="more">
+        <RemoteField v-for="o in split.rest" :key="o.name" :o="o" :values="values" :provider="provider" :type="type.id" :saved="r?.secrets?.includes(o.name) ?? false" />
+      </template>
+    </SubCard>
+    <SubCard>
+      <FieldRowGroup>
+        <FieldRow :label="c('remotes.name')" :hint="c('remotes.nameTip')"><TextField id="a-rname" v-model="name" :placeholder="c('remotes.namePh')" width="medium" @input="nameTyped" /></FieldRow>
+        <FieldRow :label="c('remotes.mountAt')" :hint="c('remotes.mountAtTip')"><PathField v-model="mount" v-bind="pathField('a-rmount')" @input="mountTouched = true" /></FieldRow>
+      </FieldRowGroup>
+    </SubCard>
+  </div>
 </template>

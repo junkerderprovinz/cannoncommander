@@ -4,6 +4,8 @@
 import { PASSWORDS } from './fixture-auth.js';
 import { clock } from './fixture-clock.js';
 import { createFixture } from './fixture.js';
+// What rclone 1.75 says it can reach, through the server's provider table, with the advanced options left out.
+import CATALOG from './fixture-remotes.json' with { type: 'json' };
 
 const MIN = 60000, HOUR = 60 * MIN, DAY = 24 * HOUR, KB = 1024, MB = KB * 1024, GB = MB * 1024, TB = GB * 1024;
 const iso = (t) => (t == null ? null : new Date(t).toISOString());
@@ -13,6 +15,11 @@ const json = (res, status, body, code) => {
   res.setHeader('Content-Type', status >= 400 ? 'application/problem+json' : 'application/json');
   res.end(status === 204 ? '' : JSON.stringify(status >= 400 ? { type: 'about:blank', title: 'Error', status, detail: body, ...(code ? { code } : {}) } : body));
 };
+// The product behind a remote is the one whose preset its parameters hold, the one with most keys winning.
+const providerFor = (type, params) => CATALOG.providers.filter((p) => p.backend === type && Object.entries(p.preset || {}).every(([k, v]) => params[k] === v))
+  .sort((a, b) => Object.keys(b.preset || {}).length - Object.keys(a.preset || {}).length)[0]?.id;
+const secretOf = (type, key) => !!CATALOG.types.find((t) => t.id === type)?.options.find((o) => o.name === key)?.secret || ['pass', 'token'].includes(key);
+const HOST_KEY = { pin: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl', fingerprint: 'SHA256:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU' };
 const readBody = (req) => new Promise((resolve) => {
   let raw = '';
   req.on('data', (c) => { raw += c; });
@@ -111,8 +118,8 @@ function state() {
       },
     },
     remotes: [
-      { name: 'gdrive', type: 'drive', path: '', mount: '/remotes/gdrive', label: 'rclone: gdrive', mounted: true, mountOnStart: true, params: {}, secrets: ['token'] },
-      { name: 'nas-keller', type: 'smb', path: 'archiv', mount: '/remotes/nas-keller', label: 'rclone: nas-keller', mounted: true, mountOnStart: true, params: { host: 'keller', user: 'jdp', domain: '' }, secrets: ['pass'] },
+      { name: 'gdrive', type: 'drive', provider: 'gdrive', path: '', mount: '/remotes/gdrive', label: 'rclone: gdrive', mounted: true, mountOnStart: true, params: {}, secrets: ['token'] },
+      { name: 'nas-keller', type: 'smb', provider: 'smb', path: 'archiv', mount: '/remotes/nas-keller', label: 'rclone: nas-keller', mounted: true, mountOnStart: true, params: { host: 'keller', user: 'jdp', domain: '' }, secrets: ['pass'] },
     ],
     app: {
       office: { kind: 'none', url: '', secret: '' },
@@ -404,8 +411,8 @@ export function settingsFixtureMiddleware() {
     ['POST', '/remotes', (b) => {
       if (S.remotes.some((r) => r.name === b.name)) return [409, 'the name is taken'];
       const params = { ...b.params }, secrets = [];
-      for (const k of ['pass', 'secret_access_key', 'token']) if (params[k]) { secrets.push(k); delete params[k]; }
-      const r = { name: b.name, type: b.type, path: b.path || '', mount: b.mount || '/remotes/' + b.name, label: 'rclone: ' + b.name, mounted: true, mountOnStart: true, params, secrets };
+      for (const k of Object.keys(params)) if (secretOf(b.type, k)) { secrets.push(k); delete params[k]; }
+      const r = { name: b.name, type: b.type, provider: providerFor(b.type, params), path: b.path || '', mount: b.mount || '/remotes/' + b.name, label: 'rclone: ' + b.name, mounted: true, mountOnStart: true, params, secrets };
       S.remotes.push(r);
       return [201, wireRemote(r)];
     }],
@@ -413,7 +420,7 @@ export function settingsFixtureMiddleware() {
       const r = S.remotes.find((x) => x.name === name);
       if (!r) return [404, 'remote'];
       for (const [k, v] of Object.entries(b.params || {})) {
-        if (['pass', 'secret_access_key', 'token'].includes(k)) { if (v && !r.secrets.includes(k)) r.secrets.push(k); } else if (v === '') delete r.params[k]; else r.params[k] = v;
+        if (secretOf(r.type, k)) { if (v && !r.secrets.includes(k)) r.secrets.push(k); } else if (v === '') delete r.params[k]; else r.params[k] = v;
       }
       Object.assign(r, { name: b.name || r.name, path: b.path ?? r.path, mount: b.mount || r.mount });
       r.label = 'rclone: ' + r.name;
@@ -426,7 +433,12 @@ export function settingsFixtureMiddleware() {
       r.mounted = r.mountOnStart = how === 'mount';
       return wireRemote(r);
     }],
-    ['POST', '/remotes/test', (b) => (b.params?.host === 'nirgends' ? { ok: false, entries: 0, error: 'dial tcp: no such host' } : { ok: true, entries: 12, total: 4 * TB, used: TB, free: 3 * TB })],
+    ['GET', '/remotes/types', () => CATALOG],
+    // An SFTP server shows its key, an SMB server without a share its shares.
+    ['POST', '/remotes/test', (b) => (b.params?.host === 'nirgends' ? { ok: false, entries: 0, error: 'dial tcp: no such host' } : {
+      ok: true, entries: 12, total: 4 * TB, used: TB, free: 3 * TB,
+      ...(b.type === 'sftp' ? { hostKey: HOST_KEY } : {}), ...(b.type === 'smb' && !b.path ? { shares: ['archiv', 'fotos', 'backup'] } : {}),
+    })],
     ['POST', '/remotes/oauth', (b) => (b.token.trim().startsWith('{') ? { token: b.token.trim(), expiry: iso(clock.now() + HOUR) } : [400, 'this is not a token from rclone authorize'])],
     ['GET', '/system', () => ({
       version: '0.1.0', commit: 'f00dfeed', release: true, deployment: 'container', go: 'go1.27.0', os: 'linux', arch: 'amd64', started: iso(S.started), uptime: Math.round((clock.now() - S.started) / 1000),

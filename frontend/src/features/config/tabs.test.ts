@@ -1,6 +1,8 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createApp, nextTick } from 'vue';
+import { host } from '@/core/host';
+import { actions } from '@/core/actions';
 import { go, settingsTabs, view } from '@/core/views';
 import { addMessages } from '@/i18n';
 import de from './de.json';
@@ -60,6 +62,18 @@ describe('the settings', () => {
 
   it('put the account third and end on integrations, apps, system and info, as in BombVault', () => {
     expect(settingsTabs.map((t) => t.id)).toEqual(['general', 'look', 'security', 'files', 'keys', 'ctxmenu', 'sources', 'remotes', 'users', 'rules', 'shares', 'integrations', 'app', 'system', 'info']);
+  });
+
+  it('leave the remotes out of the desktop app, which has nothing to mount them with', () => {
+    expect(tile('remotes')!.hidden?.()).toBe(false);
+    expect(actions.mounts!.when?.()).toBe(true);
+    Object.assign(host, { desktop: true });
+    try {
+      expect(tile('remotes')!.hidden?.()).toBe(true);
+      expect(actions.mounts!.when?.()).toBe(false);
+    } finally {
+      Object.assign(host, { desktop: false });
+    }
   });
 
   it('lead to the account after signing in again and from the news', () => {

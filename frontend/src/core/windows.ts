@@ -3,8 +3,12 @@ import { type Component, markRaw, shallowReactive } from 'vue';
 import { t } from '@/i18n';
 import { closeMenu } from './menu';
 
-// wayOut marks a button that leaves the window by itself, so Window adds no Abbrechen or Schließen beside it.
-export interface FootButton { label?: string; g?: string; primary?: boolean; disabled?: boolean; wayOut?: boolean; start?: string; run?: (el: HTMLElement) => unknown }
+// wayOut marks a button that leaves the window by itself, so Window adds no Abbrechen or Schließen beside it. tone colours
+// a button that carries a verdict, such as a connection test that worked or failed.
+export interface FootButton {
+  label?: string; g?: string; primary?: boolean; disabled?: boolean; wayOut?: boolean; start?: string; tone?: 'ok' | 'danger'; attrs?: Record<string, string>;
+  run?: (el: HTMLElement) => unknown;
+}
 export interface WinOptions {
   title: string;
   // The name of a dot after the title, for a file with unsaved changes.

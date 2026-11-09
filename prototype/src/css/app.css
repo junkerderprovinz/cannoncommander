@@ -43,6 +43,10 @@ svg { display: block; }
 .btn.primary { background: var(--accent); color: var(--accent-contrast); }
 .btn.primary svg { color: var(--accent-contrast); }
 .btn.primary:hover { background: color-mix(in srgb, var(--accent) 85%, var(--carbon-text)); }
+/* A foot button that carries a verdict, such as a connection test. */
+.btn.tone-ok { background: var(--status-ok-solid); color: var(--carbon-bg); }
+.btn.tone-danger { background: var(--status-fail-solid); color: var(--carbon-bg); }
+.btn.tone-ok svg, .btn.tone-danger svg { color: currentColor; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 /* Every control in the head row shares one height, so brand, menu, selector and buttons line up. */
 .head .btn { background: var(--carbon-surface2); height: 2.4rem; padding: 0 .8rem; }
@@ -106,6 +110,10 @@ svg { display: block; }
 .nav-row:hover .unpin { opacity: 1; }
 .nav-row .unpin:hover { background: var(--carbon-surface3); color: var(--accent-glyph); }
 .nav-row.cur .unpin:hover { background: color-mix(in srgb, var(--accent-contrast) 15%, transparent); color: inherit; }
+/* A remote that is not mounted reads quieter, and the pin of one among the shortcuts stays in view. */
+.side-remotes .unmounted { color: var(--carbon-text-muted); }
+.side-remotes .unpin.pinned { opacity: 1; color: var(--accent-glyph); }
+.side-remotes .meta + .unpin { margin-left: 0; }
 .nav-row.cur { background: var(--accent); color: var(--accent-contrast); }
 .nav-row.cur svg { color: var(--accent-contrast); }
 .nav-row .meta { margin-left: auto; font-size: 12px; color: var(--carbon-text-muted); flex: none; }

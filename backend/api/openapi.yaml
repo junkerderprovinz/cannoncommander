@@ -4864,11 +4864,14 @@ paths:
   /remotes/types:
     get:
       operationId: remoteTypes
-      summary: Remote types rclone knows
+      summary: Remote types rclone knows, and the products behind them
       description: |
         SFTP, SMB, WebDAV, S3, Google Drive, OneDrive and Dropbox come first
         with featured set. Types with oauth log in through rclone authorize
         on a computer with a browser, authorize is the command for it.
+        providers are the products the add dialog offers by name, grouped
+        into clouds, storage and protocols, and unlisted the backends no
+        product stands for.
       parameters:
         - name: advanced
           in: query
@@ -4882,12 +4885,21 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [types]
+                required: [types, providers, unlisted]
                 properties:
                   types:
                     type: array
                     items:
                       $ref: "#/components/schemas/RemoteType"
+                  providers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RemoteProvider"
+                  unlisted:
+                    type: array
+                    items:
+                      type: string
+                    example: [zzz]
         "401":
           $ref: "#/components/responses/Unauthorized"
         "503":
@@ -4898,10 +4910,14 @@ paths:
       operationId: remoteTest
       summary: Try a remote configuration
       description: |
-        Lists the folder of the remote without saving anything. With the
-        name of a saved remote of the same type, its saved parameters fill
-        in what the body leaves out, such as an unchanged password. A remote
-        that does not answer is a result with ok false, not an error.
+        Lists the folder of the remote without saving anything and without
+        writing to it. With the name of a saved remote of the same type, its
+        saved parameters fill in what the body leaves out, such as an
+        unchanged password, as long as the body names the same server. A
+        remote that does not answer is a result with ok false, not an error.
+        An SFTP server shows its host key, an SMB server without a share in
+        path its shares, and a choice rclone's setup leaves open comes back
+        as question, whose answer goes into params under its name.
       x-access: admin
       requestBody:
         required: true
@@ -7158,7 +7174,7 @@ components:
           schema:
             $ref: "#/components/schemas/Problem"
     RemoteConflict:
-      description: The name is taken, or a mount is busy or failed.
+      description: The name is taken, a mount is busy or failed, or rclone asks a question first (code setupQuestion).
       content:
         application/problem+json:
           schema:
@@ -10125,6 +10141,10 @@ components:
           type: string
           description: The rclone backend.
           example: drive
+        provider:
+          type: string
+          description: The product behind the remote where its parameters name one.
+          example: gdrive
         path:
           type: string
           description: The folder at the remote that is mounted, the share for SMB, the bucket for S3.
@@ -10219,7 +10239,7 @@ components:
             $ref: "#/components/schemas/RemoteOption"
     RemoteOption:
       type: object
-      required: [name, help, type, required, secret, advanced, exclusive]
+      required: [name, help, type, required, essential, secret, advanced, exclusive]
       properties:
         name:
           type: string
@@ -10234,6 +10254,9 @@ components:
           description: For S3, the providers the option applies to.
         required:
           type: boolean
+        essential:
+          type: boolean
+          description: The remote will not work in practice without it, whatever rclone's wizard asks.
         secret:
           type: boolean
         advanced:
@@ -10274,6 +10297,87 @@ components:
         error:
           type: string
           description: What rclone said, in English.
+        failure:
+          type: string
+          enum: [timeout, hostKey, missing, address]
+          description: The reason, where the interface has a sentence of its own for it.
+        hostKey:
+          type: object
+          required: [pin, fingerprint]
+          description: The key the SFTP server showed. Saving with pin in params.host_keys holds the remote to it.
+          properties:
+            pin:
+              type: string
+              example: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+            fingerprint:
+              type: string
+              example: SHA256:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU
+        shares:
+          type: array
+          description: The shares of an SMB server, when path names none.
+          items:
+            type: string
+          example: [archiv, fotos]
+        question:
+          type: object
+          required: [name, help, choices]
+          description: A choice rclone's setup leaves open, such as which drive to use.
+          properties:
+            name:
+              type: string
+              example: config_driveid
+            help:
+              type: string
+            choices:
+              type: array
+              items:
+                type: object
+                required: [value, help]
+                properties:
+                  value:
+                    type: string
+                  help:
+                    type: string
+    RemoteProvider:
+      type: object
+      required: [id, name, backend, group]
+      properties:
+        id:
+          type: string
+          example: nextcloud
+        name:
+          type: string
+          example: Nextcloud
+        backend:
+          type: string
+          example: webdav
+        group:
+          type: string
+          enum: [cloud, storage, protocol]
+        preset:
+          type: object
+          description: Parameters set without asking.
+          additionalProperties:
+            type: string
+          example:
+            vendor: nextcloud
+        mark:
+          type: string
+          description: The logo or glyph of the product.
+          example: IconNextcloud
+        urlHint:
+          type: string
+          example: https://cloud.example.com/remote.php/webdav/
+        auth:
+          type: string
+          enum: [apppassword, oauth, apikey, accesskey, login, logintoken]
+        authUrl:
+          type: string
+        defaults:
+          type: object
+          description: What the product's server assumes for a field left empty.
+          additionalProperties:
+            type: string
     UpdateCheck:
       type: object
       required: [version, latest, updateAvailable]

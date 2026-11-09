@@ -162,6 +162,7 @@ function renderFiles(host) {
   if (!CC.prefs.dual) Files.active = 0;
   host.innerHTML = `<aside class="side" id="side">
       <section class="side-card"><span class="notch">Verknüpfungen</span><button class="ptab add side-add" data-run="addBookmark" data-tip="Aktuellen Ordner als Verknüpfung anlegen">${g('IconAdd')}</button><div id="shortcuts"></div></section>
+      <section class="side-card side-remotes" ${DATA.remotes.length ? '' : 'hidden'}><span class="notch">Fernziele</span><div id="remotes"></div></section>
       <section class="side-card side-tree"><span class="notch">Ordnerbaum</span><div id="tree"></div></section>
     </aside><div class="panels" id="panels"></div>`;
   renderSide();
@@ -184,6 +185,12 @@ function renderSide() {
   $('#shortcuts').innerHTML = DATA.bookmarks.map((s, i) => `<div class="nav-row ${cur === s.path ? 'cur' : ''}" data-go="${esc(s.path)}" data-bm="${i}">${g(s.g)}<span>${esc(s.name)}</span><button class="unpin" data-unpin="${i}" data-tip="Vom Schnellzugriff lösen" aria-label="${esc(s.name)} vom Schnellzugriff lösen">${g('IconPin')}</button></div>`).join('')
     + `<div class="nav-row" data-run="openTrash">${g('IconTrash')}<span>Papierkorb</span><span class="meta glim-num">${DATA.trash.length}</span></div>`
     + Files.sideRows.map(f => f()).join('');
+  // The remotes with their state, each pinned to quick access or taken out of it in one click.
+  const pinned = (r) => DATA.bookmarks.some(b => b.path === r.mount);
+  $('#remotes').innerHTML = DATA.remotes.map(r => {
+    const up = r.state === 'verbunden';
+    return `<div class="nav-row ${up ? '' : 'unmounted'} ${up && cur === r.mount ? 'cur' : ''}" data-remote="${esc(r.name)}" data-go="${esc(r.mount)}" data-tip="${esc(r.mount + '\n' + (up ? 'Eingehängt, ein Klick öffnet es' : 'Gerade nicht eingehängt'))}">${g('IconCloud')}<span>${esc(r.name)}</span>${up ? '' : '<span class="meta">Ausgehängt</span>'}<button class="unpin ${pinned(r) ? 'pinned' : ''}" data-pin="${esc(r.name)}" data-tip="${pinned(r) ? 'Vom Schnellzugriff lösen' : 'An den Schnellzugriff anheften'}" aria-label="${esc(r.name)} ${pinned(r) ? 'vom Schnellzugriff lösen' : 'an den Schnellzugriff anheften'}" aria-pressed="${pinned(r)}">${g('IconPin')}</button></div>`;
+  }).join('');
   const rows = [];
   const walk = (n, path, depth) => {
     for (const k of FS.kids(n).filter(k => k.dir)) {

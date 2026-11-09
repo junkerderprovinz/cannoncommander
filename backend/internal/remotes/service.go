@@ -38,6 +38,8 @@ type Service struct {
 	rc       *rcClient
 	d        *daemon
 	mounting func(context.Context) (system.Mounting, error)
+	// readKey asks an SSH server for its key. Tests answer it themselves.
+	readKey func(ctx context.Context, host, port string) (HostKey, error)
 
 	start   sync.Once
 	stop    context.CancelFunc
@@ -58,8 +60,11 @@ type Service struct {
 // Remote is one configured remote. Params and Secrets are only filled in
 // for admins, Secrets names the parameters that are set but never sent.
 type Remote struct {
-	Name         string            `json:"name"`
-	Type         string            `json:"type"`
+	Name string `json:"name"`
+	Type string `json:"type"`
+	// Provider is the product behind the remote where its parameters name
+	// one, for its logo.
+	Provider     string            `json:"provider,omitempty"`
 	Path         string            `json:"path"`
 	Mount        string            `json:"mount"`
 	Label        string            `json:"label"`
@@ -96,7 +101,7 @@ type List struct {
 }
 
 func newService(cfg Config, db store, mounting func(context.Context) (system.Mounting, error)) *Service {
-	s := &Service{cfg: cfg, db: db, mounting: mounting, errs: map[string]string{}}
+	s := &Service{cfg: cfg, db: db, mounting: mounting, readKey: readHostKey, errs: map[string]string{}}
 	if cfg.Binary != "" {
 		s.rc = socketClient(cfg.Socket)
 		s.d = newDaemon(cfg, s.rc)
@@ -363,12 +368,14 @@ func (s *Service) labelAt(p string) string {
 	return (*m)[filepath.Clean(p)]
 }
 
-func (s *Service) view(r row, mounted map[string]bool, params map[string]string, p *provider) Remote {
+// view shows a remote. Its parameters name the product to everybody, and
+// only admins get the parameters themselves.
+func (s *Service) view(r row, mounted map[string]bool, params map[string]string, p *provider, admin bool) Remote {
 	out := Remote{
-		Name: r.Name, Type: r.Type, Path: r.Path, Mount: r.Mount, Label: label(r, params),
+		Name: r.Name, Type: r.Type, Provider: providerFor(r.Type, params), Path: r.Path, Mount: r.Mount, Label: label(r, params),
 		Mounted: mounted[filepath.Clean(r.Mount)], MountOnStart: r.MountOnStart, Error: s.lastError(r.Name),
 	}
-	if params == nil {
+	if params == nil || !admin {
 		return out
 	}
 	out.Params = map[string]string{}
@@ -400,9 +407,7 @@ func (s *Service) List(ctx context.Context, admin bool) (List, error) {
 	var dump map[string]map[string]string
 	if st.Running {
 		mounted = s.mountedPoints(ctx)
-		if admin {
-			dump = s.dump(ctx)
-		}
+		dump = s.dump(ctx)
 	}
 	out := List{Remotes: []Remote{}, Rclone: st}
 	for _, r := range rows {
@@ -413,9 +418,11 @@ func (s *Service) List(ctx context.Context, admin bool) (List, error) {
 			if params == nil {
 				params = map[string]string{}
 			}
-			p, _ = s.provider(ctx, r.Type)
+			if admin {
+				p, _ = s.provider(ctx, r.Type)
+			}
 		}
-		out.Remotes = append(out.Remotes, s.view(r, mounted, params, p))
+		out.Remotes = append(out.Remotes, s.view(r, mounted, params, p, admin))
 	}
 	return out, nil
 }
@@ -427,17 +434,17 @@ func (s *Service) Get(ctx context.Context, name string, admin bool) (Remote, err
 		return Remote{}, err
 	}
 	if !s.status().Running {
-		return s.view(r, nil, nil, nil), nil
+		return s.view(r, nil, nil, nil, admin), nil
 	}
-	var params map[string]string
+	params, err := s.section(ctx, name)
+	if err != nil {
+		params = map[string]string{}
+	}
 	var p *provider
 	if admin {
-		if params, err = s.section(ctx, name); err != nil {
-			params = map[string]string{}
-		}
 		p, _ = s.provider(ctx, r.Type)
 	}
-	return s.view(r, s.mountedPoints(ctx), params, p), nil
+	return s.view(r, s.mountedPoints(ctx), params, p, admin), nil
 }
 
 func (s *Service) row(ctx context.Context, name string) (row, error) {

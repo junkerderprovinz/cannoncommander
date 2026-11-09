@@ -151,8 +151,8 @@ const DATA = {
   ],
   tokens: [{ name: 'backup-skript', created: NOW - 30 * DAY, last: NOW - DAY, rights: 'lesen, schreiben' }],
   remotes: [
-    { name: 'gdrive', type: 'Google Drive', mount: '/remotes/gdrive', state: 'verbunden' },
-    { name: 'nas-keller', type: 'SMB', mount: '/remotes/nas-keller', state: 'verbunden' },
+    { name: 'gdrive', type: 'drive', provider: 'gdrive', mount: '/remotes/gdrive', state: 'verbunden' },
+    { name: 'nas-keller', type: 'smb', provider: 'smb', path: 'archiv', mount: '/remotes/nas-keller', state: 'verbunden' },
   ],
   bookmarks: [
     { name: 'Downloads', path: '/mnt/user/downloads', g: 'IconDownload' },
