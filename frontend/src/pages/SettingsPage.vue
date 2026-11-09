@@ -45,7 +45,7 @@ function open(e: MouseEvent, id: string) {
   </div>
   <div v-else class="settings">
     <nav ref="tiles" class="tiles" role="tablist" aria-orientation="vertical" :aria-label="t('settings.title')">
-      <button v-for="tab in shown" :key="tab.id" class="stile" :class="[drag.look(tab.id), { cur: tab.id === cur.id }]" role="tab" :aria-selected="tab.id === cur.id" :data-stab="tab.id" :data-tip="labelOf(tab)"
+      <button v-for="tab in shown" :key="tab.id" class="stile" :class="[drag.look(tab.id), { cur: tab.id === cur.id }]" role="tab" :aria-selected="tab.id === cur.id" :data-stab="tab.id" :data-tip="labelOf(tab)" :aria-label="labelOf(tab)"
         @click="open($event, tab.id)" @pointerdown="drag.press($event, tab.id)"><G :n="tab.g" /><span>{{ labelOf(tab) }}</span></button>
     </nav>
     <div id="settings-body" class="settings-body"><div id="settings-col" class="settings-col"><component :is="cur.component" :key="cur.id" /></div></div>
