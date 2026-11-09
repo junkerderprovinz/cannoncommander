@@ -13,6 +13,7 @@ import logo from '@/assets/brand/cannoncommander.svg';
 import { G } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { plural, t } from '@/i18n';
+import { onConsentPage } from '@/pages/consent';
 import { eyeWords } from '@/ui/kit';
 import { leaveNote, session, takeNote } from '.';
 
@@ -217,7 +218,8 @@ function submitStep() {
 function oidc() {
   if (!opts.value.oidc) return;
   step.value = 'leaving';
-  location.assign(opts.value.oidc.url);
+  // From the consent page the provider sends the person back there, and everywhere else to the app's start.
+  location.assign(opts.value.oidc.url + (onConsentPage() ? '?redirect=' + encodeURIComponent(location.pathname) : ''));
 }
 </script>
 
