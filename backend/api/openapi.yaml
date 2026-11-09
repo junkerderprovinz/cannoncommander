@@ -5710,7 +5710,8 @@ paths:
         menu is native where the system draws its own context menu, as
         Windows does, and actions where the app lists what other file
         managers add. runAs lists the file types the computer starts as
-        administrator.
+        administrator. thumbnails says on Linux how the system's
+        thumbnails come about.
       responses:
         "200":
           description: What is offered.
@@ -5730,6 +5731,8 @@ paths:
                     items:
                       type: string
                       example: .exe
+                  thumbnails:
+                    $ref: "#/components/schemas/ShellThumbnails"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "404":
@@ -5997,6 +6000,53 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           description: Not the desktop app (desktopOnly), or no icon.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [shell]
+  /shell/thumbnails:
+    post:
+      operationId: shellThumbnails
+      summary: Let thumbnailers into the sandbox, or not
+      description: |
+        Where the kernel keeps user namespaces from programs without an
+        AppArmor profile, as Ubuntu does since 24.04, bwrap cannot shut the
+        system's thumbnailers in. With allow the app puts a profile for its
+        own program in place, after the computer asked for administrator
+        rights, and takes it away without. It answers how thumbnails come
+        about afterwards.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [allow]
+              properties:
+                allow:
+                  type: boolean
+      responses:
+        "200":
+          description: How thumbnails come about now.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShellThumbnails"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: The prompt for administrator rights was turned down (elevationDeclined).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          $ref: "#/components/responses/ShellDesktopOnly"
+        "409":
+          description: The profile could not be put in place or loaded.
           content:
             application/problem+json:
               schema:
@@ -10408,6 +10458,23 @@ components:
           description: A data URL, left out when the program has no icon.
         default:
           type: boolean
+    ShellThumbnails:
+      type: object
+      required: [way, restricted, allowed]
+      properties:
+        way:
+          type: string
+          enum: [sandbox, service, cache]
+          description: |
+            sandbox where thumbnailers run in bwrap, service where the
+            desktop's thumbnail service draws them, cache where only the
+            pictures other file managers drew show.
+        restricted:
+          type: boolean
+          description: The kernel keeps the sandbox out, which the app's AppArmor profile lifts.
+        allowed:
+          type: boolean
+          description: The app's AppArmor profile is in place.
     ShellEntry:
       type: object
       required: [key, label, hidden]

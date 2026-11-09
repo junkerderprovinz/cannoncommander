@@ -2546,7 +2546,14 @@
     "propsOpen": "Opna",
     "icons": "Kerfistákn",
     "iconsTip": "Sýnir tákn kerfisins þíns alls staðar í listanum. Forrit og flýtileiðir sýna sitt eigið tákn líka þegar slökkt er á þessu.",
-    "iconsTipLinux": "Sýnir tákn kerfisins þíns alls staðar í listanum. Forrit og flýtileiðir sýna sitt eigið tákn hvort sem er. CannonCommander teiknar smámyndir aðeins í einangruðu umhverfi. Þar sem það gengur ekki, eins og á Ubuntu 24.04, sérðu aðeins þær sem skráastjórinn þinn hefur þegar búið til."
+    "iconsTipLinux": "Sýnir tákn kerfisins þíns alls staðar í listanum. Forrit og flýtileiðir sýna sitt eigið tákn hvort sem er. CannonCommander teiknar smámyndir aðeins í einangruðu umhverfi. Þar sem það gengur ekki, eins og á Ubuntu 24.04, sérðu aðeins þær sem skráastjórinn þinn hefur þegar búið til.",
+    "thumbs": "Smámyndir",
+    "thumbsTip": "Ubuntu hleypir forriti aðeins inn í einangrað umhverfi með sérstakri heimild. Þegar kveikt er á þessu bætir CannonCommander við lítilli AppArmor-reglu, sem biður um lykilorðið þitt, og teiknar síðan smámyndir sjálft. Þegar slökkt er á þessu hverfur reglan aftur.",
+    "thumbsOnButton": "Kveikja á smámyndum kerfisins",
+    "thumbsOffButton": "Slökkva á smámyndum kerfisins",
+    "thumbsOn": "Búið, CannonCommander teiknar nú smámyndir sjálft.",
+    "thumbsOff": "Slökkt, AppArmor-reglan er farin aftur.",
+    "thumbsStillOut": "Reglan er komin, en einangraða umhverfið virkar því miður enn ekki."
   },
   "shortcuts": {
     "title": "Flýtilyklar",

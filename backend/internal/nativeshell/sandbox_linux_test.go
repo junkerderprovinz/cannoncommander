@@ -180,3 +180,30 @@ func TestWhereNoSandboxWorksItsReasonsAreLoggedOnce(t *testing.T) {
 		t.Errorf("warned %q", *warned)
 	}
 }
+
+func TestTheStateSaysWhenTheKernelKeepsTheSandboxOut(t *testing.T) {
+	f := newFixture(t)
+	f.root = fstest.MapFS{"proc/sys/kernel/apparmor_restrict_unprivileged_userns": &fstest.MapFile{Data: []byte("1\n")}}
+	f.install()
+	if got := Sandboxing(); got.Sandboxed || got.Service || !got.Restricted {
+		t.Errorf("got %+v", got)
+	}
+	f.root = fstest.MapFS{"proc/sys/kernel/apparmor_restrict_unprivileged_userns": &fstest.MapFile{Data: []byte("0\n")}}
+	f.bwrap = "/usr/bin/bwrap"
+	f.install()
+	if got := Sandboxing(); !got.Sandboxed || got.Restricted {
+		t.Errorf("got %+v", got)
+	}
+}
+
+func TestASecondLookTriesTheSandboxAgain(t *testing.T) {
+	sandboxes.Lock()
+	sandboxes.found["/usr/bin/bwrap"] = sandbox{}
+	sandboxes.Unlock()
+	Resandbox()
+	sandboxes.Lock()
+	defer sandboxes.Unlock()
+	if len(sandboxes.found) != 0 {
+		t.Errorf("still known: %v", sandboxes.found)
+	}
+}

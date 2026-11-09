@@ -6,11 +6,13 @@
 package shellapi
 
 import (
+	"context"
 	_ "embed"
 	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"time"
 
@@ -18,8 +20,10 @@ import (
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/nativeshell"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/elevate"
 )
 
 //go:embed openapi.yaml
@@ -52,6 +56,9 @@ type system struct {
 	runAsAdmin    func(string) error
 	icon          func(string, int) ([]byte, string, error)
 	typeIcon      func(string, bool, int) ([]byte, string, error)
+	sandboxing    func() nativeshell.SandboxState
+	resandbox     func()
+	elevate       func(context.Context, []elevate.Op) error
 }
 
 var native = system{
@@ -65,6 +72,24 @@ var native = system{
 	runAsAdmin:    nativeshell.RunAsAdmin,
 	icon:          nativeshell.Icon,
 	typeIcon:      nativeshell.TypeIcon,
+	sandboxing:    nativeshell.Sandboxing,
+	resandbox:     nativeshell.Resandbox,
+	elevate:       elevated,
+}
+
+// elevated runs ops with administrator rights and returns the first error,
+// whether the prompt or an operation failed.
+func elevated(ctx context.Context, ops []elevate.Op) error {
+	var first error
+	err := elevate.Run(ctx, ops, func(_ int, err error) {
+		if first == nil {
+			first = err
+		}
+	})
+	if err != nil {
+		return err
+	}
+	return first
 }
 
 // Routes registers the contract and the handlers.
@@ -108,6 +133,7 @@ func bind(r *v1.Router, h *handlers) {
 	r.Handle("GET /shell/icon", h.icon)
 	r.Handle("GET /shell/entries", h.entries)
 	r.Handle("PUT /shell/entries/hidden", h.hide)
+	r.Handle("POST /shell/thumbnails", h.thumbnails)
 }
 
 type handlers struct {
@@ -122,6 +148,30 @@ type offersJSON struct {
 	Menu       string   `json:"menu"`
 	Properties bool     `json:"properties"`
 	RunAs      []string `json:"runAs"`
+	// Thumbnails says on Linux how the system's thumbnails come about.
+	Thumbnails *thumbsJSON `json:"thumbnails,omitempty"`
+}
+
+type thumbsJSON struct {
+	// Way is "sandbox" where thumbnailers run in a sandbox, "service" where
+	// the desktop's thumbnail service draws them and "cache" where only the
+	// pictures other file managers drew show.
+	Way string `json:"way"`
+	// Restricted says the kernel keeps the sandbox out, which the app's
+	// AppArmor profile lifts, and Allowed that the profile is in place.
+	Restricted bool `json:"restricted"`
+	Allowed    bool `json:"allowed"`
+}
+
+func thumbsOf(s nativeshell.SandboxState) thumbsJSON {
+	out := thumbsJSON{Way: "cache", Restricted: s.Restricted, Allowed: s.Allowed}
+	switch {
+	case s.Sandboxed:
+		out.Way = "sandbox"
+	case s.Service:
+		out.Way = "service"
+	}
+	return out
 }
 
 // offers is GET /shell.
@@ -135,7 +185,33 @@ func (h *handlers) offers(w http.ResponseWriter, r *http.Request) error {
 			out.RunAs = append(out.RunAs, ext)
 		}
 	}
+	if runtime.GOOS == "linux" {
+		t := thumbsOf(h.sys.sandboxing())
+		out.Thumbnails = &t
+	}
 	return v1.WriteJSON(w, r, http.StatusOK, out)
+}
+
+// thumbnails is POST /shell/thumbnails. It puts the app's AppArmor profile
+// in place or takes it away, with administrator rights, and tries the
+// sandbox again.
+func (h *handlers) thumbnails(w http.ResponseWriter, r *http.Request) error {
+	var in struct {
+		Allow bool `json:"allow"`
+	}
+	if err := v1.DecodeJSON(r, &in); err != nil {
+		return err
+	}
+	kind := elevate.DisallowUserNamespaces
+	if in.Allow {
+		kind = elevate.AllowUserNamespaces
+	}
+	if err := h.sys.elevate(r.Context(), []elevate.Op{{Kind: kind}}); err != nil {
+		logger.Errorf("changing the AppArmor profile for thumbnails: %v", err)
+		return jobs.ElevationError(err)
+	}
+	h.sys.resandbox()
+	return v1.WriteJSON(w, r, http.StatusOK, thumbsOf(h.sys.sandboxing()))
 }
 
 // menu is POST /shell/menu. It answers once the menu has closed and the

@@ -2546,7 +2546,14 @@
     "propsOpen": "Abrir",
     "icons": "Iconas do sistema",
     "iconsTip": "Amosa en toda a lista as iconas do teu sistema. Os programas e os atallos amosan a súa propia icona mesmo con isto desactivado.",
-    "iconsTipLinux": "Amosa en toda a lista as iconas do teu sistema. Os programas e os atallos amosan igualmente a súa propia icona. CannonCommander só xera miniaturas nun contorno illado. Onde iso non é posible, como en Ubuntu 24.04, só ves as que o teu xestor de ficheiros xa creou."
+    "iconsTipLinux": "Amosa en toda a lista as iconas do teu sistema. Os programas e os atallos amosan igualmente a súa propia icona. CannonCommander só xera miniaturas nun contorno illado. Onde iso non é posible, como en Ubuntu 24.04, só ves as que o teu xestor de ficheiros xa creou.",
+    "thumbs": "Miniaturas",
+    "thumbsTip": "Ubuntu só deixa entrar un programa nun contorno illado cun permiso propio. Ao activalo, CannonCommander engade unha pequena regra de AppArmor, que pide o teu contrasinal, e desde entón xera el mesmo as miniaturas. Ao desactivalo, a regra desaparece.",
+    "thumbsOnButton": "Activar as miniaturas do sistema",
+    "thumbsOffButton": "Desactivar as miniaturas do sistema",
+    "thumbsOn": "Feito, desde agora CannonCommander xera el mesmo as miniaturas.",
+    "thumbsOff": "Desactivado, a regra de AppArmor xa non está.",
+    "thumbsStillOut": "A regra está aí, pero o contorno illado aínda non funciona, sentímolo."
   },
   "shortcuts": {
     "title": "Atallos de teclado",

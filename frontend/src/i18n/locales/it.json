@@ -2630,7 +2630,14 @@
     "propsOpen": "Apri",
     "icons": "Icone di sistema",
     "iconsTip": "Mostra ovunque nell'elenco le icone del tuo sistema. Programmi e collegamenti mostrano la propria icona anche con questa opzione disattivata.",
-    "iconsTipLinux": "Mostra ovunque nell'elenco le icone del tuo sistema. Programmi e collegamenti mostrano comunque la propria icona. CannonCommander crea le miniature solo in un ambiente isolato. Dove non è possibile, come su Ubuntu 24.04, vedi solo quelle che il tuo file manager ha già creato."
+    "iconsTipLinux": "Mostra ovunque nell'elenco le icone del tuo sistema. Programmi e collegamenti mostrano comunque la propria icona. CannonCommander crea le miniature solo in un ambiente isolato. Dove non è possibile, come su Ubuntu 24.04, vedi solo quelle che il tuo file manager ha già creato.",
+    "thumbs": "Miniature",
+    "thumbsTip": "Ubuntu fa entrare un programma in un ambiente isolato solo con un permesso apposito. Attivandolo, CannonCommander aggiunge una piccola regola AppArmor, che chiede la tua password, e da quel momento crea da sé le miniature. Disattivandolo, la regola sparisce.",
+    "thumbsOnButton": "Attiva le miniature di sistema",
+    "thumbsOffButton": "Disattiva le miniature di sistema",
+    "thumbsOn": "Fatto, da ora CannonCommander crea da sé le miniature.",
+    "thumbsOff": "Disattivato, la regola AppArmor non c'è più.",
+    "thumbsStillOut": "La regola c'è, ma l'ambiente isolato purtroppo non funziona ancora."
   },
   "shortcuts": {
     "title": "Scorciatoie da tastiera",
