@@ -197,7 +197,9 @@ func strs(desc string) map[string]any {
 	return map[string]any{"type": "array", "description": desc, "items": map[string]any{"type": "string"}, "minItems": 1, "maxItems": itemsPerCall}
 }
 
-func boolean(desc string) map[string]any { return map[string]any{"type": "boolean", "description": desc} }
+func boolean(desc string) map[string]any {
+	return map[string]any{"type": "boolean", "description": desc}
+}
 
 func integer(desc string, low, high int) map[string]any {
 	return map[string]any{"type": "integer", "description": desc, "minimum": low, "maximum": high}
@@ -259,8 +261,16 @@ func failure(err error) *mcp.CallToolResult {
 	return toolError("failed", "CannonCommander could not do this")
 }
 
+// problemCode names a refusal for the assistant. A path the account may not
+// see answers like one that is not there, so asking cannot tell a hidden
+// folder from a missing one.
 func problemCode(p *v1.Problem) string {
-	if p.Code != "" {
+	switch {
+	case p.Status == http.StatusUnsupportedMediaType:
+		return "binary"
+	case p.Code == "denied", p.Code == "notFound":
+		return "not_found"
+	case p.Code != "":
 		return snake(p.Code)
 	}
 	switch p.Status {
@@ -285,8 +295,8 @@ func problemText(p *v1.Problem) string {
 	if p.Status == http.StatusUnsupportedMediaType {
 		return "the file holds binary data, not text"
 	}
-	if p.Status == http.StatusNotFound {
-		return "there is no such file or folder, or this account may not see it"
+	if p.Status == http.StatusNotFound || p.Code == "denied" {
+		return "there is no such file or folder, or this account may not see or change it"
 	}
 	text := p.Detail
 	if text == "" {
@@ -302,8 +312,8 @@ func snake(code string) string {
 }
 
 var (
-	windowsPath = regexp.MustCompile(`(?i)\b[a-z]:\\[^\s"']*`)
-	uncPath     = regexp.MustCompile(`\\\\[^\s"'\\]+\\[^\s"']*`)
+	windowsPath = regexp.MustCompile(`(?i)\b[a-z]:\\[^\s"']*[^\s"'.,:;)]`)
+	uncPath     = regexp.MustCompile(`\\\\[^\s"'\\]+\\[^\s"']*[^\s"'.,:;)]`)
 	credentials = regexp.MustCompile(`://[^/\s:@]+:[^/\s@]+@`)
 )
 

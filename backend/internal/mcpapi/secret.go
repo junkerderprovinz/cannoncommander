@@ -61,7 +61,9 @@ func keyCheck(pepper []byte, id string) string { return mac(pepper, checkDomain+
 
 // hashOAuth separates the digests by kind, so an access token's digest can
 // never stand in for a refresh token's.
-func hashOAuth(pepper []byte, kind, value string) string { return mac(pepper, oauthDomain+kind+":"+value) }
+func hashOAuth(pepper []byte, kind, value string) string {
+	return mac(pepper, oauthDomain+kind+":"+value)
+}
 
 // keyHint is the last four characters of a key, which tell two keys apart in
 // a list.

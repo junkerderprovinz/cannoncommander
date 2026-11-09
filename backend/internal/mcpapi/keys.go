@@ -485,10 +485,13 @@ func (s *Server) notify(owner *users.User, k Key, event string) {
 }
 
 type oauthView struct {
-	Possible   bool   `json:"possible"`
-	Enabled    bool   `json:"enabled"`
-	Issuer     string `json:"issuer"`
-	Active     bool   `json:"active"`
+	Possible bool   `json:"possible"`
+	Enabled  bool   `json:"enabled"`
+	Issuer   string `json:"issuer"`
+	Active   bool   `json:"active"`
+	// Resource is the address a cloud connector is given, the endpoint under
+	// the public address.
+	Resource   string `json:"resource,omitempty"`
 	GrantLimit int    `json:"grantLimit"`
 }
 
@@ -498,7 +501,11 @@ func (s *Server) oauthView(ctx context.Context) (oauthView, error) {
 		return oauthView{}, err
 	}
 	_, active := s.issuer(ctx)
-	return oauthView{Possible: s.oauthPossible(), Enabled: o.Enabled, Issuer: o.Issuer, Active: active, GrantLimit: keyLimit}, nil
+	v := oauthView{Possible: s.oauthPossible(), Enabled: o.Enabled, Issuer: o.Issuer, Active: active, GrantLimit: keyLimit}
+	if o.Issuer != "" {
+		v.Resource = resourceOf(o.Issuer, s.basePath())
+	}
+	return v, nil
 }
 
 // setOAuth stores the switch and the public address. Switching off is how an

@@ -817,3 +817,25 @@ func TestErrorCodesOutlastARestart(t *testing.T) {
 		t.Errorf("job error %q %v", got.ErrorCode, got.ErrorParams)
 	}
 }
+
+func TestTheKeyAJobCameThroughOutlastsARestart(t *testing.T) {
+	e := newEnv(t)
+	done := addScript(t, func(ctx context.Context, run *Run) error {
+		for _, it := range run.Items() {
+			run.Finish(it.Seq, ItemDone, nil)
+		}
+		return nil
+	})
+	j, err := e.m.Submit("anna", "test", &Plan{Params: testParams{Script: done}, Via: "Claude", Items: []Item{{Path: "/mnt/user/x/a"}}}, 0, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if j.Via != "Claude" {
+		t.Fatalf("the new job names %q", j.Via)
+	}
+	e.waitState(t, j.ID, Done)
+	e.restart(t)
+	if got, _ := e.m.Get(j.ID, false); got.Via != "Claude" {
+		t.Fatalf("after a restart the job names %q", got.Via)
+	}
+}

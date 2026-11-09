@@ -78,6 +78,25 @@ func TestEverythingElseIsTurnedAway(t *testing.T) {
 	}
 }
 
+func TestAnAssistantReachesTheMCPEndpointOnlyOnLoopback(t *testing.T) {
+	h := guarded(t)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, httptest.NewRequest("POST", "http://127.0.0.1:47321"+MCPPath, nil))
+	if rec.Code != http.StatusTeapot {
+		t.Fatalf("without the cookie: %d, want the endpoint to answer", rec.Code)
+	}
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, httptest.NewRequest("POST", "http://evil.example:47321"+MCPPath, nil))
+	if rec.Code != http.StatusMisdirectedRequest {
+		t.Fatalf("under a rebound name: %d", rec.Code)
+	}
+	rec = httptest.NewRecorder()
+	h.ServeHTTP(rec, httptest.NewRequest("POST", "http://127.0.0.1:47321"+MCPPath+"/../api/v1/system", nil))
+	if rec.Code != http.StatusForbidden {
+		t.Fatalf("a path past the endpoint: %d", rec.Code)
+	}
+}
+
 func TestLocalhostAndIPv6LoopbackCount(t *testing.T) {
 	for _, host := range []string{"localhost:47321", "[::1]:47321", "127.0.0.1:47321"} {
 		if !loopbackHost(host, 47321) {

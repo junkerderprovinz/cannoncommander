@@ -241,11 +241,14 @@ func (e *env) api(user, method, target string, body, out any, headers ...string)
 		req.Header.Set("Content-Type", "application/json")
 	}
 	for i := 0; i+1 < len(headers); i += 2 {
-		if headers[i+1] == "" {
+		switch {
+		case headers[i] == "Host":
+			req.Host = headers[i+1]
+		case headers[i+1] == "":
 			req.Header.Del(headers[i])
-			continue
+		default:
+			req.Header.Set(headers[i], headers[i+1])
 		}
-		req.Header.Set(headers[i], headers[i+1])
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -368,6 +371,15 @@ func (e *env) raw(method, body string, headers ...string) (int, string, http.Hea
 	defer resp.Body.Close()
 	raw, _ := io.ReadAll(resp.Body)
 	return resp.StatusCode, string(raw), resp.Header
+}
+
+func mustJSON(t *testing.T, v any) string {
+	t.Helper()
+	raw, err := json.Marshal(v)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(raw)
 }
 
 const initBody = `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"t","version":"1"}}}`

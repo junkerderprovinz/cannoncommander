@@ -61,8 +61,8 @@ type Login interface {
 type accountsLogin struct{ deps v1.Deps }
 
 func (accountsLogin) SessionHash(r *http.Request) (string, bool) { return accounts.SessionHash(r) }
-func (accountsLogin) ByAPIToken(r *http.Request) bool              { return accounts.ByAPIToken(r) }
-func (accountsLogin) ClientIP(r *http.Request) string              { return accounts.ClientIP(r) }
+func (accountsLogin) ByAPIToken(r *http.Request) bool            { return accounts.ByAPIToken(r) }
+func (accountsLogin) ClientIP(r *http.Request) string            { return accounts.ClientIP(r) }
 func (l accountsLogin) Confirm(r *http.Request, u *users.User, password string) error {
 	return accounts.ConfirmOwner(r, l.deps.DB, u, password)
 }

@@ -127,7 +127,9 @@ func (c oauthClient) redirectJSON() string {
 	return string(raw)
 }
 
-func (c *oauthClient) readRedirects(raw string) error { return json.Unmarshal([]byte(raw), &c.RedirectURIs) }
+func (c *oauthClient) readRedirects(raw string) error {
+	return json.Unmarshal([]byte(raw), &c.RedirectURIs)
+}
 
 // knownClients are the clients the card and the consent page show with their
 // own mark. A client counts as one of them only when every redirect URI it

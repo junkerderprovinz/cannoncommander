@@ -329,8 +329,8 @@ var errBadJob = errors.New("bad job id")
 func jobView(j apiJob) map[string]any {
 	out := map[string]any{
 		"jobId": j.ID, "kind": j.Kind, "state": j.State, "name": j.Name, "entries": j.Count,
-		"files": map[string]int64{"done": j.DoneFiles, "total": j.TotalFiles},
-		"bytes": map[string]int64{"done": j.DoneBytes, "total": j.TotalBytes},
+		"files":     map[string]int64{"done": j.DoneFiles, "total": j.TotalFiles},
+		"bytes":     map[string]int64{"done": j.DoneBytes, "total": j.TotalBytes},
 		"createdAt": j.CreatedAt,
 	}
 	if j.Dest != "" {

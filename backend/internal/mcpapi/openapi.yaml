@@ -425,6 +425,9 @@ components:
           type: string
         active:
           type: boolean
+        resource:
+          type: string
+          description: The address a cloud connector is given, the endpoint under the public address.
         grantLimit:
           type: integer
     McpEvent:
