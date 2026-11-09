@@ -1482,6 +1482,13 @@
         "not_found": "nič ni najdeno",
         "timeout": "ni končano pravočasno",
         "failed": "ni uspelo",
+        "read_only": "zavrnjeno, mapa je samo za branje",
+        "in_archive": "zavrnjeno, to je v arhivu",
+        "source_root": "zavrnjeno, to je cel vir",
+        "binary": "zavrnjeno, to ni besedilna datoteka",
+        "busy": "zavrnjeno, iskanje še poteka",
+        "name_taken": "zavrnjeno, to ime že obstaja",
+        "unknown_fields": "zavrnjeno, neznana polja v iskanju",
         "other": "končano s {code}"
       },
       "oauth": "Prijava prek OAuth",

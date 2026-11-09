@@ -1338,6 +1338,13 @@
         "not_found": "không tìm thấy gì",
         "timeout": "không xong kịp thời gian",
         "failed": "thất bại",
+        "read_only": "bị từ chối, thư mục chỉ cho phép đọc",
+        "in_archive": "bị từ chối, mục này nằm trong tệp nén",
+        "source_root": "bị từ chối, đây là cả một nguồn",
+        "binary": "bị từ chối, đây không phải tệp văn bản",
+        "busy": "bị từ chối, một lượt tìm kiếm vẫn đang chạy",
+        "name_taken": "bị từ chối, tên này đã có rồi",
+        "unknown_fields": "bị từ chối, có trường không xác định trong tìm kiếm",
         "other": "kết thúc với {code}"
       },
       "oauth": "Đăng nhập qua OAuth",

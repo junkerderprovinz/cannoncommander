@@ -1338,6 +1338,13 @@
         "not_found": "tiada apa-apa ditemui",
         "timeout": "tidak selesai tepat pada masanya",
         "failed": "gagal",
+        "read_only": "ditolak, folder itu baca sahaja",
+        "in_archive": "ditolak, itu berada di dalam arkib",
+        "source_root": "ditolak, itu ialah keseluruhan sumber",
+        "binary": "ditolak, itu bukan fail teks",
+        "busy": "ditolak, masih ada carian yang sedang berjalan",
+        "name_taken": "ditolak, nama itu sudah wujud",
+        "unknown_fields": "ditolak, ada medan yang tidak dikenali dalam carian",
         "other": "berakhir dengan {code}"
       },
       "oauth": "Log masuk melalui OAuth",

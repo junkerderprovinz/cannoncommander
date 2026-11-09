@@ -1386,6 +1386,13 @@
         "not_found": "non se atopou nada",
         "timeout": "non rematou a tempo",
         "failed": "fallou",
+        "read_only": "rexeitado, o cartafol é só de lectura",
+        "in_archive": "rexeitado, iso está dentro dun arquivo",
+        "source_root": "rexeitado, iso é unha orixe enteira",
+        "binary": "rexeitado, iso non é un ficheiro de texto",
+        "busy": "rexeitado, aínda hai unha busca en curso",
+        "name_taken": "rexeitado, ese nome xa existe",
+        "unknown_fields": "rexeitado, campos descoñecidos na busca",
         "other": "rematou con {code}"
       },
       "oauth": "Inicio de sesión con OAuth",

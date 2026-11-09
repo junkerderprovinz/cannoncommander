@@ -1386,6 +1386,13 @@
         "not_found": "niets gevonden",
         "timeout": "niet op tijd klaar",
         "failed": "mislukt",
+        "read_only": "geweigerd, de map is alleen-lezen",
+        "in_archive": "geweigerd, dat zit in een archief",
+        "source_root": "geweigerd, dat is een hele bron",
+        "binary": "geweigerd, dat is geen tekstbestand",
+        "busy": "geweigerd, er loopt nog een zoekopdracht",
+        "name_taken": "geweigerd, die naam bestaat al",
+        "unknown_fields": "geweigerd, onbekende velden in de zoekopdracht",
         "other": "geëindigd met {code}"
       },
       "oauth": "Inloggen via OAuth",

@@ -1434,6 +1434,13 @@
         "not_found": "nada encontrado",
         "timeout": "não terminou a tempo",
         "failed": "falhou",
+        "read_only": "recusado, a pasta é só de leitura",
+        "in_archive": "recusado, isso está dentro de um arquivo",
+        "source_root": "recusado, isso é uma origem inteira",
+        "binary": "recusado, isso não é um ficheiro de texto",
+        "busy": "recusado, ainda há uma pesquisa em curso",
+        "name_taken": "recusado, esse nome já existe",
+        "unknown_fields": "recusado, campos desconhecidos na pesquisa",
         "other": "terminou com {code}"
       },
       "oauth": "Início de sessão por OAuth",

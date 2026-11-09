@@ -1434,6 +1434,13 @@
         "not_found": "non è stato trovato nulla",
         "timeout": "non finito in tempo",
         "failed": "non riuscito",
+        "read_only": "rifiutato, la cartella è in sola lettura",
+        "in_archive": "rifiutato, si trova dentro un archivio",
+        "source_root": "rifiutato, è un'intera origine",
+        "binary": "rifiutato, non è un file di testo",
+        "busy": "rifiutato, c'è ancora una ricerca in corso",
+        "name_taken": "rifiutato, questo nome esiste già",
+        "unknown_fields": "rifiutato, campi sconosciuti nella ricerca",
         "other": "terminato con {code}"
       },
       "oauth": "Accesso tramite OAuth",

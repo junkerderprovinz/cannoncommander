@@ -1434,6 +1434,13 @@
         "not_found": "ništa nije pronađeno",
         "timeout": "nije završeno na vrijeme",
         "failed": "neuspjelo",
+        "read_only": "odbijeno, mapa je samo za čitanje",
+        "in_archive": "odbijeno, to je unutar arhive",
+        "source_root": "odbijeno, to je cijeli izvor",
+        "binary": "odbijeno, to nije tekstna datoteka",
+        "busy": "odbijeno, pretraživanje još traje",
+        "name_taken": "odbijeno, taj naziv već postoji",
+        "unknown_fields": "odbijeno, nepoznata polja u pretraživanju",
         "other": "završeno s {code}"
       },
       "oauth": "Prijava putem OAutha",

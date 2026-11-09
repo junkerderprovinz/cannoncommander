@@ -1386,6 +1386,13 @@
         "not_found": "ekkert fannst",
         "timeout": "lauk ekki í tæka tíð",
         "failed": "mistókst",
+        "read_only": "hafnað, mappan er skrifvarin",
+        "in_archive": "hafnað, þetta er inni í safnskrá",
+        "source_root": "hafnað, þetta er heil uppspretta",
+        "binary": "hafnað, þetta er ekki textaskrá",
+        "busy": "hafnað, leit er enn í gangi",
+        "name_taken": "hafnað, nafnið er þegar til",
+        "unknown_fields": "hafnað, óþekkt svið í leitinni",
         "other": "lauk með {code}"
       },
       "oauth": "Innskráning með OAuth",

@@ -1434,6 +1434,13 @@
         "not_found": "no s'ha trobat res",
         "timeout": "no ha acabat a temps",
         "failed": "ha fallat",
+        "read_only": "rebutjat, la carpeta és només de lectura",
+        "in_archive": "rebutjat, això és dins d'un arxiu",
+        "source_root": "rebutjat, això és un origen sencer",
+        "binary": "rebutjat, això no és un fitxer de text",
+        "busy": "rebutjat, encara hi ha una cerca en curs",
+        "name_taken": "rebutjat, aquest nom ja existeix",
+        "unknown_fields": "rebutjat, camps desconeguts a la cerca",
         "other": "ha acabat amb {code}"
       },
       "oauth": "Inici de sessió amb OAuth",

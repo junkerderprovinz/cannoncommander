@@ -1386,6 +1386,13 @@
         "not_found": "mitään ei löytynyt",
         "timeout": "ei valmistunut ajoissa",
         "failed": "epäonnistui",
+        "read_only": "hylätty, kansio on kirjoitussuojattu",
+        "in_archive": "hylätty, se on arkiston sisällä",
+        "source_root": "hylätty, se on kokonainen lähde",
+        "binary": "hylätty, se ei ole tekstitiedosto",
+        "busy": "hylätty, haku on vielä käynnissä",
+        "name_taken": "hylätty, nimi on jo käytössä",
+        "unknown_fields": "hylätty, haussa on tuntemattomia kenttiä",
         "other": "päättyi koodiin {code}"
       },
       "oauth": "Kirjautuminen OAuthilla",

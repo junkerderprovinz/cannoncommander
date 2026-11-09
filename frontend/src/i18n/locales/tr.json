@@ -1386,6 +1386,13 @@
         "not_found": "hiçbir şey bulunamadı",
         "timeout": "zamanında bitmedi",
         "failed": "başarısız",
+        "read_only": "reddedildi, klasör salt okunur",
+        "in_archive": "reddedildi, bu bir arşivin içinde",
+        "source_root": "reddedildi, bu bir kaynağın tamamı",
+        "binary": "reddedildi, bu bir metin dosyası değil",
+        "busy": "reddedildi, hâlâ bir arama sürüyor",
+        "name_taken": "reddedildi, bu ad zaten var",
+        "unknown_fields": "reddedildi, aramada bilinmeyen alanlar var",
         "other": "{code} ile bitti"
       },
       "oauth": "OAuth ile giriş",

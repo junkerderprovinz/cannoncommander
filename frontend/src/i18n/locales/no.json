@@ -1386,6 +1386,13 @@
         "not_found": "ingenting funnet",
         "timeout": "ikke ferdig i tide",
         "failed": "mislyktes",
+        "read_only": "avvist, mappen er skrivebeskyttet",
+        "in_archive": "avvist, det ligger i et arkiv",
+        "source_root": "avvist, det er en hel kilde",
+        "binary": "avvist, det er ikke en tekstfil",
+        "busy": "avvist, et søk pågår fortsatt",
+        "name_taken": "avvist, navnet finnes allerede",
+        "unknown_fields": "avvist, ukjente felt i søket",
         "other": "endte med {code}"
       },
       "oauth": "Pålogging via OAuth",

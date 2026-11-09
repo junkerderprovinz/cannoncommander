@@ -1386,6 +1386,13 @@
         "not_found": "midagi ei leitud",
         "timeout": "ei saanud õigel ajal valmis",
         "failed": "ebaõnnestus",
+        "read_only": "keeldutud, kaust on kirjutuskaitstud",
+        "in_archive": "keeldutud, see asub arhiivis",
+        "source_root": "keeldutud, see on terve allikas",
+        "binary": "keeldutud, see pole tekstifail",
+        "busy": "keeldutud, otsing alles käib",
+        "name_taken": "keeldutud, selline nimi on juba olemas",
+        "unknown_fields": "keeldutud, otsingus on tundmatud väljad",
         "other": "lõppes koodiga {code}"
       },
       "oauth": "Sisselogimine OAuthiga",

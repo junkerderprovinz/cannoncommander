@@ -1434,6 +1434,13 @@
         "not_found": "nu s-a găsit nimic",
         "timeout": "nu s-a terminat la timp",
         "failed": "eșuat",
+        "read_only": "refuzat, dosarul este doar pentru citire",
+        "in_archive": "refuzat, asta se află într-o arhivă",
+        "source_root": "refuzat, asta e o sursă întreagă",
+        "binary": "refuzat, asta nu e un fișier text",
+        "busy": "refuzat, o căutare încă rulează",
+        "name_taken": "refuzat, numele există deja",
+        "unknown_fields": "refuzat, câmpuri necunoscute în căutare",
         "other": "s-a încheiat cu {code}"
       },
       "oauth": "Autentificare prin OAuth",

@@ -1386,6 +1386,13 @@
         "not_found": "nincs találat",
         "timeout": "nem készült el időben",
         "failed": "sikertelen",
+        "read_only": "elutasítva, a mappa írásvédett",
+        "in_archive": "elutasítva, ez egy archívumon belül van",
+        "source_root": "elutasítva, ez egy teljes forrás",
+        "binary": "elutasítva, ez nem szövegfájl",
+        "busy": "elutasítva, még fut egy keresés",
+        "name_taken": "elutasítva, ez a név már foglalt",
+        "unknown_fields": "elutasítva, ismeretlen mezők a keresésben",
         "other": "vége, kód: {code}"
       },
       "oauth": "Belépés OAuth-tal",

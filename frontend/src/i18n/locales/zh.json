@@ -1338,6 +1338,13 @@
         "not_found": "未找到",
         "timeout": "未能按时完成",
         "failed": "失败",
+        "read_only": "已拒绝：文件夹为只读",
+        "in_archive": "已拒绝：它位于压缩包内",
+        "source_root": "已拒绝：这是整个源",
+        "binary": "已拒绝：这不是文本文件",
+        "busy": "已拒绝：仍有搜索在进行",
+        "name_taken": "已拒绝：该名称已存在",
+        "unknown_fields": "已拒绝：搜索中有未知字段",
         "other": "以 {code} 结束"
       },
       "oauth": "通过 OAuth 登录",

@@ -1386,6 +1386,13 @@
         "not_found": "inget hittades",
         "timeout": "blev inte klart i tid",
         "failed": "misslyckades",
+        "read_only": "avvisat, mappen är skrivskyddad",
+        "in_archive": "avvisat, det ligger i ett arkiv",
+        "source_root": "avvisat, det är en hel källa",
+        "binary": "avvisat, det är ingen textfil",
+        "busy": "avvisat, en sökning pågår fortfarande",
+        "name_taken": "avvisat, namnet finns redan",
+        "unknown_fields": "avvisat, okända fält i sökningen",
         "other": "avslutades med {code}"
       },
       "oauth": "Inloggning via OAuth",

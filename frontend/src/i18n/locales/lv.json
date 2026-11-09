@@ -1434,6 +1434,13 @@
         "not_found": "nekas netika atrasts",
         "timeout": "netika pabeigts laikā",
         "failed": "neizdevās",
+        "read_only": "noraidīts, mape ir tikai lasāma",
+        "in_archive": "noraidīts, tas atrodas arhīvā",
+        "source_root": "noraidīts, tas ir vesels avots",
+        "binary": "noraidīts, tas nav teksta fails",
+        "busy": "noraidīts, vēl notiek meklēšana",
+        "name_taken": "noraidīts, šāds nosaukums jau ir",
+        "unknown_fields": "noraidīts, meklēšanā ir nezināmi lauki",
         "other": "beidzās ar {code}"
       },
       "oauth": "Pieteikšanās ar OAuth",

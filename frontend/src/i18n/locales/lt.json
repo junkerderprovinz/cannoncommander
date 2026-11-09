@@ -1482,6 +1482,13 @@
         "not_found": "nieko nerasta",
         "timeout": "nebaigta laiku",
         "failed": "nepavyko",
+        "read_only": "atmesta, aplankas tik skaitymui",
+        "in_archive": "atmesta, tai yra archyve",
+        "source_root": "atmesta, tai visas šaltinis",
+        "binary": "atmesta, tai ne tekstinis failas",
+        "busy": "atmesta, paieška dar vyksta",
+        "name_taken": "atmesta, toks pavadinimas jau yra",
+        "unknown_fields": "atmesta, paieškoje nežinomi laukai",
         "other": "baigėsi kodu {code}"
       },
       "oauth": "Prisijungimas per OAuth",

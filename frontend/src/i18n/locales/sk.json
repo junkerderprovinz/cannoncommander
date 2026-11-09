@@ -1482,6 +1482,13 @@
         "not_found": "nič sa nenašlo",
         "timeout": "nedokončené včas",
         "failed": "zlyhalo",
+        "read_only": "odmietnuté, priečinok je iba na čítanie",
+        "in_archive": "odmietnuté, to je v archíve",
+        "source_root": "odmietnuté, to je celý zdroj",
+        "binary": "odmietnuté, to nie je textový súbor",
+        "busy": "odmietnuté, ešte beží hľadanie",
+        "name_taken": "odmietnuté, tento názov už existuje",
+        "unknown_fields": "odmietnuté, neznáme polia v hľadaní",
         "other": "skončilo s {code}"
       },
       "oauth": "Prihlásenie cez OAuth",

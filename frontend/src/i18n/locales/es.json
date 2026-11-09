@@ -1434,6 +1434,13 @@
         "not_found": "no se encontró nada",
         "timeout": "no terminó a tiempo",
         "failed": "falló",
+        "read_only": "rechazado, la carpeta es de solo lectura",
+        "in_archive": "rechazado, eso está dentro de un archivo comprimido",
+        "source_root": "rechazado, eso es un origen entero",
+        "binary": "rechazado, eso no es un archivo de texto",
+        "busy": "rechazado, aún hay una búsqueda en curso",
+        "name_taken": "rechazado, ese nombre ya existe",
+        "unknown_fields": "rechazado, campos desconocidos en la búsqueda",
         "other": "terminó con {code}"
       },
       "oauth": "Inicio de sesión con OAuth",

@@ -1482,6 +1482,13 @@
         "not_found": "nic nie znaleziono",
         "timeout": "nie skończono na czas",
         "failed": "niepowodzenie",
+        "read_only": "odrzucono, folder jest tylko do odczytu",
+        "in_archive": "odrzucono, to jest w archiwum",
+        "source_root": "odrzucono, to całe źródło",
+        "binary": "odrzucono, to nie jest plik tekstowy",
+        "busy": "odrzucono, wyszukiwanie wciąż trwa",
+        "name_taken": "odrzucono, ta nazwa już istnieje",
+        "unknown_fields": "odrzucono, nieznane pola w wyszukiwaniu",
         "other": "zakończono z {code}"
       },
       "oauth": "Logowanie przez OAuth",

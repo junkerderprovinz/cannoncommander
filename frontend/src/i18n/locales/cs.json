@@ -1482,6 +1482,13 @@
         "not_found": "nic nenalezeno",
         "timeout": "nedokončeno včas",
         "failed": "selhalo",
+        "read_only": "odmítnuto, složka je jen pro čtení",
+        "in_archive": "odmítnuto, to je uvnitř archivu",
+        "source_root": "odmítnuto, to je celý zdroj",
+        "binary": "odmítnuto, to není textový soubor",
+        "busy": "odmítnuto, ještě běží hledání",
+        "name_taken": "odmítnuto, tento název už existuje",
+        "unknown_fields": "odmítnuto, neznámá pole ve vyhledávání",
         "other": "skončilo s {code}"
       },
       "oauth": "Přihlášení přes OAuth",

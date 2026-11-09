@@ -1434,6 +1434,13 @@
         "not_found": "rien trouvé",
         "timeout": "pas terminé à temps",
         "failed": "échec",
+        "read_only": "refusé, le dossier est en lecture seule",
+        "in_archive": "refusé, c'est dans une archive",
+        "source_root": "refusé, c'est une source entière",
+        "binary": "refusé, ce n'est pas un fichier texte",
+        "busy": "refusé, une recherche est encore en cours",
+        "name_taken": "refusé, ce nom existe déjà",
+        "unknown_fields": "refusé, champs inconnus dans la recherche",
         "other": "terminé avec {code}"
       },
       "oauth": "Connexion par OAuth",

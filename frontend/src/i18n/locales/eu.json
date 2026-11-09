@@ -1386,6 +1386,13 @@
         "not_found": "ez da ezer aurkitu",
         "timeout": "ez da garaiz amaitu",
         "failed": "huts egin du",
+        "read_only": "ukatuta, karpeta irakurtzeko soilik da",
+        "in_archive": "ukatuta, hori artxibo baten barruan dago",
+        "source_root": "ukatuta, hori iturburu oso bat da",
+        "binary": "ukatuta, hori ez da testu-fitxategi bat",
+        "busy": "ukatuta, bilaketa bat abian dago oraindik",
+        "name_taken": "ukatuta, izen hori badago lehendik",
+        "unknown_fields": "ukatuta, eremu ezezagunak bilaketan",
         "other": "{code} kodearekin amaitu da"
       },
       "oauth": "OAuth bidezko saio-hasiera",
