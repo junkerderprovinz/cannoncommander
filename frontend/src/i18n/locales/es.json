@@ -841,7 +841,7 @@
         "url": "La dirección completa del almacenamiento, con la ruta que sigue al nombre del servidor. Una nube la muestra en sus ajustes, en WebDAV.",
         "user": "El nombre con el que inicias sesión, no el nombre visible.",
         "pass": "La contraseña de esta cuenta. Si el servicio ofrece contraseñas de aplicación, una de ellas es más segura.",
-        "passCloud": "Aquí va una contraseña de aplicación, no tu contraseña de inicio de sesión. Nextcloud la crea en Ajustes, Seguridad, y OpenCloud en Cuenta, Tokens de aplicación.",
+        "passCloud": "Aquí va una contraseña de aplicación, no tu contraseña de inicio de sesión. Nextcloud la crea en Ajustes personales, Seguridad, y OpenCloud en Account, App Tokens.",
         "host": "El nombre o la IP del equipo, por ejemplo nas o 192.168.1.20, sin http:// y sin ruta.",
         "port": "Solo si el servicio no escucha en su puerto habitual.",
         "accessKey": "El ID de la clave, la mitad más corta y pública del par.",

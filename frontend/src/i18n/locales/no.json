@@ -806,7 +806,7 @@
         "url": "Hele adressen til lagringen, med stien bak servernavnet. En sky viser den i innstillingene sine under WebDAV.",
         "user": "Navnet du logger inn med, ikke visningsnavnet.",
         "pass": "Passordet til denne kontoen. Der tjenesten tilbyr app-passord, er et slikt tryggere.",
-        "passCloud": "Her skal det inn et app-passord, ikke innloggingspassordet ditt. Nextcloud lager et under Innstillinger, Sikkerhet, og OpenCloud under Konto, App-tokens.",
+        "passCloud": "Her skal det inn et app-passord, ikke innloggingspassordet ditt. Nextcloud lager et under Personlige innstillinger, Sikkerhet, og OpenCloud under Konto, App-token.",
         "host": "Navnet eller IP-en til maskinen, for eksempel nas eller 192.168.1.20, uten http:// og uten sti.",
         "port": "Bare når tjenesten ikke lytter på den vanlige porten sin.",
         "accessKey": "Nøkkel-ID-en, den korte og offentlige halvdelen av paret.",

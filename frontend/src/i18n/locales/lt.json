@@ -876,13 +876,13 @@
         "url": "Visas saugyklos adresas, kartu su keliu po serverio pavadinimo. Debesis jį rodo savo nustatymuose, prie WebDAV.",
         "user": "Vardas, kuriuo prisijungi, ne rodomas vardas.",
         "pass": "Šios paskyros slaptažodis. Jei paslauga siūlo programų slaptažodžius, vienas iš jų saugesnis.",
-        "passCloud": "Čia įrašyk programos slaptažodį, ne prisijungimo slaptažodį. Nextcloud jį sukuria skiltyje Nustatymai, Saugumas, OpenCloud skiltyje Paskyra, Programų žetonai.",
+        "passCloud": "Čia įrašyk programos slaptažodį, ne prisijungimo slaptažodį. Nextcloud jį sukuria skiltyje Asmeniniai nustatymai, Saugumas, OpenCloud skiltyje Account, App Tokens.",
         "host": "Kompiuterio pavadinimas arba IP, pvz., nas ar 192.168.1.20, be http:// ir be kelio.",
         "port": "Tik jei paslauga klauso ne įprasto prievado.",
         "accessKey": "Rakto ID, trumpesnė ir vieša poros pusė.",
         "secretKey": "Slaptoji poros pusė. Ji parodoma tik kartą, kai raktas sukuriamas.",
         "endpoint": "Tavo serverio adresas su prievadu, pvz., http://192.168.1.20:9000. Pačiam Amazon palik tuščią.",
-        "region": "Regionas, kuriame yra kibiras. Savo saugyklos dažniausiai priima bet kokį žodį, us-east-1 tinka beveik visada.",
+        "region": "Regionas, kuriame yra bucket'as. Savo saugyklos dažniausiai priima bet kokį žodį, us-east-1 tinka beveik visada.",
         "vendor": "Koks tai WebDAV serveris. Jei abejoji, rinkis other.",
         "keyFile": "Kelias iki privataus rakto serveryje, kuriame veikia CannonCommander.",
         "remote": "Nuotolinė vieta, kuria remiasi ši, jei nori, su aplanku, pvz., nas:photos.",
@@ -910,12 +910,12 @@
       "path": {
         "folder": "Aplankas",
         "share": "Bendrinimas",
-        "bucket": "Kibiras"
+        "bucket": "Bucket"
       },
       "pathTip": {
         "folder": "Palik tuščią, jei nori visko, arba nurodyk aplanką, pvz., /Photos.",
         "share": "Bendrinamas aplankas serveryje. Bandymas be jo išvardija bendrinimus, iš kurių gali rinktis.",
-        "bucket": "Palik tuščią, jei nori visų kibirų, kuriuos raktas mato, arba nurodyk vieną."
+        "bucket": "Palik tuščią, jei nori visų bucket'ų, kuriuos raktas mato, arba nurodyk vieną."
       },
       "pickShare": "Pasirink bendrinimą",
       "hostKey": "Serverio raktas",

@@ -876,7 +876,7 @@
         "url": "Pełny adres magazynu, razem ze ścieżką za nazwą serwera. Chmura pokazuje go w swoich ustawieniach przy WebDAV.",
         "user": "Nazwa, którą się logujesz, a nie nazwa wyświetlana.",
         "pass": "Hasło do tego konta. Jeśli usługa oferuje hasła aplikacji, któreś z nich będzie bezpieczniejsze.",
-        "passCloud": "Tu wpisz hasło aplikacji, a nie hasło logowania. Nextcloud tworzy je w Ustawienia, Bezpieczeństwo, a OpenCloud w Konto, Tokeny aplikacji.",
+        "passCloud": "Tu wpisz hasło aplikacji, a nie hasło logowania. Nextcloud tworzy je w Ustawienia osobiste, Bezpieczeństwo, a OpenCloud w Konto, Tokeny aplikacji.",
         "host": "Nazwa lub IP maszyny, na przykład nas albo 192.168.1.20, bez http:// i bez ścieżki.",
         "port": "Tylko gdy usługa nie nasłuchuje na swoim zwykłym porcie.",
         "accessKey": "Identyfikator klucza, krótsza i jawna połowa pary.",

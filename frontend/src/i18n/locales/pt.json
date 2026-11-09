@@ -841,7 +841,7 @@
         "url": "O endereço completo do armazenamento, com o caminho depois do nome do servidor. Uma nuvem mostra-o nas definições, em WebDAV.",
         "user": "O nome com que inicia sessão, não o nome a apresentar.",
         "pass": "A palavra-passe desta conta. Se o serviço oferecer palavras-passe de aplicação, uma delas é mais segura.",
-        "passCloud": "Aqui vai uma palavra-passe de aplicação, não a sua palavra-passe de início de sessão. O Nextcloud cria-a em Definições, Segurança, e o OpenCloud em Conta, Tokens de aplicação.",
+        "passCloud": "Aqui vai uma palavra-passe de aplicação, não a sua palavra-passe de início de sessão. O Nextcloud cria-a em Configurações pessoais, Segurança, e o OpenCloud em Conta, Tokens de aplicação.",
         "host": "O nome ou o IP da máquina, por exemplo nas ou 192.168.1.20, sem http:// e sem caminho.",
         "port": "Só quando o serviço não escuta na porta habitual.",
         "accessKey": "O ID da chave, a metade mais curta e pública do par.",

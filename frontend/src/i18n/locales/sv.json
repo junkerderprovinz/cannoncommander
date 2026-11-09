@@ -806,7 +806,7 @@
         "url": "Lagringens fullständiga adress, med sökvägen efter servernamnet. Ett moln visar den i sina inställningar under WebDAV.",
         "user": "Namnet du loggar in med, inte visningsnamnet.",
         "pass": "Lösenordet till det här kontot. Om tjänsten erbjuder applösenord är ett sådant säkrare.",
-        "passCloud": "Här hör ett applösenord hemma, inte ditt inloggningslösenord. Nextcloud skapar ett under Inställningar, Säkerhet och OpenCloud under Konto, App-tokens.",
+        "passCloud": "Här hör ett applösenord hemma, inte ditt inloggningslösenord. Nextcloud skapar ett under Personliga inställningar, Säkerhet och OpenCloud under Konto, App-tokens.",
         "host": "Datorns namn eller IP, till exempel nas eller 192.168.1.20, utan http:// och utan sökväg.",
         "port": "Bara om tjänsten inte lyssnar på sin vanliga port.",
         "accessKey": "Nyckel-ID:t, den kortare och offentliga halvan av paret.",

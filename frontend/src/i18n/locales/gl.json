@@ -806,7 +806,7 @@
         "url": "O enderezo completo do almacenamento, coa ruta que vai despois do nome do servidor. Unha nube móstrao na súa configuración, en WebDAV.",
         "user": "O nome co que inicias sesión, non o nome visible.",
         "pass": "O contrasinal desta conta. Se o servizo ofrece contrasinais de aplicación, un deles é máis seguro.",
-        "passCloud": "Aquí vai un contrasinal de aplicación, non o teu contrasinal de acceso. Nextcloud crea un en Configuración, Seguranza, e OpenCloud en Conta, Tokens de aplicación.",
+        "passCloud": "Aquí vai un contrasinal de aplicación, non o teu contrasinal de acceso. Nextcloud crea un en Axustes persoais, Seguranza, e OpenCloud en Account, App Tokens.",
         "host": "O nome ou a IP da máquina, como nas ou 192.168.1.20, sen http:// e sen ruta.",
         "port": "Só se o servizo non escoita no seu porto habitual.",
         "accessKey": "O ID da chave, a metade máis curta e pública do par.",

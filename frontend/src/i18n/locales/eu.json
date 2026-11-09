@@ -1271,7 +1271,7 @@
         "url": "Biltegiaren helbide osoa, zerbitzariaren izenaren ondoko bidea barne. Hodei batek bere ezarpenetan erakusten du, WebDAV atalean.",
         "user": "Saioa hasteko erabiltzen duzun izena, ez bistaratzeko izena.",
         "pass": "Kontu honen pasahitza. Zerbitzuak aplikazio-pasahitzak eskaintzen baditu, horietako bat seguruagoa da.",
-        "passCloud": "Hemen aplikazio-pasahitz bat doa, ez zure saio-hasierako pasahitza. Nextcloud-ek Ezarpenak, Segurtasuna atalean sortzen du, eta OpenCloud-ek Kontua, Aplikazio-tokenak atalean.",
+        "passCloud": "Hemen aplikazio-pasahitz bat doa, ez zure saio-hasierako pasahitza. Nextcloud-ek Ezarpen pertsonalak, Segurtasuna atalean sortzen du, eta OpenCloud-ek Account, App Tokens atalean.",
         "host": "Makinaren izena edo IPa, adibidez nas edo 192.168.1.20, http:// gabe eta biderik gabe.",
         "port": "Zerbitzuak bere ohiko atakan entzuten ez badu bakarrik.",
         "accessKey": "Gakoaren IDa, bikotearen erdi laburragoa eta publikoa.",

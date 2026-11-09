@@ -841,7 +841,7 @@
         "url": "L'adresse complète du stockage, avec le chemin après le nom du serveur. Un cloud l'affiche dans ses paramètres, sous WebDAV.",
         "user": "Le nom avec lequel vous vous connectez, pas le nom affiché.",
         "pass": "Le mot de passe de ce compte. Si le service propose des mots de passe d'application, l'un d'eux est plus sûr.",
-        "passCloud": "Il faut ici un mot de passe d'application, pas votre mot de passe de connexion. Nextcloud en crée un sous Paramètres, Sécurité, et OpenCloud sous Compte, Jetons d'application.",
+        "passCloud": "Il faut ici un mot de passe d'application, pas votre mot de passe de connexion. Nextcloud en crée un sous Paramètres personnels, Sécurité, et OpenCloud sous Compte, Jetons d'application.",
         "host": "Le nom ou l'IP de la machine, par exemple nas ou 192.168.1.20, sans http:// et sans chemin.",
         "port": "Seulement si le service n'écoute pas sur son port habituel.",
         "accessKey": "L'ID de la clé, la moitié la plus courte et publique de la paire.",

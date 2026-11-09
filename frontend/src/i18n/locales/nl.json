@@ -806,7 +806,7 @@
         "url": "Het volledige adres van de opslag, met het pad achter de servernaam. Een cloud toont het in zijn instellingen onder WebDAV.",
         "user": "De naam waarmee je inlogt, niet de weergavenaam.",
         "pass": "Het wachtwoord van dit account. Biedt de dienst app-wachtwoorden aan, dan is zo'n wachtwoord veiliger.",
-        "passCloud": "Hier hoort een app-wachtwoord, niet je inlogwachtwoord. Nextcloud maakt er een aan onder Instellingen, Beveiliging, OpenCloud onder Account, App-tokens.",
+        "passCloud": "Hier hoort een app-wachtwoord, niet je inlogwachtwoord. Nextcloud maakt er een aan onder Persoonlijke instellingen, Beveiliging, OpenCloud onder Account, App-tokens.",
         "host": "De naam of het IP-adres van de machine, zoals nas of 192.168.1.20, zonder http:// en zonder pad.",
         "port": "Alleen als de dienst niet op zijn gebruikelijke poort luistert.",
         "accessKey": "De sleutel-ID, de kortere en openbare helft van het paar.",

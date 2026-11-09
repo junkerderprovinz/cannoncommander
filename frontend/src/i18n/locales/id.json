@@ -771,7 +771,7 @@
         "url": "Alamat lengkap penyimpanan, termasuk jalur di belakang nama server. Layanan awan menampilkannya di pengaturannya, di bagian WebDAV.",
         "user": "Nama yang Anda pakai untuk masuk, bukan nama tampilan.",
         "pass": "Kata sandi akun ini. Jika layanan menawarkan kata sandi aplikasi, salah satunya lebih aman.",
-        "passCloud": "Di sini diisi kata sandi aplikasi, bukan kata sandi masuk Anda. Nextcloud membuatnya di Pengaturan, Keamanan, dan OpenCloud di Akun, Token aplikasi.",
+        "passCloud": "Di sini diisi kata sandi aplikasi, bukan kata sandi masuk Anda. Nextcloud membuatnya di Pengaturan pribadi, Keamanan, dan OpenCloud di Account, App Tokens.",
         "host": "Nama atau IP mesin, misalnya nas atau 192.168.1.20, tanpa http:// dan tanpa jalur.",
         "port": "Hanya jika layanan tidak mendengarkan di port biasanya.",
         "accessKey": "ID kunci, separuh pasangan yang lebih pendek dan bersifat publik.",
