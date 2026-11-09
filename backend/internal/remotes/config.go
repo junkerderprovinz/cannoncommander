@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/system"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -26,7 +27,9 @@ type Config struct {
 
 // ConfigFromEnv returns the defaults with the CC_RCLONE_* variables applied.
 // Dir defaults to a folder next to the database, which in the container is
-// /config/rclone.
+// /config/rclone. The desktop app mounts nothing: it brings neither rclone
+// nor WinFsp or FUSE along, and /remotes is no folder a user may make on a
+// computer of their own.
 func ConfigFromEnv() Config {
 	c := Config{
 		Binary: system.RcloneBinary(),
@@ -42,6 +45,9 @@ func ConfigFromEnv() Config {
 		if v := os.Getenv(env); v != "" {
 			*dst = v
 		}
+	}
+	if desktop.Active() {
+		c.Binary = ""
 	}
 	return c
 }

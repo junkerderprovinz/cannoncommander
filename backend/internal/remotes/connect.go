@@ -7,6 +7,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"maps"
+	"net"
 	"net/http"
 	"slices"
 	"strings"
@@ -24,12 +26,38 @@ type TestResult struct {
 	Used    *int64 `json:"used,omitempty"`
 	Free    *int64 `json:"free,omitempty"`
 	Error   string `json:"error,omitempty"`
+	// Failure names the reason where the interface has a sentence for it.
+	Failure string `json:"failure,omitempty"`
+	// HostKey is the key the SFTP server showed, to compare with the one its
+	// owner sees. Saving pins the remote to it.
+	HostKey *HostKey `json:"hostKey,omitempty"`
+	// Shares are what an SMB server offers, when the form names none yet.
+	Shares []string `json:"shares,omitempty"`
+	// Question is what rclone's setup wants chosen before it can go on.
+	Question *Question `json:"question,omitempty"`
 }
 
-// Test tries a configuration without saving it. It lists the folder of the
-// remote through a section that lives for the test only. With the name of
-// a saved remote of the same type, the saved parameters fill in what the
-// form left out, such as a password shown as unchanged.
+// Failures the interface explains in its own words.
+const (
+	failTimeout = "timeout"
+	failHostKey = "hostKey"
+	failMissing = "missing"
+	failAddress = "address"
+)
+
+const testWait = 45 * time.Second
+
+// addressKeys decide which server a connection reaches and as whom. A saved
+// secret only joins a test whose form names the same ones, so a password
+// never travels to a server the form names instead.
+var addressKeys = []string{"host", "port", "user", "url", "endpoint", "auth", "auth_url", "token_url", "api_url"}
+
+// Test tries a configuration without saving it and without writing to the
+// remote. It lists the folder of the remote through a connection string,
+// which leaves rclone.conf alone. Only a fresh OAuth token or a picked answer
+// needs rclone's own setup, which runs on a section that lives for the test.
+// With the name of a saved remote of the same type, the saved parameters
+// fill in what the form left out, such as a password shown as unchanged.
 func (s *Service) Test(ctx context.Context, in Input) (TestResult, error) {
 	if err := s.ready(ctx, readyWait); err != nil {
 		return TestResult{}, err
@@ -38,21 +66,28 @@ func (s *Service) Test(ctx context.Context, in Input) (TestResult, error) {
 	if err != nil {
 		return TestResult{}, err
 	}
-	set, unset, token, err := s.params(ctx, p, in.Params)
+	set, unset, token, picked, err := s.params(ctx, p, in.Params)
 	if err != nil {
 		return TestResult{}, err
 	}
+	freshToken := token != ""
 	if r, ok, _ := s.db.get(ctx, strings.TrimSpace(in.Name)); ok && r.Type == in.Type {
 		stored, err := s.section(ctx, r.Name)
 		if err != nil {
 			return TestResult{}, err
 		}
+		same := !slices.ContainsFunc(addressKeys, func(k string) bool {
+			given, ok := set[k]
+			return ok && given != stored[k]
+		})
 		for k, v := range stored {
-			if _, given := set[k]; !given && k != "type" && !slices.Contains(unset, k) {
-				set[k] = v
+			// Another server is no reason to trust the old one's key either.
+			if _, given := set[k]; given || k == "type" || slices.Contains(unset, k) || ((p.secret(k) || k == hostKeysKey) && !same) {
+				continue
 			}
+			set[k] = v
 		}
-		if token == "" {
+		if token == "" && same {
 			token = stored["token"]
 		}
 	}
@@ -60,24 +95,67 @@ func (s *Service) Test(ctx context.Context, in Input) (TestResult, error) {
 	if in.Path != nil {
 		path = strings.TrimSpace(*in.Path)
 	}
-	tmp := tryPrefix + randomID()
-	defer s.forget(tmp)
-	if err := s.createSection(ctx, tmp, in.Type, set, token); err != nil {
-		return failedTest(err)
+
+	res := TestResult{}
+	if in.Type == "sftp" && set["host"] != "" {
+		if pin, ok := pinnedKey(set[hostKeysKey]); ok {
+			res.HostKey = &pin
+		} else if !checksHostKey(set) {
+			key, err := s.readKey(ctx, set["host"], set["port"])
+			if err != nil {
+				return failed(res, err, "")
+			}
+			set[hostKeysKey] = key.Pin
+			res.HostKey = &key
+		}
 	}
-	listCtx, cancel := context.WithTimeout(ctx, 45*time.Second)
+
+	base := connString(p, in.Type, set)
+	if (freshToken && p.oauth()) || len(picked) > 0 {
+		tmp := tryPrefix + randomID()
+		defer s.forget(tmp)
+		if err := s.createSection(ctx, tmp, in.Type, set, token, withSetupAnswers(in.Type, picked)); err != nil {
+			if asks, ok := errors.AsType[errAsks](err); ok {
+				res.Question = asks.q
+				return res, nil
+			}
+			return failed(res, err, "")
+		}
+		base = tmp + ":"
+	}
+
+	listCtx, cancel := context.WithTimeout(ctx, testWait)
 	defer cancel()
 	var list struct {
-		List []json.RawMessage `json:"list"`
+		List []struct {
+			Name  string `json:"Name"`
+			IsDir bool   `json:"IsDir"`
+		} `json:"list"`
 	}
 	err = s.rc.call(listCtx, "operations/list", map[string]any{
-		"fs": tmp + ":" + path, "remote": "",
+		"fs": base + path, "remote": "",
 		"opt": map[string]any{"noModTime": true, "noMimeType": true},
 	}, &list)
-	if err != nil {
-		return failedTest(err)
+	switch {
+	case err != nil && notFound(err) && path != "":
+		return failed(res, scrub(err, base), failMissing)
+	case err != nil && notFound(err) && (in.Type == "webdav" || in.Type == "http"):
+		// A WebDAV root is the address itself, so nothing there means a
+		// wrong address rather than an empty remote.
+		return failed(res, scrub(err, base), failAddress)
+	case err != nil && notFound(err):
+	case err != nil:
+		return failed(res, scrub(err, base), "")
 	}
-	res := TestResult{OK: true, Entries: len(list.List)}
+	res.OK, res.Entries = true, len(list.List)
+	if in.Type == "smb" && path == "" {
+		res.Shares = []string{}
+		for _, e := range list.List {
+			if e.IsDir {
+				res.Shares = append(res.Shares, e.Name)
+			}
+		}
+	}
 	aboutCtx, cancelAbout := context.WithTimeout(ctx, 10*time.Second)
 	defer cancelAbout()
 	var about struct {
@@ -85,26 +163,81 @@ func (s *Service) Test(ctx context.Context, in Input) (TestResult, error) {
 		Used  *int64 `json:"used"`
 		Free  *int64 `json:"free"`
 	}
-	if s.rc.call(aboutCtx, "operations/about", map[string]string{"fs": tmp + ":"}, &about) == nil {
+	if s.rc.call(aboutCtx, "operations/about", map[string]string{"fs": base}, &about) == nil {
 		res.Total, res.Used, res.Free = about.Total, about.Used, about.Free
 	}
 	return res, nil
 }
 
-// failedTest turns what rclone said about a configuration into a result.
-// Only a missing rclone is an error of the request.
-func failedTest(err error) (TestResult, error) {
+func notFound(err error) bool {
+	rc, ok := errors.AsType[*rcError](err)
+	return ok && strings.Contains(rc.Msg, "directory not found")
+}
+
+// failed turns what went wrong into a result. Only a missing rclone is an
+// error of the request.
+func failed(res TestResult, err error, why string) (TestResult, error) {
 	var rc *rcError
 	var p *v1.Problem
+	var ne net.Error
 	switch {
+	case errors.Is(err, errNotRunning) || errors.Is(err, errUnavailable):
+		return TestResult{}, err
+	case errors.Is(err, context.DeadlineExceeded) || (errors.As(err, &ne) && ne.Timeout()):
+		res.Error, res.Failure = "the remote did not answer in time", failTimeout
 	case errors.As(err, &rc):
-		return TestResult{Error: rc.Msg}, nil
+		res.Error = rc.Msg
 	case errors.As(err, &p) && p.Status == http.StatusBadRequest:
-		return TestResult{Error: p.Detail}, nil
-	case errors.Is(err, context.DeadlineExceeded):
-		return TestResult{Error: "the remote did not answer in time"}, nil
+		res.Error = p.Detail
+	default:
+		res.Error = err.Error()
 	}
-	return TestResult{}, err
+	if strings.Contains(res.Error, "host key mismatch") {
+		res.Failure = failHostKey
+	}
+	if why != "" {
+		res.Failure = why
+	}
+	return res, nil
+}
+
+// scrub takes the connection string out of what rclone says, since it
+// carries the obscured password.
+func scrub(err error, fs string) error {
+	rc, ok := errors.AsType[*rcError](err)
+	if !ok || !strings.HasPrefix(fs, ":") {
+		return err
+	}
+	typ, _, _ := strings.Cut(strings.Trim(fs, ":"), ",")
+	return &rcError{Method: rc.Method, Status: rc.Status, Msg: strings.ReplaceAll(rc.Msg, fs, ":"+typ+":")}
+}
+
+// connString is rclone's inline remote, :backend,k=v,k=v:, with the keys
+// sorted. rclone reads it like a section of rclone.conf, so passwords go in
+// obscured as params left them.
+func connString(p *provider, typ string, params map[string]string) string {
+	var b strings.Builder
+	b.WriteString(":" + typ)
+	for _, k := range slices.Sorted(maps.Keys(params)) {
+		if _, ok := p.option(k); !ok || params[k] == "" {
+			continue
+		}
+		b.WriteString("," + k + "=" + quoteValue(params[k]))
+	}
+	return b.String() + ":"
+}
+
+// quoteValue wraps a value in double quotes, doubling any inside, unless
+// every character is safe bare. It allows rather than forbids, because the
+// separators include the colon every URL has.
+func quoteValue(v string) string {
+	bare := v != "" && !strings.ContainsFunc(v, func(r rune) bool {
+		return (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') && (r < '0' || r > '9') && !strings.ContainsRune("-_.~", r)
+	})
+	if bare {
+		return v
+	}
+	return `"` + strings.ReplaceAll(v, `"`, `""`) + `"`
 }
 
 func randomID() string {

@@ -57,6 +57,14 @@ func bind(r *v1.Router, s *Service) {
 
 type handlers struct{ s *Service }
 
+// Catalog is what the add dialog picks from: the products by name, and the
+// rclone backends no product stands for.
+type Catalog struct {
+	Types     []Type     `json:"types"`
+	Providers []Provider `json:"providers"`
+	Unlisted  []string   `json:"unlisted"`
+}
+
 func admin(r *http.Request) bool {
 	u := v1.UserFrom(r)
 	return u != nil && u.Permissions.Admin
@@ -100,7 +108,8 @@ func (h handlers) types(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return problem(err)
 	}
-	return v1.WriteJSON(w, r, http.StatusOK, map[string][]Type{"types": out})
+	provs, unlisted := providersFor(out)
+	return v1.WriteJSON(w, r, http.StatusOK, Catalog{Types: out, Providers: provs, Unlisted: unlisted})
 }
 
 func (h handlers) create(w http.ResponseWriter, r *http.Request) error {
