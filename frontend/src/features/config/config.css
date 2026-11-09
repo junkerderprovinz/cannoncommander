@@ -31,6 +31,7 @@
    protocols, and a protocol's glyph in the accent until its tile lights up. */
 .a-picks { display: flex; flex-direction: column; gap: 1.5rem; }
 .a-pgroup { display: flex; flex-direction: column; gap: .75rem; }
+.a-pgroup > .glim-eyebrow { margin: 0; }
 .a-pglyph { color: var(--accent-glyph); }
 .glim-readme-btn-unit:is(:hover, :focus-within) .a-pglyph { color: inherit; }
 .a-pmore { margin: .25rem 0 0; font-size: 12px; font-weight: 400; color: var(--carbon-text-muted); }
