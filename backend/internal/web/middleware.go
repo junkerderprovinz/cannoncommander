@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/auth"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
@@ -72,7 +71,6 @@ func withUserHelper(fn handleFunc) handleFunc {
 			return fn(w, r, data)
 		}
 
-		keyFunc := auth.JWTSigningKeyFunc()
 		if data.Token == "" {
 			var err error
 			data.Token, err = ExtractToken(r)
@@ -82,21 +80,15 @@ func withUserHelper(fn handleFunc) handleFunc {
 		}
 
 		var tk users.AuthToken
-		token, err := jwt.ParseWithClaims(data.Token, &tk, keyFunc)
+		token, err := auth.ParseToken(data.Token, &tk)
 		if err != nil {
-			// JWT library automatically validates expiration - if expired, it returns an error
-			return http.StatusUnauthorized, fmt.Errorf("invalid token: %v", err)
+			return http.StatusUnauthorized, fmt.Errorf("invalid token: %w", err)
 		}
 		if !token.Valid {
 			return http.StatusUnauthorized, fmt.Errorf("invalid token")
 		}
 		if state.IsTokenRevoked(data.Token) {
 			return http.StatusUnauthorized, fmt.Errorf("token is expired or revoked")
-		}
-		// ExpiresAt should always be set in valid tokens created by our system
-		// JWT library populates RegisteredClaims.ExpiresAt
-		if tk.RegisteredClaims.ExpiresAt == nil {
-			return http.StatusUnauthorized, fmt.Errorf("token is invalid or revoked")
 		}
 		userValue, err := resolveBearerTokenUser(data.Token)
 		if err != nil {

@@ -407,20 +407,6 @@
     },
     {
         "type": "file",
-        "url": "https://proxy.golang.org/github.com/golang-jwt/jwt/v4/@v/v4.5.2.mod",
-        "sha256": "0f8e678e6495b652c5c8aec1879c8171cd6ff1cf435fb47fe536362f88994299",
-        "dest": "gomod/github.com/golang-jwt/jwt/v4/@v",
-        "dest-filename": "v4.5.2.mod"
-    },
-    {
-        "type": "file",
-        "url": "https://proxy.golang.org/github.com/golang-jwt/jwt/v4/@v/v4.5.2.zip",
-        "sha256": "ec5ee69a31fd478fc197fddce7c06dad1abe7543095a55c4ee6546ae79d99a0f",
-        "dest": "gomod/github.com/golang-jwt/jwt/v4/@v",
-        "dest-filename": "v4.5.2.zip"
-    },
-    {
-        "type": "file",
         "url": "https://proxy.golang.org/github.com/golang-jwt/jwt/v5/@v/v5.3.1.mod",
         "sha256": "ce98fa479154259db056ded8254a6ae9c66f2b42e613e76ba0f026699b5e542f",
         "dest": "gomod/github.com/golang-jwt/jwt/v5/@v",
