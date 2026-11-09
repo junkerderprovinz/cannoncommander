@@ -61,7 +61,7 @@ func BindOIDC(ctx context.Context, db *sql.DB, userID uint64, issuer, subject st
 // EndAccess ends every session and API token of u, for an account whose
 // identity the provider no longer lets in.
 func EndAccess(r *http.Request, db *sql.DB, u *users.User) error {
-	if _, err := login.EndAll(u.ID, ""); err != nil {
+	if _, err := endSessions(r.Context(), db, u, ""); err != nil {
 		return err
 	}
 	return handlers{db: db}.revokeTokens(r, u)

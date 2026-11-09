@@ -218,6 +218,11 @@ func (h handlers) revokeTokens(r *http.Request, u *users.User) error {
 			return err
 		}
 	}
+	for _, f := range ended.tokens {
+		if err := f(r.Context(), h.db, u.ID); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

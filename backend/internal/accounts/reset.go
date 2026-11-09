@@ -141,7 +141,7 @@ func (h handlers) reset(w http.ResponseWriter, r *http.Request) error {
 	if err := h.revokeTokens(r, &u); err != nil {
 		return err
 	}
-	if _, err := login.EndAll(u.ID, ""); err != nil {
+	if _, err := endSessions(r.Context(), h.db, &u, ""); err != nil {
 		return err
 	}
 	if err := passwordChanged(r.Context(), h.db, idOf(&u)); err != nil {
