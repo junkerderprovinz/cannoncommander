@@ -60,7 +60,8 @@ The first release of CannonCommander: a two-pane file manager for Unraid that ru
 ## 🎨 Design
 
 - **The look is [GlimStone](https://github.com/junkerderprovinz/glimstone) 4.2.8**, shared with BombVault, KnightLoader and ArrowLoop: light and dark, your own accent colour or a rainbow, corner shapes, motion levels and labels as text, symbols or both. The theme follows your system until you pick one, and the sign-in page is GlimStone's sign-in card.
-- **A logo of its own**, a cannon, in the head, on the share page and in every icon. Copies, deletes and finished jobs come with a little motion, as much as your motion level allows, and there are a few surprises to find.
+- **A logo of its own**, a cannon, in the head, on the share page and in every icon.
+- **Motion that follows your motion level.** Menus drop open, windows rise into place, the rows of a folder swing in and buttons give way when you press them. A copy sends lights across to the other panel, deleted rows fall into the trash and a finished job throws sparks. Subtle keeps it calm, Wild livens it up, Storm makes it stormy, and Off holds everything still. There are a few surprises to find, too.
 - **A tidy head**: one family of buttons, the settings with their gear, and the jobs in the avatar menu with a badge that counts the running ones. Every menu entry and command has a glyph, and the panels reach down to the bottom edge when the function key bar is off.
 - **Things you drag make room.** Settings tiles and jobs move aside while you carry one to its new place.
 - **Dropdowns and the language picker look as they do in BombVault.**
