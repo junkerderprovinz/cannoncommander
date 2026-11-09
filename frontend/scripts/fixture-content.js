@@ -157,8 +157,13 @@ export function contentRoutes(FS) {
         });
         return true;
       }
-      if (!['/fs/text', '/fs/hex', '/fs/raw', '/fs/thumb', '/fs/page', '/fs/stat'].includes(route)) return false;
+      if (!['/fs/text', '/fs/file', '/fs/hex', '/fs/raw', '/fs/thumb', '/fs/page', '/fs/stat'].includes(route)) return false;
       if (!n) return fail(res, 404, 'Not found'), true;
+      if (route === '/fs/file') {
+        const text = textOf(path, n);
+        if (text == null) return fail(res, 415, 'Binary'), true;
+        return json(res, { path, size: Buffer.byteLength(text), mtime: new Date(n.time).toISOString(), encoding: 'utf-8', eol: 'lf', text, etag: `"${Buffer.byteLength(text)}-${n.time}"`, writable: true }), true;
+      }
       const folder = parent(path), e = FS.ext(n.name), kind = FS.kindOf(n);
 
       if (route === '/fs/stat') {
