@@ -3796,6 +3796,7 @@
     "removable": "Dysk USB",
     "optical": "Stacja dysków DVD",
     "network": "Dysk sieciowy",
+    "shareOn": "{share} na {server}",
     "volume": "Wolumin {size}"
   },
   "files": {

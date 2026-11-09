@@ -3665,6 +3665,7 @@
     "removable": "USB pogon",
     "optical": "DVD pogon",
     "network": "Mrežni pogon",
+    "shareOn": "{share} na {server}",
     "volume": "Volumen od {size}"
   },
   "files": {

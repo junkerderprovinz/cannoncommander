@@ -3534,6 +3534,7 @@
     "removable": "USB-asema",
     "optical": "DVD-asema",
     "network": "Verkkoasema",
+    "shareOn": "{share} palvelimella {server}",
     "volume": "{size}:n taltio"
   },
   "files": {

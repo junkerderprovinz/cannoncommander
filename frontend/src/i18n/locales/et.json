@@ -3534,6 +3534,7 @@
     "removable": "USB-draiv",
     "optical": "DVD-draiv",
     "network": "Võrgudraiv",
+    "shareOn": "{share} serveris {server}",
     "volume": "{size} köide"
   },
   "files": {

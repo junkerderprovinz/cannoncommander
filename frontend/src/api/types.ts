@@ -34,7 +34,8 @@ export interface FsItem {
   picture?: string;
 }
 export interface Shortcut { kind: 'lnk' | 'url' | 'desktop'; target?: string; path?: string; dir?: boolean; args?: string; name?: string; icon?: string }
-export interface Volume { path: string; label?: string; free: number; total: number }
+// kind and remote come with a drive of the computer the desktop app runs on, as on TreeItem.
+export interface Volume { path: string; label?: string; kind?: DriveKind; remote?: string; free: number; total: number }
 export interface FsList { path: string; items: FsItem[]; volume?: Volume }
 // kind and eject come with a drive of the computer the desktop app runs on.
 export interface TreeItem { name: string; path: string; hasDirs: boolean; label?: string; free?: number; total?: number; remote?: string; hidden?: boolean; system?: boolean; kind?: DriveKind; eject?: boolean }

@@ -3796,6 +3796,7 @@
     "removable": "Pogon USB",
     "optical": "Pogon DVD",
     "network": "Omrežni pogon",
+    "shareOn": "{share} na {server}",
     "volume": "Nosilec {size}"
   },
   "files": {

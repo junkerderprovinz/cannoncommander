@@ -3403,6 +3403,7 @@
     "removable": "USB ドライブ",
     "optical": "DVD ドライブ",
     "network": "ネットワーク ドライブ",
+    "shareOn": "{server} 上の {share}",
     "volume": "{size} ボリューム"
   },
   "files": {

@@ -3403,6 +3403,7 @@
     "removable": "USB 드라이브",
     "optical": "DVD 드라이브",
     "network": "네트워크 드라이브",
+    "shareOn": "{server}의 {share}",
     "volume": "{size} 볼륨"
   },
   "files": {

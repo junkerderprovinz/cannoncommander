@@ -3665,6 +3665,7 @@
     "removable": "USB disks",
     "optical": "DVD diskdzinis",
     "network": "Tīkla disks",
+    "shareOn": "{share} serverī {server}",
     "volume": "{size} sējums"
   },
   "files": {

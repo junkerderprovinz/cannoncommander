@@ -3403,6 +3403,7 @@
     "removable": "Pemacu USB",
     "optical": "Pemacu DVD",
     "network": "Pemacu Rangkaian",
+    "shareOn": "{share} di {server}",
     "volume": "Volum {size}"
   },
   "files": {

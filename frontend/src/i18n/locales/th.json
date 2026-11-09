@@ -3403,6 +3403,7 @@
     "removable": "ไดรฟ์ USB",
     "optical": "ไดรฟ์ DVD",
     "network": "ไดรฟ์เครือข่าย",
+    "shareOn": "{share} บน {server}",
     "volume": "โวลุ่ม {size}"
   },
   "files": {

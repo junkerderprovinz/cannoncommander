@@ -3403,6 +3403,7 @@
     "removable": "Ổ USB",
     "optical": "Ổ DVD",
     "network": "Ổ mạng",
+    "shareOn": "{share} trên {server}",
     "volume": "Ổ đĩa {size}"
   },
   "files": {

@@ -59,11 +59,12 @@ func (f *follower) changed() {
 	f.known = now
 	f.fs.SetVolumes(sources(now))
 	ev := volumesEvent{Added: []volumeJSON{}, Removed: []volumeJSON{}}
-	folders := []string{"/"}
 	for _, v := range added {
-		j := volumeFor(v)
-		ev.Added = append(ev.Added, j)
-		if j.Path != "" {
+		ev.Added = append(ev.Added, volumeFor(v))
+	}
+	folders := []string{"/"}
+	for _, v := range now {
+		if j := volumeFor(v); j.Path != "" {
 			folders = append(folders, path.Dir(j.Path))
 		}
 	}
@@ -95,8 +96,9 @@ func (f *follower) publish(c watch.Change) {
 	}
 }
 
-// compare returns the volumes that came or were mounted, and those that
-// went or were unmounted, between before and now.
+// compare returns the volumes that came and those that went or were
+// unmounted between before and now. A volume that came and is then mounted,
+// as the desktop does with a stick, has come once.
 func compare(before, now []desktop.Volume) (added, removed []desktop.Volume) {
 	find := func(list []desktop.Volume, v desktop.Volume) (desktop.Volume, bool) {
 		at := slices.IndexFunc(list, func(o desktop.Volume) bool { return o.ID == v.ID })
@@ -106,7 +108,7 @@ func compare(before, now []desktop.Volume) (added, removed []desktop.Volume) {
 		return list[at], true
 	}
 	for _, v := range now {
-		if old, ok := find(before, v); !ok || old.Root == "" && v.Root != "" {
+		if _, ok := find(before, v); !ok {
 			added = append(added, v)
 		}
 	}

@@ -3403,6 +3403,7 @@
     "removable": "Drive USB",
     "optical": "Drive DVD",
     "network": "Drive Jaringan",
+    "shareOn": "{share} di {server}",
     "volume": "Volume {size}"
   },
   "files": {

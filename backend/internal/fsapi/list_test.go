@@ -205,6 +205,33 @@ func TestListAndTreeMarkRemotes(t *testing.T) {
 	}
 }
 
+func TestADriveInsideASourceGoesByItsOwnName(t *testing.T) {
+	f := newFixture(t)
+	f.fs.SetVolumes([]ccfs.Volume{{Name: "ccshare", Root: filepath.Join(f.share, "fotos"), Drive: ccfs.Drive{Label: "ccshare", Kind: "network", Remote: "smb://localhost/ccshare"}}})
+	got := decode[Listing](t, f.get(t, "jdp", "/fs/list", "/mnt/user/fotos/2025")).Volume
+	if got == nil || got.Path != "/mnt/user/fotos" || got.Label != "ccshare" || got.Kind != "network" || got.Remote != "smb://localhost/ccshare" {
+		t.Errorf("volume inside the drive = %+v", got)
+	}
+	if other := decode[Listing](t, f.get(t, "jdp", "/fs/list", "/mnt/user/filme")).Volume; other == nil || other.Label != "Shares" || other.Kind != "" {
+		t.Errorf("volume beside it = %+v", other)
+	}
+	fotos := byTreeName(t, decode[Tree](t, f.get(t, "jdp", "/fs/tree", "/mnt/user")), "fotos")
+	if fotos.Label != "ccshare" || fotos.Kind != "network" || fotos.Remote != "smb://localhost/ccshare" {
+		t.Errorf("tree item = %+v", fotos)
+	}
+}
+
+func byTreeName(t *testing.T, tr Tree, name string) TreeItem {
+	t.Helper()
+	for _, it := range tr.Items {
+		if it.Name == name {
+			return it
+		}
+	}
+	t.Fatalf("no %s in %+v", name, tr.Items)
+	return TreeItem{}
+}
+
 func TestStatDescribesFilesAndFolders(t *testing.T) {
 	idx := &fakeIndex{totals: map[string][2]int64{"/filme": {3, 1}}}
 	f := newFixture(t, idx)

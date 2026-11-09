@@ -3665,6 +3665,7 @@
     "removable": "Unità USB",
     "optical": "Unità DVD",
     "network": "Unità di rete",
+    "shareOn": "{share} su {server}",
     "volume": "Volume da {size}"
   },
   "files": {

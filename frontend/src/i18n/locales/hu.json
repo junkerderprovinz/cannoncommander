@@ -3534,6 +3534,7 @@
     "removable": "USB-meghajtó",
     "optical": "DVD-meghajtó",
     "network": "Hálózati meghajtó",
+    "shareOn": "{share} itt: {server}",
     "volume": "{size} kötet"
   },
   "files": {

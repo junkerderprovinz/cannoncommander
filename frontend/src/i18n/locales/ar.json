@@ -4058,6 +4058,7 @@
     "removable": "محرك أقراص USB",
     "optical": "محرك أقراص DVD",
     "network": "محرك أقراص الشبكة",
+    "shareOn": "{share} على {server}",
     "volume": "وحدة تخزين {size}"
   },
   "files": {

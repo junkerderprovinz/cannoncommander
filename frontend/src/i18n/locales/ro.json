@@ -3665,6 +3665,7 @@
     "removable": "Unitate USB",
     "optical": "Unitate DVD",
     "network": "Unitate de rețea",
+    "shareOn": "{share} pe {server}",
     "volume": "Volum de {size}"
   },
   "files": {

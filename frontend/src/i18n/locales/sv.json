@@ -3534,6 +3534,7 @@
     "removable": "USB-enhet",
     "optical": "DVD-enhet",
     "network": "Nätverksenhet",
+    "shareOn": "{share} på {server}",
     "volume": "{size}-volym"
   },
   "files": {
