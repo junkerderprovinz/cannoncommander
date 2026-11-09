@@ -51,11 +51,12 @@ func (k *desk) thumbnail(ctx context.Context, file string, px int) ([]byte, erro
 	if failed(root, name, uri, mtime) {
 		return nil, ErrNoPicture
 	}
-	// Without a sandbox no thumbnailer runs, since the file may come from
-	// anyone and thumbnailers have a long history of holes.
+	// Without a sandbox no thumbnailer runs here, since the file may come
+	// from anyone and thumbnailers have a long history of holes. The
+	// desktop's thumbnail service runs them its own way.
 	t, ok := k.thumbnailerFor(file)
-	if !ok || k.bwrap == "" {
-		return nil, ErrNoPicture
+	if !ok || k.sandbox.program == "" {
+		return k.fromService(ctx, file, root, name, size, uri, mtime)
 	}
 	select {
 	case drawing <- struct{}{}:
@@ -89,6 +90,23 @@ func (k *desk) thumbnail(ctx context.Context, file string, px int) ([]byte, erro
 
 var errNotDrawn = errors.New("the thumbnailer wrote no PNG")
 
+// fromService asks the desktop's thumbnail service for the thumbnail and
+// reads it from the shared cache once the service is done.
+func (k *desk) fromService(ctx context.Context, file, root, name string, size int, uri string, mtime int64) ([]byte, error) {
+	if k.service == nil {
+		return nil, ErrNoPicture
+	}
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
+	defer cancel()
+	if err := k.service(ctx, uri, k.db.TypeOf(file), xdg.ThumbnailSizes[size].Dir); err != nil {
+		return nil, ErrNoPicture
+	}
+	if b, ok := cachedThumbnail(root, name, size, uri, mtime); ok {
+		return b, nil
+	}
+	return nil, ErrNoPicture
+}
+
 // draw runs a thumbnailer on file in a sandbox and returns what it drew.
 // It gives up after 20 seconds.
 func (k *desk) draw(ctx context.Context, t xdg.Thumbnailer, file string, edge int) ([]byte, error) {
@@ -105,7 +123,7 @@ func (k *desk) draw(ctx context.Context, t xdg.Thumbnailer, file string, edge in
 	if err != nil {
 		return nil, err
 	}
-	args = bwrapArgs(k.bwrap, k.root, tmp, file, inside, args)
+	args = bwrapArgs(k.sandbox.program, k.sandbox.isolate, k.root, tmp, file, inside, args)
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
 	cmd.Dir = tmp
 	// A process group of its own lets a timeout end whatever the
