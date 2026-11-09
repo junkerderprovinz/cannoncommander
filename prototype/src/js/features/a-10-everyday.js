@@ -137,6 +137,7 @@
       + frow('Animation', seg(motions, p.motion, 'data-k-focus="motion" id="a-motion"'), 'Wie lebhaft Fenster und Seiten hereinkommen. Wenn dein System weniger Bewegung wünscht, gilt das immer.')
       + frow('Leise Benachrichtigungen', sw(p.quietToasts, 'data-pref="quietToasts"'), 'Zeigt nur noch Fehler und Hinweise, bei denen du etwas tun kannst. Routinemeldungen wie „Kopiert“ bleiben weg.')
       + frow('Reihenfolge der Einstellungsseiten', `<button class="btn" id="a-order-reset" ${ordered ? '' : 'disabled'}>${g('IconRefresh')}Zurücksetzen</button>`, 'Die Kacheln links lassen sich mit der Maus an eine andere Stelle ziehen.'))
+      + listCard()
       + CC.card('Beschriftungen',
         frow('Buttons', seg(labelModes, p.labelsButtons, 'data-pref="labelsButtons"'), 'Wie viel von einem Bedienelement gezeigt wird: seine Wörter, sein Symbol oder beides. Reaktiv zeigt nur das Symbol und blendet die Wörter ein, sobald du darauf zeigst.')
         + frow('Seitenleiste', seg(labelModes, p.labelsSidebar, 'data-pref="labelsSidebar"'))
@@ -195,20 +196,24 @@
     });
   } });
 
-  CC.settingsTab({ id: 'files', label: 'Dateiliste', g: 'IconFiles', order: 40, render(host) {
-    const p = CC.prefs;
-    const sample = A.now() - 2 * DAY;
-    host.innerHTML = CC.card('Liste',
+  // How the file list looks, which Aussehen shows as Explorer shows it under its view.
+  const listCard = () => {
+    const p = CC.prefs, sample = A.now() - 2 * DAY;
+    return CC.card('Liste',
       frow('Versteckte Dateien zeigen', sw(p.showHidden, 'data-pref="showHidden"'), 'Dateien, deren Name mit einem Punkt beginnt, etwa .DS_Store. Strg+H schaltet sie auch in der Liste um.')
       + frow('Ordnergrößen berechnen', sw(p.folderSizes, 'data-pref="folderSizes"'), 'Zählt alles in einem Ordner zusammen. Ohne den Schalter steht dort nur, wie viele Objekte er enthält.')
       + frow('Ordner zuerst', sw(p.foldersFirst !== false, 'data-pref="foldersFirst"'), 'Ordner stehen über den Dateien, egal wonach sortiert wird.')
       + frow('Datum', seg([['short', fmtDate(sample)], ['long', fmtTime(sample)], ['relative', A.ago(sample)]], p.dateFormat, 'data-pref="dateFormat"'))
       + frow('Zeilenhöhe', seg([['compact', 'Kompakt', 'IconRowCompact'], ['medium', 'Mittel', 'IconRowMedium'], ['comfortable', 'Bequem', 'IconRowComfortable']], p.density, 'data-pref="density"'))
-      + frow('Spalten', `<button class="btn" data-run="columns">${g('IconSliders')}Spalten wählen</button>`, 'Spalten lassen sich auch direkt im Spaltenkopf verschieben, und ein Rechtsklick auf den Kopf blendet sie ein und aus.'))
-      + CC.card('Leisten',
-        frow('Seitenleiste', sw(p.side, 'data-pref="side"'), 'Verknüpfungen und Ordnerbaum links neben den Fenstern.')
-        + frow('Funktionstastenleiste', sw(p.fkeys, 'data-pref="fkeys"'), 'Die Knöpfe für F3 bis F8 am unteren Rand, wie im Total Commander.')
-        + frow('Vorschauleiste', sw(p.quickview, 'id="a-qv" data-k-focus="qv"'), 'Zeigt im zweiten Fenster eine Vorschau der Datei, auf der der Cursor steht. Schaltet dafür die zwei Fenster ein.'));
+      + frow('Spalten', `<button class="btn" data-run="columns">${g('IconSliders')}Spalten wählen</button>`, 'Spalten lassen sich auch direkt im Spaltenkopf verschieben, und ein Rechtsklick auf den Kopf blendet sie ein und aus.'));
+  };
+
+  CC.settingsTab({ id: 'files', label: 'Dateiliste', g: 'IconFiles', order: 40, render(host) {
+    const p = CC.prefs;
+    host.innerHTML = CC.card('Leisten',
+      frow('Seitenleiste', sw(p.side, 'data-pref="side"'), 'Verknüpfungen und Ordnerbaum links neben den Fenstern.')
+      + frow('Funktionstastenleiste', sw(p.fkeys, 'data-pref="fkeys"'), 'Die Knöpfe für F3 bis F8 am unteren Rand, wie im Total Commander.')
+      + frow('Vorschauleiste', sw(p.quickview, 'id="a-qv" data-k-focus="qv"'), 'Zeigt im zweiten Fenster eine Vorschau der Datei, auf der der Cursor steht. Schaltet dafür die zwei Fenster ein.'));
     A.bindPrefs(host);
     $('#a-qv', host).addEventListener('change', e => {
       const on = swVal(e.target);

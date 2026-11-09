@@ -9,7 +9,7 @@ import { MODIFIER_KEYS } from './keys';
 
 const props = defineProps<{
   /** Every key the action has, as it reads, each with why it does nothing here if it does not: such a key shows
-   *  dimmed and says so in its tooltip. */
+   *  struck out and says so in its tooltip. */
   keys: { label: string; blocked?: string }[];
   listening: boolean;
   listeningText: string;

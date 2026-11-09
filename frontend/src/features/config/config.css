@@ -1,5 +1,8 @@
 /* The settings tabs, their windows and the activity page, as the prototype draws them. */
 .a-list { display: flex; flex-direction: column; gap: 2px; margin: 0 -.5rem; }
+/* A row's values stay at the right edge whether or not it has the pointer, and its buttons come in to their left. */
+.a-list > .glim-list-row > .glim-list-row-actions { order: 1; }
+.a-list > .glim-list-row > .glim-list-row-badges { order: 2; }
 .a-foot { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; padding-top: .5rem; }
 .a-to { width: 14px; height: 14px; flex: none; color: var(--carbon-text-muted); }
 .a-initials { font-style: normal; font-size: 12px; font-weight: 700; }

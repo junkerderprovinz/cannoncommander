@@ -87,15 +87,25 @@
       : `${esc(label(combo))} gehört schon zu „${name}“. Ersetzen holt die Taste hierher, Esc lässt alles, wie es ist.` };
   };
 
-  // A row of the window or the tile. A clash offers the buttons only where the row asks for them.
+  // A browser never hands these to a page, so they would do nothing here. The desktop app lets the app have them.
+  const BROWSER = ['Ctrl+n', 'Ctrl+Shift+n', 'Ctrl+t', 'Ctrl+Shift+t', 'Ctrl+w', 'Ctrl+Shift+w', 'Ctrl+Tab', 'Ctrl+Shift+Tab', 'Ctrl+PageUp', 'Ctrl+PageDown', 'Ctrl+Shift+p'];
+  const kept = (c) => BROWSER.includes(c.replace(/^[a-z]+:(?=.)/, ''));
+  const keptNote = (keys) => `Durchgestrichen, weil der Browser ${new Intl.ListFormat('de', { type: 'conjunction' }).format(keys)} für sich behält. Das klappt nur in der Desktop-App.`;
+
+  // A row of the window or the tile. A clash offers the buttons only where the row asks for them. The key a row shows
+  // first is the one menus show, unless the browser keeps that one and the action has another that works.
   const row = (id, map, base, rec, pending) => {
-    const a = CC.actions[id], own = combosOf(map, id), main = own.find(c => label(c) === DEFAULT_LABEL[id]) || own[0];
+    const a = CC.actions[id], own = combosOf(map, id), named = own.find(c => label(c) === DEFAULT_LABEL[id]) || own[0];
+    const main = named && kept(named) ? own.find(c => !kept(c)) || named : named;
     const changed = combosOf(base, id).sort().join() !== own.sort().join();
     const recording = rec === id, keys = main ? [main, ...own.filter(c => c !== main)] : [];
+    const off = keys.filter(kept).map(label), note = off.length && !recording && pending?.id !== id ? keptNote(off) : '';
+    const chip = (c) => `<span ${kept(c) ? `class="kb-off" data-tip="${esc(keptNote([label(c)]))}"` : ''}><span class="kbd">${esc(label(c))}</span></span>`;
     return `<div class="kb-row ${recording ? 'rec' : ''} ${changed ? 'own' : ''}" data-kb="${id}">
       <span class="kb-name">${a.g ? g(a.g) : '<span class="ph"></span>'}${esc(nameOf(a))}</span>
-      <button class="kb-key" data-kb-rec="${id}" aria-label="Taste für ${esc(nameOf(a))} ändern">${recording ? '<span class="muted">Taste drücken …</span>' : keys.length ? keys.map(c => `<span class="kbd">${esc(label(c))}</span>`).join('') : '<span class="muted">keine</span>'}</button>
+      <button class="kb-key" data-kb-rec="${id}" aria-label="Taste für ${esc(nameOf(a))} ändern"${note ? ` aria-describedby="kb-note-${id}"` : ''}>${recording ? '<span class="muted">Taste drücken …</span>' : keys.length ? keys.map(chip).join('') : '<span class="muted">keine</span>'}</button>
       <span class="kb-acts">${changed ? `<button class="btn icon" data-kb-reset="${id}" data-tip="Zurücksetzen" aria-label="Zurücksetzen">${g('IconResetArrow')}</button>` : ''}${main ? `<button class="btn icon" data-kb-clear="${id}" data-tip="Taste löschen" aria-label="Taste löschen">${g('IconTrash')}</button>` : ''}</span>
+      ${note ? `<div class="kb-note" id="kb-note-${id}">${esc(note)}</div>` : ''}
       ${pending?.id === id ? `<div class="kb-warn"><span>${pending.msg}</span>${pending.choice ? `<span class="kb-choice">${own.length ? `<button class="btn" id="kb-swap">${g('IconSync')}Tauschen</button>` : ''}<button class="btn" id="kb-replace">${g('IconCheck')}Ersetzen</button></span>` : ''}</div>` : ''}</div>`;
   };
 
@@ -171,7 +181,6 @@
   // The settings tile: every key, changed at once, and a reset that drops the own keys.
   const tab = { rec: null, pending: null, query: '' };
   const onTab = () => CC.view === 'settings' && CC.settingsTab_ === 'keys';
-  const BROWSER = ['Ctrl+n', 'Ctrl+Shift+n', 'Ctrl+t', 'Ctrl+Shift+t', 'Ctrl+w', 'Ctrl+Shift+w', 'Ctrl+Tab', 'Ctrl+Shift+Tab', 'Ctrl+PageUp', 'Ctrl+PageDown', 'Ctrl+Shift+p'];
   const ownOf = (base, map) => Object.fromEntries([...new Set([...Object.keys(base), ...Object.keys(map)])].filter(c => base[c] !== map[c]).map(c => [c, map[c] || '']));
   function commit(map) {
     apply(map);
@@ -260,8 +269,16 @@
 .kb-name svg { width: .95rem; height: .95rem; color: var(--accent-glyph); flex: none; }
 .kb-name .ph { width: .95rem; flex: none; }
 .kb-key { grid-column: 3; grid-row: 1; justify-self: end; display: inline-flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: .3rem; max-width: 18rem; min-height: 1.8rem; padding: .2rem .55rem; border-radius: var(--radius-control); font-size: 13px; }
-.kb-key:hover, .kb-row.rec .kb-key { background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
+.kb-row.rec .kb-key { background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
 .kb-row.own .kb-key .kbd { background: color-mix(in srgb, var(--accent) 22%, var(--carbon-surface3)); }
+/* Under the pointer and the keyboard's focus the key caps light up in the accent, without a frame around them. The
+   glow is the focus mark too, so a key without caps keeps the usual ring. */
+.kb-key:focus-visible:has(.kbd) { outline: none; }
+.kb-key:is(:hover, :focus-visible) .kbd { background: var(--accent); color: var(--accent-contrast); box-shadow: 0 0 .6rem color-mix(in srgb, var(--accent) 60%, transparent); }
+.kb-key:is(:hover, :focus-visible) .muted { color: var(--accent-ink); }
+@media (prefers-reduced-motion: no-preference) {
+  .kb-key .kbd { transition: background-color var(--motion-control-dur) ease, color var(--motion-control-dur) ease, box-shadow var(--motion-control-dur) ease; }
+}
 /* The row's buttons wait beside its keys until the row has the pointer or the focus, and always show on touch. */
 .kb-acts { grid-column: 2; grid-row: 1; display: flex; justify-content: flex-end; gap: 2px; min-width: 4.2rem; visibility: hidden; }
 .kb-row:is(:hover, :focus-within, .rec) .kb-acts { visibility: visible; }
@@ -269,6 +286,9 @@
 .kb-acts .btn { width: 1.8rem; height: 1.8rem; background: transparent; }
 .kb-warn { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: 0 0 .4rem; padding: .35rem .6rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--status-warn-solid, #FF832B) 16%, transparent); font-size: 12.5px; }
 .kb-choice { display: flex; gap: .4rem; margin-left: auto; }
+/* A key the browser keeps stays in the list, struck out, and a line right under the keys says why. */
+.kb-off .kbd { opacity: .55; text-decoration: line-through; }
+.kb-note { grid-column: 1 / -1; justify-self: end; max-width: 46rem; margin: -.2rem 0 .45rem; padding-inline-end: .55rem; font-size: 12px; line-height: 1.4; color: var(--carbon-text-sub); text-align: end; }
 .kb-fixedhead { margin-top: 1.2rem; }
 `);
 })();

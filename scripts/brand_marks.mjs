@@ -27,7 +27,9 @@ function markup(jsx) {
     .replace(/(\s)(\w+)=\{([\d.]+)\}/g, '$1$2="$3"')
     .replace(/(\s)([a-z]+[A-Z]\w*)=/g, (m, sp, k) => (k in ATTRS ? `${sp}${ATTRS[k]}=` : m))
     .replace(/\saria-hidden(?=[\s>])/g, ' aria-hidden="true"')
-    .replace(/\n\s*/g, '');
+    .replace(/\n\s*/g, '')
+    // A mark with a single colour version for the hover comes as a fragment around both.
+    .replace(/^<>(.*)<\/>$/, '$1');
 }
 
 const marks = {};

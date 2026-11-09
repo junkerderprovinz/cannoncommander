@@ -33,7 +33,7 @@ export function fmtAgo(ms: number): string {
   return plural(Math.round(days / 365), 'format.yearsAgo');
 }
 
-// The list shows dates the way the Dateiliste settings ask for; every other place keeps the plain date.
+// The list shows dates the way its settings under Aussehen ask for; every other place keeps the plain date.
 export const fmtListDate = (ms: number) => ({ long: fmtTime, relative: fmtAgo }[prefs.dateFormat as string] || fmtDate)(ms);
 
 export const fmtLeft = (s: number) => s < 60 ? plural(Math.max(1, Math.ceil(s)), 'format.secondsLeft')
