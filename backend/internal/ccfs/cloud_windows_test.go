@@ -6,10 +6,12 @@ import (
 	"testing"
 
 	"golang.org/x/sys/windows"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
 )
 
 func TestAnOfflineFileCountsAsInTheCloud(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.LocalDir(t)
 	online, local := filepath.Join(dir, "online.jpg"), filepath.Join(dir, "local.jpg")
 	for _, p := range []string{online, local} {
 		if err := os.WriteFile(p, []byte("x"), 0o644); err != nil {
