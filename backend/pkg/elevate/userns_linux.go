@@ -16,6 +16,9 @@ import (
 // ships such profiles for Chrome and Steam.
 const ProfileFile = "/etc/apparmor.d/cannoncommander-userns"
 
+// ProfileName is the name the profile goes by in the kernel.
+const ProfileName = "cannoncommander-userns"
+
 var (
 	profileFile = ProfileFile
 	// parsers are the places apparmor_parser lives, looked at in turn
@@ -33,7 +36,7 @@ func usernsProfile(exe string) (string, error) {
 abi <abi/4.0>,
 include <tunables/global>
 
-profile cannoncommander-userns "` + exe + `" flags=(unconfined) {
+profile ` + ProfileName + ` "` + exe + `" flags=(unconfined) {
   userns,
 
   include if exists <local/cannoncommander-userns>

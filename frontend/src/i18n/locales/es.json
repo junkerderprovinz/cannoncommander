@@ -2715,12 +2715,15 @@
     "iconsTip": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono aunque esto esté desactivado.",
     "iconsTipLinux": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono de todos modos. CannonCommander solo genera miniaturas dentro de un entorno aislado. Donde eso no es posible, como en Ubuntu 24.04, solo ves las que tu administrador de archivos ya ha creado.",
     "thumbs": "Miniaturas",
-    "thumbsTip": "Ubuntu solo deja entrar a un programa en un entorno aislado con un permiso propio. Al activarlo, CannonCommander añade una pequeña regla de AppArmor, que pide tu contraseña, y desde entonces genera las miniaturas por sí mismo. Al desactivarlo, la regla desaparece.",
+    "thumbsTip": "Ubuntu solo deja entrar a un programa en un entorno aislado con un permiso propio. Al activarlo, CannonCommander añade una pequeña regla de AppArmor, que pide tu contraseña, y tras reiniciar genera las miniaturas por sí mismo. Al desactivarlo, la regla desaparece al momento.",
     "thumbsOnButton": "Activar las miniaturas del sistema",
     "thumbsOffButton": "Desactivar las miniaturas del sistema",
     "thumbsOn": "Listo, a partir de ahora CannonCommander genera las miniaturas por sí mismo.",
     "thumbsOff": "Desactivado, la regla de AppArmor ya no está.",
-    "thumbsStillOut": "La regla está puesta, pero el entorno aislado sigue sin funcionar, lo sentimos."
+    "thumbsStillOut": "La regla está puesta, pero el entorno aislado sigue sin funcionar, lo sentimos.",
+    "thumbsOnRestart": "La regla está puesta. Tras reiniciar, CannonCommander genera las miniaturas por sí mismo.",
+    "thumbsOffRestart": "La regla ya no está. Queda del todo desactivada tras reiniciar.",
+    "restartNow": "Reiniciar ahora"
   },
   "shortcuts": {
     "title": "Atajos de teclado",
@@ -3759,6 +3762,7 @@
     "volume": "Volumen de {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} libres",
     "network": "Red",
     "server": "Servidor",
     "thisPc": "Este equipo",

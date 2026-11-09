@@ -2800,12 +2800,15 @@
     "iconsTip": "Pokazuje w całej liście ikony twojego systemu. Programy i skróty pokazują własną ikonę także bez tego przełącznika.",
     "iconsTipLinux": "Pokazuje w całej liście ikony twojego systemu. Programy i skróty i tak pokazują własną ikonę. CannonCommander tworzy miniatury tylko w odizolowanym środowisku. Tam, gdzie to niemożliwe, na przykład w Ubuntu 24.04, widzisz tylko te, które twój menedżer plików już utworzył.",
     "thumbs": "Miniatury",
-    "thumbsTip": "Ubuntu wpuszcza program do odizolowanego środowiska tylko z osobnym pozwoleniem. Po włączeniu CannonCommander dodaje małą regułę AppArmor, która pyta o twoje hasło, i od tej pory sam tworzy miniatury. Po wyłączeniu reguła znika.",
+    "thumbsTip": "Ubuntu wpuszcza program do odizolowanego środowiska tylko z osobnym pozwoleniem. Po włączeniu CannonCommander dodaje małą regułę AppArmor, która pyta o twoje hasło, i po ponownym uruchomieniu sam tworzy miniatury. Po wyłączeniu reguła od razu znika.",
     "thumbsOnButton": "Włącz miniatury systemowe",
     "thumbsOffButton": "Wyłącz miniatury systemowe",
     "thumbsOn": "Gotowe, od teraz CannonCommander sam tworzy miniatury.",
     "thumbsOff": "Wyłączone, reguły AppArmor już nie ma.",
-    "thumbsStillOut": "Reguła jest na miejscu, ale odizolowane środowisko niestety nadal nie działa."
+    "thumbsStillOut": "Reguła jest na miejscu, ale odizolowane środowisko niestety nadal nie działa.",
+    "thumbsOnRestart": "Reguła jest na miejscu. Po ponownym uruchomieniu CannonCommander sam tworzy miniatury.",
+    "thumbsOffRestart": "Reguły już nie ma. Całkiem wyłączone będzie po ponownym uruchomieniu.",
+    "restartNow": "Uruchom ponownie teraz"
   },
   "shortcuts": {
     "title": "Skróty klawiszowe",
@@ -3891,6 +3894,7 @@
     "volume": "Wolumin {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} wolne",
     "network": "Sieć",
     "server": "Serwer",
     "thisPc": "Ten komputer",

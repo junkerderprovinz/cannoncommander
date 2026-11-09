@@ -54,7 +54,7 @@
           ${CC.admin.dropdown([[CC.ck.langOf(node), CC.ck.langOf(node) === 'Text' ? 'Normaler Text' : CC.ck.langOf(node)]], CC.ck.langOf(node), 'id="ce-lang" data-tip="Sprache"', 'ce-dd')}
           <span class="cv-swl ce-wrapsw">Zeilen umbrechen ${sw(opts.wrap, 'id="ce-wrap"')}</span></div>`,
       foot: [{ start: ' ' }, { label: 'Schließen', g: 'IconClose', run: () => (dirty ? (ask(), false) : undefined) }, { label: 'Speichern', g: 'IconSave', primary: true, run: () => { save(); return false; } }],
-      onClose: () => { if (changed && CC.view === 'files') CC.render(); },
+      onClose: () => { CC.ck.editorRun = null; if (changed && CC.view === 'files') CC.render(); },
     });
     const ta = $('.ce-ta', w), back = $('.ce-back', w), scroll = $('.ce-scroll', w), find = $('.ce-find', w), q = $('#ce-q', w), rep = $('#ce-r', w);
     const preview = $('.ce-preview .cv-md', w);
@@ -189,6 +189,7 @@
     }
     // A click beside the window would close it; with unsaved text it asks first.
     w.addEventListener('mousedown', (e) => { if (e.target === w && dirty) { e.stopImmediatePropagation(); ask(); } }, true);
+    CC.ck.editorRun = (name) => ({ save, find: () => openFind(), replace: () => openFind(true), findNext: () => step(1), findPrev: () => step(-1) })[name]?.();
     winKeys(w, (e, combo) => {
       if (combo === 'Ctrl+s') return save(), true;
       if (combo === 'Ctrl+f') return openFind(), true;
@@ -225,6 +226,32 @@
       return name;
     });
   } });
+
+  // Every command of the editor is an action of its own, with keys that count only in the editor, so the keys tile
+  // lists them as a group of their own. The browser keeps Ctrl+Tab for its tabs, so the files there go by Alt+Bild ab.
+  const EDITOR = [
+    ['save', 'Speichern', 'IconSave', 'Strg+S', ['Ctrl+s']], ['find', 'Suchen', 'IconSearch', 'Strg+F', ['Ctrl+f']],
+    ['replace', 'Ersetzen', 'IconSearch', 'Strg+H', ['Ctrl+h']], ['findNext', 'Nächster Treffer', 'IconMoveDown', 'F3', ['F3']],
+    ['findPrev', 'Vorheriger Treffer', 'IconMoveUp', 'Umschalt+F3', ['Shift+F3']], ['gotoLine', 'Gehe zu Zeile', 'IconForward', 'Strg+G', ['Ctrl+g']],
+    ['duplicateLine', 'Zeile verdoppeln', 'IconCopy', 'Strg+D', ['Ctrl+d']], ['deleteLine', 'Zeile löschen', 'IconTrash', 'Strg+Umschalt+L', ['Ctrl+Shift+l']],
+    ['moveLineUp', 'Zeile nach oben', 'IconMoveUp', 'Strg+Umschalt+Hoch', ['Ctrl+Shift+ArrowUp', 'Alt+ArrowUp']],
+    ['moveLineDown', 'Zeile nach unten', 'IconMoveDown', 'Strg+Umschalt+Runter', ['Ctrl+Shift+ArrowDown', 'Alt+ArrowDown']],
+    ['toggleComment', 'Kommentar an oder aus', 'IconCode', 'Strg+/', ['Ctrl+/', 'Ctrl+#']],
+    ['sortLines', 'Zeilen sortieren, A bis Z', 'IconSort'], ['sortLinesDown', 'Zeilen sortieren, Z bis A', 'IconSort'],
+    ['trimTrailing', 'Leerzeichen am Zeilenende entfernen', 'IconPrune'],
+    ['upperCase', 'In Großbuchstaben', 'IconFont', 'Strg+Umschalt+U', ['Ctrl+Shift+u']], ['lowerCase', 'In Kleinbuchstaben', 'IconFont', 'Strg+U', ['Ctrl+u']],
+    ['fold', 'Block einklappen', 'IconCollapse', 'Strg+Alt+F', ['Ctrl+Alt+f']], ['unfold', 'Block aufklappen', 'IconExpand', 'Strg+Alt+Umschalt+F', ['Ctrl+Alt+Shift+f']],
+    ['foldAll', 'Alles einklappen', 'IconCollapse', 'Alt+0', ['Alt+0']], ['unfoldAll', 'Alles aufklappen', 'IconExpand'],
+    ['wrap', 'Zeilen umbrechen', 'IconLabelText'],
+    ['nextTab', 'Nächste Datei', 'IconForward', 'Alt+Bild ab', ['Ctrl+Tab', 'Ctrl+PageDown', 'Alt+PageDown']],
+    ['prevTab', 'Vorige Datei', 'IconBack', 'Alt+Bild auf', ['Ctrl+Shift+Tab', 'Ctrl+PageUp', 'Alt+PageUp']],
+    ['closeTab', 'Datei schließen', 'IconClose', 'Strg+W', ['Ctrl+w']],
+  ];
+  for (const [name, label, glyph, key, keys = []] of EDITOR) {
+    const id = 'editor' + name[0].toUpperCase() + name.slice(1);
+    CC.action(id, { label, g: glyph, key, scope: 'editor', run: () => CC.ck.editorRun?.(name) });
+    keys.forEach(k => CC.bindKey('editor:' + k, id));
+  }
 
   CC.css(`
 .ce-win .win-body { padding-bottom: 0; }

@@ -100,7 +100,7 @@ func (c *computer) system() system {
 			}
 			c.asked = append(c.asked, ops...)
 			c.sandbox.Allowed = ops[0].Kind == elevate.AllowUserNamespaces
-			c.sandbox.Sandboxed = c.sandbox.Allowed
+			c.sandbox.Sandboxed = c.sandbox.Allowed && c.sandbox.Profiled
 			return nil
 		},
 		typeIcon: func(name string, dir bool, px int) ([]byte, string, error) {
@@ -370,28 +370,30 @@ func TestTheSettingsKeepALabelWithoutTheFileNames(t *testing.T) {
 	}
 }
 
-func TestThumbnailsAreLetIntoTheSandboxAndOutAgainWithAdministratorRights(t *testing.T) {
+func TestThumbnailsAreLetIntoTheSandboxWithAdministratorRightsAndARestart(t *testing.T) {
 	e := newEnv(t, false)
 	e.pc.sandbox = nativeshell.SandboxState{Restricted: true}
 	if runtime.GOOS == "linux" {
 		_, _, body := e.do(http.MethodGet, "/shell", nil)
 		var got offersJSON
 		_ = json.Unmarshal(body, &got)
-		if got.Thumbnails == nil || got.Thumbnails.Way != "cache" || !got.Thumbnails.Restricted {
+		if got.Thumbnails == nil || *got.Thumbnails != (thumbsJSON{Way: "cache", Restricted: true}) {
 			t.Fatalf("offers %s", body)
 		}
 	}
-	for _, c := range []struct {
-		allow bool
-		way   string
-	}{{true, "sandbox"}, {false, "cache"}} {
-		resp, code, body := e.do(http.MethodPost, "/shell/thumbnails", map[string]bool{"allow": c.allow})
+	post := func(allow bool, want thumbsJSON) {
+		t.Helper()
+		resp, code, body := e.do(http.MethodPost, "/shell/thumbnails", map[string]bool{"allow": allow})
 		var got thumbsJSON
 		_ = json.Unmarshal(body, &got)
-		if resp.StatusCode != http.StatusOK || got.Way != c.way || got.Allowed != c.allow {
-			t.Fatalf("allow %v: %d %s %s", c.allow, resp.StatusCode, code, body)
+		if resp.StatusCode != http.StatusOK || got != want {
+			t.Fatalf("allow %v: %d %s %s", allow, resp.StatusCode, code, body)
 		}
 	}
+	// The running app keeps the label it started with.
+	post(true, thumbsJSON{Way: "cache", Restricted: true, Allowed: true, Restart: true})
+	e.pc.sandbox = nativeshell.SandboxState{Restricted: true, Allowed: true, Profiled: true, Sandboxed: true}
+	post(false, thumbsJSON{Way: "cache", Restricted: true, Restart: true})
 	var kinds []string
 	for _, o := range e.pc.asked {
 		kinds = append(kinds, o.Kind)

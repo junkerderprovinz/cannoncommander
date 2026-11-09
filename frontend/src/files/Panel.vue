@@ -13,6 +13,7 @@ import { Render } from '@/core/Render';
 import { plural, t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { type Tab, usePanels } from '@/stores/panels';
+import { freeText } from './drives';
 import FileList from './FileList.vue';
 import { jump } from './keys';
 import { tabMenu } from './menus';
@@ -131,7 +132,7 @@ const count = computed(() => {
       <span class="grow"></span>
       <span v-if="inArchive(tab.path)">{{ t('files.inArchive') }}</span>
       <button v-else-if="vol" class="lfree" :data-du="vol.path" :data-tip="t('files.diskUsage', { name: vol.label || vol.path })" @click="run('diskUsage', vol.path)">
-        <span>{{ t('files.free', { size: fmtSize(vol.free) }) }}</span><Meter quiet size="small" :value="1 - vol.free / vol.total" :label="vol.label || vol.path" :value-text="t('files.free', { size: fmtSize(vol.free) })" />
+        <span>{{ freeText(vol) }}</span><Meter quiet size="small" :value="1 - vol.free / vol.total" :label="vol.label || vol.path" :value-text="t('files.free', { size: fmtSize(vol.free) })" />
       </button>
     </div>
     <div v-if="active && jump.text" class="tjump glim-card" :class="{ miss: !jump.found }" role="status">

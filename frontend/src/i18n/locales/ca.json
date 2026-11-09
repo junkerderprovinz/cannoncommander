@@ -2715,12 +2715,15 @@
     "iconsTip": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren la seva pròpia icona encara que això estigui desactivat.",
     "iconsTipLinux": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren igualment la seva pròpia icona. CannonCommander només genera miniatures en un entorn aïllat. On això no és possible, com a Ubuntu 24.04, només veieu les que el vostre gestor de fitxers ja ha creat.",
     "thumbs": "Miniatures",
-    "thumbsTip": "Ubuntu només deixa entrar un programa en un entorn aïllat amb un permís propi. En activar-ho, CannonCommander afegeix una petita regla d'AppArmor, que us demana la contrasenya, i des d'aleshores genera ell mateix les miniatures. En desactivar-ho, la regla desapareix.",
+    "thumbsTip": "Ubuntu només deixa entrar un programa en un entorn aïllat amb un permís propi. En activar-ho, CannonCommander afegeix una petita regla d'AppArmor, que us demana la contrasenya, i després d'un reinici genera ell mateix les miniatures. En desactivar-ho, la regla desapareix de seguida.",
     "thumbsOnButton": "Activa les miniatures del sistema",
     "thumbsOffButton": "Desactiva les miniatures del sistema",
     "thumbsOn": "Fet, a partir d'ara CannonCommander genera ell mateix les miniatures.",
     "thumbsOff": "Desactivat, la regla d'AppArmor ja no hi és.",
-    "thumbsStillOut": "La regla hi és, però l'entorn aïllat encara no funciona, ho sentim."
+    "thumbsStillOut": "La regla hi és, però l'entorn aïllat encara no funciona, ho sentim.",
+    "thumbsOnRestart": "La regla hi és. Després d'un reinici, CannonCommander genera ell mateix les miniatures.",
+    "thumbsOffRestart": "La regla ja no hi és. Queda del tot desactivada després d'un reinici.",
+    "restartNow": "Reinicia ara"
   },
   "shortcuts": {
     "title": "Dreceres de teclat",
@@ -3759,6 +3762,7 @@
     "volume": "Volum de {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} lliures",
     "network": "Xarxa",
     "server": "Servidor",
     "thisPc": "Aquest ordinador",
