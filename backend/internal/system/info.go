@@ -14,6 +14,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/version"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/flatpak"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
@@ -35,6 +36,9 @@ type Info struct {
 	Tools      map[string]Tool `json:"tools"`
 	Unraid     UnraidInfo      `json:"unraid"`
 	Feature    Features        `json:"features"`
+	// Flatpak says the desktop app runs in a Flatpak, which the software
+	// centre updates and whose sandbox holds no terminal of the computer.
+	Flatpak bool `json:"flatpak,omitempty"`
 }
 
 // Tool is a helper program the server runs.
@@ -62,7 +66,8 @@ type Features struct {
 	WebDAV bool       `json:"webdav"`
 	MuPDF  bool       `json:"mupdf"`
 	// Terminal says whether admins may open a terminal. The desktop app
-	// opens the computer's own terminal and needs no switch for it.
+	// opens the computer's own terminal and needs no switch for it, except
+	// in a Flatpak, which cannot reach one.
 	Terminal bool `json:"terminal"`
 }
 
@@ -195,7 +200,8 @@ func (s *service) info(ctx context.Context) (Info, error) {
 	}
 	if desktop.Active() {
 		in.Deployment = "desktop"
-		in.Feature.Terminal = true
+		in.Flatpak = flatpak.ID() != ""
+		in.Feature.Terminal = !in.Flatpak
 	}
 	if app.Office.Kind == OfficeNone {
 		in.Feature.Office.URL = ""

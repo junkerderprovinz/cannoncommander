@@ -11,6 +11,7 @@ import (
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/elevate"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/flatpak"
 )
 
 // sandboxEnv is all of an environment a thumbnailer gets, as names and
@@ -79,6 +80,11 @@ var (
 // tried once with a program that does nothing, and why one failed is
 // logged that once.
 func findSandbox(look func(string) (string, error), root fs.FS) sandbox {
+	// A Flatpak may not make namespaces of its own, and the computer's
+	// thumbnailers are outside it anyway.
+	if flatpak.ID() != "" {
+		return sandbox{}
+	}
 	bwrap, err := look("bwrap")
 	if err != nil {
 		return sandbox{}
@@ -109,8 +115,12 @@ func findSandbox(look func(string) (string, error), root fs.FS) sandbox {
 
 // Sandboxing says how the system's thumbnails come about here, and whether
 // the kernel's restriction on user namespaces is what keeps the sandbox out.
+// In a Flatpak it never is, so the app's AppArmor profile is not offered.
 func Sandboxing() SandboxState {
 	k := current()
+	if flatpak.ID() != "" {
+		return SandboxState{Service: k.service != nil}
+	}
 	restrict, _ := fs.ReadFile(k.root, "proc/sys/kernel/apparmor_restrict_unprivileged_userns")
 	_, err := os.Stat(elevate.ProfileFile)
 	return SandboxState{

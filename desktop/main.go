@@ -13,6 +13,7 @@ import (
 	"crypto/sha256"
 	_ "embed"
 	"encoding/hex"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -29,6 +30,7 @@ import (
 
 	"github.com/junkerderprovinz/cannoncommander/backend/cmd"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/flatpak"
 )
 
 // The window, the taskbar and the installer show one mark.
@@ -89,7 +91,7 @@ func run() error {
 			OnSecondInstanceLaunch: sh.secondLaunch,
 		},
 		Windows: application.WindowsOptions{WebviewUserDataPath: filepath.Join(dir, "webview"), AdditionalBrowserArgs: debugArgs()},
-		Linux:   application.LinuxOptions{ProgramName: "CannonCommander"},
+		Linux:   linuxOptions(),
 	})
 	sh.app = app
 	passOn(places)
@@ -184,7 +186,12 @@ type shell struct {
 	standby
 }
 
+// AutoUpdate is off in a Flatpak, whose files only the software centre
+// replaces.
 func (s *shell) AutoUpdate() bool {
+	if flatpak.ID() != "" {
+		return false
+	}
 	if s.machineFile != "" {
 		return readAutoUpdate(s.machineFile)
 	}
@@ -192,6 +199,9 @@ func (s *shell) AutoUpdate() bool {
 }
 
 func (s *shell) SetAutoUpdate(on bool) error {
+	if on && flatpak.ID() != "" {
+		return errors.ErrUnsupported
+	}
 	if s.machineFile != "" {
 		return writeAutoUpdate(s.machineFile, on)
 	}
@@ -339,13 +349,30 @@ func dataDir() (string, error) {
 
 // instanceID is the single-instance lock for dir. A copy on its own CC_DATA
 // folder gets a lock of its own, so it runs beside the usual one. On Linux the
-// lock is a D-Bus name, whose elements may not start with a digit.
+// lock is a D-Bus name, whose elements may not start with a digit, and a
+// Flatpak may own names under its own ID alone.
 func instanceID(dir string) string {
+	base := appID
+	if id := flatpak.ID(); id != "" {
+		base = id
+	}
 	if os.Getenv("CC_DATA") == "" {
-		return appID
+		return base
 	}
 	sum := sha256.Sum256([]byte(dir))
-	return appID + ".data" + hex.EncodeToString(sum[:4])
+	return base + ".data" + hex.EncodeToString(sum[:4])
+}
+
+// linuxOptions names the program to GTK. Inside a Flatpak the name is the
+// app's ID, the only one the sandbox lets it own on the bus and the one the
+// desktop matches a window to the app's launcher by.
+func linuxOptions() application.LinuxOptions {
+	opts := application.LinuxOptions{ProgramName: product}
+	if id := flatpak.ID(); id != "" {
+		opts.ApplicationID = id
+		opts.ProgramName = id
+	}
+	return opts
 }
 
 // splash is the page the window shows until the server answers: the mark on

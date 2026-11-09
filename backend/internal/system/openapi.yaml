@@ -405,6 +405,9 @@ components:
           type: string
           enum: [container, desktop]
           description: desktop inside the desktop app.
+        flatpak:
+          type: boolean
+          description: Set when the desktop app runs in a Flatpak, which the software centre updates and which has no terminal of the computer to open.
         go:
           type: string
           example: go1.27.0

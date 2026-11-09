@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/cmd"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/flatpak"
 	"github.com/junkerderprovinz/cannoncommander/desktop/update"
 )
 
@@ -75,8 +76,13 @@ func openUpdateLog(path string) *log.Logger {
 
 // run removes what the last update left and then checks for updates until ctx
 // ends, whenever autoUpdate allows. A build that does not know which release
-// it is never checks.
+// it is never checks, and a Flatpak leaves updates to the software centre,
+// which owns its files.
 func (up *updater) run(ctx context.Context, autoUpdate func() bool) {
+	if flatpak.ID() != "" {
+		up.log.Printf("update: the software centre keeps this Flatpak current")
+		return
+	}
 	up.u.Cleanup()
 	if !update.IsRelease(cmd.Version()) {
 		up.log.Printf("update: %s is not a release build, so it does not update itself", cmd.Version())

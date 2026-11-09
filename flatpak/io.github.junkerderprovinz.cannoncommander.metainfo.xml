@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.junkerderprovinz.cannoncommander</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-only</project_license>
+
+  <name>CannonCommander</name>
+  <summary>A two-pane file manager</summary>
+  <developer id="io.github.junkerderprovinz">
+    <name>junkerderprovinz</name>
+  </developer>
+
+  <description>
+    <p>
+      Krusader and Total Commander are quick because you work in two panels side
+      by side and press F5 to copy from one to the other. CannonCommander brings
+      that way of working to your own computer, with the same interface it shows
+      on a server.
+    </p>
+    <p>What it does:</p>
+    <ul>
+      <li>Two panels with tabs, a command search on Ctrl+K and the function keys of a commander</li>
+      <li>Copies, moves and deletes run as jobs in the background, with pause, undo and a trash</li>
+      <li>Nine views per tab, from details to a gallery, with quick look on the space bar</li>
+      <li>Search, folder compare and sync, duplicates, disk usage, batch rename, archives and checksums</li>
+      <li>A viewer and an editor for pictures, video, audio, PDF, text and code</li>
+      <li>Colours and tags for files, frequent folders and your own key bindings</li>
+    </ul>
+    <p>
+      There is no account, no server of ours in between and no analytics. The
+      Flatpak reaches every folder and drive of your computer, and it uses the
+      thumbnails and the properties dialog of your desktop. Your programs stay
+      outside it, so a file opens in the program your desktop picks, and Open
+      with lets the desktop ask you which one. It does not open your terminal or
+      offer the actions of other file managers, and your software centre brings
+      the updates. To open folders from other programs here, pick
+      CannonCommander as the file manager in your system settings.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.junkerderprovinz.cannoncommander.desktop</launchable>
+  <provides>
+    <binary>cannoncommander</binary>
+    <mediatype>inode/directory</mediatype>
+  </provides>
+
+  <url type="homepage">https://github.com/junkerderprovinz/cannoncommander</url>
+  <url type="bugtracker">https://github.com/junkerderprovinz/cannoncommander/issues</url>
+  <url type="vcs-browser">https://github.com/junkerderprovinz/cannoncommander</url>
+  <url type="contribute">https://github.com/junkerderprovinz/cannoncommander/issues</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Two panels side by side</caption>
+      <image>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/panels-light.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>A copy running as a job</caption>
+      <image>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/copy-light.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>The gallery view</caption>
+      <image>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/gallery-light.png</image>
+    </screenshot>
+  </screenshots>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#f9d68f</color>
+    <color type="primary" scheme_preference="dark">#4e5051</color>
+  </branding>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+
+  <content_rating type="oars-1.1"/>
+
+  <releases>
+    <release version="1.0.0" date="2026-11-09">
+      <description>
+        <p>The first release of CannonCommander, a two-pane file manager with background jobs, a trash and the tools of Krusader and Total Commander.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.0.0</url>
+    </release>
+  </releases>
+</component>

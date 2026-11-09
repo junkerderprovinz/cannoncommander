@@ -98,6 +98,16 @@ describe('the updates card', () => {
     expect(api.saveApp).toHaveBeenCalledWith({ updates: { autoUpdate: false } });
   });
 
+  it('leaves the updates of the Flatpak to the software centre and says so', async () => {
+    api.system.mockResolvedValue({ version: '1.0.0', release: true, deployment: 'desktop', flatpak: true, go: '', os: '', arch: '', started: 0, uptime: 0, tools: {}, unraid: { available: false, socket: false }, features: {} });
+    api.app.mockResolvedValue(settings(true));
+    await mount(Info);
+    const updating = toggle(de.app.autoUpdate)!;
+    expect(updating.disabled).toBe(true);
+    expect(updating.getAttribute('aria-checked')).toBe('false');
+    expect(row(de.app.autoUpdate)?.querySelector('.glim-info-icon')?.getAttribute('aria-label')).toBe(de.app.autoUpdateFlatpakTip);
+  });
+
   it('offers a restart once the desktop app has the new version in place', async () => {
     api.checkUpdate.mockResolvedValue({ version: '1.0.0', latest: '1.1.0', updateAvailable: true, releaseUrl: RELEASE, ready: '1.1.0' });
     api.app.mockResolvedValue(settings(true));

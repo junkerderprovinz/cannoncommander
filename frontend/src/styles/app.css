@@ -408,3 +408,11 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
   .glim-btn[data-tone='ok']:hover { background-color: var(--status-ok-hover); }
   .glim-btn[data-tone='danger']:hover { background-color: var(--status-fail-hover); }
 }
+
+/* Flatpak's README button, which GlimStone has no brand for: the blue of its button on the README, on both themes,
+   and under the pointer the tile's ink like every other mark. */
+.glim-tile-flatpak { --tile: #4a90d9; --tile-ink: #ffffff; } /* 3.3:1 */
+.glim-flatpak-mark { color: var(--brand-flatpak, #4a90d9); }
+@media (hover: hover) {
+  .group:hover > .glim-brand-tile { --brand-flatpak: var(--tile-ink); }
+}

@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=CannonCommander
+GenericName=File Manager
+Comment=A two-pane file manager with the keys of a commander
+Exec=cannoncommander %U
+Icon=io.github.junkerderprovinz.cannoncommander
+Terminal=false
+Categories=System;FileTools;FileManager;
+MimeType=inode/directory;
+Keywords=files;folders;file manager;commander;two panes;krusader;total commander;
+StartupNotify=true
+StartupWMClass=io.github.junkerderprovinz.cannoncommander
+SingleMainWindow=true

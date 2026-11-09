@@ -16,6 +16,8 @@ BUTTONS = {
     "macos": RELEASE + "cannoncommander-macos-universal.zip",
     "linux": RELEASE + "cannoncommander-linux-amd64-installer",
     "linux-arm": RELEASE + "cannoncommander-linux-arm64-installer",
+    "flatpak": RELEASE + "cannoncommander-linux-amd64.flatpak",
+    "flatpak-arm": RELEASE + "cannoncommander-linux-arm64.flatpak",
     # Not in Community Applications yet, so the button is drawn without a link
     # and says "coming soon". The listing's address goes here once it exists.
     "unraid": None,

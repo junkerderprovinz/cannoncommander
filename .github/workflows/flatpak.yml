@@ -1,0 +1,67 @@
+name: Flatpak
+
+# Builds the Flatpak bundles and keeps them as artifacts. Like desktop.yml it
+# attaches nothing: on a release tag release.yml calls this and puts the
+# bundles on the release with every other download.
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            slug: linux-amd64
+          # Native, as in desktop.yml: the database and WebKitGTK are linked
+          # through cgo.
+          - os: ubuntu-24.04-arm
+            slug: linux-arm64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    # The GNOME SDK and flatpak-builder, in the image Flathub keeps for this.
+    # bubblewrap needs the privileges a default container lacks.
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-51@sha256:78d969b18225ae107ca29497bf09c4a3f791e5f1838a9a912a529d0024fb6210
+      options: --privileged
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      # The bundle takes its version from the newest release in the metainfo,
+      # so a tag without its entry would ship under the version before it.
+      - name: Check the release entry
+        if: github.ref_type == 'tag'
+        run: |
+          set -eu
+          version="${GITHUB_REF_NAME#v}"
+          if ! grep -q "<release version=\"$version\"" flatpak/io.github.junkerderprovinz.cannoncommander.metainfo.xml; then
+            echo "the metainfo has no release entry for $version" >&2
+            exit 1
+          fi
+
+      - name: Check the metainfo
+        run: flatpak-builder-lint appstream flatpak/io.github.junkerderprovinz.cannoncommander.metainfo.xml
+
+      - name: Build
+        run: |
+          flatpak-builder --disable-rofiles-fuse --install-deps-from=flathub --force-clean \
+            --state-dir=flatpak/.state --repo=flatpak/.repo \
+            flatpak/.build flatpak/io.github.junkerderprovinz.cannoncommander.yml
+
+      # The runtime comes from Flathub, which the bundle names, so installing
+      # the file pulls it in.
+      - name: Bundle
+        run: |
+          flatpak build-bundle --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+            flatpak/.repo cannoncommander-${{ matrix.slug }}.flatpak io.github.junkerderprovinz.cannoncommander
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: cannoncommander-${{ matrix.slug }}-flatpak
+          path: cannoncommander-${{ matrix.slug }}.flatpak
+          if-no-files-found: error

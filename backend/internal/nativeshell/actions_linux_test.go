@@ -135,3 +135,18 @@ func TestAnActionsIconIsADataURL(t *testing.T) {
 		}
 	}
 }
+
+func TestAFlatpakOffersNoActionsOfOtherFileManagers(t *testing.T) {
+	f := newFixture(t)
+	f.script(filepath.Join(f.user, "nautilus", "scripts", "Resize"), "#!/bin/sh\n")
+	f.write(filepath.Join(f.system, "nemo", "actions", "m.nemo_action"), "[Nemo Action]\nName=mail\nExec=mail %F\nSelection=any\nExtensions=any;\n")
+	f.install()
+	t.Setenv("FLATPAK_ID", "io.github.junkerderprovinz.cannoncommander")
+	png := f.files("a.png")[0]
+	if got, err := Actions([]string{png}); err != nil || len(got) != 0 {
+		t.Errorf("got %v %v", got, err)
+	}
+	if err := RunAction([]string{png}, "nautilus:Resize"); !errors.Is(err, ErrUnknownAction) {
+		t.Errorf("ran an action: %v", err)
+	}
+}

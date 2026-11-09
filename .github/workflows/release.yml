@@ -1,11 +1,11 @@
 name: Release
 
 # Fires on the version tag, builds and pushes the image for it, builds the
-# desktop app and publishes the hand-written notes as the GitHub release with
-# the desktop files. The release comes last, once the image and every desktop
-# build exist, and the image's `latest` tag follows it, so the badge, the
-# release page and `docker pull` name the same version. A failed build leaves no
-# release; re-running the failed jobs finishes it.
+# desktop app and its Flatpak and publishes the hand-written notes as the
+# GitHub release with the desktop files. The release comes last, once the
+# image and every desktop build exist, and the image's `latest` tag follows
+# it, so the badge, the release page and `docker pull` name the same version.
+# A failed build leaves no release; re-running the failed jobs finishes it.
 on:
   push:
     tags:
@@ -51,8 +51,12 @@ jobs:
     needs: notes
     uses: ./.github/workflows/desktop.yml
 
+  flatpak:
+    needs: notes
+    uses: ./.github/workflows/flatpak.yml
+
   publish:
-    needs: [container, desktop]
+    needs: [container, desktop, flatpak]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -83,6 +87,7 @@ jobs:
           done
           cp bundles/cannoncommander-windows-amd64-installer.exe dist/
           cp bundles/cannoncommander-linux-amd64-installer bundles/cannoncommander-linux-arm64-installer dist/
+          cp bundles/cannoncommander-linux-amd64.flatpak bundles/cannoncommander-linux-arm64.flatpak dist/
           chmod +x dist/cannoncommander-linux-*-installer
           ls -lh dist
 
@@ -92,7 +97,7 @@ jobs:
       - name: Checksums
         run: |
           set -eu
-          (cd dist && sha256sum *.zip *.exe cannoncommander-linux-*-installer > checksums.txt)
+          (cd dist && sha256sum *.zip *.exe cannoncommander-linux-*-installer *.flatpak > checksums.txt)
           cat dist/checksums.txt
 
       # Only from a pushed tag; a dispatched run stops after packaging. The
@@ -104,7 +109,7 @@ jobs:
         if: github.event_name == 'push' && github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash .github/scripts/publish-release.sh dist/*.zip dist/*.exe dist/cannoncommander-linux-*-installer dist/checksums.txt
+        run: bash .github/scripts/publish-release.sh dist/*.zip dist/*.exe dist/cannoncommander-linux-*-installer dist/*.flatpak dist/checksums.txt
 
   # `latest` on the image means the newest released version. It follows the
   # answer publish-release.sh gave for the release's "Latest" badge, so a

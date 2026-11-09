@@ -163,3 +163,10 @@ func TestTheNativeTerminalIsRefused(t *testing.T) {
 		})
 	}
 }
+
+func TestAFlatpakSaysItCannotOpenTheComputersTerminal(t *testing.T) {
+	t.Setenv("FLATPAK_ID", "io.github.junkerderprovinz.cannoncommander")
+	if _, err := newNative().pick("terminal", "/home/jdp"); !errors.Is(err, errFlatpak) {
+		t.Fatalf("got %v", err)
+	}
+}

@@ -100,7 +100,7 @@ export interface IntegrationResult { kind: string; ok: boolean; reachable: boole
 // checking is set while the desktop app still looks for ffmpeg.
 export interface Tool { available: boolean; path?: string; version?: string; checking?: boolean }
 export interface System {
-  version: string; commit?: string; release: boolean; deployment: 'container' | 'desktop'; go: string; os: string; arch: string; started: number; uptime: number;
+  version: string; commit?: string; release: boolean; deployment: 'container' | 'desktop'; flatpak?: boolean; go: string; os: string; arch: string; started: number; uptime: number;
   tools: Record<string, Tool>; unraid: { available: boolean; socket: boolean };
   features: { office: { kind: OfficeKind; url?: string }; thumbs: boolean; videoPreview: boolean; webdav: boolean; mupdf: boolean; terminal: boolean };
 }
