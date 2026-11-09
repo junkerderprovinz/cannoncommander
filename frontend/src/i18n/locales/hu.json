@@ -2544,7 +2544,8 @@
     "propsSystemTip": "Megnyitja az asztali környezet fájlkezelőjének párbeszédpanelét.",
     "propsOpen": "Megnyitás",
     "icons": "Rendszerikonok",
-    "iconsTip": "A lista minden részén a rendszer ikonjait mutatja. A programok és parancsikonok e kapcsoló nélkül is a saját ikonjukat mutatják."
+    "iconsTip": "A lista minden részén a rendszer ikonjait mutatja. A programok és parancsikonok e kapcsoló nélkül is a saját ikonjukat mutatják.",
+    "iconsTipLinux": "A lista minden részén a rendszer ikonjait mutatja. A programok és parancsikonok így is a saját ikonjukat mutatják. A CannonCommander csak elszigetelt környezetben készít bélyegképeket. Ahol ez nem lehetséges, például az Ubuntu 24.04 alatt, csak azokat látja, amelyeket a fájlkezelője már elkészített."
   },
   "shortcuts": {
     "title": "Billentyűparancsok",

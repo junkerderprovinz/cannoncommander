@@ -30,5 +30,6 @@
   "propsSystemTip": "Opens the dialog of your desktop's file manager.",
   "propsOpen": "Open",
   "icons": "System icons",
-  "iconsTip": "Shows your system's icons throughout the list. Programs and shortcuts show their own icon even with this off."
+  "iconsTip": "Shows your system's icons throughout the list. Programs and shortcuts show their own icon even with this off.",
+  "iconsTipLinux": "Shows your system's icons throughout the list. Programs and shortcuts show their own icon either way. CannonCommander only draws thumbnails in a sandbox. Where that isn't possible, as on Ubuntu 24.04, you only see the ones your file manager has already made."
 }

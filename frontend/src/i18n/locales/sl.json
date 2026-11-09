@@ -2712,7 +2712,8 @@
     "propsSystemTip": "Odpre pogovorno okno upravitelja datotek vašega namizja.",
     "propsOpen": "Odpri",
     "icons": "Sistemske ikone",
-    "iconsTip": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice pokažejo svojo ikono tudi brez tega stikala."
+    "iconsTip": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice pokažejo svojo ikono tudi brez tega stikala.",
+    "iconsTipLinux": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice tako ali tako pokažejo svojo ikono. CannonCommander riše sličice le v izoliranem okolju. Kjer to ne gre, na primer v Ubuntu 24.04, vidite le tiste, ki jih je vaš upravitelj datotek že ustvaril."
   },
   "shortcuts": {
     "title": "Bližnjice na tipkovnici",

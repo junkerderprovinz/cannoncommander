@@ -2628,7 +2628,8 @@
     "propsSystemTip": "Obre el quadre de diàleg del gestor de fitxers del vostre escriptori.",
     "propsOpen": "Obre",
     "icons": "Icones del sistema",
-    "iconsTip": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren la seva pròpia icona encara que això estigui desactivat."
+    "iconsTip": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren la seva pròpia icona encara que això estigui desactivat.",
+    "iconsTipLinux": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren igualment la seva pròpia icona. CannonCommander només genera miniatures en un entorn aïllat. On això no és possible, com a Ubuntu 24.04, només veieu les que el vostre gestor de fitxers ja ha creat."
   },
   "shortcuts": {
     "title": "Dreceres de teclat",

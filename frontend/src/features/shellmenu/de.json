@@ -30,5 +30,6 @@
   "propsSystemTip": "Öffnet den Dialog des Dateimanagers deines Desktops.",
   "propsOpen": "Öffnen",
   "icons": "Symbole des Systems",
-  "iconsTip": "Zeigt in der Liste überall die Symbole deines Systems. Programme und Verknüpfungen zeigen ihr eigenes Symbol auch ohne diesen Schalter."
+  "iconsTip": "Zeigt in der Liste überall die Symbole deines Systems. Programme und Verknüpfungen zeigen ihr eigenes Symbol auch ohne diesen Schalter.",
+  "iconsTipLinux": "Zeigt in der Liste überall die Symbole deines Systems. Programme und Verknüpfungen zeigen ihr eigenes Symbol auch so. Vorschaubilder zeichnet CannonCommander nur abgeschottet. Wo das nicht geht, etwa unter Ubuntu 24.04, siehst du nur die, die dein Dateimanager schon angelegt hat."
 }

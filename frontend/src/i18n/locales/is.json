@@ -2544,7 +2544,8 @@
     "propsSystemTip": "Opnar glugga skráastjóra skjáborðsins þíns.",
     "propsOpen": "Opna",
     "icons": "Kerfistákn",
-    "iconsTip": "Sýnir tákn kerfisins þíns alls staðar í listanum. Forrit og flýtileiðir sýna sitt eigið tákn líka þegar slökkt er á þessu."
+    "iconsTip": "Sýnir tákn kerfisins þíns alls staðar í listanum. Forrit og flýtileiðir sýna sitt eigið tákn líka þegar slökkt er á þessu.",
+    "iconsTipLinux": "Sýnir tákn kerfisins þíns alls staðar í listanum. Forrit og flýtileiðir sýna sitt eigið tákn hvort sem er. CannonCommander teiknar smámyndir aðeins í einangruðu umhverfi. Þar sem það gengur ekki, eins og á Ubuntu 24.04, sérðu aðeins þær sem skráastjórinn þinn hefur þegar búið til."
   },
   "shortcuts": {
     "title": "Flýtilyklar",

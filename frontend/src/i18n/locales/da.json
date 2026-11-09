@@ -2544,7 +2544,8 @@
     "propsSystemTip": "Åbner dialogen i dit skrivebords filhåndtering.",
     "propsOpen": "Åbn",
     "icons": "Systemikoner",
-    "iconsTip": "Viser dit systems ikoner overalt i listen. Programmer og genveje viser deres eget ikon, også uden denne kontakt."
+    "iconsTip": "Viser dit systems ikoner overalt i listen. Programmer og genveje viser deres eget ikon, også uden denne kontakt.",
+    "iconsTipLinux": "Viser dit systems ikoner overalt i listen. Programmer og genveje viser deres eget ikon under alle omstændigheder. CannonCommander tegner kun miniaturer i et afskærmet miljø. Hvor det ikke kan lade sig gøre, som på Ubuntu 24.04, ser du kun dem, din filhåndtering allerede har lavet."
   },
   "shortcuts": {
     "title": "Tastaturgenveje",

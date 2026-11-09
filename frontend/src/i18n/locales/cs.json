@@ -2712,7 +2712,8 @@
     "propsSystemTip": "Otevře dialog správce souborů vašeho desktopu.",
     "propsOpen": "Otevřít",
     "icons": "Systémové ikony",
-    "iconsTip": "Zobrazí v celém seznamu ikony vašeho systému. Programy a zástupci zobrazují vlastní ikonu i bez tohoto přepínače."
+    "iconsTip": "Zobrazí v celém seznamu ikony vašeho systému. Programy a zástupci zobrazují vlastní ikonu i bez tohoto přepínače.",
+    "iconsTipLinux": "Zobrazí v celém seznamu ikony vašeho systému. Programy a zástupci zobrazují vlastní ikonu tak jako tak. Náhledy kreslí CannonCommander jen v izolovaném prostředí. Kde to nejde, třeba v Ubuntu 24.04, uvidíte jen ty, které už vytvořil váš správce souborů."
   },
   "shortcuts": {
     "title": "Klávesové zkratky",

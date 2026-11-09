@@ -2460,7 +2460,8 @@
     "propsSystemTip": "Mở hộp thoại của trình quản lý tệp trên màn hình nền của bạn.",
     "propsOpen": "Mở",
     "icons": "Biểu tượng hệ thống",
-    "iconsTip": "Hiện biểu tượng của hệ thống bạn ở khắp danh sách. Chương trình và lối tắt vẫn hiện biểu tượng riêng ngay cả khi tắt công tắc này."
+    "iconsTip": "Hiện biểu tượng của hệ thống bạn ở khắp danh sách. Chương trình và lối tắt vẫn hiện biểu tượng riêng ngay cả khi tắt công tắc này.",
+    "iconsTipLinux": "Hiện biểu tượng của hệ thống bạn ở khắp danh sách. Chương trình và lối tắt dù sao cũng hiện biểu tượng riêng. CannonCommander chỉ vẽ hình thu nhỏ trong môi trường cách ly. Ở nơi không làm được, như trên Ubuntu 24.04, bạn chỉ thấy những hình mà trình quản lý tệp của bạn đã tạo sẵn."
   },
   "shortcuts": {
     "title": "Phím tắt",

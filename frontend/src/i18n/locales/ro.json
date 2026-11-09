@@ -2628,7 +2628,8 @@
     "propsSystemTip": "Deschide dialogul managerului de fișiere al desktopului tău.",
     "propsOpen": "Deschide",
     "icons": "Pictograme de sistem",
-    "iconsTip": "Arată în toată lista pictogramele sistemului tău. Programele și comenzile rapide își arată propria pictogramă chiar și cu acest comutator oprit."
+    "iconsTip": "Arată în toată lista pictogramele sistemului tău. Programele și comenzile rapide își arată propria pictogramă chiar și cu acest comutator oprit.",
+    "iconsTipLinux": "Arată în toată lista pictogramele sistemului tău. Programele și comenzile rapide își arată oricum propria pictogramă. CannonCommander desenează miniaturi doar într-un mediu izolat. Unde nu se poate, ca pe Ubuntu 24.04, vezi doar miniaturile pe care managerul tău de fișiere le-a creat deja."
   },
   "shortcuts": {
     "title": "Comenzi rapide de la tastatură",

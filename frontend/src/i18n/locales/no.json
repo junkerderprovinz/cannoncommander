@@ -2544,7 +2544,8 @@
     "propsSystemTip": "Åpner dialogen til filbehandleren på skrivebordet ditt.",
     "propsOpen": "Åpne",
     "icons": "Systemikoner",
-    "iconsTip": "Viser systemets ikoner overalt i listen. Programmer og snarveier viser sitt eget ikon også når dette er av."
+    "iconsTip": "Viser systemets ikoner overalt i listen. Programmer og snarveier viser sitt eget ikon også når dette er av.",
+    "iconsTipLinux": "Viser systemets ikoner overalt i listen. Programmer og snarveier viser sitt eget ikon uansett. CannonCommander lager bare miniatyrbilder i et isolert miljø. Der det ikke går, som på Ubuntu 24.04, ser du bare dem filbehandleren din allerede har laget."
   },
   "shortcuts": {
     "title": "Hurtigtaster",
