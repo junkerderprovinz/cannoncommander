@@ -179,7 +179,7 @@ onBeforeUnmount(() => clearInterval(timer));
 
     <SubCard :title="other ? c('mcp.stepConfigOther') : c('mcp.stepConfig', { name: app })">
       <div class="mcp-step">
-        <p class="a-text">{{ intro }}<template v-if="client.node"> {{ c('mcp.setup.node', { app }) }}</template></p>
+        <p class="a-text">{{ client.node ? `${intro} ${c('mcp.setup.node', { app })}` : intro }}</p>
         <template v-if="snippet">
           <pre class="mcp-snippet mono" data-mcp="snippet">{{ snippet }}</pre>
           <Button :label="copyLabel" label-key="IconCopy" @click="copyText(snippet)" />
