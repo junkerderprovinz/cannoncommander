@@ -324,6 +324,44 @@ textarea.field { height: auto; padding: .6rem .7rem; resize: vertical; }
 :root[data-l-bottombar="reactive"] .bottombar button[aria-current="page"] > span { display: inline; }
 :root[data-motion="off"] *, :root[data-motion="off"] *::before, :root[data-motion="off"] *::after { transition: none !important; animation: none !important; }
 
+/* The everyday moments at the app's numbers: a menu dropping open with its rows sliding in, a window rising on the
+   level's spring, a press giving way and a panel breathing under a drag. */
+@keyframes cc-menu-in { from { transform: translateY(calc(var(--motion-menu-travel, 10px) * -1)); } to { transform: none; } }
+@keyframes cc-menu-row-in { from { opacity: 0; transform: translateX(calc(var(--motion-menu-sway, 10px) * -1)); } to { opacity: 1; transform: none; } }
+@keyframes cc-win-in { from { transform: translateY(var(--motion-win-travel, 30px)); } to { transform: none; } }
+@keyframes cc-dropzone { to { background-color: color-mix(in srgb, var(--accent) var(--motion-dropzone-glow, 20%), transparent); } }
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    --motion-menu-dur: 240ms; --motion-menu-travel: 10px; --motion-menu-step: 16ms; --motion-menu-sway: 10px;
+    --motion-win-dur: 380ms; --motion-win-travel: 30px;
+    --motion-press-scale: .95; --motion-dropzone-dur: .9s; --motion-dropzone-glow: 20%;
+  }
+  :root[data-motion="subtle"] {
+    --motion-menu-dur: 100ms; --motion-menu-travel: 3px; --motion-menu-step: 0ms; --motion-menu-sway: 0px;
+    --motion-win-dur: 150ms; --motion-win-travel: 6px;
+    --motion-press-scale: .985; --motion-dropzone-dur: 1.4s; --motion-dropzone-glow: 12%;
+  }
+  :root[data-motion="off"] {
+    --motion-menu-dur: 0s; --motion-menu-travel: 0px; --motion-menu-step: 0s; --motion-menu-sway: 0px;
+    --motion-win-dur: 0s; --motion-win-travel: 0px;
+    --motion-press-scale: 1; --motion-dropzone-dur: 60s; --motion-dropzone-glow: 0%;
+  }
+  :root[data-motion="storm"] {
+    --motion-menu-dur: 420ms; --motion-menu-travel: 28px; --motion-menu-step: 32ms; --motion-menu-sway: 36px;
+    --motion-win-dur: 640ms; --motion-win-travel: 90px;
+    --motion-press-scale: .88; --motion-dropzone-dur: .45s; --motion-dropzone-glow: 34%;
+  }
+  .menu { animation: cc-menu-in var(--motion-menu-dur) var(--motion-page-ease, ease-out) both, glim-fade-in var(--motion-menu-dur) ease-out both; }
+  .menu > * {
+    animation: cc-menu-row-in var(--motion-menu-dur) ease-out both;
+    animation-delay: min(calc(var(--row-i, 0) * var(--motion-menu-step)), calc(var(--motion-menu-step) * 12));
+  }
+  .scrim > .win { animation: cc-win-in var(--motion-win-dur) var(--motion-page-ease, ease-out) both, glim-fade-in calc(var(--motion-win-dur) * .6) ease-out both; }
+  .btn { transition: scale var(--motion-control-dur, .12s) ease-out; }
+  .btn:not(:disabled):active { scale: var(--motion-press-scale); }
+  :root:not([data-motion="off"]) .list.dragover { animation: cc-dropzone var(--motion-dropzone-dur) ease-in-out infinite alternate; }
+}
+
 .bottombar { display: none; }
 @media (max-width: 1100px) { .app.dual .panels { grid-template-columns: 1fr; } .app.dual .panel:not(.active) { display: none; } }
 .narrow-only { display: none !important; }

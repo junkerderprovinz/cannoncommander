@@ -2,6 +2,7 @@
 // nothing in it that takes a click. Every piece reads its numbers from the level's dials in motion.css and takes
 // itself away when its animation ends, so a quick level and a slow one leave the page the same.
 import { glyph } from '@/core/glyphs';
+import { dial } from '@/core/motion';
 import { type Blast, type Burst, burst, type Picture, splinters } from './burst';
 
 type Vars = Record<string, string | number>;
@@ -61,9 +62,14 @@ export function replay(el: Element, cls: string) {
   el.addEventListener('animationend', done);
 }
 
+// The lights of a copy run side by side across the way, a volley of them in the storm.
 export function trace(from: Element, to: Element) {
-  const a = centre(from), b = centre(to);
-  piece('fx-trace', { left: b.x, top: b.y, '--fx-dx': b.x - a.x, '--fx-dy': b.y - a.y, '--fx-angle': `${Math.atan2(b.y - a.y, b.x - a.x)}rad` });
+  const a = centre(from), b = centre(to), dx = b.x - a.x, dy = b.y - a.y, length = Math.hypot(dx, dy) || 1;
+  const count = Math.max(1, Math.round(dial('--motion-trace-count'))), spread = dial('--motion-trace-spread');
+  return Array.from({ length: count }, (_, i) => {
+    const off = (i - (count - 1) / 2) * spread;
+    return piece('fx-trace', { left: b.x - (dy / length) * off, top: b.y + (dx / length) * off, '--fx-dx': dx, '--fx-dy': dy, '--fx-angle': `${Math.atan2(dy, dx)}rad`, '--fx-i': String(i) });
+  });
 }
 
 const puff = (at: Point, delay: string) =>
@@ -75,15 +81,15 @@ export function cannon(from: Element, to: Element) {
   puff(b, 'var(--motion-cannon-dur)');
 }
 
-// Rows on their way to the trash, at most a handful: a hundred falling entries would only hide what is left. With no
-// trash in sight they fall toward the bottom edge.
+// Rows on their way to the trash, as many as the level allows: a hundred falling entries would only hide what is
+// left. With no trash in sight they fall toward the bottom edge.
 export function drop(rows: { el: Element; glyph: string; name: string }[], bin?: Element | null) {
   const target = bin && centre(bin);
-  rows.slice(0, 8).forEach(({ el, glyph: g, name }, i) => {
+  return rows.slice(0, Math.round(dial('--motion-drop-count'))).map(({ el, glyph: g, name }, i) => {
     const r = el.getBoundingClientRect();
     const label = document.createElement('span');
     label.textContent = name;
-    piece('fx-drop', { left: r.left, top: r.top, '--fx-dx': target ? target.x - r.left : 0, '--fx-dy': target ? target.y - r.top : 160, '--fx-i': String(i) }, svg(g) + label.outerHTML);
+    return piece('fx-drop', { left: r.left, top: r.top, '--fx-dx': target ? target.x - r.left : 0, '--fx-dy': target ? target.y - r.top : 160, '--fx-i': String(i) }, svg(g) + label.outerHTML);
   });
 }
 
@@ -93,8 +99,17 @@ export function smoke(from: Element) {
 }
 
 export function salute(bar: Element) {
-  const r = bar.getBoundingClientRect(), n = 7;
+  const r = bar.getBoundingClientRect(), n = Math.round(dial('--motion-salute-count'));
   for (let i = 0; i < n; i++) piece('fx-salute', { left: r.left + (r.width * (i + 0.5)) / n, top: r.top + r.height / 2, '--fx-i': String(i) }, svg('IconStar'));
+}
+
+// Sparks thrown out from the middle of an element, evenly round with a little scatter, so no two fly the same way.
+export function sparks(from: Element, rand = Math.random) {
+  const at = centre(from), n = Math.round(dial('--motion-spark-count'));
+  return Array.from({ length: n }, (_, i) => {
+    const angle = ((i + rand() * 0.6) / n) * 2 * Math.PI, reach = 0.6 + rand() * 0.4;
+    return piece('fx-spark', { left: at.x, top: at.y, '--fx-sx': (Math.cos(angle) * reach).toFixed(3), '--fx-sy': (Math.sin(angle) * reach).toFixed(3) }, svg('IconStar'));
+  });
 }
 
 export function tumble(box: Element) {
