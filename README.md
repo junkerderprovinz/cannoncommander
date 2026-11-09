@@ -49,22 +49,22 @@ Krusader and Total Commander are quick because you work in two panels side by si
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-server-dark.svg"><img src=".github/assets/sections/group-server.svg" alt="Server" width="100%"></picture>
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(0,0,841.9,245.3))" alt="In Unraid&#x27;s Community Applications soon" width="160" height="46.618">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(0,0,841.9,245.3))" alt="In Unraid&#x27;s Community Applications soon" width="160" height="46.618">
   &nbsp;
-  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(866,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
+  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(866,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(1732,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(1732,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
 </p>
 <br>
 <p align="center">
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-desktop-dark.svg"><img src=".github/assets/sections/group-desktop.svg" alt="Desktop" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(2598,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(3464,0,457.783,245.3))" alt="Download the portable Windows app" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(2598,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(3464,0,457.783,245.3))" alt="Download the portable Windows app" width="87" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(3946,0,841.9,245.3))" alt="Download for macOS" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(3946,0,841.9,245.3))" alt="Download for macOS" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(4812,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(5678,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(4812,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(5678,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
 </p>
 <!-- /download-buttons -->
 
@@ -82,11 +82,11 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 
 <!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(6160,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(6160,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(7026,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(7026,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3f33d7218791#svgView(viewBox(7892,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=58ba03d9197e#svgView(viewBox(7892,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
 <!-- /give-buttons -->
 
