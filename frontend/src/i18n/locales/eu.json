@@ -3532,6 +3532,7 @@
     "removable": "USB unitatea",
     "optical": "DVD unitatea",
     "network": "Sareko unitatea",
+    "shareOn": "{share} {server} zerbitzarian",
     "volume": "{size}eko bolumena"
   },
   "files": {

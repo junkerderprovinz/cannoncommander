@@ -1,6 +1,6 @@
 // Drives of the computer the desktop app runs on, named the way its own file manager names them: a network drive by
-// its share and server, any other by the label it was given or else by what kind of drive it is, and on Windows with
-// its letter, as in USB-Laufwerk (E:).
+// its share and server, as daten (\\nas) in Explorer and daten auf nas in Nautilus, any other by the label it was
+// given or else by what kind of drive it is, and on Windows with its letter, as in USB-Laufwerk (E:).
 import type { DriveKind } from '@/api/types';
 import { fmtSize } from '@/core/format';
 import { t } from '@/i18n';
@@ -13,8 +13,10 @@ export const driveGlyph = (kind: DriveKind) => GLYPHS[kind];
 export function driveName(d: DriveLike): string {
   const letter = /^\/([A-Za-z])$/.exec(d.path ?? '')?.[1];
   const share = /^\\\\([^\\]+)\\(.+)$/.exec(d.remote ?? '');
+  const url = /^\w+:\/\/(?:[^@/]*@)?([^/]+)\/(.+)$/.exec(d.remote ?? '');
   const kind = d.kind === 'virtual' ? 'fixed' : d.kind ?? 'fixed';
   const word = (share ? `${share[2]} (\\\\${share[1]})` : '')
+    || (url ? t('drives.shareOn', { share: url[2], server: url[1] }) : '')
     || d.label
     || (d.kind === 'network' ? d.remote : '')
     || (!letter && d.size ? t('drives.volume', { size: fmtSize(d.size) }) : '')

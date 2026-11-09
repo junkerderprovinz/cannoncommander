@@ -3532,6 +3532,7 @@
     "removable": "USB Sürücü",
     "optical": "DVD Sürücüsü",
     "network": "Ağ Sürücüsü",
+    "shareOn": "{server} üzerindeki {share}",
     "volume": "{size} birim"
   },
   "files": {

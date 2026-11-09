@@ -3532,6 +3532,7 @@
     "removable": "USB-drev",
     "optical": "Dvd-drev",
     "network": "Netværksdrev",
+    "shareOn": "{share} på {server}",
     "volume": "{size}-diskenhed"
   },
   "files": {

@@ -3532,6 +3532,7 @@
     "removable": "USB-stasjon",
     "optical": "DVD-stasjon",
     "network": "Nettverksstasjon",
+    "shareOn": "{share} på {server}",
     "volume": "{size}-volum"
   },
   "files": {

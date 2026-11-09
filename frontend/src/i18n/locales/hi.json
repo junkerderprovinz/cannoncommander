@@ -3532,6 +3532,7 @@
     "removable": "USB ड्राइव",
     "optical": "DVD ड्राइव",
     "network": "नेटवर्क ड्राइव",
+    "shareOn": "{server} पर {share}",
     "volume": "{size} वॉल्यूम"
   },
   "files": {

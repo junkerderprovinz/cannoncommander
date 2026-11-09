@@ -3794,6 +3794,7 @@
     "removable": "USB diskas",
     "optical": "DVD įrenginys",
     "network": "Tinklo diskas",
+    "shareOn": "{share} serveryje {server}",
     "volume": "{size} tomas"
   },
   "files": {

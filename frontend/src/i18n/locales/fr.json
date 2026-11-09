@@ -3663,6 +3663,7 @@
     "removable": "Lecteur USB",
     "optical": "Lecteur DVD",
     "network": "Lecteur réseau",
+    "shareOn": "{share} sur {server}",
     "volume": "Volume de {size}"
   },
   "files": {

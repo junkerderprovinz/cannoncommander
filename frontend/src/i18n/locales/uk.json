@@ -3794,6 +3794,7 @@
     "removable": "USB-накопичувач",
     "optical": "DVD-дисковод",
     "network": "Мережний диск",
+    "shareOn": "{share} на {server}",
     "volume": "Том {size}"
   },
   "files": {

@@ -3401,6 +3401,7 @@
     "removable": "U 盘",
     "optical": "DVD 驱动器",
     "network": "网络驱动器",
+    "shareOn": "{server} 上的 {share}",
     "volume": "{size} 卷"
   },
   "files": {

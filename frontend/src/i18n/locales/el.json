@@ -3532,6 +3532,7 @@
     "removable": "Μονάδα USB",
     "optical": "Μονάδα DVD",
     "network": "Μονάδα δικτύου",
+    "shareOn": "{share} στο {server}",
     "volume": "Τόμος {size}"
   },
   "files": {

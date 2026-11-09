@@ -3532,6 +3532,7 @@
     "removable": "درایو USB",
     "optical": "درایو DVD",
     "network": "درایو شبکه",
+    "shareOn": "{share} روی {server}",
     "volume": "حجم {size}"
   },
   "files": {

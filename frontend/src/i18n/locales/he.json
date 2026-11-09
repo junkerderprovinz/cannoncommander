@@ -3663,6 +3663,7 @@
     "removable": "כונן USB",
     "optical": "כונן DVD",
     "network": "כונן רשת",
+    "shareOn": "{share} על {server}",
     "volume": "אמצעי אחסון בגודל {size}"
   },
   "files": {

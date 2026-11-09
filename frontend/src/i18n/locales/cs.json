@@ -3794,6 +3794,7 @@
     "removable": "Jednotka USB",
     "optical": "Jednotka DVD",
     "network": "Síťová jednotka",
+    "shareOn": "{share} na {server}",
     "volume": "Svazek {size}"
   },
   "files": {

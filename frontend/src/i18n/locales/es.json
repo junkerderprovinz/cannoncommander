@@ -3663,6 +3663,7 @@
     "removable": "Unidad USB",
     "optical": "Unidad de DVD",
     "network": "Unidad de red",
+    "shareOn": "{share} en {server}",
     "volume": "Volumen de {size}"
   },
   "files": {

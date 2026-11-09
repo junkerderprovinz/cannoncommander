@@ -3663,6 +3663,7 @@
     "removable": "USB диск",
     "optical": "DVD уређај",
     "network": "Мрежни диск",
+    "shareOn": "{share} на {server}",
     "volume": "Волумен од {size}"
   },
   "files": {

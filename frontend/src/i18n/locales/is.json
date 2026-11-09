@@ -3532,6 +3532,7 @@
     "removable": "USB-drif",
     "optical": "DVD-drif",
     "network": "Netdrif",
+    "shareOn": "{share} á {server}",
     "volume": "{size} gagnasvæði"
   },
   "files": {

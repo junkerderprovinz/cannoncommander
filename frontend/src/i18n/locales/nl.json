@@ -3532,6 +3532,7 @@
     "removable": "USB-station",
     "optical": "Dvd-station",
     "network": "Netwerkstation",
+    "shareOn": "{share} op {server}",
     "volume": "Volume van {size}"
   },
   "files": {

@@ -3532,6 +3532,7 @@
     "removable": "USB устройство",
     "optical": "DVD устройство",
     "network": "Мрежово устройство",
+    "shareOn": "{share} на {server}",
     "volume": "Том от {size}"
   },
   "files": {
