@@ -51,8 +51,8 @@ svg { display: block; }
 .head .glim-menubar-item { height: var(--btn-h); padding-inline: var(--btn-pad-x); font-size: var(--text-body); font-weight: 500; color: var(--carbon-text); transition: background-color var(--motion-control-dur, .15s); }
 .head .glim-menubar-item:is(:hover, [aria-expanded="true"]) { background-color: var(--carbon-surface3); }
 
-/* Another program's icon fills the glyph's square in a menu row, in its own colours. */
-.glim-menu-glyph > .glyph-picture { width: 100%; height: 100%; object-fit: contain; }
+/* Another program's icon fills the glyph's square in a menu row or a dropdown, in its own colours. */
+.glim-menu-glyph > .glyph-picture, .glim-select-glyph > .glyph-picture { width: 100%; height: 100%; object-fit: contain; }
 
 /* Installed with the window controls folded in, the bar takes the title bar's place and drags the window. */
 @media (display-mode: window-controls-overlay) {

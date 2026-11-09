@@ -26,6 +26,9 @@ const change = (map: KeyMap) => commit(map, layout());
     <FieldRow v-if="host.desktop" :label="t('keys.clickSelect')" :hint="t('keys.clickSelectTip')">
       <Toggle id="d-clickselect" :model-value="!!prefs.clickSelect" @update:model-value="setPref('clickSelect', $event)" />
     </FieldRow>
+    <FieldRow :label="t('keys.vim')" :hint="t('keys.vimTip')">
+      <Toggle id="kt-vim" :model-value="!!prefs.editorVim" @update:model-value="setPref('editorVim', $event)" />
+    </FieldRow>
     <FieldRow :label="t('keys.own')" :hint="t('keys.resetTip')">
       <Button id="kt-reset" :label="t('keys.reset')" label-key="IconRefresh" :disabled="!hasOwnKeys()" @click="change({ ...base })" />
     </FieldRow>

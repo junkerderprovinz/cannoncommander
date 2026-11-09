@@ -15,6 +15,11 @@ export const keymap = reactive<Record<string, string>>({});
 export const bindKey = (combo: string, id: string) => { keymap[combo] = id; };
 export const bindDefaults = () => Object.entries(DEFAULT_KEYS).forEach(([k, id]) => bindKey(k, id));
 
+// A key of a scope, such as the editor's, carries the scope in front, editor:Ctrl+d, so the same key can do one thing in
+// the file list and another in the editor.
+export const inScope = (scope: string, combo: string) => `${scope}:${combo}`;
+export const bareCombo = (combo: string) => combo.replace(/^[a-z]+:(?=.)/, '');
+
 // Shift counts for named keys and with Ctrl or Alt; on its own it only picks the character, such as * or +.
 export const comboOf = (e: Pick<KeyboardEvent, 'ctrlKey' | 'metaKey' | 'altKey' | 'shiftKey' | 'key'>) => {
   const mod = e.ctrlKey || e.metaKey || e.altKey;

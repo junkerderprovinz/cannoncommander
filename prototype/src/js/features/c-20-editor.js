@@ -1,17 +1,37 @@
-// Bearbeiten (F4) and Neue Datei (Shift+F4): a plain text editor with line numbers, find and replace and a markdown preview.
+// Bearbeiten (F4) and Neue Datei (Shift+F4): a plain text editor with a tab for the file, line numbers, find and replace,
+// a markdown preview and a status bar that says how the file is written.
 (() => {
   const { real, winKeys, viewKind, editable, target, textFor, md } = CC.ck;
   const opts = { wrap: false, split: true };
+  // Tabs or spaces as most indented lines have them, the way the app's editor reads a file. Go and makefiles want tabs.
+  const TWO = ['md', 'markdown', 'yml', 'yaml', 'json', 'js', 'ts', 'vue', 'html', 'css', 'xml'];
+  const indentOf = (text, node) => {
+    const e = FS.ext(node.name), fallback = e === 'go' || node.name === 'Makefile' ? 't4' : TWO.includes(e) ? 's2' : 's4';
+    let tabs = 0, spaces = 0, prev = 0;
+    const steps = new Map();
+    for (const line of text.split('\n')) {
+      if (!line.trim()) continue;
+      const lead = line.match(/^[ \t]*/)[0], n = lead.startsWith('\t') ? 0 : lead.length, step = Math.abs(n - prev);
+      if (lead.startsWith('\t')) tabs++;
+      else if (lead.length) spaces++;
+      if (step > 1 && step <= 8 && !lead.startsWith('\t')) steps.set(step, (steps.get(step) || 0) + 1);
+      prev = n;
+    }
+    if (!tabs && !spaces) return fallback;
+    if (tabs > spaces) return 't' + fallback.slice(1);
+    return 's' + ([...steps].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0]?.[0] ?? fallback.slice(1));
+  };
 
   function openEditor(node, folder) {
     const isMd = viewKind(node) === 'md';
     let saved = textFor(node), dirty = false, changed = false, matches = [], hit = -1;
     const w = win({
       title: node.name, full: true, cls: 'ce-win',
-      body: `<div class="ce-bar"><span class="pill">${esc(CC.ck.langOf(node))}</span><span class="grow"></span>
+      body: `<div class="ce-bar"><div class="ce-tabs" role="tablist" aria-label="Offene Dateien"><span class="ce-tab cur" role="tab" aria-selected="true"><button class="ce-tabname">${esc(node.name)}</button><button class="x" aria-label="${esc(node.name)} schließen">${g('IconClose')}</button></span>
+          <button class="btn icon ce-addtab" data-tip="Datei öffnen oder anlegen" aria-label="Datei öffnen oder anlegen">${g('IconAdd')}</button></div><span class="grow"></span>
           ${isMd ? `<span class="cv-swl">Vorschau ${sw(opts.split, 'id="ce-split"')}</span>` : ''}
-          <span class="cv-swl">Zeilen umbrechen ${sw(opts.wrap, 'id="ce-wrap"')}</span>
-          <button class="btn" id="ce-findbtn" data-tip="Strg+F">${g('IconSearch')}Suchen und ersetzen</button></div>
+          <button class="btn" id="ce-findbtn" data-tip="Strg+F">${g('IconSearch')}Suchen und ersetzen</button>
+          <button class="btn icon" id="ce-more" data-tip="Weitere Befehle" aria-label="Weitere Befehle">${g('IconMore')}</button></div>
         <div class="ce-main ${isMd && opts.split ? 'split' : ''}">
           <div class="ce-pane">
             <div class="ce-scroll ${opts.wrap ? 'wrap' : ''}"><div class="ce-grid"><div class="ce-back" aria-hidden="true"></div><textarea class="ce-ta" spellcheck="false" autocapitalize="off" wrap="${opts.wrap ? 'soft' : 'off'}" aria-label="Inhalt von ${esc(node.name)}"></textarea></div></div>
@@ -22,20 +42,29 @@
                 <button class="btn icon" id="ce-fclose" data-tip="Schließen (Esc)" aria-label="Suche schließen">${g('IconClose')}</button></div>
               <div class="ce-frow"><input class="field" id="ce-r" placeholder="Ersetzen durch" aria-label="Ersetzen durch">
                 <button class="btn" id="ce-one">Ersetzen</button><button class="btn" id="ce-all">Alle ersetzen</button></div>
+              <div class="ce-frow ce-fopts">${[['case', 'Groß- und Kleinschreibung beachten'], ['word', 'Nur ganze Wörter'], ['regex', 'Regulärer Ausdruck']].map(([k, l]) => `<button class="col-check" type="button" role="checkbox" aria-checked="false" data-fopt="${k}"><span class="cbox">${g('IconCheck')}</span>${l}</button>`).join('')}</div>
             </div>
           </div>
           ${isMd ? '<div class="ce-preview"><article class="cv-md"></article></div>' : ''}
-        </div>`,
-      foot: [{ start: '<span class="ce-pos glim-num"></span>' }, { label: 'Schließen', g: 'IconClose', run: () => (dirty ? (ask(), false) : undefined) }, { label: 'Speichern', g: 'IconSave', primary: true, run: () => { save(); return false; } }],
+        </div>
+        <div class="ce-status glim-num" role="status"><button class="ce-pos"></button><span class="grow"></span>
+          ${CC.admin.dropdown([['s2', 'Leerzeichen: 2'], ['s4', 'Leerzeichen: 4'], ['s8', 'Leerzeichen: 8'], ['t2', 'Tabs: 2'], ['t4', 'Tabs: 4'], ['t8', 'Tabs: 8']], indentOf(saved, node), 'id="ce-indent" data-tip="Einrückung"', 'ce-dd')}
+          ${CC.admin.dropdown([['lf', 'Unix (LF)'], ['crlf', 'Windows (CRLF)'], ['cr', 'Altes Mac OS (CR)']], 'lf', 'id="ce-eol" data-tip="Zeilenende"', 'ce-dd')}
+          ${CC.admin.dropdown(['UTF-8', 'UTF-8 BOM', 'UTF-16 LE', 'UTF-16 BE', 'Windows-1252', 'ISO-8859-1', 'ISO-8859-15'].map(e => [e, e]), 'UTF-8', 'id="ce-enc" data-tip="Zeichenkodierung"', 'ce-dd')}
+          ${CC.admin.dropdown([[CC.ck.langOf(node), CC.ck.langOf(node) === 'Text' ? 'Normaler Text' : CC.ck.langOf(node)]], CC.ck.langOf(node), 'id="ce-lang" data-tip="Sprache"', 'ce-dd')}
+          <span class="cv-swl ce-wrapsw">Zeilen umbrechen ${sw(opts.wrap, 'id="ce-wrap"')}</span></div>`,
+      foot: [{ start: ' ' }, { label: 'Schließen', g: 'IconClose', run: () => (dirty ? (ask(), false) : undefined) }, { label: 'Speichern', g: 'IconSave', primary: true, run: () => { save(); return false; } }],
       onClose: () => { if (changed && CC.view === 'files') CC.render(); },
     });
     const ta = $('.ce-ta', w), back = $('.ce-back', w), scroll = $('.ce-scroll', w), find = $('.ce-find', w), q = $('#ce-q', w), rep = $('#ce-r', w);
     const preview = $('.ce-preview .cv-md', w);
+    const fopt = { case: false, word: false, regex: false };
     ta.value = saved;
 
     const setDirty = (d) => {
       dirty = d;
       $('.notch', w).innerHTML = `${esc(node.name)}${d ? '<i class="ce-dot" aria-label="Nicht gespeichert"></i>' : ''}`;
+      $('.ce-tabname', w).innerHTML = `${esc(node.name)}${d ? '<i class="ce-tabdot" aria-label="Nicht gespeichert"></i>' : ''}`;
     };
     const lineOf = (pos) => ta.value.slice(0, pos).split('\n').length - 1;
     // The text stays in the textarea; the layer behind it draws line numbers, the caret's line and the find marks.
@@ -69,9 +98,15 @@
     const renderMd = () => { if (preview) { clearTimeout(mdTimer); mdTimer = setTimeout(() => { preview.innerHTML = md(ta.value); }, 120); } };
 
     const search = (keep) => {
-      const needle = q.value.toLowerCase(), hay = ta.value.toLowerCase();
       matches = [];
-      if (needle) for (let i = hay.indexOf(needle); i >= 0; i = hay.indexOf(needle, i + needle.length)) matches.push([i, i + needle.length]);
+      let re = null;
+      const src = fopt.regex ? q.value : q.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      try { re = q.value ? new RegExp(fopt.word ? `\\b(?:${src})\\b` : src, 'gmu' + (fopt.case ? '' : 'i')) : null; } catch { re = null; }
+      for (let m = re && re.exec(ta.value); m; m = re.exec(ta.value)) {
+        if (!m[0].length) { re.lastIndex++; continue; }
+        matches.push([m.index, m.index + m[0].length]);
+      }
+      const needle = q.value;
       if (!keep) hit = matches.length ? Math.max(0, matches.findIndex(([a]) => a >= ta.selectionStart)) : -1;
       hit = Math.min(hit, matches.length - 1);
       $('#ce-n', w).textContent = needle ? (matches.length ? `${hit + 1} von ${matches.length}` : 'keine Treffer') : '';
@@ -116,6 +151,13 @@
     rep.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('#ce-one', w).click(); } });
     find.addEventListener('click', (e) => { const b = e.target.closest('[data-hit]'); if (b) step(+b.dataset.hit); });
     $('#ce-fclose', w).onclick = closeFind;
+    $$('[data-fopt]', w).forEach((b) => b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-checked') !== 'true';
+      fopt[b.dataset.fopt] = on;
+      b.setAttribute('aria-checked', String(on));
+      b.firstElementChild.classList.toggle('on', on);
+      search();
+    }));
     $('#ce-findbtn', w).onclick = () => openFind();
 
     ta.addEventListener('input', () => { edited(); reveal(lineOf(ta.selectionStart)); });
@@ -218,16 +260,32 @@
 .ce-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent-contrast); margin-left: .5rem; }
 .ce-ask { display: flex; gap: .75rem; align-items: flex-start; line-height: 1.5; }
 .ce-ask svg { width: 1.2rem; height: 1.2rem; color: var(--accent-glyph); flex: none; margin-top: .1rem; }
-.ce-pos { font-size: 12px; }
+.ce-tabs { display: flex; align-items: center; gap: .35rem; min-width: 0; overflow-x: auto; scrollbar-width: none; flex: 0 1 auto; }
+.ce-tab { height: 1.75rem; padding: 0 .3rem 0 .85rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); color: var(--carbon-text-sub); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap; flex: none; }
+.ce-tab.cur { background: var(--accent); color: var(--accent-contrast); }
+.ce-tab button { all: unset; cursor: pointer; display: inline-flex; align-items: center; }
+.ce-tab .ce-tabname { gap: .4rem; }
+.ce-tabdot { display: inline-block; width: .45rem; height: .45rem; border-radius: 50%; background: currentColor; }
+.ce-tab .x { width: 1.2rem; height: 1.2rem; border-radius: var(--radius-pill); justify-content: center; opacity: .75; }
+.ce-tab .x svg { width: .55rem; height: .55rem; }
+.ce-fopts { gap: .4rem 1.1rem; flex-wrap: wrap; padding: .15rem .2rem 0; font-size: 13px; }
+.ce-status { display: flex; align-items: center; gap: .35rem .9rem; min-height: 2.1rem; padding: .3rem .2rem 0; flex: none; font-size: 12px; color: var(--carbon-text-sub); }
+.ce-pos { all: unset; cursor: pointer; white-space: nowrap; padding: .15rem .35rem; border-radius: var(--radius-control); }
+.ce-status .grow { flex: 1; }
+.ce-status .ce-dd { height: 1.6rem; font-size: 12px; padding: 0 .55rem; gap: .3rem; width: auto; }
+.ce-wrapsw { white-space: nowrap; }
 @media (max-width: 760px) {
   .scrim:has(> .ce-win) { padding: .5rem .5rem 4.75rem; }
   .ce-win.full { height: calc(100vh - 5.25rem); max-height: none; padding: 1.4rem .75rem .75rem; }
   .ce-bar { flex-wrap: wrap; gap: .6rem 1rem; }
-  .ce-bar .pill, .ce-bar .grow { display: none; }
+  .ce-bar { gap: .6rem; flex-wrap: nowrap; }
   #ce-findbtn { font-size: 0; gap: 0; width: var(--btn-h); padding: 0; }
   .ce-main.split { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
   .ce-find { right: .5rem; left: .5rem; width: auto; }
   .ce-frow { flex-wrap: wrap; }
+  .ce-status { flex-wrap: wrap; row-gap: .2rem; }
+  .ce-status .grow { flex-basis: 100%; height: 0; order: 1; }
+  .ce-status > :not(.ce-pos, .grow) { order: 2; }
 }
 `);
 })();

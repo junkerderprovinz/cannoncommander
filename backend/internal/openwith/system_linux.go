@@ -5,6 +5,7 @@ package openwith
 import (
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"syscall"
@@ -41,7 +42,7 @@ func (desktopEntries) icon(where string) (string, error) {
 // open starts the program through gio where GLib has it, which also knows
 // programs that run in a terminal or start over D-Bus, and by its Exec line
 // elsewhere.
-func (desktopEntries) open(file, id string) error {
+func (desktopEntries) open(file, id, _ string) error {
 	e, ok := xdg.Current().Entries()[id]
 	if !ok {
 		return errUnknownApp
@@ -57,6 +58,25 @@ func (desktopEntries) open(file, id string) error {
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Dir = filepath.Dir(file)
 	// A session of its own keeps the program open when the app quits.
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	go func() { _ = cmd.Wait() }()
+	return nil
+}
+
+// pick has nothing to show: Linux has no dialog for programs, so the app
+// lists every program instead.
+func (desktopEntries) pick(_, _ string) (app, error) { return app{}, errNoDialog }
+
+func (desktopEntries) runs(_ string, info os.FileInfo) bool {
+	return info.Mode().IsRegular() && info.Mode().Perm()&0o111 != 0
+}
+
+func (desktopEntries) run(program, file string) error {
+	cmd := exec.Command(program, file)
+	cmd.Dir = filepath.Dir(file)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 	if err := cmd.Start(); err != nil {
 		return err

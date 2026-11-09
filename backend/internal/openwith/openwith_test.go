@@ -32,14 +32,25 @@ type fakeSystem struct {
 	all    []app
 	ownDlg bool
 	fail   error
-	opened [][2]string
+	opened [][3]string
 	icons  map[string]int
 	chose  chan string
+	// asked holds the files apps was asked about, picked the program the
+	// picker hands back and ran what run started.
+	asked  []string
+	picked app
+	ran    [][2]string
 }
 
-func (s *fakeSystem) apps(string) ([]app, error) { return s.offer, nil }
-func (s *fakeSystem) every() ([]app, error)      { return s.all, nil }
-func (s *fakeSystem) dialog() bool               { return s.ownDlg }
+func (s *fakeSystem) apps(file string) ([]app, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.asked = append(s.asked, file)
+	return s.offer, nil
+}
+
+func (s *fakeSystem) every() ([]app, error) { return s.all, nil }
+func (s *fakeSystem) dialog() bool          { return s.ownDlg }
 
 func (s *fakeSystem) icon(where string) (string, error) {
 	s.mu.Lock()
@@ -51,13 +62,13 @@ func (s *fakeSystem) icon(where string) (string, error) {
 	return "data:image/png;base64," + where, nil
 }
 
-func (s *fakeSystem) open(file, id string) error {
+func (s *fakeSystem) open(file, id, ext string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.fail != nil {
 		return s.fail
 	}
-	s.opened = append(s.opened, [2]string{file, id})
+	s.opened = append(s.opened, [3]string{file, id, ext})
 	return nil
 }
 
@@ -66,10 +77,32 @@ func (s *fakeSystem) choose(file string) error {
 	return nil
 }
 
-func (s *fakeSystem) started() [][2]string {
+func (s *fakeSystem) pick(_, _ string) (app, error) {
+	if !s.ownDlg {
+		return app{}, errNoDialog
+	}
+	return s.picked, nil
+}
+
+// runs takes any regular file whose name ends in .exe for a program.
+func (s *fakeSystem) runs(program string, info os.FileInfo) bool {
+	return info.Mode().IsRegular() && strings.HasSuffix(program, ".exe")
+}
+
+func (s *fakeSystem) run(program, file string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return append([][2]string(nil), s.opened...)
+	if s.fail != nil {
+		return s.fail
+	}
+	s.ran = append(s.ran, [2]string{program, file})
+	return nil
+}
+
+func (s *fakeSystem) started() [][3]string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return append([][3]string(nil), s.opened...)
 }
 
 type hiddenRules struct{ path string }
@@ -97,7 +130,7 @@ func newEnv(t *testing.T) *env {
 			t.Fatal(err)
 		}
 	}
-	for _, f := range []string{filepath.Join(root, "work", "notes.txt"), filepath.Join(root, "private", "diary.txt"), filepath.Join(outside, "secret.txt")} {
+	for _, f := range []string{filepath.Join(root, "work", "notes.txt"), filepath.Join(root, "work", "main.go"), filepath.Join(root, "work", "edit.exe"), filepath.Join(root, "private", "edit.exe"), filepath.Join(root, "private", "diary.txt"), filepath.Join(outside, "secret.txt")} {
 		if err := os.WriteFile(f, []byte("x"), 0o666); err != nil {
 			t.Fatal(err)
 		}
@@ -236,7 +269,7 @@ func TestAFileOpensWithAProgramOfTheList(t *testing.T) {
 		t.Fatalf("got %d %s", status, code)
 	}
 	got := e.sys.started()
-	if len(got) != 1 || got[0][0] != filepath.Join(e.root, "work", "notes.txt") || got[0][1] != "code" {
+	if len(got) != 1 || got[0] != [3]string{filepath.Join(e.root, "work", "notes.txt"), "code", ".txt"} {
 		t.Fatalf("opened %v", got)
 	}
 }
@@ -352,4 +385,84 @@ func decodeDataURL(t *testing.T, u string) image.Image {
 		t.Fatal(err)
 	}
 	return img
+}
+
+func TestATypeListsItsProgramsWithoutAFile(t *testing.T) {
+	e := newEnv(t)
+	status, code, body := e.do(http.MethodGet, "/openwith?type=txt", nil)
+	var l listJSON
+	_ = json.Unmarshal(body, &l)
+	if status != http.StatusOK || len(l.Apps) != 2 || l.Apps[0].ID != "editor" {
+		t.Fatalf("got %d %s %+v", status, code, l)
+	}
+	if asked := e.sys.asked; len(asked) != 1 || filepath.Ext(asked[0]) != ".txt" {
+		t.Fatalf("asked about %v", asked)
+	}
+	if _, err := os.Stat(e.sys.asked[0]); !os.IsNotExist(err) {
+		t.Fatal("the stand-in file stayed")
+	}
+	for _, bad := range []string{"../txt", "t/x", "a.b", strings.Repeat("x", 20)} {
+		if status, _, _ := e.do(http.MethodGet, "/openwith?type="+url.QueryEscape(bad), nil); status != http.StatusBadRequest {
+			t.Errorf("type %q: got %d", bad, status)
+		}
+	}
+}
+
+func TestAFileOpensWithAProgramPickedForAnotherType(t *testing.T) {
+	e := newEnv(t)
+	if status, code, _ := e.do(http.MethodPost, "/openwith", map[string]string{"path": "/mnt/user/work/main.go", "app": "editor", "type": "txt"}); status != http.StatusNoContent {
+		t.Fatalf("got %d %s", status, code)
+	}
+	got := e.sys.started()
+	if len(got) != 1 || got[0] != [3]string{filepath.Join(e.root, "work", "main.go"), "editor", ".txt"} {
+		t.Fatalf("opened %v", got)
+	}
+}
+
+func TestAProgramFileOpensTheFile(t *testing.T) {
+	e := newEnv(t)
+	status, code, _ := e.do(http.MethodPost, "/openwith/program", map[string]string{"path": "/mnt/user/work/main.go", "program": "/mnt/user/work/edit.exe"})
+	if status != http.StatusNoContent {
+		t.Fatalf("got %d %s", status, code)
+	}
+	if e.sys.ran[0] != [2]string{filepath.Join(e.root, "work", "edit.exe"), filepath.Join(e.root, "work", "main.go")} {
+		t.Fatalf("ran %v", e.sys.ran)
+	}
+	cases := []struct {
+		program string
+		status  int
+		code    string
+	}{
+		{"/mnt/user/work/notes.txt", http.StatusBadRequest, "notAProgram"},
+		{"/mnt/user/work/sub", http.StatusBadRequest, "notAProgram"},
+		{"/mnt/user/private/edit.exe", http.StatusForbidden, ""},
+		{"/mnt/user/work/gone.exe", http.StatusNotFound, ""},
+	}
+	for _, c := range cases {
+		status, code, _ := e.do(http.MethodPost, "/openwith/program", map[string]string{"path": "/mnt/user/work/main.go", "program": c.program})
+		if status != c.status || c.code != "" && code != c.code {
+			t.Errorf("%s: got %d %s", c.program, status, code)
+		}
+	}
+	if len(e.sys.ran) != 1 {
+		t.Fatalf("ran %v", e.sys.ran)
+	}
+}
+
+func TestThePickerHandsBackTheProgram(t *testing.T) {
+	e := newEnv(t)
+	if status, code, _ := e.do(http.MethodPost, "/openwith/pick", map[string]string{"title": "Editor", "programs": "Programs"}); status != http.StatusNotFound || code != "noAppDialog" {
+		t.Fatalf("without a picker: got %d %s", status, code)
+	}
+	e.sys.ownDlg = true
+	if status, _, _ := e.do(http.MethodPost, "/openwith/pick", map[string]string{"title": "Editor"}); status != http.StatusNoContent {
+		t.Fatalf("closed without a pick: got %d", status)
+	}
+	e.sys.picked = app{id: `C:\Tools\edit.exe`, name: "edit", icon: "ed"}
+	status, _, body := e.do(http.MethodPost, "/openwith/pick", map[string]string{"title": "Editor"})
+	var got appJSON
+	_ = json.Unmarshal(body, &got)
+	if status != http.StatusOK || got != (appJSON{ID: `C:\Tools\edit.exe`, Name: "edit", Icon: "data:image/png;base64,ed"}) {
+		t.Fatalf("got %d %+v", status, got)
+	}
 }

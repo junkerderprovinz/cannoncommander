@@ -7,7 +7,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -100,7 +102,7 @@ func (launchServices) icon(where string) (string, error) {
 	return "data:image/png;base64," + out, nil
 }
 
-func (launchServices) open(file, id string) error {
+func (launchServices) open(file, id, _ string) error {
 	return exec.Command("open", "-a", id, file).Run()
 }
 
@@ -113,16 +115,47 @@ function run(argv) {
   return app.chooseApplication({ as: 'alias' }).toString();
 }`
 
-func (launchServices) choose(file string) error {
+// chosen asks for a program in the Mac's application chooser and returns
+// its path, or "" when the person cancels.
+func chosen() (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
 	out, err := exec.CommandContext(ctx, "osascript", "-l", "JavaScript", "-e", chooseScript).Output()
 	if err != nil {
 		var exit *exec.ExitError
 		if errors.As(err, &exit) && strings.Contains(string(exit.Stderr), "-128") {
-			return nil
+			return "", nil
 		}
+		return "", err
+	}
+	return strings.TrimSpace(string(out)), nil
+}
+
+func (launchServices) choose(file string) error {
+	prog, err := chosen()
+	if err != nil || prog == "" {
 		return err
 	}
-	return exec.Command("open", "-a", strings.TrimSpace(string(out)), file).Run()
+	return exec.Command("open", "-a", prog, file).Run()
+}
+
+// pick uses the same chooser, which has its own title.
+func (launchServices) pick(_, _ string) (app, error) {
+	p, err := chosen()
+	if err != nil || p == "" {
+		return app{}, err
+	}
+	return app{id: p, name: strings.TrimSuffix(filepath.Base(p), ".app"), icon: p}, nil
+}
+
+// runs takes a program bundle, which is a folder, or a program file.
+func (launchServices) runs(program string, info os.FileInfo) bool {
+	if info.IsDir() {
+		return strings.HasSuffix(program, ".app")
+	}
+	return info.Mode().IsRegular() && info.Mode().Perm()&0o111 != 0
+}
+
+func (launchServices) run(program, file string) error {
+	return exec.Command("open", "-a", program, file).Run()
 }

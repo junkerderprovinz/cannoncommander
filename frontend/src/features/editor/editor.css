@@ -1,45 +1,63 @@
-/* The editor window in the prototype's look, drawn by CodeMirror. */
+/* The editor window in the prototype's look: the tabs and the window's tools above, the text drawn by CodeMirror, the
+   status bar under it. */
 .ce-win .glim-window-body { padding-bottom: 0; }
-.ce-bar { display: flex; align-items: center; gap: 1.1rem; min-height: var(--btn-h); flex: none; }
-.ce-bar .grow { flex: 1; }
+.ce-bar { display: flex; align-items: center; gap: 1.1rem; min-height: var(--btn-h); flex: none; min-width: 0; }
+.ce-bar .grow, .ce-status .grow { flex: 1; }
+
+/* A tab per file, in the pills of the panels' tabs, with names written as they are. */
+.ce-tabs { display: flex; align-items: center; gap: .35rem; min-width: 0; overflow-x: auto; scrollbar-width: none; flex: 0 1 auto; }
+.ce-tab { height: 1.75rem; padding: 0 .3rem 0 .85rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); color: var(--carbon-text-sub); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap; flex: none; }
+.ce-tab:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
+.ce-tab.cur { background: var(--accent); color: var(--accent-contrast); }
+.ce-tab button { all: unset; cursor: pointer; display: inline-flex; align-items: center; }
+.ce-tab button:focus-visible { outline: 2px solid var(--focus-ring, var(--accent-ink)); outline-offset: 2px; border-radius: var(--radius-pill); }
+.ce-tab .ce-tabname { gap: .4rem; max-width: 16rem; overflow: hidden; text-overflow: ellipsis; }
+.ce-tabdot { display: inline-block; width: .45rem; height: .45rem; border-radius: 50%; background: currentColor; flex: none; }
+.ce-tab .x { width: 1.2rem; height: 1.2rem; border-radius: var(--radius-pill); justify-content: center; opacity: .75; }
+.ce-tab .x svg { width: .55rem; height: .55rem; }
+.ce-tab .x:hover { opacity: 1; background: color-mix(in srgb, currentColor 18%, transparent); }
+.ce-addtab { flex: none; }
+
 .ce-main { contain: inline-size; flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr; gap: 1rem; }
 .ce-main.split { grid-template-columns: 1fr 1fr; }
 .ce-main:not(.split) .ce-preview { display: none; }
 .ce-pane { position: relative; min-width: 0; min-height: 0; display: flex; }
-.ce-scroll { flex: 1; overflow: auto; border-radius: var(--radius-card); background: var(--carbon-surface2); }
-.ce-grid { position: relative; min-width: 100%; width: max-content; min-height: 100%; }
-.ce-scroll.wrap .ce-grid { width: 100%; }
-.ce-back, .ce-ta { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 13px; line-height: 1.6; tab-size: 4; letter-spacing: 0; }
-.ce-back { padding: .7rem 0 3rem; color: transparent; counter-reset: ln; pointer-events: none; }
-.ce-back .ln { position: relative; padding: 0 1rem 0 4.2rem; white-space: pre; min-height: 1.6em; }
-.ce-scroll.wrap .ce-back .ln { white-space: pre-wrap; overflow-wrap: anywhere; }
-.ce-back .ln::before { counter-increment: ln; content: counter(ln); position: absolute; left: 0; width: 3.1rem; text-align: right; color: var(--carbon-text-muted); font-variant-numeric: tabular-nums; }
-.ce-back .ln.cur { background: var(--carbon-hover); }
-.ce-back .ln.cur::before { color: var(--carbon-text); }
-.ce-back mark { color: transparent; background: color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 3px; }
-.ce-back mark.cur { background: var(--accent); }
-.ce-ta { position: absolute; inset: 0; width: 100%; height: 100%; padding: .7rem 1rem 3rem 4.2rem; margin: 0; border: 0; outline: none; resize: none; overflow: hidden; background: transparent; color: var(--carbon-text); caret-color: var(--accent-ink); white-space: pre; }
-.ce-scroll.wrap .ce-ta { white-space: pre-wrap; overflow-wrap: anywhere; }
-.ce-ta::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
-.ce-find { position: absolute; top: .6rem; right: 1.4rem; z-index: 2; padding: .55rem; display: flex; flex-direction: column; gap: .45rem; width: min(30rem, calc(100% - 2rem)); }
+/* CodeMirror draws the lines, the numbers and the marks itself; the pane only gives it the surface. */
+.ce-scroll { flex: 1; display: flex; overflow: hidden; border-radius: var(--radius-card); background: var(--carbon-surface2); }
+.ce-scroll > .cm-editor { flex: 1; min-width: 0; }
+.ce-fold { display: inline-grid; place-items: center; width: .8rem; height: 1.6em; color: var(--carbon-text-muted); }
+.ce-fold svg { width: .7rem; height: .7rem; }
+.ce-fold.open svg { transform: rotate(90deg); }
+.ce-fold:hover { color: var(--carbon-text); }
+.ce-find { position: absolute; top: .6rem; right: 1.4rem; z-index: 2; padding: .55rem; display: flex; flex-direction: column; gap: .45rem; width: min(31rem, calc(100% - 2rem)); }
 .ce-find[hidden] { display: none; }
 .ce-frow { display: flex; align-items: center; gap: .4rem; }
 .ce-frow .glim-input { flex: 1; min-width: 0; }
 .ce-frow .glim-pill { min-width: 4.5rem; justify-content: center; }
+.ce-fopts { gap: .4rem 1.1rem; flex-wrap: wrap; padding: .15rem .2rem 0; font-size: 13px; }
 .ce-preview { min-width: 0; overflow: auto; border-radius: var(--radius-card); background: var(--carbon-surface2); }
-.ce-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent-contrast); margin-left: .5rem; }
 .ce-ask { display: flex; gap: .75rem; align-items: flex-start; line-height: 1.5; }
 .ce-ask svg { width: 1.2rem; height: 1.2rem; color: var(--accent-glyph); flex: none; margin-top: .1rem; }
-.ce-pos { font-size: 12px; }
+
+/* The status bar: where the caret is on the left, how the file is written on the right. */
+.ce-status { display: flex; align-items: center; gap: .35rem .9rem; min-height: 2.1rem; padding: .3rem .2rem 0; flex: none; font-size: 12px; color: var(--carbon-text-sub); font-variant-numeric: tabular-nums; }
+.ce-pos { all: unset; cursor: pointer; white-space: nowrap; padding: .15rem .35rem; border-radius: var(--radius-control); }
+.ce-pos:hover { color: var(--carbon-text); background: var(--carbon-hover); }
+.ce-pos:focus-visible { outline: 2px solid var(--focus-ring, var(--accent-ink)); }
+.ce-status .ce-flag { flex: none; }
+.ce-wrapsw { white-space: nowrap; }
+.ce-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent-contrast); margin-left: .5rem; }
+
 @media (max-width: 760px) {
-  .ce-bar { flex-wrap: wrap; gap: .6rem 1rem; }
-  .ce-bar .glim-pill, .ce-bar .grow { display: none; }
+  .ce-bar { gap: .6rem; }
   .ce-main.split { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
   .ce-find { right: .5rem; left: .5rem; width: auto; }
   .ce-frow { flex-wrap: wrap; }
   .ce-frow .glim-input { flex: 1 1 100%; }
+  .ce-status { flex-wrap: wrap; row-gap: .2rem; }
+  .ce-status .grow { flex-basis: 100%; height: 0; order: 1; }
+  .ce-win .cm-editor .cm-lineNumbers .cm-gutterElement { width: 2rem !important; }
+  .ce-win .cm-editor .cm-line { padding-inline: .6rem !important; }
+  .ce-status .ce-pos { order: 0; }
+  .ce-status > :not(.ce-pos, .grow) { order: 2; }
 }
-
-/* CodeMirror draws the lines, the numbers and the marks itself; the pane only gives it the surface. */
-.ce-scroll { display: flex; overflow: hidden; }
-.ce-scroll > .cm-editor { flex: 1; min-width: 0; }

@@ -150,3 +150,28 @@ func TestEditorKeepsModeAndHardLinks(t *testing.T) {
 		t.Fatalf("the hard link sees %q", b)
 	}
 }
+
+func TestEditorConvertsToTheEncodingAsked(t *testing.T) {
+	f := newFixture(t)
+	p := filepath.Join(f.share, "downloads", "preis.txt")
+	put(t, p, []byte("5 €\n"))
+	f.save(t, "jdp", "/mnt/user/downloads/preis.txt", map[string]string{"text": "5 €\n", "encoding": "iso-8859-15", "eol": "crlf"})
+	if b, _ := os.ReadFile(p); string(b) != "5 \xa4\r\n" {
+		t.Fatalf("written %q", b)
+	}
+	got := decode[EditFile](t, f.get(t, "jdp", "/fs/file", "/mnt/user/downloads/preis.txt", "encoding", "iso-8859-15"))
+	if got.Encoding != "iso-8859-15" || got.Text != "5 €\r\n" {
+		t.Fatalf("read back %+v", got)
+	}
+	rec := f.save(t, "jdp", "/mnt/user/downloads/preis.txt", map[string]string{"text": "✓", "encoding": "iso-8859-1"})
+	var problem struct {
+		Code   string         `json:"code"`
+		Params map[string]any `json:"params"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &problem); err != nil || rec.Code != http.StatusUnprocessableEntity || problem.Code != "notEncodable" || problem.Params["encoding"] != "ISO-8859-1" {
+		t.Fatalf("a character ISO-8859-1 lacks: %d %s", rec.Code, rec.Body)
+	}
+	if rec := f.save(t, "jdp", "/mnt/user/downloads/preis.txt", map[string]string{"text": "x", "encoding": "ebcdic"}); rec.Code != http.StatusBadRequest {
+		t.Fatalf("an unknown encoding: %d", rec.Code)
+	}
+}

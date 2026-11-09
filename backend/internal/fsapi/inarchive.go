@@ -157,14 +157,14 @@ func (h handlers) archiveRaw(w http.ResponseWriter, r *http.Request, loc ccfs.Lo
 	})
 }
 
-func (h handlers) archiveText(w http.ResponseWriter, r *http.Request, loc ccfs.Location, limit int64) error {
+func (h handlers) archiveText(w http.ResponseWriter, r *http.Request, loc ccfs.Location, limit int64, asked string) error {
 	return h.readArchived(r, loc, func(e archives.Entry, rd io.Reader) error {
 		buf, err := io.ReadAll(io.LimitReader(rd, limit))
 		if err != nil {
 			return err
 		}
 		truncated := int64(len(buf)) < e.Size
-		enc, text, err := decodeText(buf, truncated)
+		enc, text, err := readText(buf, asked, truncated)
 		if err != nil {
 			return err
 		}
