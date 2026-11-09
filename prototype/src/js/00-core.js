@@ -189,6 +189,9 @@ const menuHTML = (list) => list.map((it, k) => {
   return `<button data-k="${k}" class="${it.radio && on ? 'on' : ''}" ${off ? 'disabled' : ''} ${role}>${lead}<span>${esc(typeof it.label === 'function' ? it.label() : it.label)}</span>${end}</button>`;
 }).join('');
 
+// A menu's rows come in one after another, each on its own place.
+const numberRows = (m) => [...m.children].forEach((row, i) => row.style.setProperty('--row-i', i));
+
 function menu(x, y, items, { above = false, anchor = null } = {}) {
   closeMenu();
   $$('.bubble').forEach(b => b.remove());
@@ -198,6 +201,7 @@ function menu(x, y, items, { above = false, anchor = null } = {}) {
   m.setAttribute('role', 'menu');
   const resolved = resolveItems(items);
   m.innerHTML = menuHTML(resolved);
+  numberRows(m);
   document.body.appendChild(m);
   const r = m.getBoundingClientRect();
   m.style.left = Math.max(8, Math.min(x, innerWidth - r.width - 8)) + 'px';
@@ -214,6 +218,7 @@ function menu(x, y, items, { above = false, anchor = null } = {}) {
     sub.id = 'submenu';
     sub.setAttribute('role', 'menu');
     sub.innerHTML = menuHTML(list);
+    numberRows(sub);
     document.body.appendChild(sub);
     host.classList.add('open');
     const hr = host.getBoundingClientRect(), sr = sub.getBoundingClientRect();
