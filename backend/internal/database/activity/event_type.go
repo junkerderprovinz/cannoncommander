@@ -180,7 +180,8 @@ func (e EventType) Valid() bool {
 		EventPasskeyRegister, EventPasskeyDelete,
 		EventTokenCreate, EventTokenDelete,
 		EventDuplicateFinder,
-		EventTerminalOpen, EventTerminalClose:
+		EventTerminalOpen, EventTerminalClose,
+		EventFolderCreate, EventTrash, EventRestore:
 		return true
 	default:
 		return false

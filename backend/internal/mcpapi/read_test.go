@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -245,5 +247,24 @@ func TestScrubTakesHostPathsAndCredentialsOut(t *testing.T) {
 		if got := scrub(in); got != want {
 			t.Fatalf("scrub(%q) = %q, want %q", in, got, want)
 		}
+	}
+}
+
+func TestALinkOutOfTheSourcesLeadsNowhere(t *testing.T) {
+	e := newEnv(t)
+	outside := t.TempDir()
+	if err := os.WriteFile(filepath.Join(outside, "secret.txt"), []byte("draußen"), 0o666); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, e.real("/mnt/user/filme/raus")); err != nil {
+		t.Skip("no symlinks here:", err)
+	}
+	key, _ := e.key("anna", false)
+	s := e.client(key)
+	if out, code := e.tool(s, "read_text_file", map[string]any{"path": "/mnt/user/filme/raus/secret.txt"}); code == "" {
+		t.Fatalf("read through a link out of the source: %v", out)
+	}
+	if out, code := e.tool(s, "list_folder", map[string]any{"path": "/mnt/user/filme/raus"}); code == "" {
+		t.Fatalf("listed through a link out of the source: %v", out)
 	}
 }
