@@ -2545,12 +2545,15 @@
     "iconsTip": "Hiện biểu tượng của hệ thống bạn ở khắp danh sách. Chương trình và lối tắt vẫn hiện biểu tượng riêng ngay cả khi tắt công tắc này.",
     "iconsTipLinux": "Hiện biểu tượng của hệ thống bạn ở khắp danh sách. Chương trình và lối tắt dù sao cũng hiện biểu tượng riêng. CannonCommander chỉ vẽ hình thu nhỏ trong môi trường cách ly. Ở nơi không làm được, như trên Ubuntu 24.04, bạn chỉ thấy những hình mà trình quản lý tệp của bạn đã tạo sẵn.",
     "thumbs": "Hình thu nhỏ",
-    "thumbsTip": "Ubuntu chỉ cho một chương trình vào môi trường cách ly khi có quyền riêng. Khi bật, CannonCommander thêm một quy tắc AppArmor nhỏ, sẽ hỏi mật khẩu của bạn, và từ đó tự vẽ hình thu nhỏ. Khi tắt, quy tắc sẽ biến mất.",
+    "thumbsTip": "Ubuntu chỉ cho một chương trình vào môi trường cách ly khi có quyền riêng. Khi bật, CannonCommander thêm một quy tắc AppArmor nhỏ, sẽ hỏi mật khẩu của bạn, và sau khi khởi động lại sẽ tự vẽ hình thu nhỏ. Khi tắt, quy tắc sẽ biến mất ngay.",
     "thumbsOnButton": "Bật hình thu nhỏ của hệ thống",
     "thumbsOffButton": "Tắt hình thu nhỏ của hệ thống",
     "thumbsOn": "Xong, từ giờ CannonCommander tự vẽ hình thu nhỏ.",
     "thumbsOff": "Đã tắt, quy tắc AppArmor đã được gỡ.",
-    "thumbsStillOut": "Quy tắc đã có, nhưng tiếc là môi trường cách ly vẫn chưa hoạt động."
+    "thumbsStillOut": "Quy tắc đã có, nhưng tiếc là môi trường cách ly vẫn chưa hoạt động.",
+    "thumbsOnRestart": "Quy tắc đã có. Sau khi khởi động lại, CannonCommander sẽ tự vẽ hình thu nhỏ.",
+    "thumbsOffRestart": "Quy tắc đã được gỡ. Tính năng tắt hẳn sau khi khởi động lại.",
+    "restartNow": "Khởi động lại ngay"
   },
   "shortcuts": {
     "title": "Phím tắt",

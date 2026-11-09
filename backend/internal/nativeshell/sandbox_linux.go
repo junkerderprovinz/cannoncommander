@@ -116,7 +116,19 @@ func Sandboxing() SandboxState {
 	return SandboxState{
 		Sandboxed: k.sandbox.program != "", Service: k.service != nil,
 		Restricted: strings.TrimSpace(string(restrict)) == "1", Allowed: err == nil,
+		Profiled: apparmorLabel(k.root) == elevate.ProfileName,
 	}
+}
+
+// apparmorLabel is the name of the AppArmor profile this process runs
+// under. Kernels before 5.8 only have the older place for it.
+func apparmorLabel(root fs.FS) string {
+	b, err := fs.ReadFile(root, "proc/self/attr/apparmor/current")
+	if err != nil {
+		b, _ = fs.ReadFile(root, "proc/self/attr/current")
+	}
+	name, _, _ := strings.Cut(strings.TrimSpace(string(b)), " (")
+	return name
 }
 
 // Resandbox forgets what the probe found, so the next thumbnail tries bwrap

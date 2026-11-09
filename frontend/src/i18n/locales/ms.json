@@ -2545,12 +2545,15 @@
     "iconsTip": "Menunjukkan ikon sistem anda di seluruh senarai. Program dan pintasan tetap menunjukkan ikon sendiri walaupun suis ini dimatikan.",
     "iconsTipLinux": "Menunjukkan ikon sistem anda di seluruh senarai. Program dan pintasan tetap menunjukkan ikon sendiri. CannonCommander hanya melukis lakaran kenit dalam persekitaran terpencil. Jika itu tidak boleh dilakukan, seperti pada Ubuntu 24.04, anda hanya melihat yang telah dibuat oleh pengurus fail anda.",
     "thumbs": "Lakaran kenit",
-    "thumbsTip": "Ubuntu hanya membenarkan program masuk ke persekitaran terpencil dengan kebenaran tersendiri. Apabila dihidupkan, CannonCommander menambah peraturan AppArmor yang kecil, yang meminta kata laluan anda, dan selepas itu melukis lakaran kenit sendiri. Apabila dimatikan, peraturan itu hilang semula.",
+    "thumbsTip": "Ubuntu hanya membenarkan program masuk ke persekitaran terpencil dengan kebenaran tersendiri. Apabila dihidupkan, CannonCommander menambah peraturan AppArmor yang kecil, yang meminta kata laluan anda, dan selepas dimulakan semula melukis lakaran kenit sendiri. Apabila dimatikan, peraturan itu terus hilang.",
     "thumbsOnButton": "Hidupkan lakaran kenit sistem",
     "thumbsOffButton": "Matikan lakaran kenit sistem",
     "thumbsOn": "Siap, mulai sekarang CannonCommander melukis lakaran kenit sendiri.",
     "thumbsOff": "Dimatikan, peraturan AppArmor sudah tiada.",
-    "thumbsStillOut": "Peraturan sudah ada, tetapi persekitaran terpencil masih belum berfungsi, maaf."
+    "thumbsStillOut": "Peraturan sudah ada, tetapi persekitaran terpencil masih belum berfungsi, maaf.",
+    "thumbsOnRestart": "Peraturan sudah ada. Selepas dimulakan semula, CannonCommander melukis lakaran kenit sendiri.",
+    "thumbsOffRestart": "Peraturan sudah tiada. Ia dimatikan sepenuhnya selepas dimulakan semula.",
+    "restartNow": "Mula semula sekarang"
   },
   "shortcuts": {
     "title": "Pintasan papan kekunci",

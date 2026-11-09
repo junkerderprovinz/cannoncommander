@@ -66,4 +66,7 @@ type SandboxState struct {
 	// without an AppArmor profile, as Ubuntu does since 24.04, and Allowed
 	// that the app's own profile is in place.
 	Restricted, Allowed bool
+	// Profiled says this process runs under that profile, which a program
+	// only takes on when it starts.
+	Profiled bool
 }

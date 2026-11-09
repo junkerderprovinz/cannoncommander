@@ -2630,12 +2630,15 @@
     "iconsTip": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa myös ilman tätä valintaa.",
     "iconsTipLinux": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa joka tapauksessa. CannonCommander piirtää esikatselukuvat vain eristetyssä ympäristössä. Missä se ei onnistu, kuten Ubuntu 24.04:ssä, näet vain ne, jotka tiedostonhallintasi on jo tehnyt.",
     "thumbs": "Esikatselukuvat",
-    "thumbsTip": "Ubuntu päästää ohjelman eristettyyn ympäristöön vain omalla luvalla. Kun otat tämän käyttöön, CannonCommander lisää pienen AppArmor-säännön, joka kysyy salasanaasi, ja piirtää sen jälkeen esikatselukuvat itse. Kun poistat sen käytöstä, sääntö poistuu taas.",
+    "thumbsTip": "Ubuntu päästää ohjelman eristettyyn ympäristöön vain omalla luvalla. Kun otat tämän käyttöön, CannonCommander lisää pienen AppArmor-säännön, joka kysyy salasanaasi, ja piirtää uudelleenkäynnistyksen jälkeen esikatselukuvat itse. Kun poistat sen käytöstä, sääntö poistuu heti.",
     "thumbsOnButton": "Ota järjestelmän esikatselukuvat käyttöön",
     "thumbsOffButton": "Poista järjestelmän esikatselukuvat käytöstä",
     "thumbsOn": "Valmis, CannonCommander piirtää nyt esikatselukuvat itse.",
     "thumbsOff": "Poistettu käytöstä, AppArmor-sääntö on taas poissa.",
-    "thumbsStillOut": "Sääntö on paikallaan, mutta eristetty ympäristö ei valitettavasti vieläkään toimi."
+    "thumbsStillOut": "Sääntö on paikallaan, mutta eristetty ympäristö ei valitettavasti vieläkään toimi.",
+    "thumbsOnRestart": "Sääntö on paikallaan. Uudelleenkäynnistyksen jälkeen CannonCommander piirtää esikatselukuvat itse.",
+    "thumbsOffRestart": "Sääntö on poistettu. Kokonaan pois päältä se on uudelleenkäynnistyksen jälkeen.",
+    "restartNow": "Käynnistä uudelleen nyt"
   },
   "shortcuts": {
     "title": "Pikanäppäimet",
