@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { Provider, RemoteType } from '@/api/admin';
 import { addMessages, setLanguage } from '@/i18n';
+import catalog from '../../../scripts/fixture-remotes.json';
 import de from './de.json';
 import en from './en.json';
 import { applies, loadMarks, markOf, nameAndKind, optionHint, optionLabel, providerName, splitOptions, suggestName } from './remotes';
@@ -26,6 +27,23 @@ describe('the provider picker', () => {
     expect(lit.tile).toEqual({ tile: '#0082c9', ink: '#ffffff' });
     expect(markOf('IconFolder')).toEqual({ glyph: 'IconFolder' });
     expect(markOf('IconNothingLikeThis')).toEqual({ glyph: 'IconCloud' });
+  });
+
+  it('gives every provider a logo that is nothing but SVG, or a glyph of its own', () => {
+    for (const p of catalog.providers) {
+      const mark = markOf(p.mark);
+      if (!mark.svg) {
+        expect(mark.glyph, p.id).toBe(p.mark);
+        continue;
+      }
+      const box = document.createElement('template');
+      box.innerHTML = mark.svg;
+      const nodes = [...box.content.childNodes];
+      expect(nodes.length, p.id).toBeGreaterThan(0);
+      expect(nodes.map((n) => n.nodeName.toLowerCase()), p.id).toEqual(nodes.map(() => 'svg'));
+      const resting = nodes.filter((n) => !(n as Element).classList.contains('glim-mark-hover'));
+      expect(resting.length, p.id).toBe(1);
+    }
   });
 
   it('says the names that are words in the reader language and keeps a brand as it is', () => {

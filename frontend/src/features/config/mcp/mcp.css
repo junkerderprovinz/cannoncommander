@@ -1,9 +1,10 @@
 /* The MCP card, its windows and the consent page. */
 .mcp-mark { display: contents; }
-.mcp-mark svg { width: 100%; height: 100%; display: block; }
+/* The single colour mark stays hidden until GlimStone's lit tile swaps it in. */
+.mcp-mark svg { width: 100%; height: 100%; }
+.mcp-mark svg:not(.glim-mark-hover) { display: block; }
 .mcp-row-mark { display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.25rem; flex: none; color: var(--carbon-text); }
-.mcp-row-mark svg { width: 100%; height: 100%; display: block; }
-.mcp-row-mark .glim-mark-hover { display: none; }
+.mcp-row-mark > svg { width: 100%; height: 100%; display: block; }
 .mcp-row-mark.big { width: 2.25rem; height: 1.75rem; }
 
 /* The client tiles, three across a wide window and two on a phone. A tile's class sits beside the house tile

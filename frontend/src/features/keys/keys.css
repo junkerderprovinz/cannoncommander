@@ -10,8 +10,16 @@
 .kb-name svg { width: .95rem; height: .95rem; color: var(--accent-glyph); flex: none; }
 .kb-name .ph { width: .95rem; flex: none; }
 .kb-key { grid-column: 3; grid-row: 1; justify-self: end; display: inline-flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: .3rem; max-width: 18rem; min-height: 1.8rem; padding: .2rem .55rem; border-radius: var(--radius-control); font-size: 13px; }
-.kb-key:hover, .kb-row.rec .kb-key { background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
+.kb-row.rec .kb-key { background: var(--carbon-surface2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent); }
 .kb-row.own .kb-key .glim-kbd { background: color-mix(in srgb, var(--accent) 22%, var(--carbon-surface3)); }
+/* Under the pointer and the keyboard's focus the key caps light up in the accent, without a frame around them. The
+   glow is the focus mark too, so a key without caps keeps the usual ring. */
+.kb-key:focus-visible:has(.glim-kbd) { outline: none; }
+.kb-key:is(:hover, :focus-visible) .glim-kbd { background: var(--accent); color: var(--accent-contrast); box-shadow: 0 0 .6rem color-mix(in srgb, var(--accent) 60%, transparent); }
+.kb-key:is(:hover, :focus-visible) .muted { color: var(--accent-ink); }
+@media (prefers-reduced-motion: no-preference) {
+  .kb-key .glim-kbd { transition: background-color var(--motion-control-dur) ease, color var(--motion-control-dur) ease, box-shadow var(--motion-control-dur) ease; }
+}
 /* The row's buttons wait beside its keys until the row has the pointer or the focus. A touch screen has no hover, so
    there they always show. */
 .kb-acts { grid-column: 2; grid-row: 1; display: flex; justify-content: flex-end; gap: 2px; min-width: 4.2rem; visibility: hidden; }
@@ -19,6 +27,7 @@
 @media (hover: none) { .kb-acts { visibility: visible; } }
 .kb-warn { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: 0 0 .4rem; padding: .35rem .6rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--status-warn-solid, #FF832B) 16%, transparent); font-size: 12.5px; }
 .kb-choice { display: flex; gap: .4rem; margin-left: auto; }
-/* A key the browser keeps stays in the list, dimmed, and its tooltip says why. */
+/* A key the browser keeps stays in the list, struck out, and a line right under the keys says why. */
 .kb-off .glim-kbd { opacity: .55; text-decoration: line-through; }
+.kb-note { grid-column: 1 / -1; justify-self: end; max-width: 46rem; margin: -.2rem 0 .45rem; padding-inline-end: .55rem; font-size: 12px; line-height: 1.4; color: var(--carbon-text-sub); text-align: end; }
 .kb-fixedhead { margin-top: 1.2rem; }

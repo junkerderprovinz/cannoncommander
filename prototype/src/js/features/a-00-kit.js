@@ -60,7 +60,7 @@
   const pill = (text, tone = '', attr = '') => `<span class="pill ${tone}" ${attr}>${esc(text)}</span>`;
   const bareBtn = (glyph, tip, attr) => `<button class="btn icon a-bare" data-tip="${esc(tip)}" aria-label="${esc(tip)}" ${attr}>${g(glyph)}</button>`;
 
-  // A list row: glyph tile, the name, badges on the right, and buttons that come in on hover.
+  // A list row: glyph tile, the name, badges on the right, and to their left buttons that come in on hover.
   const row = ({ tile, name, tip, badges = [], acts = [], attr = '', mono = false }) => `<div class="a-row" tabindex="0" ${attr}>
       <span class="tile">${tile}</span>
       <span class="a-name ${mono ? 'mono' : ''}"><span class="t">${esc(name)}</span>${tip ? info(tip) : ''}</span>
@@ -284,8 +284,9 @@
 .a-row .tile svg { color: var(--accent-glyph); }
 .a-name { display: flex; align-items: center; gap: .4rem; min-width: 0; white-space: nowrap; }
 .a-name .t { overflow: hidden; text-overflow: ellipsis; }
-.a-badges { display: flex; gap: .35rem; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
-.a-acts { display: flex; gap: .15rem; opacity: 0; transition: opacity .1s; }
+/* A row's values stay at the right edge whether or not it has the pointer, and its buttons come in to their left. */
+.a-badges { order: 2; display: flex; gap: .35rem; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
+.a-acts { order: 1; display: flex; gap: .15rem; opacity: 0; transition: opacity .1s; }
 .a-row:hover .a-acts, .a-row:focus-within .a-acts { opacity: 1; }
 @media (hover: none) { .a-acts { opacity: 1; } }
 .a-slot { width: var(--btn-h); flex: none; }
