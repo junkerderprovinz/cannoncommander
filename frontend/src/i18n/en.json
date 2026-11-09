@@ -300,6 +300,7 @@
     "removable": "USB Drive",
     "optical": "DVD Drive",
     "network": "Network Drive",
+    "shareOn": "{share} on {server}",
     "volume": "{size} Volume"
   },
   "files": {
@@ -515,7 +516,7 @@
     "notInTrash": "This is not in the trash",
     "notOnDisk": "Only files on disk can go to another program",
     "notText": "This file is not text",
-    "notWindows1252": "The text holds characters Windows-1252 cannot store. Save it as UTF-8",
+    "notEncodable": "The text holds characters {encoding} cannot store. Save it as UTF-8",
     "nothingToUndo": "There is nothing to take back",
     "noVolume": "This drive is gone",
     "officeCannotOpen": "The office server does not open .{ext} files",

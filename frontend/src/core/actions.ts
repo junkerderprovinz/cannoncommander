@@ -22,6 +22,9 @@ export interface Action {
   checked?: () => boolean;
   // Kept out of the command search: it needs what its caller hands it, or a menu of its own already leads there.
   hidden?: boolean;
+  // Where the action works, such as the editor. It runs only there, by keys of that scope, and stays out of the command
+  // search.
+  scope?: string;
 }
 export type ActionDef = Omit<Action, 'id'>;
 

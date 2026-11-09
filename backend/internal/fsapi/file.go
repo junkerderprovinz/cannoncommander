@@ -17,8 +17,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fileops"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fschange"
-	"golang.org/x/text/encoding/charmap"
-	"golang.org/x/text/encoding/unicode"
 )
 
 // editMax is the largest file the editor opens. Past that a browser editor
@@ -67,7 +65,8 @@ func contentTag(b []byte) string {
 
 func (h handlers) fileGet(w http.ResponseWriter, r *http.Request) error {
 	u := v1.UserFrom(r)
-	loc, info, err := h.file(u, r.URL.Query().Get("path"), ccfs.Download)
+	q := r.URL.Query()
+	loc, info, err := h.file(u, q.Get("path"), ccfs.Download)
 	if err != nil {
 		return err
 	}
@@ -85,7 +84,7 @@ func (h handlers) fileGet(w http.ResponseWriter, r *http.Request) error {
 		w.WriteHeader(http.StatusNotModified)
 		return nil
 	}
-	enc, text, err := decodeText(buf, false)
+	enc, text, err := readText(buf, q.Get("encoding"), false)
 	if err != nil {
 		return err
 	}
@@ -253,27 +252,4 @@ func withEOL(text, eol string) string {
 		return text
 	}
 	return strings.ReplaceAll(text, "\n", sep)
-}
-
-// encodeText writes text back in the encoding the editor read it in.
-func encodeText(text, encoding string) ([]byte, error) {
-	switch encoding {
-	case "utf-8", "ascii":
-		return []byte(text), nil
-	case "utf-8-bom":
-		return append([]byte{0xEF, 0xBB, 0xBF}, text...), nil
-	case "utf-16le", "utf-16be":
-		order := unicode.LittleEndian
-		if encoding == "utf-16be" {
-			order = unicode.BigEndian
-		}
-		return unicode.UTF16(order, unicode.UseBOM).NewEncoder().Bytes([]byte(text))
-	case "windows-1252":
-		out, err := charmap.Windows1252.NewEncoder().Bytes([]byte(text))
-		if err != nil {
-			return nil, v1.Coded(http.StatusUnprocessableEntity, "notWindows1252", "the text holds characters Windows-1252 cannot store, save it as UTF-8 instead")
-		}
-		return out, nil
-	}
-	return nil, v1.Errorf(http.StatusBadRequest, "encoding must be utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252 or ascii")
 }

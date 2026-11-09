@@ -88,6 +88,7 @@ func TestAThumbnailComesFromTheCacheWhileItFitsTheFile(t *testing.T) {
 // arguments to a log and then runs body.
 func (f *fixture) thumbnailer(body string) (log string) {
 	log = filepath.Join(f.home, "thumbnailer.log")
+	f.bwrap = f.script(filepath.Join(f.home, "bin", "bwrap"), fakeBwrap)
 	program := f.script(filepath.Join(f.home, "bin", "thumbnail me"), "#!/bin/sh\nfor a in \"$@\"; do printf '[%s]' \"$a\" >> "+shellQuote(log)+"; done\necho >> "+shellQuote(log)+"\n"+body+"\n")
 	f.write(filepath.Join(f.system, "thumbnailers", "test.thumbnailer"), "[Thumbnailer Entry]\nExec=\""+program+"\" -s %s %i %o %u\nMimeType=image/png;\n")
 	return log
@@ -116,9 +117,15 @@ func TestAThumbnailerDrawsAndTheCacheKeepsIt(t *testing.T) {
 		t.Errorf("folder %v %v", dir, err)
 	}
 	logged, _ := os.ReadFile(log)
-	args := regexp.MustCompile(`^\[-s\]\[256\]\[` + regexp.QuoteMeta(file) + `\]\[/[^\]]+/thumbnail\.png\]\[` + regexp.QuoteMeta(uri) + `\]\n$`)
+	// The thumbnailer sees the paths inside the sandbox, which the stand-in
+	// for bwrap turned back into its private folder.
+	args := regexp.MustCompile(`^\[-s\]\[256\]\[/[^\]]+/input\.png\]\[/[^\]]+/thumbnail\.png\]\[file:///tmp/input\.png\]\n$`)
 	if !args.Match(logged) {
 		t.Errorf("arguments %q", logged)
+	}
+	sandbox, _ := os.ReadFile(filepath.Join(f.home, "bin", "bwrap.log"))
+	if !strings.Contains(string(sandbox), "\n--ro-bind\n"+file+"\n/tmp/input.png\n") || !strings.Contains(string(sandbox), "\n--clearenv\n") {
+		t.Errorf("sandbox %q", sandbox)
 	}
 	if again, err := k.thumbnail(context.Background(), file, 200); err != nil || !bytes.Equal(again, b) {
 		t.Errorf("again: %v", err)
@@ -185,5 +192,31 @@ func TestAFileWithoutAThumbnailerHasNoThumbnail(t *testing.T) {
 	empty := f.files("empty.png")[0]
 	if _, err := f.desk().thumbnail(context.Background(), empty, 100); !errors.Is(err, ErrNoPicture) {
 		t.Errorf("nothing drawn: %v", err)
+	}
+}
+
+func TestWithoutASandboxTheThumbnailServiceDrawsIntoTheSharedCache(t *testing.T) {
+	f := newFixture(t)
+	f.bwrap = ""
+	files := f.files("film.png", "odd.png")
+	k := f.desk()
+	var asked []string
+	k.service = func(_ context.Context, uri, mime, flavor string) error {
+		asked = append(asked, uri+" "+mime+" "+flavor)
+		if strings.HasSuffix(uri, "film.png") {
+			f.cached(flavor, files[0], mtime(t, files[0]), 256)
+			return nil
+		}
+		return errors.New("the service has no thumbnailer for it")
+	}
+	b, err := k.thumbnail(context.Background(), files[0], 200)
+	if err != nil || size(t, b) != 256 {
+		t.Fatalf("got %v", err)
+	}
+	if want := xdg.FileURI(files[0]) + " image/png large"; len(asked) != 1 || asked[0] != want {
+		t.Errorf("asked %q", asked)
+	}
+	if _, err := k.thumbnail(context.Background(), files[1], 200); !errors.Is(err, ErrNoPicture) {
+		t.Errorf("got %v", err)
 	}
 }

@@ -293,3 +293,8 @@ document.addEventListener('mouseover', e => {
   bubble.style.left = Math.max(8, Math.min(r.left + r.width / 2 - b.width / 2, innerWidth - b.width - 8)) + 'px';
   bubble.style.top = (r.bottom + b.height + 12 > innerHeight ? r.top - b.height - 8 : r.bottom + 8) + 'px';
 });
+// A click, a key, a scroll or another window can change what lies under a pointer that stays where it is, and then no
+// element is entered that would close the bubble, so those close it, as leaving its control does.
+const hideBubble = () => { bubble?.remove(); bubble = null; };
+document.addEventListener('mouseout', e => { if (bubble?._for?.contains(e.target) && !bubble._for.contains(e.relatedTarget)) hideBubble(); });
+for (const type of ['pointerdown', 'keydown', 'blur', 'scroll']) addEventListener(type, hideBubble, true);

@@ -4,7 +4,7 @@ import { driveName } from './drives';
 
 beforeAll(() => {
   setLanguage('de');
-  addMessages('drives', { de: { fixed: 'Lokaler Datenträger', removable: 'USB-Laufwerk', optical: 'DVD-Laufwerk', network: 'Netzlaufwerk', volume: 'Datenträger mit {size}' } });
+  addMessages('drives', { de: { fixed: 'Lokaler Datenträger', removable: 'USB-Laufwerk', optical: 'DVD-Laufwerk', network: 'Netzlaufwerk', volume: 'Datenträger mit {size}', shareOn: '{share} auf {server}' } });
 });
 
 describe('a drive', () => {
@@ -17,7 +17,8 @@ describe('a drive', () => {
 
   it('names a network drive after its share and server', () => {
     expect(driveName({ path: '/Z', kind: 'network', remote: '\\\\nas\\daten', label: 'Archiv' })).toBe('daten (\\\\nas) (Z:)');
-    expect(driveName({ path: '/run/user/1000/gvfs/x', kind: 'network', remote: 'smb://nas/daten', label: 'daten' })).toBe('daten');
+    expect(driveName({ path: '/run/user/1000/gvfs/smb-share:server=localhost,share=ccshare', kind: 'network', remote: 'smb://localhost/ccshare', label: 'ccshare' })).toBe('ccshare auf localhost');
+    expect(driveName({ kind: 'network', remote: 'sftp://jdp@pi.local', label: 'pi.local' })).toBe('pi.local');
     expect(driveName({ kind: 'network', remote: 'sftp://pi.local' })).toBe('sftp://pi.local');
   });
 

@@ -30,18 +30,16 @@ func (k *desk) nemo(sel selection) []action {
 			}
 			g := kf["Nemo Action"]
 			label, command := k.Localized(g, "Name"), g.String("Exec")
-			if g["Active"] == "false" || label == "" || command == "" || !k.nemoFits(g, sel) {
+			if g["Active"] == "false" || label == "" || command == "" || !k.nemoFits(g, dir, sel) {
 				continue
 			}
-			// An Exec line in angle brackets names a program next to the
-			// action file.
-			if inner, ok := strings.CutPrefix(command, "<"); ok {
-				command = shellQuote(dir) + "/" + strings.TrimSuffix(inner, ">")
+			command = inActionDir(dir, command)
+			shown, remember := nemoLabel(label, g, sel), generic(label)
+			if remember == shown {
+				remember = ""
 			}
-			first := filepath.Base(sel.items[0].path)
-			label = strings.NewReplacer("%N", first, "%f", first, "%%", "%").Replace(label)
 			out = append(out, action{
-				Action: Action{Entry: Entry{Key: "nemo:" + name, Label: label}},
+				Action: Action{Entry: Entry{Key: "nemo:" + name, Label: shown, Remember: remember}},
 				icon:   g.String("Icon-Name"),
 				launches: func(sel selection) ([]launch, error) {
 					args, err := nemoCommand(command, g, sel)
@@ -57,9 +55,9 @@ func (k *desk) nemo(sel selection) []action {
 }
 
 // nemoFits reports whether a Nemo action is for sel by its selection,
-// extensions, types and dependencies. None of Nemo's conditions can be
-// checked cheaply from here, so an action with any is left out.
-func (k *desk) nemoFits(g xdg.Group, sel selection) bool {
+// extensions, types, dependencies and conditions, the costly conditions
+// last. dir is the folder of the action file.
+func (k *desk) nemoFits(g xdg.Group, dir string, sel selection) bool {
 	n := len(sel.items)
 	switch s := strings.ToLower(g["Selection"]); s {
 	case "s", "":
@@ -76,9 +74,6 @@ func (k *desk) nemoFits(g xdg.Group, sel selection) bool {
 			return false
 		}
 	}
-	if len(g.List("Conditions")) > 0 {
-		return false
-	}
 	exts, types := g.List("Extensions"), g.List("Mimetypes")
 	for _, it := range sel.items {
 		if !slices.ContainsFunc(exts, func(e string) bool { return nemoExtension(it, e) }) &&
@@ -92,7 +87,18 @@ func (k *desk) nemoFits(g xdg.Group, sel selection) bool {
 			return false
 		}
 	}
-	return true
+	return k.nemoConditions(g, dir, sel)
+}
+
+// inActionDir resolves a command in angle brackets, which names a program
+// next to the action file, for Exec lines and exec conditions alike.
+func inActionDir(dir, command string) string {
+	if inner, ok := strings.CutPrefix(command, "<"); ok {
+		if inner, ok := strings.CutSuffix(inner, ">"); ok {
+			return shellQuote(dir) + "/" + inner
+		}
+	}
+	return command
 }
 
 // has reports whether a program is there, by its path or by its name.
@@ -127,6 +133,16 @@ func nemoCommand(command string, g xdg.Group, sel selection) ([]string, error) {
 	if strings.EqualFold(g["Quote"], "double") {
 		quote = doubleQuote
 	}
+	return splitArgv(fill(command, nemoCodes(g, sel, quote)))
+}
+
+// nemoLabel fills the same codes into a label, as Nemo does, without the
+// quotes a command needs.
+func nemoLabel(label string, g xdg.Group, sel selection) string {
+	return fill(label, nemoCodes(g, sel, func(s string) string { return s }))
+}
+
+func nemoCodes(g xdg.Group, sel selection, quote func(string) string) map[byte]string {
 	sep := g.String("Separator")
 	if sep == "" {
 		sep = " "
@@ -139,7 +155,7 @@ func nemoCommand(command string, g xdg.Group, sel selection) ([]string, error) {
 		return strings.Join(quoted, sep)
 	}
 	first := filepath.Base(sel.items[0].path)
-	return splitArgv(fill(command, map[byte]string{
+	return map[byte]string{
 		'U': each(sel.uris()),
 		'F': each(sel.paths()),
 		'P': quote(sel.dir),
@@ -149,5 +165,5 @@ func nemoCommand(command string, g xdg.Group, sel selection) ([]string, error) {
 		'e': quote(strings.TrimSuffix(first, filepath.Ext(first))),
 		'D': "",
 		'X': "",
-	}))
+	}
 }

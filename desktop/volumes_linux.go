@@ -25,7 +25,16 @@ const (
 	udisksDrive   = udisks + ".Drive"
 	udisksLoop    = udisks + ".Loop"
 	gvfsPollEvery = 2 * time.Second
+
+	settleAfterSignal = 300 * time.Millisecond
 )
+
+// interactive lets polkit ask for a password where mounting or ejecting
+// needs rights, in the dialog of the desktop, as its file manager does.
+var interactive = map[string]dbus.Variant{"auth.no_user_interaction": dbus.MakeVariant(false)}
+
+// askAllowed marks a call that may wait while polkit asks the person.
+const askAllowed = dbus.FlagAllowInteractiveAuthorization
 
 // volumeWatch follows udisks2, which reports every stick, disc and
 // partition, and the folder where gvfs mounts the shares the desktop
@@ -35,6 +44,19 @@ type volumeWatch struct {
 	mu      sync.Mutex
 	conn    *dbus.Conn
 	changed func()
+	later   *time.Timer
+}
+
+// signal tells the server once a burst of signals about one device is over:
+// udisks2 reports a stick's drive, its partitions and their mounts one by
+// one.
+func (w *volumeWatch) signal() {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	if w.later != nil {
+		w.later.Stop()
+	}
+	w.later = time.AfterFunc(settleAfterSignal, w.changed)
 }
 
 // bus is the connection to udisks2, nil on a system without it.
@@ -66,7 +88,7 @@ func (w *volumeWatch) objects() udisksObjects {
 }
 
 func (s *shell) Volumes() []desktop.Volume {
-	return append(udisksVolumes(s.volumes.objects()), gvfsVolumes(gvfsDir())...)
+	return append(udisksVolumes(s.volumes.objects(), uint32(os.Getuid())), gvfsVolumes(gvfsDir())...)
 }
 
 func (s *shell) OnVolumes(changed func()) {
@@ -78,7 +100,7 @@ func (s *shell) OnVolumes(changed func()) {
 		if conn := w.bus(); conn != nil {
 			go w.listen(conn)
 		}
-		go pollGvfs(gvfsDir(), func() { w.changed() })
+		go pollGvfs(gvfsDir(), w.signal)
 	})
 }
 
@@ -92,14 +114,17 @@ func (w *volumeWatch) listen(conn *dbus.Conn) {
 	signals := make(chan *dbus.Signal, 16)
 	conn.Signal(signals)
 	for range signals {
-		w.changed()
+		w.signal()
 	}
 }
 
-// udisksVolumes picks the file systems a file manager shows: those on a
-// drive one can pull, and those the system did not mark as its own, such
-// as the root and swap.
-func udisksVolumes(objs udisksObjects) []desktop.Volume {
+// udisksVolumes picks the file systems a file manager shows to the person
+// with uid, as Nautilus does: a partition that waits to be mounted, and one
+// mounted where the desktop puts the disks a person opens. Whatever udisks2
+// says to ignore stays out, and so does a file system mounted anywhere else,
+// such as / and /boot/efi. Of the loop devices only a disk image the person
+// attached counts, never one of the snaps root sets up from /var/lib/snapd.
+func udisksVolumes(objs udisksObjects, uid uint32) []desktop.Volume {
 	var out []desktop.Volume
 	for p, ifaces := range objs {
 		block, fs := ifaces[udisksBlock], ifaces[udisksFS]
@@ -107,20 +132,23 @@ func udisksVolumes(objs udisksObjects) []desktop.Volume {
 			continue
 		}
 		v := desktop.Volume{ID: string(p), Root: firstMount(fs["MountPoints"]), Label: stringProp(block, "IdLabel"), Kind: "fixed"}
+		if v.Root != "" && !userMount(v.Root) {
+			continue
+		}
 		if size, ok := block["Size"].Value().(uint64); ok {
 			v.Size = size
 		}
 		drive := objs[pathProp(block, "Drive")][udisksDrive]
-		switch {
-		case ifaces[udisksLoop] != nil:
+		if loop := ifaces[udisksLoop]; loop != nil {
+			setupBy, _ := loop["SetupByUID"].Value().(uint32)
+			if setupBy != uid || strings.HasPrefix(bytesProp(loop, "BackingFile"), "/var/lib/snapd/") {
+				continue
+			}
 			v.Kind, v.Eject = "virtual", true
-		case drive != nil && boolProp(drive, "Optical"):
+		} else if drive != nil && boolProp(drive, "Optical") {
 			v.Kind, v.Eject = "optical", true
-		case drive != nil && (boolProp(drive, "Removable") || slices.Contains([]string{"usb", "sdio", "ieee1394"}, stringProp(drive, "ConnectionBus"))):
+		} else if drive != nil && (boolProp(drive, "Removable") || slices.Contains([]string{"usb", "sdio", "ieee1394"}, stringProp(drive, "ConnectionBus"))) {
 			v.Kind, v.Eject = "removable", boolProp(drive, "Ejectable") || boolProp(drive, "CanPowerOff")
-		}
-		if boolProp(block, "HintSystem") && v.Kind == "fixed" && !userMount(v.Root) {
-			continue
 		}
 		out = append(out, v)
 	}
@@ -154,6 +182,12 @@ func pathProp(props map[string]dbus.Variant, name string) dbus.ObjectPath {
 	return p
 }
 
+// bytesProp reads a path udisks2 keeps as a byte string that ends in a NUL.
+func bytesProp(props map[string]dbus.Variant, name string) string {
+	b, _ := props[name].Value().([]byte)
+	return strings.TrimRight(string(b), "\x00")
+}
+
 // firstMount reads the first of the mount points udisks2 lists as byte
 // strings that end in a NUL.
 func firstMount(v dbus.Variant) string {
@@ -170,7 +204,7 @@ func (s *shell) Mount(id string) (string, error) {
 		return "", errors.New("udisks2 is not there to mount it")
 	}
 	var root string
-	err := conn.Object(udisks, dbus.ObjectPath(id)).Call(udisksFS+".Mount", 0, map[string]dbus.Variant{}).Store(&root)
+	err := conn.Object(udisks, dbus.ObjectPath(id)).Call(udisksFS+".Mount", askAllowed, interactive).Store(&root)
 	return root, err
 }
 
@@ -187,27 +221,26 @@ func (s *shell) Eject(id string) error {
 	if conn == nil || ifaces == nil {
 		return errors.New("udisks2 does not know this volume")
 	}
-	none := map[string]dbus.Variant{}
 	drive := pathProp(ifaces[udisksBlock], "Drive")
 	for p, other := range objs {
 		if p != dbus.ObjectPath(id) && (drive == "/" || pathProp(other[udisksBlock], "Drive") != drive) {
 			continue
 		}
 		if fs := other[udisksFS]; fs != nil && firstMount(fs["MountPoints"]) != "" {
-			if err := conn.Object(udisks, p).Call(udisksFS+".Unmount", 0, none).Err; err != nil {
+			if err := conn.Object(udisks, p).Call(udisksFS+".Unmount", askAllowed, interactive).Err; err != nil {
 				return fmt.Errorf("unmount %s: %w", p, err)
 			}
 		}
 	}
 	if ifaces[udisksLoop] != nil {
-		return conn.Object(udisks, dbus.ObjectPath(id)).Call(udisksLoop+".Delete", 0, none).Err
+		return conn.Object(udisks, dbus.ObjectPath(id)).Call(udisksLoop+".Delete", askAllowed, interactive).Err
 	}
 	props := objs[drive][udisksDrive]
 	switch {
 	case boolProp(props, "Ejectable"):
-		return conn.Object(udisks, drive).Call(udisksDrive+".Eject", 0, none).Err
+		return conn.Object(udisks, drive).Call(udisksDrive+".Eject", askAllowed, interactive).Err
 	case boolProp(props, "CanPowerOff"):
-		return conn.Object(udisks, drive).Call(udisksDrive+".PowerOff", 0, none).Err
+		return conn.Object(udisks, drive).Call(udisksDrive+".PowerOff", askAllowed, interactive).Err
 	}
 	return nil
 }

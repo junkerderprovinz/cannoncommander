@@ -95,3 +95,25 @@ func TestANemoCommandKeepsEveryNameOneArgument(t *testing.T) {
 		}
 	}
 }
+
+func TestALabelWithFileNamesIsRememberedWithoutThem(t *testing.T) {
+	f := newFixture(t)
+	for name, label := range map[string]string{"open": "Open %N", "here": "Copy to %p", "first": "Shrink %e here", "plain": "Plain", "percent": "Plain 100%%"} {
+		f.write(filepath.Join(f.system, "nemo", "actions", name+".nemo_action"), "[Nemo Action]\nName="+label+"\nExec=x %F\nSelection=any\nExtensions=any;\n")
+	}
+	f.write(filepath.Join(f.config, "Thunar", "uca.xml"), "<actions><action><name>Thunar</name><unique-id>t</unique-id><command>x %f</command><patterns>*</patterns><image-files/></action></actions>")
+	f.script(filepath.Join(f.user, "nautilus", "scripts", "Script %N"), "#!/bin/sh\n")
+	f.install()
+	got, err := Actions(f.files("a b.png"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var rows []string
+	for _, a := range got {
+		rows = append(rows, a.Label+" = "+a.Remember)
+	}
+	want := []string{"Copy to work = Copy to …", "Open a b.png = Open …", "Plain = ", "Plain 100% = ", "Script %N = ", "Shrink a b here = Shrink … here", "Thunar = "}
+	if !slices.Equal(rows, want) {
+		t.Errorf("got %q", rows)
+	}
+}

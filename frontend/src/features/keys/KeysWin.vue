@@ -38,7 +38,7 @@ onMounted(() => {
 
 <template>
   <SubCard>
-    <FieldRow :label="t('keys.style')" :hint="t(host.desktop ? 'keys.styleTipDesktop' : 'keys.styleTip')"><Selector id="kb-preset" :model-value="which" :items="segItems(layoutItems())" size="sm" activation="manual" inline button-height pairs-on-phone @update:model-value="pickLayout($event as Preset)" /></FieldRow>
+    <FieldRow v-if="host.desktop" :label="t('keys.preset')" :hint="t('keys.layoutTip')"><Selector id="kb-preset" :model-value="which" :items="segItems(layoutItems())" size="sm" activation="manual" inline button-height pairs-on-phone @update:model-value="pickLayout($event as Preset)" /></FieldRow>
     <FieldRow :label="t('keys.search')"><TextField id="kb-q" v-model="query" :placeholder="t('keys.searchPh')" autocomplete="off" width="medium" /></FieldRow>
   </SubCard>
   <SubCard class="kb-well">

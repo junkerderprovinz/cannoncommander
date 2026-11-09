@@ -88,8 +88,12 @@ type Item struct {
 type Volume struct {
 	Path  string `json:"path"`
 	Label string `json:"label,omitempty"`
-	Free  uint64 `json:"free"`
-	Total uint64 `json:"total"`
+	// Kind and Remote come with a drive of the computer the desktop app runs
+	// on, as on TreeItem.
+	Kind   string `json:"kind,omitempty"`
+	Remote string `json:"remote,omitempty"`
+	Free   uint64 `json:"free"`
+	Total  uint64 `json:"total"`
 }
 
 // Listing is the answer of GET /fs/list.
@@ -191,7 +195,7 @@ func (h handlers) list(w http.ResponseWriter, r *http.Request) error {
 	}
 	h.describe(loc.Source, refs)
 	unraidDetails(loc, out.Items)
-	out.Volume = volumeOf(loc.Source)
+	out.Volume = h.volumeOf(loc)
 	// Free space changes all the time, the ETag only follows the entries.
 	return v1.WriteJSONTagged(w, r, http.StatusOK, out, Listing{Path: out.Path, Items: out.Items})
 }
@@ -241,13 +245,13 @@ func (h handlers) tree(w http.ResponseWriter, r *http.Request) error {
 		} else {
 			item.HasDirs = h.hasSubfolder(u, child)
 		}
-		if child.Source != nil && child.Index == "/" {
+		if mount, d, ok := h.fs.VolumeAt(child.Path); ok && mount == child.Path {
+			item.Label, item.Kind, item.Eject = d.Label, d.Kind, d.Eject
+			item.Remote = cmp.Or(item.Remote, d.Remote)
+			item.Free, item.Total, _ = usage(d.Root)
+		} else if child.Source != nil && child.Index == "/" {
 			item.Label = child.Source.Name
-			if d := child.Source.Drive; d != nil {
-				item.Label, item.Kind, item.Eject = d.Label, d.Kind, d.Eject
-				item.Remote = cmp.Or(item.Remote, d.Remote)
-			}
-			if v := volumeOf(child.Source); v != nil {
+			if v := h.volumeOf(child); v != nil {
 				item.Free, item.Total = v.Free, v.Total
 			}
 		}
@@ -287,7 +291,7 @@ func (h handlers) stat(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 	out.Devices = devicesOf(loc, &out.Item)
-	out.Volume = volumeOf(loc.Source)
+	out.Volume = h.volumeOf(loc)
 	return v1.WriteJSONTagged(w, r, http.StatusOK, out, Stat{Path: out.Path, Item: out.Item, Files: out.Files, Dirs: out.Dirs, Devices: out.Devices})
 }
 
@@ -374,7 +378,17 @@ func (h handlers) virtualItem(p, name string) Item {
 	return item
 }
 
-func volumeOf(s *ccfs.Source) *Volume {
+// volumeOf is what loc lies on: the drive of the computer that holds it, as
+// a stick or a share below / on Linux, or else its source.
+func (h handlers) volumeOf(loc ccfs.Location) *Volume {
+	if mount, d, ok := h.fs.VolumeAt(loc.Path); ok {
+		free, total, ok := usage(d.Root)
+		if !ok {
+			return nil
+		}
+		return &Volume{Path: mount, Label: d.Label, Kind: d.Kind, Remote: d.Remote, Free: free, Total: total}
+	}
+	s := loc.Source
 	if s == nil {
 		return nil
 	}

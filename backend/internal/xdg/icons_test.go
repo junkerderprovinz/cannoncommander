@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"image"
 	"image/png"
+	"os"
 	"path/filepath"
 	"testing"
 )
@@ -167,5 +168,42 @@ func TestTheUsersFoldersHaveTheHomeFilledIn(t *testing.T) {
 	got := d.UserDirs()
 	if len(got) != 2 || got["DESKTOP"] != filepath.Join(d.home, "Schreibtisch") || got["DOWNLOAD"] != "/data/Downloads" {
 		t.Fatalf("got %v", got)
+	}
+}
+
+func TestOnlySmallPicturesAreReadAsIcons(t *testing.T) {
+	d := newDesk(t)
+	var small bytes.Buffer
+	if err := png.Encode(&small, image.NewNRGBA(image.Rect(0, 0, 16, 16))); err != nil {
+		t.Fatal(err)
+	}
+	ok := d.write(filepath.Join(d.home, "ok.png"), small.String())
+	passwd := d.write(filepath.Join(d.home, "passwd"), "root:x:0:0:root:/root:/bin/bash\n")
+	named := d.write(filepath.Join(d.home, "passwd.png"), "root:x:0:0:root:/root:/bin/bash\n")
+	xpm := d.write(filepath.Join(d.home, "old.xpm"), "/* XPM */\n")
+	big := d.write(filepath.Join(d.home, "big.png"), small.String())
+	if err := os.Truncate(big, 2<<20); err != nil {
+		t.Fatal(err)
+	}
+	// A PNG of a few bytes that claims to be 20000 pixels wide.
+	var wide bytes.Buffer
+	if err := png.Encode(&wide, image.NewGray(image.Rect(0, 0, 20000, 1))); err != nil {
+		t.Fatal(err)
+	}
+	huge := d.write(filepath.Join(d.home, "huge.png"), wide.String())
+
+	if !IconFile(ok) {
+		t.Error("a small PNG is no icon")
+	}
+	if _, _, err := LoadIcon(ok, 32); err != nil {
+		t.Errorf("a small PNG: %v", err)
+	}
+	for _, file := range []string{passwd, named, xpm, big, huge, d.home} {
+		if _, _, err := LoadIcon(file, 32); err == nil {
+			t.Errorf("%s was read", filepath.Base(file))
+		}
+		if got, found := d.AppIcon(file); found && file != huge && file != named {
+			t.Errorf("%s was taken as an icon: %s", filepath.Base(file), got)
+		}
 	}
 }

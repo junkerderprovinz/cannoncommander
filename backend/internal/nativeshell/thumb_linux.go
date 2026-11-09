@@ -51,9 +51,12 @@ func (k *desk) thumbnail(ctx context.Context, file string, px int) ([]byte, erro
 	if failed(root, name, uri, mtime) {
 		return nil, ErrNoPicture
 	}
+	// Without a sandbox no thumbnailer runs here, since the file may come
+	// from anyone and thumbnailers have a long history of holes. The
+	// desktop's thumbnail service runs them its own way.
 	t, ok := k.thumbnailerFor(file)
-	if !ok {
-		return nil, ErrNoPicture
+	if !ok || k.sandbox.program == "" {
+		return k.fromService(ctx, file, root, name, size, uri, mtime)
 	}
 	select {
 	case drawing <- struct{}{}:
@@ -66,7 +69,7 @@ func (k *desk) thumbnail(ctx context.Context, file string, px int) ([]byte, erro
 		return b, nil
 	}
 	text := map[string]string{"Thumb::URI": uri, "Thumb::MTime": strconv.FormatInt(mtime, 10)}
-	b, err := draw(ctx, t, file, xdg.ThumbnailSizes[size].Edge)
+	b, err := k.draw(ctx, t, file, xdg.ThumbnailSizes[size].Edge)
 	if err == nil {
 		b, err = xdg.SetPNGText(b, text)
 	}
@@ -87,9 +90,26 @@ func (k *desk) thumbnail(ctx context.Context, file string, px int) ([]byte, erro
 
 var errNotDrawn = errors.New("the thumbnailer wrote no PNG")
 
-// draw runs a thumbnailer on file and returns what it drew. It gives up
-// after 20 seconds.
-func draw(ctx context.Context, t xdg.Thumbnailer, file string, edge int) ([]byte, error) {
+// fromService asks the desktop's thumbnail service for the thumbnail and
+// reads it from the shared cache once the service is done.
+func (k *desk) fromService(ctx context.Context, file, root, name string, size int, uri string, mtime int64) ([]byte, error) {
+	if k.service == nil {
+		return nil, ErrNoPicture
+	}
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
+	defer cancel()
+	if err := k.service(ctx, uri, k.db.TypeOf(file), xdg.ThumbnailSizes[size].Dir); err != nil {
+		return nil, ErrNoPicture
+	}
+	if b, ok := cachedThumbnail(root, name, size, uri, mtime); ok {
+		return b, nil
+	}
+	return nil, ErrNoPicture
+}
+
+// draw runs a thumbnailer on file in a sandbox and returns what it drew.
+// It gives up after 20 seconds.
+func (k *desk) draw(ctx context.Context, t xdg.Thumbnailer, file string, edge int) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	tmp, err := os.MkdirTemp("", "cc-thumbnail-")
@@ -97,11 +117,13 @@ func draw(ctx context.Context, t xdg.Thumbnailer, file string, edge int) ([]byte
 		return nil, err
 	}
 	defer os.RemoveAll(tmp)
-	out := filepath.Join(tmp, "thumbnail.png")
-	args, err := t.Command(file, out, edge)
+	// The input keeps its extension, which some thumbnailers go by.
+	inside := "/tmp/input" + filepath.Ext(file)
+	args, err := t.Command(inside, "/tmp/thumbnail.png", edge)
 	if err != nil {
 		return nil, err
 	}
+	args = bwrapArgs(k.sandbox.program, k.sandbox.isolate, k.root, tmp, file, inside, args)
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
 	cmd.Dir = tmp
 	// A process group of its own lets a timeout end whatever the
@@ -114,7 +136,7 @@ func draw(ctx context.Context, t xdg.Thumbnailer, file string, edge int) ([]byte
 		}
 		return nil, err
 	}
-	b, err := os.ReadFile(out)
+	b, err := os.ReadFile(filepath.Join(tmp, "thumbnail.png"))
 	if err != nil {
 		return nil, errNotDrawn
 	}

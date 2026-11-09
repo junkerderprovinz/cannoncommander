@@ -31,7 +31,8 @@ export function handleKey(e: KeyboardEvent) {
   // An open dropdown takes its own keys, so Escape closes the list and not the window or page behind it.
   if (document.querySelector('.glim-select-content[data-state="open"]')) return;
   if (winStack.length) {
-    if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); if (!winStack.at(-1)!.locked) closeWin(); }
+    // A locked window leaves Escape to its content, such as the editor's Vim keys.
+    if (e.key === 'Escape' && !e.defaultPrevented && !winStack.at(-1)!.locked) { e.preventDefault(); closeWin(); }
     return;
   }
   // Escape closes an open popover first and leaves the page only when none is open.

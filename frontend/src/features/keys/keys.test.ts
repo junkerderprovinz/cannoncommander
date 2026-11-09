@@ -122,7 +122,7 @@ describe('which keys a binding can use', () => {
 });
 
 describe('own keys', () => {
-  const TC = preset('tc', DEFAULTS, () => true);
+  const EXPLORER = preset('explorer', DEFAULTS, () => true);
 
   it('are only what differs from the layout', () => {
     const map = assign(DEFAULTS, 'Ctrl+F5', 'copy');
@@ -137,8 +137,8 @@ describe('own keys', () => {
 
   it('stay when another layout is chosen', () => {
     const own = ownKeys(DEFAULTS, assign(DEFAULTS, 'Ctrl+k', 'copy'));
-    const map = withOwn(TC, own);
-    expect(map['Alt+F5']).toBe('pack');
+    const map = withOwn(EXPLORER, own);
+    expect(map.Backspace).toBe('back');
     expect(combosOf(map, 'copy')).toEqual(['Ctrl+k']);
   });
 
@@ -148,29 +148,15 @@ describe('own keys', () => {
   });
 
   it("go back to the layout's key on reset, not the shipped one", () => {
-    const map = assign(TC, 'Ctrl+F2', 'refresh');
-    expect(combosOf(reset(map, TC, 'refresh'), 'refresh').sort()).toEqual(['F2']);
-    expect(changed(TC, TC, 'rename')).toBe(false);
-    expect(changed(TC, DEFAULTS, 'rename')).toBe(true);
+    const map = assign(EXPLORER, 'Ctrl+F2', 'refresh');
+    expect(combosOf(reset(map, EXPLORER, 'refresh'), 'refresh').sort()).toEqual(['Ctrl+r', 'F5']);
+    expect(changed(EXPLORER, EXPLORER, 'copy')).toBe(false);
+    expect(changed(EXPLORER, DEFAULTS, 'copy')).toBe(true);
   });
 });
 
-describe('the Total Commander layout', () => {
-  it('moves the shared actions to Total Commander keys', () => {
-    const map = preset('tc', DEFAULTS, () => true);
-    expect(map['Alt+F5']).toBe('pack');
-    expect(map['Alt+F9']).toBe('unpack');
-    expect(map['Shift+F6']).toBe('rename');
-    expect(map['Alt+p']).toBeUndefined();
-    expect(map.F2).toBe('refresh');
-  });
-
-  it('leaves out actions the app does not have', () => {
-    const map = preset('tc', DEFAULTS, (id) => id !== 'addBookmark');
-    expect(map['Ctrl+d']).toBeUndefined();
-  });
-
-  it('is the shipped map for CannonCommander', () => {
+describe('the Commander layout', () => {
+  it('is the shipped map', () => {
     expect(preset('cc', DEFAULTS, () => true)).toEqual(DEFAULTS);
   });
 });
@@ -196,5 +182,23 @@ describe('the key a menu shows', () => {
     setLanguage('de');
     const map = { ...DEFAULTS, 'Ctrl+F5': 'copy' };
     expect(mainCombo(map, 'copy', 'F5')).toBe('F5');
+  });
+});
+
+describe('keys of a scope', () => {
+  const map = { ...DEFAULTS, 'Ctrl+d': 'duplicate', 'editor:Ctrl+d': 'editorDuplicateLine' };
+
+  it('reads without the scope', () => {
+    setLanguage('de');
+    expect(keyLabel('editor:Ctrl+Shift+ArrowUp')).toBe('Strg+Umschalt+Hoch');
+  });
+
+  it('meets only keys of its own scope', () => {
+    expect(check(map, 'editor:Ctrl+r', 'editorGotoLine', false)).toEqual({ ok: true });
+    expect(check(map, 'editor:Ctrl+d', 'editorGotoLine', false)).toEqual({ ok: false, reason: 'taken', other: 'editorDuplicateLine' });
+    expect(check(map, 'editor:g', 'editorGotoLine', false)).toEqual({ ok: false, reason: 'letter' });
+    expect(check(map, 'editor:Tab', 'editorGotoLine', false)).toEqual({ ok: false, reason: 'fixed' });
+    expect(check(map, 'editor:Ctrl+w', 'editorCloseTab', false)).toEqual({ ok: false, reason: 'browser' });
+    expect(check(map, 'editor:Ctrl+w', 'editorCloseTab', true)).toEqual({ ok: true });
   });
 });

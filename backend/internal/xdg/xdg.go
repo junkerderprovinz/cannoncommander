@@ -5,11 +5,15 @@ package xdg
 
 import (
 	"bufio"
+	"context"
+	"errors"
 	"os"
 	"os/exec"
 	"path"
 	"slices"
+	"strconv"
 	"strings"
+	"time"
 )
 
 // Desktop is where a desktop keeps what it knows.
@@ -29,10 +33,91 @@ type Desktop struct {
 	Langs []string
 	// Look finds a program by name the way exec.LookPath does.
 	Look func(name string) (string, error)
+	// Output runs a program without a shell and returns what it prints, as
+	// exec.Cmd.Output does. Where it is nil, no program is asked.
+	Output func(program string, args ...string) ([]byte, error)
 }
 
 // Current is the desktop of this process's environment.
-func Current() Desktop { return FromEnv(os.Getenv, exec.LookPath) }
+func Current() Desktop {
+	d := FromEnv(os.Getenv, exec.LookPath)
+	d.Output = output
+	return d
+}
+
+// output gives up on a program after a few seconds, so one that hangs
+// cannot hold up a menu. WaitDelay ends the wait for its output even when
+// something it started keeps the pipe open.
+func output(program string, args ...string) ([]byte, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, program, args...)
+	cmd.WaitDelay = time.Second
+	return cmd.Output()
+}
+
+var errNoOutput = errors.New("no program may be asked")
+
+// GSetting reads a key of GSettings with the gsettings program and returns
+// it as GLib prints it, such as 'Adwaita', true or uint32 5.
+func (d Desktop) GSetting(schema, key string) (string, error) {
+	if d.Output == nil {
+		return "", errNoOutput
+	}
+	program, err := d.Look("gsettings")
+	if err != nil {
+		return "", err
+	}
+	out, err := d.Output(program, "get", schema, key)
+	return strings.TrimSpace(string(out)), err
+}
+
+// UnquoteGVariant reads a string in GLib's text format for values, in single
+// or double quotes with backslash escapes.
+func UnquoteGVariant(s string) (string, bool) {
+	if len(s) < 2 || s[0] != s[len(s)-1] || s[0] != '\'' && s[0] != '"' {
+		return "", false
+	}
+	var b strings.Builder
+	for i := 1; i < len(s)-1; i++ {
+		c := s[i]
+		if c == s[0] {
+			return "", false
+		}
+		if c != '\\' {
+			b.WriteByte(c)
+			continue
+		}
+		if i++; i == len(s)-1 {
+			return "", false
+		}
+		switch s[i] {
+		case 'n':
+			b.WriteByte('\n')
+		case 't':
+			b.WriteByte('\t')
+		case 'r':
+			b.WriteByte('\r')
+		case 'u', 'U':
+			n := 4
+			if s[i] == 'U' {
+				n = 8
+			}
+			if i+n >= len(s) {
+				return "", false
+			}
+			r, err := strconv.ParseUint(s[i+1:i+1+n], 16, 32)
+			if err != nil {
+				return "", false
+			}
+			b.WriteRune(rune(r))
+			i += n
+		default:
+			b.WriteByte(s[i])
+		}
+	}
+	return b.String(), true
+}
 
 // FromEnv reads the folders and the language from the environment.
 func FromEnv(getenv func(string) string, look func(string) (string, error)) Desktop {

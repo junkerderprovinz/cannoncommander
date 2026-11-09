@@ -438,6 +438,12 @@ paths:
         Windows-1252. Needs the download right.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: encoding
+          in: query
+          description: Decodes the text in this encoding instead of finding it, for a file the guess gets wrong.
+          schema:
+            type: string
+            enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
         - name: max
           in: query
           description: Bytes to read at most.
@@ -514,11 +520,17 @@ paths:
       operationId: fsFileGet
       summary: File content for the editor
       description: |
-        The whole text of a file up to 16 MiB, decoded like fs/text. The
-        ETag follows the bytes, and a save sends it back in If-Match. Needs
-        the download right.
+        The whole text of a file up to 16 MiB, decoded like fs/text and, with
+        encoding, in the encoding asked for. The ETag follows the bytes, and
+        a save sends it back in If-Match. Needs the download right.
       parameters:
         - $ref: "#/components/parameters/Path"
+        - name: encoding
+          in: query
+          description: Decodes the text in this encoding instead of finding it, for a file the guess gets wrong.
+          schema:
+            type: string
+            enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
       responses:
         "200":
           description: The text.
@@ -587,7 +599,7 @@ paths:
                   type: string
                 encoding:
                   type: string
-                  enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+                  enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
                 eol:
                   type: string
                   enum: [lf, crlf, cr]
@@ -634,7 +646,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "422":
-          description: The text holds characters the encoding cannot store.
+          description: The text holds characters the encoding cannot store (notEncodable, with the encoding's name).
           content:
             application/problem+json:
               schema:
@@ -5585,9 +5597,21 @@ paths:
         32 pixels or an SVG, as a data URL. dialog says whether the
         computer has a dialog of its own to pick another program, as
         Windows and macOS do. Without one, every=true lists all programs
-        a person can pick from instead.
+        a person can pick from instead. With type in place of path it
+        lists the programs for files of that type, such as txt, which the
+        setting for the editor of F4 offers.
       parameters:
-        - $ref: "#/components/parameters/Path"
+        - name: path
+          in: query
+          description: The file, unless type is given.
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: A file type, its extension without the dot.
+          schema:
+            type: string
+            pattern: "^[A-Za-z0-9]{1,16}$"
         - name: every
           in: query
           description: All programs instead of those for the file, where the computer has no dialog for that.
@@ -5625,8 +5649,9 @@ paths:
       operationId: openWithOpen
       summary: Open a file with one of its programs
       description: |
-        The program is one the list named for the file, or with every one
-        of all programs, and any other is refused. The file goes to the
+        The program is one the list named for the file, with type for files
+        of that type, or with every one of all programs, and any other is
+        refused. The file goes to the
         program the way the system's file manager hands it over, never
         through a shell.
       requestBody:
@@ -5645,6 +5670,10 @@ paths:
                   description: The id of a program from the list.
                 every:
                   type: boolean
+                type:
+                  type: string
+                  description: The file type the program was listed for, when that is not the file's own, as for the editor of F4.
+                  pattern: "^[A-Za-z0-9]{1,16}$"
       responses:
         "204":
           description: The program has the file.
@@ -5702,6 +5731,97 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
       tags: [openwith]
+  /openwith/pick:
+    post:
+      operationId: openWithPick
+      summary: Pick a program file in the system's dialog
+      description: |
+        Shows the computer's own dialog for choosing a program, the open
+        file dialog kept to programs on Windows and the application
+        chooser on a Mac, and answers once the person has chosen. Linux has
+        no such dialog and lists every program instead.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The dialog's title, in the person's language.
+                programs:
+                  type: string
+                  description: The name of the dialog's filter for programs.
+      responses:
+        "200":
+          description: The program chosen. Its id is the path the computer writes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenWithApp"
+        "204":
+          description: The person closed the dialog.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly), or no dialog on this computer (noAppDialog).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [openwith]
+  /openwith/program:
+    post:
+      operationId: openWithProgram
+      summary: Open a file with a program file
+      description: |
+        Starts the program with the file as its one argument, never through
+        a shell, as the editor of F4 does with a program picked as a file.
+        The rules judge the program as they judge the file, and a file that
+        is no program the computer can start is refused.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, program]
+              properties:
+                path:
+                  type: string
+                  example: /C/Users/jdp/Documents/notes.txt
+                program:
+                  type: string
+                  example: /C/Program Files/Notepad++/notepad++.exe
+      responses:
+        "204":
+          description: The program has the file.
+        "400":
+          description: A path is not a file (notAFile), or the program is none (notAProgram).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), or no such file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: The program did not start (appNotStarted, with its name).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [openwith]
   /shell:
     get:
       operationId: shellOffers
@@ -5710,7 +5830,8 @@ paths:
         menu is native where the system draws its own context menu, as
         Windows does, and actions where the app lists what other file
         managers add. runAs lists the file types the computer starts as
-        administrator.
+        administrator. thumbnails says on Linux how the system's
+        thumbnails come about.
       responses:
         "200":
           description: What is offered.
@@ -5730,6 +5851,8 @@ paths:
                     items:
                       type: string
                       example: .exe
+                  thumbnails:
+                    $ref: "#/components/schemas/ShellThumbnails"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "404":
@@ -5997,6 +6120,53 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           description: Not the desktop app (desktopOnly), or no icon.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [shell]
+  /shell/thumbnails:
+    post:
+      operationId: shellThumbnails
+      summary: Let thumbnailers into the sandbox, or not
+      description: |
+        Where the kernel keeps user namespaces from programs without an
+        AppArmor profile, as Ubuntu does since 24.04, bwrap cannot shut the
+        system's thumbnailers in. With allow the app puts a profile for its
+        own program in place, after the computer asked for administrator
+        rights, and takes it away without. It answers how thumbnails come
+        about afterwards.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [allow]
+              properties:
+                allow:
+                  type: boolean
+      responses:
+        "200":
+          description: How thumbnails come about now.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShellThumbnails"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: The prompt for administrator rights was turned down (elevationDeclined).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          $ref: "#/components/responses/ShellDesktopOnly"
+        "409":
+          description: The profile could not be put in place or loaded.
           content:
             application/problem+json:
               schema:
@@ -7185,10 +7355,18 @@ components:
       properties:
         path:
           type: string
-          description: Where the source is mounted.
+          description: Where the source or the drive is mounted.
         label:
           type: string
-          description: Name of the source.
+          description: Name of the source, or of the drive, empty for a drive without one.
+        kind:
+          type: string
+          enum: [fixed, removable, optical, network, virtual]
+          description: What kind of drive of the computer this is, in the desktop app.
+        remote:
+          type: string
+          description: The share a network drive stands for.
+          example: smb://nas/daten
         free:
           type: integer
           format: int64
@@ -7291,7 +7469,7 @@ components:
           format: date-time
         encoding:
           type: string
-          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
         eol:
           type: string
           enum: [lf, crlf, cr, mixed]
@@ -7315,7 +7493,7 @@ components:
           format: date-time
         encoding:
           type: string
-          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1252]
+          enum: [ascii, utf-8, utf-8-bom, utf-16le, utf-16be, windows-1250, windows-1251, windows-1252, iso-8859-1, iso-8859-2, iso-8859-15, koi8-r]
         eol:
           type: string
           enum: [lf, crlf, cr, mixed]
@@ -10400,6 +10578,23 @@ components:
           description: A data URL, left out when the program has no icon.
         default:
           type: boolean
+    ShellThumbnails:
+      type: object
+      required: [way, restricted, allowed]
+      properties:
+        way:
+          type: string
+          enum: [sandbox, service, cache]
+          description: |
+            sandbox where thumbnailers run in bwrap, service where the
+            desktop's thumbnail service draws them, cache where only the
+            pictures other file managers drew show.
+        restricted:
+          type: boolean
+          description: The kernel keeps the sandbox out, which the app's AppArmor profile lifts.
+        allowed:
+          type: boolean
+          description: The app's AppArmor profile is in place.
     ShellEntry:
       type: object
       required: [key, label, hidden]

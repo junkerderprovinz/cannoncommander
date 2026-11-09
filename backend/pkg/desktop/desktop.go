@@ -4,6 +4,8 @@ package desktop
 
 import (
 	"crypto/subtle"
+	"encoding/json"
+	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -91,7 +93,7 @@ func Guard(next http.Handler) http.Handler {
 			if open := r.URL.Query().Get("open"); open != "" {
 				to += "?" + url.Values{"open": {open}}.Encode()
 			}
-			http.Redirect(w, r, to, http.StatusSeeOther)
+			enter(w, to)
 			return
 		}
 		c, err := r.Cookie(CookieName)
@@ -101,6 +103,17 @@ func Guard(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+// enter sends the window on to the interface from a page of this server.
+// A redirect would keep the navigation the app started from its splash page,
+// another site, and the browser would leave the SameSite cookie out of it and
+// out of every reload after.
+func enter(w http.ResponseWriter, to string) {
+	js, _ := json.Marshal(to)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-store")
+	fmt.Fprintf(w, "<!doctype html><script>location.replace(%s)</script>", js)
 }
 
 func same(a, b string) bool {

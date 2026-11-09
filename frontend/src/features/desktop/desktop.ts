@@ -14,8 +14,15 @@ import { launch } from './launch';
 import { type Opening, openHandedOver, takeStartFolders } from './open';
 import { askStyle } from './style';
 
+// The window's own menu offers Back, Forward and Reload in the language of the system's web view, which mean nothing
+// here. Fields keep theirs for cut, copy and paste.
+function quietMenu(e: MouseEvent) {
+  if (!(e.target instanceof Element) || !e.target.closest('input, textarea, [contenteditable]:not([contenteditable="false"])')) e.preventDefault();
+}
+
 export default function setup() {
   const F = usePanels();
+  document.addEventListener('contextmenu', quietMenu);
   action('launch', {
     label: tl('desktop.launch'), g: 'IconExternalLink', when: () => F.sel().some((k) => !k.dir),
     run: (path?: string) => {

@@ -15,10 +15,12 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
 )
 
 type fixture struct {
 	h     http.Handler
+	fs    *ccfs.Resolver
 	share string
 	cache string
 }
@@ -40,7 +42,7 @@ func newFixture(t testing.TB, index ...fsindex.Index) fixture {
 
 func newFixtureWith(t testing.TB, rules ccfs.Rules, index ...fsindex.Index) fixture {
 	t.Helper()
-	base := t.TempDir()
+	base := testutil.LocalDir(t)
 	share := filepath.Join(base, "mnt", "user")
 	cache := filepath.Join(base, "mnt", "cache")
 	boot := filepath.Join(base, "boot")
@@ -90,7 +92,7 @@ func newFixtureWith(t testing.TB, rules ccfs.Rules, index ...fsindex.Index) fixt
 	if err != nil {
 		t.Fatal(err)
 	}
-	return fixture{h: h, share: share, cache: cache}
+	return fixture{h: h, fs: fs, share: share, cache: cache}
 }
 
 func (f fixture) get(t testing.TB, user, endpoint, p string, extra ...string) *httptest.ResponseRecorder {

@@ -300,6 +300,7 @@
     "removable": "USB-Laufwerk",
     "optical": "DVD-Laufwerk",
     "network": "Netzlaufwerk",
+    "shareOn": "{share} auf {server}",
     "volume": "Datenträger mit {size}"
   },
   "files": {
@@ -515,7 +516,7 @@
     "notInTrash": "Das liegt nicht im Papierkorb",
     "notOnDisk": "Nur Dateien auf dem Datenträger lassen sich an andere Programme geben",
     "notText": "Diese Datei ist kein Text",
-    "notWindows1252": "Der Text hat Zeichen, die Windows-1252 nicht speichern kann. Speichere ihn als UTF-8",
+    "notEncodable": "Der Text hat Zeichen, die {encoding} nicht speichern kann. Speichere ihn als UTF-8",
     "nothingToUndo": "Es gibt nichts zurückzunehmen",
     "noVolume": "Dieses Laufwerk ist nicht mehr da",
     "officeCannotOpen": "Der Office-Server öffnet keine .{ext}-Dateien",

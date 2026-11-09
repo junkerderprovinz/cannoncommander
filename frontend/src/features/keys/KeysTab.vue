@@ -19,12 +19,15 @@ const change = (map: KeyMap) => commit(map, layout());
 </script>
 
 <template>
-  <Card :title="t('keys.preset')">
-    <FieldRow :label="t('keys.style')" :hint="t(host.desktop ? 'keys.styleTipDesktop' : 'keys.styleTip')">
+  <Card :title="t('keys.use')">
+    <FieldRow v-if="host.desktop" :label="t('keys.preset')" :hint="t('keys.layoutTip')">
       <Selector id="kt-layout" :model-value="layout()" :items="segItems(layoutItems())" size="sm" activation="manual" inline button-height pairs-on-phone @update:model-value="useLayout($event as Preset)" />
     </FieldRow>
     <FieldRow v-if="host.desktop" :label="t('keys.clickSelect')" :hint="t('keys.clickSelectTip')">
       <Toggle id="d-clickselect" :model-value="!!prefs.clickSelect" @update:model-value="setPref('clickSelect', $event)" />
+    </FieldRow>
+    <FieldRow :label="t('keys.vim')" :hint="t('keys.vimTip')">
+      <Toggle id="kt-vim" :model-value="!!prefs.editorVim" @update:model-value="setPref('editorVim', $event)" />
     </FieldRow>
     <FieldRow :label="t('keys.own')" :hint="t('keys.resetTip')">
       <Button id="kt-reset" :label="t('keys.reset')" label-key="IconRefresh" :disabled="!hasOwnKeys()" @click="change({ ...base })" />

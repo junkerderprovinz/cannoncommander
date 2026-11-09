@@ -11,6 +11,7 @@ import { type Entry, toEntry } from '@/files/entries';
 import { parent, split } from '@/files/paths';
 import { plural, t, tl } from '@/i18n';
 import { diskName, jobError, jobLabel, objects, placeName } from '@/features/jobs/label';
+import { elevationAnswers } from '@/features/elevate/answers';
 import { undoAct } from '@/features/undo/act';
 import { useUnraid } from '@/features/unraid/state';
 import { useClipboard } from '@/stores/clipboard';
@@ -112,7 +113,10 @@ function announce(job: Job, kind: 'copy' | 'move') {
     if (done.state === 'done') {
       usePanels().T().marked = new Set();
       toast(doneText(done, kind, what, to), 'ok', done.undo ? undoAct(done.undo) : undefined);
-    } else if (done.state === 'failed') toast(done.error ? t('transfer.failed', { label: jobLabel(done), error: jobError(done) }) : t('transfer.failedPlain', { label: jobLabel(done) }), 'fault');
+    } else if (done.state === 'failed') {
+      void elevationAnswers(done).then((answered) => answered || toast(done.error ? t('transfer.failed', { label: jobLabel(done), error: jobError(done) })
+        : t('transfer.failedPlain', { label: jobLabel(done) }), 'fault'));
+    }
   });
 }
 

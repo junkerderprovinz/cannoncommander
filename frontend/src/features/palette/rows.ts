@@ -55,7 +55,7 @@ export function score(q: string, e: Pick<Row, 'name' | 'group'>) {
 export function lines(q: string): Line[] {
   const grp = groups();
   const extra = sources.map((s) => ({ head: s.head(), rows: s.list().map((r) => ({ ...r, group: s.head() })) }));
-  const all: Row[] = Object.values(actions).filter((a) => labelOf(a) && !a.hidden && a.id !== 'palette').map((a) => ({
+  const all: Row[] = Object.values(actions).filter((a) => labelOf(a) && !a.hidden && !a.scope && a.id !== 'palette').map((a) => ({
     a, name: labelOf(a), g: a.g, group: grp[a.id], why: blocked(a) || (a.when && !a.when() ? t('palette.notNow') : null),
   }));
   const byName = (x: Row, y: Row) => Number(!!x.why) - Number(!!y.why) || byText(x.name, y.name);

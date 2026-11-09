@@ -1,8 +1,8 @@
 // The keys in force: the layout chosen, own keys on top of it, and the labels menus and tooltips show for them.
 import { actions } from '@/core/actions';
-import { host } from '@/core/host';
 import { keymap } from '@/core/keymap';
 import { prefs, setPref } from '@/core/prefs';
+import { t } from '@/i18n';
 import { type KeyMap, keyLabel, mainCombo, type OwnKeys, ownKeys, type Preset, preset, withOwn } from './keys';
 
 interface Saved { preset: Preset; own: OwnKeys }
@@ -13,14 +13,15 @@ export const shippedKeys = () => defaults;
 export const declaredKeys = () => declared;
 
 export const layoutKeys = (which: Preset) => preset(which, defaults, (a) => !!actions[a]);
-// Explorer's layout is for the desktop app, which stands in for Explorer.
-export const layoutItems = (): [Preset, string][] => [['cc', 'CannonCommander'], ['tc', 'Total Commander'], ...(host.desktop ? [['explorer', 'Explorer'] as [Preset, string]] : [])];
+// The desktop app stands in for Explorer, so only there is a choice, the one its first start asks for.
+export const layoutItems = (): [Preset, string][] => [['cc', t('keys.asCommander')], ['explorer', t('keys.asExplorer')]];
 
 // Older settings hold the whole map, which turns into what it changes in its layout.
 function saved(): Saved | null {
-  const s = prefs.keys as { preset?: Preset; own?: OwnKeys; map?: KeyMap } | null | undefined;
+  const s = prefs.keys as { preset?: string; own?: OwnKeys; map?: KeyMap } | null | undefined;
   if (!s || typeof s !== 'object') return null;
-  const which = s.preset ?? 'cc';
+  // A stored Total Commander layout counts as the commander's.
+  const which: Preset = s.preset === 'explorer' ? 'explorer' : 'cc';
   if (s.own && typeof s.own === 'object') return { preset: which, own: s.own };
   if (s.map && typeof s.map === 'object') return { preset: which, own: ownKeys(layoutKeys(which), s.map) };
   return null;

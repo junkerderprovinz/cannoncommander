@@ -121,11 +121,12 @@ func (k *desk) appImageIcon(file string, px int) (string, bool) {
 		}
 		icons, _ := os.ReadDir(filepath.Join(hicolor, size.Name(), "apps"))
 		for _, icon := range icons {
-			if !strings.HasPrefix(icon.Name(), prefix) {
+			p := filepath.Join(hicolor, size.Name(), "apps", icon.Name())
+			if !strings.HasPrefix(icon.Name(), prefix) || !xdg.IconFile(p) {
 				continue
 			}
 			if d := max(edge-px, px-edge); best == "" || d < nearest {
-				best, nearest = filepath.Join(hicolor, size.Name(), "apps", icon.Name()), d
+				best, nearest = p, d
 			}
 		}
 	}

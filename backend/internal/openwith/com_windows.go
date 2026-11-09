@@ -10,13 +10,18 @@ import (
 )
 
 var (
-	shell32 = windows.NewLazySystemDLL("shell32.dll")
-	shlwapi = windows.NewLazySystemDLL("shlwapi.dll")
+	shell32  = windows.NewLazySystemDLL("shell32.dll")
+	shlwapi  = windows.NewLazySystemDLL("shlwapi.dll")
+	comdlg32 = windows.NewLazySystemDLL("comdlg32.dll")
+	user32   = windows.NewLazySystemDLL("user32.dll")
 
-	procEnumHandlers     = shell32.NewProc("SHAssocEnumHandlers")
-	procItemFromPath     = shell32.NewProc("SHCreateItemFromParsingName")
-	procOpenWithDialog   = shell32.NewProc("SHOpenWithDialog")
-	procAssocQueryString = shlwapi.NewProc("AssocQueryStringW")
+	procEnumHandlers         = shell32.NewProc("SHAssocEnumHandlers")
+	procItemFromPath         = shell32.NewProc("SHCreateItemFromParsingName")
+	procOpenWithDialog       = shell32.NewProc("SHOpenWithDialog")
+	procAssocQueryString     = shlwapi.NewProc("AssocQueryStringW")
+	procGetOpenFileName      = comdlg32.NewProc("GetOpenFileNameW")
+	procCommDlgExtendedError = comdlg32.NewProc("CommDlgExtendedError")
+	procAttachThreadInput    = user32.NewProc("AttachThreadInput")
 )
 
 var (

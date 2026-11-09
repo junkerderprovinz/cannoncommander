@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"testing/fstest"
 	"time"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/xdg"
@@ -20,6 +21,12 @@ type fixture struct {
 	config, work       string
 	installed          []string
 	langs              []string
+	// root stands in for / where /proc and /sys are read, owners are the
+	// names owned on the session bus, and output answers for programs.
+	root   fstest.MapFS
+	owners []string
+	output func(program string, args ...string) ([]byte, error)
+	bwrap  string
 }
 
 func newFixture(t *testing.T) *fixture {
@@ -90,7 +97,19 @@ func (f *fixture) desktop() xdg.Desktop {
 }
 
 // desk reads the current desktop.
-func (f *fixture) desk() *desk { return newDesk(f.desktop(), nil) }
+func (f *fixture) desk() *desk {
+	d := f.desktop()
+	d.Output = f.output
+	k := newDesk(d, nil)
+	k.root = f.root
+	k.hasOwner = func(name string) bool { return slices.Contains(f.owners, name) }
+	k.sandbox = sandbox{}
+	if f.bwrap != "" {
+		k.sandbox = sandbox{program: f.bwrap, isolate: isolations[0]}
+	}
+	k.service = nil
+	return k
+}
 
 // install makes the desktop the one the exported functions see.
 func (f *fixture) install() *desk {

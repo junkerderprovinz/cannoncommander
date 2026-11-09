@@ -59,7 +59,7 @@ func TestAProgramWindowsDoesNotOfferIsNotStarted(t *testing.T) {
 	if err := os.WriteFile(file, []byte("hi"), 0o666); err != nil {
 		t.Fatal(err)
 	}
-	if err := (shell{}).open(file, `C:\Windows\System32\cmd.exe`); !errors.Is(err, errGone) {
+	if err := (shell{}).open(file, `C:\Windows\System32\cmd.exe`, ".txt"); !errors.Is(err, errGone) {
 		t.Fatalf("got %v", err)
 	}
 }

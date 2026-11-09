@@ -153,3 +153,23 @@ func TestWithoutANetworkNetIsAnUnknownPath(t *testing.T) {
 		t.Fatalf("got %v", err)
 	}
 }
+
+func TestAVolumeInsideTheRootSourceIsFoundByAnyPathInIt(t *testing.T) {
+	root := t.TempDir()
+	share := filepath.Join(root, "gvfs", "smb-share:server=localhost,share=ccshare")
+	r, err := New(nil, Source{Name: "Computer", Mount: "/", Root: root})
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.SetVolumes([]Volume{{Name: "ccshare", Root: share, Drive: Drive{Label: "ccshare", Kind: "network", Remote: "smb://localhost/ccshare"}}})
+	mount := "/gvfs/smb-share:server=localhost,share=ccshare"
+	for _, p := range []string{mount, mount + "/Fotos/2024"} {
+		at, v, ok := r.VolumeAt(p)
+		if !ok || at != mount || v.Root != share || v.Remote != "smb://localhost/ccshare" {
+			t.Errorf("%s: %s %+v %v", p, at, v, ok)
+		}
+	}
+	if _, _, ok := r.VolumeAt("/etc"); ok {
+		t.Error("a folder on no drive of its own has one")
+	}
+}

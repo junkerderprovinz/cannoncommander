@@ -1,5 +1,6 @@
-// Keys of your own: which combo runs which action, how a combo reads, the Total Commander layout to start from and the
+// Keys of your own: which combo runs which action, how a combo reads, the layouts to start from and the
 // rules a new key has to pass. Pure, so the window and the tests share it.
+import { bareCombo } from '@/core/keymap';
 import { t } from '@/i18n';
 
 export type KeyMap = Record<string, string>;
@@ -8,7 +9,8 @@ const NAMED = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Delete', 'Ins
 const MODS: Record<string, string> = { Ctrl: 'ctrl', Shift: 'shift', Alt: 'alt' };
 
 // A combo ending in the plus key itself, such as Ctrl++, keeps that plus as its last part.
-export function keyLabel(combo: string): string {
+export function keyLabel(scoped: string): string {
+  const combo = bareCombo(scoped);
   const parts = combo.endsWith('++') ? [...combo.slice(0, -2).split('+'), '+'] : combo.split('+');
   return parts.map((p, i) => {
     if (i < parts.length - 1) return MODS[p] ? t(`keys.mod.${MODS[p]}`) : p;
@@ -25,27 +27,15 @@ export function mainCombo(map: KeyMap, id: string, declared?: string) {
   return own.find((c) => c === declared) ?? own[0];
 }
 
-// Total Commander's own keys for the actions both programs share.
-export const TOTAL_COMMANDER: KeyMap = { 'Alt+F5': 'pack', 'Alt+F9': 'unpack', 'Ctrl+b': 'flat', 'Shift+F6': 'rename', F2: 'refresh', 'Shift+F2': 'compareDirs', 'Ctrl+d': 'addBookmark', 'Alt+F8': 'history' };
-
 // Explorer's keys where they differ from a commander's. They come on top, so Ctrl+R still refreshes beside F5, and
 // F3 stays with the viewer, as Space does.
 export const EXPLORER: KeyMap = { F5: 'refresh', 'Alt+d': 'gotoPath', 'Ctrl+Shift+c': 'copyPath', Backspace: 'back', 'Alt+p': 'sidePane', 'Ctrl+d': 'delete' };
 
-export type Preset = 'cc' | 'tc' | 'explorer';
+export type Preset = 'cc' | 'explorer';
 
 export function preset(id: Preset, defaults: KeyMap, known: (action: string) => boolean): KeyMap {
   const map = { ...defaults };
-  if (id === 'explorer') {
-    for (const [combo, act] of Object.entries(EXPLORER)) if (known(act)) map[combo] = act;
-    return map;
-  }
-  if (id !== 'tc') return map;
-  for (const [combo, act] of Object.entries(TOTAL_COMMANDER)) {
-    if (!known(act)) continue;
-    for (const c of combosOf(map, act)) delete map[c];
-    map[combo] = act;
-  }
+  if (id === 'explorer') for (const [combo, act] of Object.entries(EXPLORER)) if (known(act)) map[combo] = act;
   return map;
 }
 
@@ -58,7 +48,8 @@ const BROWSER = ['Ctrl+n', 'Ctrl+Shift+n', 'Ctrl+t', 'Ctrl+Shift+t', 'Ctrl+w', '
 const SYSTEM = ['Alt+Tab', 'Alt+Shift+Tab', 'Alt+F4', 'Alt+ ', 'Ctrl+Escape', 'Ctrl+Alt+Delete'];
 
 export type Reserved = 'browser' | 'system';
-export function reservedBy(combo: string, desktop: boolean): Reserved | undefined {
+export function reservedBy(scoped: string, desktop: boolean): Reserved | undefined {
+  const combo = bareCombo(scoped);
   if (SYSTEM.includes(combo)) return 'system';
   return !desktop && BROWSER.includes(combo) ? 'browser' : undefined;
 }
@@ -66,9 +57,10 @@ export function reservedBy(combo: string, desktop: boolean): Reserved | undefine
 export type Verdict = { ok: true } | { ok: false; reason: 'fixed' | 'letter' | Reserved } | { ok: false; reason: 'taken'; other: string };
 
 export function check(map: KeyMap, combo: string, action: string, desktop: boolean): Verdict {
-  if (FIXED.includes(combo)) return { ok: false, reason: 'fixed' };
-  // Single letters and digits belong to typing to jump in the list.
-  if (/^[\p{L}\d]$/u.test(combo)) return { ok: false, reason: 'letter' };
+  const bare = bareCombo(combo);
+  if (FIXED.includes(bare)) return { ok: false, reason: 'fixed' };
+  // Single letters and digits belong to typing, to jump in the list or to write in the editor.
+  if (/^[\p{L}\d]$/u.test(bare)) return { ok: false, reason: 'letter' };
   const reserved = reservedBy(combo, desktop);
   if (reserved) return { ok: false, reason: reserved };
   const other = map[combo];

@@ -11,7 +11,9 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -21,6 +23,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/migrate"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/nativeshell"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/elevate"
 	_ "modernc.org/sqlite"
 )
 
@@ -44,6 +47,12 @@ type computer struct {
 	ran      []string
 	elevated []string
 	props    [][]string
+	// sandbox is the state of the thumbnail sandbox, which the operations
+	// asked for with administrator rights change, unless decline is set.
+	sandbox     nativeshell.SandboxState
+	asked       []elevate.Op
+	resandboxed int
+	decline     bool
 }
 
 func (c *computer) system() system {
@@ -82,6 +91,17 @@ func (c *computer) system() system {
 				return nil, "", nativeshell.ErrNoPicture
 			}
 			return []byte("icon of " + filepath.Base(f)), "image/png", nil
+		},
+		sandboxing: func() nativeshell.SandboxState { return c.sandbox },
+		resandbox:  func() { c.resandboxed++ },
+		elevate: func(_ context.Context, ops []elevate.Op) error {
+			if c.decline {
+				return elevate.ErrDeclined
+			}
+			c.asked = append(c.asked, ops...)
+			c.sandbox.Allowed = ops[0].Kind == elevate.AllowUserNamespaces
+			c.sandbox.Sandboxed = c.sandbox.Allowed
+			return nil
 		},
 		typeIcon: func(name string, dir bool, px int) ([]byte, string, error) {
 			return []byte("type of " + name), "image/png", nil
@@ -319,5 +339,68 @@ func TestAnIconComesByTypeOrByItem(t *testing.T) {
 	}
 	if resp, _, _ := e.do(http.MethodGet, "/shell/icon?size=20&name=a.txt", nil); resp.StatusCode != http.StatusBadRequest {
 		t.Fatalf("an odd size got %d", resp.StatusCode)
+	}
+}
+
+func TestTheCommonIconsAreLookedUpForEverySizeOfARow(t *testing.T) {
+	asked := map[string]int{}
+	sys := system{typeIcon: func(name string, dir bool, px int) ([]byte, string, error) {
+		asked[name+"@"+strconv.Itoa(px)]++
+		return nil, "", nativeshell.ErrNoPicture
+	}}
+	(&handlers{sys: sys}).warmIcons()
+	for _, want := range []string{"file.png@16", "file.pdf@48", "file.mp4@32", "folder@16"} {
+		if asked[want] != 1 {
+			t.Errorf("%s asked %d times", want, asked[want])
+		}
+	}
+}
+
+func TestTheSettingsKeepALabelWithoutTheFileNames(t *testing.T) {
+	e := newEnv(t, false)
+	e.pc.actions = []nativeshell.Action{{Entry: nativeshell.Entry{Key: "nemo:scan", Label: "Scan notes.txt", Remember: "Scan %N"}}}
+	_, _, body := e.do(http.MethodGet, "/shell/actions?path=/mnt/user/work/notes.txt", nil)
+	var got struct{ Actions []actionJSON }
+	_ = json.Unmarshal(body, &got)
+	if len(got.Actions) != 1 || got.Actions[0].Label != "Scan notes.txt" {
+		t.Fatalf("the menu shows %+v", got.Actions)
+	}
+	if kept := e.entries(); len(kept) != 1 || kept[0].Label != "Scan %N" {
+		t.Fatalf("kept %+v", kept)
+	}
+}
+
+func TestThumbnailsAreLetIntoTheSandboxAndOutAgainWithAdministratorRights(t *testing.T) {
+	e := newEnv(t, false)
+	e.pc.sandbox = nativeshell.SandboxState{Restricted: true}
+	if runtime.GOOS == "linux" {
+		_, _, body := e.do(http.MethodGet, "/shell", nil)
+		var got offersJSON
+		_ = json.Unmarshal(body, &got)
+		if got.Thumbnails == nil || got.Thumbnails.Way != "cache" || !got.Thumbnails.Restricted {
+			t.Fatalf("offers %s", body)
+		}
+	}
+	for _, c := range []struct {
+		allow bool
+		way   string
+	}{{true, "sandbox"}, {false, "cache"}} {
+		resp, code, body := e.do(http.MethodPost, "/shell/thumbnails", map[string]bool{"allow": c.allow})
+		var got thumbsJSON
+		_ = json.Unmarshal(body, &got)
+		if resp.StatusCode != http.StatusOK || got.Way != c.way || got.Allowed != c.allow {
+			t.Fatalf("allow %v: %d %s %s", c.allow, resp.StatusCode, code, body)
+		}
+	}
+	var kinds []string
+	for _, o := range e.pc.asked {
+		kinds = append(kinds, o.Kind)
+	}
+	if want := []string{elevate.AllowUserNamespaces, elevate.DisallowUserNamespaces}; !slices.Equal(kinds, want) || e.pc.resandboxed != 2 {
+		t.Fatalf("asked %+v, probed again %d times", e.pc.asked, e.pc.resandboxed)
+	}
+	e.pc.decline = true
+	if resp, code, _ := e.do(http.MethodPost, "/shell/thumbnails", map[string]bool{"allow": true}); resp.StatusCode != http.StatusForbidden || code != "elevationDeclined" {
+		t.Fatalf("a refused prompt: %d %s", resp.StatusCode, code)
 	}
 }

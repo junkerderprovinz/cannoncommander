@@ -232,7 +232,7 @@ func TestADriveThatComesAndGoesReachesTheResolverAndTheWindow(t *testing.T) {
 	}
 }
 
-func TestComparingFindsMountedAndUnmountedVolumes(t *testing.T) {
+func TestAVolumeComesWhenItAppearsAndGoesWhenItIsUnmounted(t *testing.T) {
 	before := []desktop.Volume{{ID: "a", Root: "/run/media/jdp/A"}, {ID: "b"}, {ID: "c", Root: "/run/media/jdp/C"}}
 	now := []desktop.Volume{{ID: "a"}, {ID: "b", Root: "/run/media/jdp/B"}, {ID: "d"}}
 	added, removed := compare(before, now)
@@ -242,8 +242,31 @@ func TestComparingFindsMountedAndUnmountedVolumes(t *testing.T) {
 		}
 		return out
 	}
-	if !slices.Equal(ids(added), []string{"b", "d"}) || !slices.Equal(ids(removed), []string{"a", "c"}) {
+	if !slices.Equal(ids(added), []string{"d"}) || !slices.Equal(ids(removed), []string{"a", "c"}) {
 		t.Fatalf("added %v, removed %v", ids(added), ids(removed))
+	}
+}
+
+func TestAStickTheDesktopMountsAfterItCameIsGreetedOnce(t *testing.T) {
+	home, stick := t.TempDir(), t.TempDir()
+	c := onDesktop(t, home)
+	fs, err := ccfs.New(nil, ccfs.Source{Name: "Home", Mount: apiPath(home), Root: home})
+	if err != nil {
+		t.Fatal(err)
+	}
+	h := hub.New(hub.Options{})
+	client, _, _ := h.Connect("tab", "jdp", 0)
+	desktop.Listen(func(typ string, data any) { _, _ = h.PublishJSON(typ, "", data) })
+	t.Cleanup(func() { desktop.Listen(nil) })
+	Follow(fs, h)
+
+	c.plug(desktop.Volume{ID: "sdb1", Kind: "removable", Eject: true})
+	if ev := next(t, client.Events, "desktop.volumes"); !bytes.Contains(ev.Data, []byte(`"added":[{"id":"sdb1"`)) {
+		t.Fatalf("arrival %s", ev.Data)
+	}
+	c.plug(desktop.Volume{ID: "sdb1", Root: stick, Kind: "removable", Eject: true})
+	if ev := next(t, client.Events, "desktop.volumes"); !bytes.Contains(ev.Data, []byte(`"added":[]`)) {
+		t.Fatalf("the mount greeted the stick again: %s", ev.Data)
 	}
 }
 

@@ -26,7 +26,6 @@
 9821 Ctrl+k runs: Kopieren
 9821 stored: true
 9821 after reload: copy Strg+K, Ctrl+k copy
-9821 tc preset: pack Alt+F5, unpack Alt+F9, rename Umschalt+F6, flat Strg+B, compareDirs Umschalt+F2, copy Strg+K
 9821 reset: copy F5, palette Strg+K, stored false
 9831 groups: Leere Ordner 1 Papierkorb | Leere Dateien 1 Papierkorb | Temp-Reste 5 Papierkorb | Kaputte Verknüpfungen 1 Papierkorb | Falsche Endung 1 Umbenennen | Problematische Namen 2 Umbenennen
 9831 primary: 5 löschen, 3 umbenennen

@@ -341,13 +341,14 @@ func dataDir() (string, error) {
 }
 
 // instanceID is the single-instance lock for dir. A copy on its own CC_DATA
-// folder gets a lock of its own, so it runs beside the usual one.
+// folder gets a lock of its own, so it runs beside the usual one. On Linux the
+// lock is a D-Bus name, whose elements may not start with a digit.
 func instanceID(dir string) string {
 	if os.Getenv("CC_DATA") == "" {
 		return appID
 	}
 	sum := sha256.Sum256([]byte(dir))
-	return appID + "." + hex.EncodeToString(sum[:4])
+	return appID + ".data" + hex.EncodeToString(sum[:4])
 }
 
 // splash is the page the window shows until the server answers: the mark on

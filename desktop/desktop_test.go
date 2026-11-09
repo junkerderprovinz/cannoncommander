@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -169,5 +171,36 @@ func TestACopyOnItsOwnDataFolderHasALockOfItsOwn(t *testing.T) {
 	t.Setenv("CC_DATA", "a")
 	if a, b := instanceID("a"), instanceID("b"); a == appID || a == b {
 		t.Fatalf("got %s and %s", a, b)
+	}
+}
+
+type fakeWindow []string
+
+func (f *fakeWindow) UnMinimise() { *f = append(*f, "unminimise") }
+func (f *fakeWindow) Show() application.Window {
+	*f = append(*f, "show")
+	return nil
+}
+func (f *fakeWindow) Focus() { *f = append(*f, "focus") }
+
+func TestAWindowComesUpAsLargeAsItWas(t *testing.T) {
+	var w fakeWindow
+	raise(&w)
+	if want := []string{"unminimise", "show", "focus"}; !reflect.DeepEqual([]string(w), want) {
+		t.Fatalf("got %v", w)
+	}
+}
+
+// D-Bus refuses a name element that starts with a digit, and the Linux lock is
+// a bus name, so such a copy would quit before its window opened.
+func TestAPortableLockIsAValidBusName(t *testing.T) {
+	t.Setenv("CC_DATA", "a")
+	for i := range 64 {
+		id := instanceID(fmt.Sprintf("/home/tester/data%d", i))
+		for _, element := range strings.Split(id, ".") {
+			if element == "" || element[0] >= '0' && element[0] <= '9' {
+				t.Fatalf("%s is no bus name", id)
+			}
+		}
 	}
 }
