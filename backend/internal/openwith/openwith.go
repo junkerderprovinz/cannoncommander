@@ -11,7 +11,10 @@ import (
 	"image"
 	"net/http"
 	"os"
+	"path/filepath"
+	"regexp"
 	"slices"
+	"strings"
 	"sync"
 
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -29,10 +32,12 @@ var contract []byte
 const iconSize = 32
 
 var (
-	errNotAFile   = v1.Coded(http.StatusBadRequest, "notAFile", "path is not a regular file")
-	errUnknownApp = v1.Coded(http.StatusBadRequest, "unknownApp", "the computer offers no such program for this file")
-	errNoDialog   = v1.Coded(http.StatusNotFound, "noAppDialog", "this computer has no dialog to pick a program")
-	errNotStarted = v1.Coded(http.StatusBadGateway, "appNotStarted", "the program did not start")
+	errNotAFile    = v1.Coded(http.StatusBadRequest, "notAFile", "path is not a regular file")
+	errUnknownApp  = v1.Coded(http.StatusBadRequest, "unknownApp", "the computer offers no such program for this file")
+	errNoDialog    = v1.Coded(http.StatusNotFound, "noAppDialog", "this computer has no dialog to pick a program")
+	errNotStarted  = v1.Coded(http.StatusBadGateway, "appNotStarted", "the program did not start")
+	errNotAProgram = v1.Coded(http.StatusBadRequest, "notAProgram", "this is no program the computer can start")
+	errBadType     = v1.Coded(http.StatusBadRequest, "badFileType", "a file type is a few letters and digits, such as txt")
 
 	errNoIcon = errors.New("no icon")
 )
@@ -59,12 +64,22 @@ type system interface {
 	every() ([]app, error)
 	// icon returns the icon a program keeps at where as a data URL.
 	icon(where string) (string, error)
-	open(file, id string) error
+	// open hands file to the program id, which the system offers for files
+	// that end in ext.
+	open(file, id, ext string) error
 	// choose shows the system's dialog that picks a program for file and
 	// opens it there. It returns once the dialog closes.
 	choose(file string) error
 	// dialog reports whether the system has such a dialog.
 	dialog() bool
+	// pick shows the system's dialog for choosing a program and returns the
+	// one chosen, with an empty id when the person closes it. title heads
+	// the dialog and programs names its filter.
+	pick(title, programs string) (app, error)
+	// runs reports whether program is something run can start.
+	runs(program string, info os.FileInfo) bool
+	// run starts program with file, without a shell between them.
+	run(program, file string) error
 }
 
 // Routes registers the contract and the handlers.
@@ -77,6 +92,8 @@ func bind(r *v1.Router, h *handlers) {
 	r.Handle("GET /openwith", h.list)
 	r.Handle("POST /openwith", h.open)
 	r.Handle("POST /openwith/dialog", h.dialog)
+	r.Handle("POST /openwith/pick", h.pick)
+	r.Handle("POST /openwith/program", h.program)
 }
 
 type handlers struct {
@@ -103,14 +120,16 @@ type listJSON struct {
 	Dialog bool      `json:"dialog"`
 }
 
-// list is GET /openwith.
+// list is GET /openwith. With type instead of a path it lists the programs
+// for files of that type, which the editor setting picks from.
 func (h *handlers) list(w http.ResponseWriter, r *http.Request) error {
 	q := r.URL.Query()
-	loc, err := h.file(v1.UserFrom(r), q.Get("path"))
+	file, done, err := h.typed(v1.UserFrom(r), q.Get("path"), q.Get("type"))
 	if err != nil {
 		return err
 	}
-	apps, err := h.offered(loc.Real, q.Get("every") == "true")
+	defer done()
+	apps, err := h.offered(file, q.Get("every") == "true")
 	if err != nil {
 		return err
 	}
@@ -127,6 +146,7 @@ func (h *handlers) open(w http.ResponseWriter, r *http.Request) error {
 		Path  string `json:"path"`
 		App   string `json:"app"`
 		Every bool   `json:"every"`
+		Type  string `json:"type"`
 	}
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
@@ -135,7 +155,12 @@ func (h *handlers) open(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	apps, err := h.offered(loc.Real, in.Every)
+	via, done, err := h.typed(v1.UserFrom(r), in.Path, in.Type)
+	if err != nil {
+		return err
+	}
+	defer done()
+	apps, err := h.offered(via, in.Every)
 	if err != nil {
 		return err
 	}
@@ -143,7 +168,7 @@ func (h *handlers) open(w http.ResponseWriter, r *http.Request) error {
 	if at < 0 {
 		return errUnknownApp
 	}
-	if err := h.sys.open(loc.Real, in.App); err != nil {
+	if err := h.sys.open(loc.Real, in.App, filepath.Ext(via)); err != nil {
 		logger.Errorf("opening %s with %s: %v", loc.Real, in.App, err)
 		return errNotStarted.With("app", apps[at].name)
 	}
@@ -175,6 +200,95 @@ func (h *handlers) dialog(w http.ResponseWriter, r *http.Request) error {
 	}()
 	w.WriteHeader(http.StatusNoContent)
 	return nil
+}
+
+// pick is POST /openwith/pick. It answers once the person has chosen, with
+// no content when they closed the dialog.
+func (h *handlers) pick(w http.ResponseWriter, r *http.Request) error {
+	var in struct {
+		Title    string `json:"title"`
+		Programs string `json:"programs"`
+	}
+	if err := v1.DecodeJSON(r, &in); err != nil {
+		return err
+	}
+	a, err := h.sys.pick(in.Title, in.Programs)
+	if err != nil {
+		return err
+	}
+	if a.id == "" {
+		w.WriteHeader(http.StatusNoContent)
+		return nil
+	}
+	return v1.WriteJSON(w, r, http.StatusOK, appJSON{ID: a.id, Name: a.name, Icon: h.icon(a.icon)})
+}
+
+// program is POST /openwith/program: a file opens in a program the person
+// picked as a file of its own. The rules judge the program as they judge the
+// file.
+func (h *handlers) program(w http.ResponseWriter, r *http.Request) error {
+	var in struct {
+		Path    string `json:"path"`
+		Program string `json:"program"`
+	}
+	if err := v1.DecodeJSON(r, &in); err != nil {
+		return err
+	}
+	u := v1.UserFrom(r)
+	loc, err := h.file(u, in.Path)
+	if err != nil {
+		return err
+	}
+	prog, err := h.deps.FS.Landed(u, in.Program, ccfs.View|ccfs.Download)
+	if err != nil {
+		return err
+	}
+	if prog.Virtual() || prog.InArchive() {
+		return errNotAProgram
+	}
+	info, err := os.Stat(prog.Real)
+	if err != nil {
+		return err
+	}
+	if !h.sys.runs(prog.Real, info) {
+		return errNotAProgram
+	}
+	name := strings.TrimSuffix(filepath.Base(prog.Real), filepath.Ext(prog.Real))
+	if err := h.sys.run(prog.Real, loc.Real); err != nil {
+		logger.Errorf("opening %s with %s: %v", loc.Real, prog.Real, err)
+		return errNotStarted.With("app", name)
+	}
+	logger.Infof("opened %s with %s", loc.Real, prog.Real)
+	w.WriteHeader(http.StatusNoContent)
+	return nil
+}
+
+// fileType is an extension without its dot.
+var fileType = regexp.MustCompile(`^[A-Za-z0-9]{1,16}$`)
+
+// typed is the file whose programs count: the one at p, or with t a stand-in
+// of that type, since the systems tell programs by a file. done removes the
+// stand-in.
+func (h *handlers) typed(u *users.User, p, t string) (file string, done func(), err error) {
+	done = func() {}
+	if t == "" {
+		loc, err := h.file(u, p)
+		return loc.Real, done, err
+	}
+	if !fileType.MatchString(t) {
+		return "", done, errBadType
+	}
+	dir, err := os.MkdirTemp("", "cc-type-")
+	if err != nil {
+		return "", done, err
+	}
+	done = func() { _ = os.RemoveAll(dir) }
+	file = filepath.Join(dir, "file."+t)
+	if err := os.WriteFile(file, nil, 0o600); err != nil {
+		done()
+		return "", func() {}, err
+	}
+	return file, done, nil
 }
 
 // offered is what the computer offers for file, or every program there is.

@@ -5597,9 +5597,21 @@ paths:
         32 pixels or an SVG, as a data URL. dialog says whether the
         computer has a dialog of its own to pick another program, as
         Windows and macOS do. Without one, every=true lists all programs
-        a person can pick from instead.
+        a person can pick from instead. With type in place of path it
+        lists the programs for files of that type, such as txt, which the
+        setting for the editor of F4 offers.
       parameters:
-        - $ref: "#/components/parameters/Path"
+        - name: path
+          in: query
+          description: The file, unless type is given.
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: A file type, its extension without the dot.
+          schema:
+            type: string
+            pattern: "^[A-Za-z0-9]{1,16}$"
         - name: every
           in: query
           description: All programs instead of those for the file, where the computer has no dialog for that.
@@ -5637,8 +5649,9 @@ paths:
       operationId: openWithOpen
       summary: Open a file with one of its programs
       description: |
-        The program is one the list named for the file, or with every one
-        of all programs, and any other is refused. The file goes to the
+        The program is one the list named for the file, with type for files
+        of that type, or with every one of all programs, and any other is
+        refused. The file goes to the
         program the way the system's file manager hands it over, never
         through a shell.
       requestBody:
@@ -5657,6 +5670,10 @@ paths:
                   description: The id of a program from the list.
                 every:
                   type: boolean
+                type:
+                  type: string
+                  description: The file type the program was listed for, when that is not the file's own, as for the editor of F4.
+                  pattern: "^[A-Za-z0-9]{1,16}$"
       responses:
         "204":
           description: The program has the file.
@@ -5709,6 +5726,97 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           description: Not the desktop app (desktopOnly), no dialog on this computer (noAppDialog), or no such file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [openwith]
+  /openwith/pick:
+    post:
+      operationId: openWithPick
+      summary: Pick a program file in the system's dialog
+      description: |
+        Shows the computer's own dialog for choosing a program, the open
+        file dialog kept to programs on Windows and the application
+        chooser on a Mac, and answers once the person has chosen. Linux has
+        no such dialog and lists every program instead.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The dialog's title, in the person's language.
+                programs:
+                  type: string
+                  description: The name of the dialog's filter for programs.
+      responses:
+        "200":
+          description: The program chosen. Its id is the path the computer writes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenWithApp"
+        "204":
+          description: The person closed the dialog.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly), or no dialog on this computer (noAppDialog).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [openwith]
+  /openwith/program:
+    post:
+      operationId: openWithProgram
+      summary: Open a file with a program file
+      description: |
+        Starts the program with the file as its one argument, never through
+        a shell, as the editor of F4 does with a program picked as a file.
+        The rules judge the program as they judge the file, and a file that
+        is no program the computer can start is refused.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path, program]
+              properties:
+                path:
+                  type: string
+                  example: /C/Users/jdp/Documents/notes.txt
+                program:
+                  type: string
+                  example: /C/Program Files/Notepad++/notepad++.exe
+      responses:
+        "204":
+          description: The program has the file.
+        "400":
+          description: A path is not a file (notAFile), or the program is none (notAProgram).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not the desktop app (desktopOnly), or no such file.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: The program did not start (appNotStarted, with its name).
           content:
             application/problem+json:
               schema:

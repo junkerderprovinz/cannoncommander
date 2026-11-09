@@ -4,9 +4,13 @@ package openwith
 
 import (
 	"errors"
+	"fmt"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"unicode/utf16"
 	"unsafe"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
@@ -82,7 +86,7 @@ var errGone = errors.New("the program is no longer offered for this file")
 
 // open hands the file to the program the way Explorer does, which also
 // starts a packaged app that has no program file to run.
-func (shell) open(file, id string) error {
+func (shell) open(file, id, ext string) error {
 	return winshell.Apartment(func() error {
 		obj, err := dataObject(file)
 		if err != nil {
@@ -90,7 +94,7 @@ func (shell) open(file, id string) error {
 		}
 		defer winshell.Release(obj)
 		invoked := errGone
-		err = eachHandler(filepath.Ext(file), func(h unsafe.Pointer) bool {
+		err = eachHandler(ext, func(h unsafe.Pointer) bool {
 			if name, _ := winshell.TaskString(h, handlerName); name != id {
 				return false
 			}
@@ -136,4 +140,98 @@ func (shell) choose(file string) error {
 		}
 		return err
 	})
+}
+
+// openFileName is OPENFILENAMEW.
+type openFileName struct {
+	structSize    uint32
+	owner         windows.HWND
+	instance      windows.Handle
+	filter        *uint16
+	customFilter  *uint16
+	maxCustFilter uint32
+	filterIndex   uint32
+	file          *uint16
+	maxFile       uint32
+	fileTitle     *uint16
+	maxFileTitle  uint32
+	initialDir    *uint16
+	title         *uint16
+	flags         uint32
+	fileOffset    uint16
+	fileExt       uint16
+	defExt        *uint16
+	custData      uintptr
+	hook          uintptr
+	template      *uint16
+	reserved      uintptr
+	reserved2     uint32
+	flagsEx       uint32
+}
+
+// The flags of a dialog that opens one program file that exists, and leaves
+// the recent files and the working folder as they were.
+const (
+	ofnHideReadOnly    = 0x4
+	ofnNoChangeDir     = 0x8
+	ofnPathMustExist   = 0x800
+	ofnFileMustExist   = 0x1000
+	ofnExplorer        = 0x80000
+	ofnDontAddToRecent = 0x2000000
+)
+
+// pick shows the system's dialog for opening a file, kept to programs and
+// starting in Program Files, where they live.
+func (shell) pick(title, programs string) (app, error) {
+	if programs == "" {
+		programs = "Programs"
+	}
+	// The filter is pairs of a name and a pattern, each ending in a zero,
+	// which a Go string cannot hold, so it is made from UTF-16 by hand.
+	filter := append(utf16.Encode([]rune(programs+"\x00*.exe\x00")), 0)
+	buf := make([]uint16, 4096)
+	var dir, head *uint16
+	if pf := os.Getenv("ProgramFiles"); pf != "" {
+		dir, _ = windows.UTF16PtrFromString(pf)
+	}
+	if title != "" {
+		head, _ = windows.UTF16PtrFromString(title)
+	}
+	var chosen string
+	err := winshell.Apartment(func() error {
+		o := openFileName{
+			owner: winshell.Owner(), filter: &filter[0], filterIndex: 1, file: &buf[0], maxFile: uint32(len(buf)),
+			initialDir: dir, title: head, flags: ofnHideReadOnly | ofnNoChangeDir | ofnPathMustExist | ofnFileMustExist | ofnExplorer | ofnDontAddToRecent,
+		}
+		o.structSize = uint32(unsafe.Sizeof(o))
+		if r, _, _ := procGetOpenFileName.Call(uintptr(unsafe.Pointer(&o))); r != 0 {
+			chosen = windows.UTF16ToString(buf)
+			return nil
+		}
+		// No extended error means the person closed the dialog.
+		if code, _, _ := procCommDlgExtendedError.Call(); code != 0 {
+			return fmt.Errorf("the dialog failed with %#x", code)
+		}
+		return nil
+	})
+	if err != nil || chosen == "" {
+		return app{}, err
+	}
+	return app{id: chosen, name: strings.TrimSuffix(filepath.Base(chosen), filepath.Ext(chosen)), icon: chosen + ",0"}, nil
+}
+
+func (shell) runs(program string, info os.FileInfo) bool {
+	return info.Mode().IsRegular() && strings.EqualFold(filepath.Ext(program), ".exe")
+}
+
+// run starts the program itself, so the file goes to it as its one
+// argument and no shell reads the command line.
+func (shell) run(program, file string) error {
+	cmd := exec.Command(program, file)
+	cmd.Dir = filepath.Dir(file)
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	go func() { _ = cmd.Wait() }()
+	return nil
 }
