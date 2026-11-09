@@ -233,8 +233,9 @@ func (s *Server) list(w http.ResponseWriter, r *http.Request) error {
 		"signIn":         s.signIn(),
 		"hostAllowsKeys": s.keysAllowedFrom(r),
 		"desktop":        desktop.Active(),
-		"writeLimits": map[string]int{
+		"writeLimits": map[string]int64{
 			"entriesPerCall": itemsPerCall, "entriesPerHour": itemsPerHour, "filesPerCall": filesPerCall, "callsPerMinute": callsPerMinute,
+			"bytesPerCall": bytesPerCall,
 		},
 		"keys":    active,
 		"revoked": revoked,
@@ -635,6 +636,7 @@ func (s *Server) consentInfo(w http.ResponseWriter, r *http.Request) error {
 			"redirectHost": u.Hostname(), "loopback": loopback(u.Hostname()),
 		},
 		"account":      me.Username,
+		"password":     me.LoginMethod == users.LoginMethodPassword,
 		"ticket":       ticket,
 		"limitReached": others >= keyLimit,
 		"grantLimit":   keyLimit,
@@ -642,12 +644,16 @@ func (s *Server) consentInfo(w http.ResponseWriter, r *http.Request) error {
 }
 
 // consent takes the user's answer. Allow hands the client a code for the
-// token endpoint; deny tells it access_denied.
+// token endpoint, which makes a lasting credential like a key, so it asks for
+// the password or a fresh sign-in as making a key does. A refused proof
+// leaves the ticket unspent, so the page can ask again. Deny tells the client
+// access_denied.
 func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
 	var in struct {
 		Ticket   string `json:"ticket"`
 		Allow    bool   `json:"allow"`
 		CanWrite bool   `json:"canWrite"`
+		Password string `json:"password"`
 	}
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
@@ -662,6 +668,11 @@ func (s *Server) consent(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	me := v1.UserFrom(r)
+	if in.Allow {
+		if err := s.proveOwner(r, me, in.Password); err != nil {
+			return err
+		}
+	}
 	now := s.now()
 	t, ok := s.openConsent(session, in.Ticket, now)
 	if !ok || t.User != me.ID {

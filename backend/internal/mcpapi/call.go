@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net"
 	"net/http"
 	"net/url"
 
@@ -16,7 +17,8 @@ import (
 // web interface runs holds for an assistant as well: the scope, the access
 // rules with hidden and read only folders, archives and the rights of the
 // role. The request never leaves the process. Its context names the one
-// operation it may reach, which no request from the network can carry.
+// operation it may reach, as the route its contract declares, which no
+// request from the network can carry.
 type principal struct {
 	user *users.User
 	op   string
@@ -34,7 +36,7 @@ func Authenticate(next v1.Authenticator) v1.Authenticator {
 		if !ok {
 			return next(w, r)
 		}
-		if r.Method+" "+r.URL.Path != p.op {
+		if r.Pattern != p.op {
 			return nil, errOpNotAllowed
 		}
 		return p.user, nil
@@ -85,13 +87,13 @@ func (s *Server) call(ctx context.Context, c *caller, method, pattern, target st
 		rd = bytes.NewReader(nil)
 	}
 	u := &url.URL{Path: target, RawQuery: query.Encode()}
-	ctx = context.WithValue(ctx, principalKey{}, &principal{user: c.user, op: method + " " + target})
+	ctx = context.WithValue(ctx, principalKey{}, &principal{user: c.user, op: op})
 	ctx = v1.WithAgent(ctx, v1.Agent{KeyID: c.key.ID, Name: c.key.Label})
 	req, err := http.NewRequestWithContext(ctx, method, u.String(), rd)
 	if err != nil {
 		return err
 	}
-	req.RemoteAddr = c.addr + ":0"
+	req.RemoteAddr = net.JoinHostPort(c.addr, "0")
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}

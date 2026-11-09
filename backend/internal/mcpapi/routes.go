@@ -9,7 +9,9 @@ package mcpapi
 
 import (
 	"context"
+	"database/sql"
 	_ "embed"
+	"time"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/accounts"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
@@ -19,7 +21,9 @@ import (
 var contract []byte
 
 // A deleted account takes its keys along, before anything else could reuse
-// what hangs on it.
+// what hangs on it. A client that signed in through OAuth came in through a
+// session, so it ends with the sessions; a key is a credential like an API
+// token and ends with them.
 func init() {
 	accounts.OnDelete(func(ctx context.Context, d v1.Deps, userID uint64) error {
 		if d.DB == nil {
@@ -27,6 +31,18 @@ func init() {
 		}
 		return store{db: d.DB}.forgetUser(ctx, userID)
 	})
+	accounts.OnSessionsEnd(endGrants)
+	accounts.OnTokensEnd(endKeys)
+}
+
+func endGrants(ctx context.Context, db *sql.DB, userID uint64) error {
+	_, err := store{db: db}.revokeUser(ctx, userID, kindOAuth, "signed-out", time.Now().Unix())
+	return err
+}
+
+func endKeys(ctx context.Context, db *sql.DB, userID uint64) error {
+	_, err := store{db: db}.revokeUser(ctx, userID, kindKey, "tokens-ended", time.Now().Unix())
+	return err
 }
 
 // Routes registers the contract and, when there is a database, the handlers

@@ -274,6 +274,9 @@ paths:
                 canWrite:
                   type: boolean
                   default: false
+                password:
+                  type: string
+                  description: Needed to allow, as for making a key. An account without a password signs in again instead.
       responses:
         "200":
           description: Where the browser goes on to.
@@ -336,7 +339,7 @@ components:
           type: boolean
         writeLimits:
           type: object
-          required: [entriesPerCall, entriesPerHour, filesPerCall, callsPerMinute]
+          required: [entriesPerCall, entriesPerHour, filesPerCall, bytesPerCall, callsPerMinute]
           properties:
             entriesPerCall:
               type: integer
@@ -344,6 +347,9 @@ components:
               type: integer
             filesPerCall:
               type: integer
+            bytesPerCall:
+              type: integer
+              format: int64
             callsPerMinute:
               type: integer
         keys:
@@ -447,7 +453,7 @@ components:
           type: string
     McpConsent:
       type: object
-      required: [client, ticket, account, limitReached, grantLimit]
+      required: [client, ticket, account, password, limitReached, grantLimit]
       properties:
         client:
           type: object
@@ -465,6 +471,9 @@ components:
               type: boolean
         account:
           type: string
+        password:
+          type: boolean
+          description: The account signs in with a password, which Allow then asks for. Any other account needs a sign-in from the last minutes instead.
         ticket:
           type: string
         limitReached:

@@ -124,8 +124,8 @@ func (s *Server) tools() []toolDef {
 }
 
 // writeNote ends the description of every tool that changes something.
-var writeNote = fmt.Sprintf(" Needs a key with the write switch on. Limits: %d entries per call, %d entries per hour per key, %d files and folders below them per call.",
-	itemsPerCall, itemsPerHour, filesPerCall)
+var writeNote = fmt.Sprintf(" Needs a key with the write switch on. Limits: %d entries per call, %d entries per hour per key, %d files and folders below them per call, %d GiB copied per call.",
+	itemsPerCall, itemsPerHour, filesPerCall, bytesPerCall>>30)
 
 func transferSchema(sources, dest string) map[string]any {
 	return object(map[string]any{
@@ -243,9 +243,9 @@ func toolError(code, msg string) *mcp.CallToolResult {
 
 var errWriteOff = errors.New("write switch off")
 
-// failure turns what went wrong in a call of /api/v1 into the tool error an
+// fail turns what went wrong in a call of /api/v1 into the tool error an
 // assistant can act on, with nothing in it that names the host.
-func failure(err error) *mcp.CallToolResult {
+func (s *Server) fail(c *caller, err error) *mcp.CallToolResult {
 	var p *v1.Problem
 	switch {
 	case errors.Is(err, errWriteOff):
@@ -255,7 +255,7 @@ func failure(err error) *mcp.CallToolResult {
 	case errors.Is(err, errAnswerTooBig):
 		return toolError("too_big", "the answer is too big; narrow it down with offset and limit or a smaller folder")
 	case errors.As(err, &p):
-		return toolError(problemCode(p), problemText(p))
+		return toolError(problemCode(p), s.problemText(c, p))
 	}
 	logger.Errorf("mcp: tool: %v", err)
 	return toolError("failed", "CannonCommander could not do this")
@@ -268,7 +268,7 @@ func problemCode(p *v1.Problem) string {
 	switch {
 	case p.Status == http.StatusUnsupportedMediaType:
 		return "binary"
-	case p.Code == "denied", p.Code == "notFound":
+	case p.Code == "denied", p.Code == "notFound", p.Code == "mcpNotAllowed":
 		return "not_found"
 	case p.Code != "":
 		return snake(p.Code)
@@ -288,7 +288,7 @@ func problemCode(p *v1.Problem) string {
 	return "failed"
 }
 
-func problemText(p *v1.Problem) string {
+func (s *Server) problemText(c *caller, p *v1.Problem) string {
 	if p.Status >= 500 {
 		return "CannonCommander could not do this"
 	}
@@ -296,35 +296,19 @@ func problemText(p *v1.Problem) string {
 		return "the file holds binary data, not text"
 	}
 	if p.Status == http.StatusNotFound || p.Code == "denied" {
-		return "there is no such file or folder, or this account may not see or change it"
+		return notThere
 	}
 	text := p.Detail
 	if text == "" {
 		text = p.Title
 	}
-	return scrub(text)
+	return s.scrub(c.user, text)
 }
 
 var upper = regexp.MustCompile(`[A-Z]`)
 
 func snake(code string) string {
 	return upper.ReplaceAllStringFunc(code, func(c string) string { return "_" + strings.ToLower(c) })
-}
-
-var (
-	windowsPath = regexp.MustCompile(`(?i)\b[a-z]:\\[^\s"']*[^\s"'.,:;)]`)
-	uncPath     = regexp.MustCompile(`\\\\[^\s"'\\]+\\[^\s"']*[^\s"'.,:;)]`)
-	credentials = regexp.MustCompile(`://[^/\s:@]+:[^/\s@]+@`)
-)
-
-// scrub takes paths of the host and the credentials of an address out of a
-// text an assistant will read. The paths of the API stay, since the
-// assistant works with them; on Windows those look nothing like a path on
-// disk.
-func scrub(s string) string {
-	s = windowsPath.ReplaceAllString(s, "[path]")
-	s = uncPath.ReplaceAllString(s, "[path]")
-	return credentials.ReplaceAllString(s, "://[redacted]@")
 }
 
 // logCall writes the line an operator follows a key by and the entry of the

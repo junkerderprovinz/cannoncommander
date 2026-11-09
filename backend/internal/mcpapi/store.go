@@ -320,9 +320,9 @@ func revokeTx(tx *sql.Tx, id, reason string, now int64) (bool, error) {
 	return err == nil, err
 }
 
-// revokeUser revokes every key and grant of a user and returns them.
-func (s store) revokeUser(ctx context.Context, userID uint64, reason string, now int64) ([]Key, error) {
-	return s.revokeWhere(ctx, `SELECT id FROM mcp_keys WHERE user_id = ? AND revoked_at = 0`, reason, now, uid(userID))
+// revokeUser revokes the active rows of one kind a user has and returns them.
+func (s store) revokeUser(ctx context.Context, userID uint64, kind, reason string, now int64) ([]Key, error) {
+	return s.revokeWhere(ctx, `SELECT id FROM mcp_keys WHERE user_id = ? AND kind = ? AND revoked_at = 0`, reason, now, uid(userID), kind)
 }
 
 // revokeGrants revokes every active OAuth grant and returns them, keys

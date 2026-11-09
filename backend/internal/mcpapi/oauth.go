@@ -45,7 +45,8 @@ const (
 	// A code waits here between the consent and the client's exchange, which
 	// takes seconds. Only a signed-in user can add one, so the cap is about a
 	// stuck client, not an attacker.
-	pendingMax = 64
+	pendingMax     = 64
+	pendingPerUser = 3
 
 	// Registration needs no credentials. Per address, or per /64 for IPv6,
 	// it is held to a few an hour; the store caps the clients nobody signed

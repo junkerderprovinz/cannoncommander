@@ -23,6 +23,7 @@ const (
 	itemsPerCall = 25
 	itemsPerHour = 200
 	filesPerCall = 10000
+	bytesPerCall = 50 << 30
 
 	// walkFolders bounds how many folders counting what lies below an entry
 	// may open, when the index does not know the number yet.
@@ -44,15 +45,23 @@ func started(j apiJob) *mcp.CallToolResult {
 }
 
 // check refuses what no key may touch, whatever its owner may do: a path
-// inside an archive, and with whole set, the top of a source or a folder that
-// only holds sources.
-func (s *Server) check(paths []string, whole bool) *mcp.CallToolResult {
+// inside an archive, a share of another computer nobody opened, and with
+// whole set, the top of a source or a folder that only holds sources. That
+// last refusal would tell a source the account cannot see from no source at
+// all, so it comes only after the account was shown to see the path.
+func (s *Server) check(ctx context.Context, c *caller, paths []string, whole bool) *mcp.CallToolResult {
 	for _, p := range paths {
 		if strings.Contains(p, ccfs.ArchiveSep) {
 			return toolError("in_archive", "the tools do not change archives; "+p+" lies inside one")
 		}
+		if r := s.offNet(p); r != nil {
+			return r
+		}
 		if !whole {
 			continue
+		}
+		if err := s.call(ctx, c, http.MethodGet, "/fs/stat", "/fs/stat", url.Values{"path": {p}}, nil, nil); err != nil {
+			return s.fail(c, err)
 		}
 		loc, err := s.deps.FS.Resolve(p)
 		if err == nil && (loc.Virtual() || loc.Path == loc.Source.Mount) {
@@ -72,6 +81,35 @@ func (s *Server) spend(c *caller, n int) (release func(), refusal *mcp.CallToolR
 			itemsPerHour-s.writes.left(c.key.ID, now), int(retry.Minutes())+1))
 	}
 	return func() { s.writes.give(c.key.ID, n, now) }, nil
+}
+
+// preflight is what /ops/preflight says about a copy or a move before it
+// starts.
+type preflight struct {
+	Bytes      int64  `json:"bytes"`
+	Files      int64  `json:"files"`
+	SameDevice bool   `json:"sameDevice"`
+	Space      *space `json:"space"`
+}
+
+type space struct {
+	Free   int64 `json:"free"`
+	Need   int64 `json:"need"`
+	Enough bool  `json:"enough"`
+}
+
+// refusal stops a transfer that would change too much at once or not fit. A
+// move on one disk only renames, so its bytes cost nothing.
+func (p preflight) refusal() *mcp.CallToolResult {
+	switch {
+	case p.Files > filesPerCall:
+		return tooBig(p.Files)
+	case !p.SameDevice && p.Bytes > bytesPerCall:
+		return toolError("too_big", fmt.Sprintf("these entries hold %d bytes, more than the %d one call may copy; pick smaller folders", p.Bytes, int64(bytesPerCall)))
+	case p.Space != nil && !p.Space.Enough:
+		return toolError("no_space", fmt.Sprintf("the target has %d bytes free and needs %d", p.Space.Free, p.Space.Need))
+	}
+	return nil
 }
 
 // tooBig refuses a call whose entries hold more than filesPerCall files and
@@ -98,9 +136,9 @@ func (s *Server) createFolder(ctx context.Context, c *caller, args json.RawMessa
 		return badArgs(err)
 	}
 	if !c.key.CanWrite {
-		return failure(errWriteOff)
+		return s.fail(c, errWriteOff)
 	}
-	if r := s.check([]string{in.Path}, false); r != nil {
+	if r := s.check(ctx, c, []string{in.Path}, false); r != nil {
 		return r
 	}
 	release, refusal := s.spend(c, 1)
@@ -109,7 +147,7 @@ func (s *Server) createFolder(ctx context.Context, c *caller, args json.RawMessa
 	}
 	if err := s.call(ctx, c, http.MethodPost, "/fs/mkdir", "/fs/mkdir", nil, map[string]string{"path": in.Path}, nil); err != nil {
 		release()
-		return failure(err)
+		return s.fail(c, err)
 	}
 	s.record(c, activitydb.EventFolderCreate, in.Path, "", nil)
 	return ok(map[string]any{"path": in.Path, "created": true})
@@ -124,12 +162,12 @@ func (s *Server) renameItem(ctx context.Context, c *caller, args json.RawMessage
 		return badArgs(err)
 	}
 	if !c.key.CanWrite {
-		return failure(errWriteOff)
+		return s.fail(c, errWriteOff)
 	}
 	if in.NewName == "" || strings.ContainsAny(in.NewName, `/\`) || in.NewName == "." || in.NewName == ".." {
 		return toolError("invalid_arguments", "newName is a plain name, without a folder")
 	}
-	if r := s.check([]string{in.Path}, true); r != nil {
+	if r := s.check(ctx, c, []string{in.Path}, true); r != nil {
 		return r
 	}
 	release, refusal := s.spend(c, 1)
@@ -139,7 +177,7 @@ func (s *Server) renameItem(ctx context.Context, c *caller, args json.RawMessage
 	body := map[string]string{"path": in.Path, "name": in.NewName}
 	if err := s.call(ctx, c, http.MethodPost, "/fs/rename", "/fs/rename", nil, body, nil); err != nil {
 		release()
-		return failure(err)
+		return s.fail(c, err)
 	}
 	to := path.Join(path.Dir(in.Path), in.NewName)
 	s.record(c, activitydb.EventRename, in.Path, to, nil)
@@ -167,7 +205,7 @@ func (s *Server) transfer(ctx context.Context, c *caller, args json.RawMessage, 
 		return badArgs(err)
 	}
 	if !c.key.CanWrite {
-		return failure(errWriteOff)
+		return s.fail(c, errWriteOff)
 	}
 	rule := "skip"
 	switch in.OnConflict {
@@ -180,26 +218,23 @@ func (s *Server) transfer(ctx context.Context, c *caller, args json.RawMessage, 
 	if len(in.Sources) == 0 || in.Destination == "" {
 		return toolError("invalid_arguments", "give the sources and the destination")
 	}
-	if r := s.check(in.Sources, kind == "move"); r != nil {
+	if r := s.check(ctx, c, in.Sources, kind == "move"); r != nil {
 		return r
 	}
-	if r := s.check([]string{in.Destination}, false); r != nil {
+	if r := s.check(ctx, c, []string{in.Destination}, false); r != nil {
 		return r
 	}
 	if len(in.Sources) > itemsPerCall {
 		return toolError("too_many", fmt.Sprintf("at most %d entries per call; split the work into smaller calls", itemsPerCall))
 	}
 	params := map[string]any{"sources": in.Sources, "dest": in.Destination}
-	var pre struct {
-		Files int64 `json:"files"`
-		Count int64 `json:"count"`
-	}
+	var pre preflight
 	preBody := map[string]any{"kind": kind, "sources": in.Sources, "dest": in.Destination}
 	if err := s.call(ctx, c, http.MethodPost, "/ops/preflight", "/ops/preflight", nil, preBody, &pre); err != nil {
-		return failure(err)
+		return s.fail(c, err)
 	}
-	if pre.Files > filesPerCall {
-		return tooBig(pre.Files)
+	if r := pre.refusal(); r != nil {
+		return r
 	}
 	release, refusal := s.spend(c, len(in.Sources))
 	if refusal != nil {
@@ -209,7 +244,7 @@ func (s *Server) transfer(ctx context.Context, c *caller, args json.RawMessage, 
 	var j apiJob
 	if err := s.call(ctx, c, http.MethodPost, "/jobs", "/jobs", nil, jobRequest{Kind: kind, Params: params}, &j); err != nil {
 		release()
-		return failure(err)
+		return s.fail(c, err)
 	}
 	s.record(c, event, in.Sources[0], in.Destination, in.Sources)
 	return started(j)
@@ -223,7 +258,7 @@ func (s *Server) moveToTrash(ctx context.Context, c *caller, args json.RawMessag
 		return badArgs(err)
 	}
 	if !c.key.CanWrite {
-		return failure(errWriteOff)
+		return s.fail(c, errWriteOff)
 	}
 	if len(in.Paths) == 0 {
 		return toolError("invalid_arguments", "give the paths to move to the trash")
@@ -231,14 +266,14 @@ func (s *Server) moveToTrash(ctx context.Context, c *caller, args json.RawMessag
 	if len(in.Paths) > itemsPerCall {
 		return toolError("too_many", fmt.Sprintf("at most %d entries per call; split the work into smaller calls", itemsPerCall))
 	}
-	if r := s.check(in.Paths, true); r != nil {
+	if r := s.check(ctx, c, in.Paths, true); r != nil {
 		return r
 	}
 	var total int64
 	for _, p := range in.Paths {
 		n, err := s.countBelow(ctx, c, p, filesPerCall-total)
 		if err != nil {
-			return failure(err)
+			return s.fail(c, err)
 		}
 		if total += n; total > filesPerCall {
 			return tooBig(total)
@@ -252,7 +287,7 @@ func (s *Server) moveToTrash(ctx context.Context, c *caller, args json.RawMessag
 	body := jobRequest{Kind: "trash", Params: map[string]any{"paths": in.Paths}}
 	if err := s.call(ctx, c, http.MethodPost, "/jobs", "/jobs", nil, body, &j); err != nil {
 		release()
-		return failure(err)
+		return s.fail(c, err)
 	}
 	s.record(c, activitydb.EventTrash, in.Paths[0], "", in.Paths)
 	return started(j)
@@ -302,7 +337,7 @@ func (s *Server) restoreFromTrash(ctx context.Context, c *caller, args json.RawM
 		return badArgs(err)
 	}
 	if !c.key.CanWrite {
-		return failure(errWriteOff)
+		return s.fail(c, errWriteOff)
 	}
 	if len(in.IDs) == 0 {
 		return toolError("invalid_arguments", "give the ids list_trash names")
@@ -318,7 +353,7 @@ func (s *Server) restoreFromTrash(ctx context.Context, c *caller, args json.RawM
 		} `json:"items"`
 	}
 	if err := s.call(ctx, c, http.MethodGet, "/trash", "/trash", nil, nil, &list); err != nil {
-		return failure(err)
+		return s.fail(c, err)
 	}
 	var total int64
 	var origins []string
@@ -337,7 +372,7 @@ func (s *Server) restoreFromTrash(ctx context.Context, c *caller, args json.RawM
 			return toolError("not_found", "there is no trash entry "+id+" this account can see")
 		}
 	}
-	if r := s.check(origins, false); r != nil {
+	if r := s.check(ctx, c, origins, false); r != nil {
 		return r
 	}
 	if total > filesPerCall {
@@ -350,7 +385,7 @@ func (s *Server) restoreFromTrash(ctx context.Context, c *caller, args json.RawM
 	var j apiJob
 	if err := s.call(ctx, c, http.MethodPost, "/trash/restore", "/trash/restore", nil, map[string]any{"ids": in.IDs}, &j); err != nil {
 		release()
-		return failure(err)
+		return s.fail(c, err)
 	}
 	first := ""
 	if len(origins) > 0 {

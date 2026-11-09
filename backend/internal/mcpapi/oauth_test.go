@@ -1,6 +1,7 @@
 package mcpapi
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
@@ -67,7 +68,7 @@ func (e *env) consent(user, client string, canWrite bool) string {
 		e.t.Fatalf("consent info: %d %+v", code, info)
 	}
 	var answer struct{ Redirect string }
-	if code := e.api(user, http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true, "canWrite": canWrite}, &answer); code != http.StatusOK {
+	if code := e.api(user, http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true, "canWrite": canWrite, "password": "richtig"}, &answer); code != http.StatusOK {
 		e.t.Fatalf("consent: %d", code)
 	}
 	u, _ := url.Parse(answer.Redirect)
@@ -159,7 +160,7 @@ func TestTheConsentIsBoundToTheSessionThatSawIt(t *testing.T) {
 	var info struct{ Ticket string }
 	e.api("anna", http.MethodGet, "/mcp/oauth/authorize?"+q.Encode(), nil, &info)
 	var p problem
-	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true}, &p, "X-Session", "another session"); code != http.StatusConflict {
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true, "password": "richtig"}, &p, "X-Session", "another session"); code != http.StatusConflict {
 		t.Fatalf("the ticket from another session = %d %s", code, p.Code)
 	}
 	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": info.Ticket, "allow": true}, nil, "X-Token", "1"); code != http.StatusForbidden {
@@ -268,5 +269,88 @@ func TestARegistrationIsCheckedAndThrottled(t *testing.T) {
 	}
 	if code, _ := e.post("/oauth/register", "application/json", `{"redirect_uris":["http://127.0.0.1:8000/cb"]}`); code != http.StatusTooManyRequests {
 		t.Fatalf("one registration too many = %d", code)
+	}
+}
+
+func (e *env) consentTicket(user, client string) string {
+	e.t.Helper()
+	q := url.Values{"client_id": {client}, "redirect_uri": {claudeHook}, "response_type": {"code"},
+		"code_challenge": {challengeOf(verifier)}, "code_challenge_method": {"S256"}}
+	var info struct {
+		Ticket   string
+		Password bool
+	}
+	if code := e.api(user, http.MethodGet, "/mcp/oauth/authorize?"+q.Encode(), nil, &info); code != http.StatusOK || !info.Password {
+		e.t.Fatalf("consent info: %d %+v", code, info)
+	}
+	return info.Ticket
+}
+
+func TestAllowingAClientNeedsTheOwnerAtTheKeyboard(t *testing.T) {
+	e := newEnv(t)
+	e.oauthOn()
+	client := e.registerClient()
+	ticket := e.consentTicket("anna", client)
+	var p problem
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true}, &p); code != http.StatusForbidden {
+		t.Fatalf("allow without the password: %d %s", code, p.Code)
+	}
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true, "password": "falsch"}, &p); code != http.StatusForbidden {
+		t.Fatalf("allow with a wrong password: %d %s", code, p.Code)
+	}
+	var answer struct{ Redirect string }
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true, "password": "richtig"}, &answer); code != http.StatusOK || !strings.Contains(answer.Redirect, "code=") {
+		t.Fatalf("the same ticket with the password: %d %s", code, answer.Redirect)
+	}
+	e.advance(time.Second)
+	deny := e.consentTicket("anna", client)
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": deny, "allow": false}, &answer); code != http.StatusOK || !strings.Contains(answer.Redirect, "access_denied") {
+		t.Fatalf("deny without the password: %d %s", code, answer.Redirect)
+	}
+}
+
+func TestOneAccountCannotFillTheWaitingCodes(t *testing.T) {
+	e := newEnv(t)
+	e.oauthOn()
+	client := e.registerClient()
+	for i := 0; i < pendingPerUser; i++ {
+		e.consent("anna", client, false)
+		e.advance(time.Second)
+	}
+	var p problem
+	ticket := e.consentTicket("anna", client)
+	if code := e.api("anna", http.MethodPost, "/mcp/oauth/authorize", map[string]any{"ticket": ticket, "allow": true, "password": "richtig"}, &p); code != http.StatusConflict || p.Code != "oauthBusy" {
+		t.Fatalf("one code more for anna: %d %s", code, p.Code)
+	}
+	e.consent("chef", client, false)
+	e.advance(codeTTL + time.Second)
+	e.consent("anna", client, false)
+}
+
+func TestEndingSessionsEndsGrantsAndEndingTokensEndsKeys(t *testing.T) {
+	e := newEnv(t)
+	e.oauthOn()
+	client := e.registerClient()
+	_, tokens := e.exchange(client, e.consent("anna", client, false))
+	key, _ := e.key("anna", false)
+	other, _ := e.key("chef", false)
+	ctx := context.Background()
+	if err := endGrants(ctx, e.deps.DB, anna); err != nil {
+		t.Fatal(err)
+	}
+	if status, _, _ := e.raw(http.MethodPost, initBody, "Authorization", "Bearer "+tokens["access_token"].(string)); status != http.StatusUnauthorized {
+		t.Fatalf("the grant after the sessions ended = %d", status)
+	}
+	if status, _, _ := e.raw(http.MethodPost, initBody, "Authorization", "Bearer "+key); status != http.StatusOK {
+		t.Fatalf("the key after the sessions ended = %d", status)
+	}
+	if err := endKeys(ctx, e.deps.DB, anna); err != nil {
+		t.Fatal(err)
+	}
+	if status, _, _ := e.raw(http.MethodPost, initBody, "Authorization", "Bearer "+key); status != http.StatusUnauthorized {
+		t.Fatalf("the key after the tokens ended = %d", status)
+	}
+	if status, _, _ := e.raw(http.MethodPost, initBody, "Authorization", "Bearer "+other); status != http.StatusOK {
+		t.Fatalf("another account's key = %d", status)
 	}
 }

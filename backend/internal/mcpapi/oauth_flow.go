@@ -212,16 +212,22 @@ func authorizationResponse(redirect, issuer, state string, v url.Values) string 
 }
 
 // putCode keeps a code until it expires, refusing a new one while too many
-// wait.
+// wait, in all or for the one account, so nobody can fill the place the
+// others need for their sign-in.
 func (o *oauthState) putCode(digest string, c *pendingCode, now time.Time) bool {
 	o.mu.Lock()
 	defer o.mu.Unlock()
+	mine := 0
 	for d, p := range o.codes {
 		if !now.Before(p.expires) {
 			delete(o.codes, d)
+			continue
+		}
+		if p.userID == c.userID && !p.used {
+			mine++
 		}
 	}
-	if len(o.codes) >= pendingMax {
+	if len(o.codes) >= pendingMax || mine >= pendingPerUser {
 		return false
 	}
 	o.codes[digest] = c

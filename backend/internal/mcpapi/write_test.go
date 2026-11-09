@@ -242,3 +242,61 @@ func TestAFailedChangeCostsNothing(t *testing.T) {
 		t.Fatalf("after a refused change %v are left", left)
 	}
 }
+
+func TestTheTopOfASourceTheAccountCannotSeeAnswersNotFound(t *testing.T) {
+	e := newEnv(t)
+	annaKey, _ := e.key("anna", true)
+	s := e.client(annaKey)
+	for _, p := range []string{"/mnt/disks/extern", "/mnt/disks"} {
+		if _, code := e.tool(s, "move_to_trash", map[string]any{"paths": []any{p}}); code != "not_found" {
+			t.Fatalf("anna trashing %s: %q", p, code)
+		}
+		if _, code := e.tool(s, "rename_item", map[string]any{"path": p, "newName": "x"}); code != "not_found" {
+			t.Fatalf("anna renaming %s: %q", p, code)
+		}
+	}
+	chefKey, _ := e.key("chef", true)
+	if _, code := e.tool(e.client(chefKey), "move_to_trash", map[string]any{"paths": []any{"/mnt/disks/extern"}}); code != "source_root" {
+		t.Fatalf("the admin trashing a source: %q", code)
+	}
+}
+
+func TestACopyIsHeldToItsBytes(t *testing.T) {
+	e := newEnv(t)
+	big := e.real("/mnt/user/filme/gross.mkv")
+	if err := os.WriteFile(big, nil, 0o666); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Truncate(big, bytesPerCall+1); err != nil {
+		t.Skip("no sparse files here:", err)
+	}
+	key, _ := e.key("anna", true)
+	if _, code := e.tool(e.client(key), "copy_items", map[string]any{"sources": []any{"/mnt/user/filme/gross.mkv"}, "destination": "/mnt/user/fotos"}); code != "too_big" {
+		t.Fatalf("copying %d bytes: %q", bytesPerCall+1, code)
+	}
+	if e.exists("/mnt/user/fotos/gross.mkv") {
+		t.Fatal("the copy started")
+	}
+}
+
+func TestATransferWithoutRoomIsRefused(t *testing.T) {
+	for _, c := range []struct {
+		name string
+		pre  preflight
+		want string
+	}{
+		{"room", preflight{Bytes: 10, Space: &space{Free: 20, Need: 10, Enough: true}}, ""},
+		{"no room", preflight{Bytes: 30, Space: &space{Free: 20, Need: 30, Enough: false}}, "no_space"},
+		{"a move on one disk", preflight{Bytes: bytesPerCall * 2, SameDevice: true}, ""},
+		{"a copy too big", preflight{Bytes: bytesPerCall + 1}, "too_big"},
+		{"too many files", preflight{Files: filesPerCall + 1}, "too_big"},
+	} {
+		got := ""
+		if r := c.pre.refusal(); r != nil {
+			got = codeOf(r)
+		}
+		if got != c.want {
+			t.Fatalf("%s: %q, want %q", c.name, got, c.want)
+		}
+	}
+}

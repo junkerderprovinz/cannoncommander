@@ -81,9 +81,41 @@ func (fakeLogin) Confirm(_ *http.Request, _ *users.User, password string) error 
 	return nil
 }
 
+// lan stands for the computers a desktop app reaches below /net. It counts
+// every question, since each one would go out over the network.
+type lan struct {
+	mu    sync.Mutex
+	asked []string
+	root  string
+}
+
+func (n *lan) Share(server, share string) (string, bool) {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	n.asked = append(n.asked, server+"/"+share)
+	return n.root, server == "nas" && share == "daten"
+}
+
+func (n *lan) Shares(server string) []string {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	n.asked = append(n.asked, server)
+	if server == "nas" {
+		return []string{"daten"}
+	}
+	return nil
+}
+
+func (n *lan) questions() []string {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	return append([]string(nil), n.asked...)
+}
+
 type env struct {
 	t     *testing.T
 	root  string
+	net   *lan
 	deps  v1.Deps
 	srv   *Server
 	web   *httptest.Server
@@ -102,7 +134,10 @@ func newEnv(t *testing.T) *env {
 			t.Fatal(err)
 		}
 	}
-	e := &env{t: t, root: root, users: map[uint64]*users.User{}, now: time.Unix(1_800_000_000, 0), signIn: true}
+	// A source only the admin has in scope, and a share another computer
+	// offers below /net.
+	extern, share := t.TempDir(), t.TempDir()
+	e := &env{t: t, root: root, users: map[uint64]*users.User{}, now: time.Unix(1_800_000_000, 0), signIn: true, net: &lan{root: share}}
 	full := users.SourceFilePermissions{View: true, Download: true, Create: true, Modify: true, Delete: true}
 	look := users.SourceFilePermissions{View: true, Download: true}
 	for id, spec := range map[uint64]struct {
@@ -112,13 +147,17 @@ func newEnv(t *testing.T) *env {
 	}{anna: {"anna", full, false}, gast: {"gast", look, false}, chef: {"chef", full, true}} {
 		u := &users.User{ID: id, Username: spec.name, BackendScopes: []users.BackendScope{{Path: root, Scope: "/", Permissions: spec.perms}}}
 		u.Permissions.Admin = spec.admin
+		if spec.admin {
+			u.BackendScopes = append(u.BackendScopes, users.BackendScope{Path: extern, Scope: "/", Permissions: full})
+		}
 		u.LoginMethod = users.LoginMethodPassword
 		e.users[id] = u
 	}
-	fsys, err := ccfs.New(rules{}, ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: root})
+	fsys, err := ccfs.New(rules{}, ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: root}, ccfs.Source{Name: "Extern", Mount: "/mnt/disks/extern", Root: extern})
 	if err != nil {
 		t.Fatal(err)
 	}
+	fsys = fsys.WithNetwork(e.net)
 	e.deps = v1.Deps{FS: fsys, Hub: hub.New(hub.Options{}), DB: testutil.MainDB(t), Users: e.byName}
 	e.srv = newServer(e.deps)
 	e.srv.login = fakeLogin{}

@@ -3,6 +3,7 @@ package mcpapi
 import (
 	"context"
 	"errors"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -194,13 +195,17 @@ func TestAnInternalCallReachesOnlyTheOperationItNames(t *testing.T) {
 	next := func(http.ResponseWriter, *http.Request) (*users.User, error) { return nil, errors.New("no session") }
 	auth := Authenticate(next)
 	ctx := context.WithValue(context.Background(), principalKey{}, &principal{user: u, op: "GET /fs/list"})
-	r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/fs/list?path=/mnt/user", nil)
-	if got, err := auth(nil, r); err != nil || got != u {
+	routed := func(pattern, target string) *http.Request {
+		r := httptest.NewRequestWithContext(ctx, strings.Fields(pattern)[0], target, nil)
+		r.Pattern = pattern
+		return r
+	}
+	if got, err := auth(nil, routed("GET /fs/list", "/fs/list?path=/mnt/user")); err != nil || got != u {
 		t.Fatalf("the named operation: %v %v", got, err)
 	}
 	for _, other := range []*http.Request{
-		httptest.NewRequestWithContext(ctx, http.MethodGet, "/fs/stat?path=/mnt/user", nil),
-		httptest.NewRequestWithContext(ctx, http.MethodPost, "/fs/list", nil),
+		routed("GET /fs/stat", "/fs/stat?path=/mnt/user"),
+		routed("POST /fs/list", "/fs/list"),
 	} {
 		if _, err := auth(nil, other); err == nil {
 			t.Fatalf("%s %s went through", other.Method, other.URL.Path)
@@ -237,16 +242,90 @@ func TestTheTrashListsWhatTheAccountMaySee(t *testing.T) {
 	}
 }
 
-func TestScrubTakesHostPathsAndCredentialsOut(t *testing.T) {
+func TestScrubShowsAPIPathsAndTakesTheHostOut(t *testing.T) {
+	e := newEnv(t)
+	inShares := filepath.ToSlash(e.real("/mnt/user/filme/a.txt"))
 	for in, want := range map[string]string{
 		`open C:\Users\jdp\geheim.txt: denied`:    `open [path]: denied`,
 		`\\nas\share\x failed`:                    `[path] failed`,
 		`dial https://user:pw@example.com/x fail`: `dial https://[redacted]@example.com/x fail`,
 		`/mnt/user/filme is read only`:            `/mnt/user/filme is read only`,
+		"open " + inShares + ": no space":         "open /mnt/user/filme/a.txt: no space",
+		"write /mnt/cache/appdata/x: denied":      "write [path]: denied",
+		"/mnt/disks/extern/x is gone":             "[path] is gone",
 	} {
-		if got := scrub(in); got != want {
+		if got := e.srv.scrub(e.users[anna], in); got != want {
 			t.Fatalf("scrub(%q) = %q, want %q", in, got, want)
 		}
+	}
+	if got := e.srv.scrub(e.users[chef], "/mnt/disks/extern/x is gone"); got != "/mnt/disks/extern/x is gone" {
+		t.Fatalf("the admin, who sees that source, gets %q", got)
+	}
+}
+
+func TestNetworkSharesNobodyOpenedStayUntouched(t *testing.T) {
+	e := newEnv(t)
+	key, _ := e.key("chef", false)
+	s := e.client(key)
+	for _, p := range []string{"/net/fremd/daten", "/net/fremd", "/net/nas/daten/x"} {
+		if _, code := e.tool(s, "list_folder", map[string]any{"path": p}); code != "not_found" {
+			t.Fatalf("listing %s: %q", p, code)
+		}
+	}
+	e.tool(s, "list_sources", nil)
+	e.tool(s, "search_files", map[string]any{"path": "/net/fremd/daten", "query": "x"})
+	if asked := e.net.questions(); len(asked) != 0 {
+		t.Fatalf("the network was asked %v", asked)
+	}
+	if _, err := e.deps.FS.Resolve("/net/nas/daten"); err != nil {
+		t.Fatal(err)
+	}
+	if _, code := e.tool(s, "list_folder", map[string]any{"path": "/net/nas/daten"}); code != "" {
+		t.Fatalf("a share the app opened itself: %q", code)
+	}
+}
+
+func TestOneContentSearchPerKeyIsReservedBeforeItStarts(t *testing.T) {
+	e := newEnv(t)
+	c := &caller{user: e.users[anna], key: Key{ID: "k"}}
+	if busy, ok := e.srv.claimSearch(t.Context(), c); !ok {
+		t.Fatalf("the first claim: busy %q", busy)
+	}
+	if _, ok := e.srv.claimSearch(t.Context(), c); ok {
+		t.Fatal("a second search while the first is starting")
+	}
+	e.srv.releaseSearch(c, "")
+	if busy, ok := e.srv.claimSearch(t.Context(), c); !ok {
+		t.Fatalf("after the release: busy %q", busy)
+	}
+}
+
+func TestAJobIDCannotReachAnotherRoute(t *testing.T) {
+	e := newEnv(t)
+	c := &caller{user: e.users[chef], key: Key{ID: "k"}}
+	var out map[string]any
+	if err := e.srv.call(t.Context(), c, http.MethodGet, "/jobs/{id}", "/jobs/settings", nil, nil, &out); err == nil {
+		t.Fatalf("GET /jobs/settings through the pattern of one job: %v", out)
+	}
+	key, _ := e.key("chef", false)
+	if _, code := e.tool(e.client(key), "get_job", map[string]any{"jobId": "settings"}); code != "not_found" {
+		t.Fatalf("get_job settings: %q", code)
+	}
+}
+
+func TestTheClientAddressSurvivesIPv6(t *testing.T) {
+	e := newEnv(t)
+	var host string
+	e.srv.api = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		host, _, _ = net.SplitHostPort(r.RemoteAddr)
+		w.WriteHeader(http.StatusNoContent)
+	})
+	c := &caller{user: e.users[anna], key: Key{ID: "k"}, addr: "2001:db8::1"}
+	if err := e.srv.call(t.Context(), c, http.MethodGet, "/fs/list", "/fs/list", nil, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if host != "2001:db8::1" {
+		t.Fatalf("the API saw the client as %q", host)
 	}
 }
 

@@ -96,6 +96,7 @@ func (s *Server) getAccess(_ context.Context, c *caller, args json.RawMessage) *
 			"entriesPerHour":         itemsPerHour,
 			"entriesLeftThisHour":    s.writes.left(c.key.ID, s.now()),
 			"filesAndFoldersPerCall": filesPerCall,
+			"bytesPerCall":           int64(bytesPerCall),
 		},
 	})
 }
@@ -129,6 +130,9 @@ func (s *Server) listSources(ctx context.Context, c *caller, args json.RawMessag
 	for len(queue) > 0 && len(out) < 200 {
 		p := queue[0]
 		queue = queue[1:]
+		if s.offNet(p) != nil {
+			continue
+		}
 		if loc, err := s.deps.FS.Resolve(p); err == nil && !loc.Virtual() {
 			if s.call(ctx, c, http.MethodGet, "/fs/stat", "/fs/stat", url.Values{"path": {p}}, nil, nil) == nil {
 				out = append(out, Source{Name: loc.Source.Name, Path: p})
@@ -166,6 +170,9 @@ func (s *Server) listFolder(ctx context.Context, c *caller, args json.RawMessage
 	if err := decodeArgs(args, &in); err != nil {
 		return badArgs(err)
 	}
+	if r := s.offNet(in.Path); r != nil {
+		return r
+	}
 	if in.Limit <= 0 {
 		in.Limit = listDefault
 	}
@@ -176,7 +183,7 @@ func (s *Server) listFolder(ctx context.Context, c *caller, args json.RawMessage
 		Items []apiItem `json:"items"`
 	}
 	if err := s.call(ctx, c, http.MethodGet, "/fs/list", "/fs/list", url.Values{"path": {in.Path}}, nil, &list); err != nil {
-		return failure(err)
+		return s.fail(c, err)
 	}
 	items := []Item{}
 	for _, a := range list.Items {
@@ -197,9 +204,12 @@ func (s *Server) getItem(ctx context.Context, c *caller, args json.RawMessage) *
 	if err := decodeArgs(args, &in); err != nil {
 		return badArgs(err)
 	}
+	if r := s.offNet(in.Path); r != nil {
+		return r
+	}
 	var st apiItem
 	if err := s.call(ctx, c, http.MethodGet, "/fs/stat", "/fs/stat", url.Values{"path": {in.Path}}, nil, &st); err != nil {
-		return failure(err)
+		return s.fail(c, err)
 	}
 	out := map[string]any{
 		"item":    itemOf(st, st.Path),
@@ -228,6 +238,9 @@ func (s *Server) readText(ctx context.Context, c *caller, args json.RawMessage) 
 	if err := decodeArgs(args, &in); err != nil {
 		return badArgs(err)
 	}
+	if r := s.offNet(in.Path); r != nil {
+		return r
+	}
 	if in.MaxBytes <= 0 {
 		in.MaxBytes = textDefault
 	}
@@ -242,7 +255,7 @@ func (s *Server) readText(ctx context.Context, c *caller, args json.RawMessage) 
 	}
 	q := url.Values{"path": {in.Path}, "max": {strconv.Itoa(in.MaxBytes)}}
 	if err := s.call(ctx, c, http.MethodGet, "/fs/text", "/fs/text", q, nil, &text); err != nil {
-		return failure(err)
+		return s.fail(c, err)
 	}
 	return ok(map[string]any{"path": text.Path, "size": text.Size, "modified": text.MTime, "encoding": text.Encoding,
 		"truncated": text.Truncated, "text": text.Text})
@@ -259,6 +272,9 @@ func (s *Server) searchFiles(ctx context.Context, c *caller, args json.RawMessag
 	if err := decodeArgs(args, &in); err != nil {
 		return badArgs(err)
 	}
+	if r := s.offNet(in.Path); r != nil {
+		return r
+	}
 	if in.Limit <= 0 {
 		in.Limit = searchDefault
 	}
@@ -273,7 +289,7 @@ func (s *Server) searchFiles(ctx context.Context, c *caller, args json.RawMessag
 		Unknown []string  `json:"unknown"`
 	}
 	if err := s.call(ctx, c, http.MethodGet, "/search", "/search", q, nil, &res); err != nil {
-		return failure(err)
+		return s.fail(c, err)
 	}
 	if len(res.Unknown) > 0 {
 		return toolError("unknown_fields", "these fields are unknown: "+strings.Join(res.Unknown, ", "))
@@ -326,7 +342,7 @@ func (s *Server) job(ctx context.Context, c *caller, id string) (apiJob, error) 
 
 var errBadJob = errors.New("bad job id")
 
-func jobView(j apiJob) map[string]any {
+func (s *Server) jobView(c *caller, j apiJob) map[string]any {
 	out := map[string]any{
 		"jobId": j.ID, "kind": j.Kind, "state": j.State, "name": j.Name, "entries": j.Count,
 		"files":     map[string]int64{"done": j.DoneFiles, "total": j.TotalFiles},
@@ -343,7 +359,7 @@ func jobView(j apiJob) map[string]any {
 		out["failedEntries"] = j.FailedItems
 	}
 	if j.Error != "" {
-		out["error"] = scrub(j.Error)
+		out["error"] = s.scrub(c.user, j.Error)
 	}
 	if j.FinishedAt != "" {
 		out["finishedAt"] = j.FinishedAt
@@ -366,9 +382,9 @@ func (s *Server) getJob(ctx context.Context, c *caller, args json.RawMessage) *m
 		return toolError("not_found", "there is no such job")
 	}
 	if err != nil {
-		return failure(err)
+		return s.fail(c, err)
 	}
-	return ok(jobView(j))
+	return ok(s.jobView(c, j))
 }
 
 // searchContents starts a content search as the job CannonCommander runs for
@@ -388,13 +404,20 @@ func (s *Server) searchContents(ctx context.Context, c *caller, args json.RawMes
 		if strings.TrimSpace(in.Text) == "" || in.Path == "" {
 			return toolError("invalid_arguments", "give path and text, or the jobId of a search started earlier")
 		}
-		if busy := s.runningSearch(ctx, c); busy != "" {
+		if r := s.offNet(in.Path); r != nil {
+			return r
+		}
+		if busy, ok := s.claimSearch(ctx, c); !ok {
+			if busy == "" {
+				return toolError("busy", "a content search of this key is starting; try again in a moment")
+			}
 			return toolError("busy", "a content search of this key is still running; collect it with jobId "+busy)
 		}
 		var j apiJob
 		body := jobRequest{Kind: kindContentSearch, Params: map[string]any{"path": in.Path, "text": in.Text, "q": in.Query}}
 		if err := s.call(ctx, c, http.MethodPost, "/jobs", "/jobs", nil, body, &j); err != nil {
-			return failure(err)
+			s.releaseSearch(c, "")
+			return s.fail(c, err)
 		}
 		s.contentMu.Lock()
 		s.contentRun[c.key.ID] = j.ID
@@ -406,7 +429,7 @@ func (s *Server) searchContents(ctx context.Context, c *caller, args json.RawMes
 		return toolError("not_found", "there is no such job")
 	}
 	if err != nil {
-		return failure(err)
+		return s.fail(c, err)
 	}
 	if j.Kind != kindContentSearch {
 		return toolError("not_found", "this job is no content search")
@@ -416,11 +439,7 @@ func (s *Server) searchContents(ctx context.Context, c *caller, args json.RawMes
 		out["files"] = map[string]int64{"searched": j.DoneFiles, "total": j.TotalFiles}
 		return ok(out)
 	}
-	s.contentMu.Lock()
-	if s.contentRun[c.key.ID] == j.ID {
-		delete(s.contentRun, c.key.ID)
-	}
-	s.contentMu.Unlock()
+	s.releaseSearch(c, j.ID)
 	var res struct {
 		Items   []apiItem `json:"items"`
 		Total   int       `json:"total"`
@@ -431,29 +450,43 @@ func (s *Server) searchContents(ctx context.Context, c *caller, args json.RawMes
 	}
 	out["total"], out["scanned"], out["items"] = res.Total, res.Scanned, hits(res.Items)
 	if j.Error != "" {
-		out["error"] = scrub(j.Error)
+		out["error"] = s.scrub(c.user, j.Error)
 	}
 	return ok(out)
 }
 
-// runningSearch returns the content search of the key that still runs, if
-// any.
-func (s *Server) runningSearch(ctx context.Context, c *caller) string {
-	s.contentMu.Lock()
-	id := s.contentRun[c.key.ID]
-	s.contentMu.Unlock()
-	if id == "" {
-		return ""
+// claimSearch takes the one content search a key may run, before the job
+// starts, so two calls at once cannot both start one. When the key holds it
+// already, busy names the job that still runs, or is empty while that job is
+// still being started.
+func (s *Server) claimSearch(ctx context.Context, c *caller) (busy string, ok bool) {
+	for {
+		s.contentMu.Lock()
+		id, held := s.contentRun[c.key.ID]
+		if !held {
+			s.contentRun[c.key.ID] = ""
+			s.contentMu.Unlock()
+			return "", true
+		}
+		s.contentMu.Unlock()
+		if id == "" {
+			return "", false
+		}
+		if j, err := s.job(ctx, c, id); err == nil && j.open() {
+			return id, false
+		}
+		s.releaseSearch(c, id)
 	}
-	if j, err := s.job(ctx, c, id); err == nil && j.open() {
-		return id
-	}
+}
+
+// releaseSearch gives the key's content search back, if it is still the one
+// with this job id, or the one being started for "".
+func (s *Server) releaseSearch(c *caller, id string) {
 	s.contentMu.Lock()
-	if s.contentRun[c.key.ID] == id {
+	defer s.contentMu.Unlock()
+	if held, ok := s.contentRun[c.key.ID]; ok && held == id {
 		delete(s.contentRun, c.key.ID)
 	}
-	s.contentMu.Unlock()
-	return ""
 }
 
 // waitJob reads the job until it ended or wait ran out.
@@ -509,7 +542,7 @@ func (s *Server) listTrash(ctx context.Context, c *caller, args json.RawMessage)
 		} `json:"items"`
 	}
 	if err := s.call(ctx, c, http.MethodGet, "/trash", "/trash", nil, nil, &list); err != nil {
-		return failure(err)
+		return s.fail(c, err)
 	}
 	out := []TrashEntry{}
 	for _, it := range list.Items {
@@ -532,7 +565,7 @@ func (s *Server) listTrash(ctx context.Context, c *caller, args json.RawMessage)
 
 // apiPath reports whether p is a path of the API inside some source.
 func (s *Server) apiPath(p string) bool {
-	if p == "" {
+	if p == "" || s.offNet(p) != nil {
 		return false
 	}
 	clean, err := ccfs.Clean(p)
@@ -541,4 +574,25 @@ func (s *Server) apiPath(p string) bool {
 	}
 	loc, err := s.deps.FS.Resolve(p)
 	return err == nil && !loc.Virtual()
+}
+
+// netRoot is where the desktop app shows the shares of other computers.
+const netRoot = "/net"
+
+const notThere = "there is no such file or folder, or this account may not see or change it"
+
+// offNet refuses a path below /net that no open share holds. Resolving it
+// would send the computer out to the network to look for that server, and a
+// key reaches only the shares somebody opened in the app.
+func (s *Server) offNet(p string) *mcp.CallToolResult {
+	clean, err := ccfs.Clean(p)
+	if err != nil || !below(clean, netRoot) {
+		return nil
+	}
+	for _, src := range s.deps.FS.Sources() {
+		if below(clean, src.Mount) || below(src.Mount, clean) {
+			return nil
+		}
+	}
+	return toolError("not_found", notThere)
 }
