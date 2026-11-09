@@ -6,7 +6,7 @@ import { api, BASE } from './client';
 export type EventType =
   | 'job.created' | 'job.progress' | 'job.state' | 'job.conflict' | 'job.done' | 'fs.changed' | 'trash.changed' | 'labels.changed'
   | 'undo.changed' | 'share.opened' | 'unraid.parity' | 'unraid.spin' | 'index.progress' | 'search.hits' | 'prefs.changed' | 'notify'
-  | 'heartbeat' | 'resync' | `desktop.${string}`;
+  | 'mcp.changed' | 'heartbeat' | 'resync' | `desktop.${string}`;
 
 // One frame as the hub writes it: the topic names what it is about, such as fs:/mnt/user/filme.
 export interface ServerEvent<T = unknown> { id?: number; type: EventType; topic?: string; time?: string; data?: T }
