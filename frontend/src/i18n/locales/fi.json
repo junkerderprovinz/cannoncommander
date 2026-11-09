@@ -2544,7 +2544,8 @@
     "propsSystemTip": "Avaa työpöytäsi tiedostonhallinnan valintaikkunan.",
     "propsOpen": "Avaa",
     "icons": "Järjestelmän kuvakkeet",
-    "iconsTip": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa myös ilman tätä valintaa."
+    "iconsTip": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa myös ilman tätä valintaa.",
+    "iconsTipLinux": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa joka tapauksessa. CannonCommander piirtää esikatselukuvat vain eristetyssä ympäristössä. Missä se ei onnistu, kuten Ubuntu 24.04:ssä, näet vain ne, jotka tiedostonhallintasi on jo tehnyt."
   },
   "shortcuts": {
     "title": "Pikanäppäimet",

@@ -2628,7 +2628,8 @@
     "propsSystemTip": "Abre el cuadro de diálogo del administrador de archivos de tu escritorio.",
     "propsOpen": "Abrir",
     "icons": "Iconos del sistema",
-    "iconsTip": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono aunque esto esté desactivado."
+    "iconsTip": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono aunque esto esté desactivado.",
+    "iconsTipLinux": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono de todos modos. CannonCommander solo genera miniaturas dentro de un entorno aislado. Donde eso no es posible, como en Ubuntu 24.04, solo ves las que tu administrador de archivos ya ha creado."
   },
   "shortcuts": {
     "title": "Atajos de teclado",

@@ -1,6 +1,7 @@
 package nativeshell
 
 import (
+	"context"
 	"errors"
 	"io/fs"
 	"os"
@@ -26,8 +27,10 @@ type desk struct {
 	// asks the session bus about a name. Tests replace both.
 	root     fs.FS
 	hasOwner func(name string) bool
-	// bwrap is the program that sandboxes thumbnailers, or "".
-	bwrap string
+	// sandbox shuts thumbnailers in, and service asks the desktop's
+	// thumbnail service to draw into the shared cache where there is one.
+	sandbox sandbox
+	service func(ctx context.Context, uri, mime, flavor string) error
 }
 
 var (
@@ -51,7 +54,12 @@ func newDesk(d xdg.Desktop, last *desk) *desk {
 	k := &desk{Desktop: d, db: d.MimeDB(), theme: d.ThemeName(), userDirs: d.UserDirs(), thumbnailers: d.Thumbnailers(), read: time.Now(),
 		root: os.DirFS("/"), hasOwner: nameHasOwner,
 	}
-	k.bwrap = sandboxProgram(d.Look, k.root)
+	k.sandbox = findSandbox(d.Look, k.root)
+	session.Lock()
+	if offeredOnBus(thumbService) {
+		k.service = askThumbService
+	}
+	session.Unlock()
 	if last != nil && last.theme == k.theme {
 		k.icons = last.icons
 	} else {

@@ -2628,7 +2628,8 @@
     "propsSystemTip": "Ouvre la boîte de dialogue du gestionnaire de fichiers de votre bureau.",
     "propsOpen": "Ouvrir",
     "icons": "Icônes du système",
-    "iconsTip": "Affiche partout dans la liste les icônes de votre système. Les programmes et les raccourcis gardent leur propre icône même sans cette option."
+    "iconsTip": "Affiche partout dans la liste les icônes de votre système. Les programmes et les raccourcis gardent leur propre icône même sans cette option.",
+    "iconsTipLinux": "Affiche partout dans la liste les icônes de votre système. Les programmes et les raccourcis gardent de toute façon leur propre icône. CannonCommander ne dessine les miniatures que dans un bac à sable. Là où ce n'est pas possible, comme sous Ubuntu 24.04, vous ne voyez que celles que votre gestionnaire de fichiers a déjà créées."
   },
   "shortcuts": {
     "title": "Raccourcis clavier",

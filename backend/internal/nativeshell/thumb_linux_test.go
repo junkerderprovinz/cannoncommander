@@ -194,3 +194,29 @@ func TestAFileWithoutAThumbnailerHasNoThumbnail(t *testing.T) {
 		t.Errorf("nothing drawn: %v", err)
 	}
 }
+
+func TestWithoutASandboxTheThumbnailServiceDrawsIntoTheSharedCache(t *testing.T) {
+	f := newFixture(t)
+	f.bwrap = ""
+	files := f.files("film.png", "odd.png")
+	k := f.desk()
+	var asked []string
+	k.service = func(_ context.Context, uri, mime, flavor string) error {
+		asked = append(asked, uri+" "+mime+" "+flavor)
+		if strings.HasSuffix(uri, "film.png") {
+			f.cached(flavor, files[0], mtime(t, files[0]), 256)
+			return nil
+		}
+		return errors.New("the service has no thumbnailer for it")
+	}
+	b, err := k.thumbnail(context.Background(), files[0], 200)
+	if err != nil || size(t, b) != 256 {
+		t.Fatalf("got %v", err)
+	}
+	if want := xdg.FileURI(files[0]) + " image/png large"; len(asked) != 1 || asked[0] != want {
+		t.Errorf("asked %q", asked)
+	}
+	if _, err := k.thumbnail(context.Background(), files[1], 200); !errors.Is(err, ErrNoPicture) {
+		t.Errorf("got %v", err)
+	}
+}

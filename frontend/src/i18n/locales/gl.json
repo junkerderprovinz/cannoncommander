@@ -2544,7 +2544,8 @@
     "propsSystemTip": "Abre o diálogo do xestor de ficheiros do teu escritorio.",
     "propsOpen": "Abrir",
     "icons": "Iconas do sistema",
-    "iconsTip": "Amosa en toda a lista as iconas do teu sistema. Os programas e os atallos amosan a súa propia icona mesmo con isto desactivado."
+    "iconsTip": "Amosa en toda a lista as iconas do teu sistema. Os programas e os atallos amosan a súa propia icona mesmo con isto desactivado.",
+    "iconsTipLinux": "Amosa en toda a lista as iconas do teu sistema. Os programas e os atallos amosan igualmente a súa propia icona. CannonCommander só xera miniaturas nun contorno illado. Onde iso non é posible, como en Ubuntu 24.04, só ves as que o teu xestor de ficheiros xa creou."
   },
   "shortcuts": {
     "title": "Atallos de teclado",

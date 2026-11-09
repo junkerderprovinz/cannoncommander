@@ -46,6 +46,19 @@ func fill(command string, codes map[byte]string) string {
 	return b.String()
 }
 
+// generic is a label with what its field codes fill in, such as the names
+// of the files, given as an ellipsis, the way the settings keep it for
+// every file.
+func generic(label string) string {
+	codes := map[byte]string{}
+	for c := byte('A'); c <= 'z'; c++ {
+		if c <= 'Z' || c >= 'a' {
+			codes[c] = "…"
+		}
+	}
+	return fill(label, codes)
+}
+
 // splitArgv splits a command line the way g_shell_parse_argv does for
 // Thunar and Nemo instead of running a shell, so a quoted file name stays
 // one argument. Quotes, backslashes and comments work as in sh, and nothing

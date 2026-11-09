@@ -2544,7 +2544,8 @@
     "propsSystemTip": "Opent het venster van het bestandsbeheer van je desktop.",
     "propsOpen": "Openen",
     "icons": "Systeempictogrammen",
-    "iconsTip": "Toont overal in de lijst de pictogrammen van je systeem. Programma's en snelkoppelingen tonen hun eigen pictogram ook zonder deze schakelaar."
+    "iconsTip": "Toont overal in de lijst de pictogrammen van je systeem. Programma's en snelkoppelingen tonen hun eigen pictogram ook zonder deze schakelaar.",
+    "iconsTipLinux": "Toont overal in de lijst de pictogrammen van je systeem. Programma's en snelkoppelingen tonen hoe dan ook hun eigen pictogram. CannonCommander maakt miniaturen alleen afgeschermd. Waar dat niet kan, zoals op Ubuntu 24.04, zie je alleen de miniaturen die je bestandsbeheer al heeft gemaakt."
   },
   "shortcuts": {
     "title": "Sneltoetsen",

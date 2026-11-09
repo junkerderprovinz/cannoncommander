@@ -2628,7 +2628,8 @@
     "propsSystemTip": "Otvara dijalog upravitelja datoteka vaše radne površine.",
     "propsOpen": "Otvori",
     "icons": "Ikone sustava",
-    "iconsTip": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci prikazuju vlastitu ikonu i bez ovog prekidača."
+    "iconsTip": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci prikazuju vlastitu ikonu i bez ovog prekidača.",
+    "iconsTipLinux": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci ionako prikazuju vlastitu ikonu. CannonCommander crta minijature samo u izoliranom okruženju. Gdje to nije moguće, kao na Ubuntu 24.04, vidite samo one koje je vaš upravitelj datoteka već izradio."
   },
   "shortcuts": {
     "title": "Tipkovnički prečaci",
