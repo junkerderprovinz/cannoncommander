@@ -1,0 +1,4 @@
+/* A remote that is not mounted reads quieter, and the pin of one among the shortcuts stays in view. */
+.side-remotes .unmounted { color: var(--carbon-text-muted); }
+.side-remotes .meta.warn { color: var(--status-warn-text); }
+.side-remotes .unpin.pinned { opacity: 1; color: var(--accent-glyph); }

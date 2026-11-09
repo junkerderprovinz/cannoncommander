@@ -112,8 +112,7 @@ function getNow<T>(path: string): T | undefined {
 }
 
 // GlimStone names some parts of its menus otherwise than the prototype did, and the step files still look for the old
-// names: the pencil in a heading, a row that opens a submenu and the chosen one of a set. The Google Drive tile of the
-// remote window carries rclone's name for it, drive, where the prototype said gdrive. A damaged archive carries its
+// names: the pencil in a heading, a row that opens a submenu and the chosen one of a set. A damaged archive carries its
 // mark on the name, where the prototype marked the whole row.
 function aliasMenuParts() {
   const alias = () => {
@@ -123,7 +122,6 @@ function aliasMenuParts() {
     });
     document.querySelectorAll<HTMLElement>('.glim-menu [aria-haspopup="menu"]').forEach((el) => { el.dataset.sub ??= ''; });
     document.querySelectorAll('.row').forEach((el) => el.classList.toggle('damaged', !!el.querySelector('.bk-damaged')));
-    document.querySelectorAll<HTMLElement>('.a-tile[data-type="drive"]').forEach((el) => { el.dataset.type = 'gdrive'; });
     document.querySelectorAll('.glim-menu [role="menuitemradio"]').forEach((el) => el.classList.toggle('on', el.getAttribute('aria-checked') === 'true'));
   };
   new MutationObserver(alias).observe(document.body, { childList: true, subtree: true });

@@ -45,11 +45,31 @@ export interface IndexState {
   scanning?: string; metadata: number; job?: string;
 }
 export interface Remote {
-  name: string; type: string; path: string; mount: string; label: string; mounted: boolean; mountOnStart: boolean;
+  name: string; type: string; provider?: string; path: string; mount: string; label: string; mounted: boolean; mountOnStart: boolean;
   error?: string; params?: Record<string, string>; secrets?: string[];
 }
 export interface RemoteInput { name?: string; type?: string; path?: string; mount?: string; params?: Record<string, string> }
-export interface RemoteTest { ok: boolean; entries: number; total?: number; used?: number; free?: number; error?: string }
+export interface HostKey { pin: string; fingerprint: string }
+export interface SetupQuestion { name: string; help: string; choices: { value: string; help: string }[] }
+export type TestFailure = 'timeout' | 'hostKey' | 'missing' | 'address';
+export interface RemoteTest {
+  ok: boolean; entries: number; total?: number; used?: number; free?: number; error?: string; failure?: TestFailure;
+  hostKey?: HostKey; shares?: string[]; question?: SetupQuestion;
+}
+export interface RemoteOption {
+  name: string; help: string; type: string; default?: string; provider?: string; required: boolean; essential: boolean;
+  secret: boolean; advanced: boolean; exclusive: boolean; examples?: { value: string; help: string; provider?: string }[];
+}
+export interface RemoteType {
+  id: string; description: string; featured: boolean; oauth: boolean; authorize?: string; pathHint: 'folder' | 'share' | 'bucket'; options: RemoteOption[];
+}
+export type ProviderGroup = 'cloud' | 'storage' | 'protocol';
+export type AuthStyle = 'apppassword' | 'oauth' | 'apikey' | 'accesskey' | 'login' | 'logintoken';
+export interface Provider {
+  id: string; name: string; backend: string; group: ProviderGroup; preset?: Record<string, string>; mark?: string;
+  urlHint?: string; auth?: AuthStyle; authUrl?: string; defaults?: Record<string, string>;
+}
+export interface RemoteCatalog { types: RemoteType[]; providers: Provider[]; unlisted: string[] }
 export interface Rclone { installed: boolean; running: boolean; version?: string; error?: string }
 export interface Share extends Omit<WireShare, 'created' | 'expires'> { created: number; expires: number | null; url: string }
 export interface Session { id: string; created: number; seen: number; userAgent: string; ip: string; current: boolean }
@@ -136,6 +156,7 @@ export const admin = {
   mountRemote: (name: string, on: boolean) => write<Remote>('POST', `/remotes/${at(name)}/${on ? 'mount' : 'unmount'}`),
   // With the name of a saved remote, its stored password fills in the one the form leaves empty.
   testRemote: (r: RemoteInput) => write<RemoteTest>('POST', '/remotes/test', r),
+  remoteCatalog: () => get<RemoteCatalog>('/remotes/types' + q({ advanced: 'true' })),
   remoteToken: (type: string, pasted: string) => write<{ token?: string; expiry?: string }>('POST', '/remotes/oauth', { type, token: pasted }),
   system: async (): Promise<System> => { const s = await get<Wire<System, 'started'>>('/system'); return { ...s, started: ms(s.started)! }; },
   checkUpdate: () => write<UpdateCheck>('POST', '/system/update'),

@@ -191,17 +191,17 @@ var providers = []Provider{
 	{ID: "s3", Name: "S3 compatible", Backend: "s3", Group: GroupStorage, Mark: "IconDatabase"},
 
 	{ID: "smb", Name: "SMB / Windows share", Backend: "smb", Group: GroupProtocol, Mark: "IconFolder"},
-	{ID: "sftp", Name: "SFTP", Backend: "sftp", Group: GroupProtocol, Mark: "IconTerminal"},
+	{ID: "sftp", Name: "SFTP", Backend: "sftp", Group: GroupProtocol, Mark: "IconNetwork"},
 	{ID: "webdav", Name: "WebDAV", Auth: AuthAppPassword, Backend: "webdav", Group: GroupProtocol,
 		Mark: "IconBrowser", URLHint: "https://server.example.com/remote.php/webdav/"},
-	{ID: "ftp", Name: "FTP", Backend: "ftp", Group: GroupProtocol, Mark: "IconNetwork"},
+	{ID: "ftp", Name: "FTP", Backend: "ftp", Group: GroupProtocol, Mark: "IconUpload"},
 	{ID: "http", Name: "HTTP", Backend: "http", Group: GroupProtocol, Mark: "IconLink"},
 	{ID: "hdfs", Name: "HDFS", Backend: "hdfs", Group: GroupProtocol, Mark: "IconHadoop"},
 	{ID: "doi", Name: "DOI", Backend: "doi", Group: GroupProtocol, Mark: "IconDoi"},
 
 	// Remotes built on another remote. Their names are words, translated in
 	// the interface.
-	{ID: "crypt", Name: "Encrypted", Backend: "crypt", Group: GroupProtocol, Mark: "IconKey"},
+	{ID: "crypt", Name: "Encrypted", Backend: "crypt", Group: GroupProtocol, Mark: "IconShieldOn"},
 	{ID: "alias", Name: "Alias", Backend: "alias", Group: GroupProtocol, Mark: "IconLink"},
 	{ID: "archive", Name: "Archive files", Backend: "archive", Group: GroupProtocol, Mark: "IconArchive"},
 	{ID: "cache", Name: "Cache", Backend: "cache", Group: GroupProtocol, Mark: "IconRefresh"},

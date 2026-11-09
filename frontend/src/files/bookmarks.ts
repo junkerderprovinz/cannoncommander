@@ -12,11 +12,15 @@ import { inArchive, split } from './paths';
 const save = () => api.saveBookmarks(useUser().bookmarks).catch(() => toast(t('side.notSaved'), 'warn'));
 
 export function addBookmark(path: string) {
-  const user = useUser(), label = useListing().placeLabel(path);
+  const label = useListing().placeLabel(path);
   if (inArchive(path)) return toast(t('side.archiveNoBookmark'), 'warn');
-  if (user.bookmarks.some((b) => b.path === path)) return toast(t('side.bookmarkExists'), 'warn');
-  const name = label || split(path).pop() || rootName();
   const g = label ? (path === '/boot' ? 'IconFlash' : path === '/remotes' ? 'IconCloud' : 'IconZFS') : 'IconFolder';
+  pin(label || split(path).pop() || rootName(), path, g);
+}
+
+export function pin(name: string, path: string, g: string) {
+  const user = useUser();
+  if (user.bookmarks.some((b) => b.path === path)) return toast(t('side.bookmarkExists'), 'warn');
   user.bookmarks.push({ name, path, g });
   save();
   toast(t('side.bookmarkAdded', { name }));

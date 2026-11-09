@@ -400,3 +400,11 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 /* Names, paths and code read left to right inside a right to left page, so a long name is cut at its own end. */
 [dir=rtl] :is(.name > .t, .citem .t, .gcard .t, .bk-name) { unicode-bidi: plaintext; }
 [dir=rtl] :is(.mono:not(.bk-path), .glim-input--mono) { direction: ltr; unicode-bidi: isolate; }
+
+/* A foot button that carries a verdict, such as a connection test, wears it the way GlimStone's ok and danger tones do. */
+.glim-btn[data-tone='ok'] { background-color: var(--status-ok-solid); color: var(--carbon-bg); }
+.glim-btn[data-tone='danger'] { background-color: var(--status-fail-solid); color: var(--carbon-bg); }
+@media (hover: hover) {
+  .glim-btn[data-tone='ok']:hover { background-color: var(--status-ok-hover); }
+  .glim-btn[data-tone='danger']:hover { background-color: var(--status-fail-hover); }
+}

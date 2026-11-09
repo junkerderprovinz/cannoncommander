@@ -1,0 +1,19 @@
+{
+  "title": "Fernziele",
+  "failed": "Fehler",
+  "unmounted": "Ausgehängt",
+  "mountedTip": "Eingehängt, ein Klick öffnet es",
+  "unmountedTip": "Gerade nicht eingehängt",
+  "failedTip": "Das Einhängen hat nicht geklappt: {error}",
+  "nowMounted": "{name} ist eingehängt",
+  "nowUnmounted": "{name} ist ausgehängt",
+  "askAdmin": "{name} ist gerade nicht eingehängt. Einhängen kann es ein Admin in den Einstellungen.",
+  "open": "Öffnen",
+  "pin": "An den Schnellzugriff anheften",
+  "unpin": "Vom Schnellzugriff lösen",
+  "pinLabel": "{name} an den Schnellzugriff anheften",
+  "unpinLabel": "{name} vom Schnellzugriff lösen",
+  "mount": "Einhängen",
+  "unmount": "Aushängen",
+  "settings": "Fernziele verwalten"
+}
