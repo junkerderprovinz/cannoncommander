@@ -3891,6 +3891,7 @@
     "volume": "Том {size}"
   },
   "files": {
+    "freeOn": "{name}: вільно {size}",
     "network": "Мережа",
     "server": "Сервер",
     "thisPc": "Цей ПК",

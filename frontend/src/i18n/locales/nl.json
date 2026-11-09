@@ -3627,6 +3627,7 @@
     "volume": "Volume van {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} vrij",
     "network": "Netwerk",
     "server": "Server",
     "thisPc": "Deze pc",

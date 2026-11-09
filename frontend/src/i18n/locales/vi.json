@@ -3495,6 +3495,7 @@
     "volume": "Ổ đĩa {size}"
   },
   "files": {
+    "freeOn": "{name}: trống {size}",
     "network": "Mạng",
     "server": "Máy chủ",
     "thisPc": "PC này",

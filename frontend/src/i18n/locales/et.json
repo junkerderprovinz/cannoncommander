@@ -3627,6 +3627,7 @@
     "volume": "{size} köide"
   },
   "files": {
+    "freeOn": "{name}: {size} vaba",
     "network": "Võrk",
     "server": "Server",
     "thisPc": "See arvuti",

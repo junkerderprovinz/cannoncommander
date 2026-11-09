@@ -3627,6 +3627,7 @@
     "volume": "{size} kötet"
   },
   "files": {
+    "freeOn": "{name}: {size} szabad",
     "network": "Hálózat",
     "server": "Szerver",
     "thisPc": "Ez a gép",

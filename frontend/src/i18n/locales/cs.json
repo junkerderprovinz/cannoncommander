@@ -3891,6 +3891,7 @@
     "volume": "Svazek {size}"
   },
   "files": {
+    "freeOn": "{name}: volných {size}",
     "network": "Síť",
     "server": "Server",
     "thisPc": "Tento počítač",

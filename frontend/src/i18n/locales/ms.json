@@ -3495,6 +3495,7 @@
     "volume": "Volum {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} kosong",
     "network": "Rangkaian",
     "server": "Pelayan",
     "thisPc": "PC ini",

@@ -13,22 +13,30 @@ import { usePanels } from '@/stores/panels';
 import { useUser } from '@/stores/user';
 import { shake } from '@/ui/kit';
 import { shown } from './entries';
+import { type Crumb, crumbs } from './crumbs';
 import { nativePath, split, typedPath } from './paths';
 
 const props = defineProps<{ i: number }>();
 const F = usePanels();
 const listing = useListing();
 const tab = computed(() => F.T(props.i));
-const parts = computed(() => split(tab.value.path));
+// A network share the computer mounted deep down, such as one gvfs mounted, where the path bar starts.
+const share = computed(() => {
+  const vol = host.desktop ? listing.lists.get(tab.value.path)?.volume : undefined;
+  return vol?.kind === 'network' && split(vol.path).length > 1 && !vol.path.startsWith('/net/') ? vol.path : undefined;
+});
+const items = computed(() => crumbs(tab.value.path, share.value));
 const hasDirs = computed(() => listing.lists.get(tab.value.path)?.items.some((k) => k.dir) ?? false);
-const under = (k: number) => '/' + parts.value.slice(0, k).join('/');
+const above = (k: number) => (k > 0 ? items.value[k - 1]!.path : '/');
 // In the desktop app a folder goes by the name the computer gives it where it has one, as a drive or a network share
 // does, and a drive on Windows is C: otherwise, as in Explorer.
-function partName(part: string, k: number) {
-  const named = host.desktop ? listing.placeLabel(under(k + 1)) : undefined;
+function crumbName(c: Crumb, k: number) {
+  if (c.network) return t('files.network');
+  const named = host.desktop ? listing.placeLabel(c.path) : undefined;
   if (named) return named;
-  return k > 0 || !windowsPaths() ? part.replace('::', '') : part === 'net' ? t('files.network') : part + ':';
+  return k > 0 || !windowsPaths() ? c.part.replace('::', '') : c.part === 'net' ? t('files.network') : c.part + ':';
 }
+const aboveName = (k: number) => (k > 0 ? crumbName(items.value[k - 1]!, k - 1) : rootName());
 
 async function psub(e: MouseEvent, folder: string) {
   const r = (e.currentTarget as HTMLElement).getBoundingClientRect(), here = tab.value.path;
@@ -72,12 +80,12 @@ function key(e: KeyboardEvent) {
 <template>
   <input v-if="tab.editPath" :id="`pathedit-${i}`" ref="input" class="pathbar pathedit mono" :value="nativePath(tab.path, windowsPaths())" :aria-label="t('files.path')" @keydown="key" @blur="tab.editPath = false">
   <div v-else class="pathbar" :class="{ open: tab.pathOpen }" data-pathbar :data-tip="t('files.pathTip')" @click="onBar">
-    <button v-if="parts.length > 1" class="pmore" data-pathmore :aria-label="t('files.pathMore')" @click="more">…</button>
+    <button v-if="items.length > 1" class="pmore" data-pathmore :aria-label="t('files.pathMore')" @click="more">…</button>
     <button class="pseg" data-go="/" @click="F.go('/', i)">{{ rootName() }}</button>
-    <template v-for="(part, k) in parts" :key="k">
-      <button class="psep" :data-psub="under(k)" :aria-label="t('files.foldersIn', { name: split(under(k)).pop() || rootName() })" @click="psub($event, under(k))">›</button>
-      <button class="pseg" :class="{ last: k === parts.length - 1 }" :data-go="under(k + 1)" @click="F.go(under(k + 1), i)">{{ partName(part, k) }}</button>
+    <template v-for="(c, k) in items" :key="c.path">
+      <button class="psep" :data-psub="above(k)" :aria-label="t('files.foldersIn', { name: aboveName(k) })" @click="psub($event, above(k))">›</button>
+      <button class="pseg" :class="{ last: k === items.length - 1 }" :data-go="c.path" @click="F.go(c.path, i)">{{ crumbName(c, k) }}</button>
     </template>
-    <button v-if="hasDirs" class="psep" :data-psub="tab.path" :aria-label="t('files.foldersIn', { name: parts.at(-1) || rootName() })" @click="psub($event, tab.path)">›</button>
+    <button v-if="hasDirs" class="psep" :data-psub="tab.path" :aria-label="t('files.foldersIn', { name: aboveName(items.length) })" @click="psub($event, tab.path)">›</button>
   </div>
 </template>

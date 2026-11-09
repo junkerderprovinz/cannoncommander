@@ -3627,6 +3627,7 @@
     "volume": "{size}-volum"
   },
   "files": {
+    "freeOn": "{name}: {size} ledig",
     "network": "Nettverk",
     "server": "Server",
     "thisPc": "Denne PC-en",

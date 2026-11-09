@@ -3627,6 +3627,7 @@
     "volume": "{size}:n taltio"
   },
   "files": {
+    "freeOn": "{name}: {size} vapaana",
     "network": "Verkko",
     "server": "Palvelin",
     "thisPc": "Tämä tietokone",

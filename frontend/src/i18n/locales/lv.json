@@ -3759,6 +3759,7 @@
     "volume": "{size} sējums"
   },
   "files": {
+    "freeOn": "{name}: brīvi {size}",
     "network": "Tīkls",
     "server": "Serveris",
     "thisPc": "Šis dators",

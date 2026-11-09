@@ -4155,6 +4155,7 @@
     "volume": "وحدة تخزين {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} متاحة",
     "network": "الشبكة",
     "server": "الخادم",
     "thisPc": "هذا الكمبيوتر",

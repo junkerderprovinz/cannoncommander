@@ -3891,6 +3891,7 @@
     "volume": "{size} tomas"
   },
   "files": {
+    "freeOn": "{name}: laisva {size}",
     "network": "Tinklas",
     "server": "Serveris",
     "thisPc": "Šis kompiuteris",

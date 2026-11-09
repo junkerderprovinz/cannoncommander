@@ -3759,6 +3759,7 @@
     "volume": "Волумен од {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} слободно",
     "network": "Мрежа",
     "server": "Сервер",
     "thisPc": "Овај рачунар",

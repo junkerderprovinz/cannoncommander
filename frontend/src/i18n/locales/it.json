@@ -3759,6 +3759,7 @@
     "volume": "Volume da {size}"
   },
   "files": {
+    "freeOn": "{name}: {size} liberi",
     "network": "Rete",
     "server": "Server",
     "thisPc": "Questo PC",

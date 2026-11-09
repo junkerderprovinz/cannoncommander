@@ -3495,6 +3495,7 @@
     "volume": "{size} ボリューム"
   },
   "files": {
+    "freeOn": "{name}: 空き {size}",
     "network": "ネットワーク",
     "server": "サーバー",
     "thisPc": "PC",
