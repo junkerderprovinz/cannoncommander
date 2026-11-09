@@ -39,7 +39,8 @@ describe('languages', () => {
     expect(id('notes.txt', '#!/bin/bash')).toBeUndefined();
   });
 
-  it('loads every language', async () => {
+  // Each grammar is a real import that Vite transforms first, which takes seconds when the suite runs in parallel.
+  it('loads every language', { timeout: 30_000 }, async () => {
     for (const l of LANGUAGES) expect(await l.load(), l.id).toBeTruthy();
   });
 
