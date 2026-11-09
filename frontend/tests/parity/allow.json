@@ -239,8 +239,8 @@
     "why": "the app lists API tokens in a card of their own, where the prototype counts them among the sessions; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
    },
    "a-integrations-after": {
-    "pixels": 91689,
-    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The integrations page has the terminal switch. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu"
+    "pixels": 121251,
+    "why": "the integrations follow the Office choice with one office server to pick, and carry the ArrowLoop card with its paths; GlimStone's Card, FieldRow, Selector and Button: rows stand further apart, a path's picker shows its words where there is room, a switch that is off holds GlimStone's contrast, and the rows of a page end further down, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The integrations page has the terminal switch. jdp's Pinnwand round 2: the account tab comes first among the settings tiles, and the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu; the settings reach down to the window's margin, so more of the page shows"
    },
    "a-export-done": {
     "pixels": 53450,
@@ -831,8 +831,8 @@
     "why": "a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "r13-7-touch-390": {
-    "pixels": 7735,
-    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along"
+    "pixels": 10325,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along; a tap closes the tooltip in the app, while the prototype draws the list anew under the resting pointer and so opens the bubble on the cache badge again"
    },
    "r13-9-shortcuts": {
     "pixels": 65972,
@@ -1087,10 +1087,6 @@
    "v3b-4-keys-conflict": {
     "pixels": 43322,
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
-   },
-   "v3b-5-keys-tc": {
-    "pixels": 30267,
-    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "v3b-9-damaged": {
     "pixels": 30816,

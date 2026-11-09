@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Button, MenuBar } from '@glimstone/vue';
-import { computed, h, onMounted, ref, watch } from 'vue';
+import { computed, h, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { actions, run } from '@/core/actions';
 import { glyphComponent } from '@/core/glyphs';
 import { menu, resolveItems, toGlim } from '@/core/menu';
 import { allMenuItems, MENUS, menuItems, menuName, setMenuBarOpener } from '@/core/menus';
 import { prefs } from '@/core/prefs';
 import { go, view } from '@/core/views';
-import { plural, t } from '@/i18n';
+import { language, plural, t } from '@/i18n';
 import { useUser } from '@/stores/user';
 import { HEAD_LOGO } from './logo';
 import { shell } from './state';
@@ -45,13 +45,42 @@ function account(e: MouseEvent) {
 }
 // One button for the layout: its glyph and its words name the layout that shows and the bubble says what a press does.
 // It is not a pressed toggle, since its name already changes with the layout and a reader would hear the state twice.
+// How much room the menus and the words on the buttons need depends on the language, so the head folds by the room it
+// has: first its buttons keep only their glyphs, then the menus fold into one button. Each step remembers the width the
+// head needed before it, and comes undone once the head is that wide again.
+const head = ref<HTMLElement | null>(null);
+const fold = ref(0);
+let needed: number[] = [];
+function fit() {
+  const el = head.value!;
+  if (el.scrollWidth > el.clientWidth + 1 && fold.value < 2) {
+    needed[fold.value] = el.scrollWidth;
+    fold.value++;
+    void nextTick(fit);
+  } else if (fold.value > 0 && el.clientWidth >= needed[fold.value - 1]!) {
+    fold.value--;
+    void nextTick(fit);
+  }
+}
+let watcher: ResizeObserver | undefined;
+onMounted(() => {
+  watcher = new ResizeObserver(fit);
+  watcher.observe(head.value!);
+});
+onBeforeUnmount(() => watcher?.disconnect());
+watch([language, files], () => {
+  fold.value = 0;
+  needed = [];
+  void nextTick(fit);
+});
+
 const layout = computed(() => (prefs.dual
   ? { id: 'single', label: t('actions.dual'), glyph: 'IconPaneTwo', tip: t('head.toSingle') }
   : { id: 'dual', label: t('actions.single'), glyph: 'IconPaneOne', tip: t('head.toDual') }));
 </script>
 
 <template>
-  <header class="head glim-card">
+  <header ref="head" class="head glim-card" :class="{ 'fold-menus': fold > 1 }">
     <button class="brand" data-go-view="files" :data-tip="t('head.brand')" :aria-label="t('head.brand')" @click="go('files')">
       <span class="brand-logo" :style="{ aspectRatio: HEAD_LOGO.ratio }"><svg class="brand-cannon" :viewBox="HEAD_LOGO.viewBox" aria-hidden="true" v-html="HEAD_LOGO.cannon" /><svg class="brand-ball" :viewBox="HEAD_LOGO.viewBox" aria-hidden="true" v-html="HEAD_LOGO.ball" /></span>
     </button>
@@ -62,8 +91,8 @@ const layout = computed(() => (prefs.dual
     </template>
     <Button v-else class="hback" :label="t('head.back')" label-key="IconBack" data-go-view="files" :title="t('head.backTip')" @click="go('files')" />
     <span class="spacer"></span>
-    <Button v-if="files" class="head-layout" :compact-below="900" :label="layout.label" :label-key="null" :glyph="glyphComponent(layout.glyph)" :title="layout.tip" :data-run="layout.id" @click="run(layout.id)" />
-    <Button :compact-below="900" :label="t('head.settings')" label-key="IconGear" data-run="settings" @click="run('settings')" />
+    <Button v-if="files" class="head-layout" :compact="fold > 0" :compact-below="900" :label="layout.label" :label-key="null" :glyph="glyphComponent(layout.glyph)" :title="layout.tip" :data-run="layout.id" @click="run(layout.id)" />
+    <Button :compact="fold > 0" :compact-below="900" :label="t('head.settings')" label-key="IconGear" data-run="settings" @click="run('settings')" />
     <Button class="avatar" compact :label="user.me.full" :label-key="null" :glyph="Initials" :title="shell.jobCount ? plural(shell.jobCount, 'head.running') : undefined" data-account @click="account"><template #after><span id="job-count" class="count glim-num" :class="{ idle: !shell.jobCount }" aria-hidden="true">{{ shell.jobCount }}</span></template></Button>
   </header>
 </template>

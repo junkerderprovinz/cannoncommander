@@ -1,6 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { createApp, nextTick } from 'vue';
+import { createApp, h, nextTick } from 'vue';
 import { action, actions } from '@/core/actions';
+import { glyphComponent } from '@/core/glyphs';
 import { host } from '@/core/host';
 import { bindKey, keymap } from '@/core/keymap';
 import { prefs } from '@/core/prefs';
@@ -50,11 +51,19 @@ async function rebind(id: string) {
   $(`[data-kb-rec="${id}"]`)!.click();
   await settle();
 }
+// The trash glyph as GlimStone draws it, which every delete button in the app wears.
+const trash = () => {
+  const host = document.body.appendChild(document.createElement('div'));
+  createApp({ render: () => h(glyphComponent('IconTrash')) }).mount(host);
+  const svg = host.innerHTML;
+  host.remove();
+  return svg;
+};
 const button = (text: string) => [...document.querySelectorAll<HTMLButtonElement>('button')].find((b) => b.textContent?.trim() === text || b.getAttribute('aria-label') === text)!;
 
 describe('the shortcuts tile', () => {
   it('starts with the layout and lists the actions under their menus', () => {
-    expect([...document.querySelectorAll('.glim-notch-card > h2')].map((h) => h.textContent?.trim())[0]).toBe('Vorlage');
+    expect([...document.querySelectorAll('.glim-notch-card > h2')].map((h) => h.textContent?.trim())[0]).toBe('Bedienung');
     expect(rows()).toContain('Kopieren');
     expect(keyOf('copy')).toBe('F5');
   });
@@ -190,19 +199,31 @@ describe('the shortcuts tile', () => {
     expect(keymap['Ctrl+F5']).toBeUndefined();
   });
 
-  it('offers Explorer\'s layout in the desktop app only', async () => {
+  it('offers no layout in the container and the first start\'s two in the desktop app', async () => {
     const layouts = () => [...document.querySelectorAll('#kt-layout button')].map((b) => b.textContent?.trim());
-    expect(layouts()).toEqual(['CannonCommander', 'Total Commander']);
+    expect($('#kt-layout')).toBeNull();
     host.desktop = true;
     await settle();
-    expect(layouts()).toEqual(['CannonCommander', 'Total Commander', 'Explorer']);
+    expect(layouts()).toEqual(['Wie ein Commander', 'Wie im Explorer']);
     expect($('#d-clickselect')).not.toBeNull();
   });
 
-  it('brings a layout\'s keys when it is chosen', async () => {
-    [...document.querySelectorAll<HTMLButtonElement>('#kt-layout button')].find((b) => b.textContent?.trim() === 'Total Commander')!.click();
+  it('brings Explorer\'s keys when it is chosen in the desktop app', async () => {
+    host.desktop = true;
     await settle();
-    expect(keymap['Alt+F5']).toBe('pack');
-    expect(keyOf('pack')).toBe('Alt+F5');
+    [...document.querySelectorAll<HTMLButtonElement>('#kt-layout button')].find((b) => b.textContent?.trim() === 'Wie im Explorer')!.click();
+    await settle();
+    expect(keymap.F5).toBe('refresh');
+    expect(keyOf('refresh')).toBe('F5+1');
+  });
+
+  it('deletes a key with a trash button named for it', async () => {
+    const del = $('[data-kb-clear="copy"]')!;
+    expect(del.getAttribute('aria-label')).toBe('Taste löschen');
+    expect(del.querySelector('svg')?.outerHTML).toBe(trash());
+    del.click();
+    await settle();
+    expect(keymap.F5).toBeUndefined();
+    expect(keyOf('copy')).toBe('keine');
   });
 });
