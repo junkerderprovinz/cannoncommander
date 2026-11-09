@@ -57,5 +57,6 @@
   "notifyFailed": "Aufgabe fehlgeschlagen",
   "notifyBody": "{label}, nach {took}",
   "took": { "s": "{n} s", "min": "{n} Min.", "h": "{n} Std." },
-  "settingsFailed": "Die Aufgaben-Einstellungen ließen sich nicht speichern. Das dürfen nur Admins."
+  "settingsFailed": "Die Aufgaben-Einstellungen ließen sich nicht speichern. Das dürfen nur Admins.",
+  "via": "über {name}"
 }

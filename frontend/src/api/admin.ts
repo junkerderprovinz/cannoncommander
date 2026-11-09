@@ -57,7 +57,11 @@ export interface Token { id: string; name: string; created: number; last: number
 export interface Passkey { id: string; name: string; origin: string; created: number; last: number | null }
 // blocked says why no passkey can be added from this address, null when one can.
 export interface Passkeys { blocked: Problem | null; items: Passkey[] }
-export interface Activity { id: number; t: number; who: string; what: string; obj: string; path?: string; target?: string; ip?: string; details: Record<string, unknown> }
+// authMethod is mcp for what an assistant did, and tokenName then names its key.
+export interface Activity {
+  id: number; t: number; who: string; what: string; obj: string; path?: string; target?: string; ip?: string; authMethod?: string; tokenName?: string;
+  details: Record<string, unknown>;
+}
 export type OfficeKind = 'none' | 'onlyoffice' | 'eurooffice' | 'collabora';
 export interface AppSettings {
   office: { kind: OfficeKind; url: string; secret?: string; secretSet?: boolean };

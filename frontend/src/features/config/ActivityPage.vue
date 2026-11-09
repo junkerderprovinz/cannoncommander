@@ -20,7 +20,7 @@ const KINDS: Record<string, string> = {
   quotaCreate: 'IconSliders', quotaUpdate: 'IconSliders', quotaDelete: 'IconSliders',
   login: 'IconSignIn', logout: 'IconSignOut', signup: 'IconSignIn',
   passkeyRegister: 'IconKey', passkeyDelete: 'IconKey', tokenCreate: 'IconKey', tokenDelete: 'IconKey',
-  terminalOpen: 'IconCode', terminalClose: 'IconCode',
+  terminalOpen: 'IconCode', terminalClose: 'IconCode', folderCreate: 'IconFolderAdd', trash: 'IconTrashFiles', restore: 'IconRestore',
 };
 const all = ref<Activity[]>([]), users = ref<User[]>([]);
 const act = reactive({ who: null as string | null, what: null as string | null, dir: -1 });
@@ -75,7 +75,7 @@ function open(a: Activity) {
         </div>
         <template v-if="shown.length">
           <div v-for="a in shown" :key="a.id" class="a-row a-arow" :tabindex="a.path ? 0 : undefined" :data-open="a.path" :data-tip="tip(a)" @click="open(a)" @keydown.enter="open(a)">
-            <GlyphTile :glyph="glyphComponent(KINDS[a.what] || 'IconLog')" /><span class="a-name"><span class="t">{{ a.obj }}</span></span>
+            <GlyphTile :glyph="glyphComponent(KINDS[a.what] || 'IconLog')" /><span class="a-name"><span class="t">{{ a.obj }}</span><Pill v-if="a.authMethod === 'mcp' && a.tokenName" tone="state" class="a-via">{{ c('activity.viaKey', { name: a.tokenName }) }}</Pill></span>
             <Pill>{{ full(a.who) }}</Pill><Pill>{{ kind(a.what) }}</Pill><Pill class="glim-num">{{ ago(a.t) }}</Pill>
           </div>
         </template>

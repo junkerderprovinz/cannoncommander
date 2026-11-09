@@ -13,6 +13,8 @@ export interface Job {
   id: string;
   kind: string;
   owner: string;
+  // The name of the MCP key an assistant started the job with.
+  via?: string;
   state: JobState;
   reason?: 'parity';
   place?: number;
