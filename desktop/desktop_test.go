@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"image/png"
 	"net"
 	"os"
 	"path/filepath"
@@ -202,5 +204,17 @@ func TestAPortableLockIsAValidBusName(t *testing.T) {
 				t.Fatalf("%s is no bus name", id)
 			}
 		}
+	}
+}
+
+// X11 takes a window icon of at most 262144 values, so GTK drops a larger
+// one without a word and the window has none.
+func TestTheWindowIconFitsInAnX11Property(t *testing.T) {
+	img, err := png.Decode(bytes.NewReader(windowIcon()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if b := img.Bounds(); b.Dx() != 256 || b.Dy() != 256 {
+		t.Fatalf("%v", b)
 	}
 }
