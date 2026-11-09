@@ -82,9 +82,6 @@ module.exports = async (page, shot) => {
   await page.reload(); await wait(900);
   console.log('9821 after reload:', await page.evaluate(() => `copy ${CC.actions.copy.key}, Ctrl+k ${CC.keymap['Ctrl+k']}`));
   await page.keyboard.press('F1'); await wait();
-  await page.click('#kb-preset [data-v="tc"]'); await wait();
-  console.log('9821 tc preset:', await page.evaluate(() => ['pack', 'unpack', 'rename', 'flat', 'compareDirs', 'copy'].map(id => `${id} ${$(`[data-kb-rec="${id}"]`)?.textContent.trim()}`).join(', ')));
-  await shot('v3b-5-keys-tc');
   await page.click('.kb-win .win-foot .btn:has-text("Alles zurücksetzen")'); await wait();
   await page.click('.kb-win .win-foot .btn.primary'); await wait();
   console.log('9821 reset:', await page.evaluate(() => `copy ${CC.actions.copy.key}, palette ${CC.actions.palette.key}, stored ${!!localStorage.getItem('cannoncommander-keys')}`));
