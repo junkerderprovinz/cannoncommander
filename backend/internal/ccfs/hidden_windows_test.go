@@ -6,10 +6,12 @@ import (
 	"testing"
 
 	"golang.org/x/sys/windows"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
 )
 
 func TestTheAttributeHidesAnEntryOnWindows(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.LocalDir(t)
 	attrs := map[string]uint32{"desktop.ini": windows.FILE_ATTRIBUTE_HIDDEN | windows.FILE_ATTRIBUTE_SYSTEM, "Thumbs.db": windows.FILE_ATTRIBUTE_HIDDEN, ".git": 0, "boot.ini": windows.FILE_ATTRIBUTE_SYSTEM}
 	for n, a := range attrs {
 		p := filepath.Join(dir, n)
