@@ -14,13 +14,22 @@ const boot = core.filter(f => f.startsWith('99-'));
 const ordered = [...core.filter(f => !f.startsWith('99-')).map(f => join('src', 'js', f)), ...features.map(f => join('src', 'js', 'features', f)), ...boot.map(f => join('src', 'js', f))];
 const js = ordered.map(f => `// ${f.replaceAll('\\', '/')}\n${read(f)}`).join('\n');
 
+// The remotes window takes rclone's catalog, the provider logos and its German texts from the app, so both show the same.
+const frontend = join(here, '..', 'frontend');
+const remotes = readFileSync(join(frontend, 'scripts', 'fixture-remotes.json'), 'utf8');
+const marksTs = readFileSync(join(frontend, 'src', 'features', 'config', 'brandMarks.ts'), 'utf8');
+const table = (name) => JSON.parse(marksTs.match(new RegExp(name + '[^=]*= (\\{[\\s\\S]*?\\n\\});'))[1]);
+const brands = { marks: table('BRAND_MARKS'), tiles: table('BRAND_TILES') };
+const remoteTexts = { config: JSON.parse(readFileSync(join(frontend, 'src', 'features', 'config', 'de.json'), 'utf8')).remotes, side: JSON.parse(readFileSync(join(frontend, 'src', 'features', 'remotes', 'de.json'), 'utf8')) };
+
 const glyphs = Object.fromEntries([...JSON.parse(read('vendor', 'glyphs.json')), ...JSON.parse(read('src', 'glyphs-extra.json'))].map(gl => [gl.name, { viewBox: gl.viewBox, svg: gl.svg.replace(/\s+/g, ' ') }]));
 const formats = JSON.parse(read('src', 'formats.json'));
 const candidates = ['IconFile', 'IconFileText', 'IconFileImage', 'IconFileVideo', 'IconFileAudio', 'IconFileSubtitles', 'IconCode', 'IconConfig', 'IconLog',
   'IconDatabase', 'IconArchive', 'IconKey', 'IconMail', 'IconExternalLink', 'IconLink', 'IconManual', 'IconApp', 'IconVM', 'IconContainers',
   'IconShieldOn', 'IconCompressMax', 'IconDownload', 'IconDashboard', 'IconBrowser', 'IconFlash', 'IconStar',
   ...JSON.parse(read('src', 'glyphs-extra.json')).map(gl => gl.name)];
-const used = new Set([...(js.match(/Icon[A-Z][A-Za-z]+/g) || []), ...formats.map(f => f.glyph), ...candidates]);
+const used = new Set([...(js.match(/Icon[A-Z][A-Za-z]+/g) || []), ...formats.map(f => f.glyph), ...candidates,
+  ...JSON.parse(remotes).providers.map(p => p.mark).filter(m => glyphs[m])]);
 const missing = [...used].filter(n => !glyphs[n]);
 if (missing.length) throw new Error('unknown glyphs: ' + missing.join(', '));
 
@@ -53,6 +62,10 @@ const html = read('src', 'index.html')
   .replace('/*GLYPHS*/', () => JSON.stringify(Object.fromEntries([...used].map(n => [n, glyphs[n]]))))
   .replace('/*FORMATS*/', () => JSON.stringify(formats))
   .replace('/*MARKS*/', () => read('vendor', 'marks.json'))
+  .replace('/*BRANDCSS*/', () => readFileSync(join(frontend, 'src', 'features', 'config', 'brandMarks.css'), 'utf8'))
+  .replace('/*REMOTES*/', () => remotes.trim())
+  .replace('/*BRANDS*/', () => JSON.stringify(brands))
+  .replace('/*REMOTETEXTS*/', () => JSON.stringify(remoteTexts))
   .replace('/*APP*/', () => js)
   .replace('<!--PINNWAND-->', () => board(`window.PW_ROUND = ${round}; window.PW_CHANGES = ${JSON.stringify(changes.map(c => ({ route: '/cannoncommander.html', ...c })))};`, pinnwand));
 mkdirSync(join(here, 'dist'), { recursive: true });

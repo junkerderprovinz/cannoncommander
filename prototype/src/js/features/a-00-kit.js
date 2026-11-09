@@ -120,7 +120,9 @@
       lock: (on) => { locked = on; },
       set(html, buttons) {
         body.innerHTML = html;
-        ft.innerHTML = buttons.map((f, k) => f.start ? `<span class="start">${f.start}</span>` : `<button class="btn ${f.primary ? 'primary' : ''}" data-sf="${k}">${f.g ? g(f.g) : ''}${esc(f.label)}</button>`).join('');
+        // A start of '' keeps its place, so the buttons stay where they are while a verdict comes and goes. tone colours a
+        // button that carries a verdict.
+        ft.innerHTML = buttons.map((f, k) => f.start !== undefined ? `<span class="start">${f.start}</span>` : `<button class="btn ${f.primary ? 'primary' : ''} ${f.tone ? 'tone-' + f.tone : ''}" ${f.id ? `id="${f.id}"` : ''} data-sf="${k}">${f.g ? g(f.g) : ''}${esc(f.label)}</button>`).join('');
         $$('[data-sf]', ft).forEach(b => b.addEventListener('click', () => { const f = buttons[+b.dataset.sf]; if (!f.run || f.run(el, b) !== false) w.close(); }));
         wireControls(el);
         setTimeout(() => (body.querySelector('input:not([readonly])') || ft.querySelector('.btn:last-child'))?.focus(), 0);
