@@ -5,6 +5,7 @@
 *.log
 *.mjs
 !/scripts/desktop.mjs
+!/flatpak/update-sources.mjs
 _old
 .idea/
 /backend/backend
@@ -58,3 +59,10 @@ backend/preview/thumbnails/
 # Fixture trees and parity screenshots from testing/, whose own scripts are ES modules
 /testing/out
 !/testing/**/*.mjs
+
+# What flatpak-builder leaves behind when the Flatpak is built from the clone,
+# and the bundle made from it.
+/flatpak/.state/
+/flatpak/.build/
+/flatpak/.repo/
+*.flatpak
