@@ -290,9 +290,13 @@ function gotoLine() {
   });
 }
 
+// A picker of the status bar hands the keys back to the text once its list has closed.
+const refocus = () => requestAnimationFrame(() => view?.focus());
+
 function setWrap(on: boolean) {
   setPref('editorWrap', on);
   view?.dispatch({ effects: parts.wrap.reconfigure(wrapOf(on)) });
+  refocus();
 }
 
 function command(name: string) {
@@ -321,21 +325,25 @@ function setLang(id: string) {
   d.lang = id;
   void (id ? languageOf(id) : Promise.resolve([])).then((ext) => reconfigure(d, { effects: parts.lang.reconfigure(ext) }));
   if (isMd.value) preview.value = md(text());
+  refocus();
 }
 function setIndent(i: Indent) {
   const d = cur.value!;
   d.indent = i;
   reconfigure(d, { effects: parts.indent.reconfigure(indentOf(i)) });
+  refocus();
 }
 function convert(encoding: string) {
   const d = cur.value!;
   d.encoding = encoding;
   refreshDirty(d);
+  refocus();
 }
 function setEol(e: Eol) {
   const d = cur.value!;
   d.eol = e;
   refreshDirty(d);
+  refocus();
 }
 // Reading again in another encoding throws away what was typed, so it waits until that is saved or undone.
 async function reopen(encoding: string) {
@@ -348,6 +356,7 @@ async function reopen(encoding: string) {
   moved();
   if (isMd.value) preview.value = md(text());
   toast(t('editor.reopened', { name: d.name, encoding: encodingName(r.encoding) }));
+  refocus();
 }
 
 async function openMore(nodes: FileNode[], folder: string) {

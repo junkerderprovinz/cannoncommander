@@ -131,8 +131,10 @@ func (shell) choose(file string) error {
 		return err
 	}
 	return winshell.Apartment(func() error {
+		owner := winshell.Owner()
+		defer shareInput(owner)()
 		info := openAsInfo{file: p, flags: oaifAllowRegistration | oaifRegisterExt | oaifExec}
-		r, _, _ := procOpenWithDialog.Call(uintptr(winshell.Owner()), uintptr(unsafe.Pointer(&info)))
+		r, _, _ := procOpenWithDialog.Call(uintptr(owner), uintptr(unsafe.Pointer(&info)))
 		err := winshell.Failed(r)
 		// Closing the dialog without a pick is no failure.
 		if err != nil && uint32(r)&0xffff == uint32(errCancelled) {
@@ -199,8 +201,10 @@ func (shell) pick(title, programs string) (app, error) {
 	}
 	var chosen string
 	err := winshell.Apartment(func() error {
+		owner := winshell.Owner()
+		defer shareInput(owner)()
 		o := openFileName{
-			owner: winshell.Owner(), filter: &filter[0], filterIndex: 1, file: &buf[0], maxFile: uint32(len(buf)),
+			owner: owner, filter: &filter[0], filterIndex: 1, file: &buf[0], maxFile: uint32(len(buf)),
 			initialDir: dir, title: head, flags: ofnHideReadOnly | ofnNoChangeDir | ofnPathMustExist | ofnFileMustExist | ofnExplorer | ofnDontAddToRecent,
 		}
 		o.structSize = uint32(unsafe.Sizeof(o))
@@ -234,4 +238,23 @@ func (shell) run(program, file string) error {
 	}
 	go func() { _ = cmd.Wait() }()
 	return nil
+}
+
+// shareInput lets the calling thread share the input of the thread that owns
+// the app's window, so a dialog it opens comes up in front and takes the
+// keys, as one the window's own thread opened would. It returns the undo.
+func shareInput(owner windows.HWND) func() {
+	if owner == 0 {
+		return func() {}
+	}
+	var pid uint32
+	to, err := windows.GetWindowThreadProcessId(owner, &pid)
+	if err != nil {
+		return func() {}
+	}
+	me := windows.GetCurrentThreadId()
+	if r, _, _ := procAttachThreadInput.Call(uintptr(me), uintptr(to), 1); r == 0 {
+		return func() {}
+	}
+	return func() { procAttachThreadInput.Call(uintptr(me), uintptr(to), 0) }
 }
