@@ -15,7 +15,7 @@ import { useJobs } from '@/stores/jobs';
 import { usePanels } from '@/stores/panels';
 import { useTrash } from '@/stores/trash';
 import { broadside, KONAMI, onceEach, sequence, typedWord } from './cues';
-import { cannon, drop, replay, salute, smoke, trace, tumble } from './fx';
+import { cannon, drop, replay, salute, smoke, sparks, trace, tumble } from './fx';
 import { armLogo, stopShot } from './shot';
 import './motion.css';
 
@@ -51,7 +51,8 @@ function onStarted(_job: Job, req: JobCreate) {
       return k && !k.up && gone.has(join(k.at || F.T(i).path, k.name)) ? [{ el, glyph: glyphOf(k), name: k.name }] : [];
     }));
     const bin = [document.querySelector('#side [data-run="openTrash"] svg'), document.querySelector('#fkeys [data-run="delete"]')].find(shown);
-    drop(rows, bin);
+    const last = drop(rows, bin).at(-1);
+    if (bin) last?.addEventListener('animationend', () => replay(bin, 'fx-bin-hit'));
   }
   copyCommand = false;
 }
@@ -59,8 +60,30 @@ function onStarted(_job: Job, req: JobCreate) {
 function onEnded(job: Job) {
   const home = jobsHome();
   if (!moving() || !shown(home)) return;
-  if (job.state === 'done') replay(home, 'glim-confirm');
-  else if (job.state === 'failed') replay(home, 'glim-shake');
+  if (job.state === 'done') {
+    replay(home, 'glim-confirm');
+    sparks(home);
+    const F = usePanels(), landed = job.dest ? panelsShown().find((i) => F.T(i).path === job.dest) : undefined;
+    const list = landed === undefined ? null : panelEl(landed);
+    if (shown(list)) replay(list, 'fx-land');
+  } else if (job.state === 'failed') {
+    replay(home, 'glim-shake');
+    const head = document.querySelector('.head');
+    if (head) replay(head, 'fx-jolt');
+  }
+}
+
+// A menu's rows come in one after another, so each needs its place; GlimStone draws the rows without one.
+function numberMenus() {
+  new MutationObserver((changes) => {
+    for (const c of changes) {
+      for (const node of c.addedNodes) {
+        if (node instanceof HTMLElement && node.classList.contains('glim-menu')) {
+          [...node.children].forEach((row, i) => (row as HTMLElement).style.setProperty('--row-i', String(i)));
+        }
+      }
+    }
+  }).observe(document.body, { childList: true });
 }
 
 // The smoke waits for both the job's end and the empty list, which arrive in either order.
@@ -129,6 +152,7 @@ export default function setup() {
     return run(...args);
   });
   smokeAfterEmptying();
+  numberMenus();
   konami();
   kaboom();
   tumbleweed();

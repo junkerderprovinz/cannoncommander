@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeCanvas } from '@/testing/fakeCanvas';
 import type { Blast } from './burst';
-import { shardLayer, shatter } from './fx';
+import { drop, salute, shardLayer, shatter, sparks, trace } from './fx';
 
 // The same numbers on every run, so a failure can be replayed.
 const seeded = (seed: number) => () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -38,5 +38,63 @@ describe('the burst of a struck element', () => {
     expect(layer.querySelector('canvas.fx-burst')).not.toBeNull();
     expect(canvas.drawn.splinters).toBeGreaterThanOrEqual(WILD.count * 0.75);
     expect(layer.querySelector('button')).toBeNull();
+  });
+});
+
+describe('the pieces a level fires', () => {
+  const box = (left: number, top: number, w = 40, h = 20) => {
+    const el = document.createElement('div');
+    el.getBoundingClientRect = () => ({ left, top, right: left + w, bottom: top + h, width: w, height: h, x: left, y: top, toJSON() {} }) as DOMRect;
+    document.body.append(el);
+    return el;
+  };
+  const pieces = (cls: string) => [...document.querySelectorAll<HTMLElement>(`.fx-layer .${cls}`)];
+  const level = (dials: Record<string, string>) => {
+    for (const [k, v] of Object.entries(dials)) document.documentElement.style.setProperty(k, v);
+  };
+
+  beforeEach(() => { document.body.innerHTML = ''; document.documentElement.removeAttribute('style'); });
+
+  it('sends as many lights across as the level asks for, side by side and one after another', () => {
+    level({ '--motion-trace-count': '5', '--motion-trace-spread': '40px' });
+    trace(box(0, 0), box(400, 0));
+    const lights = pieces('fx-trace');
+    expect(lights.length).toBe(5);
+    expect(new Set(lights.map((l) => l.style.getPropertyValue('top'))).size).toBe(5);
+    expect(lights.map((l) => l.style.getPropertyValue('--fx-i'))).toEqual(['0', '1', '2', '3', '4']);
+  });
+
+  it('still sends one light where the level names none', () => {
+    trace(box(0, 0), box(400, 0));
+    expect(pieces('fx-trace').length).toBe(1);
+  });
+
+  it('drops no more entries than the level allows', () => {
+    const rows = Array.from({ length: 30 }, (_, i) => ({ el: box(0, i * 20), glyph: 'IconFile', name: `f${i}` }));
+    for (const [count, want] of [['3', 3], ['16', 16]] as const) {
+      document.querySelector('.fx-layer')?.remove();
+      level({ '--motion-drop-count': count });
+      expect(drop(rows, box(500, 500)).length).toBe(want);
+      expect(pieces('fx-drop').length).toBe(want);
+    }
+  });
+
+  it('fires as many stars in the salute as the level asks for', () => {
+    level({ '--motion-salute-count': '21' });
+    salute(box(0, 0, 1000, 50));
+    expect(pieces('fx-salute').length).toBe(21);
+  });
+
+  it('throws sparks out from the middle of a finished job, each its own way, and none where the level has none', () => {
+    level({ '--motion-spark-count': '10' });
+    sparks(box(100, 100, 40, 40));
+    const thrown = pieces('fx-spark');
+    expect(thrown.length).toBe(10);
+    expect(new Set(thrown.map((s) => `${s.style.getPropertyValue('left')} ${s.style.getPropertyValue('top')}`))).toEqual(new Set(['120px 120px']));
+    expect(new Set(thrown.map((s) => s.style.getPropertyValue('--fx-sx'))).size).toBe(10);
+    document.querySelector('.fx-layer')?.remove();
+    level({ '--motion-spark-count': '0' });
+    sparks(box(100, 100, 40, 40));
+    expect(pieces('fx-spark').length).toBe(0);
   });
 });

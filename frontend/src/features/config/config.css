@@ -9,7 +9,6 @@
 .a-text { line-height: 1.55; }
 .a-text p { margin: 0; }
 .a-text p + p { margin-top: .6rem; }
-@media (max-width: 900px) { .settings { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) {
 }
 /* The language field keeps one width whatever is picked, and a flag is wider than the square a glyph gets. */

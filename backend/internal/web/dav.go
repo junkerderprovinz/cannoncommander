@@ -70,7 +70,7 @@ func davToken(raw string) (dav.Identity, error) {
 	}
 	var claims users.AuthToken
 	token, err := auth.ParseToken(raw, &claims)
-	if err != nil || !token.Valid || claims.RegisteredClaims.ExpiresAt == nil || state.IsTokenRevoked(raw) {
+	if err != nil || !token.Valid || state.IsTokenRevoked(raw) {
 		return dav.Identity{}, errNotADavToken
 	}
 	if _, isSession, known := state.HashedTokenOwner(raw); !known || isSession {

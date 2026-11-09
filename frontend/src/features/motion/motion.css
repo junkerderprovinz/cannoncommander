@@ -142,6 +142,25 @@
   80% { transform: translate(calc(var(--motion-quake-dist, 4px) * -.1), calc(var(--motion-quake-dist, 4px) * .08)); }
   to { transform: none; }
 }
+/* A finished job: sparks thrown out from the avatar, each on its own heading, shrinking as they go. */
+@keyframes fx-spark {
+  from { scale: 1; }
+  55% { opacity: 1; }
+  to { opacity: 0; scale: .3; rotate: 180deg; translate: calc(var(--fx-sx) * var(--motion-spark-reach, 36px)) calc(var(--fx-sy) * var(--motion-spark-reach, 36px)); }
+}
+/* The panel a copy went to gives under what arrived and springs back. */
+@keyframes fx-land {
+  30% { transform: translateY(var(--motion-land-dist, 6px)); }
+  65% { transform: translateY(calc(var(--motion-land-dist, 6px) * -.35)); }
+  to { transform: none; }
+}
+@keyframes fx-jolt {
+  15% { transform: translateX(calc(var(--motion-jolt-dist, 3px) * -1)); }
+  35% { transform: translateX(var(--motion-jolt-dist, 3px)); }
+  55% { transform: translateX(calc(var(--motion-jolt-dist, 3px) * -.6)); }
+  75% { transform: translateX(calc(var(--motion-jolt-dist, 3px) * .3)); }
+  to { transform: none; }
+}
 @keyframes fx-rebuild {
   from { opacity: 0; scale: .7; }
   to { opacity: 1; scale: none; }
@@ -159,6 +178,7 @@
     transform-origin: right center; rotate: var(--fx-angle);
     filter: drop-shadow(0 0 calc(var(--motion-trace-width, 3px) * 1.5) color-mix(in srgb, var(--accent) 70%, transparent));
     animation: fx-trace var(--motion-trace-dur, 460ms) cubic-bezier(.45, 0, .25, 1) both;
+    animation-delay: calc(var(--fx-i, 0) * var(--motion-stagger-step, 30ms));
   }
 
   .fx-trace::after {
@@ -203,6 +223,17 @@
   .fx-salute svg, .fx-puff svg, .fx-smoke svg { width: 100%; height: 100%; }
 
   .head.fx-recoil { animation: fx-recoil var(--motion-recoil-dur, 420ms) cubic-bezier(.2, .8, .3, 1); }
+  .head.fx-jolt { animation: fx-jolt var(--motion-jolt-dur, 320ms) ease-out; }
+
+  .fx-spark {
+    width: 14px; height: 14px; margin: -7px 0 0 -7px; color: var(--accent-ink);
+    filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 70%, transparent));
+    animation: fx-spark var(--motion-spark-dur, 650ms) cubic-bezier(.15, .8, .3, 1) both;
+  }
+  .fx-spark svg { width: 100%; height: 100%; }
+  .fx-land { animation: fx-land var(--motion-land-dur, 380ms) cubic-bezier(.3, .7, .4, 1); }
+  /* The trash rocks as the last entry drops in. */
+  .fx-bin-hit { animation: xshake var(--motion-shake-dur, .4s) ease-in-out; }
 
   .fx-tumble { overflow: hidden; animation: fx-tumble-fade var(--motion-tumble-dur, 2.4s) linear both; }
   .fx-tumble-run { position: absolute; left: -36px; bottom: 22%; width: calc(100% + 72px); height: 32px; animation: fx-tumble-run var(--motion-tumble-dur, 2.4s) cubic-bezier(.3, .1, .6, .9) both; }
