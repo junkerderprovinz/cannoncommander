@@ -512,7 +512,7 @@ export function settingsFixtureMiddleware() {
       const mine = (k) => q.get('all') === 'true' || k.owner === ME;
       return {
         endpointPath: 'mcp', limit: 10, signIn: true, hostAllowsKeys: true, desktop: false,
-        writeLimits: { entriesPerCall: 25, entriesPerHour: 200, filesPerCall: 10000, callsPerMinute: 120 },
+        writeLimits: { entriesPerCall: 25, entriesPerHour: 200, filesPerCall: 10000, bytesPerCall: 53687091200, callsPerMinute: 120 },
         keys: S.mcp.keys.filter(mine).map(view), revoked: S.mcp.revoked.filter(mine).map(view),
         oauth: { possible: true, ...S.mcp.oauth, active: S.mcp.oauth.enabled && !!S.mcp.oauth.issuer, grantLimit: 10 },
       };
@@ -572,7 +572,7 @@ export function settingsFixtureMiddleware() {
     ['GET', '/mcp/oauth/authorize', (_, __, q) => {
       if (!S.mcp.oauth.enabled) return [404, 'sign-in through OAuth is not switched on', 'oauthOff'];
       if (!q.get('client_id')) return [400, 'this client is not registered here', 'oauthUnknownClient'];
-      return { client: { id: q.get('client_id'), name: 'Claude', known: 'claude', redirectHost: 'claude.ai', loopback: false }, account: ME, ticket: 'fixture-ticket', limitReached: false, grantLimit: 10 };
+      return { client: { id: q.get('client_id'), name: 'Claude', known: 'claude', redirectHost: 'claude.ai', loopback: false }, account: ME, password: true, ticket: 'fixture-ticket', limitReached: false, grantLimit: 10 };
     }],
     ['POST', '/mcp/oauth/authorize', (b) => ({ redirect: `https://claude.ai/api/mcp/auth_callback?${b.allow ? 'code=fixture' : 'error=access_denied'}` })],
     // The app's own folder appears once the container has run, so exports have somewhere to go.

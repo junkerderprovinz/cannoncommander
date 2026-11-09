@@ -45,7 +45,7 @@ async function server(url: string, init: RequestInit = {}) {
 
 const settings = (more: Record<string, unknown> = {}) => ({
   endpointPath: 'mcp', limit: 10, signIn: true, hostAllowsKeys: true, desktop: false,
-  writeLimits: { entriesPerCall: 25, entriesPerHour: 200, filesPerCall: 10000, callsPerMinute: 120 },
+  writeLimits: { entriesPerCall: 25, entriesPerHour: 200, filesPerCall: 10000, bytesPerCall: 53687091200, callsPerMinute: 120 },
   keys: [key('a', 'Claude Code')], revoked: [], oauth: { possible: true, enabled: false, issuer: '', active: false, grantLimit: 10 }, ...more,
 });
 

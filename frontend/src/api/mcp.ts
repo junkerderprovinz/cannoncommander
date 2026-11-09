@@ -10,7 +10,7 @@ export interface McpKey {
   unusable: string; callsToday: number;
 }
 export interface McpOAuth { possible: boolean; enabled: boolean; issuer: string; active: boolean; grantLimit: number }
-export interface McpWriteLimits { entriesPerCall: number; entriesPerHour: number; filesPerCall: number; callsPerMinute: number }
+export interface McpWriteLimits { entriesPerCall: number; entriesPerHour: number; filesPerCall: number; bytesPerCall: number; callsPerMinute: number }
 export interface McpKeys {
   endpointPath: string; limit: number; signIn: boolean; hostAllowsKeys: boolean; desktop: boolean; writeLimits: McpWriteLimits;
   keys: McpKey[]; revoked: McpKey[]; oauth: McpOAuth;
@@ -19,7 +19,8 @@ export interface McpKeys {
 export interface McpEvent { at: number; tool: string; outcome: string; jobId?: string }
 export interface McpConsent {
   client: { id: string; name: string; known: string; redirectHost: string; loopback: boolean };
-  account: string; ticket: string; limitReached: boolean; grantLimit: number;
+  // password says that Allow asks for the account's password, which only an account that signs in with one has.
+  account: string; password: boolean; ticket: string; limitReached: boolean; grantLimit: number;
 }
 export interface McpSecret { key: string; item: McpKey }
 
@@ -58,5 +59,7 @@ export const mcp = {
   setOAuth: (enabled: boolean, issuer: string) => write<McpOAuth>('PUT', '/mcp/oauth', { enabled, issuer }),
   // search is the query the client opened the consent page with, passed on as it came.
   consent: (search: string) => get<McpConsent>('/mcp/oauth/authorize' + search),
-  answer: (ticket: string, allow: boolean, canWrite: boolean) => write<{ redirect: string }>('POST', '/mcp/oauth/authorize', { ticket, allow, canWrite }),
+  // Allow needs the password of an account that has one, as making a key does.
+  answer: (ticket: string, allow: boolean, canWrite: boolean, password?: string) =>
+    write<{ redirect: string }>('POST', '/mcp/oauth/authorize', password === undefined ? { ticket, allow, canWrite } : { ticket, allow, canWrite, password }),
 };
