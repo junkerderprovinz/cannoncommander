@@ -2715,7 +2715,7 @@
     "iconsTip": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci prikazuju vlastitu ikonu i bez ovog prekidača.",
     "iconsTipLinux": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci ionako prikazuju vlastitu ikonu. CannonCommander crta minijature samo u izoliranom okruženju. Gdje to nije moguće, kao na Ubuntu 24.04, vidite samo one koje je vaš upravitelj datoteka već izradio.",
     "thumbs": "Minijature",
-    "thumbsTip": "Ubuntu pušta program u izolirano okruženje samo uz vlastito dopuštenje. Pri uključivanju CannonCommander dodaje malo pravilo AppArmor, koje traži vašu lozinku, i nakon ponovnog pokretanja sam crta minijature. Pri isključivanju pravilo opet nestaje, a i to vrijedi tek nakon ponovnog pokretanja.",
+    "thumbsTip": "Ubuntu pušta program u izolirano okruženje samo uz vlastito dopuštenje. Pri uključivanju CannonCommander dodaje malo pravilo AppArmor, koje traži vašu lozinku, i nakon ponovnog pokretanja sam crta minijature. Pri isključivanju pravilo odmah nestaje.",
     "thumbsOnButton": "Uključi minijature sustava",
     "thumbsOffButton": "Isključi minijature sustava",
     "thumbsOn": "Gotovo, CannonCommander sada sam crta minijature.",

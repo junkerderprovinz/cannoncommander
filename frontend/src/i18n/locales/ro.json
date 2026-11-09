@@ -2715,7 +2715,7 @@
     "iconsTip": "Arată în toată lista pictogramele sistemului tău. Programele și comenzile rapide își arată propria pictogramă chiar și cu acest comutator oprit.",
     "iconsTipLinux": "Arată în toată lista pictogramele sistemului tău. Programele și comenzile rapide își arată oricum propria pictogramă. CannonCommander desenează miniaturi doar într-un mediu izolat. Unde nu se poate, ca pe Ubuntu 24.04, vezi doar miniaturile pe care managerul tău de fișiere le-a creat deja.",
     "thumbs": "Miniaturi",
-    "thumbsTip": "Ubuntu lasă un program într-un mediu izolat doar cu o permisiune proprie. La pornire, CannonCommander adaugă o mică regulă AppArmor, care îți cere parola, și după o repornire desenează singur miniaturile. La oprire, regula dispare, iar și asta contează abia după o repornire.",
+    "thumbsTip": "Ubuntu lasă un program într-un mediu izolat doar cu o permisiune proprie. La pornire, CannonCommander adaugă o mică regulă AppArmor, care îți cere parola, și după o repornire desenează singur miniaturile. La oprire, regula dispare imediat.",
     "thumbsOnButton": "Pornește miniaturile sistemului",
     "thumbsOffButton": "Oprește miniaturile sistemului",
     "thumbsOn": "Gata, de acum CannonCommander desenează singur miniaturile.",

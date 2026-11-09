@@ -2545,7 +2545,7 @@
     "iconsTip": "在整个列表中显示系统图标。即使关闭此开关，程序和快捷方式也会显示自己的图标。",
     "iconsTipLinux": "在整个列表中显示系统图标。程序和快捷方式无论如何都会显示自己的图标。CannonCommander 只在隔离环境中生成缩略图。在无法做到的地方，例如 Ubuntu 24.04，你只能看到文件管理器已经生成的缩略图。",
     "thumbs": "缩略图",
-    "thumbsTip": "Ubuntu 只允许拥有专门权限的程序进入隔离环境。开启后，CannonCommander 会添加一条小的 AppArmor 规则（需要你的密码），重启后自行生成缩略图。关闭后，这条规则会被移除，同样在重启后生效。",
+    "thumbsTip": "Ubuntu 只允许拥有专门权限的程序进入隔离环境。开启后，CannonCommander 会添加一条小的 AppArmor 规则（需要你的密码），重启后自行生成缩略图。关闭后，这条规则会立即被移除。",
     "thumbsOnButton": "开启系统缩略图",
     "thumbsOffButton": "关闭系统缩略图",
     "thumbsOn": "完成，从现在起 CannonCommander 会自行生成缩略图。",

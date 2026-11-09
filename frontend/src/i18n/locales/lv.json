@@ -2715,7 +2715,7 @@
     "iconsTip": "Visā sarakstā rāda tavas sistēmas ikonas. Programmas un saīsnes rāda savu ikonu arī bez šī slēdža.",
     "iconsTipLinux": "Visā sarakstā rāda tavas sistēmas ikonas. Programmas un saīsnes savu ikonu rāda jebkurā gadījumā. Sīktēlus CannonCommander zīmē tikai izolētā vidē. Kur tas nav iespējams, piemēram, Ubuntu 24.04, tu redzi tikai tos, ko tavs failu pārvaldnieks jau ir izveidojis.",
     "thumbs": "Sīktēli",
-    "thumbsTip": "Ubuntu ielaiž programmu izolētā vidē tikai ar atsevišķu atļauju. Ieslēdzot CannonCommander pievieno nelielu AppArmor kārtulu, kas prasīs tavu paroli, un pēc restartēšanas pats zīmē sīktēlus. Izslēdzot kārtula atkal pazūd, un arī tas stājas spēkā pēc restartēšanas.",
+    "thumbsTip": "Ubuntu ielaiž programmu izolētā vidē tikai ar atsevišķu atļauju. Ieslēdzot CannonCommander pievieno nelielu AppArmor kārtulu, kas prasīs tavu paroli, un pēc restartēšanas pats zīmē sīktēlus. Izslēdzot kārtula uzreiz pazūd.",
     "thumbsOnButton": "Ieslēgt sistēmas sīktēlus",
     "thumbsOffButton": "Izslēgt sistēmas sīktēlus",
     "thumbsOn": "Gatavs, turpmāk CannonCommander pats zīmē sīktēlus.",

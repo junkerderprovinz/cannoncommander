@@ -2800,7 +2800,7 @@
     "iconsTip": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice pokažejo svojo ikono tudi brez tega stikala.",
     "iconsTipLinux": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice tako ali tako pokažejo svojo ikono. CannonCommander riše sličice le v izoliranem okolju. Kjer to ne gre, na primer v Ubuntu 24.04, vidite le tiste, ki jih je vaš upravitelj datotek že ustvaril.",
     "thumbs": "Sličice",
-    "thumbsTip": "Ubuntu spusti program v izolirano okolje le z lastnim dovoljenjem. Ob vklopu CannonCommander doda majhno pravilo AppArmor, ki zahteva vaše geslo, in po vnovičnem zagonu sam riše sličice. Ob izklopu pravilo spet izgine, tudi to velja šele po vnovičnem zagonu.",
+    "thumbsTip": "Ubuntu spusti program v izolirano okolje le z lastnim dovoljenjem. Ob vklopu CannonCommander doda majhno pravilo AppArmor, ki zahteva vaše geslo, in po vnovičnem zagonu sam riše sličice. Ob izklopu pravilo takoj izgine.",
     "thumbsOnButton": "Vklopi sistemske sličice",
     "thumbsOffButton": "Izklopi sistemske sličice",
     "thumbsOn": "Končano, CannonCommander zdaj sam riše sličice.",

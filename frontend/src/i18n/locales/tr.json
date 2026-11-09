@@ -2630,7 +2630,7 @@
     "iconsTip": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar bu anahtar kapalıyken de kendi simgelerini gösterir.",
     "iconsTipLinux": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar zaten kendi simgelerini gösterir. CannonCommander küçük resimleri yalnızca yalıtılmış bir ortamda çizer. Bunun mümkün olmadığı yerlerde, örneğin Ubuntu 24.04'te, yalnızca dosya yöneticinin daha önce oluşturduklarını görürsün.",
     "thumbs": "Küçük resimler",
-    "thumbsTip": "Ubuntu bir programı yalıtılmış ortama yalnızca ayrı bir izinle alır. Açtığında CannonCommander küçük bir AppArmor kuralı ekler, bunun için parolanı sorar ve yeniden başlattıktan sonra küçük resimleri kendisi çizer. Kapattığında kural yeniden kalkar, bu da ancak yeniden başlattıktan sonra geçerli olur.",
+    "thumbsTip": "Ubuntu bir programı yalıtılmış ortama yalnızca ayrı bir izinle alır. Açtığında CannonCommander küçük bir AppArmor kuralı ekler, bunun için parolanı sorar ve yeniden başlattıktan sonra küçük resimleri kendisi çizer. Kapattığında kural hemen kalkar.",
     "thumbsOnButton": "Sistem küçük resimlerini aç",
     "thumbsOffButton": "Sistem küçük resimlerini kapat",
     "thumbsOn": "Tamam, CannonCommander artık küçük resimleri kendisi çiziyor.",

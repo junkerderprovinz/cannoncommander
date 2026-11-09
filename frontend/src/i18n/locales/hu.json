@@ -2630,7 +2630,7 @@
     "iconsTip": "A lista minden részén a rendszer ikonjait mutatja. A programok és parancsikonok e kapcsoló nélkül is a saját ikonjukat mutatják.",
     "iconsTipLinux": "A lista minden részén a rendszer ikonjait mutatja. A programok és parancsikonok így is a saját ikonjukat mutatják. A CannonCommander csak elszigetelt környezetben készít bélyegképeket. Ahol ez nem lehetséges, például az Ubuntu 24.04 alatt, csak azokat látja, amelyeket a fájlkezelője már elkészített.",
     "thumbs": "Bélyegképek",
-    "thumbsTip": "Az Ubuntu csak külön engedéllyel enged be egy programot elszigetelt környezetbe. Bekapcsoláskor a CannonCommander felvesz egy kis AppArmor-szabályt, ehhez elkéri a jelszavát, és újraindítás után maga készíti a bélyegképeket. Kikapcsoláskor a szabály újra eltűnik, és ez is újraindítás után lép életbe.",
+    "thumbsTip": "Az Ubuntu csak külön engedéllyel enged be egy programot elszigetelt környezetbe. Bekapcsoláskor a CannonCommander felvesz egy kis AppArmor-szabályt, ehhez elkéri a jelszavát, és újraindítás után maga készíti a bélyegképeket. Kikapcsoláskor a szabály azonnal eltűnik.",
     "thumbsOnButton": "Rendszer-bélyegképek bekapcsolása",
     "thumbsOffButton": "Rendszer-bélyegképek kikapcsolása",
     "thumbsOn": "Kész, mostantól a CannonCommander maga készíti a bélyegképeket.",

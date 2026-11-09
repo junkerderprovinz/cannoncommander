@@ -2715,7 +2715,7 @@
     "iconsTip": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren la seva pròpia icona encara que això estigui desactivat.",
     "iconsTipLinux": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren igualment la seva pròpia icona. CannonCommander només genera miniatures en un entorn aïllat. On això no és possible, com a Ubuntu 24.04, només veieu les que el vostre gestor de fitxers ja ha creat.",
     "thumbs": "Miniatures",
-    "thumbsTip": "Ubuntu només deixa entrar un programa en un entorn aïllat amb un permís propi. En activar-ho, CannonCommander afegeix una petita regla d'AppArmor, que us demana la contrasenya, i després d'un reinici genera ell mateix les miniatures. En desactivar-ho, la regla desapareix, i això també compta després d'un reinici.",
+    "thumbsTip": "Ubuntu només deixa entrar un programa en un entorn aïllat amb un permís propi. En activar-ho, CannonCommander afegeix una petita regla d'AppArmor, que us demana la contrasenya, i després d'un reinici genera ell mateix les miniatures. En desactivar-ho, la regla desapareix de seguida.",
     "thumbsOnButton": "Activa les miniatures del sistema",
     "thumbsOffButton": "Desactiva les miniatures del sistema",
     "thumbsOn": "Fet, a partir d'ara CannonCommander genera ell mateix les miniatures.",

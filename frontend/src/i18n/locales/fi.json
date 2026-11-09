@@ -2630,7 +2630,7 @@
     "iconsTip": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa myös ilman tätä valintaa.",
     "iconsTipLinux": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa joka tapauksessa. CannonCommander piirtää esikatselukuvat vain eristetyssä ympäristössä. Missä se ei onnistu, kuten Ubuntu 24.04:ssä, näet vain ne, jotka tiedostonhallintasi on jo tehnyt.",
     "thumbs": "Esikatselukuvat",
-    "thumbsTip": "Ubuntu päästää ohjelman eristettyyn ympäristöön vain omalla luvalla. Kun otat tämän käyttöön, CannonCommander lisää pienen AppArmor-säännön, joka kysyy salasanaasi, ja piirtää uudelleenkäynnistyksen jälkeen esikatselukuvat itse. Kun poistat sen käytöstä, sääntö poistuu taas, ja sekin tulee voimaan uudelleenkäynnistyksen jälkeen.",
+    "thumbsTip": "Ubuntu päästää ohjelman eristettyyn ympäristöön vain omalla luvalla. Kun otat tämän käyttöön, CannonCommander lisää pienen AppArmor-säännön, joka kysyy salasanaasi, ja piirtää uudelleenkäynnistyksen jälkeen esikatselukuvat itse. Kun poistat sen käytöstä, sääntö poistuu heti.",
     "thumbsOnButton": "Ota järjestelmän esikatselukuvat käyttöön",
     "thumbsOffButton": "Poista järjestelmän esikatselukuvat käytöstä",
     "thumbsOn": "Valmis, CannonCommander piirtää nyt esikatselukuvat itse.",

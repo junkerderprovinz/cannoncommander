@@ -2800,7 +2800,7 @@
     "iconsTip": "Visame sąraše rodo tavo sistemos piktogramas. Programos ir nuorodos savo piktogramą rodo ir be šio jungiklio.",
     "iconsTipLinux": "Visame sąraše rodo tavo sistemos piktogramas. Programos ir nuorodos savo piktogramą rodo bet kuriuo atveju. Miniatiūras CannonCommander piešia tik izoliuotoje aplinkoje. Kur to padaryti negalima, pavyzdžiui, Ubuntu 24.04, matai tik tas, kurias tavo failų tvarkytuvė jau sukūrė.",
     "thumbs": "Miniatiūros",
-    "thumbsTip": "Ubuntu įleidžia programą į izoliuotą aplinką tik su atskiru leidimu. Įjungus CannonCommander prideda nedidelę AppArmor taisyklę, kuri paprašys tavo slaptažodžio, ir paleidus iš naujo pats piešia miniatiūras. Išjungus taisyklė vėl dingsta, ir tai taip pat galioja tik paleidus iš naujo.",
+    "thumbsTip": "Ubuntu įleidžia programą į izoliuotą aplinką tik su atskiru leidimu. Įjungus CannonCommander prideda nedidelę AppArmor taisyklę, kuri paprašys tavo slaptažodžio, ir paleidus iš naujo pats piešia miniatiūras. Išjungus taisyklė iškart dingsta.",
     "thumbsOnButton": "Įjungti sistemos miniatiūras",
     "thumbsOffButton": "Išjungti sistemos miniatiūras",
     "thumbsOn": "Atlikta, nuo šiol CannonCommander pats piešia miniatiūras.",
