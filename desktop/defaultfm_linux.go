@@ -15,6 +15,7 @@ import (
 	"github.com/godbus/dbus/v5"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/flatpak"
 )
 
 const (
@@ -46,7 +47,14 @@ type xdgHandler struct {
 	reload func()
 }
 
+// newFolderHandler is nil in a Flatpak, which can neither write the entry
+// and the service the computer reads nor own the FileManager1 name. Its own
+// desktop entry names it for folders, so the system settings can make it
+// the default there.
 func newFolderHandler() folderHandler {
+	if flatpak.ID() != "" {
+		return nil
+	}
 	dirs := currentDirs()
 	if len(dirs.config) == 0 {
 		return nil

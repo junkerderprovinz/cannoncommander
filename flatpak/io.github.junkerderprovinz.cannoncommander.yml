@@ -1,0 +1,87 @@
+# Builds the desktop app as a Flatpak from this checkout:
+#
+#     flatpak-builder --user --install --force-clean --state-dir=flatpak/.state \
+#       flatpak/.build flatpak/io.github.junkerderprovinz.cannoncommander.yml
+#
+# The build has no network, so every Go module and npm package comes from
+# go-sources.json and node-sources.json. node flatpak/update-sources.mjs writes
+# both again after a dependency changes.
+id: io.github.junkerderprovinz.cannoncommander
+runtime: org.gnome.Platform
+runtime-version: '51'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.golang
+  - org.freedesktop.Sdk.Extension.node24
+command: cannoncommander
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # The update check, the office servers and ArrowLoop.
+  - --share=network
+  # A file manager shows the whole computer. This also puts the system's own
+  # /usr and /etc under /run/host, where the icons and file types are read.
+  - --filesystem=host
+  # The network places the desktop has mounted, and taking them away again.
+  - --filesystem=xdg-run/gvfs
+  - --talk-name=org.gtk.vfs.*
+  # The drives: udisks2 lists, mounts and ejects them.
+  - --system-talk-name=org.freedesktop.UDisks2
+  # The desktop's thumbnail service draws into the cache every file manager
+  # shares, since the sandbox runs no thumbnailer of its own.
+  - --talk-name=org.freedesktop.thumbnails.Thumbnailer1
+  # The properties dialog of the desktop's own file manager.
+  - --talk-name=org.freedesktop.FileManager1
+modules:
+  - name: cannoncommander
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/golang/bin:/usr/lib/sdk/node24/bin
+      env:
+        GOTOOLCHAIN: local
+        GOFLAGS: -modcacherw
+        GOPROXY: file:///run/build/cannoncommander/gomod
+        GOSUMDB: 'off'
+        GOMODCACHE: /run/build/cannoncommander/gomodcache
+        GOCACHE: /run/build/cannoncommander/gocache
+        CGO_ENABLED: '1'
+    build-commands:
+      - npm --prefix frontend ci --offline --no-audit --no-fund --cache=$FLATPAK_BUILDER_BUILDDIR/flatpak-node/npm-cache
+      - npm --prefix frontend run build
+      # The MuPDF headers the preview package compiles against, linked where
+      # backend/scripts/setup-gofitz-cgo links them for scripts/desktop.mjs.
+      # That script asks the proxy for a file the offline sources leave out,
+      # so the link is made here once go list has put go-fitz in the cache.
+      - >-
+        go -C desktop list -deps -tags desktop,production,mupdf,gtk3 . > /dev/null &&
+        fitz=$(sed -n 's|^[[:space:]]*github.com/gen2brain/go-fitz \(v[^ ]*\).*|\1|p' desktop/go.mod) &&
+        ln -sfn "$GOMODCACHE/github.com/gen2brain/go-fitz@$fitz/include" backend/internal/preview/gofitzinclude
+      # The tags and flags of scripts/desktop.mjs on Linux. The newest release
+      # in the metainfo is the version the Info tile shows, so a tag cannot
+      # ship without its release entry.
+      - >-
+        version=$(sed -n 's|.*<release version="\([^"]*\)".*|\1|p' flatpak/io.github.junkerderprovinz.cannoncommander.metainfo.xml | head -1);
+        cd desktop && go build -tags desktop,production,mupdf,gtk3 -trimpath -buildvcs=false
+        -ldflags "-s -w -X github.com/junkerderprovinz/cannoncommander/backend/internal/version.Version=v$version"
+        -o cannoncommander .
+      - install -Dm755 desktop/cannoncommander $FLATPAK_DEST/bin/cannoncommander
+      - install -Dm644 flatpak/$FLATPAK_ID.desktop $FLATPAK_DEST/share/applications/$FLATPAK_ID.desktop
+      - install -Dm644 flatpak/$FLATPAK_ID.metainfo.xml $FLATPAK_DEST/share/metainfo/$FLATPAK_ID.metainfo.xml
+      - install -Dm644 desktop/installer/logo.svg $FLATPAK_DEST/share/icons/hicolor/scalable/apps/$FLATPAK_ID.svg
+      - install -Dm644 desktop/installer/icon.png $FLATPAK_DEST/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png
+      - install -Dm644 LICENSE $FLATPAK_DEST/share/licenses/$FLATPAK_ID/LICENSE
+      - install -Dm644 NOTICE $FLATPAK_DEST/share/licenses/$FLATPAK_ID/NOTICE
+    sources:
+      - type: dir
+        path: ..
+        skip:
+          - .git
+          - frontend/node_modules
+          - prototype/node_modules
+          - flatpak/.state
+          - flatpak/.build
+          - flatpak/.repo
+      - go-sources.json
+      - node-sources.json

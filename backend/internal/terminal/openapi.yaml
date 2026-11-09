@@ -104,8 +104,10 @@ paths:
         "404":
           description: |
             Not the desktop app (desktopOnly), the program the kind names is
-            not installed (terminalMissing, with the program's name), or no
-            terminal program was found at all (noTerminal).
+            not installed (terminalMissing, with the program's name), no
+            terminal program was found at all (noTerminal), or the desktop app
+            runs in a Flatpak, whose sandbox holds none of the computer's
+            (terminalFlatpak).
           content:
             application/problem+json:
               schema:

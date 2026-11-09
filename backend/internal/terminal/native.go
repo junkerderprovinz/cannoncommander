@@ -14,6 +14,7 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 	v1 "github.com/junkerderprovinz/cannoncommander/backend/internal/api/v1"
 	activitydb "github.com/junkerderprovinz/cannoncommander/backend/internal/database/activity"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/flatpak"
 )
 
 // The desktop app runs on the user's own computer, so instead of a shell in
@@ -28,6 +29,7 @@ var (
 	errKind       = v1.Coded(http.StatusBadRequest, "terminalKind", "kind is one of cmd, sh, bash, terminal, powershell, pwsh or wt")
 	errMissing    = v1.Coded(http.StatusNotFound, "terminalMissing", "that program is not installed here")
 	errNoTerminal = v1.Coded(http.StatusNotFound, "noTerminal", "no terminal program was found on this computer")
+	errFlatpak    = v1.Coded(http.StatusNotFound, "terminalFlatpak", "a Flatpak cannot open the computer's terminal")
 )
 
 // launch is a terminal program to start in a folder.
@@ -50,6 +52,10 @@ type native struct {
 func newNative() native {
 	return native{
 		pick: func(kind, dir string) (launch, error) {
+			// The terminal programs are the computer's, outside the sandbox.
+			if flatpak.ID() != "" {
+				return launch{}, errFlatpak
+			}
 			return nativeTerminal(runtime.GOOS, kind, dir, os.Getenv("TERMINAL"), exec.LookPath)
 		},
 		start: startNative,

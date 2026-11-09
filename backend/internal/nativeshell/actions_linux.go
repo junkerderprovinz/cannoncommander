@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/xdg"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/flatpak"
 )
 
 // actionIconSize is the edge of an action's icon in pixels, twice the glyph
@@ -82,7 +83,13 @@ func RunAction(files []string, key string) error {
 	return nil
 }
 
+// actions are the rows the other file managers offer for sel, and none in a
+// Flatpak, since the programs they run are the computer's and outside its
+// sandbox.
 func (k *desk) actions(sel selection) []action {
+	if flatpak.ID() != "" {
+		return nil
+	}
 	all := slices.Concat(k.dolphin(sel), k.nemo(sel), k.nautilus(sel), k.thunar(sel))
 	slices.SortFunc(all, func(a, b action) int {
 		return cmp.Or(

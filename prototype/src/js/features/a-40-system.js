@@ -148,6 +148,7 @@
       { tile: 'glim-tile-windows', mark: 'glim-windows-mark', svg: MARKS.windows, name: 'Windows' },
       { tile: 'glim-tile-apple', svg: MARKS.apple, name: 'macOS' },
       { tile: 'glim-tile-linux', svg: MARKS.linux, name: 'Linux' },
+      { tile: 'glim-tile-flatpak', mark: 'glim-flatpak-mark', svg: MARKS.flatpak, name: 'Flatpak' },
     ]))
       + hinted('Handy-App', 'Die CannonCommander-App für Android-Handys. Sobald es sie gibt, findest du sie hier.', builds([
         { tile: 'glim-tile-play', svg: MARKS.play, name: 'Google Play' },

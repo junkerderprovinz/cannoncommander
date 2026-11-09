@@ -138,6 +138,22 @@ func FromEnv(getenv func(string) string, look func(string) (string, error)) Desk
 		Home:   home,
 		Look:   look,
 	}
+	if getenv("FLATPAK_ID") != "" {
+		// Inside a Flatpak the variables name the app's folder under
+		// ~/.var/app and the runtime's /usr. The icons, types, settings and
+		// thumbnail cache the person sees are the computer's, which the
+		// sandbox shows in the home folder and under /run/host. The
+		// runtime's own folder stays last for an icon the computer lacks.
+		host := func(name, fallback string) string {
+			if v := getenv("HOST_" + name); v != "" {
+				return v
+			}
+			return fallback
+		}
+		d.Data = []string{host("XDG_DATA_HOME", path.Join(home, ".local", "share")), "/run/host/usr/local/share", "/run/host/usr/share", "/usr/share"}
+		d.Config = []string{host("XDG_CONFIG_HOME", path.Join(home, ".config")), "/run/host/etc/xdg"}
+		d.Cache = host("XDG_CACHE_HOME", path.Join(home, ".cache"))
+	}
 	for _, name := range list(strings.ReplaceAll(getenv("XDG_CURRENT_DESKTOP"), ";", ":")) {
 		d.Desktops = append(d.Desktops, strings.ToLower(name))
 	}
