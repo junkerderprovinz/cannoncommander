@@ -2,11 +2,7 @@ module github.com/junkerderprovinz/cannoncommander/desktop/installer
 
 go 1.27.0
 
-require github.com/junkerderprovinz/pommelporter v1.1.1
-
-// The installer offers the app's choices, which pommelporter carries from
-// the checkout beside this repository.
-replace github.com/junkerderprovinz/pommelporter => ../../../pommelporter
+require github.com/junkerderprovinz/pommelporter v1.1.5
 
 require (
 	github.com/coder/websocket v1.8.14 // indirect
