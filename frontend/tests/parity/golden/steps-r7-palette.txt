@@ -22,7 +22,7 @@ shortcut window has Strg+K: Befehl suchen Strg+K
 1600 users: 2 cards, 1 col, width 832, bottoms 539
 1600 rules: 2 cards, 1 col, width 832, bottoms 521
 1600 shares: 1 cards, 1 col, width 832, bottoms 229
-1600 integrations: 3 cards, 1 col, width 832, bottoms 576
+1600 integrations: 5 cards, 1 col, width 832, bottoms 1140
 1600 app: 2 cards, 1 col, width 832, bottoms 322
 1600 system: 2 cards, 1 col, width 832, bottoms 376
 1600 info: 4 cards, 1 col, width 832, bottoms 976
@@ -37,7 +37,7 @@ shortcut window has Strg+K: Befehl suchen Strg+K
 1200 users: 2 cards, 1 col, width 832, bottoms 539
 1200 rules: 2 cards, 1 col, width 832, bottoms 521
 1200 shares: 1 cards, 1 col, width 832, bottoms 229
-1200 integrations: 3 cards, 1 col, width 832, bottoms 576
+1200 integrations: 5 cards, 1 col, width 832, bottoms 1140
 1200 app: 2 cards, 1 col, width 832, bottoms 322
 1200 system: 2 cards, 1 col, width 832, bottoms 376
 1200 info: 4 cards, 1 col, width 832, bottoms 976

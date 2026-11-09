@@ -28,7 +28,9 @@
       + CC.card('WebDAV und rclone',
         frow('WebDAV-Server', sw(it.webdav, 'data-it="webdav"'), 'Damit bindest du die Dateien als Laufwerk ein, etwa im Windows-Explorer oder in einer Handy-App. Es gelten dieselben Benutzer und Regeln.')
         + (it.webdav ? frow('Adresse', A.copyField('https://cannon.tower.lan/dav/')) : '')
-        + frow('rclone', pill(`${rc.version}, ${rc.path}`, 'mono'), 'Hängt die Fernziele ein. Das Programm ist im Container dabei.'));
+        + frow('rclone', pill(`${rc.version}, ${rc.path}`, 'mono'), 'Hängt die Fernziele ein. Das Programm ist im Container dabei.'))
+      + CC.mcp.cards();
+    CC.mcp.bind(host);
     host.addEventListener('change', e => {
       const k = e.target.dataset.it;
       if (k) { it[k] = swVal(e.target); if (k === 'webdav') A.redraw(); CC.toast('Gespeichert'); return; }
@@ -258,7 +260,8 @@
         + part('Markieren', '<p>Einfg markiert eine Zeile und springt zur nächsten, die Leertaste zeigt die Datei groß in der Schnellansicht. Strg+Klick nimmt einzelne dazu, Umschalt+Klick einen ganzen Bereich. Mit + markierst du nach Muster, etwa alle *.jpg.</p>')
         + part('Finden', '<p>Ein / öffnet den Schnellfilter im aktuellen Ordner. Alt+F7 sucht auf dem ganzen Server, schnell dank des Index unter Einstellungen, Quellen.</p>')
         + part('Teilen und Fernziele', '<p>Über Datei, Freigeben bekommst du einen Link mit Ablaufdatum und auf Wunsch einem Passwort. Google Drive, ein NAS oder einen anderen Server hängst du unter Einstellungen, Fernziele ein. Danach liegen sie im Ordnerbaum wie jeder andere Ordner.</p>')
-        + part('Wer was darf', '<p>Jede Person hat eine Rolle und einen Bereich, aus dem sie nicht herauskommt. Zugriffsregeln verbergen darin einzelne Ordner oder machen sie schreibgeschützt. Unter Konto und Sicherheit schaltest du die Zwei-Faktor-Authentifizierung ein.</p>'),
+        + part('Wer was darf', '<p>Jede Person hat eine Rolle und einen Bereich, aus dem sie nicht herauskommt. Zugriffsregeln verbergen darin einzelne Ordner oder machen sie schreibgeschützt. Unter Konto und Sicherheit schaltest du die Zwei-Faktor-Authentifizierung ein.</p>')
+        + part('KI-Assistenten', '<p>Unter Einstellungen, Anbindungen, MCP-Server verbindest du Claude, ChatGPT oder einen anderen Assistenten mit deinen Dateien. Er sieht nur, was du auch siehst, und liest erst einmal nur. Schreiben erlaubst du ihm mit einem Schalter, und jede Änderung lässt sich rückgängig machen.</p>'),
       foot: [{ label: 'Tastenkürzel', g: 'IconKeyboard', run: () => setTimeout(() => CC.run('shortcuts'), 0) }, closeBtn] });
   }
 
