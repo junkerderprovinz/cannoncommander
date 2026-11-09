@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panneau gauche",
     "right": "Panneau droit",
@@ -1974,10 +1973,11 @@
       "Enter": "Entrée",
       "Tab": "Tab"
     },
+    "use": "Utilisation",
     "preset": "Modèle",
-    "style": "Utilisation comme",
-    "styleTip": "Total Commander place par exemple la compression sur Alt+F5, l'extraction sur Alt+F9 et le renommage sur Maj+F6. Vos propres touches restent telles quelles.",
-    "styleTipDesktop": "Comme dans l'Explorateur, F5 actualise, Retour arrière ramène en arrière et un clic sélectionne. Total Commander place par exemple la compression sur Alt+F5. Vos propres touches restent telles quelles.",
+    "layoutTip": "Comme un Commander, F5 copie et F6 déplace. Comme dans l'Explorateur, F5 actualise, Retour arrière revient en arrière et un clic sélectionne. Vos propres touches restent telles quelles.",
+    "asCommander": "Comme un Commander",
+    "asExplorer": "Comme dans l'Explorateur",
     "vim": "Touches Vim dans l'éditeur",
     "vimTip": "L'éditeur fonctionne alors comme Vim, avec un mode normal et un mode insertion. :w enregistre et :q ferme le fichier.",
     "clickSelect": "Sélection comme dans l'Explorateur",
@@ -1992,7 +1992,7 @@
     "change": "Changer la touche pour {action}",
     "press": "Appuyez sur une touche…",
     "none": "aucune",
-    "clear": "Retirer la touche",
+    "clear": "Supprimer la touche",
     "undo": "Comme avant",
     "fixed": "{key} est réservée. Choisissez une autre touche.",
     "letter": "Les lettres et chiffres seuls servent à la recherche rapide. Ajoutez Ctrl, Alt ou une touche F.",
@@ -2008,7 +2008,7 @@
     "resetAll": "Tout réinitialiser",
     "own": "Vos propres touches",
     "reset": "Réinitialiser",
-    "resetTip": "Rétablit les touches du modèle. Le modèle lui-même reste.",
+    "resetTip": "Annule vos propres touches.",
     "ownNow": "Vos raccourcis s'appliquent maintenant partout",
     "asShipped": "Les raccourcis sont revenus à leur état d'origine",
     "fixedHead": "Réservées",
@@ -2712,7 +2712,15 @@
     "propsSystemTip": "Ouvre la boîte de dialogue du gestionnaire de fichiers de votre bureau.",
     "propsOpen": "Ouvrir",
     "icons": "Icônes du système",
-    "iconsTip": "Affiche partout dans la liste les icônes de votre système. Les programmes et les raccourcis gardent leur propre icône même sans cette option."
+    "iconsTip": "Affiche partout dans la liste les icônes de votre système. Les programmes et les raccourcis gardent leur propre icône même sans cette option.",
+    "iconsTipLinux": "Affiche partout dans la liste les icônes de votre système. Les programmes et les raccourcis gardent de toute façon leur propre icône. CannonCommander ne dessine les miniatures que dans un bac à sable. Là où ce n'est pas possible, comme sous Ubuntu 24.04, vous ne voyez que celles que votre gestionnaire de fichiers a déjà créées.",
+    "thumbs": "Miniatures",
+    "thumbsTip": "Ubuntu ne laisse un programme entrer dans un bac à sable qu'avec une autorisation propre. Pour l'activer, CannonCommander ajoute une petite règle AppArmor, ce qui demande votre mot de passe, puis dessine lui-même les miniatures. En le désactivant, la règle disparaît.",
+    "thumbsOnButton": "Activer les miniatures du système",
+    "thumbsOffButton": "Désactiver les miniatures du système",
+    "thumbsOn": "C'est fait, CannonCommander dessine désormais lui-même les miniatures.",
+    "thumbsOff": "Désactivé, la règle AppArmor a disparu.",
+    "thumbsStillOut": "La règle est en place, mais le bac à sable ne fonctionne toujours pas, désolé."
   },
   "shortcuts": {
     "title": "Raccourcis clavier",
@@ -3747,6 +3755,7 @@
     "removable": "Lecteur USB",
     "optical": "Lecteur DVD",
     "network": "Lecteur réseau",
+    "shareOn": "{share} sur {server}",
     "volume": "Volume de {size}"
   },
   "files": {

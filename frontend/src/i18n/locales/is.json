@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Vinstri gluggi",
     "right": "Hægri gluggi",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Notkun",
     "preset": "Forskrift",
-    "style": "Notkun eins og",
-    "styleTip": "Total Commander setur til dæmis þjöppun á Alt+F5, afþjöppun á Alt+F9 og endurnefningu á Shift+F6. Þínir eigin lyklar haldast óbreyttir.",
-    "styleTipDesktop": "Eins og í Explorer endurnýjar F5, Backspace fer til baka og smellur velur. Total Commander setur til dæmis þjöppun á Alt+F5. Þínir eigin lyklar haldast óbreyttir.",
+    "layoutTip": "Eins og Commander afritar F5 og F6 færir. Eins og í Explorer endurnýjar F5, Backspace fer til baka og smellur velur. Þínir eigin lyklar haldast óbreyttir.",
+    "asCommander": "Eins og Commander",
+    "asExplorer": "Eins og í Explorer",
     "vim": "Vim-lyklar í ritlinum",
     "vimTip": "Ritillinn virkar þá eins og Vim, með venjulegum ham og innsetningarham. :w vistar og :q lokar skránni.",
     "clickSelect": "Val eins og í Explorer",
@@ -1930,7 +1930,7 @@
     "change": "Breyta lykli fyrir {action}",
     "press": "Ýttu á lykil …",
     "none": "enginn",
-    "clear": "Fjarlægja lykil",
+    "clear": "Eyða lykli",
     "undo": "Eins og áður",
     "fixed": "{key} er fastbundinn. Veldu annan lykil.",
     "letter": "Stakir bókstafir og tölustafir tilheyra flýtileitinni. Bættu við Ctrl, Alt eða F-lykli.",
@@ -1946,7 +1946,7 @@
     "resetAll": "Endurstilla allt",
     "own": "Þínir eigin lyklar",
     "reset": "Endurstilla",
-    "resetTip": "Sækir aftur lykla forskriftarinnar. Forskriftin sjálf helst.",
+    "resetTip": "Afturkallar þína eigin lykla.",
     "ownNow": "Flýtilyklarnir þínir gilda nú alls staðar",
     "asShipped": "Flýtilyklarnir eru aftur eins og við afhendingu",
     "fixedHead": "Fastbundnir",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Opnar glugga skráastjóra skjáborðsins þíns.",
     "propsOpen": "Opna",
     "icons": "Kerfistákn",
-    "iconsTip": "Sýnir tákn kerfisins þíns alls staðar í listanum. Forrit og flýtileiðir sýna sitt eigið tákn líka þegar slökkt er á þessu."
+    "iconsTip": "Sýnir tákn kerfisins þíns alls staðar í listanum. Forrit og flýtileiðir sýna sitt eigið tákn líka þegar slökkt er á þessu.",
+    "iconsTipLinux": "Sýnir tákn kerfisins þíns alls staðar í listanum. Forrit og flýtileiðir sýna sitt eigið tákn hvort sem er. CannonCommander teiknar smámyndir aðeins í einangruðu umhverfi. Þar sem það gengur ekki, eins og á Ubuntu 24.04, sérðu aðeins þær sem skráastjórinn þinn hefur þegar búið til.",
+    "thumbs": "Smámyndir",
+    "thumbsTip": "Ubuntu hleypir forriti aðeins inn í einangrað umhverfi með sérstakri heimild. Þegar kveikt er á þessu bætir CannonCommander við lítilli AppArmor-reglu, sem biður um lykilorðið þitt, og teiknar síðan smámyndir sjálft. Þegar slökkt er á þessu hverfur reglan aftur.",
+    "thumbsOnButton": "Kveikja á smámyndum kerfisins",
+    "thumbsOffButton": "Slökkva á smámyndum kerfisins",
+    "thumbsOn": "Búið, CannonCommander teiknar nú smámyndir sjálft.",
+    "thumbsOff": "Slökkt, AppArmor-reglan er farin aftur.",
+    "thumbsStillOut": "Reglan er komin, en einangraða umhverfið virkar því miður enn ekki."
   },
   "shortcuts": {
     "title": "Flýtilyklar",
@@ -3615,6 +3623,7 @@
     "removable": "USB-drif",
     "optical": "DVD-drif",
     "network": "Netdrif",
+    "shareOn": "{share} á {server}",
     "volume": "{size} gagnasvæði"
   },
   "files": {

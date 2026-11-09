@@ -19,8 +19,8 @@ const change = (map: KeyMap) => commit(map, layout());
 </script>
 
 <template>
-  <Card :title="t('keys.preset')">
-    <FieldRow :label="t('keys.style')" :hint="t(host.desktop ? 'keys.styleTipDesktop' : 'keys.styleTip')">
+  <Card :title="t('keys.use')">
+    <FieldRow v-if="host.desktop" :label="t('keys.preset')" :hint="t('keys.layoutTip')">
       <Selector id="kt-layout" :model-value="layout()" :items="segItems(layoutItems())" size="sm" activation="manual" inline button-height pairs-on-phone @update:model-value="useLayout($event as Preset)" />
     </FieldRow>
     <FieldRow v-if="host.desktop" :label="t('keys.clickSelect')" :hint="t('keys.clickSelectTip')">

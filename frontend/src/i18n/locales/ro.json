@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panoul stâng",
     "right": "Panoul drept",
@@ -1974,10 +1973,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Utilizare",
     "preset": "Șablon",
-    "style": "Utilizare ca",
-    "styleTip": "Total Commander pune, de exemplu, arhivarea pe Alt+F5, dezarhivarea pe Alt+F9 și redenumirea pe Shift+F6. Tastele tale rămân așa cum sunt.",
-    "styleTipDesktop": "Ca în Explorer, F5 reîmprospătează, Backspace merge înapoi și un clic selectează. Total Commander pune, de exemplu, arhivarea pe Alt+F5. Tastele tale rămân așa cum sunt.",
+    "layoutTip": "Ca un Commander, F5 copiază, iar F6 mută. Ca în Explorer, F5 reîmprospătează, Backspace merge înapoi, iar un clic selectează. Tastele tale rămân așa cum sunt.",
+    "asCommander": "Ca un Commander",
+    "asExplorer": "Ca în Explorer",
     "vim": "Taste Vim în editor",
     "vimTip": "Editorul funcționează atunci ca Vim, cu mod normal și mod de inserare. Cu :w salvezi, cu :q închizi fișierul.",
     "clickSelect": "Selecție ca în Explorer",
@@ -1992,7 +1992,7 @@
     "change": "Schimbă tasta pentru {action}",
     "press": "Apasă o tastă…",
     "none": "niciuna",
-    "clear": "Elimină tasta",
+    "clear": "Șterge tasta",
     "undo": "Ca înainte",
     "fixed": "{key} este rezervată. Alege altă tastă.",
     "letter": "Literele și cifrele singure sunt pentru căutarea rapidă. Adaugă Ctrl, Alt sau o tastă F.",
@@ -2008,7 +2008,7 @@
     "resetAll": "Resetează tot",
     "own": "Tastele tale",
     "reset": "Resetează",
-    "resetTip": "Aduce înapoi tastele șablonului. Șablonul în sine rămâne.",
+    "resetTip": "Anulează tastele tale.",
     "ownNow": "Comenzile tale rapide funcționează acum peste tot",
     "asShipped": "Comenzile rapide sunt din nou cele originale",
     "fixedHead": "Rezervate",
@@ -2712,7 +2712,15 @@
     "propsSystemTip": "Deschide dialogul managerului de fișiere al desktopului tău.",
     "propsOpen": "Deschide",
     "icons": "Pictograme de sistem",
-    "iconsTip": "Arată în toată lista pictogramele sistemului tău. Programele și comenzile rapide își arată propria pictogramă chiar și cu acest comutator oprit."
+    "iconsTip": "Arată în toată lista pictogramele sistemului tău. Programele și comenzile rapide își arată propria pictogramă chiar și cu acest comutator oprit.",
+    "iconsTipLinux": "Arată în toată lista pictogramele sistemului tău. Programele și comenzile rapide își arată oricum propria pictogramă. CannonCommander desenează miniaturi doar într-un mediu izolat. Unde nu se poate, ca pe Ubuntu 24.04, vezi doar miniaturile pe care managerul tău de fișiere le-a creat deja.",
+    "thumbs": "Miniaturi",
+    "thumbsTip": "Ubuntu lasă un program într-un mediu izolat doar cu o permisiune proprie. La pornire, CannonCommander adaugă o mică regulă AppArmor, care îți cere parola, și de atunci desenează singur miniaturile. La oprire, regula dispare.",
+    "thumbsOnButton": "Pornește miniaturile sistemului",
+    "thumbsOffButton": "Oprește miniaturile sistemului",
+    "thumbsOn": "Gata, de acum CannonCommander desenează singur miniaturile.",
+    "thumbsOff": "Oprit, regula AppArmor a dispărut.",
+    "thumbsStillOut": "Regula există, dar mediul izolat tot nu funcționează, ne pare rău."
   },
   "shortcuts": {
     "title": "Comenzi rapide de la tastatură",
@@ -3747,6 +3755,7 @@
     "removable": "Unitate USB",
     "optical": "Unitate DVD",
     "network": "Unitate de rețea",
+    "shareOn": "{share} pe {server}",
     "volume": "Volum de {size}"
   },
   "files": {

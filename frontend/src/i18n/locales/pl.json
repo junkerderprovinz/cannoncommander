@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Lewe okno",
     "right": "Prawe okno",
@@ -2036,10 +2035,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Obsługa",
     "preset": "Układ",
-    "style": "Obsługa jak",
-    "styleTip": "Total Commander kładzie np. pakowanie na Alt+F5, rozpakowywanie na Alt+F9, a zmianę nazwy na Shift+F6. Twoje własne klawisze zostają bez zmian.",
-    "styleTipDesktop": "Jak w Eksploratorze, F5 odświeża, Backspace cofa, a kliknięcie zaznacza. Total Commander kładzie np. pakowanie na Alt+F5. Twoje własne klawisze zostają bez zmian.",
+    "layoutTip": "Jak Commander: F5 kopiuje, a F6 przenosi. Jak w Eksploratorze: F5 odświeża, Backspace wraca, a kliknięcie zaznacza. Twoje własne klawisze zostają bez zmian.",
+    "asCommander": "Jak Commander",
+    "asExplorer": "Jak w Eksploratorze",
     "vim": "Klawisze Vim w edytorze",
     "vimTip": "Edytor działa wtedy jak Vim, z trybem normalnym i trybem wstawiania. :w zapisuje, a :q zamyka plik.",
     "clickSelect": "Zaznaczanie jak w Eksploratorze",
@@ -2070,7 +2070,7 @@
     "resetAll": "Resetuj wszystko",
     "own": "Twoje własne klawisze",
     "reset": "Resetuj",
-    "resetTip": "Przywraca klawisze układu. Sam układ zostaje.",
+    "resetTip": "Cofa twoje własne klawisze.",
     "ownNow": "Twoje skróty działają teraz wszędzie",
     "asShipped": "Skróty są znów takie, jak przy instalacji",
     "fixedHead": "Przypisane na stałe",
@@ -2797,7 +2797,15 @@
     "propsSystemTip": "Otwiera okno dialogowe menedżera plików twojego pulpitu.",
     "propsOpen": "Otwórz",
     "icons": "Ikony systemowe",
-    "iconsTip": "Pokazuje w całej liście ikony twojego systemu. Programy i skróty pokazują własną ikonę także bez tego przełącznika."
+    "iconsTip": "Pokazuje w całej liście ikony twojego systemu. Programy i skróty pokazują własną ikonę także bez tego przełącznika.",
+    "iconsTipLinux": "Pokazuje w całej liście ikony twojego systemu. Programy i skróty i tak pokazują własną ikonę. CannonCommander tworzy miniatury tylko w odizolowanym środowisku. Tam, gdzie to niemożliwe, na przykład w Ubuntu 24.04, widzisz tylko te, które twój menedżer plików już utworzył.",
+    "thumbs": "Miniatury",
+    "thumbsTip": "Ubuntu wpuszcza program do odizolowanego środowiska tylko z osobnym pozwoleniem. Po włączeniu CannonCommander dodaje małą regułę AppArmor, która pyta o twoje hasło, i od tej pory sam tworzy miniatury. Po wyłączeniu reguła znika.",
+    "thumbsOnButton": "Włącz miniatury systemowe",
+    "thumbsOffButton": "Wyłącz miniatury systemowe",
+    "thumbsOn": "Gotowe, od teraz CannonCommander sam tworzy miniatury.",
+    "thumbsOff": "Wyłączone, reguły AppArmor już nie ma.",
+    "thumbsStillOut": "Reguła jest na miejscu, ale odizolowane środowisko niestety nadal nie działa."
   },
   "shortcuts": {
     "title": "Skróty klawiszowe",
@@ -3879,6 +3887,7 @@
     "removable": "Dysk USB",
     "optical": "Stacja dysków DVD",
     "network": "Dysk sieciowy",
+    "shareOn": "{share} na {server}",
     "volume": "Wolumin {size}"
   },
   "files": {

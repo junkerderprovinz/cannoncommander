@@ -83,8 +83,8 @@ function gatherWindow() {
 }
 
 export default function setup() {
-  const user = useUser();
-  action('gather', { label: tl('gather.title'), g: 'IconMerge', when: () => user.admin(), run: gatherWindow });
+  const user = useUser(), U = useUnraid();
+  action('gather', { label: tl('gather.title'), g: 'IconMerge', when: () => user.admin() && U.available, run: gatherWindow });
   const tools = MENUS.find(([id]) => id === 'tools')![1];
   if (!tools.includes('gather')) tools.splice(tools.indexOf('diskUsage') + 1, 0, 'gather');
 }

@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Ezkerreko panela",
     "right": "Eskuineko panela",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Erabilera",
     "preset": "Txantiloia",
-    "style": "Erabilera honen antzera",
-    "styleTip": "Total Commander-ek, adibidez, konprimatzea Alt+F5 teklan jartzen du, erauztea Alt+F9 teklan eta izena aldatzea Shift+F6 teklan. Zure teklak dauden bezala geratzen dira.",
-    "styleTipDesktop": "Arakatzailean bezala, F5 teklak eguneratzen du, Atzera-teklak atzera egiten du eta klik batek hautatzen du. Total Commander-ek, adibidez, konprimatzea Alt+F5 teklan jartzen du. Zure teklak dauden bezala geratzen dira.",
+    "layoutTip": "Commander baten antzera, F5ek kopiatzen du eta F6k mugitzen du. Arakatzailean bezala, F5ek freskatzen du, Atzera-teklak atzera egiten du eta klik batek hautatzen du. Zure teklak dauden bezala geratzen dira.",
+    "asCommander": "Commander baten antzera",
+    "asExplorer": "Arakatzailean bezala",
     "vim": "Vim teklak editorean",
     "vimTip": "Orduan editoreak Vim bezala funtzionatzen du, modu arruntarekin eta txertatze-moduarekin. Gordetzeko, erabili :w, eta fitxategia ixteko, :q.",
     "clickSelect": "Hautapena Arakatzailean bezala",
@@ -1930,7 +1930,7 @@
     "change": "Aldatu {action} ekintzaren tekla",
     "press": "Sakatu tekla bat…",
     "none": "bat ere ez",
-    "clear": "Kendu tekla",
+    "clear": "Ezabatu tekla",
     "undo": "Lehen bezala",
     "fixed": "{key} finkoa da. Aukeratu beste tekla bat.",
     "letter": "Letra eta zifra solteak bilaketa azkarrerako dira. Gehitu Ctrl, Alt edo F tekla bat.",
@@ -1946,7 +1946,7 @@
     "resetAll": "Berrezarri dena",
     "own": "Zure teklak",
     "reset": "Berrezarri",
-    "resetTip": "Txantiloiaren teklak itzultzen ditu. Txantiloia bera ez da aldatzen.",
+    "resetTip": "Zure teklak desegiten ditu.",
     "ownNow": "Zure lasterbideek leku guztietan balio dute orain",
     "asShipped": "Lasterbideak jatorrizko egoerara itzuli dira",
     "fixedHead": "Finkoak",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Zure mahaigaineko fitxategi-kudeatzailearen elkarrizketa-koadroa irekitzen du.",
     "propsOpen": "Ireki",
     "icons": "Sistemaren ikonoak",
-    "iconsTip": "Zure sistemaren ikonoak erakusten ditu zerrenda osoan. Programek eta lasterbideek beren ikonoa erakusten dute aukera hau desaktibatuta egonda ere."
+    "iconsTip": "Zure sistemaren ikonoak erakusten ditu zerrenda osoan. Programek eta lasterbideek beren ikonoa erakusten dute aukera hau desaktibatuta egonda ere.",
+    "iconsTipLinux": "Zure sistemaren ikonoak erakusten ditu zerrenda osoan. Programek eta lasterbideek beren ikonoa erakusten dute nolanahi ere. CannonCommanderrek ingurune isolatu batean bakarrik sortzen ditu koadro txikiak. Hori ezinezkoa den lekuetan, Ubuntu 24.04n adibidez, zure fitxategi-kudeatzaileak jada sortutakoak bakarrik ikusten dituzu.",
+    "thumbs": "Koadro txikiak",
+    "thumbsTip": "Ubuntuk baimen berezi batekin bakarrik uzten dio programa bati ingurune isolatu batean sartzen. Aktibatzean, CannonCommanderrek AppArmor arau txiki bat gehitzen du, zure pasahitza eskatuz, eta handik aurrera berak sortzen ditu koadro txikiak. Desaktibatzean, araua desagertu egiten da.",
+    "thumbsOnButton": "Aktibatu sistemaren koadro txikiak",
+    "thumbsOffButton": "Desaktibatu sistemaren koadro txikiak",
+    "thumbsOn": "Eginda, hemendik aurrera CannonCommanderrek berak sortzen ditu koadro txikiak.",
+    "thumbsOff": "Desaktibatuta, AppArmor araua kendu da.",
+    "thumbsStillOut": "Araua hor dago, baina ingurune isolatuak oraindik ez du funtzionatzen, sentitzen dugu."
   },
   "shortcuts": {
     "title": "Lasterbide-teklak",
@@ -3615,6 +3623,7 @@
     "removable": "USB unitatea",
     "optical": "DVD unitatea",
     "network": "Sareko unitatea",
+    "shareOn": "{share} {server} zerbitzarian",
     "volume": "{size}eko bolumena"
   },
   "files": {

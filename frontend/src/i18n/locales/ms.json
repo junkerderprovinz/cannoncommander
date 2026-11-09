@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panel kiri",
     "right": "Panel kanan",
@@ -1850,10 +1849,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Penggunaan",
     "preset": "Susun atur",
-    "style": "Cara guna seperti",
-    "styleTip": "Total Commander contohnya meletakkan mampat pada Alt+F5, ekstrak pada Alt+F9 dan namakan semula pada Shift+F6. Kekunci anda sendiri kekal seperti sedia ada.",
-    "styleTipDesktop": "Seperti dalam Explorer, F5 menyegar semula, Backspace kembali ke belakang dan klik memilih. Total Commander contohnya meletakkan mampat pada Alt+F5. Kekunci anda sendiri kekal seperti sedia ada.",
+    "layoutTip": "Seperti Commander, F5 menyalin dan F6 mengalihkan. Seperti dalam Explorer, F5 menyegar semula, Backspace kembali dan klik memilih. Kekunci anda sendiri kekal seperti sedia ada.",
+    "asCommander": "Seperti Commander",
+    "asExplorer": "Seperti dalam Explorer",
     "vim": "Kekunci Vim dalam editor",
     "vimTip": "Editor kemudian berfungsi seperti Vim, dengan mod normal dan mod sisip. :w menyimpan dan :q menutup fail.",
     "clickSelect": "Pilih seperti dalam Explorer",
@@ -1868,7 +1868,7 @@
     "change": "Tukar kekunci untuk {action}",
     "press": "Tekan kekunci …",
     "none": "tiada",
-    "clear": "Buang kekunci",
+    "clear": "Padam kekunci",
     "undo": "Seperti sebelum ini",
     "fixed": "{key} sudah ditetapkan tetap. Pilih kekunci lain.",
     "letter": "Huruf dan digit tunggal digunakan oleh carian pantas. Tambah Ctrl, Alt atau kekunci F.",
@@ -1884,7 +1884,7 @@
     "resetAll": "Tetapkan semula semua",
     "own": "Kekunci anda sendiri",
     "reset": "Tetapkan semula",
-    "resetTip": "Mengembalikan kekunci susun atur. Susun atur itu sendiri kekal.",
+    "resetTip": "Membatalkan kekunci anda sendiri.",
     "ownNow": "Pintasan anda kini berkuat kuasa di mana-mana",
     "asShipped": "Pintasan kembali seperti asal",
     "fixedHead": "Tetap",
@@ -2542,7 +2542,15 @@
     "propsSystemTip": "Membuka dialog pengurus fail desktop anda.",
     "propsOpen": "Buka",
     "icons": "Ikon sistem",
-    "iconsTip": "Menunjukkan ikon sistem anda di seluruh senarai. Program dan pintasan tetap menunjukkan ikon sendiri walaupun suis ini dimatikan."
+    "iconsTip": "Menunjukkan ikon sistem anda di seluruh senarai. Program dan pintasan tetap menunjukkan ikon sendiri walaupun suis ini dimatikan.",
+    "iconsTipLinux": "Menunjukkan ikon sistem anda di seluruh senarai. Program dan pintasan tetap menunjukkan ikon sendiri. CannonCommander hanya melukis lakaran kenit dalam persekitaran terpencil. Jika itu tidak boleh dilakukan, seperti pada Ubuntu 24.04, anda hanya melihat yang telah dibuat oleh pengurus fail anda.",
+    "thumbs": "Lakaran kenit",
+    "thumbsTip": "Ubuntu hanya membenarkan program masuk ke persekitaran terpencil dengan kebenaran tersendiri. Apabila dihidupkan, CannonCommander menambah peraturan AppArmor yang kecil, yang meminta kata laluan anda, dan selepas itu melukis lakaran kenit sendiri. Apabila dimatikan, peraturan itu hilang semula.",
+    "thumbsOnButton": "Hidupkan lakaran kenit sistem",
+    "thumbsOffButton": "Matikan lakaran kenit sistem",
+    "thumbsOn": "Siap, mulai sekarang CannonCommander melukis lakaran kenit sendiri.",
+    "thumbsOff": "Dimatikan, peraturan AppArmor sudah tiada.",
+    "thumbsStillOut": "Peraturan sudah ada, tetapi persekitaran terpencil masih belum berfungsi, maaf."
   },
   "shortcuts": {
     "title": "Pintasan papan kekunci",
@@ -3483,6 +3491,7 @@
     "removable": "Pemacu USB",
     "optical": "Pemacu DVD",
     "network": "Pemacu Rangkaian",
+    "shareOn": "{share} di {server}",
     "volume": "Volum {size}"
   },
   "files": {

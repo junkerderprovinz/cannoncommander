@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Kreisais panelis",
     "right": "Labais panelis",
@@ -1974,10 +1973,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Lietošana",
     "preset": "Izkārtojums",
-    "style": "Lietošana kā",
-    "styleTip": "Total Commander, piemēram, arhivēšanu liek uz Alt+F5, izpakošanu uz Alt+F9 un pārdēvēšanu uz Shift+F6. Tavi taustiņi paliek, kā ir.",
-    "styleTipDesktop": "Kā pārlūkā Explorer, F5 atsvaidzina, Backspace iet atpakaļ un klikšķis atlasa. Total Commander, piemēram, arhivēšanu liek uz Alt+F5. Tavi taustiņi paliek, kā ir.",
+    "layoutTip": "Kā Commander, F5 kopē un F6 pārvieto. Kā pārlūkā Explorer, F5 atsvaidzina, Backspace iet atpakaļ un klikšķis atlasa. Tavi taustiņi paliek, kā ir.",
+    "asCommander": "Kā Commander",
+    "asExplorer": "Kā pārlūkā Explorer",
     "vim": "Vim taustiņi redaktorā",
     "vimTip": "Tad redaktors darbojas kā Vim, ar normālo un ievietošanas režīmu. :w saglabā, un :q aizver failu.",
     "clickSelect": "Atlase kā pārlūkā Explorer",
@@ -1992,7 +1992,7 @@
     "change": "Mainīt taustiņu komandai {action}",
     "press": "Nospied taustiņu …",
     "none": "nav",
-    "clear": "Noņemt taustiņu",
+    "clear": "Dzēst taustiņu",
     "undo": "Kā iepriekš",
     "fixed": "{key} ir piešķirts pastāvīgi. Izvēlies citu taustiņu.",
     "letter": "Atsevišķi burti un cipari ir ātrajai meklēšanai. Pievieno Ctrl, Alt vai F taustiņu.",
@@ -2008,7 +2008,7 @@
     "resetAll": "Atiestatīt visu",
     "own": "Tavi taustiņi",
     "reset": "Atiestatīt",
-    "resetTip": "Atjauno izkārtojuma taustiņus. Pats izkārtojums paliek.",
+    "resetTip": "Atceļ tavus taustiņus.",
     "ownNow": "Tavi īsinājumtaustiņi tagad darbojas visur",
     "asShipped": "Īsinājumtaustiņi atkal ir kā sākotnēji",
     "fixedHead": "Piešķirti pastāvīgi",
@@ -2712,7 +2712,15 @@
     "propsSystemTip": "Atver tavas darbvirsmas failu pārvaldnieka dialoglodziņu.",
     "propsOpen": "Atvērt",
     "icons": "Sistēmas ikonas",
-    "iconsTip": "Visā sarakstā rāda tavas sistēmas ikonas. Programmas un saīsnes rāda savu ikonu arī bez šī slēdža."
+    "iconsTip": "Visā sarakstā rāda tavas sistēmas ikonas. Programmas un saīsnes rāda savu ikonu arī bez šī slēdža.",
+    "iconsTipLinux": "Visā sarakstā rāda tavas sistēmas ikonas. Programmas un saīsnes savu ikonu rāda jebkurā gadījumā. Sīktēlus CannonCommander zīmē tikai izolētā vidē. Kur tas nav iespējams, piemēram, Ubuntu 24.04, tu redzi tikai tos, ko tavs failu pārvaldnieks jau ir izveidojis.",
+    "thumbs": "Sīktēli",
+    "thumbsTip": "Ubuntu ielaiž programmu izolētā vidē tikai ar atsevišķu atļauju. Ieslēdzot CannonCommander pievieno nelielu AppArmor kārtulu, kas prasīs tavu paroli, un turpmāk pats zīmē sīktēlus. Izslēdzot kārtula atkal pazūd.",
+    "thumbsOnButton": "Ieslēgt sistēmas sīktēlus",
+    "thumbsOffButton": "Izslēgt sistēmas sīktēlus",
+    "thumbsOn": "Gatavs, turpmāk CannonCommander pats zīmē sīktēlus.",
+    "thumbsOff": "Izslēgts, AppArmor kārtulas vairs nav.",
+    "thumbsStillOut": "Kārtula ir vietā, bet izolētā vide diemžēl joprojām nedarbojas."
   },
   "shortcuts": {
     "title": "Īsinājumtaustiņi",
@@ -3747,6 +3755,7 @@
     "removable": "USB disks",
     "optical": "DVD diskdzinis",
     "network": "Tīkla disks",
+    "shareOn": "{share} serverī {server}",
     "volume": "{size} sējums"
   },
   "files": {

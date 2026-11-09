@@ -220,6 +220,8 @@ svg { display: block; }
 @media (max-width: 760px) { .sidepane { display: none; } .panels.paned, .app.dual .panels.paned { grid-template-columns: 1fr; } }
 .narrow-only { display: none !important; }
 @media (max-width: 900px) { .menubar { display: none; } .narrow-only { display: inline-flex !important; } }
+.head.fold-menus .menubar { display: none; }
+.head.fold-menus .narrow-only { display: inline-flex !important; }
 @media (max-width: 760px) {
   .app, #app { padding: .75rem; gap: .75rem; }
   .side { position: fixed; z-index: 40; margin-top: 0; inset: .75rem auto 4.5rem .75rem; width: min(20rem, calc(100vw - 1.5rem)); }

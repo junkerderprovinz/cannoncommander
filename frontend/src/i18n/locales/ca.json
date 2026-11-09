@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panell esquerre",
     "right": "Panell dret",
@@ -1974,10 +1973,11 @@
       "Enter": "Retorn",
       "Tab": "Tab"
     },
+    "use": "Ús",
     "preset": "Plantilla",
-    "style": "Funciona com",
-    "styleTip": "El Total Commander posa, per exemple, comprimir a Alt+F5, extreure a Alt+F9 i canviar el nom a Maj+F6. Les vostres tecles es queden com són.",
-    "styleTipDesktop": "Com a l'Explorador, F5 actualitza, Retrocés torna enrere i un clic selecciona. El Total Commander posa, per exemple, comprimir a Alt+F5. Les vostres tecles es queden com són.",
+    "layoutTip": "Com un Commander, F5 copia i F6 mou. Com a l'Explorador, F5 actualitza, Retrocés torna enrere i un clic selecciona. Les vostres tecles es queden com són.",
+    "asCommander": "Com un Commander",
+    "asExplorer": "Com a l'Explorador",
     "vim": "Tecles de Vim a l'editor",
     "vimTip": "Aleshores l'editor funciona com Vim, amb mode normal i mode d'inserció. Amb :w deseu i amb :q tanqueu el fitxer.",
     "clickSelect": "Selecció com a l'Explorador",
@@ -1992,7 +1992,7 @@
     "change": "Canvia la tecla de {action}",
     "press": "Premeu una tecla…",
     "none": "cap",
-    "clear": "Elimina la tecla",
+    "clear": "Suprimeix la tecla",
     "undo": "Com abans",
     "fixed": "{key} està reservada. Trieu una altra tecla.",
     "letter": "Les lletres i xifres soles són per a la cerca ràpida. Afegiu-hi Ctrl, Alt o una tecla F.",
@@ -2008,7 +2008,7 @@
     "resetAll": "Restableix-ho tot",
     "own": "Les vostres tecles",
     "reset": "Restableix",
-    "resetTip": "Recupera les tecles de la plantilla. La plantilla es manté.",
+    "resetTip": "Desfà les vostres tecles.",
     "ownNow": "Les vostres dreceres ara valen a tot arreu",
     "asShipped": "Les dreceres tornen a ser com de fàbrica",
     "fixedHead": "Reservades",
@@ -2712,7 +2712,15 @@
     "propsSystemTip": "Obre el quadre de diàleg del gestor de fitxers del vostre escriptori.",
     "propsOpen": "Obre",
     "icons": "Icones del sistema",
-    "iconsTip": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren la seva pròpia icona encara que això estigui desactivat."
+    "iconsTip": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren la seva pròpia icona encara que això estigui desactivat.",
+    "iconsTipLinux": "Mostra a tota la llista les icones del vostre sistema. Els programes i les dreceres mostren igualment la seva pròpia icona. CannonCommander només genera miniatures en un entorn aïllat. On això no és possible, com a Ubuntu 24.04, només veieu les que el vostre gestor de fitxers ja ha creat.",
+    "thumbs": "Miniatures",
+    "thumbsTip": "Ubuntu només deixa entrar un programa en un entorn aïllat amb un permís propi. En activar-ho, CannonCommander afegeix una petita regla d'AppArmor, que us demana la contrasenya, i des d'aleshores genera ell mateix les miniatures. En desactivar-ho, la regla desapareix.",
+    "thumbsOnButton": "Activa les miniatures del sistema",
+    "thumbsOffButton": "Desactiva les miniatures del sistema",
+    "thumbsOn": "Fet, a partir d'ara CannonCommander genera ell mateix les miniatures.",
+    "thumbsOff": "Desactivat, la regla d'AppArmor ja no hi és.",
+    "thumbsStillOut": "La regla hi és, però l'entorn aïllat encara no funciona, ho sentim."
   },
   "shortcuts": {
     "title": "Dreceres de teclat",
@@ -3747,6 +3755,7 @@
     "removable": "Unitat USB",
     "optical": "Unitat de DVD",
     "network": "Unitat de xarxa",
+    "shareOn": "{share} a {server}",
     "volume": "Volum de {size}"
   },
   "files": {

@@ -22,8 +22,13 @@ const tab = computed(() => F.T(props.i));
 const parts = computed(() => split(tab.value.path));
 const hasDirs = computed(() => listing.lists.get(tab.value.path)?.items.some((k) => k.dir) ?? false);
 const under = (k: number) => '/' + parts.value.slice(0, k).join('/');
-// A drive on Windows is C: there, as in Explorer.
-const partName = (part: string, k: number) => (k > 0 || !windowsPaths() ? part.replace('::', '') : part === 'net' ? t('files.network') : part + ':');
+// In the desktop app a folder goes by the name the computer gives it where it has one, as a drive or a network share
+// does, and a drive on Windows is C: otherwise, as in Explorer.
+function partName(part: string, k: number) {
+  const named = host.desktop ? listing.placeLabel(under(k + 1)) : undefined;
+  if (named) return named;
+  return k > 0 || !windowsPaths() ? part.replace('::', '') : part === 'net' ? t('files.network') : part + ':';
+}
 
 async function psub(e: MouseEvent, folder: string) {
   const r = (e.currentTarget as HTMLElement).getBoundingClientRect(), here = tab.value.path;

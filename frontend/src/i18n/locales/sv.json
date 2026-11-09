@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Vänster panel",
     "right": "Höger panel",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Hantering",
     "preset": "Mall",
-    "style": "Hantering som",
-    "styleTip": "Total Commander lägger till exempel packning på Alt+F5, uppackning på Alt+F9 och namnbyte på Skift+F6. Dina egna tangenter förblir som de är.",
-    "styleTipDesktop": "Som i Utforskaren uppdaterar F5, Backsteg går tillbaka och ett klick markerar. Total Commander lägger till exempel packning på Alt+F5. Dina egna tangenter förblir som de är.",
+    "layoutTip": "Som en Commander kopierar F5 och F6 flyttar. Som i Utforskaren uppdaterar F5, Backsteg går tillbaka och ett klick markerar. Dina egna tangenter förblir som de är.",
+    "asCommander": "Som en Commander",
+    "asExplorer": "Som i Utforskaren",
     "vim": "Vim-tangenter i redigeraren",
     "vimTip": "Redigeraren fungerar då som Vim, med normalläge och infogningsläge. :w sparar och :q stänger filen.",
     "clickSelect": "Markering som i Utforskaren",
@@ -1946,7 +1946,7 @@
     "resetAll": "Återställ allt",
     "own": "Dina egna tangenter",
     "reset": "Återställ",
-    "resetTip": "Hämtar tillbaka tangenterna från mallen. Själva mallen finns kvar.",
+    "resetTip": "Tar tillbaka dina egna tangenter.",
     "ownNow": "Dina kortkommandon gäller nu överallt",
     "asShipped": "Kortkommandona är som vid leverans igen",
     "fixedHead": "Fast tilldelade",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Öppnar dialogrutan i skrivbordets filhanterare.",
     "propsOpen": "Öppna",
     "icons": "Systemikoner",
-    "iconsTip": "Visar systemets ikoner överallt i listan. Program och genvägar visar sin egen ikon även när detta är av."
+    "iconsTip": "Visar systemets ikoner överallt i listan. Program och genvägar visar sin egen ikon även när detta är av.",
+    "iconsTipLinux": "Visar systemets ikoner överallt i listan. Program och genvägar visar sin egen ikon ändå. CannonCommander ritar bara miniatyrer i en isolerad miljö. Där det inte går, som på Ubuntu 24.04, ser du bara dem som din filhanterare redan har skapat.",
+    "thumbs": "Miniatyrer",
+    "thumbsTip": "Ubuntu släpper bara in ett program i en isolerad miljö med en egen behörighet. När du slår på det lägger CannonCommander till en liten AppArmor-regel, som ber om ditt lösenord, och ritar sedan miniatyrer själv. När du slår av det försvinner regeln igen.",
+    "thumbsOnButton": "Slå på systemminiatyrer",
+    "thumbsOffButton": "Slå av systemminiatyrer",
+    "thumbsOn": "Klart, CannonCommander ritar nu miniatyrer själv.",
+    "thumbsOff": "Avstängt, AppArmor-regeln är borta igen.",
+    "thumbsStillOut": "Regeln finns, men den isolerade miljön fungerar tyvärr fortfarande inte."
   },
   "shortcuts": {
     "title": "Kortkommandon",
@@ -3615,6 +3623,7 @@
     "removable": "USB-enhet",
     "optical": "DVD-enhet",
     "network": "Nätverksenhet",
+    "shareOn": "{share} på {server}",
     "volume": "{size}-volym"
   },
   "files": {

@@ -27,7 +27,7 @@ func HasProperties() bool {
 	session.Lock()
 	defer session.Unlock()
 	if time.Since(session.checked) > 5*time.Second {
-		session.has = offered()
+		session.has = offeredOnBus(fileManager)
 		session.checked = time.Now()
 	}
 	return session.has
@@ -36,7 +36,7 @@ func HasProperties() bool {
 // Properties shows the file manager's properties dialog of files.
 func Properties(files []string) error {
 	session.Lock()
-	ok := offered()
+	ok := offeredOnBus(fileManager)
 	session.has, session.checked = ok, time.Now()
 	conn := session.conn
 	session.Unlock()
@@ -53,10 +53,10 @@ func Properties(files []string) error {
 	return conn.Object(fileManager, "/org/freedesktop/FileManager1").CallWithContext(ctx, fileManager+".ShowItemProperties", 0, uris, "").Err
 }
 
-// offered reports whether a program other than this one owns the file
-// manager's name, or the bus can start one that does. The caller holds the
+// offeredOnBus reports whether a program other than this one owns name on
+// the session bus, or the bus can start one that does. The caller holds the
 // session lock.
-func offered() bool {
+func offeredOnBus(name string) bool {
 	conn, err := sessionBus()
 	if err != nil {
 		return false
@@ -65,13 +65,13 @@ func offered() bool {
 	defer cancel()
 	bus := conn.BusObject()
 	var owner string
-	if bus.CallWithContext(ctx, "org.freedesktop.DBus.GetNameOwner", 0, fileManager).Store(&owner) == nil {
+	if bus.CallWithContext(ctx, "org.freedesktop.DBus.GetNameOwner", 0, name).Store(&owner) == nil {
 		var pid uint32
 		err := bus.CallWithContext(ctx, "org.freedesktop.DBus.GetConnectionUnixProcessID", 0, owner).Store(&pid)
 		return err != nil || int(pid) != os.Getpid()
 	}
 	var names []string
-	return bus.CallWithContext(ctx, "org.freedesktop.DBus.ListActivatableNames", 0).Store(&names) == nil && slices.Contains(names, fileManager)
+	return bus.CallWithContext(ctx, "org.freedesktop.DBus.ListActivatableNames", 0).Store(&names) == nil && slices.Contains(names, name)
 }
 
 // nameHasOwner reports whether some program owns name on the session bus.

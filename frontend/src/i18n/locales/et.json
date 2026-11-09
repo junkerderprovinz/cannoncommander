@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Vasak paneel",
     "right": "Parem paneel",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Kasutamine",
     "preset": "Mall",
-    "style": "Kasutus nagu",
-    "styleTip": "Total Commander paneb näiteks pakkimise klahvile Alt+F5, lahtipakkimise klahvile Alt+F9 ja ümbernimetamise klahvile Shift+F6. Sinu enda klahvid jäävad alles.",
-    "styleTipDesktop": "Nagu Exploreris, F5 värskendab, Backspace viib tagasi ja klõps valib. Total Commander paneb näiteks pakkimise klahvile Alt+F5. Sinu enda klahvid jäävad alles.",
+    "layoutTip": "Nagu Commander, F5 kopeerib ja F6 teisaldab. Nagu Exploreris, F5 värskendab, Backspace läheb tagasi ja klõps valib. Sinu enda klahvid jäävad alles.",
+    "asCommander": "Nagu Commander",
+    "asExplorer": "Nagu Exploreris",
     "vim": "Vim-klahvid redaktoris",
     "vimTip": "Siis töötab redaktor nagu Vim, tava- ja sisestusrežiimiga. :w salvestab ja :q sulgeb faili.",
     "clickSelect": "Valik nagu Exploreris",
@@ -1930,7 +1930,7 @@
     "change": "Muuda klahvi: {action}",
     "press": "Vajuta klahvi …",
     "none": "puudub",
-    "clear": "Eemalda klahv",
+    "clear": "Kustuta klahv",
     "undo": "Nagu enne",
     "fixed": "{key} on püsivalt hõivatud. Vali teine klahv.",
     "letter": "Üksikud tähed ja numbrid kuuluvad kiirotsingule. Lisa Ctrl, Alt või F-klahv.",
@@ -1946,7 +1946,7 @@
     "resetAll": "Lähtesta kõik",
     "own": "Sinu enda klahvid",
     "reset": "Lähtesta",
-    "resetTip": "Toob tagasi malli klahvid. Mall ise jääb alles.",
+    "resetTip": "Võtab sinu enda klahvid tagasi.",
     "ownNow": "Sinu kiirklahvid kehtivad nüüd kõikjal",
     "asShipped": "Kiirklahvid on jälle vaikimisi",
     "fixedHead": "Püsivalt hõivatud",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Avab sinu töölaua failihalduri dialoogi.",
     "propsOpen": "Ava",
     "icons": "Süsteemi ikoonid",
-    "iconsTip": "Näitab kogu loendis sinu süsteemi ikoone. Programmid ja otseteed näitavad oma ikooni ka siis, kui see lüliti on väljas."
+    "iconsTip": "Näitab kogu loendis sinu süsteemi ikoone. Programmid ja otseteed näitavad oma ikooni ka siis, kui see lüliti on väljas.",
+    "iconsTipLinux": "Näitab kogu loendis sinu süsteemi ikoone. Programmid ja otseteed näitavad oma ikooni niikuinii. CannonCommander joonistab pisipilte ainult eraldatud keskkonnas. Kus see ei õnnestu, näiteks Ubuntu 24.04 puhul, näed ainult neid, mille sinu failihaldur on juba teinud.",
+    "thumbs": "Pisipildid",
+    "thumbsTip": "Ubuntu laseb programmi eraldatud keskkonda ainult eraldi loaga. Sisselülitamisel lisab CannonCommander väikese AppArmori reegli, mis küsib sinu parooli, ja joonistab seejärel pisipildid ise. Väljalülitamisel kaob reegel jälle.",
+    "thumbsOnButton": "Lülita süsteemi pisipildid sisse",
+    "thumbsOffButton": "Lülita süsteemi pisipildid välja",
+    "thumbsOn": "Valmis, nüüdsest joonistab CannonCommander pisipildid ise.",
+    "thumbsOff": "Välja lülitatud, AppArmori reegel on jälle läinud.",
+    "thumbsStillOut": "Reegel on olemas, aga eraldatud keskkond kahjuks ikka ei tööta."
   },
   "shortcuts": {
     "title": "Kiirklahvid",
@@ -3615,6 +3623,7 @@
     "removable": "USB-draiv",
     "optical": "DVD-draiv",
     "network": "Võrgudraiv",
+    "shareOn": "{share} serveris {server}",
     "volume": "{size} köide"
   },
   "files": {

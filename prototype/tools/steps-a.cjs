@@ -23,7 +23,7 @@ module.exports = async (page, shot) => {
   await page.click('#a-shape [data-v="square"]'); await wait();
   await page.click('[data-preset="1"]'); await wait(300);
   await shot('a-look-picker');
-  await page.mouse.click(200, 900); await wait();
+  await page.mouse.click(1500, 900); await wait();
   console.log('accent/shape:', await page.evaluate(() => [CC.prefs.accent, document.documentElement.dataset.shape, getComputedStyle(document.documentElement).getPropertyValue('--accent')]));
   for (let i = 0; i < 5; i++) { await page.click('#a-shape [data-v="square"]'); await wait(80); }
   console.log('leaf:', await page.evaluate(() => document.documentElement.dataset.shape));

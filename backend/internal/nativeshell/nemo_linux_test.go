@@ -112,7 +112,7 @@ func TestALabelWithFileNamesIsRememberedWithoutThem(t *testing.T) {
 	for _, a := range got {
 		rows = append(rows, a.Label+" = "+a.Remember)
 	}
-	want := []string{"Copy to work = Copy to %p", "Open a b.png = Open %N", "Plain = ", "Plain 100% = ", "Script %N = ", "Shrink a b here = Shrink %e here", "Thunar = "}
+	want := []string{"Copy to work = Copy to …", "Open a b.png = Open …", "Plain = ", "Plain 100% = ", "Script %N = ", "Shrink a b here = Shrink … here", "Thunar = "}
 	if !slices.Equal(rows, want) {
 		t.Errorf("got %q", rows)
 	}

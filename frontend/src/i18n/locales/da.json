@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Venstre panel",
     "right": "Højre panel",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Betjening",
     "preset": "Skabelon",
-    "style": "Betjening som",
-    "styleTip": "Total Commander lægger fx pakning på Alt+F5, udpakning på Alt+F9 og omdøbning på Skift+F6. Dine egne taster bliver, som de er.",
-    "styleTipDesktop": "Som i Stifinder opdaterer F5, Tilbage går et trin tilbage, og et klik markerer. Total Commander lægger fx pakning på Alt+F5. Dine egne taster bliver, som de er.",
+    "layoutTip": "Som en Commander kopierer F5, og F6 flytter. Som i Stifinder opdaterer F5, Tilbage går et trin tilbage, og et klik markerer. Dine egne taster bliver, som de er.",
+    "asCommander": "Som en Commander",
+    "asExplorer": "Som i Stifinder",
     "vim": "Vim-taster i editoren",
     "vimTip": "Editoren fungerer så som Vim, med normal- og indsætningstilstand. :w gemmer, og :q lukker filen.",
     "clickSelect": "Markering som i Stifinder",
@@ -1930,7 +1930,7 @@
     "change": "Skift tast for {action}",
     "press": "Tryk på en tast…",
     "none": "ingen",
-    "clear": "Fjern tast",
+    "clear": "Slet tast",
     "undo": "Som før",
     "fixed": "{key} er fast optaget. Vælg en anden tast.",
     "letter": "Enkelte bogstaver og cifre bruges af hurtigsøgningen. Tag Ctrl, Alt eller en F-tast med.",
@@ -1946,7 +1946,7 @@
     "resetAll": "Nulstil alt",
     "own": "Dine egne taster",
     "reset": "Nulstil",
-    "resetTip": "Henter skabelonens taster tilbage. Selve skabelonen bliver.",
+    "resetTip": "Tager dine egne taster tilbage.",
     "ownNow": "Dine genveje gælder nu overalt",
     "asShipped": "Genvejene er igen som ved levering",
     "fixedHead": "Faste",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Åbner dialogen i dit skrivebords filhåndtering.",
     "propsOpen": "Åbn",
     "icons": "Systemikoner",
-    "iconsTip": "Viser dit systems ikoner overalt i listen. Programmer og genveje viser deres eget ikon, også uden denne kontakt."
+    "iconsTip": "Viser dit systems ikoner overalt i listen. Programmer og genveje viser deres eget ikon, også uden denne kontakt.",
+    "iconsTipLinux": "Viser dit systems ikoner overalt i listen. Programmer og genveje viser deres eget ikon under alle omstændigheder. CannonCommander tegner kun miniaturer i et afskærmet miljø. Hvor det ikke kan lade sig gøre, som på Ubuntu 24.04, ser du kun dem, din filhåndtering allerede har lavet.",
+    "thumbs": "Miniaturer",
+    "thumbsTip": "Ubuntu lukker kun et program ind i et afskærmet miljø med en særlig tilladelse. Når du slår det til, opretter CannonCommander en lille AppArmor-regel, som beder om din adgangskode, og tegner derefter selv miniaturer. Når du slår det fra, forsvinder reglen igen.",
+    "thumbsOnButton": "Slå systemminiaturer til",
+    "thumbsOffButton": "Slå systemminiaturer fra",
+    "thumbsOn": "Færdig, CannonCommander tegner nu selv miniaturer.",
+    "thumbsOff": "Slået fra, AppArmor-reglen er væk igen.",
+    "thumbsStillOut": "Reglen er på plads, men det afskærmede miljø virker desværre stadig ikke."
   },
   "shortcuts": {
     "title": "Tastaturgenveje",
@@ -3615,6 +3623,7 @@
     "removable": "USB-drev",
     "optical": "Dvd-drev",
     "network": "Netværksdrev",
+    "shareOn": "{share} på {server}",
     "volume": "{size}-diskenhed"
   },
   "files": {

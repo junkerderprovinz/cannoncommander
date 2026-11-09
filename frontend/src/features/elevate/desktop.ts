@@ -9,12 +9,11 @@ import { confirmWin } from '@/features/config/shared';
 import { objects } from '@/features/jobs/label';
 import { t } from '@/i18n';
 import { useJobs } from '@/stores/jobs';
-
-const KINDS = ['copy', 'move', 'delete', 'trash', 'restore', 'undo'];
+import { ELEVATABLE } from './answers';
 
 export default function setup() {
   useJobs().onEnded((j) => {
-    if (host.desktop && j.state === 'failed' && KINDS.includes(j.kind)) void offer(j);
+    if (host.desktop && j.state === 'failed' && ELEVATABLE.includes(j.kind)) void offer(j);
   });
 }
 

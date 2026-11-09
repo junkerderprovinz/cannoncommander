@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Lijevi panel",
     "right": "Desni panel",
@@ -1974,10 +1973,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Rukovanje",
     "preset": "Raspored",
-    "style": "Upravljanje kao",
-    "styleTip": "Total Commander na primjer stavlja pakiranje na Alt+F5, raspakiravanje na Alt+F9 i preimenovanje na Shift+F6. Vaše vlastite tipke pritom ostaju kakve jesu.",
-    "styleTipDesktop": "Kao u Exploreru, F5 osvježava, Backspace ide natrag, a klik odabire. Total Commander na primjer stavlja pakiranje na Alt+F5. Vaše vlastite tipke pritom ostaju kakve jesu.",
+    "layoutTip": "Kao Commander, F5 kopira, a F6 premješta. Kao u Exploreru, F5 osvježava, Backspace ide natrag, a klik odabire. Vaše vlastite tipke ostaju kakve jesu.",
+    "asCommander": "Kao Commander",
+    "asExplorer": "Kao u Exploreru",
     "vim": "Vim tipke u uređivaču",
     "vimTip": "Uređivač tada radi kao Vim, s normalnim načinom i načinom umetanja. :w sprema, a :q zatvara datoteku.",
     "clickSelect": "Odabir kao u Exploreru",
@@ -1992,7 +1992,7 @@
     "change": "Promijeni tipku za „{action}“",
     "press": "Pritisnite tipku…",
     "none": "nema",
-    "clear": "Ukloni tipku",
+    "clear": "Izbriši tipku",
     "undo": "Kao prije",
     "fixed": "{key} je trajno zauzeta. Odaberite drugu tipku.",
     "letter": "Pojedinačna slova i znamenke koristi brzo pretraživanje. Dodajte Ctrl, Alt ili F tipku.",
@@ -2008,7 +2008,7 @@
     "resetAll": "Vrati sve na zadano",
     "own": "Vaše tipke",
     "reset": "Vrati na zadano",
-    "resetTip": "Vraća tipke rasporeda. Sam raspored ostaje.",
+    "resetTip": "Poništava vaše vlastite tipke.",
     "ownNow": "Vaši prečaci sada vrijede posvuda",
     "asShipped": "Prečaci su ponovno kao pri isporuci",
     "fixedHead": "Trajno zauzete",
@@ -2712,7 +2712,15 @@
     "propsSystemTip": "Otvara dijalog upravitelja datoteka vaše radne površine.",
     "propsOpen": "Otvori",
     "icons": "Ikone sustava",
-    "iconsTip": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci prikazuju vlastitu ikonu i bez ovog prekidača."
+    "iconsTip": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci prikazuju vlastitu ikonu i bez ovog prekidača.",
+    "iconsTipLinux": "Prikazuje ikone vašeg sustava posvuda na popisu. Programi i prečaci ionako prikazuju vlastitu ikonu. CannonCommander crta minijature samo u izoliranom okruženju. Gdje to nije moguće, kao na Ubuntu 24.04, vidite samo one koje je vaš upravitelj datoteka već izradio.",
+    "thumbs": "Minijature",
+    "thumbsTip": "Ubuntu pušta program u izolirano okruženje samo uz vlastito dopuštenje. Pri uključivanju CannonCommander dodaje malo pravilo AppArmor, koje traži vašu lozinku, i zatim sam crta minijature. Pri isključivanju pravilo opet nestaje.",
+    "thumbsOnButton": "Uključi minijature sustava",
+    "thumbsOffButton": "Isključi minijature sustava",
+    "thumbsOn": "Gotovo, CannonCommander sada sam crta minijature.",
+    "thumbsOff": "Isključeno, pravilo AppArmor opet je uklonjeno.",
+    "thumbsStillOut": "Pravilo je postavljeno, ali izolirano okruženje nažalost još uvijek ne radi."
   },
   "shortcuts": {
     "title": "Tipkovnički prečaci",
@@ -3747,6 +3755,7 @@
     "removable": "USB pogon",
     "optical": "DVD pogon",
     "network": "Mrežni pogon",
+    "shareOn": "{share} na {server}",
     "volume": "Volumen od {size}"
   },
   "files": {

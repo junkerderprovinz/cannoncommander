@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Sol panel",
     "right": "Sağ panel",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Kullanım",
     "preset": "Düzen",
-    "style": "Kullanım biçimi",
-    "styleTip": "Total Commander örneğin paketlemeyi Alt+F5'e, açmayı Alt+F9'a, yeniden adlandırmayı Shift+F6'ya koyar. Kendi tuşların olduğu gibi kalır.",
-    "styleTipDesktop": "Explorer'daki gibi F5 yeniler, Backspace geri gider ve bir tıklama seçer. Total Commander örneğin paketlemeyi Alt+F5'e koyar. Kendi tuşların olduğu gibi kalır.",
+    "layoutTip": "Commander gibi: F5 kopyalar, F6 taşır. Explorer'daki gibi: F5 yeniler, Backspace geri gider ve bir tıklama seçer. Kendi tuşların olduğu gibi kalır.",
+    "asCommander": "Commander gibi",
+    "asExplorer": "Explorer'daki gibi",
     "vim": "Düzenleyicide Vim tuşları",
     "vimTip": "Düzenleyici o zaman normal mod ve ekleme moduyla Vim gibi çalışır. :w ile kaydedersin, :q ile dosyayı kapatırsın.",
     "clickSelect": "Explorer'daki gibi seçim",
@@ -1930,7 +1930,7 @@
     "change": "{action} için tuşu değiştir",
     "press": "Bir tuşa bas …",
     "none": "yok",
-    "clear": "Tuşu kaldır",
+    "clear": "Tuşu sil",
     "undo": "Önceki gibi",
     "fixed": "{key} sabit atanmış. Başka bir tuş seç.",
     "letter": "Tek harfler ve rakamlar hızlı arama içindir. Ctrl, Alt ya da bir F tuşu ekle.",
@@ -1946,7 +1946,7 @@
     "resetAll": "Tümünü sıfırla",
     "own": "Kendi tuşların",
     "reset": "Sıfırla",
-    "resetTip": "Düzenin tuşlarını geri getirir. Düzenin kendisi kalır.",
+    "resetTip": "Kendi tuşlarını geri alır.",
     "ownNow": "Kısayolların artık her yerde geçerli",
     "asShipped": "Kısayollar yeniden fabrika ayarında",
     "fixedHead": "Sabit atanmış",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Masaüstünün dosya yöneticisinin iletişim kutusunu açar.",
     "propsOpen": "Aç",
     "icons": "Sistem simgeleri",
-    "iconsTip": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar bu anahtar kapalıyken de kendi simgelerini gösterir."
+    "iconsTip": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar bu anahtar kapalıyken de kendi simgelerini gösterir.",
+    "iconsTipLinux": "Listenin her yerinde sisteminin simgelerini gösterir. Programlar ve kısayollar zaten kendi simgelerini gösterir. CannonCommander küçük resimleri yalnızca yalıtılmış bir ortamda çizer. Bunun mümkün olmadığı yerlerde, örneğin Ubuntu 24.04'te, yalnızca dosya yöneticinin daha önce oluşturduklarını görürsün.",
+    "thumbs": "Küçük resimler",
+    "thumbsTip": "Ubuntu bir programı yalıtılmış ortama yalnızca ayrı bir izinle alır. Açtığında CannonCommander küçük bir AppArmor kuralı ekler, bunun için parolanı sorar ve bundan sonra küçük resimleri kendisi çizer. Kapattığında kural yeniden kalkar.",
+    "thumbsOnButton": "Sistem küçük resimlerini aç",
+    "thumbsOffButton": "Sistem küçük resimlerini kapat",
+    "thumbsOn": "Tamam, CannonCommander artık küçük resimleri kendisi çiziyor.",
+    "thumbsOff": "Kapatıldı, AppArmor kuralı kaldırıldı.",
+    "thumbsStillOut": "Kural yerinde ama yalıtılmış ortam ne yazık ki hâlâ çalışmıyor."
   },
   "shortcuts": {
     "title": "Klavye kısayolları",
@@ -3615,6 +3623,7 @@
     "removable": "USB Sürücü",
     "optical": "DVD Sürücüsü",
     "network": "Ağ Sürücüsü",
+    "shareOn": "{server} üzerindeki {share}",
     "volume": "{size} birim"
   },
   "files": {

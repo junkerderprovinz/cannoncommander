@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Vasen paneeli",
     "right": "Oikea paneeli",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Sarkain"
     },
+    "use": "Käyttö",
     "preset": "Pohja",
-    "style": "Käyttö kuin",
-    "styleTip": "Total Commander asettaa esimerkiksi pakkaamisen näppäimeen Alt+F5, purkamisen näppäimeen Alt+F9 ja uudelleennimeämisen näppäimeen Vaihto+F6. Omat näppäimesi pysyvät ennallaan.",
-    "styleTipDesktop": "Kuten Resurssienhallinnassa, F5 päivittää, Askelpalautin palaa takaisin ja napsautus valitsee. Total Commander asettaa esimerkiksi pakkaamisen näppäimeen Alt+F5. Omat näppäimesi pysyvät ennallaan.",
+    "layoutTip": "Kuin Commander, F5 kopioi ja F6 siirtää. Kuten Resurssienhallinnassa, F5 päivittää, askelpalautin palaa takaisin ja napsautus valitsee. Omat näppäimesi pysyvät ennallaan.",
+    "asCommander": "Kuin Commander",
+    "asExplorer": "Kuten Resurssienhallinnassa",
     "vim": "Vim-näppäimet editorissa",
     "vimTip": "Editori toimii silloin kuin Vim, normaali- ja lisäystilan kanssa. :w tallentaa ja :q sulkee tiedoston.",
     "clickSelect": "Valinta kuten Resurssienhallinnassa",
@@ -1946,7 +1946,7 @@
     "resetAll": "Palauta kaikki",
     "own": "Omat näppäimesi",
     "reset": "Palauta",
-    "resetTip": "Palauttaa pohjan näppäimet. Itse pohja säilyy.",
+    "resetTip": "Peruu omat näppäimesi.",
     "ownNow": "Omat pikanäppäimesi ovat nyt voimassa kaikkialla",
     "asShipped": "Pikanäppäimet ovat taas oletusarvoiset",
     "fixedHead": "Kiinteästi varatut",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Avaa työpöytäsi tiedostonhallinnan valintaikkunan.",
     "propsOpen": "Avaa",
     "icons": "Järjestelmän kuvakkeet",
-    "iconsTip": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa myös ilman tätä valintaa."
+    "iconsTip": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa myös ilman tätä valintaa.",
+    "iconsTipLinux": "Näyttää järjestelmäsi kuvakkeet kaikkialla luettelossa. Ohjelmat ja pikakuvakkeet näyttävät oman kuvakkeensa joka tapauksessa. CannonCommander piirtää esikatselukuvat vain eristetyssä ympäristössä. Missä se ei onnistu, kuten Ubuntu 24.04:ssä, näet vain ne, jotka tiedostonhallintasi on jo tehnyt.",
+    "thumbs": "Esikatselukuvat",
+    "thumbsTip": "Ubuntu päästää ohjelman eristettyyn ympäristöön vain omalla luvalla. Kun otat tämän käyttöön, CannonCommander lisää pienen AppArmor-säännön, joka kysyy salasanaasi, ja piirtää sen jälkeen esikatselukuvat itse. Kun poistat sen käytöstä, sääntö poistuu taas.",
+    "thumbsOnButton": "Ota järjestelmän esikatselukuvat käyttöön",
+    "thumbsOffButton": "Poista järjestelmän esikatselukuvat käytöstä",
+    "thumbsOn": "Valmis, CannonCommander piirtää nyt esikatselukuvat itse.",
+    "thumbsOff": "Poistettu käytöstä, AppArmor-sääntö on taas poissa.",
+    "thumbsStillOut": "Sääntö on paikallaan, mutta eristetty ympäristö ei valitettavasti vieläkään toimi."
   },
   "shortcuts": {
     "title": "Pikanäppäimet",
@@ -3615,6 +3623,7 @@
     "removable": "USB-asema",
     "optical": "DVD-asema",
     "network": "Verkkoasema",
+    "shareOn": "{share} palvelimella {server}",
     "volume": "{size}:n taltio"
   },
   "files": {

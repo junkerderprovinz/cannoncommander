@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Linkerpaneel",
     "right": "Rechterpaneel",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Bediening",
     "preset": "Indeling",
-    "style": "Bediening zoals",
-    "styleTip": "Total Commander zet bijvoorbeeld inpakken op Alt+F5, uitpakken op Alt+F9 en hernoemen op Shift+F6. Je eigen toetsen blijven zoals ze zijn.",
-    "styleTipDesktop": "Zoals in de Verkenner ververst F5, gaat Backspace terug en selecteert een klik. Total Commander zet bijvoorbeeld inpakken op Alt+F5. Je eigen toetsen blijven zoals ze zijn.",
+    "layoutTip": "Zoals een Commander kopieert F5 en verplaatst F6. Zoals in de Verkenner vernieuwt F5, gaat Backspace terug en selecteert een klik. Je eigen toetsen blijven zoals ze zijn.",
+    "asCommander": "Zoals een Commander",
+    "asExplorer": "Zoals in de Verkenner",
     "vim": "Vim-toetsen in de editor",
     "vimTip": "De editor werkt dan zoals Vim, met een normale modus en een invoegmodus. Met :w sla je op, met :q sluit je het bestand.",
     "clickSelect": "Selecteren zoals in de Verkenner",
@@ -1946,7 +1946,7 @@
     "resetAll": "Alles herstellen",
     "own": "Je eigen toetsen",
     "reset": "Herstellen",
-    "resetTip": "Haalt de toetsen van de indeling terug. De indeling zelf blijft.",
+    "resetTip": "Neemt je eigen toetsen terug.",
     "ownNow": "Je sneltoetsen gelden nu overal",
     "asShipped": "De sneltoetsen zijn weer zoals geleverd",
     "fixedHead": "Vast",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Opent het venster van het bestandsbeheer van je desktop.",
     "propsOpen": "Openen",
     "icons": "Systeempictogrammen",
-    "iconsTip": "Toont overal in de lijst de pictogrammen van je systeem. Programma's en snelkoppelingen tonen hun eigen pictogram ook zonder deze schakelaar."
+    "iconsTip": "Toont overal in de lijst de pictogrammen van je systeem. Programma's en snelkoppelingen tonen hun eigen pictogram ook zonder deze schakelaar.",
+    "iconsTipLinux": "Toont overal in de lijst de pictogrammen van je systeem. Programma's en snelkoppelingen tonen hoe dan ook hun eigen pictogram. CannonCommander maakt miniaturen alleen afgeschermd. Waar dat niet kan, zoals op Ubuntu 24.04, zie je alleen de miniaturen die je bestandsbeheer al heeft gemaakt.",
+    "thumbs": "Miniaturen",
+    "thumbsTip": "Ubuntu laat een programma alleen met een eigen toestemming afgeschermd draaien. Bij inschakelen maakt CannonCommander met je wachtwoord een kleine AppArmor-regel aan en maakt daarna zelf miniaturen. Bij uitschakelen verdwijnt de regel weer.",
+    "thumbsOnButton": "Systeemminiaturen inschakelen",
+    "thumbsOffButton": "Systeemminiaturen uitschakelen",
+    "thumbsOn": "Klaar, CannonCommander maakt vanaf nu zelf miniaturen.",
+    "thumbsOff": "Uitgeschakeld, de AppArmor-regel is weer weg.",
+    "thumbsStillOut": "De regel staat er, maar afschermen lukt helaas nog steeds niet."
   },
   "shortcuts": {
     "title": "Sneltoetsen",
@@ -3615,6 +3623,7 @@
     "removable": "USB-station",
     "optical": "Dvd-station",
     "network": "Netwerkstation",
+    "shareOn": "{share} op {server}",
     "volume": "Volume van {size}"
   },
   "files": {

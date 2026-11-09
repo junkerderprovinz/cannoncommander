@@ -1,4 +1,4 @@
-package fsapi
+package testutil
 
 import (
 	"os"
@@ -9,20 +9,20 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-// fixtureBase is a fresh folder on a local NTFS volume. Some tests need what
+// LocalDir is a fresh folder on a local NTFS volume. Some tests need what
 // only such a volume keeps or what Windows reads only from a local disk: the
 // owner's account, the offline attribute of a cloud file and the name a
 // desktop.ini gives a folder. A TEMP on a network share, as some machines
 // keep it, offers none of that.
-func fixtureBase(t testing.TB) string {
+func LocalDir(t testing.TB) string {
 	t.Helper()
 	dir := t.TempDir()
 	if localNTFS(dir) {
 		return dir
 	}
-	local, err := os.MkdirTemp(filepath.Join(os.Getenv("LOCALAPPDATA"), "Temp"), "cc-fsapi-")
+	local, err := os.MkdirTemp(filepath.Join(os.Getenv("LOCALAPPDATA"), "Temp"), "cc-test-")
 	if err != nil || !localNTFS(local) {
-		t.Skipf("these tests need a local NTFS volume, and neither %s nor the profile's temp folder is one", dir)
+		t.Skipf("this test needs a local NTFS volume, and neither %s nor the profile's temp folder is one", dir)
 	}
 	t.Cleanup(func() { os.RemoveAll(local) })
 	return local

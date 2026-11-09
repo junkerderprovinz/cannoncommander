@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Levo okno",
     "right": "Desno okno",
@@ -2036,10 +2035,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Upravljanje",
     "preset": "Postavitev",
-    "style": "Uporaba kot",
-    "styleTip": "Total Commander na primer stiskanje postavi na Alt+F5, razširjanje na Alt+F9 in preimenovanje na Shift+F6. Vaše lastne tipke ostanejo, kot so.",
-    "styleTipDesktop": "Kot v Raziskovalcu F5 osveži, Backspace gre nazaj in klik izbere. Total Commander na primer stiskanje postavi na Alt+F5. Vaše lastne tipke ostanejo, kot so.",
+    "layoutTip": "Kot Commander F5 kopira, F6 pa premakne. Kot v Raziskovalcu F5 osveži, Backspace gre nazaj in klik izbere. Vaše lastne tipke ostanejo, kot so.",
+    "asCommander": "Kot Commander",
+    "asExplorer": "Kot v Raziskovalcu",
     "vim": "Tipke Vim v urejevalniku",
     "vimTip": "Urejevalnik potem deluje kot Vim, z normalnim načinom in načinom vstavljanja. Z :w shranite, z :q zaprete datoteko.",
     "clickSelect": "Izbiranje kot v Raziskovalcu",
@@ -2054,7 +2054,7 @@
     "change": "Spremeni tipko za {action}",
     "press": "Pritisnite tipko …",
     "none": "brez",
-    "clear": "Odstrani tipko",
+    "clear": "Izbriši tipko",
     "undo": "Kot prej",
     "fixed": "{key} je trajno zasedena. Izberite drugo tipko.",
     "letter": "Posamezne črke in števke pripadajo hitremu iskanju. Dodajte Ctrl, Alt ali tipko F.",
@@ -2070,7 +2070,7 @@
     "resetAll": "Ponastavi vse",
     "own": "Lastne tipke",
     "reset": "Ponastavi",
-    "resetTip": "Vrne tipke postavitve. Sama postavitev ostane.",
+    "resetTip": "Prekliče vaše lastne tipke.",
     "ownNow": "Vaše bližnjice zdaj veljajo povsod",
     "asShipped": "Bližnjice so spet kot ob namestitvi",
     "fixedHead": "Trajno zasedeno",
@@ -2797,7 +2797,15 @@
     "propsSystemTip": "Odpre pogovorno okno upravitelja datotek vašega namizja.",
     "propsOpen": "Odpri",
     "icons": "Sistemske ikone",
-    "iconsTip": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice pokažejo svojo ikono tudi brez tega stikala."
+    "iconsTip": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice pokažejo svojo ikono tudi brez tega stikala.",
+    "iconsTipLinux": "Povsod na seznamu pokaže ikone vašega sistema. Programi in bližnjice tako ali tako pokažejo svojo ikono. CannonCommander riše sličice le v izoliranem okolju. Kjer to ne gre, na primer v Ubuntu 24.04, vidite le tiste, ki jih je vaš upravitelj datotek že ustvaril.",
+    "thumbs": "Sličice",
+    "thumbsTip": "Ubuntu spusti program v izolirano okolje le z lastnim dovoljenjem. Ob vklopu CannonCommander doda majhno pravilo AppArmor, ki zahteva vaše geslo, in nato sam riše sličice. Ob izklopu pravilo spet izgine.",
+    "thumbsOnButton": "Vklopi sistemske sličice",
+    "thumbsOffButton": "Izklopi sistemske sličice",
+    "thumbsOn": "Končano, CannonCommander zdaj sam riše sličice.",
+    "thumbsOff": "Izklopljeno, pravila AppArmor ni več.",
+    "thumbsStillOut": "Pravilo je tu, a izolirano okolje žal še vedno ne deluje."
   },
   "shortcuts": {
     "title": "Bližnjice na tipkovnici",
@@ -3879,6 +3887,7 @@
     "removable": "Pogon USB",
     "optical": "Pogon DVD",
     "network": "Omrežni pogon",
+    "shareOn": "{share} na {server}",
     "volume": "Nosilec {size}"
   },
   "files": {

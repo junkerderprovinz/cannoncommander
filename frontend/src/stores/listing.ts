@@ -38,6 +38,7 @@ export const useListing = defineStore('listing', () => {
     const have = lists.get(path);
     const job = api.fsList(path, have?.etag)
       .then((fresh) => {
+        if (fresh?.volume?.kind) fresh.volume = { ...fresh.volume, label: driveName(fresh.volume) };
         const next = fresh ?? have!;
         lists.set(path, next);
         failedTrees.delete(path);

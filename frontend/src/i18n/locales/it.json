@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Pannello sinistro",
     "right": "Pannello destro",
@@ -1974,10 +1973,11 @@
       "Enter": "Invio",
       "Tab": "Tab"
     },
+    "use": "Utilizzo",
     "preset": "Modello",
-    "style": "Uso come",
-    "styleTip": "Total Commander mette per esempio la compressione su Alt+F5, l'estrazione su Alt+F9 e la rinomina su Maiusc+F6. I tuoi tasti restano come sono.",
-    "styleTipDesktop": "Come in Esplora file, F5 aggiorna, Backspace torna indietro e un clic seleziona. Total Commander mette per esempio la compressione su Alt+F5. I tuoi tasti restano come sono.",
+    "layoutTip": "Come un Commander, F5 copia e F6 sposta. Come in Esplora file, F5 aggiorna, Backspace torna indietro e un clic seleziona. I tuoi tasti restano come sono.",
+    "asCommander": "Come un Commander",
+    "asExplorer": "Come in Esplora file",
     "vim": "Tasti Vim nell'editor",
     "vimTip": "L'editor funziona allora come Vim, con modalità normale e inserimento. :w salva e :q chiude il file.",
     "clickSelect": "Selezione come in Esplora file",
@@ -1992,7 +1992,7 @@
     "change": "Cambia il tasto per {action}",
     "press": "Premi un tasto…",
     "none": "nessuno",
-    "clear": "Rimuovi tasto",
+    "clear": "Elimina il tasto",
     "undo": "Come prima",
     "fixed": "{key} è riservato. Scegli un altro tasto.",
     "letter": "Le singole lettere e cifre servono alla ricerca rapida. Aggiungi Ctrl, Alt o un tasto F.",
@@ -2008,7 +2008,7 @@
     "resetAll": "Ripristina tutto",
     "own": "I tuoi tasti",
     "reset": "Ripristina",
-    "resetTip": "Riporta i tasti del modello. Il modello resta.",
+    "resetTip": "Annulla i tuoi tasti.",
     "ownNow": "Le tue scorciatoie ora valgono ovunque",
     "asShipped": "Le scorciatoie sono tornate come all'origine",
     "fixedHead": "Riservati",
@@ -2712,7 +2712,15 @@
     "propsSystemTip": "Apre la finestra di dialogo del file manager del tuo desktop.",
     "propsOpen": "Apri",
     "icons": "Icone di sistema",
-    "iconsTip": "Mostra ovunque nell'elenco le icone del tuo sistema. Programmi e collegamenti mostrano la propria icona anche con questa opzione disattivata."
+    "iconsTip": "Mostra ovunque nell'elenco le icone del tuo sistema. Programmi e collegamenti mostrano la propria icona anche con questa opzione disattivata.",
+    "iconsTipLinux": "Mostra ovunque nell'elenco le icone del tuo sistema. Programmi e collegamenti mostrano comunque la propria icona. CannonCommander crea le miniature solo in un ambiente isolato. Dove non è possibile, come su Ubuntu 24.04, vedi solo quelle che il tuo file manager ha già creato.",
+    "thumbs": "Miniature",
+    "thumbsTip": "Ubuntu fa entrare un programma in un ambiente isolato solo con un permesso apposito. Attivandolo, CannonCommander aggiunge una piccola regola AppArmor, che chiede la tua password, e da quel momento crea da sé le miniature. Disattivandolo, la regola sparisce.",
+    "thumbsOnButton": "Attiva le miniature di sistema",
+    "thumbsOffButton": "Disattiva le miniature di sistema",
+    "thumbsOn": "Fatto, da ora CannonCommander crea da sé le miniature.",
+    "thumbsOff": "Disattivato, la regola AppArmor non c'è più.",
+    "thumbsStillOut": "La regola c'è, ma l'ambiente isolato purtroppo non funziona ancora."
   },
   "shortcuts": {
     "title": "Scorciatoie da tastiera",
@@ -3747,6 +3755,7 @@
     "removable": "Unità USB",
     "optical": "Unità DVD",
     "network": "Unità di rete",
+    "shareOn": "{share} su {server}",
     "volume": "Volume da {size}"
   },
   "files": {

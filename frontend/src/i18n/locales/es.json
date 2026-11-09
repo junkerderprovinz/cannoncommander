@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Panel izquierdo",
     "right": "Panel derecho",
@@ -1974,10 +1973,11 @@
       "Enter": "Intro",
       "Tab": "Tab"
     },
+    "use": "Manejo",
     "preset": "Plantilla",
-    "style": "Se maneja como",
-    "styleTip": "Total Commander pone, por ejemplo, comprimir en Alt+F5, extraer en Alt+F9 y cambiar nombre en Mayús+F6. Tus propias teclas se quedan como están.",
-    "styleTipDesktop": "Como en el Explorador, F5 actualiza, Retroceso vuelve atrás y un clic selecciona. Total Commander pone, por ejemplo, comprimir en Alt+F5. Tus propias teclas se quedan como están.",
+    "layoutTip": "Como un Commander, F5 copia y F6 mueve. Como en el Explorador, F5 actualiza, Retroceso vuelve atrás y un clic selecciona. Tus propias teclas se quedan como están.",
+    "asCommander": "Como un Commander",
+    "asExplorer": "Como en el Explorador",
     "vim": "Teclas de Vim en el editor",
     "vimTip": "El editor funciona entonces como Vim, con modo normal y modo de inserción. :w guarda y :q cierra el archivo.",
     "clickSelect": "Selección como en el Explorador",
@@ -1992,7 +1992,7 @@
     "change": "Cambiar la tecla de {action}",
     "press": "Pulsa una tecla…",
     "none": "ninguna",
-    "clear": "Quitar tecla",
+    "clear": "Eliminar la tecla",
     "undo": "Como antes",
     "fixed": "{key} está reservada. Elige otra tecla.",
     "letter": "Las letras y cifras sueltas son para la búsqueda rápida. Añade Ctrl, Alt o una tecla F.",
@@ -2008,7 +2008,7 @@
     "resetAll": "Restablecer todo",
     "own": "Tus propias teclas",
     "reset": "Restablecer",
-    "resetTip": "Recupera las teclas de la plantilla. La plantilla en sí se mantiene.",
+    "resetTip": "Deshace tus propias teclas.",
     "ownNow": "Tus atajos valen ahora en todas partes",
     "asShipped": "Los atajos vuelven a estar como de fábrica",
     "fixedHead": "Reservadas",
@@ -2712,7 +2712,15 @@
     "propsSystemTip": "Abre el cuadro de diálogo del administrador de archivos de tu escritorio.",
     "propsOpen": "Abrir",
     "icons": "Iconos del sistema",
-    "iconsTip": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono aunque esto esté desactivado."
+    "iconsTip": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono aunque esto esté desactivado.",
+    "iconsTipLinux": "Muestra en toda la lista los iconos de tu sistema. Los programas y los accesos directos muestran su propio icono de todos modos. CannonCommander solo genera miniaturas dentro de un entorno aislado. Donde eso no es posible, como en Ubuntu 24.04, solo ves las que tu administrador de archivos ya ha creado.",
+    "thumbs": "Miniaturas",
+    "thumbsTip": "Ubuntu solo deja entrar a un programa en un entorno aislado con un permiso propio. Al activarlo, CannonCommander añade una pequeña regla de AppArmor, que pide tu contraseña, y desde entonces genera las miniaturas por sí mismo. Al desactivarlo, la regla desaparece.",
+    "thumbsOnButton": "Activar las miniaturas del sistema",
+    "thumbsOffButton": "Desactivar las miniaturas del sistema",
+    "thumbsOn": "Listo, a partir de ahora CannonCommander genera las miniaturas por sí mismo.",
+    "thumbsOff": "Desactivado, la regla de AppArmor ya no está.",
+    "thumbsStillOut": "La regla está puesta, pero el entorno aislado sigue sin funcionar, lo sentimos."
   },
   "shortcuts": {
     "title": "Atajos de teclado",
@@ -3747,6 +3755,7 @@
     "removable": "Unidad USB",
     "optical": "Unidad de DVD",
     "network": "Unidad de red",
+    "shareOn": "{share} en {server}",
     "volume": "Volumen de {size}"
   },
   "files": {

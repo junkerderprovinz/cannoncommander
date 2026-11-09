@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Kairysis skydelis",
     "right": "Dešinysis skydelis",
@@ -2036,10 +2035,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Valdymas",
     "preset": "Išdėstymas",
-    "style": "Valdymas kaip",
-    "styleTip": "Total Commander, pavyzdžiui, archyvavimą priskiria Alt+F5, išskleidimą Alt+F9, o pervardijimą Shift+F6. Tavo klavišai lieka tokie, kokie yra.",
-    "styleTipDesktop": "Kaip naršyklėje, F5 atnaujina, Backspace grįžta atgal, o spustelėjimas pažymi. Total Commander, pavyzdžiui, archyvavimą priskiria Alt+F5. Tavo klavišai lieka tokie, kokie yra.",
+    "layoutTip": "Kaip Commander, F5 kopijuoja, o F6 perkelia. Kaip naršyklėje, F5 atnaujina, Backspace grįžta atgal, o spustelėjimas pasirenka. Tavo klavišai lieka tokie, kokie yra.",
+    "asCommander": "Kaip Commander",
+    "asExplorer": "Kaip naršyklėje",
     "vim": "Vim klavišai redaktoriuje",
     "vimTip": "Tada redaktorius veikia kaip Vim, su normaliuoju ir įterpimo režimu. :w įrašo, o :q uždaro failą.",
     "clickSelect": "Pasirinkimas kaip naršyklėje",
@@ -2054,7 +2054,7 @@
     "change": "Keisti klavišą komandai {action}",
     "press": "Paspausk klavišą …",
     "none": "nėra",
-    "clear": "Pašalinti klavišą",
+    "clear": "Ištrinti klavišą",
     "undo": "Kaip anksčiau",
     "fixed": "{key} priskirtas visam laikui. Rinkis kitą klavišą.",
     "letter": "Pavienės raidės ir skaitmenys skirti greitajai paieškai. Pridėk Ctrl, Alt arba F klavišą.",
@@ -2070,7 +2070,7 @@
     "resetAll": "Atkurti viską",
     "own": "Tavo klavišai",
     "reset": "Atkurti",
-    "resetTip": "Grąžina išdėstymo klavišus. Pats išdėstymas lieka.",
+    "resetTip": "Atšaukia tavo klavišus.",
     "ownNow": "Tavo spartieji klavišai dabar galioja visur",
     "asShipped": "Spartieji klavišai vėl tokie, kokie buvo pristatyti",
     "fixedHead": "Priskirti visam laikui",
@@ -2797,7 +2797,15 @@
     "propsSystemTip": "Atidaro tavo darbalaukio failų tvarkytuvės dialogo langą.",
     "propsOpen": "Atidaryti",
     "icons": "Sistemos piktogramos",
-    "iconsTip": "Visame sąraše rodo tavo sistemos piktogramas. Programos ir nuorodos savo piktogramą rodo ir be šio jungiklio."
+    "iconsTip": "Visame sąraše rodo tavo sistemos piktogramas. Programos ir nuorodos savo piktogramą rodo ir be šio jungiklio.",
+    "iconsTipLinux": "Visame sąraše rodo tavo sistemos piktogramas. Programos ir nuorodos savo piktogramą rodo bet kuriuo atveju. Miniatiūras CannonCommander piešia tik izoliuotoje aplinkoje. Kur to padaryti negalima, pavyzdžiui, Ubuntu 24.04, matai tik tas, kurias tavo failų tvarkytuvė jau sukūrė.",
+    "thumbs": "Miniatiūros",
+    "thumbsTip": "Ubuntu įleidžia programą į izoliuotą aplinką tik su atskiru leidimu. Įjungus CannonCommander prideda nedidelę AppArmor taisyklę, kuri paprašys tavo slaptažodžio, ir nuo tada pats piešia miniatiūras. Išjungus taisyklė vėl dingsta.",
+    "thumbsOnButton": "Įjungti sistemos miniatiūras",
+    "thumbsOffButton": "Išjungti sistemos miniatiūras",
+    "thumbsOn": "Atlikta, nuo šiol CannonCommander pats piešia miniatiūras.",
+    "thumbsOff": "Išjungta, AppArmor taisyklės nebėra.",
+    "thumbsStillOut": "Taisyklė yra, bet izoliuota aplinka, deja, vis dar neveikia."
   },
   "shortcuts": {
     "title": "Spartieji klavišai",
@@ -3879,6 +3887,7 @@
     "removable": "USB diskas",
     "optical": "DVD įrenginys",
     "network": "Tinklo diskas",
+    "shareOn": "{share} serveryje {server}",
     "volume": "{size} tomas"
   },
   "files": {

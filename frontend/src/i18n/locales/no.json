@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Venstre panel",
     "right": "Høyre panel",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Betjening",
     "preset": "Mal",
-    "style": "Bruk som",
-    "styleTip": "Total Commander legger for eksempel pakking på Alt+F5, utpakking på Alt+F9 og nytt navn på Skift+F6. Dine egne taster blir som de er.",
-    "styleTipDesktop": "Som i Utforsker laster F5 inn på nytt, Tilbake-tasten går tilbake og et klikk merker. Total Commander legger for eksempel pakking på Alt+F5. Dine egne taster blir som de er.",
+    "layoutTip": "Som en Commander kopierer F5 og F6 flytter. Som i Utforsker oppdaterer F5, Tilbake-tasten går tilbake og et klikk markerer. Dine egne taster blir som de er.",
+    "asCommander": "Som en Commander",
+    "asExplorer": "Som i Utforsker",
     "vim": "Vim-taster i redigeringsprogrammet",
     "vimTip": "Redigeringsprogrammet fungerer da som Vim, med normalmodus og innsettingsmodus. Med :w lagrer du, med :q lukker du filen.",
     "clickSelect": "Markering som i Utforsker",
@@ -1930,7 +1930,7 @@
     "change": "Endre tast for {action}",
     "press": "Trykk en tast …",
     "none": "ingen",
-    "clear": "Fjern tast",
+    "clear": "Slett tast",
     "undo": "Som før",
     "fixed": "{key} er fast tildelt. Velg en annen tast.",
     "letter": "Enkeltbokstaver og sifre brukes av hurtigsøket. Legg til Ctrl, Alt eller en F-tast.",
@@ -1946,7 +1946,7 @@
     "resetAll": "Tilbakestill alt",
     "own": "Dine egne taster",
     "reset": "Tilbakestill",
-    "resetTip": "Henter tilbake tastene i malen. Selve malen beholdes.",
+    "resetTip": "Tar tilbake dine egne taster.",
     "ownNow": "Hurtigtastene dine gjelder nå overalt",
     "asShipped": "Hurtigtastene er som ved levering igjen",
     "fixedHead": "Fast tildelt",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Åpner dialogen til filbehandleren på skrivebordet ditt.",
     "propsOpen": "Åpne",
     "icons": "Systemikoner",
-    "iconsTip": "Viser systemets ikoner overalt i listen. Programmer og snarveier viser sitt eget ikon også når dette er av."
+    "iconsTip": "Viser systemets ikoner overalt i listen. Programmer og snarveier viser sitt eget ikon også når dette er av.",
+    "iconsTipLinux": "Viser systemets ikoner overalt i listen. Programmer og snarveier viser sitt eget ikon uansett. CannonCommander lager bare miniatyrbilder i et isolert miljø. Der det ikke går, som på Ubuntu 24.04, ser du bare dem filbehandleren din allerede har laget.",
+    "thumbs": "Miniatyrbilder",
+    "thumbsTip": "Ubuntu slipper bare et program inn i et isolert miljø med en egen tillatelse. Når du slår det på, legger CannonCommander til en liten AppArmor-regel, som ber om passordet ditt, og lager deretter miniatyrbilder selv. Når du slår det av, forsvinner regelen igjen.",
+    "thumbsOnButton": "Slå på systemets miniatyrbilder",
+    "thumbsOffButton": "Slå av systemets miniatyrbilder",
+    "thumbsOn": "Ferdig, CannonCommander lager nå miniatyrbilder selv.",
+    "thumbsOff": "Slått av, AppArmor-regelen er borte igjen.",
+    "thumbsStillOut": "Regelen er på plass, men det isolerte miljøet fungerer dessverre fortsatt ikke."
   },
   "shortcuts": {
     "title": "Hurtigtaster",
@@ -3615,6 +3623,7 @@
     "removable": "USB-stasjon",
     "optical": "DVD-stasjon",
     "network": "Nettverksstasjon",
+    "shareOn": "{share} på {server}",
     "volume": "{size}-volum"
   },
   "files": {

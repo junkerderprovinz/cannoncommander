@@ -103,7 +103,7 @@ const clear = (id: string) => set(Object.fromEntries(Object.entries(props.map).f
         :data-kb-rec="id" :aria-label="t('keys.change', { action: name(actions[id]!) })"
         @click="listen(id)" @press="press" @cancel="stop" />
       <span class="kb-acts">
-        <IconButton v-if="main(id)" :tip="t('keys.clear')" :glyph="glyphComponent('IconClose')" :data-kb-clear="id" @click="clear(id)" />
+        <IconButton v-if="main(id)" :tip="t('keys.clear')" :glyph="glyphComponent('IconTrash')" :data-kb-clear="id" @click="clear(id)" />
         <IconButton v-if="changed(map, base, id)" :tip="t('keys.undo')" :glyph="glyphComponent('IconUndo')" :data-kb-reset="id" @click="undo(id)" />
       </span>
       <div v-if="pending?.id === id" class="kb-warn" role="alert">

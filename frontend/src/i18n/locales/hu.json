@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Bal ablak",
     "right": "Jobb ablak",
@@ -1912,10 +1911,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Kezelés",
     "preset": "Kiosztás",
-    "style": "Kezelés mint",
-    "styleTip": "A Total Commander például a tömörítést az Alt+F5-re, a kibontást az Alt+F9-re, az átnevezést a Shift+F6-ra teszi. A saját billentyűi közben megmaradnak.",
-    "styleTipDesktop": "Mint az Intézőben, az F5 frissít, a Backspace visszalép, egy kattintás pedig kijelöl. A Total Commander például a tömörítést az Alt+F5-re teszi. A saját billentyűi közben megmaradnak.",
+    "layoutTip": "Mint egy Commander, az F5 másol, az F6 áthelyez. Mint az Intézőben, az F5 frissít, a Backspace visszalép, egy kattintás pedig kijelöl. A saját billentyűi megmaradnak.",
+    "asCommander": "Mint egy Commander",
+    "asExplorer": "Mint az Intézőben",
     "vim": "Vim-billentyűk a szerkesztőben",
     "vimTip": "A szerkesztő ekkor úgy működik, mint a Vim, normál és beszúró móddal. A :w ment, a :q bezárja a fájlt.",
     "clickSelect": "Kijelölés, mint az Intézőben",
@@ -1930,7 +1930,7 @@
     "change": "Billentyű módosítása: {action}",
     "press": "Nyomjon meg egy billentyűt …",
     "none": "nincs",
-    "clear": "Billentyű eltávolítása",
+    "clear": "Billentyű törlése",
     "undo": "Mint korábban",
     "fixed": "A(z) {key} véglegesen foglalt. Válasszon másik billentyűt.",
     "letter": "Az egyes betűk és számjegyek a gyorskeresésé. Tegyen hozzá Ctrl-t, Alt-ot vagy egy F-billentyűt.",
@@ -1946,7 +1946,7 @@
     "resetAll": "Minden visszaállítása",
     "own": "Saját billentyűk",
     "reset": "Visszaállítás",
-    "resetTip": "Visszahozza a kiosztás billentyűit. Maga a kiosztás megmarad.",
+    "resetTip": "Visszavonja a saját billentyűit.",
     "ownNow": "A billentyűparancsai most mindenhol érvényesek",
     "asShipped": "A billentyűparancsok újra a gyári állapotban vannak",
     "fixedHead": "Véglegesen foglalt",
@@ -2627,7 +2627,15 @@
     "propsSystemTip": "Megnyitja az asztali környezet fájlkezelőjének párbeszédpanelét.",
     "propsOpen": "Megnyitás",
     "icons": "Rendszerikonok",
-    "iconsTip": "A lista minden részén a rendszer ikonjait mutatja. A programok és parancsikonok e kapcsoló nélkül is a saját ikonjukat mutatják."
+    "iconsTip": "A lista minden részén a rendszer ikonjait mutatja. A programok és parancsikonok e kapcsoló nélkül is a saját ikonjukat mutatják.",
+    "iconsTipLinux": "A lista minden részén a rendszer ikonjait mutatja. A programok és parancsikonok így is a saját ikonjukat mutatják. A CannonCommander csak elszigetelt környezetben készít bélyegképeket. Ahol ez nem lehetséges, például az Ubuntu 24.04 alatt, csak azokat látja, amelyeket a fájlkezelője már elkészített.",
+    "thumbs": "Bélyegképek",
+    "thumbsTip": "Az Ubuntu csak külön engedéllyel enged be egy programot elszigetelt környezetbe. Bekapcsoláskor a CannonCommander felvesz egy kis AppArmor-szabályt, ehhez elkéri a jelszavát, és ezután maga készíti a bélyegképeket. Kikapcsoláskor a szabály újra eltűnik.",
+    "thumbsOnButton": "Rendszer-bélyegképek bekapcsolása",
+    "thumbsOffButton": "Rendszer-bélyegképek kikapcsolása",
+    "thumbsOn": "Kész, mostantól a CannonCommander maga készíti a bélyegképeket.",
+    "thumbsOff": "Kikapcsolva, az AppArmor-szabály eltűnt.",
+    "thumbsStillOut": "A szabály megvan, de az elszigetelt környezet sajnos még mindig nem működik."
   },
   "shortcuts": {
     "title": "Billentyűparancsok",
@@ -3615,6 +3623,7 @@
     "removable": "USB-meghajtó",
     "optical": "DVD-meghajtó",
     "network": "Hálózati meghajtó",
+    "shareOn": "{share} itt: {server}",
     "volume": "{size} kötet"
   },
   "files": {

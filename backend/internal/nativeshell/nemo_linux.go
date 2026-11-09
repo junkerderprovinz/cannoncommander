@@ -34,7 +34,7 @@ func (k *desk) nemo(sel selection) []action {
 				continue
 			}
 			command = inActionDir(dir, command)
-			shown, remember := nemoLabel(label, g, sel), fill(label, nil)
+			shown, remember := nemoLabel(label, g, sel), generic(label)
 			if remember == shown {
 				remember = ""
 			}

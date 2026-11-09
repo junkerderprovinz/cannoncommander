@@ -1,5 +1,4 @@
 {
-  "$status": "untranslated",
   "access": {
     "left": "Ľavé okno",
     "right": "Pravé okno",
@@ -2036,10 +2035,11 @@
       "Enter": "Enter",
       "Tab": "Tab"
     },
+    "use": "Ovládanie",
     "preset": "Rozloženie",
-    "style": "Ovládanie ako",
-    "styleTip": "Total Commander dáva napríklad balenie na Alt+F5, rozbalenie na Alt+F9 a premenovanie na Shift+F6. Vaše vlastné klávesy zostanú, ako sú.",
-    "styleTipDesktop": "Ako v Prieskumníkovi, F5 obnovuje, Backspace ide späť a kliknutie vyberá. Total Commander dáva napríklad balenie na Alt+F5. Vaše vlastné klávesy zostanú, ako sú.",
+    "layoutTip": "Ako Commander, F5 kopíruje a F6 presúva. Ako v Prieskumníkovi, F5 obnovuje, Backspace ide späť a kliknutie vyberá. Vaše vlastné klávesy zostanú, ako sú.",
+    "asCommander": "Ako Commander",
+    "asExplorer": "Ako v Prieskumníkovi",
     "vim": "Klávesy Vim v editore",
     "vimTip": "Editor potom funguje ako Vim, s normálnym režimom a režimom vkladania. Cez :w uložíte, cez :q súbor zavriete.",
     "clickSelect": "Výber ako v Prieskumníkovi",
@@ -2054,7 +2054,7 @@
     "change": "Zmeniť kláves pre {action}",
     "press": "Stlačte kláves …",
     "none": "žiadny",
-    "clear": "Odobrať kláves",
+    "clear": "Odstrániť kláves",
     "undo": "Ako predtým",
     "fixed": "{key} je pevne priradený. Zvoľte iný kláves.",
     "letter": "Jednotlivé písmená a číslice patria rýchlemu hľadaniu. Pridajte Ctrl, Alt alebo kláves F.",
@@ -2070,7 +2070,7 @@
     "resetAll": "Obnoviť všetko",
     "own": "Vlastné klávesy",
     "reset": "Obnoviť",
-    "resetTip": "Vráti klávesy rozloženia. Samotné rozloženie zostane.",
+    "resetTip": "Zruší vaše vlastné klávesy.",
     "ownNow": "Vaše klávesové skratky teraz platia všade",
     "asShipped": "Klávesové skratky sú zase ako po inštalácii",
     "fixedHead": "Pevne priradené",
@@ -2797,7 +2797,15 @@
     "propsSystemTip": "Otvorí dialógové okno správcu súborov vášho pracovného prostredia.",
     "propsOpen": "Otvoriť",
     "icons": "Systémové ikony",
-    "iconsTip": "Zobrazí v celom zozname ikony vášho systému. Programy a odkazy zobrazujú vlastnú ikonu aj bez tohto prepínača."
+    "iconsTip": "Zobrazí v celom zozname ikony vášho systému. Programy a odkazy zobrazujú vlastnú ikonu aj bez tohto prepínača.",
+    "iconsTipLinux": "Zobrazí v celom zozname ikony vášho systému. Programy a odkazy zobrazujú vlastnú ikonu tak či tak. Náhľady kreslí CannonCommander iba v izolovanom prostredí. Kde to nejde, napríklad v Ubuntu 24.04, uvidíte iba tie, ktoré už vytvoril váš správca súborov.",
+    "thumbs": "Náhľady",
+    "thumbsTip": "Ubuntu pustí program do izolovaného prostredia iba s vlastným povolením. Pri zapnutí pridá CannonCommander malé pravidlo AppArmor, ktoré si vypýta vaše heslo, a potom kreslí náhľady sám. Pri vypnutí pravidlo opäť zmizne.",
+    "thumbsOnButton": "Zapnúť systémové náhľady",
+    "thumbsOffButton": "Vypnúť systémové náhľady",
+    "thumbsOn": "Hotovo, CannonCommander teraz kreslí náhľady sám.",
+    "thumbsOff": "Vypnuté, pravidlo AppArmor je opäť preč.",
+    "thumbsStillOut": "Pravidlo je na mieste, ale izolované prostredie bohužiaľ stále nefunguje."
   },
   "shortcuts": {
     "title": "Klávesové skratky",
@@ -3879,6 +3887,7 @@
     "removable": "Jednotka USB",
     "optical": "Jednotka DVD",
     "network": "Sieťová jednotka",
+    "shareOn": "{share} na {server}",
     "volume": "Zväzok {size}"
   },
   "files": {

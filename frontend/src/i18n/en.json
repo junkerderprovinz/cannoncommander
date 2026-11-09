@@ -300,6 +300,7 @@
     "removable": "USB Drive",
     "optical": "DVD Drive",
     "network": "Network Drive",
+    "shareOn": "{share} on {server}",
     "volume": "{size} Volume"
   },
   "files": {

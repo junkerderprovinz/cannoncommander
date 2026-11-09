@@ -206,3 +206,27 @@ describe('first start', () => {
     expect(prefs).toMatchObject({ desktopStyle: 'commander', clickSelect: false, keys: null });
   });
 });
+
+describe('right click', () => {
+  const click = (el: Element) => {
+    const e = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
+    el.dispatchEvent(e);
+    return e.defaultPrevented;
+  };
+
+  it('shows no menu of the window where the app has none of its own, and keeps the one of a field', () => {
+    Object.assign(prefs, { desktopStyle: 'commander' });
+    setup();
+    const page = document.createElement('div');
+    page.innerHTML = '<p>Papierkorb</p><input><textarea></textarea><div contenteditable="true"><b>Notiz</b></div>';
+    document.body.append(page);
+    try {
+      expect(click(page.querySelector('p')!)).toBe(true);
+      expect(click(page.querySelector('input')!)).toBe(false);
+      expect(click(page.querySelector('textarea')!)).toBe(false);
+      expect(click(page.querySelector('b')!)).toBe(false);
+    } finally {
+      page.remove();
+    }
+  });
+});
