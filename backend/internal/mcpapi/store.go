@@ -15,7 +15,7 @@ func init() {
 	migrate.Register(migrate.Main, migrate.SQL("mcp/001_create",
 		`CREATE TABLE mcp_keys (
 			id TEXT PRIMARY KEY,
-			user_id INTEGER NOT NULL,
+			user_id TEXT NOT NULL,
 			kind TEXT NOT NULL,
 			oauth_client TEXT NOT NULL DEFAULT '',
 			resource TEXT NOT NULL DEFAULT '',
@@ -129,10 +129,19 @@ const keyCols = `id, user_id, kind, oauth_client, resource, label, client, key_d
 
 type scanner interface{ Scan(...any) error }
 
+// uid is a user id as the tables keep it. Ids are random 64-bit numbers, and
+// SQLite holds no integer with the high bit set.
+func uid(id uint64) string { return strconv.FormatUint(id, 10) }
+
 func scanKey(s scanner) (Key, error) {
 	var k Key
-	err := s.Scan(&k.ID, &k.UserID, &k.Kind, &k.OAuthClient, &k.Resource, &k.Label, &k.Client, &k.Digest, &k.Hint, &k.Check,
+	var user string
+	err := s.Scan(&k.ID, &user, &k.Kind, &k.OAuthClient, &k.Resource, &k.Label, &k.Client, &k.Digest, &k.Hint, &k.Check,
 		&k.CanWrite, &k.CreatedAt, &k.RotatedAt, &k.LastUsedAt, &k.LastUsedFrom, &k.RevokedAt, &k.RevokedReason)
+	if err != nil {
+		return Key{}, err
+	}
+	k.UserID, err = strconv.ParseUint(user, 10, 64)
 	return k, err
 }
 
@@ -170,8 +179,8 @@ func (s store) key(ctx context.Context, id string) (Key, error) {
 // active ones oldest first, then the revoked ones, the most recent first.
 func (s store) keys(ctx context.Context, userID uint64) ([]Key, error) {
 	rows, err := s.db.QueryContext(ctx, `SELECT `+keyCols+` FROM mcp_keys
-		WHERE ? = 0 OR user_id = ?
-		ORDER BY revoked_at != 0, CASE WHEN revoked_at = 0 THEN created_at ELSE 0 END, revoked_at DESC, id`, userID, userID)
+		WHERE ? OR user_id = ?
+		ORDER BY revoked_at != 0, CASE WHEN revoked_at = 0 THEN created_at ELSE 0 END, revoked_at DESC, id`, userID == 0, uid(userID))
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +201,7 @@ func (s store) keys(ctx context.Context, userID uint64) ([]Key, error) {
 func labelTaken(tx *sql.Tx, userID uint64, label, exceptID string) (bool, error) {
 	var n int
 	err := tx.QueryRow(`SELECT count(*) FROM mcp_keys
-		WHERE user_id = ? AND revoked_at = 0 AND lower(label) = lower(?) AND id != ?`, userID, label, exceptID).Scan(&n)
+		WHERE user_id = ? AND revoked_at = 0 AND lower(label) = lower(?) AND id != ?`, uid(userID), label, exceptID).Scan(&n)
 	return n > 0, err
 }
 
@@ -207,7 +216,7 @@ func (s store) createKey(ctx context.Context, k Key) (Key, error) {
 	}
 	defer tx.Rollback()
 	var active int
-	if err := tx.QueryRow(`SELECT count(*) FROM mcp_keys WHERE user_id = ? AND kind = 'key' AND revoked_at = 0`, k.UserID).Scan(&active); err != nil {
+	if err := tx.QueryRow(`SELECT count(*) FROM mcp_keys WHERE user_id = ? AND kind = 'key' AND revoked_at = 0`, uid(k.UserID)).Scan(&active); err != nil {
 		return Key{}, err
 	}
 	if active >= keyLimit {
@@ -220,7 +229,7 @@ func (s store) createKey(ctx context.Context, k Key) (Key, error) {
 	}
 	if _, err := tx.Exec(`INSERT INTO mcp_keys (id, user_id, kind, label, client, key_digest, key_hint, key_check, can_write, created_at)
 		VALUES (?, ?, 'key', ?, ?, ?, ?, ?, ?, ?)`,
-		k.ID, k.UserID, k.Label, k.Client, k.Digest, k.Hint, k.Check, k.CanWrite, k.CreatedAt); err != nil {
+		k.ID, uid(k.UserID), k.Label, k.Client, k.Digest, k.Hint, k.Check, k.CanWrite, k.CreatedAt); err != nil {
 		return Key{}, err
 	}
 	if err := tx.Commit(); err != nil {
@@ -313,7 +322,7 @@ func revokeTx(tx *sql.Tx, id, reason string, now int64) (bool, error) {
 
 // revokeUser revokes every key and grant of a user and returns them.
 func (s store) revokeUser(ctx context.Context, userID uint64, reason string, now int64) ([]Key, error) {
-	return s.revokeWhere(ctx, `SELECT id FROM mcp_keys WHERE user_id = ? AND revoked_at = 0`, reason, now, userID)
+	return s.revokeWhere(ctx, `SELECT id FROM mcp_keys WHERE user_id = ? AND revoked_at = 0`, reason, now, uid(userID))
 }
 
 // revokeGrants revokes every active OAuth grant and returns them, keys
@@ -414,7 +423,7 @@ func (s store) forgetUser(ctx context.Context, userID uint64) error {
 		return err
 	}
 	defer tx.Rollback()
-	ids, err := idsOf(tx, `SELECT id FROM mcp_keys WHERE user_id = ?`, userID)
+	ids, err := idsOf(tx, `SELECT id FROM mcp_keys WHERE user_id = ?`, uid(userID))
 	if err != nil {
 		return err
 	}
@@ -655,7 +664,7 @@ func (s store) createGrant(ctx context.Context, g grant, now int64) (Key, error)
 		return Key{}, err
 	}
 	defer tx.Rollback()
-	earlier, err := idsOf(tx, `SELECT id FROM mcp_keys WHERE kind = 'oauth' AND revoked_at = 0 AND oauth_client = ? AND user_id = ?`, g.OAuthClient, g.UserID)
+	earlier, err := idsOf(tx, `SELECT id FROM mcp_keys WHERE kind = 'oauth' AND revoked_at = 0 AND oauth_client = ? AND user_id = ?`, g.OAuthClient, uid(g.UserID))
 	if err != nil {
 		return Key{}, err
 	}
@@ -665,7 +674,7 @@ func (s store) createGrant(ctx context.Context, g grant, now int64) (Key, error)
 		}
 	}
 	var active int
-	if err := tx.QueryRow(`SELECT count(*) FROM mcp_keys WHERE kind = 'oauth' AND revoked_at = 0 AND user_id = ?`, g.UserID).Scan(&active); err != nil {
+	if err := tx.QueryRow(`SELECT count(*) FROM mcp_keys WHERE kind = 'oauth' AND revoked_at = 0 AND user_id = ?`, uid(g.UserID)).Scan(&active); err != nil {
 		return Key{}, err
 	}
 	if active >= keyLimit {
@@ -677,7 +686,7 @@ func (s store) createGrant(ctx context.Context, g grant, now int64) (Key, error)
 	}
 	if _, err := tx.Exec(`INSERT INTO mcp_keys (id, user_id, kind, oauth_client, resource, label, client, key_check, can_write, created_at)
 		VALUES (?, ?, 'oauth', ?, ?, ?, ?, ?, ?, ?)`,
-		g.ID, g.UserID, g.OAuthClient, g.Resource, label, g.Client, g.Check, g.CanWrite, now); err != nil {
+		g.ID, uid(g.UserID), g.OAuthClient, g.Resource, label, g.Client, g.Check, g.CanWrite, now); err != nil {
 		return Key{}, err
 	}
 	if err := insertTokens(tx, g.ID, g.AccessDigest, g.RefreshDigest, g.AccessExpires, g.RefreshExpires, now); err != nil {

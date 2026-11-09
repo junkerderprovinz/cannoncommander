@@ -33,9 +33,10 @@ import (
 func TestMain(m *testing.M) { os.Exit(testutil.Main(m)) }
 
 // The accounts of every test: anna may do everything in her shares, gast may
-// look and download, chef is an admin.
+// look and download, chef is an admin. Ids are random 64-bit numbers in the
+// app, and anna's has the high bit set, which SQLite cannot hold as an integer.
 const (
-	anna = uint64(1)
+	anna = uint64(17795247194615346401)
 	gast = uint64(2)
 	chef = uint64(3)
 )
