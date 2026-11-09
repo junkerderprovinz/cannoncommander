@@ -1,4 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp, h, nextTick } from 'vue';
 import WindowHost from '@/core/WindowHost.vue';
@@ -170,5 +172,24 @@ describe('the MCP server card', () => {
     expect(q('[data-group="local"]')).not.toBeNull();
     await click(q('[data-client="zed"] button'));
     expect(q('#mcp-cpw')).toBeNull();
+  });
+
+  it('shows one mark on every client tile, the single colour one waiting for the pointer', async () => {
+    // Vitest leaves the stylesheets out, and which mark shows is up to them.
+    const sheet = (path: string) => document.head.appendChild(Object.assign(document.createElement('style'), { textContent: readFileSync(path, 'utf8') }));
+    const sheets = [sheet(join(import.meta.dirname, '../../../../node_modules/@glimstone/core/tokens.css')), sheet(join(import.meta.dirname, 'mcp.css'))];
+    try {
+      await mount();
+      await click(q('#mcp-choose'));
+      const tiles = [...document.querySelectorAll('[data-client]')];
+      expect(tiles.length).toBeGreaterThan(20);
+      const shown = (el: Element) => getComputedStyle(el).display !== 'none';
+      for (const tile of tiles) {
+        const marks = [...tile.querySelectorAll('.glim-readme-btn-mark svg:not(svg svg)')].filter(shown);
+        expect(marks.length, tile.getAttribute('data-client')!).toBe(1);
+      }
+    } finally {
+      sheets.forEach((s) => s.remove());
+    }
   });
 });
