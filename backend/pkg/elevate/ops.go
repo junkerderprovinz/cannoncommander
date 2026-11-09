@@ -4,8 +4,9 @@
 // or pkexec on Linux and hands it one job, on Windows over a pipe where each
 // side checks the other's process, on Linux over a loopback connection that
 // both sides prove with a secret from stdin. The copy exits once the job is
-// through. It knows a handful of operations on plain absolute paths, follows
-// no links and runs no programs.
+// through. It knows a handful of operations on plain absolute paths and
+// follows no links. Its only program is apparmor_parser, for the one
+// AppArmor profile it may put in place or take away.
 package elevate
 
 import (
@@ -31,6 +32,11 @@ const (
 	// administrator rights; on Linux root has no trash of the person.
 	Recycle = "recycle"
 	Mkdir   = "mkdir"
+	// AllowUserNamespaces puts in place the AppArmor profile that lets this
+	// program make user namespaces, and DisallowUserNamespaces removes it.
+	// Both take no paths and only exist on Linux.
+	AllowUserNamespaces    = "allowUserNamespaces"
+	DisallowUserNamespaces = "disallowUserNamespaces"
 )
 
 // ErrBadOp is an operation the helper refuses to look at.
@@ -59,6 +65,11 @@ func (o Op) check() error {
 		need, none = []string{o.From}, []string{o.To}
 	case Mkdir:
 		need, none = []string{o.To}, []string{o.From}
+	case AllowUserNamespaces, DisallowUserNamespaces:
+		none = []string{o.From, o.To}
+		if len(o.Skip) > 0 || o.Replace || o.Parents {
+			return ErrBadOp
+		}
 	default:
 		return ErrBadOp
 	}
@@ -127,6 +138,8 @@ func apply(o Op) error {
 		}
 	}
 	switch o.Kind {
+	case AllowUserNamespaces, DisallowUserNamespaces:
+		return userNamespaces(o.Kind == AllowUserNamespaces)
 	case Delete:
 		parent, err := openDir(filepath.Dir(o.From), false)
 		if err != nil {
