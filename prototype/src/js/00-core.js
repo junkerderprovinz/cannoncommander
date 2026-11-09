@@ -25,7 +25,7 @@ function fmtAgo(t) {
   if (days < 365) return `vor ${Math.round(days / 30)} Mon.`;
   return `vor ${Math.round(days / 365)} J.`;
 }
-// The list shows dates the way the Dateiliste settings ask for; every other place keeps the plain date.
+// The list shows dates the way its settings under Aussehen ask for; every other place keeps the plain date.
 const fmtListDate = (t) => ({ long: fmtTime, relative: fmtAgo }[CC.prefs.dateFormat] || fmtDate)(t);
 const NOW = Date.UTC(2026, 10, 2, 9, 30);
 const DAY = 86400000;

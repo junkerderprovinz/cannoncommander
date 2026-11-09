@@ -129,6 +129,13 @@ describe('the settings', () => {
     }
   });
 
+  it('show how the list looks under Aussehen, as Explorer does under its view, and keep the bars on the file list tile', async () => {
+    expect(await cardsOf('look')).toEqual(['Darstellung', 'Liste', 'Beschriftungen', 'Farben']);
+    app!.unmount();
+    document.body.innerHTML = '';
+    expect(await cardsOf('files')).toEqual(['Leisten', 'Aktualisieren']);
+  });
+
   it('keep the settings file and the service on the system tile', async () => {
     expect(await cardsOf('system')).toEqual(['Einstellungen sichern', 'Dienst']);
   });

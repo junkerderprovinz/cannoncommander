@@ -12,10 +12,10 @@ Hilfe menu: Befehl suchenStrg+K | TastenkürzelF1 | Neuigkeiten | Handbuch | Als
 palette from menu: 1
 shortcut window has Strg+K: Befehl suchen Strg+K
 1600 general: 3 cards, 1 col, width 832, bottoms 742
-1600 look: 3 cards, 1 col, width 832, bottoms 784
+1600 look: 4 cards, 1 col, width 832, bottoms 1109
 1600 security: 5 cards, 1 col, width 832, bottoms 1030
-1600 files: 3 cards, 1 col, width 832, bottoms 742
-1600 keys: 10 cards, 1 col, width 832, bottoms 6411
+1600 files: 2 cards, 1 col, width 832, bottoms 418
+1600 keys: 10 cards, 1 col, width 832, bottoms 6553
 1600 ctxmenu: 2 cards, 1 col, width 832, bottoms 1580
 1600 sources: 2 cards, 1 col, width 832, bottoms 523
 1600 remotes: 2 cards, 1 col, width 832, bottoms 477
@@ -27,10 +27,10 @@ shortcut window has Strg+K: Befehl suchen Strg+K
 1600 system: 2 cards, 1 col, width 832, bottoms 376
 1600 info: 4 cards, 1 col, width 832, bottoms 976
 1200 general: 3 cards, 1 col, width 832, bottoms 742
-1200 look: 3 cards, 1 col, width 832, bottoms 784
+1200 look: 4 cards, 1 col, width 832, bottoms 1109
 1200 security: 5 cards, 1 col, width 832, bottoms 1030
-1200 files: 3 cards, 1 col, width 832, bottoms 742
-1200 keys: 10 cards, 1 col, width 832, bottoms 6411
+1200 files: 2 cards, 1 col, width 832, bottoms 418
+1200 keys: 10 cards, 1 col, width 832, bottoms 6553
 1200 ctxmenu: 2 cards, 1 col, width 832, bottoms 1580
 1200 sources: 2 cards, 1 col, width 832, bottoms 523
 1200 remotes: 2 cards, 1 col, width 832, bottoms 477

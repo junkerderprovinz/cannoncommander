@@ -11,6 +11,7 @@ import { found, motionPressed, rainbowSwitched, shapePressed } from '../eggs';
 import { c, P } from '@/features/config/shared';
 import { pickerWords, segItems } from '@/ui/kit';
 import LanguagePicker from '../LanguagePicker.vue';
+import ListCard from './ListCard.vue';
 
 const SandboxRow = import.meta.env.DESKTOP ? defineAsyncComponent(() => import('@/features/shellmenu/SandboxRow.vue')) : null;
 
@@ -86,6 +87,7 @@ function resetOrder() {
     <SandboxRow v-if="SandboxRow && host.desktop && host.os === 'linux'" />
     <FieldRow :label="c('look.order')" :hint="c('look.orderTip')"><Button id="a-order-reset" :label="c('look.reset')" label-key="IconRefresh" :disabled="!ordered" @click="resetOrder" /></FieldRow>
   </Card>
+  <ListCard />
   <Card :title="c('look.labels')">
     <FieldRow :label="c('look.buttons')" :hint="c('look.buttonsTip')"><Selector v-model="P.labelsButtons" :items="segItems(labelModes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow :label="c('look.sidebar')"><Selector v-model="P.labelsSidebar" :items="segItems(labelModes)" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
