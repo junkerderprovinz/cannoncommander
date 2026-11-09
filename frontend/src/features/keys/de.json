@@ -12,7 +12,7 @@
   "taken": "{key} gehört schon zu „{action}“. Beim Tauschen bekommt „{action}“ deine bisherige Taste. Esc lässt alles, wie es ist.", "takenAlone": "{key} gehört schon zu „{action}“. Ersetzen holt die Taste hierher, Esc lässt alles, wie es ist.",
   "swap": "Tauschen", "replace": "Ersetzen",
   "browser": "{key} behält der Browser für seine Tabs und Fenster. Nimm hier bitte eine andere, in der Desktop-App klappt sie.", "system": "{key} gehört dem System und kommt bei CannonCommander nie an. Nimm bitte eine andere Taste.",
-  "browserHere": "Diese Taste behält der Browser. In der Desktop-App klappt sie.", "systemHere": "Diese Taste gehört dem System.",
+  "browserHere": "Durchgestrichen, weil der Browser {keys} für sich behält. Das klappt nur in der Desktop-App.", "systemHere": "Durchgestrichen, weil das System {keys} für sich behält. CannonCommander bekommt davon nichts mit.",
   "hint": "Klick auf eine Taste und drück die neue Kombination", "resetAll": "Alles zurücksetzen", "own": "Eigene Tasten", "reset": "Zurücksetzen", "resetTip": "Nimmt deine eigenen Tasten zurück.",
   "ownNow": "Deine Tastenkürzel gelten jetzt überall", "asShipped": "Die Tastenkürzel sind wieder wie ausgeliefert",
   "fixedHead": "Fest belegt",

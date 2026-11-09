@@ -144,10 +144,24 @@ describe('the shortcuts tile', () => {
     expect(keymap['Ctrl+w']).toBe('copy');
   });
 
-  it('dims a key the browser keeps and says so in its tooltip', () => {
+  it('strikes out a key the browser keeps and says why in its tooltip', () => {
     const k = $('[data-kb-rec="newTab"] .kb-off')!;
     expect(k.textContent).toBe('Strg+T');
-    expect(k.dataset.tip).toBe('Diese Taste behält der Browser. In der Desktop-App klappt sie.');
+    expect(k.dataset.tip).toBe('Durchgestrichen, weil der Browser Strg+T für sich behält. Das klappt nur in der Desktop-App.');
+  });
+
+  it('explains the struck out keys in a line of the row that the key button points to', () => {
+    const note = $('[data-kb="newTab"] .kb-note')!;
+    expect(note.textContent!.trim()).toBe('Durchgestrichen, weil der Browser Strg+T und Strg+N für sich behält. Das klappt nur in der Desktop-App.');
+    expect($('[data-kb-rec="newTab"]')!.getAttribute('aria-describedby')).toBe(note.id);
+    expect($('[data-kb="copy"] .kb-note')).toBeNull();
+  });
+
+  it('strikes out nothing in the desktop app', async () => {
+    host.desktop = true;
+    await settle();
+    expect($('.kb-off')).toBeNull();
+    expect($('.kb-note')).toBeNull();
   });
 
   it('puts one key back as it was', async () => {
