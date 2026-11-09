@@ -94,9 +94,10 @@ export function installDragDrop() {
     if (!tab.marked.has(k.name)) tab.marked = new Set([k.name]);
     drag = { from: F.active, items: F.sel(), folder: tab.path, shift: e.shiftKey };
     const onDisk = host.desktop && !inArchive(tab.path) && drag.items.every((k) => !inArchive(k.at || ''));
-    // WebView2 drags only within the page, so on Windows the shell's own drag carries the files, inside the window as
-    // well, where the page sees it like any other and drops it the usual way.
-    if (onDisk && host.os === 'windows') {
+    // WebView2 drags only within the page, and a WebKitGTK drag cannot be read by GTK 4 programs such as Nautilus, so
+    // there the system's own drag carries the files, inside the window as well, where the page sees it like any other
+    // and drops it the usual way.
+    if (onDisk && (host.os === 'windows' || host.os === 'linux')) {
       e.preventDefault();
       const d = drag;
       d.native = true;
@@ -105,7 +106,7 @@ export function installDragDrop() {
     }
     e.dataTransfer!.effectAllowed = 'copyMove';
     e.dataTransfer!.setData('text/plain', drag.items.map((x) => x.name).join('\n'));
-    // WebKitGTK hands a URI list on to GTK, where Nautilus, Dolphin and the desktop take it as files.
+    // Elsewhere the webview hands a URI list on to the system, where file managers take it as files.
     if (onDisk) e.dataTransfer!.setData('text/uri-list', paths(drag).map((p) => 'file://' + encodeURI(nativePath(p, false)).replace(/[?#]/g, encodeURIComponent)).join('\r\n'));
   });
   document.addEventListener('dragover', (e) => {
