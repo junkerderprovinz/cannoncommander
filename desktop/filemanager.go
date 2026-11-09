@@ -138,10 +138,20 @@ func (s *shell) show(open []opening) {
 
 func (s *shell) bringUp() {
 	if w := s.window.Load(); w != nil {
-		w.Restore()
-		w.Show()
-		w.Focus()
+		raise(w)
 	}
+}
+
+// raise brings a window up at the size it had. Restore would also take a
+// maximised window back to its smaller size.
+func raise(w interface {
+	UnMinimise()
+	Show() application.Window
+	Focus()
+}) {
+	w.UnMinimise()
+	w.Show()
+	w.Focus()
 }
 
 // switchFileManager is the command line's way to the switch, for an

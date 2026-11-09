@@ -171,3 +171,20 @@ func TestACopyOnItsOwnDataFolderHasALockOfItsOwn(t *testing.T) {
 		t.Fatalf("got %s and %s", a, b)
 	}
 }
+
+type fakeWindow []string
+
+func (f *fakeWindow) UnMinimise() { *f = append(*f, "unminimise") }
+func (f *fakeWindow) Show() application.Window {
+	*f = append(*f, "show")
+	return nil
+}
+func (f *fakeWindow) Focus() { *f = append(*f, "focus") }
+
+func TestAWindowComesUpAsLargeAsItWas(t *testing.T) {
+	var w fakeWindow
+	raise(&w)
+	if want := []string{"unminimise", "show", "focus"}; !reflect.DeepEqual([]string(w), want) {
+		t.Fatalf("got %v", w)
+	}
+}
