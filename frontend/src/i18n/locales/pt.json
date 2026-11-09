@@ -2319,7 +2319,7 @@
     "replace": "Substituir",
     "browser": "O navegador reserva {key} para os seus separadores e janelas. Escolha outra aqui, por favor. Na aplicação para computador funciona.",
     "system": "{key} pertence ao sistema e nunca chega ao CannonCommander. Escolha outra tecla, por favor.",
-    "browserHere": "O traço indica que o navegador reserva {keys} para si. Isto só funciona na aplicação para computador.",
+    "browserHere": "Só na aplicação de ambiente de trabalho: {keys}",
     "systemHere": "O traço indica que o sistema reserva {keys} para si, e nunca chega ao CannonCommander.",
     "hint": "Clique numa tecla e prima a nova combinação",
     "resetAll": "Repor tudo",

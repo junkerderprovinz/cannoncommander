@@ -2319,7 +2319,7 @@
     "replace": "Reemplazar",
     "browser": "El navegador se reserva {key} para sus pestañas y ventanas. Elige otra aquí, por favor. En la app de escritorio sí funciona.",
     "system": "{key} pertenece al sistema y nunca llega a CannonCommander. Elige otra tecla, por favor.",
-    "browserHere": "La raya indica que el navegador se reserva {keys}. Esto solo funciona en la app de escritorio.",
+    "browserHere": "Solo en la app de escritorio: {keys}",
     "systemHere": "La raya indica que el sistema se reserva {keys}, y nunca llega a CannonCommander.",
     "hint": "Haz clic en una tecla y pulsa la nueva combinación",
     "resetAll": "Restablecer todo",

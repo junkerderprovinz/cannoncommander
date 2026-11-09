@@ -2189,7 +2189,7 @@
     "replace": "Ganti",
     "browser": "Pelayar menyimpan {key} untuk tab dan tetingkapnya. Sila pilih kekunci lain di sini, ia berfungsi dalam aplikasi desktop.",
     "system": "{key} milik sistem dan tidak pernah sampai ke CannonCommander. Sila pilih kekunci lain.",
-    "browserHere": "Dipangkah kerana pelayar menyimpan {keys} untuk dirinya sendiri. Ini hanya berfungsi dalam aplikasi desktop.",
+    "browserHere": "Hanya dalam apl desktop: {keys}",
     "systemHere": "Dipangkah kerana sistem menyimpan {keys} untuk dirinya sendiri, jadi ia tidak pernah sampai ke CannonCommander.",
     "hint": "Klik kekunci dan tekan gabungan baharu",
     "resetAll": "Tetapkan semula semua",

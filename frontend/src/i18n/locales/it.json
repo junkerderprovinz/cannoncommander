@@ -2319,7 +2319,7 @@
     "replace": "Sostituisci",
     "browser": "Il browser tiene {key} per le sue schede e finestre. Qui scegline un altro, per favore, nell'app desktop funziona.",
     "system": "{key} appartiene al sistema e non arriva mai a CannonCommander. Scegli un altro tasto, per favore.",
-    "browserHere": "La riga indica che il browser tiene {keys} per sé. Funziona solo nell'app desktop.",
+    "browserHere": "Solo nell'app desktop: {keys}",
     "systemHere": "La riga indica che il sistema tiene {keys} per sé, e a CannonCommander non arriva mai.",
     "hint": "Fai clic su un tasto e premi la nuova combinazione",
     "resetAll": "Ripristina tutto",

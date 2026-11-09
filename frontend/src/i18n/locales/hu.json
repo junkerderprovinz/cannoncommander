@@ -2254,7 +2254,7 @@
     "replace": "Csere",
     "browser": "A(z) {key} billentyűt a böngésző a lapjaihoz és ablakaihoz tartja meg. Kérjük, itt válasszon másikat, az asztali alkalmazásban működik.",
     "system": "A(z) {key} a rendszeré, és soha nem jut el a CannonCommanderig. Kérjük, válasszon másik billentyűt.",
-    "browserHere": "Áthúzva, mert a böngésző megtartja magának: {keys}. Ez csak az asztali alkalmazásban működik.",
+    "browserHere": "Csak az asztali alkalmazásban: {keys}",
     "systemHere": "Áthúzva, mert a rendszer megtartja magának: {keys}. A CannonCommander ebből semmit sem kap meg.",
     "hint": "Kattintson egy billentyűre, és nyomja meg az új kombinációt",
     "resetAll": "Minden visszaállítása",

@@ -2384,7 +2384,7 @@
     "replace": "Nahradiť",
     "browser": "{key} si prehliadač necháva pre svoje karty a okná. Zvoľte tu, prosím, iný, v desktopovej aplikácii funguje.",
     "system": "{key} patrí systému a CannonCommander ho nikdy nedostane. Zvoľte, prosím, iný kláves.",
-    "browserHere": "Prečiarknuté, lebo {keys} si necháva prehliadač. Funguje to len v desktopovej aplikácii.",
+    "browserHere": "Len v desktopovej aplikácii: {keys}",
     "systemHere": "Prečiarknuté, lebo {keys} si necháva systém. Do CannonCommandera sa to nikdy nedostane.",
     "hint": "Kliknite na kláves a stlačte novú kombináciu",
     "resetAll": "Obnoviť všetko",

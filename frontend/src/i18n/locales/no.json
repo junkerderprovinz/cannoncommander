@@ -2254,7 +2254,7 @@
     "replace": "Erstatt",
     "browser": "Nettleseren beholder {key} for sine faner og vinduer. Velg gjerne en annen her, i skrivebordsappen virker den.",
     "system": "{key} tilhører systemet og kommer aldri fram til CannonCommander. Velg gjerne en annen tast.",
-    "browserHere": "Overstreket fordi nettleseren beholder {keys} selv. Dette virker bare i skrivebordsappen.",
+    "browserHere": "Bare i skrivebordsappen: {keys}",
     "systemHere": "Overstreket fordi systemet beholder {keys} selv. Det når aldri fram til CannonCommander.",
     "hint": "Klikk på en tast og trykk den nye kombinasjonen",
     "resetAll": "Tilbakestill alt",

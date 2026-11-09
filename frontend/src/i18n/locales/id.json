@@ -2189,7 +2189,7 @@
     "replace": "Ganti",
     "browser": "Browser menyimpan {key} untuk tab dan jendelanya. Silakan pilih tombol lain di sini, di aplikasi desktop tombol ini berfungsi.",
     "system": "{key} milik sistem dan tidak pernah sampai ke CannonCommander. Silakan pilih tombol lain.",
-    "browserHere": "Dicoret karena browser menyimpan {keys} untuk dirinya sendiri. Ini hanya berfungsi di aplikasi desktop.",
+    "browserHere": "Hanya di aplikasi desktop: {keys}",
     "systemHere": "Dicoret karena sistem menyimpan {keys} untuk dirinya sendiri, jadi tidak pernah sampai ke CannonCommander.",
     "hint": "Klik sebuah tombol dan tekan kombinasi yang baru",
     "resetAll": "Atur ulang semua",

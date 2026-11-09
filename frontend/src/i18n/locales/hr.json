@@ -2319,7 +2319,7 @@
     "replace": "Zamijeni",
     "browser": "Preglednik zadržava {key} za svoje kartice i prozore. Molimo odaberite ovdje drugu tipku, u desktop aplikaciji ona radi.",
     "system": "{key} pripada sustavu i nikad ne stiže do CannonCommandera. Molimo odaberite drugu tipku.",
-    "browserHere": "Precrtano jer preglednik {keys} zadržava za sebe. To radi samo u desktop aplikaciji.",
+    "browserHere": "Samo u desktop aplikaciji: {keys}",
     "systemHere": "Precrtano jer sustav {keys} zadržava za sebe. Do CannonCommandera to nikad ne stigne.",
     "hint": "Kliknite tipku i pritisnite novu kombinaciju",
     "resetAll": "Vrati sve na zadano",

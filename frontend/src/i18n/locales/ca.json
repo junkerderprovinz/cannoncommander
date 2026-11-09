@@ -2319,7 +2319,7 @@
     "replace": "Substitueix",
     "browser": "El navegador es reserva {key} per a les seves pestanyes i finestres. Trieu-ne una altra aquí, si us plau. A l'aplicació d'escriptori sí que funciona.",
     "system": "{key} és del sistema i no arriba mai a CannonCommander. Trieu una altra tecla, si us plau.",
-    "browserHere": "La ratlla vol dir que el navegador es reserva {keys}. Això només funciona a l'aplicació d'escriptori.",
+    "browserHere": "Només a l'aplicació d'escriptori: {keys}",
     "systemHere": "La ratlla vol dir que el sistema es reserva {keys} i que no arriba mai a CannonCommander.",
     "hint": "Feu clic en una tecla i premeu la combinació nova",
     "resetAll": "Restableix-ho tot",

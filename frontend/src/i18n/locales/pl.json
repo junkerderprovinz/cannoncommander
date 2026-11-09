@@ -2384,7 +2384,7 @@
     "replace": "Zastąp",
     "browser": "Przeglądarka zatrzymuje {key} dla swoich kart i okien. Wybierz tu proszę inny, w aplikacji desktopowej zadziała.",
     "system": "{key} należy do systemu i nigdy nie dociera do CannonCommandera. Wybierz proszę inny klawisz.",
-    "browserHere": "Przekreślone, bo przeglądarka zatrzymuje {keys} dla siebie. To działa tylko w aplikacji desktopowej.",
+    "browserHere": "Tylko w aplikacji desktopowej: {keys}",
     "systemHere": "Przekreślone, bo system zatrzymuje {keys} dla siebie. Do CannonCommandera to nigdy nie trafia.",
     "hint": "Kliknij klawisz i naciśnij nową kombinację",
     "resetAll": "Resetuj wszystko",
