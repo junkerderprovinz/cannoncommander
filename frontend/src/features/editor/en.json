@@ -74,6 +74,12 @@
     "fold": "Fold block", "unfold": "Unfold block", "foldAll": "Fold everything", "unfoldAll": "Unfold everything",
     "wrap": "Wrap lines", "nextTab": "Next file", "prevTab": "Previous file", "closeTab": "Close file"
   },
+  "program": {
+    "label": "Editor for F4", "tip": "F4 and Shift+F4 open text files in this program. You'll then find the built-in editor in a file's menu.",
+    "builtIn": "Built-in editor", "offered": "For text files", "other": "Other program …", "pickTitle": "Choose a program for F4", "programs": "Programs",
+    "set": "F4 now opens text files in {name}", "builtInSet": "F4 opens the built-in editor again", "editBuiltIn": "Edit in the built-in editor",
+    "gone": "{name} can't be found on this computer any more. You can pick another program for F4 under Settings, General."
+  },
   "officeMissing": "Editing office files needs an office server. You can add one under Settings, Integrations.",
   "officeOpens": "{suite} opens {name} in a new tab",
   "viewOnly": "This file can only be viewed (F3)"
