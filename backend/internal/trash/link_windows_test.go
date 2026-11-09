@@ -26,7 +26,7 @@ func TestATrashFolderOfAnotherAccountIsLeftAlone(t *testing.T) {
 		t.Skipf("cannot hand the folder to SYSTEM here: %s", out)
 	}
 	s, bin := oldBin(t, root, "abc", "Dokumente.txt")
-	s.takeOver()
+	s.sys.takeOver()
 	if len(bin.entries) != 0 {
 		t.Fatalf("taken over: %+v", bin.entries)
 	}
@@ -45,7 +45,7 @@ func TestATrashFolderOfTheAdministratorsIsTakenOverForAnAdmin(t *testing.T) {
 		t.Skip("this account is no administrator")
 	}
 	s, bin := oldBin(t, root, "abc", "Dokumente.txt")
-	s.takeOver()
+	s.sys.takeOver()
 	if len(bin.entries) != 1 {
 		t.Fatalf("not taken over: %+v", bin.entries)
 	}
