@@ -1869,7 +1869,6 @@
     "press": "Tekan kekunci …",
     "none": "tiada",
     "clear": "Padam kekunci",
-    "undo": "Seperti sebelum ini",
     "fixed": "{key} sudah ditetapkan tetap. Pilih kekunci lain.",
     "letter": "Huruf dan digit tunggal digunakan oleh carian pantas. Tambah Ctrl, Alt atau kekunci F.",
     "taken": "{key} sudah digunakan untuk “{action}”. Dengan Tukar, “{action}” mendapat kekunci anda sekarang. Esc membiarkan semuanya seperti sedia ada.",

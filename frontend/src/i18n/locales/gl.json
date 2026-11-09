@@ -1931,7 +1931,6 @@
     "press": "Preme unha tecla…",
     "none": "ningunha",
     "clear": "Eliminar a tecla",
-    "undo": "Como antes",
     "fixed": "{key} está reservada. Escolle outra tecla.",
     "letter": "As letras e os díxitos soltos son para a busca rápida. Engade Ctrl, Alt ou unha tecla F.",
     "taken": "{key} xa é de «{action}». Ao intercambiar, «{action}» recibe a túa tecla actual. Esc deixa todo como está.",

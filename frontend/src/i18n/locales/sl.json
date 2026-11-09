@@ -2055,7 +2055,6 @@
     "press": "Pritisnite tipko …",
     "none": "brez",
     "clear": "Izbriši tipko",
-    "undo": "Kot prej",
     "fixed": "{key} je trajno zasedena. Izberite drugo tipko.",
     "letter": "Posamezne črke in števke pripadajo hitremu iskanju. Dodajte Ctrl, Alt ali tipko F.",
     "taken": "{key} že pripada „{action}“. Pri zamenjavi dobi „{action}“ vašo dosedanjo tipko. Esc pusti vse, kot je.",

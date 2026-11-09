@@ -1931,7 +1931,6 @@
     "press": "Sakatu tekla bat…",
     "none": "bat ere ez",
     "clear": "Ezabatu tekla",
-    "undo": "Lehen bezala",
     "fixed": "{key} finkoa da. Aukeratu beste tekla bat.",
     "letter": "Letra eta zifra solteak bilaketa azkarrerako dira. Gehitu Ctrl, Alt edo F tekla bat.",
     "taken": "{key} «{action}» ekintzarena da jada. Trukatuz gero, «{action}» ekintzak zure oraingo tekla hartzen du. Esc-ek dena dagoen bezala uzten du.",

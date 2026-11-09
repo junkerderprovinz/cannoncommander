@@ -1993,7 +1993,6 @@
     "press": "Premi un tasto…",
     "none": "nessuno",
     "clear": "Elimina il tasto",
-    "undo": "Come prima",
     "fixed": "{key} è riservato. Scegli un altro tasto.",
     "letter": "Le singole lettere e cifre servono alla ricerca rapida. Aggiungi Ctrl, Alt o un tasto F.",
     "taken": "{key} appartiene già a «{action}». Con Scambia, «{action}» riceve il tuo tasto attuale. Esc lascia tutto com'è.",

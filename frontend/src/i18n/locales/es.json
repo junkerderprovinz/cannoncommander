@@ -1993,7 +1993,6 @@
     "press": "Pulsa una tecla…",
     "none": "ninguna",
     "clear": "Eliminar la tecla",
-    "undo": "Como antes",
     "fixed": "{key} está reservada. Elige otra tecla.",
     "letter": "Las letras y cifras sueltas son para la búsqueda rápida. Añade Ctrl, Alt o una tecla F.",
     "taken": "{key} ya pertenece a «{action}». Al intercambiar, «{action}» recibe tu tecla actual. Esc lo deja todo como está.",

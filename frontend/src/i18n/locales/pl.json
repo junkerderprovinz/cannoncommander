@@ -2055,7 +2055,6 @@
     "press": "Naciśnij klawisz …",
     "none": "brak",
     "clear": "Usuń klawisz",
-    "undo": "Jak przedtem",
     "fixed": "{key} jest przypisany na stałe. Wybierz inny klawisz.",
     "letter": "Pojedyncze litery i cyfry należą do szybkiego wyszukiwania. Dodaj Ctrl, Alt albo klawisz F.",
     "taken": "{key} należy już do „{action}”. Po zamianie „{action}” dostanie twój obecny klawisz. Esc zostawia wszystko bez zmian.",

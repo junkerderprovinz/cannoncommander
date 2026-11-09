@@ -1993,7 +1993,6 @@
     "press": "Premeu una tecla…",
     "none": "cap",
     "clear": "Suprimeix la tecla",
-    "undo": "Com abans",
     "fixed": "{key} està reservada. Trieu una altra tecla.",
     "letter": "Les lletres i xifres soles són per a la cerca ràpida. Afegiu-hi Ctrl, Alt o una tecla F.",
     "taken": "{key} ja pertany a «{action}». En intercanviar, «{action}» rep la vostra tecla actual. Esc ho deixa tot com és.",
