@@ -121,6 +121,10 @@ func (s *shell) followWindow(w *application.WebviewWindow) {
 	})
 	if on, _ := s.IsFileManager(); on {
 		s.standBy(true)
+	} else if os.Getenv("DBUS_STARTER_BUS_TYPE") != "" {
+		// The bus started the app for a request to show a folder and ends
+		// it unless it takes the name, even where the switch reads off.
+		offerFolders(s, true)
 	}
 }
 
