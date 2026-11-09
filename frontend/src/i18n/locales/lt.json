@@ -2384,7 +2384,7 @@
     "replace": "Pakeisti",
     "browser": "{key} naršyklė pasilieka savo kortelėms ir langams. Čia, prašau, rinkis kitą klavišą, darbalaukio programoje jis veikia.",
     "system": "{key} priklauso sistemai ir niekada nepasiekia CannonCommander. Prašau, rinkis kitą klavišą.",
-    "browserHere": "Perbraukta, nes naršyklė pasilieka {keys} sau. Tai veikia tik darbalaukio programoje.",
+    "browserHere": "Tik darbalaukio programoje: {keys}",
     "systemHere": "Perbraukta, nes sistema pasilieka {keys} sau. CannonCommander to niekada negauna.",
     "hint": "Spustelėk klavišą ir paspausk naują derinį",
     "resetAll": "Atkurti viską",

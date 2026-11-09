@@ -2319,7 +2319,7 @@
     "replace": "Înlocuiește",
     "browser": "Browserul păstrează {key} pentru filele și ferestrele lui. Alege te rog alta aici, în aplicația desktop merge.",
     "system": "{key} aparține sistemului și nu ajunge niciodată la CannonCommander. Alege te rog altă tastă.",
-    "browserHere": "Tăiat, pentru că browserul păstrează {keys} pentru el. Merge doar în aplicația desktop.",
+    "browserHere": "Doar în aplicația desktop: {keys}",
     "systemHere": "Tăiat, pentru că sistemul păstrează {keys} pentru el. La CannonCommander nu ajunge niciodată.",
     "hint": "Fă clic pe o tastă și apasă noua combinație",
     "resetAll": "Resetează tot",

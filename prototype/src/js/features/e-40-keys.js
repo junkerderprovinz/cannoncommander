@@ -90,7 +90,7 @@
   // A browser never hands these to a page, so they would do nothing here. The desktop app lets the app have them.
   const BROWSER = ['Ctrl+n', 'Ctrl+Shift+n', 'Ctrl+t', 'Ctrl+Shift+t', 'Ctrl+w', 'Ctrl+Shift+w', 'Ctrl+Tab', 'Ctrl+Shift+Tab', 'Ctrl+PageUp', 'Ctrl+PageDown', 'Ctrl+Shift+p'];
   const kept = (c) => BROWSER.includes(c.replace(/^[a-z]+:(?=.)/, ''));
-  const keptNote = (keys) => `Durchgestrichen, weil der Browser ${new Intl.ListFormat('de', { type: 'conjunction' }).format(keys)} für sich behält. Das klappt nur in der Desktop-App.`;
+  const keptNote = (keys) => `Nur in der Desktop-App: ${new Intl.ListFormat('de', { type: 'conjunction' }).format(keys)}`;
 
   // A row of the window or the tile. A clash offers the buttons only where the row asks for them. The key a row shows
   // first is the one menus show, unless the browser keeps that one and the action has another that works.
@@ -286,7 +286,7 @@
 .kb-acts .btn { width: 1.8rem; height: 1.8rem; background: transparent; }
 .kb-warn { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: 0 0 .4rem; padding: .35rem .6rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--status-warn-solid, #FF832B) 16%, transparent); font-size: 12.5px; }
 .kb-choice { display: flex; gap: .4rem; margin-left: auto; }
-/* A key the browser keeps stays in the list, struck out, and a line right under the keys says why. */
+/* A key the browser keeps stays in the list, struck out, and a line right under the keys says that it works in the desktop app. */
 .kb-off .kbd { opacity: .55; text-decoration: line-through; }
 .kb-note { grid-column: 1 / -1; justify-self: end; max-width: 46rem; margin: -.2rem 0 .45rem; padding-inline-end: .55rem; font-size: 12px; line-height: 1.4; color: var(--carbon-text-sub); text-align: end; }
 .kb-fixedhead { margin-top: 1.2rem; }

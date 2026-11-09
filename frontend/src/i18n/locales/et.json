@@ -2254,7 +2254,7 @@
     "replace": "Asenda",
     "browser": "Brauser hoiab {key} oma vahekaartide ja akende jaoks. Vali siin palun mõni teine, töölauarakenduses see töötab.",
     "system": "{key} kuulub süsteemile ega jõua kunagi CannonCommanderini. Vali palun teine klahv.",
-    "browserHere": "Läbi kriipsutatud, sest brauser hoiab {keys} endale. See töötab ainult töölauarakenduses.",
+    "browserHere": "Ainult töölauarakenduses: {keys}",
     "systemHere": "Läbi kriipsutatud, sest süsteem hoiab {keys} endale. CannonCommanderini see ei jõua.",
     "hint": "Klõpsa klahvil ja vajuta uut kombinatsiooni",
     "resetAll": "Lähtesta kõik",

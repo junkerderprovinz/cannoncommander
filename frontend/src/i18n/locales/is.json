@@ -2254,7 +2254,7 @@
     "replace": "Skipta út",
     "browser": "Vafrinn heldur {key} fyrir flipa sína og glugga. Veldu endilega annan lykil hér, hann virkar í skjáborðsforritinu.",
     "system": "{key} tilheyrir kerfinu og nær aldrei til CannonCommander. Veldu endilega annan lykil.",
-    "browserHere": "Yfirstrikað af því að vafrinn heldur {keys} fyrir sig. Þetta virkar aðeins í skjáborðsforritinu.",
+    "browserHere": "Aðeins í tölvuforritinu: {keys}",
     "systemHere": "Yfirstrikað af því að kerfið heldur {keys} fyrir sig. Það berst aldrei til CannonCommander.",
     "hint": "Smelltu á lykil og ýttu á nýju samsetninguna",
     "resetAll": "Endurstilla allt",

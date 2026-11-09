@@ -2719,7 +2719,7 @@
     "replace": "Ordeztu",
     "browser": "Nabigatzaileak {key} gordetzen du bere fitxa eta leihoetarako. Aukeratu beste bat hemen, mesedez. Mahaigaineko aplikazioan badabil.",
     "system": "{key} sistemarena da eta ez da inoiz CannonCommander-era iristen. Aukeratu beste tekla bat, mesedez.",
-    "browserHere": "Marratuta dago nabigatzaileak {keys} beretzat gordetzen duelako. Mahaigaineko aplikazioan bakarrik dabil.",
+    "browserHere": "Mahaigaineko aplikazioan bakarrik: {keys}",
     "systemHere": "Marratuta dago sistemak {keys} beretzat gordetzen duelako. CannonCommanderrera ez da inoiz iristen.",
     "hint": "Egin klik tekla batean eta sakatu konbinazio berria",
     "resetAll": "Berrezarri dena",

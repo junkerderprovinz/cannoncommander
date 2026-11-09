@@ -55,7 +55,7 @@ const blocked = (combo: string) => {
   return why ? t(`keys.${why}Here`, { keys: keyLabel(combo) }) : undefined;
 };
 const chips = (id: string) => keysOf(id).map((c) => ({ label: keyLabel(c), blocked: blocked(c) }));
-// The row says under its keys why some are struck out, once for the browser's and once for the system's.
+// The row says under its keys what the struck out ones mean, once for the browser's and once for the system's.
 const note = (id: string) => (['browser', 'system'] as const).flatMap((why) => {
   const keys = keysOf(id).filter((c) => reservedBy(c, host.desktop) === why).map(keyLabel);
   return keys.length ? [t(`keys.${why}Here`, { keys: new Intl.ListFormat(locale(), { type: 'conjunction' }).format(keys) })] : [];

@@ -2189,7 +2189,7 @@
     "replace": "替换",
     "browser": "浏览器把 {key} 留给自己的标签页和窗口。请在这里换一个，桌面版里可以用。",
     "system": "{key} 归系统所有，永远到不了 CannonCommander。请换一个按键。",
-    "browserHere": "划掉是因为浏览器自己占用了 {keys}。只有在桌面版里才能用。",
+    "browserHere": "仅限桌面应用：{keys}",
     "systemHere": "划掉是因为系统自己占用了 {keys}，永远到不了 CannonCommander。",
     "hint": "点击一个按键，然后按下新的组合键",
     "resetAll": "全部重置",

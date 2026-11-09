@@ -2254,7 +2254,7 @@
     "replace": "Ersätt",
     "browser": "Webbläsaren behåller {key} för sina flikar och fönster. Välj gärna en annan här, i skrivbordsappen fungerar den.",
     "system": "{key} tillhör systemet och når aldrig fram till CannonCommander. Välj gärna en annan tangent.",
-    "browserHere": "Överstruket eftersom webbläsaren behåller {keys} själv. Det fungerar bara i skrivbordsappen.",
+    "browserHere": "Bara i skrivbordsappen: {keys}",
     "systemHere": "Överstruket eftersom systemet behåller {keys} själv. Det når aldrig fram till CannonCommander.",
     "hint": "Klicka på en tangent och tryck den nya kombinationen",
     "resetAll": "Återställ allt",

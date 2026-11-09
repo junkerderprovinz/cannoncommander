@@ -12,7 +12,7 @@
   "taken": "{key} already belongs to “{action}”. Swap gives “{action}” your current key. Esc leaves everything as it is.", "takenAlone": "{key} already belongs to “{action}”. Replace moves the key here, Esc leaves everything as it is.",
   "swap": "Swap", "replace": "Replace",
   "browser": "The browser keeps {key} for its tabs and windows. Please pick another one here, it works in the desktop app.", "system": "{key} belongs to the system and never reaches CannonCommander. Please pick another key.",
-  "browserHere": "Struck out because the browser keeps {keys} for itself. This only works in the desktop app.", "systemHere": "Struck out because the system keeps {keys} for itself, out of CannonCommander's reach.",
+  "browserHere": "Only in the desktop app: {keys}", "systemHere": "Struck out because the system keeps {keys} for itself, out of CannonCommander's reach.",
   "hint": "Click a key and press the new combination", "resetAll": "Reset everything", "own": "Your own keys", "reset": "Reset", "resetTip": "Takes back your own keys.",
   "ownNow": "Your shortcuts work everywhere now", "asShipped": "The shortcuts are back as shipped",
   "fixedHead": "Taken for good",

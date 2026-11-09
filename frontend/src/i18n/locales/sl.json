@@ -2384,7 +2384,7 @@
     "replace": "Nadomesti",
     "browser": "Tipko {key} brskalnik zadrži za svoje zavihke in okna. Tukaj izberite drugo, prosim, v namizni aplikaciji deluje.",
     "system": "{key} pripada sistemu in je CannonCommander nikoli ne prejme. Prosim, izberite drugo tipko.",
-    "browserHere": "Prečrtano, ker brskalnik {keys} zadrži zase. To deluje samo v namizni aplikaciji.",
+    "browserHere": "Samo v namizni aplikaciji: {keys}",
     "systemHere": "Prečrtano, ker sistem {keys} zadrži zase. Do CannonCommanderja to nikoli ne pride.",
     "hint": "Kliknite tipko in pritisnite novo kombinacijo",
     "resetAll": "Ponastavi vse",
