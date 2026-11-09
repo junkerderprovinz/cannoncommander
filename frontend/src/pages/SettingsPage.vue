@@ -7,9 +7,10 @@ const remembered: { id?: string } = {};
 // Settings: a column of tiles beside the content, the tab selector turned on its side, and only the content scrolls.
 // A long press lifts a tile to carry it to another place in the column; the order is kept like any other pref.
 import { Card } from '@glimstone/vue';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { labelOf } from '@/core/actions';
 import { G } from '@/core/glyphs';
+import { dialMs } from '@/core/motion';
 import { setPref } from '@/core/prefs';
 import { go, orderedTabs, settingsTabs } from '@/core/views';
 import { t } from '@/i18n';
@@ -37,6 +38,19 @@ const shown = computed(() => drag.order.value.map((id) => tabs.value.find((x) =>
 function open(e: MouseEvent, id: string) {
   if (!drag.endsDrag(e)) go('settings', id);
 }
+
+// The content slides in from the side of the tile picked, from the trailing side for one further down the column.
+const dir = ref(1);
+watch(() => cur.value?.id, (id, was) => {
+  const at = (x?: string) => shown.value.findIndex((s) => s.id === x);
+  if (was) dir.value = Math.sign(at(id) - at(was)) || 1;
+});
+
+// The tiles come in one after another as the page opens. The class goes once they are in, or lifting a tile to
+// carry it would start their entrance over when it is put down.
+const entering = ref(true);
+const entered = setTimeout(() => { entering.value = false; }, dialMs('--motion-stagger-cap') + dialMs('--motion-stagger-dur'));
+onBeforeUnmount(() => clearTimeout(entered));
 </script>
 
 <template>
@@ -45,9 +59,10 @@ function open(e: MouseEvent, id: string) {
   </div>
   <div v-else class="settings">
     <nav ref="tiles" class="tiles" role="tablist" aria-orientation="vertical" :aria-label="t('settings.title')">
-      <button v-for="tab in shown" :key="tab.id" class="stile" :class="[drag.look(tab.id), { cur: tab.id === cur.id }]" role="tab" :aria-selected="tab.id === cur.id" :data-stab="tab.id" :data-tip="labelOf(tab)"
+      <button v-for="(tab, n) in shown" :key="tab.id" class="stile" :class="[drag.look(tab.id), { cur: tab.id === cur.id, 'glim-stagger-row': entering }]"
+        :style="{ '--row-i': entering ? n : undefined }" role="tab" :aria-selected="tab.id === cur.id" :data-stab="tab.id" :data-tip="labelOf(tab)"
         @click="open($event, tab.id)" @pointerdown="drag.press($event, tab.id)"><G :n="tab.g" /><span>{{ labelOf(tab) }}</span></button>
     </nav>
-    <div id="settings-body" class="settings-body"><div id="settings-col" class="settings-col"><component :is="cur.component" :key="cur.id" /></div></div>
+    <div id="settings-body" class="settings-body"><div id="settings-col" :key="cur.id" class="settings-col glim-tab-slide" :style="{ '--tab-dir': dir }"><component :is="cur.component" /></div></div>
   </div>
 </template>

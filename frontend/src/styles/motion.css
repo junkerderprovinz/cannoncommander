@@ -7,38 +7,38 @@
        along a transfer's route, the bin rocking before something goes for good, and the type-ahead bubble. */
     --motion-spin-dur: .8s;
     --motion-fresh-dur: 2.2s;
-    --motion-fresh-glow: 26%;
+    --motion-fresh-glow:32%;
     --motion-hue-dur: 14s;
     --motion-flow-dur: 1s;
-    --motion-bin-tilt: 8deg;
+    --motion-bin-tilt:12deg;
     --motion-jump-dur: 120ms;
-    --motion-jump-travel: .3rem;
+    --motion-jump-travel:.4rem;
     /* The light that runs from one panel to the other when a copy or move starts. */
-    --motion-trace-dur: 460ms;
-    --motion-trace-length: 90px;
-    --motion-trace-width: 3px;
+    --motion-trace-dur:520ms;
+    --motion-trace-length:140px;
+    --motion-trace-width:4px;
     /* A deleted entry on its way to the trash: how long, how much of the way there it goes, and how much it tips. */
-    --motion-drop-dur: 480ms;
-    --motion-drop-reach: .6;
-    --motion-drop-tilt: 5deg;
+    --motion-drop-dur:560ms;
+    --motion-drop-reach:.7;
+    --motion-drop-tilt:18deg;
     /* The cannonball's flight and how high its arc rises, and the cloud where it lands. */
     --motion-cannon-dur: 760ms;
     --motion-cannon-arc: 90px;
     --motion-puff-dur: 620ms;
-    --motion-puff-swell: 1.8;
+    --motion-puff-swell:2;
     /* The smoke over an emptied trash. */
     --motion-smoke-dur: 1.4s;
-    --motion-smoke-rise: 36px;
+    --motion-smoke-rise:44px;
     /* The salute's bursts along the head bar: one burst, its size, and the gap between two. */
     --motion-salute-dur: 700ms;
     --motion-salute-burst: 1;
     --motion-salute-step: 70ms;
     /* The head bar's kick back. */
     --motion-recoil-dur: 420ms;
-    --motion-recoil-dist: 8px;
+    --motion-recoil-dist:10px;
     /* The tumbleweed crossing an empty folder, and how high it bounces. */
     --motion-tumble-dur: 2.4s;
-    --motion-tumble-hop: 10px;
+    --motion-tumble-hop:14px;
     /* The cannon in the header logo: how long it trembles before it fires, while the ball rolls into the barrel,
        how far it shakes and how far it rocks at the end, its kick back, the flash at the muzzle and where the ball
        strikes (how long and how big), the cloud of smoke (how long, how much it swells and how far it drifts), the
@@ -75,6 +75,38 @@
     --motion-rebuild-dur: 420ms;
     /* Cards growing or shrinking under Ctrl and the wheel, and a folder turning into another view on the way. */
     --motion-zoom-dur: 180ms;
+    /* How many lights a copy sends across and how far apart they run. */
+    --motion-trace-count: 2;
+    --motion-trace-spread: 14px;
+    /* How many entries at most fall into the trash. */
+    --motion-drop-count: 8;
+    /* How many stars the salute fires. */
+    --motion-salute-count: 9;
+    /* A finished job: the sparks around the avatar (how many, how far and how long), the panel a copy went to
+       settling under it, and for a failed job the jolt through the head. */
+    --motion-spark-count: 10;
+    --motion-spark-reach: 36px;
+    --motion-spark-dur: 650ms;
+    --motion-land-dur: 380ms;
+    --motion-land-dist: 6px;
+    --motion-jolt-dur: 320ms;
+    --motion-jolt-dist: 3px;
+    /* A menu dropping open, and its rows sliding in one after another from the side. */
+    --motion-menu-dur: 240ms;
+    --motion-menu-travel: 10px;
+    --motion-menu-step: 16ms;
+    --motion-menu-sway: 10px;
+    /* A window or dialog rising into place on the level's spring. */
+    --motion-win-dur: 380ms;
+    --motion-win-travel: 30px;
+    /* The rows of a folder coming in: how far they rise and how far they swing in from alternate sides. */
+    --motion-row-travel: 14px;
+    --motion-row-sway: 8px;
+    /* How far a pressed button gives way. */
+    --motion-press-scale: .95;
+    /* A panel a drag hovers over breathes: one breath, and how strongly it glows. */
+    --motion-dropzone-dur: .9s;
+    --motion-dropzone-glow: 20%;
   }
   :root[data-motion="subtle"] {
     --motion-spin-dur: 1.2s;
@@ -130,6 +162,28 @@
     --motion-rebuild-wait: 450ms;
     --motion-rebuild-dur: 240ms;
     --motion-zoom-dur: 120ms;
+    --motion-trace-count: 1;
+    --motion-trace-spread: 0px;
+    --motion-drop-count: 3;
+    --motion-salute-count: 5;
+    --motion-spark-count: 0;
+    --motion-spark-reach: 0px;
+    --motion-spark-dur: 400ms;
+    --motion-land-dur: 180ms;
+    --motion-land-dist: 2px;
+    --motion-jolt-dur: 200ms;
+    --motion-jolt-dist: 0px;
+    --motion-menu-dur: 100ms;
+    --motion-menu-travel: 3px;
+    --motion-menu-step: 0ms;
+    --motion-menu-sway: 0px;
+    --motion-win-dur: 150ms;
+    --motion-win-travel: 6px;
+    --motion-row-travel: 4px;
+    --motion-row-sway: 0px;
+    --motion-press-scale: .985;
+    --motion-dropzone-dur: 1.4s;
+    --motion-dropzone-glow: 12%;
   }
   :root[data-motion="off"] {
     /* Slow rather than stopped: a spinner standing still reads as a hang. */
@@ -187,42 +241,64 @@
     --motion-rebuild-wait: 0s;
     --motion-rebuild-dur: 0s;
     --motion-zoom-dur: 0s;
+    --motion-trace-count: 0;
+    --motion-trace-spread: 0px;
+    --motion-drop-count: 0;
+    --motion-salute-count: 0;
+    --motion-spark-count: 0;
+    --motion-spark-reach: 0px;
+    --motion-spark-dur: 0s;
+    --motion-land-dur: 0s;
+    --motion-land-dist: 0px;
+    --motion-jolt-dur: 0s;
+    --motion-jolt-dist: 0px;
+    --motion-menu-dur: 0s;
+    --motion-menu-travel: 0px;
+    --motion-menu-step: 0s;
+    --motion-menu-sway: 0px;
+    --motion-win-dur: 0s;
+    --motion-win-travel: 0px;
+    --motion-row-travel: 0px;
+    --motion-row-sway: 0px;
+    --motion-press-scale: 1;
+    --motion-dropzone-dur: 60s;
+    --motion-dropzone-glow: 0%;
   }
   :root[data-motion="storm"] {
     --motion-spin-dur: .5s;
     --motion-fresh-dur: 3s;
-    --motion-fresh-glow: 40%;
+    --motion-fresh-glow:55%;
     --motion-hue-dur: 6s;
     --motion-flow-dur: .5s;
-    --motion-bin-tilt: 16deg;
+    --motion-bin-tilt:28deg;
     --motion-jump-dur: 260ms;
-    --motion-jump-travel: .7rem;
-    --motion-trace-dur: 640ms;
-    --motion-trace-length: 150px;
-    --motion-trace-width: 5px;
-    --motion-drop-dur: 720ms;
+    --motion-jump-travel:.9rem;
+    --motion-trace-dur:600ms;
+    --motion-trace-length:280px;
+    --motion-trace-width:8px;
+    --motion-drop-dur:760ms;
     --motion-drop-reach: 1;
-    --motion-drop-tilt: 14deg;
+    --motion-drop-tilt:220deg;
     --motion-cannon-dur: 980ms;
-    --motion-cannon-arc: 160px;
+    --motion-cannon-arc:220px;
     --motion-puff-dur: 900ms;
-    --motion-puff-swell: 2.6;
+    --motion-puff-swell:3.4;
     --motion-smoke-dur: 2s;
-    --motion-smoke-rise: 64px;
+    --motion-smoke-rise:110px;
     --motion-salute-dur: 1s;
-    --motion-salute-burst: 1.5;
+    --motion-salute-burst:2.2;
     --motion-salute-step: 110ms;
     --motion-recoil-dur: 620ms;
-    --motion-recoil-dist: 14px;
+    --motion-recoil-dist:26px;
     --motion-tumble-dur: 1.6s;
-    --motion-tumble-hop: 22px;
+    --motion-tumble-hop:36px;
     --motion-tremble-dur: 1.8s;
     --motion-tremble-dist: 8px;
     --motion-tremble-tilt: 14deg;
     --motion-kick-dur: 460ms;
     --motion-kick-dist: 11px;
     --motion-flash-dur: 260ms;
-    --motion-flash-size: 2;
+    --motion-flash-size:2.4;
     --motion-gunsmoke-dur: 2s;
     --motion-gunsmoke-swell: 3;
     --motion-gunsmoke-drift: 64px;
@@ -242,5 +318,27 @@
     --motion-rebuild-wait: 1.6s;
     --motion-rebuild-dur: 600ms;
     --motion-zoom-dur: 260ms;
+    --motion-trace-count: 5;
+    --motion-trace-spread: 40px;
+    --motion-drop-count: 16;
+    --motion-salute-count: 21;
+    --motion-spark-count: 26;
+    --motion-spark-reach: 90px;
+    --motion-spark-dur: 820ms;
+    --motion-land-dur: 560ms;
+    --motion-land-dist: 18px;
+    --motion-jolt-dur: 480ms;
+    --motion-jolt-dist: 9px;
+    --motion-menu-dur: 420ms;
+    --motion-menu-travel: 28px;
+    --motion-menu-step: 32ms;
+    --motion-menu-sway: 36px;
+    --motion-win-dur: 640ms;
+    --motion-win-travel: 90px;
+    --motion-row-travel: 40px;
+    --motion-row-sway: 48px;
+    --motion-press-scale: .88;
+    --motion-dropzone-dur: .45s;
+    --motion-dropzone-glow: 34%;
   }
 }
