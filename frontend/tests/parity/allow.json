@@ -437,8 +437,8 @@
     "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "c-edit-new": {
-    "pixels": 112562,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 127516,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin The editor shows its file as a tab and a status bar of GlimStone Selects under the text, where the prototype draws its own dropdowns."
    },
    "c-upload-empty": {
     "pixels": 63845,
@@ -509,8 +509,8 @@
     "why": "the app shows the fixture's real file, which the prototype only sketches with made-up content; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "c-light-edit": {
-    "pixels": 131028,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 147772,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin The editor shows its file as a tab and a status bar of GlimStone Selects under the text, where the prototype draws its own dropdowns."
    },
    "c-light-upload": {
     "pixels": 100594,
@@ -581,8 +581,8 @@
     "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "c-phone-edit": {
-    "pixels": 59265,
-    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 71157,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin The editor shows its file as a tab and a status bar of GlimStone Selects under the text, where the prototype draws its own dropdowns."
    },
    "c-phone-conflict": {
     "pixels": 91570,
@@ -1449,8 +1449,8 @@
  "steps-review": {
   "shots": {
    "rv-04-editor": {
-    "pixels": 117136,
-    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 128252,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin The editor shows its file as a tab and a status bar of GlimStone Selects under the text, where the prototype draws its own dropdowns."
    },
    "rv-07-diskusage": {
     "pixels": 247488,

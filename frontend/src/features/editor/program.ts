@@ -40,7 +40,7 @@ export async function openInProgram(p: EditorProgram, path: string) {
     }
   } catch (e) {
     const code = e instanceof ApiError ? e.problem?.code : undefined;
-    // A program no longer on the computer is named, with where to pick another.
+    // A program that is gone from the computer is named, with where to pick another.
     toast(code === 'unknownApp' || code === 'notAProgram' ? t('editor.program.gone', { name: p.name }) : e instanceof Error ? e.message : String(e), 'warn');
   }
 }

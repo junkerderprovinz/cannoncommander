@@ -27,14 +27,14 @@ onMounted(async () => {
     dialog.value = got.dialog;
     if (!got.dialog) every.value = (await textPrograms(true)).apps;
   } catch {
-    apps.value = [];
+    // Without the list the built-in editor stays on offer.
   }
 });
 
 const groups = computed(() => {
   const p = editorProgram();
   const offered = apps.value.map((a) => ({ value: `app:${a.id}`, label: a.name, glyph: glyphOf(a.icon) }));
-  // A program picked earlier stays in the list, also when the computer no longer names it for text files.
+  // A program picked earlier stays in the list, also when the computer stops naming it for text files.
   const own = p && !offered.some((o) => o.value === keyOf(p)) ? [{ value: keyOf(p), label: p.name, glyph: glyphOf(p.icon) }] : [];
   const other = dialog.value
     ? [{ value: OTHER, label: t('editor.program.other') }]

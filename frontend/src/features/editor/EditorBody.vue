@@ -316,7 +316,6 @@ function command(name: string) {
   view.focus();
 }
 
-// The status bar's pickers.
 function setLang(id: string) {
   const d = cur.value!;
   d.lang = id;
