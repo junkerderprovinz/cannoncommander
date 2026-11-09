@@ -56,6 +56,42 @@ func (r *Resolver) Volumes() []Source {
 	return out
 }
 
+// VolumeAt returns the drive the computer reports that holds p, the deepest
+// one, and the API path it starts at. That also finds a drive inside another
+// source, such as a stick or a share below / on Linux. ok is false for a path
+// on no drive of its own, as everywhere in the container.
+func (r *Resolver) VolumeAt(p string) (mount string, v Volume, ok bool) {
+	cur := r.current()
+	consider := func(m string, cand Volume) {
+		if within(p, m) && len(m) > len(mount) {
+			mount, v, ok = m, cand, true
+		}
+	}
+	for _, vol := range cur.volumes {
+		consider(cur.apiPath(vol.Root), vol)
+	}
+	for _, sh := range cur.shares {
+		consider(sh.Mount, Volume{Name: sh.Name, Root: sh.Root, Drive: *sh.Drive})
+	}
+	return mount, v, ok
+}
+
+// apiPath is the API path of the folder dir on disk: below the deepest
+// source that holds it, or as MountFor writes it when none does.
+func (s *sourceSet) apiPath(dir string) string {
+	best, out := "", path.Clean(MountFor(dir))
+	for _, src := range s.sources {
+		if inside(src.Root, dir) && len(src.Root) > len(best) {
+			rel, err := filepath.Rel(src.Root, dir)
+			if err != nil {
+				continue
+			}
+			best, out = src.Root, path.Join(src.Mount, filepath.ToSlash(rel))
+		}
+	}
+	return out
+}
+
 // laidOut returns s with its sources built from the rest: the configured ones
 // first, then the pools and disks in the order Unraid lists them, the drives
 // and the network shares that none of them covers. Only a configured source
@@ -87,7 +123,7 @@ func (s *sourceSet) laidOut() *sourceSet {
 	}
 	next.sources = append(next.sources, next.deviceSources(covered, names)...)
 	for _, v := range s.volumes {
-		mount := path.Clean(MountFor(v.Root))
+		mount := next.apiPath(v.Root)
 		if covered(mount) {
 			continue
 		}

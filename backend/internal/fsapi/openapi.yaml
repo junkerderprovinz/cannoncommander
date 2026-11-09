@@ -637,10 +637,18 @@ components:
       properties:
         path:
           type: string
-          description: Where the source is mounted.
+          description: Where the source or the drive is mounted.
         label:
           type: string
-          description: Name of the source.
+          description: Name of the source, or of the drive, empty for a drive without one.
+        kind:
+          type: string
+          enum: [fixed, removable, optical, network, virtual]
+          description: What kind of drive of the computer this is, in the desktop app.
+        remote:
+          type: string
+          description: The share a network drive stands for.
+          example: smb://nas/daten
         free:
           type: integer
           format: int64

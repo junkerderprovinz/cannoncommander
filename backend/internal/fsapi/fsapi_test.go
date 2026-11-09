@@ -19,6 +19,7 @@ import (
 
 type fixture struct {
 	h     http.Handler
+	fs    *ccfs.Resolver
 	share string
 	cache string
 }
@@ -90,7 +91,7 @@ func newFixtureWith(t testing.TB, rules ccfs.Rules, index ...fsindex.Index) fixt
 	if err != nil {
 		t.Fatal(err)
 	}
-	return fixture{h: h, share: share, cache: cache}
+	return fixture{h: h, fs: fs, share: share, cache: cache}
 }
 
 func (f fixture) get(t testing.TB, user, endpoint, p string, extra ...string) *httptest.ResponseRecorder {
