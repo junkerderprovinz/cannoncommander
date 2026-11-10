@@ -31,7 +31,8 @@ const MIME = {
 const mmss = (s) => `${Math.floor(s / 3600) ? Math.floor(s / 3600) + ':' : ''}${String(Math.floor(s / 60) % 60).padStart(Math.floor(s / 3600) ? 2 : 1, '0')}:${String(s % 60).padStart(2, '0')}`;
 
 const COLUMNS = [
-  { id: 'name', label: 'Name', group: 'Allgemein', width: 'minmax(0, 1fr)', min: 14, sort: 'name', fixed: true },
+  // The name gives way first, down to a few letters, so the default columns fit a narrow panel.
+  { id: 'name', label: 'Name', group: 'Allgemein', width: 'minmax(0, 1fr)', min: 7, sort: 'name', fixed: true },
   { id: 'size', label: 'Größe', group: 'Allgemein', width: '6.5rem', r: true, sort: 'size', value: (k) => k.dir ? (CC.prefs.folderSizes ? fmtSize(FS.totalSize(k)) || '0 B' : `${FS.kids(k).length} Obj.`) : fmtSize(k.size) },
   { id: 'modified', label: 'Geändert', group: 'Allgemein', width: '7.5rem', r: true, sort: 'time', value: (k) => fmtListDate(k.time) },
   { id: 'created', label: 'Erstellt', group: 'Allgemein', width: '7.5rem', r: true, num: (k) => k.time - (hashOf(k.name) % 400) * DAY, value: (k) => fmtListDate(k.time - (hashOf(k.name) % 400) * DAY) },

@@ -2,7 +2,7 @@
 import type { Connect } from 'vite';
 
 type Node = { name: string; dir?: boolean; children?: Node[]; [key: string]: unknown };
-type Column = { id: string; label: string; group: string; width: string; r?: boolean; mono?: boolean; fixed?: boolean; sort?: string; num?: (k: unknown) => number; value?: (k: unknown, path: string) => string };
+type Column = { id: string; label: string; group: string; width: string; min?: number; r?: boolean; mono?: boolean; fixed?: boolean; sort?: string; num?: (k: unknown) => number; value?: (k: unknown, path: string) => string };
 
 export function loadPrototype(): {
   FS: {
