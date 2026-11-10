@@ -99,26 +99,74 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/screenshots/panels-dark.png">
-    <img src=".github/assets/screenshots/panels-light.png" alt="Two panels side by side, the downloads share on the left and the backups share on the right, with shortcuts and the folder tree in the sidebar" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/panels-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/panels-light.png" alt="Two panels side by side: the downloads share with two more tabs on the left and the backups share on the right, with shortcuts, remotes and the folder tree in the sidebar" width="100%">
   </picture>
-  <br><em>Two panels with tabs, shortcuts and the folder tree. The badges show which files still sit on the cache.</em>
+  <br><em>Two panels with tabs, shortcuts, your remotes and the folder tree. The badges show which files still sit on the cache.</em>
 </p>
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/screenshots/gallery-dark.png">
-    <img src=".github/assets/screenshots/gallery-light.png" alt="A folder of photos shown as large tiles in the left panel" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/gallery-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/gallery-light.png" alt="The 2026 photo folder shown as large tiles in a single wide panel" width="100%">
   </picture>
-  <br><em>Each tab has its own view, here large tiles for a folder of photos</em>
+  <br><em>Each folder keeps its own view, here large tiles for a folder of photos.</em>
 </p>
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/screenshots/copy-dark.png">
-    <img src=".github/assets/screenshots/copy-light.png" alt="The copy window with the source and target folders, the choice between a copy and a hard link and the rule for files that already exist" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/copy-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/copy-light.png" alt="The copy window for a film and a zip file going from downloads to backups, with the choice between a copy and a hard link, the rule for files that already exist and the extra options opened" width="100%">
   </picture>
-  <br><em>F5 copies to the other panel, as a job in the background</em>
+  <br><em>F5 copies to the other panel as a job in the background, or makes a hard link where that saves space.</em>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/preview-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/preview-light.png" alt="Two panels of holiday photos with the preview pane on the right, showing the picture, its size, format, owner and permissions, the camera model, the date it was taken and the place" width="100%">
+  </picture>
+  <br><em>The preview pane shows the picture under the cursor, with its details and the camera data.</em>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/editor-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/editor-light.png" alt="The editor with a Go file and a compose file open in tabs, syntax colours, line numbers and a status bar for indentation, line endings, encoding and language" width="100%">
+  </picture>
+  <br><em>F4 opens the editor, with tabs, syntax colours and find and replace.</em>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/remotes-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/remotes-light.png" alt="The window for adding a remote: a search field and a grid of cloud storage providers, each with its logo, from 1Fichier and Box to Yandex Disk and Zoho WorkDrive" width="100%">
+  </picture>
+  <br><em>Adding a remote: pick one of the many providers rclone speaks.</em>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/settings-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/settings-light.png" alt="The Appearance settings with language, theme, corners, animation and the options for the file list" width="100%">
+  </picture>
+  <br><em>The settings, here Appearance with the theme, the corners and how much things move.</em>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/mcp-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/mcp-light.png" alt="The MCP server card in the Integrations settings: status, endpoint, a button to connect a client and two keys, each with its calls today and its last use" width="100%">
+  </picture>
+  <br><em>The built-in MCP server. Each assistant gets its own key, and you can see when it was last used.</em>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/mcp-clients-dark.png">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/mcp-clients-light.png" alt="The window for choosing an AI client, with tiles for Claude Code, Codex CLI, Cursor, Gemini CLI, LM Studio, ChatGPT and many more" width="100%">
+  </picture>
+  <br><em>Pick your assistant and CannonCommander shows how to connect it.</em>
 </p>
 
 <br>
