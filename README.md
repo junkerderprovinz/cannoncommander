@@ -143,7 +143,7 @@ The folders, files and keys in these pictures are made up.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/mcp.png" alt="The MCP server card in the settings: its status, the endpoint, a button to connect a client and two keys with their calls today and last use" width="100%">
-  <br><em>The built-in MCP server lets Claude, ChatGPT, Cursor and others work with your files, each through its own key.</em>
+  <br><em>The built-in MCP server lets the AI assistants you already use work with your files, each through its own key.</em>
 </p>
 
 <br>
@@ -163,11 +163,11 @@ The folders, files and keys in these pictures are made up.
 - **Unraid in view.** Which files sit on the cache and which on the array, disk shares next to user shares, sleeping disks that a copy would wake, the parity check, hard links, and permissions set the way Unraid sets them.
 - **Nine ways to look at a folder.** Details with 89 columns to choose from, compact, list, content, columns, tiles, large tiles, a gallery and a drives view. Quick look on the space bar and a preview in the other panel.
 - **Tools for the whole collection.** Search by name, field or content, folder compare and sync, file compare, duplicates, disk usage as a tree or a treemap, batch rename with patterns, archives to pack, unpack and test, checksums, split and join, links and properties.
-- **A viewer and an editor.** Pictures, video, audio, PDF, Markdown, text and code, Office files, e-books, 3D models and archives open in the browser. An Office server such as OnlyOffice or Collabora can edit Office files.
-- **Remote storage.** SFTP, SMB, WebDAV, S3, Google Drive and everything else rclone speaks, browsed like any other folder.
+- **A viewer and an editor.** Pictures, video, audio, PDF, Markdown, text and code, Office files, e-books, 3D models and archives open in the browser. An Office server of your own can edit Office files.
+- **Remote storage.** SFTP, SMB, WebDAV, S3, the big cloud drives and everything else rclone speaks, browsed like any other folder.
 - **Sharing.** Links with a password, an expiry date and download or upload limits, for one file or a whole collection, with a QR code. A WebDAV server lets you mount your files as a drive.
 - **People and rules.** Users, groups and rules that hide a folder or make it read only, two-factor sign-in, passkeys, API tokens and single sign-on through OIDC.
-- **AI assistants, with your rights.** A built-in MCP server lets Claude, ChatGPT, Cursor and other assistants browse, search and read your files, and with your say-so tidy them up.
+- **AI assistants, with your rights.** A built-in MCP server lets the AI assistants you already use browse, search and read your files, and with your say-so tidy them up.
 - **Colours and tags** for files, saved searches, window profiles and your own key bindings.
 - **[ArrowLoop](https://github.com/junkerderprovinz/arrowloop) on call.** A folder pair from the comparison becomes a recurring sync job in ArrowLoop with one click.
 - **Looks like the rest of the house.** The interface uses [GlimStone](https://github.com/junkerderprovinz/glimstone), in light and dark, with your own accent colour, and speaks English and German.
