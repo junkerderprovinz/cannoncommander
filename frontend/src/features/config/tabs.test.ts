@@ -115,7 +115,7 @@ describe('the settings', () => {
       expect(links).toEqual(['windows-amd64-installer.exe', 'windows-amd64.zip', 'macos-universal.zip', 'linux-amd64-installer', 'linux-arm64-installer',
         'linux-amd64.flatpak', 'linux-arm64.flatpak'].map((f) => at + f));
       const flatpak = [...document.querySelectorAll('.glim-readme-btn-unit')].find((u) => u.querySelector('.glim-readme-btn-name')?.textContent === 'Flatpak')!;
-      expect(flatpak.className).toBe('glim-readme-btn-unit group glim-readme-btn-group glim-tile-flatpak');
+      expect([...flatpak.classList].sort()).toEqual(['glim-readme-btn-group', 'glim-readme-btn-unit', 'glim-tile-flatpak', 'group']);
       expect([...flatpak.querySelectorAll('a')].map((a) => a.getAttribute('aria-label'))).toEqual(['Flatpak x64', 'Flatpak ARM64']);
       expect(document.querySelector('.glim-notch-card')?.textContent).not.toContain('Sobald es die Builds gibt');
     } finally {

@@ -5,3 +5,11 @@ if (typeof Element !== 'undefined') {
   Element.prototype.scrollIntoView ??= () => {};
   Element.prototype.scrollTo ??= () => {};
 }
+
+// GlimStone's selectors, README buttons and path fields measure themselves
+// through a ResizeObserver, which jsdom does not have.
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
