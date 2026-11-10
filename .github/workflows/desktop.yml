@@ -1,11 +1,20 @@
 name: Desktop
 
-# Builds the desktop app as artifacts, by hand or from release.yml. It attaches
-# nothing itself: release.yml publishes the release with every file at once
-# once this and the image are done.
+# Builds the desktop app as artifacts, by hand, from release.yml and for every
+# push to main that touches what goes into it, so a broken build shows before
+# a tag. It attaches nothing itself: release.yml publishes the release with
+# every file at once once this and the image are done.
 on:
   workflow_dispatch:
   workflow_call:
+  push:
+    branches: [main]
+    paths:
+      - backend/**
+      - desktop/**
+      - frontend/**
+      - scripts/desktop.mjs
+      - .github/workflows/desktop.yml
 
 permissions:
   contents: read
@@ -28,7 +37,9 @@ jobs:
             platform: darwin/universal
             slug: macos-universal
             args: ""
-          - os: ubuntu-latest
+          # The oldest Ubuntu still served, as for ARM, so the binary asks for
+          # no newer glibc than the people running it have.
+          - os: ubuntu-24.04
             platform: linux/amd64
             slug: linux-amd64
             args: "--arch amd64 --installer"
