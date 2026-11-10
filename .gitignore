@@ -6,6 +6,7 @@
 *.mjs
 !/scripts/desktop.mjs
 !/flatpak/update-sources.mjs
+!/.github/assets/screenshots/render.mjs
 _old
 .idea/
 /backend/backend

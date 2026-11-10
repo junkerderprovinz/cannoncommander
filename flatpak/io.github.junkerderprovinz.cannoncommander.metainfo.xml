@@ -52,15 +52,15 @@
   <screenshots>
     <screenshot type="default">
       <caption>Two panels side by side</caption>
-      <image>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/panels-light.png</image>
+      <image>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/captures/panels.png</image>
     </screenshot>
     <screenshot>
-      <caption>A copy running as a job</caption>
-      <image>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/copy-light.png</image>
+      <caption>Copying to the other panel</caption>
+      <image>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/captures/copy.png</image>
     </screenshot>
     <screenshot>
-      <caption>The gallery view</caption>
-      <image>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/gallery-light.png</image>
+      <caption>A folder of photos as large tiles</caption>
+      <image>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/captures/gallery.png</image>
     </screenshot>
   </screenshots>
 
