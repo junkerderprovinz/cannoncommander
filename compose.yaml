@@ -25,6 +25,10 @@ services:
       # /tmp/notifications, while the server runs as PUID.
       - DAC_READ_SEARCH
       - DAC_OVERRIDE
+    # Docker's AppArmor profile on Debian and Ubuntu refuses FUSE mounts even
+    # with SYS_ADMIN.
+    security_opt:
+      - apparmor:unconfined
     environment:
       TZ: Europe/Berlin
       PUID: "1000"
