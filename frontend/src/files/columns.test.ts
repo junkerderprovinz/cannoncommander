@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { toItem } from '@/api/client';
 import { t } from '@/i18n';
+import { shell } from '@/shell/state';
 import { createFixture, loadPrototype } from '../../scripts/fixture.js';
-import { COL, COLUMN_GROUPS, COLUMNS, columnLabel } from './columns';
+import { COL, COLUMN_GROUPS, COLUMNS, Columns, columnLabel } from './columns';
 import { toEntry } from './entries';
 import { join } from './paths';
 
@@ -38,8 +39,8 @@ describe('columns', () => {
   it.each(protoColumns.map((c) => [c.id, c] as const))('lays out %s like the prototype', (id, c) => {
     const mine = COL[id]!;
     expect(columnLabel(id)).toBe(c.label);
-    expect({ width: mine.width, r: !!mine.r, mono: !!mine.mono, fixed: !!mine.fixed, sort: mine.sort, sortable: !!mine.num })
-      .toEqual({ width: c.width, r: !!c.r, mono: !!c.mono, fixed: !!c.fixed, sort: c.sort, sortable: !!c.num });
+    expect({ width: mine.width, min: mine.min, r: !!mine.r, mono: !!mine.mono, fixed: !!mine.fixed, sort: mine.sort, sortable: !!mine.num })
+      .toEqual({ width: c.width, min: c.min, r: !!c.r, mono: !!c.mono, fixed: !!c.fixed, sort: c.sort, sortable: !!c.num });
     expect(t(`columnGroups.${mine.group}`)).toBe(c.group);
   });
 
@@ -61,6 +62,16 @@ describe('columns', () => {
     for (const { path, name } of rows.filter((r) => proto(id, r.path, r.name))) {
       expect(COL[id]!.num!(appEntry(path, name)), `${path}/${name}`).toBe(P.COL[id]!.num!(protoNode(path, name)));
     }
+  });
+});
+
+describe('list width', () => {
+  // At 1600 px with the sidebar, two panels and the preview pane, a panel's list is 424 px wide, and on a laptop
+  // that shows 1536 px it is 392 px.
+  it('fits the default columns beside the sidebar and the preview pane, eliding the name', () => {
+    shell.width = 1536;
+    Columns.reset();
+    expect(parseFloat(Columns.minWidth()) * 16).toBeLessThanOrEqual(392);
   });
 });
 
