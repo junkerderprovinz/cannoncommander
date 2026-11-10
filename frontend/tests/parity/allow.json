@@ -11,16 +11,16 @@
   "stale": "the step file still picks the letter case from a <select>, which the rename window replaced with a dropdown",
   "shots": {
    "b-sync": {
-    "pixels": 42866,
-    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 53344,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "b-diff": {
-    "pixels": 182726,
-    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "pixels": 191440,
+    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "b-diff-next": {
-    "pixels": 192493,
-    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
+    "pixels": 201198,
+    "why": "the compare window shows the two files as they are; the prototype makes up a text of its own for a .yml; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "b-usage": {
     "pixels": 256254,
@@ -35,12 +35,12 @@
     "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "b-compare": {
-    "pixels": 20807,
-    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 31914,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "b-sync-both": {
-    "pixels": 35466,
-    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 46178,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "b-dups": {
     "pixels": 20814,
@@ -425,32 +425,32 @@
     "why": "the app plays the file in the browser's media element, which cannot play the fixture's made-up media in headless Chromium, while the prototype pretends to play; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. jdp's Pinnwand round 2: the head shows the settings and the layout with words, the menu titles as bare buttons and the jobs in the avatar menu. jdp's Pinnwand round 4: the layout button keeps the look of the other head buttons in both layouts, where the prototype fills its pressed half with the accent"
    },
    "c-edit-find": {
-    "pixels": 147637,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 163404,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The editor shows its file as a tab and a status bar under the text on both sides, and GlimStone's taller window sets them further down; the app marks a tab unsaved a moment after the last key"
    },
    "c-edit-unsaved": {
-    "pixels": 32515,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 41566,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The editor shows its file as a tab and a status bar under the text on both sides, and GlimStone's taller window sets them further down"
    },
    "c-edit-md": {
-    "pixels": 164150,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 182773,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The editor shows its file as a tab and a status bar under the text on both sides, and GlimStone's taller window sets them further down; the sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "c-edit-new": {
     "pixels": 127516,
     "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin The editor shows its file as a tab and a status bar of GlimStone Selects under the text, where the prototype draws its own dropdowns."
    },
    "c-upload-empty": {
-    "pixels": 63845,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; a toast holds no transform once it is in, so its edges land where the layout puts them. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 74804,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; a toast holds no transform once it is in, so its edges land where the layout puts them. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "c-conflict-upload": {
     "pixels": 59080,
     "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words"
    },
    "c-upload-progress": {
-    "pixels": 98268,
-    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 108436,
+    "why": "an upload runs in real time against the page's stopped clock, so its rows reach another point; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "c-share": {
     "pixels": 95403,
@@ -461,8 +461,8 @@
     "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; a link shows the fixture's address, and the fixture draws its QR code with another pattern than the prototype's encoder; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "c-conflict-copy": {
-    "pixels": 42286,
-    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; the warning names the whole path, where the prototype names the file; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 53130,
+    "why": "the toasts left from earlier steps word a file by its name where the prototype counts it; the warning names the whole path, where the prototype names the file; GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "c-trash": {
     "pixels": 36074,
@@ -565,24 +565,24 @@
     "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "c-upload-done": {
-    "pixels": 65217,
-    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 75648,
+    "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "c-download": {
     "pixels": 52726,
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "c-light-view-md": {
-    "pixels": 117441,
-    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 127280,
+    "why": "GlimStone's full Window is larger than the prototype's, so everything in it moves, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "c-phone-view-md": {
     "pixels": 64935,
     "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "c-phone-edit": {
-    "pixels": 71157,
-    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin The editor shows its file as a tab and a status bar of GlimStone Selects under the text, where the prototype draws its own dropdowns."
+    "pixels": 76336,
+    "why": "at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin The editor shows its file as a tab and a status bar of GlimStone Selects under the text, where the prototype draws its own dropdowns. At phone width the app's find bar stacks its fields, as GlimStone's strips do."
    },
    "c-phone-conflict": {
     "pixels": 91570,
@@ -1417,7 +1417,7 @@
     "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "r7-phone-path": {
-    "pixels": 26752,
+    "pixels": 29559,
     "why": "the made-up pictures are drawn with the page's random numbers in the prototype and with the fixture's own in the app, so photos and posters differ; at phone width GlimStone's strips break into pairs and a window's foot wraps, where the prototype's run off the window, and only the newest two toasts show; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "r7-active-right": {
@@ -1581,20 +1581,20 @@
  "steps-round5": {
   "shots": {
    "r5-cascade": {
-    "pixels": 34810,
-    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 47932,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "r5-colwin": {
     "pixels": 131852,
     "why": "GlimStone's Window, FieldRow, Selector, Toggle and Button: a foot button is GlimStone's, a path's picker shows its words where there is room, and the window's height follows, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "r5-colsearch": {
-    "pixels": 58890,
-    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 68893,
+    "why": "the menu is GlimStone's ContextMenu or Select with menu rows, with its own row height and marks, over a head bar and sidebar of GlimStone's, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "r5-main": {
-    "pixels": 30553,
-    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 43797,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "r5-glyphs-in-list": {
     "pixels": 30375,
@@ -1661,8 +1661,8 @@
     "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
    },
    "r9-large-Kevin-MacLeod": {
-    "pixels": 29856,
-    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin"
+    "pixels": 39080,
+    "why": "GlimStone draws the head bar, the sidebar's cards and the panel's buttons: bare IconButtons where the prototype has filled squares, its Selector, more room under a card's badge, and SidebarRow, whose text is a little larger, so a deep folder's name is cut a little sooner, and a toast is GlimStone's, wider, with a mark, a close cross and its action under its words; jdp's logo stands in the head where the prototype has the folder tile, so the titles and controls after it sit further along. jdp's Pinnwand note: the head has one layout button and keeps the command search and the settings in the avatar's menu, every menu entry shows a glyph, and without the F-key bar the panels reach down to the bottom margin. The sidebar lists the remotes in a card of their own, so the folder tree starts further down and the current folder's row lands in the strip only the app's panels reach"
    },
    "r9-quicklook": {
     "pixels": 47851,
