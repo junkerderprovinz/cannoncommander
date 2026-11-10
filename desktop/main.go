@@ -76,6 +76,12 @@ func run() error {
 	sh := &shell{state: state}
 	sh.folders = newFolderHandler()
 
+	// WebKit's DMA-BUF renderer fails on NVIDIA with Wayland's error 71. Wails
+	// turns it off there itself, but cannot see the driver from inside a Flatpak.
+	if flatpak.ID() != "" && os.Getenv("WEBKIT_DISABLE_DMABUF_RENDERER") == "" && flatpak.NVIDIARenders("/sys", os.Getenv) {
+		os.Setenv("WEBKIT_DISABLE_DMABUF_RENDERER", "1")
+	}
+
 	// Filled in below, once this is known to be the only copy.
 	var window *application.WebviewWindow
 	app := application.New(application.Options{
