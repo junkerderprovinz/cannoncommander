@@ -1,5 +1,7 @@
 /**
- * Renders every icon from cannoncommander-app.svg, the logo on its white tile:
+ * Renders the Community Applications icon from logo.svg, the logo alone as every
+ * store shows it, and every other icon from cannoncommander-app.svg, the logo on
+ * its white tile:
  *
  *   .github/assets/icon.png                        512, the Community Applications icon
  *   frontend/public/icons/favicon.svg              the tile itself, for the browser tab
@@ -26,6 +28,7 @@ const desktop = join(__dir, "..", "..", "desktop");
 
 const SRC = join(__dir, "cannoncommander-app.svg");
 const tile = readFileSync(SRC, "utf8");
+const logo = readFileSync(join(__dir, "logo.svg"), "utf8");
 
 // The two halves of the tile, light on the left and grey on the right. The maskable icon continues them to the edge,
 // so a mask that cuts into the padding finds the tile's own colours there.
@@ -45,7 +48,7 @@ function nested(x, y, w, h) {
   return raw.replace(/<svg\b[^>]*>/, `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">`);
 }
 
-emit(join(__dir, "icon.png"), render(tile, 512));
+emit(join(__dir, "icon.png"), render(logo, 512));
 copyFileSync(SRC, join(icons, "favicon.svg"));
 console.log(`wrote ${join(icons, "favicon.svg")}`);
 for (const size of [192, 512]) emit(join(icons, `app-${size}.png`), render(tile, size));
