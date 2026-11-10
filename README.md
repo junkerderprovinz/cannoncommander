@@ -391,6 +391,6 @@ You do not have to take my word for it. The code is open and every release note 
 
 <br>
 
-Questions, bugs, ideas or feature requests? Please [open a GitHub issue](https://github.com/junkerderprovinz/cannoncommander/issues), questions are welcome there.
+Questions? Check the [support thread](https://forums.unraid.net/topic/201231-support-junkerderprovinz-cannoncommand/). Bugs, ideas or feature requests? Please [open a GitHub issue](https://github.com/junkerderprovinz/cannoncommander/issues).
 
 CannonCommander is released under the [GNU Affero General Public License v3.0](LICENSE). It builds on FileBrowser Quantum and File Browser, both under the Apache License 2.0, whose notices are kept in [NOTICE](NOTICE). The name CannonCommander and its logo are not part of the licence, so a fork needs a name of its own. Thank you to Graham Steffaniak and everyone who worked on File Browser before us.

@@ -7,7 +7,7 @@
   <MyIP/>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/junkerderprovinz/cannoncommander/issues</Support>
+  <Support>https://forums.unraid.net/topic/201231-support-junkerderprovinz-cannoncommand/</Support>
   <Project>https://github.com/junkerderprovinz/cannoncommander</Project>
   <ReadMe>https://github.com/junkerderprovinz/cannoncommander/blob/main/README.md</ReadMe>
   <Overview>A two-pane file manager for your Unraid server that runs in the browser.
