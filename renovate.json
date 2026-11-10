@@ -20,6 +20,12 @@
       "allowedVersions": "<25"
     },
     {
+      "description": "The Go devcontainer tag carries the image version and the Go version, as in 2-1.27-bookworm. Only the image version moves here, Go goes up together with go.mod.",
+      "matchManagers": ["devcontainer"],
+      "matchPackageNames": ["mcr.microsoft.com/devcontainers/go"],
+      "versioning": "regex:^(?<major>\\d+)-(?<compatibility>\\d+\\.\\d+-bookworm)$"
+    },
+    {
       "description": "GitHub Actions: auto-merge minor, patch and digest updates",
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["minor", "patch", "digest"],
