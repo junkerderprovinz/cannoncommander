@@ -498,6 +498,9 @@
       "dark": "深色",
       "light": "浅色",
       "system": "系统",
+      "oled": "OLED",
+      "oledTip": "让深色外观使用纯黑，适合 OLED 和 AMOLED 屏幕。",
+      "oledLight": "仅在{dark}或{system}下可用。上方选择的是{light}。",
       "corners": "圆角",
       "cornersTip": "卡片、按钮和窗口的圆角程度。",
       "round": "圆润",
@@ -4221,8 +4224,6 @@
   "signin": {
     "name": "名称",
     "password": "密码",
-    "stay": "保持登录",
-    "stayTip": "保持登录的天数取决于你账户中“安全”下的设置，未设置时为 30 天。关闭时，关闭浏览器后会话即结束。",
     "signIn": "登录",
     "signingIn": "正在登录…",
     "passkey": "使用通行密钥登录",

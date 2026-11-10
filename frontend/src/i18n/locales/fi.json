@@ -530,6 +530,9 @@
       "dark": "Tumma",
       "light": "Vaalea",
       "system": "Järjestelmä",
+      "oled": "OLED",
+      "oledTip": "Vaihtaa tumman ulkoasun aidoksi mustaksi OLED- ja AMOLED-näytöille.",
+      "oledLight": "Vain asetuksella {dark} tai {system}. Ylhäällä on valittu {light}.",
       "corners": "Kulmat",
       "cornersTip": "Kuinka pyöreitä kortit, painikkeet ja ikkunat ovat.",
       "round": "Pyöreät",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Nimi",
     "password": "Salasana",
-    "stay": "Pysy kirjautuneena",
-    "stayTip": "Pysyt kirjautuneena niin monta päivää kuin tililläsi on asetettu kohdassa Turvallisuus, muuten 30 päivää. Ilman kytkintä istunto päättyy, kun suljet selaimen.",
     "signIn": "Kirjaudu sisään",
     "signingIn": "Kirjaudutaan …",
     "passkey": "Kirjaudu pääsyavaimella",

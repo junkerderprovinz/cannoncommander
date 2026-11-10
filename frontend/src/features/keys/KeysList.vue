@@ -9,7 +9,7 @@ import { G, glyphComponent } from '@/core/glyphs';
 import { host } from '@/core/host';
 import type { MenuEntry } from '@/core/menu';
 import { MENUS, menuName } from '@/core/menus';
-import { locale, t } from '@/i18n';
+import { t } from '@/i18n';
 import { assign, changed, check, combosOf, heldBack, keyLabel, type KeyMap, mainCombo, reservedBy, reset, restore, swap } from './keys';
 import KeyField from './KeyField.vue';
 import { declaredKeys } from './state';
@@ -55,14 +55,6 @@ const blocked = (combo: string) => {
   return why ? t(`keys.${why}Here`, { keys: keyLabel(combo) }) : undefined;
 };
 const chips = (id: string) => keysOf(id).map((c) => ({ label: keyLabel(c), blocked: blocked(c) }));
-// The row says under its keys what the struck out ones mean, once for the browser's and once for the system's.
-const note = (id: string) => (['browser', 'system'] as const).flatMap((why) => {
-  const keys = keysOf(id).filter((c) => reservedBy(c, host.desktop) === why).map(keyLabel);
-  return keys.length ? [t(`keys.${why}Here`, { keys: new Intl.ListFormat(locale(), { type: 'conjunction' }).format(keys) })] : [];
-}).join(' ');
-
-const shownNote = (id: string) => rec.value !== id && pending.value?.id !== id && !!note(id);
-
 const stop = () => { rec.value = null; pending.value = null; };
 const set = (map: KeyMap) => { emit('update:map', map); stop(); };
 function listen(id: string) {
@@ -113,13 +105,12 @@ const clear = (id: string) => set(Object.fromEntries(Object.entries(props.map).f
       <KeyField
         :keys="chips(id)"
         :listening="rec === id" :listening-text="t('keys.press')" :empty-text="t('keys.none')"
-        :data-kb-rec="id" :aria-label="t('keys.change', { action: name(actions[id]!) })" :aria-describedby="shownNote(id) ? `kb-note-${id}` : undefined"
+        :data-kb-rec="id" :aria-label="t('keys.change', { action: name(actions[id]!) })"
         @click="listen(id)" @press="press" @cancel="stop" />
       <span class="kb-acts">
         <IconButton v-if="changed(map, base, id)" :tip="t('keys.reset')" :glyph="glyphComponent('IconResetArrow')" :data-kb-reset="id" @click="undo(id)" />
         <IconButton v-if="main(id)" :tip="t('keys.clear')" :glyph="glyphComponent('IconTrash')" :data-kb-clear="id" @click="clear(id)" />
       </span>
-      <div v-if="shownNote(id)" :id="`kb-note-${id}`" class="kb-note">{{ note(id) }}</div>
       <div v-if="pending?.id === id" class="kb-warn" role="alert">
         <span>{{ pending.msg }}</span>
         <span v-if="pending.other" class="kb-choice">

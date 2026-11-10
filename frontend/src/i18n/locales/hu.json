@@ -530,6 +530,9 @@
       "dark": "Sötét",
       "light": "Világos",
       "system": "Rendszer",
+      "oled": "OLED",
+      "oledTip": "A sötét megjelenést valódi feketére állítja OLED és AMOLED kijelzőkhöz.",
+      "oledLight": "Csak {dark} vagy {system} mellett. Fent a(z) {light} van kiválasztva.",
       "corners": "Sarkok",
       "cornersTip": "Mennyire kerekek a kártyák, gombok és ablakok.",
       "round": "Kerek",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Név",
     "password": "Jelszó",
-    "stay": "Belépve maradás",
-    "stayTip": "Annyi napig marad belépve, ahány a fiókja Biztonság részében be van állítva, különben 30 napig. A kapcsoló nélkül a munkamenet a böngésző bezárásakor véget ér.",
     "signIn": "Belépés",
     "signingIn": "Belépés …",
     "passkey": "Belépés azonosítókulccsal",

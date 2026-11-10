@@ -562,6 +562,9 @@
       "dark": "Escuro",
       "light": "Claro",
       "system": "Sistema",
+      "oled": "OLED",
+      "oledTip": "Leva o aspeto escuro ao preto puro, para ecrãs OLED e AMOLED.",
+      "oledLight": "Só com {dark} ou {system}. Acima está escolhido {light}.",
       "corners": "Cantos",
       "cornersTip": "Quão redondos são os cartões, os botões e as janelas.",
       "round": "Redondos",
@@ -4511,8 +4514,6 @@
   "signin": {
     "name": "Nome",
     "password": "Palavra-passe",
-    "stay": "Manter sessão iniciada",
-    "stayTip": "Mantém a sessão iniciada durante os dias definidos na sua conta em Segurança, ou 30 se nunca escolheu outro número. Sem esta opção, a sessão termina quando fecha o navegador.",
     "signIn": "Iniciar sessão",
     "signingIn": "A iniciar sessão…",
     "passkey": "Iniciar sessão com chave de acesso",

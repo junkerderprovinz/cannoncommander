@@ -1,8 +1,6 @@
 {
   "name": "Name",
   "password": "Password",
-  "stay": "Stay signed in",
-  "stayTip": "You stay signed in for as many days as your account has set under Security, 30 if you never picked a number. Without the switch the session ends when you close the browser.",
   "signIn": "Sign in",
   "signingIn": "Signing in …",
   "passkey": "Sign in with a passkey",

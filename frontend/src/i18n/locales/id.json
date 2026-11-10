@@ -498,6 +498,9 @@
       "dark": "Gelap",
       "light": "Terang",
       "system": "Sistem",
+      "oled": "OLED",
+      "oledTip": "Membuat tampilan gelap menjadi hitam pekat, untuk layar OLED dan AMOLED.",
+      "oledLight": "Hanya dengan {dark} atau {system}. Di atas dipilih {light}.",
       "corners": "Sudut",
       "cornersTip": "Seberapa bulat kartu, tombol, dan jendela.",
       "round": "Bulat",
@@ -4221,8 +4224,6 @@
   "signin": {
     "name": "Nama",
     "password": "Kata sandi",
-    "stay": "Tetap masuk",
-    "stayTip": "Anda tetap masuk selama jumlah hari yang diatur di akun Anda pada Keamanan, atau 30 hari jika belum pernah diatur. Tanpa sakelar ini, sesi berakhir saat Anda menutup browser.",
     "signIn": "Masuk",
     "signingIn": "Sedang masuk …",
     "passkey": "Masuk dengan passkey",

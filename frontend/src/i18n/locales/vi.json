@@ -498,6 +498,9 @@
       "dark": "Tối",
       "light": "Sáng",
       "system": "Hệ thống",
+      "oled": "OLED",
+      "oledTip": "Chuyển giao diện tối sang màu đen tuyệt đối, cho màn hình OLED và AMOLED.",
+      "oledLight": "Chỉ dùng được với {dark} hoặc {system}. Phía trên đang chọn {light}.",
       "corners": "Góc",
       "cornersTip": "Độ bo tròn của thẻ, nút và cửa sổ.",
       "round": "Tròn",
@@ -4221,8 +4224,6 @@
   "signin": {
     "name": "Tên",
     "password": "Mật khẩu",
-    "stay": "Giữ đăng nhập",
-    "stayTip": "Bạn sẽ giữ đăng nhập trong số ngày đã đặt ở mục Bảo mật trong tài khoản, nếu chưa đặt thì 30 ngày. Nếu tắt, phiên sẽ kết thúc khi bạn đóng trình duyệt.",
     "signIn": "Đăng nhập",
     "signingIn": "Đang đăng nhập …",
     "passkey": "Đăng nhập bằng passkey",

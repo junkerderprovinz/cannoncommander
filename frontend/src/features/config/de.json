@@ -30,7 +30,7 @@
     "unraidFailed": "Unraid hat die Meldung nicht angenommen. Ist das Schreiben auf Unraid im Template eingeschaltet?", "noNotes": "Dieser Browser kann keine Benachrichtigungen zeigen", "notesBlocked": "Der Browser lässt keine Benachrichtigungen zu. Erlauben kannst du sie in den Seiteneinstellungen des Browsers"
   },
   "look": {
-    "display": "Darstellung", "language": "Sprache", "theme": "Design", "themeTip": "System folgt der Einstellung deines Geräts.", "dark": "Dunkel", "light": "Hell", "system": "System",
+    "display": "Darstellung", "language": "Sprache", "theme": "Design", "themeTip": "System folgt der Einstellung deines Geräts.", "dark": "Dunkel", "light": "Hell", "system": "System", "oled": "OLED", "oledTip": "Setzt das dunkle Design auf echtes Schwarz, für OLED- und AMOLED-Bildschirme.", "oledLight": "Nur mit {dark} oder {system}. Oben ist {light} gewählt.",
     "corners": "Ecken", "cornersTip": "Wie rund Karten, Knöpfe und Fenster sind.", "round": "Rund", "soft": "Abgerundet", "square": "Eckig", "leaf": "Blatt",
     "motion": "Animation", "motionTip": "Wie lebhaft Fenster und Seiten hereinkommen. Wenn dein System weniger Bewegung wünscht, gilt das immer.",
     "off": "Aus", "subtle": "Dezent", "wild": "Wild", "storm": "Sturm",

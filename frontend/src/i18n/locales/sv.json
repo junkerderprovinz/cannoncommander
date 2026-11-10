@@ -530,6 +530,9 @@
       "dark": "Mörkt",
       "light": "Ljust",
       "system": "System",
+      "oled": "OLED",
+      "oledTip": "Ger det mörka utseendet äkta svart, för OLED- och AMOLED-skärmar.",
+      "oledLight": "Bara med {dark} eller {system}. Ovanför är {light} valt.",
       "corners": "Hörn",
       "cornersTip": "Hur runda kort, knappar och fönster är.",
       "round": "Runda",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Namn",
     "password": "Lösenord",
-    "stay": "Förbli inloggad",
-    "stayTip": "Du förblir inloggad så många dagar som ditt konto har inställt under Säkerhet, annars 30 dagar. Utan reglaget avslutas sessionen när du stänger webbläsaren.",
     "signIn": "Logga in",
     "signingIn": "Loggar in …",
     "passkey": "Logga in med nyckel",

@@ -562,6 +562,9 @@
       "dark": "Fosc",
       "light": "Clar",
       "system": "Sistema",
+      "oled": "OLED",
+      "oledTip": "Posa l\\",
+      "oledLight": "Només amb {dark} o {system}. A dalt hi ha triat {light}.",
       "corners": "Cantonades",
       "cornersTip": "Com d'arrodonides són les targetes, els botons i les finestres.",
       "round": "Rodones",
@@ -4511,8 +4514,6 @@
   "signin": {
     "name": "Nom",
     "password": "Contrasenya",
-    "stay": "Mantén la sessió iniciada",
-    "stayTip": "Manteniu la sessió iniciada tants dies com indiqui el vostre compte a Seguretat, o 30 si no n'heu triat cap altre. Sense aquesta opció, la sessió acaba quan tanqueu el navegador.",
     "signIn": "Inicia la sessió",
     "signingIn": "S'està iniciant la sessió…",
     "passkey": "Inicia la sessió amb una clau d'accés",

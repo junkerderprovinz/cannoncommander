@@ -562,6 +562,9 @@
       "dark": "Tumšs",
       "light": "Gaišs",
       "system": "Sistēma",
+      "oled": "OLED",
+      "oledTip": "Pārslēdz tumšo izskatu uz īstu melnu OLED un AMOLED ekrāniem.",
+      "oledLight": "Tikai ar {dark} vai {system}. Augšā ir izvēlēts {light}.",
       "corners": "Stūri",
       "cornersTip": "Cik apaļas ir kartītes, pogas un logi.",
       "round": "Apaļi",
@@ -4511,8 +4514,6 @@
   "signin": {
     "name": "Vārds",
     "password": "Parole",
-    "stay": "Palikt pieteiktam",
-    "stayTip": "Tu paliksi pieteikts tik dienas, cik iestatīts tava konta sadaļā Drošība, citādi 30 dienas. Bez šī slēdža sesija beidzas, kad aizver pārlūku.",
     "signIn": "Pieteikties",
     "signingIn": "Piesakās …",
     "passkey": "Pieteikties ar piekļuves atslēgu",

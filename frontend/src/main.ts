@@ -2,6 +2,7 @@ import '@glimstone/core/tokens.css';
 import './styles/app.css';
 import './styles/shell.css';
 import './styles/files.css';
+import { applyOled, storedOled } from '@glimstone/core';
 import { createPinia } from 'pinia';
 import { createApp, h, watch } from 'vue';
 import { api, ApiError } from '@/api/client';
@@ -33,6 +34,7 @@ import type { Me } from '@/api/types';
 import App from './App.vue';
 
 applyPrefs();
+applyOled(storedOled());
 useLocales(import.meta.glob('./i18n/locales/*.json', { import: 'default' }));
 setLanguage(prefs.language);
 watch(() => prefs.language, setLanguage);

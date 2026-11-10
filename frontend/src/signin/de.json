@@ -1,8 +1,6 @@
 {
   "name": "Name",
   "password": "Passwort",
-  "stay": "Angemeldet bleiben",
-  "stayTip": "Du bleibst so viele Tage angemeldet, wie es in deinem Konto unter Sicherheit eingestellt ist, sonst 30 Tage. Ohne den Schalter endet die Sitzung, wenn du den Browser schließt.",
   "signIn": "Anmelden",
   "signingIn": "Anmeldung läuft …",
   "passkey": "Mit Passkey anmelden",

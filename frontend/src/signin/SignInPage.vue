@@ -2,7 +2,7 @@
 // The way in: GlimStone's sign-in card with the name and "Stay signed in" above the password and single sign-on under
 // Sign in. The steps of CannonCommander's own run in the same card: a password of its own after the first start,
 // setting up two factor, the recovery codes and the page after a reset.
-import { Button, FieldRow, PasswordField, SignInCard, SignInField, SubCard, TextField, Toggle, type SignInAnswer, type SignInText } from '@glimstone/vue';
+import { Button, PasswordField, SignInCard, SignInField, SubCard, TextField, type SignInAnswer, type SignInText } from '@glimstone/vue';
 import { shake } from '@glimstone/core';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { auth, type SignIn, type SignInOptions, type TotpSetup } from '@/api/auth';
@@ -25,7 +25,7 @@ type StepName = 'card' | 'password' | 'totpSetup' | 'codes' | 'resetDone' | 'lea
 const step = ref<StepName>('card');
 const opts = ref<SignInOptions>({ password: true, passkey: false, oidc: null, server: '', version: '', minPassword: 12 });
 const note = ref(''), err = ref(''), busy = ref(false);
-const name = ref(props.was ?? ''), keep = ref(true);
+const name = ref(props.was ?? '');
 const next1 = ref(''), next2 = ref(''), setupCode = ref('');
 const challenge = ref(''), setup = ref<TotpSetup | null>(null), codes = ref<string[]>([]), signedIn = ref<Me | null>(null);
 // A new key starts the card over, when a step ran out on the server.
@@ -131,7 +131,7 @@ async function signIn({ password, code }: { password: string; code?: string }): 
   const n = name.value.trim();
   if (!n) return { error: s('needBoth') };
   try {
-    return proceed(await auth.login(n, password, keep.value));
+    return proceed(await auth.login(n, password));
   } catch (e) {
     return { error: reason(e, { 401: s('wrong'), 400: s('needBoth'), 403: s('noPasswords') }) };
   }
@@ -139,7 +139,7 @@ async function signIn({ password, code }: { password: string; code?: string }): 
 
 async function passkey(): Promise<SignInAnswer> {
   try {
-    return proceed(await auth.passkey(keep.value));
+    return proceed(await auth.passkey());
   } catch (e) {
     if (e instanceof ApiError) return { error: reason(e, { 401: s('passkeyFailed'), 409: s('passkeyNotHere') }) };
     // The browser's own window was closed or found no passkey, which needs no scolding.
@@ -246,7 +246,6 @@ function oidc() {
       <SignInField :label="s('name')" for="cl-user">
         <TextField id="cl-user" v-model="name" autocomplete="username" autocapitalize="off" spellcheck="false" />
       </SignInField>
-      <FieldRow :label="s('stay')" :hint="s('stayTip')"><Toggle id="cl-keep" v-model="keep" /></FieldRow>
     </template>
     <template #actions>
       <Button v-if="opts.oidc" :label="s('oidc', { name: opts.oidc.label })" label-key="IconExternalLink" data-cl="oidc" @click="oidc" />

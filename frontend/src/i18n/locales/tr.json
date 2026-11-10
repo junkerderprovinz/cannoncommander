@@ -530,6 +530,9 @@
       "dark": "Koyu",
       "light": "Açık",
       "system": "Sistem",
+      "oled": "OLED",
+      "oledTip": "Koyu görünümü OLED ve AMOLED ekranlar için gerçek siyaha çevirir.",
+      "oledLight": "Yalnızca {dark} veya {system} ile. Yukarıda {light} seçili.",
       "corners": "Köşeler",
       "cornersTip": "Kartların, düğmelerin ve pencerelerin ne kadar yuvarlak olduğu.",
       "round": "Yuvarlak",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Ad",
     "password": "Parola",
-    "stay": "Oturumu açık tut",
-    "stayTip": "Hesabında Güvenlik altında ayarlı gün sayısı kadar, yoksa 30 gün oturumun açık kalır. Bu anahtar kapalıyken tarayıcıyı kapatınca oturum biter.",
     "signIn": "Giriş yap",
     "signingIn": "Giriş yapılıyor …",
     "passkey": "Geçiş anahtarıyla giriş yap",

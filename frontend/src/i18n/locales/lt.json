@@ -594,6 +594,9 @@
       "dark": "Tamsi",
       "light": "Šviesi",
       "system": "Sistema",
+      "oled": "OLED",
+      "oledTip": "Tamsią išvaizdą paverčia tikra juoda OLED ir AMOLED ekranams.",
+      "oledLight": "Tik su {dark} arba {system}. Viršuje pasirinkta {light}.",
       "corners": "Kampai",
       "cornersTip": "Kiek apvalios kortelės, mygtukai ir langai.",
       "round": "Apvalūs",
@@ -4656,8 +4659,6 @@
   "signin": {
     "name": "Vardas",
     "password": "Slaptažodis",
-    "stay": "Likti prisijungus",
-    "stayTip": "Liksi prisijungęs tiek dienų, kiek nustatyta tavo paskyros skiltyje Sauga, kitaip 30 dienų. Be šio jungiklio seansas baigiasi uždarius naršyklę.",
     "signIn": "Prisijungti",
     "signingIn": "Jungiamasi …",
     "passkey": "Prisijungti su slaptaraktiu",

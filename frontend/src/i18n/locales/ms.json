@@ -498,6 +498,9 @@
       "dark": "Gelap",
       "light": "Cerah",
       "system": "Sistem",
+      "oled": "OLED",
+      "oledTip": "Menjadikan rupa gelap hitam sebenar, untuk skrin OLED dan AMOLED.",
+      "oledLight": "Hanya dengan {dark} atau {system}. Di atas, {light} dipilih.",
       "corners": "Bucu",
       "cornersTip": "Sebulat mana kad, butang dan tetingkap.",
       "round": "Bulat",
@@ -4221,8 +4224,6 @@
   "signin": {
     "name": "Nama",
     "password": "Kata laluan",
-    "stay": "Kekal log masuk",
-    "stayTip": "Anda kekal log masuk selama bilangan hari yang ditetapkan dalam akaun anda di bawah Keselamatan, atau 30 hari jika belum pernah ditetapkan. Tanpa suis ini, sesi tamat apabila anda menutup pelayar.",
     "signIn": "Log masuk",
     "signingIn": "Sedang log masuk …",
     "passkey": "Log masuk dengan kunci laluan",

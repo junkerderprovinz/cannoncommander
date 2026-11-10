@@ -530,6 +530,9 @@
       "dark": "Tume",
       "light": "Hele",
       "system": "Süsteem",
+      "oled": "OLED",
+      "oledTip": "Muudab tumeda välimuse päris mustaks OLED- ja AMOLED-ekraanide jaoks.",
+      "oledLight": "Ainult koos {dark} või {system} valikuga. Üleval on valitud {light}.",
       "corners": "Nurgad",
       "cornersTip": "Kui ümarad on kaardid, nupud ja aknad.",
       "round": "Ümarad",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Nimi",
     "password": "Parool",
-    "stay": "Jää sisse logituks",
-    "stayTip": "Jääd sisse logituks nii mitmeks päevaks, kui sinu kontol on jaotises Turvalisus määratud, muidu 30 päevaks. Ilma lülitita lõpeb seanss, kui brauseri sulged.",
     "signIn": "Logi sisse",
     "signingIn": "Sisselogimine …",
     "passkey": "Logi sisse pääsuvõtmega",

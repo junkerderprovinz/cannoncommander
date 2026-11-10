@@ -530,6 +530,9 @@
       "dark": "Dökkt",
       "light": "Ljóst",
       "system": "Kerfi",
+      "oled": "OLED",
+      "oledTip": "Setur dökka útlitið á hreinan svartan lit fyrir OLED- og AMOLED-skjái.",
+      "oledLight": "Aðeins með {dark} eða {system}. Hér fyrir ofan er {light} valið.",
       "corners": "Horn",
       "cornersTip": "Hversu ávöl spjöld, hnappar og gluggar eru.",
       "round": "Ávöl",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Heiti",
     "password": "Lykilorð",
-    "stay": "Vera áfram innskráð",
-    "stayTip": "Þú verður áfram innskráð jafnmarga daga og stillt er í aðganginum þínum undir Öryggi, annars 30 daga. Án rofans lýkur setunni þegar þú lokar vafranum.",
     "signIn": "Skrá inn",
     "signingIn": "Skrái inn …",
     "passkey": "Skrá inn með aðgangslykli",

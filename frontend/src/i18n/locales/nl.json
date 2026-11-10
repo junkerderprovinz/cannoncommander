@@ -530,6 +530,9 @@
       "dark": "Donker",
       "light": "Licht",
       "system": "Systeem",
+      "oled": "OLED",
+      "oledTip": "Zet het donkere uiterlijk op echt zwart, voor OLED- en AMOLED-schermen.",
+      "oledLight": "Alleen met {dark} of {system}. Hierboven is {light} gekozen.",
       "corners": "Hoeken",
       "cornersTip": "Hoe rond kaarten, knoppen en vensters zijn.",
       "round": "Rond",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Naam",
     "password": "Wachtwoord",
-    "stay": "Ingelogd blijven",
-    "stayTip": "Je blijft zoveel dagen ingelogd als in je account onder Beveiliging staat ingesteld, anders 30 dagen. Zonder deze schakelaar eindigt de sessie als je de browser sluit.",
     "signIn": "Inloggen",
     "signingIn": "Inloggen…",
     "passkey": "Inloggen met een passkey",

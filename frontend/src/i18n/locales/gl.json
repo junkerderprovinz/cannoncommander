@@ -530,6 +530,9 @@
       "dark": "Escuro",
       "light": "Claro",
       "system": "Sistema",
+      "oled": "OLED",
+      "oledTip": "Pon o aspecto escuro en negro puro, para pantallas OLED e AMOLED.",
+      "oledLight": "Só con {dark} ou {system}. Arriba está escollido {light}.",
       "corners": "Esquinas",
       "cornersTip": "Canto de redondeadas son as tarxetas, os botóns e as xanelas.",
       "round": "Redondas",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Nome",
     "password": "Contrasinal",
-    "stay": "Manter a sesión",
-    "stayTip": "Mantés a sesión tantos días como teñas configurado na túa conta en Seguranza, ou 30 se nunca escolliches un número. Sen este interruptor, a sesión remata ao pechar o navegador.",
     "signIn": "Iniciar sesión",
     "signingIn": "Iniciando sesión…",
     "passkey": "Iniciar sesión cunha chave de acceso",

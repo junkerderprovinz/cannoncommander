@@ -530,6 +530,9 @@
       "dark": "Mørk",
       "light": "Lys",
       "system": "System",
+      "oled": "OLED",
+      "oledTip": "Giver det mørke udseende ægte sort til OLED- og AMOLED-skærme.",
+      "oledLight": "Kun med {dark} eller {system}. Ovenfor er {light} valgt.",
       "corners": "Hjørner",
       "cornersTip": "Hvor runde kort, knapper og vinduer er.",
       "round": "Runde",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Navn",
     "password": "Adgangskode",
-    "stay": "Forbliv logget ind",
-    "stayTip": "Du forbliver logget ind i så mange dage, som din konto er indstillet til under Sikkerhed, ellers 30 dage. Uden kontakten slutter sessionen, når du lukker browseren.",
     "signIn": "Log ind",
     "signingIn": "Logger ind…",
     "passkey": "Log ind med adgangsnøgle",

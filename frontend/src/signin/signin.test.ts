@@ -206,6 +206,18 @@ describe('the sign in page', () => {
     expect(document.querySelector('.glim-signin-error')).toBeNull();
   });
 
+  it('asks only for the name and the password and keeps the session for the days chosen under Security', async () => {
+    script['POST /auth/login'] = { body: { next: 'done', me: { name: 'anna', full: 'Anna', role: 'user' } } };
+    await mount({});
+    expect($('#cl-keep')).toBeNull();
+    type('#cl-user', 'anna');
+    type('#cl-password', 'anna-ihr-passwort');
+    await settle();
+    submit();
+    await settle();
+    expect(sent.find((s) => s.url === 'POST /auth/login')?.body).toEqual({ username: 'anna', password: 'anna-ihr-passwort', remember: true });
+  });
+
   it('offers no passkey in a browser that keeps none here', async () => {
     script['GET /auth/options'] = { body: { password: true, passkey: true, oidc: null, server: '', version: '', minPassword: 12 } };
     vi.stubGlobal('PublicKeyCredential', undefined);

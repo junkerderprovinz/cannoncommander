@@ -562,6 +562,9 @@
       "dark": "Întunecată",
       "light": "Luminoasă",
       "system": "Sistem",
+      "oled": "OLED",
+      "oledTip": "Trece aspectul întunecat pe negru adevărat, pentru ecranele OLED și AMOLED.",
+      "oledLight": "Doar cu {dark} sau {system}. Mai sus este ales {light}.",
       "corners": "Colțuri",
       "cornersTip": "Cât de rotunde sunt cardurile, butoanele și ferestrele.",
       "round": "Rotunde",
@@ -4511,8 +4514,6 @@
   "signin": {
     "name": "Nume",
     "password": "Parolă",
-    "stay": "Rămâi autentificat",
-    "stayTip": "Rămâi autentificat atâtea zile câte sunt setate în contul tău la Securitate, altfel 30 de zile. Fără acest comutator, sesiunea se încheie când închizi browserul.",
     "signIn": "Autentificare",
     "signingIn": "Autentificare…",
     "passkey": "Autentificare cu cheie de acces",

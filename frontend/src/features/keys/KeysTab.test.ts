@@ -150,11 +150,10 @@ describe('the shortcuts tile', () => {
     expect(k.dataset.tip).toBe('Nur in der Desktop-App: Strg+T');
   });
 
-  it('explains the struck out keys in a line of the row that the key button points to', () => {
-    const note = $('[data-kb="newTab"] .kb-note')!;
-    expect(note.textContent!.trim()).toBe('Nur in der Desktop-App: Strg+T und Strg+N');
-    expect($('[data-kb-rec="newTab"]')!.getAttribute('aria-describedby')).toBe(note.id);
-    expect($('[data-kb="copy"] .kb-note')).toBeNull();
+  it('leaves the reason for a struck out key to its tooltip, with no line under the row', () => {
+    expect($('[data-kb="newTab"] .kb-off')!.dataset.tip).toBe('Nur in der Desktop-App: Strg+T');
+    expect($('.kb-note')).toBeNull();
+    expect($('[data-kb-rec="newTab"]')!.hasAttribute('aria-describedby')).toBe(false);
   });
 
   it('strikes out nothing in the desktop app', async () => {

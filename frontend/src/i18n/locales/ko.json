@@ -498,6 +498,9 @@
       "dark": "어둡게",
       "light": "밝게",
       "system": "시스템",
+      "oled": "OLED",
+      "oledTip": "OLED와 AMOLED 화면을 위해 어두운 모양을 완전한 검정으로 바꿉니다.",
+      "oledLight": "{dark} 또는 {system}에서만 됩니다. 위에서 {light}이(가) 선택되어 있습니다.",
       "corners": "모서리",
       "cornersTip": "카드, 버튼, 창의 모서리가 얼마나 둥근지 정합니다.",
       "round": "둥글게",
@@ -4221,8 +4224,6 @@
   "signin": {
     "name": "이름",
     "password": "비밀번호",
-    "stay": "로그인 유지",
-    "stayTip": "계정의 ‘보안’에서 정한 일수만큼, 정하지 않았다면 30일 동안 로그인 상태가 유지됩니다. 끄면 브라우저를 닫을 때 세션이 끝납니다.",
     "signIn": "로그인",
     "signingIn": "로그인하는 중…",
     "passkey": "패스키로 로그인",

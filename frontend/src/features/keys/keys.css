@@ -27,7 +27,6 @@
 @media (hover: none) { .kb-acts { visibility: visible; } }
 .kb-warn { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: 0 0 .4rem; padding: .35rem .6rem; border-radius: var(--radius-control); background: color-mix(in srgb, var(--status-warn-solid, #FF832B) 16%, transparent); font-size: 12.5px; }
 .kb-choice { display: flex; gap: .4rem; margin-left: auto; }
-/* A key the browser keeps stays in the list, struck out, and a line right under the keys says that it works in the desktop app. */
+/* A key the browser keeps stays in the list, struck out, and its tooltip says that it works in the desktop app. */
 .kb-off .glim-kbd { opacity: .55; text-decoration: line-through; }
-.kb-note { grid-column: 1 / -1; justify-self: end; max-width: 46rem; margin: -.2rem 0 .45rem; padding-inline-end: .55rem; font-size: 12px; line-height: 1.4; color: var(--carbon-text-sub); text-align: end; }
 .kb-fixedhead { margin-top: 1.2rem; }

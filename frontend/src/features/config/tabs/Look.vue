@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button, Card, ColorPicker, FieldRow, Selector, Toggle } from '@glimstone/vue';
-import { ACCENTS, applyAccent, COLOR_NAMES_DE, DEFAULT_ACCENT, RAINBOW } from '@glimstone/core';
+import { ACCENTS, applyAccent, applyOled, COLOR_NAMES_DE, DEFAULT_ACCENT, oledRefusal, RAINBOW, storedOled } from '@glimstone/core';
 import { computed, defineAsyncComponent, ref } from 'vue';
 import { G } from '@/core/glyphs';
 import { prefs, setPref } from '@/core/prefs';
@@ -31,6 +31,11 @@ const labelModes = computed(() => [['text', c('look.text'), 'IconLabelText'], ['
 const rainbow = computed({ get: () => prefs.rainbow, set: (on: boolean) => { rainbowSwitched(on); setPref('rainbow', on); } });
 // Turning rotation on draws a fresh offset at once, so the switch does something visible.
 const rotate = computed({ get: () => prefs.rotate, set: (on: boolean) => { prefs.rotateSeed = on ? 1 + Math.floor(Math.random() * 7) : 0; setPref('rotate', on); } });
+
+// OLED belongs to the screen, so each browser keeps its own choice, and it rests while Light shows.
+const oled = ref(storedOled());
+const setOled = (on: boolean) => { oled.value = on; applyOled(on); };
+const oledRefused = computed(() => oledRefusal(prefs.theme, { sentence: c('look.oledLight'), dark: c('look.dark'), system: c('look.system'), light: c('look.light') }));
 
 const accentDefault = computed(() => prefs.accent.toLowerCase() === DEFAULT_ACCENT.toLowerCase() && same(presets.value, PRESETS));
 const ordered = computed(() => (prefs.tabOrder || []).length > 0);
@@ -80,6 +85,7 @@ function resetOrder() {
   <Card :title="c('look.display')">
     <FieldRow :label="c('look.language')"><LanguagePicker /></FieldRow>
     <FieldRow :label="c('look.theme')" :hint="c('look.themeTip')"><Selector v-model="P.theme" :items="segItems([['dark', c('look.dark'), 'IconMoon'], ['light', c('look.light'), 'IconSun'], ['system', c('look.system'), 'IconThemeSystem']])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow :label="c('look.oled')" :hint="c('look.oledTip')"><Toggle id="a-oled" :model-value="oled" :refused="oledRefused" @update:model-value="setOled" /></FieldRow>
     <FieldRow :label="c('look.corners')" :hint="c('look.cornersTip')"><Selector id="a-shape" :model-value="prefs.shape" :items="segItems(shapes)" size="sm" activation="manual" inline button-height pairs-on-phone @press="(v) => setPref('shape', shapePressed(v, prefs.shape))" /></FieldRow>
     <FieldRow :label="c('look.motion')" :hint="c('look.motionTip')"><Selector id="a-motion" :model-value="prefs.motion" :items="segItems(motions)" size="sm" activation="manual" inline button-height pairs-on-phone @press="(v) => setPref('motion', motionPressed(v, prefs.motion))" /></FieldRow>
     <FieldRow :label="c('look.quiet')" :hint="c('look.quietTip')"><Toggle v-model="P.quietToasts" /></FieldRow>

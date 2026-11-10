@@ -995,6 +995,9 @@
       "dark": "Iluna",
       "light": "Argia",
       "system": "Sistema",
+      "oled": "OLED",
+      "oledTip": "Itxura iluna benetako beltz bihurtzen du, OLED eta AMOLED pantailentzat.",
+      "oledLight": "{dark} edo {system} aukerarekin bakarrik. Goian {light} dago aukeratuta.",
       "corners": "Izkinak",
       "cornersTip": "Txartelak, botoiak eta leihoak zenbateraino diren biribilak.",
       "round": "Biribilak",
@@ -4366,8 +4369,6 @@
   "signin": {
     "name": "Izena",
     "password": "Pasahitza",
-    "stay": "Mantendu saioa irekita",
-    "stayTip": "Zure kontuan Segurtasuna atalean ezarritako egun adina mantentzen da saioa, edo 30 egun, kopururik aukeratu ez baduzu. Etengailu hau gabe, saioa nabigatzailea ixtean amaitzen da.",
     "signIn": "Hasi saioa",
     "signingIn": "Saioa hasten…",
     "passkey": "Hasi saioa sarbide-gako batekin",

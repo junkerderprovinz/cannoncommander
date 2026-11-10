@@ -562,6 +562,9 @@
       "dark": "Sombre",
       "light": "Clair",
       "system": "Système",
+      "oled": "OLED",
+      "oledTip": "Passe l\\",
+      "oledLight": "Seulement avec {dark} ou {system}. {light} est choisi plus haut.",
       "corners": "Coins",
       "cornersTip": "L'arrondi des cartes, des boutons et des fenêtres.",
       "round": "Ronds",
@@ -4511,8 +4514,6 @@
   "signin": {
     "name": "Nom",
     "password": "Mot de passe",
-    "stay": "Rester connecté",
-    "stayTip": "Vous restez connecté autant de jours que votre compte l'indique sous Sécurité, sinon 30 jours. Sans cette option, la session se termine quand vous fermez le navigateur.",
     "signIn": "Se connecter",
     "signingIn": "Connexion en cours…",
     "passkey": "Se connecter avec une clé d'accès",

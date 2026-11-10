@@ -562,6 +562,9 @@
       "dark": "Scuro",
       "light": "Chiaro",
       "system": "Sistema",
+      "oled": "OLED",
+      "oledTip": "Porta l\\",
+      "oledLight": "Solo con {dark} o {system}. Sopra è scelto {light}.",
       "corners": "Angoli",
       "cornersTip": "Quanto sono arrotondati schede, pulsanti e finestre.",
       "round": "Tondi",
@@ -4511,8 +4514,6 @@
   "signin": {
     "name": "Nome",
     "password": "Password",
-    "stay": "Resta connesso",
-    "stayTip": "Resti connesso per tanti giorni quanti ne indica il tuo account in Sicurezza, altrimenti 30. Senza questa opzione la sessione finisce quando chiudi il browser.",
     "signIn": "Accedi",
     "signingIn": "Accesso in corso…",
     "passkey": "Accedi con una passkey",

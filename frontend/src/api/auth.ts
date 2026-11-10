@@ -12,14 +12,15 @@ const post = async <T>(path: string, body?: unknown) => (await call<T>(path, bod
 
 export const auth = {
   options: async () => (await call<SignInOptions>('/auth/options')).body!,
-  login: (username: string, password: string, remember: boolean) => post<SignIn>('/auth/login', { username, password, remember }),
+  // A sign in from the page always stays for the days chosen under Security.
+  login: (username: string, password: string) => post<SignIn>('/auth/login', { username, password, remember: true }),
   // A code from the app or a recovery code, also the first code of a setup the sign in asked for.
   code: (challenge: string, code: string) => post<SignIn>('/auth/totp', { challenge, code }),
   newPassword: (challenge: string, password: string) => post<SignIn>('/auth/password', { challenge, password }),
-  async passkey(remember: boolean): Promise<SignIn> {
+  async passkey(): Promise<SignIn> {
     const { challenge, options } = await post<{ challenge: string; options: { publicKey: Record<string, unknown> } }>('/auth/passkey/options');
     const credential = credentialJSON(await navigator.credentials.get(requestOptions(options)));
-    return post<SignIn>('/auth/passkey', { challenge, credential, remember });
+    return post<SignIn>('/auth/passkey', { challenge, credential, remember: true });
   },
   logout: () => post<void>('/auth/logout'),
   askReset: (username: string) => post<void>('/auth/reset-code', { username }),

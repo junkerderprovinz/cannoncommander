@@ -4,6 +4,8 @@ import { createApp, nextTick } from 'vue';
 import { host } from '@/core/host';
 import { actions } from '@/core/actions';
 import { go, settingsTabs, view } from '@/core/views';
+import { prefs, setPref } from '@/core/prefs';
+import { storedOled } from '@glimstone/core';
 import { addMessages } from '@/i18n';
 import de from './de.json';
 import setupKeys from '@/features/keys';
@@ -138,6 +140,31 @@ describe('the settings', () => {
     app!.unmount();
     document.body.innerHTML = '';
     expect(await cardsOf('files')).toEqual(['Leisten', 'Aktualisieren']);
+  });
+
+  it('put an OLED switch right under the theme that turns the dark look black and keeps still while Light is chosen', async () => {
+    const theme = prefs.theme;
+    try {
+      setPref('theme', 'dark');
+      await cardsOf('look');
+      const names = [...document.querySelectorAll('.glim-field-row-name')].map((n) => n.textContent?.trim());
+      expect(names[names.indexOf(de.look.theme) + 1]).toBe('OLED');
+      const sw = document.querySelector<HTMLButtonElement>('#a-oled')!;
+      sw.click();
+      await nextTick();
+      expect(storedOled()).toBe(true);
+      expect(document.documentElement.hasAttribute('data-oled')).toBe(true);
+
+      setPref('theme', 'light');
+      await nextTick();
+      expect(sw.getAttribute('aria-disabled')).toBe('true');
+      expect(document.querySelector('.glim-toggle-refusal')?.textContent).toContain(de.look.light);
+      sw.click();
+      await nextTick();
+      expect(storedOled()).toBe(true);
+    } finally {
+      setPref('theme', theme);
+    }
   });
 
   it('keep the settings file and the service on the system tile', async () => {

@@ -562,6 +562,9 @@
       "dark": "Tamna",
       "light": "Svijetla",
       "system": "Sustav",
+      "oled": "OLED",
+      "oledTip": "Prebacuje tamni izgled na pravu crnu, za OLED i AMOLED zaslone.",
+      "oledLight": "Samo uz {dark} ili {system}. Gore je odabrano {light}.",
       "corners": "Kutovi",
       "cornersTip": "Koliko su zaobljene kartice, gumbi i prozori.",
       "round": "Okrugli",
@@ -4511,8 +4514,6 @@
   "signin": {
     "name": "Ime",
     "password": "Lozinka",
-    "stay": "Zadrži prijavu",
-    "stayTip": "Ostajete prijavljeni onoliko dana koliko je postavljeno u vašem računu pod Sigurnost, inače 30 dana. Bez prekidača sesija završava kad zatvorite preglednik.",
     "signIn": "Prijavi se",
     "signingIn": "Prijava…",
     "passkey": "Prijava pristupnim ključem",

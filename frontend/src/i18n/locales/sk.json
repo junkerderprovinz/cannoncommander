@@ -594,6 +594,9 @@
       "dark": "Tmavý",
       "light": "Svetlý",
       "system": "Systém",
+      "oled": "OLED",
+      "oledTip": "Prepne tmavý vzhľad na skutočnú čiernu pre displeje OLED a AMOLED.",
+      "oledLight": "Len s {dark} alebo {system}. Hore je zvolené {light}.",
       "corners": "Rohy",
       "cornersTip": "Ako okrúhle sú karty, tlačidlá a okná.",
       "round": "Okrúhle",
@@ -4656,8 +4659,6 @@
   "signin": {
     "name": "Meno",
     "password": "Heslo",
-    "stay": "Zostať prihlásený",
-    "stayTip": "Zostanete prihlásení toľko dní, koľko je nastavené vo vašom účte v Zabezpečení, inak 30 dní. Bez tohto prepínača relácia skončí, keď zavriete prehliadač.",
     "signIn": "Prihlásiť sa",
     "signingIn": "Prihlasovanie …",
     "passkey": "Prihlásiť sa prístupovým kľúčom",
