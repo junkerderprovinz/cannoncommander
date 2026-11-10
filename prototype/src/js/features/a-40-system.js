@@ -140,16 +140,19 @@
   const hinted = (title, hint, inner) => CC.card(title, inner).replace('</span><div class="card-body">', ` ${info(hint)}</span><div class="card-body">`);
 
   /* Apps */
-  // The other forms of CannonCommander, none of them out yet, so every button says it is still to come.
+  // The other forms of CannonCommander. The phone app is still to come, so its buttons say so.
   const soonBtn = ({ tile, mark, svg, name }) => `<div class="glim-readme-btn-unit group ${tile} glim-readme-btn-soon"><span class="glim-readme-btn" aria-disabled="true" aria-label="${esc(name)} Bald"><span class="glim-readme-btn-mark ${mark || ''}" aria-hidden="true">${svg}</span><span class="glim-readme-btn-text"><span class="glim-readme-btn-name">${esc(name)}</span><span class="glim-readme-btn-sub">Bald</span></span></span></div>`;
-  const builds = (list) => `<div class="glim-readme-btn-rows">${list.map(soonBtn).join('')}</div>`;
+  // A release build links the desktop downloads of its own release, one segment of the button for each file.
+  const releaseBtn = ({ tile, mark, svg, parts }) => `<div class="glim-readme-btn-unit group ${tile}${parts.length > 1 ? ' glim-readme-btn-group' : ''}">${parts.map(([name, sub, file], i) =>
+    `<a class="glim-readme-btn${i ? ' glim-readme-btn-seg' : ''} glim-brand-tile" href="${REPO}/releases/download/v${esc(DATA.version.app)}/cannoncommander-${file}" target="_blank" rel="noreferrer noopener" aria-label="${esc(name)} ${esc(sub)}">${i ? '' : `<span class="glim-readme-btn-mark ${mark || ''}" aria-hidden="true">${svg}</span>`}<span class="glim-readme-btn-text"><span class="glim-readme-btn-name">${esc(name)}</span><span class="glim-readme-btn-sub">${esc(sub)}</span></span></a>`).join('')}<span class="glim-readme-btn-sheen" aria-hidden="true"></span></div>`;
+  const builds = (list, btn = soonBtn) => `<div class="glim-readme-btn-rows">${list.map(btn).join('')}</div>`;
   CC.settingsTab({ id: 'app', label: 'Apps', g: 'IconTabApp', order: 110, render(host) {
-    host.innerHTML = hinted('Desktop-App', 'CannonCommander als Programm auf deinem Rechner, mit dieser Oberfläche in einem eigenen Fenster. Sobald es die Builds gibt, lädst du sie hier herunter.', builds([
-      { tile: 'glim-tile-windows', mark: 'glim-windows-mark', svg: MARKS.windows, name: 'Windows' },
-      { tile: 'glim-tile-apple', svg: MARKS.apple, name: 'macOS' },
-      { tile: 'glim-tile-linux', svg: MARKS.linux, name: 'Linux' },
-      { tile: 'glim-tile-flatpak', mark: 'glim-flatpak-mark', svg: MARKS.flatpak, name: 'Flatpak' },
-    ]))
+    host.innerHTML = hinted('Desktop-App', 'CannonCommander als Programm auf deinem Rechner, mit dieser Oberfläche in einem eigenen Fenster.', builds([
+      { tile: 'glim-tile-windows', mark: 'glim-windows-mark', svg: MARKS.windows, parts: [['Windows', 'x64', 'windows-amd64-installer.exe'], ['Windows', 'Portable', 'windows-amd64.zip']] },
+      { tile: 'glim-tile-apple', svg: MARKS.apple, parts: [['macOS', 'Universal', 'macos-universal.zip']] },
+      { tile: 'glim-tile-linux', svg: MARKS.linux, parts: [['Linux', 'x64', 'linux-amd64-installer'], ['Linux', 'ARM64', 'linux-arm64-installer']] },
+      { tile: 'glim-tile-flatpak', mark: 'glim-flatpak-mark', svg: MARKS.flatpak, parts: [['Flatpak', 'x64', 'linux-amd64.flatpak'], ['Flatpak', 'ARM64', 'linux-arm64.flatpak']] },
+    ], releaseBtn))
       + hinted('Handy-App', 'Die CannonCommander-App für Android-Handys. Sobald es sie gibt, findest du sie hier.', builds([
         { tile: 'glim-tile-play', svg: MARKS.play, name: 'Google Play' },
         { tile: 'glim-tile-fdroid', svg: MARKS.fdroid, name: 'F-Droid' },
