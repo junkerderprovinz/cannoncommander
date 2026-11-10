@@ -80,7 +80,7 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
-    <release version="1.0.0" date="2026-11-09">
+    <release version="1.0.0" date="2026-11-10">
       <description>
         <p>The first release of CannonCommander, a two-pane file manager with background jobs, a trash and the tools of Krusader and Total Commander.</p>
       </description>

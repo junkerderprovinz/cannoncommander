@@ -4,7 +4,7 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
-## Unreleased
+## v1.0.0 (2026-11-10)
 
 The first release of CannonCommander: a two-pane file manager for Unraid that runs in the browser, and a desktop app for Windows, macOS and Linux that can take over from Explorer and the Linux file manager. Both bring background jobs, a trash, the tools of Krusader and Total Commander, and on Unraid an eye on the cache, the array and sleeping disks.
 
