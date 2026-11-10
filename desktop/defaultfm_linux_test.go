@@ -239,3 +239,21 @@ func TestXdgMimeAndGioSeeTheSwitch(t *testing.T) {
 		t.Error("the switch reads on")
 	}
 }
+
+// xdg-mime 1.2.1 writes mimeapps.list into a folder it expects to be there,
+// and when it is not, it still reports success.
+func TestTheConfigFolderIsThereBeforeXdgMimeRuns(t *testing.T) {
+	h := fakeXDG(t, "")
+	var there bool
+	h.assign = func(string) error {
+		_, err := os.Stat(filepath.Dir(h.mimeapps))
+		there = err == nil
+		return nil
+	}
+	if err := h.set(filepath.Join(t.TempDir(), "CannonCommander"), desktop.Words{}); err != nil {
+		t.Fatal(err)
+	}
+	if !there {
+		t.Error("xdg-mime ran without the folder of mimeapps.list")
+	}
+}

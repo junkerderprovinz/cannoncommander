@@ -93,6 +93,11 @@ func (h xdgHandler) set(exe string, w desktop.Words) error {
 		return err
 	}
 	h.reload()
+	// xdg-mime 1.2.1 writes mimeapps.list without making its folder first,
+	// and reports success when that folder is missing.
+	if err := os.MkdirAll(filepath.Dir(h.mimeapps), 0o755); err != nil {
+		return err
+	}
 	return h.assign(entryName)
 }
 
