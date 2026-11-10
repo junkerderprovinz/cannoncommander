@@ -10,13 +10,13 @@
   <Support>https://forums.unraid.net/topic/201231-support-junkerderprovinz-cannoncommand/</Support>
   <Project>https://github.com/junkerderprovinz/cannoncommander</Project>
   <ReadMe>https://github.com/junkerderprovinz/cannoncommander/blob/main/README.md</ReadMe>
-  <Overview>A two-pane file manager for your Unraid server that runs in the browser.
+  <Overview>The most beautiful file manager you will ever run. Also the only one you need.
 
-Two panels side by side with tabs, a menu bar and the keys you know from Krusader and Total Commander: F5 copies, F6 moves, F8 deletes. Copies and moves run as jobs in the background, with speed, time left and a rule for files that already exist. Deleted files go to a trash first.
+Two panels side by side, the keys the classic commanders taught your fingers, and an interface polished down to the last pixel, in light or dark and in your own accent colour. F5 copies, F6 moves, F8 deletes. Copies and moves run as jobs in the background with speed and time left, and whatever you delete waits in a trash first.
 
-It knows about Unraid: which files sit on the cache and which on the array, sleeping disks, the parity check, hard links and the permissions Unraid itself sets. Folder compare and sync, batch rename, archives, checksums, duplicates, disk usage and a viewer and editor for most file types are built in. Remote storage comes in through rclone. You connect it under Settings, Remotes, and it stays inside the container.
+It knows its way around a NAS: which files still sit on a fast cache, which disks are asleep, which permissions your shares expect. Folder compare and sync, batch rename, archives, checksums, duplicates, disk usage and a viewer and editor for almost any file are built in. Clouds and remote servers come in through rclone and open like any other folder.
 
-On the first start the container writes a password for the user admin into its log. Sign in with it and pick your own. Users, groups and access rules decide who sees which folder, and two-factor sign-in, passkeys and OIDC are there too.</Overview>
+On the first start the container writes a password for the user admin into its log. Sign in with it and pick your own. Users, groups, access rules, two-factor sign-in, passkeys and OIDC decide who gets to see what.</Overview>
   <Category>Tools:Utilities</Category>
   <WebUI>http://[IP]:[PORT:80]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/templates/my-CannonCommander.xml</TemplateURL>

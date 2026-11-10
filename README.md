@@ -20,9 +20,9 @@
 <br>
 
 <p align="center">
-<b>A two-pane file manager for Unraid that runs in your browser.</b><br>
+<b>The most beautiful file manager you will ever run. Also the only one you need.</b><br>
 <br>
-Krusader and Total Commander are quick because you work in two panels side by side and press F5 to copy from one to the other. CannonCommander brings that way of working to your server without a desktop in a container, and it knows about Unraid: the cache and the array, sleeping disks, the parity check and the permissions Unraid sets.
+Two panels, F5 to copy, and an interface so polished you will catch yourself tidying folders just to look at it. CannonCommander runs on your server in the browser and on your desk as an app for Windows, macOS and Linux. Copies fly off as jobs in the background, deletes land in a trash first, and on a NAS it even knows which disks are asleep before it wakes them.
 </p>
 
 <br>
@@ -157,7 +157,7 @@ The folders, files and keys in these pictures are made up.
 
 <p><a id="4-what-it-does" href="#4-what-it-does"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/4-what-it-does-dark.svg"><img src=".github/assets/sections/4-what-it-does.svg" alt="4. What it does" width="100%"></picture></a></p>
 
-- **Two panels and the keyboard.** Tabs in both panels, a menu bar, a command search on Ctrl+K and the keys you know from Krusader: F3 views, F4 edits, F5 copies, F6 moves, F7 makes a folder and F8 deletes. The function key bar is one switch away under View.
+- **Two panels and the keyboard.** Tabs in both panels, a menu bar, a command search on Ctrl+K and the keys the classic commanders taught your fingers: F3 views, F4 edits, F5 copies, F6 moves, F7 makes a folder and F8 deletes. The function key bar is one switch away under View.
 - **Jobs in the background.** Copies, moves and deletes run as jobs with speed, time left, pause and a speed limit. Each job has a rule for files that already exist, and the jobs pick up again after a restart.
 - **A trash and an undo.** Deleted files go to a trash on the same share first, and the last actions can be undone.
 - **Unraid in view.** Which files sit on the cache and which on the array, disk shares next to user shares, sleeping disks that a copy would wake, the parity check, hard links, and permissions set the way Unraid sets them.
