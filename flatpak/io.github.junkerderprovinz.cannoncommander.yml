@@ -1,11 +1,3 @@
-# Builds the desktop app as a Flatpak from this checkout:
-#
-#     flatpak-builder --user --install --force-clean --state-dir=flatpak/.state \
-#       flatpak/.build flatpak/io.github.junkerderprovinz.cannoncommander.yml
-#
-# The build has no network, so every Go module and npm package comes from
-# go-sources.json and node-sources.json. node flatpak/update-sources.mjs writes
-# both again after a dependency changes.
 id: io.github.junkerderprovinz.cannoncommander
 runtime: org.gnome.Platform
 runtime-version: '51'
@@ -16,24 +8,17 @@ sdk-extensions:
 command: cannoncommander
 finish-args:
   - --share=ipc
+  - --share=network
   - --socket=wayland
   - --socket=fallback-x11
   - --device=dri
-  # The update check, the office servers and ArrowLoop.
-  - --share=network
-  # A file manager shows the whole computer. This also puts the system's own
-  # /usr and /etc under /run/host, where the icons and file types are read.
+  # Also brings the host's icons and file types in under /run/host.
   - --filesystem=host
-  # The network places the desktop has mounted, and taking them away again.
   - --filesystem=xdg-run/gvfs
   - --talk-name=org.gtk.vfs.*
-  # The drives: udisks2 lists, mounts and ejects them.
-  - --system-talk-name=org.freedesktop.UDisks2
-  # The desktop's thumbnail service draws into the cache every file manager
-  # shares, since the sandbox runs no thumbnailer of its own.
   - --talk-name=org.freedesktop.thumbnails.Thumbnailer1
-  # The properties dialog of the desktop's own file manager.
   - --talk-name=org.freedesktop.FileManager1
+  - --system-talk-name=org.freedesktop.UDisks2
 modules:
   - name: cannoncommander
     buildsystem: simple
@@ -50,19 +35,14 @@ modules:
     build-commands:
       - npm --prefix frontend ci --offline --no-audit --no-fund --cache=$FLATPAK_BUILDER_BUILDDIR/flatpak-node/npm-cache
       - npm --prefix frontend run build
-      # The MuPDF headers the preview package compiles against, linked where
-      # backend/scripts/setup-gofitz-cgo links them for scripts/desktop.mjs.
-      # That script asks the proxy for a file the offline sources leave out,
-      # so the link is made here once go list has put go-fitz in the cache.
+      # setup-gofitz-cgo wants a file the offline sources lack, so the MuPDF headers are linked here.
       - >-
         go -C desktop list -deps -tags desktop,production,mupdf,gtk3 . > /dev/null &&
         fitz=$(sed -n 's|^[[:space:]]*github.com/gen2brain/go-fitz \(v[^ ]*\).*|\1|p' desktop/go.mod) &&
         ln -sfn "$GOMODCACHE/github.com/gen2brain/go-fitz@$fitz/include" backend/internal/preview/gofitzinclude
-      # The tags and flags of scripts/desktop.mjs on Linux. The newest release
-      # in the metainfo is the version the Info tile shows, so a tag cannot
-      # ship without its release entry.
+      # The Info tile shows the newest release in the metainfo.
       - >-
-        version=$(sed -n 's|.*<release version="\([^"]*\)".*|\1|p' flatpak/io.github.junkerderprovinz.cannoncommander.metainfo.xml | head -1);
+        version=$(sed -n 's|.*<release version="\([^"]*\)".*|\1|p' flatpak/$FLATPAK_ID.metainfo.xml | head -1);
         cd desktop && go build -tags desktop,production,mupdf,gtk3 -trimpath -buildvcs=false
         -ldflags "-s -w -X github.com/junkerderprovinz/cannoncommander/backend/internal/version.Version=v$version"
         -o cannoncommander .
