@@ -6,6 +6,7 @@ import { c } from '@/features/config/shared';
 
 export interface News { id: string; g: string; text: () => string; go: () => void }
 export const NEWS: News[] = [
+  { id: 'oled', g: 'IconMoon', text: () => c('look.oledTip'), go: () => go('settings', 'look') },
   { id: 'files', g: 'IconFiles', text: () => c('news.files'), go: () => go('files') },
   { id: 'look', g: 'IconTabLook', text: () => c('news.look'), go: () => go('settings', 'look') },
   { id: 'users', g: 'IconAccounts', text: () => c('news.users'), go: () => go('settings', 'users') },

@@ -80,6 +80,12 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="1.0.1" date="2026-11-11">
+      <description>
+        <p>An OLED switch for a true black dark look, a calmer sign-in with the field names inside the fields, and shortcut hints that wait for the mouse.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.0.1</url>
+    </release>
     <release version="1.0.0" date="2026-11-10">
       <description>
         <p>The first release of CannonCommander, a two-pane file manager with background jobs, a trash and the tools of Krusader and Total Commander.</p>

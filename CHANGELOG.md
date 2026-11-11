@@ -4,6 +4,28 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## v1.0.1 (2026-11-11)
+
+A switch for true black, a calmer sign-in and shortcut hints that wait until you ask.
+
+## ✨ Added
+
+- **An OLED switch right under the theme puts the dark look on true black,** for OLED and AMOLED screens. While Light is chosen it stays where it is and says why, and every browser keeps its own choice.
+
+## 🎨 Design
+
+- **The sign-in card writes "Name" and "Password" inside the fields,** in grey until the first key, as GlimStone 4.3.5 draws it for every app.
+- **The "Stay signed in" switch is gone from the sign-in card.** A sign-in lasts as long as your account sets under Account & security.
+- **A struck-out shortcut explains itself in its tooltip** instead of a line under the row.
+
+## ⚡ Improved
+
+- **CannonCommander follows GlimStone 4.3.5.**
+
+## 🐛 Fixed
+
+- **The compose file lets rclone mount remote storage on Debian and Ubuntu hosts,** whose AppArmor profile refused FUSE mounts even with SYS_ADMIN.
+
 ## v1.0.0 (2026-11-10)
 
 The first release of CannonCommander: a two-pane file manager for Unraid that runs in the browser, and a desktop app for Windows, macOS and Linux that can take over from Explorer and the Linux file manager. Both bring background jobs, a trash, the tools of Krusader and Total Commander, and on Unraid an eye on the cache, the array and sleeping disks.
