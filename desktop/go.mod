@@ -2,6 +2,8 @@ module github.com/junkerderprovinz/cannoncommander/desktop
 
 go 1.27.0
 
+toolchain go1.27.4
+
 // The server is the module next door rather than a published dependency, so
 // the window and the container always run the same server.
 replace github.com/junkerderprovinz/cannoncommander/backend => ../backend
