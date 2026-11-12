@@ -211,7 +211,7 @@
     "wantsSecret": "The server answers but wants the JWT secret", "unreachable": "No office server answers at this address",
     "media": "Videos and pictures", "thumbs": "Thumbnails", "thumbsTip": "Small pictures for photos and videos in the preview. ffmpeg makes them in the background.",
     "video": "Play videos in the browser", "videoTip": "Formats like MKV too. ffmpeg converts them while they play, which takes computing time.", "ffmpegTip": "Comes with the container.",
-    "ffmpegDesktopTip": "CannonCommander uses the ffmpeg installed on your computer. Without it, videos get no preview pictures.",
+    "ffmpegDesktopTip": "Comes with the app.",
     "webdavRclone": "WebDAV and rclone", "webdav": "WebDAV server", "webdavTip": "Lets you mount the files as a drive, in Windows Explorer or a phone app for example. The same users and rules apply.",
     "terminalCard": "Terminal", "terminal": "Terminal in the browser", "terminalTip": "Admins can open a shell in the folder they are looking at, also by typing cmd or bash into the path row. It runs in the container with the rights of CannonCommander. Whoever opens it can do anything on the server that CannonCommander may do.",
     "address": "Address", "rcloneTip": "Mounts the remotes. The program comes with the container.",
@@ -262,6 +262,8 @@
   "info": {
     "version": "Version", "versionHint": "A click on a version number opens its release page.", "glimstoneTip": "The design language CannonCommander is built in",
     "rcloneTip": "The bridge to the remotes", "new": "New", "newN": "New · {n}", "current": "Up to date",
+    "tools": "Helper programs", "toolsHint": "They come with the container.", "toolsDesktopHint": "The app brings them along and keeps them current with every update. RAR archives are packed by WinRAR or rar when one of them is installed.",
+    "ffmpegTip": "Preview pictures, videos and media details", "sevenZipTip": "Packs 7z archives", "mupdfTip": "Shows PDF pages and their details", "fetching": "{n}% downloaded", "fetched": "Restart to use them", "fetchFailed": "The helper programs did not download. Please try again later",
     "help": "Help", "helpHint": "For a bug report you download a file with the settings and the state of the jobs, without passwords, keys and credentials. Attach it to an issue on GitHub so it shows what happened on your server.",
     "helpText": "Problems, wishes or ideas for something better? Feel free to open an issue on GitHub, or send an email.",
     "mail": "Email", "mailSubject": "CannonCommander feedback", "docs": "Handbook", "open": "Open", "bug": "Bug report", "download": "Download",

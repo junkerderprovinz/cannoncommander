@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Button, Card, FieldRow, FieldRowGroup, Toggle } from '@glimstone/vue';
+import { Button, Card, FieldRow, FieldRowGroup, Pill, Toggle } from '@glimstone/vue';
 import { GLIMSTONE_VERSION } from '@glimstone/core';
-import { computed, onMounted, ref, watch } from 'vue';
-import { admin, type AppSettings, type System, type UpdateCheck } from '@/api/admin';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { admin, type AppSettings, type Modules, type System, type Tool, type UpdateCheck } from '@/api/admin';
 import { toast } from '@/core/toast';
 import { run } from '@/core/actions';
 import { G } from '@/core/glyphs';
@@ -20,6 +20,8 @@ const latest = ref<UpdateCheck | null>(null);
 onMounted(() => {
   admin.system().then((s) => { sys.value = s; }, () => {});
   admin.app().then((a) => { app.value = a; }, () => {});
+  // The container answers 404: its helper programs come with the image.
+  admin.modules().then((m) => { mods.value = m; if (m.running) follow(); }, () => {});
 });
 const saveUpdates = (change: Partial<AppSettings['updates']>) => {
   Object.assign(app.value!.updates, change);
@@ -40,6 +42,33 @@ const versions = computed(() => [
   { name: 'rclone', v: rclone.value, href: 'https://github.com/rclone/rclone/releases/tag/v' + rclone.value, tip: c('info.rcloneTip') },
 ]);
 const n = computed(() => unseen());
+
+// The helper programs the server runs. The desktop app fetches a missing one with the others of its version.
+const mods = ref<Modules | null>(null);
+const helpers = computed(() => [
+  { name: 'ffmpeg', tool: sys.value?.tools.ffmpeg, tip: c('info.ffmpegTip') },
+  { name: '7-Zip', tool: sys.value?.tools['7zz'], tip: c('info.sevenZipTip') },
+  { name: 'MuPDF', tool: sys.value?.tools.mutool, tip: c('info.mupdfTip') },
+]);
+const found = (t?: Tool) => (t?.checking ? c('integrations.checking') : t?.available ? plain(t.version) || t.path : c('integrations.notFound'));
+const fetchable = (t?: Tool) => !!mods.value?.offered && !t?.available && !t?.checking;
+let poll: number | undefined;
+function follow() {
+  window.clearTimeout(poll);
+  poll = window.setTimeout(async () => {
+    const got = await admin.modules().catch(() => null);
+    if (got) mods.value = got;
+    if (got?.running) follow();
+    else if (got?.failed) toast(c('info.fetchFailed'), 'warn');
+  }, 1000);
+}
+async function fetchModules() {
+  const got = await admin.fetchModules().catch(() => null);
+  if (!got) { toast(c('info.fetchFailed'), 'warn'); return; }
+  mods.value = got;
+  follow();
+}
+onUnmounted(() => window.clearTimeout(poll));
 
 // A check nobody pressed for stays quiet when GitHub does not answer.
 async function check(quiet = false) {
@@ -87,6 +116,13 @@ const give = computed(() => [
       <!-- A container and a Flatpak cannot replace themselves, so there this one stays off and says why. -->
       <FieldRow :label="c('app.autoUpdate')" :hint="c(sys?.flatpak ? 'app.autoUpdateFlatpakTip' : desktop ? 'app.autoUpdateDesktopTip' : 'app.autoUpdateTip')"><Toggle v-model="autoUpdate" :disabled="!selfUpdating" /></FieldRow>
     </FieldRowGroup>
+  </Card>
+  <Card :title="c('info.tools')" :hint="c(desktop ? 'info.toolsDesktopHint' : 'info.toolsHint')">
+    <FieldRow v-for="h in helpers" :key="h.name" :label="h.name" :hint="h.tip">
+      <Pill class="mono">{{ sys ? found(h.tool) : '' }}</Pill>
+      <Button v-if="mods?.ready && fetchable(h.tool)" :label="c('info.fetched')" label-key="IconRefresh" tone="ok" @click="admin.restart()" />
+      <Button v-else-if="fetchable(h.tool)" :label="mods?.running ? c('info.fetching', { n: Math.round(mods.fraction * 100) }) : c('info.download')" label-key="IconDownload" :disabled="mods?.running" @click="fetchModules" />
+    </FieldRow>
   </Card>
   <Card :title="c('info.help')" :hint="c('info.helpHint')">
     <div class="a-about">
