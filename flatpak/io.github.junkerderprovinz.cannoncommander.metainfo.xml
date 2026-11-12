@@ -82,7 +82,7 @@
   <releases>
     <release version="1.1.1" date="2026-11-12">
       <description>
-        <p>The Unraid container shows the first admin password at the end of its log. The desktop app works as before.</p>
+        <p>The Unraid container shows the first admin password at the end of its log, and the trash never deletes through a folder link.</p>
       </description>
       <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.1.1</url>
     </release>

@@ -6,11 +6,12 @@ Every release is written by hand. The full notes for each release are in
 
 ## v1.1.1 (2026-11-12)
 
-The first admin password is easy to find on Unraid again.
+The first admin password is easy to find on Unraid again, and the trash never deletes through a link.
 
 ## 🐛 Fixed
 
 - **The first admin password shows up at the end of the container log,** right below the READY line, and again on every start until you change it. It stood above the startup banner, and Unraid's log window, which shows only the last 90 lines, lost it as soon as the web interface was opened. Thanks to kfoxton for reporting it. ([#39](https://github.com/junkerderprovinz/cannoncommander/issues/39))
+- **The trash never deletes through a link.** When the trash folder at the top of a share had been swapped for a link to another folder, removing an entry, by hand or after its days ran out, deleted the files behind the link. The trash refuses such an entry and leaves everything where it is.
 
 ## v1.1.0 (2026-11-12)
 
