@@ -130,6 +130,35 @@ func TestEntriesThatVanishedFromTheBinAreDropped(t *testing.T) {
 	}
 }
 
+func TestDroppingThroughALinkedBinLeavesItsTargetAlone(t *testing.T) {
+	s, root, fsys := newStore(t)
+	if err := os.MkdirAll(filepath.Join(root, "fotos"), 0o777); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "fotos", "a.txt"), []byte("a"), 0o666); err != nil {
+		t.Fatal(err)
+	}
+	loc, _ := fsys.Resolve("/mnt/user/fotos/a.txt")
+	it, err := s.Put(context.Background(), "anna", loc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bin, elsewhere := filepath.Join(root, "fotos", DirName), filepath.Join(t.TempDir(), "elsewhere")
+	if err := os.Rename(bin, elsewhere); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(elsewhere, bin); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := s.Drop(context.Background(), nil, it.ID); err == nil {
+		t.Fatal("dropped through a link")
+	}
+	if _, err := os.Stat(filepath.Join(elsewhere, it.ID, "a.txt")); err != nil {
+		t.Fatal("the file behind the link went away")
+	}
+}
+
 func TestABurstOfChangesIsToldAtOnceAndAgainAtItsEnd(t *testing.T) {
 	root := t.TempDir()
 	fsys, err := ccfs.New(nil, ccfs.Source{Name: "Shares", Mount: "/mnt/user", Root: root})

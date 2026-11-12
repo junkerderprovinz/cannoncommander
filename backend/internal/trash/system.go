@@ -396,6 +396,10 @@ func (s *osBin) takeOver() {
 	}
 }
 
+// plainBin refuses a bin folder that is a link, junction or other reparse
+// point.
+func plainBin(dir string) error { return plainpath.Check(dir) }
+
 // ownPlain checks that every one of dirs is a plain folder of this account.
 func ownPlain(dirs ...string) error {
 	for _, d := range dirs {
