@@ -49,6 +49,7 @@ func main() {
 			InstanceID: id,
 			Choices:    []pommelporter.Choice{fileManager},
 			Stays:      stays,
+			Steps:      []pommelporter.Step{helperPrograms},
 		})
 	}
 	if err != nil {
