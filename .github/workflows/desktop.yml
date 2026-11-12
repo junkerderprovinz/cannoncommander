@@ -207,3 +207,47 @@ jobs:
             cannoncommander-${{ matrix.slug }}.zip
             cannoncommander-${{ matrix.slug }}-installer*
           if-no-files-found: error
+
+  # The helper programs the app fetches beside itself, one zip per platform,
+  # put together from the upstream files desktop/modules/sources.json pins.
+  # The Windows zips need no Windows runner: nothing in them is built. mutool
+  # is built from MuPDF's source for Linux, so each Linux zip is made on its
+  # own processor. The Mac bundle carries its modules; scripts/desktop.mjs
+  # puts them in.
+  modules:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            modules: windows/amd64
+            name: windows-amd64
+          - os: ubuntu-24.04
+            modules: windows/arm64
+            name: windows-arm64
+          - os: ubuntu-24.04
+            modules: linux/amd64
+            name: linux-amd64
+          - os: ubuntu-24.04-arm
+            modules: linux/arm64
+            name: linux-arm64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: backend/go.mod
+
+      - name: Assemble the modules
+        working-directory: desktop
+        run: go run ./modules/assemble -platform "${{ matrix.modules }}" -release "$(git describe --tags --always --dirty)" -zip "$GITHUB_WORKSPACE"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: cannoncommander-modules-${{ matrix.name }}
+          path: cannoncommander-modules-${{ matrix.name }}.zip
+          if-no-files-found: error
