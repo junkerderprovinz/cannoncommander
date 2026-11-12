@@ -80,11 +80,11 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
-    <release version="1.0.1" date="2026-11-11">
+    <release version="1.1.0" date="2026-11-12">
       <description>
-        <p>An OLED switch for a true black dark look, a calmer sign-in with the field names inside the fields, and shortcut hints that wait for the mouse.</p>
+        <p>The app brings ffmpeg, 7-Zip and MuPDF along and draws its own title bar. There is an OLED switch for a true black dark look and a calmer sign-in with the field names inside the fields.</p>
       </description>
-      <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.0.1</url>
+      <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.1.0</url>
     </release>
     <release version="1.0.0" date="2026-11-10">
       <description>
