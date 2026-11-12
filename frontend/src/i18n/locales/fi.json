@@ -1630,7 +1630,10 @@
     "explorerName": "Kuten Resurssienhallinnassa",
     "explorerHow": "Napsautus valitsee tiedoston, hiirellä piirretty kehys useita. F5 päivittää, askelpalautin palaa takaisin ja Alt+D siirtyy polkuriville.",
     "commanderName": "Kuin Commander",
-    "commanderHow": "Napsautus siirtää kohdistinta, ja merkitään Ctrl-, Shift- tai Insert-näppäimellä. F5 kopioi ja F6 siirtää toiseen paneeliin."
+    "commanderHow": "Napsautus siirtää kohdistinta, ja merkitään Ctrl-, Shift- tai Insert-näppäimellä. F5 kopioi ja F6 siirtää toiseen paneeliin.",
+    "minimise": "Pienennä",
+    "maximise": "Suurenna",
+    "restore": "Palauta"
   },
   "diff": {
     "title": "Vertaa tiedostoja",

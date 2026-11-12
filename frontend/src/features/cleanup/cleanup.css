@@ -1,4 +1,4 @@
-.bk-clean { height: min(46rem, calc(100vh - 3rem)); }
+.bk-clean { height: min(46rem, calc(100vh - 3rem - var(--window-bar))); }
 .bk-cleanwell .bk-list { gap: 1.1rem; padding-top: .3rem; }
 .cl-head { display: flex; align-items: center; gap: .55rem; height: 2.2rem; padding: 0 .45rem; }
 .cl-head .bk-name { font-weight: 600; flex: none; }

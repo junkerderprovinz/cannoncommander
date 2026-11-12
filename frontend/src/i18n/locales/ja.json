@@ -1582,7 +1582,10 @@
     "explorerName": "エクスプローラー風",
     "explorerHow": "クリックでファイルを選択し、マウスで枠を描くと複数選択できます。F5 で更新、Backspace で戻り、Alt+D でパスバーに移ります。",
     "commanderName": "Commander 風",
-    "commanderHow": "クリックでカーソルを動かし、マークは Ctrl、Shift、Insert で付けます。F5 でもう一方のパネルへコピー、F6 で移動します。"
+    "commanderHow": "クリックでカーソルを動かし、マークは Ctrl、Shift、Insert で付けます。F5 でもう一方のパネルへコピー、F6 で移動します。",
+    "minimise": "最小化",
+    "maximise": "最大化",
+    "restore": "元に戻す"
   },
   "diff": {
     "title": "ファイルを比較",

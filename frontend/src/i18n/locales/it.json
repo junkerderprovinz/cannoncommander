@@ -1678,7 +1678,10 @@
     "explorerName": "Come in Esplora file",
     "explorerHow": "Un clic seleziona un file, un riquadro col mouse ne seleziona diversi. F5 aggiorna, Backspace torna indietro e Alt+D passa alla barra del percorso.",
     "commanderName": "Come un Commander",
-    "commanderHow": "Un clic sposta il cursore e si marca con Ctrl, Maiusc o Ins. F5 copia e F6 sposta nell'altro pannello."
+    "commanderHow": "Un clic sposta il cursore e si marca con Ctrl, Maiusc o Ins. F5 copia e F6 sposta nell'altro pannello.",
+    "minimise": "Riduci a icona",
+    "maximise": "Ingrandisci",
+    "restore": "Ripristina"
   },
   "diff": {
     "title": "Confronta file",

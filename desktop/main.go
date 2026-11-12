@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"sync/atomic"
 	"time"
@@ -249,6 +250,12 @@ func openWindow(app *application.App, state *stateStore) *application.WebviewWin
 		URL:              "/",
 		// Files dropped from other programs reach the page with their paths.
 		EnableFileDrop: true,
+		// On Windows and Linux the page draws the title bar in the house style
+		// (frontend/src/shell/WindowBar.vue) and does the dragging and the edge
+		// resizing. Windows keeps the frame's shadow, rounded corners and
+		// snapping. macOS keeps its own title bar and the traffic lights people
+		// expect.
+		Frameless: runtime.GOOS != "darwin",
 	}
 	if b.Width > 0 && b.Height > 0 {
 		opts.Width, opts.Height = b.Width, b.Height
@@ -291,6 +298,22 @@ func keepPlace(w *application.WebviewWindow, state *stateStore) {
 		log.Printf("could not keep the window's place: %v", err)
 	}
 }
+
+var _ desktop.Window = (*shell)(nil)
+
+func (s *shell) WindowMaximised() bool { return s.window.Load().IsMaximised() }
+
+func (s *shell) MaximiseWindow(on bool) {
+	if on {
+		s.window.Load().Maximise()
+	} else {
+		s.window.Load().UnMaximise()
+	}
+}
+
+func (s *shell) MinimiseWindow() { s.window.Load().Minimise() }
+
+func (s *shell) CloseWindow() { s.window.Load().Close() }
 
 // onScreen reports whether the title bar of a window at b would show on one
 // of the screens, so a window last seen on a screen since unplugged opens in

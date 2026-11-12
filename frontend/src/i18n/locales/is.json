@@ -1630,7 +1630,10 @@
     "explorerName": "Eins og í Explorer",
     "explorerHow": "Smellur velur skrá, rammi með músinni velur nokkrar. F5 endurnýjar, Backspace fer til baka og Alt+D fer í slóðastikuna.",
     "commanderName": "Eins og Commander",
-    "commanderHow": "Smellur færir bendilinn og merkt er með Ctrl, Shift eða Insert. F5 afritar og F6 færir yfir á hinn gluggann."
+    "commanderHow": "Smellur færir bendilinn og merkt er með Ctrl, Shift eða Insert. F5 afritar og F6 færir yfir á hinn gluggann.",
+    "minimise": "Lágmarka",
+    "maximise": "Hámarka",
+    "restore": "Endurheimta"
   },
   "diff": {
     "title": "Bera saman skrár",

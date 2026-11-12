@@ -1726,7 +1726,10 @@
     "explorerName": "Jak w Eksploratorze",
     "explorerHow": "Kliknięcie zaznacza plik, ramka myszą zaznacza kilka. F5 odświeża, Backspace wraca, a Alt+D przechodzi do paska ścieżki.",
     "commanderName": "Jak Commander",
-    "commanderHow": "Kliknięcie przesuwa kursor, a zaznacza się klawiszem Ctrl, Shift lub Insert. F5 kopiuje, a F6 przenosi do drugiego panelu."
+    "commanderHow": "Kliknięcie przesuwa kursor, a zaznacza się klawiszem Ctrl, Shift lub Insert. F5 kopiuje, a F6 przenosi do drugiego panelu.",
+    "minimise": "Minimalizuj",
+    "maximise": "Maksymalizuj",
+    "restore": "Przywróć"
   },
   "diff": {
     "title": "Porównaj pliki",

@@ -2095,7 +2095,10 @@
     "explorerName": "Arakatzailean bezala",
     "explorerHow": "Klik batek fitxategi bat hautatzen du, saguarekin egindako markoak hainbat. F5ek freskatzen du, Atzera teklak atzera egiten du eta Alt+D bide-barrara doa.",
     "commanderName": "Commander baten antzera",
-    "commanderHow": "Klikak kurtsorea mugitzen du, eta Ctrl, Shift edo Insert-ekin markatzen da. F5ek kopiatzen du eta F6k beste panelera eramaten du."
+    "commanderHow": "Klikak kurtsorea mugitzen du, eta Ctrl, Shift edo Insert-ekin markatzen da. F5ek kopiatzen du eta F6k beste panelera eramaten du.",
+    "minimise": "Minimizatu",
+    "maximise": "Maximizatu",
+    "restore": "Leheneratu"
   },
   "diff": {
     "title": "Konparatu fitxategiak",

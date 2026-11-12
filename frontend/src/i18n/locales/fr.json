@@ -1678,7 +1678,10 @@
     "explorerName": "Comme dans l'Explorateur",
     "explorerHow": "Un clic sélectionne un fichier, un cadre tracé à la souris en sélectionne plusieurs. F5 actualise, Retour arrière revient en arrière et Alt+D va dans la barre de chemin.",
     "commanderName": "Comme un Commander",
-    "commanderHow": "Un clic déplace le curseur et on marque avec Ctrl, Maj ou Inser. F5 copie et F6 déplace vers l'autre panneau."
+    "commanderHow": "Un clic déplace le curseur et on marque avec Ctrl, Maj ou Inser. F5 copie et F6 déplace vers l'autre panneau.",
+    "minimise": "Réduire",
+    "maximise": "Agrandir",
+    "restore": "Restaurer"
   },
   "diff": {
     "title": "Comparer des fichiers",

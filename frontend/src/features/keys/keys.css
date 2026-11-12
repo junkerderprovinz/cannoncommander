@@ -1,5 +1,5 @@
 /* The shortcut window and the settings tile with their recording rows, as the prototype draws them. */
-.kb-win { height: min(48rem, calc(100vh - 3rem)); }
+.kb-win { height: min(48rem, calc(100vh - 3rem - var(--window-bar))); }
 .kb-well { flex: 1; min-height: 0; overflow: auto; }
 .kb-list { display: flex; flex-direction: column; gap: 1rem; }
 .kb-group { display: flex; flex-direction: column; gap: 1px; }

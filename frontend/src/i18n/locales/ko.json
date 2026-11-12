@@ -1582,7 +1582,10 @@
     "explorerName": "탐색기처럼",
     "explorerHow": "클릭으로 파일 하나를, 마우스로 틀을 그려 여러 개를 선택합니다. F5는 새로 고침, Backspace는 뒤로, Alt+D는 경로 표시줄로 이동합니다.",
     "commanderName": "Commander처럼",
-    "commanderHow": "클릭은 커서를 옮기고 Ctrl, Shift, Insert로 표시합니다. F5는 다른 패널로 복사하고 F6은 이동합니다."
+    "commanderHow": "클릭은 커서를 옮기고 Ctrl, Shift, Insert로 표시합니다. F5는 다른 패널로 복사하고 F6은 이동합니다.",
+    "minimise": "최소화",
+    "maximise": "최대화",
+    "restore": "이전 크기로"
   },
   "diff": {
     "title": "파일 비교",

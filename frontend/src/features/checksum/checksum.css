@@ -1,5 +1,5 @@
-.bk-sums { height: min(44rem, calc(100vh - 3rem)); }
-.bk-verify { height: min(42rem, calc(100vh - 3rem)); }
+.bk-sums { height: min(44rem, calc(100vh - 3rem - var(--window-bar))); }
+.bk-verify { height: min(42rem, calc(100vh - 3rem - var(--window-bar))); }
 .bk-sum { display: grid; grid-template-columns: 1.75rem minmax(0, 1.3fr) minmax(0, 1fr) 5.5rem; gap: .7rem; align-items: center; height: 2.25rem; padding: 0 .45rem; border-radius: var(--radius-control); flex: none; }
 .bk-sum:hover { background: var(--carbon-surface3); }
 .bk-hash { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--carbon-text-sub); }

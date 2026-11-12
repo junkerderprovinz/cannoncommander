@@ -1678,7 +1678,10 @@
     "explorerName": "Ca în Explorer",
     "explorerHow": "Un clic selectează un fișier, un cadru cu mouse-ul selectează mai multe. F5 reîmprospătează, Backspace merge înapoi, iar Alt+D sare în bara de cale.",
     "commanderName": "Ca un Commander",
-    "commanderHow": "Clicul mută cursorul, iar marcarea se face cu Ctrl, Shift sau Insert. F5 copiază, iar F6 mută în celălalt panou."
+    "commanderHow": "Clicul mută cursorul, iar marcarea se face cu Ctrl, Shift sau Insert. F5 copiază, iar F6 mută în celălalt panou.",
+    "minimise": "Minimizează",
+    "maximise": "Maximizează",
+    "restore": "Restabilește"
   },
   "diff": {
     "title": "Compară fișiere",

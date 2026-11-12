@@ -1678,7 +1678,10 @@
     "explorerName": "Kao u Exploreru",
     "explorerHow": "Klik odabire datoteku, okvir mišem odabire više njih. F5 osvježava, Backspace ide natrag, a Alt+D skače u traku putanje.",
     "commanderName": "Kao Commander",
-    "commanderHow": "Klik pomiče kursor, a označava se s Ctrl, Shift ili Insert. F5 kopira, a F6 premješta u drugu ploču."
+    "commanderHow": "Klik pomiče kursor, a označava se s Ctrl, Shift ili Insert. F5 kopira, a F6 premješta u drugu ploču.",
+    "minimise": "Minimiziraj",
+    "maximise": "Maksimiziraj",
+    "restore": "Vrati"
   },
   "diff": {
     "title": "Usporedi datoteke",

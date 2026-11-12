@@ -1630,7 +1630,10 @@
     "explorerName": "Mint az Intézőben",
     "explorerHow": "Egy kattintás kijelöl egy fájlt, egérrel húzott keret többet. Az F5 frissít, a Backspace visszalép, az Alt+D pedig az útvonalsávra ugrik.",
     "commanderName": "Mint egy Commander",
-    "commanderHow": "A kattintás a kurzort mozgatja, jelölni Ctrl, Shift vagy Insert billentyűvel lehet. Az F5 másol, az F6 áthelyez a másik panelre."
+    "commanderHow": "A kattintás a kurzort mozgatja, jelölni Ctrl, Shift vagy Insert billentyűvel lehet. Az F5 másol, az F6 áthelyez a másik panelre.",
+    "minimise": "Kis méret",
+    "maximise": "Teljes méret",
+    "restore": "Előző méret"
   },
   "diff": {
     "title": "Fájlok összehasonlítása",

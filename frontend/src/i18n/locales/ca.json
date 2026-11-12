@@ -1678,7 +1678,10 @@
     "explorerName": "Com a l'Explorador",
     "explorerHow": "Un clic selecciona un fitxer, un marc amb el ratolí en selecciona diversos. F5 actualitza, Retrocés torna enrere i Alt+D salta a la barra del camí.",
     "commanderName": "Com un Commander",
-    "commanderHow": "Un clic mou el cursor i es marca amb Ctrl, Maj o Insert. F5 copia i F6 mou a l'altre panell."
+    "commanderHow": "Un clic mou el cursor i es marca amb Ctrl, Maj o Insert. F5 copia i F6 mou a l'altre panell.",
+    "minimise": "Minimitza",
+    "maximise": "Maximitza",
+    "restore": "Restaura"
   },
   "diff": {
     "title": "Compara fitxers",

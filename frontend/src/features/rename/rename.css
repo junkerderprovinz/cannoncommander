@@ -1,4 +1,4 @@
-.bk-mren { height: min(48rem, calc(100vh - 3rem)); }
+.bk-mren { height: min(48rem, calc(100vh - 3rem - var(--window-bar))); }
 .bk-top { gap: 1rem; }
 .bk-tokens { display: flex; flex-wrap: wrap; gap: .35rem; }
 .bk-meta > .muted { width: 100%; font-size: 12px; }
@@ -10,7 +10,7 @@
 .bk-mrow > .bk-name:first-child { color: var(--carbon-text-sub); }
 .bk-mrow.same .bk-name { color: var(--carbon-text-muted); font-weight: 400; }
 @media (max-width: 760px) { .bk-mhead { display: none; } .bk-mrow { grid-template-columns: minmax(0, 1fr) 1.2rem minmax(0, 1fr); } .bk-mrow .glim-pill { grid-column: 1 / -1; justify-self: start; } }
-.re-win { height: min(44rem, calc(100vh - 3rem)); }
+.re-win { height: min(44rem, calc(100vh - 3rem - var(--window-bar))); }
 .re-find { flex-direction: row; align-items: center; gap: .5rem; flex-wrap: wrap; flex: none; }
 .re-find .glim-input { flex: 1 1 12rem; min-width: 0; height: var(--btn-h); }
 .re-sw { display: inline-flex; align-items: center; gap: .45rem; font-size: 13px; color: var(--carbon-text-sub); }

@@ -1630,7 +1630,10 @@
     "explorerName": "Som i Utforskaren",
     "explorerHow": "Ett klick markerar en fil, en ram med musen markerar flera. F5 uppdaterar, Backsteg går tillbaka och Alt+D hoppar till sökvägsfältet.",
     "commanderName": "Som en Commander",
-    "commanderHow": "Ett klick flyttar markören och du markerar med Ctrl, Shift eller Insert. F5 kopierar och F6 flyttar till den andra panelen."
+    "commanderHow": "Ett klick flyttar markören och du markerar med Ctrl, Shift eller Insert. F5 kopierar och F6 flyttar till den andra panelen.",
+    "minimise": "Minimera",
+    "maximise": "Maximera",
+    "restore": "Återställ"
   },
   "diff": {
     "title": "Jämför filer",

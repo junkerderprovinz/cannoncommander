@@ -227,7 +227,7 @@ i.k { font-style: normal; color: var(--accent-ink); }
 .cv-office { flex: 1; min-height: 24rem; display: flex; border-radius: var(--radius-card); overflow: hidden; background: var(--carbon-surface2); }
 .cv-office > div { flex: 1; }
 .cv-office form { display: none; }
-.cv-officepage { height: calc(100vh - 9rem); gap: 0; padding: 1.4rem .9rem .9rem; }
+.cv-officepage { height: calc(100vh - 9rem - var(--window-bar)); gap: 0; padding: 1.4rem .9rem .9rem; }
 .cv-book { flex: 1; min-height: 0; border-radius: var(--radius-card); background: var(--carbon-surface2); padding: 1.5rem; display: flex; justify-content: center; }
 .cv-book-page { width: min(100%, 44rem); background: #fff; border-radius: 4px; box-shadow: var(--elevation); overflow: hidden; }
 .cv-book.compact { flex: none; height: 24rem; padding: .75rem; }

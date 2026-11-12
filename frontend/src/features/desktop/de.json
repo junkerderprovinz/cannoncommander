@@ -17,5 +17,8 @@
   "explorerName": "Wie im Explorer",
   "explorerHow": "Ein Klick wählt eine Datei, ein Rahmen mit der Maus wählt mehrere. F5 lädt neu, die Rücktaste geht zurück und Alt+D springt in die Pfadzeile.",
   "commanderName": "Wie ein Commander",
-  "commanderHow": "Ein Klick setzt den Cursor, markiert wird mit Strg, Umschalt oder Einfg. F5 kopiert und F6 verschiebt ins andere Panel."
+  "commanderHow": "Ein Klick setzt den Cursor, markiert wird mit Strg, Umschalt oder Einfg. F5 kopiert und F6 verschiebt ins andere Panel.",
+  "minimise": "Minimieren",
+  "maximise": "Maximieren",
+  "restore": "Wiederherstellen"
 }
