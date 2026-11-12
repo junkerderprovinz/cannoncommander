@@ -281,7 +281,7 @@ The app brings its helper programs along: ffmpeg for thumbnails and videos, 7-Zi
 
 ### First sign-in
 
-Open port 8480 in a browser. On the first start the container writes a password for the user `admin` into its log, in a line that starts with `Generated initial admin password`. On Unraid, click the container's icon and choose **Logs**. Sign in with it and pick a new password of at least 12 characters. After that you can add users under **Settings > Users & groups**.
+Open port 8480 in a browser. On the first start the container writes a password for the user `admin` at the end of its log, right below the READY line, and shows it again on every start until you change it. On Unraid, click the container's icon and choose **Logs**. Sign in with it and pick a new password of at least 12 characters. After that you can add users under **Settings > Users & groups**.
 
 <br>
 

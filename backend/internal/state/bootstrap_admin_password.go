@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math/big"
+	"os"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
@@ -28,6 +29,22 @@ func bootstrapDefaultAdminPassword(username string) (plaintext string, generated
 		plaintext,
 	)
 	return plaintext, true, nil
+}
+
+// firstAdminPasswordFile keeps a generated admin password until the admin
+// changes it. The container prints it below the startup banner, because the
+// log line above scrolls out of Unraid's 90-line log window with the first
+// page load.
+var firstAdminPasswordFile string
+
+func keepFirstAdminPassword(plaintext string) error {
+	return os.WriteFile(firstAdminPasswordFile, []byte(plaintext+"\n"), 0o600)
+}
+
+func forgetFirstAdminPassword() {
+	if err := os.Remove(firstAdminPasswordFile); err != nil && !os.IsNotExist(err) {
+		logger.Warningf("could not remove %s: %v", firstAdminPasswordFile, err)
+	}
 }
 
 func generateSpeakableBootstrapPassword() (string, error) {

@@ -81,6 +81,10 @@ if kill -0 "$pid" 2>/dev/null; then
   version="${version:-dev}"
   /app/print-banner.sh "CannonCommander $version" "two-pane file manager for Unraid"
   printf '  \033[0;32m✓ CANNONCOMMANDER %s IS READY\033[0m - Open the WebUI now (port 80)\n\n' "$version"
+  first_password="$(dirname "$CC_DATABASE_PATH")/first-admin-password"
+  if [ -f "$first_password" ]; then
+    printf '  Admin password for the first sign-in: %s\n  You pick your own right after, and this line goes away.\n\n' "$(cat "$first_password")"
+  fi
 fi
 
 status=0

@@ -74,6 +74,11 @@ func QuickSetup() error {
 	if err := sqlDb.CreateUser(user); err != nil {
 		return fmt.Errorf("failed to create admin user: %w", err)
 	}
+	if generated {
+		if err := keepFirstAdminPassword(plainPassword); err != nil {
+			return fmt.Errorf("failed to keep the generated admin password: %w", err)
+		}
+	}
 	logger.Debug("quickSetup created admin user",
 		"username", user.Username,
 		"userID", user.ID,

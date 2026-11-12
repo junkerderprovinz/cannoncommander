@@ -360,7 +360,13 @@ func UpdateUser(user *users.User, plaintextPassword string, fields ...string) er
 		}
 	}
 
-	return commitUserUpdate(existingUser, storedSnapshot)
+	if err := commitUserUpdate(existingUser, storedSnapshot); err != nil {
+		return err
+	}
+	if FieldListIncludes(fields, "password") && storedSnapshot.Username == settings.PasswordAdminUsername() {
+		forgetFirstAdminPassword()
+	}
+	return nil
 }
 
 func commitUserUpdate(existingUser, storedSnapshot *users.User) error {

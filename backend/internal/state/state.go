@@ -2,6 +2,7 @@ package state
 
 import (
 	"fmt"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -50,6 +51,7 @@ func initialize(dbPath string) (bool, error) {
 		return false, fmt.Errorf("failed to initialize SQL database: %w", err)
 	}
 	sqlDb = store
+	firstAdminPasswordFile = filepath.Join(filepath.Dir(dbPath), "first-admin-password")
 
 	if err = InitSourceAccessDefaults(); err != nil {
 		return existingDb, fmt.Errorf("failed to initialize source access defaults: %w", err)
