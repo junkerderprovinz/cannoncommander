@@ -85,7 +85,7 @@ func (in *Installer) Install(ctx context.Context, tag string) error {
 	in.report(0, "Downloading the modules")
 	zip, err := in.Updater.FetchFile(ctx, tag, AssetName(runtime.GOOS, runtime.GOARCH), parent, func(done, total int64) {
 		if total > 0 {
-			in.report(0.9*float64(done)/float64(total), "")
+			in.report(0.9*(float64(done)/float64(total)), "")
 		}
 	})
 	if err != nil {
