@@ -67,5 +67,10 @@ func updateInstalled() error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
 	up.once(ctx)
+	version := cmd.Version()
+	if v := up.readyVersion(); v != "" {
+		version = "v" + v
+	}
+	refreshInstalled(ctx, logger, up.u, version)
 	return nil
 }
