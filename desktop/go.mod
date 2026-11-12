@@ -7,6 +7,7 @@ go 1.27.0
 replace github.com/junkerderprovinz/cannoncommander/backend => ../backend
 
 require (
+	github.com/bodgit/sevenzip v1.6.5
 	github.com/godbus/dbus/v5 v5.2.2
 	github.com/junkerderprovinz/cannoncommander/backend v0.0.0
 	github.com/wailsapp/wails/v3 v3.1.0
@@ -18,7 +19,6 @@ require (
 	github.com/alecthomas/kong v1.17.0 // indirect
 	github.com/andybalholm/brotli v1.2.8 // indirect
 	github.com/bodgit/plumbing v1.3.0 // indirect
-	github.com/bodgit/sevenzip v1.6.5 // indirect
 	github.com/bodgit/windows v1.0.1 // indirect
 	github.com/boombuler/barcode v1.1.0 // indirect
 	github.com/coder/websocket v1.8.15 // indirect

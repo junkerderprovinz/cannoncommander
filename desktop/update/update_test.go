@@ -47,7 +47,7 @@ func serve(t *testing.T, rel fakeRelease) *httptest.Server {
 	t.Helper()
 	var srv *httptest.Server
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /repos/owner/prog/releases/latest", func(w http.ResponseWriter, r *http.Request) {
+	describe := func(w http.ResponseWriter, r *http.Request) {
 		type asset struct {
 			Name string `json:"name"`
 			URL  string `json:"browser_download_url"`
@@ -62,6 +62,14 @@ func serve(t *testing.T, rel fakeRelease) *httptest.Server {
 			body.Assets = append(body.Assets, asset{name, srv.URL + "/download/" + name})
 		}
 		json.NewEncoder(w).Encode(body)
+	}
+	mux.HandleFunc("GET /repos/owner/prog/releases/latest", describe)
+	mux.HandleFunc("GET /repos/owner/prog/releases/tags/{tag}", func(w http.ResponseWriter, r *http.Request) {
+		if r.PathValue("tag") != rel.tag {
+			http.NotFound(w, r)
+			return
+		}
+		describe(w, r)
 	})
 	mux.HandleFunc("GET /download/{name}", func(w http.ResponseWriter, r *http.Request) {
 		data, ok := rel.files[r.PathValue("name")]
@@ -400,5 +408,50 @@ func TestTheReleasePublishesTheUnversionedZipsWithTheirChecksums(t *testing.T) {
 		if !strings.Contains(string(yml), want) {
 			t.Errorf("release.yml does not contain %s", want)
 		}
+	}
+}
+
+func TestFetchFileGetsANamedFileOfATaggedReleaseAndChecksIt(t *testing.T) {
+	rel := fakeRelease{tag: "v1.4.0", files: map[string][]byte{"extra.zip": []byte("the extra file")}}.withSums(keep)
+	u := newUpdater(t, serve(t, rel), "v1.3.0")
+	dir := t.TempDir()
+	var done, total int64
+	got, err := u.FetchFile(context.Background(), "v1.4.0", "extra.zip", dir, func(d, t int64) { done, total = d, t })
+	if err != nil {
+		t.Fatal(err)
+	}
+	if filepath.Dir(got) != dir {
+		t.Errorf("downloaded to %s, want a file in %s", got, dir)
+	}
+	if data, _ := os.ReadFile(got); string(data) != "the extra file" {
+		t.Errorf("downloaded %q", data)
+	}
+	if done != int64(len("the extra file")) || total != done {
+		t.Errorf("progress ended at %d of %d", done, total)
+	}
+}
+
+func TestFetchFileRefusesAFileThatDoesNotMatchItsChecksum(t *testing.T) {
+	rel := fakeRelease{tag: "v1.4.0", files: map[string][]byte{"extra.zip": []byte("the extra file")}}.withSums(func(s string) string {
+		return strings.Replace(s, s[:4], "0000", 1)
+	})
+	u := newUpdater(t, serve(t, rel), "v1.3.0")
+	dir := t.TempDir()
+	if _, err := u.FetchFile(context.Background(), "v1.4.0", "extra.zip", dir, nil); err == nil || !strings.Contains(err.Error(), "checksum") {
+		t.Fatalf("got %v, want a checksum mismatch", err)
+	}
+	if left, _ := os.ReadDir(dir); len(left) != 0 {
+		t.Errorf("left %d files behind", len(left))
+	}
+}
+
+func TestFetchFileNeedsTheTaggedRelease(t *testing.T) {
+	rel := fakeRelease{tag: "v1.4.0", files: map[string][]byte{"extra.zip": []byte("x")}}.withSums(keep)
+	u := newUpdater(t, serve(t, rel), "v1.3.0")
+	if _, err := u.FetchFile(context.Background(), "v1.5.0", "extra.zip", t.TempDir(), nil); err == nil {
+		t.Fatal("a release that does not exist gave a file")
+	}
+	if _, err := u.FetchFile(context.Background(), "v1.4.0", "other.zip", t.TempDir(), nil); err == nil {
+		t.Fatal("a file the release lacks was downloaded")
 	}
 }

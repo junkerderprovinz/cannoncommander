@@ -90,8 +90,14 @@ var probes = []probe{
 	{"ffmpeg", []string{"-version"}, func() string { return ffmpeg.Get().FFmpegPath() }, true},
 	{"ffprobe", []string{"-version"}, func() string { return ffmpeg.Get().FFprobePath() }, true},
 	{"mutool", []string{"-v"}, nil, false},
-	{"7zz", nil, func() string { return archives.Find("7zz", "7z") }, false},
+	{"7zz", nil, sevenZip, false},
 	{"rclone", []string{"version"}, RcloneBinary, false},
+}
+
+// sevenZip is the 7-Zip that packs 7z archives, CC_7ZZ first, or "".
+func sevenZip() string {
+	p, _ := exec.LookPath(archives.SevenZip())
+	return p
 }
 
 // RcloneBinary returns the rclone program, CC_RCLONE_BINARY or the one on

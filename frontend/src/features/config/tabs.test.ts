@@ -171,9 +171,9 @@ describe('the settings', () => {
     expect(await cardsOf('system')).toEqual(['Einstellungen sichern', 'Dienst']);
   });
 
-  it('put the updates on the info tile, after the version', async () => {
+  it('put the updates on the info tile, after the version and before the helper programs', async () => {
     const cards = await cardsOf('info');
-    expect(cards.map((t) => t.split(/\s/)[0])).toEqual(['Version', 'Updates', 'Hilfe', 'Über']);
+    expect(cards.map((t) => t.split(/\s/)[0])).toEqual(['Version', 'Updates', 'Hilfsprogramme', 'Hilfe', 'Über']);
     // One button looks for a newer version, the one beside the version numbers.
     expect(document.querySelectorAll('#a-update, #a-upd')).toHaveLength(1);
   });

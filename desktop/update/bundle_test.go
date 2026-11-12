@@ -156,7 +156,7 @@ func TestUnzipRefusesNamesOutsideTheFolder(t *testing.T) {
 	if err := os.Mkdir(dest, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := unzip(archive, dest); err == nil {
+	if err := Unzip(archive, dest); err == nil {
 		t.Fatal("extracted a file outside the folder")
 	}
 	if _, err := os.Stat(filepath.Join(dir, "evil")); err == nil {

@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -178,23 +179,103 @@ func (u *Updater) Fetch(ctx context.Context, rel *Release) (string, error) {
 		return "", fmt.Errorf("%s of release %s lists no checksum for %s", ChecksumsFile, rel.Version, rel.asset)
 	}
 
-	resp, err := u.open(ctx, rel.url)
-	if err != nil {
+	if err := u.download(ctx, f, rel.url, rel.asset, want, nil); err != nil {
 		return "", err
-	}
-	defer resp.Body.Close()
-	h := sha256.New()
-	if _, err := io.Copy(io.MultiWriter(f, h), resp.Body); err != nil {
-		return "", fmt.Errorf("downloading %s: %w", rel.asset, err)
-	}
-	if got := hex.EncodeToString(h.Sum(nil)); got != want {
-		return "", fmt.Errorf("%s has checksum %s, but %s says %s", rel.asset, got, ChecksumsFile, want)
 	}
 	if err := f.Close(); err != nil {
 		return "", err
 	}
 	keep = true
 	return f.Name(), nil
+}
+
+// FetchFile downloads the file name of the release tagged tag into a
+// temporary file in dir and verifies it against that release's
+// checksums.txt. progress, when set, hears how many bytes have come of how
+// many, total being -1 while unknown.
+func (u *Updater) FetchFile(ctx context.Context, tag, name, dir string, progress func(done, total int64)) (string, error) {
+	resp, err := u.request(ctx, u.api()+"/repos/"+u.Repo+"/releases/tags/"+url.PathEscape(tag))
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("GET %s: %s", resp.Request.URL, resp.Status)
+	}
+	var gr githubRelease
+	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&gr); err != nil {
+		return "", fmt.Errorf("reading release %s: %w", tag, err)
+	}
+	var fileURL, sumsURL string
+	for _, a := range gr.Assets {
+		switch a.Name {
+		case name:
+			fileURL = a.URL
+		case ChecksumsFile:
+			sumsURL = a.URL
+		}
+	}
+	if fileURL == "" || sumsURL == "" {
+		return "", fmt.Errorf("release %s lacks %s or %s", tag, name, ChecksumsFile)
+	}
+	sums, err := u.get(ctx, sumsURL, 1<<20)
+	if err != nil {
+		return "", err
+	}
+	want, ok := lookupSum(sums, name)
+	if !ok {
+		return "", fmt.Errorf("%s of release %s lists no checksum for %s", ChecksumsFile, tag, name)
+	}
+
+	f, err := os.CreateTemp(dir, "."+name+".download-*")
+	if err != nil {
+		return "", fmt.Errorf("cannot write to %s: %w", dir, err)
+	}
+	err = u.download(ctx, f, fileURL, name, want, progress)
+	if cerr := f.Close(); err == nil {
+		err = cerr
+	}
+	if err != nil {
+		os.Remove(f.Name())
+		return "", err
+	}
+	return f.Name(), nil
+}
+
+// download writes the file at from into f and fails unless its SHA-256 is
+// want.
+func (u *Updater) download(ctx context.Context, f *os.File, from, name, want string, progress func(done, total int64)) error {
+	resp, err := u.open(ctx, from)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	h := sha256.New()
+	var w io.Writer = io.MultiWriter(f, h)
+	if progress != nil {
+		w = &counter{w: w, total: resp.ContentLength, report: progress}
+	}
+	if _, err := io.Copy(w, resp.Body); err != nil {
+		return fmt.Errorf("downloading %s: %w", name, err)
+	}
+	if got := hex.EncodeToString(h.Sum(nil)); got != want {
+		return fmt.Errorf("%s has checksum %s, but %s says %s", name, got, ChecksumsFile, want)
+	}
+	return nil
+}
+
+// counter tells report how far a download has come.
+type counter struct {
+	w           io.Writer
+	done, total int64
+	report      func(done, total int64)
+}
+
+func (c *counter) Write(p []byte) (int, error) {
+	n, err := c.w.Write(p)
+	c.done += int64(n)
+	c.report(c.done, c.total)
+	return n, err
 }
 
 // latest returns the newest published release, or nil while the repository

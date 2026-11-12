@@ -28,7 +28,7 @@ func (u *Updater) Swap(download string, rel *Release) error {
 		return err
 	}
 	defer os.RemoveAll(tmp)
-	if err := unzip(download, tmp); err != nil {
+	if err := Unzip(download, tmp); err != nil {
 		return err
 	}
 	bundle := strings.HasSuffix(target, ".app")
@@ -136,13 +136,13 @@ func replaceFile(target, fresh string) error {
 	if err := os.Remove(old); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		// The .old is the running program, left by an earlier update in this
 		// run, so target is a file nothing runs and can simply be replaced.
-		return rename(fresh, target)
+		return Rename(fresh, target)
 	}
-	if err := rename(target, old); err != nil {
+	if err := Rename(target, old); err != nil {
 		return err
 	}
-	if err := rename(fresh, target); err != nil {
-		rename(old, target)
+	if err := Rename(fresh, target); err != nil {
+		Rename(old, target)
 		return err
 	}
 	return nil
@@ -170,9 +170,9 @@ func replaceBundle(app, fresh, scratch string, stagedThisRun bool) error {
 	return nil
 }
 
-// unzip extracts through an os.Root, so neither a name nor a symlink in the
-// archive can reach outside dest.
-func unzip(archive, dest string) error {
+// Unzip extracts archive into dest through an os.Root, so neither a name nor
+// a symlink in the archive can reach outside dest.
+func Unzip(archive, dest string) error {
 	r, err := zip.OpenReader(archive)
 	if err != nil {
 		return err
@@ -244,11 +244,11 @@ func extractFile(root *os.Root, f *zip.File, name string, perm fs.FileMode) erro
 	return out.Close()
 }
 
-// rename is os.Rename, retried for up to three seconds while Windows refuses
+// Rename is os.Rename, retried for up to three seconds while Windows refuses
 // it. A virus scanner opens a program it has just seen written and holds it
 // briefly, and until it lets go the file cannot be renamed or replaced.
 // Elsewhere a refusal is final.
-func rename(from, to string) error {
+func Rename(from, to string) error {
 	err := os.Rename(from, to)
 	if runtime.GOOS != "windows" {
 		return err

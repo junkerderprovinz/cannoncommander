@@ -85,15 +85,21 @@ jobs:
           for slug in windows-amd64 windows-arm64 macos-universal linux-amd64 linux-arm64; do
             cp "bundles/cannoncommander-${slug}.zip" "dist/cannoncommander-${slug}.zip"
           done
+          # The helper programs the app fetches for its own version. A Mac
+          # bundle carries its own.
+          for slug in windows-amd64 windows-arm64 linux-amd64 linux-arm64; do
+            cp "bundles/cannoncommander-modules-${slug}.zip" dist/
+          done
           cp bundles/cannoncommander-windows-amd64-installer.exe bundles/cannoncommander-windows-arm64-installer.exe dist/
           cp bundles/cannoncommander-linux-amd64-installer bundles/cannoncommander-linux-arm64-installer dist/
           cp bundles/cannoncommander-linux-amd64.flatpak bundles/cannoncommander-linux-arm64.flatpak dist/
           chmod +x dist/cannoncommander-linux-*-installer
           ls -lh dist
 
-      # The desktop app checks the zip it updates to against this list. Run
-      # inside dist/ so the entries are bare file names, which is what both
-      # desktop/update and a manual `sha256sum -c` expect.
+      # The desktop app checks the zips it updates to and fetches its modules
+      # from against this list. Run inside dist/ so the entries are bare file
+      # names, which is what both desktop/update and a manual `sha256sum -c`
+      # expect.
       - name: Checksums
         run: |
           set -eu

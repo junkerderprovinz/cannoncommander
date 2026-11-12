@@ -18,9 +18,14 @@
 // finds two manifests it cannot merge, and the one it drops may be the
 // window's, which carries the DPI awareness. Nothing else there uses cgo, so
 // Windows builds without a C compiler, for x64 and ARM alike.
+//
+// On a Mac the bundle also gets the helper programs, which desktop/modules
+// puts together from the pinned upstream files. That builds mutool from
+// MuPDF's source, with make and clang. Windows and Linux fetch theirs from
+// the release instead; desktop.yml makes those zips.
 
 import { execFileSync, spawnSync } from 'node:child_process'
-import { cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -192,6 +197,19 @@ if (process.platform === 'win32') {
   rmSync(join(bin, 'CannonCommander-arm64'))
   cpSync(join(desktop, 'build', 'darwin', 'icons.icns'), join(app, 'Resources', 'icons.icns'))
   cpSync(join(desktop, 'build', 'darwin', 'Info.plist'), join(app, 'Info.plist'))
+  // The helper programs, ffmpeg, 7-Zip and mutool, for each processor. The
+  // bundle carries them, so an update of the bundle brings new ones along;
+  // the app takes the set of its own processor (desktop/modules).
+  for (const a of ['amd64', 'arm64']) {
+    const dir = join(app, 'Resources', 'modules', a)
+    run('go', ['run', './modules/assemble', '-platform', `darwin/${a}`, '-release', stamp, '-dir', dir])
+    // --deep leaves programs under Resources alone, and Apple Silicon starts
+    // none without a signature.
+    for (const entry of readdirSync(dir, { recursive: true, withFileTypes: true })) {
+      const file = join(entry.parentPath, entry.name)
+      if (entry.isFile() && statSync(file).mode & 0o111) run('codesign', ['--force', '--sign', '-', file])
+    }
+  }
   // An ad-hoc signature over the whole bundle, as Wails' own template does:
   // Apple Silicon refuses to start code that carries none.
   run('codesign', ['--force', '--deep', '--sign', '-', join(bin, 'CannonCommander.app')])

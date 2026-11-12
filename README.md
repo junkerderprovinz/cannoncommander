@@ -275,7 +275,9 @@ CannonCommander also runs as a program on Windows, macOS and Linux, with the sam
 
 The panels open in your home folder. On Windows every drive is a source, on a Mac your home folder and `/Volumes`, on Linux your home folder and whichever of `/media`, `/run/media` and `/mnt` exist. **Settings > Sources** changes that list. The configuration, the database and the log live in a `CannonCommander` folder in `%APPDATA%` on Windows, `~/Library/Application Support` on a Mac and `~/.config` on Linux.
 
-There is no sign-in. The app's server listens on 127.0.0.1 only and answers its own window and nothing else on the computer. So the settings leave out the account, users and access rules, and share links too, since they would point at 127.0.0.1. Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. You can switch that off under **Settings > Info**. Remote storage stays with the server, since the app has nothing to mount it with. The Mac and Linux builds show PDF pages as pictures, the Windows build does not yet.
+There is no sign-in. The app's server listens on 127.0.0.1 only and answers its own window and nothing else on the computer. So the settings leave out the account, users and access rules, and share links too, since they would point at 127.0.0.1. Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. You can switch that off under **Settings > Info**. Remote storage stays with the server, since the app has nothing to mount it with.
+
+The app brings its helper programs along: ffmpeg for thumbnails and videos, 7-Zip for 7z archives and MuPDF for PDF pages. On Windows and Linux they come as a download of their own, which the installer fetches and every update renews. A Mac has them inside the app. If one goes missing, **Settings > Info** fetches it again. To pack RAR archives the app uses WinRAR, or `rar` on Linux, when it is installed. The Windows build does not show PDF thumbnails yet.
 
 ### First sign-in
 

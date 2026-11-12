@@ -145,6 +145,12 @@ tags:
       itself on Windows and Linux, where the window has no frame. Moving the
       window and pulling its edges go to the system directly; these are the
       buttons.
+  - name: modules
+    description: |
+      The helper programs the desktop app brings itself: ffmpeg and ffprobe,
+      7-Zip and MuPDF's mutool. Each release carries them in a zip per
+      platform, and the app fetches the one of its own version when they are
+      missing.
   - name: office
     description: |
       Office files in OnlyOffice, Euro-Office or Collabora, as chosen in
@@ -6801,6 +6807,49 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
       tags: [window]
+  /modules:
+    get:
+      operationId: modulesGet
+      summary: Whether the app can fetch its helper programs, and how a fetch goes
+      responses:
+        "200":
+          description: The state of the helper programs.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModulesState"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app, or one that does not fetch them (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [modules]
+    post:
+      operationId: modulesFetch
+      summary: Fetch the helper programs of the app's version
+      description: |
+        The fetch runs in the background; GET /modules follows it. The
+        programs are on the PATH once it is done, and ffmpeg takes over after
+        a restart.
+      responses:
+        "202":
+          description: The fetch has started or was running already.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModulesState"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app, or one that does not fetch them (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [modules]
   /office/config:
     get:
       operationId: officeConfig
@@ -11257,6 +11306,26 @@ components:
       properties:
         maximised:
           type: boolean
+    ModulesState:
+      type: object
+      required: [offered, running, fraction, ready, failed]
+      properties:
+        offered:
+          type: boolean
+          description: The app can fetch its helper programs here.
+        running:
+          type: boolean
+        fraction:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: How far a fetch has come.
+        ready:
+          type: boolean
+          description: Programs came in since the app started.
+        failed:
+          type: boolean
+          description: The last fetch did not complete.
     OfficeConfig:
       type: object
       required: [kind, url]

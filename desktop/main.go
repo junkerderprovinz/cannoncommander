@@ -61,6 +61,9 @@ func run() error {
 	if *fileManager != "" {
 		return switchFileManager(*fileManager == "on")
 	}
+	if *installModules {
+		return refreshModules()
+	}
 	if *after > 0 {
 		waitGone(*after, 30*time.Second)
 	}
@@ -129,6 +132,12 @@ func run() error {
 			sh.machineFile = filepath.Join(machine, machineSettingsFile)
 		}
 	}
+	updateLog := openUpdateLog(filepath.Join(dir, "update.log"))
+	sh.up = newUpdater(updateLog)
+	if sh.helpers, err = newHelpers(updateLog, sh.up.u, installed); err != nil {
+		return err
+	}
+	sh.use()
 	key, err := newKey()
 	if err != nil {
 		return err
@@ -145,13 +154,14 @@ func run() error {
 
 	// A newer release is downloaded in the background and starts next time;
 	// see updates.go. The copy installed for all users leaves that to the
-	// installer's scheduled task and only passes on the news.
-	sh.up = newUpdater(openUpdateLog(filepath.Join(dir, "update.log")))
+	// installer's scheduled task and only passes on the news. The modules
+	// follow the program; see helpers.go.
 	if installed {
 		go sh.up.follow(ctx)
 	} else {
 		go sh.up.run(ctx, sh.AutoUpdate)
 	}
+	go sh.catchUp(ctx)
 
 	window = openWindow(app, state)
 	sh.followWindow(window)
@@ -192,6 +202,7 @@ type shell struct {
 	restart     atomic.Bool
 	volumes     volumeWatch
 	standby
+	*helpers
 }
 
 // AutoUpdate is off in a Flatpak, whose files only the software centre

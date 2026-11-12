@@ -107,6 +107,8 @@ export interface System {
 // ready is the version the desktop app has put in place for its next start.
 export interface UpdateCheck { version: string; latest: string; updateAvailable: boolean; releaseUrl?: string; ready?: string }
 export interface Imported { sections: string[]; notes: string[]; restartNeeded: boolean }
+// The desktop app's helper programs: whether it fetches them and how a fetch goes. ready means they work after a restart.
+export interface Modules { offered: boolean; running: boolean; fraction: number; ready: boolean; failed: boolean }
 
 type Wire<T, K extends keyof T> = Omit<T, K> & { [P in K]: string | null };
 type WireUser = Wire<User, 'last' | 'pwChanged'>;
@@ -164,6 +166,8 @@ export const admin = {
   remoteToken: (type: string, pasted: string) => write<{ token?: string; expiry?: string }>('POST', '/remotes/oauth', { type, token: pasted }),
   system: async (): Promise<System> => { const s = await get<Wire<System, 'started'>>('/system'); return { ...s, started: ms(s.started)! }; },
   checkUpdate: () => write<UpdateCheck>('POST', '/system/update'),
+  modules: () => get<Modules>('/modules'),
+  fetchModules: () => write<Modules>('POST', '/modules'),
   notifyUnraid: (subject: string, description: string) => write('POST', '/unraid/notify/test', { subject, description }),
 };
 

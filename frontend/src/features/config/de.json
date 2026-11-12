@@ -215,7 +215,7 @@
     "wantsSecret": "Der Server antwortet, will aber den JWT-Schlüssel", "unreachable": "Unter dieser Adresse antwortet kein Office-Server",
     "media": "Videos und Bilder", "thumbs": "Vorschaubilder", "thumbsTip": "Kleine Bilder für Fotos und Videos in der Vorschau. ffmpeg erzeugt sie im Hintergrund.",
     "video": "Videos im Browser abspielen", "videoTip": "Auch Formate wie MKV. ffmpeg wandelt sie dafür beim Abspielen um, das kostet Rechenzeit.", "ffmpegTip": "Ist im Container dabei.",
-    "ffmpegDesktopTip": "CannonCommander nimmt das ffmpeg, das auf deinem Rechner installiert ist. Ohne ffmpeg fehlen die Vorschaubilder für Videos.",
+    "ffmpegDesktopTip": "Ist in der App dabei.",
     "webdavRclone": "WebDAV und rclone", "webdav": "WebDAV-Server", "webdavTip": "Damit bindest du die Dateien als Laufwerk ein, etwa im Windows-Explorer oder in einer Handy-App. Es gelten dieselben Benutzer und Regeln.",
     "terminalCard": "Terminal", "terminal": "Terminal im Browser", "terminalTip": "Admins öffnen damit eine Shell im Ordner, den sie gerade ansehen, auch mit cmd oder bash in der Pfadzeile. Sie läuft im Container mit den Rechten von CannonCommander. Wer sie öffnet, kann auf dem Server alles tun, was CannonCommander darf.",
     "address": "Adresse", "rcloneTip": "Hängt die Fernziele ein. Das Programm ist im Container dabei.",
@@ -266,6 +266,8 @@
   "info": {
     "version": "Version", "versionHint": "Ein Klick auf eine Versionsnummer öffnet ihre Release-Seite.", "glimstoneTip": "Die Designsprache, in der CannonCommander gebaut ist",
     "rcloneTip": "Die Brücke zu den Fernzielen", "new": "Neu", "newN": "Neu · {n}", "current": "Aktuell",
+    "tools": "Hilfsprogramme", "toolsHint": "Sind im Container dabei.", "toolsDesktopHint": "Die App bringt sie mit und hält sie mit jedem Update aktuell. RAR-Archive packt WinRAR oder rar, wenn eines davon installiert ist.",
+    "ffmpegTip": "Vorschaubilder, Videos und Mediendetails", "sevenZipTip": "Packt 7z-Archive", "mupdfTip": "Zeigt PDF-Seiten und ihre Details", "fetching": "{n} % geladen", "fetched": "Zum Nutzen neu starten", "fetchFailed": "Die Hilfsprogramme ließen sich nicht laden. Versuch es bitte später noch einmal",
     "help": "Hilfe", "helpHint": "Für einen Fehlerbericht lädst du eine Datei mit den Einstellungen und dem Zustand der Aufgaben herunter, ohne Passwörter, Schlüssel und Zugangsdaten. Häng sie an ein Issue auf GitHub, dann sieht man, was auf deinem Server passiert ist.",
     "helpText": "Probleme, Wünsche oder Verbesserungsvorschläge? Mach gern ein Issue auf GitHub auf, oder schick eine E-Mail.",
     "mail": "E-Mail", "mailSubject": "CannonCommander Rückmeldung", "docs": "Handbuch", "open": "Öffnen", "bug": "Fehlerbericht", "download": "Herunterladen",
