@@ -18,8 +18,12 @@ permissions:
   contents: read
 
 jobs:
+  glimstone:
+    uses: junkerderprovinz/junkerderprovinz/.github/workflows/glimstone-current.yml@main
+
   # Before the long image build rather than after it.
   notes:
+    needs: glimstone
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
