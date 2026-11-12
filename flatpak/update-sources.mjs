@@ -20,6 +20,14 @@ import { tmpdir } from 'node:os'
 import { dirname, join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+// On Windows Go fetches a Windows toolchain into the list and the node
+// generator writes its paths with backslashes, and the build reads both on
+// Linux.
+if (process.platform === 'win32') {
+  console.error('run this on Linux, for example in a container: the lists it writes on Windows do not build')
+  process.exit(1)
+}
+
 const here = dirname(fileURLToPath(import.meta.url))
 const root = dirname(here)
 const proxy = 'https://proxy.golang.org'
