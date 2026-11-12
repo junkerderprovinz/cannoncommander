@@ -394,6 +394,19 @@ func TestATrashFolderThatIsALinkIsLeftAlone(t *testing.T) {
 	}
 }
 
+func TestDroppingThroughALinkedTrashFolderLeavesItsTargetAlone(t *testing.T) {
+	root, victim := t.TempDir(), t.TempDir()
+	file(t, filepath.Join(victim, "abc", "Dokumente.txt"), "privat")
+	linkDir(t, victim, filepath.Join(root, DirName))
+	s, _ := oldBin(t, root, "abc", "Dokumente.txt")
+	if err := s.Drop(context.Background(), nil, "abc"); err == nil {
+		t.Fatal("dropped through a link")
+	}
+	if _, err := os.Stat(filepath.Join(victim, "abc", "Dokumente.txt")); err != nil {
+		t.Fatal("the file behind the link went away")
+	}
+}
+
 func TestAHolderThatIsALinkIsLeftAlone(t *testing.T) {
 	root, victim := t.TempDir(), t.TempDir()
 	file(t, filepath.Join(victim, "Dokumente.txt"), "privat")

@@ -27,6 +27,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/labels"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/plainpath"
 )
 
 // DirName is the bin folder at the top of every share or volume. Moving
@@ -291,6 +292,11 @@ func (s *Store) Drop(ctx context.Context, run *jobs.Run, id string) error {
 	}
 	loc, err := s.fs.Resolve(path.Dir(it.Bin))
 	if err != nil {
+		return err
+	}
+	// Whoever can write the share can swap the bin folder for a link, and
+	// the removal would follow it.
+	if err := plainpath.Check(filepath.Dir(loc.Real)); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return err
 	}
 	if run != nil {
