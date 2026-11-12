@@ -32,10 +32,11 @@ const ChecksumsFile = "checksums.txt"
 
 // Assets names the zip of each platform desktop.yml builds, as release.yml
 // publishes it without the version in its name. Both Macs take the universal
-// bundle. Windows on ARM has none: the database needs a C compiler for the
-// target, and the runners bring none for it.
+// bundle. People download Windows as an installer, but the installed copy
+// updates from the zip, and copies already out there ask for it by this name.
 var Assets = map[string]string{
 	"windows/amd64": "cannoncommander-windows-amd64.zip",
+	"windows/arm64": "cannoncommander-windows-arm64.zip",
 	"darwin/amd64":  "cannoncommander-macos-universal.zip",
 	"darwin/arm64":  "cannoncommander-macos-universal.zip",
 	"linux/amd64":   "cannoncommander-linux-amd64.zip",

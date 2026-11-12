@@ -12,7 +12,7 @@ BUTTONS = {
     # The desktop app comes with every release from the first one on, under
     # these names without the version (.github/workflows/release.yml).
     "windows": RELEASE + "cannoncommander-windows-amd64-installer.exe",
-    "windows-portable": RELEASE + "cannoncommander-windows-amd64.zip",
+    "windows-arm": RELEASE + "cannoncommander-windows-arm64-installer.exe",
     "macos": RELEASE + "cannoncommander-macos-universal.zip",
     "linux": RELEASE + "cannoncommander-linux-amd64-installer",
     "linux-arm": RELEASE + "cannoncommander-linux-arm64-installer",

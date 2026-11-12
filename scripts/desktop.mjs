@@ -12,12 +12,12 @@
 // Info.plist, the icons) are written into desktop/build on every run and
 // ignored by git, so a build leaves the tree as it found it.
 //
-// The server keeps its data in SQLite through cgo, so every platform builds
-// with a C compiler: MinGW on Windows, clang on a Mac and gcc on Linux. The
-// Mac and Linux builds render PDF pages with MuPDF as the container does.
-// Windows goes without: with MuPDF linked in, MinGW's linker finds two
-// manifests it cannot merge, and the one it drops may be the window's, which
-// carries the DPI awareness.
+// The Mac and Linux builds link WebKit through cgo and render PDF pages with
+// MuPDF as the container does, so they need a C compiler: clang on a Mac and
+// gcc on Linux. Windows goes without MuPDF: with it linked in, MinGW's linker
+// finds two manifests it cannot merge, and the one it drops may be the
+// window's, which carries the DPI awareness. Nothing else there uses cgo, so
+// Windows builds without a C compiler, for x64 and ARM alike.
 
 import { execFileSync, spawnSync } from 'node:child_process'
 import { cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
@@ -75,12 +75,12 @@ function run(command, commandArgs, { cwd = desktop, env = {} } = {}) {
 }
 
 // The desktop tag compiles in the parts of the server that only the app has.
-function goBuild(out, { goos, goarch, tags, ldflags = '', env = {} }) {
+function goBuild(out, { goos, goarch, tags, cgo = '1', ldflags = '', env = {} }) {
   run('go', [
     'build', '-tags', `desktop,${tags}`, '-trimpath', '-buildvcs=false',
     '-ldflags', `-s -w ${ldflags} ${versionFlags}`,
     '-o', out, '.',
-  ], { env: { GOOS: goos, GOARCH: goarch, CGO_ENABLED: '1', ...env } })
+  ], { env: { GOOS: goos, GOARCH: goarch, CGO_ENABLED: cgo, ...env } })
 }
 
 // buildInstaller builds desktop/installer around the program at exe, into
@@ -158,7 +158,7 @@ if (process.platform === 'win32') {
   ])
   const exe = join(bin, 'CannonCommander.exe')
   try {
-    goBuild(exe, { goos: 'windows', goarch: arch, tags: 'production', ldflags: '-H windowsgui' })
+    goBuild(exe, { goos: 'windows', goarch: arch, tags: 'production', cgo: '0', ldflags: '-H windowsgui' })
   } finally {
     // Go links every .syso in the package, and one left behind would end up in
     // the next build for the other architecture.

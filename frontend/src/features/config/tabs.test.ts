@@ -112,7 +112,7 @@ describe('the settings', () => {
       await cardsOf('app');
       const links = [...document.querySelectorAll<HTMLAnchorElement>('.glim-readme-btn-unit a')].map((a) => a.getAttribute('href'));
       const at = 'https://github.com/junkerderprovinz/cannoncommander/releases/download/v1.2.0/cannoncommander-';
-      expect(links).toEqual(['windows-amd64-installer.exe', 'windows-amd64.zip', 'macos-universal.zip', 'linux-amd64-installer', 'linux-arm64-installer',
+      expect(links).toEqual(['windows-amd64-installer.exe', 'windows-arm64-installer.exe', 'macos-universal.zip', 'linux-amd64-installer', 'linux-arm64-installer',
         'linux-amd64.flatpak', 'linux-arm64.flatpak'].map((f) => at + f));
       const flatpak = [...document.querySelectorAll('.glim-readme-btn-unit')].find((u) => u.querySelector('.glim-readme-btn-name')?.textContent === 'Flatpak')!;
       expect([...flatpak.classList].sort()).toEqual(['glim-readme-btn-group', 'glim-readme-btn-unit', 'glim-tile-flatpak', 'group']);

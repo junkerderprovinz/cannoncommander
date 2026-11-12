@@ -82,10 +82,10 @@ jobs:
         run: |
           set -eu
           mkdir -p dist
-          for slug in windows-amd64 macos-universal linux-amd64 linux-arm64; do
+          for slug in windows-amd64 windows-arm64 macos-universal linux-amd64 linux-arm64; do
             cp "bundles/cannoncommander-${slug}.zip" "dist/cannoncommander-${slug}.zip"
           done
-          cp bundles/cannoncommander-windows-amd64-installer.exe dist/
+          cp bundles/cannoncommander-windows-amd64-installer.exe bundles/cannoncommander-windows-arm64-installer.exe dist/
           cp bundles/cannoncommander-linux-amd64-installer bundles/cannoncommander-linux-arm64-installer dist/
           cp bundles/cannoncommander-linux-amd64.flatpak bundles/cannoncommander-linux-arm64.flatpak dist/
           chmod +x dist/cannoncommander-linux-*-installer
