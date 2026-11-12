@@ -176,78 +176,76 @@ The folders, files and keys in these pictures are made up.
 
 <p><a id="5-how-it-compares" href="#5-how-it-compares"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/5-how-it-compares-dark.svg"><img src=".github/assets/sections/5-how-it-compares.svg" alt="5. How it compares" width="100%"></picture></a></p>
 
-CannonCommander started from the code of [FileBrowser Quantum](https://github.com/gtsteffaniak/filebrowser), which itself grew out of [File Browser](https://github.com/filebrowser/filebrowser). The rows and the values for the web file managers come from the [comparison chart in Quantum's README](https://github.com/gtsteffaniak/filebrowser#comparison-chart). The rows after the divider, and the Krusader and Windows Explorer columns (Windows 11 24H2), come from our own look at their documentation in November 2026.
+CannonCommander started from the code of [FileBrowser Quantum](https://github.com/gtsteffaniak/filebrowser), which itself grew out of [File Browser](https://github.com/filebrowser/filebrowser). The rows come from the [comparison chart in Quantum's README](https://github.com/gtsteffaniak/filebrowser#comparison-chart), the ones after the divider are our own. Every cell was checked against each tool's code and documentation on 12 November 2026: Quantum 2.0.2 and the 2.1 beta, File Browser 2.63.23 (its last release, the project was archived in September 2026), Filestash as of that day, Krusader 2.9.0 and Windows 11 24H2.
 
-✅ yes · ❌ no · 🟡 partly · 🚧 planned · ? not verified · n/a does not apply
+| | **CannonCommander** | [Quantum](https://github.com/gtsteffaniak/filebrowser) | [File Browser](https://github.com/filebrowser/filebrowser) | [Filestash](https://www.filestash.app) | [Krusader](https://krusader.org) | [Windows Explorer](https://support.microsoft.com/en-us/windows/file-explorer-in-windows-ef370130-1cca-9dc5-e0df-2f7416fe1cb1) |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Filesystem support | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Linux | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Windows | ✅ desktop app | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Mac | ✅ desktop app | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Self hostable | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Has stable release | ✅ | ✅ | ✅ final release, archived | ❌ rolling builds only | ✅ | ✅ |
+| S3 support | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| WebDAV support | ✅ | ✅ | ❌ | ✅ | ✅ | ⚠️ as a network drive |
+| FTP support | ✅ | ❌ | ❌ | ✅ | ✅ | ⚠️ as a network location |
+| Dedicated docs site | ❌ | ✅ | ❌ docs in the repository | ✅ | ✅ | ⚠️ support articles |
+| Multiple sources at once | ✅ | ✅ | ❌ | ⚠️ combined view is paid | ✅ | ✅ |
+| Docker image download | 107 MB (with ffmpeg, MuPDF, rclone and 7-Zip) | 63 MB (with ffmpeg) | 17 MB | 284 MB | desktop app | desktop app |
+| Min. memory requirements | 128 MB (small share) | 256 MB | 128 MB | 128 MB | desktop app | desktop app |
+| Has standalone binary | ⚠️ desktop app only | ✅ | ✅ | ⚠️ Linux only | ❌ | part of Windows |
+| Price | free | free | free | free tier | free | included with Windows |
+| Rich media preview | ✅ | ✅ | ✅ | ✅ | ⚠️ with KDE viewers | ✅ |
+| Upload files from the web | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Advanced search | ✅ | ✅ | ⚠️ type and case filters only | ⚠️ file names only | ✅ | ✅ |
+| Indexed search | ✅ | ✅ | ❌ | ⚠️ extra plugin | ⚠️ Locate index | ✅ |
+| Content-aware search | ✅ | ❌ | ❌ | ⚠️ extra plugin | ✅ | ✅ |
+| Custom job support | ❌ | ❌ | ⚠️ hook runner, off by default | ✅ | ✅ | ❌ |
+| Multiple users | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Single sign-on support | ✅ | ✅ | ⚠️ through an auth proxy | ⚠️ paid | ❌ | ❌ |
+| LDAP sign-on support | ❌ | ✅ | ❌ | ⚠️ paid | ❌ | ❌ |
+| Long-lived API key support | ✅ | ✅ | ❌ | ⚠️ session token only | ❌ | ❌ |
+| API documentation page | ⚠️ OpenAPI file, no page | ✅ | ❌ | ✅ | ❌ | ⚠️ Shell COM API |
+| Mobile app | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Open source | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Tags support | ✅ | ❌ | ❌ | ✅ | ⚠️ KDE tags in Properties | ⚠️ some file formats |
+| Shareable web links | ✅ | ✅ | ✅ | ✅ | ❌ | ⚠️ OneDrive files only |
+| Event-based notifications | ⚠️ when a job ends | ⚠️ when a transfer ends | ❌ | ✅ | ❌ | ❌ |
+| Metrics | ❌ | ❌ | ❌ | ⚠️ request graph only | ❌ | ❌ |
+| File space quotas | ❌ | ✅ 2.1 beta | ❌ | ⚠️ paid | ❌ | ⚠️ NTFS volume quotas |
+| Text-based files editor | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Office file support | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Office file previews | ✅ | ✅ | ❌ | ⚠️ through OnlyOffice or Collabora | ⚠️ ODF thumbnails | ⚠️ preview pane |
+| Themes | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ follows Windows light and dark |
+| Branding support | ❌ | ✅ | ✅ | ⚠️ name and CSS, logo is paid | ❌ | ❌ |
+| Activity log | ✅ | ✅ | ❌ | ⚠️ paid | ❌ | ❌ |
+| Comments support | ❌ | ❌ | ❌ | ⚠️ extra plugin | ⚠️ comment field in Properties | ⚠️ file details, some formats |
+| Trash support | ✅ | ❌ | ❌ | ⚠️ plugin on request | ✅ | ✅ |
+| Starred/pinned files | ⚠️ folders only | ✅ | ❌ | ⚠️ extra plugin | ⚠️ folder bookmarks | ✅ |
+| Chromecast support | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Share collections of files | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Can archive selected files | ✅ | ✅ | ⚠️ as a download only | ⚠️ as a download only | ✅ | ✅ |
+| Can browse archive files | ✅ | ❌ | ❌ | ⚠️ extra plugin | ✅ | ✅ |
+| Can convert documents | ❌ | ❌ | ❌ | ⚠️ extra plugin | ❌ | ❌ |
+| Can convert videos | ❌ | ❌ | ❌ | ⚠️ for playback only | ❌ | ❌ |
+| Can convert photos | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Commander features** | | | | | | |
+| Two-pane view | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Tabs | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Function-key bar, keyboard first | ✅ | ⚠️ shortcuts, no key bar | ⚠️ a few shortcuts | ⚠️ a few shortcuts | ✅ | ⚠️ shortcuts, no key bar |
+| Folder compare | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Synchronized browsing | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Batch rename with patterns | ✅ | ❌ | ❌ | ❌ | ⚠️ through KRename | ⚠️ numbered names, no patterns |
+| Create and verify checksums | ✅ | ⚠️ create only | ⚠️ create only | ❌ | ✅ | ❌ |
+| Quick look on the space bar | ✅ | ❌ | ❌ | ❌ | ⚠️ sidebar preview | ❌ |
+| Choosable list columns | ✅ | ⚠️ two extra columns in the 2.1 beta | ❌ | ❌ | ✅ | ✅ |
+| Thumbnail or gallery view | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Command search | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Duplicate finder | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Disk usage view | ✅ | ✅ | ⚠️ used space bar | ❌ | ✅ | ⚠️ drive bars only |
+| Unraid cache, array and share awareness | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
-| | CannonCommander | Quantum | Filebrowser | Filestash | Nextcloud | Google Drive | FileRun | Krusader | Windows Explorer |
-|---|---|---|---|---|---|---|---|---|---|
-| Filesystem support | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
-| Linux | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ |
-| Windows | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ✅ |
-| Mac | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | 🟡 | ❌ |
-| Self hostable | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | 🟡 | ❌ |
-| Has stable release | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| S3 support | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| WebDAV support | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | 🟡 |
-| FTP support | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | 🟡 |
-| Dedicated docs site | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 |
-| Multiple sources at once | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
-| Docker image size | 258 MB (with ffmpeg, MuPDF, rclone and 7-Zip) | 180 MB (with ffmpeg) | 31 MB | 240 MB (main image) | 250 MB | ❌ | > 2 GB | n/a | n/a |
-| Min. memory requirements | 128 MB (small share) | 512 MB | 128 MB | 128 MB (main image) | 512 MB | ❌ | 512 MB | n/a | n/a |
-| Has standalone binary | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ? | n/a |
-| Price | free | free | free | free | free tier | free tier | $99+ | free | included with Windows |
-| Rich media preview | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ |
-| Upload files from the web | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Advanced search | ✅ | ✅ | ❌ | ✅ | configurable | ✅ | ✅ | ✅ | ✅ |
-| Indexed search | ✅ | ✅ | ❌ | ✅ | configurable | ✅ | ✅ | 🟡 | ✅ |
-| Content-aware search | ✅ | ❌ | ❌ | ✅ | configurable | ✅ | ✅ | ✅ | ✅ |
-| Custom job support | ❌ | 🚧 | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ |
-| Multiple users | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Single sign-on support | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| LDAP sign-on support | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Long-lived API key support | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| API documentation page | 🟡 | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
-| Mobile app | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Open source | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ |
-| Tags support | ✅ | 🚧 | ❌ | ✅ | ✅ | ❌ | ✅ | ? | 🟡 |
-| Shareable web links | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
-| Event-based notifications | 🟡 | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Metrics | ❌ | 🚧 | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| File space quotas | ❌ | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ | 🟡 |
-| Text-based files editor | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Office file support | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Office file previews | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ? | 🟡 |
-| Themes | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🟡 |
-| Branding support | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Activity log | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
-| Comments support | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | 🟡 |
-| Trash support | ✅ | 🚧 | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Starred/pinned files | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | ✅ |
-| Chromecast support | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Share collections of files | ✅ | 🚧 | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Can archive selected files | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
-| Can browse archive files | ✅ | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ |
-| Can convert documents | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Can convert videos | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Can convert photos | ❌ | 🚧 | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **Commander features** | | | | | | | | | |
-| Two-pane view | ✅ | ❌ | ❌ | ? | ❌ | ❌ | ❌ | ✅ | ❌ |
-| Tabs | ✅ | ❌ | ❌ | ? | ❌ | ❌ | ❌ | ✅ | ✅ |
-| Function-key bar, keyboard first | ✅ | 🟡 | ? | 🟡 | ? | 🟡 | ❌ | ✅ | 🟡 |
-| Folder compare | ✅ | ❌ | ❌ | ? | ❌ | ❌ | ❌ | ✅ | ❌ |
-| Synchronized browsing | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| Batch rename with patterns | ✅ | ❌ | ❌ | ? | ? | ❌ | ❌ | ✅ | 🟡 |
-| Create and verify checksums | ✅ | 🟡 | 🟡 | ? | ? | ❌ | ? | ✅ | ❌ |
-| Quick look on the space bar | ✅ | ? | ? | ? | ? | 🟡 | ❌ | 🟡 | 🟡 |
-| Choosable list columns | ✅ | ? | ❌ | ? | ? | ? | ✅ | ✅ | ✅ |
-| Thumbnail or gallery view | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ? | ? | ✅ |
-| Command search | ✅ | ? | ❌ | ❌ | ❌ | ❌ | ❌ | ? | ❌ |
-| Duplicate finder | ✅ | ✅ | ❌ | ? | ? | ❌ | ? | ? | ❌ |
-| Disk usage view | ✅ | ✅ | ❌ | ? | 🟡 | 🟡 | ? | ✅ | 🟡 |
-| Unraid cache, array and share awareness | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-
-S3, FTP and the other remote protocols come through rclone. The API is described in OpenAPI files in the repository rather than on a page of the app, and notifications go to Unraid and the browser when a job ends.
+✅ yes · ⚠️ partly · ❌ no. Image sizes are the amd64 download from Docker Hub. "Extra plugin" means a Filestash plugin that is not in the main image, "paid" one of its paid plans. S3, FTP and the other remote protocols come through rclone in CannonCommander, and the app serves its API description at `/api/v1/openapi.yaml`.
 
 <br>
 
@@ -277,7 +275,7 @@ CannonCommander also runs as a program on Windows, macOS and Linux, with the sam
 
 The panels open in your home folder. On Windows every drive is a source, on a Mac your home folder and `/Volumes`, on Linux your home folder and whichever of `/media`, `/run/media` and `/mnt` exist. **Settings > Sources** changes that list. The configuration, the database and the log live in a `CannonCommander` folder in `%APPDATA%` on Windows, `~/Library/Application Support` on a Mac and `~/.config` on Linux.
 
-There is no sign-in. The app's server listens on 127.0.0.1 only and answers its own window and nothing else on the computer. So the settings leave out the account, users and access rules, and share links too, since they would point at 127.0.0.1. Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. You can switch that off under **Settings > Info**. Remote storage needs [rclone](https://rclone.org) on the computer, and on Windows [WinFsp](https://winfsp.dev) or on a Mac [macFUSE](https://osxfuse.github.io) for the mounts. The Mac and Linux builds show PDF pages as pictures, the Windows build does not yet.
+There is no sign-in. The app's server listens on 127.0.0.1 only and answers its own window and nothing else on the computer. So the settings leave out the account, users and access rules, and share links too, since they would point at 127.0.0.1. Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. You can switch that off under **Settings > Info**. Remote storage stays with the server, since the app has nothing to mount it with. The Mac and Linux builds show PDF pages as pictures, the Windows build does not yet.
 
 ### First sign-in
 
