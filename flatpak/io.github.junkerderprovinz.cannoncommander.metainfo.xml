@@ -80,6 +80,12 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="1.1.1" date="2026-11-12">
+      <description>
+        <p>The Unraid container shows the first admin password at the end of its log. The desktop app works as before.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.1.1</url>
+    </release>
     <release version="1.1.0" date="2026-11-12">
       <description>
         <p>The app brings ffmpeg, 7-Zip and MuPDF along and draws its own title bar. There is an OLED switch for a true black dark look and a calmer sign-in with the field names inside the fields.</p>
