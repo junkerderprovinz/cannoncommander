@@ -5,7 +5,7 @@
 # License: AGPL-3.0-only
 #
 # One Go server with the Vue interface embedded, plus the tools it calls for
-# media details, PDF pages, 7z archives and remote storage.
+# media details, PDF pages, 7z and rar archives and remote storage.
 
 ARG BUILDPLATFORM
 
@@ -42,7 +42,7 @@ LABEL org.opencontainers.image.title="cannoncommander" \
       org.opencontainers.image.licenses="AGPL-3.0-only"
 COPY --from=ffmpeg [ "/ffmpeg", "/ffprobe", "/usr/local/bin/" ]
 # tini reaps the rclone processes the server leaves behind if it dies.
-RUN apk --no-cache add ca-certificates mailcap tzdata curl setpriv 7zip tini
+RUN apk --no-cache add ca-certificates mailcap tzdata curl setpriv 7zip tini mupdf-tools
 # rclone mounts the remotes below /remotes, outside the /mnt the container
 # shares with the host, so they stay inside the container.
 RUN apk --no-cache add rclone fuse3 && mkdir /remotes && chown 99:100 /remotes
@@ -78,7 +78,7 @@ COPY --from=nbuild [ "/build/frontend/dist/", "./internal/web/dist/" ]
 # The art is checked out with whatever line endings the build machine uses.
 RUN tr -d '\r' < /usr/local/share/banner-raw.txt > /usr/local/share/banner.txt \
   && chmod 0755 ./entrypoint.sh ./print-banner.sh \
-  && ./cannoncommander version && ffmpeg -version > /dev/null && ffprobe -version > /dev/null && rclone version > /dev/null && 7zz i > /dev/null
+  && ./cannoncommander version && ffmpeg -version > /dev/null && ffprobe -version > /dev/null && rclone version > /dev/null && 7zz i > /dev/null && mutool -v 2> /dev/null
 VOLUME /config
 EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
