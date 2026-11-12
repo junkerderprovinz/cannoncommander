@@ -48,12 +48,14 @@ type PackOptions struct {
 // ErrNoProgram means a format needs a program that is not installed.
 var ErrNoProgram = errors.New("the program for this format is not installed")
 
-// SevenZip and RarProgram name the programs for 7z and rar. The x86-64
-// image carries rar, and CC_RAR points at another copy where there is none.
-var (
-	SevenZip   = program("CC_7ZZ", "7zz", "7z")
-	RarProgram = program("CC_RAR", "rar")
-)
+// RarProgram names the program for rar. The x86-64 image carries rar, and
+// CC_RAR points at another copy where there is none.
+var RarProgram = program("CC_RAR", "rar")
+
+// SevenZip names the program for 7z. It looks again on every call, since the
+// desktop app points CC_7ZZ at the 7-Zip it brings after this package has
+// started, and may fetch that 7-Zip while it runs.
+func SevenZip() string { return program("CC_7ZZ", "7zz", "7z") }
 
 // CanPack reports whether f can be written on this server.
 func CanPack(f Format) bool {
@@ -61,7 +63,7 @@ func CanPack(f Format) bool {
 	case Zip, TarGz, TarZst:
 		return true
 	case SevenZ:
-		_, err := exec.LookPath(SevenZip)
+		_, err := exec.LookPath(SevenZip())
 		return err == nil
 	case Rar:
 		_, err := exec.LookPath(RarProgram)
@@ -79,7 +81,7 @@ func Pack(ctx context.Context, out, base string, names []string, o PackOptions) 
 	}
 	switch o.Format {
 	case SevenZ:
-		return packTool(ctx, SevenZip, sevenArgs(out, names, o), base, o)
+		return packTool(ctx, SevenZip(), sevenArgs(out, names, o), base, o)
 	case Rar:
 		return packTool(ctx, RarProgram, rarArgs(out, names, o), base, o)
 	case Zip, TarGz, TarZst:

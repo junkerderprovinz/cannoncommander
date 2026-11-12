@@ -36,3 +36,11 @@ func TestFindTakesThePathAndThenTheInstalledPrograms(t *testing.T) {
 		t.Error("the program on the PATH is not found")
 	}
 }
+
+func TestSevenZipFollowsCC7ZZSetWhileRunning(t *testing.T) {
+	want := filepath.Join(t.TempDir(), "7za")
+	t.Setenv("CC_7ZZ", want)
+	if got := SevenZip(); got != want {
+		t.Errorf("SevenZip = %q, want %q from CC_7ZZ", got, want)
+	}
+}
