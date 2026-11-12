@@ -13,6 +13,7 @@ const (
 	SeeMaskNoCloseProcess = 0x40
 	SeeMaskNoAsync        = 0x100
 	SeeMaskFlagNoUI       = 0x400
+	seeMaskNoConsole      = 0x8000
 )
 
 // ExecuteInfo is SHELLEXECUTEINFOW in its 64 bit layout. Execute fills in
@@ -39,9 +40,11 @@ type ExecuteInfo struct {
 
 // Execute starts what info names the way Explorer does, from a thread in
 // the shell's apartment. The app's window owns any prompt it brings up,
-// such as the one for administrator rights.
+// such as the one for administrator rights. A console program gets a
+// window of its own rather than the desktop app's hidden console.
 func Execute(info *ExecuteInfo) error {
 	info.size = uint32(unsafe.Sizeof(*info))
+	info.Mask |= seeMaskNoConsole
 	return Apartment(func() error {
 		info.hwnd = Owner()
 		if ok, _, err := procShellExecuteEx.Call(uintptr(unsafe.Pointer(info))); ok == 0 {

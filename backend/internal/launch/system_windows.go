@@ -4,7 +4,6 @@ package launch
 
 import (
 	"path/filepath"
-	"runtime"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/winshell"
 	"golang.org/x/sys/windows"
@@ -27,16 +26,8 @@ func (shellSystem) open(file string) error {
 
 func (shellSystem) run(file string) error { return shellExecute(file, filepath.Dir(file)) }
 
-// shellExecute opens file with its default verb, as Explorer does. The shell
-// may hand the call to extensions that need a single-threaded apartment. A
-// warning it shows, such as for a file from a share, belongs to the app's
-// window, or it would open behind it.
+// shellExecute opens file with its default verb, as Explorer does.
 func shellExecute(file, dir string) error {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-	if err := windows.CoInitializeEx(0, windows.COINIT_APARTMENTTHREADED|windows.COINIT_DISABLE_OLE1DDE); err == nil || err == windows.Errno(windows.S_FALSE) {
-		defer windows.CoUninitialize()
-	}
 	f, err := windows.UTF16PtrFromString(file)
 	if err != nil {
 		return err
@@ -47,5 +38,5 @@ func shellExecute(file, dir string) error {
 			return err
 		}
 	}
-	return windows.ShellExecute(windows.Handle(winshell.Owner()), nil, f, nil, in, windows.SW_SHOWNORMAL)
+	return winshell.Execute(&winshell.ExecuteInfo{Mask: winshell.SeeMaskNoAsync, File: f, Dir: in, Show: windows.SW_SHOWNORMAL})
 }

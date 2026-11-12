@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"syscall"
 	"unicode/utf16"
 	"unsafe"
 
@@ -229,10 +230,12 @@ func (shell) runs(program string, info os.FileInfo) bool {
 }
 
 // run starts the program itself, so the file goes to it as its one
-// argument and no shell reads the command line.
+// argument and no shell reads the command line. A console program gets a
+// window of its own rather than the desktop app's hidden console.
 func (shell) run(program, file string) error {
 	cmd := exec.Command(program, file)
 	cmd.Dir = filepath.Dir(file)
+	cmd.SysProcAttr = &syscall.SysProcAttr{CreationFlags: windows.CREATE_NEW_CONSOLE}
 	if err := cmd.Start(); err != nil {
 		return err
 	}

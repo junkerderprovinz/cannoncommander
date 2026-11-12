@@ -57,6 +57,7 @@ const (
 	gcsVerbW         = 4
 
 	cmicMaskUnicode     = 0x4000
+	cmicMaskNoConsole   = 0x8000
 	cmicMaskShiftDown   = 0x10000000
 	cmicMaskPtInvoke    = 0x20000000
 	cmicMaskControlDown = 0x40000000
@@ -275,7 +276,9 @@ func (m *shown) invoke(owner windows.HWND, offset int, dir string, x, y int32) e
 		return err
 	}
 	info := invokeInfo{
-		mask: cmicMaskUnicode | cmicMaskPtInvoke,
+		// A console program from the menu gets a window of its own rather
+		// than the desktop app's hidden console.
+		mask: cmicMaskUnicode | cmicMaskNoConsole | cmicMaskPtInvoke,
 		hwnd: owner,
 		// A row is picked by its offset from the first command, passed where
 		// a verb's text would go.
