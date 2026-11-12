@@ -1,7 +1,7 @@
 /**
- * Renders the Community Applications icon from logo.svg, the logo alone as every
- * store shows it, and every other icon from cannoncommander-app.svg, the logo on
- * its white tile:
+ * Renders the Community Applications icon and the desktop app's icons from
+ * logo.svg, the logo alone as every store and taskbar shows it, and the web
+ * app's icons from cannoncommander-app.svg, the logo on its white tile:
  *
  *   .github/assets/icon.png                        512, the Community Applications icon
  *   frontend/public/icons/favicon.svg              the tile itself, for the browser tab
@@ -53,8 +53,8 @@ copyFileSync(SRC, join(icons, "favicon.svg"));
 console.log(`wrote ${join(icons, "favicon.svg")}`);
 for (const size of [192, 512]) emit(join(icons, `app-${size}.png`), render(tile, size));
 emit(join(icons, "apple-touch-icon.png"), render(tile, 180, "#ffffff"));
-emit(join(desktop, "build", "appicon.png"), render(tile, 1024));
-emit(join(desktop, "installer", "icon.png"), render(tile, 256));
+emit(join(desktop, "build", "appicon.png"), render(logo, 1024));
+emit(join(desktop, "installer", "icon.png"), render(logo, 256));
 
 // A mask keeps at least the circle of 40 % radius, so the whole tile goes into the square that circle holds.
 const S = 512, inner = Math.round(S * 0.8 / Math.SQRT2), at = (S - inner) / 2;
