@@ -2,6 +2,8 @@ module github.com/junkerderprovinz/cannoncommander/backend/build
 
 go 1.27.0
 
+toolchain go1.27.4
+
 require (
 	4d63.com/gocheckcompilerdirectives v1.4.0 // indirect
 	4d63.com/gochecknoglobals v0.2.2 // indirect
