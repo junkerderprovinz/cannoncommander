@@ -49,25 +49,25 @@ Two panels, F5 to copy, and an interface so polished you will catch yourself tid
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-server-dark.svg"><img src=".github/assets/sections/group-server.svg" alt="Server" width="100%"></picture>
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(0,0,841.9,245.3))" alt="In Unraid&#x27;s Community Applications soon" width="160" height="46.618">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(0,0,841.9,245.3))" alt="In Unraid&#x27;s Community Applications soon" width="160" height="46.618">
   &nbsp;
-  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(866,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
+  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(866,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(1732,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(1732,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
 </p>
 <br>
 <p align="center">
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-desktop-dark.svg"><img src=".github/assets/sections/group-desktop.svg" alt="Desktop" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(2598,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(3464,0,457.783,245.3))" alt="Download the portable Windows app" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(2598,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-arm64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(3464,0,457.783,245.3))" alt="Download for Windows on ARM" width="87" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(3946,0,841.9,245.3))" alt="Download for macOS" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(3946,0,841.9,245.3))" alt="Download for macOS" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(4812,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(5678,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(4812,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(5678,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(6160,0,841.9,245.3))" alt="Download the Flatpak" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(7026,0,457.783,245.3))" alt="Download the Flatpak for ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(6160,0,841.9,245.3))" alt="Download the Flatpak" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(7026,0,457.783,245.3))" alt="Download the Flatpak for ARM" width="87" height="46.618"></a>
 </p>
 <!-- /download-buttons -->
 
@@ -85,11 +85,11 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 
 <!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(7508,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(7508,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(8374,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(8374,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=ffbb71c058b5#svgView(viewBox(9240,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=9671432305e2#svgView(viewBox(9240,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
 <!-- /give-buttons -->
 
@@ -271,7 +271,7 @@ CannonCommander shows the folders below `/mnt/user`, the way Unraid lays out its
 
 ### Desktop app
 
-CannonCommander also runs as a program on Windows, macOS and Linux, with the same interface in a window of its own. Take the installer from the download buttons above, or the zip from the [releases page](https://github.com/junkerderprovinz/cannoncommander/releases/latest), which runs from any folder. On a Mac, unzip it and move CannonCommander into Applications. The app is not signed by Apple or Microsoft, so the first start may ask whether you trust it.
+CannonCommander also runs as a program on Windows, macOS and Linux, with the same interface in a window of its own. On Windows and Linux, take the installer from the download buttons above, for x64 or ARM. Linux also has a zip on the [releases page](https://github.com/junkerderprovinz/cannoncommander/releases/latest) that runs from any folder. On a Mac, unzip the download and move CannonCommander into Applications. The app is not signed by Apple or Microsoft, so the first start may ask whether you trust it.
 
 The panels open in your home folder. On Windows every drive is a source, on a Mac your home folder and `/Volumes`, on Linux your home folder and whichever of `/media`, `/run/media` and `/mnt` exist. **Settings > Sources** changes that list. The configuration, the database and the log live in a `CannonCommander` folder in `%APPDATA%` on Windows, `~/Library/Application Support` on a Mac and `~/.config` on Linux.
 
@@ -409,7 +409,7 @@ docker build -t cannoncommander -f _docker/Dockerfile .
 
 That builds the same image the releases use, with ffmpeg, MuPDF, rclone and 7-Zip inside. To work on the code, `make setup` installs the tools and `make run` starts the server with a test configuration. Without a server, `npm run dev:fixture` in `frontend/` runs the interface against made-up files. [CONTRIBUTING.md](CONTRIBUTING.md) explains the layout and the checks.
 
-The desktop app builds on the system it is for with `node scripts/desktop.mjs`, and `--installer` adds the installer on Windows and Linux. It needs the Wails CLI in the version `desktop/go.mod` names and a C compiler for SQLite: MinGW on Windows, the Xcode tools on a Mac, and on Linux gcc with the GTK 3 and WebKitGTK 4.1 headers.
+The desktop app builds on the system it is for with `node scripts/desktop.mjs`, and `--installer` adds the installer on Windows and Linux. It needs the Wails CLI in the version `desktop/go.mod` names. Windows needs nothing else and builds for ARM too with `--arch arm64`. A Mac needs the Xcode tools, and Linux gcc with the GTK 3 and WebKitGTK 4.1 headers.
 
 <br>
 

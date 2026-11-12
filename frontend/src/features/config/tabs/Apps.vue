@@ -24,7 +24,7 @@ const desktop = computed<Build[]>(() => {
   return [
     { brand: 'windows', svg: WINDOWS_SVG, markClass: 'glim-windows-mark', parts: [
       { name: 'Windows', sub: 'x64', href: at('windows-amd64-installer.exe') },
-      { name: 'Windows', sub: 'Portable', href: at('windows-amd64.zip') },
+      { name: 'Windows', sub: 'ARM64', href: at('windows-arm64-installer.exe') },
     ] },
     { brand: 'apple', svg: APPLE_SVG, parts: [{ name: 'macOS', sub: 'Universal', href: at('macos-universal.zip') }] },
     { brand: 'linux', svg: LINUX_SVG, parts: [
