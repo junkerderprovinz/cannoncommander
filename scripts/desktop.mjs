@@ -200,6 +200,7 @@ if (process.platform === 'win32') {
   // The helper programs, ffmpeg, 7-Zip and mutool, for each processor. The
   // bundle carries them, so an update of the bundle brings new ones along;
   // the app takes the set of its own processor (desktop/modules).
+  mkdirSync(join(app, 'Resources', 'modules'), { recursive: true })
   for (const a of ['amd64', 'arm64']) {
     const dir = join(app, 'Resources', 'modules', a)
     run('go', ['run', './modules/assemble', '-platform', `darwin/${a}`, '-release', stamp, '-dir', dir])
