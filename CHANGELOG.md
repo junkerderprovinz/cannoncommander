@@ -4,6 +4,14 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## v1.1.1 (2026-11-12)
+
+The first admin password is easy to find on Unraid again.
+
+## 🐛 Fixed
+
+- **The first admin password shows up at the end of the container log,** right below the READY line, and again on every start until you change it. It stood above the startup banner, and Unraid's log window, which shows only the last 90 lines, lost it as soon as the web interface was opened. Thanks to kfoxton for reporting it. ([#39](https://github.com/junkerderprovinz/cannoncommander/issues/39))
+
 ## v1.1.0 (2026-11-12)
 
 The desktop app brings its own helpers, draws its own title bar and keeps its console windows to itself.
