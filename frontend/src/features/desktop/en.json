@@ -17,5 +17,8 @@
   "explorerName": "As in Explorer",
   "explorerHow": "A click selects a file, a frame drawn with the mouse selects several. F5 refreshes, Backspace goes back and Alt+D jumps to the path bar.",
   "commanderName": "Like a commander",
-  "commanderHow": "A click moves the cursor, and Ctrl, Shift or Insert mark. F5 copies and F6 moves to the other panel."
+  "commanderHow": "A click moves the cursor, and Ctrl, Shift or Insert mark. F5 copies and F6 moves to the other panel.",
+  "minimise": "Minimise",
+  "maximise": "Maximise",
+  "restore": "Restore"
 }

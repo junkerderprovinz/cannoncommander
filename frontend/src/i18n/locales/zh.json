@@ -1582,7 +1582,10 @@
     "explorerName": "像资源管理器",
     "explorerHow": "单击选择一个文件，用鼠标拖出框可选择多个。F5 刷新，Backspace 返回，Alt+D 跳到路径栏。",
     "commanderName": "像 Commander",
-    "commanderHow": "单击移动光标，用 Ctrl、Shift 或 Insert 标记。F5 复制，F6 移动到另一个面板。"
+    "commanderHow": "单击移动光标，用 Ctrl、Shift 或 Insert 标记。F5 复制，F6 移动到另一个面板。",
+    "minimise": "最小化",
+    "maximise": "最大化",
+    "restore": "还原"
   },
   "diff": {
     "title": "比较文件",

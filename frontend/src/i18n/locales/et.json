@@ -1630,7 +1630,10 @@
     "explorerName": "Nagu Exploreris",
     "explorerHow": "Klõps valib faili, hiirega raam valib mitu. F5 värskendab, Backspace läheb tagasi ja Alt+D hüppab teeribale.",
     "commanderName": "Nagu Commander",
-    "commanderHow": "Klõps liigutab kursorit ja märgitakse Ctrl, Shift või Insert abil. F5 kopeerib ja F6 teisaldab teisele paneelile."
+    "commanderHow": "Klõps liigutab kursorit ja märgitakse Ctrl, Shift või Insert abil. F5 kopeerib ja F6 teisaldab teisele paneelile.",
+    "minimise": "Minimeeri",
+    "maximise": "Maksimeeri",
+    "restore": "Taasta"
   },
   "diff": {
     "title": "Võrdle faile",

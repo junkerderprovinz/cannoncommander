@@ -1678,7 +1678,10 @@
     "explorerName": "Kā pārlūkā Explorer",
     "explorerHow": "Klikšķis atlasa failu, ar peli novilkts rāmis atlasa vairākus. F5 atsvaidzina, Backspace iet atpakaļ, un Alt+D pārlec uz ceļa joslu.",
     "commanderName": "Kā Commander",
-    "commanderHow": "Klikšķis pārvieto kursoru, un atzīmē ar Ctrl, Shift vai Insert. F5 kopē, un F6 pārvieto uz otru paneli."
+    "commanderHow": "Klikšķis pārvieto kursoru, un atzīmē ar Ctrl, Shift vai Insert. F5 kopē, un F6 pārvieto uz otru paneli.",
+    "minimise": "Minimizēt",
+    "maximise": "Maksimizēt",
+    "restore": "Atjaunot"
   },
   "diff": {
     "title": "Salīdzināt failus",

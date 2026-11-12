@@ -1630,7 +1630,10 @@
     "explorerName": "Como no Explorador",
     "explorerHow": "Un clic selecciona un ficheiro, un marco co rato selecciona varios. F5 actualiza, Retroceso volve atrás e Alt+D salta á barra da ruta.",
     "commanderName": "Coma un Commander",
-    "commanderHow": "Un clic move o cursor e márcase con Ctrl, Maiús ou Insert. F5 copia e F6 move ao outro panel."
+    "commanderHow": "Un clic move o cursor e márcase con Ctrl, Maiús ou Insert. F5 copia e F6 move ao outro panel.",
+    "minimise": "Minimizar",
+    "maximise": "Maximizar",
+    "restore": "Restaurar"
   },
   "diff": {
     "title": "Comparar ficheiros",

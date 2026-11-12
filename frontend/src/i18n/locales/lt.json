@@ -1726,7 +1726,10 @@
     "explorerName": "Kaip naršyklėje",
     "explorerHow": "Spustelėjimas pasirenka failą, pele nubrėžtas rėmelis pasirenka kelis. F5 atnaujina, Backspace grįžta atgal, o Alt+D peršoka į kelio juostą.",
     "commanderName": "Kaip Commander",
-    "commanderHow": "Spustelėjimas perkelia žymeklį, o žymima Ctrl, Shift arba Insert. F5 kopijuoja, o F6 perkelia į kitą skydelį."
+    "commanderHow": "Spustelėjimas perkelia žymeklį, o žymima Ctrl, Shift arba Insert. F5 kopijuoja, o F6 perkelia į kitą skydelį.",
+    "minimise": "Sumažinti",
+    "maximise": "Padidinti",
+    "restore": "Atkurti"
   },
   "diff": {
     "title": "Lyginti failus",

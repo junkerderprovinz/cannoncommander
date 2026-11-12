@@ -1726,7 +1726,10 @@
     "explorerName": "Kot v Raziskovalcu",
     "explorerHow": "Klik izbere datoteko, okvir z miško jih izbere več. F5 osveži, Backspace gre nazaj, Alt+D pa skoči v vrstico s potjo.",
     "commanderName": "Kot Commander",
-    "commanderHow": "Klik premakne kazalko, označuje pa se s Ctrl, Shift ali Insert. F5 kopira, F6 pa premakne v drugo ploščo."
+    "commanderHow": "Klik premakne kazalko, označuje pa se s Ctrl, Shift ali Insert. F5 kopira, F6 pa premakne v drugo ploščo.",
+    "minimise": "Pomanjšaj",
+    "maximise": "Povečaj",
+    "restore": "Obnovi"
   },
   "diff": {
     "title": "Primerjaj datoteki",

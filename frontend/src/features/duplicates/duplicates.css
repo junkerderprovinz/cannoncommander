@@ -1,5 +1,5 @@
 
-.bk-dups { height: min(46rem, calc(100vh - 3rem)); }
+.bk-dups { height: min(46rem, calc(100vh - 3rem - var(--window-bar))); }
 .bk-dupwell { gap: .5rem; }
 .bk-dupwell .bk-list { gap: 1.1rem; padding-top: .3rem; }
 .bk-group { display: flex; flex-direction: column; gap: 1px; }

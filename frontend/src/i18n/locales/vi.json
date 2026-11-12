@@ -1582,7 +1582,10 @@
     "explorerName": "Giống Explorer",
     "explorerHow": "Một cú nhấp chọn một tệp, khung kéo bằng chuột chọn nhiều tệp. F5 làm mới, Backspace quay lại và Alt+D nhảy tới thanh đường dẫn.",
     "commanderName": "Giống Commander",
-    "commanderHow": "Nhấp để di chuyển con trỏ, đánh dấu bằng Ctrl, Shift hoặc Insert. F5 sao chép và F6 di chuyển sang bảng kia."
+    "commanderHow": "Nhấp để di chuyển con trỏ, đánh dấu bằng Ctrl, Shift hoặc Insert. F5 sao chép và F6 di chuyển sang bảng kia.",
+    "minimise": "Thu nhỏ",
+    "maximise": "Phóng to",
+    "restore": "Khôi phục"
   },
   "diff": {
     "title": "So sánh tệp",

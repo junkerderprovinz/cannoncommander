@@ -19,7 +19,7 @@ svg { display: block; }
 /* The pages keep the prototype's room at the bottom, so screenshots of both line up. The file view keeps the same
    margin at the bottom as at the top, and the F-key bar and the phone's bottom bar get a row only while they show,
    since an empty row would still bring its gap. */
-.app { height: 100vh; display: grid; grid-template-rows: auto 1fr auto; gap: var(--gut); padding: var(--gut) var(--gut) 4.75rem; }
+.app { height: calc(100vh - var(--window-bar)); display: grid; grid-template-rows: auto 1fr auto; gap: var(--gut); padding: var(--gut) var(--gut) 4.75rem; }
 #app { grid-template-rows: auto 1fr; padding-bottom: var(--gut); }
 
 /* Head row: one bar with the brand, the menus and the controls for the whole window. */

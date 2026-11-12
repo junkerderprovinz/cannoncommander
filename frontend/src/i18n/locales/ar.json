@@ -1822,7 +1822,10 @@
     "explorerName": "كما في المستكشف",
     "explorerHow": "نقرة واحدة تحدد ملفًا، وإطار بالفأرة يحدد عدة ملفات. F5 يحدّث، وBackspace يعود للخلف، وAlt+D ينتقل إلى شريط المسار.",
     "commanderName": "مثل Commander",
-    "commanderHow": "النقرة تحرك المؤشر، والتعليم بـ Ctrl أو Shift أو Insert. F5 ينسخ وF6 ينقل إلى اللوحة الأخرى."
+    "commanderHow": "النقرة تحرك المؤشر، والتعليم بـ Ctrl أو Shift أو Insert. F5 ينسخ وF6 ينقل إلى اللوحة الأخرى.",
+    "minimise": "تصغير",
+    "maximise": "تكبير",
+    "restore": "استعادة"
   },
   "diff": {
     "title": "مقارنة الملفات",

@@ -1678,7 +1678,10 @@
     "explorerName": "Као у Explorer-у",
     "explorerHow": "Клик бира датотеку, оквир мишем бира више њих. F5 освежава, Backspace иде назад, а Alt+D скаче у траку путање.",
     "commanderName": "Као Commander",
-    "commanderHow": "Клик помера курсор, а означава се са Ctrl, Shift или Insert. F5 копира, а F6 премешта у други панел."
+    "commanderHow": "Клик помера курсор, а означава се са Ctrl, Shift или Insert. F5 копира, а F6 премешта у други панел.",
+    "minimise": "Умањи",
+    "maximise": "Увећај",
+    "restore": "Врати"
   },
   "diff": {
     "title": "Упореди датотеке",

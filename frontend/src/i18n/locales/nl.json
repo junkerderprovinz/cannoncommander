@@ -1630,7 +1630,10 @@
     "explorerName": "Zoals in de Verkenner",
     "explorerHow": "Een klik selecteert een bestand, een kader met de muis selecteert er meerdere. F5 vernieuwt, Backspace gaat terug en Alt+D springt naar de padbalk.",
     "commanderName": "Zoals een Commander",
-    "commanderHow": "Een klik verplaatst de cursor en je markeert met Ctrl, Shift of Insert. F5 kopieert en F6 verplaatst naar het andere paneel."
+    "commanderHow": "Een klik verplaatst de cursor en je markeert met Ctrl, Shift of Insert. F5 kopieert en F6 verplaatst naar het andere paneel.",
+    "minimise": "Minimaliseren",
+    "maximise": "Maximaliseren",
+    "restore": "Vorige grootte"
   },
   "diff": {
     "title": "Bestanden vergelijken",

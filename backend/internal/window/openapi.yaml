@@ -1,0 +1,94 @@
+tag:
+  name: window
+  description: |
+    The desktop app's main window, for the title bar the interface draws
+    itself on Windows and Linux, where the window has no frame. Moving the
+    window and pulling its edges go to the system directly; these are the
+    buttons.
+paths:
+  /window:
+    get:
+      operationId: windowGet
+      summary: Whether the window fills the screen
+      responses:
+        "200":
+          description: The window's state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WindowState"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [window]
+    put:
+      operationId: windowSet
+      summary: Maximise the window or give it back its size
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WindowState"
+      responses:
+        "204":
+          description: The window is maximised or back at its size.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [window]
+  /window/minimise:
+    post:
+      operationId: windowMinimise
+      summary: Minimise the window
+      responses:
+        "204":
+          description: The window is minimised.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [window]
+  /window/close:
+    post:
+      operationId: windowClose
+      summary: Close the window as its own close button does
+      description: |
+        While the app stands in for the computer's file manager, the window
+        hides and the app waits in the tray; otherwise the app ends.
+      responses:
+        "204":
+          description: The window is closing.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Not the desktop app (desktopOnly).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+      tags: [window]
+components:
+  schemas:
+    WindowState:
+      type: object
+      required: [maximised]
+      properties:
+        maximised:
+          type: boolean

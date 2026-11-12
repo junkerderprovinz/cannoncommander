@@ -34,6 +34,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/trash"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/undo"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/unraid"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/window"
 )
 
 // NewRouter returns the router with every package registered. The order
@@ -61,6 +62,7 @@ func NewRouter(deps v1.Deps, auth v1.Authenticator) *v1.Router {
 	clipapi.Routes(r)
 	launch.Routes(r)
 	filemanager.Routes(r)
+	window.Routes(r)
 	office.Routes(r)
 	stream.Routes(r)
 	mcpapi.Routes(r)

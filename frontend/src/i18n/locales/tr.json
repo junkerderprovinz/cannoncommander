@@ -1630,7 +1630,10 @@
     "explorerName": "Explorer'daki gibi",
     "explorerHow": "Bir tıklama bir dosyayı, fareyle çizilen çerçeve birkaçını seçer. F5 yeniler, Backspace geri gider ve Alt+D yol çubuğuna atlar.",
     "commanderName": "Commander gibi",
-    "commanderHow": "Tıklama imleci taşır, işaretleme Ctrl, Shift veya Insert ile yapılır. F5 kopyalar, F6 diğer panele taşır."
+    "commanderHow": "Tıklama imleci taşır, işaretleme Ctrl, Shift veya Insert ile yapılır. F5 kopyalar, F6 diğer panele taşır.",
+    "minimise": "Simge durumuna küçült",
+    "maximise": "Ekranı kapla",
+    "restore": "Önceki boyut"
   },
   "diff": {
     "title": "Dosyaları karşılaştır",

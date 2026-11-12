@@ -1678,7 +1678,10 @@
     "explorerName": "Como no Explorador",
     "explorerHow": "Um clique seleciona um ficheiro, um quadro com o rato seleciona vários. F5 atualiza, Backspace volta atrás e Alt+D salta para a barra do caminho.",
     "commanderName": "Como um Commander",
-    "commanderHow": "Um clique move o cursor e marca-se com Ctrl, Shift ou Insert. F5 copia e F6 move para o outro painel."
+    "commanderHow": "Um clique move o cursor e marca-se com Ctrl, Shift ou Insert. F5 copia e F6 move para o outro painel.",
+    "minimise": "Minimizar",
+    "maximise": "Maximizar",
+    "restore": "Restaurar"
   },
   "diff": {
     "title": "Comparar ficheiros",

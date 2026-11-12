@@ -1630,7 +1630,10 @@
     "explorerName": "Som i Utforsker",
     "explorerHow": "Et klikk markerer en fil, en ramme med musen markerer flere. F5 oppdaterer, Backspace går tilbake og Alt+D hopper til stilinjen.",
     "commanderName": "Som en Commander",
-    "commanderHow": "Et klikk flytter markøren, og du markerer med Ctrl, Shift eller Insert. F5 kopierer og F6 flytter til det andre panelet."
+    "commanderHow": "Et klikk flytter markøren, og du markerer med Ctrl, Shift eller Insert. F5 kopierer og F6 flytter til det andre panelet.",
+    "minimise": "Minimer",
+    "maximise": "Maksimer",
+    "restore": "Gjenopprett"
   },
   "diff": {
     "title": "Sammenlign filer",

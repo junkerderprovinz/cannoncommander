@@ -1,5 +1,5 @@
 
-.bk-sync { height: min(48rem, calc(100vh - 3rem)); }
+.bk-sync { height: min(48rem, calc(100vh - 3rem - var(--window-bar))); }
 .bk-rows { display: contents; }
 .bk-sides { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: .75rem; align-items: center; margin-bottom: .2rem; }
 .bk-side { height: var(--btn-h); display: flex; align-items: center; padding: 0 .7rem; border-radius: var(--radius-control); background: var(--carbon-surface3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; direction: rtl; }

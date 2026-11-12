@@ -1582,7 +1582,10 @@
     "explorerName": "Seperti dalam Explorer",
     "explorerHow": "Satu klik memilih satu fail, bingkai dengan tetikus memilih beberapa. F5 menyegar semula, Backspace kembali dan Alt+D melompat ke bar laluan.",
     "commanderName": "Seperti Commander",
-    "commanderHow": "Klik mengalihkan kursor, dan tanda dibuat dengan Ctrl, Shift atau Insert. F5 menyalin dan F6 mengalihkan ke panel lain."
+    "commanderHow": "Klik mengalihkan kursor, dan tanda dibuat dengan Ctrl, Shift atau Insert. F5 menyalin dan F6 mengalihkan ke panel lain.",
+    "minimise": "Minimumkan",
+    "maximise": "Maksimumkan",
+    "restore": "Pulihkan"
   },
   "diff": {
     "title": "Bandingkan fail",

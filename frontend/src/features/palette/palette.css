@@ -1,5 +1,5 @@
-.pal-scrim { position: fixed; inset: 0; z-index: 55; }
-.pal { position: fixed; top: 4.5rem; left: 50%; translate: -50% 0; width: min(36rem, calc(100vw - 2rem)); max-height: calc(100vh - 6rem); padding: .35rem; display: flex; flex-direction: column; gap: .35rem; }
+.pal-scrim { position: fixed; inset: var(--window-bar) 0 0; z-index: 55; }
+.pal { position: fixed; top: calc(4.5rem + var(--window-bar)); left: 50%; translate: -50% 0; width: min(36rem, calc(100vw - 2rem)); max-height: calc(100vh - 6rem - var(--window-bar)); padding: .35rem; display: flex; flex-direction: column; gap: .35rem; }
 .pal-q { flex: none; }
 .pal-list { display: flex; flex-direction: column; overflow: auto; min-height: 0; max-height: 26rem; }
 .pal-list .head { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--carbon-text-muted); padding: .45rem .6rem .2rem; flex: none; }

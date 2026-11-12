@@ -1726,7 +1726,10 @@
     "explorerName": "Jako v Průzkumníku",
     "explorerHow": "Klik vybere soubor, rámeček myší vybere několik. F5 obnoví, Backspace jde zpět a Alt+D skočí do řádku s cestou.",
     "commanderName": "Jako Commander",
-    "commanderHow": "Klik posune kurzor a označuje se pomocí Ctrl, Shift nebo Insert. F5 kopíruje a F6 přesouvá do druhého panelu."
+    "commanderHow": "Klik posune kurzor a označuje se pomocí Ctrl, Shift nebo Insert. F5 kopíruje a F6 přesouvá do druhého panelu.",
+    "minimise": "Minimalizovat",
+    "maximise": "Maximalizovat",
+    "restore": "Obnovit"
   },
   "diff": {
     "title": "Porovnat soubory",
