@@ -49,6 +49,18 @@ RUN apk --no-cache add rclone fuse3 && mkdir /remotes && chown 99:100 /remotes
 # The terminal in the browser gets bash, and the terminfo of the xterm it
 # announces itself as.
 RUN apk --no-cache add bash ncurses-terminfo-base
+# RAR packs .rar archives. RARLAB builds it for x86-64 Linux alone, against
+# glibc, and asks that the package travel unchanged, licence included.
+ARG TARGETARCH
+ARG RAR_VERSION=723
+ARG RAR_SHA256=759b4b6aa0d9f77131882162951193f3a0e54bf60e1d8dc4255aa308accab588
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+      apk --no-cache add gcompat libstdc++ \
+      && curl -fsSLo /tmp/rar.tar.gz "https://www.rarlab.com/rar/rarlinux-x64-${RAR_VERSION}.tar.gz" \
+      && echo "${RAR_SHA256}  /tmp/rar.tar.gz" | sha256sum -c - \
+      && tar xzf /tmp/rar.tar.gz -C /opt && rm /tmp/rar.tar.gz \
+      && ln -s /opt/rar/rar /usr/local/bin/rar && rar -iver > /dev/null; \
+    fi
 # Unraid's own defaults: nobody:users, and files anyone on the network may change.
 ENV PUID=99 \
     PGID=100 \

@@ -48,9 +48,8 @@ type PackOptions struct {
 // ErrNoProgram means a format needs a program that is not installed.
 var ErrNoProgram = errors.New("the program for this format is not installed")
 
-// SevenZip and RarProgram name the programs for 7z and rar. rar is not
-// part of the image, its licence does not allow that, so an admin who
-// wants rar archives puts the program in place and sets CC_RAR.
+// SevenZip and RarProgram name the programs for 7z and rar. The x86-64
+// image carries rar, and CC_RAR points at another copy where there is none.
 var (
 	SevenZip   = program("CC_7ZZ", "7zz", "7z")
 	RarProgram = program("CC_RAR", "rar")
