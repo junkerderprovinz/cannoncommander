@@ -1,8 +1,8 @@
 # The same container as the Unraid template, for any Linux server with Docker.
 # It shows the folders below /mnt/user, the way Unraid lays out its shares. On
 # another server, keep your folders there or change the source in
-# appdata/config.yaml. Point PUID and PGID at the user who owns them. On first
-# start the container writes the password for the user admin into its log.
+# appdata/config.yaml. Point PUID and PGID at the user who owns them. It opens
+# without a sign-in until you set a password under Settings, Account & security.
 
 services:
   cannoncommander:
