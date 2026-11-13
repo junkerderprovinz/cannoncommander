@@ -248,4 +248,4 @@ func (g terminalGate) APIToken(r *http.Request) bool {
 	return ok
 }
 
-func (terminalGate) Open() bool { return settings.Config.Auth.Methods.NoAuth }
+func (terminalGate) Open() bool { return state.OpenAccess() }

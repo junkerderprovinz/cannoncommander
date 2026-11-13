@@ -28,7 +28,7 @@ export interface User {
   id: string; name: string; full: string; role: Role; scope: string; groups: string[];
   loginMethod: 'password' | 'oidc'; twofa: boolean; passkeys: number; last: number | null; pwChanged: number | null;
 }
-export interface Account extends User { recovery: number; lockPassword: boolean; token?: { name: string; rights: Token['rights'] } }
+export interface Account extends User { recovery: number; lockPassword: boolean; signIn: boolean; hasPassword: boolean; token?: { name: string; rights: Token['rights'] } }
 // revoke ends every session, API token and passkey of the user.
 export interface UserInput { name?: string; full?: string; role?: Role; scope?: string; groups?: string[]; password?: string; revoke?: boolean }
 export interface Group { name: string; note: string; members: string[] }
@@ -174,6 +174,7 @@ export const admin = {
 export const me = {
   account: async (): Promise<Account> => user(await get<Wire<Account, 'last' | 'pwChanged'>>('/me')),
   password: (current: string, next: string) => write<{ ended: number }>('PUT', '/me/password', { current, next }),
+  removePassword: (current: string) => write<{ ended: number }>('DELETE', '/me/password', { current }),
   sessions: async () => (await items<Wire<Session, 'created' | 'seen'>>('/me/sessions')).map(session),
   endSession: (id: string) => write('DELETE', `/me/sessions/${at(id)}`),
   tokens: async () => (await items<Wire<Token, 'created' | 'last' | 'expires'>>('/me/tokens')).map(token),

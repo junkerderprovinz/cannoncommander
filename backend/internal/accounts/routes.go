@@ -24,6 +24,7 @@ func Routes(r *v1.Router) {
 	h := handlers{db: d.DB, fs: d.FS, deps: d, svc: svc}
 	r.Handle("GET /me", h.getMe)
 	r.Handle("PUT /me/password", h.putPassword)
+	r.Handle("DELETE /me/password", h.deletePassword)
 	r.Handle("GET /me/sessions", s.list)
 	r.Handle("DELETE /me/sessions/{id}", s.end)
 	r.Handle("GET /me/tokens", h.listTokens)

@@ -187,3 +187,18 @@ func TestAFinishedPartFileKeepsTheLabelsOfTheFileItReplaces(t *testing.T) {
 		t.Fatal("an ordinary rename has to carry the label")
 	}
 }
+
+func TestDavLetsEveryoneInWhileNoAccountHasAPassword(t *testing.T) {
+	davEnv(t)
+	if err := state.DeleteUserByUsername("keeper"); err != nil {
+		t.Fatal(err)
+	}
+	admin := &users.User{FrontendUser: users.FrontendUser{Username: "admin", LoginMethod: users.LoginMethodPassword, Permissions: users.Permissions{Admin: true}}}
+	if err := state.CreateUser(admin, ""); err != nil {
+		t.Fatal(err)
+	}
+	id, err := davSignIn(httptest.NewRecorder(), httptest.NewRequest("PROPFIND", "/dav/", http.NoBody))
+	if err != nil || id.User == nil || id.User.Username != "admin" {
+		t.Fatalf("got %+v, %v", id, err)
+	}
+}

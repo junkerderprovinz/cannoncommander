@@ -16,7 +16,6 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/errors"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/utils"
-	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 type requestContext = Context
@@ -56,7 +55,7 @@ func resolveBearerTokenUser(rawToken string) (*users.User, error) {
 // Middleware to retrieve and authenticate user
 func withUserHelper(fn handleFunc) handleFunc {
 	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
-		if settings.Config.Auth.Methods.NoAuth {
+		if state.OpenAccess() {
 			userValue, err := state.ResolveNoAuthUser()
 			if err == nil {
 				data.User = &userValue

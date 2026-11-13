@@ -53,6 +53,9 @@ func (h handlers) checkCurrentPassword(u *users.User, password string) error {
 	if h.svc.passwordTries.blocked(key) {
 		return v1.Coded(http.StatusTooManyRequests, "tooManyTries", "too many wrong passwords, wait a few minutes")
 	}
+	if u.Password == "" {
+		return v1.Coded(http.StatusConflict, "ownPasswordFirst", "set your own password first")
+	}
 	if password == "" {
 		return v1.Coded(http.StatusBadRequest, "currentPasswordMissing", "the current password is missing")
 	}

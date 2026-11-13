@@ -184,6 +184,7 @@
     "codesOnce": "Diese acht Codes siehst du nur jetzt. Leg sie an einen sicheren Ort, etwa in deinen Passwortmanager.", "codesUse": "Fehlt einmal das Handy, meldet dich jeder Code genau einmal an.",
     "copyAll": "Alle kopieren", "kept": "Habe ich gesichert",
     "changePw": "Passwort ändern", "current": "Aktuelles Passwort", "newPw": "Neues Passwort", "newPwTip": "Mindestens 12 Zeichen. Ein neues Passwort meldet dich auf allen anderen Geräten ab, diese Sitzung bleibt angemeldet.",
+    "noPw": "Keins", "pwNoneTip": "Ohne Passwort öffnet CannonCommander für alle, die es erreichen, direkt in diesem Konto.", "setPw": "Passwort setzen", "pwSetDone": "Passwort gesetzt. Ab sofort fragt CannonCommander danach", "removePw": "Passwort entfernen", "removePwText": "Danach öffnet CannonCommander für alle, die es erreichen, ohne Anmeldung. Zwei-Faktor-Authentifizierung, Wiederherstellungscodes und Passkeys fallen ebenfalls weg.", "pwRemoved": "Passwort entfernt. CannonCommander öffnet ohne Anmeldung",
     "needCurrent": "Das aktuelle Passwort fehlt noch", "newShort": "Das neue Passwort braucht mindestens 12 Zeichen", "sameAsOld": "Das neue Passwort ist dasselbe wie das alte",
     "newDiffer": "Die beiden neuen Passwörter sind nicht gleich", "wrongCurrent": "Das aktuelle Passwort stimmt nicht",
     "pwChanged": "Passwort geändert", "pwChangedOthers": { "one": "Passwort geändert, ein anderes Gerät ist abgemeldet", "other": "Passwort geändert, {n} andere Geräte sind abgemeldet" },

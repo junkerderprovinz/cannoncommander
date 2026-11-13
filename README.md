@@ -279,9 +279,9 @@ There is no sign-in. The app's server listens on 127.0.0.1 only and answers its 
 
 The app brings its helper programs along: ffmpeg for thumbnails and videos, 7-Zip for 7z archives and MuPDF for PDF pages. On Windows and Linux they come as a download of their own, which the installer fetches and every update renews. A Mac has them inside the app. If one goes missing, **Settings > Info** fetches it again. To pack RAR archives the app uses WinRAR, or `rar` on Linux, when it is installed. The Windows build does not show PDF thumbnails yet.
 
-### First sign-in
+### First start
 
-Open port 8480 in a browser. On the first start the container writes a password for the user `admin` at the end of its log, right below the READY line, and shows it again on every start until you change it. On Unraid, click the container's icon and choose **Logs**. Sign in with it and pick a new password of at least 12 characters. After that you can add users under **Settings > Users & groups**.
+Open port 8480 in a browser. CannonCommander opens right away as the user `admin`, without a sign-in, so anyone who reaches the port can use it. When you want a sign-in, set a password of at least 12 characters under **Settings > Account & security**. From then on everyone signs in, and you can add more users under **Settings > Users & groups**. Removing the password there opens CannonCommander again, as long as no other account has one.
 
 <br>
 
@@ -386,7 +386,7 @@ A user who signs in for the first time is created on the spot. Members of `admin
 
 CannonCommander can read, change and delete everything you map into it, so it deserves the same care as the Unraid web interface.
 
-- **Sign-in.** Every visitor signs in. The first admin password comes from the log and has to be replaced at the first sign-in. Two-factor sign-in with an authenticator app, recovery codes and passkeys are under **Settings > Account & security**, and `enforcedOtp: true` under `auth.methods.password` in `config.yaml` asks everyone to set it up. After five wrong passwords for one name from one address, that address waits 15 minutes.
+- **Sign-in.** Without a password CannonCommander opens for everyone who reaches it. Once an account has a password or a passkey, every visitor signs in. Two-factor sign-in with an authenticator app, recovery codes and passkeys are under **Settings > Account & security**, and `enforcedOtp: true` under `auth.methods.password` in `config.yaml` asks everyone to set it up. After five wrong passwords for one name from one address, that address waits 15 minutes.
 - **Keep it on your network.** Reach it from outside only through a reverse proxy with https, or through a VPN such as WireGuard or Tailscale.
 - **The data folder is locked.** The database and `config.yaml` in `/config` cannot be opened through the file manager, not even by an admin, even when `/config` lies inside a share you mapped.
 - **Users and rules.** Admins see everything. Everyone else stays inside an area of their own, and access rules hide a folder in it or make it read only, for one user or a whole group. The rules apply to the interface, WebDAV, share links and API tokens alike, and disk shares such as `/mnt/disk1` are for admins only.

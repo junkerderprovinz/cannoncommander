@@ -6,6 +6,7 @@ import { disconnect } from '@/api/sse';
 import { action } from '@/core/actions';
 import { host } from '@/core/host';
 import { addMessages, t, tl } from '@/i18n';
+import { useUser } from '@/stores/user';
 import de from './de.json';
 import en from './en.json';
 import './signin.css';
@@ -33,8 +34,8 @@ export function installSignOut() {
   onSignedOut(() => { session.out = true; });
   action('logout', {
     label: tl('signin.logout'), g: 'IconSignOut',
-    // The desktop app signs nobody in.
-    when: () => !host.desktop,
+    // The desktop app signs nobody in, and neither does a server where nobody has a password yet.
+    when: () => !host.desktop && useUser().me.signIn === true,
     run: async () => {
       await auth.logout().catch(() => {});
       disconnect();

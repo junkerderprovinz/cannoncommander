@@ -33,7 +33,7 @@ func mountDAV(router *http.ServeMux, deps v1.Deps) {
 // cookie and the other ways into /api/v1 do not count here, or any page could
 // drive the server through the browser of someone signed in.
 func davSignIn(w http.ResponseWriter, r *http.Request) (dav.Identity, error) {
-	if settings.Config.Auth.Methods.NoAuth {
+	if state.OpenAccess() {
 		u, err := state.ResolveNoAuthUser()
 		if err != nil {
 			return dav.Identity{}, err

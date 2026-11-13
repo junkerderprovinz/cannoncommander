@@ -129,6 +129,9 @@ func (h handlers) createUser(w http.ResponseWriter, r *http.Request) error {
 	if err := v1.DecodeJSON(r, &in); err != nil {
 		return err
 	}
+	if err := passwordFirst(); err != nil {
+		return err
+	}
 	name := strings.TrimSpace(deref(in.Name))
 	if err := checkLoginName(name); err != nil {
 		return err
@@ -265,6 +268,9 @@ func (h handlers) updateUser(w http.ResponseWriter, r *http.Request) error {
 	if in.Password != nil {
 		if self {
 			return v1.Coded(http.StatusBadRequest, "ownPasswordElsewhere", "change your own password under account and security")
+		}
+		if err := passwordFirst(); err != nil {
+			return err
 		}
 		if u.LoginMethod != users.LoginMethodPassword {
 			return v1.Coded(http.StatusConflict, "userPasswordElsewhere", "this user signs in through "+string(u.LoginMethod)+", the password is kept there").With("method", string(u.LoginMethod))

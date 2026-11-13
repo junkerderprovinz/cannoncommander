@@ -70,6 +70,7 @@ func initialize(dbPath string) (bool, error) {
 			return existingDb, fmt.Errorf("failed to run initial setup: %w", err)
 		}
 	}
+	recountSignIns()
 
 	logger.Debugf("Loading index data into memory...")
 
@@ -165,6 +166,7 @@ func Close() error {
 
 	users.SetUsernameToID(nil)
 	clearUserRecordCache()
+	nobodySignsIn.Store(false)
 	StopActivityRecorder()
 
 	var err error

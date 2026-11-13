@@ -180,6 +180,7 @@
     "codesOnce": "You only see these eight codes now. Keep them somewhere safe, in your password manager for example.", "codesUse": "If your phone is ever missing, each code signs you in exactly once.",
     "copyAll": "Copy all", "kept": "I've saved them",
     "changePw": "Change password", "current": "Current password", "newPw": "New password", "newPwTip": "At least 12 characters. A new password signs you out on every other device, this session stays signed in.",
+    "noPw": "None", "pwNoneTip": "Without a password CannonCommander opens for anyone who reaches it, straight into this account.", "setPw": "Set a password", "pwSetDone": "Password set. From here on CannonCommander asks for it", "removePw": "Remove password", "removePwText": "After this CannonCommander opens for anyone who reaches it, without signing in. Two-factor authentication, recovery codes and passkeys go as well.", "pwRemoved": "Password removed. CannonCommander opens without signing in",
     "needCurrent": "The current password is still missing", "newShort": "The new password needs at least 12 characters", "sameAsOld": "The new password is the same as the old one",
     "newDiffer": "The two new passwords aren't the same", "wrongCurrent": "The current password isn't right",
     "pwChanged": "Password changed", "pwChangedOthers": { "one": "Password changed, one other device is signed out", "other": "Password changed, {n} other devices are signed out" },

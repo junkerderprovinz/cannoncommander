@@ -15,6 +15,7 @@ import (
 
 	"github.com/gtsteffaniak/go-cache/cache"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/users"
+	"github.com/junkerderprovinz/cannoncommander/backend/internal/state"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing/iteminfo"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 	"golang.org/x/time/rate"
@@ -233,7 +234,7 @@ func authRateLimitActive() bool {
 	if settings.Config.Http.DisableRateLimit {
 		return false
 	}
-	if settings.Config.Auth.Methods.NoAuth {
+	if state.OpenAccess() {
 		return false
 	}
 	return true

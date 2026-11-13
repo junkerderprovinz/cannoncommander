@@ -50,8 +50,9 @@ export interface FsText { text: string; encoding?: string }
 export interface SearchHit extends FsItem { at: string }
 export interface SearchResult { path: string; items: SearchHit[]; total: number; more?: boolean; scanned: number; pending?: number; unknown?: string[]; indexed: boolean }
 export interface WatchRequest { clientId: string; paths: string[] }
-// home is the folder the file manager opens when no start folder was picked.
-export interface Me { name: string; full: string; role: string; home?: string }
+// home is the folder the file manager opens when no start folder was picked. signIn is false while the server opens for
+// everyone, because no account has a password yet.
+export interface Me { name: string; full: string; role: string; home?: string; signIn?: boolean }
 export interface Bookmark { name: string; path: string; g: string }
 // code and params name the sentence in detail, for the interface to say it in its own language.
 export interface Problem { type: string; title: string; status: number; detail?: string; code?: string; params?: Record<string, unknown> }

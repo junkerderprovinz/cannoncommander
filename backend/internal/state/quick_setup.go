@@ -51,19 +51,15 @@ func QuickSetup() error {
 
 	logger.Debugf("Creating user as admin: %v", user.Username)
 
-	plainPassword, generated, err := bootstrapDefaultAdminPassword(user.Username)
-	if err != nil {
-		return err
+	// Without a configured password the admin has none, and the instance
+	// stays open until someone sets one in the settings.
+	if plain := configuredAdminPassword(); plain != "" {
+		hashedPassword, err := utils.HashPwd(plain)
+		if err != nil {
+			return fmt.Errorf("failed to hash admin password: %w", err)
+		}
+		user.Password = hashedPassword
 	}
-	if generated {
-		user.RequirePasswordChange = true
-	}
-
-	hashedPassword, hashErr := utils.HashPwd(plainPassword)
-	if hashErr != nil {
-		return fmt.Errorf("failed to hash admin password: %w", hashErr)
-	}
-	user.Password = hashedPassword
 
 	nid, err := utils.RandomUint64ID()
 	if err != nil {
@@ -73,11 +69,6 @@ func QuickSetup() error {
 
 	if err := sqlDb.CreateUser(user); err != nil {
 		return fmt.Errorf("failed to create admin user: %w", err)
-	}
-	if generated {
-		if err := keepFirstAdminPassword(plainPassword); err != nil {
-			return fmt.Errorf("failed to keep the generated admin password: %w", err)
-		}
 	}
 	logger.Debug("quickSetup created admin user",
 		"username", user.Username,

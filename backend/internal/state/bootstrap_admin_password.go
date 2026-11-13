@@ -1,82 +1,30 @@
 package state
 
 import (
-	"crypto/rand"
-	"fmt"
-	"math/big"
 	"os"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
-// bootstrapDefaultAdminPassword returns the plaintext password for initial admin creation.
-// Uses auth.methods.password.adminPassword (backfilled from auth.adminPassword when unset).
-// When config adminPassword is blank or "admin", a random speakable password is generated and logged once.
-func bootstrapDefaultAdminPassword(username string) (plaintext string, generated bool, err error) {
+// configuredAdminPassword returns the admin password set in the config, or ""
+// when it is blank or the placeholder "admin", so the first admin starts
+// without one.
+func configuredAdminPassword() string {
 	cfg := settings.PasswordAdminPassword()
-	if cfg != "" && cfg != "admin" {
-		return cfg, false, nil
+	if cfg == "admin" {
+		return ""
 	}
-
-	plaintext, err = generateSpeakableBootstrapPassword()
-	if err != nil {
-		return "", false, fmt.Errorf("generate bootstrap admin password: %w", err)
-	}
-	logger.Infof(
-		"Generated initial admin password for user %q (set auth.methods.password.adminPassword in config to override): %s",
-		username,
-		plaintext,
-	)
-	return plaintext, true, nil
+	return cfg
 }
 
-// firstAdminPasswordFile keeps a generated admin password until the admin
-// changes it. The container prints it below the startup banner, because the
-// log line above scrolls out of Unraid's 90-line log window with the first
-// page load.
+// firstAdminPasswordFile may hold a generated password of the first admin,
+// which the container prints below its startup banner until the admin
+// changes it.
 var firstAdminPasswordFile string
-
-func keepFirstAdminPassword(plaintext string) error {
-	return os.WriteFile(firstAdminPasswordFile, []byte(plaintext+"\n"), 0o600)
-}
 
 func forgetFirstAdminPassword() {
 	if err := os.Remove(firstAdminPasswordFile); err != nil && !os.IsNotExist(err) {
 		logger.Warningf("could not remove %s: %v", firstAdminPasswordFile, err)
 	}
-}
-
-func generateSpeakableBootstrapPassword() (string, error) {
-	if len(bootstrapWords) == 0 {
-		return "", fmt.Errorf("bootstrap word list is empty")
-	}
-	wordIdx, err := rand.Int(rand.Reader, big.NewInt(int64(len(bootstrapWords))))
-	if err != nil {
-		return "", err
-	}
-	word := bootstrapWords[wordIdx.Int64()]
-
-	primary, err := randomSpeakableCode(bootstrapSpeakablePrimaryCodeLen)
-	if err != nil {
-		return "", err
-	}
-	secondary, err := randomSpeakableCode(bootstrapSpeakableSecondaryCodeLen)
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("%s-%s-%s", word, string(primary), string(secondary)), nil
-}
-
-func randomSpeakableCode(n int) ([]byte, error) {
-	codeRunes := make([]byte, n)
-	charsetLen := big.NewInt(int64(len(bootstrapSpeakableCharset)))
-	for i := range codeRunes {
-		idx, err := rand.Int(rand.Reader, charsetLen)
-		if err != nil {
-			return nil, err
-		}
-		codeRunes[i] = bootstrapSpeakableCharset[idx.Int64()]
-	}
-	return codeRunes, nil
 }

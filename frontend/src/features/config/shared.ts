@@ -1,10 +1,11 @@
 // Shared pieces for the settings and admin tabs: relative times, the warning shake, copying, confirmations and keys
 // that a popover or a recording row must see before the app's keyboard service does.
+import { ApiError } from '@/api/client';
 import { DAY, now } from '@/core/format';
 import { type Prefs, prefs, setPref } from '@/core/prefs';
 import { toast } from '@/core/toast';
 import { cancelBtn, type FootButton, win, type WinEntry } from '@/core/windows';
-import { plural, t } from '@/i18n';
+import { plural, serverText, t } from '@/i18n';
 import ConfirmBody from '@/ui/ConfirmBody.vue';
 import { shake } from '@/ui/kit';
 
@@ -39,9 +40,12 @@ export function fail(text: string, el?: Element | null): void {
   shake(el);
 }
 
-// A save the server may refuse. On a refusal the note shows and the field shakes, and the window stays for another
-// try, so the caller only goes on with a result.
-export const attempt = <T>(p: Promise<T>, el?: Element | null) => p.then((value) => ({ value }), () => { fail(c('notSaved'), el); return null; });
+// A save the server may refuse. On a refusal the server's reason or a plain note shows and the field shakes, and the
+// window stays for another try, so the caller only goes on with a result.
+export const attempt = <T>(p: Promise<T>, el?: Element | null) => p.then((value) => ({ value }), (e: unknown) => {
+  fail((e instanceof ApiError && serverText(e.problem?.code, e.problem?.params)) || c('notSaved'), el);
+  return null;
+});
 
 // When something planned comes, as in 12 Min.
 export function soon(at: number) {

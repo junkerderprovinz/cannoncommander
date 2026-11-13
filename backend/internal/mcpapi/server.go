@@ -137,7 +137,7 @@ func newServer(d v1.Deps) *Server {
 			return &u, nil
 		},
 		pepper:     func() []byte { return []byte(settings.Config.Auth.Key) },
-		signIn:     func() bool { return !settings.Config.Auth.Methods.NoAuth },
+		signIn:     func() bool { return !state.OpenAccess() },
 		now:        time.Now,
 		calls:      newWindow(time.Minute, callsPerMinute),
 		writes:     newWindow(time.Hour, itemsPerHour),

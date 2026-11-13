@@ -19,19 +19,20 @@ paths:
   /me/password:
     put:
       operationId: mePassword
-      summary: Change the own password, which ends the other sessions
+      summary: Set or change the own password, which ends the other sessions
       description: |
-        Needs the current password. Every other session of the account is
-        logged out, this one stays. API tokens keep working. Not possible
-        with an API token. Five wrong current passwords block the change
-        for 15 minutes.
+        Needs the current password, unless the account has none yet. Every
+        other session of the account is logged out, this one stays, and the
+        first password signs this browser in. API tokens keep working. Not
+        possible with an API token. Five wrong current passwords block the
+        change for 15 minutes.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [current, next]
+              required: [next]
               properties:
                 current:
                   type: string
@@ -58,6 +59,43 @@ paths:
           description: The current password is wrong, the password is locked, or the request came with an API token.
         "409":
           description: The account signs in somewhere else, such as OIDC.
+        "429":
+          description: Too many wrong passwords.
+    delete:
+      operationId: mePasswordRemove
+      summary: Remove the own password, so the server opens without a sign in
+      description: |
+        Needs the current password. Takes the second factor, the recovery
+        codes and the passkeys with it and ends every session. Refused while
+        another account here still signs in, which would then decide alone.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current]
+              properties:
+                current:
+                  type: string
+      responses:
+        "200":
+          description: Removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ended]
+                properties:
+                  ended:
+                    type: integer
+                    description: How many sessions were logged out.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: The current password is wrong, the password is locked, or the request came with an API token.
+        "409":
+          description: Another account still signs in here, the account signs in somewhere else, or it has no password.
         "429":
           description: Too many wrong passwords.
   /me/sessions:
@@ -1252,8 +1290,14 @@ components:
       allOf:
         - $ref: "#/components/schemas/Account"
         - type: object
-          required: [home, recovery, lockPassword]
+          required: [home, recovery, lockPassword, signIn, hasPassword]
           properties:
+            signIn:
+              type: boolean
+              description: Whether this server asks anyone to sign in. Without a password or passkey on any account it opens for everyone as the admin.
+            hasPassword:
+              type: boolean
+              description: Whether the account has a password.
             home:
               type: string
               description: The folder the file manager opens when the user picked no start folder, the user shares or the first other source the user may open.

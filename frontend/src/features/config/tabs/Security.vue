@@ -45,10 +45,15 @@ const noPasskey = computed(() => {
 });
 // Some accounts sign in elsewhere or have their password kept by the admin, and then it is not changed here.
 const ownPassword = computed(() => !!acc.value && acc.value.loginMethod === 'password' && !acc.value.lockPassword);
+const noPw = computed(() => ownPassword.value && !acc.value?.hasPassword);
+// While nobody signs in, second factors, passkeys, sessions and tokens have nothing to guard.
+const signIn = computed(() => !acc.value || acc.value.signIn);
 // New tokens and passkeys ask for the password of an account that has one, even one only the admin may change.
 const proof = () => acc.value?.loginMethod !== 'oidc';
 
 const password = () => win({ title: c('security.changePw'), body: PasswordWin, props: { done: load } });
+const firstPassword = () => win({ title: c('security.setPw'), body: PasswordWin, props: { mode: 'first', done: load } });
+const removePassword = () => win({ title: c('security.removePw'), body: PasswordWin, props: { mode: 'remove', done: load } });
 const totpOn = () => win({ title: c('security.totpSetup'), wide: true, body: TotpWin, props: { done: load } });
 const totpOff = () => win({ title: c('security.totpOff'), body: CodeWin, props: { verb: c('security.turnOff'), glyph: 'IconShieldOff', submit: async (code: string) => { await me.totpOff(code); await load(); toast(c('security.totpIsOff')); } } });
 const newCodes = () => win({ title: c('security.newCodes'), body: CodeWin, props: { verb: c('security.regenerate'), glyph: 'IconRefresh', submit: async (code: string) => {
@@ -82,17 +87,18 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
 
 <template>
   <Card :title="c('security.signIn')">
-    <FieldRow :label="c('users.password')" :hint="ownPassword || !acc ? c('security.pwTip') : c('security.pwLocked')"><Pill>{{ acc?.pwChanged ? c('security.changedAgo', { ago: ago(acc.pwChanged) }) : c('users.pwSet') }}</Pill><Button v-if="ownPassword" data-pw :label="c('security.change')" label-key="IconKey" @click="password" /></FieldRow>
-    <FieldRow :label="c('security.stay')" :hint="c('security.stayTip')"><Selector id="a-stay" v-model="P.stayDays" :items="segItems([[1, c('security.day1')], [7, cn(7, 'general.days')], [30, cn(30, 'general.days')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
+    <FieldRow v-if="noPw" :label="c('users.password')" :hint="c('security.pwNoneTip')"><Pill tone="warn">{{ c('security.noPw') }}</Pill><Button data-pwset :label="c('security.setPw')" label-key="IconKey" @click="firstPassword" /></FieldRow>
+    <FieldRow v-else :label="c('users.password')" :hint="ownPassword || !acc ? c('security.pwTip') : c('security.pwLocked')"><Pill>{{ acc?.pwChanged ? c('security.changedAgo', { ago: ago(acc.pwChanged) }) : c('users.pwSet') }}</Pill><Button v-if="ownPassword" data-pw :label="c('security.change')" label-key="IconKey" @click="password" /><Button v-if="ownPassword" data-pwrm :label="c('remove')" label-key="IconTrash" @click="removePassword" /></FieldRow>
+    <FieldRow v-if="signIn" :label="c('security.stay')" :hint="c('security.stayTip')"><Selector id="a-stay" v-model="P.stayDays" :items="segItems([[1, c('security.day1')], [7, cn(7, 'general.days')], [30, cn(30, 'general.days')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </Card>
-  <Card :title="c('security.twofa')">
+  <Card v-if="signIn" :title="c('security.twofa')">
     <template v-if="acc?.twofa">
       <FieldRow :label="c('security.status')" :hint="c('security.onTip')"><Pill tone="ok">{{ c('security.on') }}</Pill><Button data-2off :label="c('security.turnOff')" label-key="IconShieldOff" @click="totpOff" /></FieldRow>
       <FieldRow :label="c('security.codes')" :hint="c('security.codesTip')"><Pill :tone="acc.recovery < 3 ? 'warn' : 'neutral'">{{ cn(acc.recovery, 'security.codesLeft') }}</Pill><Button data-2codes :label="c('security.regenerate')" label-key="IconRefresh" @click="newCodes" /></FieldRow>
     </template>
     <FieldRow v-else :label="c('security.status')" :hint="c('security.offTip')"><Pill tone="state">{{ c('security.off') }}</Pill><Button data-2on :label="c('security.setUp')" label-key="IconShieldOn" @click="totpOn" /></FieldRow>
   </Card>
-  <Card :title="c('security.passkeys')">
+  <Card v-if="signIn" :title="c('security.passkeys')">
     <div v-if="passkeys.length" class="a-list">
       <ListRow v-for="p in passkeys" :key="p.id" :name="p.name" :tip="c('security.passkeyTip', { origin: p.origin })">
         <template #tile><G n="IconKey" /></template>
@@ -104,7 +110,7 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
     <EmptyState v-else-if="!passkeys.length" nested :glyph="glyphComponent('IconKey')" :title="c('security.noPasskey')" :hint="c('security.passkeyHint')" />
     <div v-if="!noPasskey" class="a-foot"><Button data-pkadd :label="c('security.addPasskey')" label-key="IconAdd" @click="addPasskey" /></div>
   </Card>
-  <Card :title="c('security.sessions')">
+  <Card v-if="signIn" :title="c('security.sessions')">
     <div v-if="sessions.length" class="a-list">
       <ListRow v-for="s in sessions" :key="s.id" :name="device(s.userAgent).name">
         <template #tile><G :n="device(s.userAgent).g" /></template>
@@ -115,7 +121,7 @@ const tokenTip = (t: Token) => c('security.tokenCreated', { date: fmtDate(t.crea
     <EmptyState v-else nested :glyph="glyphComponent('IconBrowser')" :title="c('security.noSessions')" />
     <div v-if="others.length" class="a-foot"><Button data-soutall :label="c('security.signOutAll')" label-key="IconSignOut" @click="signOutAll" /></div>
   </Card>
-  <Card :title="c('security.tokens')">
+  <Card v-if="signIn" :title="c('security.tokens')">
     <div v-if="tokens.length" class="a-list">
       <ListRow v-for="t in tokens" :key="t.id" :name="t.name" :tip="tokenTip(t)">
         <template #tile><G n="IconKey" /></template>

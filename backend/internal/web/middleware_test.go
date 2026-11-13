@@ -30,6 +30,11 @@ func setupTestEnv(t *testing.T) {
 	t.Cleanup(func() {
 		state.Close()
 	})
+	// Without a password on any account the server would let everyone in.
+	keeper := &users.User{FrontendUser: users.FrontendUser{Username: "keeper", LoginMethod: users.LoginMethodPassword}}
+	if err := state.CreateUser(keeper, "keeper-passwort-123"); err != nil {
+		t.Fatal(err)
+	}
 
 	settings.Config.Server.SourceMap = map[string]*settings.Source{
 		"/srv": {
