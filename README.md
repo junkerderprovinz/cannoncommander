@@ -128,6 +128,13 @@ The folders, files and keys in these pictures are made up.
 <br>
 
 <p align="center">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/quicklook.png" alt="A holiday photo at night shown large over the panels after pressing Space, with its size, dimensions, date, owner and permissions beside it" width="100%">
+  <br><em>Space opens a quick look at the file under the cursor, and the arrow keys walk through the folder.</em>
+</p>
+
+<br>
+
+<p align="center">
   <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/gallery.png" alt="A folder of photos from 2026 shown as large tiles in one wide panel" width="100%">
   <br><em>Details, columns, tiles, a gallery and more, remembered per folder.</em>
 </p>

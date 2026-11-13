@@ -4,9 +4,10 @@
 //
 // `capture` first takes the interface from the fixture server, the real app against the prototype's made-up tree,
 // at 1440x700 in twice the pixels, into captures/. The address bar and the MCP endpoint both read nas.local:8480,
-// the template's default port. Without an argument the pictures are drawn from those captures.
+// the template's default port. Without an argument the pictures are drawn from those captures. Names after it limit
+// either step to those pictures.
 //
-// Run: node .github/assets/screenshots/render.mjs [capture]
+// Run: node .github/assets/screenshots/render.mjs [capture] [name ...]
 import { spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -105,6 +106,21 @@ const SHOTS = [
       await focus(tab, 0);
       await go(tab, '/mnt/user/fotos/Urlaub');
       await row(tab, 'DSC_0004.jpg').click();
+    },
+  },
+  {
+    name: 'quicklook', frame: 'browser', heading: 'Press Space. <em>Look closer.</em>',
+    alt: 'A holiday photo at night shown large over the panels after pressing Space, with its size, dimensions, date, owner and permissions beside it',
+    caption: 'Space opens a quick look at the file under the cursor, and the arrow keys walk through the folder.',
+    prefs: { quickInfo: true },
+    async prepare(tab) {
+      await focus(tab, 1);
+      await go(tab, '/mnt/user/fotos/2026');
+      await focus(tab, 0);
+      await go(tab, '/mnt/user/fotos/Urlaub');
+      await row(tab, 'DSC_0006.jpg').click();
+      await tab.keyboard.press('Space');
+      await sleep(3000);
     },
   },
   {
@@ -300,10 +316,10 @@ function picture(css, logo, shot) {
 }
 
 // Drawn at twice the size and scaled down in a second page.
-async function render(browser) {
+async function render(browser, shots) {
   const css = await style();
   const logo = dataUrl(readFileSync(join(repo, '.github', 'assets', 'logo.svg')), 'image/svg+xml');
-  for (const shot of SHOTS) {
+  for (const shot of shots) {
     const big = await browser.newPage({ viewport: { width: 1920, height: 1000 }, deviceScaleFactor: 2 });
     await big.setContent(picture(css, logo, shot));
     await big.evaluate(() => document.fonts.ready);
@@ -319,12 +335,17 @@ async function render(browser) {
   }
 }
 
-if (process.argv[2] === 'capture') {
+const capturing = process.argv[2] === 'capture';
+const names = process.argv.slice(capturing ? 3 : 2);
+const shots = names.length ? SHOTS.filter((s) => names.includes(s.name)) : SHOTS;
+if (shots.length < names.length) throw new Error(`no such picture: ${names.filter((n) => !SHOTS.some((s) => s.name === n)).join(', ')}`);
+
+if (capturing) {
   mkdirSync(captures, { recursive: true });
   const server = await fixture();
   const browser = await chromium.launch({ args: ['--disable-lcd-text', `--host-resolver-rules=MAP ${HOST} 127.0.0.1`] });
   try {
-    for (const shot of SHOTS) {
+    for (const shot of shots) {
       await capture(browser, shot);
       console.log(`captured ${shot.name}.png`);
     }
@@ -335,7 +356,7 @@ if (process.argv[2] === 'capture') {
 } else {
   const browser = await chromium.launch();
   try {
-    await render(browser);
+    await render(browser, shots);
   } finally {
     await browser.close();
   }
