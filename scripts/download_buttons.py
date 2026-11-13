@@ -27,4 +27,5 @@ BUTTONS = {
     # GitHub gives the newest one no fixed address, so this leads to the release
     # that lists it.
     "source": "https://github.com/junkerderprovinz/cannoncommander/releases/latest",
+    "docs": "https://junkerderprovinz.github.io/cannoncommander/",
 }

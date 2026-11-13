@@ -25,6 +25,12 @@
 Two panels, F5 to copy, and an interface so polished you will catch yourself tidying folders just to look at it. CannonCommander runs on your server in the browser and on your desk as an app for Windows, macOS and Linux. Copies fly off as jobs in the background, deletes land in a trash first, and on a NAS it even knows which disks are asleep before it wakes them.
 </p>
 
+<!-- docs-button: written by scripts/gen_download_buttons.py -->
+<p align="center">
+  <a href="https://junkerderprovinz.github.io/cannoncommander/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(0,0,1010.28,245.3))" alt="Read the documentation" width="192" height="46.618"></a>
+</p>
+<!-- /docs-button -->
+
 <br>
 
 <p><a id="table-of-contents" href="#table-of-contents"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/table-of-contents-dark.svg"><img src=".github/assets/sections/table-of-contents.svg" alt="Table of Contents" width="100%"></picture></a></p>
@@ -49,32 +55,32 @@ Two panels, F5 to copy, and an interface so polished you will catch yourself tid
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-server-dark.svg"><img src=".github/assets/sections/group-server.svg" alt="Server" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://ca.unraid.net/apps?q=cannoncommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(0,0,841.9,245.3))" alt="Install from Unraid&#x27;s Community Applications" width="160" height="46.618"></a>
+  <a href="https://ca.unraid.net/apps?q=cannoncommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(1035,0,841.9,245.3))" alt="Install from Unraid&#x27;s Community Applications" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://mos-official.net/apps.html?search=CannonCommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(866,0,841.9,245.3))" alt="Install from the MOS Hub" width="160" height="46.618"></a>
+  <a href="https://mos-official.net/apps.html?search=CannonCommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(1901,0,841.9,245.3))" alt="Install from the MOS Hub" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/zimaos-apps#cannoncommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(1732,0,841.9,245.3))" alt="Install from the ZimaOS and CasaOS store" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/zimaos-apps#cannoncommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(2767,0,841.9,245.3))" alt="Install from the ZimaOS and CasaOS store" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/umbrel-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(2598,0,841.9,245.3))" alt="Install from the umbrelOS community app store" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/umbrel-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(3633,0,841.9,245.3))" alt="Install from the umbrelOS community app store" width="160" height="46.618"></a>
 </p>
 <p align="center">
-  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(3464,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
+  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(4499,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(4330,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(5365,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
 </p>
 <br>
 <p align="center">
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-desktop-dark.svg"><img src=".github/assets/sections/group-desktop.svg" alt="Desktop" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(5196,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-arm64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(6062,0,457.783,245.3))" alt="Download for Windows on ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(6231,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-arm64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(7097,0,457.783,245.3))" alt="Download for Windows on ARM" width="87" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(6544,0,841.9,245.3))" alt="Download for macOS" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(7579,0,841.9,245.3))" alt="Download for macOS" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(7410,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(8276,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(8445,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(9311,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(8758,0,841.9,245.3))" alt="Download the Flatpak" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(9624,0,457.783,245.3))" alt="Download the Flatpak for ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(9793,0,841.9,245.3))" alt="Download the Flatpak" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(10659,0,457.783,245.3))" alt="Download the Flatpak for ARM" width="87" height="46.618"></a>
 </p>
 <!-- /download-buttons -->
 
@@ -92,11 +98,11 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 
 <!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(10106,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(11141,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(10972,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(12007,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(11838,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=0e9ebf188cd7#svgView(viewBox(12873,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
 <!-- /give-buttons -->
 
@@ -104,7 +110,7 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 
 <p><a id="3-what-it-looks-like" href="#3-what-it-looks-like"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/3-what-it-looks-like-dark.svg"><img src=".github/assets/sections/3-what-it-looks-like.svg" alt="3. What it looks like" width="100%"></picture></a></p>
 
-The folders, files and keys in these pictures are made up.
+The folders, files and keys in these pictures are made up. The [documentation](https://junkerderprovinz.github.io/cannoncommander/) has a picture for every step.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/screenshots/panels.png" alt="Two panels in a browser: the downloads share with two more tabs on the left, the backups share on the right, and shortcuts, remotes and the folder tree in the sidebar" width="100%">
@@ -171,20 +177,17 @@ The folders, files and keys in these pictures are made up.
 
 <p><a id="4-what-it-does" href="#4-what-it-does"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/4-what-it-does-dark.svg"><img src=".github/assets/sections/4-what-it-does.svg" alt="4. What it does" width="100%"></picture></a></p>
 
-- **Two panels and the keyboard.** Tabs in both panels, a menu bar, a command search on Ctrl+K and the keys the classic commanders taught your fingers: F3 views, F4 edits, F5 copies, F6 moves, F7 makes a folder and F8 deletes. The function key bar is one switch away under View.
-- **Jobs in the background.** Copies, moves and deletes run as jobs with speed, time left, pause and a speed limit. Each job has a rule for files that already exist, and the jobs pick up again after a restart.
-- **A trash and an undo.** Deleted files go to a trash on the same share first, and the last actions can be undone.
-- **Unraid in view.** Which files sit on the cache and which on the array, disk shares next to user shares, sleeping disks that a copy would wake, the parity check, hard links, and permissions set the way Unraid sets them.
-- **Nine ways to look at a folder.** Details with 89 columns to choose from, compact, list, content, columns, tiles, large tiles, a gallery and a drives view. Quick look on the space bar and a preview in the other panel.
-- **Tools for the whole collection.** Search by name, field or content, folder compare and sync, file compare, duplicates, disk usage as a tree or a treemap, batch rename with patterns, archives to pack, unpack and test, checksums, split and join, links and properties.
-- **A viewer and an editor.** Pictures, video, audio, PDF, Markdown, text and code, Office files, e-books, 3D models and archives open in the browser. An Office server of your own can edit Office files.
-- **Remote storage.** SFTP, SMB, WebDAV, S3, the big cloud drives and everything else rclone speaks, browsed like any other folder.
-- **Sharing.** Links with a password, an expiry date and download or upload limits, for one file or a whole collection, with a QR code. A WebDAV server lets you mount your files as a drive.
-- **People and rules.** Users, groups and rules that hide a folder or make it read only, two-factor sign-in, passkeys, API tokens and single sign-on through OIDC.
-- **AI assistants, with your rights.** A built-in MCP server lets the AI assistants you already use browse, search and read your files, and with your say-so tidy them up.
-- **Colours and tags** for files, saved searches, window profiles and your own key bindings.
-- **[ArrowLoop](https://github.com/junkerderprovinz/arrowloop) on call.** A folder pair from the comparison becomes a recurring sync job in ArrowLoop with one click.
-- **Looks like the rest of the house.** The interface uses [GlimStone](https://github.com/junkerderprovinz/glimstone), in light and dark, with your own accent colour, and speaks English and German.
+- **Two panels and the keyboard.** Tabs, a menu bar, a command search on Ctrl+K and the keys the classic commanders taught your fingers: F3 views, F4 edits, F5 copies, F6 moves, F7 makes a folder, F8 deletes.
+- **Jobs in the background.** Copies, moves and deletes run on the server with speed, time left, pause and a speed limit, and pick up again after a restart.
+- **A trash and an undo**, so a wrong F8 costs nothing.
+- **Unraid in view.** Cache and array, sleeping disks, the parity check, hard links and Unraid's own permissions.
+- **Nine views**, 89 columns, quick look on the space bar and a preview pane.
+- **Tools for the whole collection.** Search by name, field or content, folder compare and sync, duplicates, disk usage, batch rename, archives, checksums.
+- **Remote storage** through rclone, **share links** with password and expiry, a **WebDAV** server.
+- **People and rules.** Users, groups, access rules, two-factor sign-in, passkeys, API tokens and OIDC.
+- **AI assistants, with your rights**, through the built-in MCP server.
+
+Every feature with pictures and step-by-step guides: **[the documentation](https://junkerderprovinz.github.io/cannoncommander/)**.
 
 <br>
 
@@ -203,7 +206,7 @@ CannonCommander started from the code of [FileBrowser Quantum](https://github.co
 | S3 support | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | WebDAV support | ✅ | ✅ | ❌ | ✅ | ✅ | ⚠️ as a network drive |
 | FTP support | ✅ | ❌ | ❌ | ✅ | ✅ | ⚠️ as a network location |
-| Dedicated docs site | ❌ | ✅ | ❌ docs in the repository | ✅ | ✅ | ⚠️ support articles |
+| Dedicated docs site | ✅ [docs](https://junkerderprovinz.github.io/cannoncommander/) | ✅ | ❌ docs in the repository | ✅ | ✅ | ⚠️ support articles |
 | Multiple sources at once | ✅ | ✅ | ❌ | ⚠️ combined view is paid | ✅ | ✅ |
 | Docker image download | 107 MB (with ffmpeg, MuPDF, rclone and 7-Zip) | 63 MB (with ffmpeg) | 17 MB | 284 MB | desktop app | desktop app |
 | Min. memory requirements | 128 MB (small share) | 256 MB | 128 MB | 128 MB | desktop app | desktop app |
@@ -265,155 +268,24 @@ CannonCommander started from the code of [FileBrowser Quantum](https://github.co
 
 <p><a id="6-getting-started" href="#6-getting-started"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/6-getting-started-dark.svg"><img src=".github/assets/sections/6-getting-started.svg" alt="6. Getting started" width="100%"></picture></a></p>
 
-### Unraid
+- **Unraid:** search for CannonCommander in the **Apps** tab and click **Apply**. [Guide](https://junkerderprovinz.github.io/cannoncommander/getting-started/unraid/)
+- **MOS, ZimaOS, CasaOS and umbrelOS:** install it from their app stores. [Guide](https://junkerderprovinz.github.io/cannoncommander/getting-started/app-stores/)
+- **Any Docker host:** use [compose.yaml](compose.yaml) or `docker run`. [Guide](https://junkerderprovinz.github.io/cannoncommander/getting-started/docker/)
+- **Windows, macOS and Linux:** take the desktop app from the buttons above. [Guide](https://junkerderprovinz.github.io/cannoncommander/desktop-app/)
 
-Search for CannonCommander in the **Apps** tab ([Community Applications](https://ca.unraid.net/apps?q=cannoncommander)) and install it. The defaults fit a normal Unraid server, so **Apply** is enough to start.
-
-### MOS, ZimaOS, CasaOS and umbrelOS
-
-- **MOS:** install CannonCommander from the [MOS Hub](https://mos-official.net/apps.html?search=CannonCommander). It shows `/mnt/cache` there.
-- **ZimaOS and CasaOS:** add the [community store](https://github.com/junkerderprovinz/zimaos-apps#install) and install CannonCommander from it. It shows `/DATA` there.
-- **umbrelOS:** add the [community app store](https://github.com/junkerderprovinz/umbrel-apps#install) and install CannonCommander from it. It shows umbrelOS's storage folder there.
-
-### Other Docker hosts
-
-```sh
-docker run -d --name cannoncommander -p 8480:80 \
-  -v /path/to/appdata:/config \
-  -v /mnt:/mnt \
-  -e PUID=1000 -e PGID=1000 -e UMASK=022 \
-  --device /dev/fuse --cap-add SYS_ADMIN \
-  --cap-add DAC_READ_SEARCH --cap-add DAC_OVERRIDE \
-  junkerderprovinz/cannoncommander:latest
-```
-
-CannonCommander shows the folders below `/mnt/user`, the way Unraid lays out its shares. On another server, keep your folders there or change the source in `/config/config.yaml`. [compose.yaml](compose.yaml) does the same with `docker compose up -d`. Without `--device /dev/fuse` and `SYS_ADMIN` everything works except mounting remote storage.
-
-### Desktop app
-
-CannonCommander also runs as a program on Windows, macOS and Linux, with the same interface in a window of its own. On Windows and Linux, take the installer from the download buttons above, for x64 or ARM. Linux also has a zip on the [releases page](https://github.com/junkerderprovinz/cannoncommander/releases/latest) that runs from any folder. On a Mac, unzip the download and move CannonCommander into Applications. The app is not signed by Apple or Microsoft, so the first start may ask whether you trust it.
-
-The panels open in your home folder. On Windows every drive is a source, on a Mac your home folder and `/Volumes`, on Linux your home folder and whichever of `/media`, `/run/media` and `/mnt` exist. **Settings > Sources** changes that list. The configuration, the database and the log live in a `CannonCommander` folder in `%APPDATA%` on Windows, `~/Library/Application Support` on a Mac and `~/.config` on Linux.
-
-There is no sign-in. The app's server listens on 127.0.0.1 only and answers its own window and nothing else on the computer. So the settings leave out the account, users and access rules, and share links too, since they would point at 127.0.0.1. Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. You can switch that off under **Settings > Info**. Remote storage stays with the server, since the app has nothing to mount it with.
-
-The app brings its helper programs along: ffmpeg for thumbnails and videos, 7-Zip for 7z archives and MuPDF for PDF pages. On Windows and Linux they come as a download of their own, which the installer fetches and every update renews. A Mac has them inside the app. If one goes missing, **Settings > Info** fetches it again. To pack RAR archives the app uses WinRAR, or `rar` on Linux, when it is installed. The Windows build does not show PDF thumbnails yet.
-
-### First start
-
-Open port 8480 in a browser. CannonCommander opens right away as the user `admin`, without a sign-in, so anyone who reaches the port can use it. When you want a sign-in, set a password of at least 12 characters under **Settings > Account & security**. From then on everyone signs in, and you can add more users under **Settings > Users & groups**. Removing the password there opens CannonCommander again, as long as no other account has one.
+Then open port 8480. CannonCommander opens without a sign-in until you set a password under **Settings > Account & security**. [First start](https://junkerderprovinz.github.io/cannoncommander/getting-started/first-start/)
 
 <br>
 
 <p><a id="7-configuration" href="#7-configuration"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/7-configuration-dark.svg"><img src=".github/assets/sections/7-configuration.svg" alt="7. Configuration" width="100%"></picture></a></p>
 
-The container reads `/config/config.yaml`, which it writes with good defaults on the first start. Most settings live in the interface under **Settings**, and an admin can export them all from **Settings > System**.
-
-### Folders
-
-| Container path | What it holds |
-|---|---|
-| `/config` | `config.yaml`, the database with users, settings, jobs and the index, the thumbnail cache and rclone's own configuration |
-| `/mnt` | Your user shares, disks and pools, at the same paths as on the server. Everyone works in the user shares under `/mnt/user`. The disks and pools are for admins alone. Where a file lies, the other names of a hard link and moving a folder onto one disk work right away, and to browse a disk or pool, add it under **Settings > Sources**. On Unraid the access mode is **RW/Slave**, so disks and pools mounted later show up too. |
-| `/var/local/emhttp` | Read only. Unraid's live view of the disks, pools and shares. |
-| `/boot/config` | Read only. The settings of each share, read for placing files and for the Unraid permissions. |
-
-### User, group and permissions
-
-| Variable | Default | What it does |
-|---|---|---|
-| `PUID` | `99` | The user the server runs as and writes new files as. 99 is Unraid's `nobody`. `0` runs it as root. |
-| `PGID` | `100` | The group for new files, Unraid's `users`. |
-| `UMASK` | `000` | The permission mask for new files. 000 matches Unraid's shares, so you can still change what CannonCommander writes over SMB. |
-| `TZ` | | Your time zone, such as `Europe/Berlin`. |
-
-The server runs as `nobody` and keeps four capabilities of root, which the template sets for you:
-
-- `CHOWN` and `FOWNER` let **Set permissions the Unraid way** hand files to `nobody:users`.
-- `DAC_READ_SEARCH` lets the server read files that only root may read, such as the share settings in `/boot/config`.
-- `DAC_OVERRIDE` lets the server write where only root may write, such as Unraid's notification folder.
-
-The file manager's own users and rules still decide what each person sees and changes.
-
-### Unraid write access
-
-Spinning disks down and sending Unraid notifications go through files and a socket that belong to root on the server, so they are off by default. To switch them on, set `CC_UNRAID_SOCKET` to `true` and map `/var/run/emhttpd.socket` into the container at the same path. Notifications also need `/tmp/notifications` mapped at the same path. Only admins see these actions.
-
-### Remote storage
-
-Add SFTP, SMB, WebDAV, S3, Google Drive and others under **Settings > Remotes**. CannonCommander starts rclone itself, keeps its configuration in `/config/rclone` and mounts each remote below `/remotes` inside the container. The mounts stay there, so neither the server nor other containers see them. For this the container needs `/dev/fuse` and the `SYS_ADMIN` capability, which the Unraid template sets for you. A provider that signs in through a browser, such as Google Drive, takes a token you make once with `rclone authorize` on your own computer.
-
-### WebDAV
-
-Switch the WebDAV server on under **Settings > Integrations**. It answers at `/dav/`, with the same users and rules as the interface. Sign in with your user name and password, or with an API token from **Settings > Account & security** when two-factor sign-in is on.
-
-Windows Explorer only maps a WebDAV drive over https, so for Windows put CannonCommander behind a reverse proxy with a certificate, and map `https://files.example.com/dav/`. macOS Finder, Linux file managers, rclone and phone apps also work over plain http on your own network.
-
-### Terminal
-
-Admins can open a shell on the server in the folder they are looking at: type `cmd`, `bash`, `terminal` or `powershell` into the path field and press Enter, as in Windows Explorer, or pick **Open terminal here** from the Tools menu or the list's context menu. It is a Linux shell inside the container, `bash` where the image has it, running as `PUID:PGID` without the extra capabilities the server keeps. It stays off until you switch it on under **Settings > Integrations**, also when sign-in is turned off.
-
-Think before you switch it on: whoever may open it can do on the server whatever CannonCommander's user may, past every access rule of the file manager. Only signed-in admins get one, never an API token, at most four at a time. A terminal closes after 30 minutes without typing, when the session ends and when the switch goes off. Opening and closing go into the activity log, what is typed does not. With sign-in turned off everybody who reaches the page is an admin, so switching the terminal on then gives all of them a shell.
-
-In the desktop app the same words open your own computer's terminal in a window of its own, with no switch to turn on. On Windows `cmd` opens the Command Prompt, `powershell` Windows PowerShell, `pwsh` PowerShell 7 and `wt` Windows Terminal, and `terminal` opens Windows Terminal where it is installed and the Command Prompt otherwise. A Mac opens Terminal for every word, and Linux the terminal your desktop names in `TERMINAL` or `x-terminal-emulator`, else the first common one it finds.
-
-### MCP server
-
-CannonCommander has an MCP server, so an AI assistant such as Claude Code, Claude Desktop, Cursor or ChatGPT can work with your files. Open **Settings > Integrations > MCP server**, pick your client and follow the three steps there: CannonCommander makes a key for it, shows the configuration to copy and turns green once the client calls for the first time. The endpoint is `/mcp` below the address you open CannonCommander at.
-
-Every key belongs to one account and gets exactly that account's rights and access rules, so an assistant never sees more than its owner does. A new key only reads: it lists folders, searches and reads text files. Writing is a switch per key and asks for your password first. With it on, the assistant can create folders, copy, move, rename, move things to the trash and restore them, each change a job you can follow and undo. It never deletes anything for good, and it is held to 25 entries per call and 200 per hour. A key's log shows what it did, and the activity log names the key next to each change.
-
-Cloud assistants such as ChatGPT and Claude on claude.ai cannot take a key. An admin can switch on sign-in through OAuth under the same card, with the public https address CannonCommander is reachable at. The assistant then sends you to a CannonCommander page where you sign in and allow it. In the desktop app the endpoint is `http://127.0.0.1:<port>/mcp` on your own computer, and the port can change when another program has taken it.
-
-### Reverse proxy
-
-CannonCommander works behind Nginx Proxy Manager, SWAG, Traefik or Caddy. Three things matter:
-
-- The proxy passes the `Host` header on unchanged. WebDAV and passkeys check it against the address you use, and a proxy that rewrites it breaks both.
-- The live updates use server-sent events, so turn off response buffering for the site if your proxy buffers by default.
-- Tell CannonCommander which proxy to trust and under which address it is reached, so sign-in limits see the real client address and share links point to the right place:
-
-```yaml
-http:
-  externalUrl: "https://files.example.com"
-  trustProxyHeaders: true
-  trustedProxies:
-    - 192.168.1.10
-```
-
-For a sub-path such as `https://example.com/files/`, also set `baseURL: "/files/"` under `http`.
-
-### Single sign-on with OIDC
-
-CannonCommander signs in through any OpenID Connect provider, such as Authentik, Authelia, Keycloak or Pocket ID. Create an application there with the redirect address `https://files.example.com/api/auth/oidc/callback`, then add it to `config.yaml` and restart the container:
-
-```yaml
-auth:
-  methods:
-    oidc:
-      enabled: true
-      clientId: "cannoncommander"
-      clientSecret: "the secret from your provider"
-      issuerUrl: "https://auth.example.com/application/o/cannoncommander/"
-      adminGroup: "cannoncommander-admins"
-```
-
-A user who signs in for the first time is created on the spot. Members of `adminGroup` become admins, and `userGroups` limits sign-in to the groups you list. The client ID and secret can also come from the variables `CC_OIDC_CLIENT_ID` and `CC_OIDC_CLIENT_SECRET`, so they stay out of the file.
+Most settings live in the interface under **Settings**. Folders, permissions, the reverse proxy, single sign-on and Unraid's extras are explained in the [configuration guide](https://junkerderprovinz.github.io/cannoncommander/configuration/config-file/).
 
 <br>
 
 <p><a id="8-security" href="#8-security"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/8-security-dark.svg"><img src=".github/assets/sections/8-security.svg" alt="8. Security" width="100%"></picture></a></p>
 
-CannonCommander can read, change and delete everything you map into it, so it deserves the same care as the Unraid web interface.
-
-- **Sign-in.** Without a password CannonCommander opens for everyone who reaches it. Once an account has a password or a passkey, every visitor signs in. Two-factor sign-in with an authenticator app, recovery codes and passkeys are under **Settings > Account & security**, and `enforcedOtp: true` under `auth.methods.password` in `config.yaml` asks everyone to set it up. After five wrong passwords for one name from one address, that address waits 15 minutes.
-- **Keep it on your network.** Reach it from outside only through a reverse proxy with https, or through a VPN such as WireGuard or Tailscale.
-- **The data folder is locked.** The database and `config.yaml` in `/config` cannot be opened through the file manager, not even by an admin, even when `/config` lies inside a share you mapped.
-- **Users and rules.** Admins see everything. Everyone else stays inside an area of their own, and access rules hide a folder in it or make it read only, for one user or a whole group. The rules apply to the interface, WebDAV, share links and API tokens alike, and disk shares such as `/mnt/disk1` are for admins only.
-- **API tokens** can be read only, and new tokens and passkeys ask for your password again. An admin can see and revoke the sessions, tokens and passkeys of every user.
-- **Unraid write access** is off until you switch it on, because the emhttpd socket controls the whole array.
-- **The terminal** is off until you switch it on, because it hands admins a shell with the rights of CannonCommander's user.
-- **MCP keys** read until you allow writing, which asks for your password again, and the server keeps only a fingerprint of each key. An admin can see every account's keys, take writing away and revoke them.
+CannonCommander can read, change and delete everything you map into it, so set a password, keep it on your network or behind https, and read the [security checklist](https://junkerderprovinz.github.io/cannoncommander/security/).
 
 If you find a security problem, please report it privately through [GitHub's security advisories](https://github.com/junkerderprovinz/cannoncommander/security/advisories/new) rather than in a public issue. I will get back to you as soon as I can.
 
@@ -421,17 +293,13 @@ If you find a security problem, please report it privately through [GitHub's sec
 
 <p><a id="9-building-from-source" href="#9-building-from-source"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/9-building-from-source-dark.svg"><img src=".github/assets/sections/9-building-from-source.svg" alt="9. Building from source" width="100%"></picture></a></p>
 
-You need Go (the version is in `backend/go.mod`), Node.js 24 with npm, and Docker for the image.
-
 ```sh
 git clone https://github.com/junkerderprovinz/cannoncommander.git
 cd cannoncommander
 docker build -t cannoncommander -f _docker/Dockerfile .
 ```
 
-That builds the same image the releases use, with ffmpeg, MuPDF, rclone and 7-Zip inside. To work on the code, `make setup` installs the tools and `make run` starts the server with a test configuration. Without a server, `npm run dev:fixture` in `frontend/` runs the interface against made-up files. [CONTRIBUTING.md](CONTRIBUTING.md) explains the layout and the checks.
-
-The desktop app builds on the system it is for with `node scripts/desktop.mjs`, and `--installer` adds the installer on Windows and Linux. It needs the Wails CLI in the version `desktop/go.mod` names. Windows needs nothing else and builds for ARM too with `--arch arm64`. A Mac needs the Xcode tools, and Linux gcc with the GTK 3 and WebKitGTK 4.1 headers.
+The desktop app, the development server and the docs are covered in [Building from source](https://junkerderprovinz.github.io/cannoncommander/building/) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <br>
 
