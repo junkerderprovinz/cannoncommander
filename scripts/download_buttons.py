@@ -13,18 +13,15 @@ BUTTONS = {
     # these names without the version (.github/workflows/release.yml).
     "windows": RELEASE + "cannoncommander-windows-amd64-installer.exe",
     "windows-arm": RELEASE + "cannoncommander-windows-arm64-installer.exe",
-    "windows-portable": RELEASE + "cannoncommander-windows-amd64.zip",
-    "windows-portable-arm": RELEASE + "cannoncommander-windows-arm64.zip",
     "macos": RELEASE + "cannoncommander-macos-universal.zip",
     "linux": RELEASE + "cannoncommander-linux-amd64-installer",
     "linux-arm": RELEASE + "cannoncommander-linux-arm64-installer",
-    "linux-portable": RELEASE + "cannoncommander-linux-amd64.zip",
-    "linux-portable-arm": RELEASE + "cannoncommander-linux-arm64.zip",
     "flatpak": RELEASE + "cannoncommander-linux-amd64.flatpak",
     "flatpak-arm": RELEASE + "cannoncommander-linux-arm64.flatpak",
-    # Not in Community Applications yet, so the button is drawn without a link
-    # and says "coming soon". The listing's address goes here once it exists.
-    "unraid": None,
+    "unraid": "https://ca.unraid.net/apps?q=cannoncommander",
+    "mos": "https://mos-official.net/apps.html?search=CannonCommander",
+    "zimaos": "https://github.com/junkerderprovinz/zimaos-apps#cannoncommander",
+    "umbrel": "https://github.com/junkerderprovinz/umbrel-apps#install",
     "compose": "https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml",
     # A release's "Source code (zip)" is the whole repository at that tag, and
     # GitHub gives the newest one no fixed address, so this leads to the release

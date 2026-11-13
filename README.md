@@ -49,29 +49,32 @@ Two panels, F5 to copy, and an interface so polished you will catch yourself tid
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-server-dark.svg"><img src=".github/assets/sections/group-server.svg" alt="Server" width="100%"></picture>
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(0,0,841.9,245.3))" alt="In Unraid&#x27;s Community Applications soon" width="160" height="46.618">
+  <a href="https://ca.unraid.net/apps?q=cannoncommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(0,0,841.9,245.3))" alt="Install from Unraid&#x27;s Community Applications" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(866,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
+  <a href="https://mos-official.net/apps.html?search=CannonCommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(866,0,841.9,245.3))" alt="Install from the MOS Hub" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(1732,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/zimaos-apps#cannoncommander"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(1732,0,841.9,245.3))" alt="Install from the ZimaOS and CasaOS store" width="160" height="46.618"></a>
+  &nbsp;
+  <a href="https://github.com/junkerderprovinz/umbrel-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(2598,0,841.9,245.3))" alt="Install from the umbrelOS community app store" width="160" height="46.618"></a>
+</p>
+<p align="center">
+  <a href="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(3464,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
+  &nbsp;
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(4330,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
 </p>
 <br>
 <p align="center">
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-desktop-dark.svg"><img src=".github/assets/sections/group-desktop.svg" alt="Desktop" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(2598,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-arm64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(3464,0,457.783,245.3))" alt="Download for Windows on ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(5196,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-arm64-installer.exe"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(6062,0,457.783,245.3))" alt="Download for Windows on ARM" width="87" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-amd64.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(3946,0,841.9,245.3))" alt="Download the portable Windows app" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-windows-arm64.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(4812,0,457.783,245.3))" alt="Download the portable Windows app for ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(6544,0,841.9,245.3))" alt="Download for macOS" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-macos-universal.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(5294,0,841.9,245.3))" alt="Download for macOS" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(7410,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(8276,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
 </p>
 <p align="center">
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(6160,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64-installer"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(7026,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
-  &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(7508,0,841.9,245.3))" alt="Download the portable Linux app" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64.zip"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(8374,0,457.783,245.3))" alt="Download the portable Linux app for ARM" width="87" height="46.618"></a>
-  &nbsp;
-  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(8856,0,841.9,245.3))" alt="Download the Flatpak" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(9722,0,457.783,245.3))" alt="Download the Flatpak for ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(8758,0,841.9,245.3))" alt="Download the Flatpak" width="160" height="46.618"></a><a href="https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64.flatpak"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(9624,0,457.783,245.3))" alt="Download the Flatpak for ARM" width="87" height="46.618"></a>
 </p>
 <!-- /download-buttons -->
 
@@ -89,11 +92,11 @@ If it has earned a place on your server, toss a coin to your knight: it helps co
 
 <!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(10204,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(10106,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(11070,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(10972,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=3958e0066766#svgView(viewBox(11936,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/.github/assets/download-buttons/buttons.svg?v=bec5c0b11e98#svgView(viewBox(11838,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
 <!-- /give-buttons -->
 
@@ -187,7 +190,7 @@ The folders, files and keys in these pictures are made up.
 
 <p><a id="5-how-it-compares" href="#5-how-it-compares"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/5-how-it-compares-dark.svg"><img src=".github/assets/sections/5-how-it-compares.svg" alt="5. How it compares" width="100%"></picture></a></p>
 
-CannonCommander started from the code of [FileBrowser Quantum](https://github.com/gtsteffaniak/filebrowser), which itself grew out of [File Browser](https://github.com/filebrowser/filebrowser). The rows come from the [comparison chart in Quantum's README](https://github.com/gtsteffaniak/filebrowser#comparison-chart), the ones after the divider are our own. Every cell was checked against each tool's code and documentation on 12 November 2026: Quantum 2.0.2 and the 2.1 beta, File Browser 2.63.23 (its last release, the project was archived in September 2026), Filestash as of that day, Krusader 2.9.0 and Windows 11 24H2.
+CannonCommander started from the code of [FileBrowser Quantum](https://github.com/gtsteffaniak/filebrowser), which itself grew out of [File Browser](https://github.com/filebrowser/filebrowser). The rows come from the [comparison chart in Quantum's README](https://github.com/gtsteffaniak/filebrowser#comparison-chart), the ones under **Commander features** are our own. Every cell was checked against each tool's code and documentation on 12 November 2026: Quantum 2.0.2 and the 2.1 beta, File Browser 2.63.23 (its last release, the project was archived in September 2026), Filestash as of that day, Krusader 2.9.0 and Windows 11 24H2.
 
 | | **CannonCommander** | [Quantum](https://github.com/gtsteffaniak/filebrowser) | [File Browser](https://github.com/filebrowser/filebrowser) | [Filestash](https://www.filestash.app) | [Krusader](https://krusader.org) | [Windows Explorer](https://support.microsoft.com/en-us/windows/file-explorer-in-windows-ef370130-1cca-9dc5-e0df-2f7416fe1cb1) |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -264,7 +267,13 @@ CannonCommander started from the code of [FileBrowser Quantum](https://github.co
 
 ### Unraid
 
-CannonCommander is on its way into Community Applications. Until it is listed there, save [my-CannonCommander.xml](templates/my-CannonCommander.xml) as `/boot/config/plugins/dockerMan/templates-user/my-CannonCommander.xml` on your server, then open the Docker tab, click **Add Container** and choose CannonCommander under **Template**. The defaults fit a normal Unraid server, so **Apply** is enough to start.
+Search for CannonCommander in the **Apps** tab ([Community Applications](https://ca.unraid.net/apps?q=cannoncommander)) and install it. The defaults fit a normal Unraid server, so **Apply** is enough to start.
+
+### MOS, ZimaOS, CasaOS and umbrelOS
+
+- **MOS:** install CannonCommander from the [MOS Hub](https://mos-official.net/apps.html?search=CannonCommander). It shows `/mnt/cache` there.
+- **ZimaOS and CasaOS:** add the [community store](https://github.com/junkerderprovinz/zimaos-apps#install) and install CannonCommander from it. It shows `/DATA` there.
+- **umbrelOS:** add the [community app store](https://github.com/junkerderprovinz/umbrel-apps#install) and install CannonCommander from it. It shows umbrelOS's storage folder there.
 
 ### Other Docker hosts
 

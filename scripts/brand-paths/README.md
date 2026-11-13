@@ -17,9 +17,12 @@ asks for attribution and nothing else. Copyright 2024 Fonticons, Inc.
 
 **Dashboard Icons** (`homarr-labs/dashboard-icons`,
 <https://dashboardicons.com>): `unraid.txt`, its `unraid.svg` with the gradient
-left out, since the button draws it in one ink. **Apache-2.0**, whose text is
+left out, since the button draws it in one ink, and `umbrel.txt`. **Apache-2.0**, whose text is
 beside this file as `LICENSE-dashboard-icons.txt`. Copyright the Homarr Labs
 team and contributors.
+
+`mos.txt` and `zimaos.txt` are the marks of MOS and ZimaOS, the same paths the
+other repositories with these buttons draw.
 
 ## Provider logos
 
@@ -47,8 +50,8 @@ company's product is left out, and that provider shows a glyph instead.
 
 ## Trademarks
 
-Docker, Unraid, Windows, Apple, Linux, Flatpak and every provider mark are
-trademarks of their owners. Each mark sits on the button for that platform or
-the tile that connects to that service, unmodified apart from its colour, to
-name it, and nothing here claims endorsement by or affiliation with any of
-them.
+Docker, Unraid, MOS, ZimaOS, Umbrel, Windows, Apple, Linux, Flatpak and every
+provider mark are trademarks of their owners. Each mark sits on the button for
+that platform or the tile that connects to that service, unmodified apart from
+its colour, to name it, and nothing here claims endorsement by or affiliation
+with any of them.
