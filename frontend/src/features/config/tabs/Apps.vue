@@ -37,9 +37,8 @@ const desktop = computed<Build[]>(() => {
     ] },
   ];
 });
-// Not in Community Applications yet, so Unraid is still to come.
 const server = computed<Build[]>(() => [
-  { brand: 'unraid', svg: UNRAID_SVG, parts: [{ name: 'Unraid' }] },
+  { brand: 'unraid', svg: UNRAID_SVG, parts: [{ name: 'Unraid', href: 'https://ca.unraid.net/apps?q=cannoncommander' }] },
   { brand: 'docker', svg: DOCKER_SVG, markClass: 'glim-docker-mark', parts: [{ name: 'Docker', href: 'https://raw.githubusercontent.com/junkerderprovinz/cannoncommander/main/compose.yaml' }] },
   { brand: 'zip', svg: ZIP_SVG, parts: [{ name: c('builds.source'), href: REPO + '/releases/latest' }] },
 ]);

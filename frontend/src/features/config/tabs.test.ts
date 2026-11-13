@@ -130,6 +130,7 @@ describe('the settings', () => {
       expect(cards.map((t) => t.split(/\s/)[0])).toEqual(['Server', 'Handy-App']);
       const names = [...document.querySelectorAll('.glim-readme-btn-unit')].slice(0, 3).map((u) => u.querySelector('.glim-readme-btn-name')?.textContent);
       expect(names).toEqual(['Unraid', 'Docker', 'Quellcode']);
+      expect(document.querySelector('[href*="ca.unraid.net"]')).not.toBeNull();
     } finally {
       SYS.deployment = 'container';
     }
