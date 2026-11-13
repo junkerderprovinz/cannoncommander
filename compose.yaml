@@ -6,7 +6,7 @@
 
 services:
   cannoncommander:
-    image: junkerderprovinz/cannoncommander:latest
+    image: junkerderprovinz/cannoncommander:latest@sha256:6c89661b1ad0bb0a91dab7aaba7a45cc4450f2441805504904cafa909e602c17
     container_name: cannoncommander
     restart: unless-stopped
     hostname: cannoncommander

@@ -9,8 +9,8 @@
 
 ARG BUILDPLATFORM
 
-FROM gtstef/ffmpeg:9.0.2-decode AS ffmpeg
-FROM golang:1.27-alpine AS base
+FROM gtstef/ffmpeg:9.0.2-decode@sha256:1eca2261b2fee0b7b373e2ebea38ac153d0c620eed91dd6a84047c777decc55e AS ffmpeg
+FROM golang:1.27-alpine@sha256:eb61c3873c97416fff0116553fff65d67a3549f72e11d9758849a689cdd8b523 AS base
 # CI stamps the git describe and the commit. Without them the binary reads
 # both from backend/internal/version/archive.txt, which git archive fills in,
 # and a plain checkout calls itself dev.
@@ -28,14 +28,14 @@ RUN go build -tags mupdf,musl -ldflags="-w -s \
 
 # The interface is the same for every platform, so it builds once on the
 # runner's own one instead of under emulation.
-FROM --platform=$BUILDPLATFORM node:24-slim AS nbuild
+FROM --platform=$BUILDPLATFORM node:24-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54 AS nbuild
 WORKDIR /build/frontend
 COPY ./frontend/package.json ./frontend/package-lock.json ./
 RUN npm ci
 COPY ./frontend/ ./
 RUN npm run build:docker
 
-FROM alpine:3.24
+FROM alpine:3.24@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
 LABEL org.opencontainers.image.title="cannoncommander" \
       org.opencontainers.image.description="A two-pane file manager for Unraid in the browser." \
       org.opencontainers.image.source="https://github.com/junkerderprovinz/cannoncommander" \
