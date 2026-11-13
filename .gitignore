@@ -7,6 +7,7 @@
 !/scripts/desktop.mjs
 !/flatpak/update-sources.mjs
 !/.github/assets/screenshots/render.mjs
+!/scripts/docs_screenshots.mjs
 _old
 .idea/
 /backend/backend
@@ -67,3 +68,4 @@ backend/preview/thumbnails/
 /flatpak/.build/
 /flatpak/.repo/
 *.flatpak
+/site

@@ -1,0 +1,124 @@
+site_name: CannonCommander
+site_description: A two-pane file manager for Unraid and other servers in the browser, and a desktop app for Windows, macOS and Linux.
+site_url: https://junkerderprovinz.github.io/cannoncommander/
+site_author: Junker der Provinz
+
+repo_url: https://github.com/junkerderprovinz/cannoncommander
+repo_name: junkerderprovinz/cannoncommander
+edit_uri: edit/main/docs/
+
+copyright: Copyright (C) 2026 Junker der Provinz. Licensed AGPL-3.0.
+
+theme:
+  name: material
+  language: en
+  custom_dir: docs-theme/overrides
+  logo: assets/logo.svg
+  favicon: assets/favicon.png
+  font:
+    text: Noto Sans
+    code: Noto Sans Mono
+  palette:
+    # Without media queries Material opens with the first palette, so the docs
+    # start dark for everyone.
+    - scheme: slate
+      primary: black
+      accent: yellow
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - scheme: default
+      primary: black
+      accent: yellow
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  features:
+    # No tabs: the sidebar shows the whole tree, and toc.integrate folds the
+    # current page's sections into it.
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+    - toc.integrate
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  docs_theme:
+    accent: "#FCC419"
+    hero:
+      claim: Mark the files.
+      accent: Press F5.
+      text: A two-pane file manager for your server, in the browser, and for your desk as an app for Windows, macOS and Linux. Copies run as jobs, deletes go to a trash first, and the keyboard does the rest.
+      buttons:
+        - { text: Get started, link: getting-started/, primary: true }
+        - { text: Using it, link: using/panels/ }
+        - { text: Source code, link: "https://github.com/junkerderprovinz/cannoncommander" }
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.keys
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+nav:
+  - index.md
+  - Getting started:
+      - getting-started/index.md
+      - getting-started/unraid.md
+      - getting-started/app-stores.md
+      - getting-started/docker.md
+      - getting-started/first-start.md
+  - Using it:
+      - using/panels.md
+      - using/keys.md
+      - using/jobs.md
+      - using/quick-look.md
+      - using/views.md
+      - using/search.md
+      - using/compare.md
+      - using/rename.md
+      - using/archives.md
+      - using/editor.md
+      - using/trash.md
+      - using/shares.md
+      - using/tags.md
+  - remote-storage.md
+  - Users and access:
+      - access/sign-in.md
+      - access/users.md
+      - access/rules.md
+      - access/two-factor.md
+      - access/tokens.md
+  - Integrations:
+      - integrations/webdav.md
+      - integrations/terminal.md
+      - integrations/mcp.md
+      - integrations/office.md
+  - Configuration:
+      - configuration/config-file.md
+      - configuration/folders.md
+      - configuration/permissions.md
+      - configuration/unraid.md
+      - configuration/reverse-proxy.md
+      - configuration/oidc.md
+  - desktop-app.md
+  - troubleshooting.md
+  - building.md
+  - security.md
+  - license.md
