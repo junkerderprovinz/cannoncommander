@@ -13,9 +13,13 @@ BUTTONS = {
     # these names without the version (.github/workflows/release.yml).
     "windows": RELEASE + "cannoncommander-windows-amd64-installer.exe",
     "windows-arm": RELEASE + "cannoncommander-windows-arm64-installer.exe",
+    "windows-portable": RELEASE + "cannoncommander-windows-amd64.zip",
+    "windows-portable-arm": RELEASE + "cannoncommander-windows-arm64.zip",
     "macos": RELEASE + "cannoncommander-macos-universal.zip",
     "linux": RELEASE + "cannoncommander-linux-amd64-installer",
     "linux-arm": RELEASE + "cannoncommander-linux-arm64-installer",
+    "linux-portable": RELEASE + "cannoncommander-linux-amd64.zip",
+    "linux-portable-arm": RELEASE + "cannoncommander-linux-arm64.zip",
     "flatpak": RELEASE + "cannoncommander-linux-amd64.flatpak",
     "flatpak-arm": RELEASE + "cannoncommander-linux-arm64.flatpak",
     # Not in Community Applications yet, so the button is drawn without a link
