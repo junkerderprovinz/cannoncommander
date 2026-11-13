@@ -4,6 +4,18 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## v1.1.3 (2026-11-13)
+
+CannonCommander has a documentation site.
+
+## ✨ Added
+
+- **A documentation site** at [junkerderprovinz.github.io/cannoncommander](https://junkerderprovinz.github.io/cannoncommander/), with short guides and a screenshot for each step. The handbook in the app opens it.
+
+## 🐛 Fixed
+
+- **The Apps page links Unraid to Community Applications,** where CannonCommander is listed, instead of calling it coming soon.
+
 ## v1.1.2 (2026-11-13)
 
 CannonCommander opens without a sign-in until you set a password.
