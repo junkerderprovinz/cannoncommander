@@ -4,6 +4,14 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## v1.1.2 (2026-11-13)
+
+CannonCommander opens without a sign-in until you set a password.
+
+## ✨ Added
+
+- **No sign-in until you want one.** A fresh install opens right away as the admin, with no password to dig out of the log. Set one under **Settings > Account & security** and from then on everyone signs in. Removing it there opens CannonCommander again, as long as no other account has one. Installs that already have a password keep it. Thanks to @kfoxton, whose report about the lost first password got this going. ([#39](https://github.com/junkerderprovinz/cannoncommander/issues/39))
+
 ## v1.1.1 (2026-11-12)
 
 The first admin password is easy to find on Unraid again, and the trash never deletes through a link.
