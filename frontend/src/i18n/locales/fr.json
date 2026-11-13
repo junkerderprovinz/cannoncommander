@@ -1407,6 +1407,7 @@
     },
     "docs": {
       "keys": "Raccourcis clavier",
+      "site": "Ouvrir la documentation",
       "panels": {
         "title": "Deux panneaux",
         "text": "Chaque côté affiche un dossier. Tab passe de l'un à l'autre, F5 copie la sélection dans l'autre panneau et F6 la déplace. Ctrl+1 et Ctrl+2 basculent entre un et deux panneaux."

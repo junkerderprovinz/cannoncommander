@@ -1317,6 +1317,7 @@
     },
     "docs": {
       "keys": "Phím tắt",
+      "site": "Mở tài liệu",
       "panels": {
         "title": "Hai khung",
         "text": "Mỗi bên hiện một thư mục. Tab chuyển qua lại giữa chúng, F5 sao chép những gì đã đánh dấu sang khung kia và F6 di chuyển chúng. Ctrl+1 và Ctrl+2 chuyển giữa một khung và hai khung."

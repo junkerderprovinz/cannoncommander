@@ -1452,6 +1452,7 @@
     },
     "docs": {
       "keys": "Spartieji klavišai",
+      "site": "Atverti dokumentaciją",
       "panels": {
         "title": "Du skydeliai",
         "text": "Kairėje ir dešinėje rodoma po aplanką. Tab perjungia tarp jų, F5 kopijuoja pažymėtą į kitą skydelį, o F6 perkelia. Su Ctrl+1 ir Ctrl+2 perjungi tarp vieno ir dviejų skydelių."

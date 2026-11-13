@@ -1407,6 +1407,7 @@
     },
     "docs": {
       "keys": "Scorciatoie da tastiera",
+      "site": "Apri la documentazione",
       "panels": {
         "title": "Due pannelli",
         "text": "Ogni lato mostra una cartella. Tab passa dall'uno all'altro, F5 copia la selezione nell'altro pannello e F6 la sposta. Ctrl+1 e Ctrl+2 passano da uno a due pannelli."

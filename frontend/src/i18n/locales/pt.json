@@ -1407,6 +1407,7 @@
     },
     "docs": {
       "keys": "Atalhos de teclado",
+      "site": "Abrir a documentação",
       "panels": {
         "title": "Dois painéis",
         "text": "Cada lado mostra uma pasta. Tab alterna entre eles, F5 copia o que está selecionado para o outro painel e F6 move-o. Ctrl+1 e Ctrl+2 alternam entre um e dois painéis."

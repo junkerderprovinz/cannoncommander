@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Tastaturgenveje",
+      "site": "Åbn dokumentationen",
       "panels": {
         "title": "To paneler",
         "text": "Til venstre og til højre står der en mappe. Tab skifter mellem dem, F5 kopierer det markerede til det andet panel, og F6 flytter det. Med Ctrl+1 og Ctrl+2 skifter du mellem ét og to paneler."

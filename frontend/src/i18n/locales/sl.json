@@ -1452,6 +1452,7 @@
     },
     "docs": {
       "keys": "Bližnjice na tipkovnici",
+      "site": "Odpri dokumentacijo",
       "panels": {
         "title": "Dve okni",
         "text": "Levo in desno je po ena mapa. Tab preklaplja med njima, F5 kopira označeno v drugo okno, F6 pa ga premakne. Ctrl+1 in Ctrl+2 preklapljata med enim in dvema oknoma."

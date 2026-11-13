@@ -1407,6 +1407,7 @@
     },
     "docs": {
       "keys": "Tipkovnički prečaci",
+      "site": "Otvori dokumentaciju",
       "panels": {
         "title": "Dva panela",
         "text": "Lijevo i desno stoji po jedna mapa. Tab prelazi između njih, F5 kopira označeno u drugi panel, a F6 ga premješta. S Ctrl+1 i Ctrl+2 prelazite između jednog i dva panela."

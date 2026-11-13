@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Kortkommandon",
+      "site": "Öppna dokumentationen",
       "panels": {
         "title": "Två paneler",
         "text": "Till vänster och till höger står en mapp var. Tab växlar mellan dem, F5 kopierar det markerade till den andra panelen och F6 flyttar det. Med Ctrl+1 och Ctrl+2 växlar du mellan en och två paneler."

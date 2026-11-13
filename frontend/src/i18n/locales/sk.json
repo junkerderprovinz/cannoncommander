@@ -1452,6 +1452,7 @@
     },
     "docs": {
       "keys": "Klávesové skratky",
+      "site": "Otvoriť dokumentáciu",
       "panels": {
         "title": "Dve okná",
         "text": "Vľavo aj vpravo je po jednom priečinku. Tab medzi nimi prepína, F5 skopíruje označené do druhého okna a F6 to presunie. Ctrl+1 a Ctrl+2 prepínajú medzi jedným a dvoma oknami."

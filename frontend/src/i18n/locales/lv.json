@@ -1407,6 +1407,7 @@
     },
     "docs": {
       "keys": "Īsinājumtaustiņi",
+      "site": "Atvērt dokumentāciju",
       "panels": {
         "title": "Divi paneļi",
         "text": "Kreisajā un labajā pusē ir pa mapei. Tab pārslēdz starp tām, F5 kopē atzīmēto uz otru paneli, bet F6 pārvieto. Ar Ctrl+1 un Ctrl+2 pārslēdz starp vienu un diviem paneļiem."

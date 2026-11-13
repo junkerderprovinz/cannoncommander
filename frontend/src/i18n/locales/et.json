@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Kiirklahvid",
+      "site": "Ava dokumentatsioon",
       "panels": {
         "title": "Kaks paneeli",
         "text": "Vasakul ja paremal on kummaski üks kaust. Tab vahetab nende vahel, F5 kopeerib märgitu teise paneeli ja F6 teisaldab selle. Ctrl+1 ja Ctrl+2 vahetavad ühe ja kahe paneeli vahel."

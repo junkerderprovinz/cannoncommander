@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Billentyűparancsok",
+      "site": "A dokumentáció megnyitása",
       "panels": {
         "title": "Két ablak",
         "text": "Balra és jobbra egy-egy mappa áll. A Tab vált közöttük, az F5 a kijelölteket a másik ablakba másolja, az F6 áthelyezi. A Ctrl+1 és a Ctrl+2 egy és két ablak között vált."

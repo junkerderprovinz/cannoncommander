@@ -293,6 +293,7 @@
   },
   "docs": {
     "keys": "Tastenkürzel",
+    "site": "Dokumentation öffnen",
     "panels": { "title": "Zwei Fenster", "text": "Links und rechts steht je ein Ordner. Tab wechselt zwischen ihnen, F5 kopiert das Markierte ins andere Fenster und F6 verschiebt es. Mit Strg+1 und Strg+2 schaltest du zwischen einem und zwei Fenstern um." },
     "mark": { "title": "Markieren", "text": "Einfg markiert eine Zeile und springt zur nächsten, die Leertaste zeigt die Datei groß in der Schnellansicht. Strg+Klick nimmt einzelne dazu, Umschalt+Klick einen ganzen Bereich. Mit + markierst du nach Muster, etwa alle *.jpg." },
     "find": { "title": "Finden", "text": "Ein / öffnet den Schnellfilter im aktuellen Ordner. Alt+F7 sucht auf dem ganzen Server, schnell dank des Index unter Einstellungen, Quellen." },

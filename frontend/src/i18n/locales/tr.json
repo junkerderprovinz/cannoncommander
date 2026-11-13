@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Klavye kısayolları",
+      "site": "Belgeleri aç",
       "panels": {
         "title": "İki panel",
         "text": "Solda ve sağda birer klasör durur. Tab aralarında geçiş yapar, F5 işaretlileri diğer panele kopyalar, F6 taşır. Ctrl+1 ve Ctrl+2 ile tek ve iki panel arasında geçersin."

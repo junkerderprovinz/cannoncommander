@@ -289,6 +289,7 @@
   },
   "docs": {
     "keys": "Keyboard shortcuts",
+    "site": "Open the documentation",
     "panels": { "title": "Two panels", "text": "Each side shows a folder. Tab switches between them, F5 copies what is marked to the other panel and F6 moves it. Ctrl+1 and Ctrl+2 switch between one and two panels." },
     "mark": { "title": "Marking", "text": "Insert marks a row and moves to the next one, the space bar shows the file large in the quick look. Ctrl+click adds single ones, Shift+click a whole range. With + you mark by pattern, such as every *.jpg." },
     "find": { "title": "Finding", "text": "A / opens the quick filter in the current folder. Alt+F7 searches the whole server, fast thanks to the index under Settings, Sources." },

@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Flýtilyklar",
+      "site": "Opna leiðbeiningarnar",
       "panels": {
         "title": "Tveir gluggar",
         "text": "Vinstra og hægra megin er sín mappan hvoru megin. Tab skiptir á milli þeirra, F5 afritar það sem er valið í hinn gluggann og F6 færir það. Með Ctrl+1 og Ctrl+2 skiptirðu á milli eins og tveggja glugga."

@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Pikanäppäimet",
+      "site": "Avaa dokumentaatio",
       "panels": {
         "title": "Kaksi paneelia",
         "text": "Vasemmalla ja oikealla on kummassakin kansio. Tab vaihtaa niiden välillä, F5 kopioi merkityt toiseen paneeliin ja F6 siirtää ne. Ctrl+1 ja Ctrl+2 vaihtavat yhden ja kahden paneelin välillä."

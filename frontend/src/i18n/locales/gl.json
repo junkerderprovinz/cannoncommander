@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Atallos de teclado",
+      "site": "Abrir a documentación",
       "panels": {
         "title": "Dous paneis",
         "text": "Á esquerda e á dereita hai un cartafol en cada lado. Tab cambia entre eles, F5 copia o marcado ao outro panel e F6 móveo. Con Ctrl+1 e Ctrl+2 alternas entre un e dous paneis."

@@ -1452,6 +1452,7 @@
     },
     "docs": {
       "keys": "Skróty klawiszowe",
+      "site": "Otwórz dokumentację",
       "panels": {
         "title": "Dwa okna",
         "text": "Po lewej i po prawej stoi po jednym folderze. Tab przełącza między nimi, F5 kopiuje zaznaczone do drugiego okna, a F6 je przenosi. Ctrl+1 i Ctrl+2 przełączają między jednym a dwoma oknami."

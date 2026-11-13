@@ -1827,6 +1827,7 @@
     },
     "docs": {
       "keys": "Lasterbide-teklak",
+      "site": "Ireki dokumentazioa",
       "panels": {
         "title": "Bi panel",
         "text": "Ezkerrean eta eskuinean karpeta bana dago. Tab-ek batetik bestera aldatzen du, F5ek markatutakoa beste panelera kopiatzen du eta F6k mugitu egiten du. Ctrl+1 eta Ctrl+2 erabiliz panel bat eta bi panel artean aldatzen duzu."

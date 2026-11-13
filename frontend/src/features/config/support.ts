@@ -6,6 +6,7 @@ import { toast } from '@/core/toast';
 import { c } from '@/features/config/shared';
 
 export const REPO = 'https://github.com/junkerderprovinz/cannoncommander';
+export const DOCS = 'https://junkerderprovinz.github.io/cannoncommander/';
 export const MAIL = 'hello@halleluja.design';
 
 // A release carries the desktop app under names without the version, as release.yml attaches them. A build between

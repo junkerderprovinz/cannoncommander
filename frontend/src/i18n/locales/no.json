@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Hurtigtaster",
+      "site": "Åpne dokumentasjonen",
       "panels": {
         "title": "To paneler",
         "text": "Til venstre og til høyre står det en mappe hver. Tab bytter mellom dem, F5 kopierer det merkede til det andre panelet, og F6 flytter det. Med Ctrl+1 og Ctrl+2 bytter du mellom ett og to paneler."

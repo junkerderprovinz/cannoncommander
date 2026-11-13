@@ -1362,6 +1362,7 @@
     },
     "docs": {
       "keys": "Sneltoetsen",
+      "site": "Documentatie openen",
       "panels": {
         "title": "Twee panelen",
         "text": "Links en rechts staat elk een map. Tab wisselt ertussen, F5 kopieert wat gemarkeerd is naar het andere paneel en F6 verplaatst het. Met Ctrl+1 en Ctrl+2 wissel je tussen één en twee panelen."

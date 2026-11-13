@@ -1407,6 +1407,7 @@
     },
     "docs": {
       "keys": "Comenzi rapide de la tastatură",
+      "site": "Deschide documentația",
       "panels": {
         "title": "Două panouri",
         "text": "În stânga și în dreapta stă câte un dosar. Tab comută între ele, F5 copiază ce e marcat în celălalt panou, iar F6 îl mută. Cu Ctrl+1 și Ctrl+2 comuți între un panou și două."

@@ -1452,6 +1452,7 @@
     },
     "docs": {
       "keys": "Klávesové zkratky",
+      "site": "Otevřít dokumentaci",
       "panels": {
         "title": "Dvě okna",
         "text": "Vlevo i vpravo je po jedné složce. Tab mezi nimi přepíná, F5 zkopíruje označené do druhého okna a F6 to přesune. Ctrl+1 a Ctrl+2 přepínají mezi jedním a dvěma okny."

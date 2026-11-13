@@ -1317,6 +1317,7 @@
     },
     "docs": {
       "keys": "Pintasan keyboard",
+      "site": "Buka dokumentasi",
       "panels": {
         "title": "Dua panel",
         "text": "Kiri dan kanan masing-masing menampilkan satu folder. Tab berpindah di antara keduanya, F5 menyalin yang ditandai ke panel lain dan F6 memindahkannya. Ctrl+1 dan Ctrl+2 beralih antara satu dan dua panel."

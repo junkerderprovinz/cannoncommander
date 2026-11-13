@@ -4,10 +4,15 @@ import { onMounted } from 'vue';
 import { run } from '@/core/actions';
 import { closeBtn, type WinEntry } from '@/core/windows';
 import { c, stepFoot } from '@/features/config/shared';
+import { DOCS } from '@/features/config/support';
 
 const props = defineProps<{ win: WinEntry }>();
 const PARTS = ['panels', 'mark', 'find', 'share', 'rights', 'mcp'];
-onMounted(() => stepFoot(props.win, [{ label: c('docs.keys'), g: 'IconKeyboard', run: () => { setTimeout(() => run('shortcuts'), 0); } }, closeBtn()]));
+onMounted(() => stepFoot(props.win, [
+  { label: c('docs.site'), g: 'IconExternalLink', run: () => { window.open(DOCS, '_blank', 'noopener'); return false; } },
+  { label: c('docs.keys'), g: 'IconKeyboard', run: () => { setTimeout(() => run('shortcuts'), 0); } },
+  closeBtn(),
+]));
 </script>
 
 <template>

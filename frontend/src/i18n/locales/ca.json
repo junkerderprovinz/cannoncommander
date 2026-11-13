@@ -1407,6 +1407,7 @@
     },
     "docs": {
       "keys": "Dreceres de teclat",
+      "site": "Obre la documentació",
       "panels": {
         "title": "Dos panells",
         "text": "Cada costat mostra una carpeta. Tab canvia entre tots dos, F5 copia el que està seleccionat a l'altre panell i F6 ho mou. Ctrl+1 i Ctrl+2 alternen entre un i dos panells."
