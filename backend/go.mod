@@ -25,7 +25,7 @@ require (
 	github.com/gtsteffaniak/go-cache v1.1.0
 	github.com/gtsteffaniak/go-ffmpeg v1.6.2
 	github.com/gtsteffaniak/go-logger v1.1.0
-	github.com/klauspost/compress v1.20.3
+	github.com/klauspost/compress v1.20.4
 	github.com/kovidgoyal/imaging v1.9.0
 	github.com/mattn/go-sqlite3 v1.14.53
 	github.com/modelcontextprotocol/go-sdk v1.8.0
