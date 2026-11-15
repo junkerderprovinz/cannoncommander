@@ -7,6 +7,7 @@ import WindowHost from '@/core/WindowHost.vue';
 import { winStack } from '@/core/windows';
 import { addMessages } from '@/i18n';
 import { useUser } from '@/stores/user';
+import { withoutLayers } from '@/testing/layers';
 import de from '../de.json';
 import McpCard from './McpCard.vue';
 
@@ -176,7 +177,7 @@ describe('the MCP server card', () => {
 
   it('shows one mark on every client tile, the single colour one waiting for the pointer', async () => {
     // Vitest leaves the stylesheets out, and which mark shows is up to them.
-    const sheet = (path: string) => document.head.appendChild(Object.assign(document.createElement('style'), { textContent: readFileSync(path, 'utf8') }));
+    const sheet = (path: string) => document.head.appendChild(Object.assign(document.createElement('style'), { textContent: withoutLayers(readFileSync(path, 'utf8')) }));
     const sheets = [sheet(join(import.meta.dirname, '../../../../node_modules/@glimstone/core/tokens.css')), sheet(join(import.meta.dirname, 'mcp.css'))];
     try {
       await mount();

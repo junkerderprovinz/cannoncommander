@@ -17,5 +17,5 @@ const release = (id: string) => { const x = byId(id); if (x) releaseToast(x); };
 </script>
 
 <template>
-  <ToastViewport :toasts="shown" :dismiss-label="t('core.close')" @dismiss="dropToast(Number($event))" @enter="hold" @leave="release" @focusin="hold" @focusout="release" />
+  <ToastViewport :toasts="shown" :dismiss-label="t('core.close')" @dismiss="dropToast(Number($event))" @mouse-enter="hold" @mouse-leave="release" @focus="hold" @blur="release" />
 </template>

@@ -90,7 +90,7 @@
 @keyframes a-spin { to { rotate: 360deg; } }
 @media (prefers-reduced-motion: no-preference) {
   .a-swatch { transition: transform var(--motion-control-dur, .12s); }
-  .a-veil-card svg { animation: a-spin var(--motion-spin-dur, .8s) linear infinite; }
+  .a-veil-card svg { animation: a-spin var(--motion-spinner-dur, .8s) linear infinite; }
 }
 @media (max-width: 760px) { .a-lhead, .a-arow { grid-template-columns: 2.25rem minmax(0, 1fr) auto; } .a-lhead > :nth-child(n+3):not(:last-child), .a-arow .glim-pill:not(:last-child) { display: none; } .a-stats { grid-template-columns: 1fr 1fr 1fr; } }
 :root[data-rainbow] :is(#shortcuts, #tree, .tiles, .list) > :nth-child(8n+1) { --accent-glyph: var(--rb-0); }

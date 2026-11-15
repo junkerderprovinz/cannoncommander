@@ -11,4 +11,4 @@
 .cl-wait { display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: 1.6rem 0 1.2rem; }
 .cl-spin { width: 2rem; height: 2rem; border-radius: 50%; border: 3px solid var(--carbon-surface3); border-top-color: var(--accent); animation: cl-spin 2.4s linear infinite; margin-bottom: .4rem; }
 @keyframes cl-spin { to { rotate: 360deg; } }
-@media (prefers-reduced-motion: no-preference) { .cl-spin { animation: cl-spin var(--motion-spin-dur, .8s) linear infinite; } }
+@media (prefers-reduced-motion: no-preference) { .cl-spin { animation: cl-spin var(--motion-spinner-dur, .8s) linear infinite; } }

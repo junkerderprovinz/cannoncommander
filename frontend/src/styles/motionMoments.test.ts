@@ -18,7 +18,7 @@ const isTime = (v: string) => /^-?[\d.]+m?s$/.test(v);
 const num = (v: string) => parseFloat(v);
 
 // Durations that set a pace: a shorter turn of the spinner or run of the dashes is the livelier one.
-const PACE = ['--motion-spin-dur', '--motion-hue-dur', '--motion-flow-dur', '--motion-trail-flicker', '--motion-dropzone-dur'];
+const PACE = ['--motion-spinner-dur', '--motion-hue-dur', '--motion-flow-dur', '--motion-trail-flicker', '--motion-dropzone-dur'];
 // A step must grow the movement by at least this much, measured from the still value at off.
 const APART = 4 / 3;
 

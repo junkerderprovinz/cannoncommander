@@ -5,7 +5,7 @@
   :root {
     /* A spinner's turn, the glow of a row that just changed, the hue drift of rotating colours, the dashes running
        along a transfer's route, the bin rocking before something goes for good, and the type-ahead bubble. */
-    --motion-spin-dur: .8s;
+    --motion-spinner-dur: .8s;
     --motion-fresh-dur: 2.2s;
     --motion-fresh-glow:32%;
     --motion-hue-dur: 14s;
@@ -109,7 +109,7 @@
     --motion-dropzone-glow: 20%;
   }
   :root[data-motion="subtle"] {
-    --motion-spin-dur: 1.2s;
+    --motion-spinner-dur: 1.2s;
     --motion-fresh-dur: 1.6s;
     --motion-fresh-glow: 16%;
     --motion-hue-dur: 24s;
@@ -187,7 +187,7 @@
   }
   :root[data-motion="off"] {
     /* Slow rather than stopped: a spinner standing still reads as a hang. */
-    --motion-spin-dur: 2.4s;
+    --motion-spinner-dur: 2.4s;
     --motion-fresh-dur: 0s;
     --motion-fresh-glow: 0%;
     /* Long rather than 0; both stop outright at this level where they are used. */
@@ -265,7 +265,7 @@
     --motion-dropzone-glow: 0%;
   }
   :root[data-motion="storm"] {
-    --motion-spin-dur: .5s;
+    --motion-spinner-dur: .5s;
     --motion-fresh-dur: 3s;
     --motion-fresh-glow:55%;
     --motion-hue-dur: 6s;
