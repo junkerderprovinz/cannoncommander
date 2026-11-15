@@ -4,6 +4,14 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
+## Unreleased
+
+## ⚡ Improved
+
+- **Help goes to Discord.** The Help card in Settings > Info offers GitHub and the CannonCommander Discord server, and the mail button is gone, in every language.
+- **The GlimStone version opens GlimStone's newest release.**
+- **GlimStone 4.5.2.** The busy ring in GlimStone's buttons keeps its own pace, apart from the app's spinners.
+
 ## v1.1.3 (2026-11-13)
 
 CannonCommander has a documentation site.
