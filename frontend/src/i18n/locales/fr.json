@@ -1361,7 +1361,7 @@
       "fetchFailed": "Les programmes d'aide n'ont pas pu être téléchargés. Réessayez plus tard",
       "help": "Aide",
       "helpHint": "Pour un rapport de bug, téléchargez un fichier avec les réglages et l'état des tâches, sans mots de passe, clés ni identifiants. Joignez-le à un ticket sur GitHub, on verra alors ce qui s'est passé sur votre serveur.",
-      "helpText": "Un problème, une envie ou une idée ? N’hésitez pas à ouvrir une issue sur GitHub, ou à passer dire bonjour sur Discord.",
+      "helpText": "Un problème, une envie ou une idée ? N’hésite pas à ouvrir une issue sur GitHub, ou à passer dire bonjour sur Discord.",
       "docs": "Manuel",
       "open": "Ouvrir",
       "bug": "Rapport de bug",
