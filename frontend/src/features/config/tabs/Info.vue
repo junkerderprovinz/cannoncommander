@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button, Card, FieldRow, FieldRowGroup, Pill, Toggle } from '@glimstone/vue';
-import { GLIMSTONE_VERSION } from '@glimstone/core';
+import { GLIMSTONE_RELEASE_URL, GLIMSTONE_VERSION } from '@glimstone/core';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { admin, type AppSettings, type Modules, type System, type Tool, type UpdateCheck } from '@/api/admin';
 import { toast } from '@/core/toast';
@@ -9,7 +9,7 @@ import { G } from '@/core/glyphs';
 import { win } from '@/core/windows';
 import { NEWS, unseen } from '../help';
 import { c } from '@/features/config/shared';
-import { bugReport, MAIL, REPO, versionLink } from '../support';
+import { bugReport, DISCORD, REPO, versionLink } from '../support';
 import CoffeeWin from '../wins/CoffeeWin.vue';
 import CryptoWin from '../wins/CryptoWin.vue';
 import PaypalWin from '../wins/PaypalWin.vue';
@@ -33,12 +33,13 @@ const desktop = computed(() => sys.value?.deployment === 'desktop');
 const selfUpdating = computed(() => desktop.value && !sys.value?.flatpak);
 const autoUpdate = computed({ get: () => selfUpdating.value && !!app.value?.updates.autoUpdate, set: (v: boolean) => { if (selfUpdating.value) saveUpdates({ autoUpdate: v }); } });
 
-// A version number is a plain link to its release page, as in every app of the workshop.
+// A version number is a plain link to its release page, as in every app of the workshop. GlimStone's opens its newest
+// release, since a patch tag may have folded into the next minor.
 const plain = (v?: string) => v?.replace(/^v/, '');
 const rclone = computed(() => plain(sys.value?.tools.rclone?.version));
 const versions = computed(() => [
   { name: 'CannonCommander', v: plain(sys.value?.version), href: sys.value ? versionLink(sys.value) : undefined },
-  { name: 'GlimStone', v: plain(GLIMSTONE_VERSION), href: 'https://github.com/junkerderprovinz/glimstone/releases/tag/v' + plain(GLIMSTONE_VERSION), tip: c('info.glimstoneTip') },
+  { name: 'GlimStone', v: plain(GLIMSTONE_VERSION), href: GLIMSTONE_RELEASE_URL, tip: c('info.glimstoneTip') },
   { name: 'rclone', v: rclone.value, href: 'https://github.com/rclone/rclone/releases/tag/v' + rclone.value, tip: c('info.rcloneTip') },
 ]);
 const n = computed(() => unseen());
@@ -81,13 +82,11 @@ async function check(quiet = false) {
 // Once as the page opens while the switch is on, and once more when it is turned on.
 watch(() => app.value?.updates.autoCheck, (on) => { if (on) void check(true); });
 const open = (url: string) => window.open(url, '_blank', 'noopener');
-// Subject only: a prefilled body reads as a form to fill in.
-const mail = () => open(`mailto:${MAIL}?subject=${encodeURIComponent(c('info.mailSubject'))}`);
 
 const readme = (tile: string, mark: string, glyph: string, name: string, sub: string | undefined, go: () => unknown, aria?: string, id?: string) => ({ tile, mark, glyph, name, sub, go, aria, id });
 const help = computed(() => [
   readme('glim-tile-github', 'glim-github-mark', 'IconGithub', 'GitHub', undefined, () => open(REPO)),
-  readme('glim-tile-house', 'glim-house-mark', 'IconMail', c('info.mail'), undefined, mail),
+  readme('glim-tile-discord', 'glim-discord-mark', 'IconDiscord', 'Discord', undefined, () => open(DISCORD)),
   readme('glim-tile-docs', 'glim-docs-mark', 'IconManual', c('info.docs'), c('info.open'), () => run('docs')),
   readme('glim-tile-github', 'glim-github-mark', 'IconDiagnostics', c('info.bug'), c('info.download'), bugReport),
 ]);

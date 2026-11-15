@@ -136,6 +136,32 @@ describe('the settings', () => {
     }
   });
 
+  it('send help to GitHub and Discord on the Info tile, without a mail button', async () => {
+    const open = vi.spyOn(window, 'open').mockReturnValue(null);
+    try {
+      await cardsOf('info');
+      const help = [...document.querySelectorAll('.glim-notch-card')].find((c) => c.querySelector('h2')?.textContent?.includes('Hilfe'))!;
+      expect(help.querySelector('p')?.textContent).toBe(de.info.helpText);
+      expect(de.info.helpText).toMatch(/GitHub.*Discord/);
+      const units = [...help.querySelectorAll('.glim-readme-btn-unit')];
+      expect(units.map((u) => u.querySelector('.glim-readme-btn-name')?.textContent)).toEqual(['GitHub', 'Discord', 'Handbuch', 'Fehlerbericht']);
+      expect(help.querySelector('.glim-tile-house')).toBeNull();
+      const discord = units[1]!;
+      expect(discord.classList).toContain('glim-tile-discord');
+      expect(discord.querySelector('.glim-readme-btn-mark')?.classList).toContain('glim-discord-mark');
+      discord.querySelector('button')!.click();
+      expect(open).toHaveBeenCalledWith('https://discord.gg/derwJMJtb2', '_blank', 'noopener');
+    } finally {
+      open.mockRestore();
+    }
+  });
+
+  it('open the newest GlimStone release from its version on the Info tile', async () => {
+    await cardsOf('info');
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('a.a-vlink')].map((a) => a.getAttribute('href'));
+    expect(links).toContain('https://github.com/junkerderprovinz/glimstone/releases/latest');
+  });
+
   it('show how the list looks under Aussehen, as Explorer does under its view, and keep the bars on the file list tile', async () => {
     expect(await cardsOf('look')).toEqual(['Darstellung', 'Liste', 'Beschriftungen', 'Farben']);
     app!.unmount();

@@ -40,6 +40,16 @@ describe('the language files', () => {
     expect(report(english, 'en')).toEqual([]);
   });
 
+  it('name GitHub and Discord in the Help sentence, the two places its buttons lead, and no mail', () => {
+    const tables: [string, Table][] = [['de', german], ['en', english], ...Object.entries(files).map(([f, t]): [string, Table] => [f, t])];
+    for (const [code, table] of tables) {
+      const text = String(((table.config as Table).info as Table).helpText);
+      expect(text, code).toMatch(/GitHub/);
+      expect(text, code).toMatch(/Discord/);
+      expect(text, code).not.toMatch(/e-?mail|e-?post|correo|почт|имейл|ایمیل|מייל|メール|이메일|邮件|อีเมล|ईमेल|البريد/i);
+    }
+  });
+
   it('German and English give each search word one meaning', () => {
     expect([...clashes(german), ...clashes(english)]).toEqual([]);
   });

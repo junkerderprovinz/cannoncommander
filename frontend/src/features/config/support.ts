@@ -7,7 +7,7 @@ import { c } from '@/features/config/shared';
 
 export const REPO = 'https://github.com/junkerderprovinz/cannoncommander';
 export const DOCS = 'https://junkerderprovinz.github.io/cannoncommander/';
-export const MAIL = 'hello@halleluja.design';
+export const DISCORD = 'https://discord.gg/derwJMJtb2';
 
 // A release carries the desktop app under names without the version, as release.yml attaches them. A build between
 // releases cannot know which release has them.
