@@ -40,6 +40,12 @@ describe('the language files', () => {
     expect(report(english, 'en')).toEqual([]);
   });
 
+  it('give the Help sentence in GlimStone\'s words, the same in every app', () => {
+    const help = (table: Table) => ((table.config as Table).info as Table).helpText;
+    expect(help(english)).toBe('Problems, wishes or suggestions? You\'re welcome to open an issue on GitHub, or come say hi on Discord.');
+    expect(help(german)).toBe('Probleme, Wünsche oder Verbesserungsvorschläge? Mach gern ein Issue auf GitHub auf, oder schau auf Discord vorbei.');
+  });
+
   it('name GitHub and Discord in the Help sentence, the two places its buttons lead, and no mail', () => {
     const tables: [string, Table][] = [['de', german], ['en', english], ...Object.entries(files).map(([f, t]): [string, Table] => [f, t])];
     for (const [code, table] of tables) {

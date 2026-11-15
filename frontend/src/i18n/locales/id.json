@@ -1271,7 +1271,7 @@
       "fetchFailed": "Program pembantu gagal diunduh. Coba lagi nanti",
       "help": "Bantuan",
       "helpHint": "Untuk laporan bug, unduh berkas berisi pengaturan dan status tugas, tanpa kata sandi, kunci, dan data akses. Lampirkan ke issue di GitHub, supaya terlihat apa yang terjadi di server Anda.",
-      "helpText": "Ada masalah, keinginan, atau ide perbaikan? Silakan buka issue di GitHub, atau mampir menyapa di Discord.",
+      "helpText": "Ada masalah, keinginan, atau saran? Silakan buka issue di GitHub, atau mampir menyapa di Discord.",
       "docs": "Panduan",
       "open": "Buka",
       "bug": "Laporan bug",

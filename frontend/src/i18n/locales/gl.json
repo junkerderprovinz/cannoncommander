@@ -1316,7 +1316,7 @@
       "fetchFailed": "Os programas auxiliares non se descargaron. Téntao de novo máis tarde",
       "help": "Axuda",
       "helpHint": "Para un informe de erro descargas un ficheiro cos axustes e o estado das tarefas, sen contrasinais, chaves nin datos de acceso. Achégao a unha issue en GitHub e así vese o que pasou no teu servidor.",
-      "helpText": "Problemas, desexos ou ideas para mellorar? Abre unha issue en GitHub cando queiras, ou pasa a saudar por Discord.",
+      "helpText": "Problemas, desexos ou suxestións? Abre unha incidencia en GitHub cando queiras, ou pasa a saudar por Discord.",
       "docs": "Manual",
       "open": "Abrir",
       "bug": "Informe de erro",

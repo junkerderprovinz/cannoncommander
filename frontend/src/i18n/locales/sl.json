@@ -1406,7 +1406,7 @@
       "fetchFailed": "Pomožnih programov ni bilo mogoče prenesti. Poskusi znova pozneje",
       "help": "Pomoč",
       "helpHint": "Za poročilo o napaki prenesete datoteko z nastavitvami in stanjem opravil, brez gesel, ključev in prijavnih podatkov. Priložite jo k zadevi (issue) na GitHubu, da se vidi, kaj se je zgodilo na vašem strežniku.",
-      "helpText": "Težave, želje ali predlogi za izboljšave? Kar odprite zadevo (issue) na GitHubu ali se oglasite na Discordu.",
+      "helpText": "Težave, želje ali predlogi? Kar odpri issue na GitHubu ali se oglasi na Discordu.",
       "docs": "Priročnik",
       "open": "Odpri",
       "bug": "Poročilo o napaki",

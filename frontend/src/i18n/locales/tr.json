@@ -1316,7 +1316,7 @@
       "fetchFailed": "Yardımcı programlar indirilemedi. Lütfen daha sonra tekrar dene",
       "help": "Yardım",
       "helpHint": "Bir hata raporu için ayarları ve işlerin durumunu içeren bir dosya indirirsin, parolalar, anahtarlar ve erişim bilgileri olmadan. Onu GitHub'daki bir issue'ya ekle, böylece sunucunda ne olduğu görülür.",
-      "helpText": "Sorunlar, istekler ya da iyileştirme önerileri mi var? GitHub'da rahatça bir issue aç ya da Discord'a uğrayıp merhaba de.",
+      "helpText": "Sorun, dilek ya da öneri mi var? GitHub'da bir issue açabilir ya da Discord'a uğrayıp merhaba diyebilirsin.",
       "docs": "Kılavuz",
       "open": "Aç",
       "bug": "Hata raporu",

@@ -1361,7 +1361,7 @@
       "fetchFailed": "Programele ajutătoare nu s-au descărcat. Încearcă din nou mai târziu",
       "help": "Ajutor",
       "helpHint": "Pentru un raport de eroare descarci un fișier cu setările și starea sarcinilor, fără parole, chei și date de acces. Atașează-l la un issue pe GitHub, ca să se vadă ce s-a întâmplat pe serverul tău.",
-      "helpText": "Probleme, dorințe sau idei de îmbunătățire? Deschide liniștit un issue pe GitHub sau treci să saluți pe Discord.",
+      "helpText": "Probleme, dorințe sau sugestii? Deschide liniștit un issue pe GitHub sau treci să saluți pe Discord.",
       "docs": "Manual",
       "open": "Deschide",
       "bug": "Raport de eroare",

@@ -1361,7 +1361,7 @@
       "fetchFailed": "Els programes auxiliars no s'han baixat. Torna-ho a provar més tard",
       "help": "Ajuda",
       "helpHint": "Per a un informe d'error, baixeu un fitxer amb la configuració i l'estat de les tasques, sense contrasenyes, claus ni credencials. Adjunteu-lo a una incidència al GitHub i es veurà què ha passat al vostre servidor.",
-      "helpText": "Problemes, desitjos o idees de millora? Obriu tranquil·lament una incidència al GitHub o passeu a saludar per Discord.",
+      "helpText": "Problemes, desitjos o suggeriments? Obre una incidència a GitHub quan vulguis, o passa a saludar per Discord.",
       "docs": "Manual",
       "open": "Obre",
       "bug": "Informe d'error",

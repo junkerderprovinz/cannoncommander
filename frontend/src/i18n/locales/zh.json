@@ -1271,7 +1271,7 @@
       "fetchFailed": "辅助程序下载失败。请稍后再试",
       "help": "帮助",
       "helpHint": "提交错误报告时，可以下载一个包含设置和任务状态的文件，不含密码、密钥和登录信息。把它附到 GitHub 的 issue 上，就能看出你的服务器上发生了什么。",
-      "helpText": "遇到问题、有需求或改进建议？欢迎在 GitHub 上提 issue，或者来 Discord 打个招呼。",
+      "helpText": "遇到问题、有愿望或建议？欢迎在 GitHub 上提 issue，或者来 Discord 打个招呼。",
       "docs": "手册",
       "open": "打开",
       "bug": "错误报告",

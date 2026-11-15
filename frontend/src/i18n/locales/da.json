@@ -1316,7 +1316,7 @@
       "fetchFailed": "Hjælpeprogrammerne blev ikke hentet. Prøv igen senere",
       "help": "Hjælp",
       "helpHint": "Til en fejlrapport downloader du en fil med indstillingerne og jobbenes tilstand, uden adgangskoder, nøgler og loginoplysninger. Vedhæft den til et issue på GitHub, så kan man se, hvad der skete på din server.",
-      "helpText": "Problemer, ønsker eller forslag til forbedringer? Opret gerne et issue på GitHub, eller kig forbi og sig hej på Discord.",
+      "helpText": "Problemer, ønsker eller forslag? Du er velkommen til at oprette et issue på GitHub eller kigge forbi og sige hej på Discord.",
       "docs": "Håndbog",
       "open": "Åbn",
       "bug": "Fejlrapport",

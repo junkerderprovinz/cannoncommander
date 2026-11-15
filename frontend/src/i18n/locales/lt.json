@@ -1406,7 +1406,7 @@
       "fetchFailed": "Pagalbinių programų atsisiųsti nepavyko. Pabandyk vėliau",
       "help": "Pagalba",
       "helpHint": "Pranešimui apie klaidą atsisiunti failą su nustatymais ir užduočių būsena, be slaptažodžių, raktų ir prisijungimo duomenų. Pridėk jį prie issue GitHub, tada bus matyti, kas nutiko tavo serveryje.",
-      "helpText": "Problemos, pageidavimai ar idėjos, kaip patobulinti? Drąsiai atidaryk issue GitHub arba užsuk pasisveikinti į Discord.",
+      "helpText": "Problemos, norai ar pasiūlymai? Drąsiai atidaryk issue GitHub'e arba užsuk pasisveikinti į Discord.",
       "docs": "Vadovas",
       "open": "Atidaryti",
       "bug": "Pranešimas apie klaidą",

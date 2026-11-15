@@ -1316,7 +1316,7 @@
       "fetchFailed": "Apuohjelmat eivät latautuneet. Yritä myöhemmin uudelleen",
       "help": "Ohje",
       "helpHint": "Virheraporttia varten lataat tiedoston, jossa ovat asetukset ja töiden tila, ilman salasanoja, avaimia ja kirjautumistietoja. Liitä se GitHubin issueen, niin näkee, mitä palvelimellasi tapahtui.",
-      "helpText": "Ongelmia, toiveita tai parannusehdotuksia? Avaa rohkeasti issue GitHubissa tai tule moikkaamaan Discordiin.",
+      "helpText": "Ongelmia, toiveita tai ehdotuksia? Avaa ihmeessä issue GitHubissa tai tule moikkaamaan Discordiin.",
       "docs": "Käsikirja",
       "open": "Avaa",
       "bug": "Virheraportti",

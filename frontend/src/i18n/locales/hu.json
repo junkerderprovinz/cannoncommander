@@ -1316,7 +1316,7 @@
       "fetchFailed": "A segédprogramok letöltése nem sikerült. Próbáld újra később",
       "help": "Súgó",
       "helpHint": "Hibajelentéshez letölthet egy fájlt a beállításokkal és a feladatok állapotával, jelszavak, kulcsok és belépési adatok nélkül. Csatolja egy GitHub-issue-hoz, így látszik, mi történt a szerverén.",
-      "helpText": "Problémák, kívánságok vagy ötletek? Nyisson nyugodtan egy issue-t a GitHubon, vagy ugorjon be köszönni a Discordon.",
+      "helpText": "Problémád, kívánságod vagy ötleted van? Nyiss nyugodtan egy issue-t a GitHubon, vagy ugorj be köszönni a Discordon.",
       "docs": "Kézikönyv",
       "open": "Megnyitás",
       "bug": "Hibajelentés",

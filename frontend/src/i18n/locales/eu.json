@@ -1781,7 +1781,7 @@
       "fetchFailed": "Programa laguntzaileak ez dira deskargatu. Saiatu berriro geroago",
       "help": "Laguntza",
       "helpHint": "Errore-txosten baterako, ezarpenak eta lanen egoera dituen fitxategi bat deskargatzen duzu, pasahitzik, gakorik eta sarbide-daturik gabe. Erantsi GitHub-eko issue bati, eta horrela ikusiko da zer gertatu den zure zerbitzarian.",
-      "helpText": "Arazoak, nahiak edo hobetzeko ideiak? Ireki issue bat GitHub-en lasai, edo pasa zaitez Discordera kaixo esatera.",
+      "helpText": "Arazoak, nahiak edo iradokizunak? Ireki issue bat GitHuben nahi duzunean, edo pasa zaitez Discordera kaixo esatera.",
       "docs": "Eskuliburua",
       "open": "Ireki",
       "bug": "Errore-txostena",
