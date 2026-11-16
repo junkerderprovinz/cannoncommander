@@ -5,7 +5,7 @@
 .touchbar .tb-count { display: flex; align-items: center; padding: 0 .7rem; font-size: 13px; font-weight: 600; white-space: nowrap; color: var(--carbon-text); }
 .touchbar button { flex: 1; min-width: 0; min-height: 3rem; border-radius: var(--radius-control); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; color: var(--carbon-text-sub); }
 .touchbar button svg { width: 1.15rem; height: 1.15rem; color: var(--accent-glyph); }
-.touchbar button:hover:not(:disabled) { background: var(--carbon-hover); color: var(--carbon-text); }
+.touchbar button:hover:not(:disabled) { background: var(--hover); color: var(--carbon-text); }
 .touchbar button:disabled { opacity: .4; }
 .touchbar .tb-done { background: var(--accent); color: var(--accent-contrast); }
 .touchbar .tb-done svg { color: var(--accent-contrast); }

@@ -49,7 +49,6 @@ svg { display: block; }
 /* The menu titles take the shape and the words of the head's buttons, bare until the pointer is on one or its
    menu is open. */
 .head .glim-menubar-item { height: var(--btn-h); padding-inline: var(--btn-pad-x); font-size: var(--text-body); font-weight: 500; color: var(--carbon-text); transition: background-color var(--motion-control-dur, .15s); }
-.head .glim-menubar-item:is(:hover, [aria-expanded="true"]) { background-color: var(--carbon-surface3); }
 
 /* Another program's icon fills the glyph's square in a menu row or a dropdown, in its own colours. */
 .glim-menu-glyph > .glyph-picture, .glim-select-glyph > .glyph-picture { width: 100%; height: 100%; object-fit: contain; }
@@ -78,7 +77,7 @@ svg { display: block; }
 .unpin { width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border-radius: var(--radius-control); flex: none; opacity: .55; }
 .unpin svg { width: .8rem; height: .8rem; color: currentColor; }
 .glim-nav-row:hover .unpin { opacity: 1; }
-.unpin:hover { background: var(--carbon-surface3); color: var(--accent-glyph); }
+.unpin:hover { background: var(--hover); color: var(--accent-glyph); }
 .glim-active .unpin:hover { background: color-mix(in srgb, var(--accent-contrast) 15%, transparent); color: inherit; }
 #side .meta { font-size: 12px; font-weight: 400; color: var(--carbon-text-muted); flex: none; }
 #side .glim-active .meta { color: var(--accent-contrast); }
@@ -87,7 +86,7 @@ svg { display: block; }
 .tree-tog { width: 1.1rem; height: 1.1rem; display: grid; place-items: center; flex: none; border-radius: var(--radius-control); color: var(--carbon-text-muted); }
 .tree-tog svg { width: .7rem; height: .7rem; color: currentColor; transform: rotate(-90deg); }
 .tree-tog.open svg { transform: none; }
-.tree-tog:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
+.tree-tog:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--carbon-text); }
 .glim-active .tree-tog { color: var(--accent-contrast); }
 .glim-active .vmeter { background: color-mix(in srgb, var(--accent-contrast) 22%, transparent); }
 .glim-active .vmeter i { background: var(--accent-contrast); }
@@ -102,7 +101,7 @@ svg { display: block; }
 /* Tabs ride on the panel's top edge like heading badges; the open one is filled, the others stay quiet. */
 .ptabs { position: absolute; top: 0; left: 1rem; right: 1rem; transform: translateY(-50%); display: flex; gap: .35rem; align-items: center; overflow-x: auto; scrollbar-width: none; z-index: 1; }
 .ptab { height: 1.6rem; padding: 0 .8rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); color: var(--carbon-text-sub); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: .45rem; white-space: nowrap; flex: none; }
-.ptab:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
+.ptab:hover { background: var(--hover); color: var(--carbon-text); }
 .ptab.cur { background: var(--accent); color: var(--accent-contrast); }
 .ptab .x { width: 1.1rem; height: 1.1rem; margin-inline-end: -.4rem; border-radius: var(--radius-pill); display: grid; place-items: center; }
 .ptab .x svg { width: .55rem; height: .55rem; }
@@ -118,7 +117,7 @@ svg { display: block; }
 .pathbar.pathedit { padding: 0 .7rem; color: var(--carbon-text); cursor: text; }
 .pathbar.pathedit:focus { background: var(--carbon-surface3); }
 .pseg { height: 1.45rem; padding: 0 .4rem; border-radius: var(--radius-control); font-size: 13px; color: var(--carbon-text-sub); white-space: nowrap; flex: none; cursor: pointer; }
-.pseg:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
+.pseg:hover { background: var(--hover); color: var(--carbon-text); }
 .pseg.last { color: var(--carbon-text); font-weight: 500; }
 .psep { color: var(--carbon-text-muted); font-size: 14px; padding: 0 1px; flex: none; }
 
@@ -128,7 +127,7 @@ svg { display: block; }
 .lhead { position: sticky; top: 0; z-index: 2; height: 1.9rem; padding: 0 .5rem; font-size: 12px; color: var(--carbon-text-muted); background: var(--carbon-surface); }
 .lh { display: flex; align-items: center; gap: .3rem; height: 1.6rem; padding: 0 .35rem; margin: 0 -.35rem; border-radius: var(--radius-control); color: inherit; white-space: nowrap; overflow: hidden; cursor: grab; touch-action: none; }
 .lh.r { justify-content: flex-end; }
-.lh:hover { background: var(--carbon-hover); color: var(--carbon-text); }
+.lh:hover { background: var(--hover); color: var(--carbon-text); }
 .lh.sorted { color: var(--carbon-text); }
 .lh svg { width: .7rem; height: .7rem; flex: none; }
 .lh.moving { background: var(--accent); color: var(--accent-contrast); cursor: grabbing; }
@@ -138,7 +137,7 @@ svg { display: block; }
 .lh-grip:hover, .col-sizing .lh-grip { background: var(--accent) !important; }
 .col-sizing, .col-sizing * { cursor: col-resize !important; user-select: none; }
 .row { height: var(--row-h); padding: 0 .5rem; border-radius: var(--radius-control); cursor: default; user-select: none; }
-.row:hover { background: var(--carbon-hover); }
+.row:hover { background: var(--hover); }
 .cell { font-size: 13px; color: var(--carbon-text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cell.r { text-align: end; }
 .glyph { width: 1.25rem; display: grid; place-items: center; flex: none; }
@@ -235,12 +234,12 @@ svg { display: block; }
 }
 
 button.psep { height: 1.45rem; padding: 0 .3rem; border-radius: var(--radius-control); cursor: pointer; }
-button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
+button.psep:hover { background: var(--hover); color: var(--carbon-text); }
 .pmore { display: none; height: 1.45rem; padding: 0 .45rem; border-radius: var(--radius-control); color: var(--carbon-text-sub); flex: none; }
-.pmore:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
+.pmore:hover { background: var(--hover); color: var(--carbon-text); }
 .ptab > svg { width: .7rem; height: .7rem; margin-inline-start: -.2rem; }
 .lfree { display: flex; align-items: center; gap: .5rem; height: 1.5rem; padding: 0 .45rem; margin: 0 -.45rem; border-radius: var(--radius-control); color: inherit; font: inherit; }
-.lfree:hover { background: var(--carbon-hover); color: var(--carbon-text); }
+.lfree:hover { background: var(--hover); color: var(--carbon-text); }
 .pdots { display: none; gap: .35rem; margin-inline-start: .5rem; }
 .pdots i { width: .5rem; height: .5rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); cursor: pointer; }
 .pdots i.on { background: var(--accent); }
@@ -270,7 +269,7 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .gcard .meta { font-size: 12px; color: var(--carbon-text-muted); padding: 0 .1rem; }
 .lclear { width: 1.2rem; height: 1.2rem; margin-inline-start: .35rem; display: inline-grid; place-items: center; vertical-align: middle; border-radius: var(--radius-pill); color: var(--carbon-text-sub); }
 .lclear svg { width: .55rem; height: .55rem; }
-.lclear:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
+.lclear:hover { background: var(--hover); color: var(--carbon-text); }
 
 .list.view-compact { --row-h: 1.6rem; }
 .view-compact .cell, .view-compact .name .t { font-size: 12px; }
@@ -349,7 +348,7 @@ button.psep:hover { background: var(--carbon-surface3); color: var(--carbon-text
 .mitem > svg:first-child { width: 1rem; height: 1rem; flex: none; color: var(--accent-glyph); }
 .mitem > svg:last-child:not(:first-child) { width: .6rem; height: .6rem; margin-inline-start: auto; flex: none; transform: rotate(-90deg); color: var(--carbon-text-muted); }
 .mitem span { overflow: hidden; text-overflow: ellipsis; }
-.mitem:hover { background: var(--carbon-hover); color: var(--carbon-text); }
+.mitem:hover { background: var(--hover); color: var(--carbon-text); }
 .mitem.on { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--carbon-text); }
 
 /* Copy, move and delete: a picture of what happens first, the choices below it. */

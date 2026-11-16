@@ -7,6 +7,6 @@
 /* A dropdown stands on the same filled ground as the text fields beside it, as in BombVault and KnightLoader. In a
    well or a sub-card GlimStone's own rule, which weighs more, lifts it a step as it does the fields there. */
 .glim-select-trigger:not(.glim-select-trigger--inset) { border-color: transparent; background: var(--carbon-surface2); }
-.glim-select-trigger:not(.glim-select-trigger--inset):hover { background: var(--carbon-surface3); }
+.glim-select-trigger:not(.glim-select-trigger--inset):hover { background: var(--hover); }
 /* The open list is as wide as its trigger and only grows for a longer choice. */
 .glim-select-content { min-width: var(--reference-width, 0px); max-width: min(92vw, 28rem); }

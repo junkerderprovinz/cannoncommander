@@ -22,7 +22,7 @@
 .qrow svg { width: .95rem; height: .95rem; color: var(--accent-glyph); flex: none; }
 .qrow span:first-of-type { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .qrow .glim-num { font-size: 12px; color: var(--carbon-text-muted); }
-.qrow:hover, .qrow:focus-visible, .qrow.cur { background: var(--carbon-hover); outline: none; }
+.qrow:hover, .qrow:focus-visible, .qrow.cur { background: var(--hover); outline: none; }
 .qex b { font-family: var(--font-mono, monospace); font-weight: 500; font-size: 12px; min-width: 6.5rem; color: var(--carbon-text); unicode-bidi: plaintext; text-align: start; }
 .qex { height: auto; min-height: 2rem; padding-block: .3rem; }
 .qex span { font-size: 12px; white-space: normal; line-height: 1.3; }

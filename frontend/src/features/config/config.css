@@ -25,7 +25,7 @@
 /* Neutral, so a reset beside the swatches never reads as one more colour to pick. */
 .a-reset { width: 2rem; height: 2rem; border-radius: var(--radius-control); display: grid; place-items: center; flex: none; background: var(--carbon-surface2); border: 2px solid var(--carbon-border, color-mix(in srgb, var(--carbon-text) 16%, transparent)); color: var(--carbon-text); }
 .a-reset svg { width: 1rem; height: 1rem; }
-.a-reset:hover:not(:disabled) { background: var(--carbon-surface3); }
+.a-reset:hover:not(:disabled) { background: var(--hover); }
 .a-reset:disabled { opacity: .45; cursor: default; }
 .glim-pill.run { background: var(--accent); color: var(--accent-contrast); }
 .a-pickhead { display: flex; justify-content: flex-end; }
@@ -39,7 +39,7 @@
 .a-pmore { margin: .25rem 0 0; font-size: 12px; font-weight: 400; color: var(--carbon-text-muted); }
 .a-ppills { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: .5rem; margin: 0; padding: 0; list-style: none; }
 .a-ppill { width: 100%; padding: .5rem .75rem; overflow: hidden; border-radius: var(--radius-pill); background: var(--carbon-surface2); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
-.a-ppill:hover, .a-ppill:focus-visible { background: var(--carbon-surface3); }
+.a-ppill:hover, .a-ppill:focus-visible { background: var(--hover); }
 .a-pnone { padding: 1.5rem 0; text-align: center; color: var(--carbon-text-muted); }
 .a-hostkey { overflow-wrap: anywhere; }
 .a-totp { flex-direction: row; gap: 1.2rem; align-items: center; }
@@ -75,14 +75,14 @@
 .a-via { flex: none; }
 /* A long word for a kind stays in its column instead of running into the name before it. */
 .a-arow > .glim-pill { min-width: 0; max-width: 100%; overflow: hidden; }
-.a-arow:hover, .a-arow:focus-visible { background: var(--carbon-hover); }
+.a-arow:hover, .a-arow:focus-visible { background: var(--hover); }
 .a-name { display: flex; align-items: center; gap: .4rem; min-width: 0; white-space: nowrap; }
 .a-name .t { overflow: hidden; text-overflow: ellipsis; }
 .a-lhead, .a-arow { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) 10rem 7.5rem 7.5rem; gap: .6rem; align-items: center; padding: 0 .5rem; }
 .a-lhead { height: 1.9rem; font-size: 12px; color: var(--carbon-text-muted); }
 .a-hbtn { justify-self: end; display: inline-flex; align-items: center; gap: .3rem; height: 1.6rem; padding: 0 .45rem; border-radius: var(--radius-control); color: inherit; }
 .a-hbtn svg { width: .7rem; height: .7rem; }
-.a-hbtn:hover { background: var(--carbon-hover); color: var(--carbon-text); }
+.a-hbtn:hover { background: var(--hover); color: var(--carbon-text); }
 .a-hbtn.on { background: var(--accent); color: var(--accent-contrast); }
 .a-veil { z-index: 90; }
 .a-veil-card { display: flex; align-items: center; gap: .7rem; padding: 1rem 1.3rem; }

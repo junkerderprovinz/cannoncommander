@@ -6,7 +6,7 @@
 .bk-ghead { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; gap: .6rem; align-items: center; height: 2.1rem; padding: 0 .45rem; }
 .bk-ghead .bk-name { font-weight: 600; }
 .bk-copy { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: .6rem; align-items: center; height: 2.1rem; padding: 0 .45rem 0 2.8rem; border-radius: var(--radius-control); }
-.bk-copy:hover { background: var(--carbon-surface3); }
+.bk-copy:hover { background: var(--hover); }
 .bk-copy .bk-path { font-size: 12.5px; }
 .bk-copy.gone .bk-path { color: var(--carbon-text-muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--carbon-text) 35%, transparent); }
 .bk-swl { display: flex; }

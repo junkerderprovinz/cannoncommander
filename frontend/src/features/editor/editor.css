@@ -7,7 +7,7 @@
 /* A tab per file, in the pills of the panels' tabs, with names written as they are. */
 .ce-tabs { display: flex; align-items: center; gap: .35rem; min-width: 0; overflow-x: auto; scrollbar-width: none; flex: 0 1 auto; }
 .ce-tab { height: 1.75rem; padding: 0 .3rem 0 .85rem; border-radius: var(--radius-pill); background: var(--carbon-surface2); color: var(--carbon-text-sub); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap; flex: none; }
-.ce-tab:hover { background: var(--carbon-surface3); color: var(--carbon-text); }
+.ce-tab:hover { background: var(--hover); color: var(--carbon-text); }
 .ce-tab.cur { background: var(--accent); color: var(--accent-contrast); }
 .ce-tab button { all: unset; cursor: pointer; display: inline-flex; align-items: center; }
 .ce-tab button:focus-visible { outline: 2px solid var(--focus-ring, var(--accent-ink)); outline-offset: 2px; border-radius: var(--radius-pill); }
@@ -42,7 +42,7 @@
 /* The status bar: where the caret is on the left, how the file is written on the right. */
 .ce-status { display: flex; align-items: center; gap: .35rem .9rem; min-height: 2.1rem; padding: .3rem .2rem 0; flex: none; font-size: 12px; color: var(--carbon-text-sub); font-variant-numeric: tabular-nums; }
 .ce-pos { all: unset; cursor: pointer; white-space: nowrap; padding: .15rem .35rem; border-radius: var(--radius-control); }
-.ce-pos:hover { color: var(--carbon-text); background: var(--carbon-hover); }
+.ce-pos:hover { color: var(--carbon-text); background: var(--hover); }
 .ce-pos:focus-visible { outline: 2px solid var(--focus-ring, var(--accent-ink)); }
 .ce-status .ce-flag { flex: none; }
 .ce-wrapsw { white-space: nowrap; }

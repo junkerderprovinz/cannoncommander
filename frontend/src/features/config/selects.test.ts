@@ -61,7 +61,7 @@ describe('a dropdown', () => {
     const ground = rule('.glim-select-trigger:not(.glim-select-trigger--inset)');
     expect(ground).toMatch(/background: var\(--carbon-surface2\)/);
     expect(ground).toMatch(/border-color: transparent/);
-    expect(rule('.glim-select-trigger:not(.glim-select-trigger--inset):hover')).toMatch(/background: var\(--carbon-surface3\)/);
+    expect(rule('.glim-select-trigger:not(.glim-select-trigger--inset):hover')).toMatch(/background: var\(--hover\)/);
   });
 
   it('opens a list as wide as its trigger that grows for a longer choice', () => {

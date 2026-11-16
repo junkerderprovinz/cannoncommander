@@ -10,6 +10,6 @@
 .pal-row .grp { margin-inline-start: auto; padding-inline-start: .5rem; font-size: 12px; color: var(--carbon-text-muted); }
 .pal-row .t + :is(.glim-kbd, .glim-rowmark) { margin-inline-start: auto; }
 .pal-row .glim-rowmark { flex: none; }
-.pal-row.cur { background: var(--carbon-hover); }
+.pal-row.cur { background: var(--hover); }
 .pal-row.off { opacity: .45; cursor: default; }
 .pal-none { padding: .8rem .6rem; color: var(--carbon-text-muted); font-size: 13px; }

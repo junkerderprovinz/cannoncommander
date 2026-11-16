@@ -67,7 +67,7 @@
 .mcp-dot.ok { background: var(--status-ok-solid); }
 .mcp-keys { display: flex; flex-direction: column; gap: .35rem; align-self: stretch; }
 .mcp-keys button { display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem; border-radius: var(--radius-control); background: var(--carbon-surface2); text-align: start; }
-.mcp-keys button:hover { background: var(--carbon-surface3); }
+.mcp-keys button:hover { background: var(--hover); }
 .mcp-keys button[aria-pressed="true"] { box-shadow: inset 0 0 0 1.5px var(--accent-text, var(--accent)); }
 .mcp-log { display: flex; flex-direction: column; gap: .3rem; font-size: 13px; }
 .mcp-log > div { display: flex; flex-wrap: wrap; gap: .2rem .6rem; }

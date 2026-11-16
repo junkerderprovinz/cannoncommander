@@ -7,7 +7,7 @@
 .bk-fill { flex: 1; min-height: 0; overflow: hidden; }
 .bk-list { display: flex; flex-direction: column; gap: 1px; overflow: auto; min-height: 0; flex: 1; }
 .bk-row { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; align-items: center; gap: .6rem; height: 2.25rem; padding: 0 .45rem; border-radius: var(--radius-control); text-align: start; width: 100%; cursor: pointer; flex: none; }
-.bk-row:hover, .bk-row:focus-visible, .bk-row.cur { background: var(--carbon-surface3); outline: none; }
+.bk-row:hover, .bk-row:focus-visible, .bk-row.cur { background: var(--hover); outline: none; }
 .bk-row:hover .glim-pill, .bk-row.cur .glim-pill, .bk-step:hover .glim-pill, .bk-copy:hover .glim-pill:not(.glim-pill--warn), .bk-mrow:hover .glim-pill:not(.glim-pill--fail) { background: var(--carbon-hover-raised); }
 .bk-row:is(:hover, :focus-visible, .cur) > .glim-tile { background: var(--accent); color: var(--accent-contrast); }
 .bk-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
@@ -16,7 +16,7 @@
 .bk-tools { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
 .bk-tools .glim-eyebrow { padding: 0; margin-inline-end: auto; }
 .bk-chip { height: 1.75rem; padding: 0 .65rem; border-radius: var(--radius-pill); background: var(--carbon-surface3); font-size: 13px; white-space: nowrap; }
-.bk-chip:hover { background: color-mix(in srgb, var(--carbon-hover-raised) 78%, var(--btn-tint)); }
+.bk-chip:hover { background: var(--hover); }
 .bk-chip b { font-weight: 600; font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 12px; margin-inline-end: .35rem; }
 .bk-scan { display: grid; gap: .6rem; justify-items: center; padding: 3rem 1rem; color: var(--carbon-text-muted); }
 .bk-scan .bar { width: min(20rem, 80%); }

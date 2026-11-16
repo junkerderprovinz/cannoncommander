@@ -27,13 +27,13 @@
 
 .sp-crumbs { display: flex; align-items: center; gap: .25rem; flex-wrap: wrap; }
 .sp-crumb { height: 1.9rem; padding: 0 .6rem; border-radius: var(--radius-pill); color: var(--carbon-text-sub); }
-.sp-crumb:hover { background: var(--carbon-surface2); color: var(--carbon-text); }
+.sp-crumb:hover { background: var(--hover); color: var(--carbon-text); }
 .sp-crumb.cur { color: var(--carbon-text); font-weight: 600; }
 .sp-list { display: flex; flex-direction: column; }
 .sp-lhead, .sp-row { display: grid; grid-template-columns: minmax(0, 1fr) 6rem 9rem 4.6rem; align-items: center; gap: .6rem; }
 .sp-lhead { font-size: 12px; padding: 0 .5rem .35rem; }
 .sp-row { min-height: var(--row-h); padding: 0 .3rem 0 .2rem; border-radius: var(--radius-control); }
-.sp-row:hover { background: var(--carbon-surface2); }
+.sp-row:hover { background: var(--hover); }
 .sp-row > .muted { font-size: 13px; }
 .sp-lhead > :nth-child(2), .sp-row > :nth-child(2) { text-align: end; }
 .sp-lhead > :nth-child(3) { padding-inline-start: .1rem; }

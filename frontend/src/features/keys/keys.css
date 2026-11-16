@@ -4,7 +4,7 @@
 .kb-list { display: flex; flex-direction: column; gap: 1rem; }
 .kb-group { display: flex; flex-direction: column; gap: 1px; }
 .kb-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: .6rem; min-height: 2.2rem; padding: 0 .3rem 0 .5rem; border-radius: var(--radius-control); }
-.kb-row:hover { background: var(--carbon-surface3); }
+.kb-row:hover { background: var(--hover); }
 .kb-row.rec { background: color-mix(in srgb, var(--accent) 14%, var(--carbon-surface2)); }
 .kb-name { display: flex; align-items: center; gap: .6rem; min-width: 0; font-size: 14px; }
 .kb-name svg { width: .95rem; height: .95rem; color: var(--accent-glyph); flex: none; }
