@@ -72,7 +72,7 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
           <Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" />
           <span v-if="k.at && k.at !== path" class="link">{{ t('files.foundIn', { path: k.at.slice(path.length + 1) }) }}</span>
           <span v-if="k.link" class="link">→ {{ nativePath(k.link, windowsPaths()) }}</span>
-          <Pill v-if="k.archive" tone="state">{{ t('files.archive') }}</Pill>
+          <Pill v-if="k.archive">{{ t('files.archive') }}</Pill>
           <Pill v-if="mark" :tone="toneOf(mark.tone)">{{ mark.label }}</Pill>
         </span>
         <span v-else-if="id === 'size' && volume" class="cell r glim-num vcell"><Meter class="vmeter" size="small" :value="1 - volume.free / volume.total" :label="driveName" :value-text="t('files.freeOf', { free: fmtSize(volume.free), total: fmtSize(volume.total) })" />{{ t('files.free', { size: fmtSize(volume.free) }) }}</span>

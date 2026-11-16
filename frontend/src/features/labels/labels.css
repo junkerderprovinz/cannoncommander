@@ -1,7 +1,7 @@
 /* Colour dots, tag pills, the label windows and the colour picker, as the prototype draws them. */
 .cdot { width: .6rem; height: .6rem; border-radius: 50%; background: var(--c); flex: none; box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 25%, transparent); }
 .cdot.big { width: .75rem; height: .75rem; margin: 0 .2rem; }
-.glim-pill.tag { height: 1.2rem; padding: 0 .45rem; font-size: 11px; background: color-mix(in srgb, var(--accent) 14%, var(--carbon-surface2)); color: var(--carbon-text-sub); }
+.glim-pill.tag { height: 1.2rem; padding: 0 .45rem; font-size: 11px; color: var(--carbon-text-sub); }
 .mk-row { display: grid; grid-template-columns: 1.4rem minmax(0, 1fr) 8rem 1.9rem; align-items: center; gap: .6rem; min-height: 2.5rem; }
 .mk-row > svg { width: .9rem; height: .9rem; color: var(--accent-glyph); justify-self: center; }
 .mk-row .cdot.big { justify-self: center; margin: 0; }
