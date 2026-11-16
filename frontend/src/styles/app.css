@@ -146,6 +146,9 @@ svg { display: block; }
 .name { white-space: nowrap; overflow: hidden; display: flex; align-items: center; gap: .55rem; min-width: 0; }
 .name .t { overflow: hidden; text-overflow: ellipsis; }
 .name .link { color: var(--carbon-text-muted); font-size: 12px; }
+/* The badges beside a name step back behind it: a shade darker in the light theme, and in the dark one the
+   step closest to the card, where the third surface would stand out. */
+.name { --pill-ground: light-dark(var(--carbon-surface3), var(--carbon-surface2)); }
 .row.marked { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .row.marked:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
 .row.marked .t { color: var(--carbon-text); }
