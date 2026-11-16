@@ -86,7 +86,7 @@ svg { display: block; }
 .tree-tog { width: 1.1rem; height: 1.1rem; display: grid; place-items: center; flex: none; border-radius: var(--radius-control); color: var(--carbon-text-muted); }
 .tree-tog svg { width: .7rem; height: .7rem; color: currentColor; transform: rotate(-90deg); }
 .tree-tog.open svg { transform: none; }
-.tree-tog:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--carbon-text); }
+.tree-tog:hover { color: var(--accent-glyph); }
 .glim-active .tree-tog { color: var(--accent-contrast); }
 .glim-active .vmeter { background: color-mix(in srgb, var(--accent-contrast) 22%, transparent); }
 .glim-active .vmeter i { background: var(--accent-contrast); }
