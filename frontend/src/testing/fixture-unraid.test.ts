@@ -70,6 +70,32 @@ describe('fixture unraid', () => {
     expect(body.parity.exit).toBe(0);
   });
 
+  it('keeps a storeroom: shows the plan first, stores a folder and brings it back', async () => {
+    const scan = (await api('GET', '/storeroom/scan')).body;
+    expect(scan.docker).toBe(true);
+    const folder = scan.finds.find((f: { kind: string }) => f.kind === 'appdata');
+    const refs = [{ kind: 'appdata', id: folder.id }];
+    const plan = (await api('POST', '/storeroom/plan', { op: 'store', refs })).body.steps;
+    expect(plan[0]).toMatchObject({ done: false, to: expect.stringContaining('/.storeroom/') });
+    expect((await api('GET', '/storeroom/scan')).body.room).toEqual([]);
+    expect((await api('POST', '/storeroom/run', { op: 'store', refs })).body.steps[0].done).toBe(true);
+    const after = (await api('GET', '/storeroom/scan')).body;
+    expect(after.finds.some((f: { id: string }) => f.id === folder.id)).toBe(false);
+    const held = after.room.find((e: { name: string }) => e.name === folder.name);
+    await api('POST', '/storeroom/run', { op: 'restore', refs: [{ id: held.id }] });
+    const back = (await api('GET', '/storeroom/scan')).body;
+    expect(back.room).toEqual([]);
+    expect(back.finds.some((f: { id: string }) => f.id === folder.id)).toBe(true);
+    expect((await api('POST', '/storeroom/plan', { op: 'burn', refs: [] })).status).toBe(400);
+  });
+
+  it('removes images for good instead of storing them', async () => {
+    const image = (await api('GET', '/storeroom/scan')).body.finds.find((f: { kind: string }) => f.kind === 'image');
+    const steps = (await api('POST', '/storeroom/run', { op: 'store', refs: [{ kind: 'image', id: image.id }] })).body.steps;
+    expect(steps[0]).toMatchObject({ forGood: true, done: true });
+    expect((await api('GET', '/storeroom/scan')).body.room).toEqual([]);
+  });
+
   it('tells where a folder lies and which other names a hard link has', async () => {
     const folder = (await api('GET', '/unraid/where?path=' + encodeURIComponent('/mnt/user/downloads'))).body;
     expect(folder.dir).toBe(true);

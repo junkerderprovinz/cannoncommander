@@ -115,6 +115,51 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
     parity: { at: check.lastSync, seconds: 89155, errors: check.lastErrors, exit: check.lastExit },
   });
 
+  // The storeroom of a server with a few leftovers. Storing moves a find into the room, bringing back puts it where it
+  // was, and images and the build cache go for good.
+  const TPL = '/boot/config/plugins/dockerMan/templates-user', ADATA = '/mnt/user/appdata';
+  const leftovers = [
+    { kind: 'template', id: TPL + '/my-alte-mediathek.xml', name: 'alte-mediathek', path: TPL + '/my-alte-mediathek.xml', size: 6 * KB },
+    { kind: 'appdata', id: ADATA + '/altes-spiel', name: 'altes-spiel', path: ADATA + '/altes-spiel', size: 5 * GB },
+    { kind: 'container', id: 'c0ffee12ab34', name: 'test-lauf', size: 0 },
+    { kind: 'network', id: 'n0a1b2c3d4', name: 'alt-netz', size: 0 },
+    { kind: 'volume', id: '3f1b5a1c8d2e4f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8', name: '3f1b5a1c8d2e4f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8', size: 340 * MB },
+    { kind: 'image', id: 'sha256:9e8d7c6b5a4f3e2d1c0b', name: 'lscr.io/linuxserver/alt:latest', size: 820 * MB, forGood: true },
+    { kind: 'image', id: 'sha256:1a2b3c4d5e6f7a8b9c0d', name: '', size: 120 * MB, forGood: true },
+    { kind: 'cache', id: 'build-cache', name: '', size: 2.1 * GB, forGood: true },
+  ].map((f) => ({ forGood: false, ...f, size: Math.round(f.size) }));
+  const roomOf = { finds: leftovers, entries: [] };
+  let roomSeq = 0;
+  function heldAt(f, id) {
+    if (f.kind === 'template') return '/config/storeroom/templates/' + id + '-' + f.id.split('/').pop();
+    if (f.kind === 'appdata') return ADATA + '/.storeroom/' + id + '/' + f.name;
+    if (f.kind === 'container') return 'storeroom-' + id + '-' + f.name;
+    return f.kind === 'network' ? f.name : f.id;
+  }
+  function roomSteps(op, refs, act) {
+    return refs.map((r) => {
+      if (op === 'store') {
+        const f = roomOf.finds.find((x) => x.kind === r.kind && x.id === r.id);
+        if (!f) return { kind: r.kind || '', name: '', from: r.id, forGood: false, done: false, problem: 'inUse' };
+        const id = (++roomSeq).toString(16).padStart(12, '0'), held = f.forGood ? '' : heldAt(f, id);
+        const from = f.kind === 'container' || f.kind === 'network' ? f.name : f.id;
+        if (act) {
+          roomOf.finds = roomOf.finds.filter((x) => x !== f);
+          if (!f.forGood) roomOf.entries.push({ id, kind: f.kind, name: f.name, from, held, at: iso(clock.now()), size: f.size, find: f });
+        }
+        return { kind: f.kind, name: f.name, from, ...(held && held !== f.id ? { to: held } : {}), forGood: f.forGood, done: act };
+      }
+      const e = roomOf.entries.find((x) => x.id === r.id);
+      if (!e) return { kind: '', name: '', from: r.id, forGood: false, done: false, problem: 'gone' };
+      if (act) {
+        roomOf.entries = roomOf.entries.filter((x) => x !== e);
+        if (op === 'restore') roomOf.finds.push(e.find);
+      }
+      return { kind: e.kind, name: e.name, from: e.held, ...(op === 'restore' ? { to: e.from } : {}), forGood: op === 'discard', done: act };
+    });
+  }
+  const roomBody = (b) => (['store', 'restore', 'discard'].includes(b?.op) ? null : [400, 'op is store, restore or discard']);
+
   // The parity check as /proc/mdstat tells it, played on a timer of its own.
   const check = { running: false, paused: false, pos: 0, size: PARITY_SIZE, percent: 0, lastSync: iso(clock.now() - 23 * 86400000), lastErrors: 0, lastExit: 0 };
   let ticking = null;
@@ -221,6 +266,9 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
   const routes = [
     ['GET', /^\/unraid\/state$/, () => [200, state()]],
     ['GET', /^\/unraid\/drives$/, () => [200, drives()]],
+    ['GET', /^\/storeroom\/scan$/, () => [200, { docker: true, write: true, finds: roomOf.finds, room: roomOf.entries.map(({ find, ...e }) => e) }]],
+    ['POST', /^\/storeroom\/plan$/, (_r, _s, b) => roomBody(b) ?? [200, { steps: roomSteps(b.op, b.refs || [], false) }]],
+    ['POST', /^\/storeroom\/run$/, (_r, _s, b) => roomBody(b) ?? [200, { steps: roomSteps(b.op, b.refs || [], true) }]],
     ['GET', /^\/unraid\/where$/, (req) => {
       const path = new URL(req.url, 'http://fixture').searchParams.get('path') || '';
       const out = whereOut(path);
