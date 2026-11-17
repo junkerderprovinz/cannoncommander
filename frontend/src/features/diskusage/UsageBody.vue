@@ -18,6 +18,7 @@ import { inArchive, join, parent } from '@/files/paths';
 import { byName, t } from '@/i18n';
 import { deleteItems } from '@/features/trash/trash';
 import { useUnraid } from '@/features/unraid/state';
+import { useUser } from '@/stores/user';
 import { usePanels } from '@/stores/panels';
 import Crumbs from '@/ui/Crumbs.vue';
 import { copyText, folderSteps, num, plural, setFoot, segItems } from '@/ui/kit';
@@ -46,7 +47,7 @@ let anchor: string | null = null;
 const body = ref<HTMLElement | null>(null);
 const box = reactive({ w: 0, h: 0 });
 
-const VIEWS = computed(() => ([['tree', 'IconRowMedium'], ['map', 'IconModules'], ['types', 'IconFiles'], ['largest', 'IconSort'], ...(U.available ? [['drives', 'IconDatabase'], ['storeroom', 'IconArchive']] as const : [])] as const).map(([v, g]) => [v, t(`diskusage.views.${v}`), g] as const));
+const VIEWS = computed(() => ([['tree', 'IconRowMedium'], ['map', 'IconModules'], ['types', 'IconFiles'], ['largest', 'IconSort'], ...(U.available ? [['drives', 'IconDatabase']] as const : []), ...(U.available && useUser().admin() ? [['storeroom', 'IconArchive']] as const : [])] as const).map(([v, g]) => [v, t(`diskusage.views.${v}`), g] as const));
 const COLOURS = computed(() => segItems((['standard', 'type', 'age'] as const).map((c) => [c, t(`diskusage.colours.${c}`)] as const)));
 const colour = computed<ColourMode>(() => (['type', 'age'].includes(prefs.usageColours) ? prefs.usageColours as ColourMode : 'standard'));
 const hl = ref<string | null>(null);
