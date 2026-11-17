@@ -155,4 +155,14 @@ It opens without a sign-in until you set a password under Settings, Account and 
     Display="advanced"
     Required="false"
     Mask="false"></Config>
+  <Config
+    Name="Docker socket"
+    Target="/var/run/docker.sock"
+    Default=""
+    Mode="rw"
+    Description="Enter /var/run/docker.sock to find unused templates, appdata folders and Docker leftovers. Clearing them away into the storeroom also needs Unraid write access. Leave it empty otherwise: this socket controls every container."
+    Type="Path"
+    Display="advanced"
+    Required="false"
+    Mask="false"></Config>
 </Container>
