@@ -223,9 +223,37 @@ export function toolsFixture(engine) {
       if (e) t.by.set(e, (t.by.get(e) || 0) + (k.size || 0));
       types.set(id, t);
     }
+    // The treemap's colours: the bytes of each kind and of each age below an entry, as the server counts them.
+    const mix = (n) => {
+      const kinds = {}, ages = [0, 0, 0, 0, 0, 0], at = clock.now();
+      const add = (k) => {
+        if (k.link) return;
+        if (k.dir) { FS.kids(k).filter(show(all)).forEach(add); return; }
+        if (!k.size) return;
+        const days = (at - (k.time || 0)) / DAY, age = [7, 31, 183, 365, 1095].findIndex((d) => days < d);
+        kinds[kindOf(k)] = (kinds[kindOf(k)] || 0) + k.size;
+        ages[age < 0 ? 5 : age] += k.size;
+      };
+      add(n);
+      if (!ages.some(Boolean)) return {};
+      // Whole bytes that add up to the entry's own rounded size, the rest given to the largest part.
+      const whole = (vs) => {
+        const out = vs.map(Math.round), top = out.indexOf(Math.max(...out));
+        out[top] += Math.round(vs.reduce((a, v) => a + v, 0)) - out.reduce((a, v) => a + v, 0);
+        return out;
+      };
+      const names = Object.keys(kinds), sizes = whole(Object.values(kinds));
+      return { kinds: Object.fromEntries(names.map((k, i) => [k, sizes[i]])), ages: whole(ages) };
+    };
+    const entry = (k) => ({ name: k.name, dir: !!k.dir, ...totals(stat(k)), ...mix(k) });
+    const nested = (k) => {
+      if (!k.dir) return entry(k);
+      const inner = k.link ? [] : FS.kids(k).filter(show(all)).map(entry).sort((a, b) => b.size - a.size);
+      return { ...entry(k), items: inner.slice(0, 40), ...(inner.length > 40 ? { more: inner.length - 40 } : {}) };
+    };
     return {
       path, ...totals(stat(root)),
-      items: FS.kids(root).filter(show(all)).map((k) => ({ name: k.name, dir: !!k.dir, ...totals(stat(k)) })).sort((a, b) => b.size - a.size),
+      items: FS.kids(root).filter(show(all)).map(nested).sort((a, b) => b.size - a.size),
       types: [...types.values()].sort((a, b) => b.size - a.size).map(({ by, ...t }) => ({ ...t, size: Math.round(t.size), exts: [...by].sort((a, b) => b[1] - a[1]).map(([e]) => e) })),
       largest: files.filter((f) => !kind || kindOf(f.k) === kind).sort((a, b) => (b.k.size || 0) - (a.k.size || 0)).slice(0, largest)
         .map((f) => ({ name: f.k.name, at: f.at, size: Math.round(f.k.size || 0), mtime: iso(f.k.time) })),

@@ -55,6 +55,21 @@ describe('fixture unraid', () => {
     expect(st.shares.find((s: { name: string }) => s.name === 'filme').secondary).toBeUndefined();
   });
 
+  it('reports every pool and disk with twelve weeks of history and the last parity check', async () => {
+    const { status, body } = await api('GET', '/unraid/drives');
+    expect(status).toBe(200);
+    const st = (await api('GET', '/unraid/state')).body;
+    const data = st.disks.filter((d: { kind: string }) => d.kind === 'data').map((d: { name: string }) => d.name);
+    expect(body.array.filter((d: { kind: string }) => d.kind === 'data').map((d: { name: string }) => d.name)).toEqual(data);
+    expect(body.array.at(-1).kind).toBe('parity');
+    expect(body.pools.map((d: { name: string }) => d.name)).toEqual(['cache']);
+    for (const d of [...body.pools, ...body.array.filter((x: { kind: string }) => x.kind === 'data')]) {
+      expect(d.history.length, d.name).toBe(84);
+      expect(d.history.at(-1)[1], d.name).toBe(d.used);
+    }
+    expect(body.parity.exit).toBe(0);
+  });
+
   it('tells where a folder lies and which other names a hard link has', async () => {
     const folder = (await api('GET', '/unraid/where?path=' + encodeURIComponent('/mnt/user/downloads'))).body;
     expect(folder.dir).toBe(true);

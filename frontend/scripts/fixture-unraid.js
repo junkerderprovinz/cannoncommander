@@ -95,6 +95,26 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
     write: true, spindownDelay: 45, mover: { schedule: MOVER, active: false },
   });
 
+  // The drives tab: twelve weeks in which each disk filled up a little every day to what it holds now. A sleeping disk
+  // shows the temperature it had when it fell asleep two hours ago.
+  function driveOut(name, kind) {
+    const d = diskOut(name, kind), today = Math.floor(clock.now() / 86400000), at = iso(clock.now() - 2 * 3600000);
+    const perDay = d.fsSize * (kind === 'pool' ? 0 : 0.0005 * (1 + (DISKS.indexOf(name) % 3)));
+    const weeks = perDay ? (d.fsSize - d.used) / (perDay * 7) : Infinity;
+    return {
+      name, kind, status: d.status, fsType: d.fsType, rotational: d.rotational, transport: kind === 'pool' ? 'nvme' : 'ata',
+      size: d.size, fsSize: d.fsSize, used: d.used, asleep: d.spundown,
+      ...(d.spundown ? { asleepSince: at, temp: 33, tempAt: at } : { temp: d.temp }),
+      history: Array.from({ length: 84 }, (_, i) => [today - 83 + i, Math.max(0, Math.round(d.used - perDay * (83 - i)))]),
+      ...(weeks <= 104 ? { fullIn: { 4: weeks, 8: weeks, 12: weeks } } : {}),
+    };
+  }
+  const drives = () => ({
+    pools: DEVS.filter((d) => !DISKS.includes(d)).map((d) => driveOut(d, 'pool')),
+    array: [...DISKS.map((d) => driveOut(d, 'data')), { name: 'parity', kind: 'parity', status: 'DISK_OK', rotational: true, size: PARITY_SIZE, fsSize: 0, used: 0, asleep: false, temp: 34, history: [] }],
+    parity: { at: check.lastSync, seconds: 89155, errors: check.lastErrors, exit: check.lastExit },
+  });
+
   // The parity check as /proc/mdstat tells it, played on a timer of its own.
   const check = { running: false, paused: false, pos: 0, size: PARITY_SIZE, percent: 0, lastSync: iso(clock.now() - 23 * 86400000), lastErrors: 0, lastExit: 0 };
   let ticking = null;
@@ -200,6 +220,7 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
 
   const routes = [
     ['GET', /^\/unraid\/state$/, () => [200, state()]],
+    ['GET', /^\/unraid\/drives$/, () => [200, drives()]],
     ['GET', /^\/unraid\/where$/, (req) => {
       const path = new URL(req.url, 'http://fixture').searchParams.get('path') || '';
       const out = whereOut(path);
