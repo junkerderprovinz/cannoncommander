@@ -4,13 +4,24 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
-## Unreleased
+## v1.1.4 (2026-11-17)
+
+Help goes to Discord, and whatever the pointer is over lights up in your accent colour.
+
+## 🎨 Design
+
+- **GlimStone 4.5.4.** A row, a tab, a tile or a button under the pointer lights up in the same soft shade of your accent colour, and accent text on the light theme reads more clearly. The ring that shows where the keyboard is stands out on every background, and the busy ring in GlimStone's buttons keeps its own pace, apart from the app's spinners.
+- **The tree's arrows light up on their own.** The arrow that opens a folder takes your accent under the pointer, without the extra circle behind it.
+- **The badges beside a name wear one quieter grey.** Cache, tags and the archive badge share the same neutral pill and stand a step back from the name, so three plain facts no longer look like three different signals. Faults and warnings keep their colours.
 
 ## ⚡ Improved
 
-- **Help goes to Discord.** The Help card in Settings > Info offers GitHub and the CannonCommander Discord server, and the mail button is gone, in every language.
-- **The GlimStone version opens GlimStone's newest release.**
-- **GlimStone 4.5.4.** Whatever the pointer is over, a row, a tab or a button, lights up in the same soft shade of your accent colour, and accent text on the light theme reads more clearly. The busy ring in GlimStone's buttons keeps its own pace, apart from the app's spinners.
+- **Help goes to Discord.** The Help card in **Settings > Info** offers GitHub and the CannonCommander Discord server in place of the mail button.
+- **The GlimStone version opens GlimStone's newest release,** so the number always leads to notes that exist.
+
+## 🌐 Translations
+
+- **The Help sentence** uses GlimStone's words in all 42 languages.
 
 ## v1.1.3 (2026-11-13)
 

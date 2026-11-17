@@ -80,6 +80,12 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="1.1.4" date="2026-11-17">
+      <description>
+        <p>The Help card leads to GitHub and Discord, and whatever the pointer is over lights up in your accent colour.</p>
+      </description>
+      <url type="details">https://github.com/junkerderprovinz/cannoncommander/releases/tag/v1.1.4</url>
+    </release>
     <release version="1.1.3" date="2026-11-13">
       <description>
         <p>The handbook opens the new documentation site, with short guides and a screenshot for each step.</p>
