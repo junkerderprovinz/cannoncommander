@@ -1670,7 +1670,8 @@
       "tree": "ट्री",
       "map": "टाइलें",
       "types": "फ़ाइल प्रकार",
-      "largest": "सबसे बड़ी फ़ाइलें"
+      "largest": "सबसे बड़ी फ़ाइलें",
+      "drives": "ड्राइव"
     },
     "cols": {
       "name": "नाम",
@@ -1714,6 +1715,93 @@
       "text": "टेक्स्ट",
       "code": "सोर्स कोड",
       "file": "अन्य"
+    },
+    "colourBy": "रंग का आधार",
+    "colours": {
+      "standard": "सामान्य",
+      "type": "फ़ाइल प्रकार",
+      "age": "उम्र"
+    },
+    "groups": {
+      "video": "वीडियो",
+      "photo": "फ़ोटो",
+      "music": "संगीत",
+      "docs": "दस्तावेज़",
+      "archive": "आर्काइव",
+      "other": "अन्य"
+    },
+    "ages": {
+      "week": "एक हफ़्ते से कम",
+      "month": "एक महीने से कम",
+      "half": "6 महीने से कम",
+      "year": "एक साल से कम",
+      "years": "3 साल से कम",
+      "older": "3 साल से ज़्यादा"
+    },
+    "tipShare": "{folder} का {pct} %",
+    "tipAge": "ज़्यादातर हिस्सा {age} पुराना है",
+    "more": {
+      "one": "{n} छोटी एंट्री",
+      "other": "{n} छोटी एंट्रियाँ"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "पैरिटी",
+      "hint": "CannonCommander यहाँ सिर्फ़ वही पढ़ता है जो सर्वर पहले से जानता है। सोती डिस्क को छेड़ा नहीं जाता, आपको उसके वही मान दिखते हैं जो सोते समय थे।",
+      "free": "{size}, {free} खाली",
+      "used": "{name} में भरा",
+      "moonSince": "{disk} {time} से सो रही है। CannonCommander उसे सोने देता है और आपको {time} के मान दिखाता है।",
+      "moon": "{disk} सो रही है। CannonCommander उसे सोने देता है और आपको आख़िरी ज्ञात मान दिखाता है।",
+      "tempAt": "आख़िरी माप {time} पर",
+      "history": "{name} का इतिहास",
+      "range": "अवधि",
+      "weeks": {
+        "one": "{n} हफ़्ता",
+        "other": "{n} हफ़्ते"
+      },
+      "perDay": "हर दिन एक मान",
+      "asOf": "{time} की स्थिति, {name} सो रही है",
+      "change": "{weeks} में {change}",
+      "fullIn": {
+        "one": "लगभग {n} हफ़्ते में भर जाएगी",
+        "other": "लगभग {n} हफ़्तों में भर जाएगी"
+      },
+      "chartLabel": "{weeks} में {name} का भराव",
+      "chartTip": "{pct} भरा, {free} खाली",
+      "noHistory": "इतिहास अभी शुरू हुआ है, कल से आपको यहाँ एक रेखा दिखेगी",
+      "details": "{name} का विवरण",
+      "facts": {
+        "state": "स्थिति",
+        "parity": "आख़िरी पैरिटी जाँच",
+        "scrub": "आख़िरी Scrub",
+        "frag": "फ़्रैगमेंटेशन",
+        "compression": "कम्प्रेशन",
+        "fs": "फ़ाइल सिस्टम",
+        "drive": "ड्राइव"
+      },
+      "running": "चल रही है",
+      "asleep": "सो रही है",
+      "asleepSince": "{time} से सो रही है",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, रद्द",
+      "errors": {
+        "one": "{n} त्रुटि",
+        "other": "{n} त्रुटियाँ"
+      },
+      "pools": {
+        "one": "{n} Pool",
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "one": "{n} डिस्क",
+        "other": "{n} डिस्क"
+      },
+      "foot": "{pools} और {disks}",
+      "footAsleep": {
+        "one": "{pools} और {disks}, इनमें से {n} सो रही है",
+        "other": "{pools} और {disks}, इनमें से {n} सो रही हैं"
+      }
     }
   },
   "duplicates": {

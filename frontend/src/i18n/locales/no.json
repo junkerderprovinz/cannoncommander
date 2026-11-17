@@ -1670,7 +1670,8 @@
       "tree": "Tre",
       "map": "Fliser",
       "types": "Filtyper",
-      "largest": "Største filer"
+      "largest": "Største filer",
+      "drives": "Stasjoner"
     },
     "cols": {
       "name": "Navn",
@@ -1714,6 +1715,93 @@
       "text": "Tekst",
       "code": "Kildekode",
       "file": "Annet"
+    },
+    "colourBy": "Farge etter",
+    "colours": {
+      "standard": "Standard",
+      "type": "Filtype",
+      "age": "Alder"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Bilder",
+      "music": "Musikk",
+      "docs": "Dokumenter",
+      "archive": "Arkiver",
+      "other": "Annet"
+    },
+    "ages": {
+      "week": "under en uke",
+      "month": "under en måned",
+      "half": "under 6 måneder",
+      "year": "under ett år",
+      "years": "under 3 år",
+      "older": "over 3 år"
+    },
+    "tipShare": "{pct} % av {folder}",
+    "tipAge": "Det meste er {age} gammelt",
+    "more": {
+      "one": "{n} mindre oppføring",
+      "other": "{n} mindre oppføringer"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Paritet",
+      "hint": "CannonCommander leser bare det serveren allerede vet. En disk som sover, får sove i fred, og du ser verdiene fra øyeblikket den sovnet.",
+      "free": "{size}, {free} ledig",
+      "used": "{name} brukt",
+      "moonSince": "{disk} har sovet siden {time}. CannonCommander lar den sove og viser deg verdiene fra {time}.",
+      "moon": "{disk} sover. CannonCommander lar den sove og viser deg de siste kjente verdiene.",
+      "tempAt": "Sist målt kl. {time}",
+      "history": "Historikk for {name}",
+      "range": "Periode",
+      "weeks": {
+        "one": "{n} uke",
+        "other": "{n} uker"
+      },
+      "perDay": "Én verdi per dag",
+      "asOf": "Status {time}, {name} sover",
+      "change": "{change} på {weeks}",
+      "fullIn": {
+        "one": "Full om omtrent {n} uke",
+        "other": "Full om omtrent {n} uker"
+      },
+      "chartLabel": "Bruk av {name} over {weeks}",
+      "chartTip": "{pct} brukt, {free} ledig",
+      "noHistory": "Historikken starter nå, fra i morgen ser du en linje her",
+      "details": "Detaljer for {name}",
+      "facts": {
+        "state": "Tilstand",
+        "parity": "Siste paritetssjekk",
+        "scrub": "Siste Scrub",
+        "frag": "Fragmentering",
+        "compression": "Komprimering",
+        "fs": "Filsystem",
+        "drive": "Stasjon"
+      },
+      "running": "Går",
+      "asleep": "Sover",
+      "asleepSince": "Sover siden {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, avbrutt",
+      "errors": {
+        "one": "{n} feil",
+        "other": "{n} feil"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "other": "{n} pooler"
+      },
+      "disks": {
+        "one": "{n} disk",
+        "other": "{n} disker"
+      },
+      "foot": "{pools} og {disks}",
+      "footAsleep": {
+        "one": "{pools} og {disks}, {n} av dem sover",
+        "other": "{pools} og {disks}, {n} av dem sover"
+      }
     }
   },
   "duplicates": {

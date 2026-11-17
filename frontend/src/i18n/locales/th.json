@@ -1621,7 +1621,8 @@
       "tree": "แผนผัง",
       "map": "ไทล์",
       "types": "ประเภทไฟล์",
-      "largest": "ไฟล์ใหญ่ที่สุด"
+      "largest": "ไฟล์ใหญ่ที่สุด",
+      "drives": "ไดรฟ์"
     },
     "cols": {
       "name": "ชื่อ",
@@ -1663,6 +1664,86 @@
       "text": "ข้อความ",
       "code": "ซอร์สโค้ด",
       "file": "อื่นๆ"
+    },
+    "colourBy": "สีตาม",
+    "colours": {
+      "standard": "มาตรฐาน",
+      "type": "ประเภทไฟล์",
+      "age": "อายุ"
+    },
+    "groups": {
+      "video": "วิดีโอ",
+      "photo": "รูปภาพ",
+      "music": "เพลง",
+      "docs": "เอกสาร",
+      "archive": "ไฟล์บีบอัด",
+      "other": "อื่นๆ"
+    },
+    "ages": {
+      "week": "ไม่ถึง 1 สัปดาห์",
+      "month": "ไม่ถึง 1 เดือน",
+      "half": "ไม่ถึง 6 เดือน",
+      "year": "ไม่ถึง 1 ปี",
+      "years": "ไม่ถึง 3 ปี",
+      "older": "เกิน 3 ปี"
+    },
+    "tipShare": "{pct} % ของ {folder}",
+    "tipAge": "ส่วนใหญ่มีอายุ{age}",
+    "more": {
+      "other": "อีก {n} รายการที่เล็กกว่า"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander อ่านเฉพาะสิ่งที่เซิร์ฟเวอร์รู้อยู่แล้ว Disk ที่หลับอยู่จะไม่ถูกปลุก คุณจะเห็นค่าของมันตั้งแต่ตอนที่มันหลับไป",
+      "free": "{size}, ว่าง {free}",
+      "used": "{name} ใช้แล้ว",
+      "moonSince": "{disk} หลับตั้งแต่ {time} CannonCommander ปล่อยให้หลับต่อและแสดงค่าจาก {time}",
+      "moon": "{disk} หลับอยู่ CannonCommander ปล่อยให้หลับต่อและแสดงค่าล่าสุดที่รู้",
+      "tempAt": "วัดล่าสุดเมื่อ {time}",
+      "history": "ประวัติ {name}",
+      "range": "ช่วงเวลา",
+      "weeks": {
+        "other": "{n} สัปดาห์"
+      },
+      "perDay": "วันละหนึ่งค่า",
+      "asOf": "ข้อมูล ณ {time}, {name} หลับอยู่",
+      "change": "{change} ใน {weeks}",
+      "fullIn": {
+        "other": "เต็มในอีกราว {n} สัปดาห์"
+      },
+      "chartLabel": "การใช้พื้นที่ของ {name} ใน {weeks}",
+      "chartTip": "ใช้ {pct}, ว่าง {free}",
+      "noHistory": "ประวัติเพิ่งเริ่มต้น ตั้งแต่พรุ่งนี้คุณจะเห็นเส้นตรงนี้",
+      "details": "รายละเอียด {name}",
+      "facts": {
+        "state": "สถานะ",
+        "parity": "ตรวจ Parity ครั้งล่าสุด",
+        "scrub": "Scrub ครั้งล่าสุด",
+        "frag": "การกระจายตัวของไฟล์",
+        "compression": "การบีบอัด",
+        "fs": "ระบบไฟล์",
+        "drive": "ไดรฟ์"
+      },
+      "running": "ทำงานอยู่",
+      "asleep": "หลับอยู่",
+      "asleepSince": "หลับตั้งแต่ {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, ยกเลิกแล้ว",
+      "errors": {
+        "other": "ข้อผิดพลาด {n} รายการ"
+      },
+      "pools": {
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "other": "{n} Disk"
+      },
+      "foot": "{pools} และ {disks}",
+      "footAsleep": {
+        "other": "{pools} และ {disks}, หลับอยู่ {n} ตัว"
+      }
     }
   },
   "duplicates": {

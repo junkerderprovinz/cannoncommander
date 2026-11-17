@@ -1670,7 +1670,8 @@
       "tree": "Träd",
       "map": "Rutor",
       "types": "Filtyper",
-      "largest": "Största filerna"
+      "largest": "Största filerna",
+      "drives": "Enheter"
     },
     "cols": {
       "name": "Namn",
@@ -1714,6 +1715,93 @@
       "text": "Text",
       "code": "Källkod",
       "file": "Övrigt"
+    },
+    "colourBy": "Färg efter",
+    "colours": {
+      "standard": "Standard",
+      "type": "Filtyp",
+      "age": "Ålder"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Foton",
+      "music": "Musik",
+      "docs": "Dokument",
+      "archive": "Arkiv",
+      "other": "Övrigt"
+    },
+    "ages": {
+      "week": "under en vecka",
+      "month": "under en månad",
+      "half": "under 6 månader",
+      "year": "under ett år",
+      "years": "under 3 år",
+      "older": "över 3 år"
+    },
+    "tipShare": "{pct} % av {folder}",
+    "tipAge": "Det mesta är {age} gammalt",
+    "more": {
+      "one": "{n} mindre post",
+      "other": "{n} mindre poster"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Paritet",
+      "hint": "CannonCommander läser bara det servern redan vet. En sovande disk får vara i fred, och du ser dess värden från stunden den somnade.",
+      "free": "{size}, {free} ledigt",
+      "used": "{name} använt",
+      "moonSince": "{disk} har sovit sedan {time}. CannonCommander låter den sova och visar dig värdena från {time}.",
+      "moon": "{disk} sover. CannonCommander låter den sova och visar dig de senast kända värdena.",
+      "tempAt": "Senast mätt kl. {time}",
+      "history": "Historik för {name}",
+      "range": "Period",
+      "weeks": {
+        "one": "{n} vecka",
+        "other": "{n} veckor"
+      },
+      "perDay": "Ett värde per dag",
+      "asOf": "Status {time}, {name} sover",
+      "change": "{change} på {weeks}",
+      "fullIn": {
+        "one": "Full om ungefär {n} vecka",
+        "other": "Full om ungefär {n} veckor"
+      },
+      "chartLabel": "Användning av {name} över {weeks}",
+      "chartTip": "{pct} använt, {free} ledigt",
+      "noHistory": "Historiken börjar just nu, från i morgon ser du en linje här",
+      "details": "Detaljer för {name}",
+      "facts": {
+        "state": "Tillstånd",
+        "parity": "Senaste paritetskontroll",
+        "scrub": "Senaste Scrub",
+        "frag": "Fragmentering",
+        "compression": "Komprimering",
+        "fs": "Filsystem",
+        "drive": "Enhet"
+      },
+      "running": "Igång",
+      "asleep": "Sover",
+      "asleepSince": "Sover sedan {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, avbruten",
+      "errors": {
+        "one": "{n} fel",
+        "other": "{n} fel"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "other": "{n} pooler"
+      },
+      "disks": {
+        "one": "{n} disk",
+        "other": "{n} diskar"
+      },
+      "foot": "{pools} och {disks}",
+      "footAsleep": {
+        "one": "{pools} och {disks}, {n} av dem sover",
+        "other": "{pools} och {disks}, {n} av dem sover"
+      }
     }
   },
   "duplicates": {

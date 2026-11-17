@@ -1866,7 +1866,8 @@
       "tree": "شجرة",
       "map": "مربعات",
       "types": "أنواع الملفات",
-      "largest": "أكبر الملفات"
+      "largest": "أكبر الملفات",
+      "drives": "الأقراص"
     },
     "cols": {
       "name": "الاسم",
@@ -1918,6 +1919,121 @@
       "text": "نص",
       "code": "شيفرة مصدرية",
       "file": "أخرى"
+    },
+    "colourBy": "التلوين حسب",
+    "colours": {
+      "standard": "عادي",
+      "type": "نوع الملف",
+      "age": "العمر"
+    },
+    "groups": {
+      "video": "فيديو",
+      "photo": "صور",
+      "music": "موسيقى",
+      "docs": "مستندات",
+      "archive": "أرشيفات",
+      "other": "أخرى"
+    },
+    "ages": {
+      "week": "أقل من أسبوع",
+      "month": "أقل من شهر",
+      "half": "أقل من 6 أشهر",
+      "year": "أقل من سنة",
+      "years": "أقل من 3 سنوات",
+      "older": "أكثر من 3 سنوات"
+    },
+    "tipShare": "{pct}% من {folder}",
+    "tipAge": "عمر معظمه {age}",
+    "more": {
+      "zero": "لا عناصر أصغر",
+      "one": "عنصر واحد أصغر",
+      "two": "عنصران أصغر",
+      "few": "{n} عناصر أصغر",
+      "many": "{n} عنصرًا أصغر",
+      "other": "{n} عنصر أصغر"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "التكافؤ",
+      "hint": "يقرأ CannonCommander هنا فقط ما يعرفه الخادم أصلًا. القرص النائم يبقى في راحته، وترى قيمه منذ اللحظة التي نام فيها.",
+      "free": "{size}، المتاح {free}",
+      "used": "المستخدم من {name}",
+      "moonSince": "{disk} نائم منذ {time}. يتركه CannonCommander نائمًا ويعرض لك قيمه من {time}.",
+      "moon": "{disk} نائم. يتركه CannonCommander نائمًا ويعرض لك آخر القيم المعروفة.",
+      "tempAt": "آخر قياس في {time}",
+      "history": "سجل {name}",
+      "range": "الفترة",
+      "weeks": {
+        "zero": "{n} أسبوع",
+        "one": "أسبوع واحد",
+        "two": "أسبوعان",
+        "few": "{n} أسابيع",
+        "many": "{n} أسبوعًا",
+        "other": "{n} أسبوع"
+      },
+      "perDay": "قيمة واحدة في اليوم",
+      "asOf": "حتى {time}، {name} نائم",
+      "change": "{change} خلال {weeks}",
+      "fullIn": {
+        "zero": "يمتلئ خلال {n} أسبوع تقريبًا",
+        "one": "يمتلئ خلال أسبوع تقريبًا",
+        "two": "يمتلئ خلال أسبوعين تقريبًا",
+        "few": "يمتلئ خلال {n} أسابيع تقريبًا",
+        "many": "يمتلئ خلال {n} أسبوعًا تقريبًا",
+        "other": "يمتلئ خلال {n} أسبوع تقريبًا"
+      },
+      "chartLabel": "استخدام {name} خلال {weeks}",
+      "chartTip": "{pct} مستخدم، المتاح {free}",
+      "noHistory": "السجل يبدأ الآن، ومن الغد سترى هنا خطًا",
+      "details": "تفاصيل {name}",
+      "facts": {
+        "state": "الحالة",
+        "parity": "آخر فحص للتكافؤ",
+        "scrub": "آخر Scrub",
+        "frag": "التجزئة",
+        "compression": "الضغط",
+        "fs": "نظام الملفات",
+        "drive": "القرص"
+      },
+      "running": "يعمل",
+      "asleep": "نائم",
+      "asleepSince": "نائم منذ {time}",
+      "run": "{date}، {errors}",
+      "cancelled": "{date}، أُلغي",
+      "errors": {
+        "zero": "بلا أخطاء",
+        "one": "خطأ واحد",
+        "two": "خطآن",
+        "few": "{n} أخطاء",
+        "many": "{n} خطأً",
+        "other": "{n} خطأ"
+      },
+      "pools": {
+        "zero": "لا Pool",
+        "one": "Pool واحد",
+        "two": "{n} Pool",
+        "few": "{n} Pool",
+        "many": "{n} Pool",
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "zero": "لا أقراص",
+        "one": "قرص واحد",
+        "two": "قرصان",
+        "few": "{n} أقراص",
+        "many": "{n} قرصًا",
+        "other": "{n} قرص"
+      },
+      "foot": "{pools} و{disks}",
+      "footAsleep": {
+        "zero": "{pools} و{disks}، لا شيء منها نائم",
+        "one": "{pools} و{disks}، واحد منها نائم",
+        "two": "{pools} و{disks}، اثنان منها نائمان",
+        "few": "{pools} و{disks}، {n} منها نائمة",
+        "many": "{pools} و{disks}، {n} منها نائمة",
+        "other": "{pools} و{disks}، {n} منها نائمة"
+      }
     }
   },
   "duplicates": {

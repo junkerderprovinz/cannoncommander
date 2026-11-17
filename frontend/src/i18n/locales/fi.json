@@ -1670,7 +1670,8 @@
       "tree": "Puu",
       "map": "Ruudut",
       "types": "Tiedostotyypit",
-      "largest": "Suurimmat tiedostot"
+      "largest": "Suurimmat tiedostot",
+      "drives": "Asemat"
     },
     "cols": {
       "name": "Nimi",
@@ -1714,6 +1715,93 @@
       "text": "Teksti",
       "code": "Lähdekoodi",
       "file": "Muu"
+    },
+    "colourBy": "Väritys",
+    "colours": {
+      "standard": "Vakio",
+      "type": "Tiedostotyyppi",
+      "age": "Ikä"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Kuvat",
+      "music": "Musiikki",
+      "docs": "Asiakirjat",
+      "archive": "Arkistot",
+      "other": "Muut"
+    },
+    "ages": {
+      "week": "alle viikko",
+      "month": "alle kuukausi",
+      "half": "alle 6 kuukautta",
+      "year": "alle vuosi",
+      "years": "alle 3 vuotta",
+      "older": "yli 3 vuotta"
+    },
+    "tipShare": "{pct} % kansiosta {folder}",
+    "tipAge": "Suurin osa on iältään {age}",
+    "more": {
+      "one": "{n} pienempi kohde",
+      "other": "{n} pienempää kohdetta"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Pariteetti",
+      "hint": "CannonCommander lukee vain sen, minkä palvelin jo tietää. Nukkuva levy saa nukkua rauhassa, ja näet sen arvot siltä hetkeltä, kun se nukahti.",
+      "free": "{size}, {free} vapaana",
+      "used": "{name} käytössä",
+      "moonSince": "{disk} on nukkunut {time} alkaen. CannonCommander antaa sen nukkua ja näyttää sinulle arvot hetkeltä {time}.",
+      "moon": "{disk} nukkuu. CannonCommander antaa sen nukkua ja näyttää sinulle viimeisimmät tiedossa olevat arvot.",
+      "tempAt": "Mitattu viimeksi {time}",
+      "history": "Historia: {name}",
+      "range": "Aikaväli",
+      "weeks": {
+        "one": "{n} viikko",
+        "other": "{n} viikkoa"
+      },
+      "perDay": "Yksi arvo päivässä",
+      "asOf": "Tilanne {time}, {name} nukkuu",
+      "change": "{change} jaksolla {weeks}",
+      "fullIn": {
+        "one": "Täynnä noin {n} viikossa",
+        "other": "Täynnä noin {n} viikossa"
+      },
+      "chartLabel": "Käyttöaste: {name}, {weeks}",
+      "chartTip": "{pct} käytössä, {free} vapaana",
+      "noHistory": "Historia alkaa juuri, huomisesta lähtien näet tässä viivan",
+      "details": "Tiedot: {name}",
+      "facts": {
+        "state": "Tila",
+        "parity": "Viimeisin pariteettitarkistus",
+        "scrub": "Viimeisin Scrub",
+        "frag": "Pirstoutuminen",
+        "compression": "Pakkaus",
+        "fs": "Tiedostojärjestelmä",
+        "drive": "Asema"
+      },
+      "running": "Käynnissä",
+      "asleep": "Nukkuu",
+      "asleepSince": "Nukkunut {time} alkaen",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, keskeytetty",
+      "errors": {
+        "one": "{n} virhe",
+        "other": "{n} virhettä"
+      },
+      "pools": {
+        "one": "{n} Pool",
+        "other": "{n} Poolia"
+      },
+      "disks": {
+        "one": "{n} levy",
+        "other": "{n} levyä"
+      },
+      "foot": "{pools} ja {disks}",
+      "footAsleep": {
+        "one": "{pools} ja {disks}, joista {n} nukkuu",
+        "other": "{pools} ja {disks}, joista {n} nukkuu"
+      }
     }
   },
   "duplicates": {

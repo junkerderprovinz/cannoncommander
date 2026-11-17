@@ -1719,7 +1719,8 @@
       "tree": "Arbre",
       "map": "Mosaïque",
       "types": "Types de fichiers",
-      "largest": "Plus gros fichiers"
+      "largest": "Plus gros fichiers",
+      "drives": "Disques"
     },
     "cols": {
       "name": "Nom",
@@ -1765,6 +1766,100 @@
       "text": "Texte",
       "code": "Code source",
       "file": "Autres"
+    },
+    "colourBy": "Couleur selon",
+    "colours": {
+      "standard": "Standard",
+      "type": "Type de fichier",
+      "age": "Âge"
+    },
+    "groups": {
+      "video": "Vidéo",
+      "photo": "Photos",
+      "music": "Musique",
+      "docs": "Documents",
+      "archive": "Archives",
+      "other": "Autres"
+    },
+    "ages": {
+      "week": "moins d'une semaine",
+      "month": "moins d'un mois",
+      "half": "moins de 6 mois",
+      "year": "moins d'un an",
+      "years": "moins de 3 ans",
+      "older": "plus de 3 ans"
+    },
+    "tipShare": "{pct} % de {folder}",
+    "tipAge": "L'essentiel a {age}",
+    "more": {
+      "one": "{n} entrée plus petite",
+      "many": "{n} entrées plus petites",
+      "other": "{n} entrées plus petites"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parité",
+      "hint": "CannonCommander lit seulement ce que le serveur sait déjà. Un disque en veille reste tranquille, et vous voyez ses valeurs du moment où il s'est endormi.",
+      "free": "{size}, {free} libres",
+      "used": "{name} occupé",
+      "moonSince": "{disk} est en veille depuis {time}. CannonCommander le laisse dormir et vous montre ses valeurs de {time}.",
+      "moon": "{disk} est en veille. CannonCommander le laisse dormir et vous montre les dernières valeurs connues.",
+      "tempAt": "Dernière mesure à {time}",
+      "history": "Historique de {name}",
+      "range": "Période",
+      "weeks": {
+        "one": "{n} semaine",
+        "many": "{n} semaines",
+        "other": "{n} semaines"
+      },
+      "perDay": "Une valeur par jour",
+      "asOf": "État à {time}, {name} est en veille",
+      "change": "{change} en {weeks}",
+      "fullIn": {
+        "one": "Plein dans environ {n} semaine",
+        "many": "Plein dans environ {n} semaines",
+        "other": "Plein dans environ {n} semaines"
+      },
+      "chartLabel": "Occupation de {name} sur {weeks}",
+      "chartTip": "{pct} occupé, {free} libres",
+      "noHistory": "L'historique commence tout juste, dès demain vous verrez une ligne ici",
+      "details": "Détails de {name}",
+      "facts": {
+        "state": "État",
+        "parity": "Dernier contrôle de parité",
+        "scrub": "Dernier Scrub",
+        "frag": "Fragmentation",
+        "compression": "Compression",
+        "fs": "Système de fichiers",
+        "drive": "Disque"
+      },
+      "running": "En marche",
+      "asleep": "En veille",
+      "asleepSince": "En veille depuis {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, annulé",
+      "errors": {
+        "one": "{n} erreur",
+        "many": "{n} erreurs",
+        "other": "{n} erreurs"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "many": "{n} pools",
+        "other": "{n} pools"
+      },
+      "disks": {
+        "one": "{n} disque",
+        "many": "{n} disques",
+        "other": "{n} disques"
+      },
+      "foot": "{pools} et {disks}",
+      "footAsleep": {
+        "one": "{pools} et {disks}, dont {n} en veille",
+        "many": "{pools} et {disks}, dont {n} en veille",
+        "other": "{pools} et {disks}, dont {n} en veille"
+      }
     }
   },
   "duplicates": {

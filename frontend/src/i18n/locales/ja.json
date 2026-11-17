@@ -1621,7 +1621,8 @@
       "tree": "ツリー",
       "map": "タイル",
       "types": "ファイルの種類",
-      "largest": "大きいファイル"
+      "largest": "大きいファイル",
+      "drives": "ドライブ"
     },
     "cols": {
       "name": "名前",
@@ -1663,6 +1664,86 @@
       "text": "テキスト",
       "code": "ソースコード",
       "file": "その他"
+    },
+    "colourBy": "色分け",
+    "colours": {
+      "standard": "標準",
+      "type": "ファイルの種類",
+      "age": "古さ"
+    },
+    "groups": {
+      "video": "動画",
+      "photo": "写真",
+      "music": "音楽",
+      "docs": "文書",
+      "archive": "アーカイブ",
+      "other": "その他"
+    },
+    "ages": {
+      "week": "1 週間未満",
+      "month": "1 か月未満",
+      "half": "6 か月未満",
+      "year": "1 年未満",
+      "years": "3 年未満",
+      "older": "3 年以上"
+    },
+    "tipShare": "{folder} の {pct}%",
+    "tipAge": "ほとんどは更新から {age}",
+    "more": {
+      "other": "小さい項目 {n} 個"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander はサーバーがすでに把握している情報を読むだけです。スリープ中のディスクは起こさず、スリープに入った時点の値を表示します。",
+      "free": "{size}、空き {free}",
+      "used": "{name} の使用量",
+      "moonSince": "{disk} は {time} からスリープ中です。CannonCommander は起こさずに、{time} 時点の値を表示します。",
+      "moon": "{disk} はスリープ中です。CannonCommander は起こさずに、最後にわかっている値を表示します。",
+      "tempAt": "最終測定: {time}",
+      "history": "{name} の履歴",
+      "range": "期間",
+      "weeks": {
+        "other": "{n} 週間"
+      },
+      "perDay": "1 日に 1 つの値",
+      "asOf": "{time} 時点、{name} はスリープ中",
+      "change": "{weeks} で {change}",
+      "fullIn": {
+        "other": "あと約 {n} 週間で満杯"
+      },
+      "chartLabel": "{weeks} の {name} の使用量",
+      "chartTip": "使用 {pct}、空き {free}",
+      "noHistory": "履歴は始まったばかりです。明日からここに線が表示されます",
+      "details": "{name} の詳細",
+      "facts": {
+        "state": "状態",
+        "parity": "前回の Parity チェック",
+        "scrub": "前回の Scrub",
+        "frag": "断片化",
+        "compression": "圧縮",
+        "fs": "ファイルシステム",
+        "drive": "ドライブ"
+      },
+      "running": "稼働中",
+      "asleep": "スリープ中",
+      "asleepSince": "{time} からスリープ中",
+      "run": "{date}、{errors}",
+      "cancelled": "{date}、中止",
+      "errors": {
+        "other": "エラー {n} 件"
+      },
+      "pools": {
+        "other": "Pool {n} 個"
+      },
+      "disks": {
+        "other": "ディスク {n} 台"
+      },
+      "foot": "{pools} と {disks}",
+      "footAsleep": {
+        "other": "{pools} と {disks}、うち {n} 台がスリープ中"
+      }
     }
   },
   "duplicates": {

@@ -1719,7 +1719,8 @@
       "tree": "Albero",
       "map": "Riquadri",
       "types": "Tipi di file",
-      "largest": "File più grandi"
+      "largest": "File più grandi",
+      "drives": "Dischi"
     },
     "cols": {
       "name": "Nome",
@@ -1765,6 +1766,100 @@
       "text": "Testo",
       "code": "Codice sorgente",
       "file": "Altro"
+    },
+    "colourBy": "Colora per",
+    "colours": {
+      "standard": "Standard",
+      "type": "Tipo di file",
+      "age": "Età"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Foto",
+      "music": "Musica",
+      "docs": "Documenti",
+      "archive": "Archivi",
+      "other": "Altro"
+    },
+    "ages": {
+      "week": "meno di una settimana",
+      "month": "meno di un mese",
+      "half": "meno di 6 mesi",
+      "year": "meno di un anno",
+      "years": "meno di 3 anni",
+      "older": "più di 3 anni"
+    },
+    "tipShare": "{pct}% di {folder}",
+    "tipAge": "La maggior parte ha {age}",
+    "more": {
+      "one": "{n} voce più piccola",
+      "many": "{n} voci più piccole",
+      "other": "{n} voci più piccole"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parità",
+      "hint": "CannonCommander legge solo ciò che il server sa già. Un disco in standby resta tranquillo, e vedi i suoi valori dal momento in cui si è addormentato.",
+      "free": "{size}, {free} liberi",
+      "used": "{name} occupato",
+      "moonSince": "{disk} è in standby da {time}. CannonCommander lo lascia dormire e ti mostra i valori di {time}.",
+      "moon": "{disk} è in standby. CannonCommander lo lascia dormire e ti mostra gli ultimi valori noti.",
+      "tempAt": "Ultima misura alle {time}",
+      "history": "Cronologia di {name}",
+      "range": "Periodo",
+      "weeks": {
+        "one": "{n} settimana",
+        "many": "{n} settimane",
+        "other": "{n} settimane"
+      },
+      "perDay": "Un valore al giorno",
+      "asOf": "Aggiornato a {time}, {name} è in standby",
+      "change": "{change} in {weeks}",
+      "fullIn": {
+        "one": "Pieno tra circa {n} settimana",
+        "many": "Pieno tra circa {n} settimane",
+        "other": "Pieno tra circa {n} settimane"
+      },
+      "chartLabel": "Occupazione di {name} in {weeks}",
+      "chartTip": "{pct} occupato, {free} liberi",
+      "noHistory": "La cronologia inizia ora, da domani qui vedrai una linea",
+      "details": "Dettagli di {name}",
+      "facts": {
+        "state": "Stato",
+        "parity": "Ultimo controllo di parità",
+        "scrub": "Ultimo Scrub",
+        "frag": "Frammentazione",
+        "compression": "Compressione",
+        "fs": "File system",
+        "drive": "Disco"
+      },
+      "running": "In funzione",
+      "asleep": "In standby",
+      "asleepSince": "In standby da {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, annullato",
+      "errors": {
+        "one": "{n} errore",
+        "many": "{n} errori",
+        "other": "{n} errori"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "many": "{n} pool",
+        "other": "{n} pool"
+      },
+      "disks": {
+        "one": "{n} disco",
+        "many": "{n} dischi",
+        "other": "{n} dischi"
+      },
+      "foot": "{pools} e {disks}",
+      "footAsleep": {
+        "one": "{pools} e {disks}, {n} in standby",
+        "many": "{pools} e {disks}, {n} in standby",
+        "other": "{pools} e {disks}, {n} in standby"
+      }
     }
   },
   "duplicates": {

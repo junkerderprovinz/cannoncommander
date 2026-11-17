@@ -1670,7 +1670,8 @@
       "tree": "Puu",
       "map": "Paanid",
       "types": "Failitüübid",
-      "largest": "Suurimad failid"
+      "largest": "Suurimad failid",
+      "drives": "Kettad"
     },
     "cols": {
       "name": "Nimi",
@@ -1714,6 +1715,93 @@
       "text": "Tekst",
       "code": "Lähtekood",
       "file": "Muu"
+    },
+    "colourBy": "Värvi järgi",
+    "colours": {
+      "standard": "Tavaline",
+      "type": "Failitüüp",
+      "age": "Vanus"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Fotod",
+      "music": "Muusika",
+      "docs": "Dokumendid",
+      "archive": "Arhiivid",
+      "other": "Muu"
+    },
+    "ages": {
+      "week": "alla nädala",
+      "month": "alla kuu",
+      "half": "alla 6 kuu",
+      "year": "alla aasta",
+      "years": "alla 3 aasta",
+      "older": "üle 3 aasta"
+    },
+    "tipShare": "{pct} % kaustast {folder}",
+    "tipAge": "Enamik on {age} vana",
+    "more": {
+      "one": "{n} väiksem kirje",
+      "other": "{n} väiksemat kirjet"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Paarsus",
+      "hint": "CannonCommander loeb ainult seda, mida server juba teab. Magav ketas jäetakse rahule ja sa näed selle väärtusi hetkest, mil see magama jäi.",
+      "free": "{size}, {free} vaba",
+      "used": "{name} kasutusel",
+      "moonSince": "{disk} magab alates {time}. CannonCommander laseb sel magada ja näitab sulle väärtusi ajast {time}.",
+      "moon": "{disk} magab. CannonCommander laseb sel magada ja näitab sulle viimaseid teadaolevaid väärtusi.",
+      "tempAt": "Viimati mõõdetud {time}",
+      "history": "Ajalugu: {name}",
+      "range": "Ajavahemik",
+      "weeks": {
+        "one": "{n} nädal",
+        "other": "{n} nädalat"
+      },
+      "perDay": "Üks väärtus päevas",
+      "asOf": "Seis {time}, {name} magab",
+      "change": "{change} perioodil {weeks}",
+      "fullIn": {
+        "one": "Täis umbes {n} nädalaga",
+        "other": "Täis umbes {n} nädalaga"
+      },
+      "chartLabel": "Kasutus: {name}, {weeks}",
+      "chartTip": "{pct} kasutusel, {free} vaba",
+      "noHistory": "Ajalugu alles algab, homsest näed siin joont",
+      "details": "Üksikasjad: {name}",
+      "facts": {
+        "state": "Olek",
+        "parity": "Viimane paarsuskontroll",
+        "scrub": "Viimane Scrub",
+        "frag": "Killustatus",
+        "compression": "Tihendus",
+        "fs": "Failisüsteem",
+        "drive": "Ketas"
+      },
+      "running": "Töötab",
+      "asleep": "Magab",
+      "asleepSince": "Magab alates {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, katkestatud",
+      "errors": {
+        "one": "{n} viga",
+        "other": "{n} viga"
+      },
+      "pools": {
+        "one": "{n} Pool",
+        "other": "{n} Pooli"
+      },
+      "disks": {
+        "one": "{n} ketas",
+        "other": "{n} ketast"
+      },
+      "foot": "{pools} ja {disks}",
+      "footAsleep": {
+        "one": "{pools} ja {disks}, neist {n} magab",
+        "other": "{pools} ja {disks}, neist {n} magab"
+      }
     }
   },
   "duplicates": {

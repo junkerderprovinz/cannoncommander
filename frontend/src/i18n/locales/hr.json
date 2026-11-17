@@ -1719,7 +1719,8 @@
       "tree": "Stablo",
       "map": "Pločice",
       "types": "Vrste datoteka",
-      "largest": "Najveće datoteke"
+      "largest": "Najveće datoteke",
+      "drives": "Diskovi"
     },
     "cols": {
       "name": "Naziv",
@@ -1765,6 +1766,100 @@
       "text": "Tekst",
       "code": "Izvorni kôd",
       "file": "Ostalo"
+    },
+    "colourBy": "Boja prema",
+    "colours": {
+      "standard": "Standardno",
+      "type": "Vrsta datoteke",
+      "age": "Starost"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Fotografije",
+      "music": "Glazba",
+      "docs": "Dokumenti",
+      "archive": "Arhive",
+      "other": "Ostalo"
+    },
+    "ages": {
+      "week": "manje od tjedan dana",
+      "month": "manje od mjesec dana",
+      "half": "manje od 6 mjeseci",
+      "year": "manje od godinu dana",
+      "years": "manje od 3 godine",
+      "older": "više od 3 godine"
+    },
+    "tipShare": "{pct} % od {folder}",
+    "tipAge": "Starost većeg dijela: {age}",
+    "more": {
+      "one": "{n} manja stavka",
+      "few": "{n} manje stavke",
+      "other": "{n} manjih stavki"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander ovdje samo čita ono što poslužitelj ionako zna. Disk koji spava ostaje na miru, a vi vidite njegove vrijednosti iz trenutka kad je zaspao.",
+      "free": "{size}, slobodno {free}",
+      "used": "{name}: zauzeto",
+      "moonSince": "{disk} spava od {time}. CannonCommander ga pušta da spava i prikazuje vam vrijednosti iz {time}.",
+      "moon": "{disk} spava. CannonCommander ga pušta da spava i prikazuje vam posljednje poznate vrijednosti.",
+      "tempAt": "Posljednje mjerenje u {time}",
+      "history": "Povijest: {name}",
+      "range": "Razdoblje",
+      "weeks": {
+        "one": "{n} tjedan",
+        "few": "{n} tjedna",
+        "other": "{n} tjedana"
+      },
+      "perDay": "Jedna vrijednost dnevno",
+      "asOf": "Stanje u {time}, {name} spava",
+      "change": "{change}, razdoblje: {weeks}",
+      "fullIn": {
+        "one": "Pun za otprilike {n} tjedan",
+        "few": "Pun za otprilike {n} tjedna",
+        "other": "Pun za otprilike {n} tjedana"
+      },
+      "chartLabel": "Zauzeće {name}, razdoblje: {weeks}",
+      "chartTip": "zauzeto {pct}, slobodno {free}",
+      "noHistory": "Povijest tek počinje, od sutra ćete ovdje vidjeti liniju",
+      "details": "Detalji: {name}",
+      "facts": {
+        "state": "Stanje",
+        "parity": "Posljednja provjera Parity",
+        "scrub": "Posljednji Scrub",
+        "frag": "Fragmentacija",
+        "compression": "Kompresija",
+        "fs": "Datotečni sustav",
+        "drive": "Uređaj"
+      },
+      "running": "Radi",
+      "asleep": "Spava",
+      "asleepSince": "Spava od {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, prekinuto",
+      "errors": {
+        "one": "{n} greška",
+        "few": "{n} greške",
+        "other": "{n} grešaka"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "few": "{n} poola",
+        "other": "{n} poolova"
+      },
+      "disks": {
+        "one": "{n} disk",
+        "few": "{n} diska",
+        "other": "{n} diskova"
+      },
+      "foot": "{pools} i {disks}",
+      "footAsleep": {
+        "one": "{pools} i {disks}, od toga {n} spava",
+        "few": "{pools} i {disks}, od toga {n} spavaju",
+        "other": "{pools} i {disks}, od toga {n} spava"
+      }
     }
   },
   "duplicates": {
