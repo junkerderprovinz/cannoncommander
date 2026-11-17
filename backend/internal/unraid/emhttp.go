@@ -25,6 +25,9 @@ type Disk struct {
 	Status     string `json:"status"`
 	FsStatus   string `json:"fsStatus,omitempty"`
 	FsType     string `json:"fsType,omitempty"`
+	Profile    string `json:"profile,omitempty"`
+	Device     string `json:"device,omitempty"`
+	Transport  string `json:"transport,omitempty"`
 	Size       int64  `json:"size"`
 	FsSize     int64  `json:"fsSize"`
 	Free       int64  `json:"free"`
@@ -94,6 +97,8 @@ type Parity struct {
 	LastErrors int64      `json:"lastErrors"`
 	// LastExit is 0 for a finished run, negative when it was cancelled.
 	LastExit int64 `json:"lastExit"`
+	// LastSyncEnd is when the last run ended.
+	LastSyncEnd *time.Time `json:"lastSyncEnd,omitempty"`
 }
 
 // Mover is when the mover carries files between the pools and the array.
@@ -355,6 +360,10 @@ func parityFrom(s section) Parity {
 		at := time.Unix(t, 0).UTC()
 		p.LastSync = &at
 	}
+	if t := s.int("sbSynced2"); t > 0 {
+		end := time.Unix(t, 0).UTC()
+		p.LastSyncEnd = &end
+	}
 	return p
 }
 
@@ -369,6 +378,9 @@ func diskFrom(s section) (Disk, bool) {
 		Status:     status,
 		FsStatus:   s.str("fsStatus"),
 		FsType:     s.str("fsType"),
+		Profile:    s.str("fsProfile"),
+		Device:     s.str("device"),
+		Transport:  s.str("transport"),
 		Mount:      s.str("fsMountpoint"),
 		Size:       s.kib("size"),
 		FsSize:     s.kib("fsSize"),

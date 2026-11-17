@@ -2,8 +2,11 @@ package unraid
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // Config says where the Unraid files live. Inside the container the paths
@@ -27,6 +30,9 @@ type Config struct {
 	// through files and a socket that belong to root on the host, so an
 	// admin has to switch it on.
 	Write bool
+	// History is the file that keeps how full each pool and disk was over
+	// the last weeks. Without one the history lasts until a restart.
+	History string
 	// Poll is how often the monitor rereads the spin and parity state.
 	Poll time.Duration
 	// LinkBudget caps the time spent walking a disk for the other names of
@@ -50,8 +56,12 @@ func DefaultConfig() Config {
 }
 
 // ConfigFromEnv returns the defaults with the CC_UNRAID_* variables applied.
+// The history lies next to the database, in the container in /config.
 func ConfigFromEnv() Config {
 	c := DefaultConfig()
+	if db := settings.Config.Server.DatabaseV2.Path; db != "" {
+		c.History = filepath.Join(filepath.Dir(db), "drive-history.json")
+	}
 	for env, dst := range map[string]*string{
 		"CC_UNRAID_EMHTTP":        &c.Emhttp,
 		"CC_UNRAID_SHARES":        &c.Shares,
@@ -60,6 +70,7 @@ func ConfigFromEnv() Config {
 		"CC_UNRAID_MNT":           &c.Mnt,
 		"CC_UNRAID_SOCKET_PATH":   &c.Socket,
 		"CC_UNRAID_NOTIFICATIONS": &c.Notifications,
+		"CC_UNRAID_HISTORY":       &c.History,
 	} {
 		if v := os.Getenv(env); v != "" {
 			*dst = v

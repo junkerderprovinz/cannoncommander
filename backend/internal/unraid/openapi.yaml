@@ -23,6 +23,26 @@ paths:
           description: Unchanged since the ETag in If-None-Match.
         "401":
           $ref: "#/components/responses/Unauthorized"
+  /unraid/drives:
+    get:
+      operationId: unraidDrives
+      summary: Pools and disks with how full they were over the last weeks
+      description: |
+        Read from emhttp's files, the parity log on the flash drive and the
+        history CannonCommander keeps of each pool and disk, one sample a
+        day for at least twelve weeks. A ZFS pool that is awake is asked for
+        its fragmentation, compression and last scrub, which the kernel
+        answers from memory; a sleeping one shows what it said while awake.
+        Nothing here reads from a disk, so a sleeping one stays asleep.
+      responses:
+        "200":
+          description: The pools, the array and the last parity check.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidDrives"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /unraid/where:
     get:
       operationId: unraidWhere
@@ -303,6 +323,9 @@ components:
         lastSync:
           type: string
           format: date-time
+        lastSyncEnd:
+          type: string
+          format: date-time
         lastErrors:
           type: integer
         lastExit:
@@ -333,6 +356,15 @@ components:
           type: string
         fsType:
           type: string
+        profile:
+          type: string
+          example: mirror
+        device:
+          type: string
+          example: nvme0n1
+        transport:
+          type: string
+          example: nvme
         size:
           type: integer
           format: int64
@@ -699,3 +731,115 @@ components:
                 format: int64
         partial:
           type: boolean
+    UnraidRun:
+      type: object
+      required: [at, errors]
+      properties:
+        at:
+          type: string
+          format: date-time
+          description: When the run ended.
+        seconds:
+          type: integer
+          format: int64
+        errors:
+          type: integer
+          format: int64
+    UnraidDrive:
+      type: object
+      required: [name, kind, status, rotational, size, fsSize, used, asleep, history]
+      properties:
+        name:
+          type: string
+          example: disk1
+        kind:
+          type: string
+          enum: [pool, data, parity]
+        device:
+          type: string
+        status:
+          type: string
+          example: DISK_OK
+        fsType:
+          type: string
+        profile:
+          type: string
+        transport:
+          type: string
+        rotational:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+          description: The device.
+        fsSize:
+          type: integer
+          format: int64
+          description: The file system, 0 for parity and the devices of a pool.
+        used:
+          type: integer
+          format: int64
+        asleep:
+          type: boolean
+        asleepSince:
+          type: string
+          format: date-time
+          description: Missing when the disk slept before CannonCommander started.
+        temp:
+          type: integer
+          description: Celsius. For a sleeping disk the last value read, with tempAt.
+        tempAt:
+          type: string
+          format: date-time
+        history:
+          type: array
+          description: One sample a day, oldest first, as the day counted from 1970 and the bytes in use.
+          items:
+            type: array
+            minItems: 2
+            maxItems: 2
+            items:
+              type: integer
+              format: int64
+        fullIn:
+          type: object
+          description: In how many weeks the disk is full, from the trend of the last 4, 8 and 12 weeks. A key is missing while that trend is flat or falling.
+          additionalProperties:
+            type: number
+        members:
+          type: array
+          description: The devices of a pool with more than one, the pool's own first.
+          items:
+            $ref: "#/components/schemas/UnraidDrive"
+        zfs:
+          type: object
+          properties:
+            fragmentation:
+              type: integer
+              description: Percent.
+            compressRatio:
+              type: number
+            scrub:
+              $ref: "#/components/schemas/UnraidRun"
+    UnraidDrives:
+      type: object
+      required: [pools, array]
+      properties:
+        pools:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnraidDrive"
+        array:
+          type: array
+          description: The data disks, then parity.
+          items:
+            $ref: "#/components/schemas/UnraidDrive"
+        parity:
+          allOf:
+            - $ref: "#/components/schemas/UnraidRun"
+            - type: object
+              required: [exit]
+              properties:
+                exit:
+                  type: integer
+                  description: 0 for a finished run, negative when it was cancelled.

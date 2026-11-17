@@ -24,6 +24,10 @@ type Service struct {
 	index  InodeIndex
 	// onDevices hear when a pool or disk comes or goes.
 	onDevices []func(devices []string)
+
+	history *History
+	run     runner
+	facts   map[string]cachedFacts
 }
 
 // InodeIndex finds the other names of a hard link without walking the
@@ -33,7 +37,9 @@ type InodeIndex interface {
 }
 
 // New returns a service for the given paths.
-func New(cfg Config) *Service { return &Service{cfg: cfg} }
+func New(cfg Config) *Service {
+	return &Service{cfg: cfg, history: NewHistory(cfg.History), run: runTool, facts: map[string]cachedFacts{}}
+}
 
 var (
 	defaultOnce sync.Once

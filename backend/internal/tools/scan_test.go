@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -283,4 +284,64 @@ func TestDuplicatesCheckTheirParams(t *testing.T) {
 			t.Errorf("%+v: status %d", p, rec.Code)
 		}
 	}
+}
+
+func TestDiskUsageNestsEachFolderWithItsKindsAndAges(t *testing.T) {
+	f := newFixture(t)
+	usageNow = func() time.Time { return time.Date(2026, 5, 20, 10, 0, 0, 0, time.UTC) }
+	t.Cleanup(func() { usageNow = time.Now })
+	u := f.usage(t, "jdp", "path=/mnt/user")
+	film := int64(200 << 10)
+	var backup, docs UsageItem
+	for _, it := range u.Items {
+		switch it.Name {
+		case "backup":
+			backup = it
+		case "docs":
+			docs = it
+		}
+	}
+	if backup.Kinds["video"] != 3*film || len(backup.Kinds) != 1 {
+		t.Errorf("backup kinds = %v", backup.Kinds)
+	}
+	// One copy changed nineteen days ago, the other two over a year ago.
+	if len(backup.Ages) != 6 || backup.Ages[1] != film || backup.Ages[4] != 2*film {
+		t.Errorf("backup ages = %v", backup.Ages)
+	}
+	var names []string
+	for _, in := range backup.Items {
+		names = append(names, in.Name)
+		if in.Items != nil {
+			t.Errorf("%s nests a second level", in.Name)
+		}
+	}
+	if strings.Join(names, " ") != "falsch filme umbenannt.mkv" || backup.Items[0].Kinds["video"] != film || !backup.Items[0].Dir || backup.Items[2].Dir {
+		t.Errorf("inside backup = %+v", backup.Items)
+	}
+	if docs.Kinds["doc"] != 5000 || docs.Kinds["text"] != 1 {
+		t.Errorf("docs kinds = %v", docs.Kinds)
+	}
+	for _, it := range u.Items {
+		if !it.Dir && it.Items != nil {
+			t.Errorf("file %s has entries inside", it.Name)
+		}
+	}
+}
+
+func TestDiskUsageKeepsTheLargestEntriesOfEachFolderAndCountsTheRest(t *testing.T) {
+	f := newFixture(t)
+	for i := range maxNested + 5 {
+		put(t, filepath.Join(f.share, "viele", fmt.Sprintf("f%03d.bin", i)), strings.Repeat("b", 100+i), time.Time{})
+	}
+	u := f.usage(t, "jdp", "path=/mnt/user")
+	for _, it := range u.Items {
+		if it.Name != "viele" {
+			continue
+		}
+		if len(it.Items) != maxNested || it.More != 5 || it.Items[0].Name != fmt.Sprintf("f%03d.bin", maxNested+4) {
+			t.Errorf("viele keeps %d entries, more %d, first %q", len(it.Items), it.More, it.Items[0].Name)
+		}
+		return
+	}
+	t.Fatal("viele is missing")
 }

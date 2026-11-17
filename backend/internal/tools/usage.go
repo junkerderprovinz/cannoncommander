@@ -63,11 +63,106 @@ func (t *UsageTotals) add(e fsindex.Entry) {
 	}
 }
 
-// UsageItem is one entry directly inside the folder.
+// UsageItem is one entry directly inside the folder. A folder also lists
+// its own largest entries, one level deep, for the treemap.
 type UsageItem struct {
 	Name string `json:"name"`
 	Dir  bool   `json:"dir"`
 	UsageTotals
+	// Kinds are the bytes of each kind of file below the entry.
+	Kinds map[string]int64 `json:"kinds,omitempty"`
+	// Ages are the bytes last changed within a week, a month, six months,
+	// a year, three years and longer ago.
+	Ages  []int64     `json:"ages,omitempty"`
+	Items []UsageItem `json:"items,omitempty"`
+	// More counts the entries left out of Items.
+	More int `json:"more,omitempty"`
+}
+
+// maxNested caps the entries a folder lists inside itself; the smaller
+// ones would be too thin to draw.
+const maxNested = 40
+
+// ageDays are the edges of Ages.
+var ageDays = [...]float64{7, 31, 183, 365, 1095}
+
+// usageNow is the moment the ages count back from.
+var usageNow = time.Now
+
+func ageOf(now, t time.Time) int {
+	days := now.Sub(t).Hours() / 24
+	for i, d := range ageDays {
+		if days < d {
+			return i
+		}
+	}
+	return len(ageDays)
+}
+
+type usageNode struct {
+	item  UsageItem
+	ages  [len(ageDays) + 1]int64
+	inner map[string]*usageNode
+}
+
+func newNode(name string) *usageNode {
+	return &usageNode{item: UsageItem{Name: name, Kinds: map[string]int64{}}}
+}
+
+// add counts e into the node. self is true when e is the node's own entry,
+// which marks it as a folder or a file but adds no folder to its count.
+func (n *usageNode) add(e fsindex.Entry, self bool, kind string, age int) {
+	if self {
+		n.item.Dir = e.Dir
+		if e.Dir {
+			if e.MTime.After(n.item.mtime) {
+				n.item.mtime = e.MTime
+			}
+			return
+		}
+	}
+	n.item.UsageTotals.add(e)
+	if !e.Dir && e.Size > 0 {
+		n.item.Kinds[kind] += e.Size
+		n.ages[age] += e.Size
+	}
+}
+
+// done turns the node into its answer, the entries inside a folder cut to
+// the largest maxNested.
+func (n *usageNode) done() UsageItem {
+	it := n.item
+	it.MTime = stamp(it.mtime)
+	if it.Size > 0 {
+		it.Ages = n.ages[:]
+	} else {
+		it.Kinds = nil
+	}
+	if !it.Dir {
+		return it
+	}
+	it.Items = []UsageItem{}
+	for _, c := range n.inner {
+		it.Items = append(it.Items, c.done())
+	}
+	sortItems(it.Items)
+	if len(it.Items) > maxNested {
+		it.More = len(it.Items) - maxNested
+		it.Items = it.Items[:maxNested]
+	}
+	return it
+}
+
+func sortItems(items []UsageItem) {
+	slices.SortFunc(items, func(a, b UsageItem) int {
+		if a.Size != b.Size {
+			if a.Size > b.Size {
+				return -1
+			}
+			return 1
+		}
+		return strings.Compare(a.Name, b.Name)
+	})
 }
 
 // UsageType sums the files of one kind, with the extensions that take the
@@ -177,7 +272,8 @@ func scanVisible(fsys *ccfs.Resolver, u *users.User, e fsindex.Entry, hidden boo
 
 func measureUsage(ctx context.Context, fsys *ccfs.Resolver, u *users.User, loc ccfs.Location, hidden bool, kind string, largest int) (Usage, error) {
 	out := Usage{Path: loc.Path, Items: []UsageItem{}, Types: []UsageType{}, Largest: []BigFile{}}
-	children := map[string]*UsageItem{}
+	children := map[string]*usageNode{}
+	now := usageNow()
 	types := map[string]*UsageType{}
 	extSize := map[string]map[string]int64{}
 	var big []fsindex.Entry
@@ -188,26 +284,32 @@ func measureUsage(ctx context.Context, fsys *ccfs.Resolver, u *users.User, loc c
 		}
 		out.UsageTotals.add(e)
 		rel := strings.TrimPrefix(e.Path, prefix)
-		name, below, inside := strings.Cut(rel, "/")
+		name, below, _ := strings.Cut(rel, "/")
+		k, age := "", 0
+		if !e.Dir {
+			k, age = usageKind(e.Name), ageOf(now, e.MTime)
+		}
 		c := children[name]
 		if c == nil {
-			c = &UsageItem{Name: name}
+			c = newNode(name)
 			children[name] = c
 		}
-		if !inside || below == "" {
-			c.Dir = e.Dir
-			if !e.Dir {
-				c.UsageTotals.add(e)
-			} else if e.MTime.After(c.mtime) {
-				c.mtime = e.MTime
+		c.add(e, below == "", k, age)
+		if below != "" {
+			inner, deeper, _ := strings.Cut(below, "/")
+			if c.inner == nil {
+				c.inner = map[string]*usageNode{}
 			}
-		} else {
-			c.UsageTotals.add(e)
+			n := c.inner[inner]
+			if n == nil {
+				n = newNode(inner)
+				c.inner[inner] = n
+			}
+			n.add(e, deeper == "", k, age)
 		}
 		if e.Dir {
 			return nil
 		}
-		k := usageKind(e.Name)
 		t := types[k]
 		if t == nil {
 			t = &UsageType{Kind: k, Name: usageKindNames[k]}
@@ -233,18 +335,9 @@ func measureUsage(ctx context.Context, fsys *ccfs.Resolver, u *users.User, loc c
 	out.Indexed = indexed
 	out.MTime = stamp(out.mtime)
 	for _, c := range children {
-		c.MTime = stamp(c.mtime)
-		out.Items = append(out.Items, *c)
+		out.Items = append(out.Items, c.done())
 	}
-	slices.SortFunc(out.Items, func(a, b UsageItem) int {
-		if a.Size != b.Size {
-			if a.Size > b.Size {
-				return -1
-			}
-			return 1
-		}
-		return strings.Compare(a.Name, b.Name)
-	})
+	sortItems(out.Items)
 	for k, t := range types {
 		exts := make([]string, 0, len(extSize[k]))
 		for e := range extSize[k] {

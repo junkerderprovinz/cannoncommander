@@ -990,6 +990,30 @@ components:
           type: string
           format: date-time
           description: The newest change anywhere below.
+    UsageItem:
+      allOf:
+        - $ref: "#/components/schemas/UsageTotals"
+        - type: object
+          required: [name, dir]
+          properties:
+            name:
+              type: string
+            dir:
+              type: boolean
+            kinds:
+              type: object
+              description: The bytes of each kind of file below the entry, by the kinds of types.
+              additionalProperties:
+                type: integer
+                format: int64
+            ages:
+              type: array
+              description: The bytes last changed within a week, a month, six months, a year, three years and longer ago.
+              minItems: 6
+              maxItems: 6
+              items:
+                type: integer
+                format: int64
     DiskUsage:
       allOf:
         - $ref: "#/components/schemas/UsageTotals"
@@ -1000,17 +1024,20 @@ components:
               type: string
             items:
               type: array
-              description: The entries directly inside, largest first.
+              description: The entries directly inside, largest first. A folder lists its own largest entries too, one level deep.
               items:
                 allOf:
-                  - $ref: "#/components/schemas/UsageTotals"
+                  - $ref: "#/components/schemas/UsageItem"
                   - type: object
-                    required: [name, dir]
                     properties:
-                      name:
-                        type: string
-                      dir:
-                        type: boolean
+                      items:
+                        type: array
+                        description: The largest entries inside a folder, at most 40, largest first.
+                        items:
+                          $ref: "#/components/schemas/UsageItem"
+                      more:
+                        type: integer
+                        description: How many smaller entries the list leaves out.
             types:
               type: array
               items:
