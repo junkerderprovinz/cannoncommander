@@ -2136,7 +2136,8 @@
       "map": "Lauzak",
       "types": "Fitxategi motak",
       "largest": "Fitxategi handienak",
-      "drives": "Diskoak"
+      "drives": "Diskoak",
+      "storeroom": "Trastelekua"
     },
     "cols": {
       "name": "Izena",
@@ -2267,6 +2268,55 @@
         "one": "{pools} eta {disks}, horietatik {n} lotan",
         "other": "{pools} eta {disks}, horietatik {n} lotan"
       }
+    },
+    "storeroom": {
+      "noDocker": "CannonCommanderrek ezerk erabiltzen ez duena aurkitzen du Dockerri galdetu ahal dionean. Gehitu /var/run/docker.sock Docker socket eremuan, edukiontziaren ezarpenetan.",
+      "readOnly": "Baztertzeko, Unraid-en idaztea aktibatuta egon behar da edukiontziaren ezarpenetan.",
+      "kinds": {
+        "template": "Edukiontzirik gabeko template-ak",
+        "appdata": "Ezerk erabiltzen ez dituen appdata karpetak",
+        "container": "Ezerk kudeatzen ez dituen edukiontzi geldituak",
+        "network": "Inork erabiltzen ez dituen sareak",
+        "volume": "Inork eusten ez dituen bolumenak",
+        "image": "Irudiak eta konpilazio-cachea"
+      },
+      "forGood": "Hauek berriro deskargatu edo eraiki daitezke, beraz betiko kentzen dira trastelekura eraman beharrean.",
+      "nothing": "Ez dago ezer baztertzeko, hemen dena erabileran dago",
+      "room": "Trastelekuan",
+      "roomEmpty": "Trastelekua hutsik dago",
+      "store": "Baztertu",
+      "restore": "Berreskuratu",
+      "discard": "Kendu betiko",
+      "ask": {
+        "store": "Baztertu?",
+        "restore": "Berreskuratu?",
+        "discard": "Kendu betiko?"
+      },
+      "steps": {
+        "store": "{name} trastelekura doa",
+        "storeAt": "{name} trastelekura doa, hemen: {to}",
+        "forGood": "{name} betiko kentzen da",
+        "restore": "{name} hona itzultzen da: {to}",
+        "inUse": "{name} erabileran dago orain eta bertan geratzen da",
+        "taken": "Badago zerbait berria hemen: {to}, beraz {name} trastelekuan geratzen da",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Konpilazio-cachea",
+      "untagged": "Etiketarik gabeko irudia",
+      "since": "Baztertua {date} egunean",
+      "done": {
+        "one": "{n} elementu eginda",
+        "other": "{n} elementu eginda"
+      },
+      "finds": {
+        "one": "{n} baztertzeko",
+        "other": "{n} baztertzeko"
+      },
+      "held": {
+        "one": "{n} trastelekuan",
+        "other": "{n} trastelekuan"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

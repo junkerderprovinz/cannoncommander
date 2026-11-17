@@ -1769,7 +1769,8 @@
       "map": "Kafelki",
       "types": "Typy plików",
       "largest": "Największe pliki",
-      "drives": "Dyski"
+      "drives": "Dyski",
+      "storeroom": "Składzik"
     },
     "cols": {
       "name": "Nazwa",
@@ -1918,6 +1919,61 @@
         "many": "{pools} i {disks}, z czego {n} śpi",
         "other": "{pools} i {disks}, z czego {n} śpi"
       }
+    },
+    "storeroom": {
+      "noDocker": "CannonCommander znajdzie to, czego nic nie używa, gdy tylko będzie mógł zapytać Dockera. Dodaj /var/run/docker.sock w polu Docker socket w ustawieniach kontenera.",
+      "readOnly": "Do odkładania potrzebny jest zapis do Unraid w ustawieniach kontenera.",
+      "kinds": {
+        "template": "Szablony bez kontenera",
+        "appdata": "Foldery appdata, których nic nie używa",
+        "container": "Zatrzymane kontenery, którymi nic nie zarządza",
+        "network": "Sieci, których nikt nie używa",
+        "volume": "Wolumeny, których nikt nie trzyma",
+        "image": "Obrazy i pamięć podręczna budowania"
+      },
+      "forGood": "Te można pobrać lub zbudować ponownie, więc są usuwane na zawsze zamiast trafiać do składziku.",
+      "nothing": "Nie ma nic do odłożenia, wszystko tu jest w użyciu",
+      "room": "W składziku",
+      "roomEmpty": "Składzik jest pusty",
+      "store": "Odłóż",
+      "restore": "Przywróć",
+      "discard": "Usuń na zawsze",
+      "ask": {
+        "store": "Odłożyć?",
+        "restore": "Przywrócić?",
+        "discard": "Usunąć na zawsze?"
+      },
+      "steps": {
+        "store": "{name} trafia do składziku",
+        "storeAt": "{name} trafia do składziku w {to}",
+        "forGood": "{name} zostaje usunięty na zawsze",
+        "restore": "{name} wraca do {to}",
+        "inUse": "{name} jest już w użyciu i zostaje",
+        "taken": "W {to} jest już coś nowego, więc {name} zostaje w składziku",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Pamięć podręczna budowania",
+      "untagged": "Obraz bez tagu",
+      "since": "Odłożono {date}",
+      "done": {
+        "one": "Gotowe: {n} element",
+        "few": "Gotowe: {n} elementy",
+        "many": "Gotowe: {n} elementów",
+        "other": "Gotowe: {n} elementu"
+      },
+      "finds": {
+        "one": "{n} do odłożenia",
+        "few": "{n} do odłożenia",
+        "many": "{n} do odłożenia",
+        "other": "{n} do odłożenia"
+      },
+      "held": {
+        "one": "{n} w składziku",
+        "few": "{n} w składziku",
+        "many": "{n} w składziku",
+        "other": "{n} w składziku"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

@@ -1671,7 +1671,8 @@
       "map": "Rutor",
       "types": "Filtyper",
       "largest": "Största filerna",
-      "drives": "Enheter"
+      "drives": "Enheter",
+      "storeroom": "Förråd"
     },
     "cols": {
       "name": "Namn",
@@ -1802,6 +1803,55 @@
         "one": "{pools} och {disks}, {n} av dem sover",
         "other": "{pools} och {disks}, {n} av dem sover"
       }
+    },
+    "storeroom": {
+      "noDocker": "CannonCommander hittar det som inget använder så fort det kan fråga Docker. Lägg till /var/run/docker.sock under Docker socket i containerinställningarna.",
+      "readOnly": "För att städa undan behöver skrivning till Unraid vara påslagen i containerinställningarna.",
+      "kinds": {
+        "template": "Mallar utan container",
+        "appdata": "Appdata-mappar som inget använder",
+        "container": "Stoppade containrar som inget hanterar",
+        "network": "Nätverk som ingen använder",
+        "volume": "Volymer som ingen håller",
+        "image": "Images och byggcache"
+      },
+      "forGood": "De går att ladda ner eller bygga igen, så de tas bort permanent i stället för att ställas undan.",
+      "nothing": "Inget att städa undan, allt här används",
+      "room": "I förrådet",
+      "roomEmpty": "Förrådet är tomt",
+      "store": "Städa undan",
+      "restore": "Hämta tillbaka",
+      "discard": "Ta bort permanent",
+      "ask": {
+        "store": "Städa undan?",
+        "restore": "Hämta tillbaka?",
+        "discard": "Ta bort permanent?"
+      },
+      "steps": {
+        "store": "{name} hamnar i förrådet",
+        "storeAt": "{name} hamnar i förrådet på {to}",
+        "forGood": "{name} tas bort permanent",
+        "restore": "{name} kommer tillbaka till {to}",
+        "inUse": "{name} används nu och stannar",
+        "taken": "Det finns redan något nytt på {to}, så {name} stannar i förrådet",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Byggcache",
+      "untagged": "Image utan tagg",
+      "since": "Undanställd {date}",
+      "done": {
+        "one": "{n} objekt klart",
+        "other": "{n} objekt klara"
+      },
+      "finds": {
+        "one": "{n} att städa undan",
+        "other": "{n} att städa undan"
+      },
+      "held": {
+        "one": "{n} i förrådet",
+        "other": "{n} i förrådet"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

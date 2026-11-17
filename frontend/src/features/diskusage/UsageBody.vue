@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // Speicherbelegung like TreeSize: one folder as a tree sorted by size, as a treemap, by file type and as its largest
-// files, and on Unraid the drives with their history. Whatever it lists can be picked and deleted right here. The
-// numbers come from tools/diskusage, one folder at a time, so opening a branch of the tree asks for that folder.
+// files, and on Unraid the drives with their history and the storeroom. Whatever it lists can be picked and deleted
+// right here. The numbers come from tools/diskusage, one folder at a time, so opening a branch of the tree asks for
+// that folder.
 import { EmptyState, IconButton, Meter, Selector, SubCard } from '@glimstone/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { type DiskUsage, tools } from '@/api/tools';
@@ -24,9 +25,10 @@ import ColourMap from './ColourMap.vue';
 import { AGES, type ColourMode, fillOf, legend } from './colours';
 import DrivesView from './DrivesView.vue';
 import { ended } from './ended';
+import StoreroomView from './StoreroomView.vue';
 import { fit, outermost, pct, squarify } from './treemap';
 
-type View = 'tree' | 'map' | 'types' | 'largest' | 'drives';
+type View = 'tree' | 'map' | 'types' | 'largest' | 'drives' | 'storeroom';
 type SortKey = 'name' | 'size' | 'share' | 'files' | 'dirs' | 'time';
 interface Row { name: string; dir: boolean; at: string; path: string; size: number; files: number; dirs: number; time: number; depth: number; whole: number; canOpen: boolean }
 
@@ -44,11 +46,14 @@ let anchor: string | null = null;
 const body = ref<HTMLElement | null>(null);
 const box = reactive({ w: 0, h: 0 });
 
-const VIEWS = computed(() => ([['tree', 'IconRowMedium'], ['map', 'IconModules'], ['types', 'IconFiles'], ['largest', 'IconSort'], ...(U.available ? [['drives', 'IconDatabase']] as const : [])] as const).map(([v, g]) => [v, t(`diskusage.views.${v}`), g] as const));
+const VIEWS = computed(() => ([['tree', 'IconRowMedium'], ['map', 'IconModules'], ['types', 'IconFiles'], ['largest', 'IconSort'], ...(U.available ? [['drives', 'IconDatabase'], ['storeroom', 'IconArchive']] as const : [])] as const).map(([v, g]) => [v, t(`diskusage.views.${v}`), g] as const));
 const COLOURS = computed(() => segItems((['standard', 'type', 'age'] as const).map((c) => [c, t(`diskusage.colours.${c}`)] as const)));
 const colour = computed<ColourMode>(() => (['type', 'age'].includes(prefs.usageColours) ? prefs.usageColours as ColourMode : 'standard'));
 const hl = ref<string | null>(null);
 const drivesFoot = ref(' ');
+const roomFoot = ref(' ');
+// The drives and the storeroom fill the window in place of the folder's well.
+const away = computed(() => mode.value === 'drives' || mode.value === 'storeroom');
 const COLS: SortKey[] = ['name', 'size', 'share', 'files', 'dirs', 'time'];
 const KIND_GLYPH: Record<string, string> = { img: 'IconFileImage', video: 'IconFileVideo', audio: 'IconFileAudio', arch: 'IconArchive', disk: 'IconDatabase', doc: 'IconFileText', text: 'IconFileText', code: 'IconCode', file: 'IconFile' };
 
@@ -156,8 +161,9 @@ const summary = computed(() => {
   if (!u) return ' ';
   return t('diskusage.summary', { size: fmtSize(u.size) || '0 B', files: plural(u.files, 'ui.files'), dirs: plural(u.dirs, 'ui.folders') });
 });
-watch([summary, () => sel.size, mode, drivesFoot], () => {
+watch([summary, () => sel.size, mode, drivesFoot, roomFoot], () => {
   if (mode.value === 'drives') return setFoot(props.win, drivesFoot.value, []);
+  if (mode.value === 'storeroom') return setFoot(props.win, roomFoot.value, []);
   setFoot(props.win, summary.value, [
     { label: t('diskusage.delete'), g: 'IconTrash', disabled: !sel.size, run: () => { remove(); return false; } },
     { label: t('diskusage.openHere'), g: 'IconFolderOpen', primary: true, run: () => { void F.go(cur.value); } },
@@ -176,7 +182,7 @@ const steps = folderSteps(props.win, () => cur.value, show);
 const go = (p: string) => steps.go(p);
 function setView(v: View) {
   mode.value = v;
-  if (v !== 'drives') nextTick(() => body.value?.focus());
+  if (!away.value) nextTick(() => body.value?.focus());
 }
 function pickAt(i: number, e: MouseEvent) {
   pick(rows.value[i], e);
@@ -315,13 +321,13 @@ onBeforeUnmount(() => { ro?.disconnect(); steps.close(); });
 const rowClass = (r: Row) => ['du-row', { sel: sel.has(r.path), cur: focus.value === r.path, dir: r.dir }];
 const share = (part: number, whole: number) => ({ n: Math.round(pct(part, whole)) });
 const rel = (r: Row) => (r.at === cur.value ? '' : r.at.slice(cur.value === '/' ? 1 : cur.value.length + 1));
-const bodyClass = computed(() => (mode.value === 'drives' ? 'du-body' : `du-body du-${mode.value}`));
-const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', map: 'img', drives: undefined })[mode.value]);
+const bodyClass = computed(() => (away.value ? 'du-body' : `du-body du-${mode.value}`));
+const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', map: 'img', drives: undefined, storeroom: undefined })[mode.value]);
 </script>
 
 <template>
   <div class="du-top"><div id="du-crumbs" class="pathbar du-pathbar"><Crumbs :path="cur" attr="data-du-cd" @go="go" /></div><Selector id="du-view" :model-value="mode" :items="segItems(VIEWS)" size="sm" activation="manual" inline button-height pairs-on-phone @press="setView" /></div>
-  <SubCard v-show="mode !== 'drives'" class="du-well">
+  <SubCard v-show="!away" class="du-well">
     <div id="du-body" ref="body" :class="bodyClass" tabindex="0" :role="role" @click="click" @dblclick="dblclick" @contextmenu="context" @keydown="key">
       <template v-if="mode === 'tree'">
         <div class="du-row du-head" role="row"><button v-for="id in COLS" :key="id" class="du-sort" :class="{ on: sort.by === id }" :data-du-sort="id">{{ t(`diskusage.cols.${id}`) }}<G v-if="sort.by === id" :n="sort.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /></button></div>
@@ -382,4 +388,5 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
     </div>
   </div>
   <div v-if="mode === 'drives'" class="du-drives-scroll"><DrivesView @summary="(s) => (drivesFoot = s)" /></div>
+  <div v-if="mode === 'storeroom'" class="du-drives-scroll"><StoreroomView @summary="(s) => (roomFoot = s)" /></div>
 </template>

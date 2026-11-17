@@ -1622,7 +1622,8 @@
       "map": "Ubin",
       "types": "Jenis berkas",
       "largest": "Berkas terbesar",
-      "drives": "Drive"
+      "drives": "Drive",
+      "storeroom": "Gudang"
     },
     "cols": {
       "name": "Nama",
@@ -1744,6 +1745,52 @@
       "footAsleep": {
         "other": "{pools} dan {disks}, {n} di antaranya tidur"
       }
+    },
+    "storeroom": {
+      "noDocker": "CannonCommander menemukan apa yang tidak dipakai apa pun begitu bisa bertanya ke Docker. Tambahkan /var/run/docker.sock di Docker socket pada pengaturan container.",
+      "readOnly": "Untuk menyingkirkan, akses tulis ke Unraid harus dinyalakan di pengaturan container.",
+      "kinds": {
+        "template": "Template tanpa container",
+        "appdata": "Folder appdata yang tidak dipakai apa pun",
+        "container": "Container berhenti yang tidak dikelola apa pun",
+        "network": "Jaringan yang tidak dipakai siapa pun",
+        "volume": "Volume yang tidak dipegang siapa pun",
+        "image": "Image dan cache build"
+      },
+      "forGood": "Semua ini bisa diunduh atau dibangun lagi, jadi langsung dihapus permanen alih-alih disimpan di gudang.",
+      "nothing": "Tidak ada yang perlu disingkirkan, semua di sini sedang dipakai",
+      "room": "Di gudang",
+      "roomEmpty": "Gudang kosong",
+      "store": "Singkirkan",
+      "restore": "Kembalikan",
+      "discard": "Hapus permanen",
+      "ask": {
+        "store": "Singkirkan?",
+        "restore": "Kembalikan?",
+        "discard": "Hapus permanen?"
+      },
+      "steps": {
+        "store": "{name} masuk ke gudang",
+        "storeAt": "{name} masuk ke gudang di {to}",
+        "forGood": "{name} dihapus permanen",
+        "restore": "{name} kembali ke {to}",
+        "inUse": "{name} kini sedang dipakai dan tetap di tempat",
+        "taken": "Di {to} sudah ada yang baru, jadi {name} tetap di gudang",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Cache build",
+      "untagged": "Image tanpa tag",
+      "since": "Disimpan pada {date}",
+      "done": {
+        "other": "{n} item selesai"
+      },
+      "finds": {
+        "other": "{n} untuk disingkirkan"
+      },
+      "held": {
+        "other": "{n} di gudang"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

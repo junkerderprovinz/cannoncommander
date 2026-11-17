@@ -1720,7 +1720,8 @@
       "map": "Plăci",
       "types": "Tipuri de fișiere",
       "largest": "Cele mai mari fișiere",
-      "drives": "Discuri"
+      "drives": "Discuri",
+      "storeroom": "Debara"
     },
     "cols": {
       "name": "Nume",
@@ -1860,6 +1861,58 @@
         "few": "{pools} și {disks}, {n} dintre ele dorm",
         "other": "{pools} și {disks}, {n} dintre ele dorm"
       }
+    },
+    "storeroom": {
+      "noDocker": "CannonCommander găsește ce nu mai folosește nimic de îndată ce poate întreba Docker. Adaugă /var/run/docker.sock la Docker socket în setările containerului.",
+      "readOnly": "Ca să pună deoparte, CannonCommander are nevoie de scrierea în Unraid activată în setările containerului.",
+      "kinds": {
+        "template": "Template-uri fără container",
+        "appdata": "Foldere appdata pe care nu le folosește nimic",
+        "container": "Containere oprite pe care nu le gestionează nimic",
+        "network": "Rețele pe care nu le folosește nimeni",
+        "volume": "Volume pe care nu le ține nimeni",
+        "image": "Imagini și cache de build"
+      },
+      "forGood": "Acestea se pot descărca sau construi din nou, așa că sunt eliminate definitiv în loc să fie puse deoparte.",
+      "nothing": "Nimic de pus deoparte, totul aici e folosit",
+      "room": "În debara",
+      "roomEmpty": "Debaraua e goală",
+      "store": "Pune deoparte",
+      "restore": "Adu înapoi",
+      "discard": "Elimină definitiv",
+      "ask": {
+        "store": "Pui deoparte?",
+        "restore": "Aduci înapoi?",
+        "discard": "Elimini definitiv?"
+      },
+      "steps": {
+        "store": "{name} merge în debara",
+        "storeAt": "{name} merge în debara la {to}",
+        "forGood": "{name} este eliminat definitiv",
+        "restore": "{name} se întoarce la {to}",
+        "inUse": "{name} e folosit între timp și rămâne",
+        "taken": "La {to} e deja ceva nou, așa că {name} rămâne în debara",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Cache de build",
+      "untagged": "Imagine fără tag",
+      "since": "Pus deoparte pe {date}",
+      "done": {
+        "one": "{n} element gata",
+        "few": "{n} elemente gata",
+        "other": "{n} de elemente gata"
+      },
+      "finds": {
+        "one": "{n} de pus deoparte",
+        "few": "{n} de pus deoparte",
+        "other": "{n} de pus deoparte"
+      },
+      "held": {
+        "one": "{n} în debara",
+        "few": "{n} în debara",
+        "other": "{n} în debara"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

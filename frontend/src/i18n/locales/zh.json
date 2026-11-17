@@ -1622,7 +1622,8 @@
       "map": "方块",
       "types": "文件类型",
       "largest": "最大的文件",
-      "drives": "驱动器"
+      "drives": "驱动器",
+      "storeroom": "储物间"
     },
     "cols": {
       "name": "名称",
@@ -1744,6 +1745,52 @@
       "footAsleep": {
         "other": "{pools} 和 {disks}，其中 {n} 块正在休眠"
       }
+    },
+    "storeroom": {
+      "noDocker": "CannonCommander 能询问 Docker 后，就会找出没有任何东西在用的项目。请在容器设置的 Docker socket 中添加 /var/run/docker.sock。",
+      "readOnly": "要收起项目，需要在容器设置中开启对 Unraid 的写入。",
+      "kinds": {
+        "template": "没有容器的模板",
+        "appdata": "没有任何东西在用的 appdata 文件夹",
+        "container": "没有任何东西管理的已停止容器",
+        "network": "没人使用的网络",
+        "volume": "没人占用的卷",
+        "image": "镜像和构建缓存"
+      },
+      "forGood": "这些可以重新下载或构建，所以会直接永久删除，而不是放进储物间。",
+      "nothing": "没有可收起的东西，这里的一切都在使用中",
+      "room": "储物间里",
+      "roomEmpty": "储物间是空的",
+      "store": "收起",
+      "restore": "取回",
+      "discard": "永久删除",
+      "ask": {
+        "store": "要收起吗？",
+        "restore": "要取回吗？",
+        "discard": "要永久删除吗？"
+      },
+      "steps": {
+        "store": "{name} 放进储物间",
+        "storeAt": "{name} 放进 {to} 的储物间",
+        "forGood": "{name} 被永久删除",
+        "restore": "{name} 回到 {to}",
+        "inUse": "{name} 现在正在使用，保留不动",
+        "taken": "{to} 已有新的内容，所以 {name} 留在储物间",
+        "failed": "{name}：{error}"
+      },
+      "cache": "构建缓存",
+      "untagged": "无标签的镜像",
+      "since": "{date} 放入",
+      "done": {
+        "other": "已完成 {n} 项"
+      },
+      "finds": {
+        "other": "{n} 项可收起"
+      },
+      "held": {
+        "other": "储物间里 {n} 项"
+      },
+      "foot": "{finds}，{held}"
     }
   },
   "duplicates": {

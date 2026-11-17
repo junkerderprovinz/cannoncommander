@@ -1769,7 +1769,8 @@
       "map": "Ploščice",
       "types": "Vrste datotek",
       "largest": "Največje datoteke",
-      "drives": "Diski"
+      "drives": "Diski",
+      "storeroom": "Shramba"
     },
     "cols": {
       "name": "Ime",
@@ -1918,6 +1919,61 @@
         "few": "{pools} in {disks}, od tega spijo {n}",
         "other": "{pools} in {disks}, od tega jih spi {n}"
       }
+    },
+    "storeroom": {
+      "noDocker": "CannonCommander najde, česar nič ne uporablja, takoj ko lahko vpraša Docker. Dodajte /var/run/docker.sock pod Docker socket v nastavitvah vsebnika.",
+      "readOnly": "Za pospravljanje potrebuje CannonCommander vklopljeno pisanje v Unraid v nastavitvah vsebnika.",
+      "kinds": {
+        "template": "Predloge brez vsebnika",
+        "appdata": "Mape appdata, ki jih nič ne uporablja",
+        "container": "Ustavljeni vsebniki, ki jih nič ne upravlja",
+        "network": "Omrežja, ki jih nihče ne uporablja",
+        "volume": "Nosilci, ki jih nihče ne drži",
+        "image": "Slike in predpomnilnik gradnje"
+      },
+      "forGood": "Te je mogoče znova prenesti ali zgraditi, zato se dokončno odstranijo, namesto da gredo v shrambo.",
+      "nothing": "Ničesar ni treba pospraviti, vse tukaj je v uporabi",
+      "room": "V shrambi",
+      "roomEmpty": "Shramba je prazna",
+      "store": "Pospravi",
+      "restore": "Vrni nazaj",
+      "discard": "Dokončno odstrani",
+      "ask": {
+        "store": "Pospravim?",
+        "restore": "Vrnem nazaj?",
+        "discard": "Dokončno odstranim?"
+      },
+      "steps": {
+        "store": "{name} gre v shrambo",
+        "storeAt": "{name} gre v shrambo v {to}",
+        "forGood": "{name} se dokončno odstrani",
+        "restore": "{name} se vrne v {to}",
+        "inUse": "{name} je medtem v uporabi in ostane",
+        "taken": "V {to} je že nekaj novega, zato {name} ostane v shrambi",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Predpomnilnik gradnje",
+      "untagged": "Slika brez oznake",
+      "since": "Pospravljeno {date}",
+      "done": {
+        "one": "Opravljeno: {n} element",
+        "two": "Opravljeno: {n} elementa",
+        "few": "Opravljeno: {n} elementi",
+        "other": "Opravljeno: {n} elementov"
+      },
+      "finds": {
+        "one": "{n} za pospravljanje",
+        "two": "{n} za pospravljanje",
+        "few": "{n} za pospravljanje",
+        "other": "{n} za pospravljanje"
+      },
+      "held": {
+        "one": "{n} v shrambi",
+        "two": "{n} v shrambi",
+        "few": "{n} v shrambi",
+        "other": "{n} v shrambi"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

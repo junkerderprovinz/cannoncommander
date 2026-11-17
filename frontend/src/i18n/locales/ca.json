@@ -1720,7 +1720,8 @@
       "map": "Mosaic",
       "types": "Tipus de fitxer",
       "largest": "Fitxers més grans",
-      "drives": "Discs"
+      "drives": "Discs",
+      "storeroom": "Traster"
     },
     "cols": {
       "name": "Nom",
@@ -1860,6 +1861,58 @@
         "many": "{pools} i {disks}, {n} dels quals dormen",
         "other": "{pools} i {disks}, {n} dels quals dormen"
       }
+    },
+    "storeroom": {
+      "noDocker": "El CannonCommander troba el que ja res no fa servir tan bon punt pot preguntar al Docker. Afegiu /var/run/docker.sock a Docker socket, a la configuració del contenidor.",
+      "readOnly": "Per apartar coses, el CannonCommander necessita l'escriptura a l'Unraid a la configuració del contenidor.",
+      "kinds": {
+        "template": "Plantilles sense contenidor",
+        "appdata": "Carpetes d'appdata que res no fa servir",
+        "container": "Contenidors aturats que res no gestiona",
+        "network": "Xarxes que ningú no fa servir",
+        "volume": "Volums que ningú no reté",
+        "image": "Imatges i memòria cau de compilació"
+      },
+      "forGood": "Aquests es poden tornar a baixar o compilar, per això se suprimeixen definitivament en lloc d'apartar-se.",
+      "nothing": "Res a apartar, aquí tot està en ús",
+      "room": "Al traster",
+      "roomEmpty": "El traster és buit",
+      "store": "Aparta",
+      "restore": "Recupera",
+      "discard": "Suprimeix definitivament",
+      "ask": {
+        "store": "Apartar?",
+        "restore": "Recuperar?",
+        "discard": "Suprimir definitivament?"
+      },
+      "steps": {
+        "store": "{name} va al traster",
+        "storeAt": "{name} va al traster a {to}",
+        "forGood": "{name} se suprimeix definitivament",
+        "restore": "{name} torna a {to}",
+        "inUse": "{name} ara està en ús i es queda",
+        "taken": "Ja hi ha una cosa nova a {to}, així que {name} es queda al traster",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Memòria cau de compilació",
+      "untagged": "Imatge sense etiqueta",
+      "since": "Apartat el {date}",
+      "done": {
+        "one": "{n} element fet",
+        "many": "{n} elements fets",
+        "other": "{n} elements fets"
+      },
+      "finds": {
+        "one": "{n} per apartar",
+        "many": "{n} per apartar",
+        "other": "{n} per apartar"
+      },
+      "held": {
+        "one": "{n} al traster",
+        "many": "{n} al traster",
+        "other": "{n} al traster"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

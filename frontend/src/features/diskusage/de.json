@@ -1,6 +1,6 @@
 {
   "title": "Speicherbelegung",
-  "views": { "tree": "Baum", "map": "Kacheln", "types": "Dateitypen", "largest": "Größte Dateien", "drives": "Laufwerke" },
+  "views": { "tree": "Baum", "map": "Kacheln", "types": "Dateitypen", "largest": "Größte Dateien", "drives": "Laufwerke", "storeroom": "Abstellkammer" },
   "cols": { "name": "Name", "size": "Größe", "share": "Anteil", "files": "Dateien", "dirs": "Ordner", "time": "Geändert" },
   "delete": "Löschen",
   "openHere": "Hier öffnen",
@@ -60,5 +60,34 @@
     "disks": { "one": "{n} Disk", "other": "{n} Disks" },
     "foot": "{pools} und {disks}",
     "footAsleep": { "one": "{pools} und {disks}, {n} davon schläft", "other": "{pools} und {disks}, {n} davon schlafen" }
+  },
+  "storeroom": {
+    "noDocker": "Was nichts mehr braucht, findet CannonCommander, sobald es Docker fragen kann. Trag dafür /var/run/docker.sock unter Docker-Socket in den Container-Einstellungen ein.",
+    "readOnly": "Zum Wegräumen braucht CannonCommander den Schreibzugriff auf Unraid in den Container-Einstellungen.",
+    "kinds": { "template": "Vorlagen ohne Container", "appdata": "Appdata-Ordner, die nichts nutzt", "container": "Gestoppte Container, die nichts verwaltet", "network": "Netzwerke, die niemand nutzt", "volume": "Volumes, die niemand hält", "image": "Images und Build-Cache" },
+    "forGood": "Die lassen sich wieder herunterladen oder neu bauen, darum werden sie gleich ganz entfernt statt abgestellt.",
+    "nothing": "Nichts zum Wegräumen, hier ist alles in Gebrauch",
+    "room": "In der Abstellkammer",
+    "roomEmpty": "Die Abstellkammer ist leer",
+    "store": "Wegräumen",
+    "restore": "Zurückholen",
+    "discard": "Endgültig entfernen",
+    "ask": { "store": "Wegräumen?", "restore": "Zurückholen?", "discard": "Endgültig entfernen?" },
+    "steps": {
+      "store": "{name} kommt in die Abstellkammer",
+      "storeAt": "{name} kommt in die Abstellkammer nach {to}",
+      "forGood": "{name} wird endgültig entfernt",
+      "restore": "{name} kommt zurück nach {to}",
+      "inUse": "{name} ist inzwischen in Gebrauch und bleibt",
+      "taken": "Unter {to} liegt schon etwas Neues, {name} bleibt in der Abstellkammer",
+      "failed": "{name}: {error}"
+    },
+    "cache": "Build-Cache",
+    "untagged": "Image ohne Tag",
+    "since": "Abgestellt am {date}",
+    "done": { "one": "{n} Eintrag erledigt", "other": "{n} Einträge erledigt" },
+    "finds": { "one": "{n} zum Wegräumen", "other": "{n} zum Wegräumen" },
+    "held": { "one": "{n} in der Abstellkammer", "other": "{n} in der Abstellkammer" },
+    "foot": "{finds}, {held}"
   }
 }

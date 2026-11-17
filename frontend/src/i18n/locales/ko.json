@@ -1622,7 +1622,8 @@
       "map": "타일",
       "types": "파일 종류",
       "largest": "가장 큰 파일",
-      "drives": "드라이브"
+      "drives": "드라이브",
+      "storeroom": "창고"
     },
     "cols": {
       "name": "이름",
@@ -1744,6 +1745,52 @@
       "footAsleep": {
         "other": "{pools}와 {disks}, 그중 {n}개 잠자는 중"
       }
+    },
+    "storeroom": {
+      "noDocker": "CannonCommander는 Docker에 물어볼 수 있게 되면 아무것도 쓰지 않는 것을 찾아냅니다. 컨테이너 설정의 Docker socket에 /var/run/docker.sock을 추가하세요.",
+      "readOnly": "치우려면 컨테이너 설정에서 Unraid 쓰기를 켜야 합니다.",
+      "kinds": {
+        "template": "컨테이너가 없는 템플릿",
+        "appdata": "아무것도 쓰지 않는 appdata 폴더",
+        "container": "아무것도 관리하지 않는 중지된 컨테이너",
+        "network": "아무도 쓰지 않는 네트워크",
+        "volume": "아무도 붙잡고 있지 않은 볼륨",
+        "image": "이미지와 빌드 캐시"
+      },
+      "forGood": "이것들은 다시 내려받거나 빌드할 수 있어서 창고에 넣지 않고 영구 삭제합니다.",
+      "nothing": "치울 것이 없습니다. 모두 사용 중입니다",
+      "room": "창고 안",
+      "roomEmpty": "창고가 비어 있습니다",
+      "store": "치우기",
+      "restore": "되돌리기",
+      "discard": "영구 삭제",
+      "ask": {
+        "store": "치울까요?",
+        "restore": "되돌릴까요?",
+        "discard": "영구 삭제할까요?"
+      },
+      "steps": {
+        "store": "{name}을(를) 창고에 넣습니다",
+        "storeAt": "{name}을(를) {to}의 창고에 넣습니다",
+        "forGood": "{name}을(를) 영구 삭제합니다",
+        "restore": "{name}을(를) {to}(으)로 되돌립니다",
+        "inUse": "{name}은(는) 이제 사용 중이라 그대로 둡니다",
+        "taken": "{to}에 이미 새것이 있어 {name}은(는) 창고에 남습니다",
+        "failed": "{name}: {error}"
+      },
+      "cache": "빌드 캐시",
+      "untagged": "태그 없는 이미지",
+      "since": "{date}에 보관함",
+      "done": {
+        "other": "{n}개 완료"
+      },
+      "finds": {
+        "other": "치울 것 {n}개"
+      },
+      "held": {
+        "other": "창고에 {n}개"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

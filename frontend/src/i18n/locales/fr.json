@@ -1720,7 +1720,8 @@
       "map": "Mosaïque",
       "types": "Types de fichiers",
       "largest": "Plus gros fichiers",
-      "drives": "Disques"
+      "drives": "Disques",
+      "storeroom": "Débarras"
     },
     "cols": {
       "name": "Nom",
@@ -1860,6 +1861,58 @@
         "many": "{pools} et {disks}, dont {n} en veille",
         "other": "{pools} et {disks}, dont {n} en veille"
       }
+    },
+    "storeroom": {
+      "noDocker": "CannonCommander trouve ce que plus rien n'utilise dès qu'il peut interroger Docker. Ajoutez /var/run/docker.sock sous Docker socket dans les paramètres du conteneur.",
+      "readOnly": "Pour débarrasser, CannonCommander a besoin de l'écriture vers Unraid dans les paramètres du conteneur.",
+      "kinds": {
+        "template": "Modèles sans conteneur",
+        "appdata": "Dossiers appdata que plus rien n'utilise",
+        "container": "Conteneurs arrêtés que plus rien ne gère",
+        "network": "Réseaux que personne n'utilise",
+        "volume": "Volumes que personne ne garde",
+        "image": "Images et cache de build"
+      },
+      "forGood": "Ceux-ci peuvent être téléchargés ou reconstruits, alors ils sont supprimés définitivement plutôt que rangés.",
+      "nothing": "Rien à débarrasser, tout ici est utilisé",
+      "room": "Au débarras",
+      "roomEmpty": "Le débarras est vide",
+      "store": "Débarrasser",
+      "restore": "Récupérer",
+      "discard": "Supprimer définitivement",
+      "ask": {
+        "store": "Débarrasser ?",
+        "restore": "Récupérer ?",
+        "discard": "Supprimer définitivement ?"
+      },
+      "steps": {
+        "store": "{name} va au débarras",
+        "storeAt": "{name} va au débarras dans {to}",
+        "forGood": "{name} est supprimé définitivement",
+        "restore": "{name} revient dans {to}",
+        "inUse": "{name} est utilisé entre-temps et reste",
+        "taken": "Il y a déjà quelque chose de nouveau dans {to}, alors {name} reste au débarras",
+        "failed": "{name} : {error}"
+      },
+      "cache": "Cache de build",
+      "untagged": "Image sans tag",
+      "since": "Rangé le {date}",
+      "done": {
+        "one": "{n} élément traité",
+        "many": "{n} éléments traités",
+        "other": "{n} éléments traités"
+      },
+      "finds": {
+        "one": "{n} à débarrasser",
+        "many": "{n} à débarrasser",
+        "other": "{n} à débarrasser"
+      },
+      "held": {
+        "one": "{n} au débarras",
+        "many": "{n} au débarras",
+        "other": "{n} au débarras"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

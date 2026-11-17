@@ -1,6 +1,6 @@
 {
   "title": "Disk usage",
-  "views": { "tree": "Tree", "map": "Tiles", "types": "File types", "largest": "Largest files", "drives": "Drives" },
+  "views": { "tree": "Tree", "map": "Tiles", "types": "File types", "largest": "Largest files", "drives": "Drives", "storeroom": "Storeroom" },
   "cols": { "name": "Name", "size": "Size", "share": "Share", "files": "Files", "dirs": "Folders", "time": "Modified" },
   "delete": "Delete",
   "openHere": "Open here",
@@ -60,5 +60,34 @@
     "disks": { "one": "{n} disk", "other": "{n} disks" },
     "foot": "{pools} and {disks}",
     "footAsleep": { "one": "{pools} and {disks}, {n} of them asleep", "other": "{pools} and {disks}, {n} of them asleep" }
+  },
+  "storeroom": {
+    "noDocker": "CannonCommander finds what nothing uses once it can ask Docker. Add /var/run/docker.sock under Docker socket in the container settings.",
+    "readOnly": "Clearing away needs Unraid write access in the container settings.",
+    "kinds": { "template": "Templates without a container", "appdata": "Appdata folders nothing uses", "container": "Stopped containers nothing manages", "network": "Networks nobody uses", "volume": "Volumes nobody holds", "image": "Images and build cache" },
+    "forGood": "These can be downloaded or built again, so they are removed for good instead of stored.",
+    "nothing": "Nothing to clear away, everything here is in use",
+    "room": "In the storeroom",
+    "roomEmpty": "The storeroom is empty",
+    "store": "Clear away",
+    "restore": "Bring back",
+    "discard": "Remove for good",
+    "ask": { "store": "Clear away?", "restore": "Bring back?", "discard": "Remove for good?" },
+    "steps": {
+      "store": "{name} goes into the storeroom",
+      "storeAt": "{name} goes into the storeroom at {to}",
+      "forGood": "{name} is removed for good",
+      "restore": "{name} comes back to {to}",
+      "inUse": "{name} is in use by now and stays",
+      "taken": "Something new is at {to}, so {name} stays in the storeroom",
+      "failed": "{name}: {error}"
+    },
+    "cache": "Build cache",
+    "untagged": "Image without a tag",
+    "since": "Stored on {date}",
+    "done": { "one": "{n} item done", "other": "{n} items done" },
+    "finds": { "one": "{n} to clear away", "other": "{n} to clear away" },
+    "held": { "one": "{n} in the storeroom", "other": "{n} in the storeroom" },
+    "foot": "{finds}, {held}"
   }
 }
