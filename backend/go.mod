@@ -36,7 +36,7 @@ require (
 	github.com/ulikunitz/xz v0.5.17
 	github.com/yeka/zip v0.0.0-20231116150916-03d6312748a9
 	golang.org/x/crypto v0.59.0
-	golang.org/x/image v0.47.0
+	golang.org/x/image v0.48.0
 	golang.org/x/mod v0.43.0
 	golang.org/x/net v0.62.0
 	golang.org/x/oauth2 v0.38.0
