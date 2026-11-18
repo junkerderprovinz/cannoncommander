@@ -151,12 +151,12 @@
     --motion-trail-flicker: 120ms;
     --motion-quake-dur: 180ms;
     --motion-quake-dist: 1.5px;
-    --motion-shard-dur: 800ms;
-    --motion-shard-fall: 60px;
-    --motion-shard-spread: 70px;
-    --motion-shard-carry: 60px;
-    --motion-shard-spin: 180deg;
-    --motion-shard-count: 28;
+    --motion-shard-dur: 1.2s;
+    --motion-shard-fall: 200px;
+    --motion-shard-spread: 200px;
+    --motion-shard-carry: 150px;
+    --motion-shard-spin: 420deg;
+    --motion-shard-count: 60;
     --motion-dust-dur: 400ms;
     --motion-dust-drift: 8px;
     --motion-rebuild-wait: 450ms;
