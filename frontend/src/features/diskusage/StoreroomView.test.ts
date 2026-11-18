@@ -114,6 +114,16 @@ describe('the storeroom view', () => {
     expect(calls[2]!.body).toEqual({ op: 'restore', refs: [{ id: 'e1' }] });
   });
 
+  it('says first what clearing away does, also without docker', async () => {
+    await mount();
+    expect(document.querySelector('.du-room > :first-child')?.textContent).toBe(de.storeroom.about);
+    answer = { docker: false, write: true, finds: [], room: [] };
+    app?.unmount();
+    document.body.innerHTML = '';
+    await mount();
+    expect(document.querySelector('.du-room-about')?.textContent).toBe(de.storeroom.about);
+  });
+
   it('only looks while write access is off', async () => {
     answer.write = false;
     await mount();

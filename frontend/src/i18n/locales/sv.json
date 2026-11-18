@@ -1804,6 +1804,7 @@
       }
     },
     "storeroom": {
+      "about": "Att städa undan raderar ingenting: mappar väntar i en dold förrådsmapp på sin egen share, mallar i CannonCommanders inställningar, och ”Hämta tillbaka” ställer allt där det var. Bara ”Ta bort permanent” raderar, och images och byggcachen, som går att ladda ner igen, försvinner direkt.",
       "noDocker": "CannonCommander hittar det som inget använder så fort det kan fråga Docker. Lägg till /var/run/docker.sock under Docker socket i containerinställningarna.",
       "readOnly": "För att städa undan behöver skrivning till Unraid vara påslagen i containerinställningarna.",
       "kinds": {

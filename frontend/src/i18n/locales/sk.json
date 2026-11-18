@@ -1920,6 +1920,7 @@
       }
     },
     "storeroom": {
+      "about": "Upratovanie nič nemaže: priečinky čakajú v skrytom priečinku komory na svojom vlastnom Share, šablóny v nastaveniach CannonCommandera a „Vrátiť späť“ dá všetko tam, kde to bolo. Maže len „Natrvalo odstrániť“, a obrazy aj vyrovnávacia pamäť zostavenia, ktoré sa dajú znova stiahnuť, zmiznú hneď.",
       "noDocker": "CannonCommander nájde, čo už nič nepoužíva, hneď ako sa môže opýtať Dockera. Pridajte /var/run/docker.sock do poľa Docker socket v nastaveniach kontajnera.",
       "readOnly": "Na upratovanie potrebuje CannonCommander zapnutý zápis do Unraid v nastaveniach kontajnera.",
       "kinds": {

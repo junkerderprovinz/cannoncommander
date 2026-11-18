@@ -1920,6 +1920,7 @@
       }
     },
     "storeroom": {
+      "about": "Odłożenie niczego nie usuwa: foldery czekają w ukrytym folderze składziku na swoim własnym Share, szablony w ustawieniach CannonCommandera, a „Przywróć” stawia wszystko z powrotem tam, gdzie było. Usuwa tylko „Usuń na zawsze”, a obrazy i pamięć podręczna budowania, które można pobrać ponownie, znikają od razu.",
       "noDocker": "CannonCommander znajdzie to, czego nic nie używa, gdy tylko będzie mógł zapytać Dockera. Dodaj /var/run/docker.sock w polu Docker socket w ustawieniach kontenera.",
       "readOnly": "Do odkładania potrzebny jest zapis do Unraid w ustawieniach kontenera.",
       "kinds": {

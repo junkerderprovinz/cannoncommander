@@ -1920,6 +1920,7 @@
       }
     },
     "storeroom": {
+      "about": "Pospravljanje ne izbriše ničesar: mape čakajo v skriti mapi shrambe na svojem Shareu, predloge v nastavitvah CannonCommanderja, „Vrni nazaj“ pa vse postavi tja, kjer je bilo. Briše samo „Dokončno odstrani“, slike in predpomnilnik gradnje, ki jih je mogoče znova prenesti, pa izginejo takoj.",
       "noDocker": "CannonCommander najde, česar nič ne uporablja, takoj ko lahko vpraša Docker. Dodajte /var/run/docker.sock pod Docker socket v nastavitvah vsebnika.",
       "readOnly": "Za pospravljanje potrebuje CannonCommander vklopljeno pisanje v Unraid v nastavitvah vsebnika.",
       "kinds": {

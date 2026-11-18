@@ -1862,6 +1862,7 @@
       }
     },
     "storeroom": {
+      "about": "Punerea deoparte nu șterge nimic: folderele așteaptă într-un folder ascuns de debara pe propriul lor Share, template-urile în setările lui CannonCommander, iar „Adu înapoi” pune totul unde era. Șterge doar „Elimină definitiv”, iar imaginile și cache-ul de build, care se pot descărca din nou, pleacă imediat.",
       "noDocker": "CannonCommander găsește ce nu mai folosește nimic de îndată ce poate întreba Docker. Adaugă /var/run/docker.sock la Docker socket în setările containerului.",
       "readOnly": "Ca să pună deoparte, CannonCommander are nevoie de scrierea în Unraid activată în setările containerului.",
       "kinds": {

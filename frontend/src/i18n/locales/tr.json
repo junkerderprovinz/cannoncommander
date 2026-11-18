@@ -1804,6 +1804,7 @@
       }
     },
     "storeroom": {
+      "about": "Kenara koymak hiçbir şeyi silmez: klasörler kendi paylaşımlarındaki gizli bir kiler klasöründe, şablonlar CannonCommander ayarlarında bekler ve “Geri getir” her şeyi eski yerine koyar. Yalnızca “Kalıcı olarak kaldır” siler, yeniden indirilebilen imajlar ve derleme önbelleği ise hemen gider.",
       "noDocker": "CannonCommander, Docker'a sorabildiği anda artık hiçbir şeyin kullanmadığı şeyleri bulur. Konteyner ayarlarında Docker socket alanına /var/run/docker.sock ekle.",
       "readOnly": "Kenara koymak için konteyner ayarlarında Unraid'e yazmanın açık olması gerekir.",
       "kinds": {

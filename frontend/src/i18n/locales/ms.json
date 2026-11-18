@@ -1746,6 +1746,7 @@
       }
     },
     "storeroom": {
+      "about": "Mengetepikan tidak memadam apa-apa: folder menunggu dalam folder bilik stor tersembunyi pada Share sendiri, templat dalam tetapan CannonCommander, dan “Bawa balik” meletakkan semuanya di tempat asal. Hanya “Buang terus” yang memadam, dan imej serta cache binaan, yang boleh dimuat turun semula, hilang serta-merta.",
       "noDocker": "CannonCommander menemui apa yang tidak digunakan oleh apa-apa sebaik sahaja ia boleh bertanya kepada Docker. Tambahkan /var/run/docker.sock di bawah Docker socket dalam tetapan container.",
       "readOnly": "Untuk mengetepikan, akses tulis ke Unraid perlu dihidupkan dalam tetapan container.",
       "kinds": {

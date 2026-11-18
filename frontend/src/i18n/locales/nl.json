@@ -1804,6 +1804,7 @@
       }
     },
     "storeroom": {
+      "about": "Opruimen verwijdert niets: mappen wachten in een verborgen bergingsmap op hun eigen share, templates in de instellingen van CannonCommander, en „Terughalen” zet alles terug waar het was. Alleen „Definitief verwijderen” verwijdert, en images en de buildcache, die opnieuw te downloaden zijn, gaan meteen weg.",
       "noDocker": "CannonCommander vindt wat niets meer gebruikt zodra het Docker kan vragen. Zet /var/run/docker.sock bij Docker socket in de containerinstellingen.",
       "readOnly": "Om op te ruimen moet schrijven naar Unraid aanstaan in de containerinstellingen.",
       "kinds": {

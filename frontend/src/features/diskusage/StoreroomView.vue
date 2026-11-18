@@ -65,6 +65,7 @@ async function act(op: StoreroomOp, refs: StoreroomRef[]) {
 
 <template>
   <div class="du-room">
+    <p class="du-room-about">{{ t('diskusage.storeroom.about') }}</p>
     <EmptyState v-if="failed" nested :glyph="glyphComponent('IconWarning')" :title="failed" />
     <template v-else-if="scan">
       <p v-if="!scan.docker" class="du-room-note">{{ t('diskusage.storeroom.noDocker') }}</p>

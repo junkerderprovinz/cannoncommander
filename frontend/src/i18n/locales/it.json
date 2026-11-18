@@ -1862,6 +1862,7 @@
       }
     },
     "storeroom": {
+      "about": "Mettere via non cancella nulla: le cartelle aspettano in una cartella ripostiglio nascosta sulla loro Share, i template nelle impostazioni di CannonCommander, e «Recupera» rimette tutto al suo posto. Solo «Elimina definitivamente» cancella, e le immagini e la cache di build, che si possono riscaricare, se ne vanno subito.",
       "noDocker": "CannonCommander trova ciò che non usa più nulla appena può chiedere a Docker. Aggiungi /var/run/docker.sock in Docker socket nelle impostazioni del container.",
       "readOnly": "Per mettere via serve la scrittura su Unraid nelle impostazioni del container.",
       "kinds": {

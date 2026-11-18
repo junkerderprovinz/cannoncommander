@@ -39,7 +39,7 @@
     "format": "Format",
     "formatTip": "zip kan åbnes på alle systemer uden ekstra program. tar.zst er hurtigst og bevarer rettigheder og ejere. 7z pakker mindst. rar kræver programmet rar på serveren.",
     "level": "Komprimering",
-    "levelTip": "Fotos, video og musik er allerede pakket og bliver næsten ikke mindre. For dem sparer »Ingen««« tid.",
+    "levelTip": "Fotos, video og musik er allerede pakket og bliver næsten ikke mindre. For dem sparer »Ingen« tid.",
     "levels": {
       "0": "Ingen",
       "3": "Hurtig",
@@ -1804,6 +1804,7 @@
       }
     },
     "storeroom": {
+      "about": "At lægge væk sletter ingenting: mapper venter i en skjult pulterkammermappe på deres eget share, templates i CannonCommanders indstillinger, og »Hent tilbage« sætter alt, hvor det var. Kun »Fjern for altid« sletter, og images og build-cache, som kan hentes igen, forsvinder med det samme.",
       "noDocker": "CannonCommander finder det, intet bruger, så snart det kan spørge Docker. Tilføj /var/run/docker.sock under Docker socket i containerindstillingerne.",
       "readOnly": "For at lægge væk skal skrivning til Unraid være slået til i containerindstillingerne.",
       "kinds": {

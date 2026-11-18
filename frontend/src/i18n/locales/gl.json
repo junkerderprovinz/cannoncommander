@@ -1804,6 +1804,7 @@
       }
     },
     "storeroom": {
+      "about": "Apartar non borra nada: os cartafoles agardan nun cartafol de trasteiro oculto no seu propio share, os templates na configuración de CannonCommander, e «Recuperar» devolve todo ao seu sitio. Só «Borrar definitivamente» borra, e as imaxes e a caché de compilación, que se poden descargar de novo, van de inmediato.",
       "noDocker": "CannonCommander atopa o que xa nada usa en canto pode preguntarlle a Docker. Engade /var/run/docker.sock en Docker socket, na configuración do contedor.",
       "readOnly": "Para apartar cousas, CannonCommander precisa a escritura en Unraid na configuración do contedor.",
       "kinds": {

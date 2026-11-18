@@ -1920,6 +1920,7 @@
       }
     },
     "storeroom": {
+      "about": "Uklízení nic nemaže: složky čekají ve skryté složce komory na svém vlastním Share, šablony v nastavení CannonCommanderu a „Vrátit zpět“ dá všechno tam, kde to bylo. Maže jen „Trvale odstranit“, a obrazy i mezipaměť sestavení, které lze znovu stáhnout, zmizí hned.",
       "noDocker": "CannonCommander najde, co už nic nepoužívá, jakmile se může zeptat Dockeru. Přidejte /var/run/docker.sock do pole Docker socket v nastavení kontejneru.",
       "readOnly": "K uklízení potřebuje CannonCommander zapnutý zápis do Unraid v nastavení kontejneru.",
       "kinds": {

@@ -1804,6 +1804,7 @@
       }
     },
     "storeroom": {
+      "about": "Å rydde bort sletter ingenting: mapper venter i en skjult bodmappe på sitt eget share, maler i innstillingene til CannonCommander, og «Hent tilbake» setter alt der det var. Bare «Fjern for godt» sletter, og images og byggebuffer, som kan lastes ned igjen, forsvinner med en gang.",
       "noDocker": "CannonCommander finner det ingenting bruker så snart det kan spørre Docker. Legg til /var/run/docker.sock under Docker socket i containerinnstillingene.",
       "readOnly": "For å rydde bort må skriving til Unraid være slått på i containerinnstillingene.",
       "kinds": {

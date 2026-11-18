@@ -1804,6 +1804,7 @@
       }
     },
     "storeroom": {
+      "about": "Pois siivoaminen ei poista mitään: kansiot odottavat piilotetussa varastokansiossa omassa Sharessaan, mallit CannonCommanderin asetuksissa ja ”Tuo takaisin” palauttaa kaiken paikalleen. Vain ”Poista lopullisesti” poistaa, ja imaget sekä build-välimuisti, jotka voi ladata uudelleen, lähtevät heti.",
       "noDocker": "CannonCommander löytää sen, mitä mikään ei käytä, kun se pääsee kysymään Dockerilta. Lisää /var/run/docker.sock kohtaan Docker socket kontin asetuksissa.",
       "readOnly": "Pois siivoaminen vaatii, että kirjoitus Unraidiin on käytössä kontin asetuksissa.",
       "kinds": {

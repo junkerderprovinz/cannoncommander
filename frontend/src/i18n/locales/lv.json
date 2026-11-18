@@ -1862,6 +1862,7 @@
       }
     },
     "storeroom": {
+      "about": "Novākšana neko neizdzēš: mapes gaida slēptā pieliekamā mapē savā koplietojumā, veidnes CannonCommander iestatījumos, un „Atgriezt” visu noliek atpakaļ, kur tas bija. Dzēš tikai „Noņemt neatgriezeniski”, bet attēli un būvēšanas kešatmiņa, ko var atkal lejupielādēt, pazūd uzreiz.",
       "noDocker": "CannonCommander atrod to, ko nekas vairs neizmanto, tiklīdz var pajautāt Docker. Pievieno /var/run/docker.sock laukā Docker socket konteinera iestatījumos.",
       "readOnly": "Lai novāktu, CannonCommander vajag ieslēgtu rakstīšanu uz Unraid konteinera iestatījumos.",
       "kinds": {
