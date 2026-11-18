@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeCanvas } from '@/testing/fakeCanvas';
-import { type Blast, BLAST, burst, paint, splinters } from './burst';
+import { type Blast, BLAST, burst, paint, splinters, where } from './burst';
 
 const area = (poly: [number, number][]) => Math.abs(poly.reduce((sum, [x, y], i) => {
   const [nx, ny] = poly[(i + 1) % poly.length]!;
@@ -14,10 +14,10 @@ const seeded = (seed: number) => () => ((seed = (seed * 16807) % 2147483647) - 1
 
 // A menu title as wide as a word and the ball striking it at its left edge, a little above the middle.
 const W = 90, H = 36, AT = { x: 0, y: 15 };
-const WILD: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09 };
+const WILD: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09, drag: 1.8 };
 
 describe('the blast of the cannon', () => {
-  it('is the same at every motion level, the small splinters that fly far', () => {
+  it('is the same at every motion level', () => {
     expect(BLAST).toEqual(WILD);
     const css = readFileSync(join(__dirname, '../../styles/motion.css'), 'utf8');
     expect(css).not.toMatch(/--motion-shard-/);
@@ -34,8 +34,16 @@ describe('the splinters of a struck element', () => {
     expect(few < many && many < most, `${few} ${many} ${most}`).toBe(true);
   });
 
-  it('are small', () => {
-    for (const s of splinters(W, H, AT, 1, WILD, seeded(2))) expect(area(s.poly)).toBeLessThan((W * H) / 30);
+  it('break like a pane where a stone hits it: thin wedges at the strike, broken edges and corners farther out', () => {
+    const list = splinters(W, H, AT, 1, WILD, seeded(2));
+    const corners = new Set(list.map((s) => s.poly.length));
+    expect(corners.has(3) && corners.has(4), [...corners].join(' ')).toBe(true);
+    expect(list.some((s) => s.poly.length >= 5)).toBe(true);
+    const by = (s: (typeof list)[number]) => Math.hypot(s.x - AT.x, s.y - AT.y);
+    const sorted = [...list].sort((a, b) => by(a) - by(b)), third = Math.floor(list.length / 3);
+    const mean = (l: typeof list) => l.reduce((sum, s) => sum + area(s.poly), 0) / l.length;
+    expect(mean(sorted.slice(0, third))).toBeLessThan(mean(sorted.slice(-third)));
+    for (const s of list) expect(area(s.poly)).toBeLessThan((W * H) / 12);
   });
 
   it('cover the whole element without a gap or an overlap', () => {
@@ -60,8 +68,23 @@ describe('the splinters of a struck element', () => {
   }
 
   it('fly far, most of them several times the height of the head', () => {
-    const reach = splinters(W, H, AT, 1, WILD, seeded(3)).map((s) => Math.hypot(s.vx, s.vy) * WILD.life).sort((a, b) => a - b);
+    const reach = splinters(W, H, AT, 1, WILD, seeded(3)).map((s) => {
+      // Over the whole flight a splinter drops by the blast's fall, which is not part of how far it was thrown.
+      const end = where(s, WILD.life, WILD);
+      return Math.hypot(end.x, end.y - WILD.fall);
+    }).sort((a, b) => a - b);
     expect(reach[Math.floor(reach.length / 2)]).toBeGreaterThan(WILD.spread * 0.8);
+  });
+
+  it('leave fast and slow down in the air, then fall, turning more slowly as they go', () => {
+    for (const s of splinters(W, H, AT, 1, WILD, seeded(6))) {
+      const half = WILD.life / 2, a = where(s, half, WILD), b = where(s, WILD.life, WILD);
+      expect(Math.abs(a.x)).toBeGreaterThan(Math.abs(b.x - a.x) * 1.5);
+      expect(Math.abs(a.turn)).toBeGreaterThan(Math.abs(b.turn - a.turn));
+      expect(b.y).toBeGreaterThan(a.y);
+    }
+    const list = splinters(W, H, AT, 1, WILD, seeded(6));
+    expect(list.filter((s) => where(s, 0.1, WILD).y < 0).length / list.length).toBeGreaterThan(0.6);
   });
 
   it('turn both ways, and leave the strike first where they are nearest to it', () => {

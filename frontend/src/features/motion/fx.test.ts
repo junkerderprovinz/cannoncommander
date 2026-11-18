@@ -6,7 +6,7 @@ import { drop, salute, shardLayer, shatter, sparks, trace } from './fx';
 // The same numbers on every run, so a failure can be replayed.
 const seeded = (seed: number) => () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 
-const WILD: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09 };
+const WILD: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09, drag: 1.8 };
 
 describe('the burst of a struck element', () => {
   let canvas: ReturnType<typeof fakeCanvas>;

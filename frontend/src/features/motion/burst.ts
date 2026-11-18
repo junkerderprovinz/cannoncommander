@@ -1,7 +1,7 @@
 // What an element of the head turns into when the ball strikes it, made the way BombVault's logo bursts: the element
-// is painted once into a picture of its own, the picture is cut into small splinters, and every splinter flies on one
-// canvas over the whole window, thrown out from the strike and carried on by the ball, turning, falling and fading,
-// with a spray of sparks where it was hit.
+// is painted once into a picture of its own, the picture cracks like a pane where the ball struck, and every splinter
+// flies on one canvas over the whole window, thrown out from the strike and carried on by the ball, slowed by the air,
+// turning, falling and fading, with a spray of sparks where it was hit.
 interface Point { x: number; y: number }
 
 export interface Blast {
@@ -17,11 +17,12 @@ export interface Blast {
   count: number;
   /** The pause between the splinters nearest the strike leaving and the farthest, in seconds. */
   lag: number;
+  /** How quickly the air slows a splinter's throw and turn, per second. */
+  drag: number;
 }
 
-// The burst looks the same at every motion level: many small splinters that fly far. The level only decides whether
-// the cannon fires at all.
-export const BLAST: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09 };
+// The burst looks the same at every motion level. The level only decides whether the cannon fires at all.
+export const BLAST: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09, drag: 1.8 };
 
 export interface Splinter {
   /** The corners, in pixels of the element's box. */
@@ -29,10 +30,10 @@ export interface Splinter {
   /** Its middle, where it turns about. */
   x: number;
   y: number;
-  /** In pixels a second. */
+  /** As it leaves, in pixels a second. */
   vx: number;
   vy: number;
-  /** In radians a second. */
+  /** As it leaves, in radians a second. */
   spin: number;
   /** How much larger it grows as it leaves. */
   grow: number;
@@ -40,36 +41,66 @@ export interface Splinter {
   delay: number;
 }
 
-// Cuts a w by h box into about `count` triangles: a grid whose inner points are pushed a little out of line, and every
-// cell split corner to corner one way or the other. The pieces fill the box exactly, so in the moment it breaks it
-// still looks whole. Each one is thrown out from the strike, the nearest hardest and first, and the ball carries all
-// of them on the way it flies.
+// What slows a throw over t seconds: the distance it covers, in seconds of its first speed.
+const slowed = (k: number, t: number) => (1 - Math.exp(-k * t)) / k;
+
+// Cracks a w by h box into about `count` pieces the way a pane breaks where a stone hits it: rays run from the strike
+// to points spread evenly round the edge, rings cross them a little out of line, and every cell between is a piece.
+// That gives thin wedges at the strike, broken four-cornered pieces after them and the box's own corners at the rim.
+// The pieces fill the box exactly, so in the moment it breaks it still looks whole. Each one is thrown out from the
+// strike, the nearest hardest and first, and the ball carries all of them on the way it flies.
 export function splinters(w: number, h: number, at: Point, dir: number, b: Blast, rand = Math.random): Splinter[] {
-  const cells = Math.max(1, Math.round(b.count / 2)), side = Math.max(2, Math.sqrt((w * h) / cells));
-  const cols = Math.max(1, Math.round(w / side)), rows = Math.max(1, Math.round(h / side)), cw = w / cols, ch = h / rows;
-  const nudge = (i: number, n: number) => (i > 0 && i < n ? i + (rand() - 0.5) * 0.44 : i);
-  const grid = Array.from({ length: rows + 1 }, (_, j) => Array.from({ length: cols + 1 }, (_, i): [number, number] => [nudge(i, cols) * cw, nudge(j, rows) * ch]));
-  const tris: [number, number][][] = [];
-  for (let j = 0; j < rows; j++) {
-    for (let i = 0; i < cols; i++) {
-      const tl = grid[j]![i]!, tr = grid[j]![i + 1]!, br = grid[j + 1]![i + 1]!, bl = grid[j + 1]![i]!;
-      tris.push(...(rand() < 0.5 ? [[tl, tr, br], [tl, br, bl]] : [[tl, tr, bl], [tr, br, bl]]));
-    }
-  }
+  const ix = Math.min(8, w * 0.12), iy = Math.min(8, h * 0.12);
+  const P: [number, number] = [Math.min(w - ix, Math.max(ix, at.x)), Math.min(h - iy, Math.max(iy, at.y))];
+  // A long element gets more rings, so a piece at its far end is no longer than a piece near the strike is wide.
+  const longest = Math.hypot(Math.max(P[0], w - P[0]), Math.max(P[1], h - P[1]));
+  // A small count, as when the ball strikes many elements, keeps at least three rays.
+  const rings = Math.max(1, Math.min(8, Math.floor(b.count / 3) - 1, Math.round(longest / (Math.min(w, h) * 0.4))));
+  const n = Math.max(3, Math.round(b.count / (rings + 1))), round = 2 * (w + h), gap = round / n, from = rand() * gap;
+  const edge = (u: number): [number, number] => {
+    u = ((u % round) + round) % round;
+    return u < w ? [u, 0] : u < w + h ? [w, u - w] : u < 2 * w + h ? [2 * w + h - u, h] : [0, round - u];
+  };
+  const ends = Array.from({ length: n }, (_, i) => from + i * gap + (rand() - 0.5) * gap * 0.6);
+  const rays = ends.map((u) => {
+    const [ex, ey] = edge(u);
+    return [...Array.from({ length: rings }, (_, k) => (k + 1 + (rand() - 0.5) * 0.5) / (rings + 1)), 1]
+      .map((f): [number, number] => [P[0] + (ex - P[0]) * f, P[1] + (ey - P[1]) * f]);
+  });
+  const corners = [0, w, w + h, 2 * w + h];
+  const cells = rays.flatMap((ray, i) => {
+    const next = rays[(i + 1) % n]!, u0 = ends[i]!, u1 = i + 1 < n ? ends[i + 1]! : ends[0]! + round;
+    const between = [...corners, ...corners.map((c) => c + round), ...corners.map((c) => c - round)]
+      .filter((c) => c > u0 && c < u1).sort((x, y) => x - y).map(edge);
+    return [
+      [P, ray[0]!, next[0]!],
+      ...Array.from({ length: rings - 1 }, (_, k) => [ray[k]!, ray[k + 1]!, next[k + 1]!, next[k]!]),
+      [ray[rings - 1]!, ray[rings]!, ...between, next[rings]!, next[rings - 1]!],
+    ] as [number, number][][];
+  });
   const far = Math.hypot(Math.max(at.x, w - at.x), Math.max(at.y, h - at.y)) || 1, speed = b.spread / b.life;
-  return tris.map((poly) => {
-    const x = (poly[0]![0] + poly[1]![0] + poly[2]![0]) / 3, y = (poly[0]![1] + poly[1]![1] + poly[2]![1]) / 3;
+  // The air takes speed off from the start, so a splinter leaves faster to land as far as it would without it.
+  const throwBoost = b.life / slowed(b.drag, b.life), turnBoost = b.life / slowed(b.drag / 2, b.life);
+  return cells.map((poly) => {
+    const x = poly.reduce((sum, q) => sum + q[0], 0) / poly.length, y = poly.reduce((sum, q) => sum + q[1], 0) / poly.length;
     const near = Math.min(1, Math.hypot(x - at.x, y - at.y) / far), a = Math.atan2(y - at.y, x - at.x) + (rand() - 0.5) * 0.9;
     const v = speed * (0.45 + rand() * 0.9) * (1.25 - near * 0.5);
     return {
       poly, x, y,
-      vx: Math.cos(a) * v + (dir * b.carry * (0.35 + rand() * 0.8)) / b.life,
-      vy: Math.sin(a) * v - speed * (0.15 + rand() * 0.45),
-      spin: ((rand() * 2 - 1) * b.spin) / b.life,
+      vx: (Math.cos(a) * v + (dir * b.carry * (0.35 + rand() * 0.8)) / b.life) * throwBoost,
+      vy: (Math.sin(a) * v - speed * (0.15 + rand() * 0.45)) * throwBoost,
+      spin: (((rand() * 2 - 1) * b.spin) / b.life) * turnBoost,
       grow: 0.85 + rand() * 0.55,
       delay: near * b.lag,
     };
   });
+}
+
+// How far a splinter has gone t seconds after it left, and how far it has turned: the air slows its throw and its turn,
+// the turn more gently, and gravity pulls it down the whole time.
+export function where(p: Splinter, t: number, b: Blast) {
+  const drop = (2 * b.fall) / (b.life * b.life);
+  return { x: p.vx * slowed(b.drag, t), y: p.vy * slowed(b.drag, t) + (drop * t * t) / 2, turn: p.spin * slowed(b.drag / 2, t) };
 }
 
 export interface Picture { canvas: HTMLCanvasElement; scale: number }
@@ -215,9 +246,9 @@ export function burst(into: Element) {
       for (const p of f.pieces) {
         const t = Math.max(0, t0 - p.delay), k = t / life;
         if (k >= 1) continue;
-        const grow = (1 + (p.grow - 1) * Math.min(1, t * 3)) * dpr, turn = p.spin * t;
-        const c = Math.cos(turn) * grow, s = Math.sin(turn) * grow;
-        const x = (f.left + p.x + p.vx * t) * dpr, y = (f.top + p.y + p.vy * t + (drop * t * t) / 2) * dpr;
+        const grow = (1 + (p.grow - 1) * Math.min(1, t * 3)) * dpr, at = where(p, t, f.b);
+        const c = Math.cos(at.turn) * grow, s = Math.sin(at.turn) * grow;
+        const x = (f.left + p.x + at.x) * dpr, y = (f.top + p.y + at.y) * dpr;
         g.globalAlpha = k < 0.6 ? 1 : (1 - k) / 0.4;
         g.setTransform(c / ps, s / ps, -s / ps, c / ps, x - c * p.x + s * p.y, y - s * p.x - c * p.y);
         g.beginPath();

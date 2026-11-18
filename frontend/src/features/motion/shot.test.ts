@@ -7,7 +7,7 @@ import { HOLD } from './cues';
 import { armLogo, fire, stopShot, type Times } from './shot';
 
 const TIMES: Times = { tremble: 900, shot: 900, wait: 700, rebuild: 400, step: 30 };
-const BLAST: Blast = { life: 1, spread: 380, carry: 300, fall: 420, spin: 12, count: 90, lag: 0.09 };
+const BLAST: Blast = { life: 1, spread: 380, carry: 300, fall: 420, spin: 12, count: 90, lag: 0.09, drag: 1.8 };
 const END = TIMES.tremble + TIMES.shot + TIMES.wait + TIMES.rebuild + 10 * TIMES.step + 100;
 
 // jsdom lays nothing out, so every box is placed by hand along one row.
