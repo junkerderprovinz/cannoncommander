@@ -114,3 +114,13 @@ describe('the start of the age ramp', () => {
     expect(css).toMatch(/:root\[data-du-age="warm"\] \[data-theme\]/);
   });
 });
+
+describe('the scrolled tabs', () => {
+  it('keep room above the badge on the first card', () => {
+    const css = readFileSync(join(__dirname, 'diskusage.css'), 'utf8');
+    const rule = css.match(/\.du-drives-scroll \{([^}]*)\}/)?.[1] ?? '';
+    expect(rule).toMatch(/overflow: auto/);
+    // GlimStone's heading badge is 22px high and centred on the card's top edge, and --space-6 is 12px.
+    expect(rule).toMatch(/padding-top: var\(--space-6\)/);
+  });
+});
