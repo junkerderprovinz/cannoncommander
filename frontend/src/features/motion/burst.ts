@@ -22,7 +22,7 @@ export interface Blast {
 }
 
 // The burst looks the same at every motion level. The level only decides whether the cannon fires at all.
-export const BLAST: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09, drag: 1.8 };
+export const BLAST: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 42, lag: 0.09, drag: 1.8 };
 
 export interface Splinter {
   /** The corners, in pixels of the element's box. */
@@ -52,10 +52,10 @@ const slowed = (k: number, t: number) => (1 - Math.exp(-k * t)) / k;
 export function splinters(w: number, h: number, at: Point, dir: number, b: Blast, rand = Math.random): Splinter[] {
   const ix = Math.min(8, w * 0.12), iy = Math.min(8, h * 0.12);
   const P: [number, number] = [Math.min(w - ix, Math.max(ix, at.x)), Math.min(h - iy, Math.max(iy, at.y))];
-  // A long element gets more rings, so a piece at its far end is no longer than a piece near the strike is wide.
+  // A long element gets more rings, up to four, so its far pieces stay pieces and not long slivers.
   const longest = Math.hypot(Math.max(P[0], w - P[0]), Math.max(P[1], h - P[1]));
   // A small count, as when the ball strikes many elements, keeps at least three rays.
-  const rings = Math.max(1, Math.min(8, Math.floor(b.count / 3) - 1, Math.round(longest / (Math.min(w, h) * 0.4))));
+  const rings = Math.max(1, Math.min(4, Math.floor(b.count / 3) - 1, Math.round(longest / (Math.min(w, h) * 0.4))));
   const n = Math.max(3, Math.round(b.count / (rings + 1))), round = 2 * (w + h), gap = round / n, from = rand() * gap;
   const edge = (u: number): [number, number] => {
     u = ((u % round) + round) % round;
@@ -267,7 +267,7 @@ export function burst(into: Element) {
     hit(pic: Picture, left: number, top: number, at: Point, pieces: Splinter[], dir: number, b: Blast, rand = Math.random) {
       const fill = g?.createPattern(pic.canvas, 'no-repeat');
       if (!g || !fill) return;
-      flights.push({ fill, scale: pic.scale, left, top, pieces, at, b, start: performance.now(), sparks: sparksOf(Math.round(pieces.length / 5), dir, b, rand) });
+      flights.push({ fill, scale: pic.scale, left, top, pieces, at, b, start: performance.now(), sparks: sparksOf(Math.round(pieces.length / 2.5), dir, b, rand) });
       if (!raf) raf = requestAnimationFrame(frame);
     },
     stop() {

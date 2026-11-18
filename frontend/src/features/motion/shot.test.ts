@@ -367,7 +367,8 @@ describe('the look of the shot', () => {
   it('throws the splinters far over the page, as an explosion does', () => {
     // The head is 3.4rem high, about 54 px.
     for (const name of ['fall', 'spread', 'carry'] as const) expect(THROWN[name], name).toBeGreaterThanOrEqual(5 * 54);
-    expect(THROWN.count).toBeGreaterThanOrEqual(60);
+    // A few dozen pieces, as a pane breaks, each large enough to show its shape.
+    expect(THROWN.count).toBeGreaterThanOrEqual(24);
   });
 
   it('shakes the window for a moment by a few pixels and lets it settle', () => {

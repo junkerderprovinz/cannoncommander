@@ -14,7 +14,7 @@ const seeded = (seed: number) => () => ((seed = (seed * 16807) % 2147483647) - 1
 
 // A menu title as wide as a word and the ball striking it at its left edge, a little above the middle.
 const W = 90, H = 36, AT = { x: 0, y: 15 };
-const WILD: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09, drag: 1.8 };
+const WILD: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 42, lag: 0.09, drag: 1.8 };
 
 describe('the blast of the cannon', () => {
   it('is the same at every motion level', () => {
@@ -26,7 +26,7 @@ describe('the blast of the cannon', () => {
 
 describe('the splinters of a struck element', () => {
   it('are about as many as the level asks for, and more at a livelier level', () => {
-    const few = splinters(W, H, AT, 1, { ...WILD, count: 28 }, seeded(7)).length;
+    const few = splinters(W, H, AT, 1, { ...WILD, count: 20 }, seeded(7)).length;
     const many = splinters(W, H, AT, 1, WILD, seeded(7)).length;
     const most = splinters(W, H, AT, 1, { ...WILD, count: 180 }, seeded(7)).length;
     expect(many).toBeGreaterThanOrEqual(WILD.count * 0.75);
@@ -43,7 +43,7 @@ describe('the splinters of a struck element', () => {
     const sorted = [...list].sort((a, b) => by(a) - by(b)), third = Math.floor(list.length / 3);
     const mean = (l: typeof list) => l.reduce((sum, s) => sum + area(s.poly), 0) / l.length;
     expect(mean(sorted.slice(0, third))).toBeLessThan(mean(sorted.slice(-third)));
-    for (const s of list) expect(area(s.poly)).toBeLessThan((W * H) / 12);
+    for (const s of list) expect(area(s.poly)).toBeLessThan((W * H) / 6);
   });
 
   it('cover the whole element without a gap or an overlap', () => {
