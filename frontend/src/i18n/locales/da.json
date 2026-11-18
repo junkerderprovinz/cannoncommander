@@ -1718,7 +1718,6 @@
     },
     "colourBy": "Farve efter",
     "colours": {
-      "standard": "Standard",
       "type": "Filtype",
       "age": "Alder"
     },

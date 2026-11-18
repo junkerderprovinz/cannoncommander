@@ -22,7 +22,7 @@
   "pickFirst": "First pick what should go",
   "kinds": { "img": "Picture", "video": "Video", "audio": "Music", "arch": "Archive", "disk": "Disk image", "doc": "Document", "text": "Text", "code": "Source code", "file": "Other" },
   "colourBy": "Colour by",
-  "colours": { "standard": "Standard", "type": "File type", "age": "Age" },
+  "colours": { "type": "File type", "age": "Age" },
   "groups": { "video": "Video", "photo": "Photos", "music": "Music", "docs": "Documents", "archive": "Archives", "other": "Other" },
   "ages": { "week": "under a week", "month": "under a month", "half": "under 6 months", "year": "under a year", "years": "under 3 years", "older": "over 3 years" },
   "tipShare": "{pct} % of {folder}",

@@ -24,7 +24,7 @@ import ColourMap from './ColourMap.vue';
 import { AGES, type ColourMode, fillOf, legend } from './colours';
 import DrivesView from './DrivesView.vue';
 import { ended } from './ended';
-import { fit, outermost, pct, squarify } from './treemap';
+import { outermost, pct } from './treemap';
 
 type View = 'tree' | 'map' | 'types' | 'largest' | 'drives';
 type SortKey = 'name' | 'size' | 'share' | 'files' | 'dirs' | 'time';
@@ -45,8 +45,8 @@ const body = ref<HTMLElement | null>(null);
 const box = reactive({ w: 0, h: 0 });
 
 const VIEWS = computed(() => ([['tree', 'IconRowMedium'], ['map', 'IconModules'], ['types', 'IconFiles'], ['largest', 'IconSort'], ...(U.available ? [['drives', 'IconDatabase']] as const : [])] as const).map(([v, g]) => [v, t(`diskusage.views.${v}`), g] as const));
-const COLOURS = computed(() => segItems((['standard', 'type', 'age'] as const).map((c) => [c, t(`diskusage.colours.${c}`)] as const)));
-const colour = computed<ColourMode>(() => (['type', 'age'].includes(prefs.usageColours) ? prefs.usageColours as ColourMode : 'standard'));
+const COLOURS = computed(() => segItems((['type', 'age'] as const).map((c) => [c, t(`diskusage.colours.${c}`)] as const)));
+const colour = computed<ColourMode>(() => (prefs.usageColours === 'age' ? 'age' : 'type'));
 const hl = ref<string | null>(null);
 const drivesFoot = ref(' ');
 const COLS: SortKey[] = ['name', 'size', 'share', 'files', 'dirs', 'time'];
@@ -126,29 +126,13 @@ const mapItems = computed(() => {
   const byName = new Map((here.value?.items ?? []).map((it) => [it.name, it]));
   return mode.value === 'map' ? rows.value.map((r) => byName.get(r.name)!) : [];
 });
-const keys = computed(() => (colour.value === 'standard' ? [] : legend(colour.value, mapItems.value).map(({ key, v }) => ({
+const keys = computed(() => legend(colour.value, mapItems.value).map(({ key, v }) => ({
   key, v, fill: fillOf(colour.value, key), name: t(colour.value === 'type' ? `diskusage.groups.${key}` : `diskusage.ages.${AGES[Number(key)]}`),
-}))));
+})));
 function setColour(c: ColourMode) {
   hl.value = null;
   setPref('usageColours', c);
 }
-
-const blocks = computed(() => {
-  const list = rows.value;
-  if (mode.value !== 'map' || colour.value !== 'standard' || !list.length || !box.w) return [];
-  const max = list[0]!.size;
-  return squarify(list.map((r, i) => ({ r, i, v: r.size })), 0, 0, box.w, box.h).map((b) => {
-    const { r, i } = b.it, pad = 2, x = b.x + pad, y = b.y + pad, bw = Math.max(0, b.w - pad * 2), bh = Math.max(0, b.h - pad * 2);
-    const mix = r.dir ? Math.round(18 + (r.size / max) * 37) : 0;
-    return {
-      r, i, x, y, bw, bh,
-      fill: r.dir ? `color-mix(in srgb, var(--accent) ${mix}%, var(--carbon-surface3))` : 'var(--carbon-surface3)',
-      ink: r.dir && mix > 45 ? 'var(--accent-contrast)' : 'var(--carbon-text)',
-      name: fit(r.name, bw - 14), size: fit(fmtSize(r.size), bw - 14),
-    };
-  });
-});
 
 const summary = computed(() => {
   if (sel.size) return plural(sel.size, 'diskusage.picked', { size: fmtSize([...sel.values()].reduce((a, r) => a + r.size, 0)) || '0 B' });
@@ -358,18 +342,8 @@ const role = computed(() => ({ tree: 'tree', largest: 'listbox', types: 'list', 
         </template>
         <EmptyState v-else-if="here" nested :glyph="glyphComponent('IconFile')" :title="t('diskusage.noFiles')" />
       </template>
-      <template v-else-if="mode === 'map' && colour !== 'standard'">
-        <ColourMap v-if="mapItems.length && box.w" :items="mapItems" :path="cur" :mode="colour" :hl="hl" :picked="new Set(sel.keys())" :w="box.w" :h="box.h" @go="go" @pick="pickAt" />
-        <EmptyState v-else-if="here" nested :glyph="glyphComponent('IconFolder')" :title="t('diskusage.nothingBig')" />
-      </template>
       <template v-else-if="mode === 'map'">
-        <svg v-if="blocks.length" :width="box.w" :height="box.h" :viewBox="`0 0 ${box.w} ${box.h}`" :aria-label="t('diskusage.mapLabel', { path: cur })">
-          <g v-for="b in blocks" :key="b.r.path" class="bk-blk" :class="{ dir: b.r.dir, sel: sel.has(b.r.path) }" :data-dui="b.i" :data-tip="`${b.r.name}, ${fmtSize(b.r.size)}`" :style="{ '--blk': b.fill, '--ink': b.ink }">
-            <rect :x="b.x" :y="b.y" :width="b.bw" :height="b.bh" rx="6"></rect>
-            <text v-if="b.bw > 54 && b.bh > 24 && b.name" :x="b.x + 8" :y="b.y + 17" class="n">{{ b.name }}</text>
-            <text v-if="b.bw > 54 && b.bh > 42 && b.size" :x="b.x + 8" :y="b.y + 33" class="s">{{ b.size }}</text>
-          </g>
-        </svg>
+        <ColourMap v-if="mapItems.length && box.w" :items="mapItems" :path="cur" :mode="colour" :hl="hl" :picked="new Set(sel.keys())" :w="box.w" :h="box.h" @go="go" @pick="pickAt" />
         <EmptyState v-else-if="here" nested :glyph="glyphComponent('IconFolder')" :title="t('diskusage.nothingBig')" />
       </template>
     </div>

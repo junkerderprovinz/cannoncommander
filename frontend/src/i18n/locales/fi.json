@@ -1718,7 +1718,6 @@
     },
     "colourBy": "Väritys",
     "colours": {
-      "standard": "Vakio",
       "type": "Tiedostotyyppi",
       "age": "Ikä"
     },

@@ -1718,7 +1718,6 @@
     },
     "colourBy": "Színezés",
     "colours": {
-      "standard": "Alap",
       "type": "Fájltípus",
       "age": "Kor"
     },

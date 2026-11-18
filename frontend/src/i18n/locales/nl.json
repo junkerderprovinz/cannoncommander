@@ -1718,7 +1718,6 @@
     },
     "colourBy": "Kleur op",
     "colours": {
-      "standard": "Standaard",
       "type": "Bestandstype",
       "age": "Leeftijd"
     },

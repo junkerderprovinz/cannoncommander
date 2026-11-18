@@ -22,7 +22,7 @@
   "pickFirst": "Wähle zuerst aus, was weg soll",
   "kinds": { "img": "Bild", "video": "Video", "audio": "Musik", "arch": "Archiv", "disk": "Abbild", "doc": "Dokument", "text": "Text", "code": "Quelltext", "file": "Sonstiges" },
   "colourBy": "Farbe nach",
-  "colours": { "standard": "Standard", "type": "Dateityp", "age": "Alter" },
+  "colours": { "type": "Dateityp", "age": "Alter" },
   "groups": { "video": "Video", "photo": "Fotos", "music": "Musik", "docs": "Dokumente", "archive": "Archive", "other": "Sonstiges" },
   "ages": { "week": "unter 1 Woche", "month": "unter 1 Monat", "half": "unter 6 Monaten", "year": "unter 1 Jahr", "years": "unter 3 Jahren", "older": "über 3 Jahre" },
   "tipShare": "{pct} % von {folder}",

@@ -1769,7 +1769,6 @@
     },
     "colourBy": "Couleur selon",
     "colours": {
-      "standard": "Standard",
       "type": "Type de fichier",
       "age": "Âge"
     },

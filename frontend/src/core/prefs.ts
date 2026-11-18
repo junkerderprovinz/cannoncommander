@@ -14,7 +14,7 @@ export const DEFAULT_PREFS = {
   columns: ['name', 'size', 'modified'], colWidths: {} as Record<string, number>,
   density: 'medium', showHidden: false, showSystem: false, showExt: true, syncBrowse: false, folderSizes: true, foldersFirst: true, liveRefresh: true, dblclick: 'open', clickSelect: false, desktopStyle: '', fkeys: false, side: true, dual: true,
   quickview: false, sidePane: false, confirmDelete: true, trash: true, trashDays: 30, language: '', dateFormat: 'short', startFolder: '', editorWrap: false, editorVim: false,
-  folderViews: {} as Record<string, string>, folderGroups: {} as Record<string, string>, folderTiles: {} as Record<string, number>, usageColours: 'standard',
+  folderViews: {} as Record<string, string>, folderGroups: {} as Record<string, string>, folderTiles: {} as Record<string, number>, usageColours: 'type',
 };
 export type Prefs = typeof DEFAULT_PREFS & Record<string, unknown>;
 

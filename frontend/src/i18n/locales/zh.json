@@ -1667,7 +1667,6 @@
     },
     "colourBy": "着色依据",
     "colours": {
-      "standard": "标准",
       "type": "文件类型",
       "age": "新旧"
     },
