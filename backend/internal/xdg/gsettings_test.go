@@ -60,7 +60,7 @@ func TestAGVariantStringIsUnquoted(t *testing.T) {
 			t.Errorf("%s: got %q %v", in, got, ok)
 		}
 	}
-	for _, bad := range []string{"Adwaita", "'open", `'a'b'`, `'trail\'`, "true", "uint32 5", `'\u12'`, ""} {
+	for _, bad := range []string{"Adwaita", "'open", `'a'b'`, `'trail\'`, "true", "uint32 5", `'\u12'`, `'\UFFFFFFFF'`, `'\U00110000'`, `'\uD800'`, ""} {
 		if got, ok := UnquoteGVariant(bad); ok {
 			t.Errorf("%s: got %q", bad, got)
 		}

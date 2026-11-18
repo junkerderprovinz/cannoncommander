@@ -14,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
+	"unicode/utf8"
 )
 
 // Desktop is where a desktop keeps what it knows.
@@ -107,7 +109,7 @@ func UnquoteGVariant(s string) (string, bool) {
 				return "", false
 			}
 			r, err := strconv.ParseUint(s[i+1:i+1+n], 16, 32)
-			if err != nil {
+			if err != nil || r > unicode.MaxRune || !utf8.ValidRune(rune(r)) {
 				return "", false
 			}
 			b.WriteRune(rune(r))
