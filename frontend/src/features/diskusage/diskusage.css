@@ -107,7 +107,8 @@
 .du-mix { display: grid; grid-template-columns: auto 1fr auto; gap: .1rem .45rem; align-items: center; font-size: var(--text-meta); }
 .du-mix i { width: .6rem; height: .6rem; border-radius: 2px; }
 .du-mix .glim-num { text-align: end; color: var(--carbon-text-sub); }
-.du-drives-scroll { flex: 1; min-height: 0; overflow: auto; }
+/* The heading badge of the first card straddles its top edge, so the scroll box keeps room for its upper half. */
+.du-drives-scroll { flex: 1; min-height: 0; overflow: auto; padding-top: var(--space-6); }
 .du-drives { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
 .du-col { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
 .du-drives .glim-subcard { padding: .9rem .6rem .6rem; gap: .35rem; }
