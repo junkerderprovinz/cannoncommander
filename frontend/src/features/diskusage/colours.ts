@@ -46,3 +46,20 @@ export function legend(mode: ColourMode, entries: UsageInner[]): { key: ColourKe
   for (const e of entries) for (const [k, v] of typeMix(e.kinds)) sum.set(k, sum.get(k)! + v);
   return TYPES.filter((k) => sum.get(k)! > 0).map((key) => ({ key, v: sum.get(key)! }));
 }
+
+// The hue of a #rrggbb colour in degrees, or null for a grey or anything else.
+function hueOf(hex: string): number | null {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex.trim());
+  if (!m) return null;
+  const [r, g, b] = m.slice(1).map((x) => parseInt(x, 16) / 255) as [number, number, number];
+  const max = Math.max(r, g, b), d = max - Math.min(r, g, b);
+  if (d < 0.08) return null;
+  const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return (h * 60 + 360) % 360;
+}
+
+// A cyan to blue accent would make the age ramp look like the video blue, so the ramp then starts from sunflower.
+export function ageBase(accent: string): 'accent' | 'warm' {
+  const h = hueOf(accent);
+  return h != null && h >= 170 && h <= 255 ? 'warm' : 'accent';
+}

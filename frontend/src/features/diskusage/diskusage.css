@@ -1,6 +1,6 @@
 /* The treemap's colours. The five types take GlimStone's chart series, which stay apart for every kind of colour
-   blindness. The ages run from the accent to grey, so they never look like the video blue. The bubble opens on the
-   body, outside the window, so the tokens sit on the root. */
+   blindness. The ages run from the accent to grey, and from sunflower where the accent is blue, so they never look
+   like the video blue. The bubble opens on the body, outside the window, so the tokens sit on the root. */
 :root,
 [data-theme] {
   --du-type-video: var(--chart-1);
@@ -15,18 +15,26 @@
   --du-ink-type-docs: light-dark(#ffffff, #161616);
   --du-ink-type-archive: light-dark(#ffffff, #161616);
   --du-ink-type-other: var(--carbon-text);
-  --du-age-0: var(--accent);
-  --du-age-1: color-mix(in oklab, var(--accent) 80%, var(--carbon-surface3));
-  --du-age-2: color-mix(in oklab, var(--accent) 60%, var(--carbon-surface3));
-  --du-age-3: color-mix(in oklab, var(--accent) 40%, var(--carbon-surface3));
-  --du-age-4: color-mix(in oklab, var(--accent) 20%, var(--carbon-surface3));
+  --du-age-from: var(--accent);
+  --du-age-0: var(--du-age-from);
+  --du-age-1: color-mix(in oklab, var(--du-age-from) 80%, var(--carbon-surface3));
+  --du-age-2: color-mix(in oklab, var(--du-age-from) 60%, var(--carbon-surface3));
+  --du-age-3: color-mix(in oklab, var(--du-age-from) 40%, var(--carbon-surface3));
+  --du-age-4: color-mix(in oklab, var(--du-age-from) 20%, var(--carbon-surface3));
   --du-age-5: var(--carbon-surface3);
-  --du-ink-age-0: var(--accent-contrast);
-  --du-ink-age-1: var(--accent-contrast);
-  --du-ink-age-2: var(--accent-contrast);
-  --du-ink-age-3: var(--accent-contrast);
+  --du-age-ink: var(--accent-contrast);
+  --du-ink-age-0: var(--du-age-ink);
+  --du-ink-age-1: var(--du-age-ink);
+  --du-ink-age-2: var(--du-age-ink);
+  --du-ink-age-3: var(--du-age-ink);
   --du-ink-age-4: var(--carbon-text);
   --du-ink-age-5: var(--carbon-text);
+}
+
+:root[data-du-age="warm"],
+:root[data-du-age="warm"] [data-theme] {
+  --du-age-from: #FCC419;
+  --du-age-ink: #161616;
 }
 
 
