@@ -688,6 +688,7 @@
       "mountFailed": "Pelekapan gagal: {error}",
       "savedNotMounted": "{name} disimpan, tetapi pelekapan gagal",
       "search": "Cari penyedia",
+      "clear": "Kosongkan carian",
       "loading": "Bertanya kepada rclone apa yang boleh dicapainya",
       "noCatalog": "rclone belum menjawab",
       "unknownType": "rclone ini tiada {type}",

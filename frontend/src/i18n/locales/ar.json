@@ -863,6 +863,7 @@
       "mountFailed": "فشل التركيب: {error}",
       "savedNotMounted": "حُفظ {name}، لكن التركيب فشل",
       "search": "ابحث عن مزوّد",
+      "clear": "مسح البحث",
       "loading": "نسأل rclone عمّا يمكنه الوصول إليه",
       "noCatalog": "لا يجيب rclone بعد",
       "unknownType": "لا يحتوي rclone هذا على الواجهة الخلفية {type}",

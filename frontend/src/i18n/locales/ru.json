@@ -793,6 +793,7 @@
       "mountFailed": "Подключить не удалось: {error}",
       "savedNotMounted": "{name} сохранено, но подключить не удалось",
       "search": "Найти провайдера",
+      "clear": "Очистить поиск",
       "loading": "Спрашиваем rclone, что ему доступно",
       "noCatalog": "rclone пока не отвечает",
       "unknownType": "Этот rclone не знает {type}",

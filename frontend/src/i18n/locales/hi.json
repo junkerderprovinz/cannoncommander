@@ -723,6 +723,7 @@
       "mountFailed": "माउंट नहीं हो सका: {error}",
       "savedNotMounted": "{name} सहेजा गया, पर माउंट नहीं हो सका",
       "search": "प्रदाता खोजें",
+      "clear": "खोज साफ़ करें",
       "loading": "rclone से पूछा जा रहा है कि वह कहाँ तक पहुँचता है",
       "noCatalog": "rclone अभी जवाब नहीं दे रहा",
       "unknownType": "यह rclone {type} नहीं जानता",

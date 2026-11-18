@@ -793,6 +793,7 @@
       "mountFailed": "Під'єднати не вдалося: {error}",
       "savedNotMounted": "{name} збережено, але під'єднати не вдалося",
       "search": "Шукати провайдера",
+      "clear": "Очистити пошук",
       "loading": "Питаємо rclone, що йому доступно",
       "noCatalog": "rclone поки не відповідає",
       "unknownType": "Цей rclone не знає {type}",

@@ -723,6 +723,7 @@
       "mountFailed": "Monteringen mislyktes: {error}",
       "savedNotMounted": "{name} er lagret, men monteringen mislyktes",
       "search": "Søk etter leverandør",
+      "clear": "Tøm søket",
       "loading": "Spør rclone hva det kan nå",
       "noCatalog": "rclone svarer ikke ennå",
       "unknownType": "Denne rclone-versjonen kjenner ikke {type}",

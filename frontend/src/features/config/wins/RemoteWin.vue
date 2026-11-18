@@ -3,22 +3,23 @@
 // nobody has to know that Nextcloud is WebDAV underneath. The fields come from rclone's own description of the
 // backend: what it needs first, everything else folded below. Google, Microsoft and the other clouds that sign in
 // through a browser get the token from rclone authorize on a computer with one, pasted here.
-import { BrandMark, Button, CopyField, EmptyState, FieldRow, FieldRowGroup, PathField, Pill, ReadmeButton, SubCard, TextField } from '@glimstone/vue';
+import { Button, CopyField, EmptyState, FieldRow, FieldRowGroup, PathField, PickerWindow, Pill, SubCard, TextField, Window, type PickerItem, type PickerText, type PickGroup, type WindowAction } from '@glimstone/vue';
 import { Select } from '@glimstone/vue/Select';
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, shallowRef, watch, watchEffect } from 'vue';
+import { computed, nextTick, onMounted, reactive, ref, shallowRef, watch } from 'vue';
 import { admin, type Provider, type Remote, type RemoteCatalog, type RemoteInput, type RemoteTest, type SetupQuestion } from '@/api/admin';
 import { ApiError } from '@/api/client';
 import { fmtSize } from '@/core/format';
-import { G, glyphComponent } from '@/core/glyphs';
+import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
-import { cancelBtn, type FootButton, type WinEntry } from '@/core/windows';
-import { c, fail, keysFirst, stepFoot } from '@/features/config/shared';
+import { t } from '@/i18n';
+import { c, fail } from '@/features/config/shared';
 import { pathField } from '@/ui/picker';
 import { copyWords, shake } from '@/ui/kit';
 import { GROUPS, loadCatalog, markOf, nameAndKind, optionLabel, providerHint, providerName, questionLabel, splitOptions, suggestName } from '../remotes';
 import RemoteField from './RemoteField.vue';
 
-const props = defineProps<{ win: WinEntry; remote: Remote | null; all: Remote[]; saved: () => void }>();
+const props = defineProps<{ remote: Remote | null; all: Remote[] }>();
+const emit = defineEmits<{ saved: []; close: [] }>();
 const r = props.remote, isNew = !r;
 const taken = props.all.filter((x) => x !== r).map((x) => x.name);
 
@@ -34,15 +35,14 @@ let mountTouched = !!r, nameTouched = !!r;
 const token = ref(''), signing = ref(false), pasted = ref('');
 const signedIn = computed(() => !!token.value || !!r?.secrets?.includes('token'));
 
-const query = ref('');
-const floor = ref(0), tiles = ref<HTMLElement | null>(null);
 const more = ref(false);
 const testing = ref(false);
 const result = ref<RemoteTest | null>(null);
 // What a test brought that outlives the next change: the question to answer and the shares to pick from.
 const question = ref<SetupQuestion | null>(null);
 const shares = ref<string[]>([]);
-const at = (sel: string) => props.win.el?.querySelector(sel) ?? null;
+const form = ref<HTMLElement | null>(null);
+const at = (sel: string) => form.value?.closest('.glim-window')?.querySelector(sel) ?? null;
 
 watch([values, path, token], () => { result.value = null; });
 
@@ -50,26 +50,41 @@ const who = computed(() => (provider.value ? providerName(provider.value) : type
 const split = computed(() => (type.value ? splitOptions(type.value, provider.value?.preset, values) : { first: [], rest: [] }));
 const pathWord = computed(() => type.value?.pathHint ?? 'folder');
 
-// Products in the reader's alphabet, found by the name shown and by rclone's own, which is what a guide online uses.
-const sorted = computed(() => [...(cat.value?.providers ?? [])].sort((a, b) => providerName(a).localeCompare(providerName(b), undefined, { sensitivity: 'base' })));
-const groups = computed(() => {
-  const q = query.value.trim().toLowerCase();
-  const hit = (words: string[]) => !q || words.some((w) => w.toLowerCase().includes(q));
-  return GROUPS.map((g) => ({
-    g,
-    providers: sorted.value.filter((p) => p.group === g && hit([providerName(p), p.name, p.backend])),
-    unlisted: g === 'protocol' ? (cat.value?.unlisted ?? []).filter((b) => hit([b])) : [],
-  })).filter((x) => x.providers.length + x.unlisted.length > 0);
-});
+// Products found by the name shown and by rclone's own, which is what a guide online uses. The backends without a
+// product come last, under their rclone names.
+const groups = computed<PickGroup[]>(() => [
+  ...GROUPS.map((g) => ({ id: g, title: c(`remotes.g.${g}`) })),
+  { id: 'more', title: c('remotes.pickMore', { count: cat.value?.unlisted.length ?? 0 }) },
+]);
+const items = computed<PickerItem[]>(() => [
+  ...(cat.value?.providers ?? []).map((p) => {
+    const m = markOf(p.mark), protocol = p.group === 'protocol', { name: label, sub } = nameAndKind(providerName(p));
+    return {
+      id: p.id, label, sub, group: p.group, terms: [p.name, p.backend],
+      mark: m.svg ? { svg: m.svg, ...m.tile } : glyphComponent(m.glyph),
+      hint: protocol ? providerHint(p.id) : undefined, tip: protocol ? undefined : providerHint(p.id),
+    };
+  }),
+  ...(cat.value?.unlisted ?? []).map((b) => ({ id: b, label: b, group: 'more', mark: glyphComponent('IconCloud') })),
+]);
 const tileName = (id: string, fallback: string) => {
   const p = cat.value?.providers.find((x) => x.id === id);
   return p ? nameAndKind(providerName(p)).name : fallback;
 };
-const tileStyle = (p: Provider) => {
-  const lit = markOf(p.mark).tile;
-  return lit ? { '--provider-tile': lit.tile, '--provider-ink': lit.ink } : undefined;
-};
+// The picker fills in the query itself.
+const pickText = computed<PickerText>(() => ({
+  search: c('remotes.search'),
+  none: c('remotes.searchNone', { s3: tileName('s3', 'S3'), webdav: tileName('webdav', 'WebDAV') }),
+  clear: c('remotes.clear'),
+  close: t('core.close'),
+  cancel: t('core.cancel'),
+  back: c('back'),
+}));
 
+function pick(id: string) {
+  const p = cat.value?.providers.find((x) => x.id === id) ?? null;
+  choose(p, p?.backend ?? id);
+}
 function choose(p: Provider | null, backend: string) {
   provider.value = p;
   typeId.value = backend;
@@ -83,12 +98,10 @@ function choose(p: Provider | null, backend: string) {
   question.value = null;
   shares.value = [];
   more.value = false;
-  nextTick(() => (props.win.el?.querySelector('.a-rform input') as HTMLInputElement | null)?.focus());
 }
 function back() {
   typeId.value = '';
   provider.value = null;
-  nextTick(() => (at('#a-rq') as HTMLInputElement | null)?.focus());
 }
 
 const fieldOf = (k: string) => at(`[data-rf="${k}"]`);
@@ -172,29 +185,33 @@ async function save() {
     if (e instanceof ApiError && e.problem?.code === 'setupQuestion') return void test();
     return fail(c('notSaved'), at('#a-rname'));
   }
-  props.win.close();
+  emit('close');
   toast(out.error ? c('remotes.savedNotMounted', { name: n }) : isNew ? c('remotes.addedAt', { name: n, mount: m }) : c('saved'), out.error ? 'warn' : 'ok');
-  props.saved();
+  emit('saved');
 }
 
-watchEffect(() => {
-  if (!typeId.value) return stepFoot(props.win, [cancelBtn()]);
+// The test keeps its words, so the button keeps its width, and its colour and bubble say how it went.
+const actions = computed<WindowAction[]>(() => {
+  if (!type.value) return [];
   const x = result.value;
-  const tested: FootButton = {
-    label: testing.value ? c('checking') : !x ? c('test') : x.ok ? c('remotes.connected') : c('remotes.notConnected'),
-    g: testing.value ? 'IconRefresh' : !x ? 'IconHealth' : x.ok ? 'IconCheck' : 'IconClose',
-    tone: x ? (x.ok ? 'ok' : 'danger') : undefined,
-    disabled: testing.value,
-    attrs: { id: 'a-rtest' },
-    run: () => { void test(); return false; },
-  };
-  stepFoot(props.win, [
-    { start: verdict.value },
-    ...(isNew ? [{ label: c('back'), g: 'IconBack', run: () => { back(); return false; } }] : []),
-    cancelBtn(),
-    tested,
-    { label: isNew ? c('add') : c('save'), g: isNew ? 'IconAdd' : 'IconSave', primary: true, run: () => { void save(); return false; } },
-  ]);
+  return [
+    {
+      label: c('test'), labelKey: null, glyph: glyphComponent(!x ? 'IconHealth' : x.ok ? 'IconCheck' : 'IconClose'),
+      tone: x ? (x.ok ? 'ok' : 'danger') : undefined, busy: testing.value, disabled: testing.value,
+      title: x ? (x.ok ? c('remotes.connected') : c('remotes.notConnected')) : undefined,
+      attrs: { id: 'a-rtest' }, onClick: () => { void test(); return false; },
+    },
+    { label: isNew ? c('add') : c('save'), labelKey: null, glyph: glyphComponent(isNew ? 'IconAdd' : 'IconSave'), primary: true, onClick: () => { void save(); return false; } },
+  ];
+});
+
+// A new remote opens on the tiles once rclone has said what it can reach. A saved one, and the wait for rclone, take a
+// plain window, which has no tiles to go back to. PickerWindow hands the start of the foot on to its Window.
+const host = computed(() => (isNew && cat.value ? PickerWindow : Window));
+const hostProps = computed(() => {
+  const start = verdict.value || undefined;
+  if (host.value === PickerWindow) return { title: c('remotes.add'), items: items.value, groups: groups.value, text: pickText.value, actions: actions.value, start };
+  return { title: isNew ? c('remotes.add') : c('remotes.edit'), actions: actions.value, start, text: { cancel: t('core.cancel'), close: t('core.close') }, closeOnBackdrop: !type.value };
 });
 
 function nameTyped() {
@@ -202,90 +219,58 @@ function nameTyped() {
   if (!mountTouched) mount.value = '/remotes/' + name.value.trim().toLowerCase();
 }
 
-let stopKeys = () => {};
 onMounted(() => {
-  loadCatalog().then(async (got) => {
+  loadCatalog().then((got) => {
     cat.value = got;
     if (r) provider.value = got.providers.find((p) => p.id === r.provider) ?? null;
-    await nextTick();
-    // The window keeps the height it opened with while a search narrows the tiles.
-    floor.value = tiles.value?.offsetHeight ?? 0;
-    (at('#a-rq') as HTMLInputElement | null)?.focus();
   }, (e: unknown) => { broken.value = e instanceof Error ? e.message : String(e); });
-  // Escape in the search empties it first and closes the window only when it is empty.
-  stopKeys = keysFirst((e) => {
-    if (e.key !== 'Escape' || !query.value || document.activeElement?.id !== 'a-rq') return;
-    e.preventDefault();
-    e.stopPropagation();
-    query.value = '';
-  });
 });
-onBeforeUnmount(() => stopKeys());
 </script>
 
 <template>
-  <EmptyState v-if="broken" nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.noCatalog')" :hint="broken" />
-  <EmptyState v-else-if="!cat" nested :title="c('remotes.loading')" />
-  <template v-else-if="!typeId">
-    <div class="a-pickhead"><TextField id="a-rq" v-model="query" :placeholder="c('remotes.search')" :aria-label="c('remotes.search')" width="medium" /></div>
-    <div ref="tiles" class="a-picks" :style="floor ? { minHeight: floor + 'px' } : undefined">
-      <section v-for="grp in groups" :key="grp.g" class="a-pgroup" :data-group="grp.g">
-        <h3 class="glim-eyebrow">{{ c(`remotes.g.${grp.g}`) }}</h3>
-        <ul class="glim-provider-pick">
-          <li v-for="p in grp.providers" :key="p.id" :data-type="p.id" :title="p.group === 'protocol' ? undefined : providerHint(p.id)" :style="tileStyle(p)">
-            <ReadmeButton brand="house" :parts="[{ ...nameAndKind(providerName(p)), onClick: () => choose(p, p.backend) }]" :hint="p.group === 'protocol' ? providerHint(p.id) : undefined"
-              :mark-class="markOf(p.mark).svg ? undefined : 'a-pglyph'">
-              <template #mark><BrandMark v-if="markOf(p.mark).svg" :svg="markOf(p.mark).svg!" /><G v-else :n="markOf(p.mark).glyph" /></template>
-            </ReadmeButton>
-          </li>
-        </ul>
-        <template v-if="grp.unlisted.length">
-          <h4 class="a-pmore">{{ c('remotes.pickMore', { count: grp.unlisted.length }) }}</h4>
-          <ul class="a-ppills">
-            <li v-for="b in grp.unlisted" :key="b"><button type="button" class="a-ppill" :data-type="b" @click="choose(null, b)">{{ b }}</button></li>
-          </ul>
-        </template>
-      </section>
-      <p v-if="!groups.length" class="a-pnone">{{ c('remotes.searchNone', { query: query.trim(), s3: tileName('s3', 'S3'), webdav: tileName('webdav', 'WebDAV') }) }}</p>
-    </div>
-  </template>
-  <EmptyState v-else-if="!type" nested :title="c('remotes.unknownType', { type: typeId })" />
-  <div v-else class="a-rform">
-    <SubCard :title="who" :hint="provider ? providerHint(provider.id) : undefined">
-      <FieldRow v-if="type.oauth" :label="c('remotes.account')" :hint="c('remotes.accountTip')">
-        <template v-if="signedIn"><Pill tone="ok">{{ c('remotes.signedInPill') }}</Pill><Button id="a-oauth" :label="c('remotes.otherAccount')" label-key="IconSignIn" @click="signing = true" /></template>
-        <Button v-else id="a-oauth" :label="c('remotes.signInAt', { who })" label-key="IconSignIn" @click="signing = true" />
-      </FieldRow>
-      <FieldRowGroup v-if="type.oauth && signing">
-        <FieldRow :label="c('remotes.onYourPc')" :hint="c('remotes.onYourPcTip')"><CopyField width="grow" :value="type.authorize ?? `rclone authorize &quot;${type.id}&quot;`" :label="c('remotes.onYourPc')" :text="copyWords()" /></FieldRow>
-        <FieldRow :label="c('remotes.token')"><TextField id="a-rtoken" v-model="pasted" :placeholder="c('remotes.tokenPh')" spellcheck="false" autocomplete="off" width="wide" mono @keydown.enter="useToken" /><Button :label="c('remotes.takeToken')" label-key="IconCheck" @click="useToken" /></FieldRow>
-      </FieldRowGroup>
-      <RemoteField v-for="o in split.first" :key="o.name" :o="o" :values="values" :provider="provider" :type="type.id" :saved="r?.secrets?.includes(o.name) ?? false" />
-      <FieldRow :label="c(`remotes.path.${pathWord}`)" :hint="c(`remotes.pathTip.${pathWord}`)">
-        <template #label>{{ c(`remotes.path.${pathWord}`) }}{{ ' ' }}<small>{{ c('optional') }}</small></template>
-        <Select v-if="shares.length" v-model="path" :options="shares.map((s) => ({ value: s, label: s }))" :placeholder="c('remotes.pickShare')" :trigger-attrs="{ 'data-rf': 'path' }" />
-        <TextField v-else v-model="path" width="medium" data-rf="path" :placeholder="pathWord === 'folder' ? '/' : ''" spellcheck="false" mono />
-      </FieldRow>
-      <FieldRow v-if="question" :label="questionLabel(question.name)" :hint="c('remotes.q.hint')">
-        <Select v-model="values[question.name]" :options="question.choices.map((x) => ({ value: x.value, label: x.help || x.value }))" :placeholder="c('remotes.q.pick')" :trigger-attrs="{ 'data-rf': question.name }" />
-      </FieldRow>
-      <FieldRow v-if="result?.hostKey" :label="c('remotes.hostKey')" :hint="c('remotes.hostKeyTip')">
-        <span class="a-hostkey mono" data-hostkey>{{ result.hostKey.fingerprint }}</span>
-      </FieldRow>
-    </SubCard>
-    <SubCard v-if="split.rest.length" :title="c('remotes.more')">
-      <FieldRow :label="c('remotes.moreCount', { count: split.rest.length })" :hint="c('remotes.moreTip')">
-        <Button id="a-rmore" :label="more ? c('remotes.moreHide') : c('remotes.moreShow')" :label-key="more ? 'IconCollapse' : 'IconExpand'" @click="more = !more" />
-      </FieldRow>
-      <template v-if="more">
-        <RemoteField v-for="o in split.rest" :key="o.name" :o="o" :values="values" :provider="provider" :type="type.id" :saved="r?.secrets?.includes(o.name) ?? false" />
-      </template>
-    </SubCard>
-    <SubCard>
-      <FieldRowGroup>
-        <FieldRow :label="c('remotes.name')" :hint="c('remotes.nameTip')"><TextField id="a-rname" v-model="name" :placeholder="c('remotes.namePh')" width="medium" @input="nameTyped" /></FieldRow>
-        <FieldRow :label="c('remotes.mountAt')" :hint="c('remotes.mountAtTip')"><PathField v-model="mount" v-bind="pathField('a-rmount')" @input="mountTouched = true" /></FieldRow>
-      </FieldRowGroup>
-    </SubCard>
-  </div>
+  <component :is="host" v-bind="hostProps" @pick="pick" @back="back" @close="emit('close')">
+    <template v-if="host === Window || typeId" #default>
+      <EmptyState v-if="broken" nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.noCatalog')" :hint="broken" />
+      <EmptyState v-else-if="!cat" nested :title="c('remotes.loading')" />
+      <EmptyState v-else-if="!type" nested :title="c('remotes.unknownType', { type: typeId })" />
+      <div v-else ref="form" class="a-rform">
+        <SubCard :title="who" :hint="provider ? providerHint(provider.id) : undefined">
+          <FieldRow v-if="type.oauth" :label="c('remotes.account')" :hint="c('remotes.accountTip')">
+            <template v-if="signedIn"><Pill tone="ok">{{ c('remotes.signedInPill') }}</Pill><Button id="a-oauth" :label="c('remotes.otherAccount')" label-key="IconSignIn" @click="signing = true" /></template>
+            <Button v-else id="a-oauth" :label="c('remotes.signInAt', { who })" label-key="IconSignIn" @click="signing = true" />
+          </FieldRow>
+          <FieldRowGroup v-if="type.oauth && signing">
+            <FieldRow :label="c('remotes.onYourPc')" :hint="c('remotes.onYourPcTip')"><CopyField width="grow" :value="type.authorize ?? `rclone authorize &quot;${type.id}&quot;`" :label="c('remotes.onYourPc')" :text="copyWords()" /></FieldRow>
+            <FieldRow :label="c('remotes.token')"><TextField id="a-rtoken" v-model="pasted" :placeholder="c('remotes.tokenPh')" spellcheck="false" autocomplete="off" width="wide" mono @keydown.enter="useToken" /><Button :label="c('remotes.takeToken')" label-key="IconCheck" @click="useToken" /></FieldRow>
+          </FieldRowGroup>
+          <RemoteField v-for="o in split.first" :key="o.name" :o="o" :values="values" :provider="provider" :type="type.id" :saved="r?.secrets?.includes(o.name) ?? false" />
+          <FieldRow :label="c(`remotes.path.${pathWord}`)" :hint="c(`remotes.pathTip.${pathWord}`)">
+            <template #label>{{ c(`remotes.path.${pathWord}`) }}{{ ' ' }}<small>{{ c('optional') }}</small></template>
+            <Select v-if="shares.length" v-model="path" :options="shares.map((s) => ({ value: s, label: s }))" :placeholder="c('remotes.pickShare')" :trigger-attrs="{ 'data-rf': 'path' }" />
+            <TextField v-else v-model="path" width="medium" data-rf="path" :placeholder="pathWord === 'folder' ? '/' : ''" spellcheck="false" mono />
+          </FieldRow>
+          <FieldRow v-if="question" :label="questionLabel(question.name)" :hint="c('remotes.q.hint')">
+            <Select v-model="values[question.name]" :options="question.choices.map((x) => ({ value: x.value, label: x.help || x.value }))" :placeholder="c('remotes.q.pick')" :trigger-attrs="{ 'data-rf': question.name }" />
+          </FieldRow>
+          <FieldRow v-if="result?.hostKey" :label="c('remotes.hostKey')" :hint="c('remotes.hostKeyTip')">
+            <span class="a-hostkey mono" data-hostkey>{{ result.hostKey.fingerprint }}</span>
+          </FieldRow>
+        </SubCard>
+        <SubCard v-if="split.rest.length" :title="c('remotes.more')">
+          <FieldRow :label="c('remotes.moreCount', { count: split.rest.length })" :hint="c('remotes.moreTip')">
+            <Button id="a-rmore" :label="more ? c('remotes.moreHide') : c('remotes.moreShow')" :label-key="more ? 'IconCollapse' : 'IconExpand'" @click="more = !more" />
+          </FieldRow>
+          <template v-if="more">
+            <RemoteField v-for="o in split.rest" :key="o.name" :o="o" :values="values" :provider="provider" :type="type.id" :saved="r?.secrets?.includes(o.name) ?? false" />
+          </template>
+        </SubCard>
+        <SubCard>
+          <FieldRowGroup>
+            <FieldRow :label="c('remotes.name')" :hint="c('remotes.nameTip')"><TextField id="a-rname" v-model="name" :placeholder="c('remotes.namePh')" width="medium" @input="nameTyped" /></FieldRow>
+            <FieldRow :label="c('remotes.mountAt')" :hint="c('remotes.mountAtTip')"><PathField v-model="mount" v-bind="pathField('a-rmount')" @input="mountTouched = true" /></FieldRow>
+          </FieldRowGroup>
+        </SubCard>
+      </div>
+    </template>
+  </component>
 </template>

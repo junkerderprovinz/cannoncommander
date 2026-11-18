@@ -758,6 +758,7 @@
       "mountFailed": "Uzmontēt neizdevās: {error}",
       "savedNotMounted": "{name} saglabāta, bet uzmontēt neizdevās",
       "search": "Meklēt pakalpojumu sniedzēju",
+      "clear": "Notīrīt meklēšanu",
       "loading": "Jautā rclone, ko tas var sasniegt",
       "noCatalog": "rclone vēl neatbild",
       "unknownType": "Šim rclone nav {type}",

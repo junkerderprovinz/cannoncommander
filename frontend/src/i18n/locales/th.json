@@ -688,6 +688,7 @@
       "mountFailed": "เมานต์ไม่สำเร็จ: {error}",
       "savedNotMounted": "บันทึก {name} แล้ว แต่เมานต์ไม่สำเร็จ",
       "search": "ค้นหาผู้ให้บริการ",
+      "clear": "ล้างการค้นหา",
       "loading": "กำลังถาม rclone ว่าเข้าถึงอะไรได้บ้าง",
       "noCatalog": "rclone ยังไม่ตอบ",
       "unknownType": "rclone ตัวนี้ไม่รู้จัก {type}",

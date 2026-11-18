@@ -1,5 +1,6 @@
 // One keyboard service for the whole app, in the capture phase: windows and menus first, then the page, the key map
 // and last the active view.
+import { windowIsOpen } from '@glimstone/core';
 import { actions, run } from './actions';
 import { comboOf, keymap } from './keymap';
 import { closeMenu, isMenuOpen } from './menu';
@@ -35,6 +36,8 @@ export function handleKey(e: KeyboardEvent) {
     if (e.key === 'Escape' && !e.defaultPrevented && !winStack.at(-1)!.locked) { e.preventDefault(); closeWin(); }
     return;
   }
+  // A window that draws itself, such as a picker, answers its keys as GlimStone's own windows do.
+  if (windowIsOpen()) return;
   // Escape closes an open popover first and leaves the page only when none is open.
   if (e.key === 'Escape' && currentView()?.page && !e.defaultPrevented && !document.querySelector('.a-cpop, .cpick') && !typing(e.target)) {
     e.preventDefault();

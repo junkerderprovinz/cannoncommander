@@ -723,6 +723,7 @@
       "mountFailed": "Haakimine ebaõnnestus: {error}",
       "savedNotMounted": "{name} on salvestatud, aga haakimine ebaõnnestus",
       "search": "Otsi teenusepakkujaid",
+      "clear": "Tühjenda otsing",
       "loading": "Küsitakse rclone'ilt, kuhu see ulatub",
       "noCatalog": "rclone ei vasta veel",
       "unknownType": "Sellel rclone'il pole taustaprogrammi {type}",

@@ -793,6 +793,7 @@
       "mountFailed": "Montowanie się nie powiodło: {error}",
       "savedNotMounted": "{name} jest zapisany, ale montowanie się nie powiodło",
       "search": "Szukaj dostawcy",
+      "clear": "Wyczyść wyszukiwanie",
       "loading": "Pytam rclone, do czego ma dostęp",
       "noCatalog": "rclone jeszcze nie odpowiada",
       "unknownType": "To rclone nie zna {type}",

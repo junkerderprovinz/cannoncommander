@@ -793,6 +793,7 @@
       "mountFailed": "Prijungti nepavyko: {error}",
       "savedNotMounted": "{name} įrašyta, bet prijungti nepavyko",
       "search": "Ieškoti teikėjo",
+      "clear": "Išvalyti paiešką",
       "loading": "Klausiama rclone, ką jis gali pasiekti",
       "noCatalog": "rclone dar neatsako",
       "unknownType": "Šis rclone nepažįsta {type}",

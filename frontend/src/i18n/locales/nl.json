@@ -723,6 +723,7 @@
       "mountFailed": "Koppelen is niet gelukt: {error}",
       "savedNotMounted": "{name} is opgeslagen, maar koppelen is niet gelukt",
       "search": "Aanbieder zoeken",
+      "clear": "Zoekopdracht wissen",
       "loading": "rclone wordt gevraagd wat het kan bereiken",
       "noCatalog": "rclone antwoordt nog niet",
       "unknownType": "Deze rclone kent geen {type}",

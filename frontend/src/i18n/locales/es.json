@@ -758,6 +758,7 @@
       "mountFailed": "El montaje no ha funcionado: {error}",
       "savedNotMounted": "{name} está guardado, pero el montaje no ha funcionado",
       "search": "Buscar proveedores",
+      "clear": "Borrar la búsqueda",
       "loading": "Preguntando a rclone a qué puede llegar",
       "noCatalog": "rclone aún no responde",
       "unknownType": "Este rclone no tiene el backend {type}",

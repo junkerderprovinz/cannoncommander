@@ -793,6 +793,7 @@
       "mountFailed": "Pripojenie sa nepodarilo: {error}",
       "savedNotMounted": "{name} je uložené, ale pripojenie sa nepodarilo",
       "search": "Hľadať poskytovateľa",
+      "clear": "Vymazať hľadanie",
       "loading": "Zisťujem od rclone, čo dosiahne",
       "noCatalog": "rclone zatiaľ neodpovedá",
       "unknownType": "Tento rclone nepozná {type}",

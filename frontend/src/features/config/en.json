@@ -93,7 +93,7 @@
     "nameTip": "Lowercase letters, digits and hyphens. rclone knows the remote by this name.", "needName": "Give the remote a name", "mountAt": "Mount at",
     "mountAtTip": "The files show up under this folder in the file manager.", "underRemotes": "The folder has to be under /remotes, such as /remotes/{name}",
     "connected": "Connected", "addedAt": "{name} is mounted at {mount}", "signedInPill": "Signed in", "failedPill": "Error",
-    "mountFailed": "Mounting did not work: {error}", "savedNotMounted": "{name} is saved, but mounting did not work", "search": "Search providers",
+    "mountFailed": "Mounting did not work: {error}", "savedNotMounted": "{name} is saved, but mounting did not work", "search": "Search providers", "clear": "Clear the search",
     "loading": "Asking rclone what it can reach", "noCatalog": "rclone isn't answering yet", "unknownType": "This rclone has no {type} backend",
     "pickMore": "Other rclone backends: {count}", "searchNone": "Nothing matches “{query}”. Most other services work with {s3} or {webdav}.",
     "g": {"cloud": "Clouds", "storage": "Object storage", "protocol": "Servers and protocols"},

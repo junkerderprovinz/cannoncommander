@@ -723,6 +723,7 @@
       "mountFailed": "Monteringen lykkedes ikke: {error}",
       "savedNotMounted": "{name} er gemt, men monteringen lykkedes ikke",
       "search": "Søg efter udbydere",
+      "clear": "Ryd søgningen",
       "loading": "Spørger rclone, hvad det kan nå",
       "noCatalog": "rclone svarer ikke endnu",
       "unknownType": "Denne rclone har ingen {type}-backend",

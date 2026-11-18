@@ -723,6 +723,7 @@
       "mountFailed": "A csatolás nem sikerült: {error}",
       "savedNotMounted": "{name} mentve, de a csatolás nem sikerült",
       "search": "Szolgáltatók keresése",
+      "clear": "Keresés törlése",
       "loading": "Az rclone-t kérdezzük, mit ér el",
       "noCatalog": "Az rclone még nem válaszol",
       "unknownType": "Ez az rclone nem ismeri ezt: {type}",

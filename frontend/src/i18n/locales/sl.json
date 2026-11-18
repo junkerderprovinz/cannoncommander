@@ -793,6 +793,7 @@
       "mountFailed": "Priklop ni uspel: {error}",
       "savedNotMounted": "{name} je shranjen, priklop pa ni uspel",
       "search": "Išči ponudnika",
+      "clear": "Počisti iskanje",
       "loading": "Sprašujem rclone, kaj doseže",
       "noCatalog": "rclone še ne odgovarja",
       "unknownType": "Ta rclone ne pozna {type}",

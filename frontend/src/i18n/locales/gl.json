@@ -723,6 +723,7 @@
       "mountFailed": "Non se puido montar: {error}",
       "savedNotMounted": "{name} está gardado, pero non se puido montar",
       "search": "Buscar provedores",
+      "clear": "Borrar a busca",
       "loading": "Preguntándolle a rclone ata onde chega",
       "noCatalog": "rclone aínda non responde",
       "unknownType": "Este rclone non coñece {type}",

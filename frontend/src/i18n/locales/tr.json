@@ -723,6 +723,7 @@
       "mountFailed": "Bağlama başarısız oldu: {error}",
       "savedNotMounted": "{name} kaydedildi, ama bağlama başarısız oldu",
       "search": "Sağlayıcı ara",
+      "clear": "Aramayı temizle",
       "loading": "rclone'a nelere ulaşabildiği soruluyor",
       "noCatalog": "rclone henüz yanıt vermiyor",
       "unknownType": "Bu rclone {type} türünü tanımıyor",

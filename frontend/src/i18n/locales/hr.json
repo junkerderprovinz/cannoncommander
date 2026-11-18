@@ -758,6 +758,7 @@
       "mountFailed": "Montiranje nije uspjelo: {error}",
       "savedNotMounted": "{name} je spremljena, ali montiranje nije uspjelo",
       "search": "Pretraži pružatelje",
+      "clear": "Očisti pretragu",
       "loading": "Pitamo rclone što sve može dosegnuti",
       "noCatalog": "rclone još ne odgovara",
       "unknownType": "Ovaj rclone ne poznaje {type}",

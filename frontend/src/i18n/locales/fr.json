@@ -758,6 +758,7 @@
       "mountFailed": "Le montage a échoué : {error}",
       "savedNotMounted": "{name} est enregistré, mais le montage a échoué",
       "search": "Rechercher un fournisseur",
+      "clear": "Effacer la recherche",
       "loading": "On demande à rclone ce qu'il peut atteindre",
       "noCatalog": "rclone ne répond pas encore",
       "unknownType": "Ce rclone ne connaît pas {type}",

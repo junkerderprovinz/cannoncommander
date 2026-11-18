@@ -723,6 +723,7 @@
       "mountFailed": "Tenging tókst ekki: {error}",
       "savedNotMounted": "{name} er vistað, en tenging tókst ekki",
       "search": "Leita að þjónustuaðilum",
+      "clear": "Hreinsa leitina",
       "loading": "Spyr rclone hvað það nær til",
       "noCatalog": "rclone svarar ekki enn",
       "unknownType": "Þetta rclone þekkir ekki {type}",

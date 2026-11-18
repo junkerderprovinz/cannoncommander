@@ -723,6 +723,7 @@
       "mountFailed": "Η προσάρτηση απέτυχε: {error}",
       "savedNotMounted": "Το {name} αποθηκεύτηκε, αλλά η προσάρτηση απέτυχε",
       "search": "Αναζήτηση παρόχων",
+      "clear": "Καθαρισμός αναζήτησης",
       "loading": "Ρωτάμε το rclone τι μπορεί να φτάσει",
       "noCatalog": "Το rclone δεν απαντά ακόμη",
       "unknownType": "Αυτό το rclone δεν έχει backend {type}",

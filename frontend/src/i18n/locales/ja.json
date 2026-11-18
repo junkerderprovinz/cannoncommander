@@ -688,6 +688,7 @@
       "mountFailed": "マウントできませんでした: {error}",
       "savedNotMounted": "{name} は保存しましたが、マウントできませんでした",
       "search": "プロバイダーを検索",
+      "clear": "検索をクリア",
       "loading": "rclone に接続できる先を問い合わせています",
       "noCatalog": "rclone がまだ応答しません",
       "unknownType": "この rclone には {type} がありません",

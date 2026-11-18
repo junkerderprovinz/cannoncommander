@@ -723,6 +723,7 @@
       "mountFailed": "Liittäminen epäonnistui: {error}",
       "savedNotMounted": "{name} on tallennettu, mutta liittäminen epäonnistui",
       "search": "Hae palveluntarjoajia",
+      "clear": "Tyhjennä haku",
       "loading": "Kysytään rclonelta, mitä se tavoittaa",
       "noCatalog": "rclone ei vastaa vielä",
       "unknownType": "Tämä rclone ei tunne tyyppiä {type}",

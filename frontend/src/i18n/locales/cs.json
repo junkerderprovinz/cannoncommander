@@ -793,6 +793,7 @@
       "mountFailed": "Připojení se nepovedlo: {error}",
       "savedNotMounted": "{name} je uloženo, ale připojení se nepovedlo",
       "search": "Hledat poskytovatele",
+      "clear": "Vymazat hledání",
       "loading": "Zjišťuji od rclone, kam se dostane",
       "noCatalog": "rclone zatím neodpovídá",
       "unknownType": "Tento rclone nemá backend {type}",

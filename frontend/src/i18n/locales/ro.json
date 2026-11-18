@@ -758,6 +758,7 @@
       "mountFailed": "Montarea nu a reușit: {error}",
       "savedNotMounted": "{name} este salvată, dar montarea nu a reușit",
       "search": "Caută furnizorul",
+      "clear": "Șterge căutarea",
       "loading": "Se întreabă rclone ce poate accesa",
       "noCatalog": "rclone nu răspunde încă",
       "unknownType": "Acest rclone nu cunoaște {type}",

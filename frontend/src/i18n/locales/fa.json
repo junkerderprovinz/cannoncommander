@@ -723,6 +723,7 @@
       "mountFailed": "سوار کردن نشد: {error}",
       "savedNotMounted": "{name} ذخیره شد، اما سوار کردن نشد",
       "search": "جست‌وجوی ارائه‌دهنده",
+      "clear": "پاک کردن جستجو",
       "loading": "در حال پرسیدن از rclone که به چه چیزهایی دسترسی دارد",
       "noCatalog": "rclone هنوز پاسخ نمی‌دهد",
       "unknownType": "این rclone پشتیبان {type} ندارد",

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import vm from 'node:vm';
+import { stackWindow } from '@glimstone/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { action, actions } from './actions';
 import { handleKey } from './keyboard';
@@ -121,6 +122,22 @@ describe('keyboard layers', () => {
     press('Escape');
     expect(winStack.map((w) => w.title)).toEqual(['Eins']);
     expect(viewKey).not.toHaveBeenCalled();
+  });
+
+  it('leaves every key to a GlimStone window the stack does not hold, such as a picker', () => {
+    const fn = vi.fn();
+    action('copy', { label: 'Kopieren', run: fn });
+    bindKey('F5', 'copy');
+    view.id = 'settings';
+    const unstack = stackWindow(() => document.body, () => {});
+    try {
+      press('F5');
+      expect(press('Escape').defaultPrevented).toBe(false);
+      expect(fn).not.toHaveBeenCalled();
+      expect(view.id).toBe('settings');
+    } finally {
+      unstack();
+    }
   });
 
   it('leaves a full page with Escape', () => {

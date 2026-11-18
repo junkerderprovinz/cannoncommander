@@ -688,6 +688,7 @@
       "mountFailed": "마운트하지 못했습니다: {error}",
       "savedNotMounted": "{name} 저장소를 저장했지만 마운트하지 못했습니다",
       "search": "제공업체 검색",
+      "clear": "검색 지우기",
       "loading": "rclone이 연결할 수 있는 곳을 확인하는 중",
       "noCatalog": "rclone이 아직 응답하지 않습니다",
       "unknownType": "이 rclone에는 {type} 백엔드가 없습니다",

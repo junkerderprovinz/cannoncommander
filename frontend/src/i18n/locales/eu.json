@@ -1188,6 +1188,7 @@
       "mountFailed": "Ezin izan da muntatu: {error}",
       "savedNotMounted": "{name} gordeta dago, baina ezin izan da muntatu",
       "search": "Bilatu hornitzaileak",
+      "clear": "Garbitu bilaketa",
       "loading": "rclone-ri galdetzen zeri irits dakiokeen",
       "noCatalog": "rclone-k ez du oraindik erantzuten",
       "unknownType": "rclone honek ez du {type} backendik",

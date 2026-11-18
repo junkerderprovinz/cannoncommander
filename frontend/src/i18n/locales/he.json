@@ -758,6 +758,7 @@
       "mountFailed": "העיגון לא הצליח: {error}",
       "savedNotMounted": "{name} נשמר, אבל העיגון לא הצליח",
       "search": "חיפוש ספקים",
+      "clear": "ניקוי החיפוש",
       "loading": "שואלים את rclone למה הוא מגיע",
       "noCatalog": "rclone עדיין לא עונה",
       "unknownType": "ה־rclone הזה לא מכיר את {type}",

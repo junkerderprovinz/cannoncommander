@@ -723,6 +723,7 @@
       "mountFailed": "Монтирането не успя: {error}",
       "savedNotMounted": "{name} е запазено, но монтирането не успя",
       "search": "Търси доставчици",
+      "clear": "Изчисти търсенето",
       "loading": "Питаме rclone до какво може да стигне",
       "noCatalog": "rclone още не отговаря",
       "unknownType": "Този rclone няма бекенд {type}",

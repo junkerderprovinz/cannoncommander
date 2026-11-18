@@ -97,7 +97,7 @@
     "mountAt": "Einhängen unter", "mountAtTip": "Unter diesem Ordner erscheinen die Dateien im Dateimanager.",
     "underRemotes": "Der Ordner muss unter /remotes liegen, etwa /remotes/{name}", "connected": "Verbunden", "addedAt": "{name} ist eingehängt unter {mount}",
     "signedInPill": "Angemeldet", "failedPill": "Fehler", "mountFailed": "Das Einhängen hat nicht geklappt: {error}",
-    "savedNotMounted": "{name} ist gespeichert, das Einhängen hat aber nicht geklappt", "search": "Anbieter suchen",
+    "savedNotMounted": "{name} ist gespeichert, das Einhängen hat aber nicht geklappt", "search": "Anbieter suchen", "clear": "Suche leeren",
     "loading": "rclone wird gefragt, was es erreicht", "noCatalog": "rclone antwortet noch nicht", "unknownType": "Dieses rclone kennt kein {type}",
     "pickMore": "Weitere rclone-Backends: {count}", "searchNone": "Nichts passt zu „{query}“. Die meisten anderen Dienste klappen mit {s3} oder {webdav}.",
     "g": {"cloud": "Clouds", "storage": "Objektspeicher", "protocol": "Server und Protokolle"},

@@ -758,6 +758,7 @@
       "mountFailed": "El muntatge no ha funcionat: {error}",
       "savedNotMounted": "{name} s'ha desat, però el muntatge no ha funcionat",
       "search": "Cerca proveïdors",
+      "clear": "Esborra la cerca",
       "loading": "S'està preguntant a l'rclone a què pot arribar",
       "noCatalog": "L'rclone encara no respon",
       "unknownType": "Aquest rclone no té el backend {type}",

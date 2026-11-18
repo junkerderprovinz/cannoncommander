@@ -688,6 +688,7 @@
       "mountFailed": "挂载失败：{error}",
       "savedNotMounted": "{name} 已保存，但挂载失败",
       "search": "搜索服务商",
+      "clear": "清除搜索",
       "loading": "正在询问 rclone 能连到哪些服务",
       "noCatalog": "rclone 还没有响应",
       "unknownType": "这个 rclone 没有 {type} 后端",

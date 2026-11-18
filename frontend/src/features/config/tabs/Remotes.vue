@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { segItems } from '@/ui/kit';
 import { BrandMark, Button, Card, EmptyState, FieldRow, IconButton, ListRow, Pill, Selector, Toggle } from '@glimstone/vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, shallowRef } from 'vue';
 import { admin, type AppSettings, type Provider, type Rclone, type Remote } from '@/api/admin';
 import { G, glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
-import { win } from '@/core/windows';
 import { attempt, c, confirmWin } from '@/features/config/shared';
 import { reloadRemotes } from '@/features/remotes/store';
 import { loadCatalog, markOf, remoteKind } from '../remotes';
@@ -40,8 +39,12 @@ async function mount(r: Remote) {
   void reloadRemotes();
   toast(r.mounted ? c('remotes.unmounted', { name: r.name }) : c('remotes.mounted', { name: r.name }));
 }
-function edit(r: Remote | null) {
-  win({ title: r ? c('remotes.edit') : c('remotes.add'), wide: true, body: RemoteWin, props: { remote: r, all: remotes.value, saved: () => { void load(); void reloadRemotes(); } } });
+// The remote in the window, null for a new one.
+const editing = shallowRef<{ remote: Remote | null } | null>(null);
+const edit = (r: Remote | null) => { editing.value = { remote: r }; };
+function saved() {
+  void load();
+  void reloadRemotes();
 }
 function remove(r: Remote) {
   confirmWin({
@@ -83,4 +86,5 @@ function remove(r: Remote) {
     <FieldRow :label="c('remotes.cache')" :hint="c('remotes.cacheTip')"><Selector v-model="cache" :items="segItems([['off', c('remotes.cacheOff')], ['writes', c('remotes.cacheWrites')], ['full', c('remotes.cacheFull')]])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
     <FieldRow v-if="cache !== 'off'" :label="c('remotes.atMost')" :hint="c('remotes.atMostTip')"><Selector v-model="cacheSize" :items="segItems([[10, '10 GB'], [50, '50 GB'], [200, '200 GB']])" size="sm" activation="manual" inline button-height pairs-on-phone /></FieldRow>
   </Card>
+  <RemoteWin v-if="editing" :remote="editing.remote" :all="remotes" @saved="saved" @close="editing = null" />
 </template>

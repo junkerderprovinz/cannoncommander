@@ -688,6 +688,7 @@
       "mountFailed": "Gắn kết không thành công: {error}",
       "savedNotMounted": "Đã lưu {name}, nhưng gắn kết không thành công",
       "search": "Tìm nhà cung cấp",
+      "clear": "Xóa tìm kiếm",
       "loading": "Đang hỏi rclone xem nó kết nối được tới đâu",
       "noCatalog": "rclone chưa trả lời",
       "unknownType": "rclone này không có backend {type}",
