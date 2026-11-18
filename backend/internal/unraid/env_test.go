@@ -75,12 +75,19 @@ func newEnv(t *testing.T) *env {
 	return e
 }
 
+// write replaces the file in one step, so a poll in between reads the old
+// content or the new. On a slow runner the monitor could otherwise read the
+// emptied file twice in a row and take it for a real change.
 func (e *env) write(p, content string) {
 	e.t.Helper()
 	if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
 		e.t.Fatal(err)
 	}
-	if err := os.WriteFile(p, []byte(content), 0o644); err != nil {
+	tmp := p + ".tmp"
+	if err := os.WriteFile(tmp, []byte(content), 0o644); err != nil {
+		e.t.Fatal(err)
+	}
+	if err := os.Rename(tmp, p); err != nil {
 		e.t.Fatal(err)
 	}
 }
