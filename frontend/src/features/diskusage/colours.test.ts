@@ -124,3 +124,18 @@ describe('the scrolled tabs', () => {
     expect(rule).toMatch(/padding-top: var\(--space-6\)/);
   });
 });
+
+describe('the colour legend', () => {
+  const css = readFileSync(join(__dirname, 'diskusage.css'), 'utf8');
+  const legend = css.match(/^\.du-legend \{([^}]*)\}/m)?.[1] ?? '';
+  const keys = css.match(/^\.du-keys \{([^}]*)\}/m)?.[1] ?? '';
+  const vue = readFileSync(join(__dirname, 'UsageBody.vue'), 'utf8');
+
+  it('always takes a row of its own under the selector, at any window width', () => {
+    expect(legend).toMatch(/flex-wrap: wrap/);
+    expect(keys).toMatch(/flex-basis: 100%/);
+    expect(keys).toMatch(/justify-content: flex-start/);
+    expect(css).not.toMatch(/@media[^{]*\{[^@]*\.du-keys/);
+    expect(vue.indexOf('id="du-colour"')).toBeLessThan(vue.indexOf('class="du-keys"'));
+  });
+});

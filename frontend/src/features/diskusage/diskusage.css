@@ -92,7 +92,8 @@
 .du-tile.dim { opacity: .22; }
 .du-legend { display: flex; align-items: center; gap: .5rem 1rem; flex-wrap: wrap; min-height: var(--btn-h); }
 .du-legend-name { font-size: var(--text-meta); color: var(--carbon-text-muted); }
-.du-keys { display: flex; flex-wrap: wrap; gap: .35rem .9rem; align-items: center; }
+/* The keys take a row of their own under the selector, so they keep one place at any width and in either mode. */
+.du-keys { display: flex; flex-wrap: wrap; flex-basis: 100%; justify-content: flex-start; gap: .35rem .9rem; align-items: center; }
 .du-key { display: inline-flex; align-items: center; gap: .4rem; font-size: var(--text-subline); color: var(--carbon-text); border-radius: var(--radius-control); padding: .15rem .35rem; cursor: default; outline: none; }
 .du-key:hover, .du-key:focus-visible { background: var(--hover); }
 .du-key:focus-visible { box-shadow: 0 0 0 2px var(--focus-ring); }
