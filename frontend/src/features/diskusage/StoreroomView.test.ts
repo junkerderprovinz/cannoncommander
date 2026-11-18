@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp, h, nextTick } from 'vue';
@@ -122,6 +124,13 @@ describe('the storeroom view', () => {
     document.body.innerHTML = '';
     await mount();
     expect(document.querySelector('.du-room-about')?.textContent).toBe(de.storeroom.about);
+  });
+
+  it('runs the explanation across the whole width, breaking only where the window ends', () => {
+    const css = readFileSync(join(__dirname, 'diskusage.css'), 'utf8');
+    const rule = css.match(/^\.du-room-about \{([^}]*)\}/m)?.[1] ?? '';
+    expect(rule).not.toMatch(/max-width|white-space/);
+    expect(de.storeroom.about).not.toMatch(/\n/);
   });
 
   it('only looks while write access is off', async () => {
