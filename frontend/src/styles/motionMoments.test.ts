@@ -95,11 +95,6 @@ describe('the levels', () => {
     expect(num(LEVELS.subtle.get('--motion-spark-count')!)).toBe(0);
   });
 
-  it('break what the cannon hits into small splinters that fly far even at subtle', () => {
-    expect(num(LEVELS.subtle.get('--motion-shard-count')!)).toBeGreaterThanOrEqual(60);
-    expect(num(LEVELS.subtle.get('--motion-shard-spread')!)).toBeGreaterThanOrEqual(200);
-  });
-
   it('give the storm a real shake, and more pieces than wild by half again', () => {
     for (const name of ['--motion-spark-count', '--motion-trace-count', '--motion-drop-count', '--motion-salute-count']) {
       expect(num(LEVELS.storm.get(name)!), name).toBeGreaterThanOrEqual(num(LEVELS.wild.get(name)!) * 1.5);

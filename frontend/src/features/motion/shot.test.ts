@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { installTips } from '@/core/tips';
 import { fakeCanvas } from '@/testing/fakeCanvas';
-import type { Blast } from './burst';
+import { type Blast, BLAST as THROWN } from './burst';
 import { gates, inside, keyframes, rules, sheets } from '@/testing/motionCss';
 import { HOLD } from './cues';
 import { armLogo, fire, stopShot, type Times } from './shot';
@@ -349,7 +349,7 @@ describe('the look of the shot', () => {
   });
 
   it('grows every dial of the shot from off through subtle and wild to the storm', () => {
-    for (const name of ['tremble-dur', 'tremble-dist', 'tremble-tilt', 'quake-dur', 'quake-dist', 'shard-dur', 'shard-carry', 'shard-fall', 'shard-spread', 'shard-spin', 'shard-count']) {
+    for (const name of ['tremble-dur', 'tremble-dist', 'tremble-tilt', 'quake-dur', 'quake-dist']) {
       const [off, subtle, wild, storm] = ['off', 'subtle', 'wild', 'storm'].map((l) => dial(l, name));
       expect([name, off], name).toEqual([name, 0]);
       expect(0 < subtle! && subtle! < wild! && wild! < storm!, `${name}: ${subtle} ${wild} ${storm}`).toBe(true);
@@ -366,9 +366,8 @@ describe('the look of the shot', () => {
 
   it('throws the splinters far over the page, as an explosion does', () => {
     // The head is 3.4rem high, about 54 px.
-    for (const name of ['shard-fall', 'shard-spread', 'shard-carry']) expect(dial('wild', name), name).toBeGreaterThanOrEqual(5 * 54);
-    expect(dial('wild', 'shard-count')).toBeGreaterThanOrEqual(60);
-    expect(dial('storm', 'shard-count')).toBeLessThanOrEqual(300);
+    for (const name of ['fall', 'spread', 'carry'] as const) expect(THROWN[name], name).toBeGreaterThanOrEqual(5 * 54);
+    expect(THROWN.count).toBeGreaterThanOrEqual(60);
   });
 
   it('shakes the window for a moment by a few pixels and lets it settle', () => {

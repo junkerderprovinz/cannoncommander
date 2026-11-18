@@ -5,7 +5,7 @@
 // broken.
 import { dialMs, moving } from '@/core/motion';
 import { quietTips } from '@/core/tips';
-import { type Blast, blastOf, paint } from './burst';
+import { type Blast, BLAST, paint } from './burst';
 import { HOLD, holdPress } from './cues';
 import { flyBall, gunSmoke, muzzleFlash, replay, shardLayer, shatter } from './fx';
 
@@ -34,7 +34,7 @@ let stop: (() => void) | null = null;
 
 export const stopShot = () => stop?.();
 
-export function fire(head: HTMLElement, times = timesOf(), blast: Blast = blastOf()): boolean {
+export function fire(head: HTMLElement, times = timesOf(), blast: Blast = BLAST): boolean {
   if (stop) return true;
   const logo = head.querySelector('.brand-logo'), cannon = logo?.querySelector('.brand-cannon'), rest = logo?.querySelector<SVGSVGElement>('.brand-ball');
   const ball = rest?.querySelector<SVGGraphicsElement>(':scope > g'), barrel = cannon?.firstElementChild;
