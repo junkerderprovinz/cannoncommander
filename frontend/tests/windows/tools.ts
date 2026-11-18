@@ -184,9 +184,9 @@ await closeAll();
 // first click on Name sorts from Z, as in the prototype.
 await page.evaluate('CC.run("diskUsage", "/mnt/user")');
 await wait(800);
-check('disk usage opens on the treemap', (await page.getAttribute('#du-view [aria-pressed="true"]', 'data-v')) === 'map' && (await page.locator('#du-body .bk-blk').count()) > 3);
+check('disk usage opens on the treemap', (await page.getAttribute('#du-view [aria-pressed="true"]', 'data-v')) === 'map' && (await page.locator('#du-body .du-tile').count()) > 3);
 await shot('usage');
-await page.click('.bk-blk.dir');
+await page.click('#du-body .du-group');
 await wait(600);
 check('a click on a folder block goes into it', /Server › mnt › user › \S+/.test(await text('#du-crumbs')), await text('#du-crumbs'));
 await page.goBack();

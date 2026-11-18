@@ -139,3 +139,14 @@ describe('the colour legend', () => {
     expect(vue.indexOf('id="du-colour"')).toBeLessThan(vue.indexOf('class="du-keys"'));
   });
 });
+
+describe('the colour choice', () => {
+  const vue = readFileSync(join(__dirname, 'UsageBody.vue'), 'utf8');
+  const prefs = readFileSync(join(__dirname, '../../core/prefs.ts'), 'utf8');
+
+  it('offers file type and age and starts with file type', () => {
+    expect(vue).toMatch(/\(\['type', 'age'\] as const\)/);
+    expect(vue).not.toMatch(/standard/);
+    expect(prefs).toMatch(/usageColours: 'type'/);
+  });
+});

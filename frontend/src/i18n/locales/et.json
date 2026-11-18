@@ -1719,7 +1719,6 @@
     },
     "colourBy": "Värvi järgi",
     "colours": {
-      "standard": "Tavaline",
       "type": "Failitüüp",
       "age": "Vanus"
     },

@@ -1668,7 +1668,6 @@
     },
     "colourBy": "色分け",
     "colours": {
-      "standard": "標準",
       "type": "ファイルの種類",
       "age": "古さ"
     },

@@ -1719,7 +1719,6 @@
     },
     "colourBy": "Färg efter",
     "colours": {
-      "standard": "Standard",
       "type": "Filtyp",
       "age": "Ålder"
     },

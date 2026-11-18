@@ -2,7 +2,7 @@
 // and the accent, so a tile only names its token here.
 import type { UsageInner } from '@/api/tools';
 
-export type ColourMode = 'standard' | 'type' | 'age';
+export type ColourMode = 'type' | 'age';
 export type ColourKey = string;
 
 export const TYPES = ['video', 'photo', 'music', 'docs', 'archive', 'other'] as const;

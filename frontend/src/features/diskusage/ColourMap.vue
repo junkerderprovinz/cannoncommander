@@ -10,7 +10,7 @@ import { AGES, ageKey, type ColourMode, dimmed, fillOf, inkOf, keyOf, typeMix } 
 import PointBubble from './PointBubble.vue';
 import { fit, type MapTile, nestedMap, pct } from './treemap';
 
-const props = defineProps<{ items: UsageEntry[]; path: string; mode: Exclude<ColourMode, 'standard'>; hl: string | null; picked: Set<string>; w: number; h: number }>();
+const props = defineProps<{ items: UsageEntry[]; path: string; mode: ColourMode; hl: string | null; picked: Set<string>; w: number; h: number }>();
 const emit = defineEmits<{ go: [path: string]; pick: [i: number, e: MouseEvent] }>();
 
 const map = computed(() => nestedMap(props.items, props.w, props.h));

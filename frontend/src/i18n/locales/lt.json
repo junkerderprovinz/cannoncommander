@@ -1821,7 +1821,6 @@
     },
     "colourBy": "Spalva pagal",
     "colours": {
-      "standard": "Standartinė",
       "type": "Failo tipas",
       "age": "Amžius"
     },

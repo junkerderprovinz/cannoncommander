@@ -1668,7 +1668,6 @@
     },
     "colourBy": "색상 기준",
     "colours": {
-      "standard": "기본",
       "type": "파일 종류",
       "age": "경과 기간"
     },
