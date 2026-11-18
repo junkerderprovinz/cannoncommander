@@ -91,7 +91,7 @@ describe('the pieces a level fires', () => {
     const thrown = pieces('fx-spark');
     expect(thrown.length).toBe(10);
     expect(new Set(thrown.map((s) => `${s.style.getPropertyValue('left')} ${s.style.getPropertyValue('top')}`))).toEqual(new Set(['120px 120px']));
-    expect(new Set(thrown.map((s) => s.style.getPropertyValue('--fx-sx'))).size).toBe(10);
+    expect(new Set(thrown.map((s) => `${s.style.getPropertyValue('--fx-sx')} ${s.style.getPropertyValue('--fx-sy')}`)).size).toBe(10);
     document.querySelector('.fx-layer')?.remove();
     level({ '--motion-spark-count': '0' });
     sparks(box(100, 100, 40, 40));
