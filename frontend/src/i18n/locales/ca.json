@@ -1719,7 +1719,8 @@
       "tree": "Arbre",
       "map": "Mosaic",
       "types": "Tipus de fitxer",
-      "largest": "Fitxers més grans"
+      "largest": "Fitxers més grans",
+      "drives": "Discs"
     },
     "cols": {
       "name": "Nom",
@@ -1765,6 +1766,99 @@
       "text": "Text",
       "code": "Codi font",
       "file": "Altres"
+    },
+    "colourBy": "Color per",
+    "colours": {
+      "type": "Tipus de fitxer",
+      "age": "Antiguitat"
+    },
+    "groups": {
+      "video": "Vídeo",
+      "photo": "Fotos",
+      "music": "Música",
+      "docs": "Documents",
+      "archive": "Arxius",
+      "other": "Altres"
+    },
+    "ages": {
+      "week": "menys d'una setmana",
+      "month": "menys d'un mes",
+      "half": "menys de 6 mesos",
+      "year": "menys d'un any",
+      "years": "menys de 3 anys",
+      "older": "més de 3 anys"
+    },
+    "tipShare": "{pct} % de {folder}",
+    "tipAge": "La major part té {age}",
+    "more": {
+      "one": "{n} entrada més petita",
+      "many": "{n} entrades més petites",
+      "other": "{n} entrades més petites"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Paritat",
+      "hint": "El CannonCommander només llegeix el que el servidor ja sap. Un disc adormit es queda tranquil, i en veieu els valors del moment en què es va adormir.",
+      "free": "{size}, {free} lliures",
+      "used": "{name} ocupat",
+      "moonSince": "{disk} dorm des de {time}. El CannonCommander el deixa dormir i us mostra els valors de {time}.",
+      "moon": "{disk} dorm. El CannonCommander el deixa dormir i us mostra els últims valors coneguts.",
+      "tempAt": "Última mesura a les {time}",
+      "history": "Historial de {name}",
+      "range": "Període",
+      "weeks": {
+        "one": "{n} setmana",
+        "many": "{n} setmanes",
+        "other": "{n} setmanes"
+      },
+      "perDay": "Un valor per dia",
+      "asOf": "Valors de {time}, {name} dorm",
+      "change": "{change} en {weeks}",
+      "fullIn": {
+        "one": "Ple en aproximadament {n} setmana",
+        "many": "Ple en aproximadament {n} setmanes",
+        "other": "Ple en aproximadament {n} setmanes"
+      },
+      "chartLabel": "Ús de {name} en {weeks}",
+      "chartTip": "{pct} ocupat, {free} lliures",
+      "noHistory": "L'historial tot just comença, a partir de demà hi veureu una línia",
+      "details": "Detalls de {name}",
+      "facts": {
+        "state": "Estat",
+        "parity": "Última comprovació de paritat",
+        "scrub": "Últim Scrub",
+        "frag": "Fragmentació",
+        "compression": "Compressió",
+        "fs": "Sistema de fitxers",
+        "drive": "Disc"
+      },
+      "running": "En marxa",
+      "asleep": "Adormit",
+      "asleepSince": "Adormit des de {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, cancel·lat",
+      "errors": {
+        "one": "{n} error",
+        "many": "{n} errors",
+        "other": "{n} errors"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "many": "{n} pools",
+        "other": "{n} pools"
+      },
+      "disks": {
+        "one": "{n} disc",
+        "many": "{n} discs",
+        "other": "{n} discs"
+      },
+      "foot": "{pools} i {disks}",
+      "footAsleep": {
+        "one": "{pools} i {disks}, {n} dels quals dorm",
+        "many": "{pools} i {disks}, {n} dels quals dormen",
+        "other": "{pools} i {disks}, {n} dels quals dormen"
+      }
     }
   },
   "duplicates": {

@@ -1719,7 +1719,8 @@
       "tree": "Arbore",
       "map": "Plăci",
       "types": "Tipuri de fișiere",
-      "largest": "Cele mai mari fișiere"
+      "largest": "Cele mai mari fișiere",
+      "drives": "Discuri"
     },
     "cols": {
       "name": "Nume",
@@ -1765,6 +1766,99 @@
       "text": "Text",
       "code": "Cod sursă",
       "file": "Altele"
+    },
+    "colourBy": "Culoare după",
+    "colours": {
+      "type": "Tip de fișier",
+      "age": "Vechime"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Fotografii",
+      "music": "Muzică",
+      "docs": "Documente",
+      "archive": "Arhive",
+      "other": "Altele"
+    },
+    "ages": {
+      "week": "sub o săptămână",
+      "month": "sub o lună",
+      "half": "sub 6 luni",
+      "year": "sub un an",
+      "years": "sub 3 ani",
+      "older": "peste 3 ani"
+    },
+    "tipShare": "{pct} % din {folder}",
+    "tipAge": "Vechimea majorității: {age}",
+    "more": {
+      "one": "{n} intrare mai mică",
+      "few": "{n} intrări mai mici",
+      "other": "{n} de intrări mai mici"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander citește doar ce știe deja serverul. Un disc care doarme e lăsat în pace, iar tu vezi valorile lui din momentul în care a adormit.",
+      "free": "{size}, {free} liberi",
+      "used": "{name} ocupat",
+      "moonSince": "{disk} doarme din {time}. CannonCommander îl lasă să doarmă și îți arată valorile de la {time}.",
+      "moon": "{disk} doarme. CannonCommander îl lasă să doarmă și îți arată ultimele valori cunoscute.",
+      "tempAt": "Ultima măsurare la {time}",
+      "history": "Istoricul pentru {name}",
+      "range": "Perioadă",
+      "weeks": {
+        "one": "{n} săptămână",
+        "few": "{n} săptămâni",
+        "other": "{n} de săptămâni"
+      },
+      "perDay": "O valoare pe zi",
+      "asOf": "Valori de la {time}, {name} doarme",
+      "change": "{change} în {weeks}",
+      "fullIn": {
+        "one": "Plin în circa {n} săptămână",
+        "few": "Plin în circa {n} săptămâni",
+        "other": "Plin în circa {n} de săptămâni"
+      },
+      "chartLabel": "Ocuparea pentru {name} în {weeks}",
+      "chartTip": "{pct} ocupat, {free} liberi",
+      "noHistory": "Istoricul abia începe, de mâine vei vedea aici o linie",
+      "details": "Detalii pentru {name}",
+      "facts": {
+        "state": "Stare",
+        "parity": "Ultima verificare Parity",
+        "scrub": "Ultimul Scrub",
+        "frag": "Fragmentare",
+        "compression": "Compresie",
+        "fs": "Sistem de fișiere",
+        "drive": "Disc"
+      },
+      "running": "Pornit",
+      "asleep": "Doarme",
+      "asleepSince": "Doarme din {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, anulat",
+      "errors": {
+        "one": "{n} eroare",
+        "few": "{n} erori",
+        "other": "{n} de erori"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "few": "{n} pooluri",
+        "other": "{n} de pooluri"
+      },
+      "disks": {
+        "one": "{n} disc",
+        "few": "{n} discuri",
+        "other": "{n} de discuri"
+      },
+      "foot": "{pools} și {disks}",
+      "footAsleep": {
+        "one": "{pools} și {disks}, {n} dintre ele doarme",
+        "few": "{pools} și {disks}, {n} dintre ele dorm",
+        "other": "{pools} și {disks}, {n} dintre ele dorm"
+      }
     }
   },
   "duplicates": {

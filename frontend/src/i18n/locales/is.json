@@ -1670,7 +1670,8 @@
       "tree": "Tré",
       "map": "Reitir",
       "types": "Skráategundir",
-      "largest": "Stærstu skrárnar"
+      "largest": "Stærstu skrárnar",
+      "drives": "Drif"
     },
     "cols": {
       "name": "Heiti",
@@ -1714,6 +1715,92 @@
       "text": "Texti",
       "code": "Frumkóði",
       "file": "Annað"
+    },
+    "colourBy": "Litur eftir",
+    "colours": {
+      "type": "Skráategund",
+      "age": "Aldur"
+    },
+    "groups": {
+      "video": "Myndskeið",
+      "photo": "Ljósmyndir",
+      "music": "Tónlist",
+      "docs": "Skjöl",
+      "archive": "Safnskrár",
+      "other": "Annað"
+    },
+    "ages": {
+      "week": "yngra en vika",
+      "month": "yngra en mánuður",
+      "half": "yngra en 6 mánuðir",
+      "year": "yngra en ár",
+      "years": "yngra en 3 ár",
+      "older": "eldra en 3 ár"
+    },
+    "tipShare": "{pct} % af {folder}",
+    "tipAge": "Mest af því er {age}",
+    "more": {
+      "one": "{n} minni færsla",
+      "other": "{n} minni færslur"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Jöfnun",
+      "hint": "CannonCommander les bara það sem þjónninn veit nú þegar. Diskur sem sefur fær að sofa í friði, og þú sérð gildin hans frá því augnabliki sem hann sofnaði.",
+      "free": "{size}, {free} laust",
+      "used": "{name} í notkun",
+      "moonSince": "{disk} hefur sofið síðan {time}. CannonCommander leyfir honum að sofa og sýnir þér gildin frá {time}.",
+      "moon": "{disk} sefur. CannonCommander leyfir honum að sofa og sýnir þér síðustu þekktu gildin.",
+      "tempAt": "Síðast mælt kl. {time}",
+      "history": "Ferill: {name}",
+      "range": "Tímabil",
+      "weeks": {
+        "one": "{n} vika",
+        "other": "{n} vikur"
+      },
+      "perDay": "Eitt gildi á dag",
+      "asOf": "Staða kl. {time}, {name} sefur",
+      "change": "{change} á {weeks}",
+      "fullIn": {
+        "one": "Fullt eftir um {n} viku",
+        "other": "Fullt eftir um {n} vikur"
+      },
+      "chartLabel": "Notkun á {name} yfir {weeks}",
+      "chartTip": "{pct} í notkun, {free} laust",
+      "noHistory": "Ferillinn er rétt að byrja, frá og með morgundeginum sérðu línu hér",
+      "details": "Upplýsingar: {name}",
+      "facts": {
+        "state": "Staða",
+        "parity": "Síðasta jöfnunarathugun",
+        "scrub": "Síðasta Scrub",
+        "frag": "Sundrun",
+        "compression": "Þjöppun",
+        "fs": "Skráakerfi",
+        "drive": "Drif"
+      },
+      "running": "Í gangi",
+      "asleep": "Sefur",
+      "asleepSince": "Sefur síðan {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, hætt við",
+      "errors": {
+        "one": "{n} villa",
+        "other": "{n} villur"
+      },
+      "pools": {
+        "one": "{n} Pool",
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "one": "{n} diskur",
+        "other": "{n} diskar"
+      },
+      "foot": "{pools} og {disks}",
+      "footAsleep": {
+        "one": "{pools} og {disks}, {n} þeirra sefur",
+        "other": "{pools} og {disks}, {n} þeirra sofa"
+      }
     }
   },
   "duplicates": {

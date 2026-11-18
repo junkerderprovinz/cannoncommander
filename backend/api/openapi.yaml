@@ -4672,6 +4672,27 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
       tags: [unraid]
+  /unraid/drives:
+    get:
+      operationId: unraidDrives
+      summary: Pools and disks with how full they were over the last weeks
+      description: |
+        Read from emhttp's files, the parity log on the flash drive and the
+        history CannonCommander keeps of each pool and disk, one sample a
+        day for at least twelve weeks. A ZFS pool that is awake is asked for
+        its fragmentation, compression and last scrub, which the kernel
+        answers from memory; a sleeping one shows what it said while awake.
+        Nothing here reads from a disk, so a sleeping one stays asleep.
+      responses:
+        "200":
+          description: The pools, the array and the last parity check.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnraidDrives"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      tags: [unraid]
   /unraid/where:
     get:
       operationId: unraidWhere
@@ -9398,6 +9419,30 @@ components:
           type: string
           format: date-time
           description: The newest change anywhere below.
+    UsageItem:
+      allOf:
+        - $ref: "#/components/schemas/UsageTotals"
+        - type: object
+          required: [name, dir]
+          properties:
+            name:
+              type: string
+            dir:
+              type: boolean
+            kinds:
+              type: object
+              description: The bytes of each kind of file below the entry, by the kinds of types.
+              additionalProperties:
+                type: integer
+                format: int64
+            ages:
+              type: array
+              description: The bytes last changed within a week, a month, six months, a year, three years and longer ago.
+              minItems: 6
+              maxItems: 6
+              items:
+                type: integer
+                format: int64
     DiskUsage:
       allOf:
         - $ref: "#/components/schemas/UsageTotals"
@@ -9408,17 +9453,20 @@ components:
               type: string
             items:
               type: array
-              description: The entries directly inside, largest first.
+              description: The entries directly inside, largest first. A folder lists its own largest entries too, one level deep.
               items:
                 allOf:
-                  - $ref: "#/components/schemas/UsageTotals"
+                  - $ref: "#/components/schemas/UsageItem"
                   - type: object
-                    required: [name, dir]
                     properties:
-                      name:
-                        type: string
-                      dir:
-                        type: boolean
+                      items:
+                        type: array
+                        description: The largest entries inside a folder, at most 40, largest first.
+                        items:
+                          $ref: "#/components/schemas/UsageItem"
+                      more:
+                        type: integer
+                        description: How many smaller entries the list leaves out.
             types:
               type: array
               items:
@@ -10278,6 +10326,9 @@ components:
         lastSync:
           type: string
           format: date-time
+        lastSyncEnd:
+          type: string
+          format: date-time
         lastErrors:
           type: integer
         lastExit:
@@ -10308,6 +10359,15 @@ components:
           type: string
         fsType:
           type: string
+        profile:
+          type: string
+          example: mirror
+        device:
+          type: string
+          example: nvme0n1
+        transport:
+          type: string
+          example: nvme
         size:
           type: integer
           format: int64
@@ -10674,6 +10734,118 @@ components:
                 format: int64
         partial:
           type: boolean
+    UnraidRun:
+      type: object
+      required: [at, errors]
+      properties:
+        at:
+          type: string
+          format: date-time
+          description: When the run ended.
+        seconds:
+          type: integer
+          format: int64
+        errors:
+          type: integer
+          format: int64
+    UnraidDrive:
+      type: object
+      required: [name, kind, status, rotational, size, fsSize, used, asleep, history]
+      properties:
+        name:
+          type: string
+          example: disk1
+        kind:
+          type: string
+          enum: [pool, data, parity]
+        device:
+          type: string
+        status:
+          type: string
+          example: DISK_OK
+        fsType:
+          type: string
+        profile:
+          type: string
+        transport:
+          type: string
+        rotational:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+          description: The device.
+        fsSize:
+          type: integer
+          format: int64
+          description: The file system, 0 for parity and the devices of a pool.
+        used:
+          type: integer
+          format: int64
+        asleep:
+          type: boolean
+        asleepSince:
+          type: string
+          format: date-time
+          description: Missing when the disk slept before CannonCommander started.
+        temp:
+          type: integer
+          description: Celsius. For a sleeping disk the last value read, with tempAt.
+        tempAt:
+          type: string
+          format: date-time
+        history:
+          type: array
+          description: One sample a day, oldest first, as the day counted from 1970 and the bytes in use.
+          items:
+            type: array
+            minItems: 2
+            maxItems: 2
+            items:
+              type: integer
+              format: int64
+        fullIn:
+          type: object
+          description: In how many weeks the disk is full, from the trend of the last 4, 8 and 12 weeks. A key is missing while that trend is flat or falling.
+          additionalProperties:
+            type: number
+        members:
+          type: array
+          description: The devices of a pool with more than one, the pool's own first.
+          items:
+            $ref: "#/components/schemas/UnraidDrive"
+        zfs:
+          type: object
+          properties:
+            fragmentation:
+              type: integer
+              description: Percent.
+            compressRatio:
+              type: number
+            scrub:
+              $ref: "#/components/schemas/UnraidRun"
+    UnraidDrives:
+      type: object
+      required: [pools, array]
+      properties:
+        pools:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnraidDrive"
+        array:
+          type: array
+          description: The data disks, then parity.
+          items:
+            $ref: "#/components/schemas/UnraidDrive"
+        parity:
+          allOf:
+            - $ref: "#/components/schemas/UnraidRun"
+            - type: object
+              required: [exit]
+              properties:
+                exit:
+                  type: integer
+                  description: 0 for a finished run, negative when it was cancelled.
     Remote:
       type: object
       required: [name, type, path, mount, label, mounted, mountOnStart]

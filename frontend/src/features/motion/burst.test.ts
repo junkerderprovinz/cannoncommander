@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeCanvas } from '@/testing/fakeCanvas';
-import { type Blast, burst, paint, splinters } from './burst';
+import { type Blast, BLAST, burst, paint, splinters } from './burst';
 
 const area = (poly: [number, number][]) => Math.abs(poly.reduce((sum, [x, y], i) => {
   const [nx, ny] = poly[(i + 1) % poly.length]!;
@@ -13,6 +15,14 @@ const seeded = (seed: number) => () => ((seed = (seed * 16807) % 2147483647) - 1
 // A menu title as wide as a word and the ball striking it at its left edge, a little above the middle.
 const W = 90, H = 36, AT = { x: 0, y: 15 };
 const WILD: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09 };
+
+describe('the blast of the cannon', () => {
+  it('is the same at every motion level, the small splinters that fly far', () => {
+    expect(BLAST).toEqual(WILD);
+    const css = readFileSync(join(__dirname, '../../styles/motion.css'), 'utf8');
+    expect(css).not.toMatch(/--motion-shard-/);
+  });
+});
 
 describe('the splinters of a struck element', () => {
   it('are about as many as the level asks for, and more at a livelier level', () => {

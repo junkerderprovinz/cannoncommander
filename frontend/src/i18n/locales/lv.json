@@ -1719,7 +1719,8 @@
       "tree": "Koks",
       "map": "Flīzes",
       "types": "Failu veidi",
-      "largest": "Lielākie faili"
+      "largest": "Lielākie faili",
+      "drives": "Diski"
     },
     "cols": {
       "name": "Nosaukums",
@@ -1765,6 +1766,99 @@
       "text": "Teksts",
       "code": "Pirmkods",
       "file": "Cits"
+    },
+    "colourBy": "Krāsa pēc",
+    "colours": {
+      "type": "Faila veids",
+      "age": "Vecums"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Foto",
+      "music": "Mūzika",
+      "docs": "Dokumenti",
+      "archive": "Arhīvi",
+      "other": "Cits"
+    },
+    "ages": {
+      "week": "mazāk par nedēļu",
+      "month": "mazāk par mēnesi",
+      "half": "mazāk par 6 mēnešiem",
+      "year": "mazāk par gadu",
+      "years": "mazāk par 3 gadiem",
+      "older": "vairāk par 3 gadiem"
+    },
+    "tipShare": "{pct} % no {folder}",
+    "tipAge": "Lielākā daļa ir {age} veca",
+    "more": {
+      "zero": "{n} mazāku ierakstu",
+      "one": "{n} mazāks ieraksts",
+      "other": "{n} mazāki ieraksti"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Paritāte",
+      "hint": "CannonCommander lasa tikai to, ko serveris jau zina. Guļošs disks netiek traucēts, un tu redzi tā vērtības no brīža, kad tas aizmiga.",
+      "free": "{size}, {free} brīvs",
+      "used": "{name} aizņemts",
+      "moonSince": "{disk} guļ kopš {time}. CannonCommander ļauj tam gulēt un rāda tev vērtības no {time}.",
+      "moon": "{disk} guļ. CannonCommander ļauj tam gulēt un rāda tev pēdējās zināmās vērtības.",
+      "tempAt": "Pēdējo reizi mērīts {time}",
+      "history": "Vēsture: {name}",
+      "range": "Periods",
+      "weeks": {
+        "zero": "{n} nedēļu",
+        "one": "{n} nedēļa",
+        "other": "{n} nedēļas"
+      },
+      "perDay": "Viena vērtība dienā",
+      "asOf": "Stāvoklis {time}, {name} guļ",
+      "change": "{change} ({weeks})",
+      "fullIn": {
+        "zero": "Pilns pēc apmēram {n} nedēļām",
+        "one": "Pilns pēc apmēram {n} nedēļas",
+        "other": "Pilns pēc apmēram {n} nedēļām"
+      },
+      "chartLabel": "{name} aizpildījums, {weeks}",
+      "chartTip": "{pct} aizņemts, {free} brīvs",
+      "noHistory": "Vēsture tikko sākas, no rītdienas te redzēsi līniju",
+      "details": "Informācija: {name}",
+      "facts": {
+        "state": "Stāvoklis",
+        "parity": "Pēdējā paritātes pārbaude",
+        "scrub": "Pēdējais Scrub",
+        "frag": "Fragmentācija",
+        "compression": "Saspiešana",
+        "fs": "Failu sistēma",
+        "drive": "Disks"
+      },
+      "running": "Darbojas",
+      "asleep": "Guļ",
+      "asleepSince": "Guļ kopš {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, atcelts",
+      "errors": {
+        "zero": "{n} kļūdu",
+        "one": "{n} kļūda",
+        "other": "{n} kļūdas"
+      },
+      "pools": {
+        "zero": "{n} Pool",
+        "one": "{n} Pool",
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "zero": "{n} disku",
+        "one": "{n} disks",
+        "other": "{n} diski"
+      },
+      "foot": "{pools} un {disks}",
+      "footAsleep": {
+        "zero": "{pools} un {disks}, no tiem guļ {n}",
+        "one": "{pools} un {disks}, no tiem guļ {n}",
+        "other": "{pools} un {disks}, no tiem guļ {n}"
+      }
     }
   },
   "duplicates": {

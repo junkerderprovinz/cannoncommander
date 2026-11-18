@@ -1768,7 +1768,8 @@
       "tree": "Medis",
       "map": "Plytelės",
       "types": "Failų tipai",
-      "largest": "Didžiausi failai"
+      "largest": "Didžiausi failai",
+      "drives": "Diskai"
     },
     "cols": {
       "name": "Pavadinimas",
@@ -1816,6 +1817,106 @@
       "text": "Tekstas",
       "code": "Pirminis kodas",
       "file": "Kita"
+    },
+    "colourBy": "Spalva pagal",
+    "colours": {
+      "type": "Failo tipas",
+      "age": "Amžius"
+    },
+    "groups": {
+      "video": "Vaizdo įrašai",
+      "photo": "Nuotraukos",
+      "music": "Muzika",
+      "docs": "Dokumentai",
+      "archive": "Archyvai",
+      "other": "Kita"
+    },
+    "ages": {
+      "week": "mažiau nei savaitė",
+      "month": "mažiau nei mėnuo",
+      "half": "mažiau nei 6 mėnesiai",
+      "year": "mažiau nei metai",
+      "years": "mažiau nei 3 metai",
+      "older": "daugiau nei 3 metai"
+    },
+    "tipShare": "{pct} % iš {folder}",
+    "tipAge": "Daugumos amžius: {age}",
+    "more": {
+      "one": "{n} mažesnis įrašas",
+      "few": "{n} mažesni įrašai",
+      "many": "{n} mažesnio įrašo",
+      "other": "{n} mažesnių įrašų"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Lyginumas",
+      "hint": "CannonCommander skaito tik tai, ką serveris jau žino. Miegantis diskas paliekamas ramybėje, o tu matai jo reikšmes nuo tos akimirkos, kai jis užmigo.",
+      "free": "{size}, laisva {free}",
+      "used": "{name} užimta",
+      "moonSince": "{disk} miega nuo {time}. CannonCommander leidžia jam miegoti ir rodo tau reikšmes nuo {time}.",
+      "moon": "{disk} miega. CannonCommander leidžia jam miegoti ir rodo tau paskutines žinomas reikšmes.",
+      "tempAt": "Paskutinį kartą išmatuota {time}",
+      "history": "Istorija: {name}",
+      "range": "Laikotarpis",
+      "weeks": {
+        "one": "{n} savaitė",
+        "few": "{n} savaitės",
+        "many": "{n} savaitės",
+        "other": "{n} savaičių"
+      },
+      "perDay": "Viena reikšmė per dieną",
+      "asOf": "Būsena {time}, {name} miega",
+      "change": "{change} ({weeks})",
+      "fullIn": {
+        "one": "Bus pilnas maždaug po {n} savaitės",
+        "few": "Bus pilnas maždaug po {n} savaičių",
+        "many": "Bus pilnas maždaug po {n} savaitės",
+        "other": "Bus pilnas maždaug po {n} savaičių"
+      },
+      "chartLabel": "{name} užimtumas, {weeks}",
+      "chartTip": "{pct} užimta, laisva {free}",
+      "noHistory": "Istorija tik prasideda, nuo rytojaus čia matysi liniją",
+      "details": "Išsami informacija: {name}",
+      "facts": {
+        "state": "Būsena",
+        "parity": "Paskutinė lyginumo patikra",
+        "scrub": "Paskutinis Scrub",
+        "frag": "Fragmentacija",
+        "compression": "Glaudinimas",
+        "fs": "Failų sistema",
+        "drive": "Diskas"
+      },
+      "running": "Veikia",
+      "asleep": "Miega",
+      "asleepSince": "Miega nuo {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, atšaukta",
+      "errors": {
+        "one": "{n} klaida",
+        "few": "{n} klaidos",
+        "many": "{n} klaidos",
+        "other": "{n} klaidų"
+      },
+      "pools": {
+        "one": "{n} Pool",
+        "few": "{n} Pool",
+        "many": "{n} Pool",
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "one": "{n} diskas",
+        "few": "{n} diskai",
+        "many": "{n} disko",
+        "other": "{n} diskų"
+      },
+      "foot": "{pools} ir {disks}",
+      "footAsleep": {
+        "one": "{pools} ir {disks}, iš jų miega {n}",
+        "few": "{pools} ir {disks}, iš jų miega {n}",
+        "many": "{pools} ir {disks}, iš jų miega {n}",
+        "other": "{pools} ir {disks}, iš jų miega {n}"
+      }
     }
   },
   "duplicates": {

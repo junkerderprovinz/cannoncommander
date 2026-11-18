@@ -1670,7 +1670,8 @@
       "tree": "درخت",
       "map": "کاشی",
       "types": "نوع پرونده",
-      "largest": "بزرگ‌ترین پرونده‌ها"
+      "largest": "بزرگ‌ترین پرونده‌ها",
+      "drives": "درایوها"
     },
     "cols": {
       "name": "نام",
@@ -1714,6 +1715,92 @@
       "text": "متن",
       "code": "کد منبع",
       "file": "دیگر"
+    },
+    "colourBy": "رنگ بر اساس",
+    "colours": {
+      "type": "نوع پرونده",
+      "age": "قدمت"
+    },
+    "groups": {
+      "video": "ویدیو",
+      "photo": "عکس‌ها",
+      "music": "موسیقی",
+      "docs": "اسناد",
+      "archive": "بایگانی‌ها",
+      "other": "دیگر"
+    },
+    "ages": {
+      "week": "کمتر از یک هفته",
+      "month": "کمتر از یک ماه",
+      "half": "کمتر از 6 ماه",
+      "year": "کمتر از یک سال",
+      "years": "کمتر از 3 سال",
+      "older": "بیش از 3 سال"
+    },
+    "tipShare": "{pct} % از {folder}",
+    "tipAge": "قدمت بیشترش {age} است",
+    "more": {
+      "one": "{n} مورد کوچک‌تر",
+      "other": "{n} مورد کوچک‌تر"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander اینجا فقط چیزی را می‌خواند که سرور از قبل می‌داند. دیسک خواب در آرامش می‌ماند و مقادیرش را از لحظه‌ای می‌بینید که به خواب رفت.",
+      "free": "{size}، {free} آزاد",
+      "used": "مصرف {name}",
+      "moonSince": "{disk} از {time} خواب است. CannonCommander می‌گذارد بخوابد و مقادیر {time} را به شما نشان می‌دهد.",
+      "moon": "{disk} خواب است. CannonCommander می‌گذارد بخوابد و آخرین مقادیر شناخته‌شده را به شما نشان می‌دهد.",
+      "tempAt": "آخرین اندازه‌گیری در {time}",
+      "history": "تاریخچه {name}",
+      "range": "بازه",
+      "weeks": {
+        "one": "{n} هفته",
+        "other": "{n} هفته"
+      },
+      "perDay": "یک مقدار در روز",
+      "asOf": "وضعیت {time}، {name} خواب است",
+      "change": "{change} در {weeks}",
+      "fullIn": {
+        "one": "حدود {n} هفته دیگر پر می‌شود",
+        "other": "حدود {n} هفته دیگر پر می‌شود"
+      },
+      "chartLabel": "مصرف {name} در {weeks}",
+      "chartTip": "{pct} پر، {free} آزاد",
+      "noHistory": "تاریخچه تازه شروع شده است، از فردا اینجا یک خط می‌بینید",
+      "details": "جزئیات {name}",
+      "facts": {
+        "state": "وضعیت",
+        "parity": "آخرین بررسی Parity",
+        "scrub": "آخرین Scrub",
+        "frag": "پراکندگی",
+        "compression": "فشرده‌سازی",
+        "fs": "سیستم فایل",
+        "drive": "درایو"
+      },
+      "running": "در حال کار",
+      "asleep": "خواب",
+      "asleepSince": "خواب از {time}",
+      "run": "{date}، {errors}",
+      "cancelled": "{date}، لغو شد",
+      "errors": {
+        "one": "{n} خطا",
+        "other": "{n} خطا"
+      },
+      "pools": {
+        "one": "{n} Pool",
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "one": "{n} دیسک",
+        "other": "{n} دیسک"
+      },
+      "foot": "{pools} و {disks}",
+      "footAsleep": {
+        "one": "{pools} و {disks}، {n} تا خواب است",
+        "other": "{pools} و {disks}، {n} تا خواب‌اند"
+      }
     }
   },
   "duplicates": {

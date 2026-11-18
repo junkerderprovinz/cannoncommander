@@ -2,8 +2,6 @@
 // is painted once into a picture of its own, the picture is cut into small splinters, and every splinter flies on one
 // canvas over the whole window, thrown out from the strike and carried on by the ball, turning, falling and fading,
 // with a spray of sparks where it was hit.
-import { dial, dialMs } from '@/core/motion';
-
 interface Point { x: number; y: number }
 
 export interface Blast {
@@ -21,15 +19,9 @@ export interface Blast {
   lag: number;
 }
 
-export const blastOf = (): Blast => ({
-  life: dialMs('--motion-shard-dur') / 1000,
-  spread: dial('--motion-shard-spread'),
-  carry: dial('--motion-shard-carry'),
-  fall: dial('--motion-shard-fall'),
-  spin: (dial('--motion-shard-spin') * Math.PI) / 180,
-  count: dial('--motion-shard-count'),
-  lag: (dialMs('--motion-stagger-step') * 3) / 1000,
-});
+// The burst looks the same at every motion level: many small splinters that fly far. The level only decides whether
+// the cannon fires at all.
+export const BLAST: Blast = { life: 1.6, spread: 380, carry: 300, fall: 420, spin: 4 * Math.PI, count: 90, lag: 0.09 };
 
 export interface Splinter {
   /** The corners, in pixels of the element's box. */

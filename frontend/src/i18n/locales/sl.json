@@ -1768,7 +1768,8 @@
       "tree": "Drevo",
       "map": "Ploščice",
       "types": "Vrste datotek",
-      "largest": "Največje datoteke"
+      "largest": "Največje datoteke",
+      "drives": "Diski"
     },
     "cols": {
       "name": "Ime",
@@ -1816,6 +1817,106 @@
       "text": "Besedilo",
       "code": "Izvorna koda",
       "file": "Drugo"
+    },
+    "colourBy": "Barva po",
+    "colours": {
+      "type": "Vrsta datoteke",
+      "age": "Starost"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Fotografije",
+      "music": "Glasba",
+      "docs": "Dokumenti",
+      "archive": "Arhivi",
+      "other": "Drugo"
+    },
+    "ages": {
+      "week": "manj kot 1 teden",
+      "month": "manj kot 1 mesec",
+      "half": "manj kot 6 mesecev",
+      "year": "manj kot 1 leto",
+      "years": "manj kot 3 leta",
+      "older": "več kot 3 leta"
+    },
+    "tipShare": "{pct} % od {folder}",
+    "tipAge": "Starost večine: {age}",
+    "more": {
+      "one": "{n} manjši vnos",
+      "two": "{n} manjša vnosa",
+      "few": "{n} manjši vnosi",
+      "other": "{n} manjših vnosov"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander tukaj samo bere, kar strežnik že ve. Spečega diska ne zbudi, vi pa vidite njegove vrednosti iz trenutka, ko je zaspal.",
+      "free": "{size}, prosto {free}",
+      "used": "{name}: zasedeno",
+      "moonSince": "{disk} spi od {time}. CannonCommander ga pusti spati in vam pokaže vrednosti iz {time}.",
+      "moon": "{disk} spi. CannonCommander ga pusti spati in vam pokaže zadnje znane vrednosti.",
+      "tempAt": "Zadnja meritev ob {time}",
+      "history": "Zgodovina: {name}",
+      "range": "Obdobje",
+      "weeks": {
+        "one": "{n} teden",
+        "two": "{n} tedna",
+        "few": "{n} tedni",
+        "other": "{n} tednov"
+      },
+      "perDay": "Ena vrednost na dan",
+      "asOf": "Stanje ob {time}, {name} spi",
+      "change": "{change}, obdobje: {weeks}",
+      "fullIn": {
+        "one": "Poln čez približno {n} teden",
+        "two": "Poln čez približno {n} tedna",
+        "few": "Poln čez približno {n} tedne",
+        "other": "Poln čez približno {n} tednov"
+      },
+      "chartLabel": "Zasedenost {name}, obdobje: {weeks}",
+      "chartTip": "zasedeno {pct}, prosto {free}",
+      "noHistory": "Zgodovina se šele začenja, od jutri boste tukaj videli črto",
+      "details": "Podrobnosti: {name}",
+      "facts": {
+        "state": "Stanje",
+        "parity": "Zadnje preverjanje Parity",
+        "scrub": "Zadnji Scrub",
+        "frag": "Razdrobljenost",
+        "compression": "Stiskanje",
+        "fs": "Datotečni sistem",
+        "drive": "Pogon"
+      },
+      "running": "Deluje",
+      "asleep": "Spi",
+      "asleepSince": "Spi od {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, prekinjeno",
+      "errors": {
+        "one": "{n} napaka",
+        "two": "{n} napaki",
+        "few": "{n} napake",
+        "other": "{n} napak"
+      },
+      "pools": {
+        "one": "{n} Pool",
+        "two": "{n} Poola",
+        "few": "{n} Pooli",
+        "other": "{n} Poolov"
+      },
+      "disks": {
+        "one": "{n} disk",
+        "two": "{n} diska",
+        "few": "{n} diski",
+        "other": "{n} diskov"
+      },
+      "foot": "{pools} in {disks}",
+      "footAsleep": {
+        "one": "{pools} in {disks}, od tega spi {n}",
+        "two": "{pools} in {disks}, od tega spita {n}",
+        "few": "{pools} in {disks}, od tega spijo {n}",
+        "other": "{pools} in {disks}, od tega jih spi {n}"
+      }
     }
   },
   "duplicates": {

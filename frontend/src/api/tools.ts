@@ -39,7 +39,9 @@ export interface DupGroup { name: string; size: number; sha256: string; wasted: 
 export interface Duplicates { groups: DupGroup[]; more?: boolean; wasted: number; files: number }
 
 export interface UsageTotals { size: number; files: number; dirs: number; mtime: string }
-export interface UsageEntry extends UsageTotals { name: string; dir: boolean }
+// kinds are bytes by kind of file, ages bytes last changed within a week, a month, six months, a year, three years and longer.
+export interface UsageInner extends UsageTotals { name: string; dir: boolean; kinds?: Record<string, number>; ages?: number[] }
+export interface UsageEntry extends UsageInner { items?: UsageInner[]; more?: number }
 export interface UsageKind { kind: string; name: string; files: number; size: number; exts: string[] }
 export interface UsageFile { name: string; at: string; size: number; mtime: string }
 export interface DiskUsage extends UsageTotals { path: string; items: UsageEntry[]; types: UsageKind[]; largest: UsageFile[]; indexed: boolean }

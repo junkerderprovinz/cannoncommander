@@ -1768,7 +1768,8 @@
       "tree": "Strom",
       "map": "Dlaždice",
       "types": "Typy souborů",
-      "largest": "Největší soubory"
+      "largest": "Největší soubory",
+      "drives": "Disky"
     },
     "cols": {
       "name": "Název",
@@ -1816,6 +1817,106 @@
       "text": "Text",
       "code": "Zdrojový kód",
       "file": "Ostatní"
+    },
+    "colourBy": "Barva podle",
+    "colours": {
+      "type": "Typ souboru",
+      "age": "Stáří"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Fotky",
+      "music": "Hudba",
+      "docs": "Dokumenty",
+      "archive": "Archivy",
+      "other": "Ostatní"
+    },
+    "ages": {
+      "week": "méně než týden",
+      "month": "méně než měsíc",
+      "half": "méně než 6 měsíců",
+      "year": "méně než rok",
+      "years": "méně než 3 roky",
+      "older": "více než 3 roky"
+    },
+    "tipShare": "{pct} % z {folder}",
+    "tipAge": "Stáří většiny: {age}",
+    "more": {
+      "one": "{n} menší položka",
+      "few": "{n} menší položky",
+      "many": "{n} menší položky",
+      "other": "{n} menších položek"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander tu jen čte, co server už ví. Spící disk nechává v klidu a vy vidíte jeho hodnoty z chvíle, kdy usnul.",
+      "free": "{size}, volno {free}",
+      "used": "{name}: obsazeno",
+      "moonSince": "{disk} spí od {time}. CannonCommander ho nechá spát a ukáže vám hodnoty z {time}.",
+      "moon": "{disk} spí. CannonCommander ho nechá spát a ukáže vám poslední známé hodnoty.",
+      "tempAt": "Naposledy změřeno v {time}",
+      "history": "Historie: {name}",
+      "range": "Období",
+      "weeks": {
+        "one": "{n} týden",
+        "few": "{n} týdny",
+        "many": "{n} týdne",
+        "other": "{n} týdnů"
+      },
+      "perDay": "Jedna hodnota denně",
+      "asOf": "Stav k {time}, {name} spí",
+      "change": "{change}, období: {weeks}",
+      "fullIn": {
+        "one": "Plný asi za {n} týden",
+        "few": "Plný asi za {n} týdny",
+        "many": "Plný asi za {n} týdne",
+        "other": "Plný asi za {n} týdnů"
+      },
+      "chartLabel": "Obsazení {name}, období: {weeks}",
+      "chartTip": "obsazeno {pct}, volno {free}",
+      "noHistory": "Historie právě začíná, od zítřka tu uvidíte čáru",
+      "details": "Podrobnosti: {name}",
+      "facts": {
+        "state": "Stav",
+        "parity": "Poslední kontrola Parity",
+        "scrub": "Poslední Scrub",
+        "frag": "Fragmentace",
+        "compression": "Komprese",
+        "fs": "Souborový systém",
+        "drive": "Jednotka"
+      },
+      "running": "Běží",
+      "asleep": "Spí",
+      "asleepSince": "Spí od {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, přerušeno",
+      "errors": {
+        "one": "{n} chyba",
+        "few": "{n} chyby",
+        "many": "{n} chyby",
+        "other": "{n} chyb"
+      },
+      "pools": {
+        "one": "{n} Pool",
+        "few": "{n} Pooly",
+        "many": "{n} Poolu",
+        "other": "{n} Poolů"
+      },
+      "disks": {
+        "one": "{n} disk",
+        "few": "{n} disky",
+        "many": "{n} disku",
+        "other": "{n} disků"
+      },
+      "foot": "{pools} a {disks}",
+      "footAsleep": {
+        "one": "{pools} a {disks}, z toho {n} spí",
+        "few": "{pools} a {disks}, z toho {n} spí",
+        "many": "{pools} a {disks}, z toho {n} spí",
+        "other": "{pools} a {disks}, z toho {n} spí"
+      }
     }
   },
   "duplicates": {

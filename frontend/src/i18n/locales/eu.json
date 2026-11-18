@@ -2135,7 +2135,8 @@
       "tree": "Zuhaitza",
       "map": "Lauzak",
       "types": "Fitxategi motak",
-      "largest": "Fitxategi handienak"
+      "largest": "Fitxategi handienak",
+      "drives": "Diskoak"
     },
     "cols": {
       "name": "Izena",
@@ -2179,6 +2180,92 @@
       "text": "Testua",
       "code": "Iturburu-kodea",
       "file": "Bestelakoak"
+    },
+    "colourBy": "Koloreztatu honen arabera",
+    "colours": {
+      "type": "Fitxategi mota",
+      "age": "Adina"
+    },
+    "groups": {
+      "video": "Bideoak",
+      "photo": "Argazkiak",
+      "music": "Musika",
+      "docs": "Dokumentuak",
+      "archive": "Artxiboak",
+      "other": "Bestelakoak"
+    },
+    "ages": {
+      "week": "astebete baino gutxiago",
+      "month": "hilabete baino gutxiago",
+      "half": "6 hilabete baino gutxiago",
+      "year": "urtebete baino gutxiago",
+      "years": "3 urte baino gutxiago",
+      "older": "3 urte baino gehiago"
+    },
+    "tipShare": "{folder} karpetaren % {pct}",
+    "tipAge": "Gehienaren adina: {age}",
+    "more": {
+      "one": "{n} sarrera txikiago",
+      "other": "{n} sarrera txikiago"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander-ek zerbitzariak dagoeneko dakiena bakarrik irakurtzen du. Lotan dagoen diskoa bakean uzten du, eta lokartu zen uneko balioak ikusten dituzu.",
+      "free": "{size}, {free} libre",
+      "used": "{name} erabilita",
+      "moonSince": "{disk} lotan dago {time} geroztik. CannonCommander-ek lotan uzten du eta {time} orduko balioak erakusten dizkizu.",
+      "moon": "{disk} lotan dago. CannonCommander-ek lotan uzten du eta azken balio ezagunak erakusten dizkizu.",
+      "tempAt": "Azken neurketa: {time}",
+      "history": "Historia: {name}",
+      "range": "Epea",
+      "weeks": {
+        "one": "{n} aste",
+        "other": "{n} aste"
+      },
+      "perDay": "Balio bat egunean",
+      "asOf": "{time} orduko egoera, {name} lotan dago",
+      "change": "{change} ({weeks})",
+      "fullIn": {
+        "one": "{n} aste barru beteko da gutxi gorabehera",
+        "other": "{n} aste barru beteko da gutxi gorabehera"
+      },
+      "chartLabel": "{name}: erabilera, {weeks}",
+      "chartTip": "{pct} erabilita, {free} libre",
+      "noHistory": "Historia orain hasi da, bihartik aurrera lerro bat ikusiko duzu hemen",
+      "details": "Xehetasunak: {name}",
+      "facts": {
+        "state": "Egoera",
+        "parity": "Azken Parity egiaztapena",
+        "scrub": "Azken Scrub-a",
+        "frag": "Zatikatzea",
+        "compression": "Konpresioa",
+        "fs": "Fitxategi-sistema",
+        "drive": "Diskoa"
+      },
+      "running": "Martxan",
+      "asleep": "Lotan",
+      "asleepSince": "Lotan {time} geroztik",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, bertan behera utzita",
+      "errors": {
+        "one": "{n} errore",
+        "other": "{n} errore"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "other": "{n} pool"
+      },
+      "disks": {
+        "one": "{n} disko",
+        "other": "{n} disko"
+      },
+      "foot": "{pools} eta {disks}",
+      "footAsleep": {
+        "one": "{pools} eta {disks}, horietatik {n} lotan",
+        "other": "{pools} eta {disks}, horietatik {n} lotan"
+      }
     }
   },
   "duplicates": {

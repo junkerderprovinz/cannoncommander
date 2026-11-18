@@ -1670,7 +1670,8 @@
       "tree": "Fa",
       "map": "Csempék",
       "types": "Fájltípusok",
-      "largest": "Legnagyobb fájlok"
+      "largest": "Legnagyobb fájlok",
+      "drives": "Meghajtók"
     },
     "cols": {
       "name": "Név",
@@ -1714,6 +1715,92 @@
       "text": "Szöveg",
       "code": "Forráskód",
       "file": "Egyéb"
+    },
+    "colourBy": "Színezés",
+    "colours": {
+      "type": "Fájltípus",
+      "age": "Kor"
+    },
+    "groups": {
+      "video": "Videó",
+      "photo": "Fotók",
+      "music": "Zene",
+      "docs": "Dokumentumok",
+      "archive": "Archívumok",
+      "other": "Egyéb"
+    },
+    "ages": {
+      "week": "1 hétnél újabb",
+      "month": "1 hónapnál újabb",
+      "half": "6 hónapnál újabb",
+      "year": "1 évnél újabb",
+      "years": "3 évnél újabb",
+      "older": "3 évnél régebbi"
+    },
+    "tipShare": "{pct} % ebből: {folder}",
+    "tipAge": "Nagyobb része {age}",
+    "more": {
+      "one": "{n} kisebb elem",
+      "other": "{n} kisebb elem"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "A CannonCommander csak azt olvassa, amit a szerver már tud. Az alvó lemezt békén hagyja, és az értékeit abból a pillanatból látja, amikor elaludt.",
+      "free": "{size}, {free} szabad",
+      "used": "Foglalt: {name}",
+      "moonSince": "{disk} {time} óta alszik. A CannonCommander hagyja aludni, és az értékeit ebből az időpontból mutatja: {time}.",
+      "moon": "{disk} alszik. A CannonCommander hagyja aludni, és az utolsó ismert értékeit mutatja.",
+      "tempAt": "Utolsó mérés: {time}",
+      "history": "Előzmények: {name}",
+      "range": "Időszak",
+      "weeks": {
+        "one": "{n} hét",
+        "other": "{n} hét"
+      },
+      "perDay": "Napi egy érték",
+      "asOf": "Állapot: {time}, {name} alszik",
+      "change": "{change}, {weeks} alatt",
+      "fullIn": {
+        "one": "Nagyjából {n} hét múlva megtelik",
+        "other": "Nagyjából {n} hét múlva megtelik"
+      },
+      "chartLabel": "{name} foglaltsága, {weeks}",
+      "chartTip": "{pct} foglalt, {free} szabad",
+      "noHistory": "Az előzmények most indulnak, holnaptól itt egy vonalat lát",
+      "details": "Részletek: {name}",
+      "facts": {
+        "state": "Állapot",
+        "parity": "Utolsó Parity-ellenőrzés",
+        "scrub": "Utolsó Scrub",
+        "frag": "Töredezettség",
+        "compression": "Tömörítés",
+        "fs": "Fájlrendszer",
+        "drive": "Meghajtó"
+      },
+      "running": "Fut",
+      "asleep": "Alszik",
+      "asleepSince": "{time} óta alszik",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, megszakítva",
+      "errors": {
+        "one": "{n} hiba",
+        "other": "{n} hiba"
+      },
+      "pools": {
+        "one": "{n} Pool",
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "one": "{n} lemez",
+        "other": "{n} lemez"
+      },
+      "foot": "{pools} és {disks}",
+      "footAsleep": {
+        "one": "{pools} és {disks}, ebből {n} alszik",
+        "other": "{pools} és {disks}, ebből {n} alszik"
+      }
     }
   },
   "duplicates": {

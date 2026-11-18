@@ -17,13 +17,15 @@ import (
 var contract []byte
 
 // Routes registers the contract and the handlers. On a server with emhttp
-// files it also starts the monitor for spin and parity events.
+// files it also starts the monitor for spin and parity events and the
+// recorder of the drive history.
 func Routes(r *v1.Router) {
 	r.Contract("unraid", contract)
 	svc := Default()
 	bind(r, svc)
-	if h := r.Deps().Hub; h != nil {
-		if st, err := svc.State(); err == nil && st.Available {
+	if st, err := svc.State(); err == nil && st.Available {
+		go svc.Record(context.Background())
+		if h := r.Deps().Hub; h != nil {
 			go svc.Watch(context.Background(), h)
 		}
 	}
@@ -33,6 +35,7 @@ func bind(r *v1.Router, svc *Service) {
 	h := handlers{svc: svc, fs: r.Deps().FS}
 	r.Handle("GET /unraid/state", h.state)
 	r.Handle("GET /unraid/where", h.where)
+	r.Handle("GET /unraid/drives", h.drives)
 	r.Handle("POST /unraid/transfer", h.transfer)
 	r.Handle("POST /unraid/spindown", h.spindown)
 	r.Handle("POST /unraid/gather/plan", h.gather)
@@ -51,6 +54,14 @@ func (h handlers) state(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	return v1.WriteJSON(w, r, http.StatusOK, st)
+}
+
+func (h handlers) drives(w http.ResponseWriter, r *http.Request) error {
+	d, err := h.svc.Drives(r.Context())
+	if err != nil {
+		return err
+	}
+	return v1.WriteJSON(w, r, http.StatusOK, d)
 }
 
 func (h handlers) where(w http.ResponseWriter, r *http.Request) error {

@@ -1670,7 +1670,8 @@
       "tree": "Boom",
       "map": "Tegels",
       "types": "Bestandstypen",
-      "largest": "Grootste bestanden"
+      "largest": "Grootste bestanden",
+      "drives": "Schijven"
     },
     "cols": {
       "name": "Naam",
@@ -1714,6 +1715,92 @@
       "text": "Tekst",
       "code": "Broncode",
       "file": "Overig"
+    },
+    "colourBy": "Kleur op",
+    "colours": {
+      "type": "Bestandstype",
+      "age": "Leeftijd"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Foto's",
+      "music": "Muziek",
+      "docs": "Documenten",
+      "archive": "Archieven",
+      "other": "Overig"
+    },
+    "ages": {
+      "week": "jonger dan een week",
+      "month": "jonger dan een maand",
+      "half": "jonger dan 6 maanden",
+      "year": "jonger dan een jaar",
+      "years": "jonger dan 3 jaar",
+      "older": "ouder dan 3 jaar"
+    },
+    "tipShare": "{pct}% van {folder}",
+    "tipAge": "Het meeste is {age}",
+    "more": {
+      "one": "{n} kleiner item",
+      "other": "{n} kleinere items"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander leest hier alleen wat de server al weet. Een slapende schijf blijft met rust, en je ziet de waarden van het moment waarop hij in slaap viel.",
+      "free": "{size}, {free} vrij",
+      "used": "{name} in gebruik",
+      "moonSince": "{disk} slaapt sinds {time}. CannonCommander laat hem slapen en toont je de waarden van {time}.",
+      "moon": "{disk} slaapt. CannonCommander laat hem slapen en toont je de laatst bekende waarden.",
+      "tempAt": "Laatst gemeten om {time}",
+      "history": "Verloop van {name}",
+      "range": "Periode",
+      "weeks": {
+        "one": "{n} week",
+        "other": "{n} weken"
+      },
+      "perDay": "Eén waarde per dag",
+      "asOf": "Stand van {time}, {name} slaapt",
+      "change": "{change} in {weeks}",
+      "fullIn": {
+        "one": "Vol over ongeveer {n} week",
+        "other": "Vol over ongeveer {n} weken"
+      },
+      "chartLabel": "Gebruik van {name} over {weeks}",
+      "chartTip": "{pct} in gebruik, {free} vrij",
+      "noHistory": "Het verloop begint net, vanaf morgen zie je hier een lijn",
+      "details": "Details van {name}",
+      "facts": {
+        "state": "Status",
+        "parity": "Laatste Parity-check",
+        "scrub": "Laatste Scrub",
+        "frag": "Fragmentatie",
+        "compression": "Compressie",
+        "fs": "Bestandssysteem",
+        "drive": "Schijf"
+      },
+      "running": "Draait",
+      "asleep": "Slaapt",
+      "asleepSince": "Slaapt sinds {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, afgebroken",
+      "errors": {
+        "one": "{n} fout",
+        "other": "{n} fouten"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "other": "{n} pools"
+      },
+      "disks": {
+        "one": "{n} schijf",
+        "other": "{n} schijven"
+      },
+      "foot": "{pools} en {disks}",
+      "footAsleep": {
+        "one": "{pools} en {disks}, waarvan {n} slaapt",
+        "other": "{pools} en {disks}, waarvan {n} slapen"
+      }
     }
   },
   "duplicates": {

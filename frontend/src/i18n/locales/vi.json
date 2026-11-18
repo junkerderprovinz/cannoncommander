@@ -1621,7 +1621,8 @@
       "tree": "Cây",
       "map": "Ô",
       "types": "Loại tệp",
-      "largest": "Tệp lớn nhất"
+      "largest": "Tệp lớn nhất",
+      "drives": "Ổ đĩa"
     },
     "cols": {
       "name": "Tên",
@@ -1663,6 +1664,85 @@
       "text": "Văn bản",
       "code": "Mã nguồn",
       "file": "Khác"
+    },
+    "colourBy": "Tô màu theo",
+    "colours": {
+      "type": "Loại tệp",
+      "age": "Độ cũ"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Ảnh",
+      "music": "Nhạc",
+      "docs": "Tài liệu",
+      "archive": "Tệp nén",
+      "other": "Khác"
+    },
+    "ages": {
+      "week": "dưới 1 tuần",
+      "month": "dưới 1 tháng",
+      "half": "dưới 6 tháng",
+      "year": "dưới 1 năm",
+      "years": "dưới 3 năm",
+      "older": "trên 3 năm"
+    },
+    "tipShare": "{pct} % của {folder}",
+    "tipAge": "Phần lớn được sửa cách đây {age}",
+    "more": {
+      "other": "{n} mục nhỏ hơn"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander chỉ đọc những gì máy chủ đã biết. Disk đang ngủ sẽ được để yên, bạn thấy các giá trị của nó từ lúc nó ngủ.",
+      "free": "{size}, còn trống {free}",
+      "used": "{name} đã dùng",
+      "moonSince": "{disk} đã ngủ từ {time}. CannonCommander để nó ngủ và cho bạn xem các giá trị lúc {time}.",
+      "moon": "{disk} đang ngủ. CannonCommander để nó ngủ và cho bạn xem các giá trị gần nhất đã biết.",
+      "tempAt": "Đo lần cuối lúc {time}",
+      "history": "Lịch sử {name}",
+      "range": "Khoảng thời gian",
+      "weeks": {
+        "other": "{n} tuần"
+      },
+      "perDay": "Mỗi ngày một giá trị",
+      "asOf": "Tính đến {time}, {name} đang ngủ",
+      "change": "{change} trong {weeks}",
+      "fullIn": {
+        "other": "Đầy sau khoảng {n} tuần"
+      },
+      "chartLabel": "Mức dùng của {name} trong {weeks}",
+      "chartTip": "Đã dùng {pct}, còn trống {free}",
+      "noHistory": "Lịch sử vừa bắt đầu, từ ngày mai bạn sẽ thấy một đường ở đây",
+      "details": "Chi tiết {name}",
+      "facts": {
+        "state": "Trạng thái",
+        "parity": "Lần kiểm tra Parity gần nhất",
+        "scrub": "Lần Scrub gần nhất",
+        "frag": "Phân mảnh",
+        "compression": "Nén",
+        "fs": "Hệ thống tệp",
+        "drive": "Ổ đĩa"
+      },
+      "running": "Đang chạy",
+      "asleep": "Đang ngủ",
+      "asleepSince": "Ngủ từ {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, đã hủy",
+      "errors": {
+        "other": "{n} lỗi"
+      },
+      "pools": {
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "other": "{n} Disk"
+      },
+      "foot": "{pools} và {disks}",
+      "footAsleep": {
+        "other": "{pools} và {disks}, {n} trong số đó đang ngủ"
+      }
     }
   },
   "duplicates": {

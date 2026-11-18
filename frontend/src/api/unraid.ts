@@ -26,6 +26,31 @@ export interface UnraidDisk {
   rotational: boolean;
   temp?: number;
 }
+// One sample a day: the day counted from 1970 and the bytes in use.
+export type UnraidSample = [day: number, used: number];
+export interface UnraidRun { at: string; seconds?: number; errors: number }
+export interface UnraidDrive {
+  name: string;
+  kind: 'pool' | 'data' | 'parity';
+  device?: string;
+  status: string;
+  fsType?: string;
+  profile?: string;
+  transport?: string;
+  rotational: boolean;
+  size: number;
+  fsSize: number;
+  used: number;
+  asleep: boolean;
+  asleepSince?: string;
+  temp?: number;
+  tempAt?: string;
+  history: UnraidSample[];
+  fullIn?: Partial<Record<'4' | '8' | '12', number>>;
+  members?: UnraidDrive[];
+  zfs?: { fragmentation?: number; compressRatio?: number; scrub?: UnraidRun };
+}
+export interface UnraidDrives { pools: UnraidDrive[]; array: UnraidDrive[]; parity?: UnraidRun & { exit: number } }
 export interface UnraidStorage { type: 'array' | 'pool'; name?: string }
 export interface UnraidShare {
   name: string;
@@ -77,6 +102,7 @@ const body = async <T>(path: string, init?: RequestInit) => (await call<T>(path,
 
 export const unraid = {
   state: () => body<UnraidState>('/unraid/state'),
+  drives: () => body<UnraidDrives>('/unraid/drives'),
   where: (path: string) => body<UnraidWhere>('/unraid/where' + q({ path })),
   spindown: async (disks?: string[]) => (await body<{ disks: string[] }>('/unraid/spindown', json('POST', disks ? { disks } : {}))).disks,
   permsScan: (path: string) => body<PermsScan>('/unraid/fixperms/scan', json('POST', { path })),

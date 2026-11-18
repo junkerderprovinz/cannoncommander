@@ -1621,7 +1621,8 @@
       "tree": "트리",
       "map": "타일",
       "types": "파일 종류",
-      "largest": "가장 큰 파일"
+      "largest": "가장 큰 파일",
+      "drives": "드라이브"
     },
     "cols": {
       "name": "이름",
@@ -1663,6 +1664,85 @@
       "text": "텍스트",
       "code": "소스 코드",
       "file": "기타"
+    },
+    "colourBy": "색상 기준",
+    "colours": {
+      "type": "파일 종류",
+      "age": "경과 기간"
+    },
+    "groups": {
+      "video": "동영상",
+      "photo": "사진",
+      "music": "음악",
+      "docs": "문서",
+      "archive": "압축 파일",
+      "other": "기타"
+    },
+    "ages": {
+      "week": "1주 미만",
+      "month": "1개월 미만",
+      "half": "6개월 미만",
+      "year": "1년 미만",
+      "years": "3년 미만",
+      "older": "3년 이상"
+    },
+    "tipShare": "{folder}의 {pct}%",
+    "tipAge": "대부분 {age} 된 파일입니다",
+    "more": {
+      "other": "더 작은 항목 {n}개"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander는 서버가 이미 알고 있는 정보만 읽습니다. 잠든 디스크는 깨우지 않고, 잠들던 순간의 값을 보여 드립니다.",
+      "free": "{size}, 여유 {free}",
+      "used": "{name} 사용량",
+      "moonSince": "{disk} 디스크가 {time}부터 잠들어 있습니다. CannonCommander는 깨우지 않고 {time} 기준 값을 보여 드립니다.",
+      "moon": "{disk} 디스크가 잠들어 있습니다. CannonCommander는 깨우지 않고 마지막으로 알려진 값을 보여 드립니다.",
+      "tempAt": "마지막 측정: {time}",
+      "history": "{name} 기록",
+      "range": "기간",
+      "weeks": {
+        "other": "{n}주"
+      },
+      "perDay": "하루에 값 하나",
+      "asOf": "{time} 기준, {name} 디스크가 잠들어 있음",
+      "change": "{weeks} 동안 {change}",
+      "fullIn": {
+        "other": "약 {n}주 후 가득 참"
+      },
+      "chartLabel": "{weeks} 동안의 {name} 사용량",
+      "chartTip": "{pct} 사용, 여유 {free}",
+      "noHistory": "기록이 막 시작되었습니다. 내일부터 여기에 선이 보입니다",
+      "details": "{name} 세부 정보",
+      "facts": {
+        "state": "상태",
+        "parity": "마지막 Parity 검사",
+        "scrub": "마지막 Scrub",
+        "frag": "조각화",
+        "compression": "압축",
+        "fs": "파일 시스템",
+        "drive": "드라이브"
+      },
+      "running": "작동 중",
+      "asleep": "잠자는 중",
+      "asleepSince": "{time}부터 잠자는 중",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, 취소됨",
+      "errors": {
+        "other": "오류 {n}개"
+      },
+      "pools": {
+        "other": "Pool {n}개"
+      },
+      "disks": {
+        "other": "디스크 {n}개"
+      },
+      "foot": "{pools}와 {disks}",
+      "footAsleep": {
+        "other": "{pools}와 {disks}, 그중 {n}개 잠자는 중"
+      }
     }
   },
   "duplicates": {

@@ -1670,7 +1670,8 @@
       "tree": "Дърво",
       "map": "Плочки",
       "types": "Типове файлове",
-      "largest": "Най-големи файлове"
+      "largest": "Най-големи файлове",
+      "drives": "Дискове"
     },
     "cols": {
       "name": "Име",
@@ -1714,6 +1715,92 @@
       "text": "Текст",
       "code": "Изходен код",
       "file": "Друго"
+    },
+    "colourBy": "Цвят по",
+    "colours": {
+      "type": "Тип файл",
+      "age": "Възраст"
+    },
+    "groups": {
+      "video": "Видео",
+      "photo": "Снимки",
+      "music": "Музика",
+      "docs": "Документи",
+      "archive": "Архиви",
+      "other": "Друго"
+    },
+    "ages": {
+      "week": "под 1 седмица",
+      "month": "под 1 месец",
+      "half": "под 6 месеца",
+      "year": "под 1 година",
+      "years": "под 3 години",
+      "older": "над 3 години"
+    },
+    "tipShare": "{pct} % от {folder}",
+    "tipAge": "Възраст на повечето: {age}",
+    "more": {
+      "one": "{n} по-малък елемент",
+      "other": "{n} по-малки елемента"
+    },
+    "drives": {
+      "pool": "Пул {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "Тук CannonCommander само чете това, което сървърът и без това знае. Спящият диск остава на спокойствие, а вие виждате стойностите му от момента, в който е заспал.",
+      "free": "{size}, {free} свободни",
+      "used": "{name}: заето",
+      "moonSince": "{disk} спи от {time}. CannonCommander го оставя да спи и ви показва стойностите от {time}.",
+      "moon": "{disk} спи. CannonCommander го оставя да спи и ви показва последните известни стойности.",
+      "tempAt": "Последно измерване в {time}",
+      "history": "История: {name}",
+      "range": "Период",
+      "weeks": {
+        "one": "{n} седмица",
+        "other": "{n} седмици"
+      },
+      "perDay": "Една стойност на ден",
+      "asOf": "Данни към {time}, {name} спи",
+      "change": "{change} за {weeks}",
+      "fullIn": {
+        "one": "Пълен след около {n} седмица",
+        "other": "Пълен след около {n} седмици"
+      },
+      "chartLabel": "Заетост на {name} за {weeks}",
+      "chartTip": "{pct} заето, {free} свободни",
+      "noHistory": "Историята тепърва започва, от утре тук ще видите линия",
+      "details": "Подробности: {name}",
+      "facts": {
+        "state": "Състояние",
+        "parity": "Последна проверка на Parity",
+        "scrub": "Последен Scrub",
+        "frag": "Фрагментация",
+        "compression": "Компресия",
+        "fs": "Файлова система",
+        "drive": "Устройство"
+      },
+      "running": "Работи",
+      "asleep": "Спи",
+      "asleepSince": "Спи от {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, прекъснато",
+      "errors": {
+        "one": "{n} грешка",
+        "other": "{n} грешки"
+      },
+      "pools": {
+        "one": "{n} пул",
+        "other": "{n} пула"
+      },
+      "disks": {
+        "one": "{n} диск",
+        "other": "{n} диска"
+      },
+      "foot": "{pools} и {disks}",
+      "footAsleep": {
+        "one": "{pools} и {disks}, от тях {n} спи",
+        "other": "{pools} и {disks}, от тях {n} спят"
+      }
     }
   },
   "duplicates": {

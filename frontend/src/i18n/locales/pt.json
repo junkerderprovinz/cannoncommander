@@ -1719,7 +1719,8 @@
       "tree": "Árvore",
       "map": "Mosaico",
       "types": "Tipos de ficheiro",
-      "largest": "Ficheiros maiores"
+      "largest": "Ficheiros maiores",
+      "drives": "Discos"
     },
     "cols": {
       "name": "Nome",
@@ -1765,6 +1766,99 @@
       "text": "Texto",
       "code": "Código-fonte",
       "file": "Outros"
+    },
+    "colourBy": "Colorir por",
+    "colours": {
+      "type": "Tipo de ficheiro",
+      "age": "Idade"
+    },
+    "groups": {
+      "video": "Vídeo",
+      "photo": "Fotos",
+      "music": "Música",
+      "docs": "Documentos",
+      "archive": "Arquivos",
+      "other": "Outros"
+    },
+    "ages": {
+      "week": "menos de uma semana",
+      "month": "menos de um mês",
+      "half": "menos de 6 meses",
+      "year": "menos de um ano",
+      "years": "menos de 3 anos",
+      "older": "mais de 3 anos"
+    },
+    "tipShare": "{pct} % de {folder}",
+    "tipAge": "A maior parte tem {age}",
+    "more": {
+      "one": "{n} entrada mais pequena",
+      "many": "{n} entradas mais pequenas",
+      "other": "{n} entradas mais pequenas"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Paridade",
+      "hint": "O CannonCommander só lê o que o servidor já sabe. Um disco adormecido fica em paz, e vê os valores dele do momento em que adormeceu.",
+      "free": "{size}, {free} livres",
+      "used": "{name} ocupado",
+      "moonSince": "{disk} está adormecido desde {time}. O CannonCommander deixa-o dormir e mostra-lhe os valores de {time}.",
+      "moon": "{disk} está adormecido. O CannonCommander deixa-o dormir e mostra-lhe os últimos valores conhecidos.",
+      "tempAt": "Última medição às {time}",
+      "history": "Histórico de {name}",
+      "range": "Período",
+      "weeks": {
+        "one": "{n} semana",
+        "many": "{n} semanas",
+        "other": "{n} semanas"
+      },
+      "perDay": "Um valor por dia",
+      "asOf": "Valores de {time}, {name} está adormecido",
+      "change": "{change} em {weeks}",
+      "fullIn": {
+        "one": "Cheio daqui a cerca de {n} semana",
+        "many": "Cheio daqui a cerca de {n} semanas",
+        "other": "Cheio daqui a cerca de {n} semanas"
+      },
+      "chartLabel": "Ocupação de {name} em {weeks}",
+      "chartTip": "{pct} ocupado, {free} livres",
+      "noHistory": "O histórico está a começar, a partir de amanhã verá aqui uma linha",
+      "details": "Detalhes de {name}",
+      "facts": {
+        "state": "Estado",
+        "parity": "Última verificação de paridade",
+        "scrub": "Último Scrub",
+        "frag": "Fragmentação",
+        "compression": "Compressão",
+        "fs": "Sistema de ficheiros",
+        "drive": "Disco"
+      },
+      "running": "Em funcionamento",
+      "asleep": "Adormecido",
+      "asleepSince": "Adormecido desde {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, cancelado",
+      "errors": {
+        "one": "{n} erro",
+        "many": "{n} erros",
+        "other": "{n} erros"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "many": "{n} pools",
+        "other": "{n} pools"
+      },
+      "disks": {
+        "one": "{n} disco",
+        "many": "{n} discos",
+        "other": "{n} discos"
+      },
+      "foot": "{pools} e {disks}",
+      "footAsleep": {
+        "one": "{pools} e {disks}, {n} deles adormecido",
+        "many": "{pools} e {disks}, {n} deles adormecidos",
+        "other": "{pools} e {disks}, {n} deles adormecidos"
+      }
     }
   },
   "duplicates": {

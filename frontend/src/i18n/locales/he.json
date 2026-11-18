@@ -1719,7 +1719,8 @@
       "tree": "עץ",
       "map": "אריחים",
       "types": "סוגי קבצים",
-      "largest": "הקבצים הגדולים"
+      "largest": "הקבצים הגדולים",
+      "drives": "כוננים"
     },
     "cols": {
       "name": "שם",
@@ -1765,6 +1766,99 @@
       "text": "טקסט",
       "code": "קוד מקור",
       "file": "אחר"
+    },
+    "colourBy": "צבע לפי",
+    "colours": {
+      "type": "סוג קובץ",
+      "age": "גיל"
+    },
+    "groups": {
+      "video": "וידאו",
+      "photo": "תמונות",
+      "music": "מוזיקה",
+      "docs": "מסמכים",
+      "archive": "ארכיונים",
+      "other": "אחר"
+    },
+    "ages": {
+      "week": "פחות משבוע",
+      "month": "פחות מחודש",
+      "half": "פחות מ־6 חודשים",
+      "year": "פחות משנה",
+      "years": "פחות מ־3 שנים",
+      "older": "יותר מ־3 שנים"
+    },
+    "tipShare": "{pct} % מתוך {folder}",
+    "tipAge": "גיל רוב התוכן: {age}",
+    "more": {
+      "one": "עוד פריט קטן אחד",
+      "two": "עוד {n} פריטים קטנים",
+      "other": "עוד {n} פריטים קטנים"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander קורא כאן רק את מה שהשרת כבר יודע. דיסק ישן נשאר במנוחה, והערכים שלו מוצגים מהרגע שבו נרדם.",
+      "free": "{size}, {free} פנויים",
+      "used": "שימוש ב־{name}",
+      "moonSince": "{disk} ישן מאז {time}. CannonCommander נותן לו לישון ומציג את הערכים שלו מ־{time}.",
+      "moon": "{disk} ישן. CannonCommander נותן לו לישון ומציג את הערכים האחרונים הידועים.",
+      "tempAt": "נמדד לאחרונה ב־{time}",
+      "history": "היסטוריה של {name}",
+      "range": "טווח זמן",
+      "weeks": {
+        "one": "שבוע אחד",
+        "two": "שבועיים",
+        "other": "{n} שבועות"
+      },
+      "perDay": "ערך אחד ליום",
+      "asOf": "נכון ל־{time}, {name} ישן",
+      "change": "{change} ב־{weeks}",
+      "fullIn": {
+        "one": "יתמלא בעוד שבוע בערך",
+        "two": "יתמלא בעוד שבועיים בערך",
+        "other": "יתמלא בעוד {n} שבועות בערך"
+      },
+      "chartLabel": "שימוש ב־{name} לאורך {weeks}",
+      "chartTip": "{pct} בשימוש, {free} פנויים",
+      "noHistory": "ההיסטוריה מתחילה עכשיו, ומחר כבר יופיע כאן קו",
+      "details": "פרטים על {name}",
+      "facts": {
+        "state": "מצב",
+        "parity": "בדיקת Parity אחרונה",
+        "scrub": "Scrub אחרון",
+        "frag": "פיצול",
+        "compression": "דחיסה",
+        "fs": "מערכת קבצים",
+        "drive": "כונן"
+      },
+      "running": "פועל",
+      "asleep": "ישן",
+      "asleepSince": "ישן מאז {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, בוטל",
+      "errors": {
+        "one": "שגיאה אחת",
+        "two": "שתי שגיאות",
+        "other": "{n} שגיאות"
+      },
+      "pools": {
+        "one": "Pool אחד",
+        "two": "שני Pool",
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "one": "דיסק אחד",
+        "two": "שני דיסקים",
+        "other": "{n} דיסקים"
+      },
+      "foot": "{pools} ו־{disks}",
+      "footAsleep": {
+        "one": "{pools} ו־{disks}, אחד מהם ישן",
+        "two": "{pools} ו־{disks}, שניים מהם ישנים",
+        "other": "{pools} ו־{disks}, {n} מהם ישנים"
+      }
     }
   },
   "duplicates": {

@@ -1621,7 +1621,8 @@
       "tree": "树状",
       "map": "方块",
       "types": "文件类型",
-      "largest": "最大的文件"
+      "largest": "最大的文件",
+      "drives": "驱动器"
     },
     "cols": {
       "name": "名称",
@@ -1663,6 +1664,85 @@
       "text": "文本",
       "code": "源代码",
       "file": "其他"
+    },
+    "colourBy": "着色依据",
+    "colours": {
+      "type": "文件类型",
+      "age": "新旧"
+    },
+    "groups": {
+      "video": "视频",
+      "photo": "照片",
+      "music": "音乐",
+      "docs": "文档",
+      "archive": "压缩包",
+      "other": "其他"
+    },
+    "ages": {
+      "week": "不到 1 周",
+      "month": "不到 1 个月",
+      "half": "不到 6 个月",
+      "year": "不到 1 年",
+      "years": "不到 3 年",
+      "older": "超过 3 年"
+    },
+    "tipShare": "{folder} 的 {pct}%",
+    "tipAge": "大部分修改于{age}前",
+    "more": {
+      "other": "{n} 个较小的项目"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander 只读取服务器已经知道的信息。休眠的磁盘不会被唤醒，你看到的是它进入休眠那一刻的数值。",
+      "free": "{size}，可用 {free}",
+      "used": "{name} 已用",
+      "moonSince": "{disk} 自 {time} 起休眠。CannonCommander 不会唤醒它，显示的是 {time} 的数值。",
+      "moon": "{disk} 正在休眠。CannonCommander 不会唤醒它，显示的是最后已知的数值。",
+      "tempAt": "最后测量于 {time}",
+      "history": "{name} 的历史",
+      "range": "时间范围",
+      "weeks": {
+        "other": "{n} 周"
+      },
+      "perDay": "每天一个数值",
+      "asOf": "截至 {time}，{name} 正在休眠",
+      "change": "{weeks} 内 {change}",
+      "fullIn": {
+        "other": "约 {n} 周后存满"
+      },
+      "chartLabel": "{name} 在 {weeks} 内的使用情况",
+      "chartTip": "已用 {pct}，可用 {free}",
+      "noHistory": "历史记录刚刚开始，明天起这里会出现一条线",
+      "details": "{name} 的详情",
+      "facts": {
+        "state": "状态",
+        "parity": "上次 Parity 检查",
+        "scrub": "上次 Scrub",
+        "frag": "碎片化",
+        "compression": "压缩",
+        "fs": "文件系统",
+        "drive": "驱动器"
+      },
+      "running": "运行中",
+      "asleep": "休眠中",
+      "asleepSince": "自 {time} 起休眠",
+      "run": "{date}，{errors}",
+      "cancelled": "{date}，已取消",
+      "errors": {
+        "other": "{n} 个错误"
+      },
+      "pools": {
+        "other": "{n} 个 Pool"
+      },
+      "disks": {
+        "other": "{n} 块磁盘"
+      },
+      "foot": "{pools} 和 {disks}",
+      "footAsleep": {
+        "other": "{pools} 和 {disks}，其中 {n} 块正在休眠"
+      }
     }
   },
   "duplicates": {

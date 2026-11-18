@@ -1719,7 +1719,8 @@
       "tree": "Árbol",
       "map": "Mosaico",
       "types": "Tipos de archivo",
-      "largest": "Archivos más grandes"
+      "largest": "Archivos más grandes",
+      "drives": "Discos"
     },
     "cols": {
       "name": "Nombre",
@@ -1765,6 +1766,99 @@
       "text": "Texto",
       "code": "Código fuente",
       "file": "Otros"
+    },
+    "colourBy": "Colorear por",
+    "colours": {
+      "type": "Tipo de archivo",
+      "age": "Antigüedad"
+    },
+    "groups": {
+      "video": "Vídeo",
+      "photo": "Fotos",
+      "music": "Música",
+      "docs": "Documentos",
+      "archive": "Comprimidos",
+      "other": "Otros"
+    },
+    "ages": {
+      "week": "menos de una semana",
+      "month": "menos de un mes",
+      "half": "menos de 6 meses",
+      "year": "menos de un año",
+      "years": "menos de 3 años",
+      "older": "más de 3 años"
+    },
+    "tipShare": "{pct} % de {folder}",
+    "tipAge": "La mayor parte tiene {age}",
+    "more": {
+      "one": "{n} entrada más pequeña",
+      "many": "{n} entradas más pequeñas",
+      "other": "{n} entradas más pequeñas"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Paridad",
+      "hint": "CannonCommander solo lee lo que el servidor ya sabe. Un disco dormido sigue durmiendo, y ves sus valores del momento en que se durmió.",
+      "free": "{size}, {free} libres",
+      "used": "{name} ocupado",
+      "moonSince": "{disk} duerme desde {time}. CannonCommander lo deja dormir y te muestra sus valores de {time}.",
+      "moon": "{disk} está dormido. CannonCommander lo deja dormir y te muestra los últimos valores conocidos.",
+      "tempAt": "Última medición a las {time}",
+      "history": "Historial de {name}",
+      "range": "Periodo",
+      "weeks": {
+        "one": "{n} semana",
+        "many": "{n} semanas",
+        "other": "{n} semanas"
+      },
+      "perDay": "Un valor al día",
+      "asOf": "Valores de {time}, {name} está dormido",
+      "change": "{change} en {weeks}",
+      "fullIn": {
+        "one": "Lleno en aproximadamente {n} semana",
+        "many": "Lleno en aproximadamente {n} semanas",
+        "other": "Lleno en aproximadamente {n} semanas"
+      },
+      "chartLabel": "Uso de {name} en {weeks}",
+      "chartTip": "{pct} ocupado, {free} libres",
+      "noHistory": "El historial acaba de empezar, a partir de mañana verás aquí una línea",
+      "details": "Detalles de {name}",
+      "facts": {
+        "state": "Estado",
+        "parity": "Última comprobación de paridad",
+        "scrub": "Último Scrub",
+        "frag": "Fragmentación",
+        "compression": "Compresión",
+        "fs": "Sistema de archivos",
+        "drive": "Disco"
+      },
+      "running": "En marcha",
+      "asleep": "Dormido",
+      "asleepSince": "Dormido desde {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, se canceló",
+      "errors": {
+        "one": "{n} error",
+        "many": "{n} errores",
+        "other": "{n} errores"
+      },
+      "pools": {
+        "one": "{n} pool",
+        "many": "{n} pools",
+        "other": "{n} pools"
+      },
+      "disks": {
+        "one": "{n} disco",
+        "many": "{n} discos",
+        "other": "{n} discos"
+      },
+      "foot": "{pools} y {disks}",
+      "footAsleep": {
+        "one": "{pools} y {disks}, {n} de ellos duerme",
+        "many": "{pools} y {disks}, {n} de ellos duermen",
+        "other": "{pools} y {disks}, {n} de ellos duermen"
+      }
     }
   },
   "duplicates": {

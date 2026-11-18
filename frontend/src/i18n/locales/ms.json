@@ -1621,7 +1621,8 @@
       "tree": "Pepohon",
       "map": "Jubin",
       "types": "Jenis fail",
-      "largest": "Fail terbesar"
+      "largest": "Fail terbesar",
+      "drives": "Pemacu"
     },
     "cols": {
       "name": "Nama",
@@ -1663,6 +1664,85 @@
       "text": "Teks",
       "code": "Kod sumber",
       "file": "Lain-lain"
+    },
+    "colourBy": "Warna mengikut",
+    "colours": {
+      "type": "Jenis fail",
+      "age": "Usia"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Foto",
+      "music": "Muzik",
+      "docs": "Dokumen",
+      "archive": "Arkib",
+      "other": "Lain-lain"
+    },
+    "ages": {
+      "week": "kurang daripada 1 minggu",
+      "month": "kurang daripada 1 bulan",
+      "half": "kurang daripada 6 bulan",
+      "year": "kurang daripada 1 tahun",
+      "years": "kurang daripada 3 tahun",
+      "older": "lebih daripada 3 tahun"
+    },
+    "tipShare": "{pct} % daripada {folder}",
+    "tipAge": "Kebanyakannya berusia {age}",
+    "more": {
+      "other": "{n} entri yang lebih kecil"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parity",
+      "hint": "CannonCommander hanya membaca apa yang sudah diketahui oleh pelayan. Cakera yang sedang tidur dibiarkan tenang, dan Anda melihat nilainya dari saat ia tertidur.",
+      "free": "{size}, {free} kosong",
+      "used": "{name} digunakan",
+      "moonSince": "{disk} tidur sejak {time}. CannonCommander membiarkannya tidur dan menunjukkan nilainya dari {time}.",
+      "moon": "{disk} sedang tidur. CannonCommander membiarkannya tidur dan menunjukkan nilai terakhir yang diketahui.",
+      "tempAt": "Kali terakhir diukur pada {time}",
+      "history": "Sejarah {name}",
+      "range": "Tempoh",
+      "weeks": {
+        "other": "{n} minggu"
+      },
+      "perDay": "Satu nilai sehari",
+      "asOf": "Setakat {time}, {name} sedang tidur",
+      "change": "{change} dalam {weeks}",
+      "fullIn": {
+        "other": "Penuh dalam kira-kira {n} minggu"
+      },
+      "chartLabel": "Penggunaan {name} sepanjang {weeks}",
+      "chartTip": "{pct} digunakan, {free} kosong",
+      "noHistory": "Sejarah baru bermula, mulai esok Anda akan melihat garisan di sini",
+      "details": "Butiran {name}",
+      "facts": {
+        "state": "Keadaan",
+        "parity": "Semakan Parity terakhir",
+        "scrub": "Scrub terakhir",
+        "frag": "Fragmentasi",
+        "compression": "Pemampatan",
+        "fs": "Sistem fail",
+        "drive": "Pemacu"
+      },
+      "running": "Berjalan",
+      "asleep": "Tidur",
+      "asleepSince": "Tidur sejak {time}",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, dibatalkan",
+      "errors": {
+        "other": "{n} ralat"
+      },
+      "pools": {
+        "other": "{n} Pool"
+      },
+      "disks": {
+        "other": "{n} cakera"
+      },
+      "foot": "{pools} dan {disks}",
+      "footAsleep": {
+        "other": "{pools} dan {disks}, {n} daripadanya tidur"
+      }
     }
   },
   "duplicates": {

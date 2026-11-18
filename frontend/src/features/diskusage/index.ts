@@ -1,9 +1,12 @@
 // Speicherbelegung (Alt+D): where the room in a folder goes, as a tree, a treemap, by file type and as its largest files.
+import { watchEffect } from 'vue';
 import { action, inArchive } from '@/core/actions';
+import { prefs } from '@/core/prefs';
 import { view } from '@/core/views';
 import { win } from '@/core/windows';
 import { t, tl } from '@/i18n';
 import { usePanels } from '@/stores/panels';
+import { ageBase } from './colours';
 import { countEnded } from './ended';
 import UsageBody from './UsageBody.vue';
 import './diskusage.css';
@@ -11,6 +14,7 @@ import './diskusage.css';
 export default function setup() {
   const F = usePanels();
   countEnded();
+  watchEffect(() => { document.documentElement.dataset.duAge = ageBase(String(prefs.accent)); });
   action('diskUsage', { label: tl('diskusage.title'), g: 'IconDashboard', key: 'Alt+d', run: (start?: string) => {
     const here = F.T().path;
     const from = typeof start === 'string' && start ? start : view.id === 'files' && !inArchive(here) ? here : '/mnt/user';

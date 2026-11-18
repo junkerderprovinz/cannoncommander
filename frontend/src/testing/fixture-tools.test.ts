@@ -124,6 +124,18 @@ describe('fixture tools', () => {
     expect((await api('GET', '/tools/diskusage?path=/mnt/user/gibtsnicht')).status).toBe(404);
   });
 
+  it('tells what each folder holds by kind and age, with its own largest entries', async () => {
+    const u = (await api('GET', '/tools/diskusage?path=/mnt/user')).body;
+    for (const it of u.items as { name: string; dir: boolean; size: number; kinds?: Record<string, number>; ages?: number[]; items?: { size: number }[]; more?: number }[]) {
+      if (!it.size) continue;
+      expect(Object.values(it.kinds!).reduce((a, v) => a + v, 0), it.name).toBe(it.size);
+      expect(it.ages!.length).toBe(6);
+      expect(it.ages!.reduce((a, v) => a + v, 0), it.name).toBe(it.size);
+      if (it.dir) expect((it.items ?? []).length + (it.more ?? 0), it.name).toBeGreaterThan(0);
+      else expect(it.items).toBeUndefined();
+    }
+  });
+
   it('searches inside files as a job and names the line', async () => {
     const job = (await api('POST', '/jobs', { kind: 'contentSearch', params: { path: '/mnt/user', text: 'PLEX' } })).body;
     const { result } = await done(job.id);

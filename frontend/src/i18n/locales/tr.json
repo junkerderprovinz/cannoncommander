@@ -1670,7 +1670,8 @@
       "tree": "Ağaç",
       "map": "Kutucuklar",
       "types": "Dosya türleri",
-      "largest": "En büyük dosyalar"
+      "largest": "En büyük dosyalar",
+      "drives": "Sürücüler"
     },
     "cols": {
       "name": "Ad",
@@ -1714,6 +1715,92 @@
       "text": "Metin",
       "code": "Kaynak kodu",
       "file": "Diğer"
+    },
+    "colourBy": "Renk ölçütü",
+    "colours": {
+      "type": "Dosya türü",
+      "age": "Yaş"
+    },
+    "groups": {
+      "video": "Video",
+      "photo": "Fotoğraflar",
+      "music": "Müzik",
+      "docs": "Belgeler",
+      "archive": "Arşivler",
+      "other": "Diğer"
+    },
+    "ages": {
+      "week": "1 haftadan az",
+      "month": "1 aydan az",
+      "half": "6 aydan az",
+      "year": "1 yıldan az",
+      "years": "3 yıldan az",
+      "older": "3 yıldan fazla"
+    },
+    "tipShare": "{folder} içinde %{pct}",
+    "tipAge": "Çoğunun yaşı: {age}",
+    "more": {
+      "one": "{n} küçük öğe daha",
+      "other": "{n} küçük öğe daha"
+    },
+    "drives": {
+      "pool": "Pool {name}",
+      "array": "Array",
+      "parity": "Parite",
+      "hint": "CannonCommander burada yalnızca sunucunun zaten bildiğini okur. Uyuyan bir disk rahat bırakılır, değerlerini uykuya daldığı andaki haliyle görürsün.",
+      "free": "{size}, {free} boş",
+      "used": "{name} dolu",
+      "moonSince": "{disk}, {time} itibarıyla uyuyor. CannonCommander onu uyandırmaz ve sana {time} anındaki değerleri gösterir.",
+      "moon": "{disk} uyuyor. CannonCommander onu uyandırmaz ve sana bilinen son değerleri gösterir.",
+      "tempAt": "Son ölçüm: {time}",
+      "history": "{name} geçmişi",
+      "range": "Dönem",
+      "weeks": {
+        "one": "{n} hafta",
+        "other": "{n} hafta"
+      },
+      "perDay": "Günde bir değer",
+      "asOf": "Durum {time}, {name} uyuyor",
+      "change": "{weeks} içinde {change}",
+      "fullIn": {
+        "one": "Yaklaşık {n} haftada dolar",
+        "other": "Yaklaşık {n} haftada dolar"
+      },
+      "chartLabel": "{weeks} boyunca {name} doluluğu",
+      "chartTip": "{pct} dolu, {free} boş",
+      "noHistory": "Geçmiş yeni başlıyor, yarından itibaren burada bir çizgi göreceksin",
+      "details": "{name} ayrıntıları",
+      "facts": {
+        "state": "Durum",
+        "parity": "Son parite denetimi",
+        "scrub": "Son Scrub",
+        "frag": "Parçalanma",
+        "compression": "Sıkıştırma",
+        "fs": "Dosya sistemi",
+        "drive": "Sürücü"
+      },
+      "running": "Çalışıyor",
+      "asleep": "Uyuyor",
+      "asleepSince": "{time} itibarıyla uyuyor",
+      "run": "{date}, {errors}",
+      "cancelled": "{date}, iptal edildi",
+      "errors": {
+        "one": "{n} hata",
+        "other": "{n} hata"
+      },
+      "pools": {
+        "one": "{n} havuz",
+        "other": "{n} havuz"
+      },
+      "disks": {
+        "one": "{n} disk",
+        "other": "{n} disk"
+      },
+      "foot": "{pools} ve {disks}",
+      "footAsleep": {
+        "one": "{pools} ve {disks}, {n} tanesi uyuyor",
+        "other": "{pools} ve {disks}, {n} tanesi uyuyor"
+      }
     }
   },
   "duplicates": {
