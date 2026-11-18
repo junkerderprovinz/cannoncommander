@@ -1720,7 +1720,8 @@
       "map": "Mosaico",
       "types": "Tipos de archivo",
       "largest": "Archivos más grandes",
-      "drives": "Discos"
+      "drives": "Discos",
+      "storeroom": "Trastero"
     },
     "cols": {
       "name": "Nombre",
@@ -1859,6 +1860,59 @@
         "many": "{pools} y {disks}, {n} de ellos duermen",
         "other": "{pools} y {disks}, {n} de ellos duermen"
       }
+    },
+    "storeroom": {
+      "about": "Apartar no borra nada: las carpetas esperan en una carpeta de trastero oculta en su propio Share, las plantillas en los ajustes de CannonCommander, y «Recuperar» lo devuelve todo a su sitio. Solo «Eliminar definitivamente» borra, y las imágenes y la caché de compilación, que se pueden volver a descargar, se van enseguida.",
+      "noDocker": "CannonCommander encuentra lo que ya nada usa en cuanto puede preguntar a Docker. Añade /var/run/docker.sock en Docker socket, en los ajustes del contenedor.",
+      "readOnly": "Para apartar cosas, CannonCommander necesita la escritura en Unraid en los ajustes del contenedor.",
+      "kinds": {
+        "template": "Plantillas sin contenedor",
+        "appdata": "Carpetas de appdata que nada usa",
+        "container": "Contenedores detenidos que nada gestiona",
+        "network": "Redes que nadie usa",
+        "volume": "Volúmenes que nadie retiene",
+        "image": "Imágenes y caché de compilación"
+      },
+      "forGood": "Estos se pueden volver a descargar o compilar, así que se eliminan definitivamente en vez de guardarse.",
+      "nothing": "Nada que apartar, aquí todo está en uso",
+      "room": "En el trastero",
+      "roomEmpty": "El trastero está vacío",
+      "store": "Apartar",
+      "restore": "Recuperar",
+      "discard": "Eliminar definitivamente",
+      "ask": {
+        "store": "¿Apartar?",
+        "restore": "¿Recuperar?",
+        "discard": "¿Eliminar definitivamente?"
+      },
+      "steps": {
+        "store": "{name} va al trastero",
+        "storeAt": "{name} va al trastero en {to}",
+        "forGood": "{name} se elimina definitivamente",
+        "restore": "{name} vuelve a {to}",
+        "inUse": "{name} ya está en uso y se queda",
+        "taken": "Ya hay algo nuevo en {to}, así que {name} se queda en el trastero",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Caché de compilación",
+      "untagged": "Imagen sin etiqueta",
+      "since": "Guardado el {date}",
+      "done": {
+        "one": "{n} elemento listo",
+        "many": "{n} elementos listos",
+        "other": "{n} elementos listos"
+      },
+      "finds": {
+        "one": "{n} para apartar",
+        "many": "{n} para apartar",
+        "other": "{n} para apartar"
+      },
+      "held": {
+        "one": "{n} en el trastero",
+        "many": "{n} en el trastero",
+        "other": "{n} en el trastero"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

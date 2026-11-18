@@ -1622,7 +1622,8 @@
       "map": "Ô",
       "types": "Loại tệp",
       "largest": "Tệp lớn nhất",
-      "drives": "Ổ đĩa"
+      "drives": "Ổ đĩa",
+      "storeroom": "Kho đồ"
     },
     "cols": {
       "name": "Tên",
@@ -1743,6 +1744,53 @@
       "footAsleep": {
         "other": "{pools} và {disks}, {n} trong số đó đang ngủ"
       }
+    },
+    "storeroom": {
+      "about": "Dọn đi không xóa gì cả: thư mục chờ trong một thư mục kho đồ ẩn trên Share của chính nó, template trong cài đặt của CannonCommander, và “Lấy lại” đặt mọi thứ về chỗ cũ. Chỉ “Xóa vĩnh viễn” mới xóa, còn image và bộ đệm build, vốn tải lại được, sẽ bị xóa ngay.",
+      "noDocker": "CannonCommander tìm ra những thứ không còn gì dùng ngay khi có thể hỏi Docker. Hãy thêm /var/run/docker.sock vào mục Docker socket trong cài đặt container.",
+      "readOnly": "Để dọn đi, cần bật quyền ghi vào Unraid trong cài đặt container.",
+      "kinds": {
+        "template": "Template không có container",
+        "appdata": "Thư mục appdata không còn gì dùng",
+        "container": "Container đã dừng không có gì quản lý",
+        "network": "Mạng không ai dùng",
+        "volume": "Volume không ai giữ",
+        "image": "Image và bộ đệm build"
+      },
+      "forGood": "Những thứ này có thể tải về hoặc build lại, nên chúng bị xóa vĩnh viễn thay vì cất vào kho.",
+      "nothing": "Không có gì để dọn, mọi thứ ở đây đều đang được dùng",
+      "room": "Trong kho đồ",
+      "roomEmpty": "Kho đồ đang trống",
+      "store": "Dọn đi",
+      "restore": "Lấy lại",
+      "discard": "Xóa vĩnh viễn",
+      "ask": {
+        "store": "Dọn đi?",
+        "restore": "Lấy lại?",
+        "discard": "Xóa vĩnh viễn?"
+      },
+      "steps": {
+        "store": "{name} được cất vào kho đồ",
+        "storeAt": "{name} được cất vào kho đồ tại {to}",
+        "forGood": "{name} bị xóa vĩnh viễn",
+        "restore": "{name} trở về {to}",
+        "inUse": "{name} giờ đang được dùng nên ở lại",
+        "taken": "Tại {to} đã có thứ mới, nên {name} ở lại trong kho đồ",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Bộ đệm build",
+      "untagged": "Image không có tag",
+      "since": "Cất vào ngày {date}",
+      "done": {
+        "other": "Đã xong {n} mục"
+      },
+      "finds": {
+        "other": "{n} mục để dọn"
+      },
+      "held": {
+        "other": "{n} mục trong kho đồ"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

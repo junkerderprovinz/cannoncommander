@@ -1720,7 +1720,8 @@
       "map": "Pločice",
       "types": "Vrste datoteka",
       "largest": "Najveće datoteke",
-      "drives": "Diskovi"
+      "drives": "Diskovi",
+      "storeroom": "Ostava"
     },
     "cols": {
       "name": "Naziv",
@@ -1859,6 +1860,59 @@
         "few": "{pools} i {disks}, od toga {n} spavaju",
         "other": "{pools} i {disks}, od toga {n} spava"
       }
+    },
+    "storeroom": {
+      "about": "Sklanjanje ništa ne briše: mape čekaju u skrivenoj mapi ostave na svom Shareu, predlošci u postavkama CannonCommandera, a „Vrati“ sve stavlja tamo gdje je bilo. Briše samo „Trajno ukloni“, a slike i predmemorija izgradnje, koje se mogu ponovno preuzeti, odlaze odmah.",
+      "noDocker": "CannonCommander pronalazi ono što više ništa ne koristi čim može pitati Docker. Dodajte /var/run/docker.sock pod Docker socket u postavkama kontejnera.",
+      "readOnly": "Za sklanjanje CannonCommander treba uključeno pisanje u Unraid u postavkama kontejnera.",
+      "kinds": {
+        "template": "Predlošci bez kontejnera",
+        "appdata": "Mape appdata koje ništa ne koristi",
+        "container": "Zaustavljeni kontejneri kojima ništa ne upravlja",
+        "network": "Mreže koje nitko ne koristi",
+        "volume": "Volumeni koje nitko ne drži",
+        "image": "Slike i predmemorija izgradnje"
+      },
+      "forGood": "Njih se može ponovno preuzeti ili izgraditi, pa se trajno uklanjaju umjesto da idu u ostavu.",
+      "nothing": "Nema se što skloniti, sve je ovdje u upotrebi",
+      "room": "U ostavi",
+      "roomEmpty": "Ostava je prazna",
+      "store": "Skloni",
+      "restore": "Vrati",
+      "discard": "Trajno ukloni",
+      "ask": {
+        "store": "Skloniti?",
+        "restore": "Vratiti?",
+        "discard": "Trajno ukloniti?"
+      },
+      "steps": {
+        "store": "{name} ide u ostavu",
+        "storeAt": "{name} ide u ostavu na {to}",
+        "forGood": "{name} se trajno uklanja",
+        "restore": "{name} se vraća na {to}",
+        "inUse": "{name} je u međuvremenu u upotrebi i ostaje",
+        "taken": "Na {to} već je nešto novo, pa {name} ostaje u ostavi",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Predmemorija izgradnje",
+      "untagged": "Slika bez oznake",
+      "since": "Sklonjeno {date}",
+      "done": {
+        "one": "Gotovo: {n} stavka",
+        "few": "Gotovo: {n} stavke",
+        "other": "Gotovo: {n} stavki"
+      },
+      "finds": {
+        "one": "{n} za sklanjanje",
+        "few": "{n} za sklanjanje",
+        "other": "{n} za sklanjanje"
+      },
+      "held": {
+        "one": "{n} u ostavi",
+        "few": "{n} u ostavi",
+        "other": "{n} u ostavi"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

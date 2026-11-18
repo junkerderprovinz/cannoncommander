@@ -1,0 +1,202 @@
+tag:
+  name: storeroom
+  description: |
+    What the server no longer uses: container templates without a container,
+    appdata folders nothing names, stopped containers nothing manages,
+    networks and anonymous volumes nobody holds, unused images and the build
+    cache. Everything but images and the build cache goes into a storeroom
+    first and can come back from there. Without an answer from the Docker
+    engine nothing counts as unused. Sizes are bytes.
+paths:
+  /storeroom/scan:
+    get:
+      operationId: storeroomScan
+      summary: What nothing uses and what the storeroom holds
+      x-access: admin
+      responses:
+        "200":
+          description: The finds and the storeroom.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoreroomScan"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /storeroom/plan:
+    post:
+      operationId: storeroomPlan
+      summary: Say what an operation would do, without doing it
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoreroomRequest"
+      responses:
+        "200":
+          description: One step for each ref.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoreroomSteps"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "503":
+          description: The Docker engine does not answer.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /storeroom/run:
+    post:
+      operationId: storeroomRun
+      summary: Store finds, bring entries back or remove them for good
+      description: |
+        Needs write access to Unraid, which is off by default. Every find is
+        checked again first, and one that is in use by now is left alone
+        with the problem inUse.
+      x-access: admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoreroomRequest"
+      responses:
+        "200":
+          description: What happened with each ref.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoreroomSteps"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "503":
+          description: The Docker engine does not answer.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+components:
+  schemas:
+    StoreroomScan:
+      type: object
+      required: [docker, write, finds, room]
+      properties:
+        docker:
+          type: boolean
+          description: The Docker engine answered.
+        write:
+          type: boolean
+        finds:
+          type: array
+          items:
+            $ref: "#/components/schemas/StoreroomFind"
+        room:
+          type: array
+          items:
+            $ref: "#/components/schemas/StoreroomEntry"
+    StoreroomFind:
+      type: object
+      required: [kind, id, name, size, forGood]
+      properties:
+        kind:
+          type: string
+          enum: [template, appdata, container, network, volume, image, cache]
+        id:
+          type: string
+          description: A path, a container or network ID, a volume name or an image ID.
+        name:
+          type: string
+        path:
+          type: string
+        size:
+          type: integer
+          format: int64
+        forGood:
+          type: boolean
+          description: Removed instead of kept in the storeroom.
+    StoreroomEntry:
+      type: object
+      required: [id, kind, name, from, held, at, size]
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum: [template, appdata, container, network, volume]
+        name:
+          type: string
+        from:
+          type: string
+          description: Where it came from, a path or a name.
+        held:
+          type: string
+          description: Where it waits, a path or the name of the container.
+        at:
+          type: string
+          format: date-time
+        size:
+          type: integer
+          format: int64
+        ref:
+          type: string
+        network:
+          type: object
+          additionalProperties: true
+    StoreroomRequest:
+      type: object
+      required: [op, refs]
+      properties:
+        op:
+          type: string
+          enum: [store, restore, discard]
+        refs:
+          type: array
+          description: Finds by kind and ID for store, entries by ID for restore and discard.
+          items:
+            type: object
+            required: [id]
+            properties:
+              kind:
+                type: string
+              id:
+                type: string
+    StoreroomSteps:
+      type: object
+      required: [steps]
+      properties:
+        steps:
+          type: array
+          items:
+            type: object
+            required: [kind, name, from, forGood, done]
+            properties:
+              kind:
+                type: string
+              name:
+                type: string
+              from:
+                type: string
+              to:
+                type: string
+              forGood:
+                type: boolean
+              done:
+                type: boolean
+              problem:
+                type: string
+                enum: [gone, inUse, taken, failed]
+              error:
+                type: string

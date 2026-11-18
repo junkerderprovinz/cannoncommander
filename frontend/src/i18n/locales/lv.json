@@ -1720,7 +1720,8 @@
       "map": "Flīzes",
       "types": "Failu veidi",
       "largest": "Lielākie faili",
-      "drives": "Diski"
+      "drives": "Diski",
+      "storeroom": "Pieliekamais"
     },
     "cols": {
       "name": "Nosaukums",
@@ -1859,6 +1860,59 @@
         "one": "{pools} un {disks}, no tiem guļ {n}",
         "other": "{pools} un {disks}, no tiem guļ {n}"
       }
+    },
+    "storeroom": {
+      "about": "Novākšana neko neizdzēš: mapes gaida slēptā pieliekamā mapē savā koplietojumā, veidnes CannonCommander iestatījumos, un „Atgriezt” visu noliek atpakaļ, kur tas bija. Dzēš tikai „Noņemt neatgriezeniski”, bet attēli un būvēšanas kešatmiņa, ko var atkal lejupielādēt, pazūd uzreiz.",
+      "noDocker": "CannonCommander atrod to, ko nekas vairs neizmanto, tiklīdz var pajautāt Docker. Pievieno /var/run/docker.sock laukā Docker socket konteinera iestatījumos.",
+      "readOnly": "Lai novāktu, CannonCommander vajag ieslēgtu rakstīšanu uz Unraid konteinera iestatījumos.",
+      "kinds": {
+        "template": "Veidnes bez konteinera",
+        "appdata": "Appdata mapes, ko nekas neizmanto",
+        "container": "Apturēti konteineri, ko nekas nepārvalda",
+        "network": "Tīkli, ko neviens neizmanto",
+        "volume": "Sējumi, ko neviens netur",
+        "image": "Attēli un būvēšanas kešatmiņa"
+      },
+      "forGood": "Tos var atkal lejupielādēt vai uzbūvēt, tāpēc tie tiek noņemti neatgriezeniski, nevis novietoti pieliekamajā.",
+      "nothing": "Nav ko novākt, šeit viss tiek izmantots",
+      "room": "Pieliekamajā",
+      "roomEmpty": "Pieliekamais ir tukšs",
+      "store": "Novākt",
+      "restore": "Atgriezt",
+      "discard": "Noņemt neatgriezeniski",
+      "ask": {
+        "store": "Novākt?",
+        "restore": "Atgriezt?",
+        "discard": "Noņemt neatgriezeniski?"
+      },
+      "steps": {
+        "store": "{name} nonāk pieliekamajā",
+        "storeAt": "{name} nonāk pieliekamajā vietā {to}",
+        "forGood": "{name} tiek noņemts neatgriezeniski",
+        "restore": "{name} atgriežas vietā {to}",
+        "inUse": "{name} jau tiek izmantots un paliek",
+        "taken": "Vietā {to} jau ir kaut kas jauns, tāpēc {name} paliek pieliekamajā",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Būvēšanas kešatmiņa",
+      "untagged": "Attēls bez taga",
+      "since": "Novākts {date}",
+      "done": {
+        "zero": "{n} vienumi gatavi",
+        "one": "{n} vienums gatavs",
+        "other": "{n} vienumi gatavi"
+      },
+      "finds": {
+        "zero": "{n} novākšanai",
+        "one": "{n} novākšanai",
+        "other": "{n} novākšanai"
+      },
+      "held": {
+        "zero": "{n} pieliekamajā",
+        "one": "{n} pieliekamajā",
+        "other": "{n} pieliekamajā"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

@@ -1720,7 +1720,8 @@
       "map": "Riquadri",
       "types": "Tipi di file",
       "largest": "File più grandi",
-      "drives": "Dischi"
+      "drives": "Dischi",
+      "storeroom": "Ripostiglio"
     },
     "cols": {
       "name": "Nome",
@@ -1859,6 +1860,59 @@
         "many": "{pools} e {disks}, {n} in standby",
         "other": "{pools} e {disks}, {n} in standby"
       }
+    },
+    "storeroom": {
+      "about": "Mettere via non cancella nulla: le cartelle aspettano in una cartella ripostiglio nascosta sulla loro Share, i template nelle impostazioni di CannonCommander, e «Recupera» rimette tutto al suo posto. Solo «Elimina definitivamente» cancella, e le immagini e la cache di build, che si possono riscaricare, se ne vanno subito.",
+      "noDocker": "CannonCommander trova ciò che non usa più nulla appena può chiedere a Docker. Aggiungi /var/run/docker.sock in Docker socket nelle impostazioni del container.",
+      "readOnly": "Per mettere via serve la scrittura su Unraid nelle impostazioni del container.",
+      "kinds": {
+        "template": "Template senza container",
+        "appdata": "Cartelle appdata che nulla usa",
+        "container": "Container fermi che nulla gestisce",
+        "network": "Reti che nessuno usa",
+        "volume": "Volumi che nessuno tiene",
+        "image": "Immagini e cache di build"
+      },
+      "forGood": "Questi si possono riscaricare o ricostruire, quindi vengono eliminati definitivamente invece di essere messi via.",
+      "nothing": "Niente da mettere via, qui è tutto in uso",
+      "room": "Nel ripostiglio",
+      "roomEmpty": "Il ripostiglio è vuoto",
+      "store": "Metti via",
+      "restore": "Recupera",
+      "discard": "Elimina definitivamente",
+      "ask": {
+        "store": "Mettere via?",
+        "restore": "Recuperare?",
+        "discard": "Eliminare definitivamente?"
+      },
+      "steps": {
+        "store": "{name} va nel ripostiglio",
+        "storeAt": "{name} va nel ripostiglio in {to}",
+        "forGood": "{name} viene eliminato definitivamente",
+        "restore": "{name} torna in {to}",
+        "inUse": "{name} ora è in uso e resta",
+        "taken": "In {to} c'è già qualcosa di nuovo, quindi {name} resta nel ripostiglio",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Cache di build",
+      "untagged": "Immagine senza tag",
+      "since": "Messo via il {date}",
+      "done": {
+        "one": "{n} elemento fatto",
+        "many": "{n} elementi fatti",
+        "other": "{n} elementi fatti"
+      },
+      "finds": {
+        "one": "{n} da mettere via",
+        "many": "{n} da mettere via",
+        "other": "{n} da mettere via"
+      },
+      "held": {
+        "one": "{n} nel ripostiglio",
+        "many": "{n} nel ripostiglio",
+        "other": "{n} nel ripostiglio"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

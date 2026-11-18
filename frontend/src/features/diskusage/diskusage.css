@@ -145,6 +145,18 @@
 .du-facts { display: flex; flex-direction: column; gap: .15rem; padding: 0 .4rem; }
 .du-facts .glim-field-row { min-height: 2.2rem; }
 .du-facts .glim-pill svg { width: .75rem; height: .75rem; margin-inline-end: .3rem; }
+.du-room { display: flex; flex-direction: column; gap: 1.25rem; }
+.du-room .glim-subcard { padding: .9rem .6rem .6rem; gap: .2rem; }
+.du-room .glim-subcard-title { padding: 0 .4rem .2rem; }
+.du-room-about { margin: 0; padding: 0 .4rem; font-size: var(--text-subline); line-height: 1.45; color: var(--carbon-text-sub); }
+.du-room-note { margin: 0; padding: .2rem .4rem; font-size: var(--text-subline); color: var(--carbon-text-sub); }
+.du-room-row { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto auto; align-items: center; gap: .7rem; min-height: 2.6rem; padding: .25rem .6rem; border-radius: var(--radius-control); }
+.du-room-row:hover { background: var(--hover); }
+.du-room-row.on { background: color-mix(in srgb, var(--accent) 18%, var(--carbon-surface2)); }
+.du-room-row .r { text-align: end; font-size: var(--text-subline); min-width: 4.5rem; }
+.du-room-row .sub { font-size: var(--text-meta); }
+.du-room-check { min-height: 0; width: 1.6rem; height: 1.6rem; padding: 0; justify-content: center; flex: none; }
+.du-room-foot { display: flex; align-items: center; justify-content: flex-end; gap: .6rem; padding: .4rem .4rem 0; }
 @media (max-width: 900px) {
   .du-tree .du-row { grid-template-columns: minmax(10rem, 1fr) 5.5rem 7rem; }
   .du-tree .du-row > :nth-child(n+4) { display: none; }

@@ -1769,7 +1769,8 @@
       "map": "Plytelės",
       "types": "Failų tipai",
       "largest": "Didžiausi failai",
-      "drives": "Diskai"
+      "drives": "Diskai",
+      "storeroom": "Sandėliukas"
     },
     "cols": {
       "name": "Pavadinimas",
@@ -1917,6 +1918,62 @@
         "many": "{pools} ir {disks}, iš jų miega {n}",
         "other": "{pools} ir {disks}, iš jų miega {n}"
       }
+    },
+    "storeroom": {
+      "about": "Patraukimas nieko neištrina: aplankai laukia paslėptame sandėliuko aplanke savo Share, šablonai CannonCommander nustatymuose, o „Grąžinti“ viską padeda ten, kur buvo. Ištrina tik „Pašalinti visam laikui“, o atvaizdai ir kūrimo podėlis, kuriuos galima vėl atsisiųsti, dingsta iš karto.",
+      "noDocker": "CannonCommander suranda tai, ko niekas nebenaudoja, kai tik gali paklausti Docker. Pridėk /var/run/docker.sock lauke Docker socket konteinerio nustatymuose.",
+      "readOnly": "Kad galėtų patraukti, CannonCommander reikia įjungto rašymo į Unraid konteinerio nustatymuose.",
+      "kinds": {
+        "template": "Šablonai be konteinerio",
+        "appdata": "Appdata aplankai, kurių niekas nenaudoja",
+        "container": "Sustabdyti konteineriai, kurių niekas nevaldo",
+        "network": "Tinklai, kurių niekas nenaudoja",
+        "volume": "Tomai, kurių niekas nelaiko",
+        "image": "Atvaizdai ir kūrimo podėlis"
+      },
+      "forGood": "Juos galima vėl atsisiųsti ar sukurti, todėl jie pašalinami visam laikui, o ne padedami į sandėliuką.",
+      "nothing": "Nėra ko patraukti, čia viskas naudojama",
+      "room": "Sandėliuke",
+      "roomEmpty": "Sandėliukas tuščias",
+      "store": "Patraukti",
+      "restore": "Grąžinti",
+      "discard": "Pašalinti visam laikui",
+      "ask": {
+        "store": "Patraukti?",
+        "restore": "Grąžinti?",
+        "discard": "Pašalinti visam laikui?"
+      },
+      "steps": {
+        "store": "{name} keliauja į sandėliuką",
+        "storeAt": "{name} keliauja į sandėliuką vietoje {to}",
+        "forGood": "{name} pašalinamas visam laikui",
+        "restore": "{name} grįžta į {to}",
+        "inUse": "{name} jau naudojamas ir lieka",
+        "taken": "Vietoje {to} jau yra kažkas naujo, todėl {name} lieka sandėliuke",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Kūrimo podėlis",
+      "untagged": "Atvaizdas be žymos",
+      "since": "Padėta {date}",
+      "done": {
+        "one": "Atlikta: {n} elementas",
+        "few": "Atlikta: {n} elementai",
+        "many": "Atlikta: {n} elemento",
+        "other": "Atlikta: {n} elementų"
+      },
+      "finds": {
+        "one": "{n} galima patraukti",
+        "few": "{n} galima patraukti",
+        "many": "{n} galima patraukti",
+        "other": "{n} galima patraukti"
+      },
+      "held": {
+        "one": "{n} sandėliuke",
+        "few": "{n} sandėliuke",
+        "many": "{n} sandėliuke",
+        "other": "{n} sandėliuke"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

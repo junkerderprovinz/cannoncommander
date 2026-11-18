@@ -1720,7 +1720,8 @@
       "map": "Mosaico",
       "types": "Tipos de ficheiro",
       "largest": "Ficheiros maiores",
-      "drives": "Discos"
+      "drives": "Discos",
+      "storeroom": "Arrecadação"
     },
     "cols": {
       "name": "Nome",
@@ -1859,6 +1860,59 @@
         "many": "{pools} e {disks}, {n} deles adormecidos",
         "other": "{pools} e {disks}, {n} deles adormecidos"
       }
+    },
+    "storeroom": {
+      "about": "Arrumar não apaga nada: as pastas esperam numa pasta de arrecadação oculta na sua própria Share, os modelos nas definições do CannonCommander, e «Recuperar» devolve tudo ao seu lugar. Só «Eliminar definitivamente» apaga, e as imagens e a cache de compilação, que se podem descarregar de novo, vão logo embora.",
+      "noDocker": "O CannonCommander encontra o que já nada usa assim que puder perguntar ao Docker. Adicione /var/run/docker.sock em Docker socket, nas definições do contentor.",
+      "readOnly": "Para arrumar, o CannonCommander precisa da escrita no Unraid nas definições do contentor.",
+      "kinds": {
+        "template": "Modelos sem contentor",
+        "appdata": "Pastas appdata que nada usa",
+        "container": "Contentores parados que nada gere",
+        "network": "Redes que ninguém usa",
+        "volume": "Volumes que ninguém segura",
+        "image": "Imagens e cache de compilação"
+      },
+      "forGood": "Estes podem ser descarregados ou compilados de novo, por isso são eliminados definitivamente em vez de arrumados.",
+      "nothing": "Nada para arrumar, aqui está tudo em uso",
+      "room": "Na arrecadação",
+      "roomEmpty": "A arrecadação está vazia",
+      "store": "Arrumar",
+      "restore": "Recuperar",
+      "discard": "Eliminar definitivamente",
+      "ask": {
+        "store": "Arrumar?",
+        "restore": "Recuperar?",
+        "discard": "Eliminar definitivamente?"
+      },
+      "steps": {
+        "store": "{name} vai para a arrecadação",
+        "storeAt": "{name} vai para a arrecadação em {to}",
+        "forGood": "{name} é eliminado definitivamente",
+        "restore": "{name} volta para {to}",
+        "inUse": "{name} entretanto está em uso e fica",
+        "taken": "Já há algo novo em {to}, por isso {name} fica na arrecadação",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Cache de compilação",
+      "untagged": "Imagem sem tag",
+      "since": "Arrumado a {date}",
+      "done": {
+        "one": "{n} item concluído",
+        "many": "{n} itens concluídos",
+        "other": "{n} itens concluídos"
+      },
+      "finds": {
+        "one": "{n} para arrumar",
+        "many": "{n} para arrumar",
+        "other": "{n} para arrumar"
+      },
+      "held": {
+        "one": "{n} na arrecadação",
+        "many": "{n} na arrecadação",
+        "other": "{n} na arrecadação"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

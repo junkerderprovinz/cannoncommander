@@ -1671,7 +1671,8 @@
       "map": "Paanid",
       "types": "Failitüübid",
       "largest": "Suurimad failid",
-      "drives": "Kettad"
+      "drives": "Kettad",
+      "storeroom": "Panipaik"
     },
     "cols": {
       "name": "Nimi",
@@ -1801,6 +1802,56 @@
         "one": "{pools} ja {disks}, neist {n} magab",
         "other": "{pools} ja {disks}, neist {n} magab"
       }
+    },
+    "storeroom": {
+      "about": "Ärakoristamine ei kustuta midagi: kaustad ootavad peidetud panipaigakaustas oma Share'il, mallid CannonCommanderi seadetes ja „Too tagasi“ paneb kõik sinna, kus see oli. Kustutab ainult „Eemalda jäädavalt“, tõmmised ja build-vahemälu aga, mida saab uuesti alla laadida, lähevad kohe.",
+      "noDocker": "CannonCommander leiab üles, mida miski ei kasuta, kui ta saab Dockerilt küsida. Lisa /var/run/docker.sock konteineri seadetes välja Docker socket alla.",
+      "readOnly": "Ärakoristamiseks peab kirjutamine Unraidi olema konteineri seadetes sisse lülitatud.",
+      "kinds": {
+        "template": "Mallid ilma konteinerita",
+        "appdata": "Appdata kaustad, mida miski ei kasuta",
+        "container": "Peatatud konteinerid, mida miski ei halda",
+        "network": "Võrgud, mida keegi ei kasuta",
+        "volume": "Köited, mida keegi ei hoia",
+        "image": "Tõmmised ja build-vahemälu"
+      },
+      "forGood": "Neid saab uuesti alla laadida või ehitada, seega eemaldatakse need jäädavalt, mitte ei panda panipaika.",
+      "nothing": "Pole midagi ära koristada, kõik on siin kasutusel",
+      "room": "Panipaigas",
+      "roomEmpty": "Panipaik on tühi",
+      "store": "Korista ära",
+      "restore": "Too tagasi",
+      "discard": "Eemalda jäädavalt",
+      "ask": {
+        "store": "Korista ära?",
+        "restore": "Too tagasi?",
+        "discard": "Eemalda jäädavalt?"
+      },
+      "steps": {
+        "store": "{name} läheb panipaika",
+        "storeAt": "{name} läheb panipaika asukohas {to}",
+        "forGood": "{name} eemaldatakse jäädavalt",
+        "restore": "{name} tuleb tagasi asukohta {to}",
+        "inUse": "{name} on nüüd kasutusel ja jääb",
+        "taken": "Asukohas {to} on juba midagi uut, seega {name} jääb panipaika",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Build-vahemälu",
+      "untagged": "Sildita tõmmis",
+      "since": "Pandud panipaika {date}",
+      "done": {
+        "one": "{n} üksus tehtud",
+        "other": "{n} üksust tehtud"
+      },
+      "finds": {
+        "one": "{n} ära koristada",
+        "other": "{n} ära koristada"
+      },
+      "held": {
+        "one": "{n} panipaigas",
+        "other": "{n} panipaigas"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

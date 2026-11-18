@@ -1671,7 +1671,8 @@
       "map": "Tegels",
       "types": "Bestandstypen",
       "largest": "Grootste bestanden",
-      "drives": "Schijven"
+      "drives": "Schijven",
+      "storeroom": "Berging"
     },
     "cols": {
       "name": "Naam",
@@ -1801,6 +1802,56 @@
         "one": "{pools} en {disks}, waarvan {n} slaapt",
         "other": "{pools} en {disks}, waarvan {n} slapen"
       }
+    },
+    "storeroom": {
+      "about": "Opruimen verwijdert niets: mappen wachten in een verborgen bergingsmap op hun eigen share, templates in de instellingen van CannonCommander, en „Terughalen” zet alles terug waar het was. Alleen „Definitief verwijderen” verwijdert, en images en de buildcache, die opnieuw te downloaden zijn, gaan meteen weg.",
+      "noDocker": "CannonCommander vindt wat niets meer gebruikt zodra het Docker kan vragen. Zet /var/run/docker.sock bij Docker socket in de containerinstellingen.",
+      "readOnly": "Om op te ruimen moet schrijven naar Unraid aanstaan in de containerinstellingen.",
+      "kinds": {
+        "template": "Templates zonder container",
+        "appdata": "Appdata-mappen die niets gebruikt",
+        "container": "Gestopte containers die niets beheert",
+        "network": "Netwerken die niemand gebruikt",
+        "volume": "Volumes die niemand vasthoudt",
+        "image": "Images en buildcache"
+      },
+      "forGood": "Die zijn opnieuw te downloaden of te bouwen, dus ze worden definitief verwijderd in plaats van opgeborgen.",
+      "nothing": "Niets op te ruimen, alles hier is in gebruik",
+      "room": "In de berging",
+      "roomEmpty": "De berging is leeg",
+      "store": "Opruimen",
+      "restore": "Terughalen",
+      "discard": "Definitief verwijderen",
+      "ask": {
+        "store": "Opruimen?",
+        "restore": "Terughalen?",
+        "discard": "Definitief verwijderen?"
+      },
+      "steps": {
+        "store": "{name} gaat naar de berging",
+        "storeAt": "{name} gaat naar de berging op {to}",
+        "forGood": "{name} wordt definitief verwijderd",
+        "restore": "{name} komt terug naar {to}",
+        "inUse": "{name} is inmiddels in gebruik en blijft",
+        "taken": "Op {to} staat al iets nieuws, dus {name} blijft in de berging",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Buildcache",
+      "untagged": "Image zonder tag",
+      "since": "Opgeborgen op {date}",
+      "done": {
+        "one": "{n} item klaar",
+        "other": "{n} items klaar"
+      },
+      "finds": {
+        "one": "{n} om op te ruimen",
+        "other": "{n} om op te ruimen"
+      },
+      "held": {
+        "one": "{n} in de berging",
+        "other": "{n} in de berging"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

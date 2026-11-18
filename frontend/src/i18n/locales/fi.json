@@ -1671,7 +1671,8 @@
       "map": "Ruudut",
       "types": "Tiedostotyypit",
       "largest": "Suurimmat tiedostot",
-      "drives": "Asemat"
+      "drives": "Asemat",
+      "storeroom": "Varasto"
     },
     "cols": {
       "name": "Nimi",
@@ -1801,6 +1802,56 @@
         "one": "{pools} ja {disks}, joista {n} nukkuu",
         "other": "{pools} ja {disks}, joista {n} nukkuu"
       }
+    },
+    "storeroom": {
+      "about": "Pois siivoaminen ei poista mitään: kansiot odottavat piilotetussa varastokansiossa omassa Sharessaan, mallit CannonCommanderin asetuksissa ja ”Tuo takaisin” palauttaa kaiken paikalleen. Vain ”Poista lopullisesti” poistaa, ja imaget sekä build-välimuisti, jotka voi ladata uudelleen, lähtevät heti.",
+      "noDocker": "CannonCommander löytää sen, mitä mikään ei käytä, kun se pääsee kysymään Dockerilta. Lisää /var/run/docker.sock kohtaan Docker socket kontin asetuksissa.",
+      "readOnly": "Pois siivoaminen vaatii, että kirjoitus Unraidiin on käytössä kontin asetuksissa.",
+      "kinds": {
+        "template": "Mallit ilman konttia",
+        "appdata": "Appdata-kansiot, joita mikään ei käytä",
+        "container": "Pysäytetyt kontit, joita mikään ei hallitse",
+        "network": "Verkot, joita kukaan ei käytä",
+        "volume": "Taltiot, joita kukaan ei pidä",
+        "image": "Imaget ja build-välimuisti"
+      },
+      "forGood": "Ne voi ladata tai rakentaa uudelleen, joten ne poistetaan lopullisesti eikä niitä viedä varastoon.",
+      "nothing": "Ei mitään siivottavaa, kaikki täällä on käytössä",
+      "room": "Varastossa",
+      "roomEmpty": "Varasto on tyhjä",
+      "store": "Siivoa pois",
+      "restore": "Tuo takaisin",
+      "discard": "Poista lopullisesti",
+      "ask": {
+        "store": "Siivoa pois?",
+        "restore": "Tuo takaisin?",
+        "discard": "Poista lopullisesti?"
+      },
+      "steps": {
+        "store": "{name} menee varastoon",
+        "storeAt": "{name} menee varastoon kohteeseen {to}",
+        "forGood": "{name} poistetaan lopullisesti",
+        "restore": "{name} palaa kohteeseen {to}",
+        "inUse": "{name} on nyt käytössä ja jää",
+        "taken": "Kohteessa {to} on jo jotain uutta, joten {name} jää varastoon",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Build-välimuisti",
+      "untagged": "Image ilman tagia",
+      "since": "Varastoitu {date}",
+      "done": {
+        "one": "{n} kohde valmis",
+        "other": "{n} kohdetta valmiina"
+      },
+      "finds": {
+        "one": "{n} siivottavana",
+        "other": "{n} siivottavana"
+      },
+      "held": {
+        "one": "{n} varastossa",
+        "other": "{n} varastossa"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

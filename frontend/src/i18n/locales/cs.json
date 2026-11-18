@@ -1769,7 +1769,8 @@
       "map": "Dlaždice",
       "types": "Typy souborů",
       "largest": "Největší soubory",
-      "drives": "Disky"
+      "drives": "Disky",
+      "storeroom": "Komora"
     },
     "cols": {
       "name": "Název",
@@ -1917,6 +1918,62 @@
         "many": "{pools} a {disks}, z toho {n} spí",
         "other": "{pools} a {disks}, z toho {n} spí"
       }
+    },
+    "storeroom": {
+      "about": "Uklízení nic nemaže: složky čekají ve skryté složce komory na svém vlastním Share, šablony v nastavení CannonCommanderu a „Vrátit zpět“ dá všechno tam, kde to bylo. Maže jen „Trvale odstranit“, a obrazy i mezipaměť sestavení, které lze znovu stáhnout, zmizí hned.",
+      "noDocker": "CannonCommander najde, co už nic nepoužívá, jakmile se může zeptat Dockeru. Přidejte /var/run/docker.sock do pole Docker socket v nastavení kontejneru.",
+      "readOnly": "K uklízení potřebuje CannonCommander zapnutý zápis do Unraid v nastavení kontejneru.",
+      "kinds": {
+        "template": "Šablony bez kontejneru",
+        "appdata": "Složky appdata, které nic nepoužívá",
+        "container": "Zastavené kontejnery, které nic nespravuje",
+        "network": "Sítě, které nikdo nepoužívá",
+        "volume": "Svazky, které nikdo nedrží",
+        "image": "Obrazy a mezipaměť sestavení"
+      },
+      "forGood": "Ty lze znovu stáhnout nebo sestavit, proto se rovnou trvale odstraní, místo aby šly do komory.",
+      "nothing": "Není co uklízet, všechno tady se používá",
+      "room": "V komoře",
+      "roomEmpty": "Komora je prázdná",
+      "store": "Uklidit",
+      "restore": "Vrátit zpět",
+      "discard": "Trvale odstranit",
+      "ask": {
+        "store": "Uklidit?",
+        "restore": "Vrátit zpět?",
+        "discard": "Trvale odstranit?"
+      },
+      "steps": {
+        "store": "{name} jde do komory",
+        "storeAt": "{name} jde do komory v {to}",
+        "forGood": "{name} se trvale odstraní",
+        "restore": "{name} se vrací do {to}",
+        "inUse": "{name} se mezitím používá a zůstává",
+        "taken": "V {to} už je něco nového, proto {name} zůstává v komoře",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Mezipaměť sestavení",
+      "untagged": "Obraz bez tagu",
+      "since": "Uklizeno {date}",
+      "done": {
+        "one": "Hotovo: {n} položka",
+        "few": "Hotovo: {n} položky",
+        "many": "Hotovo: {n} položky",
+        "other": "Hotovo: {n} položek"
+      },
+      "finds": {
+        "one": "{n} k uklizení",
+        "few": "{n} k uklizení",
+        "many": "{n} k uklizení",
+        "other": "{n} k uklizení"
+      },
+      "held": {
+        "one": "{n} v komoře",
+        "few": "{n} v komoře",
+        "many": "{n} v komoře",
+        "other": "{n} v komoře"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

@@ -1671,7 +1671,8 @@
       "map": "Kutucuklar",
       "types": "Dosya türleri",
       "largest": "En büyük dosyalar",
-      "drives": "Sürücüler"
+      "drives": "Sürücüler",
+      "storeroom": "Kiler"
     },
     "cols": {
       "name": "Ad",
@@ -1801,6 +1802,56 @@
         "one": "{pools} ve {disks}, {n} tanesi uyuyor",
         "other": "{pools} ve {disks}, {n} tanesi uyuyor"
       }
+    },
+    "storeroom": {
+      "about": "Kenara koymak hiçbir şeyi silmez: klasörler kendi paylaşımlarındaki gizli bir kiler klasöründe, şablonlar CannonCommander ayarlarında bekler ve “Geri getir” her şeyi eski yerine koyar. Yalnızca “Kalıcı olarak kaldır” siler, yeniden indirilebilen imajlar ve derleme önbelleği ise hemen gider.",
+      "noDocker": "CannonCommander, Docker'a sorabildiği anda artık hiçbir şeyin kullanmadığı şeyleri bulur. Konteyner ayarlarında Docker socket alanına /var/run/docker.sock ekle.",
+      "readOnly": "Kenara koymak için konteyner ayarlarında Unraid'e yazmanın açık olması gerekir.",
+      "kinds": {
+        "template": "Konteyneri olmayan şablonlar",
+        "appdata": "Hiçbir şeyin kullanmadığı appdata klasörleri",
+        "container": "Hiçbir şeyin yönetmediği durdurulmuş konteynerler",
+        "network": "Kimsenin kullanmadığı ağlar",
+        "volume": "Kimsenin tutmadığı birimler",
+        "image": "İmajlar ve derleme önbelleği"
+      },
+      "forGood": "Bunlar yeniden indirilebilir ya da derlenebilir, bu yüzden kilere konmak yerine kalıcı olarak kaldırılır.",
+      "nothing": "Kenara koyacak bir şey yok, buradaki her şey kullanımda",
+      "room": "Kilerde",
+      "roomEmpty": "Kiler boş",
+      "store": "Kenara koy",
+      "restore": "Geri getir",
+      "discard": "Kalıcı olarak kaldır",
+      "ask": {
+        "store": "Kenara konsun mu?",
+        "restore": "Geri getirilsin mi?",
+        "discard": "Kalıcı olarak kaldırılsın mı?"
+      },
+      "steps": {
+        "store": "{name} kilere gidiyor",
+        "storeAt": "{name}, {to} konumundaki kilere gidiyor",
+        "forGood": "{name} kalıcı olarak kaldırılıyor",
+        "restore": "{name}, {to} konumuna geri dönüyor",
+        "inUse": "{name} artık kullanımda ve kalıyor",
+        "taken": "{to} konumunda zaten yeni bir şey var, bu yüzden {name} kilerde kalıyor",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Derleme önbelleği",
+      "untagged": "Etiketsiz imaj",
+      "since": "{date} tarihinde kenara kondu",
+      "done": {
+        "one": "{n} öğe tamam",
+        "other": "{n} öğe tamam"
+      },
+      "finds": {
+        "one": "{n} kenara konabilir",
+        "other": "{n} kenara konabilir"
+      },
+      "held": {
+        "one": "{n} kilerde",
+        "other": "{n} kilerde"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

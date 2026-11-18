@@ -1671,7 +1671,8 @@
       "map": "Fliser",
       "types": "Filtyper",
       "largest": "Største filer",
-      "drives": "Stasjoner"
+      "drives": "Stasjoner",
+      "storeroom": "Bod"
     },
     "cols": {
       "name": "Navn",
@@ -1801,6 +1802,56 @@
         "one": "{pools} og {disks}, {n} av dem sover",
         "other": "{pools} og {disks}, {n} av dem sover"
       }
+    },
+    "storeroom": {
+      "about": "Å rydde bort sletter ingenting: mapper venter i en skjult bodmappe på sitt eget share, maler i innstillingene til CannonCommander, og «Hent tilbake» setter alt der det var. Bare «Fjern for godt» sletter, og images og byggebuffer, som kan lastes ned igjen, forsvinner med en gang.",
+      "noDocker": "CannonCommander finner det ingenting bruker så snart det kan spørre Docker. Legg til /var/run/docker.sock under Docker socket i containerinnstillingene.",
+      "readOnly": "For å rydde bort må skriving til Unraid være slått på i containerinnstillingene.",
+      "kinds": {
+        "template": "Maler uten container",
+        "appdata": "Appdata-mapper ingenting bruker",
+        "container": "Stoppede containere ingenting styrer",
+        "network": "Nettverk ingen bruker",
+        "volume": "Volumer ingen holder",
+        "image": "Images og byggebuffer"
+      },
+      "forGood": "Disse kan lastes ned eller bygges på nytt, så de fjernes for godt i stedet for å settes bort.",
+      "nothing": "Ingenting å rydde bort, alt her er i bruk",
+      "room": "I boden",
+      "roomEmpty": "Boden er tom",
+      "store": "Rydd bort",
+      "restore": "Hent tilbake",
+      "discard": "Fjern for godt",
+      "ask": {
+        "store": "Rydd bort?",
+        "restore": "Hent tilbake?",
+        "discard": "Fjern for godt?"
+      },
+      "steps": {
+        "store": "{name} havner i boden",
+        "storeAt": "{name} havner i boden på {to}",
+        "forGood": "{name} fjernes for godt",
+        "restore": "{name} kommer tilbake til {to}",
+        "inUse": "{name} er i bruk nå og blir",
+        "taken": "Det ligger allerede noe nytt på {to}, så {name} blir i boden",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Byggebuffer",
+      "untagged": "Image uten tagg",
+      "since": "Satt bort {date}",
+      "done": {
+        "one": "{n} element ferdig",
+        "other": "{n} elementer ferdige"
+      },
+      "finds": {
+        "one": "{n} å rydde bort",
+        "other": "{n} å rydde bort"
+      },
+      "held": {
+        "one": "{n} i boden",
+        "other": "{n} i boden"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

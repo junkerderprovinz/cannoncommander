@@ -27,3 +27,19 @@ Spinning disks down and sending Unraid notifications go through a socket and fil
 
 !!! warning
     The emhttpd socket controls the whole array. Only switch this on if you trust everyone with an admin account.
+
+## Storeroom {#storeroom}
+
+**Disk usage > Storeroom** lists what nothing on the server uses any more: templates without a container, appdata folders nothing names, stopped containers nothing manages, networks and anonymous volumes nobody holds, and images no container uses. To find them, CannonCommander has to ask Docker:
+
+1. Edit the container in Unraid.
+2. Add a path that maps `/var/run/docker.sock` to the same path in the container.
+3. To clear things away as well, switch on [Unraid write access](#write).
+4. Apply.
+
+The socket belongs to root and the `docker` group. CannonCommander's user joins that group when the container starts, so nothing else is needed.
+
+Everything goes into the storeroom first, and you can bring it back from there. Only images and the build cache are removed for good, because they can be downloaded or built again. Before anything happens, CannonCommander shows what it will do and asks.
+
+!!! warning
+    The Docker socket controls every container. Only map it if you trust everyone with an admin account.

@@ -1671,7 +1671,8 @@
       "map": "Reitir",
       "types": "Skráategundir",
       "largest": "Stærstu skrárnar",
-      "drives": "Drif"
+      "drives": "Drif",
+      "storeroom": "Geymsla"
     },
     "cols": {
       "name": "Heiti",
@@ -1801,6 +1802,56 @@
         "one": "{pools} og {disks}, {n} þeirra sefur",
         "other": "{pools} og {disks}, {n} þeirra sofa"
       }
+    },
+    "storeroom": {
+      "about": "Að ganga frá eyðir engu: möppur bíða í falinni geymslumöppu á sínu eigin Share, sniðmát í stillingum CannonCommander, og „Sækja aftur“ setur allt þar sem það var. Aðeins „Fjarlægja endanlega“ eyðir, og diskmyndir og byggingarskyndiminni, sem má hlaða niður aftur, fara strax.",
+      "noDocker": "CannonCommander finnur það sem ekkert notar um leið og það getur spurt Docker. Bættu /var/run/docker.sock við undir Docker socket í stillingum gámsins.",
+      "readOnly": "Til að ganga frá þarf að kveikja á skrifum í Unraid í stillingum gámsins.",
+      "kinds": {
+        "template": "Sniðmát án gáms",
+        "appdata": "Appdata-möppur sem ekkert notar",
+        "container": "Stöðvaðir gámar sem ekkert stjórnar",
+        "network": "Net sem enginn notar",
+        "volume": "Gagnasvæði sem enginn heldur í",
+        "image": "Diskmyndir og byggingarskyndiminni"
+      },
+      "forGood": "Það má sækja þetta eða byggja aftur, svo þetta er fjarlægt endanlega í stað þess að fara í geymslu.",
+      "nothing": "Ekkert að ganga frá, allt hér er í notkun",
+      "room": "Í geymslunni",
+      "roomEmpty": "Geymslan er tóm",
+      "store": "Ganga frá",
+      "restore": "Sækja aftur",
+      "discard": "Fjarlægja endanlega",
+      "ask": {
+        "store": "Ganga frá?",
+        "restore": "Sækja aftur?",
+        "discard": "Fjarlægja endanlega?"
+      },
+      "steps": {
+        "store": "{name} fer í geymsluna",
+        "storeAt": "{name} fer í geymsluna á {to}",
+        "forGood": "{name} er fjarlægt endanlega",
+        "restore": "{name} kemur aftur á {to}",
+        "inUse": "{name} er komið í notkun og verður kyrrt",
+        "taken": "Eitthvað nýtt er þegar á {to}, svo {name} verður áfram í geymslunni",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Byggingarskyndiminni",
+      "untagged": "Diskmynd án merkis",
+      "since": "Sett í geymslu {date}",
+      "done": {
+        "one": "{n} atriði klárað",
+        "other": "{n} atriði kláruð"
+      },
+      "finds": {
+        "one": "{n} til að ganga frá",
+        "other": "{n} til að ganga frá"
+      },
+      "held": {
+        "one": "{n} í geymslunni",
+        "other": "{n} í geymslunni"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

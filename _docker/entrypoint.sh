@@ -44,6 +44,23 @@ if [ "$PUID" != 0 ]; then
   if ! cut -d: -f3 /etc/group | grep -qx "$PGID"; then
     echo "cannoncommander:x:$PGID:" >> /etc/group
   fi
+  # Unraid keeps the Docker socket for root and the docker group. The user
+  # joins the socket's group, so the storeroom can ask the engine.
+  if [ -S /var/run/docker.sock ]; then
+    sock_gid="$(stat -c %g /var/run/docker.sock)"
+    if [ "$sock_gid" != 0 ]; then
+      sock_group="$(awk -F: -v g="$sock_gid" '$3 == g { print $1; exit }' /etc/group)"
+      if [ -z "$sock_group" ]; then
+        sock_group=docker-host
+        echo "$sock_group:x:$sock_gid:" >> /etc/group
+      fi
+      user="$(awk -F: -v u="$PUID" '$3 == u { print $1; exit }' /etc/passwd)"
+      case " $(id -nG "$user") " in
+        *" $sock_group "*) ;;
+        *) addgroup "$user" "$sock_group" ;;
+      esac
+    fi
+  fi
   # Only what the server writes itself, never the shares.
   find "$config_dir" \( ! -user "$PUID" -o ! -group "$PGID" \) -exec chown "$PUID:$PGID" {} +
 

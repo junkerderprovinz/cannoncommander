@@ -39,7 +39,7 @@
     "format": "Format",
     "formatTip": "zip kan åbnes på alle systemer uden ekstra program. tar.zst er hurtigst og bevarer rettigheder og ejere. 7z pakker mindst. rar kræver programmet rar på serveren.",
     "level": "Komprimering",
-    "levelTip": "Fotos, video og musik er allerede pakket og bliver næsten ikke mindre. For dem sparer »Ingen««« tid.",
+    "levelTip": "Fotos, video og musik er allerede pakket og bliver næsten ikke mindre. For dem sparer »Ingen« tid.",
     "levels": {
       "0": "Ingen",
       "3": "Hurtig",
@@ -1671,7 +1671,8 @@
       "map": "Felter",
       "types": "Filtyper",
       "largest": "Største filer",
-      "drives": "Drev"
+      "drives": "Drev",
+      "storeroom": "Pulterkammer"
     },
     "cols": {
       "name": "Navn",
@@ -1801,6 +1802,56 @@
         "one": "{pools} og {disks}, {n} af dem sover",
         "other": "{pools} og {disks}, {n} af dem sover"
       }
+    },
+    "storeroom": {
+      "about": "At lægge væk sletter ingenting: mapper venter i en skjult pulterkammermappe på deres eget share, templates i CannonCommanders indstillinger, og »Hent tilbage« sætter alt, hvor det var. Kun »Fjern for altid« sletter, og images og build-cache, som kan hentes igen, forsvinder med det samme.",
+      "noDocker": "CannonCommander finder det, intet bruger, så snart det kan spørge Docker. Tilføj /var/run/docker.sock under Docker socket i containerindstillingerne.",
+      "readOnly": "For at lægge væk skal skrivning til Unraid være slået til i containerindstillingerne.",
+      "kinds": {
+        "template": "Templates uden container",
+        "appdata": "Appdata-mapper, intet bruger",
+        "container": "Stoppede containere, intet styrer",
+        "network": "Netværk, ingen bruger",
+        "volume": "Volumes, ingen holder fast i",
+        "image": "Images og build-cache"
+      },
+      "forGood": "De kan hentes eller bygges igen, så de fjernes for altid i stedet for at blive lagt væk.",
+      "nothing": "Intet at lægge væk, alt her er i brug",
+      "room": "I pulterkammeret",
+      "roomEmpty": "Pulterkammeret er tomt",
+      "store": "Læg væk",
+      "restore": "Hent tilbage",
+      "discard": "Fjern for altid",
+      "ask": {
+        "store": "Læg væk?",
+        "restore": "Hent tilbage?",
+        "discard": "Fjern for altid?"
+      },
+      "steps": {
+        "store": "{name} kommer i pulterkammeret",
+        "storeAt": "{name} kommer i pulterkammeret på {to}",
+        "forGood": "{name} fjernes for altid",
+        "restore": "{name} kommer tilbage til {to}",
+        "inUse": "{name} er i brug nu og bliver",
+        "taken": "Der ligger allerede noget nyt på {to}, så {name} bliver i pulterkammeret",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Build-cache",
+      "untagged": "Image uden tag",
+      "since": "Lagt væk {date}",
+      "done": {
+        "one": "{n} element klaret",
+        "other": "{n} elementer klaret"
+      },
+      "finds": {
+        "one": "{n} at lægge væk",
+        "other": "{n} at lægge væk"
+      },
+      "held": {
+        "one": "{n} i pulterkammeret",
+        "other": "{n} i pulterkammeret"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

@@ -1671,7 +1671,8 @@
       "map": "Mosaico",
       "types": "Tipos de ficheiro",
       "largest": "Ficheiros máis grandes",
-      "drives": "Discos"
+      "drives": "Discos",
+      "storeroom": "Trasteiro"
     },
     "cols": {
       "name": "Nome",
@@ -1801,6 +1802,56 @@
         "one": "{pools} e {disks}, {n} deles dorme",
         "other": "{pools} e {disks}, {n} deles dormen"
       }
+    },
+    "storeroom": {
+      "about": "Apartar non borra nada: os cartafoles agardan nun cartafol de trasteiro oculto no seu propio share, os templates na configuración de CannonCommander, e «Recuperar» devolve todo ao seu sitio. Só «Borrar definitivamente» borra, e as imaxes e a caché de compilación, que se poden descargar de novo, van de inmediato.",
+      "noDocker": "CannonCommander atopa o que xa nada usa en canto pode preguntarlle a Docker. Engade /var/run/docker.sock en Docker socket, na configuración do contedor.",
+      "readOnly": "Para apartar cousas, CannonCommander precisa a escritura en Unraid na configuración do contedor.",
+      "kinds": {
+        "template": "Templates sen contedor",
+        "appdata": "Cartafoles de appdata que nada usa",
+        "container": "Contedores parados que nada xestiona",
+        "network": "Redes que ninguén usa",
+        "volume": "Volumes que ninguén retén",
+        "image": "Imaxes e caché de compilación"
+      },
+      "forGood": "Estes pódense descargar ou compilar de novo, así que se borran definitivamente en vez de apartarse.",
+      "nothing": "Nada que apartar, aquí todo está en uso",
+      "room": "No trasteiro",
+      "roomEmpty": "O trasteiro está baleiro",
+      "store": "Apartar",
+      "restore": "Recuperar",
+      "discard": "Borrar definitivamente",
+      "ask": {
+        "store": "Apartar?",
+        "restore": "Recuperar?",
+        "discard": "Borrar definitivamente?"
+      },
+      "steps": {
+        "store": "{name} vai ao trasteiro",
+        "storeAt": "{name} vai ao trasteiro en {to}",
+        "forGood": "{name} bórrase definitivamente",
+        "restore": "{name} volve a {to}",
+        "inUse": "{name} xa está en uso e queda",
+        "taken": "Xa hai algo novo en {to}, así que {name} queda no trasteiro",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Caché de compilación",
+      "untagged": "Imaxe sen etiqueta",
+      "since": "Apartado o {date}",
+      "done": {
+        "one": "{n} elemento feito",
+        "other": "{n} elementos feitos"
+      },
+      "finds": {
+        "one": "{n} para apartar",
+        "other": "{n} para apartar"
+      },
+      "held": {
+        "one": "{n} no trasteiro",
+        "other": "{n} no trasteiro"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

@@ -1769,7 +1769,8 @@
       "map": "Dlaždice",
       "types": "Typy súborov",
       "largest": "Najväčšie súbory",
-      "drives": "Disky"
+      "drives": "Disky",
+      "storeroom": "Komora"
     },
     "cols": {
       "name": "Názov",
@@ -1917,6 +1918,62 @@
         "many": "{pools} a {disks}, z toho {n} spí",
         "other": "{pools} a {disks}, z toho {n} spí"
       }
+    },
+    "storeroom": {
+      "about": "Upratovanie nič nemaže: priečinky čakajú v skrytom priečinku komory na svojom vlastnom Share, šablóny v nastaveniach CannonCommandera a „Vrátiť späť“ dá všetko tam, kde to bolo. Maže len „Natrvalo odstrániť“, a obrazy aj vyrovnávacia pamäť zostavenia, ktoré sa dajú znova stiahnuť, zmiznú hneď.",
+      "noDocker": "CannonCommander nájde, čo už nič nepoužíva, hneď ako sa môže opýtať Dockera. Pridajte /var/run/docker.sock do poľa Docker socket v nastaveniach kontajnera.",
+      "readOnly": "Na upratovanie potrebuje CannonCommander zapnutý zápis do Unraid v nastaveniach kontajnera.",
+      "kinds": {
+        "template": "Šablóny bez kontajnera",
+        "appdata": "Priečinky appdata, ktoré nič nepoužíva",
+        "container": "Zastavené kontajnery, ktoré nič nespravuje",
+        "network": "Siete, ktoré nikto nepoužíva",
+        "volume": "Zväzky, ktoré nikto nedrží",
+        "image": "Obrazy a vyrovnávacia pamäť zostavenia"
+      },
+      "forGood": "Tie sa dajú znova stiahnuť alebo zostaviť, preto sa rovno natrvalo odstránia, namiesto aby išli do komory.",
+      "nothing": "Nie je čo upratať, všetko tu sa používa",
+      "room": "V komore",
+      "roomEmpty": "Komora je prázdna",
+      "store": "Upratať",
+      "restore": "Vrátiť späť",
+      "discard": "Natrvalo odstrániť",
+      "ask": {
+        "store": "Upratať?",
+        "restore": "Vrátiť späť?",
+        "discard": "Natrvalo odstrániť?"
+      },
+      "steps": {
+        "store": "{name} ide do komory",
+        "storeAt": "{name} ide do komory v {to}",
+        "forGood": "{name} sa natrvalo odstráni",
+        "restore": "{name} sa vracia do {to}",
+        "inUse": "{name} sa medzitým používa a zostáva",
+        "taken": "V {to} už je niečo nové, preto {name} zostáva v komore",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Vyrovnávacia pamäť zostavenia",
+      "untagged": "Obraz bez tagu",
+      "since": "Upratané {date}",
+      "done": {
+        "one": "Hotovo: {n} položka",
+        "few": "Hotovo: {n} položky",
+        "many": "Hotovo: {n} položky",
+        "other": "Hotovo: {n} položiek"
+      },
+      "finds": {
+        "one": "{n} na upratanie",
+        "few": "{n} na upratanie",
+        "many": "{n} na upratanie",
+        "other": "{n} na upratanie"
+      },
+      "held": {
+        "one": "{n} v komore",
+        "few": "{n} v komore",
+        "many": "{n} v komore",
+        "other": "{n} v komore"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

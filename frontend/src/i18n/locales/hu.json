@@ -1671,7 +1671,8 @@
       "map": "Csempék",
       "types": "Fájltípusok",
       "largest": "Legnagyobb fájlok",
-      "drives": "Meghajtók"
+      "drives": "Meghajtók",
+      "storeroom": "Kamra"
     },
     "cols": {
       "name": "Név",
@@ -1801,6 +1802,56 @@
         "one": "{pools} és {disks}, ebből {n} alszik",
         "other": "{pools} és {disks}, ebből {n} alszik"
       }
+    },
+    "storeroom": {
+      "about": "Az elpakolás semmit sem töröl: a mappák egy rejtett kamramappában várnak a saját Share-jükön, a sablonok a CannonCommander beállításaiban, a „Visszahozás” pedig mindent oda tesz vissza, ahol volt. Csak a „Végleges eltávolítás” töröl, a lemezképek és a build gyorsítótár pedig, mivel újra letölthetők, azonnal eltűnnek.",
+      "noDocker": "A CannonCommander megtalálja, amit már semmi sem használ, amint megkérdezheti a Dockert. Adja meg a /var/run/docker.sock útvonalat a Docker socket mezőben a konténer beállításaiban.",
+      "readOnly": "Az elpakoláshoz be kell kapcsolni az Unraidbe írást a konténer beállításaiban.",
+      "kinds": {
+        "template": "Sablonok konténer nélkül",
+        "appdata": "Appdata mappák, amelyeket semmi sem használ",
+        "container": "Leállított konténerek, amelyeket semmi sem kezel",
+        "network": "Hálózatok, amelyeket senki sem használ",
+        "volume": "Kötetek, amelyeket senki sem tart",
+        "image": "Lemezképek és build gyorsítótár"
+      },
+      "forGood": "Ezek újra letölthetők vagy felépíthetők, ezért nem a kamrába kerülnek, hanem véglegesen eltűnnek.",
+      "nothing": "Nincs mit elpakolni, itt minden használatban van",
+      "room": "A kamrában",
+      "roomEmpty": "A kamra üres",
+      "store": "Elpakolás",
+      "restore": "Visszahozás",
+      "discard": "Végleges eltávolítás",
+      "ask": {
+        "store": "Elpakolja?",
+        "restore": "Visszahozza?",
+        "discard": "Véglegesen eltávolítja?"
+      },
+      "steps": {
+        "store": "{name} a kamrába kerül",
+        "storeAt": "{name} a kamrába kerül ide: {to}",
+        "forGood": "{name} véglegesen eltűnik",
+        "restore": "{name} visszakerül ide: {to}",
+        "inUse": "{name} közben használatba került és marad",
+        "taken": "Itt már van valami új: {to}, ezért {name} a kamrában marad",
+        "failed": "{name}: {error}"
+      },
+      "cache": "Build gyorsítótár",
+      "untagged": "Lemezkép címke nélkül",
+      "since": "Elpakolva: {date}",
+      "done": {
+        "one": "{n} elem kész",
+        "other": "{n} elem kész"
+      },
+      "finds": {
+        "one": "{n} elpakolható",
+        "other": "{n} elpakolható"
+      },
+      "held": {
+        "one": "{n} a kamrában",
+        "other": "{n} a kamrában"
+      },
+      "foot": "{finds}, {held}"
     }
   },
   "duplicates": {

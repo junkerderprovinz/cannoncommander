@@ -1622,7 +1622,8 @@
       "map": "タイル",
       "types": "ファイルの種類",
       "largest": "大きいファイル",
-      "drives": "ドライブ"
+      "drives": "ドライブ",
+      "storeroom": "物置"
     },
     "cols": {
       "name": "名前",
@@ -1743,6 +1744,53 @@
       "footAsleep": {
         "other": "{pools} と {disks}、うち {n} 台がスリープ中"
       }
+    },
+    "storeroom": {
+      "about": "片付けても何も削除されず、フォルダーはそれぞれの Share にある隠れた物置フォルダーに、テンプレートは CannonCommander の設定に残り、「戻す」ですべて元の場所に戻ります。削除するのは「完全に削除」だけですが、イメージとビルドキャッシュはまたダウンロードできるので、すぐに消えます。",
+      "noDocker": "CannonCommander は Docker に問い合わせられるようになると、何にも使われていないものを見つけます。コンテナーの設定で Docker socket に /var/run/docker.sock を追加してください。",
+      "readOnly": "片付けるには、コンテナーの設定で Unraid への書き込みをオンにする必要があります。",
+      "kinds": {
+        "template": "コンテナーのないテンプレート",
+        "appdata": "何にも使われていない appdata フォルダー",
+        "container": "何にも管理されていない停止中のコンテナー",
+        "network": "誰も使っていないネットワーク",
+        "volume": "誰も保持していないボリューム",
+        "image": "イメージとビルドキャッシュ"
+      },
+      "forGood": "これらはまたダウンロードやビルドができるので、物置に入れずに完全に削除します。",
+      "nothing": "片付けるものはありません。ここはすべて使用中です",
+      "room": "物置の中",
+      "roomEmpty": "物置は空です",
+      "store": "片付ける",
+      "restore": "戻す",
+      "discard": "完全に削除",
+      "ask": {
+        "store": "片付けますか？",
+        "restore": "戻しますか？",
+        "discard": "完全に削除しますか？"
+      },
+      "steps": {
+        "store": "{name} を物置に入れます",
+        "storeAt": "{name} を {to} の物置に入れます",
+        "forGood": "{name} を完全に削除します",
+        "restore": "{name} を {to} に戻します",
+        "inUse": "{name} は使用中になったので残します",
+        "taken": "{to} にはもう新しいものがあるので、{name} は物置に残します",
+        "failed": "{name}: {error}"
+      },
+      "cache": "ビルドキャッシュ",
+      "untagged": "タグのないイメージ",
+      "since": "{date} に物置へ",
+      "done": {
+        "other": "{n} 件完了"
+      },
+      "finds": {
+        "other": "片付けられるもの {n} 件"
+      },
+      "held": {
+        "other": "物置に {n} 件"
+      },
+      "foot": "{finds}、{held}"
     }
   },
   "duplicates": {
