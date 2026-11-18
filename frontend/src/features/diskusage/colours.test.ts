@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { ACCENTS } from '@glimstone/core';
 import { describe, expect, it } from 'vitest';
-import { AGES, ageKey, dimmed, fillOf, inkOf, legend, typeKey, typeMix, TYPES } from './colours';
+import { ageBase, AGES, ageKey, dimmed, fillOf, inkOf, legend, typeKey, typeMix, TYPES } from './colours';
 
 const MB = 1 << 20;
 const film = { name: 'Klassiker', dir: true, size: 100 * MB, files: 9, dirs: 1, mtime: '', kinds: { video: 90 * MB, img: 6 * MB, text: 4 * MB }, ages: [0, 0, 0, 0, 100 * MB, 0] };
@@ -85,8 +86,31 @@ describe('the colour tokens', () => {
   });
 
   it('ramps the ages from the accent to grey without any blue', () => {
-    expect(token('du-age-0')).toBe('var(--accent)');
+    expect(token('du-age-from')).toBe('var(--accent)');
+    expect(token('du-age-0')).toBe('var(--du-age-from)');
     expect(token(`du-age-${AGES.length - 1}`)).toBe('var(--carbon-surface3)');
     AGES.forEach((_, i) => expect(token(`du-age-${i}`)).not.toMatch(/chart|#|oklch|rgb/));
+  });
+});
+
+describe('the start of the age ramp', () => {
+  it('is the accent unless the accent is blue, then sunflower', () => {
+    const want = { Sunflower: 'accent', Blue: 'warm', Green: 'accent', Red: 'accent', Purple: 'accent', Orange: 'accent', Teal: 'warm', Magenta: 'accent' };
+    expect(Object.fromEntries(ACCENTS.map((a) => [a.name, ageBase(a.hex)]))).toEqual(want);
+  });
+
+  it('takes a picked blue, a grey and a broken value as they come', () => {
+    expect(ageBase('#2f6feb')).toBe('warm');
+    expect(ageBase('#888888')).toBe('accent');
+    expect(ageBase('nonsense')).toBe('accent');
+  });
+
+  it('turns warm in the stylesheet for every theme', () => {
+    const css = readFileSync(join(__dirname, 'diskusage.css'), 'utf8');
+    const warm = css.match(/:root\[data-du-age="warm"\][^{]*\{([^}]*)\}/)?.[1] ?? '';
+    const from = warm.match(/--du-age-from:\s*(#[0-9a-fA-F]{6});/)?.[1];
+    expect(from && ageBase(from)).toBe('accent');
+    expect(warm).toMatch(/--du-age-ink:/);
+    expect(css).toMatch(/:root\[data-du-age="warm"\] \[data-theme\]/);
   });
 });
