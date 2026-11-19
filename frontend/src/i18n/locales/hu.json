@@ -1237,7 +1237,8 @@
       "desktopHintOut": "A CannonCommander programként a számítógépeden, ez a felület egy saját ablakban.",
       "server": "Szerver",
       "serverHint": "A CannonCommander az Unraid szervereden vagy Dockerben, hogy a többi eszközödről is elérd a fájljaidat.",
-      "source": "Forráskód"
+      "source": "Forráskód",
+      "macosSub": "Apple és Intel"
     },
     "app": {
       "updates": "Frissítések",

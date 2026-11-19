@@ -1193,7 +1193,8 @@
       "desktopHintOut": "CannonCommander dưới dạng một chương trình trên máy tính của bạn, với giao diện này trong một cửa sổ riêng.",
       "server": "Máy chủ",
       "serverHint": "CannonCommander trên máy chủ Unraid của bạn hoặc trong Docker, để bạn vào được tệp của mình từ cả các thiết bị khác.",
-      "source": "Mã nguồn"
+      "source": "Mã nguồn",
+      "macosSub": "Apple và Intel"
     },
     "app": {
       "updates": "Cập nhật",

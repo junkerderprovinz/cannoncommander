@@ -1193,7 +1193,8 @@
       "desktopHintOut": "CannonCommander sebagai program pada komputer anda, dengan antara muka ini dalam tetingkapnya sendiri.",
       "server": "Pelayan",
       "serverHint": "CannonCommander pada pelayan Unraid anda atau dalam Docker, supaya anda boleh mencapai fail anda dari peranti lain juga.",
-      "source": "Kod sumber"
+      "source": "Kod sumber",
+      "macosSub": "Apple dan Intel"
     },
     "app": {
       "updates": "Kemas kini",

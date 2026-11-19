@@ -1281,7 +1281,8 @@
       "desktopHintOut": "CannonCommander као програм на твом рачунару, са овим интерфејсом у сопственом прозору.",
       "server": "Сервер",
       "serverHint": "CannonCommander на твом Unraid серверу или у Docker-у, да до својих датотека стигнеш и са других уређаја.",
-      "source": "Изворни код"
+      "source": "Изворни код",
+      "macosSub": "Apple и Intel"
     },
     "app": {
       "updates": "Ажурирања",

@@ -117,6 +117,8 @@ describe('the settings', () => {
       const flatpak = [...document.querySelectorAll('.glim-readme-btn-unit')].find((u) => u.querySelector('.glim-readme-btn-name')?.textContent === 'Flatpak')!;
       expect([...flatpak.classList].sort()).toEqual(['glim-readme-btn-group', 'glim-readme-btn-unit', 'glim-tile-flatpak', 'group']);
       expect([...flatpak.querySelectorAll('a')].map((a) => a.getAttribute('aria-label'))).toEqual(['Flatpak x64', 'Flatpak ARM64']);
+      const macos = [...document.querySelectorAll('.glim-readme-btn-unit')].find((u) => u.querySelector('.glim-readme-btn-name')?.textContent === 'macOS')!;
+      expect(macos.querySelector('a')?.getAttribute('aria-label')).toBe('macOS Apple und Intel');
       const appimage = [...document.querySelectorAll('.glim-readme-btn-unit')].find((u) => u.querySelector('.glim-readme-btn-name')?.textContent === 'AppImage')!;
       expect([...appimage.querySelectorAll('a')].map((a) => a.getAttribute('aria-label'))).toEqual(['AppImage x64', 'AppImage ARM64']);
       expect(document.querySelector('.glim-notch-card')?.textContent).not.toContain('Sobald es die Builds gibt');

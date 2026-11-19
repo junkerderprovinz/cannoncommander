@@ -1281,7 +1281,8 @@
       "desktopHintOut": "CannonCommander kā programma tavā datorā, ar šo saskarni savā logā.",
       "server": "Serveris",
       "serverHint": "CannonCommander tavā Unraid serverī vai Docker, lai savus failus sasniegtu arī no citām ierīcēm.",
-      "source": "Pirmkods"
+      "source": "Pirmkods",
+      "macosSub": "Apple un Intel"
     },
     "app": {
       "updates": "Atjauninājumi",

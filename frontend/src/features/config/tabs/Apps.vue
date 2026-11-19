@@ -26,7 +26,7 @@ const desktop = computed<Build[]>(() => {
       { name: 'Windows', sub: 'x64', href: at('windows-amd64-installer.exe') },
       { name: 'Windows', sub: 'ARM64', href: at('windows-arm64-installer.exe') },
     ] },
-    { brand: 'apple', svg: APPLE_SVG, parts: [{ name: 'macOS', sub: 'Universal', href: at('macos-universal.zip') }] },
+    { brand: 'apple', svg: APPLE_SVG, parts: [{ name: 'macOS', sub: c('builds.macosSub'), href: at('macos-universal.zip') }] },
     { brand: 'linux', svg: LINUX_SVG, parts: [
       { name: 'Linux', sub: 'x64', href: at('linux-amd64-installer') },
       { name: 'Linux', sub: 'ARM64', href: at('linux-arm64-installer') },

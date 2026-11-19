@@ -1702,7 +1702,8 @@
       "desktopHintOut": "CannonCommander programa gisa zure ordenagailuan, interfaze hau bere leihoan duela.",
       "server": "Zerbitzaria",
       "serverHint": "CannonCommander zure Unraid zerbitzarian edo Dockerren, zure fitxategietara beste gailuetatik ere iristeko.",
-      "source": "Iturburu-kodea"
+      "source": "Iturburu-kodea",
+      "macosSub": "Apple eta Intel"
     },
     "app": {
       "updates": "Eguneraketak",

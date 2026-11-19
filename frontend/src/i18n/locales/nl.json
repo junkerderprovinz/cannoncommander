@@ -1237,7 +1237,8 @@
       "desktopHintOut": "CannonCommander als programma op je computer, met deze interface in een eigen venster.",
       "server": "Server",
       "serverHint": "CannonCommander op je Unraid-server of in Docker, zodat je ook vanaf je andere apparaten bij je bestanden kunt.",
-      "source": "Broncode"
+      "source": "Broncode",
+      "macosSub": "Apple en Intel"
     },
     "app": {
       "updates": "Updates",

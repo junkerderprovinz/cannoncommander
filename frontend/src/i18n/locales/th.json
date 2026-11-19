@@ -1193,7 +1193,8 @@
       "desktopHintOut": "CannonCommander ในรูปโปรแกรมบนคอมพิวเตอร์ของคุณ โดยหน้าจอนี้อยู่ในหน้าต่างของตัวเอง",
       "server": "เซิร์ฟเวอร์",
       "serverHint": "CannonCommander บนเซิร์ฟเวอร์ Unraid ของคุณหรือใน Docker เพื่อให้คุณเข้าถึงไฟล์ได้จากอุปกรณ์อื่นด้วย",
-      "source": "ซอร์สโค้ด"
+      "source": "ซอร์สโค้ด",
+      "macosSub": "Apple และ Intel"
     },
     "app": {
       "updates": "อัปเดต",

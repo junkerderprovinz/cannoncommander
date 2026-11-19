@@ -1325,7 +1325,8 @@
       "desktopHintOut": "CannonCommander kaip programa tavo kompiuteryje, su šia sąsaja atskirame lange.",
       "server": "Serveris",
       "serverHint": "CannonCommander tavo Unraid serveryje arba Docker, kad prie savo failų prieitum ir iš kitų įrenginių.",
-      "source": "Pradinis kodas"
+      "source": "Pradinis kodas",
+      "macosSub": "Apple ir Intel"
     },
     "app": {
       "updates": "Atnaujinimai",

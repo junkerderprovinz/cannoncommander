@@ -1325,7 +1325,8 @@
       "desktopHintOut": "CannonCommander kot program na tvojem računalniku, s tem vmesnikom v lastnem oknu.",
       "server": "Strežnik",
       "serverHint": "CannonCommander na tvojem strežniku Unraid ali v Dockerju, da do svojih datotek prideš tudi z drugih naprav.",
-      "source": "Izvorna koda"
+      "source": "Izvorna koda",
+      "macosSub": "Apple in Intel"
     },
     "app": {
       "updates": "Posodobitve",

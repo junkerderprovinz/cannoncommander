@@ -1237,7 +1237,8 @@
       "desktopHintOut": "CannonCommander programmina sinu arvutis, see liides omaette aknas.",
       "server": "Server",
       "serverHint": "CannonCommander sinu Unraidi serveris või Dockeris, et pääseksid oma failidele ligi ka teistest seadmetest.",
-      "source": "Lähtekood"
+      "source": "Lähtekood",
+      "macosSub": "Apple ja Intel"
     },
     "app": {
       "updates": "Värskendused",

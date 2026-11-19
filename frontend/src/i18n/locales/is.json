@@ -1237,7 +1237,8 @@
       "desktopHintOut": "CannonCommander sem forrit á tölvunni þinni, með þetta viðmót í eigin glugga.",
       "server": "Þjónn",
       "serverHint": "CannonCommander á Unraid-þjóninum þínum eða í Docker, svo þú komist í skrárnar þínar líka úr öðrum tækjum.",
-      "source": "Frumkóði"
+      "source": "Frumkóði",
+      "macosSub": "Apple og Intel"
     },
     "app": {
       "updates": "Uppfærslur",

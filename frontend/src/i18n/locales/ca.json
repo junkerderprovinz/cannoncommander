@@ -1281,7 +1281,8 @@
       "desktopHintOut": "CannonCommander com a programa al teu ordinador, amb aquesta interfície en una finestra pròpia.",
       "server": "Servidor",
       "serverHint": "CannonCommander al teu servidor Unraid o a Docker, perquè arribis als teus fitxers també des d'altres dispositius.",
-      "source": "Codi font"
+      "source": "Codi font",
+      "macosSub": "Apple i Intel"
     },
     "app": {
       "updates": "Actualitzacions",
