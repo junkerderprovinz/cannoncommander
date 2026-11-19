@@ -18,6 +18,8 @@ BUTTONS = {
     "linux-arm": RELEASE + "cannoncommander-linux-arm64-installer",
     "flatpak": RELEASE + "cannoncommander-linux-amd64.flatpak",
     "flatpak-arm": RELEASE + "cannoncommander-linux-arm64.flatpak",
+    "appimage": RELEASE + "cannoncommander-linux-amd64.AppImage",
+    "appimage-arm": RELEASE + "cannoncommander-linux-arm64.AppImage",
     "unraid": "https://ca.unraid.net/apps?q=cannoncommander",
     "mos": "https://mos-official.net/apps.html?search=CannonCommander",
     "zimaos": "https://github.com/junkerderprovinz/zimaos-apps#cannoncommander",

@@ -35,6 +35,10 @@ const desktop = computed<Build[]>(() => {
       { name: 'Flatpak', sub: 'x64', href: at('linux-amd64.flatpak') },
       { name: 'Flatpak', sub: 'ARM64', href: at('linux-arm64.flatpak') },
     ] },
+    { brand: 'linux', svg: LINUX_SVG, parts: [
+      { name: 'AppImage', sub: 'x64', href: at('linux-amd64.AppImage') },
+      { name: 'AppImage', sub: 'ARM64', href: at('linux-arm64.AppImage') },
+    ] },
   ];
 });
 const server = computed<Build[]>(() => [
@@ -58,7 +62,7 @@ const cards = computed(() => [
 <template>
   <Card v-for="card in cards" :key="card.title" :title="c(card.title)" :hint="c(card.hint)">
     <div class="glim-readme-btn-rows">
-      <ReadmeButton v-for="b in card.builds" :key="b.brand" :brand="b.brand as ReadmeBrand" :class="b.tile" :parts="b.parts" :mark-class="b.markClass" :soon-label="c('builds.soon')">
+      <ReadmeButton v-for="b in card.builds" :key="b.parts[0].name" :brand="b.brand as ReadmeBrand" :class="b.tile" :parts="b.parts" :mark-class="b.markClass" :soon-label="c('builds.soon')">
         <template #mark><BrandMark :svg="b.svg" /></template>
       </ReadmeButton>
     </div>
