@@ -52,7 +52,7 @@ async function test(r: Remote) {
   tests[r.name] = got.question ? { tone: 'danger', title: c('remotes.notConnected') } : { tone: got.ok ? 'ok' : 'danger', title: testVerdict(got, r.path) };
 }
 const rowText = computed(() => ({ test: c('test'), edit: c('edit'), remove: c('remove') }));
-const ROW_KEYS = { test: 'IconHealth', edit: 'IconPencil', remove: 'IconTrash' };
+const ROW_KEYS = { test: 'IconCheck', edit: 'IconPencil', remove: 'IconTrash' };
 
 // The remote in the window, null for a new one.
 const editing = shallowRef<{ remote: Remote | null } | null>(null);

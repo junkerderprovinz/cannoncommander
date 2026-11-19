@@ -178,7 +178,7 @@ const actions = computed<WindowAction[]>(() => {
   const x = result.value;
   return [
     {
-      label: c('test'), labelKey: null, glyph: glyphComponent(!x ? 'IconHealth' : x.ok ? 'IconCheck' : 'IconClose'),
+      label: c('test'), labelKey: null, glyph: glyphComponent(!x || x.ok ? 'IconCheck' : 'IconClose'),
       tone: x ? (x.ok ? 'ok' : 'danger') : undefined, busy: testing.value, disabled: testing.value,
       title: x ? (x.ok ? c('remotes.connected') : c('remotes.notConnected')) : undefined,
       attrs: { id: 'a-rtest' }, onClick: () => { void test(); return false; },

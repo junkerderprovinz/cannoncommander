@@ -117,7 +117,7 @@ async function test(what: 'office' | 'arrowloop') {
   toast(got ? why(got, what) : c('notSaved'), 'warn');
 }
 const testTone = (s: Test) => (s === 'ok' ? 'ok' : s === 'bad' ? 'danger' : 'neutral');
-const testGlyph = (s: Test) => (s === 'ok' ? 'IconCheck' : s === 'bad' ? 'IconClose' : s === 'busy' ? 'IconRefresh' : 'IconHealth');
+const testGlyph = (s: Test) => (s === 'bad' ? 'IconClose' : s === 'busy' ? 'IconRefresh' : 'IconCheck');
 const testWord = (s: Test) => (s === 'ok' ? c('remotes.connected') : s === 'bad' ? c('integrations.rejected') : s === 'busy' ? c('checking') : c('test'));
 </script>
 

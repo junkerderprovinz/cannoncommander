@@ -1,6 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp, nextTick } from 'vue';
 import type { Remote, RemoteCatalog, RemoteTest } from '@/api/admin';
+import { glyph } from '@/core/glyphs';
 import { addMessages, setLanguage } from '@/i18n';
 import en from '../en.json';
 import { loadMarks } from '../remotes';
@@ -108,6 +109,12 @@ describe('the list of remotes', () => {
     await open();
     expect(row('nextcloud').querySelector('.glim-connection-badges')?.textContent).toContain('Error');
     expect(row('backups').querySelector('.glim-connection-badges')?.textContent).toContain('Unmounted');
+  });
+
+  it('wears the glyph GlimStone gives a test on the test button', async () => {
+    await open();
+    const drawn = (svg: string) => { const t = document.createElement('template'); t.innerHTML = `<svg>${svg}</svg>`; return t.content.querySelector('path')?.getAttribute('d'); };
+    expect(button('nextcloud', 'test').querySelector('.glim-btn-glyph path')?.getAttribute('d')).toBe(drawn(glyph('IconCheck').svg));
   });
 
   it('tests a saved remote under its own name and says in the button how it went', async () => {
