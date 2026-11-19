@@ -143,6 +143,13 @@ func (im image) tags() []string {
 	return out
 }
 
+// manifest is one entry of an image's index in containerd's store. Available
+// is false for what a pull left at the registry, such as other platforms.
+type manifest struct {
+	Kind      string
+	Available bool
+}
+
 type usage struct {
 	Images     []image
 	Volumes    []volume
@@ -177,6 +184,26 @@ func (d *docker) danglingVolumes(ctx context.Context) ([]volume, error) {
 func (d *docker) usage(ctx context.Context) (usage, error) {
 	var out usage
 	return out, d.do(ctx, http.MethodGet, "/system/df", nil, &out)
+}
+
+// containerdStore reports whether the engine keeps its images in containerd,
+// which gives every image a digest, one built here as well.
+func (d *docker) containerdStore(ctx context.Context) (bool, error) {
+	var out struct{ DriverStatus [][2]string }
+	if err := d.do(ctx, http.MethodGet, "/info", nil, &out); err != nil {
+		return false, err
+	}
+	for _, kv := range out.DriverStatus {
+		if kv[0] == "driver-type" && kv[1] == "io.containerd.snapshotter.v1" {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func (d *docker) manifests(ctx context.Context, id string) ([]manifest, error) {
+	var out struct{ Manifests []manifest }
+	return out.Manifests, d.do(ctx, http.MethodGet, "/images/"+url.PathEscape(id)+"/json?manifests=1", nil, &out)
 }
 
 func (d *docker) rename(ctx context.Context, id, name string) error {

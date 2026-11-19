@@ -227,6 +227,23 @@ func TestOnlyAnImageARegistryCanSendAgainGoes(t *testing.T) {
 	}
 }
 
+func TestInContainerdsStoreOnlyAPulledImageGoes(t *testing.T) {
+	b := newBox(t)
+	b.engine.store = "io.containerd.snapshotter.v1"
+	b.engine.df.Images = []image{
+		{ID: "sha256:aa", RepoTags: []string{"redis:7-alpine"}, RepoDigests: []string{"redis@sha256:aa"}, Size: 300},
+		{ID: "sha256:bb", RepoTags: []string{"selbst-gebaut:latest"}, RepoDigests: []string{"selbst-gebaut@sha256:bb"}, Size: 200},
+		{ID: "sha256:cc", RepoTags: []string{"ohne-index:latest"}, RepoDigests: []string{"ohne-index@sha256:cc"}, Size: 100},
+	}
+	b.engine.manifests = map[string][]manifest{
+		"sha256:aa": {{Kind: "image", Available: true}, {Kind: "image"}, {Kind: "attestation"}},
+		"sha256:bb": {{Kind: "image", Available: true}, {Kind: "attestation", Available: true}},
+	}
+	if got := found(b.scan(), "image"); !slices.Equal(got, []string{"redis:7-alpine"}) {
+		t.Errorf("unused images = %v", got)
+	}
+}
+
 func TestAStackIsOrphanedOnlyWhenNoContainerBelongsToIt(t *testing.T) {
 	b := newBox(t)
 	b.stack("web", "services:\n  app:\n    image: nginx\n", 90*day)

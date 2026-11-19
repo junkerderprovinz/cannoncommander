@@ -20,7 +20,11 @@ type engine struct {
 	networks   []network
 	volumes    []volume
 	df         usage
-	changes    []string
+	// store is the engine's driver-type, io.containerd.snapshotter.v1 for
+	// containerd's image store.
+	store     string
+	manifests map[string][]manifest
+	changes   []string
 }
 
 func (e *engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -45,6 +49,10 @@ func (e *engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		reply(map[string]any{"Volumes": e.volumes})
 	case r.Method == http.MethodGet && p == "/system/df":
 		reply(e.df)
+	case r.Method == http.MethodGet && p == "/info":
+		reply(map[string]any{"DriverStatus": [][2]string{{"driver-type", e.store}}})
+	case r.Method == http.MethodGet && strings.HasPrefix(p, "/images/") && strings.HasSuffix(p, "/json"):
+		reply(map[string]any{"Manifests": e.manifests[strings.TrimSuffix(strings.TrimPrefix(p, "/images/"), "/json")]})
 	case r.Method == http.MethodPost && strings.HasSuffix(p, "/rename"):
 		id, name := strings.TrimSuffix(strings.TrimPrefix(p, "/containers/"), "/rename"), r.URL.Query().Get("name")
 		for i, c := range e.containers {

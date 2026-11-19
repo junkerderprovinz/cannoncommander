@@ -8,6 +8,7 @@ import (
 	"cmp"
 	"context"
 	"encoding/xml"
+	"errors"
 	"io/fs"
 	"os"
 	"path"
@@ -95,6 +96,10 @@ type world struct {
 	compose string
 	room    []Entry
 	held    map[string]bool
+	// pulled holds the images a registry sent, where a digest does not tell:
+	// in containerd's store only a pull leaves part of an index at the
+	// registry. It is nil for the classic store.
+	pulled map[string]bool
 }
 
 type template struct {
@@ -135,6 +140,9 @@ func (s *Service) look(ctx context.Context, room []Entry) (*world, error) {
 		return nil, err
 	}
 	if w.usage, err = s.docker.usage(ctx); err != nil {
+		return nil, err
+	}
+	if w.pulled, err = s.pulled(ctx, w.usage.Images); err != nil {
 		return nil, err
 	}
 	if w.templates, err = readTemplates(s.cfg.Templates); err != nil {
@@ -518,12 +526,35 @@ func leftoverVolumes(w *world) []Find {
 	return byName(out)
 }
 
+// pulled asks containerd's store which unused images came from a registry,
+// and returns nil for the classic store.
+func (s *Service) pulled(ctx context.Context, images []image) (map[string]bool, error) {
+	if ok, err := s.docker.containerdStore(ctx); err != nil || !ok {
+		return nil, err
+	}
+	out := map[string]bool{}
+	for _, im := range images {
+		if im.Containers != 0 || len(im.RepoDigests) == 0 {
+			continue
+		}
+		ms, err := s.docker.manifests(ctx, im.ID)
+		if errors.Is(err, errNotFound) {
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		out[im.ID] = slices.ContainsFunc(ms, func(m manifest) bool { return !m.Available })
+	}
+	return out, nil
+}
+
 // unusedImages are images no container uses that a registry can send
 // again. One without a digest was built or loaded here.
 func unusedImages(w *world) []Find {
 	var out []Find
 	for _, im := range w.usage.Images {
-		if im.Containers != 0 || len(im.RepoDigests) == 0 {
+		if im.Containers != 0 || len(im.RepoDigests) == 0 || (w.pulled != nil && !w.pulled[im.ID]) {
 			continue
 		}
 		name := ""
