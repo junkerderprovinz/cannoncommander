@@ -17,7 +17,7 @@ The server runs as `nobody` and keeps four capabilities of root. The Unraid temp
 
 - `CHOWN` and `FOWNER` let **Set permissions the Unraid way** hand files to `nobody:users`.
 - `DAC_READ_SEARCH` reads files that only root may read, such as the share settings in `/boot/config`.
-- `DAC_OVERRIDE` writes where only root may write, such as Unraid's notification folder.
+- `DAC_OVERRIDE` writes where only root may write, such as Unraid's notification folder and the folders on the flash the [storeroom](unraid.md#storeroom) clears away from.
 
 The file manager's own [users](../access/users.md) and [rules](../access/rules.md) still decide what each person sees and changes.
 

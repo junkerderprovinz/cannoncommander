@@ -34,7 +34,7 @@ Spinning disks down and sending Unraid notifications go through a socket and fil
 
 1. Edit the container in Unraid.
 2. Add a path that maps `/var/run/docker.sock` to the same path in the container.
-3. To clear things away as well, switch on [Unraid write access](#write).
+3. To clear things away as well, switch on [Unraid write access](#write). For templates and compose stacks, also fill in the paths **Docker templates** and **Compose stacks**: they make just these two folders writable, and the rest of `/boot/config` stays read-only.
 4. Apply.
 
 The socket belongs to root and the `docker` group. CannonCommander's user joins that group when the container starts, so nothing else is needed.
