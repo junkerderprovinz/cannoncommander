@@ -13,6 +13,7 @@ import { go as goView, view } from '@/core/views';
 import { Columns } from '@/files/columns';
 import { type Entry, groupEntries, nameMatcher, shown, sortEntries, toEntry } from '@/files/entries';
 import { recordVisit } from '@/files/frequent';
+import { nameTellsNothing, textInside } from '@/files/sniff';
 import { inArchive, join, parent, split } from '@/files/paths';
 import { viewOf } from '@/files/views';
 import type { Zoom } from '@/files/zoom';
@@ -276,7 +277,8 @@ export const usePanels = defineStore('panels', () => {
     // Only the desktop app has the launcher, and a file inside an archive has no place on disk to hand over.
     if (how === 'system' && actions.launch && !inArchive(tab.path)) return run('launch', join(k.at || tab.path, k.name!));
     if (how === 'download') return run('download');
-    if (how === 'open' && ['text', 'code'].includes(k.kind!) && actions.edit) return run('edit');
+    const text = () => ['text', 'code'].includes(k.kind!) || (nameTellsNothing({ name: k.name! }) && textInside(join(k.at || tab.path, k.name!), k));
+    if (how === 'open' && actions.edit && (await text())) return run('edit');
     return run('view');
   }
 

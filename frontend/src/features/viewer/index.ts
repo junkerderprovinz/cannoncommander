@@ -10,7 +10,7 @@ import { byName, t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
 import { office, type OfficeSetup, rawUrl } from './content';
-import { editable, type FileNode, joinPath, viewKind } from './kinds';
+import { contentKind, EDITED, type FileNode, joinPath, unsure, type ViewKind, viewKind } from './kinds';
 import OfficePage from './OfficePage.vue';
 import ViewerBody from './ViewerBody.vue';
 
@@ -54,13 +54,17 @@ export function openInOffice(path: string) {
 }
 
 export function openViewer(node: FileNode, folder: string) {
-  const kind = viewKind(node);
+  if (unsure(node)) return contentKind(node, folder).then((kind) => viewer(node, folder, kind));
+  return viewer(node, folder, viewKind(node));
+}
+
+function viewer(node: FileNode, folder: string, kind: ViewKind) {
   const sibs = ['img', 'audio'].includes(kind) ? siblings(folder, node) : [node];
   if (!sibs.some((s) => s.name === node.name)) sibs.unshift(node);
   let cur = node;
   const inArch = inArchive(folder);
   const save: FootButton = { label: t('viewer.download'), g: 'IconDownload', run: () => { download(cur, folder); return false; } };
-  const primary: FootButton = editable(node) && !inArch && hooks.edit
+  const primary: FootButton = EDITED.includes(kind) && !inArch && hooks.edit
     ? { label: t('viewer.edit'), g: 'IconPencil', primary: true, run: () => { setTimeout(() => hooks.edit?.(cur, folder), 0); } }
     : kind === 'office' && suite.kind !== 'none'
       ? { label: t('viewer.openIn', { name: officeName() }), g: 'IconExternalLink', primary: true, run: () => { openInOffice(joinPath(folder, cur.name)); return false; } }

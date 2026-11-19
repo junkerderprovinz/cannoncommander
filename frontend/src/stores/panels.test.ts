@@ -234,3 +234,28 @@ describe('a folder that is not there', () => {
     delete actions.launch;
   });
 });
+
+describe('opening a file whose name tells nothing', () => {
+  const opened = async (status: number) => {
+    const F = await panels();
+    await F.go('/mnt/user/downloads');
+    prefs.dblclick = 'open';
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('{"text":""}', { status })));
+    const edit = vi.fn(), view = vi.fn();
+    action('edit', { label: 'edit', run: edit });
+    action('view', { label: 'view', run: view });
+    await F.open(0, { name: 'nfo', dir: false, kind: 'file', size: 59, time: status });
+    vi.unstubAllGlobals();
+    delete actions.edit;
+    delete actions.view;
+    return edit.mock.calls.length ? 'edit' : view.mock.calls.length ? 'view' : '';
+  };
+
+  it('takes it to the editor when it holds text, as a text file goes', async () => {
+    expect(await opened(200)).toBe('edit');
+  });
+
+  it('shows it in the viewer when it holds no text', async () => {
+    expect(await opened(415)).toBe('view');
+  });
+});

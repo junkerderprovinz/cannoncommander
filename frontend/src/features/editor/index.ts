@@ -11,7 +11,8 @@ import { go, view } from '@/core/views';
 import { type WinEntry, win } from '@/core/windows';
 import { current, hooks, officeName, openInOffice } from '@/features/viewer';
 import { office, touch } from '@/features/viewer/content';
-import { editable, type FileNode, joinPath, viewKind } from '@/features/viewer/kinds';
+import { editable, type FileNode, joinPath, unsure, viewKind } from '@/features/viewer/kinds';
+import { textInside } from '@/files/sniff';
 import { t, tl } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
@@ -79,7 +80,7 @@ export default function setup() {
       toast(t('editor.officeOpens', { suite: officeName(suite), name: c.node.name }));
       return openInOffice(joinPath(c.folder, c.node.name));
     }
-    if (!editable(c.node)) return toast(t('editor.viewOnly'), 'warn');
+    if (!editable(c.node) && !(unsure(c.node) && (await textInside(joinPath(c.folder, c.node.name), c.node)))) return toast(t('editor.viewOnly'), 'warn');
     const marked = usePanels().sel().filter((k) => !k.dir && !k.up && editable(k) && (k.at || usePanels().T().path) === c.folder);
     void edit(c.node, c.folder, marked);
   } });

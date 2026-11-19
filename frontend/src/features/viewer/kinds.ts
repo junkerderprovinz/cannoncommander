@@ -1,5 +1,6 @@
 // Which renderer a file gets, and the small helpers every renderer shares.
 import formats from '@/core/formats.json';
+import { nameTellsNothing, textInside } from '@/files/sniff';
 import { plural as count, t } from '@/i18n';
 
 export type ViewKind = 'dir' | 'img' | 'video' | 'audio' | 'pdf' | 'office' | 'md' | 'text' | 'code' | 'arch' | 'disk' | 'epub' | 'model' | 'file';
@@ -50,7 +51,14 @@ export function viewKind(n: { name: string; dir?: boolean }): ViewKind {
   return 'file';
 }
 
-export const editable = (n: { name: string; dir?: boolean }) => !n.dir && ['text', 'code', 'md'].includes(viewKind(n));
+export const EDITED: ViewKind[] = ['text', 'code', 'md'];
+export const editable = (n: { name: string; dir?: boolean }) => !n.dir && EDITED.includes(viewKind(n));
+
+// A file whose name tells nothing shows as text when it holds text, and in the hex view otherwise.
+export const unsure = (n: { name: string; dir?: boolean }) => viewKind(n) === 'file' && nameTellsNothing(n);
+export async function contentKind(n: FileNode, folder: string): Promise<ViewKind> {
+  return unsure(n) && (await textInside(joinPath(folder, n.name), n)) ? 'text' : viewKind(n);
+}
 
 // Browsers draw these themselves; everything else in the picture group comes through the server's thumbnailer.
 const DRAWABLE = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'bmp', 'ico'];

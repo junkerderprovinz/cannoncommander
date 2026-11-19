@@ -231,6 +231,34 @@ func TestTextRefusesBinaryFiles(t *testing.T) {
 	}
 }
 
+func TestTextRefusesBinaryWithoutNullBytes(t *testing.T) {
+	f := newFixture(t)
+	put(t, filepath.Join(f.share, "downloads", "objekt"), []byte{0x78, 0x9C, 0x4B, 0xCA, 0x01, 0x02, 0x1F, 0x8B, 0x03, 0x05, 0x06, 0x11, 'a', 'b', 0x12, 0x7F})
+	if rec := f.get(t, "jdp", "/fs/text", "/mnt/user/downloads/objekt"); rec.Code != http.StatusUnsupportedMediaType {
+		t.Fatalf("binary without null bytes: %d", rec.Code)
+	}
+}
+
+func TestTextReadsAFileWithoutExtension(t *testing.T) {
+	f := newFixture(t)
+	cases := []struct {
+		encoding, text string
+		data           []byte
+	}{
+		{"utf-8", "Citizen Vigilante (2026)\nRegie: Jürgen\n", []byte("Citizen Vigilante (2026)\nRegie: Jürgen\n")},
+		{"utf-8-bom", "Grüße", append([]byte{0xEF, 0xBB, 0xBF}, "Grüße"...)},
+		{"windows-1252", "Grüße", []byte{'G', 'r', 0xFC, 0xDF, 'e'}},
+		{"ascii", "\x1b[1mfett\x1b[0m\f\tSeite 2\n", []byte("\x1b[1mfett\x1b[0m\f\tSeite 2\n")},
+	}
+	for _, c := range cases {
+		put(t, filepath.Join(f.share, "filme", "nfo"), c.data)
+		got := decode[Text](t, f.get(t, "jdp", "/fs/text", "/mnt/user/filme/nfo"))
+		if got.Encoding != c.encoding || got.Text != c.text {
+			t.Errorf("%s = %+v", c.encoding, got)
+		}
+	}
+}
+
 func TestHexReturnsTheAskedBytes(t *testing.T) {
 	f := newFixture(t)
 	data := bytes.Repeat([]byte{0xDE, 0xAD, 0xBE, 0xEF}, 3)

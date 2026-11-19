@@ -216,7 +216,7 @@ func decodeText(buf []byte, truncated bool) (encoding, text string, err error) {
 	case bytes.HasPrefix(buf, []byte{0xFE, 0xFF}):
 		return decodeUTF16("utf-16be", unicode.BigEndian, buf, truncated)
 	}
-	if bytes.IndexByte(buf[:min(len(buf), 8000)], 0) >= 0 {
+	if head := buf[:min(len(buf), 8000)]; bytes.IndexByte(head, 0) >= 0 || controls(head)*20 > len(head) {
 		return "", "", errBinary()
 	}
 	cut := trimRune(buf, truncated)
@@ -233,6 +233,18 @@ func decodeText(buf []byte, truncated bool) (encoding, text string, err error) {
 		return "", "", errBinary()
 	}
 	return "windows-1252", string(out), nil
+}
+
+// controls counts the bytes that no text has, which leaves out tab, the line
+// and page breaks, backspace and the escape of terminal colours.
+func controls(b []byte) int {
+	n := 0
+	for _, c := range b {
+		if (c < 0x20 && !strings.ContainsRune("\t\n\v\f\r\b\x1b", rune(c))) || c == 0x7F {
+			n++
+		}
+	}
+	return n
 }
 
 func decodeUTF16(name string, order unicode.Endianness, buf []byte, truncated bool) (string, string, error) {

@@ -1,12 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import vm from 'node:vm';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { addMessages, setLanguage } from '@/i18n';
 import de from './de.json';
 import en from './en.json';
 import { hexRows, kindOfBytes } from './hex';
-import { editable, filmOf, filmTitle, fmtDur, hash, langOf, plural, rng, viewKind } from './kinds';
+import { contentKind, editable, filmOf, filmTitle, fmtDur, hash, langOf, plural, rng, viewKind } from './kinds';
 import { highlight, md } from './markdown';
 import { cueAt, parseCues, subsFor } from './renderers/subs';
 
@@ -156,5 +156,28 @@ describe('the hex view', () => {
     expect(kindOfBytes(new TextEncoder().encode('SQLite format 3\0'))).toBe('sqlite');
     expect(kindOfBytes(Uint8Array.of(0x7f, 0x45, 0x4c, 0x46, 2))).toBe('program');
     expect(kindOfBytes(Uint8Array.of(1, 2, 3))).toBe('binary');
+  });
+});
+
+describe('a file whose name tells nothing', () => {
+  const kindWith = async (status: number, name = 'nfo') => {
+    const fetch = vi.fn(async () => new Response('{"text":""}', { status }));
+    vi.stubGlobal('fetch', fetch);
+    const kind = await contentKind({ name, size: 59, time: status }, '/mnt/user/medien/filme/Citizen Vigilante');
+    vi.unstubAllGlobals();
+    return [kind, fetch.mock.calls.length];
+  };
+
+  it('gets the text view when it holds text', async () => {
+    expect(await kindWith(200)).toEqual(['text', 1]);
+  });
+
+  it('keeps the hex view when it holds none', async () => {
+    expect(await kindWith(415)).toEqual(['file', 1]);
+  });
+
+  it('is not looked into when its extension tells', async () => {
+    expect(await kindWith(200, 'film.nfo')).toEqual(['text', 0]);
+    expect(await kindWith(200, 'film.mkv')).toEqual(['video', 0]);
   });
 });
