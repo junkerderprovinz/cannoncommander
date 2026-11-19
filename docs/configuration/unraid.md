@@ -30,7 +30,7 @@ Spinning disks down and sending Unraid notifications go through a socket and fil
 
 ## Storeroom {#storeroom}
 
-**Disk usage > Storeroom** lists what nothing on the server uses any more: templates without a container, appdata folders nothing names, stopped containers nothing manages, networks and anonymous volumes nobody holds, and images no container uses. To find them, CannonCommander has to ask Docker:
+**Disk usage > Storeroom** lists what nothing on the server uses any more: templates without a container, compose stacks no container belongs to, appdata folders nothing names, stopped containers nothing manages, networks and anonymous volumes nobody holds, and images no container uses that can be downloaded again. To find them, CannonCommander has to ask Docker:
 
 1. Edit the container in Unraid.
 2. Add a path that maps `/var/run/docker.sock` to the same path in the container.
@@ -38,6 +38,8 @@ Spinning disks down and sending Unraid notifications go through a socket and fil
 4. Apply.
 
 The socket belongs to root and the `docker` group. CannonCommander's user joins that group when the container starts, so nothing else is needed.
+
+When in doubt, a folder stays off the list. It only shows up when no container mounts it, no template, stack or plugin mentions it, no container, template or stack has its name, and it has not changed for 30 days. A stack only counts as unused when no container belongs to it, running or stopped.
 
 Everything goes into the storeroom first, and you can bring it back from there. Only images and the build cache are removed for good, because they can be downloaded or built again. Before anything happens, CannonCommander shows what it will do and asks.
 
