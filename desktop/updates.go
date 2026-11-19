@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/junkerderprovinz/cannoncommander/backend/cmd"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/appimage"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/flatpak"
 	"github.com/junkerderprovinz/cannoncommander/desktop/update"
 )
@@ -42,19 +43,20 @@ type updater struct {
 }
 
 func newUpdater(logger *log.Logger) *updater {
-	return &updater{
-		log: logger,
-		u: &update.Updater{
-			Repo:    update.Repo,
-			Version: cmd.Version(),
-			Assets:  update.Assets,
-			API:     updateAPI,
-			// Long enough for the zip on a slow line, short enough that a
-			// connection that stalls does not hold up every later check.
-			Client: &http.Client{Timeout: 30 * time.Minute},
-			Logf:   logger.Printf,
-		},
+	u := &update.Updater{
+		Repo:    update.Repo,
+		Version: cmd.Version(),
+		Assets:  update.Assets,
+		API:     updateAPI,
+		// Long enough for the zip on a slow line, short enough that a
+		// connection that stalls does not hold up every later check.
+		Client: &http.Client{Timeout: 30 * time.Minute},
+		Logf:   logger.Printf,
 	}
+	if image := appimage.Path(); image != "" {
+		u.ForAppImage(image)
+	}
+	return &updater{log: logger, u: u}
 }
 
 // openUpdateLog appends to the log at path, since a windowed program on

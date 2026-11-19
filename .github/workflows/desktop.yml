@@ -51,6 +51,17 @@ jobs:
             platform: linux/arm64
             slug: linux-arm64
             args: "--arch arm64 --installer"
+          # On the oldest Ubuntu it is meant to start on: the AppImage carries
+          # GTK and WebKitGTK but takes glibc from the system, and a program
+          # linked against a newer glibc does not start on an older one.
+          - os: ubuntu-22.04
+            platform: linux/amd64
+            slug: linux-amd64-appimage
+            args: "--arch amd64 --appimage"
+          - os: ubuntu-22.04-arm
+            platform: linux/arm64
+            slug: linux-arm64-appimage
+            args: "--arch arm64 --appimage"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 40
     steps:
@@ -114,7 +125,7 @@ jobs:
 
       # Builds the interface, has Wails write the manifest, icons, version
       # resource and Info.plist, and compiles; on Windows and Linux it also
-      # makes the installer.
+      # makes the installer, or on Linux the AppImage.
       - name: Build
         run: node scripts/desktop.mjs ${{ matrix.args }}
 
@@ -185,7 +196,7 @@ jobs:
       # and -y keeps symlinks inside the .app. On Windows the zip is only what
       # the installed copy updates from; people download the installer.
       - name: Zip the bundle
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && !contains(matrix.args, '--appimage')
         shell: bash
         run: |
           cd desktop/build/bin
@@ -193,6 +204,15 @@ jobs:
           if [ -d ../installer ]; then
             cp ../installer/CannonCommander-*-installer "$GITHUB_WORKSPACE/cannoncommander-${{ matrix.slug }}-installer"
           fi
+      # The AppImage is the download and the update alike, so it goes up as
+      # it is, under its release name; release.yml gives it back its execute
+      # bit.
+      - name: Name the AppImage
+        if: contains(matrix.args, '--appimage')
+        shell: bash
+        run: |
+          slug="${{ matrix.slug }}"
+          cp desktop/build/bin/*.AppImage "$GITHUB_WORKSPACE/cannoncommander-${slug%-appimage}.AppImage"
       - name: Zip the bundle
         if: runner.os == 'Windows'
         shell: pwsh
@@ -206,6 +226,7 @@ jobs:
           path: |
             cannoncommander-${{ matrix.slug }}.zip
             cannoncommander-${{ matrix.slug }}-installer*
+            cannoncommander-*.AppImage
           if-no-files-found: error
 
   # The helper programs the app fetches beside itself, one zip per platform,

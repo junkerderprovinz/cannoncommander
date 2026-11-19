@@ -237,7 +237,7 @@ func (s *shell) Restart() {
 // startAgain starts this program anew, which waits for this process to end
 // before it takes the lock, the database and the port.
 func startAgain() error {
-	exe, err := os.Executable()
+	exe, err := executable()
 	if err != nil {
 		return err
 	}

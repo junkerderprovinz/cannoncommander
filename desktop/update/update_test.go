@@ -360,7 +360,7 @@ func TestLookupSumReadsSha256sumOutput(t *testing.T) {
 }
 
 // An asset desktop.yml does not build is an update that never downloads, and a
-// bundle it builds without an entry here is one no installed copy updates to.
+// bundle or AppImage it builds without an entry here is one no copy updates to.
 func TestAssetsMatchTheDesktopWorkflow(t *testing.T) {
 	yml, err := os.ReadFile(filepath.Join("..", "..", ".github", "workflows", "desktop.yml"))
 	if err != nil {
@@ -373,7 +373,15 @@ func TestAssetsMatchTheDesktopWorkflow(t *testing.T) {
 		t.Fatal("desktop.yml: no platform line followed by a slug line in the matrix")
 	}
 	published := map[string]bool{}
+	images := map[string]bool{}
 	for _, m := range built {
+		if base, ok := strings.CutSuffix(m[2], "-appimage"); ok {
+			images[m[1]] = true
+			if got := AppImages[m[1]]; got != "cannoncommander-"+base+".AppImage" {
+				t.Errorf("desktop.yml builds %s, but AppImages[%q] = %q", m[2], m[1], got)
+			}
+			continue
+		}
 		platform, name := m[1], "cannoncommander-"+m[2]+".zip"
 		published[name] = true
 		targets := []string{platform}
@@ -391,20 +399,32 @@ func TestAssetsMatchTheDesktopWorkflow(t *testing.T) {
 			t.Errorf("Assets maps %s to %s, which desktop.yml does not build", target, name)
 		}
 	}
+	for target := range AppImages {
+		if !images[target] {
+			t.Errorf("AppImages has %s, which desktop.yml does not build", target)
+		}
+	}
 }
 
-// The updater asks for the zip without a version in its name, so the release
-// has to publish it under that name and list it in checksums.txt.
-func TestTheReleasePublishesTheUnversionedZipsWithTheirChecksums(t *testing.T) {
+// The updater asks for the zip and the AppImage without a version in their
+// names, so the release has to publish them under those names and list them in
+// checksums.txt.
+func TestTheReleasePublishesTheUnversionedFilesWithTheirChecksums(t *testing.T) {
 	yml, err := os.ReadFile(filepath.Join("..", "..", ".github", "workflows", "release.yml"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{
+	want := []string{
 		`"dist/cannoncommander-${slug}.zip"`,
 		"sha256sum *.zip",
+		"*.AppImage > " + ChecksumsFile,
+		"dist/*.AppImage",
 		"dist/" + ChecksumsFile,
-	} {
+	}
+	for _, name := range AppImages {
+		want = append(want, "bundles/"+name)
+	}
+	for _, want := range want {
 		if !strings.Contains(string(yml), want) {
 			t.Errorf("release.yml does not contain %s", want)
 		}

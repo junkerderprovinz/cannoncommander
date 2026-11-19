@@ -1,11 +1,13 @@
 // Builds the desktop app for the platform it runs on, the way CI does.
 //
-//     node scripts/desktop.mjs [--arch amd64|arm64] [--installer]
+//     node scripts/desktop.mjs [--arch amd64|arm64] [--installer] [--appimage]
 //
 // Windows gets CannonCommander.exe, macOS CannonCommander.app holding one
 // binary for both architectures, and Linux the bare binary, all in
 // desktop/build/bin. With --installer, Windows and Linux also get their
-// installer in desktop/build/installer, built from desktop/installer.
+// installer in desktop/build/installer, built from desktop/installer. With
+// --appimage, Linux gets an AppImage in desktop/build/bin in place of the bare
+// binary.
 //
 // The interface is built first and embedded from backend/internal/web/embed,
 // like the server build. Wails' generated files (manifest, version resource,
@@ -41,6 +43,7 @@ const option = (name) => {
 const hostArch = process.arch === 'arm64' ? 'arm64' : 'amd64'
 const arch = option('--arch') ?? hostArch
 const installer = args.includes('--installer')
+const appimage = args.includes('--appimage')
 
 /** Runs git and returns its answer, or an empty string when it has none. */
 function git(...gitArgs) {
@@ -105,6 +108,38 @@ function buildInstaller(exe, name, { goos, cgo, tags, ldflags = '' }) {
   } finally {
     rmSync(payload, { recursive: true, force: true })
   }
+}
+
+// buildAppImage packs the program at exe with the GTK and WebKitGTK it links
+// against into desktop/build/bin, through Wails and linuxdeploy, and removes the
+// bare program so the artifact holds the AppImage alone.
+function buildAppImage(exe) {
+  const dir = join(desktop, 'build', 'appimage')
+  rmSync(dir, { recursive: true, force: true })
+  mkdirSync(dir, { recursive: true })
+  const icon = join(dir, 'CannonCommander.png')
+  cpSync(join(desktop, 'build', 'appicon.png'), icon)
+  const entry = join(dir, 'CannonCommander.desktop')
+  writeFileSync(entry, [
+    '[Desktop Entry]',
+    'Type=Application',
+    'Name=CannonCommander',
+    'GenericName=File Manager',
+    'Comment=A two-pane file manager with the keys of a commander',
+    'Exec=CannonCommander %U',
+    'Icon=CannonCommander',
+    'Terminal=false',
+    'Categories=System;FileTools;FileManager;',
+    'Keywords=files;folders;file manager;commander;two panes;krusader;total commander;',
+    'StartupNotify=true',
+    '',
+  ].join('\n'))
+  run('wails3', [
+    'generate', 'appimage', '-binary', exe, '-icon', icon, '-desktopfile', entry,
+    '-outputdir', bin, '-builddir', join(dir, 'build'),
+  ])
+  rmSync(exe)
+  rmSync(dir, { recursive: true, force: true })
 }
 
 // The version resource Wails compiles into the executable, written after
@@ -219,6 +254,9 @@ if (process.platform === 'win32') {
   goBuild(join(bin, 'CannonCommander'), { goos: 'linux', goarch: arch, tags: 'production,mupdf,gtk3' })
   if (installer) {
     buildInstaller(join(bin, 'CannonCommander'), `CannonCommander-${arch}-installer`, { goos: 'linux', cgo: '1', tags: 'gtk3' })
+  }
+  if (appimage) {
+    buildAppImage(join(bin, 'CannonCommander'))
   }
 }
 
