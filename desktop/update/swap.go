@@ -17,12 +17,32 @@ import (
 // Swap unpacks a zip from Fetch beside the program and puts what it holds in
 // place of the program, so the next start runs the new version while this one
 // keeps running from what it started with. The zip holds the program alone at
-// its top level: the executable, or on macOS the .app bundle.
+// its top level: the executable, or on macOS the .app bundle. A release file
+// that is no zip, such as an AppImage, is the program itself.
 func (u *Updater) Swap(download string, rel *Release) error {
 	target, err := u.target()
 	if err != nil {
 		return err
 	}
+	if filepath.Ext(rel.asset) != ".zip" {
+		err = replaceFile(target, download)
+	} else {
+		err = u.unpack(target, download, rel)
+	}
+	if err != nil {
+		return err
+	}
+	u.staged = rel.Version
+	if u.UninstallKey != "" {
+		if err := recordVersion(u.UninstallKey, target, rel.Version); err != nil {
+			u.logf("update: recording version %s for the uninstall entry: %v", rel.Version, err)
+		}
+	}
+	return nil
+}
+
+// unpack puts the program in the zip at download in place of target.
+func (u *Updater) unpack(target, download string, rel *Release) error {
 	tmp, err := os.MkdirTemp(filepath.Dir(target), downloadPrefix(target)+"*")
 	if err != nil {
 		return err
@@ -37,20 +57,9 @@ func (u *Updater) Swap(download string, rel *Release) error {
 		return fmt.Errorf("%s: %w", rel.asset, err)
 	}
 	if bundle {
-		err = replaceBundle(target, fresh, tmp, u.staged != "")
-	} else {
-		err = replaceFile(target, fresh)
+		return replaceBundle(target, fresh, tmp, u.staged != "")
 	}
-	if err != nil {
-		return err
-	}
-	u.staged = rel.Version
-	if u.UninstallKey != "" {
-		if err := recordVersion(u.UninstallKey, target, rel.Version); err != nil {
-			u.logf("update: recording version %s for the uninstall entry: %v", rel.Version, err)
-		}
-	}
-	return nil
+	return replaceFile(target, fresh)
 }
 
 // Cleanup removes what an earlier run left behind: the program an update

@@ -82,9 +82,10 @@ jobs:
 
       # Every file under a name without the version, because
       # /releases/latest/download/ takes an exact name only, and the README
-      # buttons and the desktop app's update ask for these. Each build says its
-      # version itself: the exe's properties, Info and `cannoncommander
-      # version`.
+      # buttons and the desktop app's update ask for these: the zips and the
+      # AppImages (desktop/update, whose tests hold it to these names). Each
+      # build says its version itself: the exe's properties, Info and
+      # `cannoncommander version`.
       - name: Package
         run: |
           set -eu
@@ -100,17 +101,18 @@ jobs:
           cp bundles/cannoncommander-windows-amd64-installer.exe bundles/cannoncommander-windows-arm64-installer.exe dist/
           cp bundles/cannoncommander-linux-amd64-installer bundles/cannoncommander-linux-arm64-installer dist/
           cp bundles/cannoncommander-linux-amd64.flatpak bundles/cannoncommander-linux-arm64.flatpak dist/
-          chmod +x dist/cannoncommander-linux-*-installer
+          cp bundles/cannoncommander-linux-amd64.AppImage bundles/cannoncommander-linux-arm64.AppImage dist/
+          chmod +x dist/cannoncommander-linux-*-installer dist/*.AppImage
           ls -lh dist
 
-      # The desktop app checks the zips it updates to and fetches its modules
-      # from against this list. Run inside dist/ so the entries are bare file
+      # The desktop app checks the zips and AppImages it updates to and the
+      # modules it fetches against this list. Run inside dist/ so the entries are bare file
       # names, which is what both desktop/update and a manual `sha256sum -c`
       # expect.
       - name: Checksums
         run: |
           set -eu
-          (cd dist && sha256sum *.zip *.exe cannoncommander-linux-*-installer *.flatpak > checksums.txt)
+          (cd dist && sha256sum *.zip *.exe cannoncommander-linux-*-installer *.flatpak *.AppImage > checksums.txt)
           cat dist/checksums.txt
 
       # Only from a pushed tag; a dispatched run stops after packaging. The
@@ -122,7 +124,7 @@ jobs:
         if: github.event_name == 'push' && github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash .github/scripts/publish-release.sh dist/*.zip dist/*.exe dist/cannoncommander-linux-*-installer dist/*.flatpak dist/checksums.txt
+        run: bash .github/scripts/publish-release.sh dist/*.zip dist/*.exe dist/cannoncommander-linux-*-installer dist/*.flatpak dist/*.AppImage dist/checksums.txt
 
   # `latest` on the image means the newest released version. It follows the
   # answer publish-release.sh gave for the release's "Latest" badge, so a
