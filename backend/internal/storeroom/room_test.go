@@ -298,6 +298,60 @@ func TestAFolderTheFlashCannotRenameIntoIsCopied(t *testing.T) {
 	}
 }
 
+// acrossMounts makes every rename fail the way it does between two mounts,
+// as between the flash and the config folder in the container.
+func acrossMounts(t *testing.T) {
+	t.Cleanup(func() { rename = os.Rename })
+	rename = func(from, to string) error {
+		return &os.LinkError{Op: "rename", Old: from, New: to, Err: errors.New("invalid cross-device link")}
+	}
+}
+
+func TestAStackMovesAcrossMountsAndComesBackUnchanged(t *testing.T) {
+	acrossMounts(t)
+	b := newBox(t)
+	dir := b.stack("alt", "services:\n  app:\n    image: nginx\n", 90*day, ".env", "TZ=Europe/Vienna\n")
+	steps := b.run("store", find(t, b.scan(), "stack", "alt"))
+	done(t, steps)
+	if exists(dir) || !exists(filepath.Join(steps[0].To, ".env")) {
+		t.Fatalf("after storing: %s %v, held at %s", dir, exists(dir), steps[0].To)
+	}
+	done(t, b.run("restore", b.entry("stack", "alt")))
+	if raw, err := os.ReadFile(filepath.Join(dir, ".env")); err != nil || string(raw) != "TZ=Europe/Vienna\n" || exists(steps[0].To) {
+		t.Fatalf("the stack did not come back whole: %q %v", raw, err)
+	}
+	if got := found(b.scan(), "stack"); !slices.Equal(got, []string{"alt"}) {
+		t.Errorf("the stack came back looking changed: found %v", got)
+	}
+}
+
+func TestATemplateTheFlashKeepsLeavesNoCopyBehind(t *testing.T) {
+	if os.Getuid() == 0 {
+		t.Skip("root deletes what it likes")
+	}
+	acrossMounts(t)
+	b := newBox(t)
+	tpl := b.template("alt", "")
+	ref := find(t, b.scan(), "template", "alt")
+	// A read-only folder keeps the file on Linux, an open one on Windows.
+	if err := os.Chmod(b.cfg.Templates, 0o555); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(b.cfg.Templates, 0o755) })
+	held, err := os.Open(tpl)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer held.Close()
+	steps := b.run("store", ref)
+	if steps[0].Done || steps[0].Problem != "failed" || !exists(tpl) || len(b.scan().Room) != 0 {
+		t.Fatalf("store of a template that cannot leave = %+v", steps[0])
+	}
+	if left, _ := os.ReadDir(filepath.Join(b.cfg.Room, "templates")); len(left) != 0 {
+		t.Errorf("a copy stayed in the storeroom: %v", left)
+	}
+}
+
 func TestTheStoreroomOnlyEmptiesWhatLiesInIt(t *testing.T) {
 	b := newBox(t)
 	b.appdata("verwaist", 200*day)
@@ -309,7 +363,7 @@ func TestTheStoreroomOnlyEmptiesWhatLiesInIt(t *testing.T) {
 		t.Fatal(err)
 	}
 	var file struct{ Entries []map[string]any }
-	if err := json.Unmarshal(raw, &file); err != nil {
+	if err = json.Unmarshal(raw, &file); err != nil {
 		t.Fatal(err)
 	}
 	file.Entries[0]["held"] = outside

@@ -348,6 +348,9 @@ func (s *Service) holds(e Entry) bool {
 	return len(parts) == depth && !slices.ContainsFunc(parts, func(p string) bool { return p == "" || p == "." || p == ".." })
 }
 
+// rename is os.Rename, which tests swap for one that fails as between mounts.
+var rename = os.Rename
+
 func exists(p string) bool {
 	_, err := os.Lstat(p)
 	return err == nil
@@ -362,19 +365,30 @@ func move(from, to string) error {
 	if err := os.MkdirAll(filepath.Dir(to), 0o755); err != nil {
 		return err
 	}
-	if os.Rename(from, to) == nil {
+	if rename(from, to) == nil {
 		return nil
 	}
 	if err := copyAll(from, to); err != nil {
 		os.RemoveAll(to)
 		return err
 	}
-	return os.RemoveAll(from)
+	if err := os.RemoveAll(from); err != nil {
+		// While nothing of from is gone the copy is only in the way, and
+		// once something is, the copy is all that is left of it.
+		if whole(from, to) {
+			os.RemoveAll(to)
+		}
+		return err
+	}
+	return nil
 }
 
-// copyAll copies a file or a whole folder to a path that does not exist yet.
+// copyAll copies a file or a whole folder to a path that does not exist yet,
+// with the times it had, since a stack counts as unused by how long it went
+// unchanged.
 func copyAll(from, to string) error {
-	return filepath.WalkDir(from, func(p string, d fs.DirEntry, err error) error {
+	var made []string
+	err := filepath.WalkDir(from, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -385,12 +399,47 @@ func copyAll(from, to string) error {
 		dst := filepath.Join(to, rel)
 		switch {
 		case d.IsDir():
-			return os.Mkdir(dst, 0o755)
+			err = os.Mkdir(dst, 0o755)
 		case d.Type().IsRegular():
-			return copyFile(p, dst)
+			err = copyFile(p, dst)
+		default:
+			return fmt.Errorf("%s is neither a file nor a folder", p)
 		}
-		return fmt.Errorf("%s is neither a file nor a folder", p)
+		if err != nil {
+			return err
+		}
+		made = append(made, rel)
+		return nil
 	})
+	if err != nil {
+		return err
+	}
+	// Each file written into a folder changed its time, so the times go on last.
+	for _, rel := range made {
+		info, err := os.Stat(filepath.Join(from, rel))
+		if err != nil {
+			return err
+		}
+		if err := os.Chtimes(filepath.Join(to, rel), time.Time{}, info.ModTime()); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// whole reports whether everything copied to to is still at from.
+func whole(from, to string) bool {
+	return filepath.WalkDir(to, func(p string, _ fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(to, p)
+		if err != nil {
+			return err
+		}
+		_, err = os.Lstat(filepath.Join(from, rel))
+		return err
+	}) == nil
 }
 
 func copyFile(from, to string) error {
