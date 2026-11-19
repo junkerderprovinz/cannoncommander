@@ -1921,11 +1921,12 @@
       }
     },
     "storeroom": {
-      "about": "Patraukimas nieko neištrina: aplankai laukia paslėptame sandėliuko aplanke savo Share, šablonai CannonCommander nustatymuose, o „Grąžinti“ viską padeda ten, kur buvo. Ištrina tik „Pašalinti visam laikui“, o atvaizdai ir kūrimo podėlis, kuriuos galima vėl atsisiųsti, dingsta iš karto.",
+      "about": "Patraukimas nieko neištrina: aplankai laukia paslėptame sandėliuko aplanke savo Share, šablonai ir Compose stekai CannonCommander nustatymuose, o „Grąžinti“ viską padeda ten, kur buvo. Ištrina tik „Pašalinti visam laikui“, o atvaizdai ir kūrimo podėlis, kuriuos galima vėl atsisiųsti, dingsta iš karto.",
       "noDocker": "CannonCommander suranda tai, ko niekas nebenaudoja, kai tik gali paklausti Docker. Pridėk /var/run/docker.sock lauke Docker socket konteinerio nustatymuose.",
       "readOnly": "Kad galėtų patraukti, CannonCommander reikia įjungto rašymo į Unraid konteinerio nustatymuose.",
       "kinds": {
         "template": "Šablonai be konteinerio",
+        "stack": "Compose stekai be konteinerio",
         "appdata": "Appdata aplankai, kurių niekas nenaudoja",
         "container": "Sustabdyti konteineriai, kurių niekas nevaldo",
         "network": "Tinklai, kurių niekas nenaudoja",

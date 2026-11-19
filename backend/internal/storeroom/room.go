@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
@@ -195,6 +196,8 @@ func (s *Service) store(ctx context.Context, w *world, finds []Find, r Ref, act 
 	switch f.Kind {
 	case "template":
 		e.Held = filepath.Join(s.cfg.Room, "templates", id+"-"+filepath.Base(f.ID))
+	case "stack":
+		e.Held = filepath.Join(s.cfg.Room, "stacks", id+"-"+filepath.Base(f.ID))
 	case "appdata":
 		e.Held = filepath.Join(s.folders(), id, f.Name)
 	case "container":
@@ -216,7 +219,7 @@ func (s *Service) store(ctx context.Context, w *world, finds []Find, r Ref, act 
 	}
 	var err error
 	switch f.Kind {
-	case "template":
+	case "template", "stack":
 		err = move(f.ID, e.Held)
 	case "appdata":
 		if err = os.MkdirAll(filepath.Dir(e.Held), 0o755); err == nil {
@@ -236,7 +239,7 @@ func (s *Service) store(ctx context.Context, w *world, finds []Find, r Ref, act 
 			err = s.docker.removeNetwork(ctx, f.ID)
 		}
 	case "image":
-		err = s.docker.removeImage(ctx, f.ID)
+		err = s.removeImage(ctx, w, f.ID)
 	case "cache":
 		err = s.docker.pruneBuildCache(ctx)
 	}
@@ -255,7 +258,7 @@ func (s *Service) release(ctx context.Context, op string, e Entry, act bool) (st
 		st.To = e.From
 	}
 	switch e.Kind {
-	case "template", "appdata":
+	case "template", "stack", "appdata":
 		if !s.holds(e) {
 			return failed(st, fmt.Errorf("%s lies outside the storeroom", e.Held)), true
 		}
@@ -273,7 +276,7 @@ func (s *Service) release(ctx context.Context, op string, e Entry, act bool) (st
 	}
 	var err error
 	switch {
-	case op == "restore" && e.Kind == "template":
+	case op == "restore" && (e.Kind == "template" || e.Kind == "stack"):
 		err = move(e.Held, e.From)
 	case op == "restore" && e.Kind == "appdata":
 		if err = os.Rename(e.Held, e.From); err == nil {
@@ -286,6 +289,8 @@ func (s *Service) release(ctx context.Context, op string, e Entry, act bool) (st
 	case op == "restore" && e.Kind == "volume":
 	case e.Kind == "template":
 		err = os.Remove(e.Held)
+	case e.Kind == "stack":
+		err = os.RemoveAll(e.Held)
 	case e.Kind == "appdata":
 		err = os.RemoveAll(filepath.Dir(e.Held))
 	case e.Kind == "container":
@@ -304,12 +309,35 @@ func (s *Service) release(ctx context.Context, op string, e Entry, act bool) (st
 	return st, false
 }
 
-// holds reports whether a template or folder entry waits inside the
+// removeImage takes each name off first when there are several, since the
+// engine refuses to remove an image by its ID that more than one repository
+// names.
+func (s *Service) removeImage(ctx context.Context, w *world, id string) error {
+	for _, im := range w.usage.Images {
+		if im.ID != id || len(im.tags()) < 2 {
+			continue
+		}
+		for _, tag := range im.tags() {
+			if err := s.docker.removeImage(ctx, tag); err != nil && !errors.Is(err, errNotFound) {
+				return err
+			}
+		}
+	}
+	if err := s.docker.removeImage(ctx, id); err != nil && !errors.Is(err, errNotFound) {
+		return err
+	}
+	return nil
+}
+
+// holds reports whether a template, stack or folder entry waits inside the
 // storeroom. The index is a file anyone with the config share can edit, and
 // discarding removes whatever it points at.
 func (s *Service) holds(e Entry) bool {
 	base, depth := filepath.Join(s.cfg.Room, "templates"), 1
-	if e.Kind == "appdata" {
+	switch e.Kind {
+	case "stack":
+		base = filepath.Join(s.cfg.Room, "stacks")
+	case "appdata":
 		base, depth = s.folders(), 2
 	}
 	rel, err := filepath.Rel(base, e.Held)
@@ -320,20 +348,101 @@ func (s *Service) holds(e Entry) bool {
 	return len(parts) == depth && !slices.ContainsFunc(parts, func(p string) bool { return p == "" || p == "." || p == ".." })
 }
 
+// rename is os.Rename, which tests swap for one that fails as between mounts.
+var rename = os.Rename
+
 func exists(p string) bool {
 	_, err := os.Lstat(p)
 	return err == nil
 }
 
-// move renames a file, or copies it where the storeroom lies on another
-// file system than the flash.
+// move renames a file or folder, or copies it where the storeroom lies on
+// another file system than the flash. It never writes over what is at to.
 func move(from, to string) error {
+	if exists(to) {
+		return fmt.Errorf("%s: %w", to, fs.ErrExist)
+	}
 	if err := os.MkdirAll(filepath.Dir(to), 0o755); err != nil {
 		return err
 	}
-	if os.Rename(from, to) == nil {
+	if rename(from, to) == nil {
 		return nil
 	}
+	if err := copyAll(from, to); err != nil {
+		os.RemoveAll(to)
+		return err
+	}
+	if err := os.RemoveAll(from); err != nil {
+		// While nothing of from is gone the copy is only in the way, and
+		// once something is, the copy is all that is left of it.
+		if whole(from, to) {
+			os.RemoveAll(to)
+		}
+		return err
+	}
+	return nil
+}
+
+// copyAll copies a file or a whole folder to a path that does not exist yet,
+// with the times it had, since a stack counts as unused by how long it went
+// unchanged.
+func copyAll(from, to string) error {
+	var made []string
+	err := filepath.WalkDir(from, func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(from, p)
+		if err != nil {
+			return err
+		}
+		dst := filepath.Join(to, rel)
+		switch {
+		case d.IsDir():
+			err = os.Mkdir(dst, 0o755)
+		case d.Type().IsRegular():
+			err = copyFile(p, dst)
+		default:
+			return fmt.Errorf("%s is neither a file nor a folder", p)
+		}
+		if err != nil {
+			return err
+		}
+		made = append(made, rel)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	// Each file written into a folder changed its time, so the times go on last.
+	for _, rel := range made {
+		info, err := os.Stat(filepath.Join(from, rel))
+		if err != nil {
+			return err
+		}
+		if err := os.Chtimes(filepath.Join(to, rel), time.Time{}, info.ModTime()); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// whole reports whether everything copied to to is still at from.
+func whole(from, to string) bool {
+	return filepath.WalkDir(to, func(p string, _ fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(to, p)
+		if err != nil {
+			return err
+		}
+		_, err = os.Lstat(filepath.Join(from, rel))
+		return err
+	}) == nil
+}
+
+func copyFile(from, to string) error {
 	in, err := os.Open(from)
 	if err != nil {
 		return err
@@ -345,12 +454,7 @@ func move(from, to string) error {
 	}
 	if _, err := io.Copy(out, in); err != nil {
 		out.Close()
-		os.Remove(to)
 		return err
 	}
-	if err := out.Close(); err != nil {
-		os.Remove(to)
-		return err
-	}
-	return os.Remove(from)
+	return out.Close()
 }

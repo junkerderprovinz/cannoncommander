@@ -112,6 +112,7 @@ func newBox(t *testing.T) *box {
 	b.cfg = Config{
 		Templates: filepath.Join(root, "boot/config/plugins/dockerMan/templates-user"),
 		Plugins:   filepath.Join(root, "boot/config/plugins"),
+		Stacks:    filepath.Join(root, "boot/config/plugins/compose.manager/projects"),
 		Appdata:   filepath.Join(root, "mnt/user/appdata"),
 		Room:      filepath.Join(root, "config/storeroom"),
 		Write:     true,
@@ -161,6 +162,20 @@ func (b *box) appdata(name string, age time.Duration) string {
 	return dir
 }
 
+// stack makes a compose stack as the compose plugin keeps it on the flash: a
+// folder with its compose file and beside it pairs of file name and content.
+// Without a compose file the stack lives elsewhere, as an indirect one does.
+func (b *box) stack(folder, compose string, age time.Duration, files ...string) string {
+	dir := filepath.Join(b.cfg.Stacks, folder)
+	if compose != "" {
+		b.write(filepath.Join(dir, "docker-compose.yml"), compose, age)
+	}
+	for i := 0; i+1 < len(files); i += 2 {
+		b.write(filepath.Join(dir, files[i]), files[i+1], age)
+	}
+	b.age(dir, age)
+	return dir
+}
 
 func ctr(id, name, state string, age time.Duration, labels map[string]string, mounts ...string) container {
 	c := container{ID: id, Names: []string{"/" + name}, State: state, Created: now.Add(-age).Unix(), Labels: labels}

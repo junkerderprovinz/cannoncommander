@@ -89,6 +89,16 @@ describe('fixture unraid', () => {
     expect((await api('POST', '/storeroom/plan', { op: 'burn', refs: [] })).status).toBe(400);
   });
 
+  it('stores a compose stack whole and brings it back', async () => {
+    const stack = (await api('GET', '/storeroom/scan')).body.finds.find((f: { kind: string }) => f.kind === 'stack');
+    const refs = [{ kind: 'stack', id: stack.id }];
+    expect((await api('POST', '/storeroom/run', { op: 'store', refs })).body.steps[0]).toMatchObject({ done: true, to: expect.stringContaining('/config/storeroom/stacks/') });
+    const held = (await api('GET', '/storeroom/scan')).body.room.find((e: { kind: string }) => e.kind === 'stack');
+    expect(held).toMatchObject({ name: stack.name, from: stack.id });
+    await api('POST', '/storeroom/run', { op: 'restore', refs: [{ id: held.id }] });
+    expect((await api('GET', '/storeroom/scan')).body.finds.some((f: { id: string }) => f.id === stack.id)).toBe(true);
+  });
+
   it('removes images for good instead of storing them', async () => {
     const image = (await api('GET', '/storeroom/scan')).body.finds.find((f: { kind: string }) => f.kind === 'image');
     const steps = (await api('POST', '/storeroom/run', { op: 'store', refs: [{ kind: 'image', id: image.id }] })).body.steps;

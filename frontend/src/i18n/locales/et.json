@@ -1805,11 +1805,12 @@
       }
     },
     "storeroom": {
-      "about": "Ärakoristamine ei kustuta midagi: kaustad ootavad peidetud panipaigakaustas oma Share'il, mallid CannonCommanderi seadetes ja „Too tagasi“ paneb kõik sinna, kus see oli. Kustutab ainult „Eemalda jäädavalt“, tõmmised ja build-vahemälu aga, mida saab uuesti alla laadida, lähevad kohe.",
+      "about": "Ärakoristamine ei kustuta midagi: kaustad ootavad peidetud panipaigakaustas oma Share'il, mallid ja Compose'i stackid CannonCommanderi seadetes ja „Too tagasi“ paneb kõik sinna, kus see oli. Kustutab ainult „Eemalda jäädavalt“, tõmmised ja build-vahemälu aga, mida saab uuesti alla laadida, lähevad kohe.",
       "noDocker": "CannonCommander leiab üles, mida miski ei kasuta, kui ta saab Dockerilt küsida. Lisa /var/run/docker.sock konteineri seadetes välja Docker socket alla.",
       "readOnly": "Ärakoristamiseks peab kirjutamine Unraidi olema konteineri seadetes sisse lülitatud.",
       "kinds": {
         "template": "Mallid ilma konteinerita",
+        "stack": "Compose'i stackid ilma konteinerita",
         "appdata": "Appdata kaustad, mida miski ei kasuta",
         "container": "Peatatud konteinerid, mida miski ei halda",
         "network": "Võrgud, mida keegi ei kasuta",

@@ -1,7 +1,7 @@
 // What the server no longer uses and the storeroom it waits in, as backend/internal/storeroom/openapi.yaml describes it.
 import { call, json } from './client';
 
-export type FindKind = 'template' | 'appdata' | 'container' | 'network' | 'volume' | 'image' | 'cache';
+export type FindKind = 'template' | 'stack' | 'appdata' | 'container' | 'network' | 'volume' | 'image' | 'cache';
 export interface StoreroomFind { kind: FindKind; id: string; name: string; path?: string; size: number; forGood: boolean }
 export interface StoreroomEntry { id: string; kind: Exclude<FindKind, 'image' | 'cache'>; name: string; from: string; held: string; at: string; size: number }
 export interface StoreroomScan { docker: boolean; write: boolean; finds: StoreroomFind[]; room: StoreroomEntry[] }

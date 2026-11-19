@@ -1863,11 +1863,12 @@
       }
     },
     "storeroom": {
-      "about": "Apartar no esborra res: les carpetes esperen en una carpeta de traster oculta a la seva pròpia Share, les plantilles a la configuració del CannonCommander, i «Recupera» ho torna tot al seu lloc. Només «Suprimeix definitivament» esborra, i les imatges i la memòria cau de compilació, que es poden tornar a baixar, se'n van de seguida.",
+      "about": "Apartar no esborra res: les carpetes esperen en una carpeta de traster oculta a la seva pròpia Share, les plantilles i els stacks de Compose a la configuració del CannonCommander, i «Recupera» ho torna tot al seu lloc. Només «Suprimeix definitivament» esborra, i les imatges i la memòria cau de compilació, que es poden tornar a baixar, se'n van de seguida.",
       "noDocker": "El CannonCommander troba el que ja res no fa servir tan bon punt pot preguntar al Docker. Afegiu /var/run/docker.sock a Docker socket, a la configuració del contenidor.",
       "readOnly": "Per apartar coses, el CannonCommander necessita l'escriptura a l'Unraid a la configuració del contenidor.",
       "kinds": {
         "template": "Plantilles sense contenidor",
+        "stack": "Stacks de Compose sense contenidor",
         "appdata": "Carpetes d'appdata que res no fa servir",
         "container": "Contenidors aturats que res no gestiona",
         "network": "Xarxes que ningú no fa servir",

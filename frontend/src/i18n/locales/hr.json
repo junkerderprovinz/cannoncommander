@@ -1863,11 +1863,12 @@
       }
     },
     "storeroom": {
-      "about": "Sklanjanje ništa ne briše: mape čekaju u skrivenoj mapi ostave na svom Shareu, predlošci u postavkama CannonCommandera, a „Vrati“ sve stavlja tamo gdje je bilo. Briše samo „Trajno ukloni“, a slike i predmemorija izgradnje, koje se mogu ponovno preuzeti, odlaze odmah.",
+      "about": "Sklanjanje ništa ne briše: mape čekaju u skrivenoj mapi ostave na svom Shareu, predlošci i Compose stogovi u postavkama CannonCommandera, a „Vrati“ sve stavlja tamo gdje je bilo. Briše samo „Trajno ukloni“, a slike i predmemorija izgradnje, koje se mogu ponovno preuzeti, odlaze odmah.",
       "noDocker": "CannonCommander pronalazi ono što više ništa ne koristi čim može pitati Docker. Dodajte /var/run/docker.sock pod Docker socket u postavkama kontejnera.",
       "readOnly": "Za sklanjanje CannonCommander treba uključeno pisanje u Unraid u postavkama kontejnera.",
       "kinds": {
         "template": "Predlošci bez kontejnera",
+        "stack": "Compose stogovi bez kontejnera",
         "appdata": "Mape appdata koje ništa ne koristi",
         "container": "Zaustavljeni kontejneri kojima ništa ne upravlja",
         "network": "Mreže koje nitko ne koristi",

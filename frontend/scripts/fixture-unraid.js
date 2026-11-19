@@ -117,9 +117,10 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
 
   // The storeroom of a server with a few leftovers. Storing moves a find into the room, bringing back puts it where it
   // was, and images and the build cache go for good.
-  const TPL = '/boot/config/plugins/dockerMan/templates-user', ADATA = '/mnt/user/appdata';
+  const TPL = '/boot/config/plugins/dockerMan/templates-user', STACKS = '/boot/config/plugins/compose.manager/projects', ADATA = '/mnt/user/appdata';
   const leftovers = [
     { kind: 'template', id: TPL + '/my-alte-mediathek.xml', name: 'alte-mediathek', path: TPL + '/my-alte-mediathek.xml', size: 6 * KB },
+    { kind: 'stack', id: STACKS + '/alter-stapel', name: 'Alter Stapel', path: STACKS + '/alter-stapel', size: 3 * KB },
     { kind: 'appdata', id: ADATA + '/altes-spiel', name: 'altes-spiel', path: ADATA + '/altes-spiel', size: 5 * GB },
     { kind: 'container', id: 'c0ffee12ab34', name: 'test-lauf', size: 0 },
     { kind: 'network', id: 'n0a1b2c3d4', name: 'alt-netz', size: 0 },
@@ -132,6 +133,7 @@ export function unraidFixture({ fx, unraid, parity, send, createJob, view, files
   let roomSeq = 0;
   function heldAt(f, id) {
     if (f.kind === 'template') return '/config/storeroom/templates/' + id + '-' + f.id.split('/').pop();
+    if (f.kind === 'stack') return '/config/storeroom/stacks/' + id + '-' + f.id.split('/').pop();
     if (f.kind === 'appdata') return ADATA + '/.storeroom/' + id + '/' + f.name;
     if (f.kind === 'container') return 'storeroom-' + id + '-' + f.name;
     return f.kind === 'network' ? f.name : f.id;

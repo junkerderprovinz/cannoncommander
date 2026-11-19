@@ -1805,11 +1805,12 @@
       }
     },
     "storeroom": {
-      "about": "Az elpakolás semmit sem töröl: a mappák egy rejtett kamramappában várnak a saját Share-jükön, a sablonok a CannonCommander beállításaiban, a „Visszahozás” pedig mindent oda tesz vissza, ahol volt. Csak a „Végleges eltávolítás” töröl, a lemezképek és a build gyorsítótár pedig, mivel újra letölthetők, azonnal eltűnnek.",
+      "about": "Az elpakolás semmit sem töröl: a mappák egy rejtett kamramappában várnak a saját Share-jükön, a sablonok és a Compose stackek a CannonCommander beállításaiban, a „Visszahozás” pedig mindent oda tesz vissza, ahol volt. Csak a „Végleges eltávolítás” töröl, a lemezképek és a build gyorsítótár pedig, mivel újra letölthetők, azonnal eltűnnek.",
       "noDocker": "A CannonCommander megtalálja, amit már semmi sem használ, amint megkérdezheti a Dockert. Adja meg a /var/run/docker.sock útvonalat a Docker socket mezőben a konténer beállításaiban.",
       "readOnly": "Az elpakoláshoz be kell kapcsolni az Unraidbe írást a konténer beállításaiban.",
       "kinds": {
         "template": "Sablonok konténer nélkül",
+        "stack": "Compose stackek konténer nélkül",
         "appdata": "Appdata mappák, amelyeket semmi sem használ",
         "container": "Leállított konténerek, amelyeket semmi sem kezel",
         "network": "Hálózatok, amelyeket senki sem használ",

@@ -5,6 +5,7 @@ import { t } from '@/i18n';
 export type Section = Exclude<FindKind, 'cache'>;
 export const SECTIONS: { id: Section; g: string }[] = [
   { id: 'template', g: 'IconFileDesign' },
+  { id: 'stack', g: 'IconModules' },
   { id: 'appdata', g: 'IconFolder' },
   { id: 'container', g: 'IconContainers' },
   { id: 'network', g: 'IconNetwork' },
@@ -32,5 +33,5 @@ export function stepLine(op: StoreroomOp, s: StoreroomStep) {
   if (s.problem === 'failed') return t('diskusage.storeroom.steps.failed', { name, error: s.error ?? '' });
   if (op === 'restore') return t('diskusage.storeroom.steps.restore', { name, to });
   if (op === 'discard' || s.forGood) return t('diskusage.storeroom.steps.forGood', { name });
-  return s.kind === 'template' || s.kind === 'appdata' ? t('diskusage.storeroom.steps.storeAt', { name, to }) : t('diskusage.storeroom.steps.store', { name });
+  return s.kind === 'template' || s.kind === 'stack' || s.kind === 'appdata' ? t('diskusage.storeroom.steps.storeAt', { name, to }) : t('diskusage.storeroom.steps.store', { name });
 }

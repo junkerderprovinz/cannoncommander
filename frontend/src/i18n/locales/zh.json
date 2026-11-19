@@ -1747,11 +1747,12 @@
       }
     },
     "storeroom": {
-      "about": "收起不会删除任何东西：文件夹放在各自 Share 上一个隐藏的储物间文件夹里，模板放在 CannonCommander 的设置里，“取回”会把一切放回原处。只有“永久删除”才会删除，镜像和构建缓存可以重新下载，所以会直接删掉。",
+      "about": "收起不会删除任何东西：文件夹放在各自 Share 上一个隐藏的储物间文件夹里，模板和 Compose 堆栈放在 CannonCommander 的设置里，“取回”会把一切放回原处。只有“永久删除”才会删除，镜像和构建缓存可以重新下载，所以会直接删掉。",
       "noDocker": "CannonCommander 能询问 Docker 后，就会找出没有任何东西在用的项目。请在容器设置的 Docker socket 中添加 /var/run/docker.sock。",
       "readOnly": "要收起项目，需要在容器设置中开启对 Unraid 的写入。",
       "kinds": {
         "template": "没有容器的模板",
+        "stack": "没有容器的 Compose 堆栈",
         "appdata": "没有任何东西在用的 appdata 文件夹",
         "container": "没有任何东西管理的已停止容器",
         "network": "没人使用的网络",

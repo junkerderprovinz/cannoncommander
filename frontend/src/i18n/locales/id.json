@@ -1747,11 +1747,12 @@
       }
     },
     "storeroom": {
-      "about": "Menyingkirkan tidak menghapus apa pun: folder menunggu di folder gudang tersembunyi di Share miliknya sendiri, template di pengaturan CannonCommander, dan “Kembalikan” menaruh semuanya di tempat semula. Hanya “Hapus permanen” yang menghapus, dan image serta cache build, yang bisa diunduh lagi, langsung hilang.",
+      "about": "Menyingkirkan tidak menghapus apa pun: folder menunggu di folder gudang tersembunyi di Share miliknya sendiri, template dan stack Compose di pengaturan CannonCommander, dan “Kembalikan” menaruh semuanya di tempat semula. Hanya “Hapus permanen” yang menghapus, dan image serta cache build, yang bisa diunduh lagi, langsung hilang.",
       "noDocker": "CannonCommander menemukan apa yang tidak dipakai apa pun begitu bisa bertanya ke Docker. Tambahkan /var/run/docker.sock di Docker socket pada pengaturan container.",
       "readOnly": "Untuk menyingkirkan, akses tulis ke Unraid harus dinyalakan di pengaturan container.",
       "kinds": {
         "template": "Template tanpa container",
+        "stack": "Stack Compose tanpa container",
         "appdata": "Folder appdata yang tidak dipakai apa pun",
         "container": "Container berhenti yang tidak dikelola apa pun",
         "network": "Jaringan yang tidak dipakai siapa pun",

@@ -1805,11 +1805,12 @@
       }
     },
     "storeroom": {
-      "about": "Að ganga frá eyðir engu: möppur bíða í falinni geymslumöppu á sínu eigin Share, sniðmát í stillingum CannonCommander, og „Sækja aftur“ setur allt þar sem það var. Aðeins „Fjarlægja endanlega“ eyðir, og diskmyndir og byggingarskyndiminni, sem má hlaða niður aftur, fara strax.",
+      "about": "Að ganga frá eyðir engu: möppur bíða í falinni geymslumöppu á sínu eigin Share, sniðmát og Compose-staflar í stillingum CannonCommander, og „Sækja aftur“ setur allt þar sem það var. Aðeins „Fjarlægja endanlega“ eyðir, og diskmyndir og byggingarskyndiminni, sem má hlaða niður aftur, fara strax.",
       "noDocker": "CannonCommander finnur það sem ekkert notar um leið og það getur spurt Docker. Bættu /var/run/docker.sock við undir Docker socket í stillingum gámsins.",
       "readOnly": "Til að ganga frá þarf að kveikja á skrifum í Unraid í stillingum gámsins.",
       "kinds": {
         "template": "Sniðmát án gáms",
+        "stack": "Compose-staflar án gáms",
         "appdata": "Appdata-möppur sem ekkert notar",
         "container": "Stöðvaðir gámar sem ekkert stjórnar",
         "network": "Net sem enginn notar",

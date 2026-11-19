@@ -1863,11 +1863,12 @@
       }
     },
     "storeroom": {
-      "about": "Apartar no borra nada: las carpetas esperan en una carpeta de trastero oculta en su propio Share, las plantillas en los ajustes de CannonCommander, y «Recuperar» lo devuelve todo a su sitio. Solo «Eliminar definitivamente» borra, y las imágenes y la caché de compilación, que se pueden volver a descargar, se van enseguida.",
+      "about": "Apartar no borra nada: las carpetas esperan en una carpeta de trastero oculta en su propio Share, las plantillas y los stacks de Compose en los ajustes de CannonCommander, y «Recuperar» lo devuelve todo a su sitio. Solo «Eliminar definitivamente» borra, y las imágenes y la caché de compilación, que se pueden volver a descargar, se van enseguida.",
       "noDocker": "CannonCommander encuentra lo que ya nada usa en cuanto puede preguntar a Docker. Añade /var/run/docker.sock en Docker socket, en los ajustes del contenedor.",
       "readOnly": "Para apartar cosas, CannonCommander necesita la escritura en Unraid en los ajustes del contenedor.",
       "kinds": {
         "template": "Plantillas sin contenedor",
+        "stack": "Stacks de Compose sin contenedor",
         "appdata": "Carpetas de appdata que nada usa",
         "container": "Contenedores detenidos que nada gestiona",
         "network": "Redes que nadie usa",

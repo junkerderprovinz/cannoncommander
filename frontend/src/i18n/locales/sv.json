@@ -1805,11 +1805,12 @@
       }
     },
     "storeroom": {
-      "about": "Att städa undan raderar ingenting: mappar väntar i en dold förrådsmapp på sin egen share, mallar i CannonCommanders inställningar, och ”Hämta tillbaka” ställer allt där det var. Bara ”Ta bort permanent” raderar, och images och byggcachen, som går att ladda ner igen, försvinner direkt.",
+      "about": "Att städa undan raderar ingenting: mappar väntar i en dold förrådsmapp på sin egen share, mallar och Compose-stackar i CannonCommanders inställningar, och ”Hämta tillbaka” ställer allt där det var. Bara ”Ta bort permanent” raderar, och images och byggcachen, som går att ladda ner igen, försvinner direkt.",
       "noDocker": "CannonCommander hittar det som inget använder så fort det kan fråga Docker. Lägg till /var/run/docker.sock under Docker socket i containerinställningarna.",
       "readOnly": "För att städa undan behöver skrivning till Unraid vara påslagen i containerinställningarna.",
       "kinds": {
         "template": "Mallar utan container",
+        "stack": "Compose-stackar utan container",
         "appdata": "Appdata-mappar som inget använder",
         "container": "Stoppade containrar som inget hanterar",
         "network": "Nätverk som ingen använder",

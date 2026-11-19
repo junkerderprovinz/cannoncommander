@@ -1921,11 +1921,12 @@
       }
     },
     "storeroom": {
-      "about": "Uklízení nic nemaže: složky čekají ve skryté složce komory na svém vlastním Share, šablony v nastavení CannonCommanderu a „Vrátit zpět“ dá všechno tam, kde to bylo. Maže jen „Trvale odstranit“, a obrazy i mezipaměť sestavení, které lze znovu stáhnout, zmizí hned.",
+      "about": "Uklízení nic nemaže: složky čekají ve skryté složce komory na svém vlastním Share, šablony a Compose stacky v nastavení CannonCommanderu a „Vrátit zpět“ dá všechno tam, kde to bylo. Maže jen „Trvale odstranit“, a obrazy i mezipaměť sestavení, které lze znovu stáhnout, zmizí hned.",
       "noDocker": "CannonCommander najde, co už nic nepoužívá, jakmile se může zeptat Dockeru. Přidejte /var/run/docker.sock do pole Docker socket v nastavení kontejneru.",
       "readOnly": "K uklízení potřebuje CannonCommander zapnutý zápis do Unraid v nastavení kontejneru.",
       "kinds": {
         "template": "Šablony bez kontejneru",
+        "stack": "Compose stacky bez kontejneru",
         "appdata": "Složky appdata, které nic nepoužívá",
         "container": "Zastavené kontejnery, které nic nespravuje",
         "network": "Sítě, které nikdo nepoužívá",

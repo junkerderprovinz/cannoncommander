@@ -1,7 +1,7 @@
 // Package storeroom finds what a server no longer uses (container templates,
-// appdata folders and Docker's leftovers) and keeps it in a storeroom, from
-// where it can come back. Only images and the build cache, which can be
-// downloaded or built again, are removed for good.
+// compose stacks, appdata folders and Docker's leftovers) and keeps it in a
+// storeroom, from where it can come back. Only images and the build cache,
+// which can be downloaded or built again, are removed for good.
 package storeroom
 
 import (
@@ -17,12 +17,15 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 )
 
 // Config says where the server keeps what the storeroom looks at.
 type Config struct {
 	// Templates is dockerMan's folder of user templates.
 	Templates string
+	// Stacks is where the compose plugin keeps a folder for each stack.
+	Stacks string
 	// Plugins is searched for any mention of an appdata folder, in the
 	// settings and compose files of every plugin.
 	Plugins string
@@ -85,8 +88,13 @@ type world struct {
 	volumes    []volume
 	usage      usage
 	templates  map[string]template
+	stacks     []stack
 	mentions   string
-	held       map[string]bool
+	// compose is the text of every stack, stored ones included, where a
+	// folder may hide behind a variable.
+	compose string
+	room    []Entry
+	held    map[string]bool
 }
 
 type template struct {
@@ -115,7 +123,7 @@ func (s *Service) look(ctx context.Context, room []Entry) (*world, error) {
 	if s.docker == nil {
 		return nil, errNoDocker
 	}
-	w := &world{held: map[string]bool{}}
+	w := &world{room: room, held: map[string]bool{}}
 	var err error
 	if w.containers, err = s.docker.containers(ctx); err != nil {
 		return nil, err
@@ -132,11 +140,26 @@ func (s *Service) look(ctx context.Context, room []Entry) (*world, error) {
 	if w.templates, err = readTemplates(s.cfg.Templates); err != nil {
 		return nil, err
 	}
+	w.stacks = readStacks(s.cfg.Stacks)
 	w.mentions = readMentions(s.cfg.Plugins)
+	for _, st := range w.stacks {
+		w.compose += st.text
+	}
+	// What waits in the storeroom may come back with the folders it names.
 	for _, e := range room {
 		w.held[e.Kind+"\n"+e.From] = true
 		w.held[e.Kind+"\n"+e.Held] = true
 		w.held[e.Kind+"\n"+e.Ref] = true
+		switch e.Kind {
+		case "template":
+			if raw, err := os.ReadFile(e.Held); err == nil {
+				w.mentions += string(raw) + "\n"
+			}
+		case "stack":
+			if st, ok := readStack(e.Held); ok {
+				w.compose += st.text
+			}
+		}
 	}
 	return w, nil
 }
@@ -171,29 +194,134 @@ func readTemplates(dir string) (map[string]template, error) {
 func readMentions(dir string) string {
 	var b strings.Builder
 	_ = filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() {
-			return nil
-		}
-		switch strings.ToLower(filepath.Ext(p)) {
-		case ".cfg", ".yml", ".yaml", ".json", ".env", ".xml", ".conf", ".ini":
-		default:
-			return nil
-		}
-		if info, err := d.Info(); err != nil || info.Size() > 1<<20 {
-			return nil
-		}
-		if raw, err := os.ReadFile(p); err == nil {
-			b.Write(raw)
-			b.WriteByte('\n')
+		if err == nil && !d.IsDir() {
+			readText(&b, p, d)
 		}
 		return nil
 	})
 	return b.String()
 }
 
+// readText adds p to b when it is a small file of the kinds that name folders.
+func readText(b *strings.Builder, p string, d fs.DirEntry) {
+	switch strings.ToLower(filepath.Ext(p)) {
+	case ".cfg", ".yml", ".yaml", ".json", ".env", ".xml", ".conf", ".ini":
+	default:
+		return
+	}
+	if info, err := d.Info(); err != nil || info.Size() > 1<<20 {
+		return
+	}
+	if raw, err := os.ReadFile(p); err == nil {
+		b.Write(raw)
+		b.WriteByte('\n')
+	}
+}
+
+// stack is a compose stack as the compose plugin keeps it: a folder named
+// after the stack, with the compose file in it or, for a stack kept
+// elsewhere, a file named indirect that holds the folder it lies in.
+type stack struct {
+	dir, name string
+	// places are the folders its compose files lie in, dir first.
+	places []string
+	text   string
+	// containers are the names its compose files give their containers.
+	containers []string
+}
+
+var containerName = regexp.MustCompile(`(?m)^\s*container_name:\s*["']?([^"'\s#]+)`)
+
+func readStacks(dir string) []stack {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil
+	}
+	var out []stack
+	for _, e := range entries {
+		if !e.IsDir() {
+			continue
+		}
+		if st, ok := readStack(filepath.Join(dir, e.Name())); ok {
+			out = append(out, st)
+		}
+	}
+	return out
+}
+
+// readStack reports false when dir has no compose file and points nowhere else.
+func readStack(dir string) (stack, bool) {
+	st := stack{dir: dir, name: filepath.Base(dir), places: []string{dir}}
+	if raw, err := os.ReadFile(filepath.Join(dir, "name")); err == nil && strings.TrimSpace(string(raw)) != "" {
+		st.name = strings.TrimSpace(string(raw))
+	}
+	ok := false
+	if raw, err := os.ReadFile(filepath.Join(dir, "indirect")); err == nil && strings.TrimSpace(string(raw)) != "" {
+		st.places, ok = append(st.places, filepath.Clean(strings.TrimSpace(string(raw)))), true
+	}
+	var b strings.Builder
+	for _, place := range st.places {
+		entries, _ := os.ReadDir(place)
+		for _, e := range entries {
+			if e.IsDir() {
+				continue
+			}
+			switch e.Name() {
+			case "docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml":
+				ok = true
+			}
+			readText(&b, filepath.Join(place, e.Name()), e)
+		}
+	}
+	st.text = b.String()
+	for _, m := range containerName.FindAllStringSubmatch(st.text, -1) {
+		st.containers = append(st.containers, m[1])
+	}
+	return st, ok
+}
+
+// loose is a project name the way compose and the plugin may have bent it:
+// lower case, without the spaces, dots and dashes they replace.
+func loose(name string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			return unicode.ToLower(r)
+		}
+		return -1
+	}, name)
+}
+
+// within reports whether p is dir or lies below it.
+func within(dir, p string) bool {
+	rel, err := filepath.Rel(dir, filepath.Clean(p))
+	return err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator))
+}
+
+// up reports whether any container, running or stopped, belongs to st: by
+// its project name, by the folder its compose files came from, or by a
+// container name the compose file sets.
+func (w *world) up(st stack) bool {
+	for _, c := range w.containers {
+		if slices.Contains(st.containers, c.name()) {
+			return true
+		}
+		if p := loose(c.Labels["com.docker.compose.project"]); p != "" && (p == loose(filepath.Base(st.dir)) || p == loose(st.name)) {
+			return true
+		}
+		from := append(strings.Split(c.Labels["com.docker.compose.project.config_files"], ","), c.Labels["com.docker.compose.project.working_dir"])
+		for _, f := range from {
+			if f != "" && slices.ContainsFunc(st.places, func(place string) bool { return within(place, f) }) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (s *Service) finds(w *world) []Find {
 	var out []Find
 	out = append(out, s.unusedTemplates(w)...)
+	out = append(out, s.orphanedStacks(w)...)
 	out = append(out, s.orphanedFolders(w)...)
 	out = append(out, s.leftoverContainers(w)...)
 	out = append(out, unusedNetworks(w)...)
@@ -206,13 +334,29 @@ func (w *world) containerNamed(name string) bool {
 	return slices.ContainsFunc(w.containers, func(c container) bool { return c.name() == name })
 }
 
+// unusedTemplates are the user templates no container is named after,
+// neither by the name inside nor by the file's name.
 func (s *Service) unusedTemplates(w *world) []Find {
 	var out []Find
 	for _, t := range w.templates {
-		if t.name == "" || !strings.HasPrefix(filepath.Base(t.path), "my-") || w.containerNamed(t.name) || w.held["template\n"+t.path] {
+		file := filepath.Base(t.path)
+		if t.name == "" || !strings.HasPrefix(file, "my-") || w.containerNamed(t.name) || w.containerNamed(strings.TrimSuffix(file[3:], ".xml")) || w.held["template\n"+t.path] {
 			continue
 		}
 		out = append(out, Find{Kind: "template", ID: t.path, Name: t.name, Path: t.path, Size: size(t.path)})
+	}
+	return byName(out)
+}
+
+// orphanedStacks are stacks no container belongs to, left unchanged for
+// quiet. A folder elsewhere that is gone counts as unchanged.
+func (s *Service) orphanedStacks(w *world) []Find {
+	var out []Find
+	for _, st := range w.stacks {
+		if w.up(st) || w.held["stack\n"+st.dir] || slices.ContainsFunc(st.places, func(p string) bool { return exists(p) && s.changedLately(p) }) {
+			continue
+		}
+		out = append(out, Find{Kind: "stack", ID: st.dir, Name: st.name, Path: st.dir, Size: size(st.dir)})
 	}
 	return byName(out)
 }
@@ -227,17 +371,30 @@ func usedFolder(share, host string) string {
 	return parts[3]
 }
 
+// orphanedFolders are appdata folders nothing mounts or names, left
+// unchanged for quiet. A folder named like a container, a template or a
+// stack stays as well, since it most likely belongs to it.
 func (s *Service) orphanedFolders(w *world) []Find {
 	share := filepath.Base(s.cfg.Appdata)
 	used := map[string]bool{}
 	for _, c := range w.containers {
+		used[strings.ToLower(c.name())] = true
 		for _, m := range c.Mounts {
 			used[usedFolder(share, m.Source)] = true
 		}
 	}
 	text := w.mentions
 	for _, t := range w.templates {
+		used[strings.ToLower(t.name)] = true
 		text += t.text
+	}
+	for _, st := range w.stacks {
+		used[strings.ToLower(st.name)], used[strings.ToLower(filepath.Base(st.dir))] = true, true
+	}
+	for _, e := range w.room {
+		if e.Kind == "container" || e.Kind == "template" || e.Kind == "stack" {
+			used[strings.ToLower(e.Name)] = true
+		}
 	}
 	entries, err := os.ReadDir(s.cfg.Appdata)
 	if err != nil {
@@ -247,7 +404,7 @@ func (s *Service) orphanedFolders(w *world) []Find {
 	for _, e := range entries {
 		name := e.Name()
 		dir := filepath.Join(s.cfg.Appdata, name)
-		if !e.IsDir() || strings.HasPrefix(name, ".") || used[name] || mentioned(text, share, name) || w.held["appdata\n"+dir] || s.changedLately(dir) {
+		if !e.IsDir() || strings.HasPrefix(name, ".") || used[name] || used[strings.ToLower(name)] || mentioned(text, share, name) || named(w.compose, name) || w.held["appdata\n"+dir] || s.changedLately(dir) {
 			continue
 		}
 		out = append(out, Find{Kind: "appdata", ID: dir, Name: name, Path: dir, Size: size(dir)})
@@ -258,6 +415,13 @@ func (s *Service) orphanedFolders(w *world) []Find {
 // mentioned reports whether text names the folder share/name as a path.
 func mentioned(text, share, name string) bool {
 	re := regexp.MustCompile(`/` + regexp.QuoteMeta(share) + `/` + regexp.QuoteMeta(name) + `([^A-Za-z0-9._-]|$)`)
+	return re.MatchString(text)
+}
+
+// named reports whether a compose text has a path that ends in the folder's
+// name, as ${APPDATA}/name does.
+func named(text, name string) bool {
+	re := regexp.MustCompile(`/` + regexp.QuoteMeta(name) + `([^A-Za-z0-9._-]|$)`)
 	return re.MatchString(text)
 }
 
@@ -354,18 +518,17 @@ func leftoverVolumes(w *world) []Find {
 	return byName(out)
 }
 
+// unusedImages are images no container uses that a registry can send
+// again. One without a digest was built or loaded here.
 func unusedImages(w *world) []Find {
 	var out []Find
 	for _, im := range w.usage.Images {
-		if im.Containers != 0 {
+		if im.Containers != 0 || len(im.RepoDigests) == 0 {
 			continue
 		}
 		name := ""
-		for _, tag := range im.RepoTags {
-			if tag != "<none>:<none>" {
-				name = tag
-				break
-			}
+		if tags := im.tags(); len(tags) > 0 {
+			name = tags[0]
 		}
 		out = append(out, Find{Kind: "image", ID: im.ID, Name: name, Size: im.Size, ForGood: true})
 	}

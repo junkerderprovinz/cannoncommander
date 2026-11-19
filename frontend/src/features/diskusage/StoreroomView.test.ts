@@ -16,7 +16,8 @@ let calls: { path: string; body?: unknown }[];
 const plan = (body: { op: string; refs: { kind?: string; id: string }[] }): StoreroomStep[] => body.refs.map((r) => {
   const f = answer.finds.find((x) => x.id === r.id), e = answer.room.find((x) => x.id === r.id);
   if (body.op === 'restore') return { kind: e!.kind, name: e!.name, from: e!.held, to: e!.from, forGood: false, done: false };
-  return { kind: f!.kind, name: f!.name, from: f!.id, to: f!.kind === 'appdata' ? '/mnt/user/appdata/.storeroom/ab12/' + f!.name : undefined, forGood: f!.forGood, done: false };
+  const to = f!.kind === 'appdata' ? '/mnt/user/appdata/.storeroom/ab12/' + f!.name : f!.kind === 'stack' ? '/config/storeroom/stacks/ab12-' + f!.id.split('/').pop() : undefined;
+  return { kind: f!.kind, name: f!.name, from: f!.id, to, forGood: f!.forGood, done: false };
 });
 
 beforeAll(() => addMessages('diskusage', { de }));
@@ -30,6 +31,7 @@ beforeEach(() => {
     finds: [
       { kind: 'template', id: '/boot/config/plugins/dockerMan/templates-user/my-alt.xml', name: 'alt', path: '/boot/config/plugins/dockerMan/templates-user/my-alt.xml', size: 2048, forGood: false },
       { kind: 'appdata', id: '/mnt/user/appdata/verwaist', name: 'verwaist', path: '/mnt/user/appdata/verwaist', size: 5 << 20, forGood: false },
+      { kind: 'stack', id: '/boot/config/plugins/compose.manager/projects/alter-stapel', name: 'Alter Stapel', path: '/boot/config/plugins/compose.manager/projects/alter-stapel', size: 4096, forGood: false },
       { kind: 'network', id: 'n5', name: 'alt-netz', size: 0, forGood: false },
       { kind: 'image', id: 'sha256:aabbccddeeff00112233', name: '', size: 100 << 20, forGood: true },
       { kind: 'cache', id: 'build-cache', name: '', size: 30 << 20, forGood: true },
@@ -76,11 +78,11 @@ const sections = () => [...document.querySelectorAll<HTMLElement>('[data-section
 describe('the storeroom view', () => {
   it('lists what nothing uses by kind, then what waits in the storeroom', async () => {
     const summary = await mount();
-    expect(sections()).toEqual(['template', 'appdata', 'network', 'image', 'room']);
+    expect(sections()).toEqual(['template', 'stack', 'appdata', 'network', 'image', 'room']);
     const images = [...document.querySelectorAll('[data-section="image"] .du-room-row .n')].map((x) => x.textContent);
     expect(images).toEqual(['Image ohne Tag aabbccddeeff', 'Build-Cache']);
     expect(document.querySelector('[data-entry="e1"]')?.textContent).toContain('Abgestellt am 10.11.2026');
-    expect(summary.at(-1)).toBe('5 zum Wegräumen, 1 in der Abstellkammer');
+    expect(summary.at(-1)).toBe('6 zum Wegräumen, 1 in der Abstellkammer');
   });
 
   it('shows the plan and clears away only once it is agreed to', async () => {
@@ -90,6 +92,15 @@ describe('the storeroom view', () => {
     expect(asked.lines).toEqual([['verwaist kommt in die Abstellkammer nach /mnt/user/appdata/.storeroom/ab12/verwaist']]);
     expect(calls.map((c) => c.path)).toEqual(['/storeroom/scan', '/storeroom/plan', '/storeroom/run', '/storeroom/scan']);
     expect(calls[2]!.body).toEqual({ op: 'store', refs: [{ kind: 'appdata', id: '/mnt/user/appdata/verwaist' }] });
+  });
+
+  it('clears a compose stack away whole and says where it waits', async () => {
+    await mount();
+    expect(document.querySelector('[data-section="stack"]')?.textContent).toContain('Compose-Stacks ohne Container');
+    await tick('[data-find="stack|/boot/config/plugins/compose.manager/projects/alter-stapel"]');
+    await press('[data-store="stack"]');
+    expect(asked.lines).toEqual([['Alter Stapel kommt in die Abstellkammer nach /config/storeroom/stacks/ab12-alter-stapel']]);
+    expect(calls[2]!.body).toEqual({ op: 'store', refs: [{ kind: 'stack', id: '/boot/config/plugins/compose.manager/projects/alter-stapel' }] });
   });
 
   it('does nothing when the question is left', async () => {
