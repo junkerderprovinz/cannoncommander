@@ -29,9 +29,6 @@
 .a-reset:disabled { opacity: .45; cursor: default; }
 .glim-pill.run { background: var(--accent); color: var(--accent-contrast); }
 .a-pickhead { display: flex; justify-content: flex-end; }
-/* PickerWindow leaves the scrolling to its tiles. A remote's form can run longer than the window, so there the body
-   scrolls as in any window, and its padding keeps the first sub-card's notch in view. */
-.glim-window.glim-pick-window--form > .glim-window-body { overflow-y: auto; }
 .a-hostkey { overflow-wrap: anywhere; }
 .a-totp { flex-direction: row; gap: 1.2rem; align-items: center; }
 .a-qr { width: 10rem; height: 10rem; flex: none; border-radius: var(--radius-control); overflow: hidden; }

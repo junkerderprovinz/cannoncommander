@@ -206,7 +206,7 @@ const actions = computed<WindowAction[]>(() => {
 });
 
 // A new remote opens on the tiles once rclone has said what it can reach. A saved one, and the wait for rclone, take a
-// plain window, which has no tiles to go back to. PickerWindow hands the start of the foot on to its Window.
+// plain window, which has no tiles to go back to.
 const host = computed(() => (isNew && cat.value ? PickerWindow : Window));
 const hostProps = computed(() => {
   const start = verdict.value || undefined;
@@ -233,7 +233,7 @@ onMounted(() => {
       <EmptyState v-if="broken" nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.noCatalog')" :hint="broken" />
       <EmptyState v-else-if="!cat" nested :title="c('remotes.loading')" />
       <EmptyState v-else-if="!type" nested :title="c('remotes.unknownType', { type: typeId })" />
-      <div v-else ref="form" class="a-rform">
+      <div v-else ref="form">
         <SubCard :title="who" :hint="provider ? providerHint(provider.id) : undefined">
           <FieldRow v-if="type.oauth" :label="c('remotes.account')" :hint="c('remotes.accountTip')">
             <template v-if="signedIn"><Pill tone="ok">{{ c('remotes.signedInPill') }}</Pill><Button id="a-oauth" :label="c('remotes.otherAccount')" label-key="IconSignIn" @click="signing = true" /></template>

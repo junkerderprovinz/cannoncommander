@@ -1,8 +1,11 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp, h, nextTick } from 'vue';
 import type { Remote, RemoteCatalog, RemoteTest } from '@/api/admin';
 import { toasts } from '@/core/toast';
 import { addMessages, setLanguage } from '@/i18n';
+import { withoutLayers } from '@/testing/layers';
 import en from '../en.json';
 import { loadMarks } from '../remotes';
 import RemoteWin from './RemoteWin.vue';
@@ -86,7 +89,7 @@ async function open(remote: Remote | null = null, all: Remote[] = []) {
 const q = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel);
 const search = () => q<HTMLInputElement>('.glim-pick-search input')!;
 const tiles = () => [...document.querySelectorAll('.glim-provider-pick .glim-readme-btn-name')].map((b) => b.textContent?.trim());
-const eyebrows = () => [...document.querySelectorAll('.glim-pick-section > .glim-eyebrow')].map((x) => x.textContent?.trim());
+const eyebrows = () => [...document.querySelectorAll('.glim-pick-section .glim-eyebrow')].map((x) => x.textContent?.trim());
 const tile = (name: string) => [...document.querySelectorAll<HTMLButtonElement>('.glim-provider-pick button.glim-readme-btn')].find((b) => b.querySelector('.glim-readme-btn-name')?.textContent === name)!;
 const footButton = (label: string) => [...document.querySelectorAll<HTMLButtonElement>('.glim-modal-foot button')].find((b) => b.textContent?.trim() === label);
 const footLabels = () => [...document.querySelectorAll('.glim-modal-foot button')].map((b) => b.textContent?.trim());
@@ -136,6 +139,21 @@ describe('the window that adds a remote', () => {
     await click(footButton('Back'));
     expect(q('.glim-pick-window--form')).toBeNull();
     expect(tiles()).toContain('Nextcloud');
+  });
+
+  it('holds the tiles still and lets a long form scroll in the window body', async () => {
+    // Vitest leaves the stylesheets out, and which part scrolls is up to them.
+    const sheet = (path: string) => document.head.appendChild(Object.assign(document.createElement('style'), { textContent: withoutLayers(readFileSync(path, 'utf8')) }));
+    const sheets = [sheet(join(import.meta.dirname, '../../../../node_modules/@glimstone/core/tokens.css')), sheet(join(import.meta.dirname, '../config.css'))];
+    try {
+      await open();
+      const body = () => getComputedStyle(q('.glim-window-body')!).overflowY;
+      expect(body()).toBe('hidden');
+      await click(tile('Nextcloud'));
+      expect(body()).toBe('auto');
+    } finally {
+      sheets.forEach((s) => s.remove());
+    }
   });
 
   it('offers a backend without a product of its own as a tile and asks for its fields', async () => {
