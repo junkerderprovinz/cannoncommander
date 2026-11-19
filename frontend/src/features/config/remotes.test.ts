@@ -49,12 +49,23 @@ describe('the provider picker', () => {
   const pick = (...want: string[]) => providerPicker(providers.filter((p) => want.includes(p.id)));
 
   it('finds every provider a saved remote can name, under the name the list has always shown', () => {
-    expect([...ids].sort()).toEqual(Object.keys(SHOWN).sort());
+    expect(ids).toEqual(expect.arrayContaining(Object.keys(SHOWN)));
     const { items } = providerPicker(providers);
     for (const [id, name] of Object.entries(SHOWN)) {
       expect(remoteKind({ type: 'other', provider: id }, providers), id).toBe(name);
       expect(items.filter((i) => i.id === id), id).toHaveLength(1);
     }
+  });
+
+  it('offers the stores people run themselves as object storage, each with what it is on its tooltip', () => {
+    const own = ['garage', 'juicefs', 'minio', 'rustfs', 'seaweedfs', 'silo', 'versity'];
+    const { items } = pick(...own);
+    expect(items.map((i) => [i.label, i.group])).toEqual([
+      ['Garage', 'storage'], ['JuiceFS', 'storage'], ['MinIO', 'storage'], ['RustFS', 'storage'],
+      ['SeaweedFS', 'storage'], ['Silo', 'storage'], ['Versity S3 Gateway', 'storage'],
+    ]);
+    for (const i of items) expect(i.tip, i.id).toBe('Object storage you run yourself. It needs the address of its endpoint.');
+    for (const id of own) expect(markOf(id).mark?.svg, id).toMatch(/^<svg /);
   });
 
   it('names a remote by its rclone type while its product is unknown', () => {
@@ -154,6 +165,8 @@ describe('the form of a remote', () => {
     const url = optionHint(option('url'), nextcloud, 'webdav')!;
     expect(url).toContain('https://cloud.example.com/remote.php/webdav/');
     expect(url).toContain('rclone calls this field url.');
+    const rustfs: Provider = { id: 'rustfs', backend: 's3', preset: { provider: 'Other', description: 'RustFS' }, urlHint: 'http://tower:9000' };
+    expect(optionHint(option('endpoint'), rustfs, 's3')).toContain('It looks like this: http://tower:9000');
     expect(optionHint(option('pass'), nextcloud, 'webdav')).toContain('app password goes here');
   });
 

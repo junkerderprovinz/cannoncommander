@@ -139,13 +139,21 @@ var providers = []Provider{
 	{ID: "imagekit", Auth: AuthAPIKey, AuthURL: "https://imagekit.io/dashboard/developer/api-keys",
 		Backend: "imagekit"},
 	{ID: "sia", Backend: "sia"},
-	{ID: "minio", Backend: "s3", Preset: map[string]string{"provider": "Minio"}},
-	{ID: "seaweedfs", Backend: "s3", Preset: map[string]string{"provider": "SeaweedFS"}},
+	// The stores people run on their own server, each with the address its
+	// Unraid template answers on. rclone has a provider for few of them, and
+	// a description tells the others apart, as with OxiCloud.
+	{ID: "minio", Backend: "s3", Preset: map[string]string{"provider": "Minio"}, URLHint: "http://tower:9000"},
+	{ID: "silo", Backend: "s3", Preset: map[string]string{"provider": "Minio", "description": "Silo"}, URLHint: "http://tower:9000"},
+	{ID: "seaweedfs", Backend: "s3", Preset: map[string]string{"provider": "SeaweedFS"}, URLHint: "http://tower:8333"},
 	{ID: "ceph", Backend: "s3", Preset: map[string]string{"provider": "Ceph"}},
 	// Garage signs for its s3_region only, which is garage unless
 	// garage.toml names another.
-	{ID: "garage", Backend: "s3", Preset: map[string]string{"provider": "Other"},
+	{ID: "garage", Backend: "s3", Preset: map[string]string{"provider": "Other"}, URLHint: "http://tower:3900",
 		Defaults: map[string]string{"region": "garage"}},
+	{ID: "rustfs", Backend: "s3", Preset: map[string]string{"provider": "Other", "description": "RustFS"}, URLHint: "http://tower:9000"},
+	{ID: "juicefs", Backend: "s3", Preset: map[string]string{"provider": "Other", "description": "JuiceFS"}, URLHint: "http://tower:9000"},
+	{ID: "versity", Backend: "s3", Preset: map[string]string{"provider": "Other", "description": "Versity S3 Gateway"},
+		URLHint: "http://tower:7070"},
 	{ID: "s3", Backend: "s3"},
 
 	{ID: "smb", Backend: "smb"},

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { segItems } from '@/ui/kit';
-import { BrandMark, Button, Card, EmptyState, FieldRow, IconButton, ListRow, Pill, Selector, Toggle } from '@glimstone/vue';
-import { computed, onMounted, ref, shallowRef } from 'vue';
-import { admin, type AppSettings, type Provider, type Rclone, type Remote } from '@/api/admin';
-import { G, glyphComponent } from '@/core/glyphs';
+import { Button, Card, ConnectionRow, EmptyState, FieldRow, Pill, Selector, Toggle, type ConnectionTest } from '@glimstone/vue';
+import { computed, onMounted, reactive, ref, shallowRef } from 'vue';
+import { admin, type AppSettings, type Provider, type Rclone, type Remote, type RemoteTest } from '@/api/admin';
+import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { attempt, c, confirmWin } from '@/features/config/shared';
 import { reloadRemotes } from '@/features/remotes/store';
-import { loadCatalog, markOf, remoteKind } from '../remotes';
+import { loadCatalog, markOf, remoteKind, testVerdict } from '../remotes';
 import RemoteWin from '../wins/RemoteWin.vue';
 
 type Mounting = AppSettings['remotes'];
@@ -18,7 +18,10 @@ const rclone = ref<Rclone | null>(null);
 // The products give each row its name and logo. Until rclone answers, a row says its rclone type.
 const providers = ref<Provider[]>([]);
 const load = async () => { ({ remotes: remotes.value, rclone: rclone.value } = await admin.remotes()); };
-const markFor = (r: Remote) => markOf(providers.value.some((p) => p.id === r.provider) ? r.provider! : '');
+const markFor = (r: Remote) => {
+  const m = markOf(providers.value.some((p) => p.id === r.provider) ? r.provider! : '');
+  return m.mark ?? glyphComponent(m.glyph);
+};
 onMounted(() => {
   load().then(() => { if (rclone.value?.running) loadCatalog().then((c) => { providers.value = c.providers; }, () => {}); }, () => {});
   admin.app().then((a) => { mounting.value = a.remotes; }, () => {});
@@ -39,6 +42,18 @@ async function mount(r: Remote) {
   void reloadRemotes();
   toast(r.mounted ? c('remotes.unmounted', { name: r.name }) : c('remotes.mounted', { name: r.name }));
 }
+// The last test of each remote, by name, which the row's Test button wears.
+const tests = reactive<Record<string, ConnectionTest>>({});
+async function test(r: Remote) {
+  tests[r.name] = { busy: true };
+  const got = await admin.testRemote({ name: r.name, type: r.type, path: r.path, mount: r.mount, params: { ...(r.params ?? {}) } })
+    .catch((e: unknown): RemoteTest => ({ ok: false, entries: 0, error: e instanceof Error ? e.message : String(e) }));
+  // A question from rclone's setup is answered in the remote's own window.
+  tests[r.name] = got.question ? { tone: 'danger', title: c('remotes.notConnected') } : { tone: got.ok ? 'ok' : 'danger', title: testVerdict(got, r.path) };
+}
+const rowText = computed(() => ({ test: c('test'), edit: c('edit'), remove: c('remove') }));
+const ROW_KEYS = { test: 'IconHealth', edit: 'IconPencil', remove: 'IconTrash' };
+
 // The remote in the window, null for a new one.
 const editing = shallowRef<{ remote: Remote | null } | null>(null);
 const edit = (r: Remote | null) => { editing.value = { remote: r }; };
@@ -62,20 +77,19 @@ function remove(r: Remote) {
 
 <template>
   <Card :title="c('remotes.title')">
-    <div v-if="remotes.length" class="a-list">
-      <ListRow v-for="(r, i) in remotes" :key="r.name" :name="r.name" :tip="r.error ? c('remotes.mountFailed', { error: r.error }) : null" :data-open="i" @click="edit(r)">
-        <template #tile><BrandMark v-if="markFor(r).mark" :svg="markFor(r).mark!.svg" /><G v-else :n="markFor(r).glyph" /></template>
-        <template #badges>
-          <Pill>{{ remoteKind(r, providers) }}</Pill><Pill class="mono">{{ r.mount }}</Pill>
-          <Pill v-if="r.error" tone="warn">{{ c('remotes.failedPill') }}</Pill>
-          <Pill v-else-if="!r.mounted" tone="state">{{ c('remotes.unmountedPill') }}</Pill>
-        </template>
-        <template #actions>
-          <IconButton :glyph="glyphComponent(r.mounted ? 'IconUnlink' : 'IconLink')" :tip="r.mounted ? c('remotes.unmount') : c('remotes.mount')" @click="mount(r)" />
-          <IconButton :glyph="glyphComponent('IconPencil')" :tip="c('edit')" :data-open="i" @click="edit(r)" />
-          <IconButton :glyph="glyphComponent('IconTrash')" :tip="c('remove')" @click="remove(r)" />
-        </template>
-      </ListRow>
+    <!-- Mounting stands beside the row until GlimStone's ConnectionRow has a place for an action of its own. -->
+    <div v-if="remotes.length" class="a-conns">
+      <div v-for="r in remotes" :key="r.name" class="a-conn">
+        <ConnectionRow :name="r.name" :mark="markFor(r)" :status="remoteKind(r, providers)" :test="tests[r.name]" :text="rowText" :label-keys="ROW_KEYS"
+          @test="test(r)" @edit="edit(r)" @remove="remove(r)">
+          <template #badges>
+            <Pill v-if="r.error" tone="warn" :title="c('remotes.mountFailed', { error: r.error })">{{ c('remotes.failedPill') }}</Pill>
+            <Pill v-else-if="!r.mounted" tone="state">{{ c('remotes.unmountedPill') }}</Pill>
+          </template>
+          <p class="a-conn-path mono">{{ r.mount }}</p>
+        </ConnectionRow>
+        <Button data-mount :label="r.mounted ? c('remotes.unmount') : c('remotes.mount')" :label-key="r.mounted ? 'IconUnlink' : 'IconLink'" :compact-below="640" @click="mount(r)" />
+      </div>
     </div>
     <EmptyState v-else-if="rclone && !rclone.installed" nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.noRclone')" :hint="c('remotes.noRcloneHint')" />
     <EmptyState v-else nested :glyph="glyphComponent('IconCloud')" :title="c('remotes.none')" />

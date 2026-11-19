@@ -8,14 +8,13 @@ import { Select } from '@glimstone/vue/Select';
 import { computed, nextTick, onMounted, reactive, ref, shallowRef, watch } from 'vue';
 import { admin, type Provider, type Remote, type RemoteCatalog, type RemoteInput, type RemoteTest, type SetupQuestion } from '@/api/admin';
 import { ApiError } from '@/api/client';
-import { fmtSize } from '@/core/format';
 import { glyphComponent } from '@/core/glyphs';
 import { toast } from '@/core/toast';
 import { t } from '@/i18n';
 import { c, fail } from '@/features/config/shared';
 import { pathField } from '@/ui/picker';
 import { copyWords, shake } from '@/ui/kit';
-import { loadCatalog, nameAndKind, optionLabel, productName, providerHint, providerName, providerPicker, questionLabel, splitOptions, suggestName } from '../remotes';
+import { loadCatalog, nameAndKind, optionLabel, productName, providerHint, providerName, providerPicker, questionLabel, splitOptions, suggestName, testVerdict } from '../remotes';
 import RemoteField from './RemoteField.vue';
 
 const props = defineProps<{ remote: Remote | null; all: Remote[] }>();
@@ -141,14 +140,7 @@ async function test() {
 }
 
 // The verdict at the start of the foot, beside the button that carries it.
-const verdict = computed(() => {
-  const x = result.value;
-  if (!x) return '';
-  if (x.ok) return x.free != null ? c('remotes.okFree', { free: fmtSize(x.free) }) : c('remotes.ok');
-  if (x.failure === 'missing') return c('remotes.fail.missing', { path: path.value.trim() });
-  if (x.failure) return c(`remotes.fail.${x.failure}`);
-  return c('remotes.fail.other', { error: x.error ?? '' });
-});
+const verdict = computed(() => (result.value ? testVerdict(result.value, path.value.trim()) : ''));
 
 async function useToken() {
   if (!pasted.value.trim()) return fail(c('remotes.needToken'), at('#a-rtoken'));

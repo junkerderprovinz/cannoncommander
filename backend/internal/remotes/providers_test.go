@@ -67,6 +67,11 @@ func TestASavedRemoteNamesItsProduct(t *testing.T) {
 		{"webdav", map[string]string{"vendor": "other"}, "webdav"},
 		{"webdav", map[string]string{"vendor": "other", "description": "OxiCloud"}, "oxicloud"},
 		{"s3", map[string]string{"provider": "Minio"}, "minio"},
+		{"s3", map[string]string{"provider": "Minio", "description": "Silo"}, "silo"},
+		{"s3", map[string]string{"provider": "Other"}, "garage"},
+		{"s3", map[string]string{"provider": "Other", "description": "RustFS"}, "rustfs"},
+		{"s3", map[string]string{"provider": "Other", "description": "JuiceFS"}, "juicefs"},
+		{"s3", map[string]string{"provider": "Other", "description": "Versity S3 Gateway"}, "versity"},
 		{"s3", map[string]string{"provider": "AWS"}, "s3"},
 		{"drive", nil, "gdrive"},
 		{"tardigrade", nil, "storj"},
@@ -89,5 +94,23 @@ func TestTheListNamesTheProductToEverybodyAndTheParametersToAdmins(t *testing.T)
 	f.call("jdp", "GET", "/remotes", nil, &list)
 	if r := list.Remotes[0]; r.Params["vendor"] != "nextcloud" || !slices.Equal(r.Secrets, []string{"pass"}) {
 		t.Fatalf("jdp sees %+v", r)
+	}
+}
+
+func TestEverySelfHostedS3StoreShowsTheAddressOfItsTemplate(t *testing.T) {
+	want := map[string]string{
+		"garage": "http://tower:3900", "seaweedfs": "http://tower:8333", "minio": "http://tower:9000", "silo": "http://tower:9000",
+		"rustfs": "http://tower:9000", "juicefs": "http://tower:9000", "versity": "http://tower:7070",
+	}
+	for _, p := range providers {
+		if shape, ok := want[p.ID]; ok {
+			if p.Backend != "s3" || p.URLHint != shape {
+				t.Errorf("%s: backend %q, address %q, want s3 at %q", p.ID, p.Backend, p.URLHint, shape)
+			}
+			delete(want, p.ID)
+		}
+	}
+	for id := range want {
+		t.Errorf("%s is not offered", id)
 	}
 }

@@ -4,7 +4,8 @@
 import { catalogPicker, type TileMark } from '@glimstone/core';
 import type { StorageGroup, StorageProviderId } from '@glimstone/core/storageProviders';
 import type { PickerItem, PickGroup } from '@glimstone/vue';
-import { admin, type Provider, type RemoteCatalog, type RemoteOption, type RemoteType } from '@/api/admin';
+import { admin, type Provider, type RemoteCatalog, type RemoteOption, type RemoteTest, type RemoteType } from '@/api/admin';
+import { fmtSize } from '@/core/format';
 import { glyphComponent, hasGlyph } from '@/core/glyphs';
 import { locale } from '@/i18n';
 import { c } from '@/features/config/shared';
@@ -44,7 +45,8 @@ export function nameAndKind(label: string): { name: string; sub?: string } {
 // One line about what a product is, for the ones whose name does not say it.
 const HINTS: Record<string, string> = {
   smb: 'smb', sftp: 'sftp', webdav: 'webdav', ftp: 'ftp', http: 'http', crypt: 'crypt', s3: 's3', hidrive: 'hidrive', icloud: 'icloud',
-  googlephotos: 'googlephotos', minio: 'selfHosted', seaweedfs: 'selfHosted', ceph: 'selfHosted', garage: 'selfHosted', doi: 'doi',
+  googlephotos: 'googlephotos', minio: 'selfHosted', seaweedfs: 'selfHosted', ceph: 'selfHosted', garage: 'selfHosted', silo: 'selfHosted',
+  rustfs: 'selfHosted', juicefs: 'selfHosted', versity: 'selfHosted', doi: 'doi',
   alias: 'alias', archive: 'archive', cache: 'cache', chunker: 'chunker', combine: 'combine', compress: 'compress', hasher: 'hasher',
   union: 'union', memory: 'memory',
 };
@@ -99,7 +101,7 @@ export function optionHint(o: Pick<RemoteOption, 'name' | 'help'>, provider: Pro
   let own = OWN_HINTS[o.name] ? c(`remotes.oh.${OWN_HINTS[o.name]}`) : undefined;
   if ((o.name === 'pass' || o.name === 'password') && type === 'webdav') own = c('remotes.oh.passCloud');
   const about: string[] = [];
-  if (o.name === 'url' && provider?.urlHint) about.push(c('remotes.oh.shape', { shape: provider.urlHint }));
+  if ((o.name === 'url' || o.name === 'endpoint') && provider?.urlHint) about.push(c('remotes.oh.shape', { shape: provider.urlHint }));
   const assumed = provider?.defaults?.[o.name];
   if (assumed) about.push(c('remotes.oh.serverDefault', { value: assumed }));
   if (SECRET_FIELDS.has(o.name) && provider?.auth && AUTH[provider.auth] && type !== 'webdav') {
@@ -139,6 +141,14 @@ export function suggestName(product: string, taken: string[]) {
 // What a list calls a saved remote: its product, or rclone's type where the parameters name none.
 export const remoteKind = (r: { type: string; provider?: string }, providers: Provider[]) =>
   (r.provider && providers.some((x) => x.id === r.provider) ? providerName(r.provider) : r.type);
+
+// What a test found, in the reader's words. path is the folder the remote opens in.
+export function testVerdict(x: RemoteTest, path: string) {
+  if (x.ok) return x.free != null ? c('remotes.okFree', { free: fmtSize(x.free) }) : c('remotes.ok');
+  if (x.failure === 'missing') return c('remotes.fail.missing', { path });
+  if (x.failure) return c(`remotes.fail.${x.failure}`);
+  return c('remotes.fail.other', { error: x.error ?? '' });
+}
 
 // The questions rclone's setups ask, by the parameter that answers them.
 const QUESTIONS: Record<string, string> = { config_driveid: 'drive', config_workspace: 'workspace', config_team_drive_id: 'team' };
