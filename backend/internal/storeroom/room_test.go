@@ -43,12 +43,7 @@ func TestThePlanSaysWhatHappensAndTouchesNothing(t *testing.T) {
 	b := newBox(t)
 	tpl := b.template("alt", "")
 	dir := b.appdata("verwaist", 200*day)
-	b.engine.df.Images = append(b.engine.df.Images, struct {
-		ID         string `json:"Id"`
-		RepoTags   []string
-		Size       int64
-		Containers int64
-	}{ID: "sha256:aa", RepoTags: []string{"alt:latest"}, Size: 100})
+	b.engine.df.Images = []image{{ID: "sha256:aa", RepoTags: []string{"alt:latest"}, RepoDigests: []string{"alt@sha256:a1"}, Size: 100}}
 	s := b.scan()
 	steps, err := b.svc.Plan(t.Context(), "store", []Ref{find(t, s, "template", "alt"), find(t, s, "appdata", "verwaist"), find(t, s, "image", "alt:latest")})
 	if err != nil {
@@ -95,6 +90,63 @@ func TestAFolderGoesIntoTheStoreroomOnItsOwnShareAndComesBack(t *testing.T) {
 	done(t, b.run("restore", b.entry("appdata", "verwaist")))
 	if !exists(filepath.Join(dir, "settings.json")) {
 		t.Error("the folder did not come back")
+	}
+}
+
+func TestAStackGoesIntoTheStoreroomWholeAndComesBack(t *testing.T) {
+	b := newBox(t)
+	dir := b.stack("alt", "services:\n  app:\n    image: nginx\n", 90*day, ".env", "TZ=Europe/Vienna\n", "name", "Alter Stapel\n")
+	steps := b.run("store", find(t, b.scan(), "stack", "Alter Stapel"))
+	done(t, steps)
+	if exists(dir) || !strings.HasPrefix(steps[0].To, filepath.Join(b.cfg.Room, "stacks")) || !exists(filepath.Join(steps[0].To, ".env")) {
+		t.Fatalf("after storing: %s %v, held at %s", dir, exists(dir), steps[0].To)
+	}
+	if got := found(b.scan(), "stack"); len(got) != 0 {
+		t.Errorf("a stored stack is still found: %v", got)
+	}
+	done(t, b.run("restore", b.entry("stack", "Alter Stapel")))
+	if raw, err := os.ReadFile(filepath.Join(dir, ".env")); err != nil || string(raw) != "TZ=Europe/Vienna\n" || len(b.scan().Room) != 0 {
+		t.Errorf("the stack did not come back whole: %q %v", raw, err)
+	}
+}
+
+func TestADiscardedStackIsGoneForGood(t *testing.T) {
+	b := newBox(t)
+	b.stack("alt", "services:\n  app:\n    image: nginx\n", 90*day)
+	steps := b.run("store", find(t, b.scan(), "stack", "alt"))
+	done(t, b.run("discard", b.entry("stack", "alt")))
+	if exists(steps[0].To) || len(b.scan().Room) != 0 {
+		t.Error("the stack is still in the storeroom")
+	}
+}
+
+func TestAStackThatIsUpAgainIsLeftAlone(t *testing.T) {
+	b := newBox(t)
+	dir := b.stack("alt", "services:\n  app:\n    image: nginx\n", 90*day)
+	ref := find(t, b.scan(), "stack", "alt")
+	b.engine.containers = []container{ctr("s1", "alt-app-1", "running", day, map[string]string{"com.docker.compose.project": "alt"})}
+	steps := b.run("store", ref)
+	if steps[0].Done || steps[0].Problem != "inUse" || !exists(dir) {
+		t.Errorf("store of a stack that is up = %+v", steps[0])
+	}
+}
+
+func TestAFolderStaysWhileWhatNamesItWaitsInTheStoreroom(t *testing.T) {
+	b := newBox(t)
+	b.appdata("mediathek", 200*day)
+	b.appdata("stapeldaten", 200*day)
+	b.template("alte-mediathek", `  <Config Name="Config" Target="/config" Mode="rw">/mnt/user/appdata/mediathek</Config>`+"\n")
+	b.stack("stapel", "services:\n  app:\n    volumes:\n      - /mnt/user/appdata/stapeldaten:/data\n", 90*day)
+	s := b.scan()
+	done(t, b.run("store", find(t, s, "template", "alte-mediathek"), find(t, s, "stack", "stapel")))
+	if got := found(b.scan(), "appdata"); len(got) != 0 {
+		t.Errorf("folders of what waits in the storeroom = %v", got)
+	}
+	done(t, b.run("discard", b.entry("template", "alte-mediathek"), b.entry("stack", "stapel")))
+	got := found(b.scan(), "appdata")
+	slices.Sort(got)
+	if !slices.Equal(got, []string{"mediathek", "stapeldaten"}) {
+		t.Errorf("folders once the storeroom is emptied = %v", got)
 	}
 }
 
@@ -200,12 +252,7 @@ func TestAVolumeWaitsInTheStoreroomUntilItIsEmptied(t *testing.T) {
 
 func TestImagesAndTheBuildCacheSkipTheStoreroom(t *testing.T) {
 	b := newBox(t)
-	b.engine.df.Images = append(b.engine.df.Images, struct {
-		ID         string `json:"Id"`
-		RepoTags   []string
-		Size       int64
-		Containers int64
-	}{ID: "sha256:aa", RepoTags: []string{"alt:latest"}, Size: 100})
+	b.engine.df.Images = []image{{ID: "sha256:aa", RepoTags: []string{"alt:latest"}, RepoDigests: []string{"alt@sha256:a1"}, Size: 100}}
 	b.engine.df.BuildCache = append(b.engine.df.BuildCache, struct {
 		ID    string
 		Size  int64
@@ -218,6 +265,36 @@ func TestImagesAndTheBuildCacheSkipTheStoreroom(t *testing.T) {
 	}
 	if len(b.scan().Room) != 0 {
 		t.Error("images landed in the storeroom")
+	}
+}
+
+func TestAnImageWithSeveralNamesLosesEachBeforeItGoes(t *testing.T) {
+	b := newBox(t)
+	b.engine.df.Images = []image{{ID: "sha256:aa", RepoTags: []string{"lscr.io/alt:latest", "alt:1.2"}, RepoDigests: []string{"lscr.io/alt@sha256:a1"}, Size: 100}}
+	done(t, b.run("store", find(t, b.scan(), "image", "lscr.io/alt:latest")))
+	if log := b.engine.log(); !slices.Equal(log, []string{"rm image lscr.io/alt:latest", "rm image alt:1.2", "rm image sha256:aa"}) {
+		t.Errorf("engine log %v", log)
+	}
+}
+
+func TestAFolderTheFlashCannotRenameIntoIsCopied(t *testing.T) {
+	b := newBox(t)
+	from := b.stack("alt", "services: {}\n", 90*day, "sub/notes.txt", "hallo")
+	to := filepath.Join(b.root, "anderswo", "alt")
+	if err := os.MkdirAll(filepath.Dir(to), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := copyAll(from, to); err != nil {
+		t.Fatal(err)
+	}
+	for _, f := range []string{"docker-compose.yml", "sub/notes.txt"} {
+		want, _ := os.ReadFile(filepath.Join(from, f))
+		if got, err := os.ReadFile(filepath.Join(to, f)); err != nil || string(got) != string(want) {
+			t.Errorf("%s: %q %v", f, got, err)
+		}
+	}
+	if err := move(from, to); err == nil || !exists(filepath.Join(to, "sub/notes.txt")) || !exists(filepath.Join(from, "sub/notes.txt")) {
+		t.Errorf("a move over something already there: %v", err)
 	}
 }
 

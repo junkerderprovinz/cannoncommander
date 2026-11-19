@@ -23,6 +23,20 @@ func TestATemplateIsUnusedWhenNoContainerHasItsName(t *testing.T) {
 	}
 }
 
+func TestATemplateBelongsToTheContainerItNamesWhateverItsFileIsCalled(t *testing.T) {
+	b := newBox(t)
+	b.write(filepath.Join(b.cfg.Templates, "my-plex-alt.xml"), "<Container><Name>plex</Name></Container>", 90*day)
+	b.write(filepath.Join(b.cfg.Templates, "my-sonarr.xml"), "<Container><Name>sonarr-neu</Name></Container>", 90*day)
+	b.write(filepath.Join(b.cfg.Templates, "my-weg.xml"), "<Container><Name>weg</Name></Container>", 90*day)
+	b.engine.containers = []container{
+		ctr("a1", "plex", "exited", 90*day, nil),
+		ctr("a2", "sonarr", "running", 90*day, nil),
+	}
+	if got := found(b.scan(), "template"); !slices.Equal(got, []string{"weg"}) {
+		t.Errorf("unused templates = %v", got)
+	}
+}
+
 func TestWithoutDockerNoTemplateOrFolderCountsAsUnused(t *testing.T) {
 	b := newBox(t)
 	b.template("alt", "")
@@ -72,6 +86,30 @@ func TestAnAppdataFolderNamedLikeAnotherIsStillItsOwn(t *testing.T) {
 	b.engine.containers = []container{ctr("a1", "app2", "running", 90*day, nil, "/mnt/user/appdata/app2")}
 	b.template("app2", "")
 	if got := found(b.scan(), "appdata"); !slices.Equal(got, []string{"app"}) {
+		t.Errorf("orphaned folders = %v", got)
+	}
+}
+
+func TestAnAppdataFolderStaysWhenInDoubt(t *testing.T) {
+	b := newBox(t)
+	for _, name := range []string{"tief", "platte", "Nextcloud", "vorlagenname", "stapelname", "variabel", "ausgelagert", "verwaist"} {
+		b.appdata(name, 200*day)
+	}
+	b.engine.containers = []container{
+		ctr("a1", "datenbank", "exited", 90*day, nil, "/mnt/user/appdata/tief/config/db/"),
+		ctr("a2", "spieler", "running", 90*day, nil, "/mnt/disk1/appdata/platte/data"),
+		ctr("a3", "nextcloud", "running", 90*day, nil, "/mnt/user/cloud"),
+	}
+	b.template("datenbank", "")
+	b.template("spieler", "")
+	b.template("nextcloud", "")
+	b.template("vorlagenname", "")
+	b.stack("stapelname", "services:\n  app:\n    image: nginx\n", 90*day)
+	b.stack("kompose", "services:\n  app:\n    volumes:\n      - ${APPDATA}/variabel:/data\n", 90*day)
+	elsewhere := filepath.Join(b.root, "mnt/user/compose/aussen")
+	b.write(filepath.Join(elsewhere, "compose.yaml"), "services:\n  app:\n    volumes:\n      - /mnt/user/appdata/ausgelagert:/config\n", 90*day)
+	b.stack("aussen", "", 90*day, "indirect", elsewhere)
+	if got := found(b.scan(), "appdata"); !slices.Equal(got, []string{"verwaist"}) {
 		t.Errorf("orphaned folders = %v", got)
 	}
 }
@@ -141,26 +179,11 @@ func TestOnlyAnAnonymousVolumeNobodyHoldsIsALeftover(t *testing.T) {
 
 func TestImagesNoContainerUsesAndTheBuildCacheGoForGood(t *testing.T) {
 	b := newBox(t)
-	b.engine.df.Images = append(b.engine.df.Images,
-		struct {
-			ID         string `json:"Id"`
-			RepoTags   []string
-			Size       int64
-			Containers int64
-		}{ID: "sha256:aa", RepoTags: []string{"lscr.io/alt:latest"}, Size: 100},
-		struct {
-			ID         string `json:"Id"`
-			RepoTags   []string
-			Size       int64
-			Containers int64
-		}{ID: "sha256:bb", RepoTags: []string{"<none>:<none>"}, Size: 50},
-		struct {
-			ID         string `json:"Id"`
-			RepoTags   []string
-			Size       int64
-			Containers int64
-		}{ID: "sha256:cc", RepoTags: []string{"plex:latest"}, Size: 900, Containers: 1},
-	)
+	b.engine.df.Images = []image{
+		{ID: "sha256:aa", RepoTags: []string{"lscr.io/alt:latest"}, RepoDigests: []string{"lscr.io/alt@sha256:a1"}, Size: 100},
+		{ID: "sha256:bb", RepoTags: []string{"<none>:<none>"}, RepoDigests: []string{"lscr.io/alt@sha256:b1"}, Size: 50},
+		{ID: "sha256:cc", RepoTags: []string{"plex:latest"}, RepoDigests: []string{"plex@sha256:c1"}, Size: 900, Containers: 1},
+	}
 	b.engine.df.BuildCache = append(b.engine.df.BuildCache,
 		struct {
 			ID    string
@@ -187,5 +210,65 @@ func TestImagesNoContainerUsesAndTheBuildCacheGoForGood(t *testing.T) {
 	}
 	if got := found(s, "cache"); len(got) != 1 {
 		t.Errorf("build cache finds = %v", got)
+	}
+}
+
+func TestOnlyAnImageARegistryCanSendAgainGoes(t *testing.T) {
+	b := newBox(t)
+	b.engine.df.Images = []image{
+		{ID: "sha256:aa", RepoTags: []string{"lscr.io/alt:latest"}, RepoDigests: []string{"lscr.io/alt@sha256:a1"}, Size: 300},
+		{ID: "sha256:bb", RepoTags: []string{"<none>:<none>"}, RepoDigests: []string{"lscr.io/plex@sha256:b1"}, Size: 200},
+		{ID: "sha256:cc", RepoTags: []string{"selbst-gebaut:latest"}, Size: 100},
+		{ID: "sha256:dd", RepoTags: []string{"<none>:<none>"}, Size: 50},
+		{ID: "sha256:ee", RepoTags: []string{"ungezaehlt:latest"}, RepoDigests: []string{"ungezaehlt@sha256:e1"}, Size: 10, Containers: -1},
+	}
+	if got := found(b.scan(), "image"); !slices.Equal(got, []string{"lscr.io/alt:latest", ""}) {
+		t.Errorf("unused images = %v", got)
+	}
+}
+
+func TestAStackIsOrphanedOnlyWhenNoContainerBelongsToIt(t *testing.T) {
+	b := newBox(t)
+	b.stack("web", "services:\n  app:\n    image: nginx\n", 90*day)
+	b.stack("gestoppt", "services:\n  app:\n    image: nginx\n", 90*day)
+	b.stack("media", "services:\n  app:\n    image: jellyfin\n", 90*day, "name", "Media Server\n")
+	moved := b.stack("umgezogen", "services:\n  app:\n    image: nginx\n", 90*day)
+	elsewhere := filepath.Join(b.root, "mnt/user/compose/draussen")
+	b.write(filepath.Join(elsewhere, "docker-compose.yml"), "services:\n  app:\n    image: nginx\n", 90*day)
+	b.age(elsewhere, 90*day)
+	b.stack("draussen", "", 90*day, "indirect", elsewhere+"\n")
+	b.stack("solo", "services:\n  app:\n    container_name: solo-app\n    image: nginx\n", 90*day)
+	b.stack("frisch", "services:\n  app:\n    image: nginx\n", 3*day)
+	b.stack("alt", "services:\n  app:\n    image: nginx\n", 90*day)
+	b.stack("alter-stapel", "services:\n  app:\n    image: nginx\n", 90*day, "name", "Alter Stapel\n")
+	b.stack("leer", "", 90*day, "name", "Leer\n")
+	b.engine.containers = []container{
+		ctr("s1", "web-app-1", "running", 90*day, map[string]string{"com.docker.compose.project": "web"}),
+		ctr("s2", "gestoppt-app-1", "exited", 90*day, map[string]string{"com.docker.compose.project": "gestoppt"}),
+		ctr("s3", "media-app-1", "running", 90*day, map[string]string{"com.docker.compose.project": "media_server"}),
+		ctr("s4", "anders-app-1", "exited", 90*day, map[string]string{"com.docker.compose.project": "anders", "com.docker.compose.project.working_dir": moved}),
+		ctr("s5", "fern-app-1", "running", 90*day, map[string]string{"com.docker.compose.project": "fern", "com.docker.compose.project.config_files": filepath.Join(elsewhere, "docker-compose.yml")}),
+		ctr("s6", "solo-app", "exited", 90*day, nil),
+	}
+	if got := found(b.scan(), "stack"); !slices.Equal(got, []string{"Alter Stapel", "alt"}) {
+		t.Errorf("orphaned stacks = %v", got)
+	}
+}
+
+func TestAStackWhoseFolderElsewhereIsGoneIsOrphaned(t *testing.T) {
+	b := newBox(t)
+	b.stack("weg", "", 90*day, "indirect", filepath.Join(b.root, "mnt/user/compose/weg")+"\n")
+	if got := found(b.scan(), "stack"); !slices.Equal(got, []string{"weg"}) {
+		t.Errorf("orphaned stacks = %v", got)
+	}
+}
+
+func TestWithoutTheComposePluginThereAreNoStacks(t *testing.T) {
+	b := newBox(t)
+	b.svc.cfg.Stacks = filepath.Join(b.root, "nirgends")
+	b.template("alt", "")
+	s := b.scan()
+	if len(found(s, "stack")) != 0 || !slices.Equal(found(s, "template"), []string{"alt"}) {
+		t.Errorf("finds = %+v", s.Finds)
 	}
 }

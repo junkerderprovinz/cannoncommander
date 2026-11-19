@@ -122,13 +122,29 @@ type volume struct {
 	UsageData *struct{ Size int64 }
 }
 
-type usage struct {
-	Images []struct {
-		ID         string `json:"Id"`
-		RepoTags   []string
-		Size       int64
-		Containers int64
+type image struct {
+	ID          string `json:"Id"`
+	RepoTags    []string
+	RepoDigests []string
+	Size        int64
+	// Containers counts running and stopped ones alike, -1 when the engine
+	// did not count.
+	Containers int64
+}
+
+// tags are the image's names, without the placeholder of one that has none.
+func (im image) tags() []string {
+	var out []string
+	for _, t := range im.RepoTags {
+		if t != "<none>:<none>" {
+			out = append(out, t)
+		}
 	}
+	return out
+}
+
+type usage struct {
+	Images     []image
 	Volumes    []volume
 	BuildCache []struct {
 		ID    string

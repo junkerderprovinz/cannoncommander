@@ -23,6 +23,7 @@ var contract []byte
 func ConfigFromEnv() Config {
 	c := Config{
 		Templates: "/boot/config/plugins/dockerMan/templates-user",
+		Stacks:    "/boot/config/plugins/compose.manager/projects",
 		Plugins:   "/boot/config/plugins",
 		Appdata:   "/mnt/user/appdata",
 		Room:      "/config/storeroom",
@@ -35,6 +36,7 @@ func ConfigFromEnv() Config {
 	}
 	for env, dst := range map[string]*string{
 		"CC_STOREROOM_TEMPLATES": &c.Templates,
+		"CC_STOREROOM_STACKS":    &c.Stacks,
 		"CC_STOREROOM_PLUGINS":   &c.Plugins,
 		"CC_STOREROOM_APPDATA":   &c.Appdata,
 		"CC_STOREROOM_ROOM":      &c.Room,

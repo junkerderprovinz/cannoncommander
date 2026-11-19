@@ -2,11 +2,12 @@ tag:
   name: storeroom
   description: |
     What the server no longer uses: container templates without a container,
-    appdata folders nothing names, stopped containers nothing manages,
-    networks and anonymous volumes nobody holds, unused images and the build
-    cache. Everything but images and the build cache goes into a storeroom
-    first and can come back from there. Without an answer from the Docker
-    engine nothing counts as unused. Sizes are bytes.
+    compose stacks no container belongs to, appdata folders nothing names,
+    stopped containers nothing manages, networks and anonymous volumes nobody
+    holds, unused images a registry can send again and the build cache.
+    Everything but images and the build cache goes into a storeroom first and
+    can come back from there. Without an answer from the Docker engine
+    nothing counts as unused. Sizes are bytes.
 paths:
   /storeroom/scan:
     get:
@@ -113,7 +114,7 @@ components:
       properties:
         kind:
           type: string
-          enum: [template, appdata, container, network, volume, image, cache]
+          enum: [template, stack, appdata, container, network, volume, image, cache]
         id:
           type: string
           description: A path, a container or network ID, a volume name or an image ID.
@@ -135,7 +136,7 @@ components:
           type: string
         kind:
           type: string
-          enum: [template, appdata, container, network, volume]
+          enum: [template, stack, appdata, container, network, volume]
         name:
           type: string
         from:
