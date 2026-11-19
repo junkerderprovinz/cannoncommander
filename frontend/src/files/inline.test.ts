@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp, nextTick } from 'vue';
-import { editing, endInline, inline, onInlineSave, saveInline, startInline, stemLength } from './inline';
+import { editing, endInline, inline, onInlineSave, saveInline, startInline } from './inline';
 import RenameField from './RenameField.vue';
 
 const saved = vi.fn(async () => {});
@@ -11,13 +11,6 @@ beforeEach(() => {
 });
 
 describe('renaming in the row', () => {
-  it('selects the name before its extension, or all of a folder and a hidden file', () => {
-    expect(stemLength('Brief an Oma.odt', false)).toBe(12);
-    expect(stemLength('archiv.tar.gz', false)).toBe(10);
-    expect(stemLength('Fotos 2026.06', true)).toBe(13);
-    expect(stemLength('.bashrc', false)).toBe(7);
-  });
-
   it('marks one row of one panel', () => {
     startInline(1, '/C/Users/jdp', 'a.txt');
     expect(editing(1, '/C/Users/jdp', 'a.txt')).toBe(true);
@@ -53,10 +46,14 @@ describe('the field', () => {
     document.body.innerHTML = '';
   });
 
-  it('starts with the name before the extension selected', async () => {
-    const el = mount('Brief an Oma.odt');
-    await nextTick();
-    expect([el.selectionStart, el.selectionEnd]).toEqual([0, 12]);
+  it('starts with the whole name selected, extension and all', async () => {
+    for (const name of ['Brief an Oma.odt', 'archiv.tar.gz', 'nfo', '.bashrc']) {
+      const el = mount(name);
+      await nextTick();
+      expect([el.selectionStart, el.selectionEnd], name).toEqual([0, name.length]);
+      app?.unmount();
+      document.body.innerHTML = '';
+    }
   });
 
   it('keeps the new name on Enter', () => {

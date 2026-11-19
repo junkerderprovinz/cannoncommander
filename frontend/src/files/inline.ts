@@ -26,9 +26,3 @@ export function saveInline(to: string) {
   const typed = to.trim();
   return typed && typed !== name ? save(folder, name, typed, panel) : Promise.resolve();
 }
-
-// The part of a name before its extension, which the field selects first. A dot at the start belongs to the name.
-export const stemLength = (name: string, dir: boolean) => {
-  const dot = name.lastIndexOf('.');
-  return dir || dot <= 0 ? name.length : dot;
-};

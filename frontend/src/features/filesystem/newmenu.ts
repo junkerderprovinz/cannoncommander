@@ -26,7 +26,7 @@ const fromTemplate = (path: string, template: string) => call<FsChanged>('/fs/ne
 function nameFor(title: string, value: string, make: (name: string) => Promise<unknown>) {
   const folder = usePanels().T().path, st = reactive({ name: value });
   win({
-    title, body: NameBody, props: { st },
+    title, body: NameBody, props: { st, stem: true },
     foot: [cancelBtn(), { label: t('names.create'), g: 'IconAdd', primary: true, run: () => {
       const name = st.name.trim();
       if (!name) return false;

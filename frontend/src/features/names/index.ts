@@ -48,7 +48,7 @@ function nameWindow(title: string, value: string, verb: string, glyph: string, a
   const taken = (name: string) => !!listing.lists.get(folder)?.items.some((k) => k.name === name);
   const st = reactive({ name: value });
   win({
-    title, body: NameBody, props: { st, hint, field },
+    title, body: NameBody, props: { st, hint, field, stem: old === undefined },
     foot: [cancelBtn(), { label: verb, g: glyph, primary: true, run: () => {
       const name = st.name.trim();
       if (!name) return false;

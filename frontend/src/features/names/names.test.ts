@@ -1,4 +1,5 @@
 import { createPinia, setActivePinia } from 'pinia';
+import { createApp, reactive } from 'vue';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { api, toItem } from '@/api/client';
 import { run } from '@/core/actions';
@@ -10,6 +11,7 @@ import { usePanels } from '@/stores/panels';
 import de from './de.json';
 import en from './en.json';
 import setup, { copyName } from './index';
+import NameBody from './NameBody.vue';
 
 addMessages('names', { de, en });
 
@@ -77,5 +79,41 @@ describe('Umbenennen', () => {
     run('rename');
     expect(inline.panel).toBe(-1);
     expect(winStack).toHaveLength(1);
+  });
+
+  it('selects the whole name in the window, as the row does', () => {
+    row(cursorOn('b.txt'));
+    run('rename');
+    expect(winStack[0]!.props).not.toHaveProperty('stem', true);
+  });
+
+  it('selects only the part before the extension of a new file', () => {
+    run('newFile');
+    expect(winStack[0]!.props).toHaveProperty('stem', true);
+  });
+});
+
+describe('the name field', () => {
+  let app: ReturnType<typeof createApp> | undefined;
+  afterEach(() => {
+    app?.unmount();
+    document.body.innerHTML = '';
+  });
+  const selected = async (name: string, stem?: boolean) => {
+    app = createApp(NameBody, { st: reactive({ name }), stem });
+    app.mount(document.body.appendChild(document.createElement('div')));
+    await new Promise((r) => setTimeout(r, 0));
+    const el = document.querySelector<HTMLInputElement>('#nm')!;
+    return [el.selectionStart, el.selectionEnd];
+  };
+
+  it('starts with the whole name selected', async () => {
+    expect(await selected('Brief an Oma.odt')).toEqual([0, 16]);
+  });
+
+  it('selects the part before the extension when asked to', async () => {
+    expect(await selected('Neue Datei.txt', true)).toEqual([0, 10]);
+    app?.unmount();
+    expect(await selected('.bashrc', true)).toEqual([0, 7]);
   });
 });
