@@ -1,16 +1,17 @@
 <script setup lang="ts">
-// The name as a field in its row, all of it selected to type over.
+// The name as a field in its row, with the name before the extension selected.
 import { onMounted, ref } from 'vue';
 import { t } from '@/i18n';
 import { endInline, saveInline } from './inline';
+import { stemLength } from './paths';
 
-defineProps<{ name: string }>();
+const props = defineProps<{ name: string; dir?: boolean }>();
 const input = ref<HTMLInputElement | null>(null);
 let done = false;
 
 onMounted(() => {
   input.value!.focus();
-  input.value!.select();
+  input.value!.setSelectionRange(0, stemLength(props.name, !!props.dir));
 });
 
 function finish(keep: boolean) {

@@ -43,12 +43,12 @@ function renameInline(folder: string, from: string, to: string, panel: number) {
 // The row shows the field only where the entry is drawn as a row of its own, not in the column view.
 const drawnRow = (panel: number, idx: number) => !!document.querySelector(`.panel[data-panel="${panel}"] .list:not(.view-columns) > .row[data-idx="${idx}"] .t`);
 
-function nameWindow(title: string, value: string, verb: string, glyph: string, apply: (name: string) => Promise<FsChanged | void>, old?: string, hint?: string, field?: string) {
+function nameWindow(title: string, value: string, verb: string, glyph: string, stem: boolean, apply: (name: string) => Promise<FsChanged | void>, old?: string, hint?: string, field?: string) {
   const F = usePanels(), listing = useListing(), folder = F.T().path, panel = F.active;
   const taken = (name: string) => !!listing.lists.get(folder)?.items.some((k) => k.name === name);
   const st = reactive({ name: value });
   win({
-    title, body: NameBody, props: { st, hint, field, stem: old === undefined },
+    title, body: NameBody, props: { st, hint, field, stem },
     foot: [cancelBtn(), { label: verb, g: glyph, primary: true, run: () => {
       const name = st.name.trim();
       if (!name) return false;
@@ -67,20 +67,20 @@ export default function setup() {
 
   action('newFolder', { label: tl('names.newFolder'), g: 'IconFolderAdd', key: 'F7', needs: 'writable', run: () => {
     const folder = here();
-    nameWindow(t('names.newFolder'), t('names.newFolder'), t('names.create'), 'IconFolderAdd', (name) => ops.mkdir(join(folder, name)));
+    nameWindow(t('names.newFolder'), t('names.newFolder'), t('names.create'), 'IconFolderAdd', false, (name) => ops.mkdir(join(folder, name)));
   } });
   // The editor brings its own Neue Datei, which opens the file right away; this one only makes it.
   if (!actions.newFile) {
     action('newFile', { label: tl('names.newFile'), g: 'IconFileText', key: 'Shift+F4', needs: 'writable', run: () => {
       const folder = here();
-      nameWindow(t('names.newFile'), t('names.newFileName'), t('names.create'), 'IconFileText', (name) => ops.touch(join(folder, name)));
+      nameWindow(t('names.newFile'), t('names.newFileName'), t('names.create'), 'IconFileText', true, (name) => ops.touch(join(folder, name)));
     } });
   }
   action('folderWithSel', { label: tl('names.folderWithSel'), g: 'IconFolderAdd', key: 'Shift+F7', needs: ['sel', 'writable'], run: () => {
     const folder = here(), picked = F.sel().filter((k) => !k.at || k.at === folder);
     if (!picked.length) return toast(t('names.onlyHere'), 'warn');
     const hint = plural(picked.length, 'names.goIn');
-    return nameWindow(t('names.folderWithSel'), freeName(namesIn(folder), t('names.newFolder')), t('names.create'), 'IconFolderAdd', async (name) => {
+    return nameWindow(t('names.folderWithSel'), freeName(namesIn(folder), t('names.newFolder')), t('names.create'), 'IconFolderAdd', false, async (name) => {
       const box = join(folder, name);
       F.T().marked = new Set();
       const job = await useJobs().start({ kind: 'move', params: { sources: picked.map((k) => join(folder, k.name)), dest: box, rule: 'skip', newFolder: true } });
@@ -114,6 +114,6 @@ export default function setup() {
     const k = sel[0]!, folder = k.at || here(), idx = F.entries().indexOf(k);
     // The desktop app renames in the row, as the computer's own file manager does; the browser keeps the window.
     if (host.desktop && drawnRow(F.active, idx)) return startInline(F.active, folder, k.name);
-    return nameWindow(t('names.rename'), k.name, t('names.rename'), 'IconPencil', (name) => ops.rename(join(folder, k.name), name), k.name);
+    return nameWindow(t('names.rename'), k.name, t('names.rename'), 'IconPencil', !k.dir, (name) => ops.rename(join(folder, k.name), name), k.name);
   } });
 }

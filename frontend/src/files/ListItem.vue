@@ -68,7 +68,7 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
     <template v-if="kind === 'row' || kind === 'flow'">
       <template v-for="id in kind === 'row' ? Columns.visible() : ['name']" :key="id">
         <span v-if="id === 'name'" class="name">
-          <span class="glyph"><RowMark v-if="marked || boxes" :on="marked" /><EntryGlyph v-else :k="k" :folder="folder" :px="16" /></span><RenameField v-if="renaming" :name="k.name" /><span v-else class="t">{{ shownName }}</span>
+          <span class="glyph"><RowMark v-if="marked || boxes" :on="marked" /><EntryGlyph v-else :k="k" :folder="folder" :px="16" /></span><RenameField v-if="renaming" :name="k.name" :dir="k.dir" /><span v-else class="t">{{ shownName }}</span>
           <Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" />
           <span v-if="k.at && k.at !== path" class="link">{{ t('files.foundIn', { path: k.at.slice(path.length + 1) }) }}</span>
           <span v-if="k.link" class="link">→ {{ nativePath(k.link, windowsPaths()) }}</span>
@@ -82,11 +82,11 @@ const extra = computed(() => ['dimensions', 'duration', 'pages'].map((id) => COL
     </template>
     <template v-else-if="kind === 'tile'">
       <Thumb :k="k" :folder="folder" :size="thumb" /><RowMark v-if="marked || boxes" :on="marked" />
-      <RenameField v-if="renaming" :name="k.name" /><span v-else class="t">{{ k.name }}</span><span class="meta glim-num">{{ objects }}<Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" /></span>
+      <RenameField v-if="renaming" :name="k.name" :dir="k.dir" /><span v-else class="t">{{ k.name }}</span><span class="meta glim-num">{{ objects }}<Render v-for="(badge, n) in extend.nameBadges" :key="n" :node="badge(k, path)" /></span>
     </template>
     <template v-else-if="kind === 'content'">
       <Thumb :k="k" :folder="folder" /><RowMark v-if="marked || boxes" :on="marked" />
-      <span class="c-main"><RenameField v-if="renaming" :name="k.name" /><span v-else class="t">{{ k.name }}</span><span class="c-sub">{{ COL.type!.value(k, path) }} · {{ fmtListDate(k.time) }}</span></span>
+      <span class="c-main"><RenameField v-if="renaming" :name="k.name" :dir="k.dir" /><span v-else class="t">{{ k.name }}</span><span class="c-sub">{{ COL.type!.value(k, path) }} · {{ fmtListDate(k.time) }}</span></span>
       <span class="c-side glim-num"><span>{{ objects }}</span><span v-if="extra">{{ extra }}</span></span>
     </template>
     <template v-else>

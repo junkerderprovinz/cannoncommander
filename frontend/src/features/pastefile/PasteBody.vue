@@ -2,14 +2,12 @@
 // What came from the clipboard, and the name it gets. The part before the extension starts selected.
 import { FieldRow, SubCard, TextField } from '@glimstone/vue';
 import { onMounted, ref } from 'vue';
+import { stemLength } from '@/files/paths';
 import { t } from '@/i18n';
 
 const props = defineProps<{ st: { name: string }; url?: string; text?: string; folder: string }>();
 const input = ref<InstanceType<typeof TextField> | null>(null);
-onMounted(() => setTimeout(() => {
-  const dot = props.st.name.lastIndexOf('.');
-  input.value?.input?.setSelectionRange(0, dot > 0 ? dot : props.st.name.length);
-}, 0));
+onMounted(() => setTimeout(() => input.value?.input?.setSelectionRange(0, stemLength(props.st.name, false)), 0));
 const enter = (e: KeyboardEvent) => (e.target as Element).closest('.win')?.querySelector<HTMLElement>('.glim-modal-foot .glim-btn--accent')?.click();
 </script>
 

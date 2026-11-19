@@ -32,11 +32,11 @@ describe('copyName', () => {
 });
 
 describe('Umbenennen', () => {
-  const file = (name: string) => toItem({ name, dir: false, size: 1, mtime: '2026-11-08T10:00:00Z', mode: '644' });
+  const file = (name: string, dir = false) => toItem({ name, dir, size: 1, mtime: '2026-11-08T10:00:00Z', mode: '644' });
   beforeEach(async () => {
     setActivePinia(createPinia());
     history.replaceState(null, '', '/#/home/jdp');
-    vi.spyOn(api, 'fsList').mockImplementation(async (path) => ({ path, items: ['a.txt', 'b.txt'].map(file), etag: path }));
+    vi.spyOn(api, 'fsList').mockImplementation(async (path) => ({ path, items: [...['a.txt', 'b.txt'].map((n) => file(n)), file('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR', true)], etag: path }));
     vi.spyOn(api, 'fsTree').mockResolvedValue({ path: '/', items: [] });
     winStack.splice(0);
     endInline();
@@ -81,15 +81,22 @@ describe('Umbenennen', () => {
     expect(winStack).toHaveLength(1);
   });
 
-  it('selects the whole name in the window, as the row does', () => {
+  it("selects a file's name up to its extension in the window, as the row does", () => {
     row(cursorOn('b.txt'));
+    run('rename');
+    expect(winStack[0]!.props).toHaveProperty('stem', true);
+  });
+
+  it("selects all of a folder's name in the window", () => {
+    row(cursorOn('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR'));
     run('rename');
     expect(winStack[0]!.props).not.toHaveProperty('stem', true);
   });
 
-  it('selects only the part before the extension of a new file', () => {
+  it('selects only the part before the extension of a new file, and all of a new folder', () => {
     run('newFile');
-    expect(winStack[0]!.props).toHaveProperty('stem', true);
+    run('newFolder');
+    expect(winStack.map((w) => !!w.props?.stem)).toEqual([true, false]);
   });
 });
 
@@ -107,12 +114,18 @@ describe('the name field', () => {
     return [el.selectionStart, el.selectionEnd];
   };
 
-  it('starts with the whole name selected', async () => {
+  it('starts with the whole name selected, as for a bookmark', async () => {
     expect(await selected('Brief an Oma.odt')).toEqual([0, 16]);
+    app?.unmount();
+    expect(await selected('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR')).toEqual([0, 74]);
   });
 
   it('selects the part before the extension when asked to', async () => {
-    expect(await selected('Neue Datei.txt', true)).toEqual([0, 10]);
+    expect(await selected('Citizen Vigilante (2026).mkv', true)).toEqual([0, 24]);
+    app?.unmount();
+    expect(await selected('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR.mkv', true)).toEqual([0, 74]);
+    app?.unmount();
+    expect(await selected('Mr. Robot (2015)', true)).toEqual([0, 16]);
     app?.unmount();
     expect(await selected('.bashrc', true)).toEqual([0, 7]);
   });

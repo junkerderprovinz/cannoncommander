@@ -7,6 +7,12 @@ export function parent(path: string) {
   return '/' + p.join('/');
 }
 export const inArchive = (path: string) => path.includes('::');
+// How much of a name renaming selects: a file's name up to its extension, all of anything else. An extension is
+// letters and digits after the last dot, so "Mr. Robot (2015)" has none, and a leading dot belongs to the name.
+export function stemLength(name: string, dir: boolean) {
+  const dot = name.lastIndexOf('.');
+  return dir || dot <= 0 || !/^[\p{L}\p{N}]+$/u.test(name.slice(dot + 1)) ? name.length : dot;
+}
 // The folder that holds the archive path lies in, or path itself outside any archive.
 export const outsideArchive = (path: string) => (inArchive(path) ? parent(path.slice(0, path.indexOf('::'))) : path);
 

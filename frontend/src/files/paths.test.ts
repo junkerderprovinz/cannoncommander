@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { nativePath, outsideArchive, typedPath } from './paths';
+import { nativePath, outsideArchive, stemLength, typedPath } from './paths';
 
 const windows = { windows: true, home: '/C/Users/jdp' };
 const linux = { windows: false, home: '/home/jdp' };
@@ -52,5 +52,26 @@ describe('paths', () => {
 
   it('leaves a path inside an archive as it is typed', () => {
     expect(typedPath('/mnt/user/a.zip::/docs', linux)).toBe('/mnt/user/a.zip::/docs');
+  });
+});
+
+describe('the part of a name to type over', () => {
+  it('stops before the last extension of a file', () => {
+    expect(stemLength('Citizen Vigilante (2026).mkv', false)).toBe(24);
+    expect(stemLength('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR.mkv', false)).toBe(74);
+    expect(stemLength('album.flac', false)).toBe(5);
+    expect(stemLength('archiv.tar.gz', false)).toBe(10);
+  });
+
+  it('takes all of a folder, dots and all', () => {
+    expect(stemLength('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR', true)).toBe(74);
+    expect(stemLength('Citizen Vigilante (2026)', true)).toBe(24);
+  });
+
+  it('takes all of a file without an extension', () => {
+    expect(stemLength('nfo', false)).toBe(3);
+    expect(stemLength('.bashrc', false)).toBe(7);
+    expect(stemLength('Mr. Robot (2015)', false)).toBe(16);
+    expect(stemLength('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR', false)).toBe(74);
   });
 });

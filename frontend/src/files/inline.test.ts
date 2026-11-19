@@ -34,9 +34,9 @@ describe('renaming in the row', () => {
 
 describe('the field', () => {
   let app: ReturnType<typeof createApp> | undefined;
-  const mount = (name: string) => {
+  const mount = (name: string, dir = false) => {
     startInline(0, '/home/jdp', name);
-    app = createApp(RenameField, { name });
+    app = createApp(RenameField, { name, dir });
     app.mount(document.body.appendChild(document.createElement('div')));
     return document.querySelector<HTMLInputElement>('.rn-field')!;
   };
@@ -46,14 +46,25 @@ describe('the field', () => {
     document.body.innerHTML = '';
   });
 
-  it('starts with the whole name selected, extension and all', async () => {
-    for (const name of ['Brief an Oma.odt', 'archiv.tar.gz', 'nfo', '.bashrc']) {
-      const el = mount(name);
-      await nextTick();
-      expect([el.selectionStart, el.selectionEnd], name).toEqual([0, name.length]);
-      app?.unmount();
-      document.body.innerHTML = '';
-    }
+  const selected = async (name: string, dir = false) => {
+    const el = mount(name, dir);
+    await nextTick();
+    const got = el.value.slice(el.selectionStart!, el.selectionEnd!);
+    app?.unmount();
+    document.body.innerHTML = '';
+    return got;
+  };
+
+  it("starts with a file's name selected up to its extension", async () => {
+    expect(await selected('Citizen Vigilante (2026).mkv')).toBe('Citizen Vigilante (2026)');
+    expect(await selected('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR.mkv')).toBe('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR');
+    expect(await selected('album.flac')).toBe('album');
+  });
+
+  it('starts with all of a folder or an extensionless file selected', async () => {
+    expect(await selected('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR', true)).toBe('Citizen.Vigilante.2026.German.DTSHD.DL.2160p.UHD.BluRay.DV.HDR.x265-VECTOR');
+    expect(await selected('nfo')).toBe('nfo');
+    expect(await selected('.bashrc')).toBe('.bashrc');
   });
 
   it('keeps the new name on Enter', () => {
