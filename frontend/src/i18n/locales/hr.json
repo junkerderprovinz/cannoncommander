@@ -767,7 +767,8 @@
       "g": {
         "cloud": "Oblaci",
         "storage": "Objektna pohrana",
-        "protocol": "Poslužitelji i protokoli"
+        "protocol": "Poslužitelji i protokoli",
+        "layered": "Na drugoj pohrani"
       },
       "p": {
         "smb": "SMB / Windows dijeljenje",

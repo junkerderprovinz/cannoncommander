@@ -767,7 +767,8 @@
       "g": {
         "cloud": "Núvols",
         "storage": "Emmagatzematge d'objectes",
-        "protocol": "Servidors i protocols"
+        "protocol": "Servidors i protocols",
+        "layered": "Sobre un altre remot"
       },
       "p": {
         "smb": "SMB / compartició de Windows",

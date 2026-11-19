@@ -1,29 +1,39 @@
-// What the add dialog knows beyond rclone: products by name with their logos, the words beside each field, and the
-// fields a type asks for first. The server sends the product table and rclone's options; the sentences live here.
-import { admin, type Provider, type ProviderGroup, type RemoteCatalog, type RemoteOption, type RemoteType } from '@/api/admin';
-import { hasGlyph } from '@/core/glyphs';
+// What the add dialog knows beyond rclone: the words beside each field and the fields a type asks for first. The
+// products, their groups and logos come from GlimStone's storage catalog; the server says which of them this rclone
+// reaches and how each one connects.
+import { catalogPicker, type TileMark } from '@glimstone/core';
+import type { StorageGroup, StorageProviderId } from '@glimstone/core/storageProviders';
+import type { PickerItem, PickGroup } from '@glimstone/vue';
+import { admin, type Provider, type RemoteCatalog, type RemoteOption, type RemoteType } from '@/api/admin';
+import { glyphComponent, hasGlyph } from '@/core/glyphs';
+import { locale } from '@/i18n';
 import { c } from '@/features/config/shared';
 
 // The logos weigh a hundred kilobytes, so they come along with the first list or window that shows them.
-let marks: typeof import('./brandMarks') | null = null;
-export const loadMarks = async () => { marks ??= await import('./brandMarks'); };
+let storage: typeof import('@glimstone/core/storageProviders') | null = null;
+export const loadMarks = async () => { storage ??= await import('@glimstone/core/storageProviders'); };
 
 let catalog: Promise<RemoteCatalog> | null = null;
 // rclone's options only change with rclone, so one answer serves every window. A failed one is asked again.
 export const loadCatalog = () => (catalog ??= Promise.all([admin.remoteCatalog(), loadMarks()]).then(([got]) => got, (e: unknown) => { catalog = null; throw e; }));
 
-export const GROUPS: ProviderGroup[] = ['cloud', 'storage', 'protocol'];
+const entryOf = (id: string) => storage?.STORAGE_PROVIDERS.entries.find((e) => e.id === id);
+const glyphOf = (name?: string) => (name && hasGlyph(name) ? name : 'IconCloud');
 
-// A brand's own drawing where there is one, otherwise a glyph that stands for the kind of thing.
-export function markOf(mark?: string): { svg?: string; glyph: string; tile?: { tile: string; ink: string } } {
-  const svg = mark && marks?.BRAND_MARKS[mark];
-  if (svg) return { svg, glyph: 'IconCloud', tile: marks!.BRAND_TILES[mark!] };
-  return { glyph: mark && hasGlyph(mark) ? mark : 'IconCloud' };
+// A brand's own drawing where the catalog has one, otherwise the glyph that stands for the kind of thing.
+export function markOf(id: string): { mark?: TileMark; glyph: string } {
+  const e = entryOf(id);
+  return e?.mark ? { mark: e.mark, glyph: 'IconCloud' } : { glyph: glyphOf(e?.glyph) };
 }
 
-// The few names that are words rather than a product's own, which a language says its own way.
-const WORD_NAMES = new Set(['smb', 's3', 'crypt', 'alias', 'archive', 'cache', 'chunker', 'combine', 'compress', 'hasher', 'union', 'memory']);
-export const providerName = (p: { id: string; name: string }) => (WORD_NAMES.has(p.id) ? c(`remotes.p.${p.id}`) : p.name);
+// The catalog's own name, in English for a word too, which a new remote's name is made from.
+export const productName = (id: string) => entryOf(id)?.name ?? id;
+
+// A name that is a word rather than a product's own comes in the reader's language.
+export function providerName(id: string) {
+  const e = entryOf(id);
+  return !e ? id : e.word ? c(`remotes.p.${id}`) : e.name;
+}
 
 // "SMB / Windows share" becomes the tile's name and its second line.
 export function nameAndKind(label: string): { name: string; sub?: string } {
@@ -39,6 +49,25 @@ const HINTS: Record<string, string> = {
   union: 'union', memory: 'memory',
 };
 export const providerHint = (id: string) => (HINTS[id] ? c(`remotes.ph.${HINTS[id]}`) : undefined);
+
+// The tiles of the products this rclone reaches, found by rclone's name for the backend too, which is what a guide
+// online uses. A protocol or a remote built on another one needs its sentence behind an (i), a product's on its
+// tooltip.
+export function providerPicker(offered: readonly Pick<Provider, 'id' | 'backend'>[]): { items: PickerItem[]; groups: PickGroup[] } {
+  if (!storage) return { items: [], groups: [] };
+  const { STORAGE_PROVIDERS } = storage;
+  const backends = new Map(offered.map((p) => [p.id, p.backend]));
+  const titles = Object.fromEntries(STORAGE_PROVIDERS.groups.map((g) => [g, c(`remotes.g.${g}`)])) as Record<StorageGroup, string>;
+  return catalogPicker(STORAGE_PROVIDERS, {
+    ids: [...backends.keys()] as StorageProviderId[], titles, lang: locale(),
+    glyph: (e) => glyphComponent(glyphOf(e.glyph)),
+    own: (e) => {
+      const { name, sub } = e.word ? nameAndKind(c(`remotes.p.${e.id}`)) : { name: e.name, sub: undefined };
+      const why = providerHint(e.id), behind = e.group === 'protocol' || e.group === 'layered';
+      return { label: name, sub, terms: [backends.get(e.id)!], hint: behind ? why : undefined, tip: behind ? undefined : why };
+    },
+  });
+}
 
 // Names of the options the forms show most, in the reader's language. Any other keeps rclone's name, which is what
 // rclone's documentation searches for.
@@ -108,10 +137,8 @@ export function suggestName(product: string, taken: string[]) {
 }
 
 // What a list calls a saved remote: its product, or rclone's type where the parameters name none.
-export const remoteKind = (r: { type: string; provider?: string }, providers: Provider[]) => {
-  const p = providers.find((x) => x.id === r.provider);
-  return p ? providerName(p) : r.type;
-};
+export const remoteKind = (r: { type: string; provider?: string }, providers: Provider[]) =>
+  (r.provider && providers.some((x) => x.id === r.provider) ? providerName(r.provider) : r.type);
 
 // The questions rclone's setups ask, by the parameter that answers them.
 const QUESTIONS: Record<string, string> = { config_driveid: 'drive', config_workspace: 'workspace', config_team_drive_id: 'team' };

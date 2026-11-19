@@ -19,12 +19,14 @@ const CATALOG: RemoteCatalog = {
     { id: 's3', description: 'S3', featured: true, oauth: false, pathHint: 'bucket', options: [option('access_key_id', { required: true })] },
     { id: 'smb', description: 'SMB', featured: true, oauth: false, pathHint: 'share', options: [option('host', { required: true })] },
     { id: 'quatrix', description: 'Quatrix', featured: false, oauth: false, pathHint: 'folder', options: [option('api_key', { required: true })] },
+    { id: 'crypt', description: 'Encrypt a remote', featured: false, oauth: false, pathHint: 'folder', options: [option('remote', { required: true })] },
   ],
   providers: [
-    { id: 'nextcloud', name: 'Nextcloud', backend: 'webdav', group: 'cloud', preset: { vendor: 'nextcloud' }, mark: 'IconNextcloud' },
-    { id: 's3', name: 'S3', backend: 's3', group: 'storage' },
-    { id: 'smb', name: 'SMB', backend: 'smb', group: 'protocol', mark: 'IconServer' },
-    { id: 'webdav', name: 'WebDAV', backend: 'webdav', group: 'protocol' },
+    { id: 'nextcloud', backend: 'webdav', preset: { vendor: 'nextcloud' } },
+    { id: 's3', backend: 's3' },
+    { id: 'smb', backend: 'smb' },
+    { id: 'webdav', backend: 'webdav' },
+    { id: 'crypt', backend: 'crypt' },
   ],
   unlisted: ['quatrix'],
 };
@@ -110,8 +112,8 @@ describe('the window that adds a remote', () => {
     expect(q('.glim-pick-window')).not.toBeNull();
     expect(q('[data-glim-title]')?.getAttribute('data-glim-title')).toBe('Add a remote');
     expect(search().placeholder).toBe('Search providers');
-    expect(eyebrows()).toEqual(['Clouds', 'Object storage', 'Servers and protocols', 'Other rclone backends: 1']);
-    expect(tiles()).toEqual(['Nextcloud', 'S3 compatible', 'SMB', 'WebDAV', 'quatrix']);
+    expect(eyebrows()).toEqual(['Clouds', 'Object storage', 'Servers and protocols', 'On another remote', 'Other rclone backends: 1']);
+    expect(tiles()).toEqual(['Nextcloud', 'S3 compatible', 'SMB', 'WebDAV', 'Encrypted', 'quatrix']);
     expect(tile('SMB').querySelector('.glim-readme-btn-sub')?.textContent).toBe('Windows share');
     expect(footLabels()).toEqual(['Close']);
   });
@@ -125,7 +127,7 @@ describe('the window that adds a remote', () => {
     expect(q('.glim-pick-none')?.textContent).toBe('Nothing matches “gopher”. Most other services work with S3 compatible or WebDAV.');
     await click(q('.glim-pick-search button'));
     expect(search().value).toBe('');
-    expect(tiles()).toHaveLength(5);
+    expect(tiles()).toHaveLength(6);
   });
 
   it('goes from a tile to its fields in the same window and back to the tiles', async () => {

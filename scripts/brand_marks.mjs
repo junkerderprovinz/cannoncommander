@@ -1,13 +1,14 @@
 // node scripts/brand_marks.mjs <arrowloop checkout>
-// Writes the provider logos of the remotes window from ArrowLoop's marks, which share the sources and licences listed
-// in scripts/brand-paths/README.md: frontend/src/features/config/brandMarks.ts with each mark as SVG markup and its
-// tile colours, and brandMarks.css with the colours a mark shifts on one of the two grounds.
+// Writes the provider logos of the prototype's remotes window from ArrowLoop's marks, which share the sources and
+// licences listed in scripts/brand-paths/README.md: prototype/src/brandMarks.ts with each mark as SVG markup and its
+// tile colours, and brandMarks.css with the colours a mark shifts on one of the two grounds. The app takes its logos
+// from GlimStone's storage catalog.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const al = process.argv[2];
 if (!al) throw new Error('usage: node scripts/brand_marks.mjs <arrowloop checkout>');
-const out = join(import.meta.dirname, '..', 'frontend', 'src', 'features', 'config');
+const out = join(import.meta.dirname, '..', 'prototype', 'src');
 const tsx = readFileSync(join(al, 'web', 'src', 'components', 'brandGlyphs.tsx'), 'utf8');
 const css = readFileSync(join(al, 'web', 'src', 'brandGlyphs.css'), 'utf8');
 

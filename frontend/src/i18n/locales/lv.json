@@ -767,7 +767,8 @@
       "g": {
         "cloud": "Mākoņi",
         "storage": "Objektu krātuve",
-        "protocol": "Serveri un protokoli"
+        "protocol": "Serveri un protokoli",
+        "layered": "Uz citas attālās vietas"
       },
       "p": {
         "smb": "SMB / Windows koplietojums",

@@ -767,7 +767,8 @@
       "g": {
         "cloud": "Nori",
         "storage": "Stocare de obiecte",
-        "protocol": "Servere și protocoale"
+        "protocol": "Servere și protocoale",
+        "layered": "Peste o altă destinație remote"
       },
       "p": {
         "smb": "SMB / partajare Windows",

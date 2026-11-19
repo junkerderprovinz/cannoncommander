@@ -732,7 +732,8 @@
       "g": {
         "cloud": "Skyer",
         "storage": "Objektlager",
-        "protocol": "Servere og protokoller"
+        "protocol": "Servere og protokoller",
+        "layered": "Oven på et andet fjernmål"
       },
       "p": {
         "smb": "SMB / Windows-deling",

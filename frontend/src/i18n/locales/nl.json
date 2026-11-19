@@ -732,7 +732,8 @@
       "g": {
         "cloud": "Clouds",
         "storage": "Objectopslag",
-        "protocol": "Servers en protocollen"
+        "protocol": "Servers en protocollen",
+        "layered": "Op een ander extern doel"
       },
       "p": {
         "smb": "SMB / Windows-share",

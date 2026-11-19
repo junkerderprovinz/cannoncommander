@@ -11258,20 +11258,16 @@ components:
                     type: string
     RemoteProvider:
       type: object
-      required: [id, name, backend, group]
+      description: How a product of GlimStone's storage catalog connects. The catalog holds its name, group and logo.
+      required: [id, backend]
       properties:
         id:
           type: string
+          description: The product's id in GlimStone's storage catalog.
           example: nextcloud
-        name:
-          type: string
-          example: Nextcloud
         backend:
           type: string
           example: webdav
-        group:
-          type: string
-          enum: [cloud, storage, protocol]
         preset:
           type: object
           description: Parameters set without asking.
@@ -11279,10 +11275,6 @@ components:
             type: string
           example:
             vendor: nextcloud
-        mark:
-          type: string
-          description: The logo or glyph of the product.
-          example: IconNextcloud
         urlHint:
           type: string
           example: https://cloud.example.com/remote.php/webdav/

@@ -802,7 +802,8 @@
       "g": {
         "cloud": "Oblaki",
         "storage": "Objektna shramba",
-        "protocol": "Strežniki in protokoli"
+        "protocol": "Strežniki in protokoli",
+        "layered": "Na drugem oddaljenem cilju"
       },
       "p": {
         "smb": "SMB / Windows skupna raba",

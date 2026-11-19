@@ -14,10 +14,11 @@ const boot = core.filter(f => f.startsWith('99-'));
 const ordered = [...core.filter(f => !f.startsWith('99-')).map(f => join('src', 'js', f)), ...features.map(f => join('src', 'js', 'features', f)), ...boot.map(f => join('src', 'js', f))];
 const js = ordered.map(f => `// ${f.replaceAll('\\', '/')}\n${read(f)}`).join('\n');
 
-// The remotes window takes rclone's catalog, the provider logos and its German texts from the app, so both show the same.
+// The remotes window takes rclone's catalog and its German texts from the app. Its products and their logos are its
+// own, since the app takes them from GlimStone's storage catalog.
 const frontend = join(here, '..', 'frontend');
-const remotes = readFileSync(join(frontend, 'scripts', 'fixture-remotes.json'), 'utf8');
-const marksTs = readFileSync(join(frontend, 'src', 'features', 'config', 'brandMarks.ts'), 'utf8');
+const remotes = JSON.stringify({ ...JSON.parse(readFileSync(join(frontend, 'scripts', 'fixture-remotes.json'), 'utf8')), providers: JSON.parse(read('src', 'remote-providers.json')) });
+const marksTs = read('src', 'brandMarks.ts');
 const table = (name) => JSON.parse(marksTs.match(new RegExp(name + '[^=]*= (\\{[\\s\\S]*?\\n\\});'))[1]);
 const brands = { marks: table('BRAND_MARKS'), tiles: table('BRAND_TILES') };
 const remoteTexts = { config: JSON.parse(readFileSync(join(frontend, 'src', 'features', 'config', 'de.json'), 'utf8')).remotes, side: JSON.parse(readFileSync(join(frontend, 'src', 'features', 'remotes', 'de.json'), 'utf8')) };
@@ -62,7 +63,7 @@ const html = read('src', 'index.html')
   .replace('/*GLYPHS*/', () => JSON.stringify(Object.fromEntries([...used].map(n => [n, glyphs[n]]))))
   .replace('/*FORMATS*/', () => JSON.stringify(formats))
   .replace('/*MARKS*/', () => read('vendor', 'marks.json'))
-  .replace('/*BRANDCSS*/', () => readFileSync(join(frontend, 'src', 'features', 'config', 'brandMarks.css'), 'utf8'))
+  .replace('/*BRANDCSS*/', () => read('src', 'brandMarks.css'))
   .replace('/*REMOTES*/', () => remotes.trim())
   .replace('/*BRANDS*/', () => JSON.stringify(brands))
   .replace('/*REMOTETEXTS*/', () => JSON.stringify(remoteTexts))

@@ -63,11 +63,10 @@ export interface RemoteOption {
 export interface RemoteType {
   id: string; description: string; featured: boolean; oauth: boolean; authorize?: string; pathHint: 'folder' | 'share' | 'bucket'; options: RemoteOption[];
 }
-export type ProviderGroup = 'cloud' | 'storage' | 'protocol';
 export type AuthStyle = 'apppassword' | 'oauth' | 'apikey' | 'accesskey' | 'login' | 'logintoken';
+// How a product of GlimStone's storage catalog connects, by the catalog's id.
 export interface Provider {
-  id: string; name: string; backend: string; group: ProviderGroup; preset?: Record<string, string>; mark?: string;
-  urlHint?: string; auth?: AuthStyle; authUrl?: string; defaults?: Record<string, string>;
+  id: string; backend: string; preset?: Record<string, string>; urlHint?: string; auth?: AuthStyle; authUrl?: string; defaults?: Record<string, string>;
 }
 export interface RemoteCatalog { types: RemoteType[]; providers: Provider[]; unlisted: string[] }
 export interface Rclone { installed: boolean; running: boolean; version?: string; error?: string }

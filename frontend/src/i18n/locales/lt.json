@@ -802,7 +802,8 @@
       "g": {
         "cloud": "Debesys",
         "storage": "Objektų saugykla",
-        "protocol": "Serveriai ir protokolai"
+        "protocol": "Serveriai ir protokolai",
+        "layered": "Ant kitos nuotolinės vietos"
       },
       "p": {
         "smb": "SMB / Windows bendrinimas",

@@ -697,7 +697,8 @@
       "g": {
         "cloud": "クラウド",
         "storage": "オブジェクトストレージ",
-        "protocol": "サーバーとプロトコル"
+        "protocol": "サーバーとプロトコル",
+        "layered": "別のリモートの上に"
       },
       "p": {
         "smb": "SMB / Windows 共有",

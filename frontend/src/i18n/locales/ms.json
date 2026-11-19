@@ -697,7 +697,8 @@
       "g": {
         "cloud": "Awan",
         "storage": "Storan objek",
-        "protocol": "Pelayan dan protokol"
+        "protocol": "Pelayan dan protokol",
+        "layered": "Di atas storan jauh lain"
       },
       "p": {
         "smb": "SMB / perkongsian Windows",

@@ -18,7 +18,7 @@ const rclone = ref<Rclone | null>(null);
 // The products give each row its name and logo. Until rclone answers, a row says its rclone type.
 const providers = ref<Provider[]>([]);
 const load = async () => { ({ remotes: remotes.value, rclone: rclone.value } = await admin.remotes()); };
-const markFor = (r: Remote) => markOf(providers.value.find((p) => p.id === r.provider)?.mark);
+const markFor = (r: Remote) => markOf(providers.value.some((p) => p.id === r.provider) ? r.provider! : '');
 onMounted(() => {
   load().then(() => { if (rclone.value?.running) loadCatalog().then((c) => { providers.value = c.providers; }, () => {}); }, () => {});
   admin.app().then((a) => { mounting.value = a.remotes; }, () => {});
@@ -64,7 +64,7 @@ function remove(r: Remote) {
   <Card :title="c('remotes.title')">
     <div v-if="remotes.length" class="a-list">
       <ListRow v-for="(r, i) in remotes" :key="r.name" :name="r.name" :tip="r.error ? c('remotes.mountFailed', { error: r.error }) : null" :data-open="i" @click="edit(r)">
-        <template #tile><BrandMark v-if="markFor(r).svg" :svg="markFor(r).svg!" /><G v-else :n="markFor(r).glyph" /></template>
+        <template #tile><BrandMark v-if="markFor(r).mark" :svg="markFor(r).mark!.svg" /><G v-else :n="markFor(r).glyph" /></template>
         <template #badges>
           <Pill>{{ remoteKind(r, providers) }}</Pill><Pill class="mono">{{ r.mount }}</Pill>
           <Pill v-if="r.error" tone="warn">{{ c('remotes.failedPill') }}</Pill>

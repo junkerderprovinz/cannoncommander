@@ -802,7 +802,8 @@
       "g": {
         "cloud": "Cloudy",
         "storage": "Objektové úložiště",
-        "protocol": "Servery a protokoly"
+        "protocol": "Servery a protokoly",
+        "layered": "Nad jiným vzdáleným cílem"
       },
       "p": {
         "smb": "SMB / sdílení Windows",

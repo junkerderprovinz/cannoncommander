@@ -21,7 +21,7 @@ CannonCommander shows every drive with its history, colours the treemap by file 
 
 ## 🎨 Design
 
-- **GlimStone 4.5.8 and its picker.** Adding a remote opens GlimStone's picker window: the providers in their groups under a search that is open from the start, the arrow keys across the tiles, and Escape that empties the search before it closes the window. A picked tile brings its fields into the same window, where a long form scrolls, and Test keeps its label while it runs, then turns green or red. Whatever the pointer is over lights up in the same soft shade of your accent colour, and the keyboard's focus ring stands out on every background.
+- **GlimStone 4.6.0 and its picker.** Adding a remote opens GlimStone's picker window: the providers in their groups under a search that is open from the start, the arrow keys across the tiles, and Escape that empties the search before it closes the window. The providers come from GlimStone's shared catalog, with the same names, groups and logos as in the other apps, and remotes built on another remote, such as an encrypted one, have a group of their own. A picked tile brings its fields into the same window, where a long form scrolls, and Test keeps its label while it runs, then turns green or red. Whatever the pointer is over lights up in the same soft shade of your accent colour, and the keyboard's focus ring stands out on every background.
 - **What the cannon hits cracks like a pane.** Thin wedges break off where the ball strikes and larger pieces further out, and the splinters slow down in the air as they turn and fall. The blast is the same at every motion level, and with motion turned off the cannon does not fire.
 - **The line between two list columns is one thin line in the border colour,** shown on every edge while the pointer is over the header row.
 - **The tree's arrows light up on their own.** The arrow that opens a folder takes your accent under the pointer, without the extra circle behind it.
@@ -47,7 +47,7 @@ CannonCommander shows every drive with its history, colours the treemap by file 
 
 ## 🌐 Translations
 
-- **The drives, the storeroom with its stacks, the treemap's colours and the picker's clear button** speak all 42 languages, and the Help sentence uses GlimStone's words in every one of them.
+- **The drives, the storeroom with its stacks, the treemap's colours, the picker's clear button and its group for remotes built on another remote** speak all 42 languages, and the Help sentence uses GlimStone's words in every one of them.
 
 ## v1.1.0 (2026-11-12)
 

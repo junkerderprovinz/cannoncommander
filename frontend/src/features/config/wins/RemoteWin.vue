@@ -15,7 +15,7 @@ import { t } from '@/i18n';
 import { c, fail } from '@/features/config/shared';
 import { pathField } from '@/ui/picker';
 import { copyWords, shake } from '@/ui/kit';
-import { GROUPS, loadCatalog, markOf, nameAndKind, optionLabel, providerHint, providerName, questionLabel, splitOptions, suggestName } from '../remotes';
+import { loadCatalog, nameAndKind, optionLabel, productName, providerHint, providerName, providerPicker, questionLabel, splitOptions, suggestName } from '../remotes';
 import RemoteField from './RemoteField.vue';
 
 const props = defineProps<{ remote: Remote | null; all: Remote[] }>();
@@ -46,31 +46,21 @@ const at = (sel: string) => form.value?.closest('.glim-window')?.querySelector(s
 
 watch([values, path, token], () => { result.value = null; });
 
-const who = computed(() => (provider.value ? providerName(provider.value) : type.value?.description ?? typeId.value));
+const who = computed(() => (provider.value ? providerName(provider.value.id) : type.value?.description ?? typeId.value));
 const split = computed(() => (type.value ? splitOptions(type.value, provider.value?.preset, values) : { first: [], rest: [] }));
 const pathWord = computed(() => type.value?.pathHint ?? 'folder');
 
-// Products found by the name shown and by rclone's own, which is what a guide online uses. The backends without a
-// product come last, under their rclone names.
+// The products in the catalog's groups, then the backends without a product, under their rclone names.
+const picker = computed(() => providerPicker(cat.value?.providers ?? []));
 const groups = computed<PickGroup[]>(() => [
-  ...GROUPS.map((g) => ({ id: g, title: c(`remotes.g.${g}`) })),
+  ...picker.value.groups,
   { id: 'more', title: c('remotes.pickMore', { count: cat.value?.unlisted.length ?? 0 }) },
 ]);
 const items = computed<PickerItem[]>(() => [
-  ...(cat.value?.providers ?? []).map((p) => {
-    const m = markOf(p.mark), protocol = p.group === 'protocol', { name: label, sub } = nameAndKind(providerName(p));
-    return {
-      id: p.id, label, sub, group: p.group, terms: [p.name, p.backend],
-      mark: m.svg ? { svg: m.svg, ...m.tile } : glyphComponent(m.glyph),
-      hint: protocol ? providerHint(p.id) : undefined, tip: protocol ? undefined : providerHint(p.id),
-    };
-  }),
+  ...picker.value.items,
   ...(cat.value?.unlisted ?? []).map((b) => ({ id: b, label: b, group: 'more', mark: glyphComponent('IconCloud') })),
 ]);
-const tileName = (id: string, fallback: string) => {
-  const p = cat.value?.providers.find((x) => x.id === id);
-  return p ? nameAndKind(providerName(p)).name : fallback;
-};
+const tileName = (id: string, fallback: string) => (cat.value?.providers.some((x) => x.id === id) ? nameAndKind(providerName(id)).name : fallback);
 // The picker fills in the query itself.
 const pickText = computed<PickerText>(() => ({
   search: c('remotes.search'),
@@ -91,7 +81,7 @@ function choose(p: Provider | null, backend: string) {
   for (const k of Object.keys(values)) delete values[k];
   Object.assign(values, p?.preset ?? {});
   if (!nameTouched) {
-    name.value = suggestName(p?.name ?? backend, taken);
+    name.value = suggestName(p ? productName(p.id) : backend, taken);
     if (!mountTouched) mount.value = '/remotes/' + name.value;
   }
   token.value = '';

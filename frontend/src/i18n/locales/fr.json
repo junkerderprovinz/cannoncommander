@@ -767,7 +767,8 @@
       "g": {
         "cloud": "Clouds",
         "storage": "Stockage objet",
-        "protocol": "Serveurs et protocoles"
+        "protocol": "Serveurs et protocoles",
+        "layered": "Sur un autre stockage distant"
       },
       "p": {
         "smb": "SMB / partage Windows",

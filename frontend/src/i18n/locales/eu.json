@@ -1197,7 +1197,8 @@
       "g": {
         "cloud": "Hodeiak",
         "storage": "Objektu-biltegia",
-        "protocol": "Zerbitzariak eta protokoloak"
+        "protocol": "Zerbitzariak eta protokoloak",
+        "layered": "Beste urruneko baten gainean"
       },
       "p": {
         "smb": "SMB / Windows partekatzea",

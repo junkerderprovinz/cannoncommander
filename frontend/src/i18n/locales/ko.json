@@ -697,7 +697,8 @@
       "g": {
         "cloud": "클라우드",
         "storage": "오브젝트 스토리지",
-        "protocol": "서버와 프로토콜"
+        "protocol": "서버와 프로토콜",
+        "layered": "다른 원격 저장소 위에"
       },
       "p": {
         "smb": "SMB / Windows 공유",

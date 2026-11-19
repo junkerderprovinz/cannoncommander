@@ -802,7 +802,8 @@
       "g": {
         "cloud": "Chmury",
         "storage": "Magazyn obiektowy",
-        "protocol": "Serwery i protokoły"
+        "protocol": "Serwery i protokoły",
+        "layered": "Na innym zdalnym celu"
       },
       "p": {
         "smb": "SMB / udział Windows",

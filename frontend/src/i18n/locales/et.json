@@ -732,7 +732,8 @@
       "g": {
         "cloud": "Pilved",
         "storage": "Objektisalvestus",
-        "protocol": "Serverid ja protokollid"
+        "protocol": "Serverid ja protokollid",
+        "layered": "Teise kaugsihtkoha peal"
       },
       "p": {
         "smb": "SMB / Windowsi jagamine",

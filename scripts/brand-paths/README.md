@@ -26,11 +26,12 @@ other repositories with these buttons draw.
 
 ## Provider logos
 
-The tiles of the remotes window carry the provider marks of ArrowLoop, the
-sibling app by the same author, whose `scripts/brand-paths/README.md` records
-each source. `../brand_marks.mjs` turns ArrowLoop's
-`web/src/components/brandGlyphs.tsx` into SVG markup in
-`frontend/src/features/config/brandMarks.ts` and copies its
+The app's remotes window takes its provider marks from GlimStone's storage
+catalog, whose `packages/core/storage-marks/` folder records each source. The
+prototype's remotes window keeps the marks of ArrowLoop, the sibling app by the
+same author, whose `scripts/brand-paths/README.md` records each source.
+`../brand_marks.mjs` turns ArrowLoop's `web/src/components/brandGlyphs.tsx`
+into SVG markup in `prototype/src/brandMarks.ts` and copies its
 `web/src/brandGlyphs.css`, the colours a mark shifts on one of the two
 grounds.
 

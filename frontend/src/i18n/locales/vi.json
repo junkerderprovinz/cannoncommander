@@ -697,7 +697,8 @@
       "g": {
         "cloud": "Đám mây",
         "storage": "Lưu trữ đối tượng",
-        "protocol": "Máy chủ và giao thức"
+        "protocol": "Máy chủ và giao thức",
+        "layered": "Trên một đích từ xa khác"
       },
       "p": {
         "smb": "SMB / thư mục chia sẻ Windows",

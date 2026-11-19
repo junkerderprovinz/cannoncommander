@@ -732,7 +732,8 @@
       "g": {
         "cloud": "Pilvet",
         "storage": "Objektitallennus",
-        "protocol": "Palvelimet ja protokollat"
+        "protocol": "Palvelimet ja protokollat",
+        "layered": "Toisen etäkohteen päällä"
       },
       "p": {
         "smb": "SMB / Windows-jako",

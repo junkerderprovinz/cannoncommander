@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestTheCatalogNamesProductsAndOffersEveryOtherBackend(t *testing.T) {
+func TestTheCatalogOffersTheProductsThisRcloneReachesAndEveryOtherBackend(t *testing.T) {
 	f := newFixture(t)
 	var out Catalog
 	if code := f.call("anna", "GET", "/remotes/types?advanced=true", nil, &out); code != 200 {
@@ -16,16 +16,14 @@ func TestTheCatalogNamesProductsAndOffersEveryOtherBackend(t *testing.T) {
 	for _, p := range out.Providers {
 		ids = append(ids, p.ID)
 	}
-	// Clouds first, then storage, then protocols, each by name.
-	want := "gdrive,nextcloud,opencloud,owncloud,oxicloud,azureblob,memory,sftp,smb,webdav"
+	want := "azureblob,gdrive,memory,nextcloud,opencloud,owncloud,oxicloud,sftp,smb,webdav"
 	if strings.Join(ids, ",") != want {
 		t.Fatalf("providers %v", ids)
 	}
 	if strings.Join(out.Unlisted, ",") != "zzz" {
 		t.Fatalf("unlisted %v", out.Unlisted)
 	}
-	gdrive := out.Providers[0]
-	if gdrive.Auth != AuthOAuth || gdrive.Mark != "IconGoogleDrive" {
+	if gdrive := out.Providers[1]; gdrive.Auth != AuthOAuth || gdrive.Backend != "drive" {
 		t.Fatalf("gdrive %+v", gdrive)
 	}
 }

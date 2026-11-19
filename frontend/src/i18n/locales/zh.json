@@ -697,7 +697,8 @@
       "g": {
         "cloud": "云盘",
         "storage": "对象存储",
-        "protocol": "服务器与协议"
+        "protocol": "服务器与协议",
+        "layered": "基于其他远程存储"
       },
       "p": {
         "smb": "SMB / Windows 共享",
