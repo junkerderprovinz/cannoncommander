@@ -31,13 +31,13 @@ const desktop = computed<Build[]>(() => {
       { name: 'Linux', sub: 'x64', href: at('linux-amd64-installer') },
       { name: 'Linux', sub: 'ARM64', href: at('linux-arm64-installer') },
     ] },
-    { brand: 'flatpak', tile: 'glim-tile-flatpak', svg: FLATPAK_SVG, markClass: 'glim-flatpak-mark', parts: [
-      { name: 'Flatpak', sub: 'x64', href: at('linux-amd64.flatpak') },
-      { name: 'Flatpak', sub: 'ARM64', href: at('linux-arm64.flatpak') },
-    ] },
     { brand: 'linux', svg: LINUX_SVG, parts: [
       { name: 'AppImage', sub: 'x64', href: at('linux-amd64.AppImage') },
       { name: 'AppImage', sub: 'ARM64', href: at('linux-arm64.AppImage') },
+    ] },
+    { brand: 'flatpak', tile: 'glim-tile-flatpak', svg: FLATPAK_SVG, markClass: 'glim-flatpak-mark', parts: [
+      { name: 'Flatpak', sub: 'x64', href: at('linux-amd64.flatpak') },
+      { name: 'Flatpak', sub: 'ARM64', href: at('linux-arm64.flatpak') },
     ] },
   ];
 });

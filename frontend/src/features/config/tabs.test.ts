@@ -98,7 +98,7 @@ describe('the settings', () => {
     const cards = await cardsOf('app');
     expect(cards.map((t) => t.split(/\s/)[0])).toEqual(['Desktop-App', 'Handy-App']);
     const units = [...document.querySelectorAll('.glim-readme-btn-unit')];
-    expect(units.map((u) => u.querySelector('.glim-readme-btn-name')?.textContent)).toEqual(['Windows', 'macOS', 'Linux', 'Flatpak', 'AppImage', 'Google Play', 'F-Droid', 'Android']);
+    expect(units.map((u) => u.querySelector('.glim-readme-btn-name')?.textContent)).toEqual(['Windows', 'macOS', 'Linux', 'AppImage', 'Flatpak', 'Google Play', 'F-Droid', 'Android']);
     for (const u of units) {
       expect(u.classList).toContain('glim-readme-btn-soon');
       expect(u.querySelector('.glim-readme-btn-sub')?.textContent).toBe('Bald');
@@ -113,7 +113,7 @@ describe('the settings', () => {
       const links = [...document.querySelectorAll<HTMLAnchorElement>('.glim-readme-btn-unit a')].map((a) => a.getAttribute('href'));
       const at = 'https://github.com/junkerderprovinz/cannoncommander/releases/download/v1.2.0/cannoncommander-';
       expect(links).toEqual(['windows-amd64-installer.exe', 'windows-arm64-installer.exe', 'macos-universal.zip', 'linux-amd64-installer', 'linux-arm64-installer',
-        'linux-amd64.flatpak', 'linux-arm64.flatpak', 'linux-amd64.AppImage', 'linux-arm64.AppImage'].map((f) => at + f));
+        'linux-amd64.AppImage', 'linux-arm64.AppImage', 'linux-amd64.flatpak', 'linux-arm64.flatpak'].map((f) => at + f));
       const flatpak = [...document.querySelectorAll('.glim-readme-btn-unit')].find((u) => u.querySelector('.glim-readme-btn-name')?.textContent === 'Flatpak')!;
       expect([...flatpak.classList].sort()).toEqual(['glim-readme-btn-group', 'glim-readme-btn-unit', 'glim-tile-flatpak', 'group']);
       expect([...flatpak.querySelectorAll('a')].map((a) => a.getAttribute('aria-label'))).toEqual(['Flatpak x64', 'Flatpak ARM64']);
