@@ -404,7 +404,7 @@ func setupSources(generate bool) {
 				source.Name = "Source Name"
 			}
 			modifyExcludeInclude(source)
-			setConditionals(source)
+			SetConditionals(source)
 			if source.Config.DefaultUserScope == "" {
 				source.Config.DefaultUserScope = "/"
 			}
@@ -830,8 +830,8 @@ func PrepareDownloadSpoolDir() error {
 	return fileutils.ClearDirectoryContents(DownloadCacheDir())
 }
 
-// setConditionals builds optimized map structures from source rules for O(1) lookups.
-func setConditionals(config *Source) {
+// SetConditionals builds optimized map structures from source rules for O(1) lookups.
+func SetConditionals(config *Source) {
 	rules := config.Config.Rules
 
 	// Initialize the maps structure (only exact match maps for Names)

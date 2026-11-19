@@ -6,19 +6,21 @@ import (
 
 // SetTestIndex allows tests to register mock indices without database initialization
 // This is useful for testing code that depends on GetIndex() without needing full setup
-func SetTestIndex(name string, path string) {
+func SetTestIndex(name string, path string, rules ...settings.ConditionalRule) {
 	indexesMutex.Lock()
 	defer indexesMutex.Unlock()
 
 	idx := &Index{
 		Source: settings.Source{
-			Name: name,
-			Path: path,
+			Name:   name,
+			Path:   path,
+			Config: settings.SourceConfig{Rules: rules},
 		},
 		mock:                true,
 		folderSizes:         make(map[string]uint64),
 		folderSizesUnsynced: make(map[string]struct{}),
 	}
+	settings.SetConditionals(&idx.Source)
 	indexes[name] = idx
 }
 

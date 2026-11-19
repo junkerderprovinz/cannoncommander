@@ -182,7 +182,7 @@ func measureUsage(ctx context.Context, fsys *ccfs.Resolver, u *users.User, loc c
 	extSize := map[string]map[string]int64{}
 	var big []fsindex.Entry
 	prefix := strings.TrimSuffix(loc.Path, "/") + "/"
-	indexed, err := fsindex.Walk(ctx, loc, func(e fsindex.Entry) error {
+	indexed, err := fsindex.WalkAll(ctx, loc, func(e fsindex.Entry) error {
 		if !scanVisible(fsys, u, e, hidden) {
 			return fs.SkipDir
 		}

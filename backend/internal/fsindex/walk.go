@@ -15,6 +15,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/ccfs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/database/sqlitebusy"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/indexing"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 // Entry is one file or folder below the folder a walk started in.
@@ -55,6 +56,100 @@ func Walk(ctx context.Context, loc ccfs.Location, fn func(Entry) error) (indexed
 		}
 	}
 	return false, walkDisk(ctx, loc.Real, loc.Path, fn)
+}
+
+// WalkAll is Walk that also reads, from the disk, the folders below loc a
+// rule keeps out of the index but leaves open to view. Measuring disk usage
+// needs them, a search does not.
+func WalkAll(ctx context.Context, loc ccfs.Location, fn func(Entry) error) (indexed bool, err error) {
+	if loc.Source == nil {
+		return false, errors.New("walk needs a folder inside a source")
+	}
+	db, idx := indexing.GetIndexDB(), indexing.Lookup(loc.Source.Name)
+	if db == nil || idx == nil {
+		return false, walkDisk(ctx, loc.Real, loc.Path, fn)
+	}
+	var skipped []string
+	known, err := walkIndex(ctx, db.DB(), loc, func(e Entry) error {
+		err := fn(e)
+		if e.Dir && errors.Is(err, fs.SkipDir) {
+			skipped = append(skipped, e.Path+"/")
+		}
+		return err
+	})
+	if err != nil {
+		return true, err
+	}
+	if !known {
+		return false, walkDisk(ctx, loc.Real, loc.Path, fn)
+	}
+	for _, p := range viewableUnindexed(idx.Config.ResolvedRules.FolderPaths, slashed(loc.Index)) {
+		api := path.Join(loc.Source.Mount, p)
+		if slices.ContainsFunc(skipped, func(s string) bool { return strings.HasPrefix(api+"/", s) }) {
+			continue
+		}
+		if err := walkUnindexed(ctx, db.DB(), loc.Source, p, api, fn); err != nil {
+			return true, err
+		}
+	}
+	return true, nil
+}
+
+// viewableUnindexed lists the folders below dir that a viewable folderPath
+// rule keeps out of the index. A folder inside another ruled folder is
+// left out, reading the outer one covers it.
+func viewableUnindexed(rules map[string]settings.ConditionalRule, dir string) []string {
+	var out []string
+	for p, rule := range rules {
+		if !rule.Viewable || p+"/" == dir || !strings.HasPrefix(p+"/", dir) {
+			continue
+		}
+		nested := false
+		for q := range rules {
+			if q != p && strings.HasPrefix(p, q+"/") {
+				nested = true
+				break
+			}
+		}
+		if !nested {
+			out = append(out, p)
+		}
+	}
+	slices.Sort(out)
+	return out
+}
+
+// walkUnindexed hands fn the ruled folder at index path p and everything
+// on disk below it. An index that still holds the folder from before the
+// rule has given it to fn already.
+func walkUnindexed(ctx context.Context, db *sql.DB, src *ccfs.Source, p, api string, fn func(Entry) error) error {
+	var one int
+	err := db.QueryRowContext(ctx, `SELECT 1 FROM index_items WHERE source = ? AND path = ?`, src.Name, p+"/").Scan(&one)
+	if err == nil {
+		return nil
+	}
+	if !errors.Is(err, sql.ErrNoRows) {
+		return sqlitebusy.Wrap(err)
+	}
+	real := filepath.Join(src.Root, filepath.FromSlash(p))
+	info, err := os.Lstat(real)
+	if err != nil || !info.IsDir() {
+		return nil
+	}
+	err = fn(Entry{
+		Path: api, Real: real, Name: info.Name(), Dir: true, MTime: info.ModTime(),
+		Hidden: ccfs.HiddenEntry(fs.FileInfoToDirEntry(info)), Mode: modeBits(info.Mode()),
+	})
+	if errors.Is(err, fs.SkipDir) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if err := walkDisk(ctx, real, api, fn); err != nil && !isReadError(err) {
+		return err
+	}
+	return nil
 }
 
 func walkIndex(ctx context.Context, db *sql.DB, loc ccfs.Location, fn func(Entry) error) (bool, error) {

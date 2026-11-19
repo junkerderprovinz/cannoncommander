@@ -50,9 +50,11 @@ func New(t testing.TB) *dbsql.IndexDB {
 
 // Scan registers the source name with its root and writes everything below
 // root into the index, folders with a trailing slash as the scanner does.
-func Scan(t testing.TB, db *dbsql.IndexDB, source, root string) {
+// Folders the rules keep out of the index are left out the same way.
+func Scan(t testing.TB, db *dbsql.IndexDB, source, root string, rules ...settings.ConditionalRule) {
 	t.Helper()
-	indexing.SetTestIndex(source, root)
+	indexing.SetTestIndex(source, root, rules...)
+	idx := indexing.Lookup(source)
 	err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -74,6 +76,9 @@ func Scan(t testing.TB, db *dbsql.IndexDB, source, root string) {
 			Hidden: ccfs.HiddenEntry(d),
 		}}
 		if d.IsDir() {
+			if idx.ShouldSkip(true, key, fi.Hidden, false, true) {
+				return fs.SkipDir
+			}
 			fi.Type, fi.Size = "directory", 0
 			if !strings.HasSuffix(key, "/") {
 				key += "/"

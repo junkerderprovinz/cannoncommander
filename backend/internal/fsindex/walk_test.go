@@ -12,6 +12,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/fsindex/fsindextest"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 func tree(t *testing.T) (string, *ccfs.Resolver) {
@@ -95,5 +96,45 @@ func TestWalkFallsBackForAFolderTheIndexLacks(t *testing.T) {
 	fsindextest.Scan(t, db, "Shares", filepath.Join(root, "musik"))
 	if got, indexed := walk(t, r, "/mnt/user/filme/A", false); indexed || len(got) != 1 {
 		t.Errorf("got %v (indexed %v)", got, indexed)
+	}
+}
+
+func walkAll(t *testing.T, r *ccfs.Resolver, dir string) []string {
+	t.Helper()
+	loc, err := r.Resolve(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	if _, err := fsindex.WalkAll(context.Background(), loc, func(e fsindex.Entry) error {
+		got = append(got, e.Path)
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	return got
+}
+
+func TestWalkAllReadsAViewableFolderTheIndexLeavesOut(t *testing.T) {
+	root, r := tree(t)
+	db := fsindextest.New(t)
+	fsindextest.Scan(t, db, "Shares", root, settings.ConditionalRule{FolderPath: "/musik", Viewable: true})
+	got := walkAll(t, r, "/mnt/user")
+	for _, p := range []string{"/mnt/user/filme/A/a.mkv", "/mnt/user/musik", "/mnt/user/musik/m.flac"} {
+		if !slices.Contains(got, p) {
+			t.Errorf("%s is missing from %v", p, got)
+		}
+	}
+	if plain, _ := walk(t, r, "/mnt/user", false); slices.Contains(plain, "/mnt/user/musik") {
+		t.Errorf("a plain walk went to the disk: %v", plain)
+	}
+}
+
+func TestWalkAllLeavesOutAFolderNobodyMayView(t *testing.T) {
+	root, r := tree(t)
+	db := fsindextest.New(t)
+	fsindextest.Scan(t, db, "Shares", root, settings.ConditionalRule{FolderPath: "/musik"})
+	if got := walkAll(t, r, "/mnt/user"); slices.Contains(got, "/mnt/user/musik") {
+		t.Errorf("got %v", got)
 	}
 }

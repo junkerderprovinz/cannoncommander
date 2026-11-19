@@ -20,6 +20,7 @@ import (
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/hub"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/jobs"
 	"github.com/junkerderprovinz/cannoncommander/backend/internal/testutil"
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/settings"
 )
 
 type fixture struct {
@@ -174,6 +175,17 @@ func TestDiskUsageFromTheIndex(t *testing.T) {
 	fsindextest.Scan(t, db, "Shares", f.share)
 	u := f.usage(t, "jdp", "path=/mnt/user/fotos")
 	if !u.Indexed || u.Files != 2 {
+		t.Errorf("usage = %+v", u)
+	}
+}
+
+func TestDiskUsageCountsAFolderTheIndexOnlyShows(t *testing.T) {
+	f := newFixture(t)
+	db := fsindextest.New(t)
+	fsindextest.Scan(t, db, "Shares", f.share, settings.ConditionalRule{FolderPath: "/backup", Viewable: true})
+	u := f.usage(t, "jdp", "path=/mnt/user")
+	film := int64(200 << 10)
+	if !u.Indexed || len(u.Items) == 0 || u.Items[0].Name != "backup" || u.Items[0].Size != 3*film || u.Items[0].Files != 3 {
 		t.Errorf("usage = %+v", u)
 	}
 }

@@ -83,7 +83,7 @@ func TestIndexedSourceWithoutFlagsHasNoRootRule(t *testing.T) {
 
 func TestRootRuleKeepsTheSourceInTheIndex(t *testing.T) {
 	src := &Source{Path: "/mnt/user", Config: SourceConfig{Rules: []ConditionalRule{{FolderPath: "/", IgnoreHidden: true}}}}
-	setConditionals(src)
+	SetConditionals(src)
 	r := src.Config.ResolvedRules
 	if !r.IgnoreAllHidden || r.IndexingDisabled || len(r.FolderPaths) != 0 {
 		t.Fatalf("resolved %+v", r)
