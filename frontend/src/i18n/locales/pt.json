@@ -1863,11 +1863,12 @@
       }
     },
     "storeroom": {
-      "about": "Arrumar não apaga nada: as pastas esperam numa pasta de arrecadação oculta na sua própria Share, os modelos nas definições do CannonCommander, e «Recuperar» devolve tudo ao seu lugar. Só «Eliminar definitivamente» apaga, e as imagens e a cache de compilação, que se podem descarregar de novo, vão logo embora.",
+      "about": "Arrumar não apaga nada: as pastas esperam numa pasta de arrecadação oculta na sua própria Share, os modelos e os stacks do Compose nas definições do CannonCommander, e «Recuperar» devolve tudo ao seu lugar. Só «Eliminar definitivamente» apaga, e as imagens e a cache de compilação, que se podem descarregar de novo, vão logo embora.",
       "noDocker": "O CannonCommander encontra o que já nada usa assim que puder perguntar ao Docker. Adicione /var/run/docker.sock em Docker socket, nas definições do contentor.",
       "readOnly": "Para arrumar, o CannonCommander precisa da escrita no Unraid nas definições do contentor.",
       "kinds": {
         "template": "Modelos sem contentor",
+        "stack": "Stacks do Compose sem contentor",
         "appdata": "Pastas appdata que nada usa",
         "container": "Contentores parados que nada gere",
         "network": "Redes que ninguém usa",

@@ -62,10 +62,10 @@
     "footAsleep": { "one": "{pools} and {disks}, {n} of them asleep", "other": "{pools} and {disks}, {n} of them asleep" }
   },
   "storeroom": {
-    "about": "Clearing away deletes nothing: folders wait in a hidden storeroom folder on their own share, templates in CannonCommander's settings, and Bring back puts everything where it was. Only Remove for good deletes, and images and the build cache, which can be downloaded again, go straight away.",
+    "about": "Clearing away deletes nothing: folders wait in a hidden storeroom folder on their own share, templates and compose stacks in CannonCommander's settings, and Bring back puts everything where it was. Only Remove for good deletes, and images and the build cache, which can be downloaded again, go straight away.",
     "noDocker": "CannonCommander finds what nothing uses once it can ask Docker. Add /var/run/docker.sock under Docker socket in the container settings.",
     "readOnly": "Clearing away needs Unraid write access in the container settings.",
-    "kinds": { "template": "Templates without a container", "appdata": "Appdata folders nothing uses", "container": "Stopped containers nothing manages", "network": "Networks nobody uses", "volume": "Volumes nobody holds", "image": "Images and build cache" },
+    "kinds": { "template": "Templates without a container", "stack": "Compose stacks without a container", "appdata": "Appdata folders nothing uses", "container": "Stopped containers nothing manages", "network": "Networks nobody uses", "volume": "Volumes nobody holds", "image": "Images and build cache" },
     "forGood": "These can be downloaded or built again, so they are removed for good instead of stored.",
     "nothing": "Nothing to clear away, everything here is in use",
     "room": "In the storeroom",

@@ -2270,11 +2270,12 @@
       }
     },
     "storeroom": {
-      "about": "Baztertzeak ez du ezer ezabatzen: karpetak trasteleku-karpeta ezkutu batean itxaroten dute beren share-an, template-ak CannonCommander-en ezarpenetan, eta «Berreskuratu» aukerak dena lehen zegoen lekura itzultzen du. «Kendu betiko» aukerak bakarrik ezabatzen du, eta irudiak eta konpilazio-cachea, berriro deskarga daitezkeenez, berehala doaz.",
+      "about": "Baztertzeak ez du ezer ezabatzen: karpetak trasteleku-karpeta ezkutu batean itxaroten dute beren share-an, template-ak eta Compose stack-ak CannonCommander-en ezarpenetan, eta «Berreskuratu» aukerak dena lehen zegoen lekura itzultzen du. «Kendu betiko» aukerak bakarrik ezabatzen du, eta irudiak eta konpilazio-cachea, berriro deskarga daitezkeenez, berehala doaz.",
       "noDocker": "CannonCommanderrek ezerk erabiltzen ez duena aurkitzen du Dockerri galdetu ahal dionean. Gehitu /var/run/docker.sock Docker socket eremuan, edukiontziaren ezarpenetan.",
       "readOnly": "Baztertzeko, Unraid-en idaztea aktibatuta egon behar da edukiontziaren ezarpenetan.",
       "kinds": {
         "template": "Edukiontzirik gabeko template-ak",
+        "stack": "Edukiontzirik gabeko Compose stack-ak",
         "appdata": "Ezerk erabiltzen ez dituen appdata karpetak",
         "container": "Ezerk kudeatzen ez dituen edukiontzi geldituak",
         "network": "Inork erabiltzen ez dituen sareak",

@@ -62,10 +62,10 @@
     "footAsleep": { "one": "{pools} und {disks}, {n} davon schläft", "other": "{pools} und {disks}, {n} davon schlafen" }
   },
   "storeroom": {
-    "about": "Wegräumen löscht nichts: Ordner warten in einem versteckten Abstellkammer-Ordner auf ihrer eigenen Freigabe, Vorlagen in den Einstellungen von CannonCommander, und Zurückholen stellt alles wieder an seinen Platz. Gelöscht wird erst mit „Endgültig entfernen“, nur Images und Build-Cache gehen sofort, weil man sie wieder herunterladen kann.",
+    "about": "Wegräumen löscht nichts: Ordner warten in einem versteckten Abstellkammer-Ordner auf ihrer eigenen Freigabe, Vorlagen und Compose-Stacks in den Einstellungen von CannonCommander, und Zurückholen stellt alles wieder an seinen Platz. Gelöscht wird erst mit „Endgültig entfernen“, nur Images und Build-Cache gehen sofort, weil man sie wieder herunterladen kann.",
     "noDocker": "Was nichts mehr braucht, findet CannonCommander, sobald es Docker fragen kann. Trag dafür /var/run/docker.sock unter Docker-Socket in den Container-Einstellungen ein.",
     "readOnly": "Zum Wegräumen braucht CannonCommander den Schreibzugriff auf Unraid in den Container-Einstellungen.",
-    "kinds": { "template": "Vorlagen ohne Container", "appdata": "Appdata-Ordner, die nichts nutzt", "container": "Gestoppte Container, die nichts verwaltet", "network": "Netzwerke, die niemand nutzt", "volume": "Volumes, die niemand hält", "image": "Images und Build-Cache" },
+    "kinds": { "template": "Vorlagen ohne Container", "stack": "Compose-Stacks ohne Container", "appdata": "Appdata-Ordner, die nichts nutzt", "container": "Gestoppte Container, die nichts verwaltet", "network": "Netzwerke, die niemand nutzt", "volume": "Volumes, die niemand hält", "image": "Images und Build-Cache" },
     "forGood": "Die lassen sich wieder herunterladen oder neu bauen, darum werden sie gleich ganz entfernt statt abgestellt.",
     "nothing": "Nichts zum Wegräumen, hier ist alles in Gebrauch",
     "room": "In der Abstellkammer",

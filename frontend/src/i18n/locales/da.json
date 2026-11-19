@@ -1805,11 +1805,12 @@
       }
     },
     "storeroom": {
-      "about": "At lægge væk sletter ingenting: mapper venter i en skjult pulterkammermappe på deres eget share, templates i CannonCommanders indstillinger, og »Hent tilbage« sætter alt, hvor det var. Kun »Fjern for altid« sletter, og images og build-cache, som kan hentes igen, forsvinder med det samme.",
+      "about": "At lægge væk sletter ingenting: mapper venter i en skjult pulterkammermappe på deres eget share, templates og Compose-stakke i CannonCommanders indstillinger, og »Hent tilbage« sætter alt, hvor det var. Kun »Fjern for altid« sletter, og images og build-cache, som kan hentes igen, forsvinder med det samme.",
       "noDocker": "CannonCommander finder det, intet bruger, så snart det kan spørge Docker. Tilføj /var/run/docker.sock under Docker socket i containerindstillingerne.",
       "readOnly": "For at lægge væk skal skrivning til Unraid være slået til i containerindstillingerne.",
       "kinds": {
         "template": "Templates uden container",
+        "stack": "Compose-stakke uden container",
         "appdata": "Appdata-mapper, intet bruger",
         "container": "Stoppede containere, intet styrer",
         "network": "Netværk, ingen bruger",

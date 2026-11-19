@@ -1863,11 +1863,12 @@
       }
     },
     "storeroom": {
-      "about": "Débarrasser ne supprime rien : les dossiers attendent dans un dossier débarras caché sur leur propre Share, les modèles dans les réglages de CannonCommander, et « Récupérer » remet tout à sa place. Seul « Supprimer définitivement » supprime, et les images et le cache de build, qu'on peut télécharger à nouveau, partent tout de suite.",
+      "about": "Débarrasser ne supprime rien : les dossiers attendent dans un dossier débarras caché sur leur propre Share, les modèles et les stacks Compose dans les réglages de CannonCommander, et « Récupérer » remet tout à sa place. Seul « Supprimer définitivement » supprime, et les images et le cache de build, qu'on peut télécharger à nouveau, partent tout de suite.",
       "noDocker": "CannonCommander trouve ce que plus rien n'utilise dès qu'il peut interroger Docker. Ajoutez /var/run/docker.sock sous Docker socket dans les paramètres du conteneur.",
       "readOnly": "Pour débarrasser, CannonCommander a besoin de l'écriture vers Unraid dans les paramètres du conteneur.",
       "kinds": {
         "template": "Modèles sans conteneur",
+        "stack": "Stacks Compose sans conteneur",
         "appdata": "Dossiers appdata que plus rien n'utilise",
         "container": "Conteneurs arrêtés que plus rien ne gère",
         "network": "Réseaux que personne n'utilise",

@@ -1747,11 +1747,12 @@
       }
     },
     "storeroom": {
-      "about": "치우기는 아무것도 삭제하지 않으며, 폴더는 각자의 Share에 있는 숨겨진 창고 폴더에서, 템플릿은 CannonCommander 설정에서 기다리고, ‘되돌리기’를 누르면 모두 원래 자리로 돌아갑니다. 삭제는 ‘영구 삭제’로만 하며, 다시 내려받을 수 있는 이미지와 빌드 캐시는 바로 사라집니다.",
+      "about": "치우기는 아무것도 삭제하지 않으며, 폴더는 각자의 Share에 있는 숨겨진 창고 폴더에서, 템플릿과 Compose 스택은 CannonCommander 설정에서 기다리고, ‘되돌리기’를 누르면 모두 원래 자리로 돌아갑니다. 삭제는 ‘영구 삭제’로만 하며, 다시 내려받을 수 있는 이미지와 빌드 캐시는 바로 사라집니다.",
       "noDocker": "CannonCommander는 Docker에 물어볼 수 있게 되면 아무것도 쓰지 않는 것을 찾아냅니다. 컨테이너 설정의 Docker socket에 /var/run/docker.sock을 추가하세요.",
       "readOnly": "치우려면 컨테이너 설정에서 Unraid 쓰기를 켜야 합니다.",
       "kinds": {
         "template": "컨테이너가 없는 템플릿",
+        "stack": "컨테이너가 없는 Compose 스택",
         "appdata": "아무것도 쓰지 않는 appdata 폴더",
         "container": "아무것도 관리하지 않는 중지된 컨테이너",
         "network": "아무도 쓰지 않는 네트워크",

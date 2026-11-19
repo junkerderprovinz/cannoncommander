@@ -1747,11 +1747,12 @@
       }
     },
     "storeroom": {
-      "about": "Dọn đi không xóa gì cả: thư mục chờ trong một thư mục kho đồ ẩn trên Share của chính nó, template trong cài đặt của CannonCommander, và “Lấy lại” đặt mọi thứ về chỗ cũ. Chỉ “Xóa vĩnh viễn” mới xóa, còn image và bộ đệm build, vốn tải lại được, sẽ bị xóa ngay.",
+      "about": "Dọn đi không xóa gì cả: thư mục chờ trong một thư mục kho đồ ẩn trên Share của chính nó, template và stack Compose trong cài đặt của CannonCommander, và “Lấy lại” đặt mọi thứ về chỗ cũ. Chỉ “Xóa vĩnh viễn” mới xóa, còn image và bộ đệm build, vốn tải lại được, sẽ bị xóa ngay.",
       "noDocker": "CannonCommander tìm ra những thứ không còn gì dùng ngay khi có thể hỏi Docker. Hãy thêm /var/run/docker.sock vào mục Docker socket trong cài đặt container.",
       "readOnly": "Để dọn đi, cần bật quyền ghi vào Unraid trong cài đặt container.",
       "kinds": {
         "template": "Template không có container",
+        "stack": "Stack Compose không có container",
         "appdata": "Thư mục appdata không còn gì dùng",
         "container": "Container đã dừng không có gì quản lý",
         "network": "Mạng không ai dùng",
