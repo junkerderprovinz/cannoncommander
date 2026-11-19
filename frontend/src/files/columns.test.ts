@@ -1,9 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { toItem } from '@/api/client';
+import { prefs } from '@/core/prefs';
 import { t } from '@/i18n';
 import { shell } from '@/shell/state';
 import { createFixture, loadPrototype } from '../../scripts/fixture.js';
-import { COL, COLUMN_GROUPS, COLUMNS, Columns, columnLabel } from './columns';
+import { COL, COLUMN_GROUPS, COLUMNS, Columns, columnLabel, DEFAULT_COLUMNS } from './columns';
 import { toEntry } from './entries';
 import { join } from './paths';
 
@@ -109,5 +110,34 @@ describe('dragging the line between two columns', () => {
 
   it('keeps the widths in quarter rems', () => {
     expect(Columns.lineMoved('size', 'modified', start, 0.3)).toMatchObject({ size: 6.75, modified: 7.25 });
+  });
+});
+
+describe('moving a column by its header', () => {
+  afterEach(() => {
+    prefs.columns = [...DEFAULT_COLUMNS];
+    prefs.colWidths = {};
+  });
+
+  it('puts a column where the one it is dropped on stood', () => {
+    prefs.columns = ['name', 'size', 'modified', 'type'];
+    expect(Columns.moved('modified', 'size')).toEqual(['name', 'modified', 'size', 'type']);
+    expect(Columns.moved('size', 'type')).toEqual(['name', 'modified', 'type', 'size']);
+  });
+
+  it('keeps the name first, as file managers do', () => {
+    prefs.columns = ['name', 'size', 'modified'];
+    expect(Columns.moved('modified', 'name')).toEqual(['name', 'size', 'modified']);
+    expect(Columns.moved('name', 'modified')).toEqual(['name', 'size', 'modified']);
+    prefs.columns = ['size', 'name', 'modified'];
+    expect(Columns.shown()).toEqual(['name', 'size', 'modified']);
+  });
+
+  it('gives back the default order and widths', () => {
+    prefs.columns = ['name', 'modified', 'size'];
+    prefs.colWidths = { size: 9, modified: 4 };
+    Columns.reset();
+    expect(Columns.shown()).toEqual(DEFAULT_COLUMNS);
+    expect(prefs.colWidths).toEqual({});
   });
 });

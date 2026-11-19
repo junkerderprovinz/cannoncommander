@@ -315,7 +315,7 @@ function onHeadDown(e: PointerEvent) {
     document.documentElement.classList.add('col-sizing');
   } else {
     const h = target.closest<HTMLElement>('.lh');
-    if (h) Object.assign(colDrag, { id: h.dataset.colid!, x: e.clientX, moved: false });
+    if (h && h.dataset.colid !== 'name') Object.assign(colDrag, { id: h.dataset.colid!, x: e.clientX, moved: false });
   }
   addEventListener('pointermove', onHeadMove);
   addEventListener('pointerup', onHeadUp, { once: true });
@@ -334,12 +334,7 @@ function onHeadMove(e: PointerEvent) {
     const r = h.getBoundingClientRect();
     return e.clientX >= r.left && e.clientX <= r.right;
   });
-  const order = Columns.shown();
-  if (over && over.dataset.colid !== colDrag.id) {
-    const from = order.indexOf(colDrag.id), to = order.indexOf(over.dataset.colid!);
-    order.splice(to, 0, order.splice(from, 1)[0]!);
-    prefs.columns = order;
-  }
+  if (over && over.dataset.colid !== colDrag.id) prefs.columns = Columns.moved(colDrag.id, over.dataset.colid!);
 }
 function onHeadUp() {
   removeEventListener('pointermove', onHeadMove);
@@ -363,8 +358,9 @@ function fit(left: string, right: string) {
   const id = fills(left) ? right : left;
   const n = visible.value.indexOf(id) + 1;
   const cells = [...(el.value?.querySelectorAll<HTMLElement>(`.row > :nth-child(${n})`) ?? [])];
-  const label = el.value?.querySelector<HTMLElement>(`.lh[data-colid="${id}"]`);
-  const widest = Math.max(label?.scrollWidth ?? 0, ...cells.map((c) => c.scrollWidth));
+  const label = el.value?.querySelector<HTMLElement>(`.lh[data-colid="${id}"]`), text = label?.querySelector<HTMLElement>('.lh-t');
+  const head = label && text ? label.getBoundingClientRect().width - text.clientWidth + text.scrollWidth : 0;
+  const widest = Math.max(head, ...cells.map((c) => c.scrollWidth));
   setPref('colWidths', { ...prefs.colWidths, [id]: Math.max(2.5, Math.ceil((widest / REM() + 0.3) * 4) / 4) });
 }
 const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F.clip.items.includes(k.name);
@@ -376,7 +372,7 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
     @click="onClick" @contextmenu="onMenu" @scroll.passive="onScroll" @pointerdown="onDown" @dragstart.capture="onDragStart">
     <div v-if="ROW_VIEWS.includes(v)" class="lhead" data-lhead @pointerdown="onHeadDown">
       <button v-for="(id, n) in visible" :key="id" class="lh" :class="{ r: COL[id]!.r, sorted: tab.sort === Columns.sortKey(COL[id]!), moving: colDrag.moved && colDrag.id === id }"
-        :data-sort="Columns.sortKey(COL[id]!)" :data-colid="id" @click="onHeadClick($event, Columns.sortKey(COL[id]!))">{{ columnLabel(id) }}<G v-if="tab.sort === Columns.sortKey(COL[id]!)" :n="tab.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /><span v-if="n < visible.length - 1" class="lh-grip" :data-grip="id" aria-hidden="true" @dblclick.stop="fit(id, visible[n + 1]!)"></span></button>
+        :data-sort="Columns.sortKey(COL[id]!)" :data-colid="id" @click="onHeadClick($event, Columns.sortKey(COL[id]!))"><span class="lh-t">{{ columnLabel(id) }}</span><G v-if="tab.sort === Columns.sortKey(COL[id]!)" :n="tab.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /><span v-if="n < visible.length - 1" class="lh-grip" :data-grip="id" aria-hidden="true" @dblclick.stop="fit(id, visible[n + 1]!)"></span></button>
     </div>
     <Miller v-if="v === 'columns'" :i="i" :list="list" />
     <template v-else>

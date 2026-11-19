@@ -171,7 +171,8 @@ export const fills = (id: string) => COL[id]!.width.includes('fr');
 const quarter = (rem: number) => Math.round(rem * 4) / 4;
 
 export const Columns = {
-  shown: () => ((prefs.columns as string[]) || DEFAULT_COLUMNS).filter((id) => COL[id]),
+  // The name always leads, as in most file managers: the row's glyph, the rename field and the type-ahead hang on it.
+  shown: () => ['name', ...((prefs.columns as string[]) || DEFAULT_COLUMNS).filter((id) => id !== 'name' && COL[id])],
   // A phone has room for the name and the size; the chosen columns stay as they are for wider screens.
   visible: () => (narrow() ? Columns.shown().filter((id) => id === 'name' || id === 'size') : Columns.shown()),
   width: (id: string) => (prefs.colWidths?.[id] ? `${prefs.colWidths[id]}rem` : COL[id]!.width),
@@ -192,8 +193,16 @@ export const Columns = {
     if (!fills(right)) widths[right] = quarter(start[right]! - by);
     return widths;
   },
+  // A header dragged over another takes that one's place, and the name keeps its own.
+  moved(id: string, over: string): string[] {
+    const order = Columns.shown();
+    if (id === 'name' || over === 'name') return order;
+    const to = order.indexOf(over);
+    order.splice(to, 0, order.splice(order.indexOf(id), 1)[0]!);
+    return order;
+  },
   sortKey: (c: Column) => c.sort || c.id,
-  set: (ids: string[]) => setPref('columns', ids.includes('name') ? ids : ['name', ...ids]),
+  set: (ids: string[]) => setPref('columns', ['name', ...ids.filter((id) => id !== 'name')]),
   reset() {
     prefs.colWidths = {};
     Columns.set(DEFAULT_COLUMNS);
