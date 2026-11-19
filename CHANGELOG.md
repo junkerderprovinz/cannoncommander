@@ -4,54 +4,50 @@ Every release is written by hand. The full notes for each release are in
 [`.github/release-notes/`](.github/release-notes/) and on the
 [releases page](https://github.com/junkerderprovinz/cannoncommander/releases).
 
-## v1.1.4 (2026-11-17)
+## v1.2.0 (2026-11-19)
 
-Help goes to Discord, and whatever the pointer is over lights up in your accent colour.
+CannonCommander shows every drive with its history, colours the treemap by file type or age, and keeps what the server no longer uses in a storeroom before anything goes. Linux gets an AppImage.
+
+## ✨ Added
+
+- **A Drives tab in Disk usage.** Every pool and disk shows how full it is, its temperature, its state and the last parity check or scrub, with a chart of the past weeks and a guess at when it will be full. CannonCommander only reads what the server already knows, so a sleeping disk stays asleep and shows the values it had when it fell asleep.
+- **The treemap takes colour.** The Tiles view colours each folder by the kind of file it holds most, such as video, photos or music, or by how old most of it is, with the legend in a row of its own. It opens on file type.
+- **A storeroom for what the server no longer uses.** Admins get a Storeroom tab in Disk usage. It finds templates without a container, compose stacks nothing runs, appdata folders nothing uses, stopped containers nothing manages, and networks and volumes nobody holds. Clear away moves them into a hidden storeroom, Bring back puts them where they were, and only Remove for good deletes. Before anything happens, the tab says what each step will do.
+- **The storeroom leaves alone what might still belong to something.** A stack counts as unused once no container, running or stopped, belongs to it and it has gone 30 days unchanged. An appdata folder stays while a container, a template or a stack goes by its name or a compose file points at it. Images and the build cache go straight away, since they can be downloaded again, and only images a registry can send again are offered. An image with two names loses each name before it goes.
+- **The Unraid template offers the Docker socket and two writable folders for the storeroom,** one for the Docker templates and one for the compose stacks. They stay empty until you fill them in, and the rest of the flash drive stays read-only. The container's user reaches the socket without any setup of its own.
+- **An AppImage for Linux,** on amd64 and arm64, beside the installer and the Flatpak. It updates itself like the other downloads.
+- **No sign-in until you want one.** A fresh install opens right away as the admin, with no password to dig out of the log. Set one under **Settings > Account & security** and from then on everyone signs in. Removing it there opens CannonCommander again, as long as no other account has one. Installs that already have a password keep it. Thanks to @kfoxton, whose report about the lost first password got this going. ([#39](https://github.com/junkerderprovinz/cannoncommander/issues/39))
+- **A documentation site** at [junkerderprovinz.github.io/cannoncommander](https://junkerderprovinz.github.io/cannoncommander/), with short guides and a screenshot for each step. The handbook in the app opens it.
 
 ## 🎨 Design
 
-- **GlimStone 4.5.4.** A row, a tab, a tile or a button under the pointer lights up in the same soft shade of your accent colour, and accent text on the light theme reads more clearly. The ring that shows where the keyboard is stands out on every background, and the busy ring in GlimStone's buttons keeps its own pace, apart from the app's spinners.
+- **GlimStone 4.5.8 and its picker.** Adding a remote opens GlimStone's picker window: the providers in their groups under a search that is open from the start, the arrow keys across the tiles, and Escape that empties the search before it closes the window. A picked tile brings its fields into the same window, where a long form scrolls, and Test keeps its label while it runs, then turns green or red. Whatever the pointer is over lights up in the same soft shade of your accent colour, and the keyboard's focus ring stands out on every background.
+- **What the cannon hits cracks like a pane.** Thin wedges break off where the ball strikes and larger pieces further out, and the splinters slow down in the air as they turn and fall. The blast is the same at every motion level, and with motion turned off the cannon does not fire.
+- **The line between two list columns is one thin line in the border colour,** shown on every edge while the pointer is over the header row.
 - **The tree's arrows light up on their own.** The arrow that opens a folder takes your accent under the pointer, without the extra circle behind it.
-- **The badges beside a name wear one quieter grey.** Cache, tags and the archive badge share the same neutral pill and stand a step back from the name, so three plain facts no longer look like three different signals. Faults and warnings keep their colours.
-- **The installer follows PommelPorter 1.2.2.**
+- **The badges beside a name wear one quieter grey.** Cache, tags and the archive badge share the same neutral pill and stand a step back from the name. Faults and warnings keep their colours.
+- **The installer follows PommelPorter 1.2.3.**
 
 ## ⚡ Improved
 
+- **Every line between two list columns can be dragged,** and it moves just that line: one column gains what the other gives up. The grip covers the whole gap, so a press a little beside the line still catches it.
+- **The name stays the first column** when you drag the others around, as in most file managers.
+- **A file without an extension opens as text when it holds text,** such as an nfo file. It went to the hex view before, and F4 refused it.
 - **Help goes to Discord.** The Help card in **Settings > Info** offers GitHub and the CannonCommander Discord server in place of the mail button.
 - **The GlimStone version opens GlimStone's newest release,** so the number always leads to notes that exist.
+- **The libraries CannonCommander builds on are up to date,** Go's crypto and network packages among them.
+
+## 🐛 Fixed
+
+- **Renaming selects a file's name up to its extension and a folder's whole name.** The rename window cut every name at its last dot, so "Mr. Robot (2015)" kept only "Mr".
+- **The trash never deletes through a link.** When the trash folder at the top of a share had been swapped for a link to another folder, removing an entry, by hand or after its days ran out, deleted the files behind the link. The trash refuses such an entry and leaves everything where it is.
+- **The Apps page links Unraid to Community Applications,** where CannonCommander is listed, instead of calling it coming soon.
+- **The Linux desktop app refuses a broken character code in the icon theme's name.** An escape beyond the last Unicode character or a surrogate turned into a replacement character. Such a name counts as malformed and is skipped like any other.
+- **The Windows installer takes a folder with spaces after `/D=`.** Deployment tools pass it without quotes, and the installer cut it at the first space, so `C:\Program Files\CannonCommander` became `C:\Program`.
 
 ## 🌐 Translations
 
-- **The Help sentence** uses GlimStone's words in all 42 languages.
-
-## v1.1.3 (2026-11-13)
-
-CannonCommander has a documentation site.
-
-## ✨ Added
-
-- **A documentation site** at [junkerderprovinz.github.io/cannoncommander](https://junkerderprovinz.github.io/cannoncommander/), with short guides and a screenshot for each step. The handbook in the app opens it.
-
-## 🐛 Fixed
-
-- **The Apps page links Unraid to Community Applications,** where CannonCommander is listed, instead of calling it coming soon.
-
-## v1.1.2 (2026-11-13)
-
-CannonCommander opens without a sign-in until you set a password.
-
-## ✨ Added
-
-- **No sign-in until you want one.** A fresh install opens right away as the admin, with no password to dig out of the log. Set one under **Settings > Account & security** and from then on everyone signs in. Removing it there opens CannonCommander again, as long as no other account has one. Installs that already have a password keep it. Thanks to @kfoxton, whose report about the lost first password got this going. ([#39](https://github.com/junkerderprovinz/cannoncommander/issues/39))
-
-## v1.1.1 (2026-11-12)
-
-The first admin password is easy to find on Unraid again, and the trash never deletes through a link.
-
-## 🐛 Fixed
-
-- **The first admin password shows up at the end of the container log,** right below the READY line, and again on every start until you change it. It stood above the startup banner, and Unraid's log window, which shows only the last 90 lines, lost it as soon as the web interface was opened. Thanks to kfoxton for reporting it. ([#39](https://github.com/junkerderprovinz/cannoncommander/issues/39))
-- **The trash never deletes through a link.** When the trash folder at the top of a share had been swapped for a link to another folder, removing an entry, by hand or after its days ran out, deleted the files behind the link. The trash refuses such an entry and leaves everything where it is.
+- **The drives, the storeroom with its stacks, the treemap's colours and the picker's clear button** speak all 42 languages, and the Help sentence uses GlimStone's words in every one of them.
 
 ## v1.1.0 (2026-11-12)
 
