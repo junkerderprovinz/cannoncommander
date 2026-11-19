@@ -19,6 +19,7 @@ CannonCommander also runs as a program on Windows, macOS and Linux, with the sam
 
     - The installer for [x64](https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64-installer) or [ARM](https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64-installer). Make it executable and run it.
     - The Flatpak for [x64](https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64.flatpak) or [ARM](https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64.flatpak).
+    - The AppImage for [x64](https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-amd64.AppImage) or [ARM](https://github.com/junkerderprovinz/cannoncommander/releases/latest/download/cannoncommander-linux-arm64.AppImage). It brings GTK and WebKitGTK along and starts on Ubuntu 22.04 and anything newer. Make it executable and start it from wherever you keep it. Its helper programs go into a `modules` folder next to it.
     - A zip on the [releases page](https://github.com/junkerderprovinz/cannoncommander/releases/latest) that runs from any folder.
 
 ## The first start {#first-start}
@@ -44,7 +45,7 @@ You can change it any time under **Settings > Keyboard shortcuts**.
 
 ## Updates {#updates}
 
-Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. Switch that off under **Settings > Info**.
+Once a day the app looks for a new release, checks the download against the release's checksums and puts it in place for the next start. An AppImage replaces its own file. Switch that off under **Settings > Info**.
 
 ## Helper programs {#helpers}
 
