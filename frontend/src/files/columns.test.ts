@@ -83,3 +83,31 @@ describe('size column', () => {
     expect(COL.size!.value(folder({}), '/mnt/user')).toBe('0 B');
   });
 });
+
+describe('dragging the line between two columns', () => {
+  const start = { size: 6.5, modified: 7.5, type: 8.5 };
+
+  it('moves just that line: one column gains what the other gives up', () => {
+    expect(Columns.lineMoved('size', 'modified', start, 1.25)).toMatchObject({ size: 7.75, modified: 6.25 });
+    expect(Columns.lineMoved('size', 'modified', start, -2)).toMatchObject({ size: 4.5, modified: 9.5 });
+  });
+
+  it('changes only the other column beside the name, which fills the rest', () => {
+    const right = Columns.lineMoved('name', 'size', start, 2);
+    expect(right).toMatchObject({ size: 4.5 });
+    expect(right).not.toHaveProperty('name');
+    const left = Columns.lineMoved('type', 'name', start, 2);
+    expect(left).toMatchObject({ type: 10.5 });
+    expect(left).not.toHaveProperty('name');
+  });
+
+  it('stops where a column would get narrower than a short label', () => {
+    expect(Columns.lineMoved('size', 'modified', start, 9)).toMatchObject({ size: 11.5, modified: 2.5 });
+    expect(Columns.lineMoved('size', 'modified', start, -9)).toMatchObject({ size: 2.5, modified: 11.5 });
+    expect(Columns.lineMoved('name', 'size', start, 9)).toMatchObject({ size: 2.5 });
+  });
+
+  it('keeps the widths in quarter rems', () => {
+    expect(Columns.lineMoved('size', 'modified', start, 0.3)).toMatchObject({ size: 6.75, modified: 7.25 });
+  });
+});

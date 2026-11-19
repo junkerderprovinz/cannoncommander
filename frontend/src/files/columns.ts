@@ -166,6 +166,9 @@ export const DEFAULT_COLUMNS = ['name', 'size', 'modified'];
 export const columnLabel = (id: string) => t(`columns.${id}`);
 
 const narrow = () => shell.width <= 760;
+const NARROWEST = 2.5;
+export const fills = (id: string) => COL[id]!.width.includes('fr');
+const quarter = (rem: number) => Math.round(rem * 4) / 4;
 
 export const Columns = {
   shown: () => ((prefs.columns as string[]) || DEFAULT_COLUMNS).filter((id) => COL[id]),
@@ -178,6 +181,16 @@ export const Columns = {
     if (narrow()) return '0';
     const ids = Columns.visible();
     return `${ids.reduce((a, id) => a + (COL[id]!.min || parseFloat(Columns.width(id))), 0) + (ids.length - 1) + 1}rem`;
+  },
+  // Dragging the line between two columns moves just that line, from widths in rem taken when the drag began: one
+  // column gains what the other gives up. The name fills what the row has left, so beside it only the other changes.
+  lineMoved(left: string, right: string, start: Record<string, number>, by: number): Record<string, number> {
+    if (!fills(left)) by = Math.max(by, NARROWEST - start[left]!);
+    if (!fills(right)) by = Math.min(by, start[right]! - NARROWEST);
+    const widths = { ...prefs.colWidths };
+    if (!fills(left)) widths[left] = quarter(start[left]! + by);
+    if (!fills(right)) widths[right] = quarter(start[right]! - by);
+    return widths;
   },
   sortKey: (c: Column) => c.sort || c.id,
   set: (ids: string[]) => setPref('columns', ids.includes('name') ? ids : ['name', ...ids]),

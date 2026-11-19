@@ -11,7 +11,7 @@ import { prefs, setPref } from '@/core/prefs';
 import { t } from '@/i18n';
 import { useListing } from '@/stores/listing';
 import { usePanels } from '@/stores/panels';
-import { COL, columnLabel, Columns } from './columns';
+import { COL, columnLabel, Columns, fills } from './columns';
 import { useBand } from './band';
 import { editing, endInline, inline, startInline } from './inline';
 import { type Entry, groupHeads } from './entries';
@@ -298,10 +298,11 @@ function onMenu(e: MouseEvent) {
   rowMenu(e.clientX, e.clientY, e.shiftKey);
 }
 
-// The grip on a header's right edge sets that column's width, kept in rem like the defaults. A header moves live
-// under the pointer; a press without movement stays a click that sorts.
+// The grip on the line between two headers moves that line, with widths kept in rem like the defaults. A header
+// moves live under the pointer; a press without movement stays a click that sorts.
 const REM = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
-const colSize = { id: '', x: 0, w: 0, moved: false };
+const colSize = { id: '', next: '', x: 0, start: {} as Record<string, number>, moved: false };
+const headWidth = (id: string) => (el.value?.querySelector(`.lh[data-colid="${id}"]`)?.getBoundingClientRect().width ?? 0) / REM() - 0.7;
 const colDrag = reactive({ id: '', x: 0, moved: false });
 function onHeadDown(e: PointerEvent) {
   if (e.button !== 0) return;
@@ -309,7 +310,8 @@ function onHeadDown(e: PointerEvent) {
   const grip = target.closest<HTMLElement>('[data-grip]');
   if (grip) {
     e.preventDefault();
-    Object.assign(colSize, { id: grip.dataset.grip!, x: e.clientX, w: grip.closest('.lh')!.getBoundingClientRect().width / REM() - 0.7, moved: false });
+    const id = grip.dataset.grip!, next = visible.value[visible.value.indexOf(id) + 1]!;
+    Object.assign(colSize, { id, next, x: e.clientX, start: { [id]: headWidth(id), [next]: headWidth(next) }, moved: false });
     document.documentElement.classList.add('col-sizing');
   } else {
     const h = target.closest<HTMLElement>('.lh');
@@ -322,7 +324,8 @@ function onHeadMove(e: PointerEvent) {
   if (colSize.id) {
     if (!colSize.moved && Math.abs(e.clientX - colSize.x) < 3) return;
     colSize.moved = true;
-    prefs.colWidths = { ...prefs.colWidths, [colSize.id]: Math.max(2.5, Math.round((colSize.w + (e.clientX - colSize.x) * (document.documentElement.dir === 'rtl' ? -1 : 1) / REM()) * 4) / 4) };
+    const by = (e.clientX - colSize.x) * (document.documentElement.dir === 'rtl' ? -1 : 1) / REM();
+    prefs.colWidths = Columns.lineMoved(colSize.id, colSize.next, colSize.start, by);
     return;
   }
   if (!colDrag.id || (!colDrag.moved && Math.abs(e.clientX - colDrag.x) < 6)) return;
@@ -355,8 +358,9 @@ function onHeadClick(e: MouseEvent, key: string) {
   if ((e.target as Element).closest('[data-grip]') || colDrag.moved) return;
   sortBy(key);
 }
-// A double click on the grip fits the column to its widest cell.
-function fit(id: string) {
+// A double click on the grip fits the column before it to its widest cell, or the one after it beside the name.
+function fit(left: string, right: string) {
+  const id = fills(left) ? right : left;
   const n = visible.value.indexOf(id) + 1;
   const cells = [...(el.value?.querySelectorAll<HTMLElement>(`.row > :nth-child(${n})`) ?? [])];
   const label = el.value?.querySelector<HTMLElement>(`.lh[data-colid="${id}"]`);
@@ -371,8 +375,8 @@ const cutOf = (k: Entry) => !!F.clip?.cut && F.clip.from === tab.value.path && F
     :style="{ '--cols': Columns.template(), '--minw': Columns.minWidth(), '--zoom-tile': shownTile(v, tile) + 'px' }"
     @click="onClick" @contextmenu="onMenu" @scroll.passive="onScroll" @pointerdown="onDown" @dragstart.capture="onDragStart">
     <div v-if="ROW_VIEWS.includes(v)" class="lhead" data-lhead @pointerdown="onHeadDown">
-      <button v-for="id in visible" :key="id" class="lh" :class="{ r: COL[id]!.r, sorted: tab.sort === Columns.sortKey(COL[id]!), moving: colDrag.moved && colDrag.id === id }"
-        :data-sort="Columns.sortKey(COL[id]!)" :data-colid="id" @click="onHeadClick($event, Columns.sortKey(COL[id]!))">{{ columnLabel(id) }}<G v-if="tab.sort === Columns.sortKey(COL[id]!)" :n="tab.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /><span v-if="!COL[id]!.fixed" class="lh-grip" :data-grip="id" aria-hidden="true" @dblclick.stop="fit(id)"></span></button>
+      <button v-for="(id, n) in visible" :key="id" class="lh" :class="{ r: COL[id]!.r, sorted: tab.sort === Columns.sortKey(COL[id]!), moving: colDrag.moved && colDrag.id === id }"
+        :data-sort="Columns.sortKey(COL[id]!)" :data-colid="id" @click="onHeadClick($event, Columns.sortKey(COL[id]!))">{{ columnLabel(id) }}<G v-if="tab.sort === Columns.sortKey(COL[id]!)" :n="tab.dir > 0 ? 'IconMoveUp' : 'IconMoveDown'" /><span v-if="n < visible.length - 1" class="lh-grip" :data-grip="id" aria-hidden="true" @dblclick.stop="fit(id, visible[n + 1]!)"></span></button>
     </div>
     <Miller v-if="v === 'columns'" :i="i" :list="list" />
     <template v-else>
