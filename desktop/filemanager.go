@@ -11,6 +11,7 @@ import (
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/events"
 
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/appimage"
 	"github.com/junkerderprovinz/cannoncommander/backend/pkg/desktop"
 )
 
@@ -35,7 +36,12 @@ type standby struct {
 
 var _ desktop.FileManager = (*shell)(nil)
 
+// executable is the file that starts this program, the AppImage when it runs
+// from one.
 func executable() (string, error) {
+	if image := appimage.Path(); image != "" {
+		return image, nil
+	}
 	exe, err := os.Executable()
 	if err != nil {
 		return "", err

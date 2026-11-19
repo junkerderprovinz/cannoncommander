@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"runtime"
 	"sync"
 	"time"
@@ -48,11 +47,7 @@ func newHelpers(logger *log.Logger, up *update.Updater, installed bool) (*helper
 }
 
 func moduleFolder() (string, error) {
-	exe, err := os.Executable()
-	if err != nil {
-		return "", err
-	}
-	exe, err = filepath.EvalSymlinks(exe)
+	exe, err := executable()
 	if err != nil {
 		return "", err
 	}

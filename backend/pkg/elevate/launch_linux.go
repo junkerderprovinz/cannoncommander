@@ -5,10 +5,11 @@ import (
 	"encoding/hex"
 	"errors"
 	"io"
-	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+
+	"github.com/junkerderprovinz/cannoncommander/backend/pkg/appimage"
 )
 
 // launchHelper starts this program again through pkexec, which asks for the
@@ -19,7 +20,7 @@ func launchHelper(ctx context.Context) (io.ReadWriteCloser, []byte, error) {
 	if err != nil {
 		return nil, nil, ErrUnsupported
 	}
-	exe, err := os.Executable()
+	exe, err := appimage.Executable()
 	if err != nil {
 		return nil, nil, err
 	}
