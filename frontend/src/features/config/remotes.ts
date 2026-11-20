@@ -27,13 +27,16 @@ export function markOf(id: string): { mark?: TileMark; glyph: string } {
   return e?.mark ? { mark: e.mark, glyph: 'IconCloud' } : { glyph: glyphOf(e?.glyph) };
 }
 
+// Products the catalog names longer than they go by. The catalog's name stays a search word.
+const SHORT: Record<string, string> = { versity: 'Versity' };
+
 // The catalog's own name, in English for a word too, which a new remote's name is made from.
-export const productName = (id: string) => entryOf(id)?.name ?? id;
+export const productName = (id: string) => SHORT[id] ?? entryOf(id)?.name ?? id;
 
 // A name that is a word rather than a product's own comes in the reader's language.
 export function providerName(id: string) {
   const e = entryOf(id);
-  return !e ? id : e.word ? c(`remotes.p.${id}`) : e.name;
+  return !e ? id : e.word ? c(`remotes.p.${id}`) : (SHORT[id] ?? e.name);
 }
 
 // "SMB / Windows share" becomes the tile's name and its second line.
@@ -64,7 +67,7 @@ export function providerPicker(offered: readonly Pick<Provider, 'id' | 'backend'
     ids: [...backends.keys()] as StorageProviderId[], titles, lang: locale(),
     glyph: (e) => glyphComponent(glyphOf(e.glyph)),
     own: (e) => {
-      const { name, sub } = e.word ? nameAndKind(c(`remotes.p.${e.id}`)) : { name: e.name, sub: undefined };
+      const { name, sub } = e.word ? nameAndKind(c(`remotes.p.${e.id}`)) : { name: SHORT[e.id] ?? e.name, sub: undefined };
       const why = providerHint(e.id), behind = e.group === 'protocol' || e.group === 'layered';
       return { label: name, sub, terms: [backends.get(e.id)!], hint: behind ? why : undefined, tip: behind ? undefined : why };
     },

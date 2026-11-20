@@ -5,7 +5,7 @@ import catalog from '../../../scripts/fixture-remotes.json';
 import de from './de.json';
 import en from './en.json';
 import { hasGlyph } from '@/core/glyphs';
-import { applies, loadMarks, markOf, nameAndKind, optionHint, optionLabel, providerName, providerPicker, remoteKind, splitOptions, suggestName } from './remotes';
+import { applies, loadMarks, markOf, nameAndKind, optionHint, optionLabel, productName, providerName, providerPicker, remoteKind, splitOptions, suggestName } from './remotes';
 
 beforeAll(async () => {
   addMessages('config', { de, en });
@@ -62,10 +62,18 @@ describe('the provider picker', () => {
     const { items } = pick(...own);
     expect(items.map((i) => [i.label, i.group])).toEqual([
       ['Garage', 'storage'], ['JuiceFS', 'storage'], ['MinIO', 'storage'], ['RustFS', 'storage'],
-      ['SeaweedFS', 'storage'], ['Silo', 'storage'], ['Versity S3 Gateway', 'storage'],
+      ['SeaweedFS', 'storage'], ['Silo', 'storage'], ['Versity', 'storage'],
     ]);
     for (const i of items) expect(i.tip, i.id).toBe('Object storage you run yourself. It needs the address of its endpoint.');
     for (const id of own) expect(markOf(id).mark?.svg, id).toMatch(/^<svg /);
+  });
+
+  it('calls Versity by its short name and still finds it by the long one', () => {
+    const [versity] = pick('versity').items;
+    expect(versity!.label).toBe('Versity');
+    expect(versity!.terms).toContain('Versity S3 Gateway');
+    expect(providerName('versity')).toBe('Versity');
+    expect(suggestName(productName('versity'), [])).toBe('versity');
   });
 
   it('names a remote by its rclone type while its product is unknown', () => {
