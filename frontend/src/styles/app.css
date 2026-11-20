@@ -29,9 +29,6 @@ svg { display: block; }
 /* The window buttons are as tall as the head's other buttons and stand close together after them. */
 .window-controls { display: flex; align-items: center; gap: .1rem; flex: none; }
 .window-controls .glim-window-button { width: auto; height: auto; }
-/* The window buttons are as tall as the head's other buttons and stand close together after them. */
-.window-controls { display: flex; align-items: center; gap: .1rem; flex: none; }
-.window-controls .glim-window-button { width: auto; height: auto; }
 /* A long press on the logo fires its cannon, so the press must not open the phone's own menu or select anything. The
    logo stands bare, with no ground behind it under the pointer; only the keyboard's focus draws a ring around it. */
 .brand { display: flex; align-items: center; gap: .55rem; padding: 0 .4rem; height: 2.4rem; flex: none; border-radius: var(--radius-control); outline: none; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
