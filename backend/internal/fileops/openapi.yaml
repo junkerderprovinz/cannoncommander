@@ -669,6 +669,12 @@ components:
         unraid:
           $ref: "#/components/schemas/UnraidTransferReport"
           description: Trap, broken hard links, space after the allocation rules and disks that wake up. Missing where Unraid has nothing to say.
+        resume:
+          type: string
+          description: |
+            A cancelled or failed job of the caller with the same kind, sources
+            and dest. A retry of it goes on where it stopped, so what it wrote
+            is no conflict and conflicts leave it out.
     Space:
       type: object
       required: [free, need, enough]

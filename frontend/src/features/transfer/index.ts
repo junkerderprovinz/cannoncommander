@@ -140,6 +140,15 @@ export async function transfer(job: Transfer) {
       waitForParity = answer === 'later';
     } else toast(t('transfer.parityWaits'), 'warn');
   }
+  // The same transfer, cancelled or failed before, goes on where it stopped, and what it wrote counts as done.
+  if (pf.resume) {
+    try {
+      const again = useJobs().upsert(await ops.jobStep(pf.resume, 'retry'));
+      toast(t('transfer.running', { label: jobLabel(again) }), 'ok', { label: t('transfer.toJobs'), run: () => run('jobs') });
+      announce(again, kind);
+      return again;
+    } catch (e) { return warn(e); }
+  }
   if (pf.conflicts.length && params.rule === 'ask') {
     const decisions = await resolveConflicts(pf.conflicts, job.dest);
     if (!decisions) return;

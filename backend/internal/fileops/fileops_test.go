@@ -570,6 +570,56 @@ func TestCancelRemovesTheHalfWrittenFile(t *testing.T) {
 	}
 }
 
+func TestTheSameCopyAfterACancelGoesOnWhereItStopped(t *testing.T) {
+	e := newEnv(t)
+	big := strings.Repeat("x", 4*jobs.Chunk)
+	e.write("/mnt/user/fotos/album/a.jpg", "sonne", old)
+	e.write("/mnt/user/fotos/album/b.mkv", big, old)
+	params := fileops.TransferParams{Sources: []string{"/mnt/user/fotos/album"}, Dest: "/mnt/user/backups"}
+	var first jobs.Job
+	e.call("anna", "POST", "/jobs", map[string]any{"kind": "copy", "cap": jobs.Chunk, "params": params}, &first)
+	part := e.real("/mnt/user/backups/album/.b.mkv" + fileops.PartSuffix)
+	for deadline := time.Now().Add(10 * time.Second); ; time.Sleep(5 * time.Millisecond) {
+		if _, err := os.Stat(part); err == nil {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("no part file")
+		}
+	}
+	e.call("anna", "POST", "/jobs/"+first.ID+"/cancel", nil, nil)
+	if first = e.wait(first.ID); first.State != jobs.Cancelled {
+		t.Fatalf("first ended %s", first.State)
+	}
+
+	var pf fileops.Preflight
+	if code := e.call("anna", "POST", "/ops/preflight", map[string]any{"kind": "copy", "sources": params.Sources, "dest": params.Dest, "rule": "ask"}, &pf); code != http.StatusOK {
+		t.Fatalf("preflight: %d", code)
+	}
+	if pf.Resume != first.ID || len(pf.Conflicts) != 0 {
+		t.Fatalf("the same copy again: resume %q, conflicts %+v", pf.Resume, pf.Conflicts)
+	}
+	var other fileops.Preflight
+	e.call("anna", "POST", "/ops/preflight", map[string]any{"kind": "copy", "sources": params.Sources, "dest": "/mnt/user/fotos/album"}, &other)
+	if other.Resume != "" {
+		t.Fatal("another target took the cancelled job up")
+	}
+	var gast fileops.Preflight
+	e.call("gast", "POST", "/ops/preflight", map[string]any{"kind": "copy", "sources": params.Sources, "dest": params.Dest}, &gast)
+	if gast.Resume != "" {
+		t.Fatal("somebody else took the cancelled job up")
+	}
+
+	e.call("anna", "PATCH", "/jobs/"+first.ID, map[string]any{"cap": 0}, nil)
+	e.call("anna", "POST", "/jobs/"+first.ID+"/retry", nil, nil)
+	if done := e.wait(first.ID); done.State != jobs.Done {
+		t.Fatalf("taken up again it ended %s: %s", done.State, done.Error)
+	}
+	if e.read("/mnt/user/backups/album/a.jpg") != "sonne" || e.read("/mnt/user/backups/album/b.mkv") != big || !e.gone("/mnt/user/backups/album (1)") {
+		t.Fatal("the copy is not whole, or it went next to the first one")
+	}
+}
+
 func TestTrashRestoreAndUndo(t *testing.T) {
 	e := newEnv(t)
 	e.write("/mnt/user/fotos/2025/a.jpg", "sonne", old)

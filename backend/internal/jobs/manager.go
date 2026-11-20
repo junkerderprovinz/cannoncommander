@@ -351,6 +351,26 @@ func (m *Manager) List(owner string) []Job {
 	return out
 }
 
+// Unfinished returns the newest cancelled or failed job of owner that runs
+// kind on the same paths into dest, which a retry takes up where it stopped.
+func (m *Manager) Unfinished(owner, kind, dest string, paths []string) (Job, bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	var found *job
+	for _, j := range m.jobs {
+		if j.Owner != owner || j.Kind != kind || j.Dest != dest || (j.State != Cancelled && j.State != Failed) || len(j.items) != len(paths) {
+			continue
+		}
+		if slices.EqualFunc(j.items, paths, func(it Item, p string) bool { return it.Path == p }) && (found == nil || j.FinishedAt.After(found.FinishedAt)) {
+			found = j
+		}
+	}
+	if found == nil {
+		return Job{}, false
+	}
+	return m.view(found, false), true
+}
+
 // Pause holds a job at its next pause point.
 func (m *Manager) Pause(id string) (Job, error) {
 	return m.change(id, func(j *job) error {

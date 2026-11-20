@@ -312,6 +312,10 @@ type Preflight struct {
 	// the space after the allocation rules of the share and the disks it
 	// wakes. It is missing where Unraid has nothing to say.
 	Unraid *unraid.TransferReport `json:"unraid,omitempty"`
+	// Resume names a cancelled or failed job of the same transfer. Taken up
+	// again it counts what it wrote as done, so its leftovers are no
+	// conflicts, and it asks itself about any other name.
+	Resume string `json:"resume,omitempty"`
 }
 
 func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
@@ -334,6 +338,15 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	destDev, devKnown := device(destInfo)
+	if s.jobs != nil {
+		paths := make([]string, len(plan.Items))
+		for i, it := range plan.Items {
+			paths[i] = it.Path
+		}
+		if j, ok := s.jobs.Unfinished(u.Username, req.Kind, dest.Path, paths); ok {
+			out.Resume = j.ID
+		}
+	}
 	for _, it := range plan.Items {
 		src, err := s.fs.Resolve(it.Path)
 		if err != nil {
@@ -360,6 +373,7 @@ func (s *Service) preflight(w http.ResponseWriter, r *http.Request) error {
 		case os.SameFile(info, target) || unraidService().SameFile(src.Path, dst.api):
 			out.Same = append(out.Same, name)
 			continue
+		case out.Resume != "":
 		default:
 			out.Conflicts = append(out.Conflicts, jobs.NewConflict(name, side(node{src.Path, src.Real}, info), side(dst, target)))
 		}

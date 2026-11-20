@@ -82,6 +82,8 @@ export interface Preflight {
   big: boolean;
   parityBusy: boolean;
   unraid?: UnraidTransferReport;
+  // A cancelled or failed job of the same transfer, which a retry takes up where it stopped.
+  resume?: string;
 }
 
 export interface FsChanged { path: string; created?: boolean; undo?: string }
