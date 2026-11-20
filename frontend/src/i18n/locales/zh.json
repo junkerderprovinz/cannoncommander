@@ -3147,7 +3147,7 @@
     },
     "conflicts": "冲突",
     "forAll": "全部应用",
-    "forAllTip": "把下面每一行都设为同一个答复。“仅当较新时替换”只在新文件的修改时间更晚时才替换，否则跳过。",
+    "step": "第 {at} 个，共 {n} 个",
     "exists": {
       "other": "{dest} 中已有 {n} 个同名项"
     },
@@ -3158,7 +3158,6 @@
       "other": "{n} 项"
     },
     "target": "目标：{dest}",
-    "next": "继续",
     "running": "{label} 正在运行",
     "toJobs": "任务",
     "copied": "已复制：{what} 到 {to}",

@@ -1,18 +1,14 @@
-.cf-list { display: flex; flex-direction: column; max-height: 24rem; overflow: auto; margin: 0 -.3rem; }
-.cf-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name seg" "sides seg"; gap: .35rem 1rem; align-items: center; padding: .6rem .3rem; border-radius: var(--radius-control); }
-.cf-row + .cf-row { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--carbon-text) 7%, transparent); }
-.cf-name { grid-area: name; display: flex; align-items: center; gap: .6rem; min-width: 0; }
+.cf-row { display: flex; flex-direction: column; gap: .35rem; }
+.cf-name { display: flex; align-items: center; gap: .6rem; min-width: 0; }
 .cf-name b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cf-sides { grid-area: sides; display: flex; flex-direction: column; gap: .25rem; padding-inline-start: 2.35rem; }
+.cf-step { margin-inline-start: auto; flex: none; font-size: 12px; color: var(--carbon-text-muted); }
+.cf-sides { display: flex; flex-direction: column; gap: .25rem; padding-inline-start: 2.35rem; }
 .cf-side { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
 .cf-side .glim-pill { justify-self: auto; }
 .cf-side .glim-pill--state { font-weight: 600; }
 .cf-lab { width: 5.2rem; font-size: 12px; color: var(--carbon-text-muted); }
-.cf-row .cf-seg { grid-area: seg; background: var(--carbon-surface3); }
+.cf-all { align-self: flex-start; }
 @media (max-width: 900px) {
-  .cf-row { grid-template-columns: 1fr; grid-template-areas: "name" "sides" "seg"; }
-  .cf-row .cf-seg { justify-self: start; margin-inline-start: 2.35rem; max-width: calc(100% - 2.35rem); overflow-x: auto; }
-  .cf-sides { padding-inline-start: 2.35rem; }
   .cf-lab { width: auto; min-width: 4.5rem; }
 }
 .u-win .glim-window-body { gap: .8rem; }

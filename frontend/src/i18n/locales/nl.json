@@ -3248,7 +3248,7 @@
     },
     "conflicts": "Conflicten",
     "forAll": "Voor alle gebruiken",
-    "forAllTip": "Zet elke regel hieronder op hetzelfde antwoord. Alleen nieuwere vervangen vervangt een bestand alleen als het nieuwe een recentere wijzigingsdatum heeft, en slaat het anders over.",
+    "step": "{at} van {n}",
     "exists": {
       "one": "1 naam bestaat al in {dest}",
       "other": "{n} namen bestaan al in {dest}"
@@ -3261,7 +3261,6 @@
       "other": "{n} items"
     },
     "target": "Doel: {dest}",
-    "next": "Verder",
     "running": "{label} loopt",
     "toJobs": "Taken",
     "copied": "Gekopieerd: {what} naar {to}",

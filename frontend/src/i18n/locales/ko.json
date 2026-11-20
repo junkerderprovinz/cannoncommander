@@ -3147,7 +3147,7 @@
     },
     "conflicts": "충돌",
     "forAll": "모두에 적용",
-    "forAllTip": "아래의 모든 행을 같은 답으로 설정합니다. ‘더 새 파일만 바꾸기’는 새 파일의 수정 시각이 더 늦을 때만 바꾸고, 아니면 건너뜁니다.",
+    "step": "{at} / {n}",
     "exists": {
       "other": "{dest}에 이미 있는 이름 {n}개"
     },
@@ -3158,7 +3158,6 @@
       "other": "항목 {n}개"
     },
     "target": "대상: {dest}",
-    "next": "계속",
     "running": "{label} 실행 중",
     "toJobs": "작업",
     "copied": "복사 완료: {what} → {to}",

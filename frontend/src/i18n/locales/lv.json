@@ -3349,7 +3349,7 @@
     },
     "conflicts": "Konflikti",
     "forAll": "Piemērot visiem",
-    "forAllTip": "Iestata katru rindu zemāk uz to pašu atbildi. Aizstāt tikai ar jaunākiem aizstāj failu tikai tad, ja jaunais ir mainīts vēlāk, citādi izlaiž.",
+    "step": "{at} no {n}",
     "exists": {
       "zero": "{n} nosaukumu jau ir mapē {dest}",
       "one": "{n} nosaukums jau ir mapē {dest}",
@@ -3364,7 +3364,6 @@
       "other": "{n} vienumi"
     },
     "target": "Galamērķis: {dest}",
-    "next": "Tālāk",
     "running": "{label} notiek",
     "toJobs": "Uzdevumi",
     "copied": "Nokopēts: {what} uz {to}",

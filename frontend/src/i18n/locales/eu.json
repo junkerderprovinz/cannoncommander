@@ -3694,7 +3694,7 @@
     },
     "conflicts": "Gatazkak",
     "forAll": "Aplikatu guztiei",
-    "forAllTip": "Beheko errenkada guztiei erantzun bera ematen die. Ordeztu berriagoak bakarrik aukerak fitxategi bat ordezten du berriak aldaketa-data berriagoa badu bakarrik, eta bestela saltatu egiten du.",
+    "step": "{at}/{n}",
     "exists": {
       "one": "Izen 1 badago jada {dest} karpetan",
       "other": "{n} izen badaude jada {dest} karpetan"
@@ -3707,7 +3707,6 @@
       "other": "{n} elementu"
     },
     "target": "Helburua: {dest}",
-    "next": "Jarraitu",
     "running": "{label} martxan",
     "toJobs": "Lanak",
     "copied": "Kopiatuta: {what} → {to}",

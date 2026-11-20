@@ -3248,7 +3248,7 @@
     },
     "conflicts": "Çakışmalar",
     "forAll": "Hepsine uygula",
-    "forAllTip": "Aşağıdaki her satırı aynı yanıta ayarlar. Yalnızca daha yenileri değiştir, bir dosyayı yalnızca yenisinin değiştirilme tarihi daha yakınsa değiştirir, yoksa atlar.",
+    "step": "{at}/{n}",
     "exists": {
       "one": "{dest} içinde 1 ad zaten var",
       "other": "{dest} içinde {n} ad zaten var"
@@ -3261,7 +3261,6 @@
       "other": "{n} öğe"
     },
     "target": "Hedef: {dest}",
-    "next": "Devam",
     "running": "{label} çalışıyor",
     "toJobs": "İşler",
     "copied": "Kopyalandı: {what} → {to}",

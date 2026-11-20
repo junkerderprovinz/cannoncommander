@@ -3349,7 +3349,7 @@
     },
     "conflicts": "Conflictes",
     "forAll": "Aplica a tots",
-    "forAllTip": "Posa la mateixa resposta a totes les files de sota. Substitueix només els més recents substitueix un fitxer només si el nou té una data de modificació més recent; si no, l'omet.",
+    "step": "{at} de {n}",
     "exists": {
       "one": "1 nom ja existeix a {dest}",
       "many": "{n} noms ja existeixen a {dest}",
@@ -3364,7 +3364,6 @@
       "other": "{n} elements"
     },
     "target": "Destinació: {dest}",
-    "next": "Continua",
     "running": "{label} en curs",
     "toJobs": "Tasques",
     "copied": "Copiat: {what} a {to}",

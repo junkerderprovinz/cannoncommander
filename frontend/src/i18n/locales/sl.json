@@ -3450,7 +3450,7 @@
     },
     "conflicts": "Spori",
     "forAll": "Uporabi za vse",
-    "forAllTip": "Vsako vrstico spodaj nastavi na isti odgovor. Zamenjaj samo z novejšimi zamenja datoteko le, če ima nova poznejši datum spremembe, sicer jo preskoči.",
+    "step": "{at} od {n}",
     "exists": {
       "one": "{n} ime v {dest} že obstaja",
       "two": "{n} imeni v {dest} že obstajata",
@@ -3467,7 +3467,6 @@
       "other": "{n} elementov"
     },
     "target": "Cilj: {dest}",
-    "next": "Nadaljuj",
     "running": "{label} teče",
     "toJobs": "Opravila",
     "copied": "Kopirano: {what} v {to}",

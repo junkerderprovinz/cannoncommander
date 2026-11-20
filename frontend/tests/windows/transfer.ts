@@ -61,8 +61,12 @@ await shot('links');
 await page.locator('.scrim').last().locator('.win-foot .btn', { hasText: 'Trotzdem kopieren' }).click();
 await wait(800);
 check('the conflict window lists the name that exists', (await page.locator('.cf-row b').allInnerTexts()).join() === 'ubuntu-24.04.3-desktop-amd64.iso', await page.locator('.cf-row b').allInnerTexts());
+check('the conflict window has nothing to scroll', await page.evaluate(`[...document.querySelectorAll('.cf-win *')].every((e) => {
+  const s = getComputedStyle(e);
+  return !(/auto|scroll/.test(s.overflowX) && e.scrollWidth > e.clientWidth) && !(/auto|scroll/.test(s.overflowY) && e.scrollHeight > e.clientHeight);
+})`));
+check('the conflict window answers from its foot', (await page.locator('.cf-win .glim-modal-foot .glim-btn').allInnerTexts()).join('|').includes('Ersetzen|Überspringen|Beide behalten'));
 await shot('conflicts');
-await page.click('#cf-all button[data-v="both"]');
 await primary();
 await wait(300);
 await page.evaluate('CC.run("jobs")');
@@ -187,7 +191,6 @@ await page.setInputFiles('#cu-in', [
 ]);
 await wait(600);
 check('the upload asks about the name that exists', (await page.locator('.cf-row b').allInnerTexts()).join() === 'setup-notes.md');
-await page.click('#cf-all button[data-v="both"]');
 await primary();
 await wait(500);
 await shot('upload-progress');

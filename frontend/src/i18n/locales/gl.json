@@ -3248,7 +3248,7 @@
     },
     "conflicts": "Conflitos",
     "forAll": "Aplicar a todos",
-    "forAllTip": "Pon a mesma resposta en todas as filas de abaixo. Substituír só os máis novos substitúe un ficheiro só se o novo ten unha data de modificación máis recente, e se non, omíteo.",
+    "step": "{at} de {n}",
     "exists": {
       "one": "1 nome xa existe en {dest}",
       "other": "{n} nomes xa existen en {dest}"
@@ -3261,7 +3261,6 @@
       "other": "{n} elementos"
     },
     "target": "Destino: {dest}",
-    "next": "Seguir",
     "running": "{label} en marcha",
     "toJobs": "Tarefas",
     "copied": "Copiado: {what} a {to}",

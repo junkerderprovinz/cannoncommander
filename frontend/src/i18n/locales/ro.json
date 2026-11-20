@@ -3349,7 +3349,7 @@
     },
     "conflicts": "Conflicte",
     "forAll": "Aplică la toate",
-    "forAllTip": "Pune același răspuns pe fiecare rând de mai jos. Înlocuiește doar cele mai noi înlocuiește un fișier doar dacă cel nou a fost modificat mai recent, altfel îl sare.",
+    "step": "{at} din {n}",
     "exists": {
       "one": "1 nume există deja în {dest}",
       "few": "{n} nume există deja în {dest}",
@@ -3364,7 +3364,6 @@
       "other": "{n} de elemente"
     },
     "target": "Destinație: {dest}",
-    "next": "Continuă",
     "running": "{label} rulează",
     "toJobs": "Sarcini",
     "copied": "Copiat: {what} în {to}",

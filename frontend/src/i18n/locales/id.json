@@ -3147,7 +3147,7 @@
     },
     "conflicts": "Konflik",
     "forAll": "Terapkan untuk semua",
-    "forAllTip": "Mengatur setiap baris di bawah ke jawaban yang sama. Hanya ganti yang lebih baru mengganti berkas hanya jika yang baru diubah lebih belakangan, dan melewatinya jika tidak.",
+    "step": "{at} dari {n}",
     "exists": {
       "other": "{n} nama sudah ada di {dest}"
     },
@@ -3158,7 +3158,6 @@
       "other": "{n} item"
     },
     "target": "Tujuan: {dest}",
-    "next": "Lanjut",
     "running": "{label} sedang berjalan",
     "toJobs": "Tugas",
     "copied": "Disalin: {what} ke {to}",

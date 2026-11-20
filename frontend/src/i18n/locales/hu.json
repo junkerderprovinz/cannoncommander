@@ -3248,7 +3248,7 @@
     },
     "conflicts": "Ütközések",
     "forAll": "Mindegyikre",
-    "forAllTip": "Minden lenti sort ugyanarra a válaszra állít. A Csak újabbra cserél csak akkor cserél egy fájlt, ha az újnak későbbi a módosítási dátuma, különben kihagyja.",
+    "step": "{at}/{n}",
     "exists": {
       "one": "1 név már létezik itt: {dest}",
       "other": "{n} név már létezik itt: {dest}"
@@ -3261,7 +3261,6 @@
       "other": "{n} elem"
     },
     "target": "Cél: {dest}",
-    "next": "Tovább",
     "running": "Fut: {label}",
     "toJobs": "Feladatok",
     "copied": "Másolva: {what}, ide: {to}",

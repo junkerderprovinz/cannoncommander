@@ -3349,7 +3349,7 @@
     },
     "conflicts": "Sukobi",
     "forAll": "Primijeni na sve",
-    "forAllTip": "Postavlja isti odgovor u svaki redak ispod. „Zamijeni samo novijima“ zamjenjuje datoteku samo ako nova ima noviji datum izmjene, a inače je preskače.",
+    "step": "{at} od {n}",
     "exists": {
       "one": "{n} naziv već postoji u {dest}",
       "few": "{n} naziva već postoje u {dest}",
@@ -3364,7 +3364,6 @@
       "other": "{n} stavki"
     },
     "target": "Odredište: {dest}",
-    "next": "Dalje",
     "running": "{label} radi",
     "toJobs": "Zadaci",
     "copied": "Kopirano: {what} u {to}",

@@ -3248,7 +3248,7 @@
     },
     "conflicts": "Konfliktid",
     "forAll": "Kasuta kõigile",
-    "forAllTip": "Annab igale allolevale reale sama vastuse. Asenda ainult uuemad asendab faili ainult siis, kui uue muutmiskuupäev on hilisem, ja jätab selle muidu vahele.",
+    "step": "{at}/{n}",
     "exists": {
       "one": "{n} nimi on kaustas {dest} juba olemas",
       "other": "{n} nime on kaustas {dest} juba olemas"
@@ -3261,7 +3261,6 @@
       "other": "{n} üksust"
     },
     "target": "Sihtkoht: {dest}",
-    "next": "Jätka",
     "running": "{label} käib",
     "toJobs": "Tööd",
     "copied": "Kopeeritud: {what} → {to}",

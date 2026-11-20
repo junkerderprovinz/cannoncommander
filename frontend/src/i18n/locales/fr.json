@@ -3349,7 +3349,7 @@
     },
     "conflicts": "Conflits",
     "forAll": "Appliquer à tous",
-    "forAllTip": "Donne la même réponse à chaque ligne ci-dessous. Remplacer seulement les plus récents ne remplace un fichier que si le nouveau a une date de modification plus récente, et l'ignore sinon.",
+    "step": "{at} sur {n}",
     "exists": {
       "one": "{n} nom existe déjà dans {dest}",
       "many": "{n} noms existent déjà dans {dest}",
@@ -3364,7 +3364,6 @@
       "other": "{n} éléments"
     },
     "target": "Destination : {dest}",
-    "next": "Continuer",
     "running": "{label} en cours",
     "toJobs": "Tâches",
     "copied": "Copié : {what} vers {to}",

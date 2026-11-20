@@ -3248,7 +3248,7 @@
     },
     "conflicts": "Konflikter",
     "forAll": "Brug for alle",
-    "forAllTip": "Sætter hver række nedenfor til samme svar. Erstat kun nyere erstatter kun en fil, hvis den nye er ændret senere, og springer den ellers over.",
+    "step": "{at} af {n}",
     "exists": {
       "one": "1 navn findes allerede i {dest}",
       "other": "{n} navne findes allerede i {dest}"
@@ -3261,7 +3261,6 @@
       "other": "{n} elementer"
     },
     "target": "Mål: {dest}",
-    "next": "Videre",
     "running": "{label} kører",
     "toJobs": "Job",
     "copied": "Kopieret: {what} til {to}",

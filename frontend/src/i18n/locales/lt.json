@@ -3450,7 +3450,7 @@
     },
     "conflicts": "Konfliktai",
     "forAll": "Taikyti visiems",
-    "forAllTip": "Nustato kiekvieną žemiau esančią eilutę į tą patį atsakymą. Pakeisti tik naujesniais pakeičia failą tik tada, kai naujasis pakeistas vėliau, kitaip praleidžia.",
+    "step": "{at} iš {n}",
     "exists": {
       "one": "{n} pavadinimas jau yra aplanke {dest}",
       "few": "{n} pavadinimai jau yra aplanke {dest}",
@@ -3467,7 +3467,6 @@
       "other": "{n} elementų"
     },
     "target": "Paskirtis: {dest}",
-    "next": "Toliau",
     "running": "{label} vyksta",
     "toJobs": "Užduotys",
     "copied": "Nukopijuota: {what} į {to}",

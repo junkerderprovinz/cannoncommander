@@ -3248,7 +3248,7 @@
     },
     "conflicts": "Árekstrar",
     "forAll": "Nota fyrir allt",
-    "forAllTip": "Gefur hverri línu hér fyrir neðan sama svar. Skipta aðeins út nýrri skiptir skrá aðeins út þegar sú nýja hefur nýrri breytingardagsetningu, og sleppir henni annars.",
+    "step": "{at} af {n}",
     "exists": {
       "one": "{n} heiti er þegar til í {dest}",
       "other": "{n} heiti eru þegar til í {dest}"
@@ -3261,7 +3261,6 @@
       "other": "{n} atriði"
     },
     "target": "Áfangastaður: {dest}",
-    "next": "Áfram",
     "running": "{label} er í gangi",
     "toJobs": "Verk",
     "copied": "Afritað: {what} í {to}",

@@ -3450,7 +3450,7 @@
     },
     "conflicts": "Konflikty",
     "forAll": "Použiť pre všetky",
-    "forAllTip": "Nastaví každý riadok nižšie na rovnakú odpoveď. Nahradiť len novšími nahradí súbor len vtedy, keď má nový neskorší dátum zmeny, inak ho preskočí.",
+    "step": "{at} z {n}",
     "exists": {
       "one": "1 názov už v {dest} existuje",
       "few": "{n} názvy už v {dest} existujú",
@@ -3467,7 +3467,6 @@
       "other": "{n} položiek"
     },
     "target": "Cieľ: {dest}",
-    "next": "Pokračovať",
     "running": "{label} beží",
     "toJobs": "Úlohy",
     "copied": "Skopírované: {what} do {to}",

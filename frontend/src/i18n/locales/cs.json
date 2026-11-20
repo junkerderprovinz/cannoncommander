@@ -3450,7 +3450,7 @@
     },
     "conflicts": "Konflikty",
     "forAll": "Použít pro všechny",
-    "forAllTip": "Nastaví každý řádek níže na stejnou odpověď. Nahradit jen novějšími nahradí soubor jen tehdy, když má nový pozdější datum změny, jinak ho přeskočí.",
+    "step": "{at} z {n}",
     "exists": {
       "one": "1 název už v {dest} existuje",
       "few": "{n} názvy už v {dest} existují",
@@ -3467,7 +3467,6 @@
       "other": "{n} položek"
     },
     "target": "Cíl: {dest}",
-    "next": "Pokračovat",
     "running": "{label} běží",
     "toJobs": "Úlohy",
     "copied": "Zkopírováno: {what} do {to}",

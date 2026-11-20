@@ -3248,7 +3248,7 @@
     },
     "conflicts": "Konflikter",
     "forAll": "Använd för alla",
-    "forAllTip": "Ger varje rad nedan samma svar. Ersätt bara nyare ersätter en fil bara när den nya har ett senare ändringsdatum och hoppar annars över den.",
+    "step": "{at} av {n}",
     "exists": {
       "one": "{n} namn finns redan i {dest}",
       "other": "{n} namn finns redan i {dest}"
@@ -3261,7 +3261,6 @@
       "other": "{n} objekt"
     },
     "target": "Mål: {dest}",
-    "next": "Fortsätt",
     "running": "{label} körs",
     "toJobs": "Jobb",
     "copied": "Kopierat: {what} till {to}",

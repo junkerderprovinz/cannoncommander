@@ -3147,7 +3147,7 @@
     },
     "conflicts": "Xung đột",
     "forAll": "Áp dụng cho tất cả",
-    "forAllTip": "Đặt mọi dòng bên dưới cùng một câu trả lời. Chỉ thay bản mới hơn chỉ thay một tệp khi tệp mới có ngày sửa gần hơn, nếu không thì bỏ qua.",
+    "step": "{at} trên {n}",
     "exists": {
       "other": "{n} tên đã có trong {dest}"
     },
@@ -3158,7 +3158,6 @@
       "other": "{n} mục"
     },
     "target": "Đích: {dest}",
-    "next": "Tiếp tục",
     "running": "{label} đang chạy",
     "toJobs": "Công việc",
     "copied": "Đã sao chép: {what} sang {to}",

@@ -3147,7 +3147,7 @@
     },
     "conflicts": "Percanggahan",
     "forAll": "Guna untuk semua",
-    "forAllTip": "Menetapkan setiap baris di bawah kepada jawapan yang sama. Ganti yang lebih baharu sahaja menggantikan fail hanya jika yang baharu diubah lebih kemudian, dan melangkaunya jika tidak.",
+    "step": "{at} daripada {n}",
     "exists": {
       "other": "{n} nama sudah wujud dalam {dest}"
     },
@@ -3158,7 +3158,6 @@
       "other": "{n} item"
     },
     "target": "Destinasi: {dest}",
-    "next": "Teruskan",
     "running": "{label} sedang berjalan",
     "toJobs": "Tugas",
     "copied": "Disalin: {what} ke {to}",

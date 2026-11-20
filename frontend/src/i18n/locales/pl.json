@@ -3450,7 +3450,7 @@
     },
     "conflicts": "Konflikty",
     "forAll": "Zastosuj do wszystkich",
-    "forAllTip": "Ustawia każdy wiersz poniżej na tę samą odpowiedź. Zastąp tylko nowszymi zastępuje plik tylko wtedy, gdy nowy ma późniejszą datę modyfikacji, a w przeciwnym razie go pomija.",
+    "step": "{at} z {n}",
     "exists": {
       "one": "1 nazwa już istnieje w {dest}",
       "few": "{n} nazwy już istnieją w {dest}",
@@ -3467,7 +3467,6 @@
       "other": "{n} elementu"
     },
     "target": "Cel: {dest}",
-    "next": "Dalej",
     "running": "{label} działa",
     "toJobs": "Zadania",
     "copied": "Skopiowano: {what} do {to}",

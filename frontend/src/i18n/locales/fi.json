@@ -3248,7 +3248,7 @@
     },
     "conflicts": "Ristiriidat",
     "forAll": "Käytä kaikille",
-    "forAllTip": "Antaa jokaiselle alla olevalle riville saman vastauksen. Korvaa vain uudemmat korvaa tiedoston vain, jos uuden muokkauspäivä on myöhäisempi, ja muuten ohittaa sen.",
+    "step": "{at}/{n}",
     "exists": {
       "one": "{n} nimi on jo kohteessa {dest}",
       "other": "{n} nimeä on jo kohteessa {dest}"
@@ -3261,7 +3261,6 @@
       "other": "{n} kohdetta"
     },
     "target": "Kohde: {dest}",
-    "next": "Jatka",
     "running": "{label} on käynnissä",
     "toJobs": "Työt",
     "copied": "Kopioitu: {what} → {to}",
