@@ -14,8 +14,8 @@ const picked = ref<Way>(chosen());
 const cards = ref<HTMLButtonElement[]>([]);
 const Tick = glyphComponent('IconCheck');
 
-// The sketch of a window at work: the path on top, the sidebar, and one or two panels with a few rows. In one window
-// the cursor walks down and a folder opens, in two a file crosses from the left panel to the right one.
+// The sketch of a window at work: the path on top, the sidebar, and one or two panels with a few rows. A mouse pointer
+// clicks the cursor down and opens a folder in one window, and drags a file from the left panel to the right in two.
 const W = 160;
 const H = 100;
 const LEFT = 44;
@@ -27,6 +27,15 @@ const panels = (way: Way) => {
 };
 // Each row's place, how much of the panel's width its name takes, and how wide it is in the folder that opens.
 const ROWS = [[30, .85, .6], [38, .6, 1.4], [46, .75, .8], [54, .5, 1.6], [62, .7, .9]] as const;
+// The mouse pointer, its tip at the origin. It rests on the first row and travels between the stops the keyframes in
+// welcome.css name as offsets: the rows, then the path bar in one window or the drop in the right panel in two. For
+// reduced motion it stands at each stop in turn, in the order of the last number.
+const ARROW = 'M0 0V9l2.4-2.2 1.7 3.6 1.5-.7-1.7-3.5H7Z';
+const POINTER = { single: [111, 31.5], dual: [75, 31.5] } as const;
+const STOPS = {
+  single: [[0, 0, 0], [0, 8, 1], [0, 16, 2], [-83, -19.5, 3]],
+  dual: [[0, 0, 0], [0, 8, 1], [58, 40, 2], [0, 16, 3]],
+} as const;
 
 function pick(way: Way) {
   picked.value = way;
@@ -85,6 +94,15 @@ function onKey(e: KeyboardEvent, i: number) {
             <rect v-if="k === 1" class="wl-sk-new" :x="p.x + 6" y="70" :width="(p.w - 12) * .65" height="3" rx="1.5" />
           </g>
           <rect v-if="c.id === 'dual'" class="wl-sk-chip" :x="LEFT + 4" y="37" width="30" height="5" rx="2" />
+          <g :transform="`translate(${POINTER[c.id][0]} ${POINTER[c.id][1]})`">
+            <g v-for="[x, y, p] in STOPS[c.id]" :key="p" :transform="`translate(${x} ${y})`">
+              <g class="wl-sk-ptr-at" :style="{ '--wl-p': p }"><path class="wl-sk-arrow" :d="ARROW" /></g>
+            </g>
+            <g class="wl-sk-ptr">
+              <circle class="wl-sk-ring" r="3" />
+              <path class="wl-sk-arrow" :d="ARROW" />
+            </g>
+          </g>
         </svg>
         <span v-if="c.id === picked" class="wl-tick"><Tick /></span>
         <span class="wl-name">{{ c.name }}</span>

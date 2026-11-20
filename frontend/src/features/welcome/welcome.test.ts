@@ -137,6 +137,12 @@ describe('the cards', () => {
     expect(single.querySelectorAll('.wl-sk-glow')).toHaveLength(3);
     expect(dual.querySelectorAll('.wl-sk-glow')).toHaveLength(3);
     expect(single.querySelectorAll('.wl-sk-alt')).toHaveLength(5);
+    // A mouse pointer drives it all, with a ring for its clicks, and stands at four places for reduced motion.
+    for (const c of [single, dual]) {
+      expect(c.querySelectorAll('.wl-sk-ptr .wl-sk-arrow')).toHaveLength(1);
+      expect(c.querySelectorAll('.wl-sk-ptr .wl-sk-ring')).toHaveLength(1);
+      expect(c.querySelectorAll('.wl-sk-ptr-at .wl-sk-arrow')).toHaveLength(4);
+    }
   });
 });
 
