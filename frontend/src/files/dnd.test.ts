@@ -156,6 +156,21 @@ describe('a drag inside the browser', () => {
     expect(badge()).toBeUndefined();
   });
 
+  it('highlights a folder under the drag without going into it', async () => {
+    vi.useFakeTimers();
+    try {
+      const { folder, file } = panel();
+      file.dispatchEvent(ev('dragstart'));
+      folder.dispatchEvent(ev('dragover'));
+      await vi.advanceTimersByTimeAsync(3000);
+      expect(usePanels().T().path).toBe(HERE);
+      expect(folder.classList.contains('drop')).toBe(true);
+      file.dispatchEvent(ev('dragend'));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('links with Alt', async () => {
     const linked = vi.spyOn(tools, 'symlink').mockResolvedValue({ path: HERE + '/Bilder/notes.txt' });
     const { folder, file } = panel();

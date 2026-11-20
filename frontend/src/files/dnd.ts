@@ -1,6 +1,6 @@
 // Dragging rows onto a folder, a tab, a piece of the path, the sidebar or the other panel copies them. Shift moves and
-// Alt links, and a badge at the pointer says which, following the keys while the drag goes on. Holding still over a
-// folder, tab or path piece opens it, so a drop can go deeper. Files dragged in from outside go to the upload. In the
+// Alt links, and a badge at the pointer says which, following the keys while the drag goes on. A folder under the drag
+// only lights up as the target and never opens. Files dragged in from outside go to the upload. In the
 // desktop app they are files on the same computer instead: they go onto the folder under the pointer, and rows dragged
 // out of the window reach the desktop or any other program as the files themselves.
 import { tools } from '@/api/tools';
@@ -15,7 +15,7 @@ import { usePanels } from '@/stores/panels';
 import type { Entry } from './entries';
 import { inArchive, join, nativePath } from './paths';
 
-interface Target { el: Element; dest: string; open?: () => void }
+interface Target { el: Element; dest: string }
 interface Drag { from: number; items: Entry[]; folder: string; op: DragOp; native?: boolean }
 
 export type DragOp = 'copy' | 'move' | 'link';
@@ -51,7 +51,6 @@ export function installDragDrop() {
   let ended: { drag: Drag; at: number } | null = null;
   // Drops on Windows wait here for their paths, which come back from the window after the page passed it the files.
   const waiting: { dest: string; how: 'copy' | 'move' | 'auto' }[] = [];
-  let spring: { el: Element | null; timer: ReturnType<typeof setTimeout> | undefined } = { el: null, timer: undefined };
   let badge: HTMLElement | null = null;
   function showOp(op: DragOp, x: number, y: number) {
     if (!badge) badge = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'drag-op glim-card' }));
@@ -84,40 +83,30 @@ export function installDragDrop() {
       const k = F.entries(panel)[+row.dataset.idx!];
       if (k && !d?.items.some((x) => x.name === k.name && (x.at || '') === (k.at || ''))) {
         const dest = join(k.at || F.T(panel).path, k.name);
-        return { el: row, dest, open: () => F.go(dest, panel) };
+        return { el: row, dest };
       }
     }
     const tab = at('[data-tab]') as HTMLElement | null;
     if (tab && panelEl) {
-      const n = +tab.dataset.tab!;
-      return { el: tab, dest: F.P(panel).tabs[n]!.path, open: () => { F.P(panel).cur = n; } };
+      return { el: tab, dest: F.P(panel).tabs[+tab.dataset.tab!]!.path };
     }
     const go = at('[data-go]') as HTMLElement | null;
-    if (go) return { el: go, dest: go.dataset.go!, open: () => F.go(go.dataset.go!, panelEl ? panel : F.active) };
+    if (go) return { el: go, dest: go.dataset.go! };
     const list = at('.list');
     if (list && (!d || panel !== d.from)) return { el: list, dest: F.T(panel).path };
     return null;
   }
   const clearDrop = () => document.querySelectorAll('.dragover, .drop').forEach((x) => x.classList.remove('dragover', 'drop'));
-  const stopSpring = () => {
-    clearTimeout(spring.timer);
-    spring = { el: null, timer: undefined };
-  };
   function hover(tgt: Target | null) {
     if (!tgt) return clearDrop();
     if (!tgt.el.classList.contains('drop') && !tgt.el.classList.contains('dragover')) {
       clearDrop();
       tgt.el.classList.add(tgt.el.classList.contains('list') ? 'dragover' : 'drop');
     }
-    if (spring.el !== tgt.el) {
-      clearTimeout(spring.timer);
-      spring = { el: tgt.el, timer: tgt.open ? setTimeout(() => { tgt.open!(); spring.el = null; }, 900) : undefined };
-    }
   }
   function endDrag() {
     if (drag && !drag.native) ended = { drag, at: Date.now() };
     drag = null;
-    stopSpring();
     clearDrop();
     hideOp();
   }
@@ -175,7 +164,6 @@ export function installDragDrop() {
   document.addEventListener('dragend', endDrag);
   document.addEventListener('drop', (e) => {
     clearDrop();
-    stopSpring();
     const files = e.dataTransfer?.files, shell = shellOf().chrome?.webview;
     if (host.desktop && !drag && files?.length && shell?.postMessageWithAdditionalObjects) {
       e.preventDefault();
@@ -207,7 +195,6 @@ export function installDragDrop() {
   // window takes every drop with files itself, the app's own drags too, and the page only learns where it landed.
   function dropped(list: string[], x: number, y: number) {
     clearDrop();
-    stopSpring();
     const next = waiting.shift();
     if (next) {
       run('dropIn', list, next.dest, next.how);
@@ -231,7 +218,7 @@ export function installDragDrop() {
     handlePlatformFileDrop: dropped,
     handleDragEnter: () => {},
     handleDragOver: (x: number, y: number) => { if (!drag) hover(dropTarget(document.elementFromPoint(x, y), null)); },
-    handleDragLeave: () => { if (!drag) { stopSpring(); clearDrop(); } },
+    handleDragLeave: () => { if (!drag) clearDrop(); },
   } satisfies WailsHooks);
   const ready = () => wails.invoke?.('wails:runtime:ready');
   if (wails.invoke) ready();

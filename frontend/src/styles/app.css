@@ -91,7 +91,7 @@ svg { display: block; }
 #side .glim-nav-row.glim-active svg { color: var(--accent-glyph); }
 .glim-active .unpin:hover { background: var(--hover); color: inherit; }
 #side .meta { font-size: 12px; font-weight: 400; color: var(--carbon-text-muted); flex: none; }
-.glim-nav-row:has(> .drop) { outline: 2px dashed var(--accent-ink); outline-offset: -2px; }
+.glim-nav-row:has(> .drop) { background-color: var(--row-cursor); }
 #side { --nav-row-h: 2.1rem; }
 .tree-tog { width: 1.1rem; height: 1.1rem; display: grid; place-items: center; flex: none; border-radius: var(--radius-control); color: var(--carbon-text-muted); }
 .tree-tog svg { width: .7rem; height: .7rem; color: currentColor; transform: rotate(-90deg); }
@@ -129,7 +129,7 @@ svg { display: block; }
 .psep { color: var(--carbon-text-muted); font-size: 14px; padding: 0 1px; flex: none; }
 
 .list { flex: 1; min-height: 0; overflow: auto; position: relative; outline: none; border-radius: var(--radius-control); }
-.list.dragover { background: color-mix(in srgb, var(--accent) 8%, transparent); outline: 2px dashed var(--accent-ink); outline-offset: -2px; }
+.list.dragover { background: var(--accent-soft); }
 .lhead, .row { display: grid; grid-template-columns: var(--cols); align-items: center; column-gap: 1rem; min-width: var(--minw); }
 .lhead { position: sticky; top: 0; z-index: 2; height: 1.9rem; padding: 0 .5rem; font-size: 12px; color: var(--carbon-text-muted); background: var(--carbon-surface); }
 .lh { display: flex; align-items: center; gap: .3rem; height: 1.6rem; padding: 0 .35rem; margin: 0 -.35rem; border-radius: var(--radius-control); color: inherit; white-space: nowrap; cursor: grab; touch-action: none; }
@@ -353,7 +353,7 @@ button.psep:hover { background: var(--hover); color: var(--carbon-text); }
 /* In search hits the name wins the space; the folder it lives in gives way first. */
 .name .t { flex: 0 1 auto; min-width: 3rem; }
 .name .link { flex: 0 100 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-:is(.row, .ptab, .pseg).drop { outline: 2px dashed var(--accent-ink); outline-offset: -2px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
+:is(.row, .ptab, .pseg).drop { background: var(--row-cursor); }
 .lgroup { display: flex; align-items: center; gap: .5rem; height: 2rem; padding: .6rem .5rem 0; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--carbon-text-sub); grid-column: 1 / -1; }
 .lgroup .glim-num { font-weight: 500; letter-spacing: 0; color: var(--carbon-text-muted); }
 .lgroup::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--carbon-text) 9%, transparent); }
