@@ -1239,7 +1239,8 @@
       "desktopHintOut": "CannonCommander som et program på din computer, med denne brugerflade i sit eget vindue.",
       "server": "Server",
       "serverHint": "CannonCommander på din Unraid-server eller i Docker, så du også kan nå dine filer fra dine andre enheder.",
-      "source": "Kildekode"
+      "source": "Kildekode",
+      "macosSub": "Apple og Intel"
     },
     "app": {
       "updates": "Opdateringer",

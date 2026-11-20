@@ -236,7 +236,8 @@
     "soon": "Bald",
     "desktopHintOut": "CannonCommander als Programm auf deinem Rechner, mit dieser Oberfläche in einem eigenen Fenster.",
     "server": "Server", "serverHint": "CannonCommander auf deinem Unraid-Server oder in Docker, damit du auch von anderen Geräten aus an deine Dateien kommst.",
-    "source": "Quellcode"
+    "source": "Quellcode",
+    "macosSub": "Apple und Intel"
   },
   "app": {
     "updates": "Updates", "autoCheck": "Automatisch prüfen",

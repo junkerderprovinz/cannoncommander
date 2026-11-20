@@ -1239,7 +1239,8 @@
       "desktopHintOut": "आपके कंप्यूटर पर एक प्रोग्राम के रूप में CannonCommander, यह इंटरफ़ेस अपनी अलग विंडो में।",
       "server": "सर्वर",
       "serverHint": "आपके Unraid सर्वर पर या Docker में CannonCommander, ताकि आप अपनी फ़ाइलों तक दूसरे डिवाइस से भी पहुँच सकें।",
-      "source": "सोर्स कोड"
+      "source": "सोर्स कोड",
+      "macosSub": "Apple और Intel"
     },
     "app": {
       "updates": "अपडेट",

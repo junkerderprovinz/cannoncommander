@@ -1195,7 +1195,8 @@
       "desktopHintOut": "CannonCommander sebagai program di komputermu, dengan antarmuka ini di jendelanya sendiri.",
       "server": "Server",
       "serverHint": "CannonCommander di server Unraid-mu atau di Docker, supaya kamu bisa membuka file-mu juga dari perangkat lain.",
-      "source": "Kode sumber"
+      "source": "Kode sumber",
+      "macosSub": "Apple dan Intel"
     },
     "app": {
       "updates": "Pembaruan",

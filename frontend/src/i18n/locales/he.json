@@ -1283,7 +1283,8 @@
       "desktopHintOut": "CannonCommander כתוכנה במחשב שלך, עם הממשק הזה בחלון משלו.",
       "server": "שרת",
       "serverHint": "CannonCommander בשרת ה-Unraid שלך או ב-Docker, כדי שתגיע לקבצים שלך גם מהמכשירים האחרים שלך.",
-      "source": "קוד מקור"
+      "source": "קוד מקור",
+      "macosSub": "Apple ו-Intel"
     },
     "app": {
       "updates": "עדכונים",

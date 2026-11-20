@@ -1239,7 +1239,8 @@
       "desktopHintOut": "Bilgisayarında bir program olarak CannonCommander, bu arayüz de kendi penceresinde.",
       "server": "Sunucu",
       "serverHint": "Unraid sunucunda ya da Docker'da CannonCommander, böylece dosyalarına diğer cihazlarından da ulaşırsın.",
-      "source": "Kaynak kodu"
+      "source": "Kaynak kodu",
+      "macosSub": "Apple ve Intel"
     },
     "app": {
       "updates": "Güncellemeler",

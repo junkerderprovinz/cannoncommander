@@ -1195,7 +1195,8 @@
       "desktopHintOut": "作为电脑上的程序运行的 CannonCommander，这个界面在它自己的窗口里打开。",
       "server": "服务器",
       "serverHint": "在你的 Unraid 服务器上或 Docker 中运行的 CannonCommander，让你从其他设备也能访问你的文件。",
-      "source": "源代码"
+      "source": "源代码",
+      "macosSub": "Apple 和 Intel"
     },
     "app": {
       "updates": "更新",

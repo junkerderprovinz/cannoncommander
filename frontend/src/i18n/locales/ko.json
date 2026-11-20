@@ -1195,7 +1195,8 @@
       "desktopHintOut": "컴퓨터에서 프로그램으로 실행하는 CannonCommander로, 이 화면이 전용 창에 열립니다.",
       "server": "서버",
       "serverHint": "Unraid 서버나 Docker에서 실행하는 CannonCommander입니다. 다른 기기에서도 파일에 접근할 수 있습니다.",
-      "source": "소스 코드"
+      "source": "소스 코드",
+      "macosSub": "Apple 및 Intel"
     },
     "app": {
       "updates": "업데이트",

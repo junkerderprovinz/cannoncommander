@@ -1195,7 +1195,8 @@
       "desktopHintOut": "パソコン上のプログラムとして動く CannonCommander で、この画面が専用のウィンドウで開きます。",
       "server": "サーバー",
       "serverHint": "Unraid サーバーや Docker で動く CannonCommander です。ほかの端末からもファイルにアクセスできます。",
-      "source": "ソースコード"
+      "source": "ソースコード",
+      "macosSub": "Apple と Intel"
     },
     "app": {
       "updates": "アップデート",

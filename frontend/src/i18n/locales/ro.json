@@ -1283,7 +1283,8 @@
       "desktopHintOut": "CannonCommander ca program pe calculatorul tău, cu această interfață într-o fereastră proprie.",
       "server": "Server",
       "serverHint": "CannonCommander pe serverul tău Unraid sau în Docker, ca să ajungi la fișierele tale și de pe alte dispozitive.",
-      "source": "Cod sursă"
+      "source": "Cod sursă",
+      "macosSub": "Apple și Intel"
     },
     "app": {
       "updates": "Actualizări",

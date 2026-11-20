@@ -1327,7 +1327,8 @@
       "desktopHintOut": "CannonCommander як програма на вашому комп'ютері, з цим інтерфейсом у власному вікні.",
       "server": "Сервер",
       "serverHint": "CannonCommander на вашому сервері Unraid або в Docker, щоб ви діставалися до своїх файлів і з інших пристроїв.",
-      "source": "Вихідний код"
+      "source": "Вихідний код",
+      "macosSub": "Apple та Intel"
     },
     "app": {
       "updates": "Оновлення",

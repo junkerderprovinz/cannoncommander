@@ -1239,7 +1239,8 @@
       "desktopHintOut": "CannonCommander като програма на компютъра ти, с този интерфейс в собствен прозорец.",
       "server": "Сървър",
       "serverHint": "CannonCommander на твоя Unraid сървър или в Docker, за да стигаш до файловете си и от другите си устройства.",
-      "source": "Изходен код"
+      "source": "Изходен код",
+      "macosSub": "Apple и Intel"
     },
     "app": {
       "updates": "Актуализации",

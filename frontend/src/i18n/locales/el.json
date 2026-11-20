@@ -1239,7 +1239,8 @@
       "desktopHintOut": "Το CannonCommander ως πρόγραμμα στον υπολογιστή σου, με αυτή τη διεπαφή σε δικό της παράθυρο.",
       "server": "Διακομιστής",
       "serverHint": "Το CannonCommander στον διακομιστή Unraid σου ή στο Docker, ώστε να φτάνεις στα αρχεία σου και από τις άλλες συσκευές σου.",
-      "source": "Πηγαίος κώδικας"
+      "source": "Πηγαίος κώδικας",
+      "macosSub": "Apple και Intel"
     },
     "app": {
       "updates": "Ενημερώσεις",

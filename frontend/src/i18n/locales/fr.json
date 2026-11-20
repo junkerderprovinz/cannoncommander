@@ -1283,7 +1283,8 @@
       "desktopHintOut": "CannonCommander comme programme sur votre ordinateur, avec cette interface dans sa propre fenêtre.",
       "server": "Serveur",
       "serverHint": "CannonCommander sur votre serveur Unraid ou dans Docker, pour accéder à vos fichiers depuis vos autres appareils aussi.",
-      "source": "Code source"
+      "source": "Code source",
+      "macosSub": "Apple et Intel"
     },
     "app": {
       "updates": "Mises à jour",
