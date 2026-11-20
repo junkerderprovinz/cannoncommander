@@ -77,6 +77,28 @@ describe('live changes', () => {
     expect(names(L.lists.get('/a'))).toEqual(['x', 'y']);
   });
 
+  it('keeps the subfolders in the tree while it reads them again after a change', async () => {
+    const dirs = (path: string, ...names: string[]) => ({ path, items: names.map((name) => ({ name, path: `${path}/${name}`, hasDirs: false })) });
+    let release = () => {};
+    vi.spyOn(api, 'fsList').mockResolvedValue(listing('/a/ziel', ['x']));
+    const fsTree = vi.spyOn(api, 'fsTree').mockImplementation(async (path) => (path === '/a' ? dirs('/a', 'quelle', 'ziel') : dirs(path, 'film')));
+    const L = useListing();
+    await L.tree('/a');
+    await L.tree('/a/ziel');
+    await L.load('/a/ziel');
+    L.setShown(['/a/ziel']);
+    fsTree.mockImplementation((path) => new Promise((done) => { release = () => done(path === '/a' ? dirs('/a', 'quelle', 'ziel', 'neu') : dirs(path, 'film', 'kopie')); }));
+    emit({ type: 'fs.changed', topic: 'fs:/a/ziel' });
+    await settle();
+    expect(L.trees.get('/a')?.map((k) => k.name)).toEqual(['quelle', 'ziel']);
+    expect(L.trees.get('/a/ziel')?.map((k) => k.name)).toEqual(['film']);
+    release();
+    await settle();
+    expect(L.trees.get('/a')?.map((k) => k.name)).toEqual(['quelle', 'ziel', 'neu']);
+    L.setShown([]);
+    L.lists.clear();
+  });
+
   it('only forgets a folder out of sight', async () => {
     const fsList = vi.spyOn(api, 'fsList').mockResolvedValue(listing('/b', ['x']));
     const L = useListing();

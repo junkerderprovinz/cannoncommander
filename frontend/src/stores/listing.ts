@@ -54,13 +54,30 @@ export const useListing = defineStore('listing', () => {
     return job;
   }
 
+  const named = (items: TreeItem[]) => items.map((k) => (k.kind ? { ...k, label: driveName(k) } : k.path === '/net' && windowsPaths() ? { ...k, label: t('files.network') } : k));
+
+  // Reads a folder's subfolders again and swaps them in once they arrive, so the tree keeps its rows meanwhile and
+  // nothing below them moves.
+  function retree(path: string) {
+    if (pendingTrees.has(path)) return;
+    const job = api.fsTree(path)
+      .then((got) => {
+        const items = named(got.items);
+        trees.set(path, items);
+        return items;
+      })
+      .finally(() => pendingTrees.delete(path));
+    job.catch(() => {});
+    pendingTrees.set(path, job);
+  }
+
   async function tree(path: string): Promise<TreeItem[]> {
     if (trees.has(path)) return trees.get(path)!;
     if (failedTrees.has(path)) throw failedTrees.get(path);
     if (pendingTrees.has(path)) return pendingTrees.get(path)!;
     const job = api.fsTree(path)
       .then((got) => {
-        const items = got.items.map((k) => (k.kind ? { ...k, label: driveName(k) } : k.path === '/net' && windowsPaths() ? { ...k, label: t('files.network') } : k));
+        const items = named(got.items);
         trees.set(path, items);
         return items;
       }, (e: unknown) => {
@@ -84,16 +101,19 @@ export const useListing = defineStore('listing', () => {
   // drops its copy.
   function changed(path: string) {
     const visible = shown.includes(path);
-    const keep = lists.get(path);
+    const keep = lists.get(path), branch = trees.get(path);
     invalidate(path);
     if (visible) {
       if (keep) lists.set(path, keep);
       load(path).catch(() => lists.delete(path));
     }
-    if (trees.has(parent(path)) || shown.includes(parent(path))) {
-      trees.delete(parent(path));
-      tree(parent(path)).catch(() => {});
+    if (branch) {
+      trees.set(path, branch);
+      retree(path);
     }
+    const up = parent(path);
+    if (trees.has(up)) retree(up);
+    else if (shown.includes(up)) tree(up).catch(() => {});
   }
 
   // A feature may hold a change on screen back, such as while a window is open, and hand it to changed() later.
