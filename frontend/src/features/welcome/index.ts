@@ -8,7 +8,7 @@ import { win, winStack } from '@/core/windows';
 import { useStyle } from '@/features/desktop/style';
 import { t, tl } from '@/i18n';
 import WelcomeBody from './WelcomeBody.vue';
-import { welcomeDue } from './welcome';
+import { welcomeOnLoad } from './welcome';
 
 // Closed without a pick, the app stays as it ships and the window does not come back by itself.
 function settle() {
@@ -30,5 +30,5 @@ export function openWelcome() {
 
 export default function setup() {
   action('welcome', { label: tl('welcome.action'), g: 'IconApp', run: openWelcome });
-  if (!import.meta.env.DESKTOP && welcomeDue()) openWelcome();
+  if (!import.meta.env.DESKTOP && welcomeOnLoad()) openWelcome();
 }

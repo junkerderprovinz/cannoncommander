@@ -28,6 +28,9 @@ export function choose(way: Way) {
 
 export const welcomeDue = () => firstVisit() && !prefs.welcomed;
 
+// A preview build greets every load, since whoever checks it has been there before and cannot see a first visit again.
+export const welcomeOnLoad = () => import.meta.env.VITE_WELCOME_EVERY_LOAD === '1' || welcomeDue();
+
 // The master logo inline, so its two cannons can kick back on their own. Its stylesheet would reach the whole page
 // once inline, so the colours move onto the shapes. The upper cannon fires to the right, the lower one to the left.
 export function welcomeLogo(): string {

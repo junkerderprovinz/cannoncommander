@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp, h, nextTick } from 'vue';
 import { action, actions } from '@/core/actions';
 import { host } from '@/core/host';
@@ -13,7 +13,7 @@ import keysEn from '@/features/keys/en.json';
 import de from './de.json';
 import en from './en.json';
 import setup, { openWelcome } from '.';
-import { welcomeDue, welcomeLogo } from './welcome';
+import { welcomeDue, welcomeLogo, welcomeOnLoad } from './welcome';
 import WelcomeBody from './WelcomeBody.vue';
 
 let app: ReturnType<typeof createApp> | undefined;
@@ -142,6 +142,17 @@ describe('the welcome window', () => {
     expect(welcomeDue()).toBe(true);
     prefs.welcomed = true;
     expect(welcomeDue()).toBe(false);
+  });
+
+  it('greets every load of a preview that asks for it, even a browser that has been there before', () => {
+    prefs.welcomed = true;
+    expect(welcomeOnLoad()).toBe(false);
+    vi.stubEnv('VITE_WELCOME_EVERY_LOAD', '1');
+    try {
+      expect(welcomeOnLoad()).toBe(true);
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it('leaves somebody alone whose settings the server already keeps', () => {
