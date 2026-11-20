@@ -15,7 +15,8 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && vue-tsc --noEmit -p tsconfig.test.json && tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tests/tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "locales": "node scripts/locales.ts"
+    "locales": "node scripts/locales.ts",
+    "proto:dialogs": "vite build -c vite.proto.config.ts"
   },
   "dependencies": {
     "@codemirror/commands": "^6.11.1",
