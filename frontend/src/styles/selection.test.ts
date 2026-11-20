@@ -53,7 +53,10 @@ describe('the field that renames a row', () => {
     expect(own).toMatch(/outline: none/);
     expect(own).toMatch(/background: transparent/);
     expect(own).toMatch(/caret-color: var\(--accent-ink\)/);
-    expect(on('.rn-field::selection').map((r) => r.body).join()).toMatch(/background: var\(--row-cursor\)/);
+    // The row under the field already wears the wash, so the selected name takes the accent itself with its own ink.
+    const picked = on('.rn-field::selection').map((r) => r.body).join();
+    expect(picked).toMatch(/background: var\(--accent\)/);
+    expect(picked).toMatch(/color: var\(--accent-contrast\)/);
     const lines = rules.filter((r) => r.selector.includes('.rn-field') && /border-color|box-shadow|outline:(?!\s*none)/.test(r.body));
     expect(lines.map((r) => `${r.file}: ${r.selector}`)).toEqual([]);
   });

@@ -162,10 +162,10 @@ svg { display: block; }
 .row.marked, .list:not(.marking) > .row.cursor { background: var(--accent-soft); }
 .row.marked:hover, .list:not(.marking) > .row.cursor:hover { background: color-mix(in srgb, var(--accent-soft), var(--accent) 12%); }
 .row.marked .t { color: var(--carbon-text); }
-/* The name being typed has neither a line nor a ground of its own; the selected name in the accent's wash and the caret
-   show where the typing goes. */
+/* The name being typed has neither a line nor a ground of its own; the selected name in the accent and the caret show
+   where the typing goes. */
 .rn-field { flex: 1 1 auto; min-width: 6rem; height: 1.6em; margin: 0; padding: 0; border: 0; border-radius: 4px; outline: none; background: transparent; color: var(--carbon-text); caret-color: var(--accent-ink); font: inherit; }
-.rn-field::selection { background: var(--row-cursor); color: var(--carbon-text); }
+.rn-field::selection { background: var(--accent); color: var(--accent-contrast); }
 .gcard .rn-field, .citem .rn-field { width: 100%; }
 .rn-field[aria-invalid="true"] { background: var(--status-fail-bg); }
 .rn-error .glim-field-error { margin-top: 0; }
