@@ -11,6 +11,8 @@ const params = new URLSearchParams(location.search);
 const variant = ref(VARIANTS.includes(params.get('variant') as never) ? params.get('variant')! : 'A');
 const lang = ref<Lang>(params.get('lang') === 'en' ? 'en' : 'de');
 const mode = ref(params.get('mode') ?? 'dark');
+const MOTIONS = ['off', 'subtle', 'wild', 'storm'] as const;
+const motion = ref(MOTIONS.includes(params.get('motion') as never) ? params.get('motion')! : 'subtle');
 const dialog = ref<Dialog | 'all'>('all');
 const state = ref<State | 'all'>('all');
 const t = computed(() => texts(lang.value));
@@ -19,14 +21,15 @@ const shown = computed(() => DIALOGS.filter((d) => dialog.value === 'all' || d =
   .flatMap((d) => STATES.filter((s) => state.value === 'all' || s === state.value).map((s) => ({ d, s }))));
 
 function sync() {
-  const q = new URLSearchParams({ variant: variant.value, lang: lang.value, mode: mode.value });
+  const q = new URLSearchParams({ variant: variant.value, lang: lang.value, mode: mode.value, motion: motion.value });
   history.replaceState(null, '', `${location.pathname}?${q}`);
   const root = document.documentElement;
   root.dataset.theme = mode.value === 'light' ? 'light' : 'dark';
   applyOled(mode.value === 'oled');
   root.lang = lang.value;
+  root.dataset.motion = motion.value;
 }
-watch([variant, lang, mode], sync, { immediate: true });
+watch([variant, lang, mode, motion], sync, { immediate: true });
 const step = (d: number) => { variant.value = VARIANTS[(VARIANTS.indexOf(variant.value as never) + d + VARIANTS.length) % VARIANTS.length]!; };
 function key(e: KeyboardEvent) {
   if ((e.target as Element).closest?.('input, textarea, [contenteditable]')) return;
@@ -62,6 +65,8 @@ onBeforeUnmount(() => removeEventListener('keydown', key));
     <button :aria-label="lang === 'de' ? 'Nächste Variante' : 'Next variant'" @click="step(1)"><G n="IconForward" /></button>
     <span class="proto-sep"></span>
     <button v-for="m in ['light', 'dark', 'oled']" :key="m" :class="{ on: mode === m }" :data-mode="m" @click="mode = m">{{ t[m as 'light'] }}</button>
+    <span class="proto-sep"></span>
+    <button v-for="m in MOTIONS" :key="m" :class="{ on: motion === m }" :data-motion-pick="m" :aria-label="`${t.motionLabel}: ${t.motion[m]}`" @click="motion = m">{{ t.motion[m] }}</button>
     <span class="proto-sep"></span>
     <button v-for="l in ['de', 'en']" :key="l" :class="{ on: lang === l }" :data-lang="l" @click="lang = l as Lang">{{ l.toUpperCase() }}</button>
   </nav>
