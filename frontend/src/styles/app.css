@@ -162,9 +162,12 @@ svg { display: block; }
 .row.marked, .list:not(.marking) > .row.cursor { background: var(--accent-soft); }
 .row.marked:hover, .list:not(.marking) > .row.cursor:hover { background: color-mix(in srgb, var(--accent-soft), var(--accent) 12%); }
 .row.marked .t { color: var(--carbon-text); }
-.rn-field { flex: 1 1 auto; min-width: 6rem; height: 1.6em; margin: 0; padding: 0 .35rem; border: 1px solid var(--accent); border-radius: 4px; outline: none; background: var(--carbon-surface3); color: var(--carbon-text); font: inherit; }
+/* The name being typed stands on a ground of its own, without a line around it; the caret and the selection show where
+   the typing goes. */
+.rn-field { flex: 1 1 auto; min-width: 6rem; height: 1.6em; margin: 0; padding: 0 .35rem; border: 0; border-radius: 4px; outline: none; background: var(--carbon-surface3); color: var(--carbon-text); caret-color: var(--accent-ink); font: inherit; }
+.rn-field::selection { background: var(--row-cursor); color: var(--carbon-text); }
 .gcard .rn-field, .citem .rn-field { width: 100%; }
-.rn-field[aria-invalid="true"] { border-color: var(--status-fail-text); background: var(--status-fail-bg); }
+.rn-field[aria-invalid="true"] { background: var(--status-fail-bg); }
 .rn-error .glim-field-error { margin-top: 0; }
 .band { position: fixed; z-index: 5; pointer-events: none; border: 1px solid var(--accent); border-radius: 2px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
 .row.cut { opacity: .55; }
