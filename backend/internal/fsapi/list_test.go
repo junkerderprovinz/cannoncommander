@@ -81,6 +81,16 @@ func TestListCountsFoldersAndFindsTheirPicture(t *testing.T) {
 	}
 }
 
+func TestFolderCountLeavesOutTheTrashAndPartFiles(t *testing.T) {
+	f := newFixture(t)
+	write(t, filepath.Join(f.share, "filme", "Sintel (2010)", ".cc-trash", "id", "alt.mkv"), 3)
+	write(t, filepath.Join(f.share, "filme", "Sintel (2010)", ".neu.mkv.cc-part"), 3)
+	sintel := byName(t, decode[Listing](t, f.get(t, "jdp", "/fs/list", "/mnt/user/filme")).Items, "Sintel (2010)")
+	if sintel.Items == nil || *sintel.Items != 2 {
+		t.Fatalf("folder = %+v", sintel)
+	}
+}
+
 func TestListTakesFolderSizesFromTheIndex(t *testing.T) {
 	idx := &fakeIndex{folders: map[string]fsindex.Folder{
 		"/filme/Sintel (2010)": {Items: 7, Size: 123456, Pictures: []string{"cover.jpg", "Folder.jpg"}},

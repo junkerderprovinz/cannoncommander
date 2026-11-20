@@ -92,11 +92,15 @@ func peek(dir string) (n int, pictures []string, ok bool) {
 		return 0, nil, false
 	}
 	for _, name := range names {
+		if bookkeeping(name) {
+			continue
+		}
+		n++
 		if pickPicture([]string{name}) != "" {
 			pictures = append(pictures, name)
 		}
 	}
-	return len(names), pictures, true
+	return n, pictures, true
 }
 
 // pickPicture returns the most preferred folder picture among names.
