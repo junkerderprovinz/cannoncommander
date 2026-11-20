@@ -1,9 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp, nextTick } from 'vue';
+import { action } from '@/core/actions';
+import { installKeyboard } from '@/core/keyboard';
 import { editing, endInline, inline, onInlineSave, saveInline, startInline } from './inline';
 import RenameField from './RenameField.vue';
 
-const saved = vi.fn(async () => {});
+const saved = vi.fn(async (_folder: string, _from: string, _to: string, _panel: number): Promise<unknown> => undefined);
+const settle = () => new Promise((r) => setTimeout(r, 0));
 beforeEach(() => {
   saved.mockClear();
   onInlineSave(saved);
@@ -79,6 +82,46 @@ describe('the field', () => {
     el.value = 'b.txt';
     el.dispatchEvent(new FocusEvent('blur'));
     expect(saved).toHaveBeenCalledTimes(1);
+  });
+
+  it('stays open with the reason and the typed name when the name cannot be taken', async () => {
+    saved.mockRejectedValueOnce(new Error('Diesen Namen gibt es hier schon'));
+    const el = mount('a.txt');
+    el.value = 'b.txt';
+    press(el, 'Enter');
+    await settle();
+    const field = document.querySelector<HTMLInputElement>('.rn-field')!;
+    expect(inline.panel).toBe(0);
+    expect(field.value).toBe('b.txt');
+    expect(field.getAttribute('aria-invalid')).toBe('true');
+    expect(document.querySelector('.rn-error')?.textContent).toContain('Diesen Namen gibt es hier schon');
+    expect(document.activeElement).toBe(field);
+  });
+
+  it('drops the reason once the name is typed anew', async () => {
+    saved.mockRejectedValueOnce(new Error('Diesen Namen gibt es hier schon'));
+    const el = mount('a.txt');
+    el.value = 'b.txt';
+    press(el, 'Enter');
+    await settle();
+    expect(document.querySelector('.rn-error')).not.toBeNull();
+    el.value = 'c.txt';
+    el.dispatchEvent(new Event('input'));
+    await nextTick();
+    expect(document.querySelector('.rn-error')).toBeNull();
+    expect(el.getAttribute('aria-invalid')).toBeNull();
+  });
+
+  it("keeps the panel's keys to itself while it is open", () => {
+    const deleted = vi.fn(), moved = vi.fn();
+    action('delete', { label: 'delete', run: deleted });
+    action('back', { label: 'back', run: moved });
+    installKeyboard();
+    const el = mount('a.txt');
+    for (const key of ['Delete', 'ArrowDown', 'ArrowLeft', 'Backspace', 'F8']) press(el, key);
+    expect(deleted).not.toHaveBeenCalled();
+    expect(moved).not.toHaveBeenCalled();
+    expect(inline.panel).toBe(0);
   });
 
   it('leaves the name as it was on Esc', () => {

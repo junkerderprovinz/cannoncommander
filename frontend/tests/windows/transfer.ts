@@ -204,7 +204,8 @@ await page.keyboard.press('Enter');
 check('F7 makes the folder and puts the cursor on it', await until('Files.entries()[Files.T().cursor]?.name === "Projekt"'));
 await page.keyboard.press('F2');
 await wait(300);
-await page.fill('#nm', 'Projekt 2026');
+check('F2 opens the name in its row', await until('!!document.querySelector(".panel.active .row .rn-field")'));
+await page.keyboard.type('Projekt 2026');
 await page.keyboard.press('Enter');
 check('F2 renames it', await until('Files.entries().some((k) => k.name === "Projekt 2026")'));
 

@@ -3,7 +3,6 @@
 import { reactive } from 'vue';
 import { type FsChanged, ops } from '@/api/ops';
 import { action, actions, run } from '@/core/actions';
-import { host } from '@/core/host';
 import { toast } from '@/core/toast';
 import { cancelBtn, win } from '@/core/windows';
 import { onInlineSave, startInline } from '@/files/inline';
@@ -35,9 +34,13 @@ async function follow(folder: string, panel: number, name: string) {
   if (idx >= 0 && F.T(panel).path === folder) F.T(panel).cursor = idx;
 }
 
-function renameInline(folder: string, from: string, to: string, panel: number) {
-  if (useListing().lists.get(folder)?.items.some((k) => k.name === to)) return Promise.resolve(toast(t('names.taken'), 'warn'));
-  return ops.rename(join(folder, from), to).then(() => follow(folder, panel, to), (e) => toast(e.message, 'warn'));
+// A name the row cannot take throws, so the field stays open and says why. The mark goes along with the entry.
+async function renameInline(folder: string, from: string, to: string, panel: number) {
+  if (useListing().lists.get(folder)?.items.some((k) => k.name === to)) throw new Error(t('names.taken'));
+  await ops.rename(join(folder, from), to);
+  const tab = usePanels().T(panel);
+  if (tab.path === folder && tab.marked.delete(from)) tab.marked.add(to);
+  await follow(folder, panel, to);
 }
 
 // The row shows the field only where the entry is drawn as a row of its own, not in the column view.
@@ -112,8 +115,7 @@ export default function setup() {
     const sel = F.sel();
     if (sel.length > 1 && actions.multiRename) return run('multiRename');
     const k = sel[0]!, folder = k.at || here(), idx = F.entries().indexOf(k);
-    // The desktop app renames in the row, as the computer's own file manager does; the browser keeps the window.
-    if (host.desktop && drawnRow(F.active, idx)) return startInline(F.active, folder, k.name);
+    if (drawnRow(F.active, idx)) return startInline(F.active, folder, k.name);
     return nameWindow(t('names.rename'), k.name, t('names.rename'), 'IconPencil', !k.dir, (name) => ops.rename(join(folder, k.name), name), k.name);
   } });
 }
