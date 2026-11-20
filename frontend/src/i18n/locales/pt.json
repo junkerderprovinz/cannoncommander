@@ -2397,6 +2397,8 @@
     "pause": "Pausar",
     "resume": "Retomar",
     "cancel": "Cancelar",
+    "background": "Em segundo plano",
+    "keepOpen": "Manter a janela aberta no fim",
     "retry": "Tentar novamente",
     "answer": "Responder",
     "limit": "Limitar velocidade",

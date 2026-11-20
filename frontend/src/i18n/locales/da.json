@@ -2324,6 +2324,8 @@
     "pause": "Sæt på pause",
     "resume": "Fortsæt",
     "cancel": "Annuller",
+    "background": "I baggrunden",
+    "keepOpen": "Hold vinduet åbent, når det er færdigt",
     "retry": "Prøv igen",
     "answer": "Svar",
     "limit": "Begræns hastigheden",

@@ -30,6 +30,8 @@
   "pause": "Anhalten",
   "resume": "Weiter",
   "cancel": "Abbrechen",
+  "background": "Im Hintergrund",
+  "keepOpen": "Fenster nach Abschluss offen lassen",
   "retry": "Wiederholen",
   "answer": "Antworten",
   "limit": "Tempo begrenzen",

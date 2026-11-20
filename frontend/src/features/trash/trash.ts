@@ -12,6 +12,7 @@ import { nativePath } from '@/files/paths';
 import { plural, t } from '@/i18n';
 import { confirmWin } from '@/features/config/shared';
 import { answeredBy, elevationAnswers } from '@/features/elevate/answers';
+import { followJob } from '@/features/jobs/follow';
 import { objects } from '@/features/jobs/label';
 import { pathOf } from '@/features/transfer/paths';
 import { undoAct } from '@/features/undo/act';
@@ -73,8 +74,10 @@ export function deleteItems(sel: Entry[], path: string, { forever = false, after
         after?.();
         toast(toTrash ? t('trash.inTrash', { what }) : t('trash.deleted', { what }), 'ok', toTrash && j.undo ? undoAct(j.undo) : undefined);
       }, (j) => trashFailed(j, after));
+      return job;
     } catch (e) {
       toast((e as Error).message, 'warn');
+      return null;
     }
   };
   const trash = !forever && prefs.trash !== false;
@@ -83,7 +86,11 @@ export function deleteItems(sel: Entry[], path: string, { forever = false, after
     return;
   }
   const st = reactive({ trash });
-  const primary = () => ({ label: st.trash ? t('trash.toTrash') : t('trash.forever'), g: 'IconTrash', primary: true, run: () => { void doIt(st.trash); } });
+  const primary = () => ({ label: st.trash ? t('trash.toTrash') : t('trash.forever'), g: 'IconTrash', primary: true, run: () => {
+    stop();
+    void doIt(st.trash).then((job) => (job ? followJob(w, job) : w.close()));
+    return false;
+  } });
   const w = win({
     title: t('trash.delete'), cls: st.trash ? 'xwin' : 'xwin forever', body: DeleteBody, props: { items: sel, days, st, bin: system ? binName() : undefined }, foot: [cancelBtn(), primary()],
     onClose: () => stop(),

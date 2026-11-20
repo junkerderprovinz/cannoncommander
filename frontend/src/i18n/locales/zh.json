@@ -2251,6 +2251,8 @@
     "pause": "暂停",
     "resume": "继续",
     "cancel": "取消",
+    "background": "后台运行",
+    "keepOpen": "完成后保持窗口打开",
     "retry": "重试",
     "answer": "答复",
     "limit": "限速",

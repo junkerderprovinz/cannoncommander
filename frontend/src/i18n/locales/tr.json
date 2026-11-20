@@ -2324,6 +2324,8 @@
     "pause": "Duraklat",
     "resume": "Sürdür",
     "cancel": "İptal",
+    "background": "Arka planda",
+    "keepOpen": "Bitince pencere açık kalsın",
     "retry": "Yeniden dene",
     "answer": "Yanıtla",
     "limit": "Hızı sınırla",

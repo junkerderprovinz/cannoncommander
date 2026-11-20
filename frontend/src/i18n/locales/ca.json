@@ -2397,6 +2397,8 @@
     "pause": "Pausa",
     "resume": "Reprèn",
     "cancel": "Cancel·la",
+    "background": "En segon pla",
+    "keepOpen": "Mantén la finestra oberta en acabar",
     "retry": "Torna-ho a provar",
     "answer": "Respon",
     "limit": "Limita la velocitat",

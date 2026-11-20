@@ -2397,6 +2397,8 @@
     "pause": "Pauzēt",
     "resume": "Turpināt",
     "cancel": "Atcelt",
+    "background": "Fonā",
+    "keepOpen": "Pēc beigām atstāt logu atvērtu",
     "retry": "Atkārtot",
     "answer": "Atbildēt",
     "limit": "Ierobežot ātrumu",

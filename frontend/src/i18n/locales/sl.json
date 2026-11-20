@@ -2470,6 +2470,8 @@
     "pause": "Zaustavi",
     "resume": "Nadaljuj",
     "cancel": "Prekliči",
+    "background": "V ozadju",
+    "keepOpen": "Pusti okno odprto po koncu",
     "retry": "Ponovi",
     "answer": "Odgovori",
     "limit": "Omeji hitrost",

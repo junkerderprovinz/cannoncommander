@@ -2251,6 +2251,8 @@
     "pause": "Tạm dừng",
     "resume": "Tiếp tục",
     "cancel": "Hủy",
+    "background": "Chạy nền",
+    "keepOpen": "Giữ cửa sổ mở khi xong",
     "retry": "Thử lại",
     "answer": "Trả lời",
     "limit": "Giới hạn tốc độ",

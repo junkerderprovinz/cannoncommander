@@ -2397,6 +2397,8 @@
     "pause": "Pauză",
     "resume": "Continuă",
     "cancel": "Anulează",
+    "background": "În fundal",
+    "keepOpen": "Păstrează fereastra deschisă la final",
     "retry": "Reîncearcă",
     "answer": "Răspunde",
     "limit": "Limitează viteza",

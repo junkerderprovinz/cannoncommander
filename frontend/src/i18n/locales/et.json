@@ -2324,6 +2324,8 @@
     "pause": "Peata",
     "resume": "Jätka",
     "cancel": "Katkesta",
+    "background": "Taustal",
+    "keepOpen": "Jäta aken pärast lõppu avatuks",
     "retry": "Proovi uuesti",
     "answer": "Vasta",
     "limit": "Piira kiirust",

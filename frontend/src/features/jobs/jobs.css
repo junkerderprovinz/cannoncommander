@@ -14,3 +14,12 @@
 .job-file span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .job-acts { display: flex; gap: .3rem; min-width: 8.4rem; justify-content: flex-end; }
 @media (max-width: 760px) { .job { grid-template-columns: minmax(0, 1fr) auto; gap: .4rem .6rem; } .job-grip { display: none; } .job .bar { grid-column: 1 / -1; grid-row: 2; } .job-acts { min-width: 0; grid-column: 1 / -1; } }
+
+/* The job a copy, move or delete window started. */
+.jf { display: flex; flex-direction: column; gap: .5rem; }
+.jf-head { display: flex; align-items: center; gap: .6rem; min-width: 0; }
+.jf-head b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jf-head .glim-pill { margin-inline-start: auto; }
+.jf-facts { font-size: 12px; color: var(--carbon-text-muted); }
+.jf-current { font-size: 12px; color: var(--carbon-text-sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jf-keep { align-self: flex-start; }

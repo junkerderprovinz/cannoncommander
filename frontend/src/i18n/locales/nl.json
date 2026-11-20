@@ -2324,6 +2324,8 @@
     "pause": "Pauzeren",
     "resume": "Hervatten",
     "cancel": "Annuleren",
+    "background": "Op de achtergrond",
+    "keepOpen": "Venster open laten als het klaar is",
     "retry": "Opnieuw",
     "answer": "Antwoorden",
     "limit": "Snelheid beperken",

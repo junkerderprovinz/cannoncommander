@@ -2470,6 +2470,8 @@
     "pause": "Pristabdyti",
     "resume": "Tęsti",
     "cancel": "Atšaukti",
+    "background": "Fone",
+    "keepOpen": "Pabaigus palikti langą atvirą",
     "retry": "Kartoti",
     "answer": "Atsakyti",
     "limit": "Riboti greitį",

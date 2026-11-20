@@ -2470,6 +2470,8 @@
     "pause": "Wstrzymaj",
     "resume": "Wznów",
     "cancel": "Anuluj",
+    "background": "W tle",
+    "keepOpen": "Zostaw okno otwarte po zakończeniu",
     "retry": "Ponów",
     "answer": "Odpowiedz",
     "limit": "Ogranicz prędkość",

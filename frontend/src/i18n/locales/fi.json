@@ -2324,6 +2324,8 @@
     "pause": "Keskeytä",
     "resume": "Jatka",
     "cancel": "Peruuta",
+    "background": "Taustalla",
+    "keepOpen": "Pidä ikkuna auki, kun valmis",
     "retry": "Yritä uudelleen",
     "answer": "Vastaa",
     "limit": "Rajoita nopeutta",

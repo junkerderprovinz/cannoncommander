@@ -2324,6 +2324,8 @@
     "pause": "Szünet",
     "resume": "Folytatás",
     "cancel": "Mégse",
+    "background": "A háttérben",
+    "keepOpen": "Az ablak maradjon nyitva a végén",
     "retry": "Újra",
     "answer": "Válasz",
     "limit": "Sebesség korlátozása",

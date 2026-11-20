@@ -2470,6 +2470,8 @@
     "pause": "Pozastavit",
     "resume": "Pokračovat",
     "cancel": "Zrušit",
+    "background": "Na pozadí",
+    "keepOpen": "Po dokončení nechat okno otevřené",
     "retry": "Zopakovat",
     "answer": "Odpovědět",
     "limit": "Omezit rychlost",

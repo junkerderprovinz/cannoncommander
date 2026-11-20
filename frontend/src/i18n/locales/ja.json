@@ -2251,6 +2251,8 @@
     "pause": "一時停止",
     "resume": "再開",
     "cancel": "中止",
+    "background": "バックグラウンドへ",
+    "keepOpen": "完了後もウィンドウを開いたままにする",
     "retry": "再試行",
     "answer": "回答",
     "limit": "速度を制限",

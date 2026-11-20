@@ -2251,6 +2251,8 @@
     "pause": "일시 정지",
     "resume": "다시 시작",
     "cancel": "취소",
+    "background": "백그라운드로",
+    "keepOpen": "완료 후 창 열어 두기",
     "retry": "다시 시도",
     "answer": "답변",
     "limit": "속도 제한",

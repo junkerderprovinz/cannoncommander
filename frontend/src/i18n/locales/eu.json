@@ -2789,6 +2789,8 @@
     "pause": "Pausatu",
     "resume": "Jarraitu",
     "cancel": "Utzi",
+    "background": "Atzeko planoan",
+    "keepOpen": "Mantendu leihoa irekita amaitutakoan",
     "retry": "Saiatu berriro",
     "answer": "Erantzun",
     "limit": "Mugatu abiadura",

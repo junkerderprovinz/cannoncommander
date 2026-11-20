@@ -2324,6 +2324,8 @@
     "pause": "Pausa",
     "resume": "Återuppta",
     "cancel": "Avbryt",
+    "background": "I bakgrunden",
+    "keepOpen": "Låt fönstret vara öppet när det är klart",
     "retry": "Försök igen",
     "answer": "Svara",
     "limit": "Begränsa hastigheten",

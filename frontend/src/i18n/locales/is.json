@@ -2324,6 +2324,8 @@
     "pause": "Gera hlé",
     "resume": "Halda áfram",
     "cancel": "Hætta við",
+    "background": "Í bakgrunni",
+    "keepOpen": "Hafa gluggann opinn þegar því lýkur",
     "retry": "Reyna aftur",
     "answer": "Svara",
     "limit": "Takmarka hraða",

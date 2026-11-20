@@ -2251,6 +2251,8 @@
     "pause": "Jeda",
     "resume": "Lanjutkan",
     "cancel": "Batal",
+    "background": "Di latar belakang",
+    "keepOpen": "Biarkan jendela terbuka setelah selesai",
     "retry": "Ulangi",
     "answer": "Jawab",
     "limit": "Batasi kecepatan",

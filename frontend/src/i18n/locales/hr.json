@@ -2397,6 +2397,8 @@
     "pause": "Pauziraj",
     "resume": "Nastavi",
     "cancel": "Otkaži",
+    "background": "U pozadini",
+    "keepOpen": "Ostavi prozor otvoren po završetku",
     "retry": "Pokušaj ponovno",
     "answer": "Odgovori",
     "limit": "Ograniči brzinu",

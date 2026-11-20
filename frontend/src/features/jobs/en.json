@@ -30,6 +30,8 @@
   "pause": "Pause",
   "resume": "Resume",
   "cancel": "Cancel",
+  "background": "In the background",
+  "keepOpen": "Keep this window open when done",
   "retry": "Retry",
   "answer": "Answer",
   "limit": "Limit the speed",

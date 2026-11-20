@@ -21,6 +21,7 @@ import { type Transfer, usePanels } from '@/stores/panels';
 import { ask } from './ask';
 import { entriesOf, keep } from './clip';
 import { askRunning, resolveConflicts } from './conflicts';
+import { followJob } from '@/features/jobs/follow';
 import LinksBody from './LinksBody.vue';
 import ParityBody from './ParityBody.vue';
 import { ensureDir, pathOf, shareRel } from './paths';
@@ -173,7 +174,11 @@ function transferWindow(kind: 'copy' | 'move') {
   const verb = verbOf(kind);
   const primary = () => ({
     label: st.pf?.unraid?.space ? t(`transfer.anyway.${kind}`) : verb, g: kind === 'copy' ? 'IconCopy' : 'IconMove', primary: true,
-    run: () => { F.transfer(st.way, items, st.dest.trim().replace(/(.)\/$/, '$1'), from, { rule: st.rule, keepAttrs: st.keepAttrs, verify: st.verify }); },
+    run: () => {
+      void Promise.resolve(F.transfer(st.way, items, st.dest.trim().replace(/(.)\/$/, '$1'), from, { rule: st.rule, keepAttrs: st.keepAttrs, verify: st.verify }))
+        .then((job) => (job && typeof job === 'object' && 'id' in job ? followJob(w, job as Job) : w.close()));
+      return false;
+    },
   });
   const w = win({ title: verb, cls: 'xwin', body: TransferBody, props: { st }, foot: [{ start: t('transfer.background') }, primary()] });
   // The check runs again as the target changes, so the space warning and the hard link choice follow it.

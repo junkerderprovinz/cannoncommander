@@ -2324,6 +2324,8 @@
     "pause": "Pausar",
     "resume": "Continuar",
     "cancel": "Cancelar",
+    "background": "En segundo plano",
+    "keepOpen": "Manter a xanela aberta ao rematar",
     "retry": "Repetir",
     "answer": "Responder",
     "limit": "Limitar a velocidade",
