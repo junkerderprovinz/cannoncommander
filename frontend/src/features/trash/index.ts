@@ -1,10 +1,12 @@
 // Löschen (F8, Entf) into the trash or for good (Umschalt+Entf), and the Papierkorb page.
 import { action } from '@/core/actions';
+import { extend } from '@/core/extend';
 import { bindKey } from '@/core/keymap';
 import { go, registerView } from '@/core/views';
 import { tl } from '@/i18n';
 import { usePanels } from '@/stores/panels';
 import { useTrash } from '@/stores/trash';
+import { intoBin } from './bin';
 import { pick } from './pick';
 import { deleteItems } from './trash';
 import TrashPage from './TrashPage.vue';
@@ -17,5 +19,6 @@ export default function setup() {
   action('deleteNow', { label: tl('trash.deleteNow'), g: 'IconTrash', key: 'Shift+Delete', needs: ['sel', 'writable'], run: () => deleteItems(F.sel(), F.T().path, { forever: true }) });
   bindKey('Shift+Delete', 'deleteNow');
   registerView('trash', { page: true, component: TrashPage });
+  extend.beforeGo.push(intoBin);
   action('openTrash', { label: tl('trash.title'), g: 'IconTrash', run: () => { pick.sel.clear(); go('trash'); } });
 }
