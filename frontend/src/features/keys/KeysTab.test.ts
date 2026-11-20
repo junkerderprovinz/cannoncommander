@@ -218,14 +218,14 @@ describe('the shortcuts tile', () => {
     expect($('#kt-layout')).toBeNull();
     host.desktop = true;
     await settle();
-    expect(layouts()).toEqual(['Wie ein Commander', 'Wie im Explorer']);
+    expect(layouts()).toEqual(['Ein Fenster', 'Zwei Fenster']);
     expect($('#d-clickselect')).not.toBeNull();
   });
 
-  it('brings Explorer\'s keys when it is chosen in the desktop app', async () => {
+  it('brings the keys of one window when it is chosen in the desktop app', async () => {
     host.desktop = true;
     await settle();
-    [...document.querySelectorAll<HTMLButtonElement>('#kt-layout button')].find((b) => b.textContent?.trim() === 'Wie im Explorer')!.click();
+    [...document.querySelectorAll<HTMLButtonElement>('#kt-layout button')].find((b) => b.textContent?.trim() === 'Ein Fenster')!.click();
     await settle();
     expect(keymap.F5).toBe('refresh');
     expect(chips('refresh')).toEqual(['F5', 'Strg+R']);

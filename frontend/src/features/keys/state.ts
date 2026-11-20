@@ -13,8 +13,8 @@ export const shippedKeys = () => defaults;
 export const declaredKeys = () => declared;
 
 export const layoutKeys = (which: Preset) => preset(which, defaults, (a) => !!actions[a]);
-// The desktop app stands in for Explorer, so only there is a choice, the one its first start asks for.
-export const layoutItems = (): [Preset, string][] => [['cc', t('keys.asCommander')], ['explorer', t('keys.asExplorer')]];
+// The desktop app stands in for the computer's own file manager, so only there is a choice, the one its first start asks for.
+export const layoutItems = (): [Preset, string][] => [['explorer', t('actions.single')], ['cc', t('actions.dual')]];
 
 // Older settings hold the whole map, which turns into what it changes in its layout.
 function saved(): Saved | null {

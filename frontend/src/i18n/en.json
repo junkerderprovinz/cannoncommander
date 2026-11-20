@@ -4,7 +4,7 @@
     "needSel": "Pick a file or folder first",
     "ownFolder": "This only works in the file's own folder: press Enter to jump there",
     "needFile": "Pick a file first",
-    "needDual": "Turn on both panels for this (Ctrl+2)",
+    "needDual": "Switch to two windows for this (Ctrl+2)",
     "archiveOnly": "Inside an archive you can only look and extract",
     "cancel": "Cancel",
     "close": "Close",
@@ -38,8 +38,8 @@
     "brand": "CannonCommander, back to the files",
     "back": "Back to the files",
     "backTip": "Back to the files (Esc)",
-    "toSingle": "Switch to one panel (Ctrl+1)",
-    "toDual": "Switch to two panels (Ctrl+2)",
+    "toSingle": "Switch to one window (Ctrl+1)",
+    "toDual": "Switch to two windows (Ctrl+2)",
     "settings": "Settings",
     "running": { "one": "{n} job running", "other": "{n} jobs running" },
     "activity": "Activity"
@@ -54,8 +54,8 @@
     "help": "Help"
   },
   "actions": {
-    "single": "One panel",
-    "dual": "Two panels",
+    "single": "One window",
+    "dual": "Two windows",
     "sidebar": "Sidebar",
     "fkeys": "Function key bar",
     "hidden": "Hidden files",

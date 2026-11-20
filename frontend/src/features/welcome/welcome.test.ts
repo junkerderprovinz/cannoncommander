@@ -21,6 +21,7 @@ let closed = 0;
 const settle = async () => { for (let i = 0; i < 3; i++) await nextTick(); };
 const card = (way: string) => document.querySelector<HTMLButtonElement>(`[data-way="${way}"]`)!;
 const checked = () => [...document.querySelectorAll('[role="radio"][aria-checked="true"]')].map((c) => c.getAttribute('data-way'));
+const names = () => [...document.querySelectorAll('.wl-name')].map((n) => n.textContent);
 const kept = () => JSON.parse(localStorage.getItem(PREFS_KEY)!);
 
 async function show() {
@@ -50,31 +51,31 @@ afterEach(() => {
 describe('in the desktop app', () => {
   beforeEach(() => { host.desktop = true; });
 
-  it('offers the explorer way and the commander, with the commander picked as it ships', async () => {
+  it('offers one window or two, with two picked as it ships', async () => {
     await show();
-    expect([...document.querySelectorAll('.wl-name')].map((n) => n.textContent)).toEqual(['Wie im Explorer', 'Wie ein Commander']);
-    expect(checked()).toEqual(['commander']);
+    expect(names()).toEqual(['Ein Fenster', 'Zwei Fenster']);
+    expect(checked()).toEqual(['dual']);
   });
 
-  it('shows one panel the moment the explorer way is picked, and keeps it for the next start', async () => {
+  it('shows one panel the moment one window is picked, with the keys and clicks that go with it, and keeps it', async () => {
     await show();
-    card('explorer').click();
+    card('single').click();
     await settle();
     expect(prefs).toMatchObject({ desktopStyle: 'explorer', dual: false, clickSelect: true });
     expect((prefs.keys as { preset: string }).preset).toBe('explorer');
     expect(actions.sidePane!.key).toBe('Alt+P');
     expect(kept()).toMatchObject({ desktopStyle: 'explorer', dual: false });
-    expect(checked()).toEqual(['explorer']);
+    expect(checked()).toEqual(['single']);
   });
 
-  it('brings both panels back with the commander', async () => {
+  it('brings both panels back with two windows', async () => {
     await show();
-    card('explorer').click();
-    card('commander').click();
+    card('single').click();
+    card('dual').click();
     expect(prefs).toMatchObject({ desktopStyle: 'commander', dual: true, clickSelect: false, keys: null });
   });
 
-  it('stays a commander when the window is closed without a pick', () => {
+  it('stays with two windows when the window is closed without a pick', () => {
     openWelcome();
     winStack.at(-1)!.close();
     expect(prefs).toMatchObject({ desktopStyle: 'commander', dual: true, welcomed: true });
@@ -86,7 +87,7 @@ describe('in the browser', () => {
 
   it('offers one panel or two and leaves the keys as they are', async () => {
     await show();
-    expect([...document.querySelectorAll('.wl-name')].map((n) => n.textContent)).toEqual(['Ein Fenster', 'Zwei Fenster']);
+    expect(names()).toEqual(['Ein Fenster', 'Zwei Fenster']);
     card('single').click();
     expect(prefs).toMatchObject({ dual: false, desktopStyle: '', clickSelect: false, keys: null });
     expect(kept().dual).toBe(false);
@@ -106,6 +107,32 @@ describe('in the browser', () => {
     card('dual').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     expect(prefs.dual).toBe(true);
     expect(closed).toBe(1);
+  });
+});
+
+describe('the cards', () => {
+  it('describe only the layout, never how to work it', async () => {
+    for (const desktop of [true, false]) {
+      host.desktop = desktop;
+      await show();
+      const how = [...document.querySelectorAll('.wl-how')].map((n) => n.textContent!);
+      expect(how).toHaveLength(2);
+      for (const text of how) expect(text).not.toMatch(/F\d|Klick|Strg|Maus|Taste|Explorer|Commander/);
+      app!.unmount();
+      app = undefined;
+    }
+  });
+
+  it('draw a little window at work: a folder opening in one, a file crossing over in two', async () => {
+    await show();
+    const single = card('single');
+    const dual = card('dual');
+    expect(single.querySelectorAll('.wl-sk-row')).toHaveLength(5);
+    expect(single.querySelector('.wl-sk-crumb')).not.toBeNull();
+    expect(single.querySelector('.wl-sk-chip')).toBeNull();
+    expect(dual.querySelector('.wl-sk-chip')).not.toBeNull();
+    expect(dual.querySelector('.wl-sk-new')).not.toBeNull();
+    expect(dual.querySelectorAll('.wl-sketch-panel')).toHaveLength(3);
   });
 });
 

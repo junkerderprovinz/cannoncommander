@@ -1,10 +1,9 @@
 {
   "title": "Willkommen bei CannonCommander",
   "lead": "Schön, dass du da bist! Wie möchtest du arbeiten?",
-  "singleHow": "Ein Ordner über die ganze Breite, daneben die Seitenleiste. Passt gut zu kleineren Bildschirmen.",
-  "dualHow": "Zwei Ordner nebeneinander. F5 kopiert und F6 verschiebt ins andere Fenster.",
-  "hintDesktop": "Du kannst das jederzeit in den Einstellungen unter Tastenkürzel ändern.",
-  "hintWeb": "Umschalten geht jederzeit im Menü Ansicht oder mit Strg+1 und Strg+2.",
+  "singleHow": "Ein Ordner über die ganze Breite, Ordnerbaum und Verknüpfungen daneben.",
+  "dualHow": "Zwei Ordner nebeneinander, Ordnerbaum und Verknüpfungen daneben.",
+  "hint": "Umschalten geht jederzeit im Menü Ansicht oder mit Strg+1 und Strg+2.",
   "start": "Los geht's",
   "action": "Willkommensfenster"
 }

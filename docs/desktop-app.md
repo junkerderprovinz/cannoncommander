@@ -24,14 +24,14 @@ CannonCommander also runs as a program on Windows, macOS and Linux, with the sam
 
 ## The first start {#first-start}
 
-The app asks once how you like to work:
+A welcome window asks once whether you want one window or two:
 
-![The desktop app at its first start, asking whether it should work as in Explorer or like a commander.](assets/screenshots/desktop.png)
+![The welcome window at the first start: the CannonCommander logo and two cards, One window and Two windows, each with a small sketch of its layout.](assets/screenshots/desktop.png)
 
-- **As in Explorer**: a click selects a file, a frame drawn with the mouse selects several. ++f5++ refreshes, ++backspace++ goes back and ++alt+d++ jumps to the path bar.
-- **Like a commander**: a click moves the cursor, and ++ctrl++, ++shift++ or ++insert++ mark. ++f5++ copies and ++f6++ moves to the other panel.
+- **One window**: one folder across the full width, with the folder tree and shortcuts beside it.
+- **Two windows**: two folders side by side.
 
-You can change it any time under **Settings > Keyboard shortcuts**.
+Each brings the keys that go with it, which you can change any time under **Settings > Keyboard shortcuts**. **Help > Welcome window** shows the choice again.
 
 ## What is different from the server {#differences}
 

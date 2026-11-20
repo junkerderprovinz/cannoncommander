@@ -50,4 +50,4 @@ CannonCommander follows the keys of the classic commanders. ++f1++ lists all of 
 
 ![Settings, Keyboard shortcuts: vim keys for the editor, your own keys, and the list of commands.](../assets/screenshots/settings-keys.png)
 
-The same page switches the editor to vim keys. In the desktop app it also chooses between keys as in Explorer and keys like a commander.
+The same page switches the editor to vim keys. In the desktop app it also picks the keys for one window or two windows.

@@ -2,6 +2,8 @@
 
 CannonCommander opens right away as the user `admin`, without a sign-in. That makes the first look easy, but anyone who reaches the port can use it. Setting a password takes a minute.
 
+On the very first visit a welcome window asks for one window or two. The panels follow your pick at once, and ++ctrl+1++ and ++ctrl+2++ switch later on.
+
 ## Set a password {#password}
 
 1. Click **Settings** at the top right.

@@ -54,9 +54,9 @@ describe('what an action needs', () => {
     expect(blocked({ id: 'view', needs: 'file' })).toBeNull();
   });
 
-  it('wants both panels for a two-panel action', () => {
+  it('wants two windows for a two-panel action', () => {
     prefs.dual = false;
-    expect(blocked({ id: 'swapPanels', needs: 'dual' })).toBe('Dafür beide Fenster einschalten (Strg+2)');
+    expect(blocked({ id: 'swapPanels', needs: 'dual' })).toBe('Dafür auf zwei Fenster wechseln (Strg+2)');
   });
 
   it('only lets copy, move and delete work on hits from other folders', () => {

@@ -20,10 +20,15 @@
 .wl-tick svg { width: .75rem; height: .75rem; }
 .wl-sketch { display: block; width: 100%; height: auto; margin-bottom: .375rem; }
 .wl-sketch-frame { fill: var(--carbon-bg); }
-.wl-sketch-bar, .wl-sketch-key { fill: var(--carbon-surface3); }
+.wl-sketch-bar { fill: var(--carbon-surface3); }
+.wl-sk-crumb { fill: var(--carbon-text-muted); opacity: .45; transform-box: fill-box; transform-origin: left center; }
 .wl-sketch-panel { fill: var(--carbon-surface); }
 .wl-sketch-row { fill: var(--carbon-text-muted); opacity: .4; }
-.wl-sketch-cursor { fill: var(--accent); opacity: .35; }
+.wl-sk-row { transform-box: fill-box; transform-origin: left center; }
+.wl-sk-cursor { fill: var(--accent); opacity: .35; }
+/* The file on its way across and the row it becomes stay hidden while the sketch stands still. */
+.wl-sk-chip { fill: var(--accent); opacity: 0; }
+.wl-sk-new { fill: var(--accent); opacity: 0; transform-box: fill-box; transform-origin: left center; }
 .wl-name { padding-inline: .25rem; font-size: var(--text-title); font-weight: 600; }
 .wl-how { padding-inline: .25rem; color: var(--carbon-text-sub); font-size: var(--text-subline); line-height: 1.45; }
 .wl-hint { margin: 1.25rem 0 0; color: var(--carbon-text-muted); font-size: var(--text-subline); text-wrap: balance; }
@@ -54,12 +59,63 @@
   12% { opacity: .9; }
   to { opacity: 0; scale: var(--motion-welcome-swell, 1); translate: calc(var(--wl-drift, 1) * 18px * var(--motion-welcome-swell, 1)) 0; }
 }
+/* The sketches at work, one loop each, then a rest: in one window the cursor walks down two rows, the folder opens
+   with its rows sliding in, the cursor moves on and the folder closes again. In two windows the cursor takes the
+   second row, the file glides into the right panel and lands as a new row, and the cursor moves on. */
+@keyframes wl-sk-walk {
+  0%, 14% { transform: none; }
+  20%, 32% { transform: translateY(8px); }
+  38%, 50% { transform: translateY(16px); }
+  54%, 66% { transform: none; }
+  72%, 86% { transform: translateY(8px); }
+  92%, 100% { transform: none; }
+}
+@keyframes wl-sk-open {
+  0%, 50% { opacity: .4; transform: none; }
+  53% { opacity: 0; transform: translateX(calc(var(--motion-sketch-slide, 0px) * -1)); }
+  54% { opacity: 0; transform: translateX(var(--motion-sketch-slide, 0px)) scaleX(var(--wl-wide, 1)); }
+  62%, 88% { opacity: .4; transform: scaleX(var(--wl-wide, 1)); }
+  91% { opacity: 0; transform: translateX(var(--motion-sketch-slide, 0px)) scaleX(var(--wl-wide, 1)); }
+  92% { opacity: 0; transform: translateX(calc(var(--motion-sketch-slide, 0px) * -1)); }
+  98%, 100% { opacity: .4; transform: none; }
+}
+@keyframes wl-sk-path {
+  0%, 52% { transform: none; }
+  56%, 90% { transform: scaleX(1.8); }
+  94%, 100% { transform: none; }
+}
+@keyframes wl-sk-pick {
+  0%, 14% { transform: none; }
+  20%, 62% { transform: translateY(8px); }
+  68%, 88% { transform: translateY(16px); }
+  94%, 100% { transform: none; }
+}
+@keyframes wl-sk-send {
+  0%, 28% { opacity: 0; transform: none; }
+  32% { opacity: .6; transform: none; }
+  50% { opacity: .6; transform: translate(58px, 32px); }
+  54% { opacity: 0; transform: translate(58px, 32px); }
+  55%, 100% { opacity: 0; transform: none; }
+}
+@keyframes wl-sk-land {
+  0%, 50% { opacity: 0; transform: scaleX(.2); }
+  56%, 88% { opacity: .5; transform: none; }
+  94%, 100% { opacity: 0; transform: none; }
+}
 @media (prefers-reduced-motion: no-preference) {
   .wl-logo { animation: wl-arrive var(--motion-welcome-dur, 0s) var(--motion-welcome-ease, ease-out) both; }
   .wl-cannon { animation: wl-kick calc(var(--motion-welcome-dur, 0s) * 1.4) linear calc(var(--motion-welcome-step, 0ms) * 4) both; }
   .wl-lead { animation: wl-rise var(--motion-welcome-dur, 0s) var(--motion-welcome-ease, ease-out) calc(var(--motion-welcome-step, 0ms) * 2) both; }
   .wl-way { animation: wl-rise var(--motion-welcome-dur, 0s) var(--motion-welcome-ease, ease-out) calc(var(--motion-welcome-step, 0ms) * (3 + var(--wl-i, 0))) both; }
   .wl-hint { animation: wl-rise var(--motion-welcome-dur, 0s) var(--motion-welcome-ease, ease-out) calc(var(--motion-welcome-step, 0ms) * 5) both; }
+  :root:not([data-motion="off"]) [data-way="single"] .wl-sk-cursor { animation: wl-sk-walk var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
+  :root:not([data-motion="off"]) [data-way="single"] .wl-sk-crumb { animation: wl-sk-path var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
+  :root:not([data-motion="off"]) .wl-sk-row {
+    animation: wl-sk-open var(--motion-sketch-dur, 0s) ease-out calc(var(--motion-welcome-step, 0ms) * (8 + var(--wl-r, 0) / 2)) var(--motion-sketch-loops, 0) both;
+  }
+  :root:not([data-motion="off"]) [data-way="dual"] .wl-sk-cursor { animation: wl-sk-pick var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
+  :root:not([data-motion="off"]) .wl-sk-chip { animation: wl-sk-send var(--motion-sketch-dur, 0s) ease-in-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
+  :root:not([data-motion="off"]) .wl-sk-new { animation: wl-sk-land var(--motion-sketch-dur, 0s) ease-out calc(var(--motion-welcome-step, 0ms) * 8) var(--motion-sketch-loops, 0) both; }
   :root:not([data-motion="subtle"]):not([data-motion="off"]) .wl-puff {
     animation: wl-puff calc(var(--motion-welcome-dur, 0s) * 1.4) ease-out calc(var(--motion-welcome-step, 0ms) * 4) both;
   }

@@ -6,30 +6,23 @@ import { firstVisit, prefs, setPref } from '@/core/prefs';
 import { useStyle } from '@/features/desktop/style';
 import { t } from '@/i18n';
 
-export type Way = 'explorer' | 'commander' | 'single' | 'dual';
-export interface Choice { id: Way; name: string; how: string; panes: 1 | 2; fkeys: boolean }
+export type Way = 'single' | 'dual';
+export interface Choice { id: Way; name: string; how: string }
 
-// In the desktop app a way brings its keys and its kind of selecting along. In the browser those keys belong to the
-// browser, so only the panels are left to pick.
-export function choices(): Choice[] {
-  return host.desktop
-    ? [
-      { id: 'explorer', name: t('desktop.explorerName'), how: t('desktop.explorerHow'), panes: 1, fkeys: false },
-      { id: 'commander', name: t('desktop.commanderName'), how: t('desktop.commanderHow'), panes: 2, fkeys: true },
-    ]
-    : [
-      { id: 'single', name: t('actions.single'), how: t('welcome.singleHow'), panes: 1, fkeys: false },
-      { id: 'dual', name: t('actions.dual'), how: t('welcome.dualHow'), panes: 2, fkeys: true },
-    ];
-}
+export const choices = (): Choice[] => [
+  { id: 'single', name: t('actions.single'), how: t('welcome.singleHow') },
+  { id: 'dual', name: t('actions.dual'), how: t('welcome.dualHow') },
+];
 
+// In the desktop app a way also brings the keys and the clicks that go with it. In the browser those keys belong to
+// the browser, so only the panels change.
 export function chosen(): Way {
-  if (host.desktop) return prefs.desktopStyle === 'explorer' ? 'explorer' : 'commander';
+  if (host.desktop) return prefs.desktopStyle === 'explorer' ? 'single' : 'dual';
   return prefs.dual ? 'dual' : 'single';
 }
 
 export function choose(way: Way) {
-  if (way === 'explorer' || way === 'commander') useStyle(way);
+  if (host.desktop) useStyle(way === 'single' ? 'explorer' : 'commander');
   else setPref('dual', way === 'dual');
 }
 
